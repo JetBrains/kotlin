@@ -183,6 +183,7 @@ KaNamedFunctionSymbol:
   annotations: []
   callableId: sample/B.bar
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -235,19 +236,19 @@ KaKotlinPropertySymbol:
     visibility: PRIVATE
   callableId: sample/B.n
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
     annotations: []
     callableId: null
     compilerVisibility: Public
     contextReceivers: []
-    hasBody: false
     hasStableParameterNames: true
     isActual: false
-    isDefault: true
     isExpect: true
     isExtension: false
     isInline: false
+    isNotDefault: false
     isOverride: false
     location: PROPERTY
     modality: FINAL
@@ -345,6 +346,7 @@ KaNamedFunctionSymbol:
   annotations: []
   callableId: sample/baz
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -397,19 +399,19 @@ KaKotlinPropertySymbol:
     visibility: PRIVATE
   callableId: sample/m
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
     annotations: []
     callableId: null
     compilerVisibility: Public
     contextReceivers: []
-    hasBody: false
     hasStableParameterNames: true
     isActual: false
-    isDefault: true
     isExpect: true
     isExtension: false
     isInline: false
+    isNotDefault: false
     isOverride: false
     location: PROPERTY
     modality: FINAL
@@ -450,13 +452,12 @@ KaKotlinPropertySymbol:
     callableId: null
     compilerVisibility: Public
     contextReceivers: []
-    hasBody: false
     hasStableParameterNames: true
     isActual: false
-    isDefault: true
     isExpect: true
     isExtension: false
     isInline: false
+    isNotDefault: false
     isOverride: false
     location: PROPERTY
     modality: FINAL
@@ -707,6 +708,7 @@ KaNamedFunctionSymbol:
   annotations: []
   callableId: sample/B.bar
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -759,19 +761,19 @@ KaKotlinPropertySymbol:
     visibility: PRIVATE
   callableId: sample/B.n
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
     annotations: []
     callableId: null
     compilerVisibility: Public
     contextReceivers: []
-    hasBody: false
     hasStableParameterNames: true
     isActual: false
-    isDefault: true
     isExpect: false
     isExtension: false
     isInline: false
+    isNotDefault: false
     isOverride: false
     location: PROPERTY
     modality: FINAL
@@ -886,6 +888,7 @@ KaNamedFunctionSymbol:
   annotations: []
   callableId: sample/baz
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -938,19 +941,19 @@ KaKotlinPropertySymbol:
     visibility: PRIVATE
   callableId: sample/m
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
     annotations: []
     callableId: null
     compilerVisibility: Public
     contextReceivers: []
-    hasBody: false
     hasStableParameterNames: true
     isActual: false
-    isDefault: true
     isExpect: false
     isExtension: false
     isInline: false
+    isNotDefault: false
     isOverride: false
     location: PROPERTY
     modality: FINAL
@@ -991,13 +994,12 @@ KaKotlinPropertySymbol:
     callableId: null
     compilerVisibility: Public
     contextReceivers: []
-    hasBody: false
     hasStableParameterNames: true
     isActual: false
-    isDefault: true
     isExpect: false
     isExtension: false
     isInline: false
+    isNotDefault: false
     isOverride: false
     location: PROPERTY
     modality: FINAL

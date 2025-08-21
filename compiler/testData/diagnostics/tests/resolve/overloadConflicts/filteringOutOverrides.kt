@@ -32,3 +32,6 @@ fun foo3(a: MyGenericInterface<Number>) {
 }
 
 fun expectInt(w: Int): Int = w
+
+/* GENERATED_FIR_TAGS: asExpression, functionDeclaration, functionalType, interfaceDeclaration, intersectionType,
+lambdaLiteral, nullableType, override, smartcast, typeParameter */

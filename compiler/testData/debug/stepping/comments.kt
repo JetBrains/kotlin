@@ -63,5 +63,4 @@ class A {
 // test.kt:33 $A.<init> (1)
 // test.kt:7 $box (8)
 // test.kt:32 $A.bar (5)
-// test.kt:7 $box (8)
 // test.kt:8 $box (1)

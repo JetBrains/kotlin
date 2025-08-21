@@ -6,3 +6,5 @@ fun main(args: Array<String>) {
         throw Exception("Hello")
     }
 }
+
+/* GENERATED_FIR_TAGS: equalityExpression, functionDeclaration, ifExpression, stringLiteral */

@@ -21,3 +21,5 @@ import pack2.*
 
 class X : N()
 class Y : PublicNested()
+
+/* GENERATED_FIR_TAGS: classDeclaration, nestedClass */

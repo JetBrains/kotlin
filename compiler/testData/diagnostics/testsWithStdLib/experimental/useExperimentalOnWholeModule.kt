@@ -23,3 +23,5 @@ import api.*
 fun use() {
     function()
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, functionDeclaration, stringLiteral */

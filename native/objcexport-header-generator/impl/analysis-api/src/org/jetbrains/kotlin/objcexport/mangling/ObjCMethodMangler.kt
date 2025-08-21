@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.objcexport.mangling
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportStub
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCInstanceType
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCMethod
+import org.jetbrains.kotlin.backend.konan.objcexport.swiftNameAttribute
 
 /**
  * ObjC method consists of 3 parts, each part needs to be mangled
@@ -21,17 +22,19 @@ internal class ObjCMethodMangler {
 
     fun mangle(member: ObjCExportStub, containingStub: ObjCExportStub): ObjCExportStub {
         if (!member.isSwiftNameMethod()) return member
+        require(member is ObjCMethod)
         if (!contains(member)) {
             cacheMember(member)
             return member
         } else {
-            val key = getMemberKey(member as ObjCMethod)
+            val key = getMemberKey(member)
             val attribute = mangledMethods[key] ?: error("No cached item for $member")
             val mangledAttribute = attribute.mangleAttribute()
             val cloned = member.copy(
-                buildMangledSelectors(mangledAttribute),
-                buildMangledParameters(mangledAttribute),
-                buildMangledSwiftNameMethodAttribute(mangledAttribute, containingStub)
+                mangledSelectors = buildMangledSelectors(mangledAttribute),
+                mangledParameters = buildMangledParameters(mangledAttribute),
+                swiftNameAttribute = buildMangledSwiftNameMethodAttribute(mangledAttribute, containingStub),
+                containingStubName = containingStub.name
             )
             mangledMethods[key] = mangledAttribute
             return cloned
@@ -43,9 +46,9 @@ internal class ObjCMethodMangler {
         return mangledMethods[getMemberKey(member as ObjCMethod)] != null
     }
 
-    private fun cacheMember(member: ObjCExportStub) {
-        val memberKey = getMemberKey(member as ObjCMethod)
+    private fun cacheMember(member: ObjCMethod) {
+        val memberKey = getMemberKey(member)
         val swiftNameAttr = getSwiftNameAttribute(member)
-        mangledMethods[memberKey] = parseSwiftMethodNameAttribute(swiftNameAttr, member.returnType == ObjCInstanceType)
+        mangledMethods[memberKey] = parseSwiftMethodNameAttribute(swiftNameAttr, member.returnType == ObjCInstanceType, member.parameters)
     }
 }

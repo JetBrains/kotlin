@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -7,27 +7,55 @@ package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
-import org.jetbrains.kotlin.fir.analysis.checkers.checkAtomicReferenceAccess
+import org.jetbrains.kotlin.fir.analysis.checkers.reportAtomicToPrimitiveProblematicAccess
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.references.resolved
-import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
+import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
+import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
+import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.fir.types.resolvedType
+import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.StandardClassIds
+import org.jetbrains.kotlin.name.withClassId
 
 abstract class AbstractAtomicReferenceToPrimitiveCallChecker(
-    val atomicReferenceClassId: ClassId,
+    val appropriateCandidatesForArgument: Map<ClassId, ClassId>,
     mppKind: MppCheckerKind,
+    firstProblematicCallableId: CallableId,
+    vararg remainingProblematicCallableIds: CallableId,
 ) : FirFunctionCallChecker(mppKind) {
-    override fun check(expression: FirFunctionCall, context: CheckerContext, reporter: DiagnosticReporter) {
-        val callable = expression.calleeReference.resolved?.resolvedSymbol
+    val problematicCallableIds: Set<CallableId> = setOf(firstProblematicCallableId, *remainingProblematicCallableIds)
 
-        if (callable is FirConstructorSymbol) {
-            checkAtomicReferenceAccess(expression.resolvedType, expression.source, atomicReferenceClassId, context, reporter)
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(expression: FirFunctionCall) {
+        val callable = expression.calleeReference.resolved?.resolvedSymbol as? FirFunctionSymbol<*> ?: return
+        val receiverType = expression.dispatchReceiver?.resolvedType?.fullyExpandedType() ?: return
+        val atomicReferenceClassId = receiverType.classId ?: return
+        val fullyExpandedCallableId = callable.callableId.withClassId(atomicReferenceClassId)
+
+        if (fullyExpandedCallableId in problematicCallableIds) {
+            reportAtomicToPrimitiveProblematicAccess(
+                receiverType, expression.source,
+                atomicReferenceClassId, appropriateCandidatesForArgument
+            )
         }
     }
 }
 
 object FirCommonAtomicReferenceToPrimitiveCallChecker :
-    AbstractAtomicReferenceToPrimitiveCallChecker(StandardClassIds.AtomicReference, MppCheckerKind.Platform)
+    AbstractAtomicReferenceToPrimitiveCallChecker(
+        StandardClassIds.atomicByPrimitive,
+        MppCheckerKind.Platform,
+        StandardClassIds.Callables.atomicReferenceCompareAndSet,
+        StandardClassIds.Callables.atomicReferenceCompareAndExchange,
+    )
+
+object FirCommonAtomicArrayToPrimitiveCallChecker :
+    AbstractAtomicReferenceToPrimitiveCallChecker(
+        StandardClassIds.atomicArrayByPrimitive,
+        MppCheckerKind.Platform,
+        StandardClassIds.Callables.atomicArrayCompareAndSetAt,
+        StandardClassIds.Callables.atomicArrayCompareAndExchangeAt,
+    )

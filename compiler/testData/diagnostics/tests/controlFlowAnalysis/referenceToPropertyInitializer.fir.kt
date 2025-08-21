@@ -31,3 +31,6 @@ class TestObjectLiteral {
 class TestOther {
     val x: Int = <!UNINITIALIZED_VARIABLE!>x<!> + 1
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, anonymousObjectExpression, classDeclaration, functionDeclaration,
+functionalType, init, integerLiteral, lambdaLiteral, localProperty, primaryConstructor, propertyDeclaration */

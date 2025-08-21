@@ -48,8 +48,8 @@ fun bar(block: () -> String) {}
 
 fun test_5(b: Boolean) {
     bar {
-        <!ARGUMENT_TYPE_MISMATCH!>if (b) {
-            <!TYPE_MISMATCH!>println("meh")<!>
+        <!RETURN_TYPE_MISMATCH!>if (b) {
+            println("meh")
         }<!>
     }
 }
@@ -62,3 +62,6 @@ fun test_6(b: Boolean) {
         if (b) {}
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionalType, ifExpression, lambdaLiteral, stringLiteral,
+whenExpression */

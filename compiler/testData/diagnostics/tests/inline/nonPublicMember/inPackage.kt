@@ -27,3 +27,5 @@ internal inline fun test2Internal() {
     internalFun()
     internalProperty
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, inline, integerLiteral, propertyDeclaration */

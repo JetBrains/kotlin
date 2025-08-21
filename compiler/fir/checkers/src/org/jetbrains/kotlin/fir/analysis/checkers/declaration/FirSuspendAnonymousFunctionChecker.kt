@@ -14,9 +14,10 @@ import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.declarations.utils.isSuspend
 
 object FirSuspendAnonymousFunctionChecker : FirAnonymousFunctionChecker(MppCheckerKind.Common) {
-    override fun check(declaration: FirAnonymousFunction, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirAnonymousFunction) {
         if (!declaration.isLambda && declaration.isSuspend) {
-            reporter.reportOn(declaration.source, FirErrors.ANONYMOUS_SUSPEND_FUNCTION, context)
+            reporter.reportOn(declaration.source, FirErrors.ANONYMOUS_SUSPEND_FUNCTION)
         }
     }
 }

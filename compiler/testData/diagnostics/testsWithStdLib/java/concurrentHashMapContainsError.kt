@@ -1,6 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
-// LANGUAGE: +ProhibitConcurrentHashMapContains
 // FULL_JDK
 
 class A : java.util.concurrent.ConcurrentHashMap<String, Int>() {
@@ -122,3 +121,7 @@ fun main() {
         1 <!TYPE_INFERENCE_ONLY_INPUT_TYPES_ERROR!>!in<!> (e as Map<String, Int>)
     }
 }
+
+/* GENERATED_FIR_TAGS: asExpression, classDeclaration, flexibleType, functionDeclaration, integerLiteral,
+intersectionType, javaFunction, lambdaLiteral, localProperty, nullableType, operator, override, propertyDeclaration,
+stringLiteral, superExpression, typeParameter */

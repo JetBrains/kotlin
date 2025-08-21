@@ -9,7 +9,7 @@ interface J
 
 expect class Foo : I, C, J
 
-<!EXPECT_ACTUAL_INCOMPATIBILITY{JVM}!>expect<!> class Bar : <!SUPERTYPE_INITIALIZED_WITHOUT_PRIMARY_CONSTRUCTOR!>C<!><!SUPERTYPE_INITIALIZED_IN_EXPECTED_CLASS!>()<!>
+<!EXPECT_ACTUAL_IR_INCOMPATIBILITY{JVM}!>expect<!> class Bar : <!SUPERTYPE_INITIALIZED_WITHOUT_PRIMARY_CONSTRUCTOR!>C<!><!SUPERTYPE_INITIALIZED_IN_EXPECTED_CLASS!>()<!>
 
 expect class WithExplicitPrimaryConstructor() : C<!SUPERTYPE_INITIALIZED_IN_EXPECTED_CLASS!>()<!>
 
@@ -17,6 +17,8 @@ expect class WithExplicitPrimaryConstructor() : C<!SUPERTYPE_INITIALIZED_IN_EXPE
 // FILE: jvm.kt
 actual class Foo : I, C(), J
 
-actual class <!ACTUAL_WITHOUT_EXPECT!>Bar<!>
+actual class <!EXPECT_ACTUAL_INCOMPATIBLE_SUPERTYPES!>Bar<!>
 
 actual class WithExplicitPrimaryConstructor : C()
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, interfaceDeclaration, primaryConstructor */

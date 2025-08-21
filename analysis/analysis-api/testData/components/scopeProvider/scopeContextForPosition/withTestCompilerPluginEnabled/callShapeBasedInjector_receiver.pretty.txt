@@ -1,7 +1,10 @@
 element: column
-implicit receivers:
-  type: Scope1
-  owner symbol: KaFirNamedFunctionSymbol
+implicit values:
+  KaImplicitReceiver:
+    scopeIndexInTower = 0
+    type = Scope1
+    ownerSymbol = KaNamedFunctionSymbol:
+      /test_1(df: DataFrame<*>): kotlin.Unit
 
 scopes:
   TypeScope, index = 0

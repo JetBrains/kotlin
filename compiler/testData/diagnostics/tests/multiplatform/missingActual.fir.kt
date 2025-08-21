@@ -1,6 +1,5 @@
 // RUN_PIPELINE_TILL: FIR2IR
 // ISSUE: KT-68830
-// MUTE_LL_FIR: LL tests don't run IR actualizer to report NO_ACTUAL_FOR_EXPECT
 // MODULE: m1-common
 // FILE: common.kt
 
@@ -19,3 +18,5 @@ fun box(): String {
     test()
     return "OK"
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, expect, functionDeclaration, primaryConstructor, stringLiteral */

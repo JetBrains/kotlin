@@ -9,3 +9,5 @@ fun test(d: Data<out Any>) {
     }
 }
 
+/* GENERATED_FIR_TAGS: capturedType, classDeclaration, functionDeclaration, ifExpression, intersectionType, isExpression,
+nullableType, outProjection, primaryConstructor, propertyDeclaration, smartcast, typeParameter */

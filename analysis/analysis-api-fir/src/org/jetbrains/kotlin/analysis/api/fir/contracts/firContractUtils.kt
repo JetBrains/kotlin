@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -10,27 +10,20 @@ import org.jetbrains.kotlin.analysis.api.contracts.description.KaContractConstan
 import org.jetbrains.kotlin.analysis.api.contracts.description.booleans.*
 import org.jetbrains.kotlin.analysis.api.fir.KaSymbolByFirBuilder
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirNamedFunctionSymbol
-import org.jetbrains.kotlin.analysis.api.impl.base.contracts.description.KaBaseContractCallsInPlaceContractEffectDeclaration
-import org.jetbrains.kotlin.analysis.api.impl.base.contracts.description.KaBaseContractConditionalContractEffectDeclaration
-import org.jetbrains.kotlin.analysis.api.impl.base.contracts.description.KaBaseContractConstantValue
-import org.jetbrains.kotlin.analysis.api.impl.base.contracts.description.KaBaseContractParameterValue
+import org.jetbrains.kotlin.analysis.api.fir.utils.withSymbolAttachment
+import org.jetbrains.kotlin.analysis.api.impl.base.contracts.description.*
 import org.jetbrains.kotlin.analysis.api.impl.base.contracts.description.KaBaseContractReturnsContractEffectDeclarations.KaBaseContractReturnsNotNullEffectDeclaration
 import org.jetbrains.kotlin.analysis.api.impl.base.contracts.description.KaBaseContractReturnsContractEffectDeclarations.KaBaseContractReturnsSpecificValueEffectDeclaration
 import org.jetbrains.kotlin.analysis.api.impl.base.contracts.description.KaBaseContractReturnsContractEffectDeclarations.KaBaseContractReturnsSuccessfullyEffectDeclaration
-import org.jetbrains.kotlin.analysis.api.impl.base.contracts.description.booleans.KaBaseContractBinaryLogicExpression
-import org.jetbrains.kotlin.analysis.api.impl.base.contracts.description.booleans.KaBaseContractBooleanConstantExpression
-import org.jetbrains.kotlin.analysis.api.impl.base.contracts.description.booleans.KaBaseContractBooleanValueParameterExpression
-import org.jetbrains.kotlin.analysis.api.impl.base.contracts.description.booleans.KaBaseContractIsInstancePredicateExpression
-import org.jetbrains.kotlin.analysis.api.impl.base.contracts.description.booleans.KaBaseContractIsNullPredicateExpression
-import org.jetbrains.kotlin.analysis.api.impl.base.contracts.description.booleans.KaBaseContractLogicalNotExpression
-import org.jetbrains.kotlin.analysis.api.symbols.KaParameterSymbol
+import org.jetbrains.kotlin.analysis.api.impl.base.contracts.description.booleans.*
+import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
 import org.jetbrains.kotlin.contracts.description.*
-import org.jetbrains.kotlin.contracts.description.LogicOperationKind
 import org.jetbrains.kotlin.fir.contracts.description.*
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
+import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
 
 internal fun KtEffectDeclaration<ConeKotlinType, ConeDiagnostic>.coneEffectDeclarationToAnalysisApi(
     builder: KaSymbolByFirBuilder,
@@ -121,24 +114,43 @@ private class ConeContractDescriptionElementToAnalysisApi(
     override fun visitValueParameterReference(
         valueParameterReference: ConeValueParameterReference,
         data: Unit
-    ): Any = visitValueParameterReference(valueParameterReference, ::KaBaseContractParameterValue)
+    ): KaContractParameterValue = visitValueParameterReference(valueParameterReference)
 
     override fun visitBooleanValueParameterReference(
         booleanValueParameterReference: ConeBooleanValueParameterReference,
         data: Unit
-    ): Any =
-        visitValueParameterReference(booleanValueParameterReference, ::KaBaseContractBooleanValueParameterExpression)
+    ): KaContractBooleanValueParameterExpression {
+        val parameterValue = visitValueParameterReference(booleanValueParameterReference)
+        return KaBaseContractBooleanValueParameterExpression(parameterValue)
+    }
 
-    private fun <T> visitValueParameterReference(
-        valueParameterReference: ConeValueParameterReference,
-        constructor: (KaParameterSymbol) -> T
-    ): T = constructor(
-        if (valueParameterReference.parameterIndex == -1) firFunctionSymbol.receiverParameter
-            ?: errorWithAttachment("${firFunctionSymbol::class} should contain a receiver") {
-                withFirEntry("fir", firFunctionSymbol.firSymbol.fir)
-            }
-        else firFunctionSymbol.valueParameters[valueParameterReference.parameterIndex]
-    )
+    private fun visitValueParameterReference(valueParameterReference: ConeValueParameterReference): KaContractParameterValue {
+        val parameterSymbol = when (val index = valueParameterReference.parameterIndex) {
+            -1 -> firFunctionSymbol.receiverParameter
+                ?: with(firFunctionSymbol.analysisSession) {
+                    val containingClass = firFunctionSymbol.containingDeclaration
+                    requireWithAttachment(containingClass is KaClassSymbol, { "Unexpected containing class" }) {
+                        if (containingClass != null) {
+                            withSymbolAttachment("containingDeclaration", this@with, containingClass)
+                        }
+
+                        withSymbolAttachment("functionSymbol", this@with, firFunctionSymbol)
+                    }
+
+                    return KaBaseContractOwnerParameterValue(containingClass)
+                }
+
+            in firFunctionSymbol.valueParameters.indices -> firFunctionSymbol.valueParameters[index]
+
+            // Property accessors are not supported in the Analysis API
+            else -> firFunctionSymbol.contextParameters.elementAtOrNull(index - firFunctionSymbol.valueParameters.size)
+                ?: errorWithAttachment("${firFunctionSymbol::class.simpleName} doesn't contain parameter or context parameter with index $index") {
+                    withFirEntry("fir", firFunctionSymbol.firSymbol.fir)
+                }
+        }
+
+        return KaBaseContractExplicitParameterValue(parameterSymbol)
+    }
 
     // Util function to avoid hard coding names of the classes. Type inference will do a better job figuring out the best type to cast to.
     // This visitor isn't type-safe anyway

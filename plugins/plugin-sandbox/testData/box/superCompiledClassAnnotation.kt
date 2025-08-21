@@ -1,3 +1,4 @@
+// TARGET_BACKEND: JVM_IR
 // MODULE: lib
 // FILE: lib.kt
 import org.jetbrains.kotlin.plugin.sandbox.AllOpen2

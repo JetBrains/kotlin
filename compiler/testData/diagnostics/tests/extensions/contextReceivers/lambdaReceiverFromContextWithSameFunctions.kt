@@ -17,3 +17,6 @@ fun bar(foo: Ctx.() -> String ): String {
 fun box(): String = with (Ctx()) {
     bar { "OK" }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionDeclarationWithContext,
+functionalType, lambdaLiteral, stringLiteral, typeWithExtension */

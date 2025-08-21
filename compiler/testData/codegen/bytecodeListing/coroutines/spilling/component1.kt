@@ -1,3 +1,4 @@
+// JVM_DEFAULT_MODE: enable
 // WITH_STDLIB
 
 interface Result

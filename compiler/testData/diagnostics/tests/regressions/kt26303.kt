@@ -18,3 +18,5 @@ import foo.invoke
 fun main(args: Array<String>) {
     42()
 }
+
+/* GENERATED_FIR_TAGS: funWithExtensionReceiver, functionDeclaration, integerLiteral, nullableType, operator */

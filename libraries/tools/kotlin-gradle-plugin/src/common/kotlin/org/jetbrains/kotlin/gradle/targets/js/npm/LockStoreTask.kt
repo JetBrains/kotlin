@@ -24,8 +24,7 @@ abstract class LockStoreTask : LockCopyTask() {
     abstract val lockFileAutoReplace: Property<Boolean>
 
     @get:Internal
-    internal open val mismatchMessage: String
-        get() = PACKAGE_LOCK_MISMATCH_MESSAGE
+    internal abstract val mismatchMessage: Property<String>
 
     override fun copy() {
         val outputFile = outputDirectory.get().asFile.resolve(fileName.get())
@@ -41,7 +40,7 @@ abstract class LockStoreTask : LockCopyTask() {
             lockFileMismatchReport.get() != LockFileMismatchReport.NONE && !contentEquals(value.asFile, outputFile)
         }
 
-        // outputFile is updated only with auto replace or not existed, but we need delete all other files initially
+        // outputFile is updated only with auto replace or not existed, but we need to delete all other files initially
         fs.delete {
             it.delete(additionalInputFiles)
         }
@@ -51,13 +50,14 @@ abstract class LockStoreTask : LockCopyTask() {
         }
 
         if (shouldReportMismatch) {
-            when (lockFileMismatchReport.get()) {
+            logger.info("[$path] Detected mismatch for inputFile:${inputFile.get().asFile}, outputFile:${outputFile}, lockFileMismatchReport:${lockFileMismatchReport.get()}")
+            when (val lockFileMismatchReport = lockFileMismatchReport.get()) {
                 LockFileMismatchReport.NONE -> {}
                 LockFileMismatchReport.WARNING -> {
-                    logger.warn(mismatchMessage)
+                    logger.warn(mismatchMessage.get())
                 }
-                LockFileMismatchReport.FAIL -> throw GradleException(mismatchMessage)
-                else -> error("Unknown mismatch report kind")
+                LockFileMismatchReport.FAIL -> throw GradleException(mismatchMessage.get())
+                else -> error("Unknown mismatch report kind $lockFileMismatchReport")
             }
         }
     }

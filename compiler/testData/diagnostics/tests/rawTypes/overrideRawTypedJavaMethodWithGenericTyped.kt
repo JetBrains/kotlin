@@ -22,3 +22,5 @@ class Derived : Base() {
         return box
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, javaType, nullableType, override, typeParameter */

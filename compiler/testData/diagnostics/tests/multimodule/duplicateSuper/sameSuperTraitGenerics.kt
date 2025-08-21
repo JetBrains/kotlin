@@ -26,3 +26,5 @@ public interface B : Base<String>
 import p.*
 
 class Foo: A<String>, B
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, interfaceDeclaration, nullableType, typeParameter */

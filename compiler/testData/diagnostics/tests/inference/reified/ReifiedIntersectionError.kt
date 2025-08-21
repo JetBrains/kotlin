@@ -43,3 +43,7 @@ fun testParameters() {
     reifiedTypes(1, "2", false)
     reifiedTypes<Any>(1, "2", false)
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, inline, integerLiteral, interfaceDeclaration, intersectionType, isExpression,
+lambdaLiteral, nullableType, reified, smartcast, starProjection, stringLiteral, typeParameter, vararg, whenExpression,
+whenWithSubject */

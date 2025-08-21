@@ -87,3 +87,6 @@ class Demo5 {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, assignment, classDeclaration, functionDeclaration, functionalType,
+ifExpression, lambdaLiteral, nullableType, propertyDeclaration, typeParameter */

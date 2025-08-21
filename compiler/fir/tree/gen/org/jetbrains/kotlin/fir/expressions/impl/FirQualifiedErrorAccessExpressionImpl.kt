@@ -40,7 +40,7 @@ internal class FirQualifiedErrorAccessExpressionImpl(
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirQualifiedErrorAccessExpressionImpl {
         transformAnnotations(transformer, data)
-        selector = selector.transform(transformer, data)
+        transformSelector(transformer, data)
         receiver = receiver.transform(transformer, data)
         return this
     }
@@ -50,11 +50,20 @@ internal class FirQualifiedErrorAccessExpressionImpl(
         return this
     }
 
+    override fun <D> transformSelector(transformer: FirTransformer<D>, data: D): FirQualifiedErrorAccessExpressionImpl {
+        selector = selector.transform(transformer, data)
+        return this
+    }
+
     override fun replaceConeTypeOrNull(newConeTypeOrNull: ConeKotlinType?) {
         coneTypeOrNull = newConeTypeOrNull
     }
 
     override fun replaceAnnotations(newAnnotations: List<FirAnnotation>) {
         annotations = newAnnotations.toMutableOrEmpty()
+    }
+
+    override fun replaceReceiver(newReceiver: FirExpression) {
+        receiver = newReceiver
     }
 }

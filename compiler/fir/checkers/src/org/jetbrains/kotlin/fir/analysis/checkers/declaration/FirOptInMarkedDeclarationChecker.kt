@@ -17,24 +17,25 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.*
 
 object FirOptInMarkedDeclarationChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
-    override fun check(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirDeclaration) {
         for (annotation in declaration.annotations) {
             val annotationClass = annotation.getAnnotationClassForOptInMarker(context.session) ?: continue
             val useSiteTarget = annotation.useSiteTarget
             if ((declaration is FirPropertyAccessor && declaration.isGetter) || useSiteTarget == PROPERTY_GETTER) {
-                reporter.reportOn(annotation.source, FirErrors.OPT_IN_MARKER_ON_WRONG_TARGET, "getter", context)
+                reporter.reportOn(annotation.source, FirErrors.OPT_IN_MARKER_ON_WRONG_TARGET, "getter")
             }
             if (useSiteTarget == SETTER_PARAMETER ||
                 (useSiteTarget != PROPERTY && useSiteTarget != PROPERTY_SETTER && declaration is FirValueParameter &&
                         KotlinTarget.VALUE_PARAMETER in annotationClass.getAllowedAnnotationTargets(context.session))
             ) {
-                reporter.reportOn(annotation.source, FirErrors.OPT_IN_MARKER_ON_WRONG_TARGET, "parameter", context)
+                reporter.reportOn(annotation.source, FirErrors.OPT_IN_MARKER_ON_WRONG_TARGET, "parameter")
             }
             if (declaration is FirProperty && declaration.isLocal) {
-                reporter.reportOn(annotation.source, FirErrors.OPT_IN_MARKER_ON_WRONG_TARGET, "variable", context)
+                reporter.reportOn(annotation.source, FirErrors.OPT_IN_MARKER_ON_WRONG_TARGET, "variable")
             }
             if (useSiteTarget == FIELD || useSiteTarget == PROPERTY_DELEGATE_FIELD) {
-                reporter.reportOn(annotation.source, FirErrors.OPT_IN_MARKER_ON_WRONG_TARGET, "field", context)
+                reporter.reportOn(annotation.source, FirErrors.OPT_IN_MARKER_ON_WRONG_TARGET, "field")
             }
         }
 
@@ -42,7 +43,7 @@ object FirOptInMarkedDeclarationChecker : FirBasicDeclarationChecker(MppCheckerK
         val receiver = declaration.receiverParameter ?: return
         for (annotation in receiver.annotations) {
             if (annotation.getAnnotationClassForOptInMarker(context.session) != null) {
-                reporter.reportOn(annotation.source, FirErrors.OPT_IN_MARKER_ON_WRONG_TARGET, "parameter", context)
+                reporter.reportOn(annotation.source, FirErrors.OPT_IN_MARKER_ON_WRONG_TARGET, "parameter")
             }
         }
     }

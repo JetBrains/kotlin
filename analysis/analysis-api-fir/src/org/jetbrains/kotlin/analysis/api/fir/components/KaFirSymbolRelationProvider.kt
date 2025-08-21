@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -33,13 +33,14 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.util.originalDeclaration
 import org.jetbrains.kotlin.analysis.utils.printer.parentOfType
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.analysis.checkers.getContainingClassSymbol
+import org.jetbrains.kotlin.fir.resolve.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.analysis.checkers.getImplementationStatus
 import org.jetbrains.kotlin.fir.containingClassForLocalAttr
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.diagnostics.ConeDestructuringDeclarationsOnTopLevel
 import org.jetbrains.kotlin.fir.resolve.FirSamResolver
 import org.jetbrains.kotlin.fir.resolve.SessionHolderImpl
+import org.jetbrains.kotlin.fir.resolve.calls.FirSimpleSyntheticPropertySymbol
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.scopes.impl.typeAliasConstructorInfo
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
@@ -49,6 +50,7 @@ import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.toLookupTag
 import org.jetbrains.kotlin.fir.unwrapFakeOverridesOrDelegated
+import org.jetbrains.kotlin.fir.utils.exceptions.withFirSymbolEntry
 import org.jetbrains.kotlin.ir.util.kotlinPackageFqn
 import org.jetbrains.kotlin.psi
 import org.jetbrains.kotlin.psi.*
@@ -78,7 +80,9 @@ internal class KaFirSymbolRelationProvider(
 
             getContainingDeclarationForDependentDeclaration(this)?.let { return it }
 
-            val firSymbol = firSymbol
+            // Handle intersection overrides on synthetic properties
+            val firSymbol = (firSymbol as? FirSimpleSyntheticPropertySymbol)?.getterSymbol?.delegateFunctionSymbol
+                ?: firSymbol
             val symbolFirSession = firSymbol.llFirSession
             val symbolModule = symbolFirSession.ktModule
 
@@ -107,10 +111,6 @@ internal class KaFirSymbolRelationProvider(
                     if (outerFirClassifier != null) {
                         return firSymbolBuilder.buildSymbol(outerFirClassifier) as? KaDeclarationSymbol
                     }
-                }
-
-                is KaValueParameterSymbol -> {
-                    return firSymbolBuilder.buildSymbol(this.firSymbol.fir.containingDeclarationSymbol) as? KaDeclarationSymbol
                 }
 
                 is KaCallableSymbol -> {
@@ -143,7 +143,7 @@ internal class KaFirSymbolRelationProvider(
         }
 
     private fun getContainingDeclarationsForLocalClass(firSymbol: FirBasedSymbol<*>, symbolFirSession: FirSession): KaDeclarationSymbol? {
-        val fir = firSymbol.fir as? FirRegularClass ?: return null
+        val fir = firSymbol.fir as? FirClassLikeDeclaration ?: return null
         val containerSymbol = fir.containingClassForLocalAttr?.toSymbol(symbolFirSession) ?: return null
         return firSymbolBuilder.classifierBuilder.buildClassLikeSymbol(containerSymbol)
     }
@@ -175,6 +175,8 @@ internal class KaFirSymbolRelationProvider(
 
         if (symbol.isTopLevel) {
             val containingFile = (symbol.firSymbol.fir as? FirElementWithResolveState)?.getContainingFile()
+
+            @OptIn(DirectDeclarationsAccess::class)
             if (containingFile == null || containingFile.declarations.firstOrNull() !is FirScript) {
                 // Should be replaced with proper check after KT-61451 and KT-61887
                 return false
@@ -194,15 +196,28 @@ internal class KaFirSymbolRelationProvider(
         return with(analysisSession) { containingDeclaration.symbol }
     }
 
-    private fun getContainingDeclarationForDependentDeclaration(symbol: KaSymbol): KaDeclarationSymbol? {
-        return when (symbol) {
-            is KaReceiverParameterSymbol -> symbol.owningCallableSymbol
-            is KaBackingFieldSymbol -> symbol.owningProperty
-            is KaPropertyAccessorSymbol -> firSymbolBuilder.buildSymbol(symbol.firSymbol.propertySymbol) as KaDeclarationSymbol
-            is KaTypeParameterSymbol -> firSymbolBuilder.buildSymbol(symbol.firSymbol.containingDeclarationSymbol) as? KaDeclarationSymbol
-            is KaValueParameterSymbol -> firSymbolBuilder.buildSymbol(symbol.firSymbol.containingDeclarationSymbol) as? KaDeclarationSymbol
-            else -> null
+    private fun getContainingDeclarationForDependentDeclaration(symbol: KaSymbol): KaDeclarationSymbol? = when (symbol) {
+        is KaReceiverParameterSymbol -> symbol.owningCallableSymbol
+        is KaBackingFieldSymbol -> symbol.owningProperty
+        is KaPropertyAccessorSymbol -> firSymbolBuilder.buildSymbol(symbol.firSymbol.propertySymbol) as KaDeclarationSymbol
+        is KaTypeParameterSymbol -> firSymbolBuilder.buildSymbol(symbol.firSymbol.containingDeclarationSymbol) as? KaDeclarationSymbol
+        is KaValueParameterSymbol -> firSymbolBuilder.buildSymbol(symbol.firSymbol.containingDeclarationSymbol) as? KaDeclarationSymbol
+        is KaContextParameterSymbol -> {
+            val containingFirSymbol = symbol.firSymbol.containingDeclarationSymbol
+            val firSymbol = if (containingFirSymbol is FirDanglingModifierSymbol) {
+                containingFirSymbol.getContainingClassSymbol()
+                    ?: containingFirSymbol.fir.getContainingFile()?.symbol
+                    ?: errorWithAttachment("Containing element is expected for the dangling modifier symbol") {
+                        withSymbolAttachment("symbolForContainingPsi", analysisSession, symbol)
+                        withFirSymbolEntry("containingFirSymbol", containingFirSymbol)
+                    }
+            } else {
+                containingFirSymbol
+            }
+
+            firSymbolBuilder.buildSymbol(firSymbol) as? KaDeclarationSymbol
         }
+        else -> null
     }
 
     override val KaSymbol.containingFile: KaFileSymbol?
@@ -217,7 +232,7 @@ internal class KaFirSymbolRelationProvider(
 
     override val KaSymbol.containingModule: KaModule
         get() = withValidityAssertion {
-            getContainingKtModule(analysisSession.firResolveSession)
+            getContainingKtModule(analysisSession.resolutionFacade)
         }
 
     private fun getContainingPsi(symbol: KaSymbol): KtDeclaration? {
@@ -250,6 +265,11 @@ internal class KaFirSymbolRelationProvider(
                 val containingFile = psi.containingFile
                 if (containingFile is KtCodeFragment) {
                     // All content inside a code fragment is implicitly local, but there is no non-local parent
+                    return null
+                }
+
+                if (psi.parentOfType<KtModifierList>() != null) {
+                    // Invalid code: the declaration is nested inside a dangling annotation
                     return null
                 }
 
@@ -408,11 +428,12 @@ internal class KaFirSymbolRelationProvider(
 
     override fun KaDeclarationSymbol.getExpectsForActual(): List<KaDeclarationSymbol> = withValidityAssertion {
         if (this is KaReceiverParameterSymbol) {
-            this.firSymbol.expectForActual?.get(ExpectActualMatchingCompatibility.MatchedSuccessfully).orEmpty()
+            val owningExpectSymbols =
+                this.owningCallableSymbol.firSymbol.expectForActual?.get(ExpectActualMatchingCompatibility.MatchedSuccessfully).orEmpty()
+            return owningExpectSymbols
                 .filterIsInstance<FirCallableSymbol<*>>()
-                // TODO: KT-73050. This code in fact does nothing
                 .mapNotNull { callableSymbol ->
-                    callableSymbol.receiverParameter?.symbol?.let {
+                    callableSymbol.receiverParameterSymbol?.let {
                         analysisSession.firSymbolBuilder.callableBuilder.buildExtensionReceiverSymbol(it)
                     }
                 }

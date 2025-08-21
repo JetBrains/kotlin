@@ -1405,3 +1405,6 @@ const val stringWithInterpolationAsValidConstantInitializer27 = <!REDUNDANT_INTE
 const val stringWithInterpolationAsValidConstantInitializer28 = $$"""padding $${0 + compileTimeConstant} padding"""
 const val stringWithInterpolationAsValidConstantInitializer29 = $$$$"""padding $$$${0 + compileTimeConstant} padding"""
 const val stringWithInterpolationAsValidConstantInitializer30 = $$$$$$$$"""padding $$$$$$$${0 + compileTimeConstant} padding"""
+
+/* GENERATED_FIR_TAGS: additiveExpression, annotationDeclaration, const, functionDeclaration, integerLiteral,
+primaryConstructor, propertyDeclaration, stringLiteral */

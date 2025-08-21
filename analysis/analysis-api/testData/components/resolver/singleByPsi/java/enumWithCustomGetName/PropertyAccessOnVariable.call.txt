@@ -2,6 +2,7 @@ KtNameReferenceExpression(62,66): 'name'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = enum
           isSafeNavigation = false
@@ -12,6 +13,7 @@ KtNameReferenceExpression(62,66): 'name'
           receiverType = null
           returnType = kotlin.String
           symbol = val name: kotlin.String
+          contextParameters = []
           callableId = kotlin/Enum.name
       simpleAccess = Read
       typeArgumentsMapping = {}

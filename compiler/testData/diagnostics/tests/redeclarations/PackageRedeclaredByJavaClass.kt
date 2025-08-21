@@ -8,3 +8,5 @@ package a;
 
 public class b {
 }
+
+/* GENERATED_FIR_TAGS:  */

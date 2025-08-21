@@ -59,3 +59,5 @@ class W: A() {
         val a: Int = bar
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, init, javaProperty, javaType, localProperty, propertyDeclaration, stringLiteral */

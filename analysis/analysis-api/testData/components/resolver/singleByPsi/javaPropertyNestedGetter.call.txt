@@ -2,6 +2,7 @@ KtNameReferenceExpression(76,79): 'sub'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = javaClass
           isSafeNavigation = false
@@ -12,6 +13,7 @@ KtNameReferenceExpression(76,79): 'sub'
           receiverType = null
           returnType = JavaSubClass!
           symbol = val sub: JavaSubClass!
+          contextParameters = []
           callableId = /JavaClass.sub
       simpleAccess = Read
       typeArgumentsMapping = {}

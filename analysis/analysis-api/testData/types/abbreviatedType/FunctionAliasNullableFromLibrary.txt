@@ -3,7 +3,6 @@ KaFunctionType:
     abbreviation: null
     annotations: []
     classId: library1/FunctionAlias
-    nullability: NULLABLE
     qualifiers: [
       KaResolvedClassTypeQualifier:
         name: FunctionAlias
@@ -12,6 +11,9 @@ KaFunctionType:
     ]
     symbol: KaTypeAliasSymbol(library1/FunctionAlias)
     typeArguments: []
+    isMarkedNullable: true
+    isNullable: true
+    hasFlexibleNullability: false
   annotations: []
   arity: 1
   classId: kotlin/Function1
@@ -20,13 +22,11 @@ KaFunctionType:
   hasReceiver: false
   isReflectType: false
   isSuspend: false
-  nullability: NULLABLE
   parameterTypes: [
     KaUsualClassType:
       abbreviation: null
       annotations: []
       classId: kotlin/String
-      nullability: NON_NULLABLE
       qualifiers: [
         KaResolvedClassTypeQualifier:
           name: String
@@ -35,6 +35,12 @@ KaFunctionType:
       ]
       symbol: KaNamedClassSymbol(kotlin/String)
       typeArguments: []
+      isMarkedNullable: false
+      isNullable: false
+      hasFlexibleNullability: false
+  ]
+  parameters: [
+    KaBaseFunctionValueParameter [name: null, type: kotlin/String]
   ]
   qualifiers: [
     KaResolvedClassTypeQualifier:
@@ -45,7 +51,6 @@ KaFunctionType:
           abbreviation: null
           annotations: []
           classId: kotlin/String
-          nullability: NON_NULLABLE
           qualifiers: [
             KaResolvedClassTypeQualifier:
               name: String
@@ -54,11 +59,13 @@ KaFunctionType:
           ]
           symbol: KaNamedClassSymbol(kotlin/String)
           typeArguments: []
+          isMarkedNullable: false
+          isNullable: false
+          hasFlexibleNullability: false
         KaUsualClassType:
           abbreviation: null
           annotations: []
           classId: kotlin/Int
-          nullability: NON_NULLABLE
           qualifiers: [
             KaResolvedClassTypeQualifier:
               name: Int
@@ -67,6 +74,9 @@ KaFunctionType:
           ]
           symbol: KaNamedClassSymbol(kotlin/Int)
           typeArguments: []
+          isMarkedNullable: false
+          isNullable: false
+          hasFlexibleNullability: false
       ]
   ]
   receiverType: null
@@ -74,7 +84,6 @@ KaFunctionType:
     abbreviation: null
     annotations: []
     classId: kotlin/Int
-    nullability: NON_NULLABLE
     qualifiers: [
       KaResolvedClassTypeQualifier:
         name: Int
@@ -83,13 +92,15 @@ KaFunctionType:
     ]
     symbol: KaNamedClassSymbol(kotlin/Int)
     typeArguments: []
+    isMarkedNullable: false
+    isNullable: false
+    hasFlexibleNullability: false
   symbol: KaNamedClassSymbol(kotlin/Function1)
   typeArguments: [
     KaUsualClassType:
       abbreviation: null
       annotations: []
       classId: kotlin/String
-      nullability: NON_NULLABLE
       qualifiers: [
         KaResolvedClassTypeQualifier:
           name: String
@@ -98,11 +109,13 @@ KaFunctionType:
       ]
       symbol: KaNamedClassSymbol(kotlin/String)
       typeArguments: []
+      isMarkedNullable: false
+      isNullable: false
+      hasFlexibleNullability: false
     KaUsualClassType:
       abbreviation: null
       annotations: []
       classId: kotlin/Int
-      nullability: NON_NULLABLE
       qualifiers: [
         KaResolvedClassTypeQualifier:
           name: Int
@@ -111,7 +124,13 @@ KaFunctionType:
       ]
       symbol: KaNamedClassSymbol(kotlin/Int)
       typeArguments: []
+      isMarkedNullable: false
+      isNullable: false
+      hasFlexibleNullability: false
   ]
+  isMarkedNullable: true
+  isNullable: true
+  hasFlexibleNullability: false
 
 Rendered type:
 library1.FunctionAlias?

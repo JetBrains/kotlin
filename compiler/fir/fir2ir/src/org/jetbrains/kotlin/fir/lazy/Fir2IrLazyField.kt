@@ -38,8 +38,8 @@ import org.jetbrains.kotlin.name.Name
 
 class Fir2IrLazyField(
     private val c: Fir2IrComponents,
-    override val startOffset: Int,
-    override val endOffset: Int,
+    override var startOffset: Int,
+    override var endOffset: Int,
     override var origin: IrDeclarationOrigin,
     override val fir: FirField,
     val containingClass: FirRegularClass?,
@@ -76,7 +76,7 @@ class Fir2IrLazyField(
         set(_) = mutationNotSupported()
 
     override var type: IrType
-        get() = fir.returnTypeRef.toIrType(c)
+        get() = fir.returnTypeRef.toIrType()
         set(_) = mutationNotSupported()
 
     override var initializer: IrExpressionBody? by lazyVar(lock) {

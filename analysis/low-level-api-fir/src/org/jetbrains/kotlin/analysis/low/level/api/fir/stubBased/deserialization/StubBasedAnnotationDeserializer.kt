@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.fir.expressions.builder.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
@@ -31,22 +30,39 @@ import org.jetbrains.kotlin.psi.stubs.impl.KotlinPropertyStubImpl
 import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
-class StubBasedAnnotationDeserializer(
-    private val session: FirSession,
-) {
-    fun loadAnnotations(
-        ktAnnotated: KtAnnotated,
-    ): List<FirAnnotation> {
-        val annotations = ktAnnotated.annotationEntries
-        if (annotations.isEmpty()) return emptyList()
-        return annotations.map { deserializeAnnotation(it) }
+internal class StubBasedAnnotationDeserializer(private val session: FirSession) {
+    companion object {
+        fun getAnnotationClassId(ktAnnotation: KtAnnotationEntry): ClassId {
+            val userType = ktAnnotation.getStubOrPsiChild(KtStubElementTypes.CONSTRUCTOR_CALLEE)
+                ?.getStubOrPsiChild(KtStubElementTypes.TYPE_REFERENCE)
+                ?.getStubOrPsiChild(KtStubElementTypes.USER_TYPE)!!
+            return userType.classId()
+        }
+
+        val RECEIVER_ANNOTATIONS_FILTER: (AnnotationUseSiteTarget?) -> Boolean = {
+            it == AnnotationUseSiteTarget.RECEIVER
+        }
+
+        val TYPE_ANNOTATIONS_FILTER: (AnnotationUseSiteTarget?) -> Boolean = {
+            it == null
+        }
     }
 
-    private val constantCache = mutableMapOf<CallableId, FirExpression>()
+    fun loadAnnotations(
+        ktAnnotated: KtAnnotated,
+        useSiteTargetFilter: ((AnnotationUseSiteTarget?) -> Boolean)? = null,
+    ): List<FirAnnotation> {
+        val annotations = ktAnnotated.annotationEntries
+        if (annotations.isEmpty()) {
+            return emptyList()
+        }
 
-    fun loadConstant(property: KtProperty, callableId: CallableId, isUnsigned: Boolean): FirExpression? {
-        if (!property.hasModifier(KtTokens.CONST_KEYWORD)) return null
-        constantCache[callableId]?.let { return it }
+        return annotations.mapNotNull { deserializeAnnotation(it, useSiteTargetFilter = useSiteTargetFilter) }
+    }
+
+    fun loadConstant(property: KtProperty, isUnsigned: Boolean, isFromAnnotation: Boolean): FirExpression? {
+        // Default values for annotation properties have constant as a workaround for KT-58137 (ee30cc04ee810fcdd719085af3a0e0c1995a73ee)
+        if (!property.hasModifier(KtTokens.CONST_KEYWORD) && !isFromAnnotation) return null
         val propertyStub = (property.stub ?: loadStubByElement(property)) as? KotlinPropertyStubImpl ?: return null
         val constantValue = propertyStub.constantInitializer ?: return null
         val resultValue = when {
@@ -62,21 +78,20 @@ class StubBasedAnnotationDeserializer(
     }
 
     private fun deserializeAnnotation(
-        ktAnnotation: KtAnnotationEntry
-    ): FirAnnotation {
+        ktAnnotation: KtAnnotationEntry,
+        useSiteTargetFilter: ((AnnotationUseSiteTarget?) -> Boolean)? = null,
+    ): FirAnnotation? {
+        val useSiteTarget = ktAnnotation.useSiteTarget?.getAnnotationUseSiteTarget()
+        if (useSiteTargetFilter?.invoke(useSiteTarget) == false) {
+            return null
+        }
+
         return deserializeAnnotation(
             ktAnnotation,
             getAnnotationClassId(ktAnnotation),
             ((ktAnnotation.stub ?: loadStubByElement(ktAnnotation)) as? KotlinAnnotationEntryStubImpl)?.valueArguments,
-            ktAnnotation.useSiteTarget?.getAnnotationUseSiteTarget()
+            useSiteTarget,
         )
-    }
-
-    fun getAnnotationClassId(ktAnnotation: KtAnnotationEntry): ClassId {
-        val userType = ktAnnotation.getStubOrPsiChild(KtStubElementTypes.CONSTRUCTOR_CALLEE)
-            ?.getStubOrPsiChild(KtStubElementTypes.TYPE_REFERENCE)
-            ?.getStubOrPsiChild(KtStubElementTypes.USER_TYPE)!!
-        return userType.classId()
     }
 
     private fun deserializeAnnotation(

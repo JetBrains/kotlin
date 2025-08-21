@@ -88,5 +88,5 @@ external var quux: String
 <!NESTED_JS_EXPORT, WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET("setter; set; class, property, function, file")!>@set:JsExport<!>
 external var quuux: String
 
-<!WRONG_ANNOTATION_TARGET("typealias; class, property, function, file")!>@JsExport<!>
-<!WRONG_MODIFIER_TARGET("external; typealias")!>external<!> typealias ExternalTypeAlias = String
+<!WRONG_EXPORTED_DECLARATION("typealias")!><!WRONG_ANNOTATION_TARGET("typealias; class, property, function, file")!>@JsExport<!>
+<!WRONG_MODIFIER_TARGET("external; typealias")!>external<!> typealias ExternalTypeAlias = String<!>

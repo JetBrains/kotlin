@@ -21,3 +21,6 @@ fun foo(x: String?, y: String?, z: String?, w: String?) {
     else
         y<!UNSAFE_CALL!>.<!>length
 }
+
+/* GENERATED_FIR_TAGS: andExpression, disjunctionExpression, equalityExpression, functionDeclaration, ifExpression,
+nullableType, smartcast */

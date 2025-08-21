@@ -208,6 +208,18 @@ abstract class AbstractImplementationConfigurator<Implementation, Element, Eleme
         }
 
         /**
+         * Specifies that the default value of [field] in this implementation class should have a getter that returns [value]
+         * and a setter that always throws an error when an attempt is made to modify the field.
+         */
+        fun defaultWithErrorOnSet(field: String, value: String) {
+            default(field) {
+                this.value = value
+                this.withGetter = true
+                this.customSetter = "error(\"Mutation of $field is not supported for this class.\")"
+            }
+        }
+
+        /**
          * Specifies that the default value of each field of [fields] in this implementation class should be `true`.
          *
          * If [withGetter] is `true`, the fields will be generated as getter-only computed properties with their getter returning `true`,

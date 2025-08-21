@@ -10,7 +10,7 @@ import kotlin.native.internal.GCUnsafeCall
 
 @ExperimentalForeignApi
 public class Pinned<T : Any> @PublishedApi internal constructor(obj: T) {
-    private var obj: T? = obj
+    private var obj: T? = obj.pinnable()
 
     /**
      * Disposes the handle. It must not be [used][get] after that.
@@ -111,6 +111,9 @@ private inline fun <T : Any, P : CPointed> T.usingPinned(
         return pinned.block()
     }
 }
+
+@GCUnsafeCall("Kotlin_Interop_pinnable")
+private external fun <T> T.pinnable(): T
 
 @GCUnsafeCall("Kotlin_Arrays_getByteArrayAddressOfElement")
 private external fun ByteArray.addressOfElement(index: Int): CPointer<ByteVar>

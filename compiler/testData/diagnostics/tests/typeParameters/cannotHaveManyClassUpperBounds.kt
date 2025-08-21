@@ -24,3 +24,6 @@ typealias TA2 = C2
 
 class A7<T> where T : C1, T : <!REPEATED_BOUND!>TA1<!>
 class A8<T> where T : C1, T : <!ONLY_ONE_CLASS_BOUND_ALLOWED!>TA2<!>
+
+/* GENERATED_FIR_TAGS: classDeclaration, enumDeclaration, functionDeclaration, objectDeclaration, typeAliasDeclaration,
+typeConstraint, typeParameter */

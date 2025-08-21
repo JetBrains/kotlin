@@ -3,7 +3,7 @@ FILE: whenAsReceiver.kt
         ^also Null(null)!!
     }
     public final fun foo(b: R|kotlin/Boolean|, a: R|kotlin/Int|): R|kotlin/Unit| {
-        lval x: R|kotlin/Int?| = when (R|<local>/b|) {
+        lval x: R|kotlin/Int?| = when (lval <when-subject>: R|kotlin/Boolean| = R|<local>/b|) {
             ==($subj$, Boolean(true)) ->  {
                 R|<local>/a|
             }

@@ -23,3 +23,6 @@ class Test3 : Bar<suspend () -> Unit> {
 class Test4 : Bar<suspend () -> Unit> {
     override val bar: suspend () -> Unit = {}
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionalType, interfaceDeclaration, lambdaLiteral, nullableType, override,
+propertyDeclaration, suspend, typeParameter */

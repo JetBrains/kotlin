@@ -10,3 +10,6 @@ class LibraryInfoCache<Key, Value> {
         validityCondition: ((Key, Value) -> Boolean)? = null
     ) {}
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionalType, lambdaLiteral, localProperty, nullableType,
+propertyDeclaration, typeParameter */

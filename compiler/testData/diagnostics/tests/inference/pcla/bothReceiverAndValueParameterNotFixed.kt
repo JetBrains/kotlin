@@ -23,3 +23,6 @@ fun main() {
         consumeString(it)
     }.length
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionalType, lambdaLiteral, nullableType,
+thisExpression, typeParameter, typeWithExtension */

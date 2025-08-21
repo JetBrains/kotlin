@@ -1,5 +1,6 @@
 // SKIP_KT_DUMP
 // TARGET_BACKEND: JVM
+// DISABLE_JAVA_FACADE
 
 // FILE: Java1.java
 public class Java1<T extends Number> {

@@ -33,3 +33,6 @@ import some2.*
 import some3.*
 
 fun test() = <!OVERLOAD_RESOLUTION_AMBIGUITY!>Some<!>.<!UNRESOLVED_REFERENCE!>foo<!>
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, functionDeclaration, nestedClass, objectDeclaration,
+propertyDeclaration, stringLiteral */

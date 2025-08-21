@@ -14,3 +14,6 @@ object TestCase {
 
 // FILE: 2.kt
 import simpleObject.<!TYPEALIAS_AS_CALLABLE_QUALIFIER_IN_IMPORT_ERROR("SimpleObject; TestCase")!>SimpleObject<!>.extendedPropertyLikeClbl
+
+/* GENERATED_FIR_TAGS: funWithExtensionReceiver, functionDeclaration, objectDeclaration, operator, propertyDeclaration,
+typeAliasDeclaration */

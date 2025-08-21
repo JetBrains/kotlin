@@ -17,3 +17,6 @@ fun bar(c: Collection<Int>) {
     checkSubtype<Iterable<Any>>(c)
     checkSubtype<Iterator<Any>>(c.iterator())
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType, infix,
+nullableType, typeParameter, typeWithExtension */

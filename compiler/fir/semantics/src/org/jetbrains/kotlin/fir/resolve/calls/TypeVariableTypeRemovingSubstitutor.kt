@@ -5,18 +5,23 @@
 
 package org.jetbrains.kotlin.fir.resolve.calls
 
+import org.jetbrains.kotlin.fir.diagnostics.ConeCannotInferTypeParameterType
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnknownLambdaParameterTypeDiagnostic
 import org.jetbrains.kotlin.fir.resolve.substitution.AbstractConeSubstitutor
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 
-fun ConeKotlinType.removeTypeVariableTypes(typeContext: ConeTypeContext): ConeKotlinType {
-    val substitutor = TypeVariableTypeRemovingSubstitutor(typeContext)
+enum class TypeVariableReplacement {
+    TypeParameter, ErrorType,
+}
+
+fun ConeKotlinType.removeTypeVariableTypes(typeContext: ConeTypeContext, replacement: TypeVariableReplacement): ConeKotlinType {
+    val substitutor = TypeVariableTypeRemovingSubstitutor(typeContext, replacement)
     return substitutor.substituteOrSelf(this)
 }
 
-private class TypeVariableTypeRemovingSubstitutor(typeContext: ConeTypeContext) : AbstractConeSubstitutor(typeContext) {
+private class TypeVariableTypeRemovingSubstitutor(typeContext: ConeTypeContext, private val replacement: TypeVariableReplacement) : AbstractConeSubstitutor(typeContext) {
     override fun substituteType(type: ConeKotlinType): ConeKotlinType? = when (type) {
         is ConeTypeVariableType -> convertTypeVariableType(type)
         else -> null
@@ -26,7 +31,16 @@ private class TypeVariableTypeRemovingSubstitutor(typeContext: ConeTypeContext) 
         val originalTypeParameter = type.typeConstructor.originalTypeParameter
         if (originalTypeParameter != null) {
             check(originalTypeParameter is ConeTypeParameterLookupTag)
-            return ConeTypeParameterTypeImpl(originalTypeParameter, type.isMarkedNullable, type.attributes)
+            val typeParameterType = ConeTypeParameterTypeImpl(originalTypeParameter, type.isMarkedNullable, type.attributes)
+            return if (replacement == TypeVariableReplacement.ErrorType) {
+                ConeErrorType(
+                    ConeCannotInferTypeParameterType(typeParameter = originalTypeParameter.typeParameterSymbol),
+                    isUninferredParameter = true,
+                    delegatedType = typeParameterType,
+                )
+            } else {
+                typeParameterType
+            }
         }
         return ConeErrorType(ConeUnknownLambdaParameterTypeDiagnostic())
     }

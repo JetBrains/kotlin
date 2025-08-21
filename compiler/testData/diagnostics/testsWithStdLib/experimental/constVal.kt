@@ -43,3 +43,6 @@ import api.*
 
 @Anno(<!OPT_IN_USAGE!>MEANING<!>)
 fun usage() {}
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, annotationUseSiteTargetFile, classReference, const, functionDeclaration,
+integerLiteral, primaryConstructor, propertyDeclaration */

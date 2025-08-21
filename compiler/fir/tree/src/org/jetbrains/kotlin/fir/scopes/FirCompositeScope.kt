@@ -102,11 +102,11 @@ class FirNameAwareCompositeScope(val scopes: Iterable<FirContainingNamesAwareSco
         get() = delegate.scopeOwnerLookupNames
 
     override fun getCallableNames(): Set<Name> {
-        return scopes.flatMapTo(hashSetOf()) { it.getCallableNames() }
+        return scopes.flatMapTo(linkedSetOf()) { it.getCallableNames() }
     }
 
     override fun getClassifierNames(): Set<Name> {
-        return scopes.flatMapTo(hashSetOf()) { it.getClassifierNames() }
+        return scopes.flatMapTo(linkedSetOf()) { it.getClassifierNames() }
     }
 
     @DelicateScopeAPI

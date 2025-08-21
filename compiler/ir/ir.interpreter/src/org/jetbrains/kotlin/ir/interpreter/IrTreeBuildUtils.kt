@@ -219,8 +219,11 @@ internal fun IrElement.toConstantValueOrNull(): ConstantValue<*>? {
             arrayDimensions++
         }
 
-        if (type.getClass()?.isLocal == true) return KClassValue()
-        val classId = type.getClass()?.classId ?: return null
+        val irClass = type.getClass() ?: return null
+        if (irClass.isLocal == true) {
+            return KClassValue(KClassValue.Value.LocalClass(irClass))
+        }
+        val classId = irClass.classId ?: return null
         return KClassValue(classId, arrayDimensions)
     }
 
@@ -231,8 +234,8 @@ internal fun IrElement.toConstantValueOrNull(): ConstantValue<*>? {
             val classId = this.symbol.owner.constructedClass.classId ?: return null
             val rawArguments = this.getAllArgumentsWithIr()
             val argumentMapping = rawArguments
-                .filter { it.second != null || it.first.type.isArray() }
-                .associate { (parameter, expression) -> parameter.name to (expression?.toConstantValue() ?: ArrayValue(emptyList())) }
+                .filter { it.second != null }
+                .associate { (parameter, expression) -> parameter.name to expression!!.toConstantValue() }
             AnnotationValue.create(classId, argumentMapping)
         }
         is IrGetEnumValue -> {

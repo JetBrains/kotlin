@@ -30,6 +30,8 @@ public inline fun File.reader(charset: Charset = Charsets.UTF_8): InputStreamRea
 /**
  * Returns a new [BufferedReader] for reading the content of this file.
  *
+ * Refer to [BufferedReader] documentation for details about buffering behavior.
+ *
  * @param bufferSize necessary size of the buffer.
  */
 @kotlin.internal.InlineOnly
@@ -45,6 +47,8 @@ public inline fun File.writer(charset: Charset = Charsets.UTF_8): OutputStreamWr
 
 /**
  * Returns a new [BufferedWriter] for writing the content of this file.
+ *
+ * Refer to [BufferedWriter] documentation for details about buffering and flushing behavior.
  *
  * @param bufferSize necessary size of the buffer.
  */
@@ -89,7 +93,7 @@ public fun File.readBytes(): ByteArray = inputStream().use { input ->
     // when RS >> ES, ES << DBS => RS + DBS + DBS+1 + RS + ES = 2RS + 2DBS + ES
     val extra = ExposingBufferByteArrayOutputStream(DEFAULT_BUFFER_SIZE + 1)
     extra.write(extraByte)
-    input.copyTo(extra)
+    val _ = input.copyTo(extra)
 
     val resultingSize = result.size + extra.size()
     if (resultingSize < 0) throw OutOfMemoryError("File $this is too big to fit in memory.")
@@ -170,7 +174,7 @@ internal fun OutputStream.writeTextImpl(text: String, charset: Charset) {
 
         text.toCharArray(charBuffer.array(), leftover, startIndex, endIndex)
         charBuffer.limit(copyLength + leftover)
-        encoder.encode(charBuffer, byteBuffer, /*endOfInput = */endIndex == text.length).also { check(it.isUnderflow) }
+        encoder.encode(charBuffer, byteBuffer, /*endOfInput = */endIndex == text.length).let { check(it.isUnderflow) }
         this.write(byteBuffer.array(), 0, byteBuffer.position())
 
         if (charBuffer.position() != charBuffer.limit()) {

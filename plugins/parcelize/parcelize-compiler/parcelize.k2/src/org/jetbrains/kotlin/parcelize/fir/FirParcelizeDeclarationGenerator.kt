@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.parcelize.fir
 import org.jetbrains.kotlin.GeneratedDeclarationKey
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.declarations.DirectDeclarationsAccess
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.utils.modality
 import org.jetbrains.kotlin.fir.extensions.FirDeclarationGenerationExtension
@@ -34,6 +35,7 @@ import org.jetbrains.kotlin.parcelize.ParcelizeNames.WRITE_TO_PARCEL_NAME
 import org.jetbrains.kotlin.parcelize.fir.diagnostics.checkParcelizeClassSymbols
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
+@OptIn(DirectDeclarationsAccess::class)
 class FirParcelizeDeclarationGenerator(
     session: FirSession,
     private val annotations: List<FqName>

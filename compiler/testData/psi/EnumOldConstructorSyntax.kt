@@ -1,3 +1,5 @@
+// COMPILATION_ERRORS
+
 enum class My(x: Int) {
     FIRST: My(13)
 

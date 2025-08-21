@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.konan
 
 import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
+import org.jetbrains.kotlin.config.nativeBinaryOptions.BinaryOptions
 import org.jetbrains.kotlin.konan.exec.Command
 import org.jetbrains.kotlin.konan.target.*
 import java.io.File
@@ -53,9 +54,6 @@ internal class BitcodeCompiler(
                 ?: mutableListOf<String>().apply {
                     addNonEmpty(configurables.clangFlags)
                     addNonEmpty(listOf("-triple", targetTriple.toString()))
-                    if (configurables is ZephyrConfigurables) {
-                        addNonEmpty(configurables.constructClangCC1Args())
-                    }
                     addNonEmpty(when {
                         optimize -> configurables.clangOptFlags
                         debug -> configurables.clangDebugFlags

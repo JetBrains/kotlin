@@ -11,3 +11,5 @@ fun bar(nullX: Int?, nullY: String?, notNullY: String) {
     foo(<!ARGUMENT_TYPE_MISMATCH!>nullX<!>, <!ARGUMENT_TYPE_MISMATCH!>nullY<!>)
     <!NONE_APPLICABLE!>foo<!>()
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, nullableType */

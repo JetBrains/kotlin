@@ -71,16 +71,14 @@ abstract class FirProvidedDeclarationsForMetadataService : FirSessionComponent {
 }
 
 private class FirProvidedDeclarationsForMetadataServiceImpl(private val session: FirSession) : FirProvidedDeclarationsForMetadataService() {
-    private val topLevelsCache: MutableMap<FqName, MutableList<FirDeclaration>> =
-        mutableMapOf()
+    private val topLevelsCache: MutableMap<FqName, MutableList<FirDeclaration>> = hashMapOf()
 
-    private val memberCache: MutableMap<FirClassSymbol<*>, ClassDeclarations> =
-        mutableMapOf()
+    private val memberCache: MutableMap<FirClassSymbol<*>, ClassDeclarations> = hashMapOf()
 
     override fun registerDeclaration(declaration: FirCallableDeclaration) {
         val containingClass = declaration.containingClassLookupTag()?.toRegularClassSymbol(session)?.fir
         if (containingClass == null) {
-            val list = topLevelsCache.getOrPut(declaration.symbol.callableId.packageName) { mutableListOf() }
+            val list = topLevelsCache.getOrPut(declaration.symbol.callableId!!.packageName) { mutableListOf() }
             list += declaration
         } else {
             val declarations = memberCache.getOrPut(containingClass.symbol) { ClassDeclarations() }

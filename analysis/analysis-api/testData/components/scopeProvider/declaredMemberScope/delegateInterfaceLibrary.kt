@@ -1,3 +1,6 @@
+// IGNORE_STANDALONE
+// KT-76042
+
 // MAIN_FILE_NAME: I
 // MODULE_KIND: LibraryBinaryDecompiled
 // FILE: A.kt

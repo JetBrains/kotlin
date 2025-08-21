@@ -4,3 +4,5 @@ fun interface Test {
 }
 
 val f = ::Test
+
+/* GENERATED_FIR_TAGS: callableReference, funInterface, functionDeclaration, interfaceDeclaration, propertyDeclaration */

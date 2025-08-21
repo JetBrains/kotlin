@@ -27,6 +27,8 @@ class ComposedExpressionCheckers(val predicate: (FirCheckerWithMppKind) -> Boole
         get() = _functionCallCheckers
     override val propertyAccessExpressionCheckers: Set<FirPropertyAccessExpressionChecker>
         get() = _propertyAccessExpressionCheckers
+    override val superReceiverExpressionCheckers: Set<FirSuperReceiverExpressionChecker>
+        get() = _superReceiverExpressionCheckers
     override val integerLiteralOperatorCallCheckers: Set<FirIntegerLiteralOperatorCallChecker>
         get() = _integerLiteralOperatorCallCheckers
     override val variableAssignmentCheckers: Set<FirVariableAssignmentChecker>
@@ -91,6 +93,7 @@ class ComposedExpressionCheckers(val predicate: (FirCheckerWithMppKind) -> Boole
     private val _callCheckers: MutableSet<FirCallChecker> = mutableSetOf()
     private val _functionCallCheckers: MutableSet<FirFunctionCallChecker> = mutableSetOf()
     private val _propertyAccessExpressionCheckers: MutableSet<FirPropertyAccessExpressionChecker> = mutableSetOf()
+    private val _superReceiverExpressionCheckers: MutableSet<FirSuperReceiverExpressionChecker> = mutableSetOf()
     private val _integerLiteralOperatorCallCheckers: MutableSet<FirIntegerLiteralOperatorCallChecker> = mutableSetOf()
     private val _variableAssignmentCheckers: MutableSet<FirVariableAssignmentChecker> = mutableSetOf()
     private val _tryExpressionCheckers: MutableSet<FirTryExpressionChecker> = mutableSetOf()
@@ -128,6 +131,7 @@ class ComposedExpressionCheckers(val predicate: (FirCheckerWithMppKind) -> Boole
         checkers.callCheckers.filterTo(_callCheckers, predicate)
         checkers.functionCallCheckers.filterTo(_functionCallCheckers, predicate)
         checkers.propertyAccessExpressionCheckers.filterTo(_propertyAccessExpressionCheckers, predicate)
+        checkers.superReceiverExpressionCheckers.filterTo(_superReceiverExpressionCheckers, predicate)
         checkers.integerLiteralOperatorCallCheckers.filterTo(_integerLiteralOperatorCallCheckers, predicate)
         checkers.variableAssignmentCheckers.filterTo(_variableAssignmentCheckers, predicate)
         checkers.tryExpressionCheckers.filterTo(_tryExpressionCheckers, predicate)

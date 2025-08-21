@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.serialization.deserialization.IncompatibleVersionErr
 import org.jetbrains.kotlin.serialization.deserialization.builtins.BuiltInSerializerProtocol
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerAbiStability
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.PreReleaseInfo
 
 /**
  * Container source for deserialized declarations from ".kotlin_builtins" file.
@@ -32,8 +33,8 @@ internal class JvmStubDeserializedBuiltInsContainerSource(val facadeClassName: J
     override val incompatibility: IncompatibleVersionErrorData<*>?
         get() = null
 
-    override val isPreReleaseInvisible: Boolean
-        get() = false
+    override val preReleaseInfo: PreReleaseInfo
+        get() = PreReleaseInfo.DEFAULT_VISIBLE
 
     override val abiStability: DeserializedContainerAbiStability
         get() = DeserializedContainerAbiStability.STABLE

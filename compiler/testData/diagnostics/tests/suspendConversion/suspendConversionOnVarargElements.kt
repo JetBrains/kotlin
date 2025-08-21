@@ -20,3 +20,5 @@ fun testSuspendConversionInVarargElementsAll(
 ) {
     useSuspendVararg(f1, f2, f3)
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionalType, suspend, vararg */

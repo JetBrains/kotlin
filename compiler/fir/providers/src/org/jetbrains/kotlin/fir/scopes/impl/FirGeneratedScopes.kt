@@ -254,7 +254,7 @@ class FirGeneratedMemberDeclarationsStorage(private val session: FirSession) : F
                 extension.generateNestedClassLikeDeclaration(classSymbol, name, generationContext)?.also { symbol ->
                     symbol.fir.ownerGenerator = extension
                     if (classSymbol.isLocal) {
-                        (symbol.fir as? FirRegularClass)?.containingClassForLocalAttr = classSymbol.toLookupTag()
+                        symbol.fir.containingClassForLocalAttr = classSymbol.toLookupTag()
                     }
                 }
             }
@@ -286,7 +286,7 @@ class FirGeneratedMemberDeclarationsStorage(private val session: FirSession) : F
         require(session === classSymbol.moduleData.session) {
             "Class $classSymbol is declared in ${classSymbol.moduleData.session}, but generated storage for it taken from $session"
         }
-        return if (classSymbol.origin.generated) {
+        return if (classSymbol.origin.generated && !classSymbol.isLocal) {
             listOf(classSymbol.fir.ownerGenerator!!)
         } else {
             session.extensionService.declarationGenerators

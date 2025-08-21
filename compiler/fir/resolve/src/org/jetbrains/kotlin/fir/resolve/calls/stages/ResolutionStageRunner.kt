@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.resolve.calls.stages
 import org.jetbrains.kotlin.fir.resolve.calls.ResolutionContext
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.Candidate
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.CheckerSinkImpl
+import org.jetbrains.kotlin.fir.resolve.inference.inferenceLogger
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
 import kotlin.coroutines.Continuation
 import kotlin.coroutines.CoroutineContext
@@ -18,6 +19,8 @@ import kotlin.coroutines.resume
 class ResolutionStageRunner {
     fun processCandidate(candidate: Candidate, context: ResolutionContext, stopOnFirstError: Boolean = true): CandidateApplicability {
         val sink = CheckerSinkImpl(candidate, stopOnFirstError = stopOnFirstError)
+        val inferenceLogger = candidate.callInfo.session.inferenceLogger
+        inferenceLogger?.logCandidate(candidate)
         var finished = false
         sink.continuation = suspend {
             // Multiple runs on the same candidate are possible,
@@ -26,7 +29,11 @@ class ResolutionStageRunner {
             // because we have to start from the next unprocessed stage and mutate `Candidate.passedStages` on every iteration.
             val resolutionSequence = candidate.callInfo.callKind.resolutionSequence
             while (candidate.passedStages < resolutionSequence.size) {
-                resolutionSequence[candidate.passedStages++].check(candidate, candidate.callInfo, sink, context)
+                context(context, sink) {
+                    val nextStage = resolutionSequence[candidate.passedStages++]
+                    inferenceLogger?.logStage("Resolution Stages > ${nextStage::class.simpleName}", candidate.system)
+                    nextStage.check(candidate)
+                }
             }
         }.createCoroutineUnintercepted(completion = object : Continuation<Unit> {
             override val context: CoroutineContext

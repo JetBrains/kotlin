@@ -10,9 +10,9 @@ Low-level API FIR is responsible but not limited for:
 
 You can read about how FIR compiler works [here](../../fir/fir-basics.md).
 
-The entry point for LL API is [LLFirResolveSession](../../../analysis/low-level-api-fir/src/org/jetbrains/kotlin/analysis/low/level/api/fir/api/LLFirResolveSession.kt).
-`LLFirResolveSession` represents a project view from a use-site [KtModule](../../../analysis/analysis-api/src/org/jetbrains/kotlin/analysis/api/projectStructure/KaModule.kt).
-The lifetime of `LLFirResolveSession` is limited by modification events.
+The entry point for LL API is [LLResolutionFacade](../../../analysis/low-level-api-fir/src/org/jetbrains/kotlin/analysis/low/level/api/fir/api/LLResolutionFacade.kt).
+`LLResolutionFacade` represents a project view from a use-site [KaModule](../../../analysis/analysis-api/src/org/jetbrains/kotlin/analysis/api/projectStructure/KaModule.kt).
+The lifetime of `LLResolutionFacade` is limited by modification events.
 
 [LowLevelFirApiFacade](../../../analysis/low-level-api-fir/src/org/jetbrains/kotlin/analysis/low/level/api/fir/api/LowLevelFirApiFacade.kt)
 file contains a useful API surface to interact with Low Level API FIR from Analysis API FIR. 
@@ -61,6 +61,6 @@ Docs for each area are sorted by context depth – from the basic overview to th
 
 ## Project Module Structure
 
-The `LLFirResolveSession` represents a view from a specific module (**root module**) to the dependent modules. A module is represented by:
+The `LLResolutionFacade` represents a view from a specific module (**root module**) to the dependent modules. A module is represented by:
 * `LLFirSession` – the implementation of `FirSession` (FIR compiler representation of a module)
 * `ModuleFileCache` – the `KtFile -> FirFile` cache & also caches for FIR providers

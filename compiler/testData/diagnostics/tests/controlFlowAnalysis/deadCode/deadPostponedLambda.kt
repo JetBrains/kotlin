@@ -116,3 +116,6 @@ fun test12() {
         {}
     )<!>
 }
+
+/* GENERATED_FIR_TAGS: anonymousFunction, checkNotNullCall, functionDeclaration, functionalType, integerLiteral,
+lambdaLiteral, localProperty, nullableType, propertyDeclaration, typeParameter */

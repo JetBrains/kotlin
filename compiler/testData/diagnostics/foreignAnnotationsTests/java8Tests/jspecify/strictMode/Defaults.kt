@@ -28,18 +28,14 @@ public class Foo {
 
 // FILE: main.kt
 fun main(a: Defaults, x: Foo): Unit {
-    // jspecify_nullness_mismatch
     a.everythingNotNullable(<!NULL_FOR_NONNULL_TYPE!>null<!>).foo()
     a.everythingNotNullable(x).foo()
 
-    // jspecify_nullness_mismatch
     a.everythingNullable(null)<!UNSAFE_CALL!>.<!>foo()
 
     a.everythingUnknown(null).foo()
 
-    // jspecify_nullness_mismatch, jspecify_nullness_mismatch
     a.mixed(<!NULL_FOR_NONNULL_TYPE!>null<!>)<!UNSAFE_CALL!>.<!>foo()
-    // jspecify_nullness_mismatch
     a.mixed(x)<!UNSAFE_CALL!>.<!>foo()
 
     a.explicitlyNullnessUnspecified(x).foo()
@@ -47,6 +43,5 @@ fun main(a: Defaults, x: Foo): Unit {
 
     a.defaultField.foo()
 
-    // jspecify_nullness_mismatch
     a.field<!UNSAFE_CALL!>.<!>foo()
 }

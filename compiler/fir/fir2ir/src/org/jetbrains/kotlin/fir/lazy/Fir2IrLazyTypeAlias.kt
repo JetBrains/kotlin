@@ -27,8 +27,8 @@ import org.jetbrains.kotlin.name.Name
 
 class Fir2IrLazyTypeAlias(
     c: Fir2IrComponents,
-    override val startOffset: Int,
-    override val endOffset: Int,
+    override var startOffset: Int,
+    override var endOffset: Int,
     override var origin: IrDeclarationOrigin,
     override val fir: FirTypeAlias,
     override val symbol: IrTypeAliasSymbol,
@@ -59,7 +59,7 @@ class Fir2IrLazyTypeAlias(
         set(_) = mutationNotSupported()
 
     override var expandedType: IrType by lazyVar(lock) {
-        fir.expandedTypeRef.toIrType(typeConverter)
+        fir.expandedTypeRef.toIrType()
     }
 
     override var attributeOwnerId: IrElement = this

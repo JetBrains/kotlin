@@ -8,3 +8,5 @@ class A<T> {
 fun test(a: A<out CharSequence>) {
     a.foo(<!MEMBER_PROJECTED_OUT!>""<!>, <!MEMBER_PROJECTED_OUT!>""<!>)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, nullableType, outProjection, stringLiteral, typeParameter */

@@ -168,9 +168,10 @@ private fun removeSmartCastTypeForAttemptToFitVisibility(dispatchReceiver: FirEx
                         source = originalExpression.source?.fakeElement(KtFakeSourceElementKind.SmartCastedTypeRef)
                         coneType = originalTypeNotNullable
                     }
-                    typesFromSmartCast = listOf(originalTypeNotNullable)
+                    upperTypesFromSmartCast = listOf(originalTypeNotNullable)
                     smartcastStability = expressionWithSmartcastIfStable.smartcastStability
                     coneTypeOrNull = originalTypeNotNullable
+                    lowerTypesFromSmartCast = emptyList()
                 }
             else -> originalExpression
         }

@@ -28,3 +28,6 @@ class E : A() {
         val c = C()
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, localProperty, nestedClass, primaryConstructor,
+propertyDeclaration */

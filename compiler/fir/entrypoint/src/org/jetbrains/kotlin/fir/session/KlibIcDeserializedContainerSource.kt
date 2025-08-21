@@ -10,11 +10,12 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.serialization.deserialization.IncompatibleVersionErrorData
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerAbiStability
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.PreReleaseInfo
 
 class KlibIcDeserializedContainerSource(packageFqName: FqName) : DeserializedContainerSource {
     override val presentableString: String = "Package '$packageFqName'"
     override val incompatibility: IncompatibleVersionErrorData<*>? get() = null
-    override val isPreReleaseInvisible: Boolean get() = false
+    override val preReleaseInfo: PreReleaseInfo get() = PreReleaseInfo.DEFAULT_VISIBLE
     override val abiStability: DeserializedContainerAbiStability get() = DeserializedContainerAbiStability.STABLE
     override fun getContainingFile(): SourceFile = SourceFile.NO_SOURCE_FILE
 }

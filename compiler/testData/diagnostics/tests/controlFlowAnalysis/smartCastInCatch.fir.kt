@@ -74,3 +74,7 @@ fun testExceptionWithinLocalFunction() {
         x.<!UNRESOLVED_REFERENCE!>length<!>
     }
 }
+
+/* GENERATED_FIR_TAGS: asExpression, assignment, callableReference, classReference, funWithExtensionReceiver,
+functionDeclaration, ifExpression, integerLiteral, intersectionType, lambdaLiteral, localFunction, localProperty,
+nullableType, propertyDeclaration, smartcast, stringLiteral, tryExpression */

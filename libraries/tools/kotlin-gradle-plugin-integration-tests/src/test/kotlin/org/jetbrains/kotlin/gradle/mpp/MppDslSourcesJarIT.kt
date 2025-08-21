@@ -26,6 +26,8 @@ class MppDslSourcesJarIT : KGPBaseTest() {
             projectName = "new-mpp-lib-and-app/sample-lib",
             gradleVersion = gradleVersion,
             localRepoDir = localRepoDir,
+            // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
+            buildOptions = defaultBuildOptions.disableIsolatedProjects(),
         ) {
             // TODO KT-67566 once all MppDslPublishedMetadataIT test are updated to new test DSL, update the projects to use `<localRepo>`
             buildGradle.appendText(

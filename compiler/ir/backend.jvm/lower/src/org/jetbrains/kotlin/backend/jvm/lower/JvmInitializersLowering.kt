@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.backend.jvm.ir.constantValue
 @PhaseDescription(
     name = "Initializers",
     // Depends on local class extraction, because otherwise local classes in initializers will be copied into each constructor.
-    prerequisite = [JvmLocalClassPopupLowering::class]
+    prerequisite = [JvmLocalDeclarationPopupLowering::class]
 )
 internal class JvmInitializersLowering(context: JvmBackendContext) : InitializersLowering(context)
 

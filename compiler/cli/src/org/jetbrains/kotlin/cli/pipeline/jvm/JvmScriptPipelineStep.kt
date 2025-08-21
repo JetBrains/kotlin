@@ -9,7 +9,9 @@ import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.extensions.ScriptEvaluationExtension
 import org.jetbrains.kotlin.cli.common.extensions.ShellExtension
 import org.jetbrains.kotlin.cli.common.freeArgsForScript
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.ERROR
+import org.jetbrains.kotlin.cli.common.replMode
 import org.jetbrains.kotlin.cli.common.scriptMode
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.pipeline.ConfigurationPipelineArtifact
@@ -27,14 +29,19 @@ object JvmScriptPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, Jvm
             messageCollector.report(ERROR, "Specify script source path to evaluate")
             return null
         }
+        if (configuration.replMode && configuration.freeArgsForScript.isNotEmpty()) {
+            messageCollector.report(CompilerMessageSeverity.STRONG_WARNING, "The arguments are ignored in the REPL mode")
+        }
 
-        val projectEnvironment =
+        val projectEnvironment by lazy(LazyThreadSafetyMode.NONE) {
             KotlinCoreEnvironment.ProjectEnvironment(
                 rootDisposable,
                 KotlinCoreEnvironment.getOrCreateApplicationEnvironmentForProduction(rootDisposable, configuration),
                 configuration
-            )
-        projectEnvironment.registerExtensionsFromPlugins(configuration)
+            ).also {
+                it.registerExtensionsFromPlugins(configuration)
+            }
+        }
 
         val result = if (configuration.scriptMode || configuration.expressionToEvaluate != null) {
             val argumentsStub = K2JVMCompilerArguments().apply {
@@ -48,6 +55,13 @@ object JvmScriptPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, Jvm
             }
             scriptingEvaluator.eval(configuration, projectEnvironment)
         } else {
+            if (!configuration.replMode) {
+                messageCollector.report(
+                    ERROR,
+                    "Kotlin REPL is deprecated and should be enabled explicitly for now; please use the '-Xrepl' option"
+                )
+                return null
+            }
             // arguments are unused in the ShellExtension anyway
             val argumentsStub = K2JVMCompilerArguments()
             val shell = ShellExtension.getInstances(projectEnvironment.project).find { it.isAccepted(argumentsStub) }

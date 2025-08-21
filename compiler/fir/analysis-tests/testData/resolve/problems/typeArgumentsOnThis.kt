@@ -6,3 +6,5 @@ fun x(){
 }
 
 val a = <!NO_THIS, UNRESOLVED_REFERENCE!>this<!><<!UNRESOLVED_REFERENCE!>X<!>>::y
+
+/* GENERATED_FIR_TAGS: functionDeclaration, propertyDeclaration, thisExpression */

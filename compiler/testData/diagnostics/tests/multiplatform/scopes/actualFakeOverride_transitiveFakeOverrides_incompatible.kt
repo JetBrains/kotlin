@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // IGNORE_FIR_DIAGNOSTICS
 // RUN_PIPELINE_TILL: BACKEND
 // MODULE: m1-common
@@ -18,3 +17,6 @@ interface A : B {
 interface B {
     fun foo(param: Int = 3) {}
 }
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, functionDeclaration, integerLiteral, interfaceDeclaration,
+override */

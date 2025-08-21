@@ -25,6 +25,7 @@ class KT31459JvmMainClassesTest {
         val project = buildProjectWithMPP {
             kotlin {
                 jvm {
+                    @Suppress("DEPRECATION")
                     withJava()
                 }
             }
@@ -35,7 +36,7 @@ class KT31459JvmMainClassesTest {
         val task = project.tasks.getByName("jvmMainClasses")
 
         assertEquals(
-            setOf("compileKotlinJvm", "compileJava", "jvmProcessResources"),
+            setOf("compileKotlinJvm", "compileJava", "jvmProcessResources", "compileJvmMainJava", "processJvmMainResources"),
             task.directDependencies
         )
     }
@@ -57,7 +58,7 @@ class KT31459JvmMainClassesTest {
             val originalClassesDirs: FileCollection =
                 project.files(classesDirs.from.toTypedArray())
             val transformedClassesDir = project.layout.buildDirectory.dir("classes/atomicfu/${target.name}/${compilation.name}")
-            val transformTask = project.tasks.create("transformTask") {
+            val transformTask = project.tasks.register("transformTask") {
                 it.dependsOn(compilation.compileAllTaskName)
                 it.inputs.files(originalClassesDirs)
                 it.outputs.files(transformedClassesDir)

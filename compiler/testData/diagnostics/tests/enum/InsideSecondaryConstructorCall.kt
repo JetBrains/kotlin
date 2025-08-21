@@ -13,3 +13,6 @@ enum class A(val c: Int) {
         last = <!ENUM_CLASS_CONSTRUCTOR_CALL!>A(13)<!>
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, enumDeclaration, enumEntry, integerLiteral, nullableType, primaryConstructor,
+propertyDeclaration, secondaryConstructor */

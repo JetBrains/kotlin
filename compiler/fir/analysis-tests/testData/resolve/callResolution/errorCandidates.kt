@@ -18,3 +18,5 @@ fun test(c: C) {
     // Unresolved reference
     <!UNRESOLVED_REFERENCE!>baz<!>()
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, interfaceDeclaration, stringLiteral */

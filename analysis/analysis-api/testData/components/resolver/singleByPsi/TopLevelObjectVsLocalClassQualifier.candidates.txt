@@ -4,6 +4,7 @@ KtNameReferenceExpression(68,76): 'Conflict'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -11,6 +12,7 @@ KtNameReferenceExpression(68,76): 'Conflict'
           returnType = test.Conflict
           symbol = <constructor>(): test.Conflict
           valueParameters = []
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>

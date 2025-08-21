@@ -13,3 +13,5 @@ fun main() {
         2
     }<!>
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionalType, integerLiteral, lambdaLiteral */

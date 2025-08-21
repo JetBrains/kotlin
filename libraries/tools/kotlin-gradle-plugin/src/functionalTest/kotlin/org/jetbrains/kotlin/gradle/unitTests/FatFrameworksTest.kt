@@ -137,7 +137,7 @@ class FatFrameworksTest {
         val project = buildProjectWithMPP {
             kotlin {
                 // 1. Eagerly configure universal framework task
-                eagerlyCreatedTask = tasks.create("testUniversalFrameworkTask", FatFrameworkTask::class.java)
+                eagerlyCreatedTask = tasks.register("testUniversalFrameworkTask", FatFrameworkTask::class.java).get()
 
                 listOf(
                     iosX64(),

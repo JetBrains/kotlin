@@ -1,3 +1,5 @@
+// TODO: remove this when KT-75086 is completed
+@file:Suppress("DEPRECATION")
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.targets.js.binaryen.BinaryenRootEnvSpec
 import org.jetbrains.kotlin.gradle.targets.js.d8.D8EnvSpec

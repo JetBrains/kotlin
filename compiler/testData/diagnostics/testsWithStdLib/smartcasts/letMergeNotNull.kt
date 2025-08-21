@@ -8,3 +8,6 @@ fun foo(y: String?) {
         <!SMARTCAST_IMPOSSIBLE!>x<!>.length // not-null or not-null
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, equalityExpression, functionDeclaration, ifExpression, lambdaLiteral, localProperty,
+nullableType, propertyDeclaration, safeCall */

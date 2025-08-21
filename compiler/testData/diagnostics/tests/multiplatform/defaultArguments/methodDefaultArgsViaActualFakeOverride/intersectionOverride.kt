@@ -18,3 +18,5 @@ interface Base2 {
 
 @Suppress("ACTUAL_CLASSIFIER_MUST_HAVE_THE_SAME_SUPERTYPES_AS_NON_FINAL_EXPECT_CLASSIFIER_WARNING")
 actual interface Foo : Base1, Base2
+
+/* GENERATED_FIR_TAGS: actual, expect, functionDeclaration, integerLiteral, interfaceDeclaration, stringLiteral */

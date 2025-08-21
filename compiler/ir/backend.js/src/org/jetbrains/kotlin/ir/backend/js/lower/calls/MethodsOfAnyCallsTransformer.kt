@@ -28,9 +28,9 @@ class MethodsOfAnyCallsTransformer(context: JsIrBackendContext) : CallsTransform
             put(OperatorNameConventions.TO_STRING) { call ->
                 if (shouldReplaceToStringWithRuntimeCall(call)) {
                     if ((call as IrCall).isSuperToAny()) {
-                        irCall(call, intrinsics.jsAnyToString, receiversAsArguments = true)
+                        irCall(call, intrinsics.jsAnyToString)
                     } else {
-                        irCall(call, intrinsics.jsToString, receiversAsArguments = true)
+                        irCall(call, intrinsics.jsToString)
                     }
                 } else {
                     call
@@ -40,9 +40,9 @@ class MethodsOfAnyCallsTransformer(context: JsIrBackendContext) : CallsTransform
             put(OperatorNameConventions.HASH_CODE) { call ->
                 if (call.symbol.owner.isFakeOverriddenFromAny()) {
                     if ((call as IrCall).isSuperToAny()) {
-                        irCall(call, intrinsics.jsGetObjectHashCode, receiversAsArguments = true)
+                        irCall(call, intrinsics.jsGetObjectHashCode)
                     } else {
-                        irCall(call, intrinsics.jsHashCode, receiversAsArguments = true)
+                        irCall(call, intrinsics.jsHashCode)
                     }
                 } else {
                     call

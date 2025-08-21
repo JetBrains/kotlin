@@ -1,5 +1,3 @@
-import Java
-
 // LANGUAGE: +MultiPlatformProjects
 // WITH_STDLIB
 // TARGET_BACKEND: JVM_IR

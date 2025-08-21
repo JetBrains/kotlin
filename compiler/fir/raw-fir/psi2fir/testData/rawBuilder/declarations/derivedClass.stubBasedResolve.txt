@@ -1,0 +1,17 @@
+FILE: [ResolvedTo(BODY_RESOLVE)] derivedClass.kt
+    public open [ResolvedTo(BODY_RESOLVE)] class Base<[ResolvedTo(BODY_RESOLVE)] T> : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Base] constructor<[ResolvedTo(BODY_RESOLVE)] T>([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/Base.x] x: R|T|): R|Base<T>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val x: R|T| = R|<local>/x|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Base] get(): R|T|
+
+    }
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class Derived<[ResolvedTo(ANNOTATION_ARGUMENTS)] T : R|kotlin/Any|> : R|Base<T>| {
+        public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=Derived] constructor<[ResolvedTo(ANNOTATION_ARGUMENTS)] T : R|kotlin/Any|>([ResolvedTo(ANNOTATION_ARGUMENTS)] x: R|T|): R|Derived<T>| {
+            LAZY_super<R|Base<T>|>
+        }
+
+    }
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun <[ResolvedTo(ANNOTATION_ARGUMENTS)] T : R|kotlin/Any|> create([ResolvedTo(ANNOTATION_ARGUMENTS)] x: R|T|): R|Derived<T>| { LAZY_BLOCK }

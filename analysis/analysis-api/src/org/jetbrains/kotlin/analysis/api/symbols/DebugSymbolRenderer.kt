@@ -102,6 +102,10 @@ public class DebugSymbolRenderer(
                     renderComputedValue("setterDeprecationStatus", printer, currentSymbolStack) { symbol.setterDeprecationStatus }
                 }
 
+                if (symbol is KaKotlinPropertySymbol) {
+                    renderComputedValue("isInline", printer, currentSymbolStack) { symbol.isInline }
+                }
+
                 if (renderIsPublicApi) {
                     if (symbol is KaDeclarationSymbol) {
                         renderComputedValue("isPublicApi", printer, currentSymbolStack) { isPublicApi(symbol) }
@@ -271,6 +275,9 @@ public class DebugSymbolRenderer(
             appendLine()
             if (renderTypeByProperties) {
                 renderByPropertyNames(typeToRender, printer, currentSymbolStack)
+                renderComputedValue("isMarkedNullable", printer, currentSymbolStack) { typeToRender.isMarkedNullable }
+                renderComputedValue("isNullable", printer, currentSymbolStack) { typeToRender.isNullable }
+                renderComputedValue("hasFlexibleNullability", printer, currentSymbolStack) { typeToRender.hasFlexibleNullability }
             } else {
                 append("annotations: ")
                 renderAnnotationsList(typeToRender.annotations, printer, currentSymbolStack)
@@ -412,7 +419,7 @@ public class DebugSymbolRenderer(
     private fun renderModule(module: KaModule, printer: PrettyPrinter) {
         val apiClass = when (val moduleClass = module::class) {
             in kaModuleApiSubclasses -> moduleClass
-            else -> moduleClass.allSuperclasses.first { it in kaModuleApiSubclasses }
+            else -> kaModuleApiSubclasses.first { it in moduleClass.allSuperclasses }
         }
         printer.append(apiClass.simpleName + " \"" + module.moduleDescription + "\"")
     }
@@ -432,6 +439,7 @@ public class DebugSymbolRenderer(
             KaSourceModule::class,
             KaLibraryModule::class,
             KaLibrarySourceModule::class,
+            KaLibraryFallbackDependenciesModule::class,
             KaBuiltinsModule::class,
             KaScriptModule::class,
             KaScriptDependencyModule::class,

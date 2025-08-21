@@ -24,6 +24,8 @@ class MppTestsIT : KGPBaseTest() {
             gradleVersion,
             buildOptions = defaultBuildOptions.copy(
                 freeArgs = listOf("--continue"), // to ensure that all the tests are run
+                // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
+                isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED,
             )
         ) {
             val nativeTarget = MPPNativeTargets.current
@@ -60,7 +62,11 @@ class MppTestsIT : KGPBaseTest() {
     fun testKtij25757AllTaskOutputFilesBeforeExecution(gradleVersion: GradleVersion) {
         project(
             "new-mpp-lib-with-tests",
-            gradleVersion
+            gradleVersion,
+            buildOptions = defaultBuildOptions.copy(
+                // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
+                isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED,
+            )
         ) {
             buildGradle.modify {
                 it + "\n" +
@@ -96,7 +102,6 @@ class MppTestsIT : KGPBaseTest() {
     fun testKt68638KotlinNativeLinkApiFilesResolutionError(gradleVersion: GradleVersion) {
         project("kt-68638-native-link-self-dependency", gradleVersion) {
             val buildOptions = defaultBuildOptions.copy(
-                configurationCache = BuildOptions.ConfigurationCacheValue.ENABLED,
                 freeArgs = listOf("--dry-run")
             )
             // no build failure is expected

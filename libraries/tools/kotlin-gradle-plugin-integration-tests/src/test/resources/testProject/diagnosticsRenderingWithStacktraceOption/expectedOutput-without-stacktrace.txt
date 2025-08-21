@@ -1,5 +1,6 @@
 > Configure project :
-w: [PlatformSourceSetConventionUsedWithCustomTargetName | WARNING] Accessed 'source set jvmMain', but jvm target used a custom name 'customName' (expected 'jvm'):
+w: [PlatformSourceSetConventionUsedWithCustomTargetName | WARNING] Source Set used with custom target name
+Accessed 'source set jvmMain', but jvm target used a custom name 'customName' (expected 'jvm'):
 
 Replace:
 ```
@@ -17,8 +18,19 @@ kotlin {
 Please use the jvm() target name.
 #diagnostic-end
 
-w: [UnusedSourceSetsWarning | WARNING] The Kotlin source set jvmMain was configured but not added to any Kotlin compilation.
+w: [UnusedSourceSetsWarning | WARNING] Unused Kotlin Source Sets
+The Kotlin source set jvmMain was configured but not added to any Kotlin compilation.
 
 You can add a source set to a target's compilation by connecting it with the compilation's default source set using 'dependsOn'.
 See https://kotl.in/connecting-source-sets
+#diagnostic-end
+
+w: [InternalKotlinGradlePluginPropertiesUsed | WARNING] Usage of Internal Kotlin Gradle Plugin Properties Detected
+ATTENTION! This build uses the following Kotlin Gradle Plugin properties:
+
+kotlin.internal.diagnostics.ignoreWarningMode
+
+Internal properties are not recommended for production use.
+Stability and future compatibility of the build is not guaranteed.
+Please consider using the public API instead of internal properties.
 #diagnostic-end

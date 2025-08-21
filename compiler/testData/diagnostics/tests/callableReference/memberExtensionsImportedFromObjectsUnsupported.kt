@@ -26,3 +26,6 @@ fun test() {
     A::<!UNRESOLVED_REFERENCE!>foo<!>
     A::<!UNRESOLVED_REFERENCE!>bar<!>
 }
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, companionObject, functionDeclaration, getter,
+objectDeclaration, propertyDeclaration, propertyWithExtensionReceiver, thisExpression */

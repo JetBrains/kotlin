@@ -19,6 +19,7 @@ public abstract interface Test /* Test*/ {
   }
 
   public static final class DefaultImpls /* Test.DefaultImpls*/ {
+    @java.lang.Deprecated()
     public static void bar(@org.jetbrains.annotations.NotNull() Test);//  bar(Test)
   }
 }

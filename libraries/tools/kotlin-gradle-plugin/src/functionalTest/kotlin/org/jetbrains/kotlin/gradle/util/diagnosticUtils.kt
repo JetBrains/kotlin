@@ -5,11 +5,12 @@
 
 package org.jetbrains.kotlin.gradle.util
 
+import org.gradle.api.logging.Logger
 import org.gradle.api.Project
-import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
-import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnostic
-import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnosticFactory
-import org.jetbrains.kotlin.gradle.plugin.diagnostics.kotlinToolingDiagnosticsCollector
+import org.gradle.api.logging.Logging
+import org.gradle.api.model.ObjectFactory
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.*
+import org.jetbrains.kotlin.gradle.utils.newInstance
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.File
 import java.nio.file.Path
@@ -79,8 +80,11 @@ internal fun Project.checkDiagnostics(
 
 // An (KTI-1928) issue prevents us from using a snapshot version of Kotlin Native during testing. This results in a diagnostic warning.
 // Diagnostic warnings concern outdated Kotlin Native versions should be ignored in test environments.
-internal fun Project.assertNoDiagnostics(filterDiagnosticIds: List<ToolingDiagnosticFactory> = listOf(KotlinToolingDiagnostics.OldNativeVersionDiagnostic),) {
-    val actualDiagnostics = kotlinToolingDiagnosticsCollector.getDiagnosticsForProject(this).filterNot { it.id in filterDiagnosticIds.map { it.id } }
+internal val defaultFilteredDiagnostics = listOf(KotlinToolingDiagnostics.OldNativeVersionDiagnostic)
+
+internal fun Project.assertNoDiagnostics(filterDiagnosticIds: List<ToolingDiagnosticFactory> = defaultFilteredDiagnostics) {
+    val actualDiagnostics =
+        kotlinToolingDiagnosticsCollector.getDiagnosticsForProject(this).filterNot { it.id in filterDiagnosticIds.map { it.id } }
     assertTrue(
         actualDiagnostics.isEmpty(), "Expected to have no diagnostics, but some were reported:\n ${actualDiagnostics.render()}"
     )
@@ -90,8 +94,8 @@ internal fun Project.assertNoDiagnostics(filterDiagnosticIds: List<ToolingDiagno
  * Checks that diagnostic with [factory.id] is reported. The exact parameters (if any)
  * are ignored. If you need to compare the parameters, refer to the overload accepting [ToolingDiagnostic]
  */
-internal fun Project.assertContainsDiagnostic(factory: ToolingDiagnosticFactory) {
-    kotlinToolingDiagnosticsCollector.getDiagnosticsForProject(this).assertContainsDiagnostic(factory)
+internal fun Project.assertContainsDiagnostic(factory: ToolingDiagnosticFactory, idSuffix: String = "") {
+    kotlinToolingDiagnosticsCollector.getDiagnosticsForProject(this).assertContainsDiagnostic(factory, idSuffix)
 }
 
 internal fun Project.assertContainsDiagnostic(diagnostic: ToolingDiagnostic, ignoreThrowable: Boolean = false) {
@@ -101,8 +105,11 @@ internal fun Project.assertContainsDiagnostic(diagnostic: ToolingDiagnostic, ign
 
 private fun Any.withIndent() = this.toString().prependIndent("    ")
 
-internal fun Collection<ToolingDiagnostic>.assertContainsDiagnostic(factory: ToolingDiagnosticFactory) {
-    if (!any { it.id == factory.id }) failDiagnosticNotFound("diagnostic with id ${factory.id} ", this)
+internal fun Collection<ToolingDiagnostic>.assertContainsDiagnostic(factory: ToolingDiagnosticFactory, idSuffix: String = "") {
+    if (!any { it.id == if (idSuffix.isNotBlank()) "${factory.id}_$idSuffix" else factory.id }) failDiagnosticNotFound(
+        "diagnostic with id ${factory.id} ",
+        this
+    )
 }
 
 internal fun Collection<ToolingDiagnostic>.assertContainsDiagnostic(diagnostic: ToolingDiagnostic, ignoreThrowable: Boolean = false) {
@@ -161,6 +168,24 @@ internal fun Collection<ToolingDiagnostic>.assertContainsSingleDiagnostic(
         fail("Expected to have 1 diagnostic with id '${factory.id}', but ${matches.size} were reported:\n${matches.render()}")
     }
     return matches.single()
+}
+
+internal abstract class TestsProblemsReporter : ProblemsReporter {
+    private val logger: Logger by lazy { Logging.getLogger(this.javaClass) }
+
+    override fun reportProblemDiagnostic(
+        diagnostic: ToolingDiagnostic,
+        options: ToolingDiagnosticRenderingOptions
+    ) {
+        val renderedDiagnostic = diagnostic.renderReportedDiagnostic(logger, options) ?: return
+        if (renderedDiagnostic.severity == ToolingDiagnostic.Severity.FATAL) {
+            throw diagnostic.createAnExceptionForFatalDiagnostic(options)
+        }
+    }
+
+    class Factory : ProblemsReporter.Factory {
+        override fun getInstance(objects: ObjectFactory): ProblemsReporter = objects.newInstance<TestsProblemsReporter>()
+    }
 }
 
 private fun Collection<ToolingDiagnostic>.render(): String = joinToString(separator = "\n----\n")

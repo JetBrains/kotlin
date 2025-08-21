@@ -25,3 +25,6 @@ public interface JavaInterface1 {
 public interface JavaInterface2 {
     void setSomething(String value);
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, equalityExpression, functionDeclaration, ifExpression, javaFunction,
+javaProperty, javaType, override, stringLiteral */

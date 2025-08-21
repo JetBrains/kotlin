@@ -16,3 +16,6 @@ fun test() {
     myRun { throw java.lang.IllegalArgumentException() }
     val x: Int = 42
 }
+
+/* GENERATED_FIR_TAGS: contractCallsEffect, contracts, functionDeclaration, functionalType, inline, integerLiteral,
+javaFunction, lambdaLiteral, localProperty, propertyDeclaration */

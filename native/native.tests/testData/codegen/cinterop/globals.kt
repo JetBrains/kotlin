@@ -4,6 +4,7 @@
  */
 
 // TARGET_BACKEND: NATIVE
+// WITH_PLATFORM_LIBS
 // MODULE: cinterop
 // FILE: cglobals.def
 ---

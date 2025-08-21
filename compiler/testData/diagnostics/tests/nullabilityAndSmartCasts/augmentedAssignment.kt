@@ -17,3 +17,6 @@ fun test2() {
     var b: B? = B()
     b <!UNSAFE_OPERATOR_CALL!>+=<!> B()
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, assignment, classDeclaration, functionDeclaration, localProperty,
+nullableType, operator, propertyDeclaration, stringLiteral, thisExpression */

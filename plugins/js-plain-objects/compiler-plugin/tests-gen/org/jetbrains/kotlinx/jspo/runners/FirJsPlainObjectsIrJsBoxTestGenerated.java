@@ -49,6 +49,12 @@ public class FirJsPlainObjectsIrJsBoxTestGenerated extends AbstractFirJsPlainObj
   }
 
   @Test
+  @TestMetadata("multipleObjectsInTheSameFile.kt")
+  public void testMultipleObjectsInTheSameFile() {
+    runTest("plugins/js-plain-objects/compiler-plugin/testData/box/multipleObjectsInTheSameFile.kt");
+  }
+
+  @Test
   @TestMetadata("multiple-module.kt")
   public void testMultiple_module() {
     runTest("plugins/js-plain-objects/compiler-plugin/testData/box/multiple-module.kt");

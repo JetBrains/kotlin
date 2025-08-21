@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -10,6 +10,7 @@ import junit.framework.TestCase
 import org.jetbrains.kotlin.cli.common.CLICompiler
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.*
+import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.js.K2JSCompiler
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.cli.metadata.KotlinMetadataCompiler
@@ -17,13 +18,14 @@ import org.jetbrains.kotlin.cli.transformMetadataInClassFile
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.incremental.LocalFileKotlinClass
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import org.jetbrains.kotlin.metadata.jvm.deserialization.ModuleMapping
 import org.jetbrains.kotlin.test.MockLibraryUtil
-import org.jetbrains.kotlin.util.toMetadataVersion
+import org.jetbrains.kotlin.util.toJvmMetadataVersion
 import org.jetbrains.org.objectweb.asm.*
 import org.jetbrains.org.objectweb.asm.tree.ClassNode
 import java.io.ByteArrayInputStream
@@ -52,15 +54,19 @@ abstract class AbstractCompileKotlinAgainstCustomBinariesTest : AbstractKotlinCo
         additionalOptions: List<String>,
         expectedFileName: String?,
         additionalSources: List<String>,
+        sanitizeCompilerOutput: (String) -> String,
     ): Pair<String, ExitCode> {
         val options =
             if (CommonCompilerArguments::languageVersion.cliArgument in additionalOptions) additionalOptions
-            else additionalOptions + listOf(CommonCompilerArguments::languageVersion.cliArgument, languageVersion.versionString)
+            else additionalOptions + listOf(
+                CommonCompilerArguments::languageVersion.cliArgument, languageVersion.versionString,
+                CommonCompilerArguments::suppressVersionWarnings.cliArgument,
+            )
         val expectedFirFile = expectedFileName?.replace(".txt", ".fir.txt")?.let { File(testDataDirectory, it) }
         return super.compileKotlin(
             fileName, output, classpath, compiler, options,
             if (expectedFirFile != null && languageVersion.usesK2 && expectedFirFile.exists()) expectedFirFile.name else expectedFileName,
-            additionalSources
+            additionalSources, sanitizeCompilerOutput
         )
     }
 
@@ -161,14 +167,18 @@ abstract class AbstractCompileKotlinAgainstCustomBinariesTest : AbstractKotlinCo
     }
 
     fun testIncompleteHierarchyNoErrors() {
-        doTestBrokenLibrary("library", "test/Super.class")
+        doTestBrokenLibrary(
+            "library",
+            "test/Super.class",
+            additionalOptions = listOf("-XXLanguage:-${LanguageFeature.AllowEagerSupertypeAccessibilityChecks.name}"),
+        )
     }
 
     fun testIncompleteHierarchyWithExtendedCompilerChecks() {
         doTestBrokenLibrary(
             "library",
             "test/Super.class",
-            additionalOptions = listOf(CommonCompilerArguments::extendedCompilerChecks.cliArgument),
+            additionalOptions = listOf("-XXLanguage:+${LanguageFeature.AllowEagerSupertypeAccessibilityChecks.name}"),
         )
     }
 
@@ -354,7 +364,7 @@ abstract class AbstractCompileKotlinAgainstCustomBinariesTest : AbstractKotlinCo
             val expectedMajor = if (languageVersion.usesK2) 2 else 1
             val expectedMinor = if (languageVersion < LanguageVersion.KOTLIN_1_4) 1 else languageVersion.minor
 
-            val topLevelClass = LocalFileKotlinClass.create(File(tmpdir.absolutePath, "Foo.class"), languageVersion.toMetadataVersion())!!
+            val topLevelClass = LocalFileKotlinClass.create(File(tmpdir.absolutePath, "Foo.class"), languageVersion.toJvmMetadataVersion())!!
             val classVersion = topLevelClass.classHeader.metadataVersion
             assertEquals("Actual version: $classVersion", expectedMajor, classVersion.major)
             assertEquals("Actual version: $classVersion", expectedMinor, classVersion.minor)
@@ -548,10 +558,23 @@ abstract class AbstractCompileKotlinAgainstCustomBinariesTest : AbstractKotlinCo
     }
 
     fun testAgainstStable() {
-        val library = compileLibrary("library", additionalOptions = listOf(CommonCompilerArguments::languageVersion.cliArgument, "1.9"))
+        val library = compileLibrary(
+            "library",
+            additionalOptions = listOf(
+                CommonCompilerArguments::languageVersion.cliArgument, "1.9",
+                CommonCompilerArguments::suppressVersionWarnings.cliArgument,
+            )
+        )
         compileKotlin("source.kt", tmpdir, listOf(library))
 
-        val library2 = compileLibrary("library", additionalOptions = listOf(CommonCompilerArguments::languageVersion.cliArgument, "1.9", K2JVMCompilerArguments::abiStability.cliArgument("stable")))
+        val library2 = compileLibrary(
+            "library",
+            additionalOptions = listOf(
+                CommonCompilerArguments::languageVersion.cliArgument, "1.9",
+                CommonCompilerArguments::suppressVersionWarnings.cliArgument,
+                K2JVMCompilerArguments::abiStability.cliArgument("stable")
+            )
+        )
         compileKotlin("source.kt", tmpdir, listOf(library2))
     }
 
@@ -574,8 +597,12 @@ abstract class AbstractCompileKotlinAgainstCustomBinariesTest : AbstractKotlinCo
     fun testAgainstUnstable() {
         val library = compileLibrary(
             "library",
-            additionalOptions = listOf(CommonCompilerArguments::languageVersion.cliArgument, "1.9", K2JVMCompilerArguments::abiStability.cliArgument("unstable")
-        ))
+            additionalOptions = listOf(
+                CommonCompilerArguments::languageVersion.cliArgument, "1.9",
+                CommonCompilerArguments::suppressVersionWarnings.cliArgument,
+                K2JVMCompilerArguments::abiStability.cliArgument("unstable")
+            )
+        )
         compileKotlin("source.kt", tmpdir, listOf(library))
     }
 
@@ -593,7 +620,11 @@ abstract class AbstractCompileKotlinAgainstCustomBinariesTest : AbstractKotlinCo
             additionalOptions = listOf(CommonCompilerArguments::languageVersion.cliArgument, LanguageVersion.LATEST_STABLE.versionString, K2JVMCompilerArguments::abiStability.cliArgument("stable")
         ))
         compileKotlin(
-            "source.kt", tmpdir, listOf(library), additionalOptions = listOf(CommonCompilerArguments::languageVersion.cliArgument, "1.9", CommonCompilerArguments::skipPrereleaseCheck.cliArgument)
+            "source.kt", tmpdir, listOf(library), additionalOptions = listOf(
+                CommonCompilerArguments::languageVersion.cliArgument, "1.9",
+                CommonCompilerArguments::suppressVersionWarnings.cliArgument,
+                CommonCompilerArguments::skipPrereleaseCheck.cliArgument,
+            )
         )
     }
 
@@ -633,7 +664,13 @@ abstract class AbstractCompileKotlinAgainstCustomBinariesTest : AbstractKotlinCo
     }
 
     fun testConstEvaluationWithDifferentLV() {
-        val library = compileJsLibrary("library", additionalOptions = listOf(CommonCompilerArguments::languageVersion.cliArgument, "1.9"))
+        val library = compileJsLibrary(
+            "library",
+            additionalOptions = listOf(
+                CommonCompilerArguments::languageVersion.cliArgument, "1.9",
+                CommonCompilerArguments::suppressVersionWarnings.cliArgument,
+            )
+        )
         compileKotlin(
             "src", File(tmpdir, "usage.js"), emptyList(), K2JSCompiler(),
             additionalOptions = listOf(K2JSCompilerArguments::includes.cliArgument(library.absolutePath), K2JSCompilerArguments::irProduceJs.cliArgument),

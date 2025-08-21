@@ -1,0 +1,84 @@
+class G1<T : X> {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  fun checkFoo(x: IFoo<in T>) {
+  }
+
+}
+
+class G2<T> where T : X, T : Z {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  fun checkBar1(x: IBar1<in T>) {
+  }
+
+  fun checkBar2(x: IBar2<in T>) {
+  }
+
+  fun checkFoo(x: IFoo<in T>) {
+  }
+
+}
+
+interface A : X, Z {
+}
+
+interface B : X, Z {
+}
+
+fun interface IBar1<T> where T : X, T : Z {
+  abstract fun bar(t: T)
+
+}
+
+fun interface IBar2<T> where T : X, T : Z {
+  abstract fun bar(t: T)
+
+}
+
+fun interface IFoo<T : X> {
+  abstract fun foo(t: T)
+
+}
+
+interface X {
+}
+
+interface Z {
+}
+
+fun <T : Any?> sel(x: T, y: T): T {
+  return x
+}
+
+fun test1() {
+  val g: G1<*> = sel<G1<*>>(x = G1<A>(), y = G1<B>())
+  g.checkFoo(x = local fun <anonymous>(it: Any) {
+    return Unit
+  }
+ /*-> IFoo<in Nothing> */)
+}
+
+fun test2() {
+  val g: G2<*> = sel<G2<*>>(x = G2<A>(), y = G2<B>())
+  g.checkFoo(x = local fun <anonymous>(it: Any) {
+    return Unit
+  }
+ /*-> IFoo<in Nothing> */)
+  g.checkBar1(x = local fun <anonymous>(it: Any) {
+    return Unit
+  }
+ /*-> IBar1<in Nothing> */)
+  g.checkBar2(x = local fun <anonymous>(it: Any) {
+    return Unit
+  }
+ /*-> IBar2<in Nothing> */)
+}

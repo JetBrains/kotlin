@@ -6,8 +6,6 @@
 package org.jetbrains.kotlin.asJava.classes
 
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
-import org.jetbrains.kotlin.config.JvmAnalysisFlags
-import org.jetbrains.kotlin.config.JvmDefaultMode
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.name.Name
@@ -23,5 +21,3 @@ interface KtUltraLightSupport {
 
     fun possiblyHasAlias(file: KtFile, shortName: Name): Boolean
 }
-
-internal val KtUltraLightSupport.jvmDefaultMode: JvmDefaultMode get() = languageVersionSettings.getFlag(JvmAnalysisFlags.jvmDefaultMode)

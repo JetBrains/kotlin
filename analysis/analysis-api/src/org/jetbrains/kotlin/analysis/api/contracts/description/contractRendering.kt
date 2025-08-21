@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.contracts.description.KaContractReturnsContractEffectDeclaration.*
 import org.jetbrains.kotlin.analysis.api.contracts.description.booleans.*
 import org.jetbrains.kotlin.analysis.api.symbols.DebugSymbolRenderer
-import org.jetbrains.kotlin.analysis.api.symbols.KaParameterSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.analysis.api.utils.getApiKClassOf
 import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
 import kotlin.reflect.KProperty
@@ -50,7 +50,7 @@ private fun Context.renderKaContractConstantValue(value: KaContractConstantValue
 @KaNonPublicApi
 private fun Context.renderKaContractParameterValue(value: KaContractParameterValue, endWithNewLine: Boolean = true): Unit =
     printer.appendHeader(value) {
-        appendProperty(value::parameterSymbol, ::renderKaParameterSymbol, endWithNewLine)
+        appendProperty(value::symbol, ::renderKaParameterSymbol, endWithNewLine)
     }
 
 @KaNonPublicApi
@@ -76,13 +76,13 @@ private fun Context.renderKaContractBooleanExpression(value: KaContractBooleanEx
                 appendSimpleProperty(value::isNegated, endWithNewLine)
             }
             is KaContractBooleanValueParameterExpression -> {
-                appendProperty(value::parameterSymbol, ::renderKaParameterSymbol, endWithNewLine)
+                appendProperty(value::parameterSymbol, ::renderKaContractParameterValue, endWithNewLine)
             }
         }
     }
 
 @KaNonPublicApi
-private fun Context.renderKaParameterSymbol(value: KaParameterSymbol, endWithNewLine: Boolean = true) {
+private fun Context.renderKaParameterSymbol(value: KaSymbol, endWithNewLine: Boolean = true) {
     val renderedValue = symbolRenderer.render(session, value)
     if (endWithNewLine) printer.appendLine(renderedValue) else printer.append(renderedValue)
 }

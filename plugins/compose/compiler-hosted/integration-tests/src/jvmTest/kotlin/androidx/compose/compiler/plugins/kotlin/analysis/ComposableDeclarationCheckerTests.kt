@@ -17,9 +17,31 @@
 package androidx.compose.compiler.plugins.kotlin.analysis
 
 import androidx.compose.compiler.plugins.kotlin.AbstractComposeDiagnosticsTest
+import org.jetbrains.kotlin.config.*
+import org.junit.Assume.assumeFalse
+import org.junit.Assume.assumeTrue
 import org.junit.Test
+import org.junit.runners.Parameterized
 
-class ComposableDeclarationCheckerTests(useFir: Boolean) : AbstractComposeDiagnosticsTest(useFir) {
+class ComposableDeclarationCheckerTests(
+    private val languageVersion: LanguageVersion
+) : AbstractComposeDiagnosticsTest(languageVersion.usesK2) {
+
+    companion object {
+        @JvmStatic
+        @Parameterized.Parameters(name = "lv = {0}")
+        fun parameters() = arrayOf(
+            LanguageVersion.KOTLIN_1_9,
+            LanguageVersion.KOTLIN_2_0,
+            LanguageVersion.KOTLIN_2_1,
+            LanguageVersion.LATEST_STABLE
+        )
+    }
+
+    override fun CompilerConfiguration.updateConfiguration() {
+        this.languageVersionSettings = LanguageVersionSettingsImpl(languageVersion, ApiVersion.LATEST_STABLE)
+    }
+
     @Test
     fun testPropertyWithInitializer() {
         check(
@@ -33,67 +55,121 @@ class ComposableDeclarationCheckerTests(useFir: Boolean) : AbstractComposeDiagno
     }
 
     @Test
-    fun testComposableFunctionReferences() {
+    fun testComposableFunctionReferencesK1() {
+        assumeFalse(useFir)
         check(
-            if (!useFir) {
-                """
-            import androidx.compose.runtime.Composable
-
-            @Composable fun A() {}
-            val aCallable: () -> Unit = <!COMPOSABLE_FUNCTION_REFERENCE!>::A<!>
-            val bCallable: @Composable () -> Unit = <!COMPOSABLE_FUNCTION_REFERENCE,TYPE_MISMATCH!>::A<!>
-            val cCallable = <!COMPOSABLE_FUNCTION_REFERENCE!>::A<!>
-            fun doSomething(fn: () -> Unit) { print(fn) }
-            @Composable fun B(content: @Composable () -> Unit) {
-                content()
-                doSomething(<!COMPOSABLE_FUNCTION_REFERENCE!>::A<!>)
-                B(<!COMPOSABLE_FUNCTION_REFERENCE,TYPE_MISMATCH!>::A<!>)
-            }
-        """
-            } else {
-                // In K2, we are taking composability into account when resolving function references,
-                // so trying to resolve `::A` in a context where we expect a non-composable function
-                // type fails with an `UNRESOLVED_REFERENCE` error, instead of a
-                // `COMPOSABLE_FUNCTION_REFERENCE` error in the plugin..
-                """
-            import androidx.compose.runtime.Composable
-
-            @Composable fun A() {}
-            val aCallable: () -> Unit = <!INITIALIZER_TYPE_MISMATCH,COMPOSABLE_FUNCTION_REFERENCE!>::A<!>
-            val bCallable: @Composable () -> Unit = <!COMPOSABLE_FUNCTION_REFERENCE!>::A<!>
-            val cCallable = <!COMPOSABLE_FUNCTION_REFERENCE!>::A<!>
-            fun doSomething(fn: () -> Unit) { print(fn) }
-            @Composable fun B(content: @Composable () -> Unit) {
-                content()
-                doSomething(::<!INAPPLICABLE_CANDIDATE!>A<!>)
-                B(<!COMPOSABLE_FUNCTION_REFERENCE!>::A<!>)
-            }
-        """
-            }
+            """
+                import androidx.compose.runtime.Composable
+    
+                @Composable fun A() {}
+                
+                val aCallable: () -> Unit = <!COMPOSABLE_FUNCTION_REFERENCE!>::A<!>
+                val bCallable: @Composable () -> Unit = <!COMPOSABLE_FUNCTION_REFERENCE,TYPE_MISMATCH!>::A<!>
+                val cCallable = <!COMPOSABLE_FUNCTION_REFERENCE!>::A<!>
+                
+                fun doSomething(fn: () -> Unit) { print(fn) }
+                
+                @Composable fun B(content: @Composable () -> Unit) {
+                    content()
+                    doSomething(<!COMPOSABLE_FUNCTION_REFERENCE!>::A<!>)
+                    doSomething(aCallable)
+                    doSomething(<!TYPE_MISMATCH!>bCallable<!>)
+                    doSomething(cCallable)
+                    B(<!COMPOSABLE_FUNCTION_REFERENCE,TYPE_MISMATCH!>::A<!>)
+                    B(<!TYPE_MISMATCH!>aCallable<!>)
+                    B(bCallable)
+                    B(<!TYPE_MISMATCH!>cCallable<!>)
+                }
+            """
         )
     }
 
     @Test
-    fun testNonComposableFunctionReferences() {
-        // This code fails for two different reasons in K1 and K2. In K1, the code fails with
-        // a TYPE_MISMATCH, since we infer a non-composable function type in a context where a
-        // composable function type is expected. In K2, we can promote non-composable function
-        // types to composable function types (as this matches the behavior for suspend functions),
-        // but we explicitly forbid composable function references.
-        val error = if (useFir) "COMPOSABLE_FUNCTION_REFERENCE" else "TYPE_MISMATCH"
+    fun testComposableFunctionReferencesK2() {
+        assumeTrue(useFir)
+        check(
+            """
+                import androidx.compose.runtime.Composable
+    
+                @Composable fun A() {}
+                
+                val aCallable: () -> Unit = <!INITIALIZER_TYPE_MISMATCH!>::A<!>
+                val bCallable: @Composable () -> Unit = ::A
+                val cCallable = ::A
+
+                fun doSomething(fn: () -> Unit) { }
+                
+                @Composable fun B(content: @Composable () -> Unit) {
+                    content()
+                    doSomething(::<!INAPPLICABLE_CANDIDATE!>A<!>)
+                    doSomething(aCallable)
+                    doSomething(<!ARGUMENT_TYPE_MISMATCH!>bCallable<!>)
+                    doSomething(<!ARGUMENT_TYPE_MISMATCH!>cCallable<!>)
+                    B(::A)
+                    B(<!ARGUMENT_TYPE_MISMATCH!>aCallable<!>)
+                    B(bCallable)
+                    B(cCallable)
+                }
+            """
+        )
+    }
+
+    @Test
+    fun testNonComposableFunctionReferencesK1() {
+        assumeFalse(useFir)
+        check(
+            """
+            
+            import androidx.compose.runtime.Composable
+
+            fun A() {}
+                
+            val aCallable: () -> Unit = ::A
+            val bCallable: @Composable () -> Unit = <!TYPE_MISMATCH!>::A<!>
+            val cCallable = ::A
+            
+            fun doSomething(fn: () -> Unit) { print(fn) }
+            
+            @Composable fun B(content: @Composable () -> Unit) {
+                content()
+                doSomething(::A)
+                doSomething(aCallable)
+                doSomething(<!TYPE_MISMATCH!>bCallable<!>)
+                doSomething(cCallable)
+                B(<!TYPE_MISMATCH!>::A<!>)
+                B(<!TYPE_MISMATCH!>aCallable<!>)
+                B(bCallable)
+                B(<!TYPE_MISMATCH!>cCallable<!>)
+            }
+        """
+        )
+    }
+
+    @Test
+    fun testNonComposableFunctionReferencesK2() {
+        assumeTrue(useFir)
         check(
             """
             import androidx.compose.runtime.Composable
 
             fun A() {}
+                
             val aCallable: () -> Unit = ::A
-            val bCallable: @Composable () -> Unit = <!$error!>::A<!>
+            val bCallable: @Composable () -> Unit = <!INITIALIZER_TYPE_MISMATCH!>::A<!>
             val cCallable = ::A
+
             fun doSomething(fn: () -> Unit) { print(fn) }
+            
             @Composable fun B(content: @Composable () -> Unit) {
                 content()
                 doSomething(::A)
-                B(<!$error!>::A<!>)
+                doSomething(aCallable)
+                doSomething(<!ARGUMENT_TYPE_MISMATCH!>bCallable<!>)
+                doSomething(cCallable)
+                B(::<!INAPPLICABLE_CANDIDATE!>A<!>)
+                B(<!ARGUMENT_TYPE_MISMATCH!>aCallable<!>)
+                B(bCallable)
+                B(<!ARGUMENT_TYPE_MISMATCH!>cCallable<!>)
             }
         """
         )
@@ -316,7 +392,7 @@ class ComposableDeclarationCheckerTests(useFir: Boolean) : AbstractComposeDiagno
             """
             import androidx.compose.runtime.Composable
             interface A {
-                @Composable fun foo(x: Int = 0)
+                @Composable fun foo(x: Int = ${abstractDefaultParameter("0")})
             }
         """
         )
@@ -328,7 +404,7 @@ class ComposableDeclarationCheckerTests(useFir: Boolean) : AbstractComposeDiagno
             """
             import androidx.compose.runtime.Composable
             interface A {
-                @Composable fun foo(x: Int = ${if (useFir) "0" else "<!ABSTRACT_COMPOSABLE_DEFAULT_PARAMETER_VALUE!>0<!>"}) {}
+                @Composable fun foo(x: Int = ${openDefaultParameter("0")}) {}
             }
         """
         )
@@ -340,7 +416,7 @@ class ComposableDeclarationCheckerTests(useFir: Boolean) : AbstractComposeDiagno
             """
             import androidx.compose.runtime.Composable
             abstract class A {
-                @Composable abstract fun foo(x: Int = 0)
+                @Composable abstract fun foo(x: Int = ${abstractDefaultParameter("0")})
             }
         """
         )
@@ -352,7 +428,20 @@ class ComposableDeclarationCheckerTests(useFir: Boolean) : AbstractComposeDiagno
             """
             import androidx.compose.runtime.Composable
             open class A {
-                @Composable open fun foo(x: Int = ${if (useFir) "0" else "<!ABSTRACT_COMPOSABLE_DEFAULT_PARAMETER_VALUE!>0<!>"}) {}
+                @Composable open fun foo(x: Int = ${openDefaultParameter("0")}) {}
+            }
+        """
+        )
+    }
+
+    @Test
+    fun testInternalComposablesWithDefaultParameters() {
+        check(
+            """
+            import androidx.compose.runtime.Composable
+            internal abstract class A {
+                @Composable open fun foo(x: Int = ${internalDefaultParameter("0")}) {}
+                @Composable abstract fun bar(x: Int = ${internalDefaultParameter("0")})
             }
         """
         )
@@ -482,4 +571,27 @@ class ComposableDeclarationCheckerTests(useFir: Boolean) : AbstractComposeDiagno
             """
         )
     }
+
+    fun abstractDefaultParameter(value: String): String =
+        if (languageVersion < LanguageVersion.KOTLIN_2_1) {
+            "<!ABSTRACT_COMPOSABLE_DEFAULT_PARAMETER_VALUE!>$value<!>"
+        } else {
+            value
+        }
+
+    fun openDefaultParameter(value: String): String =
+        if (languageVersion < LanguageVersion.KOTLIN_2_0) {
+            "<!ABSTRACT_COMPOSABLE_DEFAULT_PARAMETER_VALUE!>$value<!>"
+        } else if (languageVersion < LanguageVersion.KOTLIN_2_2) {
+            "<!OPEN_COMPOSABLE_DEFAULT_PARAMETER_VALUE!>$value<!>"
+        } else {
+            value
+        }
+
+    fun internalDefaultParameter(value: String): String =
+        if (languageVersion < LanguageVersion.KOTLIN_2_0) {
+            "<!ABSTRACT_COMPOSABLE_DEFAULT_PARAMETER_VALUE!>$value<!>"
+        } else {
+            value
+        }
 }

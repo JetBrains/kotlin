@@ -5,11 +5,16 @@ description = "ABI generation for Kotlin/JVM"
 plugins {
     kotlin("jvm")
     id("jps-compatible")
+    id("java-test-fixtures")
 }
 
 sourceSets {
     "main" { projectDefault() }
-    "test" { projectDefault() }
+    "test" {
+        projectDefault()
+        generatedTestDir()
+    }
+    "testFixtures" { projectDefault() }
 }
 
 val embedded by configurations
@@ -26,6 +31,7 @@ dependencies {
     compileOnly(project(":compiler:util"))
     compileOnly(project(":compiler:cli"))
     compileOnly(project(":compiler:backend"))
+    compileOnly(project(":compiler:backend.jvm"))
     compileOnly(project(":compiler:frontend"))
     compileOnly(project(":compiler:frontend.java"))
     compileOnly(project(":compiler:plugin-api"))
@@ -40,9 +46,9 @@ dependencies {
     compileOnly(intellijCore())
     compileOnly(libs.intellij.asm)
 
-    testImplementation(libs.junit4)
-    testImplementation(projectTests(":compiler:tests-common"))
-    testImplementation(projectTests(":compiler:incremental-compilation-impl"))
+    testFixturesApi(libs.junit4)
+    testFixturesApi(testFixtures(project(":compiler:tests-common")))
+    testFixturesApi(testFixtures(project(":compiler:incremental-compilation-impl")))
 }
 
 optInToExperimentalCompilerApi()

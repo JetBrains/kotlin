@@ -8,7 +8,9 @@ package org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir
 import org.jetbrains.kotlin.backend.common.serialization.GlobalDeclarationTable
 import org.jetbrains.kotlin.ir.IrBuiltIns
 
-class JsGlobalDeclarationTable(builtIns: IrBuiltIns) : GlobalDeclarationTable(JsManglerIr) {
+class JsGlobalDeclarationTable(
+    builtIns: IrBuiltIns
+) : GlobalDeclarationTable(JsManglerIr) {
     init {
         loadKnownBuiltins(builtIns)
     }

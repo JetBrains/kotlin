@@ -8,10 +8,10 @@ import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.plugin.ProjectLocalConfigurations
 import org.jetbrains.kotlin.gradle.testbase.*
-import org.jetbrains.kotlin.gradle.util.isWindows
 import org.jetbrains.kotlin.gradle.util.replaceText
 import org.jetbrains.kotlin.test.TestMetadata
 import java.util.zip.ZipFile
+import kotlin.io.path.appendText
 import kotlin.io.path.deleteRecursively
 import kotlin.io.path.exists
 import kotlin.io.path.name
@@ -21,6 +21,10 @@ import kotlin.test.assertContains
 @MppGradlePluginTests
 class MppDslAppAndLibIT : KGPBaseTest() {
 
+    override val defaultBuildOptions: BuildOptions
+        // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
+        get() = super.defaultBuildOptions.copy(isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED)
+
     @GradleTest
     @TestMetadata(value = "new-mpp-lib-and-app")
     fun testLibAndApp(gradleVersion: GradleVersion) {
@@ -28,7 +32,6 @@ class MppDslAppAndLibIT : KGPBaseTest() {
             libProjectPath = "new-mpp-lib-and-app/sample-lib",
             appProjectPath = "new-mpp-lib-and-app/sample-app",
             gradleVersion = gradleVersion,
-            hmppSupport = true,
         )
     }
 
@@ -38,7 +41,6 @@ class MppDslAppAndLibIT : KGPBaseTest() {
         libProjectPath = "new-mpp-lib-and-app/sample-lib",
         appProjectPath = "new-mpp-lib-and-app/sample-app",
         gradleVersion = gradleVersion,
-        hmppSupport = false,
     )
 
     @GradleTest
@@ -48,7 +50,6 @@ class MppDslAppAndLibIT : KGPBaseTest() {
             libProjectPath = "new-mpp-lib-and-app/sample-lib-gradle-kotlin-dsl",
             appProjectPath = "new-mpp-lib-and-app/sample-app-gradle-kotlin-dsl",
             gradleVersion = gradleVersion,
-            hmppSupport = true,
         )
     }
 
@@ -56,15 +57,9 @@ class MppDslAppAndLibIT : KGPBaseTest() {
         libProjectPath: String,
         appProjectPath: String,
         gradleVersion: GradleVersion,
-        hmppSupport: Boolean,
     ) {
         val additionalBuildArgs = buildList {
-            if (hmppSupport) {
-                add("-P" + "kotlin.mpp.hierarchicalStructureSupport")
-                add("-P" + "kotlin.internal.suppressGradlePluginErrors=PreHMPPFlagsError,KotlinTargetAlreadyDeclaredError")
-            } else {
-                add("-P" + "kotlin.internal.suppressGradlePluginErrors=KotlinTargetAlreadyDeclaredError")
-            }
+            add("-P" + "kotlin.internal.suppressGradlePluginErrors=KotlinTargetAlreadyDeclaredError")
         }
 
         val localRepoDir = defaultLocalRepo(gradleVersion)
@@ -80,6 +75,9 @@ class MppDslAppAndLibIT : KGPBaseTest() {
             gradleVersion = gradleVersion,
             localRepoDir = localRepoDir,
         ) {
+            gradleProperties.appendText(
+                "\nkotlin.jvm.target.validation.mode=warning\n"
+            )
             build(
                 buildArguments = buildList {
                     add("clean")
@@ -138,6 +136,9 @@ class MppDslAppAndLibIT : KGPBaseTest() {
             gradleVersion = gradleVersion,
             localRepoDir = localRepoDir,
         ) {
+            gradleProperties.appendText(
+                "\nkotlin.jvm.target.validation.mode=warning\n"
+            )
             val buildGradle = listOf(buildGradle, buildGradleKts).first { it.exists() }
             buildGradle.replaceText(
                 "kotlinCompileLogLevel = LogLevel.LIFECYCLE",

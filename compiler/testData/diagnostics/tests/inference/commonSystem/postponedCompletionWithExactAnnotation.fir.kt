@@ -26,3 +26,6 @@ fun test(nullableSample: ISample, any: Any) {
         any
     )
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, interfaceDeclaration, intersectionType, nullableType, stringLiteral,
+typeConstraint, typeParameter */

@@ -25,3 +25,6 @@ fun <T : MutableList<out Number>> test2(t: T) {
 interface Consumer<T : Number> {
     fun consume(t: T)
 }
+
+/* GENERATED_FIR_TAGS: capturedType, classDeclaration, funWithExtensionReceiver, functionDeclaration, integerLiteral,
+interfaceDeclaration, lambdaLiteral, nullableType, outProjection, starProjection, typeConstraint, typeParameter */

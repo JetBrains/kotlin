@@ -2,9 +2,9 @@
 // RUN_PIPELINE_TILL: FIR2IR
 // MODULE: m1-common
 // FILE: common.kt
-<!EXPECT_ACTUAL_MISMATCH{JVM}!>expect<!> val String.a : String
+<!EXPECT_ACTUAL_IR_MISMATCH{JVM}!>expect<!> val String.a : String
 
-<!EXPECT_ACTUAL_MISMATCH{JVM}!>expect<!> val b : String
+<!EXPECT_ACTUAL_IR_MISMATCH{JVM}!>expect<!> val b : String
 
 expect val c : String.() -> String
 
@@ -12,7 +12,7 @@ expect val d : (String) -> String
 
 expect val <T> T.e : String
 
-<!EXPECT_ACTUAL_MISMATCH{JVM}!>expect<!> val <T> T.f : String
+<!EXPECT_ACTUAL_IR_MISMATCH{JVM}!>expect<!> val <T> T.f : String
 
 // MODULE: m2-jvm()()(m1-common)
 // FILE: jvm.kt
@@ -31,3 +31,6 @@ actual val <T> T.e : String
     get() = ""
 
 actual val <!ACTUAL_WITHOUT_EXPECT!>f<!> : String = ""
+
+/* GENERATED_FIR_TAGS: actual, expect, functionalType, getter, lambdaLiteral, nullableType, propertyDeclaration,
+propertyWithExtensionReceiver, stringLiteral, typeParameter, typeWithExtension */

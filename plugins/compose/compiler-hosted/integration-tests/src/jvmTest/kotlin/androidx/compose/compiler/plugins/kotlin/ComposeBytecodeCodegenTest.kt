@@ -625,8 +625,10 @@ class ComposeBytecodeCodegenTest(useFir: Boolean) : AbstractCodegenTest(useFir) 
     )
 
     @Test
-    fun testDefaultParametersInAbstractFunctions() = validateBytecode(
-        """
+    fun testDefaultParametersInAbstractFunctions() {
+        assumeTrue(useFir)
+        validateBytecode(
+            """
             import androidx.compose.runtime.*
 
             interface Test {
@@ -642,15 +644,16 @@ class ComposeBytecodeCodegenTest(useFir: Boolean) : AbstractCodegenTest(useFir) 
                 test.foo(0)
             }
         """,
-        validate = {
-            assertTrue(
-                it.contains(
-                    "INVOKESTATIC test/Test%ComposeDefaultImpls.foo%default (ILtest/Test;Landroidx/compose/runtime/Composer;II)V"
-                ),
-                "default static functions should be generated in ComposeDefaultsImpl class"
-            )
-        }
-    )
+            validate = {
+                assertTrue(
+                    it.contains(
+                        "INVOKESTATIC test/Test%ComposeDefaultImpls.foo%default (ILtest/Test;Landroidx/compose/runtime/Composer;II)V"
+                    ),
+                    "default static functions should be generated in ComposeDefaultsImpl class"
+                )
+            }
+        )
+    }
 
     @Test
     fun testDefaultParametersInOpenFunctions() {
@@ -778,13 +781,19 @@ class ComposeBytecodeCodegenTest(useFir: Boolean) : AbstractCodegenTest(useFir) 
                 }
             """,
             validate = { bytecode ->
-                val classesRegex = Regex("final class (.*?) \\{[\\S\\s]*?^}", RegexOption.MULTILINE)
-                val matches = classesRegex.findAll(bytecode)
-                val lambdaClass = matches
-                    .single { it.groups[1]?.value?.startsWith("test/ComposableSingletons%TestKt%lambda%") == true }
-                    .value
-                val invokeRegex = Regex("public final invoke([\\s\\S]*?)LOCALVARIABLE")
-                val invokeMethod = invokeRegex.find(lambdaClass)?.value ?: error("Could not find invoke method in $lambdaClass")
+                val invokeMethod = if (!useFir) {
+                    val classesRegex = Regex("final class (.*?) \\{[\\S\\s]*?^}", RegexOption.MULTILINE)
+                    val matches = classesRegex.findAll(bytecode)
+                    val lambdaClass = matches
+                        .single { it.groups[1]?.value?.startsWith("test/ComposableSingletons%TestKt%lambda%") == true }
+                        .value
+                    val invokeRegex = Regex("public final invoke([\\s\\S]*?)LOCALVARIABLE")
+                    invokeRegex.find(lambdaClass)?.value ?: error("Could not find invoke method in $lambdaClass")
+                } else {
+                    val staticLambdaFunctionRegex = Regex("private final static lambda.*lambda%0[\\S\\s]*?\\v\\v", RegexOption.MULTILINE)
+                    val matches = staticLambdaFunctionRegex.findAll(bytecode)
+                    matches.single().value
+                }
                 val lineNumbers = invokeMethod.lines()
                     .mapNotNull {
                         it.takeIf { it.contains("LINENUMBER") }
@@ -793,15 +802,30 @@ class ComposeBytecodeCodegenTest(useFir: Boolean) : AbstractCodegenTest(useFir) 
 
                 assertEquals(
                     """
-                    LINENUMBER 19 L3
-                    LINENUMBER 20 L5
-                    LINENUMBER 21 L6
+                    LINENUMBER 19 L4
+                    LINENUMBER 20 L6
+                    LINENUMBER 18 L3
+                    LINENUMBER 21 L7
                     """.trimIndent(),
                     lineNumbers.trimIndent()
                 )
             }
         )
     }
+
+    /**
+     * There are some parts of the bytecode that contain the actual line number.
+     * This is OK to be changed; therefore, we will sanitize this as we do care about the actual group keys
+     */
+    fun String.sanitizeOffsets(): String = lines().map { line ->
+        if (line.contains("LINENUMBER")) {
+            return@map "<LINENUMBER>"
+        }
+        if (line.contains("@Landroidx/compose/runtime/internal/FunctionKeyMeta;")) {
+            return@map "@Landroidx/compose/runtime/internal/FunctionKeyMeta;(<>)"
+        }
+        line.replace(Regex("""Test.kt:\d+"""), "Test.kt:<LINE_NUMBER>")
+    }.joinToString("\n")
 
     // regression test for b/376148043
     @Test
@@ -837,7 +861,7 @@ class ComposeBytecodeCodegenTest(useFir: Boolean) : AbstractCodegenTest(useFir) 
         val function4Regex = Regex("composableFun4[\\s\\S]*?LOCALVARIABLE")
         val function4 = function4Regex.find(newBytecode)?.value ?: error("Could not find function4 in new bytecode")
         val oldFunction4 = function4Regex.find(oldBytecode)?.value ?: error("Could not find function4 in old bytecide")
-        assertEquals(oldFunction4, function4)
+        assertEquals(oldFunction4.sanitizeOffsets(), function4.sanitizeOffsets())
     }
 
     @Test
@@ -881,17 +905,252 @@ class ComposeBytecodeCodegenTest(useFir: Boolean) : AbstractCodegenTest(useFir) 
             className = "TestClass",
         )
 
-        /**
-         * There are some parts of the bytecode that contain the actual line number.
-         * This is OK to be changed; therefore, we will sanitize this as we do care about the actual group keys
-         */
-        fun String.sanitize(): String = lines().map { line ->
-            if (line.contains("LINENUMBER")) {
-                return@map "<LINENUMBER>"
-            }
-            line.replace(Regex("""Test.kt:\d+"""), "Test.kt:<LINE_NUMBER>")
-        }.joinToString("\n")
+        assertEquals(newBytecode.sanitizeOffsets(), oldBytecode.sanitizeOffsets())
+    }
 
-        assertEquals(newBytecode.sanitize(), oldBytecode.sanitize())
+    @Test
+    fun testLocalObjectCapture() = testCompile(
+        """
+            import androidx.compose.runtime.*
+    
+            @Composable
+            fun Test(strings: List<String>) {
+                val objects = strings.map { string -> 
+                    val stringVar = string
+                    object {
+                        val value get() = stringVar
+                    }
+                }
+                val lambda = { 
+                    objects.forEach { println(it.value) }
+                }
+            }
+        """
+    )
+
+    @Test
+    fun testCaptureThisParameter() = testCompile(
+        """
+            import androidx.compose.runtime.*
+
+            interface SomeHandler {
+              fun onClick(someItem: String)
+            }
+            fun setContent(content: @Composable () -> Unit) {}
+
+            class ComposeTest {
+              private var item: String = ""
+            
+              private val someHandler = object : SomeHandler {
+                override fun onClick(s: String) {
+                  item = s // this line captures `this` parameter from `ComposeTest`
+                }
+              }
+            
+              fun test() {
+                setContent {
+                  val a = { it: String -> someHandler.onClick(it) }
+                }
+              }
+            }
+        """,
+    )
+
+    @Test
+    fun testVarargRestartGroup() {
+        validateBytecode(
+            """
+                import androidx.compose.runtime.*
+
+                @Composable
+                fun Foo(vararg text: String) {
+                    text.forEach { println(it) }
+                }
+            """,
+            validate = {
+                assertFalse {
+                    it.contains("Arrays.copyOf")
+                }
+            }
+        )
+    }
+
+    @Test
+    fun testFunctionReferenceInline() {
+        assumeTrue(useFir)
+        validateBytecode(
+            """
+                import androidx.compose.runtime.*
+
+                @Composable inline fun Fn(content: @Composable (Int) -> Unit) {
+                    content(0)
+                }
+
+                @Composable inline fun Fn2(int: Int) {
+                    println("Test " + int)
+                }
+
+                @Composable
+                fun Test() {
+                    Fn(::Fn2)
+                }
+            """,
+            validate = {
+                val testRegex = Regex("public final static Test([\\s\\S]*?)LOCALVARIABLE")
+                val test = testRegex.find(it)?.value ?: error("Could not find Test in $it")
+                assertTrue("Test should contain inlined println") {
+                    test.contains("INVOKEVIRTUAL java/io/PrintStream.println (Ljava/lang/Object;)V")
+                }
+            },
+        )
+    }
+
+    @Test
+    fun testFunctionReferenceInlineAdapted() {
+        assumeTrue(useFir)
+        validateBytecode(
+            """
+                import androidx.compose.runtime.*
+
+                @Composable inline fun Fn(content: @Composable () -> Unit) {
+                    content()
+                }
+
+                @Composable inline fun Fn2(int: Int = 0) {
+                    println("Test " + int)
+                }
+
+                @Composable
+                fun Test() {
+                    Fn(::Fn2)
+                }
+            """,
+            validate = {
+                val testRegex = Regex("public final static Test([\\s\\S]*?)LOCALVARIABLE")
+                val test = testRegex.find(it)?.value ?: error("Could not find Test in $it")
+                assertTrue("Test should contain inlined println") {
+                    test.contains("INVOKEVIRTUAL java/io/PrintStream.println (Ljava/lang/Object;)V")
+                }
+            },
+        )
+    }
+
+    @Test
+    fun testNonRestartableFunctionReference() {
+        assumeTrue(useFir)
+        testCompile(
+            """
+                import androidx.compose.runtime.*
+
+                @Composable fun Fn(content: @Composable (Int) -> Int) {
+                    content(0)
+                }
+
+                @Composable fun Fn2(int: Int) = int
+
+                @Composable
+                fun Test() {
+                    Fn(::Fn2)
+                }
+            """
+        )
+    }
+
+    @Test
+    fun samFunctionReference() = testCompile(
+        source = """
+            import androidx.compose.runtime.*
+    
+            fun Fn(int: Int): Int = 0
+    
+            fun interface Collector<T> {
+                suspend fun invoke(int: T): T
+            }
+
+            fun Ref(content: Collector<Int>) {
+                Ref(::Fn)
+            }
+        """
+    )
+
+    @Test
+    fun remember() = testCompile(
+        """
+            import androidx.compose.runtime.*
+
+            fun compose(content: () -> Unit) {}
+            inline fun <T> myRemember(block: () -> T): T =
+                block().also { println(it) }
+
+
+            fun foo(x: Any, boolean: Boolean) {
+                compose {
+                    myRemember { x }
+                }
+            }
+        """,
+        dumpClasses = true
+    )
+
+    @Test
+    fun foo() = validateBytecode(
+        """
+            import androidx.compose.runtime.*
+            
+            @Composable
+            fun Foo() {
+                println("Place breakpoints on all 3 println lines")
+                println("Debugger will stop on the first 2 but not the last one")
+                println("If you comment out the first two lines and place a breakpoint on the last one, the debugger will not stop")
+            }
+        """,
+        validate = {
+            val foo = Regex("public final static Foo([\\s\\S]*?)LOCALVARIABLE").find(it)?.value
+                ?: error("Could not find Foo")
+
+            assertTrue("Expected a fake line number for skipToGroupEnd function") {
+                foo.contains(
+                    """
+                    |    LINENUMBER 13 L3
+                    |    ALOAD 0
+                    |    INVOKEINTERFACE androidx/compose/runtime/Composer.skipToGroupEnd ()V (itf)
+                    """.trimMargin()
+                )
+            }
+
+            assertTrue("Expected a line number for endRestartGroup function") {
+                foo.contains(
+                    """
+                    |    LINENUMBER 17 L8
+                    |    ALOAD 0
+                    |    INVOKEINTERFACE androidx/compose/runtime/Composer.endRestartGroup ()Landroidx/compose/runtime/ScopeUpdateScope; (itf)
+                    """.trimMargin()
+                )
+            }
+        }
+    )
+
+    @Test
+    fun binaryCompatStubWithDeprecated() {
+        validateBytecode(
+            """
+            import androidx.compose.runtime.*
+
+            @JvmInline
+            value class Test(val value: String)
+
+            @Composable
+            @Deprecated("This is a deprecated function", level = DeprecationLevel.ERROR)
+            fun deprecatedFunction(v: Test = Test("")) {}
+            """,
+        ) {
+            assertTrue("Expected a binary compatibility stub for deprecated function") {
+                it.contains("public final static synthetic deprecatedFunction-HbeoACc(Ljava/lang/String;Landroidx/compose/runtime/Composer;II)V")
+            }
+
+            assertFalse($$"Expected no @Deprecated$Container declarations") {
+                it.contains("@Lkotlin/Deprecated%Container;")
+            }
+        }
     }
 }

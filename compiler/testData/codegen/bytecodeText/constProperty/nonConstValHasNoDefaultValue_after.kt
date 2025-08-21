@@ -1,4 +1,4 @@
-// LANGUAGE: +NoConstantValueAttributeForNonConstVals +JvmFieldInInterface
+// LANGUAGE: +JvmFieldInInterface
 
 class C {
     val testClassVal = 100

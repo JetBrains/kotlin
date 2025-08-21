@@ -40,3 +40,7 @@ fun main() {
     val x: Outer<String>.Inner<String> = factoryString()
     outer.set(x)
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType,
+infix, inner, integerLiteral, lambdaLiteral, localProperty, nullableType, outProjection, propertyDeclaration,
+starProjection, stringLiteral, thisExpression, typeParameter, typeWithExtension */

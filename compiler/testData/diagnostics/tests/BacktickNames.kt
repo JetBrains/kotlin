@@ -94,3 +94,7 @@ fun <!INVALID_CHARACTERS!>`foo:bar`<!>(<!INVALID_CHARACTERS!>`\arg`<!>: Int): In
 
     return `\arg`
 }
+
+/* GENERATED_FIR_TAGS: anonymousFunction, classDeclaration, data, destructuringDeclaration, forLoop, functionDeclaration,
+functionalType, init, integerLiteral, lambdaLiteral, localFunction, localProperty, primaryConstructor,
+propertyDeclaration, rangeExpression, tryExpression */

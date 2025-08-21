@@ -23,3 +23,6 @@ fun foo() {
     }
     println(x)
 }
+
+/* GENERATED_FIR_TAGS: assignment, contractCallsEffect, contracts, functionDeclaration, functionalType, inline,
+integerLiteral, lambdaLiteral, localProperty, propertyDeclaration, stringLiteral */

@@ -16,3 +16,5 @@ interface IC : Function0<Int><!SUPERTYPE_INITIALIZED_IN_INTERFACE!>()<!>
 interface ID : suspend () -> Int<!SUPERTYPE_INITIALIZED_IN_INTERFACE!>()<!>
 interface IE : (suspend () -> Int)<!SUPERTYPE_INITIALIZED_IN_INTERFACE!>()<!>
 interface IF : kotlin.coroutines.SuspendFunction0<Int><!SUPERTYPE_INITIALIZED_IN_INTERFACE!>()<!>
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionalType, interfaceDeclaration, suspend */

@@ -6,3 +6,5 @@ data class <!CLASSIFIER_REDECLARATION!>NoParameterReturnTypeInTheMiddle<!>(val x
 data class NoParameterReturnType(val x<!SYNTAX!><!>)
 
 data class <!CLASSIFIER_REDECLARATION!>NoParameterReturnTypeInTheMiddle<!>(val x: Int, val y<!SYNTAX!><!>, val z: Int)
+
+/* GENERATED_FIR_TAGS: classDeclaration, data, primaryConstructor, propertyDeclaration */

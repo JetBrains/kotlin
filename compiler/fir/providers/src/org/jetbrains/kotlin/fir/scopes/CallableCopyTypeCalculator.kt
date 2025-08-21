@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.fir.scopes
 
+import org.jetbrains.kotlin.KtFakeSourceElementKind
+import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.resolvedTypeFromPrototype
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
@@ -58,7 +60,9 @@ abstract class CallableCopyTypeCalculator {
                 }
 
                 val returnType = callableCopyDeferredTypeCalculation.computeReturnType(this) ?: return null
-                val returnTypeRef = declaration.returnTypeRef.resolvedTypeFromPrototype(returnType)
+                val returnTypeRef = declaration.returnTypeRef.resolvedTypeFromPrototype(
+                    returnType, declaration.source?.fakeElement(KtFakeSourceElementKind.ImplicitTypeRef)
+                )
 
                 declaration.replaceReturnTypeRef(returnTypeRef)
                 if (declaration is FirProperty) {
@@ -76,9 +80,24 @@ abstract class CallableCopyTypeCalculator {
     }
 
     /**
-     * See [DeferredCallableCopyTypeCalculator].
+     * Run deferred return types calculations and forces lazy resolution of overridden declarations.
+     *
+     * @see DeferredCallableCopyTypeCalculator
+     * @see FirDeclarationAttributes.deferredCallableCopyReturnType
      */
-    object Forced : DeferredCallableCopyTypeCalculator() {
+    object CalculateDeferredForceLazyResolution : DeferredCallableCopyTypeCalculator() {
+        override fun FirCallableDeclaration.getResolvedTypeRef(): FirResolvedTypeRef? {
+            return symbol.resolvedReturnTypeRef
+        }
+    }
+
+    /**
+     * Run deferred return types calculations but doesn't force lazy resolution of overridden declarations.
+     *
+     * @see DeferredCallableCopyTypeCalculator
+     * @see FirDeclarationAttributes.deferredCallableCopyReturnType
+     */
+    object CalculateDeferredWhenPossible : DeferredCallableCopyTypeCalculator() {
         override fun FirCallableDeclaration.getResolvedTypeRef(): FirResolvedTypeRef? {
             return returnTypeRef as? FirResolvedTypeRef
         }

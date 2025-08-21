@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle
 
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.gradle.util.resolveRepoPath
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.io.TempDir
 import java.nio.file.Path
@@ -18,7 +19,12 @@ class K2KotlinxSerializationIT : KGPBaseTest() {
     @DisplayName("Compile common code to metadata with kotlinx.serialization and K2")
     @GradleTest
     fun `test kotlinxSerializationMppK2`(gradleVersion: GradleVersion) {
-        project("kotlinxSerializationMppK2", gradleVersion) {
+        project(
+            "kotlinxSerializationMppK2",
+            gradleVersion,
+            // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
+            buildOptions = defaultBuildOptions.copy(isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED),
+        ) {
             build(":compileCommonMainKotlinMetadata") {
                 assertTasksExecuted(":compileCommonMainKotlinMetadata")
             }
@@ -29,6 +35,10 @@ class K2KotlinxSerializationIT : KGPBaseTest() {
     @GradleTest
     fun `test kotlinx serialization K2 against K1`(gradleVersion: GradleVersion) {
         project("kotlinxSerializationK2AgainstK1", gradleVersion) {
+            subprojects("app", "lib").buildScriptInjection {
+                project.plugins.apply("org.jetbrains.kotlin.plugin.serialization")
+                dependencies.add("implementation", "org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.0")
+            }
             build(":app:run") {
                 assertTasksExecuted(":app:run")
             }
@@ -47,10 +57,12 @@ class K2KotlinxSerializationIT : KGPBaseTest() {
                 gradleVersion,
                 "KGP 1.7.20 produces deprecation warning in Gradle 8.7"
             )
+                // KGP 1.7.20 is not compatible with configuration cache in Gradle 8
+                .copy(configurationCache = BuildOptions.ConfigurationCacheValue.DISABLED)
         ) {
             build(":publish") {
                 assertTasksExecuted(":publish")
-                val publishedLib = tempDir.resolve("com/example/serialization_lib/serialization_lib/1.0")
+                val publishedLib = tempDir.resolveRepoPath("com.example.serialization_lib", "serialization_lib", "1.0")
                 assertDirectoryExists(publishedLib)
                 assertTrue(publishedLib.listDirectoryEntries().isNotEmpty())
             }
@@ -66,7 +78,12 @@ class K2KotlinxSerializationIT : KGPBaseTest() {
     @DisplayName("Compile production executable with kotlinx.serialization to JS. KT-57690, KT-57807")
     @GradleTest
     fun `test kotlinx serialization compile to JS`(gradleVersion: GradleVersion) {
-        project("kotlinxSerializationK2WithJs", gradleVersion) {
+        project(
+            "kotlinxSerializationK2WithJs",
+            gradleVersion,
+            // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
+            buildOptions = defaultBuildOptions.copy(isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED),
+        ) {
             build(":compileProductionExecutableKotlinJs")
         }
     }
@@ -74,7 +91,12 @@ class K2KotlinxSerializationIT : KGPBaseTest() {
     @DisplayName("Compile test sourceset with kotlinx.serialization to JS. KT-57781")
     @GradleTest
     fun `test kotlinx serialization compile test source set to JS`(gradleVersion: GradleVersion) {
-        project("kotlinxSerializationK2WithJs", gradleVersion) {
+        project(
+            "kotlinxSerializationK2WithJs",
+            gradleVersion,
+            // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
+            buildOptions = defaultBuildOptions.copy(isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED),
+        ) {
             build(":compileTestKotlinJs")
         }
     }
@@ -82,7 +104,12 @@ class K2KotlinxSerializationIT : KGPBaseTest() {
     @DisplayName("Compile MPP project to JS kotlinx.serialization and K2")
     @GradleTest
     fun `test kotlinx serialization mpp to JS`(gradleVersion: GradleVersion) {
-        project("kotlinxSerializationMppK2", gradleVersion) {
+        project(
+            "kotlinxSerializationMppK2",
+            gradleVersion,
+            // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
+            buildOptions = defaultBuildOptions.copy(isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED),
+        ) {
             build(":compileKotlinJs")
         }
     }

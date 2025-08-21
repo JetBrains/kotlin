@@ -45,27 +45,36 @@ fun ConstraintStorage.buildNotFixedVariablesToNonSubtypableTypesSubstitutor(
     )
 }
 
-fun TypeSystemInferenceExtensionContext.hasRecursiveTypeParametersWithGivenSelfType(selfTypeConstructor: TypeConstructorMarker): Boolean =
-    selfTypeConstructor.getParameters().any { it.hasRecursiveBounds(selfTypeConstructor) } ||
-            isK2 && selfTypeConstructor is CapturedTypeConstructorMarker && selfTypeConstructor.supertypes().any { hasRecursiveTypeParametersWithGivenSelfType(it.typeConstructor()) }
+context(c: TypeSystemInferenceExtensionContext)
+fun TypeConstructorMarker.hasRecursiveTypeParametersWithGivenSelfType(): Boolean {
+    if (getParameters().any { it.hasRecursiveBounds(this) }) return true
+    if (!c.isK2) return false
 
-fun TypeSystemInferenceExtensionContext.isRecursiveTypeParameter(typeConstructor: TypeConstructorMarker) =
-    typeConstructor.getTypeParameterClassifier()?.hasRecursiveBounds() == true
+    if (this is CapturedTypeConstructorMarker || this.isIntersection()) {
+        return supertypes().any {
+            it.typeConstructor().hasRecursiveTypeParametersWithGivenSelfType()
+        }
+    }
 
-fun TypeSystemInferenceExtensionContext.extractTypeForGivenRecursiveTypeParameter(
-    type: KotlinTypeMarker,
-    typeParameter: TypeParameterMarker
-): KotlinTypeMarker? {
-    for (argument in type.getArguments()) {
+    return false
+}
+
+context(c: TypeSystemInferenceExtensionContext)
+fun TypeConstructorMarker.isRecursiveTypeParameter() =
+    getTypeParameterClassifier()?.hasRecursiveBounds() == true
+
+context(context: TypeSystemInferenceExtensionContext)
+fun KotlinTypeMarker.extractTypeForGivenRecursiveTypeParameter(typeParameter: TypeParameterMarker): KotlinTypeMarker? {
+    for (argument in getArguments()) {
         val argumentType = argument.getType() ?: continue
         val typeConstructor = argumentType.typeConstructor()
         if (typeConstructor is TypeVariableTypeConstructorMarker
             && typeConstructor.typeParameter == typeParameter
-            && typeConstructor.typeParameter?.hasRecursiveBounds(type.typeConstructor()) == true
+            && typeConstructor.typeParameter?.hasRecursiveBounds(typeConstructor()) == true
         ) {
-            return type
+            return this
         }
-        extractTypeForGivenRecursiveTypeParameter(argumentType, typeParameter)?.let { return it }
+        argumentType.extractTypeForGivenRecursiveTypeParameter(typeParameter)?.let { return it }
     }
 
     return null
@@ -80,21 +89,20 @@ fun NewConstraintSystemImpl.registerTypeVariableIfNotPresent(
     }
 }
 
-fun TypeSystemInferenceExtensionContext.extractAllContainingTypeVariables(type: KotlinTypeMarker): Set<TypeConstructorMarker> = buildSet {
-    extractAllContainingTypeVariablesNoCaptureTypeProcessing(type, this)
+context(c: TypeSystemInferenceExtensionContext)
+fun KotlinTypeMarker.extractAllContainingTypeVariables(): Set<TypeConstructorMarker> = buildSet {
+    extractAllContainingTypeVariablesNoCaptureTypeProcessing(this)
 
-    val typeProjections = extractProjectionsForAllCapturedTypes(type)
+    val typeProjections = extractProjectionsForAllCapturedTypes()
 
     typeProjections.forEach { typeProjectionsType ->
-        extractAllContainingTypeVariablesNoCaptureTypeProcessing(typeProjectionsType, this)
+        typeProjectionsType.extractAllContainingTypeVariablesNoCaptureTypeProcessing(this)
     }
 }
 
-private fun TypeSystemInferenceExtensionContext.extractAllContainingTypeVariablesNoCaptureTypeProcessing(
-    type: KotlinTypeMarker,
-    result: MutableSet<TypeConstructorMarker>
-) {
-    type.contains { nestedType ->
+context(context: TypeSystemInferenceExtensionContext)
+private fun KotlinTypeMarker.extractAllContainingTypeVariablesNoCaptureTypeProcessing(result: MutableSet<TypeConstructorMarker>) {
+    contains { nestedType ->
         nestedType.typeConstructor().unwrapStubTypeVariableConstructor().let { nestedTypeConstructor ->
             if (nestedTypeConstructor.isTypeVariable()) {
                 result.add(nestedTypeConstructor)

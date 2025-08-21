@@ -17,3 +17,6 @@ class Test4 : CStar {
 }
 
 class Test5 : CT<<!PROJECTION_IN_IMMEDIATE_ARGUMENT_TO_SUPERTYPE!>*<!>>()
+
+/* GENERATED_FIR_TAGS: classDeclaration, inProjection, nullableType, outProjection, secondaryConstructor, starProjection,
+typeAliasDeclaration, typeAliasDeclarationWithTypeParameter, typeParameter */

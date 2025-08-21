@@ -17,3 +17,5 @@ interface KtFirSymbol<out S> : KtSymbol, KtLifetimeOwner {
     override val token: String get() = ""
 }
 
+/* GENERATED_FIR_TAGS: classDeclaration, getter, interfaceDeclaration, nullableType, out, override, propertyDeclaration,
+stringLiteral, typeParameter */

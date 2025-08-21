@@ -10,10 +10,11 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.api.platform.KaCachedService
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinProjectStructureProvider
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
+import org.jetbrains.kotlin.analysis.api.utils.errors.withKaModuleEntry
 import org.jetbrains.kotlin.analysis.low.level.api.fir.projectStructure.llFirModuleData
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
-import org.jetbrains.kotlin.utils.mapToIndex
+import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
 /**
  * A combined symbol provider which *selects* a subset of its [providers] to delegate to by an element's [KaModule]. For example, a
@@ -27,16 +28,21 @@ internal abstract class LLSelectingCombinedSymbolProvider<PROVIDER : FirSymbolPr
     project: Project,
     override val providers: List<PROVIDER>,
 ) : LLCombinedSymbolProvider<PROVIDER>(session) {
-    protected val providersByKtModule: Map<KaModule, PROVIDER> =
-        providers
-            .groupingBy { it.session.llFirModuleData.ktModule }
-            // `reduce` invokes the `error` operation if it encounters a second element.
-            .reduce { module, _, _ -> error("$module must have a unique symbol provider.") }
-
     /**
-     * [KaModule] precedence must be checked in case of multiple candidates to preserve classpath order.
+     * Maps each [KaModule] (corresponding uniquely to a symbol provider) to its index in [providers]. This determines the [KaModule]
+     * precedence, which must be checked in case of multiple candidates to preserve classpath order.
      */
-    private val modulePrecedenceMap: Map<KaModule, Int> = providers.map { it.session.llFirModuleData.ktModule }.mapToIndex()
+    private val moduleToIndex: Map<KaModule, Int> = buildMap {
+        providers.forEachIndexed { index, provider ->
+            val module = provider.session.llFirModuleData.ktModule
+            if (module in this) {
+                errorWithAttachment("`${module::class.simpleName}` must not be associated with multiple symbol providers.") {
+                    withKaModuleEntry("module", module)
+                }
+            }
+            put(module, index)
+        }
+    }
 
     /**
      * Cache [KotlinProjectStructureProvider] to avoid service access when getting [KaModule]s.
@@ -55,39 +61,39 @@ internal abstract class LLSelectingCombinedSymbolProvider<PROVIDER : FirSymbolPr
      * should be delegated. This is a post-processing step that preserves classpath order when, for example, an index access with a combined
      * scope isn't guaranteed to return the first element in classpath order.
      */
-    protected fun <CANDIDATE> selectFirstElementInClasspathOrder(
+    protected inline fun <CANDIDATE> selectFirstElementInClasspathOrder(
         candidates: Collection<CANDIDATE>,
         getElement: (CANDIDATE) -> PsiElement?,
     ): Pair<CANDIDATE, PROVIDER>? {
         if (candidates.isEmpty()) return null
 
-        // We're using a custom implementation instead of `minBy` so that `ktModule` doesn't need to be fetched twice.
+        // We're using a custom implementation instead of `minBy` since we need the precedence as well to find the provider at the end.
         var currentCandidate: CANDIDATE? = null
         var currentPrecedence: Int = Int.MAX_VALUE
-        var currentKtModule: KaModule? = null
 
         for (candidate in candidates) {
             val element = getElement(candidate) ?: continue
-            val ktModule = getModule(element)
+            val module = getModule(element)
 
-            // If `ktModule` cannot be found in the map, `candidate` cannot be processed by any of the available providers, because none of
+            // If `module` cannot be found in the map, `candidate` cannot be processed by any of the available providers, because none of
             // them belong to the correct module. We can skip in that case, because iterating through all providers wouldn't lead to any
             // results for `candidate`.
-            val precedence = modulePrecedenceMap[ktModule] ?: continue
+            val precedence = moduleToIndex[module] ?: continue
             if (precedence < currentPrecedence) {
                 currentCandidate = candidate
                 currentPrecedence = precedence
-                currentKtModule = ktModule
             }
         }
 
         val candidate = currentCandidate ?: return null
-        val ktModule = currentKtModule ?: error("`currentKtModule` must not be `null` when `currentCandidate` has been found.")
 
-        // The provider will always be found at this point, because `modulePrecedenceMap` contains the same keys as `providersByKtModule`
-        // and a precedence for `currentKtModule` must have been found in the previous step.
-        val provider = providersByKtModule.getValue(ktModule)
+        // `currentPrecedence` will always be a valid index at this point, because the precedence was taken from `moduleToIndex`, which
+        // corresponds directly to the indices in `providers`.
+        val provider = providers[currentPrecedence]
 
         return Pair(candidate, provider)
     }
+
+    protected fun getProviderByModule(module: KaModule): PROVIDER? =
+        moduleToIndex[module]?.let { providers[it] }
 }

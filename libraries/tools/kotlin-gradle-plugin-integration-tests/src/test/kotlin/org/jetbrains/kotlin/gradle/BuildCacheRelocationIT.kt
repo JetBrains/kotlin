@@ -74,7 +74,12 @@ class BuildCacheRelocationIT : KGPBaseTest() {
     @DisplayName("works with JS/DCE project")
     @GradleTest
     fun testRelocationKotlinJs(gradleVersion: GradleVersion) {
-        val (firstProject, secondProject) = prepareTestProjects("kotlin-js-dce", gradleVersion)
+        val (firstProject, secondProject) = prepareTestProjects(
+            "kotlin-js-dce",
+            gradleVersion,
+            // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
+            buildOptions = defaultBuildOptions.copy(isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED),
+        )
 
         checkBuildCacheRelocation(
             firstProject,
@@ -90,10 +95,65 @@ class BuildCacheRelocationIT : KGPBaseTest() {
     }
 
     @MppGradlePluginTests
+    @DisplayName("works with Wasm project")
+    @GradleTest
+    fun testRelocationKotlinWasm(gradleVersion: GradleVersion) {
+        val (firstProject, secondProject) = prepareTestProjects(
+            "new-mpp-wasm-wasi-js-test",
+            gradleVersion,
+            // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
+            buildOptions = defaultBuildOptions.copy(isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED),
+        )
+
+        checkBuildCacheRelocation(
+            firstProject,
+            secondProject,
+            listOf("assemble"),
+            listOf(
+                ":lib:compileKotlinWasmJs",
+                ":lib:compileKotlinWasmWasi",
+                ":app:compileKotlinWasmJs",
+                ":app:compileKotlinWasmWasi",
+                ":app:compileProductionExecutableKotlinWasmJs",
+                ":app:compileProductionExecutableKotlinWasmWasi",
+            )
+        )
+    }
+
+    @MppGradlePluginTests
+    @DisplayName("works with Wasm Browser project")
+    @GradleTest
+    fun testRelocationKotlinWasmBrowser(gradleVersion: GradleVersion) {
+        val (firstProject, secondProject) = prepareTestProjects(
+            "mpp-wasm-js-browser-nodejs",
+            gradleVersion,
+            // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
+            buildOptions = defaultBuildOptions.copy(isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED),
+        )
+
+        checkBuildCacheRelocation(
+            firstProject,
+            secondProject,
+            listOf("assemble"),
+            listOf(
+                ":compileKotlinWasmJs",
+                ":compileKotlinWasmJs",
+                ":compileProductionExecutableKotlinWasmJs",
+                ":wasmJsBrowserProductionWebpack",
+            )
+        )
+    }
+
+    @MppGradlePluginTests
     @DisplayName("works with Multiplatform")
     @GradleTest
     fun testRelocationMultiplatform(gradleVersion: GradleVersion) {
-        val (firstProject, secondProject) = prepareTestProjects("new-mpp-lib-with-tests", gradleVersion)
+        val (firstProject, secondProject) = prepareTestProjects(
+            "new-mpp-lib-with-tests",
+            gradleVersion,
+            // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
+            buildOptions = defaultBuildOptions.copy(isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED),
+        )
 
         checkBuildCacheRelocation(
             firstProject,
@@ -134,7 +194,7 @@ class BuildCacheRelocationIT : KGPBaseTest() {
                         "$module:compile$flavor${buildType}Kotlin"
                     }
                 }
-            }
+            },
         )
     }
 
@@ -195,7 +255,7 @@ class BuildCacheRelocationIT : KGPBaseTest() {
                 listOf("kapt", "kaptGenerateStubs", "compile").map { kotlinTask ->
                     ":app:$kotlinTask${buildType}Kotlin"
                 }
-            }
+            },
         )
     }
 
@@ -293,7 +353,9 @@ class BuildCacheRelocationIT : KGPBaseTest() {
         cacheableTasks: List<String>,
         additionalAssertions: BuildResult.() -> Unit = {},
     ) {
-        firstProject.build(*tasksToExecute.toTypedArray()) {
+        firstProject.build(
+            *tasksToExecute.toTypedArray(),
+        ) {
             assertTasksPackedToCache(*cacheableTasks.toTypedArray())
             additionalAssertions()
         }

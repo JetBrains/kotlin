@@ -31,3 +31,5 @@ fun f() {
   val c4: a.M.<!INVISIBLE_REFERENCE!>PrNested<!>
 
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, javaType, localProperty, propertyDeclaration */

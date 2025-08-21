@@ -13,3 +13,6 @@ class C(a: A, b: B) {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, init, interfaceDeclaration, lambdaLiteral, localProperty, nullableType,
+primaryConstructor, propertyDeclaration, safeCall */

@@ -48,7 +48,7 @@ abstract class LLFirSession(
     val ktModule: KaModule,
     override val builtinTypes: BuiltinTypes,
     kind: Kind
-) : FirSession(sessionProvider = null, kind) {
+) : FirSession(kind) {
     abstract fun getScopeSession(): ScopeSession
 
     val project: Project
@@ -59,6 +59,12 @@ abstract class LLFirSession(
      */
     @Volatile
     var isValid: Boolean = true
+        internal set
+
+    /**
+     * Information about where the invalidation occurred used for diagnostic purposes.
+     */
+    var invalidationInformation: String? = null
         internal set
 
     /**

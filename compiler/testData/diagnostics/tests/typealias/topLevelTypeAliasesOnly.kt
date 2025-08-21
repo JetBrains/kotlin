@@ -1,5 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// FIR_IDENTICAL
+// RENDER_DIAGNOSTICS_FULL_TEXT
+
 typealias TopLevel = Any
 
 interface A {
@@ -19,3 +20,5 @@ class C {
 fun foo() {
     <!TOPLEVEL_TYPEALIASES_ONLY!>typealias Local = Any<!>
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, interfaceDeclaration, nestedClass, typeAliasDeclaration */

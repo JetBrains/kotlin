@@ -21,3 +21,6 @@ fun main() {
     outBar().x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x
     id(outBar()).x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x
 }
+
+/* GENERATED_FIR_TAGS: capturedType, functionDeclaration, interfaceDeclaration, nullableType, out, propertyDeclaration,
+starProjection, typeConstraint, typeParameter */

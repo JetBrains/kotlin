@@ -26,6 +26,12 @@ public class ParcelizeIrBoxTestGenerated extends AbstractParcelizeIrBoxTest {
   }
 
   @Test
+  @TestMetadata("aliasTypeParceler.kt")
+  public void testAliasTypeParceler() {
+    runTest("plugins/parcelize/parcelize-compiler/testData/box/aliasTypeParceler.kt");
+  }
+
+  @Test
   public void testAllFilesPresentInBox() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/parcelize/parcelize-compiler/testData/box"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
   }

@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // IGNORE_FIR_DIAGNOSTICS
 // RUN_PIPELINE_TILL: BACKEND
 // MODULE: m1-common
@@ -20,3 +19,6 @@ interface B<T> {
 
     fun getDefault(): T
 }
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, functionDeclaration, integerLiteral, interfaceDeclaration,
+nullableType, override, typeParameter */

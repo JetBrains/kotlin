@@ -10,7 +10,10 @@ import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
-import org.jetbrains.kotlin.fir.resolve.calls.*
+import org.jetbrains.kotlin.fir.resolve.calls.ConeAtomWithCandidate
+import org.jetbrains.kotlin.fir.resolve.calls.ConeResolutionAtom
+import org.jetbrains.kotlin.fir.resolve.calls.InferenceError
+import org.jetbrains.kotlin.fir.resolve.calls.ResolutionContext
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.Candidate
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.candidate
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.processPostponedAtoms
@@ -90,7 +93,7 @@ class FirDelegatedPropertyInferenceSession(
         val candidateSystem = candidate.system
 
         partiallyResolvedCalls.add(call to candidate)
-        currentConstraintSystem.addOtherSystem(candidateSystem.currentStorage())
+        currentConstraintSystem.replaceContentWith(candidateSystem.currentStorage())
     }
 
     private fun <T> requireCallIsDelegateOperator(call: T) where T : FirResolvable, T : FirStatement {
@@ -106,7 +109,7 @@ class FirDelegatedPropertyInferenceSession(
         check(!wasCompletionRun)
         wasCompletionRun = true
 
-        parentConstraintSystem.addOtherSystem(currentConstraintStorage)
+        parentConstraintSystem.replaceContentWith(currentConstraintStorage)
 
         (nonTrivialParentSession as? FirPCLAInferenceSession)?.apply {
             if (delegateCandidate != null) {

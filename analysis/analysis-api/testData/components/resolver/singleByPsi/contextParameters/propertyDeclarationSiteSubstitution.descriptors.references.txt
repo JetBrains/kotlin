@@ -1,0 +1,6 @@
+KtNameReferenceExpression(193,196): 'foo'
+  KtSimpleNameReference:
+    (in Another) abstract val foo: kotlin.Long
+
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)

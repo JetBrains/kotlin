@@ -1,0 +1,18 @@
+KtCallExpression(72,77): 'foo()'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /foo(): kotlin.Unit
+          valueParameters = []
+          contextParameters = []
+          callableId = /foo
+      typeArgumentsMapping = {}
+    isInBestCandidates = true

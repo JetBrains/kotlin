@@ -16,3 +16,6 @@ fun main() {
         true
     })
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType, infix, javaType,
+lambdaLiteral, nullableType, typeParameter, typeWithExtension */

@@ -6,6 +6,8 @@ package org.jetbrains.kotlin.gradle.mpp
 
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.gradle.testbase.BuildOptions
+import org.jetbrains.kotlin.gradle.util.replaceText
 import org.jetbrains.kotlin.test.TestMetadata
 
 @MppGradlePluginTests
@@ -42,7 +44,10 @@ class MppDslSourceSetsIT : KGPBaseTest() {
             projectName = "mpp-empty-sources",
             gradleVersion = gradleVersion,
             localRepoDir = defaultLocalRepo(gradleVersion),
+            // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
+            buildOptions = defaultBuildOptions.disableIsolatedProjects(),
         ) {
+            if (!isWithJavaSupported) buildGradleKts.replaceText("withJava()", "")
             build("publish") {
                 assertTasksNoSource(
                     ":compileKotlinJs",

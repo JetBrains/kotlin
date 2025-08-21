@@ -16,3 +16,6 @@ interface MyInterface {
 class MyClass : MyInterface {
     override fun execute() = experimental()
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, annotationUseSiteTargetFile, classDeclaration, classReference,
+functionDeclaration, interfaceDeclaration, override */

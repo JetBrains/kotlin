@@ -1,3 +1,5 @@
+// WITH_STDLIB
+
 @file:JvmMultifileClass
 @file:JvmName("File")
 package test

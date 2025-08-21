@@ -13,3 +13,6 @@ inline fun test(
         block()
     }
 }
+
+/* GENERATED_FIR_TAGS: break, continue, forLoop, functionDeclaration, functionalType, ifExpression, inline,
+integerLiteral, lambdaLiteral, localProperty, propertyDeclaration, rangeExpression */

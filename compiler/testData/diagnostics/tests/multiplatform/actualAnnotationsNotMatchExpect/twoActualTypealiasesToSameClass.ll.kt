@@ -23,3 +23,6 @@ class Impl {
 
 actual typealias <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>WithAnn<!> = Impl
 actual typealias WithoutAnn = Impl
+
+/* GENERATED_FIR_TAGS: actual, annotationDeclaration, classDeclaration, expect, functionDeclaration,
+typeAliasDeclaration */

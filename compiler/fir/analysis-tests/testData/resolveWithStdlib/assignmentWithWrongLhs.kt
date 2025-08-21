@@ -10,3 +10,5 @@ fun test() {
         print("To string").also { print(it) }
     }<!> = <!ASSIGNMENT_TYPE_MISMATCH!>1<!>
 }
+
+/* GENERATED_FIR_TAGS: assignment, functionDeclaration, ifExpression, integerLiteral, lambdaLiteral, stringLiteral */

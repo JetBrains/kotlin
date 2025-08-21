@@ -7,3 +7,5 @@
 
 <!CONFLICTING_OVERLOADS!>@Deprecated(message = "", level = DeprecationLevel.HIDDEN) fun TestHidden()<!> {}
 <!CONFLICTING_OVERLOADS!>fun TestHidden()<!> {}
+
+/* GENERATED_FIR_TAGS: functionDeclaration, stringLiteral */

@@ -1,0 +1,3 @@
+@Anno(CONSTANT#)
+owner -> FirDanglingModifierSymbol
+context -> FirDanglingModifierSymbol from FirAnonymousObjectSymbol foo/<anonymous> from FirEnumEntrySymbol foo/MyEnumClass.Entry

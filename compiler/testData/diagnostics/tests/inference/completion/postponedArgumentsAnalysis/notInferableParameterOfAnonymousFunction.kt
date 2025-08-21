@@ -1,6 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // DIAGNOSTICS: -UNUSED_ANONYMOUS_PARAMETER -UNUSED_VARIABLE
-// COMPARE_WITH_LIGHT_TREE
 
 fun <T> select(vararg x: T) = x[0]
 fun <K> id(x: K) = x
@@ -17,3 +16,6 @@ fun main() {
 
     select<Any?>(fun (<!CANNOT_INFER_PARAMETER_TYPE!>x<!>) {}, fun (<!CANNOT_INFER_PARAMETER_TYPE!>x<!>) {})
 }
+
+/* GENERATED_FIR_TAGS: anonymousFunction, capturedType, functionDeclaration, integerLiteral, lambdaLiteral,
+localProperty, nullableType, outProjection, propertyDeclaration, typeParameter, vararg */

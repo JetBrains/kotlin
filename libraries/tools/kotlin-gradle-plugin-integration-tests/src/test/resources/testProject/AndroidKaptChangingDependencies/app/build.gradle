@@ -2,14 +2,14 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 
 android {
-    compileSdkVersion 23
+    compileSdkVersion = 23
 
     defaultConfig {
-        applicationId "com.example.kapt"
-        minSdkVersion 19
-        targetSdkVersion 23
-        versionCode 1
-        versionName "1.0"
+        applicationId = "com.example.kapt"
+        minSdkVersion = 19
+        targetSdkVersion = 23
+        versionCode = 1
+        versionName = "1.0"
     }
     sourceSets {
         main.java.srcDirs += 'src/main/kotlin'

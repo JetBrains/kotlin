@@ -6,3 +6,5 @@ fun foo(a: String?): Int? {
     val c = a as? Int?
     return c
 }
+
+/* GENERATED_FIR_TAGS: asExpression, functionDeclaration, localProperty, nullableType, propertyDeclaration */

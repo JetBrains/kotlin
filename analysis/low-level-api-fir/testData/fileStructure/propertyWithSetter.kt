@@ -1,4 +1,4 @@
-abstract class Foo {/* ClassDeclarationStructureElement */
+/* RootStructureElement */abstract class Foo {/* ClassDeclarationStructureElement */
     abstract var id: Int/* DeclarationStructureElement */
         protected set
 }

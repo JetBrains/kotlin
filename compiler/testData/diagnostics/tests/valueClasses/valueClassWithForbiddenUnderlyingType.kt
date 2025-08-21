@@ -33,3 +33,6 @@ value class BarNullable(val u: Unit?)
 value class Baz(val u: <!VALUE_CLASS_HAS_INAPPLICABLE_PARAMETER_TYPE!>Nothing<!>)
 @JvmInline
 value class BazNullable(val u: Nothing?)
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, nullableType, primaryConstructor, propertyDeclaration,
+starProjection, typeParameter, value */

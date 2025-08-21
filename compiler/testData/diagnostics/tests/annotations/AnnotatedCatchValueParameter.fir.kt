@@ -21,3 +21,5 @@ fun main() {
 
     }
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, functionDeclaration, localProperty, propertyDeclaration, tryExpression */

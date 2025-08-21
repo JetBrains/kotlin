@@ -12,3 +12,5 @@ import java.net.* // should not import java.net.InetAddressImpl because it's pac
 import pack.*
 
 class X : InetAddressImpl() // should resolve to our pack.InetAddressImpl
+
+/* GENERATED_FIR_TAGS: classDeclaration */

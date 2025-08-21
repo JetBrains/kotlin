@@ -27,3 +27,5 @@ class D: C() {
         D.<!UNRESOLVED_REFERENCE!>bar<!>()
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, init, javaFunction, javaType */

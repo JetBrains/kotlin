@@ -30,16 +30,17 @@ import org.jetbrains.kotlin.types.expressions.OperatorConventions.ASSIGN_METHOD
 
 object FirAssignmentPluginFunctionCallChecker : FirFunctionCallChecker(MppCheckerKind.Common) {
 
-    override fun check(expression: FirFunctionCall, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(expression: FirFunctionCall) {
         if (!expression.isOverloadAssignCallCandidate()) return
 
         val calleeReference = expression.calleeReference
         if (calleeReference.isError()) {
             if (expression.isOverloadedAssignCallError(context.session, calleeReference.diagnostic)) {
-                reporter.reportOn(expression.source, NO_APPLICABLE_ASSIGN_METHOD, context)
+                reporter.reportOn(expression.source, NO_APPLICABLE_ASSIGN_METHOD)
             }
         } else if (expression.isOverloadedAssignCall(context.session) && !expression.isReturnTypeUnit()) {
-            reporter.reportOn(expression.source, CALL_ERROR_ASSIGN_METHOD_SHOULD_RETURN_UNIT, context)
+            reporter.reportOn(expression.source, CALL_ERROR_ASSIGN_METHOD_SHOULD_RETURN_UNIT)
         }
     }
 

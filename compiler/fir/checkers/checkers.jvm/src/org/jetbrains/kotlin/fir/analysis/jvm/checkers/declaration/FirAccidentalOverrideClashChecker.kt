@@ -24,11 +24,8 @@ import org.jetbrains.kotlin.load.java.SpecialGenericSignatures.Companion.JVM_SHO
 import org.jetbrains.kotlin.load.java.SpecialGenericSignatures.Companion.sameAsBuiltinMethodWithErasedValueParameters
 
 object FirAccidentalOverrideClashChecker : FirSimpleFunctionChecker(MppCheckerKind.Platform) {
-    override fun check(
-        declaration: FirSimpleFunction,
-        context: CheckerContext,
-        reporter: DiagnosticReporter,
-    ) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirSimpleFunction) {
         if (!declaration.isOverride) return
         val name = declaration.name
         val mayBeRenamedBuiltIn = name in namesPossibleForRenamedBuiltin
@@ -37,7 +34,7 @@ object FirAccidentalOverrideClashChecker : FirSimpleFunctionChecker(MppCheckerKi
         val containingClass = declaration.getContainingClass() ?: return
 
         var reported = false
-        containingClass.unsubstitutedScope(context).processFunctionsByName(name) {
+        containingClass.unsubstitutedScope().processFunctionsByName(name) {
             @OptIn(SymbolInternals::class)
             val hiddenFir = it.fir
             if (!reported && hiddenFir.isHiddenToOvercomeSignatureClash == true && !hiddenFir.isFinal) {
@@ -48,7 +45,7 @@ object FirAccidentalOverrideClashChecker : FirSimpleFunctionChecker(MppCheckerKi
                         else -> "a function with erased parameters"
                     }
                     reporter.reportOn(
-                        declaration.source, ACCIDENTAL_OVERRIDE_CLASH_BY_JVM_SIGNATURE, it, description, regularBase, context
+                        declaration.source, ACCIDENTAL_OVERRIDE_CLASH_BY_JVM_SIGNATURE, it, description, regularBase
                     )
                     reported = true
                 }

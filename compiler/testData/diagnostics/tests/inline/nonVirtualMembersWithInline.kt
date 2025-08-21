@@ -47,3 +47,5 @@ interface B {
 
     <!DECLARATION_CANT_BE_INLINED!>inline<!> fun wrong7()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, inline, interfaceDeclaration */

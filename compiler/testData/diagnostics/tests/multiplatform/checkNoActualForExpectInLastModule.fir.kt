@@ -4,3 +4,5 @@
 <!NO_ACTUAL_FOR_EXPECT{JVM}!>expect<!> class A
 
 // MODULE: platform()()(common)
+
+/* GENERATED_FIR_TAGS: classDeclaration, expect */

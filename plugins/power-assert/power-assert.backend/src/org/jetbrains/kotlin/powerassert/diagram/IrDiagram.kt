@@ -19,6 +19,7 @@
 
 package org.jetbrains.kotlin.powerassert.diagram
 
+import org.jetbrains.kotlin.backend.common.implicitInvoke
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.SourceRangeInfo
 import org.jetbrains.kotlin.ir.builders.IrBuilderWithScope
@@ -29,10 +30,7 @@ import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.lexer.KotlinLexer
 import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.powerassert.getExplicitReceiver
-import org.jetbrains.kotlin.powerassert.irString
-import org.jetbrains.kotlin.powerassert.isInnerOfComparisonOperator
-import org.jetbrains.kotlin.powerassert.isInnerOfNotEqualOperator
+import org.jetbrains.kotlin.powerassert.*
 
 fun IrBuilderWithScope.irDiagramString(
     sourceFile: SourceFile,
@@ -55,6 +53,7 @@ fun IrBuilderWithScope.irDiagramString(
     }
 
     val valuesByRow = variables
+        .filterIsInstance<IrTemporaryVariable.Displayable>()
         .map { it.toValueDisplay(callInfo) }
         .sortedBy { it.indent }
         .groupBy { it.row }
@@ -136,7 +135,7 @@ private data class ValueDisplay(
     val row: Int,
 )
 
-private fun IrTemporaryVariable.toValueDisplay(
+private fun IrTemporaryVariable.Displayable.toValueDisplay(
     originalInfo: SourceRangeInfo,
 ): ValueDisplay {
     var indent = sourceRangeInfo.startColumnNumber
@@ -209,6 +208,13 @@ private fun memberAccessOffset(
     if (expression !is IrCall) return 0
     val owner = expression.symbol.owner
     if (owner.isInfix || owner.isOperator || owner.origin == IrBuiltIns.BUILTIN_OPERATOR) {
+        if (expression.implicitInvoke) {
+            val receiver = expression.getExplicitReceiver() ?: return 0
+            var offset = receiver.endOffset - sourceRangeInfo.startOffset
+            while (offset in source.indices && source[offset] == ')') offset++
+            return offset
+        }
+
         val lhs = expression.binaryOperatorLhs() ?: return 0
         return when (expression.origin) {
             IrStatementOrigin.GET_ARRAY_ELEMENT -> lhs.endOffset - sourceRangeInfo.startOffset
@@ -266,13 +272,21 @@ private fun IrCall.binaryOperatorLhs(): IrExpression? = when (origin) {
         val innerCall = (arguments[0] as? IrCall)?.takeIf { it.isInnerOfNotEqualOperator() } ?: this
         innerCall.simpleBinaryOperatorLhs()
     }
-    IrStatementOrigin.IN -> {
-        // The `in` operator call is actually a sugar for `rhs.contains(lhs)`.
-        arguments.last()
-    }
-    IrStatementOrigin.NOT_IN -> {
-        // The `!in` operator call is actually a sugar for `rhs.contains(lhs).not()`.
-        (arguments[0] as? IrCall)?.arguments?.last()
+    IrStatementOrigin.IN, IrStatementOrigin.NOT_IN -> {
+        val innerCall = when (origin) {
+            // The `!in` operator call is actually sugar for `rhs.contains(lhs).not()`.
+            IrStatementOrigin.NOT_IN -> arguments[0] as? IrCall ?: this
+            // The `in` operator call is actually sugar for `rhs.contains(lhs)`.
+            else -> this
+        }
+
+        // There are operator functions that do not conform to the normal signature requirement:
+        // * `operator fun CharSequence.contains(other: CharSequence, ignoreCase: Boolean = false): Boolean`
+        // * `operator fun CharSequence.contains(char: Char, ignoreCase: Boolean = false)`
+        // So, need to extract the argument for the first regular parameter.
+        val function = innerCall.symbol.owner
+        val parameter = function.parameters.firstOrNull { it.kind == IrParameterKind.Regular } ?: return null
+        innerCall.arguments[parameter]
     }
     IrStatementOrigin.LT, IrStatementOrigin.GT, IrStatementOrigin.LTEQ, IrStatementOrigin.GTEQ -> {
         // Comparison operator calls are actually sugar for `lhs.compareTo(rhs) <> 0`.

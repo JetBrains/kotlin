@@ -13,10 +13,11 @@ import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirSimpleFunctionC
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 
 object DummyNameChecker : FirSimpleFunctionChecker(MppCheckerKind.Common) {
-    override fun check(declaration: FirSimpleFunction, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirSimpleFunction) {
         val name = declaration.name.asString()
         if (name == "dummy") {
-            reporter.reportOn(declaration.source, PluginErrors.FUNCTION_WITH_DUMMY_NAME, name, context)
+            reporter.reportOn(declaration.source, PluginErrors.FUNCTION_WITH_DUMMY_NAME, name)
         }
     }
 }

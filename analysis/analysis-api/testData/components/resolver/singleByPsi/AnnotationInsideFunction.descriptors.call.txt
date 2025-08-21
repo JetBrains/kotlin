@@ -3,6 +3,7 @@ KtNameReferenceExpression(59,69): 'Annotation'
     call = KaAnnotationCall:
       argumentMapping = {}
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -10,5 +11,6 @@ KtNameReferenceExpression(59,69): 'Annotation'
           returnType = test.Annotation
           symbol = <constructor>(): test.Annotation
           valueParameters = []
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}

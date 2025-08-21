@@ -19,3 +19,5 @@ class SimpleShared : SealedWithPlatformActuals()
 package foo
 
 actual sealed class SealedWithPlatformActuals actual constructor(): <!SEALED_INHERITOR_IN_DIFFERENT_MODULE!>SealedWithSharedActual<!>()
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, primaryConstructor, sealed */

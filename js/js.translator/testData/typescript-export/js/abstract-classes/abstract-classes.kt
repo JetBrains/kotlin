@@ -17,3 +17,12 @@ abstract class TestAbstract(val name: String) {
         fun baz(): String = "baz"
     }
 }
+
+@JsExport
+abstract class Money<T : Money<T>> protected constructor() {
+    abstract val amount: Float
+    fun isZero(): Boolean = amount == 0f
+}
+
+@JsExport
+class Euro(override val amount: Float) : Money<Euro>()

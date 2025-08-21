@@ -14,3 +14,6 @@ fun test(cacheExtSetting: String?) {
         else -> File(cacheExtSetting)
     }
 }
+
+/* GENERATED_FIR_TAGS: equalityExpression, functionDeclaration, javaFunction, lambdaLiteral, localProperty, nullableType,
+propertyDeclaration, safeCall, smartcast, stringLiteral, whenExpression */

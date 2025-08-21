@@ -19,7 +19,7 @@ fun C.extensionVararg(i: Int, vararg s: String) {
 fun testExtensionBoth() {
   use(f = { // BLOCK
     local fun extensionBoth(p0: C, p1: Int) {
-      p0.extensionBoth(i = p1)
+      extensionBoth(/* <this> = p0, */ i = p1)
     }
 
     ::extensionBoth
@@ -29,7 +29,7 @@ fun testExtensionBoth() {
 fun testExtensionDefault() {
   use(f = { // BLOCK
     local fun extensionDefault(p0: C, p1: Int) {
-      p0.extensionDefault(i = p1)
+      extensionDefault(/* <this> = p0, */ i = p1)
     }
 
     ::extensionDefault
@@ -39,7 +39,7 @@ fun testExtensionDefault() {
 fun testExtensionVararg() {
   use(f = { // BLOCK
     local fun extensionVararg(p0: C, p1: Int) {
-      p0.extensionVararg(i = p1)
+      extensionVararg(/* <this> = p0, */ i = p1)
     }
 
     ::extensionVararg

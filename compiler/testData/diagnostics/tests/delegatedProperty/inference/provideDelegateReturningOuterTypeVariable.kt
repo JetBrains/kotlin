@@ -18,3 +18,7 @@ fun bar2(a: A) {
 
     val x by foo { x: A -> }
 }
+
+/* GENERATED_FIR_TAGS: funWithExtensionReceiver, functionDeclaration, functionalType, interfaceDeclaration,
+lambdaLiteral, localFunction, localProperty, nullableType, operator, propertyDeclaration, propertyDelegate,
+starProjection, stringLiteral, thisExpression, typeParameter */

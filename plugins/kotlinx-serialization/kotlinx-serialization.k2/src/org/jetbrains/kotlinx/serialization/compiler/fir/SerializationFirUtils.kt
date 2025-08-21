@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.substitution.ChainedSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
@@ -188,6 +189,8 @@ internal fun FirClassSymbol<*>.shouldHaveGeneratedMethods(session: FirSession): 
             || (keepGeneratedSerializer(session) && !classKind.isEnumClass && !classKind.isObject)
 }
 
+// TODO: rewrite me according to phase contracts (KT-76122)
+@OptIn(SymbolInternals::class)
 internal fun FirClassSymbol<*>.keepGeneratedSerializer(session: FirSession): Boolean {
     return annotations.getAnnotationByClassId(
         keepGeneratedSerializerAnnotationClassId,
@@ -196,7 +199,7 @@ internal fun FirClassSymbol<*>.keepGeneratedSerializer(session: FirSession): Boo
 }
 
 internal fun FirClassSymbol<*>.hasPolymorphicAnnotation(session: FirSession): Boolean {
-    return annotations.getAnnotationByClassId(
+    return resolvedAnnotationsWithClassIds.getAnnotationByClassId(
         polymorphicClassId,
         session
     ) != null
@@ -285,6 +288,7 @@ fun ConeKotlinType.classSymbolOrUpperBound(session: FirSession): FirClassSymbol<
     }
 }
 
+@DirectDeclarationsAccess
 fun FirDeclaration.excludeFromJsExport(session: FirSession) {
     if (!session.moduleData.platform.isJs()) {
         return

@@ -158,6 +158,12 @@ public class FirPsiBytecodeTextTestGenerated extends AbstractFirPsiBytecodeTextT
   }
 
   @Test
+  @TestMetadata("inaccessibleTypeInArray.kt")
+  public void testInaccessibleTypeInArray() {
+    runTest("compiler/testData/codegen/bytecodeText/inaccessibleTypeInArray.kt");
+  }
+
+  @Test
   @TestMetadata("inheritedPropertyAnnotations.kt")
   public void testInheritedPropertyAnnotations() {
     runTest("compiler/testData/codegen/bytecodeText/inheritedPropertyAnnotations.kt");
@@ -1233,6 +1239,12 @@ public class FirPsiBytecodeTextTestGenerated extends AbstractFirPsiBytecodeTextT
     }
 
     @Test
+    @TestMetadata("kt12211_accessorForDelegatedPropertySetter.kt")
+    public void testKt12211_accessorForDelegatedPropertySetter() {
+      runTest("compiler/testData/codegen/bytecodeText/companion/kt12211_accessorForDelegatedPropertySetter.kt");
+    }
+
+    @Test
     @TestMetadata("kt14258_1.kt")
     public void testKt14258_1() {
       runTest("compiler/testData/codegen/bytecodeText/companion/kt14258_1.kt");
@@ -2060,6 +2072,12 @@ public class FirPsiBytecodeTextTestGenerated extends AbstractFirPsiBytecodeTextT
     @TestMetadata("inheritedInterfaceFunction.kt")
     public void testInheritedInterfaceFunction() {
       runTest("compiler/testData/codegen/bytecodeText/defaultArguments/inheritedInterfaceFunction.kt");
+    }
+
+    @Test
+    @TestMetadata("inheritedInterfaceFunctionJvmDefaultDisable.kt")
+    public void testInheritedInterfaceFunctionJvmDefaultDisable() {
+      runTest("compiler/testData/codegen/bytecodeText/defaultArguments/inheritedInterfaceFunctionJvmDefaultDisable.kt");
     }
 
     @Test
@@ -3587,6 +3605,12 @@ public class FirPsiBytecodeTextTestGenerated extends AbstractFirPsiBytecodeTextT
     }
 
     @Test
+    @TestMetadata("kt69624.kt")
+    public void testKt69624() {
+      runTest("compiler/testData/codegen/bytecodeText/inline/kt69624.kt");
+    }
+
+    @Test
     @TestMetadata("linenumberForOneParametersArgumentCall.kt")
     public void testLinenumberForOneParametersArgumentCall() {
       runTest("compiler/testData/codegen/bytecodeText/inline/linenumberForOneParametersArgumentCall.kt");
@@ -3866,6 +3890,12 @@ public class FirPsiBytecodeTextTestGenerated extends AbstractFirPsiBytecodeTextT
     @TestMetadata("equalsIsCalledByInlineClass.kt")
     public void testEqualsIsCalledByInlineClass() {
       runTest("compiler/testData/codegen/bytecodeText/inlineClasses/equalsIsCalledByInlineClass.kt");
+    }
+
+    @Test
+    @TestMetadata("equalsIsCalledByInlineClassK1.kt")
+    public void testEqualsIsCalledByInlineClassK1() {
+      runTest("compiler/testData/codegen/bytecodeText/inlineClasses/equalsIsCalledByInlineClassK1.kt");
     }
 
     @Test
@@ -4179,12 +4209,6 @@ public class FirPsiBytecodeTextTestGenerated extends AbstractFirPsiBytecodeTextT
     }
 
     @Test
-    @TestMetadata("kt53804.kt")
-    public void testKt53804() {
-      runTest("compiler/testData/codegen/bytecodeText/innerClasses/kt53804.kt");
-    }
-
-    @Test
     @TestMetadata("kt56104.kt")
     public void testKt56104() {
       runTest("compiler/testData/codegen/bytecodeText/innerClasses/kt56104.kt");
@@ -4200,12 +4224,6 @@ public class FirPsiBytecodeTextTestGenerated extends AbstractFirPsiBytecodeTextT
     @TestMetadata("nestedClassInAnnotationArgument.kt")
     public void testNestedClassInAnnotationArgument() {
       runTest("compiler/testData/codegen/bytecodeText/innerClasses/nestedClassInAnnotationArgument.kt");
-    }
-
-    @Test
-    @TestMetadata("nestedClassInAnnotationArgumentOldMode.kt")
-    public void testNestedClassInAnnotationArgumentOldMode() {
-      runTest("compiler/testData/codegen/bytecodeText/innerClasses/nestedClassInAnnotationArgumentOldMode.kt");
     }
   }
 
@@ -4231,6 +4249,12 @@ public class FirPsiBytecodeTextTestGenerated extends AbstractFirPsiBytecodeTextT
     }
 
     @Test
+    @TestMetadata("firstInheritedMethodIsAbstractJvmDefaultDisable.kt")
+    public void testFirstInheritedMethodIsAbstractJvmDefaultDisable() {
+      runTest("compiler/testData/codegen/bytecodeText/interfaces/firstInheritedMethodIsAbstractJvmDefaultDisable.kt");
+    }
+
+    @Test
     @TestMetadata("noAnyMethodsOnInterfaceInheritance.kt")
     public void testNoAnyMethodsOnInterfaceInheritance() {
       runTest("compiler/testData/codegen/bytecodeText/interfaces/noAnyMethodsOnInterfaceInheritance.kt");
@@ -4240,6 +4264,12 @@ public class FirPsiBytecodeTextTestGenerated extends AbstractFirPsiBytecodeTextT
     @TestMetadata("noNullCheckOnThisInDefaultMethod.kt")
     public void testNoNullCheckOnThisInDefaultMethod() {
       runTest("compiler/testData/codegen/bytecodeText/interfaces/noNullCheckOnThisInDefaultMethod.kt");
+    }
+
+    @Test
+    @TestMetadata("noNullCheckOnThisInDefaultMethodJvmDefaultDisable.kt")
+    public void testNoNullCheckOnThisInDefaultMethodJvmDefaultDisable() {
+      runTest("compiler/testData/codegen/bytecodeText/interfaces/noNullCheckOnThisInDefaultMethodJvmDefaultDisable.kt");
     }
 
     @Test
@@ -4975,6 +5005,12 @@ public class FirPsiBytecodeTextTestGenerated extends AbstractFirPsiBytecodeTextT
     }
 
     @Test
+    @TestMetadata("noNullCheckOnPrivateFunctionParameter.kt")
+    public void testNoNullCheckOnPrivateFunctionParameter() {
+      runTest("compiler/testData/codegen/bytecodeText/nullCheckOptimization/noNullCheckOnPrivateFunctionParameter.kt");
+    }
+
+    @Test
     @TestMetadata("notNullAsNotNullable.kt")
     public void testNotNullAsNotNullable() {
       runTest("compiler/testData/codegen/bytecodeText/nullCheckOptimization/notNullAsNotNullable.kt");
@@ -5008,12 +5044,6 @@ public class FirPsiBytecodeTextTestGenerated extends AbstractFirPsiBytecodeTextT
     @TestMetadata("redundantSafeCall.kt")
     public void testRedundantSafeCall() {
       runTest("compiler/testData/codegen/bytecodeText/nullCheckOptimization/redundantSafeCall.kt");
-    }
-
-    @Test
-    @TestMetadata("redundantSafeCall_1_4.kt")
-    public void testRedundantSafeCall_1_4() {
-      runTest("compiler/testData/codegen/bytecodeText/nullCheckOptimization/redundantSafeCall_1_4.kt");
     }
 
     @Test
@@ -5066,6 +5096,22 @@ public class FirPsiBytecodeTextTestGenerated extends AbstractFirPsiBytecodeTextT
       public void testInitialized() {
         runTest("compiler/testData/codegen/bytecodeText/nullCheckOptimization/localLateinit/initialized.kt");
       }
+    }
+  }
+
+  @Nested
+  @TestMetadata("compiler/testData/codegen/bytecodeText/objects")
+  @TestDataPath("$PROJECT_ROOT")
+  public class Objects {
+    @Test
+    public void testAllFilesPresentInObjects() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/objects"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+    }
+
+    @Test
+    @TestMetadata("kt77438.kt")
+    public void testKt77438() {
+      runTest("compiler/testData/codegen/bytecodeText/objects/kt77438.kt");
     }
   }
 

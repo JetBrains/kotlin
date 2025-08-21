@@ -18,19 +18,19 @@ internal val DeprecateJavaPluginsApplicationSetupAction = KotlinProjectSetupActi
 
     project.plugins.withId("java-library") {
         project.reportDiagnostic(
-            KotlinToolingDiagnostics.DeprecatedInKMPJavaPluginsDiagnostic("java-library")
+            KotlinToolingDiagnostics.KMPJavaPluginsIncompatibilityDiagnostic("java-library")
         )
     }
 
     project.plugins.withId("application") {
         project.reportDiagnostic(
-            KotlinToolingDiagnostics.DeprecatedInKMPJavaPluginsDiagnostic("application")
+            KotlinToolingDiagnostics.KMPJavaPluginsIncompatibilityDiagnostic("application")
         )
     }
 
     project.plugins.withId("java") {
         project.reportDiagnostic(
-            KotlinToolingDiagnostics.DeprecatedInKMPJavaPluginsDiagnostic("java")
+            KotlinToolingDiagnostics.KMPJavaPluginsIncompatibilityDiagnostic("java")
         )
     }
 }

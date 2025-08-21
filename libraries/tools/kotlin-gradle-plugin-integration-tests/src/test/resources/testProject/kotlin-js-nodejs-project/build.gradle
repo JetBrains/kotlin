@@ -13,11 +13,9 @@ repositories {
 }
 
 kotlin {
-    target {
+    js {
         useCommonJs()
         binaries.executable()
-        nodejs {
-            passProcessArgvToMainFunction()
-        }
+        nodejs()
     }
 }

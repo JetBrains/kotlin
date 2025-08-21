@@ -18,39 +18,49 @@ import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.types.*
 
 object FirArrayOfNothingQualifierChecker : FirQualifiedAccessExpressionChecker(MppCheckerKind.Common) {
-    override fun check(expression: FirQualifiedAccessExpression, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(expression: FirQualifiedAccessExpression) {
         val resolvedType = expression.resolvedType
-        checkTypeAndTypeArguments(resolvedType, expression.calleeReference.source, context, reporter)
+        checkTypeAndTypeArguments(resolvedType, expression.calleeReference.source)
     }
 
+    context(context: CheckerContext, reporter: DiagnosticReporter)
     private fun checkTypeAndTypeArguments(
         type: ConeKotlinType,
         source: KtSourceElement?,
-        context: CheckerContext,
-        reporter: DiagnosticReporter,
     ) {
-        val fullyExpandedType = type.fullyExpandedType(context.session)
-        if (fullyExpandedType.isArrayOfNothing(context.languageVersionSettings)) {
-            reporter.reportOn(source, FirErrors.UNSUPPORTED, "Array<Nothing> is illegal", context)
+        val fullyExpandedType = type.fullyExpandedType()
+        val arrayOfNothingKind = fullyExpandedType.unsupportedArrayOfNothingKind(context.languageVersionSettings)
+        if (arrayOfNothingKind != null) {
+            reporter.reportOn(
+                source,
+                FirErrors.UNSUPPORTED,
+                "Expression cannot have a type of '${arrayOfNothingKind.representation}'."
+            )
         } else {
             for (typeArg in fullyExpandedType.typeArguments) {
                 val typeArgType = typeArg.type ?: continue
-                checkTypeAndTypeArguments(typeArgType, source, context, reporter)
+                checkTypeAndTypeArguments(typeArgType, source)
             }
         }
     }
 }
 
-internal fun ConeKotlinType.isArrayOfNothing(languageVersionSettings: LanguageVersionSettings): Boolean {
-    if (!this.isArrayTypeOrNullableArrayType) return false
-    val typeParameterType = typeArguments.firstOrNull()?.type ?: return false
-    return typeParameterType.isUnsupportedNothingAsReifiedOrInArray(languageVersionSettings)
+internal fun ConeKotlinType.unsupportedArrayOfNothingKind(languageVersionSettings: LanguageVersionSettings): ArrayOfNothingKind? {
+    if (!this.isArrayTypeOrNullableArrayType) return null
+    val typeParameterType = typeArguments.firstOrNull()?.type ?: return null
+    return typeParameterType.unsupportedKindOfNothingAsReifiedOrInArray(languageVersionSettings)
 }
 
-internal fun ConeKotlinType.isUnsupportedNothingAsReifiedOrInArray(languageVersionSettings: LanguageVersionSettings): Boolean {
+enum class ArrayOfNothingKind(val representation: String) {
+    ArrayOfNothing("Array<Nothing>"),
+    ArrayOfNullableNothing("Array<Nothing?>"),
+}
+
+internal fun ConeKotlinType.unsupportedKindOfNothingAsReifiedOrInArray(languageVersionSettings: LanguageVersionSettings): ArrayOfNothingKind? {
     return when {
-        isNothing -> true
-        isNullableNothing -> !languageVersionSettings.supportsFeature(LanguageFeature.NullableNothingInReifiedPosition)
-        else -> false
+        isNothing -> ArrayOfNothingKind.ArrayOfNothing
+        isNullableNothing && !languageVersionSettings.supportsFeature(LanguageFeature.NullableNothingInReifiedPosition) -> ArrayOfNothingKind.ArrayOfNullableNothing
+        else -> null
     }
 }

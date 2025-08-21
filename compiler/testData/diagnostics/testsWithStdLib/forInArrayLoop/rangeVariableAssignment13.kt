@@ -19,3 +19,6 @@ fun testPrimitiveArray() {
         xs = intArrayOf(4, 5, 6)
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, forLoop, functionDeclaration, integerLiteral, localProperty, propertyDeclaration,
+stringLiteral */

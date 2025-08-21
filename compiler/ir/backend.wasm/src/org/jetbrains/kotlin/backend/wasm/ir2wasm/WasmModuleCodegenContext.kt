@@ -5,16 +5,14 @@
 
 package org.jetbrains.kotlin.backend.wasm.ir2wasm
 
+import org.jetbrains.kotlin.backend.common.serialization.cityHash64
 import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
 import org.jetbrains.kotlin.ir.declarations.IdSignatureRetriever
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.types.defaultType
-import org.jetbrains.kotlin.ir.types.isNothing
 import org.jetbrains.kotlin.ir.util.IdSignature
-import org.jetbrains.kotlin.ir.util.isInterface
 import org.jetbrains.kotlin.wasm.ir.*
 
 class WasmFileCodegenContext(
@@ -32,10 +30,6 @@ class WasmFileCodegenContext(
 
     fun referenceConstantArray(resource: Pair<List<Long>, WasmType>): WasmSymbol<Int> =
         wasmFileFragment.constantArrayDataSegmentId.reference(resource)
-
-    fun generateTypeInfo(irClass: IrClassSymbol, typeInfo: ConstantDataElement) {
-        wasmFileFragment.typeInfo[irClass.getReferenceKey()] = typeInfo
-    }
 
     fun addExport(wasmExport: WasmExport<*>) {
         wasmFileFragment.exports += wasmExport
@@ -58,10 +52,6 @@ class WasmFileCodegenContext(
 
     fun defineGlobalClassITable(irClass: IrClassSymbol, wasmGlobal: WasmGlobal) {
         wasmFileFragment.globalClassITables.define(irClass.getReferenceKey(), wasmGlobal)
-    }
-
-    fun addInterfaceUnion(interfaces: List<IrClassSymbol>) {
-        wasmFileFragment.interfaceUnions.add(interfaces.map { idSignatureRetriever.declarationSignature(it.owner)!! })
     }
 
     fun defineGcType(irClass: IrClassSymbol, wasmType: WasmTypeDeclaration) {
@@ -94,32 +84,11 @@ class WasmFileCodegenContext(
     fun referenceVTableGcType(irClass: IrClassSymbol): WasmSymbol<WasmTypeDeclaration> =
         wasmFileFragment.vTableGcTypes.reference(irClass.getReferenceKey())
 
-    fun referenceClassITableGcType(irClass: IrClassSymbol): WasmSymbol<WasmTypeDeclaration> =
-        wasmFileFragment.classITableGcType.reference(irClass.getSignature())
-
-    fun referenceClassITableInterfaceTableSize(irInterface: IrClassSymbol): WasmSymbol<Int> =
-        wasmFileFragment.classITableInterfaceTableSize.reference(irInterface.getSignature())
-
-    fun referenceClassITableInterfaceHasImplementors(irInterface: IrClassSymbol): WasmSymbol<Int> =
-        wasmFileFragment.classITableInterfaceHasImplementors.reference(irInterface.getSignature())
-
-    fun referenceClassITableInterfaceSlot(irClass: IrClassSymbol): WasmSymbol<Int> {
-        val type = irClass.defaultType
-        require(!type.isNothing()) {
-            "Can't reference Nothing type"
-        }
-        return wasmFileFragment.classITableInterfaceSlot.reference(irClass.getSignature())
-    }
-
     fun referenceFunctionType(irFunction: IrFunctionSymbol): WasmSymbol<WasmFunctionType> =
         wasmFileFragment.functionTypes.reference(irFunction.getReferenceKey())
 
-    fun referenceTypeId(irClass: IrClassSymbol): WasmSymbol<Int> =
-        if (irClass.owner.isInterface) {
-            wasmFileFragment.interfaceIds.reference(irClass.getSignature())
-        } else {
-            wasmFileFragment.classIds.reference(irClass.getReferenceKey())
-        }
+    fun referenceTypeId(irClass: IrClassSymbol): Long =
+        cityHash64(irClass.getSignature().toString().encodeToByteArray()).toLong()
 
     fun addJsFun(irFunction: IrFunctionSymbol, importName: WasmSymbol<String>, jsCode: String) {
         wasmFileFragment.jsFuns[irFunction.getReferenceKey()] =
@@ -130,24 +99,24 @@ class WasmFileCodegenContext(
         wasmFileFragment.jsModuleImports[irFunction.getReferenceKey()] = module
     }
 
-    val scratchMemAddr: WasmSymbol<Int>
-        get() = wasmFileFragment.scratchMemAddr
-            ?: WasmSymbol<Int>().also { wasmFileFragment.scratchMemAddr = it }
+    fun addJsBuiltin(declarationName: String, polyfillImpl: String) {
+        wasmFileFragment.jsBuiltinsPolyfills[declarationName] = polyfillImpl
+    }
 
-    val stringPoolSize: WasmSymbol<Int>
-        get() = wasmFileFragment.stringPoolSize
-            ?: WasmSymbol<Int>().also { wasmFileFragment.stringPoolSize = it }
+    val wasmStringsElements: WasmStringsElements
+        get() = wasmFileFragment.wasmStringsElements
+            ?: WasmStringsElements().also { wasmFileFragment.wasmStringsElements = it }
 
-    val throwableTagIndex: WasmSymbol<Int>
-        get() = wasmFileFragment.throwableTagIndex
-            ?: WasmSymbol<Int>().also { wasmFileFragment.throwableTagIndex = it }
+    fun addObjectInstanceFieldInitializer(initializer: IrFunctionSymbol) {
+        wasmFileFragment.objectInstanceFieldInitializers.add(initializer.getReferenceKey())
+    }
 
-    val jsExceptionTagIndex: WasmSymbol<Int>
-        get() = wasmFileFragment.jsExceptionTagIndex
-            ?: WasmSymbol<Int>().also { wasmFileFragment.jsExceptionTagIndex = it }
+    fun setStringPoolFieldInitializer(initializer: IrFunctionSymbol) {
+        wasmStringsElements.stringPoolFieldInitializer = initializer.getReferenceKey()
+    }
 
-    fun addFieldInitializer(irField: IrFieldSymbol, instructions: List<WasmInstr>, isObjectInstanceField: Boolean) {
-        wasmFileFragment.fieldInitializers.add(FieldInitializer(irField.getReferenceKey(), instructions, isObjectInstanceField))
+    fun addNonConstantFieldInitializers(initializer: IrFunctionSymbol) {
+        wasmFileFragment.nonConstantFieldInitializers.add(initializer.getReferenceKey())
     }
 
     fun addMainFunctionWrapper(mainFunctionWrapper: IrFunctionSymbol) {
@@ -164,9 +133,9 @@ class WasmFileCodegenContext(
 
     fun addClassAssociatedObjects(klass: IrClassSymbol, associatedObjectsGetters: List<AssociatedObjectBySymbols>) {
         val classAssociatedObjects = ClassAssociatedObjects(
-            klass.getReferenceKey(),
+            referenceTypeId(klass),
             associatedObjectsGetters.map { (obj, getter, isExternal) ->
-                AssociatedObject(obj.getReferenceKey(), getter.getReferenceKey(), isExternal)
+                AssociatedObject(referenceTypeId(obj), getter.getReferenceKey(), isExternal)
             }
         )
         wasmFileFragment.classAssociatedObjectsInstanceGetters.add(classAssociatedObjects)
@@ -178,16 +147,21 @@ class WasmFileCodegenContext(
 
     fun defineBuiltinIdSignatures(
         throwable: IrClassSymbol?,
+        kotlinAny: IrClassSymbol?,
         tryGetAssociatedObject: IrFunctionSymbol?,
         jsToKotlinAnyAdapter: IrFunctionSymbol?,
         unitGetInstance: IrFunctionSymbol?,
         runRootSuites: IrFunctionSymbol?,
+        createString: IrFunctionSymbol?,
+        registerModuleDescriptor: IrFunctionSymbol?,
     ) {
-        if (throwable != null || tryGetAssociatedObject != null || jsToKotlinAnyAdapter != null || unitGetInstance != null || runRootSuites != null) {
+        if (throwable != null || kotlinAny != null || tryGetAssociatedObject != null || jsToKotlinAnyAdapter != null || unitGetInstance != null || runRootSuites != null || createString != null || registerModuleDescriptor != null) {
             val originalSignatures = wasmFileFragment.builtinIdSignatures
             wasmFileFragment.builtinIdSignatures = BuiltinIdSignatures(
                 throwable = originalSignatures?.throwable
                     ?: throwable?.getReferenceKey(),
+                kotlinAny = originalSignatures?.kotlinAny
+                    ?: kotlinAny?.getReferenceKey(),
                 tryGetAssociatedObject = originalSignatures?.tryGetAssociatedObject
                     ?: tryGetAssociatedObject?.getReferenceKey(),
                 jsToKotlinAnyAdapter = originalSignatures?.jsToKotlinAnyAdapter
@@ -196,9 +170,40 @@ class WasmFileCodegenContext(
                     ?: unitGetInstance?.getReferenceKey(),
                 runRootSuites = originalSignatures?.runRootSuites
                     ?: runRootSuites?.getReferenceKey(),
+                createString = originalSignatures?.createString
+                    ?: createString?.getReferenceKey(),
+                registerModuleDescriptor = originalSignatures?.registerModuleDescriptor
+                    ?: registerModuleDescriptor?.getReferenceKey(),
             )
         }
     }
+
+    val interfaceTableTypes: SpecialITableTypes by lazy {
+        SpecialITableTypes().also {
+            wasmFileFragment.specialITableTypes = it
+        }
+    }
+
+    private val rttiElements: RttiElements by lazy {
+        RttiElements().also {
+            wasmFileFragment.rttiElements = it
+        }
+    }
+
+    val rttiType: WasmSymbol<WasmStructDeclaration> get() = rttiElements.rttiType
+
+    fun defineRttiGlobal(global: WasmGlobal, irClass: IrClassSymbol, irSuperClass: IrClassSymbol?) {
+        rttiElements.globals.add(
+            RttiGlobal(
+                global = global,
+                classSignature = irClass.getReferenceKey(),
+                superClassSignature = irSuperClass?.getReferenceKey()
+            )
+        )
+    }
+
+    fun referenceRttiGlobal(irClass: IrClassSymbol): WasmSymbol<WasmGlobal> =
+        rttiElements.globalReferences.reference(irClass.getReferenceKey())
 }
 
 class WasmModuleMetadataCache(private val backendContext: WasmBackendContext) {

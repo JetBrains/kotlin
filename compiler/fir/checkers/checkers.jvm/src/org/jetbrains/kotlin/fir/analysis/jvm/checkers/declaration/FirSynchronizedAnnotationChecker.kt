@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.classKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirFunctionChecker
-import org.jetbrains.kotlin.fir.analysis.checkers.getContainingClassSymbol
+import org.jetbrains.kotlin.fir.resolve.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.declarations.FirFunction
@@ -26,31 +26,32 @@ import org.jetbrains.kotlin.fir.types.isSuspendOrKSuspendFunctionType
 import org.jetbrains.kotlin.name.JvmStandardClassIds.SYNCHRONIZED_ANNOTATION_CLASS_ID
 
 object FirSynchronizedAnnotationChecker : FirFunctionChecker(MppCheckerKind.Common) {
-    override fun check(declaration: FirFunction, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirFunction) {
         val session = context.session
         val annotation = declaration.getAnnotationByClassId(SYNCHRONIZED_ANNOTATION_CLASS_ID, session) ?: return
 
         if (declaration.isInline) {
-            reporter.reportOn(annotation.source, FirJvmErrors.SYNCHRONIZED_ON_INLINE, context)
+            reporter.reportOn(annotation.source, FirJvmErrors.SYNCHRONIZED_ON_INLINE)
             return
         }
         if (declaration.isSuspend ||
             (declaration as? FirAnonymousFunction)?.typeRef?.coneType?.isSuspendOrKSuspendFunctionType(session) == true
         ) {
-            reporter.reportOn(annotation.source, FirJvmErrors.SYNCHRONIZED_ON_SUSPEND, context)
+            reporter.reportOn(annotation.source, FirJvmErrors.SYNCHRONIZED_ON_SUSPEND)
             return
         }
 
         val containingClass = declaration.getContainingClassSymbol() ?: return
         when {
             containingClass.classKind == ClassKind.INTERFACE ->
-                reporter.reportOn(annotation.source, FirJvmErrors.SYNCHRONIZED_IN_INTERFACE, context)
+                reporter.reportOn(annotation.source, FirJvmErrors.SYNCHRONIZED_IN_INTERFACE)
             containingClass.classKind == ClassKind.ANNOTATION_CLASS ->
-                reporter.reportOn(annotation.source, FirJvmErrors.SYNCHRONIZED_IN_ANNOTATION, context)
+                reporter.reportOn(annotation.source, FirJvmErrors.SYNCHRONIZED_IN_ANNOTATION)
             containingClass.isInlineOrValue ->
-                reporter.reportOn(annotation.source, FirJvmErrors.SYNCHRONIZED_ON_VALUE_CLASS, context)
+                reporter.reportOn(annotation.source, FirJvmErrors.SYNCHRONIZED_ON_VALUE_CLASS)
             declaration.isAbstract ->
-                reporter.reportOn(annotation.source, FirJvmErrors.SYNCHRONIZED_ON_ABSTRACT, context)
+                reporter.reportOn(annotation.source, FirJvmErrors.SYNCHRONIZED_ON_ABSTRACT)
         }
     }
 }

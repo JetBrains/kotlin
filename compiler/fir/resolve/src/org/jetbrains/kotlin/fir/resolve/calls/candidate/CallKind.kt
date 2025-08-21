@@ -11,7 +11,7 @@ sealed class CallKind(vararg val resolutionSequence: ResolutionStage) {
     object VariableAccess : CallKind(
         CheckHiddenDeclaration,
         CheckVisibility,
-        DiscriminateSyntheticProperties,
+        DiscriminateSyntheticAndForbiddenProperties,
         NoTypeArguments,
         InitializeEmptyArgumentMap,
         CreateFreshTypeVariableSubstitutorStage,
@@ -19,7 +19,7 @@ sealed class CallKind(vararg val resolutionSequence: ResolutionStage) {
         CheckDispatchReceiver,
         CheckExtensionReceiver,
         CheckContextArguments,
-        CheckDslScopeViolation,
+        CheckShadowedImplicits,
         CheckLowPriorityInOverloadResolution,
         ProcessDynamicExtensionAnnotation,
         LowerPriorityIfDynamic,
@@ -43,16 +43,16 @@ sealed class CallKind(vararg val resolutionSequence: ResolutionStage) {
     object Function : CallKind(
         CheckHiddenDeclaration,
         CheckVisibility,
-        DiscriminateSyntheticProperties,
+        DiscriminateSyntheticAndForbiddenProperties,
         MapArguments,
         MapTypeArguments,
         CreateFreshTypeVariableSubstitutorStage,
         CollectTypeVariableUsagesInfo,
         CheckDispatchReceiver,
         CheckExtensionReceiver,
-        CheckContextArguments,
-        CheckDslScopeViolation,
         CheckArguments,
+        CheckContextArguments,
+        CheckShadowedImplicits,
         CheckCallModifiers,
         EagerResolveOfCallableReferences,
         CheckLowPriorityInOverloadResolution,
@@ -74,9 +74,9 @@ sealed class CallKind(vararg val resolutionSequence: ResolutionStage) {
         CollectTypeVariableUsagesInfo,
         CheckDispatchReceiver,
         CheckExtensionReceiver,
-        CheckContextArguments,
-        CheckDslScopeViolation,
         CheckArguments,
+        CheckContextArguments,
+        CheckShadowedImplicits,
         EagerResolveOfCallableReferences,
         ConstraintSystemForks,
         CheckIncompatibleTypeVariableUpperBounds,
@@ -86,14 +86,14 @@ sealed class CallKind(vararg val resolutionSequence: ResolutionStage) {
     object CallableReference : CallKind(
         CheckHiddenDeclaration,
         CheckVisibility,
-        DiscriminateSyntheticProperties,
+        DiscriminateSyntheticAndForbiddenProperties,
         NoTypeArguments,
         InitializeEmptyArgumentMap,
         CreateFreshTypeVariableSubstitutorStage,
         CollectTypeVariableUsagesInfo,
         CheckDispatchReceiver,
         CheckExtensionReceiver,
-        CheckDslScopeViolation,
+        CheckShadowedImplicits,
         CheckCallableReferenceExpectedType,
         CheckLowPriorityInOverloadResolution,
         CheckIncompatibleTypeVariableUpperBounds,
@@ -135,7 +135,7 @@ class ResolutionSequenceBuilder(
     fun build(): CallKind {
         val stages = mutableListOf<ResolutionStage>().apply {
             if (checkVisibility) add(CheckVisibility)
-            if (discriminateSynthetics) add(DiscriminateSyntheticProperties)
+            if (discriminateSynthetics) add(DiscriminateSyntheticAndForbiddenProperties)
             if (checkArguments) add(MapArguments) else add(InitializeEmptyArgumentMap)
             if (mapTypeArguments) add(MapTypeArguments) else add(NoTypeArguments)
             if (checkArguments || checkDispatchReceiver || checkExtensionReceiver) add(CreateFreshTypeVariableSubstitutorStage)

@@ -1,3 +1,6 @@
+import org.jetbrains.kotlin.buildtools.api.ExperimentalBuildToolsApi
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
+
 plugins {
     `kotlin-dsl`
     id("org.jetbrains.kotlin.jvm")
@@ -6,12 +9,14 @@ plugins {
 description = "Binary Compatibility Validator compat - track ABI changes"
 
 repositories {
-    mavenCentral()
+    mavenCentral { setUrl("https://cache-redirector.jetbrains.com/maven-central") }
     gradlePluginPortal()
 }
 
 kotlin {
-    jvmToolchain(8)
+    @OptIn(ExperimentalKotlinGradlePluginApi::class, ExperimentalBuildToolsApi::class)
+    compilerVersion = libs.versions.kotlin.`for`.gradle.plugins.compilation
+    jvmToolchain(11)
 }
 
 dependencies {

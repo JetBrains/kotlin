@@ -15,3 +15,6 @@ data class C<T>(val x: Int, val y: T)
 fun <T, S> foo(c: C<T>) {
     val (x: Int, y: S) = <!COMPONENT_FUNCTION_RETURN_TYPE_MISMATCH!>c<!>
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, data, destructuringDeclaration, functionDeclaration, functionalType,
+lambdaLiteral, localProperty, nullableType, primaryConstructor, propertyDeclaration, typeParameter */

@@ -33,4 +33,13 @@ public interface FileEntryOrBuilder extends
    * <code>repeated int32 line_start_offset = 2 [packed = true];</code>
    */
   int getLineStartOffset(int index);
+
+  /**
+   * <code>optional int32 first_relevant_line_index = 3 [default = 0];</code>
+   */
+  boolean hasFirstRelevantLineIndex();
+  /**
+   * <code>optional int32 first_relevant_line_index = 3 [default = 0];</code>
+   */
+  int getFirstRelevantLineIndex();
 }

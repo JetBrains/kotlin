@@ -1,3 +1,5 @@
+// COMPILATION_ERRORS
+
 class value Foo
 
 value private class Foo

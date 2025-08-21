@@ -18,7 +18,8 @@ import org.jetbrains.kotlin.js.validateQualifier
 import org.jetbrains.kotlin.name.WebCommonStandardClassIds.Annotations.JsQualifier
 
 object FirJsQualifierChecker : FirAnnotationCallChecker(MppCheckerKind.Common) {
-    override fun check(expression: FirAnnotationCall, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(expression: FirAnnotationCall) {
         if (expression.toAnnotationClassId(context.session) != JsQualifier) {
             return
         }
@@ -26,7 +27,7 @@ object FirJsQualifierChecker : FirAnnotationCallChecker(MppCheckerKind.Common) {
         val string = (expression.argumentMapping.mapping.values.firstOrNull() as? FirLiteralExpression)?.value as? String ?: return
 
         if (!validateQualifier(string)) {
-            reporter.reportOn(expression.argumentList.arguments.first().source, FirWebCommonErrors.WRONG_JS_QUALIFIER, context)
+            reporter.reportOn(expression.argumentList.arguments.first().source, FirWebCommonErrors.WRONG_JS_QUALIFIER)
         }
     }
 }

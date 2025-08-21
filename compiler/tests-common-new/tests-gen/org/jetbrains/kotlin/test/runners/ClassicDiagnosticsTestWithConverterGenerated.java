@@ -22,7 +22,7 @@ import java.util.regex.Pattern;
 public class ClassicDiagnosticsTestWithConverterGenerated extends AbstractClassicDiagnosticsTestWithConverter {
   @Test
   public void testAllFilesPresentInTestsWithConverter() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithConverter"), Pattern.compile("^(.+)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), TargetBackend.JVM_IR, true);
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithConverter"), Pattern.compile("^(.+)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|partialBody|fir|ll|latestLV)\\.kts?$"), TargetBackend.JVM_IR, true);
   }
 
   @Nested
@@ -31,7 +31,7 @@ public class ClassicDiagnosticsTestWithConverterGenerated extends AbstractClassi
   public class Scripts {
     @Test
     public void testAllFilesPresentInScripts() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithConverter/scripts"), Pattern.compile("^(.+)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), TargetBackend.JVM_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithConverter/scripts"), Pattern.compile("^(.+)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|partialBody|fir|ll|latestLV)\\.kts?$"), TargetBackend.JVM_IR, true);
     }
 
     @Test

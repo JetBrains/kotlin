@@ -11,3 +11,6 @@ enum class E {
     <!OVERRIDING_FINAL_MEMBER!>override<!> fun equals(other: Any?) = true
     <!OVERRIDING_FINAL_MEMBER!>override<!> fun hashCode() = -1
 }
+
+/* GENERATED_FIR_TAGS: enumDeclaration, enumEntry, functionDeclaration, integerLiteral, nullableType, operator, override,
+propertyDeclaration, stringLiteral */

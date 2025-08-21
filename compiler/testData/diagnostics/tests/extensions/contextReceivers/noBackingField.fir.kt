@@ -17,3 +17,6 @@ var b = <!CONTEXT_PARAMETERS_WITH_BACKING_FIELD!>2<!>
 
 context(A, B)
 val c get() = a() + b()
+
+/* GENERATED_FIR_TAGS: additiveExpression, functionDeclaration, getter, integerLiteral, interfaceDeclaration,
+propertyDeclaration, propertyDeclarationWithContext */

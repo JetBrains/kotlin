@@ -37,10 +37,9 @@ internal val InternalKotlinSourceSet.metadataTransformation: GranularMetadataTra
     val granularMetadataTransformation = GranularMetadataTransformation(
         params = GranularMetadataTransformation.Params(project, this, transformProjectDependencies = false),
         parentSourceSetVisibilityProvider = parentSourceSetVisibilityProvider,
-        kotlinToolingDiagnosticsCollector = PreparedKotlinToolingDiagnosticsCollector.create(project)
     )
 
-    @Suppress("DEPRECATION")
+    @Suppress("DEPRECATION_ERROR")
     /*
     Older IDEs still rely on resolving the metadata configurations explicitly.
     Dependencies will be coming from extending the newer 'resolvableMetadataConfiguration'.

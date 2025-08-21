@@ -26,19 +26,19 @@ KaKotlinPropertySymbol:
     deprecationStatus: null
   callableId: /x
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
     annotations: []
     callableId: null
     compilerVisibility: Public
     contextReceivers: []
-    hasBody: false
     hasStableParameterNames: true
     isActual: false
-    isDefault: true
     isExpect: false
     isExtension: false
     isInline: false
+    isNotDefault: false
     isOverride: false
     location: PROPERTY
     modality: FINAL
@@ -89,6 +89,7 @@ KaKotlinPropertySymbol:
   javaGetterName: getX
   javaSetterName: null
   setterDeprecationStatus: null
+  isInline: false
 
 KaKotlinPropertySymbol:
   annotations: []
@@ -118,19 +119,19 @@ KaKotlinPropertySymbol:
     deprecationStatus: null
   callableId: /y
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
     annotations: []
     callableId: null
     compilerVisibility: Public
     contextReceivers: []
-    hasBody: true
     hasStableParameterNames: true
     isActual: false
-    isDefault: false
     isExpect: false
     isExtension: false
     isInline: false
+    isNotDefault: true
     isOverride: false
     location: PROPERTY
     modality: FINAL
@@ -156,7 +157,7 @@ KaKotlinPropertySymbol:
         type: kotlin/Int
       visibility: LOCAL
       getContainingFileSymbol: KaFileSymbol(topLevelProperties.kt)
-      getContainingJvmClassName: null
+      getContainingJvmClassName: TopLevelPropertiesKt
       getContainingModule: KaSourceModule "Sources of main"
       deprecationStatus: null
     returnType: KaUsualClassType:
@@ -209,7 +210,7 @@ KaKotlinPropertySymbol:
       type: kotlin/Int
     visibility: LOCAL
     getContainingFileSymbol: KaFileSymbol(topLevelProperties.kt)
-    getContainingJvmClassName: null
+    getContainingJvmClassName: TopLevelPropertiesKt
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
   returnType: KaUsualClassType:
@@ -227,6 +228,7 @@ KaKotlinPropertySymbol:
   javaGetterName: getY
   javaSetterName: null
   setterDeprecationStatus: null
+  isInline: false
 
 KaKotlinPropertySymbol:
   annotations: []
@@ -256,19 +258,19 @@ KaKotlinPropertySymbol:
     deprecationStatus: null
   callableId: /get
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
     annotations: []
     callableId: null
     compilerVisibility: Public
     contextReceivers: []
-    hasBody: true
     hasStableParameterNames: true
     isActual: false
-    isDefault: false
     isExpect: false
     isExtension: false
     isInline: false
+    isNotDefault: true
     isOverride: false
     location: PROPERTY
     modality: FINAL
@@ -294,7 +296,7 @@ KaKotlinPropertySymbol:
         type: kotlin/Short
       visibility: LOCAL
       getContainingFileSymbol: KaFileSymbol(topLevelProperties.kt)
-      getContainingJvmClassName: null
+      getContainingJvmClassName: TopLevelPropertiesKt
       getContainingModule: KaSourceModule "Sources of main"
       deprecationStatus: null
     returnType: KaUsualClassType:
@@ -347,7 +349,7 @@ KaKotlinPropertySymbol:
       type: kotlin/Short
     visibility: LOCAL
     getContainingFileSymbol: KaFileSymbol(topLevelProperties.kt)
-    getContainingJvmClassName: null
+    getContainingJvmClassName: TopLevelPropertiesKt
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
   returnType: KaUsualClassType:
@@ -359,13 +361,12 @@ KaKotlinPropertySymbol:
     callableId: null
     compilerVisibility: Public
     contextReceivers: []
-    hasBody: true
     hasStableParameterNames: true
     isActual: false
-    isDefault: false
     isExpect: false
     isExtension: false
     isInline: false
+    isNotDefault: true
     isOverride: false
     location: PROPERTY
     modality: FINAL
@@ -420,7 +421,7 @@ KaKotlinPropertySymbol:
         type: kotlin/Short
       visibility: LOCAL
       getContainingFileSymbol: KaFileSymbol(topLevelProperties.kt)
-      getContainingJvmClassName: null
+      getContainingJvmClassName: TopLevelPropertiesKt
       getContainingModule: KaSourceModule "Sources of main"
       deprecationStatus: null
     returnType: KaUsualClassType:
@@ -473,3 +474,4 @@ KaKotlinPropertySymbol:
   javaGetterName: getGet
   javaSetterName: setGet
   setterDeprecationStatus: null
+  isInline: false

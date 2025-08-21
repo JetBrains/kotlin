@@ -13,3 +13,5 @@ fun bar(a: String): String {
         else -> ""
     }
 }
+
+/* GENERATED_FIR_TAGS: equalityExpression, functionDeclaration, integerLiteral, stringLiteral, whenExpression */

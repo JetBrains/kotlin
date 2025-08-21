@@ -106,6 +106,11 @@ class Test() {
         <!WRAPPED_LHS_IN_ASSIGNMENT_ERROR!>l@ (<!VARIABLE_EXPECTED!>1<!>)<!> = 123
     }
 
+    fun testIllegalTypeRef(): Any {
+        <!VARIABLE_EXPECTED!>Char<!>=
+            return ""
+    }
+
     fun testIncompleteSyntax() {
         val s = "s"
         <!UNRESOLVED_REFERENCE!>++<!><!VARIABLE_EXPECTED!>s<!>.<!SYNTAX!><!>
@@ -162,3 +167,7 @@ fun Array<Int>.checkThis() {
 abstract class Ab {
     abstract fun getArray() : Array<Int>
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, annotationDeclaration, asExpression, assignment, classDeclaration,
+funWithExtensionReceiver, functionDeclaration, incrementDecrementExpression, inner, integerLiteral, isExpression,
+localProperty, primaryConstructor, propertyDeclaration, stringLiteral, superExpression, thisExpression */

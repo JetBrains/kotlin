@@ -303,7 +303,7 @@ private class DeclarationsGeneratorVisitor(override val generationState: NativeG
             val typeInfoOffsetInGlobal = LLVMOffsetOfElement(llvmTargetData, typeInfoWithVtableType, 0)
             check(typeInfoOffsetInGlobal == 0L) { "Offset for $typeInfoSymbolName TypeInfo is $typeInfoOffsetInGlobal" }
 
-            if (context.config.producePerFileCache && declaration in generationState.constructedFromExportedInlineFunctions) {
+            if (context.config.producePerFileCache && declaration.isConstructedFromExportedInlineFunctions) {
                 // This is required because internal inline functions can access private classes.
                 // So, in the generated code, the class type info can be accessed outside the file.
                 // With per-file caches involved, this can mean accessing from a different object file.
@@ -447,7 +447,9 @@ private class DeclarationsGeneratorVisitor(override val generationState: NativeG
             val symbolName = if (declaration.isExported()) {
                 declaration.computeSymbolName().also {
                     if (declaration.name.asString() != "main") {
-                        assert(LLVMGetNamedFunction(llvm.module, it) == null) { it }
+                        assert(LLVMGetNamedFunction(llvm.module, it) == null) {
+                            "Function `$it` is already defined. New definition is required for ${declaration.render()}"
+                        }
                     } else {
                         // As a workaround, allow `main` functions to clash because frontend accepts this.
                         // See [OverloadResolver.isTopLevelMainInDifferentFiles] usage.

@@ -1,6 +1,6 @@
 FILE: samConversionToGeneric.kt
     public final fun test1(): R|J<kotlin/String>| {
-        ^test1 R|/J|<R|ExplicitTypeArgumentIfMadeFlexibleSyntheticallyTypeAttribute(coneType=kotlin/String) kotlin/String!|>(<L> = J@fun <anonymous>(x: R|kotlin/String!|): R|kotlin/String!| <inline=NoInline>  {
+        ^test1 R|/J|<R|kotlin/String|>(<L> = J@fun <anonymous>(x: R|kotlin/String!|): R|kotlin/String!| <inline=NoInline>  {
             ^ R|<local>/x|
         }
         )
@@ -26,11 +26,11 @@ FILE: samConversionToGeneric.kt
         Q|H|.R|/H.bar*s|<R|kotlin/String!|>(SAM(R|<local>/a|))
     }
     public final fun <T> test6(a: R|(T) -> T|): R|kotlin/Unit| {
-        Q|H|.R|/H.bar*s|<R|T!|>(SAM(R|<local>/a|))
+        Q|H|.R|/H.bar*s|<R|ft<T & Any, T?>|>(SAM(R|<local>/a|))
     }
     public final fun <T> test7(a: R|kotlin/Any|): R|kotlin/Unit| {
         (R|<local>/a| as R|(T) -> T|)
-        Q|H|.R|/H.bar*s|<R|T!|>(SAM(R|<local>/a|))
+        Q|H|.R|/H.bar*s|<R|ft<T & Any, T?>|>(SAM(R|<local>/a|))
     }
     public final fun test8(efn: R|kotlin/String.() -> kotlin/String|): R|J<kotlin/String!>| {
         ^test8 R|/J|<R|kotlin/String!|>(R|<local>/efn|)

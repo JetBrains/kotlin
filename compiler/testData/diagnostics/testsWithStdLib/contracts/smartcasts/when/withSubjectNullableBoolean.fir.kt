@@ -55,3 +55,6 @@ fun exhaustiveWithNullableResult(x: Any?) {
         true -> x.length
     }
 }
+
+/* GENERATED_FIR_TAGS: contractConditionalEffect, contracts, equalityExpression, functionDeclaration, isExpression,
+lambdaLiteral, nullableType, safeCall, smartcast, whenExpression, whenWithSubject */

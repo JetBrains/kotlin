@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
+import org.jetbrains.kotlin.resolve.ReturnValueStatus
 import org.jetbrains.kotlin.types.SmartcastStability
 import org.jetbrains.kotlin.types.Variance
 
@@ -46,6 +47,7 @@ val nameType = type<Name>()
 val visibilityType = type<Visibility>()
 val effectiveVisibilityType = type("descriptors", "EffectiveVisibility")
 val modalityType = type<Modality>()
+val returnValueStatusType = type<ReturnValueStatus>()
 val smartcastStabilityType = type<SmartcastStability>()
 val fqNameType = type<FqName>()
 val classIdType = type<ClassId>()
@@ -58,8 +60,6 @@ val coneClassLikeTypeType = type<ConeClassLikeType>()
 val coneClassLikeTypeImplType = type<ConeClassLikeTypeImpl>()
 val standardClassIdsType = type<StandardClassIds>()
 
-val whenRefType = generatedType("", "FirExpressionRef")
-    .withArgs(FirTree.whenExpression)
 val referenceToSimpleExpressionType = generatedType("", "FirExpressionRef")
     .withArgs(FirTree.expression)
 val safeCallCheckedSubjectReferenceType = generatedType("", "FirExpressionRef")
@@ -124,6 +124,8 @@ val declarationOriginType = generatedType("declarations", "FirDeclarationOrigin"
 val declarationAttributesType = generatedType("declarations", "FirDeclarationAttributes")
 val valueParameterKindType = generatedType("declarations", "FirValueParameterKind")
 
+val dfaType = generatedType("", "DfaType")
+
 val exhaustivenessStatusType = generatedType("expressions", "ExhaustivenessStatus")
 
 val callableReferenceMappedArgumentsType = type("fir.resolve.calls", "CallableReferenceMappedArguments")
@@ -150,6 +152,7 @@ val firDefaultVisitorVoidType = generatedType("visitors", "FirDefaultVisitorVoid
 val firTransformerType = generatedType("visitors", "FirTransformer")
 
 val resolveStateAccessAnnotation = type("fir.declarations", "ResolveStateAccess", kind = TypeKind.Class)
+val directDeclarationsAccessAnnotation = type("fir.declarations", "DirectDeclarationsAccess", kind = TypeKind.Class)
 val unresolvedExpressionTypeAccessAnnotation = type("fir.expressions", "UnresolvedExpressionTypeAccess", kind = TypeKind.Class)
 val rawFirApi = type("fir.expressions", "RawFirApi", kind = TypeKind.Class)
 val firBuilderDslAnnotation = type("fir.builder", "FirBuilderDsl", kind = TypeKind.Class)

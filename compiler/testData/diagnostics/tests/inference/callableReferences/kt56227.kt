@@ -29,3 +29,7 @@ fun main() {
         y = { ::bodywt }
     )
 }
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, data, funWithExtensionReceiver, functionDeclaration,
+functionalType, inline, lambdaLiteral, localProperty, nullableType, primaryConstructor, propertyDeclaration, reified,
+starProjection, stringLiteral, typeParameter, typeWithExtension */

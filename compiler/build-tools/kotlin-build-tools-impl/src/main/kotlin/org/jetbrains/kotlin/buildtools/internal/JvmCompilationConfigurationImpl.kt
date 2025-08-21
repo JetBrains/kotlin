@@ -93,6 +93,7 @@ internal abstract class JvmIncrementalCompilationConfigurationImpl<P : Increment
 
 internal class ClasspathSnapshotBasedIncrementalJvmCompilationConfigurationImpl(
     override var assuredNoClasspathSnapshotsChanges: Boolean = false,
+    override var isUsingFirRunner: Boolean = false,
 ) :
     JvmIncrementalCompilationConfigurationImpl<ClasspathSnapshotBasedIncrementalCompilationApproachParameters>(),
     ClasspathSnapshotBasedIncrementalJvmCompilationConfiguration {
@@ -128,6 +129,11 @@ internal class ClasspathSnapshotBasedIncrementalJvmCompilationConfigurationImpl(
 
     override fun assureNoClasspathSnapshotsChanges(value: Boolean): ClasspathSnapshotBasedIncrementalJvmCompilationConfiguration {
         assuredNoClasspathSnapshotsChanges = value
+        return this
+    }
+
+    override fun useFirRunner(value: Boolean): ClasspathSnapshotBasedIncrementalJvmCompilationConfiguration {
+        isUsingFirRunner = value
         return this
     }
 

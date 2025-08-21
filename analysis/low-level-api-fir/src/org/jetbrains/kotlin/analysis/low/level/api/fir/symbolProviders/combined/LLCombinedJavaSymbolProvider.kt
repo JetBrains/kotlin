@@ -6,9 +6,9 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.combined
 
 import com.intellij.openapi.project.Project
-import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinGlobalSearchScopeMerger
-import org.jetbrains.kotlin.analysis.low.level.api.fir.caches.NullableCaffeineCache
-import org.jetbrains.kotlin.analysis.low.level.api.fir.caches.withStatsCounter
+import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KaGlobalSearchScopeMerger
+import org.jetbrains.kotlin.analysis.api.platform.caches.NullableCaffeineCache
+import org.jetbrains.kotlin.analysis.api.platform.caches.withStatsCounter
 import org.jetbrains.kotlin.analysis.low.level.api.fir.statistics.LLStatisticsService
 import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.LLFirJavaSymbolProvider
 import org.jetbrains.kotlin.fir.FirSession
@@ -54,7 +54,7 @@ internal class LLCombinedJavaSymbolProvider private constructor(
     private val classCache: NullableCaffeineCache<ClassId, FirRegularClassSymbol> = NullableCaffeineCache {
         it
             .maximumSize(2500)
-            .withStatsCounter(LLStatisticsService.getInstance(project)?.symbolProviders?.combinedSymbolProviderCacheStatsCounter)
+            .withStatsCounter(LLStatisticsService.getInstance(project)?.symbolProviders?.combinedSymbolProviderClassCacheStatsCounter)
     }
 
     override val symbolNamesProvider: FirSymbolNamesProvider = object : FirSymbolNamesProviderWithoutCallables() {
@@ -65,7 +65,7 @@ internal class LLCombinedJavaSymbolProvider private constructor(
     }
 
     override fun getClassLikeSymbolByClassId(classId: ClassId): FirClassLikeSymbol<*>? =
-        classCache.get(classId) { computeClassLikeSymbolByClassId(it) }
+        classCache.getOrPut(classId) { computeClassLikeSymbolByClassId(it) }
 
     private fun computeClassLikeSymbolByClassId(classId: ClassId): FirRegularClassSymbol? {
         val javaClasses = javaClassFinder.findClasses(classId).filterNot(JavaClass::hasMetadataAnnotation)
@@ -102,7 +102,7 @@ internal class LLCombinedJavaSymbolProvider private constructor(
     companion object {
         fun merge(session: FirSession, project: Project, providers: List<LLFirJavaSymbolProvider>): FirSymbolProvider? =
             if (providers.size > 1) {
-                val combinedScope = KotlinGlobalSearchScopeMerger.getInstance(project).union(providers.map { it.searchScope })
+                val combinedScope = KaGlobalSearchScopeMerger.getInstance(project).union(providers.map { it.searchScope })
                 val javaClassFinder = project.createJavaClassFinder(combinedScope)
                 LLCombinedJavaSymbolProvider(session, project, providers, javaClassFinder)
             } else providers.singleOrNull()

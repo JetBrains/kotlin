@@ -4,8 +4,8 @@
 // FILE: common.kt
 annotation class Ann
 
-<!EXPECT_ACTUAL_INCOMPATIBILITY{JVM}!>expect<!> class A {
-    class <!EXPECT_ACTUAL_INCOMPATIBILITY{JVM}!>B<!> {
+<!EXPECT_ACTUAL_IR_INCOMPATIBILITY{JVM}!>expect<!> class A {
+    class <!EXPECT_ACTUAL_IR_INCOMPATIBILITY{JVM}!>B<!> {
         @Ann
         fun foo()
         fun <!NO_ACTUAL_FOR_EXPECT{JVM}!>missingOnActual<!>()
@@ -20,4 +20,7 @@ class AImpl {
     }
 }
 
-<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual<!> typealias <!NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS!>A<!> = AImpl
+<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual<!> typealias <!EXPECT_ACTUAL_INCOMPATIBLE_CLASS_SCOPE!>A<!> = AImpl
+
+/* GENERATED_FIR_TAGS: actual, annotationDeclaration, classDeclaration, expect, functionDeclaration, nestedClass,
+typeAliasDeclaration */

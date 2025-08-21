@@ -51,7 +51,7 @@ fun Foo.b(label: String?, %composer: Composer?, %changed: Int, %default: Int) {
   if (%default and 0b0001 != 0) {
     label = ""
   }
-  c(<this>, label, %composer, 0b1110 and %changed or 0b01110000 and %changed)
+  c(<this>, label as String, %composer, 0b1110 and %changed or 0b01110000 and %changed)
   sourceInformationMarkerEnd(%composer)
 }
 @Composable

@@ -10,7 +10,8 @@ dependencies {
     api(kotlinStdlib())
     compileOnly(project(":kotlin-tooling-core")) // to reuse `KotlinToolingVersion`
     compileOnly(project(":compiler:build-tools:kotlin-build-tools-api"))
-    api(projectTests(":compiler:test-infrastructure-utils")) // for `@TestDataPath`/`@TestMetadata`
+    compileOnly(project(":compiler:build-tools:kotlin-build-tools-compat"))
+    api(testFixtures(project(":compiler:test-infrastructure-utils"))) // for `@TestDataPath`/`@TestMetadata`
 
     api(platform(libs.junit.bom))
     compileOnly(libs.junit.jupiter.engine)
@@ -22,13 +23,13 @@ kotlin {
         optIn.add("org.jetbrains.kotlin.buildtools.api.ExperimentalBuildToolsApi")
         optIn.add("kotlin.ExperimentalStdlibApi")
         optIn.add("kotlin.io.path.ExperimentalPathApi")
-        freeCompilerArgs.add("-Xcontext-parameters")
     }
 }
 
 val compatibilityTestsVersions = listOf(
     BuildToolsVersion(KotlinToolingVersion(project.version.toString()), isCurrent = true),
-    BuildToolsVersion(KotlinToolingVersion(1, 9, 20, null)),
+    BuildToolsVersion(KotlinToolingVersion(2, 1, 20, null)),
+    BuildToolsVersion(KotlinToolingVersion(2, 0, 21, null)),
 )
 
 class BuildToolsVersion(val version: KotlinToolingVersion, val isCurrent: Boolean = false) {
@@ -70,6 +71,7 @@ val businessLogicTestSuits = setOf(
     "testEscapableCharacters",
     "testInputChangesTracking",
     "testCrossModuleIncrementalChanges",
+    "testFirRunner",
 )
 
 testing {
@@ -86,6 +88,7 @@ testing {
                     configuredIdeaSourceSets = true
                 }
                 dependencies {
+                    runtimeOnly(project(":compiler:build-tools:kotlin-build-tools-compat"))
                     if (implVersion.isCurrent) {
                         runtimeOnly(project(":compiler:build-tools:kotlin-build-tools-impl"))
                     } else {
@@ -111,7 +114,8 @@ testing {
                     isTransitive = false
                 }
                 implementation(project(":kotlin-tooling-core"))
-                compileOnly(project(":compiler:build-tools:kotlin-build-tools-api"))
+                implementation(project(":compiler:build-tools:kotlin-build-tools-api"))
+                runtimeOnly(project(":compiler:build-tools:kotlin-build-tools-compat"))
                 if (isRegular) {
                     runtimeOnly(project(":compiler:build-tools:kotlin-build-tools-impl"))
                 }

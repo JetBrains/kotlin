@@ -16,3 +16,6 @@ fun box(): String {
     val d = Derived()
     return d::a.get()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, flexibleType, functionDeclaration, javaCallableReference, javaType,
+localProperty, propertyDeclaration, stringLiteral */

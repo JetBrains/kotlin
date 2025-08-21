@@ -6,12 +6,14 @@
 package org.jetbrains.kotlin.sir
 
 import org.jetbrains.kotlin.sir.util.SirSwiftModule
+import org.jetbrains.kotlin.sir.util.swiftFqName
 
 sealed interface SirType {
     val attributes: List<SirAttribute>
 
     companion object {
         val any get() = SirExistentialType()
+        val anyHashable get() = SirNominalType(SirSwiftModule.anyHashable)
         val never get() = SirNominalType(SirSwiftModule.never)
         val void get() = SirNominalType(SirSwiftModule.void)
     }
@@ -21,7 +23,10 @@ class SirFunctionalType(
     val parameterTypes: List<SirType>,
     val returnType: SirType,
     override val attributes: List<SirAttribute> = emptyList(),
-) : SirType
+) : SirType {
+    fun copyAppendingAttributes(vararg attributes: SirAttribute): SirFunctionalType =
+        SirFunctionalType(parameterTypes, returnType, this.attributes + attributes)
+}
 
 open class SirNominalType(
     val typeDeclaration: SirNamedDeclaration,
@@ -29,6 +34,7 @@ open class SirNominalType(
     val parent: SirNominalType? = null,
     override val attributes: List<SirAttribute> = emptyList(),
 ) : SirType {
+
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other == null || other !is SirNominalType) return false
@@ -48,6 +54,9 @@ open class SirNominalType(
         result = 31 * result + (parent?.hashCode() ?: 0)
         return result
     }
+
+    fun copyAppendingAttributes(vararg attributes: SirAttribute): SirNominalType =
+        SirNominalType(typeDeclaration, typeArguments, parent, this.attributes + attributes)
 }
 
 class SirOptionalType(type: SirType) : SirNominalType(
@@ -57,14 +66,14 @@ class SirOptionalType(type: SirType) : SirNominalType(
     val wrappedType: SirType get() = super.typeArguments.single()
 }
 
-class SirArrayType(type: SirType): SirNominalType(
+class SirArrayType(type: SirType) : SirNominalType(
     typeDeclaration = SirSwiftModule.array,
-    typeArguments = listOf(type)
+    typeArguments = listOf(type),
 ) {
     val elementType: SirType get() = super.typeArguments.single()
 }
 
-class SirDictionaryType(keyType: SirType, valueType: SirType): SirNominalType(
+class SirDictionaryType(keyType: SirType, valueType: SirType) : SirNominalType(
     typeDeclaration = SirSwiftModule.dictionary,
     typeArguments = listOf(keyType, valueType)
 ) {
@@ -73,14 +82,18 @@ class SirDictionaryType(keyType: SirType, valueType: SirType): SirNominalType(
 }
 
 class SirExistentialType(
-    // TODO: Protocols. For now, only `any Any` is supported
+    protocols: List<SirProtocol>,
 ) : SirType {
     override val attributes: List<SirAttribute> = emptyList()
 
+    val protocols: List<SirProtocol> = protocols.sortedBy { it.swiftFqName }
+
+    constructor(vararg protocols: SirProtocol) : this(protocols.toList())
+
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
-        if (other != null && this::class != other::class) return false
-        return true
+        if (other == null || other !is SirExistentialType) return false
+        return protocols == other.protocols
     }
 
     override fun hashCode(): Int {

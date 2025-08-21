@@ -16,15 +16,17 @@
 
 package kotlin.reflect.jvm.internal
 
+import org.jetbrains.kotlin.SpecialJvmAnnotations
 import org.jetbrains.kotlin.builtins.CompanionObjectMapping
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.builtins.isMappedIntrinsicCompanionObject
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.ClassDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.EmptyPackageFragmentDescriptor
 import org.jetbrains.kotlin.descriptors.runtime.components.ReflectKotlinClass
 import org.jetbrains.kotlin.descriptors.runtime.components.RuntimeModuleData
+import org.jetbrains.kotlin.descriptors.runtime.structure.Java16SealedRecordLoader
 import org.jetbrains.kotlin.descriptors.runtime.structure.functionClassArity
+import org.jetbrains.kotlin.descriptors.runtime.structure.safeClassLoader
 import org.jetbrains.kotlin.descriptors.runtime.structure.wrapperByPrimitive
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.load.java.JvmAbi
@@ -37,19 +39,31 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.scopes.GivenFunctionsMemberScope
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
-import org.jetbrains.kotlin.serialization.deserialization.MemberDeserializer
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedClassDescriptor
 import org.jetbrains.kotlin.utils.compact
+import java.lang.reflect.Modifier
 import kotlin.LazyThreadSafetyMode.PUBLICATION
 import kotlin.jvm.internal.TypeIntrinsics
+import kotlin.metadata.*
+import kotlin.metadata.ClassKind
+import kotlin.metadata.Modality
+import kotlin.metadata.internal.toKmClass
 import kotlin.reflect.*
 import kotlin.reflect.jvm.internal.KDeclarationContainerImpl.MemberBelonginess.DECLARED
 import kotlin.reflect.jvm.internal.KDeclarationContainerImpl.MemberBelonginess.INHERITED
+import org.jetbrains.kotlin.descriptors.ClassKind as DescriptorClassKind
+import org.jetbrains.kotlin.descriptors.Modality as DescriptorModality
 
 internal class KClassImpl<T : Any>(
-    override val jClass: Class<T>
+    override val jClass: Class<T>,
 ) : KDeclarationContainerImpl(), KClass<T>, KClassifierImpl, KTypeParameterOwnerImpl {
     inner class Data : KDeclarationContainerImpl.Data() {
+        val kmClass: KmClass? by lazy(PUBLICATION) {
+            (descriptor as? DeserializedClassDescriptor)?.let { descriptor ->
+                descriptor.classProto.toKmClass(descriptor.c.nameResolver)
+            }
+        }
+
         val descriptor: ClassDescriptor by ReflectProperties.lazySoft {
             val classId = classId
             val moduleData = data.value.moduleData
@@ -67,7 +81,9 @@ internal class KClassImpl<T : Any>(
             descriptor ?: createSyntheticClassOrFail(classId, moduleData)
         }
 
-        val annotations: List<Annotation> by ReflectProperties.lazySoft { descriptor.computeAnnotations() }
+        val annotations: List<Annotation> by ReflectProperties.lazySoft {
+            jClass.annotations.filterNot { it.annotationClass.java.name in SPECIAL_JVM_ANNOTATION_NAMES }.unwrapRepeatableAnnotations()
+        }
 
         val simpleName: String? by ReflectProperties.lazySoft {
             if (jClass.isAnonymousClass) return@lazySoft null
@@ -108,20 +124,31 @@ internal class KClassImpl<T : Any>(
         }
 
         val nestedClasses: Collection<KClass<*>> by ReflectProperties.lazySoft {
-            descriptor.unsubstitutedInnerClassesScope.getContributedDescriptors().filterNot(DescriptorUtils::isEnumEntry)
-                .mapNotNull { nestedClass ->
-                    val jClass = (nestedClass as? ClassDescriptor)?.toJavaClass()
-                    jClass?.let { KClassImpl(it) }
+            val kmClass = kmClass
+            when {
+                kmClass != null -> {
+                    val classId = kmClass.name.toClassId()
+                    val classLoader = jClass.safeClassLoader
+                    kmClass.nestedClasses.mapNotNull { name ->
+                        classLoader.loadClass(classId.createNestedClassId(Name.identifier(name)))?.kotlin
+                    }
                 }
+                else -> jClass.declaredClasses.mapNotNull { it.kotlin }
+            }
         }
 
         @Suppress("UNCHECKED_CAST")
         val objectInstance: T? by lazy(PUBLICATION) {
-            val descriptor = descriptor
-            if (descriptor.kind != ClassKind.OBJECT) return@lazy null
+            val kmClass = kmClass
+            if (kmClass == null || (kmClass.kind != ClassKind.OBJECT && kmClass.kind != ClassKind.COMPANION_OBJECT))
+                return@lazy null
 
-            val field = if (descriptor.isCompanionObject && !CompanionObjectMapping.isMappedIntrinsicCompanionObject(descriptor)) {
-                jClass.enclosingClass.getDeclaredField(descriptor.name.asString())
+            val field = if (
+                kmClass.kind == ClassKind.COMPANION_OBJECT &&
+                kmClass.name.toClassId().outerClassId !in CompanionObjectMapping.classIds
+            ) {
+                // Note that `kmClass.name` cannot be local because local objects are not allowed.
+                jClass.enclosingClass.getDeclaredField(kmClass.name.toNonLocalSimpleName())
             } else {
                 jClass.getDeclaredField(JvmAbi.INSTANCE_FIELD)
             }
@@ -154,7 +181,7 @@ internal class KClassImpl<T : Any>(
             }
             if (!KotlinBuiltIns.isSpecialClassWithNoSupertypes(descriptor) && result.all {
                     val classKind = DescriptorUtils.getClassDescriptorForType(it.type).kind
-                    classKind == ClassKind.INTERFACE || classKind == ClassKind.ANNOTATION_CLASS
+                    classKind == DescriptorClassKind.INTERFACE || classKind == DescriptorClassKind.ANNOTATION_CLASS
                 }) {
                 result += KTypeImpl(descriptor.builtIns.anyType) { Any::class.java }
             }
@@ -162,11 +189,17 @@ internal class KClassImpl<T : Any>(
         }
 
         val sealedSubclasses: List<KClass<out T>> by ReflectProperties.lazySoft {
-            descriptor.sealedSubclasses.mapNotNull { subclass ->
-                @Suppress("UNCHECKED_CAST")
-                val jClass = (subclass as ClassDescriptor).toJavaClass() as Class<out T>?
-                jClass?.let { KClassImpl(it) }
+            val classLoader = jClass.safeClassLoader
+            val kmClass = kmClass
+            val result = when {
+                kmClass != null ->
+                    kmClass.sealedSubclasses.mapNotNull(classLoader::loadKClass)
+                Java16SealedRecordLoader.loadIsSealed(jClass) == true ->
+                    Java16SealedRecordLoader.loadGetPermittedSubclasses(jClass)?.map { it.kotlin }.orEmpty()
+                else -> emptyList()
             }
+            @Suppress("UNCHECKED_CAST")
+            result as List<KClass<out T>>
         }
 
         val declaredNonStaticMembers: Collection<KCallableImpl<*>>
@@ -192,9 +225,20 @@ internal class KClassImpl<T : Any>(
 
     override val descriptor: ClassDescriptor get() = data.value.descriptor
 
+    private val kmClass: KmClass? get() = data.value.kmClass
+
     override val annotations: List<Annotation> get() = data.value.annotations
 
     private val classId: ClassId get() = RuntimeTypeMapper.mapJvmClassToKotlinClassId(jClass)
+
+    internal val classKind: ClassKind
+        get() = kmClass?.kind ?: when {
+            jClass.isAnnotation -> ClassKind.ANNOTATION_CLASS
+            jClass.isInterface -> ClassKind.INTERFACE
+            jClass.isEnum -> ClassKind.ENUM_CLASS
+            jClass.superclass.isEnum -> ClassKind.ENUM_ENTRY
+            else -> ClassKind.CLASS
+        }
 
     // Note that we load members from the container's default type, which might be confusing. For example, a function declared in a
     // generic class "A<T>" would have "A<T>" as the receiver parameter even if a concrete type like "A<String>" was specified
@@ -208,7 +252,7 @@ internal class KClassImpl<T : Any>(
     override val constructorDescriptors: Collection<ConstructorDescriptor>
         get() {
             val descriptor = descriptor
-            if (descriptor.kind == ClassKind.INTERFACE || descriptor.kind == ClassKind.OBJECT) {
+            if (descriptor.kind == DescriptorClassKind.INTERFACE || descriptor.kind == DescriptorClassKind.OBJECT) {
                 return emptyList()
             }
             return descriptor.constructors
@@ -235,9 +279,8 @@ internal class KClassImpl<T : Any>(
         return (descriptor as? DeserializedClassDescriptor)?.let { descriptor ->
             descriptor.classProto.getExtensionOrNull(JvmProtoBuf.classLocalVariable, index)?.let { proto ->
                 deserializeToDescriptor(
-                    jClass, proto, descriptor.c.nameResolver, descriptor.c.typeTable, descriptor.metadataVersion,
-                    MemberDeserializer::loadProperty
-                )
+                    jClass, proto, descriptor.c.nameResolver, descriptor.c.typeTable, descriptor.metadataVersion
+                ) { proto -> loadProperty(proto, loadAnnotationsFromMetadata = true) }
             }
         }
     }
@@ -272,32 +315,47 @@ internal class KClassImpl<T : Any>(
     override val visibility: KVisibility?
         get() = descriptor.visibility.toKVisibility()
 
+    private val modality: Modality
+        get() = kmClass?.modality ?: when {
+            jClass.isAnnotation || jClass.isEnum -> Modality.FINAL
+            Java16SealedRecordLoader.loadIsSealed(jClass) == true -> Modality.SEALED
+            Modifier.isAbstract(jClass.modifiers) -> Modality.ABSTRACT
+            !Modifier.isFinal(jClass.modifiers) -> Modality.OPEN
+            else -> Modality.FINAL
+        }
+
     override val isFinal: Boolean
-        get() = descriptor.modality == Modality.FINAL
+        get() = modality == Modality.FINAL
 
     override val isOpen: Boolean
-        get() = descriptor.modality == Modality.OPEN
+        get() = modality == Modality.OPEN
 
     override val isAbstract: Boolean
-        get() = descriptor.modality == Modality.ABSTRACT
+        get() = modality == Modality.ABSTRACT
 
     override val isSealed: Boolean
-        get() = descriptor.modality == Modality.SEALED
+        get() = modality == Modality.SEALED
 
     override val isData: Boolean
-        get() = descriptor.isData
+        get() = kmClass?.isData == true
 
     override val isInner: Boolean
-        get() = descriptor.isInner
+        get() = when (val kmClass = kmClass) {
+            null -> jClass.declaringClass != null && !Modifier.isStatic(jClass.modifiers)
+            else -> kmClass.isInner
+        }
 
     override val isCompanion: Boolean
-        get() = descriptor.isCompanionObject
+        get() = kmClass?.kind == ClassKind.COMPANION_OBJECT
 
     override val isFun: Boolean
-        get() = descriptor.isFun
+        get() = kmClass?.isFunInterface == true
 
     override val isValue: Boolean
-        get() = descriptor.isValue
+        get() = kmClass?.isValue == true
+
+    internal val isInline: Boolean
+        get() = kmClass?.inlineClassUnderlyingType != null
 
     override fun equals(other: Any?): Boolean =
         other is KClassImpl<*> && javaObjectType == other.javaObjectType
@@ -328,7 +386,8 @@ internal class KClassImpl<T : Any>(
             KotlinClassHeader.Kind.FILE_FACADE,
             KotlinClassHeader.Kind.MULTIFILE_CLASS,
             KotlinClassHeader.Kind.MULTIFILE_CLASS_PART,
-            KotlinClassHeader.Kind.SYNTHETIC_CLASS ->
+            KotlinClassHeader.Kind.SYNTHETIC_CLASS,
+                ->
                 return createSyntheticClass(classId, moduleData)
             KotlinClassHeader.Kind.UNKNOWN -> {
                 // Should not happen since ABI-related exception must have happened earlier
@@ -345,8 +404,8 @@ internal class KClassImpl<T : Any>(
         ClassDescriptorImpl(
             EmptyPackageFragmentDescriptor(moduleData.module, classId.packageFqName),
             classId.shortClassName,
-            Modality.FINAL,
-            ClassKind.CLASS,
+            DescriptorModality.FINAL,
+            DescriptorClassKind.CLASS,
             listOf(moduleData.module.builtIns.any.defaultType),
             SourceElement.NO_SOURCE,
             false,
@@ -357,4 +416,10 @@ internal class KClassImpl<T : Any>(
                 override fun computeDeclaredFunctions(): List<FunctionDescriptor> = emptyList()
             }, emptySet(), null)
         }
+
+    companion object {
+        private val SPECIAL_JVM_ANNOTATION_NAMES: Set<String> = SpecialJvmAnnotations.SPECIAL_ANNOTATIONS.mapTo(HashSet()) {
+            it.asSingleFqName().toString()
+        }
+    }
 }

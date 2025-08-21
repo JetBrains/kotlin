@@ -47,3 +47,6 @@ fun t4() {
 }
 
 fun doSmth() {}
+
+/* GENERATED_FIR_TAGS: additiveExpression, assignment, doWhileLoop, forLoop, functionDeclaration, integerLiteral,
+localProperty, propertyDeclaration, tryExpression, whileLoop */

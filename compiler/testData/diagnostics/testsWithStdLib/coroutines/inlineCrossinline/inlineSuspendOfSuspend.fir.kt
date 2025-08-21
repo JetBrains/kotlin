@@ -41,3 +41,7 @@ fun box() {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, assignment, classDeclaration, companionObject, functionDeclaration,
+functionalType, inline, interfaceDeclaration, lambdaLiteral, localProperty, nullableType, objectDeclaration, override,
+primaryConstructor, propertyDeclaration, safeCall, stringLiteral, suspend, thisExpression, typeParameter */

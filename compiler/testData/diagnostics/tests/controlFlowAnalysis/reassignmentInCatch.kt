@@ -14,3 +14,6 @@ fun test() {
         a.inc()
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, functionDeclaration, integerLiteral, lambdaLiteral, localProperty,
+propertyDeclaration, stringLiteral, tryExpression */

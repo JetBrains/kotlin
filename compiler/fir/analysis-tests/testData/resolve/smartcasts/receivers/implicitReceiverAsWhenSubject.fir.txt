@@ -1,6 +1,6 @@
 FILE: implicitReceiverAsWhenSubject.kt
     public final fun R|kotlin/Any|.test_1(): R|kotlin/Int| {
-        ^test_1 when (this@R|/test_1|) {
+        ^test_1 when (lval <when-subject>: R|kotlin/Any| = this@R|/test_1|) {
             ($subj$ is R|kotlin/collections/List<*>|) ->  {
                 this@R|/test_1|.R|SubstitutionOverride<kotlin/collections/List.size: R|kotlin/Int|>|
             }

@@ -8,7 +8,8 @@ package org.jetbrains.kotlin.scripting.compiler.plugin.services
 import org.jetbrains.kotlin.backend.jvm.originalSnippetValueSymbol
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.fir.*
-import org.jetbrains.kotlin.fir.analysis.checkers.getContainingClassSymbol
+import org.jetbrains.kotlin.fir.resolve.getContainingClassSymbol
+import org.jetbrains.kotlin.fir.backend.DelicateDeclarationStorageApi
 import org.jetbrains.kotlin.fir.backend.Fir2IrComponents
 import org.jetbrains.kotlin.fir.backend.Fir2IrReplSnippetConfiguratorExtension
 import org.jetbrains.kotlin.fir.backend.Fir2IrVisitor
@@ -19,13 +20,13 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirPrimaryConstructor
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.utils.originalReplSnippetSymbol
 import org.jetbrains.kotlin.fir.expressions.FirEmptyArgumentList
+import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.expressions.UnresolvedExpressionTypeAccess
 import org.jetbrains.kotlin.fir.expressions.builder.buildDelegatedConstructorCall
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
-import org.jetbrains.kotlin.fir.resolve.bindSymbolToLookupTag
-import org.jetbrains.kotlin.fir.resolve.defaultType
+import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.providers.dependenciesSymbolProvider
-import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.scopes.getDeclaredConstructors
 import org.jetbrains.kotlin.fir.scopes.impl.declaredMemberScope
 import org.jetbrains.kotlin.fir.scopes.kotlinScopeProvider
@@ -35,11 +36,13 @@ import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.constructType
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImplWithoutSource
+import org.jetbrains.kotlin.fir.types.type
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitorVoid
 import org.jetbrains.kotlin.ir.builders.declarations.addField
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrReplSnippet
+import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.symbols.impl.IrClassSymbolImpl
 import org.jetbrains.kotlin.ir.util.getPackageFragment
 import org.jetbrains.kotlin.name.ClassId
@@ -85,19 +88,53 @@ class Fir2IrReplSnippetConfiguratorExtensionImpl(
             classifierStorage.createAndCacheEarlierSnippetClass(it, packageFragment)
         }
 
+        // Classes should be created first to populate the cache before possible references
+        classesFromState.forEach { (classSymbol, snippetSymbol) ->
+            classifierStorage.getCachedEarlierSnippetClass(snippetSymbol)?.let { originalSnippet ->
+                createClassFromOtherSnippet(classSymbol, originalSnippet, irSnippet)
+            }
+        }
+
         propertiesFromState.forEach { (propertySymbol, snippetSymbol) ->
             classifierStorage.getCachedEarlierSnippetClass(snippetSymbol)?.let { originalSnippet ->
-                declarationStorage.createAndCacheIrVariable(
-                    propertySymbol.fir, irSnippet, IrDeclarationOrigin.REPL_FROM_OTHER_SNIPPET
-                ).also { varFromOtherSnippet ->
-                    irSnippet.variablesFromOtherSnippets.add(varFromOtherSnippet)
-                    val field = originalSnippet.addField {
-                        name = varFromOtherSnippet.name
-                        type = varFromOtherSnippet.type
-                        visibility = DescriptorVisibilities.PUBLIC
+                val convertToVariable = !propertySymbol.hasDelegate
+                // The regular properties from other snippets are "converted" to variables and then access to them lowered in the
+                // [ReplSnippetsToClassesLowering], while the delegated properties need to remain properties to be handled correctly
+                // in Fir2Ir
+                if (convertToVariable) {
+                    irSnippet.variablesFromOtherSnippets.add(
+                        declarationStorage.createAndCacheIrVariable(
+                            propertySymbol.fir, irSnippet, IrDeclarationOrigin.REPL_FROM_OTHER_SNIPPET
+                        ).also { varFromOtherSnippet ->
+                            val field = originalSnippet.addField {
+                                name = varFromOtherSnippet.name
+                                type = varFromOtherSnippet.type
+                                visibility = DescriptorVisibilities.PUBLIC
+                                origin = IrDeclarationOrigin.REPL_FROM_OTHER_SNIPPET
+                            }
+                            varFromOtherSnippet.originalSnippetValueSymbol = field.symbol
+                        }
+                    )
+                } else {
+                    val actualParent = getOrBuildActualParent(propertySymbol, originalSnippet, irSnippet)
+
+                    fun IrSimpleFunction.updateAccessor() {
                         origin = IrDeclarationOrigin.REPL_FROM_OTHER_SNIPPET
+                        parent = actualParent
                     }
-                    varFromOtherSnippet.originalSnippetValueSymbol = field.symbol
+
+                    irSnippet.declarationsFromOtherSnippets.add(
+                        declarationStorage.createAndCacheIrProperty(
+                            propertySymbol.fir,
+                            originalSnippet,
+                            IrDeclarationOrigin.REPL_FROM_OTHER_SNIPPET,
+                            allowLazyDeclarationsCreation = true
+                        ).also { propertyFromOtherSnippet ->
+                            propertyFromOtherSnippet.parent = actualParent
+                            propertyFromOtherSnippet.getter?.updateAccessor()
+                            propertyFromOtherSnippet.setter?.updateAccessor()
+                        }
+                    )
                 }
             }
         }
@@ -119,11 +156,6 @@ class Fir2IrReplSnippetConfiguratorExtensionImpl(
             }
         }
 
-        classesFromState.forEach { (classSymbol, snippetSymbol) ->
-            classifierStorage.getCachedEarlierSnippetClass(snippetSymbol)?.let { originalSnippet ->
-                createClassFromOtherSnippet(classSymbol, originalSnippet, irSnippet)
-            }
-        }
         val stateObject =
             getStateObject(
                 irSnippet,
@@ -144,24 +176,25 @@ class Fir2IrReplSnippetConfiguratorExtensionImpl(
             else null
         } ?: parentClassOrSnippet
 
-    @OptIn(SymbolInternals::class)
+    @OptIn(SymbolInternals::class, DelicateDeclarationStorageApi::class)
     private fun Fir2IrComponents.createClassFromOtherSnippet(
         classSymbol: FirRegularClassSymbol,
         parentClassOrSnippet: IrClass,
         irSnippet: IrReplSnippet
     ): IrClass {
         val actualParent = getOrBuildActualParent(classSymbol, parentClassOrSnippet, irSnippet)
-        // relying on the classifierStorage's mechanics for generating lazy IR classes for such FIR
-        return classifierStorage.getIrClass(
-            classSymbol.fir
-        ).apply {
-            parent = actualParent
-            origin = IrDeclarationOrigin.REPL_FROM_OTHER_SNIPPET
-            irSnippet.declarationsFromOtherSnippets.add(this)
+        return classifierStorage.getFir2IrLazyClass(classSymbol.fir).apply {
+            // this may be called on the directly found usages as well as on the used declarations parents, so deduplication is needed
+            // TODO: consider rearranging the code to avoid potentially ineffective check
+            if (!irSnippet.declarationsFromOtherSnippets.contains(this)) {
+                parent = actualParent
+                origin = IrDeclarationOrigin.REPL_FROM_OTHER_SNIPPET
+                irSnippet.declarationsFromOtherSnippets.add(this)
+            }
         }
     }
 
-    @OptIn(SymbolInternals::class, LookupTagInternals::class)
+    @OptIn(SymbolInternals::class, LookupTagInternals::class, DirectDeclarationsAccess::class)
     private fun Fir2IrComponents.getStateObject(
         irSnippet: IrReplSnippet,
         fir2IrVisitor: Fir2IrVisitor,
@@ -264,18 +297,9 @@ private class CollectAccessToOtherState(
     val snippets: MutableSet<FirReplSnippetSymbol>,
 ) : FirDefaultVisitorVoid() {
 
-    override fun visitElement(element: FirElement) {
-        element.acceptChildren(this)
-    }
+    private fun storeAccessedSymbol(symbol: FirBasedSymbol<FirDeclaration>) {
 
-    @OptIn(SymbolInternals::class)
-    override fun visitResolvedNamedReference(resolvedNamedReference: FirResolvedNamedReference) {
-        val resolvedSymbol = resolvedNamedReference.resolvedSymbol
-        val symbol = when (resolvedSymbol) {
-            is FirConstructorSymbol -> (resolvedSymbol.fir.returnTypeRef as? FirResolvedTypeRef)?.coneType?.toSymbol(session)
-            else -> null
-        } ?: resolvedSymbol
-
+        @OptIn(SymbolInternals::class)
         fun FirBasedSymbol<FirDeclaration>.getOriginalSnippetSymbol(): FirReplSnippetSymbol? =
             fir.originalReplSnippetSymbol ?: fir.getContainingClassSymbol()?.getOriginalSnippetSymbol()
 
@@ -286,6 +310,35 @@ private class CollectAccessToOtherState(
             is FirNamedFunctionSymbol -> functions[symbol] = originalSnippet
             is FirRegularClassSymbol -> classes[symbol] = originalSnippet
             else -> {}
+        }
+    }
+
+    @OptIn(UnresolvedExpressionTypeAccess::class)
+    override fun visitElement(element: FirElement) {
+        (element as? FirExpression)?.coneTypeOrNull?.toClassSymbol(session)?.let { storeAccessedSymbol(it) }
+
+        element.acceptChildren(this)
+    }
+
+    @OptIn(SymbolInternals::class)
+    override fun visitResolvedNamedReference(resolvedNamedReference: FirResolvedNamedReference) {
+        val resolvedSymbol = resolvedNamedReference.resolvedSymbol
+        val symbol = when (resolvedSymbol) {
+            is FirConstructorSymbol -> (resolvedSymbol.fir.returnTypeRef as? FirResolvedTypeRef)?.coneType?.toSymbol(session)
+            is FirCallableSymbol<*> -> {
+                resolvedSymbol.resolvedReturnTypeRef.accept(this)
+                resolvedSymbol
+            }
+            else -> null
+        } ?: resolvedSymbol
+
+        storeAccessedSymbol(symbol)
+    }
+
+    override fun visitResolvedTypeRef(resolvedTypeRef: FirResolvedTypeRef) {
+        resolvedTypeRef.coneType.toClassSymbol(session)?.let { storeAccessedSymbol(it) }
+        resolvedTypeRef.coneType.typeArguments.forEach {
+            it.type?.toClassSymbol(session)?.let { storeAccessedSymbol(it) }
         }
     }
 }

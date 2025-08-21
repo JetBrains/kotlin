@@ -25,22 +25,23 @@ import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.mpp.RegularClassSymbolMarker
 import org.jetbrains.kotlin.resolve.calls.mpp.AbstractExpectActualChecker
-import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualCheckingCompatibility
-import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualCompatibility
+import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualIncompatibility
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualMatchingCompatibility
+import org.jetbrains.kotlin.resolve.multiplatform.MemberIncompatibility
+import org.jetbrains.kotlin.utils.addToStdlib.partitionIsInstance
 
 @Suppress("DuplicatedCode")
 object FirExpectActualDeclarationChecker : FirBasicDeclarationChecker(MppCheckerKind.Platform) {
-    override fun check(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirDeclaration) {
         if (declaration !is FirMemberDeclaration) return
-        if (!context.session.languageVersionSettings.supportsFeature(LanguageFeature.MultiPlatformProjects)) {
+        if (!LanguageFeature.MultiPlatformProjects.isEnabled()) {
             if ((declaration.isExpect || declaration.isActual) && containsExpectOrActualModifier(declaration) &&
                 declaration.source?.kind?.shouldSkipErrorTypeReporting == false
             ) {
                 reporter.reportOn(
                     declaration.source,
                     FirErrors.NOT_A_MULTIPLATFORM_COMPILATION,
-                    context,
                     positioningStrategy = SourceElementPositioningStrategies.EXPECT_ACTUAL_MODIFIER
                 )
             }
@@ -56,13 +57,13 @@ object FirExpectActualDeclarationChecker : FirBasicDeclarationChecker(MppChecker
         if (declaration is FirBackingField || declaration is FirPropertyAccessor || declaration is FirValueParameter) return
 
         if (declaration.isExpect) {
-            checkExpectDeclarationModifiers(declaration, context, reporter)
+            checkExpectDeclarationModifiers(declaration)
         }
         val matchingCompatibilityToMembersMap = declaration.symbol.expectForActual.orEmpty()
         if ((ExpectActualMatchingCompatibility.MatchedSuccessfully in matchingCompatibilityToMembersMap || declaration.hasActualModifier()) &&
             !declaration.isLocalMember // Reduce verbosity. WRONG_MODIFIER_TARGET will be reported anyway.
         ) {
-            checkActualDeclarationHasExpected(declaration, context, reporter, matchingCompatibilityToMembersMap)
+            checkActualDeclarationHasExpected(declaration, matchingCompatibilityToMembersMap)
         }
     }
 
@@ -72,36 +73,33 @@ object FirExpectActualDeclarationChecker : FirBasicDeclarationChecker(MppChecker
         } ?: false
     }
 
+    context(context: CheckerContext, reporter: DiagnosticReporter)
     private fun checkExpectDeclarationModifiers(
         declaration: FirMemberDeclaration,
-        context: CheckerContext,
-        reporter: DiagnosticReporter,
     ) {
-        checkExpectDeclarationHasNoExternalModifier(declaration, context, reporter)
+        checkExpectDeclarationHasNoExternalModifier(declaration)
         if (declaration is FirProperty) {
-            checkExpectPropertyAccessorsModifiers(declaration, context, reporter)
+            checkExpectPropertyAccessorsModifiers(declaration)
         }
-        if (context.languageVersionSettings.supportsFeature(LanguageFeature.MultiplatformRestrictions) &&
+        if (LanguageFeature.MultiplatformRestrictions.isEnabled() &&
             declaration is FirFunction && declaration.isTailRec
         ) {
-            reporter.reportOn(declaration.source, FirErrors.EXPECTED_TAILREC_FUNCTION, context)
+            reporter.reportOn(declaration.source, FirErrors.EXPECTED_TAILREC_FUNCTION)
         }
     }
 
+    context(context: CheckerContext, reporter: DiagnosticReporter)
     private fun checkExpectPropertyAccessorsModifiers(
         property: FirProperty,
-        context: CheckerContext,
-        reporter: DiagnosticReporter,
     ) {
         for (accessor in listOfNotNull(property.getter, property.setter)) {
-            checkExpectPropertyAccessorModifiers(accessor, context, reporter)
+            checkExpectPropertyAccessorModifiers(accessor)
         }
     }
 
+    context(context: CheckerContext, reporter: DiagnosticReporter)
     private fun checkExpectPropertyAccessorModifiers(
         accessor: FirPropertyAccessor,
-        context: CheckerContext,
-        reporter: DiagnosticReporter,
     ) {
         fun FirPropertyAccessor.isDefault(): Boolean {
             val source = source
@@ -110,26 +108,24 @@ object FirExpectActualDeclarationChecker : FirBasicDeclarationChecker(MppChecker
         }
 
         if (!accessor.isDefault()) {
-            checkExpectDeclarationHasNoExternalModifier(accessor, context, reporter)
+            checkExpectDeclarationHasNoExternalModifier(accessor)
         }
     }
 
+    context(context: CheckerContext, reporter: DiagnosticReporter)
     private fun checkExpectDeclarationHasNoExternalModifier(
         declaration: FirMemberDeclaration,
-        context: CheckerContext,
-        reporter: DiagnosticReporter,
     ) {
-        if (context.languageVersionSettings.supportsFeature(LanguageFeature.MultiplatformRestrictions) &&
+        if (LanguageFeature.MultiplatformRestrictions.isEnabled() &&
             declaration.isExternal
         ) {
-            reporter.reportOn(declaration.source, FirErrors.EXPECTED_EXTERNAL_DECLARATION, context)
+            reporter.reportOn(declaration.source, FirErrors.EXPECTED_EXTERNAL_DECLARATION)
         }
     }
 
+    context(context: CheckerContext, reporter: DiagnosticReporter)
     private fun checkActualDeclarationHasExpected(
         declaration: FirMemberDeclaration,
-        context: CheckerContext,
-        reporter: DiagnosticReporter,
         matchingCompatibilityToMembersMap: ExpectForActualMatchingData,
     ) {
         val symbol = declaration.symbol
@@ -139,23 +135,24 @@ object FirExpectActualDeclarationChecker : FirBasicDeclarationChecker(MppChecker
             context.session, context.scopeSession,
             allowedWritingMemberExpectForActualMapping = true,
         )
-        val actualContainingClass = context.containingDeclarations.lastOrNull()?.symbol as? FirRegularClassSymbol
+        val actualContainingClass = context.containingDeclarations.lastOrNull() as? FirRegularClassSymbol
         val expectContainingClass = actualContainingClass?.getSingleMatchedExpectForActualOrNull() as? FirRegularClassSymbol
-        val checkingCompatibility = if (expectedSingleCandidate != null) {
+        val checkingIncompatibilities = if (expectedSingleCandidate != null) {
             getCheckingCompatibility(
                 symbol,
                 expectedSingleCandidate,
                 actualContainingClass,
                 expectContainingClass,
                 expectActualMatchingContext,
-                context,
             )
-        } else null
+        } else emptyList()
 
-        checkAmbiguousExpects(symbol, matchingCompatibilityToMembersMap, symbol, context, reporter)
+        checkAmbiguousExpects(symbol, matchingCompatibilityToMembersMap, symbol)
 
         val source = declaration.source
         if (!declaration.hasActualModifier() &&
+            // The presence of @ExpectRefinement annotation is checked by a separate FirExpectRefinementAnnotationChecker
+            !declaration.isExpect &&
             ExpectActualMatchingCompatibility.MatchedSuccessfully in matchingCompatibilityToMembersMap &&
             (actualContainingClass == null || requireActualModifier(symbol, actualContainingClass, context.session)) &&
             expectedSingleCandidate != null &&
@@ -163,53 +160,56 @@ object FirExpectActualDeclarationChecker : FirBasicDeclarationChecker(MppChecker
             // It's an inconsistency in the language design, but it's the way it works right now
             !expectedSingleCandidate.isFakeOverride(expectContainingClass, expectActualMatchingContext)
         ) {
-            reporter.reportOn(source, FirErrors.ACTUAL_MISSING, context)
+            reporter.reportOn(source, FirErrors.ACTUAL_MISSING)
             return
         }
 
-        when {
-            checkingCompatibility is ExpectActualCheckingCompatibility.ClassScopes -> {
-                reportClassScopesIncompatibility(symbol, expectedSingleCandidate, checkingCompatibility, reporter, source, context)
-            }
+        if (ExpectActualMatchingCompatibility.MatchedSuccessfully !in matchingCompatibilityToMembersMap ||
+            expectedSingleCandidate != null &&
+            declaration.hasActualModifier() &&
+            expectedSingleCandidate.isFakeOverride(expectContainingClass, expectActualMatchingContext)
+        ) {
+            reporter.reportOn(
+                source,
+                FirErrors.ACTUAL_WITHOUT_EXPECT,
+                symbol,
+                matchingCompatibilityToMembersMap
+            )
+            return
+        }
 
-            ExpectActualMatchingCompatibility.MatchedSuccessfully !in matchingCompatibilityToMembersMap ||
-                    expectedSingleCandidate != null &&
-                    declaration.hasActualModifier() &&
-                    expectedSingleCandidate.isFakeOverride(expectContainingClass, expectActualMatchingContext) -> {
+        val (classScopesIncompatibilities, normalIncompatibilities) =
+            checkingIncompatibilities.partitionIsInstance<_, ExpectActualIncompatibility.ClassScopes<FirBasedSymbol<*>>>()
+
+        for (incompatibility in normalIncompatibilities) {
+            check(expectedSingleCandidate != null) // It can't be null, because checkingIncompatibilities is not empty
+            // A nicer diagnostic for functions with default params
+            if (declaration is FirFunction && incompatibility == ExpectActualIncompatibility.ActualFunctionWithOptionalParameters) {
+                reporter.reportOn(declaration.source, FirErrors.ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS)
+            } else {
                 reporter.reportOn(
                     source,
-                    FirErrors.ACTUAL_WITHOUT_EXPECT,
+                    incompatibility.toDiagnostic(),
+                    expectedSingleCandidate,
                     symbol,
-                    matchingCompatibilityToMembersMap,
-                    context
+                    incompatibility.reason
                 )
             }
-
-            checkingCompatibility != null && checkingCompatibility != ExpectActualCheckingCompatibility.Compatible -> {
-                check(expectedSingleCandidate != null) // It can't be null, because checkingCompatibility is not null
-                // A nicer diagnostic for functions with default params
-                if (declaration is FirFunction && checkingCompatibility == ExpectActualCheckingCompatibility.ActualFunctionWithDefaultParameters) {
-                    reporter.reportOn(declaration.source, FirErrors.ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS, context)
-                } else {
-                    reporter.reportOn(
-                        source,
-                        FirErrors.ACTUAL_WITHOUT_EXPECT,
-                        symbol,
-                        mapOf(checkingCompatibility to listOf(expectedSingleCandidate)),
-                        context
-                    )
-                }
+        }
+        // CLASS_SCOPE incompatibilities might be confusing if class kinds or class modalities don't match
+        if (normalIncompatibilities.none { it is ExpectActualIncompatibility.ClassKind || it is ExpectActualIncompatibility.Modality }) {
+            for (incompatibility in classScopesIncompatibilities) {
+                reportClassScopesIncompatibility(symbol, expectedSingleCandidate, incompatibility, source)
             }
         }
     }
 
+    context(reporter: DiagnosticReporter, context: CheckerContext)
     private fun reportClassScopesIncompatibility(
         symbol: FirBasedSymbol<FirDeclaration>,
         expectedSingleCandidate: FirBasedSymbol<*>?,
-        checkingCompatibility: ExpectActualCheckingCompatibility.ClassScopes<FirBasedSymbol<*>>,
-        reporter: DiagnosticReporter,
+        checkingCompatibility: ExpectActualIncompatibility.ClassScopes<FirBasedSymbol<*>>,
         source: KtSourceElement?,
-        context: CheckerContext,
     ) {
         require((symbol is FirRegularClassSymbol || symbol is FirTypeAliasSymbol) && expectedSingleCandidate is FirRegularClassSymbol) {
             "Incompatible.ClassScopes is only possible for a class or a typealias: $symbol $expectedSingleCandidate"
@@ -219,38 +219,41 @@ object FirExpectActualDeclarationChecker : FirBasicDeclarationChecker(MppChecker
         // (albeit maybe incompatible) single actual suspect, declared in the actual class.
         // This is needed only to reduce the number of errors. Incompatibility errors for those members will be reported
         // later when this checker is called for them
-        fun hasSingleActualSuspect(
-            expectedWithIncompatibility: Pair<FirBasedSymbol<*>, Map<out ExpectActualCheckingCompatibility.Incompatible<FirBasedSymbol<*>>, Collection<FirBasedSymbol<*>>>>,
-        ): Boolean {
-            val (expectedMember, incompatibility) = expectedWithIncompatibility
-            val actualMember = incompatibility.values.singleOrNull()?.singleOrNull()
+        fun hasSingleActualSuspect(incompatibility: MemberIncompatibility<FirBasedSymbol<*>>): Boolean {
             @OptIn(SymbolInternals::class)
-            return actualMember != null &&
-                    actualMember.fir.expectForActual?.values?.singleOrNull()?.singleOrNull() == expectedMember
+            return incompatibility.actual.fir.expectForActual?.values?.singleOrNull()?.singleOrNull() == incompatibility.expect
         }
 
         val nonTrivialIncompatibleMembers = checkingCompatibility.incompatibleMembers.filterNot(::hasSingleActualSuspect)
 
         if (nonTrivialIncompatibleMembers.isNotEmpty()) {
             val (defaultArgsIncompatibleMembers, otherIncompatibleMembers) =
-                nonTrivialIncompatibleMembers.partition { it.second.contains(ExpectActualCheckingCompatibility.DefaultArgumentsInExpectActualizedByFakeOverride) }
+                nonTrivialIncompatibleMembers.partition { it.incompatibility == ExpectActualIncompatibility.ParametersWithDefaultValuesInExpectActualizedByFakeOverride }
 
             if (defaultArgsIncompatibleMembers.isNotEmpty()) { // report a nicer diagnostic for DefaultArgumentsInExpectActualizedByFakeOverride
                 val problematicExpectMembers = defaultArgsIncompatibleMembers
                     .map {
-                        it.first as? FirNamedFunctionSymbol
-                            ?: error("${ExpectActualCheckingCompatibility.DefaultArgumentsInExpectActualizedByFakeOverride} can be reported only for ${FirNamedFunctionSymbol::class}")
+                        it.expect as? FirNamedFunctionSymbol
+                            ?: error("${ExpectActualIncompatibility.ParametersWithDefaultValuesInExpectActualizedByFakeOverride} can be reported only for ${FirNamedFunctionSymbol::class}")
                     }
                 reporter.reportOn(
                     source,
                     FirErrors.DEFAULT_ARGUMENTS_IN_EXPECT_ACTUALIZED_BY_FAKE_OVERRIDE,
                     expectedSingleCandidate,
-                    problematicExpectMembers,
-                    context
+                    problematicExpectMembers
                 )
             }
             if (otherIncompatibleMembers.isNotEmpty()) {
-                reporter.reportOn(source, FirErrors.NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS, symbol, otherIncompatibleMembers, context)
+                for (member in otherIncompatibleMembers) {
+                    reporter.reportOn(
+                        source,
+                        FirErrors.EXPECT_ACTUAL_INCOMPATIBLE_CLASS_SCOPE,
+                        symbol,
+                        member.expect,
+                        member.actual,
+                        member.incompatibility.reason
+                    )
+                }
             }
         }
         if (checkingCompatibility.mismatchedMembers.isNotEmpty()) {
@@ -258,8 +261,7 @@ object FirExpectActualDeclarationChecker : FirBasicDeclarationChecker(MppChecker
                 source,
                 FirErrors.NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS,
                 symbol,
-                checkingCompatibility.mismatchedMembers,
-                context
+                checkingCompatibility.mismatchedMembers
             )
         }
     }
@@ -271,14 +273,14 @@ object FirExpectActualDeclarationChecker : FirBasicDeclarationChecker(MppChecker
             this@isFakeOverride is FirCallableSymbol<*> &&
             with(expectActualMatchingContext) { this@isFakeOverride.isFakeOverride(expectContainingClass) }
 
+    context(context: CheckerContext)
     private fun getCheckingCompatibility(
         actualSymbol: FirBasedSymbol<*>,
         expectSymbol: FirBasedSymbol<*>,
         actualContainingClass: FirRegularClassSymbol?,
         expectContainingClass: FirRegularClassSymbol?,
         expectActualMatchingContext: FirExpectActualMatchingContext,
-        context: CheckerContext,
-    ): ExpectActualCompatibility<FirBasedSymbol<*>> =
+    ): List<ExpectActualIncompatibility<FirBasedSymbol<*>>> =
         when {
             actualSymbol is FirCallableSymbol<*> && expectSymbol is FirCallableSymbol<*> -> {
                 AbstractExpectActualChecker.getCallablesCompatibility(
@@ -301,26 +303,24 @@ object FirExpectActualDeclarationChecker : FirBasicDeclarationChecker(MppChecker
             else -> error("These expect/actual shouldn't have been matched by FirExpectActualResolver")
         }
 
+    context(context: CheckerContext, reporter: DiagnosticReporter)
     private fun checkAmbiguousExpects(
         actualDeclaration: FirBasedSymbol<*>,
         compatibility: Map<ExpectActualMatchingCompatibility, List<FirBasedSymbol<*>>>,
         symbol: FirBasedSymbol<*>,
-        context: CheckerContext,
-        reporter: DiagnosticReporter
     ) {
-        val filesWithAtLeastWeaklyCompatibleExpects = compatibility[ExpectActualMatchingCompatibility.MatchedSuccessfully]
+        val filesWithMatchedExpects = compatibility[ExpectActualMatchingCompatibility.MatchedSuccessfully]
             .orEmpty()
             .map { it.moduleData }
             .sortedBy { it.name.asString() }
             .toList()
 
-        if (filesWithAtLeastWeaklyCompatibleExpects.size > 1) {
+        if (filesWithMatchedExpects.size > 1) {
             reporter.reportOn(
                 actualDeclaration.source,
                 FirErrors.AMBIGUOUS_EXPECTS,
                 symbol,
-                filesWithAtLeastWeaklyCompatibleExpects,
-                context
+                filesWithMatchedExpects
             )
         }
     }
@@ -362,6 +362,38 @@ object FirExpectActualDeclarationChecker : FirBasicDeclarationChecker(MppChecker
         platformSession: FirSession
     ): Boolean = (actualContainingClass.isInlineOrValue) &&
             symbol is FirPropertySymbol &&
-            symbol.receiverParameter == null &&
-            actualContainingClass.primaryConstructorSymbol(platformSession)?.valueParameterSymbols?.singleOrNull()?.name == symbol.name
+            actualContainingClass.primaryConstructorIfAny(platformSession)?.valueParameterSymbols?.singleOrNull() == symbol.correspondingValueParameterFromPrimaryConstructor
+}
+
+private fun ExpectActualIncompatibility<*>.toDiagnostic() = when (this) {
+    ExpectActualIncompatibility.ActualFunctionWithOptionalParameters -> error("unreachable")
+    is ExpectActualIncompatibility.ClassScopes<*> -> error("unreachable")
+
+    ExpectActualIncompatibility.ClassKind -> FirErrors.EXPECT_ACTUAL_INCOMPATIBLE_CLASS_KIND
+    ExpectActualIncompatibility.ClassModifiers -> FirErrors.EXPECT_ACTUAL_INCOMPATIBLE_CLASS_MODIFIERS
+    ExpectActualIncompatibility.ClassTypeParameterCount -> FirErrors.EXPECT_ACTUAL_INCOMPATIBLE_CLASS_TYPE_PARAMETER_COUNT
+    ExpectActualIncompatibility.ClassTypeParameterUpperBounds -> FirErrors.EXPECT_ACTUAL_INCOMPATIBLE_CLASS_TYPE_PARAMETER_UPPER_BOUNDS
+    ExpectActualIncompatibility.ContextParameterNames -> FirErrors.EXPECT_ACTUAL_INCOMPATIBLE_CONTEXT_PARAMETER_NAMES
+    ExpectActualIncompatibility.EnumEntries -> FirErrors.EXPECT_ACTUAL_INCOMPATIBLE_ENUM_ENTRIES
+    ExpectActualIncompatibility.FunInterfaceModifier -> FirErrors.EXPECT_ACTUAL_INCOMPATIBLE_FUN_INTERFACE_MODIFIER
+    ExpectActualIncompatibility.FunctionModifiersDifferent -> FirErrors.EXPECT_ACTUAL_INCOMPATIBLE_FUNCTION_MODIFIERS_DIFFERENT
+    ExpectActualIncompatibility.FunctionModifiersNotSubset -> FirErrors.EXPECT_ACTUAL_INCOMPATIBLE_FUNCTION_MODIFIERS_NOT_SUBSET
+    ExpectActualIncompatibility.IllegalRequiresOpt -> FirErrors.EXPECT_ACTUAL_INCOMPATIBLE_ILLEGAL_REQUIRES_OPT_IN
+    ExpectActualIncompatibility.NestedTypeAlias -> FirErrors.EXPECT_ACTUAL_INCOMPATIBLE_NESTED_TYPE_ALIAS
+    ExpectActualIncompatibility.ParameterNames -> FirErrors.EXPECT_ACTUAL_INCOMPATIBLE_PARAMETER_NAMES
+    ExpectActualIncompatibility.ParametersWithDefaultValuesInExpectActualizedByFakeOverride -> FirErrors.EXPECT_ACTUAL_INCOMPATIBLE_PARAMETERS_WITH_DEFAULT_VALUES_IN_EXPECT_ACTUALIZED_BY_FAKE_OVERRIDE
+    ExpectActualIncompatibility.PropertyConstModifier -> FirErrors.EXPECT_ACTUAL_INCOMPATIBLE_PROPERTY_CONST_MODIFIER
+    ExpectActualIncompatibility.PropertyKind -> FirErrors.EXPECT_ACTUAL_INCOMPATIBLE_PROPERTY_KIND
+    ExpectActualIncompatibility.PropertyLateinitModifier -> FirErrors.EXPECT_ACTUAL_INCOMPATIBLE_PROPERTY_LATEINIT_MODIFIER
+    ExpectActualIncompatibility.ReturnType -> FirErrors.EXPECT_ACTUAL_INCOMPATIBLE_RETURN_TYPE
+    ExpectActualIncompatibility.Supertypes -> FirErrors.EXPECT_ACTUAL_INCOMPATIBLE_SUPERTYPES
+    ExpectActualIncompatibility.TypeParameterNames -> FirErrors.EXPECT_ACTUAL_INCOMPATIBLE_TYPE_PARAMETER_NAMES
+    ExpectActualIncompatibility.TypeParameterReified -> FirErrors.EXPECT_ACTUAL_INCOMPATIBLE_TYPE_PARAMETER_REIFIED
+    ExpectActualIncompatibility.TypeParameterVariance -> FirErrors.EXPECT_ACTUAL_INCOMPATIBLE_TYPE_PARAMETER_VARIANCE
+    ExpectActualIncompatibility.ValueParameterCrossinline -> FirErrors.EXPECT_ACTUAL_INCOMPATIBLE_VALUE_PARAMETER_CROSSINLINE
+    ExpectActualIncompatibility.ValueParameterNoinline -> FirErrors.EXPECT_ACTUAL_INCOMPATIBLE_VALUE_PARAMETER_NOINLINE
+    ExpectActualIncompatibility.ValueParameterVararg -> FirErrors.EXPECT_ACTUAL_INCOMPATIBLE_VALUE_PARAMETER_VARARG
+    is ExpectActualIncompatibility.Modality -> FirErrors.EXPECT_ACTUAL_INCOMPATIBLE_MODALITY
+    is ExpectActualIncompatibility.PropertySetterVisibility -> FirErrors.EXPECT_ACTUAL_INCOMPATIBLE_PROPERTY_SETTER_VISIBILITY
+    is ExpectActualIncompatibility.Visibility -> FirErrors.EXPECT_ACTUAL_INCOMPATIBLE_VISIBILITY
 }

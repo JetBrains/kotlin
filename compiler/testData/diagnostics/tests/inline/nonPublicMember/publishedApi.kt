@@ -1,8 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // DIAGNOSTICS: -EXPOSED_PARAMETER_TYPE -NOTHING_TO_INLINE
-
-// FIR_IDENTICAL
-
+// LANGUAGE: +ForbidExposingLessVisibleTypesInInline
 
 inline fun call(a: A) {
     a.<!NON_PUBLIC_CALL_FROM_PUBLIC_INLINE!>test<!>()
@@ -49,3 +47,5 @@ private fun privateFun() {
 internal fun internalFun() {
 
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, inline */

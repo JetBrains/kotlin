@@ -21,12 +21,13 @@ object FirDivisionByZeroChecker : FirFunctionCallChecker(MppCheckerKind.Common) 
     private val defaultPackageName = FqName("kotlin")
     private val defaultDivName = Name.identifier("div")
 
-    override fun check(expression: FirFunctionCall, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(expression: FirFunctionCall) {
         val firstValue = (expression.arguments.singleOrNull() as? FirLiteralExpression)?.value
         if (firstValue != null && (firstValue == 0L || firstValue == 0.0f || firstValue == 0.0)) {
             val callableId = (expression.calleeReference.toResolvedNamedFunctionSymbol())?.callableId
             if (callableId != null && callableId.packageName == defaultPackageName && callableId.callableName == defaultDivName) {
-                reporter.reportOn(expression.source, FirErrors.DIVISION_BY_ZERO, context)
+                reporter.reportOn(expression.source, FirErrors.DIVISION_BY_ZERO)
             }
         }
     }

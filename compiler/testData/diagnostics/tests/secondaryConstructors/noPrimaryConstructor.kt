@@ -6,3 +6,5 @@ class A {
 }
 
 val x = A<!NO_VALUE_FOR_PARAMETER!>()<!>
+
+/* GENERATED_FIR_TAGS: classDeclaration, propertyDeclaration, secondaryConstructor */

@@ -16,7 +16,7 @@ fun FirProvider.getContainingFile(symbol: FirBasedSymbol<*>): FirFile? = when (s
     is FirSyntheticFunctionSymbol -> {
         // SAM case
         val classId = ClassId(symbol.callableId.packageName, symbol.callableId.callableName)
-        getFirClassifierContainerFile(classId)
+        getFirClassifierContainerFileIfAny(classId)
     }
     is FirClassLikeSymbol<*> -> getFirClassifierContainerFileIfAny(symbol)
     is FirCallableSymbol<*> -> getFirCallableContainerFile(symbol)

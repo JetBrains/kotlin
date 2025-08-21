@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.common.actualizer.checker
 
+import org.jetbrains.kotlin.backend.common.actualizer.IrExpectActualMap
 import org.jetbrains.kotlin.backend.common.actualizer.reportJavaDirectActualizationDefaultParametersInExpectFunction
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.util.hasAnnotation
@@ -15,6 +16,7 @@ import org.jetbrains.kotlin.name.StandardClassIds
  * Also see: [IrJavaDirectActualizationDefaultParametersInActualKmpChecker]
  */
 internal object IrJavaDirectActualizationDefaultParametersInExpectKmpChecker : IrExpectActualChecker {
+    @OptIn(IrExpectActualMap.MappingForCheckers::class)
     override fun check(context: IrExpectActualChecker.Context) = with(context) {
         val expectToActual = expectActualMap.expectToActual
         for ((expectSymbol, actualSymbol) in expectToActual) {

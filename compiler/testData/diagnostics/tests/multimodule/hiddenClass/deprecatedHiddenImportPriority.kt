@@ -36,3 +36,5 @@ fun test(a: <!DEPRECATION_ERROR!>A<!>) {
     a.m1()
     a.<!UNRESOLVED_REFERENCE!>m2<!>()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, stringLiteral */

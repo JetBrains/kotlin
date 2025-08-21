@@ -16,3 +16,5 @@ public open class T() : A(), I {
         test() // Test no "Overload resolution ambiguity" is here
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, interfaceDeclaration, primaryConstructor */

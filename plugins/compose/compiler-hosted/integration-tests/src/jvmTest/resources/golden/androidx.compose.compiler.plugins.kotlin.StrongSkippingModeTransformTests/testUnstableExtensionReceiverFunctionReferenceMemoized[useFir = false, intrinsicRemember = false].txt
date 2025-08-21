@@ -19,7 +19,7 @@ fun Something() {
 @Composable
 fun Something(%composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
-  if (%changed != 0 || !%composer.skipping) {
+  if (%composer.shouldExecute(%changed != 0, %changed and 0b0001)) {
     if (isTraceInProgress()) {
       traceEventStart(<>, %changed, -1, <>)
     }

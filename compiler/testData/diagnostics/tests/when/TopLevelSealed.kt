@@ -32,3 +32,6 @@ fun test(a: A) {
         is D -> "D"
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, isExpression, localProperty, nestedClass,
+propertyDeclaration, sealed, smartcast, stringLiteral, whenExpression, whenWithSubject */

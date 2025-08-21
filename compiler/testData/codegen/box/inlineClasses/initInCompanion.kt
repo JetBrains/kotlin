@@ -2,7 +2,6 @@
 // WORKS_WHEN_VALUE_CLASS
 // LANGUAGE: +ValueClasses
 // CHECK_BYTECODE_LISTING
-// IGNORE_BACKEND: JVM
 
 var res = ""
 

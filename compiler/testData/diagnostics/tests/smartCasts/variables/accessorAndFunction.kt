@@ -22,3 +22,6 @@ class My {
         <!SMARTCAST_IMPOSSIBLE!>x<!>.hashCode()
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, functionDeclaration, getter, integerLiteral, localFunction,
+localProperty, nullableType, propertyDeclaration, smartcast */

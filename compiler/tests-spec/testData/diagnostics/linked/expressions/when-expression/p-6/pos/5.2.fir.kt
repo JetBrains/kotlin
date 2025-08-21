@@ -227,8 +227,8 @@ fun case_23(value_1: Nothing) {
 
 // TESTCASE NUMBER: 24
 fun case_24(value_1: Nothing?) = when (value_1) {
-    <!SENSELESS_COMPARISON!>throw Exception()<!>, <!SENSELESS_COMPARISON!><!RETURN_IN_FUNCTION_WITH_EXPRESSION_BODY!>return<!> ""<!> -> ""
-    <!SENSELESS_COMPARISON!>null<!>, <!RETURN_IN_FUNCTION_WITH_EXPRESSION_BODY!>return<!> <!RETURN_IN_FUNCTION_WITH_EXPRESSION_BODY!>return<!> <!RETURN_IN_FUNCTION_WITH_EXPRESSION_BODY!>return<!> "", throw throw throw Exception() -> ""
+    <!SENSELESS_COMPARISON!>throw Exception()<!>, <!SENSELESS_COMPARISON!><!RETURN_IN_FUNCTION_WITH_EXPRESSION_BODY_AND_IMPLICIT_TYPE!>return<!> ""<!> -> ""
+    <!SENSELESS_COMPARISON!>null<!>, <!RETURN_IN_FUNCTION_WITH_EXPRESSION_BODY_AND_IMPLICIT_TYPE!>return<!> <!RETURN_IN_FUNCTION_WITH_EXPRESSION_BODY_AND_IMPLICIT_TYPE!>return<!> <!RETURN_IN_FUNCTION_WITH_EXPRESSION_BODY_AND_IMPLICIT_TYPE!>return<!> "", throw throw throw Exception() -> ""
     <!REDUNDANT_ELSE_IN_WHEN!>else<!> -> ""
 }
 
@@ -239,8 +239,8 @@ fun case_24(value_1: Nothing?) = when (value_1) {
  */
 fun case_25(value_1: Boolean) = when (value_1) {
     true -> {}
-    throw Exception(), <!RETURN_IN_FUNCTION_WITH_EXPRESSION_BODY!>return<!> -> {}
-    false, <!RETURN_IN_FUNCTION_WITH_EXPRESSION_BODY!>return<!> <!RETURN_IN_FUNCTION_WITH_EXPRESSION_BODY!>return<!> <!RETURN_IN_FUNCTION_WITH_EXPRESSION_BODY!>return<!>, throw throw throw Exception() -> {}
+    throw Exception(), <!RETURN_IN_FUNCTION_WITH_EXPRESSION_BODY_AND_IMPLICIT_TYPE!>return<!> -> {}
+    false, <!RETURN_IN_FUNCTION_WITH_EXPRESSION_BODY_AND_IMPLICIT_TYPE!>return<!> <!RETURN_IN_FUNCTION_WITH_EXPRESSION_BODY_AND_IMPLICIT_TYPE!>return<!> <!RETURN_IN_FUNCTION_WITH_EXPRESSION_BODY_AND_IMPLICIT_TYPE!>return<!>, throw throw throw Exception() -> {}
 }
 
 /*

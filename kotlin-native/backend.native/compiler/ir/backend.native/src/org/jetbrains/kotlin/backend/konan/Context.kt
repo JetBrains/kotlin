@@ -24,12 +24,16 @@ import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.irAttribute
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContextImpl
 import org.jetbrains.kotlin.ir.util.ReferenceSymbolTable
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
+import org.jetbrains.kotlin.utils.addToStdlib.getOrSetIfNull
 import java.util.concurrent.ConcurrentHashMap
+
+private var IrClass.layoutBuilder: ClassLayoutBuilder? by irAttribute(copyByDefault = false)
 
 // TODO: Can be renamed or merged with KonanBackendContext
 internal class Context(
@@ -39,12 +43,9 @@ internal class Context(
         override val irBuiltIns: IrBuiltIns,
         val irModules: Map<String, IrModuleFragment>,
         val irLinker: KonanIrLinker,
-        symbols: KonanSymbols,
+        override val symbols: KonanSymbols,
         val symbolTable: ReferenceSymbolTable,
 ) : KonanBackendContext(config) {
-
-    override val ir: KonanIr = KonanIr(symbols)
-
     override val configuration get() = config.configuration
 
     override val optimizeLoopsOverUnsignedArrays = true
@@ -52,7 +53,7 @@ internal class Context(
     override val innerClassesSupport: NativeInnerClassesSupport by lazy { NativeInnerClassesSupport(irFactory) }
     val bridgesSupport by lazy { BridgesSupport(irBuiltIns, irFactory) }
     val enumsSupport by lazy { EnumsSupport(irBuiltIns, irFactory) }
-    val cachesAbiSupport by lazy { CachesAbiSupport(mapping, irFactory) }
+    val cachesAbiSupport by lazy { CachesAbiSupport(irFactory) }
 
     val moduleDeserializerProvider by lazy {
         ModuleDeserializerProvider(config.libraryToCache, config.cachedLibraries, irLinker)
@@ -72,12 +73,14 @@ internal class Context(
         }
     }
 
-    // TODO: Remove after adding special <userData> property to IrDeclaration.
-    private val layoutBuilders = ConcurrentHashMap<IrClass, ClassLayoutBuilder>()
-
-    fun getLayoutBuilder(irClass: IrClass): ClassLayoutBuilder =
-            (irClass.metadata as? KonanMetadata.Class)?.layoutBuilder
-                    ?: layoutBuilders.getOrPut(irClass) { ClassLayoutBuilder(irClass, this) }
+    fun getLayoutBuilder(irClass: IrClass): ClassLayoutBuilder {
+        (irClass.metadata as? KonanMetadata.Class)?.layoutBuilder?.let {
+            return it
+        }
+        synchronized(irClass) {
+            return irClass::layoutBuilder.getOrSetIfNull { ClassLayoutBuilder(irClass, this) }
+        }
+    }
 
     lateinit var globalHierarchyAnalysisResult: GlobalHierarchyAnalysisResult
 

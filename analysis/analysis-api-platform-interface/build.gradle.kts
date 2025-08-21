@@ -4,7 +4,7 @@ plugins {
 }
 
 dependencies {
-    implementation(project(":compiler:psi"))
+    implementation(project(":compiler:psi:psi-api"))
     implementation(project(":compiler:frontend.java"))
     implementation(project(":core:compiler.common"))
     implementation(project(":analysis:analysis-api"))
@@ -13,6 +13,7 @@ dependencies {
     implementation(project(":analysis:decompiled:decompiler-native"))
     implementation(intellijCore())
     implementation(libs.opentelemetry.api)
+    implementation(libs.caffeine)
 }
 
 sourceSets {

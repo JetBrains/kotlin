@@ -1,4 +1,4 @@
-class Outer {/* ClassDeclarationStructureElement */
+/* RootStructureElement */class Outer {/* ClassDeclarationStructureElement */
     val i: Int = 1/* DeclarationStructureElement */
         get() {
             class Inner {

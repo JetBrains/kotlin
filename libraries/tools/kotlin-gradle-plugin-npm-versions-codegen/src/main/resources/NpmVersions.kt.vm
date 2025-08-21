@@ -1,7 +1,4 @@
-/*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
- * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
- */
+$license
 
 package $package
 
@@ -15,4 +12,10 @@ class $class : Serializable {
 #foreach( $dep in $dependencies )
     val $dep.camelize() = NpmPackageVersion("$dep.name", "$dep.version")
 #end
+
+    val allDependencies = listOf(
+#foreach( $dep in $dependencies )
+        $dep.camelize(),
+#end
+    )
 }

@@ -21,7 +21,8 @@ internal class CompositeMetadataArtifactImpl(
     override val moduleDependencyVersion: String,
     private val kotlinProjectStructureMetadata: KotlinProjectStructureMetadata,
     private val primaryArtifactFile: File,
-    private val hostSpecificArtifactFilesBySourceSetName: Map<String, File>
+    private val hostSpecificArtifactFilesBySourceSetName: Map<String, File>,
+    private val computeChecksum: Boolean = true,
 ) : CompositeMetadataArtifact {
 
     override fun exists(): Boolean {
@@ -107,7 +108,7 @@ internal class CompositeMetadataArtifactImpl(
                 ?: SourceSetMetadataLayout.METADATA.archiveExtension
 
         override val checksum: String
-            get() = artifactFile.checksum
+            get() = if (computeChecksum) artifactFile.checksum else ""
 
         /**
          * Example:

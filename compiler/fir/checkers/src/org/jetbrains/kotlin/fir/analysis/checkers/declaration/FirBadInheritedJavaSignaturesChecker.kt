@@ -21,10 +21,11 @@ import org.jetbrains.kotlin.fir.types.contains
 import org.jetbrains.kotlin.name.StandardClassIds.Annotations.FunctionN
 
 object FirBadInheritedJavaSignaturesChecker : FirClassChecker(MppCheckerKind.Platform) {
-    override fun check(declaration: FirClass, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirClass) {
         fun containsFunctionN(type: ConeKotlinType) = type.classId == FunctionN
 
-        declaration.unsubstitutedScope(context).processAllCallables { symbol ->
+        declaration.unsubstitutedScope().processAllCallables { symbol ->
             if (!symbol.isJavaOrEnhancement) {
                 return@processAllCallables
             }
@@ -33,16 +34,19 @@ object FirBadInheritedJavaSignaturesChecker : FirClassChecker(MppCheckerKind.Pla
             // NB: This case with receiver is not covered with tests
             // and was replicated, because it's present in the original
             // checker.
-            val hasBadReceiverType = symbol.resolvedReceiverTypeRef?.coneType?.contains(::containsFunctionN) == true
+            val hasBadReceiverType = symbol.resolvedReceiverType?.contains(::containsFunctionN) == true
             val hasBadValueParameter = symbol is FirFunctionSymbol<*> && symbol.valueParameterSymbols.any { valueParameter ->
                 valueParameter.resolvedReturnType.contains(::containsFunctionN)
             }
+            val hasBadContextParameter = symbol.contextParameterSymbols.any { contextParameter ->
+                contextParameter.resolvedReturnType.contains(::containsFunctionN)
+            }
 
-            if (hasBadReturnType || hasBadReceiverType || hasBadValueParameter) {
+            if (hasBadReturnType || hasBadReceiverType || hasBadValueParameter || hasBadContextParameter) {
                 reporter.reportOn(
                     declaration.source,
                     FirErrors.UNSUPPORTED_INHERITANCE_FROM_JAVA_MEMBER_REFERENCING_KOTLIN_FUNCTION,
-                    symbol, context,
+                    symbol
                 )
             }
         }

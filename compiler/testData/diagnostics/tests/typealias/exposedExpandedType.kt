@@ -1,6 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
-// DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER -TOPLEVEL_TYPEALIASES_ONLY
+// DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER -TOPLEVEL_TYPEALIASES_ONLY -UNSUPPORTED_FEATURE
 
 typealias L<T> = List<T>
 
@@ -45,3 +45,6 @@ internal typealias TestInternal2 = Internal
 private typealias TestInternal3 = Internal
 typealias <!EXPOSED_TYPEALIAS_EXPANDED_TYPE!>TestInternal4<!> = L<Internal>
 typealias <!EXPOSED_TYPEALIAS_EXPANDED_TYPE!>TestInternal5<!> = L<TestInternal1>
+
+/* GENERATED_FIR_TAGS: classDeclaration, nestedClass, nullableType, typeAliasDeclaration,
+typeAliasDeclarationWithTypeParameter, typeParameter */

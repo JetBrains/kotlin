@@ -85,7 +85,7 @@ FILE: constantValues.kt
         }
 
         public final fun getArgumentType(): R|KotlinType| {
-            when (this@R|/KClassValue|.R|SubstitutionOverride</KClassValue.value: R|KClassValue.Value|>|) {
+            when (lval <when-subject>: R|KClassValue.Value| = this@R|/KClassValue|.R|SubstitutionOverride</KClassValue.value: R|KClassValue.Value|>|) {
                 ($subj$ is R|KClassValue.Value.LocalClass|) ->  {
                     ^getArgumentType this@R|/KClassValue|.R|SubstitutionOverride</KClassValue.value: R|KClassValue.Value|>|.R|/KClassValue.Value.LocalClass.type|
                 }

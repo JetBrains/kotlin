@@ -6,6 +6,7 @@
 package test.random
 
 import test.io.*
+import java.io.InvalidObjectException
 import kotlin.random.*
 import kotlin.test.*
 
@@ -66,6 +67,10 @@ class RandomSerializationTest {
                 instance = Random(0).apply { repeat(64) { nextLong() } }, // advance state by discarding values
                 serializedHex = "ac ed 00 05 73 72 00 1a 6b 6f 74 6c 69 6e 2e 72 61 6e 64 6f 6d 2e 58 6f 72 57 6f 77 52 61 6e 64 6f 6d 00 00 00 00 00 00 00 00 02 00 06 49 00 06 61 64 64 65 6e 64 49 00 01 76 49 00 01 77 49 00 01 78 49 00 01 79 49 00 01 7a 78 70 04 25 d3 c0 be 0e 05 94 fd be 13 de a4 17 b2 90 b0 de a4 64 9c 72 81 64"
         )
+
+        assertFailsWith<InvalidObjectException> {
+            deserializeFromHex<Random>("ac ed 00 05 73 72 00 1a 6b 6f 74 6c 69 6e 2e 72 61 6e 64 6f 6d 2e 58 6f 72 57 6f 77 52 61 6e 64 6f 6d 00 00 00 00 00 00 00 00 02 00 06 49 00 06 61 64 64 65 6e 64 49 00 01 76 49 00 01 77 49 00 01 78 49 00 01 79 49 00 01 7a 78 70 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00")
+        }
     }
 
     @Test

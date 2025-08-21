@@ -11,3 +11,18 @@ package kotlin.collections
 public infix fun <T> Array<out T>?.contentEquals(other: Array<out T>?): Boolean {
     definedExternally
 }
+
+@SinceKotlin("1.4")
+public fun IntArray?.contentToString(): String {
+    TODO("Not implemented in reduced runtime")
+}
+
+@SinceKotlin("1.4")
+public fun LongArray?.contentToString(): String {
+    TODO("Not implemented in reduced runtime")
+}
+
+@SinceKotlin("1.4")
+public fun <T> Array<out T>?.contentToString(): String {
+    TODO("Not implemented in reduced runtime")
+}

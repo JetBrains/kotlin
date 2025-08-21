@@ -17,7 +17,8 @@ expect class WithExplicitPrimaryConstructor() : C<!SUPERTYPE_INITIALIZED_IN_EXPE
 // FILE: jvm.kt
 actual class Foo : I, C(), J
 
-actual class <!ACTUAL_WITHOUT_EXPECT!>Bar<!>
+actual class <!EXPECT_ACTUAL_INCOMPATIBLE_SUPERTYPES!>Bar<!>
 
 actual class WithExplicitPrimaryConstructor : C()
 
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, interfaceDeclaration, primaryConstructor */

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.mpp.smoke
 
+import org.gradle.api.logging.LogLevel
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.mpp.KmpIncrementalITBase
 import org.jetbrains.kotlin.gradle.testbase.*
@@ -17,6 +18,9 @@ import org.junit.jupiter.api.DisplayName
 @DisplayName("Basic incremental scenarios with KMP - K2")
 @MppGradlePluginTests
 open class BasicIncrementalCompilationIT : KmpIncrementalITBase() {
+
+    override val defaultBuildOptions: BuildOptions
+        get() = super.defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)
 
     @DisplayName("Base test case - local change, local recompilation")
     @GradleTest

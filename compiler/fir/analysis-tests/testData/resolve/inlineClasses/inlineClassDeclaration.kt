@@ -19,3 +19,6 @@ open class Test
 <!INLINE_CLASS_DEPRECATED!>inline<!> class ExtendTest(val x: Int): <!SUPERTYPE_NOT_INITIALIZED, VALUE_CLASS_CANNOT_EXTEND_CLASSES!>Test<!>
 
 <!INLINE_CLASS_DEPRECATED!>inline<!> class ImplementByDelegation(val x: Int) : Comparable<Int> by x
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, inheritanceDelegation, inner, localClass,
+primaryConstructor, propertyDeclaration, sealed, value */

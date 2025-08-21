@@ -34,6 +34,7 @@ KtNameReferenceExpression(55,59): 'this'
       argumentMapping = {}
       isImplicitInvoke = true
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = this
           isSafeNavigation = false
@@ -44,6 +45,7 @@ KtNameReferenceExpression(55,59): 'this'
           returnType = r.MyClass
           symbol = r/MyClass.invoke(<dispatch receiver>: r.MyClass): r.MyClass
           valueParameters = []
+          contextParameters = []
           callableId = r/MyClass.invoke
       typeArgumentsMapping = {}
     isInBestCandidates = false
@@ -63,6 +65,7 @@ KtNameReferenceExpression(78,82): 'this'
       argumentMapping = {}
       isImplicitInvoke = true
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = this
           isSafeNavigation = false
@@ -73,6 +76,7 @@ KtNameReferenceExpression(78,82): 'this'
           returnType = r.MyClass
           symbol = r/MyClass.invoke(<dispatch receiver>: r.MyClass): r.MyClass
           valueParameters = []
+          contextParameters = []
           callableId = r/MyClass.invoke
       typeArgumentsMapping = {}
     isInBestCandidates = false
@@ -113,6 +117,7 @@ KtCallExpression(124,133): 'MyClass()'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -120,6 +125,7 @@ KtCallExpression(124,133): 'MyClass()'
           returnType = r.MyClass
           symbol = <constructor>(): r.MyClass
           valueParameters = []
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -130,6 +136,7 @@ KtNameReferenceExpression(124,131): 'MyClass'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -137,6 +144,7 @@ KtNameReferenceExpression(124,131): 'MyClass'
           returnType = r.MyClass
           symbol = <constructor>(): r.MyClass
           valueParameters = []
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -159,6 +167,7 @@ KtCallExpression(156,165): 'MyClass()'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -166,6 +175,7 @@ KtCallExpression(156,165): 'MyClass()'
           returnType = r.MyClass
           symbol = <constructor>(): r.MyClass
           valueParameters = []
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -176,6 +186,7 @@ KtNameReferenceExpression(156,163): 'MyClass'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -183,6 +194,7 @@ KtNameReferenceExpression(156,163): 'MyClass'
           returnType = r.MyClass
           symbol = <constructor>(): r.MyClass
           valueParameters = []
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -205,6 +217,7 @@ KtCallExpression(186,191): 'foo()'
       argumentMapping = {}
       isImplicitInvoke = true
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = foo
           isSafeNavigation = false
@@ -215,15 +228,17 @@ KtCallExpression(186,191): 'foo()'
           returnType = r.MyClass
           symbol = r/MyClass.invoke(<dispatch receiver>: r.MyClass): r.MyClass
           valueParameters = []
+          contextParameters = []
           callableId = r/MyClass.invoke
       typeArgumentsMapping = {}
     isInBestCandidates = false
-  
+
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -231,6 +246,7 @@ KtCallExpression(186,191): 'foo()'
           returnType = kotlin.Int
           symbol = r/foo(): kotlin.Int
           valueParameters = []
+          contextParameters = []
           callableId = r/foo
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -241,6 +257,7 @@ KtNameReferenceExpression(186,189): 'foo'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -248,13 +265,15 @@ KtNameReferenceExpression(186,189): 'foo'
           returnType = kotlin.Int
           symbol = r/foo(): kotlin.Int
           valueParameters = []
+          contextParameters = []
           callableId = r/foo
       typeArgumentsMapping = {}
     isInBestCandidates = true
-  
+
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaVariableSignature:
@@ -262,6 +281,7 @@ KtNameReferenceExpression(186,189): 'foo'
           receiverType = null
           returnType = r.MyClass
           symbol = val foo: r.MyClass
+          contextParameters = []
           callableId = r/foo
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -276,6 +296,7 @@ KtNameReferenceExpression(196,199): 'foo'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -283,13 +304,15 @@ KtNameReferenceExpression(196,199): 'foo'
           returnType = kotlin.Int
           symbol = r/foo(): kotlin.Int
           valueParameters = []
+          contextParameters = []
           callableId = r/foo
       typeArgumentsMapping = {}
     isInBestCandidates = false
-  
+
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaVariableSignature:
@@ -297,6 +320,7 @@ KtNameReferenceExpression(196,199): 'foo'
           receiverType = null
           returnType = r.MyClass
           symbol = val foo: r.MyClass
+          contextParameters = []
           callableId = r/foo
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -308,6 +332,7 @@ KtDotQualifiedExpression(204,226): '(((foo)())()).invoke()'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = (((foo)())())
           isSafeNavigation = false
@@ -318,6 +343,7 @@ KtDotQualifiedExpression(204,226): '(((foo)())()).invoke()'
           returnType = r.MyClass
           symbol = r/MyClass.invoke(<dispatch receiver>: r.MyClass): r.MyClass
           valueParameters = []
+          contextParameters = []
           callableId = r/MyClass.invoke
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -331,6 +357,7 @@ KtCallExpression(205,216): '((foo)())()'
       argumentMapping = {}
       isImplicitInvoke = true
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = ((foo)())
           isSafeNavigation = false
@@ -341,6 +368,7 @@ KtCallExpression(205,216): '((foo)())()'
           returnType = r.MyClass
           symbol = r/MyClass.invoke(<dispatch receiver>: r.MyClass): r.MyClass
           valueParameters = []
+          contextParameters = []
           callableId = r/MyClass.invoke
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -354,6 +382,7 @@ KtCallExpression(206,213): '(foo)()'
       argumentMapping = {}
       isImplicitInvoke = true
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = (foo)
           isSafeNavigation = false
@@ -364,6 +393,7 @@ KtCallExpression(206,213): '(foo)()'
           returnType = r.MyClass
           symbol = r/MyClass.invoke(<dispatch receiver>: r.MyClass): r.MyClass
           valueParameters = []
+          contextParameters = []
           callableId = r/MyClass.invoke
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -377,6 +407,7 @@ KtNameReferenceExpression(207,210): 'foo'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -384,13 +415,15 @@ KtNameReferenceExpression(207,210): 'foo'
           returnType = kotlin.Int
           symbol = r/foo(): kotlin.Int
           valueParameters = []
+          contextParameters = []
           callableId = r/foo
       typeArgumentsMapping = {}
     isInBestCandidates = false
-  
+
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaVariableSignature:
@@ -398,6 +431,7 @@ KtNameReferenceExpression(207,210): 'foo'
           receiverType = null
           returnType = r.MyClass
           symbol = val foo: r.MyClass
+          contextParameters = []
           callableId = r/foo
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -415,6 +449,7 @@ KtCallExpression(218,226): 'invoke()'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = (((foo)())())
           isSafeNavigation = false
@@ -425,6 +460,7 @@ KtCallExpression(218,226): 'invoke()'
           returnType = r.MyClass
           symbol = r/MyClass.invoke(<dispatch receiver>: r.MyClass): r.MyClass
           valueParameters = []
+          contextParameters = []
           callableId = r/MyClass.invoke
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -435,6 +471,7 @@ KtNameReferenceExpression(218,224): 'invoke'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = (((foo)())())
           isSafeNavigation = false
@@ -445,6 +482,7 @@ KtNameReferenceExpression(218,224): 'invoke'
           returnType = r.MyClass
           symbol = r/MyClass.invoke(<dispatch receiver>: r.MyClass): r.MyClass
           valueParameters = []
+          contextParameters = []
           callableId = r/MyClass.invoke
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -458,6 +496,7 @@ KtDotQualifiedExpression(231,243): 'foo.invoke()'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = foo
           isSafeNavigation = false
@@ -468,6 +507,7 @@ KtDotQualifiedExpression(231,243): 'foo.invoke()'
           returnType = r.MyClass
           symbol = r/MyClass.invoke(<dispatch receiver>: r.MyClass): r.MyClass
           valueParameters = []
+          contextParameters = []
           callableId = r/MyClass.invoke
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -478,6 +518,7 @@ KtNameReferenceExpression(231,234): 'foo'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -485,13 +526,15 @@ KtNameReferenceExpression(231,234): 'foo'
           returnType = kotlin.Int
           symbol = r/foo(): kotlin.Int
           valueParameters = []
+          contextParameters = []
           callableId = r/foo
       typeArgumentsMapping = {}
     isInBestCandidates = false
-  
+
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaVariableSignature:
@@ -499,6 +542,7 @@ KtNameReferenceExpression(231,234): 'foo'
           receiverType = null
           returnType = r.MyClass
           symbol = val foo: r.MyClass
+          contextParameters = []
           callableId = r/foo
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -510,6 +554,7 @@ KtCallExpression(235,243): 'invoke()'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = foo
           isSafeNavigation = false
@@ -520,6 +565,7 @@ KtCallExpression(235,243): 'invoke()'
           returnType = r.MyClass
           symbol = r/MyClass.invoke(<dispatch receiver>: r.MyClass): r.MyClass
           valueParameters = []
+          contextParameters = []
           callableId = r/MyClass.invoke
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -530,6 +576,7 @@ KtNameReferenceExpression(235,241): 'invoke'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = foo
           isSafeNavigation = false
@@ -540,6 +587,7 @@ KtNameReferenceExpression(235,241): 'invoke'
           returnType = r.MyClass
           symbol = r/MyClass.invoke(<dispatch receiver>: r.MyClass): r.MyClass
           valueParameters = []
+          contextParameters = []
           callableId = r/MyClass.invoke
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -553,6 +601,7 @@ KtCallExpression(248,258): 'property()'
       argumentMapping = {}
       isImplicitInvoke = true
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = property
           isSafeNavigation = false
@@ -563,6 +612,7 @@ KtCallExpression(248,258): 'property()'
           returnType = r.MyClass
           symbol = r/MyClass.invoke(<dispatch receiver>: r.MyClass): r.MyClass
           valueParameters = []
+          contextParameters = []
           callableId = r/MyClass.invoke
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -571,6 +621,7 @@ KtNameReferenceExpression(248,256): 'property'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaVariableSignature:
@@ -578,6 +629,7 @@ KtNameReferenceExpression(248,256): 'property'
           receiverType = null
           returnType = r.MyClass
           symbol = val property: r.MyClass
+          contextParameters = []
           callableId = r/property
       simpleAccess = Read
       typeArgumentsMapping = {}

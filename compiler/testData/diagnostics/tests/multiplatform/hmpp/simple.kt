@@ -20,3 +20,6 @@ fun box(): String {
     val b = getB()
     return b.foo() + b.bar()
 }
+
+/* GENERATED_FIR_TAGS: actual, additiveExpression, classDeclaration, expect, functionDeclaration, localProperty,
+primaryConstructor, propertyDeclaration, stringLiteral */

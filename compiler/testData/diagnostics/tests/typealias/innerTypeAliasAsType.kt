@@ -1,6 +1,6 @@
 // FIR_IDENTICAL
 // RUN_PIPELINE_TILL: FRONTEND
-// DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER -TOPLEVEL_TYPEALIASES_ONLY -DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE
+// DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER -TOPLEVEL_TYPEALIASES_ONLY -UNSUPPORTED_FEATURE -DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE
 
 class Outer<T> {
     class Nested
@@ -34,3 +34,6 @@ fun <T> test11(x: Outer<T>.InnerAlias) = x
 fun test12(x: <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>Outer<!>.GenericInnerAlias<Int>) = x
 fun test13(x: Outer<Int>.GenericInnerAlias<Int>) = x
 fun <T> test14(x: Outer<T>.GenericInnerAlias<Int>) = x
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, inner, nestedClass, nullableType, typeAliasDeclaration,
+typeAliasDeclarationWithTypeParameter, typeParameter */

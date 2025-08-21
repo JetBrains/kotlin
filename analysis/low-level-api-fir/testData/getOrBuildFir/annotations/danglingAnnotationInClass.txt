@@ -7,9 +7,9 @@ FIR element rendered:
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] danglingAnnotationInClass.kt
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class F : R|kotlin/Any| {
-        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=F] constructor(): R|F| {
-            super<R|kotlin/Any|>()
+    public final [ResolvedTo(STATUS)] class F : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=F] constructor(): R|F| {
+            LAZY_super<R|kotlin/Any|>
         }
 
         [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=F] @R|kotlin/Suppress|[Types](names = vararg(String())) @R|kotlin/annotation/MustBeDocumented|[Types]() <DANGLING MODIFIER: Top level declaration expected>

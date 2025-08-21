@@ -24,3 +24,5 @@ abstract class A {
 
 
 open class B : A()
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, ifExpression, isExpression, smartcast */

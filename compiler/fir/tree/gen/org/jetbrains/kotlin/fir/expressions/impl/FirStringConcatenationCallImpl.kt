@@ -30,6 +30,7 @@ internal class FirStringConcatenationCallImpl(
     override var annotations: MutableOrEmptyList<FirAnnotation>,
     override var argumentList: FirArgumentList,
     override val interpolationPrefix: String,
+    override val isFoldedStrings: Boolean,
 ) : FirStringConcatenationCall() {
     @OptIn(UnresolvedExpressionTypeAccess::class)
     override val coneTypeOrNull: ConeKotlinType? = StandardClassIds.String.constructClassLikeType()

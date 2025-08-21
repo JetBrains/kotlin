@@ -14,6 +14,7 @@ import org.gradle.api.logging.Logging
 import org.gradle.internal.component.local.model.OpaqueComponentArtifactIdentifier
 import org.gradle.internal.resolve.ModuleVersionResolveException
 import org.jetbrains.kotlin.gradle.ExternalKotlinTargetApi
+import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.consumption.uklibViewAttribute
 import org.jetbrains.kotlin.gradle.idea.tcs.*
 import org.jetbrains.kotlin.gradle.idea.tcs.extras.artifactsClasspath
 import org.jetbrains.kotlin.gradle.idea.tcs.extras.isOpaqueFileDependency
@@ -26,6 +27,7 @@ import org.jetbrains.kotlin.gradle.plugin.ide.dependencyResolvers.IdeBinaryDepen
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMetadataCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.internal
 import org.jetbrains.kotlin.gradle.plugin.mpp.resolvableMetadataConfiguration
+import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.consumption.isFromUklib
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.sources.InternalKotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.sources.internal
@@ -51,10 +53,27 @@ import org.jetbrains.kotlin.tooling.core.mutableExtrasOf
  * from the given [KotlinCompilationConfigurationsContainer.compileDependencyConfiguration]
  */
 @ExternalKotlinTargetApi
-class IdeBinaryDependencyResolver @JvmOverloads constructor(
+class IdeBinaryDependencyResolver @JvmOverloads internal constructor(
+    private val importLogger: IdeMultiplatformImportLogger?,
     private val binaryType: String = IdeaKotlinBinaryDependency.KOTLIN_COMPILE_BINARY_TYPE,
     private val artifactResolutionStrategy: ArtifactResolutionStrategy = ArtifactResolutionStrategy.Compilation(),
 ) : IdeDependencyResolver {
+    private val logWarning: (String) -> Unit = {
+        if (importLogger != null) {
+            importLogger.warn(it)
+        } else {
+            logger.warn(it)
+        }
+    }
+
+    constructor(
+        binaryType: String = IdeaKotlinBinaryDependency.KOTLIN_COMPILE_BINARY_TYPE,
+        artifactResolutionStrategy: ArtifactResolutionStrategy = ArtifactResolutionStrategy.Compilation(),
+    ) : this(
+        importLogger = null,
+        binaryType = binaryType,
+        artifactResolutionStrategy = artifactResolutionStrategy,
+    )
 
     @ExternalKotlinTargetApi
     sealed class ArtifactResolutionStrategy {
@@ -164,11 +183,31 @@ class IdeBinaryDependencyResolver @JvmOverloads constructor(
                 }
 
                 is ModuleComponentIdentifier -> {
-                    IdeaKotlinResolvedBinaryDependency(
-                        coordinates = IdeaKotlinBinaryCoordinates(componentId, artifact.variant.capabilities, artifact.variant.attributes),
-                        binaryType = binaryType,
-                        classpath = IdeaKotlinClasspath(artifact.file),
-                    )
+                    /**
+                     * Without disambiguation by [sourceSetName] IDE incorrectly creates one Library per GAV with one of the resolution
+                     * artifacts from the Uklib and reuses it in inappropriate IDE Modules
+                     */
+                    if (artifact.isFromUklib) {
+                        val selectedUklibTarget = artifact.variant.attributes.getAttribute(uklibViewAttribute)
+                        IdeaKotlinResolvedBinaryDependency(
+                            coordinates = IdeaKotlinBinaryCoordinates(
+                                group = componentId.group,
+                                module = componentId.module,
+                                version = componentId.version,
+                                sourceSetName = selectedUklibTarget,
+                                capabilities = artifact.variant.capabilities.map(::IdeaKotlinBinaryCapability).toSet(),
+                                attributes = IdeaKotlinBinaryAttributes(artifact.variant.attributes)
+                            ),
+                            binaryType = binaryType,
+                            classpath = IdeaKotlinClasspath(artifact.file),
+                        )
+                    } else {
+                        IdeaKotlinResolvedBinaryDependency(
+                            coordinates = IdeaKotlinBinaryCoordinates(componentId, artifact.variant.capabilities, artifact.variant.attributes),
+                            binaryType = binaryType,
+                            classpath = IdeaKotlinClasspath(artifact.file),
+                        )
+                    }
                 }
 
                 is LibraryBinaryIdentifier -> {
@@ -208,7 +247,7 @@ class IdeBinaryDependencyResolver @JvmOverloads constructor(
                 }
 
                 else -> {
-                    logger.warn("Unhandled componentId: ${componentId.javaClass}")
+                    logWarning("Unhandled componentId: ${componentId.javaClass}")
                     null
                 }
             }?.also { dependency ->
@@ -235,7 +274,7 @@ class IdeBinaryDependencyResolver @JvmOverloads constructor(
         Refuse resolution. Write your own code if you really want to do this!
          */
         if (compilation is KotlinMetadataCompilation<*>) {
-            logger.warn("Unexpected ${KotlinMetadataCompilation::class.java}(${compilation.name}) for $sourceSet")
+            logWarning("Unexpected ${KotlinMetadataCompilation::class.java}(${compilation.name}) for $sourceSet")
             return null
         }
 

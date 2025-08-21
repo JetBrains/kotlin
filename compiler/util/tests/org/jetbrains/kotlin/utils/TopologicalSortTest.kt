@@ -23,6 +23,16 @@ class TopologicalSortTest : TestCase() {
         )
     }
 
+    fun testDisjointGraph() {
+        checkGraph(
+            """
+            A; B; C; D
+            B > C
+        """.trimIndent(),
+            listOf("D", "B", "C", "A")
+        )
+    }
+
     fun testSimpleGraph() {
         checkGraph(
             """

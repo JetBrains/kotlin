@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.analysis.api.fir.components
 import org.jetbrains.kotlin.analysis.api.components.KaTypeInformationProvider
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.types.KaFirType
-import org.jetbrains.kotlin.analysis.api.fir.types.PublicTypeApproximator
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseSessionComponent
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.types.KaType
@@ -36,18 +35,27 @@ internal class KaFirTypeInformationProvider(
             (this as KaFirType).coneType.functionTypeKind(analysisSession.firSession)
         }
 
-    override val KaType.canBeNull: Boolean
+    override val KaType.isNullable: Boolean
         get() = withValidityAssertion {
             (this as KaFirType).coneType.canBeNull(analysisSession.firSession)
         }
 
+    override val KaType.isMarkedNullable: Boolean
+        get() = withValidityAssertion {
+            (this as KaFirType).coneType.isMarkedNullable
+        }
+
+    override val KaType.hasFlexibleNullability: Boolean
+        get() = withValidityAssertion {
+            val coneType = this.coneType
+            coneType.hasFlexibleMarkedNullability || coneType is ConeErrorType && coneType.nullable == null
+        }
+
     override val KaType.isDenotable: Boolean
         get() = withValidityAssertion {
-            val coneType = (this as KaFirType).coneType
-            return analysisSession.firSession.typeApproximator.approximateToSuperType(
-                coneType,
-                PublicTypeApproximator.PublicApproximatorConfiguration(false)
-            ) == null
+            with(analysisSession) {
+                approximateToDenotableSupertype(allowLocalDenotableTypes = true) == null
+            }
         }
 
     override val KaType.isArrayOrPrimitiveArray: Boolean
@@ -65,6 +73,6 @@ internal class KaFirTypeInformationProvider(
 
     override val KaType.fullyExpandedType: KaType
         get() = withValidityAssertion {
-            coneType.fullyExpandedType(analysisSession.firSession).asKtType()
+            coneType.fullyExpandedType(analysisSession.firSession).asKaType()
         }
 }

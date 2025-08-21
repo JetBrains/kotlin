@@ -12,3 +12,6 @@ enum class MyEnum(val i: Int) {
 open class A(x: Int = 1)
 
 val x: MyEnum = MyEnum.A
+
+/* GENERATED_FIR_TAGS: classDeclaration, enumDeclaration, enumEntry, integerLiteral, primaryConstructor,
+propertyDeclaration */

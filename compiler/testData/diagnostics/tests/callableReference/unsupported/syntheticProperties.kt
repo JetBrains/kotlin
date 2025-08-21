@@ -21,3 +21,5 @@ public class Customer {
 
 // FILE: test.kt
 val customerName = Customer::<!UNSUPPORTED_FEATURE!>name<!>
+
+/* GENERATED_FIR_TAGS: flexibleType, javaCallableReference, javaType, propertyDeclaration */

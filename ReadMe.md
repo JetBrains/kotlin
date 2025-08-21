@@ -143,10 +143,10 @@ Keep in mind:
 
 We publish `-dev` versions frequently.
 
-For `-dev` versions you can use the [list of available versions](https://maven.pkg.jetbrains.space/kotlin/p/kotlin/bootstrap/org/jetbrains/kotlin/kotlin-compiler/maven-metadata.xml) and include this maven repository:
+For `-dev` versions you can use the [list of available versions](https://redirector.kotlinlang.org/maven/bootstrap/org/jetbrains/kotlin/kotlin-compiler/maven-metadata.xml) and include this maven repository:
 
 ```kotlin
-maven("https://maven.pkg.jetbrains.space/kotlin/p/kotlin/bootstrap")
+maven("https://redirector.kotlinlang.org/maven/bootstrap")
 ```
 
 # License

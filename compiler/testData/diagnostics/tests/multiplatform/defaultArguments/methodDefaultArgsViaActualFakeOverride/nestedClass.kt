@@ -17,3 +17,6 @@ open class Base {
 actual class Foo {
     actual class Bar : Base()
 }
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, functionDeclaration, integerLiteral, nestedClass,
+primaryConstructor */

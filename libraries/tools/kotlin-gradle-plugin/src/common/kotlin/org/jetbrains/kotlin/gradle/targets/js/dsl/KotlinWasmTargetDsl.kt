@@ -10,22 +10,31 @@ import org.gradle.api.NamedDomainObjectContainer
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.HasBinaries
 import org.jetbrains.kotlin.gradle.targets.js.KotlinWasmTargetType
-import org.jetbrains.kotlin.gradle.targets.js.binaryen.BinaryenExec
+import org.jetbrains.kotlin.gradle.targets.wasm.binaryen.BinaryenExec
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsBinaryContainer
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
 
 interface KotlinWasmTargetDsl : KotlinTarget, HasBinaries<KotlinJsBinaryContainer> {
     val wasmTargetType: KotlinWasmTargetType?
 
-    @Suppress("DEPRECATION")
-    @Deprecated("Binaryen is enabled by default. This call is redundant.")
+    @Suppress("DEPRECATION_ERROR")
+    @Deprecated(
+        "Binaryen is enabled by default. This call is redundant. Scheduled for removal in Kotlin 2.3.",
+        level = DeprecationLevel.ERROR
+    )
     fun applyBinaryen() = applyBinaryen { }
 
-    @Deprecated("Binaryen is enabled by default. This call is redundant.")
+    @Deprecated(
+        "Binaryen is enabled by default. This call is redundant. Scheduled for removal in Kotlin 2.3.",
+        level = DeprecationLevel.ERROR
+    )
     fun applyBinaryen(body: BinaryenExec.() -> Unit)
 
-    @Suppress("DEPRECATION")
-    @Deprecated("Binaryen is enabled by default. This call is redundant.")
+    @Suppress("DEPRECATION_ERROR")
+    @Deprecated(
+        "Binaryen is enabled by default. This call is redundant. Scheduled for removal in Kotlin 2.3.",
+        level = DeprecationLevel.ERROR
+    )
     fun applyBinaryen(fn: Action<BinaryenExec>) {
         applyBinaryen {
             fn.execute(this)

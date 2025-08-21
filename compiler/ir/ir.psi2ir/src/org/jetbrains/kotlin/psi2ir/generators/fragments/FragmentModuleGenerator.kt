@@ -6,13 +6,16 @@
 package org.jetbrains.kotlin.psi2ir.generators.fragments
 
 import org.jetbrains.kotlin.ir.PsiIrFileEntry
+import org.jetbrains.kotlin.ir.declarations.DescriptorMetadataSource
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrModuleFragmentImpl
 import org.jetbrains.kotlin.ir.util.patchDeclarationParents
 import org.jetbrains.kotlin.psi.KtBlockCodeFragment
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi2ir.generators.*
+import org.jetbrains.kotlin.psi2ir.generators.DeclarationGenerator
+import org.jetbrains.kotlin.psi2ir.generators.GeneratorContext
+import org.jetbrains.kotlin.psi2ir.generators.ModuleGenerator
 import org.jetbrains.kotlin.resolve.lazy.descriptors.findPackageFragmentForFile
 
 class FragmentModuleGenerator(
@@ -64,6 +67,8 @@ class FragmentModuleGenerator(
     private fun createEmptyIrFile(ktFile: KtFile, irModule: IrModuleFragment): IrFileImpl {
         val fileEntry = PsiIrFileEntry(ktFile)
         val packageFragmentDescriptor = context.moduleDescriptor.findPackageFragmentForFile(ktFile)!!
-        return IrFileImpl(fileEntry, packageFragmentDescriptor, irModule)
+        return IrFileImpl(fileEntry, packageFragmentDescriptor, irModule).apply {
+            metadata = DescriptorMetadataSource.CodeFragment()
+        }
     }
 }

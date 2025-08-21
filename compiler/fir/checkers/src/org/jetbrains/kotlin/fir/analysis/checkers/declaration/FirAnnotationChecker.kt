@@ -26,11 +26,14 @@ import org.jetbrains.kotlin.fir.correspondingProperty
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.fromPrimaryConstructor
 import org.jetbrains.kotlin.fir.declarations.utils.hasBackingField
+import org.jetbrains.kotlin.fir.declarations.utils.isExtension
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
-import org.jetbrains.kotlin.fir.languageVersionSettings
+import org.jetbrains.kotlin.fir.isEnabled
 import org.jetbrains.kotlin.fir.packageFqName
 import org.jetbrains.kotlin.fir.resolve.forEachExpandedType
 import org.jetbrains.kotlin.fir.resolve.fqName
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.hasContextParameters
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -48,29 +51,23 @@ object FirAnnotationChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) 
     private val deprecatedClassId = FqName("kotlin.Deprecated")
     private val deprecatedSinceKotlinClassId = FqName("kotlin.DeprecatedSinceKotlin")
 
-    override fun check(
-        declaration: FirDeclaration,
-        context: CheckerContext,
-        reporter: DiagnosticReporter
-    ) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirDeclaration) {
         if (declaration is FirDanglingModifierList) {
             return
         }
 
-        checkAnnotationContainer(declaration, context, reporter)
+        checkAnnotationContainer(declaration)
 
         if (declaration is FirCallableDeclaration) {
             declaration.receiverParameter?.let {
-                checkAnnotationContainer(it, context, reporter)
+                checkAnnotationContainer(it)
             }
         }
     }
 
-    private fun checkAnnotationContainer(
-        declaration: FirAnnotationContainer,
-        context: CheckerContext,
-        reporter: DiagnosticReporter
-    ) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    private fun checkAnnotationContainer(declaration: FirAnnotationContainer) {
         var deprecated: FirAnnotation? = null
         var deprecatedSinceKotlin: FirAnnotation? = null
 
@@ -82,60 +79,55 @@ object FirAnnotationChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) 
                 deprecatedSinceKotlin = annotation
             }
 
-            checkAnnotationTarget(declaration, annotation, context, reporter)
+            checkAnnotationTarget(declaration, annotation)
         }
 
         if (declaration is FirCallableDeclaration) {
             val receiverParameter = declaration.receiverParameter
             if (receiverParameter != null) {
                 for (receiverAnnotation in receiverParameter.annotations) {
-                    reportIfMfvc(context, reporter, receiverAnnotation, "receivers", receiverParameter.typeRef.coneType)
+                    reportIfMfvc(receiverAnnotation, "receivers", receiverParameter.typeRef.coneType)
                 }
             }
         }
 
         if (deprecatedSinceKotlin != null) {
-            checkDeprecatedCalls(deprecatedSinceKotlin, deprecated, context, reporter)
+            checkDeprecatedCalls(deprecatedSinceKotlin, deprecated)
         }
 
-        checkDeclaredRepeatedAnnotations(declaration, context, reporter)
+        checkDeclaredRepeatedAnnotations(declaration)
 
         if (declaration is FirCallableDeclaration) {
             if (declaration is FirProperty) {
-                checkRepeatedAnnotationsInProperty(declaration, context, reporter)
+                checkRepeatedAnnotationsInProperty(declaration)
             }
             if (declaration is FirValueParameter) {
-                checkPossibleMigrationToPropertyOrField(declaration, context, reporter)
+                checkPossibleMigrationToPropertyOrField(declaration)
             }
 
             if (declaration.source?.kind is KtRealSourceElementKind && declaration.returnTypeRef.source?.kind is KtRealSourceElementKind) {
-                checkAllRepeatedAnnotations(declaration.returnTypeRef, context, reporter)
+                checkAllRepeatedAnnotations(declaration.returnTypeRef)
             }
         } else if (declaration is FirTypeAlias) {
-            checkAllRepeatedAnnotations(declaration.expandedTypeRef, context, reporter)
+            checkAllRepeatedAnnotations(declaration.expandedTypeRef)
         }
     }
 
+    context(context: CheckerContext, reporter: DiagnosticReporter)
     private fun reportIfMfvc(
-        context: CheckerContext,
-        reporter: DiagnosticReporter,
         annotation: FirAnnotation,
         hint: String,
         type: ConeKotlinType,
     ) {
         if (type.needsMultiFieldValueClassFlattening(context.session)) {
-            reporter.reportOn(annotation.source, FirErrors.ANNOTATION_ON_ILLEGAL_MULTI_FIELD_VALUE_CLASS_TYPED_TARGET, hint, context)
+            reporter.reportOn(annotation.source, FirErrors.ANNOTATION_ON_ILLEGAL_MULTI_FIELD_VALUE_CLASS_TYPED_TARGET, hint)
         }
     }
 
-    private fun checkMultiFieldValueClassAnnotationRestrictions(
-        declaration: FirAnnotationContainer,
-        annotation: FirAnnotation,
-        context: CheckerContext,
-        reporter: DiagnosticReporter
-    ) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    private fun checkMultiFieldValueClassAnnotationRestrictions(declaration: FirAnnotationContainer, annotation: FirAnnotation) {
         fun FirPropertyAccessor.hasNoReceivers() = contextParameters.isEmpty() && receiverParameter?.typeRef == null &&
-                propertySymbol.resolvedReceiverTypeRef == null && propertySymbol.resolvedContextParameters.isEmpty()
+                !propertySymbol.isExtension && !propertySymbol.hasContextParameters
 
         val (hint, type) = when (annotation.useSiteTarget) {
             FIELD -> "fields" to ((declaration as? FirBackingField)?.returnTypeRef?.coneType ?: return)
@@ -162,15 +154,11 @@ object FirAnnotationChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) 
             }
             ALL -> TODO() // How @all: interoperates with ValueClasses feature?
         }
-        reportIfMfvc(context, reporter, annotation, hint, type)
+        reportIfMfvc(annotation, hint, type)
     }
 
-    private fun checkAnnotationTarget(
-        declaration: FirAnnotationContainer,
-        annotation: FirAnnotation,
-        context: CheckerContext,
-        reporter: DiagnosticReporter
-    ) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    private fun checkAnnotationTarget(declaration: FirAnnotationContainer, annotation: FirAnnotation) {
         val actualTargets = getActualTargetList(declaration)
         val applicableTargets = annotation.getAllowedAnnotationTargets(context.session)
         val useSiteTarget = annotation.useSiteTarget
@@ -187,26 +175,25 @@ object FirAnnotationChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) 
         }
 
         if (useSiteTarget != null) {
-            checkAnnotationUseSiteTarget(declaration, annotation, useSiteTarget, applicableTargets, context, reporter)
+            checkAnnotationUseSiteTarget(declaration, annotation, useSiteTarget, applicableTargets)
         }
 
         if (check(actualTargets.defaultTargets) || check(actualTargets.canBeSubstituted) || checkWithUseSiteTargets()) {
-            if (context.languageVersionSettings.supportsFeature(LanguageFeature.ValueClasses)) {
-                checkMultiFieldValueClassAnnotationRestrictions(declaration, annotation, context, reporter)
+            if (LanguageFeature.ValueClasses.isEnabled()) {
+                checkMultiFieldValueClassAnnotationRestrictions(declaration, annotation)
             }
             return
         }
 
         val targetDescription = actualTargets.defaultTargets.firstOrNull()?.description ?: "unidentified target"
         if (declaration is FirBackingField && actualTargets === AnnotationTargetLists.T_MEMBER_PROPERTY_IN_ANNOTATION &&
-            !context.languageVersionSettings.supportsFeature(LanguageFeature.ForbidFieldAnnotationsOnAnnotationParameters)
+            !LanguageFeature.ForbidFieldAnnotationsOnAnnotationParameters.isEnabled()
         ) {
             reporter.reportOn(
                 annotation.source,
                 FirErrors.WRONG_ANNOTATION_TARGET_WARNING,
                 targetDescription,
                 applicableTargets,
-                context
             )
         } else if (useSiteTarget != null) {
             if (useSiteTarget != ALL) {
@@ -217,7 +204,6 @@ object FirAnnotationChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) 
                     targetDescription,
                     useSiteTarget.renderName,
                     applicableTargets,
-                    context
                 )
             }
         } else {
@@ -226,18 +212,16 @@ object FirAnnotationChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) 
                 FirErrors.WRONG_ANNOTATION_TARGET,
                 targetDescription,
                 applicableTargets,
-                context
             )
         }
     }
 
+    context(context: CheckerContext, reporter: DiagnosticReporter)
     private fun checkAnnotationUseSiteTarget(
         annotated: FirAnnotationContainer,
         annotation: FirAnnotation,
         target: AnnotationUseSiteTarget,
         applicableTargets: Set<KotlinTarget>,
-        context: CheckerContext,
-        reporter: DiagnosticReporter
     ) {
         if (annotation.source?.kind == KtFakeSourceElementKind.FromUseSiteTarget) return
         when (target) {
@@ -247,9 +231,7 @@ object FirAnnotationChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) 
                     annotated,
                     annotation,
                     target,
-                    context,
-                    reporter,
-                    when (context.session.languageVersionSettings.supportsFeature(LanguageFeature.ProhibitUseSiteGetTargetAnnotations)) {
+                    when (LanguageFeature.ProhibitUseSiteGetTargetAnnotations.isEnabled()) {
                         true -> FirErrors.INAPPLICABLE_TARGET_ON_PROPERTY
                         false -> FirErrors.INAPPLICABLE_TARGET_ON_PROPERTY_WARNING
                     }
@@ -259,40 +241,40 @@ object FirAnnotationChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) 
                 if (annotated is FirBackingField) {
                     val propertySymbol = annotated.propertySymbol
                     if (propertySymbol.delegateFieldSymbol != null && !propertySymbol.hasBackingField) {
-                        reporter.reportOn(annotation.source, FirErrors.INAPPLICABLE_TARGET_PROPERTY_HAS_NO_BACKING_FIELD, context)
+                        reporter.reportOn(annotation.source, FirErrors.INAPPLICABLE_TARGET_PROPERTY_HAS_NO_BACKING_FIELD)
                     }
                 }
             }
             PROPERTY_DELEGATE_FIELD -> {
                 if (annotated is FirBackingField && annotated.propertySymbol.delegateFieldSymbol == null) {
-                    reporter.reportOn(annotation.source, FirErrors.INAPPLICABLE_TARGET_PROPERTY_HAS_NO_DELEGATE, context)
+                    reporter.reportOn(annotation.source, FirErrors.INAPPLICABLE_TARGET_PROPERTY_HAS_NO_DELEGATE)
                 }
             }
             PROPERTY_SETTER,
             SETTER_PARAMETER -> {
-                if (!checkPropertyGetter(annotated, annotation, target, context, reporter, FirErrors.INAPPLICABLE_TARGET_ON_PROPERTY) &&
+                if (!checkPropertyGetter(annotated, annotation, target, FirErrors.INAPPLICABLE_TARGET_ON_PROPERTY) &&
                     !annotated.isVar
                 ) {
-                    reporter.reportOn(annotation.source, FirErrors.INAPPLICABLE_TARGET_PROPERTY_IMMUTABLE, target.renderName, context)
+                    reporter.reportOn(annotation.source, FirErrors.INAPPLICABLE_TARGET_PROPERTY_IMMUTABLE, target.renderName)
                 }
             }
             CONSTRUCTOR_PARAMETER -> when {
                 annotated is FirValueParameter -> {
                     val container = context.containingDeclarations.lastOrNull()
-                    if (container is FirConstructor && container.isPrimary) {
+                    if (container.isPrimaryConstructor()) {
                         if (annotated.source?.hasValOrVar() != true) {
-                            reporter.reportOn(annotation.source, FirErrors.REDUNDANT_ANNOTATION_TARGET, target.renderName, context)
+                            reporter.reportOn(annotation.source, FirErrors.REDUNDANT_ANNOTATION_TARGET, target.renderName)
                         }
                     } else {
-                        reporter.reportOn(annotation.source, FirErrors.INAPPLICABLE_PARAM_TARGET, context)
+                        reporter.reportOn(annotation.source, FirErrors.INAPPLICABLE_PARAM_TARGET)
                     }
                 }
-                else -> reporter.reportOn(annotation.source, FirErrors.INAPPLICABLE_PARAM_TARGET, context)
+                else -> reporter.reportOn(annotation.source, FirErrors.INAPPLICABLE_PARAM_TARGET)
             }
             FILE -> {
                 // NB: report once?
                 if (annotated !is FirFile) {
-                    reporter.reportOn(annotation.source, FirErrors.INAPPLICABLE_FILE_TARGET, context)
+                    reporter.reportOn(annotation.source, FirErrors.INAPPLICABLE_FILE_TARGET)
                 }
             }
             RECEIVER -> {
@@ -304,18 +286,16 @@ object FirAnnotationChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) 
                     "declaration",
                     target.renderName,
                     applicableTargets,
-                    context
                 )
             }
             ALL -> {
-                if (context.languageVersionSettings.supportsFeature(LanguageFeature.AnnotationAllUseSiteTarget)) {
+                if (LanguageFeature.AnnotationAllUseSiteTarget.isEnabled()) {
                     when (annotated) {
                         is FirValueParameter -> {
                             if (annotated.correspondingProperty == null) {
                                 reporter.reportOn(
                                     annotation.source,
                                     FirErrors.INAPPLICABLE_ALL_TARGET,
-                                    context
                                 )
                             }
                         }
@@ -324,7 +304,11 @@ object FirAnnotationChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) 
                                 reporter.reportOn(
                                     annotation.source,
                                     FirErrors.INAPPLICABLE_ALL_TARGET,
-                                    context
+                                )
+                            } else if (annotated.delegate != null) {
+                                reporter.reportOn(
+                                    annotation.source,
+                                    FirErrors.INAPPLICABLE_ALL_TARGET,
                                 )
                             } else if (KotlinTarget.PROPERTY !in applicableTargets) {
                                 reporter.reportOn(
@@ -333,7 +317,6 @@ object FirAnnotationChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) 
                                     "property",
                                     target.renderName,
                                     applicableTargets,
-                                    context
                                 )
                             }
                         }
@@ -341,7 +324,6 @@ object FirAnnotationChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) 
                             reporter.reportOn(
                                 annotation.source,
                                 FirErrors.INAPPLICABLE_ALL_TARGET,
-                                context
                             )
                         }
                     }
@@ -351,7 +333,6 @@ object FirAnnotationChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) 
                         annotation.source,
                         FirErrors.UNSUPPORTED_FEATURE,
                         LanguageFeature.AnnotationAllUseSiteTarget to context.languageVersionSettings,
-                        context
                     )
                 }
             }
@@ -359,39 +340,33 @@ object FirAnnotationChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) 
     }
 
     @OptIn(ExperimentalContracts::class)
+    context(context: CheckerContext, reporter: DiagnosticReporter)
     private fun checkPropertyGetter(
         annotated: FirAnnotationContainer,
         annotation: FirAnnotation,
         target: AnnotationUseSiteTarget,
-        context: CheckerContext,
-        reporter: DiagnosticReporter,
         diagnostic: KtDiagnosticFactory1<String>
     ): Boolean {
         contract {
             returns(false) implies (annotated is FirProperty)
         }
         val isReport = annotated !is FirProperty || annotated.isLocal
-        if (isReport) reporter.reportOn(annotation.source, diagnostic, target.renderName, context)
+        if (isReport) reporter.reportOn(annotation.source, diagnostic, target.renderName)
         return isReport
     }
 
-    private fun checkDeprecatedCalls(
-        deprecatedSinceKotlin: FirAnnotation,
-        deprecated: FirAnnotation?,
-        context: CheckerContext,
-        reporter: DiagnosticReporter
-    ) {
-        val closestFirFile = context.containingFile
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    private fun checkDeprecatedCalls(deprecatedSinceKotlin: FirAnnotation, deprecated: FirAnnotation?) {
+        val closestFirFile = context.containingFileSymbol
         if (closestFirFile != null && !closestFirFile.packageFqName.startsWith(StandardClassIds.BASE_KOTLIN_PACKAGE.shortName())) {
             reporter.reportOn(
                 deprecatedSinceKotlin.source,
                 FirErrors.DEPRECATED_SINCE_KOTLIN_OUTSIDE_KOTLIN_SUBPACKAGE,
-                context
             )
         }
 
         if (deprecated == null) {
-            reporter.reportOn(deprecatedSinceKotlin.source, FirErrors.DEPRECATED_SINCE_KOTLIN_WITHOUT_DEPRECATED, context)
+            reporter.reportOn(deprecatedSinceKotlin.source, FirErrors.DEPRECATED_SINCE_KOTLIN_WITHOUT_DEPRECATED)
         } else {
             val argumentMapping = deprecated.argumentMapping.mapping
             for (name in argumentMapping.keys) {
@@ -399,7 +374,6 @@ object FirAnnotationChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) 
                     reporter.reportOn(
                         deprecatedSinceKotlin.source,
                         FirErrors.DEPRECATED_SINCE_KOTLIN_WITH_DEPRECATED_LEVEL,
-                        context
                     )
                     break
                 }
@@ -407,36 +381,27 @@ object FirAnnotationChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) 
         }
     }
 
-    private fun checkDeclaredRepeatedAnnotations(
-        annotationContainer: FirAnnotationContainer,
-        context: CheckerContext,
-        reporter: DiagnosticReporter
-    ) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    private fun checkDeclaredRepeatedAnnotations(annotationContainer: FirAnnotationContainer) {
         val annotationSources = annotationContainer.annotations.keysToMap { it.source }
         checkRepeatedAnnotation(
-            annotationContainer, annotationContainer.annotations, context, reporter,
+            annotationContainer, annotationContainer.annotations,
             annotationSources, defaultSource = null,
         )
     }
 
-    private fun checkAllRepeatedAnnotations(
-        typeRef: FirTypeRef,
-        context: CheckerContext,
-        reporter: DiagnosticReporter,
-    ) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    private fun checkAllRepeatedAnnotations(typeRef: FirTypeRef) {
         val annotationSources = typeRef.annotations.keysToMap { it.source }
         val useSiteSource = typeRef.source
 
         typeRef.coneType.forEachExpandedType(context.session) { type ->
-            checkRepeatedAnnotation(null, type.typeAnnotations, context, reporter, annotationSources, useSiteSource)
+            checkRepeatedAnnotation(null, type.typeAnnotations, annotationSources, useSiteSource)
         }
     }
 
-    private fun checkRepeatedAnnotationsInProperty(
-        property: FirProperty,
-        context: CheckerContext,
-        reporter: DiagnosticReporter
-    ) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    private fun checkRepeatedAnnotationsInProperty(property: FirProperty) {
         fun FirAnnotationContainer?.getAnnotationTypes(): List<ConeKotlinType> {
             return this?.annotations?.map { it.annotationTypeRef.coneType } ?: listOf()
         }
@@ -447,30 +412,24 @@ object FirAnnotationChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) 
             SETTER_PARAMETER to property.setter?.valueParameters?.single().getAnnotationTypes()
         )
 
-        val isError = context.session.languageVersionSettings.supportsFeature(LanguageFeature.ProhibitRepeatedUseSiteTargetAnnotations)
-
         for (annotation in property.annotations) {
-            val useSiteTarget = annotation.useSiteTarget ?: property.getDefaultUseSiteTarget(annotation, context)
+            val useSiteTarget = annotation.useSiteTarget ?: property.getDefaultUseSiteTarget(annotation)
             val existingAnnotations = propertyAnnotations[useSiteTarget] ?: continue
 
             if (annotation.annotationTypeRef.coneType in existingAnnotations && !annotation.isRepeatable(context.session)) {
-                val factory = if (isError) FirErrors.REPEATED_ANNOTATION else FirErrors.REPEATED_ANNOTATION_WARNING
                 if (annotation.source?.kind !is KtFakeSourceElementKind) {
-                    reporter.reportOn(annotation.source, factory, context)
+                    reporter.reportOn(annotation.source, FirErrors.REPEATED_ANNOTATION)
                 }
             }
         }
     }
 
-    private fun checkPossibleMigrationToPropertyOrField(
-        parameter: FirValueParameter,
-        context: CheckerContext,
-        reporter: DiagnosticReporter
-    ) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    private fun checkPossibleMigrationToPropertyOrField(parameter: FirValueParameter) {
         val session = context.session
-        if (!session.languageVersionSettings.supportsFeature(LanguageFeature.AnnotationDefaultTargetMigrationWarning) ||
+        if (!LanguageFeature.AnnotationDefaultTargetMigrationWarning.isEnabled() ||
             // With this feature ON, the migration warning isn't needed
-            session.languageVersionSettings.supportsFeature(LanguageFeature.PropertyParamAnnotationDefaultTargetMode)
+            LanguageFeature.PropertyParamAnnotationDefaultTargetMode.isEnabled()
         ) return
         val correspondingProperty = parameter.correspondingProperty ?: return
 
@@ -483,13 +442,13 @@ object FirAnnotationChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) 
             if (propertyAllowed || fieldAllowed) {
                 if (propertyAllowed) {
                     reporter.reportOn(
-                        annotation.source, FirErrors.ANNOTATION_WILL_BE_APPLIED_ALSO_TO_PROPERTY_OR_FIELD, PROPERTY.renderName, context
+                        annotation.source, FirErrors.ANNOTATION_WILL_BE_APPLIED_ALSO_TO_PROPERTY_OR_FIELD, PROPERTY.renderName
                     )
                 } else if (correspondingProperty.backingField != null) {
-                    val containingClass = context.containingDeclarations.getOrNull(context.containingDeclarations.size - 2) as? FirClass
+                    val containingClass = context.containingDeclarations.getOrNull(context.containingDeclarations.size - 2) as? FirClassSymbol<*>
                     if (containingClass?.classKind != ClassKind.ANNOTATION_CLASS) {
                         reporter.reportOn(
-                            annotation.source, FirErrors.ANNOTATION_WILL_BE_APPLIED_ALSO_TO_PROPERTY_OR_FIELD, FIELD.renderName, context
+                            annotation.source, FirErrors.ANNOTATION_WILL_BE_APPLIED_ALSO_TO_PROPERTY_OR_FIELD, FIELD.renderName
                         )
                     }
                 }

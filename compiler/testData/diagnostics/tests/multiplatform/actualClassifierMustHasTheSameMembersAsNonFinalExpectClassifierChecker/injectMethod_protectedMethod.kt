@@ -17,3 +17,5 @@ actual open class Foo {
 
     protected fun injectedMethod() {}
 }
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, functionDeclaration, integerLiteral, propertyDeclaration */

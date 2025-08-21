@@ -43,3 +43,6 @@ class D {
         fun foo() {}
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, localFunction, localProperty, primaryConstructor,
+propertyDeclaration */

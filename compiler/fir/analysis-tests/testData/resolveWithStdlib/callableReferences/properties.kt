@@ -22,3 +22,6 @@ fun main() {
     foo4(A::bar)
     foo4(A::baz)
 }
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, functionDeclaration, functionalType, getter, integerLiteral,
+nullableType, propertyDeclaration, propertyWithExtensionReceiver, typeParameter */

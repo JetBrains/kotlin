@@ -20,8 +20,10 @@ private interface DefaultParamInterface {
 
 private interface DefaultParamInterface {
   @Composable
+  @FunctionKeyMeta(key = 689155182, startOffset = 94, endOffset = 206)
   abstract fun Content(content: Function2<Composer, Int, Unit>, %composer: Composer?, %changed: Int)
   @Composable
+  @FunctionKeyMeta(key = 763100448, startOffset = 223, endOffset = 323)
   abstract fun ComposedContent(content: Function2<Composer, Int, Unit>, %composer: Composer?, %changed: Int)
   class ComposeDefaultImpls {
     @Composable
@@ -35,9 +37,7 @@ private interface DefaultParamInterface {
       } else if (%changed and 0b0110 == 0) {
         %dirty = %dirty or if (%composer.changedInstance(content)) 0b0100 else 0b0010
       }
-      if (%default and 0b0010 != 0) {
-        %dirty = %dirty or 0b00110000
-      } else if (%changed and 0b00110000 == 0) {
+      if (%changed and 0b00110000 == 0) {
         %dirty = %dirty or if (if (%changed and 0b01000000 == 0) {
           %composer.changed(%this%)
         } else {
@@ -45,14 +45,14 @@ private interface DefaultParamInterface {
         }
         ) 0b00100000 else 0b00010000
       }
-      if (%dirty and 0b00010011 != 0b00010010 || !%composer.skipping) {
+      if (%composer.shouldExecute(%dirty and 0b00010011 != 0b00010010, %dirty and 0b0001)) {
         if (%default and 0b0001 != 0) {
           content = ComposableSingletons%TestKt.lambda%-999636205
         }
         if (isTraceInProgress()) {
           traceEventStart(<>, %dirty, -1, <>)
         }
-        %this%.ComposedContent(content, %composer, 0b1110 and %dirty or 0b01110000 and %dirty)
+        %this%.ComposedContent(content as Function2<Composer, Int, Unit>, %composer, 0b1110 and %dirty or 0b01110000 and %dirty)
         if (isTraceInProgress()) {
           traceEventEnd()
         }
@@ -74,9 +74,7 @@ private interface DefaultParamInterface {
       } else if (%changed and 0b0110 == 0) {
         %dirty = %dirty or if (%composer.changedInstance(content)) 0b0100 else 0b0010
       }
-      if (%default and 0b0010 != 0) {
-        %dirty = %dirty or 0b00110000
-      } else if (%changed and 0b00110000 == 0) {
+      if (%changed and 0b00110000 == 0) {
         %dirty = %dirty or if (if (%changed and 0b01000000 == 0) {
           %composer.changed(%this%)
         } else {
@@ -84,11 +82,11 @@ private interface DefaultParamInterface {
         }
         ) 0b00100000 else 0b00010000
       }
-      if (%dirty and 0b00010011 != 0b00010010 || !%composer.skipping) {
+      if (%composer.shouldExecute(%dirty and 0b00010011 != 0b00010010, %dirty and 0b0001)) {
         if (%default and 0b0001 != 0) {
           content = rememberComposableLambda(<>, true, { %composer: Composer?, %changed: Int ->
             sourceInformation(%composer, "C<Compos...>:Test.kt")
-            if (%changed and 0b0011 != 0b0010 || !%composer.skipping) {
+            if (%composer.shouldExecute(%changed and 0b0011 != 0b0010, %changed and 0b0001)) {
               if (isTraceInProgress()) {
                 traceEventStart(<>, %changed, -1, <>)
               }
@@ -104,7 +102,7 @@ private interface DefaultParamInterface {
         if (isTraceInProgress()) {
           traceEventStart(<>, %dirty, -1, <>)
         }
-        %this%.Content(content, %composer, 0b1110 and %dirty or 0b01110000 and %dirty)
+        %this%.Content(content as Function2<Composer, Int, Unit>, %composer, 0b1110 and %dirty or 0b01110000 and %dirty)
         if (isTraceInProgress()) {
           traceEventEnd()
         }
@@ -120,7 +118,7 @@ private interface DefaultParamInterface {
 internal object ComposableSingletons%TestKt {
   val lambda%-999636205: Function2<Composer, Int, Unit> = composableLambdaInstance(<>, false) { %composer: Composer?, %changed: Int ->
     sourceInformation(%composer, "C<Text("...>:Test.kt")
-    if (%changed and 0b0011 != 0b0010 || !%composer.skipping) {
+    if (%composer.shouldExecute(%changed and 0b0011 != 0b0010, %changed and 0b0001)) {
       if (isTraceInProgress()) {
         traceEventStart(<>, %changed, -1, <>)
       }
@@ -134,7 +132,7 @@ internal object ComposableSingletons%TestKt {
   }
   val lambda%612594693: Function2<Composer, Int, Unit> = composableLambdaInstance(<>, false) { %composer: Composer?, %changed: Int ->
     sourceInformation(%composer, "C<Text("...>:Test.kt")
-    if (%changed and 0b0011 != 0b0010 || !%composer.skipping) {
+    if (%composer.shouldExecute(%changed and 0b0011 != 0b0010, %changed and 0b0001)) {
       if (isTraceInProgress()) {
         traceEventStart(<>, %changed, -1, <>)
       }

@@ -14,3 +14,6 @@ fun test_1() {
 fun test_2() {
     data[test as Holder<*>]
 }
+
+/* GENERATED_FIR_TAGS: asExpression, checkNotNullCall, classDeclaration, data, functionDeclaration, integerLiteral,
+nullableType, outProjection, primaryConstructor, propertyDeclaration, starProjection, typeParameter */

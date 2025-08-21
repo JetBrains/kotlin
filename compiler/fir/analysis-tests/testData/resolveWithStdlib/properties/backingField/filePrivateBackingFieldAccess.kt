@@ -5,3 +5,5 @@ val list: List<String>
 fun add(s: String) {
     list.add(s)
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, propertyDeclaration */

@@ -39,5 +39,5 @@ abstract class FirDoWhileLoop : FirLoop() {
 
     abstract override fun <D> transformCondition(transformer: FirTransformer<D>, data: D): FirDoWhileLoop
 
-    abstract override fun <D> transformOtherChildren(transformer: FirTransformer<D>, data: D): FirDoWhileLoop
+    abstract override fun <D> transformLabel(transformer: FirTransformer<D>, data: D): FirDoWhileLoop
 }

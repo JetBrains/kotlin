@@ -35,3 +35,7 @@ private val foo = listOf(
 ).map {
     it.first.map(First::compose) to it.second.map(Second::compose)
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, flexibleType, functionDeclaration, functionalType,
+integerLiteral, javaCallableReference, lambdaLiteral, nullableType, propertyDeclaration, stringLiteral, typeConstraint,
+typeParameter, vararg */

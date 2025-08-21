@@ -7,3 +7,5 @@ fun foo() {
 }
 
 fun bar() = <!UNRESOLVED_REFERENCE!>aa<!>
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, functionDeclaration */

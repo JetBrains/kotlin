@@ -40,11 +40,11 @@ class Holder<T>  {
     if (%dirty and 0b1110 == 0) {
       %dirty = %dirty or 0b0010
     }
-    if (%dirty and 0b0011 != 0b0010 || !%composer.skipping) {
+    if (%composer.shouldExecute(%dirty and 0b0011 != 0b0010, %dirty and 0b0001)) {
       if (isTraceInProgress()) {
         traceEventStart(<>, %dirty, -1, <>)
       }
-      A(x, %composer, 0)
+      A(x as Int, %composer, 0b1110 and %dirty)
       if (isTraceInProgress()) {
         traceEventEnd()
       }
@@ -53,7 +53,7 @@ class Holder<T>  {
     }
     val tmp0_rcvr = <this>
     %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-      tmp0_rcvr.Test(*x, %composer, updateChangedFlags(%changed or 0b0001))
+      tmp0_rcvr.Test(x, %composer, updateChangedFlags(%changed or 0b0001))
     }
   }
   static val %stable: Int = 0

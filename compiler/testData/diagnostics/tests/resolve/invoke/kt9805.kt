@@ -17,3 +17,6 @@ fun test(a: A, b: B) {
         (a.foo)(this)
     }
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, functionDeclaration, functionalType, getter, lambdaLiteral,
+propertyDeclaration, thisExpression, typeWithExtension */

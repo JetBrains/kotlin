@@ -11,3 +11,6 @@ fun containsRegex(vararg otherPatterns: String) {}
 fun main() {
     fun2(::containsRegex, arrayOf("foo"))
 }
+
+/* GENERATED_FIR_TAGS: callableReference, functionDeclaration, nullableType, outProjection, stringLiteral, typeParameter,
+vararg */

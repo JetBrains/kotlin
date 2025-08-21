@@ -11,3 +11,6 @@ class A {
 
 fun f1(): KProperty<Int> = A::x  // ok, property
 fun f2(): (A) -> Unit = A::x     // ok, function
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, functionDeclaration, functionalType, integerLiteral,
+propertyDeclaration */

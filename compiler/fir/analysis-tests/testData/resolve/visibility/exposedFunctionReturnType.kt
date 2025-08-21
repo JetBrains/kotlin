@@ -16,3 +16,5 @@ private enum class Some {
 
     abstract fun foo(): Some
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, enumDeclaration, enumEntry, functionDeclaration, nestedClass */

@@ -17,3 +17,7 @@ fun test() {
         <!NO_CONTEXT_RECEIVER!>d<!>()
     }
 }
+
+/* GENERATED_FIR_TAGS: funWithExtensionReceiver, functionDeclaration, functionDeclarationWithContext, getter,
+lambdaLiteral, propertyDeclaration, propertyDeclarationWithContext, propertyWithExtensionReceiver, stringLiteral,
+unsignedLiteral */

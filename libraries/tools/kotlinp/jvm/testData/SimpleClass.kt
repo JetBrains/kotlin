@@ -1,4 +1,4 @@
-// IGNORE K2
+// WITH_STDLIB
 
 class SimpleClass<in A>(val p: Int = 42) {
     constructor(s: Array<String?>?) : this(s?.size ?: 0)

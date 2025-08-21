@@ -18,3 +18,6 @@ object DelegateTest2 {
         "hello"
     }
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, assignment, lambdaLiteral, objectDeclaration, propertyDeclaration,
+propertyDelegate, stringLiteral */

@@ -4,6 +4,7 @@ KtCallExpression(45,50): 'Foo()'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -16,8 +17,10 @@ KtCallExpression(45,50): 'Foo()'
               receiverType = null
               returnType = ERROR CLASS: Cannot infer argument for type parameter T
               symbol = x: T
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {
         T -> (ERROR CLASS: Cannot infer argument for type parameter T)

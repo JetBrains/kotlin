@@ -12,3 +12,6 @@ fun test(c: C, d: D) {
 }
 
 fun acceptString(s: String) {}
+
+/* GENERATED_FIR_TAGS: capturedType, functionDeclaration, integerLiteral, interfaceDeclaration, intersectionType,
+localProperty, nullableType, outProjection, propertyDeclaration, typeParameter, vararg */

@@ -8,10 +8,18 @@ package org.jetbrains.kotlin.gradle.dsl
 /**
  * Common compiler options for all Kotlin platforms.
  */
+@OptIn(org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi::class)
 @Deprecated(
-    "The kotlinOptions types are deprecated, please migrate to the compilerOptions types. More details are here: https://kotl.in/u1r8ln"
+    message = org.jetbrains.kotlin.gradle.dsl.KOTLIN_OPTIONS_DEPRECATION_MESSAGE,
+    level = DeprecationLevel.ERROR,
 )
 interface KotlinCommonOptions : org.jetbrains.kotlin.gradle.dsl.KotlinCommonToolOptions {
+
+    @OptIn(org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi::class)
+    @Deprecated(
+        message = org.jetbrains.kotlin.gradle.dsl.KOTLIN_OPTIONS_DEPRECATION_MESSAGE,
+        level = DeprecationLevel.ERROR,
+    )
     /**
      * @suppress
      */
@@ -24,10 +32,15 @@ interface KotlinCommonOptions : org.jetbrains.kotlin.gradle.dsl.KotlinCommonTool
     /**
      * Allow using declarations from only the specified version of bundled libraries.
      *
-     * Possible values: "1.6 (deprecated)", "1.7 (deprecated)", "1.8", "1.9", "2.0", "2.1", "2.2", "2.3 (experimental)"
+     * Possible values: "1.9 (deprecated)", "2.0 (deprecated)", "2.1", "2.2", "2.3", "2.4 (experimental)", "2.5 (experimental)"
      *
      * Default value: null
      */
+    @OptIn(org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi::class)
+    @Deprecated(
+        message = org.jetbrains.kotlin.gradle.dsl.KOTLIN_OPTIONS_DEPRECATION_MESSAGE,
+        level = DeprecationLevel.WARNING,
+    )
     var apiVersion: kotlin.String?
         get() = options.apiVersion.orNull.apiVersionKotlinOption
         set(value) = options.apiVersion.set(value.apiVersionCompilerOption)
@@ -39,10 +52,15 @@ interface KotlinCommonOptions : org.jetbrains.kotlin.gradle.dsl.KotlinCommonTool
     /**
      * Provide source compatibility with the specified version of Kotlin.
      *
-     * Possible values: "1.6 (deprecated)", "1.7 (deprecated)", "1.8", "1.9", "2.0", "2.1", "2.2", "2.3 (experimental)"
+     * Possible values: "1.9 (deprecated)", "2.0 (deprecated)", "2.1", "2.2", "2.3", "2.4 (experimental)", "2.5 (experimental)"
      *
      * Default value: null
      */
+    @OptIn(org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi::class)
+    @Deprecated(
+        message = org.jetbrains.kotlin.gradle.dsl.KOTLIN_OPTIONS_DEPRECATION_MESSAGE,
+        level = DeprecationLevel.WARNING,
+    )
     var languageVersion: kotlin.String?
         get() = options.languageVersion.orNull.languageVersionKotlinOption
         set(value) = options.languageVersion.set(value.languageVersionCompilerOption)

@@ -15,3 +15,6 @@ fun box() {
         uncompilingFun = <!BUILDER_INFERENCE_STUB_PARAMETER_TYPE!>{ handleInt(it) }<!>
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, functionDeclaration, functionalType, lambdaLiteral, localProperty,
+nullableType, primaryConstructor, propertyDeclaration, typeConstraint, typeParameter, typeWithExtension */

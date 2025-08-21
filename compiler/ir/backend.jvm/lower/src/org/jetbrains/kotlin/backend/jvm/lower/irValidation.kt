@@ -5,82 +5,50 @@
 
 package org.jetbrains.kotlin.backend.jvm.lower
 
-import org.jetbrains.kotlin.backend.common.IrValidationContext
-import org.jetbrains.kotlin.backend.common.IrValidatorConfig
 import org.jetbrains.kotlin.backend.common.phaser.IrValidationAfterLoweringPhase
 import org.jetbrains.kotlin.backend.common.phaser.IrValidationBeforeLoweringPhase
 import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
-import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrAnonymousInitializer
 import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrProperty
-import org.jetbrains.kotlin.ir.util.fileOrNull
-import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
-import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
-import org.jetbrains.kotlin.ir.visitors.acceptVoid
+import org.jetbrains.kotlin.ir.validation.IrValidatorConfig
+import org.jetbrains.kotlin.ir.validation.checkers.IrElementChecker
+import org.jetbrains.kotlin.ir.validation.checkers.context.CheckerContext
 
 @PhaseDescription(name = "JvmValidateIrBeforeLowering")
 internal class JvmIrValidationBeforeLoweringPhase(
-    context: JvmBackendContext
-) : IrValidationBeforeLoweringPhase<JvmBackendContext>(context) {
-    override val defaultValidationConfig: IrValidatorConfig
-        get() = super.defaultValidationConfig.copy(
-            checkProperties = true,
-            checkCrossFileFieldUsage = false,
-            checkAllKotlinFieldsArePrivate = false,
-        )
-}
+    context: JvmBackendContext,
+) : IrValidationBeforeLoweringPhase<JvmBackendContext>(context)
 
 @PhaseDescription(name = "JvmValidateIrAfterLowering")
 internal class JvmIrValidationAfterLoweringPhase(
-    context: JvmBackendContext
+    context: JvmBackendContext,
 ) : IrValidationAfterLoweringPhase<JvmBackendContext>(context) {
     override val defaultValidationConfig: IrValidatorConfig
-        get() = super.defaultValidationConfig.copy(
-            checkProperties = true,
-            checkCrossFileFieldUsage = false,
-            checkAllKotlinFieldsArePrivate = false,
-        )
+        get() = super.defaultValidationConfig
+            .withCheckers(NoTopLevelDeclarationsChecker, NoPropertiesChecker, NoAnonymousInitializersChecker)
+}
 
-    override fun IrValidationContext.additionalValidation(irModule: IrModuleFragment, phaseName: String) {
-        for (file in irModule.files) {
-            for (declaration in file.declarations) {
-                if (declaration !is IrClass) {
-                    reportIrValidationError(
-                        file,
-                        declaration,
-                        "The only top-level declarations left should be IrClasses",
-                        phaseName,
-                    )
-                }
+private object NoTopLevelDeclarationsChecker : IrElementChecker<IrFile>(IrFile::class) {
+    override fun check(element: IrFile, context: CheckerContext) {
+        for (declaration in element.declarations) {
+            if (declaration !is IrClass) {
+                context.error(declaration, "The only top-level declarations left should be IrClasses")
             }
         }
+    }
+}
 
-        val validator = object : IrVisitorVoid() {
-            override fun visitElement(element: IrElement) {
-                element.acceptChildrenVoid(this)
-            }
+private object NoPropertiesChecker : IrElementChecker<IrProperty>(IrProperty::class) {
+    override fun check(element: IrProperty, context: CheckerContext) {
+        context.error(element, "No properties should remain at this stage")
+    }
+}
 
-            override fun visitProperty(declaration: IrProperty) {
-                reportIrValidationError(
-                    declaration.fileOrNull,
-                    declaration,
-                    "No properties should remain at this stage",
-                    phaseName,
-                )
-            }
-
-            override fun visitAnonymousInitializer(declaration: IrAnonymousInitializer) {
-                reportIrValidationError(
-                    declaration.fileOrNull,
-                    declaration,
-                    "No anonymous initializers should remain at this stage",
-                    phaseName,
-                )
-            }
-        }
-        irModule.acceptVoid(validator)
+private object NoAnonymousInitializersChecker : IrElementChecker<IrAnonymousInitializer>(IrAnonymousInitializer::class) {
+    override fun check(element: IrAnonymousInitializer, context: CheckerContext) {
+        context.error(element, "No anonymous initializers should remain at this stage")
     }
 }

@@ -19,13 +19,14 @@ package org.jetbrains.kotlin.util
 inline fun <reified E : Exception> assertThrows(
     message: String = "Expected ${E::class.java.name} to be thrown",
     body: () -> Unit,
-): Throwable {
+): E {
     try {
         body()
     } catch (e: Throwable) {
         if (e is E) {
             return e
         }
+        throw AssertionError("$message, but was ${e::class.java.name}")
     }
     throw AssertionError(message)
 }

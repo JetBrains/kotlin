@@ -9,3 +9,6 @@ val x by lazy {
     }
     foo.bar()
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, functionDeclaration, integerLiteral, interfaceDeclaration,
+lambdaLiteral, localProperty, nullableType, override, propertyDeclaration, propertyDelegate */

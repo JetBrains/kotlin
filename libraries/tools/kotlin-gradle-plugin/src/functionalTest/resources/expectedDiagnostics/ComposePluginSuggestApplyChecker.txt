@@ -1,3 +1,4 @@
-[NoComposeCompilerPluginAppliedWarning | WARNING] The Compose compiler plugin is now a part of Kotlin.
+[NoComposeCompilerPluginAppliedWarning | WARNING] Compose Compiler Plugin Not Applied
+The Compose compiler plugin is now a part of Kotlin.
 Please apply the 'org.jetbrains.kotlin.plugin.compose' Gradle plugin to enable the Compose compiler plugin.
 Learn more about this at https://kotl.in/compose-plugin

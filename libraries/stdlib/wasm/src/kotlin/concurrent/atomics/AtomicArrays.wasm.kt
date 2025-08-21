@@ -5,6 +5,10 @@
 
 package kotlin.concurrent.atomics
 
+import kotlin.contracts.InvocationKind
+import kotlin.contracts.contract
+import kotlin.internal.InlineOnly
+
 /**
  * An array of ints in which elements may be updated atomically.
  *
@@ -20,6 +24,8 @@ public actual class AtomicIntArray {
      * Creates a new [AtomicIntArray] of the given [size], with all elements initialized to zero.
      *
      * @throws RuntimeException if the specified [size] is negative.
+     *
+     * @sample samples.concurrent.atomics.AtomicIntArray.sizeCons
      */
     public actual constructor(size: Int) {
         array = IntArray(size)
@@ -27,6 +33,8 @@ public actual class AtomicIntArray {
 
     /**
      * Creates a new [AtomicIntArray] filled with elements of the given [array].
+     *
+     * @sample samples.concurrent.atomics.AtomicIntArray.intArrCons
      */
     public actual constructor(array: IntArray) {
         this.array = array.copyOf()
@@ -34,6 +42,8 @@ public actual class AtomicIntArray {
 
     /**
      * Returns the number of elements in the array.
+     *
+     * @sample samples.concurrent.atomics.AtomicIntArray.size
      */
     public actual val size: Int get() = array.size
 
@@ -41,6 +51,8 @@ public actual class AtomicIntArray {
      * Atomically loads the value from the element of this [AtomicIntArray] at the given [index].
      *
      * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
+     *
+     * @sample samples.concurrent.atomics.AtomicIntArray.loadAt
      */
     public actual fun loadAt(index: Int): Int {
         checkBounds(index)
@@ -51,6 +63,8 @@ public actual class AtomicIntArray {
      * Atomically stores the [new value][newValue] into the element of this [AtomicIntArray] at the given [index].
      *
      * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
+     *
+     * @sample samples.concurrent.atomics.AtomicIntArray.storeAt
      */
     public actual fun storeAt(index: Int, newValue: Int) {
         checkBounds(index)
@@ -62,6 +76,8 @@ public actual class AtomicIntArray {
      * and returns the old value of the element.
      *
      * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
+     *
+     * @sample samples.concurrent.atomics.AtomicIntArray.exchangeAt
      */
     public actual fun exchangeAt(index: Int, newValue: Int): Int {
         checkBounds(index)
@@ -78,6 +94,8 @@ public actual class AtomicIntArray {
      * Comparison of values is done by value.
      *
      * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
+     *
+     * @sample samples.concurrent.atomics.AtomicIntArray.compareAndSetAt
      */
     public actual fun compareAndSetAt(index: Int, expectedValue: Int, newValue: Int): Boolean {
         checkBounds(index)
@@ -93,6 +111,8 @@ public actual class AtomicIntArray {
      * Comparison of values is done by value.
      *
      * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
+     *
+     * @sample samples.concurrent.atomics.AtomicIntArray.compareAndExchangeAt
      */
     public actual fun compareAndExchangeAt(index: Int, expectedValue: Int, newValue: Int): Int {
         checkBounds(index)
@@ -107,6 +127,8 @@ public actual class AtomicIntArray {
      * Atomically adds the given [delta] the element of this [AtomicIntArray] at the given [index] by and returns the old value of the element.
      *
      * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
+     *
+     * @sample samples.concurrent.atomics.AtomicIntArray.fetchAndAddAt
      */
     public actual fun fetchAndAddAt(index: Int, delta: Int): Int {
         checkBounds(index)
@@ -119,6 +141,8 @@ public actual class AtomicIntArray {
      * Atomically adds the given [delta] the element of this [AtomicIntArray] at the given [index] by and returns the new value of the element.
      *
      * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
+     *
+     * @sample samples.concurrent.atomics.AtomicIntArray.addAndFetchAt
      */
     public actual fun addAndFetchAt(index: Int, delta: Int): Int {
         checkBounds(index)
@@ -129,11 +153,77 @@ public actual class AtomicIntArray {
     /**
      * Returns the string representation of the underlying array of ints.
      */
-    public actual override fun toString(): String = array.toString()
+    public actual override fun toString(): String = array.contentToString()
 
     private fun checkBounds(index: Int) {
         if (index < 0 || index >= array.size) throw IndexOutOfBoundsException("index $index")
     }
+}
+
+/**
+ * Atomically updates the element of this [AtomicIntArray] at the given index using the [transform] function.
+ *
+ * Wasm does not support multithreading, thus the implementation is trivial,
+ * and [transform] will be invoked exactly once to recompute a result.
+ *
+ * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
+ *
+ * @sample samples.concurrent.atomics.AtomicIntArray.updateAt
+ */
+@SinceKotlin("2.2")
+@ExperimentalAtomicApi
+@InlineOnly
+public actual inline fun AtomicIntArray.updateAt(index: Int, transform: (Int) -> Int): Unit {
+    contract {
+        callsInPlace(transform, InvocationKind.AT_LEAST_ONCE)
+    }
+    storeAt(index, transform(loadAt(index)))
+}
+
+/**
+ * Atomically updates the element of this [AtomicIntArray] at the given index using the [transform] function and returns
+ * the updated value of the element.
+ *
+ * Wasm does not support multithreading, thus the implementation is trivial,
+ * and [transform] will be invoked exactly once to recompute a result.
+ *
+ * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
+ *
+ * @sample samples.concurrent.atomics.AtomicIntArray.updateAndFetchAt
+ */
+@SinceKotlin("2.2")
+@ExperimentalAtomicApi
+@InlineOnly
+public actual inline fun AtomicIntArray.updateAndFetchAt(index: Int, transform: (Int) -> Int): Int {
+    contract {
+        callsInPlace(transform, InvocationKind.AT_LEAST_ONCE)
+    }
+    val updated = transform(loadAt(index))
+    storeAt(index, updated)
+    return updated
+}
+
+/**
+ * Atomically updates the element of this [AtomicIntArray] at the given index using the [transform] function and returns
+ * the old value of the element.
+ *
+ * Wasm does not support multithreading, thus the implementation is trivial,
+ * and [transform] will be invoked exactly once to recompute a result.
+ *
+ * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
+ *
+ * @sample samples.concurrent.atomics.AtomicIntArray.fetchAndUpdateAt
+ */
+@SinceKotlin("2.2")
+@ExperimentalAtomicApi
+@InlineOnly
+public actual inline fun AtomicIntArray.fetchAndUpdateAt(index: Int, transform: (Int) -> Int): Int {
+    contract {
+        callsInPlace(transform, InvocationKind.AT_LEAST_ONCE)
+    }
+    val old = loadAt(index)
+    storeAt(index, transform(old))
+    return old
 }
 
 /**
@@ -151,13 +241,17 @@ public actual class AtomicLongArray {
      * Creates a new [AtomicLongArray] of the given [size], with all elements initialized to zero.
      *
      * @throws RuntimeException if the specified [size] is negative.
+     *
+     * @sample samples.concurrent.atomics.AtomicLongArray.sizeCons
      */
     public actual constructor(size: Int) {
         array = LongArray(size)
     }
 
     /**
-     * Creates a new [AtomicIntArray] filled with elements of the given [array].
+     * Creates a new [AtomicLongArray] filled with elements of the given [array].
+     *
+     * @sample samples.concurrent.atomics.AtomicLongArray.longArrCons
      */
     public actual constructor(array: LongArray) {
         this.array = array.copyOf()
@@ -165,6 +259,8 @@ public actual class AtomicLongArray {
 
     /**
      * Returns the number of elements in the array.
+     *
+     * @sample samples.concurrent.atomics.AtomicLongArray.size
      */
     public actual val size: Int get() = array.size
 
@@ -172,6 +268,8 @@ public actual class AtomicLongArray {
      * Atomically loads the value from the element of this [AtomicLongArray] at the given [index].
      *
      * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
+     *
+     * @sample samples.concurrent.atomics.AtomicLongArray.loadAt
      */
     public actual fun loadAt(index: Int): Long {
         checkBounds(index)
@@ -182,6 +280,8 @@ public actual class AtomicLongArray {
      * Atomically stores the [new value][newValue] into the element of this [AtomicLongArray] at the given [index].
      *
      * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
+     *
+     * @sample samples.concurrent.atomics.AtomicLongArray.storeAt
      */
     public actual fun storeAt(index: Int, newValue: Long) {
         checkBounds(index)
@@ -193,6 +293,8 @@ public actual class AtomicLongArray {
      * and returns the old value of the element.
      *
      * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
+     *
+     * @sample samples.concurrent.atomics.AtomicLongArray.exchangeAt
      */
     public actual fun exchangeAt(index: Int, newValue: Long): Long {
         checkBounds(index)
@@ -209,6 +311,8 @@ public actual class AtomicLongArray {
      * Comparison of values is done by value.
      *
      * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
+     *
+     * @sample samples.concurrent.atomics.AtomicLongArray.compareAndSetAt
      */
     public actual fun compareAndSetAt(index: Int, expectedValue: Long, newValue: Long): Boolean {
         checkBounds(index)
@@ -224,6 +328,8 @@ public actual class AtomicLongArray {
      * Comparison of values is done by value.
      *
      * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
+     *
+     * @sample samples.concurrent.atomics.AtomicLongArray.compareAndExchangeAt
      */
     public actual fun compareAndExchangeAt(index: Int, expectedValue: Long, newValue: Long): Long {
         checkBounds(index)
@@ -238,6 +344,8 @@ public actual class AtomicLongArray {
      * Atomically adds the given [delta] the element of this [AtomicLongArray] at the given [index] by and returns the old value of the element.
      *
      * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
+     *
+     * @sample samples.concurrent.atomics.AtomicLongArray.fetchAndAddAt
      */
     public actual fun fetchAndAddAt(index: Int, delta: Long): Long {
         checkBounds(index)
@@ -250,6 +358,8 @@ public actual class AtomicLongArray {
      * Atomically adds the given [delta] the element of this [AtomicLongArray] at the given [index] by and returns the new value of the element.
      *
      * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
+     *
+     * @sample samples.concurrent.atomics.AtomicLongArray.addAndFetchAt
      */
     public actual fun addAndFetchAt(index: Int, delta: Long): Long {
         checkBounds(index)
@@ -260,11 +370,78 @@ public actual class AtomicLongArray {
     /**
      * Returns the string representation of the underlying array of longs.
      */
-    public actual override fun toString(): String = array.toString()
+    public actual override fun toString(): String = array.contentToString()
 
     private fun checkBounds(index: Int) {
         if (index < 0 || index >= array.size) throw IndexOutOfBoundsException("index $index")
     }
+}
+
+
+/**
+ * Atomically updates the element of this [AtomicLongArray] at the given index using the [transform] function.
+ *
+ * Wasm does not support multithreading, thus the implementation is trivial,
+ * and [transform] will be invoked exactly once to recompute a result.
+ *
+ * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
+ *
+ * @sample samples.concurrent.atomics.AtomicLongArray.updateAt
+ */
+@SinceKotlin("2.2")
+@ExperimentalAtomicApi
+@InlineOnly
+public actual inline fun AtomicLongArray.updateAt(index: Int, transform: (Long) -> Long): Unit {
+    contract {
+        callsInPlace(transform, InvocationKind.AT_LEAST_ONCE)
+    }
+    storeAt(index, transform(loadAt(index)))
+}
+
+/**
+ * Atomically updates the element of this [AtomicLongArray] at the given index using the [transform] function and returns
+ * the updated value of the element.
+ *
+ * Wasm does not support multithreading, thus the implementation is trivial,
+ * and [transform] will be invoked exactly once to recompute a result.
+ *
+ * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
+ *
+ * @sample samples.concurrent.atomics.AtomicLongArray.updateAndFetchAt
+ */
+@SinceKotlin("2.2")
+@ExperimentalAtomicApi
+@InlineOnly
+public actual inline fun AtomicLongArray.updateAndFetchAt(index: Int, transform: (Long) -> Long): Long {
+    contract {
+        callsInPlace(transform, InvocationKind.AT_LEAST_ONCE)
+    }
+    val updated = transform(loadAt(index))
+    storeAt(index, updated)
+    return updated
+}
+
+/**
+ * Atomically updates the element of this [AtomicLongArray] at the given index using the [transform] function and returns
+ * the old value of the element.
+ *
+ * Wasm does not support multithreading, thus the implementation is trivial,
+ * and [transform] will be invoked exactly once to recompute a result.
+ *
+ * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
+ *
+ * @sample samples.concurrent.atomics.AtomicLongArray.fetchAndUpdateAt
+ */
+@SinceKotlin("2.2")
+@ExperimentalAtomicApi
+@InlineOnly
+public actual inline fun AtomicLongArray.fetchAndUpdateAt(index: Int, transform: (Long) -> Long): Long {
+    contract {
+        callsInPlace(transform, InvocationKind.AT_LEAST_ONCE)
+    }
+    val old = loadAt(index)
+    storeAt(index, transform(old))
+    return old
 }
 
 /**
@@ -280,6 +457,8 @@ public actual class AtomicArray<T> {
 
     /**
      * Creates a new [AtomicArray] filled with elements of the given [array].
+     *
+     * @sample samples.concurrent.atomics.AtomicArray.arrCons
      */
     public actual constructor (array: Array<T>) {
         this.array = array.copyOf()
@@ -287,6 +466,8 @@ public actual class AtomicArray<T> {
 
     /**
      * Returns the number of elements in the array.
+     *
+     * @sample samples.concurrent.atomics.AtomicArray.size
      */
     public actual val size: Int get() = array.size
 
@@ -294,6 +475,8 @@ public actual class AtomicArray<T> {
      * Atomically loads the value from the element of this [AtomicArray] at the given [index].
      *
      * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
+     *
+     * @sample samples.concurrent.atomics.AtomicArray.loadAt
      */
     public actual fun loadAt(index: Int): T {
         checkBounds(index)
@@ -304,6 +487,8 @@ public actual class AtomicArray<T> {
      * Atomically stores the [new value][newValue] into the element of this [AtomicArray] at the given [index].
      *
      * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
+     *
+     * @sample samples.concurrent.atomics.AtomicArray.storeAt
      */
     public actual fun storeAt(index: Int, newValue: T) {
         checkBounds(index)
@@ -315,6 +500,8 @@ public actual class AtomicArray<T> {
      * and returns the old value of the element.
      *
      * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
+     *
+     * @sample samples.concurrent.atomics.AtomicArray.exchangeAt
      */
     public actual fun exchangeAt(index: Int, newValue: T): T {
         checkBounds(index)
@@ -328,13 +515,15 @@ public actual class AtomicArray<T> {
      * if the current value equals the [expected value][expectedValue].
      * Returns true if the operation was successful and false only if the current value of the element was not equal to the expected value.
      *
-     * Comparison of values is done by value.
+     * Comparison of values is done by reference.
      *
      * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
+     *
+     * @sample samples.concurrent.atomics.AtomicArray.compareAndSetAt
      */
     public actual fun compareAndSetAt(index: Int, expectedValue: T, newValue: T): Boolean {
         checkBounds(index)
-        if (array[index] != expectedValue) return false
+        if (array[index] !== expectedValue) return false
         array[index] = newValue
         return true
     }
@@ -343,14 +532,16 @@ public actual class AtomicArray<T> {
      * Atomically stores the [new value][newValue] into the element of this [AtomicArray] at the given [index]
      * if the current value equals the [expected value][expectedValue] and returns the old value of the element in any case.
      *
-     * Comparison of values is done by value.
+     * Comparison of values is done by reference.
      *
      * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
+     *
+     * @sample samples.concurrent.atomics.AtomicArray.compareAndExchangeAt
      */
     public actual fun compareAndExchangeAt(index: Int, expectedValue: T, newValue: T): T {
         checkBounds(index)
         val oldValue = array[index]
-        if (oldValue == expectedValue) {
+        if (oldValue === expectedValue) {
             array[index] = newValue
         }
         return oldValue
@@ -359,9 +550,75 @@ public actual class AtomicArray<T> {
     /**
      * Returns the string representation of the underlying array of objects.
      */
-    public actual override fun toString(): String = array.toString()
+    public actual override fun toString(): String = array.contentToString()
 
     private fun checkBounds(index: Int) {
         if (index < 0 || index >= array.size) throw IndexOutOfBoundsException("index $index")
     }
+}
+
+/**
+ * Atomically updates the element of this [AtomicArray] at the given index using the [transform] function.
+ *
+ * Wasm does not support multithreading, thus the implementation is trivial,
+ * and [transform] will be invoked exactly once to recompute a result.
+ *
+ * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
+ *
+ * @sample samples.concurrent.atomics.AtomicArray.updateAt
+ */
+@SinceKotlin("2.2")
+@ExperimentalAtomicApi
+@InlineOnly
+public actual inline fun <T> AtomicArray<T>.updateAt(index: Int, transform: (T) -> T): Unit {
+    contract {
+        callsInPlace(transform, InvocationKind.AT_LEAST_ONCE)
+    }
+    storeAt(index, transform(loadAt(index)))
+}
+
+/**
+ * Atomically updates the element of this [AtomicArray] at the given index using the [transform] function and returns
+ * the updated value of the element.
+ *
+ * Wasm does not support multithreading, thus the implementation is trivial,
+ * and [transform] will be invoked exactly once to recompute a result.
+ *
+ * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
+ *
+ * @sample samples.concurrent.atomics.AtomicArray.updateAndFetchAt
+ */
+@SinceKotlin("2.2")
+@ExperimentalAtomicApi
+@InlineOnly
+public actual inline fun <T> AtomicArray<T>.updateAndFetchAt(index: Int, transform: (T) -> T): T {
+    contract {
+        callsInPlace(transform, InvocationKind.AT_LEAST_ONCE)
+    }
+    val updated = transform(loadAt(index))
+    storeAt(index, updated)
+    return updated
+}
+
+/**
+ * Atomically updates the element of this [AtomicLongArray] at the given index using the [transform] function and returns
+ * the old value of the element.
+ *
+ * Wasm does not support multithreading, thus the implementation is trivial,
+ * and [transform] will be invoked exactly once to recompute a result.
+ *
+ * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
+ *
+ * @sample samples.concurrent.atomics.AtomicArray.fetchAndUpdateAt
+ */
+@SinceKotlin("2.2")
+@ExperimentalAtomicApi
+@InlineOnly
+public actual inline fun <T> AtomicArray<T>.fetchAndUpdateAt(index: Int, transform: (T) -> T): T {
+    contract {
+        callsInPlace(transform, InvocationKind.AT_LEAST_ONCE)
+    }
+    val old = loadAt(index)
+    storeAt(index, transform(old))
+    return old
 }

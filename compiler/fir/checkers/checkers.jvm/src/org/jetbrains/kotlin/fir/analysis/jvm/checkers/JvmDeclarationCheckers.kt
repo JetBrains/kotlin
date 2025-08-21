@@ -13,6 +13,7 @@ object JvmDeclarationCheckers : DeclarationCheckers() {
         get() = setOf(
             FirJvmExternalDeclarationChecker,
             FirJvmNameChecker,
+            FirJvmExposeBoxedChecker,
             FirJvmDefaultChecker,
             FirJvmFunctionDelegateMemberNameClashChecker,
             FirJvmStaticChecker,
@@ -33,13 +34,13 @@ object JvmDeclarationCheckers : DeclarationCheckers() {
             FirOverrideJavaNullabilityWarningChecker.ForExpectClass,
             FirImplementationByDelegationWithDifferentGenericSignatureChecker,
             FirPropertyHidesJavaFieldChecker,
+            FirIncompatibleAnnotationsChecker,
         )
 
     override val regularClassCheckers: Set<FirRegularClassChecker>
         get() = setOf(
             FirJvmRecordChecker,
             FirJvmInlineApplicabilityChecker,
-            FirInlineBodyRegularClassChecker,
         )
 
     override val classLikeCheckers: Set<FirClassLikeChecker>
@@ -58,7 +59,6 @@ object JvmDeclarationCheckers : DeclarationCheckers() {
         get() = setOf(
             FirSynchronizedAnnotationChecker,
             FirOverloadsChecker,
-            FirFunctionJavaNullabilityWarningChecker,
             FirJvmThrowsChecker,
         )
 
@@ -69,7 +69,6 @@ object JvmDeclarationCheckers : DeclarationCheckers() {
 
     override val simpleFunctionCheckers: Set<FirSimpleFunctionChecker>
         get() = setOf(
-            FirInlineBodySimpleFunctionChecker,
             FirAccidentalOverrideClashChecker,
         )
 

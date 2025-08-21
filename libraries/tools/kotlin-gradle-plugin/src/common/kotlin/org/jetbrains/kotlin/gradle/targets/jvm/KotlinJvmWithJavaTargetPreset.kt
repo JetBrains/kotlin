@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import org.gradle.api.Project
 import org.gradle.api.plugins.JavaPlugin
-import org.jetbrains.kotlin.gradle.DeprecatedTargetPresetApi
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
@@ -17,13 +16,12 @@ import org.jetbrains.kotlin.gradle.targets.android.internal.InternalKotlinTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinTasksProvider
 import org.jetbrains.kotlin.gradle.utils.maybeCreateResolvable
 
-@Suppress("DEPRECATION")
-@DeprecatedTargetPresetApi
-class KotlinJvmWithJavaTargetPreset(
+@Suppress("DEPRECATION_ERROR")
+internal class KotlinJvmWithJavaTargetPreset(
     private val project: Project
 ) : InternalKotlinTargetPreset<KotlinWithJavaTarget<KotlinJvmOptions, KotlinJvmCompilerOptions>> {
 
-    override fun getName(): String = PRESET_NAME
+    override val name: String = PRESET_NAME
 
     override fun createTargetInternal(name: String): KotlinWithJavaTarget<KotlinJvmOptions, KotlinJvmCompilerOptions> {
         project.reportDiagnostic(KotlinToolingDiagnostics.DeprecatedJvmWithJavaPresetDiagnostic())
@@ -34,7 +32,7 @@ class KotlinJvmWithJavaTargetPreset(
         val target = project.objects.KotlinWithJavaTargetForJvm(project, name)
             .apply {
                 disambiguationClassifier = name
-                preset = this@KotlinJvmWithJavaTargetPreset
+                targetPreset = this@KotlinJvmWithJavaTargetPreset
             }
 
         AbstractKotlinPlugin.configureTarget(target) { compilation ->

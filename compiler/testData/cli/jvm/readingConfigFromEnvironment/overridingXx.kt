@@ -1,7 +1,19 @@
-fun test(): Int {
-    var res = 0
-    for (x in 100 ..< 1) {
-        res += x
+interface TypeParameter
+
+interface A<OptionalTypeParameter : TypeParameter?> {
+    fun whatever(params: OptionalTypeParameter)
+}
+
+class B : A<Nothing?> {
+    override fun whatever(params: Nothing?) {
+        // We know this class doesn't use the type parameter, the value is just 'null'
     }
-    return res
+}
+
+inline fun <reified T : TypeParameter?> foo(it: A<T>) = Unit
+
+fun main() {
+    val b = B()
+
+    foo(b)
 }

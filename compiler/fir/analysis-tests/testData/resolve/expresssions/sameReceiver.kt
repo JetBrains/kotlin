@@ -6,3 +6,5 @@ class Foo {
         bar()
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration */

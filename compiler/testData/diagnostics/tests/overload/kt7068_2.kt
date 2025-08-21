@@ -17,3 +17,5 @@ fun test() {
         x.length + y.length
     }
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, functionDeclaration, functionalType, lambdaLiteral, typeWithExtension */

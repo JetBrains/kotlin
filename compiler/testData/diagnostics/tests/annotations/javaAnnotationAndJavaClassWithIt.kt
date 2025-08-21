@@ -27,3 +27,5 @@ package foo
 class AnotherTarget {
     fun hello() {}
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, javaType */

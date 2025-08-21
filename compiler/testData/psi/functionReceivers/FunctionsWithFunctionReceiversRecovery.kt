@@ -1,3 +1,5 @@
+// COMPILATION_ERRORS
+
 fun ((T) -> G).foo<P> { }
 fun ((T) -> G).foo { }
 fun ((T) -> G).foo<P>

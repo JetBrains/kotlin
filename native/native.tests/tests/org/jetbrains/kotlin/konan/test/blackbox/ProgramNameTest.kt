@@ -9,7 +9,9 @@ import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestCase
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestKind
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationResult.Companion.assertSuccess
+import org.jetbrains.kotlin.konan.test.blackbox.support.group.ClassicPipeline
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.ForcedNoopTestRunner
+import org.jetbrains.kotlin.konan.test.blackbox.support.settings.Timeouts
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.testProcessExecutor
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.ClangDistribution
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.compileWithClang
@@ -22,6 +24,7 @@ import kotlin.test.assertEquals
 import kotlin.time.Duration.Companion.seconds
 
 @Tag("program-name")
+@ClassicPipeline()
 class ProgramNameTest : AbstractNativeSimpleTest() {
 
     @Test
@@ -54,7 +57,7 @@ class ProgramNameTest : AbstractNativeSimpleTest() {
         fun validate(expected: String, vararg args: String) {
             val binaryName = kotlinCompilation.resultingArtifact.executableFile.path
             val result = testRunSettings.testProcessExecutor.runProcess(cExecutable.absolutePath, binaryName, *args) {
-                timeout = 60.seconds
+                timeout = testRunSettings.get<Timeouts>().executionTimeout
             }
             val sanitizedStdout = result.stdout.replace("\r\n", "\n") // Ignore if we have unix or windows line endings
             Assumptions.assumingThat(!testRunSettings.get<ForcedNoopTestRunner>().value) {

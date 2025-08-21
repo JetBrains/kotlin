@@ -42,3 +42,6 @@ fun test() {
     }
 }
 
+/* GENERATED_FIR_TAGS: annotationUseSiteTargetFile, classDeclaration, classReference, companionObject, flexibleType,
+functionDeclaration, functionalType, integerLiteral, interfaceDeclaration, javaFunction, lambdaLiteral, localProperty,
+nullableType, objectDeclaration, propertyDeclaration, typeParameter, typeWithExtension */

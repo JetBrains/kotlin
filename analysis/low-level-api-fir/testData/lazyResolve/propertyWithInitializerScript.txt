@@ -4,9 +4,9 @@ FILE: [ResolvedTo(RAW_FIR)] propertyWithInitializerScript.kts
         [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
+        public? final? [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
 
-        public? final? [ResolvedTo(RAW_FIR)] val property: Int = LAZY_EXPRESSION
+        public? final? [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val property: Int = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): Int
 
 
@@ -16,9 +16,9 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithInitializerScript.kts
         [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
+        public? final? [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
 
-        public? final? [ResolvedTo(RAW_FIR)] val property: Int = LAZY_EXPRESSION
+        public? final? [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val property: Int = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): Int
 
 
@@ -28,9 +28,9 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithInitializerScript.kts
         [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
+        public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ScriptTopLevelDeclaration=true] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
 
-        public? final? [ResolvedTo(RAW_FIR)] val property: Int = LAZY_EXPRESSION
+        public? final? [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val property: Int = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): Int
 
 
@@ -40,9 +40,9 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithInitializerScript.kts
         [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(COMPANION_GENERATION)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
+        public? final? [ResolvedTo(COMPANION_GENERATION)] [ScriptTopLevelDeclaration=true] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
 
-        public? final? [ResolvedTo(RAW_FIR)] val property: Int = LAZY_EXPRESSION
+        public? final? [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val property: Int = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): Int
 
 
@@ -52,9 +52,9 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithInitializerScript.kts
         [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(SUPER_TYPES)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
+        public? final? [ResolvedTo(SUPER_TYPES)] [ScriptTopLevelDeclaration=true] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
 
-        public? final? [ResolvedTo(RAW_FIR)] val property: Int = LAZY_EXPRESSION
+        public? final? [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val property: Int = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): Int
 
 
@@ -64,9 +64,9 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithInitializerScript.kts
         [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(TYPES)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
+        public? final? [ResolvedTo(TYPES)] [ScriptTopLevelDeclaration=true] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
 
-        public? final? [ResolvedTo(RAW_FIR)] val property: Int = LAZY_EXPRESSION
+        public? final? [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val property: Int = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): Int
 
 
@@ -76,9 +76,9 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithInitializerScript.kts
         [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
+        public final [ResolvedTo(STATUS)] [ScriptTopLevelDeclaration=true] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
 
-        public? final? [ResolvedTo(RAW_FIR)] val property: Int = LAZY_EXPRESSION
+        public? final? [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val property: Int = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): Int
 
 
@@ -88,9 +88,9 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithInitializerScript.kts
         [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
+        public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ScriptTopLevelDeclaration=true] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
 
-        public? final? [ResolvedTo(RAW_FIR)] val property: Int = LAZY_EXPRESSION
+        public? final? [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val property: Int = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): Int
 
 
@@ -100,9 +100,9 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithInitializerScript.kts
         [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(CONTRACTS)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
+        public final [ResolvedTo(CONTRACTS)] [ScriptTopLevelDeclaration=true] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
 
-        public? final? [ResolvedTo(RAW_FIR)] val property: Int = LAZY_EXPRESSION
+        public? final? [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val property: Int = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): Int
 
 
@@ -112,9 +112,9 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithInitializerScript.kts
         [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
+        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
 
-        public? final? [ResolvedTo(RAW_FIR)] val property: Int = LAZY_EXPRESSION
+        public? final? [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val property: Int = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): Int
 
 
@@ -124,9 +124,9 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithInitializerScript.kts
         [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(CONSTANT_EVALUATION)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
+        public final [ResolvedTo(CONSTANT_EVALUATION)] [ScriptTopLevelDeclaration=true] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
 
-        public? final? [ResolvedTo(RAW_FIR)] val property: Int = LAZY_EXPRESSION
+        public? final? [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val property: Int = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): Int
 
 
@@ -136,9 +136,9 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithInitializerScript.kts
         [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ScriptTopLevelDeclaration=true] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
 
-        public? final? [ResolvedTo(RAW_FIR)] val property: Int = LAZY_EXPRESSION
+        public? final? [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val property: Int = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): Int
 
 
@@ -148,11 +148,11 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithInitializerScript.kts
         [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(BODY_RESOLVE)] fun resolveMe(): R|kotlin/Unit| {
+        public final [ResolvedTo(BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] fun resolveMe(): R|kotlin/Unit| {
             <Unresolved name: receive>#(R|/property|)
         }
 
-        public final [ResolvedTo(CONTRACTS)] val property: R|kotlin/Int| = LAZY_EXPRESSION
+        public final [ResolvedTo(CONTRACTS)] [ScriptTopLevelDeclaration=true] val property: R|kotlin/Int| = LAZY_EXPRESSION
             public [ResolvedTo(CONTRACTS)] get(): R|kotlin/Int|
 
 
@@ -162,10 +162,10 @@ FILE: [ResolvedTo(BODY_RESOLVE)] propertyWithInitializerScript.kts
         [ResolvedTo(BODY_RESOLVE)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(BODY_RESOLVE)] fun resolveMe(): R|kotlin/Unit| {
+        public final [ResolvedTo(BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] fun resolveMe(): R|kotlin/Unit| {
             <Unresolved name: receive>#(R|/property|)
         }
 
-        public final [ResolvedTo(BODY_RESOLVE)] val property: R|kotlin/Int| = Int(10)
+        public final [ResolvedTo(BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] val property: R|kotlin/Int| = Int(10)
             public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
 

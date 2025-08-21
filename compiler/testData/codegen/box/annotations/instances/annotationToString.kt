@@ -1,6 +1,3 @@
-// IGNORE_BACKEND: JVM
-// IGNORE_BACKEND: WASM
-
 // This test fails on Native with test grouping and package renaming enabled,
 // because the latter doesn't yet handle annotation toString implementations properly.
 // Disable test grouping as a workaround:
@@ -8,7 +5,7 @@
 
 // WITH_STDLIB
 // LANGUAGE: +InstantiationOfAnnotationClasses
-
+// WASM_ALLOW_FQNAME_IN_KCLASS
 
 package test
 

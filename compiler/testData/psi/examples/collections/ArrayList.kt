@@ -1,3 +1,5 @@
+// COMPILATION_ERRORS
+
 class ArrayList<T> : IMutableList<T> {
   private var data = MutableArray(10)
   private var used = 0

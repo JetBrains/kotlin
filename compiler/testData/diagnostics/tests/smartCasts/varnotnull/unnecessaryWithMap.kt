@@ -18,3 +18,7 @@ class MyClass {
         return res
     }
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, assignment, checkNotNullCall, classDeclaration, forLoop,
+funWithExtensionReceiver, functionDeclaration, integerLiteral, localProperty, nullableType, operator,
+propertyDeclaration, typeParameter */

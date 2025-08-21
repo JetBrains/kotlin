@@ -15,3 +15,6 @@ fun test(inlay: Inlay<out PresentationContainerRenderer<*>>) {
 }
 
 fun <T : Any> PresentationContainerRenderer<T>.addOrUpdate() {}
+
+/* GENERATED_FIR_TAGS: capturedType, dnnType, funWithExtensionReceiver, functionDeclaration, interfaceDeclaration,
+javaProperty, javaType, outProjection, starProjection, typeConstraint, typeParameter */

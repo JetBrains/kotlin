@@ -7,6 +7,9 @@ fun main(args: Array<String>) {
     watch(local) { it.length }
 }
 
-/*fix rollbacked cause of robovm problem*/
-// 1 LOCALVARIABLE p
+// JVM_IR_TEMPLATES
+// 2 LOCALVARIABLE p
+// 1 LOCALVARIABLE p\$iv
+// JVM_IR_TEMPLATES_WITH_INLINE_SCOPES
+// 2 LOCALVARIABLE p
 // 0 LOCALVARIABLE p\$iv

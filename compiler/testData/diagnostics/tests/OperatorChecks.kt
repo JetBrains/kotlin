@@ -219,3 +219,6 @@ infix fun Example.i1(n: Int) {}
 <!INAPPLICABLE_INFIX_MODIFIER!>infix<!> fun i1(n: Int) {}
 <!INAPPLICABLE_INFIX_MODIFIER!>infix<!> fun i1(n: Int, n2: Int) {}
 <!INAPPLICABLE_INFIX_MODIFIER!>infix<!> fun i1(vararg n: Int) {}
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, infix, interfaceDeclaration,
+nullableType, operator, override, starProjection, stringLiteral, vararg */

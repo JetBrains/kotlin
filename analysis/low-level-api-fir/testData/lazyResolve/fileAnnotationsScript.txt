@@ -6,7 +6,7 @@ FILE: [ResolvedTo(RAW_FIR)] fileAnnotationsScript.kts
         [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.<script-fileAnnotationsScript.kts>] annotation class Anno : R|kotlin/Annotation| {
+        @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.<script-fileAnnotationsScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/Anno.s] s: String): R|one/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -25,7 +25,7 @@ FILE: [ResolvedTo(IMPORTS)] fileAnnotationsScript.kts
         [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.<script-fileAnnotationsScript.kts>] annotation class Anno : R|kotlin/Annotation| {
+        @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.<script-fileAnnotationsScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/Anno.s] s: String): R|one/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -38,13 +38,13 @@ FILE: [ResolvedTo(IMPORTS)] fileAnnotationsScript.kts
 
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] fileAnnotationsScript.kts
-    @FILE:R|kotlin/Deprecated|[CompilerRequiredAnnotations](String())
+    @FILE:Deprecated[Unresolved](LAZY_EXPRESSION)
     @FILE:Anno[Unresolved](LAZY_EXPRESSION)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-fileAnnotationsScript.kts>
         [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.<script-fileAnnotationsScript.kts>] annotation class Anno : R|kotlin/Annotation| {
+        @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.<script-fileAnnotationsScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/Anno.s] s: String): R|one/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -57,13 +57,13 @@ FILE: [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] fileAnnotationsScript.kts
 
 COMPANION_GENERATION:
 FILE: [ResolvedTo(COMPANION_GENERATION)] fileAnnotationsScript.kts
-    @FILE:R|kotlin/Deprecated|[CompilerRequiredAnnotations](String())
+    @FILE:Deprecated[Unresolved](LAZY_EXPRESSION)
     @FILE:Anno[Unresolved](LAZY_EXPRESSION)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-fileAnnotationsScript.kts>
         [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.<script-fileAnnotationsScript.kts>] annotation class Anno : R|kotlin/Annotation| {
+        @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.<script-fileAnnotationsScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/Anno.s] s: String): R|one/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -76,13 +76,13 @@ FILE: [ResolvedTo(COMPANION_GENERATION)] fileAnnotationsScript.kts
 
 SUPER_TYPES:
 FILE: [ResolvedTo(SUPER_TYPES)] fileAnnotationsScript.kts
-    @FILE:R|kotlin/Deprecated|[CompilerRequiredAnnotations](String())
+    @FILE:Deprecated[Unresolved](LAZY_EXPRESSION)
     @FILE:Anno[Unresolved](LAZY_EXPRESSION)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-fileAnnotationsScript.kts>
         [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.<script-fileAnnotationsScript.kts>] annotation class Anno : R|kotlin/Annotation| {
+        @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.<script-fileAnnotationsScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/Anno.s] s: String): R|one/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -95,13 +95,13 @@ FILE: [ResolvedTo(SUPER_TYPES)] fileAnnotationsScript.kts
 
 TYPES:
 FILE: [ResolvedTo(TYPES)] fileAnnotationsScript.kts
-    @FILE:R|kotlin/Deprecated|[Types](String())
+    @FILE:R|kotlin/Deprecated|[Types](LAZY_EXPRESSION)
     @FILE:R|one/Anno|[Types](LAZY_EXPRESSION)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-fileAnnotationsScript.kts>
         [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FILE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingScriptKey=FirScriptSymbol one.<script-fileAnnotationsScript.kts>] annotation class Anno : R|kotlin/Annotation| {
+        @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FILE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingScriptKey=FirScriptSymbol one.<script-fileAnnotationsScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/Anno.s] s: String): R|one/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -114,13 +114,13 @@ FILE: [ResolvedTo(TYPES)] fileAnnotationsScript.kts
 
 STATUS:
 FILE: [ResolvedTo(STATUS)] fileAnnotationsScript.kts
-    @FILE:R|kotlin/Deprecated|[Types](String())
+    @FILE:R|kotlin/Deprecated|[Types](LAZY_EXPRESSION)
     @FILE:R|one/Anno|[Types](LAZY_EXPRESSION)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-fileAnnotationsScript.kts>
         [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FILE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingScriptKey=FirScriptSymbol one.<script-fileAnnotationsScript.kts>] annotation class Anno : R|kotlin/Annotation| {
+        @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FILE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingScriptKey=FirScriptSymbol one.<script-fileAnnotationsScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/Anno.s] s: String): R|one/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -133,13 +133,13 @@ FILE: [ResolvedTo(STATUS)] fileAnnotationsScript.kts
 
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fileAnnotationsScript.kts
-    @FILE:R|kotlin/Deprecated|[Types](String())
+    @FILE:R|kotlin/Deprecated|[Types](LAZY_EXPRESSION)
     @FILE:R|one/Anno|[Types](LAZY_EXPRESSION)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-fileAnnotationsScript.kts>
         [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FILE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingScriptKey=FirScriptSymbol one.<script-fileAnnotationsScript.kts>] annotation class Anno : R|kotlin/Annotation| {
+        @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FILE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingScriptKey=FirScriptSymbol one.<script-fileAnnotationsScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/Anno.s] s: String): R|one/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -152,13 +152,13 @@ FILE: [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fileAnnotationsScript.kts
 
 CONTRACTS:
 FILE: [ResolvedTo(CONTRACTS)] fileAnnotationsScript.kts
-    @FILE:R|kotlin/Deprecated|[Types](String())
+    @FILE:R|kotlin/Deprecated|[Types](LAZY_EXPRESSION)
     @FILE:R|one/Anno|[Types](LAZY_EXPRESSION)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-fileAnnotationsScript.kts>
         [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FILE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingScriptKey=FirScriptSymbol one.<script-fileAnnotationsScript.kts>] annotation class Anno : R|kotlin/Annotation| {
+        @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FILE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingScriptKey=FirScriptSymbol one.<script-fileAnnotationsScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/Anno.s] s: String): R|one/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -171,13 +171,13 @@ FILE: [ResolvedTo(CONTRACTS)] fileAnnotationsScript.kts
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fileAnnotationsScript.kts
-    @FILE:R|kotlin/Deprecated|[Types](String())
+    @FILE:R|kotlin/Deprecated|[Types](LAZY_EXPRESSION)
     @FILE:R|one/Anno|[Types](LAZY_EXPRESSION)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-fileAnnotationsScript.kts>
         [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FILE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingScriptKey=FirScriptSymbol one.<script-fileAnnotationsScript.kts>] annotation class Anno : R|kotlin/Annotation| {
+        @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FILE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingScriptKey=FirScriptSymbol one.<script-fileAnnotationsScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/Anno.s] s: String): R|one/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -190,13 +190,13 @@ FILE: [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fileAnnotationsScript.kts
 
 CONSTANT_EVALUATION:
 FILE: [ResolvedTo(CONSTANT_EVALUATION)] fileAnnotationsScript.kts
-    @FILE:R|kotlin/Deprecated|[Types](String())
+    @FILE:R|kotlin/Deprecated|[Types](LAZY_EXPRESSION)
     @FILE:R|one/Anno|[Types](LAZY_EXPRESSION)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-fileAnnotationsScript.kts>
         [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FILE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingScriptKey=FirScriptSymbol one.<script-fileAnnotationsScript.kts>] annotation class Anno : R|kotlin/Annotation| {
+        @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FILE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingScriptKey=FirScriptSymbol one.<script-fileAnnotationsScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/Anno.s] s: String): R|one/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -215,7 +215,7 @@ FILE: [ResolvedTo(ANNOTATION_ARGUMENTS)] fileAnnotationsScript.kts
         [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FILE|) public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol one.<script-fileAnnotationsScript.kts>] annotation class Anno : R|kotlin/Annotation| {
+        @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FILE|) public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol one.<script-fileAnnotationsScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=one/Anno.s] s: R|kotlin/String|): R|one/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -234,7 +234,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] fileAnnotationsScript.kts
         [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FILE|) public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol one.<script-fileAnnotationsScript.kts>] annotation class Anno : R|kotlin/Annotation| {
+        @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FILE|) public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol one.<script-fileAnnotationsScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=one/Anno.s] s: R|kotlin/String|): R|one/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -253,7 +253,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] fileAnnotationsScript.kts
         [ResolvedTo(BODY_RESOLVE)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FILE|)) public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol one.<script-fileAnnotationsScript.kts>] annotation class Anno : R|kotlin/Annotation| {
+        @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FILE|)) public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol one.<script-fileAnnotationsScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=one/Anno.s] s: R|kotlin/String|): R|one/Anno| {
                 super<R|kotlin/Any|>()
             }

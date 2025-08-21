@@ -6,33 +6,41 @@
 package androidx.compose.compiler.plugins.kotlin.k2
 
 import androidx.compose.compiler.plugins.kotlin.ComposeClassIds
+import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirAnnotationChecker
-import org.jetbrains.kotlin.fir.expressions.FirAnnotation
-import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.utils.addToStdlib.lastIsInstanceOrNull
+import org.jetbrains.kotlin.fir.analysis.checkers.type.FirResolvedTypeRefChecker
+import org.jetbrains.kotlin.fir.declarations.getAnnotationByClassId
+import org.jetbrains.kotlin.fir.types.FirErrorTypeRef
+import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
+import org.jetbrains.kotlin.fir.types.isNonPrimitiveArray
 
-class ComposableAnnotationChecker : FirAnnotationChecker(MppCheckerKind.Common) {
-    override fun check(expression: FirAnnotation, context: CheckerContext, reporter: DiagnosticReporter) {
-        if (expression.resolvedType.classId != ComposeClassIds.Composable) {
+object ComposableAnnotationChecker : FirResolvedTypeRefChecker(MppCheckerKind.Common) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(typeRef: FirResolvedTypeRef) {
+        val composableAnnotation = typeRef.getAnnotationByClassId(ComposeClassIds.Composable, context.session)
+        if (composableAnnotation == null) {
             return
         }
 
-        val containingType = context.containingElements.lastIsInstanceOrNull<FirTypeRef>()
+        // ignore if the type is coming from vararg
         if (
-            containingType != null &&
-            !containingType.coneType.isComposableFunction(context.session) &&
-            // suspend functions are handled by checking function kinds, so no need to report additional diagnostics
-            !containingType.coneType.isSuspendOrKSuspendFunctionType(context.session)
+            typeRef.delegatedTypeRef?.source?.kind == KtFakeSourceElementKind.ArrayTypeFromVarargParameter &&
+            typeRef.coneType.isNonPrimitiveArray
+        ) {
+            return
+        }
+
+        if (
+            typeRef !is FirErrorTypeRef &&
+            !typeRef.coneType.isComposableFunction(context.session)
         ) {
             reporter.reportOn(
-                expression.source,
+                composableAnnotation.source,
                 ComposeErrors.COMPOSABLE_INAPPLICABLE_TYPE,
-                containingType.coneType,
-                context
+                typeRef.coneType
             )
         }
     }

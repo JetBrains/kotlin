@@ -1,0 +1,128 @@
+element: context(B)
+    fun <T2> C.foo(param: Int, param2: String) {
+
+    }
+implicit values:
+  KaImplicitReceiver:
+    scopeIndexInTower = 0
+    type = C
+    ownerSymbol = KaNamedFunctionSymbol:
+      /TopLevel.foo(<extension receiver>: C, <dispatch receiver>: TopLevel<T1>, param: kotlin.Int, param2: kotlin.String): kotlin.Unit
+
+  KaImplicitReceiver:
+    scopeIndexInTower = 1
+    type = B
+    ownerSymbol = KaContextParameterSymbol:
+      B: B
+
+  KaImplicitReceiver:
+    scopeIndexInTower = 4
+    type = A
+    ownerSymbol = KaContextParameterSymbol:
+      A: A
+
+  KaImplicitReceiver:
+    scopeIndexInTower = 5
+    type = TopLevel<T1>
+    ownerSymbol = KaNamedClassSymbol:
+      /TopLevel
+
+scopes:
+  TypeScope, index = 0
+    packages: 0
+    classifiers: 0
+    callables: 3
+      fun equals(other: kotlin.Any?): kotlin.Boolean
+      fun hashCode(): kotlin.Int
+      fun toString(): kotlin.String
+    constructors: 1
+      constructor()
+
+  TypeScope, index = 1
+    packages: 0
+    classifiers: 0
+    callables: 3
+      fun equals(other: kotlin.Any?): kotlin.Boolean
+      fun hashCode(): kotlin.Int
+      fun toString(): kotlin.String
+    constructors: 1
+      constructor()
+
+  LocalScope, index = 2
+    packages: 0
+    classifiers: 0
+    callables: 2
+      param: kotlin.Int
+      param2: kotlin.String
+    constructors: 0
+
+  TypeParameterScope, index = 3
+    packages: 0
+    classifiers: 1
+      T2
+    callables: 0
+    constructors: 0
+
+  TypeScope, index = 4
+    packages: 0
+    classifiers: 0
+    callables: 3
+      fun equals(other: kotlin.Any?): kotlin.Boolean
+      fun hashCode(): kotlin.Int
+      fun toString(): kotlin.String
+    constructors: 1
+      constructor()
+
+  TypeScope, index = 5
+    packages: 0
+    classifiers: 0
+    callables: 4
+      context(B@B)
+      fun <T2> C.foo(param: kotlin.Int, param2: kotlin.String)
+      fun equals(other: kotlin.Any?): kotlin.Boolean
+      fun hashCode(): kotlin.Int
+      fun toString(): kotlin.String
+    constructors: 1
+      constructor()
+
+  TypeParameterScope, index = 6
+    packages: 0
+    classifiers: 1
+      T1
+    callables: 0
+    constructors: 0
+
+  ExplicitSimpleImportingScope, index = 7
+    packages: 0
+    classifiers: 0
+    callables: 0
+    constructors: 0
+
+  PackageMemberScope, index = 8
+    packages: 6
+      META-INF
+      java
+      javax
+      kotlin
+      org
+      sun
+    classifiers: 4
+      class A
+      class B
+      class C
+      context(A@A)
+      class TopLevel<T1>
+    callables: 0
+    constructors: 0
+
+  DefaultSimpleImportingScope, index = 9
+
+  DefaultSimpleImportingScope, index = 10
+
+  ExplicitStarImportingScope, index = 11
+    packages: 0
+    classifiers: 0
+    callables: 0
+    constructors: 0
+
+  DefaultStarImportingScope, index = 12

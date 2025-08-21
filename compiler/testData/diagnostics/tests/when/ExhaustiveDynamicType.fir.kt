@@ -24,7 +24,7 @@ fun testAny() {
 
 fun testNullableAny() {
     val result = when (subject()) {
-        <!USELESS_IS_CHECK!>is Any?<!> -> ""
+        is Any? -> ""
     }
 }
 
@@ -34,3 +34,6 @@ fun testAnyAndNull() {
         null -> ""
     }
 }
+
+/* GENERATED_FIR_TAGS: equalityExpression, flexibleType, functionDeclaration, isExpression, localProperty, nullableType,
+propertyDeclaration, smartcast, stringLiteral, whenExpression, whenWithSubject */

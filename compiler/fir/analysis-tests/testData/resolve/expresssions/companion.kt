@@ -25,3 +25,6 @@ fun test() {
     val y = B.C
     val z = B.<!UNRESOLVED_REFERENCE!>D<!>
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, functionDeclaration, localProperty, objectDeclaration,
+propertyDeclaration, stringLiteral */

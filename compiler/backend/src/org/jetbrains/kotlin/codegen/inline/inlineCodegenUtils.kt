@@ -6,9 +6,11 @@
 package org.jetbrains.kotlin.codegen.inline
 
 import com.intellij.openapi.vfs.VirtualFile
+import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.SamWrapperCodegen.SAM_WRAPPER_SUFFIX
 import org.jetbrains.kotlin.codegen.optimization.common.intConstant
+import org.jetbrains.kotlin.codegen.optimization.common.isMeaningful
 import org.jetbrains.kotlin.codegen.optimization.common.nodeType
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapperBase
@@ -80,7 +82,7 @@ internal inline fun getMethodNode(classData: ByteArray, classType: Type, crossin
                 throw AssertionError("Can't find proper '$name' method for inline: ambiguity between '${existing.name + existing.desc}' and '${name + desc}'")
             }
             node = MethodNode(Opcodes.API_VERSION, access, name, desc, signature, exceptions)
-            return node!!
+            return node
         }
     }, ClassReader.SKIP_FRAMES or if (GENERATE_SMAP) 0 else ClassReader.SKIP_DEBUG)
 
@@ -98,7 +100,8 @@ fun argumentsSize(descriptor: String, isStatic: Boolean): Int =
     (Type.getArgumentsAndReturnSizes(descriptor) shr 2) - (if (isStatic) 1 else 0)
 
 internal fun findVirtualFile(state: GenerationState, classId: ClassId): VirtualFile? {
-    return VirtualFileFinder.getInstance(state.project, state.module).findVirtualFileWithHeader(classId)
+    val moduleInfo = state.module.getCapability(ModuleInfo.Capability)
+    return VirtualFileFinder.getInstance(state.project, moduleInfo).findVirtualFileWithHeader(classId)
 }
 
 internal fun findVirtualFileImprecise(state: GenerationState, internalClassName: String): VirtualFile? {
@@ -218,6 +221,37 @@ fun insertNodeBefore(from: MethodNode, to: MethodNode, beforeNode: AbstractInsnN
         to.instructions.insertBefore(beforeNode, next)
     }
 }
+
+fun getLineNumberOrNull(insn: AbstractInsnNode?): Int? {
+    var cur: AbstractInsnNode? = insn
+    while (cur != null) {
+        if (cur is LineNumberNode) {
+            return cur.line
+        }
+        cur = cur.previous
+    }
+    return null
+}
+
+private fun getFirstFinallyOperationInstructionOrNull(startIns: AbstractInsnNode, endInsExclusive: AbstractInsnNode): AbstractInsnNode? {
+    var cur: AbstractInsnNode? = startIns
+    while (cur != null && cur != endInsExclusive) {
+        cur = when {
+            !cur.isMeaningful -> cur.next
+            isFinallyMarker(cur.next) -> cur.next.next
+            else -> return cur
+        }
+    }
+    return null
+}
+
+/*
+ * Finds the line number specified for the first "operation" instruction (i.e., not label, linenumber, frame or "finally" marker)
+ * of the given instructions of "finally" block, no matter if the line number specified inside or before the block.
+ * Returns `null` if there are no operation instructions in the block, or there is no line number specified for the first one of them.
+ */
+fun getFirstFinallyOperationLineNumberOrNull(startIns: AbstractInsnNode, endInsExclusive: AbstractInsnNode): Int? =
+    getLineNumberOrNull(getFirstFinallyOperationInstructionOrNull(startIns, endInsExclusive))
 
 fun createEmptyMethodNode() = MethodNode(Opcodes.API_VERSION, 0, "fake", "()V", null, null)
 
@@ -407,7 +441,7 @@ internal fun loadClassBytesByInternalName(state: GenerationState, internalName: 
     //try to find just compiled classes then in dependencies
     state.factory.get("$internalName.class")?.let { return it.asByteArray() }
 
-    state.inlineCache.classBytes.get(internalName)?.let { return it }
+    state.inlineCache.getClassBytes(internalName)?.let { return it }
 
     val file = findVirtualFileImprecise(state, internalName) ?: throw RuntimeException("Couldn't find virtual file for $internalName")
 
@@ -440,8 +474,7 @@ fun getConstant(ins: AbstractInsnNode): Int {
         }
     }
 }
-
-internal fun removeFinallyMarkers(intoNode: MethodNode) {
+fun removeFinallyMarkers(intoNode: MethodNode) {
     val instructions = intoNode.instructions
     var curInstr: AbstractInsnNode? = instructions.first
     while (curInstr != null) {
@@ -524,9 +557,9 @@ private fun InstructionAdapter.emitInlineMarker(id: Int) {
     )
 }
 
-internal fun isBeforeSuspendMarker(insn: AbstractInsnNode) = isSuspendMarker(insn, INLINE_MARKER_BEFORE_SUSPEND_ID)
+fun isBeforeSuspendMarker(insn: AbstractInsnNode) = isSuspendMarker(insn, INLINE_MARKER_BEFORE_SUSPEND_ID)
 internal fun isAfterSuspendMarker(insn: AbstractInsnNode) = isSuspendMarker(insn, INLINE_MARKER_AFTER_SUSPEND_ID)
-internal fun isBeforeInlineSuspendMarker(insn: AbstractInsnNode) = isSuspendMarker(insn, INLINE_MARKER_BEFORE_INLINE_SUSPEND_ID)
+fun isBeforeInlineSuspendMarker(insn: AbstractInsnNode) = isSuspendMarker(insn, INLINE_MARKER_BEFORE_INLINE_SUSPEND_ID)
 internal fun isAfterInlineSuspendMarker(insn: AbstractInsnNode) = isSuspendMarker(insn, INLINE_MARKER_AFTER_INLINE_SUSPEND_ID)
 internal fun isReturnsUnitMarker(insn: AbstractInsnNode) = isSuspendMarker(insn, INLINE_MARKER_RETURNS_UNIT)
 internal fun isFakeContinuationMarker(insn: AbstractInsnNode) =
@@ -630,4 +663,18 @@ fun cloneMethodNode(methodNode: MethodNode): MethodNode {
             methodNode.exceptions.toTypedArray()
         ).also(methodNode::accept)
     }
+}
+
+fun isCatchStoreInstruction(insn: AbstractInsnNode): Boolean = resolveCatchStoreInstruction(insn) != null
+
+fun resolveCatchStoreInstruction(insn: AbstractInsnNode): AbstractInsnNode? {
+    if (insn.opcode == Opcodes.ASTORE) return insn
+
+    val marker = insn.next?.next ?: return null
+    if (!ReifiedTypeInliner.isOperationReifiedMarker(marker)) return null
+
+    val afterMarker = marker.next
+    if (afterMarker.opcode == Opcodes.ASTORE) return afterMarker
+
+    return null
 }

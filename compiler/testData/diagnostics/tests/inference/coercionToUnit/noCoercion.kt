@@ -24,3 +24,7 @@ fun noCoercionBlockHasExplicitReturn() {
 }
 
 fun noCoercionInExpressionBody(): Unit = <!TYPE_MISMATCH!>"hello"<!>
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType, ifExpression,
+infix, integerLiteral, lambdaLiteral, localProperty, nullableType, propertyDeclaration, stringLiteral, typeParameter,
+typeWithExtension */

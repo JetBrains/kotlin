@@ -18,7 +18,8 @@ import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 
 object UnreachableCodeChecker : FirControlFlowChecker(MppCheckerKind.Common) {
 
-    override fun analyze(graph: ControlFlowGraph, reporter: DiagnosticReporter, context: CheckerContext) {
+    context(reporter: DiagnosticReporter, context: CheckerContext)
+    override fun analyze(graph: ControlFlowGraph) {
         val nodes = graph.allNodes()
         val (unreachableNodes, reachableNodes) = nodes.filterNot { it.skipNode() }.partition { it.isDead }
         if (unreachableNodes.isEmpty()) return
@@ -29,7 +30,7 @@ object UnreachableCodeChecker : FirControlFlowChecker(MppCheckerKind.Common) {
         unreachableElements.forEach { it.collectInnerNodes(innerNodes) }
         unreachableElements.distinctBy { it.source }.forEach { element ->
             if (element !in innerNodes) {
-                reporter.reportOn(element.source, FirErrors.UNREACHABLE_CODE, reachableSources, unreachableSources, context)
+                reporter.reportOn(element.source, FirErrors.UNREACHABLE_CODE, reachableSources, unreachableSources)
             }
         }
     }
@@ -58,7 +59,10 @@ object UnreachableCodeChecker : FirControlFlowChecker(MppCheckerKind.Common) {
                 this is BooleanOperatorEnterRightOperandNode ||
                 this is WhenSyntheticElseBranchNode ||
                 this is WhenBranchResultEnterNode ||
-                this is WhenBranchResultExitNode
+                this is WhenBranchResultExitNode ||
+                this is ExitSafeCallNode ||
+                this is ElvisLhsExitNode ||
+                this is ElvisLhsIsNotNullNode
         val allowType = this is LoopEnterNode ||
                 this is LoopBlockEnterNode ||
                 this is TryExpressionEnterNode

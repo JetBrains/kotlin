@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirImport
-import org.jetbrains.kotlin.fir.declarations.FirReplSnippet
 import org.jetbrains.kotlin.fir.declarations.FirScript
 import org.jetbrains.kotlin.fir.declarations.builder.buildImport
 import org.jetbrains.kotlin.fir.extensions.FirScriptResolutionConfigurationExtension
@@ -25,20 +24,14 @@ class FirScriptResolutionConfigurationExtensionImpl(
     @Suppress("UNUSED_PARAMETER") hostConfiguration: ScriptingHostConfiguration
 ) : FirScriptResolutionConfigurationExtension(session) {
 
-    override fun getScriptDefaultImports(script: FirScript): List<FirImport> {
+    override fun getScriptDefaultImports(script: FirScript): List<FirImport>? {
         val scriptSession = script.moduleData.session
         val scriptFile = scriptSession.firProvider.getFirScriptContainerFile(script.symbol) ?: return emptyList()
         val scriptSourceFile = scriptFile.sourceFile?.toSourceCode() ?: return emptyList()
         val compilationConfiguration = session.getScriptCompilationConfiguration(scriptSourceFile, getDefault = { null }) ?: return emptyList()
 
-        return compilationConfiguration.firImportsFromDefaultImports(script.source?.fakeElement(KtFakeSourceElementKind.ImplicitImport))
-    }
-
-    override fun getSnippetDefaultImports(snippet: FirReplSnippet): List<FirImport> {
-        val scriptSession = snippet.moduleData.session
-        return scriptSession.replCompilationConfigurationProviderService
-            .scriptConfiguration
-            .firImportsFromDefaultImports(snippet.source?.fakeElement(KtFakeSourceElementKind.ImplicitImport))
+        return compilationConfiguration[ScriptCompilationConfiguration.defaultImports]
+            .firImportsFromDefaultImports(script.source.fakeElement(KtFakeSourceElementKind.ImplicitImport))
     }
 
     companion object {
@@ -48,8 +41,8 @@ class FirScriptResolutionConfigurationExtensionImpl(
     }
 }
 
-private fun ScriptCompilationConfiguration.firImportsFromDefaultImports(sourceElement: KtSourceElement?): List<FirImport> =
-    this[ScriptCompilationConfiguration.defaultImports]?.map { defaultImport ->
+internal fun List<String>?.firImportsFromDefaultImports(sourceElement: KtSourceElement?): List<FirImport>? =
+    this?.map { defaultImport ->
         val trimmed = defaultImport.trim()
         val endsWithStar = trimmed.endsWith("*")
         val stripped = if (endsWithStar) trimmed.substring(0, trimmed.length - 2) else trimmed
@@ -59,4 +52,4 @@ private fun ScriptCompilationConfiguration.firImportsFromDefaultImports(sourceEl
             importedFqName = fqName
             isAllUnder = endsWithStar
         }
-    }.orEmpty()
+    }

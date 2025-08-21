@@ -49,7 +49,7 @@ open class KotlinNothingValueExceptionLowering(
                 backendContext.createIrBuilder(parent, expression.startOffset, expression.endOffset).run {
                     irBlock(expression, null, context.irBuiltIns.nothingType) {
                         +super.visitCall(expression)
-                        +irCall(backendContext.ir.symbols.throwKotlinNothingValueException)
+                        +irCall(backendContext.symbols.throwKotlinNothingValueException)
                     }
                 }
             } else {

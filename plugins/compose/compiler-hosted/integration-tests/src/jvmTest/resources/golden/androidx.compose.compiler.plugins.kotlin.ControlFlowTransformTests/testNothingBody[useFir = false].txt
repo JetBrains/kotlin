@@ -25,7 +25,7 @@ val test1: Function2<Composer, Int, Unit> = TODO()
 fun Test2(%composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(Test2):Test.kt")
-  if (%changed != 0 || !%composer.skipping) {
+  if (%composer.shouldExecute(%changed != 0, %changed and 0b0001)) {
     if (isTraceInProgress()) {
       traceEventStart(<>, %changed, -1, <>)
     }
@@ -44,7 +44,7 @@ fun Test2(%composer: Composer?, %changed: Int) {
 fun Test3(%composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(Test3)<Wrappe...>:Test.kt")
-  if (%changed != 0 || !%composer.skipping) {
+  if (%composer.shouldExecute(%changed != 0, %changed and 0b0001)) {
     if (isTraceInProgress()) {
       traceEventStart(<>, %changed, -1, <>)
     }
@@ -62,7 +62,7 @@ fun Test3(%composer: Composer?, %changed: Int) {
 internal object ComposableSingletons%TestKt {
   val lambda%125591635: Function2<Composer, Int, Unit> = composableLambdaInstance(<>, false) { %composer: Composer?, %changed: Int ->
     sourceInformation(%composer, "C:Test.kt")
-    if (%changed and 0b0011 != 0b0010 || !%composer.skipping) {
+    if (%composer.shouldExecute(%changed and 0b0011 != 0b0010, %changed and 0b0001)) {
       if (isTraceInProgress()) {
         traceEventStart(<>, %changed, -1, <>)
       }

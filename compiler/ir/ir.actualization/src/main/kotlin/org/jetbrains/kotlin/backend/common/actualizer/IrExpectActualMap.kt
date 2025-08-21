@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.common.actualizer
 
+import org.jetbrains.kotlin.backend.common.actualizer.ExpectActualLinkCollector.MatchingContext
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
@@ -12,11 +13,29 @@ import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.util.classId
 import org.jetbrains.kotlin.ir.util.parentsWithSelf
+import org.jetbrains.kotlin.resolve.calls.mpp.AbstractExpectActualChecker
+import org.jetbrains.kotlin.utils.addToStdlib.CombinedMap
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 
+@OptIn(IrExpectActualMap.MappingForCheckers::class)
 class IrExpectActualMap() {
+    /**
+     * This map contains only expect-actual mapping for declarations in sources.
+     */
+    @MappingForCheckers
     val expectToActual: Map<IrSymbol, IrSymbol> get() = _expectToActual
     private val _expectToActual: MutableMap<IrSymbol, IrSymbol> = mutableMapOf()
+
+    /**
+     * This map contains expect-actual and common-platform mapping for declarations from dependencies
+     * for HMPP compilation scheme
+     */
+    private val symbolMapFromContributor: MutableMap<IrSymbol, IrSymbol> = mutableMapOf()
+
+    /**
+     * This map contains the complete symbols mapping, which should be used for actualization
+     */
+    val symbolMap: Map<IrSymbol, IrSymbol> = CombinedMap(expectToActual, symbolMapFromContributor)
 
     /**
      * Direct means "not through typealias".
@@ -29,14 +48,45 @@ class IrExpectActualMap() {
 
     val propertyAccessorsActualizedByFields: MutableMap<IrSimpleFunctionSymbol, IrPropertySymbol> = mutableMapOf()
 
+    private var sourceDeclarationMappingMode = true
+
     fun putRegular(expectSymbol: IrSymbol, actualSymbol: IrSymbol): IrSymbol? {
-        val registeredActual = _expectToActual.put(expectSymbol, actualSymbol)
+        val destination = when {
+            sourceDeclarationMappingMode -> _expectToActual
+            else -> symbolMapFromContributor
+        }
+        val registeredActual = destination.put(expectSymbol, actualSymbol)
         val expect = expectSymbol.owner
         val actual = actualSymbol.owner
-        if (expect is IrDeclaration && actual is IrDeclaration &&
+        if (sourceDeclarationMappingMode &&
+            expect is IrDeclaration && actual is IrDeclaration &&
             expect.parentsWithSelf.firstIsInstanceOrNull<IrClass>()?.classId ==
             actual.parentsWithSelf.firstIsInstanceOrNull<IrClass>()?.classId
         ) _actualToDirectExpect.put(actualSymbol, expectSymbol)
         return registeredActual
     }
+
+    internal fun fillAdditionalMapping(
+        actualizerMapContributor: IrActualizerMapContributor,
+        context: MatchingContext
+    ) {
+        sourceDeclarationMappingMode = false
+        val classMapping = actualizerMapContributor.collectClassesMap().classMapping
+        symbolMapFromContributor += classMapping
+        for ((expectClass, actualClass) in classMapping) {
+            // Here we call check for two classes only to match the scopes of these classes.
+            // Abstraction of matching leaked into checking in this place :sad:
+            AbstractExpectActualChecker.checkSingleExpectTopLevelDeclarationAgainstMatchedActual(
+                expectClass,
+                actualClass,
+                context,
+                context.languageVersionSettings,
+            )
+        }
+        symbolMapFromContributor += actualizerMapContributor.collectTopLevelCallablesMap()
+        sourceDeclarationMappingMode = true
+    }
+
+    @RequiresOptIn("This property should be used only in checkers. For mapping purposes use `symbolMap`")
+    annotation class MappingForCheckers
 }

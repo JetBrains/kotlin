@@ -1,10 +1,13 @@
 element: e
-implicit receivers:
-  type: KaUsualClassType:
-    annotations: []
-    typeArguments: []
-    type: JavaClass
-  owner symbol: KaFirNamedFunctionSymbol
+implicit values:
+  KaImplicitReceiver:
+    scopeIndexInTower = 1
+    type = KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: JavaClass
+    ownerSymbol = KaNamedFunctionSymbol:
+      /test(<extension receiver>: JavaClass): kotlin.Unit
 
 scopes:
   LocalScope, index = 0
@@ -21,6 +24,7 @@ scopes:
         annotations: []
         callableId: /JavaClass.getValue
         compilerVisibility: Public
+        contextParameters: []
         contextReceivers: []
         contractEffects: []
         hasStableParameterNames: false
@@ -51,6 +55,7 @@ scopes:
         annotations: []
         callableId: kotlin/Any.equals
         compilerVisibility: Public
+        contextParameters: []
         contextReceivers: []
         contractEffects: []
         hasStableParameterNames: true
@@ -108,6 +113,7 @@ scopes:
         annotations: []
         callableId: kotlin/Any.hashCode
         compilerVisibility: Public
+        contextParameters: []
         contextReceivers: []
         contractEffects: []
         hasStableParameterNames: true
@@ -139,6 +145,7 @@ scopes:
         annotations: []
         callableId: kotlin/Any.toString
         compilerVisibility: Public
+        contextParameters: []
         contextReceivers: []
         contractEffects: []
         hasStableParameterNames: true
@@ -177,13 +184,12 @@ scopes:
           callableId: /JavaClass.getValue
           compilerVisibility: Public
           contextReceivers: []
-          hasBody: false
           hasStableParameterNames: true
           isActual: false
-          isDefault: false
           isExpect: false
           isExtension: false
           isInline: false
+          isNotDefault: true
           isOverride: false
           location: PROPERTY
           modality: OPEN
@@ -288,6 +294,7 @@ scopes:
         annotations: []
         callableId: /test
         compilerVisibility: Public
+        contextParameters: []
         contextReceivers: []
         contractEffects: []
         hasStableParameterNames: true

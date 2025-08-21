@@ -44,3 +44,6 @@ fun test2(a: A, b: B, w: W) {
 
     <!DEBUG_INFO_EXPRESSION_TYPE("Base")!>x<!>
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType,
+interfaceDeclaration, lambdaLiteral, localProperty, nullableType, out, propertyDeclaration, stringLiteral, typeParameter */

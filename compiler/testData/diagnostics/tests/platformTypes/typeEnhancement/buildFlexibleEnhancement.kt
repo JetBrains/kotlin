@@ -36,3 +36,6 @@ fun test() {
     val collection: Collection<Int> = listOf(1, 2, 3)
     Foo(collection)
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, integerLiteral, javaFunction, javaType, localProperty,
+propertyDeclaration */

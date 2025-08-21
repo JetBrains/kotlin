@@ -19,3 +19,5 @@ import k.<!INVISIBLE_REFERENCE!>KPrivate<!>
 import k.KInternal
 import k.KPublic
 import k.A.KProtected
+
+/* GENERATED_FIR_TAGS: classDeclaration, nestedClass */

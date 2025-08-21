@@ -40,3 +40,6 @@ fun test(s: bar.Sub<String>) {
     s2.doSomething()
     s2.doSomething2()
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, flexibleType, functionDeclaration, javaProperty, javaType,
+localProperty, nullableType, override, propertyDeclaration, stringLiteral, typeParameter */

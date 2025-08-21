@@ -21,3 +21,6 @@ class Something {
     internal fun <!EXPOSED_FUNCTION_RETURN_TYPE!>internalFun2<!>() = run { class A; A() }
     private fun privateFun2() = run { class A; A() }
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, classDeclaration, functionDeclaration, lambdaLiteral, localClass,
+override, propertyDeclaration, stringLiteral */

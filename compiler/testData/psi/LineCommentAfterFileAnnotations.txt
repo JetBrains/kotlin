@@ -1,4 +1,6 @@
 KtFile: LineCommentAfterFileAnnotations.kt
+  PsiComment(EOL_COMMENT)('// COMPILATION_ERRORS')
+  PsiWhiteSpace('\n\n')
   FILE_ANNOTATION_LIST
     ANNOTATION
       PsiElement(AT)('@')

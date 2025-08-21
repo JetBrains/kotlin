@@ -10,3 +10,6 @@ fun test(foo: Foo?) {
     }
     <!DEBUG_INFO_SMARTCAST!>foo<!>.bar?.length
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, functionDeclaration, lambdaLiteral, nullableType,
+primaryConstructor, propertyDeclaration, safeCall, smartcast */

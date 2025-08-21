@@ -1,4 +1,6 @@
 KtFile: CommentsBinding.kt
+  PsiComment(EOL_COMMENT)('// COMPILATION_ERRORS')
+  PsiWhiteSpace('\n\n')
   PsiComment(BLOCK_COMMENT)('/*\n * Copyright JetBrains s.r.o.\n */')
   PsiWhiteSpace('\n')
   PACKAGE_DIRECTIVE

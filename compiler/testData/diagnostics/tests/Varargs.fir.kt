@@ -16,3 +16,5 @@ fun test() {
     v1({}) <!VARARG_OUTSIDE_PARENTHESES!>{}<!>
     v1 <!VARARG_OUTSIDE_PARENTHESES!>{}<!>
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral, lambdaLiteral, stringLiteral, vararg */

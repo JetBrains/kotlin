@@ -13,3 +13,7 @@ class My {
             <!DEBUG_INFO_SMARTCAST!>x<!>
         }
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, equalityExpression, functionDeclaration, functionalType, getter,
+ifExpression, lambdaLiteral, localProperty, nullableType, propertyDeclaration, smartcast, stringLiteral, thisExpression,
+typeParameter */

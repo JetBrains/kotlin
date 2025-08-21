@@ -1,4 +1,4 @@
-/* RootScriptStructureElement */class A
+/* RootStructureElement *//* RootScriptStructureElement */class A
 
     (val a: Int)/* DeclarationStructureElement */
 

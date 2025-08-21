@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
-import org.jetbrains.kotlin.ir.types.impl.IrTypeAbbreviationImpl
 import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
@@ -39,12 +38,10 @@ import org.jetbrains.kotlin.utils.memoryOptimizedMap
 
 internal fun IrFunction.needsComposableRemapping(): Boolean {
     if (
-        dispatchReceiverParameter?.type.containsComposableAnnotation() ||
-        extensionReceiverParameter?.type.containsComposableAnnotation() ||
         returnType.containsComposableAnnotation()
     ) return true
 
-    for (param in valueParameters) {
+    for (param in parameters) {
         if (param.type.containsComposableAnnotation()) return true
     }
     return false
@@ -184,7 +181,7 @@ internal class ComposableTypeTransformer(
             val realParams = containingClass.typeParameters.size - 1
             // with composer and changed
             val newArgsSize = realParams + 1 + changedParamCount(realParams, 0)
-            val newFnClass = context.function(newArgsSize).owner
+            val newFnClass = context.irBuiltIns.functionN(newArgsSize)
 
             val newFn = newFnClass
                 .functions
@@ -315,6 +312,7 @@ class ComposableTypeRemapper(
 
     private fun IrType.isComposableFunction(): Boolean =
         isSyntheticComposableFunction() ||
+                isKComposableFunction() ||
                 (isFunction() && hasComposableAnnotation())
 
     override fun remapType(type: IrType): IrType {
@@ -345,14 +343,13 @@ class ComposableTypeRemapper(
                     oldIrArguments.last()
 
         val newArgSize = oldIrArguments.size - 1 + extraArgs.size
-        val functionCls = context.function(newArgSize)
+        val functionCls = context.irBuiltIns.functionN(newArgSize)
 
         return IrSimpleTypeImpl(
-            functionCls,
+            functionCls.symbol,
             type.nullability,
             newIrArguments.map { remapTypeArgument(it) },
-            type.annotations.filter { !it.isComposableAnnotation() },
-            null
+            type.annotations.filter { !it.isComposableAnnotation() }
         )
     }
 
@@ -361,18 +358,9 @@ class ComposableTypeRemapper(
             type.classifier,
             type.nullability,
             type.arguments.map { remapTypeArgument(it) },
-            type.annotations,
-            type.abbreviation?.remapTypeAbbreviation()
+            type.annotations
         )
     }
-
-    private fun IrTypeAbbreviation.remapTypeAbbreviation() =
-        IrTypeAbbreviationImpl(
-            typeAlias,
-            hasQuestionMark,
-            arguments.map { remapTypeArgument(it) },
-            annotations
-        )
 
     private fun remapTypeArgument(typeArgument: IrTypeArgument): IrTypeArgument =
         if (typeArgument is IrTypeProjection)
@@ -387,13 +375,9 @@ class ComposableTypeRemapper(
     private fun IrType.hasComposableTypeArgument(): Boolean {
         when {
             this is IrSimpleType -> {
-                val argument = arguments.any {
+                return arguments.any {
                     it.typeOrNull?.hasComposableType() == true
                 }
-                val abbreviationArgument = abbreviation?.arguments?.any {
-                    it.typeOrNull?.hasComposableType() == true
-                } == true
-                return argument || abbreviationArgument
             }
         }
         return false

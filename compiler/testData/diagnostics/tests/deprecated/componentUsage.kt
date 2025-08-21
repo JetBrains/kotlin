@@ -11,3 +11,6 @@ class Data {
 fun use() {
     val (<!DEPRECATION!>x<!>, y) = Data()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, destructuringDeclaration, functionDeclaration, localProperty, operator,
+propertyDeclaration, stringLiteral */

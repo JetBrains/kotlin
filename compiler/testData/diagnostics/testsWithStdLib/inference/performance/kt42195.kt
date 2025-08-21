@@ -39,3 +39,6 @@ val tree = Tree.Inner(
         )
     )
 )
+
+/* GENERATED_FIR_TAGS: classDeclaration, data, getter, integerLiteral, nestedClass, nullableType, out, override,
+primaryConstructor, propertyDeclaration, sealed, stringLiteral, typeParameter */

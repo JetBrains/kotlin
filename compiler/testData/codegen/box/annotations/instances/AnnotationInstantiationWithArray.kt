@@ -5,6 +5,8 @@
 // ISSUE: KT-62598
 // This test is a simplified version of annotations/instances/multimoduleCreation.kt with potential deserialized annotation resolve problems
 
+// JVM_ABI_K1_K2_DIFF: K2 serializes annotation parameter default values (KT-59526).
+
 // MODULE: lib
 // FILE: AnnotationInstantiationWithArrayLib.kt
 

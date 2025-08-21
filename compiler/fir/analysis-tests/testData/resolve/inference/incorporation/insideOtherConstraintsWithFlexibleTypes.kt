@@ -21,12 +21,12 @@ fun <R> funA(
 ) {}
 
 fun <E3 : Enum<E3>> funB() {
-    <!NEW_INFERENCE_ERROR!>funA(
+    <!TYPE_MISMATCH("CapturedType(*); Enum<*>")!>funA(
         createInterfaceAKotlin(),
         defaultB(),
     )<!>
 
-    <!NEW_INFERENCE_ERROR!>funA(
+    <!TYPE_MISMATCH("CapturedType(*)?; Enum<*>")!>funA(
         JavaHelper.createInterfaceA(),
         defaultB(),
     )<!>
@@ -41,3 +41,6 @@ fun <E3 : Enum<E3>> funB() {
         defaultB(),
     )
 }
+
+/* GENERATED_FIR_TAGS: capturedType, flexibleType, functionDeclaration, interfaceDeclaration, javaFunction, nullableType,
+typeConstraint, typeParameter */

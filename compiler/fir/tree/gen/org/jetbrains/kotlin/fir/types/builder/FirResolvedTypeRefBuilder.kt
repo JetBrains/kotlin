@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.fir.types.impl.FirResolvedTypeRefImpl
 
 @FirBuilderDsl
 class FirResolvedTypeRefBuilder : FirAnnotationContainerBuilder {
-    override var source: KtSourceElement? = null
+    var source: KtSourceElement? = null
     override val annotations: MutableList<FirAnnotation> = mutableListOf()
     lateinit var coneType: ConeKotlinType
     var delegatedTypeRef: FirTypeRef? = null

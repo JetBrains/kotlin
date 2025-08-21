@@ -18,4 +18,5 @@ fun isString(x: Any?): Boolean {
     return x is String
 }
 
-
+/* GENERATED_FIR_TAGS: contractConditionalEffect, contracts, functionDeclaration, ifExpression, isExpression,
+lambdaLiteral, nullableType, smartcast */

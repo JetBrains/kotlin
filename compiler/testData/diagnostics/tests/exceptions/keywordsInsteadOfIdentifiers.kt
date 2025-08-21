@@ -7,3 +7,5 @@ fun <<!SYNTAX!>break<!>> foo() {}
 fun test(){
     foo<String>()
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, nullableType, typeParameter */

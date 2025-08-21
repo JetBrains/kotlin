@@ -14,10 +14,10 @@ interface A {
 inline class B(val x: Int) : A
 
 // 1 public static f-impl\(I\)Ljava/lang/String;
-// 1 public f\(\)Ljava/lang/String;
+// 1 public bridge f\(\)Ljava/lang/String;
 
 // 1 public static g-impl\(I\)Ljava/lang/String;
-// 1 public g\(\)Ljava/lang/String;
+// 1 public bridge g\(\)Ljava/lang/String;
 
 // 1 INVOKESTATIC B.g-impl \(I\)Ljava/lang/String;
 // 1 INVOKESTATIC B.f-impl \(I\)Ljava/lang/String;

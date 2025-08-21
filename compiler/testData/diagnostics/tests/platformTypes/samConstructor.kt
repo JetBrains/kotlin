@@ -17,3 +17,5 @@ import p.*
 fun test() {
     J.c(Comparator { a, b -> b - a })
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, flexibleType, functionDeclaration, javaFunction, lambdaLiteral */

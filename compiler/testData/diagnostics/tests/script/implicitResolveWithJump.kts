@@ -10,3 +10,5 @@ val rv = A.a + B.b
 object B {
     val b = args[2]
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, integerLiteral, localProperty, objectDeclaration, propertyDeclaration */

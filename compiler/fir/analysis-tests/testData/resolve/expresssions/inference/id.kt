@@ -7,3 +7,6 @@ fun main() {
     val b = id(null)
     val c = id(id(a))
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, localProperty, nullableType, propertyDeclaration, stringLiteral,
+typeParameter */

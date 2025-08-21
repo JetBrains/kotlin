@@ -1,7 +1,10 @@
 element: this
-implicit receivers:
-  type: test.Receiver
-  owner symbol: KaFirAnonymousFunctionSymbol
+implicit values:
+  KaImplicitReceiver:
+    scopeIndexInTower = 1
+    type = test.Receiver
+    ownerSymbol = KaAnonymousFunctionSymbol:
+      <anonymous function>(): kotlin.Unit
 
 scopes:
   LocalScope, index = 0

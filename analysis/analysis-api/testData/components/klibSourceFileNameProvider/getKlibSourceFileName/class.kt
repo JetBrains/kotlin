@@ -1,3 +1,4 @@
+// MODULE: library
 // TARGET_PLATFORM: JS
 // MODULE_KIND: LibraryBinary
 
@@ -8,3 +9,5 @@ class Foo
 // FILE: Other.kt
 package other
 class Bar
+
+// MODULE: main(library)

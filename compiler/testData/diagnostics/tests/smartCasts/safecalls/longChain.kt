@@ -13,3 +13,6 @@ fun test2(x: List<String>?) {
     x?.filter { true }!!.size
     <!DEBUG_INFO_SMARTCAST!>x<!>.size
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, functionDeclaration, integerLiteral, lambdaLiteral, nullableType, safeCall,
+smartcast */

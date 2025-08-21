@@ -6,7 +6,6 @@ import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
 import org.jetbrains.kotlin.backend.konan.driver.phases.Fir2IrOutput
 import org.jetbrains.kotlin.backend.konan.driver.phases.FirOutput
 import org.jetbrains.kotlin.backend.konan.ir.KonanSymbols
-import org.jetbrains.kotlin.backend.konan.ir.SymbolOverIrLookupUtils
 import org.jetbrains.kotlin.backend.konan.serialization.KonanManglerIr
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
@@ -129,5 +128,5 @@ internal fun PhaseContext.fir2Ir(
 private fun PhaseContext.createKonanSymbols(
         irBuiltIns: IrBuiltIns,
 ): KonanSymbols {
-    return KonanSymbols(this, SymbolOverIrLookupUtils(), irBuiltIns, this.config.configuration)
+    return KonanSymbols(this, irBuiltIns, this.config.configuration)
 }

@@ -43,3 +43,5 @@ private class PrivateBar {
         class Public
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, nestedClass, objectDeclaration */

@@ -8,3 +8,6 @@ fun bar() {
     x = 4
     foo(x, { x = null; x<!UNSAFE_CALL!>.<!>hashCode() }, x)
 }
+
+/* GENERATED_FIR_TAGS: assignment, functionDeclaration, functionalType, integerLiteral, lambdaLiteral, localProperty,
+nullableType, propertyDeclaration, smartcast */

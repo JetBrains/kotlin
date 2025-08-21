@@ -27,3 +27,6 @@ fun test3(x: Any, y: Inv<String>) {
     val z = takeTwoInvOut(x, y)
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>z<!>
 }
+
+/* GENERATED_FIR_TAGS: asExpression, capturedType, classDeclaration, functionDeclaration, lambdaLiteral, localProperty,
+nullableType, outProjection, primaryConstructor, propertyDeclaration, smartcast, starProjection, typeParameter */

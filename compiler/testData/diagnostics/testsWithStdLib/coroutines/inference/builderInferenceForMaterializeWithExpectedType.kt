@@ -10,3 +10,6 @@ fun test() {
         foo(materialize())
     }
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, lambdaLiteral, localProperty, nullableType, propertyDeclaration,
+typeParameter */

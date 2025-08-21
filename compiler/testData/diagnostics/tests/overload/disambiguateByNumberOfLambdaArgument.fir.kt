@@ -14,3 +14,6 @@ fun main() {
     println(list.map { v -> v })
     println(list.map { it })
 }
+
+/* GENERATED_FIR_TAGS: funWithExtensionReceiver, functionDeclaration, functionalType, integerLiteral, lambdaLiteral,
+localProperty, nullableType, propertyDeclaration, thisExpression, typeParameter */

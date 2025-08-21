@@ -10,3 +10,5 @@ val SomeClass.lore: List<String>
             return emptyList()
         }
     }
+
+/* GENERATED_FIR_TAGS: classDeclaration, getter, lambdaLiteral, propertyDeclaration, propertyWithExtensionReceiver */

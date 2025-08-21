@@ -1,6 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
-// LANGUAGE: +ProhibitInvisibleAbstractMethodsInSuperclasses
 // FILE: base/Base.java
 package base;
 
@@ -21,3 +20,5 @@ import base.*
 fun foo() {
     Impl().foo()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, javaFunction, javaType */

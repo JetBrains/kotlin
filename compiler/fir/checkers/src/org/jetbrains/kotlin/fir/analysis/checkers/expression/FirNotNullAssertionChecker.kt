@@ -16,21 +16,23 @@ import org.jetbrains.kotlin.fir.expressions.FirCallableReferenceAccess
 import org.jetbrains.kotlin.fir.expressions.FirCheckNotNullCall
 import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
 import org.jetbrains.kotlin.fir.expressions.unwrapSmartcastExpression
+import org.jetbrains.kotlin.fir.isEnabled
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.types.canBeNull
 import org.jetbrains.kotlin.fir.types.isUnit
 import org.jetbrains.kotlin.fir.types.resolvedType
 
 object FirNotNullAssertionChecker : FirCheckNotNullCallChecker(MppCheckerKind.Common) {
-    override fun check(expression: FirCheckNotNullCall, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(expression: FirCheckNotNullCall) {
         val argument = expression.argumentList.arguments.singleOrNull() ?: return
         val argumentWithoutSmartcast = argument.unwrapSmartcastExpression()
         if (argumentWithoutSmartcast is FirAnonymousFunctionExpression && argumentWithoutSmartcast.anonymousFunction.isLambda) {
-            reporter.reportOn(expression.source, FirErrors.NOT_NULL_ASSERTION_ON_LAMBDA_EXPRESSION, context)
+            reporter.reportOn(expression.source, FirErrors.NOT_NULL_ASSERTION_ON_LAMBDA_EXPRESSION)
             return
         }
         if (argumentWithoutSmartcast is FirCallableReferenceAccess) {
-            reporter.reportOn(expression.source, FirErrors.NOT_NULL_ASSERTION_ON_CALLABLE_REFERENCE, context)
+            reporter.reportOn(expression.source, FirErrors.NOT_NULL_ASSERTION_ON_CALLABLE_REFERENCE)
             return
         }
         // TODO: use of Unit is subject to change.
@@ -41,10 +43,10 @@ object FirNotNullAssertionChecker : FirCheckNotNullCallChecker(MppCheckerKind.Co
             return
         }
 
-        val type = resolvedType.fullyExpandedType(context.session)
+        val type = resolvedType.fullyExpandedType()
 
-        if (!type.canBeNull(context.session) && context.languageVersionSettings.supportsFeature(LanguageFeature.EnableDfaWarningsInK2)) {
-            reporter.reportOn(expression.source, FirErrors.UNNECESSARY_NOT_NULL_ASSERTION, type, context)
+        if (!type.canBeNull(context.session) && LanguageFeature.EnableDfaWarningsInK2.isEnabled()) {
+            reporter.reportOn(expression.source, FirErrors.UNNECESSARY_NOT_NULL_ASSERTION, type)
         }
     }
 }

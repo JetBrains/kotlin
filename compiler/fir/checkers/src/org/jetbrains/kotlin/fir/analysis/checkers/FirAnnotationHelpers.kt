@@ -16,13 +16,14 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.context.findClosest
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.impl.FirPrimaryConstructor
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.resolve.toSymbol
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.*
@@ -45,7 +46,7 @@ fun FirAnnotation.getAllowedAnnotationTargets(session: FirSession): Set<KotlinTa
 internal fun FirAnnotation.getAnnotationClassForOptInMarker(session: FirSession): FirRegularClassSymbol? {
     val lookupTag = annotationTypeRef.coneType.classLikeLookupTagIfAny ?: return null
     val annotationClassSymbol = lookupTag.toRegularClassSymbol(session) ?: return null
-    if (annotationClassSymbol.getAnnotationByClassId(OptInNames.REQUIRES_OPT_IN_CLASS_ID, session) == null) {
+    if (!annotationClassSymbol.hasAnnotationWithClassId(OptInNames.REQUIRES_OPT_IN_CLASS_ID, session)) {
         return null
     }
     return annotationClassSymbol
@@ -77,7 +78,7 @@ fun FirDeclaration.getTargetAnnotation(session: FirSession): FirAnnotation? {
 }
 
 fun FirClassLikeSymbol<*>.getTargetAnnotation(session: FirSession): FirAnnotation? {
-    return getAnnotationByClassId(StandardClassIds.Annotations.Target, session)
+    return getAnnotationWithResolvedArgumentsByClassId(StandardClassIds.Annotations.Target, session)
 }
 
 fun FirExpression.extractClassesFromArgument(session: FirSession): List<FirRegularClassSymbol> {
@@ -100,18 +101,17 @@ fun FirExpression.extractClassFromArgument(session: FirSession): FirRegularClass
     }
 }
 
+context(context: CheckerContext, reporter: DiagnosticReporter)
 fun checkRepeatedAnnotation(
     useSiteTarget: AnnotationUseSiteTarget?,
     existingTargetsForAnnotation: MutableList<AnnotationUseSiteTarget?>,
     annotation: FirAnnotation,
-    context: CheckerContext,
-    reporter: DiagnosticReporter,
     annotationSource: KtSourceElement?,
 ) {
     val duplicated = useSiteTarget in existingTargetsForAnnotation
             || existingTargetsForAnnotation.any { (it == null) != (useSiteTarget == null) }
     if (duplicated && !annotation.isRepeatable(context.session)) {
-        reporter.reportOn(annotationSource, FirErrors.REPEATED_ANNOTATION, context)
+        reporter.reportOn(annotationSource, FirErrors.REPEATED_ANNOTATION)
     }
 }
 
@@ -123,19 +123,20 @@ fun FirAnnotation.isRepeatable(session: FirSession): Boolean {
     return session.annotationPlatformSupport.symbolContainsRepeatableAnnotation(annotationClass, session)
 }
 
+context(context: CheckerContext)
 fun FirAnnotationContainer.getDefaultUseSiteTarget(
-    annotation: FirAnnotation,
-    context: CheckerContext
+    annotation: FirAnnotation
 ): AnnotationUseSiteTarget? {
-    return getImplicitUseSiteTargetList(context).firstOrNull {
+    return getImplicitUseSiteTargetList().firstOrNull {
         KotlinTarget.USE_SITE_MAPPING[it] in annotation.getAllowedAnnotationTargets(context.session)
     }
 }
 
-fun FirAnnotationContainer.getImplicitUseSiteTargetList(context: CheckerContext): List<AnnotationUseSiteTarget> {
+context(context: CheckerContext)
+fun FirAnnotationContainer.getImplicitUseSiteTargetList(): List<AnnotationUseSiteTarget> {
     return when (this) {
         is FirValueParameter -> {
-            return if (context.findClosest<FirDeclaration>() is FirPrimaryConstructor)
+            return if (context.findClosest<FirBasedSymbol<*>>().let { it is FirConstructorSymbol && it.isPrimary })
                 UseSiteTargetsList.T_CONSTRUCTOR_PARAMETER
             else
                 emptyList()
@@ -149,11 +150,10 @@ fun FirAnnotationContainer.getImplicitUseSiteTargetList(context: CheckerContext)
     }
 }
 
+context(context: CheckerContext, reporter: DiagnosticReporter)
 fun checkRepeatedAnnotation(
     annotationContainer: FirAnnotationContainer?,
     annotations: List<FirAnnotation>,
-    context: CheckerContext,
-    reporter: DiagnosticReporter,
     annotationSources: Map<FirAnnotation, KtSourceElement?>,
     defaultSource: KtSourceElement?,
 ) {
@@ -162,12 +162,12 @@ fun checkRepeatedAnnotation(
     val annotationsMap = hashMapOf<ConeKotlinType, MutableList<AnnotationUseSiteTarget?>>()
 
     for (annotation in annotations) {
-        val useSiteTarget = annotation.useSiteTarget ?: annotationContainer?.getDefaultUseSiteTarget(annotation, context)
-        val expandedType = annotation.annotationTypeRef.coneType.fullyExpandedType(context.session)
+        val useSiteTarget = annotation.useSiteTarget ?: annotationContainer?.getDefaultUseSiteTarget(annotation)
+        val expandedType = annotation.annotationTypeRef.coneType.fullyExpandedType()
         val existingTargetsForAnnotation = annotationsMap.getOrPut(expandedType) { arrayListOf() }
 
         val source = annotationSources[annotation] ?: defaultSource
-        checkRepeatedAnnotation(useSiteTarget, existingTargetsForAnnotation, annotation, context, reporter, source)
+        checkRepeatedAnnotation(useSiteTarget, existingTargetsForAnnotation, annotation, source)
         existingTargetsForAnnotation.add(useSiteTarget)
     }
 }

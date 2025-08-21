@@ -10,3 +10,7 @@ fun foo(s : String?, b : Boolean) {
     val s2 = s
     s2 checkType { _<String>() }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, equalityExpression, funWithExtensionReceiver, functionDeclaration,
+functionalType, ifExpression, infix, lambdaLiteral, localProperty, nullableType, propertyDeclaration, smartcast,
+stringLiteral, typeParameter, typeWithExtension */

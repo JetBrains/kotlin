@@ -30,3 +30,6 @@ val C.foo : C.D = <!EXTENSION_PROPERTY_WITH_BACKING_FIELD!><!UNRESOLVED_REFERENC
 val C.bar : C.D = <!EXTENSION_PROPERTY_WITH_BACKING_FIELD!>C().D()<!>
 
 val C.foo1 : C.D get() = D()
+
+/* GENERATED_FIR_TAGS: additiveExpression, classDeclaration, getter, inner, integerLiteral, nullableType,
+propertyDeclaration, propertyWithExtensionReceiver, stringLiteral, thisExpression, typeParameter */

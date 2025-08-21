@@ -34,3 +34,6 @@ class FooImpl2<E>(val e: E) : Foo<E> {
 
     override val y: Inv<E & Any> get() = Inv(e!!)
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, dnnType, getter, interfaceDeclaration, javaFunction, javaType,
+nullableType, override, primaryConstructor, propertyDeclaration, typeParameter */

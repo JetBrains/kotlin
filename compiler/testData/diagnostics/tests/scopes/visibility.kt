@@ -94,3 +94,6 @@ fun test() {
     internal_fun()
     <!INVISIBLE_MEMBER("private_fun; private; file")!>private_fun<!>()
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, functionDeclaration, incrementDecrementExpression, integerLiteral,
+interfaceDeclaration, propertyDeclaration */

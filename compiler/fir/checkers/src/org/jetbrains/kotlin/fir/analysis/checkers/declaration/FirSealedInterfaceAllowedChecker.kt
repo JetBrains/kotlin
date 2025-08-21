@@ -17,11 +17,12 @@ import org.jetbrains.kotlin.fir.declarations.utils.isInterface
 import org.jetbrains.kotlin.lexer.KtTokens
 
 object FirSealedInterfaceAllowedChecker : FirClassChecker(MppCheckerKind.Common) {
-    override fun check(declaration: FirClass, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirClass) {
         if (!declaration.isInterface || !declaration.isFun) {
             return
         }
         val keyword = declaration.getModifier(KtTokens.SEALED_KEYWORD) ?: return
-        reporter.reportOn(keyword.source, FirErrors.UNSUPPORTED_SEALED_FUN_INTERFACE, context)
+        reporter.reportOn(keyword.source, FirErrors.UNSUPPORTED_SEALED_FUN_INTERFACE)
     }
 }

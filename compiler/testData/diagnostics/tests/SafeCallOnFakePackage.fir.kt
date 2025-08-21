@@ -15,3 +15,6 @@ fun ff() {
     val b = <!EXPRESSION_EXPECTED_PACKAGE_FOUND!>foo<!><!UNNECESSARY_SAFE_CALL!>?.<!><!UNRESOLVED_REFERENCE!>s<!>
     <!NO_COMPANION_OBJECT!>System<!><!UNNECESSARY_SAFE_CALL!>?.<!><!UNRESOLVED_REFERENCE!>out<!>.println(a + b)
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, functionDeclaration, localProperty, nullableType, propertyDeclaration,
+safeCall, stringLiteral */

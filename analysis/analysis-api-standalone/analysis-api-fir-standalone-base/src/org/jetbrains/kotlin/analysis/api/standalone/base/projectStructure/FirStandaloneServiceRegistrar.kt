@@ -10,7 +10,12 @@ import com.intellij.mock.MockProject
 import com.intellij.openapi.Disposable
 import com.intellij.psi.PsiElementFinder
 import com.intellij.psi.impl.PsiElementFinderImpl
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
+import org.jetbrains.kotlin.analysis.api.impl.base.projectStructure.KaResolveExtensionToContentScopeRefinerBridge
+import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinContentScopeRefiner
+import org.jetbrains.kotlin.analysis.api.impl.base.projectStructure.KotlinResolveExtensionGeneratedFileScopeMergeStrategy
+import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinGlobalSearchScopeMergeStrategy
 import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
 
 @OptIn(KaImplementationDetail::class)
@@ -30,11 +35,20 @@ object FirStandaloneServiceRegistrar : AnalysisApiSimpleServiceRegistrar() {
         PluginStructureProvider.registerProjectListeners(project, PLUGIN_RELATIVE_PATH)
     }
 
+    @OptIn(KaExperimentalApi::class)
     @Suppress("TestOnlyProblems")
     override fun registerProjectModelServices(project: MockProject, disposable: Disposable) {
         with(PsiElementFinder.EP.getPoint(project)) {
             registerExtension(JavaElementFinder(project), disposable)
             registerExtension(PsiElementFinderImpl(project), disposable)
+        }
+
+        with(project.extensionArea.getExtensionPoint(KotlinContentScopeRefiner.EP_NAME)) {
+            registerExtension(KaResolveExtensionToContentScopeRefinerBridge(), disposable)
+        }
+
+        with(project.extensionArea.getExtensionPoint(KotlinGlobalSearchScopeMergeStrategy.EP_NAME)) {
+            registerExtension(KotlinResolveExtensionGeneratedFileScopeMergeStrategy(), disposable)
         }
     }
 }

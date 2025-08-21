@@ -6,33 +6,38 @@
 package org.jetbrains.kotlin.ir.backend.js.transformers.irToJs
 
 import org.jetbrains.kotlin.backend.common.compilationException
+import org.jetbrains.kotlin.backend.common.ir.KlibSymbols
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
+import org.jetbrains.kotlin.ir.backend.js.lower.ES6ConstructorLowering
+import org.jetbrains.kotlin.ir.backend.js.lower.ES6PrimaryConstructorOptimizationLowering
+import org.jetbrains.kotlin.ir.backend.js.lower.isEs6ConstructorReplacement
 import org.jetbrains.kotlin.ir.backend.js.utils.*
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
+import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
-import org.jetbrains.kotlin.ir.expressions.IrCall
-import org.jetbrains.kotlin.ir.expressions.IrFunctionExpression
-import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
-import org.jetbrains.kotlin.ir.expressions.IrRawFunctionReference
+import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
+import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.classifierOrFail
-import org.jetbrains.kotlin.ir.util.erasedUpperBound
 import org.jetbrains.kotlin.ir.util.getInlineClassBackingField
-import org.jetbrains.kotlin.ir.util.isInterface
 import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.backend.ast.metadata.isInlineClassBoxing
 import org.jetbrains.kotlin.js.backend.ast.metadata.isInlineClassUnboxing
+import org.jetbrains.kotlin.utils.filterIsInstanceAnd
 
-typealias IrCallTransformer = (IrCall, context: JsGenerationContext) -> JsExpression
+private typealias IrCallTransformer<T> = (T, context: JsGenerationContext) -> JsExpression
+private typealias IntrinsicMap = MutableMap<IrSymbol, IrCallTransformer<*>>
 
 class JsIntrinsicTransformers(backendContext: JsIrBackendContext) {
-    private val transformers: Map<IrSymbol, IrCallTransformer>
+    private val transformers: Map<IrSymbol, IrCallTransformer<*>>
     val icUtils = backendContext.inlineClassesUtils
 
     init {
         val intrinsics = backendContext.intrinsics
+        val symbols = backendContext.symbols
 
         transformers = hashMapOf()
 
@@ -210,9 +215,9 @@ class JsIntrinsicTransformers(backendContext: JsIrBackendContext) {
             }
 
             add(intrinsics.jsBind) { call, context: JsGenerationContext ->
-                val receiver = call.getValueArgument(0)!!
+                val receiver = call.arguments[0]!!
                 val jsReceiver = receiver.accept(IrElementToJsExpressionTransformer(), context)
-                val jsBindTarget = when (val target = call.getValueArgument(1)!!) {
+                val jsBindTarget = when (val target = call.arguments[1]!!) {
                     is IrFunctionReference -> {
                         val superClass = call.superQualifierSymbol!!
                         val functionName = context.getNameForMemberFunction(target.symbol.owner as IrSimpleFunction)
@@ -230,9 +235,9 @@ class JsIntrinsicTransformers(backendContext: JsIrBackendContext) {
             }
 
             add(intrinsics.jsContexfulRef) { call, context: JsGenerationContext ->
-                val receiver = call.getValueArgument(0)!!
+                val receiver = call.arguments[0]!!
                 val jsReceiver = receiver.accept(IrElementToJsExpressionTransformer(), context)
-                val target = call.getValueArgument(1) as IrRawFunctionReference
+                val target = call.arguments[1] as IrRawFunctionReference
                 val jsTarget = context.getNameForMemberFunction(target.symbol.owner as IrSimpleFunction)
 
                 JsNameRef(jsTarget, jsReceiver)
@@ -242,20 +247,31 @@ class JsIntrinsicTransformers(backendContext: JsIrBackendContext) {
                 JsInvocation(JsNameRef(Namer.UNREACHABLE_NAME))
             }
 
-            add(intrinsics.createSharedBox) { call, context: JsGenerationContext ->
+            /**
+             * We don't use [KlibSymbols.SharedVariableBoxClassInfo.constructor] here
+             * because in ES6 it may be replaced by a factory function (see [ES6ConstructorLowering]),
+             * after which replaced again by a new constructor as an optimization (see [ES6PrimaryConstructorOptimizationLowering]).
+             */
+            val sharedVariableBoxConstructors = symbols.genericSharedVariableBox.klass.owner
+                .declarations
+                .filterIsInstanceAnd<IrFunction> {
+                    it is IrConstructor || it.isEs6ConstructorReplacement
+                }
+                .map { it.symbol }
+
+            addAll(sharedVariableBoxConstructors) { call, context ->
                 val arg = translateCallArguments(call, context).single()
-                JsObjectLiteral(listOf(JsPropertyInitializer(JsNameRef(Namer.SHARED_BOX_V), arg)))
+                JsObjectLiteral(listOf(JsPropertyInitializer(JsStringLiteral(Namer.SHARED_BOX_V), arg)))
             }
 
-            add(intrinsics.readSharedBox) { call, context: JsGenerationContext ->
-                val box = translateCallArguments(call, context).single()
+            add(symbols.genericSharedVariableBox.load) { call, context: JsGenerationContext ->
+                val box = translateDispatchArgument(call, context)
                 JsNameRef(Namer.SHARED_BOX_V, box)
             }
 
-            add(intrinsics.writeSharedBox) { call, context: JsGenerationContext ->
-                val args = translateCallArguments(call, context)
-                val box = args[0]
-                val value = args[1]
+            add(symbols.genericSharedVariableBox.store) { call, context: JsGenerationContext ->
+                val box = translateDispatchArgument(call, context)
+                val value = translateCallArguments(call, context).single()
                 jsAssignment(JsNameRef(Namer.SHARED_BOX_V, box), value)
             }
 
@@ -266,10 +282,8 @@ class JsIntrinsicTransformers(backendContext: JsIrBackendContext) {
 
                 val jsInvokeFunName = context.getNameForMemberFunction(invokeFun)
 
-                val jsExtensionReceiver = call.extensionReceiver?.accept(IrElementToJsExpressionTransformer(), context)!!
                 val args = translateCallArguments(call, context)
-
-                JsInvocation(JsNameRef(jsInvokeFunName, jsExtensionReceiver), args)
+                JsInvocation(JsNameRef(jsInvokeFunName, args[0]), args.drop(1))
             }
 
             add(intrinsics.jsInvokeSuspendSuperType, suspendInvokeTransform)
@@ -300,41 +314,62 @@ class JsIntrinsicTransformers(backendContext: JsIrBackendContext) {
         }
     }
 
-    operator fun get(symbol: IrSymbol): IrCallTransformer? = transformers[symbol]
+    @Suppress("UNCHECKED_CAST")
+    operator fun get(symbol: IrSimpleFunctionSymbol): IrCallTransformer<IrCall>? =
+        transformers[symbol] as IrCallTransformer<IrCall>?
+
+    @Suppress("UNCHECKED_CAST")
+    operator fun get(symbol: IrConstructorSymbol): IrCallTransformer<IrConstructorCall>? =
+        transformers[symbol] as IrCallTransformer<IrConstructorCall>?
 }
 
-private fun translateCallArguments(expression: IrCall, context: JsGenerationContext): List<JsExpression> {
-    return translateCallArguments(expression, context, IrElementToJsExpressionTransformer(), false)
+private fun translateDispatchArgument(
+    expression: IrFunctionAccessExpression,
+    context: JsGenerationContext,
+): JsExpression = expression.dispatchReceiver?.accept(IrElementToJsExpressionTransformer(), context)
+    ?: compilationException("Expected dispatch receiver", expression)
+
+private fun translateCallArguments(
+    expression: IrFunctionAccessExpression,
+    context: JsGenerationContext,
+): List<JsExpression> {
+    return translateNonDispatchCallArguments(expression, context, IrElementToJsExpressionTransformer(), false).map { it.jsArgument }
 }
 
-private fun MutableMap<IrSymbol, IrCallTransformer>.add(functionSymbol: IrSymbol, t: IrCallTransformer) {
+private fun IntrinsicMap.add(functionSymbol: IrSimpleFunctionSymbol, t: IrCallTransformer<IrCall>) {
     put(functionSymbol, t)
 }
 
-private fun MutableMap<IrSymbol, IrCallTransformer>.add(function: IrSimpleFunction, t: IrCallTransformer) {
-    put(function.symbol, t)
+private fun IntrinsicMap.add(functionSymbol: IrConstructorSymbol, t: IrCallTransformer<IrConstructorCall>) {
+    put(functionSymbol, t)
 }
 
-private fun MutableMap<IrSymbol, IrCallTransformer>.addIfNotNull(symbol: IrSymbol?, t: IrCallTransformer) {
+private fun IntrinsicMap.addIfNotNull(symbol: IrSimpleFunctionSymbol?, t: IrCallTransformer<IrCall>) {
     if (symbol == null) return
     put(symbol, t)
 }
 
-private fun MutableMap<IrSymbol, IrCallTransformer>.binOp(function: IrSimpleFunctionSymbol, op: JsBinaryOperator) {
+private fun IntrinsicMap.addAll(symbols: Iterable<IrFunctionSymbol>, t: IrCallTransformer<IrFunctionAccessExpression>) {
+    for (symbol in symbols) {
+        put(symbol, t)
+    }
+}
+
+private fun IntrinsicMap.binOp(function: IrSimpleFunctionSymbol, op: JsBinaryOperator) {
     withTranslatedArgs(function) { JsBinaryOperation(op, it[0], it[1]) }
 }
 
-private fun MutableMap<IrSymbol, IrCallTransformer>.prefixOp(function: IrSimpleFunctionSymbol, op: JsUnaryOperator) {
+private fun IntrinsicMap.prefixOp(function: IrSimpleFunctionSymbol, op: JsUnaryOperator) {
     withTranslatedArgs(function) { JsPrefixOperation(op, it[0]) }
 }
 
-private fun MutableMap<IrSymbol, IrCallTransformer>.postfixOp(function: IrSimpleFunctionSymbol, op: JsUnaryOperator) {
+private fun IntrinsicMap.postfixOp(function: IrSimpleFunctionSymbol, op: JsUnaryOperator) {
     withTranslatedArgs(function) { JsPostfixOperation(op, it[0]) }
 }
 
-private inline fun MutableMap<IrSymbol, IrCallTransformer>.withTranslatedArgs(
+private inline fun IntrinsicMap.withTranslatedArgs(
     function: IrSimpleFunctionSymbol,
     crossinline t: (List<JsExpression>) -> JsExpression
 ) {
-    put(function) { call, context -> t(translateCallArguments(call, context)) }
+    put(function) { call: IrCall, context -> t(translateCallArguments(call, context)) }
 }

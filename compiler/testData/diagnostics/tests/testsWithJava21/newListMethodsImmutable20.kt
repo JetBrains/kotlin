@@ -1,5 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-64640, KT-65441
+// LATEST_LV_DIFFERENCE
 // LANGUAGE_VERSION: 2.0
 // API_VERSION: 2.0
 // ALLOW_DANGEROUS_LANGUAGE_VERSION_TESTING
@@ -93,3 +94,6 @@ fun foo(x: java.util.SequencedCollection<String>, y: java.util.SequencedSet<Stri
     z.first
     z.last
 }
+
+/* GENERATED_FIR_TAGS: assignment, flexibleType, functionDeclaration, javaProperty, localProperty, nullableType,
+propertyDeclaration, stringLiteral */

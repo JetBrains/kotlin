@@ -29,9 +29,9 @@ public annotation class base/Anno {
 public class base/B {
     // source: 'a.kt'
     public method <init>(): void
-    public @base.Anno(value="f") @org.jetbrains.annotations.NotNull method f(): java.lang.String
-    public @base.Anno(value="get-p") @org.jetbrains.annotations.NotNull method getP(): java.lang.String
-    public @base.Anno(value="set-p") method setP(@org.jetbrains.annotations.NotNull p0: java.lang.String): void
+    public bridge @base.Anno(value="f") @org.jetbrains.annotations.NotNull method f(): java.lang.String
+    public bridge @base.Anno(value="get-p") @org.jetbrains.annotations.NotNull method getP(): java.lang.String
+    public bridge @base.Anno(value="set-p") method setP(@org.jetbrains.annotations.NotNull p0: java.lang.String): void
     public final inner class base/A$DefaultImpls
 }
 Module: main
@@ -60,7 +60,7 @@ public interface C {
 public final class D {
     // source: 'source.kt'
     public method <init>(): void
-    public @base.Anno(value="f") @org.jetbrains.annotations.NotNull method f(): java.lang.String
-    public @base.Anno(value="get-p") @org.jetbrains.annotations.NotNull method getP(): java.lang.String
-    public @base.Anno(value="set-p") method setP(@org.jetbrains.annotations.NotNull p0: java.lang.String): void
+    public bridge @base.Anno(value="f") @org.jetbrains.annotations.NotNull method f(): java.lang.String
+    public bridge @base.Anno(value="get-p") @org.jetbrains.annotations.NotNull method getP(): java.lang.String
+    public bridge @base.Anno(value="set-p") method setP(@org.jetbrains.annotations.NotNull p0: java.lang.String): void
 }

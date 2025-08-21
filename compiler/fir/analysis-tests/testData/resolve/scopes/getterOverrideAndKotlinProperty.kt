@@ -21,3 +21,6 @@ class D : C()
 fun test(d: D) {
     d.foo.length
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, javaProperty, javaType, override,
+propertyDeclaration, stringLiteral */

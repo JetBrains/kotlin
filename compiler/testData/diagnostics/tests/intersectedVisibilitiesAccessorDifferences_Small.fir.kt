@@ -35,3 +35,5 @@ abstract class C5 : WithInternalVar(), IValDefault
 abstract class C6 : WithInternalVar(), IVarDefault
 abstract class C7 : IValDefault, WithInternalVar()
 abstract class C8 : IVarDefault, WithInternalVar()
+
+/* GENERATED_FIR_TAGS: classDeclaration, getter, integerLiteral, interfaceDeclaration, propertyDeclaration, setter */

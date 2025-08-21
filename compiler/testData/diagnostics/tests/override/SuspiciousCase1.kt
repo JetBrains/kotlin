@@ -12,3 +12,6 @@ interface Bar<Q> : Foo<Q>
 abstract class Baz() : Bar<String>
 
 fun zz(b: Baz) = b.quux("a")
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, interfaceDeclaration, nullableType,
+primaryConstructor, stringLiteral, typeParameter */

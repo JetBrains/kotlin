@@ -18,15 +18,16 @@ import org.jetbrains.kotlin.fir.declarations.getExplicitAnnotationRetention
 import org.jetbrains.kotlin.fir.declarations.toAnnotationClassLikeSymbol
 
 object FirJsRuntimeAnnotationChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
-    override fun check(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirDeclaration) {
         for (annotation in declaration.annotations) {
             val annotationClassSymbol = annotation.toAnnotationClassLikeSymbol(context.session) ?: continue
             if (annotationClassSymbol.getExplicitAnnotationRetention(context.session) != AnnotationRetention.RUNTIME) continue
 
-            if (declaration is FirMemberDeclaration && declaration.symbol.isEffectivelyExternal(context)) {
-                reporter.reportOn(annotation.source, FirJsErrors.RUNTIME_ANNOTATION_ON_EXTERNAL_DECLARATION, context)
+            if (declaration is FirMemberDeclaration && declaration.symbol.isEffectivelyExternal()) {
+                reporter.reportOn(annotation.source, FirJsErrors.RUNTIME_ANNOTATION_ON_EXTERNAL_DECLARATION)
             } else {
-                reporter.reportOn(annotation.source, FirJsErrors.RUNTIME_ANNOTATION_NOT_SUPPORTED, context)
+                reporter.reportOn(annotation.source, FirJsErrors.RUNTIME_ANNOTATION_NOT_SUPPORTED)
             }
         }
     }

@@ -3,7 +3,6 @@ KaUsualClassType:
     abbreviation: null
     annotations: []
     classId: library1/StringAlias
-    nullability: NON_NULLABLE
     qualifiers: [
       KaResolvedClassTypeQualifier:
         name: StringAlias
@@ -12,9 +11,11 @@ KaUsualClassType:
     ]
     symbol: KaTypeAliasSymbol(library1/StringAlias)
     typeArguments: []
+    isMarkedNullable: false
+    isNullable: false
+    hasFlexibleNullability: false
   annotations: []
   classId: kotlin/String
-  nullability: NON_NULLABLE
   qualifiers: [
     KaResolvedClassTypeQualifier:
       name: String
@@ -23,6 +24,9 @@ KaUsualClassType:
   ]
   symbol: KaNamedClassSymbol(kotlin/String)
   typeArguments: []
+  isMarkedNullable: false
+  isNullable: false
+  hasFlexibleNullability: false
 
 Rendered type:
 library1.StringAlias

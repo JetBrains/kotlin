@@ -8,5 +8,5 @@ package org.jetbrains.kotlin.gradle.tasks
 /**
  * Workaround for deprecation warning in import.
  */
-@Suppress("DEPRECATION")
+@Suppress("DEPRECATION_ERROR")
 typealias KotlinJvmCompileDsl = org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompile

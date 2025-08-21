@@ -1,5 +1,5 @@
 plugins {
-    kotlin("js")
+    kotlin("multiplatform")
 }
 
 repositories {
@@ -9,9 +9,7 @@ repositories {
 
 kotlin {
     js(IR) {
-        binaries.executable()
-        browser {
-        }
-        generateTypeScriptDefinitions()
+        binaries.library()
+        browser()
     }
 }

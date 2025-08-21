@@ -13,3 +13,6 @@ class D : C {
 
     operator fun String.invoke() { }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, integerLiteral, lambdaLiteral,
+localProperty, operator, primaryConstructor, propertyDeclaration, secondaryConstructor, stringLiteral */

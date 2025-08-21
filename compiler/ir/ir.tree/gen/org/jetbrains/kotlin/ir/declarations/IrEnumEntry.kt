@@ -12,8 +12,8 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.symbols.IrEnumEntrySymbol
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
+import org.jetbrains.kotlin.ir.visitors.IrTransformer
+import org.jetbrains.kotlin.ir.visitors.IrVisitor
 
 /**
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.enumEntry]
@@ -28,15 +28,15 @@ abstract class IrEnumEntry : IrDeclarationBase(), IrDeclarationWithName {
 
     abstract var correspondingClass: IrClass?
 
-    override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
+    override fun <R, D> accept(visitor: IrVisitor<R, D>, data: D): R =
         visitor.visitEnumEntry(this, data)
 
-    override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
+    override fun <D> acceptChildren(visitor: IrVisitor<Unit, D>, data: D) {
         initializerExpression?.accept(visitor, data)
         correspondingClass?.accept(visitor, data)
     }
 
-    override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {
+    override fun <D> transformChildren(transformer: IrTransformer<D>, data: D) {
         initializerExpression = initializerExpression?.transform(transformer, data)
         correspondingClass = correspondingClass?.transform(transformer, data) as IrClass?
     }

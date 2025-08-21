@@ -291,8 +291,12 @@ class GradleAndJdkArgumentsProvider : GradleArgumentsProvider() {
                 javaVersions = JavaVersion.VERSION_1_8..JavaVersion.VERSION_22,
             ),
             GradleJavaVersionsRange(
-                gradleVersions = GradleVersion.version(TestVersions.Gradle.G_8_10)..GradleVersion.version(TestVersions.Gradle.G_8_11),
+                gradleVersions = GradleVersion.version(TestVersions.Gradle.G_8_10)..GradleVersion.version(TestVersions.Gradle.G_8_13),
                 javaVersions = JavaVersion.VERSION_17..JavaVersion.VERSION_23,
+            ),
+            GradleJavaVersionsRange(
+                gradleVersions = GradleVersion.version(TestVersions.Gradle.G_8_14)..GradleVersion.version(TestVersions.Gradle.G_8_14),
+                javaVersions = JavaVersion.VERSION_17..JavaVersion.VERSION_24,
             ),
         )
     }

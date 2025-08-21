@@ -268,15 +268,16 @@ object Aggregates : TemplateGroupBase() {
                 selectorType.startsWith("java") -> selectorType.substringAfterLast('.')
                 else -> selectorType
             }
-            annotation("@OptIn(kotlin.experimental.ExperimentalTypeInference::class)")
-            annotation("@OverloadResolutionByLambdaReturnType")
+            if (selectorType !in listOf("Int", "UInt")) {
+                annotation("@OptIn(kotlin.experimental.ExperimentalTypeInference::class)")
+                annotation("@OverloadResolutionByLambdaReturnType")
+            }
             specialFor(ArraysOfUnsigned) {
                 annotation("""@Suppress("INAPPLICABLE_JVM_NAME")""")
             }
             annotation("""@kotlin.jvm.JvmName("sumOf$typeShortName")""") // should not be needed if inline return type is mangled
             if (selectorType.startsWith("U")) {
                 since("1.5")
-                wasExperimental("ExperimentalUnsignedTypes")
             }
 
             doc { "Returns the sum of all values produced by [selector] function applied to each ${f.element} in the ${f.collection}." }

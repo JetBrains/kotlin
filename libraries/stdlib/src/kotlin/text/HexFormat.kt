@@ -32,8 +32,8 @@ import kotlin.internal.InlineOnly
  * @see Int.toHexString
  * @see String.hexToInt
  */
-@ExperimentalStdlibApi
-@SinceKotlin("1.9")
+@WasExperimental(ExperimentalStdlibApi::class)
+@SinceKotlin("2.2")
 public class HexFormat internal constructor(
     /**
      * Specifies whether upper-case hexadecimal digits should be used for formatting, `false` by default.
@@ -830,8 +830,8 @@ public class HexFormat internal constructor(
  *
  * @sample samples.text.HexFormats.HexFormatClass.hexFormatBuilderFunction
  */
-@ExperimentalStdlibApi
-@SinceKotlin("1.9")
+@WasExperimental(ExperimentalStdlibApi::class)
+@SinceKotlin("2.2")
 @InlineOnly
 public inline fun HexFormat(builderAction: HexFormat.Builder.() -> Unit): HexFormat {
     return HexFormat.Builder().apply(builderAction).build()

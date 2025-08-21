@@ -7,16 +7,19 @@ KtDotQualifiedExpression(156,183): 'handler.stash(lambda, list)'
           receiverType = null
           returnType = test.pkg.MyInterface!
           symbol = actor: test.pkg.MyInterface!
+          contextParameters = []
           callableId = null),
         list -> (KaVariableSignature:
           name = actors
           receiverType = null
           returnType = ft<kotlin.collections.MutableList<test.pkg.MyInterface!>, kotlin.collections.List<test.pkg.MyInterface!>?>
           symbol = actors: ft<kotlin.collections.MutableList<test.pkg.MyInterface!>, kotlin.collections.List<test.pkg.MyInterface!>?>
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = handler
           isSafeNavigation = false
@@ -32,13 +35,16 @@ KtDotQualifiedExpression(156,183): 'handler.stash(lambda, list)'
               receiverType = null
               returnType = test.pkg.MyInterface!
               symbol = actor: test.pkg.MyInterface!
+              contextParameters = []
               callableId = null,
             KaVariableSignature:
               name = actors
               receiverType = null
               returnType = ft<kotlin.collections.MutableList<test.pkg.MyInterface!>, kotlin.collections.List<test.pkg.MyInterface!>?>
               symbol = actors: ft<kotlin.collections.MutableList<test.pkg.MyInterface!>, kotlin.collections.List<test.pkg.MyInterface!>?>
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = test/pkg/MyHandler.stash
       typeArgumentsMapping = {}

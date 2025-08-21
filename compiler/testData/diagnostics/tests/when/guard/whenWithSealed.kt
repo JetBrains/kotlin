@@ -15,3 +15,7 @@ fun WhenWithSealed(x: Any) {
         else -> 3
     }
 }
+
+/* GENERATED_FIR_TAGS: andExpression, classDeclaration, funWithExtensionReceiver, functionDeclaration, guardCondition,
+infix, integerLiteral, isExpression, localProperty, nullableType, objectDeclaration, primaryConstructor,
+propertyDeclaration, sealed, smartcast, whenExpression, whenWithSubject */

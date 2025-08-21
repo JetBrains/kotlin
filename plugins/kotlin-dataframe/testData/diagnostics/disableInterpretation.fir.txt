@@ -1,0 +1,7 @@
+FILE: disableInterpretation.kt
+    package org.jetbrains.kotlinx.dataframe
+
+    public final fun box(): R|kotlin/String| {
+        lval df: R|{org/jetbrains/kotlinx/dataframe/AnyFrame=} org/jetbrains/kotlinx/dataframe/DataFrame<*>| = @R|org/jetbrains/kotlinx/dataframe/annotations/DisableInterpretation|() Q|org/jetbrains/kotlinx/dataframe/DataFrame|.R|org/jetbrains/kotlinx/dataframe/io/read|(String(wowah_data_100K.csv))
+        ^box String(OK)
+    }

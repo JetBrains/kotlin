@@ -272,6 +272,7 @@ digraph safeCalls_kt {
     85 -> {86};
     86 -> {87};
     87 -> {88};
+    88 -> {79} [color=green style=dashed];
     89 -> {90};
     90 -> {92};
     91 -> {92} [label="Postponed"];

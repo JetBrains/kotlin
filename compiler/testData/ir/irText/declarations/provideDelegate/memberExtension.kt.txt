@@ -1,12 +1,12 @@
 object Host {
   val String.plusK: String /* by */
-    field = (<this>, "K").provideDelegate(host = <this>, p = Host::plusK)
+    field = <this>.provideDelegate(/* <this> = "K", */ host = <this>, p = Host::plusK)
     get(): String {
       return <this>.#plusK$delegate.getValue(receiver = <this>, p = Host::plusK)
     }
 
   val ok: String
-    field = (<this>, "O").<get-plusK>()
+    field = <this>.<get-plusK>(/* <this> = "O" */)
     get
 
   class StringDelegate {

@@ -6,6 +6,7 @@ KaLocalVariableSymbol:
   isActual: false
   isExpect: false
   isExtension: false
+  isLateInit: false
   isVal: true
   location: LOCAL
   modality: FINAL
@@ -26,6 +27,7 @@ KaAnonymousFunctionSymbol:
   annotations: []
   callableId: null
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   hasStableParameterNames: true
   isActual: false
@@ -84,6 +86,7 @@ KaLocalVariableSymbol:
   isActual: false
   isExpect: false
   isExtension: false
+  isLateInit: false
   isVal: true
   location: LOCAL
   modality: FINAL
@@ -117,6 +120,7 @@ KaLocalVariableSymbol:
   isActual: false
   isExpect: false
   isExtension: false
+  isLateInit: false
   isVal: true
   location: LOCAL
   modality: FINAL
@@ -137,6 +141,7 @@ KaAnonymousFunctionSymbol:
   annotations: []
   callableId: null
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   hasStableParameterNames: true
   isActual: false
@@ -195,6 +200,7 @@ KaLocalVariableSymbol:
   isActual: false
   isExpect: false
   isExtension: false
+  isLateInit: false
   isVal: true
   location: LOCAL
   modality: FINAL
@@ -228,6 +234,7 @@ KaLocalVariableSymbol:
   isActual: false
   isExpect: false
   isExtension: false
+  isLateInit: false
   isVal: true
   location: LOCAL
   modality: FINAL
@@ -248,6 +255,7 @@ KaAnonymousFunctionSymbol:
   annotations: []
   callableId: null
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   hasStableParameterNames: true
   isActual: false
@@ -302,6 +310,7 @@ KaNamedFunctionSymbol:
   annotations: []
   callableId: /foo
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -339,6 +348,7 @@ KaNamedFunctionSymbol:
   annotations: []
   callableId: /bar
   compilerVisibility: Private
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true

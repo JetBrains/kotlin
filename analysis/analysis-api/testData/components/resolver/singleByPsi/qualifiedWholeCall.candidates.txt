@@ -7,10 +7,12 @@ KtDotQualifiedExpression(48,54): 'A.y(1)'
           receiverType = null
           returnType = kotlin.Int
           symbol = a: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = A
           isSafeNavigation = false
@@ -26,8 +28,10 @@ KtDotQualifiedExpression(48,54): 'A.y(1)'
               receiverType = null
               returnType = kotlin.Int
               symbol = a: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = /A.y
       typeArgumentsMapping = {}
     isInBestCandidates = true

@@ -26,19 +26,19 @@ KaKotlinPropertySymbol:
     deprecationStatus: null
   callableId: /delegatedProp
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
     annotations: []
     callableId: null
     compilerVisibility: Public
     contextReceivers: []
-    hasBody: true
     hasStableParameterNames: true
     isActual: false
-    isDefault: false
     isExpect: false
     isExtension: false
     isInline: false
+    isNotDefault: true
     isOverride: false
     location: PROPERTY
     modality: FINAL
@@ -83,13 +83,12 @@ KaKotlinPropertySymbol:
     callableId: null
     compilerVisibility: Public
     contextReceivers: []
-    hasBody: true
     hasStableParameterNames: true
     isActual: false
-    isDefault: false
     isExpect: false
     isExtension: false
     isInline: false
+    isNotDefault: true
     isOverride: false
     location: PROPERTY
     modality: FINAL
@@ -111,7 +110,7 @@ KaKotlinPropertySymbol:
       isVararg: false
       location: LOCAL
       modality: FINAL
-      name: delegatedProp
+      name: <set-?>
       origin: SOURCE
       receiverParameter: null
       returnType: KaUsualClassType:
@@ -146,7 +145,7 @@ KaKotlinPropertySymbol:
         isVararg: false
         location: LOCAL
         modality: FINAL
-        name: delegatedProp
+        name: <set-?>
         origin: SOURCE
         receiverParameter: null
         returnType: KaUsualClassType:
@@ -174,3 +173,4 @@ KaKotlinPropertySymbol:
   javaGetterName: getDelegatedProp
   javaSetterName: setDelegatedProp
   setterDeprecationStatus: null
+  isInline: false

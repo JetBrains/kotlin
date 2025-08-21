@@ -11,3 +11,5 @@ expect class SomeClass<T> {
 actual class <!ACTUAL_WITHOUT_EXPECT!>SomeClass<!> {
     actual fun foo() {}
 }
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, functionDeclaration, nullableType, typeParameter */

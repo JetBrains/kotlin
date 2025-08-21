@@ -35,3 +35,7 @@ fun d() {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, comparisonExpression, disjunctionExpression, elvisExpression, equalityExpression,
+functionDeclaration, functionalType, ifExpression, integerLiteral, lambdaLiteral, localFunction, localProperty,
+nullableType, propertyDeclaration, smartcast, stringLiteral, whileLoop */

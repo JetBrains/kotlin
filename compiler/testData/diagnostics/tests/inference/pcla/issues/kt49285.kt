@@ -19,3 +19,6 @@ val result1 = myBuilder1 {
         add(<!TYPE_MISMATCH!>""<!>)
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, classReference, functionDeclaration, functionalType, lambdaLiteral,
+nullableType, propertyDeclaration, stringLiteral, typeParameter, typeWithExtension */

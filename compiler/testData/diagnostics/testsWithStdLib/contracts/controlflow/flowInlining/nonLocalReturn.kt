@@ -18,3 +18,6 @@ fun nonLocalReturnWithElvis(x: Int?): Int? {
     x?.myLet { return 42 }
     return x?.inc()
 }
+
+/* GENERATED_FIR_TAGS: contractCallsEffect, contracts, funWithExtensionReceiver, functionDeclaration, functionalType,
+inline, integerLiteral, lambdaLiteral, nullableType, safeCall, thisExpression, typeParameter */

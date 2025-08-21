@@ -5,12 +5,15 @@
 
 package org.jetbrains.kotlin.cli.metadata
 
+import org.jetbrains.kotlin.K1_DEPRECATION_WARNING
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.metadata.builtins.BuiltInsBinaryVersion
+import org.jetbrains.kotlin.util.PhaseType
+import org.jetbrains.kotlin.util.tryMeasurePhaseTime
 import java.io.File
 
 abstract class AbstractMetadataSerializer<T>(
@@ -18,10 +21,11 @@ abstract class AbstractMetadataSerializer<T>(
     val environment: KotlinCoreEnvironment,
     definedMetadataVersion: BuiltInsBinaryVersion? = null
 ) {
-    protected val metadataVersion =
+    protected val metadataVersion: BuiltInsBinaryVersion =
         definedMetadataVersion ?: configuration.get(CommonConfigurationKeys.METADATA_VERSION) as? BuiltInsBinaryVersion
         ?: BuiltInsBinaryVersion.INSTANCE
 
+    @Deprecated(K1_DEPRECATION_WARNING, level = DeprecationLevel.WARNING)
     fun analyzeAndSerialize(): OutputInfo? {
         val destDir = environment.destDir
         if (destDir == null) {
@@ -34,9 +38,8 @@ abstract class AbstractMetadataSerializer<T>(
         val analysisResult = analyze() ?: return null
 
         val performanceManager = environment.configuration.getNotNull(CLIConfigurationKeys.PERF_MANAGER)
-        performanceManager.notifyGenerationStarted()
-        return serialize(analysisResult, destDir).also {
-            performanceManager.notifyGenerationFinished()
+        return performanceManager.tryMeasurePhaseTime(PhaseType.Backend) {
+            serialize(analysisResult, destDir)
         }
     }
 

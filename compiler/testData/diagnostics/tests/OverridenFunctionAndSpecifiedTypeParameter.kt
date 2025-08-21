@@ -13,3 +13,6 @@ fun foo() {
     var a = Bbb<Double>()
     a.zzz(10.0)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, interfaceDeclaration, localProperty, nullableType,
+override, primaryConstructor, propertyDeclaration, typeParameter */

@@ -8,3 +8,5 @@ fun testLabels(source: Collection<String>) {
         source.mapTo(this@buildList) { it.length }
     }
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, lambdaLiteral, localProperty, propertyDeclaration, thisExpression */

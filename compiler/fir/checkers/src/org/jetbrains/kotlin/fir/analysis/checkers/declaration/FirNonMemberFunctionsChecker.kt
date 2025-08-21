@@ -26,7 +26,8 @@ val FirSession.platformDiagnosticSuppressor: FirPlatformDiagnosticSuppressor? by
 
 // See old FE's [DeclarationsChecker]
 object FirNonMemberFunctionsChecker : FirFunctionChecker(MppCheckerKind.Common) {
-    override fun check(declaration: FirFunction, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirFunction) {
         if (declaration.containingClassLookupTag() != null || declaration is FirPropertyAccessor) {
             return
         }
@@ -37,9 +38,9 @@ object FirNonMemberFunctionsChecker : FirFunctionChecker(MppCheckerKind.Common) 
         if (declaration.isExternal) return
         if (!declaration.hasBody &&
             !declaration.isExpect &&
-            context.session.platformDiagnosticSuppressor?.shouldReportNoBody(declaration, context) != false
+            context.session.platformDiagnosticSuppressor?.shouldReportNoBody(declaration) != false
         ) {
-            reporter.reportOn(source, FirErrors.NON_MEMBER_FUNCTION_NO_BODY, declaration.symbol, context)
+            reporter.reportOn(source, FirErrors.NON_MEMBER_FUNCTION_NO_BODY, declaration.symbol)
         }
     }
 }

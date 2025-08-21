@@ -92,3 +92,7 @@ fun ktype(t: KType, t2: KType) {
     KTypeProjection.STAR
     KTypeProjection(KVariance.IN, t)
 }
+
+/* GENERATED_FIR_TAGS: callableReference, capturedType, classDeclaration, classReference, equalityExpression,
+functionDeclaration, integerLiteral, nullableType, primaryConstructor, propertyDeclaration, starProjection,
+stringLiteral, typeAliasDeclaration, typeAliasDeclarationWithTypeParameter, typeConstraint, typeParameter */

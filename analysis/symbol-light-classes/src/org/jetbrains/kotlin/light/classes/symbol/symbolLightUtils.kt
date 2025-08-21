@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassForInte
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassForInterfaceDefaultImpls
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.name.SpecialNames
-import org.jetbrains.kotlin.psi.KtTypeParameterListOwner
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import java.util.*
 
@@ -124,33 +123,45 @@ internal fun KtLightElement<*, *>.isOriginEquivalentTo(that: PsiElement?): Boole
     return kotlinOrigin?.isEquivalentTo(that) == true
 }
 
-internal fun KaSession.getTypeNullability(type: KaType): KaTypeNullability {
-    if (type is KaClassErrorType) return KaTypeNullability.NON_NULLABLE
+internal enum class NullabilityAnnotation {
+    NULLABLE, NON_NULLABLE, NOT_REQUIRED;
 
-    val ktType = type.fullyExpandedType
-    if (ktType.nullability != KaTypeNullability.NON_NULLABLE) return ktType.nullability
-
-    if (ktType.isUnitType) return KaTypeNullability.NON_NULLABLE
-
-    if (ktType.isPrimitiveBacked) return KaTypeNullability.UNKNOWN
-
-    if (ktType is KaTypeParameterType) {
-        if (ktType.isMarkedNullable) return KaTypeNullability.NULLABLE
-        val subtypeOfNullableSuperType = ktType.symbol.upperBounds.all { upperBound -> upperBound.canBeNull }
-        return if (!subtypeOfNullableSuperType) KaTypeNullability.NON_NULLABLE else KaTypeNullability.UNKNOWN
+    companion object {
+        fun create(isNullable: Boolean): NullabilityAnnotation = if (isNullable) NULLABLE else NON_NULLABLE
     }
-
-    if (ktType !is KaClassType) return KaTypeNullability.NON_NULLABLE
-    if (ktType.typeArguments.any { it.type is KaClassErrorType }) return KaTypeNullability.NON_NULLABLE
-    if (ktType.classId.shortClassName.asString() == SpecialNames.ANONYMOUS_STRING) return KaTypeNullability.NON_NULLABLE
-
-    return ktType.nullability
 }
 
-internal val KaTypeNullability.asAnnotationQualifier: String?
+internal fun KaSession.getRequiredNullabilityAnnotation(type: KaType): NullabilityAnnotation {
+    if (type is KaClassErrorType) return NullabilityAnnotation.NON_NULLABLE
+    val ktType = type.fullyExpandedType
+
+    when {
+        ktType.isMarkedNullable -> return NullabilityAnnotation.NULLABLE
+        ktType.hasFlexibleNullability -> return NullabilityAnnotation.NOT_REQUIRED
+        else -> {
+            if (ktType.isUnitType) return NullabilityAnnotation.NON_NULLABLE
+
+            if (ktType.isPrimitiveBacked) return NullabilityAnnotation.NOT_REQUIRED
+
+            if (ktType is KaTypeParameterType) {
+                if (ktType.isMarkedNullable) return NullabilityAnnotation.NULLABLE
+                val subtypeOfNullableSuperType = ktType.symbol.upperBounds.all { upperBound -> upperBound.isNullable }
+                return if (!subtypeOfNullableSuperType) NullabilityAnnotation.NON_NULLABLE else NullabilityAnnotation.NOT_REQUIRED
+            }
+
+            if (ktType !is KaClassType) return NullabilityAnnotation.NON_NULLABLE
+            if (ktType.typeArguments.any { it.type is KaClassErrorType }) return NullabilityAnnotation.NON_NULLABLE
+            if (ktType.classId.shortClassName.asString() == SpecialNames.ANONYMOUS_STRING) return NullabilityAnnotation.NON_NULLABLE
+
+            return NullabilityAnnotation.NON_NULLABLE
+        }
+    }
+}
+
+internal val NullabilityAnnotation.asAnnotationQualifier: String?
     get() = when (this) {
-        KaTypeNullability.NON_NULLABLE -> JvmAnnotationNames.JETBRAINS_NOT_NULL_ANNOTATION
-        KaTypeNullability.NULLABLE -> JvmAnnotationNames.JETBRAINS_NULLABLE_ANNOTATION
+        NullabilityAnnotation.NON_NULLABLE -> JvmAnnotationNames.JETBRAINS_NOT_NULL_ANNOTATION
+        NullabilityAnnotation.NULLABLE -> JvmAnnotationNames.JETBRAINS_NULLABLE_ANNOTATION
         else -> null
     }?.asString()
 
@@ -279,14 +290,6 @@ internal fun <T : KaSymbol> KaSession.restoreSymbolOrThrowIfDisposed(pointer: Ka
         ?: errorWithAttachment("${pointer::class} pointer already disposed") {
             withEntry("pointer", pointer) { it.toString() }
         }
-
-internal fun hasTypeParameters(
-    ktModule: KaModule,
-    declaration: KtTypeParameterListOwner?,
-    declarationPointer: KaSymbolPointer<KaDeclarationSymbol>,
-): Boolean = declaration?.typeParameters?.isNotEmpty() ?: declarationPointer.withSymbol(ktModule) {
-    it.typeParameters.isNotEmpty()
-}
 
 internal val SymbolLightClassBase.interfaceIfDefaultImpls: SymbolLightClassForInterface?
     get() = (this as? SymbolLightClassForInterfaceDefaultImpls)?.containingClass

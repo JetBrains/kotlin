@@ -22,11 +22,9 @@
 #include "ObjectTestSupport.hpp"
 #include "SafePoint.hpp"
 #include "SingleThreadExecutor.hpp"
-#include "StableRef.hpp"
 #include "TestSupport.hpp"
 #include "ThreadData.hpp"
 #include "ThreadState.hpp"
-#include "WeakRef.hpp"
 
 using namespace kotlin;
 
@@ -71,7 +69,7 @@ class GlobalPermanentObjectHolder : private Pinned {
 public:
     explicit GlobalPermanentObjectHolder(mm::ThreadData& threadData) {
         mm::GlobalsRegistry::Instance().RegisterStorageForGlobal(&threadData, &global_);
-        global_->typeInfoOrMeta_ = setPointerBits(global_->typeInfoOrMeta_, OBJECT_TAG_PERMANENT_CONTAINER);
+        global_->typeInfoOrMeta_ = setPointerBits(global_->typeInfoOrMeta_, OBJECT_TAG_PERMANENT);
         RuntimeAssert(global_->permanent(), "Must be permanent");
     }
 
@@ -572,7 +570,7 @@ TYPED_TEST_P(TracingGCTest, PermanentObjects) {
         GlobalObjectHolder global2{threadData};
         test_support::Object<Payload> permanentObject{typeHolder.typeInfo()};
         permanentObject.header()->typeInfoOrMeta_ =
-                setPointerBits(permanentObject.header()->typeInfoOrMeta_, OBJECT_TAG_PERMANENT_CONTAINER);
+                setPointerBits(permanentObject.header()->typeInfoOrMeta_, OBJECT_TAG_PERMANENT);
         RuntimeAssert(permanentObject.header()->permanent(), "Must be permanent");
 
         global1->field1 = permanentObject.header();

@@ -4,3 +4,6 @@ fun foo(): Int {
     s = null
     return s<!UNSAFE_CALL!>.<!>length
 }
+
+/* GENERATED_FIR_TAGS: assignment, functionDeclaration, localProperty, nullableType, propertyDeclaration, smartcast,
+stringLiteral */

@@ -28,21 +28,20 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 
-internal fun IrBuilderWithScope.toNativeConstantReflectionBuilder(symbols: KonanSymbols, onRecursiveUpperBound: IrBuilderWithScope.(String) -> Unit = {}) = NativeConstantReflectionIrBuilder(
-        context, scope, startOffset, endOffset, symbols, onRecursiveUpperBound
+internal fun IrBuilder.toNativeConstantReflectionBuilder(symbols: KonanSymbols, onRecursiveUpperBound: IrBuilder.(String) -> Unit = {}) = NativeConstantReflectionIrBuilder(
+        context, startOffset, endOffset, symbols, onRecursiveUpperBound
 )
 
-internal fun IrBuilderWithScope.toNativeRuntimeReflectionBuilder(symbols: KonanSymbols, onRecursiveUpperBound: IrBuilderWithScope.(String) -> Unit = {}) = NativeRuntimeReflectionIrBuilder(
-        context, scope, startOffset, endOffset, symbols, onRecursiveUpperBound
+internal fun IrBuilder.toNativeRuntimeReflectionBuilder(symbols: KonanSymbols, onRecursiveUpperBound: IrBuilder.(String) -> Unit = {}) = NativeRuntimeReflectionIrBuilder(
+        context, startOffset, endOffset, symbols, onRecursiveUpperBound
 )
 
 internal class NativeRuntimeReflectionIrBuilder(
         context: IrGeneratorContext,
-        scope: Scope,
-        startOffset: Int, endOffset: Int,
-        symbols: KonanSymbols,
-        onRecursiveUpperBound: IrBuilderWithScope.(String) -> Unit,
-) : NativeReflectionIrBuilderBase<IrExpression>(context, scope, startOffset, endOffset, symbols, onRecursiveUpperBound, isReifiedTypeOfSupported = true) {
+        startOffset: Int,
+        endOffset: Int, symbols: KonanSymbols,
+        onRecursiveUpperBound: IrBuilder.(String) -> Unit,
+) : NativeReflectionIrBuilderBase<IrExpression>(context, startOffset, endOffset, symbols, onRecursiveUpperBound, isReifiedTypeOfSupported = true) {
     override fun irKClass(symbol: IrClassSymbol): IrExpression {
         val kClassType = symbols.kClassImpl.typeWith(symbol.defaultType)
         return IrClassReferenceImpl(startOffset, endOffset, kClassType, symbol, kClassType)
@@ -60,7 +59,7 @@ internal class NativeRuntimeReflectionIrBuilder(
             typeArguments: List<IrType>
     ): IrExpression {
         val constructor = clazz.primaryConstructor!!.symbol.owner
-        val arguments = constructor.valueParameters.also {
+        val arguments = constructor.parameters.also {
             require(it.size == elements.size) {
                 "Wrong number of values provided for ${clazz.name} construction: ${elements.size} instead of ${it.size}"
             }
@@ -68,8 +67,8 @@ internal class NativeRuntimeReflectionIrBuilder(
             elements[it.name.asString()] ?: error("No value for field named ${it.name} provided")
         }
         return irCallConstructor(constructor.symbol, typeArguments).apply {
-            for ((index, i) in arguments.withIndex()) {
-                putValueArgument(index, i)
+            for ((index, arg) in arguments.withIndex()) {
+                this.arguments[index] = arg
             }
         }
     }
@@ -96,11 +95,10 @@ private fun mapVariance(variance: Variance?) = when (variance) {
 
 internal class NativeConstantReflectionIrBuilder(
         context: IrGeneratorContext,
-        scope: Scope,
-        startOffset: Int, endOffset: Int,
-        symbols: KonanSymbols,
-        onRecursiveUpperBound: IrBuilderWithScope.(String) -> Unit,
-) : NativeReflectionIrBuilderBase<IrConstantValue>(context, scope, startOffset, endOffset, symbols, onRecursiveUpperBound, isReifiedTypeOfSupported = false) {
+        startOffset: Int,
+        endOffset: Int, symbols: KonanSymbols,
+        onRecursiveUpperBound: IrBuilder.(String) -> Unit,
+) : NativeReflectionIrBuilderBase<IrConstantValue>(context, startOffset, endOffset, symbols, onRecursiveUpperBound, isReifiedTypeOfSupported = false) {
 
     override fun irKTypeOfReified(type: IrType): IrConstantValue = shouldNotBeCalled()
 
@@ -123,7 +121,7 @@ internal class NativeConstantReflectionIrBuilder(
                 if (symbol.owner.isInterface)
                     irKClassUnsupported(symbols, "KClass for Objective-C protocols is not supported yet")
                 else
-                    irConstantObject(symbols.kObjCClassImplIntrinsicConstructor, emptyList(), listOf(symbol.starProjectedType))
+                    irConstantObject(symbols.kObjectiveCKClassImplIntrinsicConstructor, emptyList(), listOf(symbol.starProjectedType))
 
             symbol.owner.isObjCClass() ->
                 irKClassUnsupported(symbols, "KClass for Kotlin subclasses of Objective-C classes is not supported yet")
@@ -146,15 +144,14 @@ internal class NativeConstantReflectionIrBuilder(
 }
 
 
-internal abstract class NativeReflectionIrBuilderBase<E: IrExpression>(
+internal abstract class NativeReflectionIrBuilderBase<E : IrExpression>(
         context: IrGeneratorContext,
-        scope: Scope,
-        startOffset: Int, endOffset: Int,
-        val symbols: KonanSymbols,
-        val onRecursiveUpperBound: IrBuilderWithScope.(String) -> Unit,
+        startOffset: Int,
+        endOffset: Int, val symbols: KonanSymbols,
+        val onRecursiveUpperBound: IrBuilder.(String) -> Unit,
         val isReifiedTypeOfSupported: Boolean,
-) : IrBuilderWithScope(context, scope, startOffset, endOffset) {
-    fun irKType(type: IrType) : E =
+) : IrBuilder(context, startOffset, endOffset) {
+    fun irKType(type: IrType): E =
             irKType(type, leaveReifiedForLater = isReifiedTypeOfSupported, mutableSetOf())
 
     private class RecursiveBoundsException(message: String) : Throwable(message)

@@ -13,11 +13,12 @@ import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.scopes.KaScope
-import org.jetbrains.kotlin.analysis.api.symbols.*
+import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaFileSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaKotlinPropertySymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaNamedFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaAnnotatedSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaPsiSymbolPointerCreator
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
-import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.elements.FakeFileForLightClass
 import org.jetbrains.kotlin.fileClasses.isJvmMultifileClassFile
 import org.jetbrains.kotlin.fileClasses.javaFileFacadeFqName
@@ -60,7 +61,7 @@ internal class SymbolLightClassForFacade(
     private val firstFileInFacade: KtFile get() = files.first()
 
     @OptIn(KaImplementationDetail::class)
-    private val _modifierList: PsiModifierList by lazyPub {
+    override fun getModifierList(): PsiModifierList = cachedValue {
         SymbolLightClassModifierList(
             containingDeclaration = this,
             modifiersBox = InitializedModifiersBox(PsiModifier.PUBLIC, PsiModifier.FINAL),
@@ -70,14 +71,14 @@ internal class SymbolLightClassForFacade(
                 GranularAnnotationsBox(
                     annotationsProvider = SymbolAnnotationsProvider(
                         ktModule = this.ktModule,
-                        annotatedSymbolPointer = KaPsiSymbolPointerCreator.symbolPointerOfType<KaFileSymbol>(firstFileInFacade),
+                        annotatedSymbolPointer = analyzeForLightClasses(ktModule) {
+                            firstFileInFacade.symbol.createPointer()
+                        },
                     )
                 )
             },
         )
     }
-
-    override fun getModifierList(): PsiModifierList = _modifierList
 
     override fun getScope(): PsiElement = parent
 
@@ -107,10 +108,10 @@ internal class SymbolLightClassForFacade(
 
     override val multiFileClass: Boolean get() = files.size > 1 || firstFileInFacade.isJvmMultifileClassFile
 
-    private fun KaSession.loadFieldsFromFile(
+    private fun loadFieldsFromFile(
         fileScope: KaScope,
         nameGenerator: SymbolLightField.FieldNameGenerator,
-        result: MutableList<PsiField>
+        result: MutableList<PsiField>,
     ) {
         for (propertySymbol in fileScope.callables) {
             if (propertySymbol !is KaKotlinPropertySymbol) continue
@@ -127,9 +128,6 @@ internal class SymbolLightClassForFacade(
             )
         }
     }
-
-    private fun KaPropertyAccessorSymbol?.isNullOrPublic(): Boolean =
-        this?.toPsiVisibilityForMember()?.let { it == PsiModifier.PUBLIC } != false
 
     override fun getOwnFields(): List<PsiField> = cachedValue {
         val result = mutableListOf<PsiField>()

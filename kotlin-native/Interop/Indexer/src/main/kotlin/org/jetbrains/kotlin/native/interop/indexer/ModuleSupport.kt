@@ -84,7 +84,7 @@ private fun getModulesASTFiles(index: CXIndex, compilation: ModularCompilation, 
 
         indexTranslationUnit(index, translationUnit, 0, object : Indexer {
             override fun importedASTFile(info: CXIdxImportedASTFileInfo) {
-                result += info.file!!.canonicalPath
+                result += info.getFile()!!.canonicalPath
             }
         })
     } finally {
@@ -99,9 +99,9 @@ private fun getModulesHeaders(
         modules: Set<String>,
         topLevelHeaders: LinkedHashSet<IncludeInfo>,
         areModulesEnabled: Boolean
-): Set<CXFile> {
-    val nonModularIncludes = mutableMapOf<CXFile, MutableSet<CXFile>>()
-    val result = mutableSetOf<CXFile>()
+): Set<ClangFile> {
+    val nonModularIncludes = mutableMapOf<ClangFile, MutableSet<ClangFile>>()
+    val result = mutableSetOf<ClangFile>()
     val errors = mutableListOf<Throwable>()
 
     indexTranslationUnit(index, translationUnit, 0, object : Indexer {
@@ -120,10 +120,10 @@ private fun getModulesHeaders(
         }
 
         override fun ppIncludedFile(info: CXIdxIncludedFileInfo) {
-            val file = info.file!!
+            val file = info.getFile()!!
             val includer = clang_indexLoc_getCXSourceLocation(info.hashLoc.readValue()).getContainingFile()
 
-            val module = clang_getModuleForFile(translationUnit, file)
+            val module = clang_getModuleForFile(translationUnit, file.cxFile)
 
             if (includer == null) {
                 // i.e. the header is included by the module itself.

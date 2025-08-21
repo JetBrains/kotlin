@@ -37,8 +37,6 @@ data class MyRec5(val name: String) {
     val w: String get() = name + "1"
 }
 
-
-
-
-
-
+/* GENERATED_FIR_TAGS: additiveExpression, anonymousObjectExpression, assignment, classDeclaration, data, getter,
+inheritanceDelegation, init, integerLiteral, interfaceDeclaration, lambdaLiteral, primaryConstructor,
+propertyDeclaration, propertyDelegate, stringLiteral */

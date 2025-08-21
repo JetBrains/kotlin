@@ -21,3 +21,6 @@ class B4 : A {
     constructor(x: Int) : super()
     constructor(x: Int, y: Int) : super("")
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, primaryConstructor, secondaryConstructor,
+stringLiteral */

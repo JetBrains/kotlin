@@ -16,3 +16,5 @@ fun bar() {
     checkSubtype<Array<Int>>(a3)
 }
 
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType, infix,
+integerLiteral, lambdaLiteral, localProperty, nullableType, propertyDeclaration, typeParameter, typeWithExtension */

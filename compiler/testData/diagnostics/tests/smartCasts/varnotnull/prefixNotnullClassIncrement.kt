@@ -11,3 +11,6 @@ public fun box() {
     // j is null so call is unsafe
     j.hashCode()
 }
+
+/* GENERATED_FIR_TAGS: assignment, checkNotNullCall, classDeclaration, funWithExtensionReceiver, functionDeclaration,
+incrementDecrementExpression, localProperty, nullableType, operator, propertyDeclaration, smartcast */

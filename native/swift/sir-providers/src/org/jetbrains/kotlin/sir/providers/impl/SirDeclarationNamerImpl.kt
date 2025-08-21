@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.sir.providers.impl
 
+import org.jetbrains.kotlin.analysis.api.export.utilities.getJvmNameOrNull
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.types.symbol
 import org.jetbrains.kotlin.sir.providers.SirDeclarationNamer
@@ -18,6 +19,7 @@ public class SirDeclarationNamerImpl : SirDeclarationNamer {
     private fun KaDeclarationSymbol.getName(): String? {
         return when (this) {
             is KaNamedClassSymbol -> this.classId?.shortClassName?.asString()
+            is KaPropertySymbol -> this.name.asString()
             is KaCallableSymbol -> this.mangleCallableName()
             else -> error(this)
         }
@@ -25,6 +27,7 @@ public class SirDeclarationNamerImpl : SirDeclarationNamer {
 
     private fun KaCallableSymbol.mangleCallableName(): String? {
         this.mangleFactoryNameClashingWithClassLikeSymbol()?.let { return it }
+        this.getJvmNameOrNull()?.let { return it }
 
         return callableId?.callableName?.asString()
     }

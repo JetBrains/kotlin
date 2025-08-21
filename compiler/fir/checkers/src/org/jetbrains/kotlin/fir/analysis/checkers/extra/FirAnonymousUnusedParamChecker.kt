@@ -20,12 +20,16 @@ import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.name.SpecialNames
 
 object FirAnonymousUnusedParamChecker : FirAnonymousFunctionChecker(MppCheckerKind.Common) {
-    override fun check(declaration: FirAnonymousFunction, context: CheckerContext, reporter: DiagnosticReporter) {
-        context.lambdaBodyContext?.checkUnusedParams(declaration, context, reporter)
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirAnonymousFunction) {
+        context.lambdaBodyContext?.checkUnusedParams(declaration)
     }
 
     class LambdaBodyContext(private val outermostLambda: FirAnonymousFunction) {
-        internal fun checkUnusedParams(declaration: FirAnonymousFunction, context: CheckerContext, reporter: DiagnosticReporter) {
+        context(context: CheckerContext, reporter: DiagnosticReporter)
+        internal fun checkUnusedParams(
+            declaration: FirAnonymousFunction,
+        ) {
             // We need to check only outermost Lambda which will detect unused params of nested Lambdas too.
             if (declaration != outermostLambda)
                 return
@@ -35,7 +39,7 @@ object FirAnonymousUnusedParamChecker : FirAnonymousFunctionChecker(MppCheckerKi
             declaration.body?.accept(unusedParamsVisitor, unusedParams)
 
             unusedParams.forEach {
-                reporter.reportOn(it.source, UNUSED_ANONYMOUS_PARAMETER, it, context)
+                reporter.reportOn(it.source, UNUSED_ANONYMOUS_PARAMETER, it)
             }
         }
     }

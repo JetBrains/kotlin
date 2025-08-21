@@ -222,3 +222,7 @@ fun test() {
         }
     )
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, classReference, funWithExtensionReceiver, functionDeclaration, functionalType,
+integerLiteral, interfaceDeclaration, lambdaLiteral, localProperty, nullableType, primaryConstructor,
+propertyDeclaration, stringLiteral, thisExpression, typeParameter, typeWithExtension */

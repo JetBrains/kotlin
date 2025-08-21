@@ -41,5 +41,5 @@ sealed class FirLoop : FirPureAbstractElement(), FirStatement, FirTargetElement 
 
     abstract fun <D> transformCondition(transformer: FirTransformer<D>, data: D): FirLoop
 
-    abstract fun <D> transformOtherChildren(transformer: FirTransformer<D>, data: D): FirLoop
+    abstract fun <D> transformLabel(transformer: FirTransformer<D>, data: D): FirLoop
 }

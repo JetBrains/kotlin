@@ -7,10 +7,12 @@ KtCallExpression(98,109): 'function(1)'
           receiverType = null
           returnType = kotlin.Char
           symbol = a: kotlin.Char
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -23,13 +25,15 @@ KtCallExpression(98,109): 'function(1)'
               receiverType = null
               returnType = kotlin.Char
               symbol = a: kotlin.Char
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = /function
       typeArgumentsMapping = {}
     diagnostic = ERROR<CONSTANT_EXPECTED_TYPE_MISMATCH: The integer literal does not conform to the expected type Char>
     isInBestCandidates = true
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -38,10 +42,12 @@ KtCallExpression(98,109): 'function(1)'
           receiverType = null
           returnType = kotlin.Boolean
           symbol = b: kotlin.Boolean
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -54,13 +60,15 @@ KtCallExpression(98,109): 'function(1)'
               receiverType = null
               returnType = kotlin.Boolean
               symbol = b: kotlin.Boolean
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = /function
       typeArgumentsMapping = {}
     diagnostic = ERROR<CONSTANT_EXPECTED_TYPE_MISMATCH: The integer literal does not conform to the expected type Boolean>
     isInBestCandidates = true
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -69,10 +77,12 @@ KtCallExpression(98,109): 'function(1)'
           receiverType = null
           returnType = kotlin.String
           symbol = c: kotlin.String
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -85,8 +95,10 @@ KtCallExpression(98,109): 'function(1)'
               receiverType = null
               returnType = kotlin.String
               symbol = c: kotlin.String
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = /function
       typeArgumentsMapping = {}
     diagnostic = ERROR<CONSTANT_EXPECTED_TYPE_MISMATCH: The integer literal does not conform to the expected type String>

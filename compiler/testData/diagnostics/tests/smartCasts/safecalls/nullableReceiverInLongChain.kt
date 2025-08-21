@@ -41,3 +41,7 @@ fun testNullable(foo: Foo?) {
         s?.length?.hashCode()
     }
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, equalityExpression, funWithExtensionReceiver,
+functionDeclaration, functionalType, ifExpression, lambdaLiteral, localProperty, nullableType, primaryConstructor,
+propertyDeclaration, safeCall, smartcast, stringLiteral, thisExpression */

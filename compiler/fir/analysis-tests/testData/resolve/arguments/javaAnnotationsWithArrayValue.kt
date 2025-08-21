@@ -15,3 +15,5 @@ fun test_2() {}
 
 @Ann(*arrayOf("a", "b"))
 fun test_3() {}
+
+/* GENERATED_FIR_TAGS: collectionLiteral, functionDeclaration, javaType, stringLiteral */

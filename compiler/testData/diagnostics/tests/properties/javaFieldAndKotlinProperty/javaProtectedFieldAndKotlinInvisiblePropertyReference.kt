@@ -31,3 +31,6 @@ fun box(): String {
     d.bar()
     return d.foo()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, flexibleType, functionDeclaration, javaCallableReference, javaType,
+localProperty, propertyDeclaration, stringLiteral, thisExpression */

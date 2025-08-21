@@ -10,3 +10,5 @@ class Derived(x: String): Base(x) {
     val y = <!DEBUG_INFO_LEAKING_THIS!>foo<!>()
     val z = x
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, primaryConstructor, propertyDeclaration */

@@ -7,15 +7,16 @@ package org.jetbrains.kotlin.ir.generator.print
 
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.generators.tree.*
+import org.jetbrains.kotlin.generators.tree.imports.ArbitraryImportable
 import org.jetbrains.kotlin.generators.tree.printer.ImportCollectingPrinter
 import org.jetbrains.kotlin.generators.util.printBlock
-import org.jetbrains.kotlin.ir.generator.legacyVisitorVoidType
+import org.jetbrains.kotlin.ir.generator.IrTree
 import org.jetbrains.kotlin.ir.generator.irSimpleTypeType
 import org.jetbrains.kotlin.ir.generator.irTypeProjectionType
 import org.jetbrains.kotlin.ir.generator.model.Element
 import org.jetbrains.kotlin.ir.generator.typeVisitorType
 
-internal class TypeVisitorVoidPrinter(
+internal open class TypeVisitorVoidPrinter(
     printer: ImportCollectingPrinter,
     visitorType: ClassRef<*>,
     rootElement: Element,
@@ -24,10 +25,7 @@ internal class TypeVisitorVoidPrinter(
         get() = StandardTypes.nothing.copy(nullable = true)
 
     override val visitorSuperTypes: List<ClassRef<PositionTypeParameterRef>>
-        get() = listOf(
-            typeVisitorType.withArgs(StandardTypes.unit, visitorDataType),
-            legacyVisitorVoidType
-        )
+        get() = listOf(typeVisitorType.withArgs(StandardTypes.unit, visitorDataType))
 
     override val visitorTypeParameters: List<TypeVariable>
         get() = emptyList()
@@ -50,6 +48,7 @@ internal class TypeVisitorVoidPrinter(
             printlnMultiLine(
                 """
                 visitType(container, type)
+                type.annotations.forEach { visitAnnotationUsage(it) }
                 if (type is ${irSimpleTypeType.render()}) {
                     type.arguments.forEach {
                         if (it is ${irTypeProjectionType.render()}) {
@@ -65,28 +64,50 @@ internal class TypeVisitorVoidPrinter(
         printBlock {
             println("visitTypeRecursively(container, type)")
         }
+        println()
+        printVisitAnnotationUsage(hasDataParameter = false, modality = Modality.OPEN, override = false)
+        println()
+        printVisitAnnotationUsageDeclaration(hasDataParameter = true, modality = Modality.FINAL, override = true)
+        printBlock {
+            println("visitAnnotationUsage(annotationUsage)")
+        }
     }
 
     override fun printMethodsForElement(element: Element) {
+        if (element.parentInVisitor == null && !element.isRootElement) return
         val irTypeFields = element.getFieldsWithIrTypeType()
-        if (irTypeFields.isEmpty()) return
-        if (element.parentInVisitor == null) return
         printer.run {
-            println()
-            printVisitMethodDeclaration(element, hasDataParameter = true, modality = Modality.FINAL, override = true)
-            printBlock {
-                println(element.visitFunctionName, "(", element.visitorParameterName, ")")
+            if (shouldPrintVisitWithDataMethod()) {
+                println()
+                printVisitMethodDeclaration(element, hasDataParameter = true, modality = Modality.FINAL, override = true)
+                printBlock {
+                    println(element.visitFunctionName, "(", element.visitorParameterName, ")")
+                }
             }
             println()
-            printVisitMethodDeclaration(element, hasDataParameter = false, override = true)
+            printVisitVoidMethodDeclaration(element)
             printBlock {
+                if (element in listOf(IrTree.declarationBase, IrTree.file)) {
+                    println("${element.visitorParameterName}.annotations.forEach { visitAnnotationUsage(it) }")
+                }
                 printTypeRemappings(
                     element,
                     irTypeFields,
                     hasDataParameter = false,
                 )
-                println("super<", legacyVisitorVoidType.render(), ">.", element.visitFunctionName, "(", element.visitorParameterName, ")")
+                element.parentInVisitor?.let {
+                    println(it.visitFunctionName, "(", element.visitorParameterName, ")")
+                }
+                if (element.isRootElement) {
+                    println(element.visitorParameterName, ".acceptChildrenVoid(this)")
+                    addImport(ArbitraryImportable("org.jetbrains.kotlin.ir.visitors", "acceptChildrenVoid"))
+                }
             }
         }
+    }
+
+    protected open fun shouldPrintVisitWithDataMethod(): Boolean = true
+    protected open fun printVisitVoidMethodDeclaration(element: Element): Unit = with(printer) {
+        printVisitMethodDeclaration(element, hasDataParameter = false, modality = Modality.OPEN, override = false)
     }
 }

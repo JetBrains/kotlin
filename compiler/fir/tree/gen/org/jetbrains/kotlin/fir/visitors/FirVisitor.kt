@@ -392,6 +392,9 @@ abstract class FirVisitor<out R, in D> {
     open fun visitResolvedNamedReference(resolvedNamedReference: FirResolvedNamedReference, data: D): R =
         visitElement(resolvedNamedReference, data)
 
+    open fun visitPropertyWithExplicitBackingFieldResolvedNamedReference(propertyWithExplicitBackingFieldResolvedNamedReference: FirPropertyWithExplicitBackingFieldResolvedNamedReference, data: D): R =
+        visitElement(propertyWithExplicitBackingFieldResolvedNamedReference, data)
+
     open fun visitResolvedCallableReference(resolvedCallableReference: FirResolvedCallableReference, data: D): R =
         visitElement(resolvedCallableReference, data)
 
@@ -416,8 +419,8 @@ abstract class FirVisitor<out R, in D> {
     open fun visitResolvedTypeRef(resolvedTypeRef: FirResolvedTypeRef, data: D): R =
         visitElement(resolvedTypeRef, data)
 
-    open fun visitTypeRefWithNullability(typeRefWithNullability: FirTypeRefWithNullability, data: D): R =
-        visitElement(typeRefWithNullability, data)
+    open fun visitUnresolvedTypeRef(unresolvedTypeRef: FirUnresolvedTypeRef, data: D): R =
+        visitElement(unresolvedTypeRef, data)
 
     open fun visitUserTypeRef(userTypeRef: FirUserTypeRef, data: D): R =
         visitElement(userTypeRef, data)
@@ -440,11 +443,17 @@ abstract class FirVisitor<out R, in D> {
     open fun visitErrorNamedReference(errorNamedReference: FirErrorNamedReference, data: D): R =
         visitElement(errorNamedReference, data)
 
+    open fun visitErrorSuperReference(errorSuperReference: FirErrorSuperReference, data: D): R =
+        visitElement(errorSuperReference, data)
+
     open fun visitIntersectionTypeRef(intersectionTypeRef: FirIntersectionTypeRef, data: D): R =
         visitElement(intersectionTypeRef, data)
 
     open fun visitThisReceiverExpression(thisReceiverExpression: FirThisReceiverExpression, data: D): R =
         visitElement(thisReceiverExpression, data)
+
+    open fun visitSuperReceiverExpression(superReceiverExpression: FirSuperReceiverExpression, data: D): R =
+        visitElement(superReceiverExpression, data)
 
     open fun visitInaccessibleReceiverExpression(inaccessibleReceiverExpression: FirInaccessibleReceiverExpression, data: D): R =
         visitElement(inaccessibleReceiverExpression, data)
@@ -481,6 +490,9 @@ abstract class FirVisitor<out R, in D> {
 
     open fun visitLegacyRawContractDescription(legacyRawContractDescription: FirLegacyRawContractDescription, data: D): R =
         visitElement(legacyRawContractDescription, data)
+
+    open fun visitLazyContractDescription(lazyContractDescription: FirLazyContractDescription, data: D): R =
+        visitElement(lazyContractDescription, data)
 
     open fun visitErrorContractDescription(errorContractDescription: FirErrorContractDescription, data: D): R =
         visitElement(errorContractDescription, data)

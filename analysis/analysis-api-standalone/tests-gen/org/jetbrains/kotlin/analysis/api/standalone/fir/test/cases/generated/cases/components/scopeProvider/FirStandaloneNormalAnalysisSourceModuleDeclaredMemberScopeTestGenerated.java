@@ -46,6 +46,36 @@ public class FirStandaloneNormalAnalysisSourceModuleDeclaredMemberScopeTestGener
   }
 
   @Test
+  @TestMetadata("annotatedProperties.kt")
+  public void testAnnotatedProperties() {
+    runTest("analysis/analysis-api/testData/components/scopeProvider/declaredMemberScope/annotatedProperties.kt");
+  }
+
+  @Test
+  @TestMetadata("annotatedPropertiesCompiled.kt")
+  public void testAnnotatedPropertiesCompiled() {
+    runTest("analysis/analysis-api/testData/components/scopeProvider/declaredMemberScope/annotatedPropertiesCompiled.kt");
+  }
+
+  @Test
+  @TestMetadata("annotatedPropertiesCompiledK1.kt")
+  public void testAnnotatedPropertiesCompiledK1() {
+    runTest("analysis/analysis-api/testData/components/scopeProvider/declaredMemberScope/annotatedPropertiesCompiledK1.kt");
+  }
+
+  @Test
+  @TestMetadata("annotatedReturnType.kt")
+  public void testAnnotatedReturnType() {
+    runTest("analysis/analysis-api/testData/components/scopeProvider/declaredMemberScope/annotatedReturnType.kt");
+  }
+
+  @Test
+  @TestMetadata("annotatedReturnTypeCompiled.kt")
+  public void testAnnotatedReturnTypeCompiled() {
+    runTest("analysis/analysis-api/testData/components/scopeProvider/declaredMemberScope/annotatedReturnTypeCompiled.kt");
+  }
+
+  @Test
   @TestMetadata("class.kt")
   public void testClass() {
     runTest("analysis/analysis-api/testData/components/scopeProvider/declaredMemberScope/class.kt");
@@ -133,6 +163,18 @@ public class FirStandaloneNormalAnalysisSourceModuleDeclaredMemberScopeTestGener
   @TestMetadata("javaInnerClassConstructor.kt")
   public void testJavaInnerClassConstructor() {
     runTest("analysis/analysis-api/testData/components/scopeProvider/declaredMemberScope/javaInnerClassConstructor.kt");
+  }
+
+  @Test
+  @TestMetadata("properties.kt")
+  public void testProperties() {
+    runTest("analysis/analysis-api/testData/components/scopeProvider/declaredMemberScope/properties.kt");
+  }
+
+  @Test
+  @TestMetadata("propertiesCompiled.kt")
+  public void testPropertiesCompiled() {
+    runTest("analysis/analysis-api/testData/components/scopeProvider/declaredMemberScope/propertiesCompiled.kt");
   }
 
   @Test

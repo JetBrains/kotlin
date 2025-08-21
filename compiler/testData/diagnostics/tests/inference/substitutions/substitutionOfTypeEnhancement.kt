@@ -55,3 +55,6 @@ fun main() {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: classReference, flexibleType, functionDeclaration, inProjection, javaFunction, javaType,
+lambdaLiteral, samConversion */

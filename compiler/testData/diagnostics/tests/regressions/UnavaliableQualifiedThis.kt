@@ -12,3 +12,6 @@ interface Iterator<out T> {
         get() = <!NO_THIS!>this@map<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>hasNext<!>
     }
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, functionDeclaration, functionalType, getter, interfaceDeclaration,
+nullableType, out, override, propertyDeclaration, thisExpression, typeParameter */

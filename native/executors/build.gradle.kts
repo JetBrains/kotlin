@@ -24,6 +24,7 @@ repositories {
 }
 
 dependencies {
+    implementation(kotlinStdlib())
     implementation(libs.gson)
     implementation(libs.kotlinx.coroutines.core)
 

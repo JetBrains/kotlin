@@ -14,3 +14,6 @@ fun main() {
     println(list.map { v -> v })
     println(list.<!OVERLOAD_RESOLUTION_AMBIGUITY!>map<!> { <!UNRESOLVED_REFERENCE!>it<!> })
 }
+
+/* GENERATED_FIR_TAGS: funWithExtensionReceiver, functionDeclaration, functionalType, integerLiteral, lambdaLiteral,
+localProperty, nullableType, propertyDeclaration, thisExpression, typeParameter */

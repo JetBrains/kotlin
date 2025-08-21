@@ -39,7 +39,7 @@ interface B {
 @Composable
 fun Test(b: B, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
-  sourceInformation(%composer, "C(Test):Test.kt")
+  sourceInformation(%composer, "C(Test)N(b):Test.kt")
   val %dirty = %changed
   if (%changed and 0b0110 == 0) {
     %dirty = %dirty or if (if (%changed and 0b1000 == 0) {
@@ -49,7 +49,7 @@ fun Test(b: B, %composer: Composer?, %changed: Int) {
     }
     ) 0b0100 else 0b0010
   }
-  if (%dirty and 0b0011 != 0b0010 || !%composer.skipping) {
+  if (%composer.shouldExecute(%dirty and 0b0011 != 0b0010, %dirty and 0b0001)) {
     if (isTraceInProgress()) {
       traceEventStart(<>, %dirty, -1, <>)
     }

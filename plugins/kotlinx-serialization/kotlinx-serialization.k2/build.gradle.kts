@@ -9,6 +9,7 @@ dependencies {
     compileOnly(project(":compiler:fir:cones"))
     compileOnly(project(":compiler:fir:tree"))
     compileOnly(project(":compiler:fir:fir-serialization"))
+    compileOnly(project(":compiler:fir:fir-deserialization"))
     compileOnly(project(":compiler:fir:resolve"))
     compileOnly(project(":compiler:fir:plugin-utils"))
     compileOnly(project(":compiler:fir:entrypoint"))

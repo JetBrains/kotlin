@@ -1,4 +1,4 @@
-// JVM_DEFAULT: all
+// JVM_DEFAULT: no-compatibility
 // BINARY_STUB_ONLY_TEST
 
 package a

@@ -26,7 +26,6 @@ import kotlin.jvm.Throws
  * @param options options to determine how the file is opened.
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalPathApi::class)
 @Throws(IOException::class)
 @kotlin.internal.InlineOnly
 public inline fun Path.reader(charset: Charset = Charsets.UTF_8, vararg options: OpenOption): InputStreamReader {
@@ -36,12 +35,13 @@ public inline fun Path.reader(charset: Charset = Charsets.UTF_8, vararg options:
 /**
  * Returns a new [BufferedReader] for reading the content of this file.
  *
+ * Refer to [BufferedReader] documentation for details about buffering behavior.
+ *
  * @param charset character set to use for reading text, UTF-8 by default.
  * @param bufferSize necessary size of the buffer.
  * @param options options to determine how the file is opened.
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalPathApi::class)
 @Throws(IOException::class)
 @kotlin.internal.InlineOnly
 public inline fun Path.bufferedReader(
@@ -64,7 +64,6 @@ public inline fun Path.bufferedReader(
  * @param options options to determine how the file is opened.
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalPathApi::class)
 @Throws(IOException::class)
 @kotlin.internal.InlineOnly
 public inline fun Path.writer(charset: Charset = Charsets.UTF_8, vararg options: OpenOption): OutputStreamWriter {
@@ -74,12 +73,13 @@ public inline fun Path.writer(charset: Charset = Charsets.UTF_8, vararg options:
 /**
  * Returns a new [BufferedWriter] for writing the content of this file.
  *
+ * Refer to [BufferedWriter] documentation for details about buffering and flushing behavior.
+ *
  * @param charset character set to use for writing text, UTF-8 by default.
  * @param bufferSize necessary size of the buffer.
  * @param options options to determine how the file is opened.
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalPathApi::class)
 @Throws(IOException::class)
 @kotlin.internal.InlineOnly
 public inline fun Path.bufferedWriter(
@@ -104,7 +104,6 @@ public inline fun Path.bufferedWriter(
  * @return the entire content of this file as a byte array.
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalPathApi::class)
 @Throws(IOException::class)
 @kotlin.internal.InlineOnly
 public inline fun Path.readBytes(): ByteArray {
@@ -121,7 +120,6 @@ public inline fun Path.readBytes(): ByteArray {
  * @param options options to determine how the file is opened.
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalPathApi::class)
 @Throws(IOException::class)
 @kotlin.internal.InlineOnly
 public inline fun Path.writeBytes(array: ByteArray, vararg options: OpenOption): Unit {
@@ -134,7 +132,6 @@ public inline fun Path.writeBytes(array: ByteArray, vararg options: OpenOption):
  * @param array byte array to append to this file.
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalPathApi::class)
 @Throws(IOException::class)
 @kotlin.internal.InlineOnly
 public inline fun Path.appendBytes(array: ByteArray) {
@@ -151,7 +148,6 @@ public inline fun Path.appendBytes(array: ByteArray) {
  * @return the entire content of this file as a String.
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalPathApi::class)
 @Throws(IOException::class)
 public fun Path.readText(charset: Charset = Charsets.UTF_8): String =
     reader(charset).use { it.readText() }
@@ -167,7 +163,6 @@ public fun Path.readText(charset: Charset = Charsets.UTF_8): String =
  * @param options options to determine how the file is opened.
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalPathApi::class)
 @Throws(IOException::class)
 public fun Path.writeText(text: CharSequence, charset: Charset = Charsets.UTF_8, vararg options: OpenOption) {
     Files.newOutputStream(this, *options).use { out ->
@@ -195,7 +190,6 @@ public fun Path.writeText(text: CharSequence, charset: Charset = Charsets.UTF_8,
  * @param charset character set to use for writing text, UTF-8 by default.
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalPathApi::class)
 @Throws(IOException::class)
 public fun Path.appendText(text: CharSequence, charset: Charset = Charsets.UTF_8) {
     writeText(text, charset, StandardOpenOption.APPEND)
@@ -211,7 +205,6 @@ public fun Path.appendText(text: CharSequence, charset: Charset = Charsets.UTF_8
  * @param action function to process file lines.
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalPathApi::class)
 @Throws(IOException::class)
 @kotlin.internal.InlineOnly
 public inline fun Path.forEachLine(charset: Charset = Charsets.UTF_8, action: (line: String) -> Unit): Unit {
@@ -226,7 +219,6 @@ public inline fun Path.forEachLine(charset: Charset = Charsets.UTF_8, action: (l
  * equivalent to opening the file with the [READ][StandardOpenOption.READ] option.
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalPathApi::class)
 @Throws(IOException::class)
 @kotlin.internal.InlineOnly
 public inline fun Path.inputStream(vararg options: OpenOption): InputStream {
@@ -242,7 +234,6 @@ public inline fun Path.inputStream(vararg options: OpenOption): InputStream {
  * options.
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalPathApi::class)
 @Throws(IOException::class)
 @kotlin.internal.InlineOnly
 public inline fun Path.outputStream(vararg options: OpenOption): OutputStream {
@@ -259,7 +250,6 @@ public inline fun Path.outputStream(vararg options: OpenOption): OutputStream {
  * @return list of file lines.
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalPathApi::class)
 @Throws(IOException::class)
 @kotlin.internal.InlineOnly
 public inline fun Path.readLines(charset: Charset = Charsets.UTF_8): List<String> {
@@ -274,7 +264,6 @@ public inline fun Path.readLines(charset: Charset = Charsets.UTF_8): List<String
  * @return the value returned by [block].
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalPathApi::class)
 @Throws(IOException::class)
 @kotlin.internal.InlineOnly
 public inline fun <T> Path.useLines(charset: Charset = Charsets.UTF_8, block: (Sequence<String>) -> T): T {
@@ -293,7 +282,6 @@ public inline fun <T> Path.useLines(charset: Charset = Charsets.UTF_8, block: (S
  * @param charset character set to use for writing text, UTF-8 by default.
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalPathApi::class)
 @Throws(IOException::class)
 @kotlin.internal.InlineOnly
 public inline fun Path.writeLines(lines: Iterable<CharSequence>, charset: Charset = Charsets.UTF_8, vararg options: OpenOption): Path {
@@ -309,7 +297,6 @@ public inline fun Path.writeLines(lines: Iterable<CharSequence>, charset: Charse
  * @param charset character set to use for writing text, UTF-8 by default.
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalPathApi::class)
 @Throws(IOException::class)
 @kotlin.internal.InlineOnly
 public inline fun Path.writeLines(lines: Sequence<CharSequence>, charset: Charset = Charsets.UTF_8, vararg options: OpenOption): Path {
@@ -322,7 +309,6 @@ public inline fun Path.writeLines(lines: Sequence<CharSequence>, charset: Charse
  * @param charset character set to use for writing text, UTF-8 by default.
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalPathApi::class)
 @Throws(IOException::class)
 @kotlin.internal.InlineOnly
 public inline fun Path.appendLines(lines: Iterable<CharSequence>, charset: Charset = Charsets.UTF_8): Path {
@@ -335,7 +321,6 @@ public inline fun Path.appendLines(lines: Iterable<CharSequence>, charset: Chars
  * @param charset character set to use for writing text, UTF-8 by default.
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalPathApi::class)
 @Throws(IOException::class)
 @kotlin.internal.InlineOnly
 public inline fun Path.appendLines(lines: Sequence<CharSequence>, charset: Charset = Charsets.UTF_8): Path {

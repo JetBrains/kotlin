@@ -4,9 +4,11 @@
 package a
 
 fun main() {
-    <!CANNOT_INFER_PARAMETER_TYPE, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>test<!> <!CANNOT_INFER_PARAMETER_TYPE!>{
+    <!CANNOT_INFER_PARAMETER_TYPE!>test<!> <!CANNOT_INFER_PARAMETER_TYPE!>{
 
     }<!>
 }
 
 fun <R> test(callback: (R) -> Unit):Unit = callback(null!!)
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, functionDeclaration, functionalType, lambdaLiteral, nullableType, typeParameter */

@@ -1,0 +1,4 @@
+CLASS_TYPE_BY_CLASS_ID
+   KaType: kotlin.Int
+CLASS_TYPE_BY_SYMBOL
+   KaType: kotlin.Int

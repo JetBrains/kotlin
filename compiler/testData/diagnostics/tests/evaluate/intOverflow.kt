@@ -73,3 +73,6 @@ class A {
         val l26: Int = (-1) % 5
     }
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, classDeclaration, functionDeclaration, integerLiteral, localProperty,
+multiplicativeExpression, propertyDeclaration, unaryExpression */

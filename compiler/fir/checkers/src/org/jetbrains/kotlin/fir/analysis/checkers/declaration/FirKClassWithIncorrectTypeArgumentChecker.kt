@@ -20,7 +20,8 @@ import org.jetbrains.kotlin.fir.types.*
 // See FE1.0 [KClassWithIncorrectTypeArgumentChecker]
 object FirKClassWithIncorrectTypeArgumentChecker : FirCallableDeclarationChecker(MppCheckerKind.Common) {
 
-    override fun check(declaration: FirCallableDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirCallableDeclaration) {
         // Only report on top level callable declarations
         if (context.containingDeclarations.size > 1) return
 
@@ -44,7 +45,7 @@ object FirKClassWithIncorrectTypeArgumentChecker : FirCallableDeclarationChecker
         if (typeArgumentsWithWrongType.isEmpty()) return
         typeArgumentsWithWrongType.forEach {
             val typeParameterFromError = (it.typeArguments[0] as? ConeKotlinTypeProjection)?.type?.typeParameterFromError ?: return@forEach
-            reporter.reportOn(source, FirErrors.KCLASS_WITH_NULLABLE_TYPE_PARAMETER_IN_SIGNATURE, typeParameterFromError, context)
+            reporter.reportOn(source, FirErrors.KCLASS_WITH_NULLABLE_TYPE_PARAMETER_IN_SIGNATURE, typeParameterFromError)
         }
     }
 

@@ -15,7 +15,7 @@ public static final class C /* A.C*/ extends A {
 }
 
 public final class AAA /* AAA*/ {
-  public /* vararg */  AAA(@org.jetbrains.annotations.NotNull() int[], @org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() kotlin.jvm.functions.Function0<@org.jetbrains.annotations.NotNull() kotlin.Unit>);//  .ctor(int[], @org.jetbrains.annotations.NotNull() kotlin.jvm.functions.Function0<@org.jetbrains.annotations.NotNull() kotlin.Unit>)
+  public  AAA(@org.jetbrains.annotations.NotNull() int[], @org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() kotlin.jvm.functions.Function0<@org.jetbrains.annotations.NotNull() kotlin.Unit>);//  .ctor(int[], @org.jetbrains.annotations.NotNull() kotlin.jvm.functions.Function0<@org.jetbrains.annotations.NotNull() kotlin.Unit>)
 }
 
 public final class B /* B*/ {

@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassSymbol
 import org.jetbrains.kotlin.analysis.api.types.KaClassType
 import org.jetbrains.kotlin.analysis.api.types.KaType
-import org.jetbrains.kotlin.analysis.api.types.KaTypeNullability
 import org.jetbrains.kotlin.backend.konan.InteropFqNames
 import org.jetbrains.kotlin.backend.konan.KonanFqNames
 
@@ -65,8 +64,8 @@ private fun KaSession.isInlineIncludingKotlinNativeSpecialClasses(symbol: KaName
 }
 
 private fun KaSession.markNullable(type: KaType): KaType {
-    if (type.nullability == KaTypeNullability.NULLABLE) return type
-    return type.withNullability(KaTypeNullability.NULLABLE)
+    if (type.isMarkedNullable) return type
+    return type.withNullability(isMarkedNullable = true)
 }
 
 private fun KaSession.markNullableIf(type: KaType, shouldMarkNullable: Boolean): KaType {

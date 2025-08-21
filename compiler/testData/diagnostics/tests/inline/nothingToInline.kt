@@ -29,3 +29,6 @@ inline fun test2(s : (Int) -> Int) {
 <!NOTHING_TO_INLINE!>inline<!> fun test2(s : ((Int) -> Int)?) {
 
 }
+
+/* GENERATED_FIR_TAGS: funWithExtensionReceiver, functionDeclaration, functionalType, inline, noinline, nullableType,
+typeWithExtension */

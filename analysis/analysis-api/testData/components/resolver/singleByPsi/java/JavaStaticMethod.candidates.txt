@@ -4,6 +4,7 @@ KtNameReferenceExpression(589,592): 'bar'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = Foo
           isSafeNavigation = false
@@ -14,6 +15,7 @@ KtNameReferenceExpression(589,592): 'bar'
           returnType = kotlin.Unit
           symbol = pkg/Foo.bar(): kotlin.Unit
           valueParameters = []
+          contextParameters = []
           callableId = pkg/Foo.bar
       typeArgumentsMapping = {}
     isInBestCandidates = true

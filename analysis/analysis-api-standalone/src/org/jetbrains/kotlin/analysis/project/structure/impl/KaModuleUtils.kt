@@ -5,7 +5,9 @@
 
 package org.jetbrains.kotlin.analysis.project.structure.impl
 
+import com.intellij.core.CoreApplicationEnvironment
 import com.intellij.ide.highlighter.JavaFileType
+import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiFileSystemItem
 import com.intellij.psi.PsiManager
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
@@ -13,6 +15,7 @@ import org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.Kotlin
 import org.jetbrains.kotlin.analysis.project.structure.builder.*
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreProjectEnvironment
 import org.jetbrains.kotlin.cli.jvm.config.javaSourceRoots
+import org.jetbrains.kotlin.cli.jvm.config.jvmClasspathNioRoots
 import org.jetbrains.kotlin.cli.jvm.config.jvmClasspathRoots
 import org.jetbrains.kotlin.cli.jvm.config.jvmModularRoots
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
@@ -127,19 +130,20 @@ internal inline fun <reified T : PsiFileSystemItem> getPsiFilesFromPaths(
 
 @OptIn(KaExperimentalApi::class)
 internal fun buildKtModuleProviderByCompilerConfiguration(
-    kotlinCoreProjectEnvironment: KotlinCoreProjectEnvironment,
+    coreApplicationEnvironment: CoreApplicationEnvironment,
+    project: Project,
     compilerConfig: CompilerConfiguration,
     ktFiles: List<KtFile>,
-): KotlinStaticProjectStructureProvider = buildProjectStructureProvider(kotlinCoreProjectEnvironment) {
+): KotlinStaticProjectStructureProvider = buildProjectStructureProvider(coreApplicationEnvironment, project) {
     val (scriptFiles, _) = ktFiles.partition { it.isScript() }
     val platform = JvmPlatforms.defaultJvmPlatform
 
     fun KtModuleBuilder.addModuleDependencies(moduleName: String) {
-        val libraryRoots = compilerConfig.jvmModularRoots + compilerConfig.jvmClasspathRoots
+        val libraryRoots = compilerConfig.jvmModularRoots.asSequence().map { it.toPath() } + compilerConfig.jvmClasspathNioRoots()
         addRegularDependency(
             buildKtLibraryModule {
                 this.platform = platform
-                addBinaryRoots(libraryRoots.map { it.toPath() })
+                addBinaryRoots(libraryRoots.toList())
                 libraryName = "Library for $moduleName"
             }
         )

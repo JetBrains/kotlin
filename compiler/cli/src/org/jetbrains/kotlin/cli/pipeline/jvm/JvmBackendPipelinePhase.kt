@@ -14,12 +14,9 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinToJVMBytecodeCompiler
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinToJVMBytecodeCompiler.toBackendInput
 import org.jetbrains.kotlin.cli.jvm.compiler.createConfigurationForModule
 import org.jetbrains.kotlin.cli.jvm.compiler.getSourceFiles
-import org.jetbrains.kotlin.cli.jvm.compiler.writeOutputsIfNeeded
 import org.jetbrains.kotlin.cli.pipeline.CheckCompilationErrors
-import org.jetbrains.kotlin.cli.pipeline.PerformanceNotifications
 import org.jetbrains.kotlin.cli.pipeline.PipelinePhase
 import org.jetbrains.kotlin.codegen.state.GenerationState
-import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.config.useLightTree
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmBackendClassResolver
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmBackendExtension
@@ -27,23 +24,13 @@ import org.jetbrains.kotlin.fir.backend.utils.extractFirDeclarations
 import org.jetbrains.kotlin.ir.declarations.impl.IrModuleFragmentImpl
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus
 
-object JvmBackendPipelinePhase : PipelinePhase<JvmFir2IrPipelineArtifact, JvmBinaryPipelineArtifact>(
+object JvmBackendPipelinePhase : PipelinePhase<JvmFir2IrPipelineArtifact, JvmBackendPipelineArtifact>(
     name = "JvmBackendPipelineStep",
-    preActions = setOf(
-        PerformanceNotifications.GenerationStarted,
-        PerformanceNotifications.IrLoweringStarted
-    ),
     postActions = setOf(
-        PerformanceNotifications.IrGenerationFinished,
-        PerformanceNotifications.GenerationFinished,
         CheckCompilationErrors.CheckDiagnosticCollector
     )
 ) {
-    override fun executePhase(input: JvmFir2IrPipelineArtifact): JvmBinaryPipelineArtifact? {
-        return executePhase(input, ignoreErrors = false)
-    }
-
-    fun executePhase(input: JvmFir2IrPipelineArtifact, ignoreErrors: Boolean): JvmBinaryPipelineArtifact? {
+    override fun executePhase(input: JvmFir2IrPipelineArtifact): JvmBackendPipelineArtifact? {
         val (fir2IrResult, configuration, environment, diagnosticCollector, allSourceFiles, mainClassFqName) = input
         val moduleDescriptor = fir2IrResult.irModuleFragment.descriptor
         val project = environment.project
@@ -91,7 +78,7 @@ object JvmBackendPipelinePhase : PipelinePhase<JvmFir2IrPipelineArtifact, JvmBin
 
             codegenInputs += KotlinToJVMBytecodeCompiler.runLowerings(
                 project, configurationForModule, moduleDescriptor, module,
-                codegenFactory, backendInput, diagnosticCollector, classResolver, reportGenerationStarted = false
+                codegenFactory, backendInput, diagnosticCollector, classResolver,
             )
         }
 
@@ -105,21 +92,10 @@ object JvmBackendPipelinePhase : PipelinePhase<JvmFir2IrPipelineArtifact, JvmBin
                 codegenFactory,
                 diagnosticCollector,
                 input.state.configuration,
-                reportGenerationFinished = false,
                 reportDiagnosticsToMessageCollector = false, // diagnostics will be reported in CheckCompilationErrors.CheckDiagnosticCollector
             )
         }
 
-        ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
-        val success = writeOutputsIfNeeded(
-            project,
-            configuration,
-            configuration.messageCollector,
-            hasPendingErrors = diagnosticCollector.hasErrors,
-            outputs,
-            mainClassFqName
-        )
-
-        return JvmBinaryPipelineArtifact(outputs).takeIf { success || ignoreErrors }
+        return JvmBackendPipelineArtifact(configuration, environment, diagnosticCollector, mainClassFqName, outputs)
     }
 }

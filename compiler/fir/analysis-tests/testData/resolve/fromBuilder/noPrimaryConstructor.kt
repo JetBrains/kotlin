@@ -8,3 +8,6 @@ class NoPrimary {
 
     constructor(): this("")
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, propertyDeclaration, secondaryConstructor, stringLiteral,
+thisExpression */

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -14,15 +14,16 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirConstructorChecker
-import org.jetbrains.kotlin.fir.analysis.checkers.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.correspondingProperty
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirPropertyAccessExpression
 import org.jetbrains.kotlin.fir.references.toResolvedValueParameterSymbol
 import org.jetbrains.kotlin.fir.resolve.lookupSuperTypes
+import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.types.classId
+import org.jetbrains.kotlin.fir.types.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.parcelize.ParcelizeNames
@@ -31,18 +32,21 @@ class FirParcelizeConstructorChecker(
     private val parcelizeAnnotations: List<ClassId>,
     private val experimentalCodeGeneration: Boolean
 ) : FirConstructorChecker(MppCheckerKind.Platform) {
-    override fun check(declaration: FirConstructor, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirConstructor) {
         if (!declaration.isPrimary) return
         val source = declaration.source ?: return
         if (source.kind == KtFakeSourceElementKind.ImplicitConstructor) return
-        val containingClass = context.containingDeclarations.last() as? FirRegularClass ?: return
-        val containingClassSymbol = containingClass.symbol
+        val containingClassSymbol = context.containingDeclarations.last() as? FirRegularClassSymbol ?: return
+
+        @OptIn(SymbolInternals::class)
+        val containingClass = containingClassSymbol.fir
         if (!containingClassSymbol.isParcelize(context.session, parcelizeAnnotations)
             || containingClass.hasCustomParceler(context.session)) {
             return
         }
         if (declaration.valueParameters.isEmpty()) {
-            reporter.reportOn(containingClass.source, KtErrorsParcelize.PARCELABLE_PRIMARY_CONSTRUCTOR_IS_EMPTY, context)
+            reporter.reportOn(containingClass.source, KtErrorsParcelize.PARCELABLE_PRIMARY_CONSTRUCTOR_IS_EMPTY)
             return
         }
         val notValOrVarParameters = mutableListOf<FirValueParameter>()
@@ -58,8 +62,7 @@ class FirParcelizeConstructorChecker(
                 if (illegalAnnotation != null) {
                     reporter.reportOn(
                         illegalAnnotation.source,
-                        KtErrorsParcelize.INAPPLICABLE_IGNORED_ON_PARCEL_CONSTRUCTOR_PROPERTY,
-                        context
+                        KtErrorsParcelize.INAPPLICABLE_IGNORED_ON_PARCEL_CONSTRUCTOR_PROPERTY
                     )
                 }
             }
@@ -74,6 +77,7 @@ class FirParcelizeConstructorChecker(
             val lookingFor = notValOrVarParameters.map { it.symbol }.toSet()
             val referenceFinder = ReferenceFinder(lookingFor, reporter, context)
             // check if they are referenced in the bodies, if so report error
+            @OptIn(DirectDeclarationsAccess::class)
             for (decl in containingClass.declarations) when (decl) {
                 is FirAnonymousInitializer, is FirProperty -> decl.accept(referenceFinder)
                 else -> {}
@@ -82,8 +86,7 @@ class FirParcelizeConstructorChecker(
             for (valueParameter in notValOrVarParameters) {
                 reporter.reportOn(
                     valueParameter.source,
-                    KtErrorsParcelize.PARCELABLE_CONSTRUCTOR_PARAMETER_SHOULD_BE_VAL_OR_VAR,
-                    context
+                    KtErrorsParcelize.PARCELABLE_CONSTRUCTOR_PARAMETER_SHOULD_BE_VAL_OR_VAR
                 )
             }
         }
@@ -98,7 +101,7 @@ class FirParcelizeConstructorChecker(
     }
 
     private fun FirRegularClassSymbol.hasCustomParceler(session: FirSession): Boolean {
-        val companion = companionObjectSymbol ?: return false
+        val companion = resolvedCompanionObjectSymbol ?: return false
         return lookupSuperTypes(companion, lookupInterfaces = true, deep = true, useSiteSession = session).any {
             it.classId in ParcelizeNames.PARCELER_CLASS_IDS
         }

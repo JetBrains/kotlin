@@ -9,7 +9,6 @@ import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.junit.jupiter.api.Tag;
 import org.jetbrains.kotlin.konan.test.blackbox.support.group.UseStandardTestCaseGroupProvider;
-import org.jetbrains.kotlin.konan.test.blackbox.support.group.FirPipeline;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.jupiter.api.Test;
 
@@ -22,8 +21,6 @@ import java.util.regex.Pattern;
 @TestDataPath("$PROJECT_ROOT")
 @Tag("gc")
 @UseStandardTestCaseGroupProvider()
-@Tag("frontend-fir")
-@FirPipeline()
 public class FirNativeGCTestGenerated extends AbstractNativeBlackBoxTest {
   @Test
   public void testAllFilesPresentInGc() {

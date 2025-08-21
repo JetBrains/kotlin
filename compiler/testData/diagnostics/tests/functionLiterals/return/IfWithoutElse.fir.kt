@@ -14,3 +14,5 @@ val b/*: () -> Int */ = l@ {
 val c/*: () -> Unit */ = l@ {
     if (flag) 4
 }
+
+/* GENERATED_FIR_TAGS: ifExpression, integerLiteral, lambdaLiteral, propertyDeclaration */

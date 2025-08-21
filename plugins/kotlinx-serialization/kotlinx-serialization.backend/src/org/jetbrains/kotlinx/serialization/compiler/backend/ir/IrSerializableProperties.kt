@@ -6,6 +6,7 @@
 package org.jetbrains.kotlinx.serialization.compiler.backend.ir
 
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.fir.declarations.DirectDeclarationsAccess
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyGetter
 import org.jetbrains.kotlin.fir.declarations.impl.FirPrimaryConstructor
 import org.jetbrains.kotlin.fir.deserialization.registeredInSerializationPluginMetadataExtension
@@ -49,7 +50,7 @@ class IrSerializableProperties(
  *
  * Returns (declaresDefaultValue, hasBackingField) boolean pair. Returns (false, false) for properties from current module.
  */
-@OptIn(ObsoleteDescriptorBasedAPI::class)
+@OptIn(ObsoleteDescriptorBasedAPI::class, DirectDeclarationsAccess::class)
 fun IrProperty.analyzeIfFromAnotherModule(): Pair<Boolean, Boolean> {
     return if (descriptor is DeserializedPropertyDescriptor) {
         // IrLazyProperty does not deserialize backing fields correctly, so we should fall back to info from descriptor.
@@ -103,7 +104,7 @@ internal fun serializablePropertiesForIrBackend(
     typeReplacement: Map<IrProperty, IrSimpleType>? = null
 ): IrSerializableProperties {
     val properties = irClass.properties.toList()
-    val primaryConstructorParams = irClass.primaryConstructor?.valueParameters.orEmpty()
+    val primaryConstructorParams = irClass.primaryConstructor?.parameters.orEmpty()
     val primaryParamsAsProps = properties.associateBy { it.name }.let { namesMap ->
         primaryConstructorParams.mapNotNull {
             if (it.name !in namesMap) null else namesMap.getValue(it.name) to it.hasDefaultValue()

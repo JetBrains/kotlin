@@ -16,3 +16,6 @@ public class Y: X() {
         return if (x != null) x.length else 0
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, equalityExpression, functionDeclaration, ifExpression, integerLiteral,
+nullableType, propertyDeclaration, smartcast */

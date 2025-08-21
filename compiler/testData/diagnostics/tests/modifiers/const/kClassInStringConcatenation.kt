@@ -10,3 +10,6 @@ class B
 
 const val a = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>"${A::class}"<!>
 const val b = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>B::class.toString()<!>
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, classReference, const, primaryConstructor,
+propertyDeclaration */

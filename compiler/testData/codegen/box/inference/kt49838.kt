@@ -1,5 +1,3 @@
-// IGNORE_BACKEND: JVM
-
 inline fun <
         reified TService : Service<TService, TEvent>,
         reified TEvent : Event<TService>> event(

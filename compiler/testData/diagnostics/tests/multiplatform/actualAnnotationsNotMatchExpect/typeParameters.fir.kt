@@ -15,7 +15,7 @@ expect class ViaTypealias<@Ann A>
 
 expect class TypealiasParamNotAccepted<@Ann A>
 
-<!EXPECT_ACTUAL_MISMATCH{JVM}!>expect<!> fun <@Ann A, @Ann B> withIncompatibility()
+<!EXPECT_ACTUAL_IR_MISMATCH{JVM}!>expect<!> fun <@Ann A, @Ann B> withIncompatibility()
 
 // MODULE: m1-jvm()()(m1-common)
 // FILE: jvm.kt
@@ -34,3 +34,6 @@ class TypealiasParamNotAcceptedImpl<A>
 <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual<!> typealias TypealiasParamNotAccepted<@Ann A> = TypealiasParamNotAcceptedImpl<A>
 
 actual fun <A> <!ACTUAL_WITHOUT_EXPECT!>withIncompatibility<!>() {}
+
+/* GENERATED_FIR_TAGS: actual, annotationDeclaration, classDeclaration, expect, functionDeclaration, nullableType,
+typeAliasDeclaration, typeAliasDeclarationWithTypeParameter, typeParameter */

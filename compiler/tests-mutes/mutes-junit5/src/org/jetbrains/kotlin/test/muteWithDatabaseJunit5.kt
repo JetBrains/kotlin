@@ -54,12 +54,21 @@ class MuteInTestWatcher : TestWatcher {
         if (testClass != null &&
             testMethod != null
         ) {
-            DO_AUTO_MUTE.muteTest(
-                testKey(testClass, context.displayName)
-            )
+            val methodKey = getMethodKey(testMethod, context.displayName)
+            val mutedTest = getMutedTest(testClass, methodKey)
+            if (mutedTest == null) {
+                println(
+                    """FAILED TEST: if it's a cross-push add to mute-common.csv:
+                    ${testClass.canonicalName}.$methodKey,KT-XXXX,STABLE
+                    or if you consider it's flaky:
+                    ${testClass.canonicalName}.$methodKey,KT-XXXX,FLAKY""".trimIndent()
+                )
+            }
         }
     }
 }
+
+private fun getMethodKey(testMethod: Method, displayName: String): String = testMethod.name + if (displayName == "${testMethod.name}()") "" else "[${displayName}]"
 
 class MuteInInvocationInterceptor : InvocationInterceptor {
     override fun interceptTestTemplateMethod(
@@ -87,22 +96,24 @@ class MuteInInvocationInterceptor : InvocationInterceptor {
         if (testClass != null &&
             testMethod != null
         ) {
-            val mutedTest = getMutedTest(testClass, testMethod.name)
-            if (mutedTest != null &&
-                isPresentedInDatabaseWithoutFailMarker(mutedTest)
-            ) {
+            val mutedTest = getMutedTest(testClass, getMethodKey(testMethod, extensionContext.displayName)) ?: getMutedTest(testClass, testMethod.name)
+            if (mutedTest != null) {
                 if (!mutedTest.isFlaky) {
                     invertMutedTestResultWithLog(
                         f = { invocation.proceed() },
-                        testKey = testKey(testMethod.declaringClass, mutedTest.methodKey)
+                        testKey = testKey(testMethod.declaringClass, getMethodKey(testMethod, extensionContext.displayName))
                     )
                     return
-                } else if (DO_AUTO_MUTE.isMuted(testKey(testClass, extensionContext.displayName))) {
-                    DO_AUTO_MUTE.muted(testKey(testClass, extensionContext.displayName))
-                    invocation.skip()
-                    return
                 } else {
-                    invocation.proceed()
+                    System.err.println(
+                        "MUTED TEST: ${
+                            testKey(
+                                testMethod.declaringClass,
+                                getMethodKey(testMethod, extensionContext.displayName)
+                            )
+                        }"
+                    )
+                    invocation.skip()
                     return
                 }
             }

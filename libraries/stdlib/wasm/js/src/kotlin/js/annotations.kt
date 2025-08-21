@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -28,7 +28,9 @@ public actual annotation class JsExport {
 }
 
 /**
- * Specifies JavaScript name for external and imported declarations
+ * Gives a declaration (a function, a property or a class) specific name in JavaScript.
+ *
+ * Interoperability with JavaScript is experimental, and the behavior of this annotation may change in the future.
  */
 @Retention(AnnotationRetention.BINARY)
 @Target(
@@ -47,7 +49,7 @@ public actual annotation class JsName(actual val name: String)
  * The annotation can be used on top-level external declarations (classes, properties, functions) and files.
  * In case of file (which can't be `external`) the following rule applies: all the declarations in
  * the file must be `external`. By applying `@JsModule(...)` on a file you tell the compiler to import a JavaScript object
- * that contain all the declarations from the file.
+ * that contains all the declarations from the file.
  *
  * Example:
  *
@@ -64,15 +66,16 @@ public actual annotation class JsName(actual val name: String)
  * @property import name of a module to import declaration from.
  *           It is not interpreted by the Kotlin compiler, it's passed as is directly to the target module system.
  */
+@ExperimentalWasmJsInterop
 @Retention(AnnotationRetention.BINARY)
 @Target(AnnotationTarget.CLASS, AnnotationTarget.PROPERTY, AnnotationTarget.FUNCTION, AnnotationTarget.FILE)
-public annotation class JsModule(val import: String)
+public actual annotation class JsModule(actual val import: String)
 
 
 /**
  * Adds prefix to `external` declarations in a source file.
  *
- * JavaScript does not have concept of packages (namespaces). They are usually emulated by nested objects.
+ * JavaScript does not have a concept of packages (namespaces). They are usually emulated by nested objects.
  * The compiler turns references to `external` declarations either to plain unprefixed names
  * or to plain imports.
  * However, if a JavaScript library provides its declarations in packages, you won't be satisfied with this.
@@ -98,6 +101,7 @@ public annotation class JsModule(val import: String)
  *
  * @see JsModule
  */
+@ExperimentalWasmJsInterop
 @Retention(AnnotationRetention.BINARY)
 @Target(AnnotationTarget.FILE)
-public annotation class JsQualifier(val value: String)
+public actual annotation class JsQualifier(actual val value: String)

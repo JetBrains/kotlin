@@ -4,3 +4,5 @@
 expect class A
 
 // MODULE: platform()()(common)
+
+/* GENERATED_FIR_TAGS: classDeclaration, expect */

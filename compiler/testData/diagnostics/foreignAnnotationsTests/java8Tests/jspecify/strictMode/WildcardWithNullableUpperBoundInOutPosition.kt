@@ -21,14 +21,11 @@ fun <T> accept(arg: T) {}
 
 fun test() {
     accept<Any?>(FromJava.EXPLICIT_UPPER_BOUND.produce())
-    // jspecify_nullness_mismatch
     accept<Any>(<!TYPE_MISMATCH!>FromJava.EXPLICIT_UPPER_BOUND.produce()<!>)
 
     accept<Any?>(FromJava.EXPLICIT_LOWER_BOUND.produce())
-    // jspecify_nullness_mismatch
     accept<Any>(<!TYPE_MISMATCH!>FromJava.EXPLICIT_LOWER_BOUND.produce()<!>)
 
     accept<Any?>(FromJava.IMPLICIT_BOUNDS.produce())
-    // jspecify_nullness_mismatch
     accept<Any>(<!TYPE_MISMATCH!>FromJava.IMPLICIT_BOUNDS.produce()<!>)
 }

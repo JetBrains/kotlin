@@ -8,7 +8,7 @@ abstract class Wrapper<T: A>(protected val t: T)
 class MyWrapper(a: A): Wrapper<A>(a)
 
 // This wrapper is not legal
-class TheirWrapper(e: E): Wrapper<<!UPPER_BOUND_VIOLATED!>E<!>>(<!ARGUMENT_TYPE_MISMATCH!>e<!>)
+class TheirWrapper(e: E): <!INAPPLICABLE_CANDIDATE!>Wrapper<<!UPPER_BOUND_VIOLATED!>E<!>><!>(e)
 
 data class Pair<out T>(val a: T, val b: T)
 
@@ -19,3 +19,6 @@ fun foo(): String {
     matrix = Pair(MyWrapper(A()), TheirWrapper(E()))
     return matrix.toString()
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, data, functionDeclaration, localProperty, nullableType, out,
+outProjection, primaryConstructor, propertyDeclaration, starProjection, typeConstraint, typeParameter */

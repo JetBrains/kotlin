@@ -8,8 +8,6 @@ class C {
 }
 
 fun foo() {
-  { // BLOCK
-  }
 }
 
 typealias Test1 = String

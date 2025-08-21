@@ -1,1 +1,1 @@
-fun foo(): Int = 42/* DeclarationStructureElement */
+/* RootStructureElement */fun foo(): Int = 42/* DeclarationStructureElement */

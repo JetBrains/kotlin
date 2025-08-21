@@ -59,3 +59,6 @@ fun test_1() {
         else -> {}
     }
 }
+
+/* GENERATED_FIR_TAGS: equalityExpression, flexibleType, functionDeclaration, isExpression, javaType, smartcast,
+whenExpression, whenWithSubject */

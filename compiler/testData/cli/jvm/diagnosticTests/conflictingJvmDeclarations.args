@@ -1,3 +1,5 @@
 $TESTDATA_DIR$/conflictingJvmDeclarations.kt
 -d
 $TEMP_DIR$
+-language-version
+1.9

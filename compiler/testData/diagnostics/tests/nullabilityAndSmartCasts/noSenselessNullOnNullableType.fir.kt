@@ -20,3 +20,6 @@ fun <T : Number?> baz(t: T) = when (t) {
     null -> "null"
     else -> "else"
 }
+
+/* GENERATED_FIR_TAGS: equalityExpression, functionDeclaration, isExpression, nullableType, smartcast, stringLiteral,
+typeConstraint, typeParameter, whenExpression, whenWithSubject */

@@ -18,3 +18,5 @@ fun test3(f: (@ParameterName("a") @ParameterName("b") Int, @ParameterName("a") I
 fun test4(f: (@ParameterName("b") @ParameterName("a") Int, @ParameterName("a") Int) -> Unit) {
     f(1, 1)
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionalType, integerLiteral, stringLiteral */

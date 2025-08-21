@@ -27,3 +27,4 @@ abstract class A {
 
 class DImpl : D()
 
+/* GENERATED_FIR_TAGS: classDeclaration, getter, integerLiteral, javaType, propertyDeclaration */

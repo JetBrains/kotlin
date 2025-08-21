@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.fir.unwrapFakeOverrides
 internal class KaFirSymbolDeclarationOverridesProvider(
     override val analysisSessionProvider: () -> KaFirSession,
 ) : KaBaseSymbolDeclarationOverridesProvider<KaFirSession>(), KaFirSessionComponent {
+    @OptIn(ScopeFunctionRequiresPrewarm::class)
     fun <T : KaSymbol> getAllOverriddenSymbols(
         callableSymbol: T,
     ): Sequence<KaCallableSymbol> {
@@ -82,6 +83,7 @@ internal class KaFirSymbolDeclarationOverridesProvider(
         else -> Unit
     }
 
+    @ScopeFunctionRequiresPrewarm
     private fun FirTypeScope.processAllOverriddenDeclarations(
         declaration: FirDeclaration,
         processor: (FirCallableDeclaration) -> Unit,
@@ -199,6 +201,7 @@ internal class KaFirSymbolDeclarationOverridesProvider(
             .map { analysisSession.firSymbolBuilder.callableBuilder.buildCallableSymbol(it) }
     }
 
+    @OptIn(ScopeFunctionRequiresPrewarm::class)
     private fun FirBasedSymbol<*>.getIntersectionOverriddenSymbols(useSiteSession: FirSession): Collection<FirCallableSymbol<*>> {
         require(this is FirCallableSymbol<*>) {
             "Required FirCallableSymbol but ${this::class} found"

@@ -15,3 +15,7 @@ fun <T : A> createObj(implementedBy: Class<T>): T {
     val castObj = implementedBy.cast(obj)
     return castObj // should be OK
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, classReference, equalityExpression, flexibleType, functionDeclaration,
+intersectionType, localProperty, propertyDeclaration, smartcast, stringLiteral, typeConstraint, typeParameter,
+whenExpression, whenWithSubject */

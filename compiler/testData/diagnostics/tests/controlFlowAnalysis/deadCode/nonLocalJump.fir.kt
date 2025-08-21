@@ -11,3 +11,5 @@ fun main() {
     }
     println("hi!")
 }
+
+/* GENERATED_FIR_TAGS: break, functionDeclaration, lambdaLiteral, stringLiteral, whileLoop */

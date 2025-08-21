@@ -54,3 +54,6 @@ public class JKC implements KI {
 class C: JI2 by JC2() ,JI by JC()
 
 class C2: KI by JKC(), JI2 by JC2()
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, inheritanceDelegation, interfaceDeclaration, javaFunction,
+javaType, nullableType, typeParameter */

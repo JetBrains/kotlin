@@ -42,14 +42,11 @@ class SerialInfoImplJvmIrGenerator(
             addGetter().apply {
                 annotations = listOf(
                     IrConstructorCallImpl.fromSymbolOwner(jvmName.typeWith(), jvmName.constructors.single()).apply {
-                        putValueArgument(
-                            0,
-                            IrConstImpl.string(
-                                UNDEFINED_OFFSET,
-                                UNDEFINED_OFFSET,
-                                context.irBuiltIns.stringType,
-                                "getJavaClass"
-                            )
+                        arguments[0] = IrConstImpl.string(
+                            UNDEFINED_OFFSET,
+                            UNDEFINED_OFFSET,
+                            context.irBuiltIns.stringType,
+                            "getJavaClass"
                         )
                     }
                 )
@@ -61,7 +58,6 @@ class SerialInfoImplJvmIrGenerator(
     private val implementor = JvmAnnotationImplementationTransformer.AnnotationPropertyImplementor(
         context.irFactory,
         context.irBuiltIns,
-        context.symbols,
         javaLangClass,
         kClassJava.owner.getter!!.symbol,
         SERIALIZATION_PLUGIN_ORIGIN

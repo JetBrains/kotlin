@@ -22,8 +22,8 @@ class A<T : A<T>>
 class B<T>
 
 actual typealias C1 = String
-<!ACTUAL_TYPE_ALIAS_TO_CLASS_WITH_DECLARATION_SITE_VARIANCE!>actual typealias C2<A> = List<String><!>
-<!ACTUAL_TYPE_ALIAS_TO_CLASS_WITH_DECLARATION_SITE_VARIANCE!>actual typealias C3<B> = List<B><!>
+<!ACTUAL_TYPE_ALIAS_TO_CLASS_WITH_DECLARATION_SITE_VARIANCE!>actual typealias <!EXPECT_ACTUAL_INCOMPATIBLE_TYPE_PARAMETER_VARIANCE!>C2<!><A> = List<String><!>
+<!ACTUAL_TYPE_ALIAS_TO_CLASS_WITH_DECLARATION_SITE_VARIANCE!>actual typealias <!EXPECT_ACTUAL_INCOMPATIBLE_TYPE_PARAMETER_VARIANCE!>C3<!><B> = List<B><!>
 actual typealias C4<D, E> = MutableMap<D, E>
 <!ACTUAL_TYPE_ALIAS_WITH_COMPLEX_SUBSTITUTION!>actual typealias C5<F, G> = MutableMap<G, F><!>
 <!ACTUAL_TYPE_ALIAS_WITH_COMPLEX_SUBSTITUTION!>actual typealias C51 = MutableMap<String, String><!>
@@ -37,3 +37,6 @@ actual typealias C6<H> = MutableList<H>
 
 typealias Tmp<K> = MutableList<K>
 <!ACTUAL_TYPE_ALIAS_NOT_TO_CLASS!>actual typealias C10<L> = Tmp<L><!>
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, inProjection, interfaceDeclaration, nullableType, outProjection,
+starProjection, typeAliasDeclaration, typeAliasDeclarationWithTypeParameter, typeConstraint, typeParameter */

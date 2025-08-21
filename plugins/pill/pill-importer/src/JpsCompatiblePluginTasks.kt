@@ -48,15 +48,9 @@ class JpsCompatiblePluginTasks(
             ":kotlin-compiler",
             ":kotlin-daemon-embeddable",
             ":kotlin-compiler-embeddable",
-            ":kotlin-android-extensions",
             ":kotlin-scripting-compiler-embeddable",
             ":kotlin-scripting-compiler-impl-embeddable",
             ":kotlin-scripting-jvm-host"
-        )
-
-        private val MAPPED_LIBRARIES = mapOf(
-            ":kotlin-reflect-api/main" to ":kotlin-reflect/main",
-            ":kotlin-reflect-api/java9" to ":kotlin-reflect/main"
         )
 
         private val LIB_DIRECTORIES = listOf("dependencies", "dist")
@@ -309,10 +303,6 @@ class JpsCompatiblePluginTasks(
 
             for (path in IGNORED_LIBRARIES) {
                 result["$path/main"] = Optional.empty<PLibrary>()
-            }
-
-            for ((old, new) in MAPPED_LIBRARIES) {
-                result[old] = result[new] ?: error("Mapped library $old -> $new not found")
             }
 
             return@run result

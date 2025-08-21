@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -15,22 +15,26 @@ import org.jetbrains.kotlin.analysis.api.fir.annotations.KaFirAnnotationListForD
 import org.jetbrains.kotlin.analysis.api.fir.utils.withSymbolAttachment
 import org.jetbrains.kotlin.analysis.api.getModule
 import org.jetbrains.kotlin.analysis.api.impl.base.annotations.KaBaseEmptyAnnotationList
+import org.jetbrains.kotlin.analysis.api.impl.base.symbols.pointers.KaBasePsiSymbolPointer
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibrarySourceModule
 import org.jetbrains.kotlin.analysis.api.symbols.*
-import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaPsiSymbolPointerCreator
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.resolveToFirSymbolOfType
 import org.jetbrains.kotlin.asJava.classes.lazyPub
-import org.jetbrains.kotlin.fir.analysis.checkers.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
+import org.jetbrains.kotlin.fir.declarations.utils.isOverride
+import org.jetbrains.kotlin.fir.extensions.declarationGenerators
 import org.jetbrains.kotlin.fir.extensions.extensionService
+import org.jetbrains.kotlin.fir.extensions.statusTransformerExtensions
 import org.jetbrains.kotlin.fir.extensions.supertypeGenerators
 import org.jetbrains.kotlin.fir.realPsi
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
+import org.jetbrains.kotlin.fir.types.toRegularClassSymbol
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.JvmStandardClassIds
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.psi.*
@@ -139,8 +143,26 @@ internal fun KaFirKtBasedSymbol<KtCallableDeclaration, FirCallableSymbol<*>>.cre
  */
 private fun KaFirSession.hasCompilerPluginForSupertypes(declaration: KtClassOrObject): Boolean {
     val declarationSiteModule = getModule(declaration)
-    val declarationSiteSession = firResolveSession.getSessionFor(declarationSiteModule)
+    val declarationSiteSession = resolutionFacade.getSessionFor(declarationSiteModule)
     return declarationSiteSession.extensionService.supertypeGenerators.isNotEmpty()
+}
+
+/**
+ * We cannot optimize some declaration creations if at least one compiler plugin may generate additional declarations
+ */
+internal fun KaFirSession.hasDeclarationGeneratorCompilerPlugin(declaration: KtClassOrObject): Boolean {
+    val declarationSiteModule = getModule(declaration)
+    val declarationSiteSession = resolutionFacade.getSessionFor(declarationSiteModule)
+    return declarationSiteSession.extensionService.declarationGenerators.isNotEmpty()
+}
+
+/**
+ * We cannot optimize the status by psi if at least one compiler plugin may transform it
+ */
+internal fun KaFirSession.hasDeclarationStatusCompilerPlugin(declaration: KtDeclaration): Boolean {
+    val declarationSiteModule = getModule(declaration)
+    val declarationSiteSession = resolutionFacade.getSessionFor(declarationSiteModule)
+    return declarationSiteSession.extensionService.statusTransformerExtensions.isNotEmpty()
 }
 
 internal fun KaFirKtBasedSymbol<KtClassOrObject, FirClassSymbol<*>>.createSuperTypes(): List<KaType> {
@@ -200,7 +222,7 @@ internal fun <P : KtElement> KaFirPsiSymbol<P, *>.psiOrSymbolOrigin(): KaSymbolO
     }
 }
 
-private val KtElement.cameFromKotlinLibrary: Boolean get() = containingKtFile.isCompiled
+internal val KtElement.cameFromKotlinLibrary: Boolean get() = containingKtFile.isCompiled
 
 /**
  * Executes [action] if the [KaFirPsiSymbol.backingPsi] exists and came from a source file.
@@ -224,7 +246,7 @@ internal inline fun <R> KaFirPsiSymbol<*, *>.ifSource(action: () -> R): R? {
 internal inline fun <reified S : KaSymbol> KaFirKtBasedSymbol<*, *>.psiBasedSymbolPointerOfTypeIfSource(): KaSymbolPointer<S>? {
     return ifSource {
         backingPsi?.let {
-            KaPsiSymbolPointerCreator.symbolPointerOfType(it, this as S)
+            KaBasePsiSymbolPointer(it, S::class, this as S)
         }
     }
 }
@@ -233,11 +255,11 @@ internal inline fun <reified S : FirBasedSymbol<*>> lazyFirSymbol(
     declaration: KtDeclaration,
     session: KaFirSession,
 ): Lazy<S> = lazyPub {
-    declaration.resolveToFirSymbolOfType<S>(session.firResolveSession)
+    declaration.resolveToFirSymbolOfType<S>(session.resolutionFacade)
 }
 
 /**
- * This function is a workaround for KT-70728 issue.
+ * This function is a workaround for the KT-70728 issue.
  *
  * The problem is that library sources share the underlying PSI with binary modules, and
  * the use site session is not enough to build the correct FIR from PSI.
@@ -260,6 +282,22 @@ internal fun KaFirKtBasedSymbol<KtCallableDeclaration, *>.createKaValueParameter
         }
     }
 
+internal fun KaFirKtBasedSymbol<KtCallableDeclaration, *>.createKaContextParameters(): List<KaContextParameterSymbol>? =
+    ifNotLibrarySource {
+        val psi = backingPsi as? KtTypeParameterListOwnerStub<*> ?: return null // no psi
+        val lists = psi.contextReceiverLists.ifEmpty { return emptyList() } // no context receivers/parameters
+        with(analysisSession) {
+            lists.flatMap { list ->
+                val contextParameters = list.contextParameters()
+                if (contextParameters.isNotEmpty()) {
+                    contextParameters.map { it.symbol as KaContextParameterSymbol }
+                } else {
+                    list.contextReceivers().map { it.symbol }
+                }
+            }
+        }
+    }
+
 internal fun KaFirKtBasedSymbol<KtTypeParameterListOwner, *>.createKaTypeParameters(): List<KaTypeParameterSymbol>? =
     ifNotLibrarySource {
         with(analysisSession) {
@@ -275,3 +313,28 @@ internal fun KaFirKtBasedSymbol<KtDeclarationWithBody, FirCallableSymbol<*>>.cre
 
     return firSymbol.returnType(builder)
 }
+
+/**
+ * Callable from libraries don't have the override flag as it is not preserved in the metadata
+ */
+internal val KaFirKtBasedSymbol<KtCallableDeclaration, FirCallableSymbol<*>>.isOverrideWithWorkaround: Boolean
+    get() {
+        require(this is KaCallableSymbol)
+        if (isTopLevel) {
+            return false
+        }
+
+        val isOverride = ifSource { backingPsi }?.let { declaration ->
+            val hasModifier = declaration.hasModifier(KtTokens.OVERRIDE_KEYWORD)
+            when {
+                hasModifier -> true
+                !analysisSession.hasDeclarationStatusCompilerPlugin(declaration) -> false
+                else -> null
+            }
+        } ?: firSymbol.isOverride // Resolved status is needed as compiler plugins might add the modifier
+
+        return isOverride || origin == KaSymbolOrigin.LIBRARY && with(analysisSession) {
+            // A workaround for the case when the library declaration is analyzed as sources
+            directlyOverriddenSymbols.any()
+        }
+    }

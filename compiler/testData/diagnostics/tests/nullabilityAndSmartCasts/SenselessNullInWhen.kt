@@ -10,3 +10,5 @@ fun foo(i: Int) : Int =
         <!SENSELESS_NULL_IN_WHEN!>null<!> -> 1
         else -> 1
     }
+
+/* GENERATED_FIR_TAGS: equalityExpression, functionDeclaration, integerLiteral, whenExpression, whenWithSubject */

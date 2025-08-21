@@ -1,5 +1,5 @@
 element: loopVar
-implicit receivers:
+implicit values:
 scopes:
   LocalScope, index = 0
     packages: 0
@@ -19,6 +19,7 @@ scopes:
         isActual: false
         isExpect: false
         isExtension: false
+        isLateInit: false
         isVal: true
         location: LOCAL
         modality: FINAL
@@ -93,6 +94,7 @@ scopes:
         annotations: []
         callableId: test/usage
         compilerVisibility: Public
+        contextParameters: []
         contextReceivers: []
         contractEffects: []
         hasStableParameterNames: true

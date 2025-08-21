@@ -10,3 +10,6 @@ object TestCallableReferences {
 
     fun <T> test1(): (List<T>) -> List<T> = TestCallableReferences::foo
 }
+
+/* GENERATED_FIR_TAGS: callableReference, functionDeclaration, functionalType, nullableType, objectDeclaration,
+typeParameter */

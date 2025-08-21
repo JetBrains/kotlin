@@ -13,3 +13,6 @@ public fun foo(x: String?): Int {
     // x is null because of the break
     return x<!UNSAFE_CALL!>.<!>length
 }
+
+/* GENERATED_FIR_TAGS: assignment, break, doWhileLoop, equalityExpression, functionDeclaration, ifExpression,
+isExpression, localProperty, nullableType, propertyDeclaration, smartcast, stringLiteral */

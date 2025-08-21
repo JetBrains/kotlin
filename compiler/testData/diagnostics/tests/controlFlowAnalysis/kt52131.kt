@@ -9,3 +9,6 @@ fun foo(): Int {
     }
     return result
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral, lambdaLiteral, localProperty, propertyDeclaration,
+tryExpression */

@@ -25,6 +25,8 @@ library {
       // nested class: Var
 
       // nested class: Companion
+
+      // has Enum.entries
     }
 
     public final companion object pod1/EnumWithoutConstant.Companion {
@@ -73,6 +75,8 @@ library {
 
       @kotlinx/cinterop/internal/ConstantValue.Long(value = 1L)
       B,
+
+      // has Enum.entries
     }
 
     public final companion object pod1/ForwardEnum.Companion {

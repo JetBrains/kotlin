@@ -8,8 +8,8 @@ import kotlin.concurrent.atomics.AtomicInt
 import kotlin.concurrent.atomics.ExperimentalAtomicApi
 
 @OptIn(ExperimentalAtomicApi::class)
-<!EXPECT_ACTUAL_INCOMPATIBILITY{JVM}!>expect<!> class Foo {
-    fun <!EXPECT_ACTUAL_MISMATCH{JVM}!>test<!>(a: AtomicInt): AtomicInt
+<!EXPECT_ACTUAL_IR_INCOMPATIBILITY{JVM}!>expect<!> class Foo {
+    fun <!EXPECT_ACTUAL_IR_MISMATCH{JVM}!>test<!>(a: AtomicInt): AtomicInt
 }
 
 // MODULE: m2-jvm()()(m1-common)
@@ -24,3 +24,6 @@ public class Bar {
 
 //FILE: test.kt
 actual typealias <!NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS!>Foo<!> = Bar
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, classReference, expect, functionDeclaration, javaType,
+typeAliasDeclaration */

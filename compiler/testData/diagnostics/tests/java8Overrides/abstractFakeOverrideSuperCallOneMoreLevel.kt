@@ -24,3 +24,6 @@ class Problem2 : Derived3() {
         return super.<!ABSTRACT_SUPER_CALL_WARNING!>check<!>()
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, interfaceDeclaration, override, stringLiteral,
+superExpression */

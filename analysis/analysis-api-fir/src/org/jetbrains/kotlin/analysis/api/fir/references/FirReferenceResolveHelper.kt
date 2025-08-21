@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.throwUnexpectedFirEle
 import org.jetbrains.kotlin.analysis.utils.errors.unexpectedElementError
 import org.jetbrains.kotlin.fir.FirPackageDirective
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.analysis.checkers.getContainingClassSymbol
+import org.jetbrains.kotlin.fir.resolve.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.buildImport
 import org.jetbrains.kotlin.fir.declarations.builder.buildResolvedImport
@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.references.*
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
+import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeOperatorAmbiguityError
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnmatchedTypeArgumentsError
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.resolve.toSymbol
@@ -38,6 +39,7 @@ import org.jetbrains.kotlin.fir.scopes.processClassifiersByName
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirReceiverParameterSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -114,9 +116,14 @@ internal object FirReferenceResolveHelper {
                 listOfNotNull(resolvedSymbol.buildSymbol(symbolBuilder))
             }
             is FirThisReference -> {
-                if (isInLabelReference) {
+                val boundSymbol = boundSymbol
+
+                // Probably the workaround for a script receiver parameter should be dropped
+                // as soon as `KaScriptSymbol` API will be properly designed KT-76360
+                // (currently we don't have a dedicated KaSymbol for script receiver parameter)
+                if (isInLabelReference || boundSymbol?.fir is FirScriptReceiverParameter) {
                     listOfNotNull(
-                        when (val boundSymbol = boundSymbol) {
+                        when (boundSymbol) {
                             is FirReceiverParameterSymbol -> boundSymbol.containingDeclarationSymbol
                             is FirValueParameterSymbol -> boundSymbol.containingDeclarationSymbol
                             else -> boundSymbol as FirBasedSymbol<*>?
@@ -232,11 +239,11 @@ internal object FirReferenceResolveHelper {
         }
 
         val adjustedResolutionExpression = adjustResolutionExpression(expression)
-        val fir = when (val baseFir = adjustedResolutionExpression.getOrBuildFir(analysisSession.firResolveSession)) {
+        val fir = when (val baseFir = adjustedResolutionExpression.getOrBuildFir(analysisSession.resolutionFacade)) {
             is FirSmartCastExpression -> baseFir.originalExpression
             else -> baseFir
         }
-        val session = analysisSession.firResolveSession.useSiteFirSession
+        val session = analysisSession.resolutionFacade.useSiteFirSession
         return when (fir) {
             is FirResolvedTypeRef -> getSymbolsForResolvedTypeRef(fir, expression, session, symbolBuilder)
             is FirResolvedQualifier ->
@@ -259,6 +266,7 @@ internal object FirReferenceResolveHelper {
             is FirEqualityOperatorCall -> getSymbolsByEqualsName(fir, session, analysisSession, symbolBuilder)
             is FirTypeParameter -> getSybmolsByTypeParameter(symbolBuilder, fir)
             is FirResolvedReifiedParameterReference -> getSymbolsByResolvedReifiedTypeParameterReference(symbolBuilder, fir)
+            is FirErrorExpression -> handleErrorExpression(fir, expression, symbolBuilder)
             else -> handleUnknownFirElement(expression, analysisSession, session, symbolBuilder)
         }
     }
@@ -327,7 +335,7 @@ internal object FirReferenceResolveHelper {
     ): Collection<KaSymbol> {
         val parentAsCall = expression.parent as? KtCallExpression
         if (parentAsCall != null) {
-            val firCall = parentAsCall.getOrBuildFir(analysisSession.firResolveSession)?.unwrapSafeCall()
+            val firCall = parentAsCall.getOrBuildFir(analysisSession.resolutionFacade)?.unwrapSafeCall()
 
             if (firCall is FirResolvable) {
                 return getSymbolsByResolvable(firCall, expression, session, symbolBuilder)
@@ -375,13 +383,31 @@ internal object FirReferenceResolveHelper {
         val ktValueArgumentList = ktValueArgument.parent as? KtValueArgumentList ?: return emptyList()
         val ktCallExpression = ktValueArgumentList.parent as? KtCallElement ?: return emptyList()
 
-        val firCall = ktCallExpression.getOrBuildFir(analysisSession.firResolveSession)?.unwrapSafeCall() as? FirCall ?: return emptyList()
+        val firCall = ktCallExpression.getOrBuildFir(analysisSession.resolutionFacade)?.unwrapSafeCall() as? FirCall ?: return emptyList()
         val parameter = firCall.findCorrespondingParameter(ktValueArgumentName.asName) ?: return emptyList()
         return listOfNotNull(parameter.buildSymbol(symbolBuilder))
     }
 
     private fun FirCall.findCorrespondingParameter(name: Name): FirValueParameter? {
         return resolvedArgumentMapping?.values?.firstOrNull { it.name == name }
+    }
+
+    private fun handleErrorExpression(
+        fir: FirErrorExpression,
+        expression: KtSimpleNameExpression,
+        symbolBuilder: KaSymbolByFirBuilder,
+    ): List<KaSymbol> {
+        val diagnostic = fir.diagnostic
+        return when (expression) {
+            is KtOperationReferenceExpression if expression.operationSignTokenType in KtTokens.AUGMENTED_ASSIGNMENTS && diagnostic is ConeOperatorAmbiguityError -> {
+                diagnostic.candidates.map { candidate ->
+                    candidate.symbol.buildSymbol(symbolBuilder)
+                }
+            }
+            else -> {
+                emptyList()
+            }
+        }
     }
 
     private fun handleUnknownFirElement(
@@ -401,7 +427,7 @@ internal object FirReferenceResolveHelper {
                 parent = parent.parent as? KtDotQualifiedExpression
                 continue
             }
-            val parentFir = selectorExpression.getOrBuildFir(analysisSession.firResolveSession)
+            val parentFir = selectorExpression.getOrBuildFir(analysisSession.resolutionFacade)
             if (parentFir is FirResolvedQualifier) {
                 var classId = parentFir.classId
                 while (unresolvedCounter > 0) {
@@ -425,7 +451,7 @@ internal object FirReferenceResolveHelper {
         // If the cursor position is on the label of `super`, we want to resolve to the current class. FIR represents `super` as
         // accessing the `super` property on `this`, hence this weird looking if condition. In addition, the current class type is available
         // from the dispatch receiver `this`.
-        if (expression is KtLabelReferenceExpression && fir is FirPropertyAccessExpression && fir.calleeReference is FirSuperReference) {
+        if (expression is KtLabelReferenceExpression && fir is FirSuperReceiverExpression) {
             return listOfNotNull(fir.dispatchReceiver?.resolvedType?.toTargetSymbol(session, symbolBuilder))
         }
         val receiverOrImplicitInvoke = if (fir is FirImplicitInvokeCall) {
@@ -596,10 +622,10 @@ internal object FirReferenceResolveHelper {
         session: FirSession,
         symbolBuilder: KaSymbolByFirBuilder,
     ): Collection<KaSymbol> {
-        val referencedSymbol = if (fir.resolvedToCompanionObject) {
-            (fir.symbol?.fir as? FirRegularClass)?.companionObjectSymbol
-        } else {
-            fir.symbol
+        val referencedSymbol = when (val symbol = fir.symbol) {
+            // Note: we want to consider the companion object only for regular class qualifiers (and not for typealiased ones)
+            is FirRegularClassSymbol if (fir.resolvedToCompanionObject) -> symbol.companionObjectSymbol
+            else -> symbol
         }
         if (referencedSymbol == null) {
             // If referencedSymbol is null, it means the reference goes to a package.

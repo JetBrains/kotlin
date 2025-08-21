@@ -21,3 +21,6 @@ class Bar {
 }
 
 fun main(args: Array<String>) {}
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, annotationUseSiteTargetFile, classDeclaration, classReference,
+functionDeclaration */

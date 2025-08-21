@@ -17,12 +17,10 @@ import org.jetbrains.kotlin.analysis.api.fir.utils.createPointer
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.types.KaErrorType
-import org.jetbrains.kotlin.analysis.api.types.KaTypeNullability
 import org.jetbrains.kotlin.analysis.api.types.KaTypePointer
 import org.jetbrains.kotlin.analysis.api.types.KaUsualClassType
 import org.jetbrains.kotlin.analysis.utils.errors.requireIsInstance
 import org.jetbrains.kotlin.fir.diagnostics.ConeCannotInferTypeParameterType
-import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnosticWithNullability
 import org.jetbrains.kotlin.fir.diagnostics.ConeTypeVariableTypeIsNotInferred
 import org.jetbrains.kotlin.fir.types.ConeErrorType
 import org.jetbrains.kotlin.fir.types.renderForDebugging
@@ -34,11 +32,15 @@ internal class KaFirErrorType(
 
     override val token: KaLifetimeToken get() = builder.token
 
-    override val nullability: KaTypeNullability
+    @Deprecated(
+        "Use `isMarkedNullable`, `isNullable` or `hasFlexibleNullability` instead. See KDocs for the migration guide",
+        replaceWith = ReplaceWith("this.isMarkedNullable")
+    )
+    @Suppress("Deprecation")
+    override val nullability: org.jetbrains.kotlin.analysis.api.types.KaTypeNullability
         get() = withValidityAssertion {
-            val diagnostic = coneType.diagnostic as? ConeDiagnosticWithNullability
-                ?: return@withValidityAssertion KaTypeNullability.UNKNOWN
-            KaTypeNullability.create(diagnostic.isNullable)
+            coneType.nullable?.let(org.jetbrains.kotlin.analysis.api.types.KaTypeNullability::create)
+                ?: org.jetbrains.kotlin.analysis.api.types.KaTypeNullability.UNKNOWN
         }
 
     @KaNonPublicApi

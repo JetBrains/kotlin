@@ -22,3 +22,5 @@ public interface ACheckedFunction0 extends ALambda {
 fun test() {
     ACheckedFunction0 { 2 } // error: Interface ACheckedFunction0 does not have constructors
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, integerLiteral, javaType, lambdaLiteral */

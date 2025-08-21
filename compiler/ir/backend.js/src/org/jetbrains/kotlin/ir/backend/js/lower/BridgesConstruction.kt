@@ -6,18 +6,16 @@
 package org.jetbrains.kotlin.ir.backend.js.lower
 
 import org.jetbrains.kotlin.backend.common.DeclarationTransformer
-import org.jetbrains.kotlin.backend.common.bridges.FunctionHandle
-import org.jetbrains.kotlin.backend.common.bridges.generateBridges
+import org.jetbrains.kotlin.backend.common.compilationException
 import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.JsCommonBackendContext
-import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.varargParameterIndex
-import org.jetbrains.kotlin.ir.backend.js.utils.realOverrideTarget
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classifierOrNull
@@ -45,22 +43,28 @@ import org.jetbrains.kotlin.utils.toSmartList
  *            fun foo(t: Any?) = foo(t as Int)  // Constructed bridge
  *          }
  */
-abstract class BridgesConstruction<T : JsCommonBackendContext>(val context: T) : DeclarationTransformer {
+abstract class BridgesConstruction(private val context: JsCommonBackendContext) : DeclarationTransformer {
 
     private val specialBridgeMethods = SpecialBridgeMethods(context)
 
     abstract fun getFunctionSignature(function: IrSimpleFunction): Any
 
     /**
-     * Usually just returns [irFunction]'s value parameters, but special transformations may be required if,
+     * Given a concrete function, finds an implementation (a concrete declaration) of this function in the supertypes.
+     * The implementation is guaranteed to exist because if it wouldn't, the given function would've been abstract
+     */
+    abstract fun findConcreteSuperDeclaration(function: IrSimpleFunction): IrSimpleFunction
+
+    /**
+     * Usually just returns [irFunction]'s parameters, but special transformations may be required if,
      * for example, we're dealing with an external function, and that function contains a vararg,
      * which we must extract and convert to an array.
      */
-    protected open fun extractValueParameters(
+    protected open fun extractParameters(
         blockBodyBuilder: IrBlockBodyBuilder,
         irFunction: IrSimpleFunction,
         bridge: IrSimpleFunction
-    ): List<IrValueDeclaration> = irFunction.valueParameters
+    ): List<IrValueDeclaration> = irFunction.parameters
 
     // Should dispatch receiver type be casted inside a bridge.
     open val shouldCastDispatchReceiver: Boolean = false
@@ -71,56 +75,66 @@ abstract class BridgesConstruction<T : JsCommonBackendContext>(val context: T) :
         return generateBridges(declaration)?.let { listOf(declaration) + it }
     }
 
+    private fun dfsForOverrides(currentFunction: IrSimpleFunction, afterChild: (IrSimpleFunction) -> Unit) {
+        dfsForOverrides(currentFunction.overriddenSymbols, afterChild)
+        if (currentFunction.isRealOrOverridesInterface) {
+            afterChild(currentFunction)
+        }
+    }
+
+    private fun dfsForOverrides(functions: List<IrSimpleFunctionSymbol>, afterChild: (IrSimpleFunction) -> Unit) {
+        for (currentFunction in functions) {
+            dfsForOverrides(currentFunction.owner, afterChild)
+        }
+    }
+
     private fun generateBridges(function: IrSimpleFunction): List<IrDeclaration>? {
-        val (specialOverride: IrSimpleFunction?, specialOverrideInfo) =
-            specialBridgeMethods.findSpecialWithOverride(function) ?: Pair(null, null)
+        // If it's an abstract function, no bridges are needed: when an implementation will appear in some concrete subclass, all necessary
+        // bridges will be generated there
+        if (function.modality == Modality.ABSTRACT) return null
 
-        val specialOverrideSignature = specialOverride?.let { FunctionAndSignature(it) }
+        val (bridgesDfsRoots, implementedDfsRoots) =
+            if (function.isRealOrOverridesInterface) function.overriddenSymbols to emptyList()
+            else function.overriddenSymbols.partition { it.owner.modality == Modality.ABSTRACT }
 
-        val bridgesToGenerate = generateBridges(
-            function = IrBasedFunctionHandle(function),
-            signature = { FunctionAndSignature(it.function) }
-        )
+        // If it's a concrete fake override and all of its super-functions are concrete, then every possible bridge is already generated
+        // into some of the super-classes and will be inherited in this class
+        if (bridgesDfsRoots.isEmpty()) return null
+
+        val implementation = findConcreteSuperDeclaration(function)
+        val implementationSignature = getFunctionSignature(implementation)
+
+        val implementedBridges = mutableSetOf<Any>()
+        dfsForOverrides(implementedDfsRoots) { override ->
+            implementedBridges.add(getFunctionSignature(override))
+        }
+
+        val bridgesToGenerate = mutableMapOf<Any, IrSimpleFunction>()
+        dfsForOverrides(bridgesDfsRoots) { override ->
+            val functionSignature = getFunctionSignature(override)
+            if (functionSignature != implementationSignature && functionSignature !in implementedBridges) {
+                bridgesToGenerate.putIfAbsent(functionSignature, override)
+            }
+        }
 
         if (bridgesToGenerate.isEmpty()) return null
 
+        val (specialOverride: IrSimpleFunction?, specialOverrideInfo) =
+            specialBridgeMethods.findSpecialWithOverride(function) ?: Pair(null, null)
+        val specialOverrideSignature = specialOverride?.let(::getFunctionSignature)
+
         val result = mutableListOf<IrDeclaration>()
-
-        for ((from, to) in bridgesToGenerate) {
-            if (!from.function.parentAsClass.isInterface &&
-                from.function.isReal &&
-                from.function.modality != Modality.ABSTRACT &&
-                !to.function.isReal
-            ) {
-                continue
-            }
-
-            // Don't build bridges for functions with the same signature.
-            // TODO: This should be caught earlier in bridgesToGenerate
-            if (FunctionAndSignature(to.function.realOverrideTarget) == FunctionAndSignature(from.function.realOverrideTarget))
-                continue
-
-            if (from.function.correspondingPropertySymbol != null && from.function.isEffectivelyExternal()) {
-                // TODO: Revisit bridges from external properties
-                continue
-            }
-
-            val bridge: IrDeclaration = when {
-                specialOverrideSignature == from ->
-                    createBridge(function, from.function, to.function, specialOverrideInfo)
-
-                else ->
-                    createBridge(function, from.function, to.function, null)
-            }
-
-
-            result += bridge
+        for ((bridgeSignature, bridgeMethod) in bridgesToGenerate) {
+            result += createBridge(
+                function = function,
+                bridge = bridgeMethod,
+                delegateTo = implementation,
+                specialMethodInfo = specialOverrideInfo.takeIf { specialOverrideSignature == bridgeSignature }
+            )
         }
-
         return result
     }
 
-    // Ported from from jvm.lower.BridgeLowering
     private fun createBridge(
         function: IrSimpleFunction,
         bridge: IrSimpleFunction,
@@ -156,33 +170,32 @@ abstract class BridgesConstruction<T : JsCommonBackendContext>(val context: T) :
 
         irFunction.body = context.irFactory.createBlockBody(UNDEFINED_OFFSET, UNDEFINED_OFFSET) {
             statements += context.createIrBuilder(irFunction.symbol).irBlockBody(irFunction) {
-                val valueParameters = extractValueParameters(this, irFunction, bridge)
+                val extractedParameters = extractParameters(this, irFunction, bridge)
                 if (specialMethodInfo != null) {
-                    valueParameters.take(specialMethodInfo.argumentsToCheck).forEachIndexed { index, valueDeclaration ->
-                        +irIfThen(
-                            context.irBuiltIns.unitType,
-                            irNot(irIs(irGet(valueDeclaration), delegateTo.valueParameters[index].type)),
-                            irReturn(specialMethodInfo.defaultValueGenerator(irFunction))
-                        )
-                    }
+                    extractedParameters
+                        .map { it as? IrValueParameter ?: compilationException("Expected a value parameter", it) }
+                        .filter { it.kind != IrParameterKind.DispatchReceiver }
+                        .take(specialMethodInfo.argumentsToCheck)
+                        .forEach { parameter ->
+                            +irIfThen(
+                                context.irBuiltIns.unitType,
+                                irNot(irIs(irGet(parameter), delegateTo.parameters[parameter.indexInParameters].type)),
+                                irReturn(specialMethodInfo.defaultValueGenerator(irFunction))
+                            )
+                        }
                 }
 
                 val call = irCall(delegateTo.symbol)
-                val dispatchReceiver = irGet(irFunction.dispatchReceiverParameter!!)
+                for (delegateParam in delegateTo.parameters) {
+                    if ((delegateTo.isSuspend xor irFunction.isSuspend) && delegateParam.indexInParameters == extractedParameters.lastIndex) {
+                        break
+                    }
 
-                call.dispatchReceiver = if (shouldCastDispatchReceiver)
-                    irCastIfNeeded(dispatchReceiver, delegateTo.dispatchReceiverParameter!!.type)
-                else
-                    dispatchReceiver
-
-                irFunction.extensionReceiverParameter?.let {
-                    call.extensionReceiver = irCastIfNeeded(irGet(it), delegateTo.extensionReceiverParameter!!.type)
-                }
-
-                val toTake = valueParameters.size - if (call.isSuspend xor irFunction.isSuspend) 1 else 0
-
-                valueParameters.subList(0, toTake).forEachIndexed { i, valueParameter ->
-                    call.putValueArgument(i, irCastIfNeeded(irGet(valueParameter), delegateTo.valueParameters[i].type))
+                    var argument: IrExpression = irGet(extractedParameters[delegateParam.indexInParameters])
+                    if (delegateParam.kind != IrParameterKind.DispatchReceiver || shouldCastDispatchReceiver) {
+                        argument = irCastIfNeeded(argument, delegateParam.type)
+                    }
+                    call.arguments[delegateParam] = argument
                 }
 
                 +irReturn(call)
@@ -211,42 +224,6 @@ abstract class BridgesConstruction<T : JsCommonBackendContext>(val context: T) :
     private fun IrBlockBodyBuilder.irCastIfNeeded(argument: IrExpression, type: IrType): IrExpression =
         if (argument.type.classifierOrNull == type.classifierOrNull) argument else irAs(argument, type)
 
-    // Wrapper around function that compares and hashCodes it based on signature
-    // Designed to be used as a Signature type parameter in backend.common.bridges
-    inner class FunctionAndSignature(val function: IrSimpleFunction) {
-
-        // TODO: Use type-upper-bound-based signature instead of Strings
-        // Currently strings are used for compatibility with a hack-based name generator
-
-        private val signature = getFunctionSignature(function)
-
-        override fun equals(other: Any?): Boolean {
-            if (this === other) return true
-            if (other !is BridgesConstruction<*>.FunctionAndSignature) return false
-
-            return signature == other.signature
-        }
-
-        override fun hashCode(): Int = signature.hashCode()
-    }
-}
-
-// Handle for common.bridges
-data class IrBasedFunctionHandle(val function: IrSimpleFunction) : FunctionHandle {
-    override val isDeclaration = function.run { isReal || findInterfaceImplementation() != null }
-
-    override val isAbstract: Boolean =
-        function.modality == Modality.ABSTRACT
-
-    override val mayBeUsedAsSuperImplementation =
-        !function.parentAsClass.isInterface
-
-    override fun getOverridden() =
-        function.overriddenSymbols.map { IrBasedFunctionHandle(it.owner) }
-}
-
-private fun IrSimpleFunction.findInterfaceImplementation(): IrSimpleFunction? {
-    if (isReal) return null
-
-    return resolveFakeOverride()?.run { if (parentAsClass.isInterface) this else null }
+    protected val IrSimpleFunction.isRealOrOverridesInterface
+        get() = isReal || resolveFakeOverride()?.parentAsClass?.isInterface == true
 }

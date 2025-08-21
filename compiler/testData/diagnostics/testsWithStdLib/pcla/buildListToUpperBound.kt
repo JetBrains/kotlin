@@ -10,3 +10,6 @@ fun box(): String {
     }
     return "OK"
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral, lambdaLiteral, localProperty, propertyDeclaration,
+stringLiteral */

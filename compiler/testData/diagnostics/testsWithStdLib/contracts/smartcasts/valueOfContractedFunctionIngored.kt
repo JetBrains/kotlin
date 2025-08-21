@@ -11,3 +11,5 @@ fun f3(value: String?) {
         value<!UNSAFE_CALL!>.<!>length
     }
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, ifExpression, isExpression, nullableType */

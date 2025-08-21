@@ -20,14 +20,15 @@ import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.fir.declarations.utils.isEffectivelyExternal
 
 object FirWasmJsAssociatedObjectChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
-    override fun check(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirDeclaration) {
         if (declaration !is FirClass) return
         if (!declaration.symbol.isEffectivelyExternal(context.session)) return
 
         for (annotationCall in declaration.annotations) {
-            val annotations = annotationCall.annotationTypeRef.coneType.toSymbol(context.session)?.annotations ?: continue
-            if (annotations.hasAnnotation(StandardClassIds.Annotations.AssociatedObjectKey, context.session)) {
-                reporter.reportOn(annotationCall.source, ASSOCIATED_OBJECT_INVALID_BINDING, context)
+            val annotationSymbol = annotationCall.annotationTypeRef.coneType.toSymbol(context.session) ?: continue
+            if (annotationSymbol.hasAnnotation(StandardClassIds.Annotations.AssociatedObjectKey, context.session)) {
+                reporter.reportOn(annotationCall.source, ASSOCIATED_OBJECT_INVALID_BINDING)
             }
         }
     }

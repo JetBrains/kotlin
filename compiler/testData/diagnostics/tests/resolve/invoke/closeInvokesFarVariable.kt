@@ -17,3 +17,6 @@ fun bar() {
 }
 
 fun takeInt(x: Int) {}
+
+/* GENERATED_FIR_TAGS: funWithExtensionReceiver, functionDeclaration, integerLiteral, localFunction, operator,
+propertyDeclaration, stringLiteral */

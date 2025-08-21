@@ -106,6 +106,12 @@ public class FirStandaloneNormalAnalysisSourceModuleTypeReferenceTestGenerated e
   }
 
   @Test
+  @TestMetadata("danglingAnnotationInsideEnumEntry.kt")
+  public void testDanglingAnnotationInsideEnumEntry() {
+    runTest("analysis/analysis-api/testData/components/typeProvider/typeReference/danglingAnnotationInsideEnumEntry.kt");
+  }
+
+  @Test
   @TestMetadata("functionReceiver.kt")
   public void testFunctionReceiver() {
     runTest("analysis/analysis-api/testData/components/typeProvider/typeReference/functionReceiver.kt");
@@ -145,6 +151,18 @@ public class FirStandaloneNormalAnalysisSourceModuleTypeReferenceTestGenerated e
   @TestMetadata("superTypeEntry_withTypeArgument.kt")
   public void testSuperTypeEntry_withTypeArgument() {
     runTest("analysis/analysis-api/testData/components/typeProvider/typeReference/superTypeEntry_withTypeArgument.kt");
+  }
+
+  @Test
+  @TestMetadata("superTypeQualifier.kt")
+  public void testSuperTypeQualifier() {
+    runTest("analysis/analysis-api/testData/components/typeProvider/typeReference/superTypeQualifier.kt");
+  }
+
+  @Test
+  @TestMetadata("superTypeQualifierError.kt")
+  public void testSuperTypeQualifierError() {
+    runTest("analysis/analysis-api/testData/components/typeProvider/typeReference/superTypeQualifierError.kt");
   }
 
   @Test

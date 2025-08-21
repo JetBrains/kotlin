@@ -15,3 +15,6 @@ fun main(number: Int? = null) {
 
     number != null
 }
+
+/* GENERATED_FIR_TAGS: asExpression, checkNotNullCall, equalityExpression, functionDeclaration, functionalType,
+lambdaLiteral, nullableType, stringLiteral, typeParameter */

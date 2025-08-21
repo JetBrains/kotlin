@@ -1,5 +1,5 @@
-// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
+// RUN_PIPELINE_TILL: FRONTEND
 // DIAGNOSTICS: -UNUSED_PARAMETER
 
 interface Ctx
@@ -15,3 +15,6 @@ open class Test(open val ctx: Ctx) {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, interfaceDeclaration, isExpression,
+primaryConstructor, propertyDeclaration, smartcast, whenExpression, whenWithSubject */

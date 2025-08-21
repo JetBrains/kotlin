@@ -49,3 +49,5 @@ actual interface I2 {
 
 actual open class Expect2_1 : C2(), I2
 actual open class Expect2_2 : I2, C2()
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, functionDeclaration, interfaceDeclaration, primaryConstructor */

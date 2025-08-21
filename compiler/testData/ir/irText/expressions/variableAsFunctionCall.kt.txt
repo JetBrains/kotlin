@@ -14,7 +14,7 @@ fun test2(f: @ExtensionFunctionType Function1<String, Unit>) {
 }
 
 fun test3(): String {
-  return "hello".k().invoke()
+  return k(/* <this> = "hello" */).invoke()
 }
 
 fun test4(ns: String?): String? {
@@ -23,7 +23,7 @@ fun test4(ns: String?): String? {
       val tmp_1: String? = ns
       when {
         EQEQ(arg0 = tmp_1, arg1 = null) -> null
-        else -> tmp_1.k()
+        else -> k(/* <this> = tmp_1 */)
       }
     }
     when {
@@ -32,3 +32,4 @@ fun test4(ns: String?): String? {
     }
   }
 }
+

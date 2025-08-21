@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -20,10 +20,10 @@ import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.declarations.utils.hasBody
+import org.jetbrains.kotlin.fir.declarations.utils.isExtension
 import org.jetbrains.kotlin.fir.declarations.utils.isOverride
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.symbols.impl.FirSyntheticPropertyAccessorSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.isExtension
 import org.jetbrains.kotlin.name.CallableId
 
 internal class KaFirSyntheticPropertyGetterSymbol(
@@ -37,6 +37,10 @@ internal class KaFirSyntheticPropertyGetterSymbol(
     override val psi: PsiElement?
         get() = withValidityAssertion { findPsi() }
 
+    override val isNotDefault: Boolean
+        get() = withValidityAssertion { true }
+
+    @Deprecated("Use `!isNotDefault` instead", replaceWith = ReplaceWith("!isNotDefault"))
     override val isDefault: Boolean
         get() = withValidityAssertion { false }
 
@@ -51,6 +55,7 @@ internal class KaFirSyntheticPropertyGetterSymbol(
     override val isExtension: Boolean
         get() = withValidityAssertion { firSymbol.isExtension }
 
+    @Deprecated("Use `isCustom` instead", replaceWith = ReplaceWith("isCustom"))
     override val hasBody: Boolean
         get() = withValidityAssertion { firSymbol.fir.hasBody }
 

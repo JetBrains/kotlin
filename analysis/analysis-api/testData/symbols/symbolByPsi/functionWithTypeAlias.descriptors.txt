@@ -53,6 +53,7 @@ KaNamedFunctionSymbol:
   annotations: []
   callableId: /function
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -120,6 +121,7 @@ KaNamedFunctionSymbol:
   annotations: []
   callableId: /function
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true

@@ -35,3 +35,7 @@ fun foo() {
         )
     }
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, classDeclaration, data, funInterface, funWithExtensionReceiver,
+functionDeclaration, functionalType, inline, interfaceDeclaration, lambdaLiteral, nullableType, primaryConstructor,
+propertyDeclaration, reified, samConversion, typeConstraint, typeParameter, typeWithExtension */

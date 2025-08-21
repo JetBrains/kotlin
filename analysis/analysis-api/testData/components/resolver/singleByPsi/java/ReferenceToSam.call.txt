@@ -7,10 +7,12 @@ KtNameReferenceExpression(83,94): 'setListener'
           receiverType = null
           returnType = JavaTest.SAMInterface!
           symbol = listener: JavaTest.SAMInterface!
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = jClass
           isSafeNavigation = false
@@ -26,7 +28,9 @@ KtNameReferenceExpression(83,94): 'setListener'
               receiverType = null
               returnType = JavaTest.SAMInterface!
               symbol = listener: JavaTest.SAMInterface!
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = /JavaTest.SomeJavaClass.setListener
       typeArgumentsMapping = {}

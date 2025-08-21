@@ -31,5 +31,8 @@ fun test() {
     val a6 = foo(::singleA, ::singleB)
     a6
 
-    <!CANNOT_INFER_PARAMETER_TYPE, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>foo<!>(::<!OVERLOAD_RESOLUTION_AMBIGUITY!>multiple<!>, ::<!OVERLOAD_RESOLUTION_AMBIGUITY!>multiple<!>)
+    <!CANNOT_INFER_PARAMETER_TYPE!>foo<!>(::<!OVERLOAD_RESOLUTION_AMBIGUITY!>multiple<!>, ::<!OVERLOAD_RESOLUTION_AMBIGUITY!>multiple<!>)
 }
+
+/* GENERATED_FIR_TAGS: callableReference, functionDeclaration, functionalType, interfaceDeclaration, intersectionType,
+localProperty, nullableType, propertyDeclaration, typeParameter */

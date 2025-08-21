@@ -61,3 +61,6 @@ fun test() {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType, lambdaLiteral,
+suspend, thisExpression, typeWithExtension */

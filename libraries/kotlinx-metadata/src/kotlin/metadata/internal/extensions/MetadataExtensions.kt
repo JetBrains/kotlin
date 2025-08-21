@@ -5,11 +5,12 @@
 
 package kotlin.metadata.internal.extensions
 
-import kotlin.metadata.*
-import kotlin.metadata.internal.*
-import kotlin.metadata.internal.common.*
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import java.util.*
+import kotlin.metadata.*
+import kotlin.metadata.internal.ReadContext
+import kotlin.metadata.internal.WriteContext
+import kotlin.metadata.internal.common.KmModuleFragment
 
 public interface MetadataExtensions {
     public fun readClassExtensions(kmClass: KmClass, proto: ProtoBuf.Class, c: ReadContext)
@@ -25,6 +26,8 @@ public interface MetadataExtensions {
     public fun readConstructorExtensions(kmConstructor: KmConstructor, proto: ProtoBuf.Constructor, c: ReadContext)
 
     public fun readTypeParameterExtensions(kmTypeParameter: KmTypeParameter, proto: ProtoBuf.TypeParameter, c: ReadContext)
+
+    public fun readEnumEntryExtensions(kmEnumEntry: KmEnumEntry, proto: ProtoBuf.EnumEntry, c: ReadContext)
 
     public fun readTypeExtensions(kmType: KmType, proto: ProtoBuf.Type, c: ReadContext)
 
@@ -52,6 +55,8 @@ public interface MetadataExtensions {
         kmTypeParameter: KmTypeParameter, proto: ProtoBuf.TypeParameter.Builder, c: WriteContext
     )
 
+    public fun writeEnumEntryExtensions(enumEntry: KmEnumEntry, proto: ProtoBuf.EnumEntry.Builder, c: WriteContext)
+
     public fun writeTypeExtensions(type: KmType, proto: ProtoBuf.Type.Builder, c: WriteContext)
 
     public fun writeTypeAliasExtensions(typeAlias: KmTypeAlias, proto: ProtoBuf.TypeAlias.Builder, c: WriteContext)
@@ -73,6 +78,8 @@ public interface MetadataExtensions {
     public fun createConstructorExtension(): KmConstructorExtension
 
     public fun createTypeParameterExtension(): KmTypeParameterExtension
+
+    public fun createEnumEntryExtension(): KmEnumEntryExtension?
 
     public fun createTypeExtension(): KmTypeExtension
 

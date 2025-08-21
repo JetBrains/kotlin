@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrReturnImpl
 import org.jetbrains.kotlin.ir.expressions.implicitCastTo
 import org.jetbrains.kotlin.ir.overrides.FakeOverrideBuilderStrategy
-import org.jetbrains.kotlin.ir.overrides.IrUnimplementedOverridesStrategy
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
@@ -37,6 +36,7 @@ import org.jetbrains.kotlin.ir.util.isSubtypeOfClass
 import org.jetbrains.kotlin.name.StandardClassIds.Annotations.EnhancedNullability
 import org.jetbrains.kotlin.name.StandardClassIds.Annotations.FlexibleNullability
 import org.jetbrains.kotlin.utils.addToStdlib.applyIf
+import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
@@ -45,9 +45,13 @@ class Fir2IrFakeOverrideStrategy(
     friendModules: Map<String, List<String>>,
     override val isGenericClashFromSameSupertypeAllowed: Boolean,
     override val isOverrideOfPublishedApiFromOtherModuleDisallowed: Boolean,
-    delegatedMemberGenerationStrategy: Fir2IrDelegatedMembersGenerationStrategy,
-) : FakeOverrideBuilderStrategy.BindToPrivateSymbols(friendModules, delegatedMemberGenerationStrategy) {
+    private val delegatedMemberGenerationStrategy: Fir2IrDelegatedMembersGenerationStrategy,
+) : FakeOverrideBuilderStrategy.BindToPrivateSymbols(friendModules) {
     private val fieldOnlyProperties: MutableList<IrPropertyWithLateBinding> = mutableListOf()
+
+    override fun postProcessGeneratedFakeOverride(fakeOverride: IrOverridableDeclaration<*>, clazz: IrClass) {
+        delegatedMemberGenerationStrategy.convertFakeOverrideToDelegateIfNeeded(fakeOverride, clazz)
+    }
 
     override fun fakeOverrideMember(superType: IrType, member: IrOverridableMember, clazz: IrClass): IrOverridableMember? {
         if (member is Fir2IrLazyPropertyForPureField && member.backingField?.isStatic == true) return null
@@ -79,7 +83,7 @@ private data class DelegatedMemberInfo(
 
 /**
  * Generation of delegated members happens in three stages:
- * 1. During f/o generation [postProcessGeneratedFakeOverride] is called. This method updates the declaration header if needed
+ * 1. During f/o generation [convertFakeOverrideToDelegateIfNeeded] is called. This method updates the declaration header if needed
  *     (offsets, origin, dispatch receiver parameter and so on) and stores information for body generation
  * 2. After all f/o are built [generateDelegatedBodies] should be called to generate bodies for all delegated members.
  *     Body generation relies on the fact that all f/o are already created, because it may refer to types of functions, which are
@@ -97,7 +101,7 @@ class Fir2IrDelegatedMembersGenerationStrategy(
     private val fir2IrExtensions: Fir2IrExtensions,
     delegatedClassesInfo: Map<IrClassSymbol, Map<IrClassSymbol, IrFieldSymbol>>,
     classActualizationInfo: ClassActualizationInfo?
-) : IrUnimplementedOverridesStrategy {
+) {
     private val delegatedInfos: MutableList<DelegatedMemberInfo> = mutableListOf()
 
     /**
@@ -118,14 +122,7 @@ class Fir2IrDelegatedMembersGenerationStrategy(
         }
     }
 
-    override fun <S : IrSymbol, T : IrOverridableDeclaration<S>> computeCustomization(
-        overridableMember: T,
-        parent: IrClass,
-    ): IrUnimplementedOverridesStrategy.Customization {
-        return IrUnimplementedOverridesStrategy.Customization.NO
-    }
-
-    override fun <S : IrSymbol, T : IrOverridableDeclaration<S>> postProcessGeneratedFakeOverride(overridableMember: T, parent: IrClass) {
+    fun convertFakeOverrideToDelegateIfNeeded(overridableMember: IrOverridableDeclaration<*>, parent: IrClass) {
         val delegateInfo = delegatedClassesInfo[parent.symbol] ?: return
 
         val overridden = overridableMember.allOverridden()
@@ -333,17 +330,13 @@ class Fir2IrDelegatedMembersGenerationStrategy(
 
         val offset = SYNTHETIC_OFFSET
 
-        val substitutorForReturnType = when {
-            delegatedFunction.typeParameters.isEmpty() -> substitutor
-            else -> IrChainedSubstitutor(
-                IrTypeSubstitutor(
-                    delegateTargetFunction.typeParameters.map { it.symbol },
-                    delegatedFunction.typeParameters.map { it.defaultType },
-                    allowEmptySubstitution = true,
-                ),
-                substitutor
+        val substitutorForReturnType = substitutor.chainedWith(runIf(delegatedFunction.typeParameters.isNotEmpty()) {
+            IrTypeSubstitutor(
+                delegateTargetFunction.typeParameters.map { it.symbol },
+                delegatedFunction.typeParameters.map { it.defaultType },
+                allowEmptySubstitution = true,
             )
-        }
+        })
         val callReturnType = substitutorForReturnType.substitute(delegateTargetFunction.returnType)
 
         val irCall = IrCallImpl(
@@ -377,13 +370,9 @@ class Fir2IrDelegatedMembersGenerationStrategy(
                 if (delegateField.type.isSubtypeOfClass(baseType.classOrFail)) return@let it
                 it.implicitCastTo(baseType)
             }
-            dispatchReceiver = getField
-            extensionReceiver = delegatedFunction.extensionReceiverParameter?.let { extensionReceiver ->
-                IrGetValueImpl(offset, offset, extensionReceiver.type, extensionReceiver.symbol)
-            }
-            delegatedFunction.valueParameters.forEach {
-                putValueArgument(it.indexInOldValueParameters, IrGetValueImpl(offset, offset, it.type, it.symbol))
-            }
+            arguments.assignFrom(listOf(getField) + delegatedFunction.nonDispatchParameters.map {
+                IrGetValueImpl(offset, offset, it.type, it.symbol)
+            })
             for (index in delegatedFunction.typeParameters.indices) {
                 val parameter = delegatedFunction.typeParameters[index]
                 typeArguments[index] = IrSimpleTypeImpl(
@@ -443,9 +432,14 @@ class Fir2IrDelegatedMembersGenerationStrategy(
 
         if (!typeParametersMatch) {
             // fallback to delegation to interface member
+            val substitutor = AbstractIrTypeSubstitutor.forSuperClass(
+                parentClass = delegateTargetFromBaseType.parentAsClass.symbol,
+                childClass = parent.symbol
+            ) ?: error("${delegateTargetFromBaseType.parentAsClass} is not super-class of ${parent}")
+
             return DelegatedFunctionBodyInfo(
                 delegateTargetFunction = delegateTargetFromBaseType,
-                substitutor = createSupertypeSubstitutor(parentClass = delegateTargetFromBaseType.parentAsClass, parent.defaultType),
+                substitutor = substitutor,
                 delegatingToMethodOfSupertype = true,
             )
         }
@@ -453,31 +447,9 @@ class Fir2IrDelegatedMembersGenerationStrategy(
         requireNotNull(targetFunctionFromDelegateFieldClass)
         require(classSymbolOfDelegateField == targetFunctionFromDelegateFieldClass.parentAsClass.symbol)
 
-        val typeParametersOfClassOfDelegateField = classSymbolOfDelegateField.owner.typeParameters.map { it.symbol }
-
         val typeOfDelegatedField = delegateField.type.unwrapTypeParameterType() as IrSimpleType
+        val substitutor = AbstractIrTypeSubstitutor.forType(typeOfDelegatedField)
 
-        /**
-         * Type of delegate field may be a local class that captures type parameters of outer function, so we need to take only first
-         *   arguments, which correspond to type parameters of actual class declaration
-         */
-        val typeArgumentsForSubstitutor = typeOfDelegatedField.arguments
-            .take(typeParametersOfClassOfDelegateField.size)
-            .mapIndexed { index, argument ->
-                when (argument) {
-                    is IrStarProjection -> {
-                        val parameter = typeParametersOfClassOfDelegateField[index]
-                        parameter.owner.superTypes.first()
-                    }
-                    else -> argument
-                }
-            }
-
-        val substitutor = IrTypeSubstitutor(
-            typeParametersOfClassOfDelegateField,
-            typeArgumentsForSubstitutor,
-            allowEmptySubstitution = true
-        )
         return DelegatedFunctionBodyInfo(
             targetFunctionFromDelegateFieldClass,
             substitutor = substitutor,
@@ -495,39 +467,3 @@ class Fir2IrDelegatedMembersGenerationStrategy(
     }
 }
 
-private fun createSupertypeSubstitutor(parentClass: IrClass, type: IrSimpleType): AbstractIrTypeSubstitutor {
-    val visited = mutableSetOf<IrClass>()
-
-    @OptIn(UnsafeDuringIrConstructionAPI::class)
-    fun find(type: IrSimpleType, targetClass: IrClass): AbstractIrTypeSubstitutor? {
-        val currentClass = type.classOrFail.owner
-        if (currentClass == targetClass) return AbstractIrTypeSubstitutor.Empty
-        if (!visited.add(currentClass)) return null
-
-        val superTypeSubstitutors = getImmediateSupertypes(type.classOrFail.owner)
-
-        superTypeSubstitutors.firstNotNullOfOrNull {
-            runIf(it.key.classOrFail.owner == targetClass) { it.value }
-        }?.let { return it }
-
-        for ((superType, substitutor) in superTypeSubstitutors) {
-            val otherSubstitutor = find(superType, targetClass) ?: continue
-            return IrChainedSubstitutor(substitutor, otherSubstitutor)
-        }
-        return null
-    }
-
-    return find(type, parentClass) ?: error("Supertype substitutor not found")
-}
-
-@OptIn(UnsafeDuringIrConstructionAPI::class)
-private fun getImmediateSupertypes(irClass: IrClass): Map<IrSimpleType, AbstractIrTypeSubstitutor> {
-    @Suppress("UNCHECKED_CAST")
-    val originalSupertypes = irClass.superTypes as List<IrSimpleType>
-    return originalSupertypes
-        .filter { it.classOrNull != null }
-        .associateWith { superType ->
-            val superClass = superType.classOrFail.owner
-            IrTypeSubstitutor(superClass.typeParameters.map { it.symbol }, superType.arguments, allowEmptySubstitution = true)
-        }
-}

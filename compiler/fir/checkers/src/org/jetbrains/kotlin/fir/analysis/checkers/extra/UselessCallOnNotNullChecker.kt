@@ -21,12 +21,13 @@ import org.jetbrains.kotlin.name.StandardClassIds
 
 object UselessCallOnNotNullChecker : FirQualifiedAccessExpressionChecker(MppCheckerKind.Common) {
     // todo, KT-59829: add 'call may be reduced' in cases like 's?.isNullOrEmpty()' where 's: String? = ""'
-    override fun check(expression: FirQualifiedAccessExpression, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(expression: FirQualifiedAccessExpression) {
         val method = expression.getCallableId() ?: return
         if (method !in triggerOn) return
         val calleeOn = expression.explicitReceiver ?: return
         if (!calleeOn.resolvedType.canBeNull(context.session)) {
-            reporter.reportOn(expression.source, FirErrors.USELESS_CALL_ON_NOT_NULL, context)
+            reporter.reportOn(expression.source, FirErrors.USELESS_CALL_ON_NOT_NULL)
         }
     }
 

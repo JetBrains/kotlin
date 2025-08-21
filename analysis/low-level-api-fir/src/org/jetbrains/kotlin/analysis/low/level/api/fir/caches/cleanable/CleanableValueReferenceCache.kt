@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.caches.cleanable
 
-import com.intellij.openapi.application.ApplicationManager
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirInternals
 import java.lang.ref.ReferenceQueue
 import java.util.concurrent.ConcurrentHashMap
@@ -22,12 +21,36 @@ import java.util.concurrent.ConcurrentHashMap
  * `null` keys or values are not allowed.
  */
 @LLFirInternals
-abstract class CleanableValueReferenceCache<K : Any, V : Any> {
-    private val backingMap = ConcurrentHashMap<K, ReferenceWithCleanup<K, V>>()
+abstract class CleanableValueReferenceCache<K : Any, V : Any>(
+    protected val backingMap: ConcurrentHashMap<K, ReferenceWithCleanup<K, V>>,
+    protected val referenceQueue: ReferenceQueue<V>,
+) {
 
-    protected val referenceQueue = ReferenceQueue<V>()
+    /**
+     * Creates a copy of the cache with copies of [backingMap] and [referenceQueue]
+     */
+    fun createCopy(): CleanableValueReferenceCache<K, V> {
+        val mapCopy = ConcurrentHashMap<K, ReferenceWithCleanup<K, V>>(backingMap.size)
+        val queueCopy = ReferenceQueue<V>()
 
-    internal abstract fun createReference(key: K, value: V): ReferenceWithCleanup<K, V>
+        for ((key, reference) in backingMap) {
+            val value = reference.get() ?: continue
+            mapCopy[key] = createReference(key, value, queueCopy)
+        }
+        return createCopy(mapCopy, queueCopy)
+    }
+
+    protected abstract fun createCopy(
+        mapCopy: ConcurrentHashMap<K, ReferenceWithCleanup<K, V>>,
+        queueCopy: ReferenceQueue<V>,
+    ): CleanableValueReferenceCache<K, V>
+
+
+    internal fun createReference(key: K, value: V): ReferenceWithCleanup<K, V> {
+        return createReference(key, value, referenceQueue)
+    }
+
+    internal abstract fun createReference(key: K, value: V ,queue: ReferenceQueue<V>): ReferenceWithCleanup<K, V>
 
     private fun processQueue() {
         while (true) {
@@ -39,9 +62,10 @@ abstract class CleanableValueReferenceCache<K : Any, V : Any> {
 
             val wasRemoved = backingMap.remove(ref.key, ref)
 
-            // If `ref` already wasn't part of the map, it will have been cleaned up by a deterministic removal operation.
+            // If `ref` already wasn't part of the map,
+            // it will have been cleaned up by a deterministic removal operation
             if (wasRemoved) {
-                ref.performCleanup()
+                ref.performCleanup("CleanableValueReferenceCache.processQueue")
             }
         }
     }
@@ -109,12 +133,12 @@ abstract class CleanableValueReferenceCache<K : Any, V : Any> {
 
                 else -> {
                     removedRef = currentRef
-                    createReference(key, newValue!!)
+                    createReference(key, newValue!!,)
                 }
             }
         }
 
-        removedRef?.performCleanup()
+        removedRef?.performCleanup("CleanableValueReferenceCache.compute")
         processQueue()
 
         require(newRef?.get() === newValue) {
@@ -151,10 +175,10 @@ abstract class CleanableValueReferenceCache<K : Any, V : Any> {
             }
 
             removedRef = currentRef
-            createReference(key, value)
+            createReference(key, value,)
         }
 
-        removedRef?.performCleanup()
+        removedRef?.performCleanup("CleanableValueReferenceCache.put")
         processQueue()
 
         return oldValue
@@ -166,7 +190,7 @@ abstract class CleanableValueReferenceCache<K : Any, V : Any> {
      */
     fun remove(key: K): V? {
         val ref = backingMap.remove(key)
-        ref?.performCleanup()
+        ref?.performCleanup("CleanableValueReferenceCache.remove")
 
         processQueue()
         return ref?.get()
@@ -182,9 +206,12 @@ abstract class CleanableValueReferenceCache<K : Any, V : Any> {
      * cleanup on exactly the cleared values. Because this cache implementation is used by components which operate in read and write
      * actions, requiring a write action is more economical than synchronizing on some cache-wide lock.
      */
-    fun clear() {
+    fun clear(diagnosticInformation: String? = null) {
+        val fullDiagnosticInformation =
+            diagnosticInformation?.let { "CleanableValueReferenceCache.clear ($it)" } ?: "CleanableValueReferenceCache.clear"
+
         // The backing map will not be modified by other threads during `clean` because it is executed in a write action.
-        backingMap.values.forEach { it.performCleanup() }
+        backingMap.values.forEach { it.performCleanup(fullDiagnosticInformation) }
         backingMap.clear()
 
         processQueue()
@@ -227,7 +254,7 @@ abstract class CleanableValueReferenceCache<K : Any, V : Any> {
 
     override fun toString(): String = "${this::class.simpleName} size:$size"
 
-    private fun ReferenceWithCleanup<K, V>.performCleanup() {
-        cleaner.cleanUp(get())
+    private fun ReferenceWithCleanup<K, V>.performCleanup(diagnosticInformation: String?) {
+        cleaner.cleanUp(get(), diagnosticInformation)
     }
 }

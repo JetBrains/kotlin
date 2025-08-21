@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.cli.common.arguments.K2JsArgumentConstants
 import org.jetbrains.kotlin.cli.common.arguments.K2JsArgumentConstants.CALL
 import org.jetbrains.kotlin.cli.common.arguments.K2JsArgumentConstants.NO_CALL
 import org.jetbrains.kotlin.config.ApiVersion
+import org.jetbrains.kotlin.config.JvmDefaultMode
 import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.gradle.dsl.JsMainFunctionExecutionMode
@@ -16,6 +17,7 @@ import org.jetbrains.kotlin.gradle.dsl.JsModuleKind
 import org.jetbrains.kotlin.gradle.dsl.JsSourceMapEmbedMode
 import org.jetbrains.kotlin.gradle.dsl.JsSourceMapNamesPolicy
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion as KotlinVersionDsl
+import org.jetbrains.kotlin.gradle.dsl.JvmDefaultMode as JvmDefaultModeDsl
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget as JvmTargetDsl
 import kotlin.reflect.KType
 import kotlin.reflect.typeOf
@@ -89,6 +91,16 @@ open class DefaultValues(
         """.trimIndent(),
         toKotlinOptionConverterProp = """
         this.target
+        """.trimIndent(),
+    )
+
+    object JvmDefaultModes : DefaultValues(
+        "null",
+        typeOf<JvmDefaultModeDsl>(),
+        typeOf<String?>(),
+        possibleValues = JvmDefaultMode.entries.map { "\"${it.description}\"" },
+        toKotlinOptionConverterProp = """
+            this?.compilerArgument
         """.trimIndent(),
     )
 

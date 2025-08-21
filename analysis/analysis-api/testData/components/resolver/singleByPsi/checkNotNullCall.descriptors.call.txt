@@ -7,10 +7,12 @@ KtPostfixExpression(24,27): 'a!!'
           receiverType = null
           returnType = kotlin.Any?
           symbol = baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -23,8 +25,10 @@ KtPostfixExpression(24,27): 'a!!'
               receiverType = null
               returnType = kotlin.Any?
               symbol = baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = /<SPECIAL-FUNCTION-FOR-EXCLEXCL-RESOLVE>
       typeArgumentsMapping = {
         <TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE> -> (kotlin.Any)

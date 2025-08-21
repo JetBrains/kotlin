@@ -110,3 +110,8 @@ class DelegateProvider<T>(private val arg: T) {
 var baseJ by DelegateProvider(BaseBuildee<TargetType>())
 
 val BaseBuildee<TargetType>.baseK get() = this
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, destructuringDeclaration, functionDeclaration, functionalType,
+getter, lambdaLiteral, localClass, localProperty, nullableType, operator, primaryConstructor, propertyDeclaration,
+propertyDelegate, propertyWithExtensionReceiver, setter, starProjection, thisExpression, typeParameter,
+typeWithExtension, unnamedLocalVariable */

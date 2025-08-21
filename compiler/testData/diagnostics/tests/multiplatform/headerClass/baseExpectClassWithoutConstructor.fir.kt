@@ -12,3 +12,5 @@ open <!UNRESOLVED_REFERENCE!>class C<!> : <!SUPERTYPE_NOT_INITIALIZED!>A<!>
 
 actual open class A
 actual class B : A()
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect */

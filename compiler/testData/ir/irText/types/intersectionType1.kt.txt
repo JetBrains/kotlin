@@ -8,7 +8,7 @@ class In<in I : Any?> {
 }
 
 fun <T : Any?> foo(a: Array<In<T>>, b: Array<In<String>>): Boolean {
-  return select<Array<out In<Nothing>>>(x = a, y = b).get(index = 0).ofType<Any>(y = true)
+  return ofType<Any>(/* <this> = select<Array<out In<Nothing>>>(x = a, y = b).get(index = 0), */ y = true)
 }
 
 inline fun <reified K : Any?> In<K>.ofType(y: Any?): Boolean {

@@ -33,3 +33,6 @@ val int1 = Int::class.java
 
 val string0 = String.<!JAVA_CLASS_ON_COMPANION!>javaClass<!>
 val string1 = String::class.java
+
+/* GENERATED_FIR_TAGS: classDeclaration, classReference, companionObject, enumDeclaration, enumEntry, objectDeclaration,
+propertyDeclaration */

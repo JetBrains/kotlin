@@ -11,3 +11,6 @@ fun test(f: <!DEPRECATION_ERROR!>Foo<!>) {
 }
 
 class Bar : <!DEPRECATION_ERROR!>Foo<!>()
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, localProperty, nullableType, propertyDeclaration,
+stringLiteral */

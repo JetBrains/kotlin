@@ -11,8 +11,6 @@ import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirBasicExpressionChecker
-import org.jetbrains.kotlin.fir.analysis.checkers.getContainingClassSymbol
-import org.jetbrains.kotlin.fir.analysis.checkers.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
@@ -20,16 +18,19 @@ import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.expressions.toReference
 import org.jetbrains.kotlin.fir.references.resolved
 import org.jetbrains.kotlin.fir.references.symbol
+import org.jetbrains.kotlin.fir.resolve.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
+import org.jetbrains.kotlin.fir.types.toRegularClassSymbol
 
 object FirJvmMissingBuiltInDeclarationChecker : FirBasicExpressionChecker(MppCheckerKind.Common) {
-    override fun check(expression: FirStatement, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(expression: FirStatement) {
         if (context.languageVersionSettings.getFlag(JvmAnalysisFlags.suppressMissingBuiltinsError)) return
 
         fun reportIfNeeded(classSymbol: FirClassLikeSymbol<*>?): Boolean {
             if (classSymbol?.origin == FirDeclarationOrigin.BuiltInsFallback) {
-                reporter.reportOn(expression.source, FirJvmErrors.MISSING_BUILT_IN_DECLARATION, classSymbol, context)
+                reporter.reportOn(expression.source, FirJvmErrors.MISSING_BUILT_IN_DECLARATION, classSymbol)
                 return true
             }
             return false

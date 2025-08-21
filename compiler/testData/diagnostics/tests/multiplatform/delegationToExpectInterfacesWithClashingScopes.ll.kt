@@ -14,3 +14,6 @@ actual interface I {
 actual interface J {
     fun foo()
 }
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, functionDeclaration, inheritanceDelegation,
+interfaceDeclaration, primaryConstructor */

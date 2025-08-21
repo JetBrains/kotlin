@@ -25,3 +25,6 @@ fun foo(x: () -> Unit) {
         x()
     }
 }
+
+/* GENERATED_FIR_TAGS: classReference, contractCallsEffect, contracts, functionDeclaration, functionalType, ifExpression,
+lambdaLiteral */

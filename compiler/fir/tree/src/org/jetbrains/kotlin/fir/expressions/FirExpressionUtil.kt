@@ -7,10 +7,15 @@ package org.jetbrains.kotlin.fir.expressions
 
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
+import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
+import org.jetbrains.kotlin.fir.declarations.FirVariable
 import org.jetbrains.kotlin.fir.declarations.utils.isStatic
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
+import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
+import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.expressions.builder.buildLiteralExpression
 import org.jetbrains.kotlin.fir.expressions.builder.buildErrorExpression
 import org.jetbrains.kotlin.fir.expressions.builder.buildErrorLoop
@@ -18,6 +23,7 @@ import org.jetbrains.kotlin.fir.expressions.impl.FirBlockImpl
 import org.jetbrains.kotlin.fir.expressions.impl.FirResolvedArgumentList
 import org.jetbrains.kotlin.fir.expressions.impl.FirSingleExpressionBlock
 import org.jetbrains.kotlin.fir.references.*
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.TransformData
@@ -32,13 +38,21 @@ inline val FirAnnotation.unexpandedConeClassLikeType: ConeClassLikeType?
 inline val FirAnnotation.unexpandedClassId: ClassId?
     get() = unexpandedConeClassLikeType?.lookupTag?.classId
 
-fun <T> buildConstOrErrorExpression(source: KtSourceElement?, kind: ConstantValueKind, value: T?, diagnostic: ConeDiagnostic): FirExpression =
-    value?.let {
+fun <T> buildConstOrErrorExpression(
+    source: KtSourceElement?,
+    kind: ConstantValueKind,
+    value: T?,
+    literalType: String,
+    literalValue: Any,
+    diagnosticKind: DiagnosticKind,
+): FirExpression {
+    return value?.let {
         buildLiteralExpression(source, kind, it, setType = false)
     } ?: buildErrorExpression {
         this.source = source
-        this.diagnostic = diagnostic
+        this.diagnostic = ConeSimpleDiagnostic("Incorrect $literalType: $literalValue", diagnosticKind)
     }
+}
 
 inline val FirCall.arguments: List<FirExpression> get() = argumentList.arguments
 
@@ -101,8 +115,8 @@ fun <T : FirStatement> FirBlock.replaceFirstStatement(factory: (T) -> FirStateme
     return existing
 }
 
-fun FirExpression.unwrapErrorExpression(): FirExpression? =
-    if (this is FirErrorExpression) expression?.unwrapErrorExpression() else this
+fun FirExpression.unwrapErrorExpression(): FirExpression =
+    (this as? FirErrorExpression)?.expression?.unwrapErrorExpression() ?: this
 
 fun FirExpression.unwrapArgument(): FirExpression = (this as? FirWrappedArgumentExpression)?.expression ?: this
 
@@ -138,7 +152,6 @@ fun FirVariableAssignment.unwrapLValue(): FirQualifiedAccessExpression? {
 
 fun FirExpression.unwrapExpression(): FirExpression =
     when (this) {
-        is FirWhenSubjectExpression -> whenRef.value.subject?.unwrapExpression() ?: this
         is FirSmartCastExpression -> originalExpression.unwrapExpression()
         is FirCheckedSafeCallSubject -> originalReceiverRef.value.unwrapExpression()
         is FirCheckNotNullCall -> argument.unwrapExpression()
@@ -146,11 +159,26 @@ fun FirExpression.unwrapExpression(): FirExpression =
         else -> this
     }
 
+val FirVariable.isImplicitWhenSubjectVariable: Boolean
+    get() = origin == FirDeclarationOrigin.Synthetic.ImplicitWhenSubject
+
 fun FirExpression.unwrapSmartcastExpression(): FirExpression =
     when (this) {
         is FirSmartCastExpression -> originalExpression
         else -> this
     }
+
+fun FirExpression.unwrapDesugaredAssignmentValueRef(): FirExpression =
+    when (this) {
+        is FirDesugaredAssignmentValueReferenceExpression -> expressionRef.value
+        else -> this
+    }
+
+val FirWhenSubjectExpression.whenSubjectVariable: FirProperty?
+    get() = (calleeReference.symbol as? FirPropertySymbol)?.fir
+
+val FirWhenSubjectExpression.whenSubject: FirExpression?
+    get() = whenSubjectVariable?.initializer
 
 /**
  * A callable reference is bound iff
@@ -177,4 +205,10 @@ inline fun FirFunctionCall.forAllReifiedTypeParameters(block: (ConeKotlinType, F
             block(type, typeArgument)
         }
     }
+}
+
+tailrec fun FirExpression.unwrapAnonymousFunctionExpression(): FirAnonymousFunction? = when (this) {
+    is FirAnonymousFunctionExpression -> anonymousFunction
+    is FirWrappedArgumentExpression -> expression.unwrapAnonymousFunctionExpression()
+    else -> null
 }

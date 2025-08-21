@@ -13,3 +13,6 @@ class TopLevelClass<@A1 @A2(3) <!REPEATED_ANNOTATION!>@A2<!> <!REPEATED_ANNOTATI
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, functionDeclaration, integerLiteral, localClass,
+nestedClass, nullableType, primaryConstructor, propertyDeclaration, stringLiteral, typeParameter */

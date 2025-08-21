@@ -17,3 +17,6 @@ fun box() = "OK"
 // Additional examples
 
 annotation class WithDefaultValue(val value: Int = ConstsDuplicate.LETS_GO_BUTTON + 1)
+
+/* GENERATED_FIR_TAGS: additiveExpression, annotationDeclaration, const, functionDeclaration, integerLiteral,
+objectDeclaration, primaryConstructor, propertyDeclaration, stringLiteral */

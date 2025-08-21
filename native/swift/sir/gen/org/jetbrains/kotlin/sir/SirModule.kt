@@ -8,11 +8,16 @@
 
 package org.jetbrains.kotlin.sir
 
+import org.jetbrains.kotlin.sir.util.*
+
 /**
  * Generated from: [org.jetbrains.kotlin.sir.tree.generator.SwiftIrTree.module]
  */
-abstract class SirModule : SirMutableDeclarationContainer(), SirNamed {
+abstract class SirModule : SirElementBase(), SirMutableDeclarationContainer, SirNamed {
     abstract override val declarations: MutableList<SirDeclaration>
     abstract override val name: String
     abstract val imports: MutableList<SirImport>
+    override fun toString(): String {
+        return this.debugString
+    }
 }

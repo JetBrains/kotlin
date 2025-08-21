@@ -78,3 +78,6 @@ package test
 
 // val prop27: Infinity.toDouble()
 <!DEBUG_INFO_CONSTANT_VALUE("Infinity.toDouble()")!>val prop27 = <!DIVISION_BY_ZERO!>1.0.div(0)<!><!>
+
+/* GENERATED_FIR_TAGS: additiveExpression, integerLiteral, multiplicativeExpression, propertyDeclaration,
+unaryExpression */

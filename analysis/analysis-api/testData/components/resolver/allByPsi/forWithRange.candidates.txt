@@ -37,10 +37,12 @@ KtBinaryExpression(39,44): '1..<5'
           receiverType = null
           returnType = kotlin.Byte
           symbol = other: kotlin.Byte
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = 1
           isSafeNavigation = false
@@ -56,8 +58,10 @@ KtBinaryExpression(39,44): '1..<5'
               receiverType = null
               returnType = kotlin.Byte
               symbol = other: kotlin.Byte
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/Int.rangeUntil
       typeArgumentsMapping = {}
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Byte' was expected.>
@@ -71,10 +75,12 @@ KtBinaryExpression(39,44): '1..<5'
           receiverType = null
           returnType = kotlin.Int
           symbol = other: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = 1
           isSafeNavigation = false
@@ -90,8 +96,10 @@ KtBinaryExpression(39,44): '1..<5'
               receiverType = null
               returnType = kotlin.Int
               symbol = other: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/Int.rangeUntil
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -104,10 +112,12 @@ KtBinaryExpression(39,44): '1..<5'
           receiverType = null
           returnType = kotlin.Short
           symbol = other: kotlin.Short
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = 1
           isSafeNavigation = false
@@ -123,8 +133,10 @@ KtBinaryExpression(39,44): '1..<5'
               receiverType = null
               returnType = kotlin.Short
               symbol = other: kotlin.Short
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/Int.rangeUntil
       typeArgumentsMapping = {}
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Short' was expected.>
@@ -138,10 +150,12 @@ KtBinaryExpression(39,44): '1..<5'
           receiverType = null
           returnType = kotlin.Long
           symbol = other: kotlin.Long
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = 1
           isSafeNavigation = false
@@ -157,8 +171,10 @@ KtBinaryExpression(39,44): '1..<5'
               receiverType = null
               returnType = kotlin.Long
               symbol = other: kotlin.Long
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/Int.rangeUntil
       typeArgumentsMapping = {}
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Long' was expected.>
@@ -176,10 +192,12 @@ KtOperationReferenceExpression(40,43): '..<'
           receiverType = null
           returnType = kotlin.Byte
           symbol = other: kotlin.Byte
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = 1
           isSafeNavigation = false
@@ -195,8 +213,10 @@ KtOperationReferenceExpression(40,43): '..<'
               receiverType = null
               returnType = kotlin.Byte
               symbol = other: kotlin.Byte
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/Int.rangeUntil
       typeArgumentsMapping = {}
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Byte' was expected.>
@@ -210,10 +230,12 @@ KtOperationReferenceExpression(40,43): '..<'
           receiverType = null
           returnType = kotlin.Int
           symbol = other: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = 1
           isSafeNavigation = false
@@ -229,8 +251,10 @@ KtOperationReferenceExpression(40,43): '..<'
               receiverType = null
               returnType = kotlin.Int
               symbol = other: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/Int.rangeUntil
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -243,10 +267,12 @@ KtOperationReferenceExpression(40,43): '..<'
           receiverType = null
           returnType = kotlin.Short
           symbol = other: kotlin.Short
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = 1
           isSafeNavigation = false
@@ -262,8 +288,10 @@ KtOperationReferenceExpression(40,43): '..<'
               receiverType = null
               returnType = kotlin.Short
               symbol = other: kotlin.Short
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/Int.rangeUntil
       typeArgumentsMapping = {}
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Short' was expected.>
@@ -277,10 +305,12 @@ KtOperationReferenceExpression(40,43): '..<'
           receiverType = null
           returnType = kotlin.Long
           symbol = other: kotlin.Long
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = 1
           isSafeNavigation = false
@@ -296,8 +326,10 @@ KtOperationReferenceExpression(40,43): '..<'
               receiverType = null
               returnType = kotlin.Long
               symbol = other: kotlin.Long
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/Int.rangeUntil
       typeArgumentsMapping = {}
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Long' was expected.>

@@ -1,3 +1,5 @@
+// COMPILATION_ERRORS
+
 inline fun <T> with(receiver : T, body :  T.() -> Unit) = receiver.body()
 
 fun example() {

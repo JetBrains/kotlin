@@ -33,12 +33,16 @@ library {
 
     package {
 
+      @kotlinx/cinterop/ExperimentalForeignApi
       public typealias MyClassRef = dependency/MyClass? /* = dependency/MyClass? */
 
+      @kotlinx/cinterop/ExperimentalForeignApi
       public typealias MyClassRefVar = kotlinx/cinterop/ObjCObjectVar<dependency/MyClassRef^> /* = kotlinx/cinterop/ObjCObjectVar<dependency/MyClass? /* = dependency/MyClassRef^ */> */
 
+      @kotlinx/cinterop/ExperimentalForeignApi
       public typealias MyId = kotlin/Any? /* = kotlin/Any? */
 
+      @kotlinx/cinterop/ExperimentalForeignApi
       public typealias MyIdVar = kotlinx/cinterop/ObjCObjectVar<dependency/MyId^> /* = kotlinx/cinterop/ObjCObjectVar<kotlin/Any? /* = dependency/MyId^ */> */
     }
   }

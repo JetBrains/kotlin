@@ -24,13 +24,13 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.name.Name
 
 class IrValueParameterImpl @IrImplementationDetail constructor(
-    override val startOffset: Int,
-    override val endOffset: Int,
+    override var startOffset: Int,
+    override var endOffset: Int,
     override var origin: IrDeclarationOrigin,
     override val factory: IrFactory,
     override var name: Name,
     override var type: IrType,
-    override val isAssignable: Boolean,
+    override var isAssignable: Boolean,
     override val symbol: IrValueParameterSymbol,
     override var varargElementType: IrType?,
     override var isCrossinline: Boolean,

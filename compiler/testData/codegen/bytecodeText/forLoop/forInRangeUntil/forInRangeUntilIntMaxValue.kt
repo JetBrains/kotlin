@@ -1,5 +1,4 @@
 // OPT_IN: kotlin.ExperimentalStdlibApi
-// IGNORE_BACKEND: JVM
 
 // IMPORTANT!
 // Please, when your changes cause failures in bytecodeText tests for 'for' loops,

@@ -3,6 +3,7 @@
  * that can be found in the LICENSE file.
  */
 // TARGET_BACKEND: NATIVE
+// WITH_PLATFORM_LIBS
 // MODULE: cinterop
 // FILE: ccallbacksAndVarargs.def
 ---
@@ -102,6 +103,10 @@ fun testStructCallbacks() {
     assertEquals(42, getX(staticCFunction { -> cValue<S> { x = 42 } }))
     applyCallback(cValue { x = 17 }, staticCFunction { it: CValue<S> ->
         assertEquals(17, it.useContents { x })
+        it.useContents {
+            val xRef = ::x
+            assertEquals(17, xRef.get())
+        }
     })
 
     assertEquals(66, makeS(66, 111).useContents { x })
@@ -152,4 +157,7 @@ fun testCallableReferences() {
 
     val sumPtr = staticCFunction(::sum)
     assertEquals(7, sumPtr(3, 4))
+
+    val anonymousFunPtr = staticCFunction(fun (x: Int, y: Int): Int { return x + y })
+    assertEquals(11, anonymousFunPtr(5, 6))
 }

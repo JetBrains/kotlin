@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 // MODULE: library
 // FILE: test/JavaOuter.java
@@ -26,3 +27,5 @@ fun main(args: Array<String>) {
     JavaOuter.JavaNested()
     test.<!UNRESOLVED_REFERENCE!>`JavaOuter$JavaNested`<!>()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, javaFunction, nestedClass */

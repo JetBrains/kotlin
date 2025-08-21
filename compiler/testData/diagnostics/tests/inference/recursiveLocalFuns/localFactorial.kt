@@ -10,3 +10,6 @@ fun foo() {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, comparisonExpression, functionDeclaration, ifExpression, integerLiteral,
+lambdaLiteral, localFunction, multiplicativeExpression */

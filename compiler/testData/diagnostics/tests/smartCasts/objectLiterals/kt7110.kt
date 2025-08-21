@@ -10,3 +10,6 @@ fun foo(o: String?): Int {
     a.bar()
     return <!DEBUG_INFO_SMARTCAST!>o<!>.length
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, checkNotNullCall, classDeclaration, functionDeclaration, localProperty,
+nullableType, primaryConstructor, propertyDeclaration, smartcast */

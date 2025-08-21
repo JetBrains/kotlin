@@ -6,3 +6,5 @@ class A<!CONFLICTING_OVERLOADS!>()<!> {
 
 <!CONFLICTING_OVERLOADS!>@Deprecated("A", level = DeprecationLevel.HIDDEN)
 fun A()<!> = A()
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, primaryConstructor, stringLiteral */

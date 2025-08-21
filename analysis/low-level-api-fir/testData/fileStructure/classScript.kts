@@ -1,4 +1,4 @@
-/* RootScriptStructureElement */class A {/* ClassDeclarationStructureElement */
+/* RootStructureElement *//* RootScriptStructureElement */class A {/* ClassDeclarationStructureElement */
     fun x() {/* DeclarationStructureElement */
 
     }

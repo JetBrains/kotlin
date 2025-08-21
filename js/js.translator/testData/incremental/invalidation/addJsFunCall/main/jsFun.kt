@@ -1,0 +1,1 @@
+fun jsFun(): String = js("\"OK\"")

@@ -51,7 +51,6 @@ class FusPluginIT : KGPBaseTest() {
     @DisplayName("with configuration cache and project isolation")
     @GradleTestVersions(
         additionalVersions = [TestVersions.Gradle.G_8_0, TestVersions.Gradle.G_8_1],
-        maxVersion = TestVersions.Gradle.G_8_10, // https://youtrack.jetbrains.com/issue/KT-73702/
     )
     @GradleTest
     fun withConfigurationCacheAndProjectIsolation(gradleVersion: GradleVersion) {
@@ -61,7 +60,6 @@ class FusPluginIT : KGPBaseTest() {
             "incrementalMultiproject",
             gradleVersion,
             buildOptions = defaultBuildOptions.copy(
-                configurationCache = BuildOptions.ConfigurationCacheValue.ENABLED,
                 isolatedProjects = BuildOptions.IsolatedProjectsMode.ENABLED,
             ),
         ) {
@@ -127,7 +125,8 @@ class FusPluginIT : KGPBaseTest() {
 
     private fun TestProject.checkBuildReportIdInFusReportAndReturn(): String {
         val fusReports = projectPath.resolve(reportRelativePath).toFile().resolve("kotlin-profile").listFiles()
-        val buildIds = fusReports?.map { it.readText().lines()[0] }?.distinct() //the first line is build id
+        val buildIds = fusReports?.filter { !it.name.endsWith(".finish-profile") }?.map { it.readText().lines()[0] }
+            ?.distinct() //the first line is build id
         assertEquals(1, buildIds?.size, "Build is in all FUS files should be the same.")
         return buildIds?.get(0)!! //all checks were made on the assertion above
     }
@@ -187,11 +186,7 @@ class FusPluginIT : KGPBaseTest() {
     @DisplayName("test configuration metrics with different classloaders")
     @GradleTest
     fun testConfigurationMetricsOnly(gradleVersion: GradleVersion) {
-        project(
-            "multiClassloaderProject",
-            gradleVersion,
-            defaultBuildOptions.copy(configurationCache = BuildOptions.ConfigurationCacheValue.ENABLED),
-        ) {
+        project("multiClassloaderProject", gradleVersion) {
 
             listOf("subProjectA", "subProjectB").forEach { subProject ->
                 subProject(subProject).buildGradleKts.modify {

@@ -1,5 +1,3 @@
-// IGNORE_BACKEND: JVM
-
 fun box(): String =
     testBug(null)
 

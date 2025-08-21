@@ -38,7 +38,6 @@ class ProjectIsolationIT : KGPBaseTest() {
         project(
             projectName = "kt-63990-buildSrcWithKotlinJvmPlugin",
             gradleVersion = gradleVersion,
-            buildOptions = defaultBuildOptions.copy(configurationCache = BuildOptions.ConfigurationCacheValue.UNSPECIFIED)
         ) {
             build("tasks")
         }

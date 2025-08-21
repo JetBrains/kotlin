@@ -16,6 +16,7 @@ enum class StringMetrics(val type: StringOverridePolicy, val anonymization: Stri
     PROJECT_PATH(OVERRIDE, RegexControlled("([0-9A-Fa-f]{40,64})|undefined", true)),
 
     OS_TYPE(OVERRIDE, RegexControlled("(Windows|Windows |Windows Server |Mac|Linux|FreeBSD|Solaris|Other|Mac OS X)\\d*", false)),
+    OS_VERSION(OVERRIDE, ComponentVersionAnonymizer()),
 
     IDES_INSTALLED(CONCAT, AllowedListAnonymizer(listOf("AS", "OC", "CL", "IU", "IC", "WC"))),
 
@@ -69,23 +70,24 @@ enum class StringMetrics(val type: StringOverridePolicy, val anonymization: Stri
 
     ANDROID_GRADLE_PLUGIN_VERSION(OVERRIDE, ComponentVersionAnonymizer()),
 
+    KSP_GRADLE_PLUGIN_VERSION(OVERRIDE, ComponentVersionAnonymizer()),
+
     // Features
     KOTLIN_LANGUAGE_VERSION(OVERRIDE, ComponentVersionAnonymizer()),
     KOTLIN_API_VERSION(OVERRIDE, ComponentVersionAnonymizer()),
-    USE_CLASSPATH_SNAPSHOT(CONCAT, AllowedListAnonymizer(listOf("true", "false", "default-true"))),
     JS_GENERATE_EXECUTABLE_DEFAULT(CONCAT, AllowedListAnonymizer(listOf("true", "false"))),
     JS_TARGET_MODE(CONCAT, AllowedListAnonymizer(listOf("both", "browser", "nodejs", "none"))),
     JS_OUTPUT_GRANULARITY(OVERRIDE, RegexControlled("(whole_program|per_module|per_file)", false)),
 
     // Compiler parameters
-    JVM_DEFAULTS(CONCAT, AllowedListAnonymizer(listOf("disable", "enable", "compatibility", "all", "all-compatibility"))),
+    JVM_DEFAULTS(CONCAT, AllowedListAnonymizer(listOf("enable", "no-compatibility", "disable"))),
     USE_OLD_BACKEND(CONCAT, AllowedListAnonymizer(listOf("true", "false"))),
     USE_FIR(CONCAT, AllowedListAnonymizer(listOf("true", "false"))),
 
     JS_PROPERTY_LAZY_INITIALIZATION(CONCAT, AllowedListAnonymizer(listOf("true", "false")));
 
+
     companion object {
-        // Version 2: removed deprecated K/N targets from MPP_PLATFORMS
-        const val VERSION = 2
+        const val VERSION = 6
     }
 }

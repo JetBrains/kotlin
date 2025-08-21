@@ -32,3 +32,5 @@ fun find3(): Any? {
     }
     return null
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, functionDeclaration, inline, localFunction, nullableType */

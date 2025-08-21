@@ -1,7 +1,6 @@
-// IGNORE_BACKEND: JS_IR
-// REASON: KT-69567 Missing source annotation @UnsafeVariance on `unsafeVariance ()` symbol usage in `main()`
-
 // MODULE: lib
+// IGNORE_BACKEND_K1: NATIVE
+// REASON: ClassicFrontendFacade.performNativeModuleResolve expects DependencyKind.Source, not DependencyKind.Binary
 // FILE: lib.kt
 @file:Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
 

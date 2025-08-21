@@ -5,6 +5,7 @@ KtNameReferenceExpression(327,331): 'Test'
         argumentMapping = {}
         isImplicitInvoke = false
         partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+          contextArguments = []
           dispatchReceiver = null
           extensionReceiver = null
           signature = KaFunctionSignature:
@@ -12,6 +13,7 @@ KtNameReferenceExpression(327,331): 'Test'
             returnType = Test<T>
             symbol = <constructor>(): Test<T>
             valueParameters = []
+            contextParameters = []
             callableId = null
         typeArgumentsMapping = {
           T -> (kotlin.Int)

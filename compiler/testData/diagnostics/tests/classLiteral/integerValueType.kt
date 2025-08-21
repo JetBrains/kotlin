@@ -11,3 +11,5 @@ fun test() {
     f((40 + 2)::class)
     42::toInt
 }
+
+/* GENERATED_FIR_TAGS: callableReference, classReference, functionDeclaration, integerLiteral, outProjection */

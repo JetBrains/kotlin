@@ -7,10 +7,12 @@ KtBinaryExpression(357,375): 'oldItem == newItem'
           receiverType = null
           returnType = kotlin.Any?
           symbol = other: kotlin.Any?
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = oldItem
           isSafeNavigation = false
@@ -26,8 +28,10 @@ KtBinaryExpression(357,375): 'oldItem == newItem'
               receiverType = null
               returnType = kotlin.Any?
               symbol = other: kotlin.Any?
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = /MessagePreview.equals
       typeArgumentsMapping = {}
     isInBestCandidates = true

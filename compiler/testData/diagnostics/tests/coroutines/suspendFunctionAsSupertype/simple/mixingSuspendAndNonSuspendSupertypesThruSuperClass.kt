@@ -27,3 +27,6 @@ object O1: <!MIXING_SUSPEND_AND_NON_SUSPEND_SUPERTYPES!>SCSuper(), () -> Unit<!>
     override suspend fun invoke() {
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionalType, objectDeclaration, operator, override,
+suspend */

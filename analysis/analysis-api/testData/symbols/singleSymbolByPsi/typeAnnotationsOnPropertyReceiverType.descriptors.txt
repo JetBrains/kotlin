@@ -26,19 +26,19 @@ KaKotlinPropertySymbol:
     deprecationStatus: null
   callableId: /foo
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
     annotations: []
     callableId: null
     compilerVisibility: Public
     contextReceivers: []
-    hasBody: false
     hasStableParameterNames: true
     isActual: false
-    isDefault: true
     isExpect: false
     isExtension: false
     isInline: false
+    isNotDefault: false
     isOverride: false
     location: PROPERTY
     modality: FINAL
@@ -71,7 +71,7 @@ KaKotlinPropertySymbol:
         type: @R|Anno3|() @R|Anno2|() @R|Anno1|()  @R|Anno3|()  SecondTypeAlias
       visibility: LOCAL
       getContainingFileSymbol: KaFileSymbol(typeAnnotationsOnPropertyReceiverType.kt)
-      getContainingJvmClassName: null
+      getContainingJvmClassName: TypeAnnotationsOnPropertyReceiverTypeKt
       getContainingModule: KaSourceModule "Sources of main"
       deprecationStatus: null
     returnType: KaUsualClassType:
@@ -131,7 +131,7 @@ KaKotlinPropertySymbol:
       type: @R|Anno3|() @R|Anno2|() @R|Anno1|()  @R|Anno3|()  SecondTypeAlias
     visibility: LOCAL
     getContainingFileSymbol: KaFileSymbol(typeAnnotationsOnPropertyReceiverType.kt)
-    getContainingJvmClassName: null
+    getContainingJvmClassName: TypeAnnotationsOnPropertyReceiverTypeKt
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
   returnType: KaUsualClassType:
@@ -149,3 +149,4 @@ KaKotlinPropertySymbol:
   javaGetterName: getFoo
   javaSetterName: null
   setterDeprecationStatus: null
+  isInline: false

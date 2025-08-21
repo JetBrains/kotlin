@@ -26,3 +26,6 @@ class WithC() {
     val zz = x
   }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, getter, init, integerLiteral, interfaceDeclaration, localProperty,
+primaryConstructor, propertyDeclaration */

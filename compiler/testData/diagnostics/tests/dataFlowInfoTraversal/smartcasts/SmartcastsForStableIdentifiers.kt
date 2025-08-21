@@ -85,3 +85,7 @@ open class C {
        }
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, companionObject, funWithExtensionReceiver, functionDeclaration,
+ifExpression, integerLiteral, interfaceDeclaration, intersectionType, isExpression, localProperty, nullableType,
+objectDeclaration, primaryConstructor, propertyDeclaration, smartcast, thisExpression */

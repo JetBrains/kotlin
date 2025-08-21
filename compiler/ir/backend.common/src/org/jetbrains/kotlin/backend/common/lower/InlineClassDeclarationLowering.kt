@@ -331,8 +331,7 @@ class InlineClassLowering(val context: CommonBackendContext) {
 
                     return irCall(
                         expression,
-                        getOrCreateStaticMethod(function),
-                        receiversAsArguments = true
+                        getOrCreateStaticMethod(function)
                     )
                 }
 
@@ -367,4 +366,4 @@ class InlineClassLowering(val context: CommonBackendContext) {
         )
 }
 
-private var IrFunction.staticMethod: IrSimpleFunction? by irAttribute(followAttributeOwner = false)
+private var IrFunction.staticMethod: IrSimpleFunction? by irAttribute(copyByDefault = false)

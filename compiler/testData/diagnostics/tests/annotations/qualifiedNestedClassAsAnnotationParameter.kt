@@ -11,3 +11,6 @@ class Outer {
     @Special(Outer.Nested::class)
     class Nested<@Special(Outer.Nested::class) T> : @Special(Outer.Nested::class) Interface
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, classReference, interfaceDeclaration, nestedClass,
+nullableType, primaryConstructor, propertyDeclaration, starProjection, typeParameter */

@@ -9,9 +9,14 @@ kotlin {
 
 configureKotlinCompileTasksGradleCompatibility()
 
+publish()
+
+standardPublicJars()
+
 dependencies {
     // remove stdlib dependency from api artifact in order not to affect the dependencies of the user project
-    compileOnly(kotlinStdlib())
+    val coreDepsVersion = libs.versions.kotlin.`for`.gradle.plugins.compilation.get()
+    compileOnly("org.jetbrains.kotlin:kotlin-stdlib:$coreDepsVersion")
 
     testImplementation(kotlinTest("junit"))
     testImplementation(libs.junit4)

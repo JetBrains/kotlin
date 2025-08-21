@@ -17,6 +17,7 @@ import org.gradle.api.file.FileSystemOperations
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.internal.tasks.testing.filter.DefaultTestFilter
 import org.gradle.api.model.ObjectFactory
+import org.gradle.api.tasks.ClasspathNormalizer
 import org.gradle.api.tasks.InputFile
 import org.gradle.api.tasks.PathSensitive
 import org.gradle.api.tasks.PathSensitivity
@@ -44,8 +45,6 @@ val kotlinGradlePluginAndItsRequired = arrayOf(
     ":kotlin-sam-with-receiver",
     ":kotlin-lombok",
     ":kotlin-serialization",
-    ":kotlin-android-extensions",
-    ":kotlin-android-extensions-runtime",
     ":kotlin-parcelize-compiler",
     ":kotlin-compiler-embeddable",
     ":native:kotlin-native-utils",
@@ -60,7 +59,6 @@ val kotlinGradlePluginAndItsRequired = arrayOf(
     ":kotlin-gradle-plugin-idea",
     ":kotlin-gradle-plugin-idea-proto",
     ":kotlin-gradle-plugin",
-    ":kotlin-gradle-plugin-model",
     ":kotlin-tooling-metadata",
     ":kotlin-tooling-core",
     ":kotlin-reflect",
@@ -94,6 +92,11 @@ val kotlinGradlePluginAndItsRequired = arrayOf(
     ":compiler:build-tools:kotlin-build-tools-impl",
     ":libraries:tools:gradle:fus-statistics-gradle-plugin",
     ":kotlin-util-klib-metadata",
+    ":libraries:tools:abi-validation:abi-tools-api",
+    ":libraries:tools:abi-validation:abi-tools",
+    ":kotlin-metadata-jvm",
+    ":gradle:kotlin-gradle-ecosystem-plugin",
+    ":kotlin-klib-abi-reader",
 )
 
 fun Task.dependsOnKotlinGradlePluginInstall() {
@@ -139,6 +142,32 @@ fun Test.muteWithDatabase() {
     systemProperty("junit.jupiter.extensions.autodetection.enabled", "true")
 }
 
+/*
+ * Workaround for TW-92736
+ * TC parallelTests.excludesFile may contain invalid entries leading to skipping large groups of tests.
+ */
+fun Test.cleanupInvalidExcludePatternsForTCParallelTests(excludesFilePath: String) {
+    val candidateTestClassNames = mutableSetOf<String>()
+    candidateClassFiles.visit {
+        if (!isDirectory && name.endsWith(".class")) {
+            candidateTestClassNames.add(path.substringBefore(".class").replace('/', '.'))
+        }
+    }
+
+    val parallelTestsExcludes = File(excludesFilePath).readLines().filter { !it.startsWith("#") }.toSet()
+    val excludePatterns = filter.excludePatterns
+
+    parallelTestsExcludes.forEach {
+        if (!candidateTestClassNames.contains(it)) {
+            logger.warn("WARNING: parallelTests excludesFile contains class name missing in test classes: $it")
+            logger.warn("Removing '$it.*' from `excludePatterns`")
+            excludePatterns.remove("$it.*")
+        }
+    }
+
+    filter.setExcludePatterns(*excludePatterns.toTypedArray())
+}
+
 /**
  * @param parallel is redundant if @param jUnit5Enabled is true, because
  *   JUnit5 supports parallel test execution by itself, without gradle help
@@ -158,6 +187,10 @@ fun Project.projectTest(
         project.dependencies {
             "testImplementation"(project(":compiler:tests-mutes:mutes-junit5"))
         }
+    } else {
+        project.dependencies {
+            "testImplementation"(project(":compiler:tests-mutes:mutes-junit4"))
+        }
     }
     val shouldInstrument = project.providers.gradleProperty("kotlin.test.instrumentation.disable")
         .orNull?.toBoolean() != true
@@ -165,10 +198,17 @@ fun Project.projectTest(
         evaluationDependsOn(":test-instrumenter")
     }
     return getOrCreateTask<Test>(taskName) {
-        dependsOn(":createIdeaHomeForTests")
-        inputs.dir(File(rootDir, "build/ideaHomeForTests")).withPathSensitivity(PathSensitivity.RELATIVE)
+        inputs.files(rootProject.tasks.named("createIdeaHomeForTests").map { it.outputs.files }).withPathSensitivity(PathSensitivity.RELATIVE)
 
         muteWithDatabase()
+        if (jUnitMode == JUnitMode.JUnit4) {
+            jvmArgumentProviders.add {
+                listOf(
+                    "-javaagent:${classpath.find { it.name.contains("junit-foundation") }?.absolutePath ?:
+                    error("junit-foundation not found in ${classpath.joinToString("\n")}")}"
+                )
+            }
+        }
 
         doFirst {
             if (jUnitMode == JUnitMode.JUnit5) return@doFirst
@@ -218,13 +258,17 @@ fun Project.projectTest(
 
         if (shouldInstrument) {
             val instrumentationArgsProperty = project.providers.gradleProperty("kotlin.test.instrumentation.args")
-            val testInstrumenterOutputs = project.tasks.findByPath(":test-instrumenter:jar")!!.outputs.files
+            val testInstrumenterJar: FileCollection =
+                configurations.detachedConfiguration(dependencies.create(dependencies.project(":test-instrumenter")))
+                    .also { it.isTransitive = false }
+            inputs.files(testInstrumenterJar)
+                .withNormalizer(ClasspathNormalizer::class)
+                .withPropertyName("testInstrumenterClasspath")
             doFirst {
-                val agent = testInstrumenterOutputs.singleFile
+                val agent = testInstrumenterJar.singleFile
                 val args = instrumentationArgsProperty.orNull?.let { "=$it" }.orEmpty()
                 jvmArgs("-javaagent:$agent$args")
             }
-            dependsOn(":test-instrumenter:jar")
         }
 
         // The glibc default number of memory pools on 64bit systems is 8 times the number of CPU cores
@@ -270,15 +314,15 @@ fun Project.projectTest(
         environment("NO_FS_ROOTS_ACCESS_CHECK", "true")
         environment("PROJECT_CLASSES_DIRS", project.testSourceSet.output.classesDirs.asPath)
         environment("PROJECT_BUILD_DIR", project.layout.buildDirectory.get().asFile)
-        systemProperty("jps.kotlin.home", project.rootProject.extra["distKotlinHomeDir"]!!)
         systemProperty("kotlin.test.update.test.data", if (project.rootProject.hasProperty("kotlin.test.update.test.data")) "true" else "false")
         systemProperty("cacheRedirectorEnabled", project.rootProject.findProperty("cacheRedirectorEnabled")?.toString() ?: "false")
         project.kotlinBuildProperties.junit5NumberOfThreadsForParallelExecution?.let { n ->
             systemProperty("junit.jupiter.execution.parallel.config.strategy", "fixed")
             systemProperty("junit.jupiter.execution.parallel.config.fixed.parallelism", n)
         }
-        project.providers.gradleProperty("teamcity.build.parallelTests.excludesFile").orNull?.let { parallelTestsExcludesFile ->
-            systemProperty("teamcity.build.parallelTests.excludesFile", parallelTestsExcludesFile)
+        val excludesFile = project.providers.gradleProperty("teamcity.build.parallelTests.excludesFile").orNull
+        if (excludesFile != null && File(excludesFile).exists()) {
+            systemProperty("teamcity.build.parallelTests.excludesFile", excludesFile)
         }
 
         systemProperty("idea.ignore.disabled.plugins", "true")
@@ -287,6 +331,10 @@ fun Project.projectTest(
         val projectName = project.name
         val teamcity = project.rootProject.findProperty("teamcity") as? Map<*, *>
         doFirst {
+            if (excludesFile != null && File(excludesFile).exists()) {
+                cleanupInvalidExcludePatternsForTCParallelTests(excludesFile) // Workaround for TW-92736
+            }
+
             val systemTempRoot =
             // TC by default doesn't switch `teamcity.build.tempDir` to 'java.io.tmpdir' so it could cause to wasted disk space
                 // Should be fixed soon on Teamcity side
@@ -375,7 +423,7 @@ fun Project.confugureFirPluginAnnotationsDependency(testTask: TaskProvider<Test>
     }
 }
 
-private fun Project.optInTo(annotationFqName: String) {
+fun Project.optInTo(annotationFqName: String) {
     tasks.withType<KotlinCompilationTask<*>>().configureEach {
         compilerOptions.optIn.add(annotationFqName)
     }
@@ -391,4 +439,8 @@ fun Project.optInToUnsafeDuringIrConstructionAPI() {
 
 fun Project.optInToObsoleteDescriptorBasedAPI() {
     optInTo("org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI")
+}
+
+fun Project.optInToK1Deprecation() {
+    optInTo("org.jetbrains.kotlin.K1Deprecation")
 }

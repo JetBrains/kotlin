@@ -1,0 +1,39 @@
+FILE: valVarOnContextParameter.kt
+    public final var a: R|kotlin/String|
+        public get(): R|kotlin/String|
+        public set(value: R|kotlin/String|): R|kotlin/Unit|
+    public final fun test1(): R|kotlin/Unit| {
+    }
+    public final val a: R|kotlin/String|
+        public get(): R|kotlin/String|
+    public final fun test2(): R|kotlin/Unit| {
+    }
+    public final val a: R|kotlin/String|
+        public get(): R|kotlin/String|
+    public final val property1: R|kotlin/String|
+        public get(): R|kotlin/String| {
+            ^ <Ambiguity: a, [/a, /a, /a, /a]>#
+        }
+    public final var a: R|kotlin/String|
+        public get(): R|kotlin/String|
+        public set(value: R|kotlin/String|): R|kotlin/Unit|
+    public final val property2: R|kotlin/String|
+        public get(): R|kotlin/String| {
+            ^ <Ambiguity: a, [/a, /a, /a, /a]>#
+        }
+    context(<unused var>: R|kotlin/Int|, a: R|kotlin/String|)
+    public final fun test1(): R|kotlin/Unit| {
+    }
+    context(<unused var>: R|kotlin/Int|, a: R|kotlin/String|)
+    public final fun test2(): R|kotlin/Unit| {
+    }
+    context(<unused var>: R|kotlin/Int|, a: R|kotlin/String|)
+    public final val property1: R|kotlin/String|
+        public get(): R|kotlin/String| {
+            ^ R|<local>/a|
+        }
+    context(<unused var>: R|kotlin/Int|, a: R|kotlin/String|)
+    public final val property2: R|kotlin/String|
+        public get(): R|kotlin/String| {
+            ^ R|<local>/a|
+        }

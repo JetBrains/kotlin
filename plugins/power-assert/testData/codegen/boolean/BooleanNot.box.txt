@@ -1,0 +1,13 @@
+test1: ---
+assert(!b)
+       ||
+       |true
+       false
+---
+test2: ---
+assert(!b == true)
+       || |
+       || false
+       |true
+       false
+---

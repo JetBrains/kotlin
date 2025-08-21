@@ -17,7 +17,7 @@ fun String.repeat(n: Int) = 1
 fun String.describeConstable() = 1
 fun String.resolveConstantDesc(lookup: MethodHandles.Lookup) = 1
 
-fun <E : Enum<E>> Enum<E>.<!EXTENSION_SHADOWED_BY_MEMBER!>describeConstable<!>() = 1
+fun <E : Enum<E>> Enum<E>.describeConstable() = 1
 
 enum class MyEnum { E }
 
@@ -42,3 +42,6 @@ fun test(c: Collection<String>, l: List<String>, s: Set<String>) {
 }
 
 fun consumeInt(i: Int) {}
+
+/* GENERATED_FIR_TAGS: asExpression, enumDeclaration, enumEntry, funWithExtensionReceiver, functionDeclaration,
+functionalType, integerLiteral, lambdaLiteral, nullableType, stringLiteral, typeConstraint, typeParameter, vararg */

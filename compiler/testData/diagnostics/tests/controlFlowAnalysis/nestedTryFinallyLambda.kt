@@ -42,3 +42,6 @@ fun nestedFinallyAndLambda3() {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, functionDeclaration, functionalType, lambdaLiteral, localProperty,
+propertyDeclaration, stringLiteral, tryExpression */

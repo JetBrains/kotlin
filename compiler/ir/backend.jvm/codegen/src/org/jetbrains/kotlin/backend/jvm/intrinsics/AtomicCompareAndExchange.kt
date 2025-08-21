@@ -8,12 +8,9 @@ package org.jetbrains.kotlin.backend.jvm.intrinsics
 import org.jetbrains.kotlin.backend.jvm.codegen.ClassCodegen
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
-import org.jetbrains.org.objectweb.asm.Type.INT
-import org.jetbrains.org.objectweb.asm.Type.LONG
-import org.jetbrains.org.objectweb.asm.Type.BOOLEAN
-import org.jetbrains.org.objectweb.asm.Type.OBJECT
+import org.jetbrains.org.objectweb.asm.Type.*
 
-class AtomicCompareAndExchange(private val valueType: Int) : IntrinsicMethod() {
+class AtomicCompareAndExchange(private val valueType: Int) : CallBasedIntrinsicMethod() {
     override fun toCallable(
         expression: IrFunctionAccessExpression, signature: JvmMethodSignature, classCodegen: ClassCodegen,
     ): IntrinsicFunction {
@@ -30,7 +27,7 @@ class AtomicCompareAndExchange(private val valueType: Int) : IntrinsicMethod() {
     }
 }
 
-class AtomicArrayCompareAndExchange(private val valueType: Int) : IntrinsicMethod() {
+class AtomicArrayCompareAndExchange(private val valueType: Int) : CallBasedIntrinsicMethod() {
     override fun toCallable(
         expression: IrFunctionAccessExpression, signature: JvmMethodSignature, classCodegen: ClassCodegen,
     ): IntrinsicFunction {

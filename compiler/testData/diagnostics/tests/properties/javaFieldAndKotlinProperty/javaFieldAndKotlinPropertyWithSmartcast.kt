@@ -23,3 +23,6 @@ fun test(j: Any): String {
 }
 
 fun box(): String = test(My())
+
+/* GENERATED_FIR_TAGS: additiveExpression, assignment, classDeclaration, flexibleType, functionDeclaration, ifExpression,
+isExpression, javaProperty, javaType, propertyDeclaration, smartcast, stringLiteral */

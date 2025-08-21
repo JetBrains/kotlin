@@ -1,7 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 // FULL_JDK
-// LANGUAGE: -JavaTypeParameterDefaultRepresentationWithDNN
 // JVM_TARGET: 1.8
 
 import java.util.concurrent.Future
@@ -18,3 +17,5 @@ fun bar(threadLocal: ThreadLocal<String?>) {
 fun baz(ref: AtomicReference<String?>) {
     ref.get()<!UNSAFE_CALL!>.<!>length
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, nullableType */

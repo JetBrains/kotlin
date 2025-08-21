@@ -5,3 +5,4 @@ text: enum class Enum(val i: Int) {
     SONDE(45)
 }
 isUsedAsExpression: false
+isUsedAsResultOfLambda: false

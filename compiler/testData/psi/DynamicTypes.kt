@@ -1,3 +1,5 @@
+// COMPILATION_ERRORS
+
 fun foo(
         p1: dynamic,
         p2: @a dynamic,

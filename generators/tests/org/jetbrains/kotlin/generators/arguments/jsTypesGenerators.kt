@@ -33,7 +33,10 @@ internal fun generateJsMainFunctionExecutionMode(
                 println("@JvmStatic")
                 println("fun fromMode(mode: String): JsMainFunctionExecutionMode =")
                 println("    JsMainFunctionExecutionMode.values().firstOrNull { it.mode == mode }")
-                println("        ?: throw IllegalArgumentException(\"Unknown main function execution mode: ${'$'}mode\")")
+                println("        ?: throw IllegalArgumentException(")
+                println($$"            \"Unknown main function execution mode: $mode,\\navailable modes: ${JsMainFunctionExecutionMode.values().joinToString { it.mode }}\\n\" +")
+                println("                    \"Prefer configuring 'main' value via 'compilerOptions' DSL: https://kotl.in/compiler-options-dsl\"")
+                println("        )")
             }
             println("}")
         }
@@ -66,7 +69,10 @@ internal fun generateJsModuleKind(
                 println("@JvmStatic")
                 println("fun fromKind(kind: String): JsModuleKind =")
                 println("    JsModuleKind.values().firstOrNull { it.kind == kind }")
-                println("        ?: throw IllegalArgumentException(\"Unknown JS module kind: ${'$'}kind\")")
+                println("        ?: throw IllegalArgumentException(")
+                println($$"            \"Unknown JS module kind: $kind,\\navailable kinds: ${JsModuleKind.values().joinToString { it.kind }}\\n\" +")
+                println("                    \"Prefer configuring 'moduleKind' value via 'compilerOptions' DSL: https://kotl.in/compiler-options-dsl\"")
+                println("        )")
             }
             println("}")
         }
@@ -97,7 +103,10 @@ internal fun generateJsSourceMapEmbedMode(
                 println("@JvmStatic")
                 println("fun fromMode(mode: String): JsSourceMapEmbedMode =")
                 println("    JsSourceMapEmbedMode.values().firstOrNull { it.mode == mode }")
-                println("        ?: throw IllegalArgumentException(\"Unknown JS source map embed mode: ${'$'}mode\")")
+                println("        ?: throw IllegalArgumentException(")
+                println($$"            \"Unknown JS source map embed mode: $mode,\\navailable modes: ${JsSourceMapEmbedMode.values().joinToString { it.mode }}\\n\" +")
+                println("                    \"Prefer configuring 'sourceMapEmbedSources' value via 'compilerOptions' DSL: https://kotl.in/compiler-options-dsl\"")
+                println("        )")
             }
             println("}")
         }
@@ -128,37 +137,10 @@ internal fun generateJsSourceMapNamesPolicy(
                 println("@JvmStatic")
                 println("fun fromPolicy(policy: String): JsSourceMapNamesPolicy =")
                 println("    JsSourceMapNamesPolicy.values().firstOrNull { it.policy == policy }")
-                println("        ?: throw IllegalArgumentException(\"Unknown JS source map names policy: ${'$'}policy\")")
-            }
-            println("}")
-        }
-    }
-}
-
-internal fun generateJsDiagnosticMode(
-    apiDir: File,
-    filePrinter: (targetFile: File, Printer.() -> Unit) -> Unit
-) {
-    val diagnosticModeFqName = FqName("org.jetbrains.kotlin.gradle.dsl.JsDiagnosticMode")
-    filePrinter(fileFromFqName(apiDir, diagnosticModeFqName)) {
-        generateDeclaration("enum class", diagnosticModeFqName, afterType = "(val mode: String)") {
-            val modes = hashMapOf(
-                K2JsArgumentConstants::RUNTIME_DIAGNOSTIC_EXCEPTION.name to K2JsArgumentConstants.RUNTIME_DIAGNOSTIC_EXCEPTION,
-                K2JsArgumentConstants::RUNTIME_DIAGNOSTIC_LOG.name to K2JsArgumentConstants.RUNTIME_DIAGNOSTIC_LOG,
-            )
-
-            for ((key, value) in modes) {
-                println("$key(\"$value\"),")
-            }
-            println(";")
-
-            println()
-            println("companion object {")
-            withIndent {
-                println("@JvmStatic")
-                println("fun fromMode(mode: String): JsDiagnosticMode =")
-                println("    JsDiagnosticMode.values().firstOrNull { it.mode == mode }")
-                println("        ?: throw IllegalArgumentException(\"Unknown JS diagnostic mode: ${'$'}mode\")")
+                println("        ?: throw IllegalArgumentException(")
+                println($$"            \"Unknown JS source map names policy: $policy,\\navailable policies: ${JsSourceMapNamesPolicy.values().joinToString{ it.policy }}\\n\" +")
+                println("                    \"Prefer configuring 'sourceMapNamesPolicy' value via 'compilerOptions' DSL: https://kotl.in/compiler-options-dsl\"")
+                println("        )")
             }
             println("}")
         }

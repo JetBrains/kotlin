@@ -1,3 +1,5 @@
+// COMPILATION_ERRORS
+
 @[abc("") cde]
 class A {
     @[ abc

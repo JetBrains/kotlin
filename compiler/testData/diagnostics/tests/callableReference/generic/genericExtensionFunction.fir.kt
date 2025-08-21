@@ -29,3 +29,7 @@ fun <T> test2() {
     bar<Wrapper, Int, T>(Wrapper::fooTakeInt).checkType { _<Tripple<Wrapper, Int, T>>() }
     bar<Wrapper, Int, String>(Wrapper::fooTakeInt).checkType { _<Tripple<Wrapper, Int, String>>() }
 }
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, funWithExtensionReceiver, functionDeclaration,
+functionalType, infix, lambdaLiteral, localProperty, nullableType, primaryConstructor, propertyDeclaration,
+stringLiteral, typeParameter, typeWithExtension */

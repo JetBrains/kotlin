@@ -1,0 +1,8 @@
+STEP 0:
+    arguments: -Xcontext-parameters -XXLanguage:+IrInlinerBeforeKlibSerialization
+    dependencies: stdlib
+STEP 1:
+    arguments: -Xcontext-parameters -XXLanguage:+IrInlinerBeforeKlibSerialization
+    dependencies: stdlib
+    modifications:
+        U : l1.kt.1 -> l1.kt

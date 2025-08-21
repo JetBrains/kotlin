@@ -8,10 +8,7 @@
 
 package kotlin
 
-import kotlin.internal.ActualizeByJvmBuiltinProvider
-
 /** Represents a 16-bit Unicode character. */
-@ActualizeByJvmBuiltinProvider
 public expect class Char : Comparable<Char> {
     /**
      * Compares this value with the specified value for order.

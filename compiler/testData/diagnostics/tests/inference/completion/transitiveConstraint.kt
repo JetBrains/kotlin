@@ -14,3 +14,6 @@ fun <K> id(arg: K): K = arg
 fun test(lower: Lower) {
     id<Inv<Upper>>(makeInv(lower))
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, interfaceDeclaration, nullableType, typeConstraint,
+typeParameter */

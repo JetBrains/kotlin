@@ -6,7 +6,7 @@
 // MODULE: separate
 
 // FILE: Java2.java
-import java.util.*
+import java.util.*;
 
 public class Java2<T> {
     public List<T> a = new ArrayList();

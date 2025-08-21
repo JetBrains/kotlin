@@ -94,6 +94,7 @@ KtDotQualifiedExpression(80,94): 'prop.action1()'
       argumentMapping = {}
       isImplicitInvoke = true
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = action1
           isSafeNavigation = false
@@ -112,8 +113,10 @@ KtDotQualifiedExpression(80,94): 'prop.action1()'
               receiverType = null
               returnType = kotlin.Int
               symbol = p1: P1
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/Function1.invoke
       typeArgumentsMapping = {}
 
@@ -121,6 +124,7 @@ KtNameReferenceExpression(80,84): 'prop'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaVariableSignature:
@@ -128,6 +132,7 @@ KtNameReferenceExpression(80,84): 'prop'
           receiverType = null
           returnType = kotlin.Int
           symbol = val prop: kotlin.Int
+          contextParameters = []
           callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -138,6 +143,7 @@ KtCallExpression(85,94): 'action1()'
       argumentMapping = {}
       isImplicitInvoke = true
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = action1
           isSafeNavigation = false
@@ -156,8 +162,10 @@ KtCallExpression(85,94): 'action1()'
               receiverType = null
               returnType = kotlin.Int
               symbol = p1: P1
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/Function1.invoke
       typeArgumentsMapping = {}
 
@@ -165,6 +173,7 @@ KtNameReferenceExpression(85,92): 'action1'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaVariableSignature:
@@ -172,6 +181,7 @@ KtNameReferenceExpression(85,92): 'action1'
           receiverType = null
           returnType = @ExtensionFunctionType kotlin.Function1<kotlin.Int, kotlin.Unit>
           symbol = action1: @ExtensionFunctionType kotlin.Function1<kotlin.Int, kotlin.Unit>
+          contextParameters = []
           callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -185,6 +195,7 @@ KtCallExpression(99,112): 'action1(prop)'
       argumentMapping = {}
       isImplicitInvoke = true
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = action1
           isSafeNavigation = false
@@ -203,8 +214,10 @@ KtCallExpression(99,112): 'action1(prop)'
               receiverType = null
               returnType = kotlin.Int
               symbol = p1: P1
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/Function1.invoke
       typeArgumentsMapping = {}
 
@@ -212,6 +225,7 @@ KtNameReferenceExpression(99,106): 'action1'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaVariableSignature:
@@ -219,6 +233,7 @@ KtNameReferenceExpression(99,106): 'action1'
           receiverType = null
           returnType = @ExtensionFunctionType kotlin.Function1<kotlin.Int, kotlin.Unit>
           symbol = action1: @ExtensionFunctionType kotlin.Function1<kotlin.Int, kotlin.Unit>
+          contextParameters = []
           callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -233,6 +248,7 @@ KtNameReferenceExpression(107,111): 'prop'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaVariableSignature:
@@ -240,6 +256,7 @@ KtNameReferenceExpression(107,111): 'prop'
           receiverType = null
           returnType = kotlin.Int
           symbol = val prop: kotlin.Int
+          contextParameters = []
           callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -253,6 +270,7 @@ KtNameReferenceExpression(118,122): 'prop'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaVariableSignature:
@@ -260,6 +278,7 @@ KtNameReferenceExpression(118,122): 'prop'
           receiverType = null
           returnType = kotlin.Int
           symbol = val prop: kotlin.Int
+          contextParameters = []
           callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -286,10 +305,12 @@ KtCallExpression(151,164): 'action2(prop)'
           receiverType = null
           returnType = kotlin.Int
           symbol = p1: P1
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = true
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = action2
           isSafeNavigation = false
@@ -305,8 +326,10 @@ KtCallExpression(151,164): 'action2(prop)'
               receiverType = null
               returnType = kotlin.Int
               symbol = p1: P1
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/Function1.invoke
       typeArgumentsMapping = {}
 
@@ -314,6 +337,7 @@ KtNameReferenceExpression(151,158): 'action2'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaVariableSignature:
@@ -321,6 +345,7 @@ KtNameReferenceExpression(151,158): 'action2'
           receiverType = null
           returnType = kotlin.Function1<kotlin.Int, kotlin.Unit>
           symbol = action2: kotlin.Function1<kotlin.Int, kotlin.Unit>
+          contextParameters = []
           callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -335,6 +360,7 @@ KtNameReferenceExpression(159,163): 'prop'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaVariableSignature:
@@ -342,6 +368,7 @@ KtNameReferenceExpression(159,163): 'prop'
           receiverType = null
           returnType = kotlin.Int
           symbol = val prop: kotlin.Int
+          contextParameters = []
           callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}

@@ -23,7 +23,12 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.DeclarationCheckers
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirFunctionChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirPropertyChecker
-import org.jetbrains.kotlin.fir.analysis.checkers.expression.*
+import org.jetbrains.kotlin.fir.analysis.checkers.expression.ExpressionCheckers
+import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirCallableReferenceAccessChecker
+import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirFunctionCallChecker
+import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirPropertyAccessExpressionChecker
+import org.jetbrains.kotlin.fir.analysis.checkers.type.FirResolvedTypeRefChecker
+import org.jetbrains.kotlin.fir.analysis.checkers.type.TypeCheckers
 import org.jetbrains.kotlin.fir.analysis.extensions.FirAdditionalCheckersExtension
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.extensions.FirFunctionTypeKindExtension
@@ -33,6 +38,9 @@ class ComposeFirExtensionRegistrar : FirExtensionRegistrar() {
     override fun ExtensionRegistrarContext.configurePlugin() {
         +::ComposableFunctionTypeKindExtension
         +::ComposeFirCheckersExtension
+        +::ComposableTargetSessionStorage
+
+        registerDiagnosticContainers(ComposeErrors)
     }
 }
 
@@ -68,11 +76,11 @@ object ComposableFunction : FunctionTypeKind(
     isReflectType = false,
     isInlineable = true,
 ) {
-    override val prefixForTypeRender: String
-        get() = "@Composable"
+    override val prefixForTypeRender: String = "@Composable"
 
-    override val serializeAsFunctionWithAnnotationUntil: String
-        get() = useLegacyCustomFunctionTypeSerializationUntil
+    override val serializeAsFunctionWithAnnotationUntil: String = useLegacyCustomFunctionTypeSerializationUntil
+
+    override val supportsConversionFromSimpleFunctionType: Boolean = false
 
     override fun reflectKind(): FunctionTypeKind = KComposableFunction
 }
@@ -84,8 +92,11 @@ object KComposableFunction : FunctionTypeKind(
     isReflectType = true,
     isInlineable = false,
 ) {
-    override val serializeAsFunctionWithAnnotationUntil: String
-        get() = useLegacyCustomFunctionTypeSerializationUntil
+    override val prefixForTypeRender: String = "@Composable"
+
+    override val serializeAsFunctionWithAnnotationUntil: String = useLegacyCustomFunctionTypeSerializationUntil
+
+    override val supportsConversionFromSimpleFunctionType: Boolean = false
 
     override fun nonReflectKind(): FunctionTypeKind = ComposableFunction
 }
@@ -99,17 +110,20 @@ class ComposeFirCheckersExtension(session: FirSession) : FirAdditionalCheckersEx
             setOf(ComposablePropertyChecker)
     }
 
+    override val typeCheckers: TypeCheckers = object : TypeCheckers() {
+        override val resolvedTypeRefCheckers: Set<FirResolvedTypeRefChecker> =
+            setOf(ComposableAnnotationChecker)
+    }
+
     override val expressionCheckers: ExpressionCheckers = object : ExpressionCheckers() {
         override val functionCallCheckers: Set<FirFunctionCallChecker> =
-            setOf(ComposableFunctionCallChecker)
+            setOf(ComposableFunctionCallChecker, ComposableTargetChecker)
 
         override val propertyAccessExpressionCheckers: Set<FirPropertyAccessExpressionChecker> =
             setOf(ComposablePropertyAccessExpressionChecker)
 
         override val callableReferenceAccessCheckers: Set<FirCallableReferenceAccessChecker> =
-            setOf(ComposableCallableReferenceChecker)
-
-        override val annotationCheckers: Set<FirAnnotationChecker> =
-            setOf(ComposableAnnotationChecker())
+            setOf(ComposablePropertyReferenceChecker)
     }
+
 }

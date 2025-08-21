@@ -47,3 +47,7 @@ fun g1() = f("f1")
 fun g2() = f2("f2")
 fun g3() = f3("f3", 3)
 fun <V, W> I3<V>.g4(block: (W) -> V) = f4(block)
+
+/* GENERATED_FIR_TAGS: additiveExpression, anonymousObjectExpression, assignment, classDeclaration,
+funWithExtensionReceiver, functionDeclaration, functionalType, inProjection, integerLiteral, interfaceDeclaration,
+lambdaLiteral, nullableType, override, propertyDeclaration, starProjection, stringLiteral, thisExpression, typeParameter */

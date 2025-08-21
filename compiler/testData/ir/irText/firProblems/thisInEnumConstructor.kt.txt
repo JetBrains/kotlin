@@ -5,7 +5,7 @@ enum class EE : Enum<EE> {
 
   ENTRY = EE()
 
-  private constructor(myName: String = Companion.toString().lowercase()) /* primary */ {
+  private constructor(myName: String = lowercase(/* <this> = Companion.toString() */)) /* primary */ {
     super/*Enum*/<EE>()
     /* <init>() */
 

@@ -15,14 +15,15 @@ import org.jetbrains.kotlin.fir.expressions.FirPropertyAccessExpression
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 
 object FirPropertyAccessTypeArgumentsChecker : FirPropertyAccessExpressionChecker(MppCheckerKind.Common) {
-    override fun check(expression: FirPropertyAccessExpression, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(expression: FirPropertyAccessExpression) {
         // Property accesses may not have explicit type arguments (see KT-54978). Additionally, the callee reference's errors should take
         // precedence, if any exist. For example, the callee reference might be a function `Collections.emptyList<Int>`, but the programmer
         // has forgotten to add function call parentheses, making it a property access.
         if (expression.calleeReference !is FirErrorNamedReference) {
             val hasExplicitTypeArgument = expression.typeArguments.any { it.isExplicit }
             if (hasExplicitTypeArgument) {
-                reporter.reportOn(expression.source, FirErrors.EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS, "Property", context)
+                reporter.reportOn(expression.source, FirErrors.EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS, "Property")
             }
         }
     }

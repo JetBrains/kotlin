@@ -202,6 +202,7 @@ object Mapping : TemplateGroupBase() {
             and appends the results to the given [destination].
             """
         }
+        annotation("@IgnorableReturnValue")
         typeParam("R")
         typeParam("C : MutableCollection<in R>")
         returns("C")
@@ -230,6 +231,7 @@ object Mapping : TemplateGroupBase() {
             and returns the result of the transform applied to the ${f.element}.
             """
         }
+        annotation("@IgnorableReturnValue")
         typeParam("R")
         typeParam("C : MutableCollection<in R>")
         returns("C")
@@ -258,6 +260,7 @@ object Mapping : TemplateGroupBase() {
             and appends only the non-null results to the given [destination].
             """
         }
+        annotation("@IgnorableReturnValue")
         body {
             """
             forEach { element -> transform(element)?.let { destination.add(it) } }
@@ -281,6 +284,7 @@ object Mapping : TemplateGroupBase() {
             and returns the result of the transform applied to the ${f.element}.
             """
         }
+        annotation("@IgnorableReturnValue")
         body {
             """
             forEachIndexed { index, element -> transform(index, element)?.let { destination.add(it) } }
@@ -364,6 +368,7 @@ object Mapping : TemplateGroupBase() {
             annotation("@OverloadResolutionByLambdaReturnType")
             annotation("""@kotlin.jvm.JvmName("flatMapIterableTo")""")
         }
+        annotation("@IgnorableReturnValue")
         typeParam("R")
         typeParam("C : MutableCollection<in R>")
         returns("C")
@@ -389,6 +394,7 @@ object Mapping : TemplateGroupBase() {
             annotation("@OverloadResolutionByLambdaReturnType")
             annotation("""@kotlin.jvm.JvmName("flatMapSequenceTo")""")
         }
+        annotation("@IgnorableReturnValue")
         typeParam("R")
         typeParam("C : MutableCollection<in R>")
         returns("C")
@@ -464,6 +470,7 @@ object Mapping : TemplateGroupBase() {
             annotation("@OverloadResolutionByLambdaReturnType")
             if (family != ArraysOfUnsigned)
                 annotation("""@kotlin.jvm.JvmName("flatMapIndexed${containerClass}To")""")
+            annotation("@IgnorableReturnValue")
             typeParam("R")
             typeParam("C : MutableCollection<in R>")
             returns("C")
@@ -521,6 +528,7 @@ object Mapping : TemplateGroupBase() {
             """
         }
         sample("samples.collections.Collections.Transformations.groupBy")
+        annotation("@IgnorableReturnValue")
         sequenceClassification(terminal)
         returns("M")
         body {
@@ -581,6 +589,7 @@ object Mapping : TemplateGroupBase() {
             """
         }
         sample("samples.collections.Collections.Transformations.groupByKeysAndValues")
+        annotation("@IgnorableReturnValue")
         sequenceClassification(terminal)
         returns("M")
         body {

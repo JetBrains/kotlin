@@ -13,3 +13,6 @@ class D: Base<Int>(1) {
         constructor(x: Int, y: Int) : super(this@D.foo1(1))
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, inner, integerLiteral, nullableType, primaryConstructor,
+secondaryConstructor, thisExpression, typeParameter */

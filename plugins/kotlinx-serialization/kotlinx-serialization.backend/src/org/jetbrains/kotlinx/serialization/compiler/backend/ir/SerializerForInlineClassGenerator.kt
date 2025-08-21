@@ -34,11 +34,11 @@ class SerializerForInlineClassGenerator(
         val serialDescGetter = irGet(descriptorGetterSymbol.owner.returnType, irThis(), descriptorGetterSymbol)
 
         // val inlineEncoder = encoder.encodeInline()
-        val encodeInlineCall: IrExpression = irInvoke(irGet(saveFunc.valueParameters[0]), encodeInline, serialDescGetter)
+        val encodeInlineCall: IrExpression = irInvoke(encodeInline, irGet(saveFunc.parameters[1]), serialDescGetter)
         val inlineEncoder = irTemporary(encodeInlineCall, nameHint = "inlineEncoder")
 
         val property = serializableProperties.first()
-        val value = getProperty(irGet(saveFunc.valueParameters[1]), property.ir, property.type)
+        val value = getProperty(irGet(saveFunc.parameters[2]), property.ir, property.type)
 
         // inlineEncoder.encodeInt/String/SerializableValue
         val elementCall = formEncodeDecodePropertyCall(irGet(inlineEncoder), saveFunc.dispatchReceiverParameter!!, property, {innerSerial, sti ->
@@ -69,7 +69,7 @@ class SerializerForInlineClassGenerator(
         val serialDescGetter = irGet(descriptorGetterSymbol.owner.returnType, irThis(), descriptorGetterSymbol)
 
         // val inlineDecoder = decoder.decodeInline()
-        val inlineDecoder: IrExpression = irInvoke(irGet(loadFunc.valueParameters[0]), decodeInline, serialDescGetter)
+        val inlineDecoder: IrExpression = irInvoke(decodeInline, irGet(loadFunc.parameters[1]), serialDescGetter)
 
         val property = serializableProperties.first()
         val inlinedType = property.type
@@ -87,7 +87,7 @@ class SerializerForInlineClassGenerator(
     override fun IrBlockBodyBuilder.instantiateNewDescriptor(serialDescImplClass: IrClassSymbol, correctThis: IrExpression): IrExpression {
         val ctor = serialDescImplClass.constructors.single { it.owner.isPrimary }
         return irInvoke(
-            null, ctor,
+             ctor,
             irString(serialName),
             correctThis
         )
@@ -97,10 +97,9 @@ class SerializerForInlineClassGenerator(
 
     private fun IrBlockBodyBuilder.coerceToBox(expression: IrExpression, inlineClassBoxType: IrType): IrExpression =
         irInvoke(
-            null,
             serializableIrClass.constructors.single { it.isPrimary }.symbol,
+            listOf(expression),
             (inlineClassBoxType as IrSimpleType).arguments.map { it.typeOrNull },
-            listOf(expression)
         )
 
 }

@@ -14,3 +14,6 @@ infix fun <T : Comparable<T>, S : T?> Bar<in S>.test(other: Bar<in S>) {}
 fun checkFunctions(exp1: Foo<Int?>, exp2: Foo<Int>) {
     exp1.test(exp2)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, inProjection, infix,
+nullableType, operator, override, starProjection, typeConstraint, typeParameter */

@@ -5,7 +5,16 @@
 /* TARGET declaration */ private fun privateMethod(): String
 public val publicInlineVal: Function0<String>
     public inline fun <get-publicInlineVal>(): Function0<String>
-        local fun <anonymous>(): String
+        /* LOCAL declaration @0 */ local fun <anonymous>(): String
             /* ACCESSOR use-site */ access$privateMethod$tAKt()
+        /* INVOKE @0 */ local fun <anonymous>(): String
 /* ACCESSOR declaration */ public fun access$privateMethod$tAKt(): String
     /* TARGET use-site */ privateMethod()
+
+
+/* FILE package=<root> fileName=main.kt */
+
+public fun box(): String
+    /* LOCAL declaration @0 */ local fun <anonymous>(): String
+        /* ACCESSOR use-site */ access$privateMethod$tAKt()
+    /* INVOKE @0 */ local fun <anonymous>(): String

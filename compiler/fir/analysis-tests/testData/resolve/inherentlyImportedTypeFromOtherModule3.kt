@@ -31,3 +31,5 @@ class Main : Test() {
         return Success()
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, interfaceDeclaration, nestedClass */

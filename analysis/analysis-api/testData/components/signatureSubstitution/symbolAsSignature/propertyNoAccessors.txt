@@ -8,4 +8,5 @@ KaVariableSignature:
   receiverType = null
   returnType = kotlin.Int
   symbol = val foo: kotlin.Int
+  contextParameters = []
   callableId = /foo

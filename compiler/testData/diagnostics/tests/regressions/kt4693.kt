@@ -8,3 +8,5 @@ enum class MyEnum {
         return f(K)
     }
 }
+
+/* GENERATED_FIR_TAGS: enumDeclaration, enumEntry, functionDeclaration, functionalType, inline */

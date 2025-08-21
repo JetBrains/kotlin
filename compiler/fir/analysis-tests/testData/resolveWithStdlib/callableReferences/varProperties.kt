@@ -15,3 +15,5 @@ fun main() {
     foo1(::bar)
     foo2(A::bar)
 }
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, functionDeclaration, integerLiteral, propertyDeclaration */

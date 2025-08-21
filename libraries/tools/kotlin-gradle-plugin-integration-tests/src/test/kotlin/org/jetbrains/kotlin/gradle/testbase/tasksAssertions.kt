@@ -16,6 +16,17 @@ import org.gradle.testkit.runner.TaskOutcome
  * are not considered 'executed').
  */
 fun BuildResult.assertTasksAreNotInTaskGraph(vararg taskPaths: String) {
+    assertTasksAreNotInTaskGraph(taskPaths.asList())
+}
+
+/**
+ * Asserts given tasks are not present in the build task graph.
+ *
+ * (Note: 'not in task graph' has a different meaning to 'not executed'.
+ * Tasks with outcomes [TaskOutcome.SKIPPED] and [TaskOutcome.UP_TO_DATE] will be in the task graph, but
+ * are not considered 'executed').
+ */
+fun BuildResult.assertTasksAreNotInTaskGraph(taskPaths: Collection<String>) {
     val presentTasks = taskPaths.mapNotNull { task(it) }
     assert(presentTasks.isEmpty()) {
         printBuildOutput()
@@ -67,10 +78,48 @@ fun BuildResult.assertTasksExecuted(taskPaths: Collection<String>) {
 }
 
 /**
+ * Asserts exactly the given [taskPaths] have [TaskOutcome.SUCCESS] execution state
+ * and no other tasks were executed.
+ */
+fun BuildResult.assertExactTasksInGraph(vararg taskPaths: String) {
+    val missingTasks = taskPaths.toSet() - tasks.map { it.path }.toSet()
+    val restTasks = tasks.map { it.path } - taskPaths.toSet()
+    assert(missingTasks.isEmpty() && restTasks.isEmpty()) {
+        printBuildOutput()
+        buildString {
+            append("Expected exactly these tasks in the build: ${taskPaths.joinToString(", ")}")
+            if (missingTasks.isNotEmpty()) {
+                append("\nMissing tasks that should have been included: ${missingTasks.joinToString(", ")}")
+            }
+            if (restTasks.isNotEmpty()) {
+                append("\nUnexpected additional tasks that were executed: ${restTasks.joinToString(", ")}")
+            }
+            append("\n\nActual tasks in build:\n${getActualTasksAsString()}}")
+        }
+    }
+
+}
+
+/**
+ * Asserts exactly the given [taskPaths] have [TaskOutcome.SUCCESS] execution state
+ * and no other tasks were executed.
+ */
+fun BuildResult.assertExactTasksInGraph(taskPaths: Collection<String>) {
+    assertExactTasksInGraph(*taskPaths.toTypedArray())
+}
+
+/**
+ * Asserts given [taskPaths] have [TaskOutcome.FAILED] execution state.
+ */
+fun BuildResult.assertTasksFailed(taskPaths: Collection<String>) {
+    assertTasksHaveOutcome(TaskOutcome.FAILED, taskPaths)
+}
+
+/**
  * Asserts given [taskPaths] have [TaskOutcome.FAILED] execution state.
  */
 fun BuildResult.assertTasksFailed(vararg taskPaths: String) {
-    assertTasksHaveOutcome(TaskOutcome.FAILED, taskPaths.asList())
+    assertTasksFailed(taskPaths.asList())
 }
 
 /**
@@ -91,7 +140,14 @@ fun BuildResult.assertTasksUpToDate(taskPaths: Collection<String>) {
  * Asserts given [taskPaths] have [TaskOutcome.SKIPPED] execution state.
  */
 fun BuildResult.assertTasksSkipped(vararg taskPaths: String) {
-    assertTasksHaveOutcome(TaskOutcome.SKIPPED, taskPaths.asList())
+    assertTasksSkipped(taskPaths.asList())
+}
+
+/**
+ * Asserts given [taskPaths] have [TaskOutcome.SUCCESS] execution state.
+ */
+fun BuildResult.assertTasksSkipped(taskPaths: Collection<String>) {
+    assertTasksHaveOutcome(TaskOutcome.SKIPPED, taskPaths)
 }
 
 /**
@@ -206,7 +262,9 @@ private fun BuildResult.getActualTasksAsString(): String {
  */
 private fun BuildResult.getAllTasksFromTheOutput(): List<String> {
 
-    val taskPattern = Regex("^([:\\w]+) - (.*)$")
+    // with Isolated Projects enabled, task names include a leading colon, so we ignore it
+    // https://github.com/gradle/gradle/issues/32852
+    val taskPattern = Regex("^:?([:\\w]+) - (.*)$")
     val tasks = mutableListOf<String>()
 
     output.lines().forEach { line ->

@@ -7,7 +7,7 @@ package kotlin.native.internal
 import kotlin.native.internal.escapeAnalysis.Escapes
 
 /*
- * Internal utilities for debugging K/N compiler and runtime.
+ * Internal utilities for debugging/testing K/N compiler and runtime.
  */
 
 @OptIn(kotlin.native.runtime.NativeRuntimeApi::class)
@@ -22,9 +22,9 @@ public object Debugging {
 @GCUnsafeCall("Kotlin_Debugging_isPermanent")
 @InternalForKotlinNative
 @Escapes.Nothing
-public external fun Any.isPermanent() : Boolean
+public external fun Any.isPermanent(): Boolean
 
-@GCUnsafeCall("Kotlin_Debugging_isLocal")
+@GCUnsafeCall("Kotlin_Debugging_isStack")
 @InternalForKotlinNative
 @Escapes.Nothing
-public external fun Any.isLocal() : Boolean
+public external fun Any.isStack(): Boolean

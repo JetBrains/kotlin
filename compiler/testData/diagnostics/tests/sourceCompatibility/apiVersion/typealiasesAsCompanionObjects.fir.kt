@@ -10,7 +10,10 @@ class C {
 
 typealias CA = C
 
-val test1 = CA
+val test1 = <!API_NOT_AVAILABLE!>CA<!>
 val test2 = CA.<!UNRESOLVED_REFERENCE!>Companion<!>
 val test3 = <!API_NOT_AVAILABLE!>CA<!>.x
 val test4 = CA.<!UNRESOLVED_REFERENCE!>Companion<!>.x
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, integerLiteral, objectDeclaration, propertyDeclaration,
+stringLiteral, typeAliasDeclaration */

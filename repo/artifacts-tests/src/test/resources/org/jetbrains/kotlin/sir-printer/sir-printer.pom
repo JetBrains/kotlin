@@ -9,7 +9,7 @@
   <url>https://kotlinlang.org/</url>
   <licenses>
     <license>
-      <name>The Apache License, Version 2.0</name>
+      <name>Apache-2.0</name>
       <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
     </license>
   </licenses>
@@ -29,12 +29,6 @@
     <dependency>
       <groupId>org.jetbrains.kotlin</groupId>
       <artifactId>sir</artifactId>
-      <version>ArtifactsTest.version</version>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.jetbrains.kotlin</groupId>
-      <artifactId>sir-providers</artifactId>
       <version>ArtifactsTest.version</version>
       <scope>compile</scope>
     </dependency>

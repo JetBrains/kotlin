@@ -1,2 +1,2 @@
 Resolved to:
-    (in DeclSite) (psi: public int getX() )
+    (in DeclSite) (psi: public void setX(int value) )

@@ -33,7 +33,7 @@ interface Supertype1 : suspend () -> Unit {
 
 }
 
-interface Supertype2 : <!SUPERTYPE_IS_EXTENSION_FUNCTION_TYPE!>suspend String.() -> Unit<!> {
+interface Supertype2 : <!SUPERTYPE_IS_EXTENSION_OR_CONTEXT_FUNCTION_TYPE!>suspend String.() -> Unit<!> {
 
 }
 
@@ -41,3 +41,7 @@ interface Supertype2 : <!SUPERTYPE_IS_EXTENSION_FUNCTION_TYPE!>suspend String.()
 annotation class A(val value: String = "")
 
 interface RS
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, functionDeclaration, functionalType, interfaceDeclaration, lambdaLiteral,
+localProperty, nullableType, primaryConstructor, propertyDeclaration, stringLiteral, suspend, typeAliasDeclaration,
+typeWithExtension */

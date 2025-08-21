@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // IGNORE_FIR_DIAGNOSTICS
 // RUN_PIPELINE_TILL: BACKEND
 // MODULE: m1-common
@@ -15,3 +14,5 @@ class FooImpl {
     fun foo(a: Int = 2) {
     }
 }
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, functionDeclaration, integerLiteral, typeAliasDeclaration */

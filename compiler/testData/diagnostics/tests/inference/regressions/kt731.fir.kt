@@ -16,6 +16,10 @@ fun <T, G> A<T>.foo(x: (T)-> G): G {
 
 fun main() {
     val a = A(1)
-    val t: String = a.foo({p -> <!ARGUMENT_TYPE_MISMATCH!>p<!>})
+    val t: String = a.foo({p -> <!RETURN_TYPE_MISMATCH!>p<!>})
     checkSubtype<String>(t)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType, infix,
+integerLiteral, lambdaLiteral, localProperty, nullableType, primaryConstructor, propertyDeclaration, thisExpression,
+typeParameter, typeWithExtension */

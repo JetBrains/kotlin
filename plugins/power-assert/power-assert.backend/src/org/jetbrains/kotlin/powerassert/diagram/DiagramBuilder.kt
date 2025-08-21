@@ -22,6 +22,8 @@ package org.jetbrains.kotlin.powerassert.diagram
 import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.persistentListOf
 import org.jetbrains.kotlin.ir.builders.*
+import org.jetbrains.kotlin.ir.builders.irGet
+import org.jetbrains.kotlin.ir.builders.irTemporary
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.IrContainerExpression
 import org.jetbrains.kotlin.ir.expressions.IrExpression
@@ -50,11 +52,12 @@ private fun IrBlockBuilder.buildExpression(
     call: IrBlockBuilder.(IrExpression, PersistentList<IrTemporaryVariable>) -> IrExpression,
 ): IrExpression = when (node) {
     is ConstantNode -> add(node, variables, call)
+    is HiddenNode -> add(node, variables, call)
     is ExpressionNode -> add(sourceFile, node, variables, call)
-    is ChainNode -> nest(sourceFile, node, 0, variables, call)
-    is WhenNode -> nest(sourceFile, node, 0, variables, call)
-    is ElvisNode -> nest(sourceFile, node, 0, variables, call)
-    else -> TODO("Unknown node type=$node")
+    is ChainNode -> nest(sourceFile, node, index = 0, variables, call)
+    is WhenNode -> nest(sourceFile, node, index = 0, variables, call)
+    is ElvisNode -> nest(sourceFile, node, index = 0, variables, call)
+    is RootNode -> error("Unsupported node type=$node")
 }
 
 /**
@@ -88,6 +91,33 @@ private fun IrBlockBuilder.add(
  *
  * ```
  * val tmp0 = a
+ * val result = call(tmp0, <diagram without tmp0>)
+ * ```
+ */
+private fun IrBlockBuilder.add(
+    node: HiddenNode,
+    variables: PersistentList<IrTemporaryVariable>,
+    call: IrBlockBuilder.(IrExpression, PersistentList<IrTemporaryVariable>) -> IrExpression,
+): IrExpression {
+    val expression = node.expression
+
+    val transformer = IrTemporaryExtractionTransformer(this@add, variables)
+    val copy = expression.deepCopyWithSymbols(scope.getLocalDeclarationParent()).transform(transformer, null)
+
+    val variable = irTemporary(copy, nameHint = "PowerAssertSynthesized")
+    val newVariables = variables.add(IrTemporaryVariable.Hidden(variable, expression))
+    return call(irGet(variable), newVariables)
+}
+
+/**
+ * ```
+ * val result = call(a)
+ * ```
+ *
+ * Should be transformed into:
+ *
+ * ```
+ * val tmp0 = a
  * val result = call(tmp0, <diagram of tmp0>)
  * ```
  */
@@ -101,11 +131,11 @@ private fun IrBlockBuilder.add(
     val sourceRangeInfo = sourceFile.getSourceRangeInfo(expression)
     val text = sourceFile.getText(sourceRangeInfo)
 
-    val transformer = IrTemporaryExtractionTransformer(this@add, variables)
+    val transformer = IrTemporaryExtractionTransformer(this, variables)
     val copy = expression.deepCopyWithSymbols(scope.getLocalDeclarationParent()).transform(transformer, null)
 
     val variable = irTemporary(copy, nameHint = "PowerAssertSynthesized")
-    val newVariables = variables.add(IrTemporaryVariable(variable, expression, sourceRangeInfo, text))
+    val newVariables = variables.add(IrTemporaryVariable.Displayable(variable, expression, sourceRangeInfo, text))
     return call(irGet(variable), newVariables)
 }
 
@@ -207,6 +237,15 @@ private fun IrBlockBuilder.nest(
             }
             return super.visitWhen(expression)
         }
+    }
+
+    if (index == 0 && node.subject != null) {
+        /**
+         * When-expression subject variable needs to be added explicitly so it is maintained during transformation.
+         * Also, perform temporary variable extraction on it to make sure any Power-Assert temporary variables are correctly referenced from
+         * the initializer.
+         */
+        +IrTemporaryExtractionTransformer(this@nest, variables).visitVariable(node.subject, null)
     }
 
     val children = node.children

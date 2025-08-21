@@ -27,3 +27,6 @@ fun until() {
     val v = 1
     if (v in <!EMPTY_RANGE!>-5 until -5<!>) { }
 }
+
+/* GENERATED_FIR_TAGS: forLoop, functionDeclaration, ifExpression, integerLiteral, localProperty, propertyDeclaration,
+rangeExpression */

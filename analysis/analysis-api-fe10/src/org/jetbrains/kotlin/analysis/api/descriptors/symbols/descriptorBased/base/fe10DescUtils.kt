@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.analysis.api.impl.base.types.KaBaseStarTypeProjectio
 import org.jetbrains.kotlin.analysis.api.impl.base.types.KaBaseTypeArgumentWithVariance
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.types.KaType
-import org.jetbrains.kotlin.analysis.api.types.KaTypeNullability
 import org.jetbrains.kotlin.analysis.api.types.KaTypeProjection
 import org.jetbrains.kotlin.analysis.api.types.symbol
 import org.jetbrains.kotlin.analysis.utils.errors.unexpectedElementError
@@ -374,11 +373,12 @@ private fun DeclarationDescriptor.javaOrigin(): KaSymbolOrigin {
     return if (psi == null || psi is ClsElementImpl) KaSymbolOrigin.JAVA_LIBRARY else KaSymbolOrigin.JAVA_SOURCE
 }
 
-internal val KotlinType.ktNullability: KaTypeNullability
+@Suppress("DEPRECATION")
+internal val KotlinType.ktNullability: org.jetbrains.kotlin.analysis.api.types.KaTypeNullability
     get() = when {
-        this.isNullabilityFlexible() -> KaTypeNullability.UNKNOWN
-        this.isMarkedNullable -> KaTypeNullability.NULLABLE
-        else -> KaTypeNullability.NON_NULLABLE
+        this.isNullabilityFlexible() -> org.jetbrains.kotlin.analysis.api.types.KaTypeNullability.UNKNOWN
+        this.isMarkedNullable -> org.jetbrains.kotlin.analysis.api.types.KaTypeNullability.NULLABLE
+        else -> org.jetbrains.kotlin.analysis.api.types.KaTypeNullability.NON_NULLABLE
     }
 
 internal val DeclarationDescriptorWithVisibility.ktVisibility: Visibility
@@ -713,6 +713,12 @@ internal fun CallableDescriptor.createContextReceivers(
     analysisContext: Fe10AnalysisContext
 ): List<KaContextReceiver> {
     return contextReceiverParameters.map { createContextReceiver(it, analysisContext) }
+}
+
+internal fun CallableDescriptor.createContextParameters(analysisContext: Fe10AnalysisContext): List<KaContextParameterSymbol> {
+    return contextReceiverParameters.map {
+        KaFe10DescContextReceiverBasedContextParameterSymbol(it, analysisContext)
+    }
 }
 
 internal fun ClassDescriptor.createContextReceivers(

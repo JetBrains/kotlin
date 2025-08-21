@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -93,12 +93,19 @@ object AbstractTypeMapper {
         return when {
             typeConstructor.isTypeParameter() -> {
                 val typeParameter = typeConstructor.asTypeParameter()
-                val upperBound = typeParameter.representativeUpperBound()
-                val upperBoundIsPrimitiveOrInlineClass =
-                    upperBound.typeConstructor().isInlineClass() || upperBound is SimpleTypeMarker && upperBound.isPrimitiveType()
-                val newType = if (upperBoundIsPrimitiveOrInlineClass && type.isNullableType())
-                    upperBound.makeNullable()
-                else upperBound
+                val newType = if (mode.ignoreTypeArgumentsBounds) {
+                    nullableAnyType()
+                } else {
+                    val upperBound = typeParameter.representativeUpperBound()
+                    val upperBoundIsPrimitiveOrInlineClass =
+                        upperBound.typeConstructor().isInlineClass() || upperBound is SimpleTypeMarker && upperBound.isPrimitiveType()
+
+                    if (upperBoundIsPrimitiveOrInlineClass && type.isNullableType()) {
+                        upperBound.makeNullable()
+                    } else {
+                        upperBound
+                    }
+                }
 
                 val asmType = mapType(context, newType, mode, null, materialized)
                 sw?.writeTypeVariable(typeParameter.getName(), asmType)
@@ -214,8 +221,22 @@ object AbstractTypeMapper {
         type: KotlinTypeMarker
     ): Boolean = context.typeContext.isPrimitiveBacked(type)
 
-    private fun TypeSystemCommonBackendContext.isPrimitiveBacked(type: KotlinTypeMarker): Boolean =
-        !type.isNullableType() &&
-                (type is SimpleTypeMarker && type.isPrimitiveType() ||
-                        type.typeConstructor().getValueClassProperties()?.singleOrNull()?.let { isPrimitiveBacked(it.second) } == true)
+    private fun TypeSystemCommonBackendContext.isPrimitiveBacked(
+        type: KotlinTypeMarker,
+        visited: HashSet<TypeConstructorMarker> = hashSetOf()
+    ): Boolean {
+        if (type.isNullableType()) {
+            return false
+        }
+
+        if (type is SimpleTypeMarker && type.isPrimitiveType()) {
+            return true
+        }
+
+        val typeConstructor = type.typeConstructor()
+
+        return visited.add(typeConstructor) &&
+                typeConstructor.getValueClassProperties()?.singleOrNull()
+                    ?.let { isPrimitiveBacked(it.second, visited) } == true
+    }
 }

@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.backend.common.pop
 import org.jetbrains.kotlin.backend.common.push
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.descriptors.getPackageFragments
-import org.jetbrains.kotlin.backend.konan.driver.phases.PsiToIrContext
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
@@ -55,6 +54,8 @@ private fun isExportedFunction(descriptor: FunctionDescriptor): Boolean {
     if (!descriptor.isEffectivelyPublicApi || !descriptor.kind.isReal || descriptor.isExpect)
         return false
     if (descriptor.isSuspend)
+        return false
+    if (descriptor.contextReceiverParameters.any())
         return false
     return !descriptor.typeParameters.any()
 }
@@ -380,7 +381,7 @@ internal class ExportedElement(
  * First phase of C export: walk given declaration descriptors and create [CAdapterExportedElements] from them.
  */
 internal class CAdapterGenerator(
-        private val context: PsiToIrContext,
+        private val context: LinkKlibsContext,
         private val configuration: CompilerConfiguration,
         private val typeTranslator: CAdapterTypeTranslator,
 ) : DeclarationDescriptorVisitor<Boolean, Void?> {

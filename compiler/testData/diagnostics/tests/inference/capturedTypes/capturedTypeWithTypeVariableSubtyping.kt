@@ -22,3 +22,5 @@ fun test() {
     takeCovArray(arrayOutId(foo()))
     takeInArray(arrayInId(bar()))
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, inProjection, nullableType, outProjection, typeParameter */

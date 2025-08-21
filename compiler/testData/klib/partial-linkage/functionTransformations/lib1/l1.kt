@@ -54,9 +54,6 @@ object Functions {
     suspend fun suspendToNonSuspendFunction(x: Int): Int = wrapCoroutine { -x }
     fun nonSuspendToSuspendFunction(x: Int): Int = -x
 
-    inline fun inlineLambdaToNoinlineLambda(x: Int, lambda: (Int) -> String): String = "Functions.inlineLambdaToNoinlineLambda($x) { ${lambda(x * 2)} }"
-    inline fun inlineLambdaToCrossinlineLambda(x: Int, lambda: (Int) -> String): String = "Functions.inlineLambdaToCrossinlineLambda($x) { ${lambda(x * 2)} }"
-
     fun removedFirstDefaultValue(a: Int = 42, b: Int): Int = a + b
     fun removedVarargFirstDefaultValue(vararg a: Int = intArrayOf(1, 2, 3), b: Int): Int = a.sum() + b
     fun removedLastDefaultValue(a: Int, b: Int = 42): Int = a + b
@@ -86,16 +83,6 @@ open class OpenClass {
 
     open suspend fun suspendToNonSuspendFunctionWithDelegation(x: Int): String = Functions.wrapCoroutine { "OpenClass.suspendToNonSuspendFunctionWithDelegation($x)" }
     open fun nonSuspendToSuspendFunctionWithDelegation(x: Int): String = "OpenClass.nonSuspendToSuspendFunctionWithDelegation($x)"
-
-    open fun openNonInlineToInlineFunction(x: Int): String = "OpenClass.openNonInlineToInlineFunction($x)"
-    open fun openNonInlineToInlineFunctionWithDelegation(x: Int): String = "OpenClass.openNonInlineToInlineFunctionWithDelegation($x)"
-    //inline fun newInlineFunction1(x: Int): String = "OpenClass.newInlineFunction1($x)"
-    //inline fun newInlineFunction2(x: Int): String = "OpenClass.newInlineFunction2($x)"
-    //fun newNonInlineFunction(x: Int): String = "OpenClass.newNonInlineFunction($x)"
-
-    fun newInlineFunction1Caller(x: Int): String = TODO("Not implemented: OpenClass.newInlineFunction1Caller($x)")
-    fun newInlineFunction2Caller(x: Int): String = TODO("Not implemented: OpenClass.newInlineFunction2Caller($x)")
-    fun newNonInlineFunctionCaller(x: Int): String = TODO("Not implemented: OpenClass.newNonInlineFunctionCaller($x)")
 }
 
 interface KT59153 {

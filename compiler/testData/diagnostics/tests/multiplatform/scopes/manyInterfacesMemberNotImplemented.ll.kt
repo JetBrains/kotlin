@@ -22,3 +22,5 @@ actual interface S1 {
 actual interface S2 {
     fun f() {}
 }
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, functionDeclaration, interfaceDeclaration */

@@ -20,3 +20,6 @@ public class JavaClass {
     public String getHTMLFile() { return true; }
     public void setHTMLFile(String value) { }
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, assignment, flexibleType, functionDeclaration, javaProperty, javaType,
+localProperty, propertyDeclaration, stringLiteral */

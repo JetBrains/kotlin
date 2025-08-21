@@ -7,10 +7,12 @@ KtCallExpression(49,62): 'foo label@ {}'
           receiverType = null
           returnType = kotlin.Function1<kotlin.Int, kotlin.Unit>
           symbol = l1: kotlin.Function1<kotlin.Int, kotlin.Unit>
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -23,8 +25,10 @@ KtCallExpression(49,62): 'foo label@ {}'
               receiverType = null
               returnType = kotlin.Function1<kotlin.Int, kotlin.Unit>
               symbol = l1: kotlin.Function1<kotlin.Int, kotlin.Unit>
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = /foo
       typeArgumentsMapping = {}
     isInBestCandidates = true

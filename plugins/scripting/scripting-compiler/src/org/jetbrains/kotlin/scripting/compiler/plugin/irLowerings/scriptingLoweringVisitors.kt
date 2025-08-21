@@ -7,10 +7,10 @@
 
 package org.jetbrains.kotlin.scripting.compiler.plugin.irLowerings
 
-import org.jetbrains.kotlin.backend.common.extensions.ExperimentalAPIForScriptingPlugin
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.lower.ClosureAnnotator
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
+import org.jetbrains.kotlin.backend.jvm.JvmBackendErrors
 import org.jetbrains.kotlin.backend.jvm.JvmInnerClassesSupport
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory1
@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrGetFieldImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueParameterSymbol
+import org.jetbrains.kotlin.ir.symbols.IrVariableSymbol
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
@@ -34,7 +35,6 @@ import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
-import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmBackendErrors
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 
 internal data class ScriptLikeToClassTransformerContext(
@@ -217,10 +217,8 @@ internal abstract class ScriptLikeToClassTransformer(
 
                         else -> data
                     }
-                dispatchReceiverParameter = newDispatchReceiverParameter
-                extensionReceiverParameter = extensionReceiverParameter?.transform(dataForChildren)
+                parameters = listOfNotNull(newDispatchReceiverParameter) + nonDispatchParameters.transform(dataForChildren)
                 returnType = returnType.remapType()
-                valueParameters = valueParameters.transform(dataForChildren)
                 body = body?.transform(dataForChildren)
             }
         }
@@ -278,8 +276,9 @@ internal abstract class ScriptLikeToClassTransformer(
     override fun visitConstructor(declaration: IrConstructor, data: ScriptLikeToClassTransformerContext): IrConstructor =
         declaration.apply {
             if (declaration in capturingClassesConstructors) {
-                declaration.dispatchReceiverParameter =
-                    declaration.createThisReceiverParameter(context, IrDeclarationOrigin.INSTANCE_RECEIVER, targetClassReceiver.type)
+                declaration.parameters = listOf(
+                    declaration.createThisReceiverParameter(context, IrDeclarationOrigin.SCRIPT_THIS_RECEIVER, targetClassReceiver.type)
+                ) + declaration.nonDispatchParameters
             }
             transformParent()
             transformFunctionChildren(data)
@@ -341,22 +340,31 @@ internal abstract class ScriptLikeToClassTransformer(
         for (i in expression.typeArguments.indices) {
             expression.typeArguments[i] = expression.typeArguments[i]?.remapType()
         }
-        if (expression.dispatchReceiver == null && (expression.symbol.owner as? IrDeclaration)?.needsScriptReceiver() == true) {
+
+        val callsCapturingClassConstructor = expression is IrConstructorCall && capturingClassesConstructors.keys.any { it.symbol == expression.symbol }
+        if (callsCapturingClassConstructor || (expression.symbol.owner as? IrDeclaration)?.needsScriptReceiver() == true) {
             val memberAccessTargetReceiverType = when (val callee = expression.symbol.owner) {
-                is IrFunction -> callee.dispatchReceiverParameter?.type
+                is IrSimpleFunction -> callee.dispatchReceiverParameter?.type
                 is IrProperty -> callee.getter?.dispatchReceiverParameter?.type
+                // the first part of the expression triggers if the ctor itself is transformed before call,
+                // but the second part is not enough by itself if capturing class is defined in an earlier snippet (we are not keeping
+                // capturing classes from earlier snippets)
+                is IrConstructor -> callee.dispatchReceiverParameter?.type
+                    ?: if (callsCapturingClassConstructor) targetClassReceiver.type else null
                 else -> null
             }
-            val dispatchReceiver =
-                if (memberAccessTargetReceiverType != null && memberAccessTargetReceiverType != targetClassReceiver.type)
-                    accessCallsGenerator.getAccessCallForImplicitReceiver(
-                        data, expression, memberAccessTargetReceiverType, expression.origin, originalReceiverParameter = null
-                    )
-                else
-                    accessCallsGenerator.getAccessCallForSelf(
-                        data, expression.startOffset, expression.endOffset, expression.origin, originalReceiverParameter = null
-                    )
-            expression.insertDispatchReceiver(dispatchReceiver)
+            val dispatchReceiver = when {
+                memberAccessTargetReceiverType != null && expression is IrConstructorCall -> accessCallsGenerator.getDispatchReceiverExpression(
+                    data, expression, memberAccessTargetReceiverType, expression.origin, originalReceiverParameter = null
+                )
+                memberAccessTargetReceiverType != null && memberAccessTargetReceiverType != targetClassReceiver.type -> accessCallsGenerator.getAccessCallForImplicitReceiver(
+                    data, expression, memberAccessTargetReceiverType, expression.origin, originalReceiverParameter = null
+                )
+                else -> accessCallsGenerator.getAccessCallForSelf(
+                    data, expression.startOffset, expression.endOffset, expression.origin, originalReceiverParameter = null
+                )
+            }
+            expression.arguments.add(0, dispatchReceiver)
         }
         return super.visitMemberAccess(expression, data) as IrExpression
     }
@@ -369,24 +377,6 @@ internal abstract class ScriptLikeToClassTransformer(
                 )
         }
         return super.visitFieldAccess(expression, data)
-    }
-
-    override fun visitConstructorCall(expression: IrConstructorCall, data: ScriptLikeToClassTransformerContext): IrExpression {
-        if (expression.dispatchReceiver == null) {
-            // the first part of the expression triggers if the ctor itself is transformed before call,
-            // but the second part is not enough by itself if capturing class is defined in an earlier snippet (we are not keeping
-            // capturing classes from earlier snippets)
-            val ctorDispatchReceiverType = expression.symbol.owner.dispatchReceiverParameter?.type
-                ?: if (capturingClassesConstructors.keys.any { it.symbol == expression.symbol }) targetClassReceiver.type else null
-            if (ctorDispatchReceiverType != null) {
-                accessCallsGenerator.getDispatchReceiverExpression(
-                    data, expression, ctorDispatchReceiverType, expression.origin, null
-                )?.let {
-                    expression.insertDispatchReceiver(it)
-                }
-            }
-        }
-        return super.visitConstructorCall(expression, data) as IrExpression
     }
 
     override fun visitGetValue(expression: IrGetValue, data: ScriptLikeToClassTransformerContext): IrExpression {
@@ -416,13 +406,7 @@ internal abstract class ScriptLikeToClassTransformer(
     private fun IrDeclaration.needsScriptReceiver() =
         when (this) {
             is IrFunction -> this.dispatchReceiverParameter
-            is IrProperty -> {
-                this.getter?.takeIf {
-                    // without this exception, the PropertyReferenceLowering generates `clinit` with an attempt to use script as receiver
-                    // TODO: find whether it is a valid exception and maybe how to make it more obvious (KT-72942)
-                    it.origin != IrDeclarationOrigin.DELEGATED_PROPERTY_ACCESSOR
-                }?.dispatchReceiverParameter
-            }
+            is IrProperty -> this.getter?.dispatchReceiverParameter
             else -> null
         }?.origin == IrDeclarationOrigin.SCRIPT_THIS_RECEIVER
 }
@@ -465,7 +449,7 @@ internal class ScriptFixLambdasTransformer(val irScriptClass: IrClass) : IrTrans
                 val dataForChildren =
                     if (dispatchReceiverParameter?.type == irScriptClass.defaultType) {
                         val oldDispatchReceiver = dispatchReceiverParameter
-                        dispatchReceiverParameter = null
+                        parameters = nonDispatchParameters
                         data.copy(valueParameterToReplaceWithScript = oldDispatchReceiver)
                     } else data
                 super.visitSimpleFunction(this, dataForChildren)
@@ -514,8 +498,9 @@ internal fun patchDeclarationsDispatchReceiver(statements: List<IrStatement>, co
 
     fun IrFunction.addScriptDispatchReceiverIfNeeded() {
         if (dispatchReceiverParameter == null) {
-            dispatchReceiverParameter =
+            parameters = listOf(
                 createThisReceiverParameter(context, IrDeclarationOrigin.SCRIPT_THIS_RECEIVER, scriptClassReceiverType)
+            ) + parameters
         }
     }
 
@@ -530,13 +515,13 @@ internal fun patchDeclarationsDispatchReceiver(statements: List<IrStatement>, co
     }
 }
 
-@OptIn(ExperimentalAPIForScriptingPlugin::class)
-internal fun Collection<IrClass>.collectCapturersByReceivers(
+internal fun Collection<IrClass>.collectCapturersInScript(
     context: IrPluginContext,
     parentDeclaration: IrDeclaration,
-    externalReceivers: Set<IrType>
+    externalReceivers: Set<IrType>,
+    externalVariables: Set<IrVariableSymbol>
 ): Set<IrClass> {
-    val annotator = ClosureAnnotator(parentDeclaration, parentDeclaration)
+    val annotator = ClosureAnnotator(parentDeclaration, parentDeclaration, scriptingMode = true, closureBuilders = mutableMapOf())
     val capturingClasses = mutableSetOf<IrClass>()
 
     val collector = object : IrVisitorVoid() {
@@ -547,7 +532,7 @@ internal fun Collection<IrClass>.collectCapturersByReceivers(
         override fun visitClass(declaration: IrClass) {
             if (!declaration.isInner) {
                 val closure = annotator.getClassClosure(declaration)
-                if (closure.capturedValues.any { it.owner.type in externalReceivers }) {
+                if (closure.capturedValues.any { it in externalVariables || it.owner.type in externalReceivers }) {
                     fun reportError(factory: KtDiagnosticFactory1<String>, name: Name? = null) {
                         context.diagnosticReporter.at(declaration).report(factory, (name ?: declaration.name).asString())
                     }

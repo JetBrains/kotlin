@@ -9,8 +9,7 @@ package org.jetbrains.kotlin.gradle.plugin.mpp
 import org.gradle.api.Action
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.tasks.TaskProvider
-import org.jetbrains.kotlin.gradle.dsl.*
-import org.jetbrains.kotlin.gradle.internal.properties.nativeProperties
+import org.jetbrains.kotlin.gradle.dsl.KotlinNativeCompilerOptions
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinCompilationImpl
@@ -20,19 +19,27 @@ import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import javax.inject.Inject
 
-@Suppress("TYPEALIAS_EXPANSION_DEPRECATION", "DEPRECATION")
+@Suppress("TYPEALIAS_EXPANSION_DEPRECATION", "TYPEALIAS_EXPANSION_DEPRECATION_ERROR", "DEPRECATION")
 abstract class AbstractKotlinNativeCompilation internal constructor(
     compilation: KotlinCompilationImpl,
-    val konanTarget: KonanTarget
-) : DeprecatedAbstractKotlinCompilation<KotlinCommonOptions>(compilation) {
+    val konanTarget: KonanTarget,
+) : DeprecatedAbstractKotlinCompilation<KotlinAnyOptionsDeprecated>(compilation) {
 
-    @Suppress("DEPRECATION")
-    @Deprecated("Accessing task instance directly is deprecated", replaceWith = ReplaceWith("compileTaskProvider"))
+    @Suppress("DEPRECATION_ERROR")
+    @Deprecated(
+        "Accessing task instance directly is deprecated. Scheduled for removal in Kotlin 2.3.",
+        replaceWith = ReplaceWith("compileTaskProvider"),
+        level = DeprecationLevel.ERROR,
+    )
     override val compileKotlinTask: KotlinNativeCompile
         get() = compilation.compileKotlinTask as KotlinNativeCompile
 
-    @Suppress("UNCHECKED_CAST", "DEPRECATION")
-    @Deprecated("Replaced with compileTaskProvider", replaceWith = ReplaceWith("compileTaskProvider"))
+    @Suppress("UNCHECKED_CAST", "DEPRECATION_ERROR")
+    @Deprecated(
+        "Replaced with compileTaskProvider. Scheduled for removal in Kotlin 2.3.",
+        replaceWith = ReplaceWith("compileTaskProvider"),
+        level = DeprecationLevel.ERROR,
+    )
     override val compileKotlinTaskProvider: TaskProvider<out KotlinNativeCompile>
         get() = compilation.compileKotlinTaskProvider as TaskProvider<out KotlinNativeCompile>
 
@@ -47,9 +54,6 @@ abstract class AbstractKotlinNativeCompilation internal constructor(
     @Suppress("UNCHECKED_CAST", "DEPRECATION")
     override val compilerOptions: DeprecatedHasCompilerOptions<KotlinNativeCompilerOptions>
         get() = compilation.compilerOptions as DeprecatedHasCompilerOptions<KotlinNativeCompilerOptions>
-
-    internal val useGenericPluginArtifact: Boolean
-        get() = project.nativeProperties.shouldUseEmbeddableCompilerJar.get()
 }
 
 open class KotlinNativeCompilation @Inject internal constructor(
@@ -83,11 +87,11 @@ open class KotlinNativeCompilation @Inject internal constructor(
 @Suppress("DEPRECATION")
 open class KotlinSharedNativeCompilation @Inject internal constructor(
     val konanTargets: List<KonanTarget>,
-    compilation: KotlinCompilationImpl
+    compilation: KotlinCompilationImpl,
 ) : AbstractKotlinNativeCompilation(
     compilation,
     konanTargets.find { it.enabledOnCurrentHostForKlibCompilation(compilation.project.kotlinPropertiesProvider) } ?: konanTargets.first()
 ),
-    KotlinMetadataCompilation<KotlinCommonOptions> {
+    KotlinMetadataCompilation<Any> {
     override val target: KotlinMetadataTarget = compilation.target as KotlinMetadataTarget
 }

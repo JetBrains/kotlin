@@ -22,3 +22,6 @@ fun J.test(s1: String?, s2: String) {
     s2.bar<Int>()
     s2<!UNNECESSARY_SAFE_CALL!>?.<!>bar<Int>()
 }
+
+/* GENERATED_FIR_TAGS: asExpression, classDeclaration, flexibleType, funWithExtensionReceiver, functionDeclaration,
+javaFunction, javaType, nullableType, safeCall, stringLiteral, typeParameter */

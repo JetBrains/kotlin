@@ -27,3 +27,6 @@ fun foo() : Boolean {
 }
 
 fun getNullableList(): List<String>? = null
+
+/* GENERATED_FIR_TAGS: funWithExtensionReceiver, functionDeclaration, interfaceDeclaration, localProperty, nullableType,
+propertyDeclaration, stringLiteral, typeParameter */

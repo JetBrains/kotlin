@@ -9,18 +9,13 @@ plugins {
 
 project.configureJvmToolchain(JdkMajorVersion.JDK_1_8)
 
-val builtins by configurations.creating {
-    isCanBeResolved = true
-    isCanBeConsumed = false
-    attributes {
-        attribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, objects.named(LibraryElements.JAR))
-    }
-}
+val stdlibProjectDir = file("$rootDir/libraries/stdlib")
+
+val builtinsMetadata: Configuration by configurations.creating
 
 dependencies {
-    builtins(project(":core:builtins"))
+    builtinsMetadata(project(":kotlin-stdlib"))
 }
-val stdlibProjectDir = file("$rootDir/libraries/stdlib")
 
 val copyCommonSources by task<Sync> {
     from(stdlibProjectDir.resolve("src"))
@@ -28,6 +23,7 @@ val copyCommonSources by task<Sync> {
             "kotlin/Annotation.kt",
             "kotlin/Any.kt",
             "kotlin/Array.kt",
+            "kotlin/ArrayIntrinsics.kt",
             "kotlin/Arrays.kt",
             "kotlin/Boolean.kt",
             "kotlin/Char.kt",
@@ -47,8 +43,13 @@ val copyCommonSources by task<Sync> {
             "kotlin/util/Standard.kt",
             "kotlin/annotations/Multiplatform.kt",
             "kotlin/annotations/WasExperimental.kt",
+            "kotlin/annotations/ReturnValue.kt",
             "kotlin/internal/Annotations.kt",
             "kotlin/internal/AnnotationsBuiltin.kt",
+            "kotlin/concurrent/atomics/AtomicArrays.common.kt",
+            "kotlin/concurrent/atomics/Atomics.common.kt",
+            "kotlin/contextParameters/Context.kt",
+            "kotlin/contextParameters/ContextOf.kt",
             "kotlin/contracts/ContractBuilder.kt",
             "kotlin/contracts/Effect.kt",
         )
@@ -70,11 +71,15 @@ val copySources by task<Sync> {
         )
     from(stdlibProjectDir.resolve("jvm/src"))
         .include(
+            "kotlin/ArrayIntrinsics.kt",
             "kotlin/Unit.kt",
             "kotlin/collections/TypeAliases.kt",
             "kotlin/enums/EnumEntriesJVM.kt",
             "kotlin/io/Serializable.kt",
         )
+
+    from(stdlibProjectDir.resolve("jvm/builtins"))
+        .include("*.kt")
 
     into(layout.buildDirectory.dir("src/jvm"))
 }
@@ -86,8 +91,8 @@ kotlin {
                 compileTaskProvider.configure {
                     compilerOptions {
                         moduleName = "kotlin-stdlib"
-                        languageVersion = KotlinVersion.KOTLIN_2_0
-                        apiVersion = KotlinVersion.KOTLIN_2_0
+                        languageVersion = KotlinVersion.KOTLIN_2_3
+                        apiVersion = KotlinVersion.KOTLIN_2_3
                         // providing exhaustive list of args here
                         freeCompilerArgs.set(
                             listOfNotNull(
@@ -100,6 +105,9 @@ kotlin {
                                 "-Xdont-warn-on-error-suppression",
                                 "-opt-in=kotlin.contracts.ExperimentalContracts",
                                 "-opt-in=kotlin.ExperimentalMultiplatform",
+                                "-Xcontext-parameters",
+                                "-Xcompile-builtins-as-part-of-stdlib",
+                                "-Xreturn-value-checker=full"
                             )
                         )
                     }
@@ -127,9 +135,14 @@ kotlin {
 }
 
 val jvmJar by tasks.existing(Jar::class) {
-    dependsOn(builtins)
     archiveAppendix = null
-    from(provider { zipTree(builtins.singleFile) }) { include("kotlin/**") }
+    dependsOn(builtinsMetadata)
+    from {
+        includeEmptyDirs = false
+        builtinsMetadata.files.map {
+            zipTree(it).matching { include("**/*.kotlin_builtins") }
+        }
+    }
 }
 
 publishing {

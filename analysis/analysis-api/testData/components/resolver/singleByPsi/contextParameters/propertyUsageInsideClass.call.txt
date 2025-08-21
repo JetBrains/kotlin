@@ -2,6 +2,11 @@ KtNameReferenceExpression(195,209): 'propertyMember'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = [
+          KaImplicitReceiverValue:
+            symbol = a: A
+            type = A
+        ]
         dispatchReceiver = KaImplicitReceiverValue:
           symbol = /Base
           type = Base
@@ -11,6 +16,15 @@ KtNameReferenceExpression(195,209): 'propertyMember'
           receiverType = null
           returnType = kotlin.String
           symbol = val propertyMember: kotlin.String
+          contextParameters = [
+            KaVariableSignature:
+              name = a
+              receiverType = null
+              returnType = A
+              symbol = a: A
+              contextParameters = []
+              callableId = null
+          ]
           callableId = /Base.propertyMember
       simpleAccess = Read
       typeArgumentsMapping = {}

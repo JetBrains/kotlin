@@ -19,3 +19,5 @@ expect fun hasStrongIncompatibility(arg: Double)
 actual fun hasStrongIncompatibility<!ACTUAL_WITHOUT_EXPECT!>(arg: Any?)<!> {}
 
 actual fun hasStrongIncompatibility(arg: Double) {}
+
+/* GENERATED_FIR_TAGS: actual, annotationDeclaration, expect, functionDeclaration, inline, nullableType */

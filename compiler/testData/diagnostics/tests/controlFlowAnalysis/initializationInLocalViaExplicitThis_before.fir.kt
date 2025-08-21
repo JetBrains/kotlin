@@ -17,3 +17,6 @@ class Test {
         <!VAL_REASSIGNMENT!>str<!> = "C"
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, init, lambdaLiteral, propertyDeclaration, stringLiteral,
+thisExpression */

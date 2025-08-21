@@ -22,15 +22,16 @@ import org.jetbrains.kotlin.resolve.JVM_INLINE_ANNOTATION_CLASS_ID
 
 object FirJvmInlineApplicabilityChecker : FirRegularClassChecker(MppCheckerKind.Common) {
     @OptIn(SuspiciousValueClassCheck::class)
-    override fun check(declaration: FirRegularClass, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirRegularClass) {
         val annotation = declaration.getAnnotationByClassId(JVM_INLINE_ANNOTATION_CLASS_ID, context.session)
         if (annotation != null && !declaration.isValue) {
             // only report if value keyword does not exist, this includes the deprecated inline class syntax
-            reporter.reportOn(annotation.source, FirJvmErrors.JVM_INLINE_WITHOUT_VALUE_CLASS, context)
+            reporter.reportOn(annotation.source, FirJvmErrors.JVM_INLINE_WITHOUT_VALUE_CLASS)
         } else if (annotation == null && declaration.isValue && !declaration.isExpect) {
             // only report if value keyword exists, this ignores the deprecated inline class syntax
             val keyword = declaration.getModifier(KtTokens.VALUE_KEYWORD)!!.source
-            reporter.reportOn(keyword, FirJvmErrors.VALUE_CLASS_WITHOUT_JVM_INLINE_ANNOTATION, context)
+            reporter.reportOn(keyword, FirJvmErrors.VALUE_CLASS_WITHOUT_JVM_INLINE_ANNOTATION)
         }
     }
 }

@@ -7,3 +7,6 @@
         val test = this
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, localProperty, propertyDeclaration, stringLiteral,
+thisExpression */

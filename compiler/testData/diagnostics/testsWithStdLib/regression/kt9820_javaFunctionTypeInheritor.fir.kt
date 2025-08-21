@@ -15,3 +15,5 @@ fun useJ(j: J) {
 fun jj() {
     useJ(<!ARGUMENT_TYPE_MISMATCH!>{}<!>)
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, integerLiteral, javaType, lambdaLiteral, samConversion */

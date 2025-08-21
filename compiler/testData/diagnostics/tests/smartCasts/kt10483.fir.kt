@@ -16,3 +16,5 @@ fun foo(arg: A): B? {
     return null
 }
 
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, ifExpression,
+interfaceDeclaration, isExpression, nullableType, operator, smartcast, thisExpression */

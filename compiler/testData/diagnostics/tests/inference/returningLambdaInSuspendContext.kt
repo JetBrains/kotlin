@@ -39,3 +39,7 @@ fun main() {
         1
     }
 }
+
+/* GENERATED_FIR_TAGS: asExpression, classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType,
+inline, integerLiteral, lambdaLiteral, localProperty, nullableType, operator, propertyDeclaration, suspend,
+typeParameter, typeWithExtension */

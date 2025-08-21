@@ -2,6 +2,7 @@ KtNameReferenceExpression(50,51): 'i'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaImplicitReceiverValue:
           symbol = KaReceiverParameterSymbol:
             annotations: []
@@ -30,6 +31,7 @@ KtNameReferenceExpression(50,51): 'i'
           receiverType = null
           returnType = kotlin.Int
           symbol = val i: kotlin.Int
+          contextParameters = []
           callableId = /A.i
       simpleAccess = Read
       typeArgumentsMapping = {}

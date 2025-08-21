@@ -15,3 +15,5 @@ sourceSets {
     "main" { projectDefault() }
     "test" { none() }
 }
+
+optInTo("org.jetbrains.kotlin.fir.scopes.ScopeFunctionRequiresPrewarm")

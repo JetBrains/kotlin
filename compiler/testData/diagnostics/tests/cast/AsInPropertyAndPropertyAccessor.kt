@@ -16,3 +16,6 @@ val d: Number
         1 <!USELESS_CAST!>as Number<!>
         return 1 <!USELESS_CAST!>as Number<!>
     }
+
+/* GENERATED_FIR_TAGS: asExpression, functionDeclaration, getter, integerLiteral, localProperty, nullableType,
+propertyDeclaration */

@@ -19,3 +19,6 @@ class ScopeOwner {
     operator fun plusAssign(other: ScopeOwner) {}
     operator fun plus(other: ScopeOwner): ScopeOwner = this
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, functionDeclaration, functionalType, lambdaLiteral,
+nullableType, operator, propertyDeclaration, thisExpression, typeParameter */

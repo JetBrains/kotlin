@@ -11,3 +11,6 @@ class Foo<I, out O>(
         foo.transformer.invoke(bar)
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionalType, nullableType, out, primaryConstructor,
+propertyDeclaration, typeParameter */

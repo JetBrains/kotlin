@@ -58,3 +58,6 @@ fun test2(t: Test?) {
     val xSafeCallCast = t?.findViewById(0) as X
     val xSafeCallCastExplicitType = t<!UNNECESSARY_SAFE_CALL!>?.<!>findViewById<X>(0) as X
 }
+
+/* GENERATED_FIR_TAGS: asExpression, classDeclaration, flexibleType, functionDeclaration, integerLiteral, javaFunction,
+javaType, localProperty, nullableType, propertyDeclaration, safeCall, smartcast, typeParameter */

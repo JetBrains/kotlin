@@ -9,3 +9,5 @@ package test
 object SomeObject
 
 val some = SomeObject
+
+/* GENERATED_FIR_TAGS: objectDeclaration, propertyDeclaration */

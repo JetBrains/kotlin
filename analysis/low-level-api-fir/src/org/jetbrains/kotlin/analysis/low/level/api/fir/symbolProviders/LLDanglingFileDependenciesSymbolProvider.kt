@@ -65,7 +65,7 @@ class LLDanglingFileDependenciesSymbolProvider(private val delegate: FirSymbolPr
         val otherSymbols = ArrayList<T>()
 
         for (symbol in symbols) {
-            if (symbol.callableId.className == null) {
+            if (symbol.callableId?.className == null) {
                 val callableId = symbol.callableId
 
                 val symbolFile = symbol.fir.psi?.containingFile
@@ -73,7 +73,7 @@ class LLDanglingFileDependenciesSymbolProvider(private val delegate: FirSymbolPr
                 if (symbolFile is KtFile && symbolFile.isCompiled && symbolVirtualFile != null) {
                     val symbolRootVirtualFile = getSymbolRootFile(symbolVirtualFile, symbolFile.packageFqName)
                     if (symbolRootVirtualFile != null) {
-                        val key = CandidateSignature(callableId, FirCallableSignature.createSignature(symbol))
+                        val key = CandidateSignature(callableId!!, FirCallableSignature.createSignature(symbol))
                         binarySymbols
                             .getOrPut(key, ::LinkedHashMap)
                             .getOrPut(symbolRootVirtualFile, ::ArrayList)

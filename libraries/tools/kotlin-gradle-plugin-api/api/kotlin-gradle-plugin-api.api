@@ -2,8 +2,6 @@ public final class org/jetbrains/kotlin/gradle/dsl/ExplicitApiMode : java/lang/E
 	public static final field Disabled Lorg/jetbrains/kotlin/gradle/dsl/ExplicitApiMode;
 	public static final field Strict Lorg/jetbrains/kotlin/gradle/dsl/ExplicitApiMode;
 	public static final field Warning Lorg/jetbrains/kotlin/gradle/dsl/ExplicitApiMode;
-	public final fun getCliOption ()Ljava/lang/String;
-	public final fun toCompilerArg ()Ljava/lang/String;
 	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/dsl/ExplicitApiMode;
 	public static fun values ()[Lorg/jetbrains/kotlin/gradle/dsl/ExplicitApiMode;
 }
@@ -17,20 +15,6 @@ public abstract interface class org/jetbrains/kotlin/gradle/dsl/HasConfigurableK
 public final class org/jetbrains/kotlin/gradle/dsl/HasConfigurableKotlinCompilerOptions$DefaultImpls {
 	public static fun compilerOptions (Lorg/jetbrains/kotlin/gradle/dsl/HasConfigurableKotlinCompilerOptions;Lkotlin/jvm/functions/Function1;)V
 	public static fun compilerOptions (Lorg/jetbrains/kotlin/gradle/dsl/HasConfigurableKotlinCompilerOptions;Lorg/gradle/api/Action;)V
-}
-
-public final class org/jetbrains/kotlin/gradle/dsl/JsDiagnosticMode : java/lang/Enum {
-	public static final field Companion Lorg/jetbrains/kotlin/gradle/dsl/JsDiagnosticMode$Companion;
-	public static final field RUNTIME_DIAGNOSTIC_EXCEPTION Lorg/jetbrains/kotlin/gradle/dsl/JsDiagnosticMode;
-	public static final field RUNTIME_DIAGNOSTIC_LOG Lorg/jetbrains/kotlin/gradle/dsl/JsDiagnosticMode;
-	public static final fun fromMode (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/dsl/JsDiagnosticMode;
-	public final fun getMode ()Ljava/lang/String;
-	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/dsl/JsDiagnosticMode;
-	public static fun values ()[Lorg/jetbrains/kotlin/gradle/dsl/JsDiagnosticMode;
-}
-
-public final class org/jetbrains/kotlin/gradle/dsl/JsDiagnosticMode$Companion {
-	public final fun fromMode (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/dsl/JsDiagnosticMode;
 }
 
 public final class org/jetbrains/kotlin/gradle/dsl/JsMainFunctionExecutionMode : java/lang/Enum {
@@ -94,6 +78,15 @@ public final class org/jetbrains/kotlin/gradle/dsl/JsSourceMapNamesPolicy$Compan
 	public final fun fromPolicy (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/dsl/JsSourceMapNamesPolicy;
 }
 
+public final class org/jetbrains/kotlin/gradle/dsl/JvmDefaultMode : java/lang/Enum {
+	public static final field DISABLE Lorg/jetbrains/kotlin/gradle/dsl/JvmDefaultMode;
+	public static final field ENABLE Lorg/jetbrains/kotlin/gradle/dsl/JvmDefaultMode;
+	public static final field NO_COMPATIBILITY Lorg/jetbrains/kotlin/gradle/dsl/JvmDefaultMode;
+	public final fun getCompilerArgument ()Ljava/lang/String;
+	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/dsl/JvmDefaultMode;
+	public static fun values ()[Lorg/jetbrains/kotlin/gradle/dsl/JvmDefaultMode;
+}
+
 public final class org/jetbrains/kotlin/gradle/dsl/JvmTarget : java/lang/Enum {
 	public static final field Companion Lorg/jetbrains/kotlin/gradle/dsl/JvmTarget$Companion;
 	public static final field JVM_10 Lorg/jetbrains/kotlin/gradle/dsl/JvmTarget;
@@ -111,6 +104,7 @@ public final class org/jetbrains/kotlin/gradle/dsl/JvmTarget : java/lang/Enum {
 	public static final field JVM_21 Lorg/jetbrains/kotlin/gradle/dsl/JvmTarget;
 	public static final field JVM_22 Lorg/jetbrains/kotlin/gradle/dsl/JvmTarget;
 	public static final field JVM_23 Lorg/jetbrains/kotlin/gradle/dsl/JvmTarget;
+	public static final field JVM_24 Lorg/jetbrains/kotlin/gradle/dsl/JvmTarget;
 	public static final field JVM_9 Lorg/jetbrains/kotlin/gradle/dsl/JvmTarget;
 	public static final fun fromTarget (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/dsl/JvmTarget;
 	public static final fun getDEFAULT ()Lorg/jetbrains/kotlin/gradle/dsl/JvmTarget;
@@ -125,7 +119,6 @@ public final class org/jetbrains/kotlin/gradle/dsl/JvmTarget$Companion {
 }
 
 public abstract interface class org/jetbrains/kotlin/gradle/dsl/KaptArguments {
-	public abstract fun arg (Ljava/lang/Object;[Ljava/lang/Object;)V
 	public abstract fun arg (Ljava/lang/String;[Ljava/lang/String;)V
 }
 
@@ -167,8 +160,6 @@ public final class org/jetbrains/kotlin/gradle/dsl/KaptExtensionConfig$DefaultIm
 }
 
 public abstract interface class org/jetbrains/kotlin/gradle/dsl/KaptJavacOption {
-	public abstract fun option (Ljava/lang/Object;)V
-	public abstract fun option (Ljava/lang/Object;Ljava/lang/Object;)V
 	public abstract fun option (Ljava/lang/String;)V
 	public abstract fun option (Ljava/lang/String;Ljava/lang/String;)V
 }
@@ -199,9 +190,20 @@ public abstract interface class org/jetbrains/kotlin/gradle/dsl/KotlinArtifactCo
 }
 
 public abstract interface class org/jetbrains/kotlin/gradle/dsl/KotlinArtifactsExtension {
+	public static final field Companion Lorg/jetbrains/kotlin/gradle/dsl/KotlinArtifactsExtension$Companion;
+	public static final field KOTLIN_NATIVE_ARTIFACTS_DEPRECATION Ljava/lang/String;
 	public abstract fun getArtifactConfigs ()Lorg/gradle/api/DomainObjectSet;
 	public abstract fun getArtifacts ()Lorg/gradle/api/NamedDomainObjectSet;
 	public abstract fun getNative ()Lorg/jetbrains/kotlin/gradle/dsl/KotlinNativeArtifactDSL;
+}
+
+public final class org/jetbrains/kotlin/gradle/dsl/KotlinArtifactsExtension$Companion {
+	public static final field KOTLIN_NATIVE_ARTIFACTS_DEPRECATION Ljava/lang/String;
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/dsl/KotlinBackwardsDeploymentDependencyCollector {
+	public abstract fun invoke (Ljava/lang/Object;)V
+	public abstract fun invoke (Ljava/lang/Object;Lorg/gradle/api/Action;)V
 }
 
 public abstract interface class org/jetbrains/kotlin/gradle/dsl/KotlinBaseExtension : org/jetbrains/kotlin/gradle/dsl/KotlinTopLevelExtension {
@@ -279,6 +281,20 @@ public final class org/jetbrains/kotlin/gradle/dsl/KotlinCompile$DefaultImpls {
 	public static fun kotlinOptions (Lorg/jetbrains/kotlin/gradle/dsl/KotlinCompile;Lorg/gradle/api/Action;)V
 }
 
+public abstract interface class org/jetbrains/kotlin/gradle/dsl/KotlinDependencies : org/gradle/api/artifacts/dsl/Dependencies {
+	public abstract fun enforcedPlatform (Ljava/lang/Object;)V
+	public abstract fun getApi ()Lorg/jetbrains/kotlin/gradle/dsl/KotlinBackwardsDeploymentDependencyCollector;
+	public abstract fun getCompileOnly ()Lorg/jetbrains/kotlin/gradle/dsl/KotlinBackwardsDeploymentDependencyCollector;
+	public abstract fun getImplementation ()Lorg/jetbrains/kotlin/gradle/dsl/KotlinBackwardsDeploymentDependencyCollector;
+	public abstract fun getRuntimeOnly ()Lorg/jetbrains/kotlin/gradle/dsl/KotlinBackwardsDeploymentDependencyCollector;
+	public abstract fun getTestCompileOnly ()Lorg/jetbrains/kotlin/gradle/dsl/KotlinBackwardsDeploymentDependencyCollector;
+	public abstract fun getTestImplementation ()Lorg/jetbrains/kotlin/gradle/dsl/KotlinBackwardsDeploymentDependencyCollector;
+	public abstract fun getTestRuntimeOnly ()Lorg/jetbrains/kotlin/gradle/dsl/KotlinBackwardsDeploymentDependencyCollector;
+	public abstract fun kotlin (Ljava/lang/String;)Lorg/gradle/api/artifacts/Dependency;
+	public abstract fun kotlin (Ljava/lang/String;Ljava/lang/String;)Lorg/gradle/api/artifacts/Dependency;
+	public abstract fun platform (Ljava/lang/Object;)V
+}
+
 public abstract interface annotation class org/jetbrains/kotlin/gradle/dsl/KotlinGradlePluginDsl : java/lang/annotation/Annotation {
 }
 
@@ -291,69 +307,37 @@ public abstract interface class org/jetbrains/kotlin/gradle/dsl/KotlinHierarchyD
 public abstract interface class org/jetbrains/kotlin/gradle/dsl/KotlinJsCompilerOptions : org/jetbrains/kotlin/gradle/dsl/KotlinCommonCompilerOptions {
 	public abstract fun getFriendModulesDisabled ()Lorg/gradle/api/provider/Property;
 	public abstract fun getMain ()Lorg/gradle/api/provider/Property;
-	public abstract fun getMetaInfo ()Lorg/gradle/api/provider/Property;
 	public abstract fun getModuleKind ()Lorg/gradle/api/provider/Property;
 	public abstract fun getModuleName ()Lorg/gradle/api/provider/Property;
-	public abstract fun getNoStdlib ()Lorg/gradle/api/provider/Property;
 	public abstract fun getSourceMap ()Lorg/gradle/api/provider/Property;
 	public abstract fun getSourceMapEmbedSources ()Lorg/gradle/api/provider/Property;
 	public abstract fun getSourceMapNamesPolicy ()Lorg/gradle/api/provider/Property;
 	public abstract fun getSourceMapPrefix ()Lorg/gradle/api/provider/Property;
 	public abstract fun getTarget ()Lorg/gradle/api/provider/Property;
-	public abstract fun getTypedArrays ()Lorg/gradle/api/provider/Property;
 	public abstract fun getUseEsClasses ()Lorg/gradle/api/provider/Property;
-}
-
-public abstract interface class org/jetbrains/kotlin/gradle/dsl/KotlinJsDceCompilerToolOptions : org/jetbrains/kotlin/gradle/dsl/KotlinCommonCompilerToolOptions {
-	public abstract fun getDevMode ()Lorg/gradle/api/provider/Property;
-}
-
-public abstract interface class org/jetbrains/kotlin/gradle/dsl/KotlinJsDceOptions : org/jetbrains/kotlin/gradle/dsl/KotlinCommonToolOptions {
-	public abstract fun getDevMode ()Z
-	public abstract fun getOptions ()Lorg/jetbrains/kotlin/gradle/dsl/KotlinJsDceCompilerToolOptions;
-	public abstract fun setDevMode (Z)V
-}
-
-public final class org/jetbrains/kotlin/gradle/dsl/KotlinJsDceOptions$DefaultImpls {
-	public static fun getAllWarningsAsErrors (Lorg/jetbrains/kotlin/gradle/dsl/KotlinJsDceOptions;)Z
-	public static fun getDevMode (Lorg/jetbrains/kotlin/gradle/dsl/KotlinJsDceOptions;)Z
-	public static fun getFreeCompilerArgs (Lorg/jetbrains/kotlin/gradle/dsl/KotlinJsDceOptions;)Ljava/util/List;
-	public static fun getSuppressWarnings (Lorg/jetbrains/kotlin/gradle/dsl/KotlinJsDceOptions;)Z
-	public static fun getVerbose (Lorg/jetbrains/kotlin/gradle/dsl/KotlinJsDceOptions;)Z
-	public static fun setAllWarningsAsErrors (Lorg/jetbrains/kotlin/gradle/dsl/KotlinJsDceOptions;Z)V
-	public static fun setDevMode (Lorg/jetbrains/kotlin/gradle/dsl/KotlinJsDceOptions;Z)V
-	public static fun setFreeCompilerArgs (Lorg/jetbrains/kotlin/gradle/dsl/KotlinJsDceOptions;Ljava/util/List;)V
-	public static fun setSuppressWarnings (Lorg/jetbrains/kotlin/gradle/dsl/KotlinJsDceOptions;Z)V
-	public static fun setVerbose (Lorg/jetbrains/kotlin/gradle/dsl/KotlinJsDceOptions;Z)V
 }
 
 public abstract interface class org/jetbrains/kotlin/gradle/dsl/KotlinJsOptions : org/jetbrains/kotlin/gradle/dsl/KotlinCommonOptions {
 	public abstract fun getFriendModulesDisabled ()Z
 	public abstract fun getMain ()Ljava/lang/String;
-	public abstract fun getMetaInfo ()Z
 	public abstract fun getModuleKind ()Ljava/lang/String;
 	public abstract fun getModuleName ()Ljava/lang/String;
-	public abstract fun getNoStdlib ()Z
 	public abstract fun getOptions ()Lorg/jetbrains/kotlin/gradle/dsl/KotlinJsCompilerOptions;
 	public abstract fun getSourceMap ()Z
 	public abstract fun getSourceMapEmbedSources ()Ljava/lang/String;
 	public abstract fun getSourceMapNamesPolicy ()Ljava/lang/String;
 	public abstract fun getSourceMapPrefix ()Ljava/lang/String;
 	public abstract fun getTarget ()Ljava/lang/String;
-	public abstract fun getTypedArrays ()Z
 	public abstract fun getUseEsClasses ()Ljava/lang/Boolean;
 	public abstract fun setFriendModulesDisabled (Z)V
 	public abstract fun setMain (Ljava/lang/String;)V
-	public abstract fun setMetaInfo (Z)V
 	public abstract fun setModuleKind (Ljava/lang/String;)V
 	public abstract fun setModuleName (Ljava/lang/String;)V
-	public abstract fun setNoStdlib (Z)V
 	public abstract fun setSourceMap (Z)V
 	public abstract fun setSourceMapEmbedSources (Ljava/lang/String;)V
 	public abstract fun setSourceMapNamesPolicy (Ljava/lang/String;)V
 	public abstract fun setSourceMapPrefix (Ljava/lang/String;)V
 	public abstract fun setTarget (Ljava/lang/String;)V
-	public abstract fun setTypedArrays (Z)V
 	public abstract fun setUseEsClasses (Ljava/lang/Boolean;)V
 }
 
@@ -364,17 +348,14 @@ public final class org/jetbrains/kotlin/gradle/dsl/KotlinJsOptions$DefaultImpls 
 	public static fun getFriendModulesDisabled (Lorg/jetbrains/kotlin/gradle/dsl/KotlinJsOptions;)Z
 	public static fun getLanguageVersion (Lorg/jetbrains/kotlin/gradle/dsl/KotlinJsOptions;)Ljava/lang/String;
 	public static fun getMain (Lorg/jetbrains/kotlin/gradle/dsl/KotlinJsOptions;)Ljava/lang/String;
-	public static fun getMetaInfo (Lorg/jetbrains/kotlin/gradle/dsl/KotlinJsOptions;)Z
 	public static fun getModuleKind (Lorg/jetbrains/kotlin/gradle/dsl/KotlinJsOptions;)Ljava/lang/String;
 	public static fun getModuleName (Lorg/jetbrains/kotlin/gradle/dsl/KotlinJsOptions;)Ljava/lang/String;
-	public static fun getNoStdlib (Lorg/jetbrains/kotlin/gradle/dsl/KotlinJsOptions;)Z
 	public static fun getSourceMap (Lorg/jetbrains/kotlin/gradle/dsl/KotlinJsOptions;)Z
 	public static fun getSourceMapEmbedSources (Lorg/jetbrains/kotlin/gradle/dsl/KotlinJsOptions;)Ljava/lang/String;
 	public static fun getSourceMapNamesPolicy (Lorg/jetbrains/kotlin/gradle/dsl/KotlinJsOptions;)Ljava/lang/String;
 	public static fun getSourceMapPrefix (Lorg/jetbrains/kotlin/gradle/dsl/KotlinJsOptions;)Ljava/lang/String;
 	public static fun getSuppressWarnings (Lorg/jetbrains/kotlin/gradle/dsl/KotlinJsOptions;)Z
 	public static fun getTarget (Lorg/jetbrains/kotlin/gradle/dsl/KotlinJsOptions;)Ljava/lang/String;
-	public static fun getTypedArrays (Lorg/jetbrains/kotlin/gradle/dsl/KotlinJsOptions;)Z
 	public static fun getUseEsClasses (Lorg/jetbrains/kotlin/gradle/dsl/KotlinJsOptions;)Ljava/lang/Boolean;
 	public static fun getVerbose (Lorg/jetbrains/kotlin/gradle/dsl/KotlinJsOptions;)Z
 	public static fun setAllWarningsAsErrors (Lorg/jetbrains/kotlin/gradle/dsl/KotlinJsOptions;Z)V
@@ -383,23 +364,21 @@ public final class org/jetbrains/kotlin/gradle/dsl/KotlinJsOptions$DefaultImpls 
 	public static fun setFriendModulesDisabled (Lorg/jetbrains/kotlin/gradle/dsl/KotlinJsOptions;Z)V
 	public static fun setLanguageVersion (Lorg/jetbrains/kotlin/gradle/dsl/KotlinJsOptions;Ljava/lang/String;)V
 	public static fun setMain (Lorg/jetbrains/kotlin/gradle/dsl/KotlinJsOptions;Ljava/lang/String;)V
-	public static fun setMetaInfo (Lorg/jetbrains/kotlin/gradle/dsl/KotlinJsOptions;Z)V
 	public static fun setModuleKind (Lorg/jetbrains/kotlin/gradle/dsl/KotlinJsOptions;Ljava/lang/String;)V
 	public static fun setModuleName (Lorg/jetbrains/kotlin/gradle/dsl/KotlinJsOptions;Ljava/lang/String;)V
-	public static fun setNoStdlib (Lorg/jetbrains/kotlin/gradle/dsl/KotlinJsOptions;Z)V
 	public static fun setSourceMap (Lorg/jetbrains/kotlin/gradle/dsl/KotlinJsOptions;Z)V
 	public static fun setSourceMapEmbedSources (Lorg/jetbrains/kotlin/gradle/dsl/KotlinJsOptions;Ljava/lang/String;)V
 	public static fun setSourceMapNamesPolicy (Lorg/jetbrains/kotlin/gradle/dsl/KotlinJsOptions;Ljava/lang/String;)V
 	public static fun setSourceMapPrefix (Lorg/jetbrains/kotlin/gradle/dsl/KotlinJsOptions;Ljava/lang/String;)V
 	public static fun setSuppressWarnings (Lorg/jetbrains/kotlin/gradle/dsl/KotlinJsOptions;Z)V
 	public static fun setTarget (Lorg/jetbrains/kotlin/gradle/dsl/KotlinJsOptions;Ljava/lang/String;)V
-	public static fun setTypedArrays (Lorg/jetbrains/kotlin/gradle/dsl/KotlinJsOptions;Z)V
 	public static fun setUseEsClasses (Lorg/jetbrains/kotlin/gradle/dsl/KotlinJsOptions;Ljava/lang/Boolean;)V
 	public static fun setVerbose (Lorg/jetbrains/kotlin/gradle/dsl/KotlinJsOptions;Z)V
 }
 
 public abstract interface class org/jetbrains/kotlin/gradle/dsl/KotlinJvmCompilerOptions : org/jetbrains/kotlin/gradle/dsl/KotlinCommonCompilerOptions {
 	public abstract fun getJavaParameters ()Lorg/gradle/api/provider/Property;
+	public abstract fun getJvmDefault ()Lorg/gradle/api/provider/Property;
 	public abstract fun getJvmTarget ()Lorg/gradle/api/provider/Property;
 	public abstract fun getModuleName ()Lorg/gradle/api/provider/Property;
 	public abstract fun getNoJdk ()Lorg/gradle/api/provider/Property;
@@ -548,6 +527,8 @@ public abstract interface class org/jetbrains/kotlin/gradle/dsl/KotlinMultiplatf
 	public abstract fun getWatchosTest (Lorg/gradle/api/NamedDomainObjectContainer;)Lorg/gradle/api/NamedDomainObjectProvider;
 	public abstract fun getWatchosX64Main (Lorg/gradle/api/NamedDomainObjectContainer;)Lorg/gradle/api/NamedDomainObjectProvider;
 	public abstract fun getWatchosX64Test (Lorg/gradle/api/NamedDomainObjectContainer;)Lorg/gradle/api/NamedDomainObjectProvider;
+	public abstract fun getWebMain (Lorg/gradle/api/NamedDomainObjectContainer;)Lorg/gradle/api/NamedDomainObjectProvider;
+	public abstract fun getWebTest (Lorg/gradle/api/NamedDomainObjectContainer;)Lorg/gradle/api/NamedDomainObjectProvider;
 	public abstract fun invoke (Lorg/gradle/api/NamedDomainObjectProvider;Lkotlin/jvm/functions/Function1;)V
 	public abstract fun languageSettings (Lorg/gradle/api/NamedDomainObjectProvider;Lkotlin/jvm/functions/Function1;)V
 }
@@ -589,9 +570,6 @@ public abstract interface class org/jetbrains/kotlin/gradle/dsl/KotlinNativeArti
 	public abstract fun Library (Lorg/gradle/api/Action;)V
 	public abstract fun XCFramework (Ljava/lang/String;Lorg/gradle/api/Action;)V
 	public abstract fun XCFramework (Lorg/gradle/api/Action;)V
-}
-
-public abstract interface annotation class org/jetbrains/kotlin/gradle/dsl/KotlinNativeArtifactDSL$ExperimentalArtifactDsl : java/lang/annotation/Annotation {
 }
 
 public abstract interface class org/jetbrains/kotlin/gradle/dsl/KotlinNativeCompilerOptions : org/jetbrains/kotlin/gradle/dsl/KotlinCommonCompilerOptions {
@@ -701,6 +679,8 @@ public final class org/jetbrains/kotlin/gradle/dsl/KotlinVersion : java/lang/Enu
 	public static final field KOTLIN_2_1 Lorg/jetbrains/kotlin/gradle/dsl/KotlinVersion;
 	public static final field KOTLIN_2_2 Lorg/jetbrains/kotlin/gradle/dsl/KotlinVersion;
 	public static final field KOTLIN_2_3 Lorg/jetbrains/kotlin/gradle/dsl/KotlinVersion;
+	public static final field KOTLIN_2_4 Lorg/jetbrains/kotlin/gradle/dsl/KotlinVersion;
+	public static final field KOTLIN_2_5 Lorg/jetbrains/kotlin/gradle/dsl/KotlinVersion;
 	public static final fun fromVersion (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/dsl/KotlinVersion;
 	public static final fun getDEFAULT ()Lorg/jetbrains/kotlin/gradle/dsl/KotlinVersion;
 	public final fun getVersion ()Ljava/lang/String;
@@ -711,6 +691,92 @@ public final class org/jetbrains/kotlin/gradle/dsl/KotlinVersion : java/lang/Enu
 public final class org/jetbrains/kotlin/gradle/dsl/KotlinVersion$Companion {
 	public final fun fromVersion (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/dsl/KotlinVersion;
 	public final fun getDEFAULT ()Lorg/jetbrains/kotlin/gradle/dsl/KotlinVersion;
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/dsl/abi/AbiFilterSetSpec {
+	public abstract fun getAnnotatedWith ()Lorg/gradle/api/provider/SetProperty;
+	public abstract fun getByNames ()Lorg/gradle/api/provider/SetProperty;
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/dsl/abi/AbiFiltersSpec {
+	public abstract fun excluded (Lkotlin/jvm/functions/Function1;)V
+	public abstract fun excluded (Lorg/gradle/api/Action;)V
+	public abstract fun getExcluded ()Lorg/jetbrains/kotlin/gradle/dsl/abi/AbiFilterSetSpec;
+	public abstract fun getIncluded ()Lorg/jetbrains/kotlin/gradle/dsl/abi/AbiFilterSetSpec;
+	public abstract fun included (Lkotlin/jvm/functions/Function1;)V
+	public abstract fun included (Lorg/gradle/api/Action;)V
+}
+
+public final class org/jetbrains/kotlin/gradle/dsl/abi/AbiFiltersSpec$DefaultImpls {
+	public static fun excluded (Lorg/jetbrains/kotlin/gradle/dsl/abi/AbiFiltersSpec;Lkotlin/jvm/functions/Function1;)V
+	public static fun excluded (Lorg/jetbrains/kotlin/gradle/dsl/abi/AbiFiltersSpec;Lorg/gradle/api/Action;)V
+	public static fun included (Lorg/jetbrains/kotlin/gradle/dsl/abi/AbiFiltersSpec;Lkotlin/jvm/functions/Function1;)V
+	public static fun included (Lorg/jetbrains/kotlin/gradle/dsl/abi/AbiFiltersSpec;Lorg/gradle/api/Action;)V
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/dsl/abi/AbiValidationExtension : org/jetbrains/kotlin/gradle/dsl/abi/AbiValidationVariantSpec {
+	public abstract fun getEnabled ()Lorg/gradle/api/provider/Property;
+	public abstract fun getVariants ()Lorg/gradle/api/NamedDomainObjectContainer;
+}
+
+public final class org/jetbrains/kotlin/gradle/dsl/abi/AbiValidationExtension$DefaultImpls {
+	public static fun filters (Lorg/jetbrains/kotlin/gradle/dsl/abi/AbiValidationExtension;Lorg/gradle/api/Action;)V
+	public static fun legacyDump (Lorg/jetbrains/kotlin/gradle/dsl/abi/AbiValidationExtension;Lorg/gradle/api/Action;)V
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/dsl/abi/AbiValidationKlibKindExtension {
+	public abstract fun getEnabled ()Lorg/gradle/api/provider/Property;
+	public abstract fun getKeepUnsupportedTargets ()Lorg/gradle/api/provider/Property;
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/dsl/abi/AbiValidationLegacyDumpExtension {
+	public abstract fun getLegacyCheckTaskProvider ()Lorg/gradle/api/tasks/TaskProvider;
+	public abstract fun getLegacyDumpTaskProvider ()Lorg/gradle/api/tasks/TaskProvider;
+	public abstract fun getLegacyUpdateTaskProvider ()Lorg/gradle/api/tasks/TaskProvider;
+	public abstract fun getReferenceDumpDir ()Lorg/gradle/api/file/DirectoryProperty;
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/dsl/abi/AbiValidationMultiplatformExtension : org/jetbrains/kotlin/gradle/dsl/abi/AbiValidationMultiplatformVariantSpec {
+	public abstract fun getEnabled ()Lorg/gradle/api/provider/Property;
+	public abstract fun getVariants ()Lorg/gradle/api/NamedDomainObjectContainer;
+}
+
+public final class org/jetbrains/kotlin/gradle/dsl/abi/AbiValidationMultiplatformExtension$DefaultImpls {
+	public static fun filters (Lorg/jetbrains/kotlin/gradle/dsl/abi/AbiValidationMultiplatformExtension;Lorg/gradle/api/Action;)V
+	public static fun klib (Lorg/jetbrains/kotlin/gradle/dsl/abi/AbiValidationMultiplatformExtension;Lorg/gradle/api/Action;)V
+	public static fun legacyDump (Lorg/jetbrains/kotlin/gradle/dsl/abi/AbiValidationMultiplatformExtension;Lorg/gradle/api/Action;)V
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/dsl/abi/AbiValidationMultiplatformVariantSpec : org/jetbrains/kotlin/gradle/dsl/abi/AbiValidationVariantSpec {
+	public abstract fun getKlib ()Lorg/jetbrains/kotlin/gradle/dsl/abi/AbiValidationKlibKindExtension;
+	public abstract fun klib (Lorg/gradle/api/Action;)V
+}
+
+public final class org/jetbrains/kotlin/gradle/dsl/abi/AbiValidationMultiplatformVariantSpec$DefaultImpls {
+	public static fun filters (Lorg/jetbrains/kotlin/gradle/dsl/abi/AbiValidationMultiplatformVariantSpec;Lorg/gradle/api/Action;)V
+	public static fun klib (Lorg/jetbrains/kotlin/gradle/dsl/abi/AbiValidationMultiplatformVariantSpec;Lorg/gradle/api/Action;)V
+	public static fun legacyDump (Lorg/jetbrains/kotlin/gradle/dsl/abi/AbiValidationMultiplatformVariantSpec;Lorg/gradle/api/Action;)V
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/dsl/abi/AbiValidationVariantSpec : org/gradle/api/Named {
+	public static final field Companion Lorg/jetbrains/kotlin/gradle/dsl/abi/AbiValidationVariantSpec$Companion;
+	public static final field MAIN_VARIANT_NAME Ljava/lang/String;
+	public abstract fun filters (Lorg/gradle/api/Action;)V
+	public abstract fun getFilters ()Lorg/jetbrains/kotlin/gradle/dsl/abi/AbiFiltersSpec;
+	public abstract fun getLegacyDump ()Lorg/jetbrains/kotlin/gradle/dsl/abi/AbiValidationLegacyDumpExtension;
+	public abstract fun legacyDump (Lorg/gradle/api/Action;)V
+}
+
+public final class org/jetbrains/kotlin/gradle/dsl/abi/AbiValidationVariantSpec$Companion {
+	public static final field MAIN_VARIANT_NAME Ljava/lang/String;
+}
+
+public final class org/jetbrains/kotlin/gradle/dsl/abi/AbiValidationVariantSpec$DefaultImpls {
+	public static fun filters (Lorg/jetbrains/kotlin/gradle/dsl/abi/AbiValidationVariantSpec;Lorg/gradle/api/Action;)V
+	public static fun legacyDump (Lorg/jetbrains/kotlin/gradle/dsl/abi/AbiValidationVariantSpec;Lorg/gradle/api/Action;)V
+}
+
+public abstract interface annotation class org/jetbrains/kotlin/gradle/dsl/abi/ExperimentalAbiValidation : java/lang/annotation/Annotation {
 }
 
 public final class org/jetbrains/kotlin/gradle/dsl/jvm/JvmTargetValidationMode : java/lang/Enum {
@@ -1045,15 +1111,11 @@ public abstract interface class org/jetbrains/kotlin/gradle/plugin/KotlinGradleP
 	public abstract fun register (Lorg/gradle/api/Project;Ljava/lang/Object;)V
 }
 
-public abstract interface class org/jetbrains/kotlin/gradle/plugin/KotlinGradleSubplugin {
-}
-
 public abstract interface class org/jetbrains/kotlin/gradle/plugin/KotlinHierarchyBuilder {
 	public abstract fun common (Lkotlin/jvm/functions/Function1;)V
 	public abstract fun excludeCompilations (Lkotlin/jvm/functions/Function1;)V
 	public abstract fun filterCompilations (Lkotlin/jvm/functions/Function1;)V
 	public abstract fun group (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)V
-	public abstract fun withAndroid ()V
 	public abstract fun withAndroidNative ()V
 	public abstract fun withAndroidNativeArm32 ()V
 	public abstract fun withAndroidNativeArm64 ()V
@@ -1063,31 +1125,25 @@ public abstract interface class org/jetbrains/kotlin/gradle/plugin/KotlinHierarc
 	public abstract fun withApple ()V
 	public abstract fun withCompilations (Lkotlin/jvm/functions/Function1;)V
 	public abstract fun withIos ()V
-	public abstract fun withIosArm32 ()V
 	public abstract fun withIosArm64 ()V
 	public abstract fun withIosSimulatorArm64 ()V
 	public abstract fun withIosX64 ()V
 	public abstract fun withJs ()V
 	public abstract fun withJvm ()V
 	public abstract fun withLinux ()V
-	public abstract fun withLinuxArm32Hfp ()V
 	public abstract fun withLinuxArm64 ()V
-	public abstract fun withLinuxMips32 ()V
-	public abstract fun withLinuxMipsel32 ()V
 	public abstract fun withLinuxX64 ()V
 	public abstract fun withMacos ()V
 	public abstract fun withMacosArm64 ()V
 	public abstract fun withMacosX64 ()V
 	public abstract fun withMingw ()V
 	public abstract fun withMingwX64 ()V
-	public abstract fun withMingwX86 ()V
 	public abstract fun withNative ()V
 	public abstract fun withTvos ()V
 	public abstract fun withTvosArm64 ()V
 	public abstract fun withTvosSimulatorArm64 ()V
 	public abstract fun withTvosX64 ()V
 	public abstract fun withWasm ()V
-	public abstract fun withWasm32 ()V
 	public abstract fun withWasmJs ()V
 	public abstract fun withWasmWasi ()V
 	public abstract fun withWatchos ()V
@@ -1096,7 +1152,6 @@ public abstract interface class org/jetbrains/kotlin/gradle/plugin/KotlinHierarc
 	public abstract fun withWatchosDeviceArm64 ()V
 	public abstract fun withWatchosSimulatorArm64 ()V
 	public abstract fun withWatchosX64 ()V
-	public abstract fun withWatchosX86 ()V
 	public abstract fun withoutCompilations (Lkotlin/jvm/functions/Function1;)V
 }
 
@@ -1293,15 +1348,13 @@ public abstract interface class org/jetbrains/kotlin/gradle/plugin/KotlinTarget 
 	public abstract fun getComponents ()Ljava/util/Set;
 	public abstract fun getDisambiguationClassifier ()Ljava/lang/String;
 	public abstract fun getName ()Ljava/lang/String;
-	public abstract fun getOverrideDisambiguationClassifierOnIdeImport ()Ljava/lang/String;
 	public abstract fun getPlatformType ()Lorg/jetbrains/kotlin/gradle/plugin/KotlinPlatformType;
-	public abstract fun getPreset ()Lorg/jetbrains/kotlin/gradle/plugin/KotlinTargetPreset;
+	public abstract synthetic fun getPreset ()Lorg/jetbrains/kotlin/gradle/plugin/KotlinTargetPreset;
 	public abstract fun getPublishable ()Z
 	public abstract fun getRuntimeElementsConfigurationName ()Ljava/lang/String;
 	public abstract fun getSourceSets ()Lorg/gradle/api/NamedDomainObjectContainer;
 	public abstract fun getSourcesElementsConfigurationName ()Ljava/lang/String;
 	public abstract fun getTargetName ()Ljava/lang/String;
-	public abstract fun getUseDisambiguationClassifierAsSourceSetNamePrefix ()Z
 	public abstract fun mavenPublication (Lkotlin/jvm/functions/Function1;)V
 	public abstract fun mavenPublication (Lorg/gradle/api/Action;)V
 	public abstract fun withSourcesJar (Z)V
@@ -1312,6 +1365,7 @@ public final class org/jetbrains/kotlin/gradle/plugin/KotlinTarget$DefaultImpls 
 	public static fun attributes (Lorg/jetbrains/kotlin/gradle/plugin/KotlinTarget;Lorg/gradle/api/Action;)V
 	public static fun getDisambiguationClassifier (Lorg/jetbrains/kotlin/gradle/plugin/KotlinTarget;)Ljava/lang/String;
 	public static fun getName (Lorg/jetbrains/kotlin/gradle/plugin/KotlinTarget;)Ljava/lang/String;
+	public static synthetic fun getPreset (Lorg/jetbrains/kotlin/gradle/plugin/KotlinTarget;)Lorg/jetbrains/kotlin/gradle/plugin/KotlinTargetPreset;
 	public static fun mavenPublication (Lorg/jetbrains/kotlin/gradle/plugin/KotlinTarget;Lkotlin/jvm/functions/Function1;)V
 	public static synthetic fun withSourcesJar$default (Lorg/jetbrains/kotlin/gradle/plugin/KotlinTarget;ZILjava/lang/Object;)V
 }
@@ -1348,8 +1402,7 @@ public final class org/jetbrains/kotlin/gradle/plugin/KotlinTargetHierarchy$Sour
 	public final fun getUnitTest ()Lorg/jetbrains/kotlin/gradle/plugin/KotlinTargetHierarchy$SourceSetTree;
 }
 
-public abstract interface class org/jetbrains/kotlin/gradle/plugin/KotlinTargetPreset : org/gradle/api/Named {
-	public abstract fun createTarget (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/KotlinTarget;
+public abstract interface class org/jetbrains/kotlin/gradle/plugin/KotlinTargetPreset {
 }
 
 public abstract interface class org/jetbrains/kotlin/gradle/plugin/KotlinTargetTestRun : org/jetbrains/kotlin/gradle/plugin/KotlinTargetExecution, org/jetbrains/kotlin/gradle/plugin/KotlinTestRun {
@@ -1370,15 +1423,12 @@ public final class org/jetbrains/kotlin/gradle/plugin/KotlinTargetWithTests$Defa
 	public static fun attributes (Lorg/jetbrains/kotlin/gradle/plugin/KotlinTargetWithTests;Lorg/gradle/api/Action;)V
 	public static fun getDisambiguationClassifier (Lorg/jetbrains/kotlin/gradle/plugin/KotlinTargetWithTests;)Ljava/lang/String;
 	public static fun getName (Lorg/jetbrains/kotlin/gradle/plugin/KotlinTargetWithTests;)Ljava/lang/String;
+	public static synthetic fun getPreset (Lorg/jetbrains/kotlin/gradle/plugin/KotlinTargetWithTests;)Lorg/jetbrains/kotlin/gradle/plugin/KotlinTargetPreset;
 	public static fun mavenPublication (Lorg/jetbrains/kotlin/gradle/plugin/KotlinTargetWithTests;Lkotlin/jvm/functions/Function1;)V
 }
 
 public abstract interface class org/jetbrains/kotlin/gradle/plugin/KotlinTargetsContainer {
 	public abstract fun getTargets ()Lorg/gradle/api/NamedDomainObjectCollection;
-}
-
-public abstract interface class org/jetbrains/kotlin/gradle/plugin/KotlinTargetsContainerWithPresets : org/jetbrains/kotlin/gradle/plugin/KotlinTargetsContainer {
-	public abstract fun getPresets ()Lorg/gradle/api/NamedDomainObjectCollection;
 }
 
 public abstract interface annotation class org/jetbrains/kotlin/gradle/plugin/KotlinTargetsDsl : java/lang/annotation/Annotation {
@@ -1467,6 +1517,7 @@ public class org/jetbrains/kotlin/gradle/plugin/mpp/NativeOutputKind : java/lang
 
 public abstract interface class org/jetbrains/kotlin/gradle/tasks/BaseKapt : org/gradle/api/Task, org/jetbrains/kotlin/gradle/tasks/UsesKotlinJavaToolchain {
 	public abstract fun getAnnotationProcessorOptionProviders ()Ljava/util/List;
+	public abstract fun getAnnotationProcessorOptionsProviders ()Lorg/gradle/api/provider/ListProperty;
 	public abstract fun getClassesDir ()Lorg/gradle/api/file/DirectoryProperty;
 	public abstract fun getClasspath ()Lorg/gradle/api/file/ConfigurableFileCollection;
 	public abstract fun getCompiledSources ()Lorg/gradle/api/file/ConfigurableFileCollection;
@@ -1624,6 +1675,15 @@ public abstract interface class org/jetbrains/kotlin/gradle/tasks/UsesKotlinJava
 
 public final class org/jetbrains/kotlin/gradle/tasks/UsesKotlinJavaToolchain$DefaultImpls {
 	public static fun getKotlinJavaToolchain (Lorg/jetbrains/kotlin/gradle/tasks/UsesKotlinJavaToolchain;)Lorg/jetbrains/kotlin/gradle/tasks/KotlinJavaToolchain;
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/tasks/abi/KotlinLegacyAbiCheckTask : org/gradle/api/Task {
+	public abstract fun getActualDir ()Lorg/gradle/api/provider/Provider;
+	public abstract fun getReferenceDir ()Lorg/gradle/api/provider/Provider;
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/tasks/abi/KotlinLegacyAbiDumpTask : org/gradle/api/Task {
+	public abstract fun getDumpDir ()Lorg/gradle/api/provider/Provider;
 }
 
 public abstract interface class org/jetbrains/kotlin/project/model/LanguageSettings {

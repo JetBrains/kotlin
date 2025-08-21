@@ -10,3 +10,6 @@ object A {
 abstract class B {
     protected abstract val message: String
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, classDeclaration, objectDeclaration, override, propertyDeclaration,
+stringLiteral */

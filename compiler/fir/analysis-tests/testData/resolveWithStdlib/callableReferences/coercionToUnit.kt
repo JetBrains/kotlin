@@ -8,3 +8,6 @@ class B {
 fun main(b: B) {
     "".myAlso(b::add)
 }
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, funWithExtensionReceiver, functionDeclaration,
+functionalType, nullableType, stringLiteral, typeParameter */

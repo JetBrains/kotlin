@@ -24,7 +24,9 @@ import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.backend.konan.llvm.*
+import org.jetbrains.kotlin.backend.konan.lower.liveVariablesAtSuspensionPoint
 import org.jetbrains.kotlin.backend.konan.lower.loweredConstructorFunction
+import org.jetbrains.kotlin.backend.konan.lower.visibleVariablesAtSuspensionPoint
 import org.jetbrains.kotlin.backend.konan.lower.volatileField
 import org.jetbrains.kotlin.ir.objcinterop.isObjCObjectType
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
@@ -89,7 +91,7 @@ private class ExpressionValuesExtractor(val context: Context,
 
     val unit = IrCallImpl(
             UNDEFINED_OFFSET, UNDEFINED_OFFSET,
-            context.irBuiltIns.unitType, context.ir.symbols.theUnitInstance,
+            context.irBuiltIns.unitType, context.symbols.theUnitInstance,
             typeArgumentsCount = 0)
 
     fun forEachValue(expression: IrExpression, block: (IrExpression) -> Unit) {
@@ -164,7 +166,7 @@ internal class FunctionDFGBuilder(private val generationState: NativeGenerationS
         require(body != null) { "No body for ${declaration.render()}" }
 
         // Find all interesting expressions, variables and functions.
-        val visitor = ElementFinderVisitor()
+        val visitor = ElementFinderVisitor(declaration)
         body.acceptVoid(visitor)
 
         context.logMultiple {
@@ -201,7 +203,7 @@ internal class FunctionDFGBuilder(private val generationState: NativeGenerationS
         return function
     }
 
-    private inner class ElementFinderVisitor : IrVisitorVoid() {
+    private inner class ElementFinderVisitor(val declaration: IrDeclaration) : IrVisitorVoid() {
         val expressions = mutableMapOf<IrExpression, IrLoop?>()
         val parentLoops = mutableMapOf<IrLoop, IrLoop?>()
         val variableValues = VariableValues()
@@ -249,17 +251,17 @@ internal class FunctionDFGBuilder(private val generationState: NativeGenerationS
                             executeImplProducerInvoke.returnType,
                             executeImplProducerInvoke.symbol,
                             STATEMENT_ORIGIN_PRODUCER_INVOCATION)
-                    producerInvocation.dispatchReceiver = expression.getValueArgument(2)
+                    producerInvocation.arguments[0] = expression.arguments[2]
 
                     expressions += producerInvocation to currentLoop
 
-                    val jobFunctionReference = expression.getValueArgument(3) as? IrRawFunctionReference
+                    val jobFunctionReference = expression.arguments[3] as? IrRawFunctionReference
                             ?: error("A function reference expected")
                     val jobInvocation = IrCallImpl.fromSymbolOwner(expression.startOffset, expression.endOffset,
                             jobFunctionReference.symbol.owner.returnType,
                             jobFunctionReference.symbol as IrSimpleFunctionSymbol,
                             STATEMENT_ORIGIN_JOB_INVOCATION)
-                    jobInvocation.putValueArgument(0, producerInvocation)
+                    jobInvocation.arguments[0] = producerInvocation
 
                     expressions += jobInvocation to currentLoop
                 }
@@ -268,20 +270,22 @@ internal class FunctionDFGBuilder(private val generationState: NativeGenerationS
 
                 val intrinsicType = tryGetIntrinsicType(expression)
                 if (intrinsicType == IntrinsicType.COMPARE_AND_SET || intrinsicType == IntrinsicType.COMPARE_AND_EXCHANGE) {
+                    val index = if (expression.dispatchReceiver == null) 1 else 2
                     expressions += IrSetFieldImpl(
                             expression.startOffset, expression.endOffset,
                             expression.symbol.owner.volatileField!!.symbol,
                             expression.dispatchReceiver,
-                            expression.getValueArgument(1)!!,
+                            expression.arguments[index]!!,
                             context.irBuiltIns.unitType
                     ) to currentLoop
                 }
                 if (intrinsicType == IntrinsicType.GET_AND_SET) {
+                    val index = if (expression.dispatchReceiver == null) 0 else 1
                     expressions += IrSetFieldImpl(
                             expression.startOffset, expression.endOffset,
                             expression.symbol.owner.volatileField!!.symbol,
                             expression.dispatchReceiver,
-                            expression.getValueArgument(0)!!,
+                            expression.arguments[index]!!,
                             context.irBuiltIns.unitType
                     ) to currentLoop
                 }
@@ -295,7 +299,7 @@ internal class FunctionDFGBuilder(private val generationState: NativeGenerationS
                         objCObjectRawValueGetter.owner.returnType,
                         objCObjectRawValueGetter,
                 ).apply {
-                    extensionReceiver = expression.argument
+                    arguments[0] = expression.argument
                 }
                 expressions += objcObjGetter to currentLoop
             }
@@ -309,7 +313,9 @@ internal class FunctionDFGBuilder(private val generationState: NativeGenerationS
             }
             if (expression is IrSuspensionPoint) {
                 suspendableExpressionValues[suspendableExpressionStack.peek()!!]!!.add(expression)
-                liveVariablesStack.push(generationState.liveVariablesAtSuspensionPoints[expression]!!)
+                liveVariablesStack.push(expression.liveVariablesAtSuspensionPoint
+                        ?: expression.visibleVariablesAtSuspensionPoint
+                        ?: error("No live variables for ${declaration.render()} at ${expression.suspensionPointIdParameter.name}"))
             }
             if (expression is IrLoop) {
                 parentLoops[expression] = currentLoop
@@ -367,7 +373,7 @@ internal class FunctionDFGBuilder(private val generationState: NativeGenerationS
             super.visitConstantArray(expression)
             expressions += expression to currentLoop
             val arrayClass = expression.type.classOrNull
-            val arraySetSymbol = context.ir.symbols.arraySet[arrayClass] ?: error("Unexpected array type ${expression.type.render()}")
+            val arraySetSymbol = context.symbols.arraySet[arrayClass] ?: error("Unexpected array type ${expression.type.render()}")
             val isGeneric = arrayClass == context.irBuiltIns.arrayClass
             expression.elements.forEachIndexed { index, value ->
                 val call = IrCallImpl(
@@ -376,14 +382,14 @@ internal class FunctionDFGBuilder(private val generationState: NativeGenerationS
                         arraySetSymbol,
                         typeArgumentsCount = if (isGeneric) 1 else 0
                 ).apply {
-                    dispatchReceiver = expression
+                    arguments[0] = expression
                     if (isGeneric) {
                         typeArguments[0] = value.type
                     }
                     val constInt = IrConstImpl.int(SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, context.irBuiltIns.intType, index)
                     expressions += constInt to currentLoop
-                    putValueArgument(0, constInt)
-                    putValueArgument(1, value)
+                    arguments[1] = constInt
+                    arguments[2] = value
                 }
                 expressions += call to currentLoop
             }
@@ -395,7 +401,7 @@ internal class FunctionDFGBuilder(private val generationState: NativeGenerationS
         }
     }
 
-    private val symbols = context.ir.symbols
+    private val symbols = context.symbols
     private val arrayGetSymbols = symbols.arrayGet.values
     private val arraySetSymbols = symbols.arraySet.values
     private val createUninitializedInstanceSymbol = symbols.createUninitializedInstance
@@ -619,8 +625,8 @@ internal class FunctionDFGBuilder(private val generationState: NativeGenerationS
                                     val actualCallee = value.actualCallee
                                     DataFlowIR.Node.ArrayRead(
                                             symbolTable.mapFunction(actualCallee),
-                                            array = expressionToEdge(value.dispatchReceiver!!),
-                                            index = expressionToEdge(value.getValueArgument(0)!!),
+                                            array = expressionToEdge(value.arguments[0]!!),
+                                            index = expressionToEdge(value.arguments[1]!!),
                                             type = mapReturnType(value.type, context.irBuiltIns.anyType),
                                             irCallSite = value)
                                 }
@@ -629,10 +635,10 @@ internal class FunctionDFGBuilder(private val generationState: NativeGenerationS
                                     val actualCallee = value.actualCallee
                                     DataFlowIR.Node.ArrayWrite(
                                             symbolTable.mapFunction(actualCallee),
-                                            array = expressionToEdge(value.dispatchReceiver!!),
-                                            index = expressionToEdge(value.getValueArgument(0)!!),
-                                            value = expressionToEdge(value.getValueArgument(1)!!),
-                                            type = mapReturnType(value.getValueArgument(1)!!.type, context.irBuiltIns.anyType))
+                                            array = expressionToEdge(value.arguments[0]!!),
+                                            index = expressionToEdge(value.arguments[1]!!),
+                                            value = expressionToEdge(value.arguments[2]!!),
+                                            type = mapReturnType(value.arguments[2]!!.type, context.irBuiltIns.anyType))
                                 }
 
                                 createUninitializedInstanceSymbol ->
@@ -643,14 +649,14 @@ internal class FunctionDFGBuilder(private val generationState: NativeGenerationS
                                 createUninitializedArraySymbol ->
                                     DataFlowIR.Node.AllocArray(symbolTable.mapClassReferenceType(
                                             value.typeArguments[0]!!.getClass()!!
-                                    ), size = expressionToEdge(value.getValueArgument(0)!!), value)
+                                    ), size = expressionToEdge(value.arguments[0]!!), value)
 
                                 createEmptyStringSymbol ->
                                     // Technically, this allocates an array. However, this is an empty string, so let's treat it
                                     // like a fixed-size object.
                                     DataFlowIR.Node.AllocInstance(symbolTable.mapType(createEmptyStringSymbol.owner.returnType), value)
 
-                                reinterpret -> getNode(value.extensionReceiver!!).value
+                                reinterpret -> getNode(value.arguments[0]!!).value
 
                                 initInstanceSymbol -> error("Should've been lowered: ${value.render()}")
 
@@ -677,7 +683,7 @@ internal class FunctionDFGBuilder(private val generationState: NativeGenerationS
 
                                     if (value.isVirtualCall) {
                                         val owner = callee.parentAsClass
-                                        val actualReceiverType = value.dispatchReceiver!!.type
+                                        val actualReceiverType = value.arguments[0]!!.type
                                         val actualReceiverClassifier = actualReceiverType.classifierOrFail
 
                                         val receiverType =
@@ -770,7 +776,7 @@ internal class FunctionDFGBuilder(private val generationState: NativeGenerationS
                 }
 
                 highestScope!!.nodes += node
-                Scoped(node, highestScope!!)
+                Scoped(node, highestScope)
             }
         }
     }

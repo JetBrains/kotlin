@@ -1,0 +1,2 @@
+expression: object: A() {}
+type: kotlin.Any

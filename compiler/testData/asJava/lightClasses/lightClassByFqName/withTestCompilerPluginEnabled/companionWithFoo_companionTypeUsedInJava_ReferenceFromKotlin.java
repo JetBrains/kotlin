@@ -1,7 +1,7 @@
 public final class TestClass /* test.TestClass*/ {
-  private final MyClass.Companion usage;
+  private final test.MyClass.Companion usage;
 
   public  TestClass();//  .ctor()
 
-  public final MyClass.Companion getUsage();//  getUsage()
+  public final test.MyClass.Companion getUsage();//  getUsage()
 }

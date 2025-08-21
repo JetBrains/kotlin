@@ -30,3 +30,6 @@ fun bar() {
         b checkType { _<String>() }
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, data, funWithExtensionReceiver, functionDeclaration, functionalType, infix,
+lambdaLiteral, localProperty, nullableType, primaryConstructor, propertyDeclaration, typeParameter, typeWithExtension */

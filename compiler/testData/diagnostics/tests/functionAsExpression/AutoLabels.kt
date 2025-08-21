@@ -10,3 +10,6 @@ fun autolabel(l: List<Int>) = l.map (fun (i: Int): Int {
 fun unresolvedMapLabel(l: List<Int>) = l.map (l@ fun(i: Int): Int {
     return<!UNRESOLVED_REFERENCE!>@map<!> 4
 })
+
+/* GENERATED_FIR_TAGS: anonymousFunction, checkNotNullCall, funWithExtensionReceiver, functionDeclaration,
+functionalType, integerLiteral, nullableType, typeParameter */

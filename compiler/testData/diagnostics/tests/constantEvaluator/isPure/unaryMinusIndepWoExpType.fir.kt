@@ -15,3 +15,5 @@ val p4 = -1.toInt()
 
 // val p5: false
 val p5 = -1.toShort()
+
+/* GENERATED_FIR_TAGS: integerLiteral, propertyDeclaration, unaryExpression */

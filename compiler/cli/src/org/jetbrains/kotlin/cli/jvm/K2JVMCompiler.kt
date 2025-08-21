@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.cli.jvm
 
 import com.intellij.openapi.Disposable
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.backend.jvm.jvmPhases
 import org.jetbrains.kotlin.cli.common.*
 import org.jetbrains.kotlin.cli.common.ExitCode.*
@@ -30,28 +31,16 @@ import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompil
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
+import org.jetbrains.kotlin.platform.TargetPlatform
+import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
+import org.jetbrains.kotlin.util.PerformanceManager
+import org.jetbrains.kotlin.util.PhaseType
 import org.jetbrains.kotlin.utils.KotlinPaths
 import java.io.File
 
 class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
-    override fun shouldRunK2(
-        messageCollector: MessageCollector,
-        arguments: K2JVMCompilerArguments,
-    ): Boolean {
-        val isK2 = super.shouldRunK2(messageCollector, arguments)
-        if (isK2 && kaptIsEnabled(arguments) && !arguments.useK2Kapt) {
-            arguments.languageVersion = LanguageVersion.KOTLIN_1_9.versionString
-            if (arguments.apiVersion?.startsWith("2") == true) {
-                arguments.apiVersion = ApiVersion.KOTLIN_1_9.versionString
-            }
-            arguments.skipMetadataVersionCheck = true
-            arguments.skipPrereleaseCheck = true
-            arguments.allowUnstableDependencies = true
-            return false
-        }
-
-        return isK2
-    }
+    override val platform: TargetPlatform
+        get() = JvmPlatforms.defaultJvmPlatform
 
     override fun doExecutePhased(
         arguments: K2JVMCompilerArguments,
@@ -77,7 +66,7 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
 
         configuration.put(JVMConfigurationKeys.DISABLE_STANDARD_SCRIPT_DEFINITION, arguments.disableStandardScript)
 
-        val pluginLoadResult = loadPlugins(paths, arguments, configuration)
+        val pluginLoadResult = loadPlugins(paths, arguments, configuration, rootDisposable)
         if (pluginLoadResult != ExitCode.OK) return pluginLoadResult
 
         val moduleName = arguments.moduleName ?: JvmProtoBufUtil.DEFAULT_MODULE_NAME
@@ -92,7 +81,7 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
             arguments.buildFile == null &&
             !arguments.version &&
             !arguments.allowNoSourceFiles &&
-            (arguments.script || arguments.expression != null || arguments.freeArgs.isEmpty())
+            (arguments.script || arguments.expression != null || arguments.repl || arguments.freeArgs.isEmpty())
         ) {
             configuration.configureContentRootsFromClassPath(arguments)
             configuration.configureJdkClasspathRoots()
@@ -111,10 +100,6 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
                 )
             projectEnvironment.registerExtensionsFromPlugins(configuration)
 
-            if (arguments.useOldBackend) {
-                messageCollector.report(WARNING, "-Xuse-old-backend is no longer supported. Please migrate to the new JVM IR backend")
-            }
-
             if (arguments.script || arguments.expression != null) {
                 val scriptingEvaluator = ScriptEvaluationExtension.getInstances(projectEnvironment.project).find { it.isAccepted(arguments) }
                 if (scriptingEvaluator == null) {
@@ -123,6 +108,16 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
                 }
                 return scriptingEvaluator.eval(arguments, configuration, projectEnvironment)
             } else {
+                if (!arguments.repl) {
+                    messageCollector.report(
+                        ERROR,
+                        "Kotlin REPL is deprecated and should be enabled explicitly for now; please use the '-Xrepl' option"
+                    )
+                    return COMPILATION_ERROR
+                }
+                if (arguments.freeArgs.isNotEmpty()) {
+                    messageCollector.report(CompilerMessageSeverity.STRONG_WARNING, "The arguments are ignored in the REPL mode")
+                }
                 val shell = ShellExtension.getInstances(projectEnvironment.project).find { it.isAccepted(arguments) }
                 if (shell == null) {
                     messageCollector.report(ERROR, "Unable to run REPL, no scripting plugin loaded")
@@ -130,12 +125,6 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
                 }
                 return shell.run(arguments, configuration, projectEnvironment)
             }
-        }
-
-        if (arguments.useOldBackend) {
-            val severity = if (isUseOldBackendAllowed()) WARNING else ERROR
-            messageCollector.report(severity, "-Xuse-old-backend is no longer supported. Please migrate to the new JVM IR backend")
-            if (severity == ERROR) return COMPILATION_ERROR
         }
 
         messageCollector.report(LOGGING, "Configuring the compilation environment")
@@ -152,7 +141,10 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
             val environment = createCoreEnvironment(
                 rootDisposable, configuration, messageCollector,
                 moduleChunk.targetDescription()
-            ) ?: return COMPILATION_ERROR
+            ) ?: run {
+                configuration.perfManager?.notifyPhaseFinished(PhaseType.Initialization)
+                return COMPILATION_ERROR
+            }
             environment.registerJavacIfNeeded(arguments).let {
                 if (!it) return COMPILATION_ERROR
             }
@@ -204,6 +196,8 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
 
                 putIfNotNull(CommonConfigurationKeys.IMPORT_TRACKER, services[ImportTracker::class.java])
 
+                putIfNotNull(CommonConfigurationKeys.FILE_MAPPING_TRACKER, services[ICFileMappingTracker::class.java])
+
                 putIfNotNull(
                     JVMConfigurationKeys.INCREMENTAL_COMPILATION_COMPONENTS,
                     services[IncrementalCompilationComponents::class.java]
@@ -225,55 +219,46 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
 
     override fun createMetadataVersion(versionArray: IntArray): BinaryVersion = MetadataVersion(*versionArray)
 
-    class K2JVMCompilerPerformanceManager : CommonCompilerPerformanceManager("Kotlin to JVM Compiler")
-
     companion object {
         @JvmStatic
         fun main(args: Array<String>) {
             doMain(K2JVMCompiler(), args)
         }
 
+        @K1Deprecation
         fun createCoreEnvironment(
             rootDisposable: Disposable,
             configuration: CompilerConfiguration,
             messageCollector: MessageCollector,
             targetDescription: String
         ): KotlinCoreEnvironment? {
+            val perfManager = configuration.perfManager
+            perfManager?.targetDescription = targetDescription
+
             if (messageCollector.hasErrors()) return null
 
             val environment = KotlinCoreEnvironment.createForProduction(rootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
 
             val sourceFiles = environment.getSourceFiles()
-            configuration[CLIConfigurationKeys.PERF_MANAGER]?.notifyCompilerInitialized(
-                sourceFiles.size, environment.countLinesOfCode(sourceFiles), targetDescription
-            )
+            perfManager?.addSourcesStats(sourceFiles.size, environment.countLinesOfCode(sourceFiles))
 
             return if (messageCollector.hasErrors()) null else environment
-        }
-
-        internal fun kaptIsEnabled(arguments: K2JVMCompilerArguments): Boolean {
-            return arguments.pluginOptions?.any { it.startsWith("plugin:org.jetbrains.kotlin.kapt3") } == true
         }
 
         internal fun createCustomPerformanceManagerOrNull(
             arguments: K2JVMCompilerArguments,
             services: Services,
-        ): CommonCompilerPerformanceManager? {
-            val externalManager = services[CommonCompilerPerformanceManager::class.java]
+        ): PerformanceManager? {
+            val externalManager = services[PerformanceManager::class.java]
             if (externalManager != null) return externalManager
             val argument = arguments.profileCompilerCommand ?: return null
-            return ProfilingCompilerPerformanceManager.create(argument)
+            return ProfilingCompilerPerformanceManager.create(argument, arguments.detailedPerf)
         }
     }
 
-    override val defaultPerformanceManager: K2JVMCompilerPerformanceManager = K2JVMCompilerPerformanceManager()
-
-    override fun createPerformanceManager(arguments: K2JVMCompilerArguments, services: Services): CommonCompilerPerformanceManager {
+    override fun createPerformanceManager(arguments: K2JVMCompilerArguments, services: Services): PerformanceManager {
         return createCustomPerformanceManagerOrNull(arguments, services) ?: defaultPerformanceManager
     }
-
-    private fun isUseOldBackendAllowed(): Boolean =
-        K2JVMCompiler::class.java.classLoader.getResource("META-INF/unsafe-allow-use-old-backend") != null
 }
 
 fun CompilerConfiguration.configureModuleChunk(

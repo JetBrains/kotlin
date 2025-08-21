@@ -12,6 +12,7 @@ import kotlin.native.internal.*
 import kotlinx.cinterop.NativePtr
 import kotlinx.cinterop.*
 import kotlin.native.internal.escapeAnalysis.Escapes
+import kotlin.native.internal.ref.*
 
 /**
  * The marker interface for objects that have a cleanup action associated with them.
@@ -94,32 +95,28 @@ public fun <T> createCleaner(resource: T, cleanupAction: (resource: T) -> Unit):
 
 @ExperimentalNativeApi
 @OptIn(ObsoleteWorkersApi::class)
-internal fun <T> createCleanerImpl(resource: T, cleanupAction: (T) -> Unit): Cleaner {
-    val clean = {
+internal fun <T> createCleanerImpl(resource: T, cleanupAction: (T) -> Unit): Cleaner = CleanerImpl(
+    createRetainedExternalRCRef {
         // TODO: Maybe if this fails with exception, it should be (optionally) reported.
         cleanupAction(resource)
     }
-
-    // Make sure there's an extra reference to clean, so it's definitely alive when CleanerImpl is destroyed.
-    val cleanPtr = createStablePointer(clean)
-
-    // Make sure cleaner worker is initialized.
-    getCleanerWorker()
-
-    return CleanerImpl(cleanPtr)
-}
+)
 
 @Suppress("DEPRECATION_ERROR")
 @ExperimentalNativeApi
 @NoReorderFields
 @ExportTypeInfo("theCleanerImplTypeInfo")
 @HasFinalizer
-private class CleanerImpl(
-        private val cleanPtr: NativePtr,
-): Cleaner, kotlin.native.internal.Cleaner {}
+private class CleanerImpl(private val cleanPtr: ExternalRCRef): Cleaner, kotlin.native.internal.Cleaner
 
-
-@GCUnsafeCall("CreateStablePointer")
-@Escapes(0b01) // obj escapes into stable ref.
-external private fun createStablePointer(obj: Any): NativePtr
-
+@ExportForCppRuntime("Kotlin_native_ref_executeCleanerAction")
+@OptIn(ExperimentalNativeApi::class)
+private fun executeCleanerAction(cleanerActionRef: ExternalRCRef) {
+    @Suppress("UNCHECKED_CAST")
+    val cleanerAction = dereferenceExternalRCRef(cleanerActionRef) as () -> Unit
+    releaseExternalRCRef(cleanerActionRef)
+    disposeExternalRCRef(cleanerActionRef)
+    try {
+        cleanerAction()
+    } catch (_: Throwable) { }
+}

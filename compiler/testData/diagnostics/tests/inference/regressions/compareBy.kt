@@ -9,3 +9,6 @@ class Item(val name: String, val rating: Int): Comparable<Item> {
 // from standard library
 fun <T : Any> compareBy(a: T?, b: T?,
                                vararg functions: T.() -> Comparable<*>?): Int = throw Exception()
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, lambdaLiteral, nullableType, operator, override,
+primaryConstructor, propertyDeclaration, starProjection, thisExpression, typeConstraint, typeParameter, vararg */

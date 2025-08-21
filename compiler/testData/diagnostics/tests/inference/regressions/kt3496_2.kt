@@ -11,3 +11,6 @@ class F<T> {
     }
 }
 operator fun <V, T> Any.get(s: String, w: ArrayList<V>): ArrayList<T> = throw Exception()
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType, infix,
+localProperty, nullableType, operator, propertyDeclaration, stringLiteral, typeParameter, typeWithExtension */

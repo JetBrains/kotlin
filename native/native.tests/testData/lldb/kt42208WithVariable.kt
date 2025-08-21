@@ -1,5 +1,9 @@
 // KIND: STANDALONE_LLDB
 // FIR_IDENTICAL
+// FREE_COMPILER_ARGS: -XXLanguage:-IrInlinerBeforeKlibSerialization
+
+
+
 // FILE: kt42208-1.kt
 fun main() {
     val a = foo()

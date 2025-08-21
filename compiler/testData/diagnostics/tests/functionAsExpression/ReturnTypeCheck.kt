@@ -18,3 +18,6 @@ val bar: (Int) -> String = l@{ a ->
     }
     return@l ""
 }
+
+/* GENERATED_FIR_TAGS: anonymousFunction, equalityExpression, functionalType, ifExpression, integerLiteral,
+intersectionType, lambdaLiteral, propertyDeclaration, stringLiteral, whenExpression, whenWithSubject */

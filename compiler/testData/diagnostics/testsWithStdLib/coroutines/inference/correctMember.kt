@@ -25,3 +25,6 @@ val test2 = generate {
     yield(generidFun(2))
 }
 
+/* GENERATED_FIR_TAGS: annotationUseSiteTargetFile, classReference, functionDeclaration, functionalType, integerLiteral,
+interfaceDeclaration, lambdaLiteral, nullableType, propertyDeclaration, stringLiteral, suspend, typeParameter,
+typeWithExtension */

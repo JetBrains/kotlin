@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinHierarchyTemplate
 /**
  * @suppress
  */
-@Deprecated("Use 'KotlinHierarchyTemplate' instead")
+@Deprecated("Scheduled for removal in Kotlin 2.3. Use 'KotlinHierarchyTemplate' instead", level = DeprecationLevel.ERROR)
 @ExperimentalKotlinGradlePluginApi
 interface KotlinTargetHierarchyDsl {
     fun apply(hierarchyDescriptor: KotlinHierarchyTemplate, describeExtension: (KotlinHierarchyBuilder.Root.() -> Unit)? = null)

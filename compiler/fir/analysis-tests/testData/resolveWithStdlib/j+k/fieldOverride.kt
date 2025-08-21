@@ -14,3 +14,5 @@ public class B extends A {
 fun main(b: B) {
     b.x + 1
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, functionDeclaration, integerLiteral, javaProperty, javaType */

@@ -22,3 +22,6 @@ fun test(ordinal: Int) {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType, in,
+interfaceDeclaration, lambdaLiteral, nullableType, safeCall, typeConstraint, typeParameter, typeWithExtension */

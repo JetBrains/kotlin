@@ -4,3 +4,5 @@ fun test(
 ): Int {
     return "".f()
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionalType, lambdaLiteral, stringLiteral, typeWithExtension */

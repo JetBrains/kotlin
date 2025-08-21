@@ -65,7 +65,7 @@ fun case_9(value_1: Number): String = <!NO_ELSE_IN_WHEN!>when<!> (value_1) {
  * DISCUSSION: maybe make exhaustive without else?
  */
 fun case_10(value_1: Any): String = when (value_1) {
-    <!USELESS_IS_CHECK!>is Any<!> -> ""
+    is Any -> ""
 }
 
 // TESTCASE NUMBER: 11

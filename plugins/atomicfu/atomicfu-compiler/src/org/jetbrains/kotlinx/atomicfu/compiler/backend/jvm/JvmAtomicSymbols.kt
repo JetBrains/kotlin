@@ -273,7 +273,7 @@ class JvmAtomicSymbols(
 
     private fun kClassToJavaClass(kClassReference: IrExpression): IrCall =
         buildIrGet(javaLangClass.starProjectedType, null, kotlinKClassJava.owner.getter!!.symbol).apply {
-            extensionReceiver = kClassReference
+            arguments[0] = kClassReference
         }
 
     fun javaClassReference(classType: IrType): IrCall = kClassToJavaClass(kClassReference(classType))

@@ -114,9 +114,9 @@ fun FirMemberDeclaration.setLazyPublishedVisibility(annotations: List<FirAnnotat
 fun FirMemberDeclaration.setLazyPublishedVisibility(hasPublishedApi: Boolean, parentProperty: FirProperty?, session: FirSession) {
     lazyPublishedApiEffectiveVisibility = lazy {
         val containingClassLookupTag = (when {
-            parentProperty != null -> parentProperty.symbol.callableId.classId
+            parentProperty != null -> parentProperty.symbol.callableId?.classId
             this is FirClassLikeDeclaration -> classId.parentClassId
-            this is FirCallableDeclaration -> symbol.callableId.classId
+            this is FirCallableDeclaration -> symbol.callableId?.classId
             else -> null
         })?.toLookupTag()
 

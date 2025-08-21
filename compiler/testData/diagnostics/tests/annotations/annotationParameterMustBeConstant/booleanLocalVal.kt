@@ -6,3 +6,6 @@ fun foo() {
 
     @Ann(<!ANNOTATION_ARGUMENT_MUST_BE_CONST!>bool1<!>) val a = bool1
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, functionDeclaration, localProperty, primaryConstructor,
+propertyDeclaration, vararg */

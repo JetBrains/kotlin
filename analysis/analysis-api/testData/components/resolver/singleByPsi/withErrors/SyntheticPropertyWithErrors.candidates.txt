@@ -3,6 +3,7 @@
     KaApplicableCallCandidateInfo:
       candidate = KaSimpleVariableAccessCall:
         partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+          contextArguments = []
           dispatchReceiver = KaImplicitReceiverValue:
             symbol = KaReceiverParameterSymbol:
               annotations: []
@@ -31,6 +32,7 @@
             receiverType = null
             returnType = kotlin.Int
             symbol = var something: kotlin.Int
+            contextParameters = []
             callableId = /JavaClass.something
         simpleAccess = Read
         typeArgumentsMapping = {}
@@ -41,6 +43,7 @@
     KaApplicableCallCandidateInfo:
       candidate = KaSimpleVariableAccessCall:
         partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+          contextArguments = []
           dispatchReceiver = KaImplicitReceiverValue:
             symbol = KaReceiverParameterSymbol:
               annotations: []
@@ -69,6 +72,7 @@
             receiverType = null
             returnType = kotlin.Int
             symbol = var something: kotlin.Int
+            contextParameters = []
             callableId = /JavaClass.something
         simpleAccess = Write:
           value = 1
@@ -80,6 +84,7 @@
     KaApplicableCallCandidateInfo:
       candidate = KaSimpleVariableAccessCall:
         partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+          contextArguments = []
           dispatchReceiver = KaExplicitReceiverValue:
             expression = javaClass
             isSafeNavigation = false
@@ -90,6 +95,7 @@
             receiverType = null
             returnType = kotlin.Int
             symbol = var something: kotlin.Int
+            contextParameters = []
             callableId = /JavaClass.something
         simpleAccess = Write:
           value = 1

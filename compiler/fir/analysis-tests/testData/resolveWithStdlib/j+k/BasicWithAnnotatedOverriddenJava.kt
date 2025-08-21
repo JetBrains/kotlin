@@ -28,3 +28,6 @@ class User : AnnotatedDerived() {
         val y = foo(null)
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, javaFunction, javaType, localProperty, nullableType,
+propertyDeclaration, stringLiteral */

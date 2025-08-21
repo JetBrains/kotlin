@@ -17,28 +17,39 @@ import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
 class ReturnTypeCalculatorForFullBodyResolve private constructor(
     private val diagnosticKind: DiagnosticKind,
     private val reason: String,
+    override val callableCopyTypeCalculator: CallableCopyTypeCalculator.DeferredCallableCopyTypeCalculator,
 ) : ReturnTypeCalculator() {
     companion object {
-        // It's actual only for local functions because simple members are being resolved at another phase.
-        // Local properties are just unresolved if they are used recursively.
+        /**
+         * Uses [CallableCopyTypeCalculator.CalculateDeferredForceLazyResolution].
+         */
         val Default: ReturnTypeCalculatorForFullBodyResolve = ReturnTypeCalculatorForFullBodyResolve(
             DiagnosticKind.RecursionInImplicitTypes,
-            "Recursion with local function"
+            "Recursion with local function",
+            CallableCopyTypeCalculator.CalculateDeferredForceLazyResolution
         )
+
+        /**
+         * Uses [CallableCopyTypeCalculator.CalculateDeferredWhenPossible] so it's safe to be used during STATUS phase.
+         */
+        val Status: ReturnTypeCalculatorForFullBodyResolve = ReturnTypeCalculatorForFullBodyResolve(
+            DiagnosticKind.RecursionInImplicitTypes,
+            "Recursion with local function",
+            CallableCopyTypeCalculator.CalculateDeferredWhenPossible
+        )
+
         val Contract: ReturnTypeCalculatorForFullBodyResolve = ReturnTypeCalculatorForFullBodyResolve(
             DiagnosticKind.InferenceError,
-            "Cannot calculate return type during full-body resolution (local class/object?)"
+            "Cannot calculate return type during full-body resolution (local class/object?)",
+            CallableCopyTypeCalculator.CalculateDeferredForceLazyResolution
         )
     }
-
-    override val callableCopyTypeCalculator: CallableCopyTypeCalculator
-        get() = CallableCopyTypeCalculator.Forced
 
     override fun tryCalculateReturnTypeOrNull(declaration: FirCallableDeclaration): FirResolvedTypeRef? {
         val returnTypeRef = declaration.returnTypeRef
         if (returnTypeRef is FirResolvedTypeRef) return returnTypeRef
         if (declaration.canHaveDeferredReturnTypeCalculation) {
-            return CallableCopyTypeCalculator.Forced.computeReturnType(declaration)
+            return callableCopyTypeCalculator.computeReturnType(declaration)
         }
 
         return buildErrorTypeRef { diagnostic = ConeSimpleDiagnostic("$reason: ${declaration.render()}", diagnosticKind) }

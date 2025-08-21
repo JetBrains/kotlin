@@ -16,3 +16,6 @@ fun test_2(s: String) {
 class B<out K, V>(val k: K, val v: V)
 
 fun <X, R, V> B<X, V>.myMap(transform: (B<X, V>) -> R): B<R, V> = TODO()
+
+/* GENERATED_FIR_TAGS: asExpression, classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType,
+lambdaLiteral, localProperty, nullableType, out, primaryConstructor, propertyDeclaration, typeParameter */

@@ -9,8 +9,8 @@ import org.jetbrains.kotlin.analysis.api.descriptors.components.*
 import org.jetbrains.kotlin.analysis.api.impl.base.KaBaseSession
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseAnalysisScopeProviderImpl
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaRendererImpl
-import org.jetbrains.kotlin.analysis.api.impl.base.sessions.KaGlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
+import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KaResolutionScope
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 
 internal class KaFe10Session(
@@ -18,7 +18,7 @@ internal class KaFe10Session(
     override val useSiteModule: KaModule,
     token: KaLifetimeToken,
     analysisSessionProvider: () -> KaFe10Session,
-    resolutionScope: KaGlobalSearchScope
+    resolutionScope: KaResolutionScope
 ) : KaBaseSession(
     token,
     resolver = KaFe10Resolver(analysisSessionProvider),

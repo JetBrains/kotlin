@@ -67,7 +67,7 @@ val expectedNullableUnitExplicitReturnString: () -> Unit? = l@ {
 
 fun expectedFlexibleUnitExplicitReturnString() {
     A.foo = l@ {
-        return@l <!RETURN_TYPE_MISMATCH!>""<!>
+        return@l <!RETURN_TYPE_MISMATCH, RETURN_TYPE_MISMATCH!>""<!>
     }
 }
 
@@ -114,7 +114,7 @@ fun test() {
 
     run<Unit?> l@ {
         if ("0".hashCode() == 42) return@l Unit
-        <!ARGUMENT_TYPE_MISMATCH!>""<!>
+        <!RETURN_TYPE_MISMATCH!>""<!>
     }
 
     A.run l@ {
@@ -127,11 +127,11 @@ fun test() {
     }
 
     run<Unit?> l@ {
-        return@l <!ARGUMENT_TYPE_MISMATCH!>""<!>
+        return@l <!RETURN_TYPE_MISMATCH!>""<!>
     }
 
     A.run l@ {
-        return@l <!ARGUMENT_TYPE_MISMATCH, RETURN_TYPE_MISMATCH!>""<!>
+        return@l <!RETURN_TYPE_MISMATCH, RETURN_TYPE_MISMATCH!>""<!>
     }
 
     run<Unit?> l@ {
@@ -142,3 +142,6 @@ fun test() {
         return@l <!NULL_FOR_NONNULL_TYPE!>null<!>
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, equalityExpression, flexibleType, functionDeclaration, functionalType, ifExpression,
+integerLiteral, javaFunction, javaProperty, lambdaLiteral, nullableType, propertyDeclaration, stringLiteral */

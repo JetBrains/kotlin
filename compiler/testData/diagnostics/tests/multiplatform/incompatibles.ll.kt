@@ -5,3 +5,5 @@
 <!INCOMPATIBLE_MODIFIERS!>expect<!> <!INCOMPATIBLE_MODIFIERS!>actual<!> class <!ACTUAL_WITHOUT_EXPECT!>Sixth<!>
 
 // MODULE: platform()()(common)
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect */

@@ -8,3 +8,6 @@ fun test() {
     when (val x = foo()) {
     }
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral, localProperty, propertyDeclaration, whenExpression,
+whenWithSubject */

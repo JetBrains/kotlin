@@ -37,3 +37,7 @@ fun <T> test(t: <!WRONG_ANNOTATION_TARGET!>@A<!> T): T = t
 internal annotation class C
 
 fun <<!WRONG_ANNOTATION_TARGET!>@C<!> T> test2(t: T): T = t
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, functionDeclaration, getter, integerLiteral,
+localFunction, localProperty, nullableType, primaryConstructor, propertyDeclaration, propertyWithExtensionReceiver,
+typeParameter */

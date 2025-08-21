@@ -4,6 +4,7 @@ KtNameReferenceExpression(100,109): 'asDynamic'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:
           expression = "some"
@@ -14,6 +15,7 @@ KtNameReferenceExpression(100,109): 'asDynamic'
           returnType = dynamic
           symbol = kotlin/js/asDynamic(<extension receiver>: kotlin.Any?): dynamic
           valueParameters = []
+          contextParameters = []
           callableId = kotlin/js/asDynamic
       typeArgumentsMapping = {}
     isInBestCandidates = true

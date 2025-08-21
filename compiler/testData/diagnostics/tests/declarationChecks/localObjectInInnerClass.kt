@@ -29,3 +29,6 @@ class A {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, classDeclaration, functionDeclaration, functionalType, inner,
+interfaceDeclaration, lambdaLiteral, nullableType, operator, propertyDeclaration, propertyDelegate, typeParameter */

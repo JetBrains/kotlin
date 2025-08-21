@@ -16,5 +16,8 @@ fun <S> test1(a: ParameterizedChild<S>?, b: Child): Base<S> = myRun {
 }
 
 fun <S> test2(a: S?, b: S): S = myRun {
-    <!ARGUMENT_TYPE_MISMATCH!>select(a, b)<!>
+    <!RETURN_TYPE_MISMATCH!>select(a, b)<!>
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionalType, interfaceDeclaration, lambdaLiteral,
+nullableType, out, typeParameter */

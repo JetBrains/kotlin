@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.ir.backend.js.ic
 
+import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageConfig
 import org.jetbrains.kotlin.backend.common.serialization.Hash128Bits
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.CompilerConfigurationKey
@@ -14,7 +15,6 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.CrossModuleReferences
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.linkage.partial.PartialLinkageConfig
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.util.DumpIrTreeVisitor
 import org.jetbrains.kotlin.ir.util.isInterface
@@ -115,7 +115,7 @@ private class HashCalculatorForIC(private val checkForClassStructuralChanges: Bo
             }
         }
         (symbol.owner as? IrFunction)?.let { irFunction ->
-            updateForEach(irFunction.valueParameters) { functionParam ->
+            updateForEach(irFunction.parameters) { functionParam ->
                 // symbol rendering doesn't print default params information
                 // it is important to understand if default params were added or removed
                 update(functionParam.defaultValue?.let { 1 } ?: 0)

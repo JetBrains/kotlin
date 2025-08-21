@@ -24,20 +24,23 @@ import org.jetbrains.kotlin.utils.addToStdlib.popLast
 
 sealed class FirJsExternalInheritorOnlyChecker(mppKind: MppCheckerKind) : FirClassChecker(mppKind) {
     object Regular : FirJsExternalInheritorOnlyChecker(MppCheckerKind.Platform) {
-        override fun check(declaration: FirClass, context: CheckerContext, reporter: DiagnosticReporter) {
+        context(context: CheckerContext, reporter: DiagnosticReporter)
+        override fun check(declaration: FirClass) {
             if (declaration.isExpect) return
-            super.check(declaration, context, reporter)
+            super.check(declaration)
         }
     }
 
     object ForExpectClass : FirJsExternalInheritorOnlyChecker(MppCheckerKind.Common) {
-        override fun check(declaration: FirClass, context: CheckerContext, reporter: DiagnosticReporter) {
+        context(context: CheckerContext, reporter: DiagnosticReporter)
+        override fun check(declaration: FirClass) {
             if (!declaration.isExpect) return
-            super.check(declaration, context, reporter)
+            super.check(declaration)
         }
     }
 
-    private fun FirClass.forEachParents(context: CheckerContext, f: (FirRegularClassSymbol) -> Unit) {
+    context(context: CheckerContext)
+    private fun FirClass.forEachParents(f: (FirRegularClassSymbol) -> Unit) {
         val todo = superConeTypes.toMutableList()
         val done = hashSetOf<FirRegularClassSymbol>()
 
@@ -50,16 +53,16 @@ sealed class FirJsExternalInheritorOnlyChecker(mppKind: MppCheckerKind) : FirCla
         }
     }
 
-    override fun check(declaration: FirClass, context: CheckerContext, reporter: DiagnosticReporter) {
-        if (!declaration.symbol.isEffectivelyExternal(context)) {
-            declaration.forEachParents(context) { parent ->
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirClass) {
+        if (!declaration.symbol.isEffectivelyExternal()) {
+            declaration.forEachParents() { parent ->
                 if (parent.hasAnnotation(JsExternalInheritorsOnly, context.session)) {
                     reporter.reportOn(
                         declaration.source,
                         FirJsErrors.JS_EXTERNAL_INHERITORS_ONLY,
                         parent,
-                        declaration.symbol,
-                        context
+                        declaration.symbol
                     )
                 }
             }

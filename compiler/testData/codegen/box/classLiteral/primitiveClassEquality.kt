@@ -1,5 +1,6 @@
 // IGNORE_BACKEND: JS_IR, JS_IR_ES6
 
+// FILE: lib.kt
 // boxed primitive comparisons
 fun isBoolean(a: Any) = a::class == true::class
 fun isChar(a: Any) = a::class == 'c'::class
@@ -13,6 +14,7 @@ fun isDouble(a: Any) = a::class == 0.0::class
 // reified primitive comparisons
 inline fun <reified T> isReifiedInt() = 1::class == T::class
 
+// FILE: main.kt
 fun box(): String {
     if (!isBoolean(true)) return "Fail 1"
     if (isBoolean(0)) return "Fail 2"

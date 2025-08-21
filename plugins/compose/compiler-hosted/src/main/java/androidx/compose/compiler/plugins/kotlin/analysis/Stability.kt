@@ -186,9 +186,8 @@ private fun IrClass.hasStableMarkedDescendant(): Boolean {
 }
 
 private fun IrAnnotationContainer.stabilityParamBitmask(): Int? =
-    (annotations.findAnnotation(ComposeFqNames.StabilityInferred)
-        ?.getValueArgument(0) as? IrConst
-            )?.value as? Int
+    (annotations.findAnnotation(ComposeFqNames.StabilityInferred)?.arguments[0] as? IrConst)
+        ?.value as? Int
 
 private data class SymbolForAnalysis(
     val symbol: IrClassifierSymbol,
@@ -409,12 +408,6 @@ class StabilityInferencer(
                     substitutions + type.substitutionMap(),
                     currentlyAnalyzing
                 )
-            }
-
-            type is IrTypeAbbreviation -> {
-                val aliased = type.typeAlias.owner.expandedType
-                // TODO(lmr): figure out how type.arguments plays in here
-                stabilityOf(aliased, substitutions, currentlyAnalyzing)
             }
 
             else -> error("Unexpected IrType: $type")

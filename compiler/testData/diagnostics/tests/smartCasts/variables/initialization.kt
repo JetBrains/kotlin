@@ -8,3 +8,6 @@ fun foo() {
     v = 42
     v.<!UNRESOLVED_REFERENCE!>length<!>()
 }
+
+/* GENERATED_FIR_TAGS: assignment, functionDeclaration, integerLiteral, localProperty, propertyDeclaration, smartcast,
+stringLiteral */

@@ -9,23 +9,29 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.checkers.expression.isArrayOfNothing
+import org.jetbrains.kotlin.fir.analysis.checkers.expression.unsupportedArrayOfNothingKind
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirTypeAlias
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
+import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 
 object FirArrayOfNothingTypeChecker : FirResolvedTypeRefChecker(MppCheckerKind.Common) {
-    override fun check(typeRef: FirResolvedTypeRef, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(typeRef: FirResolvedTypeRef) {
         /** Ignore typealias, see [FirErrors.TYPEALIAS_EXPANDS_TO_ARRAY_OF_NOTHINGS] */
-        if (context.containingDeclarations.lastOrNull() is FirTypeAlias) return
-        val fullyExpandedType = typeRef.coneType.fullyExpandedType(context.session)
+        if (context.containingDeclarations.lastOrNull() is FirTypeAliasSymbol) return
+        val fullyExpandedType = typeRef.coneType.fullyExpandedType()
 
         /** Ignore vararg, see varargOfNothing.kt test */
-        val isVararg = (context.containingDeclarations.lastOrNull() as? FirValueParameter)?.isVararg ?: false
-        if (!isVararg && fullyExpandedType.isArrayOfNothing(context.languageVersionSettings)) {
-            reporter.reportOn(typeRef.source, FirErrors.UNSUPPORTED, "Array<Nothing> is illegal", context)
+        val isVararg = (context.containingDeclarations.lastOrNull() as? FirValueParameterSymbol)?.isVararg ?: false
+        if (!isVararg) {
+            val arrayOfNothingKind = fullyExpandedType.unsupportedArrayOfNothingKind(context.languageVersionSettings)
+            if (arrayOfNothingKind != null) {
+                reporter.reportOn(typeRef.source, FirErrors.UNSUPPORTED, "'${arrayOfNothingKind.representation}' is an invalid array type.")
+            }
         }
     }
 }

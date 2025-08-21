@@ -11,7 +11,7 @@
   <parent>
     <artifactId>kotlin-project</artifactId>
     <groupId>org.jetbrains.kotlin</groupId>
-    <version>2.2.255-SNAPSHOT</version>
+    <version>2.3.255-SNAPSHOT</version>
     <relativePath>../../pom.xml</relativePath>
   </parent>
 
@@ -130,7 +130,7 @@
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>kotlin-maven-serialization</artifactId>
+      <artifactId>kotlin-maven-serialization-for-jps-avoid-using-this</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
@@ -181,6 +181,16 @@
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>kotlin-assignment-compiler-plugin</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>kotlin-maven-dataframe</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>kotlin-dataframe-compiler-plugin-experimental</artifactId>
       <version>${project.version}</version>
     </dependency>
   </dependencies>

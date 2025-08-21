@@ -44,3 +44,7 @@ context(A<Int>, A<String>, B) val C.p: Int
         this.c
         return 1
     }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, getter, integerLiteral, nullableType, primaryConstructor,
+propertyDeclaration, propertyDeclarationWithContext, propertyWithExtensionReceiver, setter, thisExpression,
+typeParameter */

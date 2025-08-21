@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousObject
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
-import org.jetbrains.kotlin.fir.declarations.impl.FirPrimaryConstructor
+import org.jetbrains.kotlin.fir.declarations.primaryConstructorIfAny
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
 import org.jetbrains.kotlin.fir.expressions.allReceiverExpressions
@@ -31,34 +31,33 @@ import org.jetbrains.kotlin.fir.resolve.dfa.controlFlowGraph
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
-import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.addToStdlib.lastIsInstanceOrNull
 
 object FirEnumCompanionInEnumConstructorCallChecker : FirClassChecker(MppCheckerKind.Common) {
-    override fun check(declaration: FirClass, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirClass) {
         val enumClass = when (declaration.classKind) {
-            ClassKind.ENUM_CLASS -> declaration as FirRegularClass
+            ClassKind.ENUM_CLASS -> (declaration as FirRegularClass).symbol
             ClassKind.ENUM_ENTRY -> context.containingDeclarations.lastIsInstanceOrNull()
             else -> null
         } ?: return
-        val companionOfEnum = enumClass.companionObjectSymbol ?: return
+        val companionOfEnum = enumClass.resolvedCompanionObjectSymbol ?: return
         val graph = declaration.controlFlowGraphReference?.controlFlowGraph ?: return
-        analyzeGraph(graph, companionOfEnum, enumClass, context, reporter)
+        analyzeGraph(graph, companionOfEnum, enumClass)
         if (declaration.classKind.isEnumEntry) {
-            val constructor = declaration.declarations.firstIsInstanceOrNull<FirPrimaryConstructor>()
-            val constructorGraph = constructor?.controlFlowGraphReference?.controlFlowGraph
+            val constructor = declaration.primaryConstructorIfAny(context.session)
+            val constructorGraph = constructor?.resolvedControlFlowGraphReference?.controlFlowGraph
             if (constructorGraph != null) {
-                analyzeGraph(constructorGraph, companionOfEnum, enumClass, context, reporter)
+                analyzeGraph(constructorGraph, companionOfEnum, enumClass)
             }
         }
     }
 
+    context(context: CheckerContext, reporter: DiagnosticReporter)
     private fun analyzeGraph(
         graph: ControlFlowGraph,
         companionSymbol: FirRegularClassSymbol,
-        enumClass: FirRegularClass,
-        context: CheckerContext,
-        reporter: DiagnosticReporter
+        enumClass: FirRegularClassSymbol,
     ) {
         for (node in graph.nodes) {
             if (node is CFGNodeWithSubgraphs) {
@@ -66,10 +65,11 @@ object FirEnumCompanionInEnumConstructorCallChecker : FirClassChecker(MppChecker
                     when (subGraph.kind) {
                         ControlFlowGraph.Kind.AnonymousFunctionCalledInPlace,
                         ControlFlowGraph.Kind.PropertyInitializer,
-                        ControlFlowGraph.Kind.ClassInitializer -> analyzeGraph(subGraph, companionSymbol, enumClass, context, reporter)
+                        ControlFlowGraph.Kind.ClassInitializer
+                            -> analyzeGraph(subGraph, companionSymbol, enumClass)
                         ControlFlowGraph.Kind.Class -> {
                             if (subGraph.declaration is FirAnonymousObject) {
-                                analyzeGraph(subGraph, companionSymbol, enumClass, context, reporter)
+                                analyzeGraph(subGraph, companionSymbol, enumClass)
                             }
                         }
                         else -> {}
@@ -87,8 +87,7 @@ object FirEnumCompanionInEnumConstructorCallChecker : FirClassChecker(MppChecker
                 reporter.reportOn(
                     matchingReceiver.source ?: qualifiedAccess.source,
                     FirErrors.UNINITIALIZED_ENUM_COMPANION,
-                    enumClass.symbol,
-                    context
+                    enumClass
                 )
             }
         }

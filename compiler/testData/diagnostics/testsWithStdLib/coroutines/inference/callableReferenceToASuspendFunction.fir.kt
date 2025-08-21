@@ -20,3 +20,5 @@ fun test() {
     test0(::<!INAPPLICABLE_CANDIDATE!>bar<!>)
     test1(::bar)
 }
+
+/* GENERATED_FIR_TAGS: callableReference, functionDeclaration, suspend */

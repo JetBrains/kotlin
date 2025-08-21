@@ -11,3 +11,5 @@ class A() {
     fun b()<!> {
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, primaryConstructor, stringLiteral */

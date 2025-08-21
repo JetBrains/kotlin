@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.scripting.compiler.plugin.impl.ScriptJvmCompilerFrom
 import org.jetbrains.kotlin.scripting.compiler.plugin.toCompilerMessageSeverity
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinitionProvider
 import org.jetbrains.kotlin.utils.tryConstructClassFromStringArgs
-import org.junit.Assert
 import java.io.ByteArrayOutputStream
 import java.io.PrintStream
 import kotlin.reflect.KClass
@@ -24,6 +23,7 @@ import kotlin.script.experimental.api.with
 import kotlin.script.experimental.jvm.baseClassLoader
 import kotlin.script.experimental.jvm.dependenciesFromCurrentContext
 import kotlin.script.experimental.jvm.jvm
+import kotlin.test.*
 
 internal const val NUM_4_LINE = "num: 4"
 
@@ -57,7 +57,7 @@ internal fun String.linesSplitTrim() =
     split('\n', '\r').map(String::trim).filter(String::isNotBlank)
 
 internal fun assertEqualsTrimmed(expected: String, actual: String) =
-    Assert.assertEquals(expected.linesSplitTrim(), actual.linesSplitTrim())
+    assertEquals(expected.linesSplitTrim(), actual.linesSplitTrim())
 
 // TODO: rewrite tests to avoid emulated old behavior
 internal fun compileScript(

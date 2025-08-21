@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.getClassAndItsOuterClassesWhenLocal
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
+import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
@@ -20,16 +21,18 @@ import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.AbstractTypeChecker.findCorrespondingSupertypes
 import org.jetbrains.kotlin.types.model.typeConstructor
 
-fun isCastErased(supertype: ConeKotlinType, subtype: ConeKotlinType, context: CheckerContext): Boolean {
+context(context: CheckerContext)
+fun isCastErased(supertype: ConeKotlinType, subtype: ConeKotlinType): Boolean {
     val typeContext = context.session.typeContext
 
     val isNonReifiedTypeParameter = subtype.isNonReifiedTypeParameter()
-    val isUpcast = isUpcast(context, supertype, subtype)
+    val isUpcast = isUpcast(supertype, subtype)
 
     // here we want to restrict cases such as `x is T` for x = T?, when T might have nullable upper bound
     if (isNonReifiedTypeParameter && !isUpcast) {
         // hack to save previous behavior in case when `x is T`, where T is not nullable, see IsErasedNullableTasT.kt
-        val nullableToDefinitelyNotNull = !subtype.canBeNull(context.session) && supertype.withNullability(nullable = false, typeContext) == subtype
+        val nullableToDefinitelyNotNull =
+            !subtype.canBeNull(context.session) && supertype.withNullability(nullable = false, typeContext) == subtype
         if (!nullableToDefinitelyNotNull) {
             return true
         }
@@ -39,8 +42,7 @@ fun isCastErased(supertype: ConeKotlinType, subtype: ConeKotlinType, context: Ch
     if ((supertype !is ConeErrorType && supertype.isMarkedNullable) || (subtype !is ConeErrorType && subtype.isMarkedNullable)) {
         return isCastErased(
             supertype.withNullability(nullable = false, typeContext),
-            subtype.withNullability(nullable = false, typeContext),
-            context
+            subtype.withNullability(nullable = false, typeContext)
         )
     }
 
@@ -60,14 +62,22 @@ fun isCastErased(supertype: ConeKotlinType, subtype: ConeKotlinType, context: Ch
         return true
     }
 
-    val staticallyKnownSubtype = findStaticallyKnownSubtype(supertype, regularClassSymbol, context)
+    val staticallyKnownSubtype = findStaticallyKnownSubtype(supertype, regularClassSymbol)
 
     // If the substitution failed, it means that the result is an impossible type, e.g. something like Out<in Foo>
     // In this case, we can't guarantee anything, so the cast is considered to be erased
 
     // If the type we calculated is a subtype of the cast target, it's OK to use the cast target instead.
     // If not, it's wrong to use it
-    return !AbstractTypeChecker.isSubtypeOf(context.session.typeContext, staticallyKnownSubtype, subtype, stubTypesEqualToAnything = false)
+    return !AbstractTypeChecker.isSubtypeOf(
+        context.session.typeContext.newTypeCheckerState(
+            errorTypesEqualToAnything = true,
+            stubTypesEqualToAnything = false,
+            dnnTypesEqualToFlexible = false
+        ),
+        staticallyKnownSubtype,
+        subtype
+    )
 }
 
 /**
@@ -86,15 +96,19 @@ fun isCastErased(supertype: ConeKotlinType, subtype: ConeKotlinType, context: Ch
  * subtype = List<...>
  * result = List<*>, some arguments were not inferred, replaced with '*'
  */
+context(context: CheckerContext)
 fun findStaticallyKnownSubtype(
     supertype: ConeKotlinType,
-    subTypeClassSymbol: FirRegularClassSymbol,
-    context: CheckerContext
+    subTypeClassSymbol: FirRegularClassSymbol
 ): ConeKotlinType {
     assert(!supertype.isMarkedNullable) { "This method only makes sense for non-nullable types" }
 
     val session = context.session
     val typeContext = session.typeContext
+
+    if (supertype is ConeClassLikeType && supertype.toSymbol(session) == subTypeClassSymbol) {
+        return supertype
+    }
 
     // Assume we are casting an expression of type Collection<Foo> to List<Bar>
     // First, let's make List<T>, where T is a type variable
@@ -169,11 +183,12 @@ fun ConeKotlinType.isNonReifiedTypeParameter(): Boolean {
     return this is ConeTypeParameterType && !this.lookupTag.typeParameterSymbol.isReified
 }
 
-fun isUpcast(context: CheckerContext, candidateType: ConeKotlinType, targetType: ConeKotlinType): Boolean =
+context(context: CheckerContext)
+fun isUpcast(candidateType: ConeKotlinType, targetType: ConeKotlinType): Boolean =
     AbstractTypeChecker.isSubtypeOf(context.session.typeContext, candidateType, targetType, stubTypesEqualToAnything = false)
 
+context(context: CheckerContext)
 internal fun isRefinementUseless(
-    context: CheckerContext,
     lhsType: ConeKotlinType,
     targetType: ConeKotlinType,
     expression: FirTypeOperatorCall,
@@ -199,14 +214,15 @@ internal fun isRefinementUseless(
                 } else {
                     targetType
                 }
-            isExactTypeCast(context, lhsType, refinedTargetType)
+            isExactTypeCast(lhsType, refinedTargetType)
         }
         FirOperation.IS, FirOperation.NOT_IS -> {
-            isUpcast(context, lhsType, targetType)
+            isUpcast(lhsType, targetType)
         }
         else -> throw AssertionError("Should not be here: ${expression.operation}")
     }
 }
 
-private fun isExactTypeCast(context: CheckerContext, lhsType: ConeKotlinType, targetType: ConeKotlinType): Boolean =
+context(context: CheckerContext)
+private fun isExactTypeCast(lhsType: ConeKotlinType, targetType: ConeKotlinType): Boolean =
     AbstractTypeChecker.equalTypes(context.session.typeContext, lhsType, targetType, stubTypesEqualToAnything = false)

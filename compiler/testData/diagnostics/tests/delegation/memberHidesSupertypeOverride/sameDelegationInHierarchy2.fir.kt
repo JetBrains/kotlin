@@ -20,3 +20,5 @@ fun box(): String {
     return "OK"
 }
 
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, classDeclaration, functionDeclaration, inheritanceDelegation,
+interfaceDeclaration, override, stringLiteral */

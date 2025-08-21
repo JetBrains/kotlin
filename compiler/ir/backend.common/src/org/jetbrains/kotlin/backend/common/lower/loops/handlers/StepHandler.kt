@@ -33,7 +33,7 @@ internal class StepHandler(
     override fun matchIterable(expression: IrCall): Boolean {
         val callee = expression.symbol.owner
         return callee.hasShape(extensionReceiver = true, regularParameters = 1) &&
-                callee.parameters[0].type.classOrNull in context.ir.symbols.progressionClasses &&
+                callee.parameters[0].type.classOrNull in context.symbols.progressionClasses &&
                 callee.parameters[1].type.let { it.isInt() || it.isLong() } &&
                 callee.kotlinFqName == FqName("kotlin.ranges.step")
     }
@@ -117,7 +117,8 @@ internal class StepHandler(
                 ProgressionDirection.INCREASING -> stepArgExpression
                 ProgressionDirection.DECREASING -> {
                     if (stepArgVar == null) {
-                        stepNegation = scope.createTmpVariable(stepArgExpression.shallowCopy().negate())
+                        stepNegation =
+                            scope.createTemporaryVariable(stepArgExpression.shallowCopy().negate(), inventUniqueName = false)
                         irGet(stepNegation)
                     } else {
                         // Step is already stored in a variable, just negate it.
@@ -137,14 +138,15 @@ internal class StepHandler(
                     }
                     if (stepArgVar == null) {
                         // Create a temporary variable for the possibly-negated step, so we don't have to re-check every time step is used.
-                        stepNegation = scope.createTmpVariable(
+                        stepNegation = scope.createTemporaryVariable(
                             irIfThenElse(
                                 stepType,
                                 nestedStepNonPositiveCheck,
                                 stepArgExpression.shallowCopy().negate(),
                                 stepArgExpression.shallowCopy()
                             ),
-                            nameHint = "maybeNegatedStep"
+                            nameHint = "maybeNegatedStep",
+                            inventUniqueName = false,
                         )
                         irGet(stepNegation)
                     } else {

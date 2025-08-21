@@ -46,3 +46,6 @@ fun use() {
 
 <!OPT_IN_USAGE!>function<!>()
 use()
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, annotationUseSiteTargetFile, classReference, functionDeclaration, init,
+localProperty, propertyDeclaration, stringLiteral */

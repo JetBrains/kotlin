@@ -15,3 +15,6 @@ fun foo1(o: Any) {
         s.length
     }
 }
+
+/* GENERATED_FIR_TAGS: asExpression, functionDeclaration, ifExpression, isExpression, localProperty, propertyDeclaration,
+smartcast */

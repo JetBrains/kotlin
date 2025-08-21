@@ -26,3 +26,6 @@ fun test() {
         })
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, classReference, functionDeclaration, functionalType, in, interfaceDeclaration,
+lambdaLiteral, nullableType, override, suspend, typeParameter, typeWithExtension */

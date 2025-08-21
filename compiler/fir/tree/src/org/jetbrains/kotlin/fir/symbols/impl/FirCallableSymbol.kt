@@ -15,9 +15,25 @@ import org.jetbrains.kotlin.mpp.CallableSymbolMarker
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
+import kotlin.RequiresOptIn.Level.ERROR
 
 abstract class FirCallableSymbol<out D : FirCallableDeclaration> : FirBasedSymbol<D>(), CallableSymbolMarker {
-    abstract val callableId: CallableId
+    /**
+     * Combination of a package name, a container class name (if any) and a callable name.
+     *
+     * Under some circumstances can be used as an unique id (however, not recommended generally).
+     * Equals null for local variables and parameters.
+     */
+    abstract val callableId: CallableId?
+
+    /**
+     * [callableId] having non-null value of [CallableId.PACKAGE_FQ_NAME_FOR_LOCAL].[name] for local variables/properties.
+     *
+     * Introduced specifically for rendering purposes. Please never use to identify something etc.
+     */
+    @RenderingInternals
+    val callableIdForRendering: CallableId
+        get() = callableId ?: CallableId(name)
 
     val resolvedReturnTypeRef: FirResolvedTypeRef
         get() {
@@ -37,31 +53,16 @@ abstract class FirCallableSymbol<out D : FirCallableDeclaration> : FirBasedSymbo
         get() = resolvedReturnTypeRef.coneType
 
     val resolvedReceiverTypeRef: FirResolvedTypeRef?
-        get() = calculateReceiverTypeRef()
+        get() = receiverParameterSymbol?.calculateResolvedTypeRef()
 
-    private fun calculateReceiverTypeRef(): FirResolvedTypeRef? {
-        val receiverParameter = fir.receiverParameter ?: return null
-        ensureType(receiverParameter.typeRef)
-        val receiverTypeRef = receiverParameter.typeRef
-        if (receiverTypeRef !is FirResolvedTypeRef) {
-            errorInLazyResolve("receiverTypeRef", receiverTypeRef::class, FirResolvedTypeRef::class)
-        }
+    val resolvedReceiverType: ConeKotlinType?
+        get() = resolvedReceiverTypeRef?.coneType
 
-        return receiverTypeRef
-    }
+    val receiverParameterSymbol: FirReceiverParameterSymbol?
+        get() = fir.receiverParameter?.symbol
 
-    val receiverParameter: FirReceiverParameter?
-        get() {
-            calculateReceiverTypeRef()
-            return fir.receiverParameter
-        }
-
-    val resolvedContextParameters: List<FirValueParameter>
-        get() {
-            if (fir.contextParameters.isEmpty()) return emptyList()
-            lazyResolveToPhase(FirResolvePhase.TYPES)
-            return fir.contextParameters
-        }
+    val contextParameterSymbols: List<FirValueParameterSymbol>
+        get() = fir.contextParameters.map { it.symbol }
 
     val resolvedStatus: FirResolvedDeclarationStatus
         get() = fir.resolvedStatus()
@@ -72,11 +73,13 @@ abstract class FirCallableSymbol<out D : FirCallableDeclaration> : FirBasedSymbo
     val typeParameterSymbols: List<FirTypeParameterSymbol>
         get() = fir.typeParameters.map { it.symbol }
 
+    val ownTypeParameterSymbols: List<FirTypeParameterSymbol>
+        get() = fir.typeParameters.mapNotNull { (it as? FirTypeParameter)?.symbol }
+
     val dispatchReceiverType: ConeSimpleKotlinType?
         get() = fir.dispatchReceiverType
 
-    val name: Name
-        get() = callableId.callableName
+    abstract val name: Name
 
     val containerSource: DeserializedContainerSource?
         // This is ok, because containerSource should be set during fir creation
@@ -84,8 +87,7 @@ abstract class FirCallableSymbol<out D : FirCallableDeclaration> : FirBasedSymbo
 
     fun getDeprecation(languageVersionSettings: LanguageVersionSettings): DeprecationsPerUseSite? {
         if (deprecationsAreDefinitelyEmpty()) {
-            // here should probably be `null`, see KT-74133
-            return EmptyDeprecationsPerUseSite
+            return null
         }
 
         lazyResolveToPhase(FirResolvePhase.COMPILER_REQUIRED_ANNOTATIONS)
@@ -136,12 +138,22 @@ abstract class FirCallableSymbol<out D : FirCallableDeclaration> : FirBasedSymbo
         }
     }
 
-    override fun toString(): String = "${this::class.simpleName} $callableId"
+    override fun toString(): String {
+        val description = when (isBound) {
+            true -> callableIdAsString()
+            false -> "(unbound)"
+        }
+        return "${this::class.simpleName} $description"
+    }
+
+    fun callableIdAsString(): String = callableId?.toString() ?: "<local>/$name"
 }
 
-val FirCallableSymbol<*>.isExtension: Boolean
-    get() = when (fir) {
-        is FirFunction -> fir.receiverParameter != null
-        is FirProperty -> fir.receiverParameter != null
-        is FirVariable -> false
-    }
+val FirCallableSymbol<*>.hasContextParameters: Boolean
+    get() = fir.contextParameters.isNotEmpty()
+
+@RequiresOptIn(
+    level = ERROR,
+    message = "This API is intended to be used specifically for diagnostics/dumps rendering. Please don't use in other places."
+)
+annotation class RenderingInternals

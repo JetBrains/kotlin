@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.mpp.smoke
 
+import org.gradle.api.logging.LogLevel
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.mpp.KmpIncrementalITBase
 import org.jetbrains.kotlin.gradle.testbase.*
@@ -14,6 +15,10 @@ import org.junit.jupiter.api.DisplayName
 @DisplayName("Basic incremental scenarios with tests in KMP - K2")
 @MppGradlePluginTests
 open class BasicTestIncrementalCompilationIT : KmpIncrementalITBase() {
+
+    override val defaultBuildOptions: BuildOptions
+        get() = super.defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)
+
     override val mainCompileTasks: Set<String>
         get() = setOf(
             ":app:compileCommonMainKotlinMetadata",

@@ -34,3 +34,6 @@ fun test() {
     a.getLinkedProjectsSettings()
     a.linkedProjectsSettings
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaFunction, javaProperty, localProperty, propertyDeclaration,
+starProjection */

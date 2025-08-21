@@ -1,5 +1,6 @@
 declare namespace JS_TESTS {
     type Nullable<T> = T | null | undefined
+    function KtSingleton<T>(): T & (abstract new() => any);
     namespace kotlin.collections {
         interface KtMutableList<E> /* extends kotlin.collections.KtList<E>, kotlin.collections.MutableCollection<E> */ {
             asJsArrayView(): Array<E>;
@@ -7,9 +8,18 @@ declare namespace JS_TESTS {
                 readonly "kotlin.collections.KtMutableList": unique symbol;
             };
         }
-        const KtMutableList: {
-            fromJsArray<E>(array: ReadonlyArray<E>): kotlin.collections.KtMutableList<E>;
-        };
+        abstract class KtMutableList<E> extends KtSingleton<KtMutableList.$metadata$.constructor>() {
+            private constructor();
+        }
+        namespace KtMutableList {
+            /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+            namespace $metadata$ {
+                abstract class constructor {
+                    fromJsArray<E>(array: ReadonlyArray<E>): kotlin.collections.KtMutableList<E>;
+                    private constructor();
+                }
+            }
+        }
     }
     namespace foo {
         interface SomeExternalInterface {
@@ -33,5 +43,31 @@ declare namespace JS_TESTS {
         function createList(): kotlin.collections.KtMutableList<any /*UnknownType **/>;
         function defaultParametersAtTheBegining(a: string | undefined, b: string): string;
         function nonDefaultParameterInBetween(a: string | undefined, b: string, c?: string): string;
+        class Scope1 {
+            constructor(a: string);
+            get a(): string;
+            getA(): string;
+        }
+        namespace Scope1 {
+            /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+            namespace $metadata$ {
+                const constructor: abstract new () => Scope1;
+            }
+        }
+        class Scope2 {
+            constructor(a: string);
+            get a(): string;
+            getA(): string;
+        }
+        namespace Scope2 {
+            /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+            namespace $metadata$ {
+                const constructor: abstract new () => Scope2;
+            }
+        }
+        function concatWithContextParameters(scope1: foo.Scope1, scope2: foo.Scope2): string;
+        function concatWithExtensionAndContextParameter(scope1: foo.Scope1, _this_: foo.Scope2): string;
+        function getWithExtension(_this_: foo.Scope1): string;
+        function context<A, B, R>(a: A, b: B, block: (p0: A, p1: B) => R): R;
     }
 }

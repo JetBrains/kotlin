@@ -21,3 +21,6 @@ class Test2: Test() {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: break, classDeclaration, continue, forLoop, functionDeclaration, functionalType, init, inline,
+integerLiteral, lambdaLiteral, localProperty, propertyDeclaration, rangeExpression, superExpression */

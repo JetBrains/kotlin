@@ -1,5 +1,7 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // LANGUAGE: +ContractSyntaxV2
+// LANGUAGE: -AllowContractsOnPropertyAccessors
+
 import kotlin.contracts.*
 
 class A {
@@ -18,3 +20,6 @@ class A {
     fun f(arg: Int) = arg * arg
     fun g(arg: Double) = arg / 2
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, assignment, classDeclaration, contractConditionalEffect, contracts,
+functionDeclaration, getter, integerLiteral, multiplicativeExpression, propertyDeclaration, setter */

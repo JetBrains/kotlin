@@ -25,10 +25,12 @@ import org.jetbrains.org.objectweb.asm.tree.analysis.BasicValue
 import org.jetbrains.org.objectweb.asm.tree.analysis.Frame
 import kotlin.math.max
 
-private const val COROUTINES_DEBUG_METADATA_VERSION = 1
+private const val COROUTINES_DEBUG_METADATA_VERSION = 2
+private const val COROUTINES_DEBUG_METADATA_VERSION_BEFORE_2_3 = 1
 
 private const val COROUTINES_METADATA_SOURCE_FILE_JVM_NAME = "f"
 private const val COROUTINES_METADATA_LINE_NUMBERS_JVM_NAME = "l"
+private const val COROUTINES_METADATA_NEXT_LINE_NUMBERS_JVM_NAME = "nl"
 private const val COROUTINES_METADATA_LOCAL_NAMES_JVM_NAME = "n"
 private const val COROUTINES_METADATA_SPILLED_JVM_NAME = "s"
 private const val COROUTINES_METADATA_INDEX_TO_LABEL_JVM_NAME = "i"
@@ -67,7 +69,13 @@ class CoroutineTransformerMethodVisitor(
     private var continuationIndex = if (isForNamedFunction) -1 else 0
     private var dataIndex = if (isForNamedFunction) -1 else 1
 
+    private var generatedCodeMarkers: GeneratedCodeMarkers? = null
+
     override fun performTransformations(methodNode: MethodNode) {
+        if (config.enhancedCoroutinesDebugging) {
+            generatedCodeMarkers = GeneratedCodeMarkers.fillOutMarkersAndCleanUpMethodNode(methodNode)
+        }
+
         removeFakeContinuationConstructorCall(methodNode)
 
         replaceReturnsUnitMarkersWithPushingUnitOnStack(methodNode)
@@ -89,7 +97,12 @@ class CoroutineTransformerMethodVisitor(
 
         checkForSuspensionPointInsideMonitor(methodNode, suspensionPoints)
 
-        // First instruction in the method node may change in case of named function
+        // Because we add a sprinkle of fictitious line numbers, it is important not to lose correct linenumbers for suspension points.
+        addLineNumberForSuspensionPointsAtTheSameLine(methodNode, suspensionPoints)
+
+        // First instruction in the method node is different for named functions and for lambdas
+        //   For named functions, before the first instruction we have continuation check
+        //   For lambdas, we have lambda arguments unspilling
         var actualCoroutineStart = methodNode.instructions.first
 
         if (isForNamedFunction) {
@@ -108,6 +121,10 @@ class CoroutineTransformerMethodVisitor(
             actualCoroutineStart = methodNode.instructions.findLast { isSuspendLambdaParameterMarker(it) }?.next ?: actualCoroutineStart
         }
 
+        if (!isForNamedFunction) {
+            markFakeLineNumberForLambdaArgumentUnspilling(methodNode)
+        }
+
         for (suspensionPoint in suspensionPoints) {
             splitTryCatchBlocksContainingSuspensionPoint(methodNode, suspensionPoint)
         }
@@ -122,6 +139,7 @@ class CoroutineTransformerMethodVisitor(
         val suspendMarkerVarIndex = methodNode.maxLocals++
 
         val suspensionPointLineNumbers = suspensionPoints.map { findSuspensionPointLineNumber(it) }
+        val suspensionPointNextLineNumbers = suspensionPoints.map { findSuspensionPointNextLineNumber(it) }
 
         // Create states in state-machine, to which state-machine can jump
         val stateLabels = suspensionPoints.withIndex().map {
@@ -130,10 +148,58 @@ class CoroutineTransformerMethodVisitor(
             )
         }
 
+        generateStateMachinesTableswitch(methodNode, actualCoroutineStart, suspendMarkerVarIndex, suspensionPoints, stateLabels)
+
+        initializeFakeInlinerVariables(methodNode, stateLabels)
+
+        dropSuspensionMarkers(methodNode)
+        dropUnboxInlineClassMarkers(methodNode, suspensionPoints)
+        methodNode.removeEmptyCatchBlocks()
+        if (config.nullOutSpilledCoroutineLocalsUsingStdlibFunction) {
+            methodNode.extendParameterRanges()
+            methodNode.extendSuspendLambdaParameterRanges()
+        }
+        dropSuspendLambdaParameterMarkers(methodNode)
+
+        if (!config.nullOutSpilledCoroutineLocalsUsingStdlibFunction && !config.enableDebugMode) {
+            updateLvtAccordingToLiveness(methodNode, isForNamedFunction, stateLabels)
+        }
+
+        generatedCodeMarkers?.addFakeVariablesToLVTAndInitializeThem(methodNode, isForNamedFunction)
+
+        writeDebugMetadata(methodNode, suspensionPointLineNumbers, suspensionPointNextLineNumbers, spilledToVariableMapping)
+    }
+
+    private fun addLineNumberForSuspensionPointsAtTheSameLine(node: MethodNode, points: List<SuspensionPoint>) {
+        for (i in points.dropLast(1).indices) {
+            if (InsnSequence(points[i].suspensionCallEnd.next, points[i+1].suspensionCallBegin).none { it is LineNumberNode }) {
+                val lineNumber = findSuspensionPointLineNumber(points[i])
+                if (lineNumber != null) {
+                    node.instructions.insertBefore(points[i+1].suspensionCallBegin, withInstructionAdapter {
+                        val label = Label()
+                        mark(label)
+                        visitLineNumber(lineNumber.line, label)
+                    })
+                }
+            }
+        }
+    }
+
+    private fun generateStateMachinesTableswitch(
+        methodNode: MethodNode,
+        actualCoroutineStart: AbstractInsnNode?,
+        suspendMarkerVarIndex: Int,
+        suspensionPoints: List<SuspensionPoint>,
+        stateLabels: List<LabelNode>,
+    ) {
         methodNode.instructions.apply {
             val tableSwitchLabel = LabelNode()
             val firstStateLabel = LabelNode()
             val defaultLabel = LabelNode()
+
+            insertBefore(actualCoroutineStart, withInstructionAdapter {
+                GeneratedCodeMarkers.markFakeLineNumber(this, generatedCodeMarkers?.tableswitch)
+            })
 
             // tableswitch(this.label)
             insertBefore(
@@ -194,27 +260,22 @@ class CoroutineTransformerMethodVisitor(
             insert(last, LineNumberNode(lineNumber, defaultLabel))
 
             insert(last, withInstructionAdapter {
+                GeneratedCodeMarkers.markFakeLineNumber(this, generatedCodeMarkers?.unreachable)
+            })
+
+            insert(last, withInstructionAdapter {
                 AsmUtil.genThrow(this, "java/lang/IllegalStateException", ILLEGAL_STATE_ERROR_MESSAGE)
                 areturn(Type.VOID_TYPE)
             })
         }
+    }
 
-        initializeFakeInlinerVariables(methodNode, stateLabels)
-
-        dropSuspensionMarkers(methodNode)
-        dropUnboxInlineClassMarkers(methodNode, suspensionPoints)
-        methodNode.removeEmptyCatchBlocks()
-        if (config.nullOutSpilledCoroutineLocalsUsingStdlibFunction) {
-            methodNode.extendParameterRanges()
-            methodNode.extendSuspendLambdaParameterRanges()
-        }
-        dropSuspendLambdaParameterMarkers(methodNode)
-
-        if (!config.nullOutSpilledCoroutineLocalsUsingStdlibFunction && !config.enableDebugMode) {
-            updateLvtAccordingToLiveness(methodNode, isForNamedFunction, stateLabels)
-        }
-
-        writeDebugMetadata(methodNode, suspensionPointLineNumbers, spilledToVariableMapping)
+    private fun markFakeLineNumberForLambdaArgumentUnspilling(node: MethodNode) {
+        val label = node.instructions.find { isSuspendLambdaParameterMarker(it) }?.findPreviousOrNull { it is LabelNode }
+        if (label == null) return
+        node.instructions.insert(label, withInstructionAdapter {
+            GeneratedCodeMarkers.markFakeLineNumber(this, generatedCodeMarkers?.lambdaArgumentsUnspilling)
+        })
     }
 
     // When suspension point is inlined, it is in range of fake inliner variables.
@@ -303,8 +364,11 @@ class CoroutineTransformerMethodVisitor(
         }
     }
 
-    private fun findSuspensionPointLineNumber(suspensionPoint: SuspensionPoint) =
+    private fun findSuspensionPointLineNumber(suspensionPoint: SuspensionPoint): LineNumberNode? =
         suspensionPoint.suspensionCallBegin.findPreviousOrNull { it is LineNumberNode } as LineNumberNode?
+
+    private fun findSuspensionPointNextLineNumber(suspensionPoint: SuspensionPoint): LineNumberNode? =
+        suspensionPoint.suspensionCallEnd.findNextOrNull { it is LineNumberNode } as LineNumberNode?
 
     private fun checkForSuspensionPointInsideMonitor(methodNode: MethodNode, suspensionPoints: List<SuspensionPoint>) {
         if (methodNode.instructions.asSequence().none { it.opcode == Opcodes.MONITORENTER }) return
@@ -346,12 +410,18 @@ class CoroutineTransformerMethodVisitor(
     private fun writeDebugMetadata(
         methodNode: MethodNode,
         suspensionPointLineNumbers: List<LineNumberNode?>,
+        suspensionPointNextLineNumbers: List<LineNumberNode?>,
         spilledToLocalMapping: List<List<SpilledVariableAndField>>
     ) {
         val lines = suspensionPointLineNumbers.map { it?.line ?: -1 }
         val metadata = classBuilderForCoroutineState.newAnnotation(DEBUG_METADATA_ANNOTATION_ASM_TYPE.descriptor, true)
         metadata.visit(COROUTINES_METADATA_SOURCE_FILE_JVM_NAME, sourceFile)
         metadata.visit(COROUTINES_METADATA_LINE_NUMBERS_JVM_NAME, lines.toIntArray())
+
+        if (config.generateDebugMetadataV2) {
+            val nextLines = suspensionPointNextLineNumbers.map { it?.line ?: -1 }
+            metadata.visit(COROUTINES_METADATA_NEXT_LINE_NUMBERS_JVM_NAME, nextLines.toIntArray())
+        }
 
         val debugIndexToLabel = spilledToLocalMapping.withIndex().flatMap { (labelIndex, list) ->
             list.map { labelIndex }
@@ -366,10 +436,10 @@ class CoroutineTransformerMethodVisitor(
         }.visitEnd()
         metadata.visit(COROUTINES_METADATA_METHOD_NAME_JVM_NAME, methodNode.name)
         metadata.visit(COROUTINES_METADATA_CLASS_NAME_JVM_NAME, Type.getObjectType(containingClassInternalName).className)
-        @Suppress("ConstantConditionIf")
-        if (COROUTINES_DEBUG_METADATA_VERSION != 1) {
-            metadata.visit(COROUTINES_METADATA_VERSION_JVM_NAME, COROUTINES_DEBUG_METADATA_VERSION)
-        }
+        metadata.visit(
+            COROUTINES_METADATA_VERSION_JVM_NAME,
+            if (config.generateDebugMetadataV2) COROUTINES_DEBUG_METADATA_VERSION else COROUTINES_DEBUG_METADATA_VERSION_BEFORE_2_3
+        )
         metadata.visitEnd()
     }
 
@@ -452,6 +522,8 @@ class CoroutineTransformerMethodVisitor(
             // - Otherwise it's still can be a recursive call. To check it's not the case we set the last bit in the label in
             // `doResume` just before calling the suspend function (see kotlin.coroutines.experimental.jvm.internal.CoroutineImplForNamedFunction).
             // So, if it's set we're in continuation.
+
+            GeneratedCodeMarkers.markFakeLineNumber(this, generatedCodeMarkers?.checkContinuation)
 
             visitVarInsn(Opcodes.ALOAD, continuationArgumentIndex)
             instanceOf(objectTypeForState)
@@ -590,7 +662,10 @@ class CoroutineTransformerMethodVisitor(
      * When a variable becomes dead, we have to clean it up - spilling null into continuation.
      */
     private fun spillVariables(suspensionPoints: List<SuspensionPoint>, methodNode: MethodNode): List<List<SpilledVariableAndField>> {
+        if (suspensionPoints.isEmpty()) return emptyList()
+
         val frames: Array<out Frame<BasicValue>?> = performSpilledVariableFieldTypesAnalysis(methodNode, containingClassInternalName)
+        val afterResumeFrames = performUninitializedAfterResumeVariablesAnalysis(suspensionPoints, methodNode, containingClassInternalName)
 
         val suspendLambdaParameters =
             if (config.nullOutSpilledCoroutineLocalsUsingStdlibFunction) methodNode.collectSuspendLambdaParameterSlots()
@@ -611,6 +686,8 @@ class CoroutineTransformerMethodVisitor(
         val referencesToSpillBySuspensionPointIndex = mutableListOf<List<SpillableVariable>>()
         // while primitives shall not
         val primitivesToSpillBySuspensionPointIndex = mutableListOf<List<SpillableVariable>>()
+        // both references and primitives
+        val variablesToSpillBySuspensionPointIndex = mutableListOf<List<SpillableVariable>>()
 
         // Collect information about spillable variables, that we use to determine which variables we need to cleanup
         for (suspension in suspensionPoints) {
@@ -634,6 +711,7 @@ class CoroutineTransformerMethodVisitor(
 
             referencesToSpillBySuspensionPointIndex += referencesToSpill
             primitivesToSpillBySuspensionPointIndex += primitivesToSpill
+            variablesToSpillBySuspensionPointIndex += variablesToSpill
 
             for ((type, index) in varsCountByType) {
                 maxVarsCountByType[type] = max(maxVarsCountByType[type] ?: 0, index)
@@ -649,6 +727,11 @@ class CoroutineTransformerMethodVisitor(
         val spilledToVariableMapping = mapFieldNameToVariable(
             methodNode, suspensionPoints, referencesToSpillBySuspensionPointIndex, primitivesToSpillBySuspensionPointIndex
         )
+
+        // for each suspension point, check if there are some dead non-spilled variables that will be spilled on further points
+        // but could be unitialized there if resumed on this point
+        val varilablesForReinitializationBySuspensionPointIndex =
+            calculateVariablesToReinitialize(suspensionPoints, afterResumeFrames, methodNode, variablesToSpillBySuspensionPointIndex)
 
         // Mutate method node
         for (suspensionPointIndex in suspensionPoints.indices) {
@@ -671,6 +754,10 @@ class CoroutineTransformerMethodVisitor(
             for (primitiveToSpill in primitivesToSpillBySuspensionPointIndex[suspensionPointIndex]) {
                 generateSpillAndUnspill(methodNode, suspension, primitiveToSpill, suspendLambdaParameters)
             }
+
+            for (variable in varilablesForReinitializationBySuspensionPointIndex[suspensionPointIndex]) {
+                generateFakeUnspill(methodNode, suspension, variable)
+            }
         }
 
         for (entry in maxVarsCountByType) {
@@ -684,6 +771,37 @@ class CoroutineTransformerMethodVisitor(
         }
 
         return spilledToVariableMapping
+    }
+
+    private fun calculateVariablesToReinitialize(
+        suspensionPoints: List<SuspensionPoint>,
+        afterResumeFrames: Array<out Frame<ResumeDependentValue>?>,
+        methodNode: MethodNode,
+        variablesToSpillBySuspensionPointIndex: MutableList<List<SpillableVariable>>,
+    ): Array<MutableList<SpillableVariable>> {
+        val varilablesForReinitializationBySuspensionPointIndex = Array(suspensionPoints.size) { mutableListOf<SpillableVariable>() }
+        for ((spIndex, suspensionPoint) in suspensionPoints.withIndex()) {
+            val resumeDependentFrame = afterResumeFrames[methodNode.instructions.indexOf(suspensionPoint.suspensionCallEnd)]
+                ?: error(
+                    "Missing 'after resume' analysis data for ${suspensionPoint.suspensionCallEnd} " +
+                            "at ${containingClassInternalName}::${methodNode.name}"
+                )
+            for (variable in variablesToSpillBySuspensionPointIndex[spIndex]) {
+                val resumeDependentValue = resumeDependentFrame.getLocal(variable.slot)
+                    ?: error("Missing 'after resume' analysis data for slot ${variable.slot}")
+                resumeDependentValue.states.withIndex().filter { it.value.isUnitialized() }.forEach {
+                    val otherSpIndex = it.index
+                    // it was deduced by analysis that there is a path between suspension points (otherSpIndex -> spIndex) with no
+                    // STOREs to the variable's slot
+                    if (variablesToSpillBySuspensionPointIndex[otherSpIndex].all { it.slot != variable.slot }) {
+                        // .. and the variable is not spilled on preceding (other) SP, so we need to additionally initialize it
+                        // with some value (e.g. default one) on unspill block
+                        varilablesForReinitializationBySuspensionPointIndex[otherSpIndex].add(variable)
+                    }
+                }
+            }
+        }
+        return varilablesForReinitializationBySuspensionPointIndex
     }
 
     private fun generateSpillAndUnspill(
@@ -761,6 +879,21 @@ class CoroutineTransformerMethodVisitor(
 
                 splitLvtRecord(methodNode, suspension, local, localRestart)
             }
+        }
+    }
+
+    private fun generateFakeUnspill(methodNode: MethodNode, suspension: SuspensionPoint, variable: SpillableVariable) {
+        with(methodNode.instructions) {
+            insert(suspension.tryCatchBlockEndLabelAfterSuspensionCall, withInstructionAdapter {
+                when(variable.normalizedType.sort) {
+                    Type.INT, Type.SHORT, Type.BYTE, Type.BOOLEAN, Type.CHAR -> iconst(0)
+                    Type.FLOAT -> fconst(0f)
+                    Type.DOUBLE -> dconst(0.0)
+                    Type.LONG -> lconst(0L)
+                    else -> aconst(null)
+                }
+                store(variable.slot, variable.normalizedType)
+            })
         }
     }
 
@@ -923,7 +1056,18 @@ class CoroutineTransformerMethodVisitor(
             }
             cursor = cursor.next
         }
-        return true
+
+        // Check whether the variable range has meaningful operations in it
+        cursor = local.start
+        while (cursor != null && cursor != local.end) {
+            if (cursor.isMeaningful) {
+                // found at least one meaningful operation
+                return true
+            }
+            cursor = cursor.next
+        }
+
+        return false
     }
 
     private fun mapFieldNameToVariable(
@@ -1081,6 +1225,8 @@ class CoroutineTransformerMethodVisitor(
             )
 
             insert(suspension.tryCatchBlockEndLabelAfterSuspensionCall, withInstructionAdapter {
+                GeneratedCodeMarkers.markFakeLineNumber(this, generatedCodeMarkers?.checkCOROUTINE_SUSPENDED)
+
                 dup()
                 load(suspendMarkerVarIndex, AsmTypes.OBJECT_TYPE)
                 ifacmpne(continuationLabelAfterLoadedResult.label)
@@ -1217,6 +1363,15 @@ class CoroutineTransformerMethodVisitor(
         return
     }
 
+    private fun InstructionAdapter.generateResumeWithExceptionCheck(dataIndex: Int) {
+        // Check if resumeWithException has been called
+
+        GeneratedCodeMarkers.markFakeLineNumber(this, generatedCodeMarkers?.checkResult)
+
+        load(dataIndex, AsmTypes.OBJECT_TYPE)
+        invokestatic("kotlin/ResultKt", "throwOnFailure", "(Ljava/lang/Object;)V", false)
+    }
+
     private data class SpilledVariableAndField(val fieldName: String, val variableName: String)
 }
 
@@ -1299,13 +1454,6 @@ private fun InstructionAdapter.generateContinuationConstructorCall(
         ),
         false
     )
-}
-
-private fun InstructionAdapter.generateResumeWithExceptionCheck(dataIndex: Int) {
-    // Check if resumeWithException has been called
-
-    load(dataIndex, AsmTypes.OBJECT_TYPE)
-    invokestatic("kotlin/ResultKt", "throwOnFailure", "(Ljava/lang/Object;)V", false)
 }
 
 private fun Type.fieldNameForVar(index: Int) = descriptor.first() + "$" + index

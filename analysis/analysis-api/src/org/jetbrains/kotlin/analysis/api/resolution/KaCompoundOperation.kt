@@ -1,11 +1,12 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.analysis.api.resolution
 
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeOwner
 import org.jetbrains.kotlin.analysis.api.symbols.KaNamedFunctionSymbol
 import org.jetbrains.kotlin.psi.KtExpression
@@ -16,6 +17,7 @@ import org.jetbrains.kotlin.psi.KtExpression
  * The left-hand operand (the variable or array element expression) is represented in the call variants, [KaVariableAccessCall] and
  * [KaCompoundArrayAccessCall], which contain the [KaCompoundOperation].
  */
+@OptIn(KaImplementationDetail::class)
 public sealed interface KaCompoundOperation : KaLifetimeOwner {
     /**
      * The function that computes the value for this compound access. For example, if the access is `+=`, this is the resolved `plus`
@@ -29,6 +31,7 @@ public sealed interface KaCompoundOperation : KaLifetimeOwner {
  * computed value. Calls to `<op>Assign` are not represented by [KaCompoundAssignOperation].
  */
 @KaExperimentalApi
+@SubclassOptInRequired(KaImplementationDetail::class)
 public interface KaCompoundAssignOperation : KaCompoundOperation {
     /**
      * The kind of assignment operation (`+=`, `-=`, and so on).
@@ -77,6 +80,7 @@ public interface KaCompoundAssignOperation : KaCompoundOperation {
  * decrements, and writes the computed value.
  */
 @KaExperimentalApi
+@SubclassOptInRequired(KaImplementationDetail::class)
 public interface KaCompoundUnaryOperation : KaCompoundOperation {
     /**
      * The kind of compound unary operation (`++` or `--`).

@@ -18,3 +18,5 @@ actual class Foo : Base() {
     actual override var foo: Int = 2
         public set
 }
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, integerLiteral, override, propertyDeclaration */

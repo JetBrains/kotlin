@@ -7,13 +7,8 @@ package org.jetbrains.kotlin.analysis.api.standalone.base.packages
 
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
-import org.jetbrains.kotlin.analysis.api.platform.packages.KotlinPackageProvider
-import org.jetbrains.kotlin.analysis.api.platform.packages.KotlinPackageProviderFactory
-import org.jetbrains.kotlin.analysis.api.platform.packages.KotlinPackageProviderMerger
-import org.jetbrains.kotlin.analysis.api.platform.packages.createPackageProvider
-import org.jetbrains.kotlin.analysis.api.platform.packages.KotlinPackageProviderBase
 import org.jetbrains.kotlin.analysis.api.platform.mergeSpecificProviders
-import org.jetbrains.kotlin.analysis.api.platform.packages.KotlinCompositePackageProvider
+import org.jetbrains.kotlin.analysis.api.platform.packages.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtFile
@@ -41,18 +36,17 @@ class KotlinStandalonePackageProvider(
         return packageFqName.isRoot || packageFqName in kotlinPackageToSubPackages
     }
 
-    override fun getKotlinOnlySubPackagesFqNames(packageFqName: FqName, nameFilter: (Name) -> Boolean): Set<Name> {
-        return kotlinPackageToSubPackages[packageFqName]?.filterTo(mutableSetOf()) { nameFilter(it) } ?: emptySet()
+    override fun getKotlinOnlySubpackageNames(packageFqName: FqName): Set<Name> {
+        return kotlinPackageToSubPackages[packageFqName] ?: emptySet()
     }
 }
 
 class KotlinStandalonePackageProviderFactory(
     private val project: Project,
     private val files: Collection<KtFile>
-) : KotlinPackageProviderFactory {
-    override fun createPackageProvider(searchScope: GlobalSearchScope): KotlinPackageProvider {
-        return KotlinStandalonePackageProvider(project, searchScope, files)
-    }
+) : KotlinCachingPackageProviderFactory(project) {
+    override fun createNewPackageProvider(searchScope: GlobalSearchScope): KotlinPackageProvider =
+        KotlinStandalonePackageProvider(project, searchScope, files)
 }
 
 class KotlinStandalonePackageProviderMerger(private val project: Project) : KotlinPackageProviderMerger {

@@ -9,7 +9,6 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.platform.packages.createPackagePartProvider
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileModule
-import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
 import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.factories.LLLibrarySymbolProviderFactory
@@ -47,8 +46,8 @@ internal class LLFirCommonSessionFactory(project: Project) : LLFirAbstractSessio
         }
     }
 
-    override fun createLibrarySession(module: KaModule): LLFirLibraryOrLibrarySourceResolvableModuleSession {
-        return doCreateLibrarySession(module) { context ->
+    override fun createResolvableLibrarySession(module: KaModule): LLFirLibraryOrLibrarySourceResolvableModuleSession {
+        return doCreateResolvableLibrarySession(module) { context ->
             register(
                 FirSymbolProvider::class,
                 LLModuleWithDependenciesSymbolProvider(
@@ -64,7 +63,7 @@ internal class LLFirCommonSessionFactory(project: Project) : LLFirAbstractSessio
         }
     }
 
-    override fun createBinaryLibrarySession(module: KaLibraryModule): LLFirLibrarySession {
+    override fun createBinaryLibrarySession(module: KaModule): LLFirLibrarySession {
         return doCreateBinaryLibrarySession(module) {
             registerPlatformSpecificComponentsIfAny(module)
         }
@@ -90,7 +89,6 @@ internal class LLFirCommonSessionFactory(project: Project) : LLFirAbstractSessio
     override fun createProjectLibraryProvidersForScope(
         session: LLFirSession,
         scope: GlobalSearchScope,
-        isFallbackDependenciesProvider: Boolean,
     ): List<FirSymbolProvider> {
         val moduleData = session.moduleData
         val moduleDataProvider = SingleModuleDataProvider(moduleData)
@@ -101,7 +99,6 @@ internal class LLFirCommonSessionFactory(project: Project) : LLFirAbstractSessio
                     session,
                     packagePartProvider,
                     scope,
-                    isFallbackDependenciesProvider,
                 )
             )
 

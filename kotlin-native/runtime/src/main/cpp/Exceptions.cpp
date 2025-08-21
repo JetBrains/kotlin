@@ -78,9 +78,16 @@ void RUNTIME_NORETURN terminateWithUnhandledException(KRef exception) {
     kotlin::AssertThreadState(kotlin::ThreadState::kRunnable);
     concurrentTerminateWrapper([exception]() {
         ReportUnhandledException(exception);
+
+        // Just in case.
+        // At this stage we are more interested in the exception than in the thread state checker failure.
+        kotlin::CallsCheckerIgnoreGuard ignoreCallChecks;
+
 #if KONAN_REPORT_BACKTRACE_TO_IOS_CRASH_LOG
         ReportBacktraceToIosCrashLog(exception);
 #endif
+
+        kotlin::ThreadStateGuard guard(kotlin::ThreadState::kNative);
 
         // Best effort to make sure the reported exception gets actually printed:
         konan::consoleFlush();

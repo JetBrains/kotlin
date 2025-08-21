@@ -16,3 +16,6 @@ fun rain() {
     5.(b)().inv()
     5.(id(b))().inv() // should be consistent
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionalType, getter, integerLiteral, lambdaLiteral, nullableType,
+propertyDeclaration, propertyWithExtensionReceiver, stringLiteral, typeParameter, typeWithExtension */

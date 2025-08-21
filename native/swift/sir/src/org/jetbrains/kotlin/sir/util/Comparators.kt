@@ -24,6 +24,12 @@ object Comparators {
         { mangleParameters(it.parameters) },
     )
 
+    val stableSubscriptComparator: Comparator<SirSubscript> = compareBy(
+        { it.returnType.swift },
+        { it.parameters.size },
+        { mangleParameters(it.parameters) },
+    )
+
     val stableCallableComparator: Comparator<SirCallable> = compareBy<SirCallable> {
         when (it) {
             is SirInit -> 0
@@ -33,12 +39,29 @@ object Comparators {
     }.thenComparing(stableInitComparator)
         .thenComparing(stableFunctionComparator)
 
+    val stableBridgeComparator: Comparator<SirBridge> = Comparator<SirBridge> { lhs, rhs ->
+        when (lhs) {
+            is SirFunctionBridge -> {
+                when (rhs) {
+                    is SirFunctionBridge -> lhs.name.compareTo(rhs.name)
+                    is SirTypeBindingBridge -> 1
+                }
+            }
+            is SirTypeBindingBridge -> {
+                when (rhs) {
+                    is SirFunctionBridge -> -1
+                    is SirTypeBindingBridge -> lhs.name.compareTo(rhs.name)
+                }
+            }
+        }
+    }
+
     private fun mangleParameters(params: List<SirParameter>): String =
         params.joinToString { "${it.parameterName}-${it.argumentName}:${it.type.swift}" }
 
     private val SirType.swift
         get(): String = when (this) {
-            is SirExistentialType -> error("Existential types are not supported yet")
+            is SirExistentialType -> "Any" + protocols.count() + this.protocols.joinToString(separator = "_") { it.name }
             is SirNominalType -> typeDeclaration.name
             is SirErrorType -> "SirErrorType"
             is SirUnsupportedType -> "SirUnsupportedType"

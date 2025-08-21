@@ -6,3 +6,5 @@
 class MyHashMap : java.util.HashMap<String, String>() {
     fun getOrDefault(key: String, defaultValue: String): String = TODO()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration */

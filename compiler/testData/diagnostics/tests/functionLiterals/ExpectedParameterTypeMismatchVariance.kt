@@ -19,3 +19,6 @@ fun test(s: Sub) {
     foo(<!TYPE_MISMATCH, TYPE_MISMATCH!>fun(<!EXPECTED_PARAMETER_TYPE_MISMATCH!>t: Sub<!>) = s<!>)
     foo(<!TYPE_MISMATCH!>fun(t): Super = s<!>)
 }
+
+/* GENERATED_FIR_TAGS: anonymousFunction, classDeclaration, functionDeclaration, functionalType, interfaceDeclaration,
+lambdaLiteral */

@@ -25,3 +25,6 @@ actual class Bar actual constructor() {
     actual val bus: Any
         get() = "bus"
 }
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, functionDeclaration, getter, ifExpression, integerLiteral,
+isExpression, localProperty, primaryConstructor, propertyDeclaration, smartcast, stringLiteral */

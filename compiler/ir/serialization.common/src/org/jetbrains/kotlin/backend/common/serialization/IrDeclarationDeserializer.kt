@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrVariableImpl
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
 import org.jetbrains.kotlin.ir.symbols.*
-import org.jetbrains.kotlin.ir.symbols.impl.IrTypeParameterSymbolImpl
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.*
 import org.jetbrains.kotlin.ir.util.*
@@ -42,7 +41,6 @@ import org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclarationBase
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrDefinitelyNotNullType as ProtoDefinitelyNotNullType
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrDynamicType as ProtoDynamicType
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrEnumEntry as ProtoEnumEntry
-import org.jetbrains.kotlin.backend.common.serialization.proto.IrErrorDeclaration as ProtoErrorDeclaration
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrErrorType as ProtoErrorType
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression as ProtoExpression
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrField as ProtoField
@@ -57,7 +55,6 @@ import org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeLegac
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeNullability as ProtoSimpleTypeNullablity
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrStatement as ProtoStatement
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrType as ProtoType
-import org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeAbbreviation as ProtoTypeAbbreviation
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeAlias as ProtoTypeAlias
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeParameter as ProtoTypeParameter
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter as ProtoValueParameter
@@ -119,14 +116,12 @@ class IrDeclarationDeserializer(
 
         val arguments = proto.argumentList.memoryOptimizedMap { deserializeIrTypeArgument(it) }
         val annotations = deserializeAnnotations(proto.annotationList)
-        val abbreviation = if (proto.hasAbbreviation()) deserializeTypeAbbreviation(proto.abbreviation) else null
 
         return IrSimpleTypeImpl(
             symbol,
             deserializeSimpleTypeNullability(proto.nullability),
             arguments,
-            annotations,
-            abbreviation
+            annotations
         )
     }
 
@@ -136,24 +131,14 @@ class IrDeclarationDeserializer(
 
         val arguments = proto.argumentList.memoryOptimizedMap { deserializeIrTypeArgument(it) }
         val annotations = deserializeAnnotations(proto.annotationList)
-        val abbreviation = if (proto.hasAbbreviation()) deserializeTypeAbbreviation(proto.abbreviation) else null
 
         return IrSimpleTypeImpl(
             symbol,
             SimpleTypeNullability.fromHasQuestionMark(proto.hasQuestionMark),
             arguments,
-            annotations,
-            abbreviation
+            annotations
         )
     }
-
-    private fun deserializeTypeAbbreviation(proto: ProtoTypeAbbreviation): IrTypeAbbreviation =
-        IrTypeAbbreviationImpl(
-            deserializeIrSymbol(proto.typeAlias).checkSymbolType(TYPEALIAS_SYMBOL),
-            proto.hasQuestionMark,
-            proto.argumentList.memoryOptimizedMap { deserializeIrTypeArgument(it) },
-            deserializeAnnotations(proto.annotationList)
-        )
 
     private val SIMPLE_DYNAMIC_TYPE = IrDynamicTypeImpl(emptyList(), Variance.INVARIANT)
 
@@ -203,7 +188,7 @@ class IrDeclarationDeserializer(
         }
 
     internal fun deserializeIrSymbol(code: Long): IrSymbol {
-        return symbolDeserializer.deserializeIrSymbol(code)
+        return symbolDeserializer.deserializeSymbolWithOwnerMaybeInOtherFile(code)
     }
 
     private var isEffectivelyExternal = false
@@ -223,7 +208,7 @@ class IrDeclarationDeserializer(
         setParent: Boolean = true,
         block: (IrSymbol, IdSignature, Int, Int, IrDeclarationOrigin, Long) -> T,
     ): T where T : IrDeclaration, T : IrSymbolOwner {
-        val (s, uid) = symbolDeserializer.deserializeIrSymbolToDeclare(proto.symbol)
+        val (s, uid) = symbolDeserializer.deserializeSymbolToDeclareInCurrentFile(proto.symbol)
         val coordinates = BinaryCoordinates.decode(proto.coordinates)
         val result = block(
             s,
@@ -239,13 +224,27 @@ class IrDeclarationDeserializer(
         return result
     }
 
-    private fun deserializeIrTypeParameter(proto: ProtoTypeParameter, index: Int, isGlobal: Boolean, setParent: Boolean = true):
-            IrTypeParameter {
+    private fun deserializeIrTypeParameter(
+        proto: ProtoTypeParameter,
+        index: Int,
+        isGlobal: Boolean,
+        setParent: Boolean = true,
+    ): IrTypeParameter {
+
         val name = deserializeName(proto.name)
         val coordinates = BinaryCoordinates.decode(proto.base.coordinates)
         val flags = TypeParameterFlags.decode(proto.base.flags)
 
-        val factory = { symbol: IrTypeParameterSymbol ->
+        val signature: IdSignature = symbolDeserializer.deserializeIdSignature(
+            symbolDeserializer.parseSymbolData(proto.base.symbol).signatureId
+        )
+
+        val symbolFactory: () -> IrTypeParameterSymbol = {
+            symbolDeserializer.deserializeSymbolWithOwnerInCurrentFile(signature, TYPE_PARAMETER_SYMBOL)
+                .checkSymbolType(TYPE_PARAMETER_SYMBOL)
+        }
+
+        val typeParameterFactory: (IrTypeParameterSymbol) -> IrTypeParameter = { symbol: IrTypeParameterSymbol ->
             createIfUnbound(symbol) {
                 irFactory.createTypeParameter(
                     startOffset = coordinates.startOffset,
@@ -260,34 +259,23 @@ class IrDeclarationDeserializer(
             }
         }
 
-        val sig: IdSignature
-        val result = symbolTable.run {
-            if (isGlobal) {
-                val p = symbolDeserializer.deserializeIrSymbolToDeclare(proto.base.symbol)
-                val symbol: IrTypeParameterSymbol = p.first.checkSymbolType(TYPE_PARAMETER_SYMBOL)
-                sig = p.second
-                declareGlobalTypeParameter(sig, { symbol }, factory)
-            } else {
-                val symbolData = BinarySymbolData.decode(proto.base.symbol)
-                sig = symbolDeserializer.deserializeIdSignature(symbolData.signatureId)
-                declareScopedTypeParameter(
-                    sig,
-                    {
-                        if (it.isPubliclyVisible)
-                            symbolDeserializer.deserializeIrSymbol(sig, TYPE_PARAMETER_SYMBOL).checkSymbolType(TYPE_PARAMETER_SYMBOL)
-                        else
-                            IrTypeParameterSymbolImpl()
-                    },
-                    factory
-                )
-            }
+        val typeParameter: IrTypeParameter = if (isGlobal) {
+            symbolTable.declareGlobalTypeParameter(
+                signature = signature,
+                symbolFactory = symbolFactory,
+                typeParameterFactory = typeParameterFactory
+            )
+        } else {
+            symbolTable.declareScopedTypeParameter(
+                signature = signature,
+                symbolFactory = { symbolFactory() },
+                typeParameterFactory = typeParameterFactory
+            )
         }
 
-        // make sure this symbol is known to linker
-        symbolDeserializer.referenceLocalIrSymbol(result.symbol, sig)
-        result.annotations = deserializeAnnotations(proto.base.annotationList)
-        if (setParent) result.parent = currentParent
-        return result
+        typeParameter.annotations = deserializeAnnotations(proto.base.annotationList)
+        if (setParent) typeParameter.parent = currentParent
+        return typeParameter
     }
 
     private fun deserializeIrValueParameter(proto: ProtoValueParameter, kind: IrParameterKind, setParent: Boolean = true): IrValueParameter =
@@ -420,14 +408,6 @@ class IrDeclarationDeserializer(
                 typeParameters = deserializeTypeParameters(proto.typeParameterList, true)
             }
         }
-
-    private fun deserializeErrorDeclaration(proto: ProtoErrorDeclaration, setParent: Boolean = true): IrErrorDeclaration {
-        if (!settings.allowErrorNodes) throw IrDisallowedErrorNode(IrErrorDeclaration::class.java)
-        val coordinates = BinaryCoordinates.decode(proto.coordinates)
-        return irFactory.createErrorDeclaration(coordinates.startOffset, coordinates.endOffset).also {
-            if (setParent) it.parent = currentParent
-        }
-    }
 
     private fun deserializeTypeParameters(protos: List<ProtoTypeParameter>, isGlobal: Boolean): List<IrTypeParameter> {
         // NOTE: fun <C : MutableCollection<in T>, T : Any> Array<out T?>.filterNotNullTo(destination: C): C
@@ -785,13 +765,14 @@ class IrDeclarationDeserializer(
                 .mapNotNull { it.get(IrDeclarationOrigin.Companion) as? IrDeclarationOriginImpl }
                 .associateBy { it.name }
         }
+        private val unknownDeclarationOriginCache = mutableMapOf<String, IrDeclarationOrigin>()
     }
 
     private fun deserializeIrDeclarationOrigin(protoName: Int): IrDeclarationOrigin {
         val originName = libraryFile.string(protoName)
         return IrDeclarationOrigin.GeneratedByPlugin.fromSerializedString(originName)
             ?: declarationOriginIndex[originName]
-            ?: IrDeclarationOriginImpl(originName)
+            ?: unknownDeclarationOriginCache.getOrPut(originName) { IrDeclarationOriginImpl(originName) }
     }
 
     fun deserializeDeclaration(proto: ProtoDeclaration, setParent: Boolean = true): IrDeclaration {
@@ -808,7 +789,6 @@ class IrDeclarationDeserializer(
             IR_ENUM_ENTRY -> deserializeIrEnumEntry(proto.irEnumEntry, setParent)
             IR_LOCAL_DELEGATED_PROPERTY -> deserializeIrLocalDelegatedProperty(proto.irLocalDelegatedProperty, setParent)
             IR_TYPE_ALIAS -> deserializeIrTypeAlias(proto.irTypeAlias, setParent)
-            IR_ERROR_DECLARATION -> deserializeErrorDeclaration(proto.irErrorDeclaration, setParent)
             DECLARATOR_NOT_SET -> error("Declaration deserialization not implemented: ${proto.declaratorCase}")
         }
 
@@ -821,8 +801,8 @@ class IrDeclarationDeserializer(
         if (needToDeserializeFakeOverrides(parent)) return false
 
         val symbol = when (fakeOverrideProto.declaratorCase!!) {
-            IR_FUNCTION -> symbolDeserializer.deserializeIrSymbol(fakeOverrideProto.irFunction.base.base.symbol)
-            IR_PROPERTY -> symbolDeserializer.deserializeIrSymbol(fakeOverrideProto.irProperty.base.symbol)
+            IR_FUNCTION -> symbolDeserializer.deserializeSymbolToDeclareInCurrentFile(fakeOverrideProto.irFunction.base.base.symbol).first
+            IR_PROPERTY -> symbolDeserializer.deserializeSymbolToDeclareInCurrentFile(fakeOverrideProto.irProperty.base.symbol).first
             // Don't consider IR_FIELDS here.
             else -> return false
         }

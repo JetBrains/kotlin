@@ -1,11 +1,14 @@
+import org.jetbrains.kotlin.buildtools.api.ExperimentalBuildToolsApi
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
+
 plugins {
     `kotlin-dsl`
     id("org.jetbrains.kotlin.jvm")
 }
 
 repositories {
-    maven("https://maven.pkg.jetbrains.space/kotlin/p/kotlin/kotlin-dependencies")
-    mavenCentral()
+    maven("https://redirector.kotlinlang.org/maven/kotlin-dependencies")
+    mavenCentral { setUrl("https://cache-redirector.jetbrains.com/maven-central") }
     gradlePluginPortal()
 
     extra["bootstrapKotlinRepo"]?.let {
@@ -14,10 +17,13 @@ repositories {
 }
 
 kotlin {
-    jvmToolchain(8)
+    @OptIn(ExperimentalKotlinGradlePluginApi::class, ExperimentalBuildToolsApi::class)
+    compilerVersion = libs.versions.kotlin.`for`.gradle.plugins.compilation
+    jvmToolchain(11)
 
     compilerOptions {
         allWarningsAsErrors.set(true)
+        freeCompilerArgs.add("-Xsuppress-version-warnings")
     }
 }
 

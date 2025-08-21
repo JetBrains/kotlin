@@ -32,6 +32,7 @@ KaKotlinPropertySymbol:
     deprecationStatus: null
   callableId: /prop
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
     annotations: [
@@ -41,13 +42,12 @@ KaKotlinPropertySymbol:
     callableId: null
     compilerVisibility: Public
     contextReceivers: []
-    hasBody: false
     hasStableParameterNames: true
     isActual: false
-    isDefault: true
     isExpect: false
     isExtension: false
     isInline: false
+    isNotDefault: false
     isOverride: false
     location: PROPERTY
     modality: FINAL
@@ -95,13 +95,12 @@ KaKotlinPropertySymbol:
     callableId: null
     compilerVisibility: Public
     contextReceivers: []
-    hasBody: false
     hasStableParameterNames: true
     isActual: false
-    isDefault: true
     isExpect: false
     isExtension: false
     isInline: false
+    isNotDefault: false
     isOverride: false
     location: PROPERTY
     modality: FINAL
@@ -192,3 +191,4 @@ KaKotlinPropertySymbol:
   javaGetterName: getProp
   javaSetterName: setProp
   setterDeprecationStatus: null
+  isInline: false

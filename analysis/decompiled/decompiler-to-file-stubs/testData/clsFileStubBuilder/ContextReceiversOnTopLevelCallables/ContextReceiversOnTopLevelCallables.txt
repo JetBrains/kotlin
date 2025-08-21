@@ -1,17 +1,17 @@
-PsiJetFileStubImpl[package=]
+FILE[kind=Facade[packageFqName=<root>, facadeFqName=ContextReceiversOnTopLevelCallablesKt]]
   PACKAGE_DIRECTIVE
   IMPORT_LIST
-  PROPERTY[fqName=property, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=true, isTopLevel=true, isVar=false, name=property]
-    CONTEXT_RECEIVER_LIST
-      CONTEXT_RECEIVER[label=null]
-        TYPE_REFERENCE
-          USER_TYPE
-            REFERENCE_EXPRESSION[referencedName=A]
-      CONTEXT_RECEIVER[label=null]
-        TYPE_REFERENCE
-          USER_TYPE
-            REFERENCE_EXPRESSION[referencedName=B]
+  PROPERTY[fqName=property, hasBackingField=false, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=true, isTopLevel=true, isVar=false, name=property]
     MODIFIER_LIST[private]
+      CONTEXT_RECEIVER_LIST
+        CONTEXT_RECEIVER[label=null]
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=A]
+        CONTEXT_RECEIVER[label=null]
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=B]
       ANNOTATION_ENTRY[hasValueArguments=false, shortName=MyAnnotation]
         CONSTRUCTOR_CALLEE
           TYPE_REFERENCE
@@ -27,19 +27,20 @@ PsiJetFileStubImpl[package=]
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=Int]
-    PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=false, isGetter=true]
+    PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=true, isGetter=true, mayHaveContract=false]
       MODIFIER_LIST[private final]
-  PROPERTY[fqName=propertyWithSetter, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=true, isTopLevel=true, isVar=true, name=propertyWithSetter]
-    CONTEXT_RECEIVER_LIST
-      CONTEXT_RECEIVER[label=null]
-        TYPE_REFERENCE
-          USER_TYPE
-            REFERENCE_EXPRESSION[referencedName=A]
-      CONTEXT_RECEIVER[label=null]
-        TYPE_REFERENCE
-          USER_TYPE
-            REFERENCE_EXPRESSION[referencedName=B]
+      VALUE_PARAMETER_LIST
+  PROPERTY[fqName=propertyWithSetter, hasBackingField=false, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=true, isTopLevel=true, isVar=true, name=propertyWithSetter]
     MODIFIER_LIST[private]
+      CONTEXT_RECEIVER_LIST
+        CONTEXT_RECEIVER[label=null]
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=A]
+        CONTEXT_RECEIVER[label=null]
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=B]
       ANNOTATION_ENTRY[hasValueArguments=false, shortName=MyAnnotation]
         CONSTRUCTOR_CALLEE
           TYPE_REFERENCE
@@ -55,9 +56,10 @@ PsiJetFileStubImpl[package=]
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=Int]
-    PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=false, isGetter=true]
+    PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=true, isGetter=true, mayHaveContract=false]
       MODIFIER_LIST[private final]
-    PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=true, isGetter=false]
+      VALUE_PARAMETER_LIST
+    PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=true, isGetter=false, mayHaveContract=false]
       MODIFIER_LIST[private final]
       VALUE_PARAMETER_LIST
         VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=v]
@@ -66,17 +68,17 @@ PsiJetFileStubImpl[package=]
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=Int]
-  FUN[fqName=function, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=true, mayHaveContract=false, name=function]
-    CONTEXT_RECEIVER_LIST
-      CONTEXT_RECEIVER[label=null]
-        TYPE_REFERENCE
-          USER_TYPE
-            REFERENCE_EXPRESSION[referencedName=A]
-      CONTEXT_RECEIVER[label=null]
-        TYPE_REFERENCE
-          USER_TYPE
-            REFERENCE_EXPRESSION[referencedName=B]
+  FUN[fqName=function, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=true, mayHaveContract=false, name=function]
     MODIFIER_LIST[private]
+      CONTEXT_RECEIVER_LIST
+        CONTEXT_RECEIVER[label=null]
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=A]
+        CONTEXT_RECEIVER[label=null]
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=B]
       ANNOTATION_ENTRY[hasValueArguments=false, shortName=MyAnnotation]
         CONSTRUCTOR_CALLEE
           TYPE_REFERENCE

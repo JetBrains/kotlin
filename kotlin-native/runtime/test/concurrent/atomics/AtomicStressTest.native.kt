@@ -79,6 +79,55 @@ class AtomicIntStressTest {
         }
         assertEquals(futures.size, counter.load())
     }
+
+    @Test fun update() {
+        class Updater(val shiftSelf: Int,
+                      val shiftCompetitor: Int,
+                      val updates: Int,
+                      val atomic: AtomicInt) {
+            var oldSelfValue = -1
+            var oldCompetitorValue = -1
+
+            fun run() {
+                var run = true
+                while (run) {
+
+                    atomic.update {
+                        val self = it.shr(shiftSelf).and(0x0ffff)
+                        val other = it.shr(shiftCompetitor).and(0x0ffff)
+
+                        run = self < updates
+
+                        // Either our update failed, and the competitor succeeded, or the opposite.
+                        if (self == oldSelfValue) {
+                            assertTrue(oldCompetitorValue < other || other >= updates)
+                            oldCompetitorValue = other
+                        } else {
+                            assertTrue(oldSelfValue == -1 || self == oldSelfValue + 1)
+                            oldSelfValue = self
+                        }
+                        (self + 1).shl(shiftSelf).or(other.shl(shiftCompetitor))
+                    }
+                }
+            }
+        }
+
+        val atomic = AtomicInt(0)
+        val adversary = Updater(shiftSelf = 16, shiftCompetitor = 0, updates = 10000, atomic = atomic)
+        val self = Updater(shiftSelf = 0, shiftCompetitor = 16, updates = 10000, atomic = atomic)
+        val futures = ThreadPool.execute {
+            when (it) {
+                0 -> {
+                    adversary.run()
+                }
+                1 -> {
+                    self.run()
+                }
+                else -> { /* do nothing */ }
+            }
+        }
+        futures.forEach { it.result }
+    }
 }
 
 class AtomicLongStressTest {
@@ -94,6 +143,52 @@ class AtomicLongStressTest {
             it.result
         }
         assertEquals(10L + 9999999999 * futures.size, atomic.load())
+    }
+
+    @OptIn(ExperimentalAtomicApi::class)
+    @Test fun update() {
+        class Updater(val shiftSelf: Int,
+                      val shiftCompetitor: Int,
+                      val updates: Int,
+                      val atomic: AtomicLong) {
+            var oldSelfValue = -1L
+            var oldCompetitorValue = -1L
+
+            fun run() {
+                var run = true
+                while (run) {
+
+                    atomic.update {
+                        val self = it.shr(shiftSelf).and(0x0ffffffffL)
+                        val other = it.shr(shiftCompetitor).and(0x0ffffffffL)
+
+                        run = self < updates.toLong()
+
+                        // Either our update failed, and the competitor succeeded, or the opposite.
+                        if (self == oldSelfValue) {
+                            assertTrue(oldCompetitorValue < other)
+                            oldCompetitorValue = other
+                        } else {
+                            assertTrue(oldSelfValue == -1L || self == oldSelfValue + 1)
+                            oldSelfValue = self
+                        }
+                        (self + 1).shl(shiftSelf).or(other.shl(shiftCompetitor))
+                    }
+                }
+            }
+        }
+
+        val atomic = AtomicLong(0)
+        val adversary = Updater(shiftSelf = 32, shiftCompetitor = 0, updates = 100000, atomic = atomic)
+        val self = Updater(shiftSelf = 0, shiftCompetitor = 32, updates = 100000, atomic = atomic)
+        val futures = ThreadPool.execute {
+            when (it) {
+                0 -> adversary.run()
+                1 -> self.run()
+                else -> { /* do nothing */ }
+            }
+        }
+        futures.forEach { it.result }
     }
 }
 

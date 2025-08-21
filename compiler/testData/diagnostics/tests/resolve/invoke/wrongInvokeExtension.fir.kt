@@ -17,3 +17,6 @@ fun test(a: A, b: B) {
         (<!UNRESOLVED_REFERENCE!>a<!>)()
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType, getter,
+integerLiteral, lambdaLiteral, localProperty, operator, propertyDeclaration, propertyWithExtensionReceiver */

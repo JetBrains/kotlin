@@ -45,9 +45,6 @@ object RangeOps : TemplateGroupBase() {
             sourceFile(SourceFile.Ranges)
             if (primitive in PrimitiveType.unsignedPrimitives) {
                 sinceAtLeast("1.5")
-                if (since == null || since!!.toDouble() <= 1.5) {
-                    wasExperimental("ExperimentalUnsignedTypes")
-                }
                 sourceFile(SourceFile.URanges)
             }
         }

@@ -1,7 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// FIR_IDENTICAL
-// FIR_IDENTICAL
 // DIAGNOSTICS: -EXPOSED_PARAMETER_TYPE
+// LANGUAGE: +ForbidExposingLessVisibleTypesInInline
 
 private class S public constructor() {
     fun a() {
@@ -26,3 +25,5 @@ private inline fun x2(s: S, z: () -> Unit) {
 private fun test(): S {
     return S()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionalType, inline, primaryConstructor */

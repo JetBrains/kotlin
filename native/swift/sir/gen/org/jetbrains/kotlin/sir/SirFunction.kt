@@ -8,15 +8,18 @@
 
 package org.jetbrains.kotlin.sir
 
+import org.jetbrains.kotlin.sir.util.*
+
 /**
  * Generated from: [org.jetbrains.kotlin.sir.tree.generator.SwiftIrTree.function]
  */
-abstract class SirFunction : SirElementBase(), SirCallable, SirClassMemberDeclaration {
+abstract class SirFunction : SirCallable(), SirClassMemberDeclaration {
     abstract override val origin: SirOrigin
     abstract override val visibility: SirVisibility
     abstract override val documentation: String?
     abstract override var parent: SirDeclarationParent
     abstract override val attributes: List<SirAttribute>
+    abstract override val bridges: List<SirBridge>
     abstract override var body: SirFunctionBody?
     abstract override val errorType: SirType
     abstract override val isOverride: Boolean
@@ -26,4 +29,8 @@ abstract class SirFunction : SirElementBase(), SirCallable, SirClassMemberDeclar
     abstract val extensionReceiverParameter: SirParameter?
     abstract val parameters: List<SirParameter>
     abstract val returnType: SirType
+    abstract val fixity: SirFixity?
+    override fun toString(): String {
+        return this.debugString
+    }
 }

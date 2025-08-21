@@ -16,3 +16,6 @@ fun String.foo(count: Int) {
 }
 
 fun block(block: Long.() -> Unit) = 5L.block()
+
+/* GENERATED_FIR_TAGS: additiveExpression, funWithExtensionReceiver, functionDeclaration, functionalType, lambdaLiteral,
+localProperty, propertyDeclaration, thisExpression, typeWithExtension */

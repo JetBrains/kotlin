@@ -6,3 +6,6 @@ interface A : <!INTERFACE_WITH_SUPERCLASS!>Test<!>
 open class Test {
     fun <T> result() = object : A { }
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, classDeclaration, functionDeclaration, interfaceDeclaration,
+nullableType, typeParameter */

@@ -5,3 +5,5 @@ fun foo(bar: Any?): Int {
     bar ?: throw IllegalStateException()
     return bar.length
 }
+
+/* GENERATED_FIR_TAGS: asExpression, elvisExpression, functionDeclaration, nullableType, smartcast */

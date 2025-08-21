@@ -37,3 +37,6 @@ fun main(a: A, b: B, c: C) {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionDeclarationWithContext,
+integerLiteral, lambdaLiteral, propertyDeclaration */

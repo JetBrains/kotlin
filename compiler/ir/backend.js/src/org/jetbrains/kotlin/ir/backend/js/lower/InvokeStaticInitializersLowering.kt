@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.ir.backend.js.lower
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.ir.backend.js.JsCommonBackendContext
 import org.jetbrains.kotlin.ir.backend.js.JsStatementOrigins
+import org.jetbrains.kotlin.ir.backend.js.objectGetInstanceFunction
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.expressions.IrBody
@@ -30,7 +31,7 @@ class InvokeStaticInitializersLowering(val context: JsCommonBackendContext) : Bo
 
         val companionObject = irClass.companionObject() ?: return
 
-        val instance = context.mapping.objectToGetInstanceFunction[companionObject] ?: return
+        val instance = companionObject.objectGetInstanceFunction ?: return
 
         val getInstanceCall = IrCallImpl(
             irClass.startOffset,

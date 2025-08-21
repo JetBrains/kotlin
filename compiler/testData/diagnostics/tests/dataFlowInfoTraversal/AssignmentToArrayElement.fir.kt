@@ -11,3 +11,5 @@ fun arrayAccessLHS(a: Int?, b: Array<Int>) {
     checkSubtype<Int>(a)
 }
 
+/* GENERATED_FIR_TAGS: assignment, checkNotNullCall, classDeclaration, funWithExtensionReceiver, functionDeclaration,
+functionalType, infix, integerLiteral, nullableType, smartcast, typeParameter, typeWithExtension */

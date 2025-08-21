@@ -23,9 +23,11 @@ import org.jetbrains.kotlin.fir.declarations.utils.isFromVararg
 import org.jetbrains.kotlin.fir.declarations.utils.isInner
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.expressions.builder.buildAnnotationCallCopy
 import org.jetbrains.kotlin.fir.expressions.builder.buildAnnotationCopy
 import org.jetbrains.kotlin.fir.expressions.builder.buildExpressionStub
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
+import org.jetbrains.kotlin.fir.resolve.TypeResolutionConfiguration
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeAmbiguouslyResolvedAnnotationFromPlugin
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeCyclicTypeBound
 import org.jetbrains.kotlin.fir.resolve.lookupSuperTypes
@@ -304,6 +306,7 @@ open class FirTypeResolveTransformer(
             if (hasSupertypePathToParameter(typeParameter, typeParameter, mutableSetOf())) {
                 val errorType = buildErrorTypeRef {
                     diagnostic = ConeCyclicTypeBound(typeParameter.symbol, typeParameter.bounds.toImmutableList())
+                    source = typeParameter.bounds.first().source
                 }
                 typeParameter.replaceBounds(
                     listOf(errorType)
@@ -338,12 +341,10 @@ open class FirTypeResolveTransformer(
     }
 
     override fun transformTypeRef(typeRef: FirTypeRef, data: Any?): FirResolvedTypeRef {
-        return typeResolverTransformer.withFile(currentFile) {
-            typeRef.transform(
-                typeResolverTransformer,
-                ScopeClassDeclaration(scopes.asReversed(), classDeclarationsStack, containerDeclaration = currentDeclaration)
-            )
-        }
+        return typeRef.transform(
+            typeResolverTransformer,
+            TypeResolutionConfiguration(scopes.asReversed(), classDeclarationsStack, currentFile)
+        )
     }
 
     override fun transformValueParameter(
@@ -637,12 +638,17 @@ open class FirTypeResolveTransformer(
                 var addedSomewhere = false
 
                 fun FirCallableDeclaration.addAnnotationWithoutUseSiteTarget(annotation: FirAnnotation) {
-                    replaceAnnotations(
-                        annotations + buildAnnotationCopy(annotation) {
+                    val copy = if (annotation is FirAnnotationCall) {
+                        buildAnnotationCallCopy(annotation) {
                             useSiteTarget = null
-                            addedSomewhere = true
                         }
-                    )
+                    } else {
+                        buildAnnotationCopy(annotation) {
+                            useSiteTarget = null
+                        }
+                    }
+                    replaceAnnotations(annotations + copy)
+                    addedSomewhere = true
                 }
 
                 if (FIELD in allowedTargets && annotated.delegate == null) {
@@ -654,8 +660,12 @@ open class FirTypeResolveTransformer(
                 if (annotated.isVar && SETTER_PARAMETER in allowedTargets) {
                     annotated.setter?.valueParameters?.firstOrNull()?.addAnnotationWithoutUseSiteTarget(this)
                 }
-                // If annotation isn't applicable anywhere, we keep it at property to report an error later
-                PROPERTY in allowedTargets || !addedSomewhere
+                if (CONSTRUCTOR_PARAMETER in allowedTargets && annotated.fromPrimaryConstructor == true) {
+                    // It's already on a constructor parameter, but we set the flag to prevent reporting an error
+                    addedSomewhere = true
+                }
+                // If annotation isn't applicable anywhere or the property is delegated, we keep it at property to report an error later
+                PROPERTY in allowedTargets || !addedSomewhere || annotated.delegate != null
             }
             else -> {
                 true

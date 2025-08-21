@@ -100,3 +100,5 @@ open class C : O.B() {
     // DEPRECATED: Classifiers from supertypes of our own companion
     open class r : Delta.FromDelta()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, nestedClass, objectDeclaration */

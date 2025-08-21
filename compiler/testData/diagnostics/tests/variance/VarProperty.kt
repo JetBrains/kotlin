@@ -50,3 +50,7 @@ abstract class Test<in I, out O, P> {
     var <X> X.typeParameter9: Int where X : In<<!TYPE_VARIANCE_CONFLICT_ERROR!>I<!>> get() = 0; set(i) {}
     var <X> X.typeParameter0: Int where X : In<O> get() = 0; set(i) {}
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, functionDeclaration, getter, in, integerLiteral,
+interfaceDeclaration, nullableType, operator, out, propertyDeclaration, propertyDelegate, propertyWithExtensionReceiver,
+setter, starProjection, typeConstraint, typeParameter */

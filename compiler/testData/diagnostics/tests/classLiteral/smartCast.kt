@@ -23,3 +23,7 @@ fun test2(): KClass<out Foo>? {
     }
     return null
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, classReference, disjunctionExpression, equalityExpression,
+functionDeclaration, ifExpression, lambdaLiteral, localProperty, nullableType, operator, outProjection, override,
+propertyDeclaration, smartcast, thisExpression */

@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM
 // WITH_STDLIB
 
 @file:JvmName("TestKt")

@@ -12,3 +12,6 @@ interface Inv<E> {
 
     fun e(): E = null!!
 }
+
+/* GENERATED_FIR_TAGS: capturedType, checkNotNullCall, functionDeclaration, functionalType, interfaceDeclaration,
+lambdaLiteral, nullableType, outProjection, typeParameter */

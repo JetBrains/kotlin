@@ -1,10 +1,11 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.analysis.api.components
 
+import org.jetbrains.kotlin.analysis.api.KaContextParameterApi
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaSession
@@ -20,6 +21,7 @@ import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
 @KaExperimentalApi
+@SubclassOptInRequired(KaImplementationDetail::class)
 public interface KaSubstitutorProvider : KaSessionComponent {
     /**
      * Creates a [KaSubstitutor] based on the given [mappings].
@@ -61,6 +63,7 @@ public interface KaSubstitutorProvider : KaSessionComponent {
  */
 @KaExperimentalApi
 @OptIn(ExperimentalContracts::class, KaImplementationDetail::class)
+@JvmName("buildSubstitutorExtension")
 public inline fun KaSession.buildSubstitutor(
     build: KaSubstitutorBuilder.() -> Unit,
 ): KaSubstitutor {
@@ -71,6 +74,7 @@ public inline fun KaSession.buildSubstitutor(
 }
 
 @KaExperimentalApi
+@OptIn(KaImplementationDetail::class)
 public class KaSubstitutorBuilder
 @KaImplementationDetail constructor(override val token: KaLifetimeToken) : KaLifetimeOwner {
     private val backingMapping = mutableMapOf<KaTypeParameterSymbol, KaType>()
@@ -99,4 +103,40 @@ public class KaSubstitutorBuilder
     public fun substitutions(substitutions: Map<KaTypeParameterSymbol, KaType>): Unit = withValidityAssertion {
         backingMapping += substitutions
     }
+}
+
+/**
+ * @see KaSubstitutorProvider.createSubstitutor
+ */
+@KaContextParameterApi
+@KaExperimentalApi
+context(context: KaSubstitutorProvider)
+public fun createSubstitutor(mappings: Map<KaTypeParameterSymbol, KaType>): KaSubstitutor {
+    return with(context) { createSubstitutor(mappings) }
+}
+
+/**
+ * @see KaSubstitutorProvider.createInheritanceTypeSubstitutor
+ */
+@KaContextParameterApi
+@KaExperimentalApi
+context(context: KaSubstitutorProvider)
+public fun createInheritanceTypeSubstitutor(subClass: KaClassSymbol, superClass: KaClassSymbol): KaSubstitutor? {
+    return with(context) { createInheritanceTypeSubstitutor(subClass, superClass) }
+}
+
+/**
+ * @see KaSession.buildSubstitutor
+ */
+@KaContextParameterApi
+@KaExperimentalApi
+@OptIn(ExperimentalContracts::class, KaImplementationDetail::class)
+context(context: KaSession)
+public inline fun buildSubstitutor(
+    build: KaSubstitutorBuilder.() -> Unit,
+): KaSubstitutor {
+    contract {
+        callsInPlace(build, InvocationKind.EXACTLY_ONCE)
+    }
+    return context.buildSubstitutor(build)
 }

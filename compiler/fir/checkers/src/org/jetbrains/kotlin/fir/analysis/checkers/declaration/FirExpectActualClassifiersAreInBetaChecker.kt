@@ -15,14 +15,16 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirClassLikeDeclaration
 import org.jetbrains.kotlin.fir.declarations.utils.isActual
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
+import org.jetbrains.kotlin.fir.isEnabled
 
 object FirExpectActualClassifiersAreInBetaChecker : FirClassLikeChecker(MppCheckerKind.Common) {
-    override fun check(declaration: FirClassLikeDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
-        if (!context.languageVersionSettings.supportsFeature(LanguageFeature.MultiPlatformProjects)) return
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirClassLikeDeclaration) {
+        if (!LanguageFeature.MultiPlatformProjects.isEnabled()) return
         if (context.languageVersionSettings.areExpectActualClassesStable) return
 
         if (declaration.isExpect || declaration.isActual) {
-            reporter.reportOn(declaration.source, FirErrors.EXPECT_ACTUAL_CLASSIFIERS_ARE_IN_BETA_WARNING, context)
+            reporter.reportOn(declaration.source, FirErrors.EXPECT_ACTUAL_CLASSIFIERS_ARE_IN_BETA_WARNING)
         }
     }
 }

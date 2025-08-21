@@ -17,3 +17,5 @@ abstract class B2 : A() {
 class C2 : B2() {
     <!REDUNDANT_VISIBILITY_MODIFIER!>public<!> override var attribute = super.attribute
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, override, propertyDeclaration, stringLiteral, superExpression */

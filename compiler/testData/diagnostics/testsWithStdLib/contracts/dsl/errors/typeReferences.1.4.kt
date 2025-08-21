@@ -1,5 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // LANGUAGE: +AllowContractsForCustomFunctions +UseReturnsEffect +AllowContractsForNonOverridableMembers +AllowReifiedGenericsInContracts
+// LANGUAGE: -AllowCheckForErasedTypesInContracts
 // OPT_IN: kotlin.contracts.ExperimentalContracts
 // DIAGNOSTICS: -INVISIBLE_REFERENCE -INVISIBLE_MEMBER
 
@@ -52,3 +53,6 @@ fun referToAliasedSimpleType(x: Any?) {
         returns() implies (x is SimpleType)
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, contractConditionalEffect, contracts, functionDeclaration, functionalType,
+inline, isExpression, lambdaLiteral, nullableType, reified, starProjection, typeAliasDeclaration, typeParameter */

@@ -11,7 +11,6 @@ import org.gradle.api.publish.maven.MavenPom
 import org.gradle.api.publish.maven.MavenPublication
 import org.jetbrains.kotlin.gradle.plugin.KotlinTargetComponent
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
-import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.utils.projectStoredProperty
 
 private val Project.pomDependenciesRewriterMap: MutableMap<KotlinTargetComponent, PomDependenciesRewriter>
@@ -19,12 +18,7 @@ private val Project.pomDependenciesRewriterMap: MutableMap<KotlinTargetComponent
 
 private fun Project.pomDependenciesRewriterForTargetComponent(kotlinComponent: KotlinTargetComponent): PomDependenciesRewriter =
     pomDependenciesRewriterMap.getOrPut(kotlinComponent) {
-        if (project.kotlinPropertiesProvider.kotlinKmpProjectIsolationEnabled) {
-            project.createDefaultPomDependenciesRewriterForTargetComponent(kotlinComponent)
-        } else {
-            @Suppress("DEPRECATION")
-            DeprecatedPomDependenciesRewriter(project, kotlinComponent)
-        }
+        project.createDefaultPomDependenciesRewriterForTargetComponent(kotlinComponent)
     }
 
 internal fun Project.rewriteKmpDependenciesInPomForTargetPublication(
@@ -42,9 +36,7 @@ internal fun Project.rewriteDependenciesInPom(
     includeOnlySpecifiedDependencies: Provider<Set<ModuleCoordinates>>?,
 ) {
     val pom = publication.pom
-    if (pomRewriter.taskDependencies != null) {
-        addTaskDependenciesToPomGenerator(publication, pomRewriter.taskDependencies!!)
-    }
+    trackInputFilesInGenerateMavenPomTask(publication, pomRewriter.inputFiles)
 
     val shouldRewritePomDependencies =
         project.provider { PropertiesProvider(project).keepMppDependenciesIntactInPoms != true }

@@ -30,3 +30,6 @@ fun test_3(): Int = getInt { return@test_3 1 }
 
 
 fun test_4(): Int = getInt(block = { return@test_4 1 })
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionalType, ifExpression, inline, integerLiteral, isExpression,
+lambdaLiteral, localProperty, nullableType, propertyDeclaration, smartcast */

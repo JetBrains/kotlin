@@ -1,3 +1,4 @@
-[DIAGNOSTIC_ID | WARNING] Sample diagnostic
+[DIAGNOSTIC_ID | WARNING] Sample
+Sample diagnostic
 Solution 1
 Solution 2

@@ -89,3 +89,6 @@ fun use() {
     <!OPT_IN_USAGE!>c<!>.<!OPT_IN_USAGE!>Inner<!>()
     <!OPT_IN_USAGE!>c<!>.<!OPT_IN_USAGE!>extension<!>()
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, classReference, funWithExtensionReceiver,
+functionDeclaration, inner, localProperty, nestedClass, propertyDeclaration, stringLiteral */

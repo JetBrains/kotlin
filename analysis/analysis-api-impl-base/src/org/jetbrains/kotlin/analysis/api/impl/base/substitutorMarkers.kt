@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.analysis.api.types.KaType
  * This is an implementation details and Analysis API clients should not depend on the fact if some [KaSubstitutor] is [KaMapBackedSubstitutor] or not.
  */
 @KaImplementationDetail
+@SubclassOptInRequired(KaImplementationDetail::class)
 interface KaMapBackedSubstitutor : KaSubstitutor {
     /**
      * Substitution rules in a form of a `Map<KaTypeParameterSymbol, KaType>`
@@ -29,6 +30,7 @@ interface KaMapBackedSubstitutor : KaSubstitutor {
  * and Analysis API clients should not depend on the fact if some [KaSubstitutor] is [KaChainedSubstitutor] or not.
  */
 @KaImplementationDetail
+@SubclassOptInRequired(KaImplementationDetail::class)
 interface KaChainedSubstitutor : KaSubstitutor {
     val first: KaSubstitutor
     val second: KaSubstitutor

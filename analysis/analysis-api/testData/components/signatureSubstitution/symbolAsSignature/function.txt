@@ -13,18 +13,22 @@ KaFunctionSignature:
       receiverType = null
       returnType = kotlin.collections.List<T>
       symbol = x: kotlin.collections.List<T>
+      contextParameters = []
       callableId = null,
     KaVariableSignature:
       name = y
       receiverType = null
       returnType = kotlin.collections.Map<T, kotlin.String>
       symbol = y: kotlin.collections.Map<T, kotlin.String>
+      contextParameters = []
       callableId = null,
     KaVariableSignature:
       name = k
       receiverType = null
       returnType = kotlin.String
       symbol = k: kotlin.String
+      contextParameters = []
       callableId = null
   ]
+  contextParameters = []
   callableId = /foo

@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.resolve.calls.candidate
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.fakeElement
+import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
@@ -67,7 +68,7 @@ class Candidate(
 
     // ---------------------------------------- Constraint system ----------------------------------------
 
-    val usedOuterCs: Boolean get() = system.usesOuterCs
+    override val usedOuterCs: Boolean get() = system.usesOuterCs
 
     private var systemInitialized: Boolean = false
     override val system: NewConstraintSystemImpl by lazy(LazyThreadSafetyMode.NONE) {
@@ -114,9 +115,6 @@ class Candidate(
     var resultingTypeForCallableReference: ConeKotlinType? = null
         private set
 
-    val usesSamConversion: Boolean get() = functionTypesOfSamConversions != null
-    val usesSamConversionOrSamConstructor: Boolean get() = usesSamConversion || symbol.origin == FirDeclarationOrigin.SamConstructor
-
     internal var callableReferenceAdaptation: CallableReferenceAdaptation? = null
         private set
 
@@ -127,21 +125,41 @@ class Candidate(
         require(this.callableReferenceAdaptation == null) { "callableReferenceAdaptation already initialized" }
         this.callableReferenceAdaptation = callableReferenceAdaptation
         this.resultingTypeForCallableReference = resultingTypeForCallableReference
-        usesFunctionConversion =
-            callableReferenceAdaptation?.suspendConversionStrategy is CallableReferenceConversionStrategy.CustomConversion
         if (callableReferenceAdaptation != null) {
             numDefaults = callableReferenceAdaptation.defaults
         }
     }
 
-    var usesFunctionConversion: Boolean = false
-    var functionTypesOfSamConversions: HashMap<FirExpression, FirSamResolver.SamConversionInfo>? = null
+    /**
+     * Expressions in this set are arguments of the call that have function kind conversion applied (e.g., suspend conversion).
+     */
+    var argumentsWithFunctionKindConversion: HashSet<FirExpression>? = null
         private set
 
-    fun initializeFunctionTypesOfSamConversions(types: HashMap<FirExpression, FirSamResolver.SamConversionInfo>) {
-        require(functionTypesOfSamConversions == null) { "functionTypesOfSamConversions already initialized" }
-        functionTypesOfSamConversions = types
+    fun addFunctionKindConversionOfArgument(element: FirExpression) {
+        val set = argumentsWithFunctionKindConversion ?: HashSet<FirExpression>().also { argumentsWithFunctionKindConversion = it }
+        set += element
     }
+
+    var samConversionInfosOfArguments: HashMap<FirExpression, FirSamResolver.SamConversionInfo>? = null
+        private set
+
+    fun setSamConversionOfArgument(expression: FirExpression, conversionInfo: FirSamResolver.SamConversionInfo) {
+        val map = samConversionInfosOfArguments
+            ?: hashMapOf<FirExpression, FirSamResolver.SamConversionInfo>().also { samConversionInfosOfArguments = it }
+        map[expression] = conversionInfo
+    }
+
+    // Computed getters
+
+    val usesSamConversion: Boolean
+        get() = samConversionInfosOfArguments != null
+
+    val usesSamConversionOrSamConstructor: Boolean
+        get() = usesSamConversion || symbol.origin == FirDeclarationOrigin.SamConstructor
+
+    val usesFunctionKindConversion: Boolean
+        get() = argumentsWithFunctionKindConversion != null || callableReferenceAdaptation?.hasFunctionKindConversion() == true
 
     // ---------------------------------------- Argument mapping ----------------------------------------
 
@@ -203,6 +221,24 @@ class Candidate(
         _postponedAtoms += atom
     }
 
+    // ------------------------ Context-sensitively resolved arguments ------------------------------------
+
+    private var _updatedArgumentsFromContextSensitiveResolution: MutableMap<FirElement, FirExpression>? =
+        null
+
+    fun setUpdatedArgumentFromContextSensitiveResolution(old: FirPropertyAccessExpression, new: FirExpression) {
+        if (_updatedArgumentsFromContextSensitiveResolution == null) {
+            _updatedArgumentsFromContextSensitiveResolution = mutableMapOf()
+        }
+
+        val existingValue = _updatedArgumentsFromContextSensitiveResolution!!.put(old, new)
+        check(existingValue == null) {
+            "We shouldn't put the value for $old twice"
+        }
+    }
+
+    val contextSensitiveResolutionReplacements: Map<FirElement, FirExpression>?
+        get() = _updatedArgumentsFromContextSensitiveResolution
     // ---------------------------------------- PCLA-related parts ----------------------------------------
 
     val postponedPCLACalls: MutableList<ConeResolutionAtom> = mutableListOf()
@@ -255,7 +291,7 @@ class Candidate(
      * In case `f: context(C..) (V) -> ..`, `f(e..)`, context values are still being introduced as a prefix of
      * regular arguments for `invoke` function.
      */
-    var expectedContextParameterTypesForInvoke: List<ConeKotlinType>? = null
+    var expectedContextParameterCountForInvoke: Int? = null
 
     // FirExpressionStub can be located here in case of callable reference resolution
     fun dispatchReceiverExpression(): FirExpression? {

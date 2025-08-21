@@ -13,3 +13,6 @@ expect class Foo: @Ann I
 typealias ITypealias = I
 
 actual class Foo : ITypealias
+
+/* GENERATED_FIR_TAGS: actual, annotationDeclaration, classDeclaration, expect, interfaceDeclaration,
+typeAliasDeclaration */

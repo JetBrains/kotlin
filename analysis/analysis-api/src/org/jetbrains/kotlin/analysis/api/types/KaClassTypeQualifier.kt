@@ -1,10 +1,11 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.analysis.api.types
 
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeOwner
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassifierSymbol
 import org.jetbrains.kotlin.name.Name
@@ -30,6 +31,7 @@ import org.jetbrains.kotlin.name.Name
  *
  * The type `Foo<Int>.Bar<String>` consists of two qualifiers, `Foo<Int>` and `Bar<String>`.
  */
+@OptIn(KaImplementationDetail::class)
 public sealed interface KaClassTypeQualifier : KaLifetimeOwner {
     public val name: Name
     public val typeArguments: List<KaTypeProjection>
@@ -38,6 +40,7 @@ public sealed interface KaClassTypeQualifier : KaLifetimeOwner {
 /**
  * A *successfully resolved* [KaClassTypeQualifier].
  */
+@SubclassOptInRequired(KaImplementationDetail::class)
 public interface KaResolvedClassTypeQualifier : KaClassTypeQualifier {
     public val symbol: KaClassifierSymbol
 }
@@ -45,4 +48,5 @@ public interface KaResolvedClassTypeQualifier : KaClassTypeQualifier {
 /**
  * An *unresolved* [KaClassTypeQualifier] due to a type error.
  */
+@SubclassOptInRequired(KaImplementationDetail::class)
 public interface KaUnresolvedClassTypeQualifier : KaClassTypeQualifier

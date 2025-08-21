@@ -21,3 +21,6 @@ fun main() {
     <!OVERLOAD_RESOLUTION_AMBIGUITY!>doStuffTa<!>(uByte)
     <!OVERLOAD_RESOLUTION_AMBIGUITY!>doStuffComparable<!>(uByte)
 }
+
+/* GENERATED_FIR_TAGS: funWithExtensionReceiver, functionDeclaration, localProperty, propertyDeclaration, stringLiteral,
+typeAliasDeclaration */

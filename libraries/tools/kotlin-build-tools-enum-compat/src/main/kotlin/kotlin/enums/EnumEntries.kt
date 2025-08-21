@@ -5,6 +5,8 @@
 
 package kotlin.enums
 
+import java.io.InvalidObjectException
+import java.io.ObjectInputStream
 import java.io.Serializable
 
 /**
@@ -76,4 +78,7 @@ private class EnumEntriesList<T : Enum<T>>(private val entries: Array<T>) : Enum
         // Used for Java serialization: EESP ensures that deserialized object **always** reflects the state of the enum on the target classpath
         return EnumEntriesSerializationProxy(entries)
     }
+
+    @Suppress("unused")
+    private fun readObject(@Suppress("UNUSED_PARAMETER") input: ObjectInputStream): Unit = throw InvalidObjectException("Deserialization is supported via proxy only")
 }

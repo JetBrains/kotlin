@@ -6,14 +6,15 @@
 package org.jetbrains.kotlin.konan.test.blackbox
 
 import com.intellij.testFramework.TestDataPath
+import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.test.blackbox.CachesAutoBuildTest.Companion.TEST_SUITE_PATH
 import org.jetbrains.kotlin.konan.test.blackbox.support.EnforcedHostTarget
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestCompilerArgs
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationArtifact.KLIB
-import org.jetbrains.kotlin.konan.test.blackbox.support.group.FirPipeline
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.CacheMode
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.KotlinNativeTargets
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.OptimizationMode
+import org.jetbrains.kotlin.konan.test.blackbox.support.settings.ThreadStateChecker
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.UsedPartialLinkageConfig
 import org.jetbrains.kotlin.test.TestMetadata
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertFalse
@@ -28,13 +29,13 @@ import java.io.File
 @EnforcedHostTarget
 @TestMetadata(TEST_SUITE_PATH)
 @TestDataPath("\$PROJECT_ROOT")
-@FirPipeline
-@Tag("frontend-fir")
 class CachesAutoBuildTest : AbstractNativeSimpleTest() {
 
     @BeforeEach
     fun assumeCachesAreEnabled() {
         Assumptions.assumeFalse(testRunSettings.get<CacheMode>() == CacheMode.WithoutCache)
+        // MinGW support for caches is limited to stdlib, so these tests won't work as expected.
+        Assumptions.assumeFalse(targets.testTarget == KonanTarget.MINGW_X64)
     }
 
     @Test
@@ -124,7 +125,8 @@ class CachesAutoBuildTest : AbstractNativeSimpleTest() {
             testRunSettings.get<KotlinNativeTargets>().testTarget,
             "STATIC",
             testRunSettings.get<OptimizationMode>() == OptimizationMode.DEBUG,
-            partialLinkageEnabled = testRunSettings.get<UsedPartialLinkageConfig>().config.isEnabled
+            partialLinkageEnabled = testRunSettings.get<UsedPartialLinkageConfig>().config.isEnabled,
+            checkStateAtExternalCalls = testRunSettings.get<ThreadStateChecker>() == ThreadStateChecker.ENABLED
         )
 
     companion object {

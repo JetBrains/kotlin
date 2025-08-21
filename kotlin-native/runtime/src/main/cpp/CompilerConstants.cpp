@@ -23,18 +23,20 @@ RUNTIME_WEAK uint32_t Kotlin_auxGCThreads = 0;
 RUNTIME_WEAK uint32_t Kotlin_concurrentMarkMaxIterations = 100;
 RUNTIME_WEAK int32_t Kotlin_suspendFunctionsFromAnyThreadFromObjC = 0;
 RUNTIME_WEAK Kotlin_getSourceInfo_FunctionType Kotlin_getSourceInfo_Function = nullptr;
+RUNTIME_WEAK int32_t Kotlin_CoreSymbolication_useOnlyKotlinImage = 0;
 #ifdef KONAN_ANDROID
 RUNTIME_WEAK int32_t Kotlin_printToAndroidLogcat = 1;
 #endif
 // Keep it 0 even when the compiler defaults to 1: if the overriding mechanism breaks, keeping it disabled is safer.
 RUNTIME_WEAK int32_t Kotlin_appStateTracking = 0;
-RUNTIME_WEAK int32_t Kotlin_mimallocUseDefaultOptions = 1;
-RUNTIME_WEAK int32_t Kotlin_mimallocUseCompaction = 0;
 RUNTIME_WEAK int32_t Kotlin_objcDisposeOnMain = 0;
 RUNTIME_WEAK int32_t Kotlin_objcDisposeWithRunLoop = 1;
 RUNTIME_WEAK int32_t Kotlin_enableSafepointSignposts = 0;
 RUNTIME_WEAK int32_t Kotlin_globalDataLazyInit = 1;
 RUNTIME_WEAK int32_t Kotlin_swiftExport = 0;
+RUNTIME_WEAK int32_t Kotlin_latin1Strings = 0;
+RUNTIME_WEAK uint8_t Kotlin_mmapTag = 0;
+RUNTIME_WEAK const char* Kotlin_minidumpLocation = nullptr;
 
 ALWAYS_INLINE bool compiler::gcMutatorsCooperate() noexcept {
     return Kotlin_gcMutatorsCooperate != 0;
@@ -70,12 +72,8 @@ ALWAYS_INLINE int compiler::getSourceInfo(void* addr, SourceInfo *result, int re
     }
 }
 
-ALWAYS_INLINE bool compiler::mimallocUseDefaultOptions() noexcept {
-    return Kotlin_mimallocUseDefaultOptions != 0;
-}
-
-ALWAYS_INLINE bool compiler::mimallocUseCompaction() noexcept {
-    return Kotlin_mimallocUseCompaction != 0;
+ALWAYS_INLINE bool compiler::coreSymbolicationUseOnlyKotlinImage() noexcept {
+    return Kotlin_CoreSymbolication_useOnlyKotlinImage != 0;
 }
 
 ALWAYS_INLINE bool compiler::objcDisposeOnMain() noexcept {
@@ -96,4 +94,15 @@ ALWAYS_INLINE bool compiler::globalDataLazyInit() noexcept {
 
 ALWAYS_INLINE bool compiler::swiftExport() noexcept {
     return Kotlin_swiftExport != 0;
+}
+
+ALWAYS_INLINE bool compiler::latin1Strings() noexcept {
+    return Kotlin_latin1Strings != 0;
+}
+
+ALWAYS_INLINE uint8_t compiler::mmapTag() noexcept {
+    return Kotlin_mmapTag;
+}
+ALWAYS_INLINE const char* compiler::minidumpLocation() noexcept {
+    return Kotlin_minidumpLocation;
 }

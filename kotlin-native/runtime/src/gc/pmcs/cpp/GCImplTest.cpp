@@ -13,7 +13,6 @@
 #include "GCImplTestSupport.hpp"
 #include "GlobalData.hpp"
 #include "SafePoint.hpp"
-#include "StableRef.hpp"
 #include "TestSupport.hpp"
 #include "TracingGCTest.hpp"
 
@@ -33,7 +32,7 @@ public:
 
     ~ParallelMarkConcurrentSweepTest() {
         mm::GlobalsRegistry::Instance().ClearForTests();
-        mm::SpecialRefRegistry::instance().clearForTests();
+        mm::ExternalRCRefRegistry::instance().clearForTests();
         mm::GlobalData::Instance().gc().ClearForTests();
         mm::GlobalData::Instance().allocator().clearForTests();
     }

@@ -10,13 +10,13 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirBasicDeclarationChecker
+import org.jetbrains.kotlin.fir.analysis.checkers.isPrimaryConstructor
 import org.jetbrains.kotlin.fir.analysis.checkers.isTopLevel
 import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.declarations.FirVariable
-import org.jetbrains.kotlin.fir.declarations.impl.FirPrimaryConstructor
 import org.jetbrains.kotlin.fir.declarations.utils.hasBackingField
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -24,16 +24,16 @@ import org.jetbrains.kotlin.name.FqName
 object FirNativeSharedImmutableChecker : FirBasicDeclarationChecker(MppCheckerKind.Platform) {
     private val sharedImmutableClassId = ClassId.topLevel(FqName("kotlin.native.concurrent.SharedImmutable"))
 
-    override fun check(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirDeclaration) {
         if (declaration is FirVariable) {
-            if (declaration !is FirValueParameter || context.containingDeclarations.lastOrNull() !is FirPrimaryConstructor) {
+            if (declaration !is FirValueParameter || context.containingDeclarations.lastOrNull().isPrimaryConstructor()) {
                 val hasBackingField = declaration is FirProperty && declaration.hasBackingField
                 if ((declaration.isVar || !hasBackingField) && declaration.delegate == null) {
                     reporter.reportIfHasAnnotation(
                         declaration,
                         sharedImmutableClassId,
-                        FirNativeErrors.INAPPLICABLE_SHARED_IMMUTABLE_PROPERTY,
-                        context
+                        FirNativeErrors.INAPPLICABLE_SHARED_IMMUTABLE_PROPERTY
                     )
                 }
             }
@@ -43,8 +43,7 @@ object FirNativeSharedImmutableChecker : FirBasicDeclarationChecker(MppCheckerKi
             reporter.reportIfHasAnnotation(
                 declaration,
                 sharedImmutableClassId,
-                FirNativeErrors.INAPPLICABLE_SHARED_IMMUTABLE_PROPERTY,
-                context
+                FirNativeErrors.INAPPLICABLE_SHARED_IMMUTABLE_PROPERTY
             )
 
             return
@@ -54,8 +53,7 @@ object FirNativeSharedImmutableChecker : FirBasicDeclarationChecker(MppCheckerKi
             reporter.reportIfHasAnnotation(
                 declaration,
                 sharedImmutableClassId,
-                FirNativeErrors.INAPPLICABLE_SHARED_IMMUTABLE_TOP_LEVEL,
-                context
+                FirNativeErrors.INAPPLICABLE_SHARED_IMMUTABLE_TOP_LEVEL
             )
         }
     }

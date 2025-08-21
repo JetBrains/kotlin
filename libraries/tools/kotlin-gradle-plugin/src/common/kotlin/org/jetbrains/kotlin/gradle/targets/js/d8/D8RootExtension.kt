@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -11,6 +11,11 @@ import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.logging.kotlinInfo
 import org.jetbrains.kotlin.gradle.targets.js.AbstractSettings
+import org.jetbrains.kotlin.gradle.targets.wasm.d8.D8Env
+import org.jetbrains.kotlin.gradle.targets.wasm.d8.D8EnvSpec
+import org.jetbrains.kotlin.gradle.targets.wasm.d8.D8SetupTask
+import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmPlatformDisambiguator
+import org.jetbrains.kotlin.gradle.targets.web.HasPlatformDisambiguator
 import org.jetbrains.kotlin.gradle.utils.property
 
 @OptIn(ExperimentalWasmDsl::class)
@@ -37,7 +42,7 @@ open class D8RootExtension(
      * The same as in [D8EnvSpec.version]
      */
     override val versionProperty: org.gradle.api.provider.Property<String> = project.objects.property<String>()
-        .convention("11.9.85")
+        .convention("13.4.61")
 
     /**
      * Specify the edition of the D8.
@@ -59,7 +64,8 @@ open class D8RootExtension(
             project.d8SetupTaskProvider
         }
 
-    companion object {
-        const val EXTENSION_NAME: String = "kotlinD8"
+    companion object : HasPlatformDisambiguator by WasmPlatformDisambiguator {
+        val EXTENSION_NAME: String
+            get() = extensionName("D8")
     }
 }

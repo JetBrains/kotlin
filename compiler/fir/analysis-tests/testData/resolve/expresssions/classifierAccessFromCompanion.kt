@@ -9,3 +9,5 @@ class Factory {
         val x = Function.Default
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, nestedClass, objectDeclaration, propertyDeclaration, sealed */

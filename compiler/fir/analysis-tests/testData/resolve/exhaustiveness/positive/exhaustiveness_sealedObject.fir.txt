@@ -20,7 +20,7 @@ FILE: exhaustiveness_sealedObject.kt
     public final fun takeString(s: R|kotlin/String|): R|kotlin/Unit| {
     }
     public final fun test_1(a: R|A|): R|kotlin/Unit| {
-        lval s: R|kotlin/String| = when (R|<local>/a|) {
+        lval s: R|kotlin/String| = when (lval <when-subject>: R|A| = R|<local>/a|) {
             ($subj$ is R|B|) ->  {
                 String()
             }
@@ -32,7 +32,7 @@ FILE: exhaustiveness_sealedObject.kt
         R|/takeString|(R|<local>/s|)
     }
     public final fun test_2(a: R|A|): R|kotlin/Unit| {
-        lval s: R|kotlin/String| = when (R|<local>/a|) {
+        lval s: R|kotlin/String| = when (lval <when-subject>: R|A| = R|<local>/a|) {
             ($subj$ is R|B|) ->  {
                 String()
             }

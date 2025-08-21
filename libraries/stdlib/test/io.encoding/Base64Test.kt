@@ -42,7 +42,8 @@ class Base64Test {
     private val codecs = listOf(
         Base64 to "Basic",
         Base64.UrlSafe to "UrlSafe",
-        Base64.Mime to "Mime"
+        Base64.Mime to "Mime",
+        Base64.Pem to "PEM",
     )
 
     @Test
@@ -341,37 +342,41 @@ class Base64Test {
 
     @Test
     fun mime() {
-        testCoding(Base64.Mime, bytes(0b1111_1011, 0b1111_0000), "+/A=")
+        for ((codec, lineLength) in listOf(Base64.Mime to 76, Base64.Pem to 64)) {
+            testCoding(codec, bytes(0b1111_1011, 0b1111_0000), "+/A=")
 
-        // all symbols from alphabet
-        testCoding(Base64.Mime, alphabetBytes, basicAlphabet)
+            // all symbols from alphabet
+            testCoding(codec, alphabetBytes, basicAlphabet)
 
-        // dangling single symbol
-        assertFailsWith<IllegalArgumentException> { Base64.Mime.decode("Zm9vY(==") }
+            // dangling single symbol
+            assertFailsWith<IllegalArgumentException> { codec.decode("Zm9vY(==") }
 
-        // decode line separator
-        testDecode(Base64.Mime, "Zm9v\r\nYg==", "foob".encodeToByteArray())
-        testDecode(Base64.Mime, "Zm9v\nYg==", "foob".encodeToByteArray())
-        testDecode(Base64.Mime, "Zm9\rvYg==", "foob".encodeToByteArray())
+            // decode line separator
+            testDecode(codec, "Zm9v\r\nYg==", "foob".encodeToByteArray())
+            testDecode(codec, "Zm9v\nYg==", "foob".encodeToByteArray())
+            testDecode(codec, "Zm9\rvYg==", "foob".encodeToByteArray())
 
-        // decode illegal char
-        testDecode(Base64.Mime, "Zm9vYg(==", "foob".encodeToByteArray())
-        testDecode(Base64.Mime, "Zm[@]9vYg==", "foob".encodeToByteArray())
-        testDecode(Base64.Mime, "Zm9v-Yg==", "foob".encodeToByteArray())
-        testDecode(Base64.Mime, "Zm9vYg=(%^)=", "foob".encodeToByteArray())
-        testDecode(Base64.Mime, "Zm\u00FF9vYg==", "foob".encodeToByteArray())
-        testDecode(Base64.Mime, "\uFFFFZm9vYg==", "foob".encodeToByteArray())
-        testDecode(Base64.Mime, "Zm9vYg==\uD800\uDC00", "foob".encodeToByteArray())
+            // decode illegal char
+            testDecode(codec, "Zm9vYg(==", "foob".encodeToByteArray())
+            testDecode(codec, "Zm[@]9vYg==", "foob".encodeToByteArray())
+            testDecode(codec, "Zm9v-Yg==", "foob".encodeToByteArray())
+            testDecode(codec, "Zm9vYg=(%^)=", "foob".encodeToByteArray())
+            testDecode(codec, "Zm\u00FF9vYg==", "foob".encodeToByteArray())
+            testDecode(codec, "\uFFFFZm9vYg==", "foob".encodeToByteArray())
+            testDecode(codec, "Zm9vYg==\uD800\uDC00", "foob".encodeToByteArray())
 
-        // inserts line separator, but not to the end of the output
-        val expected = "Zm9vYmFy".repeat(76).chunked(76).joinToString(separator = "\r\n")
-        testEncode(Base64.Mime, "foobar".repeat(76).encodeToByteArray(), expected)
+            // inserts line separator, but not to the end of the output
+            val expected = "Zm9vYmFy".repeat(100).chunked(lineLength).joinToString(separator = "\r\n")
+            testEncode(codec, "foobar".repeat(100).encodeToByteArray(), expected)
+        }
     }
 
     @Test
     fun encodeSize() {
         for ((codec, _) in codecs) {
             val lineSeparatorChars = if (codec.isMimeScheme) 2 else 0
+            val mimeSeparatedLineLength = codec.mimeLineLength + lineSeparatorChars
+            val oneLineInputBytes = codec.mimeLineLength / Base64.symbolsPerGroup * Base64.bytesPerGroup
 
             val paddingPresent = Base64.PaddingOption.entries.filter { it.isPresentOnEncode() }
             for (paddingOption in paddingPresent) {
@@ -390,26 +395,39 @@ class Base64Test {
                 assertEquals(12, configuredCodec.encodeSize(8))
                 assertEquals(12, configuredCodec.encodeSize(9))
 
-                // Two lines in mime scheme
+                if (codec.isMimeScheme) {
+                    // Two lines in mime scheme
+                    assertEquals(codec.mimeLineLength, configuredCodec.encodeSize(oneLineInputBytes))
+                    assertEquals(codec.mimeLineLength + lineSeparatorChars + Base64.symbolsPerGroup, configuredCodec.encodeSize(oneLineInputBytes + 1)) // line separator
+                    assertEquals(codec.mimeLineLength + lineSeparatorChars + Base64.symbolsPerGroup, configuredCodec.encodeSize(oneLineInputBytes + 2))
 
-                assertEquals(76, configuredCodec.encodeSize(57))
-                assertEquals(80 + lineSeparatorChars, configuredCodec.encodeSize(58)) // line separator
-                assertEquals(80 + lineSeparatorChars, configuredCodec.encodeSize(59))
-
-                // Three lines in mime scheme
-
-                assertEquals(152 + lineSeparatorChars, configuredCodec.encodeSize(114))
-                assertEquals(156 + 2 * lineSeparatorChars, configuredCodec.encodeSize(115)) // line separator
-                assertEquals(156 + 2 * lineSeparatorChars, configuredCodec.encodeSize(116))
+                    // Three lines in mime scheme
+                    assertEquals(2 * codec.mimeLineLength + lineSeparatorChars, configuredCodec.encodeSize(2 * oneLineInputBytes))
+                    assertEquals(2 * codec.mimeLineLength + 2 * lineSeparatorChars + Base64.symbolsPerGroup, configuredCodec.encodeSize(2 * oneLineInputBytes + 1)) // line separator
+                    assertEquals(2 * codec.mimeLineLength + 2 * lineSeparatorChars + Base64.symbolsPerGroup, configuredCodec.encodeSize(2 * oneLineInputBytes + 2))
+                } else {
+                    assertEquals(76, configuredCodec.encodeSize(57))
+                    assertEquals(80, configuredCodec.encodeSize(58)) // no line separator
+                    assertEquals(80, configuredCodec.encodeSize(59))
+                    assertEquals(152, configuredCodec.encodeSize(114))
+                    assertEquals(156, configuredCodec.encodeSize(115)) // no line separator
+                    assertEquals(156, configuredCodec.encodeSize(116))
+                }
 
                 // The maximum number of bytes that we can encode
 
                 if (codec.isMimeScheme) {
-                    val limit = 1_651_910_496 // lines = 21_17_83_39
-                    assertEquals(2_147_483_646, configuredCodec.encodeSize(limit - 1))
-                    assertEquals(2_147_483_646, configuredCodec.encodeSize(limit))
+                    val fullLines = Int.MAX_VALUE / mimeSeparatedLineLength
+                    val fullLinesChars = fullLines * mimeSeparatedLineLength
+                    val fullLinesBytes = fullLines * oneLineInputBytes
+                    val lastLineChars = Int.MAX_VALUE % mimeSeparatedLineLength
+                    val lastLineBytes = lastLineChars / Base64.symbolsPerGroup * Base64.bytesPerGroup
+
+                    for (lastLine in 1..lastLineBytes) {
+                        assertEquals(fullLinesChars + configuredCodec.encodeSize(lastLine), configuredCodec.encodeSize(fullLinesBytes + lastLine))
+                    }
                     assertFailsWith<IllegalArgumentException> {
-                        configuredCodec.encodeSize(limit + 1) // Int.MAX_VALUE + 3
+                        configuredCodec.encodeSize(fullLinesBytes + lastLineBytes + 1) // Int.MAX_VALUE + 3
                     }.also { exception ->
                         assertEquals("Input is too big", exception.message)
                     }
@@ -447,26 +465,39 @@ class Base64Test {
                 assertEquals(11, configuredCodec.encodeSize(8))
                 assertEquals(12, configuredCodec.encodeSize(9))
 
-                // Two lines in mime scheme
+                if (codec.isMimeScheme) {
+                    // Two lines in mime scheme
+                    assertEquals(codec.mimeLineLength, configuredCodec.encodeSize(oneLineInputBytes))
+                    assertEquals(codec.mimeLineLength + lineSeparatorChars + 2, configuredCodec.encodeSize(oneLineInputBytes + 1)) // line separator
+                    assertEquals(codec.mimeLineLength + lineSeparatorChars + 3, configuredCodec.encodeSize(oneLineInputBytes + 2))
 
-                assertEquals(76, configuredCodec.encodeSize(57))
-                assertEquals(78 + lineSeparatorChars, configuredCodec.encodeSize(58)) // line separator
-                assertEquals(79 + lineSeparatorChars, configuredCodec.encodeSize(59))
-
-                // Three lines in mime scheme
-
-                assertEquals(152 + lineSeparatorChars, configuredCodec.encodeSize(114))
-                assertEquals(154 + 2 * lineSeparatorChars, configuredCodec.encodeSize(115)) // line separator
-                assertEquals(155 + 2 * lineSeparatorChars, configuredCodec.encodeSize(116))
+                    // Three lines in mime scheme
+                    assertEquals(2 * codec.mimeLineLength + lineSeparatorChars, configuredCodec.encodeSize(2 * oneLineInputBytes))
+                    assertEquals(2 * codec.mimeLineLength + 2 * lineSeparatorChars + 2, configuredCodec.encodeSize(2 * oneLineInputBytes + 1)) // line separator
+                    assertEquals(2 * codec.mimeLineLength + 2 * lineSeparatorChars + 3, configuredCodec.encodeSize(2 * oneLineInputBytes + 2))
+                } else {
+                    assertEquals(76, configuredCodec.encodeSize(57))
+                    assertEquals(78, configuredCodec.encodeSize(58)) // no line separator
+                    assertEquals(79, configuredCodec.encodeSize(59))
+                    assertEquals(152, configuredCodec.encodeSize(114))
+                    assertEquals(154, configuredCodec.encodeSize(115)) // no line separator
+                    assertEquals(155, configuredCodec.encodeSize(116))
+                }
 
                 // The maximum number of bytes that we can encode
 
                 if (codec.isMimeScheme) {
-                    val limit = 1_651_910_496 // lines = 21_17_83_39
-                    assertEquals(2_147_483_645, configuredCodec.encodeSize(limit - 1))
-                    assertEquals(2_147_483_646, configuredCodec.encodeSize(limit))
+                    val fullLines = Int.MAX_VALUE / mimeSeparatedLineLength
+                    val fullLinesChars = fullLines * mimeSeparatedLineLength
+                    val fullLinesBytes = fullLines * oneLineInputBytes
+                    val lastLineChars = Int.MAX_VALUE % mimeSeparatedLineLength
+                    val lastLineBytes = lastLineChars / Base64.symbolsPerGroup * Base64.bytesPerGroup
+
+                    for (lastLine in 1..lastLineBytes) {
+                        assertEquals(fullLinesChars + configuredCodec.encodeSize(lastLine), configuredCodec.encodeSize(fullLinesBytes + lastLine))
+                    }
                     assertFailsWith<IllegalArgumentException> {
-                        configuredCodec.encodeSize(limit + 1) // Int.MAX_VALUE + 1
+                        configuredCodec.encodeSize(fullLinesBytes + lastLineBytes + 1) // Int.MAX_VALUE + 1
                     }.also { exception ->
                         assertEquals("Input is too big", exception.message)
                     }

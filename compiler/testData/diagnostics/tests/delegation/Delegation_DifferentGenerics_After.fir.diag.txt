@@ -48,20 +48,20 @@ fun <E : Any!, F : Any!> bar(): (Mutable)List<F!>!
 /KJC.kt:(207,227): error: Conflicting overloads:
 fun bar(): List<Int>
 fun <E : Any!, F : Any!> bar(): (Mutable)List<F!>!
-/test.kt:(125,127): error: The function 'fun <C : Any!> foo(): (Mutable)List<C!>!' defined in '/JI' from an interface is generic, but the function 'fun foo(): (Mutable)List<String!>!' defined in '/JC' from a delegate is not.
+/test.kt:(125,127): error: The function 'fun <C : Any!> foo(): (Mutable)List<C!>!' defined in 'JI' from an interface is generic, but the function 'fun foo(): (Mutable)List<String!>!' defined in 'JC' from a delegate is not.
 Such an implementation can provoke runtime errors.
 
-/test.kt:(125,127): error: The function 'fun <D : Any!> baz(): D!' defined in '/JI' from an interface is generic, but the function 'fun baz(): Any!' defined in '/JC' from a delegate is not.
+/test.kt:(125,127): error: The function 'fun <D : Any!> baz(): D!' defined in 'JI' from an interface is generic, but the function 'fun baz(): Any!' defined in 'JC' from a delegate is not.
 Such an implementation can provoke runtime errors.
 
-/test.kt:(125,127): error: The function 'fun <E : Any!, F : Any!> bar(): (Mutable)List<F!>!' defined in '/JI' from an interface is generic, but the function 'fun bar(): (Mutable)List<Int!>!' defined in '/JC' from a delegate is not.
+/test.kt:(125,127): error: The function 'fun <E : Any!, F : Any!> bar(): (Mutable)List<F!>!' defined in 'JI' from an interface is generic, but the function 'fun bar(): (Mutable)List<Int!>!' defined in 'JC' from a delegate is not.
 Such an implementation can provoke runtime errors.
 
-/test.kt:(238,240): error: The function 'fun <C> foo(): List<C>' defined in '/KI' from an interface is generic, but the function 'fun foo(): List<String!>' defined in '/JKC' from a delegate is not.
+/test.kt:(238,240): error: The function 'fun <C> foo(): List<C>' defined in 'KI' from an interface is generic, but the function 'fun foo(): List<String!>' defined in 'JKC' from a delegate is not.
 Such an implementation can provoke runtime errors.
 
-/test.kt:(238,240): error: The function 'fun <D> baz(): D' defined in '/KI' from an interface is generic, but the function 'fun baz(): Any' defined in '/JKC' from a delegate is not.
+/test.kt:(238,240): error: The function 'fun <D> baz(): D' defined in 'KI' from an interface is generic, but the function 'fun baz(): Any' defined in 'JKC' from a delegate is not.
 Such an implementation can provoke runtime errors.
 
-/test.kt:(238,240): error: The function 'fun <E, F> bar(): List<F>' defined in '/KI' from an interface is generic, but the function 'fun bar(): List<Int!>' defined in '/JKC' from a delegate is not.
+/test.kt:(238,240): error: The function 'fun <E, F> bar(): List<F>' defined in 'KI' from an interface is generic, but the function 'fun bar(): List<Int!>' defined in 'JKC' from a delegate is not.
 Such an implementation can provoke runtime errors.

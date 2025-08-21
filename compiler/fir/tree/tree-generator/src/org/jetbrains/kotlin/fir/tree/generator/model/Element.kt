@@ -42,12 +42,6 @@ class Element(name: String, override val propertyName: String, kind: Kind) : Abs
     override val hasTransformMethod: Boolean
         get() = true
 
-    override val hasAcceptChildrenMethod: Boolean
-        get() = isRootElement
-
-    override val hasTransformChildrenMethod: Boolean
-        get() = isRootElement
-
     override val walkableChildren: List<Field>
         get() = emptyList() // Use Implementation#walkableChildren instead
 

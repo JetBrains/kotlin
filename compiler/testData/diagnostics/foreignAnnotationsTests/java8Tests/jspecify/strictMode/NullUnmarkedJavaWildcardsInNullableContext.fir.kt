@@ -30,10 +30,7 @@ public class NullMarkedType {
 fun <T> accept(arg: T) {}
 
 fun test() {
-    // jspecify_nullness_mismatch
     accept<Any>(<!ARGUMENT_TYPE_MISMATCH!>NullMarkedType.TargetType.UNBOUNDED_WILDCARD().produce()<!>)
-    // jspecify_nullness_mismatch
     accept<String>(<!ARGUMENT_TYPE_MISMATCH!>NullMarkedType.TargetType.UPPER_BOUNDED_WILDCARD().produce()<!>)
-    // jspecify_nullness_mismatch
     accept<Any>(<!ARGUMENT_TYPE_MISMATCH!>NullMarkedType.TargetType.LOWER_BOUNDED_WILDCARD().produce()<!>)
 }

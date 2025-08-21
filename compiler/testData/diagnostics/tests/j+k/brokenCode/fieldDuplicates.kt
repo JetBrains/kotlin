@@ -12,3 +12,5 @@ fun foo() {
     // no exception is thrown (see KT-3898)
     A().foo
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, javaFunction, javaType */

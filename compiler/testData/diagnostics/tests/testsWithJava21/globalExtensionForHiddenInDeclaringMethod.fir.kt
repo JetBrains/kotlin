@@ -5,10 +5,13 @@ abstract class A : List<Any> {
     }
 }
 
-fun <T> List<T>.<!EXTENSION_SHADOWED_BY_MEMBER!>getFirst<!>(): Int = 1
+fun <T> List<T>.getFirst(): Int = 1
 
 fun test(l: A){
     consumeInt(<!ARGUMENT_TYPE_MISMATCH!>l.<!DEPRECATION!>getFirst<!>()<!>)
 
 }
 fun consumeInt(i: Int) {}
+
+/* GENERATED_FIR_TAGS: classDeclaration, flexibleType, funWithExtensionReceiver, functionDeclaration, integerLiteral,
+nullableType, override, superExpression, typeParameter */

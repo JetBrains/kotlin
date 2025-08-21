@@ -10,3 +10,6 @@ fun main() {
         value = "value"
     )
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaFunction, localProperty, nullableType, propertyDeclaration,
+stringLiteral */

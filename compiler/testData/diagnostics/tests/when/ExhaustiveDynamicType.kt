@@ -34,3 +34,6 @@ fun testAnyAndNull() {
         null -> ""
     }
 }
+
+/* GENERATED_FIR_TAGS: equalityExpression, flexibleType, functionDeclaration, isExpression, localProperty, nullableType,
+propertyDeclaration, smartcast, stringLiteral, whenExpression, whenWithSubject */

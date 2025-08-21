@@ -5,24 +5,35 @@
 
 package org.jetbrains.kotlin.fir.renderer
 
+import org.jetbrains.kotlin.KtFakeSourceElementKind
+import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.expressions.FirErrorExpression
 
 abstract class FirErrorExpressionRenderer {
     internal lateinit var components: FirRendererComponents
     protected val printer: FirPrinter get() = components.printer
 
+    fun renderDiagnostic(diagnostic: ConeDiagnostic) {
+        printer.print("ERROR_EXPR(${diagnostic.reason})")
+    }
+
     abstract fun renderErrorExpression(errorExpression: FirErrorExpression)
 }
 
 class FirErrorExpressionOnlyErrorRenderer : FirErrorExpressionRenderer() {
     override fun renderErrorExpression(errorExpression: FirErrorExpression) {
-        printer.print("ERROR_EXPR(${errorExpression.diagnostic.reason})")
+        renderDiagnostic(errorExpression.diagnostic)
+        errorExpression.expression?.let {
+            if (errorExpression.source?.kind == KtFakeSourceElementKind.ErrorExpressionForTopLevelLambda) {
+                it.accept(components.visitor)
+            }
+        }
     }
 }
 
 class FirErrorExpressionExtendedRenderer : FirErrorExpressionRenderer() {
     override fun renderErrorExpression(errorExpression: FirErrorExpression) {
-        printer.print("ERROR_EXPR(${errorExpression.diagnostic.reason})")
+        renderDiagnostic(errorExpression.diagnostic)
         errorExpression.nonExpressionElement?.accept(components.visitor)
     }
 }

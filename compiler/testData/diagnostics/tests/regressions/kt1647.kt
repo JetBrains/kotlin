@@ -11,3 +11,6 @@ fun <F : Abs> patternMatchingAndGenerics(arg : F) : String {
     }
     return "else";
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, ifExpression, isExpression, stringLiteral, typeConstraint,
+typeParameter */

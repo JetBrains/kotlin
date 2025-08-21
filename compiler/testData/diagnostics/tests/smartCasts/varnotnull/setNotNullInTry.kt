@@ -14,3 +14,6 @@ fun foo() {
     if (s != null) { }
     s<!UNSAFE_CALL!>.<!>hashCode()
 }
+
+/* GENERATED_FIR_TAGS: assignment, equalityExpression, functionDeclaration, ifExpression, localProperty, nullableType,
+propertyDeclaration, stringLiteral, tryExpression */

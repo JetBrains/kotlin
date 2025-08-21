@@ -22,3 +22,6 @@ class Some : My() {
 }
 
 fun box(): String = Some().soo()
+
+/* GENERATED_FIR_TAGS: additiveExpression, assignment, classDeclaration, flexibleType, functionDeclaration, javaProperty,
+javaType, propertyDeclaration, stringLiteral, superExpression */

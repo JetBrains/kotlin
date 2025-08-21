@@ -32,13 +32,13 @@ open class Foo {
   val current: Int
     @Composable @ReadOnlyComposable @JvmName(name = "getCurrent")
     get() {
-      val tmp0 = %composer.hashCode()
+      val tmp0 = %composer as Any.hashCode()
       return tmp0
     }
   @ReadOnlyComposable
   @Composable
   fun getHashCode(%composer: Composer?, %changed: Int): Int {
-    val tmp0 = %composer.hashCode()
+    val tmp0 = %composer as Any.hashCode()
     return tmp0
   }
   static val %stable: Int = 0
@@ -46,6 +46,6 @@ open class Foo {
 @ReadOnlyComposable
 @Composable
 fun getHashCode(%composer: Composer?, %changed: Int): Int {
-  val tmp0 = %composer.hashCode()
+  val tmp0 = %composer as Any.hashCode()
   return tmp0
 }

@@ -1,6 +1,6 @@
 FILE fqName:<root> fileName:/dynamicMemberIncrementDecrement.kt
-  FUN name:testMemberIncrementDecrement visibility:public modality:FINAL <> (d:dynamic) returnType:kotlin.Unit
-    VALUE_PARAMETER name:d index:0 type:dynamic
+  FUN name:testMemberIncrementDecrement visibility:public modality:FINAL returnType:kotlin.Unit
+    VALUE_PARAMETER kind:Regular name:d index:0 type:dynamic
     BLOCK_BODY
       VAR name:t1 type:dynamic [val]
         DYN_OP operator=PREFIX_INCREMENT type=dynamic
@@ -18,8 +18,8 @@ FILE fqName:<root> fileName:/dynamicMemberIncrementDecrement.kt
         DYN_OP operator=POSTFIX_DECREMENT type=dynamic
           receiver: DYN_MEMBER memberName='postfixDecr' type=dynamic
             GET_VAR 'd: dynamic declared in <root>.testMemberIncrementDecrement' type=dynamic origin=IMPLICIT_ARGUMENT
-  FUN name:testSafeMemberIncrementDecrement visibility:public modality:FINAL <> (d:dynamic) returnType:kotlin.Unit
-    VALUE_PARAMETER name:d index:0 type:dynamic
+  FUN name:testSafeMemberIncrementDecrement visibility:public modality:FINAL returnType:kotlin.Unit
+    VALUE_PARAMETER kind:Regular name:d index:0 type:dynamic
     BLOCK_BODY
       VAR name:t1 type:dynamic [val]
         BLOCK type=dynamic origin=SAFE_CALL
@@ -28,8 +28,8 @@ FILE fqName:<root> fileName:/dynamicMemberIncrementDecrement.kt
           WHEN type=dynamic origin=null
             BRANCH
               if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
-                arg0: GET_VAR 'val tmp_0: dynamic declared in <root>.testSafeMemberIncrementDecrement' type=dynamic origin=null
-                arg1: CONST Null type=kotlin.Nothing? value=null
+                ARG arg0: GET_VAR 'val tmp_0: dynamic declared in <root>.testSafeMemberIncrementDecrement' type=dynamic origin=null
+                ARG arg1: CONST Null type=kotlin.Nothing? value=null
               then: CONST Null type=kotlin.Nothing? value=null
             BRANCH
               if: CONST Boolean type=kotlin.Boolean value=true
@@ -43,8 +43,8 @@ FILE fqName:<root> fileName:/dynamicMemberIncrementDecrement.kt
           WHEN type=dynamic origin=null
             BRANCH
               if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
-                arg0: GET_VAR 'val tmp_1: dynamic declared in <root>.testSafeMemberIncrementDecrement' type=dynamic origin=null
-                arg1: CONST Null type=kotlin.Nothing? value=null
+                ARG arg0: GET_VAR 'val tmp_1: dynamic declared in <root>.testSafeMemberIncrementDecrement' type=dynamic origin=null
+                ARG arg1: CONST Null type=kotlin.Nothing? value=null
               then: CONST Null type=kotlin.Nothing? value=null
             BRANCH
               if: CONST Boolean type=kotlin.Boolean value=true
@@ -58,8 +58,8 @@ FILE fqName:<root> fileName:/dynamicMemberIncrementDecrement.kt
           WHEN type=dynamic origin=null
             BRANCH
               if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
-                arg0: GET_VAR 'val tmp_2: dynamic declared in <root>.testSafeMemberIncrementDecrement' type=dynamic origin=null
-                arg1: CONST Null type=kotlin.Nothing? value=null
+                ARG arg0: GET_VAR 'val tmp_2: dynamic declared in <root>.testSafeMemberIncrementDecrement' type=dynamic origin=null
+                ARG arg1: CONST Null type=kotlin.Nothing? value=null
               then: CONST Null type=kotlin.Nothing? value=null
             BRANCH
               if: CONST Boolean type=kotlin.Boolean value=true
@@ -73,8 +73,8 @@ FILE fqName:<root> fileName:/dynamicMemberIncrementDecrement.kt
           WHEN type=dynamic origin=null
             BRANCH
               if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
-                arg0: GET_VAR 'val tmp_3: dynamic declared in <root>.testSafeMemberIncrementDecrement' type=dynamic origin=null
-                arg1: CONST Null type=kotlin.Nothing? value=null
+                ARG arg0: GET_VAR 'val tmp_3: dynamic declared in <root>.testSafeMemberIncrementDecrement' type=dynamic origin=null
+                ARG arg1: CONST Null type=kotlin.Nothing? value=null
               then: CONST Null type=kotlin.Nothing? value=null
             BRANCH
               if: CONST Boolean type=kotlin.Boolean value=true

@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.fir.types.FirTypeRef
 
 @FirBuilderDsl
 class FirScriptReceiverParameterBuilder : FirAnnotationContainerBuilder {
-    override var source: KtSourceElement? = null
+    var source: KtSourceElement? = null
     var resolvePhase: FirResolvePhase = FirResolvePhase.RAW_FIR
     lateinit var moduleData: FirModuleData
     lateinit var origin: FirDeclarationOrigin

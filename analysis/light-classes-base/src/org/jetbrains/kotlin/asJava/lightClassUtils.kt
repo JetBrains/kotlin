@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -7,10 +7,14 @@ package org.jetbrains.kotlin.asJava
 
 import com.intellij.lang.jvm.JvmModifier
 import com.intellij.psi.*
+import com.intellij.psi.impl.light.LightRecordMethod
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.asJava.classes.KtFakeLightClass
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
-import org.jetbrains.kotlin.asJava.elements.*
+import org.jetbrains.kotlin.asJava.elements.KtLightElement
+import org.jetbrains.kotlin.asJava.elements.KtLightElementBase
+import org.jetbrains.kotlin.asJava.elements.KtLightMethod
+import org.jetbrains.kotlin.asJava.elements.PsiElementWithOrigin
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.load.java.JvmAbi
@@ -234,7 +238,7 @@ private val PsiMethod.canBeGetter: Boolean
     get() = JvmAbi.isGetterName(name) && parameters.isEmpty() && returnTypeElement?.textMatches("void") != true
 
 private val PsiMethod.canBeSetter: Boolean
-    get() = JvmAbi.isSetterName(name) && parameters.size == 1 && returnTypeElement?.textMatches("void") != false
+    get() = JvmAbi.isSetterName(name) && parameters.size == 1
 
 private val PsiMethod.probablyCanHaveSyntheticAccessors: Boolean
     get() = probablyCanHaveSyntheticAccessors()
@@ -268,7 +272,7 @@ fun PsiMethod.syntheticAccessors(withoutOverrideCheck: Boolean = false): Collect
     }
 }
 
-val PsiMethod.canHaveSyntheticAccessors: Boolean get() = probablyCanHaveSyntheticAccessors && (canBeGetter || canBeSetter)
+val PsiMethod.canHaveSyntheticAccessors: Boolean get() = this is LightRecordMethod || probablyCanHaveSyntheticAccessors && (canBeGetter || canBeSetter)
 
 val PsiMethod.canHaveSyntheticGetter: Boolean get() = probablyCanHaveSyntheticAccessors && canBeGetter
 

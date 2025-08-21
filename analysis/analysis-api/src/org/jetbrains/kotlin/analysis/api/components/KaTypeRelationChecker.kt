@@ -1,14 +1,17 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.analysis.api.components
 
+import org.jetbrains.kotlin.analysis.api.KaContextParameterApi
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassLikeSymbol
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.name.ClassId
 
+@SubclassOptInRequired(KaImplementationDetail::class)
 public interface KaTypeRelationChecker : KaSessionComponent {
     /**
      * Returns whether this [KaType] is semantically equal to [other].
@@ -112,4 +115,52 @@ public enum class KaSubtypingErrorTypePolicy {
      * `List<ERROR>` is a subtype of `List<Int>`, meaning that `foo(list: List<Int>)` is a valid candidate for our purposes.
      */
     LENIENT,
+}
+
+/**
+ * @see KaTypeRelationChecker.semanticallyEquals
+ */
+@KaContextParameterApi
+context(context: KaTypeRelationChecker)
+public fun KaType.semanticallyEquals(
+    other: KaType,
+    errorTypePolicy: KaSubtypingErrorTypePolicy = KaSubtypingErrorTypePolicy.STRICT,
+): Boolean {
+    return with(context) { semanticallyEquals(other, errorTypePolicy) }
+}
+
+/**
+ * @see KaTypeRelationChecker.isSubtypeOf
+ */
+@KaContextParameterApi
+context(context: KaTypeRelationChecker)
+public fun KaType.isSubtypeOf(
+    supertype: KaType,
+    errorTypePolicy: KaSubtypingErrorTypePolicy = KaSubtypingErrorTypePolicy.STRICT,
+): Boolean {
+    return with(context) { isSubtypeOf(supertype, errorTypePolicy) }
+}
+
+/**
+ * @see KaTypeRelationChecker.isSubtypeOf
+ */
+@KaContextParameterApi
+context(context: KaTypeRelationChecker)
+public fun KaType.isSubtypeOf(
+    classId: ClassId,
+    errorTypePolicy: KaSubtypingErrorTypePolicy = KaSubtypingErrorTypePolicy.STRICT,
+): Boolean {
+    return with(context) { isSubtypeOf(classId, errorTypePolicy) }
+}
+
+/**
+ * @see KaTypeRelationChecker.isSubtypeOf
+ */
+@KaContextParameterApi
+context(context: KaTypeRelationChecker)
+public fun KaType.isSubtypeOf(
+    symbol: KaClassLikeSymbol,
+    errorTypePolicy: KaSubtypingErrorTypePolicy = KaSubtypingErrorTypePolicy.STRICT,
+): Boolean {
+    return with(context) { isSubtypeOf(symbol, errorTypePolicy) }
 }

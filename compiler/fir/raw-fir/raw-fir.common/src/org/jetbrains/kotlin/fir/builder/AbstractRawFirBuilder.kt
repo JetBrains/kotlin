@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.diagnostics.*
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.*
+import org.jetbrains.kotlin.fir.extensions.extensionService
 import org.jetbrains.kotlin.fir.references.builder.buildImplicitThisReference
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.builder.buildSimpleNamedReference
@@ -44,13 +45,19 @@ import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.exceptions.ExceptionAttachmentBuilder
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
+import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
+import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.InvocationKind
+import kotlin.contracts.contract
 
-//T can be either PsiElement, or LighterASTNode
-abstract class AbstractRawFirBuilder<T>(val baseSession: FirSession, val context: Context<T> = Context()) {
+// T can be either PsiElement or LighterASTNode
+abstract class AbstractRawFirBuilder<T : Any>(val baseSession: FirSession, val context: Context<T> = Context()) {
+    companion object {
+        fun firScriptName(fileName: String): Name = Name.special("<script-$fileName>")
+    }
+
     val baseModuleData: FirModuleData = baseSession.moduleData
-
-    protected val contextParameterEnabled: Boolean = baseSession.languageVersionSettings.supportsFeature(LanguageFeature.ContextParameters)
 
     abstract fun T.toFirSourceElement(kind: KtFakeSourceElementKind? = null): KtSourceElement
 
@@ -59,9 +66,14 @@ abstract class AbstractRawFirBuilder<T>(val baseSession: FirSession, val context
     protected val implicitEnumType: FirImplicitBuiltinTypeRef = baseSession.builtinTypes.enumType
     protected val implicitAnnotationType: FirImplicitBuiltinTypeRef = baseSession.builtinTypes.annotationType
 
+    protected val imitateLambdaSuspendModifier: Boolean =
+        baseSession.languageVersionSettings.supportsFeature(LanguageFeature.ParseLambdaWithSuspendModifier)
+
+    val nameBasedDestructuringShortForm: Boolean =
+        baseSession.languageVersionSettings.supportsFeature(LanguageFeature.EnableNameBasedDestructuringShortForm)
+
     abstract val T.elementType: IElementType
     abstract val T.asText: String
-    abstract val T.unescapedValue: String
     abstract fun T.getReferencedNameAsName(): Name
     abstract fun T.getLabelName(): String?
     abstract fun T.getExpressionInParentheses(): T?
@@ -157,11 +169,16 @@ abstract class AbstractRawFirBuilder<T>(val baseSession: FirSession, val context
      * @see Context.pushContainerSymbol
      * @see Context.popContainerSymbol
      */
+    @OptIn(ExperimentalContracts::class)
     inline fun <T> withContainerSymbol(
         symbol: FirBasedSymbol<*>,
         isLocal: Boolean = false,
         block: () -> T,
     ): T {
+        contract {
+            callsInPlace(block, InvocationKind.EXACTLY_ONCE)
+        }
+
         if (!isLocal) {
             context.pushContainerSymbol(symbol)
         }
@@ -187,6 +204,19 @@ abstract class AbstractRawFirBuilder<T>(val baseSession: FirSession, val context
         } finally {
             context.popContainerSymbol(symbol)
             context.containingScriptSymbol = null
+        }
+    }
+
+    inline fun <T> withContainerReplSymbol(
+        symbol: FirReplSnippetSymbol,
+        block: () -> T,
+    ): T {
+        require(context.containingReplSymbol == null) { "Nested snippets are not supported" }
+        context.containingReplSymbol = symbol
+        return try {
+            block()
+        } finally {
+            context.containingReplSymbol = null
         }
     }
 
@@ -226,7 +256,7 @@ abstract class AbstractRawFirBuilder<T>(val baseSession: FirSession, val context
     fun currentDispatchReceiverType(): ConeClassLikeType? = currentDispatchReceiverType(context)
 
     /**
-     * @return second from the end dispatch receiver. For the inner class constructor it would be the outer class.
+     * @return second from the end dispatch receiver. For the inner class constructor, it would be the outer class.
      */
     protected fun dispatchReceiverForInnerClassConstructor(): ConeClassLikeType? {
         val dispatchReceivers = context.dispatchReceiverTypesStack
@@ -305,15 +335,15 @@ abstract class AbstractRawFirBuilder<T>(val baseSession: FirSession, val context
         }
     }
 
-    fun T?.toDelegatedSelfType(firClass: FirRegularClassBuilder): FirResolvedTypeRef =
+    fun T.toDelegatedSelfType(firClass: FirRegularClassBuilder): FirResolvedTypeRef =
         toDelegatedSelfType(firClass.typeParameters, firClass.symbol)
 
-    fun T?.toDelegatedSelfType(firObject: FirAnonymousObjectBuilder): FirResolvedTypeRef =
+    fun T.toDelegatedSelfType(firObject: FirAnonymousObjectBuilder): FirResolvedTypeRef =
         toDelegatedSelfType(firObject.typeParameters, firObject.symbol)
 
-    protected fun T?.toDelegatedSelfType(typeParameters: List<FirTypeParameterRef>, symbol: FirClassLikeSymbol<*>): FirResolvedTypeRef {
+    protected fun T.toDelegatedSelfType(typeParameters: List<FirTypeParameterRef>, symbol: FirClassLikeSymbol<*>): FirResolvedTypeRef {
         return buildResolvedTypeRef {
-            source = this@toDelegatedSelfType?.toFirSourceElement(KtFakeSourceElementKind.ClassSelfTypeRef)
+            source = this@toDelegatedSelfType.toFirSourceElement(KtFakeSourceElementKind.ClassSelfTypeRef)
             coneType = ConeClassLikeTypeImpl(
                 symbol.toLookupTag(),
                 typeParameters.map { ConeTypeParameterTypeImpl(it.symbol.toLookupTag(), false) }.toTypedArray(),
@@ -457,7 +487,9 @@ abstract class AbstractRawFirBuilder<T>(val baseSession: FirSession, val context
                     sourceElement,
                     kind,
                     number,
-                    ConeSimpleDiagnostic("Incorrect integer literal: $text", diagnostic)
+                    "integer",
+                    text,
+                    diagnostic,
                 )
             }
             FLOAT_CONSTANT ->
@@ -466,14 +498,18 @@ abstract class AbstractRawFirBuilder<T>(val baseSession: FirSession, val context
                         sourceElement,
                         ConstantValueKind.Float,
                         convertedText,
-                        ConeSimpleDiagnostic("Incorrect float: $text", DiagnosticKind.FloatLiteralOutOfRange)
+                        "float",
+                        text,
+                        DiagnosticKind.FloatLiteralOutOfRange,
                     )
                 } else {
                     buildConstOrErrorExpression(
                         sourceElement,
                         ConstantValueKind.Double,
                         convertedText as? Double,
-                        ConeSimpleDiagnostic("Incorrect double: $text", DiagnosticKind.FloatLiteralOutOfRange)
+                        "double",
+                        text,
+                        DiagnosticKind.FloatLiteralOutOfRange,
                     )
                 }
             CHARACTER_CONSTANT -> {
@@ -482,10 +518,9 @@ abstract class AbstractRawFirBuilder<T>(val baseSession: FirSession, val context
                     sourceElement,
                     ConstantValueKind.Char,
                     characterWithDiagnostic.value,
-                    ConeSimpleDiagnostic(
-                        "Incorrect character: $text",
-                        characterWithDiagnostic.getDiagnostic() ?: DiagnosticKind.IllegalConstExpression
-                    )
+                    "character",
+                    text,
+                    characterWithDiagnostic.getDiagnostic() ?: DiagnosticKind.IllegalConstExpression
                 )
             }
             BOOLEAN_CONSTANT ->
@@ -554,7 +589,7 @@ abstract class AbstractRawFirBuilder<T>(val baseSession: FirSession, val context
                 L@ for (entry in this@toInterpolatingCall) {
                     if (entry == null) continue
                     when (getElementType(entry)) {
-                        INTERPOLATION_PREFIX, OPEN_QUOTE, CLOSING_QUOTE -> continue@L
+                        STRING_INTERPOLATION_PREFIX, OPEN_QUOTE, CLOSING_QUOTE -> continue@L
                         LITERAL_STRING_TEMPLATE_ENTRY -> {
                             sb.append(entry.asText)
                             arguments += buildLiteralExpression(
@@ -562,16 +597,20 @@ abstract class AbstractRawFirBuilder<T>(val baseSession: FirSession, val context
                             )
                         }
                         ESCAPE_STRING_TEMPLATE_ENTRY -> {
-                            sb.append(entry.unescapedValue)
-                            val characterWithDiagnostic = escapedStringToCharacter(entry.asText)
+                            val entryText = entry.asText
+                            val characterWithDiagnostic = escapedStringToCharacter(entryText)
+                            val unescapedCharacter = characterWithDiagnostic.value
+                            if (unescapedCharacter != null) {
+                                sb.append(unescapedCharacter)
+                            }
+
                             arguments += buildConstOrErrorExpression(
                                 entry.toFirSourceElement(),
                                 ConstantValueKind.String,
-                                characterWithDiagnostic.value?.toString(),
-                                ConeSimpleDiagnostic(
-                                    "Incorrect character: ${entry.asText}",
-                                    characterWithDiagnostic.getDiagnostic() ?: DiagnosticKind.IllegalConstExpression
-                                )
+                                unescapedCharacter?.toString(),
+                                "character",
+                                entryText,
+                                characterWithDiagnostic.getDiagnostic() ?: DiagnosticKind.IllegalConstExpression
                             )
                         }
                         SHORT_STRING_TEMPLATE_ENTRY, LONG_STRING_TEMPLATE_ENTRY -> {
@@ -596,7 +635,7 @@ abstract class AbstractRawFirBuilder<T>(val baseSession: FirSession, val context
                     }
                 }
             }
-            source = base?.toFirSourceElement()
+            source = base.toFirSourceElement()
             interpolationPrefix = prefix()
             // Fast-pass if there is no errors and non-const string expressions
             if (!hasExpressions && !argumentList.arguments.any { it is FirErrorExpression })
@@ -611,7 +650,7 @@ abstract class AbstractRawFirBuilder<T>(val baseSession: FirSession, val context
     }
 
     fun generateIncrementOrDecrementBlock(
-        // Used to obtain source-element or text
+        // Used to get source-element or text
         wholeExpression: T,
         operationReference: T?,
         receiver: T?,
@@ -620,6 +659,7 @@ abstract class AbstractRawFirBuilder<T>(val baseSession: FirSession, val context
         convert: T.() -> FirExpression,
     ): FirExpression {
         val unwrappedReceiver = receiver.unwrap() ?: return buildErrorExpression {
+            source = wholeExpression.toFirSourceElement()
             diagnostic = ConeSyntaxDiagnostic("Inc/dec without operand")
         }
 
@@ -635,7 +675,7 @@ abstract class AbstractRawFirBuilder<T>(val baseSession: FirSession, val context
         }
 
         return buildIncrementDecrementExpression {
-            val baseSource = wholeExpression?.toFirSourceElement()
+            val baseSource = wholeExpression.toFirSourceElement()
             source = baseSource
             operationSource = operationReference?.toFirSourceElement()
             operationName = callName
@@ -656,9 +696,9 @@ abstract class AbstractRawFirBuilder<T>(val baseSession: FirSession, val context
         var unwrapped = this
         while (true) {
             unwrapped = when (unwrapped?.elementType) {
-                PARENTHESIZED -> unwrapped?.getExpressionInParentheses()
-                LABELED_EXPRESSION -> unwrapped?.getLabeledExpression()
-                ANNOTATED_EXPRESSION -> unwrapped?.getAnnotatedExpression()
+                PARENTHESIZED -> unwrapped.getExpressionInParentheses()
+                LABELED_EXPRESSION -> unwrapped.getLabeledExpression()
+                ANNOTATED_EXPRESSION -> unwrapped.getAnnotatedExpression()
                 else -> return unwrapped
             }
         }
@@ -710,11 +750,12 @@ abstract class AbstractRawFirBuilder<T>(val baseSession: FirSession, val context
         return buildBlockPossiblyUnderSafeCall(
             array, convert,
             // For (a?.b[3])++ and (a?.b)[3]++ we should not pull `++` inside safe call
-            isChildInParentheses = receiverSourceElement.isChildInParentheses() || array?.toFirSourceElement()?.isChildInParentheses() == true,
+            isChildInParentheses = receiverSourceElement.isChildInParentheses() ||
+                    array?.toFirSourceElement()?.isChildInParentheses() == true,
             sourceElementForError = receiverSourceElement,
         ) { arrayReceiver ->
-            val baseSource = wholeExpression?.toFirSourceElement()
-            val desugaredSource = baseSource?.fakeElement(sourceKind)
+            val baseSource = wholeExpression.toFirSourceElement()
+            val desugaredSource = baseSource.fakeElement(sourceKind)
             source = desugaredSource
 
             val indices = receiver.indexExpressions
@@ -738,7 +779,7 @@ abstract class AbstractRawFirBuilder<T>(val baseSession: FirSession, val context
 
             fun buildGetCall(sourceKind: KtFakeSourceElementKind) =
                 buildFunctionCall {
-                    val fakeSource = receiver?.toFirSourceElement(sourceKind)
+                    val fakeSource = receiver.toFirSourceElement(sourceKind)
                     source = fakeSource
                     calleeReference = buildSimpleNamedReference {
                         source = fakeSource
@@ -820,7 +861,7 @@ abstract class AbstractRawFirBuilder<T>(val baseSession: FirSession, val context
         receiver: T?,
         convert: T.() -> FirExpression,
         isChildInParentheses: Boolean,
-        sourceElementForError: KtSourceElement?,
+        sourceElementForError: KtSourceElement,
         init: FirBlockBuilder.(receiver: FirExpression) -> Unit = {},
     ): FirExpression {
         val receiverFir = receiver?.convert() ?: buildErrorExpression {
@@ -865,7 +906,7 @@ abstract class AbstractRawFirBuilder<T>(val baseSession: FirSession, val context
     // T is a PSI or a light-tree node
     @OptIn(FirContractViolation::class)
     fun T?.generateAssignment(
-        baseSource: KtSourceElement?,
+        baseSource: KtSourceElement,
         arrayAccessSource: KtSourceElement?,
         rhsExpression: FirExpression,
         operation: FirOperation,
@@ -878,6 +919,7 @@ abstract class AbstractRawFirBuilder<T>(val baseSession: FirSession, val context
         convert: T.() -> FirExpression,
     ): FirStatement {
         val unwrappedLhs = this.unwrap() ?: return buildErrorExpression {
+            source = baseSource
             diagnostic = ConeSyntaxDiagnostic("Inc/dec without operand")
         }
 
@@ -908,7 +950,7 @@ abstract class AbstractRawFirBuilder<T>(val baseSession: FirSession, val context
                     statements += result
                 }
                 statements += buildUnitExpression {
-                    source = this@buildBlock.source?.fakeElement(KtFakeSourceElementKind.ImplicitUnit.IndexedAssignmentCoercion)
+                    source = baseSource.fakeElement(KtFakeSourceElementKind.ImplicitUnit.IndexedAssignmentCoercion)
                 }
             }
         }
@@ -922,9 +964,9 @@ abstract class AbstractRawFirBuilder<T>(val baseSession: FirSession, val context
 
             val receiverToUse =
                 lhsReceiver ?: buildErrorExpression {
-                    source = null
+                    source = baseSource
                     diagnostic = ConeSimpleDiagnostic(
-                        "Unsupported left value of assignment: ${baseSource?.psi?.text}", DiagnosticKind.ExpressionExpected
+                        "Unsupported left value of assignment: ${baseSource.psi?.text}", DiagnosticKind.ExpressionExpected
                     )
                 }
 
@@ -964,7 +1006,7 @@ abstract class AbstractRawFirBuilder<T>(val baseSession: FirSession, val context
         val assignmentLValue = unwrappedLhs.convert()
         return buildVariableAssignment {
             source = baseSource
-            lValue = if (baseSource?.kind is KtFakeSourceElementKind.DesugaredIncrementOrDecrement) {
+            lValue = if (baseSource.kind is KtFakeSourceElementKind.DesugaredIncrementOrDecrement) {
                 buildDesugaredAssignmentValueReferenceExpression {
                     expressionRef = FirExpressionRef<FirExpression>().apply { bind(assignmentLValue) }
                     source =
@@ -1004,7 +1046,7 @@ abstract class AbstractRawFirBuilder<T>(val baseSession: FirSession, val context
 
     private fun generateIndexedAccessAugmentedAssignment(
         receiver: FirExpression, // a.get(x,y)
-        baseSource: KtSourceElement?,
+        baseSource: KtSourceElement,
         arrayAccessSource: KtSourceElement?,
         operation: FirOperation,
         annotations: List<FirAnnotation>,
@@ -1022,7 +1064,7 @@ abstract class AbstractRawFirBuilder<T>(val baseSession: FirSession, val context
         // Also, disable `set` resolution for `(a[0]) += ...` where `a: Array<A>`.
         if (receiver is FirSafeCallExpression || isLhsParenthesized && prohibitSetCallsForParenthesizedLhs) {
             val argument = rhs?.convert() ?: buildErrorExpression(
-                null,
+                baseSource,
                 ConeSyntaxDiagnostic("No value for array set")
             )
             return generateAssignmentOperatorCall(operation, baseSource, receiver, argument, annotations)
@@ -1037,7 +1079,7 @@ abstract class AbstractRawFirBuilder<T>(val baseSession: FirSession, val context
             this.operation = operation
             this.lhsGetCall = receiver
             this.rhs = rhs?.convert() ?: buildErrorExpression(
-                null,
+                baseSource,
                 ConeSyntaxDiagnostic("No value for array set")
             )
             this.arrayAccessSource = arrayAccessSource
@@ -1090,7 +1132,7 @@ abstract class AbstractRawFirBuilder<T>(val baseSession: FirSession, val context
                 val name = Name.identifier("component$componentIndex")
                 componentIndex++
                 val componentFunction = buildSimpleFunction {
-                    source = sourceNode?.toFirSourceElement(KtFakeSourceElementKind.DataClassGeneratedMembers)
+                    source = sourceNode.toFirSourceElement(KtFakeSourceElementKind.DataClassGeneratedMembers)
                     moduleData = baseModuleData
                     origin = FirDeclarationOrigin.Synthetic.DataClassMember
                     returnTypeRef = firProperty.returnTypeRef.copyWithNewSourceKind(KtFakeSourceElementKind.DataClassGeneratedMembers)
@@ -1125,12 +1167,21 @@ abstract class AbstractRawFirBuilder<T>(val baseSession: FirSession, val context
         }
     }
 
-    protected fun FirRegularClass.initContainingClassForLocalAttr() {
+    protected fun FirClassLikeDeclaration.initContainingClassForLocalAttr() {
         if (isLocal) {
             val currentDispatchReceiverType = currentDispatchReceiverType()
             if (currentDispatchReceiverType != null) {
                 containingClassForLocalAttr = currentDispatchReceiverType.lookupTag
             }
+        }
+    }
+
+    protected fun FirRegularClass.initContainingScriptOrReplAttr() {
+        context.containingScriptSymbol?.let { script ->
+            containingScriptSymbolAttr = script
+        }
+        context.containingReplSymbol?.let { repl ->
+            containingReplSymbolAttr = repl
         }
     }
 
@@ -1222,13 +1273,20 @@ abstract class AbstractRawFirBuilder<T>(val baseSession: FirSession, val context
         }
     }
 
-    protected fun buildErrorTopLevelDestructuringDeclaration(source: KtSourceElement): FirErrorProperty = buildErrorProperty {
+    protected fun buildErrorNonLocalDestructuringDeclaration(
+        source: KtSourceElement,
+        initializer: FirExpression?,
+    ): FirErrorProperty = buildErrorProperty {
         this.source = source
         moduleData = baseModuleData
         origin = FirDeclarationOrigin.Source
         name = Name.special("<destructuring>")
         diagnostic = ConeDestructuringDeclarationsOnTopLevel
         symbol = FirErrorPropertySymbol(diagnostic)
+        this.initializer = initializer ?: buildErrorExpression {
+            this.source = source
+            diagnostic = ConeSyntaxDiagnostic("Initializer required for destructuring declaration")
+        }
     }
 
     protected fun createNoTypeForParameterTypeRef(parameterSource: KtSourceElement): FirErrorTypeRef {
@@ -1242,14 +1300,72 @@ abstract class AbstractRawFirBuilder<T>(val baseSession: FirSession, val context
         return status.isActual && (status.isInline || status.isValue || classKind == ClassKind.ANNOTATION_CLASS)
     }
 
-    enum class ValueParameterDeclaration(val shouldExplicitParameterTypeBePresent: Boolean) {
-        FUNCTION(shouldExplicitParameterTypeBePresent = true),
-        CATCH(shouldExplicitParameterTypeBePresent = true),
-        PRIMARY_CONSTRUCTOR(shouldExplicitParameterTypeBePresent = true),
-        SETTER(shouldExplicitParameterTypeBePresent = false),
-        LAMBDA(shouldExplicitParameterTypeBePresent = false),
-        FOR_LOOP(shouldExplicitParameterTypeBePresent = false),
-        CONTEXT_PARAMETER(shouldExplicitParameterTypeBePresent = true),
+    enum class ValueParameterDeclaration(val shouldExplicitParameterTypeBePresent: Boolean, val isAnnotationOwner: Boolean) {
+        FUNCTION(shouldExplicitParameterTypeBePresent = true, isAnnotationOwner = true),
+        CATCH(shouldExplicitParameterTypeBePresent = true, isAnnotationOwner = false),
+        PRIMARY_CONSTRUCTOR(shouldExplicitParameterTypeBePresent = true, isAnnotationOwner = false),
+        SETTER(shouldExplicitParameterTypeBePresent = false, isAnnotationOwner = false),
+        LAMBDA(shouldExplicitParameterTypeBePresent = false, isAnnotationOwner = false),
+        FOR_LOOP(shouldExplicitParameterTypeBePresent = false, isAnnotationOwner = false),
+        CONTEXT_PARAMETER(shouldExplicitParameterTypeBePresent = true, isAnnotationOwner = true),
+    }
+
+    protected fun convertScriptOrSnippets(declaration: T, fileBuilder: FirFileBuilder): FirDeclaration {
+        val scriptSource = declaration.toFirSourceElement()
+        val sourceFile = fileBuilder.sourceFile!!
+
+        val repSnippetConfigurator =
+            baseSession.extensionService.replSnippetConfigurators.filter {
+                it.isReplSnippetsSource(sourceFile, scriptSource)
+            }.let {
+                requireWithAttachment(
+                    it.size <= 1,
+                    message = { "More than one REPL snippet configurator is found for the file" },
+                ) {
+                    withEntry("fileName", sourceFile.name)
+                    withEntry("configurators", it.joinToString { "${it::class.java.name}" })
+                }
+                it.firstOrNull()
+            }
+
+        return if (repSnippetConfigurator != null) {
+            convertReplSnippet(declaration, scriptSource, sourceFile.name) {
+                with(repSnippetConfigurator) {
+                    configureContainingFile(fileBuilder)
+                    configure(fileBuilder.sourceFile, context)
+                }
+            }
+        } else {
+            val scriptConfigurator =
+                baseSession.extensionService.scriptConfigurators.firstOrNull { it.accepts(fileBuilder.sourceFile, scriptSource) }
+
+            convertScript(declaration, scriptSource, fileBuilder.name) {
+                if (scriptConfigurator != null) {
+                    with(scriptConfigurator) {
+                        configureContainingFile(fileBuilder)
+                        configure(fileBuilder.sourceFile, context)
+                    }
+                }
+            }
+        }
+    }
+
+    protected abstract fun convertScript(
+        script: T,
+        scriptSource: KtSourceElement,
+        fileName: String,
+        setup: FirScriptBuilder.() -> Unit,
+    ): FirScript
+
+    protected abstract fun convertReplSnippet(
+        script: T,
+        scriptSource: KtSourceElement,
+        fileName: String,
+        setup: FirReplSnippetBuilder.() -> Unit,
+    ): FirReplSnippet
+
+    protected fun configureScriptDestructuringDeclarationEntry(declaration: FirVariable, container: FirVariable) {
+        (declaration as FirProperty).destructuringDeclarationContainerVariable = container.symbol
     }
 }
 
@@ -1299,7 +1415,7 @@ fun <TBase, TSource : TBase, TParameter : TBase> FirRegularClassBuilder.createDa
         symbol = FirNamedFunctionSymbol(CallableId(classId.packageFqName, classId.relativeClassName, StandardNames.DATA_CLASS_COPY))
         dispatchReceiverType = dispatchReceiver
         resolvePhase = this@createDataClassCopyFunction.resolvePhase
-        // We need to resolve annotations on the data class. It's not possible to do it on RAW_FIR phase.
+        // We need to resolve annotations on the data class. It's not possible to do it in the RAW_FIR phase.
         // We will resolve the visibility later in the STATUS phase
         status = if (isFromLibrary) {
             FirResolvedDeclarationStatusImpl(Visibilities.Unknown, Modality.FINAL, EffectiveVisibility.Unknown)
@@ -1319,7 +1435,7 @@ fun <TBase, TSource : TBase, TParameter : TBase> FirRegularClassBuilder.createDa
                 origin = declarationOrigin
                 returnTypeRef = propertyReturnTypeRef
                 name = propertyName
-                symbol = FirValueParameterSymbol(propertyName)
+                symbol = FirValueParameterSymbol()
                 defaultValue = generateComponentAccess(parameterSource, firProperty, classTypeRef, propertyReturnTypeRef)
                 isCrossinline = false
                 isNoinline = false
@@ -1339,12 +1455,12 @@ fun <TBase, TSource : TBase, TParameter : TBase> FirRegularClassBuilder.createDa
  * primary constructor value parameters annotations should go to the
  * [FirValueParameter] first.
  */
-fun List<FirAnnotationCall>.filterConstructorPropertyRelevantAnnotations(isVar: Boolean) = filter {
+fun List<FirAnnotationCall>.filterConstructorPropertyRelevantAnnotations(isVar: Boolean): List<FirAnnotationCall> = filter {
     it.useSiteTarget == null || it.useSiteTarget == AnnotationUseSiteTarget.PROPERTY || it.useSiteTarget == AnnotationUseSiteTarget.ALL
             || !isVar && (it.useSiteTarget == AnnotationUseSiteTarget.SETTER_PARAMETER || it.useSiteTarget == AnnotationUseSiteTarget.PROPERTY_SETTER)
 }
 
-fun List<FirAnnotationCall>.filterStandalonePropertyRelevantAnnotations(isVar: Boolean) = filter {
+fun List<FirAnnotationCall>.filterStandalonePropertyRelevantAnnotations(isVar: Boolean): List<FirAnnotationCall> = filter {
     it.useSiteTarget != AnnotationUseSiteTarget.FIELD && it.useSiteTarget != AnnotationUseSiteTarget.PROPERTY_DELEGATE_FIELD && it.useSiteTarget != AnnotationUseSiteTarget.PROPERTY_GETTER &&
             (!isVar || it.useSiteTarget != AnnotationUseSiteTarget.SETTER_PARAMETER && it.useSiteTarget != AnnotationUseSiteTarget.PROPERTY_SETTER)
 }

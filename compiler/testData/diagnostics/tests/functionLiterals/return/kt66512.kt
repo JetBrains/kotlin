@@ -19,3 +19,6 @@ fun test() {
         return@l <!TYPE_MISMATCH, TYPE_MISMATCH!>""<!>
     }
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionalType, lambdaLiteral, propertyDeclaration, stringLiteral,
+typeAliasDeclaration */

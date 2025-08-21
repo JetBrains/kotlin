@@ -58,6 +58,11 @@ val NULLABILITY_ANNOTATION_SETTINGS: NullabilityAnnotationStates<JavaNullability
             sinceVersion = KotlinVersion(1, 8),
             reportLevelAfter = ReportLevel.STRICT
         ),
+        FqName("jakarta.annotation") to JavaNullabilityAnnotationsStatus(
+            reportLevelBefore = ReportLevel.WARN,
+            sinceVersion = KotlinVersion(2, 4),
+            reportLevelAfter = ReportLevel.STRICT
+        ),
     )
 )
 
@@ -66,7 +71,7 @@ private val JSR_305_DEFAULT_SETTINGS = JavaNullabilityAnnotationsStatus(
     sinceVersion = null
 )
 
-fun getDefaultJsr305Settings(configuredKotlinVersion: KotlinVersion = KotlinVersion.CURRENT): Jsr305Settings {
+fun getDefaultJsr305Settings(configuredKotlinVersion: KotlinVersion): Jsr305Settings {
     val globalReportLevel =
         if (JSR_305_DEFAULT_SETTINGS.sinceVersion != null && JSR_305_DEFAULT_SETTINGS.sinceVersion <= configuredKotlinVersion) {
             JSR_305_DEFAULT_SETTINGS.reportLevelAfter
@@ -80,13 +85,13 @@ fun getDefaultJsr305Settings(configuredKotlinVersion: KotlinVersion = KotlinVers
 fun getDefaultMigrationJsr305ReportLevelForGivenGlobal(globalReportLevel: ReportLevel) =
     if (globalReportLevel == ReportLevel.WARN) null else globalReportLevel
 
-fun getDefaultReportLevelForAnnotation(annotationFqName: FqName) =
-    getReportLevelForAnnotation(annotationFqName, NullabilityAnnotationStates.EMPTY)
+fun getDefaultReportLevelForAnnotation(annotationFqName: FqName, configuredKotlinVersion: KotlinVersion) =
+    getReportLevelForAnnotation(annotationFqName, NullabilityAnnotationStates.EMPTY, configuredKotlinVersion)
 
 fun getReportLevelForAnnotation(
     annotation: FqName,
     configuredReportLevels: NullabilityAnnotationStates<ReportLevel>,
-    configuredKotlinVersion: KotlinVersion = KotlinVersion(1, 7, 20)
+    configuredKotlinVersion: KotlinVersion,
 ): ReportLevel {
     configuredReportLevels[annotation]?.let { return it }
 

@@ -30,6 +30,24 @@ public class ReplViaApiDiagnosticsTestGenerated extends AbstractReplViaApiDiagno
   }
 
   @Test
+  @TestMetadata("delegated_extension_property.repl.kts")
+  public void testDelegated_extension_property_repl() {
+    runTest("plugins/scripting/scripting-tests/testData/diagnostics/repl/delegated_extension_property.repl.kts");
+  }
+
+  @Test
+  @TestMetadata("function_returns_anonymous_object.repl.kts")
+  public void testFunction_returns_anonymous_object_repl() {
+    runTest("plugins/scripting/scripting-tests/testData/diagnostics/repl/function_returns_anonymous_object.repl.kts");
+  }
+
+  @Test
+  @TestMetadata("import_visible_in_next_snippet.repl.kts")
+  public void testImport_visible_in_next_snippet_repl() {
+    runTest("plugins/scripting/scripting-tests/testData/diagnostics/repl/import_visible_in_next_snippet.repl.kts");
+  }
+
+  @Test
   @TestMetadata("mixed1.repl.kts")
   public void testMixed1_repl() {
     runTest("plugins/scripting/scripting-tests/testData/diagnostics/repl/mixed1.repl.kts");
@@ -63,5 +81,11 @@ public class ReplViaApiDiagnosticsTestGenerated extends AbstractReplViaApiDiagno
   @TestMetadata("single_snippet_use_before_define.repl.kts")
   public void testSingle_snippet_use_before_define_repl() {
     runTest("plugins/scripting/scripting-tests/testData/diagnostics/repl/single_snippet_use_before_define.repl.kts");
+  }
+
+  @Test
+  @TestMetadata("unsafe_cast_in_loop.kts")
+  public void testUnsafe_cast_in_loop() {
+    runTest("plugins/scripting/scripting-tests/testData/diagnostics/repl/unsafe_cast_in_loop.kts");
   }
 }

@@ -91,9 +91,14 @@ class NativeDistribution(val root: Directory) {
      */
     val compilerClasspath: FileCollection
         get() = compilerJars.asFileTree.matching {
-            include("trove4j.jar")
             include("kotlin-native-compiler-embeddable.jar")
         }
+
+    /**
+     * Additional platform configuration.
+     */
+    val konanPlatforms: Directory
+        get() = root.dir("konan/platforms")
 
     /**
      * `konan.properties` file with targets and dependencies descriptions.
@@ -134,7 +139,7 @@ class NativeDistribution(val root: Directory) {
     /**
      * Static compiler cache of library [name] for a specific [target].
      */
-    fun cache(name: String, target: String): Directory = cachesRoot.dir("${target}-gSTATIC/${name}-cache")
+    fun cache(name: String, target: String): Directory = cachesRoot.dir("${target}-gSTATIC-system/${name}-cache")
 
     /**
      * Archive with stdlib sources.
@@ -152,6 +157,17 @@ class NativeDistribution(val root: Directory) {
      * Static compiler cache of standard library for a specific [target].
      */
     fun stdlibCache(target: String): Directory = cache(name = "stdlib", target)
+
+    /**
+     * Fingerprint of the contents of [compilerJars] and [nativeLibs].
+     */
+    val compilerFingerprint: RegularFile
+        get() = root.file("konan/compiler.fingerprint")
+
+    /**
+     * Fingerprint of [runtime] contents for [target].
+     */
+    fun runtimeFingerprint(target: String) = root.file("konan/targets/$target/runtime.fingerprint")
 }
 
 /**
@@ -230,11 +246,3 @@ fun ObjectFactory.nativeDistributionProperty() = NativeDistributionProperty(dire
 //       and sometimes incompatible with Gradle isolation mechanisms.
 val Project.nativeDistribution: Provider<NativeDistribution>
     get() = layout.dir(provider { kotlinNativeDist }).map { NativeDistribution(it) }
-
-/**
- * Get Native "proto" distribution.
- *
- * Only [konan.properties][NativeDistribution.konanProperties] is available inside it.
- */
-val Project.nativeProtoDistribution: NativeDistribution
-    get() = NativeDistribution(project(":kotlin-native").layout.projectDirectory)

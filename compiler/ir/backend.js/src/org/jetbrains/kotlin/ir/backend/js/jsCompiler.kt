@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.ir.backend.js
 
+import org.jetbrains.kotlin.backend.common.IrModuleDependencies
 import org.jetbrains.kotlin.backend.common.linkage.issues.checkNoUnboundSymbols
 import org.jetbrains.kotlin.backend.common.serialization.KotlinIrLinker
 import org.jetbrains.kotlin.config.phaser.PhaserState
@@ -23,6 +24,9 @@ import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.js.config.RuntimeDiagnostic
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.util.PhaseType
+import org.jetbrains.kotlin.util.PotentiallyIncorrectPhaseTimeMeasurement
+import org.jetbrains.kotlin.util.tryMeasurePhaseTime
 
 class CompilerResult(
     val outputs: Map<TranslationMode, CompilationOutputs>,
@@ -37,7 +41,7 @@ class LoweredIr(
 
 fun compile(
     mainCallArguments: List<String>?,
-    depsDescriptors: ModulesStructure,
+    modulesStructure: ModulesStructure,
     irFactory: IrFactory,
     exportedDeclarations: Set<FqName> = emptySet(),
     keep: Set<String> = emptySet(),
@@ -47,25 +51,24 @@ fun compile(
     filesToLower: Set<String>? = null,
     granularity: JsGenerationGranularity = JsGenerationGranularity.WHOLE_PROGRAM,
 ): LoweredIr {
-    val (moduleFragment: IrModuleFragment, dependencyModules, irBuiltIns, symbolTable, deserializer, moduleToName) =
-        loadIr(depsDescriptors, irFactory, filesToLower, loadFunctionInterfacesIntoStdlib = true)
+    val (moduleFragment: IrModuleFragment, moduleDependencies, irBuiltIns, symbolTable, deserializer) =
+        loadIr(modulesStructure, irFactory, filesToLower, loadFunctionInterfacesIntoStdlib = true)
 
     return compileIr(
-        moduleFragment,
-        depsDescriptors.mainModule,
-        mainCallArguments,
-        depsDescriptors.compilerConfiguration,
-        dependencyModules,
-        moduleToName,
-        irBuiltIns,
-        symbolTable,
-        deserializer,
-        exportedDeclarations,
-        keep,
-        dceRuntimeDiagnostic,
-        safeExternalBoolean,
-        safeExternalBooleanDiagnostic,
-        granularity,
+        moduleFragment = moduleFragment,
+        mainModule = modulesStructure.mainModule,
+        mainCallArguments = mainCallArguments,
+        configuration = modulesStructure.compilerConfiguration,
+        moduleDependencies = moduleDependencies,
+        irBuiltIns = irBuiltIns,
+        symbolTable = symbolTable,
+        irLinker = deserializer,
+        exportedDeclarations = exportedDeclarations,
+        keep = keep,
+        dceRuntimeDiagnostic = dceRuntimeDiagnostic,
+        safeExternalBoolean = safeExternalBoolean,
+        safeExternalBooleanDiagnostic = safeExternalBooleanDiagnostic,
+        granularity = granularity,
     )
 }
 
@@ -74,8 +77,7 @@ fun compileIr(
     mainModule: MainModule,
     mainCallArguments: List<String>?,
     configuration: CompilerConfiguration,
-    dependencyModules: List<IrModuleFragment>,
-    moduleToName: Map<IrModuleFragment, String>,
+    moduleDependencies: IrModuleDependencies,
     irBuiltIns: IrBuiltIns,
     symbolTable: SymbolTable,
     irLinker: KotlinIrLinker,
@@ -93,11 +95,6 @@ fun compileIr(
     val irFactory = symbolTable.irFactory
     val shouldGeneratePolyfills = configuration.getBoolean(JSConfigurationKeys.GENERATE_POLYFILLS)
     val performanceManager = configuration[CLIConfigurationKeys.PERF_MANAGER]
-
-    val allModules = when (mainModule) {
-        is MainModule.SourceFiles -> dependencyModules + listOf(moduleFragment)
-        is MainModule.Klib -> dependencyModules
-    }
 
     val context = JsIrBackendContext(
         moduleDescriptor,
@@ -122,6 +119,14 @@ fun compileIr(
     irLinker.checkNoUnboundSymbols(symbolTable, "at the end of IR linkage process")
     irLinker.clear()
 
+    // Sort dependencies after IR linkage.
+    val sortedModuleDependencies = irLinker.moduleDependencyTracker.reverseTopoOrder(moduleDependencies)
+
+    val allModules = when (mainModule) {
+        is MainModule.SourceFiles -> sortedModuleDependencies.all + listOf(moduleFragment)
+        is MainModule.Klib -> sortedModuleDependencies.all
+    }
+
     allModules.forEach { module ->
         if (shouldGeneratePolyfills) {
             collectNativeImplementations(context, module)
@@ -132,21 +137,21 @@ fun compileIr(
 
     // TODO should be done incrementally
     generateJsTests(context, allModules.last())
-    performanceManager?.notifyIRTranslationFinished()
+    @OptIn(PotentiallyIncorrectPhaseTimeMeasurement::class)
+    performanceManager?.notifyCurrentPhaseFinishedIfNeeded() // It should be `notifyTranslationToIRFinished`, but this phase not always started or already finished
 
-    performanceManager?.notifyGenerationStarted()
-    performanceManager?.notifyIRLoweringStarted()
-    (irFactory.stageController as? WholeWorldStageController)?.let {
-        lowerPreservingTags(allModules, context, it)
-    } ?: run {
-        val phaserState = PhaserState()
-        getJsLowerings(configuration).forEachIndexed { _, lowering ->
-            allModules.forEach { module ->
-                lowering.invoke(context.phaseConfig, phaserState, context, module)
+    performanceManager.tryMeasurePhaseTime(PhaseType.IrLowering) {
+        (irFactory.stageController as? WholeWorldStageController)?.let {
+            lowerPreservingTags(allModules, context, it)
+        } ?: run {
+            val phaserState = PhaserState()
+            getJsLowerings(configuration).forEachIndexed { _, lowering ->
+                allModules.forEach { module ->
+                    lowering.invoke(context.phaseConfig, phaserState, context, module)
+                }
             }
         }
     }
-    performanceManager?.notifyIRLoweringFinished()
 
-    return LoweredIr(context, moduleFragment, allModules, moduleToName)
+    return LoweredIr(context, moduleFragment, allModules, moduleDependencies.fragmentNames)
 }

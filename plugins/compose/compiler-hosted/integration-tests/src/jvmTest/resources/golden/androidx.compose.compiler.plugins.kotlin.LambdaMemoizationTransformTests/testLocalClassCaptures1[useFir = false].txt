@@ -35,7 +35,7 @@ fun Err(y: Int, z: Int, %composer: Composer?, %changed: Int) {
     }
   }
   sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
-  val tmp0_group = %composer.cache(%changed and 0b1110 xor 0b0110 > 4 && %composer.changed(y) || %changed and 0b0110 == 0b0100 or %changed and 0b01110000 xor 0b00110000 > 32 && %composer.changed(z) || %changed and 0b00110000 == 0b00100000) {
+  val tmp0_group = %composer.cache(%changed and 0b01110000 xor 0b00110000 > 32 && %composer.changed(z) || %changed and 0b00110000 == 0b00100000 or %changed and 0b1110 xor 0b0110 > 4 && %composer.changed(y) || %changed and 0b0110 == 0b0100) {
     {
       Local().something(2)
     }

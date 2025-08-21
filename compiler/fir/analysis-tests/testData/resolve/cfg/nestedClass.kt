@@ -11,3 +11,5 @@ class OuterClass {
         val nestedProperty2 = nestedProperty
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, nestedClass, propertyDeclaration */

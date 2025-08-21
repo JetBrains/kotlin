@@ -1,0 +1,1 @@
+override fun doSmth(x: T1 & kotlin.Any): T1 & kotlin.Any

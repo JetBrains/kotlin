@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
 import org.jetbrains.kotlin.fir.declarations.builder.buildReceiverParameter
 import org.jetbrains.kotlin.fir.declarations.builder.buildSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.origin
+import org.jetbrains.kotlin.fir.declarations.utils.fileNameForPluginGeneratedCallable
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.extensions.ExperimentalTopLevelDeclarationsGenerationApi
 import org.jetbrains.kotlin.fir.extensions.FirExtension
@@ -32,6 +33,7 @@ public class SimpleFunctionBuildingContext(
     owner: FirClassSymbol<*>?,
     callableId: CallableId,
     private val returnTypeProvider: (List<FirTypeParameter>) -> ConeKotlinType,
+    private val containingFileName: String?,
 ) : FunctionBuildingContext<FirSimpleFunction>(callableId, session, key, owner) {
     private var extensionReceiverTypeProvider: ((List<FirTypeParameter>) -> ConeKotlinType)? = null
 
@@ -86,6 +88,11 @@ public class SimpleFunctionBuildingContext(
                     containingDeclarationSymbol = this@buildSimpleFunction.symbol
                 }
             }
+        }.also {
+            if (containingFileName != null) {
+                require(callableId.classId == null) { "containingFileName could be set only for top-level declarations, but $callableId is a member" }
+            }
+            it.fileNameForPluginGeneratedCallable = containingFileName
         }
     }
 }
@@ -121,41 +128,56 @@ public fun FirExtension.createMemberFunction(
     config: SimpleFunctionBuildingContext.() -> Unit = {}
 ): FirSimpleFunction {
     val callableId = CallableId(owner.classId, name)
-    return SimpleFunctionBuildingContext(session, key, owner, callableId, returnTypeProvider).apply(config).apply {
-        status {
-            isExpect = owner.isExpect
-        }
-    }.build()
+    return SimpleFunctionBuildingContext(session, key, owner, callableId, returnTypeProvider, containingFileName = null)
+        .apply(config)
+        .apply {
+            status {
+                isExpect = owner.isExpect
+            }
+        }.build()
 }
 
 /**
  * Creates a top-level function with [callableId] and specified [returnType].
  *
  * Type and value parameters can be configured with [config] builder.
+ *
+ * @param containingFileName defines the name for a newly created file with this property.
+ * The full file path would be `package/of/the/property/containingFileName.kt.
+ * If null is passed, then `__GENERATED BUILTINS DECLARATIONS__.kt` would be used
  */
 @ExperimentalTopLevelDeclarationsGenerationApi
 public fun FirExtension.createTopLevelFunction(
     key: GeneratedDeclarationKey,
     callableId: CallableId,
     returnType: ConeKotlinType,
+    containingFileName: String? = null,
     config: SimpleFunctionBuildingContext.() -> Unit = {}
 ): FirSimpleFunction {
-    return createTopLevelFunction(key, callableId, { returnType }, config)
+    return createTopLevelFunction(key, callableId, { returnType }, containingFileName, config)
 }
 
 /**
  * Creates a top-level function with [callableId] and return type provided by [returnTypeProvider].
- * Use this overload when return type references type parameters of created function.
+ * Use this overload when return type references type parameters of the created function.
  *
  * Type and value parameters can be configured with [config] builder.
+ *
+ * @param containingFileName defines the name for a newly created file with this property.
+ * The full file path would be `package/of/the/property/containingFileName.kt.
+ * If null is passed, then `__GENERATED BUILTINS DECLARATIONS__.kt` would be used
  */
 @ExperimentalTopLevelDeclarationsGenerationApi
 public fun FirExtension.createTopLevelFunction(
     key: GeneratedDeclarationKey,
     callableId: CallableId,
     returnTypeProvider: (List<FirTypeParameter>) -> ConeKotlinType,
+    containingFileName: String? = null,
     config: SimpleFunctionBuildingContext.() -> Unit = {}
 ): FirSimpleFunction {
     require(callableId.classId == null)
-    return SimpleFunctionBuildingContext(session, key, owner = null, callableId, returnTypeProvider).apply(config).build()
+    return SimpleFunctionBuildingContext(
+        session, key, owner = null, callableId,
+        returnTypeProvider, containingFileName
+    ).apply(config).build()
 }

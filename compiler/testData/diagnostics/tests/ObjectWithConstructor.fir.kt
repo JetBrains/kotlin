@@ -23,3 +23,7 @@ class A3 {
         public <!CONSTRUCTOR_IN_OBJECT!>constructor()<!> : <!NONE_APPLICABLE!>this<!>(2)
     }
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, anonymousObjectExpression, classDeclaration, companionObject, integerLiteral,
+localProperty, multiplicativeExpression, objectDeclaration, primaryConstructor, propertyDeclaration,
+secondaryConstructor, stringLiteral */

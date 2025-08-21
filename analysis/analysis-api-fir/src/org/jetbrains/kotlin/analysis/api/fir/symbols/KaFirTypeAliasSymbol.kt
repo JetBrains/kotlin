@@ -58,11 +58,9 @@ internal class KaFirTypeAliasSymbol private constructor(
 
     override val visibility: KaSymbolVisibility
         get() = withValidityAssertion {
-            backingPsi?.visibilityByModifiers?.asKaSymbolVisibility ?:
-            // TODO: We should use resolvedStatus, because it can be altered by status-transforming compiler plugins. See KT-58572
-            when (val possiblyRawVisibility = firSymbol.fir.visibility) {
+            backingPsi?.visibilityByModifiers?.asKaSymbolVisibility ?: when (val visibility = firSymbol.possiblyRawVisibility) {
                 Visibilities.Unknown -> KaSymbolVisibility.PUBLIC
-                else -> possiblyRawVisibility.asKaSymbolVisibility
+                else -> visibility.asKaSymbolVisibility
             }
         }
 

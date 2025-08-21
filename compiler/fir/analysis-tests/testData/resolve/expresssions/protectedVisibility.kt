@@ -62,3 +62,6 @@ class DerivedGeneric : Generic<Int>(1) {
         return super.foo()
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, functionDeclaration, inner, integerLiteral, nestedClass,
+nullableType, objectDeclaration, override, primaryConstructor, propertyDeclaration, superExpression, typeParameter */

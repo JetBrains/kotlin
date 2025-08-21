@@ -1,4 +1,7 @@
-// Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+/*
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
 
 package org.jetbrains.kotlin.analysis.decompiler.stub
 
@@ -137,9 +140,7 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
             val numContextReceivers = if (contextReceiverAnnotations.isEmpty()) {
                 0
             } else {
-                annotations.map { it.annotationWithArgs }.find { annotationWithArgs ->
-                    annotationWithArgs.classId.asSingleFqName() == StandardNames.FqNames.contextFunctionTypeParams
-                }?.args[CONTEXT_FUNCTION_TYPE_PARAMS_ARGUMENT_NAME]?.value as? Int
+                contextReceiverAnnotations.first().annotationWithArgs.args[CONTEXT_FUNCTION_TYPE_PARAMS_ARGUMENT_NAME]?.value as? Int
                     ?: error("Error: can't get type parameter count from ${StandardNames.FqNames.contextFunctionTypeParams}")
             }
             createFunctionTypeStub(nullableWrapper, type, isExtension, isSuspend, numContextReceivers, abbreviatedType)
@@ -235,7 +236,12 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
             val typeProjection = KotlinTypeProjectionStubImpl(typeArgumentsListStub, projectionKind.ordinal)
             if (projectionKind != KtProjectionKind.STAR) {
                 val modifierKeywordToken = projectionKind.token as? KtModifierKeywordToken
-                createModifierListStub(typeProjection, listOfNotNull(modifierKeywordToken))
+                createModifierListStub(
+                    typeProjection,
+                    listOfNotNull(modifierKeywordToken),
+                    ProtoBuf.ReturnValueStatus.UNSPECIFIED,
+                )
+
                 createTypeReferenceStub(typeProjection, typeArgumentProto.type(c.typeTable)!!)
             }
         }
@@ -261,7 +267,7 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
         var processedTypes = 0
 
         if (numContextReceivers != 0) {
-            ContextReceiversListStubBuilder(c).createContextReceiverStubs(
+            createContextReceiverStubs(
                 functionType,
                 typeArgumentList.subList(
                     processedTypes,
@@ -311,7 +317,7 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
 
             val parameter = KotlinParameterStubImpl(
                 parameterList,
-                fqName = null,
+                fqNameRef = null,
                 name = null,
                 isMutable = false,
                 hasValOrVar = false,
@@ -345,7 +351,7 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
             val parameterStub = KotlinParameterStubImpl(
                 parameterListStub,
                 name = parameterName.ref(),
-                fqName = null,
+                fqNameRef = null,
                 hasDefaultValue = hasDefaultValue,
                 hasValOrVar = false,
                 isMutable = false
@@ -364,7 +370,11 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
                 modifiers.add(KtTokens.NOINLINE_KEYWORD)
             }
 
-            val modifierList = createModifierListStub(parameterStub, modifiers)
+            val modifierList = createModifierListStub(
+                parameterStub,
+                modifiers,
+                ProtoBuf.ReturnValueStatus.UNSPECIFIED,
+            )
 
             if (Flags.HAS_ANNOTATIONS.get(valueParameterProto.flags)) {
                 val parameterAnnotations = c.components.annotationLoader.loadValueParameterAnnotations(
@@ -395,9 +405,8 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
             val typeParameterStub = KotlinTypeParameterStubImpl(
                 typeParameterListStub,
                 name = name.ref(),
-                isInVariance = proto.variance == Variance.IN,
-                isOutVariance = proto.variance == Variance.OUT
             )
+
             createTypeParameterModifierListStub(typeParameterStub, proto)
             val upperBoundProtos = proto.upperBounds(c.typeTable)
             if (upperBoundProtos.isNotEmpty()) {
@@ -443,7 +452,11 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
             modifiers.add(KtTokens.REIFIED_KEYWORD)
         }
 
-        val modifierList = createModifierListStub(typeParameterStub, modifiers)
+        val modifierList = createModifierListStub(
+            typeParameterStub,
+            modifiers,
+            ProtoBuf.ReturnValueStatus.UNSPECIFIED,
+        )
 
         val annotations = c.components.annotationLoader.loadTypeParameterAnnotations(typeParameterProto, c.nameResolver)
         if (annotations.isNotEmpty()) {
@@ -458,5 +471,16 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
         return this.hasClassName() &&
                 c.nameResolver.getClassId(className).let { StandardNames.FqNames.any == it.asSingleFqName().toUnsafe() } &&
                 this.nullable
+    }
+
+    fun createContextReceiverStubs(parent: StubElement<*>, contextReceiverTypes: List<Type>) {
+        if (contextReceiverTypes.isEmpty()) return
+        val contextReceiverListStub =
+            KotlinPlaceHolderStubImpl<KtContextReceiverList>(parent, KtStubElementTypes.CONTEXT_RECEIVER_LIST)
+        for (contextReceiverType in contextReceiverTypes) {
+            val contextReceiverStub =
+                KotlinContextReceiverStubImpl(contextReceiverListStub, KtStubElementTypes.CONTEXT_RECEIVER, labelRef = null)
+            createTypeReferenceStub(contextReceiverStub, contextReceiverType)
+        }
     }
 }

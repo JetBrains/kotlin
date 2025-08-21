@@ -36,20 +36,22 @@ fun KtSourceElement.getChild(types: Set<IElementType>, index: Int = 0, depth: In
 }
 
 /**
- * Iterates recursively over all children up to the given depth.
+ * Iterates recursively over all children up to the given [depth] or indefinitely if [depth] is -1.
  * `processChild` is invoked for each child having a type in the `types` set.
  */
 inline fun KtSourceElement.forEachChildOfType(
     types: Set<IElementType>,
-    depth: Int = -1,
+    depth: Int,
     reverse: Boolean = false,
     processChild: (KtSourceElement) -> Unit,
-) = when (this) {
-    is KtPsiSourceElement -> psi.forEachChildOfType(types, depth, reverse) {
-        processChild(it.toKtPsiSourceElement())
-    }
-    is KtLightSourceElement -> lighterASTNode.forEachChildOfType(types, depth, reverse, treeStructure) {
-        processChild(it.toKtLightSourceElement(treeStructure))
+) {
+    when (this) {
+        is KtPsiSourceElement -> psi.forEachChildOfType(types, depth, reverse) {
+            processChild(it.toKtPsiSourceElement())
+        }
+        is KtLightSourceElement -> lighterASTNode.forEachChildOfType(types, depth, reverse, treeStructure) {
+            processChild(it.toKtLightSourceElement(treeStructure))
+        }
     }
 }
 
@@ -58,36 +60,40 @@ inline fun KtSourceElement.forEachChildOfType(
  */
 inline fun PsiElement.forEachChildOfType(
     types: Set<IElementType>,
-    depth: Int = -1,
+    depth: Int,
     reverse: Boolean = false,
     processChild: (PsiElement) -> Unit,
-) = forEachChildOfType(
-    this, types, depth, reverse,
-    getElementType = { it.node.elementType },
-    getChildren = { it.allChildren.toList() },
-    processChild,
-)
+) {
+    forEachChildOfType(
+        this, types, depth, reverse,
+        getElementType = { it.node.elementType },
+        getChildren = { it.allChildren.toList() },
+        processChild,
+    )
+}
 
 /**
  * See [KtSourceElement.forEachChildOfType]
  */
 inline fun LighterASTNode.forEachChildOfType(
     types: Set<IElementType>,
-    depth: Int = -1,
+    depth: Int,
     reverse: Boolean = false,
     treeStructure: FlyweightCapableTreeStructure<LighterASTNode>,
     processChild: (LighterASTNode) -> Unit,
-) = forEachChildOfType(
-    this, types, depth, reverse,
-    getElementType = { it.tokenType },
-    getChildren = { it.getChildren(treeStructure) },
-    processChild,
-)
+) {
+    forEachChildOfType(
+        this, types, depth, reverse,
+        getElementType = { it.tokenType },
+        getChildren = { it.getChildren(treeStructure) },
+        processChild,
+    )
+}
 
 inline fun <T> forEachChildOfType(
     root: T,
     types: Set<IElementType>,
-    depth: Int = -1,
+    depth: Int,
     reverse: Boolean = false,
     getElementType: (T) -> IElementType,
     getChildren: (T) -> List<T>,

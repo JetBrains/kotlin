@@ -19,15 +19,19 @@
 package androidx.compose.compiler.plugins.kotlin.lower
 
 import androidx.compose.compiler.plugins.kotlin.*
+import androidx.compose.compiler.plugins.kotlin.ComposeFqNames.InternalPackage
 import androidx.compose.compiler.plugins.kotlin.analysis.*
 import androidx.compose.compiler.plugins.kotlin.lower.hiddenfromobjc.hiddenFromObjCClassId
 import org.jetbrains.kotlin.GeneratedDeclarationKey
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
+import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.ir.isInlineClassType
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.backend.FirMetadataSource
 import org.jetbrains.kotlin.fir.declarations.utils.klibSourceFile
 import org.jetbrains.kotlin.fir.lazy.Fir2IrLazyClass
@@ -47,6 +51,7 @@ import org.jetbrains.kotlin.ir.interpreter.hasAnnotation
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.symbols.impl.IrVariableSymbolImpl
 import org.jetbrains.kotlin.ir.types.*
+import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.impl.IrStarProjectionImpl
 import org.jetbrains.kotlin.ir.util.*
@@ -61,7 +66,6 @@ import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.platform.konan.isNative
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.util.OperatorNameConventions
-import org.jetbrains.kotlin.utils.DFS
 import org.jetbrains.kotlin.utils.exceptions.rethrowIntellijPlatformExceptionIfNeeded
 
 object ComposeCompilerKey : GeneratedDeclarationKey()
@@ -113,30 +117,33 @@ abstract class AbstractComposeLowering(
     val FeatureFlag.enabled get() = featureFlags.isEnabled(this)
 
     fun metricsFor(function: IrFunction): FunctionMetrics =
-        context.irTrace[ComposeWritableSlices.FUNCTION_METRICS, function]
+        function.functionMetrics
             ?: metrics.makeFunctionMetrics(function).also {
-                context.irTrace.record(ComposeWritableSlices.FUNCTION_METRICS, function, it)
+                function.functionMetrics = it
             }
 
     fun IrType.unboxInlineClass() = unboxType() ?: this
 
     fun IrType.defaultParameterType(): IrType {
         val type = this
-        val constructorAccessible = !type.isPrimitiveType() &&
-                type.classOrNull?.owner?.primaryConstructor != null
+
         return when {
             type.isPrimitiveType() -> type
-            type.isInlineClassType() -> if (context.platform.isJvm() || constructorAccessible) {
-                if (type.unboxInlineClass().isPrimitiveType()) {
-                    type
+            type.isInlineClassType() -> {
+                // TODO migrate to more precise constructor accessibility test in k2.4
+                val constructorAccessible = type.classOrNull?.owner?.primaryConstructor != null
+                if (context.platform.isJvm() || constructorAccessible) {
+                    if (type.unboxInlineClass().isPrimitiveType()) {
+                        type
+                    } else {
+                        type.makeNullable()
+                    }
                 } else {
+                    // k/js and k/native: private constructors of value classes can be not accessible.
+                    // Therefore it won't be possible to create a "fake" default argument for calls.
+                    // Making it nullable allows to pass null.
                     type.makeNullable()
                 }
-            } else {
-                // k/js and k/native: private constructors of value classes can be not accessible.
-                // Therefore it won't be possible to create a "fake" default argument for calls.
-                // Making it nullable allows to pass null.
-                type.makeNullable()
             }
             else -> type.makeNullable()
         }
@@ -148,28 +155,11 @@ abstract class AbstractComposeLowering(
                 classifier,
                 isMarkedNullable(),
                 List(arguments.size) { IrStarProjectionImpl },
-                annotations,
-                abbreviation
+                annotations
             )
 
             else -> this
         }
-
-    // IR external stubs don't have their value parameters' parent properly mapped to the
-    // function itself. This normally isn't a problem because nothing in the IR lowerings ask for
-    // the parent of the parameters, but we do. I believe this should be considered a bug in
-    // kotlin proper, but this works around it.
-    fun IrValueParameter.hasDefaultValueSafe(): Boolean = DFS.ifAny(
-        listOf(this),
-        { current ->
-            (current.parent as? IrSimpleFunction)?.overriddenSymbols?.map { fn ->
-                fn.owner.valueParameters[current.indexInOldValueParameters].also { p ->
-                    p.parent = fn.owner
-                }
-            } ?: listOf()
-        },
-        { current -> current.defaultValue != null }
-    )
 
     // NOTE(lmr): This implementation mimics the kotlin-provided unboxInlineClass method, except
     // this one makes sure to bind the symbol if it is unbound, so is a bit safer to use.
@@ -198,7 +188,7 @@ abstract class AbstractComposeLowering(
                     type.unboxInlineClass()
                 ).unboxValueIfInline()
             } else {
-                val primaryValueParameter = klass.primaryConstructor?.valueParameters?.get(0)
+                val primaryValueParameter = klass.primaryConstructor?.parameters?.singleOrNull { it.kind == IrParameterKind.Regular }
                 val cantUnbox = primaryValueParameter == null || klass.properties.none {
                     it.name == primaryValueParameter.name && it.getter != null
                 }
@@ -207,7 +197,7 @@ abstract class AbstractComposeLowering(
                     // So we can't unbox the value
                     return this
                 }
-                val fieldGetter = klass.getPropertyGetter(primaryValueParameter!!.name.identifier)
+                val fieldGetter = klass.getPropertyGetter(primaryValueParameter.name.identifier)
                     ?: error("Expected a getter")
                 return irCall(
                     symbol = fieldGetter,
@@ -332,8 +322,19 @@ abstract class AbstractComposeLowering(
     }
 
     protected fun irCall(
+        symbol: IrFunctionSymbol
+    ): IrCallImpl =
+        IrCallImpl(
+            UNDEFINED_OFFSET,
+            UNDEFINED_OFFSET,
+            symbol.owner.returnType,
+            symbol as IrSimpleFunctionSymbol,
+        )
+
+    protected fun irCall(
         symbol: IrFunctionSymbol,
         origin: IrStatementOrigin? = null,
+        returnType: IrType = symbol.owner.returnType,
         dispatchReceiver: IrExpression? = null,
         extensionReceiver: IrExpression? = null,
         vararg args: IrExpression,
@@ -341,54 +342,74 @@ abstract class AbstractComposeLowering(
         return IrCallImpl(
             UNDEFINED_OFFSET,
             UNDEFINED_OFFSET,
-            symbol.owner.returnType,
+            returnType,
             symbol as IrSimpleFunctionSymbol,
             symbol.owner.typeParameters.size,
             origin
-        ).also {
-            if (dispatchReceiver != null) it.dispatchReceiver = dispatchReceiver
-            if (extensionReceiver != null) it.extensionReceiver = extensionReceiver
-            args.forEachIndexed { index, arg ->
-                it.putValueArgument(index, arg)
+        ).also { call ->
+            var argIndex = 0
+            symbol.owner.parameters.forEach {
+                when (it.kind) {
+                    IrParameterKind.DispatchReceiver -> {
+                        call.arguments[it.indexInParameters] = dispatchReceiver
+                    }
+                    IrParameterKind.ExtensionReceiver -> {
+                        call.arguments[it.indexInParameters] = extensionReceiver
+                    }
+                    IrParameterKind.Context,
+                    IrParameterKind.Regular -> {
+                        call.arguments[it.indexInParameters] = args[argIndex++]
+                    }
+                }
             }
         }
     }
 
-    protected fun IrType.binaryOperator(name: Name, paramType: IrType): IrFunctionSymbol =
-        context.symbols.getBinaryOperator(name, this, paramType)
+    protected fun IrType.binaryOperator(name: Name, paramType: IrType): IrFunctionSymbol {
+        return context.referenceFunctions(CallableId(this.classOrFail.owner.classId!!, name))
+            .single {
+                it.owner.hasShape(
+                    dispatchReceiver = true,
+                    regularParameters = 1,
+                    parameterTypes = listOf(this, paramType)
+                )
+            }
+    }
+
+    private fun binaryOperatorCall(
+        lhs: IrExpression,
+        rhs: IrExpression,
+        name: Name,
+        lhsType: IrType = lhs.type,
+        rhsType: IrType = rhs.type
+    ): IrCallImpl {
+        val symbol = lhsType.binaryOperator(name, rhsType)
+        return irCall(
+            symbol = symbol,
+            dispatchReceiver = lhs,
+            args = arrayOf(rhs)
+        )
+    }
 
     protected fun irAnd(lhs: IrExpression, rhs: IrExpression): IrCallImpl {
-        return irCall(
-            lhs.type.binaryOperator(OperatorNameConventions.AND, rhs.type),
-            null,
-            lhs,
-            null,
-            rhs
-        )
+        return binaryOperatorCall(lhs, rhs, OperatorNameConventions.AND)
+    }
+
+    protected fun irShl(lhs: IrExpression, rhs: IrExpression): IrCallImpl {
+        val int = context.irBuiltIns.intType
+        return binaryOperatorCall(lhs, rhs, OperatorNameConventions.SHL, lhsType = int, rhsType = int)
     }
 
     protected fun irOr(lhs: IrExpression, rhs: IrExpression): IrExpression {
         if (rhs is IrConst && rhs.value == 0) return lhs
         if (lhs is IrConst && lhs.value == 0) return rhs
         val int = context.irBuiltIns.intType
-        return irCall(
-            int.binaryOperator(OperatorNameConventions.OR, int),
-            null,
-            lhs,
-            null,
-            rhs
-        )
+        return binaryOperatorCall(lhs, rhs, OperatorNameConventions.OR, lhsType = int, rhsType = int)
     }
 
     protected fun irBooleanOr(lhs: IrExpression, rhs: IrExpression): IrCallImpl {
         val boolean = context.irBuiltIns.booleanType
-        return irCall(
-            boolean.binaryOperator(OperatorNameConventions.OR, boolean),
-            null,
-            lhs,
-            null,
-            rhs
-        )
+        return binaryOperatorCall(lhs, rhs, OperatorNameConventions.OR, lhsType = boolean, rhsType = boolean)
     }
 
     protected fun irOrOr(lhs: IrExpression, rhs: IrExpression): IrExpression {
@@ -439,25 +460,16 @@ abstract class AbstractComposeLowering(
 
     protected fun irXor(lhs: IrExpression, rhs: IrExpression): IrCallImpl {
         val int = context.irBuiltIns.intType
-        return irCall(
-            int.binaryOperator(OperatorNameConventions.XOR, int),
-            null,
-            lhs,
-            null,
-            rhs
-        )
+        return binaryOperatorCall(lhs, rhs, OperatorNameConventions.XOR, lhsType = int, rhsType = int)
     }
 
     protected fun irGreater(lhs: IrExpression, rhs: IrExpression): IrCallImpl {
         val int = context.irBuiltIns.intType
         val gt = context.irBuiltIns.greaterFunByOperandType[int.classifierOrFail]
         return irCall(
-            gt!!,
-            IrStatementOrigin.GT,
-            null,
-            null,
-            lhs,
-            rhs
+            symbol = gt!!,
+            origin = IrStatementOrigin.GT,
+            args = arrayOf(lhs, rhs)
         )
     }
 
@@ -491,12 +503,8 @@ abstract class AbstractComposeLowering(
     /** Compare [lhs] and [rhs] using structural equality (`==`). */
     protected fun irEqual(lhs: IrExpression, rhs: IrExpression): IrExpression {
         return irCall(
-            context.irBuiltIns.eqeqSymbol,
-            null,
-            null,
-            null,
-            lhs,
-            rhs
+            symbol = context.irBuiltIns.eqeqSymbol,
+            args = arrayOf(lhs, rhs)
         )
     }
 
@@ -579,16 +587,12 @@ abstract class AbstractComposeLowering(
         val hasNextSymbol = iteratorSymbol.owner.functions
             .single { it.name.asString() == "hasNext" }
 
-        val call = IrCallImpl(
-            UNDEFINED_OFFSET,
-            UNDEFINED_OFFSET,
-            iteratorType,
-            getIteratorFunction.symbol,
-            getIteratorFunction.symbol.owner.typeParameters.size,
-            IrStatementOrigin.FOR_LOOP_ITERATOR
-        ).also {
-            it.dispatchReceiver = subject
-        }
+        val call = irCall(
+            symbol = getIteratorFunction.symbol,
+            origin = IrStatementOrigin.FOR_LOOP_ITERATOR,
+            returnType = iteratorType,
+            dispatchReceiver = subject
+        )
 
         val iteratorVar = irTemporary(
             value = call,
@@ -609,16 +613,12 @@ abstract class AbstractComposeLowering(
                     IrStatementOrigin.FOR_LOOP_INNER_WHILE
                 ).apply {
                     val loopVar = irTemporary(
-                        value = IrCallImpl(
+                        value = irCall(
                             symbol = nextSymbol.symbol,
                             origin = IrStatementOrigin.FOR_LOOP_NEXT,
-                            startOffset = UNDEFINED_OFFSET,
-                            endOffset = UNDEFINED_OFFSET,
-                            typeArgumentsCount = nextSymbol.symbol.owner.typeParameters.size,
-                            type = elementType
-                        ).also {
-                            it.dispatchReceiver = irGet(iteratorVar)
-                        },
+                            returnType = elementType,
+                            dispatchReceiver = irGet(iteratorVar)
+                        ),
                         origin = IrDeclarationOrigin.FOR_LOOP_VARIABLE,
                         isVar = false,
                         name = "value",
@@ -747,11 +747,13 @@ abstract class AbstractComposeLowering(
     protected fun irBlock(
         type: IrType = context.irBuiltIns.unitType,
         origin: IrStatementOrigin? = null,
+        startOffset: Int = UNDEFINED_OFFSET,
+        endOffset: Int = UNDEFINED_OFFSET,
         statements: List<IrStatement>,
-    ): IrExpression {
+    ): IrBlock {
         return IrBlockImpl(
-            UNDEFINED_OFFSET,
-            UNDEFINED_OFFSET,
+            startOffset,
+            endOffset,
             type,
             origin,
             statements
@@ -790,8 +792,8 @@ abstract class AbstractComposeLowering(
         return IrFunctionExpressionImpl(
             startOffset = startOffset,
             endOffset = endOffset,
-            type = context.function(function.valueParameters.size).typeWith(
-                function.valueParameters.map { it.type } + listOf(function.returnType)
+            type = context.irBuiltIns.functionN(function.parameters.size).typeWith(
+                function.parameters.map { it.type } + listOf(function.returnType)
             ),
             origin = IrStatementOrigin.LAMBDA,
             function = function
@@ -799,15 +801,15 @@ abstract class AbstractComposeLowering(
     }
 
     private fun IrClass.uniqueStabilityFieldName(): Name = Name.identifier(
-        kotlinFqName.asString().replace(".", "_") + ComposeNames.STABILITY_FLAG
+        kotlinFqName.asString().replace(".", "_") + ComposeNames.StabilityFlag
     )
 
     private fun IrClass.uniqueStabilityPropertyName(): Name = Name.identifier(
-        kotlinFqName.asString().replace(".", "_") + ComposeNames.STABILITY_PROP_FLAG
+        kotlinFqName.asString().replace(".", "_") + ComposeNames.StabilityFlagProperty
     )
 
     private fun IrClass.uniqueStabilityGetterName(): Name = Name.identifier(
-        kotlinFqName.asString().replace(".", "_") + ComposeNames.STABILITY_GETTER_FLAG
+        kotlinFqName.asString().replace(".", "_") + ComposeNames.StabilityFlagPropertyGetter
     )
 
     private fun IrClass.getMetadataStabilityGetterFun(): IrSimpleFunctionSymbol? {
@@ -856,7 +858,7 @@ abstract class AbstractComposeLowering(
     }
 
     private fun IrClass.makeStabilityFieldJvm(): IrField {
-        return buildStabilityField(ComposeNames.STABILITY_FLAG).also { stabilityField ->
+        return buildStabilityField(ComposeNames.StabilityFlag).also { stabilityField ->
             stabilityField.parent = this@makeStabilityFieldJvm
             declarations += stabilityField
         }
@@ -898,7 +900,7 @@ abstract class AbstractComposeLowering(
             startOffset = SYNTHETIC_OFFSET
             endOffset = SYNTHETIC_OFFSET
             name = propName
-            visibility = DescriptorVisibilities.PUBLIC
+            visibility = this@buildStabilityProp.visibility
         }.also { property ->
             property.parent = parent
             stabilityField.correspondingPropertySymbol = property.symbol
@@ -926,7 +928,7 @@ abstract class AbstractComposeLowering(
             endOffset = this@buildStabilityGetter.endOffset
             name = getterName
             returnType = stabilityField.type
-            visibility = DescriptorVisibilities.PUBLIC
+            visibility = this@buildStabilityGetter.visibility
             origin = IrDeclarationOrigin.GeneratedByPlugin(ComposeCompilerKey)
         }.also { fn ->
             fn.parent = parent
@@ -976,8 +978,7 @@ abstract class AbstractComposeLowering(
             }
 
             is IrFunctionExpression,
-            is IrTypeOperatorCall,
-            ->
+            is IrTypeOperatorCall ->
                 context.irTrace[ComposeWritableSlices.IS_STATIC_FUNCTION_EXPRESSION, this] ?: false
 
             is IrGetField ->
@@ -998,7 +999,7 @@ abstract class AbstractComposeLowering(
         // value is static.
         if (type.isInlineClassType()) {
             return stabilityInferencer.stabilityOf(type.unboxInlineClass()).knownStable() &&
-                    getValueArgument(0)?.isStatic() == true
+                    arguments[0]?.isStatic() == true
         }
 
         // If a type is immutable, then calls to its constructor are static if all of
@@ -1040,8 +1041,7 @@ abstract class AbstractComposeLowering(
                 if (prop.isConst) return true
 
                 val typeIsStable = stabilityInferencer.stabilityOf(type).knownStable()
-                val dispatchReceiverIsStatic = dispatchReceiver?.isStatic() != false
-                val extensionReceiverIsStatic = extensionReceiver?.isStatic() != false
+                val receiversAreStatic = arguments.all { it?.isStatic() != false }
 
                 // if we see that the property is read-only with a default getter and a
                 // stable return type , then reading the property can also be considered
@@ -1049,7 +1049,7 @@ abstract class AbstractComposeLowering(
                 if (!prop.isVar &&
                     prop.getter?.origin == IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR &&
                     typeIsStable &&
-                    dispatchReceiverIsStatic && extensionReceiverIsStatic
+                    receiversAreStatic
                 ) {
                     return true
                 }
@@ -1060,8 +1060,7 @@ abstract class AbstractComposeLowering(
                 if (
                     getterIsStable &&
                     typeIsStable &&
-                    dispatchReceiverIsStatic &&
-                    extensionReceiverIsStatic
+                    receiversAreStatic
                 ) {
                     return true
                 }
@@ -1094,7 +1093,7 @@ abstract class AbstractComposeLowering(
                             1 // changed param
                     val expectedArgumentsCount = 1 + syntheticRememberParams // 1 for lambda
                     if (
-                        valueArgumentsCount == expectedArgumentsCount &&
+                        arguments.size == expectedArgumentsCount &&
                         stabilityInferencer.stabilityOf(type).knownStable()
                     ) {
                         return true
@@ -1172,7 +1171,7 @@ abstract class AbstractComposeLowering(
         ).apply {
             typeArguments[0] = from
             typeArguments[1] = to
-            putValueArgument(0, argument)
+            arguments[0] = argument
         }
 
     fun IrExpression.coerceToUnboxed() =
@@ -1234,7 +1233,12 @@ abstract class AbstractComposeLowering(
 
     private val cacheFunction by guardedLazy {
         getTopLevelFunctions(ComposeCallableIds.cache).first {
-            it.owner.valueParameters.size == 2 && it.owner.extensionReceiverParameter != null
+            it.owner.parameters.let {
+                it.size == 3 &&
+                        it[0].kind == IrParameterKind.ExtensionReceiver &&
+                        it[1].kind == IrParameterKind.Regular &&
+                        it[2].kind == IrParameterKind.Regular
+            }
         }.owner
     }
 
@@ -1251,12 +1255,12 @@ abstract class AbstractComposeLowering(
             startOffset,
             endOffset,
             returnType,
-            symbol as IrSimpleFunctionSymbol,
+            symbol,
             symbol.owner.typeParameters.size
         ).apply {
-            extensionReceiver = currentComposer
-            putValueArgument(0, invalid)
-            putValueArgument(1, calculation)
+            arguments[0] = currentComposer
+            arguments[1] = invalid
+            arguments[2] = calculation
             typeArguments[0] = returnType
         }
     }
@@ -1292,7 +1296,8 @@ abstract class AbstractComposeLowering(
                     changedFunction
                 }
             irMethodCall(currentComposer, descriptor).also {
-                it.putValueArgument(0, expr)
+                // 0th argument is the composer
+                it.arguments[1] = expr
             }
         } else {
             val descriptor = when {
@@ -1305,7 +1310,8 @@ abstract class AbstractComposeLowering(
                 else -> error("Cannot determine descriptor for irChanged")
             }
             irMethodCall(currentComposer, descriptor).also {
-                it.putValueArgument(0, expr)
+                // 0th argument is the composer
+                it.arguments[1] = expr
             }
         }
     }
@@ -1330,10 +1336,23 @@ abstract class AbstractComposeLowering(
                 } else {
                     irEnumOrdinal
                 }
-                irCall(
-                    function.symbol,
-                    dispatchReceiver = this
-                )
+                if (type.isNullable()) {
+                    val enumValue = irTemporary(this, "tmpEnum")
+                    irBlock(
+                        context.irBuiltIns.intType,
+                        statements = listOf(
+                            enumValue,
+                            irIfThenElse(
+                                type = context.irBuiltIns.intType,
+                                condition = irEqual(irGet(enumValue), irNull()),
+                                thenPart = irConst(-1),
+                                elsePart = irCall(function.symbol, dispatchReceiver = irGet(enumValue))
+                            )
+                        )
+                    )
+                } else {
+                    irCall(function.symbol, dispatchReceiver = this)
+                }
             }
             else -> {
                 this
@@ -1353,7 +1372,8 @@ abstract class AbstractComposeLowering(
             startOffset,
             endOffset
         ).also {
-            it.putValueArgument(0, key)
+            // 0th argument is the composer
+            it.arguments[1] = key
         }
     }
 
@@ -1388,30 +1408,31 @@ abstract class AbstractComposeLowering(
 
     private val changedFunction = composerIrClass.functions
         .first {
-            it.name.identifier == "changed" && it.valueParameters.first().type.isNullableAny()
+            it.name.identifier == "changed" &&
+                    it.parameters.first { it.kind == IrParameterKind.Regular }.type.isNullableAny()
         }
 
     private val changedInstanceFunction = composerIrClass.functions
         .firstOrNull {
             it.name.identifier == "changedInstance" &&
-                    it.valueParameters.first().type.isNullableAny()
+                    it.parameters.first { it.kind == IrParameterKind.Regular }.type.isNullableAny()
         } ?: changedFunction
 
     private val startReplaceFunction by guardedLazy {
         composerIrClass.functions.firstOrNull {
-            it.name.identifier == "startReplaceGroup" && it.valueParameters.size == 1
+            it.name.identifier == "startReplaceGroup" && it.parameters.count { it.kind == IrParameterKind.Regular } == 1
         } ?: composerIrClass.functions
             .first {
-                it.name.identifier == "startReplaceableGroup" && it.valueParameters.size == 1
+                it.name.identifier == "startReplaceableGroup" && it.parameters.count { it.kind == IrParameterKind.Regular } == 1
             }
     }
 
     private val endReplaceFunction by guardedLazy {
         composerIrClass.functions.firstOrNull {
-            it.name.identifier == "endReplaceGroup" && it.valueParameters.isEmpty()
+            it.name.identifier == "endReplaceGroup" && it.parameters.none { it.kind == IrParameterKind.Regular }
         } ?: composerIrClass.functions
             .first {
-                it.name.identifier == "endReplaceableGroup" && it.valueParameters.isEmpty()
+                it.name.identifier == "endReplaceableGroup" && it.parameters.none { it.kind == IrParameterKind.Regular }
             }
     }
 
@@ -1432,7 +1453,7 @@ abstract class AbstractComposeLowering(
             .functions
             .filter { it.name.identifier == "changed" }
             .mapNotNull { f ->
-                f.valueParameters.first().type.toPrimitiveType()?.let { primitive ->
+                f.parameters.first { it.kind == IrParameterKind.Regular }.type.toPrimitiveType()?.let { primitive ->
                     primitive to f
                 }
             }
@@ -1446,7 +1467,7 @@ abstract class AbstractComposeLowering(
         endOffset: Int = UNDEFINED_OFFSET,
     ): IrCall {
         return irCall(function, startOffset, endOffset).apply {
-            dispatchReceiver = target
+            arguments[0] = target
         }
     }
 
@@ -1466,7 +1487,7 @@ abstract class AbstractComposeLowering(
         )
     }
 
-    internal fun IrFunction.copyParametersFrom(original: IrFunction) {
+    internal fun IrFunction.copyParametersFrom(original: IrFunction, copyDefaultValues: Boolean = true) {
         val newFunction = this
         // here generic value parameters will be applied
         newFunction.copyTypeParametersFrom(original)
@@ -1476,26 +1497,37 @@ abstract class AbstractComposeLowering(
             source = original,
             target = newFunction
         )
-        newFunction.valueParameters = original.valueParameters.map {
-            val name = dexSafeName(it.name)
-            it.copyTo(
-                newFunction,
-                name = name,
-                type = it.type.remapTypeParameters(original, newFunction),
-                // remapping the type parameters explicitly
-                defaultValue = it.defaultValue?.copyWithNewTypeParams(original, newFunction)
-            )
+        newFunction.parameters = original.parameters.map {
+            when (it.kind) {
+                IrParameterKind.ExtensionReceiver,
+                IrParameterKind.DispatchReceiver -> {
+                    it.copyWithNewTypeParams(original, newFunction)
+                }
+                IrParameterKind.Context,
+                IrParameterKind.Regular -> {
+                    val name = dexSafeName(it.name)
+                    it.copyTo(
+                        newFunction,
+                        name = name,
+                        type = it.type.remapTypeParameters(original, newFunction),
+                        // remapping the type parameters explicitly
+                        defaultValue = if (copyDefaultValues) {
+                            it.defaultValue?.copyWithNewTypeParams(original, newFunction)
+                        } else {
+                            null
+                        }
+                    )
+                }
+            }
         }
-        newFunction.dispatchReceiverParameter =
-            original.dispatchReceiverParameter?.copyTo(newFunction)
-        newFunction.extensionReceiverParameter =
-            original.extensionReceiverParameter?.copyWithNewTypeParams(original, newFunction)
 
-        newFunction.valueParameters.forEach {
-            it.defaultValue?.transformDefaultValue(
-                originalFunction = original,
-                newFunction = newFunction
-            )
+        if (copyDefaultValues) {
+            newFunction.parameters.forEach {
+                it.defaultValue?.transformDefaultValue(
+                    originalFunction = original,
+                    newFunction = newFunction
+                )
+            }
         }
     }
 
@@ -1514,40 +1546,17 @@ abstract class AbstractComposeLowering(
         transformChildrenVoid(object : IrElementTransformerVoid() {
             override fun visitGetValue(expression: IrGetValue): IrExpression {
                 val original = super.visitGetValue(expression)
-                val valueParameter =
+                val parameter =
                     (expression.symbol.owner as? IrValueParameter) ?: return original
 
-                val parameterIndex = valueParameter.indexInOldValueParameters
-                if (valueParameter.parent != originalFunction) {
+                val parameterIndex = parameter.indexInParameters
+                if (parameter.parent != originalFunction) {
                     return super.visitGetValue(expression)
-                }
-                if (parameterIndex < 0) {
-                    when (valueParameter) {
-                        originalFunction.dispatchReceiverParameter -> {
-                            return IrGetValueImpl(
-                                expression.startOffset,
-                                expression.endOffset,
-                                newFunction.dispatchReceiverParameter!!.symbol,
-                                expression.origin
-                            )
-                        }
-                        originalFunction.extensionReceiverParameter -> {
-                            return IrGetValueImpl(
-                                expression.startOffset,
-                                expression.endOffset,
-                                newFunction.extensionReceiverParameter!!.symbol,
-                                expression.origin
-                            )
-                        }
-                        else -> {
-                            error("Cannot copy parameter: ${valueParameter.dump()}")
-                        }
-                    }
                 }
                 return IrGetValueImpl(
                     expression.startOffset,
                     expression.endOffset,
-                    newFunction.valueParameters[parameterIndex].symbol,
+                    newFunction.parameters[parameterIndex].symbol,
                     expression.origin
                 )
             }
@@ -1633,33 +1642,72 @@ abstract class AbstractComposeLowering(
         val copy = source.deepCopyWithSymbols(parent)
         copy.attributeOwnerId = copy
         copy.isDefaultParamStub = true
-        copy.annotations += listOfNotNull(
+        val newAnnotations = listOfNotNull(
             jvmSynthetic(),
             hiddenFromObjC(),
             hiddenDeprecated("Binary compatibility stub for default parameters")
         )
+        // Remove existing annotations that are overridden by the new ones
+        copy.annotations = copy.annotations.filterNot { annotation ->
+            newAnnotations.any { it.annotationClass?.owner?.classId == annotation.annotationClass?.owner?.classId }
+        }
+        copy.annotations += newAnnotations
         copy.body = null
         return copy
     }
+
+    protected fun IrFunction.shouldBeRestartable(): Boolean {
+        // Only insert observe scopes in non-empty composable function
+        if (body == null || this !is IrSimpleFunction)
+            return false
+
+        if (isLocal && parentClassOrNull?.origin != JvmLoweredDeclarationOrigin.LAMBDA_IMPL) {
+            return false
+        }
+
+        // Do not insert observe scope in an inline function
+        if (isInline)
+            return false
+
+        if (hasNonRestartableAnnotation)
+            return false
+
+        if (hasExplicitGroups)
+            return false
+
+        // Do not insert an observe scope if the function has a return result
+        if (!returnType.isUnit())
+            return false
+
+        if (isComposableDelegatedAccessor())
+            return false
+
+        // Virtual functions with default params are called through wrapper generated in
+        // ComposableDefaultParamLowering. The restartable group is moved to the wrapper, while
+        // the function itself is no longer restartable.
+        if (isVirtualFunctionWithDefaultParam()) {
+            return false
+        }
+
+        // Open functions cannot be restartable since restart logic makes a virtual call (todo: b/329477544)
+        if (modality == Modality.OPEN && parentClassOrNull?.isFinalClass != true) {
+            return false
+        }
+
+        // Check if the descriptor has restart scope calls resolved
+        // Lambdas should be ignored. All composable lambdas are wrapped by a restartable
+        // function wrapper by ComposerLambdaMemoization which supplies the startRestartGroup/
+        // endRestartGroup pair on behalf of the lambda.
+        return origin != IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA
+    }
+
+    protected fun IrFunction.isVirtualFunctionWithDefaultParam(): Boolean =
+        this is IrSimpleFunction &&
+                (isVirtualFunctionWithDefaultParam == true ||
+                        overriddenSymbols.any { it.owner.isVirtualFunctionWithDefaultParam() })
 }
 
 private val unsafeSymbolsRegex = "[ <>]".toRegex()
-
-fun IrFunction.composerParam(): IrValueParameter? {
-    for (param in valueParameters.asReversed()) {
-        if (param.isComposerParam()) return param
-        if (!param.name.asString().startsWith('$')) return null
-    }
-    return null
-}
-
-fun IrValueParameter.isComposerParam(): Boolean =
-    name == ComposeNames.COMPOSER_PARAMETER && type.classFqName == ComposeFqNames.Composer
-
-// FIXME: There is a `functionN` factory in `IrBuiltIns`, but it currently produces unbound symbols.
-//        We can switch to this and remove this function once KT-54230 is fixed.
-fun IrPluginContext.function(arity: Int): IrClassSymbol =
-    referenceClass(ClassId(FqName("kotlin"), Name.identifier("Function$arity")))!!
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 fun IrAnnotationContainer.hasAnnotationSafe(fqName: FqName): Boolean =
@@ -1715,9 +1763,23 @@ internal inline fun <reified T : IrElement> T.copyWithNewTypeParams(
     return transform(deepCopy, null).patchDeclarationParents(target) as T
 }
 
-// Stub origin indicates that function should not be transformed in any way
-// and only exists for backwards compatibility.
-object ComposeBackwardsCompatibleStubOrigin : IrDeclarationOrigin {
-    override val name = "ComposeBackwardsCompatibleStubOrigin"
-    override val isSynthetic = true
-}
+fun IrType.isSyntheticComposableFunction() =
+    classOrNull?.owner?.let {
+        it.name.asString().startsWith("ComposableFunction") &&
+                it.packageFqName == InternalPackage
+    } ?: false
+
+fun IrType.isKComposableFunction() =
+    classOrNull?.owner?.let {
+        it.name.asString().startsWith("KComposableFunction") &&
+                it.packageFqName == InternalPackage
+    } ?: false
+
+fun IrFunction.firstParameterOfKind(kind: IrParameterKind) =
+    parameters.firstOrNull { it.kind == kind }
+
+val IrFunction.namedParameters
+    get() = parameters.filter { it.kind == IrParameterKind.Regular || it.kind == IrParameterKind.Context }
+
+val IrValueParameter.isReceiver
+    get() = kind == IrParameterKind.ExtensionReceiver || kind == IrParameterKind.DispatchReceiver

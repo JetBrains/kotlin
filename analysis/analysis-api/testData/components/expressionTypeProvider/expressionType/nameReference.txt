@@ -1,2 +1,2 @@
 expression: pair
-type: kotlin.Unit
+type: ERROR_TYPE(Unresolved name: Pair)

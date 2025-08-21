@@ -17,6 +17,7 @@ internal class SirGetterImpl(
     override val visibility: SirVisibility,
     override val documentation: String?,
     override val attributes: MutableList<SirAttribute>,
+    override val bridges: MutableList<SirBridge>,
     override var body: SirFunctionBody?,
     override val errorType: SirType,
 ) : SirGetter() {

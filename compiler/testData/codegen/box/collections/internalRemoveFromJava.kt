@@ -1,9 +1,4 @@
 // TARGET_BACKEND: JVM
-
-// IGNORE_BACKEND: JVM
-// ^ KT-43334 AbstractMethodError when calling 'remove' from Java on a Kotlin Collection with custom internal 'remove'
-//   fixed in JVM_IR
-
 // FILE: internalRemoveFromJava.kt
 
 class Test<T> : Collection<T> {

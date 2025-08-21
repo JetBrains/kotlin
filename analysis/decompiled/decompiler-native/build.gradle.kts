@@ -1,11 +1,13 @@
 plugins {
     kotlin("jvm")
     id("jps-compatible")
+    id("java-test-fixtures")
 }
 
 sourceSets {
     "main" { projectDefault() }
-    "test" { projectDefault() }
+    "test" { generatedTestDir() }
+    "testFixtures" { projectDefault() }
 }
 
 projectTest {
@@ -14,7 +16,7 @@ projectTest {
 
 dependencies {
     api(project(":core:deserialization"))
-    api(project(":compiler:psi"))
+    api(project(":compiler:psi:psi-api"))
     api(project(":compiler:frontend.java"))
     api(project(":analysis:decompiled:decompiler-to-file-stubs"))
     api(project(":analysis:decompiled:decompiler-to-psi"))
@@ -25,12 +27,14 @@ dependencies {
 
     compileOnly(intellijCore())
 
-    testApi(platform(libs.junit.bom))
-    testImplementation(libs.junit4)
+    testFixturesApi(platform(libs.junit.bom))
+    testFixturesApi(libs.junit4)
     testCompileOnly(libs.junit.jupiter.api) // the annotations are misused and have no effect
-    testImplementation(projectTests(":compiler:tests-common"))
-    testImplementation(projectTests(":compiler:tests-common-new"))
-    testImplementation(projectTests(":analysis:decompiled:decompiler-to-file-stubs"))
+    testFixturesApi(testFixtures(project(":compiler:tests-common")))
+    testFixturesApi(testFixtures(project(":compiler:tests-common-new")))
+    testFixturesApi(testFixtures(project(":analysis:decompiled:decompiler-to-file-stubs")))
 }
+
+optInToK1Deprecation()
 
 testsJar()

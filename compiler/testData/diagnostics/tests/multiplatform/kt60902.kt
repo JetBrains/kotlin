@@ -12,3 +12,6 @@ public actual fun <T : Comparable<T>> Array<out T>.foo() {
 
 private fun <T> Array<out T>.foo() {
 }
+
+/* GENERATED_FIR_TAGS: actual, expect, funWithExtensionReceiver, functionDeclaration, nullableType, outProjection,
+typeConstraint, typeParameter */

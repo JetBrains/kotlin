@@ -18,7 +18,8 @@ import org.jetbrains.kotlin.fir.types.FirStarProjection
 import org.jetbrains.kotlin.fir.types.FirUserTypeRef
 
 object FirStarProjectionModifierChecker : FirResolvedTypeRefChecker(MppCheckerKind.Common) {
-    override fun check(typeRef: FirResolvedTypeRef, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(typeRef: FirResolvedTypeRef) {
         val delegatedTypeRef = typeRef.delegatedTypeRef as? FirUserTypeRef ?: return
         for (part in delegatedTypeRef.qualifier) {
             for (typeArgument in part.typeArgumentList.typeArguments) {
@@ -31,8 +32,7 @@ object FirStarProjectionModifierChecker : FirResolvedTypeRefChecker(MppCheckerKi
                         modifier.source,
                         FirErrors.WRONG_MODIFIER_TARGET,
                         modifier.token,
-                        KotlinTarget.STAR_PROJECTION.description,
-                        context,
+                        KotlinTarget.STAR_PROJECTION.description
                     )
                 }
             }

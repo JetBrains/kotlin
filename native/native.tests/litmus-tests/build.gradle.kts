@@ -27,7 +27,7 @@ val litmusKt by configurations.creating {
     }
 }
 
-val litmusKtVersion = "0.1"
+val litmusKtVersion = "0.1.2"
 val litmusKtArtifacts = listOf(
     "org.jetbrains.litmuskt:litmuskt-core",
     "org.jetbrains.litmuskt:litmuskt-testsuite",
@@ -60,7 +60,7 @@ dependencies {
     testImplementation(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)
 
-    testImplementation(projectTests(":native:native.tests"))
+    testImplementation(testFixtures(project(":native:native.tests")))
 }
 
 sourceSets {

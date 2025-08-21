@@ -14,17 +14,15 @@ import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.ir.builders.irBlock
-import org.jetbrains.kotlin.ir.declarations.IrConstructor
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
-import org.jetbrains.kotlin.ir.declarations.IrFile
-import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrVariableImpl
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrVariableSymbolImpl
-import org.jetbrains.kotlin.ir.util.dump
+import org.jetbrains.kotlin.ir.util.nonDispatchArguments
 import org.jetbrains.kotlin.util.OperatorNameConventions
+import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
 
 /**
  * Inlines directly invoked lambdas and replaces invoked function references with calls.
@@ -46,10 +44,8 @@ internal class DirectInvokeLowering(private val context: JvmBackendContext) : Fi
             receiver is IrFunctionReference && receiver.symbol.owner.typeParameters.isEmpty() ->
                 visitFunctionReferenceInvoke(expression, receiver)
 
-            receiver is IrBlock ->
-                receiver.asInlinableFunctionReference()?.takeIf { it.extensionReceiver == null }?.let { reference ->
-                    visitLambdaInvoke(expression, reference)
-                } ?: expression
+            receiver is IrBlock -> receiver.asInlinableFunctionReference()
+                ?.let { reference -> visitLambdaInvoke(expression, reference) } ?: expression
 
             else ->
                 expression
@@ -63,14 +59,14 @@ internal class DirectInvokeLowering(private val context: JvmBackendContext) : Fi
         val scope = currentScope!!.scope
         val declarationParent = scope.getLocalDeclarationParent()
         val function = reference.symbol.owner
-        if (expression.valueArgumentsCount == 0) {
+        if (expression.symbol.owner.parameters.none { it.kind == IrParameterKind.Regular }) {
             return function.inline(declarationParent)
         }
         return context.createIrBuilder(scope.scopeOwnerSymbol).run {
             at(expression)
             irBlock {
                 val arguments = function.parameters.mapIndexed { index, parameter ->
-                    val argument = expression.getValueArgument(index)!!
+                    val argument = expression.arguments[index + 1]!!
                     IrVariableImpl(
                         argument.startOffset, argument.endOffset, IrDeclarationOrigin.DEFINED, IrVariableSymbolImpl(), parameter.name,
                         parameter.type, isVar = false, isConst = false, isLateinit = false
@@ -109,19 +105,6 @@ internal class DirectInvokeLowering(private val context: JvmBackendContext) : Fi
         irFunRef: IrFunctionReference,
         irInvokeCall: IrFunctionAccessExpression
     ) {
-        val irFun = irFunRef.symbol.owner
-        var invokeArgIndex = 0
-        if (irFun.dispatchReceiverParameter != null) {
-            dispatchReceiver = irFunRef.dispatchReceiver ?: irInvokeCall.getValueArgument(invokeArgIndex++)
-        }
-        if (irFun.extensionReceiverParameter != null) {
-            extensionReceiver = irFunRef.extensionReceiver ?: irInvokeCall.getValueArgument(invokeArgIndex++)
-        }
-        if (invokeArgIndex + valueArgumentsCount != irInvokeCall.valueArgumentsCount) {
-            throw AssertionError("Mismatching value arguments: $invokeArgIndex arguments used for receivers\n${irInvokeCall.dump()}")
-        }
-        for (i in 0 until valueArgumentsCount) {
-            putValueArgument(i, irInvokeCall.getValueArgument(invokeArgIndex++))
-        }
+        arguments.assignFrom(irFunRef.arguments.filterNotNull() + irInvokeCall.nonDispatchArguments)
     }
 }

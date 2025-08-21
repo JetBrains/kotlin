@@ -68,3 +68,6 @@ object D {
         val a = <!DEPRECATED_ACCESS_BY_SHORT_NAME!>FromBaseCompanion<!>::foo
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, functionDeclaration, integerLiteral, nestedClass,
+objectDeclaration, propertyDeclaration */

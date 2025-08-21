@@ -27,10 +27,9 @@ private val FirSession.jsModuleKindComponent: FirJsModuleKind? by FirSession.nul
 private val FirSession.jsModuleKind: ModuleKind?
     get() = jsModuleKindComponent?.moduleKind
 
+context(context: CheckerContext, reporter: DiagnosticReporter)
 internal fun checkJsModuleUsage(
     callee: FirBasedSymbol<*>,
-    context: CheckerContext,
-    reporter: DiagnosticReporter,
     source: AbstractKtSourceElement?
 ) {
     val moduleKind = context.session.jsModuleKind ?: return
@@ -48,17 +47,17 @@ internal fun checkJsModuleUsage(
     when (moduleKind) {
         ModuleKind.UMD -> {
             if (!callToNonModule && callToModule || callToNonModule && !callToModule) {
-                reporter.reportOn(source, FirJsErrors.CALL_FROM_UMD_MUST_BE_JS_MODULE_AND_JS_NON_MODULE, context)
+                reporter.reportOn(source, FirJsErrors.CALL_FROM_UMD_MUST_BE_JS_MODULE_AND_JS_NON_MODULE)
             }
         }
         ModuleKind.PLAIN -> {
             if (!callToNonModule && callToModule) {
-                reporter.reportOn(source, FirJsErrors.CALL_TO_JS_MODULE_WITHOUT_MODULE_SYSTEM, callee, context)
+                reporter.reportOn(source, FirJsErrors.CALL_TO_JS_MODULE_WITHOUT_MODULE_SYSTEM, callee)
             }
         }
         else -> {
             if (!callToModule && callToNonModule) {
-                reporter.reportOn(source, FirJsErrors.CALL_TO_JS_NON_MODULE_WITH_MODULE_SYSTEM, callee, context)
+                reporter.reportOn(source, FirJsErrors.CALL_TO_JS_NON_MODULE_WITH_MODULE_SYSTEM, callee)
             }
         }
     }

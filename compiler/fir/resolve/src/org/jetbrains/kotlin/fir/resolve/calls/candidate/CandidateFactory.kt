@@ -1,10 +1,11 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.fir.resolve.calls.candidate
 
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.*
@@ -18,6 +19,7 @@ import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.extensions.*
 import org.jetbrains.kotlin.fir.resolve.calls.*
+import org.jetbrains.kotlin.fir.resolve.inference.inferenceLogger
 import org.jetbrains.kotlin.fir.resolve.isIntegerLiteralOrOperatorCall
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.scopes.FirScope
@@ -43,6 +45,7 @@ class CandidateFactory private constructor(
             callInfo.argumentAtoms.forEach {
                 system.addSubsystemFromAtom(it)
             }
+            context.session.inferenceLogger?.logStage("CandidateFactory.buildBaseSystem()", system)
             return system.asReadOnlyStorage()
         }
 
@@ -196,7 +199,7 @@ class CandidateFactory private constructor(
 
     private fun FirBasedSymbol<*>.isRegularClassWithoutCompanion(session: FirSession): Boolean {
         val referencedClass = (this as? FirClassLikeSymbol<*>)?.fullyExpandedClass(session) ?: return false
-        return referencedClass.classKind != ClassKind.OBJECT && referencedClass.companionObjectSymbol == null
+        return referencedClass.classKind != ClassKind.OBJECT && referencedClass.resolvedCompanionObjectSymbol == null
     }
 
     private fun FirBasedSymbol<*>.unwrapIntegerOperatorSymbolIfNeeded(callInfo: CallInfo): FirBasedSymbol<*> {
@@ -220,7 +223,7 @@ class CandidateFactory private constructor(
 
     fun createErrorCandidate(callInfo: CallInfo, diagnostic: ConeDiagnostic): Candidate {
         val symbol: FirBasedSymbol<*> = when (callInfo.callKind) {
-            is CallKind.VariableAccess -> createErrorPropertySymbol(diagnostic)
+            is CallKind.VariableAccess -> createErrorPropertySymbol(diagnostic, callInfo.callSite.source)
             is CallKind.Function,
             is CallKind.DelegatingConstructorCall,
             is CallKind.CallableReference
@@ -254,7 +257,7 @@ class CandidateFactory private constructor(
         }
     }
 
-    private fun createErrorPropertySymbol(diagnostic: ConeDiagnostic): FirErrorPropertySymbol {
+    private fun createErrorPropertySymbol(diagnostic: ConeDiagnostic, sourceElement: KtSourceElement?): FirErrorPropertySymbol {
         return FirErrorPropertySymbol(diagnostic).also {
             buildErrorProperty {
                 moduleData = context.session.moduleData
@@ -263,6 +266,7 @@ class CandidateFactory private constructor(
                 name = FirErrorPropertySymbol.NAME
                 this.diagnostic = diagnostic
                 symbol = it
+                source = sourceElement
             }
         }
     }

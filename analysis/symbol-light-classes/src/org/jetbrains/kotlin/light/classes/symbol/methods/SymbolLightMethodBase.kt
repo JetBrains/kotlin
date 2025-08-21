@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -12,7 +12,6 @@ import com.intellij.psi.impl.light.LightReferenceListBuilder
 import com.intellij.psi.scope.PsiScopeProcessor
 import com.intellij.psi.util.MethodSignature
 import com.intellij.psi.util.MethodSignatureBackedByPsiMethod
-import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolVisibility
@@ -25,14 +24,14 @@ import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.asJava.mangleInternalName
 import org.jetbrains.kotlin.light.classes.symbol.SymbolLightMemberBase
-import org.jetbrains.kotlin.light.classes.symbol.annotations.getJvmNameFromAnnotation
-import org.jetbrains.kotlin.light.classes.symbol.annotations.hasPublishedApiAnnotation
+import org.jetbrains.kotlin.light.classes.symbol.annotations.*
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassBase
 
 internal abstract class SymbolLightMethodBase(
     lightMemberOrigin: LightMemberOrigin?,
     containingClass: SymbolLightClassBase,
     protected val methodIndex: Int,
+    val isJvmExposedBoxed: Boolean,
 ) : SymbolLightMemberBase<PsiMethod>(lightMemberOrigin, containingClass), KtLightMethod {
     override fun getBody(): PsiCodeBlock? = null
 
@@ -110,7 +109,7 @@ internal abstract class SymbolLightMethodBase(
 
     override fun getDefaultValue(): PsiAnnotationMemberValue? = null
 
-    protected fun KaSession.computeJvmMethodName(
+    protected fun computeJvmMethodName(
         symbol: KaCallableSymbol,
         defaultName: String,
     ): String {
@@ -124,7 +123,15 @@ internal abstract class SymbolLightMethodBase(
         return mangleInternalName(defaultName, sourceModule.stableModuleName ?: sourceModule.name)
     }
 
+    protected fun computeJvmExposeBoxedMethodName(
+        symbol: KaCallableSymbol,
+        defaultName: String,
+    ): String = symbol.getJvmExposeBoxedNameFromAnnotation() ?: symbol.getJvmNameFromAnnotation() ?: defaultName
+
     abstract fun isOverride(): Boolean
 
     internal open fun suppressWildcards(): Boolean? = null
+
+    protected val jvmExposeBoxedAwareAnnotationFilter: AnnotationFilter
+        get() = if (isJvmExposedBoxed) ExcludeAnnotationFilter.JvmName else ExcludeAnnotationFilter.JvmExposeBoxed
 }

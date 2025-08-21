@@ -22,3 +22,6 @@ class C {
     fun getRwProp(): Int = 123
     fun setRwProp(v: Int) {}
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, getter, integerLiteral,
+propertyDeclaration, setter, stringLiteral */

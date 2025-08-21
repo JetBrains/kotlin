@@ -40,3 +40,6 @@ open class Case1<K : Number> {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, init, inner, interfaceDeclaration, nullableType, primaryConstructor,
+propertyDeclaration, typeConstraint, typeParameter */

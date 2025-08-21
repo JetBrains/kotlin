@@ -2,8 +2,6 @@
 // RUN_PIPELINE_TILL: BACKEND
 // LANGUAGE: +MultiPlatformProjects
 // ISSUE: KT-58845
-// IGNORE_NON_REVERSED_RESOLVE
-// IGNORE_REVERSED_RESOLVE
 
 // MODULE: common
 // FILE: common.kt
@@ -46,3 +44,6 @@ actual interface I2 : J2 {}
 actual typealias I3 = J1
 
 actual typealias I4 = J2
+
+/* GENERATED_FIR_TAGS: actual, expect, funInterface, functionDeclaration, interfaceDeclaration, javaType,
+typeAliasDeclaration */

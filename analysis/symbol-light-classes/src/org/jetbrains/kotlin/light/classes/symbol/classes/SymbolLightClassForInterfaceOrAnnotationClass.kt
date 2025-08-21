@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -7,13 +7,10 @@ package org.jetbrains.kotlin.light.classes.symbol.classes
 
 import com.intellij.psi.*
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
-import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassKind
 import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaPsiSymbolPointerCreator
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
-import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.light.classes.symbol.annotations.AbstractClassAdditionalAnnotationsProvider
 import org.jetbrains.kotlin.light.classes.symbol.annotations.GranularAnnotationsBox
 import org.jetbrains.kotlin.light.classes.symbol.annotations.SymbolAnnotationsProvider
@@ -27,12 +24,10 @@ import org.jetbrains.kotlin.psi.KtClassOrObject
 
 internal abstract class SymbolLightClassForInterfaceOrAnnotationClass : SymbolLightClassForNamedClassLike {
     constructor(
-        ktAnalysisSession: KaSession,
         ktModule: KaModule,
         classSymbol: KaNamedClassSymbol,
-        manager: PsiManager
+        manager: PsiManager,
     ) : super(
-        ktAnalysisSession = ktAnalysisSession,
         ktModule = ktModule,
         classSymbol = classSymbol,
         manager = manager,
@@ -47,7 +42,7 @@ internal abstract class SymbolLightClassForInterfaceOrAnnotationClass : SymbolLi
         ktModule: KaModule,
     ) : this(
         classOrObjectDeclaration = classOrObject,
-        classSymbolPointer = KaPsiSymbolPointerCreator.symbolPointerOfType(classOrObject),
+        classSymbolPointer = classOrObject.createSymbolPointer(ktModule),
         ktModule = ktModule,
         manager = classOrObject.manager,
     ) {
@@ -78,11 +73,9 @@ internal abstract class SymbolLightClassForInterfaceOrAnnotationClass : SymbolLi
         ),
     )
 
-    private val _modifierList: PsiModifierList? by lazyPub {
+    final override fun getModifierList(): PsiModifierList? = cachedValue {
         computeModifierList()
     }
-
-    final override fun getModifierList(): PsiModifierList? = _modifierList
 
     override val ownConstructors: Array<PsiMethod> get() = PsiMethod.EMPTY_ARRAY
 

@@ -13,3 +13,5 @@ fun test(): String = <!TYPE_MISMATCH!>f(42)<!> // Should be resolved to (2) beca
 // FILE: jvm.kt
 
 actual fun f(element: Int): String = "asdf"
+
+/* GENERATED_FIR_TAGS: actual, expect, functionDeclaration, integerLiteral, stringLiteral, vararg */

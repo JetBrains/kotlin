@@ -1,5 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // DIAGNOSTICS: -UNUSED_VARIABLE
+// LANGUAGE: -ForbidInferOfInvisibleTypeAsReifiedVarargOrReturnType
 
 //FILE:file1.kt
 package a
@@ -46,3 +47,6 @@ class Q {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, functionDeclaration, integerLiteral, localProperty, nestedClass,
+objectDeclaration, propertyDeclaration */

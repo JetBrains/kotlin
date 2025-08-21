@@ -73,7 +73,7 @@ object GenericSignatureMapper {
             if (processor.match(irFunction, method)) {
                 return JvmMethodGenericSignature(
                     method,
-                    genericSignature.valueParameters,
+                    genericSignature.parameters,
                     processor.process(signature)
                 )
             }

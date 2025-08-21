@@ -3,7 +3,7 @@
 // MODULE: m1-common
 // FILE: common.kt
 
-<!EXPECT_ACTUAL_INCOMPATIBILITY{JVM}!>expect<!> class Foo(i: Int) {
+<!EXPECT_ACTUAL_IR_INCOMPATIBILITY{JVM}!>expect<!> class Foo(i: Int) {
     fun foo()
 }
 
@@ -20,3 +20,5 @@ public class Foo {
 class <!ACTUAL_MISSING, CLASSIFIER_REDECLARATION!>Foo<!><T>(t: T) {
     fun <!ACTUAL_MISSING!>foo<!>() {}
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, expect, functionDeclaration, nullableType, primaryConstructor, typeParameter */

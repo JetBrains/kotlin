@@ -39,3 +39,6 @@ fun testArrayPlusAssign(array: Array<Any>) {
 }
 
 fun todo(): Nothing = throw Exception()
+
+/* GENERATED_FIR_TAGS: assignment, funWithExtensionReceiver, functionDeclaration, integerLiteral, localFunction,
+operator, stringLiteral */

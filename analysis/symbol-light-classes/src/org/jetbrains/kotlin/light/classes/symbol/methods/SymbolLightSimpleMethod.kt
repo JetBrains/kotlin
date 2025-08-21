@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaNamedFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.types.KaClassType
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.api.types.KaTypeMappingMode
-import org.jetbrains.kotlin.analysis.api.types.KaTypeNullability
 import org.jetbrains.kotlin.asJava.builder.LightMemberOrigin
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -32,28 +31,30 @@ import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 import java.util.*
 
 internal class SymbolLightSimpleMethod private constructor(
-    ktAnalysisSession: KaSession,
     functionSymbol: KaNamedFunctionSymbol,
     lightMemberOrigin: LightMemberOrigin?,
     containingClass: SymbolLightClassBase,
     methodIndex: Int,
     private val isTopLevel: Boolean,
-    argumentsSkipMask: BitSet?,
+    valueParameterPickMask: BitSet?,
     private val suppressStatic: Boolean,
+    isJvmExposedBoxed: Boolean,
 ) : SymbolLightMethod<KaNamedFunctionSymbol>(
-    ktAnalysisSession = ktAnalysisSession,
     functionSymbol = functionSymbol,
     lightMemberOrigin = lightMemberOrigin,
     containingClass = containingClass,
     methodIndex = methodIndex,
-    argumentsSkipMask = argumentsSkipMask,
+    valueParameterPickMask = valueParameterPickMask,
+    isJvmExposedBoxed = isJvmExposedBoxed,
 ) {
     private val _name: String by lazyPub {
         withFunctionSymbol { functionSymbol ->
-            computeJvmMethodName(
-                symbol = functionSymbol,
-                defaultName = functionSymbol.name.asString(),
-            )
+            val defaultName = functionSymbol.name.asString()
+            if (isJvmExposedBoxed) {
+                computeJvmExposeBoxedMethodName(functionSymbol, defaultName)
+            } else {
+                computeJvmMethodName(functionSymbol, defaultName)
+            }
         }
     }
 
@@ -70,9 +71,9 @@ internal class SymbolLightSimpleMethod private constructor(
         }
     }
 
-    override fun hasTypeParameters(): Boolean =
-        hasTypeParameters(ktModule, functionDeclaration, functionSymbolPointer)
-                || containingClass.isDefaultImplsForInterfaceWithTypeParameters
+    override fun hasTypeParameters(): Boolean {
+        return withFunctionSymbol { it.typeParameters.isNotEmpty() } || containingClass.isDefaultImplsForInterfaceWithTypeParameters
+    }
 
     override fun getTypeParameterList(): PsiTypeParameterList? = _typeParameterList
     override fun getTypeParameters(): Array<PsiTypeParameter> = _typeParameterList?.typeParameters ?: PsiTypeParameter.EMPTY_ARRAY
@@ -144,7 +145,7 @@ internal class SymbolLightSimpleMethod private constructor(
 
     private val hasInlineOnlyAnnotation: Boolean by lazyPub { withFunctionSymbol { it.hasInlineOnlyAnnotation() } }
 
-    private val _modifierList: PsiModifierList by lazyPub {
+    override fun getModifierList(): PsiModifierList = cachedValue {
         SymbolLightMemberModifierList(
             containingDeclaration = this,
             modifiersBox = GranularModifiersBox(computer = ::computeModifiers),
@@ -153,52 +154,53 @@ internal class SymbolLightSimpleMethod private constructor(
                     ktModule = ktModule,
                     annotatedSymbolPointer = functionSymbolPointer,
                 ),
+                annotationFilter = jvmExposeBoxedAwareAnnotationFilter,
                 additionalAnnotationsProvider = CompositeAdditionalAnnotationsProvider(
                     NullabilityAnnotationsProvider {
                         if (modifierList.hasModifierProperty(PsiModifier.PRIVATE)) {
-                            KaTypeNullability.UNKNOWN
+                            NullabilityAnnotation.NOT_REQUIRED
                         } else {
                             withFunctionSymbol { functionSymbol ->
                                 when {
                                     functionSymbol.isSuspend -> { // Any?
-                                        KaTypeNullability.NULLABLE
+                                        NullabilityAnnotation.NULLABLE
                                     }
-                                    forceBoxedReturnType(functionSymbol) -> {
-                                        KaTypeNullability.NON_NULLABLE
+                                    shouldEnforceBoxedReturnType(functionSymbol) -> {
+                                        NullabilityAnnotation.NON_NULLABLE
                                     }
                                     else -> {
                                         val returnType = functionSymbol.returnType
-                                        if (isVoidType(returnType)) KaTypeNullability.UNKNOWN else getTypeNullability(returnType)
+                                        if (isVoidType(returnType)) NullabilityAnnotation.NOT_REQUIRED else getRequiredNullabilityAnnotation(returnType)
                                     }
                                 }
                             }
                         }
                     },
                     MethodAdditionalAnnotationsProvider,
+                    JvmExposeBoxedAdditionalAnnotationsProvider,
                 ),
             )
         )
     }
-
-    override fun getModifierList(): PsiModifierList = _modifierList
 
     override fun isConstructor(): Boolean = false
 
     override fun isOverride(): Boolean = _isOverride
 
     private val _isOverride: Boolean by lazyPub {
-        if (isTopLevel) false else withFunctionSymbol { it.isOverride }
+        withFunctionSymbol { it.isOverride }
     }
 
     // Inspired by KotlinTypeMapper#forceBoxedReturnType
-    private fun KaSession.forceBoxedReturnType(functionSymbol: KaNamedFunctionSymbol): Boolean {
+    private fun KaSession.shouldEnforceBoxedReturnType(functionSymbol: KaNamedFunctionSymbol): Boolean {
         val returnType = functionSymbol.returnType
         // 'invoke' methods for lambdas, function literals, and callable references
         // implicitly override generic 'invoke' from a corresponding base class.
         if (functionSymbol.isBuiltinFunctionInvoke && isInlineClassType(returnType))
             return true
 
-        return returnType.isPrimitiveBacked &&
+        return isJvmExposedBoxed && typeForValueClass(returnType) ||
+                returnType.isPrimitiveBacked &&
                 functionSymbol.allOverriddenSymbols.any { overriddenSymbol ->
                     !overriddenSymbol.returnType.isPrimitiveBacked
                 }
@@ -211,7 +213,7 @@ internal class SymbolLightSimpleMethod private constructor(
 
     private fun KaSession.isVoidType(type: KaType): Boolean {
         val expandedType = type.fullyExpandedType
-        return expandedType.isUnitType && expandedType.nullability != KaTypeNullability.NULLABLE
+        return expandedType.isUnitType && !expandedType.isMarkedNullable
     }
 
     private val _returnedType: PsiType by lazyPub {
@@ -222,7 +224,7 @@ internal class SymbolLightSimpleMethod private constructor(
                 functionSymbol.returnType.takeUnless { isVoidType(it) } ?: return@withFunctionSymbol PsiTypes.voidType()
             }
 
-            val typeMappingMode = if (forceBoxedReturnType(functionSymbol))
+            val typeMappingMode = if (shouldEnforceBoxedReturnType(functionSymbol))
                 KaTypeMappingMode.RETURN_TYPE_BOXED
             else
                 KaTypeMappingMode.RETURN_TYPE
@@ -241,6 +243,9 @@ internal class SymbolLightSimpleMethod private constructor(
     override fun getReturnType(): PsiType = _returnedType
 
     companion object {
+        /**
+         * @param suppressValueClass whether suppress the [containingClass] check for [isValueClass]
+         */
         internal fun KaSession.createSimpleMethods(
             containingClass: SymbolLightClassBase,
             result: MutableList<PsiMethod>,
@@ -249,36 +254,66 @@ internal class SymbolLightSimpleMethod private constructor(
             methodIndex: Int,
             isTopLevel: Boolean,
             suppressStatic: Boolean = false,
+            suppressValueClass: Boolean = false,
         ) {
             ProgressManager.checkCanceled()
 
-            if (functionSymbol.hasReifiedParameters || isHiddenOrSynthetic(functionSymbol)) return
-            if (functionSymbol.name.isSpecial || hasTypeForValueClassInSignature(functionSymbol, ignoreReturnType = isTopLevel)) return
+            if (functionSymbol.name.isSpecial || functionSymbol.hasReifiedParameters || isHiddenOrSynthetic(functionSymbol)) return
 
-            result.add(
-                SymbolLightSimpleMethod(
-                    ktAnalysisSession = this,
-                    functionSymbol = functionSymbol,
-                    lightMemberOrigin = lightMemberOrigin,
-                    containingClass = containingClass,
-                    methodIndex = methodIndex,
-                    isTopLevel = isTopLevel,
-                    suppressStatic = suppressStatic,
-                    argumentsSkipMask = null,
-                )
-            )
+            val hasJvmNameAnnotation = functionSymbol.hasJvmNameAnnotation()
+            val exposeBoxedMode = jvmExposeBoxedMode(functionSymbol)
+            val hasValueClassInReturnType = hasValueClassInReturnType(functionSymbol)
 
-            createJvmOverloadsIfNeeded(functionSymbol, result) { methodIndex, argumentSkipMask ->
-                SymbolLightSimpleMethod(
-                    ktAnalysisSession = this,
-                    functionSymbol = functionSymbol,
-                    lightMemberOrigin = lightMemberOrigin,
-                    containingClass = containingClass,
-                    methodIndex = methodIndex,
+            val isNonMaterializableValueClassFunction = !suppressValueClass &&
+                    containingClass.isValueClass &&
+                    // Overrides are materialized by default
+                    !functionSymbol.isOverride
+
+            val isSuspend = functionSymbol.isSuspend
+            createMethodsJvmOverloadsAware(
+                declaration = functionSymbol,
+                methodIndexBase = methodIndex,
+            ) { methodIndex, valueParameterPickMask, hasValueClassInParameterType ->
+                val hasMangledNameDueValueClassesInSignature = hasMangledNameDueValueClassesInSignature(
+                    hasValueClassInParameterType = hasValueClassInParameterType,
+                    hasValueClassInReturnType = hasValueClassInReturnType,
                     isTopLevel = isTopLevel,
-                    argumentsSkipMask = argumentSkipMask,
-                    suppressStatic = suppressStatic,
                 )
+
+                val generationResult = methodGeneration(
+                    exposeBoxedMode = exposeBoxedMode,
+                    hasValueClassInParameterType = hasValueClassInParameterType,
+                    hasValueClassInReturnType = hasValueClassInReturnType,
+                    isAffectedByValueClass = hasMangledNameDueValueClassesInSignature || isNonMaterializableValueClassFunction,
+                    hasJvmNameAnnotation = hasJvmNameAnnotation,
+                    isSuspend = isSuspend,
+                )
+
+                if (generationResult.isBoxedMethodRequired) {
+                    result += SymbolLightSimpleMethod(
+                        functionSymbol = functionSymbol,
+                        lightMemberOrigin = lightMemberOrigin,
+                        containingClass = containingClass,
+                        methodIndex = methodIndex,
+                        isTopLevel = isTopLevel,
+                        valueParameterPickMask = valueParameterPickMask,
+                        suppressStatic = suppressStatic,
+                        isJvmExposedBoxed = true,
+                    )
+                }
+
+                if (generationResult.isRegularMethodRequired) {
+                    result += SymbolLightSimpleMethod(
+                        functionSymbol = functionSymbol,
+                        lightMemberOrigin = lightMemberOrigin,
+                        containingClass = containingClass,
+                        methodIndex = methodIndex,
+                        isTopLevel = isTopLevel,
+                        valueParameterPickMask = valueParameterPickMask,
+                        suppressStatic = suppressStatic,
+                        isJvmExposedBoxed = false,
+                    )
+                }
             }
         }
     }

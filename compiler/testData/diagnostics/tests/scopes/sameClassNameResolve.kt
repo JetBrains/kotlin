@@ -10,3 +10,5 @@ class SubBase: Base()
 
 open class Base
 class SubBase: Base()
+
+/* GENERATED_FIR_TAGS: classDeclaration */

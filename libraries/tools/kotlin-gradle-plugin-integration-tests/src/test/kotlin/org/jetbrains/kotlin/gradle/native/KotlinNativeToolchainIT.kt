@@ -20,7 +20,8 @@ class KotlinNativeToolchainIT : KGPBaseTest() {
     fun checkCommonizeNativeDistributionWithPlatform(gradleVersion: GradleVersion) {
         nativeProject("commonize-kt-66750-with-subproject", gradleVersion) {
             // commonizeNativeDistribution is added only when isolated projects support mode is disabled
-            val buildOptions = defaultBuildOptions.disableKmpIsolatedProjectSupport()
+            // so Gradle isolated projects should be also disabled
+            val buildOptions = defaultBuildOptions.disableKmpIsolatedProjectSupport().disableIsolatedProjects()
             build(":commonizeNativeDistribution", buildOptions = buildOptions)
         }
     }

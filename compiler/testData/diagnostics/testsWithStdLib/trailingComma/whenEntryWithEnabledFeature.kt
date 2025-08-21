@@ -50,3 +50,7 @@ fun foo7(x: Boolean?) = when (x) {
     true, false,/**/ -> println(1)
     null,/**/ -> println(1)
 }
+
+/* GENERATED_FIR_TAGS: asExpression, classReference, disjunctionExpression, equalityExpression, functionDeclaration,
+functionalType, integerLiteral, isExpression, lambdaLiteral, localProperty, nullableType, propertyDeclaration, smartcast,
+whenExpression, whenWithSubject */

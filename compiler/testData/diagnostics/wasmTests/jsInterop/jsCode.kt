@@ -1,4 +1,5 @@
 // DIAGNOSTICS: -UNREACHABLE_CODE -UNUSED_PARAMETER
+// OPT_IN: kotlin.js.ExperimentalWasmJsInterop
 
 val prop: Int =
     js("1")

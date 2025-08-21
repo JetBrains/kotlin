@@ -47,6 +47,8 @@ sealed class DescriptorMetadataSource : MetadataSource {
 
     class Script(override val descriptor: ScriptDescriptor) : DescriptorMetadataSource(), MetadataSource.Script
 
+    class CodeFragment : DescriptorMetadataSource(), MetadataSource.CodeFragment
+
     class Function(override val descriptor: FunctionDescriptor) : DescriptorMetadataSource(), MetadataSource.Function
 
     class Property(override val descriptor: PropertyDescriptor) : DescriptorMetadataSource(), MetadataSource.Property {

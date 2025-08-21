@@ -1,11 +1,12 @@
 plugins {
     kotlin("jvm")
     id("jps-compatible")
+    id("java-test-fixtures")
 }
 
 dependencies {
     implementation(intellijCore())
-    implementation(project(":compiler:psi"))
+    implementation(project(":compiler:psi:psi-api"))
     api(project(":analysis:analysis-api"))
     api(project(":analysis:analysis-api-platform-interface"))
     api(project(":analysis:analysis-api-fir"))
@@ -14,16 +15,16 @@ dependencies {
     api(project(":analysis:decompiled:light-classes-for-decompiled"))
     api(project(":analysis:analysis-api-standalone:analysis-api-standalone-base"))
     implementation(project(":analysis:analysis-api-standalone:analysis-api-fir-standalone-base"))
-    testImplementation(projectTests(":analysis:analysis-api-fir"))
-    testImplementation(projectTests(":analysis:analysis-api-impl-base"))
-    testImplementation(projectTests(":analysis:analysis-test-framework"))
-    testImplementation(projectTests(":analysis:low-level-api-fir"))
+    testFixturesApi(testFixtures(project(":analysis:analysis-api-fir")))
+    testFixturesApi(testFixtures(project(":analysis:analysis-api-impl-base")))
+    testFixturesApi(testFixtures(project(":analysis:analysis-test-framework")))
+    testFixturesApi(testFixtures(project(":analysis:low-level-api-fir")))
 
-    testImplementation(kotlinTest("junit"))
+    testFixturesApi(kotlinTest("junit"))
     testCompileOnly(toolsJarApi())
     testRuntimeOnly(toolsJar())
-    testApi(platform(libs.junit.bom))
-    testImplementation(libs.junit.jupiter.api)
+    testFixturesApi(platform(libs.junit.bom))
+    testFixturesApi(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)
 }
 
@@ -41,9 +42,10 @@ sourceSets {
         projectDefault()
         generatedTestDir()
     }
+    "testFixtures" { projectDefault() }
 }
 
-projectTest(jUnitMode = JUnitMode.JUnit5) {
+projectTest(jUnitMode = JUnitMode.JUnit5, defineJDKEnvVariables = listOf(JdkMajorVersion.JDK_11_0)) {
     dependsOn(":dist")
     workingDir = rootDir
     useJUnitPlatform()

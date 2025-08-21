@@ -8,3 +8,6 @@ fun test() {
     val x: Int = select()
     val t = <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>select<!>()
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, lambdaLiteral, localProperty, nullableType, propertyDeclaration,
+typeParameter */

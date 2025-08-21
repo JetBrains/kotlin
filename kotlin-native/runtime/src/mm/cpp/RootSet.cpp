@@ -89,7 +89,7 @@ mm::GlobalRootSet::Value mm::GlobalRootSet::Iterator::operator*() noexcept {
         case Phase::kGlobals:
             return {**globalsIterator_, Source::kGlobal};
         case Phase::kStableRefs:
-            return {*specialRefsIterator_, Source::kStableRef};
+            return {*externalRCRefsIterator_, Source::kStableRef};
         case Phase::kDone:
             RuntimeFail("Cannot dereference");
     }
@@ -102,7 +102,7 @@ mm::GlobalRootSet::Iterator& mm::GlobalRootSet::Iterator::operator++() noexcept 
             Init();
             return *this;
         case Phase::kStableRefs:
-            ++specialRefsIterator_;
+            ++externalRCRefsIterator_;
             Init();
             return *this;
         case Phase::kDone:
@@ -121,7 +121,7 @@ bool mm::GlobalRootSet::Iterator::operator==(const Iterator& rhs) const noexcept
         case Phase::kGlobals:
             return globalsIterator_ == rhs.globalsIterator_;
         case Phase::kStableRefs:
-            return specialRefsIterator_ == rhs.specialRefsIterator_;
+            return externalRCRefsIterator_ == rhs.externalRCRefsIterator_;
     }
 }
 
@@ -131,10 +131,10 @@ void mm::GlobalRootSet::Iterator::Init() noexcept {
             case Phase::kGlobals:
                 if (globalsIterator_ != owner_.globalsIterable_.end()) return;
                 phase_ = Phase::kStableRefs;
-                specialRefsIterator_ = owner_.specialRefsIterable_.begin();
+                externalRCRefsIterator_ = owner_.externalRCRefsIterable_.begin();
                 break;
             case Phase::kStableRefs:
-                if (specialRefsIterator_ != owner_.specialRefsIterable_.end()) return;
+                if (externalRCRefsIterator_ != owner_.externalRCRefsIterable_.end()) return;
                 phase_ = Phase::kDone;
                 break;
             case Phase::kDone:
@@ -146,4 +146,4 @@ void mm::GlobalRootSet::Iterator::Init() noexcept {
 mm::ThreadRootSet::ThreadRootSet(ThreadData& threadData) noexcept : ThreadRootSet(threadData.shadowStack(), threadData.tls()) {}
 
 mm::GlobalRootSet::GlobalRootSet() noexcept :
-    GlobalRootSet(mm::GlobalData::Instance().globalsRegistry(), mm::GlobalData::Instance().specialRefRegistry()) {}
+    GlobalRootSet(mm::GlobalData::Instance().globalsRegistry(), mm::GlobalData::Instance().externalRCRefRegistry()) {}

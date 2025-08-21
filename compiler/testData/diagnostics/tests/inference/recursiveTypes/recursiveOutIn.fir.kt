@@ -20,3 +20,6 @@ fun testOutOut() {
     <!DEBUG_INFO_EXPRESSION_TYPE("Rec<*, I2 & I3>")!>cst1<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("Rec<*, I2 & I4>")!>cst2<!>
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, in, interfaceDeclaration, intersectionType, localProperty, nullableType,
+objectDeclaration, out, propertyDeclaration, starProjection, typeConstraint, typeParameter, vararg */

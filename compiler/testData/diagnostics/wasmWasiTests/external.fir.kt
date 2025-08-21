@@ -1,5 +1,7 @@
 // LANGUAGE: +ContextParameters
 
+@file:OptIn(ExperimentalWasmInterop::class)
+
 import kotlin.wasm.WasmImport
 
 <!WASI_EXTERNAL_FUNCTION_WITHOUT_IMPORT!>external fun foo(): Int<!>

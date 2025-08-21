@@ -10,24 +10,18 @@ import org.jetbrains.kotlin.KtIoFileSourceFile
 import org.jetbrains.kotlin.KtPsiSourceFile
 import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.KtVirtualFileSourceFile
-import org.jetbrains.kotlin.backend.common.checkers.IrInlineDeclarationChecker
 import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibSingleFileMetadataSerializer
 import org.jetbrains.kotlin.backend.common.serialization.metadata.serializeKlibHeader
-import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.KlibConfigurationKeys
-import org.jetbrains.kotlin.config.LanguageVersionSettings
-import org.jetbrains.kotlin.config.languageVersionSettings
+import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.impl.deduplicating
-import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrDiagnosticReporter
 import org.jetbrains.kotlin.ir.KtDiagnosticReporterWithImplicitIrBasedContext
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.ir.validation.checkers.IrInlineDeclarationChecker
 import org.jetbrains.kotlin.ir.visitors.IrVisitor
-import org.jetbrains.kotlin.library.KotlinLibrary
-import org.jetbrains.kotlin.library.SerializedIrFile
-import org.jetbrains.kotlin.library.SerializedIrModule
-import org.jetbrains.kotlin.library.SerializedMetadata
+import org.jetbrains.kotlin.konan.properties.Properties
+import org.jetbrains.kotlin.library.*
 import java.io.File
 
 /**
@@ -85,10 +79,8 @@ fun KtSourceFile.toIoFileOrNull(): File? = when (this) {
  *
  * @param moduleName The name of the module being serialized to be written into the KLIB header.
  * @param irModuleFragment The IR to be serialized into the KLIB being produced, or `null` if this is going to be a metadata-only KLIB.
- * @param irBuiltins IR builtins for `irModuleFragment`, or `null` if this is going to be a metadata-only KLIB.
  * @param configuration Used to determine certain serialization parameters and enable/disable serialization diagnostics.
  * @param diagnosticReporter Used for reporting serialization-time diagnostics, for example, about clashing IR signatures.
- * @param compatibilityMode The information about KLIB ABI.
  * @param cleanFiles In the case of incremental compilation, the list of files that were not changed and therefore don't need to be
  *     serialized again.
  * @param dependencies The list of KLIBs that the KLIB being produced depends on.
@@ -102,21 +94,11 @@ fun KtSourceFile.toIoFileOrNull(): File? = when (this) {
 fun <Dependency : KotlinLibrary, SourceFile> serializeModuleIntoKlib(
     moduleName: String,
     irModuleFragment: IrModuleFragment?,
-    irBuiltins: IrBuiltIns?,
     configuration: CompilerConfiguration,
     diagnosticReporter: DiagnosticReporter,
-    compatibilityMode: CompatibilityMode,
     cleanFiles: List<KotlinFileSerializedData>,
     dependencies: List<Dependency>,
-    createModuleSerializer: (
-        irDiagnosticReporter: IrDiagnosticReporter,
-        irBuiltins: IrBuiltIns,
-        compatibilityMode: CompatibilityMode,
-        normalizeAbsolutePaths: Boolean,
-        sourceBaseDirs: Collection<String>,
-        languageVersionSettings: LanguageVersionSettings,
-        shouldCheckSignaturesOnUniqueness: Boolean,
-    ) -> IrModuleSerializer<*>,
+    createModuleSerializer: (irDiagnosticReporter: IrDiagnosticReporter) -> IrModuleSerializer<*>,
     metadataSerializer: KlibSingleFileMetadataSerializer<SourceFile>,
     platformKlibCheckers: List<(IrDiagnosticReporter) -> IrVisitor<*, Nothing?>> = emptyList(),
     processCompiledFileData: ((File, KotlinFileSerializedData) -> Unit)? = null,
@@ -137,20 +119,17 @@ fun <Dependency : KotlinLibrary, SourceFile> serializeModuleIntoKlib(
             *platformKlibCheckers.toTypedArray(),
         )
 
-        // TODO(KT-71416): Move this after the first phase of KLIB inlining.
-        it.runIrLevelCheckers(
-            irDiagnosticReporter,
-            ::IrInlineDeclarationChecker,
-        )
+        if (!configuration.languageVersionSettings.supportsFeature(LanguageFeature.IrInlinerBeforeKlibSerialization)) {
+            // With IrInlinerBeforeKlibSerialization feature, this check happens after the first phase of KLIB inlining.
+            // Without it, the check should happen here instead.
+            it.runIrLevelCheckers(
+                irDiagnosticReporter,
+                ::IrInlineDeclarationChecker,
+            )
+        }
 
         createModuleSerializer(
             irDiagnosticReporter,
-            irBuiltins!!,
-            compatibilityMode,
-            configuration.getBoolean(KlibConfigurationKeys.KLIB_NORMALIZE_ABSOLUTE_PATH),
-            configuration.getList(KlibConfigurationKeys.KLIB_RELATIVE_PATH_BASES),
-            configuration.languageVersionSettings,
-            configuration.get(KlibConfigurationKeys.PRODUCE_KLIB_SIGNATURES_CLASH_CHECKS, true),
         ).serializedIrModule(it)
     }
 
@@ -211,6 +190,25 @@ fun <Dependency : KotlinLibrary, SourceFile> serializeModuleIntoKlib(
         serializedIr = if (serializedIr == null) null else SerializedIrModule(compiledKotlinFiles.mapNotNull { it.irData }),
         neededLibraries = dependencies,
     )
+}
+
+fun addLanguageFeaturesToManifest(manifestProperties: Properties, languageVersionSettings: LanguageVersionSettings) {
+    val enabledFeatures = languageVersionSettings.getCustomizedEffectivelyEnabledLanguageFeatures()
+    val presentableEnabledFeatures = enabledFeatures.sortedBy(LanguageFeature::name).joinToString(" ") { "+$it" }
+
+    val disabledFeatures = languageVersionSettings.getCustomizedEffectivelyDisabledLanguageFeatures()
+    val presentableDisabledFeatures = disabledFeatures.sortedBy(LanguageFeature::name).joinToString(" ") { "-$it" }
+
+    val presentableAlteredFeatures = "$presentableEnabledFeatures $presentableDisabledFeatures".trim()
+    if (presentableAlteredFeatures.isNotBlank()) {
+        manifestProperties.setProperty(KLIB_PROPERTY_MANUALLY_ALTERED_LANGUAGE_FEATURES, presentableAlteredFeatures)
+    }
+
+    val presentablePoisoningFeatures =
+        enabledFeatures.filter { it.forcesPreReleaseBinariesIfEnabled() }.sortedBy(LanguageFeature::name).joinToString(" ") { "+$it" }
+    if (presentablePoisoningFeatures.isNotBlank()) {
+        manifestProperties.setProperty(KLIB_PROPERTY_MANUALLY_ENABLED_POISONING_LANGUAGE_FEATURES, presentablePoisoningFeatures)
+    }
 }
 
 private fun IrModuleFragment.runIrLevelCheckers(

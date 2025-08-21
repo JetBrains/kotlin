@@ -20,19 +20,19 @@ FILE: b.kt
     }
 FILE: c.kt
     public final fun test_1(base: R|Base|): R|kotlin/Unit| {
-        lval x: R|kotlin/Int| = when (R|<local>/base|) {
+        lval x: R|kotlin/Int| = when (lval <when-subject>: R|Base| = R|<local>/base|) {
             ($subj$ is R|A|) ->  {
                 Int(1)
             }
         }
 
-        lval y: R|kotlin/Int| = when (R|<local>/base|) {
+        lval y: R|kotlin/Int| = when (lval <when-subject>: R|Base| = R|<local>/base|) {
             ==($subj$, Q|B|) ->  {
                 Int(1)
             }
         }
 
-        lval z: R|kotlin/Int| = when (R|<local>/base|) {
+        lval z: R|kotlin/Int| = when (lval <when-subject>: R|Base| = R|<local>/base|) {
             ($subj$ is R|A|) ->  {
                 Int(1)
             }
@@ -43,7 +43,7 @@ FILE: c.kt
 
     }
     public final fun test_2(base: R|Base?|): R|kotlin/Unit| {
-        lval x: R|kotlin/Int| = when (R|<local>/base|) {
+        lval x: R|kotlin/Int| = when (lval <when-subject>: R|Base?| = R|<local>/base|) {
             ($subj$ is R|A|) ->  {
                 Int(1)
             }
@@ -52,7 +52,7 @@ FILE: c.kt
             }
         }
 
-        lval y: R|kotlin/Int| = when (R|<local>/base|) {
+        lval y: R|kotlin/Int| = when (lval <when-subject>: R|Base?| = R|<local>/base|) {
             ($subj$ is R|A|) ->  {
                 Int(1)
             }
@@ -61,7 +61,7 @@ FILE: c.kt
             }
         }
 
-        lval z: R|kotlin/Int| = when (R|<local>/base|) {
+        lval z: R|kotlin/Int| = when (lval <when-subject>: R|Base?| = R|<local>/base|) {
             ($subj$ is R|A|) ->  {
                 Int(1)
             }
@@ -75,7 +75,7 @@ FILE: c.kt
 
     }
     public final fun test_3(base: R|Base|): R|kotlin/Unit| {
-        when (R|<local>/base|) {
+        when (lval <when-subject>: R|Base| = R|<local>/base|) {
             ($subj$ is R|A|) ->  {
                 Int(1)
             }

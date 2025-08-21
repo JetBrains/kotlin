@@ -30,3 +30,7 @@ class A {
 }
 
 fun fn(x: (A) -> Unit) {}
+
+/* GENERATED_FIR_TAGS: classDeclaration, destructuringDeclaration, equalityExpression, functionDeclaration,
+functionalType, ifExpression, integerLiteral, lambdaLiteral, localProperty, operator, propertyDeclaration,
+whenExpression, whenWithSubject */

@@ -25,3 +25,5 @@ import p.*
 fun test(v: Visitor<Nothing>, e: Element) {
     e.accept(v, null)
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaFunction, javaType, nullableType */

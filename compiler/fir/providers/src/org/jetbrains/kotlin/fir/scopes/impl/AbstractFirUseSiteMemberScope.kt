@@ -39,9 +39,9 @@ abstract class AbstractFirUseSiteMemberScope(
         hashMapOf()
     protected val directOverriddenProperties: MutableMap<FirPropertySymbol, List<ResultOfIntersection<FirPropertySymbol>>> = hashMapOf()
 
-    protected val functionsFromSupertypes: MutableMap<Name, List<ResultOfIntersection<FirNamedFunctionSymbol>>> = mutableMapOf()
-    protected val propertiesFromSupertypes: MutableMap<Name, List<ResultOfIntersection<FirPropertySymbol>>> = mutableMapOf()
-    protected val fieldsFromSupertypes: MutableMap<Name, List<FirFieldSymbol>> = mutableMapOf()
+    protected val functionsFromSupertypes: MutableMap<Name, List<ResultOfIntersection<FirNamedFunctionSymbol>>> = hashMapOf()
+    protected val propertiesFromSupertypes: MutableMap<Name, List<ResultOfIntersection<FirPropertySymbol>>> = hashMapOf()
+    protected val fieldsFromSupertypes: MutableMap<Name, List<FirFieldSymbol>> = hashMapOf()
 
     private val callableNamesCached by lazy(LazyThreadSafetyMode.PUBLICATION) {
         buildSet {

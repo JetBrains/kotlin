@@ -16,3 +16,7 @@ suspend fun GenericController<List<String>>.test() {}
 val test1 = generate {
     test()
 }
+
+/* GENERATED_FIR_TAGS: annotationUseSiteTargetFile, classDeclaration, classReference, funWithExtensionReceiver,
+functionDeclaration, functionalType, lambdaLiteral, nullableType, propertyDeclaration, suspend, typeParameter,
+typeWithExtension */

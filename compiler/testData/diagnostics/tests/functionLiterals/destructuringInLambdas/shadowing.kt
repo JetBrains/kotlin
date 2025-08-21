@@ -25,3 +25,7 @@ fun bar(a: Double) {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, data, funWithExtensionReceiver, functionDeclaration, functionalType, infix,
+integerLiteral, lambdaLiteral, localProperty, nullableType, primaryConstructor, propertyDeclaration, typeParameter,
+typeWithExtension */

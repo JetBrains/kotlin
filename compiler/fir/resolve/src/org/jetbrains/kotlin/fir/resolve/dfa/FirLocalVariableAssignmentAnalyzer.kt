@@ -13,7 +13,8 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.references.FirReference
-import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
+import org.jetbrains.kotlin.fir.resolve.dfa.cfg.CfgInternals
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.typeContext
@@ -28,12 +29,15 @@ import org.jetbrains.kotlin.types.AbstractTypeChecker
  *  [isUnstableInCurrentScope] only works for an access during the natural FIR tree traversal. This class will not work if one
  *  queries after the traversal is done.
  **/
-internal class FirLocalVariableAssignmentAnalyzer {
-    private var rootFunction: FirFunctionSymbol<*>? = null
-    private var assignedLocalVariablesByDeclaration: Map<Any /* FirBasedSymbol<*> | FirLoop */, Fork>? = null
-    private var variableAssignments: Map<FirProperty, List<Assignment>>? = null
+internal class FirLocalVariableAssignmentAnalyzer private constructor(
+    /**
+     * Symbol of a topmost declaration containing a code block which is under analysis
+     */
+    private var rootSymbol: FirBasedSymbol<*>?,
+    private var assignedLocalVariablesByDeclaration: Map<Any /* FirBasedSymbol<*> | FirLoop */, Fork>?,
+    private var variableAssignments: Map<FirProperty, List<Assignment>>?,
 
-    private val scopes: Stack<Pair<Fork?, VariableAssignments>> = stackOf()
+    private val scopes: Stack<Pair<Fork?, VariableAssignments>>,
 
     // Example of control-flow-postponed lambdas: callBoth({ a.x }, { a = null })
     // Lambdas are called in an unknown order, so control flow edges to both of them go from before the call.
@@ -46,10 +50,55 @@ internal class FirLocalVariableAssignmentAnalyzer {
     // from the result of `run` to the result of `genericFunction` so smart casts should be prohibited in `a.x`.
     //
     // This mirrors `ControlFlowGraphBuilder.postponedLambdaExits`.
-    private val postponedLambdas: Stack<MutableMap<Fork, Boolean /* data-flow only */>> = stackOf()
+    private val postponedLambdas: Stack<MutableMap<Fork, Boolean /* data-flow only */>>
+) {
+    constructor() : this(
+        rootSymbol = null,
+        assignedLocalVariablesByDeclaration = null,
+        variableAssignments = null,
+        scopes = stackOf(),
+        postponedLambdas = stackOf(),
+    )
+
+    /**
+     * Builds a deep independent copy of this [FirLocalVariableAssignmentAnalyzer].
+     * The copy is not affected by changes in this storage.
+     *
+     * @param [firMapper] A mapper to be applied on all [FirElement]s and [FirBasedSymbol]s referenced in the snapshot.
+     */
+    @CfgInternals
+    internal fun createSnapshot(firMapper: SnapshotFirMapper): FirLocalVariableAssignmentAnalyzer {
+        /** Clones the [value] together with applying the [firMapper] on all [FirElement]s inside. */
+        fun <T> clone(value: T): T {
+            /** This includes values of all typed mentioned in instance properties of [FirLocalVariableAssignmentAnalyzer]. */
+            @Suppress("UNCHECKED_CAST")
+            return when (value) {
+                is FirBasedSymbol<*> -> firMapper.mapSymbol(value)
+                is FirElement -> firMapper.mapElement(value)
+                is Fork -> value.createSnapshot(firMapper) as T
+                is VariableAssignments -> value.createSnapshot(firMapper) as T
+                is Pair<*, *> -> Pair(clone(value.first), clone(value.second)) as T
+                is List<*> -> value.map { clone(it) } as T
+                is Map<*, *> -> buildMap {
+                    value.forEach { (k, v) -> put(clone(k), clone(v)) }
+                } as T
+                is Stack<*> -> value.createSnapshot { clone(it) } as T
+                is Assignment, is Boolean, null -> value
+                else -> error("Unexpected key type: ${value::class.simpleName}")
+            }
+        }
+
+        return FirLocalVariableAssignmentAnalyzer(
+            rootSymbol,
+            assignedLocalVariablesByDeclaration = clone(assignedLocalVariablesByDeclaration),
+            variableAssignments = clone(variableAssignments),
+            scopes = clone(scopes),
+            postponedLambdas = clone(postponedLambdas)
+        )
+    }
 
     fun reset() {
-        rootFunction = null
+        rootSymbol = null
         assignedLocalVariablesByDeclaration = null
         variableAssignments = null
         postponedLambdas.reset()
@@ -79,13 +128,13 @@ internal class FirLocalVariableAssignmentAnalyzer {
                 assignments.all { assignment -> types.all { AbstractTypeChecker.isSubtypeOf(session.typeContext, assignment.type!!, it) } })
 
     private fun getInfoForDeclaration(symbol: Any): Fork? {
-        val root = rootFunction ?: return null
+        val root = rootSymbol ?: return null
         if (root == symbol) return null
         val cachedMap = buildInfoForRoot(root)
         return cachedMap[symbol]
     }
 
-    private fun buildInfoForRoot(root: FirFunctionSymbol<*>): Map<Any, Fork> {
+    private fun buildInfoForRoot(root: FirBasedSymbol<*>): Map<Any, Fork> {
         assignedLocalVariablesByDeclaration?.let { return it }
 
         val data = MiniCfgBuilder.MiniCfgData()
@@ -135,8 +184,8 @@ internal class FirLocalVariableAssignmentAnalyzer {
      * function.
      */
     fun enterFunction(function: FirFunction): Set<FirPropertySymbol> {
-        if (rootFunction == null) {
-            rootFunction = function.symbol
+        if (rootSymbol == null) {
+            rootSymbol = function.symbol
             scopes.push(null to VariableAssignments())
             return emptySet()
         }
@@ -155,14 +204,53 @@ internal class FirLocalVariableAssignmentAnalyzer {
     fun exitFunction() {
         scopes.pop()
         if (scopes.isEmpty) {
-            rootFunction = null
+            rootSymbol = null
+            assignedLocalVariablesByDeclaration = null
+            variableAssignments = null
+        }
+    }
+
+    fun enterAnonymousInitializer(anonymousInitializer: FirAnonymousInitializer) {
+        enterNewTopLevelScopeIfNeeded(anonymousInitializer)
+    }
+
+    fun exitAnonymousInitializer(anonymousInitializer: FirAnonymousInitializer) {
+        exitNewTopLevelScopeIfNeeded(anonymousInitializer)
+    }
+
+    fun enterCodeFragment(anonymousInitializer: FirCodeFragment) {
+        enterNewTopLevelScopeIfNeeded(anonymousInitializer)
+    }
+
+    fun exitCodeFragment(anonymousInitializer: FirCodeFragment) {
+        exitNewTopLevelScopeIfNeeded(anonymousInitializer)
+    }
+
+    fun enterReplSnippet(anonymousInitializer: FirReplSnippet) {
+        enterNewTopLevelScopeIfNeeded(anonymousInitializer)
+    }
+
+    fun exitReplSnippet(anonymousInitializer: FirReplSnippet) {
+        exitNewTopLevelScopeIfNeeded(anonymousInitializer)
+    }
+
+    private fun enterNewTopLevelScopeIfNeeded(declaration: FirDeclaration) {
+        if (rootSymbol != null) return
+        rootSymbol = declaration.symbol
+        scopes.push(null to VariableAssignments())
+    }
+
+    private fun exitNewTopLevelScopeIfNeeded(declaration: FirDeclaration) {
+        if (rootSymbol == declaration.symbol) {
+            rootSymbol = null
+            scopes.pop()
             assignedLocalVariablesByDeclaration = null
             variableAssignments = null
         }
     }
 
     fun enterClass(klass: FirClass) {
-        if (rootFunction == null) return
+        if (rootSymbol == null) return
         val (info, prohibitSmartCasts) = enterScope(klass.symbol, klass is FirAnonymousObject)
         if (klass is FirAnonymousObject && info != null) {
             // Assignments in initializers and methods invalidate smart casts in other members.
@@ -171,18 +259,18 @@ internal class FirLocalVariableAssignmentAnalyzer {
     }
 
     fun exitClass() {
-        if (rootFunction == null) return
+        if (rootSymbol == null) return
         scopes.pop()
     }
 
     fun enterFunctionCall(lambdaArgs: Collection<FirAnonymousFunction>) {
         // If not inside a function at all, then there is no concept of a local and nothing to track.
-        if (rootFunction == null) return
+        if (rootSymbol == null) return
         postponedLambdas.push(lambdaArgs.mapNotNull { getInfoForDeclaration(it.symbol) }.associateWithTo(mutableMapOf()) { false })
     }
 
     fun exitFunctionCall(callCompleted: Boolean) {
-        if (rootFunction == null) return
+        if (rootSymbol == null) return
         val lambdasInCall = postponedLambdas.pop()
         if (!callCompleted) {
             // TODO: this has the same problem as above:
@@ -207,7 +295,7 @@ internal class FirLocalVariableAssignmentAnalyzer {
      * Enters an [FirLoop] and returns all [FirPropertySymbol]s which are defined before the loop that will be modified within the loop.
      */
     fun enterLoop(loop: FirLoop): Set<FirPropertySymbol> {
-        if (rootFunction == null) return emptySet()
+        if (rootSymbol == null) return emptySet()
         val (info, _) = enterScope(loop, evaluatedInPlace = true)
         return info?.assignedInside?.getAssignedProperties().orEmpty()
     }
@@ -216,13 +304,13 @@ internal class FirLocalVariableAssignmentAnalyzer {
      * Exits an [FirLoop] and returns all [FirPropertySymbol]s which were defined before the loop that were modified within the loop.
      */
     fun exitLoop(): Set<FirPropertySymbol> {
-        if (rootFunction == null) return emptySet()
+        if (rootSymbol == null) return emptySet()
         val (info, _) = scopes.pop()
         return info?.assignedInside?.getAssignedProperties().orEmpty()
     }
 
     fun visitAssignment(property: FirProperty, type: ConeKotlinType) {
-        buildInfoForRoot(rootFunction ?: return)
+        buildInfoForRoot(rootSymbol ?: return)
         val assignments = variableAssignments?.get(property) ?: return
         val assignment = assignments.firstOrNull { it.type == null } ?: return
         assignment.type = type
@@ -309,7 +397,12 @@ internal class FirLocalVariableAssignmentAnalyzer {
         private class Fork(
             val assignedLater: VariableAssignments,
             val assignedInside: VariableAssignments,
-        )
+        ) {
+            @CfgInternals
+            fun createSnapshot(firMapper: SnapshotFirMapper): Fork {
+                return Fork(assignedLater.createSnapshot(firMapper), assignedInside.createSnapshot(firMapper))
+            }
+        }
 
         private class Assignment(
             val operatorAssignment: Boolean,
@@ -329,6 +422,15 @@ internal class FirLocalVariableAssignmentAnalyzer {
 
             fun add(property: FirProperty, assignment: Assignment): Boolean {
                 return assignments.getOrPut(property) { mutableSetOf() }.add(assignment)
+            }
+
+            @CfgInternals
+            fun createSnapshot(firMapper: SnapshotFirMapper): VariableAssignments {
+                val copy = VariableAssignments()
+                for ((key, value) in assignments) {
+                    copy.assignments.put(firMapper.mapElement(key), value)
+                }
+                return copy
             }
 
             fun copy(): VariableAssignments {
@@ -383,6 +485,10 @@ internal class FirLocalVariableAssignmentAnalyzer {
                 return flow.assignedLater.apply { retain(freeVariables) }
             }
 
+            override fun visitAnonymousInitializer(anonymousInitializer: FirAnonymousInitializer, data: MiniCfgData) {
+                visitLocalDeclaration(anonymousInitializer, data)
+            }
+
             override fun visitAnonymousFunction(anonymousFunction: FirAnonymousFunction, data: MiniCfgData) =
                 visitLocalDeclaration(anonymousFunction, data)
 
@@ -406,7 +512,7 @@ internal class FirLocalVariableAssignmentAnalyzer {
             }
 
             override fun visitWhenExpression(whenExpression: FirWhenExpression, data: MiniCfgData) {
-                (whenExpression.subjectVariable ?: whenExpression.subject)?.accept(this, data)
+                whenExpression.subjectVariable?.accept(this, data)
                 val flow = data.flow
                 // Also collect `flow` here for the case when none of the branches execute.
                 data.flow = whenExpression.branches.mapTo(mutableSetOf(flow)) {

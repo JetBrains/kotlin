@@ -1,5 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-73752
+// SKIP_FIR_DUMP
 
 // FILE: main.kt
 
@@ -46,3 +47,6 @@ val nestedTAtoNestedInner = Outer.Nested().TAtoNestedInner()
 val nestedTAtoNestedInnerCallable = Outer.Nested::TAtoNestedInner
 val nestedTAtoNestedInnerError = Outer.<!INNER_CLASS_CONSTRUCTOR_NO_RECEIVER!>TAtoNestedInner<!>()
 val nestedTAtoNestedInnerCallableError = Outer::<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>TAtoNestedInner<!>
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, functionDeclaration, inner, nestedClass, propertyDeclaration,
+typeAliasDeclaration */

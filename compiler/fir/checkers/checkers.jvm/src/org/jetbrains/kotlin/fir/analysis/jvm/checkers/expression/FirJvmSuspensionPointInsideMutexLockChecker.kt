@@ -16,8 +16,8 @@ import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.utils.isSuspend
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.resolvedArgumentMapping
+import org.jetbrains.kotlin.fir.expressions.unwrapAnonymousFunctionExpression
 import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
-import org.jetbrains.kotlin.fir.resolve.transformers.unwrapAnonymousFunctionExpression
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.isSuspendOrKSuspendFunctionType
 import org.jetbrains.kotlin.name.CallableId
@@ -30,7 +30,8 @@ object FirJvmSuspensionPointInsideMutexLockChecker : FirFunctionCallChecker(MppC
     private val withLockCallableId = CallableId(FqName("kotlin.concurrent"), Name.identifier("withLock"))
     private val synchronizedBlockParamName = Name.identifier("block")
 
-    override fun check(expression: FirFunctionCall, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(expression: FirFunctionCall) {
         val symbol = expression.calleeReference.toResolvedCallableSymbol() ?: return
         if (!symbol.isSuspend) return
         var anonymousFunctionArg: FirAnonymousFunction? = null
@@ -71,7 +72,7 @@ object FirJvmSuspensionPointInsideMutexLockChecker : FirFunctionCallChecker(MppC
         // There is no need to report SUSPENSION_POINT_INSIDE_CRITICAL_SECTION if enclosing suspend function is not found
         // Because ILLEGAL_SUSPEND_FUNCTION_CALL is reported in this case
         if (isMutexLockFound && isSuspendFunctionFound) {
-            reporter.reportOn(expression.source, FirJvmErrors.SUSPENSION_POINT_INSIDE_CRITICAL_SECTION, symbol, context)
+            reporter.reportOn(expression.source, FirJvmErrors.SUSPENSION_POINT_INSIDE_CRITICAL_SECTION, symbol)
         }
     }
 }

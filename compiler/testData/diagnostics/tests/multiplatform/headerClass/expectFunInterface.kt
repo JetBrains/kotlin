@@ -67,3 +67,6 @@ interface F6Typealias {
 <!ACTUAL_WITHOUT_EXPECT!>actual<!> typealias F6 = F6Typealias
 
 <!ACTUAL_WITHOUT_EXPECT!>actual<!> typealias F7 = NotSam
+
+/* GENERATED_FIR_TAGS: actual, expect, funInterface, functionDeclaration, interfaceDeclaration, javaType,
+typeAliasDeclaration */

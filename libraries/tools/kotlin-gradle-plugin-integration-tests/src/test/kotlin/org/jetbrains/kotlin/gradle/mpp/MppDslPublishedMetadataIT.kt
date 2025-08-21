@@ -4,31 +4,28 @@
  */
 package org.jetbrains.kotlin.gradle.mpp
 
-import org.gradle.api.attributes.Attribute
-import org.gradle.api.attributes.Category
 import org.gradle.util.GradleVersion
-import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
-import org.jetbrains.kotlin.gradle.plugin.extraProperties
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.test.TestMetadata
-import java.io.File
-import kotlin.io.path.absolutePathString
 import kotlin.io.path.appendText
-import kotlin.io.path.createDirectories
-import kotlin.io.path.writeText
 import kotlin.test.assertTrue
 
 @MppGradlePluginTests
 class MppDslPublishedMetadataIT : KGPBaseTest() {
 
+    override val defaultBuildOptions: BuildOptions
+        // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
+        get() = super.defaultBuildOptions.copy(isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED)
+
     @GradleTest
     @TestMetadata("new-mpp-lib-and-app/sample-lib")
-    fun testPublishingOnlySupportedNativeTargets(gradleVersion: GradleVersion) {
+    fun testPublishingOnlySupportedNativeTargetsWithCrossCompilationDisabled(gradleVersion: GradleVersion) {
         val localRepoDir = defaultLocalRepo(gradleVersion)
         nativeProject(
             projectName = "new-mpp-lib-and-app/sample-lib",
             gradleVersion = gradleVersion,
             localRepoDir = localRepoDir,
+            buildOptions = defaultBuildOptions.disableKlibsCrossCompilation()
         ) {
             val publishedVariants = MPPNativeTargets.supported
             val nonPublishedVariants = MPPNativeTargets.unsupported
@@ -45,6 +42,33 @@ class MppDslPublishedMetadataIT : KGPBaseTest() {
                 }
 
                 // but check that the module metadata contains all variants:
+                val moduleMetadata = localRepoDir.resolve("com/example/sample-lib/1.0/sample-lib-1.0.module")
+                assertFileContains(moduleMetadata, """"name": "linux64ApiElements-published"""")
+                assertFileContains(moduleMetadata, """"name": "mingw64ApiElements-published"""")
+                assertFileContains(moduleMetadata, """"name": "macos64ApiElements-published"""")
+            }
+        }
+    }
+
+    @GradleTest
+    @TestMetadata("new-mpp-lib-and-app/sample-lib")
+    fun testPublishingOnlySupportedNativeTargetsWithCrossCompilationEnabled(gradleVersion: GradleVersion) {
+        val localRepoDir = defaultLocalRepo(gradleVersion)
+        nativeProject(
+            projectName = "new-mpp-lib-and-app/sample-lib",
+            gradleVersion = gradleVersion,
+            localRepoDir = localRepoDir,
+        ) {
+            val publishedVariants = MPPNativeTargets.supported + MPPNativeTargets.unsupported
+
+            build("publish") {
+
+                assertTrue(publishedVariants.isNotEmpty(), "publishedVariants must not be empty")
+                publishedVariants.forEach {
+                    assertFileExists(localRepoDir.resolve("com/example/sample-lib-$it/1.0/sample-lib-$it-1.0.klib"))
+                }
+
+                // check that the module metadata contains all variants:
                 val moduleMetadata = localRepoDir.resolve("com/example/sample-lib/1.0/sample-lib-1.0.module")
                 assertFileContains(moduleMetadata, """"name": "linux64ApiElements-published"""")
                 assertFileContains(moduleMetadata, """"name": "mingw64ApiElements-published"""")
@@ -74,6 +98,10 @@ class MppDslPublishedMetadataIT : KGPBaseTest() {
                 otherProjectName = "sample-app",
                 pathPrefix = "new-mpp-lib-and-app",
                 localRepoDir = localRepoDir,
+            )
+
+            gradleProperties.appendText(
+                "\nkotlin.jvm.target.validation.mode=warning\n"
             )
 
             subProject("sample-app").apply {
@@ -122,8 +150,6 @@ class MppDslPublishedMetadataIT : KGPBaseTest() {
                 "clean",
                 "publish",
                 "-Pkotlin.internal.suppressGradlePluginErrors=KotlinTargetAlreadyDeclaredError",
-                buildOptions = defaultBuildOptions
-                    .copy(configurationCache = enableConfigurationCacheSinceGradle("8.0", gradleVersion))
             ) {
                 assertFileContains(
                     localRepoDir.resolve("com/exampleapp/sample-app-nodejs/1.0/sample-app-nodejs-1.0.pom"),
@@ -185,6 +211,4 @@ class MppDslPublishedMetadataIT : KGPBaseTest() {
             }
         }
     }
-
-
 }

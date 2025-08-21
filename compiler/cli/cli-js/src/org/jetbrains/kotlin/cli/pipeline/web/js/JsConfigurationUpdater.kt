@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.cli.pipeline.SuccessfulPipelineExecutionException
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.config.phaseConfig
-import org.jetbrains.kotlin.ir.backend.js.getJsPhases
+import org.jetbrains.kotlin.ir.backend.js.getJsLowerings
 import org.jetbrains.kotlin.js.config.*
 import org.jetbrains.kotlin.serialization.js.ModuleKind
 
@@ -38,7 +38,7 @@ object JsConfigurationUpdater : ConfigurationUpdater<K2JSCompilerArguments>() {
         // setup phase config for the second compilation stage (JS codegen)
         if (arguments.includes != null) {
             configuration.phaseConfig = createPhaseConfig(arguments).also {
-                it.list(getJsPhases(configuration))
+                it.list(getJsLowerings(configuration))
             }
         }
     }
@@ -57,13 +57,21 @@ object JsConfigurationUpdater : ConfigurationUpdater<K2JSCompilerArguments>() {
             ?: ModuleKind.ES.takeIf { isES2015 }
             ?: ModuleKind.UMD
 
+        configuration.keep = arguments.irKeep?.split(",")?.filterNot { it.isEmpty() }.orEmpty()
         configuration.moduleKind = moduleKind
+        configuration.safeExternalBoolean = arguments.irSafeExternalBoolean
+        configuration.minimizedMemberNames = arguments.irMinimizedMemberNames
         configuration.propertyLazyInitialization = arguments.irPropertyLazyInitialization
         configuration.generatePolyfills = arguments.generatePolyfills
         configuration.generateInlineAnonymousFunctions = arguments.irGenerateInlineAnonymousFunctions
         configuration.useEs6Classes = arguments.useEsClasses ?: isES2015
         configuration.compileSuspendAsJsGenerator = arguments.useEsGenerators ?: isES2015
         configuration.compileLambdasAsEs6ArrowFunctions = arguments.useEsArrowFunctions ?: isES2015
+        configuration.compileLongAsBigint = arguments.compileLongAsBigInt ?: false
+
+        arguments.irSafeExternalBooleanDiagnostic?.let {
+            configuration.safeExternalBooleanDiagnostic = it
+        }
 
         arguments.platformArgumentsProviderJsExpression?.let {
             configuration.definePlatformMainFunctionArguments = it

@@ -22,3 +22,7 @@ fun main() {
     expectInt(list0[0])
     expectInt(list1[0])
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType, inline,
+integerLiteral, lambdaLiteral, localProperty, nullableType, operator, primaryConstructor, propertyDeclaration,
+propertyDelegate, starProjection, typeParameter */

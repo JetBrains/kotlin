@@ -57,7 +57,7 @@ class FirDelegatedMemberScope(
     private fun buildScope(delegateField: FirField): FirTypeScope? = delegateField.symbol.resolvedReturnType.scope(
         session,
         scopeSession,
-        CallableCopyTypeCalculator.Forced,
+        CallableCopyTypeCalculator.CalculateDeferredWhenPossible,
         requiredMembersPhase = null,
     )
 
@@ -110,7 +110,9 @@ class FirDelegatedMemberScope(
                     newSource = containingClass.source?.fakeElement(KtFakeSourceElementKind.MembersImplementedByDelegation),
                     markAsOverride = true
                 ).apply {
-                    delegatedWrapperData = DelegatedWrapperData(functionSymbol.fir, containingClass.symbol.toLookupTag(), delegateField)
+                    delegatedWrapperData = DelegatedWrapperData(
+                        functionSymbol.fir, containingClass.symbol.toLookupTag(), delegateField.symbol
+                    )
                 }.symbol
 
             result += delegatedSymbol
@@ -148,7 +150,9 @@ class FirDelegatedMemberScope(
                 return@processor
             }
 
-            if (propertySymbol.modality == Modality.FINAL || propertySymbol.visibility == Visibilities.Private) {
+            // Check of final modality and private visibility never requires status resolve, so raw status is enough here
+            // Note that here we potentially have status -> status dependency, so using of resolved status is forbidden
+            if (propertySymbol.rawStatus.modality == Modality.FINAL || propertySymbol.rawStatus.visibility == Visibilities.Private) {
                 return@processor
             }
 
@@ -177,7 +181,7 @@ class FirDelegatedMemberScope(
 
             val delegatedSymbol =
                 FirFakeOverrideGenerator.createCopyForFirProperty(
-                    FirPropertySymbol(CallableId(containingClass.classId, propertySymbol.name)),
+                    FirRegularPropertySymbol(CallableId(containingClass.classId, propertySymbol.name)),
                     original,
                     derivedClassLookupTag = dispatchReceiverType.lookupTag,
                     session,
@@ -185,7 +189,9 @@ class FirDelegatedMemberScope(
                     newModality = Modality.OPEN,
                     newDispatchReceiverType = dispatchReceiverType,
                 ).apply {
-                    delegatedWrapperData = DelegatedWrapperData(propertySymbol.fir, containingClass.symbol.toLookupTag(), delegateField)
+                    delegatedWrapperData = DelegatedWrapperData(
+                        propertySymbol.fir, containingClass.symbol.toLookupTag(), delegateField.symbol
+                    )
                 }.symbol
             result += delegatedSymbol
         }

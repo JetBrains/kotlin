@@ -158,3 +158,8 @@ fun println(message : Any?) {
 fun print(message : Any?) {
   System.out.print(message)
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, assignment, classDeclaration, equalityExpression, flexibleType, forLoop,
+funWithExtensionReceiver, functionDeclaration, functionalType, getter, ifExpression, javaFunction, javaProperty,
+lambdaLiteral, localProperty, nullableType, operator, override, primaryConstructor, propertyDeclaration, setter,
+smartcast, stringLiteral, thisExpression, typeConstraint, typeParameter, typeWithExtension, unaryExpression */

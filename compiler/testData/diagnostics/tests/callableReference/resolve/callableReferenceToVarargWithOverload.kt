@@ -15,3 +15,6 @@ fun Foo.bar(vararg x: Int) = ""
 fun actualTest() {
     test(Foo::bar)
 }
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, funWithExtensionReceiver, functionDeclaration, nullableType,
+outProjection, stringLiteral, vararg */

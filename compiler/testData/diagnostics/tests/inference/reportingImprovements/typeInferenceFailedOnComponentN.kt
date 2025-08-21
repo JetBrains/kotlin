@@ -9,3 +9,6 @@ operator fun <T> X.component1(): T = TODO()
 fun test() {
     val (y) = <!COMPONENT_FUNCTION_MISSING!>X()<!>
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, destructuringDeclaration, funWithExtensionReceiver, functionDeclaration,
+localProperty, nullableType, operator, propertyDeclaration, typeParameter */

@@ -11,8 +11,8 @@ package org.jetbrains.kotlin.cli.klib
  *  logged at different levels, but is not supposed to collect plain output (such as, for example, IR dump).
  */
 internal class KlibToolOutput(
-        stdout: Appendable,
-        val stderr: Appendable
+    stdout: Appendable,
+    val stderr: Appendable,
 ) : Appendable by stdout {
     var hasErrors: Boolean = false
         private set

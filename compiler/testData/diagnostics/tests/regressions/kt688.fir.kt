@@ -13,3 +13,6 @@ class C() {
 
   val x: B = a({it.b()}, B())
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionalType, lambdaLiteral, nullableType,
+primaryConstructor, propertyDeclaration, typeParameter */

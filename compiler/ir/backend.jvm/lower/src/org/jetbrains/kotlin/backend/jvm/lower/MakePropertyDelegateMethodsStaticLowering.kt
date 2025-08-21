@@ -6,16 +6,15 @@
 package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
-import org.jetbrains.kotlin.backend.common.lower.VariableRemapper
 import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrFile
+import org.jetbrains.kotlin.ir.declarations.IrParameterKind
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.util.copyTo
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.load.java.JvmAbi
@@ -41,17 +40,10 @@ internal class MakePropertyDelegateMethodsStaticLowering(val context: JvmBackend
     }
 
     override fun visitSimpleFunction(declaration: IrSimpleFunction): IrStatement {
-        if (!declaration.isSyntheticDelegateMethod()) return super.visitSimpleFunction(declaration)
-
-        val oldParameter = declaration.dispatchReceiverParameter ?: return super.visitSimpleFunction(declaration)
-        val newParameter = oldParameter.copyTo(declaration)
-
-        return declaration.apply {
-            valueParameters =
-                listOf(newParameter) + valueParameters.map { it.copyTo(this) }
-            dispatchReceiverParameter = null
-            body = body?.transform(VariableRemapper(mapOf(oldParameter to newParameter)), null)
+        if (declaration.isSyntheticDelegateMethod()) {
+            declaration.dispatchReceiverParameter?.kind = IrParameterKind.Regular
         }
+        return super.visitSimpleFunction(declaration)
     }
 
     override fun visitCall(expression: IrCall): IrExpression {

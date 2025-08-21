@@ -16,7 +16,6 @@ import kotlin.reflect.KClass
 interface FirSessionComponent
 
 abstract class FirSession @PrivateSessionConstructor constructor(
-    val sessionProvider: FirSessionProvider?,
     val kind: Kind
 ) : ComponentArrayOwner<FirSessionComponent, FirSessionComponent>() {
     companion object : ConeTypeRegistry<FirSessionComponent, FirSessionComponent>() {
@@ -49,16 +48,16 @@ abstract class FirSession @PrivateSessionConstructor constructor(
 
     override fun toString(): String {
         val moduleData = nullableModuleData ?: return "Libraries session"
-        return "Source session for module ${moduleData.name}"
+        val prefix = when (kind) {
+            Kind.Source -> "Source"
+            Kind.Library -> "Library"
+        }
+        return "$prefix session for module ${moduleData.name}"
     }
 
     enum class Kind {
         Source, Library
     }
-}
-
-abstract class FirSessionProvider {
-    abstract fun getSession(moduleData: FirModuleData): FirSession?
 }
 
 class BuiltinTypes {

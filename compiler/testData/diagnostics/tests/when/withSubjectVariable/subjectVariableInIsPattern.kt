@@ -8,3 +8,6 @@ fun test(x: Any) {
         is String -> {}
     }
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, isExpression, localProperty, propertyDeclaration, whenExpression,
+whenWithSubject */

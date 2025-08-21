@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.analysis.api.descriptors.KaFe10Session
 import org.jetbrains.kotlin.analysis.api.descriptors.components.base.KaFe10SessionComponent
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtType
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseSessionComponent
-import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
+import org.jetbrains.kotlin.analysis.api.impl.base.components.withPsiValidityAssertion
 import org.jetbrains.kotlin.analysis.api.types.KaErrorType
 import org.jetbrains.kotlin.analysis.api.types.KaFunctionType
 import org.jetbrains.kotlin.analysis.api.types.KaType
@@ -52,7 +52,7 @@ internal class KaFe10ExpressionTypeProvider(
     }
 
     override val KtExpression.expressionType: KaType?
-        get() = withValidityAssertion {
+        get() = withPsiValidityAssertion {
             // Not sure if it's safe enough. In theory, some annotations on expressions might change its type
             val unwrapped = unwrapParenthesesLabelsAndAnnotations() as? KtExpression ?: return null
             if (unwrapped.getParentOfTypes(false, *NON_EXPRESSION_CONTAINERS) != null) {
@@ -69,10 +69,10 @@ internal class KaFe10ExpressionTypeProvider(
             return kotlinType.toKtType(analysisContext)
         }
 
-    override val KtDeclaration.returnType: KaType
-        get() = withValidityAssertion { getReturnTypeForKtDeclaration(this) }
+    override val KtDeclarationWithReturnType.returnType: KaType
+        get() = withPsiValidityAssertion { getReturnTypeForDeclaration(this) }
 
-    private fun getReturnTypeForKtDeclaration(declaration: KtDeclaration): KaType {
+    private fun getReturnTypeForDeclaration(declaration: KtDeclarationWithReturnType): KaType {
         // Handle callable declarations with explicit return type first
         if (declaration is KtCallableDeclaration) {
             val typeReference = declaration.typeReference
@@ -146,7 +146,7 @@ internal class KaFe10ExpressionTypeProvider(
     }
 
     override val KtFunction.functionType: KaType
-        get() = withValidityAssertion {
+        get() = withPsiValidityAssertion {
             val analysisMode = if (hasDeclaredReturnType()) AnalysisMode.PARTIAL else AnalysisMode.FULL
             val bindingContext = analysisContext.analyze(this, analysisMode)
             val functionDescriptor = bindingContext[BindingContext.FUNCTION, this]
@@ -168,7 +168,7 @@ internal class KaFe10ExpressionTypeProvider(
         }
 
     override val PsiElement.expectedType: KaType?
-        get() = withValidityAssertion { computeExpectedType(this) }
+        get() = withPsiValidityAssertion { computeExpectedType(this) }
 
     private fun computeExpectedType(expression: PsiElement): KaType? {
         val ktExpression = expression.getParentOfType<KtExpression>(false) ?: return null
@@ -229,7 +229,7 @@ internal class KaFe10ExpressionTypeProvider(
                             val kotlinType = when (val originalCallableDescriptor = parameterDescriptor.containingDeclaration) {
                                 is SamConstructorDescriptor -> originalCallableDescriptor.returnTypeOrNothing
                                 else -> {
-                                    if (parameterDescriptor.isVararg)
+                                    if (parameterDescriptor.isVararg && !parentExpression.isSpread && !parentExpression.isNamed())
                                         parameterDescriptor.varargElementType
                                     else
                                         parameterDescriptor.type
@@ -289,7 +289,7 @@ internal class KaFe10ExpressionTypeProvider(
     }
 
     override val KtExpression.isDefinitelyNull: Boolean
-        get() = withValidityAssertion {
+        get() = withPsiValidityAssertion {
             val unwrapped = unwrapParenthesesLabelsAndAnnotations() as? KtElement ?: return false
             val bindingContext = analysisContext.analyze(this, AnalysisMode.PARTIAL)
 
@@ -307,7 +307,7 @@ internal class KaFe10ExpressionTypeProvider(
         }
 
     override val KtExpression.isDefinitelyNotNull: Boolean
-        get() = withValidityAssertion {
+        get() = withPsiValidityAssertion {
             val bindingContext = analysisContext.analyze(this)
 
             val smartCasts = bindingContext[BindingContext.SMARTCAST, this]

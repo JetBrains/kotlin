@@ -17,3 +17,6 @@ fun usage(b: Boolean) {
         )
     )
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, data, functionDeclaration, ifExpression, lambdaLiteral, nullableType, out,
+primaryConstructor, propertyDeclaration, typeConstraint, typeParameter */

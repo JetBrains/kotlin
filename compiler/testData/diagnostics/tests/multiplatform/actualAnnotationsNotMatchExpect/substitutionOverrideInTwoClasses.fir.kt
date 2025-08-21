@@ -23,3 +23,6 @@ abstract class Intermediate : Parent<String>()
 <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual<!> class WithAnn : Intermediate()
 
 actual class WithoutAnn : Intermediate()
+
+/* GENERATED_FIR_TAGS: actual, annotationDeclaration, classDeclaration, expect, functionDeclaration, nullableType,
+typeParameter */

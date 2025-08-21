@@ -11,12 +11,18 @@ import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirProperty
+import org.jetbrains.kotlin.fir.declarations.isLocal
 import org.jetbrains.kotlin.fir.declarations.utils.isExtension
+import org.jetbrains.kotlin.fir.declarations.utils.isReplSnippetDeclaration
 
 object FirLocalExtensionPropertyChecker : FirPropertyChecker(MppCheckerKind.Common) {
-    override fun check(declaration: FirProperty, context: CheckerContext, reporter: DiagnosticReporter) {
-        if (declaration.isLocal && declaration.isExtension) {
-            reporter.reportOn(declaration.receiverParameter?.source, FirErrors.LOCAL_EXTENSION_PROPERTY, context)
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirProperty) {
+        if (declaration.isLocal && declaration.isExtension &&
+            // Explicitly allow local delegated extension properties in repl snippets
+            !(declaration.isReplSnippetDeclaration == true && declaration.delegate != null)
+        ) {
+            reporter.reportOn(declaration.receiverParameter?.source, FirErrors.LOCAL_EXTENSION_PROPERTY)
         }
     }
 }

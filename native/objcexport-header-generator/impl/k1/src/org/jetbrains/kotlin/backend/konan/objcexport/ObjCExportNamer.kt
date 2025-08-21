@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.descriptors.isArray
 import org.jetbrains.kotlin.backend.konan.descriptors.isInterface
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.config.nativeBinaryOptions.UnitSuspendFunctionObjCExport
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.konan.isNativeStdlib
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
@@ -24,6 +25,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
+import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.annotations.argumentValue
 import org.jetbrains.kotlin.resolve.descriptorUtil.isSubclassOf
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
@@ -66,6 +68,9 @@ interface ObjCExportNamer {
 
         val nameCollisionMode: ObjCExportNameCollisionMode
             get() = ObjCExportNameCollisionMode.NONE
+
+        val explicitMethodFamily: Boolean
+            get() = false
     }
 
     val topLevelNamePrefix: String
@@ -91,6 +96,7 @@ interface ObjCExportNamer {
 
     fun getObjectPropertySelector(descriptor: ClassDescriptor): String
     fun getCompanionObjectPropertySelector(descriptor: ClassDescriptor): String
+    fun needsExplicitMethodFamily(name: String): Boolean
 
     companion object {
         @InternalKotlinNativeApi
@@ -285,6 +291,16 @@ private class ObjCExportNamingHelper(
         "NSUInteger", "NSString", "NSSet", "NSDictionary", "NSMutableArray", "int", "unsigned", "short",
         "char", "long", "float", "double", "int32_t", "int64_t", "int16_t", "int8_t", "unichar"
     )
+
+    fun isSpecialFamily(name: String): Boolean {
+        val trimmed = name.dropWhile { it == '_' }
+        return specialFamilyPrefixes.any { startsWithWords(trimmed, it) }
+    }
+
+    fun startsWithWords(sentence: String, words: String) = sentence.startsWith(words) &&
+        (sentence.length == words.length || !sentence[words.length].isLowerCase())
+
+    private val specialFamilyPrefixes = listOf("alloc", "copy", "mutableCopy", "new", "init")
 }
 
 @InternalKotlinNativeApi
@@ -306,6 +322,7 @@ class ObjCExportNamerImpl(
         disableSwiftMemberNameMangling: Boolean = false,
         ignoreInterfaceMethodCollisions: Boolean = false,
         nameCollisionMode: ObjCExportNameCollisionMode = ObjCExportNameCollisionMode.NONE,
+        explicitMethodFamily: Boolean = false,
     ) : this(
         object : ObjCExportNamer.Configuration {
             override val topLevelNamePrefix: String
@@ -325,6 +342,9 @@ class ObjCExportNamerImpl(
 
             override val nameCollisionMode: ObjCExportNameCollisionMode
                 get() = nameCollisionMode
+
+            override val explicitMethodFamily: Boolean
+                get() = explicitMethodFamily
         },
         builtIns,
         mapper,
@@ -704,6 +724,10 @@ class ObjCExportNamerImpl(
         return ObjCExportNamer.companionObjectPropertyName
     }
 
+    override fun needsExplicitMethodFamily(name: String): Boolean {
+        return configuration.explicitMethodFamily && helper.isSpecialFamily(name)
+    }
+
     init {
         if (!local) {
             forceAssignPredefined(builtIns)
@@ -774,23 +798,17 @@ class ObjCExportNamerImpl(
         return candidate.mangleIfSpecialFamily("do")
     }
 
-    private fun String.mangleIfSpecialFamily(prefix: String): String {
-        val trimmed = this.dropWhile { it == '_' }
-        for (family in listOf("alloc", "copy", "mutableCopy", "new", "init")) {
-            if (trimmed.startsWithWords(family)) {
-                // Then method can be detected as having special family by Objective-C compiler.
-                // mangle the name:
-                return prefix + this.replaceFirstChar(Char::uppercaseChar)
-            }
+    private fun String.mangleIfSpecialFamily(prefix: String): String =
+        if (!configuration.explicitMethodFamily && helper.isSpecialFamily(this) ||
+            this == "init" || this.startsWith("initWith")
+        ) {
+            // Method can be detected as having special family by Objective-C compiler, or might clash with a generated constructor.
+            // Mangle the name:
+            prefix + this.replaceFirstChar(Char::uppercaseChar)
+        } else {
+            // TODO: handle clashes with NSObject methods etc.
+            this
         }
-
-        // TODO: handle clashes with NSObject methods etc.
-
-        return this
-    }
-
-    private fun String.startsWithWords(words: String) = this.startsWith(words) &&
-        (this.length == words.length || !this[words.length].isLowerCase())
 
     private inner class GenericTypeParameterNameMapping {
         private val elementToName = mutableMapOf<TypeParameterDescriptor, String>()
@@ -844,6 +862,12 @@ class ObjCExportNamerImpl(
         private fun getIfAssigned(element: TypeParameterDescriptor): String? = elementToName[element]
     }
 
+    private sealed class AssignResult {
+        data object Success : AssignResult()
+        data object Reserved : AssignResult()
+        data class Conflict(val conflictingElement: Any) : AssignResult()
+    }
+
     private abstract inner class Mapping<in T : Any, N>() {
         private val elementToName = mutableMapOf<T, N>()
         private val nameToElements = mutableMapOf<N, MutableList<T>>()
@@ -856,25 +880,32 @@ class ObjCExportNamerImpl(
             var reportedCollision = false
 
             nameCandidates().forEach {
-                if (tryAssign(element, it)) {
+                val res = tryAssign(element, it)
+                if (res is AssignResult.Success) {
                     return it
                 }
 
                 if (!reportedCollision) {
                     reportedCollision = true
+                    val conflict = when (res) {
+                        is AssignResult.Conflict if res.conflictingElement is DeclarationDescriptor ->
+                            DescriptorRenderer.COMPACT_WITH_SHORT_TYPES.render(res.conflictingElement)
+                        is AssignResult.Conflict -> "${res.conflictingElement}"
+                        AssignResult.Reserved -> "a keyword or a reserved name"
+                    }
                     when (configuration.nameCollisionMode) {
                         ObjCExportNameCollisionMode.ERROR -> {
                             if (element is DeclarationDescriptor) {
-                                problemCollector.reportError(element, "name is mangled when generating Objective-C header")
+                                problemCollector.reportError(element, "name is mangled when generating Objective-C header because it conflicts with $conflict")
                             } else {
-                                problemCollector.reportError("name \"$it\" is mangled when generating Objective-C header")
+                                problemCollector.reportError("name \"$it\" is mangled when generating Objective-C header because it conflicts with $conflict")
                             }
                         }
                         ObjCExportNameCollisionMode.WARNING -> {
                             if (element is DeclarationDescriptor) {
-                                problemCollector.reportWarning(element, "name is mangled when generating Objective-C header")
+                                problemCollector.reportWarning(element, "name is mangled when generating Objective-C header because it conflicts with $conflict")
                             } else {
-                                problemCollector.reportWarning("name \"$it\" is mangled when generating Objective-C header")
+                                problemCollector.reportWarning("name \"$it\" is mangled when generating Objective-C header because it conflicts with $conflict")
                             }
                         }
                         ObjCExportNameCollisionMode.NONE -> Unit
@@ -889,13 +920,13 @@ class ObjCExportNamerImpl(
 
         private fun getIfAssigned(element: T): N? = elementToName[element]
 
-        private fun tryAssign(element: T, name: N): Boolean {
+        private fun tryAssign(element: T, name: N): AssignResult {
             if (element in elementToName) error(element)
 
-            if (reserved(name)) return false
+            if (reserved(name)) return AssignResult.Reserved
 
-            if (nameToElements[name].orEmpty().any { conflict(element, it) }) {
-                return false
+            nameToElements[name].orEmpty().firstOrNull { conflict(element, it) }?.let {
+                return AssignResult.Conflict(it)
             }
 
             if (!local) {
@@ -904,7 +935,7 @@ class ObjCExportNamerImpl(
                 elementToName[element] = name
             }
 
-            return true
+            return AssignResult.Success
         }
 
         fun forceAssign(element: T, name: N) {

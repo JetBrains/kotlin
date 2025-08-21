@@ -8,3 +8,5 @@ fun foo() {
     var <!ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE!>e<!> = E.E1
     e = E.E2
 }
+
+/* GENERATED_FIR_TAGS: assignment, enumDeclaration, enumEntry, functionDeclaration, localProperty, propertyDeclaration */

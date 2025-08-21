@@ -4,6 +4,7 @@ KtCallExpression(76,88): 'javaMethod()'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = javaClass
           isSafeNavigation = false
@@ -14,5 +15,6 @@ KtCallExpression(76,88): 'javaMethod()'
           returnType = kotlin.Unit
           symbol = /JavaClass.javaMethod(<dispatch receiver>: JavaClass): kotlin.Unit
           valueParameters = []
+          contextParameters = []
           callableId = /JavaClass.javaMethod
       typeArgumentsMapping = {}

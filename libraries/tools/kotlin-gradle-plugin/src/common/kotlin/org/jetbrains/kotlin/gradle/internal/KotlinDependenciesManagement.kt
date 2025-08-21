@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMetadataTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinWithJavaCompilation
 import org.jetbrains.kotlin.gradle.utils.providerWithLazyConvention
-import org.jetbrains.kotlin.gradle.utils.withType
 
 internal const val KOTLIN_MODULE_GROUP = "org.jetbrains.kotlin"
 internal const val KOTLIN_COMPILER_EMBEDDABLE = "kotlin-compiler-embeddable"
@@ -64,8 +63,8 @@ private fun ConfigurationContainer.configureDefaultVersionsResolutionStrategy(
 ) = configureEach { configuration ->
     configuration.withDependencies { dependencySet ->
         dependencySet
-            .withType<ExternalDependency>()
-            .all { dependency ->
+            .filterIsInstance<ExternalDependency>()
+            .forEach { dependency ->
                 if (dependency.group == KOTLIN_MODULE_GROUP &&
                     dependency.version.isNullOrEmpty()
                 ) {
@@ -92,7 +91,7 @@ private fun excludeStdlibAndKotlinTestCommonFromPlatformCompilations(project: Pr
 
 // there several JVM-like targets, like KotlinWithJava, or KotlinAndroid, and they don't have common supertype
 // aside from KotlinTarget
-@Suppress("DEPRECATION") // KT-58227, KT-64273
+@Suppress("DEPRECATION_ERROR") // KT-58227, KT-64273
 private fun KotlinTarget.excludeStdlibAndKotlinTestCommonFromPlatformCompilations() {
     compilations.all {
         listOfNotNull(

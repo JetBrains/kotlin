@@ -37,7 +37,6 @@ internal abstract class AbstractKotlinCompileConfig<TASK : AbstractKotlinCompile
 
     init {
         val compilerSystemPropertiesService = CompilerSystemPropertiesService.registerIfAbsent(project)
-        val buildFinishedListenerService = BuildFinishedListenerService.registerIfAbsent(project)
         val buildIdService = BuildIdService.registerIfAbsent(project)
         configureTask { task ->
             val propertiesProvider = project.kotlinPropertiesProvider
@@ -87,7 +86,6 @@ internal abstract class AbstractKotlinCompileConfig<TASK : AbstractKotlinCompile
             task.enableMonotonousIncrementalCompileSetExpansion
                 .convention(propertiesProvider.enableMonotonousIncrementalCompileSetExpansion)
                 .finalizeValueOnRead()
-            task.buildFinishedListenerService.value(buildFinishedListenerService).disallowChanges()
             task.buildIdService.value(buildIdService).disallowChanges()
 
             task.incremental = false
@@ -97,6 +95,7 @@ internal abstract class AbstractKotlinCompileConfig<TASK : AbstractKotlinCompile
             task.explicitApiMode
                 .value(explicitApiMode)
                 .finalizeValueOnRead()
+            task.separateKmpCompilation.convention(propertiesProvider.separateKmpCompilation)
         }
     }
 
@@ -141,7 +140,8 @@ private fun KotlinCompilationInfo.explicitApiMode(): Provider<ExplicitApiMode> =
 
     val androidCompilation = tcs.compilation as? KotlinJvmAndroidCompilation
     val isMainAndroidCompilation = androidCompilation?.let {
-        getTestedVariantData(it.androidVariant) == null
+        @Suppress("DEPRECATION") val variant = it.androidVariant
+        variant != null && getTestedVariantData(variant) == null
     } == true
 
     if (isMain || isCommonCompilation || isMainAndroidCompilation) {

@@ -1,3 +1,5 @@
+// JVM_ABI_K1_K2_DIFF: K2 serializes annotation parameter default values (KT-59526).
+
 annotation class A(val a: Int = 0)
 
 @A fun test1() = 1

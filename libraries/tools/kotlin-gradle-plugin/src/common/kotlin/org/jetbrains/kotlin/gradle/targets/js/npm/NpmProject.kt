@@ -18,14 +18,17 @@ import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsPlugin.Companion.kotlinNodeJsEnvSpec
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin.Companion.kotlinNodeJsRootExtension
 import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinPackageJsonTask
+import org.jetbrains.kotlin.gradle.targets.js.webTargetVariant
 import org.jetbrains.kotlin.gradle.utils.getFile
-import java.io.File
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import java.io.Serializable
+import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsPlugin.Companion.kotlinNodeJsEnvSpec as wasmKotlinNodeJsEnvSpec
+import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsRootPlugin.Companion.kotlinNodeJsRootExtension as wasmKotlinNodeJsRootExtension
 
 val KotlinJsIrCompilation.npmProject: NpmProject
     get() = NpmProject(this)
 
-@Deprecated("Use npmProject for KotlinJsIrCompilation")
+@Deprecated("Use npmProject for KotlinJsIrCompilation. Scheduled for removal in Kotlin 2.3.", level = DeprecationLevel.ERROR)
 val KotlinJsCompilation.npmProject: NpmProject
     get() = NpmProject(this as KotlinJsIrCompilation)
 
@@ -44,12 +47,18 @@ open class NpmProject(@Transient val compilation: KotlinJsIrCompilation) : Seria
 
     @delegate:Transient
     val nodeJsRoot by lazy {
-        project.rootProject.kotlinNodeJsRootExtension
+        compilation.webTargetVariant(
+            { project.rootProject.kotlinNodeJsRootExtension },
+            { project.rootProject.wasmKotlinNodeJsRootExtension },
+        )
     }
 
     @delegate:Transient
     val nodeJs by lazy {
-        project.kotlinNodeJsEnvSpec
+        compilation.webTargetVariant(
+            { project.kotlinNodeJsEnvSpec },
+            { project.wasmKotlinNodeJsEnvSpec },
+        )
     }
 
     val dir: Provider<Directory> = nodeJsRoot.projectPackagesDirectory.zip(name) { directory, name ->
@@ -62,8 +71,7 @@ open class NpmProject(@Transient val compilation: KotlinJsIrCompilation) : Seria
     val project: Project
         get() = target.project
 
-    val nodeModulesDir
-        get() = dir.map { it.dir(NODE_MODULES) }
+    val nodeModulesDir: Provider<Directory> = nodeJsRoot.rootPackageDirectory.map { it.dir(NODE_MODULES) }
 
     val packageJsonFile: Provider<RegularFile>
         get() = dir.map { it.file(PACKAGE_JSON) }
@@ -84,6 +92,23 @@ open class NpmProject(@Transient val compilation: KotlinJsIrCompilation) : Seria
         "${DIST_FOLDER}/$name.$ext"
     }
 
+    private val typesFileExtension = extension
+        .zip(compilation.target.shouldGenerateTypeScriptDefinitions) { extension, shouldGenerateTypeScriptDefinitions ->
+            runIf(shouldGenerateTypeScriptDefinitions) {
+                when (extension) {
+                    "mjs" -> "d.mts"
+                    "js" -> "d.ts"
+                    else -> error("Illegal JS-file extension provided: $extension")
+                }
+            }
+        }
+
+    val typesFileName: Provider<String> = name.zip(typesFileExtension) { name, extension ->
+        "$name.$extension"
+    }
+
+    val typesFilePath: Provider<String> = typesFileName.map { "$DIST_FOLDER/$it" }
+
     val publicPackageJsonTaskName: String
         get() = compilation.disambiguateName(PublicPackageJsonTask.NAME)
 
@@ -91,34 +116,31 @@ open class NpmProject(@Transient val compilation: KotlinJsIrCompilation) : Seria
         NpmProjectModules(dir.getFile())
     }
 
-    private val nodeExecutable by lazy {
+    internal val nodeExecutable by lazy {
         nodeJs.executable.get()
     }
 
+    @Deprecated("Internal KGP utility. Scheduled for removal in Kotlin 2.4.")
     fun useTool(
         exec: ExecSpec,
         tool: String,
         nodeArgs: List<String> = listOf(),
-        args: List<String>
+        args: List<String>,
     ) {
         exec.workingDir(dir)
         exec.executable(nodeExecutable)
+        @Suppress("DEPRECATION")
         exec.args = nodeArgs + require(tool) + args
     }
 
     /**
      * Require [request] nodejs module and return canonical path to it's main js file.
      */
+    @Deprecated("Internal KGP utility. Scheduled for removal in Kotlin 2.4.")
     fun require(request: String): String {
 //        nodeJs.npmResolutionManager.requireAlreadyInstalled(project)
         return modules.require(request)
     }
-
-    /**
-     * Find node module according to https://nodejs.org/api/modules.html#modules_all_together,
-     * with exception that instead of traversing parent folders, we are traversing parent projects
-     */
-    internal fun resolve(name: String): File? = modules.resolve(name)
 
     override fun toString() = "NpmProject(${name.get()})"
 

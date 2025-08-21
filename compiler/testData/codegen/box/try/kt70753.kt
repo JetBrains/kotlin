@@ -1,4 +1,6 @@
+// FIR_IDENTICAL
 // TARGET_BACKEND: JVM
+// DUMP_IR
 // ISSUE: KT-70753
 
 // FILE: Lib.java

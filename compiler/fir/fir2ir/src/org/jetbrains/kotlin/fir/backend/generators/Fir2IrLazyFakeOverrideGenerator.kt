@@ -7,18 +7,22 @@ package org.jetbrains.kotlin.fir.backend.generators
 
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.*
-import org.jetbrains.kotlin.fir.backend.*
-import org.jetbrains.kotlin.fir.backend.utils.*
+import org.jetbrains.kotlin.fir.backend.Fir2IrComponents
+import org.jetbrains.kotlin.fir.backend.utils.unsubstitutedScope
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.utils.*
-import org.jetbrains.kotlin.fir.resolve.*
+import org.jetbrains.kotlin.fir.declarations.utils.isExpect
+import org.jetbrains.kotlin.fir.declarations.utils.superConeTypes
+import org.jetbrains.kotlin.fir.declarations.utils.visibility
+import org.jetbrains.kotlin.fir.lazy.Fir2IrLazyField
+import org.jetbrains.kotlin.fir.lazy.Fir2IrLazyProperty
+import org.jetbrains.kotlin.fir.lazy.Fir2IrLazySimpleFunction
+import org.jetbrains.kotlin.fir.resolve.defaultType
+import org.jetbrains.kotlin.fir.resolve.isRealOwnerOf
+import org.jetbrains.kotlin.fir.resolve.toClassSymbol
+import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.scopes.*
 import org.jetbrains.kotlin.fir.scopes.impl.FirFakeOverrideGenerator
-import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirFieldSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
-import org.jetbrains.kotlin.fir.lazy.*
+import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.types.typeContext
 import org.jetbrains.kotlin.fir.util.setMultimapOf
@@ -28,6 +32,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 /**
  * This class should be used ONLY for generation of fake-overrides for Fir2IrLazy... declarations
  */
+@OptIn(ScopeFunctionRequiresPrewarm::class)
 class Fir2IrLazyFakeOverrideGenerator(private val c: Fir2IrComponents) : Fir2IrComponents by c {
     /**
      * For given [originalFunction] calculates original symbols for supertypes of given [klass], which contain this function
@@ -43,7 +48,7 @@ class Fir2IrLazyFakeOverrideGenerator(private val c: Fir2IrComponents) : Fir2IrC
         // When generating code for IDE debugger we may get an empty session and empty scope caches
         // We work it around by forcing cache initialization
         if (c.configuration.allowNonCachedDeclarations) {
-            klass.unsubstitutedScope(c).processFunctionsByName(originalFunction.name) {}
+            klass.unsubstitutedScope().processFunctionsByName(originalFunction.name) {}
         }
         return computeFakeOverrideKeysImpl(
             klass,
@@ -66,7 +71,7 @@ class Fir2IrLazyFakeOverrideGenerator(private val c: Fir2IrComponents) : Fir2IrC
     ): List<Pair<FirPropertySymbol, ConeClassLikeLookupTag>> {
         // Same reasoning as for `computeFakeOverrideKeys` for functions
         if (c.configuration.allowNonCachedDeclarations) {
-            klass.unsubstitutedScope(c).processPropertiesByName(originalProperty.name) {}
+            klass.unsubstitutedScope().processPropertiesByName(originalProperty.name) {}
         }
         return computeFakeOverrideKeysImpl(
             klass,
@@ -151,15 +156,18 @@ class Fir2IrLazyFakeOverrideGenerator(private val c: Fir2IrComponents) : Fir2IrC
         directOverridden: FirTypeScope.(S) -> List<S>,
         processOverridden: FirTypeScope.(S, (S) -> ProcessorAction) -> ProcessorAction
     ): List<Pair<S, ConeClassLikeLookupTag>> {
-        val scope = klass.unsubstitutedScope(c)
+        val scope = klass.unsubstitutedScope()
         val classLookupTag = klass.symbol.toLookupTag()
         val overriddenFirSymbols = computeBaseSymbols(originalSymbol, directOverridden, scope, classLookupTag)
         val typeContext = session.typeContext
         val overriddenPerSupertype = setMultimapOf<ConeClassLikeLookupTag, S>()
+        val supertypes =
+            if (configuration.skipBodies) klass.superConeTypes.filter { it.lookupTag.toClassSymbol(session) != null }
+            else klass.superConeTypes
         with(typeContext) {
             for (symbol in overriddenFirSymbols) {
                 val symbolDispatchReceiver = symbol.containingClassLookupTag() ?: continue
-                for (superType in klass.superConeTypes) {
+                for (superType in supertypes) {
                     val compatibleType = superType.anySuperTypeConstructor {
                         it.typeConstructor() == symbolDispatchReceiver
                     }
@@ -214,7 +222,7 @@ class Fir2IrLazyFakeOverrideGenerator(private val c: Fir2IrComponents) : Fir2IrC
         overridden: Collection<S>,
         processOverridden: FirTypeScope.(S, (S) -> ProcessorAction) -> ProcessorAction
     ): S {
-        val scope = containingClassLookupTag.toRegularClassSymbol(session)?.unsubstitutedScope(c) ?: return overridden.first()
+        val scope = containingClassLookupTag.toRegularClassSymbol(session)?.unsubstitutedScope() ?: return overridden.first()
 
         val result = overridden.firstOrNull { s1 ->
             overridden.all { s2 ->
@@ -270,7 +278,7 @@ class Fir2IrLazyFakeOverrideGenerator(private val c: Fir2IrComponents) : Fir2IrC
             val containingClass = dispatchReceiverLookupTag.toRegularClassSymbol(session)!!
             FirFakeOverrideGenerator.createSubstitutionOverrideProperty(
                 session,
-                FirPropertySymbol(CallableId(containingClass.classId, originalSymbol.callableId.callableName)),
+                FirRegularPropertySymbol(CallableId(containingClass.classId, originalSymbol.name)),
                 firProperty,
                 derivedClassLookupTag = dispatchReceiverLookupTag,
                 newDispatchReceiverType = containingClass.defaultType(),

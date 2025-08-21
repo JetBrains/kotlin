@@ -12,14 +12,17 @@ option optimize_for = LITE_RUNTIME;
 message FileEntry {
   required string name = 1;
   repeated int32 line_start_offset = 2 [packed=true];
+  optional int32 first_relevant_line_index = 3 [default = 0];
 }
 
 message IrFile {
   repeated int32 declaration_id = 1 [packed=true];
-  required FileEntry file_entry = 2;
+  optional FileEntry file_entry = 2; // Required: either `file_entry` or `file_entry_id` is present.
+  optional int32 file_entry_id = 7;  // Required: either `file_entry` or `file_entry_id` is present.
   repeated int32 fq_name = 3 [packed=true];
   repeated IrConstructorCall annotation = 4;
   repeated int64 explicitly_exported_to_compiler = 5 [packed=true];
+  repeated int32 preprocessed_inline_functions = 8 [packed=true];
 
   // WARNING: Don't occupy index 6 which was previously used for storing expect/actual table.
   // repeated Actual actual = 6;
@@ -46,7 +49,9 @@ message AccessorIdSignature {
 message FileLocalIdSignature {
   required int32 container = 1;
   required int64 local_id = 2;
-  optional int32 debug_info = 3;
+
+  // WARNING: Don't occupy index 3 which was previously used for storing local signature description.
+  //optional int32 debug_info = 3;
 }
 
 message CompositeSignature {
@@ -57,7 +62,9 @@ message CompositeSignature {
 message LocalSignature {
   repeated int32 local_fq_name = 1 [packed=true];
   optional int64 local_hash = 2;
-  optional int32 debug_info = 3;
+
+  // WARNING: Don't occupy index 3 which was previously used for storing local signature description.
+  //optional int32 debug_info = 3;
 }
 
 message FileSignature {}
@@ -84,7 +91,9 @@ message IrSimpleTypeLegacy {
   required int64 classifier = 2;
   required bool has_question_mark = 3;
   repeated int64 argument = 4 [packed=true]; // 0 - STAR, otherwise [63..2 - IrType index | 1..0 - Variance]
-  optional IrTypeAbbreviation abbreviation = 5;
+
+  // Previously used fields:
+  //optional IrTypeAbbreviation abbreviation = 5;
 }
 
 enum IrSimpleTypeNullability {
@@ -98,14 +107,9 @@ message IrSimpleType {
   required int64 classifier = 2;
   optional IrSimpleTypeNullability nullability = 3 [default=NOT_SPECIFIED];
   repeated int64 argument = 4 [packed=true]; // 0 - STAR, otherwise [63..2 - IrType index | 1..0 - Variance]
-  optional IrTypeAbbreviation abbreviation = 5;
-}
 
-message IrTypeAbbreviation {
-  repeated IrConstructorCall annotation = 1;
-  required int64 type_alias = 2;
-  required bool has_question_mark = 3;
-  repeated int64 argument = 4 [packed=true]; // 0 - STAR, otherwise [63..2 - IrType index | 1..0 - Variance]
+  // Previously used fields:
+  //optional IrTypeAbbreviation abbreviation = 5;
 }
 
 message IrDynamicType {
@@ -151,20 +155,26 @@ message IrReturnableBlock {
 
 message IrInlinedFunctionBlock {
   optional int64 inlined_function_symbol = 1;
-  required FileEntry inlined_function_file_entry = 2;
+  optional FileEntry inlined_function_file_entry = 2; // Required: either `inlined_function_file_entry` or `inlined_function_file_entry_id` is present.
   required IrBlock base = 3;
   required int32 inlined_function_start_offset = 4;
   required int32 inlined_function_end_offset = 5;
+  optional int32 inlined_function_file_entry_id = 6;  // Required: either `inlined_function_file_entry` or `inlined_function_file_entry_id` is present.
 }
 
 message MemberAccessCommon {
+  // Value argument serialization scheme after 2.2.0
+  repeated NullableIrExpression argument = 6;
+
+  // Value argument serialization scheme before 2.2.0
   optional IrExpression dispatch_receiver = 1;
-  // Context parameters cannot have default values but we use NullableIrExpression here just in case
-  // that will be allowed in the future, to help with compatibility.
-  repeated NullableIrExpression context_argument = 5;
   optional IrExpression extension_receiver = 2;
   repeated NullableIrExpression regular_argument = 3;
+
   repeated int32 type_argument = 4 [packed=true];
+
+  // Previously used fields:
+  //repeated NullableIrExpression context_argument = 5;
 }
 
 message IrCall {
@@ -596,10 +606,6 @@ message IrTypeAlias {
   repeated IrTypeParameter type_parameter = 3;
 }
 
-message IrErrorDeclaration {
-  required int64 coordinates = 1;
-}
-
 message IrEnumEntry {
   required IrDeclarationBase base = 1;
   required int32 name = 2;
@@ -629,7 +635,9 @@ message IrDeclaration {
     IrValueParameter ir_value_parameter = 10;
     IrLocalDelegatedProperty ir_local_delegated_property = 11;
     IrTypeAlias ir_type_alias = 12;
-    IrErrorDeclaration ir_error_declaration = 13;
+
+    // WARNING: Don't occupy index 13 which was previously used for storing IrErrorDeclaration.
+    // IrErrorDeclaration ir_error_declaration = 13;
   }
 }
 

@@ -11,3 +11,5 @@ public fun foo(p: String?): Int {
     // Here we have while (true) loop but p is nullable due to break before
     return p<!UNSAFE_CALL!>.<!>length
 }
+
+/* GENERATED_FIR_TAGS: break, checkNotNullCall, functionDeclaration, ifExpression, nullableType, whileLoop */

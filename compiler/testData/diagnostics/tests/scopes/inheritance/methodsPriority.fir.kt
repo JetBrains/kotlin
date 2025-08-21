@@ -20,7 +20,7 @@ fun test() {
 
     class B: A() {
         init {
-            val a: Int = <!INITIALIZER_TYPE_MISMATCH, TYPE_MISMATCH!>foo()<!> // todo
+            val a: Int = <!INITIALIZER_TYPE_MISMATCH!>foo()<!> // todo
         }
     }
 }
@@ -32,3 +32,6 @@ class E: A() {
         val a: A = foo() // todo: discuss
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, init, javaFunction, javaType, localClass, localFunction,
+localProperty, override, propertyDeclaration, stringLiteral */

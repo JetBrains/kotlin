@@ -18,9 +18,11 @@ import org.jetbrains.kotlin.fir.resolve.calls.candidate.FirNamedReferenceWithCan
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.candidate
 import org.jetbrains.kotlin.fir.resolve.calls.stages.FirFakeArgumentForCallableReference
 import org.jetbrains.kotlin.fir.resolve.inference.ConeTypeVariableForLambdaReturnType
+import org.jetbrains.kotlin.fir.resolve.shouldBeResolvedInContextSensitiveMode
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.resolve.calls.model.LambdaWithTypeVariableAsExpectedTypeMarker
+import org.jetbrains.kotlin.resolve.calls.model.PostponedAtomWithRevisableExpectedType
 import org.jetbrains.kotlin.resolve.calls.model.PostponedCallableReferenceMarker
 import org.jetbrains.kotlin.resolve.calls.model.PostponedResolvedAtomMarker
 import org.jetbrains.kotlin.types.AbstractTypeChecker
@@ -77,6 +79,9 @@ sealed class ConeResolutionAtom : AbstractConeResolutionAtom() {
         }
 
         private fun createRawAtom(expression: FirExpression?, allowUnresolvedExpression: Boolean): ConeResolutionAtom? {
+            fun FirExpression.createConeResolutionAtomWithSingleChild(subExpression: FirExpression?): ConeResolutionAtomWithSingleChild {
+                return ConeResolutionAtomWithSingleChild(this, createRawAtom(subExpression, allowUnresolvedExpression))
+            }
             return when (expression) {
                 null -> null
                 is FirAnonymousFunctionExpression -> ConeResolutionAtomWithPostponedChild(expression)
@@ -84,29 +89,32 @@ sealed class ConeResolutionAtom : AbstractConeResolutionAtom() {
                     expression.isResolved -> ConeSimpleLeafResolutionAtom(expression, allowUnresolvedExpression)
                     else -> ConeResolutionAtomWithPostponedChild(expression)
                 }
-                is FirSafeCallExpression -> ConeResolutionAtomWithSingleChild(
-                    expression,
-                    createRawAtom((expression.selector as? FirExpression)?.unwrapSmartcastExpression(), allowUnresolvedExpression)
-                )
-                is FirResolvable -> when (val candidate = expression.candidate()) {
-                    null -> ConeSimpleLeafResolutionAtom(expression, allowUnresolvedExpression)
-                    else -> ConeAtomWithCandidate(expression, candidate)
+                is FirPropertyAccessExpression if expression.shouldBeResolvedInContextSensitiveMode() -> {
+                    ConeResolutionAtomWithPostponedChild(
+                        expression,
+                        fallbackSubAtom = createRawAtomForResolvable(expression, allowUnresolvedExpression),
+                    )
                 }
-                is FirWrappedArgumentExpression -> ConeResolutionAtomWithSingleChild(
-                    expression,
-                    createRawAtom(expression.expression, allowUnresolvedExpression)
+                is FirResolvable -> createRawAtomForResolvable(expression, allowUnresolvedExpression)
+                is FirSafeCallExpression -> expression.createConeResolutionAtomWithSingleChild(
+                    (expression.selector as? FirExpression)?.unwrapSmartcastExpression()
                 )
-                is FirErrorExpression -> ConeResolutionAtomWithSingleChild(
-                    expression,
-                    createRawAtom(expression.expression, allowUnresolvedExpression)
-                )
-                is FirBlock -> ConeResolutionAtomWithSingleChild(
-                    expression,
-                    createRawAtom(expression.lastExpression, allowUnresolvedExpression)
-                )
+                is FirWrappedArgumentExpression -> expression.createConeResolutionAtomWithSingleChild(expression.expression)
+                is FirErrorExpression -> expression.createConeResolutionAtomWithSingleChild(expression.expression)
+                is FirQualifiedErrorAccessExpression -> expression.createConeResolutionAtomWithSingleChild(expression.selector)
+                is FirBlock -> expression.createConeResolutionAtomWithSingleChild(expression.lastExpression)
                 else -> ConeSimpleLeafResolutionAtom(expression, allowUnresolvedExpression)
             }
         }
+
+        private fun <F> createRawAtomForResolvable(
+            expression: F,
+            allowUnresolvedExpression: Boolean,
+        ): ConeResolutionAtom where F : FirResolvable, F : FirExpression =
+            when (val candidate = expression.candidate()) {
+                null -> ConeSimpleLeafResolutionAtom(expression, allowUnresolvedExpression)
+                else -> ConeAtomWithCandidate(expression, candidate)
+            }
     }
 }
 
@@ -131,12 +139,27 @@ class ConeSimpleLeafResolutionAtom(override val expression: FirExpression, allow
 
 class ConeAtomWithCandidate(override val expression: FirExpression, val candidate: Candidate) : ConeResolutionAtom()
 
-class ConeResolutionAtomWithPostponedChild(override val expression: FirExpression) : ConeResolutionAtom() {
-    var subAtom: ConePostponedResolvedAtom? = null
-        set(value) {
+class ConeResolutionAtomWithPostponedChild(
+    override val expression: FirExpression,
+    // Used for cases like when simple name access doesn't need context-sensitive resolution
+    val fallbackSubAtom: ConeResolutionAtom? = null,
+) : ConeResolutionAtom() {
+
+    var subAtom: ConeResolutionAtom? = null
+        private set(value) {
             require(field == null) { "subAtom already initialized" }
             field = value
         }
+
+    fun setPostponedSubAtom(atom: ConePostponedResolvedAtom) {
+        subAtom = atom
+    }
+
+    fun useFallbackSubAtom() {
+        subAtom = fallbackSubAtom
+    }
+
+    fun makeFreshCopy(): ConeResolutionAtomWithPostponedChild = ConeResolutionAtomWithPostponedChild(expression, fallbackSubAtom)
 }
 
 sealed class ConePostponedResolvedAtom : ConeResolutionAtom(), PostponedResolvedAtomMarker {
@@ -147,6 +170,11 @@ sealed class ConePostponedResolvedAtom : ConeResolutionAtom(), PostponedResolved
 }
 
 //  ------------- Lambdas -------------
+
+// A lambda or a callable reference.
+// We separate this kind of atom because for them, we might fix earlier type variables contained inside the parameter
+// type of the relevant function expected type.
+sealed class ConeFunctionTypeRelatedPostponedResolvedAtom : ConePostponedResolvedAtom()
 
 class ConeResolvedLambdaAtom(
     override val expression: FirAnonymousFunctionExpression,
@@ -161,7 +189,7 @@ class ConeResolvedLambdaAtom(
     // NB: It's not null right now only for lambdas inside the calls
     // TODO: Handle somehow that kind of lack of information once KT-67961 is fixed
     val sourceForFunctionExpression: KtSourceElement?,
-) : ConePostponedResolvedAtom() {
+) : ConeFunctionTypeRelatedPostponedResolvedAtom() {
     val anonymousFunction: FirAnonymousFunction = expression.anonymousFunction
 
     var typeVariableForLambdaReturnType: ConeTypeVariableForLambdaReturnType? = typeVariableForLambdaReturnType
@@ -194,11 +222,22 @@ class ConeResolvedLambdaAtom(
     }
 }
 
+sealed class ConePostponedAtomWithRevisableExpectedType(
+    /**
+     * If the atom is created for a return statement of the lambda, its anonymous function is stored
+     * to report RETURN_TYPE_MISMATCH in case of a new constraint error.
+     * Note that for other kinds of resolution atoms, the new constraint error, if any, can be reported right away
+     * when creating the atom, hence no need to store this field.
+     */
+    val anonymousFunctionIfReturnExpression: FirAnonymousFunction?
+) : ConeFunctionTypeRelatedPostponedResolvedAtom(), PostponedAtomWithRevisableExpectedType
+
 class ConeLambdaWithTypeVariableAsExpectedTypeAtom(
     override val expression: FirAnonymousFunctionExpression,
     private val initialExpectedTypeType: ConeKotlinType,
     val candidateOfOuterCall: Candidate,
-) : ConePostponedResolvedAtom(), LambdaWithTypeVariableAsExpectedTypeMarker {
+    anonymousFunctionIfReturnExpression: FirAnonymousFunction? = null,
+) : ConePostponedAtomWithRevisableExpectedType(anonymousFunctionIfReturnExpression), LambdaWithTypeVariableAsExpectedTypeMarker {
     val anonymousFunction: FirAnonymousFunction = expression.anonymousFunction
 
     var subAtom: ConeResolvedLambdaAtom? = null
@@ -236,8 +275,9 @@ class ConeResolvedCallableReferenceAtom(
     override val expression: FirCallableReferenceAccess,
     private val initialExpectedType: ConeKotlinType?,
     val lhs: DoubleColonLHS?,
-    private val session: FirSession
-) : ConePostponedResolvedAtom(), PostponedCallableReferenceMarker {
+    private val session: FirSession,
+    anonymousFunctionIfReturnExpression: FirAnonymousFunction? = null,
+) : ConePostponedAtomWithRevisableExpectedType(anonymousFunctionIfReturnExpression), PostponedCallableReferenceMarker {
     var subAtom: ConeAtomWithCandidate? = null
         private set
 
@@ -304,10 +344,20 @@ class ConeResolvedCallableReferenceAtom(
         private set
 
     override fun reviseExpectedType(expectedType: KotlinTypeMarker) {
-        if (!needsResolution) return
         require(expectedType is ConeKotlinType)
         revisedExpectedType = expectedType
     }
+}
+
+class ConeSimpleNameForContextSensitiveResolution(
+    override val expression: FirPropertyAccessExpression,
+    override val expectedType: ConeKotlinType,
+    val containingCallCandidate: Candidate,
+    val fallbackSubAtom: ConeResolutionAtom,
+) : ConePostponedResolvedAtom() {
+    override val inputTypes: Collection<ConeKotlinType> = listOf(expectedType)
+    override val outputType: ConeKotlinType?
+        get() = null
 }
 
 //  -------------------------- Utils --------------------------

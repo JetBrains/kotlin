@@ -22,3 +22,6 @@ fun main() {
     g = ::bar         // OK
     g = Receiver::baz // OK
 }
+
+/* GENERATED_FIR_TAGS: assignment, callableReference, classDeclaration, funWithExtensionReceiver, functionDeclaration,
+functionDeclarationWithContext, functionalType, localProperty, propertyDeclaration, typeWithContext, typeWithExtension */

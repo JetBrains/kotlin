@@ -118,9 +118,9 @@ class FirebaseCloudXCTestExecutor(
         // Fetch results from the storage
         hostExecutor.executeWithRepeatOnTimeout(
             ExecuteRequest(
-                executableAbsolutePath = "gsutil",
+                executableAbsolutePath = "gcloud",
                 workingDirectory = projectDir.toFile(),
-                args = mutableListOf("-m", "cp", "-r", "gs://${resultsBucketURL}/iphone*", ".")
+                args = mutableListOf("storage", "cp", "-r", "gs://${resultsBucketURL}/iphone*", ".")
             ),
             // This command sometimes just hangs on certain agents, see KT-72581.
             // Let's try repeating.

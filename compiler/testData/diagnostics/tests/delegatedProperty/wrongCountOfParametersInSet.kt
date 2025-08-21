@@ -1,5 +1,7 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // DIAGNOSTICS: -UNUSED_PARAMETER
+// LANGUAGE: -ForbidGetSetValueWithTooManyParameters
+// ISSUE: KT-77131
 
 import kotlin.reflect.KProperty
 
@@ -16,3 +18,6 @@ class Delegate {
 
   operator fun setValue(t: Any?, p: KProperty<*>, a: Int, c: Int) {}
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, nullableType, operator,
+propertyDeclaration, propertyDelegate, setter, starProjection */

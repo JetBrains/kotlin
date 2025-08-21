@@ -23,3 +23,6 @@ class B {
         checkSubtype<KFunction0<B>>(y)
     }
 }
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, funWithExtensionReceiver, functionDeclaration,
+functionalType, infix, localProperty, nullableType, propertyDeclaration, typeParameter, typeWithExtension */

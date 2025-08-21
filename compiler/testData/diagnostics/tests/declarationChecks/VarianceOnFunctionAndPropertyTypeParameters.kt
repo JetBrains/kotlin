@@ -17,3 +17,6 @@ val <<!VARIANCE_ON_TYPE_PARAMETER_NOT_ALLOWED!>out<!> T> T.x: Int
 
 val <<!VARIANCE_ON_TYPE_PARAMETER_NOT_ALLOWED!>in<!> T> T.y: Int
     get() = 1
+
+/* GENERATED_FIR_TAGS: functionDeclaration, getter, in, integerLiteral, nullableType, out, propertyDeclaration,
+propertyWithExtensionReceiver, typeParameter */

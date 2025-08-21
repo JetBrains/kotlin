@@ -13,3 +13,6 @@ fun baz(s: String?): String {
     }
     return t
 }
+
+/* GENERATED_FIR_TAGS: equalityExpression, functionDeclaration, ifExpression, localProperty, nullableType,
+propertyDeclaration, smartcast, stringLiteral */

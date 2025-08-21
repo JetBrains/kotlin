@@ -16,7 +16,7 @@ expect class C {
     <!WRONG_MODIFIER_TARGET!>expect<!> inner class I
 }
 
-<!EXPECT_ACTUAL_INCOMPATIBILITY{JVM}!>expect<!> class D {
+<!EXPECT_ACTUAL_IR_INCOMPATIBILITY{JVM}!>expect<!> class D {
     class <!NO_ACTUAL_FOR_EXPECT{JVM}!>N<!>
 }
 
@@ -45,3 +45,5 @@ actual class <!NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS!>D<!>
 actual class E {
     class <!ACTUAL_MISSING!>N<!>
 }
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, enumDeclaration, expect, functionDeclaration, inner, nestedClass */

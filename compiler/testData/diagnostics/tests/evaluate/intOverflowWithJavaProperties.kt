@@ -13,3 +13,5 @@ val a1: Int = Test.i1 + 1
 val a2: Int = <!INTEGER_OVERFLOW!>Test.i2 + 1<!>
 val a3: Int = <!INTEGER_OVERFLOW!>Test().i3 + 1<!>
 val a4: Int = Test().i4 + 1
+
+/* GENERATED_FIR_TAGS: additiveExpression, integerLiteral, javaFunction, javaProperty, javaType, propertyDeclaration */

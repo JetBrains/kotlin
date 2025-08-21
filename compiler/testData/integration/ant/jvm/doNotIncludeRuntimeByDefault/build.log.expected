@@ -2,12 +2,15 @@ OUT:
 Buildfile: [TestData]/build.xml
 
 test1:
+  [kotlinc] Support for the Ant build system is currently deprecated and planned for removal in the Kotlin 2.3.0 release. If you're interested in taking on the role of an external maintainer, please contact us via https://kotl.in/ant-deprecation.
   [kotlinc] Compiling [[TestData]/test.kt] => [[Temp]/test.jar]
 
 test2:
+  [kotlinc] Support for the Ant build system is currently deprecated and planned for removal in the Kotlin 2.3.0 release. If you're interested in taking on the role of an external maintainer, please contact us via https://kotl.in/ant-deprecation.
   [kotlinc] Compiling [[TestData]/test.kt] => [[Temp]/test.jar]
 
 test3:
+  [kotlinc] Support for the Ant build system is currently deprecated and planned for removal in the Kotlin 2.3.0 release. If you're interested in taking on the role of an external maintainer, please contact us via https://kotl.in/ant-deprecation.
   [kotlinc] Compiling [[TestData]/test.kt] => [[Temp]/test.jar]
 
 BUILD SUCCESSFUL

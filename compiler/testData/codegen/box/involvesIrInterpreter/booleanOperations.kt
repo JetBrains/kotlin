@@ -1,4 +1,3 @@
-// DONT_TARGET_EXACT_BACKEND: JVM
 fun <T> T.id() = this
 
 const val trueVal = <!EVALUATED("true")!>true<!>

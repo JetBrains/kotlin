@@ -7,10 +7,12 @@ KtCallExpression(110,117): 'x(true)'
           receiverType = null
           returnType = kotlin.Boolean
           symbol = b: kotlin.Boolean
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -23,7 +25,9 @@ KtCallExpression(110,117): 'x(true)'
               receiverType = null
               returnType = kotlin.Boolean
               symbol = b: kotlin.Boolean
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}

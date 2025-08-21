@@ -7,38 +7,55 @@ package org.jetbrains.kotlin.gradle.targets.js.typescript
 
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.DirectoryProperty
+import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.*
+import org.gradle.process.ExecOperations
 import org.gradle.work.DisableCachingByDefault
 import org.gradle.work.NormalizeLineEndings
 import org.jetbrains.kotlin.gradle.internal.execWithProgress
+import org.jetbrains.kotlin.gradle.internal.newBuildOpLogger
+import org.jetbrains.kotlin.gradle.targets.js.NpmVersions
 import org.jetbrains.kotlin.gradle.targets.js.RequiredKotlinJsDependency
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinIrJsGeneratedTSValidationStrategy
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
-import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin.Companion.kotlinNodeJsRootExtension
+import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProjectModules
+import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProject
 import org.jetbrains.kotlin.gradle.targets.js.npm.RequiresNpmDependencies
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
+import org.jetbrains.kotlin.gradle.utils.getExecOperations
+import org.jetbrains.kotlin.gradle.utils.getFile
 import javax.inject.Inject
 
 @DisableCachingByDefault
 abstract class TypeScriptValidationTask
 @Inject
-constructor(
+internal constructor(
     @Internal
     @Transient
-    override val compilation: KotlinJsIrCompilation
+    final override val compilation: KotlinJsIrCompilation,
+    private val objects: ObjectFactory,
+    private val execOps: ExecOperations,
 ) : DefaultTask(), RequiresNpmDependencies {
-    private val npmProject = compilation.npmProject
+
+    @Deprecated("Extending this class is deprecated. Scheduled for removal in Kotlin 2.4.")
+    @Suppress("DEPRECATION")
+    constructor(
+        compilation: KotlinJsIrCompilation,
+    ) : this(
+        compilation = compilation,
+        objects = compilation.project.objects,
+        execOps = compilation.project.getExecOperations(),
+    )
+
+    private val npmProject: NpmProject = compilation.npmProject
 
     @get:Internal
-    @Transient
-    protected val nodeJs = project.rootProject.kotlinNodeJsRootExtension
-
-    private val versions = nodeJs.versions
+    internal abstract val versions: Property<NpmVersions>
 
     @get:Internal
     override val requiredNpmDependencies: Set<RequiredKotlinJsDependency>
-        get() = setOf(versions.typescript)
+        get() = setOf(versions.get().typescript)
 
     @get:SkipWhenEmpty
     @get:NormalizeLineEndings
@@ -50,7 +67,10 @@ constructor(
     abstract val validationStrategy: Property<KotlinIrJsGeneratedTSValidationStrategy>
 
     private val generatedDts
-        get() = inputDir.asFileTree.matching { it.include("*.d.ts") }.files
+        get() = inputDir.asFileTree.matching {
+            it.include("*.d.ts")
+            it.include("*.d.mts")
+        }.files
 
     @TaskAction
     fun run() {
@@ -60,10 +80,15 @@ constructor(
 
         val files = generatedDts.map { it.absolutePath }
 
-        if (files.isEmpty()) return
+        val npmProjectDir = npmProject.dir
 
-        val result = services.execWithProgress("typescript") {
-            npmProject.useTool(it, "typescript/bin/tsc", listOf(), listOf("--noEmit"))
+        val modules = NpmProjectModules(npmProjectDir.getFile())
+
+        val progressLogger = objects.newBuildOpLogger()
+        val result = execWithProgress(progressLogger, "typescript", execOps) {
+            it.workingDir(npmProjectDir)
+            it.executable(npmProject.nodeExecutable)
+            it.args = listOf(modules.require("typescript/bin/tsc")) + "--noEmit" + files
         }
 
         if (result.exitValue == 0) return

@@ -20,15 +20,13 @@ fun Icon(param: Int, defaultParam: Int, %composer: Composer?, %changed: Int, %de
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(Icon)P(1)<rememb...>:Test.kt")
   val %dirty = %changed
-  if (%default and 0b0001 != 0) {
-    %dirty = %dirty or 0b0110
-  } else if (%changed and 0b0110 == 0) {
+  if (%changed and 0b0110 == 0) {
     %dirty = %dirty or if (%composer.changed(param)) 0b0100 else 0b0010
   }
   if (%changed and 0b00110000 == 0) {
     %dirty = %dirty or if (%default and 0b0010 == 0 && %composer.changed(defaultParam)) 0b00100000 else 0b00010000
   }
-  if (%dirty and 0b00010011 != 0b00010010 || !%composer.skipping) {
+  if (%composer.shouldExecute(%dirty and 0b00010011 != 0b00010010, %dirty and 0b0001)) {
     %composer.startDefaults()
     sourceInformation(%composer, "<curren...>")
     if (%changed and 0b0001 == 0 || %composer.defaultsInvalid) {

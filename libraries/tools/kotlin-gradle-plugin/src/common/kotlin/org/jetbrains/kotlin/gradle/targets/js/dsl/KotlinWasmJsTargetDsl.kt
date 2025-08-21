@@ -9,7 +9,7 @@ import org.gradle.api.Action
 import org.gradle.api.NamedDomainObjectContainer
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
-import org.jetbrains.kotlin.gradle.targets.js.d8.D8Exec
+import org.jetbrains.kotlin.gradle.targets.wasm.d8.D8Exec
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrSubTargetWithBinary
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinD8Ir
 import org.jetbrains.kotlin.gradle.utils.withType

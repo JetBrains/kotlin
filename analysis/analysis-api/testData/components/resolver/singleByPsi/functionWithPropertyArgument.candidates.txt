@@ -7,10 +7,12 @@ KtCallExpression(44,62): 'foo(localProperty)'
           receiverType = null
           returnType = kotlin.Int
           symbol = i: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -23,8 +25,10 @@ KtCallExpression(44,62): 'foo(localProperty)'
               receiverType = null
               returnType = kotlin.Int
               symbol = i: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = /foo
       typeArgumentsMapping = {}
     isInBestCandidates = true

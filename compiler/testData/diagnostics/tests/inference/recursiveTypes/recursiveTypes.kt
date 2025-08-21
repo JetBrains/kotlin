@@ -13,3 +13,6 @@ fun foo(a: A, b: B, c: C) {
     <!DEBUG_INFO_EXPRESSION_TYPE("RecursiveGeneric<*, kotlin.Int>")!>select(a, b)<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("RecursiveGeneric<*, out kotlin.Any>")!>select(a, c)<!>
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, interfaceDeclaration, nullableType, outProjection,
+starProjection, typeConstraint, typeParameter */

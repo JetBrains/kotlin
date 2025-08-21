@@ -12,3 +12,5 @@ expect annotation class CommonVolatile
 actual annotation class Ann
 
 actual typealias CommonVolatile = kotlin.jvm.Volatile
+
+/* GENERATED_FIR_TAGS: actual, annotationDeclaration, expect, primaryConstructor, typeAliasDeclaration */

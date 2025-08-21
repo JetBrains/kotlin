@@ -1,4 +1,3 @@
-// DONT_TARGET_EXACT_BACKEND: JVM
 fun <T> T.id() = this
 
 const val minusOneVal = (-1).<!EVALUATED("-1")!>toByte()<!>
@@ -74,7 +73,7 @@ const val unaryMinus1 = oneVal.<!EVALUATED("-1")!>unaryMinus()<!>
 const val unaryMinus2 = minusOneVal.<!EVALUATED("1")!>unaryMinus()<!>
 
 const val convert1 = oneVal.<!EVALUATED("1")!>toByte()<!>
-const val convert2 = oneVal.<!EVALUATED("")!>toChar()<!>
+const val convert2 = oneVal.toInt().<!EVALUATED("")!>toChar()<!>
 const val convert3 = oneVal.<!EVALUATED("1")!>toShort()<!>
 const val convert4 = oneVal.<!EVALUATED("1")!>toInt()<!>
 const val convert5 = oneVal.<!EVALUATED("1")!>toLong()<!>

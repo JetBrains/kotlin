@@ -29,3 +29,5 @@ class BS2: A(), IGA<Any>
 <!RETURN_TYPE_MISMATCH_ON_INHERITANCE!>class BS3<!>: A(), IGA<String>
 
 <!RETURN_TYPE_MISMATCH_ON_INHERITANCE!>class BG1<!><T>: A(), IGA<T>
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, interfaceDeclaration, nullableType, typeParameter */

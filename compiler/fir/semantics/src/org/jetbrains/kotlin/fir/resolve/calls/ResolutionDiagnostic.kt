@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.ConeTypeVariable
 import org.jetbrains.kotlin.resolve.ForbiddenNamedArgumentsTarget
@@ -135,6 +136,10 @@ class ArgumentTypeMismatch(
     val actualType: ConeKotlinType,
     val argument: FirExpression,
     val isMismatchDueToNullability: Boolean,
+    // We use argument checking mechanism for return statements of lambdas, too.
+    // Thus, to report proper RETURN_TYPE_MISMATCH we preserve a reference to the lambda
+    val anonymousFunctionIfReturnExpression: FirAnonymousFunction? = null,
+    val systemHadContradiction: Boolean = false,
 ) : ResolutionDiagnostic(if (isMismatchDueToNullability) UNSAFE_CALL else INAPPLICABLE)
 
 class UnitReturnTypeLambdaContradictsExpectedType(
@@ -162,18 +167,24 @@ class NotFunctionAsOperator(val symbol: FirBasedSymbol<*>) : ResolutionDiagnosti
 
 class DslScopeViolation(val calleeSymbol: FirBasedSymbol<*>) : ResolutionDiagnostic(RESOLVED_WITH_ERROR)
 
+class ReceiverShadowedByContextParameter(
+    val calleeSymbol: FirBasedSymbol<*>,
+    val isDispatchOfMemberExtension: Boolean,
+    val compatibleContextParameters: List<FirValueParameterSymbol>
+) : ResolutionDiagnostic(RESOLVED_WITH_ERROR)
+
 class MultipleContextReceiversApplicableForExtensionReceivers : ResolutionDiagnostic(INAPPLICABLE)
 
 object NoReceiverAllowed : ResolutionDiagnostic(INAPPLICABLE)
 
 class NoContextArgument(
-    val expectedContextReceiverType: ConeKotlinType
+    val symbol: FirValueParameterSymbol,
 ) : ResolutionDiagnostic(INAPPLICABLE)
 
 object UnsupportedContextualDeclarationCall : ResolutionDiagnostic(INAPPLICABLE)
 
 class AmbiguousContextArgument(
-    val expectedContextReceiverType: ConeKotlinType,
+    val symbol: FirValueParameterSymbol,
 ) : ResolutionDiagnostic(INAPPLICABLE)
 
 object ResolutionResultOverridesOtherToPreserveCompatibility : ResolutionDiagnostic(RESOLVED)
@@ -198,4 +209,4 @@ val Collection<ResolutionDiagnostic>.allSuccessful: Boolean get() = all { it.app
 val Collection<ResolutionDiagnostic>.anyUnsuccessful: Boolean get() = !allSuccessful
 
 @OptIn(ApplicabilityDetail::class)
-val ResolutionDiagnostic.isSuccess get() = applicability.isSuccess
+val ResolutionDiagnostic.isSuccess: Boolean get() = applicability.isSuccess

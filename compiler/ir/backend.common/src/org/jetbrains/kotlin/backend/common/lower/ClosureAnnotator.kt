@@ -33,9 +33,12 @@ import org.jetbrains.kotlin.ir.visitors.IrVisitor
 
 data class Closure(val capturedValues: List<IrValueSymbol>, val capturedTypeParameters: List<IrTypeParameter>)
 
-class ClosureAnnotator(irElement: IrElement, declaration: IrDeclaration) {
-    private val closureBuilders = mutableMapOf<IrDeclaration, ClosureBuilder>()
-
+class ClosureAnnotator(
+    irElement: IrElement,
+    declaration: IrDeclaration,
+    private val closureBuilders: MutableMap<IrDeclaration, ClosureBuilder> = mutableMapOf(),
+    private val scriptingMode: Boolean = false,
+) {
     init {
         // Collect all closures for classes and functions. Collect call graph
         irElement.accept(ClosureCollectorVisitor(), declaration.closureBuilderOrNull ?: declaration.parentClosureBuilder)
@@ -50,7 +53,7 @@ class ClosureAnnotator(irElement: IrElement, declaration: IrDeclaration) {
             .buildClosure()
     }
 
-    private class ClosureBuilder(val owner: IrDeclaration) {
+    class ClosureBuilder(val owner: IrDeclaration) {
         private val capturedValues = mutableSetOf<IrValueSymbol>()
         private val declaredValues = mutableSetOf<IrValueDeclaration>()
         private val includes = mutableSetOf<ClosureBuilder>()
@@ -153,9 +156,6 @@ class ClosureAnnotator(irElement: IrElement, declaration: IrDeclaration) {
             if (classifier is IrTypeParameterSymbol && isExternal(classifier.owner) && capturedTypeParameters.add(classifier.owner))
                 classifier.owner.superTypes.forEach(::seeType)
             type.arguments.forEach {
-                (it as? IrTypeProjection)?.type?.let(::seeType)
-            }
-            type.abbreviation?.arguments?.forEach {
                 (it as? IrTypeProjection)?.type?.let(::seeType)
             }
         }
@@ -282,7 +282,7 @@ class ClosureAnnotator(irElement: IrElement, declaration: IrDeclaration) {
 
         override fun visitFunctionAccess(expression: IrFunctionAccessExpression, data: ClosureBuilder?) {
             super.visitFunctionAccess(expression, data)
-            processScriptCapturing(expression.dispatchReceiver, expression.symbol.owner, data)
+            processScriptCapturing(expression, data)
             processMemberAccess(expression.symbol.owner, data)
         }
 
@@ -321,8 +321,9 @@ class ClosureAnnotator(irElement: IrElement, declaration: IrDeclaration) {
             typeParameterContainerScopeBuilder?.seeType(expression.type)
         }
 
-        private fun processScriptCapturing(receiverExpression: IrExpression?, declaration: IrDeclaration, data: ClosureBuilder?) {
-            if (receiverExpression == null) {
+        private fun processScriptCapturing(expression: IrFunctionAccessExpression, data: ClosureBuilder?) {
+            val declaration = expression.symbol.owner
+            if (scriptingMode && (declaration.dispatchReceiverParameter == null || expression.arguments.size < declaration.parameters.size)) {
                 val parent = declaration.parent
                 when (parent) {
                     is IrScript -> {

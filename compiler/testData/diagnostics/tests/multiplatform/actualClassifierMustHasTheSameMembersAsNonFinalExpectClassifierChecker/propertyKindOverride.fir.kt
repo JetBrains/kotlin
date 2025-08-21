@@ -13,5 +13,7 @@ expect open class Foo : Base
 // FILE: jvm.kt
 
 actual open class Foo : Base() {
-    override var <!ACTUAL_WITHOUT_EXPECT!>foo<!>: Int = 1
+    override var <!EXPECT_ACTUAL_INCOMPATIBLE_PROPERTY_KIND!>foo<!>: Int = 1
 }
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, integerLiteral, override, propertyDeclaration */

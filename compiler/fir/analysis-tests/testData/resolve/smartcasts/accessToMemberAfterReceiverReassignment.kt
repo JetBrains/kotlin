@@ -40,3 +40,6 @@ fun severalMembersTest() {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, equalityExpression, functionDeclaration, ifExpression,
+localProperty, nullableType, primaryConstructor, propertyDeclaration, safeCall, smartcast */

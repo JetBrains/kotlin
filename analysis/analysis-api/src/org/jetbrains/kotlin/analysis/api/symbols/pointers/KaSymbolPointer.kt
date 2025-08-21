@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.analysis.utils.relfection.renderAsDataClassToString
  *
  * @see org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
  */
+@SubclassOptInRequired(KaImplementationDetail::class)
 public abstract class KaSymbolPointer<out S : KaSymbol> {
     /**
      * Returns the restored [KaSymbol] (possibly a new symbol instance) if the pointer is still valid, `null` otherwise.
@@ -34,12 +35,22 @@ public abstract class KaSymbolPointer<out S : KaSymbol> {
     override fun toString(): String = renderAsDataClassToString()
 }
 
+@Deprecated(
+    "Symbol pointers are supposed to be created only by the Analysis API via `KaSymbol#createPointer()` API",
+    level = DeprecationLevel.ERROR,
+)
+@OptIn(KaImplementationDetail::class)
 public inline fun <S : KaSymbol> symbolPointer(crossinline getSymbol: (KaSession) -> S?): KaSymbolPointer<S> =
     object : KaSymbolPointer<S>() {
         @KaImplementationDetail
         override fun restoreSymbol(analysisSession: KaSession): S? = getSymbol(analysisSession)
     }
 
+@Deprecated(
+    "Symbol pointers are supposed to be created only by the Analysis API via `KaSymbol#createPointer()` API",
+    level = DeprecationLevel.ERROR,
+)
+@OptIn(KaImplementationDetail::class)
 public inline fun <T : KaSymbol, R : KaSymbol> symbolPointerDelegator(
     pointer: KaSymbolPointer<T>,
     crossinline transformer: KaSession.(T) -> R?,

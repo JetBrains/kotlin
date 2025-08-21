@@ -1,4 +1,4 @@
-/* RootScriptStructureElement */fun foo() {/* DeclarationStructureElement */
+/* RootStructureElement *//* RootScriptStructureElement */fun foo() {/* DeclarationStructureElement */
     var x: Int
 }
 class A {/* ClassDeclarationStructureElement */

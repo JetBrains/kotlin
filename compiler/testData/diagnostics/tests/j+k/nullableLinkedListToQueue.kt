@@ -1,6 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // FULL_JDK
-// LANGUAGE: -JavaTypeParameterDefaultRepresentationWithDNN
 // ISSUE: KT-65184
 
 // FILE: A.java
@@ -45,3 +44,5 @@ class C {
 fun test(c: C, jj: LinkedList<String?>) {
     c.bar(<!TYPE_MISMATCH!>jj<!>)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, flexibleType, functionDeclaration, javaFunction, javaType, nullableType */

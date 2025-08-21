@@ -17,3 +17,5 @@ import a.C
 fun test() {
     C.create().foo()
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaFunction, starProjection */

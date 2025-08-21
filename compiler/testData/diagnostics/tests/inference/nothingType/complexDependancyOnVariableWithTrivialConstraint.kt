@@ -14,3 +14,6 @@ fun <K> bar(x: K, y: (K) -> Unit) {}
 fun test() {
     bar(Data(null)) { it.dataMethod() }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionalType, lambdaLiteral, nullableType,
+primaryConstructor, propertyDeclaration, typeParameter */

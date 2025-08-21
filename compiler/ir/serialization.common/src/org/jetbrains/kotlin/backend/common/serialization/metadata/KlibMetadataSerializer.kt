@@ -36,7 +36,6 @@ abstract class KlibMetadataSerializer(
     val exportKDoc: Boolean = false,
     val skipExpects: Boolean,
     val includeOnlyModuleContent: Boolean = false,
-    private val allowErrorTypes: Boolean,
     val produceHeaderKlib: Boolean = false,
 ) {
 
@@ -54,7 +53,6 @@ abstract class KlibMetadataSerializer(
             languageVersionSettings,
             metadataVersion,
             ApproximatingStringTable(),
-            allowErrorTypes,
             exportKDoc,
             produceHeaderKlib
         )

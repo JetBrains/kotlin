@@ -35,3 +35,5 @@ interface TextFragment : ColoredTextContainer
 //     we miss `nonSubsumed()` check and since this is a Kotlin class we are not allowed to implicitly choose
 //     between `JComponent::setToolTipText` and `ColoredTextContainer::setToolTipText`.
 private class TextFragmentImpl : TextFragment, SimpleColoredComponent()
+
+/* GENERATED_FIR_TAGS: classDeclaration, interfaceDeclaration, javaType */

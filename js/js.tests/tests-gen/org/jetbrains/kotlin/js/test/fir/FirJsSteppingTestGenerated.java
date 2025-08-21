@@ -25,6 +25,36 @@ public class FirJsSteppingTestGenerated extends AbstractFirJsSteppingTest {
   }
 
   @Test
+  @TestMetadata("annotatedConstructor.kt")
+  public void testAnnotatedConstructor() {
+    runTest("compiler/testData/debug/stepping/annotatedConstructor.kt");
+  }
+
+  @Test
+  @TestMetadata("annotatedFunction.kt")
+  public void testAnnotatedFunction() {
+    runTest("compiler/testData/debug/stepping/annotatedFunction.kt");
+  }
+
+  @Test
+  @TestMetadata("annotatedInlineFunctionWithDefault.kt")
+  public void testAnnotatedInlineFunctionWithDefault() {
+    runTest("compiler/testData/debug/stepping/annotatedInlineFunctionWithDefault.kt");
+  }
+
+  @Test
+  @TestMetadata("annotatedLocalVariable.kt")
+  public void testAnnotatedLocalVariable() {
+    runTest("compiler/testData/debug/stepping/annotatedLocalVariable.kt");
+  }
+
+  @Test
+  @TestMetadata("annotatedProperty.kt")
+  public void testAnnotatedProperty() {
+    runTest("compiler/testData/debug/stepping/annotatedProperty.kt");
+  }
+
+  @Test
   @TestMetadata("anonymousFunction.kt")
   public void testAnonymousFunction() {
     runTest("compiler/testData/debug/stepping/anonymousFunction.kt");
@@ -70,6 +100,18 @@ public class FirJsSteppingTestGenerated extends AbstractFirJsSteppingTest {
   @TestMetadata("chainCall.kt")
   public void testChainCall() {
     runTest("compiler/testData/debug/stepping/chainCall.kt");
+  }
+
+  @Test
+  @TestMetadata("chainCallOfInlineFunctions.kt")
+  public void testChainCallOfInlineFunctions() {
+    runTest("compiler/testData/debug/stepping/chainCallOfInlineFunctions.kt");
+  }
+
+  @Test
+  @TestMetadata("chainCallOfPrivateInlineFunctions.kt")
+  public void testChainCallOfPrivateInlineFunctions() {
+    runTest("compiler/testData/debug/stepping/chainCallOfPrivateInlineFunctions.kt");
   }
 
   @Test
@@ -175,6 +217,18 @@ public class FirJsSteppingTestGenerated extends AbstractFirJsSteppingTest {
   }
 
   @Test
+  @TestMetadata("delegateMemberVal.kt")
+  public void testDelegateMemberVal() {
+    runTest("compiler/testData/debug/stepping/delegateMemberVal.kt");
+  }
+
+  @Test
+  @TestMetadata("delegatedProperty.kt")
+  public void testDelegatedProperty() {
+    runTest("compiler/testData/debug/stepping/delegatedProperty.kt");
+  }
+
+  @Test
   @TestMetadata("delegation.kt")
   public void testDelegation() {
     runTest("compiler/testData/debug/stepping/delegation.kt");
@@ -193,9 +247,15 @@ public class FirJsSteppingTestGenerated extends AbstractFirJsSteppingTest {
   }
 
   @Test
-  @TestMetadata("functionCallWithDefault.kt")
-  public void testFunctionCallWithDefault() {
-    runTest("compiler/testData/debug/stepping/functionCallWithDefault.kt");
+  @TestMetadata("funCallsInsideInlineableLambda.kt")
+  public void testFunCallsInsideInlineableLambda() {
+    runTest("compiler/testData/debug/stepping/funCallsInsideInlineableLambda.kt");
+  }
+
+  @Test
+  @TestMetadata("funCallsInsideNonInlineableLambda.kt")
+  public void testFunCallsInsideNonInlineableLambda() {
+    runTest("compiler/testData/debug/stepping/funCallsInsideNonInlineableLambda.kt");
   }
 
   @Test
@@ -301,6 +361,36 @@ public class FirJsSteppingTestGenerated extends AbstractFirJsSteppingTest {
   }
 
   @Test
+  @TestMetadata("inlineFunAsDefaultArgument.kt")
+  public void testInlineFunAsDefaultArgument() {
+    runTest("compiler/testData/debug/stepping/inlineFunAsDefaultArgument.kt");
+  }
+
+  @Test
+  @TestMetadata("inlineFunAsMemberOfAnonymousObjectInsideInlineFun.kt")
+  public void testInlineFunAsMemberOfAnonymousObjectInsideInlineFun() {
+    runTest("compiler/testData/debug/stepping/inlineFunAsMemberOfAnonymousObjectInsideInlineFun.kt");
+  }
+
+  @Test
+  @TestMetadata("inlineFunAsMemberOfAnonymousObjectInsideInlineableLambda.kt")
+  public void testInlineFunAsMemberOfAnonymousObjectInsideInlineableLambda() {
+    runTest("compiler/testData/debug/stepping/inlineFunAsMemberOfAnonymousObjectInsideInlineableLambda.kt");
+  }
+
+  @Test
+  @TestMetadata("inlineFunAsMemberOfClassInsideFun.kt")
+  public void testInlineFunAsMemberOfClassInsideFun() {
+    runTest("compiler/testData/debug/stepping/inlineFunAsMemberOfClassInsideFun.kt");
+  }
+
+  @Test
+  @TestMetadata("inlineFunReference.kt")
+  public void testInlineFunReference() {
+    runTest("compiler/testData/debug/stepping/inlineFunReference.kt");
+  }
+
+  @Test
   @TestMetadata("inlineNamedCallableReference.kt")
   public void testInlineNamedCallableReference() {
     runTest("compiler/testData/debug/stepping/inlineNamedCallableReference.kt");
@@ -349,6 +439,12 @@ public class FirJsSteppingTestGenerated extends AbstractFirJsSteppingTest {
   }
 
   @Test
+  @TestMetadata("kt63267_smartCastOnExtensionReceiver.kt")
+  public void testKt63267_smartCastOnExtensionReceiver() {
+    runTest("compiler/testData/debug/stepping/kt63267_smartCastOnExtensionReceiver.kt");
+  }
+
+  @Test
   @TestMetadata("lambdaStepInline.kt")
   public void testLambdaStepInline() {
     runTest("compiler/testData/debug/stepping/lambdaStepInline.kt");
@@ -358,6 +454,30 @@ public class FirJsSteppingTestGenerated extends AbstractFirJsSteppingTest {
   @TestMetadata("lambdaStepInlineWithDefaults.kt")
   public void testLambdaStepInlineWithDefaults() {
     runTest("compiler/testData/debug/stepping/lambdaStepInlineWithDefaults.kt");
+  }
+
+  @Test
+  @TestMetadata("leakingPrivateFunThroughDefaultArgument.kt")
+  public void testLeakingPrivateFunThroughDefaultArgument() {
+    runTest("compiler/testData/debug/stepping/leakingPrivateFunThroughDefaultArgument.kt");
+  }
+
+  @Test
+  @TestMetadata("leakingPrivateFunThroughInternalInlineVal.kt")
+  public void testLeakingPrivateFunThroughInternalInlineVal() {
+    runTest("compiler/testData/debug/stepping/leakingPrivateFunThroughInternalInlineVal.kt");
+  }
+
+  @Test
+  @TestMetadata("leakingPrivateFunThroughReferenceInInternalInlineFun.kt")
+  public void testLeakingPrivateFunThroughReferenceInInternalInlineFun() {
+    runTest("compiler/testData/debug/stepping/leakingPrivateFunThroughReferenceInInternalInlineFun.kt");
+  }
+
+  @Test
+  @TestMetadata("leakingPrivateValThroughInternalInlineFun.kt")
+  public void testLeakingPrivateValThroughInternalInlineFun() {
+    runTest("compiler/testData/debug/stepping/leakingPrivateValThroughInternalInlineFun.kt");
   }
 
   @Test
@@ -433,6 +553,12 @@ public class FirJsSteppingTestGenerated extends AbstractFirJsSteppingTest {
   }
 
   @Test
+  @TestMetadata("noinlineParameter.kt")
+  public void testNoinlineParameter() {
+    runTest("compiler/testData/debug/stepping/noinlineParameter.kt");
+  }
+
+  @Test
   @TestMetadata("nullcheck.kt")
   public void testNullcheck() {
     runTest("compiler/testData/debug/stepping/nullcheck.kt");
@@ -493,12 +619,6 @@ public class FirJsSteppingTestGenerated extends AbstractFirJsSteppingTest {
   }
 
   @Test
-  @TestMetadata("simpleSmap.kt")
-  public void testSimpleSmap() {
-    runTest("compiler/testData/debug/stepping/simpleSmap.kt");
-  }
-
-  @Test
   @TestMetadata("smapInlineAsArgument.kt")
   public void testSmapInlineAsArgument() {
     runTest("compiler/testData/debug/stepping/smapInlineAsArgument.kt");
@@ -532,6 +652,12 @@ public class FirJsSteppingTestGenerated extends AbstractFirJsSteppingTest {
   @TestMetadata("stringSwitchesSmall.kt")
   public void testStringSwitchesSmall() {
     runTest("compiler/testData/debug/stepping/stringSwitchesSmall.kt");
+  }
+
+  @Test
+  @TestMetadata("supercall.kt")
+  public void testSupercall() {
+    runTest("compiler/testData/debug/stepping/supercall.kt");
   }
 
   @Test

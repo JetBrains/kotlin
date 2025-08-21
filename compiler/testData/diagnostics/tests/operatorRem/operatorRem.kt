@@ -15,3 +15,6 @@ fun baz() {
     val b = Bar()
     b %= 1
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, localProperty, multiplicativeExpression,
+operator, propertyDeclaration */

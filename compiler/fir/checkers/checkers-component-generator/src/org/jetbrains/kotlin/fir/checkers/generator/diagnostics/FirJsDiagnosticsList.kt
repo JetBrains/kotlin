@@ -115,6 +115,8 @@ object JS_DIAGNOSTICS_LIST : DiagnosticList("FirJsErrors") {
             parameter<String>("name")
         }
         val NAMED_COMPANION_IN_EXPORTED_INTERFACE by error<KtElement>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT)
+
+        val NOT_EXPORTED_ACTUAL_DECLARATION_WHILE_EXPECT_IS_EXPORTED by error<KtElement>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT)
     }
 
     val DYNAMICS by object : DiagnosticGroup("Dynamics") {
@@ -130,6 +132,5 @@ object JS_DIAGNOSTICS_LIST : DiagnosticList("FirJsErrors") {
         val JS_STATIC_NOT_IN_CLASS_COMPANION by error<PsiElement>(PositioningStrategy.DECLARATION_SIGNATURE)
         val JS_STATIC_ON_NON_PUBLIC_MEMBER by error<PsiElement>(PositioningStrategy.DECLARATION_SIGNATURE)
         val JS_STATIC_ON_CONST by error<PsiElement>(PositioningStrategy.DECLARATION_SIGNATURE)
-        val JS_STATIC_ON_OVERRIDE by error<PsiElement>(PositioningStrategy.DECLARATION_SIGNATURE)
     }
 }

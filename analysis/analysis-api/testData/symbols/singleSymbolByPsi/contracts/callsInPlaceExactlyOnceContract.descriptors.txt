@@ -5,12 +5,13 @@ KaNamedFunctionSymbol:
   ]
   callableId: /exactlyOnceContract
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: [
     KaContractCallsInPlaceContractEffectDeclaration:
       valueParameterReference:
-        KaContractParameterValue:
-          parameterSymbol:
+        KaContractExplicitParameterValue:
+          symbol:
             KaValueParameterSymbol:
               annotations: []
               callableId: null

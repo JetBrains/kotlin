@@ -257,12 +257,6 @@ public class FirPsiJvmIrTextTestGenerated extends AbstractFirPsiJvmIrTextTest {
     }
 
     @Test
-    @TestMetadata("kt45934.kt")
-    public void testKt45934() {
-      runTest("compiler/testData/ir/irText/classes/kt45934.kt");
-    }
-
-    @Test
     @TestMetadata("localClasses.kt")
     public void testLocalClasses() {
       runTest("compiler/testData/ir/irText/classes/localClasses.kt");
@@ -1100,6 +1094,12 @@ public class FirPsiJvmIrTextTestGenerated extends AbstractFirPsiJvmIrTextTest {
       }
 
       @Test
+      @TestMetadata("delegateForExtPropertyInClass.kt")
+      public void testDelegateForExtPropertyInClass() {
+        runTest("compiler/testData/ir/irText/declarations/delegate/delegateForExtPropertyInClass.kt");
+      }
+
+      @Test
       @TestMetadata("delegationEvaluationOrder1.kt")
       public void testDelegationEvaluationOrder1() {
         runTest("compiler/testData/ir/irText/declarations/delegate/delegationEvaluationOrder1.kt");
@@ -1147,6 +1147,12 @@ public class FirPsiJvmIrTextTestGenerated extends AbstractFirPsiJvmIrTextTest {
       @TestMetadata("compiler/testData/ir/irText/declarations/multiplatform/k2")
       @TestDataPath("$PROJECT_ROOT")
       public class K2 {
+        @Test
+        @TestMetadata("actualizeInterfaceAsAny.kt")
+        public void testActualizeInterfaceAsAny() {
+          runTest("compiler/testData/ir/irText/declarations/multiplatform/k2/actualizeInterfaceAsAny.kt");
+        }
+
         @Test
         public void testAllFilesPresentInK2() {
           KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/declarations/multiplatform/k2"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
@@ -1345,12 +1351,6 @@ public class FirPsiJvmIrTextTestGenerated extends AbstractFirPsiJvmIrTextTest {
     public void testSuppressedNonPublicCall() {
       runTest("compiler/testData/ir/irText/errors/suppressedNonPublicCall.kt");
     }
-
-    @Test
-    @TestMetadata("unresolvedReference.kt")
-    public void testUnresolvedReference() {
-      runTest("compiler/testData/ir/irText/errors/unresolvedReference.kt");
-    }
   }
 
   @Nested
@@ -1402,6 +1402,12 @@ public class FirPsiJvmIrTextTestGenerated extends AbstractFirPsiJvmIrTextTest {
     @TestMetadata("assignments.kt")
     public void testAssignments() {
       runTest("compiler/testData/ir/irText/expressions/assignments.kt");
+    }
+
+    @Test
+    @TestMetadata("atomicFuUncheckedCast.kt")
+    public void testAtomicFuUncheckedCast() {
+      runTest("compiler/testData/ir/irText/expressions/atomicFuUncheckedCast.kt");
     }
 
     @Test
@@ -1963,12 +1969,6 @@ public class FirPsiJvmIrTextTestGenerated extends AbstractFirPsiJvmIrTextTest {
     }
 
     @Test
-    @TestMetadata("kt47328.kt")
-    public void testKt47328() {
-      runTest("compiler/testData/ir/irText/expressions/kt47328.kt");
-    }
-
-    @Test
     @TestMetadata("kt47450.kt")
     public void testKt47450() {
       runTest("compiler/testData/ir/irText/expressions/kt47450.kt");
@@ -2308,6 +2308,12 @@ public class FirPsiJvmIrTextTestGenerated extends AbstractFirPsiJvmIrTextTest {
     @TestMetadata("tryCatch.kt")
     public void testTryCatch() {
       runTest("compiler/testData/ir/irText/expressions/tryCatch.kt");
+    }
+
+    @Test
+    @TestMetadata("tryCatchIlt.kt")
+    public void testTryCatchIlt() {
+      runTest("compiler/testData/ir/irText/expressions/tryCatchIlt.kt");
     }
 
     @Test
@@ -4542,6 +4548,28 @@ public class FirPsiJvmIrTextTestGenerated extends AbstractFirPsiJvmIrTextTest {
   }
 
   @Nested
+  @TestMetadata("compiler/testData/ir/irText/lenientMode")
+  @TestDataPath("$PROJECT_ROOT")
+  public class LenientMode {
+    @Test
+    public void testAllFilesPresentInLenientMode() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/lenientMode"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+    }
+
+    @Test
+    @TestMetadata("annotations.kt")
+    public void testAnnotations() {
+      runTest("compiler/testData/ir/irText/lenientMode/annotations.kt");
+    }
+
+    @Test
+    @TestMetadata("lenientModeStubs.kt")
+    public void testLenientModeStubs() {
+      runTest("compiler/testData/ir/irText/lenientMode/lenientModeStubs.kt");
+    }
+  }
+
+  @Nested
   @TestMetadata("compiler/testData/ir/irText/properties")
   @TestDataPath("$PROJECT_ROOT")
   public class Properties {
@@ -4877,12 +4905,6 @@ public class FirPsiJvmIrTextTestGenerated extends AbstractFirPsiJvmIrTextTest {
     }
 
     @Test
-    @TestMetadata("genericDelegatedDeepProperty.kt")
-    public void testGenericDelegatedDeepProperty() {
-      runTest("compiler/testData/ir/irText/types/genericDelegatedDeepProperty.kt");
-    }
-
-    @Test
     @TestMetadata("genericFunWithStar.kt")
     public void testGenericFunWithStar() {
       runTest("compiler/testData/ir/irText/types/genericFunWithStar.kt");
@@ -5015,6 +5037,12 @@ public class FirPsiJvmIrTextTestGenerated extends AbstractFirPsiJvmIrTextTest {
       @TestMetadata("enhancedNullability.kt")
       public void testEnhancedNullability() {
         runTest("compiler/testData/ir/irText/types/nullChecks/enhancedNullability.kt");
+      }
+
+      @Test
+      @TestMetadata("enhancedNullabilityInCatch.kt")
+      public void testEnhancedNullabilityInCatch() {
+        runTest("compiler/testData/ir/irText/types/nullChecks/enhancedNullabilityInCatch.kt");
       }
 
       @Test

@@ -93,3 +93,6 @@ abstract class AbstractDerived2 : Interface {
 class FinalDerived2(override <!REDUNDANT_MODALITY_MODIFIER!>final<!> val gav: Int) : Base() {
     override fun bar() {}
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, expect, functionDeclaration, getter, integerLiteral, interfaceDeclaration,
+nestedClass, objectDeclaration, override, primaryConstructor, propertyDeclaration */

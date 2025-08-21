@@ -9,3 +9,5 @@ fun test(x: Any, y: Int?) {
   }
 }
 
+/* GENERATED_FIR_TAGS: classDeclaration, equalityExpression, functionDeclaration, ifExpression, isExpression, localClass,
+nullableType, primaryConstructor, smartcast */

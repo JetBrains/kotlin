@@ -9,6 +9,7 @@ import groovy.util.Node
 import groovy.util.NodeList
 import org.gradle.api.Project
 import org.gradle.api.XmlProvider
+import org.gradle.api.file.FileCollection
 import org.gradle.api.provider.Provider
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.publish.maven.tasks.GenerateMavenPom
@@ -21,7 +22,8 @@ internal data class ModuleCoordinates(
 
 internal abstract class PomDependenciesRewriter {
 
-    open val taskDependencies: Any? get() = null
+    /** [org.gradle.api.tasks.InputFiles] for [GenerateMavenPom] task to track dependencies on other tasks */
+    abstract val inputFiles: FileCollection
 
     abstract fun createDependenciesMappingForEachUsageContext(): List<Map<ModuleCoordinates, ModuleCoordinates>>
 
@@ -87,11 +89,11 @@ internal abstract class PomDependenciesRewriter {
     }
 }
 
-internal fun Project.addTaskDependenciesToPomGenerator(publication: MavenPublication, dependencies: Any) {
+internal fun Project.trackInputFilesInGenerateMavenPomTask(publication: MavenPublication, inputFiles: FileCollection) {
     val pom = publication.pom
     tasks.withType(GenerateMavenPom::class.java).configureEach {
         if (it.pom === pom) {
-            it.dependsOn(dependencies)
+            it.inputs.files(inputFiles)
         }
     }
 }

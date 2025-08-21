@@ -53,3 +53,6 @@ final value class D0(val x: Int)
 <!VALUE_CLASS_NOT_FINAL!>sealed<!> <!VALUE_CLASS_WITHOUT_JVM_INLINE_ANNOTATION!>value<!> class D3(val x: Int)
 
 <!INCOMPATIBLE_MODIFIERS, VALUE_CLASS_WITHOUT_JVM_INLINE_ANNOTATION!>value<!> <!INCOMPATIBLE_MODIFIERS!>data<!> class D4(val x: String)
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, companionObject, data, nestedClass, objectDeclaration,
+primaryConstructor, propertyDeclaration, sealed, value, vararg */

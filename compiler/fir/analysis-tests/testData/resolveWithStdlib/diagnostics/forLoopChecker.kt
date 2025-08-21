@@ -102,11 +102,14 @@ fun test(
     for (i in <!HAS_NEXT_MISSING, NEXT_MISSING!>notRange2<!>);
     for (i in <!NEXT_MISSING!>notRange3<!>);
     for (i in <!HAS_NEXT_MISSING!>notRange4<!>);
-    for (i in <!CONDITION_TYPE_MISMATCH!>notRange5<!>);
+    for (i in <!HAS_NEXT_FUNCTION_TYPE_MISMATCH!>notRange5<!>);
     for (i in notRange6);
-    for (i in <!CONDITION_TYPE_MISMATCH!>notRange7<!>);
+    for (i in <!HAS_NEXT_FUNCTION_TYPE_MISMATCH!>notRange7<!>);
     for (i in <!HAS_NEXT_MISSING!>notRange8<!>);
     for (i in <!OPERATOR_MODIFIER_REQUIRED!>notRange9<!>);
     for (i in range0);
     for (i in range1);
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, forLoop, functionDeclaration, getter, integerLiteral, localProperty, operator,
+primaryConstructor, propertyDeclaration, propertyWithExtensionReceiver */

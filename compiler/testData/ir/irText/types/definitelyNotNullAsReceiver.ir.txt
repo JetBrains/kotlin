@@ -1,23 +1,23 @@
 FILE fqName:<root> fileName:/definitelyNotNullAsReceiver.kt
-  FUN name:box visibility:public modality:FINAL <> () returnType:kotlin.Unit
+  FUN name:box visibility:public modality:FINAL returnType:kotlin.Unit
     BLOCK_BODY
-      CALL 'public final fun foo <T> (): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
-        <T>: kotlin.String?
-        $receiver: CONST String type=kotlin.String value=""
+      CALL 'public final fun foo <T> (<this>: {T of <root>.foo & Any}): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+        TYPE_ARG T: kotlin.String?
+        ARG <this>: CONST String type=kotlin.String value=""
       CALL 'public final fun foo <T> (l: kotlin.Function1<{T of <root>.foo & Any}, kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
-        <T>: kotlin.String?
-        l: FUN_EXPR type=kotlin.Function1<kotlin.String, kotlin.Unit> origin=LAMBDA
-          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:kotlin.String) returnType:kotlin.Unit
-            VALUE_PARAMETER name:it index:0 type:kotlin.String
+        TYPE_ARG T: kotlin.String?
+        ARG l: FUN_EXPR type=kotlin.Function1<kotlin.String, kotlin.Unit> origin=LAMBDA
+          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Unit
+            VALUE_PARAMETER kind:Regular name:it index:0 type:kotlin.String
             BLOCK_BODY
               TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
                 STRING_CONCATENATION type=kotlin.String
                   GET_VAR 'it: kotlin.String declared in <root>.box.<anonymous>' type=kotlin.String origin=null
-  FUN name:foo visibility:public modality:FINAL <T> ($receiver:{T of <root>.foo & Any}) returnType:kotlin.Unit
+  FUN name:foo visibility:public modality:FINAL returnType:kotlin.Unit
     TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
-    $receiver: VALUE_PARAMETER name:<this> type:{T of <root>.foo & Any}
+    VALUE_PARAMETER kind:ExtensionReceiver name:<this> index:0 type:{T of <root>.foo & Any}
     BLOCK_BODY
-  FUN name:foo visibility:public modality:FINAL <T> (l:kotlin.Function1<{T of <root>.foo & Any}, kotlin.Unit>) returnType:kotlin.Unit
+  FUN name:foo visibility:public modality:FINAL returnType:kotlin.Unit
     TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
-    VALUE_PARAMETER name:l index:0 type:kotlin.Function1<{T of <root>.foo & Any}, kotlin.Unit>
+    VALUE_PARAMETER kind:Regular name:l index:0 type:kotlin.Function1<{T of <root>.foo & Any}, kotlin.Unit>
     BLOCK_BODY

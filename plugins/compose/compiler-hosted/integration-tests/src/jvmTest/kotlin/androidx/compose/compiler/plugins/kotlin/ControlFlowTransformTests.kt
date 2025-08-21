@@ -2568,4 +2568,72 @@ class ControlFlowTransformTests(useFir: Boolean) : AbstractControlFlowTransformT
             val background by ThemeToken { background }
         """
     )
+
+    @Test
+    fun earlyReturnKey() = verifyGoldenComposeIrTransform(
+        source = """
+            import androidx.compose.runtime.*
+
+            @Composable
+            fun Test() {
+                key(1) {
+                    return
+                    Test()
+                }
+            }
+        """
+    )
+
+    @Test
+    fun earlyReturnKeyNoCalls() = verifyGoldenComposeIrTransform(
+        source = """
+            import androidx.compose.runtime.*
+
+            @Composable
+            fun Test() {
+                key(1) {
+                    return
+                }
+            }
+        """
+    )
+
+    @Test
+    fun earlyReturnKeyWithValue() = verifyGoldenComposeIrTransform(
+        source = """
+            import androidx.compose.runtime.*
+
+            @Composable
+            fun Test(): String {
+                key(1) {
+                    return "foo"
+                }
+            }
+        """
+    )
+
+    @Test
+    fun exhaustiveWhen() = verifyGoldenComposeIrTransform(
+        source = """
+            import androidx.compose.runtime.*
+
+            @Composable
+            fun <T> Test(alpha: Alpha<T>): Float =
+                when (alpha) {
+                    is Alpha.A -> 0f
+                    is Alpha.B -> 1f
+                }
+        """,
+        extra = """
+            sealed interface Alpha<T> {
+                data class A<T>(
+                    val unused: Unit = Unit,
+                ) : Alpha<T>
+
+                data class B<T>(
+                    val unused: Unit = Unit,
+                ) : Alpha<T>
+            }
+        """
+    )
 }

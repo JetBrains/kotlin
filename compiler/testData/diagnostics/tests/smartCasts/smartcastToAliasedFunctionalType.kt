@@ -20,3 +20,6 @@ class Box(val f: T) {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionalType, integerLiteral, interfaceDeclaration,
+isExpression, primaryConstructor, propertyDeclaration, smartcast, stringLiteral, whenExpression, whenWithSubject */

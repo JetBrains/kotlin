@@ -21,3 +21,4 @@ fun f() {
 
 fun foo(a: Any) {}
 
+/* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral, lambdaLiteral */

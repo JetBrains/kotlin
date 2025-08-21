@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyGetter
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertySetter
+import org.jetbrains.kotlin.fir.declarations.isLocal
 import org.jetbrains.kotlin.fir.declarations.utils.hasExplicitBackingField
 import org.jetbrains.kotlin.fir.declarations.utils.isAbstract
 import org.jetbrains.kotlin.fir.declarations.utils.isExtension
@@ -23,72 +24,71 @@ import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.types.*
 
 object FirInapplicableLateinitChecker : FirPropertyChecker(MppCheckerKind.Common) {
-    override fun check(declaration: FirProperty, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirProperty) {
         if (!declaration.isLateInit || declaration.returnTypeRef is FirErrorTypeRef) {
             return
         }
 
         if (declaration.isVal) {
-            reporter.reportError(declaration.source, "is allowed only on mutable properties", context)
+            reporter.reportError(declaration.source, "is allowed only on mutable properties")
         }
 
         if (declaration.initializer != null) {
             if (declaration.isLocal) {
-                reporter.reportError(declaration.source, "is not allowed on local variables with initializer", context)
+                reporter.reportError(declaration.source, "is not allowed on local variables with initializer")
             } else {
-                reporter.reportError(declaration.source, "is not allowed on properties with initializer", context)
+                reporter.reportError(declaration.source, "is not allowed on properties with initializer")
             }
         }
 
         if (declaration.delegate != null) {
-            reporter.reportError(declaration.source, "is not allowed on delegated properties", context)
+            reporter.reportError(declaration.source, "is not allowed on delegated properties")
         }
 
         if (declaration.returnTypeRef.coneType.canBeNull(context.session)) {
-            reporter.reportError(declaration.source, "is not allowed on properties of a type with nullable upper bound", context)
+            reporter.reportError(declaration.source, "is not allowed on properties of a type with nullable upper bound")
         }
 
         if (declaration.returnTypeRef.coneType.isPrimitive) {
             if (declaration.isLocal) {
-                reporter.reportError(declaration.source, "is not allowed on local variables of primitive types", context)
+                reporter.reportError(declaration.source, "is not allowed on local variables of primitive types")
             } else {
-                reporter.reportError(declaration.source, "is not allowed on properties of primitive types", context)
+                reporter.reportError(declaration.source, "is not allowed on properties of primitive types")
             }
         }
 
         if (declaration.hasExplicitBackingField) {
-            reporter.reportError(declaration.source, "must be moved to the field declaration", context)
+            reporter.reportError(declaration.source, "must be moved to the field declaration")
         }
 
         if ((declaration.hasGetter() || declaration.hasSetter()) && declaration.delegate == null) {
-            reporter.reportError(declaration.source, "is not allowed on properties with a custom getter or setter", context)
+            reporter.reportError(declaration.source, "is not allowed on properties with a custom getter or setter")
         }
 
         if (declaration.isExtension) {
-            reporter.reportError(declaration.source, "is not allowed on extension properties", context)
+            reporter.reportError(declaration.source, "is not allowed on extension properties")
         }
 
         if (declaration.contextParameters.isNotEmpty()) {
-            reporter.reportError(declaration.source, "is not allowed on properties with context receivers", context)
+            reporter.reportError(declaration.source, "is not allowed on properties with context receivers")
         }
 
         if (declaration.isAbstract) {
-            reporter.reportError(declaration.source, "is not allowed on abstract properties", context)
+            reporter.reportError(declaration.source, "is not allowed on abstract properties")
         }
 
         if (declaration.returnTypeRef.coneType.isSingleFieldValueClass(context.session)) {
-            val declarationType = declaration.returnTypeRef.coneType.fullyExpandedType(context.session)
+            val declarationType = declaration.returnTypeRef.coneType.fullyExpandedType()
             val variables = if (declaration.isLocal) "local variables" else "properties"
             when {
                 declarationType.isUnsignedType -> reporter.reportError(
                     declaration.source,
-                    "is not allowed on $variables of unsigned types",
-                    context
+                    "is not allowed on $variables of unsigned types"
                 )
                 else -> reporter.reportError(
                     declaration.source,
-                    "is not allowed on $variables of inline class types",
-                    context
+                    "is not allowed on $variables of inline class types"
                 )
             }
         }
@@ -97,7 +97,8 @@ object FirInapplicableLateinitChecker : FirPropertyChecker(MppCheckerKind.Common
     private fun FirProperty.hasGetter() = getter != null && getter !is FirDefaultPropertyGetter
     private fun FirProperty.hasSetter() = setter != null && setter !is FirDefaultPropertySetter
 
-    private fun DiagnosticReporter.reportError(source: KtSourceElement?, target: String, context: CheckerContext) {
-        reportOn(source, FirErrors.INAPPLICABLE_LATEINIT_MODIFIER, target, context)
+    context(context: CheckerContext)
+    private fun DiagnosticReporter.reportError(source: KtSourceElement?, target: String) {
+        reportOn(source, FirErrors.INAPPLICABLE_LATEINIT_MODIFIER, target)
     }
 }

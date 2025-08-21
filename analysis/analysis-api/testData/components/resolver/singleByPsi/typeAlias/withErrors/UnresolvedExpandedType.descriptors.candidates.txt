@@ -7,10 +7,12 @@ KtNameReferenceExpression(67,70): 'foo'
           receiverType = null
           returnType = ERROR_TYPE
           symbol = t: ERROR_TYPE
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -23,8 +25,10 @@ KtNameReferenceExpression(67,70): 'foo'
               receiverType = null
               returnType = ERROR_TYPE
               symbol = t: ERROR_TYPE
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = main/foo
       typeArgumentsMapping = {}
     isInBestCandidates = true

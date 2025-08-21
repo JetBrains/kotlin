@@ -19,11 +19,12 @@ package org.jetbrains.kotlin.resolve.jvm
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptorNonRoot
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
+import org.jetbrains.kotlin.load.java.descriptors.getImplClassNameForDeserialized
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.OverloadFilter
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedCallableMemberDescriptor
-import java.util.*
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedMemberDescriptor
 
 object JvmOverloadFilter : OverloadFilter {
     override fun filterPackageMemberOverloads(overloads: Collection<DeclarationDescriptorNonRoot>): Collection<DeclarationDescriptorNonRoot> {
@@ -40,7 +41,7 @@ object JvmOverloadFilter : OverloadFilter {
             if (overload is ConstructorDescriptor) continue
             if (overload !is DeserializedCallableMemberDescriptor) continue
 
-            val implClassFQN = JvmFileClassUtil.getPartFqNameForDeserialized(overload)
+            val implClassFQN = getPartFqNameForDeserialized(overload)
             if (implClassFQN !in sourceClassesFQNs) {
                 result.add(overload)
             }
@@ -48,4 +49,8 @@ object JvmOverloadFilter : OverloadFilter {
 
         return result
     }
+
+    private fun getPartFqNameForDeserialized(descriptor: DeserializedMemberDescriptor): FqName =
+        descriptor.getImplClassNameForDeserialized()?.fqNameForTopLevelClassMaybeWithDollars
+            ?: error("No implClassName for $descriptor")
 }

@@ -61,8 +61,33 @@ fun referenceChangedFunFromClass(): String = ClassWithChangedMembers::changedFun
 fun referenceRemovedFunFromInterface(): String = InterfaceWithChangedMembers::removedFun.name
 fun referenceChangedFunFromInterface(): String = InterfaceWithChangedMembers::changedFun.name
 
+fun referenceNestedToInnerConstructorWithoutDispatchReceiver(): String = ClassWithChangedMembers::NestedToInner.name
+fun referenceInnerToNestedConstructorWithoutDispatchReceiver(): String = ClassWithChangedMembers::InnerToNested.name
+fun referenceInnerToNestedConstructorWithDispatchReceiver(obj: ClassWithChangedMembers): String = obj::InnerToNested.name
+
+fun invokeNestedToInnerConstructorWithoutDispatchReceiver(): String = ClassWithChangedMembers::NestedToInner.invoke(123).toString()
+fun invokeInnerToNestedConstructorWithoutDispatchReceiver(obj: ClassWithChangedMembers): String = ClassWithChangedMembers::InnerToNested.invoke(obj, 123).toString()
+fun invokeInnerToNestedConstructorWithDispatchReceiver(obj: ClassWithChangedMembers): String = obj::InnerToNested.invoke(123).toString()
+
 fun referenceFunctionWithUnlinkedParameter(): String = ::functionWithUnlinkedParameter.name
 fun referenceFunctionWithUnlinkedReturnValue(): String = ::functionWithUnlinkedReturnValue.name
+
+class MyList<T> /* A non-inlining version of `kotlin.collections.listOf` */ constructor(vararg items: T) {
+    private val items = items.toMutableList()
+
+    // A non-inlining version of `kotlin.collections.map`.
+    fun <R> myMap(transform: (T) -> R): MyList<R> {
+        val result = MyList<R>()
+        for (item in this.items) {
+            result.items.add(transform(item))
+        }
+        return result
+    }
+
+    // A non-inlining version of `kotlin.collections.joinToString`.
+    fun myJoinToString() = items.joinToString()
+}
+
 fun referenceFunctionWithRemovedTypeParameter(): String {
     /*
      * The syntax of function references does not allow explicitly specifying type arguments.
@@ -70,7 +95,7 @@ fun referenceFunctionWithRemovedTypeParameter(): String {
      * `::functionWithRemovedTypeParameter` statement. So let's put the reference into
      * the context with evident type arguments.
      */
-    return listOf<Any?>(null).map<Any?, RemovedClassImpl>(::functionWithRemovedTypeParameter).joinToString()
+    return MyList<Any?>(null).myMap<RemovedClassImpl>(::functionWithRemovedTypeParameter).myJoinToString()
 }
 
 abstract class StableAbstractFunctionsHolder {

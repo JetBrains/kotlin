@@ -1,7 +1,10 @@
 element: param1
-implicit receivers:
-  type: test.MyClass<TypeParam>
-  owner symbol: KaFirNamedClassSymbol
+implicit values:
+  KaImplicitReceiver:
+    scopeIndexInTower = 0
+    type = test.MyClass<TypeParam>
+    ownerSymbol = KaNamedClassSymbol:
+      test/MyClass
 
 scopes:
   TypeScope, index = 0

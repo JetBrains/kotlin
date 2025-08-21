@@ -20,3 +20,5 @@ fun foo(mr: MyRecord) {
     takeString(mr.x)
     takeString(mr.x())
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaFunction, javaProperty, javaType */

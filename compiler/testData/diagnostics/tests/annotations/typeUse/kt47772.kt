@@ -18,3 +18,5 @@ fun test_error() {
 fun test_ok() {
     materialize<@Good String>()
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, functionDeclaration, nullableType, typeParameter */

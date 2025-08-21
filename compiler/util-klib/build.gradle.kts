@@ -6,10 +6,11 @@ plugins {
 description = "Common klib reader and writer"
 
 dependencies {
-    api(kotlinStdlib())
+    val coreDepsVersion = libs.versions.kotlin.`for`.gradle.plugins.compilation.get()
+    api("org.jetbrains.kotlin:kotlin-stdlib:$coreDepsVersion")
     api(project(":kotlin-util-io"))
 
-    compileOnly(project(":core:metadata"))
+    compileOnly(project(":core:metadata")) { exclude("org.jetbrains.kotlin", "kotlin-stdlib") }
 
     embedded(project(":core:metadata")) { isTransitive = false }
 

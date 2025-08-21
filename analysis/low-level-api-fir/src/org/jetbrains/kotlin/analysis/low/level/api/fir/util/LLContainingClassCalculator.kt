@@ -9,7 +9,7 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtFakeSourceElementKind.*
 import org.jetbrains.kotlin.KtPsiSourceElement
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getFirResolveSession
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getResolutionFacade
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.resolveToFirSymbolOfTypeSafe
 import org.jetbrains.kotlin.analysis.low.level.api.fir.projectStructure.llFirModuleData
 import org.jetbrains.kotlin.fir.containingClassLookupTag
@@ -59,6 +59,12 @@ internal object LLContainingClassCalculator {
 
         when (kind) {
             is KtFakeSourceElementKind -> {
+                if (symbol is FirBackingFieldSymbol) {
+                    if (kind == DefaultAccessor) {
+                        return computeContainingClass(symbol, (source.psi as? KtDeclaration)?.containingClassOrObject)
+                    }
+                }
+
                 if (symbol is FirConstructorSymbol && kind == ImplicitConstructor) {
                     return computeContainingClass(symbol, source.psi)
                 }
@@ -138,7 +144,8 @@ internal object LLContainingClassCalculator {
         is FirValueParameterSymbol, is FirAnonymousFunctionSymbol -> false
         is FirPropertySymbol -> !symbol.isLocal
         is FirNamedFunctionSymbol -> !symbol.isLocal
-        is FirCallableSymbol, is FirClassLikeSymbol, is FirDanglingModifierSymbol -> true
+        is FirClassLikeSymbol -> symbol.classId.isNestedClass
+        is FirCallableSymbol, is FirDanglingModifierSymbol -> true
         else -> false
     }
 
@@ -148,7 +155,7 @@ internal object LLContainingClassCalculator {
         }
 
         val module = symbol.llFirModuleData.ktModule
-        val resolveSession = module.getFirResolveSession(module.project)
-        return psi.resolveToFirSymbolOfTypeSafe<FirClassLikeSymbol<*>>(resolveSession)
+        val resolutionFacade = module.getResolutionFacade(module.project)
+        return psi.resolveToFirSymbolOfTypeSafe<FirClassLikeSymbol<*>>(resolutionFacade)
     }
 }

@@ -9,50 +9,47 @@ import org.jetbrains.kotlin.library.IrKotlinLibraryLayout
 import org.jetbrains.kotlin.library.IrWriter
 import org.jetbrains.kotlin.library.SerializedIrFile
 import org.jetbrains.kotlin.library.SerializedIrModule
+import org.jetbrains.kotlin.konan.file.File as KFile
 
-abstract class IrWriterImpl(val irLayout: IrKotlinLibraryLayout) : IrWriter
-
-class IrMonoliticWriterImpl(_irLayout: IrKotlinLibraryLayout) : IrWriterImpl(_irLayout) {
-
+class IrWriterImpl(val irLayout: IrKotlinLibraryLayout) : IrWriter {
     override fun addIr(ir: SerializedIrModule) {
         irLayout.irDir.mkdirs()
 
         with(ir.files.sortedBy { it.path }) {
-            IrArrayWriter(map { it.fileData }).writeIntoFile(irLayout.irFiles.absolutePath)
-            IrArrayWriter(map { it.declarations }).writeIntoFile(irLayout.irDeclarations.absolutePath)
-            IrArrayWriter(map { it.types }).writeIntoFile(irLayout.irTypes.absolutePath)
-            IrArrayWriter(map { it.signatures }).writeIntoFile(irLayout.irSignatures.absolutePath)
-            IrArrayWriter(map { it.strings }).writeIntoFile(irLayout.irStrings.absolutePath)
-            IrArrayWriter(map { it.bodies }).writeIntoFile(irLayout.irBodies.absolutePath)
-            IrArrayWriter(mapNotNull { it.debugInfo }).writeIntoFile(irLayout.irDebugInfo.absolutePath)
-        }
-    }
-}
-
-class IrPerFileWriterImpl(_irLayout: IrKotlinLibraryLayout) : IrWriterImpl(_irLayout) {
-    override fun addIr(ir: SerializedIrModule) {
-        irLayout.irDir.mkdirs()
-
-        ir.files.forEach {
-            serializeFile(it)
+            serializeNonNullableEntities(SerializedIrFile::fileData, irLayout::irFiles)
+            serializeNonNullableEntities(SerializedIrFile::declarations, irLayout::irDeclarations)
+            serializeNonNullableEntities(SerializedIrFile::inlineDeclarations, irLayout::irInlineDeclarations)
+            serializeNonNullableEntities(SerializedIrFile::types, irLayout::irTypes)
+            serializeNonNullableEntities(SerializedIrFile::signatures, irLayout::irSignatures)
+            serializeNonNullableEntities(SerializedIrFile::strings, irLayout::irStrings)
+            serializeNonNullableEntities(SerializedIrFile::bodies, irLayout::irBodies)
+            serializeNullableEntries(SerializedIrFile::debugInfo, irLayout::irDebugInfo)
+            serializeNullableEntries(SerializedIrFile::fileEntries, irLayout::irFileEntries)
         }
     }
 
-    private fun serializeFile(file: SerializedIrFile) {
-        val fqnPath = file.fqName
-        val fileId = file.path.hashCode().toString(Character.MAX_RADIX)
-        val irFileDirectory = "$fqnPath.$fileId.file"
-        val fileDir = irLayout.irDir.child(irFileDirectory)
+    private inline fun List<SerializedIrFile>.serializeNonNullableEntities(
+        accessor: (SerializedIrFile) -> ByteArray,
+        destination: () -> KFile,
+    ): Unit = IrArrayWriter(map { accessor(it) }).writeIntoFile(destination().absolutePath)
 
-        assert(!fileDir.exists)
-        fileDir.mkdirs()
+    private inline fun List<SerializedIrFile>.serializeNullableEntries(
+        accessor: (SerializedIrFile) -> ByteArray?,
+        destination: () -> KFile,
+    ) {
+        val nonNullEntries: List<ByteArray> = mapNotNull(accessor)
+        if (nonNullEntries.isEmpty()) {
+            // No entries -> nothing to write to `destination`.
+            return
+        }
 
-        irLayout.irFile(fileDir).writeBytes(file.fileData)
+        // The number of entries should be strictly the same as the number of serialized IR files.
+        // Otherwise, the resulting byte table will be incorrectly read during deserialization.
+        check(nonNullEntries.size == size) {
+            "Error while writing IR to ${destination()}:" +
+                    "\nOnly ${nonNullEntries.size} out of $size serialized IR files have non-nullable values."
+        }
 
-        irLayout.irDeclarations(fileDir).writeBytes(file.declarations)
-        irLayout.irTypes(fileDir).writeBytes(file.types)
-        irLayout.irSignatures(fileDir).writeBytes(file.signatures)
-        irLayout.irStrings(fileDir).writeBytes(file.strings)
-        irLayout.irBodies(fileDir).writeBytes(file.bodies)
+        IrArrayWriter(nonNullEntries).writeIntoFile(destination().absolutePath)
     }
 }

@@ -6,3 +6,6 @@ fun test() {
         checkSubtype<Nothing>(return@f 1)
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType, infix,
+integerLiteral, lambdaLiteral, nullableType, typeParameter, typeWithExtension */

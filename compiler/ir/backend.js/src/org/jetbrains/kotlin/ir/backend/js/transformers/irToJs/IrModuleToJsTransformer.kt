@@ -9,7 +9,14 @@ import org.jetbrains.kotlin.backend.common.serialization.checkIsFunctionInterfac
 import org.jetbrains.kotlin.backend.js.JsGenerationGranularity
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.ir.backend.js.*
-import org.jetbrains.kotlin.ir.backend.js.export.*
+import org.jetbrains.kotlin.ir.backend.js.tsexport.ExportModelGenerator as TsExportModelGenerator
+import org.jetbrains.kotlin.ir.backend.js.tsexport.TypeScriptFragment
+import org.jetbrains.kotlin.ir.backend.js.tsexport.joinTypeScriptFragments
+import org.jetbrains.kotlin.ir.backend.js.tsexport.toTypeScriptFragment
+import org.jetbrains.kotlin.ir.backend.js.jsexport.ExportModelGenerator as JsExportModelGenerator
+import org.jetbrains.kotlin.ir.backend.js.jsexport.ExportModelToJsStatements
+import org.jetbrains.kotlin.ir.backend.js.jsexport.ExportedDeclaration
+import org.jetbrains.kotlin.ir.backend.js.jsexport.ExportedModule
 import org.jetbrains.kotlin.ir.backend.js.lower.JsCodeOutliningLowering
 import org.jetbrains.kotlin.ir.backend.js.lower.StaticMembersLowering
 import org.jetbrains.kotlin.ir.backend.js.lower.isBuiltInClass
@@ -179,10 +186,12 @@ class IrModuleToJsTransformer(
     private class IrAndExportedDeclarations(val fragment: IrModuleFragment, val files: List<IrFileExports>)
 
     private fun associateIrAndExport(modules: Iterable<IrModuleFragment>): List<IrAndExportedDeclarations> {
-        val exportModelGenerator = ExportModelGenerator(backendContext, generateNamespacesForPackages = !isEsModules)
+        val tsExportModelGenerator = runIf(shouldGenerateTypeScriptDefinitions) {
+            TsExportModelGenerator(backendContext, generateNamespacesForPackages = !isEsModules)
+        }
 
         return modules.map { module ->
-            val files = exportModelGenerator.generateExportWithExternals(module.files)
+            val files = generateExportWithExternals(module.files, tsExportModelGenerator)
             IrAndExportedDeclarations(module, files)
         }
     }
@@ -237,8 +246,15 @@ class IrModuleToJsTransformer(
         dirtyFiles: Collection<IrFile>,
         allModules: Collection<IrModuleFragment>
     ): List<() -> JsIrProgramFragments> {
-        val exportModelGenerator = ExportModelGenerator(backendContext, generateNamespacesForPackages = !isEsModules)
-        val exportData = exportModelGenerator.generateExportWithExternals(dirtyFiles)
+        val exportData = generateExportWithExternals(
+            dirtyFiles,
+            runIf(shouldGenerateTypeScriptDefinitions) {
+                TsExportModelGenerator(
+                    backendContext,
+                    generateNamespacesForPackages = !isEsModules
+                )
+            },
+        )
         val mode = TranslationMode.fromFlags(production = false, backendContext.granularity, minimizedMemberNames = false)
 
         doStaticMembersLowering(allModules)
@@ -246,13 +262,26 @@ class IrModuleToJsTransformer(
         return exportData.map { { generateProgramFragment(it, mode) } }
     }
 
-    private fun ExportModelGenerator.generateExportWithExternals(irFiles: Collection<IrFile>): List<IrFileExports> {
+    private fun <E> generateExportWithExternals(rootFile: IrFile, generate: (IrPackageFragment) -> List<E>): List<E> {
+        val exports = generate(rootFile)
+        val additionalExports = backendContext.externalPackageFragment[rootFile.symbol]?.let(generate) ?: emptyList()
+        return additionalExports + exports
+    }
+
+    private fun generateExportWithExternals(
+        irFiles: Collection<IrFile>,
+        tsExportModelGenerator: TsExportModelGenerator?,
+    ): List<IrFileExports> {
+        val jsExportModelGenerator = JsExportModelGenerator(backendContext, generateNamespacesForPackages = !isEsModules)
         return irFiles.map { irFile ->
-            val exports = generateExport(irFile)
-            val additionalExports = backendContext.externalPackageFragment[irFile.symbol]?.let { generateExport(it) } ?: emptyList()
-            val allExports = additionalExports + exports
-            val tsDeclarations = runIf(shouldGenerateTypeScriptDefinitions) {
-                allExports.ifNotEmpty { toTypeScriptFragment(moduleKind) }
+            val allExports = generateExportWithExternals(irFile, jsExportModelGenerator::generateExport)
+            val tsDeclarations = if (tsExportModelGenerator != null) {
+                generateExportWithExternals(
+                    irFile,
+                    tsExportModelGenerator::generateExport
+                ).ifNotEmpty { toTypeScriptFragment(moduleKind) }
+            } else {
+                null
             }
             IrFileExports(irFile, allExports, tsDeclarations)
         }
@@ -396,7 +425,7 @@ class IrModuleToJsTransformer(
             .also {
                 it.dts = tsDeclarations
                 it.exports.statements += ExportModelToJsStatements(staticContext, backendContext.es6mode, { globalNames.declareFreshName(it, it) })
-                    .generateModuleExport(ExportedModule(mainModuleName, moduleKind, exports), internalModuleName, isEsModules)
+                    .generateModuleExport(ExportedModule(mainModuleName, exports), internalModuleName, isEsModules)
                 it.computeAndSaveNameBindings(emptySet(), nameGenerator)
             }
     }

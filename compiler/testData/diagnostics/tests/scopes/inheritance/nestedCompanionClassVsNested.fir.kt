@@ -94,3 +94,5 @@ class C: A() {
         Z().<!UNRESOLVED_REFERENCE!>A_C_Z<!>()
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, functionDeclaration, init, nestedClass, objectDeclaration */

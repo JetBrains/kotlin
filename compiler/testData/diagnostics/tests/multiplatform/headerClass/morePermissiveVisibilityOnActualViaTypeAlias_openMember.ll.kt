@@ -20,4 +20,6 @@ public class Foo {
 
 // FILE: jvm.kt
 
-actual typealias <!NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS!>Container<!> = foo.Foo
+actual typealias <!EXPECT_ACTUAL_INCOMPATIBLE_CLASS_SCOPE!>Container<!> = foo.Foo
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, functionDeclaration, javaType, typeAliasDeclaration */

@@ -83,3 +83,6 @@ fun test_error_4(sameFile: SameFile) {
         is SameFile.A -> 1
     }
 }
+
+/* GENERATED_FIR_TAGS: equalityExpression, functionDeclaration, integerLiteral, isExpression, javaProperty, javaType,
+localProperty, propertyDeclaration, smartcast, whenExpression, whenWithSubject */

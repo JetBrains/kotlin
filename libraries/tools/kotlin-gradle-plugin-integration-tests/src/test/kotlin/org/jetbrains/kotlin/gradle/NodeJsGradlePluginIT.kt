@@ -17,6 +17,11 @@ import kotlin.io.path.appendText
 
 @MppGradlePluginTests
 class NodeJsGradlePluginIT : KGPBaseTest() {
+
+    override val defaultBuildOptions: BuildOptions
+        // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
+        get() = super.defaultBuildOptions.copy(isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED)
+
     @DisplayName("Set different Node.js versions in different subprojects")
     @GradleTest
     @TestMetadata("subprojects-nodejs-setup")
@@ -75,7 +80,7 @@ class NodeJsGradlePluginIT : KGPBaseTest() {
         ) {
             listOf("app1", "app2").forEach { subProjectName ->
                 subProject(subProjectName).buildGradleKts.modify {
-                    it.replace("plugins.", "rootProject.plugins.")
+                    it.replace("plugins.", "@Suppress(\"DEPRECATION_ERROR\") rootProject.plugins.")
                         .replace("the", "rootProject.the")
                         .replace("NodeJsPlugin", "NodeJsRootPlugin")
                         .replace("NodeJsEnvSpec", "NodeJsRootExtension")

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -15,16 +15,28 @@ import org.jetbrains.kotlin.analysis.api.signatures.KaFunctionSignature
 import org.jetbrains.kotlin.analysis.api.signatures.KaVariableSignature
 import org.jetbrains.kotlin.analysis.api.symbols.KaFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaVariableSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.contextParameters
 import org.jetbrains.kotlin.analysis.api.symbols.receiverType
 
 internal class KaFe10SignatureSubstitutor(
-    override val analysisSessionProvider: () -> KaFe10Session
+    override val analysisSessionProvider: () -> KaFe10Session,
 ) : KaBaseSignatureSubstitutor<KaFe10Session>(), KaFe10SessionComponent {
     override fun <S : KaFunctionSymbol> S.asSignature(): KaFunctionSignature<S> = withValidityAssertion {
-        return KaFe10FunctionSignature(this, returnType, receiverType, valueParameters.map { it.asSignature() })
+        KaFe10FunctionSignature(
+            backingSymbol = this,
+            backingReturnType = returnType,
+            backingReceiverType = receiverType,
+            backingValueParameters = valueParameters.map { it.asSignature() },
+            backingContextParameters = contextParameters.map { it.asSignature() },
+        )
     }
 
     override fun <S : KaVariableSymbol> S.asSignature(): KaVariableSignature<S> = withValidityAssertion {
-        return KaFe10VariableSignature(this, returnType, receiverType)
+        KaFe10VariableSignature(
+            backingSymbol = this,
+            backingReturnType = returnType,
+            backingReceiverType = receiverType,
+            backingContextParameters = contextParameters.map { it.asSignature() },
+        )
     }
 }

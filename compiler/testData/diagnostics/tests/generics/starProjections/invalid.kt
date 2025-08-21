@@ -26,3 +26,7 @@ public class JavaClass<T extends JavaClass<? super T>> {
     public void bar(T... x) {}
     public T foo() {}
 }
+
+/* GENERATED_FIR_TAGS: capturedType, checkNotNullCall, classDeclaration, flexibleType, funWithExtensionReceiver,
+functionDeclaration, functionalType, inProjection, infix, integerLiteral, javaType, lambdaLiteral, nullableType,
+outProjection, primaryConstructor, propertyDeclaration, starProjection, typeConstraint, typeParameter, typeWithExtension */

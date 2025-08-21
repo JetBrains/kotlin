@@ -16,9 +16,10 @@ import org.jetbrains.kotlin.fir.types.ConeDynamicType
 import org.jetbrains.kotlin.fir.types.resolvedType
 
 object FirJsPropertyDelegationByDynamicChecker : FirPropertyChecker(MppCheckerKind.Common) {
-    override fun check(declaration: FirProperty, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirProperty) {
         if (declaration.delegate?.resolvedType is ConeDynamicType) {
-            reporter.reportOn(declaration.delegate?.source, FirJsErrors.PROPERTY_DELEGATION_BY_DYNAMIC, context)
+            reporter.reportOn(declaration.delegate?.source, FirJsErrors.PROPERTY_DELEGATION_BY_DYNAMIC)
         }
     }
 }

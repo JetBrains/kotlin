@@ -34,4 +34,7 @@ object ScriptingConfigurationKeys {
 
     val LEGACY_SCRIPT_RESOLVER_ENVIRONMENT_OPTION: CompilerConfigurationKey<MutableMap<String, Any?>> =
         CompilerConfigurationKey.create("Script resolver environment")
+
+    val ENABLE_SCRIPT_EXPLANATION_OPTION: CompilerConfigurationKey<Boolean> =
+        CompilerConfigurationKey.create("Enable additional IR generation which contains script expressions evaluation info")
 }

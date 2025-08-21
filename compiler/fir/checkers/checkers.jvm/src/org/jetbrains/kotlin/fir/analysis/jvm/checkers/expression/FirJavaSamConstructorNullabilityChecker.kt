@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.*
-import org.jetbrains.kotlin.fir.languageVersionSettings
+import org.jetbrains.kotlin.fir.isEnabled
 import org.jetbrains.kotlin.fir.references.isError
 import org.jetbrains.kotlin.fir.references.toResolvedFunctionSymbol
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
@@ -25,12 +25,10 @@ import org.jetbrains.kotlin.types.AbstractTypeChecker
 
 object FirJavaSamConstructorNullabilityChecker : FirFunctionCallChecker(MppCheckerKind.Common) {
 
-    override fun check(expression: FirFunctionCall, context: CheckerContext, reporter: DiagnosticReporter) {
-        val languageVersionSettings = context.session.languageVersionSettings
-        if (languageVersionSettings.supportsFeature(LanguageFeature.JavaTypeParameterDefaultRepresentationWithDNN)) return
-        val reportError = languageVersionSettings.supportsFeature(
-            LanguageFeature.ProhibitReturningIncorrectNullabilityValuesFromSamConstructorLambdaOfJdkInterfaces
-        )
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(expression: FirFunctionCall) {
+        val reportError =
+            LanguageFeature.ProhibitReturningIncorrectNullabilityValuesFromSamConstructorLambdaOfJdkInterfaces.isEnabled()
 
         val calleeReference = expression.calleeReference
         if (calleeReference.isError()) return
@@ -48,7 +46,7 @@ object FirJavaSamConstructorNullabilityChecker : FirFunctionCallChecker(MppCheck
         )
         val expectedReturnType = parameterFunctionType.typeArguments.lastOrNull()?.type?.let(substitutor::substituteOrSelf) ?: return
 
-        for (returnedExpression in lambda.anonymousFunction.getReturnedExpressions()) {
+        for (returnedExpression in lambda.anonymousFunction.symbol.getReturnedExpressions()) {
             val returnedExpressionType = returnedExpression.resolvedType
             if (!AbstractTypeChecker.isSubtypeOf(context.session.typeContext, returnedExpressionType, expectedReturnType)) {
                 if (reportError) {
@@ -57,16 +55,14 @@ object FirJavaSamConstructorNullabilityChecker : FirFunctionCallChecker(MppCheck
                         FirErrors.ARGUMENT_TYPE_MISMATCH,
                         returnedExpressionType,
                         expectedReturnType,
-                        true,
-                        context,
+                        true
                     )
                 } else {
                     reporter.reportOn(
                         returnedExpression.source,
                         FirJvmErrors.TYPE_MISMATCH_WHEN_FLEXIBILITY_CHANGES,
                         returnedExpressionType,
-                        expectedReturnType,
-                        context,
+                        expectedReturnType
                     )
                 }
             }

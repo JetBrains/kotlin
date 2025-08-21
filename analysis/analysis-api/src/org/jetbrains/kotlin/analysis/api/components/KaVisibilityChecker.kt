@@ -1,18 +1,23 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.analysis.api.components
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.analysis.api.KaContextParameterApi
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
+import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeOwner
+import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaFileSymbol
 import org.jetbrains.kotlin.psi.KtExpression
 
+@SubclassOptInRequired(KaImplementationDetail::class)
 public interface KaVisibilityChecker : KaSessionComponent {
     /**
      * Checks whether the [candidateSymbol] is visible in the [useSiteFile] from the given [position].
@@ -20,13 +25,34 @@ public interface KaVisibilityChecker : KaSessionComponent {
      * @param receiverExpression The [dispatch receiver](https://kotlin.github.io/analysis-api/receivers.html#types-of-receivers) expression
      *  which the [candidateSymbol] is called on, if applicable.
      */
+    @Deprecated(
+        "Use `createUseSiteVisibilityChecker` instead. It's much more performant for multiple visibility checks on the same use-site",
+        replaceWith = ReplaceWith("createUseSiteVisibilityChecker(useSiteFile, receiverExpression, position).isVisible(candidateSymbol)")
+    )
     @KaExperimentalApi
     public fun isVisible(
         candidateSymbol: KaDeclarationSymbol,
         useSiteFile: KaFileSymbol,
         receiverExpression: KtExpression? = null,
-        position: PsiElement
-    ): Boolean
+        position: PsiElement,
+    ): Boolean = withValidityAssertion {
+        createUseSiteVisibilityChecker(useSiteFile, receiverExpression, position).isVisible(candidateSymbol)
+    }
+
+    /**
+     * Creates a visibility checker for the given use-site position.
+     *
+     * @param receiverExpression The [dispatch receiver](https://kotlin.github.io/analysis-api/receivers.html#types-of-receivers) expression
+     *  which the candidate symbol is called on, if applicable.
+     *
+     * @see KaUseSiteVisibilityChecker
+     */
+    @KaExperimentalApi
+    public fun createUseSiteVisibilityChecker(
+        useSiteFile: KaFileSymbol,
+        receiverExpression: KtExpression? = null,
+        position: PsiElement,
+    ): KaUseSiteVisibilityChecker
 
     /**
      * Checks whether the given [KaCallableSymbol] (possibly inherited from a superclass) is visible in the given [classSymbol].
@@ -41,4 +67,58 @@ public interface KaVisibilityChecker : KaSessionComponent {
      * and explicit return types are required for such symbols.
      */
     public fun isPublicApi(symbol: KaDeclarationSymbol): Boolean
+}
+
+/**
+ * Allows checking if [KaDeclarationSymbol] is visible from the current use-site.
+ *
+ * [KaUseSiteVisibilityChecker] is created by [KaVisibilityChecker.createUseSiteVisibilityChecker].
+ *
+ * [KaUseSiteVisibilityChecker] is designed to be reused. Therefore, if you have multiple candidates to check from the same use-site position,
+ * it will be more performant to reuse the same [KaUseSiteVisibilityChecker].
+ */
+@KaExperimentalApi
+@SubclassOptInRequired(KaImplementationDetail::class)
+public interface KaUseSiteVisibilityChecker : KaLifetimeOwner {
+    /**
+     * Checks whether the [candidateSymbol] is visible at the current use-site.
+     *
+     * @param candidateSymbol The symbol whose visibility is to be checked.
+     * @return `true` if the [candidateSymbol] is visible from the current use-site, `false` otherwise.
+     */
+    @KaExperimentalApi
+    public fun isVisible(candidateSymbol: KaDeclarationSymbol): Boolean
+}
+
+/**
+ * @see KaVisibilityChecker.createUseSiteVisibilityChecker
+ */
+@KaExperimentalApi
+@KaContextParameterApi
+context(context: KaVisibilityChecker)
+public fun createUseSiteVisibilityChecker(
+    useSiteFile: KaFileSymbol,
+    receiverExpression: KtExpression? = null,
+    position: PsiElement,
+): KaUseSiteVisibilityChecker {
+    return with(context) { createUseSiteVisibilityChecker(useSiteFile, receiverExpression, position) }
+}
+
+/**
+ * @see KaVisibilityChecker.isVisibleInClass
+ */
+@KaExperimentalApi
+@KaContextParameterApi
+context(context: KaVisibilityChecker)
+public fun KaCallableSymbol.isVisibleInClass(classSymbol: KaClassSymbol): Boolean {
+    return with(context) { isVisibleInClass(classSymbol) }
+}
+
+/**
+ * @see KaVisibilityChecker.isPublicApi
+ */
+@KaContextParameterApi
+context(context: KaVisibilityChecker)
+public fun isPublicApi(symbol: KaDeclarationSymbol): Boolean {
+    return with(context) { isPublicApi(symbol) }
 }

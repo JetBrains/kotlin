@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactoryToRendererMap
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticRenderers.TO_STRING
 import org.jetbrains.kotlin.diagnostics.rendering.BaseDiagnosticRendererFactory
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.RENDER_TYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.SYMBOL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.SYMBOLS_ON_NEXT_LINES
 import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.CANNOT_CHECK_FOR_FORWARD_DECLARATION
@@ -19,6 +20,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.CONS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.EMPTY_OBJC_NAME
 import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.FORWARD_DECLARATION_AS_CLASS_LITERAL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.FORWARD_DECLARATION_AS_REIFIED_TYPE_ARGUMENT
+import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.IDENTITY_HASH_CODE_ON_VALUE_TYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.INAPPLICABLE_EXACT_OBJC_NAME
 import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.INAPPLICABLE_OBJC_NAME
 import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.INAPPLICABLE_OBJC_OVERRIDE
@@ -41,6 +43,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.MISS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.MUST_BE_OBJC_OBJECT_TYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.MUST_BE_UNIT_TYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.MUST_NOT_HAVE_EXTENSION_RECEIVER
+import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.NATIVE_SPECIFIC_ATOMIC
 import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.NON_LITERAL_OBJC_NAME_ARG
 import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.PROPERTY_MUST_BE_VAR
 import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.REDUNDANT_SWIFT_REFINEMENT
@@ -50,7 +53,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.TWO_
 import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.UNCHECKED_CAST_TO_FORWARD_DECLARATION
 
 object FirNativeErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
-    override val MAP: KtDiagnosticFactoryToRendererMap = KtDiagnosticFactoryToRendererMap("FIR").also { map ->
+    override val MAP: KtDiagnosticFactoryToRendererMap by KtDiagnosticFactoryToRendererMap("FIR") { map ->
         map.put(THROWS_LIST_EMPTY, "Throws must have a non-empty class list.")
         map.put(INCOMPATIBLE_THROWS_OVERRIDE, "Member overrides different ''@Throws'' filter from ''{0}''.", SYMBOL)
         map.put(INCOMPATIBLE_THROWS_INHERITED, "Member inherits different ''@Throws'' filters from:{0}", SYMBOLS_ON_NEXT_LINES)
@@ -105,23 +108,23 @@ object FirNativeErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(
             CANNOT_CHECK_FOR_FORWARD_DECLARATION,
             "Cannot check for forward declaration ''{0}''.",
-            FirDiagnosticRenderers.RENDER_TYPE
+            RENDER_TYPE
         )
         map.put(
             UNCHECKED_CAST_TO_FORWARD_DECLARATION,
             "Unchecked cast to forward declaration from ''{0}'' to ''{1}''.",
-            FirDiagnosticRenderers.RENDER_TYPE,
-            FirDiagnosticRenderers.RENDER_TYPE
+            RENDER_TYPE,
+            RENDER_TYPE
         )
         map.put(
             FORWARD_DECLARATION_AS_REIFIED_TYPE_ARGUMENT,
             "Cannot pass forward declaration ''{0}'' for reified type parameter.",
-            FirDiagnosticRenderers.RENDER_TYPE
+            RENDER_TYPE
         )
         map.put(
             FORWARD_DECLARATION_AS_CLASS_LITERAL,
             "Cannot refer to forward declaration ''{0}'' from class literal.",
-            FirDiagnosticRenderers.RENDER_TYPE
+            RENDER_TYPE
         )
         map.put(TWO_OR_LESS_PARAMETERS_ARE_SUPPORTED_HERE, "Only 0, 1 or 2 parameters are supported here.")
         map.put(PROPERTY_MUST_BE_VAR, "''@{0}'' property must be var.", TO_STRING)
@@ -130,13 +133,13 @@ object FirNativeErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             MUST_BE_OBJC_OBJECT_TYPE,
             "Unexpected {0}: ''{1}''\nOnly Objective-C object types are supported here.",
             TO_STRING,
-            FirDiagnosticRenderers.RENDER_TYPE
+            RENDER_TYPE
         )
         map.put(
             MUST_BE_UNIT_TYPE,
             "Unexpected {0}: ''{1}''\nOnly ''Unit'' is supported here.",
             TO_STRING,
-            FirDiagnosticRenderers.RENDER_TYPE
+            RENDER_TYPE
         )
         map.put(
             CONSTRUCTOR_OVERRIDES_ALREADY_OVERRIDDEN_OBJC_INITIALIZER,
@@ -161,6 +164,17 @@ object FirNativeErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(
             INAPPLICABLE_OBJC_OVERRIDE,
             "@ObjCSignatureOverride is only allowed on methods overriding methods from Objective-C.",
+        )
+        map.put(
+            NATIVE_SPECIFIC_ATOMIC,
+            "Native-specific atomic type ''kotlin.concurrent.{0}'' is going to be deprecated soon." +
+                    " Consider using ''kotlin.concurrent.atomics.{0}'' instead.",
+            TO_STRING
+        )
+        map.put(
+            IDENTITY_HASH_CODE_ON_VALUE_TYPE,
+            "Call to ''kotlin.native.identityHashCode'' on an instance of value type ''{0}'' can have unexpected behavior.",
+            RENDER_TYPE,
         )
     }
 }

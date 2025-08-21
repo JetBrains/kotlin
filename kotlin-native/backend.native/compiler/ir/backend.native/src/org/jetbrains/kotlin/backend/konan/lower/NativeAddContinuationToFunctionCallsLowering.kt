@@ -19,5 +19,5 @@ internal class NativeAddContinuationToFunctionCallsLowering(
      * In simple cases, function is left as is, and receives continuation as its last parameter
      * We should handle both cases here
      */
-    override fun IrSimpleFunction.isContinuationItself(): Boolean = overrides(context.ir.symbols.invokeSuspendFunction.owner)
+    override fun IrSimpleFunction.isContinuationItself(): Boolean = overrides(context.symbols.invokeSuspendFunction.owner)
 }

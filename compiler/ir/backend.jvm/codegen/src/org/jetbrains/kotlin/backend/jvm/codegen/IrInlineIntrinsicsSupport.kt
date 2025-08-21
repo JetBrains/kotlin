@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.backend.jvm.codegen
 
-import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
+import org.jetbrains.kotlin.backend.jvm.JvmBackendErrors
 import org.jetbrains.kotlin.backend.jvm.intrinsics.SignatureString
 import org.jetbrains.kotlin.backend.jvm.ir.getCallableReferenceOwnerKClassType
 import org.jetbrains.kotlin.backend.jvm.ir.getCallableReferenceTopLevelFlag
@@ -13,19 +13,17 @@ import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.inline.ReifiedTypeInliner
 import org.jetbrains.kotlin.codegen.state.JvmBackendConfig
+import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.descriptors.toIrBasedKotlinType
-import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classOrNull
-import org.jetbrains.kotlin.ir.util.allParametersCount
 import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes.*
-import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmBackendErrors
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.model.TypeParameterMarker
 import org.jetbrains.org.objectweb.asm.Type
@@ -38,15 +36,11 @@ import org.jetbrains.org.objectweb.asm.tree.InsnList
 
 class IrInlineIntrinsicsSupport(
     private val classCodegen: ClassCodegen,
-    private val reportErrorsOn: IrExpression,
+    private val reportErrorsOn: IrElement,
     private val containingFile: IrFile,
 ) : ReifiedTypeInliner.IntrinsicsSupport<IrType> {
     override val config: JvmBackendConfig
         get() = classCodegen.context.config
-
-    // todo: this likely need to be moved up as IrInlineIntrinsicsSupport is recreated every time in getOrCreateCallGenerator
-    private val pluginExtensions = IrGenerationExtension.getInstances(classCodegen.context.state.project)
-        .mapNotNull { it.getPlatformIntrinsicExtension(classCodegen.context) as? JvmIrIntrinsicExtension }
 
     override fun putClassInstance(v: InstructionAdapter, type: IrType) {
         ExpressionCodegen.generateClassInstance(v, type, classCodegen.typeMapper, wrapPrimitives = false)
@@ -127,7 +121,12 @@ class IrInlineIntrinsicsSupport(
             .report(JvmBackendErrors.TYPEOF_NON_REIFIED_TYPE_PARAMETER_WITH_RECURSIVE_BOUND, typeParameterName.asString())
     }
 
-    override fun rewritePluginDefinedOperationMarker(v: InstructionAdapter, reifiedInsn: AbstractInsnNode, instructions: InsnList, type: IrType): Boolean {
-        return pluginExtensions.any { it.rewritePluginDefinedOperationMarker(v, reifiedInsn, instructions, type) }
+    override fun rewritePluginDefinedOperationMarker(
+        v: InstructionAdapter,
+        reifiedInsn: AbstractInsnNode,
+        instructions: InsnList,
+        type: IrType,
+    ): Boolean {
+        return classCodegen.intrinsicExtensions.any { it.rewritePluginDefinedOperationMarker(v, reifiedInsn, instructions, type) }
     }
 }

@@ -43,7 +43,7 @@ fun Box(child: Function2<Composer, Int, Unit>, %composer: Composer?, %changed: I
   if (%changed and 0b0110 == 0) {
     %dirty = %dirty or if (%composer.changedInstance(child)) 0b0100 else 0b0010
   }
-  if (%dirty and 0b0011 != 0b0010 || !%composer.skipping) {
+  if (%composer.shouldExecute(%dirty and 0b0011 != 0b0010, %dirty and 0b0001)) {
     if (isTraceInProgress()) {
       traceEventStart(<>, %dirty, -1, <>)
     }
@@ -65,7 +65,7 @@ fun Foo(crossinline child: Function2<Composer, Int, Unit>, %composer: Composer?,
   sourceInformationMarkerStart(%composer, <>, "CC(Foo)<{>,<{>,<Box>:Test.kt")
   val a = rememberComposableLambda(<>, false, { %composer: Composer?, %changed: Int ->
     sourceInformation(%composer, "C:Test.kt")
-    if (%changed and 0b0011 != 0b0010 || !%composer.skipping) {
+    if (%composer.shouldExecute(%changed and 0b0011 != 0b0010, %changed and 0b0001)) {
       if (isTraceInProgress()) {
         traceEventStart(<>, %changed, -1, <>)
       }
@@ -79,7 +79,7 @@ fun Foo(crossinline child: Function2<Composer, Int, Unit>, %composer: Composer?,
   }, %composer, 0b00110110)
   Box(rememberComposableLambda(<>, true, { %composer: Composer?, %changed: Int ->
     sourceInformation(%composer, "C<a()>,<child(...>:Test.kt")
-    if (%changed and 0b0011 != 0b0010 || !%composer.skipping) {
+    if (%composer.shouldExecute(%changed and 0b0011 != 0b0010, %changed and 0b0001)) {
       if (isTraceInProgress()) {
         traceEventStart(<>, %changed, -1, <>)
       }
@@ -99,7 +99,7 @@ fun Foo(crossinline child: Function2<Composer, Int, Unit>, %composer: Composer?,
 fun Test(%composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(Test)<Foo>:Test.kt")
-  if (%changed != 0 || !%composer.skipping) {
+  if (%composer.shouldExecute(%changed != 0, %changed and 0b0001)) {
     if (isTraceInProgress()) {
       traceEventStart(<>, %changed, -1, <>)
     }
@@ -122,7 +122,7 @@ fun Test(%composer: Composer?, %changed: Int) {
 internal object ComposableSingletons%TestKt {
   val lambda%1624704495: Function2<Composer, Int, Unit> = composableLambdaInstance(<>, false) { %composer: Composer?, %changed: Int ->
     sourceInformation(%composer, "C:Test.kt")
-    if (%changed and 0b0011 != 0b0010 || !%composer.skipping) {
+    if (%composer.shouldExecute(%changed and 0b0011 != 0b0010, %changed and 0b0001)) {
       if (isTraceInProgress()) {
         traceEventStart(<>, %changed, -1, <>)
       }

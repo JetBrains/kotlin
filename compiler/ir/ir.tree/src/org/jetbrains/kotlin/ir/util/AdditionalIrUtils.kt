@@ -7,13 +7,19 @@ package org.jetbrains.kotlin.ir.util
 
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.ir.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
+import org.jetbrains.kotlin.ir.expressions.IrGetEnumValue
+import org.jetbrains.kotlin.ir.expressions.IrVararg
 import org.jetbrains.kotlin.ir.symbols.*
+import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.types.isArray
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
+import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.filterIsInstanceAnd
 
 val IrConstructor.constructedClass get() = this.parent as IrClass
@@ -125,7 +131,11 @@ private val IrConstructorCall.annotationClass
     get() = this.symbol.owner.constructedClass
 
 fun IrConstructorCall.isAnnotationWithEqualFqName(fqName: FqName): Boolean =
-    annotationClass.hasEqualFqName(fqName)
+    if (symbol.isBound) {
+        annotationClass.hasEqualFqName(fqName)
+    } else {
+        symbol.hasEqualFqName(fqName.child(SpecialNames.INIT))
+    }
 
 val IrClass.packageFqName: FqName?
     get() = symbol.signature?.packageFqName() ?: parent.getPackageFragment()?.packageFqName
@@ -154,7 +164,7 @@ fun IrSymbol.hasEqualFqName(fqName: FqName): Boolean {
     }
 }
 
-private fun IrSymbol.hasTopLevelEqualFqName(packageName: String, declarationName: String): Boolean {
+fun IrSymbol.hasTopLevelEqualFqName(packageName: String, declarationName: String): Boolean {
     return with(signature as? IdSignature.CommonSignature ?: return false) {
         // optimized version of FqName("$packageFqName.$declarationFqName") == fqName
         packageFqName == packageName && declarationFqName == declarationName
@@ -164,10 +174,10 @@ private fun IrSymbol.hasTopLevelEqualFqName(packageName: String, declarationName
 fun List<IrConstructorCall>.hasAnnotation(classId: ClassId): Boolean = hasAnnotation(classId.asSingleFqName())
 
 fun List<IrConstructorCall>.hasAnnotation(fqName: FqName): Boolean =
-    any { it.annotationClass.hasEqualFqName(fqName) }
+    any { it.isAnnotationWithEqualFqName(fqName) }
 
 fun List<IrConstructorCall>.findAnnotation(fqName: FqName): IrConstructorCall? =
-    firstOrNull { it.annotationClass.hasEqualFqName(fqName) }
+    firstOrNull { it.isAnnotationWithEqualFqName(fqName) }
 
 val IrDeclaration.fileEntry: IrFileEntry
     get() = parent.let {
@@ -203,24 +213,36 @@ val IrDeclaration.isAnonymousObject get() = this is IrClass && name == SpecialNa
 
 val IrDeclaration.isAnonymousFunction get() = this is IrSimpleFunction && name == SpecialNames.NO_NAME_PROVIDED
 
-val IrDeclaration.isLocal: Boolean
-    get() {
-        var current: IrElement = this
-        while (current !is IrPackageFragment) {
-            require(current is IrDeclaration)
+/**
+ * Used to mark local declarations that have been lifted out of their local scope and changed their visibility to a non-local one.
+ *
+ * Sometimes it is useful to be able to distinguish such declarations even after they were lifted.
+ */
+var IrDeclaration.isOriginallyLocalDeclaration: Boolean by irFlag(copyByDefault = true)
 
-            if (current is IrDeclarationWithVisibility) {
-                if (current.visibility == DescriptorVisibilities.LOCAL) return true
-            }
+private inline fun IrDeclaration.isLocalImpl(isLocal: (IrDeclarationWithVisibility) -> Boolean): Boolean {
+    var current: IrElement = this
+    while (current !is IrPackageFragment) {
+        require(current is IrDeclaration)
 
-            if (current.isAnonymousObject) return true
-            if (current is IrScript || (current is IrClass && current.origin == IrDeclarationOrigin.SCRIPT_CLASS)) return true
-
-            current = current.parent
+        if (current is IrDeclarationWithVisibility) {
+            if (isLocal(current)) return true
         }
 
-        return false
+        if (current.isAnonymousObject) return true
+        if (current is IrScript || (current is IrClass && current.origin == IrDeclarationOrigin.SCRIPT_CLASS)) return true
+
+        current = current.parent
     }
+
+    return false
+}
+
+val IrDeclaration.isLocal: Boolean
+    get() = isLocalImpl { it.visibility == DescriptorVisibilities.LOCAL }
+
+val IrDeclaration.isOriginallyLocal: Boolean
+    get() = isLocalImpl { it.visibility == DescriptorVisibilities.LOCAL || it.isOriginallyLocalDeclaration }
 
 @ObsoleteDescriptorBasedAPI
 val IrDeclaration.module get() = this.descriptor.module
@@ -230,7 +252,8 @@ const val SYNTHETIC_OFFSET = -2
 class NaiveSourceBasedFileEntryImpl(
     override val name: String,
     override val lineStartOffsets: IntArray = intArrayOf(),
-    override val maxOffset: Int = UNDEFINED_OFFSET
+    override val maxOffset: Int = UNDEFINED_OFFSET,
+    override val firstRelevantLineIndex: Int = 0,
 ) : AbstractIrFileEntry() {
     val lineStartOffsetsAreEmpty: Boolean
         get() = lineStartOffsets.isEmpty()
@@ -289,7 +312,7 @@ fun IrClassSymbol.getPropertyGetter(name: String): IrSimpleFunctionSymbol? = own
 fun IrClassSymbol.getPropertySetter(name: String): IrSimpleFunctionSymbol? = owner.getPropertySetter(name)
 
 fun filterOutAnnotations(fqName: FqName, annotations: List<IrConstructorCall>): List<IrConstructorCall> {
-    return annotations.filterNot { it.annotationClass.hasEqualFqName(fqName) }
+    return annotations.filterNot { it.isAnnotationWithEqualFqName(fqName) }
 }
 
 fun IrFunction.isBuiltInSuspendCoroutine(): Boolean =
@@ -300,3 +323,40 @@ fun IrFunction.isBuiltInSuspendCoroutineUninterceptedOrReturn(): Boolean =
         "suspendCoroutineUninterceptedOrReturn",
         StandardNames.COROUTINES_INTRINSICS_PACKAGE_FQ_NAME
     )
+
+/**
+ * @return null - if [this] class is not an annotation class ([isAnnotationClass])
+ * set of [KotlinTarget] representing the annotation targets of the annotation
+ * ```
+ * @Target(AnnotationTarget.CLASS, AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY, AnnotationTarget.CONSTRUCTOR)
+ * annotation class Foo
+ * ```
+ *
+ * shall return Class, Function, Property & Constructor
+ */
+fun IrClass.getAnnotationTargets(): Set<KotlinTarget>? {
+    if (!this.isAnnotationClass) return null
+
+    val valueArgument = getAnnotation(StandardNames.FqNames.target)
+        ?.getValueArgument(StandardClassIds.Annotations.ParameterNames.targetAllowedTargets) as? IrVararg
+        ?: return KotlinTarget.DEFAULT_TARGET_SET
+    return valueArgument.elements.filterIsInstance<IrGetEnumValue>().mapNotNull {
+        KotlinTarget.valueOrNull(it.symbol.owner.name.asString())
+    }.toSet()
+}
+
+fun IrClass.selectSAMOverriddenFunctionOrNull(): IrSimpleFunction? {
+    return when {
+        // Function classes on jvm have some extra methods, which would be in fact implemented by super type,
+        // e.g., callBy and other reflection related callables. So we need to filter them out.
+        symbol.isKFunction() || symbol.isKSuspendFunction() || symbol.isFunction() || symbol.isSuspendFunction() ->
+            functions.singleOrNull { it.name == OperatorNameConventions.INVOKE }
+        symbol.defaultType.isKProperty() ->
+            functions.singleOrNull { it.name == OperatorNameConventions.GET }
+        else ->
+            functions.singleOrNull { it.modality == Modality.ABSTRACT }
+    }
+}
+
+fun IrClass.selectSAMOverriddenFunction(): IrSimpleFunction = selectSAMOverriddenFunctionOrNull()
+    ?: error("${render()} should have a single abstract method to be a type of function reference")

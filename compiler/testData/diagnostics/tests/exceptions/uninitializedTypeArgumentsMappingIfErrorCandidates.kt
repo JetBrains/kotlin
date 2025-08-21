@@ -24,3 +24,6 @@ import alias.<!CONFLICTING_IMPORT!>X<!>
 fun test() {
     val x = <!UNRESOLVED_REFERENCE!>X<!><String>()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, localProperty, nullableType, propertyDeclaration,
+typeAliasDeclaration, typeAliasDeclarationWithTypeParameter, typeParameter */

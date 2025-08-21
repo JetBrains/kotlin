@@ -10,3 +10,5 @@ class A {
 fun main() {
     ::<!UNRESOLVED_REFERENCE!>Inner<!>
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, inner */

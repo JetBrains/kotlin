@@ -1,0 +1,4 @@
+Invalidated sessions:
+library1
+library1 (resolvable session)
+sourceModule

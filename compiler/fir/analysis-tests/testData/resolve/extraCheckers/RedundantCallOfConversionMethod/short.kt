@@ -1,3 +1,5 @@
 // RUN_PIPELINE_TILL: BACKEND
 // WITH_STDLIB
 val foo = Short.MAX_VALUE.<!REDUNDANT_CALL_OF_CONVERSION_METHOD!>toShort()<!>
+
+/* GENERATED_FIR_TAGS: propertyDeclaration */

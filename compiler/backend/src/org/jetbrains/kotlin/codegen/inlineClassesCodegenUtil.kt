@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.codegen
 
+import org.jetbrains.kotlin.codegen.inline.findVirtualFile
 import org.jetbrains.kotlin.codegen.state.GenerationState
-import org.jetbrains.kotlin.load.kotlin.VirtualFileFinder
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.org.objectweb.asm.ClassReader
 import org.jetbrains.org.objectweb.asm.ClassVisitor
@@ -15,8 +15,7 @@ import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.commons.Method
 
 fun classFileContainsMethod(classId: ClassId, state: GenerationState, method: Method): Boolean? {
-    val bytes = VirtualFileFinder.getInstance(state.project, state.module).findVirtualFileWithHeader(classId)
-        ?.contentsToByteArray() ?: return null
+    val bytes = findVirtualFile(state, classId)?.contentsToByteArray() ?: return null
     var found = false
     ClassReader(bytes).accept(object : ClassVisitor(Opcodes.API_VERSION) {
         override fun visitMethod(

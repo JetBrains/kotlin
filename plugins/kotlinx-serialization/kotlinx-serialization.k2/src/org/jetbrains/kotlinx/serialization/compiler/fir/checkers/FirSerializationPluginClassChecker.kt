@@ -12,14 +12,12 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.SourceElementPositioningStrategies
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.analysis.checkers.*
+import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirClassChecker
-import org.jetbrains.kotlin.fir.analysis.checkers.declaration.primaryConstructorSymbol
+import org.jetbrains.kotlin.fir.analysis.checkers.extractArgumentsTypeRefAndSource
 import org.jetbrains.kotlin.fir.analysis.checkers.isSingleFieldValueClass
-import org.jetbrains.kotlin.fir.analysis.checkers.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.annotationPlatformSupport
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.moduleData
@@ -31,15 +29,21 @@ import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.resolve.jvm.annotations.TRANSIENT_ANNOTATION_CLASS_ID
+import org.jetbrains.kotlin.name.JvmStandardClassIds.TRANSIENT_ANNOTATION_CLASS_ID
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlinx.serialization.compiler.diagnostic.RuntimeVersions
 import org.jetbrains.kotlinx.serialization.compiler.fir.*
 import org.jetbrains.kotlinx.serialization.compiler.fir.checkers.FirSerializationErrors.EXTERNAL_SERIALIZER_NO_SUITABLE_CONSTRUCTOR
 import org.jetbrains.kotlinx.serialization.compiler.fir.checkers.FirSerializationErrors.EXTERNAL_SERIALIZER_USELESS
-import org.jetbrains.kotlinx.serialization.compiler.fir.services.*
+import org.jetbrains.kotlinx.serialization.compiler.fir.services.dependencySerializationInfoProvider
+import org.jetbrains.kotlinx.serialization.compiler.fir.services.findTypeSerializerOrContextUnchecked
+import org.jetbrains.kotlinx.serialization.compiler.fir.services.serializablePropertiesProvider
+import org.jetbrains.kotlinx.serialization.compiler.fir.services.versionReader
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializationAnnotations
+import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializationAnnotations.protoNumberAnnotationClassId
+import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializationAnnotations.protoOneOfAnnotationClassId
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializersClassIds
 
 object FirSerializationPluginClassChecker : FirClassChecker(MppCheckerKind.Common) {
@@ -48,7 +52,8 @@ object FirSerializationPluginClassChecker : FirClassChecker(MppCheckerKind.Commo
     private const val UNKNOWN = "unknown"
     private const val NA = "N/A"
 
-    override fun check(declaration: FirClass, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirClass) {
         with(context) {
             val classSymbol = declaration.symbol
             checkMetaSerializableApplicable(classSymbol, reporter)
@@ -62,6 +67,7 @@ object FirSerializationPluginClassChecker : FirClassChecker(MppCheckerKind.Commo
 
             val properties = buildSerializableProperties(classSymbol, reporter) ?: return
             checkCorrectTransientAnnotationIsUsed(classSymbol, properties.serializableProperties, reporter)
+            checkProtobufProperties(properties.serializableProperties, reporter)
             checkTransients(classSymbol, reporter)
             analyzePropertiesSerializers(classSymbol, properties.serializableProperties, reporter)
             checkInheritedAnnotations(classSymbol, reporter)
@@ -76,7 +82,7 @@ object FirSerializationPluginClassChecker : FirClassChecker(MppCheckerKind.Commo
         val anno = classSymbol.resolvedAnnotationsWithClassIds
             .find { it.toAnnotationClassId(session) == SerializationAnnotations.metaSerializableAnnotationClassId }
             ?: return
-        reporter.reportOn(anno.source, FirSerializationErrors.META_SERIALIZABLE_NOT_APPLICABLE, this)
+        reporter.reportOn(anno.source, FirSerializationErrors.META_SERIALIZABLE_NOT_APPLICABLE)
     }
 
     private fun CheckerContext.checkInheritableSerialInfoNotRepeatable(
@@ -88,18 +94,16 @@ object FirSerializationPluginClassChecker : FirClassChecker(MppCheckerKind.Commo
         val anno = classSymbol.resolvedAnnotationsWithClassIds
             .find { it.toAnnotationClassId(session) == SerializationAnnotations.inheritableSerialInfoClassId }
             ?: return
-        reporter.reportOn(anno.source, FirSerializationErrors.INHERITABLE_SERIALINFO_CANT_BE_REPEATABLE, this)
+        reporter.reportOn(anno.source, FirSerializationErrors.INHERITABLE_SERIALINFO_CANT_BE_REPEATABLE)
     }
 
     private fun CheckerContext.checkExternalSerializer(classSymbol: FirClassSymbol<*>, reporter: DiagnosticReporter) {
         val serializableKType = classSymbol.getSerializerForClass(session) ?: return
         val serializableClassSymbol = serializableKType.toRegularClassSymbol(session) ?: return
 
-        val declarations = classSymbol.declarationSymbols
-
         val parametersCount = serializableKType.typeArguments.size
         if (parametersCount > 0) {
-            val hasSuitableConstructor = declarations.filterIsInstance<FirConstructorSymbol>().any { constructor ->
+            val hasSuitableConstructor = classSymbol.constructors(session).any { constructor ->
                 constructor.valueParameterSymbols.size == parametersCount
                         && constructor.valueParameterSymbols.all { param -> param.resolvedReturnType.isKSerializer }
             }
@@ -110,24 +114,24 @@ object FirSerializationPluginClassChecker : FirClassChecker(MppCheckerKind.Commo
                     EXTERNAL_SERIALIZER_NO_SUITABLE_CONSTRUCTOR,
                     classSymbol,
                     serializableKType,
-                    parametersCount.toString(),
-                    this
+                    parametersCount.toString()
                 )
             }
         }
 
-        val descriptorOverridden = declarations.filterIsInstance<FirPropertySymbol>().singleOrNull {
+        val descriptorOverridden = classSymbol.declaredProperties(session).singleOrNull {
             it.name == SerialEntityNames.SERIAL_DESC_FIELD_NAME
                     && it.isOverride
                     && it.origin == FirDeclarationOrigin.Source
         } != null
-        val serializeOverridden = declarations.filterIsInstance<FirFunctionSymbol<*>>().singleOrNull {
+        val functions = classSymbol.declaredFunctions(session)
+        val serializeOverridden = functions.singleOrNull {
             it.name == SerialEntityNames.SAVE_NAME
                     && it.valueParameterSymbols.size == 2
                     && it.isOverride
                     && it.origin == FirDeclarationOrigin.Source
         } != null
-        val deserializeOverridden = declarations.filterIsInstance<FirFunctionSymbol<*>>().singleOrNull {
+        val deserializeOverridden = functions.singleOrNull {
             it.name == SerialEntityNames.LOAD_NAME
                     && it.valueParameterSymbols.size == 1
                     && it.isOverride
@@ -136,7 +140,7 @@ object FirSerializationPluginClassChecker : FirClassChecker(MppCheckerKind.Commo
 
         if (descriptorOverridden && serializeOverridden && deserializeOverridden) {
             val source = classSymbol.getSerializerAnnotation(session)?.source ?: classSymbol.source
-            reporter.reportOn(source, EXTERNAL_SERIALIZER_USELESS, classSymbol, this)
+            reporter.reportOn(source, EXTERNAL_SERIALIZER_USELESS, classSymbol)
             return
         }
 
@@ -148,7 +152,7 @@ object FirSerializationPluginClassChecker : FirClassChecker(MppCheckerKind.Commo
             } else {
                 FirSerializationErrors.EXTERNAL_CLASS_IN_ANOTHER_MODULE
             }
-            reporter.reportOn(source, error, serializableClassSymbol, serializableKType, this)
+            reporter.reportOn(source, error, serializableClassSymbol, serializableKType)
         }
 
     }
@@ -163,13 +167,13 @@ object FirSerializationPluginClassChecker : FirClassChecker(MppCheckerKind.Commo
 
         if (classSymbol.hasSerializableOrMetaAnnotation(session)) {
             if (classSymbol.hasSerializableOrMetaAnnotationWithoutArgs(session)) {
-                reporter.reportOn(element, FirSerializationErrors.KEEP_SERIALIZER_ANNOTATION_USELESS, this)
+                reporter.reportOn(element, FirSerializationErrors.KEEP_SERIALIZER_ANNOTATION_USELESS)
             }
             if (classSymbol.isAbstract || classSymbol.isSealed || classSymbol.isInterface || classSymbol.hasPolymorphicAnnotation(session)) {
-                reporter.reportOn(element, FirSerializationErrors.KEEP_SERIALIZER_ANNOTATION_ON_POLYMORPHIC, this)
+                reporter.reportOn(element, FirSerializationErrors.KEEP_SERIALIZER_ANNOTATION_ON_POLYMORPHIC)
             }
         } else {
-            reporter.reportOn(element, FirSerializationErrors.KEEP_SERIALIZER_ANNOTATION_USELESS, this)
+            reporter.reportOn(element, FirSerializationErrors.KEEP_SERIALIZER_ANNOTATION_USELESS)
         }
     }
 
@@ -194,8 +198,7 @@ object FirSerializationPluginClassChecker : FirClassChecker(MppCheckerKind.Commo
                         existingAnnotation.source,
                         FirSerializationErrors.INCONSISTENT_INHERITABLE_SERIALINFO,
                         existingAnnotation.annotationTypeRef.coneType,
-                        classSymbol.defaultType(),
-                        this
+                        classSymbol.defaultType()
                     )
                 }
             }
@@ -250,8 +253,7 @@ object FirSerializationPluginClassChecker : FirClassChecker(MppCheckerKind.Commo
                 FirSerializationErrors.PROVIDED_RUNTIME_TOO_LOW,
                 KotlinCompilerVersion.getVersion() ?: TOO_LOW,
                 currentVersions.implementationVersion?.toString() ?: UNKNOWN,
-                RuntimeVersions.MINIMAL_SUPPORTED_VERSION.toString(),
-                this
+                RuntimeVersions.MINIMAL_SUPPORTED_VERSION.toString()
             )
         }
         if (!currentVersions.currentCompilerMatchRequired()) {
@@ -260,8 +262,7 @@ object FirSerializationPluginClassChecker : FirClassChecker(MppCheckerKind.Commo
                 FirSerializationErrors.REQUIRED_KOTLIN_TOO_HIGH,
                 KotlinCompilerVersion.getVersion() ?: TOO_LOW,
                 currentVersions.implementationVersion?.toString() ?: UNKNOWN,
-                currentVersions.requireKotlinVersion?.toString() ?: NA,
-                this
+                currentVersions.requireKotlinVersion?.toString() ?: NA
             )
         }
     }
@@ -275,14 +276,106 @@ object FirSerializationPluginClassChecker : FirClassChecker(MppCheckerKind.Commo
         for (property in properties) {
             if (property.transient) continue
             val incorrectTransient =
-                property.propertySymbol.backingFieldSymbol?.annotations?.getAnnotationByClassId(TRANSIENT_ANNOTATION_CLASS_ID, session)
+                property.propertySymbol.backingFieldSymbol?.resolvedAnnotationsWithClassIds?.getAnnotationByClassId(
+                    TRANSIENT_ANNOTATION_CLASS_ID, session
+                )
             if (incorrectTransient != null) {
                 reporter.reportOn(
                     source = incorrectTransient.source ?: property.propertySymbol.source,
-                    FirSerializationErrors.INCORRECT_TRANSIENT,
-                    this
+                    factory = FirSerializationErrors.INCORRECT_TRANSIENT
                 )
             }
+        }
+    }
+
+    private fun CheckerContext.checkProtobufProperties(
+        properties: List<FirSerializableProperty>,
+        reporter: DiagnosticReporter,
+    ) {
+        /*
+        IMPORTANT! In protobuf filed numbers starts with 1
+        Therefore, for correct calculations, we assume that the fields in the class are also numbered from 1
+
+        The following notation is used in the comments:
+        proto number - field number used when encoding with protobuf
+        origin number - sequence number of field in the class, starts with 1
+        custom number - redefined by @ProtoNumber annotation value of proto number
+
+        Target proto number is origin number or if @ProtoNumber is specified a custom number
+         */
+
+        // origin number -> custom number
+        val originToCustom = mutableMapOf<Int, Int>()
+
+        properties.forEachIndexed { index, property ->
+
+            val annotation =
+                property.propertySymbol.resolvedAnnotationsWithArguments.getAnnotationByClassId(protoNumberAnnotationClassId, session)
+                    ?: return@forEachIndexed
+
+            // TODO should we throw error if there is no `number` argument or there is evaluation error
+            val argument = annotation.findArgumentByName(Name.identifier("number")) ?: return@forEachIndexed
+            val literal = argument.evaluateAs<FirLiteralExpression>(session) ?: return@forEachIndexed
+            val customNumber = literal.value as? Long ?: return@forEachIndexed
+
+            // use +1 to follow the rule that fields are numbered from 1
+            originToCustom[index + 1] = customNumber.toInt()
+        }
+
+        // there is no ProtoNumber annotation
+        if (originToCustom.isEmpty()) return
+
+        // origin number -> proto number
+        // proto id = null if there is no override annotation
+        val originToProto = mutableMapOf<Int, Int?>()
+        for (number in 1..properties.size) {
+            // use -1 to follow the rule that fields are numbered from 1
+            if (properties[number - 1].propertySymbol.getAnnotationByClassId(protoOneOfAnnotationClassId, session) != null) {
+                // if property marked with ProtoOneOf annotation we should skip check field number for it
+                // because filed number will be specified in heirs
+                continue
+            }
+
+            originToProto[number] = originToCustom[number]
+        }
+
+        // proto id -> [list of origin fields numbers that uses it, null there is no annotation on a field]
+        val duplicates = mutableMapOf<Int, MutableList<Int?>>()
+        originToProto.forEach { (originNumber, protoNumber) ->
+            if (protoNumber != null) {
+                duplicates.getOrPut(protoNumber) { mutableListOf() }.add(originNumber)
+            } else {
+                duplicates.getOrPut(originNumber) { mutableListOf() }.add(null)
+            }
+        }
+
+        originToProto.forEach { (originNumber, protoNumber) ->
+            // skip fields without ProtoNumber annotation
+            if (protoNumber == null) return@forEach
+
+            val duplicates = duplicates.getValue(protoNumber)
+            if (duplicates.size < 2) return@forEach
+
+            // use -1 to follow the rule that fields are numbered from 1
+            val property = properties[originNumber - 1]
+            val annotation =
+                property.propertySymbol.resolvedAnnotationsWithArguments.getAnnotationByClassId(protoNumberAnnotationClassId, session)
+
+            val duplicateFieldsNames = duplicates.asSequence()
+                // if fieldNumber == null it's mean that there is no custom annotation and proto number is an origin field number
+                .map { number -> number ?: protoNumber }
+                .filter { number -> number != originNumber }
+                // use -1 to follow the rule that fields are numbered from 1
+                .map { number -> properties[number - 1].propertySymbol.name }
+                .joinToString()
+
+            reporter.reportOn(
+                source = annotation?.source,
+                factory = FirSerializationErrors.PROTOBUF_PROTO_NUM_DUPLICATED,
+                a = property.propertySymbol.name.asString(),
+                b = duplicateFieldsNames
+            )
+
         }
     }
 
@@ -292,7 +385,6 @@ object FirSerializationPluginClassChecker : FirClassChecker(MppCheckerKind.Commo
             reporter.reportOn(
                 classSymbol.source,
                 FirSerializationErrors.EXPLICIT_SERIALIZABLE_IS_REQUIRED,
-                this,
                 positioningStrategy = SourceElementPositioningStrategies.ENUM_MODIFIER
             )
             return false
@@ -305,12 +397,15 @@ object FirSerializationPluginClassChecker : FirClassChecker(MppCheckerKind.Commo
         checkCompanionOfSerializableClass(classSymbol, reporter)
 
         if (classSymbol.isAnonymousObjectOrInsideIt(this)) {
-            reporter.reportOn(classSymbol.serializableOrMetaAnnotationSource(session), FirSerializationErrors.ANONYMOUS_OBJECTS_NOT_SUPPORTED, this)
+            reporter.reportOn(
+                classSymbol.serializableOrMetaAnnotationSource(session),
+                FirSerializationErrors.ANONYMOUS_OBJECTS_NOT_SUPPORTED
+            )
             return false
         }
 
         if (classSymbol.isInner) {
-            reporter.reportOn(classSymbol.serializableOrMetaAnnotationSource(session), FirSerializationErrors.INNER_CLASSES_NOT_SUPPORTED, this)
+            reporter.reportOn(classSymbol.serializableOrMetaAnnotationSource(session), FirSerializationErrors.INNER_CLASSES_NOT_SUPPORTED)
             return false
         }
 
@@ -319,8 +414,7 @@ object FirSerializationPluginClassChecker : FirClassChecker(MppCheckerKind.Commo
                 classSymbol.serializableOrMetaAnnotationSource(session),
                 FirSerializationErrors.INLINE_CLASSES_NOT_SUPPORTED,
                 RuntimeVersions.MINIMAL_VERSION_FOR_INLINE_CLASSES.toString(),
-                session.versionReader.runtimeVersions?.implementationVersion.toString(),
-                this
+                session.versionReader.runtimeVersions?.implementationVersion.toString()
             )
             return false
         }
@@ -337,7 +431,7 @@ object FirSerializationPluginClassChecker : FirClassChecker(MppCheckerKind.Commo
 
         if (classSymbol.serializableAnnotationIsUseless(session)) {
             classSymbol.serializableOrMetaAnnotationSource(session)?.let {
-                reporter.reportOn(it, FirSerializationErrors.SERIALIZABLE_ANNOTATION_IGNORED, this)
+                reporter.reportOn(it, FirSerializationErrors.SERIALIZABLE_ANNOTATION_IGNORED)
             }
             return false
         }
@@ -347,12 +441,11 @@ object FirSerializationPluginClassChecker : FirClassChecker(MppCheckerKind.Commo
             val superClassSymbol = classSymbol.superClassOrAny(session)
             if (!superClassSymbol.shouldHaveInternalSerializer(session)) {
                 val noArgConstructorSymbol =
-                    superClassSymbol.declarationSymbols.firstOrNull { it is FirConstructorSymbol && it.valueParameterSymbols.isEmpty() }
+                    superClassSymbol.constructors(session).firstOrNull { it.valueParameterSymbols.isEmpty() }
                 if (noArgConstructorSymbol == null) {
                     reporter.reportOn(
                         classSymbol.serializableOrMetaAnnotationSource(session),
-                        FirSerializationErrors.NON_SERIALIZABLE_PARENT_MUST_HAVE_NOARG_CTOR,
-                        this
+                        FirSerializationErrors.NON_SERIALIZABLE_PARENT_MUST_HAVE_NOARG_CTOR
                     )
                     return false
                 }
@@ -363,9 +456,9 @@ object FirSerializationPluginClassChecker : FirClassChecker(MppCheckerKind.Commo
     }
 
     private fun CheckerContext.checkClassWithCustomSerializer(classSymbol: FirClassSymbol<*>, reporter: DiagnosticReporter) {
-        val serializerType = classSymbol.getSerializableWith(session)?.fullyExpandedType(session) ?: return
+        val serializerType = classSymbol.getSerializableWith(session)?.fullyExpandedType() ?: return
 
-        val serializerForType = serializerType.serializerForType(session)?.fullyExpandedType(session)
+        val serializerForType = serializerType.serializerForType(session)?.fullyExpandedType()
 
         checkCustomSerializerMatch(classSymbol, source = null, classSymbol.defaultType(), serializerType, serializerForType, reporter)
         checkCustomSerializerIsNotLocal(source = null, classSymbol, serializerType, reporter)
@@ -375,24 +468,23 @@ object FirSerializationPluginClassChecker : FirClassChecker(MppCheckerKind.Commo
 
     private fun FirClassSymbol<*>.isAnonymousObjectOrInsideIt(c: CheckerContext): Boolean {
         if (this is FirAnonymousObjectSymbol) return true
-        return c.containingDeclarations.any { it is FirAnonymousObject }
+        return c.containingDeclarations.any { it is FirAnonymousObjectSymbol }
     }
 
     private fun CheckerContext.checkEnum(classSymbol: FirClassSymbol<*>, reporter: DiagnosticReporter) {
         if (!classSymbol.isEnumClass) return
         val entryBySerialName = mutableMapOf<String, FirEnumEntrySymbol>()
-        for (enumEntrySymbol in classSymbol.collectEnumEntries()) {
+        for (enumEntrySymbol in classSymbol.collectEnumEntries(session)) {
             val serialNameAnnotation = enumEntrySymbol.getSerialNameAnnotation(session)
             val serialName = enumEntrySymbol.getSerialNameValue(session) ?: enumEntrySymbol.name.asString()
             val firstEntry = entryBySerialName[serialName]
             if (firstEntry != null) {
                 reporter.reportOn(
                     source = serialNameAnnotation?.source ?: firstEntry.getSerialNameAnnotation(session)?.source ?: enumEntrySymbol.source,
-                    FirSerializationErrors.DUPLICATE_SERIAL_NAME_ENUM,
-                    classSymbol,
-                    serialName,
-                    enumEntrySymbol.name.asString(),
-                    this
+                    factory = FirSerializationErrors.DUPLICATE_SERIAL_NAME_ENUM,
+                    a = classSymbol,
+                    b = serialName,
+                    c = enumEntrySymbol.name.asString()
                 )
             } else {
                 entryBySerialName[serialName] = enumEntrySymbol
@@ -413,8 +505,7 @@ object FirSerializationPluginClassChecker : FirClassChecker(MppCheckerKind.Commo
         if (!properties.isExternallySerializable) {
             reporter.reportOn(
                 classSymbol.serializableOrMetaAnnotationSource(session),
-                FirSerializationErrors.PRIMARY_CONSTRUCTOR_PARAMETER_IS_NOT_A_PROPERTY,
-                this
+                FirSerializationErrors.PRIMARY_CONSTRUCTOR_PARAMETER_IS_NOT_A_PROPERTY
             )
         }
 
@@ -423,21 +514,25 @@ object FirSerializationPluginClassChecker : FirClassChecker(MppCheckerKind.Commo
         for (property in properties.serializableProperties) {
             val name = property.name
             if (!namesSet.add(name)) {
-                reporter.reportOn(classSymbol.serializableOrMetaAnnotationSource(session), FirSerializationErrors.DUPLICATE_SERIAL_NAME, name, this)
+                reporter.reportOn(
+                    classSymbol.serializableOrMetaAnnotationSource(session),
+                    FirSerializationErrors.DUPLICATE_SERIAL_NAME,
+                    name
+                )
             }
         }
         return properties
     }
 
     private fun CheckerContext.checkTransients(classSymbol: FirClassSymbol<*>, reporter: DiagnosticReporter) {
-        for (propertySymbol in classSymbol.declarationSymbols.filterIsInstance<FirPropertySymbol>()) {
+        for (propertySymbol in classSymbol.declaredProperties(session)) {
             val isInitialized = propertySymbol.isLateInit || declarationHasInitializer(propertySymbol)
             val transientAnnotation = propertySymbol.getSerialTransientAnnotation(session) ?: continue
             val hasBackingField = propertySymbol.hasBackingField
             if (!hasBackingField) {
-                reporter.reportOn(transientAnnotation.source ?: propertySymbol.source, FirSerializationErrors.TRANSIENT_IS_REDUNDANT, this)
+                reporter.reportOn(transientAnnotation.source ?: propertySymbol.source, FirSerializationErrors.TRANSIENT_IS_REDUNDANT)
             } else if (!isInitialized) {
-                reporter.reportOn(propertySymbol.source, FirSerializationErrors.TRANSIENT_MISSING_INITIALIZER, this)
+                reporter.reportOn(propertySymbol.source, FirSerializationErrors.TRANSIENT_MISSING_INITIALIZER)
             }
         }
     }
@@ -464,14 +559,14 @@ object FirSerializationPluginClassChecker : FirClassChecker(MppCheckerKind.Commo
             val serializerSymbol = customSerializerType?.toRegularClassSymbol(session)
             val propertySymbol = property.propertySymbol
             val typeRef = propertySymbol.resolvedReturnTypeRef
-            val propertyType = typeRef.coneType.fullyExpandedType(session)
+            val propertyType = typeRef.coneType.fullyExpandedType()
             val source = typeRef.source ?: propertySymbol.source
             if (customSerializerType != null && serializerSymbol != null) {
                 // Do not account for @Polymorphic and @Contextual, as they are serializers for T: Any
                 // and would not be compatible on direct comparison
                 if (customSerializerType.classId in SerializersClassIds.setOfSpecialSerializers) return
 
-                val serializerForType = customSerializerType.serializerForType(session)?.fullyExpandedType(session)
+                val serializerForType = customSerializerType.serializerForType(session)?.fullyExpandedType()
 
                 checkCustomSerializerMatch(
                     classSymbol,
@@ -497,8 +592,7 @@ object FirSerializationPluginClassChecker : FirClassChecker(MppCheckerKind.Commo
         if (propertyType.isNonPrimitiveArray && propertyType.typeArguments.first().type?.isTypeParameter == true) {
             reporter.reportOn(
                 source,
-                FirSerializationErrors.GENERIC_ARRAY_ELEMENT_NOT_SUPPORTED,
-                this
+                FirSerializationErrors.GENERIC_ARRAY_ELEMENT_NOT_SUPPORTED
             )
         }
     }
@@ -522,23 +616,22 @@ object FirSerializationPluginClassChecker : FirClassChecker(MppCheckerKind.Commo
     private fun ConeKotlinType.isUnsupportedInlineType(session: FirSession): Boolean = isSingleFieldValueClass(session) && !isPrimitiveOrNullablePrimitive
 
     private fun CheckerContext.checkType(typeRef: FirTypeRef, typeSource: KtSourceElement?, reporter: DiagnosticReporter) {
-        val type = typeRef.coneType.fullyExpandedType(session)
+        val type = typeRef.coneType.fullyExpandedType()
         if (type.lowerBoundIfFlexible().isTypeParameter) return // type parameters always have serializer stored in class' field
         if (type.isUnsupportedInlineType(session) && !canSupportInlineClasses()) {
             reporter.reportOn(
                 typeRef.source ?: typeSource,
                 FirSerializationErrors.INLINE_CLASSES_NOT_SUPPORTED,
                 RuntimeVersions.MINIMAL_VERSION_FOR_INLINE_CLASSES.toString(),
-                session.versionReader.runtimeVersions?.implementationVersion.toString(),
-                this
+                session.versionReader.runtimeVersions?.implementationVersion.toString()
             )
         }
 
         val serializer = findTypeSerializerOrContextUnchecked(type, this)
         if (serializer != null) {
             val classSymbol = type.toRegularClassSymbol(session) ?: return
-            type.getSerializableWith(session)?.fullyExpandedType(session)?.let { serializerType ->
-                val serializerForType = serializerType.serializerForType(session)?.fullyExpandedType(session)
+            type.getSerializableWith(session)?.fullyExpandedType()?.let { serializerType ->
+                val serializerForType = serializerType.serializerForType(session)?.fullyExpandedType()
 
                 checkCustomSerializerMatch(classSymbol, typeSource, type, serializerType, serializerForType, reporter)
                 checkCustomSerializerIsNotLocal(typeSource, classSymbol, serializerType, reporter)
@@ -552,7 +645,7 @@ object FirSerializationPluginClassChecker : FirClassChecker(MppCheckerKind.Commo
         } else {
             if (type.classSymbolOrUpperBound(session)?.isEnumClass != true) {
                 // enums are always serializable
-                reporter.reportOn(typeSource, FirSerializationErrors.SERIALIZER_NOT_FOUND, type, this)
+                reporter.reportOn(typeSource, FirSerializationErrors.SERIALIZER_NOT_FOUND, type)
             }
         }
     }
@@ -574,8 +667,7 @@ object FirSerializationPluginClassChecker : FirClassChecker(MppCheckerKind.Commo
                 FirSerializationErrors.SERIALIZER_TYPE_INCOMPATIBLE,
                 declarationType,
                 serializerType,
-                serializerForType,
-                this
+                serializerForType
             )
         }
     }
@@ -591,8 +683,7 @@ object FirSerializationPluginClassChecker : FirClassChecker(MppCheckerKind.Commo
                 source ?: containingClassSymbol.serializableOrMetaAnnotationSource(session),
                 FirSerializationErrors.ABSTRACT_SERIALIZER_TYPE,
                 containingClassSymbol.defaultType(),
-                serializerType,
-                this
+                serializerType
             )
         }
     }
@@ -612,7 +703,7 @@ object FirSerializationPluginClassChecker : FirClassChecker(MppCheckerKind.Commo
             return
         }
 
-        val primaryConstructor = serializerType.toRegularClassSymbol(session)?.primaryConstructorSymbol(session) ?: return
+        val primaryConstructor = serializerType.toRegularClassSymbol(session)?.primaryConstructorIfAny(session) ?: return
 
         val targetElement by lazy { source ?: containingClassSymbol.serializableOrMetaAnnotationSource(session) }
 
@@ -635,8 +726,7 @@ object FirSerializationPluginClassChecker : FirClassChecker(MppCheckerKind.Commo
                 FirSerializationErrors.CUSTOM_SERIALIZER_PARAM_ILLEGAL_COUNT,
                 serializerType,
                 serializerForType,
-                message,
-                this
+                message
             )
         }
 
@@ -648,8 +738,7 @@ object FirSerializationPluginClassChecker : FirClassChecker(MppCheckerKind.Commo
                     FirSerializationErrors.CUSTOM_SERIALIZER_PARAM_ILLEGAL_TYPE,
                     serializerType,
                     serializerForType,
-                    param.name.asString(),
-                    this
+                    param.name.asString()
                 )
             }
         }
@@ -666,8 +755,7 @@ object FirSerializationPluginClassChecker : FirClassChecker(MppCheckerKind.Commo
             reporter.reportOn(
                 source ?: classSymbol.serializableOrMetaAnnotationSource(session),
                 FirSerializationErrors.LOCAL_SERIALIZER_USAGE,
-                serializerType,
-                this
+                serializerType
             )
         }
     }
@@ -681,7 +769,7 @@ object FirSerializationPluginClassChecker : FirClassChecker(MppCheckerKind.Commo
         // @Serializable annotation has proper signature so this error would be caught in type checker
         val serializerForType = serializerType.serializerForType(session) ?: return
         if (!classType.isMarkedNullable && serializerForType.isMarkedNullable) {
-            reporter.reportOn(source, FirSerializationErrors.SERIALIZER_NULLABILITY_INCOMPATIBLE, serializerType, classType, this)
+            reporter.reportOn(source, FirSerializationErrors.SERIALIZER_NULLABILITY_INCOMPATIBLE, serializerType, classType)
         }
     }
 }

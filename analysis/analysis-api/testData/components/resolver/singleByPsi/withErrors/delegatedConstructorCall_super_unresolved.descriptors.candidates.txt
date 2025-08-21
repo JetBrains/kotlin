@@ -7,10 +7,12 @@ KtConstructorDelegationCall(108,116): 'super(s)'
           receiverType = null
           returnType = kotlin.Int
           symbol = p1: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       kind = SUPER_CALL
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -23,8 +25,10 @@ KtConstructorDelegationCall(108,116): 'super(s)'
               receiverType = null
               returnType = kotlin.Int
               symbol = p1: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is String but Int was expected>

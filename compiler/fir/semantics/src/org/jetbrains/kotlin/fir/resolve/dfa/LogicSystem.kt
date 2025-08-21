@@ -6,7 +6,9 @@
 package org.jetbrains.kotlin.fir.resolve.dfa
 
 import kotlinx.collections.immutable.*
+import org.jetbrains.kotlin.fir.DfaType
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.expressions.UnresolvedExpressionTypeAccess
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import java.util.*
@@ -60,12 +62,16 @@ abstract class LogicSystem(private val context: ConeInferenceContext) {
     }
 
     fun addTypeStatement(flow: MutableFlow, statement: TypeStatement): TypeStatement? {
-        if (statement.exactType.isEmpty()) return null
+        if (statement.isEmpty) return null
         val variable = statement.variable
-        val oldExactType = flow.approvedTypeStatements[variable]?.exactType
-        val newExactType = oldExactType?.addAll(statement.exactType) ?: statement.exactType.toPersistentSet()
-        if (newExactType === oldExactType) return null
-        return PersistentTypeStatement(variable, newExactType).also { flow.approvedTypeStatements[variable] = it }
+        val oldStatement = flow.approvedTypeStatements[variable]
+        val oldUpperTypes = oldStatement?.upperTypes
+        val oldLowerTypes = oldStatement?.lowerTypes
+        val newUpperTypes = oldUpperTypes?.addAll(statement.upperTypes) ?: statement.upperTypes.toPersistentSet()
+        val newLowerTypes = oldLowerTypes?.addAll(statement.lowerTypes) ?: statement.lowerTypes.toPersistentSet()
+        if (newUpperTypes === oldUpperTypes && newLowerTypes === oldLowerTypes) return null
+        return PersistentTypeStatement(variable, newUpperTypes, newLowerTypes)
+            .also { flow.approvedTypeStatements[variable] = it }
     }
 
     fun addTypeStatements(flow: MutableFlow, statements: TypeStatements): List<TypeStatement> =
@@ -74,8 +80,7 @@ abstract class LogicSystem(private val context: ConeInferenceContext) {
     fun addImplication(flow: MutableFlow, implication: Implication) {
         val effect = implication.effect
         val redundant = effect == implication.condition || when (effect) {
-            is TypeStatement ->
-                effect.isEmpty || flow.approvedTypeStatements[effect.variable]?.exactType?.containsAll(effect.exactType) == true
+            is TypeStatement -> effect.isEmpty || flow.containsAlready(effect)
             // Synthetic variables can only be referenced in tree order, so implications with synthetic variables can
             // only look like "if <expression> is A, then <part of that expression> is B". If we don't already have any
             // statements about a part of the expression, then we never will, as we're already exiting the entire expression.
@@ -84,6 +89,12 @@ abstract class LogicSystem(private val context: ConeInferenceContext) {
         if (redundant) return
         val variable = implication.condition.variable
         flow.implications[variable] = flow.implications[variable]?.add(implication) ?: persistentListOf(implication)
+    }
+
+    private fun MutableFlow.containsAlready(effect: TypeStatement): Boolean {
+        val approved = approvedTypeStatements[effect.variable] ?: return false
+        return approved.upperTypes.containsAll(effect.upperTypes)
+                && approved.lowerTypes.containsAll(effect.lowerTypes)
     }
 
     fun translateVariableFromConditionInStatements(
@@ -256,7 +267,7 @@ abstract class LogicSystem(private val context: ConeInferenceContext) {
         approvedStatement: OperationStatement,
         removeApprovedOrImpossible: Boolean
     ): TypeStatements {
-        val result = mutableMapOf<RealVariable, MutableTypeStatement>()
+        val result = mutableMapOf<DataFlowVariable, MutableTypeStatement>()
         val queue = LinkedList<OperationStatement>().apply { this += approvedStatement }
         val approved = mutableSetOf<OperationStatement>()
         while (queue.isNotEmpty()) {
@@ -266,9 +277,17 @@ abstract class LogicSystem(private val context: ConeInferenceContext) {
 
             val operation = next.operation
             val variable = next.variable
-            if (variable.isReal()) {
-                val impliedType = if (operation == Operation.EqNull) nullableNothingType else anyType
-                result.getOrPut(variable) { MutableTypeStatement(variable) }.exactType.add(impliedType)
+
+            val impliedType = if (operation == Operation.EqNull) nullableNothingType else anyType
+            val resultStatement = result.getOrPut(variable) { MutableTypeStatement(variable) }
+            resultStatement.upperTypes.add(impliedType)
+            // We could additionally imply the opposite lower type, but it won't bring us anything new
+            // because `Nothing?` and `Any` are disjoint, and we already store the upper type.
+            // For booleans it makes sense because we don't store `EqTrue` and `EqFalse`.
+            when (operation) {
+                Operation.EqTrue -> resultStatement.lowerTypes.add(DfaType.BooleanLiteral(false))
+                Operation.EqFalse -> resultStatement.lowerTypes.add(DfaType.BooleanLiteral(true))
+                else -> {}
             }
 
             val statements = logicStatements[variable] ?: continue
@@ -294,6 +313,31 @@ abstract class LogicSystem(private val context: ConeInferenceContext) {
         return result
     }
 
+    @OptIn(UnresolvedExpressionTypeAccess::class)
+    fun approveTypeStatement(flow: Flow, statement: TypeStatement): Boolean {
+        val variable = statement.variable
+        val typeFromVar =
+            if (variable is SyntheticVariable) variable.fir.coneTypeOrNull
+            else variable.originalType
+        val known = flow.getTypeStatement(variable)
+        val approvedStatements = when {
+            known != null && typeFromVar != null -> mapOf(variable to known.toMutable().also { it.upperTypes += typeFromVar })
+            known != null && typeFromVar == null -> mapOf(variable to known)
+            known == null && typeFromVar != null -> mapOf(variable to MutableTypeStatement(variable, mutableSetOf(typeFromVar)))
+            else -> return false
+        }
+
+        val approvedUpper = approvedStatements.values.getUnifiedUpperType()
+        val approvedLower = approvedStatements.values.getIntersectedLowerType()
+
+        val statementUpper = listOf(statement).getUnifiedUpperType()
+        val statementLower = listOf(statement).getIntersectedLowerType()
+
+        return (approvedUpper == null || statementUpper == null || AbstractTypeChecker.isSubtypeOf(context, approvedUpper, statementUpper))
+            && (approvedLower == null || statementUpper == null || !AbstractTypeChecker.isSubtypeOf(context, statementUpper, approvedLower))
+            && (statementLower == null || approvedUpper == null || !AbstractTypeChecker.isSubtypeOf(context, approvedUpper, statementLower))
+    }
+
     // ------------------------------- Public TypeStatement util functions -------------------------------
 
     fun orForTypeStatements(left: TypeStatements, right: TypeStatements): TypeStatements = when {
@@ -317,7 +361,8 @@ abstract class LogicSystem(private val context: ConeInferenceContext) {
     }
 
     private operator fun MutableTypeStatement.plusAssign(other: TypeStatement) {
-        exactType += other.exactType
+        upperTypes += other.upperTypes
+        lowerTypes += other.lowerTypes
     }
 
     fun and(a: TypeStatement?, b: TypeStatement): TypeStatement {
@@ -345,31 +390,68 @@ abstract class LogicSystem(private val context: ConeInferenceContext) {
         val variable = statements.first().variable
         assert(statements.all { it.variable == variable }) { "folding statements for different variables" }
         if (statements.any { it.isEmpty }) return null
-        val intersected = statements.map { ConeTypeIntersector.intersectTypes(context, it.exactType.toList()) }
-        val unified = context.commonSuperTypeOrNull(intersected) ?: return null
-        val result = when {
-            unified.isNullableAny -> return null
-            unified.isAcceptableForSmartcast() -> unified
-            unified.canBeNull(context.session) -> return null
-            else -> context.anyType()
+        val unifiedUpperType = statements.getUnifiedUpperType()
+        val newUpperTypes = when {
+            unifiedUpperType == null -> persistentSetOf()
+            unifiedUpperType.isNullableAny -> persistentSetOf()
+            unifiedUpperType.isAcceptableForSmartcast() -> persistentSetOf(unifiedUpperType)
+            unifiedUpperType.canBeNull(context.session) -> persistentSetOf()
+            else -> persistentSetOf(context.anyType())
         }
-        return PersistentTypeStatement(variable, persistentSetOf(result))
+        val newLowerTypes = setOfNotNull(statements.getIntersectedLowerType()?.let(DfaType::Cone)) + statements.getCommonExcludedValues()
+        return if (newUpperTypes.isNotEmpty() || newLowerTypes.isNotEmpty()) {
+            PersistentTypeStatement(variable, newUpperTypes, newLowerTypes.toPersistentSet())
+        } else {
+            null
+        }
     }
+
+    private fun Collection<TypeStatement>.getUnifiedUpperType(): ConeKotlinType? {
+        val intersectedUpperTypes = map { statement ->
+            statement.upperTypesOrNull?.toList()?.let { ConeTypeIntersector.intersectTypes(context, it) } ?: context.nullableAnyType()
+        }
+        return context.commonSuperTypeOrNull(intersectedUpperTypes)
+    }
+
+    private fun Collection<TypeStatement>.getIntersectedLowerType(): ConeKotlinType? =
+        flatMap { statement ->
+            // This is not quite correct, and what we should do instead is `¬(A | B) | ¬(B | C)` (e.g., for 2 statements),
+            // but because we only have `commonSuperType()` (and it wouldn't preserve `¬B` here), then for the completely
+            // correct approach, we'd have to do `¬(A & B) & ¬(A & C) & ¬(B & B) & ¬(B & C)`, which doesn't seem all that
+            // great: taking all possible permutations with one bound from each statement is an exponential process.
+
+            // Intersecting everything instead isn't unsound, it just loses some information, so it's acceptable.
+            // Note that we do correctly handle the similar situation for upper bounds, but for them the use of
+            // `commonSuperType()` isn't that critical (remember it's exactly the `commonSuperType` that requires
+            // this whole mechanism with lower bounds for DFA-based exhaustiveness).
+
+            statement.lowerTypes.mapNotNull { (it as? DfaType.Cone)?.type }.takeIf { it.isNotEmpty() }
+                ?: listOf(context.nothingType())
+        }.let {
+            ConeTypeIntersector.intersectTypes(context, it)
+        }.takeIf { !it.isNothing }
+
+    private fun Collection<TypeStatement>.getCommonExcludedValues(): Set<DfaType.Symbol> =
+        flatMap { it.lowerTypes.filterIsInstance<DfaType.Symbol>() }
+            .groupingBy { it }
+            .eachCount()
+            .filterValues { it == size }
+            .keys
 }
 
 private fun TypeStatement.toPersistent(): PersistentTypeStatement = when (this) {
     is PersistentTypeStatement -> this
     // If this statement was obtained via `toMutable`, `toPersistentSet` will call `build`.
-    else -> PersistentTypeStatement(variable, exactType.toPersistentSet())
+    else -> PersistentTypeStatement(variable, upperTypes.toPersistentSet(), lowerTypes.toPersistentSet())
 }
 
 private fun TypeStatement.toMutable(): MutableTypeStatement = when (this) {
-    is PersistentTypeStatement -> MutableTypeStatement(variable, exactType.builder())
-    else -> MutableTypeStatement(variable, LinkedHashSet(exactType))
+    is PersistentTypeStatement -> MutableTypeStatement(variable, upperTypes.builder(), lowerTypes.builder())
+    else -> MutableTypeStatement(variable, LinkedHashSet(upperTypes), LinkedHashSet(lowerTypes))
 }
 
 @JvmName("replaceVariableInStatements")
-private fun MutableMap<RealVariable, PersistentTypeStatement>.replaceVariable(from: RealVariable, to: RealVariable?) {
+private fun MutableMap<DataFlowVariable, PersistentTypeStatement>.replaceVariable(from: DataFlowVariable, to: DataFlowVariable?) {
     val existing = remove(from) ?: return
     if (to != null) {
         put(to, existing.copy(variable = to))
@@ -419,6 +501,6 @@ private fun Statement.replaceVariable(from: RealVariable, to: RealVariable): Sta
     return when (this) {
         is OperationStatement -> copy(variable = to)
         is PersistentTypeStatement -> copy(variable = to)
-        is MutableTypeStatement -> MutableTypeStatement(to, exactType)
+        is MutableTypeStatement -> MutableTypeStatement(to, upperTypes, lowerTypes)
     }
 }

@@ -27,3 +27,6 @@ class My {
             field = !param
         }
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, annotationDeclaration, assignment, classDeclaration, getter, integerLiteral,
+propertyDeclaration, setter, stringLiteral */

@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.builtins.jvm.JvmBuiltInsPackageFragmentProvider
 import org.jetbrains.kotlin.config.JvmAnalysisFlags
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
+import org.jetbrains.kotlin.config.toKotlinVersion
 import org.jetbrains.kotlin.container.*
 import org.jetbrains.kotlin.context.ModuleContext
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
@@ -32,10 +33,7 @@ import org.jetbrains.kotlin.incremental.components.EnumWhenTracker
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.incremental.components.InlineConstTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
-import org.jetbrains.kotlin.load.java.AbstractJavaClassFinder
-import org.jetbrains.kotlin.load.java.InternalFlexibleTypeTransformer
-import org.jetbrains.kotlin.load.java.JavaClassFinderImpl
-import org.jetbrains.kotlin.load.java.JavaClassesTracker
+import org.jetbrains.kotlin.load.java.*
 import org.jetbrains.kotlin.load.java.components.*
 import org.jetbrains.kotlin.load.java.lazy.JavaResolverSettings
 import org.jetbrains.kotlin.load.java.lazy.ModuleClassResolver
@@ -135,7 +133,10 @@ fun StorageComponentContainer.configureJavaSpecificComponents(
         useImpl<JavaSourceElementFactoryImpl>()
     }
 
-    useInstance(languageVersionSettings.getFlag(JvmAnalysisFlags.javaTypeEnhancementState))
+    useInstance(
+        languageVersionSettings.getFlag(JvmAnalysisFlags.javaTypeEnhancementState)
+            ?: JavaTypeEnhancementState.getDefault(languageVersionSettings.toKotlinVersion())
+    )
 
     val builtIns = moduleContext.module.builtIns
     if (useBuiltInsProvider && builtIns is JvmBuiltIns) {

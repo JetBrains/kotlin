@@ -52,19 +52,19 @@ KaConstructorSymbol:
           deprecationStatus: null
         callableId: /Style.value
         compilerVisibility: Public
+        contextParameters: []
         contextReceivers: []
         getter: KaPropertyGetterSymbol:
           annotations: []
           callableId: null
           compilerVisibility: Public
           contextReceivers: []
-          hasBody: false
           hasStableParameterNames: true
           isActual: false
-          isDefault: true
           isExpect: false
           isExtension: false
           isInline: false
+          isNotDefault: false
           isOverride: false
           location: PROPERTY
           modality: FINAL
@@ -123,6 +123,7 @@ KaConstructorSymbol:
         javaGetterName: getValue
         javaSetterName: null
         setterDeprecationStatus: null
+        isInline: false
       hasDefaultValue: false
       isActual: false
       isCrossinline: false
@@ -181,19 +182,19 @@ KaKotlinPropertySymbol:
     deprecationStatus: null
   callableId: null
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
     annotations: []
     callableId: null
     compilerVisibility: Public
     contextReceivers: []
-    hasBody: true
     hasStableParameterNames: true
     isActual: false
-    isDefault: false
     isExpect: false
     isExtension: false
     isInline: false
+    isNotDefault: true
     isOverride: true
     location: PROPERTY
     modality: FINAL
@@ -252,6 +253,7 @@ KaKotlinPropertySymbol:
   javaGetterName: getExitAnimation
   javaSetterName: null
   setterDeprecationStatus: null
+  isInline: false
 
 KaEnumEntrySymbol:
   annotations: []
@@ -306,19 +308,19 @@ KaKotlinPropertySymbol:
     deprecationStatus: null
   callableId: /Style.exitAnimation
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
     annotations: []
     callableId: null
     compilerVisibility: Public
     contextReceivers: []
-    hasBody: false
     hasStableParameterNames: true
     isActual: false
-    isDefault: true
     isExpect: false
     isExtension: false
     isInline: false
+    isNotDefault: false
     isOverride: false
     location: PROPERTY
     modality: ABSTRACT
@@ -377,6 +379,7 @@ KaKotlinPropertySymbol:
   javaGetterName: getExitAnimation
   javaSetterName: null
   setterDeprecationStatus: null
+  isInline: false
 
 KaNamedClassSymbol:
   annotations: []

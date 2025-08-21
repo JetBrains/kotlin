@@ -16,18 +16,19 @@ import org.jetbrains.kotlin.fir.declarations.utils.hasBackingField
 import org.jetbrains.kotlin.fir.declarations.utils.isInline
 
 object FirInlinePropertyChecker : FirPropertyChecker(MppCheckerKind.Common) {
-    override fun check(declaration: FirProperty, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirProperty) {
         if (declaration.getter?.isInline != true && declaration.setter?.isInline != true) return
 
-        FirInlineDeclarationChecker.checkCallableDeclaration(declaration, context, reporter)
+        FirInlineDeclarationChecker.checkCallableDeclaration(declaration)
 
         if (declaration.hasBackingField || declaration.delegate != null) {
             when (declaration.source?.kind) {
                 KtFakeSourceElementKind.PropertyFromParameter -> reporter.reportOn(
-                    declaration.source, FirErrors.INLINE_PROPERTY_WITH_BACKING_FIELD_DEPRECATION, context
+                    declaration.source, FirErrors.INLINE_PROPERTY_WITH_BACKING_FIELD_DEPRECATION
                 )
                 else -> reporter.reportOn(
-                    declaration.source, FirErrors.INLINE_PROPERTY_WITH_BACKING_FIELD, context
+                    declaration.source, FirErrors.INLINE_PROPERTY_WITH_BACKING_FIELD
                 )
             }
         }

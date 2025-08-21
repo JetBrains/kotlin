@@ -13,3 +13,5 @@ fun f() {
     } catch (e: Exception) {
     }
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, localProperty, propertyDeclaration, tryExpression */

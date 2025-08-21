@@ -134,6 +134,12 @@ public class FirWasmJsTranslatorTestGenerated extends AbstractFirWasmJsTranslato
     }
 
     @Test
+    @TestMetadata("externalLong.kt")
+    public void testExternalLong() {
+      runTest("js/js.translator/testData/box/native/externalLong.kt");
+    }
+
+    @Test
     @TestMetadata("externalValWithOverridenVar.kt")
     public void testExternalValWithOverridenVar() {
       runTest("js/js.translator/testData/box/native/externalValWithOverridenVar.kt");
@@ -236,7 +242,7 @@ public class FirWasmJsTranslatorTestGenerated extends AbstractFirWasmJsTranslato
   public class EsModules {
     @Test
     public void testAllFilesPresentInEsModules() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/esModules"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true, "jsExport", "native", "export", "crossModuleRef", "crossModuleRefPerFile", "crossModuleRefPerModule");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/esModules"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true, "jsExport", "native", "export", "escapedIdentifiers", "crossModuleRef", "crossModuleRefPerFile", "crossModuleRefPerModule");
     }
 
     @Nested
@@ -515,30 +521,6 @@ public class FirWasmJsTranslatorTestGenerated extends AbstractFirWasmJsTranslato
     @Test
     public void testAllFilesPresentInReflection() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/reflection"), Pattern.compile("^(findAssociatedObject(InSeparatedFile)?(Lazyness)?(AndDCE)?)\\.kt$"), null, TargetBackend.WASM, true);
-    }
-
-    @Test
-    @TestMetadata("findAssociatedObject.kt")
-    public void testFindAssociatedObject() {
-      runTest("js/js.translator/testData/box/reflection/findAssociatedObject.kt");
-    }
-
-    @Test
-    @TestMetadata("findAssociatedObjectAndDCE.kt")
-    public void testFindAssociatedObjectAndDCE() {
-      runTest("js/js.translator/testData/box/reflection/findAssociatedObjectAndDCE.kt");
-    }
-
-    @Test
-    @TestMetadata("findAssociatedObjectInSeparatedFile.kt")
-    public void testFindAssociatedObjectInSeparatedFile() {
-      runTest("js/js.translator/testData/box/reflection/findAssociatedObjectInSeparatedFile.kt");
-    }
-
-    @Test
-    @TestMetadata("findAssociatedObjectLazyness.kt")
-    public void testFindAssociatedObjectLazyness() {
-      runTest("js/js.translator/testData/box/reflection/findAssociatedObjectLazyness.kt");
     }
   }
 

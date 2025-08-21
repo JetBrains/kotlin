@@ -51,3 +51,6 @@ typealias TA<T5, T6> = C2<T6, T5>
 interface I2
 interface I3
 class C3 : TA<I2, I3>(), I0<I3, I2>
+
+/* GENERATED_FIR_TAGS: classDeclaration, in, interfaceDeclaration, nullableType, out, typeAliasDeclaration,
+typeAliasDeclarationWithTypeParameter, typeParameter */

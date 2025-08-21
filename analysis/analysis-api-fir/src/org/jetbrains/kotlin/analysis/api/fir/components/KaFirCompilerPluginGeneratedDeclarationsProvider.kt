@@ -33,7 +33,7 @@ internal class KaFirCompilerPluginGeneratedDeclarationsProvider(
 ) : KaBaseSessionComponent<KaFirSession>(), KaCompilerPluginGeneratedDeclarationsProvider {
     override val KaModule.compilerPluginGeneratedDeclarations: KaCompilerPluginGeneratedDeclarations
         get() = withValidityAssertion {
-            val firSessionForModule = analysisSession.firResolveSession.sessionProvider.getSession(this)
+            val firSessionForModule = analysisSession.resolutionFacade.sessionProvider.getSession(this)
             val generatedDeclarationsSymbolProviderForModule = firSessionForModule.generatedDeclarationsSymbolProvider
                 ?: return KaBaseCompilerPluginGeneratedDeclarations(KaBaseEmptyScope(analysisSession.token))
 

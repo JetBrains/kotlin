@@ -10,3 +10,5 @@ fun foo() {}
 fun test() {
     <!DEPRECATION!>foo<!>()
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, stringLiteral */

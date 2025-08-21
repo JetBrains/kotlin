@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.gradle
 import org.gradle.api.JavaVersion
 import org.gradle.api.logging.LogLevel
 import org.gradle.util.GradleVersion
-import org.jetbrains.kotlin.gradle.scripting.internal.ScriptingGradleSubplugin
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
@@ -112,7 +112,7 @@ abstract class ScriptingIT : KGPBaseTest() {
     fun testNoScriptingWarning(gradleVersion: GradleVersion) {
         project("simpleProject", gradleVersion) {
             build("help") {
-                assertOutputDoesNotContain(ScriptingGradleSubplugin.MISCONFIGURATION_MESSAGE_SUFFIX)
+                assertNoDiagnostic(KotlinToolingDiagnostics.KotlinScriptingMisconfiguration)
             }
         }
     }

@@ -10,7 +10,6 @@ import org.gradle.api.logging.Logger
 import org.gradle.api.provider.Provider
 import org.gradle.internal.service.ServiceRegistry
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsEnv
-import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.PackageManagerEnvironment
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.PreparedKotlinCompilationNpmResolution
 import java.io.File
@@ -38,6 +37,17 @@ interface NpmApiExecution<out T : PackageManagerEnvironment> : Serializable {
         cliArgs: List<String>,
     )
 
+    fun prepareTooling(dir: File)
+
+    fun packageManagerExec(
+        logger: Logger,
+        nodeJs: NodeJsEnvironment,
+        environment: @UnsafeVariance T,
+        dir: Provider<File>,
+        description: String,
+        args: List<String>,
+    )
+
     companion object {
         fun resolveOperationDescription(packageManagerTitle: String): String =
             "Resolving NPM dependencies using $packageManagerTitle"
@@ -50,8 +60,12 @@ data class NodeJsEnvironment(
     val packageManager: NpmApiExecution<PackageManagerEnvironment>,
 ) : Serializable
 
-internal fun asNodeJsEnvironment(nodeJsRoot: NodeJsRootExtension, nodeJsEnv: NodeJsEnv) = NodeJsEnvironment(
-    nodeJsRoot.rootPackageDirectory,
+internal fun asNodeJsEnvironment(
+    rootPackageDirectory: Provider<Directory>,
+    packageManager: Provider<NpmApiExecution<PackageManagerEnvironment>>,
+    nodeJsEnv: NodeJsEnv
+) = NodeJsEnvironment(
+    rootPackageDirectory,
     nodeJsEnv.executable,
-    nodeJsRoot.packageManagerExtension.get().packageManager
+    packageManager.get()
 )

@@ -136,6 +136,12 @@ public class IrJsES6CodegenInlineTestGenerated extends AbstractIrJsES6CodegenInl
     }
 
     @Test
+    @TestMetadata("capturedLocalFunReflection.kt")
+    public void testCapturedLocalFunReflection() {
+      runTest("compiler/testData/codegen/boxInline/anonymousObject/capturedLocalFunReflection.kt");
+    }
+
+    @Test
     @TestMetadata("capturedLocalFunTwice.kt")
     public void testCapturedLocalFunTwice() {
       runTest("compiler/testData/codegen/boxInline/anonymousObject/capturedLocalFunTwice.kt");
@@ -178,15 +184,33 @@ public class IrJsES6CodegenInlineTestGenerated extends AbstractIrJsES6CodegenInl
     }
 
     @Test
+    @TestMetadata("fakeOverrideGenericBase.kt")
+    public void testFakeOverrideGenericBase() {
+      runTest("compiler/testData/codegen/boxInline/anonymousObject/fakeOverrideGenericBase.kt");
+    }
+
+    @Test
     @TestMetadata("fakeOverrideInDefaultMultiModule.kt")
     public void testFakeOverrideInDefaultMultiModule() {
       runTest("compiler/testData/codegen/boxInline/anonymousObject/fakeOverrideInDefaultMultiModule.kt");
     }
 
     @Test
+    @TestMetadata("fakeOverrideLocalGenericBase.kt")
+    public void testFakeOverrideLocalGenericBase() {
+      runTest("compiler/testData/codegen/boxInline/anonymousObject/fakeOverrideLocalGenericBase.kt");
+    }
+
+    @Test
     @TestMetadata("fakeOverrideMultiModule.kt")
     public void testFakeOverrideMultiModule() {
       runTest("compiler/testData/codegen/boxInline/anonymousObject/fakeOverrideMultiModule.kt");
+    }
+
+    @Test
+    @TestMetadata("fakeOverrideReferenceGenericBase.kt")
+    public void testFakeOverrideReferenceGenericBase() {
+      runTest("compiler/testData/codegen/boxInline/anonymousObject/fakeOverrideReferenceGenericBase.kt");
     }
 
     @Test
@@ -391,6 +415,12 @@ public class IrJsES6CodegenInlineTestGenerated extends AbstractIrJsES6CodegenInl
     @TestMetadata("kt6552.kt")
     public void testKt6552() {
       runTest("compiler/testData/codegen/boxInline/anonymousObject/kt6552.kt");
+    }
+
+    @Test
+    @TestMetadata("kt75902.kt")
+    public void testKt75902() {
+      runTest("compiler/testData/codegen/boxInline/anonymousObject/kt75902.kt");
     }
 
     @Test
@@ -1435,6 +1465,42 @@ public class IrJsES6CodegenInlineTestGenerated extends AbstractIrJsES6CodegenInl
     @TestMetadata("spillConstructorArgumentsAndInlineLambdaParameter.kt")
     public void testSpillConstructorArgumentsAndInlineLambdaParameter() {
       runTest("compiler/testData/codegen/boxInline/complexStack/spillConstructorArgumentsAndInlineLambdaParameter.kt");
+    }
+  }
+
+  @Nested
+  @TestMetadata("compiler/testData/codegen/boxInline/contextParameters")
+  @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
+  @Tag("es6")
+  public class ContextParameters {
+    @Test
+    public void testAllFilesPresentInContextParameters() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/contextParameters"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+    }
+
+    @Test
+    @TestMetadata("contextAndReceiver.kt")
+    public void testContextAndReceiver() {
+      runTest("compiler/testData/codegen/boxInline/contextParameters/contextAndReceiver.kt");
+    }
+
+    @Test
+    @TestMetadata("contextOnly.kt")
+    public void testContextOnly() {
+      runTest("compiler/testData/codegen/boxInline/contextParameters/contextOnly.kt");
+    }
+
+    @Test
+    @TestMetadata("contextReceiverAndParameter.kt")
+    public void testContextReceiverAndParameter() {
+      runTest("compiler/testData/codegen/boxInline/contextParameters/contextReceiverAndParameter.kt");
+    }
+
+    @Test
+    @TestMetadata("contextReceiverAndParameterLong.kt")
+    public void testContextReceiverAndParameterLong() {
+      runTest("compiler/testData/codegen/boxInline/contextParameters/contextReceiverAndParameterLong.kt");
     }
   }
 
@@ -2842,6 +2908,24 @@ public class IrJsES6CodegenInlineTestGenerated extends AbstractIrJsES6CodegenInl
     }
 
     @Test
+    @TestMetadata("localDelegatedProperty.kt")
+    public void testLocalDelegatedProperty() {
+      runTest("compiler/testData/codegen/boxInline/localFunInLambda/localDelegatedProperty.kt");
+    }
+
+    @Test
+    @TestMetadata("localDelegatedPropertyUsedInsideAnonymousObject.kt")
+    public void testLocalDelegatedPropertyUsedInsideAnonymousObject() {
+      runTest("compiler/testData/codegen/boxInline/localFunInLambda/localDelegatedPropertyUsedInsideAnonymousObject.kt");
+    }
+
+    @Test
+    @TestMetadata("localDelegatedPropertyUsedInsideAnonymousObjectWithInlinedFunInKlib.kt")
+    public void testLocalDelegatedPropertyUsedInsideAnonymousObjectWithInlinedFunInKlib() {
+      runTest("compiler/testData/codegen/boxInline/localFunInLambda/localDelegatedPropertyUsedInsideAnonymousObjectWithInlinedFunInKlib.kt");
+    }
+
+    @Test
     @TestMetadata("localFunInLambda.kt")
     public void testLocalFunInLambda() {
       runTest("compiler/testData/codegen/boxInline/localFunInLambda/localFunInLambda.kt");
@@ -2857,6 +2941,24 @@ public class IrJsES6CodegenInlineTestGenerated extends AbstractIrJsES6CodegenInl
     @TestMetadata("localFunInLambdaCapturesOuterVariable.kt")
     public void testLocalFunInLambdaCapturesOuterVariable() {
       runTest("compiler/testData/codegen/boxInline/localFunInLambda/localFunInLambdaCapturesOuterVariable.kt");
+    }
+
+    @Test
+    @TestMetadata("localFunInLambdaInsideAnonymousObject.kt")
+    public void testLocalFunInLambdaInsideAnonymousObject() {
+      runTest("compiler/testData/codegen/boxInline/localFunInLambda/localFunInLambdaInsideAnonymousObject.kt");
+    }
+
+    @Test
+    @TestMetadata("localFunInLambdaNoInline.kt")
+    public void testLocalFunInLambdaNoInline() {
+      runTest("compiler/testData/codegen/boxInline/localFunInLambda/localFunInLambdaNoInline.kt");
+    }
+
+    @Test
+    @TestMetadata("localFunInLambdaOutsideAnonymousObject.kt")
+    public void testLocalFunInLambdaOutsideAnonymousObject() {
+      runTest("compiler/testData/codegen/boxInline/localFunInLambda/localFunInLambdaOutsideAnonymousObject.kt");
     }
   }
 
@@ -2921,6 +3023,30 @@ public class IrJsES6CodegenInlineTestGenerated extends AbstractIrJsES6CodegenInl
   }
 
   @Nested
+  @TestMetadata("compiler/testData/codegen/boxInline/nestedInline")
+  @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
+  @Tag("es6")
+  public class NestedInline {
+    @Test
+    public void testAllFilesPresentInNestedInline() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/nestedInline"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+    }
+
+    @Test
+    @TestMetadata("nestedInlineLetLet.kt")
+    public void testNestedInlineLetLet() {
+      runTest("compiler/testData/codegen/boxInline/nestedInline/nestedInlineLetLet.kt");
+    }
+
+    @Test
+    @TestMetadata("nestedInlineLetLetComplex.kt")
+    public void testNestedInlineLetLetComplex() {
+      runTest("compiler/testData/codegen/boxInline/nestedInline/nestedInlineLetLetComplex.kt");
+    }
+  }
+
+  @Nested
   @TestMetadata("compiler/testData/codegen/boxInline/noInline")
   @TestDataPath("$PROJECT_ROOT")
   @Tag("legacy-frontend")
@@ -2935,6 +3061,12 @@ public class IrJsES6CodegenInlineTestGenerated extends AbstractIrJsES6CodegenInl
     @TestMetadata("extensionReceiver.kt")
     public void testExtensionReceiver() {
       runTest("compiler/testData/codegen/boxInline/noInline/extensionReceiver.kt");
+    }
+
+    @Test
+    @TestMetadata("inheritedLambdaAsGeneric.kt")
+    public void testInheritedLambdaAsGeneric() {
+      runTest("compiler/testData/codegen/boxInline/noInline/inheritedLambdaAsGeneric.kt");
     }
 
     @Test
@@ -3652,27 +3784,9 @@ public class IrJsES6CodegenInlineTestGenerated extends AbstractIrJsES6CodegenInl
     }
 
     @Test
-    @TestMetadata("nestedInPrivateClass.kt")
-    public void testNestedInPrivateClass() {
-      runTest("compiler/testData/codegen/boxInline/private/nestedInPrivateClass.kt");
-    }
-
-    @Test
-    @TestMetadata("nestedInPrivateClass2.kt")
-    public void testNestedInPrivateClass2() {
-      runTest("compiler/testData/codegen/boxInline/private/nestedInPrivateClass2.kt");
-    }
-
-    @Test
-    @TestMetadata("privateClass.kt")
-    public void testPrivateClass() {
-      runTest("compiler/testData/codegen/boxInline/private/privateClass.kt");
-    }
-
-    @Test
-    @TestMetadata("privateClassExtensionLambda.kt")
-    public void testPrivateClassExtensionLambda() {
-      runTest("compiler/testData/codegen/boxInline/private/privateClassExtensionLambda.kt");
+    @TestMetadata("privateFakeOverride.kt")
+    public void testPrivateFakeOverride() {
+      runTest("compiler/testData/codegen/boxInline/private/privateFakeOverride.kt");
     }
 
     @Test
@@ -5287,24 +5401,6 @@ public class IrJsES6CodegenInlineTestGenerated extends AbstractIrJsES6CodegenInl
     @TestMetadata("propertyModifiers.kt")
     public void testPropertyModifiers() {
       runTest("compiler/testData/codegen/boxInline/syntheticAccessors/propertyModifiers.kt");
-    }
-
-    @Test
-    @TestMetadata("superCall.kt")
-    public void testSuperCall() {
-      runTest("compiler/testData/codegen/boxInline/syntheticAccessors/superCall.kt");
-    }
-
-    @Test
-    @TestMetadata("superCallFromMultipleSubclasses.kt")
-    public void testSuperCallFromMultipleSubclasses() {
-      runTest("compiler/testData/codegen/boxInline/syntheticAccessors/superCallFromMultipleSubclasses.kt");
-    }
-
-    @Test
-    @TestMetadata("superProperty.kt")
-    public void testSuperProperty() {
-      runTest("compiler/testData/codegen/boxInline/syntheticAccessors/superProperty.kt");
     }
 
     @Nested

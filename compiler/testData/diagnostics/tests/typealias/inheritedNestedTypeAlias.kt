@@ -1,6 +1,6 @@
 // FIR_IDENTICAL
 // RUN_PIPELINE_TILL: FRONTEND
-// DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER -TOPLEVEL_TYPEALIASES_ONLY
+// DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER -TOPLEVEL_TYPEALIASES_ONLY -UNSUPPORTED_FEATURE
 
 interface ICell<T> {
     val x: T
@@ -20,3 +20,6 @@ class Derived : Base<Int>() {
     val test1: CT = Cell(42)
     val test2: Base<Int>.CT = Cell(42)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, inner, integerLiteral, interfaceDeclaration, nullableType, override,
+primaryConstructor, propertyDeclaration, typeAliasDeclaration, typeAliasDeclarationWithTypeParameter, typeParameter */

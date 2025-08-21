@@ -100,3 +100,6 @@ fun test5(x: Int?) {
         y.inc()
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, equalityExpression, functionDeclaration, ifExpression, integerLiteral,
+localProperty, nullableType, propertyDeclaration, smartcast, tryExpression */

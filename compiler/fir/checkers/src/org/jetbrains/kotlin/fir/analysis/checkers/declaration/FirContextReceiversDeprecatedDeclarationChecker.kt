@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
+import org.jetbrains.kotlin.fir.analysis.checkers.config.FirContextParametersLanguageVersionSettingsChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
@@ -19,10 +20,12 @@ import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.declarations.impl.FirPrimaryConstructor
 import org.jetbrains.kotlin.fir.declarations.isLegacyContextReceiver
+import org.jetbrains.kotlin.fir.isEnabled
 
 object FirContextReceiversDeprecatedDeclarationChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
-    override fun check(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
-        if (context.languageVersionSettings.supportsFeature(LanguageFeature.ContextParameters)) return
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirDeclaration) {
+        if (LanguageFeature.ContextParameters.isEnabled()) return
 
         if (declaration is FirCallableDeclaration &&
             // Skip the lambdas. They don't have `context` explicitly written => `context` is written somewhere else.
@@ -30,15 +33,15 @@ object FirContextReceiversDeprecatedDeclarationChecker : FirBasicDeclarationChec
             declaration !is FirAnonymousFunction &&
             declaration.contextParameters.onlyLegacyContextReceivers()
         ) {
-            val factory = if (declaration is FirConstructor && declaration !is FirPrimaryConstructor) {
-                FirErrors.CONTEXT_CLASS_OR_CONSTRUCTOR
+            if (declaration is FirConstructor && declaration !is FirPrimaryConstructor) {
+                reporter.reportOn(declaration.source, FirErrors.CONTEXT_CLASS_OR_CONSTRUCTOR)
             } else {
-                FirErrors.CONTEXT_RECEIVERS_DEPRECATED
+                val message = FirContextParametersLanguageVersionSettingsChecker.getMessage(context.languageVersionSettings)
+                reporter.reportOn(declaration.source, FirErrors.CONTEXT_RECEIVERS_DEPRECATED, message)
             }
-            reporter.reportOn(declaration.source, factory, context)
         }
         if (declaration is FirRegularClass && declaration.contextParameters.onlyLegacyContextReceivers()) {
-            reporter.reportOn(declaration.source, FirErrors.CONTEXT_CLASS_OR_CONSTRUCTOR, context)
+            reporter.reportOn(declaration.source, FirErrors.CONTEXT_CLASS_OR_CONSTRUCTOR)
         }
     }
 

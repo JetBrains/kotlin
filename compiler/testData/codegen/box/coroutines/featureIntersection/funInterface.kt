@@ -1,7 +1,6 @@
 // WITH_STDLIB
 // WITH_COROUTINES
-// IGNORE_BACKEND: JVM
-// LANGUAGE: +SuspendFunctionsInFunInterfaces, +JvmIrEnabledByDefault
+// LANGUAGE: +SuspendFunctionsInFunInterfaces
 // SKIP_DCE_DRIVEN
 
 import helpers.*

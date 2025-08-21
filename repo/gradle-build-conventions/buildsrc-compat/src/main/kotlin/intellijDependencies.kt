@@ -27,14 +27,13 @@ fun Project.intellijResources() = "com.jetbrains.intellij.platform:resources:$in
 fun Project.intellijJDom() = "com.jetbrains.intellij.platform:util-jdom:$intellijVersion"
 
 /**
- * Runtime version of annotations that are already in Kotlin stdlib (historically Kotlin has older version of this one).
+ * Runtime version of annotations that are already in Kotlin stdlib (historically, Kotlin has the older version of this one).
  *
  * SHOULD NOT BE USED IN COMPILE CLASSPATH!
  *
- * `@NonNull`, `@Nullabe` from `idea/annotations.jar` has `TYPE` target which leads to different types treatment in Kotlin compiler.
- * On the other hand, `idea/annotations.jar` contains org/jetbrains/annotations/Async annations which is required for IDEA debugger.
+ * `@NonNull`, `@Nullable` from `idea/annotations.jar` has `TYPE` target which leads to different types treatment in Kotlin compiler.
+ * On the other hand, `idea/annotations.jar` contains org/jetbrains/annotations/Async annotations which is required for IDEA debugger.
  *
- * So, we are excluding `annotaions.jar` from all other `kotlin.build` and using this one for runtime only
- * to avoid accidentally including `annotations.jar` by calling `intellijDep()`.
+ * https://youtrack.jetbrains.com/issue/KT-25047/#focus=Comments-27-6974910.0-0
  */
 fun Project.intellijRuntimeAnnotations() = "org.jetbrains:annotations:${rootProject.extra["versions.annotations"]}"

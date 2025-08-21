@@ -13,38 +13,38 @@ import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirFileChecker
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors
 import org.jetbrains.kotlin.fir.analysis.js.checkers.FirJsStableName
 import org.jetbrains.kotlin.fir.analysis.js.checkers.collectNameClashesWith
-import org.jetbrains.kotlin.fir.declarations.FirClass
+import org.jetbrains.kotlin.fir.declarations.DirectDeclarationsAccess
 import org.jetbrains.kotlin.fir.declarations.FirFile
-import org.jetbrains.kotlin.fir.declarations.FirTypeAlias
-import org.jetbrains.kotlin.fir.declarations.constructors
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 
 object FirJsNameClashFileTopLevelDeclarationsChecker : FirFileChecker(MppCheckerKind.Common) {
+    context(context: CheckerContext)
     private fun MutableMap<String, MutableList<FirJsStableName>>.addStableName(
-        symbol: FirBasedSymbol<*>,
-        context: CheckerContext
+        symbol: FirBasedSymbol<*>
     ) {
         val stableName = FirJsStableName.createStableNameOrNull(symbol, context.session)
         if (stableName != null) {
             getOrPut(stableName.name) { mutableListOf() }.add(stableName)
         }
         if (symbol is FirPropertySymbol) {
-            symbol.getterSymbol?.let { getter -> addStableName(getter, context) }
-            symbol.setterSymbol?.let { setter -> addStableName(setter, context) }
+            symbol.getterSymbol?.let { getter -> addStableName(getter) }
+            symbol.setterSymbol?.let { setter -> addStableName(setter) }
         }
     }
 
-    override fun check(declaration: FirFile, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirFile) {
         val topLevelDeclarationsWithStableName = mutableMapOf<String, MutableList<FirJsStableName>>()
+        @OptIn(DirectDeclarationsAccess::class)
         for (topLevelDeclaration in declaration.declarations) {
-            topLevelDeclarationsWithStableName.addStableName(topLevelDeclaration.symbol, context)
+            topLevelDeclarationsWithStableName.addStableName(topLevelDeclaration.symbol)
         }
         for ((name, stableNames) in topLevelDeclarationsWithStableName.entries) {
             for (symbol in stableNames) {
                 val clashed = stableNames.collectNameClashesWith(symbol).takeIf { it.isNotEmpty() } ?: continue
                 val source = symbol.symbol.source ?: declaration.source
-                reporter.reportOn(source, FirJsErrors.JS_NAME_CLASH, name, clashed.map { it.symbol }, context)
+                reporter.reportOn(source, FirJsErrors.JS_NAME_CLASH, name, clashed.map { it.symbol })
             }
         }
     }

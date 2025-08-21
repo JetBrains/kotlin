@@ -9,3 +9,5 @@ fun main() {
     parameterFunc(::testFunc)
     (::testFunc).extensionFunc()
 }
+
+/* GENERATED_FIR_TAGS: callableReference, funWithExtensionReceiver, functionDeclaration, functionalType, suspend */

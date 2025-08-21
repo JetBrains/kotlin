@@ -8,9 +8,6 @@ package org.jetbrains.kotlin.diagnostics.rendering
 import org.jetbrains.kotlin.diagnostics.KtDiagnostic
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactoryToRendererMap
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticRenderer
-import java.util.LinkedHashSet
-import java.util.concurrent.locks.ReentrantLock
-import kotlin.concurrent.withLock
 
 fun interface DiagnosticRendererFactory {
     operator fun invoke(diagnostic: KtDiagnostic): KtDiagnosticRenderer?
@@ -24,26 +21,4 @@ abstract class BaseDiagnosticRendererFactory : DiagnosticRendererFactory {
     }
 
     abstract val MAP: KtDiagnosticFactoryToRendererMap
-}
-
-object RootDiagnosticRendererFactory : DiagnosticRendererFactory {
-    private val _factories: LinkedHashSet<DiagnosticRendererFactory> = linkedSetOf()
-    val factories: Set<DiagnosticRendererFactory>
-        get() = _factories
-
-    private val lock = ReentrantLock()
-
-    override operator fun invoke(diagnostic: KtDiagnostic): KtDiagnosticRenderer = lock.withLock {
-        for (factory in _factories) {
-            val renderer = factory(diagnostic)
-            if (renderer != null) return renderer
-        }
-        diagnostic.factory.ktRenderer
-    }
-
-    fun registerFactory(factory: DiagnosticRendererFactory) {
-        lock.withLock {
-            _factories.add(factory)
-        }
-    }
 }

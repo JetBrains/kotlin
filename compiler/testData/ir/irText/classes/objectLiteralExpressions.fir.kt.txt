@@ -92,3 +92,4 @@ fun Outer.test4(): Inner {
     <no name provided>()
   }
 }
+

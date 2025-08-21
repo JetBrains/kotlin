@@ -1,13 +1,9 @@
-// IGNORE_BACKEND: ANY
-// ^^^ Muted because accessor for function/constructor/property references are not generated. To be fixed in KT-69797.
-// IGNORE_KLIB_SYNTHETIC_ACCESSORS_CHECKS: ANY
-// ^^^ error: public-API inline function cannot access non-public-API function.
-
 // MODULE: lib
 // FILE: A.kt
 class A {
     private var privateVar = 22
 
+    @Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
     public inline fun publicInlineFunction() = ::privateVar
 }
 

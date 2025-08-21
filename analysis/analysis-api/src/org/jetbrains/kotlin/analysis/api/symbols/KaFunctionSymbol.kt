@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.base.KaContextReceiver
 import org.jetbrains.kotlin.analysis.api.contracts.description.KaContractEffectDeclaration
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
+import org.jetbrains.kotlin.analysis.api.symbols.markers.KaContextParameterOwnerSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaNamedSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaTypeParameterOwnerSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
@@ -45,7 +46,9 @@ public sealed class KaFunctionSymbol : KaCallableSymbol() {
  *
  * Anonymous functions are always [local][KaSymbolLocation.LOCAL] and have no [callableId] (`null`).
  */
-public abstract class KaAnonymousFunctionSymbol : KaFunctionSymbol() {
+@OptIn(KaExperimentalApi::class, KaImplementationDetail::class)
+@SubclassOptInRequired(KaImplementationDetail::class)
+public abstract class KaAnonymousFunctionSymbol : KaFunctionSymbol(), KaContextParameterOwnerSymbol {
     final override val location: KaSymbolLocation get() = withValidityAssertion { KaSymbolLocation.LOCAL }
     final override val callableId: CallableId? get() = withValidityAssertion { null }
     final override val isActual: Boolean get() = withValidityAssertion { false }
@@ -79,6 +82,7 @@ public abstract class KaAnonymousFunctionSymbol : KaFunctionSymbol() {
  * @see KaSymbolOrigin.SAM_CONSTRUCTOR
  */
 @OptIn(KaImplementationDetail::class)
+@SubclassOptInRequired(KaImplementationDetail::class)
 public abstract class KaSamConstructorSymbol : KaFunctionSymbol(), KaNamedSymbol, KaTypeParameterOwnerSymbol {
     final override val location: KaSymbolLocation get() = withValidityAssertion { KaSymbolLocation.TOP_LEVEL }
     final override val receiverParameter: KaReceiverParameterSymbol? get() = withValidityAssertion { null }
@@ -90,8 +94,9 @@ public abstract class KaSamConstructorSymbol : KaFunctionSymbol(), KaNamedSymbol
  * [KaNamedFunctionSymbol] represents a named [function declaration](https://kotlinlang.org/docs/functions.html), such as a top-level
  * function, a class method, or a named local function.
  */
-@OptIn(KaImplementationDetail::class)
-public abstract class KaNamedFunctionSymbol : KaFunctionSymbol(), KaNamedSymbol, KaTypeParameterOwnerSymbol {
+@OptIn(KaImplementationDetail::class, KaExperimentalApi::class)
+@SubclassOptInRequired(KaImplementationDetail::class)
+public abstract class KaNamedFunctionSymbol : KaFunctionSymbol(), KaNamedSymbol, KaTypeParameterOwnerSymbol, KaContextParameterOwnerSymbol {
     /**
      * Whether the function is a [suspend function](https://kotlinlang.org/spec/asynchronous-programming-with-coroutines.html#suspending-functions).
      */
@@ -155,6 +160,7 @@ public abstract class KaNamedFunctionSymbol : KaFunctionSymbol(), KaNamedSymbol,
  * Constructors do not have a [callableId] (`null`) and cannot have a [receiverParameter] or [contextReceivers].
  */
 @OptIn(KaImplementationDetail::class)
+@SubclassOptInRequired(KaImplementationDetail::class)
 public abstract class KaConstructorSymbol : KaFunctionSymbol(), KaTypeParameterOwnerSymbol {
     /**
      * Whether the constructor is the [primary constructor](https://kotlinlang.org/docs/classes.html#constructors) of the class. The primary

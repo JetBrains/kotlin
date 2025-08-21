@@ -19,3 +19,5 @@ actual abstract class AbstractMap() {
 }
 
 actual class HashMap : AbstractMap()
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, integerLiteral, primaryConstructor, propertyDeclaration */

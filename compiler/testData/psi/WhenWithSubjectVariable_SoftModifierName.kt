@@ -1,3 +1,5 @@
+// COMPILATION_ERRORS
+
 fun test() {
     when (abstract) {}
     when (enum) {}

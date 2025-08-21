@@ -34,3 +34,6 @@ sealed class Base {
         is A.A2 -> 3
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, equalityExpression, functionDeclaration, integerLiteral, isExpression,
+nestedClass, objectDeclaration, sealed, smartcast, whenExpression, whenWithSubject */

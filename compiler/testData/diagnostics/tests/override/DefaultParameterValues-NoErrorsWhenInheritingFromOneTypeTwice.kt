@@ -15,3 +15,6 @@ class Z2 : Y, YSub {
 object Z2O : Y, YSub {
     override fun foo(a : Int) {}
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, interfaceDeclaration, objectDeclaration,
+override */

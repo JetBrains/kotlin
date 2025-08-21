@@ -7,3 +7,5 @@ fun bar(list: List<Int>) {
 }
 
 fun <T : CharSequence> foo(list: List<T>) {}
+
+/* GENERATED_FIR_TAGS: functionDeclaration, typeConstraint, typeParameter */

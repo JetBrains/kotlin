@@ -1,3 +1,5 @@
+// COMPILATION_ERRORS
+
 fun test() {
     x as? X ?: return
     x as X? ?: return

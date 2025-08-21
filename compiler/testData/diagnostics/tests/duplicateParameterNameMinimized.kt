@@ -11,3 +11,6 @@ fun main() {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: funWithExtensionReceiver, functionDeclaration, functionalType, integerLiteral, lambdaLiteral,
+nullableType, typeParameter */

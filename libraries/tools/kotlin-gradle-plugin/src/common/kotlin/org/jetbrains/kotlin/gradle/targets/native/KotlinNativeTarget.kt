@@ -9,24 +9,15 @@ package org.jetbrains.kotlin.gradle.plugin.mpp
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
 import org.gradle.api.attributes.Attribute
-import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.resources.publication.setUpResourcesVariant
 import org.jetbrains.kotlin.gradle.plugin.sources.awaitPlatformCompilations
 import org.jetbrains.kotlin.gradle.plugin.sources.internal
-import org.jetbrains.kotlin.gradle.targets.metadata.*
-import org.jetbrains.kotlin.gradle.targets.native.KotlinNativeBinaryTestRun
-import org.jetbrains.kotlin.gradle.targets.native.KotlinNativeHostTestRun
-import org.jetbrains.kotlin.gradle.targets.native.KotlinNativeSimulatorTestRun
-import org.jetbrains.kotlin.gradle.targets.native.NativeBinaryTestRunSource
-import org.jetbrains.kotlin.gradle.targets.native.KotlinNativeHostTestRunFactory
-import org.jetbrains.kotlin.gradle.targets.native.KotlinNativeSimulatorTestRunFactory
-import org.jetbrains.kotlin.gradle.utils.dashSeparatedName
-import org.jetbrains.kotlin.gradle.utils.klibModuleName
-import org.jetbrains.kotlin.gradle.utils.newInstance
-import org.jetbrains.kotlin.gradle.utils.setAttribute
+import org.jetbrains.kotlin.gradle.targets.metadata.isNativeSourceSet
+import org.jetbrains.kotlin.gradle.targets.native.*
+import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
@@ -38,19 +29,32 @@ abstract class KotlinNativeTarget @Inject constructor(
     val konanTarget: KonanTarget,
 ) : HasConfigurableKotlinCompilerOptions<KotlinNativeCompilerOptions>,
     KotlinTargetWithBinaries<KotlinNativeCompilation, KotlinNativeBinaryContainer>(
-    project,
-    KotlinPlatformType.native
-) {
+        project,
+        KotlinPlatformType.native
+    ) {
 
     init {
-        attributes.setAttribute(konanTargetAttribute, konanTarget.name)
+        attributes.attribute(konanTargetAttribute, konanTarget.name)
     }
 
     internal val hostSpecificMetadataElementsConfigurationName get() = disambiguateName("MetadataElements")
 
+    /**
+     * Indicates whether cross-compilation is supported on the current host for the associated Kotlin Native Target.
+     */
+    internal val crossCompilationOnCurrentHostSupported: Future<Boolean> = project.future {
+        val crossCompilationEnabled = project.kotlinPropertiesProvider.enableKlibsCrossCompilation
+        val isSupportedHost = hostManager.isEnabled(konanTarget)
+
+        // Supported hosts can always compile
+        if (isSupportedHost) return@future true
+
+        // Unsupported hosts require cross-compilation enabled and no cinterops
+        KotlinPluginLifecycle.Stage.AfterFinaliseCompilations.await()
+        crossCompilationEnabled && compilations.none { it.cinterops.isNotEmpty() }
+    }
+
     override val kotlinComponents: Set<KotlinTargetComponent> by lazy {
-        if (!project.isKotlinGranularMetadataEnabled)
-            return@lazy super.kotlinComponents
 
         val mainCompilation = compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME)
 
@@ -92,7 +96,7 @@ abstract class KotlinNativeTarget @Inject constructor(
         setOf(result)
     }
 
-    override val binaries =
+    override val binaries: KotlinNativeBinaryContainer =
         // Use newInstance to allow accessing binaries by their names in Groovy using the extension mechanism.
         project.objects.newInstance(
             KotlinNativeBinaryContainer::class.java,
@@ -104,7 +108,7 @@ abstract class KotlinNativeTarget @Inject constructor(
         get() = disambiguateName("binaries")
 
     override val publishable: Boolean
-        get() = konanTarget.enabledOnCurrentHostForKlibCompilation(project.kotlinPropertiesProvider)
+        get() = crossCompilationOnCurrentHostSupported.getOrThrow()
 
     override val compilerOptions: KotlinNativeCompilerOptions = project.objects
         .newInstance<KotlinNativeCompilerOptionsDefault>()

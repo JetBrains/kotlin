@@ -19,3 +19,6 @@ class D<X, Z, Y : X>(foo: C<X, Z, Y>) {
         val d: D<X, Y, Y> = <!TYPE_MISMATCH, TYPE_MISMATCH!>D(a)<!>
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, localProperty, nullableType, primaryConstructor,
+propertyDeclaration, typeConstraint, typeParameter */

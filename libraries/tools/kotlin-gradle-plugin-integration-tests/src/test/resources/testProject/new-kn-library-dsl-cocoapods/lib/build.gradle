@@ -3,7 +3,7 @@ plugins {
     id 'org.jetbrains.kotlin.native.cocoapods'
 }
 
-version '0.2'
+version = '0.2'
 
 kotlin {
     linuxX64()

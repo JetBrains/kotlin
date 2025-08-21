@@ -7,7 +7,9 @@ package org.jetbrains.kotlin.konan.test
 
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.CommonKlibBasedCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.K2NativeCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.cliArgument
+import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.config.DuplicatedUniqueNameStrategy
 import org.jetbrains.kotlin.konan.properties.propertyList
 import org.jetbrains.kotlin.konan.test.blackbox.*
@@ -17,19 +19,20 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.LibraryCompi
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationArtifact.KLIB
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationResult
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationResult.Companion.assertSuccess
-import org.jetbrains.kotlin.konan.test.blackbox.support.group.FirPipeline
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestExecutable
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.KotlinNativeHome
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.KotlinNativeTargets
 import org.jetbrains.kotlin.library.*
 import org.jetbrains.kotlin.test.services.JUnit5Assertions
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertContainsElements
-import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertFalse
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertEquals
+import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertFalse
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertNotEquals
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.fail
-import org.jetbrains.kotlin.test.utils.*
+import org.jetbrains.kotlin.test.utils.assertCompilerOutputHasKlibResolverIncompatibleAbiMessages
+import org.jetbrains.kotlin.test.utils.patchManifestAsMap
+import org.jetbrains.kotlin.test.utils.patchManifestToBumpAbiVersion
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.junit.jupiter.api.*
 import org.junit.jupiter.api.parallel.Execution
@@ -48,8 +51,6 @@ import org.jetbrains.kotlin.konan.file.File as KFile
  *
  * The control over the working directory in performed in the [runWithCustomWorkingDir] function.
  */
-@FirPipeline
-@Tag("frontend-fir")
 @Tag("klib")
 @Isolated // Run this test class in isolation from other test classes.
 @Execution(ExecutionMode.SAME_THREAD) // Run all test functions sequentially in the same thread.
@@ -62,6 +63,95 @@ class KlibResolverTest : AbstractNativeSimpleTest() {
 
         fun initDependencies(resolveDependency: (String) -> Module) {
             dependencies = dependencyNames.map(resolveDependency)
+        }
+    }
+
+    @Test
+    @DisplayName("Test -Xabi-version CLI argument (KT-74467)")
+    fun testABIVersionCLIFlag() {
+        val module = createModules(Module("a"))
+
+        val correctVersions = arrayOf(
+            "0.0.0", "255.255.255",
+            "0.10.200", "10.200.0", "200.0.10",
+            "2.2.0", "2.3.0"
+        )
+        for (version in correctVersions) {
+            module.compileModules(
+                produceUnpackedKlibs = true,
+                useLibraryNamesInCliArguments = false,
+                extraCmdLineParams = listOf(K2NativeCompilerArguments::customKlibAbiVersion.cliArgument + "=" + version)
+            ) { _, successKlib ->
+                val klib = successKlib.resultingArtifact
+                val manifest = File("${klib.path}/default/manifest")
+                val versionBumped = manifest.readLines()
+                    .find { it.startsWith("abi_version") }
+                    ?.split("=")
+                    ?.get(1)
+                kotlin.test.assertEquals(versionBumped, version)
+            }
+        }
+
+        val incorrectVersions = arrayOf(
+            "0", "0.1", "0.1.", "0.1.2.", "..", "0 .1. 2",
+            "00.001.0002", "-0.-0.-0", "256.256.256"
+        )
+        for (version in incorrectVersions) {
+            try {
+                module.compileModules(
+                    produceUnpackedKlibs = true,
+                    useLibraryNamesInCliArguments = false,
+                    extraCmdLineParams = listOf(K2NativeCompilerArguments::customKlibAbiVersion.cliArgument + "=" + version)
+                )
+                assertTrue(false)
+            } catch (cte: CompilationToolException) {
+                assertTrue(cte.reason.contains("error: invalid ABI version"))
+            }
+        }
+    }
+
+    @Test
+    @DisplayName("Test -Xmetadata-version CLI argument (KT-56062)")
+    fun testMetadataVersionCLIFlag() {
+        val module = createModules(Module("a"))
+
+        val correctVersions = arrayOf(
+            "0.0.0", "255.255.255",
+            "1.4.1", "2.1.0", "2.2.0", "2.3.0"
+        )
+        for (version in correctVersions) {
+            module.compileModules(
+                produceUnpackedKlibs = true,
+                useLibraryNamesInCliArguments = false,
+                extraCmdLineParams = listOf(K2NativeCompilerArguments::metadataVersion.cliArgument + "=" + version)
+            ) { _, successKlib ->
+                val klib = successKlib.resultingArtifact
+                val manifest = File("${klib.path}/default/manifest")
+                val versionBumped = manifest.readLines()
+                    .find { it.startsWith("metadata_version") }
+                    ?.split("=")
+                    ?.get(1)
+                kotlin.test.assertEquals(versionBumped, version)
+            }
+        }
+
+        val incorrectVersions = arrayOf(
+            "0.1.", "0.1.2.", "..", "0 .1. 2",
+            // These test cases should be uncommented after fixing KT-76247
+            // "0", "0.1", "0.1.2.3",
+            // "00.001.0002", "-0.-0.-0", "256.256.256"
+        )
+        for (version in incorrectVersions) {
+            try {
+                module.compileModules(
+                    produceUnpackedKlibs = true,
+                    useLibraryNamesInCliArguments = false,
+                    extraCmdLineParams = listOf(K2NativeCompilerArguments::metadataVersion.cliArgument + "=" + version)
+                )
+                assertTrue(false)
+            } catch (cte: CompilationToolException) {
+                assertTrue(cte.reason.contains("error: invalid metadata version"))
+            }
         }
     }
 
@@ -101,85 +191,10 @@ class KlibResolverTest : AbstractNativeSimpleTest() {
                 "c" -> {
                     val compilationToolCall = successKlib.loggedData as LoggedData.CompilationToolCall
                     assertEquals(ExitCode.OK, compilationToolCall.exitCode)
-                    assertTrue(compilationToolCall.toolOutput.contains("warning: KLIB resolver: Could not find \"a\""))
+                    val warnings = compilationToolCall.toolOutput.lineSequence().filter { "warning: KLIB resolver:" in it }.toList()
+                    assertTrue(warnings.isEmpty())
                 }
             }
-        }
-    }
-
-    @Test
-    @DisplayName("-nowarn cmdline param suppresses warning when resolving nonexistent transitive dependency recorded in `depends` property (KT-70146)")
-    fun testResolvingTransitiveDependenciesRecordedInManifestWithNowarn() {
-        val moduleA = Module("a")
-        val moduleB = Module("b", "a")
-        val moduleC = Module("c", "b")
-        val modules = createModules(moduleA, moduleB, moduleC)
-
-        var aKlib: KLIB? = null
-        modules.compileModules(produceUnpackedKlibs = false, useLibraryNamesInCliArguments = true, extraCmdLineParams = listOf("-nowarn")) { module, successKlib ->
-            when (module.name) {
-                "a" -> aKlib = successKlib.resultingArtifact
-                "b" -> aKlib!!.klibFile.delete() // remove transitive dependency `a`, so subsequent compilation of `c` would miss it.
-                "c" -> {
-                    val compilationToolCall = successKlib.loggedData as LoggedData.CompilationToolCall
-                    assertEquals(ExitCode.OK, compilationToolCall.exitCode)
-                    assertFalse(compilationToolCall.toolOutput.contains("warning: KLIB resolver: Could not find \"a\""))
-                }
-            }
-        }
-    }
-
-    @Test
-    @DisplayName("-Werror cmdline param causes error resolving nonexistent transitive dependency recorded in `depends` property (KT-70146)")
-    fun testResolvingTransitiveDependenciesRecordedInManifestWithWerror() {
-        val moduleA = Module("a")
-        val moduleB = Module("b", "a")
-        val moduleC = Module("c", "b")
-        val modules = createModules(moduleA, moduleB, moduleC)
-
-        var aKlib: KLIB? = null
-        try {
-            modules.compileModules(
-                produceUnpackedKlibs = false,
-                useLibraryNamesInCliArguments = true,
-                extraCmdLineParams = listOf("-Werror"),
-            ) { module, successKlib ->
-                when (module.name) {
-                    "a" -> aKlib = successKlib.resultingArtifact
-                    "b" -> aKlib!!.klibFile.delete() // remove transitive dependency `a`, so subsequent compilation of `c` would miss it.
-                    "c" -> fail ("Normally should not get here")
-                }
-            }
-        } catch (cte: CompilationToolException) {
-            assertTrue(cte.reason.contains("warning: KLIB resolver: Could not find \"a\" in "))
-            assertTrue(cte.reason.contains("error: warnings found and -Werror specified"))
-        }
-    }
-
-    @Test
-    @DisplayName("-Werror and -nowarn cmdline params cause error resolving nonexistent transitive dependency recorded in `depends` property (KT-70146)")
-    fun testResolvingTransitiveDependenciesRecordedInManifestWithWerrorNowarn() {
-        val moduleA = Module("a")
-        val moduleB = Module("b", "a")
-        val moduleC = Module("c", "b")
-        val modules = createModules(moduleA, moduleB, moduleC)
-
-        var aKlib: KLIB? = null
-        try {
-            modules.compileModules(
-                produceUnpackedKlibs = false,
-                useLibraryNamesInCliArguments = true,
-                extraCmdLineParams = listOf("-Werror", "-nowarn"),
-            ) { module, successKlib ->
-                when (module.name) {
-                    "a" -> aKlib = successKlib.resultingArtifact
-                    "b" -> aKlib!!.klibFile.delete() // remove transitive dependency `a`, so subsequent compilation of `c` would miss it.
-                    "c" -> fail ("Normally should not get here")
-                }
-            }
-        } catch (cte: CompilationToolException) {
-            assertTrue(cte.reason.contains("warning: KLIB resolver: Could not find \"a\" in "))
-            assertTrue(cte.reason.contains("error: warnings found and -Werror specified"))
         }
     }
 
@@ -452,7 +467,7 @@ class KlibResolverTest : AbstractNativeSimpleTest() {
         fun testNonExistingLibraryPassedToTheCompilerInDifferentWays() = with(NonRepeatedModuleNameGenerator()) {
             sequenceOf("no-such-library")
                 .flatMap { sequenceOf(it, "no-such-directory/$it") }
-                .flatMap { sequenceOf(it, "./$it", "../$it", "$it/../$it") }
+                .flatMap { sequenceOf(it, "./$it", "../build/$it", "$it/../$it") }
                 .flatMap { sequenceOf(it, buildDir.resolve(it).absolutePath) }
                 .flatMap { sequenceOf(it, "$it.klib") }
                 .forEach { libraryNameOrPath ->
@@ -493,7 +508,7 @@ class KlibResolverTest : AbstractNativeSimpleTest() {
 
             sequenceOf(stdlibFile, posixFile)
                 .map { it.name }
-                .flatMap { sequenceOf("./$it", "../$it", "$it/../$it") }
+                .flatMap { sequenceOf("./$it", "../build/$it", "$it/../$it") }
                 .flatMap { sequenceOf(it, "$it.klib") }
                 .forEach { libraryNameOrPath ->
                     expectFailingAsNotFound(libraryNameOrPath) { compileMainModule(libraryNameOrPath) }
@@ -672,11 +687,20 @@ class KlibResolverTest : AbstractNativeSimpleTest() {
         }
 
         private inline fun expectFailingAsNotFound(dependencyNameInError: String, block: () -> Unit) {
+            val normalizedDependencyNameInError = dependencyNameInError.replace('/', File.separatorChar)
+
             try {
                 block()
-                fail("Normally should not get here")
+                fail { "The test was expected to fail with the error due to unresolved KLIB \"$dependencyNameInError\". But was successful." }
             } catch (cte: CompilationToolException) {
-                assertTrue(cte.reason.contains("error: KLIB resolver: Could not find \"$dependencyNameInError\""))
+                // The message can use both forward and backward slashes on Windows.
+                assertTrue(
+                    cte.reason.contains("error: KLIB resolver: Could not find \"$normalizedDependencyNameInError\"") ||
+                            cte.reason.contains("error: KLIB resolver: Could not find \"$dependencyNameInError\"")
+                ) {
+                    "The test was expected to fail with the error due to unresolved KLIB \"$dependencyNameInError\". " +
+                            "But the actual error message is (${cte.reason.toByteArray().size} bytes, ${cte.reason.lineSequence().count()} lines):\n${cte.reason}"
+                }
             }
         }
 
@@ -883,7 +907,7 @@ class KlibResolverTest : AbstractNativeSimpleTest() {
 
     companion object {
         private const val USER_DIR = "user.dir"
-        private val irProvidersMismatchSrcDir = File("native/native.tests/testData/irProvidersMismatch")
+        private val irProvidersMismatchSrcDir = ForTestCompileRuntime.transformTestDataPath("native/native.tests/testData/irProvidersMismatch")
 
         private const val DUPLICATED_UNIQUE_NAME = "DUPLICATED_UNIQUE_NAME"
 

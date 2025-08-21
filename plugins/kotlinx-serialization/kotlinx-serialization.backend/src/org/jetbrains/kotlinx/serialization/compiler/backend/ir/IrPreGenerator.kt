@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.ir.declarations.isSingleFieldValueClass
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.companionObject
 import org.jetbrains.kotlin.ir.util.copyTo
+import org.jetbrains.kotlin.ir.util.nonDispatchParameters
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.platform.jvm.isJvm
@@ -70,8 +71,8 @@ class IrPreGenerator(
             )
         }
         // Despite this function should be static in bytecode, registerFunctionAsMetadataVisible needs a correct dispatch receiver
-        // to handle function metadata correctly. This dispatchReceiverParameter will become `null` later.
-        method.dispatchReceiverParameter = irClass.thisReceiver?.copyTo(method, remapTypeMap = typeParamsMap)
+        // to handle function metadata correctly. This dispatchReceiverParameter will be removed later.
+        method.parameters = listOfNotNull(irClass.thisReceiver?.copyTo(method, remapTypeMap = typeParamsMap))
         val typeParamsAsArguments = typeParamsMap.values.map { it.defaultType }
 
         // object
@@ -107,7 +108,7 @@ class IrPreGenerator(
         compilerContext.metadataDeclarationRegistrar.registerFunctionAsMetadataVisible(method)
 
         // Make function static in bytecode (see JvmStaticAnnotationLowering.makeStatic).
-        method.dispatchReceiverParameter = null
+        method.parameters = method.nonDispatchParameters
     }
 
     private fun preGenerateDeserializationConstructorIfNeeded() {

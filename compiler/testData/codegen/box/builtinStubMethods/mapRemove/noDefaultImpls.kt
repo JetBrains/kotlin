@@ -1,4 +1,4 @@
-// JVM_DEFAULT_MODE: all
+// JVM_DEFAULT_MODE: no-compatibility
 // SKIP_JDK6
 // TARGET_BACKEND: JVM
 // JVM_TARGET: 1.8

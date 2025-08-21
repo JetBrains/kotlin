@@ -1,3 +1,5 @@
+// COMPILATION_ERRORS
+
 val simpleNumber: Number
     field = 4
 

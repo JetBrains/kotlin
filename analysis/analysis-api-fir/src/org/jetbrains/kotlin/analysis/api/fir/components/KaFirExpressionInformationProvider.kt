@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.components.KaExpressionInformationProvider
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseSessionComponent
-import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
+import org.jetbrains.kotlin.analysis.api.impl.base.components.withPsiValidityAssertion
 import org.jetbrains.kotlin.analysis.api.resolution.KaSimpleVariableAccessCall
 import org.jetbrains.kotlin.analysis.api.resolution.KaSuccessCallInfo
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
@@ -30,23 +30,34 @@ internal class KaFirExpressionInformationProvider(
     override val analysisSessionProvider: () -> KaFirSession,
 ) : KaBaseSessionComponent<KaFirSession>(), KaExpressionInformationProvider, KaFirSessionComponent {
     override val KtReturnExpression.targetSymbol: KaCallableSymbol?
-        get() = withValidityAssertion {
-            val fir = getOrBuildFirSafe<FirReturnExpression>(firResolveSession) ?: return null
+        get() = withPsiValidityAssertion {
+            val fir = getOrBuildFirSafe<FirReturnExpression>(resolutionFacade) ?: return null
             val firTargetSymbol = fir.target.labeledElement
             if (firTargetSymbol is FirErrorFunction) return null
             return firSymbolBuilder.callableBuilder.buildCallableSymbol(firTargetSymbol.symbol)
         }
 
-    override fun KtWhenExpression.computeMissingCases(): List<WhenMissingCase> = withValidityAssertion {
-        val firWhenExpression = getOrBuildFirSafe<FirWhenExpression>(analysisSession.firResolveSession) ?: return emptyList()
+    override fun KtWhenExpression.computeMissingCases(): List<WhenMissingCase> = withPsiValidityAssertion {
+        val firWhenExpression = getOrBuildFirSafe<FirWhenExpression>(analysisSession.resolutionFacade) ?: return emptyList()
         return FirWhenExhaustivenessTransformer.computeAllMissingCases(
-            analysisSession.firResolveSession.useSiteFirSession,
+            analysisSession.resolutionFacade.useSiteFirSession,
             firWhenExpression
         )
     }
 
     override val KtExpression.isUsedAsExpression: Boolean
-        get() = withValidityAssertion { isUsed(this) }
+        get() = withPsiValidityAssertion { isUsed(this, null) }
+
+    override val KtExpression.isUsedAsResultOfLambda: Boolean
+        get() = withPsiValidityAssertion {
+            val additionalInfoCollector = AdditionalInfoCollector()
+                .also { collector -> isUsed(this, collector) }
+            additionalInfoCollector.isUsedAsResultOfLambda
+        }
+
+    private class AdditionalInfoCollector() {
+        var isUsedAsResultOfLambda: Boolean = false
+    }
 
     /**
      * [isUsed] and [doesParentUseChild] are defined in mutual recursion,
@@ -54,24 +65,28 @@ internal class KaFirExpressionInformationProvider(
      * two.
      *
      * Whether an expression is used is defined by the context in which it
-     * appears. E.g. a "statement" in a block is considered used if it is the
+     * appears.
+     * E.g., a "statement" in a block is considered used if it is the
      * last expression in that block AND the block itself is used -- a
      * recursive call to `isUsed`, one level higher in the syntax tree.
      *
      * The methods are _conservative_, erring on the side of answering `true`.
      */
-    private fun isUsed(psiElement: PsiElement): Boolean = when (psiElement) {
+    private fun isUsed(
+        psiElement: PsiElement,
+        additionalElementUsageInfoContext: AdditionalInfoCollector?
+    ): Boolean = when (psiElement) {
         /**
          * DECLARATIONS
          */
         // Inner PSI of KtLambdaExpressions. Used if the containing KtLambdaExpression is.
         is KtFunctionLiteral ->
-            doesParentUseChild(psiElement.parent, psiElement)
+            doesParentUseChild(psiElement.parent, psiElement, additionalElementUsageInfoContext)
 
         // KtNamedFunction includes `fun() { ... }` lambda syntax. No other
         // "named" functions can be expressions.
         is KtNamedFunction ->
-            doesParentUseChild(psiElement.parent, psiElement)
+            doesParentUseChild(psiElement.parent, psiElement, additionalElementUsageInfoContext)
 
         // No other declarations are considered expressions
         is KtDeclaration ->
@@ -80,7 +95,7 @@ internal class KaFirExpressionInformationProvider(
         /**
          * EXPRESSIONS
          */
-        // A handful of expression are never considered used:
+        // A handful of expressions are never considered used:
 
         //  - Everything of type `Nothing`
         is KtThrowExpression ->
@@ -100,7 +115,7 @@ internal class KaFirExpressionInformationProvider(
         is KtConstructorDelegationReferenceExpression ->
             false
 
-        // - Administrative node for EnumEntries. Never used as expression.
+        // - Administrative node for EnumEntries. Never used as an expression.
         is KtEnumEntrySuperclassReferenceExpression ->
             false
 
@@ -118,43 +133,51 @@ internal class KaFirExpressionInformationProvider(
 
         // All other expressions are used if their parent expression uses them.
         else ->
-            doesParentUseChild(psiElement.parent, psiElement)
+            doesParentUseChild(psiElement.parent, psiElement, additionalElementUsageInfoContext)
     }
 
-    private fun doesParentUseChild(parent: PsiElement, child: PsiElement): Boolean = when (parent) {
+    private fun doesParentUseChild(
+        parent: PsiElement,
+        child: PsiElement,
+        additionalInfoCollector: AdditionalInfoCollector?
+    ): Boolean = when (parent) {
         /**
          * NON-EXPRESSION PARENTS
          */
-        // KtValueArguments are a container for call-sites, and use exactly the
+        // KtValueArguments are a container for call-sites and use exactly the
         // argument expression they wrap.
         is KtValueArgument ->
             parent.getArgumentExpression() == child
+
+        // In `foo(param = value)`, `param` is not used as an expression
+        is KtValueArgumentName ->
+            false
 
         is KtDelegatedSuperTypeEntry ->
             parent.delegateExpression == child
 
         // KtContainerNode are containers used in `KtIfExpressions`, and should be regarded
-        // as parentheses for the purpose of this analysis.
+        // as parentheses for this analysis.
         is KtContainerNode ->
             // !!!!CAUTION!!!! Not `parentUse(parent.parent, _parent_)`
-            // Here we assume the parent (e.g. If condition) statement
-            // ignores the ContainerNode when accessing child
-            doesParentUseChild(parent.parent, child)
+            // Here we assume the parent (e.g., If condition) statement
+            // ignores the ContainerNode when accessing the child
+            doesParentUseChild(parent.parent, child, additionalInfoCollector)
 
-        // KtWhenEntry/WhenCondition are containers used in KtWhenExpressions, ard
+        // KtWhenEntry/WhenCondition are containers used in KtWhenExpressions and
         // should be regarded as parentheses.
         is KtWhenEntry ->
-            (parent.expression == child && isUsed(parent.parent)) || child in parent.conditions
+            (parent.expression == child && isUsed(parent.parent, additionalInfoCollector)) || child in parent.conditions
 
         is KtWhenCondition ->
-            doesParentUseChild(parent.parent, parent)
+            doesParentUseChild(parent.parent, parent, additionalInfoCollector)
 
-        // Type parameters, return types and other annotations are all contained in KtUserType,
+        // Type parameters, return types and other annotations are all contained in KtUserType
         // and are never considered used as expressions
         is KtUserType ->
             false
 
-        // Only top-level named declarations have KtFile/KtScript Parents, and are never considered used
+        // Only top-level named declarations have KtFile/KtScript parents and are never considered used
         is KtFile ->
             false
         is KtScript ->
@@ -164,15 +187,18 @@ internal class KaFirExpressionInformationProvider(
         is KtClassBody ->
             false
 
+        is KtImportDirective ->
+            false
+
         // $_ and ${_} contexts use their inner expression
         is KtStringTemplateEntry ->
             parent.expression == child
 
         // Catch blocks are used if the parent-try uses the catch block
         is KtCatchClause ->
-            doesParentUseChild(parent.parent, parent)
+            doesParentUseChild(parent.parent, parent, additionalInfoCollector)
 
-        // Finally blocks are never used
+        // Finally, blocks are never used
         is KtFinallySection ->
             false
 
@@ -189,7 +215,7 @@ internal class KaFirExpressionInformationProvider(
         /**
          * EXPRESSIONS
          */
-        // Enum entries, type parameters, lamda expressions and script
+        // Enum entries, type parameters, lambda expressions and script
         // initializers never use any child expressions.
         is KtEnumEntry ->
             false
@@ -202,7 +228,7 @@ internal class KaFirExpressionInformationProvider(
 
         // The last expression of a block is considered used iff the block itself is used.
         is KtBlockExpression ->
-            parent.statements.lastOrNull() == child && isUsed(parent)
+            parent.statements.lastOrNull() == child && isUsed(parent, additionalInfoCollector)
 
         // Destructuring declarations use their initializer.
         is KtDestructuringDeclaration ->
@@ -217,9 +243,11 @@ internal class KaFirExpressionInformationProvider(
             parent.bodyExpression == child && doesPropertyAccessorUseBody(parent, child)
 
         // Lambdas do not use their expression-blocks if they are inferred
-        // to be of unit type
+        // to be of the Unit type
         is KtFunctionLiteral ->
-            parent.bodyBlockExpression == child && !analysisSession.returnsUnit(parent)
+            (parent.bodyBlockExpression == child && !analysisSession.returnsUnit(parent)).also { value ->
+                additionalInfoCollector?.isUsedAsResultOfLambda = value
+            }
 
         /** See [doesNamedFunctionUseBody] */
         is KtNamedFunction ->
@@ -252,7 +280,7 @@ internal class KaFirExpressionInformationProvider(
         // Qualified expressions always use its receiver. The selector is
         // used iff the qualified expression is.
         is KtQualifiedExpression ->
-            parent.receiverExpression == child || (parent.selectorExpression == child && isUsed(parent))
+            parent.receiverExpression == child || (parent.selectorExpression == child && isUsed(parent, additionalInfoCollector))
 
         // Array accesses use both receiver and index.
         is KtArrayAccessExpression ->
@@ -269,7 +297,7 @@ internal class KaFirExpressionInformationProvider(
 
         // Annotations are regarded as parentheses. The annotation itself is never used.
         is KtAnnotatedExpression ->
-            parent.baseExpression == child && isUsed(parent)
+            parent.baseExpression == child && isUsed(parent, additionalInfoCollector)
 
         /** See [doesDoubleColonUseLHS] */
         is KtDoubleColonExpression ->
@@ -277,10 +305,10 @@ internal class KaFirExpressionInformationProvider(
 
         // Parentheses are ignored for this analysis.
         is KtParenthesizedExpression ->
-            doesParentUseChild(parent.parent, parent)
+            doesParentUseChild(parent.parent, parent, additionalInfoCollector)
 
         // When expressions use the subject expression _unless_ the first branch in the
-        // when is an `else`.
+        // `when` is an `else`.
         is KtWhenExpression ->
             parent.subjectExpression == child && parent.entries.firstOrNull()?.isElse == false
 
@@ -291,14 +319,14 @@ internal class KaFirExpressionInformationProvider(
         // Body and catch blocks of try-catch expressions are used if the try-catch itself
         // is used.
         is KtTryExpression ->
-            (parent.tryBlock == child || child in parent.catchClauses) && isUsed(parent)
+            (parent.tryBlock == child || child in parent.catchClauses) && isUsed(parent, additionalInfoCollector)
 
         // If expressions always use their condition, and the branches are used if the
-        // If itself is used as an expression.
+        // `if` itself is used as an expression.
         is KtIfExpression ->
             parent.condition == child ||
                     ((parent.then == child ||
-                            parent.`else` == child) && isUsed(parent))
+                            parent.`else` == child) && isUsed(parent, additionalInfoCollector))
 
         // For expressions use their loop range expression.
         is KtForExpression ->
@@ -314,7 +342,7 @@ internal class KaFirExpressionInformationProvider(
 
         // Labels are regarded as parentheses for this analysis. The label itself is never used.
         is KtLabeledExpression ->
-            parent.baseExpression == child && isUsed(parent)
+            parent.baseExpression == child && isUsed(parent, additionalInfoCollector)
 
         // No children.
         is KtConstantExpression ->
@@ -348,7 +376,7 @@ internal class KaFirExpressionInformationProvider(
         is KtObjectLiteralExpression ->
             false
 
-        // break, continue, super, this do not have children
+        // `break`, `continue`, `super` and `this` do not have children
         is KtBreakExpression ->
             false
         is KtContinueExpression ->
@@ -370,8 +398,8 @@ internal class KaFirExpressionInformationProvider(
 }
 
 /**
- *  The left hand side of a `::` is regarded as used unless it refers to a type.
- *  We decide that the LHS is a type reference by checking if the left hand
+ *  The left-hand side of a `::` is regarded as used unless it refers to a type.
+ *  We decide that the LHS is a type reference by checking if the left-hand
  *  side is a (qualified) name, and, in case it _is_, resolving that name.
  *
  *  If it resolves to a non-class declaration, it does _not_ refer to a type.
@@ -391,11 +419,11 @@ private fun doesDoubleColonUseLHS(lhs: PsiElement): Boolean {
 }
 
 /**
- * Invocations of _statically named_ callables is not considered a use. E.g.
- * consider
+ * Invocations of _statically named_ callables are not considered a use.
+ * E.g., consider
  *
- *   1)   fun f() { 54 }; f()
- *   2)   val f = { 54 }; f()
+ *   1) fun f() { 54 }; f()
+ *   2) val f = { 54 }; f()
  *
  * in which the `f` in 2) is regarded as used and `f` in 1) is not.
  */
@@ -404,7 +432,7 @@ private fun KaSession.doesCallExpressionUseCallee(callee: PsiElement): Boolean {
 }
 
 /**
- * The body of setters are always used. The body of getters are only used if they are expression bodies.
+ * The body of setters is always used. The body of getters is only used if they are expression bodies.
  */
 private fun doesPropertyAccessorUseBody(propertyAccessor: KtPropertyAccessor, body: PsiElement): Boolean {
     return propertyAccessor.isSetter || (propertyAccessor.isGetter && body !is KtBlockExpression)
@@ -439,4 +467,5 @@ private fun KaSession.isSimpleVariableAccessCall(reference: KtReferenceExpressio
             false
     }
 
-private fun KaSession.returnsUnit(declaration: KtDeclaration): Boolean = declaration.returnType.isUnitType
+private fun KaSession.returnsUnit(declaration: KtDeclarationWithReturnType): Boolean =
+    declaration.returnType.isUnitType

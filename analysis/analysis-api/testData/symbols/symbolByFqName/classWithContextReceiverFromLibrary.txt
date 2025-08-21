@@ -1,0 +1,43 @@
+KaNamedClassSymbol:
+  annotations: []
+  classId: one/Foo
+  classKind: CLASS
+  companionObject: null
+  compilerVisibility: Public
+  contextReceivers: [
+    KaContextReceiver:
+      label: <unused var>
+      type: KaUsualClassType:
+        annotations: []
+        typeArguments: []
+        type: kotlin/Int
+    KaContextReceiver:
+      label: <unused var>
+      type: KaUsualClassType:
+        annotations: []
+        typeArguments: []
+        type: kotlin/String
+  ]
+  isActual: false
+  isData: false
+  isExpect: false
+  isExternal: false
+  isFun: false
+  isInline: false
+  isInner: false
+  location: TOP_LEVEL
+  modality: FINAL
+  name: Foo
+  origin: LIBRARY
+  superTypes: [
+    KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: kotlin/Any
+  ]
+  typeParameters: []
+  visibility: PUBLIC
+  getContainingFileSymbol: null
+  getContainingModule: KaLibraryModule "Library library"
+  annotationApplicableTargets: null
+  deprecationStatus: null

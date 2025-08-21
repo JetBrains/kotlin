@@ -35,3 +35,7 @@ fun <T> test(x: T) {
     val s5: Pair<Int, String> = <!TYPE_MISMATCH, TYPE_MISMATCH!>bar(1, "", ::foo)<!>
     val (a1: Int, b1: String) = <!COMPONENT_FUNCTION_RETURN_TYPE_MISMATCH!>bar(1, "", ::foo)<!>
 }
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, data, destructuringDeclaration, funWithExtensionReceiver,
+functionDeclaration, functionalType, infix, inline, integerLiteral, lambdaLiteral, localProperty, nullableType,
+primaryConstructor, propertyDeclaration, reified, stringLiteral, typeParameter, typeWithExtension */

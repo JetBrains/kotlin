@@ -13,3 +13,5 @@ fun test(a: Stream<String>) {
     a.collect(Collectors.toList()) checkType { _<List<String?>>() }
 }
 
+/* GENERATED_FIR_TAGS: classDeclaration, flexibleType, funWithExtensionReceiver, functionDeclaration, functionalType,
+infix, javaFunction, lambdaLiteral, nullableType, starProjection, typeParameter, typeWithExtension */

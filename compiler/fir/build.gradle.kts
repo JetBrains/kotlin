@@ -6,8 +6,7 @@ val projectsAllowedToUseFirFromSymbol = listOf(
     "fir-deserialization",
     "fir-serialization",
     "fir2ir",
-    "java",
-    "jvm",
+    "fir-jvm",
     "raw-fir",
     "providers",
     "semantics",
@@ -25,6 +24,7 @@ subprojects {
             compilerOptions.optIn.addAll(
                 listOf(
                     "org.jetbrains.kotlin.fir.symbols.SymbolInternals",
+                    "org.jetbrains.kotlin.fir.declarations.DirectDeclarationsAccess",
                     "org.jetbrains.kotlin.types.model.K2Only",
                 )
             )

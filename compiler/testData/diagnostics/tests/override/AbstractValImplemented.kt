@@ -7,3 +7,5 @@ abstract class A {
 class B() : A() {
     override val i = 1
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, integerLiteral, override, primaryConstructor, propertyDeclaration */

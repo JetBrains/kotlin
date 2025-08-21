@@ -37,3 +37,5 @@ public class JavaClass {
         return true;
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, functionDeclaration, javaProperty, javaType */

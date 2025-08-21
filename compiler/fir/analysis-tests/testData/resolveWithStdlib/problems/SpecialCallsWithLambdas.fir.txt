@@ -7,7 +7,7 @@ FILE: SpecialCallsWithLambdas.kt
 
         }
         !!
-        lval bar: R|() -> kotlin/Function0<kotlin/Unit>| = fun <anonymous>(): R|() -> kotlin/Unit| <inline=Unknown>  {
+        lval bar: R|() -> kotlin/Function0<kotlin/Unit>| = fun <anonymous>(): R|() -> kotlin/Unit| <inline=NoInline>  {
             ^ fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
                 ^ Unit
             }

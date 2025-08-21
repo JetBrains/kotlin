@@ -19,7 +19,8 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.parentOrNull
 
 internal object FirPackageConflictsWithClassifierChecker : FirFileChecker(MppCheckerKind.Platform) {
-    override fun check(declaration: FirFile, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirFile) {
         val packageDirective = declaration.packageDirective
         val filePackageFqName = packageDirective.packageFqName
         for (currentPackageFqName in filePackageFqName.parentsIncludingSelf()) {
@@ -37,7 +38,7 @@ internal object FirPackageConflictsWithClassifierChecker : FirFileChecker(MppChe
             ) {
                 continue
             }
-            reporter.reportOn(packageDirective.source, FirErrors.PACKAGE_CONFLICTS_WITH_CLASSIFIER, classId, context)
+            reporter.reportOn(packageDirective.source, FirErrors.PACKAGE_CONFLICTS_WITH_CLASSIFIER, classId)
         }
     }
 

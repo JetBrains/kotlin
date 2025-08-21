@@ -14,8 +14,6 @@ import org.jetbrains.kotlin.fir.resolve.dfa.*
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.BodyResolveContext
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirAbstractBodyResolveTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirBodyResolveTransformer
-import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.types.SmartcastStability
 
 internal fun createStubBodyResolveComponents(firSession: FirSession): FirAbstractBodyResolveTransformer.BodyResolveTransformerComponents {
     val scopeSession = ScopeSession()
@@ -59,7 +57,7 @@ internal open class StubBodyResolveTransformerComponents(
             override fun implicitUpdated(info: TypeStatement) =
                 error("Should not be called")
 
-            override fun getTypeUsingSmartcastInfo(expression: FirExpression): Pair<SmartcastStability, Set<ConeKotlinType>>? =
+            override fun getTypeUsingSmartcastInfo(expression: FirExpression): SmartCastStatement? =
                 null
         }
 }

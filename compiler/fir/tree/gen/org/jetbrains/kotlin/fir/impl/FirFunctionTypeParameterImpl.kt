@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.name.Name
 
 internal class FirFunctionTypeParameterImpl(
-    override val source: KtSourceElement?,
+    override val source: KtSourceElement,
     override val name: Name?,
     override var returnTypeRef: FirTypeRef,
 ) : FirFunctionTypeParameter() {

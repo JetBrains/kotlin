@@ -5,6 +5,7 @@ callables: 1
     annotations: []
     callableId: test/nested/dummyTest
     compilerVisibility: Public
+    contextParameters: []
     contextReceivers: []
     contractEffects: []
     hasStableParameterNames: true

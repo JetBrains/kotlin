@@ -60,7 +60,7 @@ private class Transformer(
     private fun matchStdlibExtensionContainsCall(expression: IrCall): Boolean {
         val callee = expression.symbol.owner
         return callee.hasShape(extensionReceiver = true, regularParameters = 1) &&
-                callee.parameters[0].type.isSubtypeOfClass(context.ir.symbols.closedRange) &&
+                callee.parameters[0].type.isSubtypeOfClass(context.symbols.closedRange) &&
                 callee.kotlinFqName == FqName("kotlin.ranges.${OperatorNameConventions.CONTAINS}")
     }
 
@@ -231,10 +231,10 @@ private class Transformer(
         var arg = argument
         val builtIns = context.irBuiltIns
         val comparisonClass = if (isNumericRange) {
-            computeComparisonClass(this@Transformer.context.ir.symbols, lower.type, upper.type, arg.type) ?: return null
+            computeComparisonClass(this@Transformer.context.symbols, lower.type, upper.type, arg.type) ?: return null
         } else {
             assert(headerInfo is ComparableRangeInfo)
-            this@Transformer.context.ir.symbols.comparable.owner
+            this@Transformer.context.symbols.comparable.owner
         }
 
         if (isNumericRange) {
@@ -431,7 +431,7 @@ internal class ComparableRangeToHandler(private val context: CommonBackendContex
     override fun matchIterable(expression: IrCall): Boolean {
         val callee = expression.symbol.owner
         return callee.hasShape(extensionReceiver = true, regularParameters = 1) &&
-                callee.parameters[0].type.isSubtypeOfClass(context.ir.symbols.comparable) &&
+                callee.parameters[0].type.isSubtypeOfClass(context.symbols.comparable) &&
                 callee.kotlinFqName == FqName("kotlin.ranges.${OperatorNameConventions.RANGE_TO}")
     }
 

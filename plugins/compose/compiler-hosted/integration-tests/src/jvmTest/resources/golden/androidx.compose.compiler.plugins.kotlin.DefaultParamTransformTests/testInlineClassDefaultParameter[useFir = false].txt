@@ -28,7 +28,7 @@ fun Example(foo: Foo, %composer: Composer?, %changed: Int, %default: Int) {
   } else if (%changed and 0b0110 == 0) {
     %dirty = %dirty or if (%composer.changed(<unsafe-coerce>(foo))) 0b0100 else 0b0010
   }
-  if (%dirty and 0b0011 != 0b0010 || !%composer.skipping) {
+  if (%composer.shouldExecute(%dirty and 0b0011 != 0b0010, %dirty and 0b0001)) {
     if (%default and 0b0001 != 0) {
       foo = Foo(0)
     }
@@ -50,7 +50,7 @@ fun Example(foo: Foo, %composer: Composer?, %changed: Int, %default: Int) {
 fun Test(%composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(Test)<Exampl...>:Test.kt")
-  if (%changed != 0 || !%composer.skipping) {
+  if (%composer.shouldExecute(%changed != 0, %changed and 0b0001)) {
     if (isTraceInProgress()) {
       traceEventStart(<>, %changed, -1, <>)
     }

@@ -9,6 +9,7 @@
 #include <type_traits>
 #include <vector>
 
+#include "ExternalRCRef.hpp"
 #include "KAssert.h"
 #include "Memory.h"
 #include "ReferenceOps.hpp"
@@ -356,13 +357,11 @@ public:
 };
 
 struct RegularWeakReferenceImplPayload {
-    void* weakRef;
+    mm::RawExternalRCRef* weakRef;
     void* referred;
 
     static constexpr test_support::NoRefFields<RegularWeakReferenceImplPayload> kFields{};
 };
-
-extern "C" OBJ_GETTER(Konan_RegularWeakReferenceImpl_get, ObjHeader*);
 
 class RegularWeakReferenceImpl : public Object<RegularWeakReferenceImplPayload> {
 public:
@@ -373,7 +372,7 @@ public:
 
     RegularWeakReferenceImpl() noexcept : Object(theRegularWeakReferenceImplTypeInfo) {}
 
-    OBJ_GETTER0(get) noexcept { RETURN_RESULT_OF(Konan_RegularWeakReferenceImpl_get, header()); }
+    OBJ_GETTER0(get) noexcept { RETURN_RESULT_OF(mm::tryRefExternalRCRef, (*this)->weakRef); }
 
     ObjHeader* get() noexcept {
         ObjHeader* result;

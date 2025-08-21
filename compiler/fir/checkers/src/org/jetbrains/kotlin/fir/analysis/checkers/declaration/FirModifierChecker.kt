@@ -18,16 +18,31 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.context.findClosest
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.impl.FirPrimaryConstructor
 import org.jetbrains.kotlin.fir.declarations.utils.*
+import org.jetbrains.kotlin.fir.isEnabled
 import org.jetbrains.kotlin.fir.languageVersionSettings
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousObjectSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirEnumEntrySymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertyAccessorSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirScriptSymbol
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.lexer.KtTokens.DATA_KEYWORD
+import org.jetbrains.kotlin.lexer.KtTokens.INLINE_KEYWORD
 import org.jetbrains.kotlin.resolve.*
 
 object FirModifierChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
-    override fun check(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirDeclaration) {
+        // Checked separately
+        if (declaration is FirValueParameter && declaration.valueParameterKind == FirValueParameterKind.ContextParameter) return
+
         val source = when (declaration) {
             is FirFile -> declaration.packageDirective.source
             else -> declaration.source
@@ -37,14 +52,13 @@ object FirModifierChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
             return
         }
 
-        source.getModifierList()?.let { checkModifiers(it, declaration, context, reporter) }
+        source.getModifierList()?.let { checkModifiers(it, declaration) }
     }
 
+    context(context: CheckerContext, reporter: DiagnosticReporter)
     private fun checkModifiers(
         list: FirModifierList,
         owner: FirDeclaration,
-        context: CheckerContext,
-        reporter: DiagnosticReporter
     ) {
         if (list.modifiers.isEmpty()) return
 
@@ -54,49 +68,48 @@ object FirModifierChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
 
         val actualTargets = getActualTargetList(owner).defaultTargets
 
-        val parent = context.findClosest<FirDeclaration> {
-            it !is FirPrimaryConstructor &&
-                    it !is FirProperty &&
+        val parent = context.findClosest<FirBasedSymbol<*>> {
+            !(it is FirConstructorSymbol && it.isPrimary) &&
+                    it !is FirPropertySymbol &&
                     it.source?.kind !is KtFakeSourceElementKind
         }
 
         val actualParents = when (parent) {
-            is FirAnonymousObject -> KotlinTarget.LOCAL_CLASS_LIST
-            is FirClass -> classActualTargets(
+            is FirAnonymousObjectSymbol -> KotlinTarget.LOCAL_CLASS_LIST
+            is FirClassSymbol -> classActualTargets(
                 parent.classKind,
-                isInnerClass = (parent as? FirMemberDeclaration)?.isInner ?: false,
-                isCompanionObject = (parent as? FirRegularClass)?.isCompanion ?: false,
-                isLocalClass = parent.isLocal
+                isInnerClass = parent.isInner,
+                isCompanionObject = parent.isCompanion,
+                isLocalClass = parent.isLocalInFunction
             )
-            is FirPropertyAccessor -> if (parent.isSetter) KotlinTarget.PROPERTY_SETTER_LIST else KotlinTarget.PROPERTY_GETTER_LIST
-            is FirFunction -> KotlinTarget.FUNCTION_LIST
-            is FirEnumEntry -> KotlinTarget.ENUM_ENTRY_LIST
+            is FirPropertyAccessorSymbol -> if (parent.isSetter) KotlinTarget.PROPERTY_SETTER_LIST else KotlinTarget.PROPERTY_GETTER_LIST
+            is FirFunctionSymbol -> KotlinTarget.FUNCTION_LIST
+            is FirEnumEntrySymbol -> KotlinTarget.ENUM_ENTRY_LIST
             else -> KotlinTarget.FILE_LIST
         }
 
         val modifiers = list.modifiers
         for ((secondIndex, secondModifier) in modifiers.withIndex()) {
             for (firstIndex in 0 until secondIndex) {
-                checkCompatibilityType(modifiers[firstIndex], secondModifier, reporter, reportedNodes, owner, context)
+                checkCompatibilityType(modifiers[firstIndex], secondModifier, reportedNodes, owner)
             }
             if (secondModifier !in reportedNodes) {
                 val modifierSource = secondModifier.source
                 val modifier = secondModifier.token
                 when {
-                    !checkTarget(modifierSource, modifier, actualTargets, parent, context, reporter) -> reportedNodes += secondModifier
-                    !checkParent(modifierSource, modifier, actualParents, parent, context, reporter) -> reportedNodes += secondModifier
+                    !checkTarget(modifierSource, modifier, actualTargets, parent) -> reportedNodes += secondModifier
+                    !checkParent(modifierSource, modifier, actualParents, parent) -> reportedNodes += secondModifier
                 }
             }
         }
     }
 
+    context(context: CheckerContext, reporter: DiagnosticReporter)
     private fun checkTarget(
         modifierSource: KtSourceElement,
         modifierToken: KtModifierKeywordToken,
         actualTargets: List<KotlinTarget>,
-        parent: FirDeclaration?,
-        context: CheckerContext,
-        reporter: DiagnosticReporter
+        parent: FirBasedSymbol<*>?,
     ): Boolean {
         fun checkModifier(factory: KtDiagnosticFactory2<KtModifierKeywordToken, String>): Boolean {
             val map = when (factory) {
@@ -106,20 +119,25 @@ object FirModifierChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
             }
             val set = map[modifierToken] ?: emptySet()
             val checkResult = if (factory == FirErrors.WRONG_MODIFIER_TARGET) {
-                actualTargets.none { it in set } ||
-                        (modifierToken == DATA_KEYWORD
-                                && actualTargets.contains(KotlinTarget.STANDALONE_OBJECT)
-                                && !context.languageVersionSettings.supportsFeature(LanguageFeature.DataObjects))
+                actualTargets.none { it in set }
+                        || (modifierToken == DATA_KEYWORD
+                        && actualTargets.contains(KotlinTarget.STANDALONE_OBJECT)
+                        && !LanguageFeature.DataObjects.isEnabled())
+                        || (modifierToken == INLINE_KEYWORD
+                        && actualTargets.contains(KotlinTarget.ENUM_ENTRY)
+                        && LanguageFeature.ForbidInlineEnumEntries.isEnabled())
             } else {
                 actualTargets.any { it in set }
+                        || (modifierToken == INLINE_KEYWORD
+                        && actualTargets.contains(KotlinTarget.ENUM_ENTRY)
+                        && !LanguageFeature.ForbidInlineEnumEntries.isEnabled())
             }
             if (checkResult) {
                 reporter.reportOn(
                     modifierSource,
                     factory,
                     modifierToken,
-                    actualTargets.firstOrThis(),
-                    context
+                    actualTargets.firstOrThis()
                 )
                 return false
             }
@@ -130,8 +148,8 @@ object FirModifierChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
             return false
         }
 
-        if (parent is FirRegularClass && modifierToken == KtTokens.EXPECT_KEYWORD) {
-            reporter.reportOn(modifierSource, FirErrors.WRONG_MODIFIER_TARGET, modifierToken, "nested class", context)
+        if (parent is FirRegularClassSymbol && modifierToken == KtTokens.EXPECT_KEYWORD) {
+            reporter.reportOn(modifierSource, FirErrors.WRONG_MODIFIER_TARGET, modifierToken, "nested class")
             return false
         }
 
@@ -142,13 +160,12 @@ object FirModifierChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
         return true
     }
 
+    context(context: CheckerContext, reporter: DiagnosticReporter)
     private fun checkParent(
         modifierSource: KtSourceElement,
         modifierToken: KtModifierKeywordToken,
         actualParents: List<KotlinTarget>,
-        parent: FirDeclaration?,
-        context: CheckerContext,
-        reporter: DiagnosticReporter
+        parent: FirBasedSymbol<*>?,
     ): Boolean {
         val deprecatedParents = deprecatedParentTargetMap[modifierToken]
         if (deprecatedParents != null && actualParents.any { it in deprecatedParents }) {
@@ -156,8 +173,7 @@ object FirModifierChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
                 modifierSource,
                 FirErrors.DEPRECATED_MODIFIER_CONTAINING_DECLARATION,
                 modifierToken,
-                actualParents.firstOrThis(),
-                context
+                actualParents.firstOrThis()
             )
             return true
         }
@@ -167,22 +183,20 @@ object FirModifierChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
                 modifierSource,
                 FirErrors.WRONG_MODIFIER_CONTAINING_DECLARATION,
                 modifierToken,
-                "final expect class",
-                context,
+                "final expect class"
             )
         }
         val possibleParentPredicate = possibleParentTargetPredicateMap[modifierToken] ?: return true
         if (actualParents.any { possibleParentPredicate.isAllowed(it, context.session.languageVersionSettings) }) return true
 
-        if (modifierToken == KtTokens.INNER_KEYWORD && parent is FirScript) {
-            reporter.reportOn(modifierSource, FirErrors.INNER_ON_TOP_LEVEL_SCRIPT_CLASS, context)
+        if (modifierToken == KtTokens.INNER_KEYWORD && parent is FirScriptSymbol) {
+            reporter.reportOn(modifierSource, FirErrors.INNER_ON_TOP_LEVEL_SCRIPT_CLASS)
         } else {
             reporter.reportOn(
                 modifierSource,
                 FirErrors.WRONG_MODIFIER_CONTAINING_DECLARATION,
                 modifierToken,
-                actualParents.firstOrThis(),
-                context
+                actualParents.firstOrThis()
             )
         }
 
@@ -193,7 +207,7 @@ object FirModifierChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
         return firstOrNull()?.description ?: "this"
     }
 
-    private fun isFinalExpectClass(d: FirDeclaration?): Boolean {
-        return d is FirClass && d.isFinal && d.isExpect
+    private fun isFinalExpectClass(d: FirBasedSymbol<*>?): Boolean {
+        return d is FirClassSymbol && d.isFinal && d.isExpect
     }
 }

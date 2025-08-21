@@ -3,7 +3,7 @@
 // LANGUAGE: +MultiPlatformProjects
 
 // MODULE: common
-expect val <!REDECLARATION{JVM}, REDECLARATION{JVM}!>x1<!>: Int
+expect val <!REDECLARATION{JVM;JVM}!>x1<!>: Int
 
 expect val <!AMBIGUOUS_ACTUALS{JVM}, EXPECT_AND_ACTUAL_IN_THE_SAME_MODULE{JVM}!>x2<!>: Int
 
@@ -22,3 +22,5 @@ actual val <!AMBIGUOUS_EXPECTS!>x1<!> = 1
 actual val <!REDECLARATION!>x2<!> = 2
 
 val <!ACTUAL_MISSING, REDECLARATION!>x3<!> = 3
+
+/* GENERATED_FIR_TAGS: actual, expect, integerLiteral, propertyDeclaration */

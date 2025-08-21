@@ -8,6 +8,8 @@ fun test() {
     <!CANNOT_INFER_PARAMETER_TYPE!>id2<!>(<!UNRESOLVED_REFERENCE!>unresolved<!>, "foo")
     <!CANNOT_INFER_PARAMETER_TYPE!>id2<!>(<!UNRESOLVED_REFERENCE!>unresolved<!>, <!ARGUMENT_TYPE_MISMATCH!>42<!>)
 
-    <!CANNOT_INFER_PARAMETER_TYPE, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>ret<!>("foo")
+    <!CANNOT_INFER_PARAMETER_TYPE!>ret<!>("foo")
     <!CANNOT_INFER_PARAMETER_TYPE!>ret<!>(<!ARGUMENT_TYPE_MISMATCH!>42<!>)
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral, nullableType, stringLiteral, typeParameter */

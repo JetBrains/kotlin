@@ -2,17 +2,19 @@ plugins {
     kotlin("jvm")
     id("jps-compatible")
     id("compiler-tests-convention")
+    id("test-inputs-check")
+    id("java-test-fixtures")
 }
 
 dependencies {
     api(kotlinStdlib())
-    testApi(projectTests(":generators:test-generator"))
-    testApi(projectTests(":compiler:tests-common"))
-    testApi(projectTests(":compiler:tests-integration"))
+    testFixturesApi(testFixtures(project(":generators:test-generator")))
+    testFixturesApi(testFixtures(project(":compiler:tests-common")))
+    testFixturesApi(testFixtures(project(":compiler:tests-integration")))
 
-    testCompileOnly(intellijCore())
+    testFixturesCompileOnly(intellijCore())
     testRuntimeOnly(intellijCore())
-    testImplementation("org.junit.jupiter:junit-jupiter")
+    testFixturesApi("org.junit.jupiter:junit-jupiter")
     testCompileOnly(libs.junit4)
     testRuntimeOnly("org.junit.vintage:junit-vintage-engine")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
@@ -20,26 +22,21 @@ dependencies {
 
 sourceSets {
     "main" { }
-    "test" { projectDefault() }
+    "test" { generatedTestDir() }
+    "testFixtures" { projectDefault() }
 }
-
-testsJar {}
 
 compilerTests {
     // only 2 files are really needed:
     // - compiler/testData/codegen/boxKlib/properties.kt
     // - compiler/testData/codegen/boxKlib/simple.kt
-    testData("../testData/codegen/boxKlib")
+    testData(project(":compiler").isolated, "testData/codegen/boxKlib")
 }
 
 projectTest(parallel = true) {
-    workingDir = rootDir
     useJUnitPlatform()
-
-    // only 2 files are really needed:
-    // - compiler/testData/codegen/boxKlib/properties.kt
-    // - compiler/testData/codegen/boxKlib/simple.kt
-    inputs.dir(layout.projectDirectory.dir("../testData")).withPathSensitivity(PathSensitivity.RELATIVE)
 }
+
+optInToK1Deprecation()
 
 val generateTests by generator("org.jetbrains.kotlin.generators.tests.GenerateCompilerTestsAgainstKlibKt")

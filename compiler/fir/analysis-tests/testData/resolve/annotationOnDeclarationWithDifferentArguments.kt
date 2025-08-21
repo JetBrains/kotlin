@@ -29,3 +29,7 @@ const val constString = ""
     )
 )
 fun foo() {}
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classReference, collectionLiteral, const, enumDeclaration, enumEntry,
+functionDeclaration, integerLiteral, outProjection, primaryConstructor, propertyDeclaration, starProjection,
+stringLiteral */

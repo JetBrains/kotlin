@@ -29,3 +29,7 @@ class C {
 
 val Int.ext : () -> Int get() = { 5 }
 val x = 1.ext()
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionalType, getter, integerLiteral,
+interfaceDeclaration, lambdaLiteral, nestedClass, nullableType, override, propertyDeclaration,
+propertyWithExtensionReceiver, typeConstraint, typeParameter */

@@ -6,3 +6,6 @@ fun Any.test() {
     }
     <!UNRESOLVED_REFERENCE!>length<!>
 }
+
+/* GENERATED_FIR_TAGS: funWithExtensionReceiver, functionDeclaration, functionalType, integerLiteral, isExpression,
+lambdaLiteral, localProperty, propertyDeclaration, smartcast, whenExpression, whenWithSubject */

@@ -15,3 +15,6 @@ class C<X, Y>
 fun <T> toList(): C<T, Inv<T>> = null!!
 
 class Inv<Q>
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType,
+inProjection, infix, interfaceDeclaration, lambdaLiteral, nullableType, typeParameter, typeWithExtension */

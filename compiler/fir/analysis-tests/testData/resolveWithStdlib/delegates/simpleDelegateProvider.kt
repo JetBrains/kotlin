@@ -8,3 +8,6 @@ class DelegateProvider(val value: String) {
 }
 
 val testTopLevel by DelegateProvider("OK")
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, nullableType, operator, primaryConstructor,
+propertyDeclaration, propertyDelegate, stringLiteral */

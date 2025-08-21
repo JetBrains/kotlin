@@ -16,3 +16,6 @@ fun foo(a: Int) {
 }
 
 annotation class ann
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, equalityExpression, functionDeclaration, integerLiteral, whenExpression,
+whenWithSubject */

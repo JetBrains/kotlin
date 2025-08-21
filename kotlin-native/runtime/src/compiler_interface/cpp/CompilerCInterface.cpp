@@ -4,12 +4,12 @@
  */
 
 #include "Common.h"
+#include "ExternalRCRef.hpp"
 #include "TypeInfo.h"
 #include "Memory.h"
 #include "Types.h"
 #include "Runtime.h"
 #include "Exceptions.h"
-#include "MemorySharedRefs.hpp"
 #include "Natives.h"
 #include "KString.h"
 
@@ -32,8 +32,6 @@ touchType(ObjHeader)
 touchType(ArrayHeader)
 touchType(StringHeader)
 touchType(FrameOverlay)
-
-touchType(KRefSharedHolder)
 
 touchFunction(AllocInstance)
 touchFunction(AllocArrayInstance)
@@ -69,11 +67,6 @@ touchFunction(LookupTLS)
 
 touchFunction(Kotlin_initRuntimeIfNeeded)
 
-touchFunction(KRefSharedHolder_initLocal)
-touchFunction(KRefSharedHolder_init)
-touchFunction(KRefSharedHolder_dispose)
-touchFunction(KRefSharedHolder_ref)
-
 touchFunction(Kotlin_mm_switchThreadStateNative)
 touchFunction(Kotlin_mm_switchThreadStateNative_debug)
 touchFunction(Kotlin_mm_switchThreadStateRunnable)
@@ -88,6 +81,10 @@ touchFunction(Kotlin_processEmptyObjectInMark)
 touchFunction(Kotlin_arrayGetElementAddress)
 touchFunction(Kotlin_intArrayGetElementAddress)
 touchFunction(Kotlin_longArrayGetElementAddress)
+
+touchFunction(Kotlin_mm_createRetainedExternalRCRef)
+touchFunction(Kotlin_mm_releaseExternalRCRef)
+touchFunction(Kotlin_mm_disposeExternalRCRef)
 
 #ifdef __cplusplus
 } // extern "C"

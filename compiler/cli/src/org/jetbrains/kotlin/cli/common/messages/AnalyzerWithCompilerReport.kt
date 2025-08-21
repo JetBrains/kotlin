@@ -70,9 +70,6 @@ class AnalyzerWithCompilerReport(
                     .append(", unresolved supertypes: ").append(unresolved!!.joinToString())
                     .append("\n")
             }
-            if (!languageVersionSettings.getFlag(AnalysisFlags.extendedCompilerChecks)) {
-                message.append("Adding -Xextended-compiler-checks argument might provide additional information.\n")
-            }
             messageCollector.report(ERROR, message.toString())
         }
     }
@@ -139,6 +136,7 @@ class AnalyzerWithCompilerReport(
             Severity.INFO -> INFO
             Severity.ERROR -> ERROR
             Severity.WARNING -> WARNING
+            Severity.FIXED_WARNING -> FIXED_WARNING
         }
 
         private val SYNTAX_ERROR_FACTORY = DiagnosticFactory0.create<PsiErrorElement>(Severity.ERROR)
@@ -236,7 +234,8 @@ class AnalyzerWithCompilerReport(
                 val diagnostic = FirSyntaxErrors.SYNTAX.on(
                     KtRealPsiSourceElement(element),
                     message,
-                    positioningStrategy = null
+                    positioningStrategy = null,
+                    LanguageVersionSettingsImpl.DEFAULT, // syntax errors couldn't be suppressed anyway
                 )
                 val context = object : DiagnosticContext {
                     override val containingFilePath: String?

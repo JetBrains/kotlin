@@ -11,3 +11,5 @@ fun f() {
 
 fun foo(a: Any) {}
 fun bar(a: Any) {}
+
+/* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral, lambdaLiteral */

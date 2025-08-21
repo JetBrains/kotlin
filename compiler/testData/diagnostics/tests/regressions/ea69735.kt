@@ -5,3 +5,5 @@ enum class MyEnum {
     // while checking on a deprecated super constructor
     FIRST<!SYNTAX!><!SYNTAX!><!>:<!>
 }
+
+/* GENERATED_FIR_TAGS: enumDeclaration, enumEntry */

@@ -16,24 +16,25 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.forEachChildOfType
 import org.jetbrains.kotlin.fir.analysis.js.checkers.sanitizeName
 import org.jetbrains.kotlin.fir.declarations.FirFile
+import org.jetbrains.kotlin.fir.isEnabled
 import org.jetbrains.kotlin.fir.packageFqName
 import org.jetbrains.kotlin.psi.KtPsiUtil
 import org.jetbrains.kotlin.text
 
 object FirJsPackageDirectiveChecker: FirFileChecker(MppCheckerKind.Common) {
     // inspired by FirJsNameCharsChecker.check()
-    override fun check(declaration: FirFile, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirFile) {
         if (declaration.packageFqName.isRoot) return
-        if (context.languageVersionSettings.supportsFeature(LanguageFeature.JsAllowInvalidCharsIdentifiersEscaping)) return
+        if (LanguageFeature.JsAllowInvalidCharsIdentifiersEscaping.isEnabled()) return
 
-        declaration.packageDirective.source?.forEachChildOfType(setOf(KtNodeTypes.REFERENCE_EXPRESSION)) {
+        declaration.packageDirective.source?.forEachChildOfType(setOf(KtNodeTypes.REFERENCE_EXPRESSION), depth = -1) {
             val name = KtPsiUtil.unquoteIdentifier(it.text.toString())
             if (sanitizeName(name) != name) {
                 reporter.reportOn(
                     it,
                     FirErrors.INVALID_CHARACTERS,
-                    "$name contains illegal characters",
-                    context,
+                    "$name contains illegal characters"
                 )
             }
         }

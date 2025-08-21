@@ -34,3 +34,7 @@ class Test {
     fun <T> List<T>.testUnresolved3() = a<<!SYNTAX!><!>>::foo
     fun <T> List<T>.testUnresolved4() = <!SAFE_CALLABLE_REFERENCE_CALL!><!UNRESOLVED_REFERENCE!>unresolved<!>?::foo<!>
 }
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, classReference, funWithExtensionReceiver,
+functionDeclaration, functionalType, getter, nullableType, objectDeclaration, outProjection, propertyDeclaration,
+propertyWithExtensionReceiver, typeParameter */

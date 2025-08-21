@@ -34,19 +34,19 @@ import org.jetbrains.kotlin.backend.konan.KonanFqNames
  * //       ^
  * // objCName = "FooObjC"
  * // swiftName = "FooSwift"
- * // isExaclt = true
+ * // isExact = true
  * ```
  */
-internal class KtResolvedObjCNameAnnotation(
+class ObjCExportObjCNameAnnotation(
     val objCName: String?,
     val swiftName: String?,
     val isExact: Boolean,
 )
 
-internal fun KaAnnotatedSymbol.resolveObjCNameAnnotation(): KtResolvedObjCNameAnnotation? {
+internal fun KaAnnotatedSymbol.resolveObjCNameAnnotation(): ObjCExportObjCNameAnnotation? {
     val annotation = annotations.find { it.classId?.asSingleFqName() == KonanFqNames.objCName } ?: return null
 
-    return KtResolvedObjCNameAnnotation(
+    return ObjCExportObjCNameAnnotation(
         objCName = annotation.findArgument("name")?.resolveStringConstantValue(),
         swiftName = annotation.findArgument("swiftName")?.resolveStringConstantValue(),
         isExact = annotation.findArgument("exact")?.resolveBooleanConstantValue() ?: false

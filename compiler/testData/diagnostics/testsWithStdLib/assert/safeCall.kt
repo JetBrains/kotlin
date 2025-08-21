@@ -35,3 +35,6 @@ fun test6() {
     assert(s!!.isEmpty())
     <!DEBUG_INFO_SMARTCAST!>s<!>.length
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, functionDeclaration, localProperty, nullableType, propertyDeclaration, safeCall,
+smartcast */

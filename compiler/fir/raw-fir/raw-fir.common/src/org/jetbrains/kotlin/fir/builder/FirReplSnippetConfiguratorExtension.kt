@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.fir.builder
 
-import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.fir.FirSession
@@ -32,7 +31,7 @@ abstract class FirReplSnippetConfiguratorExtension(
 
     abstract fun isReplSnippetsSource(sourceFile: KtSourceFile?, scriptSource: KtSourceElement): Boolean
     abstract fun FirReplSnippetBuilder.configureContainingFile(fileBuilder: FirFileBuilder)
-    abstract fun FirReplSnippetBuilder.configure(sourceFile: KtSourceFile?, context: Context<PsiElement>)
+    abstract fun FirReplSnippetBuilder.configure(sourceFile: KtSourceFile?, context: Context<*>)
 }
 
 val FirExtensionService.replSnippetConfigurators: List<FirReplSnippetConfiguratorExtension> by FirExtensionService.registeredExtensions()

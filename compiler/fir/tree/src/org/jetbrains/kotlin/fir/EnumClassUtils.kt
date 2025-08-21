@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -24,8 +24,8 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyGetter
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusWithLazyEffectiveVisibility
 import org.jetbrains.kotlin.fir.expressions.builder.buildEmptyExpressionBlock
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.types.ConeTypeProjection
@@ -169,7 +169,7 @@ fun generateValueOfFunction(
                 )
             }
             name = DEFAULT_VALUE_PARAMETER
-            this@vp.symbol = FirValueParameterSymbol(DEFAULT_VALUE_PARAMETER)
+            this@vp.symbol = FirValueParameterSymbol()
             isCrossinline = false
             isNoinline = false
             isVararg = false
@@ -219,7 +219,6 @@ fun generateEntriesGetter(
     return buildProperty {
         source = sourceElement
         isVar = false
-        isLocal = false
         this.origin = origin
         this.moduleData = moduleData
         returnTypeRef = buildResolvedTypeRef {
@@ -242,12 +241,17 @@ fun generateEntriesGetter(
             isExpect = makeExpect
         }
 
-        symbol = FirPropertySymbol(CallableId(packageFqName, classFqName, ENUM_ENTRIES))
+        symbol = FirRegularPropertySymbol(CallableId(packageFqName, classFqName, ENUM_ENTRIES))
         resolvePhase = classResolvePhase
         getter = FirDefaultPropertyGetter(
-            sourceElement?.fakeElement(KtFakeSourceElementKind.EnumGeneratedDeclaration),
-            moduleData, origin, returnTypeRef.copyWithNewSourceKind(KtFakeSourceElementKind.EnumGeneratedDeclaration),
-            Visibilities.Public, symbol, resolvePhase = classResolvePhase
+            source = sourceElement?.fakeElement(KtFakeSourceElementKind.EnumGeneratedDeclaration),
+            moduleData = moduleData,
+            origin = origin,
+            propertyTypeRef = returnTypeRef.copyWithNewSourceKind(KtFakeSourceElementKind.EnumGeneratedDeclaration),
+            visibility = Visibilities.Public,
+            propertySymbol = symbol,
+            modality = Modality.FINAL,
+            resolvePhase = classResolvePhase,
         ).apply {
             this.status = createStatus(classStatus).apply {
                 isStatic = true

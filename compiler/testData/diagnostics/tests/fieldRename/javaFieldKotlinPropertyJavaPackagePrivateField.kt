@@ -26,3 +26,5 @@ public class C extends B {}
 fun box(): String {
     return C().<!INVISIBLE_MEMBER!>f<!>
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, javaFunction, javaType, propertyDeclaration, stringLiteral */

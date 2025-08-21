@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.group.UseStandardTestCas
 import org.jetbrains.kotlin.konan.test.blackbox.support.EnforcedProperty;
 import org.jetbrains.kotlin.konan.test.blackbox.support.ClassLevelProperty;
 import org.jetbrains.kotlin.konan.test.blackbox.support.EnforcedHostTarget;
+import org.jetbrains.kotlin.konan.test.blackbox.support.group.ClassicPipeline;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.jupiter.api.Test;
 
@@ -26,6 +27,7 @@ import java.util.regex.Pattern;
 @UseStandardTestCaseGroupProvider()
 @EnforcedProperty(property = ClassLevelProperty.OPTIMIZATION_MODE, propertyValue = "DEBUG")
 @EnforcedHostTarget()
+@ClassicPipeline()
 public class LldbTestGenerated extends AbstractNativeBlackBoxTest {
   @Test
   public void testAllFilesPresentInLldb() {
@@ -111,15 +113,45 @@ public class LldbTestGenerated extends AbstractNativeBlackBoxTest {
   }
 
   @Test
+  @TestMetadata("kt42208WithInlinedFunInKlib.kt")
+  public void testKt42208WithInlinedFunInKlib() {
+    runTest("native/native.tests/testData/lldb/kt42208WithInlinedFunInKlib.kt");
+  }
+
+  @Test
   @TestMetadata("kt42208WithPassingLambdaToAnotherFunction.kt")
   public void testKt42208WithPassingLambdaToAnotherFunction() {
     runTest("native/native.tests/testData/lldb/kt42208WithPassingLambdaToAnotherFunction.kt");
   }
 
   @Test
+  @TestMetadata("kt42208WithPassingLambdaToAnotherFunctionWithInlinedFunInKlib.kt")
+  public void testKt42208WithPassingLambdaToAnotherFunctionWithInlinedFunInKlib() {
+    runTest("native/native.tests/testData/lldb/kt42208WithPassingLambdaToAnotherFunctionWithInlinedFunInKlib.kt");
+  }
+
+  @Test
   @TestMetadata("kt42208WithVariable.kt")
   public void testKt42208WithVariable() {
     runTest("native/native.tests/testData/lldb/kt42208WithVariable.kt");
+  }
+
+  @Test
+  @TestMetadata("kt42208WithVariableAndNesting.kt")
+  public void testKt42208WithVariableAndNesting() {
+    runTest("native/native.tests/testData/lldb/kt42208WithVariableAndNesting.kt");
+  }
+
+  @Test
+  @TestMetadata("kt42208WithVariableAndNestingWithInlinedFunInKlib.kt")
+  public void testKt42208WithVariableAndNestingWithInlinedFunInKlib() {
+    runTest("native/native.tests/testData/lldb/kt42208WithVariableAndNestingWithInlinedFunInKlib.kt");
+  }
+
+  @Test
+  @TestMetadata("kt42208WithVariableWithInlinedFunInKlib.kt")
+  public void testKt42208WithVariableWithInlinedFunInKlib() {
+    runTest("native/native.tests/testData/lldb/kt42208WithVariableWithInlinedFunInKlib.kt");
   }
 
   @Test

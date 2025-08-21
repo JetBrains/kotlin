@@ -13,13 +13,13 @@ import com.intellij.core.CorePackageIndex
 import com.intellij.ide.highlighter.JavaFileType
 import com.intellij.mock.MockProject
 import com.intellij.openapi.Disposable
-import com.intellij.openapi.extensions.PluginDescriptor
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.PackageIndex
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileManager
+import com.intellij.openapi.vfs.toNioPathOrNull
 import com.intellij.psi.*
 import com.intellij.psi.impl.file.impl.JavaFileManager
 import com.intellij.psi.impl.smartPointers.PsiClassReferenceTypePointerFactory
@@ -33,6 +33,8 @@ import com.intellij.util.messages.ListenerDescriptor
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.impl.base.util.LibraryUtils
+import org.jetbrains.kotlin.analysis.api.platform.java.KotlinJavaModuleAccessibilityChecker
+import org.jetbrains.kotlin.analysis.api.platform.java.KotlinJavaModuleAnnotationsProvider
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinModuleDependentsProvider
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinProjectStructureProvider
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
@@ -41,6 +43,10 @@ import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.allDirectDependencies
 import org.jetbrains.kotlin.analysis.api.resolve.extensions.KaResolveExtensionProvider
 import org.jetbrains.kotlin.analysis.api.standalone.base.declarations.KotlinFakeClsStubsCache
+import org.jetbrains.kotlin.analysis.api.standalone.base.java.KotlinStandaloneJavaModuleAccessibilityChecker
+import org.jetbrains.kotlin.analysis.api.standalone.base.java.KotlinStandaloneJavaModuleAnnotationsProvider
+import org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.StandaloneProjectFactory.findJvmRootsForJavaFiles
+import org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.StandaloneProjectFactory.registerJavaPsiFacade
 import org.jetbrains.kotlin.analysis.api.symbols.AdditionalKDocResolutionProvider
 import org.jetbrains.kotlin.analysis.decompiler.psi.BuiltinsVirtualFileProvider
 import org.jetbrains.kotlin.analysis.decompiler.psi.BuiltinsVirtualFileProviderCliImpl
@@ -61,7 +67,6 @@ import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.library.KLIB_FILE_EXTENSION
 import org.jetbrains.kotlin.load.kotlin.MetadataFinderFactory
 import org.jetbrains.kotlin.load.kotlin.VirtualFileFinderFactory
-import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleResolver
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.popLast
 import org.picocontainer.PicoContainer
@@ -204,6 +209,7 @@ object StandaloneProjectFactory {
         )
     }
 
+    @OptIn(KaImplementationDetail::class)
     private fun initialiseVirtualFileFinderServices(
         environment: KotlinCoreProjectEnvironment,
         modules: List<KaModule>,
@@ -219,12 +225,29 @@ object StandaloneProjectFactory {
         val allSourceFileRoots = sourceFiles.map { JavaRoot(it.virtualFile, JavaRoot.RootType.SOURCE) }
         val jdkRoots = getDefaultJdkModuleRoots(javaModuleFinder, javaModuleGraph)
 
+        // To implement the platform components required by the Analysis API for its own implementation of `JavaModuleResolver`, we can use
+        // the compiler's `CliJavaModuleResolver`. This is a bit of an indirection (CLI java module resolver -> platform components ->
+        // Analysis API java module resolver), but it's preferable over exposing `JavaModuleResolver` to all platforms. Furthermore, we can
+        // still benefit from the common Analysis API implementation, for example its caching for Java module annotations.
+        //
+        // Note that the registered `JavaModuleResolver` will still be the `KaBaseJavaModuleResolver` registered by the Analysis API engine,
+        // not `CliJavaModuleResolver`.
+        val delegateJavaModuleResolver = CliJavaModuleResolver(
+            javaModuleGraph,
+            emptyList(),
+            javaModuleFinder.systemModules.toList(),
+            project,
+        )
         project.registerService(
-            JavaModuleResolver::class.java,
-            CliJavaModuleResolver(javaModuleGraph, emptyList(), javaModuleFinder.systemModules.toList(), project)
+            KotlinJavaModuleAccessibilityChecker::class.java,
+            KotlinStandaloneJavaModuleAccessibilityChecker(delegateJavaModuleResolver),
+        )
+        project.registerService(
+            KotlinJavaModuleAnnotationsProvider::class.java,
+            KotlinStandaloneJavaModuleAnnotationsProvider(delegateJavaModuleResolver),
         )
 
-        val libraryRoots = getAllBinaryRoots(modules, environment)
+        val libraryRoots = getAllBinaryRoots(modules, environment.environment)
 
         val rootsWithSingleJavaFileRoots = buildList {
             addAll(libraryRoots)
@@ -271,10 +294,12 @@ object StandaloneProjectFactory {
                     .invoke(ProjectScope.getLibrariesScope(project))
             ),
             SingleJavaFileRootsIndex(singleJavaFileRoots),
-            true
+            usePsiClassFilesReading = true,
+            perfManager = null, // Don't care about pure compiler performance in Analysis API
         )
 
-        val fileFinderFactory = CliVirtualFileFinderFactory(rootsIndex, false)
+        // Don't care about pure compiler performance in Analysis API
+        val fileFinderFactory = CliVirtualFileFinderFactory(rootsIndex, false, perfManager = null)
         project.registerService(VirtualFileFinderFactory::class.java, fileFinderFactory)
         project.registerService(MetadataFinderFactory::class.java, CliMetadataFinderFactory(fileFinderFactory))
     }
@@ -332,7 +357,7 @@ object StandaloneProjectFactory {
         return result.toList()
     }
 
-    fun getAllBinaryRoots(modules: List<KaModule>, environment: KotlinCoreProjectEnvironment): List<JavaRoot> {
+    fun getAllBinaryRoots(modules: List<KaModule>, environment: CoreApplicationEnvironment): List<JavaRoot> {
         return buildList {
             for (module in withAllTransitiveDependencies(modules)) {
                 val roots = when (module) {
@@ -346,16 +371,53 @@ object StandaloneProjectFactory {
         }
     }
 
+    fun createLibraryModuleSearchScope(
+        binaryRoots: Collection<Path>,
+        binaryVirtualFiles: Collection<VirtualFile>,
+        environment: CoreApplicationEnvironment,
+        project: Project,
+    ): GlobalSearchScope {
+        return if (binaryVirtualFiles.any { it.toNioPathOrNull() == null }) {
+            // I.e., in-memory file system
+            // Fall back: file-based search scope
+            @Suppress("DEPRECATION")
+            createSearchScopeByLibraryRoots(
+                binaryRoots,
+                binaryVirtualFiles,
+                environment,
+                project,
+            )
+        } else {
+            // Optimization: Trie-based search scope
+            @Suppress("DEPRECATION")
+            createTrieBasedSearchScopeByLibraryRoots(
+                binaryRoots,
+                binaryVirtualFiles,
+                environment,
+                project,
+            )
+        }
+    }
+
+    @Deprecated(
+        "This function will become private. Use `createLibraryModuleSearchScope` instead.",
+        replaceWith = ReplaceWith("createLibraryModuleSearchScope(binaryRoots, binaryVirtualFiles, environment, project)"),
+    )
     fun createSearchScopeByLibraryRoots(
         binaryRoots: Collection<Path>,
         binaryVirtualFiles: Collection<VirtualFile>,
-        environment: KotlinCoreProjectEnvironment,
+        environment: CoreApplicationEnvironment,
+        project: Project,
     ): GlobalSearchScope {
-        val virtualFileUrlsFromBinaryRoots = getVirtualFileUrlsForLibraryRootsRecursively(binaryRoots, environment)
-        val virtualFileUrlsFromBinaryVirtualFiles = getVirtualFileUrlsForLibraryRootsRecursively(binaryVirtualFiles)
-        val virtualFileUrls = virtualFileUrlsFromBinaryRoots + virtualFileUrlsFromBinaryVirtualFiles
+        @OptIn(KaImplementationDetail::class)
+        val virtualFileUrls = buildSet {
+            for (root in getVirtualFilesForLibraryRoots(binaryRoots, environment) + binaryVirtualFiles) {
+                LibraryUtils.getAllVirtualFilesFromRoot(root, includeRoot = true)
+                    .mapTo(this) { it.url }
+            }
+        }
 
-        return object : GlobalSearchScope(environment.project) {
+        return object : GlobalSearchScope(project) {
             override fun contains(file: VirtualFile): Boolean = file.url in virtualFileUrls
 
             override fun isSearchInModuleContent(aModule: Module): Boolean = false
@@ -366,42 +428,77 @@ object StandaloneProjectFactory {
         }
     }
 
-    @OptIn(KaImplementationDetail::class)
-    private fun getVirtualFileUrlsForLibraryRootsRecursively(
-        roots: Collection<Path>,
-        environment: KotlinCoreProjectEnvironment,
-    ): Set<String> =
-        buildSet {
-            for (root in getVirtualFilesForLibraryRoots(roots, environment)) {
-                LibraryUtils.getAllVirtualFilesFromRoot(root, includeRoot = true)
-                    .mapTo(this) { it.url }
+    @Deprecated(
+        "This function will become private. Use `createLibraryModuleSearchScope` instead.",
+        replaceWith = ReplaceWith("createLibraryModuleSearchScope(binaryRoots, binaryVirtualFiles, environment, project)"),
+    )
+    fun createTrieBasedSearchScopeByLibraryRoots(
+        binaryRoots: Collection<Path>,
+        binaryVirtualFiles: Collection<VirtualFile>,
+        environment: CoreApplicationEnvironment,
+        project: Project,
+    ): GlobalSearchScope {
+        val virtualFiles = getVirtualFilesForLibraryRoots(binaryRoots, environment) + binaryVirtualFiles
+        return LibraryRootsSearchScope(virtualFiles, project)
+    }
+
+    private class SimpleTrie(paths: List<String>) {
+        class TrieNode {
+            var isTerminal: Boolean = false
+        }
+
+        val root = TrieNode()
+
+        private val m = mutableMapOf<Pair<TrieNode, String>, TrieNode>().apply {
+            paths.forEach { path ->
+                var p = root
+                for (d in path.trim('/').split('/')) {
+                    p = getOrPut(Pair(p, d)) { TrieNode() }
+                }
+                p.isTerminal = true
             }
         }
 
-    @OptIn(KaImplementationDetail::class)
-    private fun getVirtualFileUrlsForLibraryRootsRecursively(
-        binaryVirtualFiles: Collection<VirtualFile>
-    ): Set<String> =
-        buildSet {
-            for (vf in binaryVirtualFiles) {
-                LibraryUtils.getAllVirtualFilesFromRoot(vf, includeRoot = true)
-                    .mapTo(this) { it.url }
+        fun contains(s: String): Boolean {
+            var p = root
+            for (d in s.trim('/').split('/')) {
+                p = m.get(Pair(p, d))?.also {
+                    if (it.isTerminal)
+                        return true
+                } ?: return false
             }
+            return false
         }
+    }
+
+    private class LibraryRootsSearchScope(
+        roots: List<VirtualFile>,
+        project: Project,
+    ) : GlobalSearchScope(project) {
+        val trie: SimpleTrie = SimpleTrie(roots.map { it.path })
+
+        override fun contains(file: VirtualFile): Boolean {
+            return trie.contains(file.path)
+        }
+
+        override fun isSearchInModuleContent(aModule: Module): Boolean = false
+
+        override fun isSearchInLibraries(): Boolean = true
+    }
 
     fun getVirtualFilesForLibraryRoots(
         roots: Collection<Path>,
-        environment: KotlinCoreProjectEnvironment,
+        environment: CoreApplicationEnvironment,
     ): List<VirtualFile> {
         return roots.mapNotNull { path ->
             val pathString = FileUtil.toSystemIndependentName(path.toAbsolutePath().toString())
             when {
                 pathString.endsWith(JAR_PROTOCOL) || pathString.endsWith(KLIB_FILE_EXTENSION) -> {
-                    environment.environment.jarFileSystem.findFileByPath(pathString + JAR_SEPARATOR)
+                    environment.jarFileSystem.findFileByPath(pathString + JAR_SEPARATOR)
                 }
 
                 pathString.contains(JAR_SEPARATOR) -> {
-                    environment.environment.jrtFileSystem?.findFileByPath(adjustModulePath(pathString))
+                    environment.jrtFileSystem?.findFileByPath(adjustModulePath(pathString))
                 }
 
                 else -> {
@@ -440,9 +537,7 @@ object StandaloneProjectFactory {
     }
 
     @OptIn(KaExperimentalApi::class)
-    private fun KaLibraryModule.getJavaRoots(
-        environment: KotlinCoreProjectEnvironment,
-    ): List<JavaRoot> {
+    private fun KaLibraryModule.getJavaRoots(environment: CoreApplicationEnvironment): List<JavaRoot> {
         val binaryRootsAsVirtualFiles = getVirtualFilesForLibraryRoots(binaryRoots, environment) + binaryVirtualFiles
         return binaryRootsAsVirtualFiles.map { root ->
             JavaRoot(root, JavaRoot.RootType.BINARY)

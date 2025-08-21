@@ -1127,7 +1127,7 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
             +")."
         }
         symbolRef(symbol) {
-            +symbol.callableId.toString()
+            +symbol.callableIdAsString()
         }
         +"("
         generateList(fir.valueParameters) {
@@ -1207,7 +1207,6 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
                     is FirPropertyAccessor,
                     is FirBackingField,
                     is FirEnumEntry,
-                    is FirErrorProperty,
                     is FirValueParameter -> {}
                 }
             }
@@ -1441,7 +1440,7 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
                 keyword("when")
                 +" ("
                 whenExpression.subjectVariable?.let { generate(it) }
-                    ?: whenExpression.subject?.let { generate(it) }
+                    ?: whenExpression.subjectVariable?.initializer?.let { generate(it) }
                 +") {"
             }
             withIdentLevel {

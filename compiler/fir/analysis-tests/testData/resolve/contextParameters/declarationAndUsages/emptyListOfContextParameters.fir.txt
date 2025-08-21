@@ -1,0 +1,17 @@
+FILE: emptyListOfContextParameters.kt
+    public final fun test1(): R|kotlin/Unit| {
+    }
+    context(R|kotlin/String|)
+    public final fun test2(): R|kotlin/Unit| {
+    }
+    public final val property1: R|kotlin/String|
+        public get(): R|kotlin/String| {
+            ^ String()
+        }
+    context(R|kotlin/String|)
+    public final val property2: R|kotlin/String|
+        public get(): R|kotlin/String| {
+            ^ String()
+        }
+    public final fun inTypePosition(a: R|() -> kotlin/Unit|): R|kotlin/Unit| {
+    }

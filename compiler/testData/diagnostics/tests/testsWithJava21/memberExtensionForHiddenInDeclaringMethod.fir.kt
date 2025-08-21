@@ -8,7 +8,7 @@ abstract class A : List<Any> {
 abstract class B : List<Any>
 
 class Test {
-    fun <T> List<T>.<!EXTENSION_SHADOWED_BY_MEMBER!>getFirst<!>() = 1
+    fun <T> List<T>.getFirst() = 1
 
     fun test(a: A, b: B){
         consumeInt(<!ARGUMENT_TYPE_MISMATCH!>a.<!DEPRECATION!>getFirst<!>()<!>)
@@ -16,3 +16,6 @@ class Test {
     }
 }
 fun consumeInt(i: Int) {}
+
+/* GENERATED_FIR_TAGS: classDeclaration, flexibleType, funWithExtensionReceiver, functionDeclaration, integerLiteral,
+nullableType, override, superExpression, typeParameter */

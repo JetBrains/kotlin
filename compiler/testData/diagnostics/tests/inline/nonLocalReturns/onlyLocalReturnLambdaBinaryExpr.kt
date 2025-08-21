@@ -25,3 +25,6 @@ fun <R> fun4(p: () -> R) {
         return@lambda p();
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, crossinline, functionDeclaration, functionalType, infix, inline, lambdaLiteral,
+nullableType, typeParameter */

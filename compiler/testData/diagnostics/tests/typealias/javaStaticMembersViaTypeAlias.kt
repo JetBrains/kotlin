@@ -46,3 +46,5 @@ fun testNestedAsTypeArgument3(x: List<IT.<!UNRESOLVED_REFERENCE!>Nested<!>>) {}
 fun testInnerAsTypeArgument1(x: List<JT.<!UNRESOLVED_REFERENCE!>Inner<!>>) {}
 fun testInnerAsTypeArgument2(x: List<KT.<!UNRESOLVED_REFERENCE!>Inner<!>>) {}
 
+/* GENERATED_FIR_TAGS: classDeclaration, flexibleType, functionDeclaration, inner, interfaceDeclaration, javaFunction,
+javaType, nestedClass, propertyDeclaration, typeAliasDeclaration */

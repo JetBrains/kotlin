@@ -1,11 +1,12 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.analysis.api.descriptors.components
 
 import org.jetbrains.kotlin.analysis.api.components.KaBuiltinTypes
+import org.jetbrains.kotlin.analysis.api.components.KaScopeKind
 import org.jetbrains.kotlin.analysis.api.components.KaTypeProvider
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisContext
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisFacade.AnalysisMode
@@ -16,22 +17,20 @@ import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.bas
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased.base.getResolutionScope
 import org.jetbrains.kotlin.analysis.api.descriptors.types.base.KaFe10Type
 import org.jetbrains.kotlin.analysis.api.descriptors.utils.PublicApproximatorConfiguration
-import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseSessionComponent
+import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseTypeProvider
+import org.jetbrains.kotlin.analysis.api.impl.base.components.withPsiValidityAssertion
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassifierSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.nameOrAnonymous
 import org.jetbrains.kotlin.analysis.api.types.KaType
-import org.jetbrains.kotlin.analysis.api.types.KaTypeNullability
+import org.jetbrains.kotlin.analysis.api.types.symbol
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.name.StandardClassIds
-import org.jetbrains.kotlin.psi.KtCallElement
-import org.jetbrains.kotlin.psi.KtDoubleColonExpression
-import org.jetbrains.kotlin.psi.KtElement
-import org.jetbrains.kotlin.psi.KtTypeReference
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
@@ -51,8 +50,7 @@ import org.jetbrains.kotlin.util.containingNonLocalDeclaration
 
 internal class KaFe10TypeProvider(
     override val analysisSessionProvider: () -> KaFe10Session,
-) : KaBaseSessionComponent<KaFe10Session>(), KaTypeProvider, KaFe10SessionComponent {
-    @Suppress("SpellCheckingInspection")
+) : KaBaseTypeProvider<KaFe10Session>(), KaFe10SessionComponent {
     private val typeApproximator by lazy {
         TypeApproximator(
             analysisContext.builtIns,
@@ -62,16 +60,53 @@ internal class KaFe10TypeProvider(
 
     override val builtinTypes: KaBuiltinTypes by lazy(LazyThreadSafetyMode.PUBLICATION) { KaFe10BuiltinTypes(analysisContext) }
 
+    @Suppress("OVERRIDE_DEPRECATION")
     override fun KaType.approximateToSuperPublicDenotable(approximateLocalTypes: Boolean): KaType? = withValidityAssertion {
         require(this is KaFe10Type)
         return typeApproximator.approximateToSuperType(fe10Type, PublicApproximatorConfiguration(approximateLocalTypes))
             ?.toKtType(analysisContext)
     }
 
-    override fun KaType.approximateToSubPublicDenotable(approximateLocalTypes: Boolean): KaType? = withValidityAssertion {
+    override fun KaType.approximateToDenotableSupertype(allowLocalDenotableTypes: Boolean): KaType? = withValidityAssertion {
         require(this is KaFe10Type)
-        return typeApproximator.approximateToSubType(fe10Type, PublicApproximatorConfiguration(approximateLocalTypes))
-            ?.toKtType(analysisContext)
+        return typeApproximator.approximateToSuperType(
+            fe10Type,
+            PublicApproximatorConfiguration(
+                approximateLocalTypes = true,
+                shouldApproximateLocalType = { _, _ -> !allowLocalDenotableTypes })
+        )?.toKtType(analysisContext)
+    }
+
+    override fun KaType.approximateToDenotableSubtype(): KaType? = withValidityAssertion {
+        require(this is KaFe10Type)
+        return typeApproximator.approximateToSubType(
+            fe10Type, PublicApproximatorConfiguration(
+                approximateLocalTypes = false
+            )
+        )?.toKtType(analysisContext)
+    }
+
+    override fun KaType.approximateToDenotableSupertype(position: KtElement): KaType? = withPsiValidityAssertion(position) {
+        require(this is KaFe10Type)
+        with(analysisSession) {
+            val containingFile = position.containingFile as? KtFile
+            val scopeClassifiers =
+                containingFile?.scopeContext(position)?.scopes?.filter {
+                    it.kind is KaScopeKind.LocalScope
+                }?.flatMap { it.scope.classifiers }?.associateBy { it.name }
+
+            return typeApproximator.approximateToSuperType(
+                fe10Type,
+                PublicApproximatorConfiguration(
+                    approximateLocalTypes = true,
+                    shouldApproximateLocalType = { _, typeMarker ->
+                        val typeSymbol =
+                            (typeMarker as KotlinType).toKtType(analysisContext).symbol ?: return@PublicApproximatorConfiguration false
+                        scopeClassifiers?.get(typeSymbol.name) != typeSymbol
+                    }
+                )
+            )?.toKtType(analysisContext)
+        }
     }
 
     override val KaType.enhancedType: KaType?
@@ -98,7 +133,7 @@ internal class KaFe10TypeProvider(
         }
 
     override val KtTypeReference.type: KaType
-        get() = withValidityAssertion {
+        get() = withPsiValidityAssertion {
             val bindingContext = analysisContext.analyze(this, AnalysisMode.PARTIAL)
             val kotlinType = bindingContext[BindingContext.TYPE, this]
                 ?: getKtTypeAsTypeArgument(this)
@@ -117,22 +152,22 @@ internal class KaFe10TypeProvider(
     }
 
     override val KtDoubleColonExpression.receiverType: KaType?
-        get() = withValidityAssertion {
+        get() = withPsiValidityAssertion {
             val bindingContext = analysisContext.analyze(this, AnalysisMode.PARTIAL)
             val lhs = bindingContext[BindingContext.DOUBLE_COLON_LHS, receiverExpression] ?: return null
             return lhs.type.toKtType(analysisContext)
         }
 
-    override fun KaType.withNullability(newNullability: KaTypeNullability): KaType = withValidityAssertion {
+    override fun KaType.withNullability(isMarkedNullable: Boolean): KaType = withValidityAssertion {
         require(this is KaFe10Type)
-        return fe10Type.makeNullableAsSpecified(newNullability == KaTypeNullability.NULLABLE).toKtType(analysisContext)
+        return fe10Type.makeNullableAsSpecified(isMarkedNullable).toKtType(analysisContext)
     }
 
     override fun KaType.hasCommonSubtypeWith(that: KaType): Boolean = withValidityAssertion {
         return areTypesCompatible((this as KaFe10Type).fe10Type, (that as KaFe10Type).fe10Type)
     }
 
-    override fun collectImplicitReceiverTypes(position: KtElement): List<KaType> = withValidityAssertion {
+    override fun collectImplicitReceiverTypes(position: KtElement): List<KaType> = withPsiValidityAssertion(position) {
         val elementToAnalyze = position.containingNonLocalDeclaration() ?: position
         val bindingContext = analysisContext.analyze(elementToAnalyze)
 

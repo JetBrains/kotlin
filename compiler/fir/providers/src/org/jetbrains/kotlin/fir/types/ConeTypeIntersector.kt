@@ -35,7 +35,7 @@ object ConeTypeIntersector {
             // Special case - if C is `Nothing?`, then the result is `Nothing!`; but if it is non-null,
             // then this code is unreachable, so it's more useful to do resolution/diagnostics
             // under the assumption that it is purely nullable.
-            return if (lowerBound.isNothing) upperBound else coneFlexibleOrSimpleType(context, lowerBound, upperBound)
+            return if (lowerBound.isNothing) upperBound else coneFlexibleOrSimpleType(context, lowerBound, upperBound, isTrivial = false)
         }
 
         val isResultNotNullable = with(context) {

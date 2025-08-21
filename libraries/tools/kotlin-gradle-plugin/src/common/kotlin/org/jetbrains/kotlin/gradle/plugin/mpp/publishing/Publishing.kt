@@ -16,8 +16,9 @@ import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
-import org.jetbrains.kotlin.gradle.plugin.mpp.InternalKotlinTarget
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinTargetComponentWithPublication
+import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.Uklib
+import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.publication.KmpPublicationStrategy
+import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.publication.createUklibPublication
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
 import org.jetbrains.kotlin.gradle.tooling.buildKotlinToolingMetadataTask
 import org.jetbrains.kotlin.gradle.utils.*
@@ -55,6 +56,10 @@ private fun createRootPublication(project: Project, publishing: PublishingExtens
         (this as MavenPublicationInternal).publishWithOriginalFileName()
 
         addKotlinToolingMetadataArtifactIfNeeded(project)
+        configureRootComponentForUklibPublication(
+            project,
+            kotlinSoftwareComponent,
+        )
     }
 }
 
@@ -67,20 +72,52 @@ private fun MavenPublication.addKotlinToolingMetadataArtifactIfNeeded(project: P
     }
 }
 
+private fun MavenPublication.configureRootComponentForUklibPublication(
+    project: Project,
+    rootComponent: KotlinSoftwareComponent,
+) {
+    when (project.kotlinPropertiesProvider.kmpPublicationStrategy) {
+        KmpPublicationStrategy.UklibPublicationInASingleComponentWithKMPPublication -> {
+            pom.packaging = Uklib.UKLIB_PACKAGING
+            project.launch {
+                rootComponent.uklibUsages.complete(
+                    project.createUklibPublication()
+                )
+            }
+        }
+        KmpPublicationStrategy.StandardKMPPublication ->
+            rootComponent.uklibUsages.complete(emptyList())
+    }
+}
+
 private fun createTargetPublications(project: Project, publishing: PublishingExtension) {
     val kotlin = project.multiplatformExtension
     // Enforce the order of creating the publications, since the metadata publication is used in the other publications:
     kotlin.targets
         .withType(InternalKotlinTarget::class.java)
-        .matching { it.publishable }
+        .matching { kotlinTarget ->
+            when (kotlinTarget) {
+                is KotlinNativeTarget -> kotlinTarget.crossCompilationPublishable
+                else -> kotlinTarget.publishable
+            }
+        }
         .all { kotlinTarget ->
             /** Publication for [KotlinMetadataTarget] is created in [createRootPublication] */
             if (kotlinTarget is KotlinMetadataTarget) return@all
-            if (kotlinTarget is KotlinAndroidTarget)
-            // Android targets have their variants created in afterEvaluate; TODO handle this better?
-                project.whenEvaluated { kotlinTarget.createTargetSpecificMavenPublications(publishing.publications) }
-            else
-                kotlinTarget.createTargetSpecificMavenPublications(publishing.publications)
+            when (kotlinTarget) {
+                // Android targets have their variants created in afterEvaluate; TODO handle this better?
+                is KotlinAndroidTarget -> project.whenEvaluated {
+                    kotlinTarget.createTargetSpecificMavenPublications(publishing.publications)
+                }
+                is KotlinNativeTarget -> {
+                    project.launch {
+                        val crossCompilationSupported = kotlinTarget.crossCompilationOnCurrentHostSupported.await()
+                        if (!crossCompilationSupported) return@launch
+                        kotlinTarget.createTargetSpecificMavenPublications(publishing.publications)
+                    }
+                }
+                else -> kotlinTarget.createTargetSpecificMavenPublications(publishing.publications)
+            }
         }
 }
 
@@ -99,9 +136,8 @@ private fun InternalKotlinTarget.createTargetSpecificMavenPublications(publicati
                 project.launchInStage(KotlinPluginLifecycle.Stage.AfterFinaliseCompilations) {
                     val gradleComponent = components.find { kotlinComponent.name == it.name } ?: return@launchInStage
                     publication.from(gradleComponent)
-
-                    project.rewriteKmpDependenciesInPomForTargetPublication(kotlinComponent, publication)
                 }
+                project.rewriteKmpDependenciesInPomForTargetPublication(kotlinComponent, publication)
             }
 
             (kotlinComponent as? KotlinTargetComponentWithPublication)?.publicationDelegate = componentPublication
@@ -116,13 +152,13 @@ internal fun Configuration.configureSourcesPublicationAttributes(target: KotlinT
     // to be either JAVA_RUNTIME (for jvm) or KOTLIN_RUNTIME (for other targets)
     // the latter isn't a strong requirement since there is no tooling that consume kotlin sources through gradle variants at the moment
     // so consistency with Java Gradle Plugin seemed most desirable choice.
-    attributes.setAttribute(Usage.USAGE_ATTRIBUTE, KotlinUsages.producerRuntimeUsage(target))
-    attributes.setAttribute(Category.CATEGORY_ATTRIBUTE, project.attributeValueByName(Category.DOCUMENTATION))
-    attributes.setAttribute(DocsType.DOCS_TYPE_ATTRIBUTE, project.attributeValueByName(DocsType.SOURCES))
+    KotlinUsages.configureProducerRuntimeUsage(this, target)
+    attributes.attribute(Category.CATEGORY_ATTRIBUTE, project.attributeValueByName(Category.DOCUMENTATION))
+    attributes.attribute(DocsType.DOCS_TYPE_ATTRIBUTE, project.attributeValueByName(DocsType.SOURCES))
     // Bundling attribute is about component dependencies, external means that they are provided as separate components
     // source variants doesn't have any dependencies (at least at the moment) so there is not much sense to use this attribute
     // however for Java Gradle Plugin compatibility and in order to prevent weird Variant Resolution errors we include this attribute
-    attributes.setAttribute(Bundling.BUNDLING_ATTRIBUTE, project.attributeValueByName(Bundling.EXTERNAL))
+    attributes.attribute(Bundling.BUNDLING_ATTRIBUTE, project.attributeValueByName(Bundling.EXTERNAL))
     usesPlatformOf(target)
 }
 
@@ -134,17 +170,17 @@ internal fun HasAttributes.configureResourcesPublicationAttributes(target: Kotli
     } else {
         KotlinUsages.KOTLIN_RESOURCES
     }
-    attributes.setAttribute(
+    attributes.attribute(
         Usage.USAGE_ATTRIBUTE,
         project.usageByName(usage)
     )
-    attributes.setAttribute(
+    attributes.attribute(
         LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE,
         project.objects.named(usage)
     )
 
-    attributes.setAttribute(Category.CATEGORY_ATTRIBUTE, project.objects.named(Category.LIBRARY))
-    attributes.setAttribute(Bundling.BUNDLING_ATTRIBUTE, project.attributeValueByName(Bundling.EXTERNAL))
+    attributes.attribute(Category.CATEGORY_ATTRIBUTE, project.objects.named(Category.LIBRARY))
+    attributes.attribute(Bundling.BUNDLING_ATTRIBUTE, project.attributeValueByName(Bundling.EXTERNAL))
 
     setUsesPlatformOf(target)
 }

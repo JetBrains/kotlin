@@ -2,6 +2,7 @@ KtNameReferenceExpression(80,83): 'bar'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaImplicitReceiverValue:
           symbol = /Child
           type = kotlin.Unit
@@ -11,6 +12,7 @@ KtNameReferenceExpression(80,83): 'bar'
           receiverType = null
           returnType = kotlin.Int
           symbol = var bar: kotlin.Int
+          contextParameters = []
           callableId = /BaseClass.bar
       simpleAccess = Read
       typeArgumentsMapping = {}

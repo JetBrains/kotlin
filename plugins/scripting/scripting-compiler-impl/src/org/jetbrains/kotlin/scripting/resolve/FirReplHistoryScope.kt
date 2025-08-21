@@ -20,21 +20,20 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.name.Name
 
 class FirReplHistoryScope(
-    val properties: Map<Name, FirVariableSymbol<*>>,
+    val properties: Map<Name, List<FirVariableSymbol<*>>>,
     val functions: Map<Name, List<FirNamedFunctionSymbol>>,
     val classLikes: Map<Name, FirClassLikeSymbol<*>>,
     val useSiteSession: FirSession,
 ) : FirContainingNamesAwareScope() {
 
     override fun processFunctionsByName(name: Name, processor: (FirNamedFunctionSymbol) -> Unit) {
-        for (function in functions[name].orEmpty()) {
+        for (function in functions[name].orEmpty().asReversed()) {
             processor(function)
         }
     }
 
     override fun processPropertiesByName(name: Name, processor: (FirVariableSymbol<*>) -> Unit) {
-        val property = properties[name]
-        if (property != null) {
+        for (property in properties[name].orEmpty().asReversed()) {
             processor(property)
         }
     }

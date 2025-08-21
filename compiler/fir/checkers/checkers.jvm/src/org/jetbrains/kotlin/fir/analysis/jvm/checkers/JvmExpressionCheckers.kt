@@ -45,10 +45,11 @@ object JvmExpressionCheckers : ExpressionCheckers() {
             FirJavaGenericVarianceViolationTypeChecker,
             FirSuperCallWithDefaultsChecker,
             FirJvmSuspensionPointInsideMutexLockChecker,
-            FirJvmSynchronizedByValueClassOrPrimitiveChecker,
+            FirJvmIdentitySensitiveCallWithValueTypeObjectChecker,
             FirJvmInconsistentOperatorFromJavaCallChecker,
             FirJvmPolymorphicSignatureCallChecker,
             FirJvmAtomicReferenceToPrimitiveCallChecker,
+            FirJvmAtomicReferenceArrayToPrimitiveCallChecker,
             FirJavaSamConstructorNullabilityChecker,
         )
 
@@ -97,5 +98,15 @@ object JvmExpressionCheckers : ExpressionCheckers() {
     override val resolvedQualifierCheckers: Set<FirResolvedQualifierChecker>
         get() = setOf(
             FirJvmModuleAccessibilityResolvedQualifierChecker,
+        )
+
+    override val returnExpressionCheckers: Set<FirReturnExpressionChecker>
+        get() = setOf(
+            FirReturnJavaNullabilityWarningChecker,
+        )
+
+    override val equalityOperatorCallCheckers: Set<FirEqualityOperatorCallChecker>
+        get() = setOf(
+            FirJvmIdentityEqualsOnJavaValueBasedClass,
         )
 }

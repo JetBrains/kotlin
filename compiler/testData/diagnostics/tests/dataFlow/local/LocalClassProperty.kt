@@ -11,3 +11,6 @@ fun test(x: Any?) {
     val s: String = <!DEBUG_INFO_SMARTCAST!>x<!>
   }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, getter, ifExpression, isExpression, localClass,
+nullableType, propertyDeclaration, smartcast */

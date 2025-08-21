@@ -29,3 +29,7 @@ fun test(k: K) {
 
     k.bar { it checkType { _<String>() }; "" } checkType { _<Int>() }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, flexibleType, funWithExtensionReceiver, functionDeclaration, functionalType,
+infix, interfaceDeclaration, javaType, lambdaLiteral, nullableType, samConversion, stringLiteral, typeParameter,
+typeWithExtension */

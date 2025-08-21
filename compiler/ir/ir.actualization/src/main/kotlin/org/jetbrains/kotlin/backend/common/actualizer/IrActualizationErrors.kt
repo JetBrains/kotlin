@@ -9,7 +9,9 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.diagnostics.*
-import org.jetbrains.kotlin.diagnostics.rendering.*
+import org.jetbrains.kotlin.diagnostics.rendering.BaseDiagnosticRendererFactory
+import org.jetbrains.kotlin.diagnostics.rendering.CommonRenderers
+import org.jetbrains.kotlin.diagnostics.rendering.Renderer
 import org.jetbrains.kotlin.ir.IrDiagnosticRenderers
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
@@ -17,16 +19,16 @@ import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.util.RenderIrElementVisitorForDiagnosticText
 import org.jetbrains.kotlin.platform.isCommon
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualAnnotationsIncompatibilityType
-import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualCheckingCompatibility
+import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualIncompatibility
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualMatchingCompatibility
 
-internal object IrActualizationErrors {
+internal object IrActualizationErrors : KtDiagnosticsContainer() {
     val NO_ACTUAL_FOR_EXPECT by error2<PsiElement, String, ModuleDescriptor>(SourceElementPositioningStrategies.EXPECT_ACTUAL_MODIFIER)
     val AMBIGUOUS_ACTUALS by error2<PsiElement, String, ModuleDescriptor>(SourceElementPositioningStrategies.EXPECT_ACTUAL_MODIFIER)
-    val EXPECT_ACTUAL_MISMATCH by error3<PsiElement, String, String, ExpectActualMatchingCompatibility.Mismatch>(
+    val EXPECT_ACTUAL_IR_MISMATCH by error3<PsiElement, String, String, ExpectActualMatchingCompatibility.Mismatch>(
         SourceElementPositioningStrategies.EXPECT_ACTUAL_MODIFIER
     )
-    val EXPECT_ACTUAL_INCOMPATIBILITY by error3<PsiElement, String, String, ExpectActualCheckingCompatibility.Incompatible<*>>(
+    val EXPECT_ACTUAL_IR_INCOMPATIBILITY by error3<PsiElement, String, String, ExpectActualIncompatibility<*>>(
         SourceElementPositioningStrategies.EXPECT_ACTUAL_MODIFIER
     )
     val ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT by warning3<PsiElement, IrSymbol, IrSymbol, ExpectActualAnnotationsIncompatibilityType<IrConstructorCall>>(
@@ -39,13 +41,13 @@ internal object IrActualizationErrors {
     val JAVA_DIRECT_ACTUALIZATION_DEFAULT_PARAMETERS_IN_EXPECT_FUNCTION by error1<PsiElement, IrSymbol>()
     val JAVA_DIRECT_ACTUALIZATION_DEFAULT_PARAMETERS_IN_ACTUAL_FUNCTION by error1<PsiElement, IrSymbol>()
 
-    init {
-        RootDiagnosticRendererFactory.registerFactory(KtDefaultIrActualizationErrorMessages)
+    override fun getRendererFactory(): BaseDiagnosticRendererFactory {
+        return KtDefaultIrActualizationErrorMessages
     }
 }
 
 internal object KtDefaultIrActualizationErrorMessages : BaseDiagnosticRendererFactory() {
-    override val MAP = KtDiagnosticFactoryToRendererMap("KT").also { map ->
+    override val MAP by KtDiagnosticFactoryToRendererMap("KT") { map ->
         map.put(
             IrActualizationErrors.AMBIGUOUS_ACTUALS,
             "{0} has several compatible actual declarations in modules {1}",
@@ -59,15 +61,15 @@ internal object KtDefaultIrActualizationErrorMessages : BaseDiagnosticRendererFa
             IrActualizationDiagnosticRenderers.MODULE_WITH_PLATFORM,
         )
         map.put(
-            IrActualizationErrors.EXPECT_ACTUAL_MISMATCH,
+            IrActualizationErrors.EXPECT_ACTUAL_IR_MISMATCH,
             "Expect declaration `{0}` doesn''t match actual `{1}` because {2}",
             CommonRenderers.STRING,
             CommonRenderers.STRING,
             IrActualizationDiagnosticRenderers.MISMATCH
         )
         map.put(
-            IrActualizationErrors.EXPECT_ACTUAL_INCOMPATIBILITY,
-            "Expect declaration `{0}` is incompatible with actual `{1}` because {2}",
+            IrActualizationErrors.EXPECT_ACTUAL_IR_INCOMPATIBILITY,
+            "The 'expect' and the 'actual' declarations are incompatible.\n  expect: {0}\n  actual: {1}\n  reason: {2}",
             CommonRenderers.STRING,
             CommonRenderers.STRING,
             IrActualizationDiagnosticRenderers.INCOMPATIBILITY
@@ -110,10 +112,10 @@ internal object KtDefaultIrActualizationErrorMessages : BaseDiagnosticRendererFa
 
 internal object IrActualizationDiagnosticRenderers {
     val MISMATCH = Renderer<ExpectActualMatchingCompatibility.Mismatch> {
-        it.reason ?: "<unknown>"
+        it.reason
     }
-    val INCOMPATIBILITY = Renderer<ExpectActualCheckingCompatibility.Incompatible<*>> {
-        it.reason ?: "<unknown>"
+    val INCOMPATIBILITY = Renderer<ExpectActualIncompatibility<*>> {
+        it.reason
     }
     val EXPECT_ACTUAL_ANNOTATION_INCOMPATIBILITY =
         Renderer { incompatibilityType: ExpectActualAnnotationsIncompatibilityType<IrConstructorCall> ->

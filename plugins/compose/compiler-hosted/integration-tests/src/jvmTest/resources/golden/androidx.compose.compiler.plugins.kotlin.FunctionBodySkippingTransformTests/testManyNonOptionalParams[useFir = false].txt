@@ -21,14 +21,10 @@ fun Test(a: Int, b: Boolean, c: Int, d: Foo?, e: List<Int>?, %composer: Composer
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(Test)<A(a,>:Test.kt")
   val %dirty = %changed
-  if (%default and 0b0001 != 0) {
-    %dirty = %dirty or 0b0110
-  } else if (%changed and 0b0110 == 0) {
+  if (%changed and 0b0110 == 0) {
     %dirty = %dirty or if (%composer.changed(a)) 0b0100 else 0b0010
   }
-  if (%default and 0b0010 != 0) {
-    %dirty = %dirty or 0b00110000
-  } else if (%changed and 0b00110000 == 0) {
+  if (%changed and 0b00110000 == 0) {
     %dirty = %dirty or if (%composer.changed(b)) 0b00100000 else 0b00010000
   }
   if (%default and 0b0100 != 0) {
@@ -44,7 +40,7 @@ fun Test(a: Int, b: Boolean, c: Int, d: Foo?, e: List<Int>?, %composer: Composer
   } else if (%changed and 0b0110000000000000 == 0) {
     %dirty = %dirty or if (%composer.changedInstance(e)) 0b0100000000000000 else 0b0010000000000000
   }
-  if (%dirty and 0b0010010010010011 != 0b0010010010010010 || !%composer.skipping) {
+  if (%composer.shouldExecute(%dirty and 0b0010010010010011 != 0b0010010010010010, %dirty and 0b0001)) {
     %composer.startDefaults()
     if (%changed and 0b0001 == 0 || %composer.defaultsInvalid) {
       if (%default and 0b0100 != 0) {
@@ -67,7 +63,7 @@ fun Test(a: Int, b: Boolean, c: Int, d: Foo?, e: List<Int>?, %composer: Composer
     if (isTraceInProgress()) {
       traceEventStart(<>, %dirty, -1, <>)
     }
-    A(a, b, c, d, e, %composer, 0b1110 and %dirty or 0b01110000 and %dirty or 0b001110000000 and %dirty or 0b0001110000000000 and %dirty or 0b1110000000000000 and %dirty)
+    A(a, b, c, d as Foo, e as List<Int>, %composer, 0b1110 and %dirty or 0b01110000 and %dirty or 0b001110000000 and %dirty or 0b0001110000000000 and %dirty or 0b1110000000000000 and %dirty)
     if (isTraceInProgress()) {
       traceEventEnd()
     }

@@ -10,3 +10,5 @@ class Outer {
         constructor()
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, nestedClass, secondaryConstructor */

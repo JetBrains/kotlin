@@ -14,12 +14,12 @@ fun foo() {
     } catch (_: Exception) {
         val x = {
             val x2 = {
-                val x3 = <!UNRESOLVED_REFERENCE!>{ y: Int ->
-                    val x4 = <!UNRESOLVED_REFERENCE!>{ _: Int ->
+                val x3 = { y: Int ->
+                    val x4 = { _: Int ->
                         <!UNRESOLVED_REFERENCE!>`_`<!>
-                    }<!>
+                    }
                     <!UNRESOLVED_REFERENCE!>`_`<!>
-                }<!>
+                }
                 <!UNRESOLVED_REFERENCE!>`_`<!>
                 10
             }
@@ -57,3 +57,7 @@ fun foo() {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, flexibleType, functionDeclaration, inner, integerLiteral, javaProperty,
+lambdaLiteral, localClass, localFunction, localProperty, primaryConstructor, propertyDeclaration, tryExpression,
+unnamedLocalVariable */

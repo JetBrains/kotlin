@@ -13,7 +13,7 @@ value class IT {
     when {
       other !is IT -> return false
     }
-    val tmp_0: IT = other as IT
+    val tmp_0: IT = other /*as IT */
     when {
       EQEQ(arg0 = <this>.#x, arg1 = tmp_0.#x).not() -> return false
     }
@@ -45,7 +45,7 @@ value class InlineMutableSet : MutableSet<IT> {
     when {
       other !is InlineMutableSet -> return false
     }
-    val tmp_1: InlineMutableSet = other as InlineMutableSet
+    val tmp_1: InlineMutableSet = other /*as InlineMutableSet */
     when {
       EQEQ(arg0 = <this>.#ms, arg1 = tmp_1.#ms).not() -> return false
     }
@@ -106,4 +106,3 @@ value class InlineMutableSet : MutableSet<IT> {
     }
 
 }
-

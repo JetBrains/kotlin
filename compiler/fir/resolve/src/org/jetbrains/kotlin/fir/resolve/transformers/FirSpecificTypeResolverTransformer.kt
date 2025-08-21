@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.KtRealSourceElementKind
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.FirFile
+import org.jetbrains.kotlin.fir.computeTypeAttributes
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
@@ -38,7 +38,7 @@ class FirSpecificTypeResolverTransformer(
     private val resolveDeprecations: Boolean = true,
     private val supertypeSupplier: SupertypeSupplier = SupertypeSupplier.Default,
     private val expandTypeAliases: Boolean,
-) : FirAbstractTreeTransformer<ScopeClassDeclaration>(phase = FirResolvePhase.SUPER_TYPES) {
+) : FirAbstractTreeTransformer<TypeResolutionConfiguration>(phase = FirResolvePhase.SUPER_TYPES) {
     private val typeResolver get() = session.typeResolver
 
     @set:PrivateForInline
@@ -69,23 +69,8 @@ class FirSpecificTypeResolverTransformer(
         }
     }
 
-    @PrivateForInline
-    @JvmField
-    var currentFile: FirFile? = null
-
     @OptIn(PrivateForInline::class)
-    inline fun <R> withFile(file: FirFile?, block: FirSpecificTypeResolverTransformer.() -> R): R {
-        val oldValue = currentFile
-        currentFile = file
-        return try {
-            block()
-        } finally {
-            currentFile = oldValue
-        }
-    }
-
-    @OptIn(PrivateForInline::class)
-    override fun transformTypeRef(typeRef: FirTypeRef, data: ScopeClassDeclaration): FirResolvedTypeRef {
+    override fun transformTypeRef(typeRef: FirTypeRef, data: TypeResolutionConfiguration): FirResolvedTypeRef {
         withBareTypes(allowed = false) {
             typeRef.transformChildren(this, data)
         }
@@ -96,7 +81,7 @@ class FirSpecificTypeResolverTransformer(
     @OptIn(PrivateForInline::class)
     override fun transformFunctionTypeRef(
         functionTypeRef: FirFunctionTypeRef,
-        data: ScopeClassDeclaration
+        data: TypeResolutionConfiguration
     ): FirResolvedTypeRef {
         functionTypeRef.transformChildren(this, data)
         val resolvedTypeWithDiagnostic = resolveType(functionTypeRef, data)
@@ -125,16 +110,15 @@ class FirSpecificTypeResolverTransformer(
     @OptIn(PrivateForInline::class)
     private fun FirSpecificTypeResolverTransformer.resolveType(
         typeRef: FirTypeRef,
-        scopeClassDeclaration: ScopeClassDeclaration,
+        configuration: TypeResolutionConfiguration,
         expandTypeAliases: Boolean = true,
     ): FirTypeResolutionResult {
         return typeResolver.resolveType(
             typeRef,
-            scopeClassDeclaration,
+            configuration,
             areBareTypesAllowed,
             isOperandOfIsOperator,
             resolveDeprecations,
-            currentFile,
             supertypeSupplier,
             expandTypeAliases,
         )
@@ -144,14 +128,14 @@ class FirSpecificTypeResolverTransformer(
         typeRef: FirTypeRef,
         resolvedType: ConeKotlinType,
         diagnostic: ConeDiagnostic?,
-        scopeClassDeclaration: ScopeClassDeclaration,
+        configuration: TypeResolutionConfiguration,
     ): FirResolvedTypeRef {
         return when {
             resolvedType is ConeErrorType -> {
-                buildErrorType(typeRef, resolvedType, resolvedType.diagnostic, scopeClassDeclaration)
+                buildErrorType(typeRef, resolvedType, resolvedType.diagnostic, configuration)
             }
             diagnostic != null -> {
-                buildErrorType(typeRef, resolvedType, diagnostic, scopeClassDeclaration)
+                buildErrorType(typeRef, resolvedType, diagnostic, configuration)
             }
             else -> {
                 buildResolvedTypeRef {
@@ -168,7 +152,7 @@ class FirSpecificTypeResolverTransformer(
         typeRef: FirTypeRef,
         resolvedType: ConeKotlinType,
         diagnostic: ConeDiagnostic,
-        scopeClassDeclaration: ScopeClassDeclaration,
+        configuration: TypeResolutionConfiguration,
     ): FirErrorTypeRef {
         return buildErrorTypeRef {
             val typeRefSourceKind = typeRef.source?.kind
@@ -188,12 +172,12 @@ class FirSpecificTypeResolverTransformer(
             coneType = resolvedType
             annotations += typeRef.annotations
 
-            val partiallyResolvedTypeRef = tryCalculatingPartiallyResolvedTypeRef(typeRef, scopeClassDeclaration)
+            val partiallyResolvedTypeRef = tryCalculatingPartiallyResolvedTypeRef(typeRef, configuration)
             this.partiallyResolvedTypeRef = partiallyResolvedTypeRef
 
             this.diagnostic = when {
                 diagnostic is ConeUnresolvedTypeQualifierError -> {
-                    ConeUnresolvedTypeQualifierError(smallestUnresolvablePrefix(diagnostic.qualifiers, partiallyResolvedTypeRef), diagnostic.isNullable)
+                    ConeUnresolvedTypeQualifierError(smallestUnresolvablePrefix(diagnostic.qualifiers, partiallyResolvedTypeRef))
                 }
                 diagnostic is ConeVisibilityError && typeRef is FirUserTypeRef -> {
                     ConeTypeVisibilityError(diagnostic.symbol, smallestUnresolvablePrefix(typeRef.qualifier, partiallyResolvedTypeRef))
@@ -256,7 +240,7 @@ class FirSpecificTypeResolverTransformer(
      * @param data The scope class declaration containing relevant information for resolving the reference.
      * @return A partially resolved type reference if it was resolved, or `null` otherwise.
      */
-    private fun tryCalculatingPartiallyResolvedTypeRef(typeRef: FirTypeRef, data: ScopeClassDeclaration): FirResolvedTypeRef? {
+    private fun tryCalculatingPartiallyResolvedTypeRef(typeRef: FirTypeRef, data: TypeResolutionConfiguration): FirResolvedTypeRef? {
         if (typeRef !is FirUserTypeRef) return null
         val qualifiers = typeRef.qualifier
         if (qualifiers.size <= 1) {
@@ -313,20 +297,28 @@ class FirSpecificTypeResolverTransformer(
         !errorTypeAsResolved && it is ConeErrorType
     }
 
-    override fun transformResolvedTypeRef(resolvedTypeRef: FirResolvedTypeRef, data: ScopeClassDeclaration): FirTypeRef {
+    override fun transformResolvedTypeRef(resolvedTypeRef: FirResolvedTypeRef, data: TypeResolutionConfiguration): FirTypeRef {
         return resolvedTypeRef
     }
 
-    override fun transformErrorTypeRef(errorTypeRef: FirErrorTypeRef, data: ScopeClassDeclaration): FirTypeRef {
+    override fun transformErrorTypeRef(errorTypeRef: FirErrorTypeRef, data: TypeResolutionConfiguration): FirTypeRef {
         errorTypeRef.transformPartiallyResolvedTypeRef(this, data)
-        return errorTypeRef
+        if (errorTypeRef.annotations.isEmpty() || errorTypeRef.coneType.attributes.isNotEmpty()) {
+            return errorTypeRef
+        }
+        // Otherwise we "lose" annotation arguments here, and later cannot resolve them
+        return errorTypeRef.withReplacedConeType(
+            errorTypeRef.coneType.withAttributes(
+                errorTypeRef.annotations.computeTypeAttributes(session, shouldExpandTypeAliases = true)
+            )
+        )
     }
 
-    override fun transformImplicitTypeRef(implicitTypeRef: FirImplicitTypeRef, data: ScopeClassDeclaration): FirTypeRef {
+    override fun transformImplicitTypeRef(implicitTypeRef: FirImplicitTypeRef, data: TypeResolutionConfiguration): FirTypeRef {
         return implicitTypeRef
     }
 
-    override fun transformValueParameter(valueParameter: FirValueParameter, data: ScopeClassDeclaration): FirStatement {
+    override fun transformValueParameter(valueParameter: FirValueParameter, data: TypeResolutionConfiguration): FirStatement {
         val result = transformElement(valueParameter, data)
         result.defaultValue?.let {
             it.resultType = ConeErrorType(ConeUnsupportedDefaultValueInFunctionType(it.source))

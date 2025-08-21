@@ -8,3 +8,5 @@ fun test(x: Int, y: Int) {
         Unit
     }
 }
+
+/* GENERATED_FIR_TAGS: comparisonExpression, functionDeclaration, ifExpression, integerLiteral */

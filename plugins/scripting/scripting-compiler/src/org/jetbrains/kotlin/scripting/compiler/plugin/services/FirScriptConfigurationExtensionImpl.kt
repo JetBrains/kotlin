@@ -1,17 +1,15 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.scripting.compiler.plugin.services
 
 import com.intellij.openapi.diagnostic.Logger
-import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.analysis.checkers.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.builder.Context
 import org.jetbrains.kotlin.fir.builder.FirScriptConfiguratorExtension
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousInitializer
@@ -28,7 +26,8 @@ import org.jetbrains.kotlin.fir.expressions.impl.FirSingleExpressionBlock
 import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.resolve.providers.dependenciesSymbolProvider
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
-import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirLocalPropertySymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirReceiverParameterSymbol
 import org.jetbrains.kotlin.fir.toFirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
@@ -39,6 +38,7 @@ import org.jetbrains.kotlin.fir.types.constructType
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImplWithoutSource
 import org.jetbrains.kotlin.fir.types.impl.FirQualifierPartImpl
 import org.jetbrains.kotlin.fir.types.impl.FirTypeArgumentListImpl
+import org.jetbrains.kotlin.fir.types.toRegularClassSymbol
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -69,15 +69,15 @@ class FirScriptConfiguratorExtensionImpl(
                 (scriptSource is KtPsiSourceElement && scriptSource.psi is KtScript) // workd only with PSI so far
 
     @OptIn(SymbolInternals::class)
-    override fun FirScriptBuilder.configure(sourceFile: KtSourceFile?, context: Context<PsiElement>) {
-        val configuration = getOrLoadConfiguration(sourceFile!!) ?: run {
+    override fun FirScriptBuilder.configure(sourceFile: KtSourceFile?, context: Context<*>) {
+        val configuration = getOrLoadConfiguration(session, sourceFile!!) ?: run {
             log.warn("Configuration for ${sourceFile.asString()} wasn't found. FirScriptBuilder wasn't configured.")
             return
         }
 
         configuration.getNoDefault(ScriptCompilationConfiguration.baseClass)?.let { baseClass ->
             val baseClassTypeRef =
-                tryResolveOrBuildParameterTypeRefFromKotlinType(baseClass, source?.fakeElement(KtFakeSourceElementKind.ScriptBaseClass))
+                tryResolveOrBuildParameterTypeRefFromKotlinType(baseClass, source.fakeElement(KtFakeSourceElementKind.ScriptBaseClass))
 
             receivers.add(
                 buildScriptReceiverParameter {
@@ -95,14 +95,13 @@ class FirScriptConfiguratorExtensionImpl(
                     parameters.add(
                         buildProperty {
                             moduleData = session.moduleData
-                            source = this@configure.source?.fakeElement(KtFakeSourceElementKind.ScriptParameter)
+                            source = this@configure.source.fakeElement(KtFakeSourceElementKind.ScriptParameter)
                             origin = FirDeclarationOrigin.ScriptCustomization.ParameterFromBaseClass
                             // TODO: copy type parameters?
                             returnTypeRef = baseCtorParameter.returnTypeRef
                             name = baseCtorParameter.name
-                            symbol = FirPropertySymbol(name)
+                            symbol = FirRegularPropertySymbol(CallableId(name))
                             status = FirDeclarationStatusImpl(Visibilities.Local, Modality.FINAL)
-                            isLocal = true
                             isVar = false
                         }
                     )
@@ -127,13 +126,27 @@ class FirScriptConfiguratorExtensionImpl(
             parameters.add(
                 buildProperty {
                     moduleData = session.moduleData
-                    source = this@configure.source?.fakeElement(KtFakeSourceElementKind.ScriptParameter)
+                    source = this@configure.source.fakeElement(KtFakeSourceElementKind.ScriptParameter)
                     origin = FirDeclarationOrigin.ScriptCustomization.Parameter
                     returnTypeRef = this@configure.tryResolveOrBuildParameterTypeRefFromKotlinType(propertyType)
                     name = Name.identifier(propertyName)
-                    symbol = FirPropertySymbol(name)
+                    symbol = FirLocalPropertySymbol()
                     status = FirDeclarationStatusImpl(Visibilities.Local, Modality.FINAL)
-                    isLocal = true
+                    isVar = false
+                }
+            )
+        }
+
+        configuration[ScriptCompilationConfiguration.explainField]?.let {
+            parameters.add(
+                buildProperty {
+                    moduleData = session.moduleData
+                    source = this@configure.source.fakeElement(KtFakeSourceElementKind.ScriptParameter)
+                    origin = FirDeclarationOrigin.ScriptCustomization.Parameter
+                    returnTypeRef = this@configure.tryResolveOrBuildParameterTypeRefFromKotlinType(KotlinType(MutableMap::class))
+                    name = Name.identifier(it)
+                    symbol = FirLocalPropertySymbol()
+                    status = FirDeclarationStatusImpl(Visibilities.Local, Modality.FINAL)
                     isVar = false
                 }
             )
@@ -149,7 +162,7 @@ class FirScriptConfiguratorExtensionImpl(
                 when (val lastScriptBlockBody = lastScriptBlock?.body) {
                     is FirLazyBlock -> null
                     is FirSingleExpressionBlock -> lastScriptBlockBody.statement as? FirExpression
-                    else -> lastScriptBlockBody?.statements?.single()?.takeIf { it is FirExpression } as? FirExpression
+                    else -> lastScriptBlockBody?.statements?.singleOrNull()?.takeIf { it is FirExpression } as? FirExpression
                 }?.takeUnless { it is FirErrorExpression }
 
             if (lastExpression != null) {
@@ -161,22 +174,23 @@ class FirScriptConfiguratorExtensionImpl(
                 declarations.add(
                     buildProperty {
                         this.name = Name.identifier(resultFieldName)
-                        this.symbol = FirPropertySymbol(CallableId(context.packageFqName, this.name))
+                        this.symbol = FirRegularPropertySymbol(CallableId(context.packageFqName, this.name))
                         source = lastScriptBlock?.source
                         moduleData = session.moduleData
                         origin = FirDeclarationOrigin.ScriptCustomization.ResultProperty
                         initializer = lastExpression
                         returnTypeRef = lastExpressionTypeRef
                         getter = FirDefaultPropertyGetter(
-                            lastScriptBlock?.source?.fakeElement(KtFakeSourceElementKind.DefaultAccessor),
-                            session.moduleData,
-                            FirDeclarationOrigin.ScriptCustomization.ResultProperty,
-                            lastExpressionTypeRef,
-                            Visibilities.Public,
-                            this.symbol,
+                            source = lastScriptBlock?.source?.fakeElement(KtFakeSourceElementKind.DefaultAccessor),
+                            moduleData = session.moduleData,
+                            origin = FirDeclarationOrigin.ScriptCustomization.ResultProperty,
+                            propertyTypeRef = lastExpressionTypeRef,
+                            visibility = Visibilities.Public,
+                            propertySymbol = this.symbol,
+                            modality = Modality.FINAL,
                         )
+
                         status = FirDeclarationStatusImpl(Visibilities.Public, Modality.FINAL)
-                        isLocal = false
                         isVar = false
                     }.also {
                         resultPropertyName = it.name
@@ -188,21 +202,9 @@ class FirScriptConfiguratorExtensionImpl(
 
     private fun KtSourceFile.asString() = path ?: name
 
-    private fun getOrLoadConfiguration(file: KtSourceFile): ScriptCompilationConfiguration? {
-        val service = checkNotNull(session.scriptDefinitionProviderService)
-        val sourceCode = file.toSourceCode()
-        val ktFile = sourceCode?.originalKtFile()
-        val configuration = with(service) {
-            ktFile?.let { asKtFile -> configurationFor(asKtFile) }
-                ?: sourceCode?.let { asSourceCode -> configurationFor(asSourceCode) }
-                ?: defaultConfiguration()?.also { log.debug("Default configuration loaded for ${file.asString()}") }
-        }
-        return configuration
-    }
-
     private fun FirScriptBuilder.tryResolveOrBuildParameterTypeRefFromKotlinType(
         kotlinType: KotlinType,
-        sourceElement: KtSourceElement? = source?.fakeElement(KtFakeSourceElementKind.ScriptParameter),
+        sourceElement: KtSourceElement = source.fakeElement(KtFakeSourceElementKind.ScriptParameter),
     ): FirTypeRef {
         // TODO: check/support generics and other cases (KT-72638)
         // such a conversion by simple splitting by a '.', is overly simple and does not support all cases, e.g. generics or backticks
@@ -263,3 +265,16 @@ fun KtSourceFile.toSourceCode(): SourceCode? = when (this) {
     is KtInMemoryTextSourceFile -> StringScriptSource(text.toString(), name)
     else -> null
 }
+
+internal fun getOrLoadConfiguration(session: FirSession, file: KtSourceFile): ScriptCompilationConfiguration? {
+    val service = checkNotNull(session.scriptDefinitionProviderService)
+    val sourceCode = file.toSourceCode()
+    val ktFile = sourceCode?.originalKtFile()
+    val configuration = with(service) {
+        ktFile?.let { asKtFile -> configurationFor(asKtFile) }
+            ?: sourceCode?.let { asSourceCode -> configurationFor(asSourceCode) }
+            ?: defaultConfiguration()
+    }
+    return configuration
+}
+

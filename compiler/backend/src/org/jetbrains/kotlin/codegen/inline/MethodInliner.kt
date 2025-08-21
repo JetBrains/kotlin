@@ -107,7 +107,7 @@ class MethodInliner(
             transformedNode.signature, transformedNode.exceptions?.toTypedArray()
         )
 
-        val visitor = RemapVisitor(resultNode, remapper, nodeRemapper)
+        val visitor = RemapVisitor(resultNode, remapper, nodeRemapper, inliningContext.typeMapper)
 
         try {
             transformedNode.accept(
@@ -253,7 +253,7 @@ class MethodInliner(
                         return
                     }
 
-                    val nullableAnyType = inliningContext.state.module.builtIns.nullableAnyType
+                    val nullableAnyType = inliningContext.typeMapper.typeSystem.nullableAnyType()
                     val expectedParameters = info.invokeMethod.argumentTypes
                     val expectedKotlinParameters = info.invokeMethodParameters
                     val argumentCount = Type.getArgumentTypes(desc).size
@@ -265,7 +265,9 @@ class MethodInliner(
                     var valueParamShift = max(nextLocalIndex, markerShift) + expectedParameters.sumOf { it.size }
                     for (index in argumentCount - 1 downTo 0) {
                         val type = expectedParameters[index]
-                        StackValue.coerce(AsmTypes.OBJECT_TYPE, nullableAnyType, type, expectedKotlinParameters[index], this)
+                        StackValue.coerce(
+                            AsmTypes.OBJECT_TYPE, nullableAnyType, type, expectedKotlinParameters[index], this, inliningContext.typeMapper,
+                        )
                         valueParamShift -= type.size
                         store(valueParamShift, type)
                     }
@@ -350,7 +352,10 @@ class MethodInliner(
                     result.reifiedTypeParametersUsages.mergeAll(lambdaResult.reifiedTypeParametersUsages)
                     result.reifiedTypeParametersUsages.mergeAll(info.reifiedTypeParametersUsages)
 
-                    StackValue.coerce(info.invokeMethod.returnType, info.invokeMethodReturnType, OBJECT_TYPE, nullableAnyType, this)
+                    StackValue.coerce(
+                        info.invokeMethod.returnType, info.invokeMethodReturnType, OBJECT_TYPE, nullableAnyType, this,
+                        inliningContext.typeMapper,
+                    )
                     setLambdaInlining(false)
                     addInlineMarker(this, false)
 
@@ -477,7 +482,7 @@ class MethodInliner(
         val oldArgumentTypes = if (reorderIrLambdaParameters) {
             // In IR lambdas, captured variables come before real parameters, but after the extension receiver.
             // Move them to the end of the descriptor instead.
-            Type.getArgumentTypes(inliningContext.lambdaInfo!!.invokeMethod.descriptor)
+            Type.getArgumentTypes(inliningContext.lambdaInfo.invokeMethod.descriptor)
         } else {
             Type.getArgumentTypes(node.desc)
         }
@@ -501,12 +506,13 @@ class MethodInliner(
             private fun getNewIndex(`var`: Int): Int {
                 val lambdaInfo = inliningContext.lambdaInfo
                 if (reorderIrLambdaParameters) {
-                    val extensionSize = if (lambdaInfo.isExtensionLambda) lambdaInfo.invokeMethod.argumentTypes[0].size else 0
+                    val extensionSize = lambdaInfo.invokeMethod.argumentTypes
+                        .slice(0..<lambdaInfo.nonRegularParametersCount).sumOf { it.size }
                     return when {
-                        //                v-- extensionSize     v-- argsSizeOnStack
-                        // |- extension -|- captured -|- real -|- locals -|    old descriptor
-                        // |- extension -|- real -|- captured -|- locals -|    new descriptor
-                        //                         ^-- realParametersSize
+                        //                           v-- extensionSize     v-- argsSizeOnStack
+                        // - context -|- extension -|- captured -|- real -|- locals -|    old descriptor
+                        // - context -|- extension -|- real -|- captured -|- locals -|    new descriptor
+                        //                                    ^-- realParametersSize
                         `var` >= parameters.argsSizeOnStack -> `var`
                         `var` >= extensionSize + capturedParamsSize -> `var` - capturedParamsSize
                         `var` >= extensionSize -> `var` + realParametersSize - extensionSize
@@ -543,7 +549,7 @@ class MethodInliner(
                     for (captured in lambda.capturedVars.asReversed()) {
                         lambda.originalBoundReceiverType?.let {
                             // The receiver is the only captured value; it needs to be boxed.
-                            StackValue.onStack(it).put(captured.type, InstructionAdapter(this))
+                            StackValue.coerce(it, captured.type, InstructionAdapter(this))
                         }
                         super.visitFieldInsn(
                             Opcodes.PUTSTATIC,

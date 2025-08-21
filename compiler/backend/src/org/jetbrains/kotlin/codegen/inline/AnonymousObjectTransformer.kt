@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -21,8 +21,9 @@ import org.jetbrains.kotlin.metadata.jvm.JvmProtoBuf
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.metadata.jvm.serialization.JvmStringTable
 import org.jetbrains.kotlin.protobuf.MessageLite
+import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin.Companion.NO_ORIGIN
-import org.jetbrains.kotlin.util.toMetadataVersion
+import org.jetbrains.kotlin.util.toJvmMetadataVersion
 import org.jetbrains.org.objectweb.asm.*
 import org.jetbrains.org.objectweb.asm.commons.Method
 import org.jetbrains.org.objectweb.asm.tree.*
@@ -121,8 +122,8 @@ class AnonymousObjectTransformer(
 
             override fun visitEnd() {}
         }, ClassReader.SKIP_FRAMES)
-        val header = metadataReader.createHeader(inliningContext.state.config.languageVersionSettings.languageVersion.toMetadataVersion())
-        assert(isSameModule || (header != null && isPublicAbi(header))) {
+        val header = metadataReader.createHeader(inliningContext.state.config.languageVersionSettings.languageVersion.toJvmMetadataVersion())
+        assert(isSameModule || (header != null && isPublicAbi(header)) || inliningContext.callSiteInfo.suppressNonPublicApiObjectInliningError) {
             "Trying to inline an anonymous object which is not part of the public ABI: ${oldObjectType.className}"
         }
 
@@ -195,10 +196,10 @@ class AnonymousObjectTransformer(
 
         if (GENERATE_SMAP && !inliningContext.isInliningLambda) {
             classBuilder.visitSMAP(
-                sourceMapper, !state.config.languageVersionSettings.supportsFeature(LanguageFeature.CorrectSourceMappingSyntax),
+                sourceMapper, !state.config.languageVersionSettings.supportsFeature(LanguageFeature.CorrectSourceMappingSyntax), true
             )
         } else if (debugFileName != null) {
-            classBuilder.visitSource(debugFileName!!, debugInfo)
+            classBuilder.visitSource(debugFileName, debugInfo)
         }
 
         innerClassNodes.forEach { node ->
@@ -211,8 +212,8 @@ class AnonymousObjectTransformer(
 
         // debugMetadataAnnotation can be null in LV < 1.3
         if (putDebugMetadata && debugMetadataAnnotation != null) {
-            classBuilder.newAnnotation(debugMetadataAnnotation!!.desc, true).also {
-                debugMetadataAnnotation!!.accept(it)
+            classBuilder.newAnnotation(debugMetadataAnnotation.desc, true).also {
+                debugMetadataAnnotation.accept(it)
             }
         }
 
@@ -252,7 +253,9 @@ class AnonymousObjectTransformer(
                 }
                 return@action
             }
-            DescriptorAsmUtil.writeAnnotationData(av, newProto, newStringTable)
+            AsmUtil.writeAnnotationData(
+                av, JvmProtoBufUtil.writeData(newProto, newStringTable), ArrayUtil.toStringArray(newStringTable.strings),
+            )
         }
     }
 
@@ -348,6 +351,7 @@ class AnonymousObjectTransformer(
             InlineCallSiteInfo(
                 transformationInfo.oldClassName,
                 Method(sourceNode.name, if (isConstructor) transformationInfo.newConstructorDescriptor else sourceNode.desc),
+                inliningContext.callSiteInfo.suppressNonPublicApiObjectInliningError,
                 inliningContext.callSiteInfo.inlineScopeVisibility,
                 inliningContext.callSiteInfo.file,
                 inliningContext.callSiteInfo.lineNumber
@@ -383,7 +387,7 @@ class AnonymousObjectTransformer(
             val info = param.fieldEquivalent?.also {
                 // Permit to access this capture through a field within the constructor itself, but remap to local loads.
                 constructorInlineBuilder.addCapturedParam(it, it.newFieldName).remapValue =
-                    if (offset == -1) null else StackValue.local(offset, param.type)
+                    if (offset == -1) null else StackValue.Local(offset, param.type, null)
             } ?: param
             if (!param.isSkipped && info is CapturedParamInfo && !info.isSkipInConstructor) {
                 val desc = info.type.descriptor
@@ -543,7 +547,10 @@ class AnonymousObjectTransformer(
                         recapturedParamInfo.functionalArgument = NonInlineArgumentForInlineSuspendParameter.INLINE_LAMBDA_AS_VARIABLE
                     }
                     capturedParamBuilder.addCapturedParam(recapturedParamInfo, recapturedParamInfo.newFieldName).remapValue =
-                        StackValue.field(desc.type, oldObjectType, recapturedParamInfo.newFieldName, StackValue.LOCAL_0)
+                        StackValue.Field(
+                            desc.type, oldObjectType, recapturedParamInfo.newFieldName,
+                            StackValue.Local(0, AsmTypes.OBJECT_TYPE, null),
+                        )
                     allRecapturedParameters.add(desc)
                 }
             }
@@ -557,7 +564,8 @@ class AnonymousObjectTransformer(
             val desc = CapturedParamDesc(ownerType, AsmUtil.THIS, ownerType)
             val recapturedParamInfo =
                 constructorParamBuilder.addCapturedParam(desc, AsmUtil.CAPTURED_THIS_FIELD/*outer lambda/object*/, false)
-            capturedParamBuilder.addCapturedParam(recapturedParamInfo, recapturedParamInfo.newFieldName).remapValue = StackValue.LOCAL_0
+            capturedParamBuilder.addCapturedParam(recapturedParamInfo, recapturedParamInfo.newFieldName).remapValue =
+                StackValue.Local(0, AsmTypes.OBJECT_TYPE, null)
             allRecapturedParameters.add(desc)
         }
 

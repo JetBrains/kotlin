@@ -16,10 +16,11 @@ import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.name.StandardClassIds
 
 object FirKotlinActualAnnotationHasNoEffectInKotlinTypeChecker : FirResolvedTypeRefChecker(MppCheckerKind.Common) {
-    override fun check(typeRef: FirResolvedTypeRef, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(typeRef: FirResolvedTypeRef) {
         if (typeRef.source == null || typeRef.source?.kind is KtFakeSourceElementKind) return
         if (typeRef.coneType.classId == StandardClassIds.Annotations.KotlinActual) {
-            reporter.reportOn(typeRef.source, FirErrors.KOTLIN_ACTUAL_ANNOTATION_HAS_NO_EFFECT_IN_KOTLIN, context)
+            reporter.reportOn(typeRef.source, FirErrors.KOTLIN_ACTUAL_ANNOTATION_HAS_NO_EFFECT_IN_KOTLIN)
         }
     }
 }

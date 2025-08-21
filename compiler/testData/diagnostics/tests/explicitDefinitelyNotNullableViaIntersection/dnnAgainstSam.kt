@@ -25,3 +25,6 @@ val nonNullableCorrect = object : Y<Int?, String> {
 }
 
 val nonNullableLambda = Y<Int?, String> { it: Int? -> "Test $it" }
+
+/* GENERATED_FIR_TAGS: additiveExpression, anonymousObjectExpression, dnnType, funInterface, functionDeclaration,
+interfaceDeclaration, lambdaLiteral, nullableType, override, propertyDeclaration, stringLiteral, typeParameter */

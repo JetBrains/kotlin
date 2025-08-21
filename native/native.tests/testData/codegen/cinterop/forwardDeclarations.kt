@@ -1,6 +1,7 @@
 // This test mostly checks frontend behaviour.
 
 // TARGET_BACKEND: NATIVE
+// WITH_PLATFORM_LIBS
 // MODULE: cinterop
 // FILE: cForwardDeclarations.def
 ---

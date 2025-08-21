@@ -93,7 +93,7 @@ internal class GradleKotlinCompilerWork @Inject constructor(
     }
     private var icLogLines: List<String> = emptyList()
 
-    private val log: KotlinLogger = getTaskLogger(config.taskPath, null, "GradleKotlinCompilerWork")
+    private val log: KotlinLogger = getTaskLogger(config.taskPath, null, "GradleKotlinCompilerWork", false)
 
     private val isIncremental: Boolean
         get() = config.incrementalCompilationEnvironment != null
@@ -310,7 +310,6 @@ internal class GradleKotlinCompilerWork @Inject constructor(
             requestedCompilationResults = requestedCompilationResults.map { it.code }.toTypedArray(),
             compilerMode = CompilerMode.INCREMENTAL_COMPILER,
             targetPlatform = targetPlatform,
-            usePreciseJavaTracking = icEnv.usePreciseJavaTracking,
             outputFiles = config.outputFiles,
             multiModuleICSettings = icEnv.multiModuleICSettings,
             modulesInfo = config.incrementalModuleInfo,
@@ -318,6 +317,7 @@ internal class GradleKotlinCompilerWork @Inject constructor(
             buildDir = icEnv.buildDir,
             kotlinScriptExtensions = config.kotlinScriptExtensions,
             icFeatures = icEnv.icFeatures,
+            useJvmFirRunner = icEnv.useJvmFirRunner,
         )
 
         log.info("Options for KOTLIN DAEMON: $compilationOptions")

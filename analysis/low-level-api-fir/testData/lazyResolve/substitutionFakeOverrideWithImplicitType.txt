@@ -1,5 +1,5 @@
 STATUS:
-TARGET: public final override [ResolvedTo(STATUS)] [DeferredCallableCopyReturnTypeKey=DeferredReturnTypeOfSubstitution(substitutor={T -> kotlin/Int}, baseSymbol=FirPropertySymbol /AbstractClass.property), SubstitutedOverrideOriginalKey=/AbstractClass.property] val property: <implicit>
+TARGET: public final override [ResolvedTo(STATUS)] [DeferredCallableCopyReturnTypeKey=DeferredReturnTypeOfSubstitution(substitutor={T -> kotlin/Int}, baseSymbol=FirRegularPropertySymbol /AbstractClass.property), SubstitutedOverrideOriginalKey=/AbstractClass.property] val property: <implicit>
     public [ResolvedTo(STATUS)] [ContainingClassKey=SubClass] get(): <implicit>
 
 FILE: [ResolvedTo(IMPORTS)] substitutionFakeOverrideWithImplicitType.kt
@@ -22,7 +22,7 @@ FILE: [ResolvedTo(IMPORTS)] substitutionFakeOverrideWithImplicitType.kt
     }
 
 EXPECT_ACTUAL_MATCHING:
-TARGET: public final override [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [DeferredCallableCopyReturnTypeKey=DeferredReturnTypeOfSubstitution(substitutor={T -> kotlin/Int}, baseSymbol=FirPropertySymbol /AbstractClass.property), SubstitutedOverrideOriginalKey=/AbstractClass.property] val property: <implicit>
+TARGET: public final override [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [DeferredCallableCopyReturnTypeKey=DeferredReturnTypeOfSubstitution(substitutor={T -> kotlin/Int}, baseSymbol=FirRegularPropertySymbol /AbstractClass.property), SubstitutedOverrideOriginalKey=/AbstractClass.property] val property: <implicit>
     public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingClassKey=SubClass] get(): <implicit>
 
 FILE: [ResolvedTo(IMPORTS)] substitutionFakeOverrideWithImplicitType.kt
@@ -45,7 +45,7 @@ FILE: [ResolvedTo(IMPORTS)] substitutionFakeOverrideWithImplicitType.kt
     }
 
 CONTRACTS:
-TARGET: public final override [ResolvedTo(CONTRACTS)] [DeferredCallableCopyReturnTypeKey=DeferredReturnTypeOfSubstitution(substitutor={T -> kotlin/Int}, baseSymbol=FirPropertySymbol /AbstractClass.property), SubstitutedOverrideOriginalKey=/AbstractClass.property] val property: <implicit>
+TARGET: public final override [ResolvedTo(CONTRACTS)] [DeferredCallableCopyReturnTypeKey=DeferredReturnTypeOfSubstitution(substitutor={T -> kotlin/Int}, baseSymbol=FirRegularPropertySymbol /AbstractClass.property), SubstitutedOverrideOriginalKey=/AbstractClass.property] val property: <implicit>
     public [ResolvedTo(CONTRACTS)] [ContainingClassKey=SubClass] get(): <implicit>
 
 FILE: [ResolvedTo(IMPORTS)] substitutionFakeOverrideWithImplicitType.kt

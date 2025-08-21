@@ -10,24 +10,24 @@ repositories {
 }
 
 android {
-    compileSdkVersion 30
-    namespace "com.example.myapplication"
+    compileSdkVersion = 30
+    namespace = "com.example.myapplication"
     defaultConfig {
-        applicationId "com.example.myapplication"
-        minSdkVersion 30
-        targetSdkVersion 30
-        versionCode 1
-        versionName "1.0"
+        applicationId = "com.example.myapplication"
+        minSdkVersion = 30
+        targetSdkVersion = 30
+        versionCode = 1
+        versionName = "1.0"
     }
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled = false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8
     }
     kotlinOptions {
         jvmTarget = '1.8'

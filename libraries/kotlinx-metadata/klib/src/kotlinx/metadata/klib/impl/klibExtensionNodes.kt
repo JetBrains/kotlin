@@ -4,7 +4,8 @@
  */
 package kotlinx.metadata.klib.impl
 
-import kotlinx.metadata.klib.*
+import kotlinx.metadata.klib.KlibSourceFile
+import kotlinx.metadata.klib.UniqId
 import kotlin.metadata.*
 import kotlin.metadata.internal.common.KmModuleFragment
 import kotlin.metadata.internal.extensions.*
@@ -27,6 +28,9 @@ internal val KmConstructor.klibExtensions: KlibConstructorExtension
 internal val KmTypeParameter.klibExtensions: KlibTypeParameterExtension
     get() = getExtension(KlibTypeParameterExtension.TYPE) as KlibTypeParameterExtension
 
+internal val KmEnumEntry.klibExtensions: KlibEnumEntryExtension
+    get() = getExtension(KlibEnumEntryExtension.TYPE) as KlibEnumEntryExtension
+
 internal val KmPackage.klibExtensions: KlibPackageExtension
     get() = getExtension(KlibPackageExtension.TYPE) as KlibPackageExtension
 
@@ -36,11 +40,7 @@ internal val KmModuleFragment.klibExtensions: KlibModuleFragmentExtension
 internal val KmTypeAlias.klibExtensions: KlibTypeAliasExtension
     get() = getExtension(KlibTypeAliasExtension.TYPE) as KlibTypeAliasExtension
 
-internal val KmValueParameter.klibExtensions: KlibValueParameterExtension
-    get() = getExtension(KlibValueParameterExtension.TYPE) as KlibValueParameterExtension
-
 internal class KlibFunctionExtension : KmFunctionExtension {
-    val annotations: MutableList<KmAnnotation> = mutableListOf()
     var uniqId: UniqId? = null
     var file: KlibSourceFile? = null
 
@@ -53,8 +53,6 @@ internal class KlibFunctionExtension : KmFunctionExtension {
 }
 
 internal class KlibClassExtension : KmClassExtension {
-    val annotations: MutableList<KmAnnotation> = mutableListOf()
-    val enumEntries: MutableList<KlibEnumEntry> = mutableListOf()
     var uniqId: UniqId? = null
     var file: KlibSourceFile? = null
 
@@ -91,11 +89,8 @@ internal class KlibTypeExtension : KmTypeExtension {
 }
 
 internal class KlibPropertyExtension : KmPropertyExtension {
-    val annotations: MutableList<KmAnnotation> = mutableListOf()
-    val getterAnnotations: MutableList<KmAnnotation> = mutableListOf()
-    val setterAnnotations: MutableList<KmAnnotation> = mutableListOf()
     var uniqId: UniqId? = null
-    var file: Int? = null
+    var file: KlibSourceFile? = null
     var compileTimeValue: KmAnnotationArgument? = null
 
     override val type: KmExtensionType
@@ -127,6 +122,19 @@ internal class KlibTypeParameterExtension : KmTypeParameterExtension {
 
     companion object {
         val TYPE = KmExtensionType(KlibTypeParameterExtension::class)
+    }
+}
+
+internal class KlibEnumEntryExtension : KmEnumEntryExtension {
+    var ordinal: Int? = null
+    var uniqId: UniqId? = null
+    val annotations: MutableList<KmAnnotation> = mutableListOf()
+
+    override val type: KmExtensionType
+        get() = TYPE
+
+    companion object {
+        val TYPE = KmExtensionType(KlibEnumEntryExtension::class)
     }
 }
 

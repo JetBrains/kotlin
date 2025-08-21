@@ -1,10 +1,10 @@
 pluginManagement {
-    apply(from = "../scripts/cache-redirector.settings.gradle.kts")
-    apply(from = "../scripts/kotlin-bootstrap.settings.gradle.kts")
+    apply(from = "cache-redirector/src/main/kotlin/cache-redirector.settings.gradle.kts")
+    apply(from = "kotlin-bootstrap/src/main/kotlin/kotlin-bootstrap.settings.gradle.kts")
 
     repositories {
-        maven(url = "https://maven.pkg.jetbrains.space/kotlin/p/kotlin/kotlin-dependencies")
-        mavenCentral()
+        maven(url = "https://redirector.kotlinlang.org/maven/kotlin-dependencies")
+        mavenCentral { setUrl("https://cache-redirector.jetbrains.com/maven-central") }
         gradlePluginPortal()
     }
 }
@@ -18,8 +18,8 @@ buildscript {
 
 plugins {
     // Versions here should be also synced with the versions in 'libs.versions.toml'
-    id("org.gradle.toolchains.foojay-resolver-convention") version "0.4.0"
-    id("com.gradle.develocity") version("3.17.5")
+    id("org.gradle.toolchains.foojay-resolver-convention") version "0.9.0"
+    id("com.gradle.develocity") version("3.19.2")
 }
 
 dependencyResolutionManagement {
@@ -34,6 +34,8 @@ include(":develocity")
 include(":jvm-toolchain-provisioning")
 include(":kotlin-daemon-config")
 include(":internal-gradle-setup")
+include(":cache-redirector")
+include(":kotlin-bootstrap")
 
 // Sync below to the content of develocity settings plugin
 val buildProperties = getKotlinBuildPropertiesForSettings(settings)
@@ -76,12 +78,19 @@ buildCache {
         }
     }
     if (develocity.server.isPresent) {
-        remote(develocity.buildCache) {
-            isPush = buildProperties.pushToBuildCache
-            val remoteBuildCacheUrl = buildProperties.buildCacheUrl?.trim()
-            isEnabled = remoteBuildCacheUrl != "" // explicit "" disables it
-            if (!remoteBuildCacheUrl.isNullOrEmpty()) {
-                server = remoteBuildCacheUrl.removeSuffix("/cache/")
+        if (System.getenv("TC_K8S_CLOUD_PROFILE_ID") == "kotlindev-kotlin-k8s") {
+            remote(develocity.buildCache) {
+                isPush = buildProperties.pushToBuildCache
+                server = "https://kotlin-cache.eqx.k8s.intellij.net"
+            }
+        } else {
+            remote(develocity.buildCache) {
+                isPush = buildProperties.pushToBuildCache
+                val remoteBuildCacheUrl = buildProperties.buildCacheUrl?.trim()
+                isEnabled = remoteBuildCacheUrl != "" // explicit "" disables it
+                if (!remoteBuildCacheUrl.isNullOrEmpty()) {
+                    server = remoteBuildCacheUrl.removeSuffix("/cache/")
+                }
             }
         }
     }

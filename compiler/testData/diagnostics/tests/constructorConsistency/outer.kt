@@ -11,3 +11,5 @@ class Outer {
         val y = foo()
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, inner, integerLiteral, propertyDeclaration, thisExpression */

@@ -18,3 +18,6 @@ const val or = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>EnumClass.VALUE1 || EnumC
 annotation class Anno(val i: Boolean)
 @Anno(<!ANNOTATION_ARGUMENT_MUST_BE_CONST!>EnumClass.VALUE1 == EnumClass.VALUE2<!>)
 class MyClass
+
+/* GENERATED_FIR_TAGS: andExpression, annotationDeclaration, classDeclaration, comparisonExpression, const,
+disjunctionExpression, enumDeclaration, enumEntry, equalityExpression, primaryConstructor, propertyDeclaration */

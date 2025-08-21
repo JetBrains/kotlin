@@ -22,11 +22,12 @@ fun C(a: Int, bar: Bar = Bar()) { }
 // ------------------------------------------
 
 @Composable
-fun A(%context_receiver_0: Foo, %context_receiver_1: Bar, a: Int, %composer: Composer?, %changed: Int, %default: Int) {
+context(%context_receiver_0: Foo, %context_receiver_1: Bar)
+fun A(a: Int, %composer: Composer?, %changed: Int, %default: Int) {
   %composer = %composer.startRestartGroup(<>)
-  sourceInformation(%composer, "C(A):Test.kt")
-  if (%changed and 0b0001 != 0 || !%composer.skipping) {
-    if (%default and 0b0100 != 0) {
+  sourceInformation(%composer, "C(A)N(a):Test.kt")
+  if (%composer.shouldExecute(%changed and 0b0001 != 0, %changed and 0b0001)) {
+    if (%default and 0b0001 != 0) {
       a = 1
     }
     if (isTraceInProgress()) {
@@ -43,14 +44,15 @@ fun A(%context_receiver_0: Foo, %context_receiver_1: Bar, a: Int, %composer: Com
   }
 }
 @Composable
-fun B(%context_receiver_0: Foo, %context_receiver_1: Bar, %context_receiver_2: FooBar, a: Int, b: String?, c: Int, %composer: Composer?, %changed: Int, %default: Int) {
+context(%context_receiver_0: Foo, %context_receiver_1: Bar, %context_receiver_2: FooBar)
+fun B(a: Int, b: String?, c: Int, %composer: Composer?, %changed: Int, %default: Int) {
   %composer = %composer.startRestartGroup(<>)
-  sourceInformation(%composer, "C(B):Test.kt")
-  if (%changed and 0b0001 != 0 || !%composer.skipping) {
-    if (%default and 0b00010000 != 0) {
+  sourceInformation(%composer, "C(B)N(a,b,c):Test.kt")
+  if (%composer.shouldExecute(%changed and 0b0001 != 0, %changed and 0b0001)) {
+    if (%default and 0b0010 != 0) {
       b = ""
     }
-    if (%default and 0b00100000 != 0) {
+    if (%default and 0b0100 != 0) {
       c = 1
     }
     if (isTraceInProgress()) {
@@ -67,20 +69,21 @@ fun B(%context_receiver_0: Foo, %context_receiver_1: Bar, %context_receiver_2: F
   }
 }
 @Composable
-fun C(%context_receiver_0: Foo, a: Int, bar: Bar?, %composer: Composer?, %changed: Int, %default: Int) {
+context(%context_receiver_0: Foo)
+fun C(a: Int, bar: Bar?, %composer: Composer?, %changed: Int, %default: Int) {
   %composer = %composer.startRestartGroup(<>)
-  sourceInformation(%composer, "C(C):Test.kt")
+  sourceInformation(%composer, "C(C)N(a,bar):Test.kt")
   val %dirty = %changed
-  if (%dirty and 0b0001 != 0 || !%composer.skipping) {
+  if (%composer.shouldExecute(%dirty and 0b0001 != 0, %dirty and 0b0001)) {
     %composer.startDefaults()
     if (%changed and 0b0001 == 0 || %composer.defaultsInvalid) {
-      if (%default and 0b0100 != 0) {
+      if (%default and 0b0010 != 0) {
         bar = Bar()
         %dirty = %dirty and 0b001110000000.inv()
       }
     } else {
       %composer.skipToGroupEnd()
-      if (%default and 0b0100 != 0) {
+      if (%default and 0b0010 != 0) {
         %dirty = %dirty and 0b001110000000.inv()
       }
     }

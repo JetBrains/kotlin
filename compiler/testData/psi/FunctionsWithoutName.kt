@@ -1,3 +1,5 @@
+// COMPILATION_ERRORS
+
 fun ()
 fun T.()
 fun T.(a : foo) : bar

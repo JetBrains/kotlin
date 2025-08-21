@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.cli.pipeline.web.wasm
 
-import org.jetbrains.kotlin.backend.wasm.getWasmPhases
+import org.jetbrains.kotlin.backend.wasm.getWasmLowerings
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.cli.common.createPhaseConfig
 import org.jetbrains.kotlin.cli.common.list
@@ -31,7 +31,7 @@ object WasmConfigurationUpdater : ConfigurationUpdater<K2JSCompilerArguments>() 
         // setup phase config for the second compilation stage (Wasm codegen)
         if (arguments.includes != null) {
             configuration.phaseConfig = createPhaseConfig(arguments).also {
-                it.list(getWasmPhases(configuration, isIncremental = false))
+                it.list(getWasmLowerings(configuration, isIncremental = false))
             }
         }
     }
@@ -47,7 +47,7 @@ object WasmConfigurationUpdater : ConfigurationUpdater<K2JSCompilerArguments>() 
         configuration.put(WasmConfigurationKeys.WASM_GENERATE_WAT, arguments.wasmGenerateWat)
         configuration.put(WasmConfigurationKeys.WASM_USE_TRAPS_INSTEAD_OF_EXCEPTIONS, arguments.wasmUseTrapsInsteadOfExceptions)
         configuration.put(WasmConfigurationKeys.WASM_USE_NEW_EXCEPTION_PROPOSAL, arguments.wasmUseNewExceptionProposal)
-        configuration.put(WasmConfigurationKeys.WASM_USE_JS_TAG, arguments.wasmUseJsTag ?: arguments.wasmUseNewExceptionProposal)
+        configuration.put(WasmConfigurationKeys.WASM_NO_JS_TAG, arguments.wasmNoJsTag)
         configuration.put(WasmConfigurationKeys.WASM_GENERATE_DWARF, arguments.generateDwarf)
         configuration.put(WasmConfigurationKeys.WASM_FORCE_DEBUG_FRIENDLY_COMPILATION, arguments.forceDebugFriendlyCompilation)
         configuration.putIfNotNull(WasmConfigurationKeys.WASM_TARGET, arguments.wasmTarget?.let(WasmTarget::fromName))

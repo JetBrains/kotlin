@@ -5,7 +5,7 @@
 
 // MODULE: a
 
-expect sealed <!EXPECT_AND_ACTUAL_IN_THE_SAME_MODULE{JVM}, EXPECT_AND_ACTUAL_IN_THE_SAME_MODULE{JVM}!>class Base<!>()
+expect sealed <!EXPECT_AND_ACTUAL_IN_THE_SAME_MODULE{JVM;JVM}!>class Base<!>()
 class A : Base() // OK, A in same module with Base
 
 // MODULE: b()()(a)
@@ -24,3 +24,5 @@ class D : <!SEALED_INHERITOR_IN_DIFFERENT_MODULE!>Base<!>() // Error, D not in s
 // MODULE: main-jvm()()(d)
 
 class E : <!SEALED_INHERITOR_IN_DIFFERENT_MODULE!>Base<!>() // Error, E not in same module with actual Base
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, primaryConstructor, sealed */

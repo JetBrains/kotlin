@@ -19,3 +19,6 @@ class Foo {
         val r = o + k
     }
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, classDeclaration, destructuringDeclaration, functionDeclaration, ifExpression,
+init, localProperty, operator, propertyDeclaration, stringLiteral */

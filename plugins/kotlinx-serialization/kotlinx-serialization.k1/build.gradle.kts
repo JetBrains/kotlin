@@ -10,6 +10,7 @@ dependencies {
     compileOnly(project(":compiler:frontend"))
     compileOnly(project(":js:js.frontend"))
     compileOnly(project(":compiler:cli-common"))
+    compileOnly(project(":compiler:config.jvm"))
     compileOnly(project(":compiler:ir.backend.common")) // needed for CompilationException
     compileOnly(project(":core:deserialization.common.jvm")) // needed for CompilationException
 

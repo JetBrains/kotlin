@@ -12,3 +12,6 @@ fun someFun(someInterface: SomeInterface) {
         someInterface.<!UNSAFE_IMPLICIT_INVOKE_CALL!>interfaceMethod<!>()
     }
 }
+
+/* GENERATED_FIR_TAGS: equalityExpression, functionDeclaration, functionalType, ifExpression, interfaceDeclaration,
+nullableType, propertyDeclaration, smartcast */

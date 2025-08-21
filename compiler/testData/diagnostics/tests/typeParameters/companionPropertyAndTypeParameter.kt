@@ -55,3 +55,6 @@ class C4<test> {
         val some = <!TYPE_PARAMETER_IS_NOT_AN_EXPRESSION!>test<!>
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, functionDeclaration, integerLiteral, localProperty,
+nullableType, objectDeclaration, primaryConstructor, propertyDeclaration, stringLiteral, typeParameter */

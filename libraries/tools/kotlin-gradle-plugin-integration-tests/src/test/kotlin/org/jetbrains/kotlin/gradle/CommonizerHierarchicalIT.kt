@@ -16,14 +16,13 @@ import org.junit.jupiter.api.DisplayName
 @NativeGradlePluginTests
 open class CommonizerHierarchicalIT : KGPBaseTest() {
 
-    override val defaultBuildOptions: BuildOptions
-        get() = super.defaultBuildOptions
-            .disableConfigurationCache_KT70416()
-
     @DisplayName("Commonize hierarchically metadata compilations")
     @GradleTest
     fun testCommonizeHierarchicallyMetadataCompilations(gradleVersion: GradleVersion) {
-        nativeProject("commonizeHierarchically", gradleVersion) {
+        nativeProject(
+            "commonizeHierarchically",
+            gradleVersion,
+        ) {
             if (HostManager.hostIsMac) {
                 build(":p1:compileIosMainKotlinMetadata") {
                     assertDirectoryInProjectExists("p1/build/classes/kotlin/metadata/iosMain/klib/p1_iosMain")
@@ -61,7 +60,10 @@ open class CommonizerHierarchicalIT : KGPBaseTest() {
     @DisplayName("Commonize hierarchically Klibrary compilations")
     @GradleTest
     fun testCommonizeHierarchicallyKlibraryCompilations(gradleVersion: GradleVersion) {
-        nativeProject("commonizeHierarchically", gradleVersion) {
+        nativeProject(
+            "commonizeHierarchically",
+            gradleVersion,
+        ) {
             if (HostManager.hostIsMac) {
                 build(":p1:iosArm64MainKlibrary", ":p1:iosX64MainKlibrary", ":p1:macosX64MainKlibrary", ":p1:macosArm64MainKLibrary") {
                     assertDirectoryInProjectExists("p1/build/classes/kotlin/iosArm64/main/klib/p1")
@@ -89,7 +91,12 @@ open class CommonizerHierarchicalIT : KGPBaseTest() {
     @GradleTest
     fun testCommonizeHierarchicallyMultiModule(gradleVersion: GradleVersion) {
         nativeProject("commonizeHierarchicallyMultiModule", gradleVersion) {
-            build("assemble") {
+            build(
+                "assemble",
+                // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
+                buildOptions = defaultBuildOptions
+                    .disableIsolatedProjects(),
+            ) {
                 assertTasksExecuted(":p1:commonizeCInterop")
                 assertTasksExecuted(":p2:commonizeCInterop")
                 assertTasksExecuted(":p3:commonizeCInterop")

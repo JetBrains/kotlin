@@ -9,3 +9,6 @@ fun foo(): Int {
     @<!UNRESOLVED_REFERENCE!>Err<!> val (c, d) = Pair(56, 78)
     return a + b + c + d
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, annotationDeclaration, classDeclaration, data, destructuringDeclaration,
+functionDeclaration, integerLiteral, localProperty, primaryConstructor, propertyDeclaration */

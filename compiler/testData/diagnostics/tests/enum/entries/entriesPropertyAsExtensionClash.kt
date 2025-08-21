@@ -28,3 +28,6 @@ fun test() {
     val aCompanion = A.Companion
     aCompanion.<!DEBUG_INFO_CALL("fqName: pckg.entries; typeCall: variable")!>entries<!>
 }
+
+/* GENERATED_FIR_TAGS: companionObject, enumDeclaration, functionDeclaration, getter, integerLiteral, lambdaLiteral,
+localProperty, objectDeclaration, propertyDeclaration, propertyWithExtensionReceiver, thisExpression */

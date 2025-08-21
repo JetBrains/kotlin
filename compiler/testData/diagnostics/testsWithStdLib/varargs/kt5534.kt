@@ -6,3 +6,6 @@ fun test() {
 }
 
 fun foo(vararg a: String?) = a
+
+/* GENERATED_FIR_TAGS: functionDeclaration, localProperty, nullableType, outProjection, propertyDeclaration,
+stringLiteral, vararg */

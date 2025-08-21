@@ -13,7 +13,7 @@
 extern "C" {
 # endif
 
-void LLVMKotlinInitializeTargets();
+void LLVMKotlinInitializeTargets(void);
 
 void LLVMSetNoTailCall(LLVMValueRef Call);
 
@@ -23,10 +23,10 @@ int LLVMInlineCall(LLVMValueRef call);
 void LLVMSetTimePasses(int enabled);
 
 /// Print timing results. Useful in combination with LLVMSetTimePasses.
-void LLVMPrintAllTimersToStdOut();
+void LLVMPrintAllTimersToStdOut(void);
 
 /// Clear all LLVM timers. Allows avoiding automatic printing on shutdown
-void LLVMClearAllTimers();
+void LLVMClearAllTimers(void);
 
 # ifdef __cplusplus
 }

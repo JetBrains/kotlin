@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -19,10 +19,11 @@ import org.jetbrains.kotlin.analysis.api.types.*
 import org.jetbrains.kotlin.asJava.classes.annotateByTypeAnnotationProvider
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
+import org.jetbrains.kotlin.light.classes.symbol.NullabilityAnnotation
 import org.jetbrains.kotlin.light.classes.symbol.asAnnotationQualifier
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassBase
 import org.jetbrains.kotlin.light.classes.symbol.getContainingSymbolsWithSelf
-import org.jetbrains.kotlin.light.classes.symbol.getTypeNullability
+import org.jetbrains.kotlin.light.classes.symbol.getRequiredNullabilityAnnotation
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.JvmStandardClassIds
 import org.jetbrains.kotlin.name.JvmStandardClassIds.JVM_OVERLOADS_CLASS_ID
@@ -36,7 +37,15 @@ internal fun KaAnnotatedSymbol.hasJvmSyntheticAnnotation(): Boolean {
 }
 
 internal fun KaAnnotatedSymbol.getJvmNameFromAnnotation(): String? {
-    val annotation = findAnnotation(JvmStandardClassIds.Annotations.JvmName)
+    return stringArgumentFromAnnotation(JvmStandardClassIds.Annotations.JvmName)
+}
+
+internal fun KaAnnotatedSymbol.getJvmExposeBoxedNameFromAnnotation(): String? {
+    return stringArgumentFromAnnotation(JvmStandardClassIds.JVM_EXPOSE_BOXED_ANNOTATION_CLASS_ID)
+}
+
+private fun KaAnnotatedSymbol.stringArgumentFromAnnotation(annotationClassId: ClassId): String? {
+    val annotation = findAnnotation(annotationClassId)
     return annotation?.let {
         (it.arguments.firstOrNull()?.expression as? KaAnnotationValue.ConstantValue)?.value?.value as? String
     }
@@ -61,6 +70,11 @@ internal fun KaAnnotatedSymbol.hasDeprecatedAnnotation(): Boolean = StandardClas
 internal fun KaAnnotatedSymbol.hasJvmOverloadsAnnotation(): Boolean = JVM_OVERLOADS_CLASS_ID in annotations
 
 internal fun KaAnnotatedSymbol.hasJvmNameAnnotation(): Boolean = JvmStandardClassIds.Annotations.JvmName in annotations
+
+/** @see org.jetbrains.kotlin.light.classes.symbol.methods.jvmExposeBoxedMode */
+internal fun KaAnnotatedSymbol.hasJvmExposeBoxedAnnotation(): Boolean {
+    return JvmStandardClassIds.JVM_EXPOSE_BOXED_ANNOTATION_CLASS_ID in annotations
+}
 
 internal fun KaAnnotatedSymbol.hasJvmStaticAnnotation(): Boolean = JvmStandardClassIds.Annotations.JvmStatic in annotations
 
@@ -135,6 +149,7 @@ fun KaSession.annotateByKtType(
     psiType: PsiType,
     ktType: KaType,
     annotationParent: PsiElement,
+    inferNullabilityForTypeArguments: Boolean,
 ): PsiType {
     fun getAnnotationsSequence(type: KaType): Sequence<List<PsiAnnotation>> = sequence {
         val unwrappedType = when (type) {
@@ -155,8 +170,9 @@ fun KaSession.annotateByKtType(
 
         // Original type should be used to infer nullability
         val typeNullability = when {
-            psiType !is PsiPrimitiveType && type.isPrimitiveBacked -> KaTypeNullability.NON_NULLABLE
-            else -> getTypeNullability(type)
+            !inferNullabilityForTypeArguments && type is KaTypeParameterType -> NullabilityAnnotation.NOT_REQUIRED
+            psiType !is PsiPrimitiveType && type.isPrimitiveBacked -> NullabilityAnnotation.NON_NULLABLE
+            else -> getRequiredNullabilityAnnotation(type)
         }
 
         val nullabilityAnnotation = typeNullability.asAnnotationQualifier?.let {

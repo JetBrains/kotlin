@@ -20,3 +20,6 @@ fun testOutOut() {
     <!DEBUG_INFO_EXPRESSION_TYPE("Rec<Obj2 & Obj3, I1>")!>cst1<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("Rec<Obj2 & Obj4, kotlin.Any>")!>cst2<!>
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, in, interfaceDeclaration, intersectionType, localProperty, nullableType,
+objectDeclaration, out, propertyDeclaration, typeConstraint, typeParameter, vararg */

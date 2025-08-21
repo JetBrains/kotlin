@@ -15,10 +15,14 @@ internal class VisibleTreeState {
     internal class State: BaseState(), CustomComparable<State>
 
     // K1: ok
-    // K2: NEW_INFERENCE_ERROR
+    // K2: NEW_INFERENCE_ERROR (before KT-61075 fix)
     @get:XCollection var expandedNodes: State by treeSet()
 
     // K1: ok
-    // K2: NEW_INFERENCE_ERROR
+    // K2: NEW_INFERENCE_ERROR (before KT-61075 fix)
     @set:XCollection var selectedNodes: State by treeSet()
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, annotationUseSiteTargetPropertyGetter,
+annotationUseSiteTargetPropertySetter, classDeclaration, functionDeclaration, interfaceDeclaration, nestedClass,
+nullableType, propertyDeclaration, propertyDelegate, setter, typeConstraint, typeParameter */

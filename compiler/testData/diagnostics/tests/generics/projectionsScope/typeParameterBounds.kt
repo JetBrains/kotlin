@@ -42,3 +42,6 @@ fun foo2(a: A<out CharSequence>, b: A<in CharSequence>) {
     b.foo3(In<Any?>())
     b.foo3(In())
 }
+
+/* GENERATED_FIR_TAGS: capturedType, classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType, in,
+inProjection, infix, integerLiteral, nullableType, out, outProjection, typeConstraint, typeParameter, typeWithExtension */

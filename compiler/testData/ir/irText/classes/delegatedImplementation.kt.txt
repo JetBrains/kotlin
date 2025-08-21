@@ -15,7 +15,7 @@ class Test1 : IBase {
   }
 
   override fun String.qux() {
-    (<this>.#$$delegate_0, <this>).qux()
+    <this>.#$$delegate_0.qux(/* <this> = <this> */)
   }
 
 }
@@ -38,7 +38,7 @@ class Test2 : IBase, IOther {
   }
 
   override fun String.qux() {
-    (<this>.#$$delegate_0, <this>).qux()
+    <this>.#$$delegate_0.qux(/* <this> = <this> */)
   }
 
   override val x: String
@@ -56,15 +56,15 @@ class Test2 : IBase, IOther {
 
   override val Byte.z1: Int
     override get(): Int {
-      return (<this>.#$$delegate_1, <this>).<get-z1>()
+      return <this>.#$$delegate_1.<get-z1>(/* <this> = <this> */)
     }
 
   override var Byte.z2: Int
     override get(): Int {
-      return (<this>.#$$delegate_1, <this>).<get-z2>()
+      return <this>.#$$delegate_1.<get-z2>(/* <this> = <this> */)
     }
     override set(<set-?>: Int) {
-      (<this>.#$$delegate_1, <this>).<set-z2>(<set-?> = <set-?>)
+      <this>.#$$delegate_1.<set-z2>(/* <this> = <this>, */ <set-?> = <set-?>)
     }
 
 }

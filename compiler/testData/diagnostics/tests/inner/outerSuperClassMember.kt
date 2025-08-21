@@ -9,3 +9,5 @@ class Derived : Base() {
         fun bar() = <!UNRESOLVED_REFERENCE!>foo<!>()
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, nestedClass */

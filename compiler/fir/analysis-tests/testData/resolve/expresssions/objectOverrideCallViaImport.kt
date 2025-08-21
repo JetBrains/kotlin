@@ -11,3 +11,5 @@ fun test() {
     // See KT-35730
     foo() // Derived.foo is more correct here
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, interfaceDeclaration, objectDeclaration */

@@ -12,3 +12,6 @@ class Mutable(var y: String?) {
         return ""
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, equalityExpression, functionDeclaration, ifExpression, nullableType,
+primaryConstructor, propertyDeclaration, smartcast, stringLiteral */

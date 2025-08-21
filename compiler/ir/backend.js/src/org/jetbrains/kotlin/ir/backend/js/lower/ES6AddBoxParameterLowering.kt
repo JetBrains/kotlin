@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.types.makeNullable
 import org.jetbrains.kotlin.ir.util.defaultType
-import org.jetbrains.kotlin.ir.util.isLocal
+import org.jetbrains.kotlin.ir.util.isOriginallyLocal
 import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.ir.util.superClass
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
@@ -40,7 +40,7 @@ val IrWhen.isBoxParameterDefaultResolution: Boolean
     get() = origin == ES6_BOX_PARAMETER_DEFAULT_RESOLUTION
 
 val IrFunction.boxParameter: IrValueParameter?
-    get() = valueParameters.lastOrNull()?.takeIf { it.isBoxParameter }
+    get() = parameters.lastOrNull { it.isBoxParameter }
 
 /**
  * Adds box parameter to a constructor if needed.
@@ -50,7 +50,6 @@ class ES6AddBoxParameterToConstructorsLowering(val context: JsIrBackendContext) 
         if (!context.es6mode || declaration !is IrConstructor || declaration.hasStrictSignature(context)) return null
 
         hackEnums(declaration)
-        hackExceptions(declaration)
         hackSimpleClassWithCapturing(declaration)
 
         if (!declaration.isSyntheticPrimaryConstructor) {
@@ -62,7 +61,8 @@ class ES6AddBoxParameterToConstructorsLowering(val context: JsIrBackendContext) 
 
     private fun IrConstructor.addBoxParameter() {
         val irClass = parentAsClass
-        val boxParameter = generateBoxParameter(irClass).also { valueParameters = valueParameters memoryOptimizedPlus it }
+        val boxParameter = generateBoxParameter(irClass)
+        parameters = parameters memoryOptimizedPlus boxParameter
 
         val body = body as? IrBlockBody ?: return
         val isBoxUsed = body.replaceThisWithBoxBeforeSuperCall(irClass, boxParameter.symbol)
@@ -143,7 +143,7 @@ class ES6AddBoxParameterToConstructorsLowering(val context: JsIrBackendContext) 
     private fun hackSimpleClassWithCapturing(constructor: IrConstructor) {
         val irClass = constructor.parentAsClass
 
-        if (irClass.superClass != null || (!irClass.isInner && !irClass.isLocal)) return
+        if (irClass.superClass != null || (!irClass.isInner && !irClass.isOriginallyLocal)) return
 
         val statements = (constructor.body as? IrBlockBody)?.statements ?: return
         val delegationConstructorIndex = statements.indexOfFirst { it is IrDelegatingConstructorCall }
@@ -158,33 +158,5 @@ class ES6AddBoxParameterToConstructorsLowering(val context: JsIrBackendContext) 
 
         statements.add(firstClassFieldAssignment, statements[delegationConstructorIndex])
         statements.removeAt(delegationConstructorIndex + 1)
-    }
-
-    /**
-     * Swap call synthetic primary ctor and call extendThrowable
-     */
-    private fun hackExceptions(constructor: IrConstructor) {
-        val setPropertiesSymbol = context.setPropertiesToThrowableInstanceSymbol
-
-        val statements = (constructor.body as? IrBlockBody)?.statements ?: return
-
-        var callIndex = -1
-        var superCallIndex = -1
-        for (i in statements.indices) {
-            val s = statements[i]
-
-            if (s is IrCall && s.symbol === setPropertiesSymbol) {
-                callIndex = i
-            }
-            if (s is IrDelegatingConstructorCall && s.symbol.owner.origin === PrimaryConstructorLowering.SYNTHETIC_PRIMARY_CONSTRUCTOR) {
-                superCallIndex = i
-            }
-        }
-
-        if (callIndex != -1 && superCallIndex != -1) {
-            val tmp = statements[callIndex]
-            statements[callIndex] = statements[superCallIndex]
-            statements[superCallIndex] = tmp
-        }
     }
 }

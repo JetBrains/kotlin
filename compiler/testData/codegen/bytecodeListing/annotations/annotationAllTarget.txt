@@ -33,17 +33,13 @@ public final class O {
     public final static @org.jetbrains.annotations.NotNull field INSTANCE: O
     private final static @Default @Prop field x: int
     private static @Default @Prop field y: int
-    private final static @org.jetbrains.annotations.NotNull field z$delegate: kotlin.Lazy
     static method <clinit>(): void
     private method <init>(): void
     public synthetic deprecated static @Default @Prop method getX$annotations(): void
     public final @Default @Function method getX(): int
     public synthetic deprecated static @Default @Prop method getY$annotations(): void
     public final @Default @Function method getY(): int
-    public synthetic deprecated static @Default @Prop method getZ$annotations(): void
-    public final @Default @Function method getZ(): int
     public final method setY(@Default p0: int): void
-    private final static method z_delegate$lambda$0(): int
 }
 
 @kotlin.annotation.Target(allowedTargets=[FIELD, PROPERTY])

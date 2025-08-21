@@ -34,3 +34,6 @@ fun <FT> build(
 ): Buildee<FT> {
     return Buildee<FT>().apply { this.instructions() }
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, functionDeclaration, functionalType, lambdaLiteral,
+localProperty, nullableType, propertyDeclaration, stringLiteral, thisExpression, typeParameter, typeWithExtension */

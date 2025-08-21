@@ -11,3 +11,6 @@ fun test() {
 
   }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, equalityExpression, functionDeclaration, ifExpression, localProperty,
+nullableType, primaryConstructor, propertyDeclaration */

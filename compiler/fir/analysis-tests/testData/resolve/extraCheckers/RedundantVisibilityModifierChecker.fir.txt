@@ -125,6 +125,10 @@ FILE: RedundantVisibilityModifierChecker.kt
             this<R|G|>(Int(42))
         }
 
+        protected constructor(x: R|kotlin/Double|): R|G| {
+            this<R|G|>(R|<local>/x|.R|kotlin/Double.toInt|())
+        }
+
         public final object H : R|G| {
             private constructor(): R|G.H| {
                 super<R|G|>()

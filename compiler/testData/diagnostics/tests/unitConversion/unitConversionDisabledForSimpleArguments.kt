@@ -21,3 +21,6 @@ fun test(f: () -> String, g: () -> Nothing, h: () -> Nothing?, s: SubInt) {
     foo(<!UNSUPPORTED_FEATURE!>f<!>)
     foo(<!UNSUPPORTED_FEATURE!>s<!>)
 }
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, funWithExtensionReceiver, functionDeclaration,
+functionalType, integerLiteral, lambdaLiteral, nullableType, stringLiteral, typeParameter */

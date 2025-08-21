@@ -37,3 +37,6 @@ tailrec fun foo5() {
         return foo5()
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionalType, lambdaLiteral, localFunction, tailrec,
+thisExpression */

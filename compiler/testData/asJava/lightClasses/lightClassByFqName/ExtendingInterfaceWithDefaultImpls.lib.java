@@ -10,25 +10,34 @@ public abstract interface C /* p.C*/<T>  extends p.B {
   public abstract void setProp3(int);//  setProp3(int)
 
   public static final class DefaultImpls /* p.C.DefaultImpls*/ {
+    @java.lang.Deprecated()
     @org.jetbrains.annotations.NotNull()
     public static <T> java.lang.String a(@org.jetbrains.annotations.NotNull() p.C<T>);// <T>  a(p.C<T>)
 
+    @java.lang.Deprecated()
     @org.jetbrains.annotations.NotNull()
     public static <T> java.lang.String b(@org.jetbrains.annotations.NotNull() p.C<T>);// <T>  b(p.C<T>)
 
+    @java.lang.Deprecated()
     @org.jetbrains.annotations.NotNull()
     public static <T> java.lang.String c(@org.jetbrains.annotations.NotNull() p.C<T>);// <T>  c(p.C<T>)
 
+    @java.lang.Deprecated()
     public static <T> int getProp1(@org.jetbrains.annotations.NotNull() p.C<T>);// <T>  getProp1(p.C<T>)
 
+    @java.lang.Deprecated()
     public static <T> int getProp2(@org.jetbrains.annotations.NotNull() p.C<T>);// <T>  getProp2(p.C<T>)
 
+    @java.lang.Deprecated()
     public static <T> int getProp3(@org.jetbrains.annotations.NotNull() p.C<T>);// <T>  getProp3(p.C<T>)
 
+    @java.lang.Deprecated()
     public static <T> void setProp1(@org.jetbrains.annotations.NotNull() p.C<T>, int);// <T>  setProp1(p.C<T>, int)
 
+    @java.lang.Deprecated()
     public static <T> void setProp2(@org.jetbrains.annotations.NotNull() p.C<T>, int);// <T>  setProp2(p.C<T>, int)
 
+    @java.lang.Deprecated()
     public static <T> void setProp3(@org.jetbrains.annotations.NotNull() p.C<T>, int);// <T>  setProp3(p.C<T>, int)
   }
 }

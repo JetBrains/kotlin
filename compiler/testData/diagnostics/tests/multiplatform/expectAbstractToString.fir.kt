@@ -21,3 +21,6 @@ actual value class C(actual val s: String) : B {
 
 @JvmInline
 actual value class D(actual val s: String) : B
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, functionDeclaration, interfaceDeclaration, override,
+primaryConstructor, propertyDeclaration, value */

@@ -7,14 +7,12 @@ package org.jetbrains.kotlin.commonizer.metadata.utils
 
 import com.intellij.util.containers.FactoryMap
 import kotlinx.metadata.klib.*
-import kotlin.metadata.*
-import kotlin.metadata.internal.common.KmModuleFragment
 import org.jetbrains.kotlin.commonizer.metadata.utils.MetadataDeclarationsComparator.EntityKind.*
-import org.jetbrains.kotlin.commonizer.metadata.utils.MetadataDeclarationsComparator.Mismatch
-import org.jetbrains.kotlin.commonizer.metadata.utils.MetadataDeclarationsComparator.Result
 import org.jetbrains.kotlin.commonizer.utils.KNI_BRIDGE_FUNCTION_PREFIX
 import java.util.*
 import kotlin.contracts.ExperimentalContracts
+import kotlin.metadata.*
+import kotlin.metadata.internal.common.KmModuleFragment
 import kotlin.reflect.KProperty
 import kotlin.reflect.KProperty1
 
@@ -25,6 +23,7 @@ import kotlin.reflect.KProperty1
  * The entry point is [MetadataDeclarationsComparator.Companion.compare] function.
  */
 // TODO: extract to kotlinx-metadata-klib library?
+@OptIn(ExperimentalAnnotationsInMetadata::class)
 class MetadataDeclarationsComparator private constructor(private val config: Config) {
 
     interface Config {
@@ -124,7 +123,7 @@ class MetadataDeclarationsComparator private constructor(private val config: Con
             override fun toString() = "TypeFlexibleUpperBound"
         }
 
-        class EnumEntry(val entryA: KlibEnumEntry, val entryB: KlibEnumEntry) : PathElement {
+        class EnumEntry(val entryA: KmEnumEntry, val entryB: KmEnumEntry) : PathElement {
             override fun toString() = "EnumEntry '${entryA.name}'"
         }
 
@@ -178,7 +177,7 @@ class MetadataDeclarationsComparator private constructor(private val config: Con
                     val optionalIndex = entityKey?.toInt()
                     EffectExpression(entityA, entityB, optionalIndex)
                 }
-                entityA is KlibEnumEntry && entityB is KlibEnumEntry -> EnumEntry(entityA, entityB)
+                entityA is KmEnumEntry && entityB is KmEnumEntry -> EnumEntry(entityA, entityB)
                 entityA is KmFlexibleTypeUpperBound && entityB is KmFlexibleTypeUpperBound -> FlexibleTypeUpperBound(entityA, entityB)
                 else -> error("Unknown combination of entities: ${entityA::class.java}, ${entityB::class.java}")
             }
@@ -528,6 +527,21 @@ class MetadataDeclarationsComparator private constructor(private val config: Con
         )
     }
 
+    private fun compareEnumEntryLists(
+        containerContext: Context,
+        enumEntryListA: List<KmEnumEntry>,
+        enumEntryListB: List<KmEnumEntry>
+    ) {
+        compareUniqueEntityLists(
+            containerContext = containerContext,
+            entityListA = enumEntryListA,
+            entityListB = enumEntryListB,
+            entityKind = EntityKind.EnumEntry,
+            groupingKeySelector = { _, enumEntry -> enumEntry.dumpToString() },
+            entitiesComparator = ::compareEnumEntries
+        )
+    }
+
     private fun compareOrderInsensitiveTypeLists(
         containerContext: Context,
         typeListA: List<KmType>,
@@ -592,7 +606,6 @@ class MetadataDeclarationsComparator private constructor(private val config: Con
         )
     }
 
-    @OptIn(ExperimentalContextReceivers::class)
     private fun compareClasses(
         classContext: Context,
         classA: KmClass,
@@ -604,6 +617,7 @@ class MetadataDeclarationsComparator private constructor(private val config: Con
         compareTypeParameterLists(classContext, classA.typeParameters, classB.typeParameters)
 
         compareOrderInsensitiveTypeLists(classContext, classA.supertypes, classB.supertypes, TypeKind.SUPERTYPE)
+        @[Suppress("DEPRECATION") OptIn(ExperimentalContextReceivers::class)]
         compareOrderSensitiveTypeLists(classContext, classA.contextReceiverTypes, classB.contextReceiverTypes, TypeKind.CONTEXT_RECEIVER)
 
         compareNullableEntities(
@@ -624,22 +638,11 @@ class MetadataDeclarationsComparator private constructor(private val config: Con
         compareTypeAliasLists(classContext, classA.typeAliases, classB.typeAliases)
         comparePropertyLists(classContext, classA.properties, classB.properties)
         compareFunctionLists(classContext, classA.functions, classB.functions)
+        compareEnumEntryLists(classContext, classA.kmEnumEntries, classB.kmEnumEntries)
 
         compareNullableValues(classContext, classA.companionObject, classB.companionObject, EntityKind.CompanionObject)
         compareValueLists(classContext, classA.nestedClasses, classB.nestedClasses, EntityKind.NestedClass)
         compareValueLists(classContext, classA.sealedSubclasses, classB.sealedSubclasses, EntityKind.SealedSubclass)
-        compareValueLists(classContext, classA.enumEntries, classB.enumEntries, EntityKind.EnumEntry)
-
-        compareUniqueEntityLists(
-            containerContext = classContext,
-            entityListA = classA.klibEnumEntries,
-            entityListB = classB.klibEnumEntries,
-            entityKind = EntityKind.EnumEntryInKlib,
-            groupingKeySelector = { _, enumEntry -> enumEntry.name }
-        ) { klibEnumEntryContext, entryA, entryB ->
-            compareAnnotationLists(klibEnumEntryContext, entryA.annotations, entryB.annotations)
-            compareNullableValues(klibEnumEntryContext, entryA.ordinal, entryB.ordinal, EntityKind.EnumEntryInKlibOrdinal)
-        }
     }
 
     private fun compareTypeAliases(
@@ -668,7 +671,7 @@ class MetadataDeclarationsComparator private constructor(private val config: Con
         )
     }
 
-    @OptIn(ExperimentalContextReceivers::class)
+    @OptIn(ExperimentalContextParameters::class)
     @Suppress("DuplicatedCode")
     private fun compareProperties(
         propertyContext: Context,
@@ -677,13 +680,17 @@ class MetadataDeclarationsComparator private constructor(private val config: Con
     ) {
         compareFlags(propertyContext, propertyA, propertyB, PROPERTY_FLAGS)
         compareFlags(propertyContext, propertyA.getter, propertyB.getter, PROPERTY_ACCESSOR_FLAGS, FlagKind.GETTER)
-        compareValues(propertyContext, propertyA.setter != null, propertyB.setter != null, FlagKind.REGULAR, "hasSetter")
-        if (propertyA.setter != null && propertyB.setter != null)
-            compareFlags(propertyContext, propertyA.setter!!, propertyB.setter!!, PROPERTY_ACCESSOR_FLAGS, FlagKind.SETTER)
+
+        val setterA = propertyA.setter
+        val setterB = propertyB.setter
+        compareValues(propertyContext, setterA != null, setterB != null, FlagKind.REGULAR, "hasSetter")
+        if (setterA != null && setterB != null) {
+            compareFlags(propertyContext, setterA, setterB, PROPERTY_ACCESSOR_FLAGS, FlagKind.SETTER)
+            compareAnnotationLists(propertyContext, setterA.annotations, setterB.annotations, AnnotationKind.SETTER)
+        }
 
         compareAnnotationLists(propertyContext, propertyA.annotations, propertyB.annotations)
-        compareAnnotationLists(propertyContext, propertyA.getterAnnotations, propertyB.getterAnnotations, AnnotationKind.GETTER)
-        compareAnnotationLists(propertyContext, propertyA.setterAnnotations, propertyB.setterAnnotations, AnnotationKind.SETTER)
+        compareAnnotationLists(propertyContext, propertyA.getter.annotations, propertyB.getter.annotations, AnnotationKind.GETTER)
 
         compareTypeParameterLists(propertyContext, propertyA.typeParameters, propertyB.typeParameters)
 
@@ -696,8 +703,8 @@ class MetadataDeclarationsComparator private constructor(private val config: Con
         )
         compareOrderSensitiveTypeLists(
             containerContext = propertyContext,
-            typeListA = propertyA.contextReceiverTypes,
-            typeListB = propertyB.contextReceiverTypes,
+            typeListA = propertyA.contextParameters.map { it.type },
+            typeListB = propertyB.contextParameters.map { it.type },
             typeKind = TypeKind.CONTEXT_RECEIVER
         )
         compareEntities(
@@ -719,7 +726,7 @@ class MetadataDeclarationsComparator private constructor(private val config: Con
         compareNullableValues(propertyContext, propertyA.compileTimeValue, propertyB.compileTimeValue, EntityKind.CompileTimeValue)
     }
 
-    @OptIn(ExperimentalContracts::class, ExperimentalContextReceivers::class)
+    @OptIn(ExperimentalContracts::class, ExperimentalContextParameters::class)
     @Suppress("DuplicatedCode")
     private fun compareFunctions(
         functionContext: Context,
@@ -740,8 +747,8 @@ class MetadataDeclarationsComparator private constructor(private val config: Con
         )
         compareOrderSensitiveTypeLists(
             containerContext = functionContext,
-            typeListA = functionA.contextReceiverTypes,
-            typeListB = functionB.contextReceiverTypes,
+            typeListA = functionA.contextParameters.map { it.type },
+            typeListB = functionB.contextParameters.map { it.type },
             typeKind = TypeKind.CONTEXT_RECEIVER
         )
         compareEntities(
@@ -904,6 +911,16 @@ class MetadataDeclarationsComparator private constructor(private val config: Con
 
         compareValues(typeParameterContext, typeParameterA.variance, typeParameterB.variance, EntityKind.TypeParameterVariance)
         compareOrderInsensitiveTypeLists(typeParameterContext, typeParameterA.upperBounds, typeParameterB.upperBounds, TypeKind.UPPER_BOUND)
+    }
+
+    private fun compareEnumEntries(
+        enumEntryContext: Context,
+        enumEntryA: KmEnumEntry,
+        enumEntryB: KmEnumEntry,
+    ) {
+        compareValues(enumEntryContext, enumEntryA.name, enumEntryB.name, EntityKind.EnumEntry)
+        compareAnnotationLists(enumEntryContext, enumEntryA.annotations, enumEntryB.annotations)
+        compareNullableValues(enumEntryContext, enumEntryA.ordinal, enumEntryB.ordinal, EntityKind.EnumEntryInKlibOrdinal)
     }
 
     @OptIn(ExperimentalContracts::class)
@@ -1097,6 +1114,7 @@ class MetadataDeclarationsComparator private constructor(private val config: Con
         }
     }
 
+    @Suppress("DEPRECATION")
     companion object {
         fun compare(
             metadataA: KlibModuleMetadata,
@@ -1260,6 +1278,9 @@ class MetadataDeclarationsComparator private constructor(private val config: Con
                 }
             }
         }
+
+        private fun KmEnumEntry.dumpToString(): String =
+            "$name(#$ordinal)"
 
         private inline fun <T, K> Iterable<T>.groupByIndexed(keySelector: (Int, T) -> K): Map<K, List<T>> {
             return mutableMapOf<K, MutableList<T>>().apply {

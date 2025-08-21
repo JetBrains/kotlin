@@ -21,7 +21,12 @@ class CompilationWithKlibsIT : KGPBaseTest() {
     fun testDuplicatedKlibsInJsTestCompilation(
         gradleVersion: GradleVersion,
     ) {
-        project("kt-64115", gradleVersion) {
+        project(
+            "kt-64115",
+            gradleVersion,
+            // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
+            buildOptions = defaultBuildOptions.copy(isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED),
+        ) {
             build(":foo:compileTestKotlinJs") {
                 assertTasksExecuted(":foo:compileTestKotlinJs")
                 assertOutputDoesNotContain("w: KLIB resolver: The same 'unique_name=kt-64115:foo' found in more than one library:")

@@ -86,7 +86,7 @@ public class DefaultErrorMessagesJvm implements DefaultErrorMessages.Extension {
         MAP.put(NO_REFLECTION_IN_CLASS_PATH, "Call uses reflection API which is not found in compilation classpath. " +
                                              "Make sure you have kotlin-reflect.jar in the classpath");
 
-        MAP.put(INTERFACE_CANT_CALL_DEFAULT_METHOD_VIA_SUPER, "Interfaces can call JVM-default members via super only within JVM-default members. Please use '-Xjvm-default=all/all-compatibility' modes for such calls");
+        MAP.put(INTERFACE_CANT_CALL_DEFAULT_METHOD_VIA_SUPER, "Interfaces can call JVM-default members via super only within JVM-default members. Please use '-jvm-default=enable/no-compatibility' modes for such calls");
         MAP.put(SUBCLASS_CANT_CALL_COMPANION_PROTECTED_NON_STATIC, "Using protected members which are not @JvmStatic in the superclass companion is unsupported yet");
 
         MAP.put(NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS, "Type mismatch: inferred type is {1} but {0} was expected", RENDER_TYPE, RENDER_TYPE);
@@ -160,8 +160,8 @@ public class DefaultErrorMessagesJvm implements DefaultErrorMessages.Extension {
         MAP.put(ASSIGNMENT_TO_ARRAY_LOOP_VARIABLE, "Assignment to a for-in-array loop range variable. Behavior may change in Kotlin 1.3. " +
                                                    "See https://youtrack.jetbrains.com/issue/KT-21354 for more details");
 
-        MAP.put(JVM_DEFAULT_IN_DECLARATION, "Usage of ''@{0}'' is only allowed with -Xjvm-default option", STRING);
-        MAP.put(JVM_DEFAULT_WITH_COMPATIBILITY_IN_DECLARATION, "Usage of '@JvmDefaultWithCompatibility' is only allowed with '-Xjvm-default=all' option");
+        MAP.put(JVM_DEFAULT_IN_DECLARATION, "Usage of ''@{0}'' is only allowed with -jvm-default option", STRING);
+        MAP.put(JVM_DEFAULT_WITH_COMPATIBILITY_IN_DECLARATION, "Usage of '@JvmDefaultWithCompatibility' is only allowed with '-jvm-default=no-compatibility' option");
         MAP.put(JVM_DEFAULT_WITH_COMPATIBILITY_NOT_ON_INTERFACE, "'@JvmDefaultWithCompatibility' annotation is only allowed on interfaces");
         MAP.put(EXPLICIT_METADATA_IS_DISALLOWED, "Explicit @Metadata is disallowed");
         MAP.put(SUSPENSION_POINT_INSIDE_CRITICAL_SECTION, "The ''{0}'' suspension point is inside a critical section", NAME);

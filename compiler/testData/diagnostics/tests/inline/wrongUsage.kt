@@ -51,3 +51,6 @@ inline fun inlineFunNoInline(noinline ext: Int.(p: Int) -> Unit) {
 
     ext ?: ext
 }
+
+/* GENERATED_FIR_TAGS: elvisExpression, functionDeclaration, functionalType, ifExpression, inline, integerLiteral,
+lambdaLiteral, noinline, smartcast, typeWithExtension */

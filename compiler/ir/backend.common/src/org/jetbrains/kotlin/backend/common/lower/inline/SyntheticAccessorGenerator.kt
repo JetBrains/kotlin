@@ -54,9 +54,9 @@ abstract class SyntheticAccessorGenerator<Context : LoweringContext, ScopeInfo>(
 
         const val PROPERTY_MARKER = "p"
 
-        private var IrFunction.syntheticAccessors: MutableMap<AccessorKey, IrFunction>? by irAttribute(followAttributeOwner = false)
-        private var IrField.getterSyntheticAccessors: MutableMap<AccessorKey, IrSimpleFunction>? by irAttribute(followAttributeOwner = false)
-        private var IrField.setterSyntheticAccessors: MutableMap<AccessorKey, IrSimpleFunction>? by irAttribute(followAttributeOwner = false)
+        private var IrFunction.syntheticAccessors: MutableMap<AccessorKey, IrFunction>? by irAttribute(copyByDefault = false)
+        private var IrField.getterSyntheticAccessors: MutableMap<AccessorKey, IrSimpleFunction>? by irAttribute(copyByDefault = false)
+        private var IrField.setterSyntheticAccessors: MutableMap<AccessorKey, IrSimpleFunction>? by irAttribute(copyByDefault = false)
     }
 
     fun getSyntheticFunctionAccessor(expression: IrFunctionAccessExpression, scopeInfo: ScopeInfo): IrFunction {
@@ -426,9 +426,9 @@ abstract class SyntheticAccessorGenerator<Context : LoweringContext, ScopeInfo>(
         }
         newExpression.copyTypeArgumentsFrom(oldExpression)
         val newExpressionArguments = if (accessorSymbol is IrConstructorSymbol) {
-            oldExpression.receiverAndArgs() + createAccessorMarkerArgument()
+            oldExpression.arguments + createAccessorMarkerArgument()
         } else {
-            oldExpression.receiverAndArgs()
+            oldExpression.arguments
         }
         newExpression.arguments.assignFrom(newExpressionArguments)
         return newExpression
@@ -466,7 +466,7 @@ abstract class SyntheticAccessorGenerator<Context : LoweringContext, ScopeInfo>(
     }
 
     fun createAccessorMarkerArgument() =
-        IrConstImpl.constNull(UNDEFINED_OFFSET, UNDEFINED_OFFSET, context.ir.symbols.defaultConstructorMarker.defaultType.makeNullable())
+        IrConstImpl.constNull(UNDEFINED_OFFSET, UNDEFINED_OFFSET, context.symbols.defaultConstructorMarker.defaultType.makeNullable())
 
     /**
      * Produces a call to the synthetic accessor [accessorSymbol] to replace the field _read_ expression [oldExpression].

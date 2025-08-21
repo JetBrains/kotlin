@@ -27,10 +27,13 @@ class G<E : <!FINAL_UPPER_BOUND!>Double<!>>(val balue: E) : F<E>(balue) {
     override var rest: E = balue
 }
 
-class H<E : <!FINAL_UPPER_BOUND!>String<!>>(val balue: E) : F<<!UPPER_BOUND_VIOLATED!>E<!>>(<!ARGUMENT_TYPE_MISMATCH!>balue<!>) {
+class H<E : <!FINAL_UPPER_BOUND!>String<!>>(val balue: E) : <!INAPPLICABLE_CANDIDATE!>F<<!UPPER_BOUND_VIOLATED!>E<!>><!>(balue) {
     override var rest: E = balue // no report because of INAPPLICABLE_CANDIDATE
 }
 
 class M<E : <!FINAL_UPPER_BOUND!>String<!>>(val balue: E) : F<Double>(3.14) {
     override var rest: <!VAR_TYPE_MISMATCH_ON_OVERRIDE!>E<!> = balue
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, integerLiteral, override, primaryConstructor, propertyDeclaration,
+stringLiteral, typeConstraint, typeParameter */

@@ -11,3 +11,6 @@ fun <R> test(x: Inv<Out<R>>): R = TODO()
 fun testNothing() {
     test(invOut(null)) checkType { _<Nothing>() }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType, infix,
+lambdaLiteral, nullableType, out, typeParameter, typeWithExtension */

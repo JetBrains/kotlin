@@ -10,3 +10,6 @@ fun foo1(a: MutableMap<String, String>, x: String?) {
     a[<!ARGUMENT_TYPE_MISMATCH!>x<!>] = x!!
     a[x<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>] = x
 }
+
+/* GENERATED_FIR_TAGS: assignment, checkNotNullCall, funWithExtensionReceiver, functionDeclaration, nullableType,
+operator, smartcast, typeParameter */

@@ -19,8 +19,9 @@ internal class SirProtocolImpl(
     override val attributes: MutableList<SirAttribute>,
     override val name: String,
     override val declarations: MutableList<SirDeclaration>,
-    override val superClass: SirType?,
+    override val superClass: SirNominalType?,
     override val protocols: MutableList<SirProtocol>,
+    override val bridges: MutableList<SirBridge>,
 ) : SirProtocol() {
     override lateinit var parent: SirDeclarationParent
 }

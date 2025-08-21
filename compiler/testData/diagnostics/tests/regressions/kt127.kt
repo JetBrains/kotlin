@@ -18,3 +18,6 @@ fun main() {
     command.equals1(null)
     command?.equals(null)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, localProperty, nullableType,
+primaryConstructor, propertyDeclaration, safeCall */

@@ -9,9 +9,11 @@ import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.IrPropertyReference
+import org.jetbrains.kotlin.ir.expressions.IrRichPropertyReference
 import org.jetbrains.kotlin.ir.interpreter.CallInterceptor
 import org.jetbrains.kotlin.ir.interpreter.proxy.reflection.KTypeProxy
 import org.jetbrains.kotlin.ir.interpreter.state.State
+import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.types.classOrNull
 import kotlin.reflect.KParameter
 import kotlin.reflect.KType
@@ -33,6 +35,17 @@ internal class KPropertyState(
     ) : this(
         callInterceptor,
         propertyReference.symbol.owner,
+        propertyReference.type.classOrNull!!.owner,
+        boundValues
+    )
+
+    constructor(
+        callInterceptor: CallInterceptor,
+        propertyReference: IrRichPropertyReference,
+        boundValues: List<State?>,
+    ) : this(
+        callInterceptor,
+        (propertyReference.reflectionTargetSymbol as IrPropertySymbol).owner,
         propertyReference.type.classOrNull!!.owner,
         boundValues
     )

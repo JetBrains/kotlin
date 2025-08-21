@@ -15,3 +15,5 @@ fun <T> test(l: List<T>) {
 }
 
 fun <T> emptyList(): List<T> {throw Exception()}
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, in, integerLiteral, nullableType, typeParameter, vararg */

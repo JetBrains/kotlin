@@ -17,3 +17,6 @@
     val lambda = {}
     run(lambda)
 }
+
+/* GENERATED_FIR_TAGS: anonymousFunction, callableReference, functionDeclaration, functionalType, lambdaLiteral,
+localFunction, localProperty, propertyDeclaration */

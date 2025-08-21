@@ -18,3 +18,6 @@ annotation class JvmInline
 
 @JvmInline
 value class NotVal(<!VALUE_CLASS_CONSTRUCTOR_NOT_FINAL_READ_ONLY_PARAMETER!>x: Int<!>)
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, enumDeclaration, objectDeclaration, primaryConstructor,
+propertyDeclaration, value */

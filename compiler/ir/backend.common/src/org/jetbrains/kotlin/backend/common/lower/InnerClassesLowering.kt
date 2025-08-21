@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueParameterSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.types.classOrNull
-import org.jetbrains.kotlin.ir.util.copyValueArgumentsFrom
+import org.jetbrains.kotlin.ir.util.copyTypeAndValueArgumentsFrom
 import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.ir.util.patchDeclarationParents
@@ -258,6 +258,20 @@ open class InnerClassConstructorCallsLowering(val context: CommonBackendContext)
                 return newCall
             }
 
+
+            override fun visitRawFunctionReference(expression: IrRawFunctionReference): IrExpression {
+                expression.transformChildrenVoid(this)
+
+                val callee = expression.symbol as? IrConstructorSymbol ?: return expression
+                val parent = callee.owner.parent as? IrClass ?: return expression
+                if (!parent.isInner) return expression
+
+                val newCallee = innerClassesSupport.getInnerClassConstructorWithOuterThisParameter(callee.owner)
+
+                expression.symbol = newCallee.symbol
+                return expression
+            }
+
             override fun visitFunctionReference(expression: IrFunctionReference): IrExpression {
                 expression.transformChildrenVoid(this)
 
@@ -284,12 +298,7 @@ open class InnerClassConstructorCallsLowering(val context: CommonBackendContext)
                         origin = origin
                     )
                 }
-
-                newReference.let {
-                    it.copyTypeArgumentsFrom(expression)
-                    it.copyValueArgumentsFrom(expression, it.symbol.owner, receiversAsArguments = true)
-                }
-
+                newReference.copyTypeAndValueArgumentsFrom(expression)
                 return newReference
             }
             // TODO callable references?

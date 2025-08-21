@@ -16,3 +16,5 @@ annotation class A(
     @ParameterAnnotation
     val x: Int
 )
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, primaryConstructor, propertyDeclaration */

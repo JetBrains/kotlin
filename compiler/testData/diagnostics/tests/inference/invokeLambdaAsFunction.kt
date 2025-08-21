@@ -6,3 +6,5 @@ fun test1(i: Int) = { <!CANNOT_INFER_PARAMETER_TYPE, NAME_SHADOWING!>i<!> ->
 fun test2() = { <!CANNOT_INFER_PARAMETER_TYPE!>i<!> -> <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>i<!> }<!NO_VALUE_FOR_PARAMETER!>()<!>
 
 fun test3() = { <!CANNOT_INFER_PARAMETER_TYPE!>i<!> -> <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>i<!> }(1)
+
+/* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral, lambdaLiteral */

@@ -19,3 +19,6 @@ fun test(
     bar(::foo)
     bar(x)
 }
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, functionDeclaration, functionalType, outProjection,
+starProjection, vararg */

@@ -12,3 +12,5 @@ public class JavaClass {
 fun bar() {
     JavaClass.add(ArrayList())
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaFunction */

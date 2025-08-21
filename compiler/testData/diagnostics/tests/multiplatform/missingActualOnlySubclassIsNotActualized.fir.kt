@@ -1,6 +1,5 @@
 // RUN_PIPELINE_TILL: FIR2IR
 // ISSUE: KT-68830
-// MUTE_LL_FIR: LL tests don't run IR actualizer to report NO_ACTUAL_FOR_EXPECT
 // MODULE: m1-common
 // FILE: common.kt
 
@@ -26,3 +25,5 @@ fun test2() = B2().foo()
 open actual class A1 {
     open actual fun foo(): String = "OK"
 }
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, functionDeclaration, primaryConstructor, stringLiteral */

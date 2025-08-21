@@ -7,7 +7,7 @@ FILE fqName:<root> fileName:/catchParameterInTopLevelProperty.kt
           CATCH parameter=val e: kotlin.Throwable declared in <root>.test
             VAR CATCH_PARAMETER name:e type:kotlin.Throwable [val]
             BLOCK type=kotlin.Unit origin=null
-    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test> visibility:public modality:FINAL <> () returnType:kotlin.Unit
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test> visibility:public modality:FINAL returnType:kotlin.Unit
       correspondingProperty: PROPERTY name:test visibility:public modality:FINAL [val]
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-test> (): kotlin.Unit declared in <root>'

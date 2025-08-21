@@ -1,7 +1,6 @@
 package org.jetbrains.kotlin.fir.declarations
 
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
-import org.jetbrains.kotlin.resolve.deprecation.DeprecationInfo
 
 /*
  * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
@@ -29,5 +28,3 @@ class DeprecationsPerUseSite(
         if (isEmpty()) "NoDeprecation"
         else "org.jetbrains.kotlin.fir.declarations.DeprecationInfoForUseSites(all=$all, bySpecificSite=$bySpecificSite)"
 }
-
-val EmptyDeprecationsPerUseSite: DeprecationsPerUseSite = DeprecationsPerUseSite(null, null)

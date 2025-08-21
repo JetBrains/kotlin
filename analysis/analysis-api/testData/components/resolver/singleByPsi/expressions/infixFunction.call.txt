@@ -7,10 +7,12 @@ KtBinaryExpression(56,71): '4 infixOp "str"'
           receiverType = null
           returnType = kotlin.String
           symbol = rhs: kotlin.String
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:
           expression = 4
@@ -26,7 +28,9 @@ KtBinaryExpression(56,71): '4 infixOp "str"'
               receiverType = null
               returnType = kotlin.String
               symbol = rhs: kotlin.String
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = /infixOp
       typeArgumentsMapping = {}

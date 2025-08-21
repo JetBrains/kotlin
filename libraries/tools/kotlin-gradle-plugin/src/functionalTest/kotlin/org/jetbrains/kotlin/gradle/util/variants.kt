@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.gradle.util
 
 import org.gradle.api.invocation.Gradle
+import org.jetbrains.kotlin.gradle.plugin.VariantImplementationFactoriesConfigurator
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.ProblemsReporter
 
 /**
  * Configures some default factories that are usually automatically registered in
@@ -15,4 +17,7 @@ import org.gradle.api.invocation.Gradle
  * some parts of its code
  */
 fun Gradle.registerMinimalVariantImplementationFactoriesForTests() {
+    val factories = VariantImplementationFactoriesConfigurator.get(gradle)
+    factories[ProblemsReporter.Factory::class] =
+        TestsProblemsReporter.Factory()
 }

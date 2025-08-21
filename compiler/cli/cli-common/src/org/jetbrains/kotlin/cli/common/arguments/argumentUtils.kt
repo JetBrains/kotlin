@@ -103,7 +103,9 @@ fun <T : Any> collectProperties(kClass: KClass<T>, inheritedOnly: Boolean): List
         properties.removeAll(kClass.declaredMemberProperties)
     }
     return properties.filter { property ->
-        property.visibility == KVisibility.PUBLIC && (property.javaField?.modifiers?.let { Modifier.isTransient(it) } != true)
+        property.visibility == KVisibility.PUBLIC
+                && (property.javaField?.modifiers?.let { Modifier.isTransient(it) } != true)
+                && (!property.isAbstract)
     }
 }
 
@@ -111,4 +113,26 @@ fun CommonCompilerArguments.setApiVersionToLanguageVersionIfNeeded() {
     if (languageVersion != null && VersionComparatorUtil.compare(languageVersion, apiVersion) < 0) {
         apiVersion = languageVersion
     }
+}
+
+/**
+ * An argument which should be passed to Kotlin compiler to enable [this] compiler option
+ */
+val KProperty1<out CommonCompilerArguments, *>.argumentAnnotation: Argument
+    get() {
+        val javaField = javaField ?: error("Java field should be present for $this")
+        return javaField.getAnnotation(Argument::class.java)
+    }
+
+/**
+ * An argument which should be passed to Kotlin compiler to enable [this] compiler option
+ */
+val KProperty1<out CommonCompilerArguments, *>.cliArgument: String
+    get() = argumentAnnotation.value
+
+/**
+ * Returns a string of the form "argument=value" where "argument" is the [Argument.value] of this compiler argument.
+ */
+fun KProperty1<out CommonCompilerArguments, *>.cliArgument(value: String): String {
+    return "$cliArgument=$value"
 }

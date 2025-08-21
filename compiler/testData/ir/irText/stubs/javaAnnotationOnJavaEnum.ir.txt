@@ -1,5 +1,5 @@
 FILE fqName:<root> fileName:/test.kt
-  FUN name:foo visibility:public modality:FINAL <> () returnType:kotlin.Unit
+  FUN name:foo visibility:public modality:FINAL returnType:kotlin.Unit
     BLOCK_BODY
       VAR name:x type:<root>.JavaEnum [val]
         GET_ENUM 'ENUM_ENTRY IR_EXTERNAL_DECLARATION_STUB name:FOO' type=<root>.JavaEnum

@@ -15,32 +15,40 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.hasBackingField
-import org.jetbrains.kotlin.fir.declarations.utils.hasExplicitBackingField
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
 import org.jetbrains.kotlin.fir.expressions.FirThisReceiverExpression
 import org.jetbrains.kotlin.fir.expressions.unwrapSmartcastExpression
 import org.jetbrains.kotlin.fir.isCatchParameter
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.ControlFlowGraph
-import org.jetbrains.kotlin.fir.resolve.dfa.cfg.QualifiedAccessNode
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.VariableAssignmentNode
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
+import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousObjectSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirSyntheticPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 
 object FirPropertyInitializationAnalyzer : AbstractFirPropertyInitializationChecker(MppCheckerKind.Common) {
-    override fun analyze(data: VariableInitializationInfoData, reporter: DiagnosticReporter, context: CheckerContext) {
-        PropertyInitializationCheckProcessor.check(data, isForInitialization = false, context, reporter)
+    context(reporter: DiagnosticReporter, context: CheckerContext)
+    override fun analyze(data: VariableInitializationInfoData) {
+        PropertyInitializationCheckProcessor.check(data, isForInitialization = false)
     }
 }
 
 val FirDeclaration.evaluatedInPlace: Boolean
+    get() = symbol.evaluatedInPlace
+
+val FirBasedSymbol<*>.evaluatedInPlace: Boolean
     get() = when (this) {
-        is FirAnonymousFunction -> invocationKind.isInPlace
-        is FirAnonymousObject -> classKind != ClassKind.ENUM_ENTRY
-        is FirConstructor -> true // child of class initialization graph
-        is FirFunction, is FirClass -> false
+        is FirAnonymousFunctionSymbol -> invocationKind.isInPlace
+        is FirAnonymousObjectSymbol -> classKind != ClassKind.ENUM_ENTRY
+        is FirConstructorSymbol -> true // child of class initialization graph
+        is FirFunctionSymbol, is FirClassSymbol -> false
         else -> true // property initializer, etc.
     }
 
@@ -64,11 +72,10 @@ fun ControlFlowGraph.nearestNonInPlaceGraph(): ControlFlowGraph =
  */
 @OptIn(SymbolInternals::class)
 fun FirPropertySymbol.requiresInitialization(isForInitialization: Boolean): Boolean {
-    val hasImplicitBackingField = !hasExplicitBackingField && hasBackingField
     return when {
         this is FirSyntheticPropertySymbol -> false
-        isForInitialization -> hasDelegate || hasImplicitBackingField
-        else -> !hasInitializer && hasImplicitBackingField && fir.isCatchParameter != true
+        isForInitialization -> hasDelegate || hasBackingField
+        else -> hasBackingField && !hasInitializer && backingFieldSymbol?.resolvedInitializer == null && fir.isCatchParameter != true
     }
 }
 
@@ -86,11 +93,10 @@ object PropertyInitializationCheckProcessor : VariableInitializationCheckProcess
         }
     }
 
+    context(reporter: DiagnosticReporter, context: CheckerContext)
     override fun VariableInitializationInfoData.reportCapturedInitialization(
         node: VariableAssignmentNode,
         symbol: FirVariableSymbol<*>,
-        reporter: DiagnosticReporter,
-        context: CheckerContext
     ) {
         require(symbol is FirPropertySymbol)
         val capturedInitializationError = if (receiver != null)
@@ -98,7 +104,7 @@ object PropertyInitializationCheckProcessor : VariableInitializationCheckProcess
         else
             FirErrors.CAPTURED_VAL_INITIALIZATION
 
-        reporter.reportOn(node.fir.lValue.source, capturedInitializationError, symbol, context)
+        reporter.reportOn(node.fir.lValue.source, capturedInitializationError, symbol)
     }
 
     override fun FirQualifiedAccessExpression.hasMatchingReceiver(data: VariableInitializationInfoData): Boolean {
@@ -107,32 +113,29 @@ object PropertyInitializationCheckProcessor : VariableInitializationCheckProcess
                 (expression as? FirResolvedQualifier)?.symbol == data.receiver
     }
 
+    context(reporter: DiagnosticReporter, context: CheckerContext)
     override fun reportUninitializedVariable(
-        reporter: DiagnosticReporter,
-        node: QualifiedAccessNode,
+        expression: FirQualifiedAccessExpression,
         symbol: FirVariableSymbol<*>,
-        context: CheckerContext,
     ) {
         require(symbol is FirPropertySymbol)
-        reporter.reportOn(node.fir.source, FirErrors.UNINITIALIZED_VARIABLE, symbol, context)
+        reporter.reportOn(expression.source, FirErrors.UNINITIALIZED_VARIABLE, symbol)
     }
 
+    context(reporter: DiagnosticReporter, context: CheckerContext)
     override fun reportNonInlineMemberValInitialization(
         node: VariableAssignmentNode,
         symbol: FirVariableSymbol<*>,
-        reporter: DiagnosticReporter,
-        context: CheckerContext,
     ) {
         require(symbol is FirPropertySymbol)
-        reporter.reportOn(node.fir.lValue.source, FirErrors.NON_INLINE_MEMBER_VAL_INITIALIZATION, symbol, context)
+        reporter.reportOn(node.fir.lValue.source, FirErrors.NON_INLINE_MEMBER_VAL_INITIALIZATION, symbol)
     }
 
+    context(reporter: DiagnosticReporter, context: CheckerContext)
     override fun reportValReassignment(
         node: VariableAssignmentNode,
         symbol: FirVariableSymbol<*>,
-        reporter: DiagnosticReporter,
-        context: CheckerContext,
     ) {
-        reporter.reportOn(node.fir.lValue.source, FirErrors.VAL_REASSIGNMENT, symbol, context)
+        reporter.reportOn(node.fir.lValue.source, FirErrors.VAL_REASSIGNMENT, symbol)
     }
 }

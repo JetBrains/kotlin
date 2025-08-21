@@ -33,7 +33,8 @@ FILE: [ResolvedTo(RAW_FIR)] classLevel.kt
 
         }
 
-        <ERROR PROPERTY: Destructuring declarations are only allowed for local variables/values>
+        public final [ResolvedTo(RAW_FIR)] val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = LAZY_EXPRESSION
+
 
         public final? [ResolvedTo(RAW_FIR)] object <no name provided> : R|kotlin/Any| {
             private [ResolvedTo(RAW_FIR)] [ContainingClassKey=<no name provided>] constructor(): R|util/Foo.<no name provided>| {
@@ -82,7 +83,8 @@ FILE: [ResolvedTo(IMPORTS)] classLevel.kt
 
         }
 
-        <ERROR PROPERTY: Destructuring declarations are only allowed for local variables/values>
+        public final [ResolvedTo(RAW_FIR)] val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = LAZY_EXPRESSION
+
 
         public final? [ResolvedTo(RAW_FIR)] object <no name provided> : R|kotlin/Any| {
             private [ResolvedTo(RAW_FIR)] [ContainingClassKey=<no name provided>] constructor(): R|util/Foo.<no name provided>| {
@@ -131,7 +133,8 @@ FILE: [ResolvedTo(IMPORTS)] classLevel.kt
 
         }
 
-        <ERROR PROPERTY: Destructuring declarations are only allowed for local variables/values>
+        public final [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = LAZY_EXPRESSION
+
 
         public final? [ResolvedTo(RAW_FIR)] object <no name provided> : R|kotlin/Any| {
             private [ResolvedTo(RAW_FIR)] [ContainingClassKey=<no name provided>] constructor(): R|util/Foo.<no name provided>| {
@@ -180,7 +183,8 @@ FILE: [ResolvedTo(IMPORTS)] classLevel.kt
 
         }
 
-        <ERROR PROPERTY: Destructuring declarations are only allowed for local variables/values>
+        public final [ResolvedTo(COMPANION_GENERATION)] val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = LAZY_EXPRESSION
+
 
         public final? [ResolvedTo(RAW_FIR)] object <no name provided> : R|kotlin/Any| {
             private [ResolvedTo(RAW_FIR)] [ContainingClassKey=<no name provided>] constructor(): R|util/Foo.<no name provided>| {
@@ -229,7 +233,8 @@ FILE: [ResolvedTo(IMPORTS)] classLevel.kt
 
         }
 
-        <ERROR PROPERTY: Destructuring declarations are only allowed for local variables/values>
+        public final [ResolvedTo(SUPER_TYPES)] val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = LAZY_EXPRESSION
+
 
         public final? [ResolvedTo(RAW_FIR)] object <no name provided> : R|kotlin/Any| {
             private [ResolvedTo(RAW_FIR)] [ContainingClassKey=<no name provided>] constructor(): R|util/Foo.<no name provided>| {
@@ -278,7 +283,8 @@ FILE: [ResolvedTo(IMPORTS)] classLevel.kt
 
         }
 
-        <ERROR PROPERTY: Destructuring declarations are only allowed for local variables/values>
+        public final [ResolvedTo(TYPES)] val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = LAZY_EXPRESSION
+
 
         public final? [ResolvedTo(RAW_FIR)] object <no name provided> : R|kotlin/Any| {
             private [ResolvedTo(RAW_FIR)] [ContainingClassKey=<no name provided>] constructor(): R|util/Foo.<no name provided>| {
@@ -327,7 +333,8 @@ FILE: [ResolvedTo(IMPORTS)] classLevel.kt
 
         }
 
-        <ERROR PROPERTY: Destructuring declarations are only allowed for local variables/values>
+        public final [ResolvedTo(STATUS)] val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = LAZY_EXPRESSION
+
 
         public final? [ResolvedTo(RAW_FIR)] object <no name provided> : R|kotlin/Any| {
             private [ResolvedTo(RAW_FIR)] [ContainingClassKey=<no name provided>] constructor(): R|util/Foo.<no name provided>| {
@@ -376,7 +383,8 @@ FILE: [ResolvedTo(IMPORTS)] classLevel.kt
 
         }
 
-        <ERROR PROPERTY: Destructuring declarations are only allowed for local variables/values>
+        public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = LAZY_EXPRESSION
+
 
         public final? [ResolvedTo(RAW_FIR)] object <no name provided> : R|kotlin/Any| {
             private [ResolvedTo(RAW_FIR)] [ContainingClassKey=<no name provided>] constructor(): R|util/Foo.<no name provided>| {
@@ -425,7 +433,8 @@ FILE: [ResolvedTo(IMPORTS)] classLevel.kt
 
         }
 
-        <ERROR PROPERTY: Destructuring declarations are only allowed for local variables/values>
+        public final [ResolvedTo(CONTRACTS)] val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = LAZY_EXPRESSION
+
 
         public final? [ResolvedTo(RAW_FIR)] object <no name provided> : R|kotlin/Any| {
             private [ResolvedTo(RAW_FIR)] [ContainingClassKey=<no name provided>] constructor(): R|util/Foo.<no name provided>| {
@@ -474,7 +483,8 @@ FILE: [ResolvedTo(IMPORTS)] classLevel.kt
 
         }
 
-        <ERROR PROPERTY: Destructuring declarations are only allowed for local variables/values>
+        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = LAZY_EXPRESSION
+
 
         public final? [ResolvedTo(RAW_FIR)] object <no name provided> : R|kotlin/Any| {
             private [ResolvedTo(RAW_FIR)] [ContainingClassKey=<no name provided>] constructor(): R|util/Foo.<no name provided>| {
@@ -523,7 +533,8 @@ FILE: [ResolvedTo(IMPORTS)] classLevel.kt
 
         }
 
-        <ERROR PROPERTY: Destructuring declarations are only allowed for local variables/values>
+        public final [ResolvedTo(CONSTANT_EVALUATION)] val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = LAZY_EXPRESSION
+
 
         public final? [ResolvedTo(RAW_FIR)] object <no name provided> : R|kotlin/Any| {
             private [ResolvedTo(RAW_FIR)] [ContainingClassKey=<no name provided>] constructor(): R|util/Foo.<no name provided>| {
@@ -572,7 +583,8 @@ FILE: [ResolvedTo(IMPORTS)] classLevel.kt
 
         }
 
-        <ERROR PROPERTY: Destructuring declarations are only allowed for local variables/values>
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = LAZY_EXPRESSION
+
 
         public final? [ResolvedTo(RAW_FIR)] object <no name provided> : R|kotlin/Any| {
             private [ResolvedTo(RAW_FIR)] [ContainingClassKey=<no name provided>] constructor(): R|util/Foo.<no name provided>| {
@@ -621,7 +633,8 @@ FILE: [ResolvedTo(IMPORTS)] classLevel.kt
 
         }
 
-        <ERROR PROPERTY: Destructuring declarations are only allowed for local variables/values>
+        public final [ResolvedTo(BODY_RESOLVE)] val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = R|kotlin/Pair.Pair|<R|kotlin/Int|, R|kotlin/Int|>(Int(0), Int(1))
+
 
         public final? [ResolvedTo(RAW_FIR)] object <no name provided> : R|kotlin/Any| {
             private [ResolvedTo(RAW_FIR)] [ContainingClassKey=<no name provided>] constructor(): R|util/Foo.<no name provided>| {
@@ -670,7 +683,8 @@ FILE: [ResolvedTo(BODY_RESOLVE)] classLevel.kt
 
         }
 
-        <ERROR PROPERTY: Destructuring declarations are only allowed for local variables/values>
+        public final [ResolvedTo(BODY_RESOLVE)] val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = R|util/Foo.Pair.Pair|(Int(0), Int(1))
+
 
         public final [ResolvedTo(BODY_RESOLVE)] object <no name provided> : R|kotlin/Any| {
             private [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=<no name provided>] constructor(): R|util/Foo.<no name provided>| {

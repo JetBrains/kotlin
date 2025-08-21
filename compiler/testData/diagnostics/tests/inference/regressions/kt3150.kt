@@ -24,3 +24,6 @@ fun test() {
     SomeTemplate().query { i: Int -> }
     SomeTemplate().query1 { i: Int -> }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType, lambdaLiteral,
+localProperty, nullableType, propertyDeclaration, typeParameter */

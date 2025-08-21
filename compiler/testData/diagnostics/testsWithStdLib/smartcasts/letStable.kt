@@ -9,3 +9,6 @@ fun foo(y: String?) {
         <!DEBUG_INFO_SMARTCAST!>x<!>.length
     }
 }
+
+/* GENERATED_FIR_TAGS: equalityExpression, functionDeclaration, ifExpression, lambdaLiteral, localProperty, nullableType,
+propertyDeclaration, safeCall, smartcast, stringLiteral */

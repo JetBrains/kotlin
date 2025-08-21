@@ -28,3 +28,6 @@ actual class Foo {
 
     actual fun <T : Set<Number>> f3(t: T): dynamic = null!!
 }
+
+/* GENERATED_FIR_TAGS: actual, checkNotNullCall, classDeclaration, expect, flexibleType, functionDeclaration,
+nullableType, secondaryConstructor, typeConstraint, typeParameter */

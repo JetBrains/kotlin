@@ -4,7 +4,7 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideAnnotationCallScript.kts
         [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol one.<script-localFunctionInsideAnnotationCallScript.kts>] annotation class Anno : R|kotlin/Annotation| {
+        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol one.<script-localFunctionInsideAnnotationCallScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=one/Anno.s] s: R|kotlin/String|): R|one/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -14,9 +14,7 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideAnnotationCallScript.kts
 
         }
 
-        @R|one/Anno|[Types](s = [ResolvedTo(RAW_FIR)] fun <anonymous>(): R|kotlin/String| <inline=Unknown>  {
-        }
-        .R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/String|>|()) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingScriptKey=FirScriptSymbol one.<script-localFunctionInsideAnnotationCallScript.kts>] class TopLevelClass : R|kotlin/Any| {
+        @R|one/Anno|[Types](s = ERROR_EXPR(Inapplicable(INAPPLICABLE): _synthetic/ACCEPT_SPECIFIC_TYPE_CALL).R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/String|>|()) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingScriptKey=FirScriptSymbol one.<script-localFunctionInsideAnnotationCallScript.kts>, ScriptTopLevelDeclaration=true] class TopLevelClass : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -30,7 +28,7 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideAnnotationCallScript.kts
         [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol one.<script-localFunctionInsideAnnotationCallScript.kts>] annotation class Anno : R|kotlin/Annotation| {
+        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol one.<script-localFunctionInsideAnnotationCallScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=one/Anno.s] s: R|kotlin/String|): R|one/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -40,9 +38,7 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideAnnotationCallScript.kts
 
         }
 
-        @R|one/Anno|[Types](s = [ResolvedTo(RAW_FIR)] fun <anonymous>(): R|kotlin/String| <inline=Unknown>  {
-        }
-        .R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/String|>|()) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingScriptKey=FirScriptSymbol one.<script-localFunctionInsideAnnotationCallScript.kts>] class TopLevelClass : R|kotlin/Any| {
+        @R|one/Anno|[Types](s = ERROR_EXPR(Inapplicable(INAPPLICABLE): _synthetic/ACCEPT_SPECIFIC_TYPE_CALL).R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/String|>|()) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingScriptKey=FirScriptSymbol one.<script-localFunctionInsideAnnotationCallScript.kts>, ScriptTopLevelDeclaration=true] class TopLevelClass : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -56,7 +52,7 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideAnnotationCallScript.kts
         [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol one.<script-localFunctionInsideAnnotationCallScript.kts>] annotation class Anno : R|kotlin/Annotation| {
+        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol one.<script-localFunctionInsideAnnotationCallScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=one/Anno.s] s: R|kotlin/String|): R|one/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -66,9 +62,7 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideAnnotationCallScript.kts
 
         }
 
-        @R|one/Anno|[Types](s = [ResolvedTo(RAW_FIR)] fun <anonymous>(): R|kotlin/String| <inline=Unknown>  {
-        }
-        .R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/String|>|()) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingScriptKey=FirScriptSymbol one.<script-localFunctionInsideAnnotationCallScript.kts>] class TopLevelClass : R|kotlin/Any| {
+        @R|one/Anno|[Types](s = ERROR_EXPR(Inapplicable(INAPPLICABLE): _synthetic/ACCEPT_SPECIFIC_TYPE_CALL).R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/String|>|()) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingScriptKey=FirScriptSymbol one.<script-localFunctionInsideAnnotationCallScript.kts>, ScriptTopLevelDeclaration=true] class TopLevelClass : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -82,7 +76,7 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideAnnotationCallScript.kts
         [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol one.<script-localFunctionInsideAnnotationCallScript.kts>] annotation class Anno : R|kotlin/Annotation| {
+        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol one.<script-localFunctionInsideAnnotationCallScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=one/Anno.s] s: R|kotlin/String|): R|one/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -92,9 +86,7 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideAnnotationCallScript.kts
 
         }
 
-        @R|one/Anno|[Types](s = [ResolvedTo(RAW_FIR)] fun <anonymous>(): R|kotlin/String| <inline=Unknown>  {
-        }
-        .R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/String|>|()) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingScriptKey=FirScriptSymbol one.<script-localFunctionInsideAnnotationCallScript.kts>] class TopLevelClass : R|kotlin/Any| {
+        @R|one/Anno|[Types](s = ERROR_EXPR(Inapplicable(INAPPLICABLE): _synthetic/ACCEPT_SPECIFIC_TYPE_CALL).R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/String|>|()) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingScriptKey=FirScriptSymbol one.<script-localFunctionInsideAnnotationCallScript.kts>, ScriptTopLevelDeclaration=true] class TopLevelClass : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -108,7 +100,7 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideAnnotationCallScript.kts
         [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol one.<script-localFunctionInsideAnnotationCallScript.kts>] annotation class Anno : R|kotlin/Annotation| {
+        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol one.<script-localFunctionInsideAnnotationCallScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=one/Anno.s] s: R|kotlin/String|): R|one/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -118,9 +110,7 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideAnnotationCallScript.kts
 
         }
 
-        @R|one/Anno|[Types](s = [ResolvedTo(RAW_FIR)] fun <anonymous>(): R|kotlin/String| <inline=Unknown>  {
-        }
-        .R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/String|>|()) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingScriptKey=FirScriptSymbol one.<script-localFunctionInsideAnnotationCallScript.kts>] class TopLevelClass : R|kotlin/Any| {
+        @R|one/Anno|[Types](s = ERROR_EXPR(Inapplicable(INAPPLICABLE): _synthetic/ACCEPT_SPECIFIC_TYPE_CALL).R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/String|>|()) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingScriptKey=FirScriptSymbol one.<script-localFunctionInsideAnnotationCallScript.kts>, ScriptTopLevelDeclaration=true] class TopLevelClass : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -134,7 +124,7 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideAnnotationCallScript.kts
         [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol one.<script-localFunctionInsideAnnotationCallScript.kts>] annotation class Anno : R|kotlin/Annotation| {
+        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol one.<script-localFunctionInsideAnnotationCallScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=one/Anno.s] s: R|kotlin/String|): R|one/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -144,9 +134,7 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideAnnotationCallScript.kts
 
         }
 
-        @R|one/Anno|[Types](s = [ResolvedTo(RAW_FIR)] fun <anonymous>(): R|kotlin/String| <inline=Unknown>  {
-        }
-        .R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/String|>|()) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingScriptKey=FirScriptSymbol one.<script-localFunctionInsideAnnotationCallScript.kts>] class TopLevelClass : R|kotlin/Any| {
+        @R|one/Anno|[Types](s = ERROR_EXPR(Inapplicable(INAPPLICABLE): _synthetic/ACCEPT_SPECIFIC_TYPE_CALL).R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/String|>|()) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingScriptKey=FirScriptSymbol one.<script-localFunctionInsideAnnotationCallScript.kts>, ScriptTopLevelDeclaration=true] class TopLevelClass : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -160,7 +148,7 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideAnnotationCallScript.kts
         [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol one.<script-localFunctionInsideAnnotationCallScript.kts>] annotation class Anno : R|kotlin/Annotation| {
+        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol one.<script-localFunctionInsideAnnotationCallScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=one/Anno.s] s: R|kotlin/String|): R|one/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -170,9 +158,7 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideAnnotationCallScript.kts
 
         }
 
-        @R|one/Anno|[Types](s = [ResolvedTo(RAW_FIR)] fun <anonymous>(): R|kotlin/String| <inline=Unknown>  {
-        }
-        .R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/String|>|()) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingScriptKey=FirScriptSymbol one.<script-localFunctionInsideAnnotationCallScript.kts>] class TopLevelClass : R|kotlin/Any| {
+        @R|one/Anno|[Types](s = ERROR_EXPR(Inapplicable(INAPPLICABLE): _synthetic/ACCEPT_SPECIFIC_TYPE_CALL).R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/String|>|()) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingScriptKey=FirScriptSymbol one.<script-localFunctionInsideAnnotationCallScript.kts>, ScriptTopLevelDeclaration=true] class TopLevelClass : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -186,7 +172,7 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideAnnotationCallScript.kts
         [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol one.<script-localFunctionInsideAnnotationCallScript.kts>] annotation class Anno : R|kotlin/Annotation| {
+        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol one.<script-localFunctionInsideAnnotationCallScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=one/Anno.s] s: R|kotlin/String|): R|one/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -196,9 +182,7 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideAnnotationCallScript.kts
 
         }
 
-        @R|one/Anno|[Types](s = [ResolvedTo(RAW_FIR)] fun <anonymous>(): R|kotlin/String| <inline=Unknown>  {
-        }
-        .R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/String|>|()) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingScriptKey=FirScriptSymbol one.<script-localFunctionInsideAnnotationCallScript.kts>] class TopLevelClass : R|kotlin/Any| {
+        @R|one/Anno|[Types](s = ERROR_EXPR(Inapplicable(INAPPLICABLE): _synthetic/ACCEPT_SPECIFIC_TYPE_CALL).R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/String|>|()) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingScriptKey=FirScriptSymbol one.<script-localFunctionInsideAnnotationCallScript.kts>, ScriptTopLevelDeclaration=true] class TopLevelClass : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -212,7 +196,7 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideAnnotationCallScript.kts
         [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol one.<script-localFunctionInsideAnnotationCallScript.kts>] annotation class Anno : R|kotlin/Annotation| {
+        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol one.<script-localFunctionInsideAnnotationCallScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=one/Anno.s] s: R|kotlin/String|): R|one/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -222,9 +206,7 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideAnnotationCallScript.kts
 
         }
 
-        @R|one/Anno|[Types](s = [ResolvedTo(RAW_FIR)] fun <anonymous>(): R|kotlin/String| <inline=Unknown>  {
-        }
-        .R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/String|>|()) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingScriptKey=FirScriptSymbol one.<script-localFunctionInsideAnnotationCallScript.kts>] class TopLevelClass : R|kotlin/Any| {
+        @R|one/Anno|[Types](s = ERROR_EXPR(Inapplicable(INAPPLICABLE): _synthetic/ACCEPT_SPECIFIC_TYPE_CALL).R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/String|>|()) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingScriptKey=FirScriptSymbol one.<script-localFunctionInsideAnnotationCallScript.kts>, ScriptTopLevelDeclaration=true] class TopLevelClass : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -238,7 +220,7 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideAnnotationCallScript.kts
         [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol one.<script-localFunctionInsideAnnotationCallScript.kts>] annotation class Anno : R|kotlin/Annotation| {
+        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol one.<script-localFunctionInsideAnnotationCallScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=one/Anno.s] s: R|kotlin/String|): R|one/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -248,9 +230,7 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideAnnotationCallScript.kts
 
         }
 
-        @R|one/Anno|[Types](s = [ResolvedTo(RAW_FIR)] fun <anonymous>(): R|kotlin/String| <inline=Unknown>  {
-        }
-        .R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/String|>|()) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingScriptKey=FirScriptSymbol one.<script-localFunctionInsideAnnotationCallScript.kts>] class TopLevelClass : R|kotlin/Any| {
+        @R|one/Anno|[Types](s = ERROR_EXPR(Inapplicable(INAPPLICABLE): _synthetic/ACCEPT_SPECIFIC_TYPE_CALL).R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/String|>|()) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingScriptKey=FirScriptSymbol one.<script-localFunctionInsideAnnotationCallScript.kts>, ScriptTopLevelDeclaration=true] class TopLevelClass : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -264,7 +244,7 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideAnnotationCallScript.kts
         [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol one.<script-localFunctionInsideAnnotationCallScript.kts>] annotation class Anno : R|kotlin/Annotation| {
+        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol one.<script-localFunctionInsideAnnotationCallScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=one/Anno.s] s: R|kotlin/String|): R|one/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -274,9 +254,7 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideAnnotationCallScript.kts
 
         }
 
-        @R|one/Anno|[Types](s = [ResolvedTo(RAW_FIR)] fun <anonymous>(): R|kotlin/String| <inline=Unknown>  {
-        }
-        .R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/String|>|()) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingScriptKey=FirScriptSymbol one.<script-localFunctionInsideAnnotationCallScript.kts>] class TopLevelClass : R|kotlin/Any| {
+        @R|one/Anno|[Types](s = ERROR_EXPR(Inapplicable(INAPPLICABLE): _synthetic/ACCEPT_SPECIFIC_TYPE_CALL).R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/String|>|()) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingScriptKey=FirScriptSymbol one.<script-localFunctionInsideAnnotationCallScript.kts>, ScriptTopLevelDeclaration=true] class TopLevelClass : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -290,7 +268,7 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideAnnotationCallScript.kts
         [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol one.<script-localFunctionInsideAnnotationCallScript.kts>] annotation class Anno : R|kotlin/Annotation| {
+        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol one.<script-localFunctionInsideAnnotationCallScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=one/Anno.s] s: R|kotlin/String|): R|one/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -300,9 +278,7 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideAnnotationCallScript.kts
 
         }
 
-        @R|one/Anno|[Types](s = [ResolvedTo(RAW_FIR)] fun <anonymous>(): R|kotlin/String| <inline=Unknown>  {
-        }
-        .R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/String|>|()) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingScriptKey=FirScriptSymbol one.<script-localFunctionInsideAnnotationCallScript.kts>] class TopLevelClass : R|kotlin/Any| {
+        @R|one/Anno|[Types](s = ERROR_EXPR(Inapplicable(INAPPLICABLE): _synthetic/ACCEPT_SPECIFIC_TYPE_CALL).R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/String|>|()) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingScriptKey=FirScriptSymbol one.<script-localFunctionInsideAnnotationCallScript.kts>, ScriptTopLevelDeclaration=true] class TopLevelClass : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -316,7 +292,7 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideAnnotationCallScript.kts
         [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol one.<script-localFunctionInsideAnnotationCallScript.kts>] annotation class Anno : R|kotlin/Annotation| {
+        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol one.<script-localFunctionInsideAnnotationCallScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=one/Anno.s] s: R|kotlin/String|): R|one/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -326,9 +302,7 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideAnnotationCallScript.kts
 
         }
 
-        @R|one/Anno|[Types](s = [ResolvedTo(RAW_FIR)] fun <anonymous>(): R|kotlin/String| <inline=Unknown>  {
-        }
-        .R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/String|>|()) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingScriptKey=FirScriptSymbol one.<script-localFunctionInsideAnnotationCallScript.kts>] class TopLevelClass : R|kotlin/Any| {
+        @R|one/Anno|[Types](s = ERROR_EXPR(Inapplicable(INAPPLICABLE): _synthetic/ACCEPT_SPECIFIC_TYPE_CALL).R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/String|>|()) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingScriptKey=FirScriptSymbol one.<script-localFunctionInsideAnnotationCallScript.kts>, ScriptTopLevelDeclaration=true] class TopLevelClass : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -342,7 +316,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] localFunctionInsideAnnotationCallScript.kts
         [ResolvedTo(BODY_RESOLVE)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol one.<script-localFunctionInsideAnnotationCallScript.kts>] annotation class Anno : R|kotlin/Annotation| {
+        public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol one.<script-localFunctionInsideAnnotationCallScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=one/Anno.s] s: R|kotlin/String|): R|one/Anno| {
                 super<R|kotlin/Any|>()
             }
@@ -352,9 +326,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] localFunctionInsideAnnotationCallScript.kts
 
         }
 
-        @R|one/Anno|[Types](s = [ResolvedTo(RAW_FIR)] fun <anonymous>(): R|kotlin/String| <inline=Unknown>  {
-        }
-        .R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/String|>|()) public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol one.<script-localFunctionInsideAnnotationCallScript.kts>] class TopLevelClass : R|kotlin/Any| {
+        @R|one/Anno|[Types](s = ERROR_EXPR(Inapplicable(INAPPLICABLE): _synthetic/ACCEPT_SPECIFIC_TYPE_CALL).R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/String|>|()) public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol one.<script-localFunctionInsideAnnotationCallScript.kts>, ScriptTopLevelDeclaration=true] class TopLevelClass : R|kotlin/Any| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
                 super<R|kotlin/Any|>()
             }

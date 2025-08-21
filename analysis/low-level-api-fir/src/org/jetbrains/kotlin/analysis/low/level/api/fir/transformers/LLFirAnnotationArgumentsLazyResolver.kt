@@ -162,15 +162,15 @@ private class LLFirAnnotationArgumentsTargetResolver(resolveTarget: LLFirResolve
 
     @Deprecated("Should never be called directly, only for override purposes, please use withRegularClass", level = DeprecationLevel.ERROR)
     override fun withContainingRegularClass(firClass: FirRegularClass, action: () -> Unit) {
-        transformer.declarationsTransformer.withRegularClass(firClass) {
+        transformer.declarationsTransformer.forRegularClassBody(firClass) {
             action()
             firClass
         }
     }
 
     private fun transformAnnotations(target: FirElementWithResolveState) {
-        when {
-            target is FirRegularClass -> {
+        when (target) {
+            is FirRegularClass -> {
                 val declarationTransformer = transformer.declarationsTransformer
                 declarationTransformer.context.withClassHeader(target) {
                     target.transformAnnotations(declarationTransformer, ResolutionMode.ContextIndependent)
@@ -180,27 +180,20 @@ private class LLFirAnnotationArgumentsTargetResolver(resolveTarget: LLFirResolve
                 }
             }
 
-            target is FirScript -> target.transformAnnotations(transformer.declarationsTransformer, ResolutionMode.ContextIndependent)
-            target is FirFile -> transformer.declarationsTransformer.withFile(target) {
+            is FirScript -> target.transformAnnotations(transformer.declarationsTransformer, ResolutionMode.ContextIndependent)
+            is FirFile -> transformer.declarationsTransformer.withFile(target) {
                 target.transformAnnotations(transformer.declarationsTransformer, ResolutionMode.ContextIndependent)
             }
 
-            target.isRegularDeclarationWithAnnotation -> target.transformSingle(transformer, ResolutionMode.ContextIndependent)
-            target is FirCodeFragment -> {}
+            is FirCallableDeclaration, is FirAnonymousInitializer, is FirDanglingModifierList, is FirTypeAlias -> {
+                target.transformSingle(transformer, ResolutionMode.ContextIndependent)
+            }
+
+            is FirCodeFragment -> {}
             else -> throwUnexpectedFirElementError(target)
         }
     }
 }
-
-internal val FirElementWithResolveState.isRegularDeclarationWithAnnotation: Boolean
-    get() = when (this) {
-        is FirCallableDeclaration,
-        is FirAnonymousInitializer,
-        is FirDanglingModifierList,
-        is FirTypeAlias,
-            -> true
-        else -> false
-    }
 
 internal object AnnotationArgumentsStateKeepers {
     private val ANNOTATION: StateKeeper<FirAnnotation, FirSession> = stateKeeper { builder, _, session ->

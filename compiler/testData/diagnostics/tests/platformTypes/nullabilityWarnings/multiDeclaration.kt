@@ -32,3 +32,6 @@ fun test() {
     val (a2, b2) = <!COMPONENT_FUNCTION_ON_NULLABLE, COMPONENT_FUNCTION_ON_NULLABLE!>platformN<!>
     val (a3, b3) = platformJ
 }
+
+/* GENERATED_FIR_TAGS: destructuringDeclaration, flexibleType, functionDeclaration, javaProperty, javaType,
+localProperty, nullableType, propertyDeclaration */

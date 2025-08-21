@@ -19,3 +19,5 @@ class E : A.C() {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, init, nestedClass */

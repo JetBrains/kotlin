@@ -16,3 +16,7 @@ fun elvis(x: ElementOrRef<*, *>?, y: ElementOrRef<*, *>?) {
     val yElement = y?.element
     val e = xElement ?: yElement
 }
+
+/* GENERATED_FIR_TAGS: capturedType, classDeclaration, elvisExpression, functionDeclaration, interfaceDeclaration,
+localProperty, nullableType, out, outProjection, propertyDeclaration, safeCall, starProjection, typeConstraint,
+typeParameter */

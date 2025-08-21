@@ -47,14 +47,14 @@ digraph flowFromTwoInplaceLambdas_kt {
                 13 [label="Function call arguments enter"];
                 14 [label="Function call arguments exit"];
             }
-            15 [label="Function call enter: R?C|kotlin/Function0.invoke|()"];
+            15 [label="Function call enter: R|<local>/x|.R|SubstitutionOverride<kotlin/Function0.invoke: R|T|>|()"];
             16 [label="Function call exit: R|<local>/x|.R|SubstitutionOverride<kotlin/Function0.invoke: R|T|>|()" style="filled" fillcolor=yellow];
             subgraph cluster_7 {
                 color=blue
                 17 [label="Function call arguments enter"];
                 18 [label="Function call arguments exit"];
             }
-            19 [label="Function call enter: R?C|kotlin/Function0.invoke|()"];
+            19 [label="Function call enter: R|<local>/y|.R|SubstitutionOverride<kotlin/Function0.invoke: R|T|>|()"];
             20 [label="Function call exit: R|<local>/y|.R|SubstitutionOverride<kotlin/Function0.invoke: R|T|>|()" style="filled" fillcolor=yellow];
             21 [label="Exit block"];
         }

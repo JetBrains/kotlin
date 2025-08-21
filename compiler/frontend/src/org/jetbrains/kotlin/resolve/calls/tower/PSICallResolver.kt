@@ -299,7 +299,7 @@ class PSICallResolver(
     private val List<ResolvedCall<*>>.allIncomplete: Boolean get() = all { it.status == ResolutionStatus.INCOMPLETE_TYPE_INFERENCE }
 
     private fun ResolvedCall<*>.recordEffects(trace: BindingTrace) {
-        val moduleDescriptor = DescriptorUtils.getContainingModule(this.resultingDescriptor?.containingDeclaration ?: return)
+        val moduleDescriptor = DescriptorUtils.getContainingModule(this.resultingDescriptor.containingDeclaration)
         recordLambdasInvocations(trace, moduleDescriptor)
         recordResultInfo(trace, moduleDescriptor)
     }
@@ -593,7 +593,7 @@ class PSICallResolver(
                     if (i == 0) continue
                     val lambdaExpression = externalLambdaArguments[i].getLambdaExpression() ?: continue
 
-                    if (lambdaExpression.isTrailingLambdaOnNewLIne) {
+                    if (lambdaExpression.isTrailingLambdaOnNewLine) {
                         context.trace.report(Errors.UNEXPECTED_TRAILING_LAMBDA_ON_A_NEW_LINE.on(lambdaExpression))
                     }
                     context.trace.report(Errors.MANY_LAMBDA_EXPRESSION_ARGUMENTS.on(lambdaExpression))

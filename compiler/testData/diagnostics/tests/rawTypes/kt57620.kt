@@ -29,3 +29,6 @@ fun getRunCommandLine(configuration: PythonRunConfiguration) {
     checkSubtype<Map<String, String>>(configuration.fetchEnvs())
     checkSubtype<Map<*, *>>(configuration.fetchEnvs())
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, flexibleType, funWithExtensionReceiver, functionDeclaration, functionalType,
+infix, javaType, localFunction, nullableType, starProjection, typeParameter, typeWithExtension */

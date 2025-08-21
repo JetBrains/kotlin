@@ -17,3 +17,6 @@ value class Foo(val x: Int)
 fun foo() {
     <!INAPPLICABLE_LATEINIT_MODIFIER!>lateinit<!> var b: Foo
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, functionDeclaration, lateinit, localProperty,
+primaryConstructor, propertyDeclaration, value */

@@ -25,19 +25,19 @@ KaKotlinPropertySymbol:
     deprecationStatus: null
   callableId: /lazyProp
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
     annotations: []
     callableId: null
     compilerVisibility: Private
     contextReceivers: []
-    hasBody: false
     hasStableParameterNames: true
     isActual: false
-    isDefault: false
     isExpect: false
     isExtension: false
     isInline: false
+    isNotDefault: true
     isOverride: false
     location: PROPERTY
     modality: FINAL
@@ -80,13 +80,12 @@ KaKotlinPropertySymbol:
     callableId: null
     compilerVisibility: Internal
     contextReceivers: []
-    hasBody: false
     hasStableParameterNames: true
     isActual: false
-    isDefault: false
     isExpect: false
     isExtension: false
     isInline: false
+    isNotDefault: true
     isOverride: false
     location: PROPERTY
     modality: FINAL
@@ -169,3 +168,4 @@ KaKotlinPropertySymbol:
   javaGetterName: getLazyProp
   javaSetterName: setLazyProp
   setterDeprecationStatus: null
+  isInline: false

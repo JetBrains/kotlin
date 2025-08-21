@@ -17,3 +17,7 @@ fun main(args : Array<String>) {
     System.out.println("Hello, ${a}!")
   }
 }
+
+/* GENERATED_FIR_TAGS: comparisonExpression, flexibleType, forLoop, functionDeclaration, functionalType, ifExpression,
+integerLiteral, javaFunction, javaProperty, lambdaLiteral, localProperty, nullableType, propertyDeclaration,
+stringLiteral, typeParameter */

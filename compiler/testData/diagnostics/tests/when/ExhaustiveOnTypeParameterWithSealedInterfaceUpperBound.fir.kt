@@ -86,3 +86,8 @@ fun <T: SealedI> testOut(instance: Inv<out T>) = when(instance.prop) {
     EnumClass.B -> 4
     is DataClass -> 5
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, data, enumDeclaration, enumEntry, equalityExpression, funWithExtensionReceiver,
+functionDeclaration, getter, inline, integerLiteral, interfaceDeclaration, isExpression, nullableType, outProjection,
+primaryConstructor, propertyDeclaration, propertyWithExtensionReceiver, reified, sealed, smartcast, typeConstraint,
+typeParameter, whenExpression, whenWithSubject */

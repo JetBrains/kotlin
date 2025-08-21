@@ -11,11 +11,14 @@ import org.jetbrains.kotlin.backend.common.serialization.SerializedKlibFingerpri
 import org.jetbrains.kotlin.backend.konan.serialization.*
 import org.jetbrains.kotlin.backend.konan.serialization.ClassFieldsSerializer
 import org.jetbrains.kotlin.backend.konan.serialization.InlineFunctionBodyReferenceSerializer
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
+import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.impl.javaFile
+import org.jetbrains.kotlin.library.isNativeStdlib
 import org.jetbrains.kotlin.library.uniqueName
 
 private class LibraryHashComputer {
@@ -35,6 +38,7 @@ private fun getArtifactName(target: KonanTarget, baseName: String, kind: Compile
         "${kind.prefix(target)}$baseName${kind.suffix(target)}"
 
 class CachedLibraries(
+        private val configuration: CompilerConfiguration,
         private val target: KonanTarget,
         allLibraries: List<KotlinLibrary>,
         explicitCaches: Map<KotlinLibrary, String>,
@@ -114,8 +118,9 @@ class CachedLibraries(
                         it.absolutePath
                     }
 
-            fun getFileHash(file: String) =
-                    File(path).child(file).child(HASH_FILE_NAME).readBytes()
+            fun getMetadata(file: String) = File(path).child(file).child(METADATA_FILE_NAME).bufferedReader().use {
+                CacheMetadataSerializer.deserialize(it)
+            }
 
             override fun computeBitcodeDependencies() = perFileBitcodeDependencies.values.flatten()
 
@@ -194,16 +199,27 @@ class CachedLibraries(
             File(explicitPath).trySelectCacheFor(library)
                     ?: error("No cache found for library ${library.libraryName} at $explicitPath")
         } else {
-            val libraryPath = library.libraryFile.absolutePath
+            val libraryPath = library.libraryFile.canonicalPath
             library.trySelectCacheAt { cacheNameToImplicitDirMapping[it] }
-                    ?: autoCacheDirectory.takeIf { autoCacheableFrom.any { libraryPath.startsWith(it.absolutePath) } }
+                    ?: autoCacheDirectory.takeIf { autoCacheableFrom.any { libraryPath.startsWith(it.canonicalPath) } }
                             ?.let {
                                 val dir = computeLibraryCacheDirectory(it, library, uniqueNameToLibrary, uniqueNameToHash)
                                 library.trySelectCacheAt { cacheName -> dir.child(cacheName) }
                             }
         }
 
-        cache?.let { library to it }
+        cache?.let {
+            // A safety measure. We don't expect the compiler to produce non-stdlib caches on MinGW.
+            // However, if it does, we are going to be aware without breaking the compilation.
+            if (target == KonanTarget.MINGW_X64 && !library.isNativeStdlib) {
+                configuration.report(CompilerMessageSeverity.WARNING,
+                        "MinGW target does not support caches for libraries except for stdlib. Found cache at ${cache.path}"
+                )
+                null
+            } else {
+                library to it
+            }
+        }
     }.toMap()
 
     fun isLibraryCached(library: KotlinLibrary): Boolean =
@@ -258,7 +274,7 @@ class CachedLibraries(
         const val PER_FILE_CACHE_IR_LEVEL_DIR_NAME = "ir"
         const val PER_FILE_CACHE_BINARY_LEVEL_DIR_NAME = "bin"
 
-        const val HASH_FILE_NAME = "hash"
+        const val METADATA_FILE_NAME = "metadata.properties"
         const val BITCODE_DEPENDENCIES_FILE_NAME = "bitcode_deps"
         const val INLINE_FUNCTION_BODIES_FILE_NAME = "inline_bodies"
         const val CLASS_FIELDS_FILE_NAME = "class_fields"

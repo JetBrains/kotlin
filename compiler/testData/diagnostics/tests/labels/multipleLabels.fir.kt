@@ -44,3 +44,6 @@ fun foo8() {
     func(<!MULTIPLE_LABELS_ARE_FORBIDDEN!>l2@<!> l1@ {})
     func(<!UNDERSCORE_IS_RESERVED!>_<!>@ {})
 }
+
+/* GENERATED_FIR_TAGS: doWhileLoop, functionDeclaration, functionalType, integerLiteral, lambdaLiteral, localFunction,
+whileLoop */

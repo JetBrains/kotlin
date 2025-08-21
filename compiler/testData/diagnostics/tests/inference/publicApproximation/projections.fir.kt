@@ -18,3 +18,6 @@ fun test() {
     testOut()
     testIn()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, inProjection, interfaceDeclaration, intersectionType,
+nullableType, objectDeclaration, outProjection, typeConstraint, typeParameter, vararg */

@@ -6,7 +6,8 @@
 package org.jetbrains.kotlin.backend.jvm.codegen
 
 import com.intellij.openapi.util.TextRange
-import org.jetbrains.kotlin.backend.common.CodegenUtil
+import org.jetbrains.kotlin.backend.jvm.JvmBackendErrors
+import org.jetbrains.kotlin.backend.jvm.JvmEvaluatorData
 import org.jetbrains.kotlin.backend.jvm.hasMangledReturnType
 import org.jetbrains.kotlin.backend.jvm.ir.*
 import org.jetbrains.kotlin.codegen.inline.*
@@ -23,7 +24,6 @@ import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.ir.expressions.IrLoop
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.psi.doNotAnalyze
-import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmBackendErrors
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.org.objectweb.asm.Type
@@ -35,7 +35,8 @@ class IrSourceCompilerForInline(
     override val callElement: IrFunctionAccessExpression,
     private val callee: IrFunction,
     internal val codegen: ExpressionCodegen,
-    private val data: BlockInfo
+    private val data: BlockInfo,
+    private val evaluatorData: JvmEvaluatorData?,
 ) : SourceCompilerForInline {
     override val callElementText: String
         get() = ir2string(callElement)
@@ -49,6 +50,9 @@ class IrSourceCompilerForInline(
                     codegen.signature.asmMethod
                 else
                     codegen.methodSignatureMapper.mapAsmMethod(rootFunction),
+                // In K1, evaluatorData?.evaluatorGeneratedFunction == null, but it's OK as in K1 non-public-api object inlining error
+                // does not appear in the first place, since all is being compiled in the single module
+                evaluatorData?.evaluatorGeneratedFunction == rootFunction,
                 rootFunction.inlineScopeVisibility,
                 rootFunction.fileParent.getIoFile(),
                 codegen.irFunction.fileParent.fileEntry.getLineNumber(callElement.startOffset),
@@ -98,12 +102,19 @@ class IrSourceCompilerForInline(
                 state
             )
         }
-        return ClassCodegen.getOrCreate(callee.parentAsClass, codegen.context).generateMethodNode(callee)
+        return ClassCodegen.getOrCreate(callee.parentAsClass, codegen.context, codegen.classCodegen.intrinsicExtensions)
+            .generateMethodNode(callee)
     }
 
     override fun hasFinallyBlocks() = data.hasFinallyBlocks()
 
-    override fun generateFinallyBlocks(finallyNode: MethodNode, curFinallyDepth: Int, returnType: Type, afterReturnLabel: Label, target: Label?) {
+    override fun generateFinallyBlocks(
+        finallyNode: MethodNode,
+        curFinallyDepth: Int,
+        returnType: Type,
+        afterReturnLabel: Label,
+        target: Label?,
+    ) {
         ExpressionCodegen(
             codegen.irFunction, codegen.signature, codegen.frameMap, InstructionAdapter(finallyNode), codegen.classCodegen,
             sourceMapper, codegen.reifiedTypeParametersUsages

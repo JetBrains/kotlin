@@ -17,8 +17,8 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.NativeForwardDeclarationKind
 import org.jetbrains.kotlin.name.NativeStandardInteropNames
 import org.jetbrains.kotlin.name.NativeStandardInteropNames.cInteropPackage
-import org.jetbrains.kotlin.objcexport.analysisApiUtils.getDeclaredSuperInterfaceSymbols
-import org.jetbrains.kotlin.objcexport.analysisApiUtils.getSuperClassSymbolNotAny
+import org.jetbrains.kotlin.analysis.api.export.utilities.getDeclaredSuperInterfaceSymbols
+import org.jetbrains.kotlin.analysis.api.export.utilities.getSuperClassSymbolNotAny
 import org.jetbrains.kotlin.objcexport.analysisApiUtils.objCErrorType
 import org.jetbrains.kotlin.objcexport.extras.objCTypeExtras
 import org.jetbrains.kotlin.objcexport.extras.requiresForwardDeclaration

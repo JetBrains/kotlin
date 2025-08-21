@@ -32,3 +32,6 @@ interface G2<T> : G0<G1<out G2<*>, T>>
 abstract class H0<X> {
     inner abstract class H1<Y> : H0<H1<Y>>() // Outer(X) should not be reported as non-expansive
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, in, inner, interfaceDeclaration, nullableType, outProjection, starProjection,
+typeConstraint, typeParameter */

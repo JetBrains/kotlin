@@ -8,15 +8,18 @@ package org.jetbrains.kotlin.ir.generator.model.symbol
 import org.jetbrains.kotlin.generators.tree.AbstractField.SymbolFieldRole
 import org.jetbrains.kotlin.generators.tree.ClassOrElementRef
 import org.jetbrains.kotlin.ir.generator.IrSymbolTree.classifierSymbol
-import org.jetbrains.kotlin.ir.generator.IrSymbolTree.typeAliasSymbol
 import org.jetbrains.kotlin.ir.generator.irSimpleTypeType
-import org.jetbrains.kotlin.ir.generator.irTypeAbbreviationType
 import org.jetbrains.kotlin.ir.generator.model.Element
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
 
 fun symbolRemapperMethodName(symbolClass: Symbol, role: SymbolFieldRole): String {
     val elementName = symbolClass.name.removeSuffix("Symbol")
     return "get${role.name.lowercase().capitalizeAsciiOnly()}$elementName"
+}
+
+fun symbolVisitorMethodName(symbolClass: Symbol, role: SymbolFieldRole): String {
+    val elementName = symbolClass.name.removeSuffix("Symbol")
+    return "visit${role.name.lowercase().capitalizeAsciiOnly()}$elementName"
 }
 
 data class FieldWithSymbol(
@@ -28,7 +31,6 @@ data class FieldWithSymbol(
 
 private val additionalSymbolFields = listOf(
     FieldWithSymbol(classifierSymbol, "classifier", SymbolFieldRole.REFERENCED, irSimpleTypeType),
-    FieldWithSymbol(typeAliasSymbol, "typeAlias", SymbolFieldRole.REFERENCED, irTypeAbbreviationType)
 )
 
 private val Element.fieldsWithSymbols: List<FieldWithSymbol>

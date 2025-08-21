@@ -42,3 +42,6 @@ data class InternalInline <!DATA_CLASS_COPY_VISIBILITY_WILL_BE_CHANGED_WARNING!>
         copy()
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, data, functionDeclaration, inline, integerLiteral, primaryConstructor,
+propertyDeclaration */

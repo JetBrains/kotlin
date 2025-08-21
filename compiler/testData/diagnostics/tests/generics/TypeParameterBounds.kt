@@ -23,3 +23,5 @@ interface incorrectJ<<!MISPLACED_TYPE_PARAMETER_CONSTRAINTS!>T: G<D<T>><!>> wher
 interface correctJ<T> where T : G<D<T>>, T : <!REPEATED_BOUND!>G<D<T?>><!>
 
 fun <T> bar() where T : D<A>, T : <!REPEATED_BOUND!>D<B><!> {}
+
+/* GENERATED_FIR_TAGS: functionDeclaration, interfaceDeclaration, nullableType, typeConstraint, typeParameter */

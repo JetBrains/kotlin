@@ -3,6 +3,8 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:OptIn(ExperimentalWasmJsInterop::class)
+
 package kotlin.wasm.internal
 
 import kotlin.reflect.*
@@ -13,7 +15,7 @@ private fun getConstructor(obj: JsAny): JsAny? =
 
 @Suppress("UNCHECKED_CAST")
 internal actual fun <T : Any> getKClassForObject(obj: Any): KClass<T> {
-    if (obj !is JsExternalBox) return KClassImpl(getTypeInfoTypeDataByPtr(obj.typeInfo))
+    if (obj !is JsExternalBox) return KClassImpl(wasmGetObjectRtti(obj))
     val jsConstructor = getConstructor(obj.ref) ?: error("JavaScript constructor is not defined")
     return KExternalClassImpl(jsConstructor)
 }

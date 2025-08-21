@@ -6,7 +6,7 @@ import a.Base
 class Test : Base()
 
 // FILE: a/Base.java
-package a
+package a;
 
 public class Base {
     public static void publicStaticMethod() {}

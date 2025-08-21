@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// FIR_IDENTICAL
 // DIAGNOSTICS: -UNUSED_EXPRESSION -UNUSED_PARAMETER -UNUSED_VARIABLE -NOTHING_TO_INLINE
 
 inline fun <R> inlineFunOnlyLocal(crossinline p: () -> R) {
@@ -23,3 +22,6 @@ inline fun <R> inlineFun(p: () -> R) {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, crossinline, functionDeclaration, functionalType, inline, localClass,
+nullableType, propertyDeclaration, typeParameter */

@@ -1,0 +1,3 @@
+KtNameReferenceExpression(203,210): 'another'
+  KtSimpleNameReference:
+    another: Another

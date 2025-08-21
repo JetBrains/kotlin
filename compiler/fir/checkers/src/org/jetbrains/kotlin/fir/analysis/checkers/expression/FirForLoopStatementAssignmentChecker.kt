@@ -20,7 +20,8 @@ import org.jetbrains.kotlin.fir.expressions.FirLoop
 import org.jetbrains.kotlin.fir.expressions.FirReturnExpression
 
 object FirForLoopStatementAssignmentChecker : FirLoopExpressionChecker(MppCheckerKind.Common) {
-    override fun check(expression: FirLoop, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(expression: FirLoop) {
         // Checks the pattern for desugared for loop.
         val parent = if (context.containingElements.size >= 2) context.containingElements[context.containingElements.size - 2] else return
         if (parent.source?.kind != KtFakeSourceElementKind.DesugaredForLoop) return
@@ -41,6 +42,6 @@ object FirForLoopStatementAssignmentChecker : FirLoopExpressionChecker(MppChecke
         )
             return
 
-        reporter.reportOn(expression.source, FirErrors.EXPRESSION_EXPECTED, context)
+        reporter.reportOn(expression.source, FirErrors.EXPRESSION_EXPECTED)
     }
 }

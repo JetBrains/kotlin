@@ -18,3 +18,6 @@ class DefaultArgsInCompanionImpl {
 }
 
 <!DEFAULT_ARGUMENTS_IN_EXPECT_WITH_ACTUAL_TYPEALIAS!>actual typealias DefaultArgsInCompanion = DefaultArgsInCompanionImpl<!>
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, companionObject, expect, functionDeclaration, objectDeclaration,
+stringLiteral, typeAliasDeclaration */

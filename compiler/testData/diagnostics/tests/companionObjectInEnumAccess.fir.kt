@@ -14,3 +14,5 @@ enum class MyEnum {
         private val staticValue = VALUE
     }
 }
+
+/* GENERATED_FIR_TAGS: companionObject, enumDeclaration, enumEntry, init, objectDeclaration, propertyDeclaration */

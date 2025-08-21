@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.name.Name
 
 @FirBuilderDsl
 class FirReplSnippetBuilder : FirAnnotationContainerBuilder {
-    override var source: KtSourceElement? = null
     var resolvePhase: FirResolvePhase = FirResolvePhase.RAW_FIR
     override val annotations: MutableList<FirAnnotation> = mutableListOf()
     lateinit var moduleData: FirModuleData
@@ -34,13 +33,13 @@ class FirReplSnippetBuilder : FirAnnotationContainerBuilder {
     var attributes: FirDeclarationAttributes = FirDeclarationAttributes()
     lateinit var name: Name
     lateinit var symbol: FirReplSnippetSymbol
+    lateinit var source: KtSourceElement
     val receivers: MutableList<FirScriptReceiverParameter> = mutableListOf()
     lateinit var body: FirBlock
     lateinit var resultTypeRef: FirTypeRef
 
     override fun build(): FirReplSnippet {
         return FirReplSnippetImpl(
-            source,
             resolvePhase,
             annotations.toMutableOrEmpty(),
             moduleData,
@@ -48,12 +47,12 @@ class FirReplSnippetBuilder : FirAnnotationContainerBuilder {
             attributes,
             name,
             symbol,
+            source,
             receivers.toMutableOrEmpty(),
             body,
             resultTypeRef,
         )
     }
-
 }
 
 @OptIn(ExperimentalContracts::class)

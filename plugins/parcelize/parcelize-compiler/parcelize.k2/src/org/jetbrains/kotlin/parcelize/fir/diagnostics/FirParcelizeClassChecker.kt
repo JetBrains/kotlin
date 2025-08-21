@@ -32,7 +32,8 @@ import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
 class FirParcelizeClassChecker(private val parcelizeAnnotations: List<ClassId>) : FirClassChecker(MppCheckerKind.Platform) {
-    override fun check(declaration: FirClass, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirClass) {
         checkParcelableClass(declaration, context, reporter)
         checkParcelerClass(declaration, context, reporter)
     }
@@ -118,7 +119,7 @@ fun FirClassSymbol<*>?.isParcelize(session: FirSession, parcelizeAnnotations: Li
 
     if (this == null) return false
     return checkParcelizeClassSymbols(this, session) { symbol ->
-        symbol.annotations.any { it.toAnnotationClassId(session) in parcelizeAnnotations }
+        symbol.resolvedAnnotationsWithClassIds.any { it.toAnnotationClassId(session) in parcelizeAnnotations }
     }
 }
 

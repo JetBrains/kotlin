@@ -19,3 +19,6 @@ fun bar(): Foo {
     if (x == null) throw Exception()
     return repeat(x)
 }
+
+/* GENERATED_FIR_TAGS: equalityExpression, functionDeclaration, ifExpression, interfaceDeclaration, lambdaLiteral,
+localProperty, nullableType, propertyDeclaration, smartcast, typeParameter */

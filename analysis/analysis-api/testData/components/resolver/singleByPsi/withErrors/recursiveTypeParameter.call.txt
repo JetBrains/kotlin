@@ -7,10 +7,12 @@ KtCallExpression(96,130): 'install(CoroutineModule.builder())'
           receiverType = null
           returnType = ft<AbstractModule.Builder<*>, AbstractModule.Builder<*>?>
           symbol = builder: ft<AbstractModule.Builder<*>, AbstractModule.Builder<*>?>
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaImplicitReceiverValue:
           symbol = /RunnerModule
           type = RunnerModule
@@ -25,7 +27,9 @@ KtCallExpression(96,130): 'install(CoroutineModule.builder())'
               receiverType = null
               returnType = ft<AbstractModule.Builder<*>, AbstractModule.Builder<*>?>
               symbol = builder: ft<AbstractModule.Builder<*>, AbstractModule.Builder<*>?>
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = /AbstractModule.install
       typeArgumentsMapping = {}

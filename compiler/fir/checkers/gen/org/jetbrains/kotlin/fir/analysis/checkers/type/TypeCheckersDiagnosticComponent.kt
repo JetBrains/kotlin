@@ -63,8 +63,8 @@ class TypeCheckersDiagnosticComponent(
         checkers.allTypeRefCheckers.check(implicitTypeRef, data)
     }
 
-    override fun visitTypeRefWithNullability(typeRefWithNullability: FirTypeRefWithNullability, data: CheckerContext) {
-        checkers.allTypeRefCheckers.check(typeRefWithNullability, data)
+    override fun visitUnresolvedTypeRef(unresolvedTypeRef: FirUnresolvedTypeRef, data: CheckerContext) {
+        checkers.allTypeRefCheckers.check(unresolvedTypeRef, data)
     }
 
     override fun visitUserTypeRef(userTypeRef: FirUserTypeRef, data: CheckerContext) {
@@ -85,7 +85,9 @@ class TypeCheckersDiagnosticComponent(
     ) {
         for (checker in this) {
             try {
-                checker.check(element, context, reporter)
+                context(context, reporter) {
+                    checker.check(element)
+                }
             } catch (e: Exception) {
                 rethrowExceptionWithDetails("Exception in type checkers", e) {
                     withFirEntry("element", element)

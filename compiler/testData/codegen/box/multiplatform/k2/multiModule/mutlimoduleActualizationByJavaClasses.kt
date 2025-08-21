@@ -19,7 +19,7 @@ public abstract class MyA {
 actual typealias A = MyA
 
 
-// MODULE: common(platformLib)
+// MODULE: common(commonLib)
 // FILE: common.kt
 expect open class B : A
 

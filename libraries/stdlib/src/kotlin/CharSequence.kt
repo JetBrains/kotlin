@@ -5,15 +5,20 @@
 
 package kotlin
 
-import kotlin.internal.ActualizeByJvmBuiltinProvider
 
 /**
  * Represents a readable sequence of [Char] values.
  */
-@ActualizeByJvmBuiltinProvider
 public expect interface CharSequence {
     /**
      * Returns the length of this character sequence.
+     *
+     * The length is measured in the number of [Char]s constituting the sequence.
+     * It implies that the length may not correspond to the number of printed graphemes:
+     * some [Char]s could represent control, non-printable, or diaeresis symbols, others could form UTF-16 surrogate pairs,
+     * required to encode Unicode code points not representable by a single [Char].
+     *
+     * @sample samples.text.CharSequences.charSequenceLength
      */
     public val length: Int
 

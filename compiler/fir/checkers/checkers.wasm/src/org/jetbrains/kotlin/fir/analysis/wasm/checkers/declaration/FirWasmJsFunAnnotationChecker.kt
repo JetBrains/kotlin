@@ -19,12 +19,13 @@ import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.name.WasmStandardClassIds
 
 object FirWasmJsFunAnnotationChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
-    override fun check(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirDeclaration) {
         val annotation: FirAnnotation =
             declaration.annotations.getAnnotationByClassId(WasmStandardClassIds.Annotations.JsFun, context.session) ?: return
 
         if (!context.isTopLevel || !declaration.symbol.isEffectivelyExternal(context.session)) {
-            reporter.reportOn(annotation.source, FirWasmErrors.WRONG_JS_FUN_TARGET, context)
+            reporter.reportOn(annotation.source, FirWasmErrors.WRONG_JS_FUN_TARGET)
         }
     }
 }

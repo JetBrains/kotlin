@@ -7,11 +7,6 @@ repositories {
     mavenCentral()
 }
 
-// KT-45801
-tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinNativeCompile>().configureEach {
-    kotlinOptions
-}
-
 kotlin {
     sourceSets["commonMain"].apply {
         dependencies {
@@ -31,8 +26,11 @@ kotlin {
     val windows = mingwX64("mingw64")
 
     configure(listOf(macos, macosArm, linux, windows)) {
-        compilations.all { kotlinOptions.verbose = true }
-        compilations["test"].kotlinOptions.freeCompilerArgs += "-nowarn"
+        compilerOptions.verbose.set(true)
+
+        compilations["test"].compileTaskProvider.configure {
+            compilerOptions.freeCompilerArgs.add("-nowarn")
+        }
         binaries {
 
             executable()                       // Executable with default name.
@@ -50,8 +48,10 @@ kotlin {
             executable("test2") {
                 compilation = compilations["test"]
                 freeCompilerArgs += "-tr"
-                linkTask.kotlinOptions {
-                    freeCompilerArgs += "-Xtime"
+                linkTaskProvider.configure {
+                    toolOptions {
+                        freeCompilerArgs.add("-Xtime")
+                    }
                 }
             }
 
@@ -64,7 +64,7 @@ kotlin {
         }
         // Check that we can access binaries/tasks:
         // Just by name:
-        println("Check link task: ${binaries["releaseShared"].linkTask.name}")
+        println("Check link task: ${binaries["releaseShared"].linkTaskProvider.name}")
         // Using a typed getter:
         println("Check run task: ${binaries.getExecutable("foo", RELEASE).runTask?.name}")
     }

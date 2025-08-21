@@ -29,3 +29,6 @@ class TypedThis {
         this@TypedThis
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionDeclarationWithContext,
+getter, propertyDeclaration, propertyDeclarationWithContext, thisExpression, typeAliasDeclaration */

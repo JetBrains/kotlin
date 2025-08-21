@@ -13,3 +13,6 @@ fun test(foo: A.() -> Int) {
         this.foo() checkType { _<A>() }
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType, infix,
+lambdaLiteral, nullableType, thisExpression, typeParameter, typeWithExtension */

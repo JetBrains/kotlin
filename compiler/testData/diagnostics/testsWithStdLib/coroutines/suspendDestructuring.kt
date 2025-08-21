@@ -13,3 +13,6 @@ fun bar() {
         x.length
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionalType, lambdaLiteral, localProperty, operator,
+propertyDeclaration, stringLiteral, suspend */

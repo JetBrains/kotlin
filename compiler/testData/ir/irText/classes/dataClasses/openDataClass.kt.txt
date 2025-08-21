@@ -33,7 +33,7 @@ open data class ValidatedProperties {
     when {
       other !is ValidatedProperties -> return false
     }
-    val tmp_0: ValidatedProperties = other as ValidatedProperties
+    val tmp_0: ValidatedProperties = other /*as ValidatedProperties */
     when {
       EQEQ(arg0 = <this>.<get-test1>(), arg1 = tmp_0.<get-test1>()).not() -> return false
     }
@@ -54,4 +54,3 @@ open data class ValidatedProperties {
   }
 
 }
-

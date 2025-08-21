@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: BACKEND
-// LANGUAGE: +TypeInferenceOnCallsWithSelfTypes
 
 // FILE: JavaBuilder.java
 public class JavaBuilder<B extends JavaBuilder<B>> {
@@ -58,3 +57,6 @@ fun <K : JavaBuilder<K>> testTypeParamJava(builder: JavaBuilder<K>) {
         .test()
         .foo()
 }
+
+/* GENERATED_FIR_TAGS: capturedType, classDeclaration, flexibleType, functionDeclaration, functionalType, javaType,
+lambdaLiteral, nullableType, out, starProjection, typeConstraint, typeParameter */

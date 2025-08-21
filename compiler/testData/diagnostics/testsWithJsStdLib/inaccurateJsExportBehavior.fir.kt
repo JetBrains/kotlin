@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: KLIB
 // ISSUE: KT-74389
 // WITH_STDLIB
 
@@ -17,3 +17,7 @@ class Box<T>
 
 <!NON_EXPORTABLE_TYPE!>@JsExport
 fun box(): Box<*><!> = null!!
+
+@JsExport
+fun <T> promisify(x: T): Box<out T> =
+    null!!

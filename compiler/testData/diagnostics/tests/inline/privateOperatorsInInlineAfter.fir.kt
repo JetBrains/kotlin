@@ -62,3 +62,8 @@ inline fun foo() {
     for (p in <!NON_PUBLIC_CALL_FROM_PUBLIC_INLINE, NON_PUBLIC_CALL_FROM_PUBLIC_INLINE!>P<!>) {
     }
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, assignment, comparisonExpression, destructuringDeclaration, forLoop,
+funWithExtensionReceiver, functionDeclaration, incrementDecrementExpression, inline, integerLiteral, lambdaLiteral,
+localProperty, nullableType, objectDeclaration, operator, propertyDeclaration, propertyDelegate, rangeExpression, setter,
+starProjection, stringLiteral, thisExpression, unaryExpression */

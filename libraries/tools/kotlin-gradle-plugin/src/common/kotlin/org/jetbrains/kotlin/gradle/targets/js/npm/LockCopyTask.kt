@@ -6,12 +6,16 @@
 package org.jetbrains.kotlin.gradle.targets.js.npm
 
 import org.gradle.api.DefaultTask
-import org.gradle.api.file.*
+import org.gradle.api.file.ConfigurableFileCollection
+import org.gradle.api.file.DirectoryProperty
+import org.gradle.api.file.FileSystemOperations
+import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
 import org.gradle.work.DisableCachingByDefault
 import org.gradle.work.NormalizeLineEndings
+import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 import java.io.File
 import javax.inject.Inject
 
@@ -59,13 +63,40 @@ abstract class LockCopyTask : DefaultTask() {
     }
 
     companion object {
+        @InternalKotlinGradlePluginApi
+        const val STORE_PACKAGE_LOCK_BASE_NAME = "storePackageLock"
+
+        @InternalKotlinGradlePluginApi
+        const val RESTORE_PACKAGE_LOCK_BASE_NAME = "restorePackageLock"
+
+        @InternalKotlinGradlePluginApi
+        const val UPGRADE_PACKAGE_LOCK_BASE_NAME = "upgradePackageLock"
+
+        @Deprecated(
+            "Use storePackageLockTaskProvider from NpmExtension or WasmNpmExtension instead. " +
+                    "Scheduled for removal in Kotlin 2.4."
+        )
         const val STORE_PACKAGE_LOCK_NAME = "kotlinStorePackageLock"
+
+        @Deprecated(
+            "Use restorePackageLockTaskProvider from NpmExtension or WasmNpmExtension instead. " +
+                    "Scheduled for removal in Kotlin 2.4."
+        )
         const val RESTORE_PACKAGE_LOCK_NAME = "kotlinRestorePackageLock"
+
+        @Deprecated(
+            "It is task name for JS target only. Use UPGRADE_PACKAGE_LOCK_BASE_NAME to calculate correct name for your platform. " +
+                    "Scheduled for removal in Kotlin 2.4."
+        )
         const val UPGRADE_PACKAGE_LOCK = "kotlinUpgradePackageLock"
-        const val PACKAGE_LOCK_MISMATCH_MESSAGE = "Lock file was changed. Run the `$UPGRADE_PACKAGE_LOCK` task to actualize lock file"
+
         const val KOTLIN_JS_STORE = "kotlin-js-store"
         const val PACKAGE_LOCK = "package-lock.json"
         const val YARN_LOCK = "yarn.lock"
+
+        @InternalKotlinGradlePluginApi
+        fun packageLockMismatchMessage(upgradeTaskName: String) =
+            "Lock file was changed. Run the `$upgradeTaskName` task to actualize lock file"
     }
 }
 

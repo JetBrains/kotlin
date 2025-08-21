@@ -16,3 +16,5 @@ import a.<!PACKAGE_CANNOT_BE_IMPORTED!>x<!>
 import b.<!PACKAGE_CANNOT_BE_IMPORTED!>x<!>
 
 class Y : <!UNRESOLVED_REFERENCE!>x<!>.X
+
+/* GENERATED_FIR_TAGS: classDeclaration */

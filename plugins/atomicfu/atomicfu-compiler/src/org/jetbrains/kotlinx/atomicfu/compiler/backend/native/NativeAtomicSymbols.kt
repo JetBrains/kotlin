@@ -6,7 +6,6 @@
 package org.jetbrains.kotlinx.atomicfu.compiler.backend.native
 
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
-import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
@@ -71,11 +70,11 @@ class NativeAtomicSymbols(
     }
     val intPlusOperator by lazy {
         context.referenceFunctions(CallableId(StandardClassIds.Int, Name.identifier("plus")))
-            .single { it.owner.valueParameters[0].type.isInt() }
+            .single { it.owner.parameters.size == 2 && it.owner.parameters.last().type.isInt() }
     }
     val longPlusOperator by lazy {
         context.referenceFunctions(CallableId(StandardClassIds.Long, Name.identifier("plus")))
-            .single { it.owner.valueParameters[0].type.isLong() }
+            .single { it.owner.parameters.size == 2 && it.owner.parameters.last().type.isLong() }
     }
 
     fun isVolatilePropertyReferenceGetter(type: IrType) = type.classOrNull == irBuiltIns.functionN(0).symbol

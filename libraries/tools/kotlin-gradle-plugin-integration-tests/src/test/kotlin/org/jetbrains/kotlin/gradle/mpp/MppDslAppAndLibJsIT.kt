@@ -16,6 +16,10 @@ import kotlin.io.path.name
 @MppGradlePluginTests
 class MppDslAppAndLibJsIT : KGPBaseTest() {
 
+    override val defaultBuildOptions: BuildOptions
+        // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
+        get() = super.defaultBuildOptions.copy(isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED)
+
     @GradleTest
     @TestMetadata(value = "both-js-lib-and-app")
     fun testLibAndAppJsIr(gradleVersion: GradleVersion) {

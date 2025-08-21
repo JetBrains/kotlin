@@ -1,3 +1,5 @@
+// JVM_DEFAULT_MODE: enable
+
 @Retention(AnnotationRetention.BINARY)
 annotation class MyAnnotation
 

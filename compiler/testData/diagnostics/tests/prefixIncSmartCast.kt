@@ -12,3 +12,6 @@ fun main() {
     val x: ST = ++local
     val y: ST = <!TYPE_MISMATCH!>local<!>
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, functionDeclaration, incrementDecrementExpression, localProperty,
+operator, propertyDeclaration, smartcast */

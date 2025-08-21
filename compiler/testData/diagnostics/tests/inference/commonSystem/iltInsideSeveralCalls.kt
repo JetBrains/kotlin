@@ -12,3 +12,6 @@ fun main() {
         consumeLongAndMaterialize(3L * 1000)
     } else true
 }
+
+/* GENERATED_FIR_TAGS: asExpression, functionDeclaration, ifExpression, integerLiteral, multiplicativeExpression,
+nullableType, typeParameter */

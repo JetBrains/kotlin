@@ -509,6 +509,12 @@ public class FirLoadK2CompiledJsKotlinTestGenerated extends AbstractFirLoadK2Com
       @TestDataPath("$PROJECT_ROOT")
       public class WithUseSiteTarget {
         @Test
+        @TestMetadata("All.kt")
+        public void testAll() {
+          runTest("compiler/testData/loadJava/compiledKotlin/annotations/withUseSiteTarget/All.kt");
+        }
+
+        @Test
         public void testAllFilesPresentInWithUseSiteTarget() {
           KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/annotations/withUseSiteTarget"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
         }
@@ -1016,6 +1022,28 @@ public class FirLoadK2CompiledJsKotlinTestGenerated extends AbstractFirLoadK2Com
         public void testConstructorVararg() {
           runTest("compiler/testData/loadJava/compiledKotlin/constructor/vararg/ConstructorVararg.kt");
         }
+      }
+    }
+
+    @Nested
+    @TestMetadata("compiler/testData/loadJava/compiledKotlin/contextParameters")
+    @TestDataPath("$PROJECT_ROOT")
+    public class ContextParameters {
+      @Test
+      public void testAllFilesPresentInContextParameters() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/contextParameters"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+      }
+
+      @Test
+      @TestMetadata("contractOnContextParameter.kt")
+      public void testContractOnContextParameter() {
+        runTest("compiler/testData/loadJava/compiledKotlin/contextParameters/contractOnContextParameter.kt");
+      }
+
+      @Test
+      @TestMetadata("simpleContextParameters.kt")
+      public void testSimpleContextParameters() {
+        runTest("compiler/testData/loadJava/compiledKotlin/contextParameters/simpleContextParameters.kt");
       }
     }
 

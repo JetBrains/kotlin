@@ -14,3 +14,6 @@ fun test(x: XdAgile) {
     val y = x.swimlaneSettings as XdIssueBasedSwimlaneSettings
     x.swimlaneSettings!!.settingsLogic
 }
+
+/* GENERATED_FIR_TAGS: asExpression, checkNotNullCall, classDeclaration, functionDeclaration, getter, localProperty,
+nullableType, override, primaryConstructor, propertyDeclaration, smartcast, stringLiteral */

@@ -158,8 +158,8 @@ open class LiveLiteralTransformer(
         typeArgumentsCount = 0,
         constructorTypeArgumentsCount = 0
     ).apply {
-        putValueArgument(0, irConst(key))
-        putValueArgument(1, irConst(offset))
+        arguments[0] = irConst(key)
+        arguments[1] = irConst(offset)
     }
 
     private fun irLiveLiteralFileInfoAnnotation(
@@ -172,7 +172,7 @@ open class LiveLiteralTransformer(
         typeArgumentsCount = 0,
         constructorTypeArgumentsCount = 0
     ).apply {
-        putValueArgument(0, irConst(file))
+        arguments[0] = irConst(file)
     }
 
     @OptIn(IrImplementationDetail::class)
@@ -210,7 +210,7 @@ open class LiveLiteralTransformer(
             }.also { fn ->
                 fn.correspondingPropertySymbol = p.symbol
                 val thisParam = clazz.thisReceiver!!.copyTo(fn)
-                fn.dispatchReceiverParameter = thisParam
+                fn.parameters += thisParam
                 fn.body = DeclarationIrBuilder(context, fn.symbol).irBlockBody {
                     +irReturn(irGetField(irGet(thisParam), p.backingField!!))
                 }
@@ -237,7 +237,7 @@ open class LiveLiteralTransformer(
             }.also { fn ->
                 fn.correspondingPropertySymbol = p.symbol
                 val thisParam = clazz.thisReceiver!!.copyTo(fn)
-                fn.dispatchReceiverParameter = thisParam
+                fn.parameters += thisParam
                 fn.body = DeclarationIrBuilder(context, fn.symbol).irBlockBody {
                     +irReturn(irGetField(irGet(thisParam), p.backingField!!))
                 }
@@ -249,7 +249,7 @@ open class LiveLiteralTransformer(
             }.also { fn ->
                 fn.correspondingPropertySymbol = p.symbol
                 val thisParam = clazz.thisReceiver!!.copyTo(fn)
-                fn.dispatchReceiverParameter = thisParam
+                fn.parameters += thisParam
                 val valueParam = fn.addValueParameter("value", stateType)
                 fn.body = DeclarationIrBuilder(context, fn.symbol).irBlockBody {
                     +irSetField(irGet(thisParam), p.backingField!!, irGet(valueParam))
@@ -293,14 +293,11 @@ open class LiveLiteralTransformer(
                     subject = irGet(a),
                     thenPart = irBlock(resultType = stateType) {
                         val liveLiteralCall = irCall(liveLiteral).apply {
-                            putValueArgument(0, irString(key))
-                            putValueArgument(
-                                1,
-                                irGet(
-                                    literalType,
-                                    irGet(thisParam),
-                                    defaultProp.getter!!.symbol
-                                )
+                            arguments[0] = irString(key)
+                            arguments[1] = irGet(
+                                literalType,
+                                irGet(thisParam),
+                                defaultProp.getter!!.symbol
                             )
                             typeArguments[0] = literalType
                         }
@@ -370,25 +367,30 @@ open class LiveLiteralTransformer(
         // If live literals are enabled, don't do anything
         if (!liveLiteralsEnabled) return expression
 
+        val originalStartOffset = expression.startOffset
+        val originalEndOffset = expression.endOffset
         // create the getter function on the live literals class
         val getter = irLiveLiteralGetter(
             key = key,
             // Move the start/endOffsets to the call of the getter since we don't
             // want to step into <clinit> in the debugger.
-            literalValue = expression.copyWithOffsets(UNDEFINED_OFFSET, UNDEFINED_OFFSET),
+            literalValue = expression.apply {
+                startOffset = UNDEFINED_OFFSET
+                endOffset = UNDEFINED_OFFSET
+            },
             literalType = expression.type,
-            startOffset = expression.startOffset
+            startOffset = originalStartOffset
         )
 
         // return a call to the getter in place of the constant
         return IrCallImpl(
-            expression.startOffset,
-            expression.endOffset,
+            originalStartOffset,
+            originalEndOffset,
             expression.type,
             getter.symbol,
             getter.symbol.owner.typeParameters.size
         ).apply {
-            dispatchReceiver = irGetLiveLiteralsClass(expression.startOffset, expression.endOffset)
+            dispatchReceiver = irGetLiveLiteralsClass(originalStartOffset, originalEndOffset)
         }
     }
 
@@ -477,7 +479,7 @@ open class LiveLiteralTransformer(
                                 origin = IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR
                             }.also { fn ->
                                 val thisParam = it.thisReceiver!!.copyTo(fn)
-                                fn.dispatchReceiverParameter = thisParam
+                                fn.parameters += thisParam
                                 fn.body = DeclarationIrBuilder(context, fn.symbol).irBlockBody {
                                     +irReturn(irGetField(irGet(thisParam), p.backingField!!))
                                 }
@@ -520,107 +522,33 @@ open class LiveLiteralTransformer(
         return aTry
     }
 
-    override fun visitDelegatingConstructorCall(
-        expression: IrDelegatingConstructorCall,
-    ): IrExpression {
+    override fun visitFunctionAccess(expression: IrFunctionAccessExpression): IrExpression {
         val owner = expression.symbol.owner
 
         // annotations are represented as constructor calls in IR, but the parameters need to be
         // compile-time values only, so we can't transform them at all.
-        if (owner.parentAsClass.isAnnotationClass) return expression
-
-        val name = owner.name.asJvmFriendlyString()
-
-        return enter("call-$name") {
-            expression.dispatchReceiver = enter("\$this") {
-                expression.dispatchReceiver?.transform(this, null)
-            }
-            expression.extensionReceiver = enter("\$\$this") {
-                expression.extensionReceiver?.transform(this, null)
-            }
-
-            for (i in 0 until expression.valueArgumentsCount) {
-                val arg = expression.getValueArgument(i)
-                if (arg != null) {
-                    enter("arg-$i") {
-                        expression.putValueArgument(i, arg.transform(this, null))
-                    }
-                }
-            }
-            expression
+        if (
+            (expression is IrConstructorCall || expression is IrDelegatingConstructorCall) &&
+                owner.parentAsClass.isAnnotationClass
+        ) {
+            return expression
         }
-    }
-
-    override fun visitEnumConstructorCall(expression: IrEnumConstructorCall): IrExpression {
-        val owner = expression.symbol.owner
         val name = owner.name.asJvmFriendlyString()
 
         return enter("call-$name") {
-            expression.dispatchReceiver = enter("\$this") {
-                expression.dispatchReceiver?.transform(this, null)
-            }
-            expression.extensionReceiver = enter("\$\$this") {
-                expression.extensionReceiver?.transform(this, null)
-            }
-
-            for (i in 0 until expression.valueArgumentsCount) {
-                val arg = expression.getValueArgument(i)
-                if (arg != null) {
-                    enter("arg-$i") {
-                        expression.putValueArgument(i, arg.transform(this, null))
-                    }
+            // The value argument counter is not /technically/ needed, but it preserves 0-indexed labels
+            var valueArgCount = 0
+            for (i in 0 until expression.arguments.size) {
+                val arg = expression.arguments[i]
+                val label = when (expression.symbol.owner.parameters[i].kind) {
+                    IrParameterKind.DispatchReceiver -> $$"$this"
+                    IrParameterKind.ExtensionReceiver -> $$$"$$this"
+                    IrParameterKind.Context,
+                    IrParameterKind.Regular -> "arg-${valueArgCount++}"
                 }
-            }
-            expression
-        }
-    }
-
-    override fun visitConstructorCall(expression: IrConstructorCall): IrExpression {
-        val owner = expression.symbol.owner
-
-        // annotations are represented as constructor calls in IR, but the parameters need to be
-        // compile-time values only, so we can't transform them at all.
-        if (owner.parentAsClass.isAnnotationClass) return expression
-
-        val name = owner.name.asJvmFriendlyString()
-
-        return enter("call-$name") {
-            expression.dispatchReceiver = enter("\$this") {
-                expression.dispatchReceiver?.transform(this, null)
-            }
-            expression.extensionReceiver = enter("\$\$this") {
-                expression.extensionReceiver?.transform(this, null)
-            }
-
-            for (i in 0 until expression.valueArgumentsCount) {
-                val arg = expression.getValueArgument(i)
                 if (arg != null) {
-                    enter("arg-$i") {
-                        expression.putValueArgument(i, arg.transform(this, null))
-                    }
-                }
-            }
-            expression
-        }
-    }
-
-    override fun visitCall(expression: IrCall): IrExpression {
-        val owner = expression.symbol.owner
-        val name = owner.name.asJvmFriendlyString()
-
-        return enter("call-$name") {
-            expression.dispatchReceiver = enter("\$this") {
-                expression.dispatchReceiver?.transform(this, null)
-            }
-            expression.extensionReceiver = enter("\$\$this") {
-                expression.extensionReceiver?.transform(this, null)
-            }
-
-            for (i in 0 until expression.valueArgumentsCount) {
-                val arg = expression.getValueArgument(i)
-                if (arg != null) {
-                    enter("arg-$i") {
-                        expression.putValueArgument(i, arg.transform(this, null))
+                    enter(label) {
+                        expression.arguments[i] = arg.transform(this, null)
                     }
                 }
             }

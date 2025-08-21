@@ -21,3 +21,6 @@ fun test() {
         x.plus(1)
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, equalityExpression, funWithExtensionReceiver, functionDeclaration, ifExpression,
+integerLiteral, localProperty, nullableType, propertyDeclaration, smartcast, whileLoop */

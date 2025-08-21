@@ -12,6 +12,7 @@ fun IB.test(a: IA) {
   { // BLOCK
     val tmp_0: IA = a
     val tmp_1: String = ""
-    (<this>, tmp_0).set(index = tmp_1, value = tmp_0.get(index = tmp_1).plus(other = 42))
+    <this>.set(/* <this> = tmp_0, */ index = tmp_1, value = tmp_0.get(index = tmp_1).plus(other = 42))
   }
 }
+

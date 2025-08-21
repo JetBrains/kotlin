@@ -51,6 +51,12 @@ class BuildToolsApiJvmCompilationIT : KGPBaseTest() {
             )
         ) {
             chooseCompilerVersion(TestVersions.Kotlin.STABLE_RELEASE)
+            buildGradle.append(
+                """
+                kotlin {
+                    coreLibrariesVersion = "${TestVersions.Kotlin.STABLE_RELEASE}"
+                }
+                """.trimIndent())
             buildGradle.append( // FIXME: this is a workaround for KT-68107
                 // language=Gradle
                 """

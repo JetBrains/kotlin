@@ -1,5 +1,6 @@
 declare namespace JS_TESTS {
     type Nullable<T> = T | null | undefined
+    function KtSingleton<T>(): T & (abstract new() => any);
     namespace foo {
         abstract class TestEnumClass {
             private constructor();
@@ -21,15 +22,29 @@ declare namespace JS_TESTS {
             static valueOf(value: string): foo.TestEnumClass;
         }
         namespace TestEnumClass {
+            /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+            namespace $metadata$ {
+                const constructor: abstract new () => TestEnumClass;
+            }
             class Nested {
                 constructor();
                 get prop(): string;
+            }
+            namespace Nested {
+                /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+                namespace $metadata$ {
+                    const constructor: abstract new () => Nested;
+                }
             }
         }
         class OuterClass {
             constructor();
         }
         namespace OuterClass {
+            /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+            namespace $metadata$ {
+                const constructor: abstract new () => OuterClass;
+            }
             abstract class NestedEnum {
                 private constructor();
                 static get A(): foo.OuterClass.NestedEnum & {
@@ -44,6 +59,12 @@ declare namespace JS_TESTS {
                 get ordinal(): 0 | 1;
                 static values(): Array<foo.OuterClass.NestedEnum>;
                 static valueOf(value: string): foo.OuterClass.NestedEnum;
+            }
+            namespace NestedEnum {
+                /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+                namespace $metadata$ {
+                    const constructor: abstract new () => NestedEnum;
+                }
             }
         }
     }

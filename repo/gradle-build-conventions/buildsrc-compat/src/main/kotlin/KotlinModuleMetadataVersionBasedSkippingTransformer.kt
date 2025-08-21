@@ -3,11 +3,12 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+import com.github.jengelman.gradle.plugins.shadow.transformers.CacheableTransformer
 import com.github.jengelman.gradle.plugins.shadow.transformers.Transformer
 import com.github.jengelman.gradle.plugins.shadow.transformers.TransformerContext
-import kotlinx.metadata.jvm.JvmMetadataVersion
-import kotlinx.metadata.jvm.KotlinModuleMetadata
-import kotlinx.metadata.jvm.UnstableMetadataApi
+import kotlin.metadata.jvm.JvmMetadataVersion
+import kotlin.metadata.jvm.KotlinModuleMetadata
+import kotlin.metadata.jvm.UnstableMetadataApi
 import org.apache.tools.zip.ZipEntry
 import org.apache.tools.zip.ZipOutputStream
 import org.gradle.api.file.FileTreeElement
@@ -26,6 +27,7 @@ data class KotlinMetadataPivotVersion(val major: Int, val minor: Int, val patch:
  * This excludes .kotlin_module files for compiler modules from the fat jars.
  * These files are required only at compilation time, but we include the modules only for runtime
  */
+@CacheableTransformer
 class KotlinModuleMetadataVersionBasedSkippingTransformer : Transformer {
     private val kotlinModules: MutableMap<String, ByteArray> = mutableMapOf()
     private val logger = Logging.getLogger(this::class.java)

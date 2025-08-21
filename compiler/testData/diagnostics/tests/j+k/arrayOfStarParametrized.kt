@@ -14,3 +14,6 @@ fun foo1(x: A<*>) = x.baz()
 fun foo2(x: A<*>) {
     x.baz() checkType { _<Array<out A<*>>>() }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, flexibleType, funWithExtensionReceiver, functionDeclaration, functionalType,
+infix, javaType, lambdaLiteral, nullableType, outProjection, starProjection, typeParameter, typeWithExtension */

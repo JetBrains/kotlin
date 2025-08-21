@@ -14,3 +14,5 @@ expect class <!IMPLICIT_JVM_ACTUALIZATION{JVM}!>Foo<!>() {
     @kotlin.annotations.jvm.KotlinActual public Foo() { }
     @kotlin.annotations.jvm.KotlinActual public static void foo() { }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, expect, functionDeclaration, primaryConstructor */

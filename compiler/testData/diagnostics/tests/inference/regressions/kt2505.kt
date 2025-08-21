@@ -24,3 +24,7 @@ fun <R> test (httpResponse: HttpResponse, rtype: MyClass<R>) {
     val res = httpResponse.parseAs( rtype )
     checkSubtype<R>(res) //type mismatch: required R, found T
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType, infix,
+interfaceDeclaration, localProperty, nullableType, primaryConstructor, propertyDeclaration, typeParameter,
+typeWithExtension */

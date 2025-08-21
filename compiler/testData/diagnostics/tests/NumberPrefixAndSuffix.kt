@@ -54,3 +54,6 @@ fun test(a: Any) {
     <!USELESS_IS_CHECK!>1<!UNSUPPORTED!>!is<!> Any<!>
     1<!UNSUPPORTED!>!in<!> a
 }
+
+/* GENERATED_FIR_TAGS: asExpression, funWithExtensionReceiver, functionDeclaration, infix, integerLiteral, isExpression,
+nullableType, operator */

@@ -29,21 +29,22 @@ import org.jetbrains.kotlin.fir.unwrapOr
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.IrParameterKind
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.isFacadeClass
+import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.NameUtils
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
-import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 
 class Fir2IrLazyProperty(
     private val c: Fir2IrComponents,
-    startOffset: Int,
-    endOffset: Int,
+    override var startOffset: Int,
+    override var endOffset: Int,
     override var origin: IrDeclarationOrigin,
     override val fir: FirProperty,
     val containingClass: FirRegularClass?,
@@ -52,11 +53,6 @@ class Fir2IrLazyProperty(
     override var isFakeOverride: Boolean,
 ) : IrProperty(), AbstractFir2IrLazyDeclaration<FirProperty>, Fir2IrComponents by c {
     override val symbol: IrPropertySymbol = symbols.propertySymbol
-
-    override var startOffset: Int = startOffset
-        set(_) = shouldNotBeCalled()
-    override var endOffset: Int = endOffset
-        set(_) = shouldNotBeCalled()
 
     init {
         this.parent = parent
@@ -106,7 +102,7 @@ class Fir2IrLazyProperty(
         set(_) = mutationNotSupported()
 
     private val type: IrType by lazy {
-        fir.returnTypeRef.toIrType(c)
+        fir.returnTypeRef.toIrType()
     }
 
     private fun toIrInitializer(initializer: FirExpression?): IrExpressionBody? {
@@ -126,14 +122,14 @@ class Fir2IrLazyProperty(
                         declarationStorage.getIrConstructorSymbol(firPrimaryConstructor).owner.putParametersInScope(firPrimaryConstructor.fir)
                     }
                     fir.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
-                    irInitializer = initializer?.asCompileTimeIrInitializerForAnnotationParameter(c, fir.returnTypeRef.coneType)
+                    irInitializer = initializer?.asCompileTimeIrInitializerForAnnotationParameter(fir.returnTypeRef.coneType)
                 }
                 irInitializer
             }
             // Setting initializers to every other class causes some cryptic errors in lowerings
             initializer is FirLiteralExpression -> {
                 fir.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
-                val constType = fir.initializer?.resolvedType?.toIrType(c) ?: initializer.resolvedType.toIrType(c)
+                val constType = fir.initializer?.resolvedType?.toIrType() ?: initializer.resolvedType.toIrType()
                 factory.createExpressionBody(initializer.toIrConst(constType))
             }
             else -> null
@@ -143,7 +139,7 @@ class Fir2IrLazyProperty(
     override var backingField: IrField? = when {
         symbols.backingFieldSymbol == null -> null
         fir.hasExplicitBackingField -> {
-            val backingFieldType = fir.backingField?.returnTypeRef?.toIrType(c)
+            val backingFieldType = fir.backingField?.returnTypeRef?.toIrType()
             val evaluatedInitializer = fir.evaluatedInitializer?.unwrapOr<FirExpression> {}
             val initializer = fir.backingField?.initializer ?: evaluatedInitializer ?: fir.initializer
             val visibility = fir.backingField?.visibility ?: fir.visibility
@@ -252,45 +248,43 @@ class Fir2IrLazyProperty(
 
         accessor.classifiersGenerator.setTypeParameters(accessor, fir, typeOrigin)
 
-        val containingClass = (parent as? IrClass)?.takeUnless { it.isFacadeClass }
-        if (containingClass != null && accessor.shouldHaveDispatchReceiver(containingClass)) {
-            accessor.dispatchReceiverParameter = accessor.declareThisReceiverParameter(
-                c,
-                thisType = containingClass.thisReceiver?.type ?: error("No this receiver for containing class"),
-                thisOrigin = accessor.origin,
-            )
-        }
+        accessor.parameters = buildList {
+            val containingClass = (parent as? IrClass)?.takeUnless { it.isFacadeClass }
+            if (containingClass != null && accessor.shouldHaveDispatchReceiver(containingClass)) {
+                this += accessor.declareThisReceiverParameter(
+                    thisType = containingClass.thisReceiver?.type ?: error("No this receiver for containing class: ${containingClass.render()}"),
+                    thisOrigin = accessor.origin,
+                    kind = IrParameterKind.DispatchReceiver,
+                )
+            }
 
-        accessor.extensionReceiverParameter = fir.receiverParameter?.let {
-            accessor.declareThisReceiverParameter(
-                c,
-                thisType = it.typeRef.toIrType(typeConverter, typeOrigin),
-                thisOrigin = accessor.origin,
-                explicitReceiver = it
-            )
-        }
-
-        accessor.valueParameters = buildList {
             callablesGenerator.addContextParametersTo(
                 accessor.fir.contextParametersForFunctionOrContainingProperty(),
                 accessor,
                 this@buildList
             )
 
+            fir.receiverParameter?.let {
+                this += accessor.declareThisReceiverParameter(
+                    thisType = it.typeRef.toIrType(typeOrigin),
+                    thisOrigin = accessor.origin,
+                    explicitReceiver = it,
+                    kind = IrParameterKind.ExtensionReceiver,
+                )
+            }
+
             if (accessor.isSetter) {
                 val valueParameter = firAccessor?.valueParameters?.firstOrNull()
-                add(
-                    callablesGenerator.createDefaultSetterParameter(
-                        accessor.startOffset, accessor.endOffset,
-                        (valueParameter?.returnTypeRef ?: accessor.fir.returnTypeRef).toIrType(
-                            typeConverter, typeOrigin
-                        ),
-                        parent = accessor,
-                        firValueParameter = valueParameter,
-                        name = valueParameter?.name?.takeUnless { firAccessor is FirDefaultPropertySetter },
-                        isCrossinline = valueParameter?.isCrossinline == true,
-                        isNoinline = valueParameter?.isNoinline == true
-                    )
+                this += callablesGenerator.createDefaultSetterParameter(
+                    accessor.startOffset, accessor.endOffset,
+                    (valueParameter?.returnTypeRef ?: accessor.fir.returnTypeRef).toIrType(
+                        typeOrigin
+                    ),
+                    parent = accessor,
+                    firValueParameter = valueParameter,
+                    name = valueParameter?.name?.takeUnless { firAccessor is FirDefaultPropertySetter },
+                    isCrossinline = valueParameter?.isCrossinline == true,
+                    isNoinline = valueParameter?.isNoinline == true
                 )
             }
         }

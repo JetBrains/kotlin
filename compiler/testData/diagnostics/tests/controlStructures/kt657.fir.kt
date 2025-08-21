@@ -9,13 +9,16 @@ fun foo() =
         cond1() -> 12
         cond2() -> 2
         <!CONDITION_TYPE_MISMATCH!>4<!> -> 34
-        <!CONDITION_TYPE_MISMATCH, TYPE_MISMATCH!>Pair(1, 2)<!> -> 3
-        <!ARGUMENT_TYPE_MISMATCH, EXPECTED_CONDITION!>in 1..10<!> -> 34
+        <!CONDITION_TYPE_MISMATCH!>Pair(1, 2)<!> -> 3
+        <!EXPECTED_CONDITION!>in 1..10<!> -> 34
         <!CONDITION_TYPE_MISMATCH!>4<!> -> 38
-        <!EXPECTED_CONDITION, USELESS_IS_CHECK!>is Int<!> -> 33
+        <!EXPECTED_CONDITION!>is Int<!> -> 33
         else -> 34
     }
 
 fun cond1() = false
 
 fun cond2() = true
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, isExpression, nullableType,
+primaryConstructor, rangeExpression, typeParameter, whenExpression */

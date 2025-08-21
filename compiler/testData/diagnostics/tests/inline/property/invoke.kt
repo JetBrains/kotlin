@@ -20,3 +20,6 @@ inline var value2: Int.(p: Int) -> String
 
         val p = <!USAGE_IS_NOT_INLINABLE!>ext<!>
     }
+
+/* GENERATED_FIR_TAGS: functionalType, getter, integerLiteral, lambdaLiteral, localProperty, propertyDeclaration, setter,
+stringLiteral, typeWithExtension */

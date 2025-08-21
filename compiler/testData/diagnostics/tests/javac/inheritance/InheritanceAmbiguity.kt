@@ -27,3 +27,5 @@ public class y extends x implements i {
 package a
 
 fun test() = y().<!MISSING_DEPENDENCY_CLASS!>getZ<!>()
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaFunction, javaType */

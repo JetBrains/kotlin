@@ -13,3 +13,5 @@ class MyClass {
         foo()
     }
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, classReference, collectionLiteral, functionDeclaration */

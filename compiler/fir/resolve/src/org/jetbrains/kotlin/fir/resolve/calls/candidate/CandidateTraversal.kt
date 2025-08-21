@@ -52,6 +52,8 @@ private fun Context.processCandidatesAndPostponedAtoms(atom: ConeResolutionAtom?
             processCandidatesAndPostponedAtoms(atom.subAtom)
         }
 
+        is ConeSimpleNameForContextSensitiveResolution -> postponedAtomsProcessor(atom)
+
         // candidates
         is ConeAtomWithCandidate -> {
             val candidate = atom.candidate

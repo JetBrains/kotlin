@@ -11,3 +11,5 @@ interface Base {
 interface Derived : Base {
     var test: String
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, interfaceDeclaration, propertyDeclaration, stringLiteral, suspend */

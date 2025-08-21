@@ -5,16 +5,11 @@
 
 package org.jetbrains.kotlin.cli.jvm.compiler
 
-import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.load.kotlin.MetadataFinderFactory
 import org.jetbrains.kotlin.serialization.deserialization.KotlinMetadataFinder
 
 class CliMetadataFinderFactory(private val fileFinderFactory: CliVirtualFileFinderFactory) : MetadataFinderFactory {
     override fun create(scope: GlobalSearchScope): KotlinMetadataFinder =
         fileFinderFactory.create(scope)
-
-    override fun create(project: Project, module: ModuleDescriptor): KotlinMetadataFinder =
-        fileFinderFactory.create(project, module)
 }

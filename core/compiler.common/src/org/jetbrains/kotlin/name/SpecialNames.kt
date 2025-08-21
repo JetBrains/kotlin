@@ -50,6 +50,9 @@ object SpecialNames {
     val INIT = Name.special("<init>")
 
     @JvmField
+    val WHEN_SUBJECT = Name.special("<when-subject>")
+
+    @JvmField
     val ITERATOR = Name.special("<iterator>")
 
     @JvmField

@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers
 
-import org.jetbrains.kotlin.fir.declarations.utils.isOperator
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.name.CallableId
@@ -41,16 +40,14 @@ internal object FirRedeclarationPresenter {
     }
 
     private fun StringBuilder.appendRepresentationBeforeCallableId(it: FirCallableSymbol<*>) {
-        repeat(it.resolvedContextParameters.size) {
-            append(',')
-        }
+        if (it.contextParameterSymbols.isNotEmpty()) append(',')
         append('<')
         repeat(it.typeParameterSymbols.size) {
             append(',')
         }
         append('>')
         append('[')
-        it.receiverParameter?.typeRef?.let {
+        it.receiverParameterSymbol?.let {
             append(',')
         }
         append(']')
@@ -82,7 +79,7 @@ internal object FirRedeclarationPresenter {
 
     fun represent(it: FirVariableSymbol<*>) = buildString {
         appendRepresentationBeforeCallableId(it)
-        appendRepresentation(it.callableId)
+        appendRepresentation(it.callableId!!)
 
         if (it is FirFieldSymbol) {
             append("#f")
@@ -101,9 +98,7 @@ internal object FirRedeclarationPresenter {
     }
 
     fun represent(it: FirConstructorSymbol, owner: FirClassLikeSymbol<*>) = buildString {
-        repeat(it.resolvedContextParameters.size) {
-            append(',')
-        }
+        if (it.contextParameterSymbols.isNotEmpty()) append(',')
         append('<')
         repeat(it.typeParameterSymbols.size) {
             append(',')

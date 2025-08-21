@@ -7,3 +7,6 @@ fun main(x: Int) {
 
     x.get()
 }
+
+/* GENERATED_FIR_TAGS: callableReference, comparisonExpression, functionDeclaration, getter, ifExpression,
+integerLiteral, localProperty, nullableType, propertyDeclaration, propertyWithExtensionReceiver */

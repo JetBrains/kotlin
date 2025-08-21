@@ -1,9 +1,9 @@
 package org.jetbrains.kotlin.maven;
 
-import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.util.text.StringUtil;
 import kotlin.text.StringsKt;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.com.intellij.openapi.util.io.FileUtil;
+import org.jetbrains.kotlin.com.intellij.openapi.util.text.StringUtil;
 import org.junit.Assert;
 
 import java.io.File;
@@ -85,7 +85,7 @@ class MavenExecutionResult {
         return check(new Action<MavenExecutionResult>() {
             @Override
             public void run(MavenExecutionResult execResult) {
-                Pattern kotlinCompileIteration = Pattern.compile("(?m)Kotlin compile iteration: (.*)$");
+                Pattern kotlinCompileIteration = Pattern.compile("(?m)compile iteration: (.*)$");
                 Matcher m = kotlinCompileIteration.matcher(stdout);
 
                 Set<String> normalizedActualPaths = new HashSet<String>();

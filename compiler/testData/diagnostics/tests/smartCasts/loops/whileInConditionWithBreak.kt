@@ -8,3 +8,6 @@ fun foo(s: String?): Int {
     }
     return <!DEBUG_INFO_SMARTCAST!>s<!>.length
 }
+
+/* GENERATED_FIR_TAGS: break, checkNotNullCall, comparisonExpression, functionDeclaration, ifExpression, integerLiteral,
+nullableType, smartcast, whileLoop */

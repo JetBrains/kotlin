@@ -5,17 +5,31 @@
 
 package org.jetbrains.kotlin.gradle
 
+import com.android.build.api.dsl.LibraryExtension
 import org.gradle.api.DefaultTask
 import org.gradle.api.InvalidUserCodeException
+import org.gradle.api.JavaVersion
+import org.gradle.api.attributes.Usage
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.OutputFile
 import org.gradle.api.plugins.UnknownPluginException
+import org.gradle.kotlin.dsl.*
+import org.gradle.plugin.devel.GradlePluginDevelopmentExtension
 import org.gradle.testkit.runner.UnexpectedBuildSuccess
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
+import org.jetbrains.kotlin.gradle.testbase.BuildOptions.ConfigurationCacheValue
 import org.jetbrains.kotlin.gradle.uklibs.*
+import org.jetbrains.kotlin.gradle.testbase.useAsZipFile
+import org.jetbrains.kotlin.gradle.testing.PrettyPrint
+import org.jetbrains.kotlin.gradle.testing.ResolvedComponentWithArtifacts
+import org.jetbrains.kotlin.gradle.testing.prettyPrinted
+import org.jetbrains.kotlin.gradle.testing.resolveProjectDependencyComponentsWithArtifacts
+import org.junit.jupiter.api.DisplayName
 import java.io.File
 import kotlin.test.*
 
@@ -36,6 +50,28 @@ class BuildScriptInjectionIT : KGPBaseTest() {
             "empty",
             version,
         )
+    }
+
+    @GradleTest
+    fun testMultipleInjections(version: GradleVersion) {
+        project("empty", version) {
+            val subproject = project("empty", version)
+            include(subproject, "subproject")
+            subproject.buildScriptInjection {
+                println("subproject buildscript injection 1")
+            }
+            subProject("subproject").buildScriptInjection {
+                println("subproject buildscript injection 2")
+            }
+            subProject("subproject").buildScriptInjection {
+                println("subproject buildscript injection 3")
+            }
+            build(":subproject:help") {
+                assertOutputContains("subproject buildscript injection 1")
+                assertOutputContains("subproject buildscript injection 2")
+                assertOutputContains("subproject buildscript injection 3")
+            }
+        }
     }
 
     @GradleTest
@@ -259,6 +295,290 @@ class BuildScriptInjectionIT : KGPBaseTest() {
         )
     }
 
+    @GradleTest
+    fun publishGeneratedJavaSource(version: GradleVersion) {
+        project("empty", version) {
+            buildScriptInjection {
+                project.plugins.apply("java")
+                java.sourceSets.getByName("main").compileJavaSource(
+                    project,
+                    className = "Generated",
+                    """
+                        public class Generated { }
+                    """.trimIndent()
+                )
+            }
+
+            assertEquals(
+                setOf(
+                    "META-INF/MANIFEST.MF",
+                    "Generated.class",
+                ),
+                publishJava(PublisherConfiguration()).rootComponent.jar.useAsZipFile {
+                    it.entries().asSequence().filter { !it.isDirectory }.map { it.name }.toSet()
+                }
+            )
+        }
+    }
+
+    @DisplayName("Composite build")
+    @GradleTest
+    fun compositeBuild(version: GradleVersion) {
+        val parent = "Parent"
+        val child = "Child"
+        val parentGroup = "foo"
+        val parentId = "includeme"
+
+        // Declare a Parent class in a project
+        val parentClassProducer = project("empty", version) {
+            settingsBuildScriptInjection {
+                settings.rootProject.name = parentId
+            }
+            addKgpToBuildScriptCompilationClasspath()
+            buildScriptInjection {
+                project.group = parentGroup
+                project.applyMultiplatform {
+                    jvm()
+                    sourceSets.getByName("commonMain").compileSource("open class ${parent}")
+                }
+            }
+        }
+
+        // Inherit from Parent in Child and consumer the project above as a modular dependency
+        val consumer = project("empty", version) {
+            includeBuild(parentClassProducer)
+            addKgpToBuildScriptCompilationClasspath()
+            buildScriptInjection {
+                project.applyMultiplatform {
+                    jvm()
+                    sourceSets.getByName("commonMain").compileSource("class ${child} : ${parent}()")
+                    sourceSets.getByName("commonMain").dependencies {
+                        implementation("${parentGroup}:${parentId}:1.0")
+                    }
+                }
+            }
+        }
+
+        // Check we managed to compile the Child class
+        assertFileExists(
+            consumer.buildScriptReturn {
+                kotlinMultiplatform.jvm()
+                    .compilations
+                    .getByName("main")
+                    .output
+                    .classesDirs
+                    .files
+                    .single { it.endsWith("kotlin/jvm/main") }
+                    .resolve("${child}.class")
+            }.buildAndReturn("compileKotlinJvm")
+        )
+    }
+
+    @GradleTest
+    fun kgpTestFixturesRuntime(version: GradleVersion) {
+        // Check we have access to KGP testFixtures source set at compile and run time
+        project("empty", version) {
+            addKgpToBuildScriptCompilationClasspath()
+            include(
+                project("empty", version) {
+                    buildScriptInjection {
+                        val consumable = project.configurations.create("consumable") {
+                            it.isCanBeResolved = false
+                            it.attributes.attribute(
+                                Usage.USAGE_ATTRIBUTE,
+                                project.objects.named(Usage::class.java, Usage.JAVA_API)
+                            )
+                        }
+                        project.artifacts.add(
+                            consumable.name,
+                            project.tasks.register("makeFoo", DefaultTask::class.java) {
+                                val foo = project.layout.buildDirectory.file("foo.foo")
+                                it.outputs.file(foo)
+                                it.doLast { foo.get().asFile.createNewFile() }
+                            },
+                        )
+                    }
+                },
+                "sub",
+            )
+
+            val resolvedConfiguration = providerBuildScriptReturn {
+                val resolvable = project.configurations.create("resolvable") {
+                    it.isCanBeConsumed = false
+                    it.attributes.attribute(
+                        Usage.USAGE_ATTRIBUTE,
+                        project.objects.named(Usage::class.java, Usage.JAVA_API)
+                    )
+                    it.dependencies.add(project.dependencies.project(mapOf("path" to ":sub")))
+                }
+                project.provider {
+                    project.ignoreAccessViolations {
+                        resolvable.resolveProjectDependencyComponentsWithArtifacts()
+                    }
+                }
+            }.buildAndReturn()
+
+            assertEquals<PrettyPrint<Map<String, ResolvedComponentWithArtifacts>>>(
+                mutableMapOf<String, ResolvedComponentWithArtifacts>(
+                    ":sub" to ResolvedComponentWithArtifacts(
+                        artifacts = mutableListOf(
+                            mutableMapOf(
+                                "artifactType" to "foo",
+                                "org.gradle.usage" to "java-api",
+                            ),
+                        ),
+                        configuration = "consumable",
+                    ),
+                ).prettyPrinted,
+                resolvedConfiguration.prettyPrinted,
+            )
+        }
+    }
+
+    @GradleTest
+    fun pluginApplicationSugar(version: GradleVersion) {
+        val appliedExtension = "appliedExtension"
+        val appliedPluginId = "com.example.applied"
+        val notAppliedExtension = "notAppliedExtension"
+        val notAppliedPluginId = "com.example.notApplied"
+        val samplePlugin = project("empty", version) {
+            plugins {
+                kotlin("jvm")
+                `java-gradle-plugin`
+                `maven-publish`
+            }
+            buildScriptInjection {
+                project.configurations.getByName("compileOnly").dependencies.add(
+                    project.dependencies.gradleApi()
+                )
+                java.targetCompatibility = JavaVersion.VERSION_1_8
+                kotlinJvm.compilerOptions.jvmTarget.set(JvmTarget.JVM_1_8)
+                kotlinJvm.sourceSets.getByName("main").compileSource(
+                    """
+                    interface Ext
+                    class Applied : org.gradle.api.Plugin<org.gradle.api.Project> {
+                        override fun apply(target: org.gradle.api.Project) {
+                            target.extensions.add(Ext::class.java, "$appliedExtension", target.objects.newInstance(Ext::class.java))
+                        }
+                    }
+                    
+                    class NotApplied : org.gradle.api.Plugin<org.gradle.api.Project> {
+                        override fun apply(target: org.gradle.api.Project) {
+                            target.extensions.add(Ext::class.java, "$notAppliedExtension", target.objects.newInstance(Ext::class.java))
+                        }
+                    }
+                    """.trimIndent()
+                )
+
+                project.extensions.getByType<GradlePluginDevelopmentExtension>().apply {
+                    plugins.create("applied") {
+                        it.id = appliedPluginId
+                        it.implementationClass = "Applied"
+                    }
+                    plugins.create("notApplied") {
+                        it.id = notAppliedPluginId
+                        it.implementationClass = "NotApplied"
+                    }
+                }
+            }
+        }.publishJava(publisherConfiguration = PublisherConfiguration(group = "sample_plugin", version = "1.0"))
+
+        project("empty", version) {
+            settingsBuildScriptInjection {
+                settings.pluginManagement.repositories.maven(samplePlugin.repository)
+            }
+            assertTrue(
+                buildScriptReturn {
+                    try {
+                        this.javaClass.classLoader.loadClass(KotlinMultiplatformExtension::class.java.name)
+                    } catch (e: NoClassDefFoundError) {
+                        return@buildScriptReturn true
+                    }
+                    return@buildScriptReturn false
+                }.buildAndReturn(),
+                "Build script is not supposed to see KGP classes at this point",
+            )
+            plugins {
+                kotlin("multiplatform")
+                id(appliedPluginId) version "1.0"
+                id(notAppliedPluginId) version "1.0" apply false
+            }
+            assertTrue(
+                buildScriptReturn {
+                    this.javaClass.classLoader.loadClass(KotlinMultiplatformExtension::class.java.name).isInstance(
+                        project.extensions.getByName("kotlin")
+                    )
+                }.buildAndReturn(),
+                "At this point the plugin is expected to be applied and the extension must inherit from the relevant class",
+            )
+            assertTrue(
+                buildScriptReturn {
+                    project.extensions.findByName(appliedExtension) != null
+                }.buildAndReturn(),
+                "Extension is expected to be registered at \"$appliedExtension\"",
+            )
+            assertTrue(
+                buildScriptReturn {
+                    project.extensions.findByName(notAppliedExtension) == null
+                }.buildAndReturn(),
+                "Extension is expected to not be registered at \"$notAppliedExtension\"",
+            )
+        }
+    }
+
+    @GradleAndroidTest
+    fun pluginApplicationSugarAgpGroovy(
+        version: GradleVersion,
+        agpVersion: String,
+    ) = testPluginApplicationSugarAgp("empty", version, agpVersion)
+
+    @GradleAndroidTest
+    fun pluginApplicationSugarAgp(
+        version: GradleVersion,
+        agpVersion: String,
+    ) = testPluginApplicationSugarAgp("emptyKts", version, agpVersion)
+
+    private fun testPluginApplicationSugarAgp(
+        template: String,
+        version: GradleVersion,
+        agpVersion: String,
+    ) {
+        project(
+            template,
+            version,
+            defaultBuildOptions.copy(androidVersion = agpVersion)
+        ) {
+            assertTrue(
+                buildScriptReturn {
+                    try {
+                        this.javaClass.classLoader.loadClass(LibraryExtension::class.java.name)
+                    } catch (e: NoClassDefFoundError) {
+                        return@buildScriptReturn true
+                    }
+                    return@buildScriptReturn false
+                }.buildAndReturn(),
+                "Build script is not supposed to see AGP classes at this point",
+            )
+            plugins {
+                id("com.android.library")
+            }
+            buildScriptInjection {
+                with(project.extensions.getByType(LibraryExtension::class.java)) {
+                    compileSdk = 23
+                    namespace = "kotlin"
+                }
+            }
+            assertTrue(
+                buildScriptReturn {
+                    this.javaClass.classLoader.loadClass(LibraryExtension::class.java.name).isInstance(
+                        project.extensions.getByName("android")
+                    )
+                }.buildAndReturn(),
+                "At this point the plugin is expected to be applied and the extension must inherit from the relevant class",
+            )
+        }
+    }
+
     @Test
     fun testPrependToOrCreateBuildscriptBlock() {
         assertEquals(
@@ -321,10 +641,14 @@ class BuildScriptInjectionIT : KGPBaseTest() {
         targetProject: String,
         version: GradleVersion,
     ) {
+        val producerName = "producer"
         val publishedProject = project(
             targetProject,
             version,
         ) {
+            settingsBuildScriptInjection {
+                settings.rootProject.name = producerName
+            }
             addKgpToBuildScriptCompilationClasspath()
             buildScriptInjection {
                 project.applyMultiplatform {
@@ -335,7 +659,7 @@ class BuildScriptInjectionIT : KGPBaseTest() {
                     }
                 }
             }
-        }.publish(PublisherConfiguration())
+        }.publish(publisherConfiguration = PublisherConfiguration())
 
         project(
             targetProject,
@@ -354,7 +678,7 @@ class BuildScriptInjectionIT : KGPBaseTest() {
                     }
 
                     sourceSets.commonMain.dependencies {
-                        implementation(publishedProject.coordinate)
+                        implementation(publishedProject.rootCoordinate)
                     }
                 }
             }
@@ -367,19 +691,19 @@ class BuildScriptInjectionIT : KGPBaseTest() {
                 }
             }.buildAndReturn()
 
-            val transformedFiles = buildScriptReturn {
+            val transformedFiles = providerBuildScriptReturn {
                 with(kotlinMultiplatform) {
                     project.locateOrRegisterMetadataDependencyTransformationTask(
                         sourceSets.commonMain.get()
-                    ).get().allTransformedLibraries().get()
+                    ).flatMap { it.allTransformedLibraries() }
                 }
             }.buildAndReturn(metadataTransformationTaskName)
 
             assertEquals(
                 listOf(
-                    listOf("foo", "producer", "1.0", "linuxMain"),
-                    listOf("foo", "producer", "1.0", "nativeMain"),
-                    listOf("foo", "producer", "1.0", "commonMain"),
+                    listOf("foo", producerName, "1.0", "linuxMain"),
+                    listOf("foo", producerName, "1.0", "nativeMain"),
+                    listOf("foo", producerName, "1.0", "commonMain"),
                 ),
                 transformedFiles.map { it.nameWithoutExtension.split("-").take(4) },
             )

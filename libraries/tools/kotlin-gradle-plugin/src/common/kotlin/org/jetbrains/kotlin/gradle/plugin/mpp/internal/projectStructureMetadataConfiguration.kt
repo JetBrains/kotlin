@@ -14,10 +14,10 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinProjectSetupAction
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.launch
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
-import org.jetbrains.kotlin.gradle.plugin.mpp.kotlinMetadataCompilations
 import org.jetbrains.kotlin.gradle.plugin.mpp.resolvableMetadataConfiguration
 import org.jetbrains.kotlin.gradle.plugin.sources.InternalKotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.sources.internal
+import org.jetbrains.kotlin.gradle.plugin.sources.isSharedSourceSet
 import org.jetbrains.kotlin.gradle.plugin.usageByName
 import org.jetbrains.kotlin.gradle.targets.metadata.locateOrRegisterGenerateProjectStructureMetadataTask
 import org.jetbrains.kotlin.gradle.utils.*
@@ -40,7 +40,7 @@ internal fun Project.setupProjectStructureMetadataOutgoingArtifacts() {
         val apiElements = project.configurations.getByName(metadataTarget.apiElementsConfigurationName)
 
         apiElements.outgoing.variants.maybeCreate("kotlinProjectStructureMetadata").apply {
-            setAttribute(Usage.USAGE_ATTRIBUTE, project.usageByName(KotlinUsages.KOTLIN_PSM_METADATA))
+            attributes.attribute(Usage.USAGE_ATTRIBUTE, project.usageByName(KotlinUsages.KOTLIN_PSM_METADATA))
             registerArtifact(
                 artifactProvider = generateProjectStructureMetadata.map { task -> task.resultFile },
                 classifier = "psm-metadata",
@@ -52,27 +52,28 @@ internal fun Project.setupProjectStructureMetadataOutgoingArtifacts() {
 
 internal fun InternalKotlinSourceSet.projectStructureMetadataResolvedConfiguration(): LazyResolvedConfiguration {
     return LazyResolvedConfiguration(resolvableMetadataConfiguration) { attributes ->
-        attributes.setAttribute(Usage.USAGE_ATTRIBUTE, project.usageByName(KotlinUsages.KOTLIN_PSM_METADATA))
-        attributes.setAttribute(ArtifactTypeDefinition.ARTIFACT_TYPE_ATTRIBUTE, KotlinUsages.KOTLIN_PSM_METADATA)
+        attributes.attribute(Usage.USAGE_ATTRIBUTE, project.usageByName(KotlinUsages.KOTLIN_PSM_METADATA))
+        attributes.attribute(ArtifactTypeDefinition.ARTIFACT_TYPE_ATTRIBUTE, KotlinUsages.KOTLIN_PSM_METADATA)
     }
 }
 
-internal suspend fun Project.psmArtifactsForAllDependencies(): List<FileCollection> {
+internal suspend fun Project.psmArtifactsForAllDependenciesFromSharedSourceSets(): List<FileCollection> {
     if (!kotlinPropertiesProvider.kotlinKmpProjectIsolationEnabled) return emptyList()
-    return multiplatformExtension.kotlinMetadataCompilations().map { compilation ->
-        compilation.defaultSourceSet.internal.projectStructureMetadataResolvedConfiguration().files
+    return multiplatformExtension.sourceSets.mapNotNull { sourceSet ->
+        if (!sourceSet.internal.isSharedSourceSet()) return@mapNotNull null
+        sourceSet.internal.projectStructureMetadataResolvedConfiguration().files
     }
 }
 
 private fun setupTransformActionFromJarToPsm(project: Project) {
     project.dependencies.registerTransform(ProjectStructureMetadataTransformAction::class.java) { transform ->
         transform.from.apply {
-            setAttribute(Usage.USAGE_ATTRIBUTE, project.usageByName(KotlinUsages.KOTLIN_METADATA))
-            setAttribute(ArtifactTypeDefinition.ARTIFACT_TYPE_ATTRIBUTE, ArtifactTypeDefinition.JAR_TYPE)
+            attributes.attribute(Usage.USAGE_ATTRIBUTE, project.usageByName(KotlinUsages.KOTLIN_METADATA))
+            attributes.attribute(ArtifactTypeDefinition.ARTIFACT_TYPE_ATTRIBUTE, ArtifactTypeDefinition.JAR_TYPE)
         }
         transform.to.apply {
-            setAttribute(Usage.USAGE_ATTRIBUTE, project.usageByName(KotlinUsages.KOTLIN_PSM_METADATA))
-            setAttribute(ArtifactTypeDefinition.ARTIFACT_TYPE_ATTRIBUTE, KotlinUsages.KOTLIN_PSM_METADATA)
+            attributes.attribute(Usage.USAGE_ATTRIBUTE, project.usageByName(KotlinUsages.KOTLIN_PSM_METADATA))
+            attributes.attribute(ArtifactTypeDefinition.ARTIFACT_TYPE_ATTRIBUTE, KotlinUsages.KOTLIN_PSM_METADATA)
         }
     }
 }

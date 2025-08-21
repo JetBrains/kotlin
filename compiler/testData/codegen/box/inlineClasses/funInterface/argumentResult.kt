@@ -1,5 +1,4 @@
 // WITH_STDLIB
-// IGNORE_BACKEND: JVM
 
 fun interface ResultHandler<T> {
     fun onResult(result: Result<T>)

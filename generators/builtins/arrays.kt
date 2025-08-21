@@ -19,7 +19,13 @@ abstract class GenerateArrays(val writer: PrintWriter, val primitiveArrays: Bool
         return file(this::class) { generateClasses() }.apply { this.modifyGeneratedFile() }
     }
 
-    internal abstract class ArrayBuilder(val kind: PrimitiveType?) {
+    internal abstract class ArrayBuilder(
+        val kind: PrimitiveType?,
+        val generateRuntimeTypeAppendix: AnnotatedAndDocumented.(String) -> Unit = {},
+        val generateOutOfBoundsBehaviorNote: AnnotatedAndDocumented.() -> Unit = {
+            appendDoc("If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException].")
+        },
+    ) {
         protected val arrayClassName = "${kind?.capitalized ?: ""}Array"
         protected val arrayTypeName = arrayClassName + if (kind == null) "<T>" else ""
         protected val elementTypeName = kind?.capitalized ?: "T"
@@ -32,13 +38,15 @@ abstract class GenerateArrays(val writer: PrintWriter, val primitiveArrays: Bool
                 expectActual = ExpectActualModifier.Actual
                 name = arrayClassName
                 if (kind == null) {
-                    appendDoc("A generic array of objects. When targeting the JVM, instances of this class are represented as `T[]`.")
+                    appendDoc("A generic array of objects.")
+                    generateRuntimeTypeAppendix("T[]")
                     appendDoc("Array instances can be created using the [arrayOf], [arrayOfNulls] and [emptyArray]")
                     appendDoc("standard library functions.")
                     typeParam("T")
                     noPrimaryConstructor()
                 } else {
-                    appendDoc("An array of ${typeLower}s. When targeting the JVM, instances of this class are represented as `$typeLower[]`.")
+                    appendDoc("An array of ${typeLower}s.")
+                    generateRuntimeTypeAppendix("$typeLower[]")
                     val defaultValue = when (kind) {
                         PrimitiveType.CHAR -> "null char (`\\u0000')"
                         PrimitiveType.BOOLEAN -> "`false`"
@@ -82,11 +90,13 @@ abstract class GenerateArrays(val writer: PrintWriter, val primitiveArrays: Bool
                         type = arrayTypeName
                     }
                 }
-                classBody("""
+                classBody(
+                    """
                     private var index = 0
                     override fun hasNext() = index < array.size
                     override fun next${kind?.capitalized ?: ""}() = if (index < array.size) array[index++] else throw NoSuchElementException("${'$'}index")
-                """.trimIndent())
+                """.trimIndent()
+                )
             }
         }
 
@@ -125,8 +135,7 @@ abstract class GenerateArrays(val writer: PrintWriter, val primitiveArrays: Bool
                 appendDoc("value = array[index]")
                 appendDoc("```")
                 appendDoc("")
-                appendDoc("If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException] except in Kotlin/JS")
-                appendDoc("where the behavior is unspecified.")
+                generateOutOfBoundsBehaviorNote(this)
                 signature {
                     methodName = "get"
                     isOperator = true
@@ -145,8 +154,7 @@ abstract class GenerateArrays(val writer: PrintWriter, val primitiveArrays: Bool
                 appendDoc("array[index] = value")
                 appendDoc("```")
                 appendDoc("")
-                appendDoc("If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException] except in Kotlin/JS")
-                appendDoc("where the behavior is unspecified.")
+                generateOutOfBoundsBehaviorNote(this)
                 signature {
                     methodName = "set"
                     isOperator = true
@@ -209,24 +217,37 @@ abstract class GenerateArrays(val writer: PrintWriter, val primitiveArrays: Bool
 
 
 class GenerateCommonArrays(writer: PrintWriter, primitiveArrays: Boolean) : GenerateArrays(writer, primitiveArrays) {
-    override fun FileBuilder.modifyGeneratedFile() {
-        import("kotlin.internal.ActualizeByJvmBuiltinProvider")
-    }
-
-    override fun arrayBuilder(kind: PrimitiveType?): ArrayBuilder = object : ArrayBuilder(kind) {
-        override fun ClassBuilder.modifyGeneratedClass() {
-            annotations += "ActualizeByJvmBuiltinProvider"
-            expectActual = ExpectActualModifier.Expect
+    override fun arrayBuilder(kind: PrimitiveType?): ArrayBuilder =
+        object : ArrayBuilder(
+            kind,
+            generateRuntimeTypeAppendix = { type -> appendDoc("When targeting the JVM, instances of this class are represented as `$type`.") },
+            generateOutOfBoundsBehaviorNote = {
+                appendDoc("If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException] except in Kotlin/JS")
+                appendDoc("where the behavior is unspecified, and in Kotlin/Wasm where a [trap](https://webassembly.github.io/spec/core/intro/overview.html#trap) will be raised instead,")
+                appendDoc("unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.")
+            }
+        ) {
+            override fun ClassBuilder.modifyGeneratedClass() {
+                expectActual = ExpectActualModifier.Expect
+            }
         }
-    }
 }
 
 class GenerateJvmArrays(writer: PrintWriter, primitiveArrays: Boolean) : GenerateArrays(writer, primitiveArrays) {
-    override fun arrayBuilder(kind: PrimitiveType?): ArrayBuilder = object : ArrayBuilder(kind) {
-        override fun ClassBuilder.modifyGeneratedClass() {
-            expectActual = ExpectActualModifier.Unspecified
-        }
+    override fun FileBuilder.modifyGeneratedFile() {
+        annotate("kotlin.internal.JvmBuiltin")
+        annotate("kotlin.internal.SuppressBytecodeGeneration")
+        suppress("NON_ABSTRACT_FUNCTION_WITH_NO_BODY")
+        suppress("PRIMARY_CONSTRUCTOR_DELEGATION_CALL_EXPECTED")
+        suppress("MUST_BE_INITIALIZED_OR_BE_ABSTRACT")
     }
+
+    override fun arrayBuilder(kind: PrimitiveType?): ArrayBuilder =
+        object : ArrayBuilder(kind, { type -> appendDoc("Instances of this class are represented as `$type`.") }) {
+            override fun ClassBuilder.modifyGeneratedClass() {
+                expectActual = ExpectActualModifier.Actual
+            }
+        }
 }
 
 class GenerateJsArrays(writer: PrintWriter, primitiveArrays: Boolean) : GenerateArrays(writer, primitiveArrays) {
@@ -234,7 +255,9 @@ class GenerateJsArrays(writer: PrintWriter, primitiveArrays: Boolean) : Generate
         suppress("UNUSED_PARAMETER")
     }
 
-    override fun arrayBuilder(kind: PrimitiveType?): ArrayBuilder = object : ArrayBuilder(kind) {
+    override fun arrayBuilder(kind: PrimitiveType?): ArrayBuilder = object : ArrayBuilder(kind, generateOutOfBoundsBehaviorNote = {
+        appendDoc("If the [index] is out of bounds of this array, the behavior is unspecified")
+    }) {
         override fun SecondaryConstructorBuilder.modifySecondaryConstructor() {
             annotations.removeAll { it.startsWith("Suppress") }
             annotations += """Suppress("WRONG_MODIFIER_TARGET", "PRIMARY_CONSTRUCTOR_DELEGATION_CALL_EXPECTED")"""
@@ -265,7 +288,11 @@ class GenerateWasmArrays(writer: PrintWriter, primitiveArrays: Boolean) : Genera
         suppress("UNUSED_PARAMETER")
     }
 
-    override fun arrayBuilder(kind: PrimitiveType?): ArrayBuilder = object : ArrayBuilder(kind) {
+    override fun arrayBuilder(kind: PrimitiveType?): ArrayBuilder = object : ArrayBuilder(kind, generateOutOfBoundsBehaviorNote = {
+        appendDoc("If the [index] is out of bounds of this array, a [trap](https://webassembly.github.io/spec/core/intro/overview.html#trap) will be raised")
+        appendDoc("unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.")
+        appendDoc("With the `-Xwasm-enable-array-range-checks` an [IndexOutOfBoundsException] will be thrown.")
+    }) {
         private val storageArrayType = when (kind) {
             null -> "WasmAnyArray"
             PrimitiveType.BOOLEAN -> "WasmByteArray"
@@ -292,7 +319,8 @@ class GenerateWasmArrays(writer: PrintWriter, primitiveArrays: Boolean) : Genera
                 name = "storage"
                 type = storageArrayType
             }
-            classBody("""
+            classBody(
+                """
                 init {
                     if (size < 0) throw IllegalArgumentException("Negative array size")
                     storage = $storageArrayType(size)
@@ -301,7 +329,8 @@ class GenerateWasmArrays(writer: PrintWriter, primitiveArrays: Boolean) : Genera
                 @WasmPrimitiveConstructor
                 @Suppress("PRIMARY_CONSTRUCTOR_DELEGATION_CALL_EXPECTED")
                 internal constructor(storage: $storageArrayType)
-            """.trimIndent())
+            """.trimIndent()
+            )
         }
 
         override fun SecondaryConstructorBuilder.modifySecondaryConstructor() {
@@ -314,12 +343,12 @@ class GenerateWasmArrays(writer: PrintWriter, primitiveArrays: Boolean) : Genera
             """
                 rangeCheck(index, storage.len())
                 ${
-                    when (kind) {
-                        null -> "@Suppress(\"UNCHECKED_CAST\") return storage.get(index) as T"
-                        PrimitiveType.BOOLEAN -> "return storage.get(index).reinterpretAsInt().reinterpretAsBoolean()"
-                        else -> "return storage.get(index)"
-                    }
+                when (kind) {
+                    null -> "@Suppress(\"UNCHECKED_CAST\") return storage.get(index) as T"
+                    PrimitiveType.BOOLEAN -> "return storage.get(index).reinterpretAsInt().reinterpretAsBoolean()"
+                    else -> "return storage.get(index)"
                 }
+            }
             """.trimIndent().setAsBlockBody()
         }
 

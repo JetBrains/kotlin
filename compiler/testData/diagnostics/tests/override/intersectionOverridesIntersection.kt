@@ -35,3 +35,5 @@ open class FirDeclarationStatusImpl : FirPureAbstractElement(), FirDeclarationSt
 //     Contains an IO for the above 2 functions. To check if this is green, we unwrap the IO in
 //     the base and then check `nonSubsumed()`, thus doing what is written in "IDEALLY".
 class FirResolvedDeclarationStatusImpl : FirDeclarationStatusImpl(), FirResolvedDeclarationStatus
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, interfaceDeclaration, override */

@@ -8,6 +8,8 @@ package kotlin.collections.builders
 import java.io.Externalizable
 import java.io.InvalidObjectException
 import java.io.NotSerializableException
+import java.io.ObjectInputStream
+import kotlin.internal.throwReadObjectNotSupported
 
 internal class ListBuilder<E>(initialCapacity: Int = 10) : MutableList<E>, RandomAccess, AbstractMutableList<E>(), Serializable {
     private var backing = arrayOfUninitializedElements<E>(initialCapacity)
@@ -106,6 +108,7 @@ internal class ListBuilder<E>(initialCapacity: Int = 10) : MutableList<E>, Rando
         removeRangeInternal(0, length)
     }
 
+    @IgnorableReturnValue
     override fun removeAt(index: Int): E {
         checkIsMutable()
         AbstractList.checkElementIndex(index, length)
@@ -319,6 +322,8 @@ internal class ListBuilder<E>(initialCapacity: Int = 10) : MutableList<E>, Rando
             else
                 throw NotSerializableException("The list cannot be serialized while it is being built.")
 
+        private fun readObject(input: ObjectInputStream): Unit = throwReadObjectNotSupported()
+
         override val size: Int
             get() {
                 checkForComodification()
@@ -411,6 +416,7 @@ internal class ListBuilder<E>(initialCapacity: Int = 10) : MutableList<E>, Rando
             removeRangeInternal(offset, length)
         }
 
+        @IgnorableReturnValue
         override fun removeAt(index: Int): E {
             checkIsMutable()
             checkForComodification()

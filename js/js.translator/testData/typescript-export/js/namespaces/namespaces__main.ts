@@ -12,13 +12,13 @@ function box(): string {
     const res3 = JS_TESTS.f(c1, c2, c3);
 
     if (res1 !== "foo.bar.baz.f(C1(value=1), C2(value=2), C3(value=3))")
-        return "Fail 1: " + res1;
+        return "Error: Function in nested namespace foo.bar.baz should return correct string. Got: " + res1;
 
     if (res2 !== "a.b.f(C1(value=1), C2(value=2), C3(value=3))")
-        return "Fail 2: " + res2;
+        return "Error: Function in nested namespace a.b should return correct string. Got: " + res2;
 
     if (res3 !== "f(C1(value=1), C2(value=2), C3(value=3))")
-        return "Fail 3: " + res3;
+        return "Error: Function in root namespace should return correct string. Got: " + res3;
 
     return "OK";
 }

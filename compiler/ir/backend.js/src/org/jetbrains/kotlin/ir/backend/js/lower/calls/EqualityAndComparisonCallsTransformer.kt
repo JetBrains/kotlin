@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.util.isNullable
+import org.jetbrains.kotlin.js.config.compileLongAsBigint
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.atMostOne
 
@@ -24,6 +25,7 @@ class EqualityAndComparisonCallsTransformer(context: JsIrBackendContext) : Calls
     private val intrinsics = context.intrinsics
     private val irBuiltIns = context.irBuiltIns
     private val icUtils = context.inlineClassesUtils
+    private val longAsBigInt = context.configuration.compileLongAsBigint
 
     private val symbolToTransformer: SymbolToTransformer = hashMapOf()
 
@@ -49,15 +51,19 @@ class EqualityAndComparisonCallsTransformer(context: JsIrBackendContext) : Calls
     }
 
     private fun transformLongComparison(comparator: IrSimpleFunctionSymbol): (IrFunctionAccessExpression) -> IrExpression = { call ->
-        IrCallImpl(
-            call.startOffset,
-            call.endOffset,
-            comparator.owner.returnType,
-            comparator,
-            typeArgumentsCount = 0
-        ).apply {
-            putValueArgument(0, irCall(call, intrinsics.longCompareToLong, argumentsAsReceivers = true))
-            putValueArgument(1, JsIrBuilder.buildInt(irBuiltIns.intType, 0))
+        if (longAsBigInt) {
+            irCall(call, comparator)
+        } else {
+            IrCallImpl(
+                call.startOffset,
+                call.endOffset,
+                comparator.owner.returnType,
+                comparator,
+                typeArgumentsCount = 0
+            ).apply {
+                arguments[0] = irCall(call, intrinsics.longCompareToLong!!)
+                arguments[1] = JsIrBuilder.buildInt(irBuiltIns.intType, 0)
+            }
         }
     }
 
@@ -75,8 +81,8 @@ class EqualityAndComparisonCallsTransformer(context: JsIrBackendContext) : Calls
     }
 
     private fun transformEqeqeqOperator(call: IrFunctionAccessExpression): IrExpression {
-        val lhs = call.getValueArgument(0)!!
-        val rhs = call.getValueArgument(1)!!
+        val lhs = call.arguments[0]!!
+        val rhs = call.arguments[1]!!
 
         return if (lhs.isCharBoxing() && rhs.isCharBoxing()) {
             optimizeInlineClassEquality(call, lhs, rhs)
@@ -86,12 +92,12 @@ class EqualityAndComparisonCallsTransformer(context: JsIrBackendContext) : Calls
     }
 
     private fun IrExpression.isCharBoxing(): Boolean {
-        return this is IrCall && symbol == intrinsics.jsBoxIntrinsic && getValueArgument(0)!!.type.isChar()
+        return this is IrCall && symbol == intrinsics.jsBoxIntrinsic && arguments[0]!!.type.isChar()
     }
 
     private fun transformEqeqOperator(call: IrFunctionAccessExpression): IrExpression {
-        val lhs = call.getValueArgument(0)!!
-        val rhs = call.getValueArgument(1)!!
+        val lhs = call.arguments[0]!!
+        val rhs = call.arguments[1]!!
 
         val lhsJsType = lhs.type.getPrimitiveType()
         val rhsJsType = rhs.type.getPrimitiveType()
@@ -110,8 +116,14 @@ class EqualityAndComparisonCallsTransformer(context: JsIrBackendContext) : Calls
             lhsJsType == rhsJsType && lhsJsType.canBeUsedWithJsEq() ->
                 chooseEqualityOperatorForPrimitiveTypes(call)
 
+            lhs.type.isLong() && rhs.type.isLong() -> if (longAsBigInt) {
+                chooseEqualityOperatorForPrimitiveTypes(call)
+            } else {
+                irCall(call, intrinsics.longEquals!!)
+            }
+
             !lhsJsType.isBuiltin() && !lhs.type.isNullable() && equalsMethod != null ->
-                irCall(call, equalsMethod.symbol, argumentsAsReceivers = true)
+                irCall(call, equalsMethod.symbol)
 
             // For inline class instances we can try to unbox them for the equality comparison
             lhs.isBoxIntrinsic() && rhs.isBoxIntrinsic() ->
@@ -130,7 +142,7 @@ class EqualityAndComparisonCallsTransformer(context: JsIrBackendContext) : Calls
     }
 
     private fun IrFunctionAccessExpression.allValueArgumentsAreNullable() =
-        (0 until valueArgumentsCount).all { getValueArgument(it)!!.type.isNullable() }
+        nonDispatchArguments.all { it!!.type.isNullable() }
 
     private fun transformCompareToMethodCall(call: IrFunctionAccessExpression): IrExpression {
         val function = call.symbol.owner as IrSimpleFunction
@@ -147,7 +159,7 @@ class EqualityAndComparisonCallsTransformer(context: JsIrBackendContext) : Calls
             // Use runtime function call in case when receiverType is a primitive JS type that doesn't have `compareTo` method,
             // or has a potential to be primitive type (being fake overridden from `Comparable`)
             function.isMethodOfPrimitiveJSType() || function.isFakeOverriddenFromComparable() ->
-                irCall(call, intrinsics.jsCompareTo, receiversAsArguments = true)
+                irCall(call, intrinsics.jsCompareTo)
 
             // Valid `compareTo` method must be present at this point
             else ->
@@ -164,12 +176,12 @@ class EqualityAndComparisonCallsTransformer(context: JsIrBackendContext) : Calls
 
             // `Any.equals` works as identity operator
             call.isSuperToAny() ->
-                irCall(call, intrinsics.jsEqeqeq, receiversAsArguments = true)
+                irCall(call, intrinsics.jsEqeqeq)
 
             // Use runtime function call in case when receiverType is a primitive JS type that doesn't have `equals` method,
             // or has a potential to be primitive type (being fake overridden from `Any`)
             function.isMethodOfPotentiallyPrimitiveJSType() ->
-                irCall(call, intrinsics.jsEquals, receiversAsArguments = true)
+                irCall(call, intrinsics.jsEquals)
 
             // Valid `equals` method must be present at this point
             else -> call
@@ -184,6 +196,27 @@ class EqualityAndComparisonCallsTransformer(context: JsIrBackendContext) : Calls
             .filter { it.isEqualsInheritedFromAny() && !it.isFakeOverriddenFromAny() }
             .atMostOne()
     }
+
+    private enum class PrimitiveType {
+        FLOATING_POINT_NUMBER,
+        INTEGER_NUMBER,
+        BIGINT_NUMBER,
+        STRING,
+        BOOLEAN,
+        OTHER
+    }
+
+    private fun IrType.getPrimitiveType() = makeNotNull().run {
+        when {
+            isBoolean() -> PrimitiveType.BOOLEAN
+            isByte() || isShort() || isInt() -> PrimitiveType.INTEGER_NUMBER
+            isFloat() || isDouble() -> PrimitiveType.FLOATING_POINT_NUMBER
+            isString() -> PrimitiveType.STRING
+            isLong() && longAsBigInt -> PrimitiveType.BIGINT_NUMBER
+            else -> PrimitiveType.OTHER
+        }
+    }
+
 
     private fun IrFunction.isMethodOfPrimitiveJSType() =
         dispatchReceiverParameter?.let {
@@ -206,7 +239,7 @@ class EqualityAndComparisonCallsTransformer(context: JsIrBackendContext) : Calls
         this is IrCall && symbol == icUtils.boxIntrinsic
 
     private fun IrExpression.unboxParamWithInlinedClass(): Pair<IrExpression, IrClass?> {
-        val unboxed = (this as IrFunctionAccessExpression).getValueArgument(0)
+        val unboxed = (this as IrFunctionAccessExpression).arguments[0]
             ?: irError("Boxed expression is expected") {
                 withIrEntry("this", this@unboxParamWithInlinedClass)
             }
@@ -217,8 +250,8 @@ class EqualityAndComparisonCallsTransformer(context: JsIrBackendContext) : Calls
         val (lhsUnboxed, lhsClassType) = lhs.unboxParamWithInlinedClass()
         val (rhsUnboxed, rhsClassType) = rhs.unboxParamWithInlinedClass()
         if (lhsClassType !== null && lhsClassType === rhsClassType && lhsUnboxed.type.isDefaultEqualsMethod()) {
-            call.putValueArgument(0, lhsUnboxed)
-            call.putValueArgument(1, rhsUnboxed)
+            call.arguments[0] = lhsUnboxed
+            call.arguments[1] = rhsUnboxed
 
             if (lhsUnboxed.type.isChar() || lhsUnboxed.type.getLowestUnderlyingType().getPrimitiveType().canBeUsedWithJsEq()) {
                 return chooseEqualityOperatorForPrimitiveTypes(call)

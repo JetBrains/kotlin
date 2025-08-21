@@ -48,6 +48,7 @@ class ObjCExportTranslatorImpl(
     val namer: ObjCExportNamer,
     val problemCollector: ObjCExportProblemCollector,
     val objcGenerics: Boolean,
+    val objcExportBlockExplicitParameterNames: Boolean,
 ) : ObjCExportTranslator {
 
     private val kotlinAnyName = namer.kotlinAnyName
@@ -260,11 +261,15 @@ class ObjCExportTranslatorImpl(
             // TODO: consider adding exception-throwing impls for these.
             when (descriptor.kind) {
                 ClassKind.OBJECT -> {
+                    val selector = namer.getObjectInstanceSelector(descriptor)
                     add {
                         ObjCMethod(
                             null, false, ObjCInstanceType,
-                            listOf(namer.getObjectInstanceSelector(descriptor)), emptyList(),
-                            listOf(swiftNameAttribute("init()"))
+                            listOf(selector), emptyList(),
+                            listOfNotNull(
+                                swiftNameAttribute("init()"),
+                                if (namer.needsExplicitMethodFamily(selector)) OBJC_METHOD_FAMILY_NONE else null
+                            )
                         )
                     }
                     add {
@@ -287,6 +292,19 @@ class ObjCExportTranslatorImpl(
                                 entryName, it, type, listOf("class", "readonly"),
                                 declarationAttributes = listOf(swiftNameAttribute(swiftName))
                             )
+                        }
+                        if (namer.needsExplicitMethodFamily(entryName)) {
+                            add {
+                                ObjCMethod(
+                                    null,
+                                    null,
+                                    false,
+                                    type,
+                                    listOf(entryName),
+                                    emptyList<ObjCParameter>(),
+                                    listOf(OBJC_METHOD_FAMILY_NONE),
+                                )
+                            }
                         }
                     }
 
@@ -450,7 +468,20 @@ class ObjCExportTranslatorImpl(
                 .makePropertiesOrderStable()
                 .asSequence()
                 .distinctBy { namer.getPropertyName(it) }
-                .forEach { base -> add { buildProperty(property, base, objCExportScope) } }
+                .forEach { base -> translateProperty(property, base, objCExportScope) }
+        }
+    }
+
+    private fun StubBuilder<ObjCExportStub>.translateProperty(
+        property: PropertyDescriptor,
+        baseProperty: PropertyDescriptor,
+        objCExportScope: ObjCExportScope,
+    ) {
+        add { buildProperty(property, baseProperty, objCExportScope) }
+        if (namer.needsExplicitMethodFamily(getSelector(baseProperty.getter!!))) {
+            add {
+                buildMethod(property.getter!!, baseProperty.getter!!, objCExportScope)
+            }
         }
     }
 
@@ -498,7 +529,7 @@ class ObjCExportTranslatorImpl(
         objCExportScope: ObjCExportScope,
     ) {
         methods.makeMethodsOrderStable().forEach { add { buildMethod(it, it, objCExportScope) } }
-        properties.makePropertiesOrderStable().forEach { add { buildProperty(it, it, objCExportScope) } }
+        properties.makePropertiesOrderStable().forEach { translateProperty(it, it, objCExportScope) }
     }
     // TODO: consider checking that signatures for bases with same selector/name are equal.
 
@@ -548,6 +579,14 @@ class ObjCExportTranslatorImpl(
         return ObjCProperty(name, property, type, attributes, setterName, getterName, declarationAttributes, commentOrNull)
     }
 
+    private fun unifyName(initialName: String, usedNames: Set<String>): String {
+        var unique = initialName.toValidObjCSwiftIdentifier()
+        while (unique in usedNames || unique in cKeywords) {
+            unique += "_"
+        }
+        return unique
+    }
+
     internal fun buildMethod(
         method: FunctionDescriptor,
         baseMethod: FunctionDescriptor,
@@ -555,14 +594,6 @@ class ObjCExportTranslatorImpl(
         unavailable: Boolean = false,
     ): ObjCMethod {
         fun collectParameters(baseMethodBridge: MethodBridge, method: FunctionDescriptor): List<ObjCParameter> {
-            fun unifyName(initialName: String, usedNames: Set<String>): String {
-                var unique = initialName.toValidObjCSwiftIdentifier()
-                while (unique in usedNames || unique in cKeywords) {
-                    unique += "_"
-                }
-                return unique
-            }
-
             val valueParametersAssociated = baseMethodBridge.valueParametersAssociated(method)
 
             val parameters = mutableListOf<ObjCParameter>()
@@ -602,10 +633,12 @@ class ObjCExportTranslatorImpl(
                         }
                         ObjCBlockPointerType(
                             returnType = ObjCVoidType,
-                            parameterTypes = listOfNotNull(
+                            parameters = listOfNotNull(
                                 resultType,
                                 ObjCNullableReferenceType(ObjCClassType("NSError"))
-                            )
+                            ).map {
+                                ObjCParameter("", null, it)
+                            }
                         )
                     }
                 }
@@ -645,6 +678,10 @@ class ObjCExportTranslatorImpl(
             attributes += "unavailable"
         } else {
             attributes.addIfNotNull(getDeprecationAttribute(method))
+        }
+
+        if (namer.needsExplicitMethodFamily(namer.getSelector(baseMethod)) && baseMethod !is ConstructorDescriptor) {
+            attributes += OBJC_METHOD_FAMILY_NONE
         }
 
         val comment = buildComment(method, baseMethodBridge, parameters)
@@ -950,6 +987,7 @@ class ObjCExportTranslatorImpl(
         objCExportScope: ObjCExportScope,
         returnsVoid: Boolean,
     ): ObjCBlockPointerType {
+        val usedNames = mutableSetOf<String>()
         val parameterTypes = listOfNotNull(functionType.getReceiverTypeFromFunctionType()) +
             functionType.getValueParameterTypesFromFunctionType().map { it.type }
 
@@ -960,7 +998,20 @@ class ObjCExportTranslatorImpl(
                 mapReferenceType(functionType.getReturnTypeFromFunctionType(), objCExportScope)
             },
             parameterTypes.map {
-                mapReferenceType(it, objCExportScope)
+                val uniqueName = when (objcExportBlockExplicitParameterNames) {
+                    true -> {
+                        val parameterName = it.extractParameterNameFromFunctionTypeArgument()?.asString() ?: ""
+                        val name = unifyName(parameterName, usedNames)
+                        usedNames += name
+                        name
+                    }
+                    else -> ""
+                }
+                ObjCParameter(
+                    uniqueName,
+                    null,
+                    mapReferenceType(it, objCExportScope)
+                )
             }
         )
     }
@@ -1077,6 +1128,7 @@ private fun computeSuperClassType(descriptor: ClassDescriptor): KotlinType? =
     descriptor.typeConstructor.supertypes.firstOrNull { !it.isInterface() }
 
 internal const val OBJC_SUBCLASSING_RESTRICTED = "objc_subclassing_restricted"
+internal const val OBJC_METHOD_FAMILY_NONE = "objc_method_family(none)"
 
 @InternalKotlinNativeApi
 fun ClassDescriptor.needCompanionObjectProperty(namer: ObjCExportNamer, mapper: ObjCExportMapper): Boolean {

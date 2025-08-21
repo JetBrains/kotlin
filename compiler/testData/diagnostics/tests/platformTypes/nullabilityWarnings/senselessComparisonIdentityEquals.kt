@@ -39,3 +39,5 @@ fun test() {
     if (a === null && platformJ === <!DEBUG_INFO_CONSTANT!>a<!>) {}
 }
 
+/* GENERATED_FIR_TAGS: andExpression, equalityExpression, flexibleType, functionDeclaration, ifExpression, javaProperty,
+javaType, localProperty, nullableType, propertyDeclaration, smartcast */

@@ -1,9 +1,12 @@
+// NO_CHECK_LAMBDA_INLINING
+// FILE: lib.kt
 interface Callable {
     fun call(b: Boolean)
 }
 
 inline fun run(f: () -> Unit) { f() }
 
+// FILE: main.kt
 class A {
     fun foo(): String {
         run {

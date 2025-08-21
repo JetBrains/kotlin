@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLFirResolveT
 import org.jetbrains.kotlin.analysis.low.level.api.fir.projectStructure.llFirModuleData
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.llFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.transformers.LLFirLazyResolverRunner
+import org.jetbrains.kotlin.analysis.low.level.api.fir.transformers.PartialBodyAnalysisSuspendedException
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkCanceled
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.getContainingFile
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
@@ -102,6 +103,8 @@ internal class LLFirModuleLazyDeclarationResolver(val moduleComponents: LLFirMod
             if (toPhase == FirResolvePhase.IMPORTS) return
 
             lazyResolveTargets(target, toPhase)
+        } catch (_: PartialBodyAnalysisSuspendedException) {
+            // Do nothing, partial body resolve is complete
         } catch (e: Exception) {
             handleExceptionFromResolve(e, target, toPhase)
         }
@@ -128,7 +131,7 @@ internal class LLFirModuleLazyDeclarationResolver(val moduleComponents: LLFirMod
 
         val helper = LLFirResolutionActivityTracker.getInstance()
         try {
-            helper?.beforeLazyResolve()
+            helper.beforeLazyResolve()
 
             while (currentPhase < toPhase) {
                 currentPhase = currentPhase.next
@@ -140,7 +143,7 @@ internal class LLFirModuleLazyDeclarationResolver(val moduleComponents: LLFirMod
                 )
             }
         } finally {
-            helper?.afterLazyResolve()
+            helper.afterLazyResolve()
         }
     }
 

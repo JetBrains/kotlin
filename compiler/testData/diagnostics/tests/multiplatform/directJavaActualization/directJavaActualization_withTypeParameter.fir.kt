@@ -15,9 +15,9 @@ expect class Case3<T> where T: Number , T: Comparable<T>{
     fun foo(a: T)
 }
 
-<!EXPECT_ACTUAL_INCOMPATIBILITY{JVM}!>expect<!> class Case4<out T>
+<!EXPECT_ACTUAL_IR_INCOMPATIBILITY{JVM}!>expect<!> class Case4<out T>
 
-<!EXPECT_ACTUAL_INCOMPATIBILITY{JVM}!>expect<!> class Case5<in T>
+<!EXPECT_ACTUAL_IR_INCOMPATIBILITY{JVM}!>expect<!> class Case5<in T>
 
 expect class Case6 {
     fun <T> foo(): T
@@ -69,3 +69,6 @@ public class Case6 {
     @kotlin.annotations.jvm.KotlinActual
     public <S extends Comparable<S>> List<S> baz() { return null; }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, expect, functionDeclaration, in, nullableType, out, typeConstraint,
+typeParameter */

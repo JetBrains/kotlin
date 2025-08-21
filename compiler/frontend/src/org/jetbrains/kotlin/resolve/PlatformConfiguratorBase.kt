@@ -88,7 +88,7 @@ private val DEFAULT_CLASSIFIER_USAGE_CHECKERS = listOf(
     DeprecatedClassifierUsageChecker(), ApiVersionClassifierUsageChecker, MissingDependencyClassChecker.ClassifierUsage,
     OptionalExpectationUsageChecker()
 )
-private val DEFAULT_ANNOTATION_CHECKERS = listOf<AdditionalAnnotationChecker>()
+private val DEFAULT_ANNOTATION_CHECKERS = listOf<AdditionalAnnotationChecker>(ReturnValueAnnotationChecker)
 
 private val DEFAULT_CLASH_RESOLVERS = listOf<PlatformExtensionsClashResolver<*>>(
     IdentifierCheckerClashesResolver(),

@@ -31,3 +31,6 @@ fun testClassPropertyPlusAssign(foo: Foo) {
 
 
 fun todo(): Nothing = throw Exception()
+
+/* GENERATED_FIR_TAGS: additiveExpression, asExpression, assignment, classDeclaration, funWithExtensionReceiver,
+functionDeclaration, integerLiteral, localFunction, localProperty, operator, propertyDeclaration */

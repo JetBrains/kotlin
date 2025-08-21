@@ -19,25 +19,29 @@ KaKotlinPropertySymbol:
       annotations: []
       type: dynamic
     visibility: PRIVATE
+    getDispatchReceiver(): KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: Foo
     getContainingFileSymbol: KaFileSymbol(dynamic.kt)
     getContainingJvmClassName: Foo
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
   callableId: /Foo.p
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
     annotations: []
     callableId: null
     compilerVisibility: Public
     contextReceivers: []
-    hasBody: false
     hasStableParameterNames: true
     isActual: false
-    isDefault: true
     isExpect: false
     isExtension: false
     isInline: false
+    isNotDefault: false
     isOverride: false
     location: PROPERTY
     modality: FINAL
@@ -94,11 +98,13 @@ KaKotlinPropertySymbol:
   javaGetterName: getP
   javaSetterName: null
   setterDeprecationStatus: null
+  isInline: false
 
 KaAnonymousFunctionSymbol:
   annotations: []
   callableId: null
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   hasStableParameterNames: true
   isActual: false
@@ -122,6 +128,7 @@ KaNamedFunctionSymbol:
   annotations: []
   callableId: /Foo.f
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true

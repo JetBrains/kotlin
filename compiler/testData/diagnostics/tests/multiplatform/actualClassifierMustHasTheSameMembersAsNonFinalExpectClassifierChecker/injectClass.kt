@@ -23,3 +23,6 @@ actual open class Foo {
     // But since `override inner class` isn't possible in Kotlin, red code here is unnecessary
     inner class InjectedInnerClass
 }
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, functionDeclaration, inner, integerLiteral, nestedClass,
+propertyDeclaration */

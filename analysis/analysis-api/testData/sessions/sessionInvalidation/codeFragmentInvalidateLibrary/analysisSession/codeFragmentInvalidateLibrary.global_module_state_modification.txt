@@ -1,0 +1,5 @@
+Invalidated sessions:
+fragment1.kt
+fragment2.kt
+library (resolvable session)
+sourceModule

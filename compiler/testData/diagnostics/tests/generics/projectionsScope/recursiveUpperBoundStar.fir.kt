@@ -13,3 +13,6 @@ fun foo(x : B<*>) {
 fun bar1(x : A<A<*>>) { }
 fun bar2(x : A<out A<*>>) { }
 fun bar3(x : A<*>) { }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, interfaceDeclaration, nullableType, outProjection, starProjection,
+typeParameter */

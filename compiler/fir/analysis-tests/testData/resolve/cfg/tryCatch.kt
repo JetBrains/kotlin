@@ -33,3 +33,6 @@ fun test_3(b: Boolean) {
     }
     val z = 3
 }
+
+/* GENERATED_FIR_TAGS: break, continue, functionDeclaration, ifExpression, integerLiteral, localProperty,
+propertyDeclaration, tryExpression, whileLoop */

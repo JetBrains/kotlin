@@ -22,3 +22,6 @@ fun bar(a: A) {
         a.foo("")
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, ifExpression, isExpression, override, smartcast,
+stringLiteral, superExpression */

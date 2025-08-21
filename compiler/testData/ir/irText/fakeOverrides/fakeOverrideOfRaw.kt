@@ -2,8 +2,9 @@
 // FIR_IDENTICAL
 // ISSUE: KT-65298
 // TARGET_BACKEND: JVM
-// FILE: Java1.java
+// DISABLE_JAVA_FACADE
 
+// FILE: Java1.java
 public class Java1 {
     public void foo(List a) {};
     public List bar() { return null; };

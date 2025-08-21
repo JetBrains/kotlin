@@ -30,7 +30,7 @@ Tower Data Context:
                 FirEnumEntrySymbol public final static enum entry NORTH: R|Direction|
                 FirEnumEntrySymbol public final static enum entry SOUTH: R|Direction|
                 FirEnumEntrySymbol public final static enum entry WEST: R|Direction|
-                FirPropertySymbol public final static val entries: R|kotlin/enums/EnumEntries<Direction>|
+                FirRegularPropertySymbol public final static val entries: R|kotlin/enums/EnumEntries<Direction>|
                     public get(): R|kotlin/enums/EnumEntries<Direction>|
     Element 9
         Implicit receiver:

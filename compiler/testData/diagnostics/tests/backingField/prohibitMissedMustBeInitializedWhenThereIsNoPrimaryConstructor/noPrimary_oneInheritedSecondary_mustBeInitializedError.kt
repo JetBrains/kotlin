@@ -12,3 +12,6 @@ class Foo : Base {
         x = ""
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, init, integerLiteral, primaryConstructor, propertyDeclaration,
+secondaryConstructor, setter, stringLiteral */

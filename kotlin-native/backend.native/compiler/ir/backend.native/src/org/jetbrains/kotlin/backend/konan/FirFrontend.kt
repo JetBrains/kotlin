@@ -11,13 +11,12 @@ import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.fir.FirBinaryDependenciesModuleData
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.pipeline.*
 import org.jetbrains.kotlin.fir.resolve.ImplicitIntegerCoercionModuleCapability
 import org.jetbrains.kotlin.library.metadata.isCInteropLibrary
-import org.jetbrains.kotlin.library.metadata.resolver.KotlinResolvedLibrary
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.platform.CommonPlatforms
 
 @OptIn(SessionConfiguration::class)
 internal inline fun <F> PhaseContext.firFrontend(
@@ -37,24 +36,23 @@ internal inline fun <F> PhaseContext.firFrontend(
     val extensionRegistrars = FirExtensionRegistrar.getInstances(input.project)
     val mainModuleName = Name.special("<${config.moduleId}>")
     val syntaxErrors = files.fold(false) { errorsFound, file -> fileHasSyntaxErrors(file) or errorsFound }
-    val binaryModuleData = BinaryModuleData.initialize(mainModuleName, CommonPlatforms.defaultCommonPlatform)
-    val dependencyList = DependencyListForCliModule.build(binaryModuleData) {
+    val dependencyList = DependencyListForCliModule.build {
         val (interopLibs, regularLibs) = config.resolvedLibraries.getFullList().partition { it.isCInteropLibrary() }
-        dependencies(regularLibs.map { it.libraryFile.absolutePath })
+        defaultDependenciesSet(mainModuleName) {
+            dependencies(regularLibs.map { it.libraryFile.absolutePath })
+            friendDependencies(config.friendModuleFiles.map { it.absolutePath })
+            dependsOnDependencies(config.refinesModuleFiles.map { it.absolutePath })
+        }
         if (interopLibs.isNotEmpty()) {
             val interopModuleData =
-                    BinaryModuleData.createDependencyModuleData(
-                            Name.special("<regular interop dependencies of $mainModuleName>"),
-                            CommonPlatforms.defaultCommonPlatform,
+                    FirBinaryDependenciesModuleData(Name.special("<regular interop dependencies of $mainModuleName>"),
                             FirModuleCapabilities.create(listOf(ImplicitIntegerCoercionModuleCapability))
                     )
             dependencies(interopModuleData, interopLibs.map { it.libraryFile.absolutePath })
         }
-        friendDependencies(config.friendModuleFiles.map { it.absolutePath })
-        dependsOnDependencies(config.refinesModuleFiles.map { it.absolutePath })
         // TODO: !!! dependencies module data?
     }
-    val resolvedLibraries: List<KotlinResolvedLibrary> = config.resolvedLibraries.getFullResolvedList()
+    val resolvedLibraries = config.resolvedLibraries.getFullResolvedList().map { it.library }
 
     val sessionsWithSources = prepareNativeSessions(
             files,

@@ -9,3 +9,5 @@ fun takeJ(map: Map<Any, Any>) {}
 fun test() {
     takeJ(HashMap())
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, javaFunction */

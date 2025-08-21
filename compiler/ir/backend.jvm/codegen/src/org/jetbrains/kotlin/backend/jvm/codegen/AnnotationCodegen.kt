@@ -18,27 +18,28 @@ package org.jetbrains.kotlin.backend.jvm.codegen
 
 import org.jetbrains.annotations.NotNull
 import org.jetbrains.annotations.Nullable
+import org.jetbrains.kotlin.backend.common.report
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
-import org.jetbrains.kotlin.ir.util.erasedUpperBound
+import org.jetbrains.kotlin.backend.jvm.ir.getJvmAnnotationRetention
 import org.jetbrains.kotlin.backend.jvm.ir.isInlineClassType
 import org.jetbrains.kotlin.backend.jvm.ir.isOptionalAnnotationClass
 import org.jetbrains.kotlin.backend.jvm.ir.isWithFlexibleNullability
 import org.jetbrains.kotlin.backend.jvm.mapping.MethodSignatureMapper
 import org.jetbrains.kotlin.backend.jvm.mapping.mapClass
-import org.jetbrains.kotlin.builtins.StandardNames
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
-import org.jetbrains.kotlin.descriptors.annotations.KotlinRetention
+import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.symbols.IrEnumEntrySymbol
-import org.jetbrains.kotlin.ir.types.*
+import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.classOrNull
+import org.jetbrains.kotlin.ir.types.classifierOrNull
+import org.jetbrains.kotlin.ir.types.isMarkedNullable
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.ir.util.isNullable
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.org.objectweb.asm.AnnotationVisitor
@@ -54,19 +55,29 @@ abstract class AnnotationCodegen(private val classCodegen: ClassCodegen) {
 
     private val annotationDescriptorsAlreadyPresent = mutableSetOf<String>()
 
-    fun genAnnotations(annotated: IrDeclaration) {
-        for (annotation in annotated.annotations) {
-            val applicableTargets = annotation.annotationClass.applicableTargetSet()
+    fun genAnnotations(annotated: IrDeclaration, annotations: List<IrConstructorCall> = annotated.annotations) {
+        for (annotation in annotations) {
+            val applicableTargets = annotation.annotationClass.getAnnotationTargets().orEmpty()
             if (annotated is IrSimpleFunction &&
                 annotated.origin === IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA &&
                 KotlinTarget.FUNCTION !in applicableTargets &&
                 KotlinTarget.PROPERTY_GETTER !in applicableTargets &&
                 KotlinTarget.PROPERTY_SETTER !in applicableTargets
             ) {
-                assert(KotlinTarget.EXPRESSION in applicableTargets) {
-                    "Inconsistent target list for lambda annotation: $applicableTargets on $annotated"
+                if (annotation.source == SourceElement.NO_SOURCE && KotlinTarget.EXPRESSION !in applicableTargets) {
+                    // Leniency: Behavior before -Xindy-allow-annotated-lambdas allowed such annotations when added by plugins
+                    // This leniency can be faced out in Kotlin 2.3
+                    context.report(
+                        CompilerMessageSeverity.WARNING, annotated, annotated.fileOrNull,
+                        "Inconsistent target list for lambda annotation: +" +
+                                "${annotation.annotationClass.kotlinFqName} $applicableTargets on ${annotated.kotlinFqName}"
+                    )
+                } else {
+                    assert(KotlinTarget.EXPRESSION in applicableTargets) {
+                        "Inconsistent target list for lambda annotation: $applicableTargets on $annotated"
+                    }
+                    continue
                 }
-                continue
             }
             if (annotated is IrClass &&
                 annotated.visibility == DescriptorVisibilities.LOCAL &&
@@ -150,7 +161,7 @@ abstract class AnnotationCodegen(private val classCodegen: ClassCodegen) {
 
     private fun genAnnotation(annotation: IrConstructorCall, path: TypePath?, isTypeAnnotation: Boolean): String? {
         val annotationClass = annotation.annotationClass
-        val retentionPolicy = getRetentionPolicy(annotationClass)
+        val retentionPolicy = annotationClass.getJvmAnnotationRetention()
         if (retentionPolicy == RetentionPolicy.SOURCE && !context.state.classBuilderMode.generateSourceRetentionAnnotations) return null
 
         // Annotations in the internal IR package do not have real class files.
@@ -180,8 +191,8 @@ abstract class AnnotationCodegen(private val classCodegen: ClassCodegen) {
 
     private fun genAnnotationArguments(annotation: IrConstructorCall, annotationVisitor: AnnotationVisitor) {
         val annotationClass = annotation.annotationClass
-        for (param in annotation.symbol.owner.valueParameters) {
-            val value = annotation.getValueArgument(param.indexInOldValueParameters)
+        for (param in annotation.symbol.owner.parameters) {
+            val value = annotation.arguments[param]
             if (value != null)
                 genCompileTimeValue(getAnnotationArgumentJvmName(annotationClass, param.name), value, annotationVisitor)
             else if (param.defaultValue != null)
@@ -208,7 +219,7 @@ abstract class AnnotationCodegen(private val classCodegen: ClassCodegen) {
     private fun genCompileTimeValue(
         name: String?,
         value: IrExpression,
-        annotationVisitor: AnnotationVisitor
+        annotationVisitor: AnnotationVisitor,
     ) {
         when (value) {
             is IrConst -> annotationVisitor.visit(name, value.value)
@@ -259,7 +270,7 @@ abstract class AnnotationCodegen(private val classCodegen: ClassCodegen) {
             classCodegen: ClassCodegen,
             referenceType: Int,
             boundType: Int,
-            visitor: (typeRef: Int, typePath: TypePath?, descriptor: String, visible: Boolean) -> AnnotationVisitor
+            visitor: (typeRef: Int, typePath: TypePath?, descriptor: String, visible: Boolean) -> AnnotationVisitor,
         ) {
             for ((index, typeParameter) in typeParameterContainer.typeParameters.withIndex()) {
                 object : AnnotationCodegen(classCodegen) {
@@ -306,35 +317,6 @@ abstract class AnnotationCodegen(private val classCodegen: ClassCodegen) {
                     false
             }
 
-        private val annotationRetentionMap = mapOf(
-            KotlinRetention.SOURCE to RetentionPolicy.SOURCE,
-            KotlinRetention.BINARY to RetentionPolicy.CLASS,
-            KotlinRetention.RUNTIME to RetentionPolicy.RUNTIME
-        )
-
-        private fun getRetentionPolicy(irClass: IrClass): RetentionPolicy {
-            val retention = irClass.getAnnotationRetention()
-            if (retention != null) {
-                @Suppress("MapGetWithNotNullAssertionOperator")
-                return annotationRetentionMap[retention]!!
-            }
-            irClass.getAnnotation(FqName(java.lang.annotation.Retention::class.java.name))?.let { retentionAnnotation ->
-                val value = retentionAnnotation.getValueArgument(0)
-                if (value is IrDeclarationReference) {
-                    val symbol = value.symbol
-                    if (symbol is IrEnumEntrySymbol) {
-                        val entry = symbol.owner
-                        val enumClassFqName = entry.parentAsClass.fqNameWhenAvailable
-                        if (RetentionPolicy::class.java.name == enumClassFqName?.asString()) {
-                            return RetentionPolicy.valueOf(entry.name.asString())
-                        }
-                    }
-                }
-            }
-
-            return RetentionPolicy.RUNTIME
-        }
-
         val IrConstructorCall.annotationClass: IrClass get() = symbol.owner.parentAsClass
     }
 
@@ -378,11 +360,9 @@ private fun isBareTypeParameterWithNullableUpperBound(type: IrType): Boolean {
     return type.classifierOrNull?.owner is IrTypeParameter && !type.isMarkedNullable() && type.isNullable()
 }
 
-private fun IrClass.applicableTargetSet(): Set<KotlinTarget> {
-    val valueArgument = getAnnotation(StandardNames.FqNames.target)
-        ?.getValueArgument(StandardClassIds.Annotations.ParameterNames.targetAllowedTargets) as? IrVararg
-        ?: return KotlinTarget.DEFAULT_TARGET_SET
-    return valueArgument.elements.filterIsInstance<IrGetEnumValue>().mapNotNull {
-        KotlinTarget.valueOrNull(it.symbol.owner.name.asString())
-    }.toSet()
+internal fun IrClass.applicableJavaTargetSet(): Set<String>? {
+    val valueArgument = getAnnotation(JvmAnnotationNames.TARGET_ANNOTATION)
+        ?.getValueArgument(StandardClassIds.Annotations.ParameterNames.value) as? IrVararg
+        ?: return null
+    return valueArgument.elements.filterIsInstance<IrGetEnumValue>().map { it.symbol.owner.name.asString() }.toSet()
 }

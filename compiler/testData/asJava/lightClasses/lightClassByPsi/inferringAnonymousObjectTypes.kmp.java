@@ -17,13 +17,13 @@ public abstract interface I /* I*/ {
 
 public final class InvalidPublicSupertype /* InvalidPublicSupertype*/ {
   @org.jetbrains.annotations.NotNull()
-  private final @org.jetbrains.annotations.NotNull() I x;
+  private final @org.jetbrains.annotations.NotNull() Runnable x;
 
   @org.jetbrains.annotations.NotNull()
-  public final @org.jetbrains.annotations.NotNull() I bar();//  bar()
+  public final @org.jetbrains.annotations.NotNull() Runnable bar();//  bar()
 
   @org.jetbrains.annotations.NotNull()
-  public final @org.jetbrains.annotations.NotNull() I getX();//  getX()
+  public final @org.jetbrains.annotations.NotNull() Runnable getX();//  getX()
 
   public  InvalidPublicSupertype();//  .ctor()
 }
@@ -37,13 +37,13 @@ public final class Prop /* Prop*/ {
 
 public final class ValidPublicSupertype /* ValidPublicSupertype*/ {
   @org.jetbrains.annotations.NotNull()
-  private final @org.jetbrains.annotations.NotNull() java.lang.Object x;
+  private final @org.jetbrains.annotations.NotNull() Runnable x;
 
   @org.jetbrains.annotations.NotNull()
-  public final @org.jetbrains.annotations.NotNull() java.lang.Object bar();//  bar()
+  public final @org.jetbrains.annotations.NotNull() Runnable bar();//  bar()
 
   @org.jetbrains.annotations.NotNull()
-  public final @org.jetbrains.annotations.NotNull() java.lang.Object getX();//  getX()
+  public final @org.jetbrains.annotations.NotNull() Runnable getX();//  getX()
 
   public  ValidPublicSupertype();//  .ctor()
 }

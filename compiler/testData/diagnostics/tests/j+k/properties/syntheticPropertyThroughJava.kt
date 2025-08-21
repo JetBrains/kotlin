@@ -18,3 +18,6 @@ class Final(val i: Intermediate) : Intermediate(i.foo)
 fun test(x: Final) {
     x.foo
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, javaProperty, javaType, primaryConstructor,
+propertyDeclaration */

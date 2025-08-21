@@ -26,3 +26,7 @@ fun foo(w: Int): String {
 
     return x
 }
+
+/* GENERATED_FIR_TAGS: assignment, elvisExpression, equalityExpression, functionDeclaration, ifExpression,
+integerLiteral, javaProperty, localProperty, nullableType, propertyDeclaration, smartcast, whenExpression,
+whenWithSubject */

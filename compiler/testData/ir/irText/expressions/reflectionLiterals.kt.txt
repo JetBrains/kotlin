@@ -15,7 +15,7 @@ val test3: KFunction1<A, Unit>
   get
 
 val test4: KFunction0<A>
-  field = A::<init>
+  field = ::A
   get
 
 val test5: KFunction0<Unit>

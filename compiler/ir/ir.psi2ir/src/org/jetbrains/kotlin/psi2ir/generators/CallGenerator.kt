@@ -23,10 +23,12 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.types.IrDynamicType
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.util.irCall
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffsetSkippingComments
+import org.jetbrains.kotlin.psi2ir.descriptors.fromSymbolDescriptor
 import org.jetbrains.kotlin.psi2ir.intermediate.*
 import org.jetbrains.kotlin.psi2ir.resolveFakeOverride
 import org.jetbrains.kotlin.psi2ir.unwrappedGetMethod
@@ -157,19 +159,15 @@ internal class CallGenerator(statementGenerator: StatementGenerator) : Statement
             val descriptor = call.descriptor as? ClassConstructorDescriptor
                 ?: throw AssertionError("Class constructor expected: ${call.descriptor}")
             val constructorSymbol = context.symbolTable.descriptorExtension.referenceConstructor(descriptor.original)
-            val irCall = IrDelegatingConstructorCallImpl.fromSymbolDescriptor(
+            IrDelegatingConstructorCallImpl.fromSymbolDescriptor(
                 startOffset, endOffset,
                 context.irBuiltIns.unitType,
                 constructorSymbol
-            ).apply {
+            ).run {
                 context.callToSubstitutedDescriptorMap[this] = descriptor
                 putTypeArguments(call.typeArguments) { it.toIrType() }
-                this.dispatchReceiver = dispatchReceiver?.load()
-                this.extensionReceiver = extensionReceiver?.load()
+                putValueArguments(call, context.irBuiltIns.unitType, dispatchReceiver, extensionReceiver, contextReceivers)
             }
-            val contextReceivers = contextReceivers.map { it.load() }
-            updateOriginForImplicitReceivers(call.original, irCall.dispatchReceiver, contextReceivers, irCall.extensionReceiver)
-            addParametersToCall(startOffset, endOffset, call, irCall, context.irBuiltIns.unitType, contextReceivers)
         }
 
     fun generateEnumConstructorSuperCall(startOffset: Int, endOffset: Int, call: CallBuilder): IrExpression {
@@ -255,11 +253,7 @@ internal class CallGenerator(statementGenerator: StatementGenerator) : Statement
                             )
 
                             putTypeArguments(call.typeArguments) { it.toIrType() }
-                            dispatchReceiver = dispatchReceiverValue?.load()
-                            extensionReceiver = extensionReceiverValue?.load()
-                            val contextReceivers = contextReceiverValues.map { it.load() }
-                            updateOriginForImplicitReceivers(call.original, dispatchReceiver, contextReceivers, extensionReceiver)
-                            addParametersToCall(startOffset, endOffset, call, this, irType, contextReceivers)
+                            putValueArguments(call, irType, dispatchReceiverValue, extensionReceiverValue, contextReceiverValues)
                         }
                     }
                 }
@@ -305,11 +299,7 @@ internal class CallGenerator(statementGenerator: StatementGenerator) : Statement
             ).run {
                 context.callToSubstitutedDescriptorMap[this] = constructorDescriptor
                 putTypeArguments(call.typeArguments) { it.toIrType() }
-                dispatchReceiver = dispatchReceiverValue?.load()
-                extensionReceiver = extensionReceiverValue?.load()
-                val contextReceivers = contextReceiverValues.map { it.load() }
-                updateOriginForImplicitReceivers(call.original, dispatchReceiver, contextReceivers, extensionReceiver)
-                addParametersToCall(startOffset, endOffset, call, this, irType, contextReceivers)
+                putValueArguments(call, irType, dispatchReceiverValue, extensionReceiverValue, contextReceiverValues)
             }
         }
 
@@ -334,11 +324,7 @@ internal class CallGenerator(statementGenerator: StatementGenerator) : Statement
                 ).run {
                     context.callToSubstitutedDescriptorMap[this] = functionDescriptor
                     putTypeArguments(call.typeArguments) { it.toIrType() }
-                    dispatchReceiver = dispatchReceiverValue?.load()
-                    extensionReceiver = extensionReceiverValue?.load()
-                    val contextReceivers = contextReceiverValues.map { it.load() }
-                    updateOriginForImplicitReceivers(call.original, dispatchReceiver, contextReceivers, extensionReceiver)
-                    addParametersToCall(startOffset, endOffset, call, this, type, contextReceivers)
+                    putValueArguments(call, type, dispatchReceiverValue, extensionReceiverValue, contextReceiverValues)
                 }
             }
         }
@@ -415,13 +401,18 @@ internal class CallGenerator(statementGenerator: StatementGenerator) : Statement
         irResultType: IrType,
         contextReceivers: List<IrExpression>
     ): IrExpression {
-        contextReceivers.forEachIndexed(irCall::putValueArgument)
+        val dispatchReceiverOffset = if (irCall.symbol.descriptor.dispatchReceiverParameter != null) 1 else 0
+        contextReceivers.forEachIndexed { index, expression ->
+            irCall.arguments[index + dispatchReceiverOffset] = expression
+        }
         return if (call.isValueArgumentReorderingRequired()) {
             generateCallWithArgumentReordering(irCall, startOffset, endOffset, call, irResultType, contextReceivers.size)
         } else {
             val valueArguments = call.getValueArgumentsInParameterOrder()
+            val extensionReceiverOffset = if (irCall.symbol.descriptor.extensionReceiverParameter != null) 1 else 0
+            val indexOffset = dispatchReceiverOffset + extensionReceiverOffset + contextReceivers.size
             for ((index, valueArgument) in valueArguments.withIndex()) {
-                irCall.putValueArgument(index + contextReceivers.size, valueArgument)
+                irCall.arguments[index + indexOffset] = valueArgument
             }
             irCall
         }
@@ -467,8 +458,15 @@ internal class CallGenerator(statementGenerator: StatementGenerator) : Statement
             else
                 scope.createTemporaryVariableInBlock(context, this, irBlock, nameHint).load()
 
-        irCall.dispatchReceiver = irCall.dispatchReceiver?.freeze("\$this")
-        irCall.extensionReceiver = irCall.extensionReceiver?.freeze("\$receiver")
+        val hasDispatchReceiver = irCall.symbol.descriptor.dispatchReceiverParameter != null
+        if (hasDispatchReceiver) {
+            irCall.arguments[0] = irCall.arguments[0]?.freeze("\$this")
+        }
+        val hasExtensionReceiver = irCall.symbol.descriptor.extensionReceiverParameter != null
+        if (hasExtensionReceiver) {
+            val extensionReceiverIndex = contextReceiversCount + if (hasDispatchReceiver) 1 else 0
+            irCall.arguments[extensionReceiverIndex] = irCall.arguments[extensionReceiverIndex]?.freeze("\$receiver")
+        }
 
         val resolvedCall = call.original
         val valueParameters = resolvedCall.resultingDescriptor.valueParameters
@@ -479,10 +477,29 @@ internal class CallGenerator(statementGenerator: StatementGenerator) : Statement
         for (valueArgument in resolvedCall.valueArguments.values) {
             val index = valueArgumentsToIndex[valueArgument]!!
             val irArgument = call.getValueArgument(valueParameters[index]) ?: continue
-            irCall.putValueArgument(index + contextReceiversCount, irArgument.freeze(valueParameters[index].name.asString()))
+            val dispatchReceiverOffset = if (hasDispatchReceiver) 1 else 0
+            val extensionReceiverOffset = if (hasExtensionReceiver) 1 else 0
+            val indexOffset = dispatchReceiverOffset + extensionReceiverOffset + contextReceiversCount
+            irCall.arguments[index + indexOffset] = irArgument.freeze(valueParameters[index].name.asString())
         }
         irBlock.statements.add(irCall)
         return irBlock
+    }
+
+    private fun IrFunctionAccessExpression.putValueArguments(
+        call: CallBuilder,
+        irType: IrType,
+        dispatchReceiverValue: IntermediateValue?,
+        extensionReceiverValue: IntermediateValue?,
+        contextReceiverValues: List<IntermediateValue>
+    ): IrExpression {
+        val dispatchReceiver = dispatchReceiverValue?.load()?.also { arguments[0] = it }
+        val extensionReceiver = extensionReceiverValue?.load()?.also {
+            arguments[contextReceiverValues.size + if (dispatchReceiver != null) 1 else 0] = it
+        }
+        val contextReceivers = contextReceiverValues.map { it.load() }
+        updateOriginForImplicitReceivers(call.original, dispatchReceiver, contextReceivers, extensionReceiver)
+        return addParametersToCall(startOffset, endOffset, call, this, irType, contextReceivers)
     }
 }
 

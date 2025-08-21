@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.backend.wasm.ir2wasm
 
 import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
+import org.jetbrains.kotlin.backend.wasm.getInstanceFunctionForExternalObject
+import org.jetbrains.kotlin.ir.backend.js.objectGetInstanceFunction
 import org.jetbrains.kotlin.ir.backend.js.utils.findUnitGetInstanceFunction
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
@@ -103,12 +105,21 @@ private fun compileIrFile(
     fileContext.jsToKotlinClosures.forEach { (exportSignature, function) ->
         wasmFileCodegenContext.addEquivalentFunction("<4>_$exportSignature", function.symbol)
     }
+    fileContext.objectInstanceFieldInitializer?.apply {
+        wasmFileCodegenContext.addObjectInstanceFieldInitializer(symbol)
+    }
+    fileContext.stringPoolFieldInitializer?.apply {
+        wasmFileCodegenContext.setStringPoolFieldInitializer(symbol)
+    }
+    fileContext.nonConstantFieldInitializer?.apply {
+        wasmFileCodegenContext.addNonConstantFieldInitializers(symbol)
+    }
 
     fileContext.classAssociatedObjects.forEach { (klass, associatedObjects) ->
         val associatedObjectsInstanceGetters = associatedObjects.map { (key, obj) ->
-            backendContext.mapping.objectToGetInstanceFunction[obj]?.let {
+            obj.objectGetInstanceFunction?.let {
                 AssociatedObjectBySymbols(key.symbol, it.symbol, false)
-            } ?: backendContext.mapping.wasmExternalObjectToGetInstanceFunction[obj]?.let {
+            } ?: obj.getInstanceFunctionForExternalObject?.let {
                 AssociatedObjectBySymbols(key.symbol, it.symbol, true)
             } ?: error("Could not find instance getter for $obj")
         }
@@ -124,6 +135,10 @@ private fun compileIrFile(
 
 private fun WasmBackendContext.defineBuiltinSignatures(irFile: IrFile, wasmFileCodegenContext: WasmFileCodegenContext) {
     val throwableClass = irBuiltIns.throwableClass.takeIf {
+        irFile == it.owner.fileOrNull
+    }
+
+    val kotlinAnyClass = irBuiltIns.anyClass.takeIf {
         irFile == it.owner.fileOrNull
     }
 
@@ -148,11 +163,22 @@ private fun WasmBackendContext.defineBuiltinSignatures(irFile: IrFile, wasmFileC
         irFile == it.owner.fileOrNull
     }
 
+    val createString = wasmSymbols.createString.takeIf {
+        irFile == it.owner.fileOrNull
+    }
+
+    val registerModuleDescriptor = wasmSymbols.registerModuleDescriptor.takeIf {
+        irFile == it.owner.fileOrNull
+    }
+
     wasmFileCodegenContext.defineBuiltinIdSignatures(
         throwable = throwableClass,
+        kotlinAny = kotlinAnyClass,
         tryGetAssociatedObject = tryGetAssociatedObjectFunction,
         jsToKotlinAnyAdapter = jsToKotlinAnyAdapter,
         unitGetInstance = unitGetInstance?.symbol,
         runRootSuites = runRootSuites,
+        createString = createString,
+        registerModuleDescriptor = registerModuleDescriptor,
     )
 }

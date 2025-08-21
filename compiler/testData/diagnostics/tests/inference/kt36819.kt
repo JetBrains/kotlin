@@ -46,3 +46,7 @@ fun bar() {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: asExpression, capturedType, classDeclaration, functionDeclaration, functionalType, integerLiteral,
+interfaceDeclaration, lambdaLiteral, localProperty, nullableType, out, outProjection, primaryConstructor,
+propertyDeclaration, typeAliasDeclaration, typeParameter, typeWithExtension, vararg, whenExpression */

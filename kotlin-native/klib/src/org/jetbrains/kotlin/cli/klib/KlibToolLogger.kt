@@ -29,7 +29,7 @@ internal class KlibToolLogger(private val output: KlibToolOutput) : Logger, Mess
     override fun report(severity: CompilerMessageSeverity, message: String, location: CompilerMessageSourceLocation?) {
         when (severity) {
             CompilerMessageSeverity.INFO, CompilerMessageSeverity.LOGGING, CompilerMessageSeverity.OUTPUT -> log(message)
-            CompilerMessageSeverity.WARNING -> warning(message)
+            CompilerMessageSeverity.WARNING, CompilerMessageSeverity.FIXED_WARNING -> warning(message)
             CompilerMessageSeverity.STRONG_WARNING -> strongWarning(message)
             CompilerMessageSeverity.ERROR, CompilerMessageSeverity.EXCEPTION -> error(message)
         }

@@ -8,25 +8,27 @@ package org.jetbrains.kotlin.gradle.artifacts
 import org.gradle.api.artifacts.type.ArtifactTypeDefinition.JAR_TYPE
 import org.gradle.api.attributes.Category
 import org.gradle.api.attributes.Usage
+import org.gradle.api.file.FileCollection
+import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
+import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.categoryByName
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.usageByName
-import org.jetbrains.kotlin.gradle.targets.metadata.isCompatibilityMetadataVariantEnabled
-import org.jetbrains.kotlin.gradle.targets.metadata.isKotlinGranularMetadataEnabled
+import org.jetbrains.kotlin.gradle.targets.metadata.awaitMetadataCompilationsCreated
+import org.jetbrains.kotlin.gradle.targets.metadata.psmJarClassifier
 import org.jetbrains.kotlin.gradle.targets.metadata.locateOrRegisterGenerateProjectStructureMetadataTask
 import org.jetbrains.kotlin.gradle.targets.native.internal.includeCommonizedCInteropMetadata
-import org.jetbrains.kotlin.gradle.utils.setAttribute
 
 internal val KotlinMetadataArtifact = KotlinTargetArtifact { target, apiElements, _ ->
-    if (target !is KotlinMetadataTarget || !target.project.isKotlinGranularMetadataEnabled) return@KotlinTargetArtifact
+    if (target !is KotlinMetadataTarget) return@KotlinTargetArtifact
 
-    apiElements.attributes.setAttribute(Usage.USAGE_ATTRIBUTE, target.project.usageByName(KotlinUsages.KOTLIN_METADATA))
-    apiElements.attributes.setAttribute(Category.CATEGORY_ATTRIBUTE, target.project.categoryByName(Category.LIBRARY))
+    apiElements.attributes.attribute(Usage.USAGE_ATTRIBUTE, target.project.usageByName(KotlinUsages.KOTLIN_METADATA))
+    apiElements.attributes.attribute(Category.CATEGORY_ATTRIBUTE, target.project.categoryByName(Category.LIBRARY))
 
     val metadataJarTask = target.createArtifactsTask { jar ->
         jar.description = "Assembles a jar archive containing the metadata for all Kotlin source sets."
-        if (target.project.isCompatibilityMetadataVariantEnabled) {
-            jar.archiveClassifier.set("all")
+        target.project.psmJarClassifier?.let {
+            jar.archiveClassifier.set(it)
         }
     }
 
@@ -40,13 +42,11 @@ internal val KotlinMetadataArtifact = KotlinTargetArtifact { target, apiElements
 
     /* Include output of metadata compilations into metadata jar (including commonizer output if available */
     val hostSpecificSourceSets = getHostSpecificSourceSets(target.project)
-    target.compilations.all { compilation ->
-        /* Filter legacy compilation */
-        if (compilation is KotlinCommonCompilation && !compilation.isKlibCompilation) return@all
+    target.publishedMetadataCompilations().filter {
         /* Filter 'host specific' source sets (aka source sets that require a certain host to compile metadata) */
-        if (compilation.defaultSourceSet in hostSpecificSourceSets) return@all
-
-        metadataJarTask.configure { it.from(compilation.output.classesDirs) { spec -> spec.into(compilation.defaultSourceSet.name) } }
+        it.defaultSourceSet !in hostSpecificSourceSets
+    }.forEach { compilation ->
+        metadataJarTask.configure { it.from(compilation.metadataPublishedArtifacts) { spec -> spec.into(compilation.metadataFragmentIdentifier) } }
         if (compilation is KotlinSharedNativeCompilation) {
             target.project.includeCommonizedCInteropMetadata(metadataJarTask, compilation)
         }
@@ -54,3 +54,21 @@ internal val KotlinMetadataArtifact = KotlinTargetArtifact { target, apiElements
 
     target.createPublishArtifact(metadataJarTask, JAR_TYPE, apiElements)
 }
+
+internal suspend fun KotlinMetadataTarget.publishedMetadataCompilations(): List<KotlinCompilation<*>> {
+    return awaitMetadataCompilationsCreated().filter { compilation ->
+        /* Filter legacy compilation */
+        !(compilation is KotlinCommonCompilation && !compilation.isKlibCompilation)
+    }
+}
+
+internal val KotlinCompilation<*>.metadataPublishedArtifacts: FileCollection
+    get() = output.classesDirs
+
+/**
+ * Name of the fragment in the metadata jar/intermediate fragment in uklib is derived from the source set name
+ */
+internal val KotlinSourceSet.metadataFragmentIdentifier: String
+    get() = name
+internal val KotlinCompilation<*>.metadataFragmentIdentifier: String
+    get() = defaultSourceSet.metadataFragmentIdentifier

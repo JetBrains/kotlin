@@ -32,22 +32,27 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleResolver
 
 object FirJvmModuleAccessibilityQualifiedAccessChecker : FirQualifiedAccessExpressionChecker(MppCheckerKind.Common) {
-    override fun check(expression: FirQualifiedAccessExpression, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(expression: FirQualifiedAccessExpression) {
         val callableSymbol = expression.calleeReference.toResolvedCallableSymbol() ?: return
         if (callableSymbol.origin.fromSource) return
 
         val containingClass = callableSymbol.containingClassLookupTag()
         if (containingClass != null) {
             val containingClassSymbol = containingClass.toRegularClassSymbol(context.session) ?: return
-            checkClassAccess(context, containingClassSymbol, expression, reporter)
+            checkClassAccess(containingClassSymbol, expression)
         } else {
             val containerSource = callableSymbol.containerSource as? JvmPackagePartSource ?: return
             val virtualFile = (containerSource.knownJvmBinaryClass as? VirtualFileKotlinClass)?.file ?: return
-            checkPackageAccess(context, virtualFile, containerSource.className.packageFqName, expression, reporter)
+            checkPackageAccess(virtualFile, containerSource.className.packageFqName, expression)
         }
     }
 
-    internal fun checkClassAccess(context: CheckerContext, symbol: FirClassSymbol<*>, element: FirElement, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    internal fun checkClassAccess(
+        symbol: FirClassSymbol<*>,
+        element: FirElement
+    ) {
         if (symbol.origin.fromSource) return
 
         @OptIn(SymbolInternals::class)
@@ -58,17 +63,16 @@ object FirJvmModuleAccessibilityQualifiedAccessChecker : FirQualifiedAccessExpre
             else -> return
         }
 
-        checkPackageAccess(context, virtualFile, symbol.packageFqName(), element, reporter)
+        checkPackageAccess(virtualFile, symbol.packageFqName(), element)
     }
 
+    context(context: CheckerContext, reporter: DiagnosticReporter)
     internal fun checkPackageAccess(
-        context: CheckerContext,
         fileFromPackage: VirtualFile,
         referencedPackageFqName: FqName,
         element: FirElement,
-        reporter: DiagnosticReporter,
     ) {
-        val fileFromOurModule = (context.containingFile?.sourceFile as? KtVirtualFileSourceFile)?.virtualFile
+        val fileFromOurModule = (context.containingFileSymbol?.sourceFile as? KtVirtualFileSourceFile)?.virtualFile
 
         val diagnostic = context.session.javaModuleResolverProvider.javaModuleResolver.checkAccessibility(
             fileFromOurModule, fileFromPackage, referencedPackageFqName
@@ -78,15 +82,17 @@ object FirJvmModuleAccessibilityQualifiedAccessChecker : FirQualifiedAccessExpre
         when (diagnostic) {
             is JavaModuleResolver.AccessError.ModuleDoesNotExportPackage -> {
                 reporter.reportOn(
-                    source, FirJvmErrors.JAVA_MODULE_DOES_NOT_EXPORT_PACKAGE, diagnostic.dependencyModuleName,
-                    referencedPackageFqName.asString(), context,
+                    source,
+                    FirJvmErrors.JAVA_MODULE_DOES_NOT_EXPORT_PACKAGE,
+                    diagnostic.dependencyModuleName,
+                    referencedPackageFqName.asString()
                 )
             }
             is JavaModuleResolver.AccessError.ModuleDoesNotReadModule -> {
-                reporter.reportOn(source, FirJvmErrors.JAVA_MODULE_DOES_NOT_DEPEND_ON_MODULE, diagnostic.dependencyModuleName, context)
+                reporter.reportOn(source, FirJvmErrors.JAVA_MODULE_DOES_NOT_DEPEND_ON_MODULE, diagnostic.dependencyModuleName)
             }
             JavaModuleResolver.AccessError.ModuleDoesNotReadUnnamedModule -> {
-                reporter.reportOn(source, FirJvmErrors.JAVA_MODULE_DOES_NOT_READ_UNNAMED_MODULE, context)
+                reporter.reportOn(source, FirJvmErrors.JAVA_MODULE_DOES_NOT_READ_UNNAMED_MODULE)
             }
         }
     }

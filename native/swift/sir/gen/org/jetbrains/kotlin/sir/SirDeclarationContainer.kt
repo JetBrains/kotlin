@@ -11,6 +11,6 @@ package org.jetbrains.kotlin.sir
 /**
  * Generated from: [org.jetbrains.kotlin.sir.tree.generator.SwiftIrTree.declarationContainer]
  */
-sealed class SirDeclarationContainer : SirElementBase(), SirDeclarationParent {
-    abstract val declarations: List<SirDeclaration>
+sealed interface SirDeclarationContainer : SirDeclarationParent {
+    val declarations: List<SirDeclaration>
 }

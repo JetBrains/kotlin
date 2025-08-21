@@ -28,7 +28,6 @@ Currently, Kotlin Native from master involves three configurations: `kgpMppTests
 Depending on your development environment, there are a few different ways you can run this.
 * **On Local Environment** In the case of Local Environment builds, you have two options, which you can add in your `local.properties` file:  
   * `kotlin.native.enabled=true` - this property adds building Kotlin Native full bundle step before Integration Tests, then this bundle will be used in the Integration Tests.
-  * `kotlin.native.local.distribution.for.tests.enabled=false` - include this line if you need to disable running Integration Tests with Kotlin/Native from master, even when `kotlin.native.enabled` is set to true.
 * **On TeamCity** In the case of TeamCity builds, no extra setting is necessary. The mentioned configurations depend on the `full bundle`, which stores its artifacts in the `-DkonanDataDirForIntegrationTests` directory.
 Also, you can specify the konan directory for test by providing `-DkonanDataDirForIntegrationTests`, for example:
 ```bash
@@ -189,7 +188,7 @@ It is possible to inject code from IT test directly into the build files of the 
 See [BuildScriptInjectionIT.kt](src/test/kotlin/org/jetbrains/kotlin/gradle/BuildScriptInjectionIT.kt) for examples of how to write a test 
 with injections including:
 * Generating a multiplatform project with sources from scratch
-* Building a multi-project setup
+* Building a multi-project and composite build setups
 * Publishing a project in a Maven repository and consuming it in another project as a dependency
 * Catching execution and configuration time exceptions
 
@@ -203,7 +202,9 @@ fun test(version: GradleVersion) {
     // Any project can be injected; "empty" can be used as a bare template
     project("empty", version) {
         // Bare template doesn't have KGP in classpath, so it needs to be explicitly added before plugin application 
-        addKgpToBuildScriptCompilationClasspath()
+        plugins {
+            kotlin("multiplatform")
+        }
         buildScriptInjection {
             // This code will be executed inside build.gradle(.kts) during project evaluation
             project.applyMultiplatform {
@@ -245,7 +246,9 @@ Injections can also return `Serializable` value from the build script back to th
 
 ```kotlin
 project("empty", version) {
-    addKgpToBuildScriptCompilationClasspath()
+    plugins {
+        kotlin("multiplatform")
+    }
     buildScriptInjection {
         project.applyMultiplatform {
             linuxArm64()
@@ -300,7 +303,9 @@ Injections also have access to KGP's internal APIs (IDE currently colors this co
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 
 project("empty", version) {
-    addKgpToBuildScriptCompilationClasspath()
+    plugins {
+        kotlin("multiplatform")
+    }
     buildScriptInjection {
         project.applyMultiplatform {
             linuxArm64()
@@ -314,7 +319,27 @@ project("empty", version) {
 }
 ```
 
-Finally, it is possible to inject the `buildscript` block using injections. Using this type of injections you can add plugins to the build script classpath:
+It is also possible to apply plugins in a `TestProject.plugins {}` block:
+```kotlin
+project("empty", version) {
+    settingsBuildScriptInjection {
+        // Plugin repository can be added through the usual
+        settings.pluginManagement.repositories.maven(pluginRepository)
+    }
+    plugins {
+        id("org.example.customPlugin") version "1.0" apply true
+        // KGP and AGP don't need explicit version specification
+        kotlin("multiplatform")
+        // Bundled Gradle plugins can also be applied in this block
+        `maven-publish`
+    }
+    buildScriptInjection {
+        project.extensions.getByName("customPluginExtension")
+    }
+}
+```
+
+Finally, it is possible to inject the `buildscript` block using injections. Using this type of injections you can manipulate build script classpath directly:
 
 ```kotlin
 project("empty", version) {

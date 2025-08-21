@@ -9,11 +9,13 @@ dependencies {
     api(project(":compiler:backend-common"))
     api(project(":compiler:ir.tree"))
     api(project(":compiler:ir.interpreter"))
+    api(project(":compiler:ir.serialization.common"))
+    api(project(":compiler:ir.validation"))
     implementation(project(":kotlin-util-klib"))
     compileOnly(intellijCore())
 
     testImplementation(kotlinTest("junit"))
-    testImplementation(projectTests(":compiler:tests-common-new"))
+    testImplementation(testFixtures(project(":compiler:tests-common-new")))
 }
 
 optInToUnsafeDuringIrConstructionAPI()

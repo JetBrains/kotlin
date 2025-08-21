@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -16,17 +16,19 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirDelegateFieldSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirSyntheticPropertySymbol
 import org.jetbrains.kotlin.fir.types.ConeSimpleKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
+import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
+import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
 
 class FirSyntheticProperty @FirImplementationDetail internal constructor(
     override val moduleData: FirModuleData,
     override val name: Name,
     override val isVar: Boolean,
     override val symbol: FirSyntheticPropertySymbol,
-    override val status: FirDeclarationStatus,
+    private val customStatus: FirDeclarationStatus?,
     override val getter: FirSyntheticPropertyAccessor,
     override val dispatchReceiverType: ConeSimpleKotlinType?,
     override val setter: FirSyntheticPropertyAccessor? = null,
@@ -35,7 +37,17 @@ class FirSyntheticProperty @FirImplementationDetail internal constructor(
     init {
         @OptIn(FirImplementationDetail::class)
         symbol.bind(this)
+
+        requireWithAttachment(
+            customStatus == null || customStatus is FirResolvedDeclarationStatus,
+            { "The status must be resolved as the synthetic property is stateless and hence is not supposed to be transformed later" },
+        ) {
+            withFirEntry("property", this@FirSyntheticProperty)
+        }
     }
+
+    override val status: FirDeclarationStatus
+        get() = customStatus ?: getter.status
 
     override val backingField: FirBackingField? get() = null
 
@@ -57,9 +69,6 @@ class FirSyntheticProperty @FirImplementationDetail internal constructor(
     override val delegateFieldSymbol: FirDelegateFieldSymbol?
         get() = null
 
-    override val isLocal: Boolean
-        get() = false
-
     override val receiverParameter: FirReceiverParameter?
         get() = getter.receiverParameter
 
@@ -70,7 +79,7 @@ class FirSyntheticProperty @FirImplementationDetail internal constructor(
         get() = emptyList()
 
     override val typeParameters: List<FirTypeParameter>
-        get() = emptyList()
+        get() = getter.typeParameters
 
     override val containerSource: DeserializedContainerSource?
         get() = null

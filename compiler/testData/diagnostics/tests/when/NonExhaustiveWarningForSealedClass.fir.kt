@@ -29,3 +29,6 @@ fun foo(s: S) {
         is Derived -> use(s.s)
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, equalityExpression, functionDeclaration, isExpression, objectDeclaration,
+primaryConstructor, propertyDeclaration, sealed, smartcast, whenExpression, whenWithSubject */

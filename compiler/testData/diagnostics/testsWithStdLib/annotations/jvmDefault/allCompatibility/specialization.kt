@@ -1,5 +1,5 @@
 // RUN_PIPELINE_TILL: BACKEND
-// JVM_DEFAULT_MODE: all-compatibility
+// JVM_DEFAULT_MODE: enable
 // JVM_TARGET: 1.8
 // WITH_STDLIB
 
@@ -57,3 +57,7 @@ private class Outer {
 fun local() {
     object : Foo<String> {}
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, classDeclaration, enumDeclaration, enumEntry, functionDeclaration,
+getter, interfaceDeclaration, nestedClass, nullableType, objectDeclaration, propertyDeclaration,
+propertyWithExtensionReceiver, sealed, stringLiteral, typeParameter */

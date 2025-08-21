@@ -81,3 +81,6 @@ object Test6 {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Double")!>result<!>
     }
 }
+
+/* GENERATED_FIR_TAGS: callableReference, functionDeclaration, functionalType, integerLiteral, lambdaLiteral,
+localProperty, nestedClass, objectDeclaration, propertyDeclaration, samConversion, stringLiteral */

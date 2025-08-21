@@ -15,3 +15,5 @@ fun jk() = JK().test()
 open class K {
     open fun test() = Unit
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, javaFunction, javaType */

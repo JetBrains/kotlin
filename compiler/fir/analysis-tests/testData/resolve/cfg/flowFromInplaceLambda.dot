@@ -26,7 +26,7 @@ digraph flowFromInplaceLambda_kt {
                 6 [label="Function call arguments enter"];
                 7 [label="Function call arguments exit"];
             }
-            8 [label="Function call enter: R?C|kotlin/Function0.invoke|()"];
+            8 [label="Function call enter: R|<local>/x|.R|SubstitutionOverride<kotlin/Function0.invoke: R|T|>|()"];
             9 [label="Function call exit: R|<local>/x|.R|SubstitutionOverride<kotlin/Function0.invoke: R|T|>|()" style="filled" fillcolor=yellow];
             10 [label="Jump: ^unknown R|<local>/x|.R|SubstitutionOverride<kotlin/Function0.invoke: R|T|>|()"];
             11 [label="Stub" style="filled" fillcolor=gray];
@@ -63,7 +63,7 @@ digraph flowFromInplaceLambda_kt {
                 18 [label="Function call arguments enter"];
                 19 [label="Function call arguments exit"];
             }
-            20 [label="Function call enter: R?C|kotlin/Function0.invoke|()"];
+            20 [label="Function call enter: R|<local>/x|.R|SubstitutionOverride<kotlin/Function0.invoke: R|T|>|()"];
             21 [label="Function call exit: R|<local>/x|.R|SubstitutionOverride<kotlin/Function0.invoke: R|T|>|()" style="filled" fillcolor=yellow];
             22 [label="Jump: ^atLeastOnce R|<local>/x|.R|SubstitutionOverride<kotlin/Function0.invoke: R|T|>|()"];
             23 [label="Stub" style="filled" fillcolor=gray];
@@ -100,7 +100,7 @@ digraph flowFromInplaceLambda_kt {
                 30 [label="Function call arguments enter"];
                 31 [label="Function call arguments exit"];
             }
-            32 [label="Function call enter: R?C|kotlin/Function0.invoke|()"];
+            32 [label="Function call enter: R|<local>/x|.R|SubstitutionOverride<kotlin/Function0.invoke: R|T|>|()"];
             33 [label="Function call exit: R|<local>/x|.R|SubstitutionOverride<kotlin/Function0.invoke: R|T|>|()" style="filled" fillcolor=yellow];
             34 [label="Jump: ^exactlyOnce R|<local>/x|.R|SubstitutionOverride<kotlin/Function0.invoke: R|T|>|()"];
             35 [label="Stub" style="filled" fillcolor=gray];
@@ -137,7 +137,7 @@ digraph flowFromInplaceLambda_kt {
                 42 [label="Function call arguments enter"];
                 43 [label="Function call arguments exit"];
             }
-            44 [label="Function call enter: R?C|kotlin/Function0.invoke|()"];
+            44 [label="Function call enter: R|<local>/x|.R|SubstitutionOverride<kotlin/Function0.invoke: R|T|>|()"];
             45 [label="Function call exit: R|<local>/x|.R|SubstitutionOverride<kotlin/Function0.invoke: R|T|>|()" style="filled" fillcolor=yellow];
             46 [label="Jump: ^atMostOnce R|<local>/x|.R|SubstitutionOverride<kotlin/Function0.invoke: R|T|>|()"];
             47 [label="Stub" style="filled" fillcolor=gray];
@@ -169,7 +169,7 @@ digraph flowFromInplaceLambda_kt {
                 52 [label="Function call arguments enter"];
                 53 [label="Function call arguments exit"];
             }
-            54 [label="Function call enter: R?C|kotlin/Function0.invoke|()"];
+            54 [label="Function call enter: R|<local>/x|.R|SubstitutionOverride<kotlin/Function0.invoke: R|T|>|()"];
             55 [label="Function call exit: R|<local>/x|.R|SubstitutionOverride<kotlin/Function0.invoke: R|T|>|()" style="filled" fillcolor=yellow];
             56 [label="Jump: ^noContract R|<local>/x|.R|SubstitutionOverride<kotlin/Function0.invoke: R|T|>|()"];
             57 [label="Stub" style="filled" fillcolor=gray];
@@ -1254,6 +1254,7 @@ digraph flowFromInplaceLambda_kt {
     405 -> {406};
     406 -> {407};
     407 -> {408};
+    408 -> {398} [color=green style=dashed];
     409 -> {410};
     410 -> {412};
     411 -> {412} [color=green];
@@ -1284,6 +1285,7 @@ digraph flowFromInplaceLambda_kt {
     433 -> {434};
     434 -> {435};
     435 -> {436};
+    436 -> {421} [color=green style=dashed];
     437 -> {438};
     438 -> {440};
     439 -> {440} [color=green];
@@ -2351,6 +2353,7 @@ digraph flowFromInplaceLambda_kt {
     801 -> {802};
     802 -> {803};
     803 -> {804};
+    804 -> {784} [color=green style=dashed];
     805 -> {806};
     806 -> {808};
     807 -> {808} [color=green];
@@ -2381,6 +2384,7 @@ digraph flowFromInplaceLambda_kt {
     829 -> {830};
     830 -> {831};
     831 -> {832};
+    832 -> {815} [color=green style=dashed];
     833 -> {834};
     834 -> {836};
     835 -> {836} [color=green];
@@ -2639,6 +2643,7 @@ digraph flowFromInplaceLambda_kt {
     920 -> {930} [color=red label="Postponed"];
     921 -> {922};
     922 -> {923};
+    923 -> {905} [color=green style=dashed];
     924 -> {925};
     925 -> {927};
     926 -> {927} [color=green];

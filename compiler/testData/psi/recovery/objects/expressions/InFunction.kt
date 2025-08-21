@@ -1,3 +1,5 @@
+// COMPILATION_ERRORS
+
 fun foo() {
     val foo = object private ()
 

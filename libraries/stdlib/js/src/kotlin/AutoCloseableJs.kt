@@ -23,6 +23,7 @@ public actual inline fun AutoCloseable(crossinline closeAction: () -> Unit): Aut
 @SinceKotlin("2.0")
 @WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
+@IgnorableReturnValue
 public actual inline fun <T : AutoCloseable?, R> T.use(block: (T) -> R): R {
     contract {
         callsInPlace(block, InvocationKind.EXACTLY_ONCE)

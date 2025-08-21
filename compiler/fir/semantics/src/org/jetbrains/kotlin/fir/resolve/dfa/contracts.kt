@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.fir.resolve.dfa
 
 import org.jetbrains.kotlin.contracts.description.LogicOperationKind
-import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.contracts.description.*
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.types.canBeNull
@@ -28,6 +27,7 @@ fun LogicSystem.approveContractStatement(
     statement: ConeBooleanExpression,
     arguments: Array<out DataFlowVariable?>, // 0 = receiver (null if doesn't exist)
     substitutor: ConeSubstitutor?,
+    typesOnlyFromRealVars: Boolean = true,
     approveOperationStatement: (OperationStatement) -> TypeStatements
 ): TypeStatements? {
     fun DataFlowVariable.processEqNull(isEq: Boolean): TypeStatements =
@@ -50,11 +50,12 @@ fun LogicSystem.approveContractStatement(
                             it.processEqNull(false)
                         else
                             mapOf()
-                        if (isType && it is RealVariable) {
-                            andForTypeStatements(fromNullability, mapOf(it to (it typeEq substitutedType)))
-                        } else {
-                            fromNullability
+                        val fromType = when {
+                            typesOnlyFromRealVars && it !is RealVariable -> fromNullability
+                            isType -> mapOf(it to (it typeEq substitutedType))
+                            else -> mapOf(it to (it typeNotEq substitutedType))
                         }
+                        andForTypeStatements(fromNullability, fromType)
                     }
                 }
             } ?: mapOf()

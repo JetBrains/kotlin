@@ -124,3 +124,7 @@ fun <T> resultInGenericFun(r: Result<Int>): T = r <!UNCHECKED_CAST!>as T<!>
 
 val asFunPublic: () -> Result<Int> = TODO()
 private val asFun: () -> Result<Int>? = TODO()
+
+/* GENERATED_FIR_TAGS: asExpression, classDeclaration, companionObject, functionDeclaration, functionalType, getter,
+ifExpression, localClass, localFunction, localProperty, nullableType, objectDeclaration, out, primaryConstructor,
+propertyDeclaration, typeAliasDeclaration, typeAliasDeclarationWithTypeParameter, typeParameter, vararg */

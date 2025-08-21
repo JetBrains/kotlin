@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 /* Unavailable @JvmName */
 // KNM_K2_IGNORE
 // KNM_FE10_IGNORE

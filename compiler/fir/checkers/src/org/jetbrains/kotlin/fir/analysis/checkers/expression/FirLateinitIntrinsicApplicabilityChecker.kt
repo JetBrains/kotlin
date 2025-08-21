@@ -9,29 +9,31 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.checkers.getContainingClassSymbol
+import org.jetbrains.kotlin.fir.resolve.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
-import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.hasAnnotation
 import org.jetbrains.kotlin.fir.declarations.utils.isInline
 import org.jetbrains.kotlin.fir.declarations.utils.isLateInit
 import org.jetbrains.kotlin.fir.expressions.FirCallableReferenceAccess
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.references.toResolvedPropertySymbol
+import org.jetbrains.kotlin.fir.references.toResolvedVariableSymbol
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.name.StandardClassIds.Annotations
 
 object FirLateinitIntrinsicApplicabilityChecker : FirQualifiedAccessExpressionChecker(MppCheckerKind.Common) {
-    override fun check(expression: FirQualifiedAccessExpression, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(expression: FirQualifiedAccessExpression) {
 
         val resolvedSymbol = expression.calleeReference.toResolvedPropertySymbol() ?: return
 
         // An optimization
         if (resolvedSymbol.name.identifierOrNullIfSpecial != "isInitialized") return
 
-        val receiverParameter = resolvedSymbol.receiverParameter ?: return
+        val receiverParameter = resolvedSymbol.receiverParameterSymbol ?: return
 
         if (!receiverParameter.hasAnnotation(Annotations.AccessibleLateinitPropertyLiteral, context.session)) return
 
@@ -39,40 +41,39 @@ object FirLateinitIntrinsicApplicabilityChecker : FirQualifiedAccessExpressionCh
 
         val extensionReceiver = expression.extensionReceiver
         if (extensionReceiver !is FirCallableReferenceAccess) {
-            reporter.reportOn(source, FirErrors.LATEINIT_INTRINSIC_CALL_ON_NON_LITERAL, context)
+            reporter.reportOn(source, FirErrors.LATEINIT_INTRINSIC_CALL_ON_NON_LITERAL)
             return
         }
 
-        val calleePropertySymbol = extensionReceiver.calleeReference.toResolvedPropertySymbol() ?: return
+        val calleeVariableSymbol = extensionReceiver.calleeReference.toResolvedVariableSymbol() ?: return
 
-        if (!calleePropertySymbol.isLateInit) {
-            reporter.reportOn(source, FirErrors.LATEINIT_INTRINSIC_CALL_ON_NON_LATEINIT, context)
+        if (!calleeVariableSymbol.isLateInit) {
+            reporter.reportOn(source, FirErrors.LATEINIT_INTRINSIC_CALL_ON_NON_LATEINIT)
             return
         }
 
         // property must be declared in one of the outer lexical scopes
-        val containingSymbol = calleePropertySymbol.containingClassOrFile(context)
-        if (context.containingDeclarations.none { it.symbol == containingSymbol }) {
+        val containingSymbol = calleeVariableSymbol.containingClassOrFile()
+        if (context.containingDeclarations.none { it == containingSymbol }) {
             reporter.reportOn(
                 source,
                 FirErrors.LATEINIT_INTRINSIC_CALL_ON_NON_ACCESSIBLE_PROPERTY,
-                calleePropertySymbol,
-                context
+                calleeVariableSymbol
             )
             return
         }
 
         val closestOwnFunction = context.containingDeclarations.lastOrNull()
-        if (closestOwnFunction is FirFunction && closestOwnFunction.isInline) {
-            reporter.reportOn(source, FirErrors.LATEINIT_INTRINSIC_CALL_IN_INLINE_FUNCTION, context)
+        if (closestOwnFunction is FirFunctionSymbol && closestOwnFunction.isInline) {
+            reporter.reportOn(source, FirErrors.LATEINIT_INTRINSIC_CALL_IN_INLINE_FUNCTION)
         }
     }
 
+    context(context: CheckerContext)
     /**
      * Returns the containing class or file if the property is top-level.
      */
-    private fun FirPropertySymbol.containingClassOrFile(
-        context: CheckerContext
+    private fun FirVariableSymbol<*>.containingClassOrFile(
     ): FirBasedSymbol<*>? {
         return getContainingClassSymbol()
             ?: context.session.firProvider.getFirCallableContainerFile(this)?.symbol

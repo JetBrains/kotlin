@@ -125,8 +125,8 @@ sealed class EffectiveVisibility(val name: String, val publicApi: Boolean = fals
             when (other) {
                 Public -> Permissiveness.LESS
                 PrivateInClass, PrivateInFile, Local, InternalProtectedBound, is InternalProtected -> Permissiveness.MORE
-                is InternalOrPackage -> Permissiveness.SAME
-                ProtectedBound, is Protected, Unknown -> Permissiveness.UNKNOWN
+                this -> Permissiveness.SAME
+                is InternalOrPackage, ProtectedBound, is Protected, Unknown -> Permissiveness.UNKNOWN
             }
 
         override fun lowerBound(other: EffectiveVisibility, typeCheckerContextProvider: TypeCheckerProviderContext): EffectiveVisibility =

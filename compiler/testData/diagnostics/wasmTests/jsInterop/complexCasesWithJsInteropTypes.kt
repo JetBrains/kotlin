@@ -1,4 +1,5 @@
 // OPT_IN: kotlin.js.ExperimentalJsExport
+// OPT_IN: kotlin.js.ExperimentalWasmJsInterop
 
 external interface EI
 external open class EC

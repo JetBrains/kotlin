@@ -2,6 +2,7 @@ KtNameReferenceExpression(50,52): 'aa'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = a
           isSafeNavigation = true
@@ -12,6 +13,7 @@ KtNameReferenceExpression(50,52): 'aa'
           receiverType = null
           returnType = A?
           symbol = val aa: A?
+          contextParameters = []
           callableId = /A.aa
       simpleAccess = Read
       typeArgumentsMapping = {}

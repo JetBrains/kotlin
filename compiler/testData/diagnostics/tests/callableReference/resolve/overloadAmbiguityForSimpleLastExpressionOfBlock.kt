@@ -25,3 +25,6 @@ val l1: Int
         false -> { <!OVERLOAD_RESOLUTION_AMBIGUITY!>foo<!>(C) }
         else -> bar(C)
     }
+
+/* GENERATED_FIR_TAGS: comparisonExpression, functionDeclaration, getter, ifExpression, integerLiteral,
+interfaceDeclaration, objectDeclaration, propertyDeclaration, whenExpression */

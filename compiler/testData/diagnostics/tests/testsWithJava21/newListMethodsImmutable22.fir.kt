@@ -1,6 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-64640, KT-65441
-// LANGUAGE_VERSION: 2.2
+// LANGUAGE_VERSION: 2.3
 // ALLOW_DANGEROUS_LANGUAGE_VERSION_TESTING
 // DIAGNOSTICS: -ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE
 
@@ -92,3 +92,6 @@ fun foo(x: java.util.SequencedCollection<String>, y: java.util.SequencedSet<Stri
     z.first
     z.last
 }
+
+/* GENERATED_FIR_TAGS: assignment, flexibleType, functionDeclaration, javaProperty, localProperty, nullableType,
+propertyDeclaration, stringLiteral */

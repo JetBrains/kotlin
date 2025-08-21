@@ -15,3 +15,5 @@ actual open class Foo {
 
     fun foo(overloaded: Int) {}
 }
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, functionDeclaration */

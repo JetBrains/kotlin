@@ -71,3 +71,7 @@ value class IC8<T>(val a: String) {
 value class IC9<T>(val a: String) {
     fun equals(other: <!TYPE_ARGUMENT_ON_TYPED_VALUE_CLASS_EQUALS!>IC9<String><!>): Boolean = true
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, interfaceDeclaration, nullableType,
+operator, override, primaryConstructor, propertyDeclaration, secondaryConstructor, starProjection, stringLiteral,
+typeParameter, value */

@@ -11,7 +11,7 @@ fun testExtAsExt(fn: @ExtensionFunctionType Function1<Int, Unit>) {
       $callee.invoke(p1 = p0)
     }
 
-    fn::suspendConversion0
+    ::suspendConversion0/*($callee = fn) */
   })
 }
 
@@ -21,7 +21,7 @@ fun testExtAsExtT(fn: @ExtensionFunctionType Function1<Int, Unit>) {
       $callee.invoke(p1 = p0)
     }
 
-    fn::suspendConversion0
+    ::suspendConversion0/*($callee = fn) */
   })
 }
 
@@ -31,7 +31,7 @@ fun testExtAsSimple(fn: @ExtensionFunctionType Function1<Int, Unit>) {
       $callee.invoke(p1 = p0)
     }
 
-    fn::suspendConversion0
+    ::suspendConversion0/*($callee = fn) */
   })
 }
 
@@ -41,7 +41,7 @@ fun testExtAsSimpleT(fn: @ExtensionFunctionType Function1<Int, Unit>) {
       $callee.invoke(p1 = p0)
     }
 
-    fn::suspendConversion0
+    ::suspendConversion0/*($callee = fn) */
   })
 }
 
@@ -51,7 +51,7 @@ fun <S : Any?> testExtSAsExtT(fn: @ExtensionFunctionType Function1<S, Unit>) {
       $callee.invoke(p1 = p0)
     }
 
-    fn::suspendConversion0
+    ::suspendConversion0/*($callee = fn) */
   })
 }
 
@@ -61,7 +61,7 @@ fun <S : Any?> testExtSAsSimpleT(fn: @ExtensionFunctionType Function1<S, Unit>) 
       $callee.invoke(p1 = p0)
     }
 
-    fn::suspendConversion0
+    ::suspendConversion0/*($callee = fn) */
   })
 }
 
@@ -75,7 +75,7 @@ fun testSimple(fn: Function0<Unit>) {
       $callee.invoke()
     }
 
-    fn::suspendConversion0
+    ::suspendConversion0/*($callee = fn) */
   })
 }
 
@@ -85,7 +85,7 @@ fun testSimpleAsExt(fn: Function1<Int, Unit>) {
       $callee.invoke(p1 = p0)
     }
 
-    fn::suspendConversion0
+    ::suspendConversion0/*($callee = fn) */
   })
 }
 
@@ -95,7 +95,7 @@ fun testSimpleAsExtT(fn: Function1<Int, Unit>) {
       $callee.invoke(p1 = p0)
     }
 
-    fn::suspendConversion0
+    ::suspendConversion0/*($callee = fn) */
   })
 }
 
@@ -105,7 +105,7 @@ fun testSimpleAsSimpleT(fn: Function1<Int, Unit>) {
       $callee.invoke(p1 = p0)
     }
 
-    fn::suspendConversion0
+    ::suspendConversion0/*($callee = fn) */
   })
 }
 
@@ -115,7 +115,7 @@ fun testSimpleNonVal() {
       $callee.invoke()
     }
 
-    produceFun()::suspendConversion0
+    ::suspendConversion0/*($callee = produceFun()) */
   })
 }
 
@@ -125,7 +125,7 @@ fun <S : Any?> testSimpleSAsExtT(fn: Function1<S, Unit>) {
       $callee.invoke(p1 = p0)
     }
 
-    fn::suspendConversion0
+    ::suspendConversion0/*($callee = fn) */
   })
 }
 
@@ -135,7 +135,7 @@ fun <S : Any?> testSimpleSAsSimpleT(fn: Function1<S, Unit>) {
       $callee.invoke(p1 = p0)
     }
 
-    fn::suspendConversion0
+    ::suspendConversion0/*($callee = fn) */
   })
 }
 
@@ -153,7 +153,7 @@ fun testSmartCastOnVarWithSuspendConversion(a: Any) {
       $callee.invoke()
     }
 
-    b /*as Function0<Unit> */::suspendConversion0
+    ::suspendConversion0/*($callee = b /*as Function0<Unit> */) */
   })
 }
 
@@ -169,7 +169,7 @@ fun testSmartCastWithSuspendConversion(a: Any) {
       $callee.invoke()
     }
 
-    a /*as Function0<Unit> */::suspendConversion0
+    ::suspendConversion0/*($callee = a /*as Function0<Unit> */) */
   })
 }
 

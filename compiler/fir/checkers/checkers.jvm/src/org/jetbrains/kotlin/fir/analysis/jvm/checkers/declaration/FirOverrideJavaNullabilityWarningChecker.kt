@@ -27,46 +27,49 @@ import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 sealed class FirOverrideJavaNullabilityWarningChecker(mppKind: MppCheckerKind) : FirAbstractOverrideChecker(mppKind) {
     object Regular : FirOverrideJavaNullabilityWarningChecker(MppCheckerKind.Platform) {
-        override fun check(declaration: FirClass, context: CheckerContext, reporter: DiagnosticReporter) {
+        context(context: CheckerContext, reporter: DiagnosticReporter)
+        override fun check(declaration: FirClass) {
             if (declaration.isExpect) return
-            super.check(declaration, context, reporter)
+            super.check(declaration)
         }
     }
 
     object ForExpectClass : FirOverrideJavaNullabilityWarningChecker(MppCheckerKind.Common) {
-        override fun check(declaration: FirClass, context: CheckerContext, reporter: DiagnosticReporter) {
+        context(context: CheckerContext, reporter: DiagnosticReporter)
+        override fun check(declaration: FirClass) {
             if (!declaration.isExpect) return
-            super.check(declaration, context, reporter)
+            super.check(declaration)
         }
     }
 
-    override fun check(declaration: FirClass, context: CheckerContext, reporter: DiagnosticReporter) {
+    @OptIn(ScopeFunctionRequiresPrewarm::class)
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirClass) {
         val substitutor = EnhancedForWarningConeSubstitutor(context.session.typeContext)
-        val scope = declaration.unsubstitutedScope(context)
+        val scope = declaration.unsubstitutedScope()
         val typeCheckerState = context.session.typeContext.newTypeCheckerState(
             errorTypesEqualToAnything = false,
             stubTypesEqualToAnything = false
         )
 
-        for (member in declaration.declarations) {
+        declaration.symbol.processAllDeclaredCallables(context.session) { memberSymbol ->
             var anyBaseEnhanced = false
             var anyReported = false
 
-            if (member is FirSimpleFunction) {
+            if (memberSymbol is FirNamedFunctionSymbol) {
                 val enhancedOverrides = scope
-                    .getDirectOverriddenFunctions(member.symbol)
+                    .getDirectOverriddenFunctions(memberSymbol)
                     .map {
-                        val substitutedBase = it.substituteOrNull(substitutor, context) ?: return@map it
+                        val substitutedBase = it.substituteOrNull(substitutor) ?: return@map it
                         anyBaseEnhanced = true
 
-                        if (!anyReported && !context.session.firOverrideChecker.isOverriddenFunction(member.symbol, substitutedBase)) {
+                        if (!anyReported && !context.session.firOverrideChecker.isOverriddenFunction(memberSymbol, substitutedBase)) {
                             anyReported = true
                             reporter.reportOn(
-                                member.source,
+                                memberSymbol.source,
                                 FirJvmErrors.WRONG_NULLABILITY_FOR_JAVA_OVERRIDE,
-                                member.symbol,
-                                substitutedBase,
-                                context
+                                memberSymbol,
+                                substitutedBase
                             )
                         }
 
@@ -74,27 +77,26 @@ sealed class FirOverrideJavaNullabilityWarningChecker(mppKind: MppCheckerKind) :
                     }
 
                 if (anyBaseEnhanced && !anyReported) {
-                    member.symbol.checkReturnType(enhancedOverrides, typeCheckerState, context)?.let {
+                    memberSymbol.checkReturnType(enhancedOverrides, typeCheckerState)?.let {
                         reporter.reportOn(
-                            member.source, FirJvmErrors.WRONG_NULLABILITY_FOR_JAVA_OVERRIDE, member.symbol, it, context
+                            memberSymbol.source, FirJvmErrors.WRONG_NULLABILITY_FOR_JAVA_OVERRIDE, memberSymbol, it
                         )
                     }
                 }
-            } else if (member is FirProperty) {
+            } else if (memberSymbol is FirPropertySymbol) {
                 val enhancedOverrides = scope
-                    .getDirectOverriddenProperties(member.symbol)
+                    .getDirectOverriddenProperties(memberSymbol)
                     .map {
-                        val substitutedBase = it.substituteOrNull(substitutor, context) ?: return@map it
+                        val substitutedBase = it.substituteOrNull(substitutor) ?: return@map it
                         anyBaseEnhanced = true
 
-                        if (!anyReported && !context.session.firOverrideChecker.isOverriddenProperty(member.symbol, substitutedBase)) {
+                        if (!anyReported && !context.session.firOverrideChecker.isOverriddenProperty(memberSymbol, substitutedBase)) {
                             anyReported = true
                             reporter.reportOn(
-                                member.source,
+                                memberSymbol.source,
                                 FirJvmErrors.WRONG_NULLABILITY_FOR_JAVA_OVERRIDE,
-                                member.symbol,
-                                substitutedBase,
-                                context
+                                memberSymbol,
+                                substitutedBase
                             )
                         }
 
@@ -102,9 +104,9 @@ sealed class FirOverrideJavaNullabilityWarningChecker(mppKind: MppCheckerKind) :
                     }
 
                 if (anyBaseEnhanced && !anyReported) {
-                    member.symbol.checkReturnType(enhancedOverrides, typeCheckerState, context)?.let {
+                    memberSymbol.checkReturnType(enhancedOverrides, typeCheckerState)?.let {
                         reporter.reportOn(
-                            member.source, FirJvmErrors.WRONG_NULLABILITY_FOR_JAVA_OVERRIDE, member.symbol, it, context
+                            memberSymbol.source, FirJvmErrors.WRONG_NULLABILITY_FOR_JAVA_OVERRIDE, memberSymbol, it
                         )
                     }
                 }
@@ -113,20 +115,22 @@ sealed class FirOverrideJavaNullabilityWarningChecker(mppKind: MppCheckerKind) :
     }
 }
 
+context(context: CheckerContext)
 /**
  * @see org.jetbrains.kotlin.fir.scopes.impl.FirClassSubstitutionScope.createSubstitutionOverrideFunction
  * @see org.jetbrains.kotlin.fir.scopes.impl.FirClassSubstitutionScope.createSubstitutedData
  */
 private fun FirSimpleFunction.substituteOrNull(
     substitutor: EnhancedForWarningConeSubstitutor,
-    context: CheckerContext,
 ): FirSimpleFunction? {
     symbol.lazyResolveToPhase(FirResolvePhase.TYPES)
     var isEnhanced = false
 
     val newParameterTypes = valueParameters.map { substitutor.substituteOrNull(it.returnTypeRef.coneType)?.also { isEnhanced = true } }
-    val newContextReceiverTypes = contextParameters.map { substitutor.substituteOrNull(it.returnTypeRef.coneType)?.also { isEnhanced = true } }
-    val newReturnType = substitutor.substituteOrNull(context.returnTypeCalculator.tryCalculateReturnType(this).coneType)?.also { isEnhanced = true }
+    val newContextReceiverTypes =
+        contextParameters.map { substitutor.substituteOrNull(it.returnTypeRef.coneType)?.also { isEnhanced = true } }
+    val newReturnType =
+        substitutor.substituteOrNull(context.returnTypeCalculator.tryCalculateReturnType(this).coneType)?.also { isEnhanced = true }
     val newExtensionReceiverType =
         receiverParameter?.typeRef?.coneType?.let { substitutor.substituteOrNull(it) }?.also { isEnhanced = true }
 
@@ -147,29 +151,31 @@ private fun FirSimpleFunction.substituteOrNull(
     }
 }
 
+context(context: CheckerContext)
 private fun FirNamedFunctionSymbol.substituteOrNull(
     substitutor: EnhancedForWarningConeSubstitutor,
-    context: CheckerContext,
 ): FirNamedFunctionSymbol? {
     // Ok, because `substituteOrNull` calls lazyResolveToPhase
     @OptIn(SymbolInternals::class)
-    return fir.substituteOrNull(substitutor, context)?.symbol
+    return fir.substituteOrNull(substitutor)?.symbol
 }
 
+context(context: CheckerContext)
 /**
  * @see org.jetbrains.kotlin.fir.scopes.impl.FirClassSubstitutionScope.createSubstitutionOverrideProperty
  * @see org.jetbrains.kotlin.fir.scopes.impl.FirClassSubstitutionScope.createSubstitutedData
  */
 private fun FirProperty.substituteOrNull(
     substitutor: EnhancedForWarningConeSubstitutor,
-    context: CheckerContext,
 ): FirProperty? {
     if (!isJavaOrEnhancement) return null
     symbol.lazyResolveToPhase(FirResolvePhase.TYPES)
     var isEnhanced = false
 
-    val newContextReceiverTypes = contextParameters.map { substitutor.substituteOrNull(it.returnTypeRef.coneType)?.also { isEnhanced = true } }
-    val newReturnType = substitutor.substituteOrNull(context.returnTypeCalculator.tryCalculateReturnType(this).coneType)?.also { isEnhanced = true }
+    val newContextReceiverTypes =
+        contextParameters.map { substitutor.substituteOrNull(it.returnTypeRef.coneType)?.also { isEnhanced = true } }
+    val newReturnType =
+        substitutor.substituteOrNull(context.returnTypeCalculator.tryCalculateReturnType(this).coneType)?.also { isEnhanced = true }
     val newExtensionReceiverType =
         receiverParameter?.typeRef?.coneType?.let { substitutor.substituteOrNull(it) }?.also { isEnhanced = true }
 
@@ -188,11 +194,11 @@ private fun FirProperty.substituteOrNull(
     }
 }
 
+context(context: CheckerContext)
 private fun FirPropertySymbol.substituteOrNull(
     substitutor: EnhancedForWarningConeSubstitutor,
-    context: CheckerContext,
 ): FirPropertySymbol? {
     // Ok, because `substituteOrNull` calls `lazyResolveToPhase`
     @OptIn(SymbolInternals::class)
-    return fir.substituteOrNull(substitutor, context)?.symbol
+    return fir.substituteOrNull(substitutor)?.symbol
 }

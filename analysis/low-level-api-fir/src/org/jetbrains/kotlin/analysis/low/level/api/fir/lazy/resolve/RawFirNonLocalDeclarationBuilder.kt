@@ -126,7 +126,8 @@ internal class RawFirNonLocalDeclarationBuilder private constructor(
                     buildScriptDestructuringDeclaration(element)
                 }
             } else {
-                buildErrorTopLevelDestructuringDeclaration(element.toFirSourceElement())
+                val initializer = element.toInitializerExpression()
+                buildErrorNonLocalDestructuringDeclaration(element.toFirSourceElement(), initializer)
             }
         }
 
@@ -139,12 +140,14 @@ internal class RawFirNonLocalDeclarationBuilder private constructor(
                 withPsiEntry("element", element)
             }
 
+            val hasSquareBrackets = (element.parent as KtDestructuringDeclaration).hasSquareBrackets()
+            val isNameBased = !hasSquareBrackets && (element.ownValOrVarKeyword != null || nameBasedDestructuringShortForm)
+
             return buildDestructuringVariable(
                 moduleData = baseModuleData,
-                this,
                 container = container,
                 element,
-                isVar = element.isVar,
+                isNameBased = isNameBased,
                 forceLocal = false,
                 index = element.index(),
                 configure = { configureScriptDestructuringDeclarationEntry(it, container) },
@@ -323,7 +326,7 @@ internal class RawFirNonLocalDeclarationBuilder private constructor(
         }
     }
 
-    private fun PsiElement?.toDelegatedSelfType(firClass: FirRegularClass): FirResolvedTypeRef =
+    private fun PsiElement.toDelegatedSelfType(firClass: FirRegularClass): FirResolvedTypeRef =
         toDelegatedSelfType(firClass.typeParameters, firClass.symbol)
 
     private data class ConstructorConversionParams(

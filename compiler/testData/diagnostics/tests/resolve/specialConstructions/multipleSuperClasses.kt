@@ -28,3 +28,6 @@ fun foo(c: C?, d: D?, e: E?) {
         else -> e
     }
 }
+
+/* GENERATED_FIR_TAGS: elvisExpression, equalityExpression, functionDeclaration, ifExpression, integerLiteral,
+interfaceDeclaration, localProperty, nullableType, propertyDeclaration, whenExpression, whenWithSubject */

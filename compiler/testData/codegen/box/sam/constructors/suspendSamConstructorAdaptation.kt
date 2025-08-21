@@ -1,7 +1,5 @@
 // DUMP_IR
 // FIR_IDENTICAL
-// IGNORE_BACKEND_K1: JVM
-// ^K1 with old backend reports FUN_INTERFACE_WITH_SUSPEND_FUNCTION
 
 fun interface FunInterface {
     suspend operator fun invoke()

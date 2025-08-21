@@ -11,3 +11,5 @@ interface Bar {
 }
 
 <!ABSTRACT_MEMBER_NOT_IMPLEMENTED!>class Baz<!> : Foo, Bar
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, interfaceDeclaration */

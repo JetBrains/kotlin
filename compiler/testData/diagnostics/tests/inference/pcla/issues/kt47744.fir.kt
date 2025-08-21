@@ -36,3 +36,7 @@ fun test() {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: asExpression, classDeclaration, classReference, crossinline, funWithExtensionReceiver,
+functionDeclaration, functionalType, in, inline, interfaceDeclaration, lambdaLiteral, localProperty, nullableType,
+operator, out, propertyDeclaration, stringLiteral, suspend, typeParameter, typeWithExtension */

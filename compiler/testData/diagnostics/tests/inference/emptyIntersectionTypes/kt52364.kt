@@ -15,3 +15,6 @@ class A<T : Foo> {
         return FieldStyle2(thisRef.getProperty())
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, interfaceDeclaration, nullableType,
+primaryConstructor, propertyDeclaration, starProjection, typeConstraint, typeParameter */

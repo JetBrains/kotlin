@@ -22,3 +22,7 @@ interface Buildee<TV>
 fun <PTV> build(instructions: Buildee<PTV>.() -> Unit): Buildee<PTV> {
     return (object: Buildee<PTV> {}).apply(instructions)
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, classDeclaration, functionDeclaration, functionalType,
+inheritanceDelegation, interfaceDeclaration, lambdaLiteral, localClass, localProperty, nullableType, propertyDeclaration,
+stringLiteral, thisExpression, typeParameter, typeWithExtension */

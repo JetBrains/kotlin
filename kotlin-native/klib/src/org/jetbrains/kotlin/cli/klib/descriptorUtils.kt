@@ -21,7 +21,7 @@ private fun getPackagesFqNames(module: ModuleDescriptor): Set<FqName> {
     fun getSubPackages(fqName: FqName) {
         result.add(fqName)
         val subPackages = packageFragmentProvider?.getSubPackagesOf(fqName) { true }
-                ?: module.getSubPackagesOf(fqName) { true }
+            ?: module.getSubPackagesOf(fqName) { true }
         subPackages.forEach { getSubPackages(it) }
     }
 
@@ -31,6 +31,6 @@ private fun getPackagesFqNames(module: ModuleDescriptor): Set<FqName> {
 
 // TODO: remove it, KT-65380
 internal fun ModuleDescriptor.getPackageFragments(): List<PackageFragmentDescriptor> =
-        getPackagesFqNames(this).flatMap {
-            getPackage(it).fragments.filter { it.module == this }.toSet()
-        }
+    getPackagesFqNames(this).flatMap {
+        getPackage(it).fragments.filter { it.module == this }.toSet()
+    }

@@ -20,3 +20,5 @@ actual class MatchUseSameName
 
 @AnnImpl
 actual class MatchUseTypealiasedName
+
+/* GENERATED_FIR_TAGS: actual, annotationDeclaration, classDeclaration, expect, primaryConstructor, typeAliasDeclaration */

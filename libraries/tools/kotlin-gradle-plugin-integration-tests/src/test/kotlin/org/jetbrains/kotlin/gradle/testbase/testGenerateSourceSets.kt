@@ -7,13 +7,11 @@ package org.jetbrains.kotlin.gradle.testbase
 
 import org.gradle.api.Project
 import org.gradle.api.tasks.SourceSet
-import org.gradle.internal.extensions.core.extra
 import org.intellij.lang.annotations.Language
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.extraProperties
-import java.util.UUID
 
-fun KotlinSourceSet.addIdentifierClass() = compileSource("class $name")
+fun KotlinSourceSet.compileStubSourceWithSourceSetName() = compileSource("class $name")
 
 fun KotlinSourceSet.compileSource(
     @Language("kotlin")
@@ -22,10 +20,28 @@ fun KotlinSourceSet.compileSource(
     val identifier = "${name}_${project.generateIdentifier()}"
     val identifierPath = project.layout.buildDirectory.dir("generatedSourceDir_${identifier}")
     kotlin.srcDir(
-        project.tasks.create("generateSourceIn_${identifier}") { task ->
+        project.tasks.register("generateSourceIn_${identifier}") { task ->
             task.outputs.dir(identifierPath)
             task.doLast {
                 identifierPath.get().asFile.resolve("generatedSource_${identifier}.kt").writeText(sourceContent)
+            }
+        }
+    )
+}
+
+fun SourceSet.compileJavaSource(
+    project: Project,
+    className: String,
+    @Language("java")
+    sourceContent: String,
+) {
+    val identifier = "${name}_${project.generateIdentifier()}"
+    val identifierPath = project.layout.buildDirectory.dir("generatedJavaSourceDir_${identifier}")
+    java.srcDir(
+        project.tasks.register("generateJavaSourceIn_${identifier}") { task ->
+            task.outputs.dir(identifierPath)
+            task.doLast {
+                identifierPath.get().asFile.resolve("${className}.java").writeText(sourceContent)
             }
         }
     )

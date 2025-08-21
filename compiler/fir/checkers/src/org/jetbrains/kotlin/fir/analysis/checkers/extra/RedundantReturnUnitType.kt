@@ -19,15 +19,16 @@ import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.isUnit
 
 object RedundantReturnUnitType : FirSimpleFunctionChecker(MppCheckerKind.Common) {
-    override fun check(declaration: FirSimpleFunction, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirSimpleFunction) {
         if (declaration.body is FirSingleExpressionBlock) return
         val returnType = declaration.returnTypeRef
         if (returnType.source == null) return
         if (declaration.source?.kind is KtFakeSourceElementKind) return
         if (returnType.annotations.isNotEmpty()) return
 
-        if (returnType.coneType.fullyExpandedType(context.session).isUnit) {
-            reporter.reportOn(declaration.returnTypeRef.source, FirErrors.REDUNDANT_RETURN_UNIT_TYPE, context)
+        if (returnType.coneType.fullyExpandedType().isUnit) {
+            reporter.reportOn(declaration.returnTypeRef.source, FirErrors.REDUNDANT_RETURN_UNIT_TYPE)
         }
     }
 

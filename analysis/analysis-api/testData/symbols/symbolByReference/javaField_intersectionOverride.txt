@@ -1,0 +1,26 @@
+KaJavaFieldSymbol:
+  annotations: []
+  callableId: /Config.minValue
+  compilerVisibility: Public
+  contextReceivers: []
+  isActual: false
+  isExpect: false
+  isExtension: false
+  isStatic: false
+  isVal: true
+  location: CLASS
+  modality: FINAL
+  name: minValue
+  origin: INTERSECTION_OVERRIDE
+  receiverParameter: null
+  returnType: KaFlexibleType:
+    annotations: []
+    type: ft<it(kotlin/Int & T), it(kotlin/Int? & T?)>
+  visibility: PUBLIC
+  getDispatchReceiver(): KaIntersectionType:
+    annotations: []
+    type: it(Config<kotlin/Int> & Config<T>)
+  getContainingFileSymbol: null
+  getContainingJvmClassName: Config
+  getContainingModule: KaSourceModule "Sources of main"
+  deprecationStatus: null

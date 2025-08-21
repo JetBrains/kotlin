@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.name.Name
 
 @OptIn(FirImplementationDetail::class, ResolveStateAccess::class)
 internal class FirReplSnippetImpl(
-    override val source: KtSourceElement?,
     resolvePhase: FirResolvePhase,
     override var annotations: MutableOrEmptyList<FirAnnotation>,
     override val moduleData: FirModuleData,
@@ -36,6 +35,7 @@ internal class FirReplSnippetImpl(
     override val attributes: FirDeclarationAttributes,
     override val name: Name,
     override val symbol: FirReplSnippetSymbol,
+    override val source: KtSourceElement,
     override var receivers: MutableOrEmptyList<FirScriptReceiverParameter>,
     override var body: FirBlock,
     override var resultTypeRef: FirTypeRef,

@@ -6,7 +6,7 @@ package org.jetbrains.kotlin.cli.common.arguments
 
 import org.jetbrains.kotlin.config.LanguageFeature
 
-internal fun HashMap<LanguageFeature, LanguageFeature.State>.configureCommonLanguageFeatures(arguments: CommonCompilerArguments) {
+internal fun MutableMap<LanguageFeature, LanguageFeature.State>.configureCommonLanguageFeatures(arguments: CommonCompilerArguments) {
     if (arguments.multiPlatform) {
         put(LanguageFeature.MultiPlatformProjects, LanguageFeature.State.ENABLED)
     }
@@ -22,28 +22,12 @@ internal fun HashMap<LanguageFeature, LanguageFeature.State>.configureCommonLang
         put(LanguageFeature.InlineClasses, LanguageFeature.State.ENABLED)
     }
 
-    if (arguments.legacySmartCastAfterTry) {
-        put(LanguageFeature.SoundSmartCastsAfterTry, LanguageFeature.State.DISABLED)
-    }
-
-    if (arguments.inferenceCompatibility) {
-        put(LanguageFeature.InferenceCompatibility, LanguageFeature.State.ENABLED)
-    }
-
     if (arguments.consistentDataClassCopyVisibility) {
         put(LanguageFeature.DataClassCopyRespectsConstructorVisibility, LanguageFeature.State.ENABLED)
     }
 
     if (arguments.unrestrictedBuilderInference) {
         put(LanguageFeature.UnrestrictedBuilderInference, LanguageFeature.State.ENABLED)
-    }
-
-    if (arguments.enableBuilderInference) {
-        put(LanguageFeature.UseBuilderInferenceWithoutAnnotation, LanguageFeature.State.ENABLED)
-    }
-
-    if (arguments.selfUpperBoundInference) {
-        put(LanguageFeature.TypeInferenceOnCallsWithSelfTypes, LanguageFeature.State.ENABLED)
     }
 
     if (arguments.contextReceivers) {
@@ -54,8 +38,20 @@ internal fun HashMap<LanguageFeature, LanguageFeature.State>.configureCommonLang
         put(LanguageFeature.ContextParameters, LanguageFeature.State.ENABLED)
     }
 
+    if (arguments.contextSensitiveResolution) {
+        put(LanguageFeature.ContextSensitiveResolutionUsingExpectedType, LanguageFeature.State.ENABLED)
+    }
+
     if (arguments.nonLocalBreakContinue) {
         put(LanguageFeature.BreakContinueInInlineLambdas, LanguageFeature.State.ENABLED)
+    }
+
+    if (arguments.dataFlowBasedExhaustiveness) {
+        put(LanguageFeature.DataFlowBasedExhaustiveness, LanguageFeature.State.ENABLED)
+    }
+
+    if (arguments.explicitBackingFields) {
+        put(LanguageFeature.ExplicitBackingFields, LanguageFeature.State.ENABLED)
     }
 
     if (arguments.directJavaActualization) {
@@ -78,7 +74,50 @@ internal fun HashMap<LanguageFeature, LanguageFeature.State>.configureCommonLang
         put(LanguageFeature.NestedTypeAliases, LanguageFeature.State.ENABLED)
     }
 
+    if (arguments.annotationDefaultTarget == "first-only-warn") {
+        put(LanguageFeature.AnnotationDefaultTargetMigrationWarning, LanguageFeature.State.ENABLED)
+        put(LanguageFeature.PropertyParamAnnotationDefaultTargetMode, LanguageFeature.State.DISABLED)
+    }
+    if (arguments.annotationDefaultTarget == "param-property") {
+        put(LanguageFeature.PropertyParamAnnotationDefaultTargetMode, LanguageFeature.State.ENABLED)
+    }
+    if (arguments.annotationDefaultTarget == "first-only") {
+        put(LanguageFeature.AnnotationDefaultTargetMigrationWarning, LanguageFeature.State.DISABLED)
+        put(LanguageFeature.PropertyParamAnnotationDefaultTargetMode, LanguageFeature.State.DISABLED)
+    }
+
     if (arguments.annotationTargetAll) {
         put(LanguageFeature.AnnotationAllUseSiteTarget, LanguageFeature.State.ENABLED)
+    }
+
+    if (arguments.allowReifiedTypeInCatch) {
+        put(LanguageFeature.AllowReifiedTypeInCatchClause, LanguageFeature.State.ENABLED)
+    }
+
+    if (arguments.allowContractsOnMoreFunctions) {
+        put(LanguageFeature.AllowCheckForErasedTypesInContracts, LanguageFeature.State.ENABLED)
+        put(LanguageFeature.AllowContractsOnSomeOperators, LanguageFeature.State.ENABLED)
+        put(LanguageFeature.AllowContractsOnPropertyAccessors, LanguageFeature.State.ENABLED)
+    }
+
+    if (arguments.allowConditionImpliesReturnsContracts) {
+        put(LanguageFeature.ConditionImpliesReturnsContracts, LanguageFeature.State.ENABLED)
+    }
+
+    if (arguments.allowHoldsinContract) {
+        put(LanguageFeature.HoldsInContracts, LanguageFeature.State.ENABLED)
+    }
+
+    if (arguments.nameBasedDestructuring == "only-syntax") {
+        put(LanguageFeature.NameBasedDestructuring, LanguageFeature.State.ENABLED)
+    }
+    if (arguments.nameBasedDestructuring == "name-mismatch") {
+        put(LanguageFeature.NameBasedDestructuring, LanguageFeature.State.ENABLED)
+        put(LanguageFeature.DeprecateNameMismatchInShortDestructuringWithParentheses, LanguageFeature.State.ENABLED)
+    }
+    if (arguments.nameBasedDestructuring == "complete") {
+        put(LanguageFeature.NameBasedDestructuring, LanguageFeature.State.ENABLED)
+        put(LanguageFeature.DeprecateNameMismatchInShortDestructuringWithParentheses, LanguageFeature.State.ENABLED)
+        put(LanguageFeature.EnableNameBasedDestructuringShortForm, LanguageFeature.State.ENABLED)
     }
 }

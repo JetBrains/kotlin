@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.config.messageCollector
+import org.jetbrains.kotlin.config.scriptingHostConfiguration
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.declarations.FirFile
@@ -38,6 +39,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.jvm.extensions.PackageFragmentProviderExtension
 import org.jetbrains.kotlin.scripting.compiler.plugin.ScriptCompilerProxy
+import org.jetbrains.kotlin.scripting.compiler.plugin.configureFirSession
 import org.jetbrains.kotlin.scripting.compiler.plugin.dependencies.ScriptsCompilationDependencies
 import org.jetbrains.kotlin.scripting.compiler.plugin.irLowerings.ScriptResultFieldData
 import org.jetbrains.kotlin.scripting.compiler.plugin.irLowerings.scriptResultFieldDataAttr
@@ -285,6 +287,7 @@ private fun analyze(sourceFiles: Collection<KtFile>, environment: KotlinCoreEnvi
 
     analyzerWithCompilerReport.analyzeAndReport(sourceFiles) {
         val project = environment.project
+        @Suppress("DEPRECATION")
         TopDownAnalyzerFacadeForJVM.analyzeFilesWithJavaIntegration(
             project,
             sourceFiles,
@@ -354,6 +357,10 @@ private fun doCompileWithK2(
         }
     ).single().session
 
+    (configuration.scriptingHostConfiguration as? ScriptingHostConfiguration)?.get(ScriptingHostConfiguration.configureFirSession)?.also {
+        it.invoke(session)
+    }
+
     val scriptDefinitionProviderService = session.scriptDefinitionProviderService
 
     scriptDefinitionProviderService?.run {
@@ -411,7 +418,7 @@ private fun doCompileWithK2(
 
     val irInput = convertAnalyzedFirToIr(configuration, targetId, analysisResults, compilerEnvironment)
 
-    val codegenOutput = generateCodeFromIr(irInput, compilerEnvironment)
+    val generationState = generateCodeFromIr(irInput, compilerEnvironment)
 
     diagnosticsReporter.reportToMessageCollector(messageCollector, renderDiagnosticName)
 
@@ -420,7 +427,7 @@ private fun doCompileWithK2(
     }
 
     return makeCompiledScript(
-        codegenOutput.generationState,
+        generationState,
         script,
         sourceFiles.first(),
         sourceDependencies,

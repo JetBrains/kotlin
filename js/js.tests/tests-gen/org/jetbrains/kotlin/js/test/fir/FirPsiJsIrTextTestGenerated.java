@@ -986,6 +986,12 @@ public class FirPsiJsIrTextTestGenerated extends AbstractFirPsiJsIrTextTest {
       }
 
       @Test
+      @TestMetadata("delegateForExtPropertyInClass.kt")
+      public void testDelegateForExtPropertyInClass() {
+        runTest("compiler/testData/ir/irText/declarations/delegate/delegateForExtPropertyInClass.kt");
+      }
+
+      @Test
       @TestMetadata("delegationEvaluationOrder1.kt")
       public void testDelegationEvaluationOrder1() {
         runTest("compiler/testData/ir/irText/declarations/delegate/delegationEvaluationOrder1.kt");
@@ -1021,6 +1027,12 @@ public class FirPsiJsIrTextTestGenerated extends AbstractFirPsiJsIrTextTest {
       @TestMetadata("compiler/testData/ir/irText/declarations/multiplatform/k2")
       @TestDataPath("$PROJECT_ROOT")
       public class K2 {
+        @Test
+        @TestMetadata("actualizeInterfaceAsAny.kt")
+        public void testActualizeInterfaceAsAny() {
+          runTest("compiler/testData/ir/irText/declarations/multiplatform/k2/actualizeInterfaceAsAny.kt");
+        }
+
         @Test
         public void testAllFilesPresentInK2() {
           KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/declarations/multiplatform/k2"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
@@ -1213,12 +1225,6 @@ public class FirPsiJsIrTextTestGenerated extends AbstractFirPsiJsIrTextTest {
     public void testSuppressedNonPublicCall() {
       runTest("compiler/testData/ir/irText/errors/suppressedNonPublicCall.kt");
     }
-
-    @Test
-    @TestMetadata("unresolvedReference.kt")
-    public void testUnresolvedReference() {
-      runTest("compiler/testData/ir/irText/errors/unresolvedReference.kt");
-    }
   }
 
   @Nested
@@ -1264,6 +1270,12 @@ public class FirPsiJsIrTextTestGenerated extends AbstractFirPsiJsIrTextTest {
     @TestMetadata("assignments.kt")
     public void testAssignments() {
       runTest("compiler/testData/ir/irText/expressions/assignments.kt");
+    }
+
+    @Test
+    @TestMetadata("atomicFuUncheckedCast.kt")
+    public void testAtomicFuUncheckedCast() {
+      runTest("compiler/testData/ir/irText/expressions/atomicFuUncheckedCast.kt");
     }
 
     @Test
@@ -2008,6 +2020,12 @@ public class FirPsiJsIrTextTestGenerated extends AbstractFirPsiJsIrTextTest {
     @TestMetadata("tryCatch.kt")
     public void testTryCatch() {
       runTest("compiler/testData/ir/irText/expressions/tryCatch.kt");
+    }
+
+    @Test
+    @TestMetadata("tryCatchIlt.kt")
+    public void testTryCatchIlt() {
+      runTest("compiler/testData/ir/irText/expressions/tryCatchIlt.kt");
     }
 
     @Test
@@ -3180,6 +3198,16 @@ public class FirPsiJsIrTextTestGenerated extends AbstractFirPsiJsIrTextTest {
   }
 
   @Nested
+  @TestMetadata("compiler/testData/ir/irText/lenientMode")
+  @TestDataPath("$PROJECT_ROOT")
+  public class LenientMode {
+    @Test
+    public void testAllFilesPresentInLenientMode() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/lenientMode"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+    }
+  }
+
+  @Nested
   @TestMetadata("compiler/testData/ir/irText/properties")
   @TestDataPath("$PROJECT_ROOT")
   public class Properties {
@@ -3404,12 +3432,6 @@ public class FirPsiJsIrTextTestGenerated extends AbstractFirPsiJsIrTextTest {
     @TestMetadata("dontLeaveStubTypesInSetter.kt")
     public void testDontLeaveStubTypesInSetter() {
       runTest("compiler/testData/ir/irText/types/dontLeaveStubTypesInSetter.kt");
-    }
-
-    @Test
-    @TestMetadata("genericDelegatedDeepProperty.kt")
-    public void testGenericDelegatedDeepProperty() {
-      runTest("compiler/testData/ir/irText/types/genericDelegatedDeepProperty.kt");
     }
 
     @Test

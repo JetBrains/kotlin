@@ -27,3 +27,5 @@ fun test() {
     <!DEBUG_INFO_EXPRESSION_TYPE("(X<(I<(kotlin.Any..kotlin.Any?)>..I<(kotlin.Any..kotlin.Any?)>?), (kotlin.Any..kotlin.Any?), (I<(kotlin.Any..kotlin.Any?)>..I<(kotlin.Any..kotlin.Any?)>?)>..X<out (I<*>..I<*>?), *, out (I<*>..I<*>?)>?)")!>t<!>
     t.id // should be OK
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaProperty, localProperty, propertyDeclaration */

@@ -19,8 +19,6 @@ import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
-import org.jetbrains.kotlin.ir.expressions.putArgument
-import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.util.*
 
 /**
@@ -99,9 +97,7 @@ internal class InheritedDefaultMethodsOnClassesLowering(val context: JvmBackendC
                     }
 
                     for ((parameter, argument) in parameter2arguments) {
-                        if (argument != null) {
-                            putArgument(parameter, argument)
-                        }
+                        arguments[parameter] = argument
                     }
                 }
             })

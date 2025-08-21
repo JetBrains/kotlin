@@ -12,8 +12,8 @@ MODULE main
 				+ 2 innerObjectRetransformation.kt
 				flow/InnerObjectRetransformationKt
 				*L
-				1#1,36:1
-				54#2:37
+				1#1,64:1
+				54#2:65
 				*E
 				 } )
 			K2
@@ -27,7 +27,7 @@ MODULE main
 				+ 2 innerObjectRetransformation.kt
 				flow/InnerObjectRetransformationKt
 				*L
-				1#1,36:1
-				55#2:37
+				1#1,64:1
+				55#2:65
 				*E
 				 } )

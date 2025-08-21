@@ -75,3 +75,7 @@ public actual open class FastArrayList<E> internal constructor(
     actual override fun indexOf(element: E): Int = -1
     actual override fun lastIndexOf(element: E): Int = -1
 }
+
+/* GENERATED_FIR_TAGS: actual, additiveExpression, asExpression, classDeclaration, expect, functionDeclaration, getter,
+integerLiteral, interfaceDeclaration, nullableType, operator, override, primaryConstructor, propertyDeclaration,
+secondaryConstructor, stringLiteral, typeParameter */

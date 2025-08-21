@@ -1,4 +1,5 @@
 // TARGET_BACKEND: NATIVE
+// WITH_PLATFORM_LIBS
 // MODULE: cinterop_kt63048
 // FILE: kt63048.def
 language = Objective-C

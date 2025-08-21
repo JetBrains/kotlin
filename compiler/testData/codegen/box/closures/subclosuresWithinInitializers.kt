@@ -1,5 +1,9 @@
-fun <R> run(block: () -> R) = block()
+// NO_CHECK_LAMBDA_INLINING
+// FILE: lib.kt
 inline fun <R> inlineRun(block: () -> R) = block()
+
+// FILE: main.kt
+fun <R> run(block: () -> R) = block()
 
 class Outer(val outerProp: String) {
     fun foo(arg: String): String {

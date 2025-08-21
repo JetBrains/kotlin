@@ -1,3 +1,4 @@
 Declaration: internal class Declaration
 At usage site: println
 Is visible: false
+Receiver expression: null

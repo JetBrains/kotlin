@@ -22,13 +22,17 @@ enum class JvmTarget(val target: String) {
     JVM_21("21"),
     JVM_22("22"),
     JVM_23("23"),
+    JVM_24("24"),
     ;
 
     companion object {
         @JvmStatic
         fun fromTarget(target: String): JvmTarget =
             JvmTarget.values().firstOrNull { it.target == target }
-                ?: throw IllegalArgumentException("Unknown Kotlin JVM target: $target")
+                ?: throw IllegalArgumentException(
+                    "Unknown Kotlin JVM target: $target,\navailable targets are ${JvmTarget.values().joinToString { it.target }}\n" +
+                            "Prefer configuring 'jvmTarget' value via 'compilerOptions' DSL: https://kotl.in/compiler-options-dsl"
+                )
 
         @JvmStatic
         val DEFAULT = JVM_1_8

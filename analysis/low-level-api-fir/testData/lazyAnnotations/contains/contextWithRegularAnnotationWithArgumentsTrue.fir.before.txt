@@ -1,1 +1,1 @@
-[ResolvedTo(BODY_RESOLVE)] @R|MyAnno|[Types](v = String(1).R|kotlin/String.plus|(String(2))) variable: R|kotlin/String|
+[ResolvedTo(RAW_FIR)] @MyAnno[Unresolved](LAZY_EXPRESSION) variable: String

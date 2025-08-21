@@ -32,3 +32,6 @@ class B: A() {
         devNull(A.<!SUBCLASS_CANT_CALL_COMPANION_PROTECTED_NON_STATIC!>protected_val<!>)
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, functionDeclaration, integerLiteral, nullableType,
+objectDeclaration, propertyDeclaration */

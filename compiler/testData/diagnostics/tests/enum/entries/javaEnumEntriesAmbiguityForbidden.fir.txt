@@ -1,0 +1,7 @@
+FILE: test.kt
+    public final fun test(): R|kotlin/String| {
+        lval first: R|kotlin/enums/EnumEntries<JEnumEntry>| = Q|JEnumEntry|.R|/JEnumEntry.entries*s|
+        lval second: R|kotlin/Int| = Q|JEnumStaticField|.R|/JEnumStaticField.entries*s|
+        lval third: R|kotlin/reflect/KProperty0<kotlin/enums/EnumEntries<JEnumField>>| = Q|JEnumField|::R|/JEnumField.entries*s|
+        ^test <strcat>(R|<local>/first|, R|<local>/second|, R|<local>/third|)
+    }

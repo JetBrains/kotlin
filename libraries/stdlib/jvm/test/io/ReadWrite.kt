@@ -5,6 +5,8 @@
 
 package test.io
 
+import test.collections.behaviors.sequenceBehavior
+import test.collections.compare
 import kotlin.test.*
 import java.io.File
 import java.io.Reader
@@ -133,11 +135,16 @@ class ReadWriteTest {
     }
 
     @Test fun testURL() {
-        val url = URL("http://kotlinlang.org")
-        val text = url.readText()
-        assertFalse(text.isEmpty())
-        val text2 = url.readText(charset("UTF8"))
-        assertFalse(text2.isEmpty())
+        val file = File.createTempFile("temp", System.nanoTime().toString())
+        file.deleteOnExit()
+        val fileText = "Test Text"
+        file.writeText(fileText)
+
+        val url: URL = file.toURI().toURL()
+        val textDefault = url.readText()
+        assertEquals(fileText, textDefault)
+        val textUTF8 = url.readText(charset("UTF8"))
+        assertEquals(fileText, textUTF8)
     }
 }
 
@@ -179,5 +186,10 @@ class LineIteratorTest {
         reader = StringReader(" \n ").buffered()
         assertEquals(listOf(" ", " "), reader.lineSequence().toList())
         reader.close()
+
+        reader = StringReader("a\nb\nc").buffered()
+        compare(listOf("a", "b", "c").asSequence().constrainOnce(), reader.lineSequence()) {
+            sequenceBehavior(isConstrainOnce = true)
+        }
     }
 }

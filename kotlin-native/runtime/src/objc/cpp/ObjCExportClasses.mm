@@ -5,9 +5,10 @@
 
 #import "Types.h"
 #import "Memory.h"
-#import "MemorySharedRefs.hpp"
 
 #if KONAN_OBJC_INTEROP
+
+#include <variant>
 
 #import <Foundation/Foundation.h>
 #import <objc/runtime.h>
@@ -15,6 +16,7 @@
 #import <dispatch/dispatch.h>
 
 #import "CallsChecker.hpp"
+#include "ObjCBackRef.hpp"
 #import "ObjCExport.h"
 #import "ObjCExportInit.h"
 #import "ObjCExportPrivate.h"
@@ -36,21 +38,31 @@ extern "C" KInt Kotlin_hashCode(KRef str);
 extern "C" KBoolean Kotlin_equals(KRef lhs, KRef rhs);
 extern "C" OBJ_GETTER(Kotlin_toString, KRef obj);
 
+namespace {
+
+using PermanentRef = KRef;
+using RegularRef = kotlin::mm::ObjCBackRef;
+
+}
+
 // Note: `KotlinBase`'s `toKotlin` and `_tryRetain` methods will terminate if
 // called with non-frozen object on a wrong worker. `retain` will also terminate
 // in these conditions if backref's refCount is zero.
 
 @implementation KotlinBase {
-  BackRefFromAssociatedObject refHolder;
-  bool permanent;
+  std::variant<RegularRef, PermanentRef> refHolder;
 }
 
 -(KRef)toKotlin:(KRef*)OBJ_RESULT {
-  if (permanent) {
-    RETURN_OBJ(refHolder.refPermanent());
-  } else {
-    RETURN_OBJ(refHolder.ref());
-  }
+    auto obj = std::visit([](auto&& arg) noexcept -> KRef {
+        using T = std::decay_t<decltype(arg)>;
+        if constexpr (std::is_same_v<T, PermanentRef>) {
+            return arg;
+        } else if constexpr (std::is_same_v<T, RegularRef>) {
+            return *arg;
+        }
+    }, refHolder);
+    RETURN_OBJ(obj);
 }
 
 +(void)load {
@@ -94,77 +106,72 @@ extern "C" OBJ_GETTER(Kotlin_toString, KRef obj);
           class_getName(object_getClass(self))];
   }
   ObjHolder holder;
-  AllocInstanceWithAssociatedObject(typeInfo, result, holder.slot());
-  result->refHolder.initAndAddRef(holder.obj());
-  RuntimeAssert(!holder.obj()->permanent(), "dynamically allocated object is permanent");
-  result->permanent = false;
+  auto obj = AllocInstanceWithAssociatedObject(typeInfo, result, holder.slot());
+  RuntimeAssert(obj != nullptr, "Allocated null");
+  RuntimeAssert(!obj->permanent(), "Allocated permanent object");
+  result->refHolder.emplace<RegularRef>(obj);
   return result;
 }
 
 +(instancetype)createRetainedWrapper:(ObjHeader*)obj {
-  RuntimeAssert(!kotlin::compiler::swiftExport(), "Must not be used in Swift Export");
-
   kotlin::AssertThreadState(kotlin::ThreadState::kRunnable);
 
+  if (kotlin::compiler::swiftExport()) {
+    void *ref = kotlin::mm::createRetainedExternalRCRef(obj);
+    kotlin::ThreadStateGuard guard(kotlin::ThreadState::kNative);
+    return [self _createClassWrapperForExternalRCRef:ref];
+  }
+
   KotlinBase* candidate = [super allocWithZone:nil];
-  // TODO: should we call NSObject.init ?
   bool permanent = obj->permanent();
-  candidate->permanent = permanent;
 
   if (!permanent) { // TODO: permanent objects should probably be supported as custom types.
-    candidate->refHolder.initAndAddRef(obj);
+    auto& candidateRegularRef = candidate->refHolder.emplace<RegularRef>(obj);
     if (id old = AtomicCompareAndSwapAssociatedObject(obj, nullptr, candidate)) {
       {
         kotlin::ThreadStateGuard guard(kotlin::ThreadState::kNative);
-        candidate->refHolder.releaseRef();
+        candidateRegularRef.release();
         [candidate releaseAsAssociatedObject];
       }
       return objc_retain(old);
     }
   } else {
-    candidate->refHolder.initForPermanentObject(obj);
+    candidate->refHolder.emplace<PermanentRef>(obj);
   }
 
   return candidate;
 }
 
 -(instancetype)retain {
-  if (permanent) {
-    [super retain];
-  } else {
-    refHolder.addRef();
-  }
-  return self;
+    if (auto* ref = std::get_if<RegularRef>(&refHolder)) {
+        ref->retain();
+    } else {
+        [super retain];
+    }
+    return self;
 }
 
 -(BOOL)_tryRetain {
-  if (permanent) {
-    return [super _tryRetain];
-  } else {
-    return refHolder.tryAddRef();
-  }
+    if (auto* ref = std::get_if<RegularRef>(&refHolder)) {
+        return ref->tryRetain();
+    } else {
+        return [super _tryRetain];
+    }
 }
 
 -(oneway void)release {
-  if (permanent) {
-    [super release];
-  } else {
-    refHolder.releaseRef();
-  }
+    if (auto* ref = std::get_if<RegularRef>(&refHolder)) {
+        ref->release();
+    } else {
+        [super release];
+    }
 }
 
 -(void)releaseAsAssociatedObject {
-  RuntimeAssert(!permanent, "Cannot be called on permanent objects");
-  // No need for any special handling. Weak reference handling machinery
-  // has already cleaned up the reference to Kotlin object.
-  [super release];
-}
-
--(void)dealloc {
-  if (!permanent) {
-    refHolder.dealloc();
-  }
-  [super dealloc];
+    RuntimeAssert(std::holds_alternative<RegularRef>(refHolder), "Can only be called for regular objects");
+    // No need for any special handling. Weak reference handling machinery
+    // has already cleaned up the reference to Kotlin object.
+    [super release];
 }
 
 - (instancetype)copyWithZone:(NSZone *)zone {
@@ -172,74 +179,107 @@ extern "C" OBJ_GETTER(Kotlin_toString, KRef obj);
   return [self retain];
 }
 
-- (instancetype)initWithExternalRCRef:(uintptr_t)ref {
++ (id)_createClassWrapperForExternalRCRef:(void *)ref {
     RuntimeAssert(kotlin::compiler::swiftExport(), "Must be used in Swift Export only");
     kotlin::AssertThreadState(kotlin::ThreadState::kNative);
 
-    Class bestFittingClass =
-            kotlin::swiftExportRuntime::bestFittingObjCClassFor(kotlin::mm::externalRCRefType(reinterpret_cast<void*>(ref)));
-    if ([self class] != bestFittingClass) {
-        if ([[self class] isSubclassOfClass:bestFittingClass]) {
-            konan::consoleErrorf(
-                    "Inheritance from Kotlin exported classes is not supported: %s inherits from %s\n", class_getName([self class]),
-                    class_getName(bestFittingClass));
-            kotlin::PrintStackTraceStderr();
-            std::abort();
-        }
-        RuntimeAssert(
-                [bestFittingClass isSubclassOfClass:[self class]], "Best-fitting class is %s which is not a subclass of self (%s)",
-                class_getName(bestFittingClass), class_getName([self class]));
+    auto externalRCRef = static_cast<kotlin::mm::RawExternalRCRef *>(ref);
+    Class bestFittingClass = kotlin::swiftExportRuntime::classWrapperFor(kotlin::mm::typeOfExternalRCRef(externalRCRef));
 
-        KotlinBase* retiredSelf = self; // old `self`
+    RuntimeAssert(
+            [bestFittingClass isSubclassOfClass:self], "Best-fitting class is %s which is not a subclass of self (%s)",
+            class_getName(bestFittingClass), class_getName(self));
 
-        // Rerun the entire initializer, but with the best-fitting class now.
-        self = [[bestFittingClass alloc] initWithExternalRCRef:ref]; // new `self`, retained.
+    // Call unsafe initializer with the best-fitting class.
+    return [[bestFittingClass alloc] initWithExternalRCRefUnsafe:ref options:KotlinBaseConstructionOptionsAsBestFittingWrapper];
+}
 
-        // Fully release old `self` by just decrementing NSObject refcount.
-        [retiredSelf releaseAsAssociatedObject];
++ (id)_createProtocolWrapperForExternalRCRef:(void *)ref {
+    RuntimeAssert(kotlin::compiler::swiftExport(), "Must be used in Swift Export only");
+    kotlin::AssertThreadState(kotlin::ThreadState::kNative);
 
-        // Return new `self`.
-        return self;
-    }
+    auto externalRCRef = reinterpret_cast<kotlin::mm::RawExternalRCRef*>(ref);
 
-    permanent = refHolder.initWithExternalRCRef(reinterpret_cast<void*>(ref));
-    if (permanent) {
+    const TypeInfo *typeInfo = kotlin::mm::typeOfExternalRCRef(externalRCRef);
+    Class wrapperClass = kotlin::swiftExportRuntime::protocolWrapperFor(typeInfo);
+    Class bestFittingClass = kotlin::swiftExportRuntime::classWrapperFor(typeInfo);
+
+    KotlinBaseConstructionOptions options = wrapperClass == bestFittingClass ?
+        KotlinBaseConstructionOptionsAsBestFittingWrapper : KotlinBaseConstructionOptionsAsExistentialWrapper;
+
+    return [[wrapperClass alloc] initWithExternalRCRefUnsafe:ref options:options];
+}
+
+/*
+ * KotlinBase maintains a 1:1 association between wrapper instances and Kotlin objects for better performance and object identity preservation.
+ * However, in rare cases multiple wrapper types may be required for a single Kotlin object, with only the designated "best-fitting" wrapper being cached.
+ *
+ * Swift Export runtime offers two methods for wrapper class resolution:
+ * 1. classWrapperFor(): preserves class hierarchy relationship guarantees
+ * 2. protocolWrapperFor(): preserves protocol conformance guarantees
+ *
+ * We postulate that class hierarchy preservation takes precedence; thus classWrapperFor() output is designated
+ * as best-fitting wrapper. Implementation handles instance caching/substitution based on
+ * wrapper designation from call sites.
+ *
+ * @see `_createProtocolWrapperForExternalRCRef`
+ * @see `_createClassWrapperForExternalRCRef`
+ */
+- (instancetype)initWithExternalRCRefUnsafe:(void *)ref options:(KotlinBaseConstructionOptions)options {
+    RuntimeAssert(kotlin::compiler::swiftExport(), "Must be used in Swift Export only");
+    kotlin::AssertThreadState(kotlin::ThreadState::kNative);
+
+    auto externalRCRef = static_cast<kotlin::mm::RawExternalRCRef *>(ref);
+
+    BOOL shouldCache = options == KotlinBaseConstructionOptionsAsBestFittingWrapper || options == KotlinBaseConstructionOptionsAsBoundBridge;
+    BOOL shouldSubstitute = options == KotlinBaseConstructionOptionsAsBestFittingWrapper;
+    BOOL shouldTrapOnSubstitution = options == KotlinBaseConstructionOptionsAsBoundBridge;
+
+    if (auto obj = kotlin::mm::externalRCRefAsPermanentObject(externalRCRef)) {
+        refHolder.emplace<PermanentRef>(obj);
         // Cannot attach associated objects to permanent objects.
         return self;
     }
 
-    id newSelf = nil;
-    {
+    auto& regularRef = refHolder.emplace<RegularRef>(kotlin::mm::ExternalRCRefImpl::fromRaw(externalRCRef));
+
+    id newSelf = ({
         // TODO: Make it okay to get/replace associated objects w/o runnable state.
         kotlin::CalledFromNativeGuard guard;
         // `ref` holds a strong reference to obj, no need to place obj onto a stack.
-        KRef obj = refHolder.ref();
-        newSelf = AtomicCompareAndSwapAssociatedObject(obj, nullptr, self);
-    }
+        KRef obj = regularRef.ref();
 
-    if (newSelf == nil) {
-        // No previous associated object was set, `self` is the associated object.
+        shouldCache ? AtomicCompareAndSwapAssociatedObject(obj, nullptr, self) : Kotlin_ObjCExport_GetAssociatedObject(obj);
+    });
+
+    RuntimeCheck(shouldSubstitute || !shouldTrapOnSubstitution || newSelf == nullptr, "Newly created Kotlin object for bound bridge type should never have an associated object. Please submit a bug report.");
+
+    if (![[newSelf class] isSubclassOfClass:[self class]] || !shouldSubstitute) {
+        // No previous associated object was set or it wasn't fitting for substitution.
         return self;
     }
-
-    RuntimeAssert(
-            [[newSelf class] isSubclassOfClass:[self class]],
-            "During initialization of %p (%s) for Kotlin object %p trying to replace self with %p (%s) that is not a subclass", self,
-            class_getName([self class]), refHolder.ref(), newSelf, class_getName([newSelf class]));
 
     KotlinBase* retiredSelf = self; // old `self`
     self = [newSelf retain]; // new `self`, retained.
 
     // Fully release old `self`:
-    [retiredSelf release]; // decrement SpecialRef refcount,
+    [retiredSelf release]; // decrement ExternalRCRef refcount,
     [retiredSelf releaseAsAssociatedObject]; // and decrement NSObject refcount.
 
     // Return new `self`.
     return self;
 }
 
-- (uintptr_t)externalRCRef {
-    return reinterpret_cast<uintptr_t>(refHolder.externalRCRef(permanent));
+- (void *)externalRCRef {
+    auto ref = std::visit([](auto&& arg) noexcept -> kotlin::mm::RawExternalRCRef* {
+        using T = std::decay_t<decltype(arg)>;
+        if constexpr (std::is_same_v<T, PermanentRef>) {
+            return kotlin::mm::permanentObjectAsExternalRCRef(arg);
+        } else if constexpr (std::is_same_v<T, RegularRef>) {
+            return arg.get()->toRaw();
+        }
+    }, refHolder);
+    return static_cast<void *>(ref);
 }
 
 - (NSString *)description {

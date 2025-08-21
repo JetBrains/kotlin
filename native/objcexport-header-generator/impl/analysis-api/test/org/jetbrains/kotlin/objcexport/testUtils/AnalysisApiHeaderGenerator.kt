@@ -11,6 +11,8 @@ import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.allDirectDependencies
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCHeader
 import org.jetbrains.kotlin.backend.konan.testUtils.HeaderGenerator
+import org.jetbrains.kotlin.export.test.createStandaloneAnalysisApiSession
+import org.jetbrains.kotlin.export.test.defaultKotlinSourceModuleName
 import org.jetbrains.kotlin.objcexport.*
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.tooling.core.withClosure

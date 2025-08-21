@@ -1,4 +1,4 @@
-open class B(x: () -> Unit)/* DeclarationStructureElement *//* ClassDeclarationStructureElement */
+/* RootStructureElement */open class B(x: () -> Unit)/* DeclarationStructureElement *//* ClassDeclarationStructureElement */
 
 class A : B(1, {
     foo()

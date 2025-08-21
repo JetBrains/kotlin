@@ -32,9 +32,11 @@ actual open class Container {
     actual fun protectedFun1() {}           // OK: protected -> public
     actual protected fun protectedFun2() {} // OK: protected -> protected
 
-    actual internal fun <!ACTUAL_WITHOUT_EXPECT!>protectedFun3<!>() {}  // BAD: protected -> internal
-    actual protected fun <!ACTUAL_WITHOUT_EXPECT!>internalFun3<!>() {}  // BAD: internal -> protected
+    actual internal fun <!EXPECT_ACTUAL_INCOMPATIBLE_VISIBILITY!>protectedFun3<!>() {}  // BAD: protected -> internal
+    actual protected fun <!EXPECT_ACTUAL_INCOMPATIBLE_VISIBILITY!>internalFun3<!>() {}  // BAD: internal -> protected
 
-    actual open fun <!ACTUAL_WITHOUT_EXPECT!>openInternalFun<!>() {}    // BAD: internal+open -> public
-    actual internal fun <!ACTUAL_WITHOUT_EXPECT!>openPublicFun<!>() {}  // BAD: open+public -> internal
+    actual open fun <!EXPECT_ACTUAL_INCOMPATIBLE_VISIBILITY!>openInternalFun<!>() {}    // BAD: internal+open -> public
+    actual internal fun <!EXPECT_ACTUAL_INCOMPATIBLE_MODALITY, EXPECT_ACTUAL_INCOMPATIBLE_VISIBILITY!>openPublicFun<!>() {}  // BAD: open+public -> internal
 }
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, functionDeclaration */

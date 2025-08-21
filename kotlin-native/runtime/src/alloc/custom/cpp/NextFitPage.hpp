@@ -104,6 +104,9 @@ private:
     Cell cells_[]; // cells_[0] is reserved for an empty block
 };
 
+// ensure const-evaluatable
+static_assert(NextFitPage::cellCount() > 0);
+
 } // namespace kotlin::alloc
 
 #endif

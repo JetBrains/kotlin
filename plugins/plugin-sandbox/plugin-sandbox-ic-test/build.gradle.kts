@@ -1,15 +1,14 @@
-import org.jetbrains.kotlin.ideaExt.idea
-
 plugins {
     kotlin("jvm")
     id("jps-compatible")
+    id("java-test-fixtures")
 }
 
 dependencies {
-    testApi(project(":plugins:plugin-sandbox"))
-    testApi(project(":compiler:incremental-compilation-impl"))
-    testApi(projectTests(":compiler:incremental-compilation-impl"))
-    testImplementation(libs.junit.jupiter.api)
+    testFixturesApi(project(":plugins:plugin-sandbox"))
+    testFixturesApi(project(":compiler:incremental-compilation-impl"))
+    testFixturesApi(testFixtures(project(":compiler:incremental-compilation-impl")))
+    testFixturesApi(libs.junit.jupiter.api)
 
     testCompileOnly(intellijCore())
 
@@ -19,33 +18,20 @@ dependencies {
     testRuntimeOnly(commonDependency("org.lz4:lz4-java"))
     testRuntimeOnly(commonDependency("org.jetbrains.intellij.deps.jna:jna"))
     testRuntimeOnly(intellijJDom())
-    testRuntimeOnly(commonDependency("org.jetbrains.intellij.deps:trove4j"))
     testRuntimeOnly(libs.intellij.fastutil)
 
     testRuntimeOnly(toolsJar())
     testRuntimeOnly(libs.junit.vintage.engine)
 }
 
-val generationRoot = projectDir.resolve("tests-gen")
-
 sourceSets {
-    "main" {
-        projectDefault()
-    }
-    "test" {
-        projectDefault()
-        this.java.srcDir(generationRoot.name)
-    }
-}
-
-if (kotlinBuildProperties.isInJpsBuildIdeaSync) {
-    apply(plugin = "idea")
-    idea {
-        this.module.generatedSourceDirs.add(generationRoot)
-    }
+    "main" { none() }
+    "test" { generatedTestDir() }
+    "testFixtures" { projectDefault() }
 }
 
 projectTest(parallel = true, jUnitMode = JUnitMode.JUnit4, maxHeapSizeMb = 3072) {
+    dependsOn(":dist")
     workingDir = rootDir
     useJUnitPlatform()
     dependsOn(":plugins:plugin-sandbox:jar")

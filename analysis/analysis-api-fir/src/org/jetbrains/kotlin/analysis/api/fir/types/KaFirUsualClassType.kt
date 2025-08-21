@@ -52,6 +52,11 @@ internal class KaFirUsualClassType(
             KaFirAnnotationListForType.create(coneType, builder)
         }
 
+    @Deprecated(
+        "Use `isMarkedNullable`, `isNullable` or `hasFlexibleNullability` instead. See KDocs for the migration guide",
+        replaceWith = ReplaceWith("this.isMarkedNullable")
+    )
+    @Suppress("Deprecation")
     override val nullability: KaTypeNullability get() = withValidityAssertion { KaTypeNullability.create(coneType.isMarkedNullable) }
 
     override val abbreviation: KaUsualClassType?
@@ -80,7 +85,7 @@ private class KaFirUsualClassTypePointer(
         requireIsInstance<KaFirSession>(session)
 
         val coneType = coneTypePointer.restore(session) ?: return null
-        if (coneType.isSomeFunctionType(session.firResolveSession.useSiteFirSession)) {
+        if (coneType.isSomeFunctionType(session.resolutionFacade.useSiteFirSession)) {
             return null
         }
 

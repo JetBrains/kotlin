@@ -34,3 +34,6 @@ actual fun linkToExpectClassWhichWillBeTypealiased() {}
 
 @Ann(Any::class)
 actual fun linkToExpectClassWhichWillBeTypealiased2() {}
+
+/* GENERATED_FIR_TAGS: actual, annotationDeclaration, classDeclaration, classReference, expect, functionDeclaration,
+nestedClass, objectDeclaration, primaryConstructor, propertyDeclaration, starProjection, typeAliasDeclaration */

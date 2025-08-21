@@ -30,3 +30,6 @@ fun test(f1: (Int) -> Unit, f2: kotlin.Function1<Int, Unit>) {
     dependantSelect3(null, f1, ::foo)
     dependantSelect3(null, ::foo, f1)
 }
+
+/* GENERATED_FIR_TAGS: callableReference, functionDeclaration, functionalType, nullableType, typeConstraint,
+typeParameter */

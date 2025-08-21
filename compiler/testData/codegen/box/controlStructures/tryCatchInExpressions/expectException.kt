@@ -1,4 +1,4 @@
-
+// FILE: lib.kt
 public inline fun fails(block: () -> Unit): Throwable? {
     var thrown: Throwable? = null
     try {
@@ -15,6 +15,7 @@ public inline fun throwIt(msg: String) {
     throw Exception(msg)
 }
 
+// FILE: main.kt
 fun box(): String {
     fails {
         throwIt("oops!")

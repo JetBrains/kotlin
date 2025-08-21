@@ -18,3 +18,6 @@ fun foo(s: String?): String {
     val t = if (s == "abc") <!DEBUG_INFO_SMARTCAST!>s<!> else "xyz"
     return t
 }
+
+/* GENERATED_FIR_TAGS: equalityExpression, functionDeclaration, ifExpression, localProperty, nullableType,
+propertyDeclaration, smartcast, stringLiteral */

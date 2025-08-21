@@ -6,6 +6,9 @@
 package kotlin.concurrent.atomics
 
 import kotlin.concurrent.*
+import kotlin.contracts.InvocationKind
+import kotlin.contracts.contract
+import kotlin.internal.InlineOnly
 
 /**
  * An array of ints in which elements may be updated atomically.
@@ -26,6 +29,8 @@ public actual class AtomicIntArray {
      * Creates a new [AtomicIntArray] of the given [size], with all elements initialized to zero.
      *
      * @throws RuntimeException if the specified [size] is negative.
+     *
+     * @sample samples.concurrent.atomics.AtomicIntArray.sizeCons
      */
     public actual constructor(size: Int) {
         array = IntArray(size)
@@ -33,6 +38,8 @@ public actual class AtomicIntArray {
 
     /**
      * Creates a new [AtomicIntArray] filled with elements of the given [array].
+     *
+     * @sample samples.concurrent.atomics.AtomicIntArray.intArrCons
      */
     public actual constructor(array: IntArray) {
         this.array = array.copyOf()
@@ -40,6 +47,8 @@ public actual class AtomicIntArray {
 
     /**
      * Returns the number of elements in the array.
+     *
+     * @sample samples.concurrent.atomics.AtomicIntArray.size
      */
     public actual val size: Int get() = array.size
 
@@ -47,6 +56,8 @@ public actual class AtomicIntArray {
      * Atomically loads the value from the element of this [AtomicIntArray] at the given [index].
      *
      * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
+     *
+     * @sample samples.concurrent.atomics.AtomicIntArray.loadAt
      */
     public actual fun loadAt(index: Int): Int {
         checkBounds(index)
@@ -57,6 +68,8 @@ public actual class AtomicIntArray {
      * Atomically stores the [new value][newValue] into the element of this [AtomicIntArray] at the given [index].
      *
      * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
+     *
+     * @sample samples.concurrent.atomics.AtomicIntArray.storeAt
      */
     public actual fun storeAt(index: Int, newValue: Int): Unit {
         checkBounds(index)
@@ -68,6 +81,8 @@ public actual class AtomicIntArray {
      * and returns the old value of the element.
      *
      * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
+     *
+     * @sample samples.concurrent.atomics.AtomicIntArray.exchangeAt
      */
     public actual fun exchangeAt(index: Int, newValue: Int): Int {
         checkBounds(index)
@@ -85,6 +100,8 @@ public actual class AtomicIntArray {
      * Comparison of values is done by value.
      *
      * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
+     *
+     * @sample samples.concurrent.atomics.AtomicIntArray.compareAndSetAt
      */
     public actual fun compareAndSetAt(index: Int, expectedValue: Int, newValue: Int): Boolean {
         checkBounds(index)
@@ -98,6 +115,8 @@ public actual class AtomicIntArray {
      * Comparison of values is done by value.
      *
      * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
+     *
+     * @sample samples.concurrent.atomics.AtomicIntArray.compareAndExchangeAt
      */
     public actual fun compareAndExchangeAt(index: Int, expectedValue: Int, newValue: Int): Int {
         checkBounds(index)
@@ -108,6 +127,8 @@ public actual class AtomicIntArray {
      * Atomically adds the given [delta] to the element of this [AtomicIntArray] at the given [index] and returns the old value of the element.
      *
      * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
+     *
+     *  @sample samples.concurrent.atomics.AtomicIntArray.fetchAndAddAt
      */
     public actual fun fetchAndAddAt(index: Int, delta: Int): Int {
         checkBounds(index)
@@ -118,6 +139,8 @@ public actual class AtomicIntArray {
      * Atomically adds the given [delta] to the element of this [AtomicIntArray] at the given [index] and returns the new value of the element.
      *
      * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
+     *
+     * @sample samples.concurrent.atomics.AtomicIntArray.addAndFetchAt
      */
     public actual fun addAndFetchAt(index: Int, delta: Int): Int {
         checkBounds(index)
@@ -290,7 +313,15 @@ public actual class AtomicIntArray {
      *
      * This operation does not provide any atomicity guarantees.
      */
-    public actual override fun toString(): String = array.toString()
+    public actual override fun toString(): String = buildString {
+        append('[')
+        for (i in array.indices) {
+            val value = array.atomicGet(i)
+            if (i > 0) append(", ")
+            append(value)
+        }
+        append(']')
+    }
 
     // See KT-71459
     @Suppress("NOTHING_TO_INLINE")
@@ -300,6 +331,91 @@ public actual class AtomicIntArray {
 
     private fun checkBoundsSlowPath(index: Int) {
         throw IndexOutOfBoundsException("The index $index is out of the bounds of the AtomicIntArray with size ${array.size}.")
+    }
+}
+
+/**
+ * Atomically updates the element of this [AtomicIntArray] at the given index using the [transform] function.
+ *
+ * [transform] may be invoked more than once to recompute a result.
+ * That may happen, for example,
+ * when an integer value at the specified index was concurrently updated while [transform] was applied,
+ * or due to a spurious compare-and-set failure.
+ * The latter is implementation-specific, and it should not be relied upon.
+ *
+ * It's recommended to keep [transform] fast and free of side effects.
+ *
+ * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
+ *
+ * @sample samples.concurrent.atomics.AtomicIntArray.updateAt
+ */
+@SinceKotlin("2.2")
+@ExperimentalAtomicApi
+@InlineOnly
+public actual inline fun AtomicIntArray.updateAt(index: Int, transform: (Int) -> Int): Unit {
+    contract {
+        callsInPlace(transform, InvocationKind.AT_LEAST_ONCE)
+    }
+    updateAndFetchAt(index, transform)
+}
+
+/**
+ * Atomically updates the element of this [AtomicIntArray] at the given index using the [transform] function and returns
+ * the updated value of the element.
+ *
+ * [transform] may be invoked more than once to recompute a result.
+ * That may happen, for example,
+ * when an integer value at the specified index was concurrently updated while [transform] was applied,
+ * or due to a spurious compare-and-set failure.
+ * The latter is implementation-specific, and it should not be relied upon.
+ *
+ * It's recommended to keep [transform] fast and free of side effects.
+ *
+ * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
+ *
+ * @sample samples.concurrent.atomics.AtomicIntArray.updateAndFetchAt
+ */
+@SinceKotlin("2.2")
+@ExperimentalAtomicApi
+@InlineOnly
+public actual inline fun AtomicIntArray.updateAndFetchAt(index: Int, transform: (Int) -> Int): Int {
+    contract {
+        callsInPlace(transform, InvocationKind.AT_LEAST_ONCE)
+    }
+    while (true) {
+        val old = loadAt(index)
+        val new = transform(old)
+        if (compareAndSetAt(index, old, new)) return new
+    }
+}
+
+/**
+ * Atomically updates the element of this [AtomicIntArray] at the given index using the [transform] function and returns
+ * the old value of the element.
+ *
+ * [transform] may be invoked more than once to recompute a result.
+ * That may happen, for example,
+ * when an integer value at the specified index was concurrently updated while [transform] was applied,
+ * or due to a spurious compare-and-set failure.
+ * The latter is implementation-specific, and it should not be relied upon.
+ *
+ * It's recommended to keep [transform] fast and free of side effects.
+ *
+ * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
+ *
+ * @sample samples.concurrent.atomics.AtomicIntArray.fetchAndUpdateAt
+ */
+@SinceKotlin("2.2")
+@ExperimentalAtomicApi
+@InlineOnly
+public actual inline fun AtomicIntArray.fetchAndUpdateAt(index: Int, transform: (Int) -> Int): Int {
+    contract {
+        callsInPlace(transform, InvocationKind.AT_LEAST_ONCE)
+    }
+    while (true) {
+        val old = loadAt(index)
+        val new = transform(old)
+        if (compareAndSetAt(index, old, new)) return old
     }
 }
 
@@ -322,6 +438,8 @@ public actual class AtomicLongArray {
      * Creates a new [AtomicLongArray] of the specified [size], with all elements initialized to zero.
      *
      * @throws RuntimeException if the specified [size] is negative.
+     *
+     * @sample samples.concurrent.atomics.AtomicLongArray.sizeCons
      */
     public actual constructor(size: Int) {
         array = LongArray(size)
@@ -329,6 +447,8 @@ public actual class AtomicLongArray {
 
     /**
      * Creates a new [AtomicLongArray] filled with elements of the given [array].
+     *
+     * @sample samples.concurrent.atomics.AtomicLongArray.longArrCons
      */
     public actual constructor(array: LongArray) {
         this.array = array.copyOf()
@@ -336,6 +456,8 @@ public actual class AtomicLongArray {
 
     /**
      * Returns the number of elements in the array.
+     *
+     * @sample samples.concurrent.atomics.AtomicLongArray.size
      */
     public actual val size: Int get() = array.size
 
@@ -343,6 +465,8 @@ public actual class AtomicLongArray {
      * Atomically loads the value from the element of this [AtomicLongArray] at the given [index].
      *
      * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
+     *
+     * @sample samples.concurrent.atomics.AtomicLongArray.loadAt
      */
     public actual fun loadAt(index: Int): Long {
         checkBounds(index)
@@ -353,6 +477,8 @@ public actual class AtomicLongArray {
      * Atomically stores the [new value][newValue] into the element of this [AtomicLongArray] at the given [index].
      *
      * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
+     *
+     * @sample samples.concurrent.atomics.AtomicLongArray.storeAt
      */
     public actual fun storeAt(index: Int, newValue: Long): Unit {
         checkBounds(index)
@@ -364,6 +490,8 @@ public actual class AtomicLongArray {
      * and returns the old value of the element.
      *
      * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
+     *
+     * @sample samples.concurrent.atomics.AtomicLongArray.exchangeAt
      */
     public actual fun exchangeAt(index: Int, newValue: Long): Long {
         checkBounds(index)
@@ -381,6 +509,8 @@ public actual class AtomicLongArray {
      * Comparison of values is done by value.
      *
      * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
+     *
+     * @sample samples.concurrent.atomics.AtomicLongArray.compareAndSetAt
      */
     public actual fun compareAndSetAt(index: Int, expectedValue: Long, newValue: Long): Boolean {
         checkBounds(index)
@@ -394,6 +524,8 @@ public actual class AtomicLongArray {
      * Comparison of values is done by value.
      *
      * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
+     *
+     * @sample samples.concurrent.atomics.AtomicLongArray.compareAndExchangeAt
      */
     public actual fun compareAndExchangeAt(index: Int, expectedValue: Long, newValue: Long): Long {
         checkBounds(index)
@@ -404,6 +536,8 @@ public actual class AtomicLongArray {
      * Atomically adds the given [delta] to the element of this [AtomicLongArray] at the given [index] and returns the old value of the element.
      *
      * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
+     *
+     * @sample samples.concurrent.atomics.AtomicLongArray.fetchAndAddAt
      */
     public actual fun fetchAndAddAt(index: Int, delta: Long): Long {
         checkBounds(index)
@@ -414,6 +548,8 @@ public actual class AtomicLongArray {
      * Atomically adds the given [delta] to the element of this [AtomicLongArray] at the given [index] and returns the new value of the element.
      *
      * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
+     *
+     * @sample samples.concurrent.atomics.AtomicLongArray.addAndFetchAt
      */
     public actual fun addAndFetchAt(index: Int, delta: Long): Long {
         checkBounds(index)
@@ -586,7 +722,15 @@ public actual class AtomicLongArray {
      *
      * This operation does not provide any atomicity guarantees.
      */
-    public actual override fun toString(): String = array.toString()
+    public actual override fun toString(): String = buildString {
+        append('[')
+        for (i in array.indices) {
+            val value = array.atomicGet(i)
+            if (i > 0) append(", ")
+            append(value)
+        }
+        append(']')
+    }
 
     // See KT-71459
     @Suppress("NOTHING_TO_INLINE")
@@ -596,6 +740,91 @@ public actual class AtomicLongArray {
 
     private fun checkBoundsSlowPath(index: Int) {
         throw IndexOutOfBoundsException("The index $index is out of the bounds of the AtomicIntArray with size ${array.size}.")
+    }
+}
+
+/**
+ * Atomically updates the element of this [AtomicLongArray] at the given index using the [transform] function.
+ *
+ * [transform] may be invoked more than once to recompute a result.
+ * That may happen, for example,
+ * when a long value at the specified index was concurrently updated while [transform] was applied,
+ * or due to a spurious compare-and-set failure.
+ * The latter is implementation-specific, and it should not be relied upon.
+ *
+ * It's recommended to keep [transform] fast and free of side effects.
+ *
+ * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
+ *
+ * @sample samples.concurrent.atomics.AtomicLongArray.updateAt
+ */
+@SinceKotlin("2.2")
+@ExperimentalAtomicApi
+@InlineOnly
+public actual inline fun AtomicLongArray.updateAt(index: Int, transform: (Long) -> Long): Unit {
+    contract {
+        callsInPlace(transform, InvocationKind.AT_LEAST_ONCE)
+    }
+    updateAndFetchAt(index, transform)
+}
+
+/**
+ * Atomically updates the element of this [AtomicLongArray] at the given index using the [transform] function and returns
+ * the updated value of the element.
+ *
+ * [transform] may be invoked more than once to recompute a result.
+ * That may happen, for example,
+ * when a long value at the specified index was concurrently updated while [transform] was applied,
+ * or due to a spurious compare-and-set failure.
+ * The latter is implementation-specific, and it should not be relied upon.
+ *
+ * It's recommended to keep [transform] fast and free of side effects.
+ *
+ * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
+ *
+ * @sample samples.concurrent.atomics.AtomicLongArray.updateAndFetchAt
+ */
+@SinceKotlin("2.2")
+@ExperimentalAtomicApi
+@InlineOnly
+public actual inline fun AtomicLongArray.updateAndFetchAt(index: Int, transform: (Long) -> Long): Long {
+    contract {
+        callsInPlace(transform, InvocationKind.AT_LEAST_ONCE)
+    }
+    while (true) {
+        val old = loadAt(index)
+        val new = transform(old)
+        if (compareAndSetAt(index, old, new)) return new
+    }
+}
+
+/**
+ * Atomically updates the element of this [AtomicLongArray] at the given index using the [transform] function and returns
+ * the old value of the element.
+ *
+ * [transform] may be invoked more than once to recompute a result.
+ * That may happen, for example,
+ * when a long value at the specified index was concurrently updated while [transform] was applied,
+ * or due to a spurious compare-and-set failure.
+ * The latter is implementation-specific, and it should not be relied upon.
+ *
+ * It's recommended to keep [transform] fast and free of side effects.
+ *
+ * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
+ *
+ * @sample samples.concurrent.atomics.AtomicLongArray.fetchAndUpdateAt
+ */
+@SinceKotlin("2.2")
+@ExperimentalAtomicApi
+@InlineOnly
+public actual inline fun AtomicLongArray.fetchAndUpdateAt(index: Int, transform: (Long) -> Long): Long {
+    contract {
+        callsInPlace(transform, InvocationKind.AT_LEAST_ONCE)
+    }
+    while (true) {
+        val old = loadAt(index)
+        val new = transform(old)
+        if (compareAndSetAt(index, old, new)) return old
     }
 }
 
@@ -615,7 +844,9 @@ public actual class AtomicArray<T> {
     private val array: Array<T>
 
     /**
-     * Creates a new [AtomicArray]<T> filled with elements of the given [array].
+     * Creates a new [AtomicArray] filled with elements of the given [array].
+     *
+     * @sample samples.concurrent.atomics.AtomicArray.arrCons
      */
     public actual constructor(array: Array<T>) {
         this.array = array.copyOf()
@@ -623,6 +854,8 @@ public actual class AtomicArray<T> {
 
     /**
      * Returns the number of elements in the array.
+     *
+     * @sample samples.concurrent.atomics.AtomicArray.size
      */
     public actual val size: Int get() = array.size
 
@@ -630,6 +863,8 @@ public actual class AtomicArray<T> {
      * Atomically loads the value from the element of this [AtomicArray] at the given [index].
      *
      * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
+     *
+     * @sample samples.concurrent.atomics.AtomicArray.loadAt
      */
     public actual fun loadAt(index: Int): T {
         checkBounds(index)
@@ -640,6 +875,8 @@ public actual class AtomicArray<T> {
      * Atomically stores the [new value][newValue] into the element of this [AtomicArray] at the given [index].
      *
      * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
+     *
+     * @sample samples.concurrent.atomics.AtomicArray.storeAt
      */
     public actual fun storeAt(index: Int, newValue: T): Unit {
         checkBounds(index)
@@ -651,6 +888,8 @@ public actual class AtomicArray<T> {
      * and returns the old value of the element.
      *
      * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
+     *
+     * @sample samples.concurrent.atomics.AtomicArray.exchangeAt
      */
     public actual fun exchangeAt(index: Int, newValue: T): T {
         checkBounds(index)
@@ -668,6 +907,8 @@ public actual class AtomicArray<T> {
      * Comparison of values is done by reference.
      *
      * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
+     *
+     * @sample samples.concurrent.atomics.AtomicArray.compareAndSetAt
      */
     public actual fun compareAndSetAt(index: Int, expectedValue: T, newValue: T): Boolean {
         checkBounds(index)
@@ -681,6 +922,8 @@ public actual class AtomicArray<T> {
      * Comparison of values is done by reference.
      *
      * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
+     *
+     * @sample samples.concurrent.atomics.AtomicArray.compareAndExchangeAt
      */
     public actual fun compareAndExchangeAt(index: Int, expectedValue: T, newValue: T): T {
         checkBounds(index)
@@ -775,7 +1018,15 @@ public actual class AtomicArray<T> {
      *
      * This operation does not provide any atomicity guarantees.
      */
-    public actual override fun toString(): String = array.toString()
+    public actual override fun toString(): String = buildString {
+        append('[')
+        for (i in array.indices) {
+            val value = array.atomicGet(i)
+            if (i > 0) append(", ")
+            append(value)
+        }
+        append(']')
+    }
 
     // See KT-71459
     @Suppress("NOTHING_TO_INLINE")
@@ -785,5 +1036,90 @@ public actual class AtomicArray<T> {
 
     private fun checkBoundsSlowPath(index: Int) {
         throw IndexOutOfBoundsException("The index $index is out of the bounds of the AtomicIntArray with size ${array.size}.")
+    }
+}
+
+/**
+ * Atomically updates the element of this [AtomicArray] at the given index using the [transform] function.
+ *
+ * [transform] may be invoked more than once to recompute a result.
+ * That may happen, for example,
+ * when a reference at the specified index was concurrently updated while [transform] was applied,
+ * or due to a spurious compare-and-set failure.
+ * The latter is implementation-specific, and it should not be relied upon.
+ *
+ * It's recommended to keep [transform] fast and free of side effects.
+ *
+ * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
+ *
+ * @sample samples.concurrent.atomics.AtomicArray.updateAt
+ */
+@SinceKotlin("2.2")
+@ExperimentalAtomicApi
+@InlineOnly
+public actual inline fun <T> AtomicArray<T>.updateAt(index: Int, transform: (T) -> T): Unit {
+    contract {
+        callsInPlace(transform, InvocationKind.AT_LEAST_ONCE)
+    }
+    updateAndFetchAt(index, transform)
+}
+
+/**
+ * Atomically updates the element of this [AtomicArray] at the given index using the [transform] function and returns
+ * the updated value of the element.
+ *
+ * [transform] may be invoked more than once to recompute a result.
+ * That may happen, for example,
+ * when a reference at the specified index was concurrently updated while [transform] was applied,
+ * or due to a spurious compare-and-set failure.
+ * The latter is implementation-specific, and it should not be relied upon.
+ *
+ * It's recommended to keep [transform] fast and free of side effects.
+ *
+ * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
+ *
+ * @sample samples.concurrent.atomics.AtomicArray.updateAndFetchAt
+ */
+@SinceKotlin("2.2")
+@ExperimentalAtomicApi
+@InlineOnly
+public actual inline fun <T> AtomicArray<T>.updateAndFetchAt(index: Int, transform: (T) -> T): T {
+    contract {
+        callsInPlace(transform, InvocationKind.AT_LEAST_ONCE)
+    }
+    while (true) {
+        val old = loadAt(index)
+        val new = transform(old)
+        if (compareAndSetAt(index, old, new)) return new
+    }
+}
+
+/**
+ * Atomically updates the element of this [AtomicLongArray] at the given index using the [transform] function and returns
+ * the old value of the element.
+ *
+ * [transform] may be invoked more than once to recompute a result.
+ * That may happen, for example,
+ * when a reference at the specified index was concurrently updated while [transform] was applied,
+ * or due to a spurious compare-and-set failure.
+ * The latter is implementation-specific, and it should not be relied upon.
+ *
+ * It's recommended to keep [transform] fast and free of side effects.
+ *
+ * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
+ *
+ * @sample samples.concurrent.atomics.AtomicArray.fetchAndUpdateAt
+ */
+@SinceKotlin("2.2")
+@ExperimentalAtomicApi
+@InlineOnly
+public actual inline fun <T> AtomicArray<T>.fetchAndUpdateAt(index: Int, transform: (T) -> T): T {
+    contract {
+        callsInPlace(transform, InvocationKind.AT_LEAST_ONCE)
+    }
+    while (true) {
+        val old = loadAt(index)
+        val new = transform(old)
+        if (compareAndSetAt(index, old, new)) return old
     }
 }

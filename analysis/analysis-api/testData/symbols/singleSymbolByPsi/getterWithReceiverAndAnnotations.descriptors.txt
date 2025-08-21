@@ -8,13 +8,12 @@ KaPropertyGetterSymbol:
   callableId: null
   compilerVisibility: Public
   contextReceivers: []
-  hasBody: true
   hasStableParameterNames: true
   isActual: false
-  isDefault: false
   isExpect: false
   isExtension: false
   isInline: false
+  isNotDefault: true
   isOverride: false
   location: PROPERTY
   modality: FINAL
@@ -46,7 +45,7 @@ KaPropertyGetterSymbol:
       type: @R|ReceiverTypeAnnotation|()  kotlin/Long
     visibility: LOCAL
     getContainingFileSymbol: KaFileSymbol(getterWithReceiverAndAnnotations.kt)
-    getContainingJvmClassName: null
+    getContainingJvmClassName: GetterWithReceiverAndAnnotationsKt
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
   returnType: KaUsualClassType:

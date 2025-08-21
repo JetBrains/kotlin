@@ -62,7 +62,7 @@ fun testWithString(box: Inv<String>) {
     topLevelOverload({ "hello" }, (box))
     topLevelOverload1(box) { "hello" }
     topLevelOverload2(box) { "hello" }
-    topLevelOverload2(box) { <!ARGUMENT_TYPE_MISMATCH!>1<!> }
+    topLevelOverload2(box) { <!RETURN_TYPE_MISMATCH!>1<!> }
     topLevelOverload3(box) { param: String -> }
 
     FunHolder().classMemberOverload({ "hello" }, (box))
@@ -166,3 +166,7 @@ fun <T> twoBoxes(box: Inv<T>, box2: Inv<T>, value: T) {}
 fun testContradiction(box1: Inv<Any>, box2: Inv<String>) {
     twoBoxes(box1, <!ARGUMENT_TYPE_MISMATCH!>box2<!>) { "" }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funInterface, funWithExtensionReceiver, functionDeclaration, functionalType,
+integerLiteral, interfaceDeclaration, lambdaLiteral, localProperty, nullableType, propertyDeclaration, stringLiteral,
+typeConstraint, typeParameter */

@@ -21,3 +21,6 @@ public class JavaClass1 {
 public class JavaClass2 extends JavaClass1 {
     public String getSomething() { return ""; }
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, assignment, flexibleType, functionDeclaration, integerLiteral, javaFunction,
+javaProperty, javaType, localProperty, propertyDeclaration, stringLiteral */

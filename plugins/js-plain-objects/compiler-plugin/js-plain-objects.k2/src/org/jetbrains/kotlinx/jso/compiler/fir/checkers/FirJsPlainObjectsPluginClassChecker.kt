@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirClassChecker
+import org.jetbrains.kotlin.fir.declarations.DirectDeclarationsAccess
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.hasAnnotation
 import org.jetbrains.kotlin.fir.declarations.utils.isEffectivelyExternal
@@ -31,7 +32,8 @@ import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlinx.jspo.compiler.resolve.JsPlainObjectsAnnotations
 
 object FirJsPlainObjectsPluginClassChecker : FirClassChecker(MppCheckerKind.Platform) {
-    override fun check(declaration: FirClass, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirClass) {
         with(context) {
             val classSymbol = declaration.symbol as? FirRegularClassSymbol ?: return
 
@@ -101,7 +103,7 @@ object FirJsPlainObjectsPluginClassChecker : FirClassChecker(MppCheckerKind.Plat
         }
     }
 
-    @OptIn(SymbolInternals::class, UnexpandedTypeCheck::class)
+    @OptIn(SymbolInternals::class, UnexpandedTypeCheck::class, DirectDeclarationsAccess::class)
     private fun FirClassSymbol<FirClass>.isAllowedToUseAsSuperType(session: FirSession): Boolean =
         hasAnnotation(JsPlainObjectsAnnotations.jsPlainObjectAnnotationClassId, session) ||
                 resolvedSuperTypeRefs.singleOrNull()?.isAny == true && fir.declarations.isEmpty()

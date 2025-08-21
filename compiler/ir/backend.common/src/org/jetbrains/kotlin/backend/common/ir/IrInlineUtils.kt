@@ -45,11 +45,8 @@ fun IrExpression.asInlinableFunctionReference(): IrFunctionReference? {
 
 private fun IrExpression.asInlinableLambda(builder: IrStatementsBuilder<*>): IrInlinableLambda? {
     when (this) {
-        is IrRichFunctionReference -> {
+        is IrRichCallableReference<*> -> {
             return IrInlinableLambda(invokeFunction, boundValues.map { builder.irTemporary(it) })
-        }
-        is IrRichPropertyReference -> {
-            return IrInlinableLambda(getterFunction, boundValues.map { builder.irTemporary(it) })
         }
         is IrFunctionExpression -> {
             if (function.parameters.any { it.isVararg || it.defaultValue != null })
@@ -59,7 +56,7 @@ private fun IrExpression.asInlinableLambda(builder: IrStatementsBuilder<*>): IrI
         else -> return asInlinableFunctionReference()?.let { reference ->
             IrInlinableLambda(
                 reference.symbol.owner as IrSimpleFunction,
-                listOfNotNull(reference.extensionReceiver?.let { builder.irTemporary(it) })
+                reference.arguments.filterNotNull().map { builder.irTemporary(it) }
             )
         }
     }

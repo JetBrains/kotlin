@@ -6,3 +6,5 @@ fun main() {
 
     Some[<!SYNTAX!><!>] names <!SYNTAX!>=<!> <!NO_GET_METHOD!>["ads"]<!>
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, localClass, stringLiteral */

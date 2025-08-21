@@ -22,3 +22,6 @@ annotation class Ann2(
     val p5: <!NULLABLE_TYPE_OF_ANNOTATION_MEMBER!>Ann1?<!>,
     val p6: <!NULLABLE_TYPE_OF_ANNOTATION_MEMBER!>Enum?<!>
 )
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, enumDeclaration, enumEntry, nullableType, outProjection,
+primaryConstructor, propertyDeclaration, starProjection, vararg */

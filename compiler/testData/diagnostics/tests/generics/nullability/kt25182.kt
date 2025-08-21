@@ -13,3 +13,6 @@ private fun <S> foo(e: Expr<S>) {}
 fun test(intExpression: Expr<Int>) {
     foo(Sum(times(intExpression, 42)))
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, nullableType, primaryConstructor,
+propertyDeclaration, typeParameter */

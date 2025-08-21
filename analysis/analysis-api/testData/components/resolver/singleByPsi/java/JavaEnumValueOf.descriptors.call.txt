@@ -7,10 +7,12 @@ KtNameReferenceExpression(74,81): 'valueOf'
           receiverType = null
           returnType = kotlin.String
           symbol = value: kotlin.String
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -23,7 +25,9 @@ KtNameReferenceExpression(74,81): 'valueOf'
               receiverType = null
               returnType = kotlin.String
               symbol = value: kotlin.String
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = java/lang/annotation/RetentionPolicy.valueOf
       typeArgumentsMapping = {}

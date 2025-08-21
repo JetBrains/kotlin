@@ -7,4 +7,5 @@ package org.jetbrains.kotlin.plugin.sandbox.fir
 
 import org.jetbrains.kotlin.name.FqName
 
-fun String.fqn(): FqName = FqName("org.jetbrains.kotlin.plugin.sandbox.$this")
+val SANDBOX_ANNOTATIONS_PACKAGE = FqName("org.jetbrains.kotlin.plugin.sandbox")
+fun String.fqn(): FqName = FqName("${SANDBOX_ANNOTATIONS_PACKAGE.asString()}.$this")

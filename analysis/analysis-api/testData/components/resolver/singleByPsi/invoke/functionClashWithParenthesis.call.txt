@@ -4,6 +4,7 @@ KtCallExpression(202,209): '(foo)()'
       argumentMapping = {}
       isImplicitInvoke = true
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = (foo)
           isSafeNavigation = false
@@ -14,5 +15,6 @@ KtCallExpression(202,209): '(foo)()'
           returnType = r.MyClass
           symbol = r/MyClass.invoke(<dispatch receiver>: r.MyClass): r.MyClass
           valueParameters = []
+          contextParameters = []
           callableId = r/MyClass.invoke
       typeArgumentsMapping = {}

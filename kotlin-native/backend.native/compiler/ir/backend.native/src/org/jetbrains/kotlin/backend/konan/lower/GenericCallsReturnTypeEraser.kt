@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
  * a pure and simple function call with no conversions/coercions of the return type and the parameter types.
  */
 internal class GenericCallsReturnTypeEraser(val context: Context) : BodyLoweringPass {
-    private val reinterpret = context.ir.symbols.reinterpret.owner
+    private val reinterpret = context.symbols.reinterpret.owner
 
     override fun lower(irBody: IrBody, container: IrDeclaration) {
         val irBuilder = context.createIrBuilder(container.symbol)
@@ -40,16 +40,19 @@ internal class GenericCallsReturnTypeEraser(val context: Context) : BodyLowering
                 expression.transformChildrenVoid(this)
 
                 val callee = expression.target
-                if (callee != reinterpret && callee.returnType.classifierOrNull is IrTypeParameterSymbol) {
-                    val actualType = callee.returnType.eraseTypeParameters()
-                    val expectedType = expression.type
-                    if (actualType != expectedType) {
-                        expression.type = actualType
-                        return when {
-                            expectedType.isUnit() -> irBuilder.at(expression).irImplicitCoercionToUnit(expression)
-                            expectedType.isNothing() -> expression
-                            else -> irBuilder.at(expression).irImplicitCast(expression, expectedType)
-                        }
+                if (callee == reinterpret) return expression // It's handled specially in codegen - no cast is needed.
+
+                val returnType = callee.returnType
+                val actualType = if (returnType.classifierOrNull is IrTypeParameterSymbol)
+                    returnType.eraseTypeParameters()
+                else returnType
+                val expectedType = expression.type
+                if (actualType != expectedType) {
+                    expression.type = actualType
+                    return when {
+                        expectedType.isUnit() -> irBuilder.at(expression).irImplicitCoercionToUnit(expression)
+                        expectedType.isNothing() -> expression
+                        else -> irBuilder.at(expression).irImplicitCast(expression, expectedType)
                     }
                 }
 

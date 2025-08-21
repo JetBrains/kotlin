@@ -69,13 +69,8 @@ abstract class AbstractConeSubstitutor(protected val typeContext: ConeTypeContex
         return when (this) {
             is ConeClassLikeType -> this.substituteArguments()
             is ConeLookupTagBasedType, is ConeTypeVariableType -> return null
-            is ConeFlexibleType -> this.substituteBounds()?.let {
-                // TODO: may be (?) it's worth adding regular type comparison via AbstractTypeChecker
-                // However, the simplified check here should be enough for typical flexible types
-                if (it.lowerBound == it.upperBound) it.lowerBound
-                else it
-            }
-            is ConeCapturedType -> return substitute(::substituteOrNull)
+            is ConeFlexibleType -> this.mapTypesOrNull(typeContext) { substituteOrNull(it) }
+            is ConeCapturedType -> return this.substitute(::substituteOrNull)
             is ConeDefinitelyNotNullType -> this.substituteOriginal()
             is ConeIntersectionType -> this.substituteIntersectedTypes()
             is ConeStubType -> return null
@@ -109,20 +104,8 @@ abstract class AbstractConeSubstitutor(protected val typeContext: ConeTypeContex
         ) ?: substituted
     }
 
-    private fun ConeFlexibleType.substituteBounds(): ConeFlexibleType? {
-        val newLowerBound = substituteOrNull(lowerBound)
-        val newUpperBound = substituteOrNull(upperBound)
-        if (newLowerBound != null || newUpperBound != null) {
-            return ConeFlexibleType(
-                newLowerBound?.lowerBoundIfFlexible() ?: lowerBound,
-                newUpperBound?.upperBoundIfFlexible() ?: upperBound
-            )
-        }
-        return null
-    }
-
     private fun ConeSimpleKotlinType.substituteArguments(): ConeKotlinType? {
-        val newArguments by lazy { arrayOfNulls<ConeTypeProjection>(typeArguments.size) }
+        val newArguments by lazy(LazyThreadSafetyMode.NONE) { arrayOfNulls<ConeTypeProjection>(typeArguments.size) }
         var initialized = false
 
         for ((index, typeArgument) in this.typeArguments.withIndex()) {

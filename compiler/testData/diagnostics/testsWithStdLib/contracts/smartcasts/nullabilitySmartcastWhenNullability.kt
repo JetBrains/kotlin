@@ -55,3 +55,6 @@ fun testNotNullWhenNotNull (x: Int?) {
 
     x<!UNSAFE_CALL!>.<!>dec()
 }
+
+/* GENERATED_FIR_TAGS: contractConditionalEffect, contracts, equalityExpression, functionDeclaration, ifExpression,
+lambdaLiteral, nullableType, safeCall, smartcast */

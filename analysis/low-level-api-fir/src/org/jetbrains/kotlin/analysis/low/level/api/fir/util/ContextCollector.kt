@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -8,9 +8,14 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.util
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDesignation
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLResolutionFacade
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLPartialBodyAnalysisState
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.partialBodyAnalysisState
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.withFirDesignationEntry
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.getNonLocalContainingOrThisDeclaration
-import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.isAutonomousDeclaration
+import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.LLPartialBodyElementMapper
+import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.llFirSession
+import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.isAutonomousElement
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.ContextCollector.Context
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.ContextCollector.ContextKind
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.ContextCollector.FilterResponse
@@ -20,15 +25,18 @@ import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.declarations.utils.memberDeclarationNameOrNull
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.psi
-import org.jetbrains.kotlin.fir.resolve.SessionHolder
+import org.jetbrains.kotlin.fir.realPsi
+import org.jetbrains.kotlin.fir.SessionAndScopeSessionHolder
+import org.jetbrains.kotlin.fir.declarations.utils.isScriptTopLevelDeclaration
+import org.jetbrains.kotlin.fir.extensions.scriptResolutionHacksComponent
 import org.jetbrains.kotlin.fir.resolve.SessionHolderImpl
 import org.jetbrains.kotlin.fir.resolve.calls.ImplicitValue
 import org.jetbrains.kotlin.fir.resolve.dfa.DataFlowAnalyzerContext
 import org.jetbrains.kotlin.fir.resolve.dfa.RealVariable
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.CFGNode
+import org.jetbrains.kotlin.fir.resolve.dfa.cfg.CfgInternals
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.ClassExitNode
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.ControlFlowGraph
-import org.jetbrains.kotlin.fir.resolve.dfa.cfg.MergePostponedLambdaExitsNode
 import org.jetbrains.kotlin.fir.resolve.dfa.controlFlowGraph
 import org.jetbrains.kotlin.fir.resolve.dfa.smartCastedType
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculatorForFullBodyResolve
@@ -41,12 +49,13 @@ import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitorVoid
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.psi.KtDeclaration
-import org.jetbrains.kotlin.psi.KtParameter
-import org.jetbrains.kotlin.psi.psiUtil.isPropertyParameter
+import org.jetbrains.kotlin.psi.KtElement
+import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import org.jetbrains.kotlin.types.SmartcastStability
 import org.jetbrains.kotlin.util.PrivateForInline
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
+import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
 
 object ContextCollector {
     enum class ContextKind {
@@ -86,19 +95,27 @@ object ContextCollector {
     /**
      * Get the most precise context available for the [targetElement] in the [file].
      *
+     * @param resolutionFacade A resolve session accessing the [file].
      * @param file The file to process.
-     * @param holder The [SessionHolder] for the session that owns a [file].
      * @param targetElement The most precise element for which the context is required.
-     * @param bodyElement An element for which the [ContextKind.BODY] context is preferred.
+     * @param preferBodyContext Whether a [ContextKind.BODY] context is preferred for the [targetElement].
+     * For parents of [targetElement], [ContextKind.BODY] is *never* returned.
      *
-     * Returns the context of the [targetElement] if available, or of one of its tree parents.
+     * @return The context of the [targetElement] if available, or of one of its tree parents.
      * Returns `null` if the context was not collected.
      */
-    fun process(file: FirFile, holder: SessionHolder, targetElement: PsiElement, bodyElement: PsiElement? = targetElement): Context? {
-        val isBodyContextCollected = bodyElement != null
+    fun process(
+        resolutionFacade: LLResolutionFacade,
+        file: FirFile,
+        targetElement: PsiElement,
+        preferBodyContext: Boolean = true,
+    ): Context? {
+        val designation = computeDesignation(file, targetElement)
+        val shouldTriggerBodyAnalysis = !partiallyResolveTargetElementIfPossible(resolutionFacade, designation, targetElement)
+
         val acceptedElements = targetElement.parentsWithSelf.toSet()
 
-        val contextProvider = process(file, holder, computeDesignation(file, targetElement), isBodyContextCollected) { candidate ->
+        val contextProvider = process(file, designation, preferBodyContext, shouldTriggerBodyAnalysis) { candidate ->
             when (candidate) {
                 targetElement -> FilterResponse.STOP
                 in acceptedElements -> FilterResponse.CONTINUE
@@ -107,7 +124,7 @@ object ContextCollector {
         }
 
         for (acceptedElement in acceptedElements) {
-            if (acceptedElement === bodyElement) {
+            if (preferBodyContext && acceptedElement === targetElement) {
                 val bodyContext = contextProvider[acceptedElement, ContextKind.BODY]
                 if (bodyContext != null) {
                     return bodyContext
@@ -123,6 +140,22 @@ object ContextCollector {
         return null
     }
 
+    private fun partiallyResolveTargetElementIfPossible(
+        resolutionFacade: LLResolutionFacade,
+        designation: FirDesignation?,
+        targetElement: PsiElement
+    ): Boolean {
+        val declaration = designation?.target?.realPsi as? KtDeclaration ?: return false
+
+        val resolvedElement = targetElement
+            .getParentOfType<KtElement>(strict = false) // In case we got some leaf element
+            ?.takeIf { LLPartialBodyElementMapper.isPartiallyAnalyzable(it, declaration) }
+            ?: return false
+
+        /** [LLFirResolveSession.getOrBuildFirFor] will run partial body analysis if applicable. */
+        return resolutionFacade.getOrBuildFirFor(resolvedElement) != null
+    }
+
     fun computeDesignation(file: FirFile, targetElement: PsiElement): FirDesignation? {
         val contextKtDeclaration = targetElement.getNonLocalContainingOrThisDeclaration(::isValidTarget)
         if (contextKtDeclaration != null) {
@@ -136,13 +169,7 @@ object ContextCollector {
     }
 
     private fun isValidTarget(declaration: KtDeclaration): Boolean {
-        if (declaration.isAutonomousDeclaration) {
-            return true
-        }
-
-        if (declaration is KtParameter && declaration.isPropertyParameter()) {
-            // Prefer context for primary constructor properties.
-            // Context of the constructor itself can be computed by passing the 'KtPrimaryConstructor' element.
+        if (declaration.isAutonomousElement) {
             return true
         }
 
@@ -153,20 +180,24 @@ object ContextCollector {
      * Processes the [FirFile], collecting contexts for elements matching the [filter].
      *
      * @param file The file to process.
-     * @param holder The [SessionHolder] for the session that owns a [file].
      * @param designation The declaration to process. If `null`, all declarations in the [file] are processed.
-     * @param shouldCollectBodyContext If `true`, [ContextKind.BODY] is collected where available.
-     * @param filter The filter predicate. Context is collected only for [PsiElement]s for which the [filter] returns `true`.
+     * @param preferBodyContext If `true`, [ContextKind.BODY] is collected where available.
+     * @param filter The filter predicate. Context is collected only for [PsiElement]s for which the [filter] returns
+     *     [FilterResponse.CONTINUE] or [FilterResponse.STOP].
      */
     fun process(
         file: FirFile,
-        holder: SessionHolder,
         designation: FirDesignation?,
-        shouldCollectBodyContext: Boolean,
+        preferBodyContext: Boolean,
+        shouldTriggerBodyAnalysis: Boolean,
         filter: (PsiElement) -> FilterResponse,
     ): ContextProvider {
+        val fileSession = file.llFirSession
+        val holder = SessionHolderImpl(fileSession, fileSession.getScopeSession())
+
         val interceptor = designation?.let(::DesignationInterceptor)
-        val visitor = ContextCollectorVisitor(holder, shouldCollectBodyContext, filter, interceptor)
+
+        val visitor = ContextCollectorVisitor(holder, preferBodyContext, shouldTriggerBodyAnalysis, filter, interceptor)
         visitor.collect(file)
 
         return ContextProvider { element, kind -> visitor[element, kind] }
@@ -186,9 +217,21 @@ private class DesignationInterceptor(val designation: FirDesignation) : () -> Fi
     override fun invoke(): FirElement? = if (targetIterator.hasNext()) targetIterator.next() else null
 }
 
+/**
+ * A visitor collecting the [Context] for elements.
+ *
+ * @param shouldCollectBodyContext Whether the visitor needs to accumulate [ContextKind.BODY] contexts.
+ *     If `false`, might stop processing elements if a [FilterResponse.STOP] match is found.
+ * @param shouldTriggerBodyAnalysis Whether the visitor forces complete body resolution for traversed declarations.
+ *     Can be `false` if the caller guarantees to pass already (partially or fully) resolved body.
+ * @param filter The filter predicate. Context is collected only for [PsiElement]s for which the [filter] returns
+ *     [FilterResponse.CONTINUE] or [FilterResponse.STOP].
+ * @param designationPathInterceptor An interceptor helping to skip unrelated parts of a [FirFile] if a designation is known.
+ */
 private class ContextCollectorVisitor(
-    private val bodyHolder: SessionHolder,
+    private val bodyHolder: SessionAndScopeSessionHolder,
     private val shouldCollectBodyContext: Boolean,
+    private val shouldTriggerBodyAnalysis: Boolean,
     private val filter: (PsiElement) -> FilterResponse,
     private val designationPathInterceptor: DesignationInterceptor?,
 ) : FirDefaultVisitorVoid() {
@@ -224,7 +267,7 @@ private class ContextCollectorVisitor(
 
     private val result = HashMap<ContextKey, Context>()
 
-    private fun getSessionHolder(declaration: FirDeclaration): SessionHolder {
+    private fun getSessionHolder(declaration: FirDeclaration): SessionAndScopeSessionHolder {
         return when (val session = declaration.moduleData.session) {
             bodyHolder.session -> bodyHolder
             else -> SessionHolderImpl(session, bodyHolder.scopeSession)
@@ -237,13 +280,11 @@ private class ContextCollectorVisitor(
         withParent(element) {
             dumpContext(element, ContextKind.BODY)
 
-            onActive {
-                element.acceptChildren(this)
-            }
+            element.acceptChildren(this)
         }
     }
 
-    private fun dumpContext(fir: FirElement, kind: ContextKind) {
+    private fun dumpContext(fir: FirElement, kind: ContextKind, hasBodyContext: Boolean = true) {
         ProgressManager.checkCanceled()
 
         if (kind == ContextKind.BODY && !shouldCollectBodyContext) {
@@ -263,7 +304,10 @@ private class ContextCollectorVisitor(
         }
 
         if (response == FilterResponse.STOP) {
-            isActive = false
+            // Wait until the body context is also collected if necessary (and available)
+            if (kind == ContextKind.BODY || !(hasBodyContext && shouldCollectBodyContext)) {
+                isActive = false
+            }
         }
     }
 
@@ -278,7 +322,7 @@ private class ContextCollectorVisitor(
         if (cfgNode != null) {
             val flow = cfgNode.flow
 
-            val realVariables = flow.knownVariables
+            val realVariables = flow.knownVariables.filterIsInstance<RealVariable>()
                 .sortedBy { it.symbol.memberDeclarationNameOrNull?.asString() }
 
             for (realVariable in realVariables) {
@@ -288,7 +332,14 @@ private class ContextCollectorVisitor(
                     continue
                 }
 
-                smartCasts[typeStatement.variable] = typeStatement.exactType
+                val typeStatementVariable = typeStatement.variable
+                requireWithAttachment(
+                    typeStatementVariable is RealVariable,
+                    { "Expecting a ${RealVariable::class.simpleName}, got ${typeStatementVariable::class.simpleName}" },
+                ) {
+                    withEntry("variable", typeStatementVariable) { it.toString() }
+                }
+                smartCasts[typeStatementVariable] = typeStatement.upperTypes
 
                 // The compiler pushes smart-cast types for implicit receivers to ease later lookups.
                 // Here we emulate such behavior. Unlike the compiler, though, modified types are only reflected in the created snapshot.
@@ -331,15 +382,22 @@ private class ContextCollectorVisitor(
     private val nodesCache = HashMap<FirControlFlowGraphOwner, Map<FirElement, CFGNode<*>>>()
 
     /**
-     * Returns the first occurrence of an [element] inside the [flow]
+     * Returns the first occurrence of an [element] inside the [ControlFlowGraphData.graph].
      *
      * @param container a [FirControlFlowGraphOwner] where [element] should be searched
      * @param element an [FirElement] to search
-     * @param flow an [ControlFlowGraph] from [container]
+     * @param data a [ControlFlowGraphData] from [container], either complete or incomplete.
      */
-    private fun findNode(container: FirControlFlowGraphOwner, element: FirElement, flow: ControlFlowGraph): CFGNode<*>? {
-        val map = nodesCache.getOrPut(container) { buildDeclarationNodesMapping(flow) }
-        return map[element]
+    private fun findNode(container: FirControlFlowGraphOwner, element: FirElement, data: ControlFlowGraphData): CFGNode<*>? {
+        when (data) {
+            is ControlFlowGraphData.Complete -> {
+                val map = nodesCache.getOrPut(container) { buildDeclarationNodesMapping(data.graph) }
+                return map[element]
+            }
+            is ControlFlowGraphData.Incomplete -> {
+                return data.nodes.firstOrNull { isAcceptedControlFlowNode(it) && it.fir === element }
+            }
+        }
     }
 
     /**
@@ -359,43 +417,80 @@ private class ContextCollectorVisitor(
 
     private fun getControlFlowNode(fir: FirElement, kind: ContextKind): CFGNode<*>? {
         for (container in context.containers.asReversed()) {
-            val cfgOwner = container as? FirControlFlowGraphOwner ?: continue
-            val cfgReference = cfgOwner.controlFlowGraphReference ?: continue
-            val cfg = cfgReference.controlFlowGraph ?: continue
+            if (container !is FirControlFlowGraphOwner) {
+                continue
+            }
 
-            val node = findNode(container, fir, cfg)
+            val graphData = getControlFlowGraph(container) ?: continue
+
+            val node = findNode(container, fir, graphData)
             when {
                 node != null -> return when (kind) {
                     ContextKind.SELF -> {
                         // For the 'SELF' mode, we need to find the state *before* the 'FirElement'
-                        node.previousNodes.singleOrNull()?.takeIf { it in cfg.nodes } ?: node
+                        node.previousNodes.singleOrNull()?.takeIf { it in graphData.nodes } ?: node
                     }
                     ContextKind.BODY -> {
                         node
                     }
                 }
-                !cfg.isSubGraph -> return null
+                !graphData.graph.isSubGraph -> {
+                    return null
+                }
             }
         }
 
         return null
     }
 
-    private fun isAcceptedControlFlowNode(node: CFGNode<*>): Boolean = when {
-        node is ClassExitNode -> false
+    @OptIn(CfgInternals::class)
+    private fun getControlFlowGraph(container: FirControlFlowGraphOwner): ControlFlowGraphData? {
+        val graph = container.controlFlowGraphReference?.controlFlowGraph
+        if (graph != null) {
+            return ControlFlowGraphData.Complete(graph)
+        }
 
-        // TODO Remove as soon as KT-61728 is fixed
-        node is MergePostponedLambdaExitsNode && !node.flowInitialized -> false
+        if (container is FirDeclaration) {
+            /**
+             * If a declaration is only partially resolved, the graph is not yet available by using
+             * the [FirControlFlowGraphOwner.controlFlowGraphReference]. However, it's still possible to get the finalized part
+             * from the [FirDeclaration.partialBodyAnalysisState].
+             *
+             * A lock on the [container] isn't used here as the [LLPartialBodyAnalysisState], once added, can never disappear.
+             * The caller is responsible for resolving the required part of the [container]'s body, so the CFG for all relevant expressions
+             * should be there.
+             */
+            val snapshot = container.partialBodyAnalysisState?.analysisStateSnapshot
+            if (snapshot != null) {
+                val graph = snapshot.dataFlowAnalyzerContext.currentGraph
+                if (graph.declaration == container) {
+                    return ControlFlowGraphData.Incomplete(graph, snapshot.controlFlowGraphNodes)
+                }
+            }
+        }
 
-        else -> true
+        return null
     }
+
+    private sealed class ControlFlowGraphData(val graph: ControlFlowGraph) {
+        abstract val nodes: List<CFGNode<*>>
+
+        class Complete(graph: ControlFlowGraph) : ControlFlowGraphData(graph) {
+            override val nodes: List<CFGNode<*>>
+                get() = graph.nodes
+        }
+
+        class Incomplete(graph: ControlFlowGraph, override val nodes: List<CFGNode<*>>) : ControlFlowGraphData(graph)
+    }
+
+    private fun isAcceptedControlFlowNode(node: CFGNode<*>): Boolean = node !is ClassExitNode
 
     override fun visitScript(script: FirScript) = withProcessor(script) {
         dumpContext(script, ContextKind.SELF)
 
-        processSignatureAnnotations(script)
+        processAnnotations(script)
 
-        onActiveBody {
+        onActive {
             val holder = getSessionHolder(script)
 
             context.withScript(script, holder) {
@@ -414,7 +509,7 @@ private class ContextCollectorVisitor(
         val holder = getSessionHolder(file)
 
         context.withFile(file, holder) {
-            dumpContext(file, ContextKind.SELF)
+            dumpContext(file, ContextKind.SELF, hasBodyContext = false)
 
             processFileHeader(file)
 
@@ -439,14 +534,12 @@ private class ContextCollectorVisitor(
     override fun visitAnnotationCall(annotationCall: FirAnnotationCall) {
         dumpContext(annotationCall, ContextKind.SELF)
 
-        onActiveBody {
-            context.forAnnotation {
-                dumpContext(annotationCall, ContextKind.BODY)
+        onActive {
+            dumpContext(annotationCall, ContextKind.BODY)
 
-                // Technically, annotation arguments might contain arbitrary expressions.
-                // However, such cases are very rare, as it's currently forbidden in Kotlin.
-                // Here we ignore declarations that might be inside such expressions, avoiding unnecessary tree traversal.
-            }
+            // Technically, annotation arguments might contain arbitrary expressions.
+            // However, such cases are very rare, as it's currently forbidden in Kotlin.
+            // Here we ignore declarations that might be inside such expressions, avoiding unnecessary tree traversal.
         }
     }
 
@@ -468,7 +561,7 @@ private class ContextCollectorVisitor(
             }
         }
 
-        dumpContext(functionCall, ContextKind.SELF)
+        dumpContext(functionCall, ContextKind.SELF, hasBodyContext = false)
 
         context.addReceiversFromExtensions(functionCall, bodyHolder)
     }
@@ -494,20 +587,23 @@ private class ContextCollectorVisitor(
             withParent(propertyAccessExpression) {
                 val calleeReference = propertyAccessExpression.calleeReference
 
-                propertyAccessExpression.acceptChildren(FilteringVisitor(this, elementsToSkip = setOf(calleeReference)))
+                val visitor = FilteringVisitor(this, elementsToSkip = setOf(calleeReference), checkIsActive = true)
+                propertyAccessExpression.acceptChildren(visitor)
                 calleeReference.accept(this)
             }
         }
 
-        dumpContext(propertyAccessExpression, ContextKind.SELF)
+        dumpContext(propertyAccessExpression, ContextKind.SELF, hasBodyContext = false)
     }
 
     override fun visitRegularClass(regularClass: FirRegularClass) = withProcessor(regularClass) {
         dumpContext(regularClass, ContextKind.SELF)
 
-        processSignatureAnnotations(regularClass)
+        context.withClassHeader(regularClass) {
+            processRawAnnotations(regularClass)
+        }
 
-        onActiveBody {
+        onActive {
             regularClass.lazyResolveToPhase(FirResolvePhase.STATUS)
 
             context.withContainingClass(regularClass) {
@@ -515,7 +611,7 @@ private class ContextCollectorVisitor(
 
                 val holder = getSessionHolder(regularClass)
 
-                context.withRegularClass(regularClass, holder) {
+                context.forRegularClassBody(regularClass, holder) {
                     dumpContext(regularClass, ContextKind.BODY)
 
                     onActive {
@@ -528,7 +624,35 @@ private class ContextCollectorVisitor(
         }
 
         if (regularClass.isLocal) {
-            context.storeClassIfNotNested(regularClass, regularClass.moduleData.session)
+            context.storeClassOrTypealiasIfNotNested(regularClass, regularClass.moduleData.session)
+        }
+    }
+
+    override fun visitTypeAlias(typeAlias: FirTypeAlias) {
+        context.forTypeAlias(typeAlias) {
+            super.visitTypeAlias(typeAlias)
+        }
+
+        if (typeAlias.isLocal) {
+            context.storeClassOrTypealiasIfNotNested(typeAlias, typeAlias.moduleData.session)
+        }
+    }
+
+    override fun visitDoWhileLoop(doWhileLoop: FirDoWhileLoop) = withProcessor(doWhileLoop) {
+        dumpContext(doWhileLoop, ContextKind.SELF)
+
+        onActive {
+            dumpContext(doWhileLoop, ContextKind.BODY)
+
+            context.forBlock(bodyHolder.session) {
+                process(doWhileLoop.block) { block ->
+                    doVisitBlock(block, isolateBlock = false)
+                }
+
+                process(doWhileLoop.condition)
+            }
+
+            processChildren(doWhileLoop)
         }
     }
 
@@ -541,18 +665,19 @@ private class ContextCollectorVisitor(
      */
     @OptIn(PrivateForInline::class)
     private fun Processor.processClassHeader(regularClass: FirRegularClass) {
-        context.withTypeParametersOf(regularClass) {
-            processList(regularClass.contextParameters)
-            processList(regularClass.typeParameters)
-            processList(regularClass.superTypeRefs)
+        context.withClassHeader(regularClass) {
+            context.withTypeParametersOf(regularClass) {
+                processList(regularClass.contextParameters)
+                processList(regularClass.typeParameters)
+                processList(regularClass.superTypeRefs)
+            }
         }
     }
 
-    @OptIn(PrivateForInline::class)
     private fun Processor.processFileHeader(file: FirFile) {
         process(file.packageDirective)
         processList(file.imports)
-        processList(file.annotations)
+        processRawAnnotations(file)
     }
 
     /**
@@ -564,15 +689,19 @@ private class ContextCollectorVisitor(
         processList(anonymousObject.superTypeRefs)
     }
 
+    override fun visitErrorPrimaryConstructor(errorPrimaryConstructor: FirErrorPrimaryConstructor) {
+        visitConstructor(errorPrimaryConstructor)
+    }
+
     override fun visitConstructor(constructor: FirConstructor) = withProcessor(constructor) {
         dumpContext(constructor, ContextKind.SELF)
 
-        processSignatureAnnotations(constructor)
+        context.forConstructor(constructor) {
+            processRawAnnotations(constructor)
 
-        onActiveBody {
-            constructor.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
+            onActive {
+                constructor.performBodyAnalysis()
 
-            context.withConstructor(constructor) {
                 val holder = getSessionHolder(constructor)
                 val containingClass = context.containerIfAny as? FirRegularClass
 
@@ -584,37 +713,50 @@ private class ContextCollectorVisitor(
                     processList(constructor.valueParameters)
 
                     dumpContext(constructor, ContextKind.BODY)
-
-                    onActive {
-                        process(constructor.body)
-                    }
+                    processBody(constructor)
                 }
 
                 onActive {
-                    context.forDelegatedConstructorCall(constructor, owningClass = null, holder) {
+                    context.forDelegatedConstructorCallChildren(constructor, owningClass = null, holder) {
                         process(constructor.delegatedConstructor)
                     }
-                }
 
-                onActive {
-                    processChildren(constructor)
+                    process(constructor.contractDescription)
                 }
             }
         }
     }
 
-    override fun visitEnumEntry(enumEntry: FirEnumEntry) {
+    override fun visitEnumEntry(enumEntry: FirEnumEntry) = withProcessor(enumEntry) {
         dumpContext(enumEntry, ContextKind.SELF)
 
-        onActiveBody {
-            enumEntry.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
-
+        onActive {
+            // We have to wrap annotation processing into withEnumEntry as well as it provides the correct context
+            // Otherwise there will be the enum entry as an implicit receiver
             context.withEnumEntry(enumEntry) {
-                dumpContext(enumEntry, ContextKind.BODY)
+                processRawAnnotations(enumEntry)
 
                 onActive {
-                    super.visitEnumEntry(enumEntry)
+                    enumEntry.performBodyAnalysis()
+                    dumpContext(enumEntry, ContextKind.BODY)
+
+                    processChildren(enumEntry)
                 }
+            }
+        }
+    }
+
+    override fun visitDanglingModifierList(danglingModifierList: FirDanglingModifierList) = withProcessor(danglingModifierList) {
+        dumpContext(danglingModifierList, ContextKind.SELF)
+
+        processAnnotations(danglingModifierList)
+
+        onActive {
+            danglingModifierList.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
+
+            context.withDanglingModifierList(danglingModifierList) {
+                dumpContext(danglingModifierList, ContextKind.BODY)
+                processChildren(danglingModifierList)
             }
         }
     }
@@ -622,58 +764,65 @@ private class ContextCollectorVisitor(
     override fun visitSimpleFunction(simpleFunction: FirSimpleFunction) = withProcessor(simpleFunction) {
         dumpContext(simpleFunction, ContextKind.SELF)
 
-        processSignatureAnnotations(simpleFunction)
+        processAnnotations(simpleFunction)
 
-        onActiveBody {
-            simpleFunction.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
+        onActive {
+            simpleFunction.performBodyAnalysis()
 
             val holder = getSessionHolder(simpleFunction)
 
             context.withSimpleFunction(simpleFunction, holder.session) {
-                context.forFunctionBody(simpleFunction, holder) {
-                    processList(simpleFunction.valueParameters)
-
-                    dumpContext(simpleFunction, ContextKind.BODY)
-
-                    onActive {
-                        process(simpleFunction.body)
-                    }
-                }
+                processList(simpleFunction.typeParameters)
+                process(simpleFunction.receiverParameter)
 
                 onActive {
-                    processChildren(simpleFunction)
+                    context.forFunctionBody(simpleFunction, holder) {
+                        dumpContext(simpleFunction, ContextKind.BODY)
+
+                        processList(simpleFunction.contextParameters)
+                        processList(simpleFunction.valueParameters)
+                        processBody(simpleFunction)
+                    }
+
+                    process(simpleFunction.returnTypeRef)
+                    process(simpleFunction.contractDescription)
                 }
             }
         }
     }
 
+    override fun visitErrorProperty(errorProperty: FirErrorProperty) {
+        visitProperty(errorProperty)
+    }
+
     override fun visitProperty(property: FirProperty) = withProcessor(property) {
         dumpContext(property, ContextKind.SELF)
 
-        processSignatureAnnotations(property)
+        processAnnotations(property)
 
-        onActiveBody {
-            property.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
+        onActive {
+            property.performBodyAnalysis()
 
             context.withProperty(property) {
-                dumpContext(property, ContextKind.BODY)
+                processList(property.typeParameters)
+                process(property.receiverParameter)
 
                 onActive {
-                    context.forPropertyInitializerIfNonLocal(property) {
-                        process(property.initializer)
+                    dumpContext(property, ContextKind.BODY)
 
-                        onActive {
+                    context.withParameters(property, getSessionHolder(property)) {
+                        processList(property.contextParameters)
+                    }
+
+                    onActive {
+                        context.forPropertyInitializerIfNonLocal(property) {
+                            process(property.initializer)
                             process(property.delegate)
-                        }
-
-                        onActive {
                             process(property.backingField)
                         }
-                    }
-                }
 
-                onActive {
-                    processChildren(property)
+                        processChildren(property)
+                    }
                 }
             }
         }
@@ -685,7 +834,8 @@ private class ContextCollectorVisitor(
 
     /**
      * Executes [f] wrapped with [BodyResolveContext.forPropertyInitializer] if the [property] is not local.
-     * Note that [BodyResolveContext.forPropertyInitializer] performs the tower data cleanup in the [BodyResolveContext].
+     * Note that [BodyResolveContext.forPropertyInitializer] performs the tower data cleanup in the [BodyResolveContext], unless
+     * the [skipCleanup] is set to `true`.
      *
      * Otherwise, just calls [f] with no the cleanup.
      *
@@ -694,7 +844,10 @@ private class ContextCollectorVisitor(
      */
     private fun BodyResolveContext.forPropertyInitializerIfNonLocal(property: FirProperty, f: () -> Unit) {
         if (!property.isLocal) {
-            forPropertyInitializer(f)
+            // TODO: the [skipCleanup] hack should be reverted on fixing KT-79107
+            val skipCleanup = property.isScriptTopLevelDeclaration == true &&
+                    getSessionHolder(property).session.scriptResolutionHacksComponent?.skipTowerDataCleanupForTopLevelInitializers == true
+            forPropertyInitializer(skipCleanup, f)
         } else {
             f()
         }
@@ -722,17 +875,14 @@ private class ContextCollectorVisitor(
     override fun visitField(field: FirField) = withProcessor(field) {
         dumpContext(field, ContextKind.SELF)
 
-        processSignatureAnnotations(field)
+        processAnnotations(field)
 
-        onActiveBody {
-            field.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
+        onActive {
+            field.performBodyAnalysis()
 
             context.withField(field) {
                 dumpContext(field, ContextKind.BODY)
-
-                onActive {
-                    process(field.initializer)
-                }
+                process(field.initializer)
             }
         }
     }
@@ -740,17 +890,14 @@ private class ContextCollectorVisitor(
     override fun visitPropertyAccessor(propertyAccessor: FirPropertyAccessor) = withProcessor(propertyAccessor) {
         dumpContext(propertyAccessor, ContextKind.SELF)
 
-        processSignatureAnnotations(propertyAccessor)
+        processAnnotations(propertyAccessor)
 
-        onActiveBody {
+        onActive {
             val holder = getSessionHolder(propertyAccessor)
 
             context.withPropertyAccessor(propertyAccessor.propertySymbol.fir, propertyAccessor, holder) {
                 dumpContext(propertyAccessor, ContextKind.BODY)
-
-                onActive {
-                    processChildren(propertyAccessor)
-                }
+                processChildren(propertyAccessor)
             }
         }
     }
@@ -758,32 +905,28 @@ private class ContextCollectorVisitor(
     override fun visitValueParameter(valueParameter: FirValueParameter) = withProcessor(valueParameter) {
         dumpContext(valueParameter, ContextKind.SELF)
 
-        processSignatureAnnotations(valueParameter)
+        processAnnotations(valueParameter)
 
-        onActiveBody {
+        onActive {
             context.withValueParameter(valueParameter, valueParameter.moduleData.session) {
                 dumpContext(valueParameter, ContextKind.BODY)
-
-                onActive {
-                    processChildren(valueParameter)
-                }
+                processChildren(valueParameter)
             }
         }
-
     }
 
     override fun visitAnonymousInitializer(anonymousInitializer: FirAnonymousInitializer) = withProcessor(anonymousInitializer) {
         dumpContext(anonymousInitializer, ContextKind.SELF)
 
-        processSignatureAnnotations(anonymousInitializer)
+        processAnnotations(anonymousInitializer)
 
-        onActiveBody {
+        onActive {
             context.withAnonymousInitializer(anonymousInitializer, anonymousInitializer.moduleData.session) {
                 dumpContext(anonymousInitializer, ContextKind.BODY)
 
                 onActive {
-                    anonymousInitializer.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
-                    processChildren(anonymousInitializer)
+                    anonymousInitializer.performBodyAnalysis()
+                    processBody(anonymousInitializer)
                 }
             }
         }
@@ -792,65 +935,106 @@ private class ContextCollectorVisitor(
     override fun visitAnonymousFunction(anonymousFunction: FirAnonymousFunction) = withProcessor(anonymousFunction) {
         dumpContext(anonymousFunction, ContextKind.SELF)
 
-        processSignatureAnnotations(anonymousFunction)
+        processAnnotations(anonymousFunction)
 
-        onActiveBody {
-            context.withAnonymousFunction(anonymousFunction, bodyHolder) {
-                for (parameter in anonymousFunction.valueParameters) {
-                    process(parameter)
-                    context.storeVariable(parameter, bodyHolder.session)
-                }
-
-                dumpContext(anonymousFunction, ContextKind.BODY)
+        onActive {
+            @OptIn(PrivateForInline::class)
+            context.withTypeParametersOf(anonymousFunction) {
+                processList(anonymousFunction.typeParameters)
+                process(anonymousFunction.receiverParameter)
 
                 onActive {
-                    process(anonymousFunction.body)
-                }
+                    context.withAnonymousFunction(anonymousFunction, bodyHolder) {
+                        for (contextParameter in anonymousFunction.contextParameters) {
+                            context.storeValueParameterIfNeeded(contextParameter, bodyHolder.session)
+                        }
 
-                onActive {
+                        for (valueParameter in anonymousFunction.valueParameters) {
+                            context.storeValueParameterIfNeeded(valueParameter, bodyHolder.session)
+                        }
+
+                        dumpContext(anonymousFunction, ContextKind.BODY)
+
+                        processList(anonymousFunction.contextParameters)
+                        processList(anonymousFunction.valueParameters)
+                        process(anonymousFunction.body)
+                    }
+
                     processChildren(anonymousFunction)
                 }
             }
         }
-
     }
 
     override fun visitAnonymousObject(anonymousObject: FirAnonymousObject) = withProcessor(anonymousObject) {
         dumpContext(anonymousObject, ContextKind.SELF)
 
-        processSignatureAnnotations(anonymousObject)
+        processAnnotations(anonymousObject)
 
-        onActiveBody {
+        onActive {
             processAnonymousObjectHeader(anonymousObject)
 
             context.withAnonymousObject(anonymousObject, bodyHolder) {
                 dumpContext(anonymousObject, ContextKind.BODY)
-
-                onActive {
-                    processChildren(anonymousObject)
-                }
+                processChildren(anonymousObject)
             }
         }
     }
 
-    override fun visitBlock(block: FirBlock) = withProcessor(block) {
+    override fun visitBlock(block: FirBlock) {
+        doVisitBlock(block)
+    }
+
+    /**
+     * @param isolateBlock whether to wrap the block into a [BodyResolveContext.forBlock]
+     */
+    private fun doVisitBlock(block: FirBlock, isolateBlock: Boolean = true) = withProcessor(block) {
         dumpContext(block, ContextKind.SELF)
 
-        onActiveBody {
-            context.forBlock(bodyHolder.session) {
-                processChildren(block)
-
-                dumpContext(block, ContextKind.BODY)
+        onActive {
+            if (isolateBlock) {
+                context.forBlock(bodyHolder.session) {
+                    processBlockBody(block)
+                }
+            } else {
+                processBlockBody(block)
             }
         }
     }
 
+    private fun Processor.processBlockBody(block: FirBlock) {
+        // Process all children so we can dump the body context
+        processChildren(block, checkIsActive = false)
+        dumpContext(block, ContextKind.BODY)
+    }
+
+    /**
+     * Iterates directly through annotations without any [context] adjustments.
+     *
+     * This function is needed in the case if special modification of [context] is required.
+     * In this case such adjustments have to be done before this function.
+     *
+     * [processAnnotations] should be used by default.
+     *
+     * @see processAnnotations
+     */
     @ContextCollectorDsl
-    private fun Processor.processSignatureAnnotations(declaration: FirDeclaration) {
+    private fun Processor.processRawAnnotations(declaration: FirDeclaration) {
         for (annotation in declaration.annotations) {
-            onActive {
-                process(annotation)
-            }
+            process(annotation)
+        }
+    }
+
+    /**
+     * Processes [FirDeclaration.annotations] in the context of [declaration].
+     *
+     * @see org.jetbrains.kotlin.fir.resolve.transformers.plugin.FirAnnotationArgumentsTransformer
+     */
+    @ContextCollectorDsl
+    private fun Processor.processAnnotations(declaration: FirDeclaration) {
+        @OptIn(PrivateForInline::class)
+        context.withContainer(declaration) {
+            processRawAnnotations(declaration)
         }
     }
 
@@ -860,13 +1044,21 @@ private class ContextCollectorVisitor(
         }
     }
 
-    private class Processor(private val delegate: FirVisitorVoid) {
+    private inner class Processor(private val delegate: FirVisitorVoid) {
         private val elementsToSkip = HashSet<FirElement>()
 
         @ContextCollectorDsl
         fun process(element: FirElement?) {
-            if (element != null) {
+            if (isActive && element != null) {
                 element.accept(delegate)
+                elementsToSkip += element
+            }
+        }
+
+        @ContextCollectorDsl
+        fun <T : FirElement?> process(element: T?, customVisit: (T & Any) -> Unit) {
+            if (element != null) {
+                customVisit(element)
                 elementsToSkip += element
             }
         }
@@ -874,24 +1066,76 @@ private class ContextCollectorVisitor(
         @ContextCollectorDsl
         fun processList(elements: Collection<FirElement>) {
             for (element in elements) {
+                if (!isActive) {
+                    break
+                }
                 process(element)
                 elementsToSkip += element
             }
         }
 
         @ContextCollectorDsl
-        fun processChildren(element: FirElement) {
-            val visitor = FilteringVisitor(delegate, elementsToSkip)
+        fun processChildren(element: FirElement, checkIsActive: Boolean = true) {
+            if (checkIsActive && !isActive) {
+                return
+            }
+            val visitor = FilteringVisitor(delegate, elementsToSkip, checkIsActive)
             element.acceptChildren(visitor)
         }
     }
 
-    private class FilteringVisitor(val delegate: FirVisitorVoid, val elementsToSkip: Set<FirElement>) : FirVisitorVoid() {
+    private inner class FilteringVisitor(
+        val delegate: FirVisitorVoid,
+        val elementsToSkip: Set<FirElement>,
+        val checkIsActive: Boolean
+    ) : FirVisitorVoid() {
         override fun visitElement(element: FirElement) {
+            if (checkIsActive && !isActive) {
+                return
+            }
+
             if (element !in elementsToSkip) {
                 element.accept(delegate)
             }
         }
+    }
+
+    /**
+     * Analyze the body of the given declaration, unless the caller asked to avoid it by setting [shouldTriggerBodyAnalysis], and
+     * we can verify that at least some part of the declaration's body is already analyzed.
+     */
+    private fun FirDeclaration.performBodyAnalysis() {
+        if (!shouldTriggerBodyAnalysis && partialBodyAnalysisState != null) {
+            // The declaration body is partially resolved as the caller guaranteed. The check is optimistic.
+            return
+        }
+
+        lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
+    }
+
+    /**
+     * Visit the already resolved parts of the body.
+     */
+    private fun Processor.processBody(declaration: FirDeclaration) {
+        if (!isActive) {
+            return
+        }
+
+        val snapshot = declaration.partialBodyAnalysisState?.analysisStateSnapshot
+        if (snapshot != null) {
+            context.forBlock(bodyHolder.session) {
+                for (statement in snapshot.result.statements) {
+                    statement.accept(this@ContextCollectorVisitor)
+                    if (!isActive) {
+                        break
+                    }
+                }
+            }
+
+            return
+        }
+
+        process(declaration.body)
     }
 
     /**
@@ -919,12 +1163,6 @@ private class ContextCollectorVisitor(
 
     private inline fun onActive(block: () -> Unit) {
         if (isActive) {
-            block()
-        }
-    }
-
-    private inline fun onActiveBody(block: () -> Unit) {
-        if (isActive || shouldCollectBodyContext) {
             block()
         }
     }

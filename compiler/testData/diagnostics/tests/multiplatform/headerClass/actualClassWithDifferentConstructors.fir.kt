@@ -7,9 +7,9 @@ expect class Foo1
 expect class Foo2
 expect class Foo3
 
-<!EXPECT_ACTUAL_INCOMPATIBILITY{JVM}!>expect<!> class Bar1<!EXPECT_ACTUAL_MISMATCH{JVM}!>()<!>
-<!EXPECT_ACTUAL_INCOMPATIBILITY{JVM}!>expect<!> class Bar2<!EXPECT_ACTUAL_MISMATCH{JVM}!>()<!>
-<!EXPECT_ACTUAL_INCOMPATIBILITY{JVM}!>expect<!> class Bar3<!EXPECT_ACTUAL_MISMATCH{JVM}!>()<!>
+<!EXPECT_ACTUAL_IR_INCOMPATIBILITY{JVM}!>expect<!> class Bar1<!EXPECT_ACTUAL_IR_MISMATCH{JVM}!>()<!>
+<!EXPECT_ACTUAL_IR_INCOMPATIBILITY{JVM}!>expect<!> class Bar2<!EXPECT_ACTUAL_IR_MISMATCH{JVM}!>()<!>
+<!EXPECT_ACTUAL_IR_INCOMPATIBILITY{JVM}!>expect<!> class Bar3<!EXPECT_ACTUAL_IR_MISMATCH{JVM}!>()<!>
 expect class Bar4()
 expect class Bar5()
 expect class Bar6()
@@ -54,3 +54,6 @@ class <!ACTUAL_MISSING!>Bar6<!> {
 actual class Bar7 actual constructor(s: String) {
     constructor() : this("")
 }
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, javaType, primaryConstructor, propertyDeclaration,
+secondaryConstructor, stringLiteral, typeAliasDeclaration */

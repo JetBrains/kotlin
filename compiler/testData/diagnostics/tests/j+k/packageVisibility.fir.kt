@@ -43,3 +43,5 @@ val <!EXPOSED_PROPERTY_TYPE!>mc1<!> = <!INVISIBLE_REFERENCE!>MyJavaClass<!>()
 val x = <!INVISIBLE_REFERENCE!>MyJavaClass<!>.<!INVISIBLE_REFERENCE!>staticMethod<!>()
 val y = <!INVISIBLE_REFERENCE!>MyJavaClass<!>.NestedClass.<!INVISIBLE_REFERENCE!>staticMethodOfNested<!>()
 val <!EXPOSED_PROPERTY_TYPE!>z<!> = <!INVISIBLE_REFERENCE!>MyJavaClass<!>.<!INVISIBLE_REFERENCE!>NestedClass<!>()
+
+/* GENERATED_FIR_TAGS: javaFunction, javaType, propertyDeclaration */

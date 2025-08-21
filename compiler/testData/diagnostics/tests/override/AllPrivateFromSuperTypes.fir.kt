@@ -13,3 +13,5 @@ open class C {
 class Subject : C(), A {
     val c = <!NONE_APPLICABLE!>a<!>
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, getter, interfaceDeclaration, propertyDeclaration, stringLiteral */

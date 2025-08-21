@@ -9,3 +9,6 @@ public inline fun <T:Any, R> let(subj: T?, body: (T) -> R): R? {
 fun test(s: String?): String? {
     return let(s) {s} // Reports: "Inference failed. Expected jet.String? but found jet.String?"
 }
+
+/* GENERATED_FIR_TAGS: dnnType, equalityExpression, functionDeclaration, functionalType, ifExpression, inline,
+lambdaLiteral, nullableType, smartcast, typeConstraint, typeParameter */

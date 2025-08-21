@@ -13,7 +13,6 @@ fun simpleFun(arg: Sub): Sub = Sub()
 
 inline fun <reified T> inlineFun(t: T) = t
 
-// In conservative mode without -Xextended-compiler-checks flag these usages don't cause compilation error
 fun test() {
     @Suppress("UNUSED_VARIABLE")
     val x: Sub = Sub()

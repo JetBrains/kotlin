@@ -1,5 +1,5 @@
 // ISSUE: KT-68975
-// See same test for codegen: compiler/testData/codegen/box/js/inlinedReturnBreakContinue/nonLocalReturn.kt
+// LANGUAGE: +IrInlinerBeforeKlibSerialization
 inline fun foo(<!UNUSED_PARAMETER!>makeInt<!>: () -> Int): Int {
     return js("makeInt()")
 }

@@ -468,7 +468,8 @@ internal class DelegatedPropertyGenerator(
                 conventionMethodCall.setExplicitReceiverValue(delegateReceiverValue)
                 updateNullThisRefValue(conventionMethodCall)
                 conventionMethodCall.irValueArgumentsByIndex[1] = irPropertyReference
-                val irSetterParameter = irSetter.valueParameters[0]
+                val irSetterParameter =
+                    irSetter.parameters.first { it.kind == IrParameterKind.Regular || it.kind == IrParameterKind.Context }
                 conventionMethodCall.irValueArgumentsByIndex[2] = irGet(irSetterParameter)
                 +irReturn(CallGenerator(statementGenerator).generateCall(startOffset, endOffset, conventionMethodCall))
             }

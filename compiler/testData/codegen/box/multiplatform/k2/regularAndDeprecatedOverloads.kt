@@ -1,7 +1,8 @@
 // LANGUAGE: +MultiPlatformProjects
-// IGNORE_BACKEND: JVM, JVM_IR
+// IGNORE_BACKEND: JVM_IR
+// IGNORE_HMPP: JVM_IR
 // ISSUE: KT-69201
-// Notes: Ignore JVM backends because of `Platform declaration clash`
+// Notes: Ignore JVM backend because of "Platform declaration clash".
 
 // The test emulates KT-68396 but with an example `f` function
 // Originally, K1 somehow matches some incorrect pairs of expect/actual functions like `copyOf`

@@ -481,11 +481,11 @@ FILE: [ResolvedTo(RAW_FIR)] bottom.kt
 
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] middle.kt
-    public abstract [ResolvedTo(BODY_RESOLVE)] interface Base : R|org/example/MiddleAdditional| {
+    public abstract [ResolvedTo(BODY_RESOLVE)] interface Base : <ERROR TYPE REF: Loop in supertypes involving org/example/Base> {
         public abstract [ResolvedTo(BODY_RESOLVE)] fun middle(): R|kotlin/Unit|
 
     }
-    public abstract [ResolvedTo(BODY_RESOLVE)] interface MiddleAdditional : R|org/example/Middle| {
+    public abstract [ResolvedTo(BODY_RESOLVE)] interface MiddleAdditional : <ERROR TYPE REF: Loop in supertypes involving org/example/MiddleAdditional> {
     }
-    public abstract [ResolvedTo(BODY_RESOLVE)] interface Middle : R|org/example/Top| {
+    public abstract [ResolvedTo(BODY_RESOLVE)] interface Middle : <ERROR TYPE REF: Loop in supertypes involving org/example/Middle> {
     }

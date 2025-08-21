@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.checkers.getContainingClassSymbol
+import org.jetbrains.kotlin.fir.resolve.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.utils.isInner
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
@@ -17,11 +17,8 @@ import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
 import org.jetbrains.kotlin.fir.references.toResolvedConstructorSymbol
 
 object FirGenericQualifierOnConstructorCallChecker : FirFunctionCallChecker(MppCheckerKind.Common) {
-    override fun check(
-        expression: FirFunctionCall,
-        context: CheckerContext,
-        reporter: DiagnosticReporter,
-    ) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(expression: FirFunctionCall) {
         val resolvedQualifier = expression.explicitReceiver as? FirResolvedQualifier ?: return
         if (resolvedQualifier.typeArguments.isEmpty()) return
         val constructorSymbol = expression.calleeReference.toResolvedConstructorSymbol() ?: return
@@ -29,8 +26,7 @@ object FirGenericQualifierOnConstructorCallChecker : FirFunctionCallChecker(MppC
 
         reporter.reportOn(
             resolvedQualifier.source,
-            FirErrors.GENERIC_QUALIFIER_ON_CONSTRUCTOR_CALL,
-            context
+            FirErrors.GENERIC_QUALIFIER_ON_CONSTRUCTOR_CALL
         )
     }
 }

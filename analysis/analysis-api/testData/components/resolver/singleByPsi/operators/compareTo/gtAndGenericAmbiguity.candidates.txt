@@ -7,10 +7,12 @@ KtOperationReferenceExpression(97,98): '>'
           receiverType = null
           returnType = MyClass
           symbol = m: MyClass
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = m
           isSafeNavigation = false
@@ -26,8 +28,10 @@ KtOperationReferenceExpression(97,98): '>'
               receiverType = null
               returnType = MyClass
               symbol = m: MyClass
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = /MyClass.compareTo
       typeArgumentsMapping = {}
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'MyClass' was expected.>
@@ -41,10 +45,12 @@ KtOperationReferenceExpression(97,98): '>'
           receiverType = null
           returnType = kotlin.Int
           symbol = number: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:
           expression = m
@@ -60,8 +66,10 @@ KtOperationReferenceExpression(97,98): '>'
               receiverType = null
               returnType = kotlin.Int
               symbol = number: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = /compareTo
       typeArgumentsMapping = {
         R -> (MyClass)
@@ -76,10 +84,12 @@ KtOperationReferenceExpression(97,98): '>'
           receiverType = null
           returnType = kotlin.Int
           symbol = int: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:
           expression = m
@@ -95,8 +105,10 @@ KtOperationReferenceExpression(97,98): '>'
               receiverType = null
               returnType = kotlin.Int
               symbol = int: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = /compareTo
       typeArgumentsMapping = {
         T -> (MyClass)

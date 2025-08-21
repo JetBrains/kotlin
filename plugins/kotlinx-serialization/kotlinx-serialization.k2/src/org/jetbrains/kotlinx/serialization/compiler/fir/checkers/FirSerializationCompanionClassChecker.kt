@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -15,9 +15,6 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlinx.serialization.compiler.fir.*
-import org.jetbrains.kotlinx.serialization.compiler.fir.getSerializableWith
-import org.jetbrains.kotlinx.serialization.compiler.fir.getSerializerAnnotation
-import org.jetbrains.kotlinx.serialization.compiler.fir.getSerializerForClass
 
 // Extracted from FirSerializationPluginClassChecker to keep it reasonably small
 internal fun CheckerContext.checkCompanionOfSerializableClass(
@@ -25,7 +22,7 @@ internal fun CheckerContext.checkCompanionOfSerializableClass(
     reporter: DiagnosticReporter,
 ) {
     if (classSymbol !is FirRegularClassSymbol) return
-    val companionObjectSymbol = classSymbol.companionObjectSymbol ?: return
+    val companionObjectSymbol = classSymbol.resolvedCompanionObjectSymbol ?: return
     if (!classSymbol.hasSerializableOrMetaAnnotation(session)) return
     if (!companionObjectSymbol.hasSerializableOrMetaAnnotation(session)) return
     val serializableArg = classSymbol.getSerializableWith(session)
@@ -38,8 +35,7 @@ internal fun CheckerContext.checkCompanionOfSerializableClass(
     reporter.reportOn(
         companionObjectSymbol.serializableOrMetaAnnotationSource(session),
         FirSerializationErrors.COMPANION_OBJECT_IS_SERIALIZABLE_INSIDE_SERIALIZABLE_CLASS,
-        classSymbol,
-        this
+        classSymbol
     )
 }
 
@@ -48,7 +44,7 @@ internal fun CheckerContext.checkCompanionSerializerDependency(
     reporter: DiagnosticReporter,
 ) {
     if (classSymbol !is FirRegularClassSymbol) return
-    val companionObjectSymbol = classSymbol.companionObjectSymbol ?: return
+    val companionObjectSymbol = classSymbol.resolvedCompanionObjectSymbol ?: return
     val serializerForInCompanion = companionObjectSymbol.getSerializerForClass(session)?.toRegularClassSymbol(session) ?: return
     val serializableWith: ConeKotlinType? = classSymbol.getSerializableWith(session)
     val context = this@checkCompanionSerializerDependency
@@ -58,8 +54,7 @@ internal fun CheckerContext.checkCompanionSerializerDependency(
             companionObjectSymbol.getSerializerAnnotation(session)?.source,
             FirSerializationErrors.COMPANION_OBJECT_SERIALIZER_INSIDE_OTHER_SERIALIZABLE_CLASS,
             classSymbol.defaultType(),
-            serializerForInCompanion.defaultType(),
-            context
+            serializerForInCompanion.defaultType()
         )
     }
 
@@ -70,8 +65,7 @@ internal fun CheckerContext.checkCompanionSerializerDependency(
                 reporter.reportOn(
                     classSymbol.serializableOrMetaAnnotationSource(session),
                     FirSerializationErrors.COMPANION_OBJECT_AS_CUSTOM_SERIALIZER_DEPRECATED,
-                    classSymbol,
-                    context
+                    classSymbol
                 )
             } else {
                 // @Serializable class Foo / @Serializer(Bar::class) companion object — prohibited as vague and confusing
@@ -94,8 +88,7 @@ internal fun CheckerContext.checkCompanionSerializerDependency(
                 companionObjectSymbol.getSerializerAnnotation(session)?.source,
                 FirSerializationErrors.COMPANION_OBJECT_SERIALIZER_INSIDE_NON_SERIALIZABLE_CLASS,
                 classSymbol.defaultType(),
-                serializerForInCompanion.defaultType(),
-                context
+                serializerForInCompanion.defaultType()
             )
         }
     }

@@ -40,6 +40,7 @@ KtCallExpression(77,87): 'Delegate()'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -47,6 +48,7 @@ KtCallExpression(77,87): 'Delegate()'
           returnType = myPack.Delegate
           symbol = <constructor>(): myPack.Delegate
           valueParameters = []
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -57,6 +59,7 @@ KtNameReferenceExpression(77,85): 'Delegate'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -64,6 +67,7 @@ KtNameReferenceExpression(77,85): 'Delegate'
           returnType = myPack.Delegate
           symbol = <constructor>(): myPack.Delegate
           valueParameters = []
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true

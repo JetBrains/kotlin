@@ -31,3 +31,7 @@ fun dataFlowInfoOr(a: Array<Number>) {
         checkSubtype<Int>(<!ARGUMENT_TYPE_MISMATCH!>a[0]<!>)
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, disjunctionExpression, funWithExtensionReceiver, functionDeclaration,
+functionalType, ifExpression, infix, integerLiteral, isExpression, nullableType, smartcast, typeParameter,
+typeWithExtension */

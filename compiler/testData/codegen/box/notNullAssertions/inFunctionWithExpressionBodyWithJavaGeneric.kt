@@ -1,6 +1,5 @@
 // LANGUAGE: +StrictJavaNullabilityAssertions +ProhibitUsingNullableTypeParameterAgainstNotNullAnnotated +DefinitelyNonNullableTypes
 // TARGET_BACKEND: JVM
-// IGNORE_BACKEND: JVM
 
 // FILE: box.kt
 fun box(): String {

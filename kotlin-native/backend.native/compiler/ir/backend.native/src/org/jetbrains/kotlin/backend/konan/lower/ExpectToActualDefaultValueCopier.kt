@@ -57,15 +57,15 @@ internal class ExpectToActualDefaultValueCopier(private val irModule: IrModuleFr
                 val defaultValue = declaration.defaultValue ?: return
                 val function = declaration.parent as IrFunction
 
-                val index = declaration.indexInOldValueParameters
-                assert(function.valueParameters[index] == declaration)
+                val index = declaration.indexInParameters
+                assert(function.parameters[index] == declaration)
 
                 if (function is IrConstructor && OptionalAnnotationUtil.isOptionalAnnotationClass(function.descriptor.constructedClass)) {
                     return
                 }
 
                 val actualForExpected = function.findActualForExpected()
-                actualForExpected.valueParameters[index].defaultValue =
+                actualForExpected.parameters[index].defaultValue =
                         irBuiltIns.irFactory.createExpressionBody(
                                 defaultValue.startOffset, defaultValue.endOffset,
                                 defaultValue.expression.remapExpectValueSymbols().patchDeclarationParents(actualForExpected)
@@ -188,13 +188,9 @@ internal class ExpectToActualDefaultValueCopier(private val irModule: IrModuleFr
             is IrFunction ->
                 if (!parent.descriptor.isExpect)
                     null
-                else when (parameter) {
-                    parent.dispatchReceiverParameter -> parent.findActualForExpected().dispatchReceiverParameter!!
-                    parent.extensionReceiverParameter -> parent.findActualForExpected().extensionReceiverParameter!!
-                    else -> {
-                        assert(parent.valueParameters[parameter.indexInOldValueParameters] == parameter)
-                        parent.findActualForExpected().valueParameters[parameter.indexInOldValueParameters]
-                    }
+                else {
+                    assert(parent.parameters[parameter.indexInParameters] == parameter)
+                    parent.findActualForExpected().parameters[parameter.indexInParameters]
                 }
 
             else -> error(parent)

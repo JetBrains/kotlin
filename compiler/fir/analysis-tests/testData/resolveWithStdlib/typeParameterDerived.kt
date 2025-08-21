@@ -10,3 +10,6 @@ inline fun <K, V, VA : V> MutableMap<K, V>.getOrPut(key: K, defaultValue: (K) ->
         value
     }
 }
+
+/* GENERATED_FIR_TAGS: dnnType, equalityExpression, funWithExtensionReceiver, functionDeclaration, functionalType,
+ifExpression, inline, localProperty, nullableType, propertyDeclaration, smartcast, typeConstraint, typeParameter */

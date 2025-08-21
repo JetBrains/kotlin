@@ -2,6 +2,7 @@ KtNameReferenceExpression(44,47): 'foo'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaImplicitReceiverValue:
           symbol = KaReceiverParameterSymbol:
             annotations: []
@@ -30,6 +31,7 @@ KtNameReferenceExpression(44,47): 'foo'
           receiverType = null
           returnType = kotlin.Int
           symbol = val foo: kotlin.Int
+          contextParameters = []
           callableId = /JavaClass.foo
       simpleAccess = Read
       typeArgumentsMapping = {}

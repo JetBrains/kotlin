@@ -82,3 +82,7 @@ fun literals() {
     PropertyHolder::test1
     PropertyHolder::<!DEPRECATION!>name<!>
 }
+
+/* GENERATED_FIR_TAGS: assignment, callableReference, classDeclaration, funWithExtensionReceiver, functionDeclaration,
+integerLiteral, localProperty, operator, primaryConstructor, propertyDeclaration, propertyDelegate, setter,
+starProjection, stringLiteral */

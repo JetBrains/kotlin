@@ -16,3 +16,6 @@ class A {
         return@outer
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, comparisonExpression, functionDeclaration, ifExpression, integerLiteral,
+localFunction */

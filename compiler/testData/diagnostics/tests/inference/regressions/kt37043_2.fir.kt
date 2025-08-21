@@ -30,3 +30,6 @@ fun main() {
     nullableNumber3
     nullableNumber4
 }
+
+/* GENERATED_FIR_TAGS: elvisExpression, functionDeclaration, inline, localProperty, nullableType, outProjection,
+propertyDeclaration, reified, typeParameter */

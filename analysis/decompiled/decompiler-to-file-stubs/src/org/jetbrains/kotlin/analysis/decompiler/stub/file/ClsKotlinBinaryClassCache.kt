@@ -70,8 +70,9 @@ class ClsKotlinBinaryClassCache {
         isKotlinBinary: Boolean?
     ): KotlinJvmBinaryClass? {
         val classFileContent = try {
+            // It looks like the class is used only in K1, don't care about performance measurement for the outdated frontend
             KotlinBinaryClassCache.getKotlinBinaryClassOrClassFileContent(
-                file, metadataVersion, fileContent = fileContent
+                file, metadataVersion, fileContent = fileContent, perfManager = null
             )
         } catch (e: Exception) {
             rethrowIntellijPlatformExceptionIfNeeded(e)
@@ -86,7 +87,7 @@ class ClsKotlinBinaryClassCache {
         }
 
         if (isKotlinBinaryClass) {
-            val headerInfo = createHeaderInfo(kotlinBinaryClass!!)
+            val headerInfo = createHeaderInfo(kotlinBinaryClass)
             file.putUserData(KOTLIN_BINARY_DATA_KEY, SoftReference(KotlinBinaryData(isKotlinBinaryClass, file.timeStamp, headerInfo)))
         }
 

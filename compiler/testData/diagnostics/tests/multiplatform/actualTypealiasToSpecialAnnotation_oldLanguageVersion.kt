@@ -10,3 +10,4 @@ expect annotation class TypealiasToKotlinPkg
 // FILE: jvm.kt
 actual typealias TypealiasToKotlinPkg = kotlin.Deprecated
 
+/* GENERATED_FIR_TAGS: actual, annotationDeclaration, expect, typeAliasDeclaration */

@@ -4,6 +4,7 @@ KtNameReferenceExpression(48,57): 'Companion'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -11,6 +12,7 @@ KtNameReferenceExpression(48,57): 'Companion'
           returnType = dependency.C.Companion
           symbol = <constructor>(): dependency.C.Companion
           valueParameters = []
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>

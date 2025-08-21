@@ -10,3 +10,6 @@ fun test(x: SomeEnum) {
         SomeEnum.B -> 2
     }.inc()
 }
+
+/* GENERATED_FIR_TAGS: enumDeclaration, enumEntry, equalityExpression, functionDeclaration, integerLiteral, smartcast,
+stringLiteral, whenExpression, whenWithSubject */

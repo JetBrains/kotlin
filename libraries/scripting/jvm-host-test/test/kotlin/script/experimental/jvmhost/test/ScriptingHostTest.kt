@@ -5,19 +5,20 @@
 
 package kotlin.script.experimental.jvmhost.test
 
-import junit.framework.TestCase
 import kotlinx.coroutines.runBlocking
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.cliArgument
+import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.CompiledScriptClassLoader
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.KJvmCompiledModuleInMemoryImpl
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.SCRIPT_BASE_COMPILER_ARGUMENTS_PROPERTY
 import org.jetbrains.org.objectweb.asm.ClassReader
 import org.jetbrains.org.objectweb.asm.ClassVisitor
 import org.jetbrains.org.objectweb.asm.Opcodes
-import org.junit.Assert
-import org.junit.Test
+import org.junit.jupiter.api.parallel.ResourceLock
+import org.junit.jupiter.api.parallel.Resources
+import org.junit.jupiter.api.Test
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.PrintStream
@@ -37,8 +38,10 @@ import kotlin.script.experimental.jvm.util.KotlinJars
 import kotlin.script.experimental.jvm.util.classpathFromClass
 import kotlin.script.experimental.jvmhost.*
 import kotlin.script.templates.standard.SimpleScriptTemplate
+import kotlin.test.*
 
-class ScriptingHostTest : TestCase() {
+@ResourceLock(Resources.SYSTEM_OUT)
+class ScriptingHostTest {
 
     @Test
     fun testSimpleUsage() {
@@ -46,12 +49,12 @@ class ScriptingHostTest : TestCase() {
         val output = captureOut {
             evalScript("println(\"$greeting\")").throwOnFailure()
         }
-        Assert.assertEquals(greeting, output)
+        assertEquals(greeting, output)
         // another API
         val output2 = captureOut {
             BasicJvmScriptingHost().evalWithTemplate<SimpleScriptTemplate>("println(\"$greeting\")".toScriptSource()).throwOnFailure()
         }
-        Assert.assertEquals(greeting, output2)
+        assertEquals(greeting, output2)
     }
 
     @Test
@@ -66,44 +69,44 @@ class ScriptingHostTest : TestCase() {
                 }
             ).throwOnFailure()
         }
-        Assert.assertEquals(greeting, output)
+        assertEquals(greeting, output)
     }
 
     @Test
     fun testValueResult() {
         val evalScriptWithResult = evalScriptWithResult("42")
         val resVal = evalScriptWithResult as ResultValue.Value
-        Assert.assertEquals(42, resVal.value)
-        Assert.assertEquals("\$\$result", resVal.name)
-        Assert.assertEquals("kotlin.Int", resVal.type)
+        assertEquals(42, resVal.value)
+        assertEquals("\$\$result", resVal.name)
+        assertEquals("kotlin.Int", resVal.type)
         val resField = resVal.scriptInstance!!::class.java.getDeclaredField("\$\$result")
         resField.setAccessible(true)
-        Assert.assertEquals(42, resField.get(resVal.scriptInstance!!))
+        assertEquals(42, resField.get(resVal.scriptInstance!!))
     }
 
     @Test
     fun testUnitResult() {
         val resVal = evalScriptWithResult("val x = 42")
-        Assert.assertTrue(resVal is ResultValue.Unit)
+        assertTrue(resVal is ResultValue.Unit)
     }
 
     @Test
     fun testErrorResult() {
         val resVal = evalScriptWithResult("throw RuntimeException(\"abc\")")
-        Assert.assertTrue(resVal is ResultValue.Error)
-        val resValError = (resVal as ResultValue.Error).error
-        Assert.assertTrue(resValError is RuntimeException)
-        Assert.assertEquals("abc", resValError.message)
+        assertTrue(resVal is ResultValue.Error)
+        val resValError = resVal.error
+        assertTrue(resValError is RuntimeException)
+        assertEquals("abc", resValError.message)
     }
 
     @Test
     fun testCustomResultField() {
-        val resVal = evalScriptWithResult("42") {
+        val resVal = evalScriptWithResult("42", compilation = {
             resultField("outcome")
-        } as ResultValue.Value
-        Assert.assertEquals("outcome", resVal.name)
+        }) as ResultValue.Value
+        assertEquals("outcome", resVal.name)
         val resField = resVal.scriptInstance!!::class.java.getDeclaredField("outcome")
-        Assert.assertEquals(42, resField.get(resVal.scriptInstance!!))
+        assertEquals(42, resField.get(resVal.scriptInstance!!))
     }
 
     @Test
@@ -118,7 +121,7 @@ class ScriptingHostTest : TestCase() {
         val output = captureOut {
             scriptClass.newInstance()
         }
-        Assert.assertEquals(greeting, output)
+        assertEquals(greeting, output)
     }
 
     @Test
@@ -134,7 +137,7 @@ class ScriptingHostTest : TestCase() {
         val output = captureOut {
             scriptClass.newInstance()
         }
-        Assert.assertEquals(greeting, output)
+        assertEquals(greeting, output)
     }
 
     @Test
@@ -168,18 +171,18 @@ class ScriptingHostTest : TestCase() {
             val classloader = URLClassLoader(classpathFromJar.toTypedArray(), baseClassLoader)
             val scriptClass = classloader.loadClass(scriptName)
             val mainMethod = scriptClass.methods.find { it.name == "main" }
-            Assert.assertNotNull(mainMethod)
+            assertNotNull(mainMethod)
             val output = captureOutAndErr {
-                mainMethod!!.invoke(null, emptyArray<String>())
+                mainMethod.invoke(null, emptyArray<String>())
             }.toList().filterNot(String::isEmpty).joinToString("\n")
-            Assert.assertEquals(greeting, output)
+            assertEquals(greeting, output)
         }
 
         checkInvokeMain(null) // isolated
         checkInvokeMain(Thread.currentThread().contextClassLoader)
 
         val outputFromProcess = runScriptFromJar(outJar)
-        Assert.assertEquals(listOf(greeting), outputFromProcess)
+        assertEquals(listOf(greeting), outputFromProcess)
     }
 
     @Test
@@ -192,7 +195,7 @@ class ScriptingHostTest : TestCase() {
         val output = captureOut {
             BasicJvmScriptingHost().eval(script.toScriptSource(), compilationConfiguration, null).throwOnFailure()
         }
-        Assert.assertEquals(greeting, output)
+        assertEquals(greeting, output)
     }
 
     @Test
@@ -205,7 +208,7 @@ class ScriptingHostTest : TestCase() {
         val output = captureOut {
             BasicJvmScriptingHost().eval(script.toScriptSource(), compilationConfiguration, null).throwOnFailure().throwOnExceptionResult()
         }.lines()
-        Assert.assertEquals(greeting, output)
+        assertEquals(greeting, output)
     }
 
     @Test
@@ -226,7 +229,7 @@ class ScriptingHostTest : TestCase() {
                 script.toScriptSource(), definition.compilationConfiguration, definition.evaluationConfiguration
             ).throwOnFailure()
         }.lines()
-        Assert.assertEquals(greeting, output)
+        assertEquals(greeting, output)
     }
 
     @Test
@@ -247,7 +250,7 @@ class ScriptingHostTest : TestCase() {
                 script.toScriptSource(), definition.compilationConfiguration, definition.evaluationConfiguration
             ).throwOnFailure()
         }.lines()
-        Assert.assertEquals(greeting, output)
+        assertEquals(greeting, output)
     }
 
     @Test
@@ -270,6 +273,7 @@ class ScriptingHostTest : TestCase() {
         ).throwOnFailure()
     }
 
+    @Test
     fun testScriptWithImplicitReceiverWithGeneric() {
         val result = listOf<String>("")
         val script = "5"
@@ -289,6 +293,7 @@ class ScriptingHostTest : TestCase() {
         definition.evalScriptAndCheckOutput(script, result)
     }
 
+    @Test
     fun testScriptWithUnresolvedImplicitReceiver() {
         val definition = createJvmScriptDefinitionFromTemplate<SimpleScriptTemplate>(
             compilation = {
@@ -307,6 +312,7 @@ class ScriptingHostTest : TestCase() {
         }
     }
 
+    @Test
     fun testScriptWithUnusedUnresolvedImplicitReceiver() {
         val definition = createJvmScriptDefinitionFromTemplate<SimpleScriptTemplate>(
             compilation = {
@@ -328,6 +334,7 @@ class ScriptingHostTest : TestCase() {
         }
     }
 
+    @Test
     fun testScriptWithUnresolvedProvidedPropertyType() {
         val definition = createJvmScriptDefinitionFromTemplate<SimpleScriptTemplate>(
             compilation = {
@@ -349,6 +356,34 @@ class ScriptingHostTest : TestCase() {
         }
     }
 
+    @Test
+    fun testScriptWithProvidedPropertyAccess() {
+        // we do not care about K1 behavior anymore
+        if (IS_COMPILING_WITH_K2) {
+            val result = evalScriptWithResult(
+                """
+                val bar = foo
+                class A {
+                    fun getFoo() = foo
+                }
+                bar + A().getFoo()
+            """.trimIndent(),
+                compilation = {
+                    updateClasspath(classpathFromClass<kotlin.script.experimental.jvmhost.test.forScript.p1.TestClass>())
+                    providedProperties(
+                        "foo" to "kotlin.String",
+                    )
+                },
+                evaluation = {
+                    providedProperties("foo" to "OK")
+                }
+            )
+            assertTrue(result is ResultValue.Value)
+            assertEquals("OKOK", result.value)
+        }
+    }
+
+    @Test
     fun testScriptWithUnusedUnresolvedProvidedPropertyType() {
         val definition = createJvmScriptDefinitionFromTemplate<SimpleScriptTemplate>(
             compilation = {
@@ -373,6 +408,7 @@ class ScriptingHostTest : TestCase() {
         }
     }
 
+    @Test
     fun testScriptWithImplicitReceiversWithSameShortName() {
         val result = listOf("42")
         val script = "println(v1 + v2)"
@@ -394,6 +430,7 @@ class ScriptingHostTest : TestCase() {
         definition.evalScriptAndCheckOutput(script, result)
     }
 
+    @Test
     fun testScriptWithImplicitReceiversWithSameNamedProperty() {
         val definition = createJvmScriptDefinitionFromTemplate<SimpleScriptTemplate>(
             compilation = {
@@ -418,6 +455,7 @@ class ScriptingHostTest : TestCase() {
         }
     }
 
+    @Test
     fun testScriptWithImplicitReceiverAndBaseClassWithSameNamedProperty() {
         val result = listOf("base")
         val script = "println(v)"
@@ -440,6 +478,7 @@ class ScriptingHostTest : TestCase() {
         definition.evalScriptAndCheckOutput(script, result)
     }
 
+    @Test
     fun testScriptImplicitReceiversTransitiveVisibility() {
         val result = listOf("42")
         val script = """
@@ -523,7 +562,7 @@ class ScriptingHostTest : TestCase() {
     fun testDiamondImportWithoutSharing() {
         val greeting = listOf("Hi from common", "Hi from middle", "Hi from common", "sharedVar == 3")
         val output = doDiamondImportTest()
-        Assert.assertEquals(greeting, output)
+        assertEquals(greeting, output)
     }
 
     @Test
@@ -534,7 +573,7 @@ class ScriptingHostTest : TestCase() {
                 enableScriptsInstancesSharing()
             }
         )
-        Assert.assertEquals(greeting, output)
+        assertEquals(greeting, output)
     }
 
     @Test
@@ -559,7 +598,7 @@ class ScriptingHostTest : TestCase() {
                 }
             }
         ).throwOnFailure()
-        Assert.assertEquals(greeting, output)
+        assertEquals(greeting, output)
     }
 
     @Test
@@ -568,17 +607,17 @@ class ScriptingHostTest : TestCase() {
         val error = "Only the Kotlin standard library is allowed to use the 'kotlin' package"
         val script = "package kotlin\nprintln(\"$greeting\")"
         val res0 = evalScript(script)
-        Assert.assertTrue(res0.reports.any { it.message == error })
-        Assert.assertTrue(res0 is ResultWithDiagnostics.Failure)
+        assertTrue(res0.reports.any { it.message == error })
+        assertTrue(res0 is ResultWithDiagnostics.Failure)
 
         val output = captureOut {
-            val res1 = evalScriptWithConfiguration(script) {
+            val res1 = evalScriptWithConfiguration(script, compilation = {
                 compilerOptions(K2JVMCompilerArguments::allowKotlinPackage.cliArgument)
-            }
-            Assert.assertTrue(res1.reports.none { it.message == error })
-            Assert.assertTrue(res1 is ResultWithDiagnostics.Success)
+            }) {}
+            assertTrue(res1.reports.none { it.message == error })
+            assertTrue(res1 is ResultWithDiagnostics.Success)
         }
-        Assert.assertEquals(greeting, output)
+        assertEquals(greeting, output)
     }
 
     private fun doDiamondImportTest(evaluationConfiguration: ScriptEvaluationConfiguration? = null): List<String> {
@@ -622,18 +661,31 @@ class ScriptingHostTest : TestCase() {
         assertTrue(res is ResultWithDiagnostics.Failure)
         val report = res.reports.find { it.message.startsWith("Imported source file not found") }
         assertNotNull(report)
-        assertEquals("script.kts", report?.sourcePath)
+        assertEquals("script.kts", report.sourcePath)
     }
 
     @Test
     fun testCompileOptionsLanguageVersion() {
-        val script = "value class Holder<T>(val value: T)"
+        val script = """
+            fun test() {
+                while (true) {
+                    run {
+                        break
+                    }
+                }
+            }
+        """.trimIndent()
         val compilationConfiguration1 = createJvmCompilationConfigurationFromTemplate<SimpleScriptTemplate> {
-            compilerOptions(CommonCompilerArguments::languageVersion.cliArgument, "1.7")
+            compilerOptions(
+                CommonCompilerArguments::languageVersion.cliArgument,
+                LanguageVersion.FIRST_SUPPORTED.versionString,
+                CommonCompilerArguments::suppressVersionWarnings.cliArgument,
+                CommonCompilerArguments::whenGuards.cliArgument,
+            )
         }
         val res = BasicJvmScriptingHost().eval(script.toScriptSource(), compilationConfiguration1, null)
         assertTrue(res is ResultWithDiagnostics.Failure)
-        res.reports.find { it.message.startsWith("The feature \"generic inline class parameter\" is only available since language version 1.8") }
+        res.reports.find { it.message.startsWith("The feature \"break continue in inline lambdas\" is only available since language version 2.2") }
             ?: fail("Error report about language version not found. Reported:\n  ${res.reports.joinToString("\n  ") { it.message }}")
     }
 
@@ -641,15 +693,15 @@ class ScriptingHostTest : TestCase() {
     fun testCompileOptionsNoStdlib() {
         val script = "println(\"Hi\")"
 
-        val res1 = evalScriptWithConfiguration(script) {
+        val res1 = evalScriptWithConfiguration(script, compilation = {
             compilerOptions(K2JVMCompilerArguments::noStdlib.cliArgument)
-        }
+        }) {}
         assertTrue(res1 is ResultWithDiagnostics.Failure)
         val regex = "Unresolved reference\\W+println".toRegex()
         res1.reports.find { it.message.contains(regex) }
             ?: fail("Expected unresolved reference report. Reported:\n  ${res1.reports.joinToString("\n  ") { it.message }}")
 
-        val res2 = evalScriptWithConfiguration(script) {
+        val res2 = evalScriptWithConfiguration(script, compilation = {
             refineConfiguration {
                 beforeCompiling { ctx ->
                     ScriptCompilationConfiguration(ctx.compilationConfiguration) {
@@ -657,7 +709,7 @@ class ScriptingHostTest : TestCase() {
                     }.asSuccess()
                 }
             }
-        }
+        }) {}
         // -no-stdlib in refined configuration has no effect
         assertTrue(res2 is ResultWithDiagnostics.Success)
     }
@@ -782,22 +834,22 @@ class ScriptingHostTest : TestCase() {
         val compiledScriptClass = runBlocking { compiledScript.getClass(null).throwOnFailure().valueOrNull()!! }
         val classLoader = compiledScriptClass.java.classLoader
 
-        Assert.assertTrue(classLoader is CompiledScriptClassLoader)
+        assertTrue(classLoader is CompiledScriptClassLoader)
         val anotherClass = classLoader.loadClass(compiledScriptClass.qualifiedName)
 
-        Assert.assertEquals(compiledScriptClass.java, anotherClass)
+        assertEquals(compiledScriptClass.java, anotherClass)
 
         val classResourceName = compiledScriptClass.qualifiedName!!.replace('.', '/') + ".class"
         val classAsResourceUrl = classLoader.getResource(classResourceName)
         val classAssResourceStream = classLoader.getResourceAsStream(classResourceName)
 
-        Assert.assertNotNull(classAsResourceUrl)
-        Assert.assertNotNull(classAssResourceStream)
+        assertNotNull(classAsResourceUrl)
+        assertNotNull(classAssResourceStream)
 
-        val classAsResourceData = classAsResourceUrl!!.openConnection().getInputStream().readBytes()
-        val classAsResourceStreamData = classAssResourceStream!!.readBytes()
+        val classAsResourceData = classAsResourceUrl.openConnection().getInputStream().readBytes()
+        val classAsResourceStreamData = classAssResourceStream.readBytes()
 
-        Assert.assertArrayEquals(classAsResourceData, classAsResourceStreamData)
+        assertContentEquals(classAsResourceData, classAsResourceStreamData)
 
         // TODO: consider testing getResources as well
     }
@@ -844,22 +896,25 @@ fun <T> ResultWithDiagnostics<T>.throwOnExceptionResult(): ResultWithDiagnostics
 }
 
 private fun evalScript(script: String, host: BasicScriptingHost = BasicJvmScriptingHost()): ResultWithDiagnostics<*> =
-    evalScriptWithConfiguration(script, host)
+    evalScriptWithConfiguration(script, host) {}
 
 private fun evalScriptWithResult(
     script: String,
     host: BasicScriptingHost = BasicJvmScriptingHost(),
-    body: ScriptCompilationConfiguration.Builder.() -> Unit = {}
+    compilation: ScriptCompilationConfiguration.Builder.() -> Unit = {},
+    evaluation: ScriptEvaluationConfiguration.Builder.() -> Unit = {}
 ): ResultValue =
-    evalScriptWithConfiguration(script, host, body).throwOnFailure().valueOrNull()!!.returnValue
+    evalScriptWithConfiguration(script, host, compilation, evaluation).throwOnFailure().valueOrNull()!!.returnValue
 
 internal fun evalScriptWithConfiguration(
     script: String,
     host: BasicScriptingHost = BasicJvmScriptingHost(),
-    body: ScriptCompilationConfiguration.Builder.() -> Unit = {}
+    compilation: ScriptCompilationConfiguration.Builder.() -> Unit = {},
+    evaluation: ScriptEvaluationConfiguration.Builder.() -> Unit = {}
 ): ResultWithDiagnostics<EvaluationResult> {
-    val compilationConfiguration = createJvmCompilationConfigurationFromTemplate<SimpleScriptTemplate>(body = body)
-    return host.eval(script.toScriptSource(), compilationConfiguration, null)
+    val compilationConf = createJvmCompilationConfigurationFromTemplate<SimpleScriptTemplate>(body = compilation)
+    val evaluationConf = createJvmEvaluationConfigurationFromTemplate<SimpleScriptTemplate>(body = evaluation)
+    return host.eval(script.toScriptSource(), compilationConf, evaluationConf)
 }
 
 private fun ScriptDefinition.evalScriptAndCheckOutput(script: String, expectedOutput: List<String>) {
@@ -869,7 +924,7 @@ private fun ScriptDefinition.evalScriptAndCheckOutput(script: String, expectedOu
         ).valueOrThrow().returnValue
         if (retVal is ResultValue.Error) throw retVal.error
     }.lines()
-    Assert.assertEquals(expectedOutput, output)
+    assertEquals(expectedOutput, output)
 }
 
 internal fun ScriptCompilationConfiguration.Builder.makeSimpleConfigurationWithTestImport() {

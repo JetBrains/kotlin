@@ -2,3 +2,5 @@
 // FIR_IDENTICAL
 
 fun ff(c: MutableCollection<String>) = c <!UNCHECKED_CAST!>as MutableList<Int><!>
+
+/* GENERATED_FIR_TAGS: asExpression, functionDeclaration */

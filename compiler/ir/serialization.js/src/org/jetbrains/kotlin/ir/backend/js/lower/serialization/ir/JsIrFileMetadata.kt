@@ -8,18 +8,18 @@ package org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir
 import org.jetbrains.kotlin.backend.common.serialization.IrFileSerializer
 import org.jetbrains.kotlin.library.impl.toArray
 import org.jetbrains.kotlin.library.encodings.WobblyTF8
-import org.jetbrains.kotlin.library.impl.IrMemoryStringWriter
-import org.jetbrains.kotlin.library.impl.IrArrayMemoryReader
+import org.jetbrains.kotlin.library.impl.IrStringWriter
+import org.jetbrains.kotlin.library.impl.IrArrayReader
 
 class JsIrFileMetadata(val exportedNames: List<String>) : IrFileSerializer.FileBackendSpecificMetadata {
     override fun toByteArray(): ByteArray {
-        return IrMemoryStringWriter(exportedNames).writeIntoMemory()
+        return IrStringWriter(exportedNames).writeIntoMemory()
     }
 
     companion object {
         fun fromByteArray(data: ByteArray): JsIrFileMetadata {
             return JsIrFileMetadata(
-                exportedNames = IrArrayMemoryReader(data).toArray().map(WobblyTF8::decode)
+                exportedNames = IrArrayReader(data).toArray().map(WobblyTF8::decode)
             )
         }
     }

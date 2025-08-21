@@ -6,6 +6,7 @@
 package org.jetbrains.kotlinx.atomicfu.compiler.backend
 
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.util.render
 
 internal fun IrProperty.atomicfuRender(): String =

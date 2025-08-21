@@ -51,3 +51,5 @@ public class D<Z> extends J {
 package p
 
 fun test() = D<String>().getZ2(1)
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, integerLiteral, javaFunction, javaType */

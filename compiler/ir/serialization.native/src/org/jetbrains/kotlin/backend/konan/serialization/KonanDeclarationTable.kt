@@ -12,7 +12,9 @@ import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.util.IdSignature
 
-class KonanGlobalDeclarationTable(builtIns: IrBuiltIns) : GlobalDeclarationTable(KonanManglerIr) {
+class KonanGlobalDeclarationTable(
+    builtIns: IrBuiltIns
+) : GlobalDeclarationTable(KonanManglerIr) {
     init {
         loadKnownBuiltins(builtIns)
     }

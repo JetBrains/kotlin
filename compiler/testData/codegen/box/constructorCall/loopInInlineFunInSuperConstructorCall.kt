@@ -1,5 +1,6 @@
 // TARGET_BACKEND: JVM
 // WITH_STDLIB
+// FILE: lib.kt
 open class A(val s: String)
 
 inline fun test(crossinline z: () -> String): String {
@@ -8,6 +9,7 @@ inline fun test(crossinline z: () -> String): String {
     }.value
 }
 
+// FILE: main.kt
 fun box(): String {
     return test { "OK" }
 }

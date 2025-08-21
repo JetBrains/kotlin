@@ -29,3 +29,7 @@ fun <T> lazy(initializer: () -> T): Lazy<T> = TODO()
 interface Lazy<out T> {
     operator fun getValue(thisRef: Any?, property: KProperty<*>): T = TODO()
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, classDeclaration, functionDeclaration, functionalType,
+interfaceDeclaration, lambdaLiteral, nullableType, operator, out, propertyDeclaration, propertyDelegate, starProjection,
+typeParameter */

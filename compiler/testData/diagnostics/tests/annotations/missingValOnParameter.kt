@@ -5,3 +5,5 @@ annotation class Ann(
         <!VAR_ANNOTATION_PARAMETER!>var<!> b: Int,
         <!MISSING_VAL_ON_ANNOTATION_PARAMETER!>c: String<!>
         )
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, primaryConstructor, propertyDeclaration */

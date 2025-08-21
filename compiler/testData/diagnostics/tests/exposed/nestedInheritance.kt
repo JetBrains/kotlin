@@ -11,3 +11,5 @@ internal class Outer {
 class Container {
     interface Derived : <!EXPOSED_SUPER_INTERFACE("public;  containing declaration Outer; internal")!>Base<!>
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, interfaceDeclaration, nestedClass */

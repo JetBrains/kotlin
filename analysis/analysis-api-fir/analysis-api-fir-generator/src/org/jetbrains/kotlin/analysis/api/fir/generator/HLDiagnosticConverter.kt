@@ -40,7 +40,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.resolve.ForbiddenNamedArgumentsTarget
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualAnnotationsIncompatibilityType
-import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualCompatibility
+import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualMatchingCompatibility
 import org.jetbrains.kotlin.serialization.deserialization.IncompatibleVersionErrorData
 import org.jetbrains.kotlin.types.Variance
 import kotlin.reflect.KClass
@@ -377,8 +377,8 @@ internal object FirToKtConversionCreator {
         FqName::class,
         ClassId::class,
         FirModuleData::class,
-        ExpectActualCompatibility::class,
-        ExpectActualCompatibility.MismatchOrIncompatible::class,
+        ExpectActualMatchingCompatibility::class,
+        ExpectActualMatchingCompatibility.Mismatch::class,
         ExpectActualAnnotationsIncompatibilityType::class,
         FirDeprecationInfo::class,
         ApiVersion::class,

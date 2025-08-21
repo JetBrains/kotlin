@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirBasicDeclarationChecker
-import org.jetbrains.kotlin.fir.analysis.checkers.getContainingClassSymbol
+import org.jetbrains.kotlin.fir.resolve.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors
 import org.jetbrains.kotlin.fir.analysis.js.checkers.FirJsStableName
 import org.jetbrains.kotlin.fir.analysis.js.checkers.isNativeObject
@@ -22,7 +22,8 @@ object FirJsBuiltinNameClashChecker : FirBasicDeclarationChecker(MppCheckerKind.
     private val PROHIBITED_STATIC_NAMES = setOf("prototype", "length", "\$metadata\$")
     private val PROHIBITED_MEMBER_NAMES = setOf("constructor")
 
-    override fun check(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirDeclaration) {
         if (declaration.symbol.isNativeObject(context.session)) {
             return
         }
@@ -33,10 +34,10 @@ object FirJsBuiltinNameClashChecker : FirBasicDeclarationChecker(MppCheckerKind.
         val stableName = FirJsStableName.createStableNameOrNull(declaration.symbol, context.session) ?: return
 
         if (declaration is FirClassLikeDeclaration && stableName.name in PROHIBITED_STATIC_NAMES) {
-            reporter.reportOn(declaration.source, FirJsErrors.JS_BUILTIN_NAME_CLASH, "Function.$stableName", context)
+            reporter.reportOn(declaration.source, FirJsErrors.JS_BUILTIN_NAME_CLASH, "Function.$stableName")
         }
         if (declaration is FirCallableDeclaration && stableName.name in PROHIBITED_MEMBER_NAMES) {
-            reporter.reportOn(declaration.source, FirJsErrors.JS_BUILTIN_NAME_CLASH, "Object.prototype.$stableName", context)
+            reporter.reportOn(declaration.source, FirJsErrors.JS_BUILTIN_NAME_CLASH, "Object.prototype.$stableName")
         }
     }
 }

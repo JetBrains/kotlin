@@ -38,15 +38,15 @@ enum class AtomicFunctionType {
     ATOMIC_GET_ARRAY_ELEMENT, ATOMIC_SET_ARRAY_ELEMENT, COMPARE_AND_EXCHANGE_ARRAY_ELEMENT, COMPARE_AND_SET_ARRAY_ELEMENT, GET_AND_SET_ARRAY_ELEMENT, GET_AND_ADD_ARRAY_ELEMENT;
 }
 
-private var IrField.atomicFunction: MutableMap<AtomicFunctionType, IrSimpleFunction>? by irAttribute(followAttributeOwner = false)
-internal var IrSimpleFunction.volatileField: IrField? by irAttribute(followAttributeOwner = false)
+private var IrField.atomicFunction: MutableMap<AtomicFunctionType, IrSimpleFunction>? by irAttribute(copyByDefault = false)
+internal var IrSimpleFunction.volatileField: IrField? by irAttribute(copyByDefault = false)
 
 internal class VolatileFieldsLowering(val context: Context) : FileLoweringPass {
-    private val symbols = context.ir.symbols
+    private val symbols = context.symbols
     private val irBuiltins = context.irBuiltIns
     private fun IrBuilderWithScope.irByteToBool(expression: IrExpression) = irCall(symbols.areEqualByValue[PrimitiveBinaryType.BYTE]!!).apply {
-        putValueArgument(0, expression)
-        putValueArgument(1, irByte(1))
+        arguments[0] = expression
+        arguments[1] = irByte(1)
     }
     private fun IrBuilderWithScope.irBoolToByte(expression: IrExpression) = irWhen(irBuiltins.byteType, listOf(
         irBranch(expression, irByte(1)),
@@ -77,7 +77,7 @@ internal class VolatileFieldsLowering(val context: Context) : FileLoweringPass {
         builder()
         annotations += buildSimpleAnnotation(context.irBuiltIns,
                 SYNTHETIC_OFFSET, SYNTHETIC_OFFSET,
-                context.ir.symbols.typedIntrinsic.owner, intrinsicType.name)
+                context.symbols.typedIntrinsic.owner, intrinsicType.name)
     }
 
     private fun buildCasFunction(irField: IrField, intrinsicType: IntrinsicType, functionReturnType: IrType) =
@@ -180,8 +180,8 @@ internal class VolatileFieldsLowering(val context: Context) : FileLoweringPass {
             }
 
 
-            private fun unsupported(message: String) = builder.irCall(context.ir.symbols.throwIllegalArgumentExceptionWithMessage).apply {
-                putValueArgument(0, builder.irString(message))
+            private fun unsupported(message: String) = builder.irCall(context.symbols.throwIllegalArgumentExceptionWithMessage).apply {
+                arguments[0] = builder.irString(message)
             }
 
             override fun visitGetField(expression: IrGetField): IrExpression {
@@ -214,7 +214,6 @@ internal class VolatileFieldsLowering(val context: Context) : FileLoweringPass {
             private tailrec fun getConstPropertyReference(expression: IrExpression?, expectedReturn: IrReturnableBlockSymbol?) : IrRichPropertyReference? {
                 return when {
                     expression == null -> null
-                    expectedReturn == null && expression is IrPropertyReference -> shouldNotBeCalled()
                     expectedReturn == null && expression is IrRichPropertyReference -> expression
                     expectedReturn == null && expression is IrReturnableBlock -> getConstPropertyReference(expression.singleExpressionOrNull, expression.symbol)
                     expression is IrReturn && expression.returnTargetSymbol == expectedReturn -> getConstPropertyReference(expression.value, null)
@@ -230,7 +229,8 @@ internal class VolatileFieldsLowering(val context: Context) : FileLoweringPass {
                     it in intrinsicMap || it == IntrinsicType.ATOMIC_GET_FIELD || it == IntrinsicType.ATOMIC_SET_FIELD
                 } ?: return expression
                 builder.at(expression)
-                val reference = getConstPropertyReference(expression.extensionReceiver, null)
+                val extensionReceiver = expression.arguments[expression.symbol.owner.parameters.indexOfFirst { it.kind == IrParameterKind.ExtensionReceiver }]
+                val reference = getConstPropertyReference(extensionReceiver, null)
                         ?: return unsupported("Only compile-time known IrProperties supported for $intrinsicType")
                 val property = (reference.reflectionTargetSymbol as? IrPropertySymbol)?.owner
                 val backingField = property?.backingField
@@ -244,16 +244,18 @@ internal class VolatileFieldsLowering(val context: Context) : FileLoweringPass {
                 }
                 return builder.irCall(function).apply {
                     dispatchReceiver = reference.boundValues.singleOrNull()
-                    for (index in 0 until expression.valueArgumentsCount) {
-                        putValueArgument(index, expression.getValueArgument(index))
+                    val replacementParams = function.parameters.filter { it.kind == IrParameterKind.Regular }
+                    val originalParams = expression.symbol.owner.parameters.filter { it.kind == IrParameterKind.Regular }
+                    for ((from, to) in originalParams.zip(replacementParams)) {
+                        arguments[to] = expression.arguments[from]
                     }
                 }.let {
                     if (intrinsicType == IntrinsicType.ATOMIC_GET_FIELD || intrinsicType == IntrinsicType.ATOMIC_SET_FIELD) {
                         return it
                     }
                     if (backingField.requiresBooleanConversion()) {
-                        for (arg in 0 until it.valueArgumentsCount) {
-                            it.putValueArgument(arg, builder.irBoolToByte(it.getValueArgument(arg)!!))
+                        for (param in function.parameters.filter { it.kind == IrParameterKind.Regular }) {
+                            it.arguments[param] = builder.irBoolToByte(it.arguments[param]!!)
                         }
                         if (intrinsicType == IntrinsicType.COMPARE_AND_EXCHANGE_FIELD || intrinsicType == IntrinsicType.GET_AND_SET_FIELD) {
                             builder.irByteToBool(it)

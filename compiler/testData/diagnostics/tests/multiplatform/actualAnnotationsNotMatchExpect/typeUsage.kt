@@ -106,3 +106,7 @@ actual fun funcTypeReturnType(arg: () -> Any) {}
 actual fun funcTypeReceiverType(arg: Any.() -> Unit) {}
 
 actual fun funcTypeArgType(arg: (arg: Any) -> Unit) {}
+
+/* GENERATED_FIR_TAGS: actual, annotationDeclaration, classDeclaration, expect, funWithExtensionReceiver,
+functionDeclaration, functionalType, inner, interfaceDeclaration, nullableType, outProjection, starProjection,
+stringLiteral, typeConstraint, typeParameter, typeWithExtension */

@@ -7,10 +7,12 @@ KtArrayAccessExpression(70,77): 'list[0]'
           receiverType = null
           returnType = kotlin.Int
           symbol = index: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = list
           isSafeNavigation = false
@@ -26,12 +28,14 @@ KtArrayAccessExpression(70,77): 'list[0]'
               receiverType = null
               returnType = kotlin.Int
               symbol = index: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/collections/MutableList.get
       typeArgumentsMapping = {}
     isInBestCandidates = true
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -40,10 +44,12 @@ KtArrayAccessExpression(70,77): 'list[0]'
           receiverType = null
           returnType = kotlin.Int
           symbol = key: K
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:
           expression = list
@@ -59,8 +65,10 @@ KtArrayAccessExpression(70,77): 'list[0]'
               receiverType = null
               returnType = kotlin.Int
               symbol = key: K
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/collections/get
       typeArgumentsMapping = {
         K -> (kotlin.Int),
@@ -68,7 +76,7 @@ KtArrayAccessExpression(70,77): 'list[0]'
       }
     diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with get>
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -77,10 +85,12 @@ KtArrayAccessExpression(70,77): 'list[0]'
           receiverType = null
           returnType = kotlin.String
           symbol = name: kotlin.String
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:
           expression = list
@@ -96,8 +106,10 @@ KtArrayAccessExpression(70,77): 'list[0]'
               receiverType = null
               returnType = kotlin.String
               symbol = name: kotlin.String
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/text/get
       typeArgumentsMapping = {}
     diagnostic = ERROR<CONSTANT_EXPECTED_TYPE_MISMATCH: The integer literal does not conform to the expected type String>

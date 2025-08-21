@@ -5,3 +5,5 @@ enum class E {
 }
 
 class A : E.<!ENUM_ENTRY_AS_TYPE!>ENTRY<!>
+
+/* GENERATED_FIR_TAGS: classDeclaration, enumDeclaration, enumEntry */

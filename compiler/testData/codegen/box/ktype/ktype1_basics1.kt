@@ -4,10 +4,11 @@
  */
 // AssertionError: Expected <C<kotlin.Int?>>, actual <C<Int?>>.
 // AssertionError: Expected <C<C<kotlin.Any>>>, actual <C<C<Any>>>.
-// IGNORE_BACKEND: JS_IR, JS_IR_ES6, WASM, ANDROID
+// IGNORE_BACKEND: JS_IR, JS_IR_ES6, ANDROID
 
 // WITH_STDLIB
 // WITH_REFLECT
+// WASM_ALLOW_FQNAME_IN_KCLASS
 
 import kotlin.test.*
 import kotlin.reflect.*

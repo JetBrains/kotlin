@@ -6,12 +6,10 @@
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import org.gradle.api.Project
-import org.jetbrains.kotlin.gradle.DeprecatedTargetPresetApi
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.targets.android.internal.InternalKotlinTargetPreset
 
-@DeprecatedTargetPresetApi
-abstract class KotlinOnlyTargetPreset<R : KotlinOnlyTarget<T>, T : KotlinCompilation<*>>(
+internal abstract class KotlinOnlyTargetPreset<R : KotlinOnlyTarget<T>, T : KotlinCompilation<Any>>(
     protected val project: Project,
 ) : InternalKotlinTargetPreset<R> {
 
@@ -20,21 +18,13 @@ abstract class KotlinOnlyTargetPreset<R : KotlinOnlyTarget<T>, T : KotlinCompila
     protected open fun provideTargetDisambiguationClassifier(target: KotlinOnlyTarget<T>): String? =
         target.targetName
 
-    // This function is used in IDE import in order to indicate that sourceSetName=disambiguationClassifier+compilationName
-    @Deprecated("Scheduled for removal with Kotlin 2.2", level = DeprecationLevel.ERROR)
-    protected open fun useDisambiguationClassifierAsSourceSetNamePrefix() = true
-
-    // This function is used in IDE import in order to override sourceSetName
-    @Deprecated("Scheduled for removal with Kotlin 2.2", level = DeprecationLevel.ERROR)
-    protected open fun overrideDisambiguationClassifierOnIdeImport(name: String): String? = null
-
     protected abstract fun instantiateTarget(name: String): R
 
     override fun createTargetInternal(name: String): R {
         val result = instantiateTarget(name).apply {
             targetName = name
             disambiguationClassifier = provideTargetDisambiguationClassifier(this@apply)
-            preset = this@KotlinOnlyTargetPreset
+            targetPreset = this@KotlinOnlyTargetPreset
 
             val compilationFactory = createCompilationFactory(this)
             compilations = project.container(compilationFactory.itemClass, compilationFactory)

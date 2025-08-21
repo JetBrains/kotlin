@@ -23,3 +23,6 @@ fun register(owner: Owner<*>) {}
 fun test(some: Some<String>) {
     register(some.g)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, interfaceDeclaration, nullableType, propertyDeclaration,
+starProjection, typeParameter */

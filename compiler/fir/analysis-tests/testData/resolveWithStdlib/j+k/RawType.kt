@@ -14,3 +14,5 @@ class Some
 fun test(list: ArrayList<Some>) {
     JavaClass.foo(list)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, javaFunction */

@@ -13,3 +13,6 @@ fun test() {
         { "something" } // should be fine
     }
 }
+
+/* GENERATED_FIR_TAGS: callableReference, functionDeclaration, functionalType, integerLiteral, lambdaLiteral,
+stringLiteral */

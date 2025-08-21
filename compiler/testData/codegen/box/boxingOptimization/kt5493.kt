@@ -1,3 +1,4 @@
+// DUMP_IR
 
 fun box() : String {
     try {

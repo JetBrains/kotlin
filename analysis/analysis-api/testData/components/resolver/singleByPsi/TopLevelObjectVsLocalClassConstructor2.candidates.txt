@@ -4,6 +4,7 @@ KtNameReferenceExpression(104,112): 'Conflict'
       argumentMapping = {}
       isImplicitInvoke = true
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = Conflict
           isSafeNavigation = false
@@ -14,15 +15,17 @@ KtNameReferenceExpression(104,112): 'Conflict'
           returnType = kotlin.Unit
           symbol = test/Conflict.invoke(<dispatch receiver>: test.Conflict): kotlin.Unit
           valueParameters = []
+          contextParameters = []
           callableId = test/Conflict.invoke
       typeArgumentsMapping = {}
     isInBestCandidates = false
-  
+
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -30,6 +33,7 @@ KtNameReferenceExpression(104,112): 'Conflict'
           returnType = <local>.Conflict
           symbol = <constructor>(): <local>.Conflict
           valueParameters = []
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true

@@ -72,3 +72,6 @@ fun test_4(x: Any) {
     myRequireNot(x !is A)
     x.foo()
 }
+
+/* GENERATED_FIR_TAGS: andExpression, classReference, contractConditionalEffect, contracts, disjunctionExpression,
+functionDeclaration, ifExpression, interfaceDeclaration, intersectionType, isExpression, lambdaLiteral, smartcast */

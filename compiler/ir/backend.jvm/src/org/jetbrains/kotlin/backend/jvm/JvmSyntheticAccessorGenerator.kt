@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.ir.types.makeNullable
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
 import org.jetbrains.kotlin.load.java.JvmAbi
+import org.jetbrains.kotlin.name.JvmStandardClassIds
 import org.jetbrains.org.objectweb.asm.Opcodes
 
 class JvmSyntheticAccessorGenerator(context: JvmBackendContext) :
@@ -60,7 +61,7 @@ class JvmSyntheticAccessorGenerator(context: JvmBackendContext) :
 
             accessor.addValueParameter(
                 CONSTRUCTOR_MARKER_PARAMETER_NAME.synthesizedString,
-                context.ir.symbols.defaultConstructorMarker.defaultType.makeNullable(),
+                context.symbols.defaultConstructorMarker.defaultType.makeNullable(),
                 IrDeclarationOrigin.DEFAULT_CONSTRUCTOR_MARKER,
             )
 
@@ -198,6 +199,7 @@ class JvmSyntheticAccessorGenerator(context: JvmBackendContext) :
         }
 
     fun isOrShouldBeHiddenSinceHasMangledParams(constructor: IrConstructor): Boolean {
+        if (constructor.hasAnnotation(JvmStandardClassIds.JVM_EXPOSE_BOXED_ANNOTATION_FQ_NAME)) return false
         if (constructor.hiddenConstructorMangledParams != null) return true
         return constructor.isOrShouldBeHiddenDueToOrigin &&
                 !DescriptorVisibilities.isPrivate(constructor.visibility) &&

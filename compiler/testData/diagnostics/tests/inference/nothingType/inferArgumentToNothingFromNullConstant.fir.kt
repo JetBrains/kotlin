@@ -11,3 +11,6 @@ fun main() {
     var b: Out<Int>? = null
     b = a
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, functionDeclaration, localProperty, nullableType, out,
+primaryConstructor, propertyDeclaration, typeConstraint, typeParameter */

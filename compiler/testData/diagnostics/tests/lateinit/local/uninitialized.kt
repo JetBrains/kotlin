@@ -24,3 +24,6 @@ fun test3() {
     }
     s.length
 }
+
+/* GENERATED_FIR_TAGS: assignment, functionDeclaration, ifExpression, lambdaLiteral, lateinit, localProperty,
+propertyDeclaration, stringLiteral */

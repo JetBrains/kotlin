@@ -23,7 +23,7 @@ import java.util.regex.Pattern;
 public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCodegenTest {
   @Test
   public void testAllFilesPresentInBox() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "multiplatform/k1", "lightTree");
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "multiplatform/k1");
   }
 
   @Nested
@@ -32,7 +32,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
   public class Annotations {
     @Test
     public void testAllFilesPresentInAnnotations() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/annotations"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/annotations"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
     @Test
@@ -141,6 +141,12 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     @TestMetadata("annotationsOnTypeAliases.kt")
     public void testAnnotationsOnTypeAliases() {
       runTest("compiler/testData/codegen/box/annotations/annotationsOnTypeAliases.kt");
+    }
+
+    @Test
+    @TestMetadata("checkReturnValue.kt")
+    public void testCheckReturnValue() {
+      runTest("compiler/testData/codegen/box/annotations/checkReturnValue.kt");
     }
 
     @Test
@@ -450,6 +456,12 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     }
 
     @Test
+    @TestMetadata("transitiveAnnotationsViaJava.kt")
+    public void testTransitiveAnnotationsViaJava() {
+      runTest("compiler/testData/codegen/box/annotations/transitiveAnnotationsViaJava.kt");
+    }
+
+    @Test
     @TestMetadata("typealiasAnnotationWithNonTrivialTypeArguments.kt")
     public void testTypealiasAnnotationWithNonTrivialTypeArguments() {
       runTest("compiler/testData/codegen/box/annotations/typealiasAnnotationWithNonTrivialTypeArguments.kt");
@@ -479,7 +491,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class AnnotatedLambda {
       @Test
       public void testAllFilesPresentInAnnotatedLambda() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/annotations/annotatedLambda"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/annotations/annotatedLambda"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -525,7 +537,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class Instances {
       @Test
       public void testAllFilesPresentInInstances() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/annotations/instances"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/annotations/instances"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -697,7 +709,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class KClassMapping {
       @Test
       public void testAllFilesPresentInKClassMapping() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/annotations/kClassMapping"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/annotations/kClassMapping"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -743,7 +755,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class Repeatable {
       @Test
       public void testAllFilesPresentInRepeatable() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/annotations/repeatable"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/annotations/repeatable"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -783,7 +795,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class TypeAnnotations {
       @Test
       public void testAllFilesPresentInTypeAnnotations() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/annotations/typeAnnotations"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/annotations/typeAnnotations"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -884,7 +896,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
   public class ArgumentOrder {
     @Test
     public void testAllFilesPresentInArgumentOrder() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/argumentOrder"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/argumentOrder"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
     @Test
@@ -990,7 +1002,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
   public class Arithmetic {
     @Test
     public void testAllFilesPresentInArithmetic() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/arithmetic"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/arithmetic"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
     @Test
@@ -1066,7 +1078,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
   public class Arrays {
     @Test
     public void testAllFilesPresentInArrays() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/arrays"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/arrays"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
     @Test
@@ -1513,7 +1525,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
 
       @Test
       public void testAllFilesPresentInArraysOfInlineClass() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/arrays/arraysOfInlineClass"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/arrays/arraysOfInlineClass"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -1529,7 +1541,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class ForInReversed {
       @Test
       public void testAllFilesPresentInForInReversed() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/arrays/forInReversed"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/arrays/forInReversed"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -1569,7 +1581,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class ForInUnsignedArray {
       @Test
       public void testAllFilesPresentInForInUnsignedArray() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/arrays/forInUnsignedArray"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/arrays/forInUnsignedArray"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -1627,7 +1639,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class MultiDecl {
       @Test
       public void testAllFilesPresentInMultiDecl() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/arrays/multiDecl"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/arrays/multiDecl"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -1684,7 +1696,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
       public class Int {
         @Test
         public void testAllFilesPresentInInt() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/arrays/multiDecl/int"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/arrays/multiDecl/int"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
         }
 
         @Test
@@ -1718,7 +1730,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
       public class Long {
         @Test
         public void testAllFilesPresentInLong() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/arrays/multiDecl/long"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/arrays/multiDecl/long"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
         }
 
         @Test
@@ -1754,7 +1766,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
   public class Assert {
     @Test
     public void testAllFilesPresentInAssert() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/assert"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/assert"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
     @Test
@@ -1775,7 +1787,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class Jvm {
       @Test
       public void testAllFilesPresentInJvm() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/assert/jvm"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/assert/jvm"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -1918,7 +1930,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
   public class Basics {
     @Test
     public void testAllFilesPresentInBasics() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/basics"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/basics"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
     @Test
@@ -1985,6 +1997,18 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     @TestMetadata("k42000_2.kt")
     public void testK42000_2() {
       runTest("compiler/testData/codegen/box/basics/k42000_2.kt");
+    }
+
+    @Test
+    @TestMetadata("k42000_crossmodule.kt")
+    public void testK42000_crossmodule() {
+      runTest("compiler/testData/codegen/box/basics/k42000_crossmodule.kt");
+    }
+
+    @Test
+    @TestMetadata("kt75483.kt")
+    public void testKt75483() {
+      runTest("compiler/testData/codegen/box/basics/kt75483.kt");
     }
 
     @Test
@@ -2162,7 +2186,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
   public class Bce {
     @Test
     public void testAllFilesPresentInBce() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/bce"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/bce"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
     @Test
@@ -2280,7 +2304,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
   public class BinaryOp {
     @Test
     public void testAllFilesPresentInBinaryOp() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/binaryOp"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/binaryOp"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
     @Test
@@ -2476,7 +2500,13 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
   public class Boxing {
     @Test
     public void testAllFilesPresentInBoxing() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/boxing"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/boxing"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+    }
+
+    @Test
+    @TestMetadata("boxBoolean.kt")
+    public void testBoxBoolean() {
+      runTest("compiler/testData/codegen/box/boxing/boxBoolean.kt");
     }
 
     @Test
@@ -2594,7 +2624,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
   public class BoxingOptimization {
     @Test
     public void testAllFilesPresentInBoxingOptimization() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/boxingOptimization"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/boxingOptimization"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
     @Test
@@ -2892,7 +2922,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
 
     @Test
     public void testAllFilesPresentInBranching() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/branching"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/branching"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
     @Test
@@ -2968,19 +2998,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
 
     @Test
     public void testAllFilesPresentInBridges() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/bridges"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
-    }
-
-    @Test
-    @TestMetadata("bridgeInInterface.kt")
-    public void testBridgeInInterface() {
-      runTest("compiler/testData/codegen/box/bridges/bridgeInInterface.kt");
-    }
-
-    @Test
-    @TestMetadata("bridgeInInterfaceWithProperties.kt")
-    public void testBridgeInInterfaceWithProperties() {
-      runTest("compiler/testData/codegen/box/bridges/bridgeInInterfaceWithProperties.kt");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/bridges"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
     @Test
@@ -3050,27 +3068,9 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     }
 
     @Test
-    @TestMetadata("fakeOverrideFromInterfaceThroughIntermediateClass.kt")
-    public void testFakeOverrideFromInterfaceThroughIntermediateClass() {
-      runTest("compiler/testData/codegen/box/bridges/fakeOverrideFromInterfaceThroughIntermediateClass.kt");
-    }
-
-    @Test
-    @TestMetadata("fakeOverrideMultiFile.kt")
-    public void testFakeOverrideMultiFile() {
-      runTest("compiler/testData/codegen/box/bridges/fakeOverrideMultiFile.kt");
-    }
-
-    @Test
     @TestMetadata("fakeOverrideOfTraitImpl.kt")
     public void testFakeOverrideOfTraitImpl() {
       runTest("compiler/testData/codegen/box/bridges/fakeOverrideOfTraitImpl.kt");
-    }
-
-    @Test
-    @TestMetadata("fakeOverrideThroughGenericSuperclass.kt")
-    public void testFakeOverrideThroughGenericSuperclass() {
-      runTest("compiler/testData/codegen/box/bridges/fakeOverrideThroughGenericSuperclass.kt");
     }
 
     @Test
@@ -3209,6 +3209,12 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     @TestMetadata("kt52929_platformDependent.kt")
     public void testKt52929_platformDependent() {
       runTest("compiler/testData/codegen/box/bridges/kt52929_platformDependent.kt");
+    }
+
+    @Test
+    @TestMetadata("kt74377.kt")
+    public void testKt74377() {
+      runTest("compiler/testData/codegen/box/bridges/kt74377.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
     }
 
     @Test
@@ -3578,6 +3584,322 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     }
 
     @Nested
+    @TestMetadata("compiler/testData/codegen/box/bridges/declarationDifferentSignature")
+    @TestDataPath("$PROJECT_ROOT")
+    public class DeclarationDifferentSignature {
+      @Test
+      public void testAllFilesPresentInDeclarationDifferentSignature() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/bridges/declarationDifferentSignature"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+      }
+
+      @Test
+      @TestMetadata("simpleAbstractDeclarationDifferentSignature.kt")
+      public void testSimpleAbstractDeclarationDifferentSignature() {
+        runTest("compiler/testData/codegen/box/bridges/declarationDifferentSignature/simpleAbstractDeclarationDifferentSignature.kt");
+      }
+
+      @Test
+      @TestMetadata("simpleAbstractDeclarationOverridesConcreteDifferentSignature.kt")
+      public void testSimpleAbstractDeclarationOverridesConcreteDifferentSignature() {
+        runTest("compiler/testData/codegen/box/bridges/declarationDifferentSignature/simpleAbstractDeclarationOverridesConcreteDifferentSignature.kt");
+      }
+
+      @Test
+      @TestMetadata("simpleConcreteDeclarationDifferentSignature.kt")
+      public void testSimpleConcreteDeclarationDifferentSignature() {
+        runTest("compiler/testData/codegen/box/bridges/declarationDifferentSignature/simpleConcreteDeclarationDifferentSignature.kt");
+      }
+
+      @Test
+      @TestMetadata("simpleConcreteDeclarationOverridesAbstractDifferentSignature.kt")
+      public void testSimpleConcreteDeclarationOverridesAbstractDifferentSignature() {
+        runTest("compiler/testData/codegen/box/bridges/declarationDifferentSignature/simpleConcreteDeclarationOverridesAbstractDifferentSignature.kt");
+      }
+    }
+
+    @Nested
+    @TestMetadata("compiler/testData/codegen/box/bridges/diamond")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Diamond {
+      @Test
+      public void testAllFilesPresentInDiamond() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/bridges/diamond"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+      }
+
+      @Test
+      @TestMetadata("diamondAbstractDeclarations.kt")
+      public void testDiamondAbstractDeclarations() {
+        runTest("compiler/testData/codegen/box/bridges/diamond/diamondAbstractDeclarations.kt");
+      }
+
+      @Test
+      @TestMetadata("diamondAbstractFakeOverridesInTheMiddle.kt")
+      public void testDiamondAbstractFakeOverridesInTheMiddle() {
+        runTest("compiler/testData/codegen/box/bridges/diamond/diamondAbstractFakeOverridesInTheMiddle.kt");
+      }
+
+      @Test
+      @TestMetadata("diamondMixedDeclarations.kt")
+      public void testDiamondMixedDeclarations() {
+        runTest("compiler/testData/codegen/box/bridges/diamond/diamondMixedDeclarations.kt");
+      }
+    }
+
+    @Nested
+    @TestMetadata("compiler/testData/codegen/box/bridges/doubleOverride")
+    @TestDataPath("$PROJECT_ROOT")
+    public class DoubleOverride {
+      @Test
+      public void testAllFilesPresentInDoubleOverride() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/bridges/doubleOverride"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+      }
+
+      @Test
+      @TestMetadata("concreteDeclarationOverridesAbstractDeclarationOverridingConcrete.kt")
+      public void testConcreteDeclarationOverridesAbstractDeclarationOverridingConcrete() {
+        runTest("compiler/testData/codegen/box/bridges/doubleOverride/concreteDeclarationOverridesAbstractDeclarationOverridingConcrete.kt");
+      }
+
+      @Test
+      @TestMetadata("concreteDeclarationOverridesTwoInheritingDeclarations.kt")
+      public void testConcreteDeclarationOverridesTwoInheritingDeclarations() {
+        runTest("compiler/testData/codegen/box/bridges/doubleOverride/concreteDeclarationOverridesTwoInheritingDeclarations.kt");
+      }
+    }
+
+    @Nested
+    @TestMetadata("compiler/testData/codegen/box/bridges/fakeOverride")
+    @TestDataPath("$PROJECT_ROOT")
+    public class FakeOverride {
+      @Test
+      @TestMetadata("abstractFakeOverride.kt")
+      public void testAbstractFakeOverride() {
+        runTest("compiler/testData/codegen/box/bridges/fakeOverride/abstractFakeOverride.kt");
+      }
+
+      @Test
+      public void testAllFilesPresentInFakeOverride() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/bridges/fakeOverride"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+      }
+
+      @Test
+      @TestMetadata("diamondFakeOverrideAbstractAndConcrete.kt")
+      public void testDiamondFakeOverrideAbstractAndConcrete() {
+        runTest("compiler/testData/codegen/box/bridges/fakeOverride/diamondFakeOverrideAbstractAndConcrete.kt");
+      }
+
+      @Test
+      @TestMetadata("diamondFakeOverrideAbstractFakeAndConcrete.kt")
+      public void testDiamondFakeOverrideAbstractFakeAndConcrete() {
+        runTest("compiler/testData/codegen/box/bridges/fakeOverride/diamondFakeOverrideAbstractFakeAndConcrete.kt");
+      }
+
+      @Test
+      @TestMetadata("diamondFakeOverrideAbstractOverridesConcrete.kt")
+      public void testDiamondFakeOverrideAbstractOverridesConcrete() {
+        runTest("compiler/testData/codegen/box/bridges/fakeOverride/diamondFakeOverrideAbstractOverridesConcrete.kt");
+      }
+
+      @Test
+      @TestMetadata("fakeOverrideAbstractAndConcreteDeclarations.kt")
+      public void testFakeOverrideAbstractAndConcreteDeclarations() {
+        runTest("compiler/testData/codegen/box/bridges/fakeOverride/fakeOverrideAbstractAndConcreteDeclarations.kt");
+      }
+
+      @Test
+      @TestMetadata("fakeOverrideDiamondWithExtraAbstract.kt")
+      public void testFakeOverrideDiamondWithExtraAbstract() {
+        runTest("compiler/testData/codegen/box/bridges/fakeOverride/fakeOverrideDiamondWithExtraAbstract.kt");
+      }
+
+      @Test
+      @TestMetadata("fakeOverrideInheritingDeclarations.kt")
+      public void testFakeOverrideInheritingDeclarations() {
+        runTest("compiler/testData/codegen/box/bridges/fakeOverride/fakeOverrideInheritingDeclarations.kt");
+      }
+
+      @Test
+      @TestMetadata("fakeOverrideInheritingDeclarationsAndAbstract.kt")
+      public void testFakeOverrideInheritingDeclarationsAndAbstract() {
+        runTest("compiler/testData/codegen/box/bridges/fakeOverride/fakeOverrideInheritingDeclarationsAndAbstract.kt");
+      }
+
+      @Test
+      @TestMetadata("fakeOverrideInheritsBridgeFromDeclaration.kt")
+      public void testFakeOverrideInheritsBridgeFromDeclaration() {
+        runTest("compiler/testData/codegen/box/bridges/fakeOverride/fakeOverrideInheritsBridgeFromDeclaration.kt");
+      }
+
+      @Test
+      @TestMetadata("fakeOverrideInheritsBridgeFromFakeOverride.kt")
+      public void testFakeOverrideInheritsBridgeFromFakeOverride() {
+        runTest("compiler/testData/codegen/box/bridges/fakeOverride/fakeOverrideInheritsBridgeFromFakeOverride.kt");
+      }
+
+      @Test
+      @TestMetadata("fakeOverrideInheritsBridgesAndAbstract.kt")
+      public void testFakeOverrideInheritsBridgesAndAbstract() {
+        runTest("compiler/testData/codegen/box/bridges/fakeOverride/fakeOverrideInheritsBridgesAndAbstract.kt");
+      }
+
+      @Test
+      @TestMetadata("fakeOverrideManyDeclarations.kt")
+      public void testFakeOverrideManyDeclarations() {
+        runTest("compiler/testData/codegen/box/bridges/fakeOverride/fakeOverrideManyDeclarations.kt");
+      }
+
+      @Test
+      @TestMetadata("fakeOverrideMisleadingImplementation.kt")
+      public void testFakeOverrideMisleadingImplementation() {
+        runTest("compiler/testData/codegen/box/bridges/fakeOverride/fakeOverrideMisleadingImplementation.kt");
+      }
+
+      @Test
+      @TestMetadata("fakeOverrideSameSuperDeclarations.kt")
+      public void testFakeOverrideSameSuperDeclarations() {
+        runTest("compiler/testData/codegen/box/bridges/fakeOverride/fakeOverrideSameSuperDeclarations.kt");
+      }
+
+      @Test
+      @TestMetadata("fakeOverrideShouldNotInheritBridgeFromAbstractDeclaration.kt")
+      public void testFakeOverrideShouldNotInheritBridgeFromAbstractDeclaration() {
+        runTest("compiler/testData/codegen/box/bridges/fakeOverride/fakeOverrideShouldNotInheritBridgeFromAbstractDeclaration.kt");
+      }
+
+      @Test
+      @TestMetadata("fakeOverrideShouldNotInheritBridgeFromAbstractFakeOverride.kt")
+      public void testFakeOverrideShouldNotInheritBridgeFromAbstractFakeOverride() {
+        runTest("compiler/testData/codegen/box/bridges/fakeOverride/fakeOverrideShouldNotInheritBridgeFromAbstractFakeOverride.kt");
+      }
+
+      @Test
+      @TestMetadata("fakeOverrideTwoDeclarationsThroughFakeOverrides.kt")
+      public void testFakeOverrideTwoDeclarationsThroughFakeOverrides() {
+        runTest("compiler/testData/codegen/box/bridges/fakeOverride/fakeOverrideTwoDeclarationsThroughFakeOverrides.kt");
+      }
+
+      @Test
+      @TestMetadata("longTreeOfFakeOverrideBridgeInheritance.kt")
+      public void testLongTreeOfFakeOverrideBridgeInheritance() {
+        runTest("compiler/testData/codegen/box/bridges/fakeOverride/longTreeOfFakeOverrideBridgeInheritance.kt");
+      }
+    }
+
+    @Nested
+    @TestMetadata("compiler/testData/codegen/box/bridges/fakeOverrideDifferentSignature")
+    @TestDataPath("$PROJECT_ROOT")
+    public class FakeOverrideDifferentSignature {
+      @Test
+      public void testAllFilesPresentInFakeOverrideDifferentSignature() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/bridges/fakeOverrideDifferentSignature"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+      }
+
+      @Test
+      @TestMetadata("simpleAbstractDeclarationOverridesAbstractThroughFakeOverride.kt")
+      public void testSimpleAbstractDeclarationOverridesAbstractThroughFakeOverride() {
+        runTest("compiler/testData/codegen/box/bridges/fakeOverrideDifferentSignature/simpleAbstractDeclarationOverridesAbstractThroughFakeOverride.kt");
+      }
+
+      @Test
+      @TestMetadata("simpleAbstractDeclarationOverridesConcreteThroughFakeOverride.kt")
+      public void testSimpleAbstractDeclarationOverridesConcreteThroughFakeOverride() {
+        runTest("compiler/testData/codegen/box/bridges/fakeOverrideDifferentSignature/simpleAbstractDeclarationOverridesConcreteThroughFakeOverride.kt");
+      }
+
+      @Test
+      @TestMetadata("simpleConcreteDeclarationOverridesAbstractThroughFakeOverride.kt")
+      public void testSimpleConcreteDeclarationOverridesAbstractThroughFakeOverride() {
+        runTest("compiler/testData/codegen/box/bridges/fakeOverrideDifferentSignature/simpleConcreteDeclarationOverridesAbstractThroughFakeOverride.kt");
+      }
+
+      @Test
+      @TestMetadata("simpleConcreteDeclarationOverridesConcreteThroughFakeOverride.kt")
+      public void testSimpleConcreteDeclarationOverridesConcreteThroughFakeOverride() {
+        runTest("compiler/testData/codegen/box/bridges/fakeOverrideDifferentSignature/simpleConcreteDeclarationOverridesConcreteThroughFakeOverride.kt");
+      }
+    }
+
+    @Nested
+    @TestMetadata("compiler/testData/codegen/box/bridges/noBridges")
+    @TestDataPath("$PROJECT_ROOT")
+    public class NoBridges {
+      @Test
+      public void testAllFilesPresentInNoBridges() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/bridges/noBridges"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+      }
+
+      @Test
+      @TestMetadata("oneVertexAbstract.kt")
+      public void testOneVertexAbstract() {
+        runTest("compiler/testData/codegen/box/bridges/noBridges/oneVertexAbstract.kt");
+      }
+
+      @Test
+      @TestMetadata("oneVertexConcrete.kt")
+      public void testOneVertexConcrete() {
+        runTest("compiler/testData/codegen/box/bridges/noBridges/oneVertexConcrete.kt");
+      }
+
+      @Test
+      @TestMetadata("simpleAbstractDeclarationOverridesConcreteSameSignature.kt")
+      public void testSimpleAbstractDeclarationOverridesConcreteSameSignature() {
+        runTest("compiler/testData/codegen/box/bridges/noBridges/simpleAbstractDeclarationOverridesConcreteSameSignature.kt");
+      }
+
+      @Test
+      @TestMetadata("simpleAbstractDeclarationSameSignature.kt")
+      public void testSimpleAbstractDeclarationSameSignature() {
+        runTest("compiler/testData/codegen/box/bridges/noBridges/simpleAbstractDeclarationSameSignature.kt");
+      }
+
+      @Test
+      @TestMetadata("simpleDeclarationSameSignature.kt")
+      public void testSimpleDeclarationSameSignature() {
+        runTest("compiler/testData/codegen/box/bridges/noBridges/simpleDeclarationSameSignature.kt");
+      }
+
+      @Test
+      @TestMetadata("simpleFakeOverrideSameSignature.kt")
+      public void testSimpleFakeOverrideSameSignature() {
+        runTest("compiler/testData/codegen/box/bridges/noBridges/simpleFakeOverrideSameSignature.kt");
+      }
+    }
+
+    @Nested
+    @TestMetadata("compiler/testData/codegen/box/bridges/overridesTwoDeclarations")
+    @TestDataPath("$PROJECT_ROOT")
+    public class OverridesTwoDeclarations {
+      @Test
+      @TestMetadata("abstractDeclarationOverridesAbstractAndConcreteDeclarations.kt")
+      public void testAbstractDeclarationOverridesAbstractAndConcreteDeclarations() {
+        runTest("compiler/testData/codegen/box/bridges/overridesTwoDeclarations/abstractDeclarationOverridesAbstractAndConcreteDeclarations.kt");
+      }
+
+      @Test
+      @TestMetadata("abstractDeclarationOverridesTwoAbstractDeclarations.kt")
+      public void testAbstractDeclarationOverridesTwoAbstractDeclarations() {
+        runTest("compiler/testData/codegen/box/bridges/overridesTwoDeclarations/abstractDeclarationOverridesTwoAbstractDeclarations.kt");
+      }
+
+      @Test
+      public void testAllFilesPresentInOverridesTwoDeclarations() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/bridges/overridesTwoDeclarations"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+      }
+
+      @Test
+      @TestMetadata("concreteDeclarationOverridesAbstractAndConcreteDeclarations.kt")
+      public void testConcreteDeclarationOverridesAbstractAndConcreteDeclarations() {
+        runTest("compiler/testData/codegen/box/bridges/overridesTwoDeclarations/concreteDeclarationOverridesAbstractAndConcreteDeclarations.kt");
+      }
+
+      @Test
+      @TestMetadata("concreteDeclarationOverridesTwoAbstractDeclarations.kt")
+      public void testConcreteDeclarationOverridesTwoAbstractDeclarations() {
+        runTest("compiler/testData/codegen/box/bridges/overridesTwoDeclarations/concreteDeclarationOverridesTwoAbstractDeclarations.kt");
+      }
+    }
+
+    @Nested
     @TestMetadata("compiler/testData/codegen/box/bridges/substitutionInSuperClass")
     @TestDataPath("$PROJECT_ROOT")
     public class SubstitutionInSuperClass {
@@ -3589,7 +3911,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
 
       @Test
       public void testAllFilesPresentInSubstitutionInSuperClass() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/bridges/substitutionInSuperClass"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/bridges/substitutionInSuperClass"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -3666,7 +3988,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
 
     @Test
     public void testAllFilesPresentInBuiltinStubMethods() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/builtinStubMethods"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/builtinStubMethods"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
     @Test
@@ -3813,7 +4135,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class BridgesForStubs {
       @Test
       public void testAllFilesPresentInBridgesForStubs() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/builtinStubMethods/bridgesForStubs"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/builtinStubMethods/bridgesForStubs"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -3883,7 +4205,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
 
       @Test
       public void testAllFilesPresentInExtendJavaClasses() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/builtinStubMethods/extendJavaClasses"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/builtinStubMethods/extendJavaClasses"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -3983,7 +4305,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class MapGetOrDefault {
       @Test
       public void testAllFilesPresentInMapGetOrDefault() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/builtinStubMethods/mapGetOrDefault"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/builtinStubMethods/mapGetOrDefault"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -4011,7 +4333,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class MapRemove {
       @Test
       public void testAllFilesPresentInMapRemove() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/builtinStubMethods/mapRemove"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/builtinStubMethods/mapRemove"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -4046,7 +4368,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
   public class CallableReference {
     @Test
     public void testAllFilesPresentInCallableReference() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/callableReference"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/callableReference"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
     @Test
@@ -4167,6 +4489,12 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     @TestMetadata("genericLocalClassConstructorReference.kt")
     public void testGenericLocalClassConstructorReference() {
       runTest("compiler/testData/codegen/box/callableReference/genericLocalClassConstructorReference.kt");
+    }
+
+    @Test
+    @TestMetadata("generticReferences.kt")
+    public void testGenerticReferences() {
+      runTest("compiler/testData/codegen/box/callableReference/generticReferences.kt");
     }
 
     @Test
@@ -4296,6 +4624,12 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     }
 
     @Test
+    @TestMetadata("kt62550NewBehavior.kt")
+    public void testKt62550NewBehavior() {
+      runTest("compiler/testData/codegen/box/callableReference/kt62550NewBehavior.kt");
+    }
+
+    @Test
     @TestMetadata("nested.kt")
     public void testNested() {
       runTest("compiler/testData/codegen/box/callableReference/nested.kt");
@@ -4367,7 +4701,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
 
       @Test
       public void testAllFilesPresentInAdaptedReferences() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/callableReference/adaptedReferences"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/callableReference/adaptedReferences"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -4392,6 +4726,12 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
       @TestMetadata("contextFunctionAdaptedReferences.kt")
       public void testContextFunctionAdaptedReferences() {
         runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/contextFunctionAdaptedReferences.kt");
+      }
+
+      @Test
+      @TestMetadata("contextFunctionAnonymous.kt")
+      public void testContextFunctionAnonymous() {
+        runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/contextFunctionAnonymous.kt");
       }
 
       @Test
@@ -4512,6 +4852,12 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
       @TestMetadata("extensionPropertyToJavaFun.kt")
       public void testExtensionPropertyToJavaFun() {
         runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/extensionPropertyToJavaFun.kt");
+      }
+
+      @Test
+      @TestMetadata("extensionPropertyWithAnonymousContextFun.kt")
+      public void testExtensionPropertyWithAnonymousContextFun() {
+        runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/extensionPropertyWithAnonymousContextFun.kt");
       }
 
       @Test
@@ -4730,7 +5076,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
 
         @Test
         public void testAllFilesPresentInSuspendConversion() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/callableReference/adaptedReferences/suspendConversion"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/callableReference/adaptedReferences/suspendConversion"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
         }
 
         @Test
@@ -4915,7 +5261,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
 
       @Test
       public void testAllFilesPresentInBound() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/callableReference/bound"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/callableReference/bound"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -5116,7 +5462,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
       public class Equals {
         @Test
         public void testAllFilesPresentInEquals() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/callableReference/bound/equals"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/callableReference/bound/equals"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
         }
 
         @Test
@@ -5145,7 +5491,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class Equality {
       @Test
       public void testAllFilesPresentInEquality() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/callableReference/equality"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/callableReference/equality"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -5251,7 +5597,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class FunInterfaceConstructor {
       @Test
       public void testAllFilesPresentInFunInterfaceConstructor() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/callableReference/funInterfaceConstructor"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/callableReference/funInterfaceConstructor"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -5303,7 +5649,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
 
       @Test
       public void testAllFilesPresentInFunction() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/callableReference/function"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/callableReference/function"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -5792,7 +6138,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
       public class Local {
         @Test
         public void testAllFilesPresentInLocal() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/callableReference/function/local"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/callableReference/function/local"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
         }
 
         @Test
@@ -5941,7 +6287,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
 
       @Test
       public void testAllFilesPresentInProperty() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/callableReference/property"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/callableReference/property"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -6026,12 +6372,6 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
       @TestMetadata("extensionToArray.kt")
       public void testExtensionToArray() {
         runTest("compiler/testData/codegen/box/callableReference/property/extensionToArray.kt");
-      }
-
-      @Test
-      @TestMetadata("genericProperty.kt")
-      public void testGenericProperty() {
-        runTest("compiler/testData/codegen/box/callableReference/property/genericProperty.kt");
       }
 
       @Test
@@ -6203,7 +6543,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
 
       @Test
       public void testAllFilesPresentInSerializability() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/callableReference/serializability"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/callableReference/serializability"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -6250,7 +6590,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
   public class Casts {
     @Test
     public void testAllFilesPresentInCasts() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/casts"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/casts"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
     @Test
@@ -6305,6 +6645,12 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     @TestMetadata("asThrowsNpe_1_4.kt")
     public void testAsThrowsNpe_1_4() {
       runTest("compiler/testData/codegen/box/casts/asThrowsNpe_1_4.kt");
+    }
+
+    @Test
+    @TestMetadata("asToNothing.kt")
+    public void testAsToNothing() {
+      runTest("compiler/testData/codegen/box/casts/asToNothing.kt");
     }
 
     @Test
@@ -6494,6 +6840,12 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     }
 
     @Test
+    @TestMetadata("parallelHierarchy.kt")
+    public void testParallelHierarchy() {
+      runTest("compiler/testData/codegen/box/casts/parallelHierarchy.kt");
+    }
+
+    @Test
     @TestMetadata("unitAsAny.kt")
     public void testUnitAsAny() {
       runTest("compiler/testData/codegen/box/casts/unitAsAny.kt");
@@ -6523,7 +6875,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class Functions {
       @Test
       public void testAllFilesPresentInFunctions() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/casts/functions"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/casts/functions"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -6623,7 +6975,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class JavaInterop {
       @Test
       public void testAllFilesPresentInJavaInterop() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/casts/javaInterop"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/casts/javaInterop"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -6717,7 +7069,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class LiteralExpressionAsGenericArgument {
       @Test
       public void testAllFilesPresentInLiteralExpressionAsGenericArgument() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/casts/literalExpressionAsGenericArgument"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/casts/literalExpressionAsGenericArgument"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -6769,7 +7121,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class MutableCollections {
       @Test
       public void testAllFilesPresentInMutableCollections() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/casts/mutableCollections"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/casts/mutableCollections"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -6827,7 +7179,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class NativeCCEMessage {
       @Test
       public void testAllFilesPresentInNativeCCEMessage() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/casts/nativeCCEMessage"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/casts/nativeCCEMessage"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
     }
   }
@@ -6838,7 +7190,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
   public class CheckcastOptimization {
     @Test
     public void testAllFilesPresentInCheckcastOptimization() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/checkcastOptimization"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/checkcastOptimization"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
     @Test
@@ -6878,7 +7230,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
   public class ClassDelegation {
     @Test
     public void testAllFilesPresentInClassDelegation() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/classDelegation"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/classDelegation"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
     @Test
@@ -7002,7 +7354,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
   public class ClassLiteral {
     @Test
     public void testAllFilesPresentInClassLiteral() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/classLiteral"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/classLiteral"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
     @Test
@@ -7035,7 +7387,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class Bound {
       @Test
       public void testAllFilesPresentInBound() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/classLiteral/bound"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/classLiteral/bound"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -7075,7 +7427,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class Java {
       @Test
       public void testAllFilesPresentInJava() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/classLiteral/java"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/classLiteral/java"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -7134,7 +7486,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
   public class Classes {
     @Test
     public void testAllFilesPresentInClasses() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/classes"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/classes"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
     @Test
@@ -7303,6 +7655,12 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     @TestMetadata("implementComparableInSubclass.kt")
     public void testImplementComparableInSubclass() {
       runTest("compiler/testData/codegen/box/classes/implementComparableInSubclass.kt");
+    }
+
+    @Test
+    @TestMetadata("implementingInterfaceByParentClass.kt")
+    public void testImplementingInterfaceByParentClass() {
+      runTest("compiler/testData/codegen/box/classes/implementingInterfaceByParentClass.kt");
     }
 
     @Test
@@ -7869,7 +8227,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class Inner {
       @Test
       public void testAllFilesPresentInInner() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/classes/inner"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/classes/inner"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -7928,7 +8286,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
   public class Closures {
     @Test
     public void testAllFilesPresentInClosures() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/closures"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/closures"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
     @Test
@@ -8255,7 +8613,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class CaptureInSuperConstructorCall {
       @Test
       public void testAllFilesPresentInCaptureInSuperConstructorCall() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/closures/captureInSuperConstructorCall"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/closures/captureInSuperConstructorCall"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -8457,7 +8815,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class CaptureOuterProperty {
       @Test
       public void testAllFilesPresentInCaptureOuterProperty() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/closures/captureOuterProperty"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/closures/captureOuterProperty"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -8515,7 +8873,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class CapturedVarsOptimization {
       @Test
       public void testAllFilesPresentInCapturedVarsOptimization() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/closures/capturedVarsOptimization"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/closures/capturedVarsOptimization"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -8552,6 +8910,12 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
       @TestMetadata("capturedVarsOfSize2.kt")
       public void testCapturedVarsOfSize2() {
         runTest("compiler/testData/codegen/box/closures/capturedVarsOptimization/capturedVarsOfSize2.kt");
+      }
+
+      @Test
+      @TestMetadata("closureBoxedVarOptimizations.kt")
+      public void testClosureBoxedVarOptimizations() {
+        runTest("compiler/testData/codegen/box/closures/capturedVarsOptimization/closureBoxedVarOptimizations.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
       }
 
       @Test
@@ -8603,7 +8967,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class ClosureInsideClosure {
       @Test
       public void testAllFilesPresentInClosureInsideClosure() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/closures/closureInsideClosure"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/closures/closureInsideClosure"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -8650,7 +9014,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
   public class CollectionLiterals {
     @Test
     public void testAllFilesPresentInCollectionLiterals() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/collectionLiterals"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/collectionLiterals"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
     @Test
@@ -8690,7 +9054,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
 
     @Test
     public void testAllFilesPresentInCollections() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/collections"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/collections"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
     @Test
@@ -8844,6 +9208,12 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     }
 
     @Test
+    @TestMetadata("kt72039.kt")
+    public void testKt72039() {
+      runTest("compiler/testData/codegen/box/collections/kt72039.kt");
+    }
+
+    @Test
     @TestMetadata("mutableList.kt")
     public void testMutableList() {
       runTest("compiler/testData/codegen/box/collections/mutableList.kt");
@@ -8988,7 +9358,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
   public class Companion {
     @Test
     public void testAllFilesPresentInCompanion() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/companion"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/companion"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
     @Test
@@ -9034,7 +9404,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
   public class Compatibility {
     @Test
     public void testAllFilesPresentInCompatibility() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/compatibility"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/compatibility"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
     @Test
@@ -9056,7 +9426,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
 
     @Test
     public void testAllFilesPresentInCompileKotlinAgainstKotlin() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/compileKotlinAgainstKotlin"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/compileKotlinAgainstKotlin"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
     @Test
@@ -9527,7 +9897,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class Fir {
       @Test
       public void testAllFilesPresentInFir() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/compileKotlinAgainstKotlin/fir"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/compileKotlinAgainstKotlin/fir"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -9573,7 +9943,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class InlineClasses {
       @Test
       public void testAllFilesPresentInInlineClasses() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/compileKotlinAgainstKotlin/inlineClasses"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/compileKotlinAgainstKotlin/inlineClasses"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -9678,7 +10048,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
       public class OldMangling {
         @Test
         public void testAllFilesPresentInOldMangling() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/compileKotlinAgainstKotlin/inlineClasses/oldMangling"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/compileKotlinAgainstKotlin/inlineClasses/oldMangling"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
         }
 
         @Test
@@ -9773,7 +10143,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class Jvm8 {
       @Test
       public void testAllFilesPresentInJvm8() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Nested
@@ -9782,7 +10152,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
       public class Defaults {
         @Test
         public void testAllFilesPresentInDefaults() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
         }
 
         @Test
@@ -9828,87 +10198,87 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
         }
 
         @Nested
-        @TestMetadata("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/allCompatibility")
+        @TestMetadata("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/enable")
         @TestDataPath("$PROJECT_ROOT")
-        public class AllCompatibility {
+        public class Enable {
           @Test
-          public void testAllFilesPresentInAllCompatibility() {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/allCompatibility"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+          public void testAllFilesPresentInEnable() {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/enable"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
           }
 
           @Test
           @TestMetadata("callStackTrace.kt")
           public void testCallStackTrace() {
-            runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/allCompatibility/callStackTrace.kt");
+            runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/enable/callStackTrace.kt");
           }
 
           @Test
           @TestMetadata("superCall.kt")
           public void testSuperCall() {
-            runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/allCompatibility/superCall.kt");
+            runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/enable/superCall.kt");
           }
 
           @Test
           @TestMetadata("superCallFromInterface.kt")
           public void testSuperCallFromInterface() {
-            runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/allCompatibility/superCallFromInterface.kt");
+            runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/enable/superCallFromInterface.kt");
           }
 
           @Test
           @TestMetadata("superCallFromInterface2.kt")
           public void testSuperCallFromInterface2() {
-            runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/allCompatibility/superCallFromInterface2.kt");
+            runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/enable/superCallFromInterface2.kt");
           }
 
           @Test
           @TestMetadata("superCallToKotlinInterfaceDefaultMethodFromDisabled.kt")
           public void testSuperCallToKotlinInterfaceDefaultMethodFromDisabled() {
-            runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/allCompatibility/superCallToKotlinInterfaceDefaultMethodFromDisabled.kt");
+            runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/enable/superCallToKotlinInterfaceDefaultMethodFromDisabled.kt");
           }
 
           @Test
           @TestMetadata("superCallToKotlinInterfaceOverriddenDefaultMethodFromDisabled.kt")
           public void testSuperCallToKotlinInterfaceOverriddenDefaultMethodFromDisabled() {
-            runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/allCompatibility/superCallToKotlinInterfaceOverriddenDefaultMethodFromDisabled.kt");
+            runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/enable/superCallToKotlinInterfaceOverriddenDefaultMethodFromDisabled.kt");
           }
 
           @Test
           @TestMetadata("superPropAccess.kt")
           public void testSuperPropAccess() {
-            runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/allCompatibility/superPropAccess.kt");
+            runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/enable/superPropAccess.kt");
           }
 
           @Test
           @TestMetadata("superPropAccessFromInterface.kt")
           public void testSuperPropAccessFromInterface() {
-            runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/allCompatibility/superPropAccessFromInterface.kt");
+            runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/enable/superPropAccessFromInterface.kt");
           }
 
           @Test
           @TestMetadata("superPropAccessFromInterface2.kt")
           public void testSuperPropAccessFromInterface2() {
-            runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/allCompatibility/superPropAccessFromInterface2.kt");
+            runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/enable/superPropAccessFromInterface2.kt");
           }
 
           @Nested
-          @TestMetadata("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/allCompatibility/delegationBy")
+          @TestMetadata("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/enable/delegationBy")
           @TestDataPath("$PROJECT_ROOT")
           public class DelegationBy {
             @Test
             public void testAllFilesPresentInDelegationBy() {
-              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/allCompatibility/delegationBy"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/enable/delegationBy"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
             }
 
             @Test
             @TestMetadata("simple.kt")
             public void testSimple() {
-              runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/allCompatibility/delegationBy/simple.kt");
+              runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/enable/delegationBy/simple.kt");
             }
 
             @Test
             @TestMetadata("simpleProperty.kt")
             public void testSimpleProperty() {
-              runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/allCompatibility/delegationBy/simpleProperty.kt");
+              runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/enable/delegationBy/simpleProperty.kt");
             }
           }
         }
@@ -9918,20 +10288,14 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
         @TestDataPath("$PROJECT_ROOT")
         public class Interop {
           @Test
-          @TestMetadata("allAgainsAllCompatibility.kt")
-          public void testAllAgainsAllCompatibility() {
-            runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/interop/allAgainsAllCompatibility.kt");
-          }
-
-          @Test
-          @TestMetadata("allCompatibilityAgainsAll.kt")
-          public void testAllCompatibilityAgainsAll() {
-            runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/interop/allCompatibilityAgainsAll.kt");
-          }
-
-          @Test
           public void testAllFilesPresentInInterop() {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/interop"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/interop"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+          }
+
+          @Test
+          @TestMetadata("enableAgainstNoCompatibility.kt")
+          public void testEnableAgainstNoCompatibility() {
+            runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/interop/enableAgainstNoCompatibility.kt");
           }
 
           @Test
@@ -9969,6 +10333,12 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
           public void testNewAndOldSchemes3() {
             runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/interop/newAndOldSchemes3.kt");
           }
+
+          @Test
+          @TestMetadata("noCompatibilityAgainstEnable.kt")
+          public void testNoCompatibilityAgainstEnable() {
+            runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/interop/noCompatibilityAgainstEnable.kt");
+          }
         }
       }
 
@@ -9978,7 +10348,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
       public class Jvm8against6 {
         @Test
         public void testAllFilesPresentInJvm8against6() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/jvm8against6"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/jvm8against6"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
         }
 
         @Test
@@ -10023,7 +10393,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
         public class Delegation {
           @Test
           public void testAllFilesPresentInDelegation() {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/jvm8against6/delegation"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/jvm8against6/delegation"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
           }
 
           @Test
@@ -10053,7 +10423,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class TypeAnnotations {
       @Test
       public void testAllFilesPresentInTypeAnnotations() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/compileKotlinAgainstKotlin/typeAnnotations"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/compileKotlinAgainstKotlin/typeAnnotations"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -10070,7 +10440,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
   public class Constants {
     @Test
     public void testAllFilesPresentInConstants() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/constants"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/constants"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
     @Test
@@ -10164,7 +10534,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
   public class Constructor {
     @Test
     public void testAllFilesPresentInConstructor() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/constructor"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/constructor"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
     @Test
@@ -10186,7 +10556,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
   public class ConstructorCall {
     @Test
     public void testAllFilesPresentInConstructorCall() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/constructorCall"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/constructorCall"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
     @Test
@@ -10292,7 +10662,25 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
   public class ContextParameters {
     @Test
     public void testAllFilesPresentInContextParameters() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/contextParameters"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/contextParameters"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+    }
+
+    @Test
+    @TestMetadata("assignmentOfContextVar.kt")
+    public void testAssignmentOfContextVar() {
+      runTest("compiler/testData/codegen/box/contextParameters/assignmentOfContextVar.kt");
+    }
+
+    @Test
+    @TestMetadata("choosingTheNearestContext.kt")
+    public void testChoosingTheNearestContext() {
+      runTest("compiler/testData/codegen/box/contextParameters/choosingTheNearestContext.kt");
+    }
+
+    @Test
+    @TestMetadata("classCastException.kt")
+    public void testClassCastException() {
+      runTest("compiler/testData/codegen/box/contextParameters/classCastException.kt");
     }
 
     @Test
@@ -10320,6 +10708,12 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     }
 
     @Test
+    @TestMetadata("contextFunCallFromJava.kt")
+    public void testContextFunCallFromJava() {
+      runTest("compiler/testData/codegen/box/contextParameters/contextFunCallFromJava.kt");
+    }
+
+    @Test
     @TestMetadata("contextFunInSam.kt")
     public void testContextFunInSam() {
       runTest("compiler/testData/codegen/box/contextParameters/contextFunInSam.kt");
@@ -10338,15 +10732,117 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     }
 
     @Test
+    @TestMetadata("contextOnInvokeResolve.kt")
+    public void testContextOnInvokeResolve() {
+      runTest("compiler/testData/codegen/box/contextParameters/contextOnInvokeResolve.kt");
+    }
+
+    @Test
     @TestMetadata("contextParameterToDefaultArgument.kt")
     public void testContextParameterToDefaultArgument() {
       runTest("compiler/testData/codegen/box/contextParameters/contextParameterToDefaultArgument.kt");
     }
 
     @Test
+    @TestMetadata("contextPropertyInInterface.kt")
+    public void testContextPropertyInInterface() {
+      runTest("compiler/testData/codegen/box/contextParameters/contextPropertyInInterface.kt");
+    }
+
+    @Test
+    @TestMetadata("contextResolveDependingOnCallSite.kt")
+    public void testContextResolveDependingOnCallSite() {
+      runTest("compiler/testData/codegen/box/contextParameters/contextResolveDependingOnCallSite.kt");
+    }
+
+    @Test
     @TestMetadata("contextTypeOverrideInJava.kt")
     public void testContextTypeOverrideInJava() {
       runTest("compiler/testData/codegen/box/contextParameters/contextTypeOverrideInJava.kt");
+    }
+
+    @Test
+    @TestMetadata("contextualAnonymousFunAsAnExpression.kt")
+    public void testContextualAnonymousFunAsAnExpression() {
+      runTest("compiler/testData/codegen/box/contextParameters/contextualAnonymousFunAsAnExpression.kt");
+    }
+
+    @Test
+    @TestMetadata("contextualAnonymousFunction.kt")
+    public void testContextualAnonymousFunction() {
+      runTest("compiler/testData/codegen/box/contextParameters/contextualAnonymousFunction.kt");
+    }
+
+    @Test
+    @TestMetadata("contextualLocalFunAndTopLevelFun.kt")
+    public void testContextualLocalFunAndTopLevelFun() {
+      runTest("compiler/testData/codegen/box/contextParameters/contextualLocalFunAndTopLevelFun.kt");
+    }
+
+    @Test
+    @TestMetadata("contextualLocalFunWithExtensiionReceiver.kt")
+    public void testContextualLocalFunWithExtensiionReceiver() {
+      runTest("compiler/testData/codegen/box/contextParameters/contextualLocalFunWithExtensiionReceiver.kt");
+    }
+
+    @Test
+    @TestMetadata("contextualLocalFunWithTypeParam.kt")
+    public void testContextualLocalFunWithTypeParam() {
+      runTest("compiler/testData/codegen/box/contextParameters/contextualLocalFunWithTypeParam.kt");
+    }
+
+    @Test
+    @TestMetadata("contextualLocalFunction.kt")
+    public void testContextualLocalFunction() {
+      runTest("compiler/testData/codegen/box/contextParameters/contextualLocalFunction.kt");
+    }
+
+    @Test
+    @TestMetadata("contextualLocalWithLocalExtensionAndValue.kt")
+    public void testContextualLocalWithLocalExtensionAndValue() {
+      runTest("compiler/testData/codegen/box/contextParameters/contextualLocalWithLocalExtensionAndValue.kt");
+    }
+
+    @Test
+    @TestMetadata("dispatchExtensionAndContextReceiverResolve.kt")
+    public void testDispatchExtensionAndContextReceiverResolve() {
+      runTest("compiler/testData/codegen/box/contextParameters/dispatchExtensionAndContextReceiverResolve.kt");
+    }
+
+    @Test
+    @TestMetadata("falsePositiveAccidentalOverrides.kt")
+    public void testFalsePositiveAccidentalOverrides() {
+      runTest("compiler/testData/codegen/box/contextParameters/falsePositiveAccidentalOverrides.kt");
+    }
+
+    @Test
+    @TestMetadata("functionalType.kt")
+    public void testFunctionalType() {
+      runTest("compiler/testData/codegen/box/contextParameters/functionalType.kt");
+    }
+
+    @Test
+    @TestMetadata("ImplicitReceiverWithTheSameContextAndExtension.kt")
+    public void testImplicitReceiverWithTheSameContextAndExtension() {
+      runTest("compiler/testData/codegen/box/contextParameters/ImplicitReceiverWithTheSameContextAndExtension.kt");
+    }
+
+    @Test
+    @TestMetadata("inlineAnonymousParameter.kt")
+    public void testInlineAnonymousParameter() {
+      runTest("compiler/testData/codegen/box/contextParameters/inlineAnonymousParameter.kt");
+    }
+
+    @Test
+    @TestMetadata("inlineContextualReceiverLambda.kt")
+    public void testInlineContextualReceiverLambda() {
+      runTest("compiler/testData/codegen/box/contextParameters/inlineContextualReceiverLambda.kt");
+    }
+
+    @Test
+    @TestMetadata("invokeOnTypeWithContext.kt")
+    public void testInvokeOnTypeWithContext() {
+      runTest("compiler/testData/codegen/box/contextParameters/invokeOnTypeWithContext.kt");
     }
 
     @Test
@@ -10380,9 +10876,21 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     }
 
     @Test
+    @TestMetadata("sameNameWithLocalValueParameter.kt")
+    public void testSameNameWithLocalValueParameter() {
+      runTest("compiler/testData/codegen/box/contextParameters/sameNameWithLocalValueParameter.kt");
+    }
+
+    @Test
     @TestMetadata("sameNameWithMemberProperty.kt")
     public void testSameNameWithMemberProperty() {
       runTest("compiler/testData/codegen/box/contextParameters/sameNameWithMemberProperty.kt");
+    }
+
+    @Test
+    @TestMetadata("sameNameWithOuterContext.kt")
+    public void testSameNameWithOuterContext() {
+      runTest("compiler/testData/codegen/box/contextParameters/sameNameWithOuterContext.kt");
     }
 
     @Test
@@ -10395,6 +10903,12 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     @TestMetadata("simple.kt")
     public void testSimple() {
       runTest("compiler/testData/codegen/box/contextParameters/simple.kt");
+    }
+
+    @Test
+    @TestMetadata("suspendContextParemetersWithExtension.kt")
+    public void testSuspendContextParemetersWithExtension() {
+      runTest("compiler/testData/codegen/box/contextParameters/suspendContextParemetersWithExtension.kt");
     }
 
     @Test
@@ -10428,7 +10942,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
   public class Contracts {
     @Test
     public void testAllFilesPresentInContracts() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/contracts"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/contracts"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
     @Test
@@ -10447,6 +10961,12 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     @TestMetadata("contractForCast.kt")
     public void testContractForCast() {
       runTest("compiler/testData/codegen/box/contracts/contractForCast.kt");
+    }
+
+    @Test
+    @TestMetadata("contractOnContextParameter.kt")
+    public void testContractOnContextParameter() {
+      runTest("compiler/testData/codegen/box/contracts/contractOnContextParameter.kt");
     }
 
     @Test
@@ -10546,6 +11066,12 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     }
 
     @Test
+    @TestMetadata("referenceToGenericInDeserializedContract.kt")
+    public void testReferenceToGenericInDeserializedContract() {
+      runTest("compiler/testData/codegen/box/contracts/referenceToGenericInDeserializedContract.kt");
+    }
+
+    @Test
     @TestMetadata("require.kt")
     public void testRequire() {
       runTest("compiler/testData/codegen/box/contracts/require.kt");
@@ -10570,7 +11096,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
   public class ControlStructures {
     @Test
     public void testAllFilesPresentInControlStructures() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/controlStructures"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/controlStructures"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
     @Test
@@ -10781,12 +11307,6 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     @TestMetadata("kt12908.kt")
     public void testKt12908() {
       runTest("compiler/testData/codegen/box/controlStructures/kt12908.kt");
-    }
-
-    @Test
-    @TestMetadata("kt12908_2.kt")
-    public void testKt12908_2() {
-      runTest("compiler/testData/codegen/box/controlStructures/kt12908_2.kt");
     }
 
     @Test
@@ -11089,7 +11609,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class BreakContinueInExpressions {
       @Test
       public void testAllFilesPresentInBreakContinueInExpressions() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/controlStructures/breakContinueInExpressions"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/controlStructures/breakContinueInExpressions"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -11218,7 +11738,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
       public class InlinedBreakContinue {
         @Test
         public void testAllFilesPresentInInlinedBreakContinue() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/controlStructures/breakContinueInExpressions/inlinedBreakContinue"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/controlStructures/breakContinueInExpressions/inlinedBreakContinue"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
         }
 
         @Test
@@ -11301,7 +11821,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class ForInArray {
       @Test
       public void testAllFilesPresentInForInArray() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/controlStructures/forInArray"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/controlStructures/forInArray"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -11371,7 +11891,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class ForInArrayWithIndex {
       @Test
       public void testAllFilesPresentInForInArrayWithIndex() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/controlStructures/forInArrayWithIndex"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/controlStructures/forInArrayWithIndex"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -11501,7 +12021,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class ForInCharSequenceWithIndex {
       @Test
       public void testAllFilesPresentInForInCharSequenceWithIndex() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/controlStructures/forInCharSequenceWithIndex"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/controlStructures/forInCharSequenceWithIndex"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -11595,7 +12115,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class ForInIterableWithIndex {
       @Test
       public void testAllFilesPresentInForInIterableWithIndex() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/controlStructures/forInIterableWithIndex"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/controlStructures/forInIterableWithIndex"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -11689,7 +12209,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
 
       @Test
       public void testAllFilesPresentInForInIterator() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/controlStructures/forInIterator"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/controlStructures/forInIterator"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -11717,7 +12237,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class ForInSequenceWithIndex {
       @Test
       public void testAllFilesPresentInForInSequenceWithIndex() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/controlStructures/forInSequenceWithIndex"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/controlStructures/forInSequenceWithIndex"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -11793,7 +12313,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class ReturnsNothing {
       @Test
       public void testAllFilesPresentInReturnsNothing() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/controlStructures/returnsNothing"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/controlStructures/returnsNothing"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -11833,7 +12353,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class SlowDsl {
       @Test
       public void testAllFilesPresentInSlowDsl() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/controlStructures/slowDsl"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/controlStructures/slowDsl"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -11855,7 +12375,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class TryCatchInExpressions {
       @Test
       public void testAllFilesPresentInTryCatchInExpressions() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/controlStructures/tryCatchInExpressions"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/controlStructures/tryCatchInExpressions"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -12046,7 +12566,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
   public class Controlflow {
     @Test
     public void testAllFilesPresentInControlflow() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/controlflow"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/controlflow"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
     @Test
@@ -12188,7 +12708,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
 
     @Test
     public void testAllFilesPresentInCoroutines() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
     @Test
@@ -12840,12 +13360,6 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     }
 
     @Test
-    @TestMetadata("kt49645.kt")
-    public void testKt49645() {
-      runTest("compiler/testData/codegen/box/coroutines/kt49645.kt");
-    }
-
-    @Test
     @TestMetadata("kt50277.kt")
     public void testKt50277() {
       runTest("compiler/testData/codegen/box/coroutines/kt50277.kt");
@@ -13158,6 +13672,12 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     }
 
     @Test
+    @TestMetadata("suspendFunctionAsSupertypeWithInlinedFunInKlib.kt")
+    public void testSuspendFunctionAsSupertypeWithInlinedFunInKlib() {
+      runTest("compiler/testData/codegen/box/coroutines/suspendFunctionAsSupertypeWithInlinedFunInKlib.kt");
+    }
+
+    @Test
     @TestMetadata("suspendFunctionMethodReference.kt")
     public void testSuspendFunctionMethodReference() {
       runTest("compiler/testData/codegen/box/coroutines/suspendFunctionMethodReference.kt");
@@ -13313,7 +13833,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class Bridges {
       @Test
       public void testAllFilesPresentInBridges() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/bridges"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/bridges"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -13326,6 +13846,12 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
       @TestMetadata("interfaceSpecialization.kt")
       public void testInterfaceSpecialization() {
         runTest("compiler/testData/codegen/box/coroutines/bridges/interfaceSpecialization.kt");
+      }
+
+      @Test
+      @TestMetadata("interfaceWithTwoDefaultFunsReturnValueType.kt")
+      public void testInterfaceWithTwoDefaultFunsReturnValueType() {
+        runTest("compiler/testData/codegen/box/coroutines/bridges/interfaceWithTwoDefaultFunsReturnValueType.kt");
       }
 
       @Test
@@ -13359,7 +13885,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class ControlFlow {
       @Test
       public void testAllFilesPresentInControlFlow() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/controlFlow"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/controlFlow"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -13507,7 +14033,13 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class Debug {
       @Test
       public void testAllFilesPresentInDebug() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/debug"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/debug"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+      }
+
+      @Test
+      @TestMetadata("debugMetadata_av22.kt")
+      public void testDebugMetadata_av22() {
+        runTest("compiler/testData/codegen/box/coroutines/debug/debugMetadata_av22.kt");
       }
 
       @Test
@@ -13541,6 +14073,12 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
       }
 
       @Test
+      @TestMetadata("nextLineNumber.kt")
+      public void testNextLineNumber() {
+        runTest("compiler/testData/codegen/box/coroutines/debug/nextLineNumber.kt");
+      }
+
+      @Test
       @TestMetadata("runtimeDebugMetadata.kt")
       public void testRuntimeDebugMetadata() {
         runTest("compiler/testData/codegen/box/coroutines/debug/runtimeDebugMetadata.kt");
@@ -13559,7 +14097,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class FeatureIntersection {
       @Test
       public void testAllFilesPresentInFeatureIntersection() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/featureIntersection"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/featureIntersection"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -13688,7 +14226,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
       public class CallableReference {
         @Test
         public void testAllFilesPresentInCallableReference() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/featureIntersection/callableReference"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/featureIntersection/callableReference"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
         }
 
         @Test
@@ -13727,7 +14265,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
         public class Bound {
           @Test
           public void testAllFilesPresentInBound() {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/featureIntersection/callableReference/bound"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/featureIntersection/callableReference/bound"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
           }
 
           @Test
@@ -13749,7 +14287,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
 
           @Test
           public void testAllFilesPresentInFunction() {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/featureIntersection/callableReference/function"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/featureIntersection/callableReference/function"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
           }
 
           @Test
@@ -13776,7 +14314,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
           public class Local {
             @Test
             public void testAllFilesPresentInLocal() {
-              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/featureIntersection/callableReference/function/local"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/featureIntersection/callableReference/function/local"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
             }
 
             @Test
@@ -13794,7 +14332,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
       public class FunInterface {
         @Test
         public void testAllFilesPresentInFunInterface() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/featureIntersection/funInterface"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/featureIntersection/funInterface"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
         }
 
         @Test
@@ -13827,14 +14365,14 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
       @TestDataPath("$PROJECT_ROOT")
       public class JvmDefault {
         @Test
-        @TestMetadata("all.kt")
-        public void testAll() {
-          runTest("compiler/testData/codegen/box/coroutines/featureIntersection/jvmDefault/all.kt");
+        public void testAllFilesPresentInJvmDefault() {
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/featureIntersection/jvmDefault"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
         }
 
         @Test
-        public void testAllFilesPresentInJvmDefault() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/featureIntersection/jvmDefault"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        @TestMetadata("noCompatibility.kt")
+        public void testNoCompatibility() {
+          runTest("compiler/testData/codegen/box/coroutines/featureIntersection/jvmDefault/noCompatibility.kt");
         }
 
         @Nested
@@ -13842,26 +14380,26 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
         @TestDataPath("$PROJECT_ROOT")
         public class Kt46007 {
           @Test
-          @TestMetadata("all.kt")
-          public void testAll() {
-            runTest("compiler/testData/codegen/box/coroutines/featureIntersection/jvmDefault/kt46007/all.kt");
-          }
-
-          @Test
           public void testAllFilesPresentInKt46007() {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/featureIntersection/jvmDefault/kt46007"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
-          }
-
-          @Test
-          @TestMetadata("all-compatibility.kt")
-          public void testAll_compatibility() {
-            runTest("compiler/testData/codegen/box/coroutines/featureIntersection/jvmDefault/kt46007/all-compatibility.kt");
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/featureIntersection/jvmDefault/kt46007"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
           }
 
           @Test
           @TestMetadata("disable.kt")
           public void testDisable() {
             runTest("compiler/testData/codegen/box/coroutines/featureIntersection/jvmDefault/kt46007/disable.kt");
+          }
+
+          @Test
+          @TestMetadata("enable.kt")
+          public void testEnable() {
+            runTest("compiler/testData/codegen/box/coroutines/featureIntersection/jvmDefault/kt46007/enable.kt");
+          }
+
+          @Test
+          @TestMetadata("noCompatibility.kt")
+          public void testNoCompatibility() {
+            runTest("compiler/testData/codegen/box/coroutines/featureIntersection/jvmDefault/kt46007/noCompatibility.kt");
           }
         }
       }
@@ -13872,7 +14410,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
       public class Tailrec {
         @Test
         public void testAllFilesPresentInTailrec() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/featureIntersection/tailrec"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/featureIntersection/tailrec"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
         }
 
         @Test
@@ -13962,18 +14500,52 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     }
 
     @Nested
+    @TestMetadata("compiler/testData/codegen/box/coroutines/generatedCodeMarkers")
+    @TestDataPath("$PROJECT_ROOT")
+    public class GeneratedCodeMarkers {
+      @Test
+      public void testAllFilesPresentInGeneratedCodeMarkers() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/generatedCodeMarkers"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+      }
+
+      @Test
+      @TestMetadata("simple.kt")
+      public void testSimple() {
+        runTest("compiler/testData/codegen/box/coroutines/generatedCodeMarkers/simple.kt");
+      }
+    }
+
+    @Nested
     @TestMetadata("compiler/testData/codegen/box/coroutines/inlineClasses")
     @TestDataPath("$PROJECT_ROOT")
     public class InlineClasses {
       @Test
       public void testAllFilesPresentInInlineClasses() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/inlineClasses"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/inlineClasses"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
       @TestMetadata("genericParameterResult.kt")
       public void testGenericParameterResult() {
         runTest("compiler/testData/codegen/box/coroutines/inlineClasses/genericParameterResult.kt");
+      }
+
+      @Test
+      @TestMetadata("interfaceFakeOverride.kt")
+      public void testInterfaceFakeOverride() {
+        runTest("compiler/testData/codegen/box/coroutines/inlineClasses/interfaceFakeOverride.kt");
+      }
+
+      @Test
+      @TestMetadata("interfaceFakeOverrideJvmDefaultDisable.kt")
+      public void testInterfaceFakeOverrideJvmDefaultDisable() {
+        runTest("compiler/testData/codegen/box/coroutines/inlineClasses/interfaceFakeOverrideJvmDefaultDisable.kt");
+      }
+
+      @Test
+      @TestMetadata("interfaceFakeOverrideJvmDefaultNoCompatibility.kt")
+      public void testInterfaceFakeOverrideJvmDefaultNoCompatibility() {
+        runTest("compiler/testData/codegen/box/coroutines/inlineClasses/interfaceFakeOverrideJvmDefaultNoCompatibility.kt");
       }
 
       @Test
@@ -13994,7 +14566,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
       public class Direct {
         @Test
         public void testAllFilesPresentInDirect() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/inlineClasses/direct"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/inlineClasses/direct"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
         }
 
         @Test
@@ -14292,7 +14864,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
       public class Resume {
         @Test
         public void testAllFilesPresentInResume() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/inlineClasses/resume"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/inlineClasses/resume"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
         }
 
         @Test
@@ -14590,7 +15162,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
       public class ResumeWithException {
         @Test
         public void testAllFilesPresentInResumeWithException() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/inlineClasses/resumeWithException"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/inlineClasses/resumeWithException"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
         }
 
         @Test
@@ -14853,7 +15425,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class IntLikeVarSpilling {
       @Test
       public void testAllFilesPresentInIntLikeVarSpilling() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/intLikeVarSpilling"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/intLikeVarSpilling"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -14935,7 +15507,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class IntrinsicSemantics {
       @Test
       public void testAllFilesPresentInIntrinsicSemantics() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/intrinsicSemantics"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/intrinsicSemantics"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -15005,7 +15577,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class JavaInterop {
       @Test
       public void testAllFilesPresentInJavaInterop() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/javaInterop"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/javaInterop"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -15045,7 +15617,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class LocalFunctions {
       @Test
       public void testAllFilesPresentInLocalFunctions() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/localFunctions"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/localFunctions"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Nested
@@ -15054,7 +15626,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
       public class Named {
         @Test
         public void testAllFilesPresentInNamed() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/localFunctions/named"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/localFunctions/named"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
         }
 
         @Test
@@ -15143,7 +15715,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class MultiModule {
       @Test
       public void testAllFilesPresentInMultiModule() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/multiModule"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/multiModule"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -15213,7 +15785,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class RedundantLocalsElimination {
       @Test
       public void testAllFilesPresentInRedundantLocalsElimination() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/redundantLocalsElimination"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/redundantLocalsElimination"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -15229,7 +15801,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class Reflect {
       @Test
       public void testAllFilesPresentInReflect() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/reflect"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/reflect"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -15263,7 +15835,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class StackUnwinding {
       @Test
       public void testAllFilesPresentInStackUnwinding() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/stackUnwinding"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/stackUnwinding"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -15309,7 +15881,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class SuspendConversion {
       @Test
       public void testAllFilesPresentInSuspendConversion() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/suspendConversion"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/suspendConversion"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -15331,6 +15903,12 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
       }
 
       @Test
+      @TestMetadata("onNullableArgument.kt")
+      public void testOnNullableArgument() {
+        runTest("compiler/testData/codegen/box/coroutines/suspendConversion/onNullableArgument.kt");
+      }
+
+      @Test
       @TestMetadata("subtypeOfFunctionalTypeToSuspendConversion.kt")
       public void testSubtypeOfFunctionalTypeToSuspendConversion() {
         runTest("compiler/testData/codegen/box/coroutines/suspendConversion/subtypeOfFunctionalTypeToSuspendConversion.kt");
@@ -15349,7 +15927,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class SuspendFunctionAsCoroutine {
       @Test
       public void testAllFilesPresentInSuspendFunctionAsCoroutine() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/suspendFunctionAsCoroutine"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/suspendFunctionAsCoroutine"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -15467,7 +16045,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class SuspendFunctionTypeCall {
       @Test
       public void testAllFilesPresentInSuspendFunctionTypeCall() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/suspendFunctionTypeCall"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/suspendFunctionTypeCall"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -15507,7 +16085,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class TailCallOptimizations {
       @Test
       public void testAllFilesPresentInTailCallOptimizations() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/tailCallOptimizations"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/tailCallOptimizations"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -15630,7 +16208,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
       public class Unit {
         @Test
         public void testAllFilesPresentInUnit() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/tailCallOptimizations/unit"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/tailCallOptimizations/unit"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
         }
 
         @Test
@@ -15713,7 +16291,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class TailOperations {
       @Test
       public void testAllFilesPresentInTailOperations() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/tailOperations"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/tailOperations"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -15747,7 +16325,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class UnitTypeReturn {
       @Test
       public void testAllFilesPresentInUnitTypeReturn() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/unitTypeReturn"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/unitTypeReturn"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -15799,13 +16377,25 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class VarSpilling {
       @Test
       public void testAllFilesPresentInVarSpilling() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/varSpilling"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/varSpilling"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
       @TestMetadata("fakeInlinerVariables.kt")
       public void testFakeInlinerVariables() {
         runTest("compiler/testData/codegen/box/coroutines/varSpilling/fakeInlinerVariables.kt");
+      }
+
+      @Test
+      @TestMetadata("inlineClassAsLambdaParameter.kt")
+      public void testInlineClassAsLambdaParameter() {
+        runTest("compiler/testData/codegen/box/coroutines/varSpilling/inlineClassAsLambdaParameter.kt");
+      }
+
+      @Test
+      @TestMetadata("inlineClassAsLambdaParameterWithoutCreate.kt")
+      public void testInlineClassAsLambdaParameterWithoutCreate() {
+        runTest("compiler/testData/codegen/box/coroutines/varSpilling/inlineClassAsLambdaParameterWithoutCreate.kt");
       }
 
       @Test
@@ -15830,6 +16420,30 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
       @TestMetadata("kt64139.kt")
       public void testKt64139() {
         runTest("compiler/testData/codegen/box/coroutines/varSpilling/kt64139.kt");
+      }
+
+      @Test
+      @TestMetadata("kt75926.kt")
+      public void testKt75926() {
+        runTest("compiler/testData/codegen/box/coroutines/varSpilling/kt75926.kt");
+      }
+
+      @Test
+      @TestMetadata("kt79276.kt")
+      public void testKt79276() {
+        runTest("compiler/testData/codegen/box/coroutines/varSpilling/kt79276.kt");
+      }
+
+      @Test
+      @TestMetadata("lambdaInlineClassParamUnspill.kt")
+      public void testLambdaInlineClassParamUnspill() {
+        runTest("compiler/testData/codegen/box/coroutines/varSpilling/lambdaInlineClassParamUnspill.kt");
+      }
+
+      @Test
+      @TestMetadata("lambdaInlineClassParamUnspillWithoutCreate.kt")
+      public void testLambdaInlineClassParamUnspillWithoutCreate() {
+        runTest("compiler/testData/codegen/box/coroutines/varSpilling/lambdaInlineClassParamUnspillWithoutCreate.kt");
       }
 
       @Test
@@ -15868,7 +16482,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
       public class Cleanup {
         @Test
         public void testAllFilesPresentInCleanup() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/varSpilling/cleanup"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/varSpilling/cleanup"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
         }
 
         @Test
@@ -15926,7 +16540,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
       public class CleanupWithoutStdlibFunction {
         @Test
         public void testAllFilesPresentInCleanupWithoutStdlibFunction() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/varSpilling/cleanupWithoutStdlibFunction"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/varSpilling/cleanupWithoutStdlibFunction"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
         }
 
         @Test
@@ -15990,7 +16604,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
       public class DebugMode {
         @Test
         public void testAllFilesPresentInDebugMode() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/varSpilling/debugMode"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/varSpilling/debugMode"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
         }
 
         @Test
@@ -16060,7 +16674,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
       public class NoCleanup {
         @Test
         public void testAllFilesPresentInNoCleanup() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/varSpilling/noCleanup"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/varSpilling/noCleanup"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
         }
 
         @Test
@@ -16132,7 +16746,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
   public class CorrectFrontendCode {
     @Test
     public void testAllFilesPresentInCorrectFrontendCode() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/correctFrontendCode"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/correctFrontendCode"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
     @Test
@@ -16148,7 +16762,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
   public class Cycles {
     @Test
     public void testAllFilesPresentInCycles() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/cycles"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/cycles"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
     @Test
@@ -16176,7 +16790,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
   public class DataClasses {
     @Test
     public void testAllFilesPresentInDataClasses() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/dataClasses"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/dataClasses"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
     @Test
@@ -16317,7 +16931,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class Components {
       @Test
       public void testAllFilesPresentInComponents() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/dataClasses/components"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/dataClasses/components"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -16339,7 +16953,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class Copy {
       @Test
       public void testAllFilesPresentInCopy() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/dataClasses/copy"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/dataClasses/copy"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -16397,7 +17011,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class Equals {
       @Test
       public void testAllFilesPresentInEquals() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/dataClasses/equals"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/dataClasses/equals"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -16449,7 +17063,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class HashCode {
       @Test
       public void testAllFilesPresentInHashCode() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/dataClasses/hashCode"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/dataClasses/hashCode"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -16537,7 +17151,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class ToString {
       @Test
       public void testAllFilesPresentInToString() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/dataClasses/toString"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/dataClasses/toString"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -16596,7 +17210,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
   public class DataObjects {
     @Test
     public void testAllFilesPresentInDataObjects() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/dataObjects"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/dataObjects"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
     @Test
@@ -16636,7 +17250,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
   public class Dataflow {
     @Test
     public void testAllFilesPresentInDataflow() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/dataflow"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/dataflow"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
     @Test
@@ -16658,7 +17272,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
   public class DeadCodeElimination {
     @Test
     public void testAllFilesPresentInDeadCodeElimination() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/deadCodeElimination"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/deadCodeElimination"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
     @Test
@@ -16692,7 +17306,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
   public class DefaultArguments {
     @Test
     public void testAllFilesPresentInDefaultArguments() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/defaultArguments"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/defaultArguments"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
     @Test
@@ -16804,6 +17418,12 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     }
 
     @Test
+    @TestMetadata("kt59326.kt")
+    public void testKt59326() {
+      runTest("compiler/testData/codegen/box/defaultArguments/kt59326.kt");
+    }
+
+    @Test
     @TestMetadata("kt6382.kt")
     public void testKt6382() {
       runTest("compiler/testData/codegen/box/defaultArguments/kt6382.kt");
@@ -16869,7 +17489,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class Constructor {
       @Test
       public void testAllFilesPresentInConstructor() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/defaultArguments/constructor"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/defaultArguments/constructor"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -16882,6 +17502,12 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
       @TestMetadata("annotationWithEmptyArray.kt")
       public void testAnnotationWithEmptyArray() {
         runTest("compiler/testData/codegen/box/defaultArguments/constructor/annotationWithEmptyArray.kt");
+      }
+
+      @Test
+      @TestMetadata("anonymousObjectAsDefaultParam.kt")
+      public void testAnonymousObjectAsDefaultParam() {
+        runTest("compiler/testData/codegen/box/defaultArguments/constructor/anonymousObjectAsDefaultParam.kt");
       }
 
       @Test
@@ -16981,7 +17607,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class Convention {
       @Test
       public void testAllFilesPresentInConvention() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/defaultArguments/convention"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/defaultArguments/convention"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -17033,7 +17659,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
 
       @Test
       public void testAllFilesPresentInFunction() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/defaultArguments/function"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/defaultArguments/function"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -17205,7 +17831,13 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class Private {
       @Test
       public void testAllFilesPresentInPrivate() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/defaultArguments/private"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/defaultArguments/private"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+      }
+
+      @Test
+      @TestMetadata("clashingNames.kt")
+      public void testClashingNames() {
+        runTest("compiler/testData/codegen/box/defaultArguments/private/clashingNames.kt");
       }
 
       @Test
@@ -17239,7 +17871,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class Reflection {
       @Test
       public void testAllFilesPresentInReflection() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/defaultArguments/reflection"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/defaultArguments/reflection"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -17321,7 +17953,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class Signature {
       @Test
       public void testAllFilesPresentInSignature() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/defaultArguments/signature"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/defaultArguments/signature"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -17356,7 +17988,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
 
     @Test
     public void testAllFilesPresentInDelegatedProperty() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/delegatedProperty"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/delegatedProperty"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
     @Test
@@ -17612,6 +18244,12 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     }
 
     @Test
+    @TestMetadata("lazyDelegateInObject.kt")
+    public void testLazyDelegateInObject() {
+      runTest("compiler/testData/codegen/box/delegatedProperty/lazyDelegateInObject.kt");
+    }
+
+    @Test
     @TestMetadata("local.kt")
     public void testLocal() {
       runTest("compiler/testData/codegen/box/delegatedProperty/local.kt");
@@ -17779,7 +18417,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class DelegateToAnother {
       @Test
       public void testAllFilesPresentInDelegateToAnother() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/delegatedProperty/delegateToAnother"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/delegatedProperty/delegateToAnother"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -17819,6 +18457,12 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
       }
 
       @Test
+      @TestMetadata("kt79979_memberExtension.kt")
+      public void testKt79979_memberExtension() {
+        runTest("compiler/testData/codegen/box/delegatedProperty/delegateToAnother/kt79979_memberExtension.kt");
+      }
+
+      @Test
       @TestMetadata("mutable.kt")
       public void testMutable() {
         runTest("compiler/testData/codegen/box/delegatedProperty/delegateToAnother/mutable.kt");
@@ -17855,7 +18499,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class DelegateToConst {
       @Test
       public void testAllFilesPresentInDelegateToConst() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/delegatedProperty/delegateToConst"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/delegatedProperty/delegateToConst"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -17883,7 +18527,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class DelegateToFinalProperty {
       @Test
       public void testAllFilesPresentInDelegateToFinalProperty() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/delegatedProperty/delegateToFinalProperty"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/delegatedProperty/delegateToFinalProperty"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -17953,7 +18597,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class DelegateToSingleton {
       @Test
       public void testAllFilesPresentInDelegateToSingleton() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/delegatedProperty/delegateToSingleton"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/delegatedProperty/delegateToSingleton"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -18005,7 +18649,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class DelegateToThis {
       @Test
       public void testAllFilesPresentInDelegateToThis() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/delegatedProperty/delegateToThis"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/delegatedProperty/delegateToThis"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -18033,7 +18677,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class Local {
       @Test
       public void testAllFilesPresentInLocal() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/delegatedProperty/local"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/delegatedProperty/local"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -18109,6 +18753,18 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
       }
 
       @Test
+      @TestMetadata("kt78073.kt")
+      public void testKt78073() {
+        runTest("compiler/testData/codegen/box/delegatedProperty/local/kt78073.kt");
+      }
+
+      @Test
+      @TestMetadata("localDelegatedPropertyCall.kt")
+      public void testLocalDelegatedPropertyCall() {
+        runTest("compiler/testData/codegen/box/delegatedProperty/local/localDelegatedPropertyCall.kt");
+      }
+
+      @Test
       @TestMetadata("localVal.kt")
       public void testLocalVal() {
         runTest("compiler/testData/codegen/box/delegatedProperty/local/localVal.kt");
@@ -18145,7 +18801,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class OptimizedDelegatedProperties {
       @Test
       public void testAllFilesPresentInOptimizedDelegatedProperties() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/delegatedProperty/optimizedDelegatedProperties"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/delegatedProperty/optimizedDelegatedProperties"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -18221,7 +18877,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class ProvideDelegate {
       @Test
       public void testAllFilesPresentInProvideDelegate() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/delegatedProperty/provideDelegate"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/delegatedProperty/provideDelegate"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -18388,7 +19044,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
   public class Delegation {
     @Test
     public void testAllFilesPresentInDelegation() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/delegation"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/delegation"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
     @Test
@@ -18449,6 +19105,12 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     @TestMetadata("delegationToIntersectionType2.kt")
     public void testDelegationToIntersectionType2() {
       runTest("compiler/testData/codegen/box/delegation/delegationToIntersectionType2.kt");
+    }
+
+    @Test
+    @TestMetadata("delegationToIntersectionType3.kt")
+    public void testDelegationToIntersectionType3() {
+      runTest("compiler/testData/codegen/box/delegation/delegationToIntersectionType3.kt");
     }
 
     @Test
@@ -18632,7 +19294,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
   public class Deprecated {
     @Test
     public void testAllFilesPresentInDeprecated() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/deprecated"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/deprecated"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
     @Test
@@ -18648,7 +19310,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
   public class DestructuringDeclInLambdaParam {
     @Test
     public void testAllFilesPresentInDestructuringDeclInLambdaParam() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/destructuringDeclInLambdaParam"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/destructuringDeclInLambdaParam"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
     @Test
@@ -18712,7 +19374,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
   public class Devirtualization {
     @Test
     public void testAllFilesPresentInDevirtualization() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/devirtualization"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/devirtualization"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
     @Test
@@ -18758,7 +19420,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
   public class Diagnostics {
     @Test
     public void testAllFilesPresentInDiagnostics() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/diagnostics"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/diagnostics"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
     @Nested
@@ -18767,7 +19429,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class Functions {
       @Test
       public void testAllFilesPresentInFunctions() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/diagnostics/functions"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/diagnostics/functions"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Nested
@@ -18776,7 +19438,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
       public class Inference {
         @Test
         public void testAllFilesPresentInInference() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/diagnostics/functions/inference"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/diagnostics/functions/inference"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
         }
 
         @Test
@@ -18792,7 +19454,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
       public class Invoke {
         @Test
         public void testAllFilesPresentInInvoke() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/diagnostics/functions/invoke"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/diagnostics/functions/invoke"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
         }
 
         @Nested
@@ -18801,7 +19463,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
         public class OnObjects {
           @Test
           public void testAllFilesPresentInOnObjects() {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/diagnostics/functions/invoke/onObjects"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/diagnostics/functions/invoke/onObjects"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
           }
 
           @Test
@@ -18872,7 +19534,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
       public class TailRecursion {
         @Test
         public void testAllFilesPresentInTailRecursion() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/diagnostics/functions/tailRecursion"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/diagnostics/functions/tailRecursion"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
         }
 
         @Test
@@ -19056,6 +19718,12 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
         }
 
         @Test
+        @TestMetadata("shortCircuit.kt")
+        public void testShortCircuit() {
+          runTest("compiler/testData/codegen/box/diagnostics/functions/tailRecursion/shortCircuit.kt");
+        }
+
+        @Test
         @TestMetadata("simpleBlock.kt")
         public void testSimpleBlock() {
           runTest("compiler/testData/codegen/box/diagnostics/functions/tailRecursion/simpleBlock.kt");
@@ -19153,7 +19821,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class Vararg {
       @Test
       public void testAllFilesPresentInVararg() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/diagnostics/vararg"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/diagnostics/vararg"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -19170,7 +19838,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
   public class DifferentDependencyVersion {
     @Test
     public void testAllFilesPresentInDifferentDependencyVersion() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/differentDependencyVersion"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/differentDependencyVersion"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
     @Test
@@ -19198,7 +19866,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
   public class DirectInvokeOptimization {
     @Test
     public void testAllFilesPresentInDirectInvokeOptimization() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/directInvokeOptimization"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/directInvokeOptimization"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
     @Test
@@ -19223,6 +19891,12 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     @TestMetadata("capturingLambda.kt")
     public void testCapturingLambda() {
       runTest("compiler/testData/codegen/box/directInvokeOptimization/capturingLambda.kt");
+    }
+
+    @Test
+    @TestMetadata("contextParameters.kt")
+    public void testContextParameters() {
+      runTest("compiler/testData/codegen/box/directInvokeOptimization/contextParameters.kt");
     }
 
     @Test
@@ -19292,7 +19966,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
   public class Elvis {
     @Test
     public void testAllFilesPresentInElvis() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/elvis"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/elvis"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
     @Test
@@ -19374,7 +20048,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
 
     @Test
     public void testAllFilesPresentInEnum() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/enum"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/enum"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
     @Test
@@ -20121,7 +20795,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class DefaultCtor {
       @Test
       public void testAllFilesPresentInDefaultCtor() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/enum/defaultCtor"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/enum/defaultCtor"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -20174,7 +20848,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
   public class EquivalentCalls {
     @Test
     public void testAllFilesPresentInEquivalentCalls() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/equivalentCalls"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/equivalentCalls"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
     @Test
@@ -20190,7 +20864,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
   public class EscapeAnalysis {
     @Test
     public void testAllFilesPresentInEscapeAnalysis() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/escapeAnalysis"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/escapeAnalysis"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
     @Test
@@ -20296,7 +20970,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
   public class Evaluate {
     @Test
     public void testAllFilesPresentInEvaluate() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/evaluate"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/evaluate"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
     @Test
@@ -20408,7 +21082,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
   public class Exceptions {
     @Test
     public void testAllFilesPresentInExceptions() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/exceptions"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/exceptions"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
     @Test
@@ -20466,7 +21140,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
   public class ExclExcl {
     @Test
     public void testAllFilesPresentInExclExcl() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/exclExcl"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/exclExcl"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
     @Test
@@ -20500,7 +21174,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
   public class ExtensionClasses {
     @Test
     public void testAllFilesPresentInExtensionClasses() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/extensionClasses"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/extensionClasses"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
     @Test
@@ -20582,7 +21256,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
   public class ExtensionFunctions {
     @Test
     public void testAllFilesPresentInExtensionFunctions() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/extensionFunctions"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/extensionFunctions"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
     @Test
@@ -20928,6 +21602,12 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     }
 
     @Test
+    @TestMetadata("selectingLambdas.kt")
+    public void testSelectingLambdas() {
+      runTest("compiler/testData/codegen/box/extensionFunctions/selectingLambdas.kt");
+    }
+
+    @Test
     @TestMetadata("shared.kt")
     public void testShared() {
       runTest("compiler/testData/codegen/box/extensionFunctions/shared.kt");
@@ -20981,7 +21661,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class ContextReceivers {
       @Test
       public void testAllFilesPresentInContextReceivers() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/extensionFunctions/contextReceivers"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/extensionFunctions/contextReceivers"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -21290,7 +21970,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
       public class FromKEEP {
         @Test
         public void testAllFilesPresentInFromKEEP() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/extensionFunctions/contextReceivers/fromKEEP"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/extensionFunctions/contextReceivers/fromKEEP"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
         }
 
         @Test
@@ -21315,12 +21995,6 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
         @TestMetadata("dp.kt")
         public void testDp() {
           runTest("compiler/testData/codegen/box/extensionFunctions/contextReceivers/fromKEEP/dp.kt");
-        }
-
-        @Test
-        @TestMetadata("functionalType.kt")
-        public void testFunctionalType() {
-          runTest("compiler/testData/codegen/box/extensionFunctions/contextReceivers/fromKEEP/functionalType.kt");
         }
 
         @Test
@@ -21350,7 +22024,13 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
 
     @Test
     public void testAllFilesPresentInExtensionProperties() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/extensionProperties"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/extensionProperties"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+    }
+
+    @Test
+    @TestMetadata("contextPropertyInInterface.kt")
+    public void testContextPropertyInInterface() {
+      runTest("compiler/testData/codegen/box/extensionProperties/contextPropertyInInterface.kt");
     }
 
     @Test
@@ -21546,7 +22226,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
   public class External {
     @Test
     public void testAllFilesPresentInExternal() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/external"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/external"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
     @Test
@@ -21574,7 +22254,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
   public class FakeOverride {
     @Test
     public void testAllFilesPresentInFakeOverride() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/fakeOverride"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/fakeOverride"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
     @Test
@@ -21647,6 +22327,12 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     @TestMetadata("intersectionOverrideBetweenValAndVar.kt")
     public void testIntersectionOverrideBetweenValAndVar() {
       runTest("compiler/testData/codegen/box/fakeOverride/intersectionOverrideBetweenValAndVar.kt");
+    }
+
+    @Test
+    @TestMetadata("intersectionOverrideDispatchReceiver.kt")
+    public void testIntersectionOverrideDispatchReceiver() {
+      runTest("compiler/testData/codegen/box/fakeOverride/intersectionOverrideDispatchReceiver.kt");
     }
 
     @Test
@@ -21770,7 +22456,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
   public class FieldRename {
     @Test
     public void testAllFilesPresentInFieldRename() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/fieldRename"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/fieldRename"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
     @Test
@@ -21810,7 +22496,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
   public class Finally {
     @Test
     public void testAllFilesPresentInFinally() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/finally"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/finally"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
     @Test
@@ -21964,7 +22650,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
   public class Fir {
     @Test
     public void testAllFilesPresentInFir() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/fir"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/fir"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
     @Test
@@ -21977,6 +22663,12 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     @TestMetadata("anonymousOverrideWithDefaultInOverridden.kt")
     public void testAnonymousOverrideWithDefaultInOverridden() {
       runTest("compiler/testData/codegen/box/fir/anonymousOverrideWithDefaultInOverridden.kt");
+    }
+
+    @Test
+    @TestMetadata("arrayOfAnyWithNull.kt")
+    public void testArrayOfAnyWithNull() {
+      runTest("compiler/testData/codegen/box/fir/arrayOfAnyWithNull.kt");
     }
 
     @Test
@@ -22418,12 +23110,6 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     }
 
     @Test
-    @TestMetadata("selectingLambdas.kt")
-    public void testSelectingLambdas() {
-      runTest("compiler/testData/codegen/box/fir/selectingLambdas.kt");
-    }
-
-    @Test
     @TestMetadata("smartCastToInvisibleClassMember.kt")
     public void testSmartCastToInvisibleClassMember() {
       runTest("compiler/testData/codegen/box/fir/smartCastToInvisibleClassMember.kt");
@@ -22532,6 +23218,12 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     }
 
     @Test
+    @TestMetadata("unnamedLocalVariable.kt")
+    public void testUnnamedLocalVariable() {
+      runTest("compiler/testData/codegen/box/fir/unnamedLocalVariable.kt");
+    }
+
+    @Test
     @TestMetadata("unqualifiedEnum.kt")
     public void testUnqualifiedEnum() {
       runTest("compiler/testData/codegen/box/fir/unqualifiedEnum.kt");
@@ -22544,12 +23236,52 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     }
 
     @Nested
+    @TestMetadata("compiler/testData/codegen/box/fir/contextSensitiveResolution")
+    @TestDataPath("$PROJECT_ROOT")
+    public class ContextSensitiveResolution {
+      @Test
+      public void testAllFilesPresentInContextSensitiveResolution() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/fir/contextSensitiveResolution"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+      }
+
+      @Test
+      @TestMetadata("annotationArguments.kt")
+      public void testAnnotationArguments() {
+        runTest("compiler/testData/codegen/box/fir/contextSensitiveResolution/annotationArguments.kt");
+      }
+
+      @Test
+      @TestMetadata("argumentPosition.kt")
+      public void testArgumentPosition() {
+        runTest("compiler/testData/codegen/box/fir/contextSensitiveResolution/argumentPosition.kt");
+      }
+
+      @Test
+      @TestMetadata("basicExampleWithEnumAndWhens.kt")
+      public void testBasicExampleWithEnumAndWhens() {
+        runTest("compiler/testData/codegen/box/fir/contextSensitiveResolution/basicExampleWithEnumAndWhens.kt");
+      }
+
+      @Test
+      @TestMetadata("eitherInTypePosition.kt")
+      public void testEitherInTypePosition() {
+        runTest("compiler/testData/codegen/box/fir/contextSensitiveResolution/eitherInTypePosition.kt");
+      }
+
+      @Test
+      @TestMetadata("otherExpressionKindsPosition.kt")
+      public void testOtherExpressionKindsPosition() {
+        runTest("compiler/testData/codegen/box/fir/contextSensitiveResolution/otherExpressionKindsPosition.kt");
+      }
+    }
+
+    @Nested
     @TestMetadata("compiler/testData/codegen/box/fir/primitivesInJava")
     @TestDataPath("$PROJECT_ROOT")
     public class PrimitivesInJava {
       @Test
       public void testAllFilesPresentInPrimitivesInJava() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/fir/primitivesInJava"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/fir/primitivesInJava"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -22602,7 +23334,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
   public class FullJdk {
     @Test
     public void testAllFilesPresentInFullJdk() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/fullJdk"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/fullJdk"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
     @Test
@@ -22653,7 +23385,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class Native {
       @Test
       public void testAllFilesPresentInNative() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/fullJdk/native"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/fullJdk/native"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -22681,7 +23413,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class Regressions {
       @Test
       public void testAllFilesPresentInRegressions() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/fullJdk/regressions"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/fullJdk/regressions"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -22704,7 +23436,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
   public class FunInterface {
     @Test
     public void testAllFilesPresentInFunInterface() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/funInterface"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/funInterface"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
     @Test
@@ -22798,15 +23530,15 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     }
 
     @Test
-    @TestMetadata("inheritPropertyJvmDefaultAll.kt")
-    public void testInheritPropertyJvmDefaultAll() {
-      runTest("compiler/testData/codegen/box/funInterface/inheritPropertyJvmDefaultAll.kt");
+    @TestMetadata("inheritPropertyJvmDefaultEnable.kt")
+    public void testInheritPropertyJvmDefaultEnable() {
+      runTest("compiler/testData/codegen/box/funInterface/inheritPropertyJvmDefaultEnable.kt");
     }
 
     @Test
-    @TestMetadata("inheritPropertyJvmDefaultAllCompatibility.kt")
-    public void testInheritPropertyJvmDefaultAllCompatibility() {
-      runTest("compiler/testData/codegen/box/funInterface/inheritPropertyJvmDefaultAllCompatibility.kt");
+    @TestMetadata("inheritPropertyJvmDefaultNoCompatibility.kt")
+    public void testInheritPropertyJvmDefaultNoCompatibility() {
+      runTest("compiler/testData/codegen/box/funInterface/inheritPropertyJvmDefaultNoCompatibility.kt");
     }
 
     @Test
@@ -22867,6 +23599,30 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     @TestMetadata("kt49384_getSame.kt")
     public void testKt49384_getSame() {
       runTest("compiler/testData/codegen/box/funInterface/kt49384_getSame.kt");
+    }
+
+    @Test
+    @TestMetadata("kt77685.kt")
+    public void testKt77685() {
+      runTest("compiler/testData/codegen/box/funInterface/kt77685.kt");
+    }
+
+    @Test
+    @TestMetadata("kt77685-sam.kt")
+    public void testKt77685_sam() {
+      runTest("compiler/testData/codegen/box/funInterface/kt77685-sam.kt");
+    }
+
+    @Test
+    @TestMetadata("kt79092.kt")
+    public void testKt79092() {
+      runTest("compiler/testData/codegen/box/funInterface/kt79092.kt");
+    }
+
+    @Test
+    @TestMetadata("kt79092-sam.kt")
+    public void testKt79092_sam() {
+      runTest("compiler/testData/codegen/box/funInterface/kt79092-sam.kt");
     }
 
     @Test
@@ -22947,7 +23703,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class Equality {
       @Test
       public void testAllFilesPresentInEquality() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/funInterface/equality"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/funInterface/equality"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -22988,7 +23744,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
   public class Function {
     @Test
     public void testAllFilesPresentInFunction() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/function"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/function"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
     @Test
@@ -23214,7 +23970,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
   public class Functions {
     @Test
     public void testAllFilesPresentInFunctions() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/functions"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/functions"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
     @Test
@@ -23583,7 +24339,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class BigArity {
       @Test
       public void testAllFilesPresentInBigArity() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/functions/bigArity"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/functions/bigArity"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -23659,7 +24415,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class FunctionExpression {
       @Test
       public void testAllFilesPresentInFunctionExpression() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/functions/functionExpression"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/functions/functionExpression"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -23699,7 +24455,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class Invoke {
       @Test
       public void testAllFilesPresentInInvoke() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/functions/invoke"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/functions/invoke"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -23799,7 +24555,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class LocalFunctions {
       @Test
       public void testAllFilesPresentInLocalFunctions() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/functions/localFunctions"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/functions/localFunctions"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -23990,7 +24746,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
   public class Ieee754 {
     @Test
     public void testAllFilesPresentInIeee754() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ieee754"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ieee754"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
     @Test
@@ -24288,7 +25044,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
   public class Increment {
     @Test
     public void testAllFilesPresentInIncrement() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/increment"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/increment"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
     @Test
@@ -24460,7 +25216,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
   public class Inference {
     @Test
     public void testAllFilesPresentInInference() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inference"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inference"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
     @Test
@@ -24494,9 +25250,45 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     }
 
     @Test
+    @TestMetadata("capturedSelfInsideIntersection.kt")
+    public void testCapturedSelfInsideIntersection() {
+      runTest("compiler/testData/codegen/box/inference/capturedSelfInsideIntersection.kt");
+    }
+
+    @Test
+    @TestMetadata("capturedSelfInsideIntersection2.kt")
+    public void testCapturedSelfInsideIntersection2() {
+      runTest("compiler/testData/codegen/box/inference/capturedSelfInsideIntersection2.kt");
+    }
+
+    @Test
+    @TestMetadata("capturedSelfInsideIntersection3.kt")
+    public void testCapturedSelfInsideIntersection3() {
+      runTest("compiler/testData/codegen/box/inference/capturedSelfInsideIntersection3.kt");
+    }
+
+    @Test
+    @TestMetadata("capturedSelfInsideIntersection4.kt")
+    public void testCapturedSelfInsideIntersection4() {
+      runTest("compiler/testData/codegen/box/inference/capturedSelfInsideIntersection4.kt");
+    }
+
+    @Test
     @TestMetadata("capturedStarProjection.kt")
     public void testCapturedStarProjection() {
       runTest("compiler/testData/codegen/box/inference/capturedStarProjection.kt");
+    }
+
+    @Test
+    @TestMetadata("capturedTypeAsLambdaInputType.kt")
+    public void testCapturedTypeAsLambdaInputType() {
+      runTest("compiler/testData/codegen/box/inference/capturedTypeAsLambdaInputType.kt");
+    }
+
+    @Test
+    @TestMetadata("capturedTypeWhenSubject.kt")
+    public void testCapturedTypeWhenSubject() {
+      runTest("compiler/testData/codegen/box/inference/capturedTypeWhenSubject.kt");
     }
 
     @Test
@@ -24596,12 +25388,6 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     }
 
     @Test
-    @TestMetadata("kt42042.kt")
-    public void testKt42042() {
-      runTest("compiler/testData/codegen/box/inference/kt42042.kt");
-    }
-
-    @Test
     @TestMetadata("kt42130.kt")
     public void testKt42130() {
       runTest("compiler/testData/codegen/box/inference/kt42130.kt");
@@ -24611,12 +25397,6 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     @TestMetadata("kt45118.kt")
     public void testKt45118() {
       runTest("compiler/testData/codegen/box/inference/kt45118.kt");
-    }
-
-    @Test
-    @TestMetadata("kt47316.kt")
-    public void testKt47316() {
-      runTest("compiler/testData/codegen/box/inference/kt47316.kt");
     }
 
     @Test
@@ -24769,19 +25549,13 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
       runTest("compiler/testData/codegen/box/inference/unsafeVarianceCodegen.kt");
     }
 
-    @Test
-    @TestMetadata("violatingUpperBoundForSelfType.kt")
-    public void testViolatingUpperBoundForSelfType() {
-      runTest("compiler/testData/codegen/box/inference/violatingUpperBoundForSelfType.kt");
-    }
-
     @Nested
     @TestMetadata("compiler/testData/codegen/box/inference/pcla")
     @TestDataPath("$PROJECT_ROOT")
     public class Pcla {
       @Test
       public void testAllFilesPresentInPcla() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inference/pcla"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inference/pcla"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -24806,12 +25580,6 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
       @TestMetadata("capturedTypes.kt")
       public void testCapturedTypes() {
         runTest("compiler/testData/codegen/box/inference/pcla/capturedTypes.kt");
-      }
-
-      @Test
-      @TestMetadata("changingResolveIfDontUseBuilderInferenceDisabledFeature.kt")
-      public void testChangingResolveIfDontUseBuilderInferenceDisabledFeature() {
-        runTest("compiler/testData/codegen/box/inference/pcla/changingResolveIfDontUseBuilderInferenceDisabledFeature.kt");
       }
 
       @Test
@@ -25049,12 +25817,6 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
       }
 
       @Test
-      @TestMetadata("withExpectedType.kt")
-      public void testWithExpectedType() {
-        runTest("compiler/testData/codegen/box/inference/pcla/withExpectedType.kt");
-      }
-
-      @Test
       @TestMetadata("withoutAnnotation.kt")
       public void testWithoutAnnotation() {
         runTest("compiler/testData/codegen/box/inference/pcla/withoutAnnotation.kt");
@@ -25066,7 +25828,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
       public class Issues {
         @Test
         public void testAllFilesPresentInIssues() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inference/pcla/issues"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inference/pcla/issues"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
         }
 
         @Test
@@ -25530,6 +26292,24 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
         public void testKt67993() {
           runTest("compiler/testData/codegen/box/inference/pcla/issues/kt67993.kt");
         }
+
+        @Test
+        @TestMetadata("kt74819e.kt")
+        public void testKt74819e() {
+          runTest("compiler/testData/codegen/box/inference/pcla/issues/kt74819e.kt");
+        }
+
+        @Test
+        @TestMetadata("kt76058.kt")
+        public void testKt76058() {
+          runTest("compiler/testData/codegen/box/inference/pcla/issues/kt76058.kt");
+        }
+
+        @Test
+        @TestMetadata("kt76171.kt")
+        public void testKt76171() {
+          runTest("compiler/testData/codegen/box/inference/pcla/issues/kt76171.kt");
+        }
       }
 
       @Nested
@@ -25538,7 +26318,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
       public class OneParameter {
         @Test
         public void testAllFilesPresentInOneParameter() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inference/pcla/oneParameter"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inference/pcla/oneParameter"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
         }
 
         @Nested
@@ -25547,7 +26327,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
         public class OneTypeVariable {
           @Test
           public void testAllFilesPresentInOneTypeVariable() {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inference/pcla/oneParameter/oneTypeVariable"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inference/pcla/oneParameter/oneTypeVariable"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
           }
 
           @Nested
@@ -25556,7 +26336,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
           public class OneTypeInfoOrigin {
             @Test
             public void testAllFilesPresentInOneTypeInfoOrigin() {
-              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inference/pcla/oneParameter/oneTypeVariable/oneTypeInfoOrigin"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inference/pcla/oneParameter/oneTypeVariable/oneTypeInfoOrigin"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
             }
 
             @Test
@@ -25589,7 +26369,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
             public class SourceSinkFeedContexts {
               @Test
               public void testAllFilesPresentInSourceSinkFeedContexts() {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inference/pcla/oneParameter/oneTypeVariable/oneTypeInfoOrigin/sourceSinkFeedContexts"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inference/pcla/oneParameter/oneTypeVariable/oneTypeInfoOrigin/sourceSinkFeedContexts"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
               }
 
               @Test
@@ -25653,7 +26433,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
             public class TargetTypes {
               @Test
               public void testAllFilesPresentInTargetTypes() {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inference/pcla/oneParameter/oneTypeVariable/oneTypeInfoOrigin/targetTypes"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inference/pcla/oneParameter/oneTypeVariable/oneTypeInfoOrigin/targetTypes"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
               }
 
               @Test
@@ -25879,7 +26659,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
             public class TypeInfoSinks {
               @Test
               public void testAllFilesPresentInTypeInfoSinks() {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inference/pcla/oneParameter/oneTypeVariable/oneTypeInfoOrigin/typeInfoSinks"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inference/pcla/oneParameter/oneTypeVariable/oneTypeInfoOrigin/typeInfoSinks"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
               }
 
               @Test
@@ -25943,7 +26723,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
             public class TypeInfoSources {
               @Test
               public void testAllFilesPresentInTypeInfoSources() {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inference/pcla/oneParameter/oneTypeVariable/oneTypeInfoOrigin/typeInfoSources"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inference/pcla/oneParameter/oneTypeVariable/oneTypeInfoOrigin/typeInfoSources"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
               }
 
               @Test
@@ -25994,7 +26774,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
   public class Initializers {
     @Test
     public void testAllFilesPresentInInitializers() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/initializers"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/initializers"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
     @Test
@@ -26135,7 +26915,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class Files {
       @Test
       public void testAllFilesPresentInFiles() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/initializers/files"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/initializers/files"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -26170,7 +26950,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
   public class Inline {
     @Test
     public void testAllFilesPresentInInline() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inline"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inline"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
     @Test
@@ -26195,6 +26975,18 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     @TestMetadata("correctOrderFunctionReference.kt")
     public void testCorrectOrderFunctionReference() {
       runTest("compiler/testData/codegen/box/inline/correctOrderFunctionReference.kt");
+    }
+
+    @Test
+    @TestMetadata("crossModuleTypeOf.kt")
+    public void testCrossModuleTypeOf() {
+      runTest("compiler/testData/codegen/box/inline/crossModuleTypeOf.kt");
+    }
+
+    @Test
+    @TestMetadata("crossinlineLambdaAllocation.kt")
+    public void testCrossinlineLambdaAllocation() {
+      runTest("compiler/testData/codegen/box/inline/crossinlineLambdaAllocation.kt");
     }
 
     @Test
@@ -26468,6 +27260,18 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     }
 
     @Test
+    @TestMetadata("multipleInheritanceClash.kt")
+    public void testMultipleInheritanceClash() {
+      runTest("compiler/testData/codegen/box/inline/multipleInheritanceClash.kt");
+    }
+
+    @Test
+    @TestMetadata("nestedLabelsInlinedClashingAtFunctionsWithClosure.kt")
+    public void testNestedLabelsInlinedClashingAtFunctionsWithClosure() {
+      runTest("compiler/testData/codegen/box/inline/nestedLabelsInlinedClashingAtFunctionsWithClosure.kt");
+    }
+
+    @Test
     @TestMetadata("propertyAccessorInline.kt")
     public void testPropertyAccessorInline() {
       runTest("compiler/testData/codegen/box/inline/propertyAccessorInline.kt");
@@ -26516,6 +27320,12 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     }
 
     @Test
+    @TestMetadata("typeParameterSymbolIsUnbound.kt")
+    public void testTypeParameterSymbolIsUnbound() {
+      runTest("compiler/testData/codegen/box/inline/typeParameterSymbolIsUnbound.kt");
+    }
+
+    @Test
     @TestMetadata("typeSubstitutionInFakeOverride.kt")
     public void testTypeSubstitutionInFakeOverride() {
       runTest("compiler/testData/codegen/box/inline/typeSubstitutionInFakeOverride.kt");
@@ -26528,7 +27338,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
   public class InlineArgsInPlace {
     @Test
     public void testAllFilesPresentInInlineArgsInPlace() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineArgsInPlace"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineArgsInPlace"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
     @Test
@@ -26610,7 +27420,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
   public class InlineClass {
     @Test
     public void testAllFilesPresentInInlineClass() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClass"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClass"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
     @Test
@@ -26644,7 +27454,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
   public class InlineClasses {
     @Test
     public void testAllFilesPresentInInlineClasses() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
     @Test
@@ -26657,6 +27467,24 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     @TestMetadata("annotatedMemberExtensionPropertyGeneric.kt")
     public void testAnnotatedMemberExtensionPropertyGeneric() {
       runTest("compiler/testData/codegen/box/inlineClasses/annotatedMemberExtensionPropertyGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+    }
+
+    @Test
+    @TestMetadata("anonymousObjectAsDefaultParam.kt")
+    public void testAnonymousObjectAsDefaultParam() {
+      runTest("compiler/testData/codegen/box/inlineClasses/anonymousObjectAsDefaultParam.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+    }
+
+    @Test
+    @TestMetadata("anonymousObjectAsDefaultParamFull.kt")
+    public void testAnonymousObjectAsDefaultParamFull() {
+      runTest("compiler/testData/codegen/box/inlineClasses/anonymousObjectAsDefaultParamFull.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+    }
+
+    @Test
+    @TestMetadata("anonymousObjectAsDefaultParamSingleFile.kt")
+    public void testAnonymousObjectAsDefaultParamSingleFile() {
+      runTest("compiler/testData/codegen/box/inlineClasses/anonymousObjectAsDefaultParamSingleFile.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
     }
 
     @Test
@@ -27131,6 +27959,12 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     @TestMetadata("constructorImplVisibilityGeneric.kt")
     public void testConstructorImplVisibilityGeneric() {
       runTest("compiler/testData/codegen/box/inlineClasses/constructorImplVisibilityGeneric.kt");
+    }
+
+    @Test
+    @TestMetadata("contextParameters.kt")
+    public void testContextParameters() {
+      runTest("compiler/testData/codegen/box/inlineClasses/contextParameters.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
     }
 
     @Test
@@ -27890,6 +28724,12 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     }
 
     @Test
+    @TestMetadata("internalConstructorWithDefaultParam.kt")
+    public void testInternalConstructorWithDefaultParam() {
+      runTest("compiler/testData/codegen/box/inlineClasses/internalConstructorWithDefaultParam.kt");
+    }
+
+    @Test
     @TestMetadata("iterateOverArrayOfInlineClassValues.kt")
     public void testIterateOverArrayOfInlineClassValues() {
       runTest("compiler/testData/codegen/box/inlineClasses/iterateOverArrayOfInlineClassValues.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
@@ -28547,6 +29387,12 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     @TestMetadata("kt71649.kt")
     public void testKt71649() {
       runTest("compiler/testData/codegen/box/inlineClasses/kt71649.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+    }
+
+    @Test
+    @TestMetadata("kt79547_inlineLambdaWithUnderlyingArrayOfObject.kt")
+    public void testKt79547_inlineLambdaWithUnderlyingArrayOfObject() {
+      runTest("compiler/testData/codegen/box/inlineClasses/kt79547_inlineLambdaWithUnderlyingArrayOfObject.kt");
     }
 
     @Test
@@ -29215,7 +30061,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class BoxReturnValueInLambda {
       @Test
       public void testAllFilesPresentInBoxReturnValueInLambda() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/boxReturnValueInLambda"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/boxReturnValueInLambda"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -29393,7 +30239,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class BoxReturnValueOnOverride {
       @Test
       public void testAllFilesPresentInBoxReturnValueOnOverride() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -29769,7 +30615,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class CallableReferences {
       @Test
       public void testAllFilesPresentInCallableReferences() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/callableReferences"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/callableReferences"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -30018,7 +30864,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
       public class Let {
         @Test
         public void testAllFilesPresentInLet() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/callableReferences/let"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/callableReferences/let"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
         }
 
         @Test
@@ -30269,7 +31115,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
 
       @Test
       public void testAllFilesPresentInContextsAndAccessors() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/contextsAndAccessors"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/contextsAndAccessors"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -30411,7 +31257,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class DefaultParameterValues {
       @Test
       public void testAllFilesPresentInDefaultParameterValues() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/defaultParameterValues"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/defaultParameterValues"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -30557,44 +31403,44 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
       @TestDataPath("$PROJECT_ROOT")
       public class DefaultWithDefaultParameter {
         @Test
-        @TestMetadata("all.kt")
-        public void testAll() {
-          runTest("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/defaultWithDefaultParameter/all.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
-        }
-
-        @Test
         public void testAllFilesPresentInDefaultWithDefaultParameter() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/defaultWithDefaultParameter"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/defaultWithDefaultParameter"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
         }
 
         @Test
-        @TestMetadata("allGeneric.kt")
-        public void testAllGeneric() {
-          runTest("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/defaultWithDefaultParameter/allGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        @TestMetadata("disable.kt")
+        public void testDisable() {
+          runTest("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/defaultWithDefaultParameter/disable.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
         }
 
         @Test
-        @TestMetadata("all-compatibility.kt")
-        public void testAll_compatibility() {
-          runTest("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/defaultWithDefaultParameter/all-compatibility.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        @TestMetadata("disableGeneric.kt")
+        public void testDisableGeneric() {
+          runTest("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/defaultWithDefaultParameter/disableGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
         }
 
         @Test
-        @TestMetadata("all-compatibilityGeneric.kt")
-        public void testAll_compatibilityGeneric() {
-          runTest("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/defaultWithDefaultParameter/all-compatibilityGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        @TestMetadata("enable.kt")
+        public void testEnable() {
+          runTest("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/defaultWithDefaultParameter/enable.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
         }
 
         @Test
-        @TestMetadata("default.kt")
-        public void testDefault() {
-          runTest("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/defaultWithDefaultParameter/default.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        @TestMetadata("enableGeneric.kt")
+        public void testEnableGeneric() {
+          runTest("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/defaultWithDefaultParameter/enableGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
         }
 
         @Test
-        @TestMetadata("defaultGeneric.kt")
-        public void testDefaultGeneric() {
-          runTest("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/defaultWithDefaultParameter/defaultGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        @TestMetadata("noCompatibility.kt")
+        public void testNoCompatibility() {
+          runTest("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/defaultWithDefaultParameter/noCompatibility.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("noCompatibilityGeneric.kt")
+        public void testNoCompatibilityGeneric() {
+          runTest("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/defaultWithDefaultParameter/noCompatibilityGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
         }
       }
 
@@ -30603,44 +31449,44 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
       @TestDataPath("$PROJECT_ROOT")
       public class OverrideFunctionWithDefaultParameter {
         @Test
-        @TestMetadata("all.kt")
-        public void testAll() {
-          runTest("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/overrideFunctionWithDefaultParameter/all.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
-        }
-
-        @Test
         public void testAllFilesPresentInOverrideFunctionWithDefaultParameter() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/overrideFunctionWithDefaultParameter"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/overrideFunctionWithDefaultParameter"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
         }
 
         @Test
-        @TestMetadata("allGeneric.kt")
-        public void testAllGeneric() {
-          runTest("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/overrideFunctionWithDefaultParameter/allGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        @TestMetadata("disable.kt")
+        public void testDisable() {
+          runTest("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/overrideFunctionWithDefaultParameter/disable.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
         }
 
         @Test
-        @TestMetadata("all-compatibility.kt")
-        public void testAll_compatibility() {
-          runTest("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/overrideFunctionWithDefaultParameter/all-compatibility.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        @TestMetadata("disableGeneric.kt")
+        public void testDisableGeneric() {
+          runTest("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/overrideFunctionWithDefaultParameter/disableGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
         }
 
         @Test
-        @TestMetadata("all-compatibilityGeneric.kt")
-        public void testAll_compatibilityGeneric() {
-          runTest("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/overrideFunctionWithDefaultParameter/all-compatibilityGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        @TestMetadata("enable.kt")
+        public void testEnable() {
+          runTest("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/overrideFunctionWithDefaultParameter/enable.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
         }
 
         @Test
-        @TestMetadata("default.kt")
-        public void testDefault() {
-          runTest("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/overrideFunctionWithDefaultParameter/default.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        @TestMetadata("enableGeneric.kt")
+        public void testEnableGeneric() {
+          runTest("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/overrideFunctionWithDefaultParameter/enableGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
         }
 
         @Test
-        @TestMetadata("defaultGeneric.kt")
-        public void testDefaultGeneric() {
-          runTest("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/overrideFunctionWithDefaultParameter/defaultGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        @TestMetadata("noCompatibility.kt")
+        public void testNoCompatibility() {
+          runTest("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/overrideFunctionWithDefaultParameter/noCompatibility.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("noCompatibilityGeneric.kt")
+        public void testNoCompatibilityGeneric() {
+          runTest("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/overrideFunctionWithDefaultParameter/noCompatibilityGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
         }
       }
     }
@@ -30651,7 +31497,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class DelegationByUnderlyingType {
       @Test
       public void testAllFilesPresentInDelegationByUnderlyingType() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/delegationByUnderlyingType"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/delegationByUnderlyingType"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -30697,7 +31543,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class FunInterface {
       @Test
       public void testAllFilesPresentInFunInterface() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/funInterface"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/funInterface"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -30791,7 +31637,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class FunctionNameMangling {
       @Test
       public void testAllFilesPresentInFunctionNameMangling() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/functionNameMangling"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/functionNameMangling"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -31017,7 +31863,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class GenericUnderlyingValue {
       @Test
       public void testAllFilesPresentInGenericUnderlyingValue() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/genericUnderlyingValue"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/genericUnderlyingValue"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -31069,7 +31915,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class HiddenConstructor {
       @Test
       public void testAllFilesPresentInHiddenConstructor() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/hiddenConstructor"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/hiddenConstructor"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -31229,7 +32075,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class InlineClassCollection {
       @Test
       public void testAllFilesPresentInInlineClassCollection() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/inlineClassCollection"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/inlineClassCollection"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -31281,7 +32127,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class InterfaceDelegation {
       @Test
       public void testAllFilesPresentInInterfaceDelegation() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/interfaceDelegation"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/interfaceDelegation"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -31381,7 +32227,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class InterfaceMethodCalls {
       @Test
       public void testAllFilesPresentInInterfaceMethodCalls() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/interfaceMethodCalls"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/interfaceMethodCalls"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -31523,7 +32369,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class JavaInterop {
       @Test
       public void testAllFilesPresentInJavaInterop() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/javaInterop"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/javaInterop"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -31587,31 +32433,31 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class Jvm8DefaultInterfaceMethods {
       @Test
       public void testAllFilesPresentInJvm8DefaultInterfaceMethods() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/jvm8DefaultInterfaceMethods"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/jvm8DefaultInterfaceMethods"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
-      @TestMetadata("inlineClassInheritingDefaultMethod.kt")
-      public void testInlineClassInheritingDefaultMethod() {
-        runTest("compiler/testData/codegen/box/inlineClasses/jvm8DefaultInterfaceMethods/inlineClassInheritingDefaultMethod.kt");
+      @TestMetadata("inlineClassInheritingDefaultMethodDisable.kt")
+      public void testInlineClassInheritingDefaultMethodDisable() {
+        runTest("compiler/testData/codegen/box/inlineClasses/jvm8DefaultInterfaceMethods/inlineClassInheritingDefaultMethodDisable.kt");
       }
 
       @Test
-      @TestMetadata("inlineClassInheritingDefaultMethodAll.kt")
-      public void testInlineClassInheritingDefaultMethodAll() {
-        runTest("compiler/testData/codegen/box/inlineClasses/jvm8DefaultInterfaceMethods/inlineClassInheritingDefaultMethodAll.kt");
+      @TestMetadata("inlineClassInheritingDefaultMethodDisableGeneric.kt")
+      public void testInlineClassInheritingDefaultMethodDisableGeneric() {
+        runTest("compiler/testData/codegen/box/inlineClasses/jvm8DefaultInterfaceMethods/inlineClassInheritingDefaultMethodDisableGeneric.kt");
       }
 
       @Test
-      @TestMetadata("inlineClassInheritingDefaultMethodAllGeneric.kt")
-      public void testInlineClassInheritingDefaultMethodAllGeneric() {
-        runTest("compiler/testData/codegen/box/inlineClasses/jvm8DefaultInterfaceMethods/inlineClassInheritingDefaultMethodAllGeneric.kt");
+      @TestMetadata("inlineClassInheritingDefaultMethodNoCompatibility.kt")
+      public void testInlineClassInheritingDefaultMethodNoCompatibility() {
+        runTest("compiler/testData/codegen/box/inlineClasses/jvm8DefaultInterfaceMethods/inlineClassInheritingDefaultMethodNoCompatibility.kt");
       }
 
       @Test
-      @TestMetadata("inlineClassInheritingDefaultMethodGeneric.kt")
-      public void testInlineClassInheritingDefaultMethodGeneric() {
-        runTest("compiler/testData/codegen/box/inlineClasses/jvm8DefaultInterfaceMethods/inlineClassInheritingDefaultMethodGeneric.kt");
+      @TestMetadata("inlineClassInheritingDefaultMethodNoCompatibilityGeneric.kt")
+      public void testInlineClassInheritingDefaultMethodNoCompatibilityGeneric() {
+        runTest("compiler/testData/codegen/box/inlineClasses/jvm8DefaultInterfaceMethods/inlineClassInheritingDefaultMethodNoCompatibilityGeneric.kt");
       }
 
       @Test
@@ -31639,39 +32485,9 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
       }
 
       @Test
-      @TestMetadata("jvmDefaultAll.kt")
-      public void testJvmDefaultAll() {
-        runTest("compiler/testData/codegen/box/inlineClasses/jvm8DefaultInterfaceMethods/jvmDefaultAll.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
-      }
-
-      @Test
-      @TestMetadata("jvmDefaultAllGeneric.kt")
-      public void testJvmDefaultAllGeneric() {
-        runTest("compiler/testData/codegen/box/inlineClasses/jvm8DefaultInterfaceMethods/jvmDefaultAllGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
-      }
-
-      @Test
-      @TestMetadata("jvmDefaultAllPrimaryProperty.kt")
-      public void testJvmDefaultAllPrimaryProperty() {
-        runTest("compiler/testData/codegen/box/inlineClasses/jvm8DefaultInterfaceMethods/jvmDefaultAllPrimaryProperty.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
-      }
-
-      @Test
-      @TestMetadata("jvmDefaultAllPrimaryPropertyGeneric.kt")
-      public void testJvmDefaultAllPrimaryPropertyGeneric() {
-        runTest("compiler/testData/codegen/box/inlineClasses/jvm8DefaultInterfaceMethods/jvmDefaultAllPrimaryPropertyGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
-      }
-
-      @Test
-      @TestMetadata("jvmDefaultAllProperty.kt")
-      public void testJvmDefaultAllProperty() {
-        runTest("compiler/testData/codegen/box/inlineClasses/jvm8DefaultInterfaceMethods/jvmDefaultAllProperty.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
-      }
-
-      @Test
-      @TestMetadata("jvmDefaultAllPropertyGeneric.kt")
-      public void testJvmDefaultAllPropertyGeneric() {
-        runTest("compiler/testData/codegen/box/inlineClasses/jvm8DefaultInterfaceMethods/jvmDefaultAllPropertyGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+      @TestMetadata("jvmDefault.kt")
+      public void testJvmDefault() {
+        runTest("compiler/testData/codegen/box/inlineClasses/jvm8DefaultInterfaceMethods/jvmDefault.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
       }
 
       @Test
@@ -31681,9 +32497,39 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
       }
 
       @Test
+      @TestMetadata("jvmDefaultGeneric2.kt")
+      public void testJvmDefaultGeneric2() {
+        runTest("compiler/testData/codegen/box/inlineClasses/jvm8DefaultInterfaceMethods/jvmDefaultGeneric2.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+      }
+
+      @Test
       @TestMetadata("jvmDefaultGenericGeneric.kt")
       public void testJvmDefaultGenericGeneric() {
         runTest("compiler/testData/codegen/box/inlineClasses/jvm8DefaultInterfaceMethods/jvmDefaultGenericGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+      }
+
+      @Test
+      @TestMetadata("jvmDefaultPrimaryProperty.kt")
+      public void testJvmDefaultPrimaryProperty() {
+        runTest("compiler/testData/codegen/box/inlineClasses/jvm8DefaultInterfaceMethods/jvmDefaultPrimaryProperty.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+      }
+
+      @Test
+      @TestMetadata("jvmDefaultPrimaryPropertyGeneric.kt")
+      public void testJvmDefaultPrimaryPropertyGeneric() {
+        runTest("compiler/testData/codegen/box/inlineClasses/jvm8DefaultInterfaceMethods/jvmDefaultPrimaryPropertyGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+      }
+
+      @Test
+      @TestMetadata("jvmDefaultProperty.kt")
+      public void testJvmDefaultProperty() {
+        runTest("compiler/testData/codegen/box/inlineClasses/jvm8DefaultInterfaceMethods/jvmDefaultProperty.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+      }
+
+      @Test
+      @TestMetadata("jvmDefaultPropertyGeneric.kt")
+      public void testJvmDefaultPropertyGeneric() {
+        runTest("compiler/testData/codegen/box/inlineClasses/jvm8DefaultInterfaceMethods/jvmDefaultPropertyGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
       }
 
       @Test
@@ -31724,12 +32570,344 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     }
 
     @Nested
+    @TestMetadata("compiler/testData/codegen/box/inlineClasses/jvmExposeBoxed")
+    @TestDataPath("$PROJECT_ROOT")
+    public class JvmExposeBoxed {
+      @Test
+      public void testAllFilesPresentInJvmExposeBoxed() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/jvmExposeBoxed"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+      }
+
+      @Test
+      @TestMetadata("companionObject.kt")
+      public void testCompanionObject() {
+        runTest("compiler/testData/codegen/box/inlineClasses/jvmExposeBoxed/companionObject.kt");
+      }
+
+      @Test
+      @TestMetadata("constructor.kt")
+      public void testConstructor() {
+        runTest("compiler/testData/codegen/box/inlineClasses/jvmExposeBoxed/constructor.kt");
+      }
+
+      @Test
+      @TestMetadata("constructorBoxed.kt")
+      public void testConstructorBoxed() {
+        runTest("compiler/testData/codegen/box/inlineClasses/jvmExposeBoxed/constructorBoxed.kt");
+      }
+
+      @Test
+      @TestMetadata("contexts.kt")
+      public void testContexts() {
+        runTest("compiler/testData/codegen/box/inlineClasses/jvmExposeBoxed/contexts.kt");
+      }
+
+      @Test
+      @TestMetadata("extension.kt")
+      public void testExtension() {
+        runTest("compiler/testData/codegen/box/inlineClasses/jvmExposeBoxed/extension.kt");
+      }
+
+      @Test
+      @TestMetadata("getter.kt")
+      public void testGetter() {
+        runTest("compiler/testData/codegen/box/inlineClasses/jvmExposeBoxed/getter.kt");
+      }
+
+      @Test
+      @TestMetadata("globalReturn.kt")
+      public void testGlobalReturn() {
+        runTest("compiler/testData/codegen/box/inlineClasses/jvmExposeBoxed/globalReturn.kt");
+      }
+
+      @Test
+      @TestMetadata("initBlock.kt")
+      public void testInitBlock() {
+        runTest("compiler/testData/codegen/box/inlineClasses/jvmExposeBoxed/initBlock.kt");
+      }
+
+      @Test
+      @TestMetadata("int.kt")
+      public void testInt() {
+        runTest("compiler/testData/codegen/box/inlineClasses/jvmExposeBoxed/int.kt");
+      }
+
+      @Test
+      @TestMetadata("jvmStatic.kt")
+      public void testJvmStatic() {
+        runTest("compiler/testData/codegen/box/inlineClasses/jvmExposeBoxed/jvmStatic.kt");
+      }
+
+      @Test
+      @TestMetadata("lambda.kt")
+      public void testLambda() {
+        runTest("compiler/testData/codegen/box/inlineClasses/jvmExposeBoxed/lambda.kt");
+      }
+
+      @Test
+      @TestMetadata("method.kt")
+      public void testMethod() {
+        runTest("compiler/testData/codegen/box/inlineClasses/jvmExposeBoxed/method.kt");
+      }
+
+      @Test
+      @TestMetadata("methodReturn.kt")
+      public void testMethodReturn() {
+        runTest("compiler/testData/codegen/box/inlineClasses/jvmExposeBoxed/methodReturn.kt");
+      }
+
+      @Test
+      @TestMetadata("methodReturnWithJvmName.kt")
+      public void testMethodReturnWithJvmName() {
+        runTest("compiler/testData/codegen/box/inlineClasses/jvmExposeBoxed/methodReturnWithJvmName.kt");
+      }
+
+      @Test
+      @TestMetadata("methodWithAnnotation.kt")
+      public void testMethodWithAnnotation() {
+        runTest("compiler/testData/codegen/box/inlineClasses/jvmExposeBoxed/methodWithAnnotation.kt");
+      }
+
+      @Test
+      @TestMetadata("noArg.kt")
+      public void testNoArg() {
+        runTest("compiler/testData/codegen/box/inlineClasses/jvmExposeBoxed/noArg.kt");
+      }
+
+      @Test
+      @TestMetadata("noArg2.kt")
+      public void testNoArg2() {
+        runTest("compiler/testData/codegen/box/inlineClasses/jvmExposeBoxed/noArg2.kt");
+      }
+
+      @Test
+      @TestMetadata("simple.kt")
+      public void testSimple() {
+        runTest("compiler/testData/codegen/box/inlineClasses/jvmExposeBoxed/simple.kt");
+      }
+
+      @Test
+      @TestMetadata("suspend.kt")
+      public void testSuspend() {
+        runTest("compiler/testData/codegen/box/inlineClasses/jvmExposeBoxed/suspend.kt");
+      }
+
+      @Test
+      @TestMetadata("uint.kt")
+      public void testUint() {
+        runTest("compiler/testData/codegen/box/inlineClasses/jvmExposeBoxed/uint.kt");
+      }
+
+      @Test
+      @TestMetadata("uintInt.kt")
+      public void testUintInt() {
+        runTest("compiler/testData/codegen/box/inlineClasses/jvmExposeBoxed/uintInt.kt");
+      }
+
+      @Test
+      @TestMetadata("uintReceiver.kt")
+      public void testUintReceiver() {
+        runTest("compiler/testData/codegen/box/inlineClasses/jvmExposeBoxed/uintReceiver.kt");
+      }
+
+      @Nested
+      @TestMetadata("compiler/testData/codegen/box/inlineClasses/jvmExposeBoxed/directive")
+      @TestDataPath("$PROJECT_ROOT")
+      public class Directive {
+        @Test
+        public void testAllFilesPresentInDirective() {
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/jvmExposeBoxed/directive"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        }
+
+        @Test
+        @TestMetadata("companionObject.kt")
+        public void testCompanionObject() {
+          runTest("compiler/testData/codegen/box/inlineClasses/jvmExposeBoxed/directive/companionObject.kt");
+        }
+
+        @Test
+        @TestMetadata("constructor.kt")
+        public void testConstructor() {
+          runTest("compiler/testData/codegen/box/inlineClasses/jvmExposeBoxed/directive/constructor.kt");
+        }
+
+        @Test
+        @TestMetadata("constructorBoxed.kt")
+        public void testConstructorBoxed() {
+          runTest("compiler/testData/codegen/box/inlineClasses/jvmExposeBoxed/directive/constructorBoxed.kt");
+        }
+
+        @Test
+        @TestMetadata("getter.kt")
+        public void testGetter() {
+          runTest("compiler/testData/codegen/box/inlineClasses/jvmExposeBoxed/directive/getter.kt");
+        }
+
+        @Test
+        @TestMetadata("globalReturn.kt")
+        public void testGlobalReturn() {
+          runTest("compiler/testData/codegen/box/inlineClasses/jvmExposeBoxed/directive/globalReturn.kt");
+        }
+
+        @Test
+        @TestMetadata("initBlock.kt")
+        public void testInitBlock() {
+          runTest("compiler/testData/codegen/box/inlineClasses/jvmExposeBoxed/directive/initBlock.kt");
+        }
+
+        @Test
+        @TestMetadata("int.kt")
+        public void testInt() {
+          runTest("compiler/testData/codegen/box/inlineClasses/jvmExposeBoxed/directive/int.kt");
+        }
+
+        @Test
+        @TestMetadata("lambda.kt")
+        public void testLambda() {
+          runTest("compiler/testData/codegen/box/inlineClasses/jvmExposeBoxed/directive/lambda.kt");
+        }
+
+        @Test
+        @TestMetadata("method.kt")
+        public void testMethod() {
+          runTest("compiler/testData/codegen/box/inlineClasses/jvmExposeBoxed/directive/method.kt");
+        }
+
+        @Test
+        @TestMetadata("methodReturn.kt")
+        public void testMethodReturn() {
+          runTest("compiler/testData/codegen/box/inlineClasses/jvmExposeBoxed/directive/methodReturn.kt");
+        }
+
+        @Test
+        @TestMetadata("methodReturnWithJvmName.kt")
+        public void testMethodReturnWithJvmName() {
+          runTest("compiler/testData/codegen/box/inlineClasses/jvmExposeBoxed/directive/methodReturnWithJvmName.kt");
+        }
+
+        @Test
+        @TestMetadata("noArg.kt")
+        public void testNoArg() {
+          runTest("compiler/testData/codegen/box/inlineClasses/jvmExposeBoxed/directive/noArg.kt");
+        }
+
+        @Test
+        @TestMetadata("noArg2.kt")
+        public void testNoArg2() {
+          runTest("compiler/testData/codegen/box/inlineClasses/jvmExposeBoxed/directive/noArg2.kt");
+        }
+
+        @Test
+        @TestMetadata("simple.kt")
+        public void testSimple() {
+          runTest("compiler/testData/codegen/box/inlineClasses/jvmExposeBoxed/directive/simple.kt");
+        }
+
+        @Test
+        @TestMetadata("synthetic.kt")
+        public void testSynthetic() {
+          runTest("compiler/testData/codegen/box/inlineClasses/jvmExposeBoxed/directive/synthetic.kt");
+        }
+
+        @Test
+        @TestMetadata("uint.kt")
+        public void testUint() {
+          runTest("compiler/testData/codegen/box/inlineClasses/jvmExposeBoxed/directive/uint.kt");
+        }
+
+        @Test
+        @TestMetadata("uintInt.kt")
+        public void testUintInt() {
+          runTest("compiler/testData/codegen/box/inlineClasses/jvmExposeBoxed/directive/uintInt.kt");
+        }
+
+        @Test
+        @TestMetadata("uintReceiver.kt")
+        public void testUintReceiver() {
+          runTest("compiler/testData/codegen/box/inlineClasses/jvmExposeBoxed/directive/uintReceiver.kt");
+        }
+      }
+
+      @Nested
+      @TestMetadata("compiler/testData/codegen/box/inlineClasses/jvmExposeBoxed/featureInteraction")
+      @TestDataPath("$PROJECT_ROOT")
+      public class FeatureInteraction {
+        @Test
+        public void testAllFilesPresentInFeatureInteraction() {
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/jvmExposeBoxed/featureInteraction"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        }
+
+        @Test
+        @TestMetadata("jvmName.kt")
+        public void testJvmName() {
+          runTest("compiler/testData/codegen/box/inlineClasses/jvmExposeBoxed/featureInteraction/jvmName.kt");
+        }
+
+        @Test
+        @TestMetadata("jvmOverloads.kt")
+        public void testJvmOverloads() {
+          runTest("compiler/testData/codegen/box/inlineClasses/jvmExposeBoxed/featureInteraction/jvmOverloads.kt");
+        }
+
+        @Test
+        @TestMetadata("jvmStatic.kt")
+        public void testJvmStatic() {
+          runTest("compiler/testData/codegen/box/inlineClasses/jvmExposeBoxed/featureInteraction/jvmStatic.kt");
+        }
+
+        @Test
+        @TestMetadata("throws.kt")
+        public void testThrows() {
+          runTest("compiler/testData/codegen/box/inlineClasses/jvmExposeBoxed/featureInteraction/throws.kt");
+        }
+      }
+
+      @Nested
+      @TestMetadata("compiler/testData/codegen/box/inlineClasses/jvmExposeBoxed/inherit")
+      @TestDataPath("$PROJECT_ROOT")
+      public class Inherit {
+        @Test
+        public void testAllFilesPresentInInherit() {
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/jvmExposeBoxed/inherit"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        }
+
+        @Nested
+        @TestMetadata("compiler/testData/codegen/box/inlineClasses/jvmExposeBoxed/inherit/child")
+        @TestDataPath("$PROJECT_ROOT")
+        public class Child {
+          @Test
+          @TestMetadata("abstractFun.kt")
+          public void testAbstractFun() {
+            runTest("compiler/testData/codegen/box/inlineClasses/jvmExposeBoxed/inherit/child/abstractFun.kt");
+          }
+
+          @Test
+          public void testAllFilesPresentInChild() {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/jvmExposeBoxed/inherit/child"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+          }
+
+          @Test
+          @TestMetadata("interface.kt")
+          public void testInterface() {
+            runTest("compiler/testData/codegen/box/inlineClasses/jvmExposeBoxed/inherit/child/interface.kt");
+          }
+
+          @Test
+          @TestMetadata("openFun.kt")
+          public void testOpenFun() {
+            runTest("compiler/testData/codegen/box/inlineClasses/jvmExposeBoxed/inherit/child/openFun.kt");
+          }
+        }
+      }
+    }
+
+    @Nested
     @TestMetadata("compiler/testData/codegen/box/inlineClasses/propertyDelegation")
     @TestDataPath("$PROJECT_ROOT")
     public class PropertyDelegation {
       @Test
       public void testAllFilesPresentInPropertyDelegation() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/propertyDelegation"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/propertyDelegation"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -31883,7 +33061,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class Result {
       @Test
       public void testAllFilesPresentInResult() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/result"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/result"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -31941,7 +33119,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class ReturnResult {
       @Test
       public void testAllFilesPresentInReturnResult() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/returnResult"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/returnResult"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -31987,7 +33165,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class UnboxGenericParameter {
       @Test
       public void testAllFilesPresentInUnboxGenericParameter() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -32002,7 +33180,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
       public class FunInterface {
         @Test
         public void testAllFilesPresentInFunInterface() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/funInterface"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/funInterface"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
         }
 
         @Test
@@ -32114,7 +33292,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
       public class Lambda {
         @Test
         public void testAllFilesPresentInLambda() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/lambda"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/lambda"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
         }
 
         @Test
@@ -32226,7 +33404,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
       public class ObjectLiteral {
         @Test
         public void testAllFilesPresentInObjectLiteral() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/objectLiteral"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/objectLiteral"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
         }
 
         @Test
@@ -32340,7 +33518,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
   public class InnerClass {
     @Test
     public void testAllFilesPresentInInnerClass() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/innerClass"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/innerClass"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
     @Test
@@ -32422,7 +33600,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
   public class InnerNested {
     @Test
     public void testAllFilesPresentInInnerNested() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/innerNested"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/innerNested"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
     @Test
@@ -32665,7 +33843,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class SuperConstructorCall {
       @Test
       public void testAllFilesPresentInSuperConstructorCall() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/innerNested/superConstructorCall"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/innerNested/superConstructorCall"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -32808,7 +33986,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
   public class Instructions {
     @Test
     public void testAllFilesPresentInInstructions() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/instructions"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/instructions"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
     @Nested
@@ -32817,7 +33995,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class Swap {
       @Test
       public void testAllFilesPresentInSwap() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/instructions/swap"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/instructions/swap"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -32840,7 +34018,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
   public class InterfaceCallsNCasts {
     @Test
     public void testAllFilesPresentInInterfaceCallsNCasts() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/interfaceCallsNCasts"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/interfaceCallsNCasts"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
     @Test
@@ -32874,7 +34052,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
   public class Intrinsics {
     @Test
     public void testAllFilesPresentInIntrinsics() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/intrinsics"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/intrinsics"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
     @Test
@@ -33058,7 +34236,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
   public class Invokedynamic {
     @Test
     public void testAllFilesPresentInInvokedynamic() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/invokedynamic"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/invokedynamic"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
     @Test
@@ -33073,13 +34251,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class Lambdas {
       @Test
       public void testAllFilesPresentInLambdas() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/invokedynamic/lambdas"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
-      }
-
-      @Test
-      @TestMetadata("anyAnnotationDisablesIndyLambdaGeneration.kt")
-      public void testAnyAnnotationDisablesIndyLambdaGeneration() {
-        runTest("compiler/testData/codegen/box/invokedynamic/lambdas/anyAnnotationDisablesIndyLambdaGeneration.kt");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/invokedynamic/lambdas"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -33137,6 +34309,12 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
       }
 
       @Test
+      @TestMetadata("jvmSerializableLambda_indyAllowAnnotatedLambdas.kt")
+      public void testJvmSerializableLambda_indyAllowAnnotatedLambdas() {
+        runTest("compiler/testData/codegen/box/invokedynamic/lambdas/jvmSerializableLambda_indyAllowAnnotatedLambdas.kt");
+      }
+
+      @Test
       @TestMetadata("kt52875.kt")
       public void testKt52875() {
         runTest("compiler/testData/codegen/box/invokedynamic/lambdas/kt52875.kt");
@@ -33164,6 +34342,18 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
       @TestMetadata("lambdaToSting.kt")
       public void testLambdaToSting() {
         runTest("compiler/testData/codegen/box/invokedynamic/lambdas/lambdaToSting.kt");
+      }
+
+      @Test
+      @TestMetadata("lambdaWithAnnotations.kt")
+      public void testLambdaWithAnnotations() {
+        runTest("compiler/testData/codegen/box/invokedynamic/lambdas/lambdaWithAnnotations.kt");
+      }
+
+      @Test
+      @TestMetadata("lambdaWithAnnotations_target_expression_target.kt")
+      public void testLambdaWithAnnotations_target_expression_target() {
+        runTest("compiler/testData/codegen/box/invokedynamic/lambdas/lambdaWithAnnotations_target_expression_target.kt");
       }
 
       @Test
@@ -33197,9 +34387,39 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
       }
 
       @Test
+      @TestMetadata("runtimeAnnotation.kt")
+      public void testRuntimeAnnotation() {
+        runTest("compiler/testData/codegen/box/invokedynamic/lambdas/runtimeAnnotation.kt");
+      }
+
+      @Test
+      @TestMetadata("runtimeAnnotationImplicit.kt")
+      public void testRuntimeAnnotationImplicit() {
+        runTest("compiler/testData/codegen/box/invokedynamic/lambdas/runtimeAnnotationImplicit.kt");
+      }
+
+      @Test
+      @TestMetadata("runtimeAnnotationImplicit_allowAnnotatedLambdas.kt")
+      public void testRuntimeAnnotationImplicit_allowAnnotatedLambdas() {
+        runTest("compiler/testData/codegen/box/invokedynamic/lambdas/runtimeAnnotationImplicit_allowAnnotatedLambdas.kt");
+      }
+
+      @Test
+      @TestMetadata("runtimeAnnotation_allowAnnotatedLambdas.kt")
+      public void testRuntimeAnnotation_allowAnnotatedLambdas() {
+        runTest("compiler/testData/codegen/box/invokedynamic/lambdas/runtimeAnnotation_allowAnnotatedLambdas.kt");
+      }
+
+      @Test
       @TestMetadata("simpleIndyLambda.kt")
       public void testSimpleIndyLambda() {
         runTest("compiler/testData/codegen/box/invokedynamic/lambdas/simpleIndyLambda.kt");
+      }
+
+      @Test
+      @TestMetadata("sourcesAnnotationAllowsIndyLambdaGeneration.kt")
+      public void testSourcesAnnotationAllowsIndyLambdaGeneration() {
+        runTest("compiler/testData/codegen/box/invokedynamic/lambdas/sourcesAnnotationAllowsIndyLambdaGeneration.kt");
       }
 
       @Test
@@ -33220,7 +34440,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
       public class InlineClassInSignature {
         @Test
         public void testAllFilesPresentInInlineClassInSignature() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/invokedynamic/lambdas/inlineClassInSignature"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/invokedynamic/lambdas/inlineClassInSignature"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
         }
 
         @Test
@@ -33267,7 +34487,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class Sam {
       @Test
       public void testAllFilesPresentInSam() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/invokedynamic/sam"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/invokedynamic/sam"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -33522,7 +34742,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
       public class FunctionExprToJavaInterface {
         @Test
         public void testAllFilesPresentInFunctionExprToJavaInterface() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/invokedynamic/sam/functionExprToJavaInterface"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/invokedynamic/sam/functionExprToJavaInterface"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
         }
 
         @Test
@@ -33592,7 +34812,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
 
         @Test
         public void testAllFilesPresentInFunctionRefToJavaInterface() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/invokedynamic/sam/functionRefToJavaInterface"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/invokedynamic/sam/functionRefToJavaInterface"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
         }
 
         @Test
@@ -33805,7 +35025,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
         public class SpecialFunctions {
           @Test
           public void testAllFilesPresentInSpecialFunctions() {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/invokedynamic/sam/functionRefToJavaInterface/specialFunctions"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/invokedynamic/sam/functionRefToJavaInterface/specialFunctions"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
           }
 
           @Test
@@ -33869,7 +35089,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
         public class WithAccessor {
           @Test
           public void testAllFilesPresentInWithAccessor() {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/invokedynamic/sam/functionRefToJavaInterface/withAccessor"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/invokedynamic/sam/functionRefToJavaInterface/withAccessor"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
           }
 
           @Test
@@ -33928,7 +35148,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
       public class InlineClassInSignature {
         @Test
         public void testAllFilesPresentInInlineClassInSignature() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/invokedynamic/sam/inlineClassInSignature"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/invokedynamic/sam/inlineClassInSignature"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
         }
 
         @Test
@@ -34010,7 +35230,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
       public class SpecializedGenerics {
         @Test
         public void testAllFilesPresentInSpecializedGenerics() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/invokedynamic/sam/specializedGenerics"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/invokedynamic/sam/specializedGenerics"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
         }
 
         @Test
@@ -34153,7 +35373,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class Serializable {
       @Test
       public void testAllFilesPresentInSerializable() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/invokedynamic/serializable"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/invokedynamic/serializable"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -34320,7 +35540,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
   public class InvolvesIrInterpreter {
     @Test
     public void testAllFilesPresentInInvolvesIrInterpreter() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/involvesIrInterpreter"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/involvesIrInterpreter"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
     @Test
@@ -34539,7 +35759,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
 
       @Test
       public void testAllFilesPresentInConstEvaluationFromJavaWorld() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/involvesIrInterpreter/constEvaluationFromJavaWorld"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/involvesIrInterpreter/constEvaluationFromJavaWorld"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -34567,7 +35787,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class IntrinsicConst {
       @Test
       public void testAllFilesPresentInIntrinsicConst() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/involvesIrInterpreter/intrinsicConst"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/involvesIrInterpreter/intrinsicConst"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -34643,7 +35863,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class Serialization {
       @Test
       public void testAllFilesPresentInSerialization() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/involvesIrInterpreter/serialization"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/involvesIrInterpreter/serialization"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -34708,7 +35928,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
   public class Ir {
     @Test
     public void testAllFilesPresentInIr() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ir"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ir"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
     @Test
@@ -34861,7 +36081,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class ClosureConversion {
       @Test
       public void testAllFilesPresentInClosureConversion() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ir/closureConversion"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ir/closureConversion"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -34919,7 +36139,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class PrimitiveNumberComparisons {
       @Test
       public void testAllFilesPresentInPrimitiveNumberComparisons() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ir/primitiveNumberComparisons"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ir/primitiveNumberComparisons"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -34953,7 +36173,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class PrivateSignatures {
       @Test
       public void testAllFilesPresentInPrivateSignatures() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ir/privateSignatures"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ir/privateSignatures"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -34975,7 +36195,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class SerializationRegressions {
       @Test
       public void testAllFilesPresentInSerializationRegressions() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ir/serializationRegressions"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ir/serializationRegressions"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -34985,21 +36205,9 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
       }
 
       @Test
-      @TestMetadata("deepGenericDelegatedProperty.kt")
-      public void testDeepGenericDelegatedProperty() {
-        runTest("compiler/testData/codegen/box/ir/serializationRegressions/deepGenericDelegatedProperty.kt");
-      }
-
-      @Test
       @TestMetadata("dispatchReceiverValue.kt")
       public void testDispatchReceiverValue() {
         runTest("compiler/testData/codegen/box/ir/serializationRegressions/dispatchReceiverValue.kt");
-      }
-
-      @Test
-      @TestMetadata("genericProperty.kt")
-      public void testGenericProperty() {
-        runTest("compiler/testData/codegen/box/ir/serializationRegressions/genericProperty.kt");
       }
 
       @Test
@@ -35040,7 +36248,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
   public class JavaFieldAndKotlinProperty {
     @Test
     public void testAllFilesPresentInJavaFieldAndKotlinProperty() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/javaFieldAndKotlinProperty"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/javaFieldAndKotlinProperty"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
     @Test
@@ -35194,7 +36402,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
 
     @Test
     public void testAllFilesPresentInJavaInterop() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/javaInterop"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/javaInterop"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
     @Test
@@ -35360,6 +36568,30 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     }
 
     @Test
+    @TestMetadata("platformToLateinit.kt")
+    public void testPlatformToLateinit() {
+      runTest("compiler/testData/codegen/box/javaInterop/platformToLateinit.kt");
+    }
+
+    @Test
+    @TestMetadata("platformToLateinit2.kt")
+    public void testPlatformToLateinit2() {
+      runTest("compiler/testData/codegen/box/javaInterop/platformToLateinit2.kt");
+    }
+
+    @Test
+    @TestMetadata("platformToLateinit3.kt")
+    public void testPlatformToLateinit3() {
+      runTest("compiler/testData/codegen/box/javaInterop/platformToLateinit3.kt");
+    }
+
+    @Test
+    @TestMetadata("primitiveSyntheticPropertyBoxedSetterType.kt")
+    public void testPrimitiveSyntheticPropertyBoxedSetterType() {
+      runTest("compiler/testData/codegen/box/javaInterop/primitiveSyntheticPropertyBoxedSetterType.kt");
+    }
+
+    @Test
     @TestMetadata("protectedField.kt")
     public void testProtectedField() {
       runTest("compiler/testData/codegen/box/javaInterop/protectedField.kt");
@@ -35437,7 +36669,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
 
       @Test
       public void testAllFilesPresentInCommonAtomicTypes() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/javaInterop/commonAtomicTypes"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/javaInterop/commonAtomicTypes"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -35489,7 +36721,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class ForeignAnnotationsTests {
       @Test
       public void testAllFilesPresentInForeignAnnotationsTests() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/javaInterop/foreignAnnotationsTests"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/javaInterop/foreignAnnotationsTests"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Nested
@@ -35498,7 +36730,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
       public class Tests {
         @Test
         public void testAllFilesPresentInTests() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/javaInterop/foreignAnnotationsTests/tests"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/javaInterop/foreignAnnotationsTests/tests"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
         }
 
         @Test
@@ -35521,7 +36753,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class Generics {
       @Test
       public void testAllFilesPresentInGenerics() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/javaInterop/generics"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/javaInterop/generics"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -35573,7 +36805,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class NotNullAssertions {
       @Test
       public void testAllFilesPresentInNotNullAssertions() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/javaInterop/notNullAssertions"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/javaInterop/notNullAssertions"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -35720,7 +36952,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
       public class EnhancedNullability {
         @Test
         public void testAllFilesPresentInEnhancedNullability() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/javaInterop/notNullAssertions/enhancedNullability"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/javaInterop/notNullAssertions/enhancedNullability"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
         }
 
         @Test
@@ -35778,7 +37010,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
       public class ExpressionAssertionMessages {
         @Test
         public void testAllFilesPresentInExpressionAssertionMessages() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/javaInterop/notNullAssertions/expressionAssertionMessages"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/javaInterop/notNullAssertions/expressionAssertionMessages"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
         }
 
         @Test
@@ -35860,7 +37092,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
       public class NullCheckOnLambdaReturnValue {
         @Test
         public void testAllFilesPresentInNullCheckOnLambdaReturnValue() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/javaInterop/notNullAssertions/nullCheckOnLambdaReturnValue"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/javaInterop/notNullAssertions/nullCheckOnLambdaReturnValue"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
         }
 
         @Test
@@ -35931,7 +37163,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class ObjectMethods {
       @Test
       public void testAllFilesPresentInObjectMethods() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/javaInterop/objectMethods"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/javaInterop/objectMethods"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -35977,7 +37209,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class PrimitiveVsWrapperTypeInInheritance {
       @Test
       public void testAllFilesPresentInPrimitiveVsWrapperTypeInInheritance() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/javaInterop/primitiveVsWrapperTypeInInheritance"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/javaInterop/primitiveVsWrapperTypeInInheritance"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -36041,7 +37273,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class Statics {
       @Test
       public void testAllFilesPresentInStatics() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/javaInterop/statics"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/javaInterop/statics"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -36082,7 +37314,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
   public class JavaVisibility {
     @Test
     public void testAllFilesPresentInJavaVisibility() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/javaVisibility"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/javaVisibility"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
     @Nested
@@ -36091,7 +37323,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class Package {
       @Test
       public void testAllFilesPresentInPackage() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/javaVisibility/package"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/javaVisibility/package"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -36167,7 +37399,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class ProtectedAndPackage {
       @Test
       public void testAllFilesPresentInProtectedAndPackage() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/javaVisibility/protectedAndPackage"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/javaVisibility/protectedAndPackage"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -36231,7 +37463,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class ProtectedStatic {
       @Test
       public void testAllFilesPresentInProtectedStatic() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/javaVisibility/protectedStatic"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/javaVisibility/protectedStatic"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -36314,7 +37546,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
   public class Jdk {
     @Test
     public void testAllFilesPresentInJdk() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/jdk"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/jdk"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
     @Test
@@ -36372,7 +37604,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
   public class Js {
     @Test
     public void testAllFilesPresentInJs() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/js"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/js"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
     @Nested
@@ -36381,7 +37613,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class InlinedReturnBreakContinue {
       @Test
       public void testAllFilesPresentInInlinedReturnBreakContinue() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/js/inlinedReturnBreakContinue"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/js/inlinedReturnBreakContinue"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
     }
   }
@@ -36392,7 +37624,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
   public class Jvm8 {
     @Test
     public void testAllFilesPresentInJvm8() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/jvm8"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/jvm8"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
     @Test
@@ -36533,7 +37765,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class Defaults {
       @Test
       public void testAllFilesPresentInDefaults() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/jvm8/defaults"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/jvm8/defaults"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -36549,320 +37781,12 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
       }
 
       @Nested
-      @TestMetadata("compiler/testData/codegen/box/jvm8/defaults/allCompatibility")
-      @TestDataPath("$PROJECT_ROOT")
-      public class AllCompatibility {
-        @Test
-        @TestMetadata("accessor.kt")
-        public void testAccessor() {
-          runTest("compiler/testData/codegen/box/jvm8/defaults/allCompatibility/accessor.kt");
-        }
-
-        @Test
-        @TestMetadata("accessorFromCompanion.kt")
-        public void testAccessorFromCompanion() {
-          runTest("compiler/testData/codegen/box/jvm8/defaults/allCompatibility/accessorFromCompanion.kt");
-        }
-
-        @Test
-        public void testAllFilesPresentInAllCompatibility() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/jvm8/defaults/allCompatibility"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
-        }
-
-        @Test
-        @TestMetadata("bridge.kt")
-        public void testBridge() {
-          runTest("compiler/testData/codegen/box/jvm8/defaults/allCompatibility/bridge.kt");
-        }
-
-        @Test
-        @TestMetadata("bridge2.kt")
-        public void testBridge2() {
-          runTest("compiler/testData/codegen/box/jvm8/defaults/allCompatibility/bridge2.kt");
-        }
-
-        @Test
-        @TestMetadata("bridge3.kt")
-        public void testBridge3() {
-          runTest("compiler/testData/codegen/box/jvm8/defaults/allCompatibility/bridge3.kt");
-        }
-
-        @Test
-        @TestMetadata("bridgeInClass.kt")
-        public void testBridgeInClass() {
-          runTest("compiler/testData/codegen/box/jvm8/defaults/allCompatibility/bridgeInClass.kt");
-        }
-
-        @Test
-        @TestMetadata("bridgeInInterface.kt")
-        public void testBridgeInInterface() {
-          runTest("compiler/testData/codegen/box/jvm8/defaults/allCompatibility/bridgeInInterface.kt");
-        }
-
-        @Test
-        @TestMetadata("bridgeInInterfaceWithProperties.kt")
-        public void testBridgeInInterfaceWithProperties() {
-          runTest("compiler/testData/codegen/box/jvm8/defaults/allCompatibility/bridgeInInterfaceWithProperties.kt");
-        }
-
-        @Test
-        @TestMetadata("bridgeWithProperties.kt")
-        public void testBridgeWithProperties() {
-          runTest("compiler/testData/codegen/box/jvm8/defaults/allCompatibility/bridgeWithProperties.kt");
-        }
-
-        @Test
-        @TestMetadata("bridgeWithProperties2.kt")
-        public void testBridgeWithProperties2() {
-          runTest("compiler/testData/codegen/box/jvm8/defaults/allCompatibility/bridgeWithProperties2.kt");
-        }
-
-        @Test
-        @TestMetadata("bridgeWithProperties3.kt")
-        public void testBridgeWithProperties3() {
-          runTest("compiler/testData/codegen/box/jvm8/defaults/allCompatibility/bridgeWithProperties3.kt");
-        }
-
-        @Test
-        @TestMetadata("callStackTrace.kt")
-        public void testCallStackTrace() {
-          runTest("compiler/testData/codegen/box/jvm8/defaults/allCompatibility/callStackTrace.kt");
-        }
-
-        @Test
-        @TestMetadata("callableReference.kt")
-        public void testCallableReference() {
-          runTest("compiler/testData/codegen/box/jvm8/defaults/allCompatibility/callableReference.kt");
-        }
-
-        @Test
-        @TestMetadata("capturedSuperCall.kt")
-        public void testCapturedSuperCall() {
-          runTest("compiler/testData/codegen/box/jvm8/defaults/allCompatibility/capturedSuperCall.kt");
-        }
-
-        @Test
-        @TestMetadata("defaultArgs.kt")
-        public void testDefaultArgs() {
-          runTest("compiler/testData/codegen/box/jvm8/defaults/allCompatibility/defaultArgs.kt");
-        }
-
-        @Test
-        @TestMetadata("defaultArgsViaAnonymousObject.kt")
-        public void testDefaultArgsViaAnonymousObject() {
-          runTest("compiler/testData/codegen/box/jvm8/defaults/allCompatibility/defaultArgsViaAnonymousObject.kt");
-        }
-
-        @Test
-        @TestMetadata("deprecatedAnnotation.kt")
-        public void testDeprecatedAnnotation() {
-          runTest("compiler/testData/codegen/box/jvm8/defaults/allCompatibility/deprecatedAnnotation.kt");
-        }
-
-        @Test
-        @TestMetadata("deprecatedDefaultMethod.kt")
-        public void testDeprecatedDefaultMethod() {
-          runTest("compiler/testData/codegen/box/jvm8/defaults/allCompatibility/deprecatedDefaultMethod.kt");
-        }
-
-        @Test
-        @TestMetadata("diamond.kt")
-        public void testDiamond() {
-          runTest("compiler/testData/codegen/box/jvm8/defaults/allCompatibility/diamond.kt");
-        }
-
-        @Test
-        @TestMetadata("funInterface.kt")
-        public void testFunInterface() {
-          runTest("compiler/testData/codegen/box/jvm8/defaults/allCompatibility/funInterface.kt");
-        }
-
-        @Test
-        @TestMetadata("inheritedFunctionWithDefaultParameters.kt")
-        public void testInheritedFunctionWithDefaultParameters() {
-          runTest("compiler/testData/codegen/box/jvm8/defaults/allCompatibility/inheritedFunctionWithDefaultParameters.kt");
-        }
-
-        @Test
-        @TestMetadata("inheritedJvmDefault.kt")
-        public void testInheritedJvmDefault() {
-          runTest("compiler/testData/codegen/box/jvm8/defaults/allCompatibility/inheritedJvmDefault.kt");
-        }
-
-        @Test
-        @TestMetadata("inline.kt")
-        public void testInline() {
-          runTest("compiler/testData/codegen/box/jvm8/defaults/allCompatibility/inline.kt");
-        }
-
-        @Test
-        @TestMetadata("inlineProperty.kt")
-        public void testInlineProperty() {
-          runTest("compiler/testData/codegen/box/jvm8/defaults/allCompatibility/inlineProperty.kt");
-        }
-
-        @Test
-        @TestMetadata("interfaceExtension.kt")
-        public void testInterfaceExtension() {
-          runTest("compiler/testData/codegen/box/jvm8/defaults/allCompatibility/interfaceExtension.kt");
-        }
-
-        @Test
-        @TestMetadata("kt11969.kt")
-        public void testKt11969() {
-          runTest("compiler/testData/codegen/box/jvm8/defaults/allCompatibility/kt11969.kt");
-        }
-
-        @Test
-        @TestMetadata("kt14243.kt")
-        public void testKt14243() {
-          runTest("compiler/testData/codegen/box/jvm8/defaults/allCompatibility/kt14243.kt");
-        }
-
-        @Test
-        @TestMetadata("kt14243_2.kt")
-        public void testKt14243_2() {
-          runTest("compiler/testData/codegen/box/jvm8/defaults/allCompatibility/kt14243_2.kt");
-        }
-
-        @Test
-        @TestMetadata("kt14243_prop.kt")
-        public void testKt14243_prop() {
-          runTest("compiler/testData/codegen/box/jvm8/defaults/allCompatibility/kt14243_prop.kt");
-        }
-
-        @Test
-        @TestMetadata("kt40920.kt")
-        public void testKt40920() {
-          runTest("compiler/testData/codegen/box/jvm8/defaults/allCompatibility/kt40920.kt");
-        }
-
-        @Test
-        @TestMetadata("kt42674.kt")
-        public void testKt42674() {
-          runTest("compiler/testData/codegen/box/jvm8/defaults/allCompatibility/kt42674.kt");
-        }
-
-        @Test
-        @TestMetadata("localDelegatedProperties.kt")
-        public void testLocalDelegatedProperties() {
-          runTest("compiler/testData/codegen/box/jvm8/defaults/allCompatibility/localDelegatedProperties.kt");
-        }
-
-        @Test
-        @TestMetadata("multiModuleClassInheritanceWithSuperCall.kt")
-        public void testMultiModuleClassInheritanceWithSuperCall() {
-          runTest("compiler/testData/codegen/box/jvm8/defaults/allCompatibility/multiModuleClassInheritanceWithSuperCall.kt");
-        }
-
-        @Test
-        @TestMetadata("oneImplementation.kt")
-        public void testOneImplementation() {
-          runTest("compiler/testData/codegen/box/jvm8/defaults/allCompatibility/oneImplementation.kt");
-        }
-
-        @Test
-        @TestMetadata("oneImplementation2.kt")
-        public void testOneImplementation2() {
-          runTest("compiler/testData/codegen/box/jvm8/defaults/allCompatibility/oneImplementation2.kt");
-        }
-
-        @Test
-        @TestMetadata("privateFunInInterface.kt")
-        public void testPrivateFunInInterface() {
-          runTest("compiler/testData/codegen/box/jvm8/defaults/allCompatibility/privateFunInInterface.kt");
-        }
-
-        @Test
-        @TestMetadata("privateFunWithDefaultArg.kt")
-        public void testPrivateFunWithDefaultArg() {
-          runTest("compiler/testData/codegen/box/jvm8/defaults/allCompatibility/privateFunWithDefaultArg.kt");
-        }
-
-        @Test
-        @TestMetadata("privateFunWithDefaultArg2.kt")
-        public void testPrivateFunWithDefaultArg2() {
-          runTest("compiler/testData/codegen/box/jvm8/defaults/allCompatibility/privateFunWithDefaultArg2.kt");
-        }
-
-        @Test
-        @TestMetadata("privateSuspend.kt")
-        public void testPrivateSuspend() {
-          runTest("compiler/testData/codegen/box/jvm8/defaults/allCompatibility/privateSuspend.kt");
-        }
-
-        @Test
-        @TestMetadata("propertyAnnotation.kt")
-        public void testPropertyAnnotation() {
-          runTest("compiler/testData/codegen/box/jvm8/defaults/allCompatibility/propertyAnnotation.kt");
-        }
-
-        @Test
-        @TestMetadata("simpleFunction.kt")
-        public void testSimpleFunction() {
-          runTest("compiler/testData/codegen/box/jvm8/defaults/allCompatibility/simpleFunction.kt");
-        }
-
-        @Test
-        @TestMetadata("superCall.kt")
-        public void testSuperCall() {
-          runTest("compiler/testData/codegen/box/jvm8/defaults/allCompatibility/superCall.kt");
-        }
-
-        @Test
-        @TestMetadata("superCallWithGenericSpecialization.kt")
-        public void testSuperCallWithGenericSpecialization() {
-          runTest("compiler/testData/codegen/box/jvm8/defaults/allCompatibility/superCallWithGenericSpecialization.kt");
-        }
-
-        @Test
-        @TestMetadata("suspendFunction.kt")
-        public void testSuspendFunction() {
-          runTest("compiler/testData/codegen/box/jvm8/defaults/allCompatibility/suspendFunction.kt");
-        }
-
-        @Nested
-        @TestMetadata("compiler/testData/codegen/box/jvm8/defaults/allCompatibility/delegationBy")
-        @TestDataPath("$PROJECT_ROOT")
-        public class DelegationBy {
-          @Test
-          public void testAllFilesPresentInDelegationBy() {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/jvm8/defaults/allCompatibility/delegationBy"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
-          }
-
-          @Test
-          @TestMetadata("simple.kt")
-          public void testSimple() {
-            runTest("compiler/testData/codegen/box/jvm8/defaults/allCompatibility/delegationBy/simple.kt");
-          }
-
-          @Test
-          @TestMetadata("simpleProperty.kt")
-          public void testSimpleProperty() {
-            runTest("compiler/testData/codegen/box/jvm8/defaults/allCompatibility/delegationBy/simpleProperty.kt");
-          }
-        }
-      }
-
-      @Nested
       @TestMetadata("compiler/testData/codegen/box/jvm8/defaults/defaultCompatibilityBridges")
       @TestDataPath("$PROJECT_ROOT")
       public class DefaultCompatibilityBridges {
         @Test
-        @TestMetadata("all.kt")
-        public void testAll() {
-          runTest("compiler/testData/codegen/box/jvm8/defaults/defaultCompatibilityBridges/all.kt");
-        }
-
-        @Test
-        @TestMetadata("allCompatibility.kt")
-        public void testAllCompatibility() {
-          runTest("compiler/testData/codegen/box/jvm8/defaults/defaultCompatibilityBridges/allCompatibility.kt");
-        }
-
-        @Test
         public void testAllFilesPresentInDefaultCompatibilityBridges() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/jvm8/defaults/defaultCompatibilityBridges"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/jvm8/defaults/defaultCompatibilityBridges"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
         }
 
         @Test
@@ -36875,6 +37799,12 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
         @TestMetadata("defaultArguments.kt")
         public void testDefaultArguments() {
           runTest("compiler/testData/codegen/box/jvm8/defaults/defaultCompatibilityBridges/defaultArguments.kt");
+        }
+
+        @Test
+        @TestMetadata("enable.kt")
+        public void testEnable() {
+          runTest("compiler/testData/codegen/box/jvm8/defaults/defaultCompatibilityBridges/enable.kt");
         }
 
         @Test
@@ -36902,6 +37832,12 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
         }
 
         @Test
+        @TestMetadata("noCompatibility.kt")
+        public void testNoCompatibility() {
+          runTest("compiler/testData/codegen/box/jvm8/defaults/defaultCompatibilityBridges/noCompatibility.kt");
+        }
+
+        @Test
         @TestMetadata("superCallWithGenericSubstitution.kt")
         public void testSuperCallWithGenericSubstitution() {
           runTest("compiler/testData/codegen/box/jvm8/defaults/defaultCompatibilityBridges/superCallWithGenericSubstitution.kt");
@@ -36920,7 +37856,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
       public class DelegationBy {
         @Test
         public void testAllFilesPresentInDelegationBy() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/jvm8/defaults/delegationBy"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/jvm8/defaults/delegationBy"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
         }
 
         @Test
@@ -36931,341 +37867,661 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
       }
 
       @Nested
-      @TestMetadata("compiler/testData/codegen/box/jvm8/defaults/noDefaultImpls")
+      @TestMetadata("compiler/testData/codegen/box/jvm8/defaults/enable")
       @TestDataPath("$PROJECT_ROOT")
-      public class NoDefaultImpls {
+      public class Enable {
         @Test
         @TestMetadata("accessor.kt")
         public void testAccessor() {
-          runTest("compiler/testData/codegen/box/jvm8/defaults/noDefaultImpls/accessor.kt");
+          runTest("compiler/testData/codegen/box/jvm8/defaults/enable/accessor.kt");
         }
 
         @Test
         @TestMetadata("accessorFromCompanion.kt")
         public void testAccessorFromCompanion() {
-          runTest("compiler/testData/codegen/box/jvm8/defaults/noDefaultImpls/accessorFromCompanion.kt");
+          runTest("compiler/testData/codegen/box/jvm8/defaults/enable/accessorFromCompanion.kt");
         }
 
         @Test
-        public void testAllFilesPresentInNoDefaultImpls() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/jvm8/defaults/noDefaultImpls"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        public void testAllFilesPresentInEnable() {
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/jvm8/defaults/enable"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
         }
 
         @Test
         @TestMetadata("bridge.kt")
         public void testBridge() {
-          runTest("compiler/testData/codegen/box/jvm8/defaults/noDefaultImpls/bridge.kt");
+          runTest("compiler/testData/codegen/box/jvm8/defaults/enable/bridge.kt");
         }
 
         @Test
         @TestMetadata("bridge2.kt")
         public void testBridge2() {
-          runTest("compiler/testData/codegen/box/jvm8/defaults/noDefaultImpls/bridge2.kt");
+          runTest("compiler/testData/codegen/box/jvm8/defaults/enable/bridge2.kt");
         }
 
         @Test
         @TestMetadata("bridge3.kt")
         public void testBridge3() {
-          runTest("compiler/testData/codegen/box/jvm8/defaults/noDefaultImpls/bridge3.kt");
+          runTest("compiler/testData/codegen/box/jvm8/defaults/enable/bridge3.kt");
         }
 
         @Test
         @TestMetadata("bridgeInClass.kt")
         public void testBridgeInClass() {
-          runTest("compiler/testData/codegen/box/jvm8/defaults/noDefaultImpls/bridgeInClass.kt");
+          runTest("compiler/testData/codegen/box/jvm8/defaults/enable/bridgeInClass.kt");
         }
 
         @Test
         @TestMetadata("bridgeInInterface.kt")
         public void testBridgeInInterface() {
-          runTest("compiler/testData/codegen/box/jvm8/defaults/noDefaultImpls/bridgeInInterface.kt");
+          runTest("compiler/testData/codegen/box/jvm8/defaults/enable/bridgeInInterface.kt");
         }
 
         @Test
         @TestMetadata("bridgeInInterfaceWithProperties.kt")
         public void testBridgeInInterfaceWithProperties() {
-          runTest("compiler/testData/codegen/box/jvm8/defaults/noDefaultImpls/bridgeInInterfaceWithProperties.kt");
+          runTest("compiler/testData/codegen/box/jvm8/defaults/enable/bridgeInInterfaceWithProperties.kt");
         }
 
         @Test
         @TestMetadata("bridgeWithProperties.kt")
         public void testBridgeWithProperties() {
-          runTest("compiler/testData/codegen/box/jvm8/defaults/noDefaultImpls/bridgeWithProperties.kt");
+          runTest("compiler/testData/codegen/box/jvm8/defaults/enable/bridgeWithProperties.kt");
         }
 
         @Test
         @TestMetadata("bridgeWithProperties2.kt")
         public void testBridgeWithProperties2() {
-          runTest("compiler/testData/codegen/box/jvm8/defaults/noDefaultImpls/bridgeWithProperties2.kt");
+          runTest("compiler/testData/codegen/box/jvm8/defaults/enable/bridgeWithProperties2.kt");
         }
 
         @Test
         @TestMetadata("bridgeWithProperties3.kt")
         public void testBridgeWithProperties3() {
-          runTest("compiler/testData/codegen/box/jvm8/defaults/noDefaultImpls/bridgeWithProperties3.kt");
+          runTest("compiler/testData/codegen/box/jvm8/defaults/enable/bridgeWithProperties3.kt");
+        }
+
+        @Test
+        @TestMetadata("callStackTrace.kt")
+        public void testCallStackTrace() {
+          runTest("compiler/testData/codegen/box/jvm8/defaults/enable/callStackTrace.kt");
         }
 
         @Test
         @TestMetadata("callableReference.kt")
         public void testCallableReference() {
-          runTest("compiler/testData/codegen/box/jvm8/defaults/noDefaultImpls/callableReference.kt");
+          runTest("compiler/testData/codegen/box/jvm8/defaults/enable/callableReference.kt");
         }
 
         @Test
         @TestMetadata("capturedSuperCall.kt")
         public void testCapturedSuperCall() {
-          runTest("compiler/testData/codegen/box/jvm8/defaults/noDefaultImpls/capturedSuperCall.kt");
+          runTest("compiler/testData/codegen/box/jvm8/defaults/enable/capturedSuperCall.kt");
         }
 
         @Test
         @TestMetadata("defaultArgs.kt")
         public void testDefaultArgs() {
-          runTest("compiler/testData/codegen/box/jvm8/defaults/noDefaultImpls/defaultArgs.kt");
+          runTest("compiler/testData/codegen/box/jvm8/defaults/enable/defaultArgs.kt");
         }
 
         @Test
         @TestMetadata("defaultArgsViaAnonymousObject.kt")
         public void testDefaultArgsViaAnonymousObject() {
-          runTest("compiler/testData/codegen/box/jvm8/defaults/noDefaultImpls/defaultArgsViaAnonymousObject.kt");
+          runTest("compiler/testData/codegen/box/jvm8/defaults/enable/defaultArgsViaAnonymousObject.kt");
+        }
+
+        @Test
+        @TestMetadata("deprecatedAnnotation.kt")
+        public void testDeprecatedAnnotation() {
+          runTest("compiler/testData/codegen/box/jvm8/defaults/enable/deprecatedAnnotation.kt");
+        }
+
+        @Test
+        @TestMetadata("deprecatedDefaultMethod.kt")
+        public void testDeprecatedDefaultMethod() {
+          runTest("compiler/testData/codegen/box/jvm8/defaults/enable/deprecatedDefaultMethod.kt");
         }
 
         @Test
         @TestMetadata("diamond.kt")
         public void testDiamond() {
-          runTest("compiler/testData/codegen/box/jvm8/defaults/noDefaultImpls/diamond.kt");
+          runTest("compiler/testData/codegen/box/jvm8/defaults/enable/diamond.kt");
         }
 
         @Test
         @TestMetadata("funInterface.kt")
         public void testFunInterface() {
-          runTest("compiler/testData/codegen/box/jvm8/defaults/noDefaultImpls/funInterface.kt");
+          runTest("compiler/testData/codegen/box/jvm8/defaults/enable/funInterface.kt");
         }
 
         @Test
         @TestMetadata("inheritedFunctionWithDefaultParameters.kt")
         public void testInheritedFunctionWithDefaultParameters() {
-          runTest("compiler/testData/codegen/box/jvm8/defaults/noDefaultImpls/inheritedFunctionWithDefaultParameters.kt");
+          runTest("compiler/testData/codegen/box/jvm8/defaults/enable/inheritedFunctionWithDefaultParameters.kt");
         }
 
         @Test
         @TestMetadata("inheritedJvmDefault.kt")
         public void testInheritedJvmDefault() {
-          runTest("compiler/testData/codegen/box/jvm8/defaults/noDefaultImpls/inheritedJvmDefault.kt");
+          runTest("compiler/testData/codegen/box/jvm8/defaults/enable/inheritedJvmDefault.kt");
         }
 
         @Test
         @TestMetadata("inline.kt")
         public void testInline() {
-          runTest("compiler/testData/codegen/box/jvm8/defaults/noDefaultImpls/inline.kt");
+          runTest("compiler/testData/codegen/box/jvm8/defaults/enable/inline.kt");
         }
 
         @Test
         @TestMetadata("inlineProperty.kt")
         public void testInlineProperty() {
-          runTest("compiler/testData/codegen/box/jvm8/defaults/noDefaultImpls/inlineProperty.kt");
+          runTest("compiler/testData/codegen/box/jvm8/defaults/enable/inlineProperty.kt");
         }
 
         @Test
         @TestMetadata("interfaceExtension.kt")
         public void testInterfaceExtension() {
-          runTest("compiler/testData/codegen/box/jvm8/defaults/noDefaultImpls/interfaceExtension.kt");
+          runTest("compiler/testData/codegen/box/jvm8/defaults/enable/interfaceExtension.kt");
         }
 
         @Test
         @TestMetadata("kt11969.kt")
         public void testKt11969() {
-          runTest("compiler/testData/codegen/box/jvm8/defaults/noDefaultImpls/kt11969.kt");
+          runTest("compiler/testData/codegen/box/jvm8/defaults/enable/kt11969.kt");
+        }
+
+        @Test
+        @TestMetadata("kt12466_superCallKJK.kt")
+        public void testKt12466_superCallKJK() {
+          runTest("compiler/testData/codegen/box/jvm8/defaults/enable/kt12466_superCallKJK.kt");
         }
 
         @Test
         @TestMetadata("kt14243.kt")
         public void testKt14243() {
-          runTest("compiler/testData/codegen/box/jvm8/defaults/noDefaultImpls/kt14243.kt");
+          runTest("compiler/testData/codegen/box/jvm8/defaults/enable/kt14243.kt");
         }
 
         @Test
         @TestMetadata("kt14243_2.kt")
         public void testKt14243_2() {
-          runTest("compiler/testData/codegen/box/jvm8/defaults/noDefaultImpls/kt14243_2.kt");
+          runTest("compiler/testData/codegen/box/jvm8/defaults/enable/kt14243_2.kt");
         }
 
         @Test
         @TestMetadata("kt14243_prop.kt")
         public void testKt14243_prop() {
-          runTest("compiler/testData/codegen/box/jvm8/defaults/noDefaultImpls/kt14243_prop.kt");
+          runTest("compiler/testData/codegen/box/jvm8/defaults/enable/kt14243_prop.kt");
         }
 
         @Test
         @TestMetadata("kt40920.kt")
         public void testKt40920() {
-          runTest("compiler/testData/codegen/box/jvm8/defaults/noDefaultImpls/kt40920.kt");
+          runTest("compiler/testData/codegen/box/jvm8/defaults/enable/kt40920.kt");
         }
 
         @Test
         @TestMetadata("kt42674.kt")
         public void testKt42674() {
-          runTest("compiler/testData/codegen/box/jvm8/defaults/noDefaultImpls/kt42674.kt");
+          runTest("compiler/testData/codegen/box/jvm8/defaults/enable/kt42674.kt");
         }
 
         @Test
-        @TestMetadata("kt42967_all.kt")
-        public void testKt42967_all() {
-          runTest("compiler/testData/codegen/box/jvm8/defaults/noDefaultImpls/kt42967_all.kt");
+        @TestMetadata("kt42697_mutableMapMixedDisableEnable.kt")
+        public void testKt42697_mutableMapMixedDisableEnable() {
+          runTest("compiler/testData/codegen/box/jvm8/defaults/enable/kt42697_mutableMapMixedDisableEnable.kt");
+        }
+
+        @Test
+        @TestMetadata("kt55083_indyLambdaForFunInterface.kt")
+        public void testKt55083_indyLambdaForFunInterface() {
+          runTest("compiler/testData/codegen/box/jvm8/defaults/enable/kt55083_indyLambdaForFunInterface.kt");
         }
 
         @Test
         @TestMetadata("localDelegatedProperties.kt")
         public void testLocalDelegatedProperties() {
-          runTest("compiler/testData/codegen/box/jvm8/defaults/noDefaultImpls/localDelegatedProperties.kt");
+          runTest("compiler/testData/codegen/box/jvm8/defaults/enable/localDelegatedProperties.kt");
         }
 
         @Test
-        @TestMetadata("localDelegatedProperties2.kt")
-        public void testLocalDelegatedProperties2() {
-          runTest("compiler/testData/codegen/box/jvm8/defaults/noDefaultImpls/localDelegatedProperties2.kt");
+        @TestMetadata("multiModuleClassInheritanceWithSuperCall.kt")
+        public void testMultiModuleClassInheritanceWithSuperCall() {
+          runTest("compiler/testData/codegen/box/jvm8/defaults/enable/multiModuleClassInheritanceWithSuperCall.kt");
         }
 
         @Test
         @TestMetadata("oneImplementation.kt")
         public void testOneImplementation() {
-          runTest("compiler/testData/codegen/box/jvm8/defaults/noDefaultImpls/oneImplementation.kt");
+          runTest("compiler/testData/codegen/box/jvm8/defaults/enable/oneImplementation.kt");
         }
 
         @Test
         @TestMetadata("oneImplementation2.kt")
         public void testOneImplementation2() {
-          runTest("compiler/testData/codegen/box/jvm8/defaults/noDefaultImpls/oneImplementation2.kt");
+          runTest("compiler/testData/codegen/box/jvm8/defaults/enable/oneImplementation2.kt");
         }
 
         @Test
         @TestMetadata("privateFunInInterface.kt")
         public void testPrivateFunInInterface() {
-          runTest("compiler/testData/codegen/box/jvm8/defaults/noDefaultImpls/privateFunInInterface.kt");
+          runTest("compiler/testData/codegen/box/jvm8/defaults/enable/privateFunInInterface.kt");
         }
 
         @Test
         @TestMetadata("privateFunWithDefaultArg.kt")
         public void testPrivateFunWithDefaultArg() {
-          runTest("compiler/testData/codegen/box/jvm8/defaults/noDefaultImpls/privateFunWithDefaultArg.kt");
+          runTest("compiler/testData/codegen/box/jvm8/defaults/enable/privateFunWithDefaultArg.kt");
+        }
+
+        @Test
+        @TestMetadata("privateFunWithDefaultArg2.kt")
+        public void testPrivateFunWithDefaultArg2() {
+          runTest("compiler/testData/codegen/box/jvm8/defaults/enable/privateFunWithDefaultArg2.kt");
         }
 
         @Test
         @TestMetadata("privateSuspend.kt")
         public void testPrivateSuspend() {
-          runTest("compiler/testData/codegen/box/jvm8/defaults/noDefaultImpls/privateSuspend.kt");
+          runTest("compiler/testData/codegen/box/jvm8/defaults/enable/privateSuspend.kt");
         }
 
         @Test
         @TestMetadata("propertyAnnotation.kt")
         public void testPropertyAnnotation() {
-          runTest("compiler/testData/codegen/box/jvm8/defaults/noDefaultImpls/propertyAnnotation.kt");
+          runTest("compiler/testData/codegen/box/jvm8/defaults/enable/propertyAnnotation.kt");
         }
 
         @Test
         @TestMetadata("simpleFunction.kt")
         public void testSimpleFunction() {
-          runTest("compiler/testData/codegen/box/jvm8/defaults/noDefaultImpls/simpleFunction.kt");
+          runTest("compiler/testData/codegen/box/jvm8/defaults/enable/simpleFunction.kt");
+        }
+
+        @Test
+        @TestMetadata("superCall.kt")
+        public void testSuperCall() {
+          runTest("compiler/testData/codegen/box/jvm8/defaults/enable/superCall.kt");
         }
 
         @Test
         @TestMetadata("superCallWithGenericSpecialization.kt")
         public void testSuperCallWithGenericSpecialization() {
-          runTest("compiler/testData/codegen/box/jvm8/defaults/noDefaultImpls/superCallWithGenericSpecialization.kt");
+          runTest("compiler/testData/codegen/box/jvm8/defaults/enable/superCallWithGenericSpecialization.kt");
         }
 
         @Test
         @TestMetadata("suspendFunction.kt")
         public void testSuspendFunction() {
-          runTest("compiler/testData/codegen/box/jvm8/defaults/noDefaultImpls/suspendFunction.kt");
-        }
-
-        @Test
-        @TestMetadata("suspendSuperCall.kt")
-        public void testSuspendSuperCall() {
-          runTest("compiler/testData/codegen/box/jvm8/defaults/noDefaultImpls/suspendSuperCall.kt");
+          runTest("compiler/testData/codegen/box/jvm8/defaults/enable/suspendFunction.kt");
         }
 
         @Nested
-        @TestMetadata("compiler/testData/codegen/box/jvm8/defaults/noDefaultImpls/delegationBy")
+        @TestMetadata("compiler/testData/codegen/box/jvm8/defaults/enable/delegationBy")
         @TestDataPath("$PROJECT_ROOT")
         public class DelegationBy {
           @Test
           public void testAllFilesPresentInDelegationBy() {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/jvm8/defaults/noDefaultImpls/delegationBy"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/jvm8/defaults/enable/delegationBy"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
           }
 
           @Test
           @TestMetadata("simple.kt")
           public void testSimple() {
-            runTest("compiler/testData/codegen/box/jvm8/defaults/noDefaultImpls/delegationBy/simple.kt");
+            runTest("compiler/testData/codegen/box/jvm8/defaults/enable/delegationBy/simple.kt");
           }
 
           @Test
           @TestMetadata("simpleProperty.kt")
           public void testSimpleProperty() {
-            runTest("compiler/testData/codegen/box/jvm8/defaults/noDefaultImpls/delegationBy/simpleProperty.kt");
+            runTest("compiler/testData/codegen/box/jvm8/defaults/enable/delegationBy/simpleProperty.kt");
           }
+        }
+      }
+
+      @Nested
+      @TestMetadata("compiler/testData/codegen/box/jvm8/defaults/noCompatibility")
+      @TestDataPath("$PROJECT_ROOT")
+      public class NoCompatibility {
+        @Test
+        @TestMetadata("accessor.kt")
+        public void testAccessor() {
+          runTest("compiler/testData/codegen/box/jvm8/defaults/noCompatibility/accessor.kt");
+        }
+
+        @Test
+        @TestMetadata("accessorFromCompanion.kt")
+        public void testAccessorFromCompanion() {
+          runTest("compiler/testData/codegen/box/jvm8/defaults/noCompatibility/accessorFromCompanion.kt");
+        }
+
+        @Test
+        public void testAllFilesPresentInNoCompatibility() {
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/jvm8/defaults/noCompatibility"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        }
+
+        @Test
+        @TestMetadata("bridge.kt")
+        public void testBridge() {
+          runTest("compiler/testData/codegen/box/jvm8/defaults/noCompatibility/bridge.kt");
+        }
+
+        @Test
+        @TestMetadata("bridge2.kt")
+        public void testBridge2() {
+          runTest("compiler/testData/codegen/box/jvm8/defaults/noCompatibility/bridge2.kt");
+        }
+
+        @Test
+        @TestMetadata("bridge3.kt")
+        public void testBridge3() {
+          runTest("compiler/testData/codegen/box/jvm8/defaults/noCompatibility/bridge3.kt");
+        }
+
+        @Test
+        @TestMetadata("bridgeInClass.kt")
+        public void testBridgeInClass() {
+          runTest("compiler/testData/codegen/box/jvm8/defaults/noCompatibility/bridgeInClass.kt");
+        }
+
+        @Test
+        @TestMetadata("bridgeInInterface.kt")
+        public void testBridgeInInterface() {
+          runTest("compiler/testData/codegen/box/jvm8/defaults/noCompatibility/bridgeInInterface.kt");
+        }
+
+        @Test
+        @TestMetadata("bridgeInInterfaceWithProperties.kt")
+        public void testBridgeInInterfaceWithProperties() {
+          runTest("compiler/testData/codegen/box/jvm8/defaults/noCompatibility/bridgeInInterfaceWithProperties.kt");
+        }
+
+        @Test
+        @TestMetadata("bridgeWithProperties.kt")
+        public void testBridgeWithProperties() {
+          runTest("compiler/testData/codegen/box/jvm8/defaults/noCompatibility/bridgeWithProperties.kt");
+        }
+
+        @Test
+        @TestMetadata("bridgeWithProperties2.kt")
+        public void testBridgeWithProperties2() {
+          runTest("compiler/testData/codegen/box/jvm8/defaults/noCompatibility/bridgeWithProperties2.kt");
+        }
+
+        @Test
+        @TestMetadata("bridgeWithProperties3.kt")
+        public void testBridgeWithProperties3() {
+          runTest("compiler/testData/codegen/box/jvm8/defaults/noCompatibility/bridgeWithProperties3.kt");
+        }
+
+        @Test
+        @TestMetadata("callableReference.kt")
+        public void testCallableReference() {
+          runTest("compiler/testData/codegen/box/jvm8/defaults/noCompatibility/callableReference.kt");
+        }
+
+        @Test
+        @TestMetadata("capturedSuperCall.kt")
+        public void testCapturedSuperCall() {
+          runTest("compiler/testData/codegen/box/jvm8/defaults/noCompatibility/capturedSuperCall.kt");
+        }
+
+        @Test
+        @TestMetadata("defaultArgs.kt")
+        public void testDefaultArgs() {
+          runTest("compiler/testData/codegen/box/jvm8/defaults/noCompatibility/defaultArgs.kt");
+        }
+
+        @Test
+        @TestMetadata("defaultArgsViaAnonymousObject.kt")
+        public void testDefaultArgsViaAnonymousObject() {
+          runTest("compiler/testData/codegen/box/jvm8/defaults/noCompatibility/defaultArgsViaAnonymousObject.kt");
+        }
+
+        @Test
+        @TestMetadata("diamond.kt")
+        public void testDiamond() {
+          runTest("compiler/testData/codegen/box/jvm8/defaults/noCompatibility/diamond.kt");
+        }
+
+        @Test
+        @TestMetadata("funInterface.kt")
+        public void testFunInterface() {
+          runTest("compiler/testData/codegen/box/jvm8/defaults/noCompatibility/funInterface.kt");
+        }
+
+        @Test
+        @TestMetadata("inheritedFunctionWithDefaultParameters.kt")
+        public void testInheritedFunctionWithDefaultParameters() {
+          runTest("compiler/testData/codegen/box/jvm8/defaults/noCompatibility/inheritedFunctionWithDefaultParameters.kt");
+        }
+
+        @Test
+        @TestMetadata("inheritedJvmDefault.kt")
+        public void testInheritedJvmDefault() {
+          runTest("compiler/testData/codegen/box/jvm8/defaults/noCompatibility/inheritedJvmDefault.kt");
+        }
+
+        @Test
+        @TestMetadata("inline.kt")
+        public void testInline() {
+          runTest("compiler/testData/codegen/box/jvm8/defaults/noCompatibility/inline.kt");
+        }
+
+        @Test
+        @TestMetadata("inlineProperty.kt")
+        public void testInlineProperty() {
+          runTest("compiler/testData/codegen/box/jvm8/defaults/noCompatibility/inlineProperty.kt");
+        }
+
+        @Test
+        @TestMetadata("interfaceExtension.kt")
+        public void testInterfaceExtension() {
+          runTest("compiler/testData/codegen/box/jvm8/defaults/noCompatibility/interfaceExtension.kt");
+        }
+
+        @Test
+        @TestMetadata("kt11969.kt")
+        public void testKt11969() {
+          runTest("compiler/testData/codegen/box/jvm8/defaults/noCompatibility/kt11969.kt");
+        }
+
+        @Test
+        @TestMetadata("kt12466_superCallKJK.kt")
+        public void testKt12466_superCallKJK() {
+          runTest("compiler/testData/codegen/box/jvm8/defaults/noCompatibility/kt12466_superCallKJK.kt");
+        }
+
+        @Test
+        @TestMetadata("kt14243.kt")
+        public void testKt14243() {
+          runTest("compiler/testData/codegen/box/jvm8/defaults/noCompatibility/kt14243.kt");
+        }
+
+        @Test
+        @TestMetadata("kt14243_2.kt")
+        public void testKt14243_2() {
+          runTest("compiler/testData/codegen/box/jvm8/defaults/noCompatibility/kt14243_2.kt");
+        }
+
+        @Test
+        @TestMetadata("kt14243_prop.kt")
+        public void testKt14243_prop() {
+          runTest("compiler/testData/codegen/box/jvm8/defaults/noCompatibility/kt14243_prop.kt");
+        }
+
+        @Test
+        @TestMetadata("kt40920.kt")
+        public void testKt40920() {
+          runTest("compiler/testData/codegen/box/jvm8/defaults/noCompatibility/kt40920.kt");
+        }
+
+        @Test
+        @TestMetadata("kt42674.kt")
+        public void testKt42674() {
+          runTest("compiler/testData/codegen/box/jvm8/defaults/noCompatibility/kt42674.kt");
+        }
+
+        @Test
+        @TestMetadata("kt42967_all.kt")
+        public void testKt42967_all() {
+          runTest("compiler/testData/codegen/box/jvm8/defaults/noCompatibility/kt42967_all.kt");
+        }
+
+        @Test
+        @TestMetadata("localDelegatedProperties.kt")
+        public void testLocalDelegatedProperties() {
+          runTest("compiler/testData/codegen/box/jvm8/defaults/noCompatibility/localDelegatedProperties.kt");
+        }
+
+        @Test
+        @TestMetadata("localDelegatedProperties2.kt")
+        public void testLocalDelegatedProperties2() {
+          runTest("compiler/testData/codegen/box/jvm8/defaults/noCompatibility/localDelegatedProperties2.kt");
+        }
+
+        @Test
+        @TestMetadata("oneImplementation.kt")
+        public void testOneImplementation() {
+          runTest("compiler/testData/codegen/box/jvm8/defaults/noCompatibility/oneImplementation.kt");
+        }
+
+        @Test
+        @TestMetadata("oneImplementation2.kt")
+        public void testOneImplementation2() {
+          runTest("compiler/testData/codegen/box/jvm8/defaults/noCompatibility/oneImplementation2.kt");
+        }
+
+        @Test
+        @TestMetadata("privateFunInInterface.kt")
+        public void testPrivateFunInInterface() {
+          runTest("compiler/testData/codegen/box/jvm8/defaults/noCompatibility/privateFunInInterface.kt");
+        }
+
+        @Test
+        @TestMetadata("privateFunWithDefaultArg.kt")
+        public void testPrivateFunWithDefaultArg() {
+          runTest("compiler/testData/codegen/box/jvm8/defaults/noCompatibility/privateFunWithDefaultArg.kt");
+        }
+
+        @Test
+        @TestMetadata("privateSuspend.kt")
+        public void testPrivateSuspend() {
+          runTest("compiler/testData/codegen/box/jvm8/defaults/noCompatibility/privateSuspend.kt");
+        }
+
+        @Test
+        @TestMetadata("propertyAnnotation.kt")
+        public void testPropertyAnnotation() {
+          runTest("compiler/testData/codegen/box/jvm8/defaults/noCompatibility/propertyAnnotation.kt");
+        }
+
+        @Test
+        @TestMetadata("simpleFunction.kt")
+        public void testSimpleFunction() {
+          runTest("compiler/testData/codegen/box/jvm8/defaults/noCompatibility/simpleFunction.kt");
+        }
+
+        @Test
+        @TestMetadata("superCallWithGenericSpecialization.kt")
+        public void testSuperCallWithGenericSpecialization() {
+          runTest("compiler/testData/codegen/box/jvm8/defaults/noCompatibility/superCallWithGenericSpecialization.kt");
+        }
+
+        @Test
+        @TestMetadata("suspendFunction.kt")
+        public void testSuspendFunction() {
+          runTest("compiler/testData/codegen/box/jvm8/defaults/noCompatibility/suspendFunction.kt");
+        }
+
+        @Test
+        @TestMetadata("suspendSuperCall.kt")
+        public void testSuspendSuperCall() {
+          runTest("compiler/testData/codegen/box/jvm8/defaults/noCompatibility/suspendSuperCall.kt");
         }
 
         @Nested
-        @TestMetadata("compiler/testData/codegen/box/jvm8/defaults/noDefaultImpls/specialization")
+        @TestMetadata("compiler/testData/codegen/box/jvm8/defaults/noCompatibility/delegationBy")
         @TestDataPath("$PROJECT_ROOT")
-        public class Specialization {
+        public class DelegationBy {
           @Test
-          public void testAllFilesPresentInSpecialization() {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/jvm8/defaults/noDefaultImpls/specialization"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
-          }
-
-          @Test
-          @TestMetadata("basic.kt")
-          public void testBasic() {
-            runTest("compiler/testData/codegen/box/jvm8/defaults/noDefaultImpls/specialization/basic.kt");
-          }
-        }
-
-        @Nested
-        @TestMetadata("compiler/testData/codegen/box/jvm8/defaults/noDefaultImpls/withCompatibility")
-        @TestDataPath("$PROJECT_ROOT")
-        public class WithCompatibility {
-          @Test
-          public void testAllFilesPresentInWithCompatibility() {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/jvm8/defaults/noDefaultImpls/withCompatibility"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
-          }
-
-          @Test
-          @TestMetadata("defaultArgs.kt")
-          public void testDefaultArgs() {
-            runTest("compiler/testData/codegen/box/jvm8/defaults/noDefaultImpls/withCompatibility/defaultArgs.kt");
-          }
-
-          @Test
-          @TestMetadata("differentCases.kt")
-          public void testDifferentCases() {
-            runTest("compiler/testData/codegen/box/jvm8/defaults/noDefaultImpls/withCompatibility/differentCases.kt");
-          }
-
-          @Test
-          @TestMetadata("javaInheritance.kt")
-          public void testJavaInheritance() {
-            runTest("compiler/testData/codegen/box/jvm8/defaults/noDefaultImpls/withCompatibility/javaInheritance.kt");
-          }
-
-          @Test
-          @TestMetadata("propertyAnnotation.kt")
-          public void testPropertyAnnotation() {
-            runTest("compiler/testData/codegen/box/jvm8/defaults/noDefaultImpls/withCompatibility/propertyAnnotation.kt");
+          public void testAllFilesPresentInDelegationBy() {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/jvm8/defaults/noCompatibility/delegationBy"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
           }
 
           @Test
           @TestMetadata("simple.kt")
           public void testSimple() {
-            runTest("compiler/testData/codegen/box/jvm8/defaults/noDefaultImpls/withCompatibility/simple.kt");
+            runTest("compiler/testData/codegen/box/jvm8/defaults/noCompatibility/delegationBy/simple.kt");
+          }
+
+          @Test
+          @TestMetadata("simpleProperty.kt")
+          public void testSimpleProperty() {
+            runTest("compiler/testData/codegen/box/jvm8/defaults/noCompatibility/delegationBy/simpleProperty.kt");
+          }
+        }
+
+        @Nested
+        @TestMetadata("compiler/testData/codegen/box/jvm8/defaults/noCompatibility/specialization")
+        @TestDataPath("$PROJECT_ROOT")
+        public class Specialization {
+          @Test
+          public void testAllFilesPresentInSpecialization() {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/jvm8/defaults/noCompatibility/specialization"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+          }
+
+          @Test
+          @TestMetadata("basic.kt")
+          public void testBasic() {
+            runTest("compiler/testData/codegen/box/jvm8/defaults/noCompatibility/specialization/basic.kt");
+          }
+        }
+
+        @Nested
+        @TestMetadata("compiler/testData/codegen/box/jvm8/defaults/noCompatibility/withCompatibility")
+        @TestDataPath("$PROJECT_ROOT")
+        public class WithCompatibility {
+          @Test
+          public void testAllFilesPresentInWithCompatibility() {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/jvm8/defaults/noCompatibility/withCompatibility"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+          }
+
+          @Test
+          @TestMetadata("defaultArgs.kt")
+          public void testDefaultArgs() {
+            runTest("compiler/testData/codegen/box/jvm8/defaults/noCompatibility/withCompatibility/defaultArgs.kt");
+          }
+
+          @Test
+          @TestMetadata("differentCases.kt")
+          public void testDifferentCases() {
+            runTest("compiler/testData/codegen/box/jvm8/defaults/noCompatibility/withCompatibility/differentCases.kt");
+          }
+
+          @Test
+          @TestMetadata("javaInheritance.kt")
+          public void testJavaInheritance() {
+            runTest("compiler/testData/codegen/box/jvm8/defaults/noCompatibility/withCompatibility/javaInheritance.kt");
+          }
+
+          @Test
+          @TestMetadata("propertyAnnotation.kt")
+          public void testPropertyAnnotation() {
+            runTest("compiler/testData/codegen/box/jvm8/defaults/noCompatibility/withCompatibility/propertyAnnotation.kt");
+          }
+
+          @Test
+          @TestMetadata("simple.kt")
+          public void testSimple() {
+            runTest("compiler/testData/codegen/box/jvm8/defaults/noCompatibility/withCompatibility/simple.kt");
           }
 
           @Test
           @TestMetadata("suspend.kt")
           public void testSuspend() {
-            runTest("compiler/testData/codegen/box/jvm8/defaults/noDefaultImpls/withCompatibility/suspend.kt");
+            runTest("compiler/testData/codegen/box/jvm8/defaults/noCompatibility/withCompatibility/suspend.kt");
           }
         }
       }
@@ -37276,7 +38532,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
       public class NonDefaultInheritance {
         @Test
         public void testAllFilesPresentInNonDefaultInheritance() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/jvm8/defaults/nonDefaultInheritance"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/jvm8/defaults/nonDefaultInheritance"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
         }
 
         @Test
@@ -37328,7 +38584,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
       public class Reflection {
         @Test
         public void testAllFilesPresentInReflection() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/jvm8/defaults/reflection"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/jvm8/defaults/reflection"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
         }
 
         @Test
@@ -37345,7 +38601,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class InterfaceFlag {
       @Test
       public void testAllFilesPresentInInterfaceFlag() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/jvm8/interfaceFlag"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/jvm8/interfaceFlag"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -37367,7 +38623,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class JavaDefaults {
       @Test
       public void testAllFilesPresentInJavaDefaults() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/jvm8/javaDefaults"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/jvm8/javaDefaults"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -37468,7 +38724,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
   public class JvmField {
     @Test
     public void testAllFilesPresentInJvmField() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/jvmField"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/jvmField"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
     @Test
@@ -37574,30 +38830,6 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     }
 
     @Test
-    @TestMetadata("kt47328.kt")
-    public void testKt47328() {
-      runTest("compiler/testData/codegen/box/jvmField/kt47328.kt");
-    }
-
-    @Test
-    @TestMetadata("kt47328_inherited.kt")
-    public void testKt47328_inherited() {
-      runTest("compiler/testData/codegen/box/jvmField/kt47328_inherited.kt");
-    }
-
-    @Test
-    @TestMetadata("kt47328_super.kt")
-    public void testKt47328_super() {
-      runTest("compiler/testData/codegen/box/jvmField/kt47328_super.kt");
-    }
-
-    @Test
-    @TestMetadata("kt47328_var.kt")
-    public void testKt47328_var() {
-      runTest("compiler/testData/codegen/box/jvmField/kt47328_var.kt");
-    }
-
-    @Test
     @TestMetadata("kt47739.kt")
     public void testKt47739() {
       runTest("compiler/testData/codegen/box/jvmField/kt47739.kt");
@@ -37682,7 +38914,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
   public class JvmName {
     @Test
     public void testAllFilesPresentInJvmName() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/jvmName"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/jvmName"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
     @Test
@@ -37799,7 +39031,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class FileFacades {
       @Test
       public void testAllFilesPresentInFileFacades() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/jvmName/fileFacades"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/jvmName/fileFacades"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -37828,7 +39060,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
   public class JvmOverloads {
     @Test
     public void testAllFilesPresentInJvmOverloads() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/jvmOverloads"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/jvmOverloads"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
     @Test
@@ -37964,7 +39196,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
   public class JvmPackageName {
     @Test
     public void testAllFilesPresentInJvmPackageName() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/jvmPackageName"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/jvmPackageName"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
     @Test
@@ -38028,7 +39260,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
   public class JvmStatic {
     @Test
     public void testAllFilesPresentInJvmStatic() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/jvmStatic"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/jvmStatic"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
     @Test
@@ -38113,6 +39345,18 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     @TestMetadata("inline.kt")
     public void testInline() {
       runTest("compiler/testData/codegen/box/jvmStatic/inline.kt");
+    }
+
+    @Test
+    @TestMetadata("inlinePrivateStatic1.kt")
+    public void testInlinePrivateStatic1() {
+      runTest("compiler/testData/codegen/box/jvmStatic/inlinePrivateStatic1.kt");
+    }
+
+    @Test
+    @TestMetadata("inlinePrivateStatic2.kt")
+    public void testInlinePrivateStatic2() {
+      runTest("compiler/testData/codegen/box/jvmStatic/inlinePrivateStatic2.kt");
     }
 
     @Test
@@ -38259,7 +39503,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class ProtectedInSuperClass {
       @Test
       public void testAllFilesPresentInProtectedInSuperClass() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/jvmStatic/protectedInSuperClass"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/jvmStatic/protectedInSuperClass"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -38288,7 +39532,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
   public class Kclass {
     @Test
     public void testAllFilesPresentInKclass() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/kclass"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/kclass"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
     @Test
@@ -38310,7 +39554,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
   public class Klib {
     @Test
     public void testAllFilesPresentInKlib() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/klib"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/klib"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
     @Test
@@ -38326,7 +39570,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
   public class Ktype {
     @Test
     public void testAllFilesPresentInKtype() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ktype"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ktype"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
     @Test
@@ -38378,7 +39622,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
   public class Labels {
     @Test
     public void testAllFilesPresentInLabels() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/labels"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/labels"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
     @Test
@@ -38436,7 +39680,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
   public class Lambda {
     @Test
     public void testAllFilesPresentInLambda() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/lambda"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/lambda"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
     @Test
@@ -38546,6 +39790,12 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public void testLambda_kt49360_wrapBlock() {
       runTest("compiler/testData/codegen/box/lambda/lambda_kt49360_wrapBlock.kt");
     }
+
+    @Test
+    @TestMetadata("lambda_kt78666.kt")
+    public void testLambda_kt78666() {
+      runTest("compiler/testData/codegen/box/lambda/lambda_kt78666.kt");
+    }
   }
 
   @Nested
@@ -38554,7 +39804,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
   public class Lateinit {
     @Test
     public void testAllFilesPresentInLateinit() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/lateinit"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/lateinit"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
     @Test
@@ -38624,7 +39874,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
   public class LazyCodegen {
     @Test
     public void testAllFilesPresentInLazyCodegen() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/lazyCodegen"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/lazyCodegen"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
     @Test
@@ -38687,7 +39937,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class Optimizations {
       @Test
       public void testAllFilesPresentInOptimizations() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/lazyCodegen/optimizations"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/lazyCodegen/optimizations"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -38752,7 +40002,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
   public class Literals {
     @Test
     public void testAllFilesPresentInLiterals() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/literals"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/literals"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
     @Test
@@ -38774,7 +40024,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
   public class LocalClass {
     @Test
     public void testAllFilesPresentInLocalClass() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/localClass"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/localClass"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
     @Test
@@ -38850,7 +40100,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
   public class LocalClasses {
     @Test
     public void testAllFilesPresentInLocalClasses() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/localClasses"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/localClasses"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
     @Test
@@ -39100,7 +40350,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
   public class LocalEscapeAnalysis {
     @Test
     public void testAllFilesPresentInLocalEscapeAnalysis() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/localEscapeAnalysis"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/localEscapeAnalysis"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
     @Test
@@ -39116,7 +40366,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
   public class Lower {
     @Test
     public void testAllFilesPresentInLower() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/lower"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/lower"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
     @Test
@@ -39131,7 +40381,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class ForLoopsLowering {
       @Test
       public void testAllFilesPresentInForLoopsLowering() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/lower/forLoopsLowering"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/lower/forLoopsLowering"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -39208,7 +40458,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
   public class Mangling {
     @Test
     public void testAllFilesPresentInMangling() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/mangling"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/mangling"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
     @Test
@@ -39278,7 +40528,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
   public class MixedNamedPosition {
     @Test
     public void testAllFilesPresentInMixedNamedPosition() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/mixedNamedPosition"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/mixedNamedPosition"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
     @Test
@@ -39312,7 +40562,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
   public class MultiDecl {
     @Test
     public void testAllFilesPresentInMultiDecl() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multiDecl"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multiDecl"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
     @Test
@@ -39331,6 +40581,36 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     @TestMetadata("kt9828_hashMap.kt")
     public void testKt9828_hashMap() {
       runTest("compiler/testData/codegen/box/multiDecl/kt9828_hashMap.kt");
+    }
+
+    @Test
+    @TestMetadata("nameBasedDestructuringFullForm.kt")
+    public void testNameBasedDestructuringFullForm() {
+      runTest("compiler/testData/codegen/box/multiDecl/nameBasedDestructuringFullForm.kt");
+    }
+
+    @Test
+    @TestMetadata("nameBasedDestructuringShortForm.kt")
+    public void testNameBasedDestructuringShortForm() {
+      runTest("compiler/testData/codegen/box/multiDecl/nameBasedDestructuringShortForm.kt");
+    }
+
+    @Test
+    @TestMetadata("nameBasedDestructuringUnderscoreWithRenaming.kt")
+    public void testNameBasedDestructuringUnderscoreWithRenaming() {
+      runTest("compiler/testData/codegen/box/multiDecl/nameBasedDestructuringUnderscoreWithRenaming.kt");
+    }
+
+    @Test
+    @TestMetadata("positionalDestructuringFullForm.kt")
+    public void testPositionalDestructuringFullForm() {
+      runTest("compiler/testData/codegen/box/multiDecl/positionalDestructuringFullForm.kt");
+    }
+
+    @Test
+    @TestMetadata("positionalDestructuringShortForm.kt")
+    public void testPositionalDestructuringShortForm() {
+      runTest("compiler/testData/codegen/box/multiDecl/positionalDestructuringShortForm.kt");
     }
 
     @Test
@@ -39405,7 +40685,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class ForIterator {
       @Test
       public void testAllFilesPresentInForIterator() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multiDecl/forIterator"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multiDecl/forIterator"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -39444,7 +40724,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
       public class LongIterator {
         @Test
         public void testAllFilesPresentInLongIterator() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multiDecl/forIterator/longIterator"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multiDecl/forIterator/longIterator"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
         }
 
         @Test
@@ -39479,7 +40759,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class ForRange {
       @Test
       public void testAllFilesPresentInForRange() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multiDecl/forRange"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multiDecl/forRange"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -39530,7 +40810,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
       public class ExplicitRangeTo {
         @Test
         public void testAllFilesPresentInExplicitRangeTo() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multiDecl/forRange/explicitRangeTo"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multiDecl/forRange/explicitRangeTo"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
         }
 
         @Test
@@ -39569,7 +40849,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
         public class Int {
           @Test
           public void testAllFilesPresentInInt() {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multiDecl/forRange/explicitRangeTo/int"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multiDecl/forRange/explicitRangeTo/int"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
           }
 
           @Test
@@ -39603,7 +40883,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
         public class Long {
           @Test
           public void testAllFilesPresentInLong() {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multiDecl/forRange/explicitRangeTo/long"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multiDecl/forRange/explicitRangeTo/long"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
           }
 
           @Test
@@ -39638,7 +40918,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
       public class ExplicitRangeToWithDot {
         @Test
         public void testAllFilesPresentInExplicitRangeToWithDot() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multiDecl/forRange/explicitRangeToWithDot"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multiDecl/forRange/explicitRangeToWithDot"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
         }
 
         @Test
@@ -39677,7 +40957,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
         public class Int {
           @Test
           public void testAllFilesPresentInInt() {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multiDecl/forRange/explicitRangeToWithDot/int"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multiDecl/forRange/explicitRangeToWithDot/int"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
           }
 
           @Test
@@ -39711,7 +40991,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
         public class Long {
           @Test
           public void testAllFilesPresentInLong() {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multiDecl/forRange/explicitRangeToWithDot/long"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multiDecl/forRange/explicitRangeToWithDot/long"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
           }
 
           @Test
@@ -39746,7 +41026,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
       public class Int {
         @Test
         public void testAllFilesPresentInInt() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multiDecl/forRange/int"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multiDecl/forRange/int"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
         }
 
         @Test
@@ -39780,7 +41060,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
       public class Long {
         @Test
         public void testAllFilesPresentInLong() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multiDecl/forRange/long"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multiDecl/forRange/long"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
         }
 
         @Test
@@ -39816,7 +41096,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
   public class MultifileClasses {
     @Test
     public void testAllFilesPresentInMultifileClasses() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multifileClasses"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multifileClasses"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
     @Test
@@ -39915,7 +41195,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class Optimized {
       @Test
       public void testAllFilesPresentInOptimized() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multifileClasses/optimized"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multifileClasses/optimized"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -39992,13 +41272,19 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
   public class Multiplatform {
     @Test
     public void testAllFilesPresentInMultiplatform() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multiplatform"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "k1", "lightTree");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multiplatform"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "k1");
     }
 
     @Nested
     @TestMetadata("compiler/testData/codegen/box/multiplatform/k2")
     @TestDataPath("$PROJECT_ROOT")
     public class K2 {
+      @Test
+      @TestMetadata("AbstractMutableList_modCount.kt")
+      public void testAbstractMutableList_modCount() {
+        runTest("compiler/testData/codegen/box/multiplatform/k2/AbstractMutableList_modCount.kt");
+      }
+
       @Test
       @TestMetadata("AbstractMutableList_modCount_deprecated.kt")
       public void testAbstractMutableList_modCount_deprecated() {
@@ -40025,7 +41311,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
 
       @Test
       public void testAllFilesPresentInK2() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multiplatform/k2"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multiplatform/k2"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -40095,6 +41381,12 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
       }
 
       @Test
+      @TestMetadata("expectRefinement.kt")
+      public void testExpectRefinement() {
+        runTest("compiler/testData/codegen/box/multiplatform/k2/expectRefinement.kt");
+      }
+
+      @Test
       @TestMetadata("expectValInInlineClass.kt")
       public void testExpectValInInlineClass() {
         runTest("compiler/testData/codegen/box/multiplatform/k2/expectValInInlineClass.kt");
@@ -40128,6 +41420,12 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
       @TestMetadata("internalOverride2.kt")
       public void testInternalOverride2() {
         runTest("compiler/testData/codegen/box/multiplatform/k2/internalOverride2.kt");
+      }
+
+      @Test
+      @TestMetadata("internalSetterInCommon.kt")
+      public void testInternalSetterInCommon() {
+        runTest("compiler/testData/codegen/box/multiplatform/k2/internalSetterInCommon.kt");
       }
 
       @Test
@@ -40250,7 +41548,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
       public class Annotations {
         @Test
         public void testAllFilesPresentInAnnotations() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multiplatform/k2/annotations"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multiplatform/k2/annotations"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
         }
 
         @Test
@@ -40302,7 +41600,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
 
         @Test
         public void testAllFilesPresentInBasic() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multiplatform/k2/basic"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multiplatform/k2/basic"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
         }
 
         @Test
@@ -40690,7 +41988,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
       public class ComplexMatchings {
         @Test
         public void testAllFilesPresentInComplexMatchings() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multiplatform/k2/complexMatchings"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multiplatform/k2/complexMatchings"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
         }
 
         @Test
@@ -40712,7 +42010,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
       public class DefaultArguments {
         @Test
         public void testAllFilesPresentInDefaultArguments() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multiplatform/k2/defaultArguments"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multiplatform/k2/defaultArguments"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
         }
 
         @Test
@@ -40896,7 +42194,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
       public class Delegation {
         @Test
         public void testAllFilesPresentInDelegation() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multiplatform/k2/delegation"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multiplatform/k2/delegation"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
         }
 
         @Test
@@ -40990,7 +42288,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
       public class Exhaustiveness {
         @Test
         public void testAllFilesPresentInExhaustiveness() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multiplatform/k2/exhaustiveness"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multiplatform/k2/exhaustiveness"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
         }
 
         @Test
@@ -41017,14 +42315,222 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
       @TestDataPath("$PROJECT_ROOT")
       public class Hmpp {
         @Test
+        @TestMetadata("abstractExpectedActual2-2.kt")
+        public void testAbstractExpectedActual2_2() {
+          runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/abstractExpectedActual2-2.kt");
+        }
+
+        @Test
         public void testAllFilesPresentInHmpp() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multiplatform/k2/hmpp"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multiplatform/k2/hmpp"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        }
+
+        @Test
+        @TestMetadata("arrayDeque.kt")
+        public void testArrayDeque() {
+          runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/arrayDeque.kt");
+        }
+
+        @Test
+        @TestMetadata("differentDependenciesWithTheSameName.kt")
+        public void testDifferentDependenciesWithTheSameName() {
+          runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/differentDependenciesWithTheSameName.kt");
+        }
+
+        @Test
+        @TestMetadata("expectActualChain2-2.kt")
+        public void testExpectActualChain2_2() {
+          runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/expectActualChain2-2.kt");
+        }
+
+        @Test
+        @TestMetadata("expectActualChain2-3.kt")
+        public void testExpectActualChain2_3() {
+          runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/expectActualChain2-3.kt");
+        }
+
+        @Test
+        @TestMetadata("expectActualChain3-3.kt")
+        public void testExpectActualChain3_3() {
+          runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/expectActualChain3-3.kt");
+        }
+
+        @Test
+        @TestMetadata("expectActualChain3-3-error.kt")
+        public void testExpectActualChain3_3_error() {
+          runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/expectActualChain3-3-error.kt");
+        }
+
+        @Test
+        @TestMetadata("expectActualChain3-4.kt")
+        public void testExpectActualChain3_4() {
+          runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/expectActualChain3-4.kt");
+        }
+
+        @Test
+        @TestMetadata("expectActualChain4-4.kt")
+        public void testExpectActualChain4_4() {
+          runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/expectActualChain4-4.kt");
+        }
+
+        @Test
+        @TestMetadata("expectOfActualTypeAliasNotReferenced.kt")
+        public void testExpectOfActualTypeAliasNotReferenced() {
+          runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/expectOfActualTypeAliasNotReferenced.kt");
+        }
+
+        @Test
+        @TestMetadata("expectRefinement.kt")
+        public void testExpectRefinement() {
+          runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/expectRefinement.kt");
+        }
+
+        @Test
+        @TestMetadata("fakeOverrideExpectSuperType.kt")
+        public void testFakeOverrideExpectSuperType() {
+          runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/fakeOverrideExpectSuperType.kt");
+        }
+
+        @Test
+        @TestMetadata("fakeOverrideExpectSuperTypeFromLib.kt")
+        public void testFakeOverrideExpectSuperTypeFromLib() {
+          runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/fakeOverrideExpectSuperTypeFromLib.kt");
+        }
+
+        @Test
+        @TestMetadata("iheritanceFromExpected2-2.kt")
+        public void testIheritanceFromExpected2_2() {
+          runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/iheritanceFromExpected2-2.kt");
+        }
+
+        @Test
+        @TestMetadata("inheritanceFromExpected2-3.kt")
+        public void testInheritanceFromExpected2_3() {
+          runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/inheritanceFromExpected2-3.kt");
+        }
+
+        @Test
+        @TestMetadata("inheritanceFromExpected3-3.kt")
+        public void testInheritanceFromExpected3_3() {
+          runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/inheritanceFromExpected3-3.kt");
+        }
+
+        @Test
+        @TestMetadata("inheritanceFromExpected3-4.kt")
+        public void testInheritanceFromExpected3_4() {
+          runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/inheritanceFromExpected3-4.kt");
+        }
+
+        @Test
+        @TestMetadata("inheritanceFromExpected4-4.kt")
+        public void testInheritanceFromExpected4_4() {
+          runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/inheritanceFromExpected4-4.kt");
+        }
+
+        @Test
+        @TestMetadata("inheritanceFromExpectedInApp2-2.kt")
+        public void testInheritanceFromExpectedInApp2_2() {
+          runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/inheritanceFromExpectedInApp2-2.kt");
+        }
+
+        @Test
+        @TestMetadata("inheritanceFromExpectedInApp2-3.kt")
+        public void testInheritanceFromExpectedInApp2_3() {
+          runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/inheritanceFromExpectedInApp2-3.kt");
+        }
+
+        @Test
+        @TestMetadata("inheritanceFromExpectedInApp3-3.kt")
+        public void testInheritanceFromExpectedInApp3_3() {
+          runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/inheritanceFromExpectedInApp3-3.kt");
+        }
+
+        @Test
+        @TestMetadata("inheritanceFromLibraryExpectClass.kt")
+        public void testInheritanceFromLibraryExpectClass() {
+          runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/inheritanceFromLibraryExpectClass.kt");
+        }
+
+        @Test
+        @TestMetadata("mutlipleExpectsForOneActual.kt")
+        public void testMutlipleExpectsForOneActual() {
+          runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/mutlipleExpectsForOneActual.kt");
+        }
+
+        @Test
+        @TestMetadata("openExpectedActual2-2.kt")
+        public void testOpenExpectedActual2_2() {
+          runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/openExpectedActual2-2.kt");
+        }
+
+        @Test
+        @TestMetadata("sameLibraryInTwoEdgesOfDiamond.kt")
+        public void testSameLibraryInTwoEdgesOfDiamond() {
+          runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/sameLibraryInTwoEdgesOfDiamond.kt");
         }
 
         @Test
         @TestMetadata("simple.kt")
         public void testSimple() {
           runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/simple.kt");
+        }
+
+        @Test
+        @TestMetadata("stdlibRegressions.kt")
+        public void testStdlibRegressions() {
+          runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/stdlibRegressions.kt");
+        }
+
+        @Test
+        @TestMetadata("typealiasActualisation2-2.kt")
+        public void testTypealiasActualisation2_2() {
+          runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/typealiasActualisation2-2.kt");
+        }
+
+        @Test
+        @TestMetadata("typealiasActualizationJavaSimple2-2.kt")
+        public void testTypealiasActualizationJavaSimple2_2() {
+          runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/typealiasActualizationJavaSimple2-2.kt");
+        }
+      }
+
+      @Nested
+      @TestMetadata("compiler/testData/codegen/box/multiplatform/k2/lenientMode")
+      @TestDataPath("$PROJECT_ROOT")
+      public class LenientMode {
+        @Test
+        public void testAllFilesPresentInLenientMode() {
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multiplatform/k2/lenientMode"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        }
+
+        @Test
+        @TestMetadata("classes.kt")
+        public void testClasses() {
+          runTest("compiler/testData/codegen/box/multiplatform/k2/lenientMode/classes.kt");
+        }
+
+        @Test
+        @TestMetadata("lenientModeSmokeTest.kt")
+        public void testLenientModeSmokeTest() {
+          runTest("compiler/testData/codegen/box/multiplatform/k2/lenientMode/lenientModeSmokeTest.kt");
+        }
+
+        @Test
+        @TestMetadata("overloads.kt")
+        public void testOverloads() {
+          runTest("compiler/testData/codegen/box/multiplatform/k2/lenientMode/overloads.kt");
+        }
+
+        @Test
+        @TestMetadata("returnTypes.kt")
+        public void testReturnTypes() {
+          runTest("compiler/testData/codegen/box/multiplatform/k2/lenientMode/returnTypes.kt");
+        }
+
+        @Test
+        @TestMetadata("typealias.kt")
+        public void testTypealias() {
+          runTest("compiler/testData/codegen/box/multiplatform/k2/lenientMode/typealias.kt");
         }
       }
 
@@ -41034,7 +42540,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
       public class MigratedOldTests {
         @Test
         public void testAllFilesPresentInMigratedOldTests() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multiplatform/k2/migratedOldTests"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multiplatform/k2/migratedOldTests"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
         }
 
         @Test
@@ -41074,7 +42580,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
       public class MultiModule {
         @Test
         public void testAllFilesPresentInMultiModule() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multiplatform/k2/multiModule"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multiplatform/k2/multiModule"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
         }
 
         @Test
@@ -41110,7 +42616,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
   public class NonLocalReturns {
     @Test
     public void testAllFilesPresentInNonLocalReturns() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/nonLocalReturns"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/nonLocalReturns"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
     @Test
@@ -41162,7 +42668,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
   public class NotNullAssertions {
     @Test
     public void testAllFilesPresentInNotNullAssertions() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/notNullAssertions"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/notNullAssertions"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
     @Test
@@ -41232,7 +42738,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
   public class NothingValue {
     @Test
     public void testAllFilesPresentInNothingValue() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/nothingValue"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/nothingValue"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
     @Test
@@ -41260,7 +42766,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
   public class NullCheckOptimization {
     @Test
     public void testAllFilesPresentInNullCheckOptimization() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/nullCheckOptimization"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/nullCheckOptimization"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
     @Test
@@ -41354,7 +42860,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
   public class Object {
     @Test
     public void testAllFilesPresentInObject() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/object"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/object"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
     @Test
@@ -41418,7 +42924,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
   public class ObjectExpression {
     @Test
     public void testAllFilesPresentInObjectExpression() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/objectExpression"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/objectExpression"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
     @Test
@@ -41452,7 +42958,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
   public class ObjectIntrinsics {
     @Test
     public void testAllFilesPresentInObjectIntrinsics() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/objectIntrinsics"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/objectIntrinsics"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
     @Test
@@ -41468,7 +42974,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
   public class Objects {
     @Test
     public void testAllFilesPresentInObjects() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/objects"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/objects"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
     @Test
@@ -41559,6 +43065,12 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     @TestMetadata("initializerBlockResetToDefault.kt")
     public void testInitializerBlockResetToDefault() {
       runTest("compiler/testData/codegen/box/objects/initializerBlockResetToDefault.kt");
+    }
+
+    @Test
+    @TestMetadata("innerClassInsideAnonymousObject.kt")
+    public void testInnerClassInsideAnonymousObject() {
+      runTest("compiler/testData/codegen/box/objects/innerClassInsideAnonymousObject.kt");
     }
 
     @Test
@@ -41796,12 +43308,6 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     }
 
     @Test
-    @TestMetadata("objectLiteralInClosure.kt")
-    public void testObjectLiteralInClosure() {
-      runTest("compiler/testData/codegen/box/objects/objectLiteralInClosure.kt");
-    }
-
-    @Test
     @TestMetadata("objectVsClassInitialization_kt5291.kt")
     public void testObjectVsClassInitialization_kt5291() {
       runTest("compiler/testData/codegen/box/objects/objectVsClassInitialization_kt5291.kt");
@@ -41969,7 +43475,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class CompanionObjectAccess {
       @Test
       public void testAllFilesPresentInCompanionObjectAccess() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/objects/companionObjectAccess"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/objects/companionObjectAccess"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -42080,7 +43586,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
 
         @Test
         public void testAllFilesPresentInMultipleCompanionsWithAccessors() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/objects/companionObjectAccess/multipleCompanionsWithAccessors"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/objects/companionObjectAccess/multipleCompanionsWithAccessors"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
         }
 
         @Test
@@ -42156,7 +43662,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
       public class PrimitiveCompanion {
         @Test
         public void testAllFilesPresentInPrimitiveCompanion() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/objects/companionObjectAccess/primitiveCompanion"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/objects/companionObjectAccess/primitiveCompanion"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
         }
 
         @Test
@@ -42210,7 +43716,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
   public class OperatorConventions {
     @Test
     public void testAllFilesPresentInOperatorConventions() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/operatorConventions"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/operatorConventions"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
     @Test
@@ -42375,7 +43881,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class CompareTo {
       @Test
       public void testAllFilesPresentInCompareTo() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/operatorConventions/compareTo"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/operatorConventions/compareTo"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -42452,7 +43958,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
   public class Optimizations {
     @Test
     public void testAllFilesPresentInOptimizations() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/optimizations"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/optimizations"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
     @Test
@@ -42480,7 +43986,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
   public class Package {
     @Test
     public void testAllFilesPresentInPackage() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/package"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/package"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
     @Test
@@ -42580,7 +44086,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
   public class ParametersMetadata {
     @Test
     public void testAllFilesPresentInParametersMetadata() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/parametersMetadata"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/parametersMetadata"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
     @Test
@@ -42662,7 +44168,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
   public class PlatformTypes {
     @Test
     public void testAllFilesPresentInPlatformTypes() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/platformTypes"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/platformTypes"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
     @Test
@@ -42737,7 +44243,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class Primitives {
       @Test
       public void testAllFilesPresentInPrimitives() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/platformTypes/primitives"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/platformTypes/primitives"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -42874,7 +44380,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
   public class PolymorphicSignature {
     @Test
     public void testAllFilesPresentInPolymorphicSignature() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/polymorphicSignature"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/polymorphicSignature"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
     @Test
@@ -42950,7 +44456,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
   public class PrimitiveTypes {
     @Test
     public void testAllFilesPresentInPrimitiveTypes() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/primitiveTypes"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/primitiveTypes"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
     @Test
@@ -43212,6 +44718,12 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     }
 
     @Test
+    @TestMetadata("kt52230.kt")
+    public void testKt52230() {
+      runTest("compiler/testData/codegen/box/primitiveTypes/kt52230.kt");
+    }
+
+    @Test
     @TestMetadata("kt6590_identityEquals.kt")
     public void testKt6590_identityEquals() {
       runTest("compiler/testData/codegen/box/primitiveTypes/kt6590_identityEquals.kt");
@@ -43263,6 +44775,18 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     @TestMetadata("kt757.kt")
     public void testKt757() {
       runTest("compiler/testData/codegen/box/primitiveTypes/kt757.kt");
+    }
+
+    @Test
+    @TestMetadata("kt79977.kt")
+    public void testKt79977() {
+      runTest("compiler/testData/codegen/box/primitiveTypes/kt79977.kt");
+    }
+
+    @Test
+    @TestMetadata("kt79977_withIncrementalCompilation.kt")
+    public void testKt79977_withIncrementalCompilation() {
+      runTest("compiler/testData/codegen/box/primitiveTypes/kt79977_withIncrementalCompilation.kt");
     }
 
     @Test
@@ -43355,13 +44879,19 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
       runTest("compiler/testData/codegen/box/primitiveTypes/unboxComparable.kt");
     }
 
+    @Test
+    @TestMetadata("virtualCallToCustomNumber.kt")
+    public void testVirtualCallToCustomNumber() {
+      runTest("compiler/testData/codegen/box/primitiveTypes/virtualCallToCustomNumber.kt");
+    }
+
     @Nested
     @TestMetadata("compiler/testData/codegen/box/primitiveTypes/equalityWithObject")
     @TestDataPath("$PROJECT_ROOT")
     public class EqualityWithObject {
       @Test
       public void testAllFilesPresentInEqualityWithObject() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/primitiveTypes/equalityWithObject"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/primitiveTypes/equalityWithObject"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -43424,7 +44954,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
       public class Generated {
         @Test
         public void testAllFilesPresentInGenerated() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/primitiveTypes/equalityWithObject/generated"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/primitiveTypes/equalityWithObject/generated"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
         }
 
         @Test
@@ -43543,7 +45073,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class IdentityEqualsWithNullable {
       @Test
       public void testAllFilesPresentInIdentityEqualsWithNullable() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/primitiveTypes/identityEqualsWithNullable"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/primitiveTypes/identityEqualsWithNullable"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -43583,7 +45113,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
 
       @Test
       public void testAllFilesPresentInNumberToChar() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/primitiveTypes/numberToChar"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/primitiveTypes/numberToChar"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -43630,7 +45160,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
   public class Private {
     @Test
     public void testAllFilesPresentInPrivate() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/private"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/private"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
     @Test
@@ -43652,7 +45182,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
   public class PrivateConstructors {
     @Test
     public void testAllFilesPresentInPrivateConstructors() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/privateConstructors"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/privateConstructors"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
     @Test
@@ -43776,7 +45306,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
 
     @Test
     public void testAllFilesPresentInProperties() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/properties"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/properties"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
     @Test
@@ -44331,7 +45861,13 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class BackingField {
       @Test
       public void testAllFilesPresentInBackingField() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/properties/backingField"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/properties/backingField"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+      }
+
+      @Test
+      @TestMetadata("backingFieldInitializedInInit.kt")
+      public void testBackingFieldInitializedInInit() {
+        runTest("compiler/testData/codegen/box/properties/backingField/backingFieldInitializedInInit.kt");
       }
 
       @Test
@@ -44413,7 +45949,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class Const {
       @Test
       public void testAllFilesPresentInConst() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/properties/const"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/properties/const"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -44501,7 +46037,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
 
       @Test
       public void testAllFilesPresentInLateinit() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/properties/lateinit"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/properties/lateinit"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -44594,7 +46130,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
       public class IsInitializedAndDeinitialize {
         @Test
         public void testAllFilesPresentInIsInitializedAndDeinitialize() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/properties/lateinit/isInitializedAndDeinitialize"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/properties/lateinit/isInitializedAndDeinitialize"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
         }
 
         @Test
@@ -44664,7 +46200,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
       public class Local {
         @Test
         public void testAllFilesPresentInLocal() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/properties/lateinit/local"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/properties/lateinit/local"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
         }
 
         @Test
@@ -44728,7 +46264,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
 
         @Test
         public void testAllFilesPresentInTopLevel() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/properties/lateinit/topLevel"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/properties/lateinit/topLevel"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
         }
 
         @Test
@@ -44758,7 +46294,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
   public class PropertyCallableReference {
     @Test
     public void testAllFilesPresentInPropertyCallableReference() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/propertyCallableReference"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/propertyCallableReference"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
     @Test
@@ -44816,7 +46352,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
   public class PublishedApi {
     @Test
     public void testAllFilesPresentInPublishedApi() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/publishedApi"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/publishedApi"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
     @Test
@@ -44856,7 +46392,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
   public class Ranges {
     @Test
     public void testAllFilesPresentInRanges() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
     @Test
@@ -45021,7 +46557,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class Contains {
       @Test
       public void testAllFilesPresentInContains() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/contains"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/contains"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -45342,7 +46878,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
       public class Generated {
         @Test
         public void testAllFilesPresentInGenerated() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/contains/generated"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/contains/generated"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
         }
 
         @Test
@@ -45515,7 +47051,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class EvaluationOrder {
       @Test
       public void testAllFilesPresentInEvaluationOrder() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/evaluationOrder"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/evaluationOrder"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -45578,7 +47114,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
       public class Stepped {
         @Test
         public void testAllFilesPresentInStepped() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/evaluationOrder/stepped"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/evaluationOrder/stepped"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
         }
 
         @Nested
@@ -45587,7 +47123,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
         public class ForInDownTo {
           @Test
           public void testAllFilesPresentInForInDownTo() {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/evaluationOrder/stepped/forInDownTo"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/evaluationOrder/stepped/forInDownTo"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
           }
 
           @Test
@@ -45645,7 +47181,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
         public class ForInRangeLiteral {
           @Test
           public void testAllFilesPresentInForInRangeLiteral() {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/evaluationOrder/stepped/forInRangeLiteral"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/evaluationOrder/stepped/forInRangeLiteral"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
           }
 
           @Test
@@ -45703,7 +47239,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
         public class ForInUntil {
           @Test
           public void testAllFilesPresentInForInUntil() {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/evaluationOrder/stepped/forInUntil"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/evaluationOrder/stepped/forInUntil"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
           }
 
           @Test
@@ -45763,7 +47299,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class Expression {
       @Test
       public void testAllFilesPresentInExpression() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/expression"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/expression"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -45959,7 +47495,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class ForInDownTo {
       @Test
       public void testAllFilesPresentInForInDownTo() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/forInDownTo"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/forInDownTo"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -46017,7 +47553,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class ForInIndices {
       @Test
       public void testAllFilesPresentInForInIndices() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/forInIndices"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/forInIndices"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -46171,7 +47707,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class ForInProgressionWithIndex {
       @Test
       public void testAllFilesPresentInForInProgressionWithIndex() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/forInProgressionWithIndex"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/forInProgressionWithIndex"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -46271,7 +47807,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class ForInReversed {
       @Test
       public void testAllFilesPresentInForInReversed() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/forInReversed"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/forInReversed"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -46389,7 +47925,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class ForInUntil {
       @Test
       public void testAllFilesPresentInForInUntil() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/forInUntil"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/forInUntil"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -46489,7 +48025,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class ForWithPossibleOverflow {
       @Test
       public void testAllFilesPresentInForWithPossibleOverflow() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/forWithPossibleOverflow"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/forWithPossibleOverflow"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -46577,7 +48113,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class JavaInterop {
       @Test
       public void testAllFilesPresentInJavaInterop() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/javaInterop"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/javaInterop"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -46700,7 +48236,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
       public class WithIndex {
         @Test
         public void testAllFilesPresentInWithIndex() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/javaInterop/withIndex"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/javaInterop/withIndex"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
         }
 
         @Test
@@ -46789,7 +48325,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class Literal {
       @Test
       public void testAllFilesPresentInLiteral() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/literal"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/literal"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -46985,7 +48521,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class NullableLoopParameter {
       @Test
       public void testAllFilesPresentInNullableLoopParameter() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/nullableLoopParameter"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/nullableLoopParameter"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -47013,7 +48549,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class Stepped {
       @Test
       public void testAllFilesPresentInStepped() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Nested
@@ -47022,7 +48558,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
       public class Expression {
         @Test
         public void testAllFilesPresentInExpression() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/expression"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/expression"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
         }
 
         @Nested
@@ -47031,7 +48567,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
         public class DownTo {
           @Test
           public void testAllFilesPresentInDownTo() {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/expression/downTo"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/expression/downTo"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
           }
 
           @Test
@@ -47136,7 +48672,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
           public class NestedStep {
             @Test
             public void testAllFilesPresentInNestedStep() {
-              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/expression/downTo/nestedStep"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/expression/downTo/nestedStep"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
             }
 
             @Test
@@ -47194,7 +48730,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
           public class Reversed {
             @Test
             public void testAllFilesPresentInReversed() {
-              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/expression/downTo/reversed"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/expression/downTo/reversed"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
             }
 
             @Test
@@ -47241,7 +48777,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
         public class RangeTo {
           @Test
           public void testAllFilesPresentInRangeTo() {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/expression/rangeTo"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/expression/rangeTo"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
           }
 
           @Test
@@ -47346,7 +48882,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
           public class NestedStep {
             @Test
             public void testAllFilesPresentInNestedStep() {
-              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/expression/rangeTo/nestedStep"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/expression/rangeTo/nestedStep"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
             }
 
             @Test
@@ -47404,7 +48940,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
           public class Reversed {
             @Test
             public void testAllFilesPresentInReversed() {
-              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/expression/rangeTo/reversed"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/expression/rangeTo/reversed"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
             }
 
             @Test
@@ -47451,7 +48987,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
         public class RangeUntil {
           @Test
           public void testAllFilesPresentInRangeUntil() {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/expression/rangeUntil"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/expression/rangeUntil"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
           }
 
           @Test
@@ -47520,7 +49056,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
           public class NestedStep {
             @Test
             public void testAllFilesPresentInNestedStep() {
-              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/expression/rangeUntil/nestedStep"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/expression/rangeUntil/nestedStep"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
             }
 
             @Test
@@ -47578,7 +49114,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
           public class Reversed {
             @Test
             public void testAllFilesPresentInReversed() {
-              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/expression/rangeUntil/reversed"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/expression/rangeUntil/reversed"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
             }
 
             @Test
@@ -47625,7 +49161,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
         public class Until {
           @Test
           public void testAllFilesPresentInUntil() {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/expression/until"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/expression/until"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
           }
 
           @Test
@@ -47736,7 +49272,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
           public class NestedStep {
             @Test
             public void testAllFilesPresentInNestedStep() {
-              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/expression/until/nestedStep"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/expression/until/nestedStep"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
             }
 
             @Test
@@ -47794,7 +49330,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
           public class Reversed {
             @Test
             public void testAllFilesPresentInReversed() {
-              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/expression/until/reversed"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/expression/until/reversed"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
             }
 
             @Test
@@ -47842,7 +49378,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
       public class Literal {
         @Test
         public void testAllFilesPresentInLiteral() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/literal"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/literal"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
         }
 
         @Nested
@@ -47851,7 +49387,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
         public class DownTo {
           @Test
           public void testAllFilesPresentInDownTo() {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/literal/downTo"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/literal/downTo"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
           }
 
           @Test
@@ -47956,7 +49492,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
           public class NestedStep {
             @Test
             public void testAllFilesPresentInNestedStep() {
-              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/literal/downTo/nestedStep"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/literal/downTo/nestedStep"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
             }
 
             @Test
@@ -48014,7 +49550,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
           public class Reversed {
             @Test
             public void testAllFilesPresentInReversed() {
-              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/literal/downTo/reversed"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/literal/downTo/reversed"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
             }
 
             @Test
@@ -48061,7 +49597,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
         public class RangeTo {
           @Test
           public void testAllFilesPresentInRangeTo() {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/literal/rangeTo"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/literal/rangeTo"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
           }
 
           @Test
@@ -48166,7 +49702,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
           public class NestedStep {
             @Test
             public void testAllFilesPresentInNestedStep() {
-              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/literal/rangeTo/nestedStep"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/literal/rangeTo/nestedStep"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
             }
 
             @Test
@@ -48224,7 +49760,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
           public class Reversed {
             @Test
             public void testAllFilesPresentInReversed() {
-              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/literal/rangeTo/reversed"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/literal/rangeTo/reversed"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
             }
 
             @Test
@@ -48271,7 +49807,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
         public class RangeUntil {
           @Test
           public void testAllFilesPresentInRangeUntil() {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/literal/rangeUntil"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/literal/rangeUntil"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
           }
 
           @Test
@@ -48340,7 +49876,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
           public class NestedStep {
             @Test
             public void testAllFilesPresentInNestedStep() {
-              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/literal/rangeUntil/nestedStep"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/literal/rangeUntil/nestedStep"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
             }
 
             @Test
@@ -48398,7 +49934,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
           public class Reversed {
             @Test
             public void testAllFilesPresentInReversed() {
-              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/literal/rangeUntil/reversed"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/literal/rangeUntil/reversed"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
             }
 
             @Test
@@ -48445,7 +49981,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
         public class Until {
           @Test
           public void testAllFilesPresentInUntil() {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/literal/until"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/literal/until"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
           }
 
           @Test
@@ -48556,7 +50092,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
           public class NestedStep {
             @Test
             public void testAllFilesPresentInNestedStep() {
-              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/literal/until/nestedStep"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/literal/until/nestedStep"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
             }
 
             @Test
@@ -48614,7 +50150,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
           public class Reversed {
             @Test
             public void testAllFilesPresentInReversed() {
-              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/literal/until/reversed"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/literal/until/reversed"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
             }
 
             @Test
@@ -48662,7 +50198,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
       public class Unsigned {
         @Test
         public void testAllFilesPresentInUnsigned() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/unsigned"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/unsigned"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
         }
 
         @Nested
@@ -48671,7 +50207,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
         public class Expression {
           @Test
           public void testAllFilesPresentInExpression() {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/unsigned/expression"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/unsigned/expression"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
           }
 
           @Nested
@@ -48680,7 +50216,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
           public class DownTo {
             @Test
             public void testAllFilesPresentInDownTo() {
-              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/downTo"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/downTo"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
             }
 
             @Test
@@ -48785,7 +50321,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
             public class NestedStep {
               @Test
               public void testAllFilesPresentInNestedStep() {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/downTo/nestedStep"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/downTo/nestedStep"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
               }
 
               @Test
@@ -48843,7 +50379,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
             public class Reversed {
               @Test
               public void testAllFilesPresentInReversed() {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/downTo/reversed"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/downTo/reversed"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
               }
 
               @Test
@@ -48890,7 +50426,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
           public class RangeTo {
             @Test
             public void testAllFilesPresentInRangeTo() {
-              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/rangeTo"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/rangeTo"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
             }
 
             @Test
@@ -48995,7 +50531,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
             public class NestedStep {
               @Test
               public void testAllFilesPresentInNestedStep() {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/rangeTo/nestedStep"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/rangeTo/nestedStep"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
               }
 
               @Test
@@ -49053,7 +50589,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
             public class Reversed {
               @Test
               public void testAllFilesPresentInReversed() {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/rangeTo/reversed"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/rangeTo/reversed"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
               }
 
               @Test
@@ -49100,7 +50636,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
           public class RangeUntil {
             @Test
             public void testAllFilesPresentInRangeUntil() {
-              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/rangeUntil"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/rangeUntil"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
             }
 
             @Test
@@ -49169,7 +50705,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
             public class NestedStep {
               @Test
               public void testAllFilesPresentInNestedStep() {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/rangeUntil/nestedStep"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/rangeUntil/nestedStep"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
               }
 
               @Test
@@ -49227,7 +50763,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
             public class Reversed {
               @Test
               public void testAllFilesPresentInReversed() {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/rangeUntil/reversed"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/rangeUntil/reversed"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
               }
 
               @Test
@@ -49274,7 +50810,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
           public class Until {
             @Test
             public void testAllFilesPresentInUntil() {
-              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/until"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/until"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
             }
 
             @Test
@@ -49385,7 +50921,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
             public class NestedStep {
               @Test
               public void testAllFilesPresentInNestedStep() {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/until/nestedStep"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/until/nestedStep"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
               }
 
               @Test
@@ -49443,7 +50979,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
             public class Reversed {
               @Test
               public void testAllFilesPresentInReversed() {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/until/reversed"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/until/reversed"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
               }
 
               @Test
@@ -49491,7 +51027,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
         public class Literal {
           @Test
           public void testAllFilesPresentInLiteral() {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/unsigned/literal"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/unsigned/literal"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
           }
 
           @Nested
@@ -49500,7 +51036,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
           public class DownTo {
             @Test
             public void testAllFilesPresentInDownTo() {
-              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/downTo"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/downTo"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
             }
 
             @Test
@@ -49605,7 +51141,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
             public class NestedStep {
               @Test
               public void testAllFilesPresentInNestedStep() {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/downTo/nestedStep"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/downTo/nestedStep"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
               }
 
               @Test
@@ -49663,7 +51199,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
             public class Reversed {
               @Test
               public void testAllFilesPresentInReversed() {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/downTo/reversed"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/downTo/reversed"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
               }
 
               @Test
@@ -49710,7 +51246,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
           public class RangeTo {
             @Test
             public void testAllFilesPresentInRangeTo() {
-              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/rangeTo"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/rangeTo"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
             }
 
             @Test
@@ -49815,7 +51351,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
             public class NestedStep {
               @Test
               public void testAllFilesPresentInNestedStep() {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/rangeTo/nestedStep"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/rangeTo/nestedStep"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
               }
 
               @Test
@@ -49873,7 +51409,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
             public class Reversed {
               @Test
               public void testAllFilesPresentInReversed() {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/rangeTo/reversed"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/rangeTo/reversed"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
               }
 
               @Test
@@ -49920,7 +51456,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
           public class RangeUntil {
             @Test
             public void testAllFilesPresentInRangeUntil() {
-              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/rangeUntil"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/rangeUntil"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
             }
 
             @Test
@@ -49989,7 +51525,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
             public class NestedStep {
               @Test
               public void testAllFilesPresentInNestedStep() {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/rangeUntil/nestedStep"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/rangeUntil/nestedStep"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
               }
 
               @Test
@@ -50047,7 +51583,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
             public class Reversed {
               @Test
               public void testAllFilesPresentInReversed() {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/rangeUntil/reversed"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/rangeUntil/reversed"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
               }
 
               @Test
@@ -50094,7 +51630,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
           public class Until {
             @Test
             public void testAllFilesPresentInUntil() {
-              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/until"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/until"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
             }
 
             @Test
@@ -50205,7 +51741,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
             public class NestedStep {
               @Test
               public void testAllFilesPresentInNestedStep() {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/until/nestedStep"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/until/nestedStep"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
               }
 
               @Test
@@ -50263,7 +51799,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
             public class Reversed {
               @Test
               public void testAllFilesPresentInReversed() {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/until/reversed"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/until/reversed"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
               }
 
               @Test
@@ -50313,7 +51849,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class Unsigned {
       @Test
       public void testAllFilesPresentInUnsigned() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/unsigned"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/unsigned"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -50364,7 +51900,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
       public class Expression {
         @Test
         public void testAllFilesPresentInExpression() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/unsigned/expression"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/unsigned/expression"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
         }
 
         @Test
@@ -50560,7 +52096,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
       public class Literal {
         @Test
         public void testAllFilesPresentInLiteral() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/unsigned/literal"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/unsigned/literal"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
         }
 
         @Test
@@ -50756,7 +52292,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
       public class NullableLoopParameter {
         @Test
         public void testAllFilesPresentInNullableLoopParameter() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/unsigned/nullableLoopParameter"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/unsigned/nullableLoopParameter"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
         }
 
         @Test
@@ -50786,7 +52322,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
   public class RecursiveRawTypes {
     @Test
     public void testAllFilesPresentInRecursiveRawTypes() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/recursiveRawTypes"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/recursiveRawTypes"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
     @Test
@@ -50808,7 +52344,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
   public class Reflection {
     @Test
     public void testAllFilesPresentInReflection() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
     @Test
@@ -50835,13 +52371,13 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class Annotations {
       @Test
       public void testAllFilesPresentInAnnotations() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/annotations"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/annotations"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
-      @TestMetadata("annotationRetentionAnnotation.kt")
-      public void testAnnotationRetentionAnnotation() {
-        runTest("compiler/testData/codegen/box/reflection/annotations/annotationRetentionAnnotation.kt");
+      @TestMetadata("annotationRetentionAndTarget.kt")
+      public void testAnnotationRetentionAndTarget() {
+        runTest("compiler/testData/codegen/box/reflection/annotations/annotationRetentionAndTarget.kt");
       }
 
       @Test
@@ -50964,7 +52500,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
       public class OnTypes {
         @Test
         public void testAllFilesPresentInOnTypes() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/annotations/onTypes"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/annotations/onTypes"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
         }
 
         @Test
@@ -50977,6 +52513,12 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
         @TestMetadata("arrayTypeInDefaultPackage.kt")
         public void testArrayTypeInDefaultPackage() {
           runTest("compiler/testData/codegen/box/reflection/annotations/onTypes/arrayTypeInDefaultPackage.kt");
+        }
+
+        @Test
+        @TestMetadata("arrayWithDefaultValue.kt")
+        public void testArrayWithDefaultValue() {
+          runTest("compiler/testData/codegen/box/reflection/annotations/onTypes/arrayWithDefaultValue.kt");
         }
 
         @Test
@@ -50996,6 +52538,18 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
         public void testDifferentPositions() {
           runTest("compiler/testData/codegen/box/reflection/annotations/onTypes/differentPositions.kt");
         }
+
+        @Test
+        @TestMetadata("equalsOnTypeAnnotationWithVarargField.kt")
+        public void testEqualsOnTypeAnnotationWithVarargField() {
+          runTest("compiler/testData/codegen/box/reflection/annotations/onTypes/equalsOnTypeAnnotationWithVarargField.kt");
+        }
+
+        @Test
+        @TestMetadata("localClass.kt")
+        public void testLocalClass() {
+          runTest("compiler/testData/codegen/box/reflection/annotations/onTypes/localClass.kt");
+        }
       }
 
       @Nested
@@ -51004,7 +52558,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
       public class Repeatable {
         @Test
         public void testAllFilesPresentInRepeatable() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/annotations/repeatable"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/annotations/repeatable"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
         }
 
         @Test
@@ -51063,7 +52617,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class Builtins {
       @Test
       public void testAllFilesPresentInBuiltins() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/builtins"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/builtins"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -51091,7 +52645,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class Call {
       @Test
       public void testAllFilesPresentInCall() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/call"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/call"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -51122,6 +52676,18 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
       @TestMetadata("cannotCallEnumConstructor.kt")
       public void testCannotCallEnumConstructor() {
         runTest("compiler/testData/codegen/box/reflection/call/cannotCallEnumConstructor.kt");
+      }
+
+      @Test
+      @TestMetadata("contextParameters.kt")
+      public void testContextParameters() {
+        runTest("compiler/testData/codegen/box/reflection/call/contextParameters.kt");
+      }
+
+      @Test
+      @TestMetadata("contextParametersSuspend.kt")
+      public void testContextParametersSuspend() {
+        runTest("compiler/testData/codegen/box/reflection/call/contextParametersSuspend.kt");
       }
 
       @Test
@@ -51244,7 +52810,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
       public class Bound {
         @Test
         public void testAllFilesPresentInBound() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/call/bound"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/call/bound"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
         }
 
         @Test
@@ -51332,7 +52898,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
       public class InlineClasses {
         @Test
         public void testAllFilesPresentInInlineClasses() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/call/inlineClasses"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/call/inlineClasses"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
         }
 
         @Test
@@ -51362,7 +52928,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
         @Test
         @TestMetadata("secondaryConstructorVisibilies.kt")
         public void testSecondaryConstructorVisibilies() {
-          runTest("compiler/testData/codegen/box/reflection/call/inlineClasses/secondaryConstructorVisibilies.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+          runTest("compiler/testData/codegen/box/reflection/call/inlineClasses/secondaryConstructorVisibilies.kt");
         }
 
         @Test
@@ -51377,7 +52943,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
         public class NonNullObject {
           @Test
           public void testAllFilesPresentInNonNullObject() {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/call/inlineClasses/nonNullObject"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/call/inlineClasses/nonNullObject"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
           }
 
           @Test
@@ -51453,7 +53019,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
         public class NullableObject {
           @Test
           public void testAllFilesPresentInNullableObject() {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/call/inlineClasses/nullableObject"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/call/inlineClasses/nullableObject"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
           }
 
           @Test
@@ -51529,7 +53095,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
         public class Primitive {
           @Test
           public void testAllFilesPresentInPrimitive() {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/call/inlineClasses/primitive"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/call/inlineClasses/primitive"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
           }
 
           @Test
@@ -51597,6 +53163,12 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
           public void testSuspendFunction() {
             runTest("compiler/testData/codegen/box/reflection/call/inlineClasses/primitive/suspendFunction.kt");
           }
+
+          @Test
+          @TestMetadata("suspendFunctionGenericSubstitutedByPrimitive.kt")
+          public void testSuspendFunctionGenericSubstitutedByPrimitive() {
+            runTest("compiler/testData/codegen/box/reflection/call/inlineClasses/primitive/suspendFunctionGenericSubstitutedByPrimitive.kt");
+          }
         }
       }
 
@@ -51606,7 +53178,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
       public class ValueClasses {
         @Test
         public void testAllFilesPresentInValueClasses() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/call/valueClasses"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/call/valueClasses"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
         }
 
         @Test
@@ -51707,7 +53279,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class CallBy {
       @Test
       public void testAllFilesPresentInCallBy() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/callBy"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/callBy"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -51744,6 +53316,18 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
       @TestMetadata("companionObject.kt")
       public void testCompanionObject() {
         runTest("compiler/testData/codegen/box/reflection/callBy/companionObject.kt");
+      }
+
+      @Test
+      @TestMetadata("contextParameters.kt")
+      public void testContextParameters() {
+        runTest("compiler/testData/codegen/box/reflection/callBy/contextParameters.kt");
+      }
+
+      @Test
+      @TestMetadata("contextParametersSuspend.kt")
+      public void testContextParametersSuspend() {
+        runTest("compiler/testData/codegen/box/reflection/callBy/contextParametersSuspend.kt");
       }
 
       @Test
@@ -51950,7 +53534,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
       public class InlineClasses {
         @Test
         public void testAllFilesPresentInInlineClasses() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/callBy/inlineClasses"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/callBy/inlineClasses"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
         }
 
         @Nested
@@ -51959,7 +53543,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
         public class NonNullObject {
           @Test
           public void testAllFilesPresentInNonNullObject() {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/callBy/inlineClasses/nonNullObject"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/callBy/inlineClasses/nonNullObject"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
           }
 
           @Nested
@@ -51968,7 +53552,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
           public class DefaultArguments {
             @Test
             public void testAllFilesPresentInDefaultArguments() {
-              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/callBy/inlineClasses/nonNullObject/defaultArguments"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/callBy/inlineClasses/nonNullObject/defaultArguments"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
             }
 
             @Test
@@ -52027,7 +53611,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
         public class NullableObject {
           @Test
           public void testAllFilesPresentInNullableObject() {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/callBy/inlineClasses/nullableObject"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/callBy/inlineClasses/nullableObject"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
           }
 
           @Nested
@@ -52036,7 +53620,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
           public class DefaultArguments {
             @Test
             public void testAllFilesPresentInDefaultArguments() {
-              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/callBy/inlineClasses/nullableObject/defaultArguments"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/callBy/inlineClasses/nullableObject/defaultArguments"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
             }
 
             @Test
@@ -52095,7 +53679,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
         public class Primitive {
           @Test
           public void testAllFilesPresentInPrimitive() {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/callBy/inlineClasses/primitive"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/callBy/inlineClasses/primitive"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
           }
 
           @Nested
@@ -52104,7 +53688,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
           public class DefaultArguments {
             @Test
             public void testAllFilesPresentInDefaultArguments() {
-              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/callBy/inlineClasses/primitive/defaultArguments"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/callBy/inlineClasses/primitive/defaultArguments"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
             }
 
             @Test
@@ -52165,7 +53749,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class ClassLiterals {
       @Test
       public void testAllFilesPresentInClassLiterals() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/classLiterals"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/classLiterals"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -52235,7 +53819,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class Classes {
       @Test
       public void testAllFilesPresentInClasses() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/classes"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/classes"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -52263,6 +53847,12 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
       }
 
       @Test
+      @TestMetadata("deprecatedDefaultType.kt")
+      public void testDeprecatedDefaultType() {
+        runTest("compiler/testData/codegen/box/reflection/classes/deprecatedDefaultType.kt");
+      }
+
+      @Test
       @TestMetadata("javaVoid.kt")
       public void testJavaVoid() {
         runTest("compiler/testData/codegen/box/reflection/classes/javaVoid.kt");
@@ -52284,6 +53874,12 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
       @TestMetadata("localClassSimpleName.kt")
       public void testLocalClassSimpleName() {
         runTest("compiler/testData/codegen/box/reflection/classes/localClassSimpleName.kt");
+      }
+
+      @Test
+      @TestMetadata("multiplatformKClassCreation.kt")
+      public void testMultiplatformKClassCreation() {
+        runTest("compiler/testData/codegen/box/reflection/classes/multiplatformKClassCreation.kt");
       }
 
       @Test
@@ -52365,7 +53961,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class Constructors {
       @Test
       public void testAllFilesPresentInConstructors() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/constructors"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/constructors"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -52411,7 +54007,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class CreateAnnotation {
       @Test
       public void testAllFilesPresentInCreateAnnotation() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/createAnnotation"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/createAnnotation"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -52499,7 +54095,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class Enclosing {
       @Test
       public void testAllFilesPresentInEnclosing() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/enclosing"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/enclosing"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -52521,9 +54117,21 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
       }
 
       @Test
-      @TestMetadata("kt11969.kt")
-      public void testKt11969() {
-        runTest("compiler/testData/codegen/box/reflection/enclosing/kt11969.kt");
+      @TestMetadata("kt16727_anonymousInInterface.kt")
+      public void testKt16727_anonymousInInterface() {
+        runTest("compiler/testData/codegen/box/reflection/enclosing/kt16727_anonymousInInterface.kt");
+      }
+
+      @Test
+      @TestMetadata("kt33097_anonymousInInterfaceCompanion.kt")
+      public void testKt33097_anonymousInInterfaceCompanion() {
+        runTest("compiler/testData/codegen/box/reflection/enclosing/kt33097_anonymousInInterfaceCompanion.kt");
+      }
+
+      @Test
+      @TestMetadata("kt33097_anonymousInInterfaceCompanionJvmDefaultDisable.kt")
+      public void testKt33097_anonymousInInterfaceCompanionJvmDefaultDisable() {
+        runTest("compiler/testData/codegen/box/reflection/enclosing/kt33097_anonymousInInterfaceCompanionJvmDefaultDisable.kt");
       }
 
       @Test
@@ -52665,7 +54273,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class Functions {
       @Test
       public void testAllFilesPresentInFunctions() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/functions"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/functions"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -52759,7 +54367,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class GenericSignature {
       @Test
       public void testAllFilesPresentInGenericSignature() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/genericSignature"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/genericSignature"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -52877,7 +54485,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class IsInstance {
       @Test
       public void testAllFilesPresentInIsInstance() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/isInstance"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/isInstance"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -52893,7 +54501,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class KClassInAnnotation {
       @Test
       public void testAllFilesPresentInKClassInAnnotation() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/kClassInAnnotation"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/kClassInAnnotation"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -52957,7 +54565,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class LambdaClasses {
       @Test
       public void testAllFilesPresentInLambdaClasses() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/lambdaClasses"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/lambdaClasses"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -53033,7 +54641,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class LocalClasses {
       @Test
       public void testAllFilesPresentInLocalClasses() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/localClasses"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/localClasses"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -53055,7 +54663,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class Mapping {
       @Test
       public void testAllFilesPresentInMapping() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/mapping"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/mapping"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -53214,7 +54822,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
       public class FakeOverrides {
         @Test
         public void testAllFilesPresentInFakeOverrides() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/mapping/fakeOverrides"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/mapping/fakeOverrides"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
         }
 
         @Test
@@ -53236,7 +54844,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
       public class InlineClasses {
         @Test
         public void testAllFilesPresentInInlineClasses() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/mapping/inlineClasses"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/mapping/inlineClasses"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
         }
 
         @Test
@@ -53258,7 +54866,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
       public class JvmStatic {
         @Test
         public void testAllFilesPresentInJvmStatic() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/mapping/jvmStatic"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/mapping/jvmStatic"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
         }
 
         @Test
@@ -53280,7 +54888,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
       public class Types {
         @Test
         public void testAllFilesPresentInTypes() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/mapping/types"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/mapping/types"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
         }
 
         @Test
@@ -53428,7 +55036,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
       public class ValueClasses {
         @Test
         public void testAllFilesPresentInValueClasses() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/mapping/valueClasses"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/mapping/valueClasses"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
         }
 
         @Test
@@ -53457,7 +55065,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
 
       @Test
       public void testAllFilesPresentInMethodsFromAny() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/methodsFromAny"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/methodsFromAny"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -53476,6 +55084,12 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
       @TestMetadata("classToString.kt")
       public void testClassToString() {
         runTest("compiler/testData/codegen/box/reflection/methodsFromAny/classToString.kt");
+      }
+
+      @Test
+      @TestMetadata("contextParametersToString.kt")
+      public void testContextParametersToString() {
+        runTest("compiler/testData/codegen/box/reflection/methodsFromAny/contextParametersToString.kt");
       }
 
       @Test
@@ -53611,7 +55225,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class Modifiers {
       @Test
       public void testAllFilesPresentInModifiers() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/modifiers"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/modifiers"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -53651,6 +55265,18 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
       }
 
       @Test
+      @TestMetadata("javaClassModality.kt")
+      public void testJavaClassModality() {
+        runTest("compiler/testData/codegen/box/reflection/modifiers/javaClassModality.kt");
+      }
+
+      @Test
+      @TestMetadata("javaClasses.kt")
+      public void testJavaClasses() {
+        runTest("compiler/testData/codegen/box/reflection/modifiers/javaClasses.kt");
+      }
+
+      @Test
       @TestMetadata("javaVisibility.kt")
       public void testJavaVisibility() {
         runTest("compiler/testData/codegen/box/reflection/modifiers/javaVisibility.kt");
@@ -53681,7 +55307,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class MultifileClasses {
       @Test
       public void testAllFilesPresentInMultifileClasses() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/multifileClasses"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/multifileClasses"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -53709,7 +55335,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class NoReflectAtRuntime {
       @Test
       public void testAllFilesPresentInNoReflectAtRuntime() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/noReflectAtRuntime"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/noReflectAtRuntime"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -53760,7 +55386,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
       public class MethodsFromAny {
         @Test
         public void testAllFilesPresentInMethodsFromAny() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/noReflectAtRuntime/methodsFromAny"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/noReflectAtRuntime/methodsFromAny"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
         }
 
         @Test
@@ -53789,7 +55415,13 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class Parameters {
       @Test
       public void testAllFilesPresentInParameters() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/parameters"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/parameters"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+      }
+
+      @Test
+      @TestMetadata("anonymousContextParameter.kt")
+      public void testAnonymousContextParameter() {
+        runTest("compiler/testData/codegen/box/reflection/parameters/anonymousContextParameter.kt");
       }
 
       @Test
@@ -53814,6 +55446,12 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
       @TestMetadata("boundReferences.kt")
       public void testBoundReferences() {
         runTest("compiler/testData/codegen/box/reflection/parameters/boundReferences.kt");
+      }
+
+      @Test
+      @TestMetadata("contextParameters.kt")
+      public void testContextParameters() {
+        runTest("compiler/testData/codegen/box/reflection/parameters/contextParameters.kt");
       }
 
       @Test
@@ -53889,7 +55527,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class Properties {
       @Test
       public void testAllFilesPresentInProperties() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/properties"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/properties"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -53902,6 +55540,12 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
       @TestMetadata("callPrivatePropertyFromGetProperties.kt")
       public void testCallPrivatePropertyFromGetProperties() {
         runTest("compiler/testData/codegen/box/reflection/properties/callPrivatePropertyFromGetProperties.kt");
+      }
+
+      @Test
+      @TestMetadata("contextParametersGet.kt")
+      public void testContextParametersGet() {
+        runTest("compiler/testData/codegen/box/reflection/properties/contextParametersGet.kt");
       }
 
       @Test
@@ -54102,7 +55746,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
 
         @Test
         public void testAllFilesPresentInAccessors() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/properties/accessors"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/properties/accessors"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
         }
 
         @Test
@@ -54136,7 +55780,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
       public class GetDelegate {
         @Test
         public void testAllFilesPresentInGetDelegate() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/properties/getDelegate"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/properties/getDelegate"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
         }
 
         @Test
@@ -54259,7 +55903,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
         public class Method {
           @Test
           public void testAllFilesPresentInMethod() {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/properties/getDelegate/method"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/properties/getDelegate/method"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
           }
 
           @Test
@@ -54318,7 +55962,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
       public class JvmField {
         @Test
         public void testAllFilesPresentInJvmField() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/properties/jvmField"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/properties/jvmField"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
         }
 
         @Test
@@ -54346,7 +55990,13 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
       public class LocalDelegated {
         @Test
         public void testAllFilesPresentInLocalDelegated() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/properties/localDelegated"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/properties/localDelegated"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        }
+
+        @Test
+        @TestMetadata("annotations.kt")
+        public void testAnnotations() {
+          runTest("compiler/testData/codegen/box/reflection/properties/localDelegated/annotations.kt");
         }
 
         @Test
@@ -54411,13 +56061,19 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class Supertypes {
       @Test
       public void testAllFilesPresentInSupertypes() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/supertypes"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/supertypes"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
       @TestMetadata("builtInClassSupertypes.kt")
       public void testBuiltInClassSupertypes() {
         runTest("compiler/testData/codegen/box/reflection/supertypes/builtInClassSupertypes.kt");
+      }
+
+      @Test
+      @TestMetadata("flexibleTypesSubstitution.kt")
+      public void testFlexibleTypesSubstitution() {
+        runTest("compiler/testData/codegen/box/reflection/supertypes/flexibleTypesSubstitution.kt");
       }
 
       @Test
@@ -54430,6 +56086,12 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
       @TestMetadata("isSubclassOfIsSuperclassOf.kt")
       public void testIsSubclassOfIsSuperclassOf() {
         runTest("compiler/testData/codegen/box/reflection/supertypes/isSubclassOfIsSuperclassOf.kt");
+      }
+
+      @Test
+      @TestMetadata("nullablilitySubstitution.kt")
+      public void testNullablilitySubstitution() {
+        runTest("compiler/testData/codegen/box/reflection/supertypes/nullablilitySubstitution.kt");
       }
 
       @Test
@@ -54451,7 +56113,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class SyntheticClasses {
       @Test
       public void testAllFilesPresentInSyntheticClasses() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/syntheticClasses"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/syntheticClasses"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -54467,7 +56129,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class TypeOf {
       @Test
       public void testAllFilesPresentInTypeOf() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/typeOf"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/typeOf"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -54495,15 +56157,15 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
       }
 
       @Test
-      @TestMetadata("flexibleTypes_after.kt")
-      public void testFlexibleTypes_after() {
-        runTest("compiler/testData/codegen/box/reflection/typeOf/flexibleTypes_after.kt");
+      @TestMetadata("definitelyNotNullType.kt")
+      public void testDefinitelyNotNullType() {
+        runTest("compiler/testData/codegen/box/reflection/typeOf/definitelyNotNullType.kt");
       }
 
       @Test
-      @TestMetadata("flexibleTypes_before.kt")
-      public void testFlexibleTypes_before() {
-        runTest("compiler/testData/codegen/box/reflection/typeOf/flexibleTypes_before.kt");
+      @TestMetadata("flexibleTypes_after.kt")
+      public void testFlexibleTypes_after() {
+        runTest("compiler/testData/codegen/box/reflection/typeOf/flexibleTypes_after.kt");
       }
 
       @Test
@@ -54522,6 +56184,12 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
       @TestMetadata("intersectionType.kt")
       public void testIntersectionType() {
         runTest("compiler/testData/codegen/box/reflection/typeOf/intersectionType.kt");
+      }
+
+      @Test
+      @TestMetadata("localClass.kt")
+      public void testLocalClass() {
+        runTest("compiler/testData/codegen/box/reflection/typeOf/localClass.kt");
       }
 
       @Test
@@ -54555,21 +56223,9 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
       }
 
       @Test
-      @TestMetadata("mutableCollections_before.kt")
-      public void testMutableCollections_before() {
-        runTest("compiler/testData/codegen/box/reflection/typeOf/mutableCollections_before.kt");
-      }
-
-      @Test
       @TestMetadata("nothing_after.kt")
       public void testNothing_after() {
         runTest("compiler/testData/codegen/box/reflection/typeOf/nothing_after.kt");
-      }
-
-      @Test
-      @TestMetadata("nothing_before.kt")
-      public void testNothing_before() {
-        runTest("compiler/testData/codegen/box/reflection/typeOf/nothing_before.kt");
       }
 
       @Test
@@ -54585,15 +56241,15 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
       }
 
       @Test
-      @TestMetadata("rawTypes_before.kt")
-      public void testRawTypes_before() {
-        runTest("compiler/testData/codegen/box/reflection/typeOf/rawTypes_before.kt");
-      }
-
-      @Test
       @TestMetadata("reifiedAsNestedArgument.kt")
       public void testReifiedAsNestedArgument() {
         runTest("compiler/testData/codegen/box/reflection/typeOf/reifiedAsNestedArgument.kt");
+      }
+
+      @Test
+      @TestMetadata("typeAliasedType.kt")
+      public void testTypeAliasedType() {
+        runTest("compiler/testData/codegen/box/reflection/typeOf/typeAliasedType.kt");
       }
 
       @Test
@@ -54608,7 +56264,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
       public class Js {
         @Test
         public void testAllFilesPresentInJs() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/typeOf/js"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/typeOf/js"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
         }
       }
 
@@ -54618,7 +56274,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
       public class NoReflect {
         @Test
         public void testAllFilesPresentInNoReflect() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/typeOf/noReflect"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/typeOf/noReflect"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
         }
 
         @Test
@@ -54640,12 +56296,6 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
         }
 
         @Test
-        @TestMetadata("flexibleTypes_before.kt")
-        public void testFlexibleTypes_before() {
-          runTest("compiler/testData/codegen/box/reflection/typeOf/noReflect/flexibleTypes_before.kt");
-        }
-
-        @Test
         @TestMetadata("inlineClasses.kt")
         public void testInlineClasses() {
           runTest("compiler/testData/codegen/box/reflection/typeOf/noReflect/inlineClasses.kt");
@@ -54664,21 +56314,9 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
         }
 
         @Test
-        @TestMetadata("mutableCollections_before.kt")
-        public void testMutableCollections_before() {
-          runTest("compiler/testData/codegen/box/reflection/typeOf/noReflect/mutableCollections_before.kt");
-        }
-
-        @Test
         @TestMetadata("nothing_after.kt")
         public void testNothing_after() {
           runTest("compiler/testData/codegen/box/reflection/typeOf/noReflect/nothing_after.kt");
-        }
-
-        @Test
-        @TestMetadata("nothing_before.kt")
-        public void testNothing_before() {
-          runTest("compiler/testData/codegen/box/reflection/typeOf/noReflect/nothing_before.kt");
         }
 
         @Test
@@ -54694,12 +56332,6 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
         }
 
         @Test
-        @TestMetadata("rawTypes_before.kt")
-        public void testRawTypes_before() {
-          runTest("compiler/testData/codegen/box/reflection/typeOf/noReflect/rawTypes_before.kt");
-        }
-
-        @Test
         @TestMetadata("typeReferenceEqualsHashCode.kt")
         public void testTypeReferenceEqualsHashCode() {
           runTest("compiler/testData/codegen/box/reflection/typeOf/noReflect/typeReferenceEqualsHashCode.kt");
@@ -54711,7 +56343,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
         public class NonReifiedTypeParameters {
           @Test
           public void testAllFilesPresentInNonReifiedTypeParameters() {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/typeOf/noReflect/nonReifiedTypeParameters"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/typeOf/noReflect/nonReifiedTypeParameters"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
           }
 
           @Test
@@ -54782,7 +56414,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
       public class NonReifiedTypeParameters {
         @Test
         public void testAllFilesPresentInNonReifiedTypeParameters() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/typeOf/nonReifiedTypeParameters"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/typeOf/nonReifiedTypeParameters"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
         }
 
         @Test
@@ -54840,6 +56472,18 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
         }
 
         @Test
+        @TestMetadata("recursiveBoundWithInline.kt")
+        public void testRecursiveBoundWithInline() {
+          runTest("compiler/testData/codegen/box/reflection/typeOf/nonReifiedTypeParameters/recursiveBoundWithInline.kt");
+        }
+
+        @Test
+        @TestMetadata("recursiveBoundWithoutInline.kt")
+        public void testRecursiveBoundWithoutInline() {
+          runTest("compiler/testData/codegen/box/reflection/typeOf/nonReifiedTypeParameters/recursiveBoundWithoutInline.kt");
+        }
+
+        @Test
         @TestMetadata("simpleClassParameter.kt")
         public void testSimpleClassParameter() {
           runTest("compiler/testData/codegen/box/reflection/typeOf/nonReifiedTypeParameters/simpleClassParameter.kt");
@@ -54889,7 +56533,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class TypeParameters {
       @Test
       public void testAllFilesPresentInTypeParameters() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/typeParameters"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/typeParameters"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -54929,7 +56573,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class Types {
       @Test
       public void testAllFilesPresentInTypes() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/types"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/types"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -54954,6 +56598,12 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
       @TestMetadata("equalsForClassAndTypeParameterWithSameFqName.kt")
       public void testEqualsForClassAndTypeParameterWithSameFqName() {
         runTest("compiler/testData/codegen/box/reflection/types/equalsForClassAndTypeParameterWithSameFqName.kt");
+      }
+
+      @Test
+      @TestMetadata("functionTypes.kt")
+      public void testFunctionTypes() {
+        runTest("compiler/testData/codegen/box/reflection/types/functionTypes.kt");
       }
 
       @Test
@@ -54993,6 +56643,12 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
       }
 
       @Test
+      @TestMetadata("typeAliasedType.kt")
+      public void testTypeAliasedType() {
+        runTest("compiler/testData/codegen/box/reflection/types/typeAliasedType.kt");
+      }
+
+      @Test
       @TestMetadata("typeArguments.kt")
       public void testTypeArguments() {
         runTest("compiler/testData/codegen/box/reflection/types/typeArguments.kt");
@@ -55016,7 +56672,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
       public class CreateType {
         @Test
         public void testAllFilesPresentInCreateType() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/types/createType"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/types/createType"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
         }
 
         @Test
@@ -55056,7 +56712,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
       public class Subtyping {
         @Test
         public void testAllFilesPresentInSubtyping() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/types/subtyping"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/types/subtyping"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
         }
 
         @Test
@@ -55092,7 +56748,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
   public class Regressions {
     @Test
     public void testAllFilesPresentInRegressions() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/regressions"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/regressions"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
     @Test
@@ -55189,6 +56845,12 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     @TestMetadata("intersectionOfEqualTypes.kt")
     public void testIntersectionOfEqualTypes() {
       runTest("compiler/testData/codegen/box/regressions/intersectionOfEqualTypes.kt");
+    }
+
+    @Test
+    @TestMetadata("java2kotlinDelegation.kt")
+    public void testJava2kotlinDelegation() {
+      runTest("compiler/testData/codegen/box/regressions/java2kotlinDelegation.kt");
     }
 
     @Test
@@ -55420,12 +57082,6 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     }
 
     @Test
-    @TestMetadata("kt3850.kt")
-    public void testKt3850() {
-      runTest("compiler/testData/codegen/box/regressions/kt3850.kt");
-    }
-
-    @Test
     @TestMetadata("kt3903.kt")
     public void testKt3903() {
       runTest("compiler/testData/codegen/box/regressions/kt3903.kt");
@@ -55612,6 +57268,12 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     }
 
     @Test
+    @TestMetadata("kt79516.kt")
+    public void testKt79516() {
+      runTest("compiler/testData/codegen/box/regressions/kt79516.kt");
+    }
+
+    @Test
     @TestMetadata("kt864.kt")
     public void testKt864() {
       runTest("compiler/testData/codegen/box/regressions/kt864.kt");
@@ -55732,7 +57394,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
   public class Reified {
     @Test
     public void testAllFilesPresentInReified() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reified"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reified"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
     @Test
@@ -55886,6 +57548,18 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     }
 
     @Test
+    @TestMetadata("overrideResolution.kt")
+    public void testOverrideResolution() {
+      runTest("compiler/testData/codegen/box/reified/overrideResolution.kt");
+    }
+
+    @Test
+    @TestMetadata("overrideResolutionWithInlinedFunInKlib.kt")
+    public void testOverrideResolutionWithInlinedFunInKlib() {
+      runTest("compiler/testData/codegen/box/reified/overrideResolutionWithInlinedFunInKlib.kt");
+    }
+
+    @Test
     @TestMetadata("recursiveInnerAnonymousObject.kt")
     public void testRecursiveInnerAnonymousObject() {
       runTest("compiler/testData/codegen/box/reified/recursiveInnerAnonymousObject.kt");
@@ -56017,7 +57691,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class ArraysReification {
       @Test
       public void testAllFilesPresentInArraysReification() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reified/arraysReification"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reified/arraysReification"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -56056,6 +57730,62 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
         runTest("compiler/testData/codegen/box/reified/arraysReification/jaggedDeep.kt");
       }
     }
+
+    @Nested
+    @TestMetadata("compiler/testData/codegen/box/reified/catchParameter")
+    @TestDataPath("$PROJECT_ROOT")
+    public class CatchParameter {
+      @Test
+      public void testAllFilesPresentInCatchParameter() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reified/catchParameter"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+      }
+
+      @Test
+      @TestMetadata("nestedReifiedCatch.kt")
+      public void testNestedReifiedCatch() {
+        runTest("compiler/testData/codegen/box/reified/catchParameter/nestedReifiedCatch.kt");
+      }
+
+      @Test
+      @TestMetadata("nullableExceptionType.kt")
+      public void testNullableExceptionType() {
+        runTest("compiler/testData/codegen/box/reified/catchParameter/nullableExceptionType.kt");
+      }
+
+      @Test
+      @TestMetadata("nullableNothing.kt")
+      public void testNullableNothing() {
+        runTest("compiler/testData/codegen/box/reified/catchParameter/nullableNothing.kt");
+      }
+
+      @Test
+      @TestMetadata("reificationClash.kt")
+      public void testReificationClash() {
+        runTest("compiler/testData/codegen/box/reified/catchParameter/reificationClash.kt");
+      }
+
+      @Test
+      @TestMetadata("tryCatchReifiedType.kt")
+      public void testTryCatchReifiedType() {
+        runTest("compiler/testData/codegen/box/reified/catchParameter/tryCatchReifiedType.kt");
+      }
+    }
+  }
+
+  @Nested
+  @TestMetadata("compiler/testData/codegen/box/returnInExpressionBody")
+  @TestDataPath("$PROJECT_ROOT")
+  public class ReturnInExpressionBody {
+    @Test
+    public void testAllFilesPresentInReturnInExpressionBody() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/returnInExpressionBody"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+    }
+
+    @Test
+    @TestMetadata("returnInExpressionBody.kt")
+    public void testReturnInExpressionBody() {
+      runTest("compiler/testData/codegen/box/returnInExpressionBody/returnInExpressionBody.kt");
+    }
   }
 
   @Nested
@@ -56064,7 +57794,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
   public class SafeCall {
     @Test
     public void testAllFilesPresentInSafeCall() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/safeCall"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/safeCall"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
     @Test
@@ -56224,7 +57954,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
   public class Sam {
     @Test
     public void testAllFilesPresentInSam() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/sam"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/sam"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
     @Test
@@ -56267,6 +57997,24 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     @TestMetadata("fieldInJavaSamInterface.kt")
     public void testFieldInJavaSamInterface() {
       runTest("compiler/testData/codegen/box/sam/fieldInJavaSamInterface.kt");
+    }
+
+    @Test
+    @TestMetadata("funInterfaceExtendsSuspendFunction.kt")
+    public void testFunInterfaceExtendsSuspendFunction() {
+      runTest("compiler/testData/codegen/box/sam/funInterfaceExtendsSuspendFunction.kt");
+    }
+
+    @Test
+    @TestMetadata("funInterfaceExtendsSuspendFunction2.kt")
+    public void testFunInterfaceExtendsSuspendFunction2() {
+      runTest("compiler/testData/codegen/box/sam/funInterfaceExtendsSuspendFunction2.kt");
+    }
+
+    @Test
+    @TestMetadata("funInterfaceExtendsSuspendFunction3.kt")
+    public void testFunInterfaceExtendsSuspendFunction3() {
+      runTest("compiler/testData/codegen/box/sam/funInterfaceExtendsSuspendFunction3.kt");
     }
 
     @Test
@@ -56546,15 +58294,15 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     }
 
     @Test
-    @TestMetadata("samWithInferenceToDefaultBounds.kt")
-    public void testSamWithInferenceToDefaultBounds() {
-      runTest("compiler/testData/codegen/box/sam/samWithInferenceToDefaultBounds.kt");
-    }
-
-    @Test
     @TestMetadata("smartCastSamConversion.kt")
     public void testSmartCastSamConversion() {
       runTest("compiler/testData/codegen/box/sam/smartCastSamConversion.kt");
+    }
+
+    @Test
+    @TestMetadata("topLevelConversions.kt")
+    public void testTopLevelConversions() {
+      runTest("compiler/testData/codegen/box/sam/topLevelConversions.kt");
     }
 
     @Nested
@@ -56563,7 +58311,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class Adapters {
       @Test
       public void testAllFilesPresentInAdapters() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/sam/adapters"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/sam/adapters"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -56746,7 +58494,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
       public class Operators {
         @Test
         public void testAllFilesPresentInOperators() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/sam/adapters/operators"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/sam/adapters/operators"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
         }
 
         @Test
@@ -56817,7 +58565,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class Approximation {
       @Test
       public void testAllFilesPresentInApproximation() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/sam/approximation"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/sam/approximation"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -56851,7 +58599,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class Constructors {
       @Test
       public void testAllFilesPresentInConstructors() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/sam/constructors"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/sam/constructors"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -56963,7 +58711,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class Equality {
       @Test
       public void testAllFilesPresentInEquality() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/sam/equality"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/sam/equality"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -57003,7 +58751,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class JavaSamWithEqualsHashCode {
       @Test
       public void testAllFilesPresentInJavaSamWithEqualsHashCode() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/sam/javaSamWithEqualsHashCode"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/sam/javaSamWithEqualsHashCode"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -57032,7 +58780,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
   public class SameFileInSourceAndDependencies {
     @Test
     public void testAllFilesPresentInSameFileInSourceAndDependencies() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/sameFileInSourceAndDependencies"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/sameFileInSourceAndDependencies"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
     @Test
@@ -57102,7 +58850,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
   public class Script {
     @Test
     public void testAllFilesPresentInScript() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/script"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/script"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
     @Test
@@ -57166,7 +58914,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
   public class Sealed {
     @Test
     public void testAllFilesPresentInSealed() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/sealed"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/sealed"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
     @Test
@@ -57242,7 +58990,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
 
     @Test
     public void testAllFilesPresentInSecondaryConstructors() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/secondaryConstructors"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/secondaryConstructors"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
     @Test
@@ -57444,7 +59192,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
   public class Serialization {
     @Test
     public void testAllFilesPresentInSerialization() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/serialization"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/serialization"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
     @Test
@@ -57496,7 +59244,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
   public class Size {
     @Test
     public void testAllFilesPresentInSize() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/size"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/size"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
   }
 
@@ -57506,7 +59254,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
   public class Smap {
     @Test
     public void testAllFilesPresentInSmap() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/smap"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/smap"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
     @Test
@@ -57534,7 +59282,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
   public class SmartCasts {
     @Test
     public void testAllFilesPresentInSmartCasts() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/smartCasts"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/smartCasts"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
     @Test
@@ -57712,6 +59460,12 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     }
 
     @Test
+    @TestMetadata("negativesmartCastAugmentedAssignment.kt")
+    public void testNegativesmartCastAugmentedAssignment() {
+      runTest("compiler/testData/codegen/box/smartCasts/negativesmartCastAugmentedAssignment.kt");
+    }
+
+    @Test
     @TestMetadata("nullSmartCast.kt")
     public void testNullSmartCast() {
       runTest("compiler/testData/codegen/box/smartCasts/nullSmartCast.kt");
@@ -57766,6 +59520,12 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     }
 
     @Test
+    @TestMetadata("smartCastOnSuper.kt")
+    public void testSmartCastOnSuper() {
+      runTest("compiler/testData/codegen/box/smartCasts/smartCastOnSuper.kt");
+    }
+
+    @Test
     @TestMetadata("smartCastedGenericWhenSubjectInRangeCheck.kt")
     public void testSmartCastedGenericWhenSubjectInRangeCheck() {
       runTest("compiler/testData/codegen/box/smartCasts/smartCastedGenericWhenSubjectInRangeCheck.kt");
@@ -57814,7 +59574,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
   public class SpecialBuiltins {
     @Test
     public void testAllFilesPresentInSpecialBuiltins() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/specialBuiltins"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/specialBuiltins"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
     @Test
@@ -58028,7 +59788,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
   public class Statics {
     @Test
     public void testAllFilesPresentInStatics() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/statics"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/statics"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
     @Test
@@ -58134,7 +59894,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
   public class StoreStackBeforeInline {
     @Test
     public void testAllFilesPresentInStoreStackBeforeInline() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/storeStackBeforeInline"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/storeStackBeforeInline"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
     @Test
@@ -58174,7 +59934,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
   public class StringTrim {
     @Test
     public void testAllFilesPresentInStringTrim() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/stringTrim"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/stringTrim"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
     @Test
@@ -58190,7 +59950,19 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
   public class Strings {
     @Test
     public void testAllFilesPresentInStrings() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/strings"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/strings"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+    }
+
+    @Test
+    @TestMetadata("charSequenceGet.kt")
+    public void testCharSequenceGet() {
+      runTest("compiler/testData/codegen/box/strings/charSequenceGet.kt");
+    }
+
+    @Test
+    @TestMetadata("charSequenceSubSequence.kt")
+    public void testCharSequenceSubSequence() {
+      runTest("compiler/testData/codegen/box/strings/charSequenceSubSequence.kt");
     }
 
     @Test
@@ -58440,7 +60212,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
   public class Super {
     @Test
     public void testAllFilesPresentInSuper() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/super"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/super"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
     @Test
@@ -58468,9 +60240,15 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     }
 
     @Test
-    @TestMetadata("diamondWithGenericSpecialization.kt")
-    public void testDiamondWithGenericSpecialization() {
-      runTest("compiler/testData/codegen/box/super/diamondWithGenericSpecialization.kt");
+    @TestMetadata("diamondWithGenericParameterType.kt")
+    public void testDiamondWithGenericParameterType() {
+      runTest("compiler/testData/codegen/box/super/diamondWithGenericParameterType.kt");
+    }
+
+    @Test
+    @TestMetadata("diamondWithGenericReturnType.kt")
+    public void testDiamondWithGenericReturnType() {
+      runTest("compiler/testData/codegen/box/super/diamondWithGenericReturnType.kt");
     }
 
     @Test
@@ -58653,7 +60431,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class SuperConstructor {
       @Test
       public void testAllFilesPresentInSuperConstructor() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/super/superConstructor"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/super/superConstructor"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -58706,7 +60484,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
   public class Suppressions {
     @Test
     public void testAllFilesPresentInSuppressions() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/suppressions"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/suppressions"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
     @Test
@@ -58728,7 +60506,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
   public class SuspendConversion {
     @Test
     public void testAllFilesPresentInSuspendConversion() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/suspendConversion"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/suspendConversion"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
     @Test
@@ -58822,7 +60600,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
   public class Synchronized {
     @Test
     public void testAllFilesPresentInSynchronized() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/synchronized"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/synchronized"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
     @Test
@@ -58940,7 +60718,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
 
     @Test
     public void testAllFilesPresentInSyntheticAccessors() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/syntheticAccessors"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/syntheticAccessors"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
     @Test
@@ -59082,12 +60860,118 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     }
 
     @Nested
+    @TestMetadata("compiler/testData/codegen/box/syntheticAccessors/functionsWithDefaultValues")
+    @TestDataPath("$PROJECT_ROOT")
+    public class FunctionsWithDefaultValues {
+      @Test
+      public void testAllFilesPresentInFunctionsWithDefaultValues() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/syntheticAccessors/functionsWithDefaultValues"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+      }
+
+      @Test
+      @TestMetadata("extensionFunction.kt")
+      public void testExtensionFunction() {
+        runTest("compiler/testData/codegen/box/syntheticAccessors/functionsWithDefaultValues/extensionFunction.kt");
+      }
+
+      @Test
+      @TestMetadata("extensionFunctionCrossModuleCase.kt")
+      public void testExtensionFunctionCrossModuleCase() {
+        runTest("compiler/testData/codegen/box/syntheticAccessors/functionsWithDefaultValues/extensionFunctionCrossModuleCase.kt");
+      }
+
+      @Test
+      @TestMetadata("extensionFunctionCrossModuleTransitiveCase.kt")
+      public void testExtensionFunctionCrossModuleTransitiveCase() {
+        runTest("compiler/testData/codegen/box/syntheticAccessors/functionsWithDefaultValues/extensionFunctionCrossModuleTransitiveCase.kt");
+      }
+
+      @Test
+      @TestMetadata("extensionFunctionTransitiveCase.kt")
+      public void testExtensionFunctionTransitiveCase() {
+        runTest("compiler/testData/codegen/box/syntheticAccessors/functionsWithDefaultValues/extensionFunctionTransitiveCase.kt");
+      }
+
+      @Test
+      @TestMetadata("memberFunction.kt")
+      public void testMemberFunction() {
+        runTest("compiler/testData/codegen/box/syntheticAccessors/functionsWithDefaultValues/memberFunction.kt");
+      }
+
+      @Test
+      @TestMetadata("memberFunctionCrossModuleCase.kt")
+      public void testMemberFunctionCrossModuleCase() {
+        runTest("compiler/testData/codegen/box/syntheticAccessors/functionsWithDefaultValues/memberFunctionCrossModuleCase.kt");
+      }
+
+      @Test
+      @TestMetadata("memberFunctionCrossModuleTransitiveCase.kt")
+      public void testMemberFunctionCrossModuleTransitiveCase() {
+        runTest("compiler/testData/codegen/box/syntheticAccessors/functionsWithDefaultValues/memberFunctionCrossModuleTransitiveCase.kt");
+      }
+
+      @Test
+      @TestMetadata("memberFunctionTransitiveCase.kt")
+      public void testMemberFunctionTransitiveCase() {
+        runTest("compiler/testData/codegen/box/syntheticAccessors/functionsWithDefaultValues/memberFunctionTransitiveCase.kt");
+      }
+
+      @Test
+      @TestMetadata("severalDefaultValues.kt")
+      public void testSeveralDefaultValues() {
+        runTest("compiler/testData/codegen/box/syntheticAccessors/functionsWithDefaultValues/severalDefaultValues.kt");
+      }
+
+      @Test
+      @TestMetadata("severalDefaultValuesCrossModuleCase.kt")
+      public void testSeveralDefaultValuesCrossModuleCase() {
+        runTest("compiler/testData/codegen/box/syntheticAccessors/functionsWithDefaultValues/severalDefaultValuesCrossModuleCase.kt");
+      }
+
+      @Test
+      @TestMetadata("severalDefaultValuesCrossModuleTransitiveCase.kt")
+      public void testSeveralDefaultValuesCrossModuleTransitiveCase() {
+        runTest("compiler/testData/codegen/box/syntheticAccessors/functionsWithDefaultValues/severalDefaultValuesCrossModuleTransitiveCase.kt");
+      }
+
+      @Test
+      @TestMetadata("severalDefaultValuesTransitiveCase.kt")
+      public void testSeveralDefaultValuesTransitiveCase() {
+        runTest("compiler/testData/codegen/box/syntheticAccessors/functionsWithDefaultValues/severalDefaultValuesTransitiveCase.kt");
+      }
+
+      @Test
+      @TestMetadata("topLevelFunction.kt")
+      public void testTopLevelFunction() {
+        runTest("compiler/testData/codegen/box/syntheticAccessors/functionsWithDefaultValues/topLevelFunction.kt");
+      }
+
+      @Test
+      @TestMetadata("topLevelFunctionCrossModuleCase.kt")
+      public void testTopLevelFunctionCrossModuleCase() {
+        runTest("compiler/testData/codegen/box/syntheticAccessors/functionsWithDefaultValues/topLevelFunctionCrossModuleCase.kt");
+      }
+
+      @Test
+      @TestMetadata("topLevelFunctionCrossModuleTransitiveCase.kt")
+      public void testTopLevelFunctionCrossModuleTransitiveCase() {
+        runTest("compiler/testData/codegen/box/syntheticAccessors/functionsWithDefaultValues/topLevelFunctionCrossModuleTransitiveCase.kt");
+      }
+
+      @Test
+      @TestMetadata("topLevelFunctionTransitiveCase.kt")
+      public void testTopLevelFunctionTransitiveCase() {
+        runTest("compiler/testData/codegen/box/syntheticAccessors/functionsWithDefaultValues/topLevelFunctionTransitiveCase.kt");
+      }
+    }
+
+    @Nested
     @TestMetadata("compiler/testData/codegen/box/syntheticAccessors/protectedJavaFieldAccessor")
     @TestDataPath("$PROJECT_ROOT")
     public class ProtectedJavaFieldAccessor {
       @Test
       public void testAllFilesPresentInProtectedJavaFieldAccessor() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/syntheticAccessors/protectedJavaFieldAccessor"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/syntheticAccessors/protectedJavaFieldAccessor"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -59151,7 +61035,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class ProtectedMemberReferenceAccessor {
       @Test
       public void testAllFilesPresentInProtectedMemberReferenceAccessor() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/syntheticAccessors/protectedMemberReferenceAccessor"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/syntheticAccessors/protectedMemberReferenceAccessor"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -59210,7 +61094,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
   public class SyntheticExtensions {
     @Test
     public void testAllFilesPresentInSyntheticExtensions() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/syntheticExtensions"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/syntheticExtensions"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
     @Test
@@ -59316,7 +61200,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
   public class Throws {
     @Test
     public void testAllFilesPresentInThrows() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/throws"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/throws"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
     @Test
@@ -59338,7 +61222,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
   public class ToArray {
     @Test
     public void testAllFilesPresentInToArray() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/toArray"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/toArray"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
     @Test
@@ -59408,7 +61292,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
   public class TopLevelInitializtion {
     @Test
     public void testAllFilesPresentInTopLevelInitializtion() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/topLevelInitializtion"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/topLevelInitializtion"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
     @Test
@@ -59430,7 +61314,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
   public class TopLevelPrivate {
     @Test
     public void testAllFilesPresentInTopLevelPrivate() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/topLevelPrivate"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/topLevelPrivate"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
     @Test
@@ -59476,7 +61360,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
   public class TrailingComma {
     @Test
     public void testAllFilesPresentInTrailingComma() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/trailingComma"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/trailingComma"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
     @Test
@@ -59504,7 +61388,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
 
     @Test
     public void testAllFilesPresentInTraits() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/traits"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/traits"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
     @Test
@@ -59748,7 +61632,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
   public class Try {
     @Test
     public void testAllFilesPresentInTry() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/try"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/try"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
     @Test
@@ -59890,7 +61774,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
   public class TypeInfo {
     @Test
     public void testAllFilesPresentInTypeInfo() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/typeInfo"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/typeInfo"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
     @Test
@@ -59942,7 +61826,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
   public class TypeMapping {
     @Test
     public void testAllFilesPresentInTypeMapping() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/typeMapping"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/typeMapping"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
     @Test
@@ -60030,7 +61914,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
 
     @Test
     public void testAllFilesPresentInTypealias() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/typealias"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/typealias"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
     @Test
@@ -60076,6 +61960,12 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     }
 
     @Test
+    @TestMetadata("importNestedTypealiasFromAnotherModule.kt")
+    public void testImportNestedTypealiasFromAnotherModule() {
+      runTest("compiler/testData/codegen/box/typealias/importNestedTypealiasFromAnotherModule.kt");
+    }
+
+    @Test
     @TestMetadata("incorrectTypeOfTypealiasForSuspendFTMM.kt")
     public void testIncorrectTypeOfTypealiasForSuspendFTMM() {
       runTest("compiler/testData/codegen/box/typealias/incorrectTypeOfTypealiasForSuspendFTMM.kt");
@@ -60115,6 +62005,12 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     @TestMetadata("kt45308.kt")
     public void testKt45308() {
       runTest("compiler/testData/codegen/box/typealias/kt45308.kt");
+    }
+
+    @Test
+    @TestMetadata("localTypeAliases.kt")
+    public void testLocalTypeAliases() {
+      runTest("compiler/testData/codegen/box/typealias/localTypeAliases.kt");
     }
 
     @Test
@@ -60244,7 +62140,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
   public class UnaryOp {
     @Test
     public void testAllFilesPresentInUnaryOp() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/unaryOp"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/unaryOp"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
     @Test
@@ -60290,7 +62186,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
   public class UnderscoredTypeArguments {
     @Test
     public void testAllFilesPresentInUnderscoredTypeArguments() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/underscoredTypeArguments"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/underscoredTypeArguments"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
     @Test
@@ -60330,7 +62226,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
   public class Unit {
     @Test
     public void testAllFilesPresentInUnit() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/unit"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/unit"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
     @Test
@@ -60430,7 +62326,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
   public class UnsignedTypes {
     @Test
     public void testAllFilesPresentInUnsignedTypes() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/unsignedTypes"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/unsignedTypes"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
     @Test
@@ -60572,6 +62468,12 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     }
 
     @Test
+    @TestMetadata("javaWrapperOverUByte.kt")
+    public void testJavaWrapperOverUByte() {
+      runTest("compiler/testData/codegen/box/unsignedTypes/javaWrapperOverUByte.kt");
+    }
+
+    @Test
     @TestMetadata("kt25784.kt")
     public void testKt25784() {
       runTest("compiler/testData/codegen/box/unsignedTypes/kt25784.kt");
@@ -60605,6 +62507,12 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     @TestMetadata("literalEqualsNullableUnsigned.kt")
     public void testLiteralEqualsNullableUnsigned() {
       runTest("compiler/testData/codegen/box/unsignedTypes/literalEqualsNullableUnsigned.kt");
+    }
+
+    @Test
+    @TestMetadata("nullableSmartcastUnsignedArray.kt")
+    public void testNullableSmartcastUnsignedArray() {
+      runTest("compiler/testData/codegen/box/unsignedTypes/nullableSmartcastUnsignedArray.kt");
     }
 
     @Test
@@ -60659,12 +62567,6 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     @TestMetadata("unsignedLiteralsForMaxLongValue.kt")
     public void testUnsignedLiteralsForMaxLongValue() {
       runTest("compiler/testData/codegen/box/unsignedTypes/unsignedLiteralsForMaxLongValue.kt");
-    }
-
-    @Test
-    @TestMetadata("unsignedLiteralsInApiVersion14.kt")
-    public void testUnsignedLiteralsInApiVersion14() {
-      runTest("compiler/testData/codegen/box/unsignedTypes/unsignedLiteralsInApiVersion14.kt");
     }
 
     @Test
@@ -60739,7 +62641,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class Jvm8Intrinsics {
       @Test
       public void testAllFilesPresentInJvm8Intrinsics() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/unsignedTypes/jvm8Intrinsics"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/unsignedTypes/jvm8Intrinsics"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -60798,7 +62700,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
   public class ValueClasses {
     @Test
     public void testAllFilesPresentInValueClasses() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/valueClasses"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/valueClasses"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
     @Test
@@ -60817,6 +62719,12 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     @TestMetadata("conditionalExpressions.kt")
     public void testConditionalExpressions() {
       runTest("compiler/testData/codegen/box/valueClasses/conditionalExpressions.kt");
+    }
+
+    @Test
+    @TestMetadata("contextParameters.kt")
+    public void testContextParameters() {
+      runTest("compiler/testData/codegen/box/valueClasses/contextParameters.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
     }
 
     @Test
@@ -61059,7 +62967,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class JavaInterop {
       @Test
       public void testAllFilesPresentInJavaInterop() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/valueClasses/javaInterop"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/valueClasses/javaInterop"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -61094,7 +63002,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
   public class Vararg {
     @Test
     public void testAllFilesPresentInVararg() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/vararg"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/vararg"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
     @Test
@@ -61113,6 +63021,12 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     @TestMetadata("doNotCopyImmediatelyCreatedArrays.kt")
     public void testDoNotCopyImmediatelyCreatedArrays() {
       runTest("compiler/testData/codegen/box/vararg/doNotCopyImmediatelyCreatedArrays.kt");
+    }
+
+    @Test
+    @TestMetadata("emptyVarArg.kt")
+    public void testEmptyVarArg() {
+      runTest("compiler/testData/codegen/box/vararg/emptyVarArg.kt");
     }
 
     @Test
@@ -61266,7 +63180,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
   public class Volatile {
     @Test
     public void testAllFilesPresentInVolatile() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/volatile"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/volatile"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
     @Test
@@ -61330,7 +63244,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
   public class Wasm_new_exception_handling {
     @Test
     public void testAllFilesPresentInWasm_new_exception_handling() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/wasm-new-exception-handling"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/wasm-new-exception-handling"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
   }
 
@@ -61340,7 +63254,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
   public class When {
     @Test
     public void testAllFilesPresentInWhen() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/when"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/when"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
     @Test
@@ -61365,12 +63279,6 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     @TestMetadata("exceptionOnNoMatch.kt")
     public void testExceptionOnNoMatch() {
       runTest("compiler/testData/codegen/box/when/exceptionOnNoMatch.kt");
-    }
-
-    @Test
-    @TestMetadata("exhaustiveBoolean.kt")
-    public void testExhaustiveBoolean() {
-      runTest("compiler/testData/codegen/box/when/exhaustiveBoolean.kt");
     }
 
     @Test
@@ -61667,7 +63575,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class EnumOptimization {
       @Test
       public void testAllFilesPresentInEnumOptimization() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/when/enumOptimization"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/when/enumOptimization"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -61798,12 +63706,40 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     }
 
     @Nested
+    @TestMetadata("compiler/testData/codegen/box/when/exhaustiveness")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Exhaustiveness {
+      @Test
+      public void testAllFilesPresentInExhaustiveness() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/when/exhaustiveness"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+      }
+
+      @Test
+      @TestMetadata("exhaustiveWithNegativeBoolean.kt")
+      public void testExhaustiveWithNegativeBoolean() {
+        runTest("compiler/testData/codegen/box/when/exhaustiveness/exhaustiveWithNegativeBoolean.kt");
+      }
+
+      @Test
+      @TestMetadata("exhaustiveWithNegativeEnum.kt")
+      public void testExhaustiveWithNegativeEnum() {
+        runTest("compiler/testData/codegen/box/when/exhaustiveness/exhaustiveWithNegativeEnum.kt");
+      }
+
+      @Test
+      @TestMetadata("exhaustiveWithNegativeSealed.kt")
+      public void testExhaustiveWithNegativeSealed() {
+        runTest("compiler/testData/codegen/box/when/exhaustiveness/exhaustiveWithNegativeSealed.kt");
+      }
+    }
+
+    @Nested
     @TestMetadata("compiler/testData/codegen/box/when/guard")
     @TestDataPath("$PROJECT_ROOT")
     public class Guard {
       @Test
       public void testAllFilesPresentInGuard() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/when/guard"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/when/guard"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -61819,7 +63755,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class StringOptimization {
       @Test
       public void testAllFilesPresentInStringOptimization() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/when/stringOptimization"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/when/stringOptimization"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test
@@ -61895,7 +63831,7 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public class WhenSubjectVariable {
       @Test
       public void testAllFilesPresentInWhenSubjectVariable() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/when/whenSubjectVariable"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/when/whenSubjectVariable"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
       @Test

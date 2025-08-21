@@ -7,3 +7,6 @@ class My<T: Any>(val y: T?) {
         <!DEBUG_INFO_SMARTCAST!>x<!>
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, dnnType, equalityExpression, functionDeclaration, ifExpression, lambdaLiteral,
+localProperty, nullableType, primaryConstructor, propertyDeclaration, smartcast, typeConstraint, typeParameter */

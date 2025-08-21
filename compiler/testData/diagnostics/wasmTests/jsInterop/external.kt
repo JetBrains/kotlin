@@ -1,6 +1,7 @@
 // FIR_IDENTICAL
 // DIAGNOSTICS: -INLINE_CLASS_DEPRECATED -NO_TAIL_CALLS_FOUND
 // LANGUAGE: +JsExternalPropertyParameters
+// OPT_IN: kotlin.js.ExperimentalWasmJsInterop
 
 // Classes
 

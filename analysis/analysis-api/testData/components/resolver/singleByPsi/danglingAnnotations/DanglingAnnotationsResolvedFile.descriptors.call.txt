@@ -7,9 +7,11 @@ KtNameReferenceExpression(49,56): 'JvmName'
           receiverType = null
           returnType = kotlin.String
           symbol = name: kotlin.String
+          contextParameters = []
           callableId = null)
       }
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -22,7 +24,9 @@ KtNameReferenceExpression(49,56): 'JvmName'
               receiverType = null
               returnType = kotlin.String
               symbol = name: kotlin.String
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}

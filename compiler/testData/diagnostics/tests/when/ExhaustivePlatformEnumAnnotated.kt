@@ -31,3 +31,6 @@ fun foo(): Int {
         J.B -> 2
     }
 }
+
+/* GENERATED_FIR_TAGS: equalityExpression, functionDeclaration, integerLiteral, javaProperty, javaType, smartcast,
+whenExpression, whenWithSubject */

@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.backend.generators.isExternalParent
 import org.jetbrains.kotlin.fir.backend.utils.ConversionTypeOrigin
+import org.jetbrains.kotlin.fir.containingClassForLocalAttr
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.expressions.FirAnonymousObjectExpression
@@ -207,14 +208,27 @@ class Fir2IrClassifierStorage(
         if (firClass is FirAnonymousObject || firClass is FirRegularClass && firClass.visibility == Visibilities.Local) {
             return createAndCacheLocalIrClassOnTheFly(firClass)
         }
+        return createFir2IrLazyClass(firClass)
+    }
+
+    /**
+     * Function for directly generating or getting from cache the Fir2IrLazyClass.
+     * Should not be generally used outside the very special cases.
+     * Use [getIrClass] instead.
+     */
+    @DelicateDeclarationStorageApi
+    fun getFir2IrLazyClass(firClass: FirClass): Fir2IrLazyClass =
+        getCachedIrClass(firClass)?.let { it as Fir2IrLazyClass } ?: createFir2IrLazyClass(firClass)
+
+    private fun createFir2IrLazyClass(firClass: FirClass): Fir2IrLazyClass {
         require(firClass is FirRegularClass)
         val symbol = createClassSymbol()
         val classId = firClass.symbol.classId
-        val parentId = classId.outerClassId
-        val parentClass = parentId?.let { session.symbolProvider.getClassLikeSymbolByClassId(it) }
+        val parentClassLookupTag = firClass.containingClassForLocalAttr
+            ?: classId.outerClassId?.let { session.symbolProvider.getClassLikeSymbolByClassId(it) }?.toLookupTag()
         val irParent = declarationStorage.findIrParent(
             classId.packageFqName,
-            parentClass?.toLookupTag(),
+            parentClassLookupTag,
             firClass.symbol,
             firClass.origin
         )!!
@@ -248,6 +262,7 @@ class Fir2IrClassifierStorage(
         return getIrClass(lookupTag)?.symbol
     }
 
+    // TODO(KT-72994) remove when context receivers are removed
     fun getFieldsWithContextReceiversForClass(irClass: IrClass, klass: FirClass): List<IrField> {
         if (klass !is FirRegularClass || klass.contextParameters.isEmpty()) return emptyList()
 
@@ -260,7 +275,7 @@ class Fir2IrClassifierStorage(
                     name = Name.identifier("contextReceiverField$index"),
                     visibility = DescriptorVisibilities.PRIVATE,
                     symbol = IrFieldSymbolImpl(),
-                    type = contextReceiver.returnTypeRef.toIrType(c),
+                    type = contextReceiver.returnTypeRef.toIrType(),
                     isFinal = true,
                     isStatic = false,
                     isExternal = false,

@@ -5,19 +5,19 @@
 // FILE: common.kt
 interface I
 
-<!EXPECT_ACTUAL_INCOMPATIBILITY{JVM}!>expect<!> class A
-<!EXPECT_ACTUAL_INCOMPATIBILITY{JVM}!>expect<!> value class B(val x: Int)
+<!EXPECT_ACTUAL_IR_INCOMPATIBILITY{JVM}!>expect<!> class A
+<!EXPECT_ACTUAL_IR_INCOMPATIBILITY{JVM;JVM}!>expect<!> value class B<!EXPECT_ACTUAL_IR_MISMATCH{JVM}!>(val <!NO_ACTUAL_FOR_EXPECT{JVM}!>x<!>: Int)<!>
 expect fun interface C1 { fun foo() }
-<!EXPECT_ACTUAL_INCOMPATIBILITY{JVM}, JAVA_DIRECT_ACTUAL_WITHOUT_EXPECT{JVM}!>expect<!> fun interface C2 { fun foo() }
+<!EXPECT_ACTUAL_IR_INCOMPATIBILITY{JVM}!>expect<!> fun interface C2 { fun foo() }
 expect class D1 : I
-<!EXPECT_ACTUAL_INCOMPATIBILITY{JVM}!>expect<!> class D2 : I
+<!EXPECT_ACTUAL_IR_INCOMPATIBILITY{JVM}!>expect<!> class D2 : I
 expect enum class E1 { ONE, TWO }
-<!EXPECT_ACTUAL_INCOMPATIBILITY{JVM}!>expect<!> enum class E2 { ONE, <!NO_ACTUAL_FOR_EXPECT{JVM}!>TWO<!> }
-<!EXPECT_ACTUAL_INCOMPATIBILITY{JVM}!>expect<!> class Outer {
+<!EXPECT_ACTUAL_IR_INCOMPATIBILITY{JVM}!>expect<!> enum class E2 { ONE, <!NO_ACTUAL_FOR_EXPECT{JVM}!>TWO<!> }
+<!EXPECT_ACTUAL_IR_INCOMPATIBILITY{JVM}!>expect<!> class Outer {
     class F1
     inner class F2
-    inner class <!EXPECT_ACTUAL_INCOMPATIBILITY{JVM}!>F3<!>
-    class <!EXPECT_ACTUAL_INCOMPATIBILITY{JVM}!>F4<!>
+    inner class <!EXPECT_ACTUAL_IR_INCOMPATIBILITY{JVM}!>F3<!>
+    class <!EXPECT_ACTUAL_IR_INCOMPATIBILITY{JVM}!>F4<!>
 }
 
 // MODULE: m2-jvm()()(m1-common)
@@ -44,3 +44,6 @@ expect enum class E1 { ONE, TWO }
     @kotlin.annotations.jvm.KotlinActual public static class F3 {}
     @kotlin.annotations.jvm.KotlinActual public class F4 {}
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, enumDeclaration, enumEntry, expect, funInterface, functionDeclaration, inner,
+interfaceDeclaration, nestedClass, primaryConstructor, propertyDeclaration, value */

@@ -12,6 +12,7 @@ import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiFileFactory
 import com.intellij.psi.impl.PsiFileFactoryImpl
 import com.intellij.testFramework.LightVirtualFile
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.repl.*
@@ -52,7 +53,6 @@ open class GenericReplChecker(
             }
             add(ScriptingConfigurationKeys.SCRIPT_DEFINITIONS, ScriptDefinition.FromLegacy(hostConfiguration, scriptDefinition))
             this.messageCollector = messageCollector
-            put(JVMConfigurationKeys.RETAIN_OUTPUT_IN_MEMORY, true)
 
             if (get(JVMConfigurationKeys.JVM_TARGET) == null) {
                 put(JVMConfigurationKeys.JVM_TARGET,
@@ -61,6 +61,7 @@ open class GenericReplChecker(
                         ?: JvmTarget.DEFAULT)
             }
         }
+        @OptIn(K1Deprecation::class)
         KotlinCoreEnvironment.createForProduction(disposable, compilerConfiguration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
     }
 

@@ -11,3 +11,5 @@ fun nonlocals(b : Boolean) {
         return@a 5
     }
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, ifExpression, integerLiteral, lambdaLiteral, localFunction */

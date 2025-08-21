@@ -28,3 +28,6 @@ fun <H> bar(w1: H?, w2: H?) {
         throw RuntimeException()
     }
 }
+
+/* GENERATED_FIR_TAGS: dnnType, elvisExpression, functionDeclaration, functionalType, in, interfaceDeclaration,
+lambdaLiteral, localProperty, nullableType, propertyDeclaration, tryExpression, typeParameter, typeWithExtension */

@@ -1,4 +1,4 @@
-class A(
+/* RootStructureElement */class A(
     @setparam:Ann
     @get:Ann
     @set:Ann

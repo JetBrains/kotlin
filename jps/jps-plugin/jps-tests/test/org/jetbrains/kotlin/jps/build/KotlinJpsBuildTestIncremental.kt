@@ -97,6 +97,7 @@ class KotlinJpsBuildTestIncremental : KotlinJpsBuildTest() {
             "Kotlin language version: " + LanguageVersion.LATEST_STABLE,
             "Time metrics:",
             "Jps iteration:",
+            "Compiler initialization time:",
             "Compiler code analysis:",
             "Compiler code generation:"
         )
@@ -310,7 +311,7 @@ class KotlinJpsBuildTestIncremental : KotlinJpsBuildTest() {
         buildAllModules().assertSuccessful()
         assertCompiled(KotlinBuilder.KOTLIN_BUILDER_NAME)
 
-        setVersion(LanguageVersion.KOTLIN_1_6.versionString)
+        setVersion(LanguageVersion.FIRST_API_SUPPORTED.versionString)
         buildAllModules().assertSuccessful()
         assertCompiled(KotlinBuilder.KOTLIN_BUILDER_NAME, "src/Bar.kt", "src/Foo.kt")
     }

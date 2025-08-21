@@ -37,3 +37,7 @@ fun test() {
         <!SMARTCAST_IMPOSSIBLE!>x<!>.foobar().checkType { _<String>() }
     }
 }
+
+/* GENERATED_FIR_TAGS: andExpression, checkNotNullCall, classDeclaration, funWithExtensionReceiver, functionDeclaration,
+functionalType, ifExpression, infix, integerLiteral, interfaceDeclaration, intersectionType, isExpression, lambdaLiteral,
+nullableType, propertyDeclaration, smartcast, stringLiteral, typeParameter, typeWithExtension */

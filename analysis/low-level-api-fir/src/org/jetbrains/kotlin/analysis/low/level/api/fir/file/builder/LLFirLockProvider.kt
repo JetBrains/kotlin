@@ -1,12 +1,14 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder
 
 import com.intellij.openapi.util.registry.Registry
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.partialBodyAnalysisState
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.LLFirLazyResolveContractChecker
+import org.jetbrains.kotlin.analysis.low.level.api.fir.transformers.PartialBodyAnalysisSuspendedException
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkCanceled
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.errorWithFirSpecificEntries
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.lockWithPCECheck
@@ -30,13 +32,10 @@ import java.util.concurrent.locks.ReentrantLock
 internal class LLFirLockProvider(private val checker: LLFirLazyResolveContractChecker) {
     private val globalLock = ReentrantLock()
 
-    inline fun <R> withGlobalLock(
-        lockingIntervalMs: Long = DEFAULT_LOCKING_INTERVAL,
-        action: () -> R,
-    ): R {
+    inline fun <R> withGlobalLock(action: () -> R): R {
         if (!globalLockEnabled) return action()
 
-        return globalLock.lockWithPCECheck(lockingIntervalMs, action)
+        return globalLock.lockWithPCECheck(action)
     }
 
     /**
@@ -132,10 +131,16 @@ internal class LLFirLockProvider(private val checker: LLFirLazyResolveContractCh
                     try {
                         action()
                     } catch (e: Throwable) {
-                        exceptionOccurred = true
+                        if (e !is PartialBodyAnalysisSuspendedException) {
+                            // Partial body analysis is complete (and successful), there is no real error
+                            exceptionOccurred = true
+                        }
                         throw e
                     } finally {
-                        val newPhase = if (updatePhase && !exceptionOccurred) toPhase else stateSnapshot.resolvePhase
+                        val newPhase = when {
+                            !updatePhase || exceptionOccurred -> stateSnapshot.resolvePhase
+                            else -> computeNewPhase(stateSnapshot, toPhase)
+                        }
                         unlock(toPhase = newPhase)
                     }
 
@@ -149,10 +154,23 @@ internal class LLFirLockProvider(private val checker: LLFirLazyResolveContractCh
         }
     }
 
+    private fun FirElementWithResolveState.computeNewPhase(stateSnapshot: FirResolveState, toPhase: FirResolvePhase): FirResolvePhase {
+        if (this is FirDeclaration && toPhase == FirResolvePhase.BODY_RESOLVE) {
+            val state = partialBodyAnalysisState
+            if (state != null && !state.isFullyAnalyzed) {
+                // We only update the phase to BODY_RESOLVE if all statements are resolved.
+                // Otherwise, we set (BODY_RESOLVE - 1), so the next BODY_RESOLVE phase run can finish the analysis.
+                return stateSnapshot.resolvePhase
+            }
+        }
+
+        return toPhase
+    }
+
     private fun waitOnBarrier(
         stateSnapshot: FirInProcessOfResolvingToPhaseStateWithBarrier,
     ): Boolean {
-        return stateSnapshot.barrier.await(DEFAULT_LOCKING_INTERVAL, TimeUnit.MILLISECONDS)
+        return stateSnapshot.barrier.await(lockingInterval, TimeUnit.MILLISECONDS)
     }
 
     private fun FirElementWithResolveState.trySettingBarrier(
@@ -306,7 +324,7 @@ internal class LLFirLockProvider(private val checker: LLFirLazyResolveContractCh
 
                     try {
                         // Waiting until another thread released the lock
-                        currentState.latch.await(DEFAULT_LOCKING_INTERVAL, TimeUnit.MILLISECONDS)
+                        currentState.latch.await(lockingInterval, TimeUnit.MILLISECONDS)
                     } finally {
                         previousState?.waitingFor = null
                     }
@@ -353,6 +371,12 @@ internal class LLFirLockProvider(private val checker: LLFirLazyResolveContractCh
         resolveStateFieldUpdater.set(this, FirResolvedToPhaseState(toPhase))
         currentState.latch.countDown()
     }
+
+    companion object {
+        val lockingInterval: Long by lazy(LazyThreadSafetyMode.PUBLICATION) {
+            Registry.intValue("kotlin.analysis.ll.locking.interval", 100).toLong()
+        }
+    }
 }
 
 private val resolveStateFieldUpdater = AtomicReferenceFieldUpdater.newUpdater(
@@ -364,8 +388,6 @@ private val resolveStateFieldUpdater = AtomicReferenceFieldUpdater.newUpdater(
 private val globalLockEnabled: Boolean by lazy(LazyThreadSafetyMode.PUBLICATION) {
     Registry.`is`("kotlin.parallel.resolve.under.global.lock", false)
 }
-
-private const val DEFAULT_LOCKING_INTERVAL = 50L
 
 /**
  * @see FirInProcessOfResolvingToJumpingPhaseState

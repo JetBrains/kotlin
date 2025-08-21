@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirClassChecker
-import org.jetbrains.kotlin.fir.analysis.checkers.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.analysis.checkers.unsubstitutedScope
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors
 import org.jetbrains.kotlin.fir.declarations.FirClass
@@ -19,21 +18,24 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.isDeprecationLevelHidden
 import org.jetbrains.kotlin.fir.declarations.isJavaOrEnhancement
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
+import org.jetbrains.kotlin.fir.resolve.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.scopes.processAllProperties
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirFieldSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
+import org.jetbrains.kotlin.fir.symbols.impl.hasContextParameters
 import org.jetbrains.kotlin.fir.visibilityChecker
 
 object FirPropertyHidesJavaFieldChecker : FirClassChecker(MppCheckerKind.Platform) {
-    override fun check(declaration: FirClass, context: CheckerContext, reporter: DiagnosticReporter) {
-        val scope = declaration.unsubstitutedScope(context)
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirClass) {
+        val scope = declaration.unsubstitutedScope()
         scope.processAllProperties { propertySymbol ->
             if (propertySymbol !is FirPropertySymbol) return@processAllProperties
             if (propertySymbol.getContainingClassSymbol() != declaration.symbol) return@processAllProperties
             if (propertySymbol.origin != FirDeclarationOrigin.Source) return@processAllProperties
-            if (propertySymbol.receiverParameter != null) return@processAllProperties
-            if (propertySymbol.resolvedContextParameters.isNotEmpty()) return@processAllProperties
+            if (propertySymbol.receiverParameterSymbol != null) return@processAllProperties
+            if (propertySymbol.hasContextParameters) return@processAllProperties
             if (propertySymbol.isDeprecationLevelHidden(context.session)) return@processAllProperties
             var warningReported = false
             scope.processPropertiesByName(propertySymbol.name) { fieldSymbol ->
@@ -51,7 +53,7 @@ object FirPropertyHidesJavaFieldChecker : FirClassChecker(MppCheckerKind.Platfor
                             return@processPropertiesByName
                         }
                     }
-                    reporter.reportOn(propertySymbol.source, FirJvmErrors.PROPERTY_HIDES_JAVA_FIELD, fieldSymbol, context)
+                    reporter.reportOn(propertySymbol.source, FirJvmErrors.PROPERTY_HIDES_JAVA_FIELD, fieldSymbol)
                     warningReported = true
                 }
             }

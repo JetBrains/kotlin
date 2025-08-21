@@ -45,3 +45,7 @@ fun test() {
 fun consumeInt(i: Int) {}
 fun consumeString(s: String) {}
 fun consumeExample2(e: Example2) {}
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, destructuringDeclaration, funWithExtensionReceiver,
+functionDeclaration, incrementDecrementExpression, infix, integerLiteral, localProperty, operator, propertyDeclaration,
+smartcast, stringLiteral */

@@ -54,3 +54,6 @@ class B : J2() {
         fun bar() {}
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, functionDeclaration, init, javaFunction, javaType, nestedClass,
+objectDeclaration */

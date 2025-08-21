@@ -28,3 +28,5 @@ fun test() {
     C<String?>().foo(<!NULL_FOR_NONNULL_TYPE!>null<!>)
     C<String?>().foo("")
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaFunction, javaType, nullableType, stringLiteral */

@@ -13,21 +13,12 @@ import org.jetbrains.kotlin.fir.containingClassLookupTag
 import org.jetbrains.kotlin.fir.declarations.utils.isInlineOrValue
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
-import org.jetbrains.kotlin.fir.resolve.substitution.createTypeSubstitutorByTypeConstructor
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.types.model.typeConstructor
 import org.jetbrains.kotlin.util.OperatorNameConventions
-
-internal fun ConeKotlinType.substitutedUnderlyingTypeForInlineClass(session: FirSession, context: ConeTypeContext): ConeKotlinType? {
-    val unsubstitutedType = unsubstitutedUnderlyingTypeForInlineClass(session) ?: return null
-    val substitutor = createTypeSubstitutorByTypeConstructor(
-        mapOf(this.typeConstructor(context) to this), context, approximateIntegerLiterals = true
-    )
-    return substitutor.substituteOrNull(unsubstitutedType)
-}
 
 internal fun ConeKotlinType.unsubstitutedUnderlyingTypeForInlineClass(session: FirSession): ConeKotlinType? {
     val symbol = this.fullyExpandedType(session).toRegularClassSymbol(session) ?: return null
@@ -70,16 +61,16 @@ private fun ConeRigidType.valueClassRepresentationTypeMarkersList(session: FirSe
     return constructorSymbol.valueParameterSymbols.map { it.name to it.resolvedReturnType as ConeRigidType }
 }
 
-fun FirSimpleFunction.isTypedEqualsInValueClass(session: FirSession): Boolean =
+fun FirNamedFunctionSymbol.isTypedEqualsInValueClass(session: FirSession): Boolean =
     containingClassLookupTag()?.toRegularClassSymbol(session)?.run {
         val valueClassStarProjection = this@run.defaultType().replaceArgumentsWithStarProjections()
         with(this@isTypedEqualsInValueClass) {
-            contextParameters.isEmpty() && receiverParameter == null
+            contextParameterSymbols.isEmpty() && receiverParameterSymbol == null
                     && name == OperatorNameConventions.EQUALS
-                    && this@run.isInlineOrValue && valueParameters.size == 1
-                    && returnTypeRef.coneType.fullyExpandedType(session).let {
+                    && this@run.isInlineOrValue && valueParameterSymbols.size == 1
+                    && resolvedReturnTypeRef.coneType.fullyExpandedType(session).let {
                 it.isBoolean || it.isNothing
-            } && valueParameters[0].returnTypeRef.coneType.let {
+            } && valueParameterSymbols[0].resolvedReturnTypeRef.coneType.let {
                 it is ConeClassLikeType && it.replaceArgumentsWithStarProjections() == valueClassStarProjection
             }
         }

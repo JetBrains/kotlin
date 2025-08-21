@@ -17,3 +17,5 @@ open class K {
 fun jk() {
     JK().test()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, javaFunction, javaType */

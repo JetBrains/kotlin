@@ -10,7 +10,16 @@ import org.jetbrains.kotlin.contracts.description.MarkedEventOccurrencesRange
 import org.jetbrains.kotlin.contracts.description.canBeVisited
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.CFGNode
 
-typealias EventOccurrencesRangeAtNode = MarkedEventOccurrencesRange<CFGNode<*>>
+data class EventOccurrencesRangeAtNode(
+    val range: MarkedEventOccurrencesRange<CFGNode<*>>,
+    /**
+     * Signals that the property, though initialized, isn't initialized properly (e.g., read before written).
+     * The absence of `lateinit` results in an initialization error.
+     *
+     * Was introduced to prevent false positive `UNNECESSARY_LATEINIT`.
+     */
+    val mustBeLateinit: Boolean,
+)
 
 typealias EventOccurrencesRangeInfo<K> = PersistentMap<K, EventOccurrencesRangeAtNode>
 
@@ -27,9 +36,9 @@ abstract class EventCollectingControlFlowGraphVisitor<K : Any> : PathAwareContro
         // For union nodes, iterating over keys not present in the other branch is pointless as the result
         // is unchanged. For non-union nodes, lower bounds for keys only present on one side become 0.
         return (if (isUnion) b.keys else a.keys union b.keys).associateWithTo(a.builder()) { symbol ->
-            val kind1 = a[symbol] ?: MarkedEventOccurrencesRange.Zero
-            val kind2 = b[symbol] ?: MarkedEventOccurrencesRange.Zero
-            if (kind1.location != null && kind1 == kind2) {
+            val kind1 = a[symbol]?.range ?: MarkedEventOccurrencesRange.Zero
+            val kind2 = b[symbol]?.range ?: MarkedEventOccurrencesRange.Zero
+            val newKind = if (kind1.location != null && kind1 == kind2) {
                 // If ranges are equal and have the same location, the event happened before branching:
                 //   <x>; if (p) { ... } else { ... }
                 //   ExactlyOnce(x) ---> ExactlyOnce(x) ---> ExactlyOnce(x)
@@ -64,6 +73,9 @@ abstract class EventCollectingControlFlowGraphVisitor<K : Any> : PathAwareContro
                 }
                 (kind1.withoutMarker or kind2.withoutMarker).at(newLocation)
             }
+            val aMustBeLateinit = a[symbol]?.mustBeLateinit == true
+            val bMustBeLateinit = b[symbol]?.mustBeLateinit == true
+            EventOccurrencesRangeAtNode(newKind, mustBeLateinit = aMustBeLateinit || bMustBeLateinit)
         }.build()
     }
 }
@@ -72,13 +84,27 @@ fun <K : Any> PathAwareEventOccurrencesRangeInfo<K>.addRange(
     key: K,
     range: EventOccurrencesRangeAtNode,
 ): PathAwareEventOccurrencesRangeInfo<K> =
-    if (!range.canBeVisited()) this else transformValues {
-        val newRange = it[key]?.let { oldRange ->
+    if (!range.range.canBeVisited() && !range.mustBeLateinit) this else transformValues {
+        val oldRange = it[key] ?: return@transformValues it.put(key, range)
+        val combinedRange = when {
+            !range.range.canBeVisited() -> oldRange.range
             // Can discard the old location since the sum can only be `ExactlyOnce` or `AtMostOnce`
             // if the old range is `Zero`.
-            (oldRange.withoutMarker + range.withoutMarker).at(range.location)
-        } ?: range
-        it.put(key, newRange)
+            else -> (oldRange.range.withoutMarker + range.range.withoutMarker).at(range.range.location)
+        }
+        val combinedMustBeLateinit = oldRange.mustBeLateinit || range.mustBeLateinit
+        it.put(key, EventOccurrencesRangeAtNode(combinedRange, mustBeLateinit = combinedMustBeLateinit))
+    }
+
+fun <K : Any> PathAwareEventOccurrencesRangeInfo<K>.addRangeIfEmpty(
+    key: K,
+    range: EventOccurrencesRangeAtNode,
+): PathAwareEventOccurrencesRangeInfo<K> =
+    if (!range.range.canBeVisited() && !range.mustBeLateinit) this else transformValues {
+        when {
+            key in it -> it
+            else -> it.put(key, range)
+        }
     }
 
 fun <K : Any> PathAwareEventOccurrencesRangeInfo<K>.overwriteRange(

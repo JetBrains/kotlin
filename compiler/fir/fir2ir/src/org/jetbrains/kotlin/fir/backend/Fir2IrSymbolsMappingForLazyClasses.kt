@@ -25,41 +25,28 @@ import kotlin.reflect.KProperty
  * and corresponding symbols would be lazily updated in lazy declarations
  * and in return values of storages.
  */
-class Fir2IrSymbolsMappingForLazyClasses {
-    private var remapper: SymbolRemapper? = null
-
+class Fir2IrSymbolsMappingForLazyClasses(private val remapper: SymbolRemapper) {
     /**
-     * This value can be used for fast check if something changed since last time.
-     * It should have new unique values on each change of class' state.
+     * Accessing [remapper] before fake overrides are built can lead to errors,
+     * as it may fail to resolve fake override symbols.
      *
-     * Typical usage should cache the mapping result, and invalidate cache if and only if this value has changed.
+     * Remapper should be enabled after fake overrides are built,
+     * and the mapping result should be cached afterward.
      */
-    var generation: Int = 0
+    var isRemapperEnabled: Boolean = false
         private set
 
+    fun enableRemapper() {
+        require(!isRemapperEnabled) { "Remapper is already enabled" }
+        isRemapperEnabled = true
+    }
+
     fun remapFunctionSymbol(symbol: IrSimpleFunctionSymbol): IrSimpleFunctionSymbol {
-        return remapper?.getReferencedSimpleFunction(symbol) ?: symbol
+        return if (isRemapperEnabled) remapper.getReferencedSimpleFunction(symbol) else symbol
     }
 
     fun remapPropertySymbol(symbol: IrPropertySymbol): IrPropertySymbol {
-        return remapper?.getReferencedProperty(symbol) ?: symbol
-    }
-
-    @RequiresOptIn
-    annotation class SymbolRemapperInternals
-
-    @SymbolRemapperInternals
-    fun initializeRemapper(remapper: SymbolRemapper) {
-        require(this.remapper == null) { "Remapper already initialized"}
-        this.remapper = remapper
-        generation++
-    }
-
-    @SymbolRemapperInternals
-    fun unregisterRemapper() {
-        requireNotNull(remapper) { "Remapper was already disposed" }
-        remapper = null
-        generation++
+        return if (isRemapperEnabled) remapper.getReferencedProperty(symbol) else symbol
     }
 }
 
@@ -72,17 +59,16 @@ internal class MappedLazyVar<T>(
     private val lazy = lazyVar(lock, initializer)
 
     @Volatile
-    private var lastSeenGeneration: Int = -1
+    private var isRemapped: Boolean = false
 
     override fun toString(): String = lazy.toString()
 
     override fun getValue(thisRef: Any?, property: KProperty<*>): T {
         return synchronized(lock) {
-            if (lastSeenGeneration != map.generation) {
+            if (!isRemapped && map.isRemapperEnabled) {
                 lazy.setValue(thisRef, property, map.mapperFun(lazy.getValue(thisRef, property)))
-                lastSeenGeneration = map.generation
+                isRemapped = true
             }
-            lastSeenGeneration = map.generation
             lazy.getValue(thisRef, property)
         }
     }
@@ -90,7 +76,7 @@ internal class MappedLazyVar<T>(
     override fun setValue(thisRef: Any?, property: KProperty<*>, value: T) {
         synchronized(lock) {
             lazy.setValue(thisRef, property, value)
-            lastSeenGeneration = map.generation
+            if (map.isRemapperEnabled) isRemapped = true
         }
     }
 }

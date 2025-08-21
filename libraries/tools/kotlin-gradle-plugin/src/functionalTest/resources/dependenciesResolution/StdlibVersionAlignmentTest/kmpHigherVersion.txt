@@ -52,3 +52,9 @@ wasmWasiTest
   org.jetbrains.kotlin:kotlin-stdlib-wasm-wasi:<FUTURE_KOTLIN_VERSION>
   org.jetbrains.kotlin:kotlin-stdlib:<FUTURE_KOTLIN_VERSION>
   test:lib:1.0
+webMain
+  org.jetbrains.kotlin:kotlin-stdlib:<FUTURE_KOTLIN_VERSION>
+  test:lib:1.0
+webTest
+  org.jetbrains.kotlin:kotlin-stdlib:<FUTURE_KOTLIN_VERSION>
+  test:lib:1.0

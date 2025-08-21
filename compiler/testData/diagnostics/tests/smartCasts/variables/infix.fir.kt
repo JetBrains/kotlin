@@ -9,4 +9,7 @@ fun box() : Int {
     } else {
         return 2
     }
-} 
+}
+
+/* GENERATED_FIR_TAGS: additiveExpression, functionDeclaration, ifExpression, integerLiteral, isExpression,
+localProperty, propertyDeclaration, smartcast */

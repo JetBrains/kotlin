@@ -23,3 +23,6 @@ public class x {
 package a
 
 fun test() = x().getSealed2()
+
+/* GENERATED_FIR_TAGS: classDeclaration, flexibleType, functionDeclaration, javaFunction, javaType, nestedClass,
+objectDeclaration, sealed */

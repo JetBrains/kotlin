@@ -22,7 +22,6 @@ object Elements : TemplateGroupBase() {
             specialFor(RangesOfPrimitives) {
                 if (primitive in PrimitiveType.unsignedPrimitives) {
                     sinceAtLeast("1.5")
-                    wasExperimental("ExperimentalUnsignedTypes")
                     sourceFile(SourceFile.URanges)
                 }
             }
@@ -30,9 +29,6 @@ object Elements : TemplateGroupBase() {
                 if (primitive in PrimitiveType.unsignedPrimitives) {
                     sourceFile(SourceFile.URanges)
                 }
-            }
-            if (since?.let { it <= "1.4" } == true) {
-                wasExperimentalAnnotations.clear()
             }
         }
     }
@@ -328,6 +324,18 @@ object Elements : TemplateGroupBase() {
                     """
                     return elementAtOrElse(index) { throw IndexOutOfBoundsException("index: $index, $size: $$size}") }
                     """
+                }
+            }
+            on(Platform.Native) {
+                on(Backend.Wasm) {
+                    inlineOnly()
+
+                    val size = f.code.size
+                    body {
+                        """
+                        return elementAtOrElse(index) { throw IndexOutOfBoundsException("index: $index, $size: $$size}") }
+                        """
+                    }
                 }
             }
         }
@@ -1010,7 +1018,6 @@ object Elements : TemplateGroupBase() {
         include(Collections, ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned, CharSequences, RangesOfPrimitives)
     } builder {
         since("1.4")
-        wasExperimental("ExperimentalStdlibApi")
         inlineOnly()
         returns("T?")
         doc {
@@ -1072,7 +1079,6 @@ object Elements : TemplateGroupBase() {
         include(Collections, ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned, CharSequences, RangesOfPrimitives)
     } builder {
         since("1.4")
-        wasExperimental("ExperimentalStdlibApi")
         returns("T?")
         doc {
             """
@@ -1138,7 +1144,9 @@ object Elements : TemplateGroupBase() {
                     Returns ${getOrdinal(n)} *element* from the ${f.collection}.
             
                     If $condition, throws an [IndexOutOfBoundsException] except in Kotlin/JS 
-                    where the behavior is unspecified.
+                    where the behavior is unspecified, and in Kotlin/Wasm where 
+                    a [trap](https://webassembly.github.io/spec/core/intro/overview.html#trap) will be raised instead,
+                    unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
                     """
                 }
             }

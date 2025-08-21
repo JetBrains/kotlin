@@ -15,8 +15,13 @@ internal fun ObjCExportContext.translateToObjCFunctionType(type: KaType, returns
             if (returnType is KaFunctionType) translateToObjCFunctionType(returnType, analysisSession.isObjCVoid(returnType))
             else translateToObjCReferenceType(returnType)
         },
-        parameterTypes = listOfNotNull(type.receiverType).plus(type.parameterTypes).map { parameterType ->
-            translateToObjCReferenceType(parameterType)
+        parameters = listOfNotNull(type.receiverType).plus(type.parameterTypes).map { parameterType ->
+            ObjCParameter(
+                "",
+                null,
+                type = translateToObjCReferenceType(parameterType),
+                todo = null,
+            )
         }
     )
     return analysisSession.withNullabilityOf(objCBlockPointerType, type)

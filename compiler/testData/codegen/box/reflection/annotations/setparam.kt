@@ -1,8 +1,6 @@
 // TARGET_BACKEND: JVM
 // WITH_REFLECT
-
-// different annotation order
-// IGNORE_BACKEND: ANDROID
+// JVM_ABI_K1_K2_DIFF: KT-63984
 
 package test
 
@@ -13,14 +11,21 @@ annotation class Ann2
 
 class Foo {
     @setparam:Ann1
-    var delegate = " "
+    var customSetter = " "
         set(@Ann2 value) {}
 }
 
+@setparam:Ann1
+var defaultSetter = ""
+
 fun box(): String {
-    val setterParameters = Foo::delegate.setter.parameters
-    assertEquals(2, setterParameters.size)
-    assertEquals("[]", setterParameters.first().annotations.toString())
-    assertEquals("[@test.Ann2(), @test.Ann1()]", setterParameters.last().annotations.toString())
+    assertEquals(
+        "[[], [@test.Ann1(), @test.Ann2()]]",
+        Foo::customSetter.setter.parameters.map { it.annotations.sortedBy { it.toString() }.toString() }.toString(),
+    )
+    assertEquals(
+        "[[@test.Ann1()]]", 
+        ::defaultSetter.setter.parameters.map { it.annotations.toString() }.toString(),
+    )
     return "OK"
 }

@@ -18,3 +18,6 @@ fun f(outer: Outer) {
         Inner(3)
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, lambdaLiteral, primaryConstructor,
+propertyDeclaration */

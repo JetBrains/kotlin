@@ -11,3 +11,4 @@ enum class MyEnumBase() {}
 
 interface MyTrait {}
 
+/* GENERATED_FIR_TAGS: classDeclaration, enumDeclaration, interfaceDeclaration, primaryConstructor */

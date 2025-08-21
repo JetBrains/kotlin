@@ -1,5 +1,6 @@
 // RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
+// LATEST_LV_DIFFERENCE
 // LANGUAGE_VERSION: 2.0
 // API_VERSION: 2.0
 // ALLOW_DANGEROUS_LANGUAGE_VERSION_TESTING
@@ -61,3 +62,6 @@ fun <E> removeFirstLastArrayListE(s: ArrayList<E>) {
     var x2 = s.removeLast()
     x1 = <!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>
 }
+
+/* GENERATED_FIR_TAGS: assignment, flexibleType, functionDeclaration, localProperty, nullableType, propertyDeclaration,
+stringLiteral, typeParameter */

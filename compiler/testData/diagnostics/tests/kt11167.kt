@@ -15,3 +15,6 @@ fun foo(s: IntStream) {
     val elapseTime = (System.nanoTime() - startTimeNanos) / 1e9
     println("Parallel Streams $pi $n $elapseTime")
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, flexibleType, functionDeclaration, integerLiteral, javaFunction,
+lambdaLiteral, localProperty, multiplicativeExpression, propertyDeclaration, samConversion, stringLiteral */

@@ -26,3 +26,8 @@ fun test_3(cond: Boolean) {
     c <!TYPE_MISMATCH!>{ <!UNRESOLVED_REFERENCE!>length<!> }<!>
     c { it.length }
 }
+
+/* GENERATED_FIR_TAGS: callableReference, capturedType, checkNotNullCall, classDeclaration, equalityExpression,
+functionDeclaration, functionalType, ifExpression, integerLiteral, lambdaLiteral, localProperty, nullableType,
+outProjection, primaryConstructor, propertyDeclaration, smartcast, typeParameter, typeWithExtension, vararg,
+whenExpression, whenWithSubject */

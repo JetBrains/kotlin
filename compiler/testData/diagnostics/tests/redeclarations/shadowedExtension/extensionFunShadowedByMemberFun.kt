@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: BACKEND
-// FIR_IDENTICAL
 // DIAGNOSTICS: -UNUSED_PARAMETER
 
 interface Test1 {
@@ -46,3 +45,6 @@ interface Test8 {
 typealias NullableTest8 = Test8?
 
 fun NullableTest8.test8() {}
+
+/* GENERATED_FIR_TAGS: funWithExtensionReceiver, functionDeclaration, interfaceDeclaration, nullableType,
+typeAliasDeclaration, typeConstraint, typeParameter */

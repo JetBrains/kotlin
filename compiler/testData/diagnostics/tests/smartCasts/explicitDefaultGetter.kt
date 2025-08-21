@@ -10,3 +10,6 @@ class ExplicitAccessorForAnnotation {
         return ""
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, ifExpression, isExpression, nullableType,
+propertyDeclaration, smartcast, stringLiteral */

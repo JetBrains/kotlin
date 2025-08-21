@@ -7,7 +7,6 @@ plugins {
 
 dependencies {
     api(kotlinStdlib())
-    api(project(":kotlin-android-extensions-runtime"))
     compileOnly(commonDependency("com.google.android", "android"))
 
     val httpClientVersion = libs.versions.http.client.get()

@@ -9,8 +9,8 @@ import org.jetbrains.kotlin.cli.common.arguments.K2JsArgumentConstants
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.js.IcCachesArtifacts
 import org.jetbrains.kotlin.cli.js.IcCachesConfigurationData
+import org.jetbrains.kotlin.cli.js.platformChecker
 import org.jetbrains.kotlin.cli.js.prepareIcCaches
-import org.jetbrains.kotlin.cli.js.runStandardLibrarySpecialCompatibilityChecks
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.pipeline.CheckCompilationErrors
@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.ir.backend.js.ModulesStructure
 import org.jetbrains.kotlin.ir.backend.js.ic.IncrementalCacheGuard
 import org.jetbrains.kotlin.ir.backend.js.ic.acquireAndRelease
 import org.jetbrains.kotlin.ir.backend.js.ic.tryAcquireAndRelease
+import org.jetbrains.kotlin.ir.backend.js.loadWebKlibsInProductionPipeline
 import org.jetbrains.kotlin.js.config.*
 import org.jetbrains.kotlin.wasm.config.WasmConfigurationKeys
 import java.io.File
@@ -70,20 +71,16 @@ abstract class WebBackendPipelinePhase<Output : WebBackendPipelineArtifact>(
                     cacheDirectory = cacheDirectory,
                     icConfigurationData = when {
                         configuration.wasmCompilation -> IcCachesConfigurationData.Wasm(
-                            configuration.includes!!,
                             wasmDebug = configuration.getBoolean(WasmConfigurationKeys.WASM_DEBUG),
                             preserveIcOrder = configuration.preserveIcOrder,
                             generateWat = configuration.getBoolean(WasmConfigurationKeys.WASM_GENERATE_WAT),
                         )
                         else -> IcCachesConfigurationData.Js(
-                            configuration.includes!!,
                             granularity = configuration.granularity!!
                         )
                     },
                     messageCollector = messageCollector,
                     outputDir = configuration.outputDir!!,
-                    libraries = configuration.libraries,
-                    friendLibraries = configuration.friendLibraries,
                     targetConfiguration = configuration,
                     mainCallArguments = mainCallArguments,
                     icCacheReadOnly = icCacheReadOnly,
@@ -111,19 +108,16 @@ abstract class WebBackendPipelinePhase<Output : WebBackendPipelineArtifact>(
                 configuration,
                 configFiles
             )
+
+            val klibs = loadWebKlibsInProductionPipeline(configuration, configuration.platformChecker)
+
             val module = ModulesStructure(
-                environment.project,
-                kLib,
-                configuration,
-                configuration.libraries,
-                configuration.friendLibraries
-            ).also {
-                runStandardLibrarySpecialCompatibilityChecks(
-                    it.allDependencies,
-                    isWasm = configuration.wasmCompilation,
-                    messageCollector
-                )
-            }
+                project = environment.project,
+                mainModule = kLib,
+                compilerConfiguration = configuration,
+                klibs = klibs,
+            )
+
             return compileNonIncrementally(configuration, module, mainCallArguments)
         }
     }

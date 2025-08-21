@@ -12,3 +12,6 @@ public fun foo(pp: Any): Int {
     // Smart cast is NOT possible here
     return p.<!UNRESOLVED_REFERENCE!>length<!>()
 }
+
+/* GENERATED_FIR_TAGS: asExpression, assignment, break, doWhileLoop, equalityExpression, functionDeclaration,
+ifExpression, integerLiteral, intersectionType, localProperty, propertyDeclaration, smartcast, stringLiteral */

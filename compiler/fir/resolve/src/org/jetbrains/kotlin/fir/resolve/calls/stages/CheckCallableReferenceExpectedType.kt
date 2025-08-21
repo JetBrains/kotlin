@@ -34,26 +34,26 @@ import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
 
 internal object CheckCallableReferenceExpectedType : ResolutionStage() {
-    override suspend fun check(candidate: Candidate, callInfo: CallInfo, sink: CheckerSink, context: ResolutionContext) {
-        callInfo as CallableReferenceInfo
-        val expectedType = callInfo.expectedType
+    context(sink: CheckerSink, context: ResolutionContext)
+    override suspend fun check(candidate: Candidate) {
+        candidate.callInfo as CallableReferenceInfo
+        val expectedType = candidate.callInfo.expectedType
         if (candidate.symbol !is FirCallableSymbol<*>) return
 
-        val resultingReceiverType = when (callInfo.lhs) {
-            is DoubleColonLHS.Type -> callInfo.lhs.type.takeIf {
-                callInfo.explicitReceiver?.unwrapSmartcastExpression() !is FirResolvedQualifier
+        val resultingReceiverType = when (candidate.callInfo.lhs) {
+            is DoubleColonLHS.Type -> candidate.callInfo.lhs.type.takeIf {
+                candidate.callInfo.explicitReceiver?.unwrapSmartcastExpression() !is FirResolvedQualifier
             }
             else -> null
         }
 
         val fir: FirCallableDeclaration = candidate.symbol.fir as FirCallableDeclaration
 
-        val isExpectedTypeReflectionType = callInfo.expectedType?.isReflectFunctionType(callInfo.session) == true
+        val isExpectedTypeReflectionType = candidate.callInfo.expectedType?.isReflectFunctionType(candidate.callInfo.session) == true
         val (rawResultingType, callableReferenceAdaptation) = buildResultingTypeAndAdaptation(
             fir,
             resultingReceiverType,
             candidate,
-            context,
             // If the input and output types match the expected type but the expected type is a reflection type, and we need an adaptation,
             // we want to report AdaptedCallableReferenceIsUsedWithReflection but *not* InapplicableCandidate because
             // AdaptedCallableReferenceIsUsedWithReflection has the higher applicability.
@@ -65,7 +65,7 @@ internal object CheckCallableReferenceExpectedType : ResolutionStage() {
         )
 
         if (callableReferenceAdaptation != null) {
-            if (!context.session.languageVersionSettings.supportsFeature(LanguageFeature.DisableCompatibilityModeForNewInference)) {
+            if (!LanguageFeature.DisableCompatibilityModeForNewInference.isEnabled()) {
                 sink.reportDiagnostic(LowerPriorityToPreserveCompatibilityDiagnostic)
             }
 
@@ -86,7 +86,7 @@ internal object CheckCallableReferenceExpectedType : ResolutionStage() {
         // with an exception about a non-existing type variable.
         if (expectedType != null && candidate.symbol !is FirErrorCallableSymbol<*>) {
             candidate.system.addSubtypeConstraint(
-                resultingType, expectedType, ConeArgumentConstraintPosition(callInfo.callSite)
+                resultingType, expectedType, ConeArgumentConstraintPosition(candidate.callInfo.callSite)
             )
         }
 
@@ -101,11 +101,11 @@ internal object CheckCallableReferenceExpectedType : ResolutionStage() {
  *  iff the adaptation is `null` or [forceReflectionType]` == true`.
  *  Otherwise, it's a non-reflection type ([FunctionTypeKind.nonReflectKind]).
  */
+context(context: ResolutionContext)
 private fun buildResultingTypeAndAdaptation(
     fir: FirCallableDeclaration,
     receiverType: ConeKotlinType?,
     candidate: Candidate,
-    context: ResolutionContext,
     forceReflectionType: Boolean,
 ): Pair<ConeKotlinType, CallableReferenceAdaptation?> {
     val returnTypeRef = context.bodyResolveComponents.returnTypeCalculator.tryCalculateReturnType(fir)
@@ -129,7 +129,13 @@ private fun buildResultingTypeAndAdaptation(
             val returnTypeWithoutCoercion = returnTypeRef.coneType
             val returnType = if (callableReferenceAdaptation == null) {
                 returnTypeWithoutCoercion.also {
-                    fir.valueParameters.mapTo(parameters) { it.returnTypeRef.coneType }
+                    fir.valueParameters.mapTo(parameters) {
+                        if ((fir is FirSimpleFunction || fir is FirConstructor) && fir.origin != FirDeclarationOrigin.SamConstructor) {
+                            it.returnTypeRef.coneType.withParameterNameAnnotation(it)
+                        } else {
+                            it.returnTypeRef.coneType
+                        }
+                    }
                 }
             } else {
                 parameters += callableReferenceAdaptation.argumentTypes
@@ -273,7 +279,7 @@ private fun BodyResolveComponents.getCallableReferenceAdaptation(
     val returnTypeRef = function.returnTypeRef
     val coercionStrategy =
         if (returnExpectedType.isUnitOrFlexibleUnit &&
-            returnTypeRef.coneTypeSafe<ConeKotlinType>()?.fullyExpandedType(session)?.isUnit != true
+            returnTypeRef.coneTypeSafe<ConeKotlinType>()?.fullyExpandedType()?.isUnit != true
         )
             CoercionStrategy.COERCION_TO_UNIT
         else
@@ -287,7 +293,11 @@ private fun BodyResolveComponents.getCallableReferenceAdaptation(
     val expectedTypeFunctionKind = expectedType.functionTypeKind(session)?.takeUnless { it.isBasicFunctionOrKFunction }
     val functionKind = function.specialFunctionTypeKind(session)
 
-    val conversionStrategy = if (expectedTypeFunctionKind != null && functionKind == null) {
+    val conversionStrategy = if (
+        expectedTypeFunctionKind != null &&
+        expectedTypeFunctionKind.supportsConversionFromSimpleFunctionType &&
+        functionKind == null
+    ) {
         CallableReferenceConversionStrategy.CustomConversion(expectedTypeFunctionKind)
     } else {
         CallableReferenceConversionStrategy.NoConversion

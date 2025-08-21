@@ -12,3 +12,5 @@ expect fun foo(x: String, y: Int = -1)
 
 @JvmOverloads
 actual fun foo(x: String, y: Int) {}
+
+/* GENERATED_FIR_TAGS: actual, expect, functionDeclaration, integerLiteral */

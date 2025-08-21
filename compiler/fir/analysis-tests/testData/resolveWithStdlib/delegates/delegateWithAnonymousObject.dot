@@ -215,6 +215,7 @@ digraph delegateWithAnonymousObject_kt {
     39 -> {43 58} [style=dashed];
     40 -> {41};
     41 -> {42};
+    42 -> {32} [color=green style=dashed];
     43 -> {44};
     44 -> {45};
     45 -> {46};
@@ -294,12 +295,12 @@ digraph delegateWithAnonymousObject_kt {
                 color=blue
                 92 [label="Function call arguments enter"];
                 93 [label="Access variable D|/IssuesListUserProfile.issueListView|"];
-                94 [label="Access variable R|<local>/issueListView|"];
+                94 [label="Access variable R|<local>/<set-?>|"];
                 95 [label="Function call arguments exit"];
             }
             96 [label="Function call enter: this@R|/IssuesListUserProfile|.D|/IssuesListUserProfile.issueListView|.R|SubstitutionOverride<kotlin/properties/ReadWriteProperty.setValue: R|kotlin/Unit|>|(...)"];
             97 [label="Function call exit: this@R|/IssuesListUserProfile|.D|/IssuesListUserProfile.issueListView|.R|SubstitutionOverride<kotlin/properties/ReadWriteProperty.setValue: R|kotlin/Unit|>|(...)" style="filled" fillcolor=yellow];
-            98 [label="Jump: ^ this@R|/IssuesListUserProfile|.D|/IssuesListUserProfile.issueListView|.R|SubstitutionOverride<kotlin/properties/ReadWriteProperty.setValue: R|kotlin/Unit|>|(this@R|/IssuesListUserProfile|, ::R|/IssuesListUserProfile.issueListView|, R|<local>/issueListView|)"];
+            98 [label="Jump: ^ this@R|/IssuesListUserProfile|.D|/IssuesListUserProfile.issueListView|.R|SubstitutionOverride<kotlin/properties/ReadWriteProperty.setValue: R|kotlin/Unit|>|(this@R|/IssuesListUserProfile|, ::R|/IssuesListUserProfile.issueListView|, R|<local>/<set-?>|)"];
             99 [label="Stub" style="filled" fillcolor=gray];
             100 [label="Exit block" style="filled" fillcolor=gray];
         }

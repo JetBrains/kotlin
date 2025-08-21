@@ -10,7 +10,6 @@ import java.io.File
 class MutedTest(
     val key: String,
     @Suppress("unused") val issue: String?,
-    val hasFailFile: Boolean,
     val isFlaky: Boolean
 ) {
     val methodKey: String
@@ -66,28 +65,21 @@ internal fun loadMutedTests(file: File): List<MutedTest> {
 }
 
 private val COLUMN_PARSE_REGEXP = Regex("\\s*(?:(?:\"((?:[^\"]|\"\")*)\")|([^,]*))\\s*")
-private val MUTE_LINE_PARSE_REGEXP = Regex("$COLUMN_PARSE_REGEXP,$COLUMN_PARSE_REGEXP,$COLUMN_PARSE_REGEXP,$COLUMN_PARSE_REGEXP")
+private val MUTE_LINE_PARSE_REGEXP = Regex("$COLUMN_PARSE_REGEXP,$COLUMN_PARSE_REGEXP,$COLUMN_PARSE_REGEXP")
 private fun parseMutedTest(str: String): MutedTest {
     val matchResult = MUTE_LINE_PARSE_REGEXP.matchEntire(str) ?: throw ParseError("Can't parse the line: $str")
     val resultValues = matchResult.groups.filterNotNull()
 
     val testKey = resultValues[1].value
     val issue = resultValues[2].value
-    val stateStr = resultValues[3].value
-    val statusStr = resultValues[4].value
-
-    val hasFailFile = when (stateStr) {
-        "MUTE", "" -> false
-        "FAIL" -> true
-        else -> throw ParseError("Invalid state (`$stateStr`), MUTE, FAIL or empty are expected: $str")
-    }
-    val isFlaky = when (statusStr) {
+    val isFlaky = when (val statusStr = resultValues[3].value) {
         "FLAKY" -> true
+        "STABLE" -> false
         "" -> false
-        else -> throw ParseError("Invalid status (`$statusStr`), FLAKY or empty are expected: $str")
+        else -> throw ParseError("Invalid status (`$statusStr`), FLAKY or STABLE are expected: $str")
     }
 
-    return MutedTest(testKey, issue, hasFailFile, isFlaky)
+    return MutedTest(testKey, issue, isFlaky)
 }
 
 private class ParseError(message: String, override val cause: Throwable? = null) : IllegalArgumentException(message)

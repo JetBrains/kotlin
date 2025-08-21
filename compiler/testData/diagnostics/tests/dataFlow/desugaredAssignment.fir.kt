@@ -16,3 +16,6 @@ open class ABC {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, assignment, classDeclaration, forLoop, functionDeclaration, integerLiteral,
+isExpression, localProperty, propertyDeclaration, smartcast, whenExpression, whenWithSubject */

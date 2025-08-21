@@ -5,11 +5,11 @@
 
 package org.jetbrains.kotlin.config.keys.generator
 
-import org.jetbrains.kotlin.cli.common.CommonCompilerPerformanceManager
 import org.jetbrains.kotlin.cli.common.config.ContentRoot
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.modules.ModuleChunk
 import org.jetbrains.kotlin.config.keys.generator.model.KeysContainer
+import org.jetbrains.kotlin.util.PerformanceManager
 import org.jetbrains.kotlin.utils.KotlinPaths
 import java.io.File
 
@@ -37,7 +37,9 @@ object CLIConfigurationKeysContainer : KeysContainer("org.jetbrains.kotlin.cli.c
 
     val ALLOW_KOTLIN_PACKAGE by key<Boolean>("allow kotlin package")
 
-    val PERF_MANAGER by key<CommonCompilerPerformanceManager>("performance manager")
+    val PERF_MANAGER by key<PerformanceManager>("performance manager")
+
+    val DETAILED_PERF by key<Boolean>("Enable more detailed performance statistics.")
 
     val INTELLIJ_PLUGIN_ROOT by key<String>(
         "intellij plugin root",
@@ -49,7 +51,8 @@ object CLIConfigurationKeysContainer : KeysContainer("org.jetbrains.kotlin.cli.c
     val PATH_TO_KOTLIN_COMPILER_JAR by key<File>("jar of Kotlin compiler in Kotlin plugin", comment = "used in FIR IDE uast tests")
 
     val PRINT_VERSION by key<Boolean>("Print compiler version")
-    val SCRIPT_MODE by key<Boolean>("Compile and evaluate kotlin script")
+    val SCRIPT_MODE by key<Boolean>("Compile and evaluate Kotlin script")
+    val REPL_MODE by key<Boolean>("Run Kotlin REPL (deprecated)")
     val KOTLIN_PATHS by key<KotlinPaths>("Kotlin paths")
 
     val ALLOW_NO_SOURCE_FILES by key<Boolean>("allow no source files compilation")
@@ -57,4 +60,6 @@ object CLIConfigurationKeysContainer : KeysContainer("org.jetbrains.kotlin.cli.c
     val BUILD_FILE by key<File>("Build file")
     val FREE_ARGS_FOR_SCRIPT by key<List<String>>("Free args from arguments. Used only for scripts execution")
     val DEFAULT_EXTENSION_FOR_SCRIPTS by key<String>("Default extension for scripts", throwOnNull = false)
+
+    val TEST_ENVIRONMENT by key<Boolean>("test environment", comment = "Defines what kind of application environment should be created. Should be set to `true` only in tests")
 }

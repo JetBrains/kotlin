@@ -1,3 +1,5 @@
+// COMPILATION_ERRORS
+
 fun foo() {
     return @ 1
     return (@ 2)

@@ -9,9 +9,9 @@ inline fun <reified T : Any?> T.fooN(): T? {
 fun test() {
   val nullStr: @FlexibleNullability String? = nullString()
   val nonnullStr: @FlexibleNullability String? = nonnullString()
-  nullStr.foo<@FlexibleNullability String?>() /*~> Unit */
-  nonnullStr.foo<@FlexibleNullability String?>() /*~> Unit */
-  nullStr.fooN<@FlexibleNullability String?>() /*~> Unit */
-  nonnullStr.fooN<@FlexibleNullability String?>() /*~> Unit */
+  foo<@FlexibleNullability String?>(/* <this> = nullStr */) /*~> Unit */
+  foo<@FlexibleNullability String?>(/* <this> = nonnullStr */) /*~> Unit */
+  fooN<@FlexibleNullability String?>(/* <this> = nullStr */) /*~> Unit */
+  fooN<@FlexibleNullability String?>(/* <this> = nonnullStr */) /*~> Unit */
 }
 

@@ -1,8 +1,7 @@
-// IGNORE_BACKEND: JVM
-// IGNORE_BACKEND: WASM
-
 // WITH_STDLIB
 // LANGUAGE: +InstantiationOfAnnotationClasses
+
+// JVM_ABI_K1_K2_DIFF: K2 serializes annotation parameter default values (KT-59526).
 
 package test
 

@@ -42,3 +42,6 @@ fun justResolve() {
     val c = Scope.Nested<*>::keyT
     val d = Scope.Nested<out Number?>::keyT
 }
+
+/* GENERATED_FIR_TAGS: asExpression, callableReference, capturedType, classDeclaration, functionDeclaration,
+localProperty, nestedClass, nullableType, outProjection, propertyDeclaration, starProjection, typeParameter */

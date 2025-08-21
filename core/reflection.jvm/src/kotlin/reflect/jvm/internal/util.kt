@@ -18,6 +18,7 @@ package kotlin.reflect.jvm.internal
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.PrimitiveType
+import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotated
@@ -43,8 +44,6 @@ import org.jetbrains.kotlin.protobuf.MessageLite
 import org.jetbrains.kotlin.resolve.constants.*
 import org.jetbrains.kotlin.resolve.descriptorUtil.annotationClass
 import org.jetbrains.kotlin.resolve.descriptorUtil.classId
-import org.jetbrains.kotlin.resolve.isInlineClassType
-import org.jetbrains.kotlin.resolve.needsMfvcFlattening
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationContext
 import org.jetbrains.kotlin.serialization.deserialization.MemberDeserializer
 import java.lang.reflect.Field
@@ -72,15 +71,26 @@ internal fun ClassDescriptor.toJavaClass(): Class<*>? {
             // If this is neither a Kotlin class nor a Java class, it's likely either a built-in or some fake class descriptor like the one
             // that's created for java.io.Serializable in JvmBuiltInsSettings
             val classId = classId ?: return null
-            loadClass(javaClass.safeClassLoader, classId, 0)
+            javaClass.safeClassLoader.loadClass(classId)
         }
     }
 }
 
-private fun loadClass(classLoader: ClassLoader, kotlinClassId: ClassId, arrayDimensions: Int = 0): Class<*>? {
-    val javaClassId = JavaToKotlinClassMap.mapKotlinToJava(kotlinClassId.asSingleFqName().toUnsafe()) ?: kotlinClassId
-    // All pseudo-classes like kotlin.String.Companion must be accessible from the current class loader
-    return loadClass(classLoader, javaClassId.packageFqName.asString(), javaClassId.relativeClassName.asString(), arrayDimensions)
+private val SUSPEND_FUNCTION_PREFIX =
+    FunctionTypeKind.SuspendFunction.packageFqName.asString() + "." + FunctionTypeKind.SuspendFunction.classNamePrefix
+
+internal fun ClassLoader.loadClass(kotlinClassId: ClassId, arrayDimensions: Int = 0): Class<*>? {
+    val kotlinFqName = kotlinClassId.asSingleFqName().toUnsafe()
+    kotlinFqName.asString().substringAfter(SUSPEND_FUNCTION_PREFIX).toIntOrNull()?.let { suspendFunctionArity ->
+        return loadClass(FunctionTypeKind.Function.numberedClassId(suspendFunctionArity + 1), arrayDimensions)
+    }
+
+    val javaClassId = JavaToKotlinClassMap.mapKotlinToJava(kotlinFqName) ?: kotlinClassId
+    // Pseudo-classes like `kotlin/String.Companion` can be accessible from different class loaders. To ensure that we always use the
+    // same class, we always load it from the stdlib's class loader.
+    val correctClassLoader =
+        if (javaClassId != kotlinClassId) Unit::class.java.safeClassLoader else this
+    return loadClass(correctClassLoader, javaClassId.packageFqName.asString(), javaClassId.relativeClassName.asString(), arrayDimensions)
 }
 
 private fun loadClass(classLoader: ClassLoader, packageName: String, className: String, arrayDimensions: Int): Class<*>? {
@@ -139,7 +149,7 @@ internal fun Annotated.computeAnnotations(): List<Annotation> =
         }
     }.unwrapRepeatableAnnotations()
 
-private fun List<Annotation>.unwrapRepeatableAnnotations(): List<Annotation> =
+fun List<Annotation>.unwrapRepeatableAnnotations(): List<Annotation> =
     if (any { it.annotationClass.java.simpleName == JvmAbi.REPEATABLE_ANNOTATION_CONTAINER_NAME })
         flatMap {
             val klass = it.annotationClass.java
@@ -172,14 +182,14 @@ private fun ConstantValue<*>.toRuntimeValue(classLoader: ClassLoader): Any? = wh
     is ArrayValue -> arrayToRuntimeValue(classLoader)
     is EnumValue -> {
         val (enumClassId, entryName) = value
-        loadClass(classLoader, enumClassId)?.let { enumClass ->
+        classLoader.loadClass(enumClassId)?.let { enumClass ->
             @Suppress("UNCHECKED_CAST")
             Util.getEnumConstantByName(enumClass as Class<out Enum<*>>, entryName.asString())
         }
     }
     is KClassValue -> when (val classValue = value) {
         is KClassValue.Value.NormalClass ->
-            loadClass(classLoader, classValue.classId, classValue.arrayDimensions)
+            classLoader.loadClass(classValue.classId, classValue.arrayDimensions)
         is KClassValue.Value.LocalClass -> {
             // TODO: this doesn't work because of KT-30013
             (classValue.type.constructor.declarationDescriptor as? ClassDescriptor)?.toJavaClass()
@@ -210,7 +220,7 @@ private fun ArrayValue.arrayToRuntimeValue(classLoader: ClassLoader): Any? {
                 KotlinBuiltIns.isString(argType) -> Array(value.size) { values[it] as String }
                 KotlinBuiltIns.isKClass(classifier) -> Array(value.size) { values[it] as Class<*> }
                 else -> {
-                    val argClass = classifier.classId?.let { loadClass(classLoader, it) } ?: return null
+                    val argClass = classifier.classId?.let(classLoader::loadClass) ?: return null
 
                     @Suppress("UNCHECKED_CAST")
                     val array = java.lang.reflect.Array.newInstance(argClass, value.size) as Array<in Any?>
@@ -268,9 +278,10 @@ internal fun <M : MessageLite, D : CallableDescriptor> deserializeToDescriptor(
 }
 
 internal val KType.isInlineClassType: Boolean
-    get() = (this as? KTypeImpl)?.type?.isInlineClassType() == true
+    get() = (classifier as? KClassImpl<*>)?.isInline == true
+
 internal val KType.needsMultiFieldValueClassFlattening: Boolean
-    get() = (this as? KTypeImpl)?.type?.needsMfvcFlattening() == true
+    get() = (classifier as? KClassImpl<*>)?.run { isValue && !isInline } == true
 
 internal fun defaultPrimitiveValue(type: Type): Any? =
     if (type is Class<*> && type.isPrimitive) {
@@ -291,16 +302,21 @@ internal fun defaultPrimitiveValue(type: Type): Any? =
 internal open class CreateKCallableVisitor(private val container: KDeclarationContainerImpl) :
     DeclarationDescriptorVisitorEmptyBodies<KCallableImpl<*>, Unit>() {
     override fun visitPropertyDescriptor(descriptor: PropertyDescriptor, data: Unit): KCallableImpl<*> {
-        val receiverCount = (descriptor.dispatchReceiverParameter?.let { 1 } ?: 0) +
-                (descriptor.extensionReceiverParameter?.let { 1 } ?: 0)
+        val receiverCount =
+            if (descriptor.contextReceiverParameters.isNotEmpty())
+                -1
+            else
+                (descriptor.dispatchReceiverParameter?.let { 1 } ?: 0) + (descriptor.extensionReceiverParameter?.let { 1 } ?: 0)
 
         when {
             descriptor.isVar -> when (receiverCount) {
+                -1 -> return KMutablePropertyNImpl<Any?>(container, descriptor)
                 0 -> return KMutableProperty0Impl<Any?>(container, descriptor)
                 1 -> return KMutableProperty1Impl<Any?, Any?>(container, descriptor)
                 2 -> return KMutableProperty2Impl<Any?, Any?, Any?>(container, descriptor)
             }
             else -> when (receiverCount) {
+                -1 -> return KPropertyNImpl<Any?>(container, descriptor)
                 0 -> return KProperty0Impl<Any?>(container, descriptor)
                 1 -> return KProperty1Impl<Any?, Any?>(container, descriptor)
                 2 -> return KProperty2Impl<Any?, Any?, Any?>(container, descriptor)

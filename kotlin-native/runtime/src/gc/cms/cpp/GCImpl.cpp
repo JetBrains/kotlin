@@ -16,7 +16,7 @@
 using namespace kotlin;
 
 gc::GC::ThreadData::ThreadData(GC& gc, mm::ThreadData& threadData) noexcept :
-    impl_(std::make_unique<Impl>(gc.impl().markDispatcher_, threadData)) {}
+    impl_(std::make_unique<Impl>(gc.impl().mark_, threadData)) {}
 
 gc::GC::ThreadData::~ThreadData() = default;
 
@@ -38,7 +38,7 @@ PERFORMANCE_INLINE void gc::GC::ThreadData::onAllocation(ObjHeader* object) noex
 
 gc::GC::GC(alloc::Allocator& allocator, gcScheduler::GCScheduler& gcScheduler) noexcept :
     impl_(std::make_unique<Impl>(allocator, gcScheduler, compiler::gcMutatorsCooperate(), compiler::auxGCThreads())) {
-    RuntimeLogInfo({kTagGC}, "Concurrent Mark & Sweep GC initialized");
+    RuntimeLogInfo({kTagGC}, "%s GC initialized", internal::CmsGCTraits::kName);
 }
 
 gc::GC::~GC() {
@@ -46,22 +46,7 @@ gc::GC::~GC() {
 }
 
 void gc::GC::ClearForTests() noexcept {
-    StopFinalizerThreadIfRunning();
     GCHandle::ClearForTests();
-}
-
-void gc::GC::StartFinalizerThreadIfNeeded() noexcept {
-    NativeOrUnregisteredThreadGuard guard(true);
-    impl_->finalizerProcessor_.startThreadIfNeeded();
-}
-
-void gc::GC::StopFinalizerThreadIfRunning() noexcept {
-    NativeOrUnregisteredThreadGuard guard(true);
-    impl_->finalizerProcessor_.stopThread();
-}
-
-bool gc::GC::FinalizersThreadIsRunning() noexcept {
-    return impl_->finalizerProcessor_.isThreadRunning();
 }
 
 // static
@@ -86,14 +71,6 @@ void gc::GC::WaitFinalizers(int64_t epoch) noexcept {
     impl_->state_.waitEpochFinalized(epoch);
 }
 
-void gc::GC::configureMainThreadFinalizerProcessor(std::function<void(alloc::RunLoopFinalizerProcessorConfig&)> f) noexcept {
-    impl_->finalizerProcessor_.configureMainThread(std::move(f));
-}
-
-bool gc::GC::mainThreadFinalizerProcessorAvailable() noexcept {
-    return impl_->finalizerProcessor_.mainThreadAvailable();
-}
-
 PERFORMANCE_INLINE void gc::beforeHeapRefUpdate(mm::DirectRefAccessor ref, ObjHeader* value, bool loadAtomic) noexcept {
     barriers::beforeHeapRefUpdate(ref, value, loadAtomic);
 }
@@ -110,14 +87,14 @@ PERFORMANCE_INLINE bool gc::tryResetMark(GC::ObjectData& objectData) noexcept {
     return objectData.tryResetMark();
 }
 
-ALWAYS_INLINE bool gc::barriers::SpecialRefReleaseGuard::isNoop() {
+ALWAYS_INLINE bool gc::barriers::ExternalRCRefReleaseGuard::isNoop() {
     return false;
 }
-PERFORMANCE_INLINE gc::barriers::SpecialRefReleaseGuard::SpecialRefReleaseGuard(mm::DirectRefAccessor ref) noexcept : impl_(ref) {}
-PERFORMANCE_INLINE gc::barriers::SpecialRefReleaseGuard::SpecialRefReleaseGuard(SpecialRefReleaseGuard&& other) noexcept = default;
-PERFORMANCE_INLINE gc::barriers::SpecialRefReleaseGuard::~SpecialRefReleaseGuard() noexcept = default;
-PERFORMANCE_INLINE gc::barriers::SpecialRefReleaseGuard& gc::barriers::SpecialRefReleaseGuard::SpecialRefReleaseGuard::operator=(
-        SpecialRefReleaseGuard&&) noexcept = default;
+PERFORMANCE_INLINE gc::barriers::ExternalRCRefReleaseGuard::ExternalRCRefReleaseGuard(mm::DirectRefAccessor ref) noexcept : impl_(ref) {}
+PERFORMANCE_INLINE gc::barriers::ExternalRCRefReleaseGuard::ExternalRCRefReleaseGuard(ExternalRCRefReleaseGuard&& other) noexcept = default;
+PERFORMANCE_INLINE gc::barriers::ExternalRCRefReleaseGuard::~ExternalRCRefReleaseGuard() noexcept = default;
+PERFORMANCE_INLINE gc::barriers::ExternalRCRefReleaseGuard& gc::barriers::ExternalRCRefReleaseGuard::ExternalRCRefReleaseGuard::operator=(
+        ExternalRCRefReleaseGuard&&) noexcept = default;
 
 // static
 ALWAYS_INLINE uint64_t type_layout::descriptor<gc::GC::ObjectData>::type::size() noexcept {
@@ -132,4 +109,9 @@ ALWAYS_INLINE size_t type_layout::descriptor<gc::GC::ObjectData>::type::alignmen
 // static
 ALWAYS_INLINE gc::GC::ObjectData* type_layout::descriptor<gc::GC::ObjectData>::type::construct(uint8_t* ptr) noexcept {
     return new (ptr) gc::GC::ObjectData();
+}
+
+void gc::GC::onEpochFinalized(int64_t epoch) noexcept {
+    GCHandle::getByEpoch(epoch).finalizersDone();
+    impl_->state_.finalized(epoch);
 }

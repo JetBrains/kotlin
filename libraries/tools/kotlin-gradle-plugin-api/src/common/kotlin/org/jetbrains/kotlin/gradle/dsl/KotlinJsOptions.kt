@@ -8,10 +8,18 @@ package org.jetbrains.kotlin.gradle.dsl
 /**
  * Compiler options for Kotlin/JS.
  */
+@OptIn(org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi::class)
 @Deprecated(
-    "The kotlinOptions types are deprecated, please migrate to the compilerOptions types. More details are here: https://kotl.in/u1r8ln"
+    message = org.jetbrains.kotlin.gradle.dsl.KOTLIN_OPTIONS_DEPRECATION_MESSAGE,
+    level = DeprecationLevel.ERROR,
 )
 interface KotlinJsOptions : org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions {
+
+    @OptIn(org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi::class)
+    @Deprecated(
+        message = org.jetbrains.kotlin.gradle.dsl.KOTLIN_OPTIONS_DEPRECATION_MESSAGE,
+        level = DeprecationLevel.ERROR,
+    )
     /**
      * @suppress
      */
@@ -22,6 +30,11 @@ interface KotlinJsOptions : org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions 
      *
      * Default value: false
      */
+    @OptIn(org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi::class)
+    @Deprecated(
+        message = org.jetbrains.kotlin.gradle.dsl.KOTLIN_OPTIONS_DEPRECATION_MESSAGE,
+        level = DeprecationLevel.WARNING,
+    )
     var friendModulesDisabled: kotlin.Boolean
         get() = options.friendModulesDisabled.get()
         set(value) = options.friendModulesDisabled.set(value)
@@ -37,19 +50,14 @@ interface KotlinJsOptions : org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions 
      *
      * Default value: JsMainFunctionExecutionMode.CALL
      */
+    @OptIn(org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi::class)
+    @Deprecated(
+        message = org.jetbrains.kotlin.gradle.dsl.KOTLIN_OPTIONS_DEPRECATION_MESSAGE,
+        level = DeprecationLevel.WARNING,
+    )
     var main: kotlin.String
         get() = options.main.get().mainKotlinOption
         set(value) = options.main.set(value.mainCompilerOption)
-
-    /**
-     * This option does nothing and is left for compatibility with the legacy backend. It is deprecated and will be removed in Kotlin 2.2.
-     *
-     * Default value: false
-     */
-    @Deprecated(message = "Only for legacy backend.", level = DeprecationLevel.ERROR)
-    var metaInfo: kotlin.Boolean
-        get() = options.metaInfo.get()
-        set(value) = options.metaInfo.set(value)
 
     private val kotlin.String?.moduleKindCompilerOption get() = this?.let { org.jetbrains.kotlin.gradle.dsl.JsModuleKind.fromKind(it) }
 
@@ -62,6 +70,11 @@ interface KotlinJsOptions : org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions 
      *
      * Default value: null
      */
+    @OptIn(org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi::class)
+    @Deprecated(
+        message = org.jetbrains.kotlin.gradle.dsl.KOTLIN_OPTIONS_DEPRECATION_MESSAGE,
+        level = DeprecationLevel.WARNING,
+    )
     var moduleKind: kotlin.String?
         get() = options.moduleKind.orNull.moduleKindKotlinOption
         set(value) = options.moduleKind.set(value.moduleKindCompilerOption)
@@ -71,25 +84,25 @@ interface KotlinJsOptions : org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions 
      *
      * Default value: null
      */
+    @OptIn(org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi::class)
+    @Deprecated(
+        message = org.jetbrains.kotlin.gradle.dsl.KOTLIN_OPTIONS_DEPRECATION_MESSAGE,
+        level = DeprecationLevel.WARNING,
+    )
     var moduleName: kotlin.String?
         get() = options.moduleName.orNull
         set(value) = options.moduleName.set(value)
-
-    /**
-     * This option does nothing and is left for compatibility with the legacy backend. It is deprecated and will be removed in Kotlin 2.2.
-     *
-     * Default value: false
-     */
-    @Deprecated(message = "Only for legacy backend.", level = DeprecationLevel.ERROR)
-    var noStdlib: kotlin.Boolean
-        get() = options.noStdlib.get()
-        set(value) = options.noStdlib.set(value)
 
     /**
      * Generate a source map.
      *
      * Default value: false
      */
+    @OptIn(org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi::class)
+    @Deprecated(
+        message = org.jetbrains.kotlin.gradle.dsl.KOTLIN_OPTIONS_DEPRECATION_MESSAGE,
+        level = DeprecationLevel.WARNING,
+    )
     var sourceMap: kotlin.Boolean
         get() = options.sourceMap.get()
         set(value) = options.sourceMap.set(value)
@@ -105,6 +118,11 @@ interface KotlinJsOptions : org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions 
      *
      * Default value: null
      */
+    @OptIn(org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi::class)
+    @Deprecated(
+        message = org.jetbrains.kotlin.gradle.dsl.KOTLIN_OPTIONS_DEPRECATION_MESSAGE,
+        level = DeprecationLevel.WARNING,
+    )
     var sourceMapEmbedSources: kotlin.String?
         get() = options.sourceMapEmbedSources.orNull.sourceMapEmbedSourcesKotlinOption
         set(value) = options.sourceMapEmbedSources.set(value.sourceMapEmbedSourcesCompilerOption)
@@ -120,6 +138,11 @@ interface KotlinJsOptions : org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions 
      *
      * Default value: null
      */
+    @OptIn(org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi::class)
+    @Deprecated(
+        message = org.jetbrains.kotlin.gradle.dsl.KOTLIN_OPTIONS_DEPRECATION_MESSAGE,
+        level = DeprecationLevel.WARNING,
+    )
     var sourceMapNamesPolicy: kotlin.String?
         get() = options.sourceMapNamesPolicy.orNull.sourceMapNamesPolicyKotlinOption
         set(value) = options.sourceMapNamesPolicy.set(value.sourceMapNamesPolicyCompilerOption)
@@ -129,6 +152,11 @@ interface KotlinJsOptions : org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions 
      *
      * Default value: null
      */
+    @OptIn(org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi::class)
+    @Deprecated(
+        message = org.jetbrains.kotlin.gradle.dsl.KOTLIN_OPTIONS_DEPRECATION_MESSAGE,
+        level = DeprecationLevel.WARNING,
+    )
     var sourceMapPrefix: kotlin.String?
         get() = options.sourceMapPrefix.orNull
         set(value) = options.sourceMapPrefix.set(value)
@@ -140,25 +168,25 @@ interface KotlinJsOptions : org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions 
      *
      * Default value: "es5"
      */
+    @OptIn(org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi::class)
+    @Deprecated(
+        message = org.jetbrains.kotlin.gradle.dsl.KOTLIN_OPTIONS_DEPRECATION_MESSAGE,
+        level = DeprecationLevel.WARNING,
+    )
     var target: kotlin.String
         get() = options.target.get()
         set(value) = options.target.set(value)
-
-    /**
-     * This option does nothing and is left for compatibility with the legacy backend. It is deprecated and will be removed in a future release.
-     *
-     * Default value: false
-     */
-    @Deprecated(message = "Only for legacy backend.", level = DeprecationLevel.WARNING)
-    var typedArrays: kotlin.Boolean
-        get() = options.typedArrays.get()
-        set(value) = options.typedArrays.set(value)
 
     /**
      * Let generated JavaScript code use ES2015 classes. Enabled by default in case of ES2015 target usage
      *
      * Default value: null
      */
+    @OptIn(org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi::class)
+    @Deprecated(
+        message = org.jetbrains.kotlin.gradle.dsl.KOTLIN_OPTIONS_DEPRECATION_MESSAGE,
+        level = DeprecationLevel.WARNING,
+    )
     var useEsClasses: kotlin.Boolean?
         get() = options.useEsClasses.orNull
         set(value) = options.useEsClasses.set(value)

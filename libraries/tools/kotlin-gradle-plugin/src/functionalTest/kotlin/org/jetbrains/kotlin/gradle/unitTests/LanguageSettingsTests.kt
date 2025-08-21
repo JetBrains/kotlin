@@ -11,16 +11,17 @@ import org.gradle.api.NamedDomainObjectSet
 import org.gradle.api.Project
 import org.gradle.api.ProjectConfigurationException
 import org.gradle.api.internal.project.ProjectInternal
+import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
-import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
+import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
+import org.jetbrains.kotlin.gradle.plugin.sources.DefaultLanguageSettingsBuilder
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
 import org.jetbrains.kotlin.gradle.tasks.withType
-import org.jetbrains.kotlin.gradle.util.allCauses
-import org.jetbrains.kotlin.gradle.util.assertContains
-import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
+import org.jetbrains.kotlin.gradle.testing.prettyPrinted
+import org.jetbrains.kotlin.gradle.util.*
 import org.jetbrains.kotlin.util.assertThrows
 import org.junit.Test
 import kotlin.test.assertEquals
@@ -29,6 +30,9 @@ class LanguageSettingsTests {
 
     @Test
     fun languageSettingsSyncToCompilerOptions() {
+        val targetApiVersion = LanguageVersion.FIRST_NON_DEPRECATED
+        val targetLanguageVersion = LanguageVersion.LATEST_STABLE
+
         val project = buildProjectWithMPP {
             with(multiplatformExtension) {
                 jvm()
@@ -43,8 +47,8 @@ class LanguageSettingsTests {
 
                 sourceSets.configureEach {
                     it.languageSettings {
-                        apiVersion = "1.7"
-                        languageVersion = "1.8"
+                        apiVersion = targetApiVersion.versionString
+                        languageVersion = targetLanguageVersion.versionString
                     }
                 }
             }
@@ -66,15 +70,17 @@ class LanguageSettingsTests {
         ).forEach { taskName ->
             val compileTask = project.tasks.getByName(taskName) as KotlinCompilationTask<*>
             with(compileTask.compilerOptions) {
-                @Suppress("DEPRECATION")
-                assertEquals(apiVersion.orNull, KotlinVersion.KOTLIN_1_7)
-                assertEquals(languageVersion.orNull, KotlinVersion.KOTLIN_1_8)
+                assertEquals(apiVersion.orNull, targetApiVersion.asKotlinVersion())
+                assertEquals(languageVersion.orNull, targetLanguageVersion.asKotlinVersion())
             }
         }
     }
 
     @Test
     fun compilerOptionsSyncToLanguageSettings() {
+        val targetApiVersion = LanguageVersion.FIRST_NON_DEPRECATED
+        val targetLanguageVersion = LanguageVersion.LATEST_STABLE
+
         val project = buildProjectWithMPP {
             with(multiplatformExtension) {
                 jvm()
@@ -91,9 +97,8 @@ class LanguageSettingsTests {
 
             tasks.withType<KotlinCompilationTask<*>>().all {
                 it.compilerOptions {
-                    @Suppress("DEPRECATION")
-                    apiVersion.set(KotlinVersion.KOTLIN_1_7)
-                    languageVersion.set(KotlinVersion.KOTLIN_1_8)
+                    apiVersion.set(targetApiVersion.asKotlinVersion())
+                    languageVersion.set(targetLanguageVersion.asKotlinVersion())
                 }
             }
         }
@@ -113,8 +118,8 @@ class LanguageSettingsTests {
             "iosArm64Main",
         ).forEach { sourceSetName ->
             with(project.multiplatformExtension.sourceSets.getByName(sourceSetName).languageSettings) {
-                assertEquals("1.7", apiVersion)
-                assertEquals("1.8", languageVersion)
+                assertEquals(targetApiVersion.versionString, apiVersion)
+                assertEquals(targetLanguageVersion.versionString, languageVersion)
             }
         }
     }
@@ -218,6 +223,72 @@ class LanguageSettingsTests {
         }
 
         project.evaluate()
+    }
+
+    /**
+     * See: [org.jetbrains.kotlin.gradle.plugin.sources.LanguageSettingsSetupAction]
+     * FIXME: KT-75216 Update this test to actually verify Language Settings propagation to IDE import when legacy way is deprecated and removed
+     * */
+    @Test
+    fun `language settings setup action test`() {
+        val project = kmpProject {
+            androidLibrary { compileSdk = 31 }
+            with(multiplatformExtension) {
+                androidTarget()
+                jvm().compilations.create("custom")
+            }
+        }
+        project.evaluate()
+
+        val sourceSetToCompileTask = mapOf(
+            "androidDebug" to "compileDebugKotlinAndroid",
+            "androidInstrumentedTest" to "compileDebugAndroidTestKotlinAndroid",
+            "androidInstrumentedTestDebug" to "compileDebugAndroidTestKotlinAndroid",
+            "androidMain" to "compileDebugKotlinAndroid",
+            "androidRelease" to "compileReleaseKotlinAndroid",
+            "androidUnitTest" to "compileDebugUnitTestKotlinAndroid",
+            "androidUnitTestDebug" to "compileDebugUnitTestKotlinAndroid",
+            "androidUnitTestRelease" to "compileReleaseUnitTestKotlinAndroid",
+            "appleMain" to "compileKotlinMetadata",
+            "appleTest" to "compileKotlinMetadata",
+            "commonMain" to "compileKotlinMetadata",
+            "commonTest" to "compileKotlinMetadata",
+            "jsMain" to "compileKotlinJs",
+            "jsTest" to "compileTestKotlinJs",
+            "jvmCustom" to "compileCustomKotlinJvm",
+            "jvmMain" to "compileKotlinJvm",
+            "jvmTest" to "compileTestKotlinJvm",
+            "linuxArm64Main" to "compileKotlinLinuxArm64",
+            "linuxArm64Test" to "compileTestKotlinLinuxArm64",
+            "linuxMain" to "compileKotlinMetadata",
+            "linuxTest" to "compileKotlinMetadata",
+            "linuxX64Main" to "compileKotlinLinuxX64",
+            "linuxX64Test" to "compileTestKotlinLinuxX64",
+            "macosArm64Main" to "compileKotlinMacosArm64",
+            "macosArm64Test" to "compileTestKotlinMacosArm64",
+            "macosMain" to "compileKotlinMetadata",
+            "macosTest" to "compileKotlinMetadata",
+            "macosX64Main" to "compileKotlinMacosX64",
+            "macosX64Test" to "compileTestKotlinMacosX64",
+            "mingwMain" to "compileKotlinMingwX64",
+            "mingwTest" to "compileTestKotlinMingwX64",
+            "mingwX64Main" to "compileKotlinMingwX64",
+            "mingwX64Test" to "compileTestKotlinMingwX64",
+            "nativeMain" to "compileKotlinMetadata",
+            "nativeTest" to "compileKotlinMetadata",
+            "wasmJsMain" to "compileKotlinWasmJs",
+            "wasmJsTest" to "compileTestKotlinWasmJs",
+            "webMain" to "compileKotlinMetadata",
+            "webTest" to "compileKotlinMetadata",
+        )
+        val actualTasks = project.kotlinExtension.sourceSets.associate { sourceSet ->
+            sourceSet.name to (sourceSet.languageSettings as DefaultLanguageSettingsBuilder).compilerPluginOptionsTask.value?.name
+        }
+
+        assertEquals(
+            sourceSetToCompileTask.prettyPrinted.toString(),
+            actualTasks.prettyPrinted.toString(),
+        )
     }
 
     companion object {

@@ -11,3 +11,5 @@ class Sub() : Super() {
     fun foo(r : (() -> Unit)?) {
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionalType, javaType, nullableType, primaryConstructor */

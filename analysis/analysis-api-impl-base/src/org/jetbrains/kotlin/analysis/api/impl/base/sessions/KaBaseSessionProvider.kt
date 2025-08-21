@@ -6,20 +6,26 @@
 package org.jetbrains.kotlin.analysis.api.impl.base.sessions
 
 import com.intellij.openapi.progress.ProgressManager
-import com.intellij.openapi.project.DumbService
-import com.intellij.openapi.project.IndexNotReadyException
 import com.intellij.openapi.project.Project
 import com.intellij.psi.util.PsiUtilCore
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.impl.base.lifetime.KaBaseLifetimeTracker
 import org.jetbrains.kotlin.analysis.api.impl.base.permissions.KaBaseWriteActionStartedChecker
+import org.jetbrains.kotlin.analysis.api.impl.base.restrictedAnalysis.KaBaseRestrictedAnalysisException
 import org.jetbrains.kotlin.analysis.api.platform.KaCachedService
+import org.jetbrains.kotlin.analysis.api.platform.KotlinPlatformSettings
 import org.jetbrains.kotlin.analysis.api.platform.lifetime.KotlinLifetimeTokenFactory
 import org.jetbrains.kotlin.analysis.api.platform.permissions.KaAnalysisPermissionChecker
+import org.jetbrains.kotlin.analysis.api.platform.restrictedAnalysis.KotlinRestrictedAnalysisService
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.isResolvable
 import org.jetbrains.kotlin.analysis.api.session.KaSessionProvider
+import org.jetbrains.kotlin.analysis.api.utils.errors.withKaModuleEntry
 import org.jetbrains.kotlin.psi.KtElement
+import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
+import org.jetbrains.kotlin.utils.exceptions.shouldIjPlatformExceptionBeRethrown
 
 @KaImplementationDetail
 abstract class KaBaseSessionProvider(project: Project) : KaSessionProvider(project) {
@@ -35,11 +41,34 @@ abstract class KaBaseSessionProvider(project: Project) : KaSessionProvider(proje
     }
 
     @KaCachedService
+    private val restrictedAnalysisService by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        KotlinRestrictedAnalysisService.getInstance(project)
+    }
+
+    @KaCachedService
     protected val tokenFactory by lazy(LazyThreadSafetyMode.PUBLICATION) {
         KotlinLifetimeTokenFactory.getInstance(project)
     }
 
+    @KaCachedService
+    private val kotlinPlatformSettings by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        KotlinPlatformSettings.getInstance(project)
+    }
+
     private val writeActionStartedChecker = KaBaseWriteActionStartedChecker(this)
+
+    protected fun checkUseSiteModule(useSiteModule: KaModule) {
+        if (useSiteModule is KaLibraryModule && !kotlinPlatformSettings.allowUseSiteLibraryModuleAnalysis) {
+            throw KaBaseUseSiteLibraryModuleAnalysisException(useSiteModule)
+        }
+
+        requireWithAttachment(
+            useSiteModule.isResolvable,
+            { "`${useSiteModule::class.simpleName}` is not resolvable and thus cannot be a use-site module." },
+        ) {
+            withKaModuleEntry("useSiteModule", useSiteModule)
+        }
+    }
 
     override fun beforeEnteringAnalysis(session: KaSession, useSiteElement: KtElement) {
         // Catch issues with analysis on invalid PSI as early as possible.
@@ -59,16 +88,34 @@ abstract class KaBaseSessionProvider(project: Project) : KaSessionProvider(proje
 
         ProgressManager.checkCanceled()
 
-        /**
-         * The Analysis API is not supposed to work in the dumb mode.
-         * See [KaSession] KDoc for more details.
-         */
-        if (DumbService.isDumb(project)) {
-            throw IndexNotReadyException.create()
+        restrictedAnalysisService?.run {
+            if (isAnalysisRestricted && !isRestrictedAnalysisAllowed) {
+                rejectRestrictedAnalysis()
+            }
         }
 
         lifetimeTracker.beforeEnteringAnalysis(session)
         writeActionStartedChecker.beforeEnteringAnalysis()
+    }
+
+    override fun handleAnalysisException(throwable: Throwable, session: KaSession, useSiteElement: KtElement): Nothing {
+        handleAnalysisException(throwable)
+    }
+
+    override fun handleAnalysisException(throwable: Throwable, session: KaSession, useSiteModule: KaModule): Nothing {
+        handleAnalysisException(throwable)
+    }
+
+    private fun handleAnalysisException(throwable: Throwable): Nothing {
+        if (
+            restrictedAnalysisService?.isAnalysisRestricted == true &&
+            throwable !is Error &&
+            !shouldIjPlatformExceptionBeRethrown(throwable)
+        ) {
+            throw KaBaseRestrictedAnalysisException(cause = throwable)
+        }
+
+        throw throwable
     }
 
     override fun afterLeavingAnalysis(session: KaSession, useSiteElement: KtElement) {
@@ -80,8 +127,12 @@ abstract class KaBaseSessionProvider(project: Project) : KaSessionProvider(proje
     }
 
     private fun afterLeavingAnalysis(session: KaSession) {
-        writeActionStartedChecker.afterLeavingAnalysis()
-        lifetimeTracker.afterLeavingAnalysis(session)
+        try {
+            // `writeActionStartedChecker` might throw an "illegal write action" exception.
+            writeActionStartedChecker.afterLeavingAnalysis()
+        } finally {
+            lifetimeTracker.afterLeavingAnalysis(session)
+        }
     }
 }
 

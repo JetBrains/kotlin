@@ -1,1 +1,1 @@
-class A(var x: Int)/* DeclarationStructureElement *//* ClassDeclarationStructureElement */
+/* RootStructureElement */class A(var x: Int)/* DeclarationStructureElement *//* ClassDeclarationStructureElement */

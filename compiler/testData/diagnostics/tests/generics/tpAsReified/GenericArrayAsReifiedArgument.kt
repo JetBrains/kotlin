@@ -1,6 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
-// LANGUAGE: +ProhibitNonReifiedArraysAsReifiedTypeArguments
 // DIAGNOSTICS: -UNUSED_PARAMETER
 
 inline fun <reified T> foo() {}
@@ -25,3 +24,6 @@ fun <T> bar() {
 fun test(x: Array<String>, y: Array<*>) {
     bar<Int>()
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, inline, nullableType, reified, starProjection, typeAliasDeclaration,
+typeAliasDeclarationWithTypeParameter, typeParameter */

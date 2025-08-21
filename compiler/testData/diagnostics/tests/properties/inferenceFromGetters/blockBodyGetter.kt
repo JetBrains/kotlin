@@ -6,3 +6,5 @@
 }
 
 val y get() = 1
+
+/* GENERATED_FIR_TAGS: getter, integerLiteral, propertyDeclaration */

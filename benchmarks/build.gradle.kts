@@ -9,7 +9,7 @@ plugins {
 val benchmarks_version = "0.4.6-1"
 
 repositories {
-    maven("https://maven.pkg.jetbrains.space/kotlin/p/kotlin/kotlin-dependencies") {
+    maven("https://redirector.kotlinlang.org/maven/kotlin-dependencies") {
         content {
             includeModuleByRegex("org\\.jetbrains\\.kotlinx", "kotlinx-benchmark-runtime.*")
         }
@@ -19,7 +19,7 @@ repositories {
 dependencies {
     api(kotlinStdlib())
     api(project(":compiler:frontend"))
-    api(projectTests(":compiler:tests-common"))
+    api(testFixtures(project(":compiler:tests-common")))
     api(project(":compiler:cli"))
     api(intellijCore())
     api(jpsModel())
@@ -29,6 +29,8 @@ dependencies {
 sourceSets {
     "main" { projectDefault() }
 }
+
+optInToK1Deprecation()
 
 benchmark {
     configurations {

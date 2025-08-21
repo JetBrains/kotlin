@@ -15,6 +15,13 @@ internal actual inline fun String.nativeLastIndexOf(ch: Char, fromIndex: Int): I
 
 /**
  * Returns `true` if this string starts with the specified prefix.
+ *
+ * @param prefix the prefix from which this string should start with.
+ * @param ignoreCase the flag indicating if the string characters should be compared with the [prefix] characters
+ *  in a case-insensitive manner; by default, comparison is case-sensitive.
+ *
+ * @sample samples.text.Strings.startsWithPrefixCaseSensitive
+ * @sample samples.text.Strings.startsWithPrefixCaseInsensitive
  */
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun String.startsWith(prefix: String, ignoreCase: Boolean = false): Boolean {
@@ -26,6 +33,16 @@ public actual fun String.startsWith(prefix: String, ignoreCase: Boolean = false)
 
 /**
  * Returns `true` if a substring of this string starting at the specified offset [startIndex] starts with the specified prefix.
+ *
+ * @param prefix the prefix from which this string's substring beginning at [startIndex] should start with.
+ * @param startIndex the start index (inclusive).
+ * @param ignoreCase the flag indicating if the string characters should be compared with the [prefix] characters
+ *  in a case-insensitive manner; by default, comparison is case-sensitive.
+ *
+ * @throws IndexOutOfBoundsException if [startIndex] is negative or exceeds the length of the string.
+ *
+ * @sample samples.text.Strings.startsWithPrefixAtPositionCaseSensitive
+ * @sample samples.text.Strings.startsWithPrefixAtPositionCaseInsensitive
  */
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun String.startsWith(prefix: String, startIndex: Int, ignoreCase: Boolean = false): Boolean {
@@ -37,6 +54,13 @@ public actual fun String.startsWith(prefix: String, startIndex: Int, ignoreCase:
 
 /**
  * Returns `true` if this string ends with the specified suffix.
+ *
+ * @param suffix the suffix with which this string should end with.
+ * @param ignoreCase the flag indicating if the string characters should be compared with the [suffix] characters
+ *  in a case-insensitive manner; by default, comparison is case-sensitive.
+ *
+ * @sample samples.text.Strings.endsWithSuffixCaseSensitive
+ * @sample samples.text.Strings.endsWithSuffixCaseInsensitive
  */
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun String.endsWith(suffix: String, ignoreCase: Boolean = false): Boolean {

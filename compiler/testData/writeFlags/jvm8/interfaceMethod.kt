@@ -10,7 +10,7 @@ interface Test {
 
 // TESTED_OBJECT_KIND: function
 // TESTED_OBJECTS: Test, test
-// FLAGS: ACC_PUBLIC, ACC_ABSTRACT
+// FLAGS: ACC_PUBLIC
 
 // TESTED_OBJECT_KIND: function
 // TESTED_OBJECTS: Test, testAbstract

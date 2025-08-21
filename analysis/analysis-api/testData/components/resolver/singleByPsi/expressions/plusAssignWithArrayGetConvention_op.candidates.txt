@@ -7,10 +7,12 @@ KtOperationReferenceExpression(153,155): '+='
           receiverType = null
           returnType = kotlin.Int
           symbol = i: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = m["a"]
           isSafeNavigation = false
@@ -26,8 +28,10 @@ KtOperationReferenceExpression(153,155): '+='
               receiverType = null
               returnType = kotlin.Int
               symbol = i: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = /A.plusAssign
       typeArgumentsMapping = {}
     isInBestCandidates = true

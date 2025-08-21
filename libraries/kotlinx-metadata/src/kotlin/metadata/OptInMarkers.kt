@@ -5,8 +5,13 @@
 
 package kotlin.metadata
 
+internal const val CtxReceiversDeprecated =
+    "Context receivers feature is superseded with context parameters. Please use context parameters API instead. See documentation for details."
+
 /**
  * Marks an API related to the Kotlin's [context receivers](https://github.com/Kotlin/KEEP/blob/master/proposals/context-receivers.md) experimental feature.
+ * This feature is superseded by context parameters.
+ * Replace the '-Xcontext-receivers' compiler argument with '-Xcontext-parameters' and migrate to the new syntax.
  *
  * Marked API reflects metadata written by this feature, and can be changed or removed as development continues.
  * Therefore, it does not provide any compatibility guarantees.
@@ -17,3 +22,22 @@ package kotlin.metadata
 )
 @MustBeDocumented
 public annotation class ExperimentalContextReceivers
+
+/**
+ * Marks an API related to the experimental feature "annotations in metadata", enabled by the compiler flag `-Xannotations-in-metadata`
+ * (https://youtrack.jetbrains.com/issue/KT-57919).
+ *
+ * kotlin-metadata-jvm clients are encouraged to update the code that reads and writes Kotlin metadata with the support of new annotations,
+ * before annotations in metadata become enabled by default (https://youtrack.jetbrains.com/issue/KT-75736).
+ *
+ * Note that we have one-version forward compatibility policy on Kotlin/JVM, so kotlin-metadata-jvm 2.2 can read and write metadata of
+ * version 2.3. In case annotations in metadata are enabled by default in 2.3, not handling them via kotlin-metadata-jvm of version 2.2
+ * will likely produce incorrect results on class files compiled by Kotlin 2.3. Clients can use the Kotlin compiler flag
+ * `-Xannotations-in-metadata` to check that annotations in metadata are read/written correctly.
+ */
+@RequiresOptIn(
+    "This API is related to the experimental feature \"annotations in metadata\" (see KT-57919).",
+    RequiresOptIn.Level.WARNING,
+)
+@MustBeDocumented
+public annotation class ExperimentalAnnotationsInMetadata

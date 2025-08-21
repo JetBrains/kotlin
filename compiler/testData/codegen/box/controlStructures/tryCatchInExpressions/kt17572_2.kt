@@ -1,4 +1,4 @@
-
+// FILE: lib.kt
 fun zap(s: String) = s
 
 inline fun tryZap(s1: String, s2: String, fn: (String, String) -> String) =
@@ -7,4 +7,5 @@ inline fun tryZap(s1: String, s2: String, fn: (String, String) -> String) =
                 try { zap(s2) } catch (e: Exception) { "" }
         )
 
+// FILE: main.kt
 fun box(): String = tryZap("O", "K") { a, b -> a + b }

@@ -13,10 +13,11 @@ import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 
 object FirJvmModuleAccessibilityResolvedQualifierChecker : FirResolvedQualifierChecker(MppCheckerKind.Common) {
-    override fun check(expression: FirResolvedQualifier, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(expression: FirResolvedQualifier) {
         val symbol = expression.symbol
         if (symbol is FirClassSymbol<*>) {
-            FirJvmModuleAccessibilityQualifiedAccessChecker.checkClassAccess(context, symbol, expression, reporter)
+            FirJvmModuleAccessibilityQualifiedAccessChecker.checkClassAccess(symbol, expression)
         }
     }
 }

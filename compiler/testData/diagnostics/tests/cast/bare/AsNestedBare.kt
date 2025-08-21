@@ -10,3 +10,6 @@ fun test(tr: Tr): Any {
 fun test1(tr: Tr): Any {
     return tr as <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>G<!>.(<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>G<!>) -> <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>G<!>
 }
+
+/* GENERATED_FIR_TAGS: asExpression, functionDeclaration, functionalType, interfaceDeclaration, nullableType,
+typeParameter, typeWithExtension */

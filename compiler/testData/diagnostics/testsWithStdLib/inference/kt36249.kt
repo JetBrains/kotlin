@@ -17,3 +17,6 @@ class A {
 fun main() {
     <!DEBUG_INFO_EXPRESSION_TYPE("PsiElement?")!>A().inv<!>
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, classReference, functionDeclaration, getter, interfaceDeclaration,
+intersectionType, nullableType, propertyDeclaration, typeConstraint, typeParameter, vararg */

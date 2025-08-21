@@ -242,7 +242,7 @@ class WasmStringSwitchOptimizerLowering(
         val stringConstantToMatchedCase = mutableMapOf<String?, MatchedCase>()
         visitedWhen.branches.forEachIndexed { branchIndex, branch ->
             if (!isElseBranch(branch)) {
-                val conditions = IrWhenUtils.matchConditions(context.irBuiltIns.ororSymbol, branch.condition) ?: return visitedWhen
+                val conditions = IrWhenUtils.matchConditions<IrCall>(context.irBuiltIns.ororSymbol, branch.condition) ?: return visitedWhen
                 if (conditions.isEmpty()) return visitedWhen
 
                 isSimpleWhen = isSimpleWhen && conditions.size == 1
@@ -263,7 +263,7 @@ class WasmStringSwitchOptimizerLowering(
 
         val convertedBlock = context.createIrBuilder(currentScope!!.scope.scopeOwnerSymbol).run {
             irBlock(resultType = visitedWhen.type) {
-                val tempIntVariable = addHashCodeVariable(firstEqCall!!)
+                val tempIntVariable = addHashCodeVariable(firstEqCall)
 
                 val buckets = stringConstantToMatchedCase.keys.groupBy { it.hashCode() }
 

@@ -28,6 +28,7 @@ class KotlinWithJavaCompilationOutput internal constructor(
                 "Please either use 'resourcesDir' to get the resource location or 'KotlinSourceSet.resources' to configure additional " +
                 "resources location for compilation.",
         replaceWith = ReplaceWith("resourcesDir"),
+        level = DeprecationLevel.ERROR,
     )
     override var resourcesDirProvider: Any
         get() = javaSourceSetOutput.resourcesDir!!

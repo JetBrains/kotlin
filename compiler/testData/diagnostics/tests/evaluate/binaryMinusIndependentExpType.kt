@@ -23,3 +23,5 @@ val s1: Byte = <!INTEGER_OPERATOR_RESOLVE_WILL_CHANGE, TYPE_MISMATCH!>1 - 1.toSh
 val s2: Int = 1 - 1.toShort()
 val s3: Long = <!TYPE_MISMATCH!>1 - 1.toShort()<!>
 val s4: Short = <!INTEGER_OPERATOR_RESOLVE_WILL_CHANGE, TYPE_MISMATCH!>1 - 1.toShort()<!>
+
+/* GENERATED_FIR_TAGS: additiveExpression, integerLiteral, propertyDeclaration */

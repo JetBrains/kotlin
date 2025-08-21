@@ -21,3 +21,6 @@ fun main() {
         serialize { it.toString() }
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, classReference, functionDeclaration, functionalType, lambdaLiteral,
+nullableType, typeConstraint, typeParameter, typeWithExtension */

@@ -1,3 +1,5 @@
+// COMPILATION_ERRORS
+
 fun test() {
     []
     [1]

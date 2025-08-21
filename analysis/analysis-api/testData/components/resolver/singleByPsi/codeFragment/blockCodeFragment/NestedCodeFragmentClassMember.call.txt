@@ -4,6 +4,7 @@ KtNameReferenceExpression(156,161): 'Local'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -11,5 +12,6 @@ KtNameReferenceExpression(156,161): 'Local'
           returnType = <local>.Local
           symbol = <constructor>(): <local>.Local
           valueParameters = []
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}

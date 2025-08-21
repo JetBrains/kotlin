@@ -20,15 +20,16 @@ import org.jetbrains.kotlin.fir.types.classLikeLookupTagIfAny
 import org.jetbrains.kotlin.fir.types.coneType
 
 object FirSealedClassConstructorCallChecker : FirQualifiedAccessExpressionChecker(MppCheckerKind.Common) {
-    override fun check(expression: FirQualifiedAccessExpression, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(expression: FirQualifiedAccessExpression) {
         val constructorSymbol = expression.calleeReference.toResolvedConstructorSymbol(discardErrorReference = true) ?: return
 
-        val typeSymbol = constructorSymbol.resolvedReturnTypeRef.coneType.fullyExpandedType(context.session)
+        val typeSymbol = constructorSymbol.resolvedReturnTypeRef.coneType.fullyExpandedType()
             .classLikeLookupTagIfAny?.toRegularClassSymbol(context.session)
             ?: return
 
         if (typeSymbol.modality == Modality.SEALED) {
-            reporter.reportOn(expression.source, FirErrors.SEALED_CLASS_CONSTRUCTOR_CALL, context)
+            reporter.reportOn(expression.source, FirErrors.SEALED_CLASS_CONSTRUCTOR_CALL)
         }
     }
 }

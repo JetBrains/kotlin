@@ -9,7 +9,7 @@ public class IncrementalCompilationIT extends MavenITBase {
     @Test
     public void testSimpleCompile() throws Exception {
         MavenProject project = new MavenProject("kotlinSimple");
-        project.exec("package")
+        project.exec("package", "-X")
                .succeeded()
                .filesExist(kotlinSimpleOutputPaths())
                .compiledKotlin("src/main/kotlin/A.kt", "src/main/kotlin/useA.kt", "src/main/kotlin/Dummy.kt");
@@ -32,7 +32,7 @@ public class IncrementalCompilationIT extends MavenITBase {
         MavenProject project = new MavenProject("kotlinSimple");
         project.exec("package");
 
-        project.exec("package")
+        project.exec("package", "-X")
                .succeeded()
                .filesExist(kotlinSimpleOutputPaths())
                .compiledKotlin();
@@ -53,7 +53,7 @@ public class IncrementalCompilationIT extends MavenITBase {
                .contains("Cannot access 'class A : Any': it is private in file");
 
         MavenTestUtils.replaceFirstInFile(aKt, replacement, original);
-        project.exec("package")
+        project.exec("package", "-X")
                .succeeded()
                .filesExist(kotlinSimpleOutputPaths())
                .compiledKotlin("src/main/kotlin/A.kt", "src/main/kotlin/useA.kt");
@@ -68,7 +68,7 @@ public class IncrementalCompilationIT extends MavenITBase {
         File aKt = project.file("src/main/kotlin/A.kt");
         MavenTestUtils.replaceFirstInFile(aKt, "fun foo", "internal fun foo");
 
-        project.exec("package")
+        project.exec("package", "-X")
                .succeeded()
                .filesExist(kotlinSimpleOutputPaths())
                .compiledKotlin("src/main/kotlin/A.kt", "src/main/kotlin/useA.kt");
@@ -84,7 +84,7 @@ public class IncrementalCompilationIT extends MavenITBase {
         File aKt = project.file("src/main/java/JavaUtil.java");
         MavenTestUtils.replaceFirstInFile(aKt, "CONST = 0", "CONST = 1");
 
-        project.exec("package")
+        project.exec("package", "-X")
                 .succeeded()
                 .filesExist(kotlinSimpleOutputPaths())
                 .compiledKotlin("src/main/kotlin/A.kt");

@@ -15,3 +15,5 @@ open class Base {
 actual class Foo : Base() {
     actual override fun foo(param: Int) {}
 }
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, functionDeclaration, integerLiteral, override */

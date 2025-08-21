@@ -23,3 +23,6 @@ fun test(s: String) {
 
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit")!>x<!>
 }
+
+/* GENERATED_FIR_TAGS: funWithExtensionReceiver, functionDeclaration, functionalType, interfaceDeclaration,
+lambdaLiteral, localProperty, nullableType, propertyDeclaration, typeConstraint, typeParameter */

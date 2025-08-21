@@ -12,3 +12,6 @@ fun main() {
     val func: (DoesNotImplementBase) -> Unit = { }
     <!INFERRED_TYPE_VARIABLE_INTO_EMPTY_INTERSECTION_WARNING!>exampleGenericFunction<!>(func) // expected this to be a compilation error as the T: Base constraint should not be satisfied
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionalType, intersectionType, lambdaLiteral,
+localProperty, propertyDeclaration, typeConstraint, typeParameter */

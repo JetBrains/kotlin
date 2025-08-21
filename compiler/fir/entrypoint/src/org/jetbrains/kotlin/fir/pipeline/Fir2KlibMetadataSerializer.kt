@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.fir.pipeline
 
 import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibSingleFileMetadataSerializer
-import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.fir.FirSession
@@ -20,9 +19,9 @@ import org.jetbrains.kotlin.fir.resolve.providers.FirProvider
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.serialization.FirKLibSerializerExtension
 import org.jetbrains.kotlin.fir.serialization.serializeSingleFirFile
-import org.jetbrains.kotlin.library.metadata.KlibMetadataVersion
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.util.klibMetadataVersionOrDefault
 
 /**
  * Responsible for serializing a FIR file metadata into a protobuf to be later written to a KLIB.
@@ -52,8 +51,7 @@ class Fir2KlibMetadataSerializer(
 
     private val languageVersionSettings = compilerConfiguration.languageVersionSettings
 
-    private val metadataVersion = compilerConfiguration.get(CommonConfigurationKeys.METADATA_VERSION) as? KlibMetadataVersion
-        ?: KlibMetadataVersion.INSTANCE
+    private val metadataVersion = compilerConfiguration.klibMetadataVersionOrDefault()
 
     /**
      * The list of source files whose metadata is to be serialized.
@@ -89,7 +87,6 @@ class Fir2KlibMetadataSerializer(
                 firProvider,
                 metadataVersion,
                 components?.let(::ConstValueProviderImpl),
-                allowErrorTypes = false,
                 exportKDoc,
                 components?.annotationsFromPluginRegistrar?.createAdditionalMetadataProvider(),
             ),

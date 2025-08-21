@@ -32,3 +32,6 @@ fun testOverrides() {
 }
 
 <!NOT_A_MULTIPLATFORM_COMPILATION!>actual<!> typealias TypealiasToKotlinPkg = <!ACTUAL_TYPEALIAS_TO_SPECIAL_ANNOTATION("kotlin.Deprecated")!>kotlin.Deprecated<!>
+
+/* GENERATED_FIR_TAGS: actual, annotationDeclaration, anonymousObjectExpression, classDeclaration, classReference,
+funInterface, functionDeclaration, interfaceDeclaration, override, typeAliasDeclaration */

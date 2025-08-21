@@ -19,8 +19,8 @@ interface KotlinContextInterface {
 <!CONFLICTING_INHERITED_JVM_DECLARATIONS, CONFLICTING_INHERITED_JVM_DECLARATIONS!>interface Intersection : KotlinContextInterface, JavaInterface<!>
 
 interface IntersectionWithOverride : KotlinContextInterface, JavaInterface {
-    <!ACCIDENTAL_OVERRIDE!>context(a: String)
-    override fun foo(b: String): String<!>
+    context(a: String)
+    override <!ACCIDENTAL_OVERRIDE!>fun foo(b: String): String<!>
 
     context(a: String)
     override val b: String

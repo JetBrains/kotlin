@@ -26,3 +26,6 @@ interface E<T> {}
 
 abstract class C0: C(), Int.() -> Double
 abstract class C1<T>: C(), E<T>, Int.(C) -> Double
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionalType, interfaceDeclaration, nullableType,
+operator, override, typeParameter, typeWithExtension */

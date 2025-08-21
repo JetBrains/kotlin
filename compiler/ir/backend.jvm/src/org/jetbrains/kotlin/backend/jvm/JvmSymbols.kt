@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.JvmStandardClassIds.JVM_EXPOSE_BOXED_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.resolve.JVM_INLINE_ANNOTATION_FQ_NAME
@@ -151,9 +152,6 @@ class JvmSymbols(
             addValueParameter("message", irBuiltIns.stringType)
         }
         klass.addFunction("throwNpe", irBuiltIns.unitType, isStatic = true)
-        klass.addFunction("singleArgumentInlineFunction", irBuiltIns.unitType, isStatic = true, isInline = true).apply {
-            addValueParameter("arg", irBuiltIns.functionClass.defaultType)
-        }
 
         klass.declarations.add(irFactory.buildClass {
             name = Name.identifier("Kotlin")
@@ -163,12 +161,16 @@ class JvmSymbols(
         })
     }
 
-    /**
-     * This function is used only with the IR inliner. It is needed to ensure that all local declarations inside lambda will be generated,
-     * because after inline these lambdas can be dropped.
-     */
-    val singleArgumentInlineFunction: IrSimpleFunctionSymbol =
-        intrinsicsClass.functions.single { it.owner.name.asString() == "singleArgumentInlineFunction" }
+    val generatedCodeMarkersInCoroutinesClass: IrClassSymbol = createClass(
+        FqName("kotlin.coroutines.jvm.internal.GeneratedCodeMarkers")
+    ) { klass ->
+        klass.addFunction("checkContinuation", irBuiltIns.unitType, isStatic = true, isInline = true)
+        klass.addFunction("lambdaArgumentsUnspilling", irBuiltIns.unitType, isStatic = true, isInline = true)
+        klass.addFunction("tableswitch", irBuiltIns.unitType, isStatic = true, isInline = true)
+        klass.addFunction("checkResult", irBuiltIns.unitType, isStatic = true, isInline = true)
+        klass.addFunction("checkCOROUTINE_SUSPENDED", irBuiltIns.unitType, isStatic = true, isInline = true)
+        klass.addFunction("unreachable", irBuiltIns.unitType, isStatic = true, isInline = true)
+    }
 
     val checkExpressionValueIsNotNull: IrSimpleFunctionSymbol =
         intrinsicsClass.functions.single { it.owner.name.asString() == "checkExpressionValueIsNotNull" }
@@ -198,7 +200,7 @@ class JvmSymbols(
     val throwIllegalAccessException: IrSimpleFunctionSymbol =
         intrinsicsClass.functions.single { it.owner.name.asString() == "throwIllegalAccessException" }
 
-    val throwUnsupportedOperationException: IrSimpleFunctionSymbol =
+    override val throwUnsupportedOperationException: IrSimpleFunctionSymbol =
         intrinsicsClass.functions.single { it.owner.name.asString() == "throwUnsupportedOperationException" }
 
     override val throwUninitializedPropertyAccessException: IrSimpleFunctionSymbol =
@@ -471,6 +473,14 @@ class JvmSymbols(
             isPrimary = true
         }
     }
+
+    val jvmExposeBoxedAnnotation: IrClassSymbol = createClass(JVM_EXPOSE_BOXED_ANNOTATION_FQ_NAME, ClassKind.ANNOTATION_CLASS).apply {
+        owner.addConstructor {
+            isPrimary = true
+        }
+    }
+
+    val boxingConstructorMarkerClass: IrClassSymbol = createClass(FqName("kotlin.jvm.internal.BoxingConstructorMarker"))
 
     private data class PropertyReferenceKey(
         val mutable: Boolean,

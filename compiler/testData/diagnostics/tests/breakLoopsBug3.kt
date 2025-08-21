@@ -9,3 +9,5 @@ abstract class A : <!CYCLIC_INHERITANCE_HIERARCHY!>C<!>() {
 }
 
 abstract class C : <!CYCLIC_INHERITANCE_HIERARCHY!>A.Nested<!>()
+
+/* GENERATED_FIR_TAGS: classDeclaration, nestedClass */

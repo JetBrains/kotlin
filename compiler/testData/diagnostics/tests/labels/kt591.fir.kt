@@ -10,3 +10,6 @@ fun test() {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: equalityExpression, functionDeclaration, functionalType, ifExpression, integerLiteral,
+lambdaLiteral, localProperty, nullableType, propertyDeclaration, smartcast, thisExpression, typeWithExtension */

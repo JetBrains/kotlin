@@ -1,5 +1,5 @@
 // RUN_PIPELINE_TILL: BACKEND
-// LANGUAGE: -JavaTypeParameterDefaultRepresentationWithDNN +AllowDnnTypeOverridingFlexibleType
+// LANGUAGE: +AllowDnnTypeOverridingFlexibleType
 // ISSUE: KT-58933
 // FILE: J.java
 public interface J<T> {
@@ -14,3 +14,5 @@ class K<T> : J<T> {
     override fun simple(t: T & Any) {}
     override fun box(box: Box<T & Any>) {}
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, dnnType, functionDeclaration, javaType, nullableType, override, typeParameter */

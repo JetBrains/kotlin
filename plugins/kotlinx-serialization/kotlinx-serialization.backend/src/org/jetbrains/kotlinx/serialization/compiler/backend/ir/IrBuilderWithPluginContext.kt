@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType
+import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
 import org.jetbrains.kotlinx.serialization.compiler.extensions.SerializationPluginContext
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.KSERIALIZER_NAME_FQ
 
@@ -127,13 +128,13 @@ interface IrBuilderWithPluginContext {
         }
 
         getter.apply {
-            dispatchReceiverParameter = containingClass.thisReceiver!!.copyTo(this, type = containingClass.defaultType)
+            parameters = listOf(containingClass.thisReceiver!!.copyTo(this, type = containingClass.defaultType))
             body = compilerContext.irBuiltIns.createIrBuilder(symbol, containingClass.startOffset, containingClass.endOffset).irBlockBody {
                 +irReturn(
                     irInvoke(
-                        irGetField(irGet(dispatchReceiverParameter!!), field),
                         compilerContext.lazyValueGetter,
-                        typeHint = targetIrType
+                        irGetField(irGet(dispatchReceiverParameter!!), field),
+                        returnTypeHint = targetIrType
                     )
                 )
             }
@@ -196,36 +197,26 @@ interface IrBuilderWithPluginContext {
     }
 
     fun IrBuilderWithScope.irInvoke(
-        dispatchReceiver: IrExpression? = null,
         callee: IrFunctionSymbol,
-        vararg args: IrExpression,
-        typeHint: IrType? = null
-    ): IrMemberAccessExpression<*> {
-        assert(callee.isBound) { "Symbol $callee expected to be bound" }
-        val returnType = typeHint ?: callee.owner.returnType
-        val call = irCall(callee, type = returnType)
-        call.dispatchReceiver = dispatchReceiver
-        args.forEachIndexed(call::putValueArgument)
+        vararg arguments: IrExpression,
+        returnTypeHint: IrType? = null,
+    ): IrFunctionAccessExpression {
+        val call = irCall(callee, type = returnTypeHint ?: callee.owner.returnType)
+        call.arguments.assignFrom(arguments.toList())
         return call
     }
 
     fun IrBuilderWithScope.irInvoke(
-        dispatchReceiver: IrExpression? = null,
         callee: IrFunctionSymbol,
-        typeArguments: List<IrType?>,
-        valueArguments: List<IrExpression>,
-        returnTypeHint: IrType? = null
-    ): IrMemberAccessExpression<*> =
-        irInvoke(
-            dispatchReceiver,
-            callee,
-            *valueArguments.toTypedArray(),
-            typeHint = returnTypeHint
-        ).also { call ->
-            typeArguments.forEachIndexed { index, type ->
-                call.typeArguments[index] = type
-            }
-        }
+        arguments: List<IrExpression>,
+        typeArguments: List<IrType?> = emptyList(),
+        returnTypeHint: IrType? = null,
+    ): IrFunctionAccessExpression {
+        val call = irCall(callee, type = returnTypeHint ?: callee.owner.returnType)
+        call.arguments.assignFrom(arguments.toList())
+        call.typeArguments.assignFrom(typeArguments)
+        return call
+    }
 
     fun IrBuilderWithScope.createArrayOfExpression(
         arrayElementType: IrType,
@@ -237,7 +228,7 @@ interface IrBuilderWithPluginContext {
         val typeArguments = listOf(arrayElementType)
 
         return irCall(compilerContext.irBuiltIns.arrayOf, arrayType, typeArguments = typeArguments).apply {
-            putValueArgument(0, arg0)
+            arguments[0] = arg0
         }
     }
 
@@ -246,7 +237,7 @@ interface IrBuilderWithPluginContext {
         val arrayType = compilerContext.intArrayOfFunctionSymbol.owner.returnType
         val arg0 = IrVarargImpl(startOffset, endOffset, arrayType, elementType, arrayElements)
         return irCall(compilerContext.intArrayOfFunctionSymbol, arrayType).apply {
-            putValueArgument(0, arg0)
+            arguments[0] = arg0
         }
     }
 
@@ -273,7 +264,7 @@ interface IrBuilderWithPluginContext {
     fun IrBuilderWithScope.irBinOp(name: Name, lhs: IrExpression, rhs: IrExpression): IrExpression {
         val classFqName = (lhs.type as IrSimpleType).classOrNull!!.owner.fqNameWhenAvailable!!
         val symbol = compilerContext.referenceFunctions(CallableId(ClassId.topLevel(classFqName), name)).single()
-        return irInvoke(lhs, symbol, rhs)
+        return irInvoke(symbol, lhs, rhs)
     }
 
     fun IrBuilderWithScope.irGetObject(irObject: IrClass) =
@@ -382,8 +373,8 @@ interface IrBuilderWithPluginContext {
         }
 
         getter.apply {
-            if (dispatchReceiverParameter == null)
-                dispatchReceiverParameter = propertyParent.thisReceiver!!.copyTo(this, type = propertyParent.defaultType)
+            if (parameters.isEmpty())
+                parameters = listOf(propertyParent.thisReceiver!!.copyTo(this, type = propertyParent.defaultType))
             if (body == null)
                 body = compilerContext.irBuiltIns.createIrBuilder(symbol, propertyParent.startOffset, propertyParent.endOffset).irBlockBody {
                         +irReturn(irGetField(irGet(dispatchReceiverParameter!!), field))
@@ -454,7 +445,7 @@ interface IrBuilderWithPluginContext {
             compilerContext.lazyModePublicationEnumEntry.symbol
         )
         val lambdaExpression = containingClass.createLambdaExpression(returnType, initializerBuilder)
-        return irInvoke(null, compilerContext.lazyFunctionSymbol, listOf(returnType), listOf(enumElement, lambdaExpression), lazyIrType)
+        return irInvoke(compilerContext.lazyFunctionSymbol, listOf(enumElement, lambdaExpression), listOf(returnType), lazyIrType)
     }
 
     @OptIn(ObsoleteDescriptorBasedAPI::class)

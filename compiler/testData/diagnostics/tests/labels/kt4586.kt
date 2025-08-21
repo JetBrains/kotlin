@@ -17,3 +17,6 @@ val str = string l@{
         this@l.append(this)
     }
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, functionalType, javaFunction, lambdaLiteral, localProperty,
+propertyDeclaration, stringLiteral, thisExpression, typeWithExtension */

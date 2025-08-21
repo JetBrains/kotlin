@@ -8,3 +8,5 @@ import <!PACKAGE_CANNOT_BE_IMPORTED!>kotlin<!>.<!SYNTAX!><!>
 import<!SYNTAX!><!>
 import <!SYNTAX!>.<!>
 import <!SYNTAX!>*<!>
+
+/* GENERATED_FIR_TAGS:  */

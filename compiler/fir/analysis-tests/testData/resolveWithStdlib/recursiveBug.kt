@@ -10,3 +10,6 @@ fun bar(name: () -> String) {
 
     val name = result.length
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionalType, lambdaLiteral, localProperty,
+primaryConstructor, propertyDeclaration */

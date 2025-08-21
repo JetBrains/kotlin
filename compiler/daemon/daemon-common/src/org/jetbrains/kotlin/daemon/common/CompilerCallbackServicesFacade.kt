@@ -109,6 +109,9 @@ interface CompilerCallbackServicesFacade : Remote {
     @Throws(RemoteException::class)
     fun expectActualTracker_report(expectedFilePath: String, actualFilePath: String)
 
+    @Throws(RemoteException::class)
+    fun expectActualTracker_reportExpectOfLenientStub(expectedFilePath: String)
+
     // ---------------------------------------------------
     // InlineConstTracker
     @Throws(RemoteException::class)

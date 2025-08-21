@@ -10,7 +10,7 @@ import com.google.gson.stream.JsonReader
 import com.google.gson.stream.JsonToken
 import com.google.gson.stream.JsonWriter
 import org.gradle.internal.hash.FileHasher
-import org.jetbrains.kotlin.gradle.targets.js.toHex
+import org.jetbrains.kotlin.gradle.targets.js.internal.toHex
 import java.io.File
 
 /**
@@ -28,7 +28,7 @@ internal open class ProcessedFilesCache(
     val projectDir: File,
     val targetDir: File,
     stateFileName: String,
-    val version: String
+    val version: String,
 ) : AutoCloseable {
     private fun readFrom(json: JsonReader): State? {
         val result = State()
@@ -150,7 +150,7 @@ internal open class ProcessedFilesCache(
 
     data class Element(
         val src: String,
-        val target: String?
+        val target: String?,
     )
 
     private val stateFile = targetDir.resolve(stateFileName)
@@ -175,12 +175,12 @@ internal open class ProcessedFilesCache(
 
     internal fun getOrCompute(
         file: File,
-        compute: () -> File?
+        compute: () -> File?,
     ): File? = getOrComputeKey(file, compute)?.let { File(targetDir, it) }
 
     private fun getOrComputeKey(
         file: File,
-        compute: () -> File?
+        compute: () -> File?,
     ): String? {
         if (!file.exists()) {
             return null

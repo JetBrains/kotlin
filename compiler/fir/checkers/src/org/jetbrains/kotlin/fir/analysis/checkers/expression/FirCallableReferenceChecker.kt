@@ -16,24 +16,27 @@ import org.jetbrains.kotlin.fir.analysis.checkers.classKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.isExtensionMember
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.isLocalMember
-import org.jetbrains.kotlin.fir.analysis.checkers.getContainingClassSymbol
+import org.jetbrains.kotlin.fir.resolve.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.expressions.FirCallableReferenceAccess
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
 import org.jetbrains.kotlin.fir.expressions.unwrapSmartcastExpression
+import org.jetbrains.kotlin.fir.isEnabled
 import org.jetbrains.kotlin.fir.references.resolved
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.hasContextParameters
 import org.jetbrains.kotlin.fir.types.*
 
 object FirCallableReferenceChecker : FirQualifiedAccessExpressionChecker(MppCheckerKind.Common) {
-    override fun check(expression: FirQualifiedAccessExpression, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(expression: FirQualifiedAccessExpression) {
         if (expression !is FirCallableReferenceAccess) return
 
         if (expression.hasQuestionMarkAtLHS && expression.explicitReceiver?.unwrapSmartcastExpression() !is FirResolvedQualifier) {
-            reporter.reportOn(expression.source, FirErrors.SAFE_CALLABLE_REFERENCE_CALL, context)
+            reporter.reportOn(expression.source, FirErrors.SAFE_CALLABLE_REFERENCE_CALL)
         }
 
         // UNRESOLVED_REFERENCE will be reported separately.
@@ -42,45 +45,43 @@ object FirCallableReferenceChecker : FirQualifiedAccessExpressionChecker(MppChec
         val source = reference.source ?: return
         if (source.kind is KtFakeSourceElementKind) return
 
-        checkReferenceIsToAllowedMember(referredSymbol, source, context, reporter)
-        checkCapturedTypeInMutableReference(expression, referredSymbol, source, context, reporter)
+        checkReferenceIsToAllowedMember(referredSymbol, source)
+        checkCapturedTypeInMutableReference(expression, referredSymbol, source)
     }
 
-    // See FE 1.0 [DoubleColonExpressionResolver#checkReferenceIsToAllowedMember]
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+// See FE 1.0 [DoubleColonExpressionResolver#checkReferenceIsToAllowedMember]
     private fun checkReferenceIsToAllowedMember(
         referredSymbol: FirBasedSymbol<*>,
         source: KtSourceElement,
-        context: CheckerContext,
-        reporter: DiagnosticReporter,
     ) {
         if (referredSymbol is FirConstructorSymbol && referredSymbol.getContainingClassSymbol()?.classKind == ClassKind.ANNOTATION_CLASS) {
-            reporter.reportOn(source, FirErrors.CALLABLE_REFERENCE_TO_ANNOTATION_CONSTRUCTOR, context)
+            reporter.reportOn(source, FirErrors.CALLABLE_REFERENCE_TO_ANNOTATION_CONSTRUCTOR)
         }
 
         if (referredSymbol is FirCallableSymbol) {
             if (referredSymbol.isExtensionMember && !referredSymbol.isLocalMember) {
-                reporter.reportOn(source, FirErrors.EXTENSION_IN_CLASS_REFERENCE_NOT_ALLOWED, referredSymbol, context)
+                reporter.reportOn(source, FirErrors.EXTENSION_IN_CLASS_REFERENCE_NOT_ALLOWED, referredSymbol)
             }
 
-            if (referredSymbol.resolvedContextParameters.isNotEmpty() && context.languageVersionSettings.supportsFeature(LanguageFeature.ContextParameters)) {
-                reporter.reportOn(source, FirErrors.CALLABLE_REFERENCE_TO_CONTEXTUAL_DECLARATION, referredSymbol, context)
+            if (referredSymbol.hasContextParameters && LanguageFeature.ContextParameters.isEnabled()) {
+                reporter.reportOn(source, FirErrors.CALLABLE_REFERENCE_TO_CONTEXTUAL_DECLARATION, referredSymbol)
             }
         }
     }
 
+    context(context: CheckerContext, reporter: DiagnosticReporter)
     private fun checkCapturedTypeInMutableReference(
         callableReferenceAccess: FirCallableReferenceAccess,
         referredSymbol: FirBasedSymbol<*>,
         source: KtSourceElement,
-        context: CheckerContext,
-        reporter: DiagnosticReporter
     ) {
         if (!callableReferenceAccess.resolvedType.isKMutableProperty(context.session)) return
         if (referredSymbol !is FirCallableSymbol<*>) return
 
         val returnType = context.returnTypeCalculator.tryCalculateReturnType(referredSymbol)
         if (returnType.coneType.hasCapture()) {
-            reporter.reportOn(source, FirErrors.MUTABLE_PROPERTY_WITH_CAPTURED_TYPE, context)
+            reporter.reportOn(source, FirErrors.MUTABLE_PROPERTY_WITH_CAPTURED_TYPE)
         }
     }
 }

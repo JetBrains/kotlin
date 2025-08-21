@@ -69,7 +69,7 @@ class MessageCollectorAdapter(
         return when (severity) {
             CompilerMessageSeverity.INFO -> BuildMessage.Kind.INFO
             CompilerMessageSeverity.ERROR, CompilerMessageSeverity.EXCEPTION -> BuildMessage.Kind.ERROR
-            CompilerMessageSeverity.WARNING, CompilerMessageSeverity.STRONG_WARNING -> BuildMessage.Kind.WARNING
+            CompilerMessageSeverity.WARNING, CompilerMessageSeverity.STRONG_WARNING, CompilerMessageSeverity.FIXED_WARNING -> BuildMessage.Kind.WARNING
             CompilerMessageSeverity.LOGGING -> null
             else -> throw IllegalArgumentException("Unsupported severity: $severity")
         }

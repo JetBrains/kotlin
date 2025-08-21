@@ -3,3 +3,5 @@
 import A.<!SYNTAX!><!>;
 
 class A
+
+/* GENERATED_FIR_TAGS: classDeclaration */

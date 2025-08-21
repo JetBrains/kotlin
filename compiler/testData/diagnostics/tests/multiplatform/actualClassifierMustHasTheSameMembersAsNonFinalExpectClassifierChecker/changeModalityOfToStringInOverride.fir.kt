@@ -9,5 +9,7 @@ expect open class Foo
 // FILE: jvm.kt
 
 actual open class Foo {
-    final override fun <!ACTUAL_WITHOUT_EXPECT!>toString<!>() = "Foo"
+    final override fun <!EXPECT_ACTUAL_INCOMPATIBLE_MODALITY!>toString<!>() = "Foo"
 }
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, functionDeclaration, override, stringLiteral */

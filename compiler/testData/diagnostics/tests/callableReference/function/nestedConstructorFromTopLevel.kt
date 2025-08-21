@@ -13,3 +13,6 @@ fun main() {
 
     checkSubtype<KFunction0<A.Nested>>(x)
 }
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, funWithExtensionReceiver, functionDeclaration,
+functionalType, infix, localProperty, nestedClass, nullableType, propertyDeclaration, typeParameter, typeWithExtension */

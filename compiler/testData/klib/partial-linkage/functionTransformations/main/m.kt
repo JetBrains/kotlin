@@ -33,12 +33,12 @@ fun box() = abiTest {
     expectSuccess(-58) { firstDefaultValueInFunctionInStableClassImpl2(sci2, 100) }
     expectSuccess(58) { lastDefaultValueInFunctionInStableClassImpl2(sci2, 100) }
 
-    expectFailure(linkage("Function 'removedFirstDefaultValue' can not be called: The call site provides less value arguments (1) than the function requires (2)")) { removedFirstDefaultValueInFunction(1) }
+    expectFailure(linkage("Function 'removedFirstDefaultValue' can not be called: The function has some value parameters for which neither the call site provides an argument, nor do they have a default value: a")) { removedFirstDefaultValueInFunction(1) }
     expectSuccess(100) { removedVarargFirstDefaultValueInFunction(100) } // Default IntArray value disappears. So it contrinutes 0 to the sum.
-    expectFailure(linkage("Function 'removedLastDefaultValue' can not be called: The call site provides less value arguments (1) than the function requires (2)")) { removedLastDefaultValueInFunction(1) }
+    expectFailure(linkage("Function 'removedLastDefaultValue' can not be called: The function has some value parameters for which neither the call site provides an argument, nor do they have a default value: b")) { removedLastDefaultValueInFunction(1) }
     expectSuccess(100) { removedVarargLastDefaultValueInFunction(100) } // Default IntArray value disappears. So it contrinutes 0 to the sum.
-    expectFailure(linkage("Constructor 'RemovedFirstDefaultValueInConstructor.<init>' can not be called: The call site provides less value arguments (1) than the constructor requires (2)")) { removedFirstDefaultValueInConstructor(1) }
-    expectFailure(linkage("Constructor 'RemovedLastDefaultValueInConstructor.<init>' can not be called: The call site provides less value arguments (1) than the constructor requires (2)")) { removedLastDefaultValueInConstructor(1) }
+    expectFailure(linkage("Constructor 'RemovedFirstDefaultValueInConstructor.<init>' can not be called: The constructor has some value parameters for which neither the call site provides an argument, nor do they have a default value: a")) { removedFirstDefaultValueInConstructor(1) }
+    expectFailure(linkage("Constructor 'RemovedLastDefaultValueInConstructor.<init>' can not be called: The constructor has some value parameters for which neither the call site provides an argument, nor do they have a default value: b")) { removedLastDefaultValueInConstructor(1) }
 
     expectSuccess(0) { singleVarargArgument() }
     expectSuccess(1) { singleVarargArgument(1) }
@@ -79,11 +79,8 @@ fun box() = abiTest {
 
     expectSuccess(-1) { suspendToNonSuspendFunction1(1) }
     expectSuccess(-2) { suspendToNonSuspendFunction2(2) }
-    expectSuccess(-3) { suspendToNonSuspendFunction3(3) }
     expectFailure(linkage("Function 'nonSuspendToSuspendFunction' can not be called: Suspend function can be called only from a coroutine or another suspend function")) { nonSuspendToSuspendFunction1(4) }
     expectSuccess(-5) { nonSuspendToSuspendFunction2(5) }
-    expectFailure(linkage("Function 'nonSuspendToSuspendFunction' can not be called: Suspend function can be called only from a coroutine or another suspend function")) { nonSuspendToSuspendFunction3(6) }
-    expectSuccess(-7) { nonSuspendToSuspendFunction4(7) }
 
     expectFailure(linkage("Abstract function 'suspendToNonSuspendFunction' is not implemented in non-abstract class 'InterfaceImpl'")) { suspendToNonSuspendFunctionInInterface(i, 1) }
     expectFailure(linkage("Function 'nonSuspendToSuspendFunction' can not be called: Suspend function can be called only from a coroutine or another suspend function")) { nonSuspendToSuspendFunctionInInterface(i, 2) }
@@ -101,24 +98,6 @@ fun box() = abiTest {
     expectSuccess("OpenClassImpl.nonSuspendToSuspendFunction(12)") { nonSuspendToSuspendFunctionInOpenClassImpl(oci, 12) }
     expectSuccess("OpenClassV2.suspendToNonSuspendFunctionWithDelegation(13) called from OpenClassImpl.suspendToNonSuspendFunctionWithDelegation(13)") { suspendToNonSuspendFunctionWithDelegation(oci, 13) }
     expectFailure(linkage("Function 'nonSuspendToSuspendFunctionWithDelegation' can not be called: Suspend function can be called only from a coroutine or another suspend function")) { nonSuspendToSuspendFunctionWithDelegation(oci, 14) }
-
-    expectSuccess("OpenClassV2.openNonInlineToInlineFunction(1)") { openNonInlineToInlineFunctionInOpenClass(oc, 1) }
-    expectSuccess("OpenClassV2.openNonInlineToInlineFunctionWithDelegation(2)") { openNonInlineToInlineFunctionWithDelegationInOpenClass(oc, 2) }
-    expectSuccess("OpenClassV2.newInlineFunction1(3)") { newInlineFunction1InOpenClass(oc, 3) }
-    expectSuccess("OpenClassV2.newInlineFunction2(4)") { newInlineFunction2InOpenClass(oc, 4) }
-    expectSuccess( // TODO: this should be fixed in JS, KT-56762
-        if (testMode.isJs) "OpenClassImpl.newNonInlineFunction(5)" else "OpenClassV2.newNonInlineFunction(5)"
-    ) { newNonInlineFunctionInOpenClass(oc, 5) }
-    expectSuccess("OpenClassImpl.openNonInlineToInlineFunction(6)") { openNonInlineToInlineFunctionInOpenClassImpl(oci, 6) }
-    expectSuccess("OpenClassV2.openNonInlineToInlineFunctionWithDelegation(7) called from OpenClassImpl.openNonInlineToInlineFunctionWithDelegation(7)") { openNonInlineToInlineFunctionWithDelegationInOpenClassImpl(oci, 7) }
-    expectSuccess("OpenClassImpl.newInlineFunction1(8)") { newInlineFunction1InOpenClassImpl(oci, 8) }
-    expectSuccess("OpenClassImpl.newInlineFunction2(9)") { newInlineFunction2InOpenClassImpl(oci, 9) }
-    expectSuccess("OpenClassImpl.newNonInlineFunction(10)") { newNonInlineFunctionInOpenClassImpl(oci, 10) }
-
-    expectSuccess("Functions.inlineLambdaToNoinlineLambda(3) { 6 }") { inlineLambdaToNoinlineLambda(3) }
-    expectFailure(linkage("Illegal non-local return: The return target is function 'inlineLambdaToNoinlineLambda' while only the following return targets are allowed: lambda in function 'inlineLambdaToNoinlineLambda'")) { inlineLambdaToNoinlineLambda(-3) }
-    expectSuccess("Functions.inlineLambdaToCrossinlineLambda(5) { 10 }") { inlineLambdaToCrossinlineLambda(5) }
-    expectFailure(linkage("Illegal non-local return: The return target is function 'inlineLambdaToCrossinlineLambda' while only the following return targets are allowed: lambda in function 'inlineLambdaToCrossinlineLambda'")) { inlineLambdaToCrossinlineLambda(-5) }
 
     expectSuccess("success") { nonLocalReturnFromArrayConstructorLambda("success", "failure") }
     expectSuccess(100) { nonLocalReturnFromIntArrayConstructorLambda(100, -100) }

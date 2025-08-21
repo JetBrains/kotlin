@@ -1,3 +1,5 @@
+// COMPILATION_ERRORS
+
 fun test() {
   a !is B
   a !in B

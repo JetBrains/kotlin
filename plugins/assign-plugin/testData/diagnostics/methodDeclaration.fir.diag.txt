@@ -1,12 +1,12 @@
-/methodDeclaration.fir.kt:(119,125): error:
+/methodDeclaration.fir.kt:(119,125): error: Function 'assign' used for '=' overload should return 'Unit'
 
-/methodDeclaration.fir.kt:(206,212): error:
+/methodDeclaration.fir.kt:(206,212): error: Function 'assign' used for '=' overload should return 'Unit'
 
-/methodDeclaration.fir.kt:(328,334): error:
+/methodDeclaration.fir.kt:(328,334): error: Function 'assign' used for '=' overload should return 'Unit'
 
-/methodDeclaration.fir.kt:(572,573): error:
+/methodDeclaration.fir.kt:(572,573): error: Function 'assign' used for '=' overload should return 'Unit'
 
-/methodDeclaration.fir.kt:(594,595): error:
+/methodDeclaration.fir.kt:(594,595): error: Function 'assign' used for '=' overload should return 'Unit'
 
 /methodDeclaration.fir.kt:(870,875): error: 'val' cannot be reassigned.
 

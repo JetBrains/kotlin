@@ -39,3 +39,6 @@ object Test3 {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>result<!>
     }
 }
+
+/* GENERATED_FIR_TAGS: funInterface, functionDeclaration, functionalType, integerLiteral, interfaceDeclaration,
+localProperty, nestedClass, objectDeclaration, propertyDeclaration, samConversion, stringLiteral */

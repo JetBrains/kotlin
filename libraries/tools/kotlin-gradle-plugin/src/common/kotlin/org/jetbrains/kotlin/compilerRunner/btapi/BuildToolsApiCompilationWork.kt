@@ -44,7 +44,6 @@ internal abstract class BuildToolsApiCompilationWork @Inject constructor(
         val compilerWorkArguments: Property<GradleKotlinCompilerWorkArguments>
         val taskOutputsToRestore: ListProperty<File>
         val snapshotsDir: DirectoryProperty
-        val buildDir: DirectoryProperty
         val metricsReporter: Property<BuildMetricsReporter<GradleBuildTime, GradleBuildPerformanceMetric>>
     }
 
@@ -54,7 +53,7 @@ internal abstract class BuildToolsApiCompilationWork @Inject constructor(
     private val taskPath
         get() = workArguments.taskPath
 
-    private val log: KotlinLogger = getTaskLogger(taskPath, LOGGER_PREFIX, BuildToolsApiCompilationWork::class.java.simpleName)
+    private val log: KotlinLogger = getTaskLogger(taskPath, LOGGER_PREFIX, BuildToolsApiCompilationWork::class.java.simpleName, true)
 
     private fun performCompilation(): CompilationResult {
         val executionStrategy = workArguments.compilerExecutionSettings.strategy
@@ -86,11 +85,13 @@ internal abstract class BuildToolsApiCompilationWork @Inject constructor(
                 val classpathSnapshotsConfig = jvmCompilationConfig.makeClasspathSnapshotBasedIncrementalCompilationConfiguration()
                     .setRootProjectDir(icEnv.rootProjectDir)
                     .setBuildDir(icEnv.buildDir)
-                    .usePreciseJavaTracking(icEnv.usePreciseJavaTracking)
+                    .usePreciseJavaTracking(icEnv.icFeatures.usePreciseJavaTracking)
                     .usePreciseCompilationResultsBackup(icEnv.icFeatures.preciseCompilationResultsBackup)
                     .keepIncrementalCompilationCachesInMemory(icEnv.icFeatures.keepIncrementalCompilationCachesInMemory)
                     .useOutputDirs(workArguments.outputFiles)
                     .forceNonIncrementalMode(classpathChanges !is ClasspathChanges.ClasspathSnapshotEnabled.IncrementalRun)
+                    .useFirRunner(icEnv.useJvmFirRunner)
+
                 val classpathSnapshotsParameters = ClasspathSnapshotBasedIncrementalCompilationApproachParameters(
                     classpathChanges.classpathSnapshotFiles.currentClasspathEntrySnapshotFiles,
                     classpathChanges.classpathSnapshotFiles.shrunkPreviousClasspathSnapshotFile,
@@ -125,7 +126,6 @@ internal abstract class BuildToolsApiCompilationWork @Inject constructor(
     private fun initializeBackup(): TaskOutputsBackup? = if (parameters.snapshotsDir.isPresent) {
         TaskOutputsBackup(
             fileSystemOperations,
-            parameters.buildDir,
             parameters.snapshotsDir,
             parameters.taskOutputsToRestore.get(),
             log,

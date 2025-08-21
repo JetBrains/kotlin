@@ -28,3 +28,6 @@ interface UserContext: HasResolver {
 fun putUserDetails() {
     put("user_id", userId)
 }
+
+/* GENERATED_FIR_TAGS: funWithExtensionReceiver, functionDeclaration, functionDeclarationWithContext, functionalType,
+interfaceDeclaration, lambdaLiteral, nullableType, propertyDeclaration, stringLiteral, typeWithExtension */

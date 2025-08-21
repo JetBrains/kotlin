@@ -1,3 +1,5 @@
+// COMPILATION_ERRORS
+
 /*
  * Copyright JetBrains s.r.o.
  */

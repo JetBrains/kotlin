@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.bitcode.CompileToBitcodeExtension
 import java.net.URI
 import javax.inject.Inject
 
-@Suppress("UnstableApiUsage")
 open class RuntimeTestingPlugin : Plugin<Project> {
     override fun apply(target: Project): Unit = with(target) {
         val extension = extensions.create(GOOGLE_TEST_EXTENSION_NAME, GoogleTestExtension::class.java)
@@ -31,7 +30,7 @@ open class RuntimeTestingPlugin : Plugin<Project> {
 
         val googleTestRoot = extension.sourceDirectory
 
-        createBitcodeTasks(project.objects.directoryProperty().value(googleTestRoot), listOf(downloadTask))
+        createBitcodeTasks(project.objects.directoryProperty().value(googleTestRoot), downloadTask)
     }
 
     private fun Project.registerDownloadTask(extension: GoogleTestExtension): TaskProvider<GitDownloadTask> =
@@ -49,7 +48,7 @@ open class RuntimeTestingPlugin : Plugin<Project> {
 
     private fun Project.createBitcodeTasks(
             googleTestRoot: DirectoryProperty,
-            dependencies: Iterable<TaskProvider<*>>
+            downloadTask: TaskProvider<GitDownloadTask>
     ) {
         pluginManager.withPlugin("compile-to-bitcode") {
             val bitcodeExtension = project.extensions.getByType<CompileToBitcodeExtension>()
@@ -68,11 +67,12 @@ open class RuntimeTestingPlugin : Plugin<Project> {
                             // Fix Gradle Configuration Cache: support this task being configured before googletest sources are actually downloaded.
                             compileTask.configure {
                                 inputFiles.setFrom(googleTestRoot.dir("googletest/src/gtest-all.cc"))
+                                dependsOn(downloadTask)
                             }
                         }
                     }
                     compilerArgs.set(listOf("-std=c++17", "-O2"))
-                    this.dependencies.addAll(dependencies)
+                    this.dependencies.add(downloadTask)
                 }
 
                 module("googlemock") {
@@ -89,11 +89,12 @@ open class RuntimeTestingPlugin : Plugin<Project> {
                             // Fix Gradle Configuration Cache: support this task being configured before googletest sources are actually downloaded.
                             compileTask.configure {
                                 inputFiles.setFrom(googleTestRoot.dir("googlemock/src/gmock-all.cc"))
+                                dependsOn(downloadTask)
                             }
                         }
                     }
                     compilerArgs.set(listOf("-std=c++17", "-O2"))
-                    this.dependencies.addAll(dependencies)
+                    this.dependencies.add(downloadTask)
                 }
             }
         }

@@ -1,6 +1,5 @@
 // LANGUAGE: +NoSourceCodeInNotNullAssertionExceptions
 // TARGET_BACKEND: JVM
-// IGNORE_BACKEND: JVM
 // FILE: test.kt
 fun f(x: String) = "Fail 1"
 

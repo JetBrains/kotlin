@@ -12,3 +12,6 @@ fun case(): String {
     }
     return "NOK"
 }
+
+/* GENERATED_FIR_TAGS: assignment, disjunctionExpression, functionDeclaration, localProperty, propertyDeclaration,
+stringLiteral, tryExpression */

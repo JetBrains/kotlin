@@ -1,49 +1,49 @@
 @R|lowlevel/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|lowlevel/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|lowlevel/Anno|(LAZY_EXPRESSION)  kotlin/Int>>
-  context -> FirPropertySymbol lowlevel/implicitType
+  context -> FirRegularPropertySymbol lowlevel/implicitType
   anchor -> [FirNamedFunctionSymbol lowlevel/explicitType]
 
 @R|lowlevel/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|lowlevel/Anno|(LAZY_EXPRESSION)  kotlin/Int>
-  context -> FirPropertySymbol lowlevel/implicitType
+  context -> FirRegularPropertySymbol lowlevel/implicitType
   anchor -> [FirNamedFunctionSymbol lowlevel/explicitType]
 
 @R|lowlevel/Anno|(LAZY_EXPRESSION)  kotlin/Int
-  context -> FirPropertySymbol lowlevel/implicitType
+  context -> FirRegularPropertySymbol lowlevel/implicitType
   anchor -> [FirNamedFunctionSymbol lowlevel/explicitType]
 
 @R|lowlevel/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|lowlevel/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|lowlevel/Anno|(LAZY_EXPRESSION)  kotlin/Int>>
-  context -> FirPropertyAccessorSymbol special/accessor from FirPropertySymbol lowlevel/implicitType
+  context -> FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol lowlevel/implicitType
   anchor -> [FirNamedFunctionSymbol lowlevel/explicitType]
 
 @R|lowlevel/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|lowlevel/Anno|(LAZY_EXPRESSION)  kotlin/Int>
-  context -> FirPropertyAccessorSymbol special/accessor from FirPropertySymbol lowlevel/implicitType
+  context -> FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol lowlevel/implicitType
   anchor -> [FirNamedFunctionSymbol lowlevel/explicitType]
 
 @R|lowlevel/Anno|(LAZY_EXPRESSION)  kotlin/Int
-  context -> FirPropertyAccessorSymbol special/accessor from FirPropertySymbol lowlevel/implicitType
+  context -> FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol lowlevel/implicitType
   anchor -> [FirNamedFunctionSymbol lowlevel/explicitType]
 
 @R|lowlevel/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|lowlevel/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|lowlevel/Anno|(LAZY_EXPRESSION)  kotlin/Int>>
-  context -> FirValueParameterSymbol <local>/value from FirPropertyAccessorSymbol special/accessor from FirPropertySymbol lowlevel/implicitType
+  context -> FirValueParameterSymbol <local>/value from FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol lowlevel/implicitType
   anchor -> [FirNamedFunctionSymbol lowlevel/explicitType]
 
 @R|lowlevel/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|lowlevel/Anno|(LAZY_EXPRESSION)  kotlin/Int>
-  context -> FirValueParameterSymbol <local>/value from FirPropertyAccessorSymbol special/accessor from FirPropertySymbol lowlevel/implicitType
+  context -> FirValueParameterSymbol <local>/value from FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol lowlevel/implicitType
   anchor -> [FirNamedFunctionSymbol lowlevel/explicitType]
 
 @R|lowlevel/Anno|(LAZY_EXPRESSION)  kotlin/Int
-  context -> FirValueParameterSymbol <local>/value from FirPropertyAccessorSymbol special/accessor from FirPropertySymbol lowlevel/implicitType
+  context -> FirValueParameterSymbol <local>/value from FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol lowlevel/implicitType
   anchor -> [FirNamedFunctionSymbol lowlevel/explicitType]
 
 @R|lowlevel/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|lowlevel/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|lowlevel/Anno|(LAZY_EXPRESSION)  kotlin/Int>>
-  context -> FirBackingFieldSymbol <local>/field from FirPropertySymbol lowlevel/implicitType
+  context -> FirBackingFieldSymbol <local>/field from FirRegularPropertySymbol lowlevel/implicitType
   anchor -> [FirNamedFunctionSymbol lowlevel/explicitType]
 
 @R|lowlevel/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|lowlevel/Anno|(LAZY_EXPRESSION)  kotlin/Int>
-  context -> FirBackingFieldSymbol <local>/field from FirPropertySymbol lowlevel/implicitType
+  context -> FirBackingFieldSymbol <local>/field from FirRegularPropertySymbol lowlevel/implicitType
   anchor -> [FirNamedFunctionSymbol lowlevel/explicitType]
 
 @R|lowlevel/Anno|(LAZY_EXPRESSION)  kotlin/Int
-  context -> FirBackingFieldSymbol <local>/field from FirPropertySymbol lowlevel/implicitType
+  context -> FirBackingFieldSymbol <local>/field from FirRegularPropertySymbol lowlevel/implicitType
   anchor -> [FirNamedFunctionSymbol lowlevel/explicitType]
 
 FILE: [ResolvedTo(IMPORTS)] implicitTypeScript.kts
@@ -51,7 +51,7 @@ FILE: [ResolvedTo(IMPORTS)] implicitTypeScript.kts
         [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingScriptKey=FirScriptSymbol lowlevel.<script-implicitTypeScript.kts>] annotation class Anno : R|kotlin/Annotation| {
+        @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingScriptKey=FirScriptSymbol lowlevel.<script-implicitTypeScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=lowlevel/Anno.position] position: String): R|lowlevel/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -61,12 +61,12 @@ FILE: [ResolvedTo(IMPORTS)] implicitTypeScript.kts
 
         }
 
-        public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
+        public? final? const [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val prop: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final [ResolvedTo(CONTRACTS)] fun explicitType(): R|@R|lowlevel/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|lowlevel/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|lowlevel/Anno|(LAZY_EXPRESSION)  kotlin/Int>>| { LAZY_BLOCK }
+        public final [ResolvedTo(CONTRACTS)] [ScriptTopLevelDeclaration=true] fun explicitType(): R|@R|lowlevel/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|lowlevel/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|lowlevel/Anno|(LAZY_EXPRESSION)  kotlin/Int>>| { LAZY_BLOCK }
 
-        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [PostponedSymbolsForAnnotationResolutionKey=[FirNamedFunctionSymbol lowlevel/explicitType]] var implicitType: R|@R|lowlevel/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|lowlevel/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|lowlevel/Anno|(LAZY_EXPRESSION)  kotlin/Int>>|
+        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [PostponedSymbolsForAnnotationResolutionKey=[FirNamedFunctionSymbol lowlevel/explicitType], ScriptTopLevelDeclaration=true] var implicitType: R|@R|lowlevel/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|lowlevel/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|lowlevel/Anno|(LAZY_EXPRESSION)  kotlin/Int>>|
             public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|@R|lowlevel/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|lowlevel/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|lowlevel/Anno|(LAZY_EXPRESSION)  kotlin/Int>>| {
                 ^ R|lowlevel/explicitType|()
             }

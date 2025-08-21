@@ -2,6 +2,7 @@
  * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
+@file:Suppress("DEPRECATION")
 
 package org.jetbrains.kotlin.gradle.targets.native.tasks.artifact
 
@@ -20,7 +21,6 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.gradle.utils.maybeCreateResolvable
 import org.jetbrains.kotlin.gradle.utils.named
-import org.jetbrains.kotlin.gradle.utils.setAttribute
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.target.presetName
 
@@ -58,12 +58,15 @@ abstract class KotlinNativeArtifactConfigImpl(artifactName: String) : KotlinArti
         toolOptionsConfigure = configure::execute
     }
 
-    @Suppress("DEPRECATION")
+    @Suppress("DEPRECATION_ERROR")
     internal var kotlinOptionsFn: KotlinCommonToolOptions.() -> Unit = {}
 
-    @Deprecated("Please migrate to toolOptions DSL. More details are here: https://kotl.in/u1r8ln")
+    @Deprecated(
+        message = KOTLIN_OPTIONS_AS_TOOLS_DEPRECATION_MESSAGE,
+        level = DeprecationLevel.ERROR,
+    )
     override fun kotlinOptions(
-        @Suppress("DEPRECATION") fn: Action<KotlinCommonToolOptions>
+        @Suppress("DEPRECATION_ERROR") fn: Action<KotlinCommonToolOptions>
     ) {
         kotlinOptionsFn = fn::execute
     }
@@ -104,9 +107,9 @@ internal fun Project.registerExportDependencies(target: KonanTarget, artifactNam
 }
 
 private fun Configuration.configureAttributesFor(project: Project, target: KonanTarget) = with(project) {
-    attributes.setAttribute(KotlinPlatformType.attribute, KotlinPlatformType.native)
-    attributes.setAttribute(KotlinNativeTarget.konanTargetAttribute, target.name)
-    attributes.setAttribute(Usage.USAGE_ATTRIBUTE, project.objects.named(KotlinUsages.KOTLIN_API))
+    attributes.attribute(KotlinPlatformType.attribute, KotlinPlatformType.native)
+    attributes.attribute(KotlinNativeTarget.konanTargetAttribute, target.name)
+    attributes.attribute(Usage.USAGE_ATTRIBUTE, project.objects.named(KotlinUsages.KOTLIN_API))
     if (kotlinPropertiesProvider.useNonPackedKlibs) {
         KlibPackaging.setAttributeTo(project, attributes, false)
     }

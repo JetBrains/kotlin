@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.delegatedWrapperData
 import org.jetbrains.kotlin.fir.resolve.scope
 import org.jetbrains.kotlin.fir.scopes.CallableCopyTypeCalculator
+import org.jetbrains.kotlin.fir.scopes.ScopeFunctionRequiresPrewarm
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.scopes.processAllFunctions
 import org.jetbrains.kotlin.fir.scopes.processOverriddenFunctions
@@ -23,27 +24,28 @@ import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.fir.unwrapFakeOverrides
 
 object FirImplementationByDelegationWithDifferentGenericSignatureChecker : FirClassChecker(MppCheckerKind.Platform) {
-    override fun check(declaration: FirClass, context: CheckerContext, reporter: DiagnosticReporter) {
-        val classScope = declaration.unsubstitutedScope(context)
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirClass) {
+        val classScope = declaration.unsubstitutedScope()
         classScope.processAllFunctions { symbol ->
             val delegatedWrapperData = symbol.delegatedWrapperData ?: return@processAllFunctions
             val wrappedGenericFunction = delegatedWrapperData.wrapped
             if (wrappedGenericFunction.typeParameters.isEmpty()) return@processAllFunctions
-            val fieldScope = delegatedWrapperData.delegateField.symbol.resolvedInitializer?.resolvedType?.scope(
+            val fieldScope = delegatedWrapperData.delegateFieldSymbol.resolvedInitializer?.resolvedType?.scope(
                 context.session, context.scopeSession, CallableCopyTypeCalculator.DoNothing, null
             ) ?: return@processAllFunctions
             var reported = false
             val genericSymbolToCompare = wrappedGenericFunction.symbol.unwrapFakeOverrides()
             fieldScope.processFunctionsByName(symbol.name) { clashedSymbol ->
                 if (reported || clashedSymbol.typeParameterSymbols.isNotEmpty()) return@processFunctionsByName
+                @OptIn(ScopeFunctionRequiresPrewarm::class)
                 fieldScope.processOverriddenFunctions(clashedSymbol) { overriddenSymbol ->
                     if (overriddenSymbol.unwrapFakeOverrides() === genericSymbolToCompare) {
                         reporter.reportOn(
-                            delegatedWrapperData.delegateField.returnTypeRef.source,
+                            delegatedWrapperData.delegateFieldSymbol.resolvedReturnTypeRef.source,
                             FirJvmErrors.IMPLEMENTATION_BY_DELEGATION_WITH_DIFFERENT_GENERIC_SIGNATURE,
                             wrappedGenericFunction.symbol,
-                            clashedSymbol,
-                            context
+                            clashedSymbol
                         )
                         reported = true
                         ProcessorAction.STOP

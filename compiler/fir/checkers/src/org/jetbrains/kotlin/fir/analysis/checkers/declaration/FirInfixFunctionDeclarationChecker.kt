@@ -10,29 +10,27 @@ import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
-import org.jetbrains.kotlin.fir.declarations.FirClass
-import org.jetbrains.kotlin.fir.declarations.FirDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
+import org.jetbrains.kotlin.fir.declarations.FirFunction
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 
-object FirInfixFunctionDeclarationChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
-    override fun check(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
-        if ((declaration as? FirMemberDeclaration)?.status?.isInfix != true) return
-        val simpleFunction = declaration as FirSimpleFunction
+object FirInfixFunctionDeclarationChecker : FirFunctionChecker(MppCheckerKind.Common) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirFunction) {
+        if (!declaration.status.isInfix) return
         if (
-            (simpleFunction.valueParameters.size != 1) ||
-            !hasExtensionOrDispatchReceiver(simpleFunction, context) ||
-            simpleFunction.valueParameters.single().isVararg
+            (declaration.valueParameters.size != 1) ||
+            !hasExtensionOrDispatchReceiver(declaration) ||
+            declaration.valueParameters.single().isVararg
         ) {
-            reporter.reportOn(declaration.source, FirErrors.INAPPLICABLE_INFIX_MODIFIER, context)
+            reporter.reportOn(declaration.source, FirErrors.INAPPLICABLE_INFIX_MODIFIER)
         }
     }
 
+    context(context: CheckerContext)
     private fun hasExtensionOrDispatchReceiver(
-        function: FirSimpleFunction,
-        context: CheckerContext
+        function: FirFunction
     ): Boolean {
         if (function.receiverParameter != null) return true
-        return context.containingDeclarations.lastOrNull() is FirClass
+        return context.containingDeclarations.lastOrNull() is FirClassSymbol
     }
 }

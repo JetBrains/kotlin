@@ -9,13 +9,12 @@ KaSyntheticJavaPropertySymbol:
     callableId: /Derived.getSomething
     compilerVisibility: Public
     contextReceivers: []
-    hasBody: true
     hasStableParameterNames: true
     isActual: false
-    isDefault: false
     isExpect: false
     isExtension: false
     isInline: false
+    isNotDefault: true
     isOverride: true
     location: PROPERTY
     modality: OPEN
@@ -64,13 +63,12 @@ KaSyntheticJavaPropertySymbol:
     callableId: /Derived.setSomething
     compilerVisibility: Public
     contextReceivers: []
-    hasBody: true
     hasStableParameterNames: true
     isActual: false
-    isDefault: false
     isExpect: false
     isExtension: false
     isInline: false
+    isNotDefault: true
     isOverride: true
     location: PROPERTY
     modality: OPEN

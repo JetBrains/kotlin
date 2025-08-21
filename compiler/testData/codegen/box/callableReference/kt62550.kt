@@ -4,6 +4,7 @@
 // DUMP_IR
 // FIR_IDENTICAL
 // LAMBDAS: CLASS
+// LANGUAGE: -ResolveTopLevelLambdasAsSyntheticCallArgument
 
 // FILE: Helper.java
 // Using Java to avoid different IR text dumps for K1 and K2

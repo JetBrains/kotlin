@@ -8,3 +8,5 @@ sealed class A {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, nestedClass, sealed, whenExpression, whenWithSubject */

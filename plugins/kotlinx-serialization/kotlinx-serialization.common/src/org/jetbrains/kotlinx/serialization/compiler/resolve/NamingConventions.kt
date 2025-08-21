@@ -46,6 +46,9 @@ object SerializationAnnotations {
 
     val namedCompanionFqName = FqName("kotlinx.serialization.internal.NamedCompanion")
 
+    val protoNumberAnnotationFqName = FqName("kotlinx.serialization.protobuf.ProtoNumber")
+    val protoOneOfAnnotationFqName = FqName("kotlinx.serialization.protobuf.ProtoOneOf")
+
     val serializableAnnotationClassId = ClassId.topLevel(serializableAnnotationFqName)
     val serializerAnnotationClassId = ClassId.topLevel(serializerAnnotationFqName)
     val serialNameAnnotationClassId = ClassId.topLevel(serialNameAnnotationFqName)
@@ -62,6 +65,9 @@ object SerializationAnnotations {
     val polymorphicClassId = ClassId.topLevel(polymorphicFqName)
     val additionalSerializersClassId = ClassId.topLevel(additionalSerializersFqName)
     val namedCompanionClassId = ClassId.topLevel(namedCompanionFqName)
+
+    val protoNumberAnnotationClassId = ClassId.topLevel(protoNumberAnnotationFqName)
+    val protoOneOfAnnotationClassId = ClassId.topLevel(protoOneOfAnnotationFqName)
 }
 
 object SerialEntityNames {
@@ -246,6 +252,7 @@ fun findStandardKotlinTypeSerializerName(typeName: String?): String? {
         "kotlin.DoubleArray" -> "DoubleArraySerializer"
         "kotlin.BooleanArray" -> "BooleanArraySerializer"
         "kotlin.time.Duration" -> "DurationSerializer"
+        "kotlin.time.Instant" -> "InstantSerializer"
         "kotlin.uuid.Uuid" -> "UuidSerializer"
         "java.lang.Boolean" -> "BooleanSerializer"
         "java.lang.Byte" -> "ByteSerializer"

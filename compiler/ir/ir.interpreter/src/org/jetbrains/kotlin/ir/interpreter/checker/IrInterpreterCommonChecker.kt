@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.interpreter.*
 import org.jetbrains.kotlin.ir.interpreter.preprocessor.IrInterpreterKCallableNamePreprocessor.Companion.isEnumName
-import org.jetbrains.kotlin.ir.interpreter.preprocessor.IrInterpreterKCallableNamePreprocessor.Companion.isKCallableNameCall
+import org.jetbrains.kotlin.ir.interpreter.preprocessor.IrInterpreterKCallableNamePreprocessor.Companion.isInterpretableKCallableNameCall
 import org.jetbrains.kotlin.ir.types.classifierOrNull
 import org.jetbrains.kotlin.ir.types.isAny
 import org.jetbrains.kotlin.ir.types.isPrimitiveType
@@ -61,7 +61,7 @@ class IrInterpreterCommonChecker : IrInterpreterChecker() {
         return when {
             expression.dispatchReceiver.isAccessToNotNullableObject() && expression.isGetterToConstVal() -> visitBodyIfNeeded(owner, data)
             !data.mode.canEvaluateExpression(expression) || !data.mode.canEvaluateFunction(owner) -> false
-            expression.isKCallableNameCall(data.irBuiltIns) || expression.isEnumName() -> true
+            expression.isInterpretableKCallableNameCall(data.irBuiltIns) || expression.isEnumName() -> true
             else -> expression.visitValueArguments(data) && visitBodyIfNeeded(owner, data)
         }
     }
@@ -299,5 +299,22 @@ class IrInterpreterCommonChecker : IrInterpreterChecker() {
 
     override fun visitClassReference(expression: IrClassReference, data: IrInterpreterCheckerData): Boolean {
         return data.mode.canEvaluateClassReference(expression)
+    }
+
+    override fun visitRichFunctionReference(expression: IrRichFunctionReference, data: IrInterpreterCheckerData): Boolean {
+        if (!data.mode.canEvaluateRichFunctionReference(expression)) return false
+        val body = expression.invokeFunction.body ?: return false
+        val functionIsComputable = expression.invokeFunction.asVisited { body.accept(this, data) }
+        val boundValuesAreComputable = expression.boundValues.all { it.accept(this, data) }
+        return boundValuesAreComputable && functionIsComputable
+
+    }
+
+    override fun visitRichPropertyReference(expression: IrRichPropertyReference, data: IrInterpreterCheckerData): Boolean {
+        if (!data.mode.canEvaluateRichPropertyReference(expression)) return false
+
+        val getterIsComputable = data.mode.canEvaluateFunction(expression.getterFunction)
+        val boundValuesAreComputable = expression.boundValues.all { it.accept(this, data) }
+        return boundValuesAreComputable && getterIsComputable
     }
 }

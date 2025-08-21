@@ -27,8 +27,7 @@ enum class JpsBuildPerformanceMetric(
 
     COMPILE_ITERATION(parent = null, "Total compiler iteration", type = ValueType.NUMBER),
     IC_COMPILE_ITERATION(parent = COMPILE_ITERATION, "Total kotlin compiler iteration", type = ValueType.NUMBER),
-    ANALYZED_LINES_NUMBER(parent = COMPILE_ITERATION, "Number of lines analyzed", type = ValueType.NUMBER),
-    CODE_GENERATED_LINES_NUMBER(parent = COMPILE_ITERATION, "Number of lines for code generation", type = ValueType.NUMBER),
+    SOURCE_LINES_NUMBER(parent = COMPILE_ITERATION, "Number of lines analyzed", type = ValueType.NUMBER),
     ANALYSIS_LPS(parent = COMPILE_ITERATION, "Analysis lines per second", type = ValueType.NUMBER),
     CODE_GENERATION_LPS(parent = COMPILE_ITERATION, "Code generation lines per second", type = ValueType.NUMBER),
     ;
@@ -77,14 +76,15 @@ enum class GradleBuildPerformanceMetric(
     DAEMON_GC_COUNT(readableString = "Count of GC", type = ValueType.NUMBER),
 
     COMPILE_ITERATION(parent = null, "Total compiler iteration", type = ValueType.NUMBER),
-    ANALYZED_LINES_NUMBER(parent = COMPILE_ITERATION, "Number of lines analyzed", type = ValueType.NUMBER),
-    CODE_GENERATED_LINES_NUMBER(parent = COMPILE_ITERATION, "Number of lines for code generation", type = ValueType.NUMBER),
+    SOURCE_LINES_NUMBER(parent = COMPILE_ITERATION, "Number of lines analyzed", type = ValueType.NUMBER),
     ANALYSIS_LPS(parent = COMPILE_ITERATION, "Analysis lines per second", type = ValueType.NUMBER),
     CODE_GENERATION_LPS(parent = COMPILE_ITERATION, "Code generation lines per second", type = ValueType.NUMBER),
-    IR_TRANSLATION_LINES_NUMBER(COMPILE_ITERATION, "Compiler IR translation line number", ValueType.NUMBER),
-    IR_LOWERING_LINES_NUMBER(COMPILE_ITERATION, "Compiler IR lowering line number", ValueType.NUMBER),
-    IR_GENERATION_LINES_NUMBER(COMPILE_ITERATION, "Compiler IR generation line number", ValueType.NUMBER),
-
+    TRANSLATION_TO_IR_LPS(parent = COMPILE_ITERATION, "Translation to IR lines per second", type = ValueType.NUMBER),
+    IR_PRE_LOWERING_LPS(parent = COMPILE_ITERATION, "IR pre-lowering lines per second", type = ValueType.NUMBER),
+    IR_SERIALIZATION_LPS(parent = COMPILE_ITERATION, "IR serialization lines per second", type = ValueType.NUMBER),
+    KLIB_WRITING_LPS(parent = COMPILE_ITERATION, "KLib Writing lines per second", type = ValueType.NUMBER),
+    IR_LOWERING_LPS(parent = COMPILE_ITERATION, "IR Lowering lines per second", type = ValueType.NUMBER),
+    BACKEND_LPS(parent = COMPILE_ITERATION, "Backend lines per second", type = ValueType.NUMBER),
 
     // Metrics for the `kotlin.incremental.useClasspathSnapshot` feature
     CLASSPATH_ENTRY_SNAPSHOT_TRANSFORM_EXECUTION_COUNT(
@@ -166,7 +166,7 @@ enum class GradleBuildPerformanceMetric(
     }
 
     companion object {
-        const val serialVersionUID = 2L
+        const val serialVersionUID = 4L
 
         val children by lazy {
             entries.filter { it.parent != null }.groupBy { it.parent }

@@ -1,6 +1,3 @@
-// Enable for JVM backend when KT-8120 gets fixed
-// IGNORE_BACKEND: JVM
-
 fun box(): String {
     var log = ""
 

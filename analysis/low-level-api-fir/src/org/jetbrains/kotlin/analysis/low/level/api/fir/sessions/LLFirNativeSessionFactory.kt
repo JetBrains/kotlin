@@ -9,7 +9,6 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.platform.packages.createPackagePartProvider
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileModule
-import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
 import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.factories.LLLibrarySymbolProviderFactory
@@ -23,7 +22,7 @@ import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.scopes.FirOverrideChecker
 import org.jetbrains.kotlin.fir.scopes.impl.FirStandardOverrideChecker
 import org.jetbrains.kotlin.fir.scopes.kotlinScopeProvider
-import org.jetbrains.kotlin.fir.session.FirNativeSessionFactory.registerNativeComponents
+import org.jetbrains.kotlin.fir.session.FirNativeSessionFactory.Companion.registerNativeComponents
 import org.jetbrains.kotlin.utils.addIfNotNull
 
 @OptIn(SessionConfiguration::class)
@@ -47,8 +46,8 @@ internal class LLFirNativeSessionFactory(project: Project) : LLFirAbstractSessio
         }
     }
 
-    override fun createLibrarySession(module: KaModule): LLFirLibraryOrLibrarySourceResolvableModuleSession {
-        return doCreateLibrarySession(module) { context ->
+    override fun createResolvableLibrarySession(module: KaModule): LLFirLibraryOrLibrarySourceResolvableModuleSession {
+        return doCreateResolvableLibrarySession(module) { context ->
             registerNativeComponents()
             // Resolvable library session for decompiled libraries can miss annotation arguments
             // necessary for correct work of the native overload checker
@@ -66,7 +65,7 @@ internal class LLFirNativeSessionFactory(project: Project) : LLFirAbstractSessio
         }
     }
 
-    override fun createBinaryLibrarySession(module: KaLibraryModule): LLFirLibrarySession {
+    override fun createBinaryLibrarySession(module: KaModule): LLFirLibrarySession {
         return doCreateBinaryLibrarySession(module) {
             registerNativeComponents()
         }
@@ -94,7 +93,6 @@ internal class LLFirNativeSessionFactory(project: Project) : LLFirAbstractSessio
     override fun createProjectLibraryProvidersForScope(
         session: LLFirSession,
         scope: GlobalSearchScope,
-        isFallbackDependenciesProvider: Boolean,
     ): List<FirSymbolProvider> {
         val moduleData = session.moduleData
         val moduleDataProvider = SingleModuleDataProvider(moduleData)
@@ -104,7 +102,6 @@ internal class LLFirNativeSessionFactory(project: Project) : LLFirAbstractSessio
                 LLLibrarySymbolProviderFactory.fromSettings(project).createNativeLibrarySymbolProvider(
                     session,
                     scope,
-                    isFallbackDependenciesProvider,
                 )
             )
             addIfNotNull(

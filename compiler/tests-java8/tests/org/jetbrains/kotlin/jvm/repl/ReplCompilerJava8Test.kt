@@ -40,6 +40,7 @@ import org.jetbrains.kotlin.test.TestJdkKind
 import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
 import org.jetbrains.kotlin.test.testFramework.resetApplicationToNull
 import org.jetbrains.kotlin.cli.common.disposeRootInWriteAction
+import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.junit.Assert
 import java.io.File
 
@@ -59,7 +60,7 @@ class ReplCompilerJava8Test : KtUsefulTestCase() {
             this.messageCollector = PrintingMessageCollector(System.out, MessageRenderer.WITHOUT_PATHS, false)
             addKotlinSourceRoot(tmpdir.absolutePath)
             put(JVMConfigurationKeys.OUTPUT_DIRECTORY, tmpdir)
-            loadScriptingPlugin(this)
+            loadScriptingPlugin(this, testRootDisposable)
         }
 
         // The following environment can be disposed right away since it's only needed to compile the bytecode. The test will use a separate
@@ -114,9 +115,9 @@ class ReplCompilerJava8Test : KtUsefulTestCase() {
     }
 
     private fun makeConfiguration() = KotlinTestUtils.newConfiguration(
-        ConfigurationKind.ALL, TestJdkKind.FULL_JDK, File(KotlinIntegrationTestBase.getCompilerLib(), "kotlin-stdlib.jar"), tmpdir
+        ConfigurationKind.ALL, TestJdkKind.FULL_JDK, ForTestCompileRuntime.runtimeJarForTests(), tmpdir
     ).also {
-        loadScriptingPlugin(it)
+        loadScriptingPlugin(it, testRootDisposable)
     }
 
     private fun runTest(configuration: CompilerConfiguration): ReplCompileResult {

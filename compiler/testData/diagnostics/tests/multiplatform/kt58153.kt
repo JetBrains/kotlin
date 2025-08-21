@@ -17,3 +17,6 @@ class NodeList: LockFreeLinkedListNode() {
 actual open class LockFreeLinkedListNode {
     override fun toString(): String = ""
 }
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, functionDeclaration, override, primaryConstructor,
+stringLiteral */

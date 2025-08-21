@@ -8,3 +8,6 @@ fun bar() {
     listOf(1, 2, 3).<!NONE_APPLICABLE!>maxOf<!> { <!UNRESOLVED_REFERENCE!>foo<!> }
     listOf(1, 2, 3).<!INFERRED_TYPE_VARIABLE_INTO_EMPTY_INTERSECTION_WARNING!>maxOf<!>(<!TYPE_MISMATCH, TYPE_MISMATCH!>{ <!UNRESOLVED_REFERENCE!>foo<!> }<!>, In<String>(), In<Int>())
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType, in,
+integerLiteral, intersectionType, lambdaLiteral, nullableType, primaryConstructor, typeConstraint, typeParameter, vararg */

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -81,9 +81,9 @@ public actual fun <T> MutableList<T>.fill(value: T): Unit {
 }
 
 /**
- * Randomly shuffles elements in this list.
+ * Randomly shuffles elements in this list in-place.
  *
- * See: https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle#The_modern_algorithm
+ * See: [A modern version of Fisher-Yates shuffle algorithm](https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle#The_modern_algorithm).
  */
 @SinceKotlin("1.2")
 public actual fun <T> MutableList<T>.shuffle(): Unit {
@@ -101,6 +101,7 @@ public actual fun <T> MutableList<T>.shuffle(): Unit {
 @SinceKotlin("1.2")
 public actual fun <T> Iterable<T>.shuffled(): List<T> = toMutableList().apply { shuffle() }
 
+@IgnorableReturnValue
 @PublishedApi
 @SinceKotlin("1.3")
 @InlineOnly
@@ -111,6 +112,7 @@ internal actual inline fun checkIndexOverflow(index: Int): Int {
     return index
 }
 
+@IgnorableReturnValue
 @PublishedApi
 @SinceKotlin("1.3")
 @InlineOnly
@@ -133,3 +135,10 @@ internal expect fun <T> MutableList<T>.replaceAll(transformation: (T) -> T)
  */
 @SinceKotlin("1.9")
 public actual fun <T> listOf(element: T): List<T> = arrayListOf(element)
+
+/**
+ * Returns a new [ArrayList] from the given Array.
+ */
+@kotlin.internal.InlineOnly
+internal actual inline fun <T> Array<out T>.asArrayList(): ArrayList<T> =
+    ArrayList(asCollection(isVarargs = true))

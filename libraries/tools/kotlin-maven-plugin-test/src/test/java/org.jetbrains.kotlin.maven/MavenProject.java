@@ -1,10 +1,10 @@
 package org.jetbrains.kotlin.maven;
 
-import com.intellij.openapi.util.io.FileUtil;
 import kotlin.io.TextStreamsKt;
 import kotlin.text.StringsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.com.intellij.openapi.util.io.FileUtil;
 
 import java.io.*;
 import java.util.*;

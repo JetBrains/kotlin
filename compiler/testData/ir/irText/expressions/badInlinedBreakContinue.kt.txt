@@ -156,25 +156,25 @@ fun test4() {
 }
 
 fun test5() {
-  listOf<Int>(elements = [1, 2, 3]).forEach<Int>(action = local fun <anonymous>(i: Int) {
+  forEach<Int>(/* <this> = listOf<Int>(elements = [1, 2, 3]), */ action = local fun <anonymous>(i: Int) {
     when {
       EQEQ(arg0 = i, arg1 = 2) -> error("") /* ErrorExpression */
     }
   }
 )
-  listOf<Int>(elements = [1, 2, 3]).forEach<Int>(action = local fun <anonymous>(i: Int) {
+  forEach<Int>(/* <this> = listOf<Int>(elements = [1, 2, 3]), */ action = local fun <anonymous>(i: Int) {
     when {
       EQEQ(arg0 = i, arg1 = 2) -> error("") /* ErrorExpression */
     }
   }
 )
-  listOf<Int>(elements = [1, 2, 3]).forEach<Int>(action = local fun <no name provided>(i: Int) {
+  forEach<Int>(/* <this> = listOf<Int>(elements = [1, 2, 3]), */ action = local fun <no name provided>(i: Int) {
     when {
       EQEQ(arg0 = i, arg1 = 2) -> error("") /* ErrorExpression */
     }
   }
 )
-  listOf<Int>(elements = [1, 2, 3]).forEach<Int>(action = local fun <no name provided>(i: Int) {
+  forEach<Int>(/* <this> = listOf<Int>(elements = [1, 2, 3]), */ action = local fun <no name provided>(i: Int) {
     when {
       EQEQ(arg0 = i, arg1 = 2) -> error("") /* ErrorExpression */
     }
@@ -214,7 +214,7 @@ fun test6() {
 }
 
 fun test7() {
-  1.rangeTo(other = 3).myForEach<Int>(action = local fun <anonymous>(i: Int) {
+  myForEach<Int>(/* <this> = 1.rangeTo(other = 3), */ action = local fun <anonymous>(i: Int) {
     when {
       EQEQ(arg0 = i, arg1 = 2) -> { // BLOCK
         error("") /* ErrorExpression */

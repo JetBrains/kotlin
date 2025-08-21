@@ -3,7 +3,7 @@
 // FREE_COMPILER_ARGS: -Xbinary=genericSafeCasts=true
 
 value class Foo(val value: Int)
-// CHECK-LABEL: define ptr @"kfun:Foo#$<bridge-NUN>toString(){}kotlin.String(){}kotlin.String
+// CHECK-LABEL: define ptr @"kfun:Foo#$<bridge-NU>toString(){}kotlin.String(){}kotlin.String
 // CHECK-DEBUG-NOT: {{call|call zeroext}} i1 @IsSubtype
 // CHECK-OPT-NOT: {{call|call zeroext}} i1 @IsSubclassFast
 // CHECK-LABEL: call ptr @"kfun:Foo#toString(){}kotlin.String

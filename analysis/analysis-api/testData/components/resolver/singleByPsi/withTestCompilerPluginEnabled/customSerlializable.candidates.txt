@@ -7,10 +7,12 @@ KtNameReferenceExpression(331,351): 'serializeFirstTarget'
           receiverType = null
           returnType = test.FirstTarget
           symbol = x: test.FirstTarget
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = serializer
           isSafeNavigation = false
@@ -26,8 +28,10 @@ KtNameReferenceExpression(331,351): 'serializeFirstTarget'
               receiverType = null
               returnType = test.FirstTarget
               symbol = x: test.FirstTarget
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = test/Serializer.serializeFirstTarget
       typeArgumentsMapping = {}
     isInBestCandidates = true

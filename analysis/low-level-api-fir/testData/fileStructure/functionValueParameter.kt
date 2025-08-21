@@ -1,4 +1,4 @@
-fun bar(a: Int, b: (Boolean) -> Unit) {/* DeclarationStructureElement */
+/* RootStructureElement */fun bar(a: Int, b: (Boolean) -> Unit) {/* DeclarationStructureElement */
 
 }
 

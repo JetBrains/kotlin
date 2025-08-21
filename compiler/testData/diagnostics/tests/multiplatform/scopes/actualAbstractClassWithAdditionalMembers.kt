@@ -20,3 +20,5 @@ actual abstract class Base {
 actual class Derived : Base() {
     override fun foo() {}
 }
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, functionDeclaration, override */

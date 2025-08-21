@@ -52,3 +52,7 @@ fun testTypealiasedKotlin() {
     val kk: KotlinAtomicReference<Int>
     kk = k
 }
+
+/* GENERATED_FIR_TAGS: annotationUseSiteTargetFile, assignment, classReference, flexibleType, functionDeclaration,
+integerLiteral, javaFunction, localProperty, nullableType, propertyDeclaration, typeAliasDeclaration,
+typeAliasDeclarationWithTypeParameter, typeParameter */

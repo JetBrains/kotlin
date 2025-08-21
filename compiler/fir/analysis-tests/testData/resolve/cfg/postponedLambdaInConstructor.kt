@@ -8,3 +8,6 @@ class B(val s: String) : A(s.let { { it } }) {
         foo()
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionalType, lambdaLiteral, primaryConstructor,
+propertyDeclaration */

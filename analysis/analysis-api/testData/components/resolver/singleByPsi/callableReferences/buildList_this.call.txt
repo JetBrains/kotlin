@@ -4,6 +4,7 @@ KtCallableReferenceExpression(102,111): 'this::add'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = this
           isSafeNavigation = false
@@ -19,7 +20,9 @@ KtCallableReferenceExpression(102,111): 'this::add'
               receiverType = null
               returnType = kotlin.String
               symbol = element: E
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/collections/MutableList.add
       typeArgumentsMapping = {}

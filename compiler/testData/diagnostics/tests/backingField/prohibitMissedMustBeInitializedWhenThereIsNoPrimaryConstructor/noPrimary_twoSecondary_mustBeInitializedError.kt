@@ -12,3 +12,6 @@ class Foo {
         x = ""
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, init, propertyDeclaration, secondaryConstructor, setter,
+stringLiteral */

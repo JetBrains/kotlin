@@ -15,3 +15,6 @@ fun foo(x: Int): Any {
     }
     return v
 }
+
+/* GENERATED_FIR_TAGS: equalityExpression, functionDeclaration, integerLiteral, localProperty, propertyDeclaration,
+whenExpression, whenWithSubject */

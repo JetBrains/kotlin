@@ -26,6 +26,8 @@ class MppDslAssociateCompilationsIT : KGPBaseTest() {
         project(
             projectName = "new-mpp-associate-compilations",
             gradleVersion = gradleVersion,
+            // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
+            buildOptions = defaultBuildOptions.disableIsolatedProjects(),
         ) {
             val tasks = arrayOf(
                 ":compileIntegrationTestKotlinJvm",
@@ -110,6 +112,8 @@ class MppDslAssociateCompilationsIT : KGPBaseTest() {
         project(
             projectName = "new-mpp-associate-compilations",
             gradleVersion = gradleVersion,
+            // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
+            buildOptions = defaultBuildOptions.disableIsolatedProjects(),
         ) {
             build(
                 buildArguments = testTasks.toTypedArray(),
@@ -117,7 +121,6 @@ class MppDslAssociateCompilationsIT : KGPBaseTest() {
                 buildOptions = buildOptions.copy(
                     logLevel = LogLevel.LIFECYCLE,
                     buildCacheEnabled = true,
-                    configurationCache = enableConfigurationCacheSinceGradle("8.5", gradleVersion)
                 )
             ) {
                 assertTasksExecuted(testTasks)

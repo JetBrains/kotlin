@@ -9,3 +9,7 @@ fun foo(a: A) {
     checkSubtype<Int>(b)
     checkSubtype<String>(c)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, data, destructuringDeclaration, funWithExtensionReceiver, functionDeclaration,
+functionalType, infix, localProperty, nullableType, primaryConstructor, propertyDeclaration, typeParameter,
+typeWithExtension */

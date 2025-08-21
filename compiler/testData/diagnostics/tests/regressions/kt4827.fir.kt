@@ -15,3 +15,5 @@ fun f() {
     <!INTERFACE_AS_FUNCTION!>TestInterface<!>()
     C.<!INNER_CLASS_CONSTRUCTOR_NO_RECEIVER!>I<!>()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, inner, interfaceDeclaration */

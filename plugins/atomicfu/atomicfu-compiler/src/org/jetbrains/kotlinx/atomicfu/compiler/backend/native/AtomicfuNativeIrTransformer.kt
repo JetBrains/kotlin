@@ -36,34 +36,6 @@ class AtomicfuNativeIrTransformer(
 
     private inner class NativeAtomicPropertiesTransformer : AtomicPropertiesTransformer() {
 
-        override fun createAtomicHandler(
-            atomicfuProperty: IrProperty,
-            parentContainer: IrDeclarationContainer
-        ): AtomicHandler<IrProperty>? =
-            when {
-                atomicfuProperty.isNotDelegatedAtomic() -> {
-                    /**
-                     * Creates an [VolatilePropertyReference] updater to replace an atomicfu property on Native:
-                     * on Native all atomic operations on atomicfu properties are delegated to atomic intrinsics
-                     * invoked on the volatile property reference (declared in kotlin.concurrent package), e.g.:
-                     * ```
-                     * private val a = atomic(0)
-                     * a.compareAndSet(0, 56)
-                     * ```
-                     * is replaced with:
-                     * ```
-                     * @Volatile var a: Int = 0
-                     * ::a.compareAndSetField
-                     *```
-                     */
-                    createVolatileProperty(atomicfuProperty, parentContainer)
-                }
-                atomicfuProperty.isAtomicArray() -> {
-                    createAtomicArray(atomicfuProperty, parentContainer)
-                }
-                else -> null
-            }
-
         override fun IrProperty.delegateToTransformedProperty(originalDelegate: IrProperty) {
             val volatileProperty = atomicfuPropertyToVolatile[originalDelegate]
             requireNotNull(volatileProperty) { "The property ${originalDelegate.atomicfuRender()} is expected to be already replaced with a corresponding volatile property, but none was found." }
@@ -106,7 +78,7 @@ class AtomicfuNativeIrTransformer(
             }
         }
 
-        override fun AbstractAtomicfuIrBuilder.getAtomicHandlerValueParameterReceiver(
+        override fun AbstractAtomicfuIrBuilder.getAtomicHandlerReceiver(
             atomicHandler: AtomicHandler<*>,
             dispatchReceiver: IrExpression?,
             parentFunction: IrFunction
@@ -131,6 +103,36 @@ class AtomicfuNativeIrTransformer(
 
     }
 
+    override fun createAtomicHandler(
+        atomicfuProperty: IrProperty,
+        parentContainer: IrDeclarationContainer
+    ): AtomicHandler<IrProperty>? =
+        with(atomicfuSymbols.createBuilder(atomicfuProperty.symbol)) {
+            when {
+                atomicfuProperty.isNotDelegatedAtomic() -> {
+                    /**
+                     * Creates an [VolatilePropertyReference] updater to replace an atomicfu property on Native:
+                     * on Native all atomic operations on atomicfu properties are delegated to atomic intrinsics
+                     * invoked on the volatile property reference (declared in kotlin.concurrent package), e.g.:
+                     * ```
+                     * private val a = atomic(0)
+                     * a.compareAndSet(0, 56)
+                     * ```
+                     * is replaced with:
+                     * ```
+                     * @Volatile var a: Int = 0
+                     * ::a.compareAndSetField
+                     *```
+                     */
+                    createVolatileProperty(atomicfuProperty, parentContainer)
+                }
+                atomicfuProperty.isAtomicArray() -> {
+                    createAtomicArray(atomicfuProperty, parentContainer)
+                }
+                else -> null
+            }
+        }
+
     override fun IrFunction.checkAtomicHandlerValueParameters(atomicHandlerType: AtomicHandlerType, valueType: IrType): Boolean =
         when (atomicHandlerType) {
             AtomicHandlerType.ATOMIC_ARRAY -> {
@@ -140,13 +142,13 @@ class AtomicfuNativeIrTransformer(
                 } else {
                     arrayClassSymbol.defaultType
                 }
-                valueParameters.size > 2 &&
-                        valueParameters.holdsAt(0, ATOMIC_HANDLER, type) &&
-                        valueParameters.holdsAt(1, INDEX, irBuiltIns.intType)
+                parameters.size > 3 &&
+                        holdsAt(1, ATOMIC_HANDLER, type) &&
+                        holdsAt(2, INDEX, irBuiltIns.intType)
             }
             AtomicHandlerType.NATIVE_PROPERTY_REF -> {
-                valueParameters.size > 1 &&
-                        valueParameters.holdsAt(0, ATOMIC_HANDLER, atomicfuSymbols.kMutableProperty0GetterType(valueType))
+                parameters.size > 2 &&
+                        holdsAt(1, ATOMIC_HANDLER, atomicfuSymbols.kMutableProperty0GetterType(valueType))
             }
             else -> error("Unexpected atomic handler type for Native backend: $atomicHandlerType")
         }

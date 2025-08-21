@@ -8,9 +8,9 @@ package org.jetbrains.kotlin.objcexport.tests
 import org.jetbrains.kotlin.analysis.api.analyze
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassLikeSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaNamedFunctionSymbol
+import org.jetbrains.kotlin.export.test.InlineSourceCodeAnalysis
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.objcexport.resolveObjCNameAnnotation
-import org.jetbrains.kotlin.objcexport.testUtils.InlineSourceCodeAnalysis
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull

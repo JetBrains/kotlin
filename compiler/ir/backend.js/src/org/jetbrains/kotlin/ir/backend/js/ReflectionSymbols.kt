@@ -11,12 +11,12 @@ import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 interface ReflectionSymbols {
     val getKClassFromExpression: IrSimpleFunctionSymbol
     val getKClass: IrSimpleFunctionSymbol
-    val createKType: IrSimpleFunctionSymbol?
-    val createDynamicKType: IrSimpleFunctionSymbol?
-    val createKTypeParameter: IrSimpleFunctionSymbol?
-    val getStarKTypeProjection: IrSimpleFunctionSymbol?
-    val createCovariantKTypeProjection: IrSimpleFunctionSymbol?
-    val createInvariantKTypeProjection: IrSimpleFunctionSymbol?
-    val createContravariantKTypeProjection: IrSimpleFunctionSymbol?
+    val createKType: IrSimpleFunctionSymbol
+    val createDynamicKType: IrSimpleFunctionSymbol
+    val createKTypeParameter: IrSimpleFunctionSymbol
+    val getStarKTypeProjection: IrSimpleFunctionSymbol
+    val createCovariantKTypeProjection: IrSimpleFunctionSymbol
+    val createInvariantKTypeProjection: IrSimpleFunctionSymbol
+    val createContravariantKTypeProjection: IrSimpleFunctionSymbol
     val kTypeClass: IrClassSymbol
 }

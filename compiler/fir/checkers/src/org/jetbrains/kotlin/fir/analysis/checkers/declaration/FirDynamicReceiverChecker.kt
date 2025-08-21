@@ -18,13 +18,14 @@ import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.name.StandardClassIds.Annotations.DynamicExtension
 
 object FirDynamicReceiverChecker : FirCallableDeclarationChecker(MppCheckerKind.Common) {
-    override fun check(declaration: FirCallableDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirCallableDeclaration) {
         if (
             declaration.receiverParameter?.typeRef?.coneType is ConeDynamicType &&
             !declaration.hasAnnotation(DynamicExtension, context.session) &&
             declaration !is FirAnonymousFunction
         ) {
-            reporter.reportOn(declaration.receiverParameter?.source, FirErrors.DYNAMIC_RECEIVER_NOT_ALLOWED, context)
+            reporter.reportOn(declaration.receiverParameter?.source, FirErrors.DYNAMIC_RECEIVER_NOT_ALLOWED)
         }
     }
 }

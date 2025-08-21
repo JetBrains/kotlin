@@ -7,10 +7,15 @@ import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.ProjectDependency
 import org.gradle.api.artifacts.dsl.DependencyHandler
-import org.gradle.api.file.*
+import org.gradle.api.file.Directory
+import org.gradle.api.file.DirectoryProperty
+import org.gradle.api.file.RegularFileProperty
+import org.gradle.api.project.IsolatedProject
+import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.gradle.kotlin.dsl.dependencies
 import org.gradle.kotlin.dsl.project
+import java.io.File
 
 abstract class CompilerTestsExtension(private val project: Project) {
     abstract val allowFlaky: Property<Boolean>
@@ -61,11 +66,16 @@ abstract class CompilerTestsExtension(private val project: Project) {
         }
     }
 
-    internal abstract val testData: ConfigurableFileCollection
-    fun testData(relativePath: String) {
-        testData.from(project.layout.projectDirectory.dir(relativePath).asFileTree.matching {
-            exclude("**/out/**")
-        })
+    internal abstract val testDataFiles: ListProperty<Directory>
+    internal val testDataMap: MutableMap<String, String> = mutableMapOf<String, String>()
+
+    fun testData(isolatedProject: IsolatedProject, relativePath: String) {
+        val testDataDirectory = isolatedProject.projectDirectory.dir(relativePath)
+        testDataFiles.add(testDataDirectory)
+        testDataMap.put(
+            testDataDirectory.asFile.relativeTo(project.rootDir).path.replace("\\", "/"),
+            testDataDirectory.asFile.canonicalPath.replace("\\", "/")
+        )
     }
 
     fun withStdlibCommon() {
@@ -103,5 +113,41 @@ abstract class CompilerTestsExtension(private val project: Project) {
         KOTLIN_SCRIPTING_COMMON_JAR
         KOTLIN_SCRIPTING_JVM_JAR
         */
+    }
+
+    abstract val mockJdkRuntime: RegularFileProperty
+    abstract val mockJDKModifiedRuntime: RegularFileProperty
+    abstract val mockJdkAnnotationsJar: RegularFileProperty
+    abstract val thirdPartyAnnotations: DirectoryProperty
+    abstract val thirdPartyJava8Annotations: DirectoryProperty
+    abstract val thirdPartyJava9Annotations: DirectoryProperty
+    abstract val thirdPartyJsr305: DirectoryProperty
+
+    fun withMockJdkRuntime() {
+        mockJdkRuntime.value { File(project.rootDir, "compiler/testData/mockJDK/jre/lib/rt.jar") }
+    }
+
+    fun withMockJDKModifiedRuntime() {
+        mockJDKModifiedRuntime.value { File(project.rootDir, "compiler/testData/mockJDKModified/rt.jar") }
+    }
+
+    fun withMockJdkAnnotationsJar() {
+        mockJdkAnnotationsJar.value { File(project.rootDir, "compiler/testData/mockJDK/jre/lib/annotations.jar") }
+    }
+
+    fun withThirdPartyAnnotations() {
+        thirdPartyAnnotations.set(File(project.rootDir, "third-party/annotations"))
+    }
+
+    fun withThirdPartyJava8Annotations() {
+        thirdPartyJava8Annotations.set(File(project.rootDir, "third-party/java8-annotations"))
+    }
+
+    fun withThirdPartyJava9Annotations() {
+        thirdPartyJava9Annotations.set(File(project.rootDir, "third-party/java9-annotations"))
+    }
+
+    fun withThirdPartyJsr305() {
+        thirdPartyJsr305.set(File(project.rootDir, "third-party/jsr305"))
     }
 }

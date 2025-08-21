@@ -30,3 +30,6 @@ fun test() {
 
     ::<!OVERLOAD_RESOLUTION_AMBIGUITY!>fas<!>
 }
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, funWithExtensionReceiver, functionDeclaration,
+functionalType, infix, integerLiteral, lambdaLiteral, nullableType, override, typeParameter, typeWithExtension */

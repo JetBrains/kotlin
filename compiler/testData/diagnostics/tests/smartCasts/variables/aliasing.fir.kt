@@ -84,3 +84,6 @@ fun test3() {
         c.length // ok
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, functionDeclaration, ifExpression, integerLiteral, isExpression, localProperty,
+nullableType, propertyDeclaration, smartcast, stringLiteral */

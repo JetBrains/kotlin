@@ -100,7 +100,6 @@ class Interop {
             val platform = KotlinPlatform.values().single { it.name.equals(flavor, ignoreCase = true) }
             processCLibSafe(platform, cinteropArguments, additionalArgs, runFromDaemon)
         }
-        "wasm" -> error("wasm target in Kotlin/Native is removed. See https://kotl.in/native-targets-tiers")
         else -> error("Unexpected flavor")
     }
 }

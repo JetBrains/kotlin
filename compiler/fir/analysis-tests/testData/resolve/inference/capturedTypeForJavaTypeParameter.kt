@@ -10,3 +10,6 @@ fun <D : A> foo(b: B<D>) {}
 fun main(b: B<*>) {
     foo(b)
 }
+
+/* GENERATED_FIR_TAGS: capturedType, functionDeclaration, interfaceDeclaration, javaType, starProjection, typeConstraint,
+typeParameter */

@@ -53,7 +53,10 @@ internal object EmptyList : List<Nothing>, Serializable, RandomAccess {
     private fun readResolve(): Any = EmptyList
 }
 
-internal fun <T> Array<out T>.asCollection(): Collection<T> = ArrayAsCollection(this, isVarargs = false)
+@kotlin.internal.InlineOnly
+internal expect inline fun <T> Array<out T>.asArrayList(): ArrayList<T>
+
+internal fun <T> Array<out T>.asCollection(isVarargs: Boolean = false): Collection<T> = ArrayAsCollection(this, isVarargs = isVarargs)
 
 private class ArrayAsCollection<T>(val values: Array<out T>, val isVarargs: Boolean) : Collection<T> {
     override val size: Int get() = values.size
@@ -115,14 +118,14 @@ public inline fun <T> arrayListOf(): ArrayList<T> = ArrayList()
  * @sample samples.collections.Collections.Lists.mutableList
  */
 public fun <T> mutableListOf(vararg elements: T): MutableList<T> =
-    if (elements.size == 0) ArrayList() else ArrayList(ArrayAsCollection(elements, isVarargs = true))
+    if (elements.size == 0) ArrayList() else elements.asArrayList()
 
 /**
  * Returns a new [ArrayList] with the given elements.
  * @sample samples.collections.Collections.Lists.arrayList
  */
 public fun <T> arrayListOf(vararg elements: T): ArrayList<T> =
-    if (elements.size == 0) ArrayList() else ArrayList(ArrayAsCollection(elements, isVarargs = true))
+    if (elements.size == 0) ArrayList() else elements.asArrayList()
 
 /**
  * Returns a new read-only list either of single given element, if it is not null, or empty list if the element is null. The returned list is serializable (JVM).
@@ -178,7 +181,6 @@ public inline fun <T> MutableList(size: Int, init: (index: Int) -> T): MutableLi
  * @sample samples.collections.Builders.Lists.buildListSample
  */
 @SinceKotlin("1.6")
-@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 @Suppress("LEAKED_IN_PLACE_LAMBDA", "WRONG_INVOCATION_KIND")
 public inline fun <E> buildList(@BuilderInference builderAction: MutableList<E>.() -> Unit): List<E> {
@@ -207,7 +209,6 @@ internal expect inline fun <E> buildListInternal(builderAction: MutableList<E>.(
  * @sample samples.collections.Builders.Lists.buildListSampleWithCapacity
  */
 @SinceKotlin("1.6")
-@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 @Suppress("LEAKED_IN_PLACE_LAMBDA", "WRONG_INVOCATION_KIND")
 public inline fun <E> buildList(capacity: Int, @BuilderInference builderAction: MutableList<E>.() -> Unit): List<E> {
@@ -468,10 +469,12 @@ private fun rangeCheck(size: Int, fromIndex: Int, toIndex: Int) {
 
 @PublishedApi
 @SinceKotlin("1.3")
+@IgnorableReturnValue
 internal expect fun checkIndexOverflow(index: Int): Int
 
 @PublishedApi
 @SinceKotlin("1.3")
+@IgnorableReturnValue
 internal expect fun checkCountOverflow(count: Int): Int
 
 

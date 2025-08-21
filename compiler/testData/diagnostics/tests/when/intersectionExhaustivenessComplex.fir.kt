@@ -12,7 +12,7 @@ sealed class B {
 }
 
 fun foo(a: A) {
-    if (a !is B) return
+    if (<!USELESS_IS_CHECK!>a !is B<!>) return
 
     when (a) {
         <!USELESS_IS_CHECK!>is A.A1<!> -> ""
@@ -41,3 +41,7 @@ fun foo(a: A) {
         <!USELESS_IS_CHECK!>is B.B1<!> -> "..."
     }.length
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType, ifExpression,
+infix, intersectionType, isExpression, nestedClass, nullableType, sealed, smartcast, stringLiteral, typeParameter,
+typeWithExtension, whenExpression, whenWithSubject */

@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.isStatic
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
+import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.calls.FirSimpleSyntheticPropertySymbol
 import org.jetbrains.kotlin.fir.resolve.findClassRepresentation
 import org.jetbrains.kotlin.fir.resolve.toSymbol
@@ -40,8 +41,8 @@ enum class ConversionTypeOrigin(val forSetter: Boolean) {
     SETTER(forSetter = true);
 }
 
+context(c: Fir2IrComponents)
 fun FirClassifierSymbol<*>.toIrSymbol(
-    c: Fir2IrComponents,
     typeOrigin: ConversionTypeOrigin = ConversionTypeOrigin.DEFAULT,
     handleAnnotations: ((List<FirAnnotation>) -> Unit)? = null
 ): IrClassifierSymbol = with(c) {
@@ -54,7 +55,7 @@ fun FirClassifierSymbol<*>.toIrSymbol(
             handleAnnotations?.invoke(symbol.fir.expandedTypeRef.annotations)
             val coneClassLikeType = symbol.fir.expandedTypeRef.coneType as ConeClassLikeType
             coneClassLikeType.lookupTag.toSymbol(session)
-                ?.toIrSymbol(c, typeOrigin, handleAnnotations)
+                ?.toIrSymbol(typeOrigin, handleAnnotations)
                 ?: classifierStorage.getIrClassForNotFoundClass(coneClassLikeType.lookupTag).symbol
         }
 
@@ -64,7 +65,8 @@ fun FirClassifierSymbol<*>.toIrSymbol(
     }
 }
 
-fun FirReference.extractDeclarationSiteSymbol(c: Fir2IrComponents): FirCallableSymbol<*>? {
+context(c: Fir2IrComponents)
+fun FirReference.extractDeclarationSiteSymbol(): FirCallableSymbol<*>? {
     if (this !is FirResolvedNamedReference) {
         return null
     }
@@ -75,7 +77,7 @@ fun FirReference.extractDeclarationSiteSymbol(c: Fir2IrComponents): FirCallableS
     if (symbol.origin == FirDeclarationOrigin.SubstitutionOverride.CallSite) {
         symbol = symbol.fir.unwrapUseSiteSubstitutionOverrides<FirCallableDeclaration>().symbol
     }
-    symbol = symbol.unwrapCallRepresentative(c)
+    symbol = symbol.unwrapCallRepresentative()
     return symbol
 }
 
@@ -85,8 +87,8 @@ private enum class UseSiteKind {
     Reference;
 }
 
+context(c: Fir2IrComponents)
 fun FirCallableSymbol<*>.toIrSymbolForCall(
-    c: Fir2IrComponents,
     dispatchReceiver: FirExpression?,
     explicitReceiver: FirExpression?,
 ): IrSymbol? = c.toIrSymbol(
@@ -97,8 +99,8 @@ fun FirCallableSymbol<*>.toIrSymbolForCall(
     isDelegate = false,
 )
 
+context(c: Fir2IrComponents)
 fun FirCallableSymbol<*>.toIrSymbolForSetCall(
-    c: Fir2IrComponents,
     dispatchReceiver: FirExpression?,
     explicitReceiver: FirExpression?,
 ): IrSymbol? = c.toIrSymbol(
@@ -109,8 +111,8 @@ fun FirCallableSymbol<*>.toIrSymbolForSetCall(
     isDelegate = false,
 )
 
+context(c: Fir2IrComponents)
 fun FirCallableSymbol<*>.toIrSymbolForCallableReference(
-    c: Fir2IrComponents,
     dispatchReceiver: FirExpression?,
     lhs: FirExpression?,
     isDelegate: Boolean,
@@ -168,9 +170,9 @@ private fun Fir2IrComponents.toIrSymbol(
                     val delegateSymbol = if (useSite == GetCall) {
                         syntheticProperty.getter.delegate.symbol
                     } else {
-                        syntheticProperty.setter?.delegate?.symbol ?: error("Written synthetic property must have a setter")
+                        syntheticProperty.setter?.delegate?.symbol ?: error("Written synthetic property must have a setter: ${syntheticProperty.render()}")
                     }
-                    val unwrappedSymbol = delegateSymbol.unwrapCallRepresentative(this)
+                    val unwrappedSymbol = delegateSymbol.unwrapCallRepresentative()
                     toIrSymbol(
                         unwrappedSymbol,
                         dispatchReceiver,

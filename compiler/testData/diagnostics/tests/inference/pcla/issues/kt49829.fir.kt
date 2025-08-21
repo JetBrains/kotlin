@@ -11,3 +11,6 @@ fun main() {
         println(secondParameter <!USELESS_CAST!>as String<!>)
     }
 }
+
+/* GENERATED_FIR_TAGS: asExpression, functionDeclaration, integerLiteral, lambdaLiteral, localProperty,
+propertyDeclaration, stringLiteral */

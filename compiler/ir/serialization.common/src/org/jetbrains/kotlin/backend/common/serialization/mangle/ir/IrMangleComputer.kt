@@ -141,10 +141,6 @@ open class IrMangleComputer(
             declaration.visitParent()
         }
 
-        override fun visitErrorDeclaration(declaration: IrErrorDeclaration) {
-            declaration.mangleSimpleDeclaration(MangleConstant.ERROR_DECLARATION)
-        }
-
         override fun visitClass(declaration: IrClass) {
             typeParameterContainers.add(declaration)
 

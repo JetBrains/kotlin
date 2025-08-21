@@ -1,3 +1,5 @@
+// FIR_IDENTICAL
+
 class Test1(val x: Int)
 
 class Test2

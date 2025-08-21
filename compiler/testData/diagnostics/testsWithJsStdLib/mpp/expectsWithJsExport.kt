@@ -1,6 +1,6 @@
 // IGNORE_FIR_DIAGNOSTICS
-// RUN_PIPELINE_TILL: FRONTEND
-// LANGUAGE: +MultiPlatformProjects
+// RUN_PIPELINE_TILL: KLIB
+// LANGUAGE: +MultiPlatformProjects -AllowExpectDeclarationsInJsExport
 // ISSUE: KT-64951
 
 // MODULE: m1-common

@@ -1,25 +1,25 @@
-/whenWithGuardDisabled.kt:15:26: error: the feature "when guards" is experimental and should be enabled explicitly. This can be done by supplying the compiler argument '-Xwhen-guards', but note that no stability guarantees are provided.
+/whenWithGuardDisabled.kt:15:26: error: the feature "when guards" is only available since language version 2.2
         is BooleanHolder if x.value -> Unit
                          ^^^^^^^^^^
-/whenWithGuardDisabled.kt:16:25: error: the feature "when guards" is experimental and should be enabled explicitly. This can be done by supplying the compiler argument '-Xwhen-guards', but note that no stability guarantees are provided.
+/whenWithGuardDisabled.kt:16:25: error: the feature "when guards" is only available since language version 2.2
         is StringHolder if x.value != null &&
                         ^^^^^^^^^^^^^^^^^^^^^
-/whenWithGuardDisabled.kt:18:14: error: the feature "when guards" is experimental and should be enabled explicitly. This can be done by supplying the compiler argument '-Xwhen-guards', but note that no stability guarantees are provided.
+/whenWithGuardDisabled.kt:18:14: error: the feature "when guards" is only available since language version 2.2
         else if x is Boolean && x -> Unit
              ^^^^^^^^^^^^^^^^^^^^
-/whenWithGuardDisabled.kt:26:28: error: the feature "when guards" is experimental and should be enabled explicitly. This can be done by supplying the compiler argument '-Xwhen-guards', but note that no stability guarantees are provided.
+/whenWithGuardDisabled.kt:26:28: error: the feature "when guards" is only available since language version 2.2
         x is BooleanHolder if x.value -> Unit
                            ^^^^^^^^^^
-/whenWithGuardDisabled.kt:28:14: error: the feature "when guards" is experimental and should be enabled explicitly. This can be done by supplying the compiler argument '-Xwhen-guards', but note that no stability guarantees are provided.
+/whenWithGuardDisabled.kt:28:14: error: the feature "when guards" is only available since language version 2.2
         else if x is Boolean -> Unit
              ^^^^^^^^^^^^^^^
-/whenWithGuardDisabled.kt:36:27: error: the feature "when guards" is experimental and should be enabled explicitly. This can be done by supplying the compiler argument '-Xwhen-guards', but note that no stability guarantees are provided.
+/whenWithGuardDisabled.kt:36:27: error: the feature "when guards" is only available since language version 2.2
         is True, is False if x.value -> Unit
                           ^^^^^^^^^^
-/whenWithGuardDisabled.kt:44:18: error: the feature "when guards" is experimental and should be enabled explicitly. This can be done by supplying the compiler argument '-Xwhen-guards', but note that no stability guarantees are provided.
+/whenWithGuardDisabled.kt:44:18: error: the feature "when guards" is only available since language version 2.2
         is False if x.value -> Unit
                  ^^^^^^^^^^
-/whenWithGuardDisabled.kt:51:18: error: the feature "when guards" is experimental and should be enabled explicitly. This can be done by supplying the compiler argument '-Xwhen-guards', but note that no stability guarantees are provided.
+/whenWithGuardDisabled.kt:51:18: error: the feature "when guards" is only available since language version 2.2
         is False if x.value -> Unit
                  ^^^^^^^^^^
 

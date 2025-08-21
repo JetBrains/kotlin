@@ -14,3 +14,5 @@ public class JavaClass {
     public int getSomething2() { return 1; }
     public JavaClass setSomething2(int value) { return this; }
 }
+
+/* GENERATED_FIR_TAGS: assignment, functionDeclaration, incrementDecrementExpression, javaType */

@@ -18,7 +18,8 @@ import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.type
 
 object FirNativeForwardDeclarationReifiedChecker : FirQualifiedAccessExpressionChecker(MppCheckerKind.Platform) {
-    override fun check(expression: FirQualifiedAccessExpression, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(expression: FirQualifiedAccessExpression) {
         val calleeReference = expression.calleeReference
         val typeArguments = expression.typeArguments
         val typeParameters = calleeReference.toResolvedCallableSymbol()?.typeParameterSymbols ?: return
@@ -35,8 +36,7 @@ object FirNativeForwardDeclarationReifiedChecker : FirQualifiedAccessExpressionC
                 reporter.reportOn(
                     source,
                     FirNativeErrors.FORWARD_DECLARATION_AS_REIFIED_TYPE_ARGUMENT,
-                    typeArgument,
-                    context,
+                    typeArgument
                 )
             }
         }

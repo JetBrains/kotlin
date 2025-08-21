@@ -41,3 +41,7 @@ fun test() {
         severalParams("", 89, <!TOO_MANY_ARGUMENTS!>this <!CAST_NEVER_SUCCEEDS!>as<!> Continuation<Double><!>) checkType { <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>_<!><Unit>() }
     }
 }
+
+/* GENERATED_FIR_TAGS: asExpression, checkNotNullCall, classDeclaration, funWithExtensionReceiver, functionDeclaration,
+functionalType, infix, integerLiteral, lambdaLiteral, nullableType, stringLiteral, suspend, thisExpression,
+typeParameter, typeWithExtension */

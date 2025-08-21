@@ -7,3 +7,5 @@ fun test(x: Int, y: Int) {
         Unit
     }
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionalType, ifExpression, integerLiteral, lambdaLiteral */

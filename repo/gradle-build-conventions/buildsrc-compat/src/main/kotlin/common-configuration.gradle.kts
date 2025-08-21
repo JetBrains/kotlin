@@ -27,23 +27,6 @@ project.configureTests()
 // therefore it is disabled by default
 // buildDir = File(commonBuildDir, project.name)
 
-afterEvaluate {
-    run configureCompilerClasspath@{
-        val bootstrapCompilerClasspath by rootProject.buildscript.configurations
-        configurations.findByName("kotlinCompilerClasspath")?.let {
-            dependencies.add(it.name, files(bootstrapCompilerClasspath))
-        }
-        val bootstrapBuildToolsApiClasspath by rootProject.buildscript.configurations
-        configurations.findByName("kotlinBuildToolsApiClasspath")?.let {
-            it.dependencies.clear() // it's different from `bootstrapCompilerClasspath` as this configuration does not use "default dependencies"
-            dependencies.add(it.name, files(bootstrapBuildToolsApiClasspath))
-        }
-
-        configurations.findByName("kotlinCompilerPluginClasspath")
-            ?.exclude("org.jetbrains.kotlin", "kotlin-scripting-compiler-embeddable")
-    }
-}
-
 fun Project.addImplicitDependenciesConfiguration() {
     configurations.maybeCreate("implicitDependencies").apply {
         isCanBeConsumed = false
@@ -127,12 +110,10 @@ fun Project.configureKotlinCompilationOptions() {
             "-Xmulti-dollar-interpolation", // KT-2425
             "-Xwhen-guards", // KT-13626
             "-Xnon-local-break-continue", // KT-1436
+            "-Xcontext-parameters", // KT-72222
         )
 
         val kotlinLanguageVersion: String by rootProject.extra
-        val useJvmFir by extra(project.kotlinBuildProperties.useFir)
-        val useFirLT by extra(project.kotlinBuildProperties.useFirWithLightTree)
-        val useFirIC by extra(project.kotlinBuildProperties.useFirTightIC)
         val renderDiagnosticNames by extra(project.kotlinBuildProperties.renderDiagnosticNames)
 
         tasks.withType<KotlinCompilationTask<*>>().configureEach {
@@ -160,11 +141,12 @@ fun Project.configureKotlinCompilationOptions() {
             //  The value for property 'freeCompilerArgs' is final and cannot be changed any further.
             if (project.path != ":native:kotlin-test-native-xctest" &&
                 !project.path.startsWith(":native:objcexport-header-generator") &&
-                !project.path.startsWith(":native:analysis-api-klib-reader")
+                !project.path.startsWith(":native:analysis-api-klib-reader") &&
+                !project.path.startsWith(":native:external-projects-test-utils")
             ) {
                 doFirst {
                     if (!useAbsolutePathsInKlib && this !is KotlinJvmCompile && this !is KotlinCompileCommon) {
-                        @Suppress("DEPRECATION")
+                        @Suppress("DEPRECATION_ERROR", "DEPRECATION")
                         (this as KotlinCompile<*>).kotlinOptions.freeCompilerArgs +=
                             "-Xklib-relative-path-base=${layout.buildDirectory.get().asFile},${layout.projectDirectory.asFile},$rootDir"
                     }
@@ -186,6 +168,8 @@ fun Project.configureKotlinCompilationOptions() {
 
                 if (!skipJvmDefaultAllForModule(project.path)) {
                     freeCompilerArgs.add("-Xjvm-default=all")
+                } else {
+                    freeCompilerArgs.add("-Xjvm-default=disable")
                 }
             }
         }
@@ -308,7 +292,7 @@ fun Project.configureTests() {
     }
 
     tasks.withType<Test>().configureEach {
-        if (!plugins.hasPlugin("compiler-tests-convention")) {
+        if (!plugins.hasPlugin("compiler-tests-convention") && !plugins.hasPlugin("test-inputs-check")) {
             outputs.doNotCacheIf("https://youtrack.jetbrains.com/issue/KTI-112") { true }
         }
         if (project.kotlinBuildProperties.limitTestTasksConcurrency) {

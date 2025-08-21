@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.fir.types.varargElementType
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtParameter
+import org.jetbrains.kotlin.psi.KtPrimaryConstructor
 
 internal class KaFirValueParameterSymbol private constructor(
     override val backingPsi: KtParameter?,
@@ -93,7 +94,7 @@ internal class KaFirValueParameterSymbol private constructor(
     override val generatedPrimaryConstructorProperty: KaKotlinPropertySymbol?
         get() = withValidityAssertion {
             if (backingPsi != null) {
-                return if (backingPsi.hasValOrVar()) {
+                return if (backingPsi.hasValOrVar() && backingPsi.ownerFunction is KtPrimaryConstructor) {
                     KaFirKotlinPropertySymbol.create(backingPsi, analysisSession)
                 } else {
                     null

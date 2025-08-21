@@ -18,3 +18,6 @@ interface T4 {
 
 interface T5 private <!CONSTRUCTOR_IN_INTERFACE!>()<!> : T4 {}
 interface T6 <!CONSTRUCTOR_IN_INTERFACE!>private<!><!SYNTAX!><!> : T5 {}
+
+/* GENERATED_FIR_TAGS: classDeclaration, integerLiteral, interfaceDeclaration, localProperty, primaryConstructor,
+propertyDeclaration, secondaryConstructor */

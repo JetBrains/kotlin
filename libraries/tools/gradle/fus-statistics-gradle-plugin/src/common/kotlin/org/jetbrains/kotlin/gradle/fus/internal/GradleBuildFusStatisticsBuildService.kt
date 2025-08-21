@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.gradle.fus.GradleBuildFusStatisticsService
 import org.jetbrains.kotlin.gradle.fus.UsesGradleBuildFusStatisticsService
 
 private const val statisticsIsEnabled: Boolean = true //KT-59629 Wait for user confirmation before start to collect metrics
-private const val FUS_STATISTICS_PATH = "kotlin.session.logger.root.path"
 private val serviceClass = GradleBuildFusStatisticsService::class.java
 internal val serviceName = "${serviceClass.name}_${serviceClass.classLoader.hashCode()}"
 private val log = Logging.getLogger(GradleBuildFusStatisticsService::class.java)
@@ -41,9 +40,7 @@ private fun registerIfAbsent(
         @Suppress("UNCHECKED_CAST")
         return it.service as Provider<GradleBuildFusStatisticsService<out BuildServiceParameters>>
     }
-    val customPath: String =
-        project.providers.gradleProperty(FUS_STATISTICS_PATH).orNull ?: project.gradle.gradleUserHomeDir.path
-
+    val customPath: String = project.getFusDirectory()
 
     return if (!statisticsIsEnabled || customPath.isBlank()) {
         log.info(
@@ -51,6 +48,10 @@ private fun registerIfAbsent(
                     (if (statisticsIsEnabled) "enabled" else "disabled") +
                     if (customPath.isBlank()) " and custom path is blank" else ""
         )
+        project.gradle.sharedServices.registerIfAbsent(serviceName, NoConsentGradleBuildFusService::class.java) {}
+    } else if (customPath.isBlank() && isCiBuild()) {
+        val ciProperty = detectedCiProperty()
+        log.debug("Fus metrics won't be collected for CI build. (CI build detected via environment variable $ciProperty)")
         project.gradle.sharedServices.registerIfAbsent(serviceName, NoConsentGradleBuildFusService::class.java) {}
     } else if (GradleVersion.current().baseVersion < GradleVersion.version("8.1")) {
         val fusService = project.gradle.sharedServices.registerIfAbsent(serviceName, BuildCloseFusStatisticsBuildService::class.java) {
@@ -63,10 +64,8 @@ private fun registerIfAbsent(
     } else {
         val fusService = project.gradle.sharedServices.registerIfAbsent(serviceName, BuildFlowFusStatisticsBuildService::class.java) {
             it.parameters.fusStatisticsRootDirPath.value(customPath).disallowChanges()
-            it.parameters.configurationMetrics.empty()
-            it.parameters.buildId.value(uidService.map { it.buildId }).disallowChanges()
         }
-        FusBuildFinishFlowManager.getInstance(project).subscribeForBuildFinish()
+        FusBuildFinishFlowManager.getInstance(project).subscribeForBuildFinish(fusService, uidService.map { it.buildId })
         fusService
     }
 }

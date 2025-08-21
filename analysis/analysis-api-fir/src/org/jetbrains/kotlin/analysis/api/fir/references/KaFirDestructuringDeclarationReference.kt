@@ -22,7 +22,7 @@ internal class KaFirDestructuringDeclarationReference(
     override fun canRename(): Boolean = false //todo
 
     override fun KaFirSession.computeSymbols(): Collection<KaSymbol> {
-        val fir = expression.getOrBuildFirSafe<FirProperty>(firResolveSession) ?: return emptyList()
+        val fir = expression.getOrBuildFirSafe<FirProperty>(resolutionFacade) ?: return emptyList()
         return listOfNotNull(
             fir.buildSymbol(firSymbolBuilder),
             getComponentNSymbol(fir)

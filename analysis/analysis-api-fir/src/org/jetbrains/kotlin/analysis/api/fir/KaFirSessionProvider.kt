@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.isStable
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirInternals
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getFirResolveSession
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getResolutionFacade
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.LLFirDeclarationModificationService
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSessionCache
@@ -58,11 +58,10 @@ internal class KaFirSessionProvider(project: Project) : KaBaseSessionProvider(pr
 
     private val scheduledCacheMaintenance: Future<*>
 
-    private val cacheCleaner: KaFirCacheCleaner by lazy {
-        if (Registry.`is`("kotlin.analysis.lowMemoryCacheCleanup", false)) {
-            KaFirStopWorldCacheCleaner(project)
-        } else {
-            KaFirNoOpCacheCleaner
+    private val cacheCleaner: KaFirCacheCleaner by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        when {
+            !Registry.`is`("kotlin.analysis.lowMemoryCacheCleanup", true) -> KaFirNoOpCacheCleaner
+            else -> KaFirStopWorldCacheCleaner(project)
         }
     }
 
@@ -74,7 +73,7 @@ internal class KaFirSessionProvider(project: Project) : KaBaseSessionProvider(pr
     init {
         LowMemoryWatcher.register(::handleLowMemoryEvent, project)
         scheduledCacheMaintenance = AppExecutorUtil.getAppScheduledExecutorService().scheduleWithFixedDelay(
-            Runnable { performCacheMaintenance() },
+            { performCacheMaintenance() },
             10,
             10,
             TimeUnit.SECONDS,
@@ -93,6 +92,8 @@ internal class KaFirSessionProvider(project: Project) : KaBaseSessionProvider(pr
     }
 
     override fun getAnalysisSession(useSiteModule: KaModule): KaSession {
+        checkUseSiteModule(useSiteModule)
+
         ProgressManager.checkCanceled()
 
         // The cache cleaner must be called before we get a session.
@@ -115,9 +116,9 @@ internal class KaFirSessionProvider(project: Project) : KaBaseSessionProvider(pr
     }
 
     private fun createAnalysisSession(useSiteKtModule: KaModule): KaFirSession {
-        val firResolveSession = useSiteKtModule.getFirResolveSession(project)
-        val validityToken = tokenFactory.create(project, firResolveSession.useSiteFirSession.createValidityTracker())
-        return KaFirSession.createAnalysisSessionByFirResolveSession(firResolveSession, validityToken)
+        val resolutionFacade = useSiteKtModule.getResolutionFacade(project)
+        val validityToken = tokenFactory.create(project, resolutionFacade.useSiteFirSession.createValidityTracker())
+        return KaFirSession.createAnalysisSessionByResolutionFacade(resolutionFacade, validityToken)
     }
 
     override fun beforeEnteringAnalysis(session: KaSession, useSiteElement: KtElement) {

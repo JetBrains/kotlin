@@ -25,3 +25,5 @@ class MakefileStubFileElementType : IStubFileElementType<StubElement<CharSequenc
     // FIR: ABSTRACT_CLASS_MEMBER_NOT_IMPLEMENTED: indexStub, should be ok
     // FE 1.0: Ok
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, javaType */

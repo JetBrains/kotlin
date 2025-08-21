@@ -1,5 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LANGUAGE: +EnumEntries +PrioritizedEnumEntries
+// LANGUAGE: +EnumEntries +PrioritizedEnumEntries -ForbidEnumEntryNamedEntries
 // WITH_STDLIB
 // FIR_DUMP
 
@@ -35,3 +35,6 @@ fun test(): String {
 
     return "$first$second$third"
 }
+
+/* GENERATED_FIR_TAGS: callableReference, functionDeclaration, javaProperty, javaType, localProperty,
+propertyDeclaration */

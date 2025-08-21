@@ -8,7 +8,10 @@ package org.jetbrains.kotlin.analysis.api.standalone.base
 import org.jetbrains.kotlin.analysis.api.platform.KotlinDeserializedDeclarationsOrigin
 import org.jetbrains.kotlin.analysis.api.platform.KotlinPlatformSettings
 
-class KotlinStandalonePlatformSettings : KotlinPlatformSettings {
+open class KotlinStandalonePlatformSettings : KotlinPlatformSettings {
     override val deserializedDeclarationsOrigin: KotlinDeserializedDeclarationsOrigin
         get() = KotlinDeserializedDeclarationsOrigin.BINARIES
+
+    override val allowUseSiteLibraryModuleAnalysis: Boolean
+        get() = false
 }

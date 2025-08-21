@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.scriptingHostConfiguration
 import org.jetbrains.kotlin.extensions.CollectAdditionalSourcesExtension
 import org.jetbrains.kotlin.extensions.CompilerConfigurationExtension
 import org.jetbrains.kotlin.extensions.ProcessSourcesBeforeCompilingExtension
@@ -33,6 +34,8 @@ import org.jetbrains.kotlin.scripting.compiler.plugin.extensions.ReplLoweringExt
 import org.jetbrains.kotlin.scripting.compiler.plugin.extensions.ScriptLoweringExtension
 import org.jetbrains.kotlin.scripting.compiler.plugin.extensions.ScriptingCollectAdditionalSourcesExtension
 import org.jetbrains.kotlin.scripting.compiler.plugin.extensions.ScriptingProcessSourcesBeforeCompilingExtension
+import org.jetbrains.kotlin.scripting.compiler.plugin.extensions.ScriptingIrExplainGenerationExtension
+import org.jetbrains.kotlin.scripting.configuration.ScriptingConfigurationKeys.ENABLE_SCRIPT_EXPLANATION_OPTION
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinitionProvider
 import org.jetbrains.kotlin.scripting.definitions.ScriptConfigurationsProvider
 import org.jetbrains.kotlin.scripting.extensions.ScriptExtraImportsProviderExtension
@@ -62,6 +65,9 @@ class ScriptingCompilerConfigurationComponentRegistrar : ComponentRegistrar {
             // TODO: add jdk path and other params if needed
         }
         withClassloadingProblemsReporting(messageCollector) {
+            if (configuration.get(ENABLE_SCRIPT_EXPLANATION_OPTION, false)) {
+                IrGenerationExtension.registerExtension(project, ScriptingIrExplainGenerationExtension(project))
+            }
             CompilerConfigurationExtension.registerExtension(project, ScriptingCompilerConfigurationExtension(project, hostConfiguration))
             CollectAdditionalSourcesExtension.registerExtension(project, ScriptingCollectAdditionalSourcesExtension(project))
             ProcessSourcesBeforeCompilingExtension.registerExtension(project, ScriptingProcessSourcesBeforeCompilingExtension(project))
@@ -89,9 +95,10 @@ class ScriptingCompilerConfigurationComponentRegistrar : ComponentRegistrar {
 class ScriptingK2CompilerPluginRegistrar : CompilerPluginRegistrar() {
     companion object {
         fun registerComponents(extensionStorage: ExtensionStorage, compilerConfiguration: CompilerConfiguration) = with(extensionStorage) {
-            val hostConfiguration = ScriptingHostConfiguration(defaultJvmScriptingHostConfiguration) {
-                // TODO: add jdk path and other params if needed
-            }
+            val hostConfiguration = (compilerConfiguration.scriptingHostConfiguration as? ScriptingHostConfiguration)
+                ?: ScriptingHostConfiguration(defaultJvmScriptingHostConfiguration) {
+                    // TODO: add jdk path and other params if needed
+                }
             FirExtensionRegistrarAdapter.registerExtension(FirScriptingCompilerExtensionRegistrar(hostConfiguration, compilerConfiguration))
             FirExtensionRegistrarAdapter.registerExtension(FirScriptingSamWithReceiverExtensionRegistrar())
         }

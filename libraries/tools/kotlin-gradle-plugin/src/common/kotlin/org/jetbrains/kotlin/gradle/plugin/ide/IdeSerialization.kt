@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.gradle.plugin.ide
 
-import org.gradle.api.logging.Logger
 import org.jetbrains.kotlin.gradle.idea.serialize.IdeaKotlinExtrasSerializationExtension
 import org.jetbrains.kotlin.gradle.idea.serialize.IdeaKotlinExtrasSerializer
 import org.jetbrains.kotlin.gradle.idea.serialize.IdeaKotlinSerializationContext
@@ -13,7 +12,7 @@ import org.jetbrains.kotlin.gradle.idea.serialize.IdeaKotlinSerializationLogger
 import org.jetbrains.kotlin.tooling.core.Extras
 
 internal fun IdeaKotlinSerializationContext(
-    logger: Logger, extrasSerializationExtensions: List<IdeaKotlinExtrasSerializationExtension>,
+    logger: IdeMultiplatformImportLogger, extrasSerializationExtensions: List<IdeaKotlinExtrasSerializationExtension>,
 ): IdeaKotlinSerializationContext {
     return IdeaKotlinSerializationContextImpl(
         extrasSerializationExtension = IdeaKotlinExtrasSerializationExtensionImpl(logger, extrasSerializationExtensions),
@@ -30,7 +29,7 @@ private class IdeaKotlinSerializationContextImpl(
 /* Simple composite implementation, reporting conflicting extensions */
 
 private class IdeaKotlinExtrasSerializationExtensionImpl(
-    private val logger: Logger,
+    private val importLogger: IdeMultiplatformImportLogger,
     private val extensions: List<IdeaKotlinExtrasSerializationExtension>,
 ) : IdeaKotlinExtrasSerializationExtension {
     override fun <T> serializer(key: Extras.Key<T>): IdeaKotlinExtrasSerializer<T>? {
@@ -41,7 +40,7 @@ private class IdeaKotlinExtrasSerializationExtensionImpl(
         }
 
         if (serializers.size > 1) {
-            logger.error("Conflicting serializers found for Extras.Key $key: $serializers")
+            importLogger.error("Conflicting serializers found for Extras.Key $key: $serializers")
             return null
         }
 
@@ -51,13 +50,13 @@ private class IdeaKotlinExtrasSerializationExtensionImpl(
 
 /* Simple Gradle logger based implementation */
 private class IdeaKotlinSerializationLoggerImpl(
-    private val logger: Logger,
+    private val importLogger: IdeMultiplatformImportLogger,
 ) : IdeaKotlinSerializationLogger {
     override fun report(severity: IdeaKotlinSerializationLogger.Severity, message: String, cause: Throwable?) {
         val text = "Serialization: $message"
         when (severity) {
-            IdeaKotlinSerializationLogger.Severity.WARNING -> logger.warn(text, cause)
-            IdeaKotlinSerializationLogger.Severity.ERROR -> logger.error(text, cause)
+            IdeaKotlinSerializationLogger.Severity.WARNING -> importLogger.warn(text, cause)
+            IdeaKotlinSerializationLogger.Severity.ERROR -> importLogger.error(text, cause)
         }
     }
 }

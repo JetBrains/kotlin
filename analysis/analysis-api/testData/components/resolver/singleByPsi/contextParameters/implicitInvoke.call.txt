@@ -1,0 +1,51 @@
+KtCallExpression(117,127): 'thisProp()'
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      argumentMapping = {}
+      isImplicitInvoke = true
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = [
+          KaImplicitReceiverValue:
+            symbol = KaReceiverParameterSymbol:
+              annotations: []
+              callableId: null
+              compilerVisibility: Public
+              contextReceivers: []
+              isActual: false
+              isExpect: false
+              isExtension: false
+              isVal: true
+              location: LOCAL
+              modality: FINAL
+              name: <receiver>
+              origin: SOURCE
+              owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
+              receiverParameter: null
+              returnType: KaUsualClassType:
+                annotations: []
+                typeArguments: []
+                type: A
+              visibility: PUBLIC
+            type = A
+        ]
+        dispatchReceiver = null
+        extensionReceiver = KaExplicitReceiverValue:
+          expression = thisProp
+          isSafeNavigation = false
+          type = A
+        signature = KaFunctionSignature:
+          receiverType = A
+          returnType = kotlin.Unit
+          symbol = /invoke(<extension receiver>: A): kotlin.Unit
+          valueParameters = []
+          contextParameters = [
+            KaVariableSignature:
+              name = a
+              receiverType = null
+              returnType = A
+              symbol = a: A
+              contextParameters = []
+              callableId = null
+          ]
+          callableId = /invoke
+      typeArgumentsMapping = {}

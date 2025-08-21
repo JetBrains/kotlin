@@ -3,7 +3,7 @@
 // CHECK_TYPE_WITH_EXACT
 
 fun test() {
-    val buildee = <!CANNOT_INFER_PARAMETER_TYPE, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>build<!> {
+    val buildee = <!CANNOT_INFER_PARAMETER_TYPE!>build<!> {
         this as DerivedBuildee<*, *>
         getTypeVariableA()
         getTypeVariableB()
@@ -28,3 +28,7 @@ class DerivedBuildee<TAA, TAB>: Buildee<TAA, TAB>()
 fun <PTVA, PTVB> build(instructions: Buildee<PTVA, PTVB>.() -> Unit): Buildee<PTVA, PTVB> {
     return DerivedBuildee<PTVA, PTVB>().apply(instructions)
 }
+
+/* GENERATED_FIR_TAGS: asExpression, checkNotNullCall, classDeclaration, functionDeclaration, functionalType,
+intersectionType, lambdaLiteral, localProperty, nullableType, propertyDeclaration, smartcast, starProjection,
+stringLiteral, thisExpression, typeParameter, typeWithExtension */

@@ -10,10 +10,9 @@ import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.types.KaClassType
 import org.jetbrains.kotlin.backend.konan.objcexport.*
-import org.jetbrains.kotlin.objcexport.analysisApiUtils.isCompanion
-import org.jetbrains.kotlin.objcexport.analysisApiUtils.isThrowable
+import org.jetbrains.kotlin.analysis.api.export.utilities.isCompanion
+import org.jetbrains.kotlin.analysis.api.export.utilities.isThrowable
 import org.jetbrains.kotlin.objcexport.analysisApiUtils.isVisibleInObjC
-import org.jetbrains.kotlin.objcexport.extras.objCExportStubExtras
 
 
 fun ObjCExportContext.translateToObjCClass(symbol: KaClassSymbol): ObjCClass? = withClassifierContext(symbol) {
@@ -43,7 +42,7 @@ fun ObjCExportContext.translateToObjCClass(symbol: KaClassSymbol): ObjCClass? = 
         /* The order of members tries to replicate the K1 implementation explicitly */
         this += translateToObjCConstructors(symbol)
 
-        if (symbol.isCompanion || analysisSession.hasCompanionObject(symbol)) {
+        if (symbol.isCompanion || analysisSession.hasVisibleCompanionObject(symbol)) {
             this += buildCompanionProperty(symbol)
         }
 

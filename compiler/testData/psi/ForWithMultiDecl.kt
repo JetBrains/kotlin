@@ -1,3 +1,5 @@
+// COMPILATION_ERRORS
+
 fun main() {
     for ((a) in b) {}
     for ((a, b) in b) {}

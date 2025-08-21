@@ -5,16 +5,17 @@
 
 package org.jetbrains.kotlin.abicmp.tasks
 
-import kotlin.metadata.*
-import kotlin.metadata.jvm.*
 import org.jetbrains.kotlin.abicmp.*
 import org.jetbrains.kotlin.abicmp.checkers.*
-import org.jetbrains.kotlin.kotlinp.*
+import org.jetbrains.kotlin.kotlinp.Settings
 import org.jetbrains.kotlin.kotlinp.jvm.JvmKotlinp
+import org.jetbrains.kotlin.kotlinp.printString
 import org.jetbrains.org.objectweb.asm.tree.ClassNode
 import org.jetbrains.org.objectweb.asm.tree.FieldNode
 import org.jetbrains.org.objectweb.asm.tree.MethodNode
 import kotlin.contracts.ExperimentalContracts
+import kotlin.metadata.*
+import kotlin.metadata.jvm.*
 
 private val allClassCheckers = listOf(
     classPropertyChecker(ClassNode::version),
@@ -56,9 +57,9 @@ private val allConstructorMetadataCheckers = listOf(
 private val allFunctionMetadataCheckers = listOf(
     functionMetadataPropertyChecker("lambdaClassOriginName") { it.lambdaClassOriginName.toString() },
     functionMetadataPropertyChecker("versionRequirements") { it.versionRequirements.stringifyRelevantRequirements() },
-    functionMetadataPropertyChecker("contextReceiverTypes") {
-        @OptIn(ExperimentalContextReceivers::class)
-        it.contextReceiverTypes.stringifyTypeListSorted()
+    functionMetadataPropertyChecker("contextParametersTypes") {
+        @OptIn(ExperimentalContextParameters::class)
+        it.contextParameters.map { it.type }.stringifyTypeListSorted()
     },
     functionMetadataPropertyChecker("modifiers") { printFunctionModifiers(it) },
     functionMetadataPropertyChecker("typeParameters") { it.typeParameters.stringifyTypeParameters() },
@@ -80,9 +81,9 @@ private val allPropertyMetadataCheckers = listOf(
     propertyMetadataPropertyChecker("syntheticMethodForAnnotations") { it.syntheticMethodForAnnotations?.toString() ?: PROPERTY_VAL_STUB },
     propertyMetadataPropertyChecker("syntheticMethodForDelegate") { it.syntheticMethodForDelegate?.toString() ?: PROPERTY_VAL_STUB },
     propertyMetadataPropertyChecker("isMovedFromInterfaceCompanion") { it.isMovedFromInterfaceCompanion.toString() },
-    propertyMetadataPropertyChecker("contextReceiverTypes") {
-        @OptIn(ExperimentalContextReceivers::class)
-        it.contextReceiverTypes.stringifyTypeListSorted()
+    propertyMetadataPropertyChecker("contextParametersTypes") {
+        @OptIn(ExperimentalContextParameters::class)
+        it.contextParameters.map { it.type }.stringifyTypeListSorted()
     },
     propertyMetadataPropertyChecker("modifiers") { printPropertyModifiers(it) },
     propertyMetadataPropertyChecker("isVar") { it.isVar.toString() },
@@ -126,7 +127,7 @@ private val allClassMetadataCheckers = listOf(
     classMetadataListChecker("properties") { loadProperties(it.kmClass).keys.toList() },
     classMetadataListChecker("typeAliases") { it.kmClass.typeAliases.map { typeAlias -> typeAlias.name } },
     classMetadataListChecker("nestedClasses") { it.kmClass.nestedClasses },
-    classMetadataListChecker("enumEntries") { it.kmClass.enumEntries },
+    classMetadataListChecker("enumEntries") { it.kmClass.kmEnumEntries.map { entry -> entry.name } },
     classMetadataListChecker("sealedSubclasses") { it.kmClass.sealedSubclasses },
     classMetadataListChecker("localDelegatedProperties") { loadLocalDelegatedProperties(it).keys.toList() },
 
@@ -140,7 +141,7 @@ private val allClassMetadataCheckers = listOf(
         it.kmClass.inlineClassUnderlyingType?.let(::printType) ?: "---"
     },
     classMetadataPropertyChecker("contextReceiverTypes") {
-        @OptIn(ExperimentalContextReceivers::class)
+        @[Suppress("DEPRECATION") OptIn(ExperimentalContextReceivers::class)]
         it.kmClass.contextReceiverTypes.stringifyTypeListSorted()
     },
     classMetadataPropertyChecker("versionRequirements") { it.kmClass.versionRequirements.stringifyRelevantRequirements() }

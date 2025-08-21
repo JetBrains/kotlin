@@ -5,10 +5,10 @@
 // FILE: common.kt
 @file:OptIn(ExperimentalMultiplatform::class)
 
-<!EXPECT_ACTUAL_INCOMPATIBILITY{JVM}!>expect<!> annotation class ActualOnly
+<!EXPECT_ACTUAL_IR_INCOMPATIBILITY{JVM}!>expect<!> annotation class ActualOnly
 
 @RequiresOptIn
-<!EXPECT_ACTUAL_INCOMPATIBILITY{JVM}, EXPECT_ACTUAL_OPT_IN_ANNOTATION!>expect<!> annotation class Both
+<!EXPECT_ACTUAL_IR_INCOMPATIBILITY{JVM}, EXPECT_ACTUAL_OPT_IN_ANNOTATION!>expect<!> annotation class Both
 
 @RequiresOptIn
 @OptionalExpectation
@@ -17,10 +17,12 @@ expect annotation class MyOptIn
 // MODULE: m1-jvm()()(m1-common)
 // FILE: jvm.kt
 @RequiresOptIn
-actual annotation class <!ACTUAL_WITHOUT_EXPECT!>ActualOnly<!>
+actual annotation class <!EXPECT_ACTUAL_INCOMPATIBLE_ILLEGAL_REQUIRES_OPT_IN!>ActualOnly<!>
 
 @RequiresOptIn
-actual annotation class <!ACTUAL_WITHOUT_EXPECT!>Both<!>
+actual annotation class <!EXPECT_ACTUAL_INCOMPATIBLE_ILLEGAL_REQUIRES_OPT_IN!>Both<!>
 
 @RequiresOptIn
 actual annotation class MyOptIn
+
+/* GENERATED_FIR_TAGS: actual, annotationDeclaration, annotationUseSiteTargetFile, classReference, expect */

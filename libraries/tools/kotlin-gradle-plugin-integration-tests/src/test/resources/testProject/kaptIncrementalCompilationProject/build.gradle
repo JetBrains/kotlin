@@ -8,7 +8,7 @@ repositories {
     mavenLocal()
     mavenCentral()
     maven {
-        url "https://packages.jetbrains.team/maven/p/ij/intellij-dependencies/"
+        url = "https://packages.jetbrains.team/maven/p/ij/intellij-dependencies/"
     }
 }
 

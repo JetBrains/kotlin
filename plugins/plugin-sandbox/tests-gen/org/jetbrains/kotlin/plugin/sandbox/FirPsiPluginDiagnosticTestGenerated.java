@@ -21,7 +21,7 @@ import java.util.regex.Pattern;
 public class FirPsiPluginDiagnosticTestGenerated extends AbstractFirPsiPluginDiagnosticTest {
   @Test
   public void testAllFilesPresentInDiagnostics() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/plugin-sandbox/testData/diagnostics"), Pattern.compile("^(.+)\\.kt$"), null, true);
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/plugin-sandbox/testData/diagnostics"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|partialBody|fir|ll|latestLV)\\.kts?$"), true);
   }
 
   @Nested
@@ -30,7 +30,7 @@ public class FirPsiPluginDiagnosticTestGenerated extends AbstractFirPsiPluginDia
   public class Checkers {
     @Test
     public void testAllFilesPresentInCheckers() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/plugin-sandbox/testData/diagnostics/checkers"), Pattern.compile("^(.+)\\.kt$"), null, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/plugin-sandbox/testData/diagnostics/checkers"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|partialBody|fir|ll|latestLV)\\.kts?$"), true);
     }
 
     @Test
@@ -76,7 +76,7 @@ public class FirPsiPluginDiagnosticTestGenerated extends AbstractFirPsiPluginDia
   public class FunctionalTypes {
     @Test
     public void testAllFilesPresentInFunctionalTypes() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/plugin-sandbox/testData/diagnostics/functionalTypes"), Pattern.compile("^(.+)\\.kt$"), null, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/plugin-sandbox/testData/diagnostics/functionalTypes"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|partialBody|fir|ll|latestLV)\\.kts?$"), true);
     }
 
     @Test
@@ -122,7 +122,7 @@ public class FirPsiPluginDiagnosticTestGenerated extends AbstractFirPsiPluginDia
   public class MemberGen {
     @Test
     public void testAllFilesPresentInMemberGen() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/plugin-sandbox/testData/diagnostics/memberGen"), Pattern.compile("^(.+)\\.kt$"), null, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/plugin-sandbox/testData/diagnostics/memberGen"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|partialBody|fir|ll|latestLV)\\.kts?$"), true);
     }
 
     @Test
@@ -162,7 +162,7 @@ public class FirPsiPluginDiagnosticTestGenerated extends AbstractFirPsiPluginDia
   public class Receivers {
     @Test
     public void testAllFilesPresentInReceivers() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/plugin-sandbox/testData/diagnostics/receivers"), Pattern.compile("^(.+)\\.kt$"), null, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/plugin-sandbox/testData/diagnostics/receivers"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|partialBody|fir|ll|latestLV)\\.kts?$"), true);
     }
 
     @Test
@@ -183,8 +183,20 @@ public class FirPsiPluginDiagnosticTestGenerated extends AbstractFirPsiPluginDia
   @TestDataPath("$PROJECT_ROOT")
   public class Status {
     @Test
+    @TestMetadata("aliasedAnnotation.kt")
+    public void testAliasedAnnotation() {
+      runTest("plugins/plugin-sandbox/testData/diagnostics/status/aliasedAnnotation.kt");
+    }
+
+    @Test
     public void testAllFilesPresentInStatus() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/plugin-sandbox/testData/diagnostics/status"), Pattern.compile("^(.+)\\.kt$"), null, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/plugin-sandbox/testData/diagnostics/status"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|partialBody|fir|ll|latestLV)\\.kts?$"), true);
+    }
+
+    @Test
+    @TestMetadata("annotatedAllOpenAnnotation.kt")
+    public void testAnnotatedAllOpenAnnotation() {
+      runTest("plugins/plugin-sandbox/testData/diagnostics/status/annotatedAllOpenAnnotation.kt");
     }
 
     @Test
@@ -224,6 +236,12 @@ public class FirPsiPluginDiagnosticTestGenerated extends AbstractFirPsiPluginDia
     }
 
     @Test
+    @TestMetadata("reversedAliasedAnnotation.kt")
+    public void testReversedAliasedAnnotation() {
+      runTest("plugins/plugin-sandbox/testData/diagnostics/status/reversedAliasedAnnotation.kt");
+    }
+
+    @Test
     @TestMetadata("simpleAnnotation.kt")
     public void testSimpleAnnotation() {
       runTest("plugins/plugin-sandbox/testData/diagnostics/status/simpleAnnotation.kt");
@@ -242,7 +260,7 @@ public class FirPsiPluginDiagnosticTestGenerated extends AbstractFirPsiPluginDia
   public class Supertypes {
     @Test
     public void testAllFilesPresentInSupertypes() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/plugin-sandbox/testData/diagnostics/supertypes"), Pattern.compile("^(.+)\\.kt$"), null, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/plugin-sandbox/testData/diagnostics/supertypes"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|partialBody|fir|ll|latestLV)\\.kts?$"), true);
     }
 
     @Test

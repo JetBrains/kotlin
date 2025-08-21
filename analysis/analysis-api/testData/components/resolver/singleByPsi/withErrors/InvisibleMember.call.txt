@@ -3,6 +3,7 @@ KtNameReferenceExpression(63,64): 'i'
     candidateCalls = [
       KaSimpleVariableAccessCall:
         partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+          contextArguments = []
           dispatchReceiver = KaExplicitReceiverValue:
             expression = a
             isSafeNavigation = false
@@ -13,8 +14,9 @@ KtNameReferenceExpression(63,64): 'i'
             receiverType = null
             returnType = kotlin.Int
             symbol = val i: kotlin.Int
+            contextParameters = []
             callableId = /A.i
         simpleAccess = Read
         typeArgumentsMapping = {}
     ]
-    diagnostic = ERROR<INVISIBLE_REFERENCE: Cannot access 'val i: Int': it is private in '/A'.>
+    diagnostic = ERROR<INVISIBLE_REFERENCE: Cannot access 'val i: Int': it is private in 'A'.>

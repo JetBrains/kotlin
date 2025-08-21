@@ -8,3 +8,6 @@ fun test() {
         else -> throw Exception()
     }
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, isExpression, localProperty, propertyDeclaration, smartcast, whenExpression,
+whenWithSubject */

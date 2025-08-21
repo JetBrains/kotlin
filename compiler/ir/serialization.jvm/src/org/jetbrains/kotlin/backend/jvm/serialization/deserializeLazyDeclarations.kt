@@ -15,11 +15,11 @@ import org.jetbrains.kotlin.backend.jvm.serialization.proto.JvmIr
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.IrProvider
 import org.jetbrains.kotlin.ir.backend.jvm.serialization.JvmIrMangler
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
-import org.jetbrains.kotlin.ir.linkage.IrProvider
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
+import org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry as ProtoFileEntry
 import org.jetbrains.kotlin.backend.common.serialization.proto.IdSignature as ProtoIdSignature
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclaration as ProtoDeclaration
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression as ProtoExpression
@@ -50,7 +51,8 @@ fun deserializeFromByteArray(
         irProto.signatureList,
         irProto.stringList,
         irProto.bodyList,
-        irProto.debugInfoList
+        irProto.debugInfoList,
+        irProto.fileEntryList,
     )
 
     // Only needed for local signature computation.
@@ -130,9 +132,14 @@ private class IrLibraryFileFromAnnotation(
     private val signatures: List<ProtoIdSignature>,
     private val strings: List<String>,
     private val bodies: List<JvmIr.XStatementOrExpression>,
-    private val debugInfo: List<String>
+    private val debugInfo: List<String>,
+    private val fileEntries: List<ProtoFileEntry>,
 ) : IrLibraryFile() {
     override fun declaration(index: Int): ProtoDeclaration {
+        error("This method is never supposed to be called")
+    }
+
+    override fun inlineDeclaration(index: Int): ProtoDeclaration {
         error("This method is never supposed to be called")
     }
 
@@ -140,6 +147,7 @@ private class IrLibraryFileFromAnnotation(
     override fun signature(index: Int): ProtoIdSignature = signatures[index]
     override fun string(index: Int): String = strings[index]
     override fun debugInfo(index: Int): String = debugInfo[index]
+    override fun fileEntry(index: Int): ProtoFileEntry = fileEntries[index]
 
     override fun expressionBody(index: Int): ProtoExpression =
         bodies[index].also { require(it.hasExpression()) }.expression
@@ -187,7 +195,7 @@ fun makeSimpleFakeOverrideBuilder(
         symbolTable,
         JvmIrMangler,
         typeSystemContext,
-        fakeOverrideDeclarationTable = PrePopulatedDeclarationTable(symbolDeserializer.deserializedSymbols),
+        fakeOverrideDeclarationTable = PrePopulatedDeclarationTable(symbolDeserializer.deserializedSymbolsWithOwnersInCurrentFile),
         friendModules = emptyMap(), // TODO: provide friend modules
         partialLinkageSupport = PartialLinkageSupportForLinker.DISABLED
     )

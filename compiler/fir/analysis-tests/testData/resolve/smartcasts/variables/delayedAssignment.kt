@@ -14,3 +14,6 @@ fun test(b: Boolean) {
     }
     a<!UNSAFE_CALL!>.<!>foo()
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, functionDeclaration, ifExpression, localProperty, nullableType,
+propertyDeclaration, smartcast */

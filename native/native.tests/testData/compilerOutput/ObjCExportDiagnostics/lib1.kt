@@ -34,5 +34,7 @@ interface I2 {
     fun method()
 }
 
+fun autorelease() {}
+
 fun topLevel(arg: Int) {}
 fun topLevel(arg: Long) {}

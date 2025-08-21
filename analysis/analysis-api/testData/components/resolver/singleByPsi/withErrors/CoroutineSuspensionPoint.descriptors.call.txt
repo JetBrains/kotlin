@@ -5,6 +5,7 @@ KtNameReferenceExpression(183,194): 'suspendHere'
         argumentMapping = {}
         isImplicitInvoke = false
         partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+          contextArguments = []
           dispatchReceiver = KaImplicitReceiverValue:
             symbol = KaReceiverParameterSymbol:
               annotations: []
@@ -38,8 +39,10 @@ KtNameReferenceExpression(183,194): 'suspendHere'
                 receiverType = null
                 returnType = ERROR_TYPE
                 symbol = x: ERROR_TYPE
+                contextParameters = []
                 callableId = null
             ]
+            contextParameters = []
             callableId = /Controller.suspendHere
         typeArgumentsMapping = {}
     ]

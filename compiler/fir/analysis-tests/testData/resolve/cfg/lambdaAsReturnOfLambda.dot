@@ -82,6 +82,7 @@ digraph lambdaAsReturnOfLambda_kt {
     17 -> {18} [style=dotted];
     18 -> {19} [style=dotted];
     19 -> {20} [style=dotted];
+    20 -> {5} [color=green style=dashed];
     21 -> {22};
     22 -> {24};
     23 -> {24} [label="Postponed"];
@@ -113,7 +114,7 @@ digraph lambdaAsReturnOfLambda_kt {
                 33 [label="Function call arguments enter"];
                 34 [label="Function call arguments exit"];
             }
-            35 [label="Function call enter: R?C|kotlin/Function0.invoke|()"];
+            35 [label="Function call enter: R|<local>/block|.R|SubstitutionOverride<kotlin/Function0.invoke: R|R|>|()"];
             36 [label="Function call exit: R|<local>/block|.R|SubstitutionOverride<kotlin/Function0.invoke: R|R|>|()" style="filled" fillcolor=yellow];
             37 [label="Jump: ^run R|<local>/block|.R|SubstitutionOverride<kotlin/Function0.invoke: R|R|>|()"];
             38 [label="Stub" style="filled" fillcolor=gray];

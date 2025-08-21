@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: BACKEND
-// LANGUAGE: +TypeInferenceOnCallsWithSelfTypes
 
 // FILE: JavaBodySpec.java
 public interface JavaBodySpec<B, S extends JavaBodySpec<B, S>> {
@@ -22,3 +21,6 @@ fun testJava(b: JavaBodySpec<String, *>) {
     val x = b.isEqualTo("")
     <!DEBUG_INFO_EXPRESSION_TYPE("(JavaBodySpec<*, *>..JavaBodySpec<*, *>?)")!>x<!>
 }
+
+/* GENERATED_FIR_TAGS: capturedType, flexibleType, functionDeclaration, interfaceDeclaration, javaType, localProperty,
+nullableType, propertyDeclaration, starProjection, stringLiteral, typeConstraint, typeParameter */

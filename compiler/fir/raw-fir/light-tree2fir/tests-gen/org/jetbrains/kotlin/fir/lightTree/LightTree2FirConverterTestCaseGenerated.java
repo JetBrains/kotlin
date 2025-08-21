@@ -26,7 +26,7 @@ public class LightTree2FirConverterTestCaseGenerated extends AbstractLightTree2F
   }
 
   public void testAllFilesPresentInRawBuilder() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/raw-fir/psi2fir/testData/rawBuilder"), Pattern.compile("^(.+)\\.kt$"), null, true);
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/raw-fir/psi2fir/testData/rawBuilder"), Pattern.compile("^(.+)\\.(kt|kts)$"), null, true);
   }
 
   @TestMetadata("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations")
@@ -38,12 +38,22 @@ public class LightTree2FirConverterTestCaseGenerated extends AbstractLightTree2F
     }
 
     public void testAllFilesPresentInDeclarations() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations"), Pattern.compile("^(.+)\\.kt$"), null, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations"), Pattern.compile("^(.+)\\.(kt|kts)$"), null, true);
     }
 
     @TestMetadata("annotation.kt")
     public void testAnnotation() {
       runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/annotation.kt");
+    }
+
+    @TestMetadata("annotationArguments.kt")
+    public void testAnnotationArguments() {
+      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/annotationArguments.kt");
+    }
+
+    @TestMetadata("annotationOnContextParameters.kt")
+    public void testAnnotationOnContextParameters() {
+      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/annotationOnContextParameters.kt");
     }
 
     @TestMetadata("annotationOnDelegatedInterface.kt")
@@ -146,6 +156,36 @@ public class LightTree2FirConverterTestCaseGenerated extends AbstractLightTree2F
       runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/contextReceivers.kt");
     }
 
+    @TestMetadata("danglingAnnotationOnMemberClass.kt")
+    public void testDanglingAnnotationOnMemberClass() {
+      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/danglingAnnotationOnMemberClass.kt");
+    }
+
+    @TestMetadata("danglingAnnotationOnMemberFunction.kt")
+    public void testDanglingAnnotationOnMemberFunction() {
+      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/danglingAnnotationOnMemberFunction.kt");
+    }
+
+    @TestMetadata("danglingAnnotationOnMemberProperty.kt")
+    public void testDanglingAnnotationOnMemberProperty() {
+      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/danglingAnnotationOnMemberProperty.kt");
+    }
+
+    @TestMetadata("danglingAnnotationOnTopLevelClass.kt")
+    public void testDanglingAnnotationOnTopLevelClass() {
+      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/danglingAnnotationOnTopLevelClass.kt");
+    }
+
+    @TestMetadata("danglingAnnotationOnTopLevelFunction.kt")
+    public void testDanglingAnnotationOnTopLevelFunction() {
+      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/danglingAnnotationOnTopLevelFunction.kt");
+    }
+
+    @TestMetadata("danglingAnnotationOnTopLevelProperty.kt")
+    public void testDanglingAnnotationOnTopLevelProperty() {
+      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/danglingAnnotationOnTopLevelProperty.kt");
+    }
+
     @TestMetadata("danglingAnnotationsClassLevel.kt")
     public void testDanglingAnnotationsClassLevel() {
       runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/danglingAnnotationsClassLevel.kt");
@@ -159,6 +199,11 @@ public class LightTree2FirConverterTestCaseGenerated extends AbstractLightTree2F
     @TestMetadata("danglingConstrants.kt")
     public void testDanglingConstrants() {
       runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/danglingConstrants.kt");
+    }
+
+    @TestMetadata("danglingModifierInsideEnumEntry.kt")
+    public void testDanglingModifierInsideEnumEntry() {
+      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/danglingModifierInsideEnumEntry.kt");
     }
 
     @TestMetadata("dataClassWithAnnotations.kt")
@@ -276,6 +321,11 @@ public class LightTree2FirConverterTestCaseGenerated extends AbstractLightTree2F
       runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/genericProperty.kt");
     }
 
+    @TestMetadata("importAlias.kt")
+    public void testImportAlias() {
+      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/importAlias.kt");
+    }
+
     @TestMetadata("incompletePropertyWithDelegate.kt")
     public void testIncompletePropertyWithDelegate() {
       runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/incompletePropertyWithDelegate.kt");
@@ -321,6 +371,11 @@ public class LightTree2FirConverterTestCaseGenerated extends AbstractLightTree2F
       runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/localImplicitType.kt");
     }
 
+    @TestMetadata("localTypeAliasInsideLocalClass.kt")
+    public void testLocalTypeAliasInsideLocalClass() {
+      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/localTypeAliasInsideLocalClass.kt");
+    }
+
     @TestMetadata("multiDeclarations.kt")
     public void testMultiDeclarations() {
       runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/multiDeclarations.kt");
@@ -361,6 +416,26 @@ public class LightTree2FirConverterTestCaseGenerated extends AbstractLightTree2F
       runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/propertyWithBackingFieldDifferentTypes.kt");
     }
 
+    @TestMetadata("script.kts")
+    public void testScript() {
+      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/script.kts");
+    }
+
+    @TestMetadata("scriptLevelDestructuringWithAnnotation.kts")
+    public void testScriptLevelDestructuringWithAnnotation() {
+      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/scriptLevelDestructuringWithAnnotation.kts");
+    }
+
+    @TestMetadata("scriptStatementLevelDestructuringWithAnnotation.kts")
+    public void testScriptStatementLevelDestructuringWithAnnotation() {
+      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/scriptStatementLevelDestructuringWithAnnotation.kts");
+    }
+
+    @TestMetadata("scriptStatementLevelDestructuringWithAnnotationAsLastStatement.kts")
+    public void testScriptStatementLevelDestructuringWithAnnotationAsLastStatement() {
+      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/scriptStatementLevelDestructuringWithAnnotationAsLastStatement.kts");
+    }
+
     @TestMetadata("secondaryConstructor.kt")
     public void testSecondaryConstructor() {
       runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/secondaryConstructor.kt");
@@ -391,9 +466,19 @@ public class LightTree2FirConverterTestCaseGenerated extends AbstractLightTree2F
       runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/suspendFunctionTypes.kt");
     }
 
+    @TestMetadata("targetAnnotationWithDifferentValues.kt")
+    public void testTargetAnnotationWithDifferentValues() {
+      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/targetAnnotationWithDifferentValues.kt");
+    }
+
     @TestMetadata("topLevelDestructuringWithAnnotation.kt")
     public void testTopLevelDestructuringWithAnnotation() {
       runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/topLevelDestructuringWithAnnotation.kt");
+    }
+
+    @TestMetadata("topLevelDestructuringWithoutInitializer.kt")
+    public void testTopLevelDestructuringWithoutInitializer() {
+      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/topLevelDestructuringWithoutInitializer.kt");
     }
 
     @TestMetadata("typeAliasWithGeneric.kt")
@@ -430,7 +515,7 @@ public class LightTree2FirConverterTestCaseGenerated extends AbstractLightTree2F
       }
 
       public void testAllFilesPresentInContracts() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/contracts"), Pattern.compile("^(.+)\\.kt$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/contracts"), Pattern.compile("^(.+)\\.(kt|kts)$"), null, true);
       }
 
       @TestMetadata("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/contracts/newSyntax")
@@ -442,7 +527,7 @@ public class LightTree2FirConverterTestCaseGenerated extends AbstractLightTree2F
         }
 
         public void testAllFilesPresentInNewSyntax() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/contracts/newSyntax"), Pattern.compile("^(.+)\\.kt$"), null, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/contracts/newSyntax"), Pattern.compile("^(.+)\\.(kt|kts)$"), null, true);
         }
 
         @TestMetadata("functionWithBothOldAndNewSyntaxContractDescription.kt")
@@ -470,13 +555,61 @@ public class LightTree2FirConverterTestCaseGenerated extends AbstractLightTree2F
         }
 
         public void testAllFilesPresentInOldSyntax() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/contracts/oldSyntax"), Pattern.compile("^(.+)\\.kt$"), null, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/contracts/oldSyntax"), Pattern.compile("^(.+)\\.(kt|kts)$"), null, true);
         }
 
         @TestMetadata("contractDescription.kt")
         public void testContractDescription() {
           runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/contracts/oldSyntax/contractDescription.kt");
         }
+      }
+    }
+
+    @TestMetadata("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/destructuring")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Destructuring extends AbstractLightTree2FirConverterTestCase {
+      private void runTest(String testDataFilePath) {
+        KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+      }
+
+      public void testAllFilesPresentInDestructuring() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/destructuring"), Pattern.compile("^(.+)\\.(kt|kts)$"), null, true);
+      }
+
+      @TestMetadata("nameBasedDestructuringFullForm.kt")
+      public void testNameBasedDestructuringFullForm() {
+        runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/destructuring/nameBasedDestructuringFullForm.kt");
+      }
+
+      @TestMetadata("nameBasedDestructuringScript.kts")
+      public void testNameBasedDestructuringScript() {
+        runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/destructuring/nameBasedDestructuringScript.kts");
+      }
+
+      @TestMetadata("nameBasedDestructuringShortFormAfter.kt")
+      public void testNameBasedDestructuringShortFormAfter() {
+        runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/destructuring/nameBasedDestructuringShortFormAfter.kt");
+      }
+
+      @TestMetadata("nameBasedDestructuringShortFormBefore.kt")
+      public void testNameBasedDestructuringShortFormBefore() {
+        runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/destructuring/nameBasedDestructuringShortFormBefore.kt");
+      }
+
+      @TestMetadata("positionalDestructuringFullForm.kt")
+      public void testPositionalDestructuringFullForm() {
+        runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/destructuring/positionalDestructuringFullForm.kt");
+      }
+
+      @TestMetadata("positionalDestructuringScript.kts")
+      public void testPositionalDestructuringScript() {
+        runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/destructuring/positionalDestructuringScript.kts");
+      }
+
+      @TestMetadata("positionalDestructuringShortForm.kt")
+      public void testPositionalDestructuringShortForm() {
+        runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/destructuring/positionalDestructuringShortForm.kt");
       }
     }
 
@@ -489,7 +622,37 @@ public class LightTree2FirConverterTestCaseGenerated extends AbstractLightTree2F
       }
 
       public void testAllFilesPresentInInvalidCode() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/invalidCode"), Pattern.compile("^(.+)\\.kt$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/invalidCode"), Pattern.compile("^(.+)\\.(kt|kts)$"), null, true);
+      }
+
+      @TestMetadata("annotationArgumentLocalDeclarations.kt")
+      public void testAnnotationArgumentLocalDeclarations() {
+        runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/invalidCode/annotationArgumentLocalDeclarations.kt");
+      }
+
+      @TestMetadata("contextParameterOnErrorPrimaryConstructor.kt")
+      public void testContextParameterOnErrorPrimaryConstructor() {
+        runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/invalidCode/contextParameterOnErrorPrimaryConstructor.kt");
+      }
+
+      @TestMetadata("danglingContextParameter.kt")
+      public void testDanglingContextParameter() {
+        runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/invalidCode/danglingContextParameter.kt");
+      }
+
+      @TestMetadata("danglingContextParameterAndAnnotations.kt")
+      public void testDanglingContextParameterAndAnnotations() {
+        runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/invalidCode/danglingContextParameterAndAnnotations.kt");
+      }
+
+      @TestMetadata("destructuringInsideCallChain.kt")
+      public void testDestructuringInsideCallChain() {
+        runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/invalidCode/destructuringInsideCallChain.kt");
+      }
+
+      @TestMetadata("duplicatedContextParameter.kt")
+      public void testDuplicatedContextParameter() {
+        runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/invalidCode/duplicatedContextParameter.kt");
       }
 
       @TestMetadata("setterWithNoBodyAndDifferentValueParameterType.kt")
@@ -507,7 +670,7 @@ public class LightTree2FirConverterTestCaseGenerated extends AbstractLightTree2F
       }
 
       public void testAllFilesPresentInNoParameterType() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/noParameterType"), Pattern.compile("^(.+)\\.kt$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/noParameterType"), Pattern.compile("^(.+)\\.(kt|kts)$"), null, true);
       }
 
       @TestMetadata("noParameterTypRefInCatch.kt")
@@ -581,7 +744,7 @@ public class LightTree2FirConverterTestCaseGenerated extends AbstractLightTree2F
     }
 
     public void testAllFilesPresentInExpressions() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/expressions"), Pattern.compile("^(.+)\\.kt$"), null, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/expressions"), Pattern.compile("^(.+)\\.(kt|kts)$"), null, true);
     }
 
     @TestMetadata("annotated.kt")
@@ -744,6 +907,16 @@ public class LightTree2FirConverterTestCaseGenerated extends AbstractLightTree2F
       runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/expressions/super.kt");
     }
 
+    @TestMetadata("suspendLambda.kt")
+    public void testSuspendLambda() {
+      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/expressions/suspendLambda.kt");
+    }
+
+    @TestMetadata("suspendLambdaScript.kts")
+    public void testSuspendLambdaScript() {
+      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/expressions/suspendLambdaScript.kts");
+    }
+
     @TestMetadata("these.kt")
     public void testThese() {
       runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/expressions/these.kt");
@@ -788,7 +961,7 @@ public class LightTree2FirConverterTestCaseGenerated extends AbstractLightTree2F
       }
 
       public void testAllFilesPresentInInvalidCode() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/expressions/invalidCode"), Pattern.compile("^(.+)\\.kt$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/expressions/invalidCode"), Pattern.compile("^(.+)\\.(kt|kts)$"), null, true);
       }
 
       @TestMetadata("longStringTemplateEntryInvalidCharacters.kt")

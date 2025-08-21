@@ -1,0 +1,76 @@
+FILE: main.kt
+    public final class MyEither<out A, out B> : R|kotlin/Any| {
+        public constructor<out A, out B>(): R|MyEither<A, B>| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final data object BlankValue : R|kotlin/Any| {
+        private constructor(): R|BlankValue| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final fun <E1> buildSomething(transform: R|Something<E1>.() -> kotlin/Unit|): R|kotlin/Unit| {
+    }
+    public final class Something<E2> : R|kotlin/Any| {
+        public constructor<E2>(): R|Something<E2>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public abstract interface MyValue<out A1> : R|kotlin/Any| {
+        }
+
+        public final fun <A2> R|MyEither<E2, A2>|.bindOrAccumulate(): R|Something.MyValue<A2>| {
+            ^bindOrAccumulate R|kotlin/TODO|()
+        }
+
+        public final operator fun <A3> R|Something.MyValue<A3>|.getValue(thisRef: R|kotlin/Nothing?|, property: R|kotlin/reflect/KProperty<*>|): R|A3| {
+            ^getValue R|kotlin/TODO|()
+        }
+
+    }
+    public final fun processRows(m: R|MyEither<BlankValue, kotlin/String>|): R|kotlin/Unit| {
+        R|/buildSomething|<R|BlankValue|>(<L> = buildSomething@fun R|Something<BlankValue>|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            lval extra1: R|kotlin/String|by (this@R|special/anonymous|, R|<local>/m|).R|SubstitutionOverride</Something.bindOrAccumulate: R|Something.MyValue<A2>|>|<R|kotlin/String|>()
+            lval extra2: R|kotlin/String|by (this@R|special/anonymous|, R|<local>/m|).R|SubstitutionOverride</Something.bindOrAccumulate: R|Something.MyValue<A2>|>|<R|kotlin/String|>()
+            lval extra3: R|kotlin/String|by (this@R|special/anonymous|, R|<local>/m|).R|SubstitutionOverride</Something.bindOrAccumulate: R|Something.MyValue<A2>|>|<R|kotlin/String|>()
+            lval extra4: R|kotlin/String|by (this@R|special/anonymous|, R|<local>/m|).R|SubstitutionOverride</Something.bindOrAccumulate: R|Something.MyValue<A2>|>|<R|kotlin/String|>()
+            lval extra5: R|kotlin/String|by (this@R|special/anonymous|, R|<local>/m|).R|SubstitutionOverride</Something.bindOrAccumulate: R|Something.MyValue<A2>|>|<R|kotlin/String|>()
+            lval extra6: R|kotlin/String|by (this@R|special/anonymous|, R|<local>/m|).R|SubstitutionOverride</Something.bindOrAccumulate: R|Something.MyValue<A2>|>|<R|kotlin/String|>()
+            lval extra7: R|kotlin/String|by (this@R|special/anonymous|, R|<local>/m|).R|SubstitutionOverride</Something.bindOrAccumulate: R|Something.MyValue<A2>|>|<R|kotlin/String|>()
+            lval extra8: R|kotlin/String|by (this@R|special/anonymous|, R|<local>/m|).R|SubstitutionOverride</Something.bindOrAccumulate: R|Something.MyValue<A2>|>|<R|kotlin/String|>()
+            lval extra9: R|kotlin/String|by (this@R|special/anonymous|, R|<local>/m|).R|SubstitutionOverride</Something.bindOrAccumulate: R|Something.MyValue<A2>|>|<R|kotlin/String|>()
+            lval extra10: R|kotlin/String|by (this@R|special/anonymous|, R|<local>/m|).R|SubstitutionOverride</Something.bindOrAccumulate: R|Something.MyValue<A2>|>|<R|kotlin/String|>()
+            lval extra11: R|kotlin/String|by (this@R|special/anonymous|, R|<local>/m|).R|SubstitutionOverride</Something.bindOrAccumulate: R|Something.MyValue<A2>|>|<R|kotlin/String|>()
+            lval extra12: R|kotlin/String|by (this@R|special/anonymous|, R|<local>/m|).R|SubstitutionOverride</Something.bindOrAccumulate: R|Something.MyValue<A2>|>|<R|kotlin/String|>()
+            lval extra13: R|kotlin/String|by (this@R|special/anonymous|, R|<local>/m|).R|SubstitutionOverride</Something.bindOrAccumulate: R|Something.MyValue<A2>|>|<R|kotlin/String|>()
+            lval extra14: R|kotlin/String|by (this@R|special/anonymous|, R|<local>/m|).R|SubstitutionOverride</Something.bindOrAccumulate: R|Something.MyValue<A2>|>|<R|kotlin/String|>()
+            lval extra15: R|kotlin/String|by (this@R|special/anonymous|, R|<local>/m|).R|SubstitutionOverride</Something.bindOrAccumulate: R|Something.MyValue<A2>|>|<R|kotlin/String|>()
+            lval extra16: R|kotlin/String|by (this@R|special/anonymous|, R|<local>/m|).R|SubstitutionOverride</Something.bindOrAccumulate: R|Something.MyValue<A2>|>|<R|kotlin/String|>()
+            lval extra17: R|kotlin/String|by (this@R|special/anonymous|, R|<local>/m|).R|SubstitutionOverride</Something.bindOrAccumulate: R|Something.MyValue<A2>|>|<R|kotlin/String|>()
+            lval extra18: R|kotlin/String|by (this@R|special/anonymous|, R|<local>/m|).R|SubstitutionOverride</Something.bindOrAccumulate: R|Something.MyValue<A2>|>|<R|kotlin/String|>()
+            lval extra19: R|kotlin/String|by (this@R|special/anonymous|, R|<local>/m|).R|SubstitutionOverride</Something.bindOrAccumulate: R|Something.MyValue<A2>|>|<R|kotlin/String|>()
+            lval extra20: R|kotlin/String|by (this@R|special/anonymous|, R|<local>/m|).R|SubstitutionOverride</Something.bindOrAccumulate: R|Something.MyValue<A2>|>|<R|kotlin/String|>()
+            lval extra21: R|kotlin/String|by (this@R|special/anonymous|, R|<local>/m|).R|SubstitutionOverride</Something.bindOrAccumulate: R|Something.MyValue<A2>|>|<R|kotlin/String|>()
+            lval extra22: R|kotlin/String|by (this@R|special/anonymous|, R|<local>/m|).R|SubstitutionOverride</Something.bindOrAccumulate: R|Something.MyValue<A2>|>|<R|kotlin/String|>()
+            lval extra23: R|kotlin/String|by (this@R|special/anonymous|, R|<local>/m|).R|SubstitutionOverride</Something.bindOrAccumulate: R|Something.MyValue<A2>|>|<R|kotlin/String|>()
+            lval extra24: R|kotlin/String|by (this@R|special/anonymous|, R|<local>/m|).R|SubstitutionOverride</Something.bindOrAccumulate: R|Something.MyValue<A2>|>|<R|kotlin/String|>()
+            lval extra25: R|kotlin/String|by (this@R|special/anonymous|, R|<local>/m|).R|SubstitutionOverride</Something.bindOrAccumulate: R|Something.MyValue<A2>|>|<R|kotlin/String|>()
+            lval extra26: R|kotlin/String|by (this@R|special/anonymous|, R|<local>/m|).R|SubstitutionOverride</Something.bindOrAccumulate: R|Something.MyValue<A2>|>|<R|kotlin/String|>()
+            lval extra27: R|kotlin/String|by (this@R|special/anonymous|, R|<local>/m|).R|SubstitutionOverride</Something.bindOrAccumulate: R|Something.MyValue<A2>|>|<R|kotlin/String|>()
+            lval extra28: R|kotlin/String|by (this@R|special/anonymous|, R|<local>/m|).R|SubstitutionOverride</Something.bindOrAccumulate: R|Something.MyValue<A2>|>|<R|kotlin/String|>()
+            lval extra29: R|kotlin/String|by (this@R|special/anonymous|, R|<local>/m|).R|SubstitutionOverride</Something.bindOrAccumulate: R|Something.MyValue<A2>|>|<R|kotlin/String|>()
+            lval extra30: R|kotlin/String|by (this@R|special/anonymous|, R|<local>/m|).R|SubstitutionOverride</Something.bindOrAccumulate: R|Something.MyValue<A2>|>|<R|kotlin/String|>()
+            lval extra31: R|kotlin/String|by (this@R|special/anonymous|, R|<local>/m|).R|SubstitutionOverride</Something.bindOrAccumulate: R|Something.MyValue<A2>|>|<R|kotlin/String|>()
+            lval extra32: R|kotlin/String|by (this@R|special/anonymous|, R|<local>/m|).R|SubstitutionOverride</Something.bindOrAccumulate: R|Something.MyValue<A2>|>|<R|kotlin/String|>()
+            lval extra33: R|kotlin/String|by (this@R|special/anonymous|, R|<local>/m|).R|SubstitutionOverride</Something.bindOrAccumulate: R|Something.MyValue<A2>|>|<R|kotlin/String|>()
+            lval extra34: R|kotlin/String|by (this@R|special/anonymous|, R|<local>/m|).R|SubstitutionOverride</Something.bindOrAccumulate: R|Something.MyValue<A2>|>|<R|kotlin/String|>()
+            lval extra35: R|kotlin/String|by (this@R|special/anonymous|, R|<local>/m|).R|SubstitutionOverride</Something.bindOrAccumulate: R|Something.MyValue<A2>|>|<R|kotlin/String|>()
+            lval extra36: R|kotlin/String|by (this@R|special/anonymous|, R|<local>/m|).R|SubstitutionOverride</Something.bindOrAccumulate: R|Something.MyValue<A2>|>|<R|kotlin/String|>()
+            lval extra37: R|kotlin/String|by (this@R|special/anonymous|, R|<local>/m|).R|SubstitutionOverride</Something.bindOrAccumulate: R|Something.MyValue<A2>|>|<R|kotlin/String|>()
+            lval extra38: R|kotlin/String|by (this@R|special/anonymous|, R|<local>/m|).R|SubstitutionOverride</Something.bindOrAccumulate: R|Something.MyValue<A2>|>|<R|kotlin/String|>()
+            lval extra39: R|kotlin/String|by (this@R|special/anonymous|, R|<local>/m|).R|SubstitutionOverride</Something.bindOrAccumulate: R|Something.MyValue<A2>|>|<R|kotlin/String|>()
+        }
+        )
+    }

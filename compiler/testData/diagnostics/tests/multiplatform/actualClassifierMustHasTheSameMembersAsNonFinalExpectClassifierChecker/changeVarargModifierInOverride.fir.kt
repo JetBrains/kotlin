@@ -14,5 +14,7 @@ expect open class Foo : Base {
 // FILE: jvm.kt
 
 actual open class Foo : Base() {
-    override fun <!ACTUAL_WITHOUT_EXPECT!>foo<!>(bar: IntArray) {}
+    override fun <!EXPECT_ACTUAL_INCOMPATIBLE_VALUE_PARAMETER_VARARG!>foo<!>(bar: IntArray) {}
 }
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, functionDeclaration, override, vararg */

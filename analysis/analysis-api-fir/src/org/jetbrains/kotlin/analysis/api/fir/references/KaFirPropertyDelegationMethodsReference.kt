@@ -25,7 +25,7 @@ internal class KaFirPropertyDelegationMethodsReference(
     element: KtPropertyDelegate,
 ) : KtPropertyDelegationMethodsReference(element), KaFirReference {
     override fun KaFirSession.computeSymbols(): Collection<KaSymbol> {
-        val property = (expression.parent as? KtElement)?.getOrBuildFirSafe<FirProperty>(firResolveSession) ?: return emptyList()
+        val property = (expression.parent as? KtElement)?.getOrBuildFirSafe<FirProperty>(resolutionFacade) ?: return emptyList()
         if (property.delegate == null) return emptyList()
 
         val getValueSymbol = (property.getter?.singleStatementOfType<FirReturnExpression>()?.result as? FirFunctionCall)?.getCalleeSymbol()

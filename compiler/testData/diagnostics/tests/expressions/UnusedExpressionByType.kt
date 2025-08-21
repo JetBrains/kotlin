@@ -187,3 +187,8 @@ class Dispatch {
         ints[0] /= 1
     }
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, assignment, callableReference, classDeclaration, classReference, const,
+funWithExtensionReceiver, functionDeclaration, functionalType, ifExpression, incrementDecrementExpression,
+integerLiteral, isExpression, lambdaLiteral, localProperty, multiplicativeExpression, propertyDeclaration, smartcast,
+stringLiteral, thisExpression */

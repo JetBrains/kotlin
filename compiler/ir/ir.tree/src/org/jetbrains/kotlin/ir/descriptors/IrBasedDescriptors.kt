@@ -78,7 +78,6 @@ fun IrDeclaration.toIrBasedDescriptor(): DeclarationDescriptor = when (this) {
     is IrProperty -> toIrBasedDescriptor()
     is IrField -> toIrBasedDescriptor()
     is IrTypeAlias -> toIrBasedDescriptor()
-    is IrErrorDeclaration -> toIrBasedDescriptor()
     is IrScript -> toIrBasedDescriptor()
     else -> error("Unknown declaration kind")
 }
@@ -1142,25 +1141,6 @@ fun IrField.toIrBasedDescriptor() = if (origin == IrDeclarationOrigin.DELEGATE) 
 } else {
     IrBasedFieldDescriptor(this)
 }
-
-class IrBasedErrorDescriptor(owner: IrErrorDeclaration) : IrBasedDeclarationDescriptor<IrErrorDeclaration>(owner) {
-    override fun getName(): Name = error("IrBasedErrorDescriptor.getName: Should not be reached")
-
-    override fun getOriginal(): DeclarationDescriptorWithSource =
-        error("IrBasedErrorDescriptor.getOriginal: Should not be reached")
-
-    override fun getContainingDeclaration(): DeclarationDescriptor =
-        error("IrBasedErrorDescriptor.getContainingDeclaration: Should not be reached")
-
-    override fun <R : Any?, D : Any?> accept(visitor: DeclarationDescriptorVisitor<R, D>?, data: D): R {
-        error("IrBasedErrorDescriptor.accept: Should not be reached")
-    }
-
-    override fun acceptVoid(visitor: DeclarationDescriptorVisitor<Void, Void>?) {
-    }
-}
-
-fun IrErrorDeclaration.toIrBasedDescriptor() = IrBasedErrorDescriptor(this)
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 private fun getContainingDeclaration(declaration: IrDeclaration): DeclarationDescriptor {

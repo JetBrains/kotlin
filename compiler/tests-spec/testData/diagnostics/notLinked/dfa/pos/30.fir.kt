@@ -144,8 +144,8 @@ fun <T> case_9(x: T) {
  */
 fun <T>case_10(x: Inv<T>?) {
     if (x!!.prop_1?.prop_1?.prop_1?.prop_2 != null) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("T? & Any")!>x.prop_1.prop_1.prop_1.prop_2<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("T? & Any")!>x.prop_1.prop_1.prop_1.prop_2<!>.equals(10)
+        <!DEBUG_INFO_EXPRESSION_TYPE("T & Any")!>x.prop_1.prop_1.prop_1.prop_2<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("T & Any")!>x.prop_1.prop_1.prop_1.prop_2<!>.equals(10)
     }
 }
 
@@ -156,8 +156,8 @@ fun <T>case_10(x: Inv<T>?) {
  */
 inline fun <reified T>case_11(x: Inv<T>?) {
     if (x?.prop_1!!.prop_1?.prop_1?.prop_2 == null) else {
-        <!DEBUG_INFO_EXPRESSION_TYPE("T? & Any")!>x.prop_1.prop_1.prop_1.prop_2<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("T? & Any")!>x.prop_1.prop_1.prop_1.prop_2<!>.equals(10)
+        <!DEBUG_INFO_EXPRESSION_TYPE("T & Any")!>x.prop_1.prop_1.prop_1.prop_2<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("T & Any")!>x.prop_1.prop_1.prop_1.prop_2<!>.equals(10)
     }
 }
 

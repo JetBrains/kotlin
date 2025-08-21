@@ -9,3 +9,6 @@ fun <T, K> test() {
     val list: List<InnerClass> = listOf()
     list.sortedBy(InnerClass::x)
 }
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, functionDeclaration, localClass, localProperty, nullableType,
+primaryConstructor, propertyDeclaration, typeParameter */

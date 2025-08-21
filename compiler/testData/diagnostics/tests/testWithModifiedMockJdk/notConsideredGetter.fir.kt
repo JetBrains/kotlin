@@ -12,3 +12,5 @@ fun foo(jalw: java.util.ListWithSomethingOverridden<String>, jal: java.util.Arra
     l.<!UNRESOLVED_REFERENCE!>somethingNonExisting<!>
     l.<!UNRESOLVED_REFERENCE!>getSomethingNonExisting<!>()
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaProperty */

@@ -21,7 +21,7 @@ digraph singleReturnFromTry_kt {
                 4 [label="Function call arguments enter"];
                 5 [label="Function call arguments exit"];
             }
-            6 [label="Function call enter: R?C|kotlin/Function0.invoke|()"];
+            6 [label="Function call enter: R|<local>/block|.R|SubstitutionOverride<kotlin/Function0.invoke: R|R|>|()"];
             7 [label="Function call exit: R|<local>/block|.R|SubstitutionOverride<kotlin/Function0.invoke: R|R|>|()" style="filled" fillcolor=yellow];
             8 [label="Jump: ^myRun R|<local>/block|.R|SubstitutionOverride<kotlin/Function0.invoke: R|R|>|()"];
             9 [label="Stub" style="filled" fillcolor=gray];

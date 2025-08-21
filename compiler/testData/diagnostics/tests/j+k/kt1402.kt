@@ -26,3 +26,5 @@ fun foo() {
 }
 
 fun doSmth(b: Inner) = b
+
+/* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral, javaFunction, javaType */

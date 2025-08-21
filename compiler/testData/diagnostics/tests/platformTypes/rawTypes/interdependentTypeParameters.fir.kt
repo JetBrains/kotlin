@@ -12,3 +12,6 @@ public class Foo<P1 extends Boo<P2, P3, P4>, P2 extends Boo<P1, P3, P4>, P3 exte
 fun main() {
     val x = <!DEBUG_INFO_EXPRESSION_TYPE("(Foo<(Boo<(Boo<*>..Boo<*>?)>..Boo<(Boo<*>..Boo<*>?)>?), (Boo<*>..Boo<*>?), (Boo<(Boo<(Boo<*>..Boo<*>?)>..Boo<(Boo<*>..Boo<*>?)>?)>..Boo<(Boo<(Boo<*>..Boo<*>?)>..Boo<(Boo<*>..Boo<*>?)>?)>?), (Boo<(Boo<(Boo<*>..Boo<*>?)>..Boo<(Boo<*>..Boo<*>?)>?)>..Boo<(Boo<(Boo<*>..Boo<*>?)>..Boo<(Boo<*>..Boo<*>?)>?)>?)>..Foo<*, *, *, *>?)")!>Foo.test1()<!>
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaFunction, localProperty, propertyDeclaration,
+starProjection */

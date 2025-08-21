@@ -12,24 +12,26 @@ import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrFunction
-import org.jetbrains.kotlin.ir.linkage.partial.PartialLinkageConfig
-import org.jetbrains.kotlin.ir.linkage.partial.PartialLinkageLogLevel
-import org.jetbrains.kotlin.ir.linkage.partial.PartialLinkageLogger
+import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
+import org.jetbrains.kotlin.ir.symbols.IrTypeAliasSymbol
 import org.jetbrains.kotlin.ir.util.SymbolTable
 
 fun createPartialLinkageSupportForLinker(
     partialLinkageConfig: PartialLinkageConfig,
     builtIns: IrBuiltIns,
-    messageCollector: MessageCollector
+    messageCollector: MessageCollector,
 ): PartialLinkageSupportForLinker = if (partialLinkageConfig.isEnabled)
-    PartialLinkageSupportForLinkerImpl(builtIns, PartialLinkageLogger(messageCollector, partialLinkageConfig.logLevel))
+    PartialLinkageSupportForLinkerImpl(
+        builtIns = builtIns,
+        logger = PartialLinkageLogger(messageCollector, partialLinkageConfig.logLevel),
+    )
 else
     PartialLinkageSupportForLinker.DISABLED
 
 internal class PartialLinkageSupportForLinkerImpl(
     builtIns: IrBuiltIns,
-    private val logger: PartialLinkageLogger
+    private val logger: PartialLinkageLogger,
 ) : PartialLinkageSupportForLinker {
     private val stubGenerator = MissingDeclarationStubGenerator(builtIns)
     private val classifierExplorer = ClassifierExplorer(builtIns, stubGenerator)
@@ -90,13 +92,16 @@ internal class PartialLinkageSupportForLinkerImpl(
         // Patch all IR declarations scheduled so far.
         patcher.patchDeclarations(declarationsEnqueuedForProcessing.getCopyAndClear())
 
-        // Patch the stubs which were not patched yet.
-        patcher.patchDeclarations(stubGenerator.grabDeclarationsToPatch())
-
         // Make sure that there are no linkage issues that have been reported with the 'error' severity.
         // If there are, abort the current compilation.
         if (logger.logLevel == PartialLinkageLogLevel.ERROR && patcher.linkageIssuesLogged > 0)
             PartialLinkageErrorsLogged.raiseIssue(logger.messageCollector)
+    }
+
+    override fun generateStubsForClassifiers(symbolTable: SymbolTable) {
+        symbolTable.descriptorExtension.allUnboundSymbols
+            .filter { it is IrClassifierSymbol || it is IrTypeAliasSymbol }
+            .forEach { stubGenerator.getDeclaration(it) }
     }
 
     override fun collectAllStubbedSymbols(): Set<IrSymbol> {

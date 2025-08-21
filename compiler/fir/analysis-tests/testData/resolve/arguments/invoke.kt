@@ -8,3 +8,6 @@ class My(var x: Int) {
 }
 
 fun testInvoke(): Int = My(13)()
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, operator, primaryConstructor,
+propertyDeclaration */

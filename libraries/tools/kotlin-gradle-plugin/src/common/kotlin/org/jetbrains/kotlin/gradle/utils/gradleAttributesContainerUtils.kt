@@ -34,18 +34,6 @@ internal fun <T : Any> HasAttributes.setAttributeProvider(
     )
 }
 
-/**
- * Should only be used to configure simple attributes values!
- *
- * When in doubt, prefer lazy method overload.
- */
-internal fun <T : Any> HasAttributes.setAttribute(
-    key: Attribute<T>,
-    value: T
-) {
-    attributes.attribute(key, value)
-}
-
 internal fun <T : Any> HasAttributes.copyAttributeTo(
     providerFactory: ProviderFactory,
     dest: HasAttributes,

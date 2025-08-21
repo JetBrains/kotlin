@@ -7,6 +7,5 @@ package org.jetbrains.kotlin.backend.konan
 
 enum class AllocationMode {
     STD,
-    MIMALLOC,
     CUSTOM
 }

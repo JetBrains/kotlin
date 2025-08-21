@@ -56,8 +56,10 @@ internal class KaFirPackageScope(
 
     override fun getPackageSymbols(nameFilter: (Name) -> Boolean): Sequence<KaPackageSymbol> = withValidityAssertion {
         sequence {
-            analysisSession.useSitePackageProvider.getSubPackageFqNames(fqName, analysisSession.targetPlatform, nameFilter).forEach {
-                yield(analysisSession.firSymbolBuilder.createPackageSymbol(fqName.child(it)))
+            analysisSession.useSitePackageProvider.getSubpackageNames(fqName, analysisSession.targetPlatform).forEach { name ->
+                if (nameFilter(name)) {
+                    yield(analysisSession.firSymbolBuilder.createPackageSymbol(fqName.child(name)))
+                }
             }
         }
     }

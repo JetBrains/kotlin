@@ -32,16 +32,7 @@ class KotlinJsIrCompilationFactory internal constructor(
                 target.project.files()
             }
         ),
-        compilationDependencyConfigurationsFactory = DefaultKotlinCompilationDependencyConfigurationsFactory.WithRuntime(
-            withResourcesConfigurationExtending = { runtimeDependencyConfiguration, _ ->
-                if (runtimeDependencyConfiguration == null) {
-                    project.reportDiagnostic(
-                        KotlinToolingDiagnostics.MissingRuntimeDependencyConfigurationForWasmTarget(target.name,)
-                    )
-                }
-                runtimeDependencyConfiguration
-            }
-        ),
+        compilationDependencyConfigurationsFactory = DefaultKotlinCompilationDependencyConfigurationsFactory.WithRuntime(),
         preConfigureAction = DefaultKotlinCompilationPreConfigure + { compilation ->
             if (compilation.platformType == KotlinPlatformType.wasm && compilation.isMain()) {
                 val artifactNameAppendix = (compilation.target as KotlinJsIrTarget).wasmDecamelizedDefaultNameOrNull()

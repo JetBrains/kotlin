@@ -1,17 +1,19 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder
 
 import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiErrorElement
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirModuleResolveComponents
+import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.FileStructure
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.FirElementsRecorder
-import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.declarationCanBeLazilyResolved
+import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.KtToFirMapping
+import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.elementCanBeLazilyResolved
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.findSourceNonLocalFirDeclaration
-import org.jetbrains.kotlin.analysis.low.level.api.fir.util.parentsWithSelfCodeFragmentAware
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.isPartialBodyResolvable
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.requireTypeIntersectionWith
 import org.jetbrains.kotlin.analysis.utils.printer.parentOfType
 import org.jetbrains.kotlin.fir.*
@@ -33,31 +35,31 @@ import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
  *
  * @see getOrBuildFirFor
  * @see org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.FileStructure
- * @see getNonLocalContainingDeclaration
+ * @see getNonLocalContainingOrThisElement
  */
 @ThreadSafe
 internal class FirElementBuilder(private val moduleComponents: LLFirModuleResolveComponents) {
     companion object {
         private fun getPsiAsFirElementSource(element: KtElement): KtElement? {
-            val deparenthesized = if (element is KtExpression) KtPsiUtil.safeDeparenthesize(element) else element
-            return when {
-                deparenthesized is KtPropertyDelegate -> deparenthesized.expression ?: element
-                deparenthesized is KtQualifiedExpression && deparenthesized.selectorExpression is KtCallExpression -> {
+            val unwrappedElement = if (element is KtExpression) KtPsiUtil.safeDeparenthesize(element) else element
+            return when (unwrappedElement) {
+                is KtPropertyDelegate -> unwrappedElement.expression ?: element
+                is KtQualifiedExpression if unwrappedElement.selectorExpression is KtCallExpression -> {
                     /*
                      KtQualifiedExpression with KtCallExpression in selector transformed in FIR to FirFunctionCall expression
                      Which will have a receiver as qualifier
                      */
-                    deparenthesized.selectorExpression ?: errorWithAttachment("Incomplete code") {
-                        withPsiEntry("psi", deparenthesized)
+                    unwrappedElement.selectorExpression ?: errorWithAttachment("Incomplete code") {
+                        withPsiEntry("psi", unwrappedElement)
                     }
                 }
-                deparenthesized is KtValueArgument -> {
+                is KtValueArgument -> {
                     // null will be return in case of invalid KtValueArgument
-                    deparenthesized.getArgumentExpression()
+                    unwrappedElement.getArgumentExpression()
                 }
-                deparenthesized is KtStringTemplateEntryWithExpression -> deparenthesized.expression
-                deparenthesized is KtUserType && deparenthesized.parent is KtNullableType -> deparenthesized.parent as KtNullableType
-                else -> deparenthesized
+                is KtStringTemplateEntryWithExpression -> unwrappedElement.expression
+                is KtUserType if unwrappedElement.parent is KtNullableType -> unwrappedElement.parent as KtNullableType
+                else -> unwrappedElement
             }
         }
 
@@ -106,22 +108,58 @@ internal class FirElementBuilder(private val moduleComponents: LLFirModuleResolv
             return null
         }
 
-        val nonLocalContainer = element.getNonLocalContainingOrThisDeclaration()
-        getFirForElementInsideAnnotations(element, nonLocalContainer)?.let { return it }
-
-        if (nonLocalContainer != null) {
-            getFirForElementInsideTypes(element, nonLocalContainer)?.let { return it }
-        } else {
-            getFirForElementInsideFileHeader(element)?.let { return it }
-        }
+        val nonLocalContainer = element.getNonLocalContainingOrThisElement()
+        tryGetFirWithoutBodyResolve(nonLocalContainer, element)?.let { return it }
 
         val psi = getPsiAsFirElementSource(element) ?: return null
-        val firFile = element.containingKtFile
-        val fileStructure = moduleComponents.fileStructureCache.getFileStructure(firFile)
+        val ktFile = element.containingKtFile
+        val fileStructure = moduleComponents.fileStructureCache.getFileStructure(ktFile)
 
         val structureElement = fileStructure.getStructureElementFor(element, nonLocalContainer)
         val mappings = structureElement.mappings
-        return mappings.getFir(psi)
+
+        val firElement = mappings.get(psi)
+
+        if (firElement is FirElementWithResolveState) {
+            // Partially resolvable declarations might have unresolved bodies in the mapping.
+            // Here we forcibly resolve them to obey to the 'getOrBuildFirFor()' contract.
+            if (firElement.isPartialBodyResolvable && firElement.resolvePhase < FirResolvePhase.BODY_RESOLVE) {
+                firElement.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
+            }
+        }
+
+        return firElement
+    }
+
+    /**
+     * Provides a fast path for well-known psi-to-fir mappings to avoid [FirResolvePhase.BODY_RESOLVE] there it is possible.
+     *
+     * This optimization makes sense only for [nonLocalContainer]s which might have such expensive resolution.
+     * For instance, there is no need to avoid [FirResolvePhase.BODY_RESOLVE] for dangling modifiers as they don't
+     * have bodies, so effectively it is the same as [FirResolvePhase.ANNOTATION_ARGUMENTS].
+     *
+     * Declaration containers ([KtFile], [KtScript], [KtClassOrObject]) are resolved till [FirResolvePhase.ANNOTATION_ARGUMENTS]
+     * by default in [FileStructure.getStructureElementFor],
+     * so there is no need to use optimized search via [getFirForElementInsideAnnotations]/[getFirForElementInsideTypes]
+     * as this is redundant work and effectively duplicate the logic of [KtToFirMapping].
+     *
+     * [KtClassOrObject] is not excluded yet as in some cases it might trigger additional resolution.
+     * For instance, currently it resolves generated members (fake constructor, data class members, enum members, etc.).
+     *
+     * [KtEnumEntry] is not a declaration container as it is treated as callable in K2.
+     *
+     * @see getFirForElementInsideFileHeader
+     * @see getFirForElementInsideAnnotations
+     * @see getFirForElementInsideTypes
+     */
+    private fun tryGetFirWithoutBodyResolve(nonLocalContainer: KtElement?, element: KtElement): FirElement? = when (nonLocalContainer) {
+        is KtScript -> null
+        is KtFile -> getFirForElementInsideFileHeader(element)
+
+        is KtDeclaration -> getFirForElementInsideAnnotations(element, nonLocalContainer)
+            ?: getFirForElementInsideTypes(element, nonLocalContainer)
+
+        else -> null
     }
 
     private inline fun <T : KtElement, E : PsiElement> getFirForNonBodyElement(
@@ -145,11 +183,16 @@ internal class FirElementBuilder(private val moduleComponents: LLFirModuleResolv
             )
         }
 
+        // There is no need for a custom traverse as the resolved element has a cached map
+        if (firElementContainer.resolvePhase == FirResolvePhase.BODY_RESOLVE) {
+            return null
+        }
+
         val anchorFir = resolveAndFindFirForAnchor(firElementContainer, anchorElement) ?: return null
         // We use identity comparison here intentionally to check that it is exactly the object we want to find
         if (element === anchorElement) return anchorFir
 
-        return findElementInside(firElement = anchorFir, element = element, stopAt = anchorElement)
+        return findElementInside(firElement = anchorFir, element = element)
     }
 
     private fun PsiElement.annotationOwner(): KtAnnotated? {
@@ -165,8 +208,8 @@ internal class FirElementBuilder(private val moduleComponents: LLFirModuleResolv
 
     private fun getFirForElementInsideAnnotations(
         element: KtElement,
-        nonLocalDeclaration: KtDeclaration?,
-    ): FirElement? = getFirForNonBodyElement<KtAnnotationEntry, KtAnnotated>(
+        nonLocalDeclaration: KtDeclaration,
+    ): FirElement? = getFirForNonBodyElement(
         element = element,
         nonLocalDeclaration = nonLocalDeclaration,
         anchorElementProvider = { it.parentsOfType<KtAnnotationEntry>(nonLocalDeclaration).firstOrNull() },
@@ -177,7 +220,7 @@ internal class FirElementBuilder(private val moduleComponents: LLFirModuleResolv
     private fun getFirForElementInsideTypes(
         element: KtElement,
         nonLocalDeclaration: KtDeclaration,
-    ): FirElement? = getFirForNonBodyElement<KtTypeReference, KtDeclaration>(
+    ): FirElement? = getFirForNonBodyElement(
         element = element,
         nonLocalDeclaration = nonLocalDeclaration,
         anchorElementProvider = { it.parentsOfType<KtTypeReference>(nonLocalDeclaration).lastOrNull() },
@@ -222,20 +265,10 @@ internal class FirElementBuilder(private val moduleComponents: LLFirModuleResolv
         return parentsWithSelf.find { it is KtPackageDirective || it is KtImportDirective } as? KtElement
     }
 
-    private fun findElementInside(firElement: FirElement, element: KtElement, stopAt: PsiElement): FirElement? {
+    private fun findElementInside(firElement: FirElement, element: KtElement): FirElement? {
         val elementToSearch = getPsiAsFirElementSource(element) ?: return null
         val mapping = FirElementsRecorder.recordElementsFrom(firElement, FirElementsRecorder())
-
-        var current: PsiElement? = elementToSearch
-        while (current != null && current != stopAt && current !is KtFile) {
-            if (current is KtElement) {
-                mapping[current]?.let { return it }
-            }
-
-            current = current.parent
-        }
-
-        return firElement
+        return KtToFirMapping.getFir(elementToSearch, moduleComponents.session, mapping)
     }
 
     private fun FirElementWithResolveState.resolveAndFindTypeRefAnchor(typeReference: KtTypeReference): FirElement? {
@@ -316,87 +349,43 @@ internal class FirElementBuilder(private val moduleComponents: LLFirModuleResolv
     ): FirAnnotation? = annotations.find { it.psi == annotationEntry }
 }
 
-private fun KtDeclaration.isPartOf(callableDeclaration: KtCallableDeclaration): Boolean = when (this) {
-    is KtPropertyAccessor -> this.property == callableDeclaration
-    is KtParameter -> {
-        val ownerFunction = ownerFunction
-        ownerFunction == callableDeclaration || ownerFunction?.isPartOf(callableDeclaration) == true
-    }
-    is KtTypeParameter -> containingDeclaration == callableDeclaration
-    else -> false
-}
-
 internal val KtTypeParameter.containingDeclaration: KtDeclaration?
     get() = (parent as? KtTypeParameterList)?.parent as? KtDeclaration
 
 /**
- * Returns **true** if [this] declaration is a unit of resolution and can be treated as non-local.
- * The property is supposed to be used only in the pair with [getNonLocalContainingDeclaration] or [getNonLocalContainingOrThisDeclaration]
+ * Returns **true** if [this] element is a unit of resolution and can be treated as non-local.
+ * The property is supposed to be used only in the pair with
+ * [getNonLocalContainingOrThisElement] or [getNonLocalContainingOrThisDeclaration].
  *
- * @see getNonLocalContainingDeclaration
+ * @see getNonLocalContainingOrThisElement
  */
-internal val KtDeclaration.isAutonomousDeclaration: Boolean
+internal val KtElement.isAutonomousElement: Boolean
     get() = when (this) {
         is KtPropertyAccessor, is KtParameter, is KtTypeParameter -> false
         else -> true
     }
 
-internal fun PsiElement.getNonLocalContainingOrThisDeclaration(predicate: (KtDeclaration) -> Boolean = { true }): KtDeclaration? {
-    return getNonLocalContainingDeclaration(this, predicate = predicate)
+// TODO change predicate (KT-76271)
+@KaImplementationDetail
+fun PsiElement.getNonLocalContainingOrThisDeclaration(predicate: (KtDeclaration) -> Boolean = { true }): KtDeclaration? {
+    return getNonLocalContainingOrThisElement { it is KtDeclaration && predicate(it) } as? KtDeclaration
 }
 
 /**
- * Returns the first non-local declaration from [parentsWithSelf] or [parentsWithSelfCodeFragmentAware]
- * (depends on [codeFragmentAware] flag) that contains the given elements, based on the specified predicate.
+ * Returns the first non-local element from [parentsWithSelf] that contains the given elements, based on the specified predicate.
  *
- * The resulting declaration can be considered reachable at [RAW_FIR][FirResolvePhase.RAW_FIR] phase.
+ * The resulting element can be considered reachable at [RAW_FIR][FirResolvePhase.RAW_FIR] phase.
  *
  * @see org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.FileStructure
  */
-internal fun getNonLocalContainingDeclaration(
-    element: PsiElement,
-    codeFragmentAware: Boolean = false,
-    predicate: (KtDeclaration) -> Boolean = { true },
-): KtDeclaration? {
-    var candidate: KtDeclaration? = null
-
-    val elementsToCheck = if (codeFragmentAware) {
-        element.parentsWithSelfCodeFragmentAware
-    } else {
-        element.parentsWithSelf
-    }
-
-    for (parent in elementsToCheck) {
-        candidate?.let { notNullCandidate ->
-            if (parent is KtEnumEntry ||
-                parent is KtCallableDeclaration &&
-                !notNullCandidate.isPartOf(parent) ||
-                parent is KtAnonymousInitializer ||
-                parent is KtObjectLiteralExpression ||
-                parent is KtCallElement ||
-                parent is KtCodeFragment ||
-                parent is PsiErrorElement
-            ) {
-                // The candidate turned out to be local. Let's find another one.
-                candidate = null
-            }
-        }
-
-        // A new candidate only needs to be proposed when `candidate` is null.
-        if (candidate == null &&
-            parent is KtDeclaration &&
-            declarationCanBeLazilyResolved(parent, codeFragmentAware) &&
-            predicate(parent)
-        ) {
-            if (codeFragmentAware && element.containingFile is KtCodeFragment) {
-                candidate = parent
-            } else {
-                return parent
-            }
+internal fun PsiElement.getNonLocalContainingOrThisElement(predicate: (KtElement) -> Boolean = { true }): KtElement? {
+    for (parent in parentsWithSelf) {
+        if (parent is KtElement && elementCanBeLazilyResolved(parent) && predicate(parent)) {
+            return parent
         }
     }
 
-    return candidate
+    return null
 }
 
 private inline fun <reified T : KtElement> PsiElement.parentsOfType(stopDeclaration: KtDeclaration?): Sequence<T> {

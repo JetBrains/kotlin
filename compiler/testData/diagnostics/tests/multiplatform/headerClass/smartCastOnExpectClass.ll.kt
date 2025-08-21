@@ -14,3 +14,5 @@ fun check(x1: Foo, x: Any) {
 }
 
 // MODULE: m1-jvm()()(m1-common)
+
+/* GENERATED_FIR_TAGS: classDeclaration, equalityExpression, expect, functionDeclaration, ifExpression */

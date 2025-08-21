@@ -44,3 +44,7 @@ fun foo(firJavaClass: FirJavaClass2, enhancement: FirSignatureEnhancement2) {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: andExpression, assignment, classDeclaration, equalityExpression, funWithExtensionReceiver,
+functionDeclaration, functionalType, getter, inline, interfaceDeclaration, lambdaLiteral, lateinit, localProperty,
+nullableType, propertyDeclaration, propertyWithExtensionReceiver, safeCall, smartcast, thisExpression, typeWithExtension */

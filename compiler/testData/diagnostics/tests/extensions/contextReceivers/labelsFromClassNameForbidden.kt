@@ -13,3 +13,6 @@ fun Int.f() {
 
 <!UNSUPPORTED_FEATURE!>context(String)<!>
 val p: String get() = this<!UNRESOLVED_REFERENCE!>@String<!>
+
+/* GENERATED_FIR_TAGS: funWithExtensionReceiver, functionDeclaration, functionDeclarationWithContext, getter,
+propertyDeclaration, propertyDeclarationWithContext, thisExpression */

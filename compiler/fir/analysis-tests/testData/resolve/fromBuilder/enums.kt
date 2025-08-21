@@ -33,3 +33,6 @@ enum class Planet(val m: Double, internal val r: Double) {
         const val G = 6.67e-11
     }
 }
+
+/* GENERATED_FIR_TAGS: companionObject, const, enumDeclaration, enumEntry, functionDeclaration, multiplicativeExpression,
+objectDeclaration, primaryConstructor, propertyDeclaration */

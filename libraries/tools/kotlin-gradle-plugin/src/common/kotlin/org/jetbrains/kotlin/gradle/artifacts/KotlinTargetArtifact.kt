@@ -15,7 +15,6 @@ import org.gradle.api.tasks.bundling.Jar
 import org.jetbrains.kotlin.gradle.plugin.KotlinGradlePluginExtensionPoint
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.tasks.registerTask
-import org.jetbrains.kotlin.gradle.utils.setAttribute
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 
 internal fun interface KotlinTargetArtifact {
@@ -53,7 +52,7 @@ internal fun KotlinTarget.createPublishArtifact(
 
     elementsConfiguration.filterNotNull().forEach { configuration ->
         configuration.outgoing.artifacts.add(artifact)
-        configuration.outgoing.attributes.setAttribute(ArtifactTypeDefinition.ARTIFACT_TYPE_ATTRIBUTE, artifactType)
+        configuration.outgoing.attributes.attribute(ArtifactTypeDefinition.ARTIFACT_TYPE_ATTRIBUTE, artifactType)
     }
 
     return artifact

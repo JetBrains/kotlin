@@ -20,25 +20,29 @@ KaKotlinPropertySymbol:
       typeArguments: []
       type: kotlin/Int
     visibility: PRIVATE
+    getDispatchReceiver(): KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: test/<anonymous>
     getContainingFileSymbol: KaFileSymbol(enumEntryInitializerWithOverriddenMember.kt)
     getContainingJvmClassName: null
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
   callableId: null
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
     annotations: []
     callableId: null
     compilerVisibility: Public
     contextReceivers: []
-    hasBody: false
     hasStableParameterNames: true
     isActual: false
-    isDefault: true
     isExpect: false
     isExtension: false
     isInline: false
+    isNotDefault: false
     isOverride: true
     location: PROPERTY
     modality: OPEN
@@ -97,11 +101,13 @@ KaKotlinPropertySymbol:
   javaGetterName: getFoo
   javaSetterName: null
   setterDeprecationStatus: null
+  isInline: false
 
 KaNamedFunctionSymbol:
   annotations: []
   callableId: test/E.compareTo
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -173,6 +179,7 @@ KaNamedFunctionSymbol:
   annotations: []
   callableId: kotlin/Enum.clone
   compilerVisibility: Protected
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -218,6 +225,7 @@ KaNamedFunctionSymbol:
   annotations: []
   callableId: kotlin/Enum.equals
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -229,7 +237,7 @@ KaNamedFunctionSymbol:
   isInfix: false
   isInline: false
   isOperator: true
-  isOverride: false
+  isOverride: true
   isStatic: false
   isSuspend: false
   isTailRec: false
@@ -293,6 +301,7 @@ KaNamedFunctionSymbol:
   annotations: []
   callableId: kotlin/Enum.hashCode
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -304,7 +313,7 @@ KaNamedFunctionSymbol:
   isInfix: false
   isInline: false
   isOperator: false
-  isOverride: false
+  isOverride: true
   isStatic: false
   isSuspend: false
   isTailRec: false
@@ -338,6 +347,7 @@ KaNamedFunctionSymbol:
   annotations: []
   callableId: kotlin/Enum.toString
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -349,7 +359,7 @@ KaNamedFunctionSymbol:
   isInfix: false
   isInline: false
   isOperator: false
-  isOverride: false
+  isOverride: true
   isStatic: false
   isSuspend: false
   isTailRec: false
@@ -404,25 +414,33 @@ KaKotlinPropertySymbol:
       typeArguments: []
       type: kotlin/String
     visibility: PRIVATE
+    getDispatchReceiver(): KaUsualClassType:
+      annotations: []
+      typeArguments: [
+        KaTypeParameterType:
+          annotations: []
+          type: E
+      ]
+      type: kotlin/Enum<E>
     getContainingFileSymbol: null
     getContainingJvmClassName: kotlin.Enum
     getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
     deprecationStatus: null
   callableId: kotlin/Enum.name
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
     annotations: []
     callableId: null
     compilerVisibility: Public
     contextReceivers: []
-    hasBody: false
     hasStableParameterNames: true
     isActual: false
-    isDefault: true
     isExpect: false
     isExtension: false
     isInline: false
+    isNotDefault: false
     isOverride: false
     location: PROPERTY
     modality: FINAL
@@ -489,6 +507,7 @@ KaKotlinPropertySymbol:
   javaGetterName: getName
   javaSetterName: null
   setterDeprecationStatus: null
+  isInline: false
 
 KaKotlinPropertySymbol:
   annotations: []
@@ -512,25 +531,33 @@ KaKotlinPropertySymbol:
       typeArguments: []
       type: kotlin/Int
     visibility: PRIVATE
+    getDispatchReceiver(): KaUsualClassType:
+      annotations: []
+      typeArguments: [
+        KaTypeParameterType:
+          annotations: []
+          type: E
+      ]
+      type: kotlin/Enum<E>
     getContainingFileSymbol: null
     getContainingJvmClassName: kotlin.Enum
     getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
     deprecationStatus: null
   callableId: kotlin/Enum.ordinal
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
     annotations: []
     callableId: null
     compilerVisibility: Public
     contextReceivers: []
-    hasBody: false
     hasStableParameterNames: true
     isActual: false
-    isDefault: true
     isExpect: false
     isExtension: false
     isInline: false
+    isNotDefault: false
     isOverride: false
     location: PROPERTY
     modality: FINAL
@@ -597,11 +624,13 @@ KaKotlinPropertySymbol:
   javaGetterName: getOrdinal
   javaSetterName: null
   setterDeprecationStatus: null
+  isInline: false
 
 KaNamedFunctionSymbol:
   annotations: []
   callableId: test/E.getDeclaringClass
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: false
@@ -642,6 +671,7 @@ KaNamedFunctionSymbol:
   annotations: []
   callableId: kotlin/Enum.finalize
   compilerVisibility: ProtectedAndPackage
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: false
@@ -653,7 +683,7 @@ KaNamedFunctionSymbol:
   isInfix: false
   isInline: false
   isOperator: false
-  isOverride: true
+  isOverride: false
   isStatic: false
   isSuspend: false
   isTailRec: false

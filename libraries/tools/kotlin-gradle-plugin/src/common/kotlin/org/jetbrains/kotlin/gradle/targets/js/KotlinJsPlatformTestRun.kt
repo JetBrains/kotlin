@@ -69,7 +69,7 @@ abstract class KotlinJsReportAggregatingTestRun @Inject constructor(
 
     override fun getConfiguredExecutions(): Iterable<KotlinJsPlatformTestRun> = mutableListOf<KotlinJsPlatformTestRun>().apply {
         target.subTargets
-            .configureEach { subTarget ->
+            .all { subTarget ->
                 add(subTarget.getChildTestExecution())
             }
     }
@@ -79,7 +79,7 @@ abstract class KotlinJsReportAggregatingTestRun @Inject constructor(
             configure(getChildTestExecution())
         }
 
-        target.subTargets.configureEach { subTarget ->
+        target.subTargets.all { subTarget ->
             doConfigureInChildren(subTarget)
         }
     }

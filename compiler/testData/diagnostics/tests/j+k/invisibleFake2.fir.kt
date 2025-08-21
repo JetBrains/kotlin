@@ -25,3 +25,6 @@ class D extends C {}
 
 // FILE: box.kt
 fun box(): String = <!JAVA_CLASS_INHERITS_KT_PRIVATE_CLASS!><!JAVA_CLASS_INHERITS_KT_PRIVATE_CLASS!>D()<!>.foo("")<!>
+
+/* GENERATED_FIR_TAGS: classDeclaration, flexibleType, functionDeclaration, javaFunction, javaType, nullableType,
+override, stringLiteral */

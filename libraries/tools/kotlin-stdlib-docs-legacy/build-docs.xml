@@ -249,7 +249,6 @@
 
         <sourceroot path="${kotlin_native_root}/Interop/Runtime/src/main/kotlin"/>
         <sourceroot path="${kotlin_native_root}/Interop/Runtime/src/native/kotlin"/>
-        <sourceroot path="${kotlin_native_root}/Interop/JsRuntime/src/main/kotlin"/>
         <sourceroot path="${kotlin_native_root}/runtime/src/main/kotlin"/>
         <sourceroot path="${kotlin_stdlib_dir}/native-wasm/src"/>
 

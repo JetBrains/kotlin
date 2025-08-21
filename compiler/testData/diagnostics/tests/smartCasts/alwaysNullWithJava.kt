@@ -15,3 +15,6 @@ fun test() {
         my<!UNSAFE_CALL!>.<!>foo()
     }
 }
+
+/* GENERATED_FIR_TAGS: equalityExpression, flexibleType, functionDeclaration, ifExpression, javaFunction, localProperty,
+nullableType, propertyDeclaration, smartcast */

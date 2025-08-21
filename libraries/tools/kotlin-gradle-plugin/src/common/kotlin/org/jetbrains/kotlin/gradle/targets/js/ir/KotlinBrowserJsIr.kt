@@ -6,15 +6,14 @@
 package org.jetbrains.kotlin.gradle.targets.js.ir
 
 import org.gradle.api.Action
-import org.jetbrains.kotlin.gradle.dsl.KOTLIN_JS_DCE_TOOL_DEPRECATION_MESSAGE
-import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalDceDsl
+import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBrowserDsl
-import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsPlugin.Companion.kotlinNodeJsEnvSpec
-import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin.Companion.kotlinNodeJsRootExtension
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.targets.js.testing.karma.KotlinKarma
+import org.jetbrains.kotlin.gradle.targets.js.webTargetVariant
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpack
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
+import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsRootExtension
 import org.jetbrains.kotlin.gradle.utils.withType
 import javax.inject.Inject
 
@@ -22,20 +21,20 @@ abstract class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
     KotlinJsIrNpmBasedSubTarget(target, "browser"),
     KotlinJsBrowserDsl {
 
-    private val nodeJsRoot = project.rootProject.kotlinNodeJsRootExtension
-    private val nodeJs = project.kotlinNodeJsEnvSpec
-
     override val testTaskDescription: String
         get() = "Run all ${target.name} tests inside browser using karma and webpack"
 
     override fun configureTestDependencies(test: KotlinJsTest, binary: JsIrBinary) {
-        test.dependsOn(
-            nodeJsRoot.npmInstallTaskProvider,
-        )
-        with(nodeJs) {
+        with(nodeJsEnvSpec) {
             test.dependsOn(project.nodeJsSetupTaskProvider)
         }
         test.dependsOn(nodeJsRoot.packageManagerExtension.map { it.postInstallTasks })
+        test.dependsOn(
+            nodeJsRoot.npmInstallTaskProvider,
+        )
+        if (target.webTargetVariant(jsVariant = false, wasmVariant = true)) {
+            test.dependsOn((nodeJsRoot as WasmNodeJsRootExtension).toolingInstallTaskProvider)
+        }
 
         test.dependsOn(binary.linkSyncTask)
     }
@@ -47,7 +46,7 @@ abstract class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
             }
         }
 
-        if (test.enabled) {
+        if (target.platformType != KotlinPlatformType.wasm && test.enabled) {
             nodeJsRoot.taskRequirements.addTaskRequirements(test)
         }
     }
@@ -82,13 +81,6 @@ abstract class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
             .configureEach {
                 it.configureBuild(body)
             }
-    }
-
-    @Suppress("DeprecatedCallableAddReplaceWith")
-    @Deprecated(KOTLIN_JS_DCE_TOOL_DEPRECATION_MESSAGE, level = DeprecationLevel.ERROR)
-    @ExperimentalDceDsl
-    override fun dceTask(body: Action<@Suppress("DEPRECATION_ERROR") org.jetbrains.kotlin.gradle.dsl.KotlinJsDce>) {
-        project.logger.warn(KOTLIN_JS_DCE_TOOL_DEPRECATION_MESSAGE)
     }
 
     companion object {

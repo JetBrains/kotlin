@@ -1,16 +1,22 @@
 element: e
-implicit receivers:
-  type: KaUsualClassType:
-    annotations: []
-    typeArguments: []
-    type: Child
-  owner symbol: KaFirNamedClassSymbol
+implicit values:
+  KaImplicitReceiver:
+    scopeIndexInTower = 1
+    type = KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: Child
+    ownerSymbol = KaNamedClassSymbol:
+      /Child
 
-  type: KaUsualClassType:
-    annotations: []
-    typeArguments: []
-    type: Base.Companion
-  owner symbol: KaFirNamedClassSymbol
+  KaImplicitReceiver:
+    scopeIndexInTower = 3
+    type = KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: Base.Companion
+    ownerSymbol = KaNamedClassSymbol:
+      /Base.Companion
 
 scopes:
   LocalScope, index = 0
@@ -72,19 +78,19 @@ scopes:
           visibility: PRIVATE
         callableId: /Child.foo
         compilerVisibility: Public
+        contextParameters: []
         contextReceivers: []
         getter: KaPropertyGetterSymbol:
           annotations: []
           callableId: null
           compilerVisibility: Public
           contextReceivers: []
-          hasBody: false
           hasStableParameterNames: true
           isActual: false
-          isDefault: true
           isExpect: false
           isExtension: false
           isInline: false
+          isNotDefault: false
           isOverride: false
           location: PROPERTY
           modality: FINAL
@@ -125,6 +131,7 @@ scopes:
         annotations: []
         callableId: kotlin/Any.equals
         compilerVisibility: Public
+        contextParameters: []
         contextReceivers: []
         contractEffects: []
         hasStableParameterNames: true
@@ -182,6 +189,7 @@ scopes:
         annotations: []
         callableId: kotlin/Any.hashCode
         compilerVisibility: Public
+        contextParameters: []
         contextReceivers: []
         contractEffects: []
         hasStableParameterNames: true
@@ -213,6 +221,7 @@ scopes:
         annotations: []
         callableId: kotlin/Any.toString
         compilerVisibility: Public
+        contextParameters: []
         contextReceivers: []
         contractEffects: []
         hasStableParameterNames: true
@@ -304,6 +313,7 @@ scopes:
         annotations: []
         callableId: /Base.Companion.bar
         compilerVisibility: Public
+        contextParameters: []
         contextReceivers: []
         contractEffects: []
         hasStableParameterNames: true
@@ -335,6 +345,7 @@ scopes:
         annotations: []
         callableId: kotlin/Any.equals
         compilerVisibility: Public
+        contextParameters: []
         contextReceivers: []
         contractEffects: []
         hasStableParameterNames: true
@@ -392,6 +403,7 @@ scopes:
         annotations: []
         callableId: kotlin/Any.hashCode
         compilerVisibility: Public
+        contextParameters: []
         contextReceivers: []
         contractEffects: []
         hasStableParameterNames: true
@@ -423,6 +435,7 @@ scopes:
         annotations: []
         callableId: kotlin/Any.toString
         compilerVisibility: Public
+        contextParameters: []
         contextReceivers: []
         contractEffects: []
         hasStableParameterNames: true

@@ -1011,6 +1011,14 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
         visitElement(resolvedNamedReference)
     }
 
+    final override fun visitPropertyWithExplicitBackingFieldResolvedNamedReference(propertyWithExplicitBackingFieldResolvedNamedReference: FirPropertyWithExplicitBackingFieldResolvedNamedReference, data: Nothing?) {
+        visitPropertyWithExplicitBackingFieldResolvedNamedReference(propertyWithExplicitBackingFieldResolvedNamedReference)
+    }
+
+    open fun visitPropertyWithExplicitBackingFieldResolvedNamedReference(propertyWithExplicitBackingFieldResolvedNamedReference: FirPropertyWithExplicitBackingFieldResolvedNamedReference) {
+        visitElement(propertyWithExplicitBackingFieldResolvedNamedReference)
+    }
+
     final override fun visitResolvedCallableReference(resolvedCallableReference: FirResolvedCallableReference, data: Nothing?) {
         visitResolvedCallableReference(resolvedCallableReference)
     }
@@ -1075,12 +1083,12 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
         visitElement(resolvedTypeRef)
     }
 
-    final override fun visitTypeRefWithNullability(typeRefWithNullability: FirTypeRefWithNullability, data: Nothing?) {
-        visitTypeRefWithNullability(typeRefWithNullability)
+    final override fun visitUnresolvedTypeRef(unresolvedTypeRef: FirUnresolvedTypeRef, data: Nothing?) {
+        visitUnresolvedTypeRef(unresolvedTypeRef)
     }
 
-    open fun visitTypeRefWithNullability(typeRefWithNullability: FirTypeRefWithNullability) {
-        visitElement(typeRefWithNullability)
+    open fun visitUnresolvedTypeRef(unresolvedTypeRef: FirUnresolvedTypeRef) {
+        visitElement(unresolvedTypeRef)
     }
 
     final override fun visitUserTypeRef(userTypeRef: FirUserTypeRef, data: Nothing?) {
@@ -1139,6 +1147,14 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
         visitElement(errorNamedReference)
     }
 
+    final override fun visitErrorSuperReference(errorSuperReference: FirErrorSuperReference, data: Nothing?) {
+        visitErrorSuperReference(errorSuperReference)
+    }
+
+    open fun visitErrorSuperReference(errorSuperReference: FirErrorSuperReference) {
+        visitElement(errorSuperReference)
+    }
+
     final override fun visitIntersectionTypeRef(intersectionTypeRef: FirIntersectionTypeRef, data: Nothing?) {
         visitIntersectionTypeRef(intersectionTypeRef)
     }
@@ -1153,6 +1169,14 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
 
     open fun visitThisReceiverExpression(thisReceiverExpression: FirThisReceiverExpression) {
         visitElement(thisReceiverExpression)
+    }
+
+    final override fun visitSuperReceiverExpression(superReceiverExpression: FirSuperReceiverExpression, data: Nothing?) {
+        visitSuperReceiverExpression(superReceiverExpression)
+    }
+
+    open fun visitSuperReceiverExpression(superReceiverExpression: FirSuperReceiverExpression) {
+        visitElement(superReceiverExpression)
     }
 
     final override fun visitInaccessibleReceiverExpression(inaccessibleReceiverExpression: FirInaccessibleReceiverExpression, data: Nothing?) {
@@ -1249,6 +1273,14 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
 
     open fun visitLegacyRawContractDescription(legacyRawContractDescription: FirLegacyRawContractDescription) {
         visitElement(legacyRawContractDescription)
+    }
+
+    final override fun visitLazyContractDescription(lazyContractDescription: FirLazyContractDescription, data: Nothing?) {
+        visitLazyContractDescription(lazyContractDescription)
+    }
+
+    open fun visitLazyContractDescription(lazyContractDescription: FirLazyContractDescription) {
+        visitElement(lazyContractDescription)
     }
 
     final override fun visitErrorContractDescription(errorContractDescription: FirErrorContractDescription, data: Nothing?) {

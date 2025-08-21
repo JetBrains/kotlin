@@ -65,3 +65,7 @@ class ScopeOwner: BaseType {
 fun ScopeOwner.extensionFunction() {}
 
 object Interloper: BaseType
+
+/* GENERATED_FIR_TAGS: callableReference, checkNotNullCall, classDeclaration, companionObject, funWithExtensionReceiver,
+functionDeclaration, functionalType, interfaceDeclaration, lambdaLiteral, localProperty, nullableType, objectDeclaration,
+propertyDeclaration, typeParameter */

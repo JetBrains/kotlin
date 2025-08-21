@@ -1,3 +1,4 @@
+warning: language version 1.9 is deprecated and its support will be removed in a future version of Kotlin
 error: opt-in requirement marker org.test.Error is deprecated. Error
 error: opt-in requirement marker org.test.Hidden is deprecated. Hidden
 COMPILATION_ERROR

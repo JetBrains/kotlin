@@ -8,3 +8,5 @@ fun getTypeChecker() : (Any)->Boolean {
 fun f() : (Any) -> Boolean {
   return { a : Any -> a is String }
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionalType, isExpression, lambdaLiteral */

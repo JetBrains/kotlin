@@ -163,11 +163,13 @@ internal val Project.commonizeNativeDistributionTask: TaskProvider<NativeDistrib
         val projectIsolationEnabled = kotlinPropertiesProvider.kotlinKmpProjectIsolationEnabled
         val addCommonizerTaskToProject = addCommonizerTaskToProject
 
-        if (!projectIsolationEnabled && rootProject.nativeProperties.isToolchainEnabled.get()) {
-            KotlinNativeBundleArtifactFormat.setupAttributesMatchingStrategy(rootProject.dependencies.attributesSchema)
-            KotlinNativeBundleArtifactFormat.setupTransform(rootProject)
-            addKotlinNativeBundleConfiguration(rootProject)
-            KotlinNativeBundleBuildService.registerIfAbsent(rootProject)
+        val projectForAddingKotlinNativeBundleResolvableConfiguration =
+            if (projectIsolationEnabled) this else rootProject
+        if (projectForAddingKotlinNativeBundleResolvableConfiguration.nativeProperties.isToolchainEnabled.get()) {
+            KotlinNativeBundleArtifactFormat.setupAttributesMatchingStrategy(projectForAddingKotlinNativeBundleResolvableConfiguration.dependencies.attributesSchema)
+            KotlinNativeBundleArtifactFormat.setupTransform(projectForAddingKotlinNativeBundleResolvableConfiguration)
+            addKotlinNativeBundleConfiguration(projectForAddingKotlinNativeBundleResolvableConfiguration)
+            KotlinNativeBundleBuildService.registerIfAbsent(projectForAddingKotlinNativeBundleResolvableConfiguration)
         }
 
         return addCommonizerTaskToProject.locateOrRegisterTask(

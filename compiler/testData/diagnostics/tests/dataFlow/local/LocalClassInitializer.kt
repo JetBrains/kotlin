@@ -15,3 +15,6 @@ interface B {
   fun foo() {}
 }
 open class X(b: B)
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, ifExpression, init, interfaceDeclaration, isExpression,
+localClass, nullableType, primaryConstructor, smartcast */

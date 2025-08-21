@@ -12,3 +12,6 @@ package d
 
 class T {}
 <!WRONG_MODIFIER_TARGET!>override<!> fun T.bar() = 2
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, integerLiteral, override,
+propertyDeclaration */

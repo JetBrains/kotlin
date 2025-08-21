@@ -1,6 +1,6 @@
 FILE: returnFromWhen.kt
     public final fun test_1(name: R|kotlin/String?|): R|kotlin/Unit| {
-        when (R|<local>/name|) {
+        when (lval <when-subject>: R|kotlin/String?| = R|<local>/name|) {
             ==($subj$, Null(null)) ->  {
                 ^test_1 Unit
             }

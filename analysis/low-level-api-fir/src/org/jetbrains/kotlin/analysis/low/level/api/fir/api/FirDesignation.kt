@@ -8,8 +8,8 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.api
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileResolutionMode
 import org.jetbrains.kotlin.analysis.low.level.api.fir.projectStructure.llFirModuleData
-import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.nullableJavaSymbolProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirLibraryOrLibrarySourceResolvableModuleSession
+import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.nullableJavaSymbolProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.*
 import org.jetbrains.kotlin.analysis.utils.errors.unexpectedElementError
 import org.jetbrains.kotlin.builtins.StandardNames
@@ -142,7 +142,6 @@ private fun tryCollectDesignation(providedFile: FirFile?, target: FirElementWith
         is FirField,
         is FirConstructor,
         is FirEnumEntry,
-        is FirErrorProperty,
             -> {
             // We shouldn't try to build a designation path for such fake declarations as they
             // do not depend on outer classes during resolution
@@ -205,9 +204,9 @@ private fun collectDesignationPathWithContainingClass(
     }
 
     val fallbackClassPath = collectDesignationPathWithContainingClassFallback(target, containingClassId)
-    val fallbackFile = providedFile ?: fallbackClassPath?.lastOrNull()?.getContainingFile() ?: file
+    val fallbackFile = providedFile ?: fallbackClassPath.lastOrNull()?.getContainingFile() ?: file
     val fallbackScript = fallbackFile?.declarations?.singleOrNull() as? FirScript
-    val fallbackPath = listOfNotNull(fallbackFile, fallbackScript) + fallbackClassPath.orEmpty()
+    val fallbackPath = listOfNotNull(fallbackFile, fallbackScript) + fallbackClassPath
     val patchedPath = patchDesignationPathIfNeeded(target, fallbackPath)
     return FirDesignation(patchedPath, target)
 }
@@ -215,7 +214,7 @@ private fun collectDesignationPathWithContainingClass(
 private fun collectDesignationPathWithContainingClassFallback(
     target: FirDeclaration,
     containingClassId: ClassId?,
-): List<FirDeclaration>? {
+): List<FirDeclaration> {
     val useSiteSession = getTargetSession(target)
 
     fun resolveChunk(classId: ClassId): FirRegularClass {
@@ -385,7 +384,7 @@ private fun patchDesignationPathForCopy(target: FirElementWithResolveState, targ
         val targetPsiFile = targetModule.files.singleOrNull() ?: return targetPath
 
         val contextModule = targetModule.contextModule
-        val contextResolveSession = contextModule.getFirResolveSession(contextModule.project)
+        val contextResolutionFacade = contextModule.getResolutionFacade(contextModule.project)
 
         return buildList {
             for (targetPathDeclaration in targetPath) {
@@ -394,9 +393,9 @@ private fun patchDesignationPathForCopy(target: FirElementWithResolveState, targ
 
                 val originalPathPsi = targetPathPsi.unwrapCopy(targetPsiFile) ?: return null
                 val originalPathDeclaration = when (originalPathPsi) {
-                    is KtClassOrObject -> originalPathPsi.resolveToFirSymbolOfTypeSafe<FirRegularClassSymbol>(contextResolveSession)?.fir
-                    is KtScript -> originalPathPsi.resolveToFirSymbolOfTypeSafe<FirScriptSymbol>(contextResolveSession)?.fir
-                    is KtFile -> originalPathPsi.getOrBuildFirFile(contextResolveSession)
+                    is KtClassOrObject -> originalPathPsi.resolveToFirSymbolOfTypeSafe<FirRegularClassSymbol>(contextResolutionFacade)?.fir
+                    is KtScript -> originalPathPsi.resolveToFirSymbolOfTypeSafe<FirScriptSymbol>(contextResolutionFacade)?.fir
+                    is KtFile -> originalPathPsi.getOrBuildFirFile(contextResolutionFacade)
                     else -> null
                 } ?: return null
 

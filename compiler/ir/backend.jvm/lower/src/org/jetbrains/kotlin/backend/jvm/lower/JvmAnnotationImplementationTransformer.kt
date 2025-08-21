@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.backend.jvm.lower
 
-import org.jetbrains.kotlin.backend.common.ir.BuiltinSymbolsBase
 import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
@@ -47,9 +46,8 @@ class JvmAnnotationImplementationTransformer(private val jvmContext: JvmBackendC
     private val implementor = AnnotationPropertyImplementor(
         jvmContext.irFactory,
         jvmContext.irBuiltIns,
-        jvmContext.ir.symbols,
-        jvmContext.ir.symbols.javaLangClass,
-        jvmContext.ir.symbols.kClassJavaPropertyGetter.symbol,
+        jvmContext.symbols.javaLangClass,
+        jvmContext.symbols.kClassJavaPropertyGetter.symbol,
         ANNOTATION_IMPLEMENTATION
     )
 
@@ -69,20 +67,20 @@ class JvmAnnotationImplementationTransformer(private val jvmContext: JvmBackendC
     // result of property getter call
     override fun IrExpression.transformArrayEqualsArgument(type: IrType, irBuilder: IrBlockBodyBuilder): IrExpression =
         if (!type.isUnsignedArray()) this
-        else irBuilder.irCall(jvmContext.ir.symbols.unsafeCoerceIntrinsic).apply {
+        else irBuilder.irCall(jvmContext.symbols.unsafeCoerceIntrinsic).apply {
             typeArguments[0] = type
             typeArguments[1] = type.unboxInlineClass()
-            putValueArgument(0, this@transformArrayEqualsArgument)
+            arguments[0] = this@transformArrayEqualsArgument
         }
 
     override fun getArrayContentEqualsSymbol(type: IrType): IrFunctionSymbol {
         val targetType = when {
             type.isPrimitiveArray() -> type
             type.isUnsignedArray() -> type.unboxInlineClass()
-            else -> jvmContext.ir.symbols.arrayOfAnyNType
+            else -> jvmContext.symbols.arrayOfAnyNType
         }
-        val requiredSymbol = jvmContext.ir.symbols.arraysClass.owner.findDeclaration<IrFunction> {
-            it.name.asString() == "equals" && it.valueParameters.size == 2 && it.valueParameters.first().type == targetType
+        val requiredSymbol = jvmContext.symbols.arraysClass.owner.findDeclaration<IrFunction> {
+            it.name.asString() == "equals" && it.hasShape(regularParameters = 2, parameterTypes = listOf(targetType, targetType))
         }
         requireNotNull(requiredSymbol) { "Can't find Arrays.equals method for type ${targetType.render()}" }
         return requiredSymbol.symbol
@@ -97,7 +95,7 @@ class JvmAnnotationImplementationTransformer(private val jvmContext: JvmBackendC
 
         implClass.addFunction(
             name = "annotationType",
-            returnType = jvmContext.ir.symbols.javaLangClass.starProjectedType,
+            returnType = jvmContext.symbols.javaLangClass.starProjectedType,
             origin = ANNOTATION_IMPLEMENTATION,
             isStatic = false
         ).apply {
@@ -141,7 +139,6 @@ class JvmAnnotationImplementationTransformer(private val jvmContext: JvmBackendC
     class AnnotationPropertyImplementor(
         val irFactory: IrFactory,
         val irBuiltIns: IrBuiltIns,
-        val symbols: BuiltinSymbolsBase,
         val javaLangClassSymbol: IrClassSymbol,
         val kClassJavaPropertyGetterSymbol: IrSimpleFunctionSymbol,
         val originForProp: IrDeclarationOrigin
@@ -160,9 +157,9 @@ class JvmAnnotationImplementationTransformer(private val jvmContext: JvmBackendC
          */
         private fun IrBuilderWithScope.kClassArrayToJClassArray(kClassArray: IrExpression): IrExpression {
             val javaLangClassType = javaLangClassSymbol.starProjectedType
-            val jlcArray = symbols.array.typeWith(javaLangClassType)
-            val arrayClass = symbols.array.owner
-            val arrayOfNulls = symbols.arrayOfNulls
+            val jlcArray = irBuiltIns.arrayClass.typeWith(javaLangClassType)
+            val arrayClass = irBuiltIns.arrayClass.owner
+            val arrayOfNulls = irBuiltIns.arrayOfNulls
             val arraySizeSymbol = arrayClass.findDeclaration<IrProperty> { it.name.asString() == "size" }!!.getter!!
 
             val block = irBlock {
@@ -173,8 +170,7 @@ class JvmAnnotationImplementationTransformer(private val jvmContext: JvmBackendC
                     "size", isMutable = false
                 )
                 val result = createTmpVariable(irCall(arrayOfNulls, jlcArray).apply {
-                    listOf(javaLangClassType)
-                    putValueArgument(0, irGet(size))
+                    arguments[0] = irGet(size)
                 })
                 val comparison = primitiveOp2(
                     startOffset, endOffset,
@@ -192,13 +188,13 @@ class JvmAnnotationImplementationTransformer(private val jvmContext: JvmBackendC
                         val tempIndex = createTmpVariable(irGet(index))
 
                         val getArray = irCall(getArraySymbol).apply {
-                            dispatchReceiver = irGet(sourceArray)
-                            putValueArgument(0, irGet(tempIndex))
+                            arguments[0] = irGet(sourceArray)
+                            arguments[1] = irGet(tempIndex)
                         }
                         +irCall(setArraySymbol).apply {
-                            dispatchReceiver = irGet(result)
-                            putValueArgument(0, irGet(tempIndex))
-                            putValueArgument(1, kClassToJClass(getArray))
+                            arguments[0] = irGet(result)
+                            arguments[1] = irGet(tempIndex)
+                            arguments[2] = kClassToJClass(getArray)
                         }
 
                         +irSet(index.symbol, irCallOp(inc.symbol, index.type, irGet(index)))
@@ -211,7 +207,7 @@ class JvmAnnotationImplementationTransformer(private val jvmContext: JvmBackendC
 
         private fun IrType.kClassToJClassIfNeeded(): IrType = when {
             this.isKClass() -> javaLangClassSymbol.starProjectedType
-            this.isKClassArray() -> symbols.array.typeWith(
+            this.isKClassArray() -> irBuiltIns.arrayClass.typeWith(
                 javaLangClassSymbol.starProjectedType
             )
 
@@ -227,7 +223,7 @@ class JvmAnnotationImplementationTransformer(private val jvmContext: JvmBackendC
                 null,
                 kClassJavaPropertyGetterSymbol
             ).apply {
-                extensionReceiver = irExpression
+                arguments[0] = irExpression
             }
 
         fun implementAnnotationPropertiesAndConstructor(
@@ -252,7 +248,7 @@ class JvmAnnotationImplementationTransformer(private val jvmContext: JvmBackendC
             // For annotations defined in Java, IrProperties do not contain initializers in backing fields, as annotation properties are represented as Java methods
             // (that are later converted to synthetic properties w/o fields).
             // However, K2 stores default values in annotation's constructor parameters.
-            val fallbackPrimaryCtorParamsMap = annotationClass.primaryConstructor?.valueParameters?.associateBy { it.name }.orEmpty()
+            val fallbackPrimaryCtorParamsMap = annotationClass.primaryConstructor?.parameters?.associateBy { it.name }.orEmpty()
 
             annotationProperties.forEach { property ->
                 val propType = property.getter!!.returnType
@@ -317,9 +313,10 @@ class JvmAnnotationImplementationTransformer(private val jvmContext: JvmBackendC
                     modality = Modality.FINAL
                 }.apply {
                     correspondingPropertySymbol = prop.symbol
-                    dispatchReceiverParameter = implClass.thisReceiver!!.copyTo(this)
+                    val dispatchReceiverParameter = implClass.thisReceiver!!.copyTo(this, kind = IrParameterKind.DispatchReceiver)
+                    parameters = listOf(dispatchReceiverParameter)
                     body = irBuiltIns.createIrBuilder(symbol, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET).irBlockBody {
-                        +irReturn(irGetField(irGet(dispatchReceiverParameter!!), field))
+                        +irReturn(irGetField(irGet(dispatchReceiverParameter), field))
                     }
                     overriddenSymbols = listOf(property.getter!!.symbol)
                 }

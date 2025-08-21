@@ -14,3 +14,6 @@ fun main() {
         yield(foo(2) { 3 })
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionalType, integerLiteral, lambdaLiteral,
+nullableType, suspend, typeParameter, typeWithExtension */

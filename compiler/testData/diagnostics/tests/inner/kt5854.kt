@@ -11,3 +11,5 @@ class A {
         Nested(<!TOO_MANY_ARGUMENTS!>1<!>) //two errors here, the first one is wrong
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, nestedClass */

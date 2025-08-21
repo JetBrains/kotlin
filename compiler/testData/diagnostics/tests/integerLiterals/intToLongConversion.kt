@@ -64,3 +64,6 @@ fun testLocalProperties() {
     takeLong(<!TYPE_MISMATCH!>localIntProperty<!>)
     takeLong(<!TYPE_MISMATCH!>localImplicitIntProperty<!>)
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, checkNotNullCall, functionDeclaration, integerLiteral, interfaceDeclaration,
+localProperty, multiplicativeExpression, propertyDeclaration */

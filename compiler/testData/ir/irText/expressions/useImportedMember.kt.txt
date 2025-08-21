@@ -71,7 +71,7 @@ fun box(): String {
     EQEQ(arg0 = C.f(s = "s"), arg1 = 2).not() -> return "2"
   }
   when {
-    EQEQ(arg0 = (C, true).f(), arg1 = 3).not() -> return "3"
+    EQEQ(arg0 = C.f(/* <this> = true */), arg1 = 3).not() -> return "3"
   }
   when {
     EQEQ(arg0 = C.<get-p>(), arg1 = 4).not() -> return "4"
@@ -81,19 +81,19 @@ fun box(): String {
     EQEQ(arg0 = C.<get-p>(), arg1 = 5).not() -> return "5"
   }
   when {
-    EQEQ(arg0 = (C, 5).<get-ext>(), arg1 = 6).not() -> return "6"
+    EQEQ(arg0 = C.<get-ext>(/* <this> = 5 */), arg1 = 6).not() -> return "6"
   }
   when {
     EQEQ(arg0 = C.g1<String>(t = "7"), arg1 = "7").not() -> return "7"
   }
   when {
-    EQEQ(arg0 = (C, "8").<get-g2><String>(), arg1 = "8").not() -> return "8"
+    EQEQ(arg0 = C.<get-g2><String>(/* <this> = "8" */), arg1 = "8").not() -> return "8"
   }
   when {
-    EQEQ(arg0 = (C, 9).fromInterface<Int>(), arg1 = 9).not() -> return "9"
+    EQEQ(arg0 = C.fromInterface<Int>(/* <this> = 9 */), arg1 = 9).not() -> return "9"
   }
   when {
-    EQEQ(arg0 = (C, "10").<get-fromClass><String>(), arg1 = "10").not() -> return "10"
+    EQEQ(arg0 = C.<get-fromClass><String>(/* <this> = "10" */), arg1 = "10").not() -> return "10"
   }
   when {
     EQEQ(arg0 = C.genericFromSuper(g = "11"), arg1 = "11").not() -> return "11"

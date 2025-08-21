@@ -4,3 +4,5 @@ fun ff(): Int {
     { i: Int -> i }
     return i
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral, lambdaLiteral, localProperty, propertyDeclaration */

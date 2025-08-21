@@ -7,3 +7,5 @@ fun test(data: String) =
         0 -> -1
         else -> 42
     }
+
+/* GENERATED_FIR_TAGS: equalityExpression, functionDeclaration, integerLiteral, whenExpression, whenWithSubject */

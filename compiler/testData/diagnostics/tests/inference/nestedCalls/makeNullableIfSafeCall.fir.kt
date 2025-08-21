@@ -40,3 +40,6 @@ fun test(a: A?) {
     doInt(a?.b.bar()<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>)
     doInt(a?.b.baz()!!)
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, funWithExtensionReceiver, functionDeclaration, integerLiteral,
+interfaceDeclaration, nullableType, propertyDeclaration, safeCall, smartcast */

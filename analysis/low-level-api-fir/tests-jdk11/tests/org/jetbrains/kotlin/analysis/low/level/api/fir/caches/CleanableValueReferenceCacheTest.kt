@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.caches
 import org.jetbrains.kotlin.analysis.low.level.api.fir.caches.cleanable.CleanableSoftValueReferenceCache
 import org.jetbrains.kotlin.analysis.low.level.api.fir.caches.cleanable.CleanableValueReferenceCache
 import org.jetbrains.kotlin.analysis.low.level.api.fir.caches.cleanable.CleanableWeakValueReferenceCache
-import org.jetbrains.kotlin.analysis.test.framework.utils.withDummyApplication
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Assertions.assertNull
@@ -210,10 +209,7 @@ class CleanableValueReferenceCacheTest {
 
         cache.setUp(value1, value2, value3)
 
-        // We need an application so that `clear` can assert write access.
-        withDummyApplication {
-            cache.clear()
-        }
+        cache.clear()
 
         assertTrue(cache.isEmpty())
         assertTrue(value1.isCleanedUp)

@@ -1,15 +1,15 @@
 // IGNORE_FIR_DIAGNOSTICS
 // RUN_PIPELINE_TILL: FIR2IR
 // TARGET_BACKEND: JVM_IR
-// IGNORE_BACKEND_K1: JVM_IR JVM
+// IGNORE_BACKEND_K1: JVM_IR
 // ISSUE: KT-66436
 
 // MODULE: common
 // FILE: common.kt
 package foo
 
-public <!EXPECT_ACTUAL_INCOMPATIBILITY{JVM}!>expect<!> abstract class AbstractMutableList() {
-    protected var <!EXPECT_ACTUAL_MISMATCH{JVM}!>modCount<!>: Int
+public <!EXPECT_ACTUAL_IR_INCOMPATIBILITY{JVM}!>expect<!> abstract class AbstractMutableList() {
+    protected var <!EXPECT_ACTUAL_IR_MISMATCH{JVM}!>modCount<!>: Int
 }
 
 // MODULE: jvm()()(common)
@@ -24,3 +24,5 @@ public abstract class JavaAbstractMutableList {
 package foo
 
 public actual abstract class <!NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS!>AbstractMutableList<!> actual constructor(): bar.JavaAbstractMutableList()
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, javaType, primaryConstructor, propertyDeclaration */

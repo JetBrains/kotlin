@@ -14,3 +14,5 @@ package b
 import a.B
 
 class C : <!OPT_IN_TO_INHERITANCE_ERROR!>B<!>()
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, classReference */

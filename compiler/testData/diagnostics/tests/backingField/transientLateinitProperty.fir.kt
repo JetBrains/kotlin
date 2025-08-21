@@ -10,3 +10,5 @@ class Bar {
         this.foo = foo
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, lateinit, propertyDeclaration, secondaryConstructor, thisExpression */

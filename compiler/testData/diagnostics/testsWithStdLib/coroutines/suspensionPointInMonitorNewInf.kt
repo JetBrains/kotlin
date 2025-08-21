@@ -60,3 +60,7 @@ suspend fun ifWhenAndOtherNonsence() {
 }
 
 suspend fun returnsInt(): Int = 0
+
+/* GENERATED_FIR_TAGS: additiveExpression, equalityExpression, functionDeclaration, functionalType, ifExpression,
+integerLiteral, isExpression, javaFunction, lambdaLiteral, propertyDeclaration, stringLiteral, suspend, whenExpression,
+whenWithSubject */

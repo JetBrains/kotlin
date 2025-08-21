@@ -328,7 +328,7 @@ public class ValueArgumentsToParametersMapper {
                 KtExpression argument = functionLiteralArguments.get(i).getArgumentExpression();
                 if (argument instanceof KtLambdaExpression) {
                     report(MANY_LAMBDA_EXPRESSION_ARGUMENTS.on(argument));
-                    if (CallUtilKt.isTrailingLambdaOnNewLIne((KtLambdaExpression) argument)) {
+                    if (((KtLambdaExpression) argument).isTrailingLambdaOnNewLine()) {
                         report(UNEXPECTED_TRAILING_LAMBDA_ON_A_NEW_LINE.on((KtLambdaExpression) argument));
                     }
                 }

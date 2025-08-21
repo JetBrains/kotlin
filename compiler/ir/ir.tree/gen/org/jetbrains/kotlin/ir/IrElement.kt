@@ -8,8 +8,8 @@
 
 package org.jetbrains.kotlin.ir
 
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
+import org.jetbrains.kotlin.ir.visitors.IrTransformer
+import org.jetbrains.kotlin.ir.visitors.IrVisitor
 
 /**
  * The root interface of the IR tree. Each IR node implements this interface.
@@ -25,7 +25,7 @@ interface IrElement {
      *
      * @see IrFileEntry.getSourceRangeInfo
      */
-    val startOffset: Int
+    var startOffset: Int
 
     /**
      * The end offset of the syntax node from which this IR node was generated,
@@ -35,7 +35,7 @@ interface IrElement {
      *
      * @see IrFileEntry.getSourceRangeInfo
      */
-    val endOffset: Int
+    var endOffset: Int
 
     /**
      * Original element before copying. Always satisfies the following
@@ -50,7 +50,7 @@ interface IrElement {
      * @param data An arbitrary context to pass to each invocation of [visitor]'s methods.
      * @return The value returned by the topmost `visit*` invocation.
      */
-    fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R
+    fun <R, D> accept(visitor: IrVisitor<R, D>, data: D): R
 
     /**
      * Runs the provided [transformer] on the IR subtree with the root at this node.
@@ -59,7 +59,7 @@ interface IrElement {
      * @param data An arbitrary context to pass to each invocation of [transformer]'s methods.
      * @return The transformed node.
      */
-    fun <D> transform(transformer: IrElementTransformer<D>, data: D): IrElement
+    fun <D> transform(transformer: IrTransformer<D>, data: D): IrElement
 
     /**
      * Runs the provided [visitor] on subtrees with roots in this node's children.
@@ -71,7 +71,7 @@ interface IrElement {
      * @param visitor The visitor for children to accept.
      * @param data An arbitrary context to pass to each invocation of [visitor]'s methods.
      */
-    fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D)
+    fun <D> acceptChildren(visitor: IrVisitor<Unit, D>, data: D)
 
     /**
      * Recursively transforms this node's children *in place* using [transformer].
@@ -83,5 +83,5 @@ interface IrElement {
      * @param transformer The transformer to use for transforming the children.
      * @param data An arbitrary context to pass to each invocation of [transformer]'s methods.
      */
-    fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D)
+    fun <D> transformChildren(transformer: IrTransformer<D>, data: D)
 }

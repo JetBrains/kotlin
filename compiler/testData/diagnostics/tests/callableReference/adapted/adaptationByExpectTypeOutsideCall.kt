@@ -29,3 +29,7 @@ fun foo(dumpStrategy: String) {
 }
 
 fun expectString(x: String) {}
+
+/* GENERATED_FIR_TAGS: assignment, callableReference, equalityExpression, functionDeclaration, functionalType,
+ifExpression, intersectionType, lambdaLiteral, localProperty, nullableType, propertyDeclaration, smartcast,
+stringLiteral, typeParameter */

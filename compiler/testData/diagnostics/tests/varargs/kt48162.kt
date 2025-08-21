@@ -21,3 +21,6 @@ fun use(arg: Array<String>, s: Collection<String>, x: Foo<String>) {
 }
 
 fun arr(x: Array<String>) {}
+
+/* GENERATED_FIR_TAGS: additiveExpression, asExpression, classDeclaration, funWithExtensionReceiver, functionDeclaration,
+nullableType, operator, thisExpression, typeParameter */

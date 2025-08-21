@@ -37,3 +37,6 @@ inline fun Function1<Int, Unit>.inlineExtWithClosure(ext: Int.(p: Int) -> Unit) 
 inline fun subInline(s: (p: Int) -> Unit, ext: Int.(p: Int) -> Unit) {}
 
 fun subNoInline(s: (p: Int) -> Unit, ext: Int.(p: Int) -> Unit) {}
+
+/* GENERATED_FIR_TAGS: funWithExtensionReceiver, functionDeclaration, functionalType, inline, lambdaLiteral, noinline,
+thisExpression, typeWithExtension */

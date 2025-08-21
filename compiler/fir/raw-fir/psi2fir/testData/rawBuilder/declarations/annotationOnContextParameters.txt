@@ -1,0 +1,25 @@
+FILE: annotationOnContextParameters.kt
+    context(@Ann() a: @Ann() String)
+    public? final? fun annotationOnContext(): R|kotlin/Unit| {
+    }
+    context(@AnnotationWithConstructor(String()) a: @AnnotationWithConstructor(String()) String)
+    public? final? fun annotationWithConstructor(): R|kotlin/Unit| {
+    }
+    context(@Ann() a: @Ann() String)
+    public? final? val annotationOnContextProperty: String
+        public? get(): String {
+            ^ String()
+        }
+    context(@AnnotationWithConstructor(String()) a: @AnnotationWithConstructor(String()) String)
+    public? final? val annotationWithConstructorProperty: String
+        public? get(): String {
+            ^ String()
+        }
+    public? final? fun functionType(f: context(@Ann() String)( () -> Unit )): R|kotlin/Unit| {
+    }
+    public? final? fun functionTypeWithConstructor(f: context(@AnnotationWithConstructor(String()) String)( () -> Unit )): R|kotlin/Unit| {
+    }
+    public? final? fun functionTypeNamed(f: context(@Ann() String)( () -> Unit )): R|kotlin/Unit| {
+    }
+    public? final? fun functionTypeNamedWithConstructor(f: context(@AnnotationWithConstructor(String()) String)( () -> Unit )): R|kotlin/Unit| {
+    }

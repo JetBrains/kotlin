@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.ir.util.shallowCopy
 internal class DefaultProgressionHandler(
     private val context: CommonBackendContext, private val allowUnsignedBounds: Boolean = false
 ) : HeaderInfoHandler<IrExpression, Nothing?> {
-    private val symbols = context.ir.symbols
+    private val symbols = context.symbols
     private val rangeClassesTypes = symbols.rangeClasses.map { it.defaultType }.toSet()
 
     // Function inliner often erases type of range in for loop expression, like

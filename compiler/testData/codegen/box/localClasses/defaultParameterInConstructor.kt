@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM
 // KT-44631
 
 class Something(val now: String)

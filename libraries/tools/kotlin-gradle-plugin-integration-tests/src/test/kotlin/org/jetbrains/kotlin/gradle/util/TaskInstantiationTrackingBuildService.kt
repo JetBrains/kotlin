@@ -16,7 +16,7 @@ import org.gradle.api.services.BuildServiceParameters
  */
 abstract class TaskInstantiationTrackingBuildService : BuildService<BuildServiceParameters.None>, AutoCloseable {
     var startedExecution = false
-    val tasksExecutedAtExecutionTime = mutableListOf<Pair<String,Throwable>>()
+    val tasksExecutedAtExecutionTime = mutableListOf<Pair<String, Throwable>>()
 
     override fun close() {
         require(tasksExecutedAtExecutionTime.isEmpty()) {

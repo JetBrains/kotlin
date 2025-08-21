@@ -96,3 +96,7 @@ fun testLambda() {
         x.length
     }
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, asExpression, assignment, classDeclaration, functionDeclaration,
+functionalType, init, integerLiteral, lambdaLiteral, localClass, localFunction, localProperty, propertyDeclaration,
+smartcast, stringLiteral, whileLoop */

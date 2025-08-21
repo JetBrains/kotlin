@@ -20,3 +20,5 @@ fun <K1, K2, K3, K4> rules(res: Result<Any>):
     }
 }
 
+/* GENERATED_FIR_TAGS: asExpression, classDeclaration, dnnType, functionDeclaration, functionalType, intersectionType,
+lambdaLiteral, nullableType, primaryConstructor, propertyDeclaration, smartcast, stringLiteral, typeParameter */

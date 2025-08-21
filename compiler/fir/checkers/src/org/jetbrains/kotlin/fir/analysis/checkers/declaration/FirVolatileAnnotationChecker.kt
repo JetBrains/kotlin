@@ -15,17 +15,18 @@ import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.getAnnotationByClassIds
 
 object FirVolatileAnnotationChecker : FirPropertyChecker(MppCheckerKind.Platform) {
-    override fun check(declaration: FirProperty, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirProperty) {
         val volatileAnnotations = context.session.annotationPlatformSupport.volatileAnnotations
         val fieldAnnotation = declaration.backingField?.annotations?.getAnnotationByClassIds(volatileAnnotations, context.session)
             ?: return
 
         if (!declaration.isVar) {
-            reporter.reportOn(fieldAnnotation.source, FirErrors.VOLATILE_ON_VALUE, context)
+            reporter.reportOn(fieldAnnotation.source, FirErrors.VOLATILE_ON_VALUE)
         }
 
         if (declaration.delegateFieldSymbol != null) {
-            reporter.reportOn(fieldAnnotation.source, FirErrors.VOLATILE_ON_DELEGATE, context)
+            reporter.reportOn(fieldAnnotation.source, FirErrors.VOLATILE_ON_DELEGATE)
         }
     }
 }

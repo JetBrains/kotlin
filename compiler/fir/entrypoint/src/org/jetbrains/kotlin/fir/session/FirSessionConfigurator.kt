@@ -13,7 +13,9 @@ import org.jetbrains.kotlin.fir.analysis.checkers.declaration.DeclarationChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.ExpressionCheckers
 import org.jetbrains.kotlin.fir.analysis.checkers.type.TypeCheckers
 import org.jetbrains.kotlin.fir.analysis.checkersComponent
+import org.jetbrains.kotlin.fir.analysis.diagnostics.diagnosticRendererFactory
 import org.jetbrains.kotlin.fir.analysis.extensions.additionalCheckers
+import org.jetbrains.kotlin.diagnostics.KtDiagnosticsContainer
 import org.jetbrains.kotlin.fir.extensions.*
 import kotlin.reflect.KClass
 
@@ -49,13 +51,18 @@ class FirSessionConfigurator(private val session: FirSession) {
         session.register(componentKey, componentValue)
     }
 
+    @OptIn(SessionConfiguration::class)
+    fun registerDiagnosticContainers(vararg diagnosticContainers: KtDiagnosticsContainer) {
+        session.diagnosticRendererFactory.registerFactories(diagnosticContainers.map { it.getRendererFactory() })
+    }
+
     @OptIn(PluginServicesInitialization::class)
     @SessionConfiguration
     fun configure() {
         var extensions = registeredExtensions.reduce(BunchOfRegisteredExtensions::plus)
         if (session.kind == FirSession.Kind.Library) {
             val filteredExtensions = extensions.extensions.filterKeys { it in FirExtensionRegistrar.ALLOWED_EXTENSIONS_FOR_LIBRARY_SESSION }
-            extensions = BunchOfRegisteredExtensions(filteredExtensions)
+            extensions = BunchOfRegisteredExtensions(filteredExtensions, diagnosticsContainers = emptyList())
         }
         session.extensionService.registerExtensions(extensions)
         if (session.kind == FirSession.Kind.Source) {

@@ -1,4 +1,4 @@
-FILE: annotationDefaultTargetFirstOnly.kt
+FILE: test.kt
     @R|kotlin/annotation/Target|(allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|)) public final annotation class ParamOnly : R|kotlin/Annotation| {
         public constructor(): R|ParamOnly| {
             super<R|kotlin/Any|>()
@@ -48,24 +48,27 @@ FILE: annotationDefaultTargetFirstOnly.kt
 
     }
     public final class My : R|kotlin/Any| {
-        public constructor(@R|ParamOnly|() @R|ParamProperty|() @R|ParamField|() @R|ParamPropertyField|() x: R|kotlin/Int|): R|My| {
+        public constructor(@R|ParamOnly|() @R|ParamProperty|() @R|ParamField|() @R|ParamPropertyField|() @R|JavaAnn|() x: R|kotlin/Int|, @R|ParamOnly|() @R|ParamProperty|() @R|ParamField|() @R|ParamPropertyField|() @R|JavaAnn|() vararg a: R|kotlin/Array<out kotlin/String>|): R|My| {
             super<R|kotlin/Any|>()
         }
 
         @R|PropertyOnly|() @R|PropertyField|() @R|Inapplicable|() field:@R|FieldOnly|() public final val x: R|kotlin/Int| = R|<local>/x|
             public get(): R|kotlin/Int|
 
-        @R|ParamOnly|() @R|PropertyOnly|() @R|ParamProperty|() @R|PropertyField|() @R|ParamPropertyField|() @R|Inapplicable|() field:@R|FieldOnly|() @R|ParamField|() public final val y: R|kotlin/Int| = Int(0)
+        @R|PropertyOnly|() @R|PropertyField|() @R|Inapplicable|() field:@R|FieldOnly|() public final val a: R|kotlin/Array<out kotlin/String>| = R|<local>/a|
+            public get(): R|kotlin/Array<out kotlin/String>|
+
+        @R|ParamOnly|() @R|PropertyOnly|() @R|ParamProperty|() @R|PropertyField|() @R|ParamPropertyField|() @R|Inapplicable|() field:@R|FieldOnly|() @R|ParamField|() @R|JavaAnn|() public final val y: R|kotlin/Int| = Int(0)
             public get(): R|kotlin/Int|
 
-        @R|ParamOnly|() @R|PropertyOnly|() @R|ParamProperty|() @R|PropertyField|() @R|ParamPropertyField|() @R|Inapplicable|() field:@R|FieldOnly|() @R|ParamField|() public final val z: R|kotlin/Int|
+        @R|ParamOnly|() @R|PropertyOnly|() @R|ParamProperty|() @R|PropertyField|() @R|ParamPropertyField|() @R|Inapplicable|() field:@R|FieldOnly|() @R|ParamField|() @R|JavaAnn|() public final val z: R|kotlin/Int|
             public get(): R|kotlin/Int| {
                 ^ Int(0)
             }
 
     }
     public final annotation class Your : R|kotlin/Annotation| {
-        public constructor(@R|ParamOnly|() @R|ParamProperty|() @R|ParamField|() @R|ParamPropertyField|() s: R|kotlin/String|): R|Your| {
+        public constructor(@R|ParamOnly|() @R|ParamProperty|() @R|ParamField|() @R|ParamPropertyField|() @R|JavaAnn|() s: R|kotlin/String|): R|Your| {
             super<R|kotlin/Any|>()
         }
 
@@ -73,3 +76,4 @@ FILE: annotationDefaultTargetFirstOnly.kt
             public get(): R|kotlin/String|
 
     }
+

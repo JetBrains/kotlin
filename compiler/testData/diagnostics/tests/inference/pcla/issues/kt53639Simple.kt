@@ -18,3 +18,6 @@ fun main2(input: InputWrapper<Unit>): Output {
 
     return Output(source = <!TYPE_MISMATCH!>output<!>)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, data, funWithExtensionReceiver, functionDeclaration, functionalType,
+lambdaLiteral, localProperty, nullableType, primaryConstructor, propertyDeclaration, stringLiteral, typeParameter */

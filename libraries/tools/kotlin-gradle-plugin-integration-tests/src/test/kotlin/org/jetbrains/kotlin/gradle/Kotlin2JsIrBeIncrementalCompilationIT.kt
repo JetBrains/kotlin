@@ -46,6 +46,8 @@ abstract class Kotlin2JsIrBeIncrementalCompilationIT : KGPBaseTest() {
             incrementalJsKlib = true,
             incrementalJsIr = true
         ),
+        // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
+        isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED,
     )
 
     @DisplayName("Test rebuild after backend error")
@@ -108,8 +110,8 @@ abstract class Kotlin2JsIrBeIncrementalCompilationIT : KGPBaseTest() {
                     """
                     |
                     |tasks.named<org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrLink>("compileDevelopmentExecutableKotlinJs") {
-                    |    kotlinOptions {
-                    |        freeCompilerArgs += "-Xir-property-lazy-initialization=$value"
+                    |    compilerOptions {
+                    |        freeCompilerArgs.add("-Xir-property-lazy-initialization=$value")
                     |   }
                     |}
                     """.trimMargin()

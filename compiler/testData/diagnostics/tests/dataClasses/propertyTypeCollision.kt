@@ -19,3 +19,6 @@ class MyClass
 data class MyDataClass(val prop: MyClass) {
     class MyClass
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, data, destructuringDeclaration, functionDeclaration, localProperty, nestedClass,
+primaryConstructor, propertyDeclaration */

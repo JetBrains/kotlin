@@ -35,10 +35,12 @@ class LoggingConfigurationMppIT : KGPBaseTest() {
         nativeProject(
             "generic-kmp-app-plus-lib-with-tests",
             gradleVersion,
-            configureSubProjects = true
+            configureSubProjects = true,
+            // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
+            buildOptions = defaultBuildOptions.disableIsolatedProjects(),
         ) {
             for (mainCompileTask in listOf(":lib:compileKotlinJvm", ":lib:compileKotlinJs")) {
-                checkLoggingConfigurations("lib/build.gradle.kts", mainCompileTask, defaultBuildOptions)
+                checkLoggingConfigurations("lib/build.gradle.kts", mainCompileTask, buildOptions)
             }
         }
     }
@@ -88,7 +90,8 @@ private fun TestProject.checkLoggingConfigurations(gradleKtsPath: String, mainCo
 }
 
 private fun TestProject.checkDebugLogPlusImplicitVerboseTrue(mainCompileTask: String, buildOptions: BuildOptions) {
-    build("clean", mainCompileTask, buildOptions = buildOptions) {
+    // KT-75850: we need to explicitly invalidate the CC here,as changing the logLevel doesn't trigger it
+    build("clean", "-PinvalidateCC${generateIdentifier()}", mainCompileTask, buildOptions = buildOptions) {
         assertOutputContains("[DEBUG]")
         assertOutputContains("Kotlin compiler args:.*-verbose".toRegex())
         assertOutputContains("IncrementalCompilationOptions.*reportSeverity=3".toRegex())

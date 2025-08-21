@@ -5,6 +5,7 @@ KtOperationReferenceExpression(57,59): '+='
         kind = PLUS_ASSIGN
         operand = 1
         operationPartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+          contextArguments = []
           dispatchReceiver = KaExplicitReceiverValue:
             expression = l[0]
             isSafeNavigation = false
@@ -20,10 +21,13 @@ KtOperationReferenceExpression(57,59): '+='
                 receiverType = null
                 returnType = kotlin.Int
                 symbol = other: kotlin.Int
+                contextParameters = []
                 callableId = null
             ]
+            contextParameters = []
             callableId = kotlin/Int.plus
       getPartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = l
           isSafeNavigation = false
@@ -39,13 +43,16 @@ KtOperationReferenceExpression(57,59): '+='
               receiverType = null
               returnType = kotlin.Int
               symbol = index: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/collections/MutableList.get
       indexArguments = [
         0
       ]
       setPartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = l
           isSafeNavigation = false
@@ -61,13 +68,16 @@ KtOperationReferenceExpression(57,59): '+='
               receiverType = null
               returnType = kotlin.Int
               symbol = index: kotlin.Int
+              contextParameters = []
               callableId = null,
             KaVariableSignature:
               name = element
               receiverType = null
               returnType = kotlin.Int
               symbol = element: E
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/collections/MutableList.set
     isInBestCandidates = true

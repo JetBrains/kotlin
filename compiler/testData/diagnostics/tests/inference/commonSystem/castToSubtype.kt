@@ -59,3 +59,7 @@ fun main1() {
         )
     )
 }
+
+/* GENERATED_FIR_TAGS: asExpression, capturedType, classDeclaration, functionDeclaration, integerLiteral,
+interfaceDeclaration, nullableType, outProjection, primaryConstructor, propertyDeclaration, typeConstraint,
+typeParameter, vararg */

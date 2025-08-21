@@ -108,12 +108,12 @@ public final class MemberAccessCommon extends
             input.popLimit(limit);
             break;
           }
-          case 42: {
-            if (!((mutable_bitField0_ & 0x00000002) == 0x00000002)) {
-              contextArgument_ = new java.util.ArrayList<org.jetbrains.kotlin.backend.common.serialization.proto.NullableIrExpression>();
-              mutable_bitField0_ |= 0x00000002;
+          case 50: {
+            if (!((mutable_bitField0_ & 0x00000001) == 0x00000001)) {
+              argument_ = new java.util.ArrayList<org.jetbrains.kotlin.backend.common.serialization.proto.NullableIrExpression>();
+              mutable_bitField0_ |= 0x00000001;
             }
-            contextArgument_.add(input.readMessage(org.jetbrains.kotlin.backend.common.serialization.proto.NullableIrExpression.PARSER, extensionRegistry));
+            argument_.add(input.readMessage(org.jetbrains.kotlin.backend.common.serialization.proto.NullableIrExpression.PARSER, extensionRegistry));
             break;
           }
         }
@@ -130,8 +130,8 @@ public final class MemberAccessCommon extends
       if (((mutable_bitField0_ & 0x00000010) == 0x00000010)) {
         typeArgument_ = java.util.Collections.unmodifiableList(typeArgument_);
       }
-      if (((mutable_bitField0_ & 0x00000002) == 0x00000002)) {
-        contextArgument_ = java.util.Collections.unmodifiableList(contextArgument_);
+      if (((mutable_bitField0_ & 0x00000001) == 0x00000001)) {
+        argument_ = java.util.Collections.unmodifiableList(argument_);
       }
       try {
         unknownFieldsCodedOutput.flush();
@@ -159,79 +159,82 @@ public final class MemberAccessCommon extends
   }
 
   private int bitField0_;
+  public static final int ARGUMENT_FIELD_NUMBER = 6;
+  private java.util.List<org.jetbrains.kotlin.backend.common.serialization.proto.NullableIrExpression> argument_;
+  /**
+   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.NullableIrExpression argument = 6;</code>
+   *
+   * <pre>
+   * Value argument serialization scheme after 2.2.0
+   * </pre>
+   */
+  public java.util.List<org.jetbrains.kotlin.backend.common.serialization.proto.NullableIrExpression> getArgumentList() {
+    return argument_;
+  }
+  /**
+   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.NullableIrExpression argument = 6;</code>
+   *
+   * <pre>
+   * Value argument serialization scheme after 2.2.0
+   * </pre>
+   */
+  public java.util.List<? extends org.jetbrains.kotlin.backend.common.serialization.proto.NullableIrExpressionOrBuilder> 
+      getArgumentOrBuilderList() {
+    return argument_;
+  }
+  /**
+   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.NullableIrExpression argument = 6;</code>
+   *
+   * <pre>
+   * Value argument serialization scheme after 2.2.0
+   * </pre>
+   */
+  public int getArgumentCount() {
+    return argument_.size();
+  }
+  /**
+   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.NullableIrExpression argument = 6;</code>
+   *
+   * <pre>
+   * Value argument serialization scheme after 2.2.0
+   * </pre>
+   */
+  public org.jetbrains.kotlin.backend.common.serialization.proto.NullableIrExpression getArgument(int index) {
+    return argument_.get(index);
+  }
+  /**
+   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.NullableIrExpression argument = 6;</code>
+   *
+   * <pre>
+   * Value argument serialization scheme after 2.2.0
+   * </pre>
+   */
+  public org.jetbrains.kotlin.backend.common.serialization.proto.NullableIrExpressionOrBuilder getArgumentOrBuilder(
+      int index) {
+    return argument_.get(index);
+  }
+
   public static final int DISPATCH_RECEIVER_FIELD_NUMBER = 1;
   private org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression dispatchReceiver_;
   /**
    * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression dispatch_receiver = 1;</code>
+   *
+   * <pre>
+   * Value argument serialization scheme before 2.2.0
+   * </pre>
    */
   public boolean hasDispatchReceiver() {
     return ((bitField0_ & 0x00000001) == 0x00000001);
   }
   /**
    * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression dispatch_receiver = 1;</code>
+   *
+   * <pre>
+   * Value argument serialization scheme before 2.2.0
+   * </pre>
    */
   public org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression getDispatchReceiver() {
     return dispatchReceiver_;
-  }
-
-  public static final int CONTEXT_ARGUMENT_FIELD_NUMBER = 5;
-  private java.util.List<org.jetbrains.kotlin.backend.common.serialization.proto.NullableIrExpression> contextArgument_;
-  /**
-   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.NullableIrExpression context_argument = 5;</code>
-   *
-   * <pre>
-   * Context parameters cannot have default values but we use NullableIrExpression here just in case
-   * that will be allowed in the future, to help with compatibility.
-   * </pre>
-   */
-  public java.util.List<org.jetbrains.kotlin.backend.common.serialization.proto.NullableIrExpression> getContextArgumentList() {
-    return contextArgument_;
-  }
-  /**
-   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.NullableIrExpression context_argument = 5;</code>
-   *
-   * <pre>
-   * Context parameters cannot have default values but we use NullableIrExpression here just in case
-   * that will be allowed in the future, to help with compatibility.
-   * </pre>
-   */
-  public java.util.List<? extends org.jetbrains.kotlin.backend.common.serialization.proto.NullableIrExpressionOrBuilder> 
-      getContextArgumentOrBuilderList() {
-    return contextArgument_;
-  }
-  /**
-   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.NullableIrExpression context_argument = 5;</code>
-   *
-   * <pre>
-   * Context parameters cannot have default values but we use NullableIrExpression here just in case
-   * that will be allowed in the future, to help with compatibility.
-   * </pre>
-   */
-  public int getContextArgumentCount() {
-    return contextArgument_.size();
-  }
-  /**
-   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.NullableIrExpression context_argument = 5;</code>
-   *
-   * <pre>
-   * Context parameters cannot have default values but we use NullableIrExpression here just in case
-   * that will be allowed in the future, to help with compatibility.
-   * </pre>
-   */
-  public org.jetbrains.kotlin.backend.common.serialization.proto.NullableIrExpression getContextArgument(int index) {
-    return contextArgument_.get(index);
-  }
-  /**
-   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.NullableIrExpression context_argument = 5;</code>
-   *
-   * <pre>
-   * Context parameters cannot have default values but we use NullableIrExpression here just in case
-   * that will be allowed in the future, to help with compatibility.
-   * </pre>
-   */
-  public org.jetbrains.kotlin.backend.common.serialization.proto.NullableIrExpressionOrBuilder getContextArgumentOrBuilder(
-      int index) {
-    return contextArgument_.get(index);
   }
 
   public static final int EXTENSION_RECEIVER_FIELD_NUMBER = 2;
@@ -308,8 +311,8 @@ public final class MemberAccessCommon extends
   private int typeArgumentMemoizedSerializedSize = -1;
 
   private void initFields() {
+    argument_ = java.util.Collections.emptyList();
     dispatchReceiver_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression.getDefaultInstance();
-    contextArgument_ = java.util.Collections.emptyList();
     extensionReceiver_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression.getDefaultInstance();
     regularArgument_ = java.util.Collections.emptyList();
     typeArgument_ = java.util.Collections.emptyList();
@@ -320,14 +323,14 @@ public final class MemberAccessCommon extends
     if (isInitialized == 1) return true;
     if (isInitialized == 0) return false;
 
-    if (hasDispatchReceiver()) {
-      if (!getDispatchReceiver().isInitialized()) {
+    for (int i = 0; i < getArgumentCount(); i++) {
+      if (!getArgument(i).isInitialized()) {
         memoizedIsInitialized = 0;
         return false;
       }
     }
-    for (int i = 0; i < getContextArgumentCount(); i++) {
-      if (!getContextArgument(i).isInitialized()) {
+    if (hasDispatchReceiver()) {
+      if (!getDispatchReceiver().isInitialized()) {
         memoizedIsInitialized = 0;
         return false;
       }
@@ -367,8 +370,8 @@ public final class MemberAccessCommon extends
     for (int i = 0; i < typeArgument_.size(); i++) {
       output.writeInt32NoTag(typeArgument_.get(i));
     }
-    for (int i = 0; i < contextArgument_.size(); i++) {
-      output.writeMessage(5, contextArgument_.get(i));
+    for (int i = 0; i < argument_.size(); i++) {
+      output.writeMessage(6, argument_.get(i));
     }
     output.writeRawBytes(unknownFields);
   }
@@ -405,9 +408,9 @@ public final class MemberAccessCommon extends
       }
       typeArgumentMemoizedSerializedSize = dataSize;
     }
-    for (int i = 0; i < contextArgument_.size(); i++) {
+    for (int i = 0; i < argument_.size(); i++) {
       size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-        .computeMessageSize(5, contextArgument_.get(i));
+        .computeMessageSize(6, argument_.get(i));
     }
     size += unknownFields.size();
     memoizedSerializedSize = size;
@@ -503,9 +506,9 @@ public final class MemberAccessCommon extends
 
     public Builder clear() {
       super.clear();
-      dispatchReceiver_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression.getDefaultInstance();
+      argument_ = java.util.Collections.emptyList();
       bitField0_ = (bitField0_ & ~0x00000001);
-      contextArgument_ = java.util.Collections.emptyList();
+      dispatchReceiver_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression.getDefaultInstance();
       bitField0_ = (bitField0_ & ~0x00000002);
       extensionReceiver_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression.getDefaultInstance();
       bitField0_ = (bitField0_ & ~0x00000004);
@@ -536,15 +539,15 @@ public final class MemberAccessCommon extends
       org.jetbrains.kotlin.backend.common.serialization.proto.MemberAccessCommon result = new org.jetbrains.kotlin.backend.common.serialization.proto.MemberAccessCommon(this);
       int from_bitField0_ = bitField0_;
       int to_bitField0_ = 0;
-      if (((from_bitField0_ & 0x00000001) == 0x00000001)) {
+      if (((bitField0_ & 0x00000001) == 0x00000001)) {
+        argument_ = java.util.Collections.unmodifiableList(argument_);
+        bitField0_ = (bitField0_ & ~0x00000001);
+      }
+      result.argument_ = argument_;
+      if (((from_bitField0_ & 0x00000002) == 0x00000002)) {
         to_bitField0_ |= 0x00000001;
       }
       result.dispatchReceiver_ = dispatchReceiver_;
-      if (((bitField0_ & 0x00000002) == 0x00000002)) {
-        contextArgument_ = java.util.Collections.unmodifiableList(contextArgument_);
-        bitField0_ = (bitField0_ & ~0x00000002);
-      }
-      result.contextArgument_ = contextArgument_;
       if (((from_bitField0_ & 0x00000004) == 0x00000004)) {
         to_bitField0_ |= 0x00000002;
       }
@@ -565,18 +568,18 @@ public final class MemberAccessCommon extends
 
     public Builder mergeFrom(org.jetbrains.kotlin.backend.common.serialization.proto.MemberAccessCommon other) {
       if (other == org.jetbrains.kotlin.backend.common.serialization.proto.MemberAccessCommon.getDefaultInstance()) return this;
-      if (other.hasDispatchReceiver()) {
-        mergeDispatchReceiver(other.getDispatchReceiver());
-      }
-      if (!other.contextArgument_.isEmpty()) {
-        if (contextArgument_.isEmpty()) {
-          contextArgument_ = other.contextArgument_;
-          bitField0_ = (bitField0_ & ~0x00000002);
+      if (!other.argument_.isEmpty()) {
+        if (argument_.isEmpty()) {
+          argument_ = other.argument_;
+          bitField0_ = (bitField0_ & ~0x00000001);
         } else {
-          ensureContextArgumentIsMutable();
-          contextArgument_.addAll(other.contextArgument_);
+          ensureArgumentIsMutable();
+          argument_.addAll(other.argument_);
         }
         
+      }
+      if (other.hasDispatchReceiver()) {
+        mergeDispatchReceiver(other.getDispatchReceiver());
       }
       if (other.hasExtensionReceiver()) {
         mergeExtensionReceiver(other.getExtensionReceiver());
@@ -607,14 +610,14 @@ public final class MemberAccessCommon extends
     }
 
     public final boolean isInitialized() {
-      if (hasDispatchReceiver()) {
-        if (!getDispatchReceiver().isInitialized()) {
+      for (int i = 0; i < getArgumentCount(); i++) {
+        if (!getArgument(i).isInitialized()) {
           
           return false;
         }
       }
-      for (int i = 0; i < getContextArgumentCount(); i++) {
-        if (!getContextArgument(i).isInitialized()) {
+      if (hasDispatchReceiver()) {
+        if (!getDispatchReceiver().isInitialized()) {
           
           return false;
         }
@@ -653,21 +656,206 @@ public final class MemberAccessCommon extends
     }
     private int bitField0_;
 
+    private java.util.List<org.jetbrains.kotlin.backend.common.serialization.proto.NullableIrExpression> argument_ =
+      java.util.Collections.emptyList();
+    private void ensureArgumentIsMutable() {
+      if (!((bitField0_ & 0x00000001) == 0x00000001)) {
+        argument_ = new java.util.ArrayList<org.jetbrains.kotlin.backend.common.serialization.proto.NullableIrExpression>(argument_);
+        bitField0_ |= 0x00000001;
+       }
+    }
+
+    /**
+     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.NullableIrExpression argument = 6;</code>
+     *
+     * <pre>
+     * Value argument serialization scheme after 2.2.0
+     * </pre>
+     */
+    public java.util.List<org.jetbrains.kotlin.backend.common.serialization.proto.NullableIrExpression> getArgumentList() {
+      return java.util.Collections.unmodifiableList(argument_);
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.NullableIrExpression argument = 6;</code>
+     *
+     * <pre>
+     * Value argument serialization scheme after 2.2.0
+     * </pre>
+     */
+    public int getArgumentCount() {
+      return argument_.size();
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.NullableIrExpression argument = 6;</code>
+     *
+     * <pre>
+     * Value argument serialization scheme after 2.2.0
+     * </pre>
+     */
+    public org.jetbrains.kotlin.backend.common.serialization.proto.NullableIrExpression getArgument(int index) {
+      return argument_.get(index);
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.NullableIrExpression argument = 6;</code>
+     *
+     * <pre>
+     * Value argument serialization scheme after 2.2.0
+     * </pre>
+     */
+    public Builder setArgument(
+        int index, org.jetbrains.kotlin.backend.common.serialization.proto.NullableIrExpression value) {
+      if (value == null) {
+        throw new NullPointerException();
+      }
+      ensureArgumentIsMutable();
+      argument_.set(index, value);
+
+      return this;
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.NullableIrExpression argument = 6;</code>
+     *
+     * <pre>
+     * Value argument serialization scheme after 2.2.0
+     * </pre>
+     */
+    public Builder setArgument(
+        int index, org.jetbrains.kotlin.backend.common.serialization.proto.NullableIrExpression.Builder builderForValue) {
+      ensureArgumentIsMutable();
+      argument_.set(index, builderForValue.build());
+
+      return this;
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.NullableIrExpression argument = 6;</code>
+     *
+     * <pre>
+     * Value argument serialization scheme after 2.2.0
+     * </pre>
+     */
+    public Builder addArgument(org.jetbrains.kotlin.backend.common.serialization.proto.NullableIrExpression value) {
+      if (value == null) {
+        throw new NullPointerException();
+      }
+      ensureArgumentIsMutable();
+      argument_.add(value);
+
+      return this;
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.NullableIrExpression argument = 6;</code>
+     *
+     * <pre>
+     * Value argument serialization scheme after 2.2.0
+     * </pre>
+     */
+    public Builder addArgument(
+        int index, org.jetbrains.kotlin.backend.common.serialization.proto.NullableIrExpression value) {
+      if (value == null) {
+        throw new NullPointerException();
+      }
+      ensureArgumentIsMutable();
+      argument_.add(index, value);
+
+      return this;
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.NullableIrExpression argument = 6;</code>
+     *
+     * <pre>
+     * Value argument serialization scheme after 2.2.0
+     * </pre>
+     */
+    public Builder addArgument(
+        org.jetbrains.kotlin.backend.common.serialization.proto.NullableIrExpression.Builder builderForValue) {
+      ensureArgumentIsMutable();
+      argument_.add(builderForValue.build());
+
+      return this;
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.NullableIrExpression argument = 6;</code>
+     *
+     * <pre>
+     * Value argument serialization scheme after 2.2.0
+     * </pre>
+     */
+    public Builder addArgument(
+        int index, org.jetbrains.kotlin.backend.common.serialization.proto.NullableIrExpression.Builder builderForValue) {
+      ensureArgumentIsMutable();
+      argument_.add(index, builderForValue.build());
+
+      return this;
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.NullableIrExpression argument = 6;</code>
+     *
+     * <pre>
+     * Value argument serialization scheme after 2.2.0
+     * </pre>
+     */
+    public Builder addAllArgument(
+        java.lang.Iterable<? extends org.jetbrains.kotlin.backend.common.serialization.proto.NullableIrExpression> values) {
+      ensureArgumentIsMutable();
+      org.jetbrains.kotlin.protobuf.AbstractMessageLite.Builder.addAll(
+          values, argument_);
+
+      return this;
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.NullableIrExpression argument = 6;</code>
+     *
+     * <pre>
+     * Value argument serialization scheme after 2.2.0
+     * </pre>
+     */
+    public Builder clearArgument() {
+      argument_ = java.util.Collections.emptyList();
+      bitField0_ = (bitField0_ & ~0x00000001);
+
+      return this;
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.NullableIrExpression argument = 6;</code>
+     *
+     * <pre>
+     * Value argument serialization scheme after 2.2.0
+     * </pre>
+     */
+    public Builder removeArgument(int index) {
+      ensureArgumentIsMutable();
+      argument_.remove(index);
+
+      return this;
+    }
+
     private org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression dispatchReceiver_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression.getDefaultInstance();
     /**
      * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression dispatch_receiver = 1;</code>
+     *
+     * <pre>
+     * Value argument serialization scheme before 2.2.0
+     * </pre>
      */
     public boolean hasDispatchReceiver() {
-      return ((bitField0_ & 0x00000001) == 0x00000001);
+      return ((bitField0_ & 0x00000002) == 0x00000002);
     }
     /**
      * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression dispatch_receiver = 1;</code>
+     *
+     * <pre>
+     * Value argument serialization scheme before 2.2.0
+     * </pre>
      */
     public org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression getDispatchReceiver() {
       return dispatchReceiver_;
     }
     /**
      * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression dispatch_receiver = 1;</code>
+     *
+     * <pre>
+     * Value argument serialization scheme before 2.2.0
+     * </pre>
      */
     public Builder setDispatchReceiver(org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression value) {
       if (value == null) {
@@ -675,24 +863,32 @@ public final class MemberAccessCommon extends
       }
       dispatchReceiver_ = value;
 
-      bitField0_ |= 0x00000001;
+      bitField0_ |= 0x00000002;
       return this;
     }
     /**
      * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression dispatch_receiver = 1;</code>
+     *
+     * <pre>
+     * Value argument serialization scheme before 2.2.0
+     * </pre>
      */
     public Builder setDispatchReceiver(
         org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression.Builder builderForValue) {
       dispatchReceiver_ = builderForValue.build();
 
-      bitField0_ |= 0x00000001;
+      bitField0_ |= 0x00000002;
       return this;
     }
     /**
      * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression dispatch_receiver = 1;</code>
+     *
+     * <pre>
+     * Value argument serialization scheme before 2.2.0
+     * </pre>
      */
     public Builder mergeDispatchReceiver(org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression value) {
-      if (((bitField0_ & 0x00000001) == 0x00000001) &&
+      if (((bitField0_ & 0x00000002) == 0x00000002) &&
           dispatchReceiver_ != org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression.getDefaultInstance()) {
         dispatchReceiver_ =
           org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression.newBuilder(dispatchReceiver_).mergeFrom(value).buildPartial();
@@ -700,201 +896,20 @@ public final class MemberAccessCommon extends
         dispatchReceiver_ = value;
       }
 
-      bitField0_ |= 0x00000001;
+      bitField0_ |= 0x00000002;
       return this;
     }
     /**
      * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression dispatch_receiver = 1;</code>
+     *
+     * <pre>
+     * Value argument serialization scheme before 2.2.0
+     * </pre>
      */
     public Builder clearDispatchReceiver() {
       dispatchReceiver_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression.getDefaultInstance();
 
-      bitField0_ = (bitField0_ & ~0x00000001);
-      return this;
-    }
-
-    private java.util.List<org.jetbrains.kotlin.backend.common.serialization.proto.NullableIrExpression> contextArgument_ =
-      java.util.Collections.emptyList();
-    private void ensureContextArgumentIsMutable() {
-      if (!((bitField0_ & 0x00000002) == 0x00000002)) {
-        contextArgument_ = new java.util.ArrayList<org.jetbrains.kotlin.backend.common.serialization.proto.NullableIrExpression>(contextArgument_);
-        bitField0_ |= 0x00000002;
-       }
-    }
-
-    /**
-     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.NullableIrExpression context_argument = 5;</code>
-     *
-     * <pre>
-     * Context parameters cannot have default values but we use NullableIrExpression here just in case
-     * that will be allowed in the future, to help with compatibility.
-     * </pre>
-     */
-    public java.util.List<org.jetbrains.kotlin.backend.common.serialization.proto.NullableIrExpression> getContextArgumentList() {
-      return java.util.Collections.unmodifiableList(contextArgument_);
-    }
-    /**
-     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.NullableIrExpression context_argument = 5;</code>
-     *
-     * <pre>
-     * Context parameters cannot have default values but we use NullableIrExpression here just in case
-     * that will be allowed in the future, to help with compatibility.
-     * </pre>
-     */
-    public int getContextArgumentCount() {
-      return contextArgument_.size();
-    }
-    /**
-     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.NullableIrExpression context_argument = 5;</code>
-     *
-     * <pre>
-     * Context parameters cannot have default values but we use NullableIrExpression here just in case
-     * that will be allowed in the future, to help with compatibility.
-     * </pre>
-     */
-    public org.jetbrains.kotlin.backend.common.serialization.proto.NullableIrExpression getContextArgument(int index) {
-      return contextArgument_.get(index);
-    }
-    /**
-     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.NullableIrExpression context_argument = 5;</code>
-     *
-     * <pre>
-     * Context parameters cannot have default values but we use NullableIrExpression here just in case
-     * that will be allowed in the future, to help with compatibility.
-     * </pre>
-     */
-    public Builder setContextArgument(
-        int index, org.jetbrains.kotlin.backend.common.serialization.proto.NullableIrExpression value) {
-      if (value == null) {
-        throw new NullPointerException();
-      }
-      ensureContextArgumentIsMutable();
-      contextArgument_.set(index, value);
-
-      return this;
-    }
-    /**
-     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.NullableIrExpression context_argument = 5;</code>
-     *
-     * <pre>
-     * Context parameters cannot have default values but we use NullableIrExpression here just in case
-     * that will be allowed in the future, to help with compatibility.
-     * </pre>
-     */
-    public Builder setContextArgument(
-        int index, org.jetbrains.kotlin.backend.common.serialization.proto.NullableIrExpression.Builder builderForValue) {
-      ensureContextArgumentIsMutable();
-      contextArgument_.set(index, builderForValue.build());
-
-      return this;
-    }
-    /**
-     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.NullableIrExpression context_argument = 5;</code>
-     *
-     * <pre>
-     * Context parameters cannot have default values but we use NullableIrExpression here just in case
-     * that will be allowed in the future, to help with compatibility.
-     * </pre>
-     */
-    public Builder addContextArgument(org.jetbrains.kotlin.backend.common.serialization.proto.NullableIrExpression value) {
-      if (value == null) {
-        throw new NullPointerException();
-      }
-      ensureContextArgumentIsMutable();
-      contextArgument_.add(value);
-
-      return this;
-    }
-    /**
-     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.NullableIrExpression context_argument = 5;</code>
-     *
-     * <pre>
-     * Context parameters cannot have default values but we use NullableIrExpression here just in case
-     * that will be allowed in the future, to help with compatibility.
-     * </pre>
-     */
-    public Builder addContextArgument(
-        int index, org.jetbrains.kotlin.backend.common.serialization.proto.NullableIrExpression value) {
-      if (value == null) {
-        throw new NullPointerException();
-      }
-      ensureContextArgumentIsMutable();
-      contextArgument_.add(index, value);
-
-      return this;
-    }
-    /**
-     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.NullableIrExpression context_argument = 5;</code>
-     *
-     * <pre>
-     * Context parameters cannot have default values but we use NullableIrExpression here just in case
-     * that will be allowed in the future, to help with compatibility.
-     * </pre>
-     */
-    public Builder addContextArgument(
-        org.jetbrains.kotlin.backend.common.serialization.proto.NullableIrExpression.Builder builderForValue) {
-      ensureContextArgumentIsMutable();
-      contextArgument_.add(builderForValue.build());
-
-      return this;
-    }
-    /**
-     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.NullableIrExpression context_argument = 5;</code>
-     *
-     * <pre>
-     * Context parameters cannot have default values but we use NullableIrExpression here just in case
-     * that will be allowed in the future, to help with compatibility.
-     * </pre>
-     */
-    public Builder addContextArgument(
-        int index, org.jetbrains.kotlin.backend.common.serialization.proto.NullableIrExpression.Builder builderForValue) {
-      ensureContextArgumentIsMutable();
-      contextArgument_.add(index, builderForValue.build());
-
-      return this;
-    }
-    /**
-     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.NullableIrExpression context_argument = 5;</code>
-     *
-     * <pre>
-     * Context parameters cannot have default values but we use NullableIrExpression here just in case
-     * that will be allowed in the future, to help with compatibility.
-     * </pre>
-     */
-    public Builder addAllContextArgument(
-        java.lang.Iterable<? extends org.jetbrains.kotlin.backend.common.serialization.proto.NullableIrExpression> values) {
-      ensureContextArgumentIsMutable();
-      org.jetbrains.kotlin.protobuf.AbstractMessageLite.Builder.addAll(
-          values, contextArgument_);
-
-      return this;
-    }
-    /**
-     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.NullableIrExpression context_argument = 5;</code>
-     *
-     * <pre>
-     * Context parameters cannot have default values but we use NullableIrExpression here just in case
-     * that will be allowed in the future, to help with compatibility.
-     * </pre>
-     */
-    public Builder clearContextArgument() {
-      contextArgument_ = java.util.Collections.emptyList();
       bitField0_ = (bitField0_ & ~0x00000002);
-
-      return this;
-    }
-    /**
-     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.NullableIrExpression context_argument = 5;</code>
-     *
-     * <pre>
-     * Context parameters cannot have default values but we use NullableIrExpression here just in case
-     * that will be allowed in the future, to help with compatibility.
-     * </pre>
-     */
-    public Builder removeContextArgument(int index) {
-      ensureContextArgumentIsMutable();
-      contextArgument_.remove(index);
-
       return this;
     }
 

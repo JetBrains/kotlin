@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.fir.resolve.providers.FirProvider
 import org.jetbrains.kotlin.fir.serialization.constant.ConstValueProvider
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
-import org.jetbrains.kotlin.fir.types.ConeErrorType
 import org.jetbrains.kotlin.fir.types.ConeFlexibleType
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf
@@ -31,7 +30,6 @@ class FirKLibSerializerExtension(
     private val firProvider: FirProvider,
     override val metadataVersion: BinaryVersion,
     override val constValueProvider: ConstValueProvider?,
-    private val allowErrorTypes: Boolean,
     private val exportKDoc: Boolean,
     override val additionalMetadataProvider: FirAdditionalMetadataProvider?
 ) : FirSerializerExtensionBase(KlibMetadataSerializerProtocol) {
@@ -39,10 +37,6 @@ class FirKLibSerializerExtension(
 
     override fun serializeFlexibleType(type: ConeFlexibleType, lowerProto: ProtoBuf.Type.Builder, upperProto: ProtoBuf.Type.Builder) {
         lowerProto.flexibleTypeCapabilitiesId = stringTable.getStringIndex(DYNAMIC_TYPE_DESERIALIZER_ID)
-    }
-
-    override fun serializeErrorType(type: ConeErrorType, builder: ProtoBuf.Type.Builder) {
-        if (!allowErrorTypes) super.serializeErrorType(type, builder)
     }
 
     override fun serializeClass(

@@ -4,19 +4,19 @@
 // MODULE: m1-common
 // FILE: common.kt
 
-<!EXPECT_ACTUAL_INCOMPATIBILITY{JVM}!>expect<!> open class Container {
+<!EXPECT_ACTUAL_IR_INCOMPATIBILITY{JVM}!>expect<!> open class Container {
     fun publicFun()
 
     internal fun internalFun1()
     internal fun internalFun2()
-    internal fun <!EXPECT_ACTUAL_INCOMPATIBILITY{JVM}!>internalFun3<!>()
+    internal fun <!EXPECT_ACTUAL_IR_INCOMPATIBILITY{JVM}!>internalFun3<!>()
 
     protected fun protectedFun1()
     protected fun protectedFun2()
-    protected fun <!EXPECT_ACTUAL_INCOMPATIBILITY{JVM}!>protectedFun3<!>()
+    protected fun <!EXPECT_ACTUAL_IR_INCOMPATIBILITY{JVM}!>protectedFun3<!>()
 
-    open internal fun <!EXPECT_ACTUAL_INCOMPATIBILITY{JVM}!>openInternalFun<!>()
-    open fun <!EXPECT_ACTUAL_INCOMPATIBILITY{JVM}!>openPublicFun<!>()
+    open internal fun <!EXPECT_ACTUAL_IR_INCOMPATIBILITY{JVM}!>openInternalFun<!>()
+    open fun <!EXPECT_ACTUAL_IR_INCOMPATIBILITY{JVM;JVM}!>openPublicFun<!>()
 }
 
 // MODULE: m2-jvm()()(m1-common)
@@ -32,9 +32,11 @@ actual open class Container {
     actual fun protectedFun1() {}           // OK: protected -> public
     actual protected fun protectedFun2() {} // OK: protected -> protected
 
-    actual internal fun <!ACTUAL_WITHOUT_EXPECT!>protectedFun3<!>() {}  // BAD: protected -> internal
-    actual protected fun <!ACTUAL_WITHOUT_EXPECT!>internalFun3<!>() {}  // BAD: internal -> protected
+    actual internal fun <!EXPECT_ACTUAL_INCOMPATIBLE_VISIBILITY!>protectedFun3<!>() {}  // BAD: protected -> internal
+    actual protected fun <!EXPECT_ACTUAL_INCOMPATIBLE_VISIBILITY!>internalFun3<!>() {}  // BAD: internal -> protected
 
-    actual open fun <!ACTUAL_WITHOUT_EXPECT!>openInternalFun<!>() {}    // BAD: internal+open -> public
-    actual internal fun <!ACTUAL_WITHOUT_EXPECT!>openPublicFun<!>() {}  // BAD: open+public -> internal
+    actual open fun <!EXPECT_ACTUAL_INCOMPATIBLE_VISIBILITY!>openInternalFun<!>() {}    // BAD: internal+open -> public
+    actual internal fun <!EXPECT_ACTUAL_INCOMPATIBLE_MODALITY, EXPECT_ACTUAL_INCOMPATIBLE_VISIBILITY!>openPublicFun<!>() {}  // BAD: open+public -> internal
 }
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, functionDeclaration */

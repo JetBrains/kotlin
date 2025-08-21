@@ -14,6 +14,7 @@ fun copyK2JVMCompilerArguments(from: K2JVMCompilerArguments, to: K2JVMCompilerAr
     to.additionalJavaModules = from.additionalJavaModules?.copyOf()
     to.allowNoSourceFiles = from.allowNoSourceFiles
     to.allowUnstableDependencies = from.allowUnstableDependencies
+    to.annotationsInMetadata = from.annotationsInMetadata
     to.assertionsMode = from.assertionsMode
     to.backendThreads = from.backendThreads
     to.buildFile = from.buildFile
@@ -25,13 +26,14 @@ fun copyK2JVMCompilerArguments(from: K2JVMCompilerArguments, to: K2JVMCompilerAr
     to.doNotClearBindingContext = from.doNotClearBindingContext
     to.emitJvmTypeAnnotations = from.emitJvmTypeAnnotations
     to.enableDebugMode = from.enableDebugMode
-    to.enableIrInliner = from.enableIrInliner
     to.enableJvmPreview = from.enableJvmPreview
     to.enhanceTypeParameterTypesToDefNotNull = from.enhanceTypeParameterTypesToDefNotNull
+    to.enhancedCoroutinesDebugging = from.enhancedCoroutinesDebugging
     to.expectBuiltinsAsPartOfStdlib = from.expectBuiltinsAsPartOfStdlib
     to.expression = from.expression
     to.friendPaths = from.friendPaths?.copyOf()
     to.includeRuntime = from.includeRuntime
+    to.indyAllowAnnotatedLambdas = from.indyAllowAnnotatedLambdas
     to.inheritMultifileParts = from.inheritMultifileParts
     to.javaModulePath = from.javaModulePath
     to.javaPackagePrefix = from.javaPackagePrefix
@@ -42,10 +44,14 @@ fun copyK2JVMCompilerArguments(from: K2JVMCompilerArguments, to: K2JVMCompilerAr
     to.jdkRelease = from.jdkRelease
     to.jspecifyAnnotations = from.jspecifyAnnotations
     to.jsr305 = from.jsr305?.copyOf()
+    @Suppress("DEPRECATION")
     to.jvmDefault = from.jvmDefault
+    to.jvmDefaultStable = from.jvmDefaultStable
+    to.jvmExposeBoxed = from.jvmExposeBoxed
     to.jvmTarget = from.jvmTarget
     to.klibLibraries = from.klibLibraries
     to.lambdas = from.lambdas
+    @Suppress("DEPRECATION")
     to.linkViaSignatures = from.linkViaSignatures
     to.moduleName = from.moduleName
     to.noCallAssertions = from.noCallAssertions
@@ -60,7 +66,6 @@ fun copyK2JVMCompilerArguments(from: K2JVMCompilerArguments, to: K2JVMCompilerAr
     to.noStdlib = from.noStdlib
     to.noUnifiedNullChecks = from.noUnifiedNullChecks
     to.nullabilityAnnotations = from.nullabilityAnnotations?.copyOf()
-    to.oldInnerClassesLogic = from.oldInnerClassesLogic
     to.outputBuiltinsMetadata = from.outputBuiltinsMetadata
     to.profileCompilerCommand = from.profileCompilerCommand
     to.samConversions = from.samConversions
@@ -77,13 +82,12 @@ fun copyK2JVMCompilerArguments(from: K2JVMCompilerArguments, to: K2JVMCompilerAr
     to.useFastJarFileSystem = from.useFastJarFileSystem
     to.useInlineScopesNumbers = from.useInlineScopesNumbers
     to.useJavac = from.useJavac
-    to.useK2Kapt = from.useK2Kapt
-    to.useOldBackend = from.useOldBackend
     to.useOldClassFilesReading = from.useOldClassFilesReading
     to.useOldInlineClassesManglingScheme = from.useOldInlineClassesManglingScheme
     to.useTypeTable = from.useTypeTable
     to.validateBytecode = from.validateBytecode
     to.valueClasses = from.valueClasses
+    to.whenExpressionsGeneration = from.whenExpressionsGeneration
 
     return to
 }

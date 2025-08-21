@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculator
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.BodyResolveContext
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.hasContextParameters
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visitors.FirDefaultTransformer
 import org.jetbrains.kotlin.resolve.calls.inference.addSubtypeConstraintIfCompatible
@@ -28,7 +29,8 @@ import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemC
 import org.jetbrains.kotlin.resolve.calls.inference.components.TypeVariableDirectionCalculator
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
 import org.jetbrains.kotlin.resolve.calls.inference.model.NewConstraintSystemImpl
-import org.jetbrains.kotlin.types.model.defaultType
+import org.jetbrains.kotlin.types.model.KotlinTypeMarker
+import org.jetbrains.kotlin.types.model.TypeConstructorMarker
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 /**
@@ -41,6 +43,11 @@ class FirPCLAInferenceSession(
 
     var currentCommonSystem: NewConstraintSystemImpl = prepareSharedBaseSystem(outerCandidate.system, inferenceComponents)
         private set
+
+    private val semiFixedVariablesInternal: MutableMap<TypeConstructorMarker, KotlinTypeMarker> = mutableMapOf()
+
+    override val semiFixedVariables: Map<TypeConstructorMarker, KotlinTypeMarker>
+        get() = semiFixedVariablesInternal
 
     override fun baseConstraintStorageForCandidate(candidate: Candidate, bodyResolveContext: BodyResolveContext): ConstraintStorage? {
         if (candidate.mightBeAnalyzedAndCompletedIndependently(bodyResolveContext.returnTypeCalculator)) return null
@@ -107,13 +114,17 @@ class FirPCLAInferenceSession(
         outerCandidate.system.replaceContentWith(currentCommonSystem.currentStorage())
     }
 
+    // Currently used only from FirDelegatedPropertyInferenceSession.completeSessionOrPostponeIfNonRoot
     fun integrateChildSession(
         childCalls: Collection<ConeResolutionAtom>,
         childStorage: ConstraintStorage,
         onCompletionResultsWriting: (ConeSubstitutor) -> Unit,
     ) {
         outerCandidate.postponedPCLACalls += childCalls
-        currentCommonSystem.addOtherSystem(childStorage)
+        // When a delegated property belongs to a PCLA lambda, the delegate session is guaranteed either use
+        // - either a delegate call which is always a nested PCLA call with an outer CS
+        // - or it literally uses `currentCommonSystem` (see the definition of FirDelegatedPropertyInferenceSession.parentConstraintSystem)
+        currentCommonSystem.replaceContentWith(childStorage)
         outerCandidate.onPCLACompletionResultsWritingCallbacks += onCompletionResultsWriting
     }
 
@@ -131,6 +142,8 @@ class FirPCLAInferenceSession(
             semiFixCurrentResultIfTypeVariableAndReturnBinding(resolvedType, system)
         }
 
+        // Here we still use additionalBinding instead of semiFixedVariables.
+        // A replacement here changes the behavior (in fact, only types inside diagnostics) of some PCLA tests
         val substitutor = system.buildCurrentSubstitutor(additionalBinding) as ConeSubstitutor
         val updatedType = substitutor.substituteOrNull(resolvedType)
 
@@ -139,12 +152,27 @@ class FirPCLAInferenceSession(
         }
     }
 
-    override fun getAndSemiFixCurrentResultIfTypeVariable(type: ConeKotlinType): ConeKotlinType? =
-        semiFixCurrentResultIfTypeVariableAndReturnBinding(type, currentCommonSystem)?.second
+    override fun getAndSemiFixCurrentResultIfTypeVariable(type: ConeKotlinType): ConeKotlinType? {
+        inferenceComponents.session.inferenceLogger?.logStage(
+            "Some getAndSemiFixCurrentResultIfTypeVariable() with currentCommonSystem inside PCLA inference session",
+            currentCommonSystem,
+        )
+        return semiFixCurrentResultIfTypeVariableAndReturnBinding(type, currentCommonSystem)?.second
+    }
+
+    override fun semiFixTypeVariablesAllowingFixationToOuterOnes(
+        type: ConeKotlinType,
+        myCs: NewConstraintSystemImpl,
+    ) {
+        type.forEachType { internalType ->
+            semiFixCurrentResultIfTypeVariableAndReturnBinding(internalType, myCs, allowFixationToOtherTypeVariables = true)
+        }
+    }
 
     fun semiFixCurrentResultIfTypeVariableAndReturnBinding(
         type: ConeKotlinType,
         myCs: NewConstraintSystemImpl,
+        allowFixationToOtherTypeVariables: Boolean = false,
     ): Pair<ConeTypeVariableTypeConstructor, ConeKotlinType>? {
         val coneTypeVariableTypeConstructor = (type.unwrapToSimpleTypeUsingLowerBound() as? ConeTypeVariableType)?.typeConstructor
             ?: return null
@@ -154,50 +182,51 @@ class FirPCLAInferenceSession(
         }
 
         val variableWithConstraints = myCs.notFixedTypeVariables[coneTypeVariableTypeConstructor] ?: return null
-        val c = myCs.getBuilder()
 
-        if (coneTypeVariableTypeConstructor in myCs.outerTypeVariables.orEmpty()
-            // Since 2.1 we do not differentiate outer variables in terms of semi-fixation
-            && !is21Mode()
-        ) {
-            // For outer TV, we don't allow semi-fixing them (adding the new equality constraints),
-            // but if there's already some proper EQ constraint, it's safe & sound to use it as a representative
-            c.prepareContextForTypeVariableForSemiFixation(coneTypeVariableTypeConstructor) {
-                inferenceComponents.resultTypeResolver.findResultIfThereIsEqualsConstraint(
-                    c,
-                    variableWithConstraints,
-                    isStrictMode = true,
-                ) as ConeKotlinType?
-            }?.let { appropriateResultType ->
-                return Pair(coneTypeVariableTypeConstructor, appropriateResultType)
+        with(myCs.getBuilder()) {
+            if (coneTypeVariableTypeConstructor in myCs.outerTypeVariables.orEmpty()
+                // Since 2.1 we do not differentiate outer variables in terms of semi-fixation
+                && !is21Mode()
+            ) {
+                // For outer TV, we don't allow semi-fixing them (adding the new equality constraints),
+                // but if there's already some proper EQ constraint, it's safe & sound to use it as a representative
+                prepareContextForTypeVariableForSemiFixation(coneTypeVariableTypeConstructor, allowFixationToOtherTypeVariables) {
+                    inferenceComponents.resultTypeResolver.findResultIfThereIsEqualsConstraint(
+                        variableWithConstraints,
+                        isStrictMode = true,
+                    ) as ConeKotlinType?
+                }?.let { appropriateResultType ->
+                    return Pair(coneTypeVariableTypeConstructor, appropriateResultType)
+                }
+
+                return null
             }
 
-            return null
+            val resultType = prepareContextForTypeVariableForSemiFixation(
+                coneTypeVariableTypeConstructor, allowFixationToOtherTypeVariables
+            ) {
+                inferenceComponents.resultTypeResolver.findResultType(
+                    variableWithConstraints,
+                    TypeVariableDirectionCalculator.ResolveDirection.UNKNOWN
+                ) as ConeKotlinType
+            } ?: return null
+            val variable = variableWithConstraints.typeVariable
+            addEqualityConstraint(variable.defaultType(), resultType, ConeSemiFixVariableConstraintPosition(variable))
+
+            semiFixedVariablesInternal[coneTypeVariableTypeConstructor] = resultType
+            return Pair(coneTypeVariableTypeConstructor, resultType)
         }
-
-        val resultType = c.prepareContextForTypeVariableForSemiFixation(coneTypeVariableTypeConstructor) {
-            inferenceComponents.resultTypeResolver.findResultType(
-                c,
-                variableWithConstraints,
-                TypeVariableDirectionCalculator.ResolveDirection.UNKNOWN
-            ) as ConeKotlinType
-        } ?: return null
-        val variable = variableWithConstraints.typeVariable
-        c.addEqualityConstraint(variable.defaultType(c), resultType, ConeSemiFixVariableConstraintPosition(variable))
-
-        return Pair(coneTypeVariableTypeConstructor, resultType)
     }
 
     private fun ConstraintSystemCompletionContext.prepareContextForTypeVariableForSemiFixation(
         coneTypeVariableTypeConstructor: ConeTypeVariableTypeConstructor,
+        allowFixationToOtherTypeVariables: Boolean,
         resultTypeCallback: () -> ConeKotlinType?,
     ): ConeKotlinType? = withTypeVariablesThatAreCountedAsProperTypes(
-        if (is21Mode())
-            notFixedTypeVariables.keys
-        else
-            outerTypeVariables.orEmpty()
+        if (is21Mode()) notFixedTypeVariables.keys else outerTypeVariables.orEmpty(),
+        allowSemiFixationToOtherTypeVariables = allowFixationToOtherTypeVariables
     ) {
-        if (!inferenceComponents.variableFixationFinder.isTypeVariableHasProperConstraint(this, coneTypeVariableTypeConstructor)) {
+        if (!inferenceComponents.variableFixationFinder.typeVariableHasProperConstraint(coneTypeVariableTypeConstructor)) {
             return@withTypeVariablesThatAreCountedAsProperTypes null
         }
 
@@ -230,7 +259,7 @@ class FirPCLAInferenceSession(
                 // We should integrate even simple calls into the PCLA tree, too
                 callInfo.resolutionMode.expectedType.containsNotFixedTypeVariables() -> return false
             }
-            is ResolutionMode.WithStatus ->
+            is ResolutionMode.WithStatus, is ResolutionMode.UpdateImplicitTypeRef ->
                 error("$this call should not be analyzed in ${callInfo.resolutionMode}")
 
             is ResolutionMode.AssignmentLValue,
@@ -258,7 +287,7 @@ class FirPCLAInferenceSession(
         // At the step of candidate's system creation, there are no chosen context receiver values, yet
         // (see org.jetbrains.kotlin.fir.resolve.calls.CheckContextArguments)
         // Thus, we just postpone everything with symbols requiring some context receivers
-        if ((symbol as? FirCallableSymbol)?.resolvedContextParameters?.isNotEmpty() == true) return false
+        if ((symbol as? FirCallableSymbol)?.hasContextParameters == true) return false
 
         // Accesses to local variables or local functions which return types contain not fixed TVs
         val returnType = (symbol as? FirCallableSymbol)?.let(returnTypeCalculator::tryCalculateReturnType)
@@ -319,6 +348,7 @@ class FirPCLAInferenceSession(
         }
 
     override fun addSubtypeConstraintIfCompatible(lowerType: ConeKotlinType, upperType: ConeKotlinType, element: FirElement) {
+        inferenceComponents.session.inferenceLogger?.logStage("Some addSubtypeConstraintIfCompatible() with currentCommonSystem inside PCLA inference session", currentCommonSystem)
         currentCommonSystem.addSubtypeConstraintIfCompatible(lowerType, upperType, ConeExpectedTypeConstraintPosition)
     }
 }
@@ -335,7 +365,9 @@ class FirTypeVariablesAfterPCLATransformer(private val substitutor: ConeSubstitu
         // FirAnonymousFunctionExpression doesn't support replacing the type
         // since it delegates the getter to the underlying FirAnonymousFunction.
         // WrappedArgumentExpression delegates the type to the inner expression and doesn't need to be updated.
-        if (element is FirExpression && element !is FirAnonymousFunctionExpression && element !is FirWrappedArgumentExpression) {
+        if (element is FirExpression && element !is FirAnonymousFunctionExpression &&
+            element !is FirWrappedArgumentExpression && element !is FirErrorExpression
+        ) {
             element.resolvedType
                 .let(substitutor::substituteOrNull)
                 ?.let { element.replaceConeTypeOrNull(it) }

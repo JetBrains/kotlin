@@ -30,10 +30,10 @@ fun bar(aInstance: A, bInstance: B) {
         d checkType { _<Short>() }
     }
 
-    <!CANNOT_INFER_PARAMETER_TYPE, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>foo<!>(bInstance) {
+    <!CANNOT_INFER_PARAMETER_TYPE!>foo<!>(bInstance) {
         <!CANNOT_INFER_PARAMETER_TYPE, COMPONENT_FUNCTION_MISSING, COMPONENT_FUNCTION_MISSING!>(a, b)<!>, (c, d) ->
-        a <!CANNOT_INFER_PARAMETER_TYPE!>checkType<!> { <!INAPPLICABLE_CANDIDATE!>_<!><<!CANNOT_INFER_PARAMETER_TYPE!>Int<!>>() }
-        b <!CANNOT_INFER_PARAMETER_TYPE!>checkType<!> { <!INAPPLICABLE_CANDIDATE!>_<!><<!CANNOT_INFER_PARAMETER_TYPE!>String<!>>() }
+        a <!CANNOT_INFER_PARAMETER_TYPE!>checkType<!> { <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>_<!><<!CANNOT_INFER_PARAMETER_TYPE!>Int<!>>() }
+        b <!CANNOT_INFER_PARAMETER_TYPE!>checkType<!> { <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>_<!><<!CANNOT_INFER_PARAMETER_TYPE!>String<!>>() }
         c checkType { _<Double>() }
         d checkType { _<Short>() }
     }
@@ -46,3 +46,7 @@ fun bar(aInstance: A, bInstance: B) {
         d checkType { _<Short>() }
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, data, funWithExtensionReceiver, functionDeclaration, functionalType, infix,
+lambdaLiteral, localProperty, nullableType, primaryConstructor, propertyDeclaration, stringLiteral, typeParameter,
+typeWithExtension */

@@ -12,12 +12,14 @@ import org.jetbrains.kotlin.fir.analysis.wasm.checkers.expression.FirWasmJsCodeC
 import org.jetbrains.kotlin.fir.analysis.wasm.checkers.expression.FirWasmReifiedExternalChecker
 import org.jetbrains.kotlin.fir.analysis.web.common.checkers.expression.FirJsCodeConstantArgumentChecker
 import org.jetbrains.kotlin.fir.analysis.web.common.checkers.expression.FirJsQualifierChecker
+import org.jetbrains.kotlin.fir.analysis.web.common.checkers.expression.FirWebReflectionAPICallChecker
 
 object WasmBaseExpressionCheckers : ExpressionCheckers() {
     override val basicExpressionCheckers: Set<FirBasicExpressionChecker>
         get() = setOf(
             FirWasmDefinedExternallyCallChecker,
             FirWasmExternalRttiChecker,
+            FirWebReflectionAPICallChecker(isWasm = true),
         )
 
     override val functionCallCheckers: Set<FirFunctionCallChecker>

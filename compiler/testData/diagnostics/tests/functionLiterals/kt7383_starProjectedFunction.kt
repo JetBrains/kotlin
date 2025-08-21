@@ -5,3 +5,6 @@ fun foo() {
     val f : Function1<*, *> = { x -> x.toString() }
     f(<!CONSTANT_EXPECTED_TYPE_MISMATCH!>1<!>)
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral, lambdaLiteral, localProperty, propertyDeclaration,
+starProjection */

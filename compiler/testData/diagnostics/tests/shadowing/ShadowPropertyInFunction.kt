@@ -10,3 +10,6 @@ class RedefinePropertyInFunction() {
     }
 
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, localProperty, primaryConstructor,
+propertyDeclaration */

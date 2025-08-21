@@ -12,9 +12,8 @@ import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrDelegatingConstructorCallImpl
-import org.jetbrains.kotlin.ir.expressions.impl.fromSymbolDescriptor
+import org.jetbrains.kotlin.psi2ir.descriptors.fromSymbolDescriptor
 import org.jetbrains.kotlin.ir.symbols.impl.IrConstructorSymbolImpl
-import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtBlockCodeFragment
@@ -103,7 +102,7 @@ open class FragmentDeclarationGenerator(
         val functionDescriptor = irFunction.descriptor
         functionDescriptor.valueParameters.forEachIndexed { index, valueParameterDescriptor ->
             val parameterInfo = fragmentInfo.parameters[index]
-            irFunction.valueParameters += declareParameter(valueParameterDescriptor, parameterInfo).apply {
+            irFunction.parameters += declareParameter(valueParameterDescriptor, parameterInfo).apply {
                 context.fragmentContext!!.capturedDescriptorToFragmentParameterMap[parameterInfo.descriptor] = this.symbol
             }
         }
@@ -152,6 +151,7 @@ open class FragmentDeclarationGenerator(
             UNDEFINED_OFFSET,
             if (shouldPromoteToSharedVariable(parameterInfo)) IrDeclarationOrigin.SHARED_VARIABLE_IN_EVALUATOR_FRAGMENT else IrDeclarationOrigin.DEFINED,
             descriptor,
+            IrParameterKind.Regular,
             descriptor.type.toIrType(),
             descriptor.varargElementType?.toIrType(),
             name = null,

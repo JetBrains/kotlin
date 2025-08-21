@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.ir.builders.IrGeneratorContext
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
-import org.jetbrains.kotlin.ir.expressions.impl.fromSymbolDescriptor
+import org.jetbrains.kotlin.psi2ir.descriptors.fromSymbolDescriptor
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 
@@ -29,8 +29,8 @@ internal class DelegatedLocalPropertyLValue(
         IrCallImpl.fromSymbolDescriptor(startOffset, endOffset, type, getterSymbol!!, origin = origin)
 
     override fun store(irExpression: IrExpression): IrExpression =
-            IrCallImpl.fromSymbolDescriptor(startOffset, endOffset, context.irBuiltIns.unitType, setterSymbol!!, origin = origin).apply {
-            putValueArgument(0, irExpression)
+        IrCallImpl.fromSymbolDescriptor(startOffset, endOffset, context.irBuiltIns.unitType, setterSymbol!!, origin = origin).apply {
+            arguments[0] = irExpression
         }
 
     override fun assign(withLValue: (LValue) -> IrExpression): IrExpression =

@@ -114,3 +114,5 @@ fun testNoOperators() {
     takeInt(1)
     takeLong(1)
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral, multiplicativeExpression */

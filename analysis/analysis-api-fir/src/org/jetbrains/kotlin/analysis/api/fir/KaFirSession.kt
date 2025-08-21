@@ -6,13 +6,11 @@
 package org.jetbrains.kotlin.analysis.api.fir
 
 import com.intellij.openapi.project.Project
-import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.fir.components.*
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirSymbolProvider
 import org.jetbrains.kotlin.analysis.api.impl.base.KaBaseSession
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseAnalysisScopeProviderImpl
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaRendererImpl
-import org.jetbrains.kotlin.analysis.api.impl.base.sessions.KaGlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.impl.base.util.createSession
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.assertIsValid
@@ -23,9 +21,10 @@ import org.jetbrains.kotlin.analysis.api.platform.declarations.createDeclaration
 import org.jetbrains.kotlin.analysis.api.platform.packages.KotlinCompositePackageProvider
 import org.jetbrains.kotlin.analysis.api.platform.packages.KotlinPackageProvider
 import org.jetbrains.kotlin.analysis.api.platform.packages.createPackageProvider
+import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KaResolutionScope
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.allDirectDependencies
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLResolutionFacade
 import org.jetbrains.kotlin.analysis.low.level.api.fir.resolve.extensions.LLFirResolveExtensionTool
 import org.jetbrains.kotlin.analysis.low.level.api.fir.resolve.extensions.llResolveExtensionTool
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
@@ -46,11 +45,11 @@ import org.jetbrains.kotlin.utils.addIfNotNull
 internal class KaFirSession
 private constructor(
     val project: Project,
-    val firResolveSession: LLFirResolveSession,
+    val resolutionFacade: LLResolutionFacade,
     val extensionTools: List<LLFirResolveExtensionTool>,
     token: KaLifetimeToken,
     analysisSessionProvider: () -> KaFirSession,
-    useSiteScope: KaGlobalSearchScope
+    useSiteScope: KaResolutionScope
 ) : KaBaseSession(
     token,
     resolver = KaFirResolver(analysisSessionProvider),
@@ -61,7 +60,7 @@ private constructor(
     expressionTypeProvider = KaFirExpressionTypeProvider(analysisSessionProvider),
     typeProvider = KaFirTypeProvider(analysisSessionProvider),
     typeInformationProvider = KaFirTypeInformationProvider(analysisSessionProvider),
-    symbolProvider = KaFirSymbolProvider(analysisSessionProvider, firResolveSession.useSiteFirSession.symbolProvider),
+    symbolProvider = KaFirSymbolProvider(analysisSessionProvider, resolutionFacade.useSiteFirSession.symbolProvider),
     javaInteroperabilityComponent = KaFirJavaInteroperabilityComponent(analysisSessionProvider),
     symbolInformationProvider = KaFirSymbolInformationProvider(analysisSessionProvider),
     typeRelationChecker = KaFirTypeRelationChecker(analysisSessionProvider),
@@ -87,9 +86,9 @@ private constructor(
     }
 
     @Suppress("AnalysisApiMissingLifetimeCheck")
-    override val useSiteModule: KaModule get() = firResolveSession.useSiteKtModule
+    override val useSiteModule: KaModule get() = resolutionFacade.useSiteModule
 
-    internal val firSession: LLFirSession get() = firResolveSession.useSiteFirSession
+    internal val firSession: LLFirSession get() = resolutionFacade.useSiteFirSession
     internal val targetPlatform: TargetPlatform get() = firSession.moduleData.platform
 
     val useSiteScopeDeclarationProvider: KotlinDeclarationProvider
@@ -116,41 +115,30 @@ private constructor(
         KaFirInternalCacheStorage(this)
     }
 
-    fun getScopeSessionFor(session: FirSession): ScopeSession = withValidityAssertion { firResolveSession.getScopeSessionFor(session) }
+    fun getScopeSessionFor(session: FirSession): ScopeSession = withValidityAssertion { resolutionFacade.getScopeSessionFor(session) }
 
     companion object {
-        internal fun createAnalysisSessionByFirResolveSession(
-            firResolveSession: LLFirResolveSession,
+        internal fun createAnalysisSessionByResolutionFacade(
+            resolutionFacade: LLResolutionFacade,
             token: KaLifetimeToken,
         ): KaFirSession {
             token.assertIsValid()
-            val useSiteModule = firResolveSession.useSiteKtModule
-            val useSiteSession = firResolveSession.useSiteFirSession
+            val useSiteModule = resolutionFacade.useSiteModule
+            val useSiteSession = resolutionFacade.useSiteFirSession
 
             val extensionTools = buildList {
                 addIfNotNull(useSiteSession.llResolveExtensionTool)
                 useSiteModule.allDirectDependencies().mapNotNullTo(this) { dependency ->
-                    firResolveSession.getSessionFor(dependency).llResolveExtensionTool
+                    resolutionFacade.getDependencySessionFor(dependency)?.llResolveExtensionTool
                 }
             }
 
-            val shadowedScope = GlobalSearchScope.union(
-                buildSet {
-                    // Add an empty scope to the shadowed set to give GlobalSearchScope.union something
-                    // to work with if there are no extension tools.
-                    // If there are extension tools, any empty scopes, whether from shadowedSearchScope
-                    // on the extension tools or from this add() call, will be ignored.
-                    add(GlobalSearchScope.EMPTY_SCOPE)
-                    extensionTools.mapTo(this) { it.shadowedSearchScope }
-                }
-            )
-
-            val resolutionScope = KaGlobalSearchScope(shadowedScope, useSiteModule)
+            val resolutionScope = KaResolutionScope.forModule(useSiteModule)
 
             return createSession {
                 KaFirSession(
-                    firResolveSession.project,
-                    firResolveSession,
+                    resolutionFacade.project,
+                    resolutionFacade,
                     extensionTools,
                     token,
                     analysisSessionProvider,

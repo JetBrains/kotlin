@@ -1,4 +1,4 @@
-// KOTLIN_CONFIGURATION_FLAGS: SAM_CONVERSIONS=INDY
+// SAM_CONVERSIONS: INDY
 // FILE: JFoo.java
 
 import org.jetbrains.annotations.Nullable;

@@ -111,3 +111,8 @@ class Delegate {
 
     operator fun setValue(thisRef: Any?, prop: KProperty<*>, value: Int) = Unit
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, asExpression, assignment, classDeclaration, companionObject, const,
+enumDeclaration, enumEntry, functionDeclaration, getter, init, inner, integerLiteral, localProperty,
+multiplicativeExpression, nestedClass, nullableType, objectDeclaration, operator, override, primaryConstructor,
+propertyDeclaration, propertyDelegate, starProjection, stringLiteral, typeAliasDeclaration, unaryExpression */

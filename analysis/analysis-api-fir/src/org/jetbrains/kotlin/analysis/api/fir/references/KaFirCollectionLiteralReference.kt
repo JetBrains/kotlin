@@ -22,7 +22,7 @@ internal class KaFirCollectionLiteralReference(
     expression: KtCollectionLiteralExpression,
 ) : KtCollectionLiteralReference(expression), KaFirReference {
     override fun KaFirSession.computeSymbols(): Collection<KaSymbol> {
-        val fir = element.getOrBuildFirSafe<FirArrayLiteral>(firResolveSession) ?: return emptyList()
+        val fir = element.getOrBuildFirSafe<FirArrayLiteral>(resolutionFacade) ?: return emptyList()
 
         val type = fir.resolvedType as? ConeClassLikeType ?: return listOfNotNull(arrayOfSymbol(arrayOf))
         val call = arrayTypeToArrayOfCall[type.lookupTag.classId] ?: arrayOf

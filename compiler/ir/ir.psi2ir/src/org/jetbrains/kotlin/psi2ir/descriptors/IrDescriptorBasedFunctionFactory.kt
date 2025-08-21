@@ -80,7 +80,7 @@ abstract class IrAbstractDescriptorBasedFunctionFactory {
 
     companion object {
         val classOrigin = IrDeclarationOriginImpl("FUNCTION_INTERFACE_CLASS")
-        val memberOrigin = IrDeclarationOriginImpl("FUNCTION_INTERFACE_MEMBER")
+        val memberOrigin = IrDeclarationOrigin.FUNCTION_INTERFACE_MEMBER
         const val offset = SYNTHETIC_OFFSET
 
         internal fun functionClassName(isK: Boolean, isSuspend: Boolean, arity: Int): String =
@@ -329,7 +329,7 @@ class IrDescriptorBasedFunctionFactory(
 
             val fDeclaration = invokeSymbol.owner
 
-            fDeclaration.dispatchReceiverParameter = createThisReceiver(descriptorFactory).also { it.parent = fDeclaration }
+            fDeclaration.parameters += createThisReceiver(descriptorFactory).also { it.parent = fDeclaration }
 
             val typeBuilder = IrSimpleTypeBuilder()
             for (i in 1 until typeParameters.size) {
@@ -344,6 +344,7 @@ class IrDescriptorBasedFunctionFactory(
                     startOffset = offset,
                     endOffset = offset,
                     origin = memberOrigin,
+                    kind = IrParameterKind.Regular,
                     name = Name.identifier("p$i"),
                     type = vType,
                     isAssignable = false,
@@ -354,7 +355,7 @@ class IrDescriptorBasedFunctionFactory(
                     isHidden = false,
                 )
                 vDeclaration.parent = fDeclaration
-                fDeclaration.valueParameters += vDeclaration
+                fDeclaration.parameters += vDeclaration
             }
 
             fDeclaration.parent = this
@@ -379,11 +380,12 @@ class IrDescriptorBasedFunctionFactory(
         }
     }
 
-    private fun IrFunction.createValueParameter(descriptor: ParameterDescriptor): IrValueParameter = with(descriptor) {
+    private fun IrFunction.createValueParameter(descriptor: ParameterDescriptor, kind: IrParameterKind): IrValueParameter = with(descriptor) {
         irFactory.createValueParameter(
             startOffset = offset,
             endOffset = offset,
             origin = memberOrigin,
+            kind = kind,
             name = name,
             type = toIrType(type),
             isAssignable = false,
@@ -434,10 +436,17 @@ class IrDescriptorBasedFunctionFactory(
             newFunction.parent = this
             newFunction.overriddenSymbols =
                 descriptor.overriddenDescriptors.memoryOptimizedMap { symbolTable.descriptorExtension.referenceSimpleFunction(it.original) }
-            newFunction.dispatchReceiverParameter = descriptor.dispatchReceiverParameter?.let { newFunction.createValueParameter(it) }
-            newFunction.extensionReceiverParameter = descriptor.extensionReceiverParameter?.let { newFunction.createValueParameter(it) }
-            newFunction.contextReceiverParametersCount = descriptor.contextReceiverParameters.size
-            newFunction.valueParameters = descriptor.valueParameters.memoryOptimizedMap { newFunction.createValueParameter(it) }
+
+            descriptor.dispatchReceiverParameter?.let {
+                newFunction.parameters += newFunction.createValueParameter(it, IrParameterKind.DispatchReceiver)
+            }
+            descriptor.extensionReceiverParameter?.let {
+                newFunction.parameters += newFunction.createValueParameter(it, IrParameterKind.ExtensionReceiver)
+            }
+            newFunction.parameters += descriptor.valueParameters.memoryOptimizedMap {
+                val kind = if (it.index < descriptor.contextReceiverParameters.size) IrParameterKind.Context else IrParameterKind.Regular
+                newFunction.createValueParameter(it, kind)
+            }
             newFunction.correspondingPropertySymbol = property
             newFunction.annotations = descriptor.annotations.mapNotNull(
                 typeTranslator.constantValueGenerator::generateAnnotationConstructorCall

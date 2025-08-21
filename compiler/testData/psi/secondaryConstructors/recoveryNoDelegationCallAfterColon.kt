@@ -1,3 +1,5 @@
+// COMPILATION_ERRORS
+
 class A {
     constructor():
     val x = 1

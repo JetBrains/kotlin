@@ -10,3 +10,5 @@ fun test2(n: Nothing?) = when (n) {
 // not exhaustive
 fun test3(n: Nothing?) = <!NO_ELSE_IN_WHEN!>when<!> (n) {
 }
+
+/* GENERATED_FIR_TAGS: equalityExpression, functionDeclaration, nullableType, whenExpression, whenWithSubject */

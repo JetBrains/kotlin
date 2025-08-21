@@ -1,3 +1,5 @@
+// COMPILATION_ERRORS
+
 enum A { X, Y }
 
 private enum B {

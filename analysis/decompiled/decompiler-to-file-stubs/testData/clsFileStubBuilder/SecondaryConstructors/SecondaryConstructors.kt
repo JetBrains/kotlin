@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 /* Unavailable Serializable */
 // KNM_K2_IGNORE
 // KNM_FE10_IGNORE

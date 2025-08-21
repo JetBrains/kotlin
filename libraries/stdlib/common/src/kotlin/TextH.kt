@@ -142,20 +142,37 @@ public expect class Regex {
     /**
      * Splits the [input] CharSequence to a list of strings around matches of this regular expression.
      *
+     * The last element of the resulting list corresponds to an [input] subsequence starting right
+     * after the last match (or at the beginning of [input] char sequence if there were no matches)
+     * and ending at the end of [input]. That implies that if [input] does not contain subsequences
+     * matching [this] regular expression, the resulting list will contain a single element
+     * corresponding to the whole [input] sequence.
+     * It also implies that for char sequences ending with a [this] regular expression match,
+     * the resulting list will end with an empty string.
+     *
      * @param limit Non-negative value specifying the maximum number of substrings the string can be split to.
      * Zero by default means no limit is set.
+     *
+     * @sample samples.text.Regexps.split
      */
     public fun split(input: CharSequence, limit: Int = 0): List<String>
 
     /**
      * Splits the [input] CharSequence to a sequence of strings around matches of this regular expression.
      *
+     * The last element of the resulting sequence corresponds to an [input] subsequence starting right
+     * after the last match (or at the beginning of [input] char sequence if there were no matches)
+     * and ending at the end of [input]. That implies that if [input] does not contain subsequences
+     * matching [this] regular expression, the resulting sequence will contain a single element
+     * corresponding to the whole [input] sequence.
+     * It also implies that for char sequences ending with a [this] regular expression match,
+     * the resulting sequence will end with an empty string.
+     *
      * @param limit Non-negative value specifying the maximum number of substrings the string can be split to.
      * Zero by default means no limit is set.
      * @sample samples.text.Regexps.splitToSequence
      */
     @SinceKotlin("1.6")
-    @WasExperimental(ExperimentalStdlibApi::class)
     public fun splitToSequence(input: CharSequence, limit: Int = 0): Sequence<String>
 
     public companion object {
@@ -295,6 +312,7 @@ public expect fun String.toCharArray(startIndex: Int = 0, endIndex: Int = this.l
  *  or when that index is out of the [destination] array indices range.
  */
 @SinceKotlin("2.0")
+@IgnorableReturnValue
 public expect fun String.toCharArray(
     destination: CharArray,
     destinationOffset: Int = 0,
@@ -332,6 +350,8 @@ public expect fun ByteArray.decodeToString(
  * Encodes this string to an array of bytes in UTF-8 encoding.
  *
  * Any malformed char sequence is replaced by the replacement byte sequence.
+ *
+ * @sample samples.text.Strings.encodeToByteArray
  */
 @SinceKotlin("1.4")
 public expect fun String.encodeToByteArray(): ByteArray
@@ -346,6 +366,8 @@ public expect fun String.encodeToByteArray(): ByteArray
  * @throws IndexOutOfBoundsException if [startIndex] is less than zero or [endIndex] is greater than the length of this string.
  * @throws IllegalArgumentException if [startIndex] is greater than [endIndex].
  * @throws CharacterCodingException if this string contains malformed char sequence and [throwOnInvalidSequence] is true.
+ *
+ * @sample samples.text.Strings.encodeToByteArray
  */
 @SinceKotlin("1.4")
 public expect fun String.encodeToByteArray(
@@ -358,8 +380,28 @@ public expect fun String.encodeToByteArray(
 internal expect fun String.nativeIndexOf(str: String, fromIndex: Int): Int
 internal expect fun String.nativeLastIndexOf(str: String, fromIndex: Int): Int
 
-
+/**
+ * Returns a substring of this string that starts at the specified [startIndex] and continues to the end of the string.
+ *
+ * @param startIndex the start index (inclusive).
+ *
+ * @throws IndexOutOfBoundsException when [startIndex] is negative or exceeds the length if the string.
+ *
+ * @sample samples.text.Strings.substringFromStartIndex
+ */
 public expect fun String.substring(startIndex: Int): String
+
+/**
+ * Returns the substring of this string starting at the [startIndex] and ending right before the [endIndex].
+ *
+ * @param startIndex the start index (inclusive).
+ * @param endIndex the end index (exclusive).
+ *
+ * @throws IndexOutOfBoundsException when [startIndex] is negative, [endIndex] exceeds the length if the string, or
+ *  if [startIndex] is greater than [endIndex].
+ *
+ * @sample samples.text.Strings.substringByStartAndEndIndices
+ */
 public expect fun String.substring(startIndex: Int, endIndex: Int): String
 
 /**
@@ -415,8 +457,41 @@ public expect fun String?.equals(other: String?, ignoreCase: Boolean = false): B
 public expect fun String.compareTo(other: String, ignoreCase: Boolean = false): Int
 
 
+/**
+ * Returns `true` if this string starts with the specified prefix.
+ *
+ * @param prefix the prefix from which this string should start with.
+ * @param ignoreCase the flag indicating if the string characters should be compared with the [prefix] characters
+ *  in a case-insensitive manner; by default, comparison is case-sensitive.
+ *
+ * @sample samples.text.Strings.startsWithPrefixCaseSensitive
+ * @sample samples.text.Strings.startsWithPrefixCaseInsensitive
+ */
 public expect fun String.startsWith(prefix: String, ignoreCase: Boolean = false): Boolean
+
+/**
+ * Returns `true` if a substring of this string starting at the specified offset [startIndex] starts with the specified prefix.
+ *
+ * @param prefix the prefix from which this string's substring beginning at [startIndex] should start with.
+ * @param startIndex the start index (inclusive).
+ * @param ignoreCase the flag indicating if the string characters should be compared with the [prefix] characters
+ *  in a case-insensitive manner; by default, comparison is case-sensitive.
+ *
+ * @sample samples.text.Strings.startsWithPrefixAtPositionCaseSensitive
+ * @sample samples.text.Strings.startsWithPrefixAtPositionCaseInsensitive
+ */
 public expect fun String.startsWith(prefix: String, startIndex: Int, ignoreCase: Boolean = false): Boolean
+
+/**
+ * Returns `true` if this string ends with the specified suffix.
+ *
+ * @param suffix the suffix with which this string should end with.
+ * @param ignoreCase the flag indicating if the string characters should be compared with the [suffix] characters
+ *  in a case-insensitive manner; by default, comparison is case-sensitive.
+ *
+ * @sample samples.text.Strings.endsWithSuffixCaseSensitive
+ * @sample samples.text.Strings.endsWithSuffixCaseInsensitive
+ */
 public expect fun String.endsWith(suffix: String, ignoreCase: Boolean = false): Boolean
 
 // From stringsCode.kt
@@ -606,6 +681,7 @@ public expect fun Int.toString(radix: Int): String
 public expect fun Long.toString(radix: Int): String
 
 @PublishedApi
+@IgnorableReturnValue
 internal expect fun checkRadix(radix: Int): Int
 
 internal expect fun digitOf(char: Char, radix: Int): Int

@@ -1,10 +1,13 @@
 element: param1
-implicit receivers:
-  type: KaUsualClassType:
-    annotations: []
-    typeArguments: []
-    type: test/Receiver
-  owner symbol: KaFirNamedFunctionSymbol
+implicit values:
+  KaImplicitReceiver:
+    scopeIndexInTower = 0
+    type = KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: test/Receiver
+    ownerSymbol = KaNamedFunctionSymbol:
+      test/function(<extension receiver>: test.Receiver, param1: test.Param1, param2: test.Param2): TypeParam
 
 scopes:
   TypeScope, index = 0
@@ -15,6 +18,7 @@ scopes:
         annotations: []
         callableId: kotlin/Any.equals
         compilerVisibility: Public
+        contextParameters: []
         contextReceivers: []
         contractEffects: []
         hasStableParameterNames: true
@@ -72,6 +76,7 @@ scopes:
         annotations: []
         callableId: kotlin/Any.hashCode
         compilerVisibility: Public
+        contextParameters: []
         contextReceivers: []
         contractEffects: []
         hasStableParameterNames: true
@@ -103,6 +108,7 @@ scopes:
         annotations: []
         callableId: kotlin/Any.toString
         compilerVisibility: Public
+        contextParameters: []
         contextReceivers: []
         contractEffects: []
         hasStableParameterNames: true
@@ -321,6 +327,7 @@ scopes:
         annotations: []
         callableId: test/function
         compilerVisibility: Public
+        contextParameters: []
         contextReceivers: []
         contractEffects: []
         hasStableParameterNames: true

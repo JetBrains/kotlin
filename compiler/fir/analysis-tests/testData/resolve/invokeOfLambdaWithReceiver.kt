@@ -16,3 +16,6 @@ class C {
         block()
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType,
+interfaceDeclaration, typeWithExtension */

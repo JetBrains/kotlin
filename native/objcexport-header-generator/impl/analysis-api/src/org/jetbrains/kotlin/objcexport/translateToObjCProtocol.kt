@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.backend.konan.objcexport.ObjCComment
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCProtocol
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCProtocolImpl
 import org.jetbrains.kotlin.backend.konan.objcexport.toNameAttributes
-import org.jetbrains.kotlin.objcexport.analysisApiUtils.getDeclaredSuperInterfaceSymbols
+import org.jetbrains.kotlin.analysis.api.export.utilities.getDeclaredSuperInterfaceSymbols
 import org.jetbrains.kotlin.objcexport.analysisApiUtils.isObjCBaseCallable
 import org.jetbrains.kotlin.objcexport.analysisApiUtils.isVisibleInObjC
 

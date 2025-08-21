@@ -118,9 +118,6 @@ projectTest {
      */
     jvmArgumentProviders.add(objects.newInstance<ProjectTestArgumentProvider>().apply {
         compilerClasspath.from(runtimeJar)
-        compilerClasspath.from(configurations.detachedConfiguration(
-                dependencies.create(commonDependency("org.jetbrains.intellij.deps:trove4j"))
-        ))
 
         // The tests run the compiler and try to produce an executable on host.
         // So, distribution with stdlib and runtime for host is required.

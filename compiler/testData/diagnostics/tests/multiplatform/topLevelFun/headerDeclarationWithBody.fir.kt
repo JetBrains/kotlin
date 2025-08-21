@@ -10,3 +10,5 @@
 <!EXPECTED_DECLARATION_WITH_BODY!><!NO_ACTUAL_FOR_EXPECT{JVM}!>expect<!> fun bar()<!> {}
 
 // MODULE: m1-jvm()()(m1-common)
+
+/* GENERATED_FIR_TAGS: expect, functionDeclaration */

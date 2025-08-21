@@ -5,9 +5,9 @@
 
 package org.jetbrains.kotlin.gradle.targets.js
 
-import com.google.gson.stream.JsonWriter
-import java.io.StringWriter
+import org.jetbrains.kotlin.gradle.targets.js.internal.jsQuoted as jsQuotedInternal
 
-fun String.jsQuoted(): String = StringWriter().also {
-    JsonWriter(it).value(this)
-}.toString()
+@Suppress("DeprecatedCallableAddReplaceWith")
+@Deprecated("Internal KGP utility. Scheduled for removal in Kotlin 2.4.")
+fun String.jsQuoted(): String =
+    jsQuotedInternal()

@@ -55,7 +55,7 @@ internal class Runtime(
     val frameOverlayType = getStructType("FrameOverlay")
 
     val initNodeType = getStructType("InitNode")
-    val memoryStateType = getStructTypeOrNull("MemoryState") ?: createOpaqueStructType("struct.MemoryState")!!
+    val memoryStateType = getStructTypeOrNull("MemoryState") ?: createOpaqueStructType("struct.MemoryState")
 
     val target = LLVMGetTarget(llvmModule)!!.toKString()
 
@@ -112,7 +112,6 @@ internal class Runtime(
     val objCIVarListType by lazy { createOpaqueStructType("_ivar_list_t") }
     val objCPropListType by lazy { createOpaqueStructType("_prop_list_t") }
 
-    val kRefSharedHolderType by lazy { getStructType("KRefSharedHolder", isClass = true) }
     val blockLiteralType by lazy { getStructType("Block_literal_1") }
     val blockDescriptorType by lazy { getStructType("Block_descriptor_1") }
 

@@ -17,12 +17,15 @@ import org.jetbrains.kotlin.analysis.api.fir.types.qualifiers.UsualClassTypeQual
 import org.jetbrains.kotlin.analysis.api.fir.utils.buildAbbreviatedType
 import org.jetbrains.kotlin.analysis.api.fir.utils.createPointer
 import org.jetbrains.kotlin.analysis.api.impl.base.KaBaseContextReceiver
+import org.jetbrains.kotlin.analysis.api.impl.base.resolution.KaBaseFunctionValueParameter
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassLikeSymbol
 import org.jetbrains.kotlin.analysis.api.types.*
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.errorWithFirSpecificEntries
 import org.jetbrains.kotlin.analysis.utils.errors.requireIsInstance
+import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.fir.resolve.transformers.ensureResolvedTypeDeclaration
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.name.ClassId
@@ -53,6 +56,11 @@ internal class KaFirFunctionType(
             KaFirAnnotationListForType.create(coneType, builder)
         }
 
+    @Deprecated(
+        "Use `isMarkedNullable`, `isNullable` or `hasFlexibleNullability` instead. See KDocs for the migration guide",
+        replaceWith = ReplaceWith("this.isMarkedNullable")
+    )
+    @Suppress("Deprecation")
     override val nullability: KaTypeNullability get() = withValidityAssertion { KaTypeNullability.create(coneType.isMarkedNullable) }
 
     override val abbreviation: KaUsualClassType?
@@ -91,6 +99,20 @@ internal class KaFirFunctionType(
             coneType.valueParameterTypesWithoutReceivers(builder.rootSession).map { it.buildKtType() }
         }
 
+    override val parameters: List<KaFunctionValueParameter>
+        get() = withValidityAssertion {
+            parameterTypes.map { parameterType ->
+                val parameterConeType = (parameterType as? KaFirType)?.coneType
+
+                // Parameters have to be resolved to FirResolvePhase.ANNOTATION_ARGUMENTS
+                // as parameter names can be explicitly provided via @ParameterName annotations.
+                parameterConeType.ensureResolvedTypeDeclaration(builder.rootSession, FirResolvePhase.ANNOTATION_ARGUMENTS)
+                val name = parameterConeType?.valueParameterName(builder.rootSession)
+                KaBaseFunctionValueParameter(name, parameterType)
+
+            }
+        }
+
     override val returnType: KaType
         get() = withValidityAssertion {
             coneType.returnType(builder.rootSession).buildKtType()
@@ -119,7 +141,7 @@ private class KaFirFunctionalClassTypePointer(
         requireIsInstance<KaFirSession>(session)
 
         val coneType = coneTypePointer.restore(session) ?: return null
-        if (!coneType.isSomeFunctionType(session.firResolveSession.useSiteFirSession)) {
+        if (!coneType.isSomeFunctionType(session.resolutionFacade.useSiteFirSession)) {
             return null
         }
 

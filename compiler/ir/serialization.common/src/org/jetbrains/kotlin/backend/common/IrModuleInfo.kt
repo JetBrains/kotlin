@@ -10,11 +10,30 @@ import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.util.SymbolTable
 
+/**
+ * The representation of a module that is being compiled.
+ */
 data class IrModuleInfo(
     val module: IrModuleFragment,
-    val allDependencies: List<IrModuleFragment>,
+    val dependencies: IrModuleDependencies,
     val bultins: IrBuiltIns,
     val symbolTable: SymbolTable,
     val deserializer: KotlinIrLinker,
-    val moduleFragmentToUniqueName: Map<IrModuleFragment, String>,
+)
+
+/**
+ * The dependencies of [IrModuleInfo]
+ *
+ * @property all All the dependencies.
+ *   If [stdlib] is not null, then it is expected as the very first element in [all].
+ *   If [included] is not null, then it is expected as the very last element in [all].
+ * @property stdlib The standard library dependency (if any).
+ * @property included The "included library" dependency (if any).
+ * @property fragmentNames The mapping from [IrModuleFragment] to its name. Used only in Kotlin/JS.
+ */
+data class IrModuleDependencies(
+    val all: List<IrModuleFragment>,
+    val stdlib: IrModuleFragment?,
+    val included: IrModuleFragment?,
+    val fragmentNames: Map<IrModuleFragment, String> = emptyMap()
 )

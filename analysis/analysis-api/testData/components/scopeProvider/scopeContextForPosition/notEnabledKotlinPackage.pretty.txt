@@ -1,7 +1,10 @@
 element: param
-implicit receivers:
-  type: kotlin.myPackage.SomeClass
-  owner symbol: KaFirNamedClassSymbol
+implicit values:
+  KaImplicitReceiver:
+    scopeIndexInTower = 2
+    type = kotlin.myPackage.SomeClass
+    ownerSymbol = KaNamedClassSymbol:
+      kotlin/myPackage/SomeClass
 
 scopes:
   LocalScope, index = 0

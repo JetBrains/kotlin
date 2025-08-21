@@ -37,7 +37,6 @@ import org.jetbrains.kotlin.utils.addToStdlib.runIf
  */
 abstract class FakeOverrideBuilderStrategy(
     private val friendModules: Map<String, Collection<String>>,
-    private val unimplementedOverridesStrategy: IrUnimplementedOverridesStrategy
 ) {
 
     /**
@@ -67,7 +66,7 @@ abstract class FakeOverrideBuilderStrategy(
      */
     open fun fakeOverrideMember(superType: IrType, member: IrOverridableMember, clazz: IrClass): IrOverridableMember? {
         return runIf(isVisibleForOverrideInClass(member, clazz)) {
-            buildFakeOverrideMember(superType, member, clazz, unimplementedOverridesStrategy)
+            buildFakeOverrideMember(superType, member, clazz)
         }
     }
 
@@ -76,9 +75,7 @@ abstract class FakeOverrideBuilderStrategy(
      *
      * It can modify the created fake override, if needed.
      */
-    fun postProcessGeneratedFakeOverride(fakeOverride: IrOverridableMember, clazz: IrClass) {
-        unimplementedOverridesStrategy.postProcessGeneratedFakeOverride(fakeOverride as IrOverridableDeclaration<*>, clazz)
-    }
+    abstract fun postProcessGeneratedFakeOverride(fakeOverride: IrOverridableDeclaration<*>, clazz: IrClass)
 
     /**
      * Create a symbol for the fake override.
@@ -158,11 +155,7 @@ abstract class FakeOverrideBuilderStrategy(
 
     abstract class BindToPrivateSymbols(
         friendModules: Map<String, Collection<String>>,
-        unimplementedOverridesStrategy: IrUnimplementedOverridesStrategy = IrUnimplementedOverridesStrategy.ProcessAsFakeOverrides
-    ) : FakeOverrideBuilderStrategy(
-        friendModules = friendModules,
-        unimplementedOverridesStrategy
-    ) {
+    ) : FakeOverrideBuilderStrategy(friendModules) {
         override fun linkFunctionFakeOverride(function: IrFunctionWithLateBinding, manglerCompatibleMode: Boolean) {
             function.acquireSymbol(IrSimpleFunctionSymbolImpl())
         }
@@ -191,7 +184,6 @@ fun buildFakeOverrideMember(
     superType: IrType,
     member: IrOverridableMember,
     clazz: IrClass,
-    unimplementedOverridesStrategy: IrUnimplementedOverridesStrategy = IrUnimplementedOverridesStrategy.ProcessAsFakeOverrides,
 ): IrOverridableMember {
     require(superType is IrSimpleType) { "superType is $superType, expected IrSimpleType" }
     val classifier = superType.classifier
@@ -213,7 +205,7 @@ fun buildFakeOverrideMember(
         substitutionMap[tp.symbol] = ta.type
     }
 
-    return CopyIrTreeWithSymbolsForFakeOverrides(member, substitutionMap, clazz, unimplementedOverridesStrategy)
+    return CopyIrTreeWithSymbolsForFakeOverrides(member, substitutionMap, clazz)
         .copy()
         .apply { makeExternal(clazz.isExternal) }
 }

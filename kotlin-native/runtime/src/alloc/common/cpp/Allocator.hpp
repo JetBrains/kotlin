@@ -9,6 +9,7 @@
 #include <memory>
 
 #include "GC.hpp"
+#include "GCStatistics.hpp"
 #include "Utils.hpp"
 #include "Memory.h"
 
@@ -55,6 +56,16 @@ public:
     void TraverseAllocatedObjects(std::function<void(ObjHeader*)> fn) noexcept;
 
     void TraverseAllocatedExtraObjects(std::function<void(mm::ExtraObjectData*)> fn) noexcept;
+
+    void startFinalizerThreadIfNeeded() noexcept;
+    void stopFinalizerThreadIfRunning() noexcept;
+    bool finalizersThreadIsRunning() noexcept;
+
+    void configureMainThreadFinalizerProcessor(std::function<void(alloc::RunLoopFinalizerProcessorConfig&)> f) noexcept;
+    bool mainThreadFinalizerProcessorAvailable() noexcept;
+
+    void sweep(gc::GCHandle gcHandle) noexcept;
+    void scheduleFinalization(gc::GCHandle gcHandle) noexcept;
 
 private:
     std::unique_ptr<Impl> impl_;

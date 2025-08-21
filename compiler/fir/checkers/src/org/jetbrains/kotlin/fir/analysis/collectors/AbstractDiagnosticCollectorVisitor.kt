@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -9,22 +9,30 @@ import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContextForProvider
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.createInlineFunctionBodyContext
+import org.jetbrains.kotlin.fir.analysis.checkers.expression.createInlinableParameterContext
 import org.jetbrains.kotlin.fir.analysis.checkers.extra.createLambdaBodyContext
 import org.jetbrains.kotlin.fir.contracts.FirContractDescription
+import org.jetbrains.kotlin.fir.contracts.FirLazyContractDescription
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.correspondingValueParameterFromPrimaryConstructor
 import org.jetbrains.kotlin.fir.declarations.utils.isInline
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirContractCallBlock
+import org.jetbrains.kotlin.fir.shouldSuppressInlineContextAt
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.ConeErrorType
 import org.jetbrains.kotlin.fir.types.FirErrorTypeRef
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.FirTypeRef
+import org.jetbrains.kotlin.fir.types.impl.FirImplicitBuiltinTypeRef
+import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitor
 import org.jetbrains.kotlin.fir.whileAnalysing
 import org.jetbrains.kotlin.util.PrivateForInline
+import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
 abstract class AbstractDiagnosticCollectorVisitor(
     @set:PrivateForInline var context: CheckerContextForProvider,
@@ -94,10 +102,7 @@ abstract class AbstractDiagnosticCollectorVisitor(
 
     override fun visitScript(script: FirScript, data: Nothing?) {
         withAnnotationContainer(script) {
-            checkElement(script)
-            withDeclaration(script) {
-                visitNestedElements(script)
-            }
+            visitWithDeclaration(script)
         }
     }
 
@@ -120,7 +125,13 @@ abstract class AbstractDiagnosticCollectorVisitor(
     }
 
     override fun visitAnonymousFunctionExpression(anonymousFunctionExpression: FirAnonymousFunctionExpression, data: Nothing?) {
-        visitAnonymousFunction(anonymousFunctionExpression.anonymousFunction, data)
+        if (shouldSuppressInlineContextAt(anonymousFunctionExpression, context.containingDeclarations.lastOrNull())) {
+            suppressInlineFunctionBodyContext {
+                visitAnonymousFunction(anonymousFunctionExpression.anonymousFunction, data)
+            }
+        } else {
+            visitAnonymousFunction(anonymousFunctionExpression.anonymousFunction, data)
+        }
     }
 
     override fun visitAnonymousFunction(anonymousFunction: FirAnonymousFunction, data: Nothing?) {
@@ -139,6 +150,12 @@ abstract class AbstractDiagnosticCollectorVisitor(
         }
     }
 
+    override fun visitErrorProperty(errorProperty: FirErrorProperty, data: Nothing?) {
+        withAnnotationContainer(errorProperty) {
+            visitWithDeclaration(errorProperty)
+        }
+    }
+
     override fun visitTypeAlias(typeAlias: FirTypeAlias, data: Nothing?) {
         withAnnotationContainer(typeAlias) {
             visitWithDeclaration(typeAlias)
@@ -146,7 +163,7 @@ abstract class AbstractDiagnosticCollectorVisitor(
     }
 
     override fun visitPropertyAccessor(propertyAccessor: FirPropertyAccessor, data: Nothing?) {
-        val property = context.containingDeclarations.last() as FirProperty
+        val property = context.containingDeclarations.last() as FirPropertySymbol
         withAnnotationContainer(propertyAccessor) {
             withInlineFunctionBodyIfApplicable(propertyAccessor, propertyAccessor.isInline || property.isInline) {
                 visitWithDeclaration(propertyAccessor)
@@ -194,6 +211,28 @@ abstract class AbstractDiagnosticCollectorVisitor(
         }
     }
 
+    override fun visitLazyBlock(lazyBlock: FirLazyBlock, data: Nothing?) {
+        suppressOrThrowError(lazyBlock)
+        super.visitLazyBlock(lazyBlock, data)
+    }
+
+    override fun visitLazyExpression(lazyExpression: FirLazyExpression, data: Nothing?) {
+        suppressOrThrowError(lazyExpression)
+        super.visitLazyExpression(lazyExpression, data)
+    }
+
+    override fun visitLazyContractDescription(lazyContractDescription: FirLazyContractDescription, data: Nothing?) {
+        suppressOrThrowError(lazyContractDescription)
+        super.visitLazyContractDescription(lazyContractDescription, data)
+    }
+
+    private fun suppressOrThrowError(element: FirElement) {
+        if (System.getProperty("kotlin.suppress.lazy.expression.access").toBoolean()) return
+        errorWithAttachment("${element::class.simpleName} should be calculated before accessing") {
+            withFirEntry("firElement", element)
+        }
+    }
+
     override fun visitContractDescription(contractDescription: FirContractDescription, data: Nothing?) {
         suppressInlineFunctionBodyContext {
             visitElement(contractDescription, data)
@@ -222,6 +261,8 @@ abstract class AbstractDiagnosticCollectorVisitor(
             visitTypeRef(resolvedTypeRef, data)
         }
         if (resolvedTypeRef.source?.kind?.shouldSkipErrorTypeReporting == true) return
+        // As implicit built-in type refs never have sources
+        if (resolvedTypeRef is FirImplicitBuiltinTypeRef) return
 
         // Even though we don't visit the children of the resolvedTypeRef we still add it as an annotation container
         // and take care not to add the corresponding delegatedTypeRef. This is so that diagnostics will have access to
@@ -248,7 +289,9 @@ abstract class AbstractDiagnosticCollectorVisitor(
     }
 
     override fun visitAnnotationCall(annotationCall: FirAnnotationCall, data: Nothing?) {
-        visitWithCallOrAssignment(annotationCall)
+        suppressInlineFunctionBodyContext {
+            visitWithCallOrAssignment(annotationCall)
+        }
     }
 
     override fun visitVariableAssignment(variableAssignment: FirVariableAssignment, data: Nothing?) {
@@ -261,6 +304,12 @@ abstract class AbstractDiagnosticCollectorVisitor(
 
     override fun visitGetClassCall(getClassCall: FirGetClassCall, data: Nothing?) {
         visitWithGetClassCall(getClassCall)
+    }
+
+    override fun visitDanglingModifierList(danglingModifierList: FirDanglingModifierList, data: Nothing?) {
+        withAnnotationContainer(danglingModifierList) {
+            visitWithDeclaration(danglingModifierList)
+        }
     }
 
     protected inline fun visitWithDeclaration(
@@ -287,20 +336,25 @@ abstract class AbstractDiagnosticCollectorVisitor(
 
     @OptIn(PrivateForInline::class)
     private inline fun <T> withInlineFunctionBodyIfApplicable(function: FirFunction, isInline: Boolean, block: () -> T): T {
+        val oldBodyContext = context.inlineFunctionBodyContext
+        val oldInlinableParameterContext = context.inlinableParameterContext
         return try {
             if (isInline) {
-                context = context.setInlineFunctionBodyContext(createInlineFunctionBodyContext(function, context.session))
+                val bodyContext = createInlineFunctionBodyContext(function, context.session, oldBodyContext)
+                val parameterContext = createInlinableParameterContext(function, context.session)
+                context = context.setInlineFunctionBodyContext(bodyContext).setInlinableParameterContext(parameterContext)
             }
             block()
         } finally {
             if (isInline) {
-                context = context.unsetInlineFunctionBodyContext()
+                context = context.setInlinableParameterContext(oldInlinableParameterContext).setInlineFunctionBodyContext(oldBodyContext)
             }
         }
     }
 
     @OptIn(PrivateForInline::class)
     private inline fun <T> withLambdaBodyIfApplicable(function: FirAnonymousFunction, block: () -> T): T {
+        val oldContext = context.lambdaBodyContext
         return try {
             if (function.isLambda) {
                 context = context.setLambdaBodyContext(createLambdaBodyContext(function, context))
@@ -308,7 +362,7 @@ abstract class AbstractDiagnosticCollectorVisitor(
             block()
         } finally {
             if (function.isLambda) {
-                context = context.unsetLambdaBodyContext()
+                context = context.setLambdaBodyContext(oldContext)
             }
         }
     }
@@ -432,7 +486,7 @@ abstract class AbstractDiagnosticCollectorVisitor(
     @OptIn(PrivateForInline::class)
     private inline fun <R> suppressInlineFunctionBodyContext(block: () -> R): R {
         val oldInlineFunctionBodyContext = context.inlineFunctionBodyContext?.also {
-            context = context.unsetInlineFunctionBodyContext()
+            context = context.setInlineFunctionBodyContext(null)
         }
         return try {
             block()

@@ -26,19 +26,64 @@ KaKotlinPropertySymbol:
     deprecationStatus: null
   callableId: /foo
   compilerVisibility: Public
+  contextParameters: [
+    KaContextParameterSymbol:
+      annotations: []
+      callableId: null
+      compilerVisibility: Public
+      contextReceivers: []
+      isActual: false
+      isExpect: false
+      isExtension: false
+      isVal: true
+      location: LOCAL
+      modality: FINAL
+      name: parameter1
+      origin: SOURCE
+      receiverParameter: null
+      returnType: KaErrorType:
+        annotations: []
+        type: ERROR_TYPE
+      visibility: PUBLIC
+      getContainingFileSymbol: KaFileSymbol(propertyWithContextParameters.kt)
+      getContainingJvmClassName: null
+      getContainingModule: KaSourceModule "Sources of main"
+      deprecationStatus: null
+    KaContextParameterSymbol:
+      annotations: []
+      callableId: null
+      compilerVisibility: Public
+      contextReceivers: []
+      isActual: false
+      isExpect: false
+      isExtension: false
+      isVal: true
+      location: LOCAL
+      modality: FINAL
+      name: parameter2
+      origin: SOURCE
+      receiverParameter: null
+      returnType: KaErrorType:
+        annotations: []
+        type: ERROR_TYPE
+      visibility: PUBLIC
+      getContainingFileSymbol: KaFileSymbol(propertyWithContextParameters.kt)
+      getContainingJvmClassName: null
+      getContainingModule: KaSourceModule "Sources of main"
+      deprecationStatus: null
+  ]
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
     annotations: []
     callableId: null
     compilerVisibility: Public
     contextReceivers: []
-    hasBody: true
     hasStableParameterNames: true
     isActual: false
-    isDefault: false
     isExpect: false
     isExtension: false
     isInline: false
+    isNotDefault: true
     isOverride: false
     location: PROPERTY
     modality: FINAL
@@ -89,3 +134,4 @@ KaKotlinPropertySymbol:
   javaGetterName: getFoo
   javaSetterName: null
   setterDeprecationStatus: null
+  isInline: false

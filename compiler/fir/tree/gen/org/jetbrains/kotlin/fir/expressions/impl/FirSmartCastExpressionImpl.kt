@@ -13,6 +13,7 @@ package org.jetbrains.kotlin.fir.expressions.impl
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fakeElement
+import org.jetbrains.kotlin.fir.DfaType
 import org.jetbrains.kotlin.fir.MutableOrEmptyList
 import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
@@ -32,7 +33,8 @@ internal class FirSmartCastExpressionImpl(
     override var coneTypeOrNull: ConeKotlinType?,
     override var annotations: MutableOrEmptyList<FirAnnotation>,
     override var originalExpression: FirExpression,
-    override val typesFromSmartCast: Collection<ConeKotlinType>,
+    override val upperTypesFromSmartCast: Collection<ConeKotlinType>,
+    override val lowerTypesFromSmartCast: Collection<DfaType>,
     override var smartcastType: FirTypeRef,
     override var smartcastTypeWithoutNullableNothing: FirTypeRef?,
     override val smartcastStability: SmartcastStability,

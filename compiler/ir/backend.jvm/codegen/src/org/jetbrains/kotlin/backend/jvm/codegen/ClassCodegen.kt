@@ -5,8 +5,10 @@
 
 package org.jetbrains.kotlin.backend.jvm.codegen
 
+import com.intellij.util.ArrayUtil
 import org.jetbrains.kotlin.backend.common.lower.ANNOTATION_IMPLEMENTATION
 import org.jetbrains.kotlin.backend.jvm.*
+import org.jetbrains.kotlin.backend.jvm.codegen.AnnotationCodegen.Companion.annotationClass
 import org.jetbrains.kotlin.backend.jvm.extensions.descriptorOrigin
 import org.jetbrains.kotlin.backend.jvm.ir.*
 import org.jetbrains.kotlin.backend.jvm.mapping.IrTypeMapper
@@ -15,11 +17,14 @@ import org.jetbrains.kotlin.backend.jvm.mapping.mapClass
 import org.jetbrains.kotlin.backend.jvm.mapping.mapType
 import org.jetbrains.kotlin.backend.jvm.metadata.MetadataSerializer
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap.mapKotlinToJava
-import org.jetbrains.kotlin.codegen.*
+import org.jetbrains.kotlin.codegen.AsmUtil
+import org.jetbrains.kotlin.codegen.VersionIndependentOpcodes
+import org.jetbrains.kotlin.codegen.addRecordComponent
 import org.jetbrains.kotlin.codegen.inline.*
 import org.jetbrains.kotlin.codegen.signature.JvmSignatureWriter
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.codegen.state.JvmBackendConfig
+import org.jetbrains.kotlin.codegen.writeKotlinMetadata
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
@@ -43,6 +48,8 @@ import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.load.kotlin.internalName
 import org.jetbrains.kotlin.metadata.jvm.deserialization.BitEncoding
+import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMemberSignature
+import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.JvmStandardClassIds.JVM_RECORD_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.name.JvmStandardClassIds.JVM_SYNTHETIC_ANNOTATION_FQ_NAME
@@ -51,9 +58,7 @@ import org.jetbrains.kotlin.name.JvmStandardClassIds.VOLATILE_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.resolve.jvm.checkers.JvmSimpleNameBacktickChecker
-import org.jetbrains.kotlin.resolve.jvm.diagnostics.MemberKind
-import org.jetbrains.kotlin.resolve.jvm.diagnostics.RawSignature
+import org.jetbrains.kotlin.resolve.jvm.JvmConstants
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmClassSignature
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.org.objectweb.asm.*
@@ -64,11 +69,12 @@ class ClassCodegen private constructor(
     val irClass: IrClass,
     val context: JvmBackendContext,
     private val parentFunction: IrFunction?,
+    val intrinsicExtensions: List<JvmIrIntrinsicExtension>,
 ) {
     // We need to avoid recursive calls to getOrCreate() from within the constructor to prevent lockups
     // in ConcurrentHashMap context.classCodegens.
     private val parentClassCodegen by lazy {
-        (parentFunction?.parentAsClass ?: irClass.parent as? IrClass)?.let { getOrCreate(it, context) }
+        (parentFunction?.parentAsClass ?: irClass.parent as? IrClass)?.let { getOrCreate(it, context, intrinsicExtensions) }
     }
     private val metadataSerializer: MetadataSerializer by lazy {
         context.backendExtension.createSerializer(
@@ -81,22 +87,19 @@ class ClassCodegen private constructor(
     private val config: JvmBackendConfig = context.config
 
     private val innerClasses = mutableSetOf<IrClass>()
-    val typeMapper =
-        if (context.config.oldInnerClassesLogic)
-            context.defaultTypeMapper
-        else object : IrTypeMapper(context) {
-            override fun mapType(type: IrType, mode: TypeMappingMode, sw: JvmSignatureWriter?, materialized: Boolean): Type {
-                var t = type
-                while (t.isArray()) {
-                    t = t.getArrayElementType(context.irBuiltIns)
-                }
-                // Only record inner class info for types that are materialized in the class file.
-                if (materialized) {
-                    t.classOrNull?.owner?.let(::addInnerClassInfo)
-                }
-                return super.mapType(type, mode, sw, materialized)
+    val typeMapper = object : IrTypeMapper(context) {
+        override fun mapType(type: IrType, mode: TypeMappingMode, sw: JvmSignatureWriter?, materialized: Boolean): Type {
+            var t = type
+            while (t.isArray()) {
+                t = t.getArrayElementType(context.irBuiltIns)
             }
+            // Only record inner class info for types that are materialized in the class file.
+            if (materialized) {
+                t.classOrNull?.owner?.let(::addInnerClassInfo)
+            }
+            return super.mapType(type, mode, sw, materialized)
         }
+    }
 
     val methodSignatureMapper = MethodSignatureMapper(context, typeMapper)
 
@@ -176,13 +179,17 @@ class ClassCodegen private constructor(
         //    everything moved to the outer class has already been recorded in `globalSerializationBindings`.
         for (declaration in irClass.declarations) {
             if (declaration is IrClass) {
-                getOrCreate(declaration, context).generate()
+                getOrCreate(declaration, context, intrinsicExtensions).generate()
             }
         }
 
         generateAnnotations()
 
-        visitor.visitSMAP(smap, !config.languageVersionSettings.supportsFeature(LanguageFeature.CorrectSourceMappingSyntax))
+        visitor.visitSMAP(
+            smap,
+            !config.languageVersionSettings.supportsFeature(LanguageFeature.CorrectSourceMappingSyntax),
+            parentFunction != null && parentFunction.isInline
+        )
 
         reifiedTypeParametersUsages.mergeAll(irClass.reifiedTypeParameters)
 
@@ -277,6 +284,7 @@ class ClassCodegen private constructor(
             facadeClassName != null -> KotlinClassHeader.Kind.MULTIFILE_CLASS_PART
             metadata is MetadataSource.Class -> KotlinClassHeader.Kind.CLASS
             metadata is MetadataSource.Script -> KotlinClassHeader.Kind.CLASS
+            metadata is MetadataSource.ReplSnippet -> KotlinClassHeader.Kind.CLASS
             metadata is MetadataSource.File -> KotlinClassHeader.Kind.FILE_FACADE
             metadata is MetadataSource.Function -> KotlinClassHeader.Kind.SYNTHETIC_CLASS
             entry is MultifileFacadeFileEntry -> KotlinClassHeader.Kind.MULTIFILE_CLASS
@@ -314,8 +322,15 @@ class ClassCodegen private constructor(
 
         writeKotlinMetadata(visitor, context.config, kind, isPublicAbi, extraFlags) { av ->
             if (metadata != null) {
-                metadataSerializer.serialize(metadata)?.let { (proto, stringTable) ->
-                    DescriptorAsmUtil.writeAnnotationData(av, proto, stringTable)
+                val containingFile = when (val containingFileMetadata = irClass.file.metadata) {
+                    is MetadataSource.File -> containingFileMetadata
+                    is MetadataSource.CodeFragment -> null
+                    else -> error("Cannot serialize class metadata without containing file: ${irClass.render()}")
+                }
+                metadataSerializer.serialize(metadata, containingFile)?.let { (proto, stringTable) ->
+                    AsmUtil.writeAnnotationData(
+                        av, JvmProtoBufUtil.writeData(proto, stringTable), ArrayUtil.toStringArray(stringTable.strings),
+                    )
                 }
             }
 
@@ -361,7 +376,7 @@ class ClassCodegen private constructor(
             fieldSignature, (field.initializer?.expression as? IrConst)?.value
         )
 
-        jvmFieldSignatureClashDetector.trackDeclaration(field, RawSignature(fieldName, fieldType.descriptor, MemberKind.FIELD))
+        jvmFieldSignatureClashDetector.trackDeclaration(field, JvmMemberSignature.Field(fieldName, fieldType.descriptor))
 
         if (field.origin != JvmLoweredDeclarationOrigin.CONTINUATION_CLASS_RESULT_FIELD) {
             val annotationCodegen = object : AnnotationCodegen(this@ClassCodegen) {
@@ -388,8 +403,17 @@ class ClassCodegen private constructor(
         }
 
         if (irClass.hasAnnotation(JVM_RECORD_ANNOTATION_FQ_NAME) && !field.isStatic) {
-            // TODO: Write annotations to the component
-            visitor.addRecordComponent(fieldName, fieldType.descriptor, fieldSignature)
+            val rcv = visitor.addRecordComponent(fieldName, fieldType.descriptor, fieldSignature)
+            val annotationCodegen = object : AnnotationCodegen(this@ClassCodegen) {
+                override fun visitAnnotation(descr: String, visible: Boolean): AnnotationVisitor {
+                    return rcv.visitAnnotation(descr, visible)
+                }
+            }
+            val recordAnnotations = field.annotations.filter { annotation ->
+                val applicableTargets = annotation.annotationClass.applicableJavaTargetSet()
+                applicableTargets == null || "RECORD_COMPONENT" in applicableTargets
+            }
+            annotationCodegen.genAnnotations(field, recordAnnotations)
         }
     }
 
@@ -431,7 +455,8 @@ class ClassCodegen private constructor(
             // Generate a state machine within this method. The continuation class for it should be generated
             // lazily so that if tail call optimization kicks in, the unused class will not be written to the output.
             val continuationClass = method.continuationClass() // null if `SuspendLambda.invokeSuspend` - `this` is continuation itself
-            val continuationClassCodegen = lazy { if (continuationClass != null) getOrCreate(continuationClass, context, method) else this }
+            val continuationClassCodegen =
+                lazy { if (continuationClass != null) getOrCreate(continuationClass, context, intrinsicExtensions, method) else this }
 
             // For suspend lambdas continuation class is null, and we need to use containing class to put L$ fields
             val spilledFieldsOwner = continuationClass ?: irClass
@@ -451,7 +476,7 @@ class ClassCodegen private constructor(
         } else {
             node.accept(smapCopyingVisitor)
         }
-        jvmMethodSignatureClashDetector.trackDeclaration(method, RawSignature(node.name, node.desc, MemberKind.METHOD))
+        jvmMethodSignatureClashDetector.trackDeclaration(method, JvmMemberSignature.Method(node.name, node.desc))
 
         when (val metadata = method.metadata) {
             is MetadataSource.Property -> metadataSerializer.bindPropertyMetadata(metadata, Method(node.name, node.desc), method.origin)
@@ -491,7 +516,7 @@ class ClassCodegen private constructor(
 
         for (klass in innerClasses.sortedBy { it.fqNameWhenAvailable?.asString() }) {
             val innerJavaClassId = klass.mapToJava()
-            val innerClass = innerJavaClassId?.internalName ?: typeMapper.classInternalName(klass)
+            val innerClass = innerJavaClassId?.internalName ?: typeMapper.classLikeDeclarationInternalName(klass)
             val outerClass =
                 if (klass.isSamWrapper || klass.isAnnotationImplementation || klass.isEnclosedInConstructor)
                     null
@@ -502,7 +527,7 @@ class ClassCodegen private constructor(
                             if (innerJavaClassId?.packageFqName != outerJavaClassId?.packageFqName) {
                                 continue
                             }
-                            outerJavaClassId?.internalName ?: typeMapper.classInternalName(parent)
+                            outerJavaClassId?.internalName ?: typeMapper.classLikeDeclarationInternalName(parent)
                         }
 
                         else -> null
@@ -547,11 +572,12 @@ class ClassCodegen private constructor(
     }
 
     companion object {
-        private var IrClass.classCodegen: ClassCodegen? by irAttribute(followAttributeOwner = false)
+        private var IrClass.classCodegen: ClassCodegen? by irAttribute(copyByDefault = false)
 
         fun getOrCreate(
             irClass: IrClass,
             context: JvmBackendContext,
+            intrinsicExtensions: List<JvmIrIntrinsicExtension>,
             // The `parentFunction` is only set for classes nested inside of functions. This is usually safe, since there is no
             // way to refer to (inline) members of such a class from outside of the function unless the function in question is
             // itself declared as inline. In that case, the function will be compiled before we can refer to the nested class.
@@ -563,7 +589,7 @@ class ClassCodegen private constructor(
                 it.origin == JvmLoweredDeclarationOrigin.CLASS_STATIC_INITIALIZER
             },
         ): ClassCodegen =
-            irClass.classCodegen ?: ClassCodegen(irClass, context, parentFunction).also {
+            irClass.classCodegen ?: ClassCodegen(irClass, context, parentFunction, intrinsicExtensions).also {
                 assert(parentFunction == null || it.parentFunction == parentFunction) {
                     "inconsistent parent function for ${irClass.render()}:\n" +
                             "New: ${parentFunction!!.render()}\n" +
@@ -573,7 +599,7 @@ class ClassCodegen private constructor(
             }
 
         private fun JvmClassSignature.hasInvalidName() =
-            name.splitToSequence('/').any { identifier -> identifier.any { it in JvmSimpleNameBacktickChecker.INVALID_CHARS } }
+            name.splitToSequence('/').any { identifier -> identifier.any { it in JvmConstants.INVALID_CHARS } }
     }
 }
 

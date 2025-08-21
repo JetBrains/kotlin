@@ -18,7 +18,6 @@ linkerOpts = -ldl -lresolv
 excludedFunctions = acl_valid_link_np add_profil pfctlinput profil unwhiteout zopen getdirentries \
                     uuid_generate_early_random setgrfile \
                     in6addr_linklocal_allv2routers
-excludedFunctions.ios_arm32 = longjmperror
 excludedFunctions.ios_arm64 = longjmperror
 excludedFunctions.ios_simulator_arm64 = longjmperror \
     openat_dprotected_np mkfifoat mknodat openat_authenticated_np

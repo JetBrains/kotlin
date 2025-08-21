@@ -10,3 +10,6 @@ val bar = fun(<!CANNOT_INFER_PARAMETER_TYPE!>a<!>){}
 
 val la = { <!CANNOT_INFER_PARAMETER_TYPE!>a<!> -> }
 val las = { a: Int -> }
+
+/* GENERATED_FIR_TAGS: anonymousFunction, classDeclaration, functionDeclaration, lambdaLiteral, primaryConstructor,
+propertyDeclaration */

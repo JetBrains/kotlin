@@ -17,3 +17,5 @@ fun main() {
     (O)[0]++
 }
 
+/* GENERATED_FIR_TAGS: assignment, functionDeclaration, incrementDecrementExpression, localProperty, objectDeclaration,
+operator, propertyDeclaration, thisExpression */

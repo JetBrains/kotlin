@@ -6,3 +6,6 @@ private enum class MethodKind {
 }
 
 private fun MethodKind.hasThis() = this == MethodKind.INSTANCE
+
+/* GENERATED_FIR_TAGS: enumDeclaration, enumEntry, equalityExpression, funWithExtensionReceiver, functionDeclaration,
+thisExpression */

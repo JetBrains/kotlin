@@ -40,3 +40,6 @@ fun main() {
         2
     )
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, flexibleType, functionDeclaration, inProjection, integerLiteral, javaFunction,
+javaType, lambdaLiteral, outProjection, samConversion */

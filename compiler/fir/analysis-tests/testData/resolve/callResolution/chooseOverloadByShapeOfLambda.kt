@@ -21,3 +21,6 @@ fun test_3() {
     val res = foo {} // (1)
     takeInt(res)
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionalType, integerLiteral, lambdaLiteral, localProperty,
+propertyDeclaration, stringLiteral */

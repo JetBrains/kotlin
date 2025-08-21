@@ -12,3 +12,6 @@ fun test(identifier: SomeClass, fn: String.() -> Unit) {
     <!NONE_APPLICABLE!>identifier<!>(1, 2)
     1.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>fn<!>()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType, integerLiteral,
+typeWithExtension */

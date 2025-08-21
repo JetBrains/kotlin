@@ -7,6 +7,3 @@ package org.jetbrains.kotlin.types.model
 
 fun KotlinTypeMarker.typeConstructor(context: TypeSystemContext): TypeConstructorMarker =
     with(context) { typeConstructor() }
-
-fun TypeConstructorMarker.isIntegerLiteralTypeConstructor(context: TypeSystemContext): Boolean =
-    with(context) { isIntegerLiteralTypeConstructor() }

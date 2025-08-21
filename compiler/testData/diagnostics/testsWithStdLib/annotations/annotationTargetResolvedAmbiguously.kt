@@ -42,3 +42,6 @@ class Derived : Base() {
 
     fun foo(x: <!WRONG_ANNOTATION_TARGET!>@Ann<!> String) {}
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, const, enumDeclaration, enumEntry, functionDeclaration,
+nestedClass, objectDeclaration, primaryConstructor, propertyDeclaration, stringLiteral */

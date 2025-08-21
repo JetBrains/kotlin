@@ -1,0 +1,5 @@
+expression: "a".compareTo("b")
+constant: -1
+constantValueKind: IntValue
+constantValueSource: NOT_EVALUATED
+constantValueSourceText: NOT_EVALUATED

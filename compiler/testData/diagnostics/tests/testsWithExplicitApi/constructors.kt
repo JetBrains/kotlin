@@ -17,3 +17,5 @@ public class Foo5 {
 public class Foo6 {
     public constructor() {}
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, primaryConstructor, secondaryConstructor */

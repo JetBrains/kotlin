@@ -9,6 +9,7 @@ import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.ObsoleteTestInfrastructure
 import org.jetbrains.kotlin.TestExceptionsComparator
 import org.jetbrains.kotlin.codegen.AbstractBlackBoxCodegenTest
+import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.spec.utils.GeneralConfiguration
 import org.jetbrains.kotlin.spec.utils.GeneralConfiguration.SPEC_TESTDATA_PATH
 import org.jetbrains.kotlin.spec.utils.models.AbstractSpecTest
@@ -40,7 +41,7 @@ abstract class AbstractBlackBoxCodegenTestSpec : AbstractBlackBoxCodegenTest() {
 
         return files + specTest.helpers.map {
             val filename = "$it.kt"
-            val helperContent = FileUtil.loadFile(File("$HELPERS_PATH/$filename"), true)
+            val helperContent = FileUtil.loadFile(ForTestCompileRuntime.transformTestDataPath("$HELPERS_PATH/$filename"), true)
             TestFile(filename, addPackageDirectiveToHelperFile(helperContent, packageName))
         }
     }

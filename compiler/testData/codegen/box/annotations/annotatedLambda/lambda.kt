@@ -1,5 +1,5 @@
+// LANGUAGE: -JvmIndyAllowLambdasWithAnnotations
 // TARGET_BACKEND: JVM
-
 // WITH_STDLIB
 
 import java.lang.reflect.Method

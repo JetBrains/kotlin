@@ -28,7 +28,7 @@ FILE: recursiveCallOnWhenWithSealedClass.kt
         }
 
         public final fun unwrap(): R|T| {
-            ^unwrap when (this@R|/Maybe|) {
+            ^unwrap when (lval <when-subject>: R|Maybe<T>| = this@R|/Maybe|) {
                 ($subj$ is R|Maybe.Nope<T>|) ->  {
                     throw R|java/lang/Exception.Exception|(String())
                 }

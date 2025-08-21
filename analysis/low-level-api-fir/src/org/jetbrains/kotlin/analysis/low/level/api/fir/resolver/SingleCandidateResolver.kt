@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -13,15 +13,13 @@ import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.builder.buildFunctionCall
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
-import org.jetbrains.kotlin.fir.resolve.calls.*
+import org.jetbrains.kotlin.fir.resolve.calls.ImplicitReceiverValue
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.*
 import org.jetbrains.kotlin.fir.resolve.calls.stages.ResolutionStageRunner
 import org.jetbrains.kotlin.fir.resolve.createConeDiagnosticForCandidateWithError
 import org.jetbrains.kotlin.fir.resolve.inference.FirCallCompleter
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
-import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.FirTypeProjection
-import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
 
 class SingleCandidateResolver(
@@ -78,13 +76,7 @@ class SingleCandidateResolver(
             return null
         }
 
-        val completionResult = firCallCompleter.completeCall(
-            fakeCall,
-            (resolutionParameters.expectedType as? FirResolvedTypeRef)?.let { ResolutionMode.WithExpectedType(it) }
-                ?: ResolutionMode.ContextIndependent
-        )
-
-        return completionResult
+        return firCallCompleter.completeCall(fakeCall, ResolutionMode.ContextIndependent)
     }
 
     private fun createCandidateInfoProvider(resolutionParameters: ResolutionParameters): CandidateInfoProvider {
@@ -101,7 +93,7 @@ class SingleCandidateResolver(
         buildFunctionCall {
             calleeReference = FirNamedReferenceWithCandidate(
                 source = null,
-                name = resolutionParameters.callableSymbol.callableId.callableName,
+                name = resolutionParameters.callableSymbol.name,
                 candidate = candidate
             )
         }
@@ -112,7 +104,7 @@ class SingleCandidateResolver(
         resolutionParameters: ResolutionParameters
     ): FirFunctionCall {
         val diagnostic = createConeDiagnosticForCandidateWithError(applicability, candidate)
-        val name = resolutionParameters.callableSymbol.callableId.callableName
+        val name = resolutionParameters.callableSymbol.name
         return buildFunctionCall {
             calleeReference = FirErrorReferenceWithCandidate(source = null, name, candidate, diagnostic)
         }
@@ -127,8 +119,8 @@ class ResolutionParameters(
     val singleCandidateResolutionMode: SingleCandidateResolutionMode,
     val callableSymbol: FirCallableSymbol<*>,
     val implicitReceiver: ImplicitReceiverValue<*>? = null,
-    val expectedType: FirTypeRef? = null,
     val explicitReceiver: FirExpression? = null,
+    /** THIS IS UNSAFE TO PASS ORIGINAL ARGUMENTS. THEY HAVE TO BE COPIED TO AVOID MUTABILITY ISSUES */
     val argumentList: FirArgumentList = FirEmptyArgumentList,
     val typeArgumentList: List<FirTypeProjection> = emptyList(),
     val allowUnsafeCall: Boolean = false,

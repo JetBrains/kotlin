@@ -36,3 +36,5 @@ fun test() {
     <!ILLEGAL_ESCAPE!>'\\u000'<!>
     <!ILLEGAL_ESCAPE!>'\'<!>
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, localProperty, propertyDeclaration */

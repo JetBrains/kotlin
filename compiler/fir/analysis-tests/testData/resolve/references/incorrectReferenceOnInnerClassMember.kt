@@ -13,3 +13,5 @@ fun test() {
     foo.Outer<Int>.<!INNER_CLASS_CONSTRUCTOR_NO_RECEIVER!>Inner<!>(42)
     foo.Outer<Int>.<!INNER_CLASS_CONSTRUCTOR_NO_RECEIVER!>Inner<!>(42)::<!UNRESOLVED_REFERENCE!>method<!>
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, inner, integerLiteral, nullableType, typeParameter */

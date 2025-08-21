@@ -29,3 +29,6 @@ fun main() {
     val emptyBoxIn = MyBoxIn<String?>()
     foo(emptyBoxIn, null)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, dnnType, functionDeclaration, in, localProperty, nullableType, out,
+primaryConstructor, propertyDeclaration, typeConstraint, typeParameter */

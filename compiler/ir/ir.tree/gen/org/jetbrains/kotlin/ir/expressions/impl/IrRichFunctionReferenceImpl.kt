@@ -22,13 +22,13 @@ import org.jetbrains.kotlin.ir.util.IrElementConstructorIndicator
 
 class IrRichFunctionReferenceImpl internal constructor(
     @Suppress("UNUSED_PARAMETER") constructorIndicator: IrElementConstructorIndicator?,
-    override val startOffset: Int,
-    override val endOffset: Int,
+    override var startOffset: Int,
+    override var endOffset: Int,
     override var type: IrType,
     override var reflectionTargetSymbol: IrFunctionSymbol?,
+    override var origin: IrStatementOrigin?,
     override var overriddenFunctionSymbol: IrSimpleFunctionSymbol,
     override var invokeFunction: IrSimpleFunction,
-    override var origin: IrStatementOrigin?,
     override var hasUnitConversion: Boolean,
     override var hasSuspendConversion: Boolean,
     override var hasVarargConversion: Boolean,
@@ -36,5 +36,5 @@ class IrRichFunctionReferenceImpl internal constructor(
 ) : IrRichFunctionReference() {
     override var attributeOwnerId: IrElement = this
 
-    override val boundValues: MutableList<IrExpression> = ArrayList()
+    override val boundValues: MutableList<IrExpression> = ArrayList(0)
 }

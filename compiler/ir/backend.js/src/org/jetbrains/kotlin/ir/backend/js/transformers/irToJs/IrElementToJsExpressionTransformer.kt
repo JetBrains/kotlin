@@ -74,10 +74,7 @@ class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsEx
             is IrConstKind.Byte -> JsIntLiteral((expression.value as Byte).toInt())
             is IrConstKind.Short -> JsIntLiteral((expression.value as Short).toInt())
             is IrConstKind.Int -> JsIntLiteral(expression.value as Int)
-            is IrConstKind.Long -> compilationException(
-                "Long const should have been lowered at this point",
-                expression
-            )
+            is IrConstKind.Long -> JsBigIntLiteral(expression.value as Long)
             is IrConstKind.Char -> compilationException(
                 "Char const should have been lowered at this point",
                 expression
@@ -179,8 +176,8 @@ class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsEx
         val callFuncRef = JsNameRef(Namer.CALL_FUNCTION, classNameRef)
         val fromPrimary = context.currentFunction is IrConstructor
         val thisRef =
-            if (fromPrimary) JsThisRef() else context.getNameForValueDeclaration(context.currentFunction!!.valueParameters.last()).makeRef()
-        val arguments = translateCallArguments(expression, context, this)
+            if (fromPrimary) JsThisRef() else context.getNameForValueDeclaration(context.currentFunction!!.parameters.last()).makeRef()
+        val arguments = translateNonDispatchCallArguments(expression, context, this).map { it.jsArgument }
 
         val constructor = expression.symbol.owner
         if (context.isClassInlineLike(constructor.parentAsClass)) {
@@ -198,8 +195,11 @@ class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsEx
     }
 
     override fun visitConstructorCall(expression: IrConstructorCall, context: JsGenerationContext): JsExpression {
+        context.staticContext.intrinsics[expression.symbol]?.let {
+            return it(expression, context)
+        }
         val function = expression.symbol.owner
-        val arguments = translateCallArguments(expression, context, this)
+        val arguments = translateNonDispatchCallArguments(expression, context, this)
         val klass = function.parentAsClass
 
         require(!context.isClassInlineLike(klass)) {
@@ -209,17 +209,11 @@ class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsEx
         return when {
             klass.isEffectivelyExternal() -> {
                 val refForExternalClass = klass.getClassRef(context.staticContext)
-                val varargParameterIndex = expression.symbol.owner.varargParameterIndex()
-                if (varargParameterIndex == -1) {
-                    JsNew(refForExternalClass, arguments)
+                if (expression.symbol.owner.parameters.none { it.isVararg }) {
+                    JsNew(refForExternalClass, arguments.memoryOptimizedMap { it.jsArgument })
                 } else {
-                    val argumentsAsSingleArray = argumentsWithVarargAsSingleArray(
-                        expression,
-                        context,
-                        JsNullLiteral(),
-                        arguments,
-                        varargParameterIndex
-                    )
+                    val dummyThisArg = TranslatedCallArgument(klass.thisReceiver!!, null, JsNullLiteral())
+                    val argumentsAsSingleArray = argumentsWithVarargAsSingleArray(listOf(dummyThisArg) + arguments, context)
                     JsNew(
                         JsInvocation(
                             JsNameRef("apply", JsNameRef("bind", JsNameRef("Function"))),
@@ -231,7 +225,7 @@ class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsEx
                 }
             }
             else -> {
-                JsNew(klass.getClassRef(context.staticContext), arguments)
+                JsNew(klass.getClassRef(context.staticContext), arguments.memoryOptimizedMap { it.jsArgument })
             }
         }.withSource(expression, context)
     }

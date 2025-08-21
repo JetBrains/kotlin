@@ -18,14 +18,6 @@ Tower Data Context:
     Element 7
         Scope: FirMemberTypeParameterScope
             Classifiers:
-                FirTypeParameterSymbol MyParam
-    Element 8
-        Implicit receiver:
-            FirRegularClassSymbol public final class Outer<MyParam> : R|kotlin/Any|
-                Type: test.Outer<MyParam>
-    Element 9
-        Scope: FirMemberTypeParameterScope
-            Classifiers:
                 FirTypeParameterSymbol T : <ERROR TYPE REF: Symbol not found for MyParam>
 
 FILE: [ResolvedTo(IMPORTS)] declaredInClass_fromNested_typeBound.kt

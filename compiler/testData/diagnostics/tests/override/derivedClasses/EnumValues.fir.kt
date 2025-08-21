@@ -6,3 +6,5 @@ enum class Direction {
 fun usage() {
     <!DEBUG_INFO_CALLABLE_OWNER("Direction.values in Direction")!>Direction.values()<!>
 }
+
+/* GENERATED_FIR_TAGS: enumDeclaration, enumEntry, functionDeclaration */

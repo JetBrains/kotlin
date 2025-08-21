@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
+import org.jetbrains.kotlin.fir.declarations.isLocal
 import org.jetbrains.kotlin.fir.declarations.utils.isOverride
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.types.abbreviatedTypeOrSelf
@@ -22,31 +23,34 @@ import org.jetbrains.kotlin.fir.types.isNothing
 
 object FirImplicitNothingReturnTypeChecker : FirCallableDeclarationChecker(MppCheckerKind.Common) {
 
-    override fun check(declaration: FirCallableDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirCallableDeclaration) {
         if (declaration !is FirSimpleFunction && declaration !is FirProperty) return
         if (declaration is FirProperty && declaration.isLocal) return
         if (declaration.isOverride) return
         if (declaration.origin == FirDeclarationOrigin.ScriptCustomization.ResultProperty) return
         if (declaration.symbol.hasExplicitReturnType) {
             val notDeclaredAsNothing = !declaration.returnTypeRef.coneType.abbreviatedTypeOrSelf.isNothing
-            val expandedNothing = declaration.returnTypeRef.coneType.fullyExpandedType(context.session).isNothing
+            val expandedNothing = declaration.returnTypeRef.coneType.fullyExpandedType().isNothing
             if (notDeclaredAsNothing && expandedNothing) {
+                @Suppress("REDUNDANT_ELSE_IN_WHEN")
                 val factory = when (declaration) {
                     is FirSimpleFunction -> FirErrors.ABBREVIATED_NOTHING_RETURN_TYPE
                     is FirProperty -> FirErrors.ABBREVIATED_NOTHING_PROPERTY_TYPE
                     else -> error("Should not be here")
                 }
-                reporter.reportOn(declaration.source, factory, context)
+                reporter.reportOn(declaration.source, factory)
             }
             return
         }
         if (declaration.returnTypeRef.coneType.isNothing) {
+            @Suppress("REDUNDANT_ELSE_IN_WHEN")
             val factory = when (declaration) {
                 is FirSimpleFunction -> FirErrors.IMPLICIT_NOTHING_RETURN_TYPE
                 is FirProperty -> FirErrors.IMPLICIT_NOTHING_PROPERTY_TYPE
                 else -> error("Should not be here")
             }
-            reporter.reportOn(declaration.source, factory, context)
+            reporter.reportOn(declaration.source, factory)
         }
     }
 }

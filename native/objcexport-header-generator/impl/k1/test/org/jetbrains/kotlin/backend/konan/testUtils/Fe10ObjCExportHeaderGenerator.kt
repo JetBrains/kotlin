@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.backend.konan.testUtils
 
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.util.Disposer
-import org.jetbrains.kotlin.backend.konan.UnitSuspendFunctionObjCExport
+import org.jetbrains.kotlin.config.nativeBinaryOptions.UnitSuspendFunctionObjCExport
 import org.jetbrains.kotlin.backend.konan.objcexport.*
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
@@ -108,6 +108,7 @@ private class Fe10HeaderGeneratorImpl(private val disposable: Disposable) : Head
             topLevelNamePrefix = configuration.frameworkName,
             local = false,
             objcGenerics = true,
+            explicitMethodFamily = configuration.explicitMethodFamily,
         )
 
         return ObjCExportHeaderGeneratorImpl(
@@ -116,6 +117,7 @@ private class Fe10HeaderGeneratorImpl(private val disposable: Disposable) : Head
             namer = namer,
             problemCollector = ObjCExportProblemCollector.SILENT,
             objcGenerics = true,
+            objcExportBlockExplicitParameterNames = configuration.objcExportBlockExplicitParameterNames,
             shouldExportKDoc = true,
             additionalImports = emptyList()
         )

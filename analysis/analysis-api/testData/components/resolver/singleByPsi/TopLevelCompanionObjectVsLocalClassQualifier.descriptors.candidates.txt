@@ -4,6 +4,7 @@ KtNameReferenceExpression(92,100): 'Conflict'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -11,15 +12,17 @@ KtNameReferenceExpression(92,100): 'Conflict'
           returnType = test.Conflict
           symbol = <constructor>(): test.Conflict
           valueParameters = []
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
-  
+
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -27,6 +30,7 @@ KtNameReferenceExpression(92,100): 'Conflict'
           returnType = test.Conflict
           symbol = <constructor>(): test.Conflict
           valueParameters = []
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = false

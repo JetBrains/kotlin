@@ -26,19 +26,19 @@ KaKotlinPropertySymbol:
     deprecationStatus: null
   callableId: test/foo
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
     annotations: []
     callableId: null
     compilerVisibility: Public
     contextReceivers: []
-    hasBody: false
     hasStableParameterNames: true
     isActual: false
-    isDefault: true
     isExpect: false
     isExtension: false
     isInline: false
+    isNotDefault: false
     isOverride: false
     location: PROPERTY
     modality: FINAL
@@ -89,6 +89,7 @@ KaKotlinPropertySymbol:
   javaGetterName: getFoo
   javaSetterName: null
   setterDeprecationStatus: null
+  isInline: false
 
 KaKotlinPropertySymbol:
   annotations: []
@@ -118,19 +119,19 @@ KaKotlinPropertySymbol:
     deprecationStatus: null
   callableId: test/internalFoo
   compilerVisibility: Internal
+  contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
     annotations: []
     callableId: null
     compilerVisibility: Internal
     contextReceivers: []
-    hasBody: false
     hasStableParameterNames: true
     isActual: false
-    isDefault: true
     isExpect: false
     isExtension: false
     isInline: false
+    isNotDefault: false
     isOverride: false
     location: PROPERTY
     modality: FINAL
@@ -181,6 +182,7 @@ KaKotlinPropertySymbol:
   javaGetterName: getInternalFoo
   javaSetterName: null
   setterDeprecationStatus: null
+  isInline: false
 
 KaKotlinPropertySymbol:
   annotations: []
@@ -210,19 +212,19 @@ KaKotlinPropertySymbol:
     deprecationStatus: null
   callableId: test/privateFoo
   compilerVisibility: Private
+  contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
     annotations: []
     callableId: null
     compilerVisibility: Private
     contextReceivers: []
-    hasBody: false
     hasStableParameterNames: true
     isActual: false
-    isDefault: true
     isExpect: false
     isExtension: false
     isInline: false
+    isNotDefault: false
     isOverride: false
     location: PROPERTY
     modality: FINAL
@@ -273,6 +275,7 @@ KaKotlinPropertySymbol:
   javaGetterName: getPrivateFoo
   javaSetterName: null
   setterDeprecationStatus: null
+  isInline: false
 
 KaKotlinPropertySymbol:
   annotations: []
@@ -302,19 +305,19 @@ KaKotlinPropertySymbol:
     deprecationStatus: null
   callableId: test/bar
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
     annotations: []
     callableId: null
     compilerVisibility: Public
     contextReceivers: []
-    hasBody: false
     hasStableParameterNames: true
     isActual: false
-    isDefault: true
     isExpect: false
     isExtension: false
     isInline: false
+    isNotDefault: false
     isOverride: false
     location: PROPERTY
     modality: FINAL
@@ -365,6 +368,7 @@ KaKotlinPropertySymbol:
   javaGetterName: getBar
   javaSetterName: null
   setterDeprecationStatus: null
+  isInline: false
 
 KaKotlinPropertySymbol:
   annotations: []
@@ -394,19 +398,19 @@ KaKotlinPropertySymbol:
     deprecationStatus: null
   callableId: test/internalBar
   compilerVisibility: Internal
+  contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
     annotations: []
     callableId: null
     compilerVisibility: Internal
     contextReceivers: []
-    hasBody: false
     hasStableParameterNames: true
     isActual: false
-    isDefault: true
     isExpect: false
     isExtension: false
     isInline: false
+    isNotDefault: false
     isOverride: false
     location: PROPERTY
     modality: FINAL
@@ -457,6 +461,7 @@ KaKotlinPropertySymbol:
   javaGetterName: getInternalBar
   javaSetterName: null
   setterDeprecationStatus: null
+  isInline: false
 
 KaKotlinPropertySymbol:
   annotations: []
@@ -486,19 +491,19 @@ KaKotlinPropertySymbol:
     deprecationStatus: null
   callableId: test/privateBar
   compilerVisibility: Private
+  contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
     annotations: []
     callableId: null
     compilerVisibility: Private
     contextReceivers: []
-    hasBody: false
     hasStableParameterNames: true
     isActual: false
-    isDefault: true
     isExpect: false
     isExtension: false
     isInline: false
+    isNotDefault: false
     isOverride: false
     location: PROPERTY
     modality: FINAL
@@ -549,11 +554,13 @@ KaKotlinPropertySymbol:
   javaGetterName: getPrivateBar
   javaSetterName: null
   setterDeprecationStatus: null
+  isInline: false
 
 KaNamedFunctionSymbol:
   annotations: []
   callableId: test/doFoo
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -591,6 +598,7 @@ KaNamedFunctionSymbol:
   annotations: []
   callableId: test/internalDoFoo
   compilerVisibility: Internal
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -628,6 +636,7 @@ KaNamedFunctionSymbol:
   annotations: []
   callableId: test/privateDoFoo
   compilerVisibility: Private
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -665,6 +674,7 @@ KaNamedFunctionSymbol:
   annotations: []
   callableId: test/doBar
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -702,6 +712,7 @@ KaNamedFunctionSymbol:
   annotations: []
   callableId: test/internalDoBar
   compilerVisibility: Internal
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -739,6 +750,7 @@ KaNamedFunctionSymbol:
   annotations: []
   callableId: test/privateDoBar
   compilerVisibility: Private
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true

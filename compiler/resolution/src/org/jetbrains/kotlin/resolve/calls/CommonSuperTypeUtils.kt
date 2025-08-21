@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.resolve.calls
 import org.jetbrains.kotlin.types.UnwrappedType
 import org.jetbrains.kotlin.types.checker.SimpleClassicTypeSystemContext
 
+@Suppress("EXTENSION_SHADOWED_BY_MEMBER")
 fun NewCommonSuperTypeCalculator.commonSuperType(types: List<UnwrappedType>): UnwrappedType {
-    return SimpleClassicTypeSystemContext.commonSuperType(types) as UnwrappedType
+    return with(SimpleClassicTypeSystemContext) { commonSuperType(types) } as UnwrappedType
 }

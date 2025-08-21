@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.dsl
 
+@Deprecated("Unused opt-in annotation. Scheduled for removal in Kotlin 2.4.")
 @RequiresOptIn(level = RequiresOptIn.Level.WARNING)
 @Target(AnnotationTarget.FUNCTION)
 annotation class ExperimentalDceDsl

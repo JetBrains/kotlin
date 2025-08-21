@@ -32,3 +32,5 @@ public class JavaClass {
 
     }
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, functionDeclaration, nestedClass */

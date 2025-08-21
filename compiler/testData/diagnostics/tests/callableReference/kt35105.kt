@@ -20,3 +20,6 @@ class Testclass {
         distinct(Testclass::entry, "filter")
     }
 }
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, classReference, functionDeclaration, inline, outProjection,
+propertyDeclaration, reified, stringLiteral, typeConstraint, typeParameter, vararg */

@@ -8,10 +8,18 @@ package org.jetbrains.kotlin.gradle.dsl
 /**
  * Common options for all Kotlin platforms' compilations and tools.
  */
+@OptIn(org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi::class)
 @Deprecated(
-    "The kotlinOptions types are deprecated, please migrate to the compilerOptions types. More details are here: https://kotl.in/u1r8ln"
+    message = org.jetbrains.kotlin.gradle.dsl.KOTLIN_OPTIONS_DEPRECATION_MESSAGE,
+    level = DeprecationLevel.ERROR,
 )
 interface KotlinCommonToolOptions {
+
+    @OptIn(org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi::class)
+    @Deprecated(
+        message = org.jetbrains.kotlin.gradle.dsl.KOTLIN_OPTIONS_DEPRECATION_MESSAGE,
+        level = DeprecationLevel.ERROR,
+    )
     /**
      * @suppress
      */
@@ -22,6 +30,11 @@ interface KotlinCommonToolOptions {
      *
      * Default value: false
      */
+    @OptIn(org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi::class)
+    @Deprecated(
+        message = org.jetbrains.kotlin.gradle.dsl.KOTLIN_OPTIONS_DEPRECATION_MESSAGE,
+        level = DeprecationLevel.WARNING,
+    )
     var allWarningsAsErrors: kotlin.Boolean
         get() = options.allWarningsAsErrors.get()
         set(value) = options.allWarningsAsErrors.set(value)
@@ -31,6 +44,11 @@ interface KotlinCommonToolOptions {
      *
      * Default value: false
      */
+    @OptIn(org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi::class)
+    @Deprecated(
+        message = org.jetbrains.kotlin.gradle.dsl.KOTLIN_OPTIONS_DEPRECATION_MESSAGE,
+        level = DeprecationLevel.WARNING,
+    )
     var suppressWarnings: kotlin.Boolean
         get() = options.suppressWarnings.get()
         set(value) = options.suppressWarnings.set(value)
@@ -40,6 +58,11 @@ interface KotlinCommonToolOptions {
      *
      * Default value: false
      */
+    @OptIn(org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi::class)
+    @Deprecated(
+        message = org.jetbrains.kotlin.gradle.dsl.KOTLIN_OPTIONS_DEPRECATION_MESSAGE,
+        level = DeprecationLevel.WARNING,
+    )
     var verbose: kotlin.Boolean
         get() = options.verbose.get()
         set(value) = options.verbose.set(value)
@@ -49,6 +72,11 @@ interface KotlinCommonToolOptions {
      *
      * Default value: emptyList<String>()
      */
+    @OptIn(org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi::class)
+    @Deprecated(
+        message = org.jetbrains.kotlin.gradle.dsl.KOTLIN_OPTIONS_DEPRECATION_MESSAGE,
+        level = DeprecationLevel.WARNING,
+    )
     var freeCompilerArgs: kotlin.collections.List<kotlin.String>
         get() = options.freeCompilerArgs.get()
         set(value) = options.freeCompilerArgs.set(value)

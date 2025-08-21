@@ -34,7 +34,7 @@ private val SUSPEND_FUNCTION_AS_GENERATOR by IrDeclarationOriginImpl
  * Transforms suspend function into a GeneratorCoroutineImpl instance and ES2015 generator.
  */
 class JsSuspendFunctionWithGeneratorsLowering(private val context: JsIrBackendContext) : DeclarationTransformer {
-    private val getContinuationSymbol = context.ir.symbols.getContinuation
+    private val getContinuationSymbol = context.symbols.getContinuation
     private val jsYieldFunctionSymbol = context.intrinsics.jsYieldFunctionSymbol
     private val suspendOrReturnFunctionSymbol = context.intrinsics.suspendOrReturnFunctionSymbol
     private val coroutineSuspendedGetterSymbol = context.symbols.coroutineSymbols.coroutineSuspendedGetter
@@ -47,7 +47,6 @@ class JsSuspendFunctionWithGeneratorsLowering(private val context: JsIrBackendCo
     }
 
     private fun transformSuspendFunction(function: IrSimpleFunction): List<IrFunction>? {
-        val originalReturnType = function.returnType.also { function.returnType = context.irBuiltIns.anyNType }
         val body = function.body ?: return null
         return when (val functionKind = getSuspendFunctionKind(context, function, body, includeSuspendLambda = false)) {
             is SuspendFunctionKind.NO_SUSPEND_CALLS -> null
@@ -56,6 +55,8 @@ class JsSuspendFunctionWithGeneratorsLowering(private val context: JsIrBackendCo
                 null
             }
             is SuspendFunctionKind.NEEDS_STATE_MACHINE -> {
+                val originalReturnType = function.returnType
+                function.returnType = context.irBuiltIns.anyNType
                 generateGeneratorAndItsWrapper(function, body, originalReturnType)
             }
         }

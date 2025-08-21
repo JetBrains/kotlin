@@ -9,3 +9,5 @@ fun foo() {
         return
     }<!>
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionalType, inline, lambdaLiteral, localProperty, propertyDeclaration */

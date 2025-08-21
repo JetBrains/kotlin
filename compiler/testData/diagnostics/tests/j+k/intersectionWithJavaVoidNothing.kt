@@ -16,3 +16,5 @@ abstract class Impl : BaseOwnerJava {
 }
 
 class Final : Impl(), BaseOwnerJava
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, javaType, override */

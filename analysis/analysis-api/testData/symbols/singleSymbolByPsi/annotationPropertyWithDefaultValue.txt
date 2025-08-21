@@ -25,25 +25,29 @@ KaValueParameterSymbol:
         typeArguments: []
         type: kotlin/Int
       visibility: PRIVATE
+      getDispatchReceiver(): KaUsualClassType:
+        annotations: []
+        typeArguments: []
+        type: pack/Anno
       getContainingFileSymbol: KaFileSymbol(annotationPropertyWithDefaultValue.kt)
       getContainingJvmClassName: pack.Anno
       getContainingModule: KaSourceModule "Sources of main"
       deprecationStatus: null
     callableId: pack/Anno.an
     compilerVisibility: Public
+    contextParameters: []
     contextReceivers: []
     getter: KaPropertyGetterSymbol:
       annotations: []
       callableId: null
       compilerVisibility: Public
       contextReceivers: []
-      hasBody: false
       hasStableParameterNames: true
       isActual: false
-      isDefault: true
       isExpect: false
       isExtension: false
       isInline: false
+      isNotDefault: false
       isOverride: false
       location: PROPERTY
       modality: FINAL
@@ -102,6 +106,7 @@ KaValueParameterSymbol:
     javaGetterName: getAn
     javaSetterName: null
     setterDeprecationStatus: null
+    isInline: false
   hasDefaultValue: true
   isActual: false
   isCrossinline: false

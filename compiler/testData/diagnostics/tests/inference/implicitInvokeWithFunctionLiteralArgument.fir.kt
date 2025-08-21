@@ -36,3 +36,7 @@ fun test(cb: FutureCallback<String>) {
         d checkType { _<Future<Int>>() }
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType, infix, inline,
+integerLiteral, interfaceDeclaration, lambdaLiteral, localProperty, nullableType, operator, propertyDeclaration,
+typeParameter, typeWithExtension */

@@ -24,16 +24,17 @@ import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.fir.visitors.transformInplace
 import org.jetbrains.kotlin.name.Name
 
-@OptIn(FirImplementationDetail::class, ResolveStateAccess::class)
+@OptIn(FirImplementationDetail::class, ResolveStateAccess::class, DirectDeclarationsAccess::class)
 internal class FirScriptImpl(
-    override val source: KtSourceElement?,
     resolvePhase: FirResolvePhase,
     override var annotations: MutableOrEmptyList<FirAnnotation>,
     override val moduleData: FirModuleData,
     override val origin: FirDeclarationOrigin,
     override val attributes: FirDeclarationAttributes,
     override val name: Name,
+    @property:DirectDeclarationsAccess
     override val declarations: MutableList<FirDeclaration>,
+    override val source: KtSourceElement,
     override val symbol: FirScriptSymbol,
     override val parameters: MutableList<FirProperty>,
     override var receivers: MutableOrEmptyList<FirScriptReceiverParameter>,

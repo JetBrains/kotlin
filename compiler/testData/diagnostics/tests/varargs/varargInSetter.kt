@@ -5,3 +5,5 @@ class My {
             x = value
         }
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, outProjection, propertyDeclaration, setter, stringLiteral, vararg */

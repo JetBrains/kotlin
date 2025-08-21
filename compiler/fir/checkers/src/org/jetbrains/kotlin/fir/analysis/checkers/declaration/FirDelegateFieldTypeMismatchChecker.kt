@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
-import org.jetbrains.kotlin.fir.declarations.FirRegularClass
+import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.delegateFieldsMap
 import org.jetbrains.kotlin.fir.expressions.FirCall
 import org.jetbrains.kotlin.fir.expressions.toReference
@@ -20,9 +20,10 @@ import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.isSubtypeOf
 import org.jetbrains.kotlin.fir.types.resolvedType
 
-object FirDelegateFieldTypeMismatchChecker : FirRegularClassChecker(MppCheckerKind.Common) {
+object FirDelegateFieldTypeMismatchChecker : FirClassChecker(MppCheckerKind.Common) {
     @SymbolInternals
-    override fun check(declaration: FirRegularClass, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirClass) {
         for (it in declaration.superTypeRefs.indices) {
             val supertype = declaration.superTypeRefs[it]
             val field = declaration.delegateFieldsMap?.get(it)?.fir ?: continue
@@ -38,8 +39,7 @@ object FirDelegateFieldTypeMismatchChecker : FirRegularClassChecker(MppCheckerKi
                     FirErrors.TYPE_MISMATCH,
                     field.returnTypeRef.coneType,
                     initializer.resolvedType,
-                    false,
-                    context,
+                    false
                 )
             }
         }

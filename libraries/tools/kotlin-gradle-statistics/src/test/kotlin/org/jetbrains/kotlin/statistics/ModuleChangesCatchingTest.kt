@@ -8,12 +8,12 @@ package org.jetbrains.kotlin.statistics
 import org.jetbrains.kotlin.statistics.metrics.BooleanMetrics
 import org.jetbrains.kotlin.statistics.metrics.NumericalMetrics
 import org.jetbrains.kotlin.statistics.metrics.StringMetrics
+import org.junit.Test
 import java.io.File
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
 import java.security.MessageDigest
-import kotlin.test.Test
 import kotlin.test.assertEquals
 
 private const val SOURCE_CODE_RELATIVE_PATH =
@@ -22,8 +22,8 @@ private const val BOOLEAN_METRICS_RELATIVE_PATH = "$SOURCE_CODE_RELATIVE_PATH/Bo
 private const val STRING_METRICS_RELATIVE_PATH = "$SOURCE_CODE_RELATIVE_PATH/StringMetrics.kt"
 private const val NUMERICAL_METRICS_RELATIVE_PATH = "$SOURCE_CODE_RELATIVE_PATH/NumericalMetrics.kt"
 
-private val STRING_METRICS_EXPECTED_VERSION_AND_HASH = Pair(2, "636529439256b809cd4fb99e20310505")
-private val BOOLEAN_METRICS_EXPECTED_VERSION_AND_HASH = Pair(13, "ba7fd08fe8ec00bd52de958c21335065")
+private val STRING_METRICS_EXPECTED_VERSION_AND_HASH = Pair(6, "9590d0e39131ec9814649a6e38a5b81e")
+private val BOOLEAN_METRICS_EXPECTED_VERSION_AND_HASH = Pair(18, "9b3c89aec68148b6237c18128fdbaecc")
 private val NUMERICAL_METRICS_EXPECTED_VERSION_AND_HASH = Pair(2, "d8c1a1f4fb7227fbe8247320bf3370ca")
 private val SOURCE_FOLDER_EXPECTED_VERSION_AND_HASH =
     Pair(

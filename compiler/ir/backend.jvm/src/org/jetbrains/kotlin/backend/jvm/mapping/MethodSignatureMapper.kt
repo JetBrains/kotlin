@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.jvm.mapping
 
+import org.jetbrains.kotlin.backend.common.defaultArgumentsOriginalFunction
 import org.jetbrains.kotlin.backend.jvm.*
 import org.jetbrains.kotlin.backend.jvm.ir.*
 import org.jetbrains.kotlin.builtins.StandardNames
@@ -17,9 +18,8 @@ import org.jetbrains.kotlin.codegen.state.isMethodWithDeclarationSiteWildcardsFq
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyClass
 import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyFunctionBase
-import org.jetbrains.kotlin.ir.declarations.lazy.IrMaybeDeserializedClass
+import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyClassBase
 import org.jetbrains.kotlin.ir.descriptors.IrBasedSimpleFunctionDescriptor
 import org.jetbrains.kotlin.ir.descriptors.toIrBasedDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrCall
@@ -31,9 +31,8 @@ import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.java.SpecialGenericSignatures
 import org.jetbrains.kotlin.load.java.getOverriddenBuiltinReflectingJvmDescriptor
 import org.jetbrains.kotlin.load.kotlin.*
-import org.jetbrains.kotlin.metadata.deserialization.getExtensionOrNull
-import org.jetbrains.kotlin.metadata.jvm.JvmProtoBuf
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
+import org.jetbrains.kotlin.name.JvmStandardClassIds
 import org.jetbrains.kotlin.name.JvmStandardClassIds.JVM_SUPPRESS_WILDCARDS_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.name.NameUtils
 import org.jetbrains.kotlin.resolve.jvm.JAVA_LANG_RECORD_FQ_NAME
@@ -134,6 +133,7 @@ class MethodSignatureMapper(private val context: JvmBackendContext, private val 
             origin != JvmLoweredDeclarationOrigin.STATIC_MULTI_FIELD_VALUE_CLASS_CONSTRUCTOR &&
             origin != JvmLoweredDeclarationOrigin.SYNTHETIC_METHOD_FOR_PROPERTY_OR_TYPEALIAS_ANNOTATIONS &&
             origin != IrDeclarationOrigin.PROPERTY_DELEGATE &&
+            origin != IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER &&
             !isPublishedApi()
         ) {
             return (originalFunction.takeIf { it != this } as? IrSimpleFunction)
@@ -146,7 +146,7 @@ class MethodSignatureMapper(private val context: JvmBackendContext, private val 
 
     private val IrSimpleFunction.originalForDefaultAdapter: IrSimpleFunction?
         get() = if (origin == IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER) {
-            (attributeOwnerId as IrFunction).symbol.owner as IrSimpleFunction
+            defaultArgumentsOriginalFunction as IrSimpleFunction
         } else null
 
     private fun getModuleName(function: IrSimpleFunction): String =
@@ -187,7 +187,8 @@ class MethodSignatureMapper(private val context: JvmBackendContext, private val 
 
     // See also: KotlinTypeMapper.forceBoxedReturnType
     private fun forceBoxedReturnType(function: IrFunction): Boolean =
-        isBoxMethodForInlineClass(function) ||
+        (function.hasAnnotation(JvmStandardClassIds.JVM_EXPOSE_BOXED_ANNOTATION_FQ_NAME) && function.returnType.isInlineClassType()) ||
+                isBoxMethodForInlineClass(function) ||
                 forceFoxedReturnTypeOnOverride(function) ||
                 forceBoxedReturnTypeOnDefaultImplFun(function) ||
                 function.isFromJava() && function.returnType.isInlineClassType()
@@ -199,7 +200,7 @@ class MethodSignatureMapper(private val context: JvmBackendContext, private val 
 
     private fun forceBoxedReturnTypeOnDefaultImplFun(function: IrFunction): Boolean {
         if (function !is IrSimpleFunction) return false
-        val originalFun = context.cachedDeclarations.getOriginalFunctionForDefaultImpl(function) ?: return false
+        val originalFun = function.originalFunctionForDefaultImpl ?: return false
         return forceFoxedReturnTypeOnOverride(originalFun)
     }
 
@@ -343,13 +344,20 @@ class MethodSignatureMapper(private val context: JvmBackendContext, private val 
             if (type.isInlineClassType() && declaration.isFromJava()) {
                 typeMapper.mapType(type, TypeMappingMode.GENERIC_ARGUMENT, sw, materialized)
             } else {
-                typeMapper.mapType(type, TypeMappingMode.DEFAULT, sw, materialized)
+                typeMapper.mapType(type, declaration.wrapInlineClassForExposeFunction(TypeMappingMode.DEFAULT, type), sw, materialized)
             }
             return
         }
 
         val mode = getTypeMappingModeForParameter(typeSystem, declaration, type)
-        typeMapper.mapType(type, mode, sw, materialized)
+        typeMapper.mapType(type, declaration.wrapInlineClassForExposeFunction(mode, type), sw, materialized)
+    }
+
+    private fun IrDeclaration.wrapInlineClassForExposeFunction(mode: TypeMappingMode, type: IrType): TypeMappingMode {
+        if (hasAnnotation(JvmStandardClassIds.JVM_EXPOSE_BOXED_ANNOTATION_FQ_NAME) && type.isInlineClassType()) {
+            return mode.wrapInlineClassesMode()
+        }
+        return mode
     }
 
     // TODO get rid of 'caller' argument
@@ -465,15 +473,10 @@ class MethodSignatureMapper(private val context: JvmBackendContext, private val 
         var current: IrDeclarationParent? = function.parent
         while (current != null) {
             when (current) {
-                is IrLazyClass -> {
-                    val classProto = current.classProto ?: return null
-                    val nameResolver = current.nameResolver ?: return null
-                    return classProto.getExtensionOrNull(JvmProtoBuf.classModuleName)
-                        ?.let(nameResolver::getString)
-                        ?: JvmProtoBufUtil.DEFAULT_MODULE_NAME
+                is IrLazyClassBase -> {
+                    val moduleName = if (current.isK2) current.moduleName else current.irLazyClassModuleName
+                    return moduleName ?: JvmProtoBufUtil.DEFAULT_MODULE_NAME
                 }
-                is IrMaybeDeserializedClass ->
-                    return current.moduleName ?: JvmProtoBufUtil.DEFAULT_MODULE_NAME
                 is IrExternalPackageFragment -> {
                     val source = current.containerSource ?: return null
                     return (source as? JvmPackagePartSource)?.moduleName

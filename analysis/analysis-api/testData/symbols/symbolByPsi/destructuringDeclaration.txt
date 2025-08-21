@@ -46,25 +46,29 @@ KaConstructorSymbol:
             typeArguments: []
             type: kotlin/Int
           visibility: PRIVATE
+          getDispatchReceiver(): KaUsualClassType:
+            annotations: []
+            typeArguments: []
+            type: P
           getContainingFileSymbol: KaFileSymbol(destructuringDeclaration.kt)
           getContainingJvmClassName: P
           getContainingModule: KaSourceModule "Sources of main"
           deprecationStatus: null
         callableId: /P.x
         compilerVisibility: Public
+        contextParameters: []
         contextReceivers: []
         getter: KaPropertyGetterSymbol:
           annotations: []
           callableId: null
           compilerVisibility: Public
           contextReceivers: []
-          hasBody: false
           hasStableParameterNames: true
           isActual: false
-          isDefault: true
           isExpect: false
           isExtension: false
           isInline: false
+          isNotDefault: false
           isOverride: false
           location: PROPERTY
           modality: FINAL
@@ -123,6 +127,7 @@ KaConstructorSymbol:
         javaGetterName: getX
         javaSetterName: null
         setterDeprecationStatus: null
+        isInline: false
       hasDefaultValue: false
       isActual: false
       isCrossinline: false
@@ -173,25 +178,29 @@ KaConstructorSymbol:
             typeArguments: []
             type: kotlin/Int
           visibility: PRIVATE
+          getDispatchReceiver(): KaUsualClassType:
+            annotations: []
+            typeArguments: []
+            type: P
           getContainingFileSymbol: KaFileSymbol(destructuringDeclaration.kt)
           getContainingJvmClassName: P
           getContainingModule: KaSourceModule "Sources of main"
           deprecationStatus: null
         callableId: /P.y
         compilerVisibility: Public
+        contextParameters: []
         contextReceivers: []
         getter: KaPropertyGetterSymbol:
           annotations: []
           callableId: null
           compilerVisibility: Public
           contextReceivers: []
-          hasBody: false
           hasStableParameterNames: true
           isActual: false
-          isDefault: true
           isExpect: false
           isExtension: false
           isInline: false
+          isNotDefault: false
           isOverride: false
           location: PROPERTY
           modality: FINAL
@@ -250,6 +259,7 @@ KaConstructorSymbol:
         javaGetterName: getY
         javaSetterName: null
         setterDeprecationStatus: null
+        isInline: false
       hasDefaultValue: false
       isActual: false
       isCrossinline: false
@@ -319,6 +329,7 @@ KaLocalVariableSymbol:
   isActual: false
   isExpect: false
   isExtension: false
+  isLateInit: false
   isVal: true
   location: LOCAL
   modality: FINAL
@@ -343,6 +354,7 @@ KaLocalVariableSymbol:
   isActual: false
   isExpect: false
   isExtension: false
+  isLateInit: false
   isVal: true
   location: LOCAL
   modality: FINAL
@@ -363,6 +375,7 @@ KaNamedFunctionSymbol:
   annotations: []
   callableId: /destruct
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true

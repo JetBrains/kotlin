@@ -1,3 +1,5 @@
 // RUN_PIPELINE_TILL: BACKEND
 // WITH_STDLIB
 val foo = Long.MAX_VALUE.<!REDUNDANT_CALL_OF_CONVERSION_METHOD!>toLong()<!>
+
+/* GENERATED_FIR_TAGS: propertyDeclaration */

@@ -27,3 +27,6 @@ fun use(beforeRunTask: BeforeRunTask<*>) {
     }
 }
 
+/* GENERATED_FIR_TAGS: capturedType, classDeclaration, classReference, flexibleType, functionDeclaration, ifExpression,
+interfaceDeclaration, intersectionType, isExpression, javaFunction, nullableType, smartcast, starProjection,
+typeParameter */

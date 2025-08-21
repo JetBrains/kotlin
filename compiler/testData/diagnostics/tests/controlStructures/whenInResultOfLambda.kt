@@ -18,3 +18,6 @@ val test5 = {
         else -> println()
     }
 }
+
+/* GENERATED_FIR_TAGS: equalityExpression, functionDeclaration, functionalType, integerLiteral, intersectionType,
+lambdaLiteral, nullableType, propertyDeclaration, stringLiteral, whenExpression, whenWithSubject */

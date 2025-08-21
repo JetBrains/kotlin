@@ -31,7 +31,8 @@ import org.jetbrains.kotlin.types.EnrichedProjectionKind
 import org.jetbrains.kotlin.types.Variance
 
 object FirPrivateToThisAccessChecker : FirQualifiedAccessExpressionChecker(MppCheckerKind.Common) {
-    override fun check(expression: FirQualifiedAccessExpression, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(expression: FirQualifiedAccessExpression) {
         val reference = expression.calleeReference.resolved ?: return
         if (reference is FirResolvedErrorReference) {
             // If there was a visibility diagnostic, no need to report another one about visibility
@@ -57,10 +58,9 @@ object FirPrivateToThisAccessChecker : FirQualifiedAccessExpressionChecker(MppCh
             reporter.reportOn(
                 source = expression.source,
                 factory = FirErrors.INVISIBLE_REFERENCE,
-                symbol,
-                Visibilities.PrivateToThis,
-                symbol.callableId.classId,
-                context,
+                a = symbol,
+                b = Visibilities.PrivateToThis,
+                c = symbol.callableId!!.classId
             )
         }
     }
@@ -77,7 +77,7 @@ object FirPrivateToThisAccessChecker : FirQualifiedAccessExpressionChecker(MppCh
         // We have to explicitly exclude data class copy because a general case isn't yet supported KT-35396
         if (symbol.isDataClassCopy(containingClassSymbol, session)) return false
 
-        if (symbol.receiverParameter?.typeRef?.coneType?.contradictsWith(Variance.IN_VARIANCE, session) == true) {
+        if (symbol.resolvedReceiverType?.contradictsWith(Variance.IN_VARIANCE, session) == true) {
             return true
         }
         if (symbol.resolvedReturnType.contradictsWith(
@@ -93,6 +93,11 @@ object FirPrivateToThisAccessChecker : FirQualifiedAccessExpressionChecker(MppCh
                 if (parameter.resolvedReturnType.contradictsWith(Variance.IN_VARIANCE, session)) {
                     return true
                 }
+            }
+        }
+        for (parameter in symbol.contextParameterSymbols) {
+            if (parameter.resolvedReturnType.contradictsWith(Variance.IN_VARIANCE, session)) {
+                return true
             }
         }
         return false

@@ -40,3 +40,6 @@ actual interface I3 {
 actual interface I4 {
     fun <T> foo()
 }
+
+/* GENERATED_FIR_TAGS: actual, expect, funInterface, functionDeclaration, integerLiteral, interfaceDeclaration,
+nullableType, propertyDeclaration, typeParameter */

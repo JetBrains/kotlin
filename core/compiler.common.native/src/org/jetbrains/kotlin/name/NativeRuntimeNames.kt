@@ -5,9 +5,39 @@
 
 package org.jetbrains.kotlin.name
 
+import java.util.concurrent.atomic.AtomicReference
+
 object NativeRuntimeNames {
     private val kotlinNativePackage = FqName("kotlin.native")
     private val kotlinNativeInternalPackage = kotlinNativePackage.child(Name.identifier("internal"))
+
+    val AtomicInt = ClassId(StandardClassIds.BASE_CONCURRENT_PACKAGE, Name.identifier("AtomicInt"))
+    val AtomicLong = ClassId(StandardClassIds.BASE_CONCURRENT_PACKAGE, Name.identifier("AtomicLong"))
+    val AtomicReference = ClassId(StandardClassIds.BASE_CONCURRENT_PACKAGE, Name.identifier("AtomicReference"))
+
+    val atomicByPrimitive = mapOf(
+        StandardClassIds.Int to AtomicInt,
+        StandardClassIds.Long to AtomicLong,
+    )
+
+    val AtomicArray = ClassId(StandardClassIds.BASE_CONCURRENT_PACKAGE, Name.identifier("AtomicArray"))
+    val AtomicIntArray = ClassId(StandardClassIds.BASE_CONCURRENT_PACKAGE, Name.identifier("AtomicIntArray"))
+    val AtomicLongArray = ClassId(StandardClassIds.BASE_CONCURRENT_PACKAGE, Name.identifier("AtomicLongArray"))
+
+    val atomicArrayByPrimitive = mapOf(
+        StandardClassIds.Int to AtomicIntArray,
+        StandardClassIds.Long to AtomicLongArray,
+    )
+
+    object Callables {
+        val AtomicArray = "AtomicArray".callableId(StandardClassIds.BASE_CONCURRENT_PACKAGE)
+
+        val atomicReferenceCompareAndSet = "compareAndSet".callableId(AtomicReference)
+        val atomicReferenceCompareAndExchange = "compareAndExchange".callableId(AtomicReference)
+        val atomicArrayCompareAndSet = "compareAndSet".callableId(NativeRuntimeNames.AtomicArray)
+        val atomicArrayCompareAndExchange = "compareAndExchange".callableId(NativeRuntimeNames.AtomicArray)
+    }
+
     object Annotations {
         val symbolNameClassId = ClassId(kotlinNativePackage, Name.identifier("SymbolName"))
         val cNameClassId = ClassId(kotlinNativePackage, Name.identifier("CName"))
@@ -29,3 +59,6 @@ object NativeRuntimeNames {
         val BindClassToObjCName = ClassId(kotlinNativeInternalPackage.child(Name.identifier("objc")), Name.identifier("BindClassToObjCName"))
     }
 }
+
+private fun String.callableId(packageName: FqName) = CallableId(packageName, Name.identifier(this))
+private fun String.callableId(classId: ClassId) = CallableId(classId, Name.identifier(this))

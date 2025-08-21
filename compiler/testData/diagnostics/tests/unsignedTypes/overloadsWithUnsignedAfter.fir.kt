@@ -21,3 +21,6 @@ fun main() {
     doStuffTa(uByte)
     doStuffComparable(uByte)
 }
+
+/* GENERATED_FIR_TAGS: funWithExtensionReceiver, functionDeclaration, localProperty, propertyDeclaration, stringLiteral,
+typeAliasDeclaration */

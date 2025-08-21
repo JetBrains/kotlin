@@ -14,3 +14,6 @@ fun foo(x: MutableList<String>, y: ArrayList<String>, z: A<String>, c: Comparato
     y.<!DEBUG_INFO_CALL("fqName: kotlin.collections.sort; typeCall: inline extension function")!><!DEPRECATION_ERROR!>sort<!>(c)<!>
     z.<!DEBUG_INFO_CALL("fqName: kotlin.collections.sort; typeCall: inline extension function")!><!DEPRECATION_ERROR!>sort<!>(c)<!>
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, inProjection, nullableType, override, superExpression,
+typeParameter */

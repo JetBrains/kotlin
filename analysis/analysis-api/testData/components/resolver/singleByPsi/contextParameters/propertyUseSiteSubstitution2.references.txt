@@ -1,0 +1,4 @@
+KtNameReferenceExpression(170,173): 'foo'
+  KtSimpleNameReference:
+    (in Base) context(c@C)
+    abstract val R.foo: kotlin.Boolean

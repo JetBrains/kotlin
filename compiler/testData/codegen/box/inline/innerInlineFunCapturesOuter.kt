@@ -1,5 +1,4 @@
 // KT-66096: java.lang.IllegalAccessError: tried to access field a.E$Inner.this$0 from class MainKt
-// DONT_TARGET_EXACT_BACKEND: JVM
 // WITH_STDLIB
 // MODULE: lib
 // FILE: lib.kt

@@ -1,7 +1,6 @@
 // LATEST_LV_DIFFERENCE
-// RUN_PIPELINE_TILL: FIR2IR
+// RUN_PIPELINE_TILL: BACKEND
 // IGNORE_FIR_DIAGNOSTICS
-// DISABLE_NEXT_PHASE_SUGGESTION: we need to run fi2ir to get all actualization diagnostics
 
 // MODULE: m1-common
 // FILE: common.kt
@@ -36,3 +35,5 @@ actual open class ExpectBase {
 actual class Baz : ExpectBase() {
     actual override fun <!ACTUAL_WITHOUT_EXPECT!>foo<!>() {}
 }
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, functionDeclaration, override */

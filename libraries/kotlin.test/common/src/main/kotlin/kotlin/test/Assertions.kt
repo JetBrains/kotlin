@@ -280,8 +280,8 @@ public fun <T : Comparable<T>> assertContains(range: ClosedRange<T>, value: T, m
 }
 
 /** Asserts that the [range] contains the specified [value], with an optional [message]. */
-@SinceKotlin("1.7")
-@ExperimentalStdlibApi
+@SinceKotlin("2.2")
+@WasExperimental(ExperimentalStdlibApi::class)
 public fun <T : Comparable<T>> assertContains(range: OpenEndRange<T>, value: T, message: String? = null) {
     assertRangeContains(range, value, message, OpenEndRange<T>::contains)
 }

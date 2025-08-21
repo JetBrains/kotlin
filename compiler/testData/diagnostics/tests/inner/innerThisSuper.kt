@@ -21,3 +21,6 @@ class Outer : Trait {
         val s = super@Outer.bar()
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, inner, integerLiteral, interfaceDeclaration, nestedClass,
+propertyDeclaration, superExpression, thisExpression */

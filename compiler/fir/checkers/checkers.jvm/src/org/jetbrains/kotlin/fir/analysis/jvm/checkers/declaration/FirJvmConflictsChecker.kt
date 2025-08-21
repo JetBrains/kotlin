@@ -21,7 +21,8 @@ import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.java.javaSymbolProvider
 
 object FirJvmConflictsChecker : FirClassLikeChecker(MppCheckerKind.Common) {
-    override fun check(declaration: FirClassLikeDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirClassLikeDeclaration) {
         val checkRedeclaration = when (declaration) {
             is FirAnonymousObject -> false
             // Java classes are allowed to "redeclare" expect classes. It's called Kotlin-to-Java direct actualization
@@ -35,7 +36,7 @@ object FirJvmConflictsChecker : FirClassLikeChecker(MppCheckerKind.Common) {
         }
         val javaSymbol = context.session.javaSymbolProvider?.getClassLikeSymbolByClassId(declaration.classId) ?: return
         reporter.reportOn(
-            declaration.source, FirErrors.CLASSIFIER_REDECLARATION, listOf(declaration.symbol, javaSymbol), context
+            declaration.source, FirErrors.CLASSIFIER_REDECLARATION, listOf(declaration.symbol, javaSymbol)
         )
     }
 }

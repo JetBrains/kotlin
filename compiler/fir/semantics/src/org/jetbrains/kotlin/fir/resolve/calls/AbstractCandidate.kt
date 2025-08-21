@@ -28,4 +28,5 @@ abstract class AbstractCallCandidate<P : AbstractConeResolutionAtom> : AbstractC
     abstract val diagnostics: List<ResolutionDiagnostic>
     abstract val errors: List<ConstraintSystemError>
     abstract val system: NewConstraintSystem
+    abstract val usedOuterCs: Boolean
 }

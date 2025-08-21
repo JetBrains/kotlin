@@ -19,3 +19,7 @@ val test1 = generate {
 }
 
 class Pair<T, R>
+
+/* GENERATED_FIR_TAGS: annotationUseSiteTargetFile, classDeclaration, classReference, functionDeclaration,
+functionalType, integerLiteral, lambdaLiteral, nullableType, propertyDeclaration, stringLiteral, suspend, typeParameter,
+typeWithExtension */

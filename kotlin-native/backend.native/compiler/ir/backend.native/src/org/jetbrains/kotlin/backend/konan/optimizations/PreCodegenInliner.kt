@@ -14,20 +14,20 @@ import org.jetbrains.kotlin.backend.konan.NativeGenerationState
 import org.jetbrains.kotlin.backend.konan.ir.isArray
 import org.jetbrains.kotlin.backend.konan.ir.konanLibrary
 import org.jetbrains.kotlin.backend.konan.lower.bridgeTarget
+import org.jetbrains.kotlin.backend.konan.lower.liveVariablesAtSuspensionPoint
 import org.jetbrains.kotlin.backend.konan.lower.originalConstructor
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.isSingleFieldValueClass
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
+import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
 import org.jetbrains.kotlin.ir.expressions.IrSuspensionPoint
 import org.jetbrains.kotlin.ir.inline.FunctionInlining
 import org.jetbrains.kotlin.ir.inline.InlineFunctionResolver
-import org.jetbrains.kotlin.ir.inline.InlineMode
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.library.metadata.isCInteropLibrary
-import kotlin.collections.*
 
 /*
  * A simple greedy inliner. Traverses the call graph and inlines all the callees with size less than a specified threshold.
@@ -40,7 +40,7 @@ internal class PreCodegenInliner(
         val callGraph: CallGraph,
 ) {
     private val context = generationState.context
-    private val symbols = context.ir.symbols
+    private val symbols = context.symbols
     private val noInline = symbols.noInline
     private val string = symbols.string
     private val throwable = symbols.throwable
@@ -106,7 +106,7 @@ internal class PreCodegenInliner(
                             || irFunction.konanLibrary?.isCInteropLibrary() == true
                             || irFunction.originalConstructor?.let { constructor ->
                                 // To support IR pattern recognition in IrToBitcode.kt on IrConstantObject generation.
-                                constructor.valueParameters.isEmpty()
+                                constructor.parameters.isEmpty()
                                         && constructor.constructedClass.superTypes.any {
                                     it.classOrNull == kFunctionImpl || it.classOrNull == kSuspendFunctionImpl
                                 }
@@ -148,12 +148,13 @@ internal class PreCodegenInliner(
                     if (functionsToInline.isNotEmpty()) {
                         val inliner = FunctionInlining(
                                 context,
-                                inlineFunctionResolver = object : InlineFunctionResolver(inlineMode = InlineMode.ALL_FUNCTIONS) {
-                                    override fun shouldExcludeFunctionFromInlining(symbol: IrFunctionSymbol) =
-                                            symbol.owner !in functionsToInline
+                                inlineFunctionResolver = object : InlineFunctionResolver() {
+                                    override fun getFunctionDeclaration(symbol: IrFunctionSymbol): IrFunction? {
+                                        return symbol.owner.takeIf { it in functionsToInline }
+                                    }
 
-                                    override fun needsInlining(expression: IrFunctionAccessExpression): Boolean {
-                                        return (expression as? IrCall)?.isVirtualCall != true
+                                    override fun shouldSkipBecauseOfCallSite(expression: IrMemberAccessExpression<IrFunctionSymbol>): Boolean {
+                                        return expression is IrCall && expression.isVirtualCall
                                     }
                                 },
                         )
@@ -162,7 +163,7 @@ internal class PreCodegenInliner(
                         // KT-72336: This is not entirely correct since coroutinesLivenessAnalysisPhase could be turned off.
                         LivenessAnalysis.run(irBody) { it is IrSuspensionPoint }
                                 .forEach { (irElement, liveVariables) ->
-                                    generationState.liveVariablesAtSuspensionPoints[irElement as IrSuspensionPoint] = liveVariables
+                                    (irElement as IrSuspensionPoint).liveVariablesAtSuspensionPoint = liveVariables
                                 }
 
                         val rebuiltFunction = FunctionDFGBuilder(generationState, moduleDFG.symbolTable).build(irFunction)

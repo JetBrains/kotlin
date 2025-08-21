@@ -12,3 +12,5 @@ class Outer<T> {
         fun foo(t: T) = t
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, inner, nestedClass, nullableType, typeParameter */

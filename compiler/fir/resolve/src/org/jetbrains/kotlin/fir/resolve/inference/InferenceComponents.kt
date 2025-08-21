@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.resolve.inference
 
+import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSessionComponent
 import org.jetbrains.kotlin.fir.NoMutableState
@@ -27,26 +28,35 @@ class InferenceComponents(val session: FirSession) : FirSessionComponent {
             approximator,
             trivialConstraintTypeInferenceOracle,
             ConeConstraintSystemUtilContext,
-            session.languageVersionSettings
+            session.languageVersionSettings,
+            session.inferenceLogger,
         )
     private val injector = ConstraintInjector(
         incorporator,
         approximator,
         session.languageVersionSettings,
+        session.inferenceLogger,
     )
     val resultTypeResolver: ResultTypeResolver =
         ResultTypeResolver(approximator, trivialConstraintTypeInferenceOracle, session.languageVersionSettings)
     val variableFixationFinder: VariableFixationFinder =
-        VariableFixationFinder(trivialConstraintTypeInferenceOracle, session.languageVersionSettings)
+        VariableFixationFinder(
+            trivialConstraintTypeInferenceOracle,
+            session.languageVersionSettings,
+            session.inferenceLogger,
+        )
     val postponedArgumentInputTypesResolver: PostponedArgumentInputTypesResolver =
         PostponedArgumentInputTypesResolver(
-            resultTypeResolver, variableFixationFinder, ConeConstraintSystemUtilContext, session.languageVersionSettings
+            resultTypeResolver, variableFixationFinder, ConeConstraintSystemUtilContext
         )
 
     val constraintSystemFactory: ConstraintSystemFactory = ConstraintSystemFactory()
 
     fun createConstraintSystem(): NewConstraintSystemImpl {
-        return NewConstraintSystemImpl(injector, typeContext, session.languageVersionSettings)
+        return NewConstraintSystemImpl(
+            injector, typeContext,
+            session.languageVersionSettings,
+        )
     }
 
     inner class ConstraintSystemFactory {

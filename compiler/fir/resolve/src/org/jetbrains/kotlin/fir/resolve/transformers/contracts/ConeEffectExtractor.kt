@@ -5,23 +5,25 @@
 
 package org.jetbrains.kotlin.fir.resolve.transformers.contracts
 
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.contracts.description.*
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.SessionHolder
 import org.jetbrains.kotlin.fir.contracts.description.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.isEnabled
 import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeContractDescriptionError
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.getContainingClass
 import org.jetbrains.kotlin.fir.resolve.referencedMemberSymbol
+import org.jetbrains.kotlin.fir.resolve.toTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.resolvedType
-import org.jetbrains.kotlin.fir.resolve.toTypeParameterSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirReceiverParameterSymbol
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitor
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
@@ -30,10 +32,10 @@ import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 
 class ConeEffectExtractor(
-    private val session: FirSession,
+    override val session: FirSession,
     private val owner: FirContractDescriptionOwner,
-    private val valueParameters: List<FirValueParameter>
-) : FirDefaultVisitor<ConeContractDescriptionElement, Nothing?>() {
+    private val valueAndContextParameters: List<FirValueParameter>
+) : FirDefaultVisitor<ConeContractDescriptionElement, Nothing?>(), SessionHolder {
     companion object {
         private val BOOLEAN_AND = FirContractsDslNames.id("kotlin", "Boolean", "and")
         private val BOOLEAN_OR = FirContractsDslNames.id("kotlin", "Boolean", "or")
@@ -85,6 +87,30 @@ class ConeEffectExtractor(
                         null -> KtErroneousCallsEffectDeclaration(reference, ConeContractDescriptionError.UnresolvedInvocationKind(argument))
                         else -> ConeCallsEffectDeclaration(reference, kind)
                     }
+                }
+            }
+
+            FirContractsDslNames.IMPLIES_BUILDER -> {
+                if (LanguageFeature.ConditionImpliesReturnsContracts.isEnabled()) {
+                    val condition = functionCall.explicitReceiver?.asContractElement() as? ConeBooleanExpression ?: noReceiver(resolvedId)
+                    when (val argument = functionCall.arguments.getOrNull(0)) {
+                        null -> noArgument(resolvedId)
+                        else -> (argument.asContractElement() as? ConeEffectDeclaration)?.let {
+                            ConeConditionalReturnsDeclaration(condition, it)
+                        } ?: ConeContractDescriptionError.IllegalElement(argument).asElement()
+                    }
+                } else {
+                    ConeContractDescriptionError.NotContractDsl(resolvedId).asElement()
+                }
+            }
+
+            FirContractsDslNames.HOLDS_IN -> {
+                if (LanguageFeature.HoldsInContracts.isEnabled()) {
+                    val condition = functionCall.explicitReceiver?.asContractElement() as? ConeBooleanExpression ?: noReceiver(resolvedId)
+                    val reference = functionCall.arguments[0].asContractValueExpression()
+                    ConeHoldsInEffectDeclaration(condition, reference)
+                } else {
+                    ConeContractDescriptionError.NotContractDsl(resolvedId).asElement()
                 }
             }
 
@@ -151,7 +177,7 @@ class ConeEffectExtractor(
             ?: return KtErroneousValueParameterReference(
                 ConeContractDescriptionError.IllegalParameter(symbol, "'${symbol.name}' is not a value parameter")
             )
-        val index = valueParameters.indexOf(parameter).takeUnless { it < 0 } ?: return KtErroneousValueParameterReference(
+        val index = valueAndContextParameters.indexOf(parameter).takeUnless { it < 0 } ?: return KtErroneousValueParameterReference(
             ConeContractDescriptionError.IllegalParameter(symbol, "value parameter '${symbol.name}' is not found in parameters of outer function")
         )
         val type = parameter.returnTypeRef.coneType
@@ -213,14 +239,17 @@ class ConeEffectExtractor(
 
     override fun visitTypeOperatorCall(typeOperatorCall: FirTypeOperatorCall, data: Nothing?): ConeContractDescriptionElement {
         val arg = typeOperatorCall.argument.asContractValueExpression()
-        val type = typeOperatorCall.conversionTypeRef.coneType.fullyExpandedType(session)
+        val type = typeOperatorCall.conversionTypeRef.coneType.fullyExpandedType()
         val isNegated = typeOperatorCall.operation == FirOperation.NOT_IS
         val diagnostic = type.toTypeParameterSymbol(session)?.let { typeParameterSymbol ->
             val typeParametersOfOwner = (owner as? FirTypeParameterRefsOwner)?.typeParameters.orEmpty()
             if (typeParametersOfOwner.none { it is FirTypeParameter && it.symbol == typeParameterSymbol }) {
                 return@let ConeContractDescriptionError.NotSelfTypeParameter(typeParameterSymbol)
             }
-            runIf(!typeParameterSymbol.isReified) {
+            runIf(
+                !typeParameterSymbol.isReified
+                        && !LanguageFeature.AllowCheckForErasedTypesInContracts.isEnabled()
+            ) {
                 ConeContractDescriptionError.NotReifiedTypeParameter(typeParameterSymbol)
             }
         }

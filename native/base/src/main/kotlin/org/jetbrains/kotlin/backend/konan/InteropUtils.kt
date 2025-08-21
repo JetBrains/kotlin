@@ -16,6 +16,7 @@ object InteropFqNames {
 
     const val cPointerName = "CPointer"
     const val nativePointedName = "NativePointed"
+    const val cVariableName = "CVariable"
 
     const val objCObjectBaseName = "ObjCObjectBase"
     const val objCOverrideInitName = "OverrideInit"
@@ -67,7 +68,11 @@ object InteropFqNames {
     const val cValueReadFunName = "readValue"
     const val allocTypeFunName = "alloc"
 
+    const val cToKotlinBridgeName = "CToKotlinBridge"
+    const val kotlinToCBridgeName = "KotlinToCBridge"
+
     val packageName = FqName("kotlinx.cinterop")
+    val internalPackageName = FqName("kotlinx.cinterop.internal")
 
     val cPointer = packageName.child(cPointerName).toUnsafe()
     val nativePointed = packageName.child(nativePointedName).toUnsafe()
@@ -87,6 +92,9 @@ object InteropFqNames {
 
     val interopStubs = packageName.child(interopStubsName)
     val managedType = packageName.child(managedTypeName)
+
+    val cToKotlinBridge = internalPackageName.child(cToKotlinBridgeName)
+    val kotlinToCBridge = internalPackageName.child(kotlinToCBridgeName)
 }
 
 private fun FqName.child(nameIdent: String) = child(Name.identifier(nameIdent))

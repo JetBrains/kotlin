@@ -16,3 +16,6 @@ fun A.test_2() {
 }
 
 class D(val x: String, val y: String = <!NO_THIS!>this<!>.<!UNRESOLVED_REFERENCE!>x<!>) {}
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, classDeclaration, funWithExtensionReceiver, functionDeclaration,
+inheritanceDelegation, interfaceDeclaration, primaryConstructor, propertyDeclaration, thisExpression */

@@ -24,3 +24,6 @@ internal fun bar(i: Internal) {
         <!DEBUG_INFO_SMARTCAST, DEPRECATED_SMARTCAST!>i.x<!>.length
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, ifExpression, isExpression, primaryConstructor,
+propertyDeclaration, smartcast, stringLiteral */

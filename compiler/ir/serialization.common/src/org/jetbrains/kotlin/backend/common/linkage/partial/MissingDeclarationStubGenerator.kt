@@ -11,10 +11,9 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrBuiltIns
+import org.jetbrains.kotlin.ir.IrProvider
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.linkage.IrProvider
-import org.jetbrains.kotlin.ir.linkage.partial.PartiallyLinkedDeclarationOrigin
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.util.createThisReceiverParameter
 import org.jetbrains.kotlin.name.FqName
@@ -36,15 +35,9 @@ internal class MissingDeclarationStubGenerator(private val builtIns: IrBuiltIns)
         createEmptyExternalPackageFragment(ErrorUtils.errorModule, FqName.ROOT)
     }
 
-    private val declarationsToPatch = arrayListOf<IrDeclaration>()
-
     private val stubbedSymbols = hashSetOf<IrSymbol>()
 
     val allStubbedSymbols: Set<IrSymbol> get() = stubbedSymbols
-
-    fun grabDeclarationsToPatch(): Collection<IrDeclaration> {
-        return declarationsToPatch.getCopyAndClear()
-    }
 
     fun getDeclaration(symbol: IrSymbol): IrDeclaration {
         require(!symbol.isBound)
@@ -59,7 +52,10 @@ internal class MissingDeclarationStubGenerator(private val builtIns: IrBuiltIns)
             is IrEnumEntrySymbol -> generateEnumEntry(symbol)
             is IrTypeAliasSymbol -> generateTypeAlias(symbol)
             is IrTypeParameterSymbol -> generateTypeParameter(symbol)
-            else -> throw NotImplementedError("Generation of stubs for ${symbol::class.java} is not supported yet")
+            is IrFieldSymbol -> generateIrField(symbol)
+            else -> throw NotImplementedError("Generation of stubs for ${symbol::class.java} is not supported yet.\n" +
+                        "Signature: ${symbol.signature}\n" +
+                        "Private signature: ${symbol.privateSignature}")
         }
     }
 
@@ -169,9 +165,23 @@ internal class MissingDeclarationStubGenerator(private val builtIns: IrBuiltIns)
         )
     }
 
+    private fun generateIrField(symbol: IrFieldSymbol): IrField {
+        return builtIns.irFactory.createField(
+            startOffset = UNDEFINED_OFFSET,
+            endOffset = UNDEFINED_OFFSET,
+            origin = PartiallyLinkedDeclarationOrigin.MISSING_DECLARATION,
+            name = symbol.guessName(),
+            visibility = DescriptorVisibilities.PRIVATE,
+            symbol = symbol,
+            type = builtIns.nothingType,
+            isFinal = false,
+            isStatic = false,
+            isExternal = false
+        )
+    }
+
     private fun <T : IrDeclaration> T.setCommonParent(): T {
         parent = commonParent
-        declarationsToPatch += this
         return this
     }
 

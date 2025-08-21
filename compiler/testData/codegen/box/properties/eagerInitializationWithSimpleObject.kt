@@ -1,6 +1,5 @@
 // KT-70778
 // TARGET_BACKEND: JS_IR, JS_IR_ES6
-// IGNORE_BACKEND: WASM
 // PROPERTY_LAZY_INITIALIZATION
 // WARNING: The file names are also a part of the test, don't change it!
 

@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirEnumEntrySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
@@ -57,7 +58,8 @@ fun deserializeClassToSymbol(
     parentContext: FirDeserializationContext? = null,
     containerSource: DeserializedContainerSource? = null,
     origin: FirDeclarationOrigin = FirDeclarationOrigin.Library,
-    deserializeNestedClass: (ClassId, FirDeserializationContext) -> FirRegularClassSymbol?
+    deserializeNestedClass: (ClassId, FirDeserializationContext) -> FirRegularClassSymbol?,
+    deserializeNestedTypeAlias: (ClassId, FirNestedTypeAliasDeserializationContext) -> FirTypeAliasSymbol?,
 ) {
     val flags = classProto.flags
     val kind = Flags.CLASS_KIND.get(flags)
@@ -163,15 +165,23 @@ fun deserializeClassToSymbol(
             }
         )
 
+        fun createNestedClassId(nameId: Int): ClassId {
+            return classId.createNestedClassId(Name.identifier(nameResolver.getString(nameId)))
+        }
+
         addDeclarations(
-            classProto.nestedClassNameList.mapNotNull { nestedNameId ->
-                val nestedClassId = classId.createNestedClassId(Name.identifier(nameResolver.getString(nestedNameId)))
-                deserializeNestedClass(nestedClassId, context)?.fir
+            classProto.nestedClassNameList.mapNotNull {
+                deserializeNestedClass(createNestedClassId(it), context)?.fir
             }
         )
 
         addDeclarations(
-            classProto.typeAliasList.mapNotNull { classDeserializer.loadTypeAlias(it, scopeProvider) }
+            classProto.typeAliasList.mapNotNull {
+                deserializeNestedTypeAlias(
+                    createNestedClassId(it.name),
+                    FirNestedTypeAliasDeserializationContext(classDeserializer, it, scopeProvider)
+                )?.fir
+            }
         )
 
         addDeclarations(
@@ -195,6 +205,9 @@ fun deserializeClassToSymbol(
                     resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
                 }.apply {
                     containingClassForStaticMemberAttr = context.dispatchReceiver!!.lookupTag
+                    replaceAnnotations(
+                        context.annotationDeserializer.loadEnumEntryAnnotations(classId, enumEntryProto, context.nameResolver)
+                    )
                 }
 
                 property
@@ -205,10 +218,11 @@ fun deserializeClassToSymbol(
             generateValuesFunction(
                 moduleData,
                 classId.packageFqName,
-                classId.relativeClassName
+                classId.relativeClassName,
+                origin = origin,
             )
-            generateValueOfFunction(moduleData, classId.packageFqName, classId.relativeClassName)
-            generateEntriesGetter(moduleData, classId.packageFqName, classId.relativeClassName)
+            generateValueOfFunction(moduleData, classId.packageFqName, classId.relativeClassName, origin = origin)
+            generateEntriesGetter(moduleData, classId.packageFqName, classId.relativeClassName, origin = origin)
         }
 
         addCloneForArrayIfNeeded(classId, context.dispatchReceiver, session)
@@ -229,9 +243,11 @@ fun deserializeClassToSymbol(
 
         valueClassRepresentation =
             classProto.loadValueClassRepresentation(
+                session.deserializationExtension?.isMaybeMultiFieldValueClass(containerSource) == true,
                 context.nameResolver,
                 context.typeTable,
-                { context.typeDeserializer.rigidType(it) }) { name ->
+                context.typeDeserializer::rigidType,
+            ) { name ->
                 val member = declarations.singleOrNull { it is FirProperty && it.receiverParameter == null && it.name == name }
                 (member as FirProperty?)?.returnTypeRef?.coneType as ConeRigidType
             } ?: computeValueClassRepresentation(this, session)

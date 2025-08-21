@@ -30,3 +30,6 @@ fun owner() {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, classDeclaration, functionDeclaration, ifExpression, lambdaLiteral,
+localClass, localProperty, nullableType, propertyDeclaration, safeCall, stringLiteral, thisExpression */

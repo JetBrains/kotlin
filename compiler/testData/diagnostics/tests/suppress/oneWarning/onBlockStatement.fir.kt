@@ -59,3 +59,8 @@ fun <T : CharSequence> foo(x: Array<Any>, y: IntArray, block: (T, Int) -> Int) {
 
     y[i] += block(x[0] as T, "" <!CAST_NEVER_SUCCEEDS!>as<!> Int).toInt()
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, asExpression, assignment, doWhileLoop, equalityExpression, forLoop,
+functionDeclaration, functionalType, ifExpression, integerLiteral, lambdaLiteral, localProperty, nullableType,
+propertyDeclaration, rangeExpression, smartcast, stringLiteral, typeConstraint, typeParameter, whenExpression,
+whenWithSubject, whileLoop */

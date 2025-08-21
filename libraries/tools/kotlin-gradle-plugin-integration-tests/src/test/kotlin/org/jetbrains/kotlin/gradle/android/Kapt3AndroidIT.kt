@@ -5,22 +5,22 @@
 
 package org.jetbrains.kotlin.gradle.android
 
+import org.gradle.api.tasks.InputFile
+import org.gradle.api.tasks.PathSensitive
+import org.gradle.api.tasks.PathSensitivity
+import org.gradle.process.CommandLineArgumentProvider
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.Kapt3BaseIT
-import org.jetbrains.kotlin.gradle.forceK1Kapt
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.checkBytecodeContains
 import org.junit.jupiter.api.DisplayName
+import java.io.File
 import kotlin.io.path.appendText
 import kotlin.io.path.writeText
 
 @DisplayName("android with kapt3 tests")
 @AndroidGradlePluginTests
 open class Kapt3AndroidIT : Kapt3BaseIT() {
-    override fun TestProject.customizeProject() {
-        forceK1Kapt()
-    }
-
     @DisplayName("KT-15001")
     @GradleAndroidTest
     fun testKt15001(
@@ -199,47 +199,33 @@ open class Kapt3AndroidIT : Kapt3BaseIT() {
             buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion, kaptOptions = null),
             buildJdk = jdkVersion.location
         ) {
-            subProject("Android").buildGradle.appendText(
-                //language=Gradle
-                """
+            val androidSubproject = subProject("Android")
+            androidSubproject.buildScriptInjection {
+                project.plugins.apply("kotlin-kapt")
 
-                apply plugin: 'kotlin-kapt'
-
-                class MyNested implements org.gradle.process.CommandLineArgumentProvider {
-                    private final File argsFile
-                     
-                    MyNested(File argsFile) {
-                        this.argsFile = argsFile
-                    } 
-    
+                class MyNested(private val argsFile: File) : CommandLineArgumentProvider {
                     @PathSensitive(PathSensitivity.RELATIVE)
                     @InputFile
-                    File inputFile = null
-    
-                    @Override
-                    Iterable<String> asArguments() {
-                        // Read the arguments from a file, because changing them in a build script is treated as an
-                        // implementation change by Gradle:
-                        return [argsFile.text]
-                    }
-                }
-    
-                def nested = new MyNested(rootProject.file("args.txt"))
-                nested.inputFile = file("${'$'}projectDir/in.txt")
-    
-                android.applicationVariants.all {
-                    it.javaCompileOptions.annotationProcessorOptions.compilerArgumentProviders.add(nested)
-                }
-                     
-                dependencies {
-                    kapt 'org.jetbrains.kotlin:annotation-processor-example'
-                }
-                """.trimIndent()
-            )
+                    var inputFile: File? = null
 
-            val inFile = subProject("Android").projectPath.resolve("in.txt")
+                    // Read the arguments from a file, because changing them in a build script is treated as an
+                    // implementation change by Gradle:
+                    override fun asArguments(): Iterable<String> = listOf(argsFile.readText())
+                }
+
+                val nested = MyNested(project.file("args.txt"))
+                nested.inputFile = project.file(project.projectDir.resolve("in.txt"))
+
+                androidApp.applicationVariants.all { variant ->
+                    variant.javaCompileOptions.annotationProcessorOptions.compilerArgumentProviders.add(nested)
+                }
+
+                dependencies.add("kapt", "org.jetbrains.kotlin:annotation-processor-example")
+            }
+
+            val inFile = androidSubproject.projectPath.resolve("in.txt")
             inFile.writeText("1234")
-            val argsFile = projectPath.resolve("args.txt")
+            val argsFile = androidSubproject.projectPath.resolve("args.txt")
             argsFile.writeText("1234")
 
             val kaptTasks = listOf(":Android:kaptFlavor1DebugKotlin")
@@ -302,7 +288,9 @@ open class Kapt3AndroidIT : Kapt3BaseIT() {
                 """.trimIndent()
             )
 
-            build(":Android:kaptFlavor1DebugKotlin", "--dry-run")
+            build(
+                ":Android:kaptFlavor1DebugKotlin", "--dry-run",
+            )
 
             build(
                 ":Android:kaptFlavor1DebugKotlin", "--dry-run",
@@ -356,20 +344,19 @@ open class Kapt3AndroidIT : Kapt3BaseIT() {
         project(
             "kapt2/noProcessors",
             gradleVersion,
-            buildOptions = defaultBuildOptions.copy(
-                kaptOptions = kaptOptions().copy(
-                    includeCompileClasspath = true,
+            buildOptions = defaultBuildOptions
+                .copy(
+                    kaptOptions = kaptOptions().copy(
+                        includeCompileClasspath = true,
+                    ),
+                    androidVersion = agpVersion,
                 ),
-                androidVersion = agpVersion,
-            ),
             buildJdk = jdkVersion.location
         ) {
-            build("build") {
+            build("assembleDebug") {
                 assertTasksExecuted(
                     ":app:compileDebugKotlin",
-                    ":app:compileReleaseKotlin",
                     ":app:kaptGenerateStubsDebugKotlin",
-                    ":app:kaptGenerateStubsReleaseKotlin",
                 )
             }
         }

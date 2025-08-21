@@ -7,10 +7,12 @@ KtCallExpression(45,63): 'Foo<String>("str")'
           receiverType = null
           returnType = kotlin.String
           symbol = x: T
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -23,8 +25,10 @@ KtCallExpression(45,63): 'Foo<String>("str")'
               receiverType = null
               returnType = kotlin.String
               symbol = x: T
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true

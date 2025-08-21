@@ -27,3 +27,5 @@ public class PlaceholderException extends RuntimeException implements Placeholde
 class KotlinTestSuccess : PlaceholderException("OK") {}
 
 <!ABSTRACT_CLASS_MEMBER_NOT_IMPLEMENTED!>class KotlinTestFailure<!> : ExceptionWithAbstractMessage("FAIL") {}
+
+/* GENERATED_FIR_TAGS: classDeclaration, javaType, stringLiteral */

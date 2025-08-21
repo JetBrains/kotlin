@@ -1,6 +1,6 @@
 // FIR_IDENTICAL
 // IGNORE_BACKEND_K1: ANY
-// LANGUAGE: +BreakContinueInInlineLambdas
+// LANGUAGE: +BreakContinueInInlineLambdas +IrInlinerBeforeKlibSerialization
 // ISSUE: KT-68975
 // See same test for codegen: compiler/testData/codegen/box/js/inlinedReturnBreakContinue/lambdaPassedToInlineFunction.kt
 
@@ -10,7 +10,7 @@ import kotlin.test.assertEquals
 @Retention(AnnotationRetention.SOURCE)
 public annotation class SomeAnnotation
 
-inline fun foo(block: () -> Unit) = js("block()")
+inline fun foo(block: () -> Unit) = js(<!JS_CODE_CAPTURES_INLINABLE_FUNCTION_WARNING!>"block()"<!>)
 
 fun box(): String {
     val visited = mutableListOf<Pair<Int, Int>>()

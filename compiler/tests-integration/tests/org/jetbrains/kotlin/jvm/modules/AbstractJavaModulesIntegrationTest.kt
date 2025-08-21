@@ -46,6 +46,7 @@ abstract class AbstractJavaModulesIntegrationTest(
             K2JVMCompilerArguments::jdkHome.cliArgument, jdkHome.path,
             K2JVMCompilerArguments::javaModulePath.cliArgument(paths),
             K2JVMCompilerArguments::languageVersion.cliArgument, languageVersion.versionString,
+            K2JVMCompilerArguments::suppressVersionWarnings.cliArgument,
         )
         if (addModules.isNotEmpty()) {
             kotlinOptions += "-Xadd-modules=${addModules.joinToString()}"
@@ -176,6 +177,7 @@ abstract class AbstractJavaModulesIntegrationTest(
             K2JVMCompilerArguments::jdkHome.cliArgument, jdkHome.path,
             K2JVMCompilerArguments::javaModulePath.cliArgument(a.path),
             K2JVMCompilerArguments::languageVersion.cliArgument, languageVersion.versionString,
+            K2JVMCompilerArguments::suppressVersionWarnings.cliArgument,
         )
         compileLibrary(
             "moduleB",

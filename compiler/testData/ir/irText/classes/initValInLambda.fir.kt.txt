@@ -3,7 +3,7 @@ class TestInitValInLambdaCalledOnce {
     get
 
   init {
-    1.run<Int, Unit>(block = local fun Int.<anonymous>() {
+    run<Int, Unit>(/* <this> = 1, */ block = local fun Int.<anonymous>() {
       <this>.#x = 0
     }
 )
@@ -16,3 +16,4 @@ class TestInitValInLambdaCalledOnce {
   }
 
 }
+

@@ -14,3 +14,5 @@ interface B : A {
 
     }
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, interfaceDeclaration, override, suspend */

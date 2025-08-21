@@ -20,3 +20,6 @@ fun main(foo1: Foo<Boolean>, foo2: Foo<String>) {
     x.with(foo2) checkType { _<String>() }
 }
 
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, classDeclaration, flexibleType, funWithExtensionReceiver,
+functionDeclaration, functionalType, infix, javaFunction, javaType, lambdaLiteral, localProperty, nullableType,
+propertyDeclaration, typeParameter, typeWithExtension */

@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.fir.resolve.calls.tower
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
-import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.*
@@ -15,12 +14,13 @@ import org.jetbrains.kotlin.fir.declarations.utils.isStatic
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirSmartCastExpression
 import org.jetbrains.kotlin.fir.expressions.FirThisReceiverExpression
-import org.jetbrains.kotlin.fir.expressions.builder.buildResolvedQualifier
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.*
+import org.jetbrains.kotlin.fir.resolve.calls.ExpressionReceiverValue
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.CallInfo
 import org.jetbrains.kotlin.fir.resolve.calls.stages.isSuperCall
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
+import org.jetbrains.kotlin.fir.resolve.toImplicitResolvedQualifierReceiver
 import org.jetbrains.kotlin.fir.scopes.*
 import org.jetbrains.kotlin.fir.scopes.impl.FirActualizingScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirDefaultStarImportingScope
@@ -158,7 +158,7 @@ class DispatchReceiverMemberScopeTowerLevel(
                 typeForSyntheticScope,
                 useSiteForSyntheticScope,
                 bodyResolveComponents.returnTypeCalculator,
-                isSuperCall = info.callSite.isSuperCall(session),
+                isSuperCall = info.callSite.isSuperCall(),
             )
 
             withSynthetic?.processScopeMembers { symbol ->
@@ -362,10 +362,10 @@ internal class ScopeBasedTowerLevel(
     private val withHideMembersOnly: Boolean,
     private val constructorFilter: ConstructorFilter,
     private val dispatchReceiverForStatics: ExpressionReceiverValue?
-) : TowerLevel() {
-    private val session: FirSession get() = bodyResolveComponents.session
+) : TowerLevel(), SessionHolder {
+    override val session: FirSession get() = bodyResolveComponents.session
 
-    private val scope = if (session.languageVersionSettings.supportsFeature(LanguageFeature.MultiPlatformProjects)) {
+    private val scope = if (LanguageFeature.MultiPlatformProjects.isEnabled()) {
         FirActualizingScope(givenScope)
     } else {
         givenScope
@@ -373,25 +373,18 @@ internal class ScopeBasedTowerLevel(
 
     fun areThereExtensionReceiverOptions(): Boolean = givenExtensionReceiverOptions.isNotEmpty()
 
-    private fun FirRegularClassSymbol.toResolvedQualifierExpressionReceiver(source: KtSourceElement?): ExpressionReceiverValue {
-        val resolvedQualifier = buildResolvedQualifier {
-            packageFqName = classId.packageFqName
-            relativeClassFqName = classId.relativeClassName
-            this.symbol = this@toResolvedQualifierExpressionReceiver
-            this.source = source?.fakeElement(KtFakeSourceElementKind.ImplicitReceiver)
-        }.apply {
-            setTypeOfQualifier(bodyResolveComponents)
-        }
-        return ExpressionReceiverValue(resolvedQualifier)
-    }
-
     // For static entries we may return here FirResolvedQualifier, wrapped in ExpressionReceiverValue
     private fun dispatchReceiverValue(candidate: FirCallableSymbol<*>, callInfo: CallInfo): ReceiverValue? {
         candidate.fir.importedFromObjectOrStaticData?.let { data ->
             val objectClassId = data.objectClassId
             val symbol = session.symbolProvider.getClassLikeSymbolByClassId(objectClassId)
             if (symbol is FirRegularClassSymbol) {
-                return symbol.toResolvedQualifierExpressionReceiver(callInfo.callSite.source)
+                return ExpressionReceiverValue(
+                    symbol.toImplicitResolvedQualifierReceiver(
+                        bodyResolveComponents,
+                        callInfo.callSite.source?.fakeElement(KtFakeSourceElementKind.ImplicitReceiver)
+                    )
+                )
             }
         }
 
@@ -401,7 +394,7 @@ internal class ScopeBasedTowerLevel(
                 return when {
                     lookupTag != null -> {
                         bodyResolveComponents.implicitValueStorage.lastDispatchReceiver { implicitReceiverValue ->
-                            implicitReceiverValue.type.fullyExpandedType(session).lookupTagIfAny == lookupTag
+                            implicitReceiverValue.type.fullyExpandedType().lookupTagIfAny == lookupTag
                         }
                     }
                     else -> null
@@ -418,7 +411,7 @@ internal class ScopeBasedTowerLevel(
         // Pre-check explicit extension receiver for default package top-level members
         if (scope !is FirDefaultStarImportingScope || !areThereExtensionReceiverOptions()) return false
 
-        val declarationReceiverType = candidate.resolvedReceiverTypeRef?.coneType as? ConeClassLikeType ?: return false
+        val declarationReceiverType = candidate.resolvedReceiverType as? ConeClassLikeType ?: return false
         val startProjectedDeclarationReceiverType = declarationReceiverType.lookupTag.constructClassType(
             declarationReceiverType.typeArguments.map { ConeStarProjection }.toTypedArray(),
             isMarkedNullable = true
@@ -443,7 +436,7 @@ internal class ScopeBasedTowerLevel(
         processor: TowerLevelProcessor
     ) {
         candidate.lazyResolveToPhase(FirResolvePhase.TYPES)
-        if (withHideMembersOnly && candidate.getAnnotationByClassId(HidesMembers, session) == null) {
+        if (withHideMembersOnly && !candidate.hasAnnotationWithClassId(HidesMembers, session)) {
             return
         }
 

@@ -26,3 +26,6 @@ class D : C(), B
 fun main() {
     D().foo(42)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, interfaceDeclaration, javaType,
+stringLiteral */

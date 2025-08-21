@@ -108,6 +108,7 @@ public actual fun String.toCharArray(startIndex: Int = 0, endIndex: Int = this.l
  * @throws IndexOutOfBoundsException when the subrange doesn't fit into the [destination] array starting at the specified [destinationOffset],
  *  or when that index is out of the [destination] array indices range.
  */
+@IgnorableReturnValue
 @SinceKotlin("2.0")
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun String.toCharArray(
@@ -161,6 +162,8 @@ public actual fun ByteArray.decodeToString(
  * Encodes this string to an array of bytes in UTF-8 encoding.
  *
  * Any malformed char sequence is replaced by the replacement byte sequence.
+ *
+ * @sample samples.text.Strings.encodeToByteArray
  */
 @SinceKotlin("1.4")
 public actual fun String.encodeToByteArray(): ByteArray {
@@ -177,6 +180,8 @@ public actual fun String.encodeToByteArray(): ByteArray {
  * @throws IndexOutOfBoundsException if [startIndex] is less than zero or [endIndex] is greater than the length of this string.
  * @throws IllegalArgumentException if [startIndex] is greater than [endIndex].
  * @throws CharacterCodingException if this string contains malformed char sequence and [throwOnInvalidSequence] is true.
+ *
+ * @sample samples.text.Strings.encodeToByteArray
  */
 @SinceKotlin("1.4")
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
@@ -206,7 +211,6 @@ public actual inline fun String.toUpperCase(): String = asDynamic().toUpperCase(
  * @sample samples.text.Strings.uppercase
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public actual inline fun String.uppercase(): String = asDynamic().toUpperCase()
 
@@ -227,7 +231,6 @@ public actual inline fun String.toLowerCase(): String = asDynamic().toLowerCase(
  * @sample samples.text.Strings.lowercase
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public actual inline fun String.lowercase(): String = asDynamic().toLowerCase()
 
@@ -268,11 +271,9 @@ if (typeof String.prototype.endsWith === "undefined") {
 """)
 internal inline fun String.nativeEndsWith(s: String): Boolean = asDynamic().endsWith(s)
 
-@kotlin.internal.InlineOnly
-public actual inline fun String.substring(startIndex: Int): String = asDynamic().substring(startIndex)
+public actual fun String.substring(startIndex: Int): String = asDynamic().substring(startIndex)
 
-@kotlin.internal.InlineOnly
-public actual inline fun String.substring(startIndex: Int, endIndex: Int): String = asDynamic().substring(startIndex, endIndex)
+public actual fun String.substring(startIndex: Int, endIndex: Int): String = asDynamic().substring(startIndex, endIndex)
 
 @Deprecated("Use String.plus() instead", ReplaceWith("this + str"))
 @DeprecatedSinceKotlin(warningSince = "1.6")

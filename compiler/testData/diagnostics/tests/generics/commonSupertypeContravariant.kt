@@ -10,3 +10,6 @@ fun <T> select(x: T, y: T): T = x ?: y
 
 // Return type should be In<*> nor In<out Any?>
 fun foobar(e: En<*>) = select(A(), e)
+
+/* GENERATED_FIR_TAGS: classDeclaration, elvisExpression, functionDeclaration, in, interfaceDeclaration, nullableType,
+starProjection, typeParameter */

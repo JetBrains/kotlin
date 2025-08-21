@@ -63,7 +63,10 @@ class CocoaPodsIT : KGPBaseTest() {
     @DisplayName("Pod import single")
     @GradleTest
     fun testPodImportSingle(gradleVersion: GradleVersion) {
-        nativeProjectWithCocoapodsAndIosAppPodFile(cocoapodsSingleKtPod, gradleVersion) {
+        nativeProjectWithCocoapodsAndIosAppPodFile(
+            cocoapodsSingleKtPod,
+            gradleVersion
+        ) {
 
             buildWithCocoapodsWrapper(podImportTaskName) {
                 podImportAsserts(buildGradleKts)
@@ -78,7 +81,10 @@ class CocoaPodsIT : KGPBaseTest() {
     @DisplayName("Pod import single noPodspec")
     @GradleTest
     fun testPodImportSingleNoPodspec(gradleVersion: GradleVersion) {
-        nativeProjectWithCocoapodsAndIosAppPodFile(cocoapodsSingleKtPod, gradleVersion) {
+        nativeProjectWithCocoapodsAndIosAppPodFile(
+            cocoapodsSingleKtPod,
+            gradleVersion
+        ) {
 
             buildGradleKts.addCocoapodsBlock("noPodspec()")
 
@@ -95,7 +101,10 @@ class CocoaPodsIT : KGPBaseTest() {
     @DisplayName("Pod import multiple")
     @GradleTest
     fun testPodImportMultiple(gradleVersion: GradleVersion) {
-        nativeProjectWithCocoapodsAndIosAppPodFile(cocoapodsMultipleKtPods, gradleVersion) {
+        nativeProjectWithCocoapodsAndIosAppPodFile(
+            cocoapodsMultipleKtPods,
+            gradleVersion
+        ) {
 
             buildWithCocoapodsWrapper(podImportTaskName) {
                 podImportAsserts(buildGradleKts)
@@ -301,7 +310,10 @@ class CocoaPodsIT : KGPBaseTest() {
     @DisplayName("UTD with podspec deployment target")
     @GradleTest
     fun testUTDPodspecDeploymentTarget(gradleVersion: GradleVersion) {
-        nativeProjectWithCocoapodsAndIosAppPodFile(gradleVersion = gradleVersion) {
+        nativeProjectWithCocoapodsAndIosAppPodFile(
+            gradleVersion = gradleVersion,
+            buildOptions = defaultBuildOptions.disableConfigurationCacheForGradle7(gradleVersion),
+        ) {
 
             buildWithCocoapodsWrapper(podspecTaskName)
 
@@ -382,6 +394,18 @@ class CocoaPodsIT : KGPBaseTest() {
             buildGradleKts.addPod("Base64", "extraOpts = listOf(\"-help\")")
             buildWithCocoapodsWrapper("cinteropBase64IOS") {
                 assertOutputContains("Usage: cinterop options_list")
+                assertOutputContains("-compiler-option -fmodules")
+            }
+        }
+    }
+
+    @DisplayName("KT-79429 - Cinterop explicit header and fmodules")
+    @GradleTest
+    fun testCinteropExplicitHeaderAndFmodules(gradleVersion: GradleVersion) {
+        nativeProjectWithCocoapodsAndIosAppPodFile(gradleVersion = gradleVersion) {
+            buildGradleKts.addPod("AFNetworking", "headers = \"AFNetworking.h\"")
+            buildWithCocoapodsWrapper("cinteropAFNetworkingIOS") {
+                assertOutputDoesNotContain("-compiler-option -fmodules")
             }
         }
     }
@@ -513,7 +537,10 @@ class CocoaPodsIT : KGPBaseTest() {
     @GradleTestVersions(additionalVersions = [TestVersions.Gradle.G_8_1])
     @GradleTest
     fun testSyncFrameworkUseXcodeStyleErrorsWhenConfigurationFailed(gradleVersion: GradleVersion) {
-        nativeProjectWithCocoapodsAndIosAppPodFile(gradleVersion = gradleVersion) {
+        nativeProjectWithCocoapodsAndIosAppPodFile(
+            gradleVersion = gradleVersion,
+            buildOptions = defaultBuildOptions.disableConfigurationCacheForGradle7(gradleVersion),
+        ) {
             buildGradleKts.appendText(
                 """
                 kotlin {
@@ -539,7 +566,10 @@ class CocoaPodsIT : KGPBaseTest() {
     @DisplayName("Xcode style errors when sync framework compilation failed")
     @GradleTest
     fun testSyncFrameworkUseXcodeStyleErrorsWhenCompilationFailed(gradleVersion: GradleVersion) {
-        nativeProjectWithCocoapodsAndIosAppPodFile(gradleVersion = gradleVersion) {
+        nativeProjectWithCocoapodsAndIosAppPodFile(
+            gradleVersion = gradleVersion,
+            buildOptions = defaultBuildOptions.disableConfigurationCacheForGradle7(gradleVersion),
+        ) {
             projectPath.resolve("src/commonMain/kotlin/A.kt").appendText("this can't be compiled")
             val buildOptions = this.buildOptions.copy(
                 nativeOptions = this.buildOptions.nativeOptions.copy(
@@ -578,7 +608,10 @@ class CocoaPodsIT : KGPBaseTest() {
     @DisplayName("Other tasks use Xcode style errors when compilation failed and `useXcodeMessageStyle` option enabled")
     @GradleTest
     fun testOtherTasksUseXcodeStyleErrorsWhenCompilationFailedAndOptionEnabled(gradleVersion: GradleVersion) {
-        nativeProjectWithCocoapodsAndIosAppPodFile(gradleVersion = gradleVersion) {
+        nativeProjectWithCocoapodsAndIosAppPodFile(
+            gradleVersion = gradleVersion,
+            buildOptions = defaultBuildOptions.disableConfigurationCacheForGradle7(gradleVersion),
+        ) {
             projectPath.resolve("src/commonMain/kotlin/A.kt").appendText("this can't be compiled")
             val buildOptions = this.buildOptions.copy(
                 nativeOptions = this.buildOptions.nativeOptions.copy(
@@ -705,7 +738,10 @@ class CocoaPodsIT : KGPBaseTest() {
         val subprojectPodImportTask = ":$subProjectName$podImportTaskName"
         val subprojectPodspecTask = ":$subProjectName$podspecTaskName"
         val subprojectPodInstallTask = ":$subProjectName$podInstallTaskName"
-        nativeProjectWithCocoapodsAndIosAppPodFile(cocoapodsSingleKtPod, gradleVersion) {
+        nativeProjectWithCocoapodsAndIosAppPodFile(
+            cocoapodsSingleKtPod,
+            gradleVersion
+        ) {
             buildGradleKts.addCocoapodsBlock("ios.deploymentTarget = \"14.0\"")
             buildWithCocoapodsWrapper(subprojectPodImportTask) {
                 assertTasksExecuted(listOf(subprojectPodspecTask, subprojectPodInstallTask))
@@ -902,7 +938,6 @@ class CocoaPodsIT : KGPBaseTest() {
                 cocoapodsArchs = "x86_64",
                 cocoapodsConfiguration = "Debug"
             ),
-            configurationCache = BuildOptions.ConfigurationCacheValue.ENABLED
         )
 
         nativeProjectWithCocoapodsAndIosAppPodFile(
@@ -1080,7 +1115,10 @@ class CocoaPodsIT : KGPBaseTest() {
             buildGradleKts.addKotlinBlock("iosArm64()")
             buildGradleKts.addCocoapodsBlock("""pod("Base64", version="1.1.2")""")
 
-            build(":embedAndSignPodAppleFrameworkForXcode", "-Pkotlin.apple.deprecated.allowUsingEmbedAndSignWithCocoaPodsDependencies=true") {
+            build(
+                ":embedAndSignPodAppleFrameworkForXcode",
+                "-Pkotlin.apple.deprecated.allowUsingEmbedAndSignWithCocoaPodsDependencies=true"
+            ) {
                 assertNoDiagnostic(CocoapodsPluginDiagnostics.EmbedAndSignUsedWithPodDependencies)
             }
         }

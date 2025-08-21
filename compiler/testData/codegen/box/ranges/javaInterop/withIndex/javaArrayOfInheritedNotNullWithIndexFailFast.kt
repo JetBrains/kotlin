@@ -1,12 +1,7 @@
 // LANGUAGE: +StrictJavaNullabilityAssertions
 // TARGET_BACKEND: JVM
-// IGNORE_BACKEND_K1: JVM, JVM_IR
+// IGNORE_BACKEND_K1: JVM_IR
 // WITH_STDLIB
-
-// Note: This fails on JVM (non-IR) with "Fail: should throw on get()". The not-null assertion is not generated when assigning to the
-// variables in the destructuring declaration. The root cause seems to be that
-// CodegenAnnotatingVisitor/RuntimeAssertionsOnDeclarationBodyChecker do not analyze the need for not-null assertions on
-// KtDestructuringDeclarations and their entries.
 
 // Note: this fails on JVM_IR because of KT-36347.
 // It requires potentially breaking changes in FE, so please, don't touch it until the language design decision.

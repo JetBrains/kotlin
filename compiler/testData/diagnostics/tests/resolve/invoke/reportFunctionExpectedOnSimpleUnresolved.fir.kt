@@ -15,3 +15,6 @@ object Scope2 {
         <!UNRESOLVED_REFERENCE!>foo<!>()
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, localProperty, nestedClass,
+objectDeclaration, propertyDeclaration */

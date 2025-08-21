@@ -25,3 +25,6 @@ fun test1(list: List<Int>) {
     //check res is not of error type
     checkSubtype<String>(<!ARGUMENT_TYPE_MISMATCH!>res<!>)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType, infix,
+lambdaLiteral, localProperty, nullableType, propertyDeclaration, typeParameter, typeWithExtension */

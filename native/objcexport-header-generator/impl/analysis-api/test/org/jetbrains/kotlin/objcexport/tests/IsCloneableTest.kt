@@ -1,13 +1,13 @@
 package org.jetbrains.kotlin.objcexport.tests
 
 import org.jetbrains.kotlin.analysis.api.analyze
-import org.jetbrains.kotlin.objcexport.analysisApiUtils.isImplementsCloneable
-import org.jetbrains.kotlin.objcexport.analysisApiUtils.isClone
-import org.jetbrains.kotlin.objcexport.analysisApiUtils.isCloneable
-import org.jetbrains.kotlin.objcexport.testUtils.InlineSourceCodeAnalysis
-import org.jetbrains.kotlin.objcexport.testUtils.getClassOrFail
-import org.jetbrains.kotlin.objcexport.testUtils.getFunctionOrFail
-import org.jetbrains.kotlin.objcexport.testUtils.getPropertyOrFail
+import org.jetbrains.kotlin.analysis.api.export.utilities.isImplementsCloneable
+import org.jetbrains.kotlin.analysis.api.export.utilities.isClone
+import org.jetbrains.kotlin.analysis.api.export.utilities.isCloneable
+import org.jetbrains.kotlin.export.test.InlineSourceCodeAnalysis
+import org.jetbrains.kotlin.export.test.getClassOrFail
+import org.jetbrains.kotlin.export.test.getFunctionOrFail
+import org.jetbrains.kotlin.export.test.getPropertyOrFail
 import org.junit.jupiter.api.Test
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue

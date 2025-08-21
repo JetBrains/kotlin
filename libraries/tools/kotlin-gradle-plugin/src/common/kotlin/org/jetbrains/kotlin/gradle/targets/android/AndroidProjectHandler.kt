@@ -206,11 +206,12 @@ internal class AndroidProjectHandler(
         }
 
         // Register the source only after the task is created, because the task is required for that:
-        @Suppress("DEPRECATION")
+        @Suppress("DEPRECATION_ERROR")
         compilation.addSourceSet(defaultSourceSet)
 
-        compilation.androidVariant.forEachKotlinSourceSet(project) { kotlinSourceSet ->
-            @Suppress("DEPRECATION")
+        @Suppress("DEPRECATION")
+        compilation.androidVariant?.forEachKotlinSourceSet(project) { kotlinSourceSet ->
+            @Suppress("DEPRECATION_ERROR")
             compilation.addSourceSet(kotlinSourceSet)
         }
     }
@@ -334,7 +335,7 @@ internal class AndroidProjectHandler(
 
         val buildTypeAttrValue = project.objects.named<BuildTypeAttr>(variant.buildType.name)
         listOf(compilation.compileDependencyConfigurationName, compilation.runtimeDependencyConfigurationName).forEach {
-            project.configurations.findByName(it)?.attributes?.setAttribute(
+            project.configurations.findByName(it)?.attributes?.attribute(
                 Attribute.of(BuildTypeAttr::class.java),
                 buildTypeAttrValue
             )
@@ -357,7 +358,7 @@ internal class AndroidProjectHandler(
         listOf(apiElementsConfigurationName, runtimeElementsConfigurationName).forEach { outputConfigurationName ->
             project.configurations.findByName(outputConfigurationName)?.let { configuration ->
                 configuration.usesPlatformOf(compilation.target)
-                configuration.attributes.setAttribute(Category.CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))
+                configuration.attributes.attribute(Category.CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))
             }
         }
     }

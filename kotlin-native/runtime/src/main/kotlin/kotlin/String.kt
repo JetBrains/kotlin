@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -20,6 +20,11 @@ public actual class String : Comparable<String>, CharSequence {
     @Escapes.Nothing
     public external override fun hashCode(): Int
 
+    /**
+     * Returns a string obtained by concatenating this string with the string representation of the given [other] object.
+     *
+     * @sample samples.text.Strings.stringPlus
+     */
     @kotlin.internal.IntrinsicConstEvaluation
     public actual operator fun plus(other: Any?): String {
         return plusImpl(other.toString())
@@ -65,6 +70,15 @@ public actual class String : Comparable<String>, CharSequence {
     @Escapes.Nothing
     internal external fun plusImpl(other: String): String
 
+    /**
+     * Indicates if [other] object is equal to this [String].
+     *
+     * An [other] object is equal to this [String] if and only if it is also a [String],
+     * it has the same [length] as this String,
+     * and characters at the same positions in each string are equal to each other.
+     *
+     * @sample samples.text.Strings.stringEquals
+     */
     @GCUnsafeCall("Kotlin_String_equals")
     @kotlin.internal.IntrinsicConstEvaluation
     @Escapes.Nothing

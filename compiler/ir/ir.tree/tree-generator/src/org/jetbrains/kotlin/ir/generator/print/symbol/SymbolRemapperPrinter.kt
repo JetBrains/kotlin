@@ -196,12 +196,3 @@ private class EmptySymbolRemapperPrinter(
         println(" = ", symbolParameter.name)
     }
 }
-
-internal fun printSymbolRemapper(
-    generationPath: File,
-    model: Model,
-    type: ClassRef<*>,
-    makePrinter: (ImportCollectingPrinter, List<Element>, ClassRef<*>) -> AbstractSymbolRemapperPrinter,
-) = printGeneratedType(generationPath, TREE_GENERATOR_README, type.packageName, type.simpleName) {
-    makePrinter(this, model.elements, type).printSymbolRemapper()
-}

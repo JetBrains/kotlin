@@ -8,10 +8,10 @@ package org.jetbrains.kotlin.fir.analysis.jvm.checkers
 import org.jetbrains.kotlin.config.JvmDefaultMode
 import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.analysis.checkers.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
-import org.jetbrains.kotlin.fir.declarations.getAnnotationByClassId
+import org.jetbrains.kotlin.fir.declarations.hasAnnotationWithClassId
 import org.jetbrains.kotlin.fir.isNewPlaceForBodyGeneration
+import org.jetbrains.kotlin.fir.resolve.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
@@ -24,7 +24,7 @@ fun <D> FirBasedSymbol<D>.isCompiledToJvmDefault(
     session: FirSession,
     jvmDefaultMode: JvmDefaultMode,
 ): Boolean where D : FirAnnotationContainer, D : FirDeclaration {
-    if (getAnnotationByClassId(JvmStandardClassIds.Annotations.JvmDefault, session) != null) return true
+    if (hasAnnotationWithClassId(JvmStandardClassIds.Annotations.JvmDefault, session)) return true
 
     val container = getContainingClassSymbol()
     if (container !is FirRegularClassSymbol || container.origin.fromSource) return jvmDefaultMode.isEnabled

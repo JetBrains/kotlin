@@ -70,6 +70,12 @@ public class Fe10IdeNormalAnalysisSourceModuleSymbolByFqNameTestGenerated extend
   }
 
   @Test
+  @TestMetadata("classWithContextReceiverFromLibrary.kt")
+  public void testClassWithContextReceiverFromLibrary() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByFqName/classWithContextReceiverFromLibrary.kt");
+  }
+
+  @Test
   @TestMetadata("enumEntry.kt")
   public void testEnumEntry() {
     runTest("analysis/analysis-api/testData/symbols/symbolByFqName/enumEntry.kt");
@@ -79,6 +85,24 @@ public class Fe10IdeNormalAnalysisSourceModuleSymbolByFqNameTestGenerated extend
   @TestMetadata("fileWalkDirectionEnum.kt")
   public void testFileWalkDirectionEnum() {
     runTest("analysis/analysis-api/testData/symbols/symbolByFqName/fileWalkDirectionEnum.kt");
+  }
+
+  @Test
+  @TestMetadata("functionWithContextParameterFromLibrary.kt")
+  public void testFunctionWithContextParameterFromLibrary() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByFqName/functionWithContextParameterFromLibrary.kt");
+  }
+
+  @Test
+  @TestMetadata("functionWithContextReceiverFromLibrary.kt")
+  public void testFunctionWithContextReceiverFromLibrary() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByFqName/functionWithContextReceiverFromLibrary.kt");
+  }
+
+  @Test
+  @TestMetadata("getFirst.kt")
+  public void testGetFirst() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByFqName/getFirst.kt");
   }
 
   @Test
@@ -133,6 +157,66 @@ public class Fe10IdeNormalAnalysisSourceModuleSymbolByFqNameTestGenerated extend
   @TestMetadata("nothing.kt")
   public void testNothing() {
     runTest("analysis/analysis-api/testData/symbols/symbolByFqName/nothing.kt");
+  }
+
+  @Test
+  @TestMetadata("propertyFromAnnotation.kt")
+  public void testPropertyFromAnnotation() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByFqName/propertyFromAnnotation.kt");
+  }
+
+  @Test
+  @TestMetadata("propertyFromAnnotationJs.kt")
+  public void testPropertyFromAnnotationJs() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByFqName/propertyFromAnnotationJs.kt");
+  }
+
+  @Test
+  @TestMetadata("propertyFromAnnotationWithDefaultValue.kt")
+  public void testPropertyFromAnnotationWithDefaultValue() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByFqName/propertyFromAnnotationWithDefaultValue.kt");
+  }
+
+  @Test
+  @TestMetadata("propertyFromAnnotationWithDefaultValueJs.kt")
+  public void testPropertyFromAnnotationWithDefaultValueJs() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByFqName/propertyFromAnnotationWithDefaultValueJs.kt");
+  }
+
+  @Test
+  @TestMetadata("propertyFromAnnotationWithVararg.kt")
+  public void testPropertyFromAnnotationWithVararg() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByFqName/propertyFromAnnotationWithVararg.kt");
+  }
+
+  @Test
+  @TestMetadata("propertyFromAnnotationWithVarargAndDefaultValue.kt")
+  public void testPropertyFromAnnotationWithVarargAndDefaultValue() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByFqName/propertyFromAnnotationWithVarargAndDefaultValue.kt");
+  }
+
+  @Test
+  @TestMetadata("propertyFromAnnotationWithVarargAndDefaultValueJs.kt")
+  public void testPropertyFromAnnotationWithVarargAndDefaultValueJs() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByFqName/propertyFromAnnotationWithVarargAndDefaultValueJs.kt");
+  }
+
+  @Test
+  @TestMetadata("propertyFromAnnotationWithVarargJs.kt")
+  public void testPropertyFromAnnotationWithVarargJs() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByFqName/propertyFromAnnotationWithVarargJs.kt");
+  }
+
+  @Test
+  @TestMetadata("propertyWithContextParameterFromLibrary.kt")
+  public void testPropertyWithContextParameterFromLibrary() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByFqName/propertyWithContextParameterFromLibrary.kt");
+  }
+
+  @Test
+  @TestMetadata("propertyWithContextReceiverFromLibrary.kt")
+  public void testPropertyWithContextReceiverFromLibrary() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByFqName/propertyWithContextReceiverFromLibrary.kt");
   }
 
   @Test

@@ -4,31 +4,31 @@ FILE: [ResolvedTo(RAW_FIR)] script2.kts
         [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] fun f([ResolvedTo(RAW_FIR)] p: Int?): Int { LAZY_BLOCK }
+        public? final? [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] fun f([ResolvedTo(RAW_FIR)] p: Int?): Int { LAZY_BLOCK }
 
-        public? final? [ResolvedTo(RAW_FIR)] fun consume([ResolvedTo(RAW_FIR)] x: Int): R|kotlin/Unit| { LAZY_BLOCK }
+        public? final? [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] fun consume([ResolvedTo(RAW_FIR)] x: Int): R|kotlin/Unit| { LAZY_BLOCK }
 
-        public? final? [ResolvedTo(RAW_FIR)] val x: Int? = LAZY_EXPRESSION
+        public? final? [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val x: Int? = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): Int?
 
-        public? final? [ResolvedTo(RAW_FIR)] val y: <implicit> = LAZY_EXPRESSION
+        public? final? [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val y: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public? final? [ResolvedTo(RAW_FIR)] val z: <implicit> = LAZY_EXPRESSION
+        public? final? [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val z: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public? final? [ResolvedTo(RAW_FIR)] fun foo(): <implicit> { LAZY_BLOCK }
+        public? final? [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] fun foo(): <implicit> { LAZY_BLOCK }
 
-        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+        [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] init { LAZY_BLOCK }
 
-        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+        [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] init { LAZY_BLOCK }
 
-        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+        [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] init { LAZY_BLOCK }
 
-        public? final? [ResolvedTo(RAW_FIR)] val zz: <implicit> = LAZY_EXPRESSION
+        public? final? [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val zz: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-script2.kts>] class A : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-script2.kts>, ScriptTopLevelDeclaration=true] class A : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -47,31 +47,31 @@ FILE: [ResolvedTo(IMPORTS)] script2.kts
         [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] fun f([ResolvedTo(RAW_FIR)] p: Int?): Int { LAZY_BLOCK }
+        public? final? [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] fun f([ResolvedTo(RAW_FIR)] p: Int?): Int { LAZY_BLOCK }
 
-        public? final? [ResolvedTo(RAW_FIR)] fun consume([ResolvedTo(RAW_FIR)] x: Int): R|kotlin/Unit| { LAZY_BLOCK }
+        public? final? [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] fun consume([ResolvedTo(RAW_FIR)] x: Int): R|kotlin/Unit| { LAZY_BLOCK }
 
-        public? final? [ResolvedTo(RAW_FIR)] val x: Int? = LAZY_EXPRESSION
+        public? final? [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val x: Int? = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): Int?
 
-        public? final? [ResolvedTo(RAW_FIR)] val y: <implicit> = LAZY_EXPRESSION
+        public? final? [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val y: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public? final? [ResolvedTo(RAW_FIR)] val z: <implicit> = LAZY_EXPRESSION
+        public? final? [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val z: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public? final? [ResolvedTo(RAW_FIR)] fun foo(): <implicit> { LAZY_BLOCK }
+        public? final? [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] fun foo(): <implicit> { LAZY_BLOCK }
 
-        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+        [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] init { LAZY_BLOCK }
 
-        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+        [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] init { LAZY_BLOCK }
 
-        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+        [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] init { LAZY_BLOCK }
 
-        public? final? [ResolvedTo(RAW_FIR)] val zz: <implicit> = LAZY_EXPRESSION
+        public? final? [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val zz: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-script2.kts>] class A : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-script2.kts>, ScriptTopLevelDeclaration=true] class A : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -90,31 +90,31 @@ FILE: [ResolvedTo(IMPORTS)] script2.kts
         [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] fun f([ResolvedTo(RAW_FIR)] p: Int?): Int { LAZY_BLOCK }
+        public? final? [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] fun f([ResolvedTo(RAW_FIR)] p: Int?): Int { LAZY_BLOCK }
 
-        public? final? [ResolvedTo(RAW_FIR)] fun consume([ResolvedTo(RAW_FIR)] x: Int): R|kotlin/Unit| { LAZY_BLOCK }
+        public? final? [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] fun consume([ResolvedTo(RAW_FIR)] x: Int): R|kotlin/Unit| { LAZY_BLOCK }
 
-        public? final? [ResolvedTo(RAW_FIR)] val x: Int? = LAZY_EXPRESSION
+        public? final? [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val x: Int? = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): Int?
 
-        public? final? [ResolvedTo(RAW_FIR)] val y: <implicit> = LAZY_EXPRESSION
+        public? final? [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val y: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public? final? [ResolvedTo(RAW_FIR)] val z: <implicit> = LAZY_EXPRESSION
+        public? final? [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val z: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public? final? [ResolvedTo(RAW_FIR)] fun foo(): <implicit> { LAZY_BLOCK }
+        public? final? [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] fun foo(): <implicit> { LAZY_BLOCK }
 
-        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+        [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] init { LAZY_BLOCK }
 
-        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+        [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] init { LAZY_BLOCK }
 
-        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+        [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] init { LAZY_BLOCK }
 
-        public? final? [ResolvedTo(RAW_FIR)] val zz: <implicit> = LAZY_EXPRESSION
+        public? final? [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val zz: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-script2.kts>] class A : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-script2.kts>, ScriptTopLevelDeclaration=true] class A : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -133,31 +133,31 @@ FILE: [ResolvedTo(IMPORTS)] script2.kts
         [ResolvedTo(COMPANION_GENERATION)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(COMPANION_GENERATION)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] fun f([ResolvedTo(RAW_FIR)] p: Int?): Int { LAZY_BLOCK }
+        public? final? [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] fun f([ResolvedTo(RAW_FIR)] p: Int?): Int { LAZY_BLOCK }
 
-        public? final? [ResolvedTo(RAW_FIR)] fun consume([ResolvedTo(RAW_FIR)] x: Int): R|kotlin/Unit| { LAZY_BLOCK }
+        public? final? [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] fun consume([ResolvedTo(RAW_FIR)] x: Int): R|kotlin/Unit| { LAZY_BLOCK }
 
-        public? final? [ResolvedTo(RAW_FIR)] val x: Int? = LAZY_EXPRESSION
+        public? final? [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val x: Int? = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): Int?
 
-        public? final? [ResolvedTo(RAW_FIR)] val y: <implicit> = LAZY_EXPRESSION
+        public? final? [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val y: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public? final? [ResolvedTo(RAW_FIR)] val z: <implicit> = LAZY_EXPRESSION
+        public? final? [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val z: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public? final? [ResolvedTo(RAW_FIR)] fun foo(): <implicit> { LAZY_BLOCK }
+        public? final? [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] fun foo(): <implicit> { LAZY_BLOCK }
 
-        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+        [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] init { LAZY_BLOCK }
 
-        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+        [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] init { LAZY_BLOCK }
 
-        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+        [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] init { LAZY_BLOCK }
 
-        public? final? [ResolvedTo(RAW_FIR)] val zz: <implicit> = LAZY_EXPRESSION
+        public? final? [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val zz: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-script2.kts>] class A : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-script2.kts>, ScriptTopLevelDeclaration=true] class A : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -176,31 +176,31 @@ FILE: [ResolvedTo(IMPORTS)] script2.kts
         [ResolvedTo(SUPER_TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(SUPER_TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] fun f([ResolvedTo(RAW_FIR)] p: Int?): Int { LAZY_BLOCK }
+        public? final? [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] fun f([ResolvedTo(RAW_FIR)] p: Int?): Int { LAZY_BLOCK }
 
-        public? final? [ResolvedTo(RAW_FIR)] fun consume([ResolvedTo(RAW_FIR)] x: Int): R|kotlin/Unit| { LAZY_BLOCK }
+        public? final? [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] fun consume([ResolvedTo(RAW_FIR)] x: Int): R|kotlin/Unit| { LAZY_BLOCK }
 
-        public? final? [ResolvedTo(RAW_FIR)] val x: Int? = LAZY_EXPRESSION
+        public? final? [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val x: Int? = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): Int?
 
-        public? final? [ResolvedTo(RAW_FIR)] val y: <implicit> = LAZY_EXPRESSION
+        public? final? [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val y: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public? final? [ResolvedTo(RAW_FIR)] val z: <implicit> = LAZY_EXPRESSION
+        public? final? [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val z: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public? final? [ResolvedTo(RAW_FIR)] fun foo(): <implicit> { LAZY_BLOCK }
+        public? final? [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] fun foo(): <implicit> { LAZY_BLOCK }
 
-        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+        [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] init { LAZY_BLOCK }
 
-        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+        [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] init { LAZY_BLOCK }
 
-        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+        [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] init { LAZY_BLOCK }
 
-        public? final? [ResolvedTo(RAW_FIR)] val zz: <implicit> = LAZY_EXPRESSION
+        public? final? [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val zz: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-script2.kts>] class A : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-script2.kts>, ScriptTopLevelDeclaration=true] class A : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -219,31 +219,31 @@ FILE: [ResolvedTo(IMPORTS)] script2.kts
         [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] fun f([ResolvedTo(RAW_FIR)] p: Int?): Int { LAZY_BLOCK }
+        public? final? [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] fun f([ResolvedTo(RAW_FIR)] p: Int?): Int { LAZY_BLOCK }
 
-        public? final? [ResolvedTo(RAW_FIR)] fun consume([ResolvedTo(RAW_FIR)] x: Int): R|kotlin/Unit| { LAZY_BLOCK }
+        public? final? [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] fun consume([ResolvedTo(RAW_FIR)] x: Int): R|kotlin/Unit| { LAZY_BLOCK }
 
-        public? final? [ResolvedTo(RAW_FIR)] val x: Int? = LAZY_EXPRESSION
+        public? final? [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val x: Int? = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): Int?
 
-        public? final? [ResolvedTo(RAW_FIR)] val y: <implicit> = LAZY_EXPRESSION
+        public? final? [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val y: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public? final? [ResolvedTo(RAW_FIR)] val z: <implicit> = LAZY_EXPRESSION
+        public? final? [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val z: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public? final? [ResolvedTo(RAW_FIR)] fun foo(): <implicit> { LAZY_BLOCK }
+        public? final? [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] fun foo(): <implicit> { LAZY_BLOCK }
 
-        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+        [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] init { LAZY_BLOCK }
 
-        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+        [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] init { LAZY_BLOCK }
 
-        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+        [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] init { LAZY_BLOCK }
 
-        public? final? [ResolvedTo(RAW_FIR)] val zz: <implicit> = LAZY_EXPRESSION
+        public? final? [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val zz: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-script2.kts>] class A : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-script2.kts>, ScriptTopLevelDeclaration=true] class A : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -262,31 +262,31 @@ FILE: [ResolvedTo(IMPORTS)] script2.kts
         [ResolvedTo(STATUS)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(STATUS)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] fun f([ResolvedTo(RAW_FIR)] p: Int?): Int { LAZY_BLOCK }
+        public? final? [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] fun f([ResolvedTo(RAW_FIR)] p: Int?): Int { LAZY_BLOCK }
 
-        public? final? [ResolvedTo(RAW_FIR)] fun consume([ResolvedTo(RAW_FIR)] x: Int): R|kotlin/Unit| { LAZY_BLOCK }
+        public? final? [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] fun consume([ResolvedTo(RAW_FIR)] x: Int): R|kotlin/Unit| { LAZY_BLOCK }
 
-        public? final? [ResolvedTo(RAW_FIR)] val x: Int? = LAZY_EXPRESSION
+        public? final? [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val x: Int? = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): Int?
 
-        public? final? [ResolvedTo(RAW_FIR)] val y: <implicit> = LAZY_EXPRESSION
+        public? final? [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val y: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public? final? [ResolvedTo(RAW_FIR)] val z: <implicit> = LAZY_EXPRESSION
+        public? final? [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val z: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public? final? [ResolvedTo(RAW_FIR)] fun foo(): <implicit> { LAZY_BLOCK }
+        public? final? [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] fun foo(): <implicit> { LAZY_BLOCK }
 
-        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+        [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] init { LAZY_BLOCK }
 
-        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+        [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] init { LAZY_BLOCK }
 
-        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+        [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] init { LAZY_BLOCK }
 
-        public? final? [ResolvedTo(RAW_FIR)] val zz: <implicit> = LAZY_EXPRESSION
+        public? final? [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val zz: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-script2.kts>] class A : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-script2.kts>, ScriptTopLevelDeclaration=true] class A : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -305,31 +305,31 @@ FILE: [ResolvedTo(IMPORTS)] script2.kts
         [ResolvedTo(EXPECT_ACTUAL_MATCHING)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(EXPECT_ACTUAL_MATCHING)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] fun f([ResolvedTo(RAW_FIR)] p: Int?): Int { LAZY_BLOCK }
+        public? final? [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] fun f([ResolvedTo(RAW_FIR)] p: Int?): Int { LAZY_BLOCK }
 
-        public? final? [ResolvedTo(RAW_FIR)] fun consume([ResolvedTo(RAW_FIR)] x: Int): R|kotlin/Unit| { LAZY_BLOCK }
+        public? final? [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] fun consume([ResolvedTo(RAW_FIR)] x: Int): R|kotlin/Unit| { LAZY_BLOCK }
 
-        public? final? [ResolvedTo(RAW_FIR)] val x: Int? = LAZY_EXPRESSION
+        public? final? [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val x: Int? = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): Int?
 
-        public? final? [ResolvedTo(RAW_FIR)] val y: <implicit> = LAZY_EXPRESSION
+        public? final? [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val y: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public? final? [ResolvedTo(RAW_FIR)] val z: <implicit> = LAZY_EXPRESSION
+        public? final? [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val z: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public? final? [ResolvedTo(RAW_FIR)] fun foo(): <implicit> { LAZY_BLOCK }
+        public? final? [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] fun foo(): <implicit> { LAZY_BLOCK }
 
-        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+        [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] init { LAZY_BLOCK }
 
-        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+        [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] init { LAZY_BLOCK }
 
-        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+        [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] init { LAZY_BLOCK }
 
-        public? final? [ResolvedTo(RAW_FIR)] val zz: <implicit> = LAZY_EXPRESSION
+        public? final? [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val zz: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-script2.kts>] class A : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-script2.kts>, ScriptTopLevelDeclaration=true] class A : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -348,31 +348,31 @@ FILE: [ResolvedTo(IMPORTS)] script2.kts
         [ResolvedTo(CONTRACTS)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(CONTRACTS)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] fun f([ResolvedTo(RAW_FIR)] p: Int?): Int { LAZY_BLOCK }
+        public? final? [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] fun f([ResolvedTo(RAW_FIR)] p: Int?): Int { LAZY_BLOCK }
 
-        public? final? [ResolvedTo(RAW_FIR)] fun consume([ResolvedTo(RAW_FIR)] x: Int): R|kotlin/Unit| { LAZY_BLOCK }
+        public? final? [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] fun consume([ResolvedTo(RAW_FIR)] x: Int): R|kotlin/Unit| { LAZY_BLOCK }
 
-        public? final? [ResolvedTo(RAW_FIR)] val x: Int? = LAZY_EXPRESSION
+        public? final? [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val x: Int? = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): Int?
 
-        public? final? [ResolvedTo(RAW_FIR)] val y: <implicit> = LAZY_EXPRESSION
+        public? final? [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val y: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public? final? [ResolvedTo(RAW_FIR)] val z: <implicit> = LAZY_EXPRESSION
+        public? final? [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val z: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public? final? [ResolvedTo(RAW_FIR)] fun foo(): <implicit> { LAZY_BLOCK }
+        public? final? [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] fun foo(): <implicit> { LAZY_BLOCK }
 
-        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+        [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] init { LAZY_BLOCK }
 
-        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+        [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] init { LAZY_BLOCK }
 
-        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+        [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] init { LAZY_BLOCK }
 
-        public? final? [ResolvedTo(RAW_FIR)] val zz: <implicit> = LAZY_EXPRESSION
+        public? final? [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val zz: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-script2.kts>] class A : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-script2.kts>, ScriptTopLevelDeclaration=true] class A : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -391,31 +391,31 @@ FILE: [ResolvedTo(IMPORTS)] script2.kts
         [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] fun f([ResolvedTo(RAW_FIR)] p: Int?): Int { LAZY_BLOCK }
+        public? final? [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] fun f([ResolvedTo(RAW_FIR)] p: Int?): Int { LAZY_BLOCK }
 
-        public? final? [ResolvedTo(RAW_FIR)] fun consume([ResolvedTo(RAW_FIR)] x: Int): R|kotlin/Unit| { LAZY_BLOCK }
+        public? final? [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] fun consume([ResolvedTo(RAW_FIR)] x: Int): R|kotlin/Unit| { LAZY_BLOCK }
 
-        public? final? [ResolvedTo(RAW_FIR)] val x: Int? = LAZY_EXPRESSION
+        public? final? [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val x: Int? = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): Int?
 
-        public? final? [ResolvedTo(RAW_FIR)] val y: <implicit> = LAZY_EXPRESSION
+        public? final? [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val y: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public? final? [ResolvedTo(RAW_FIR)] val z: <implicit> = LAZY_EXPRESSION
+        public? final? [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val z: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public? final? [ResolvedTo(RAW_FIR)] fun foo(): <implicit> { LAZY_BLOCK }
+        public? final? [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] fun foo(): <implicit> { LAZY_BLOCK }
 
-        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+        [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] init { LAZY_BLOCK }
 
-        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+        [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] init { LAZY_BLOCK }
 
-        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+        [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] init { LAZY_BLOCK }
 
-        public? final? [ResolvedTo(RAW_FIR)] val zz: <implicit> = LAZY_EXPRESSION
+        public? final? [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val zz: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-script2.kts>] class A : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-script2.kts>, ScriptTopLevelDeclaration=true] class A : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -434,31 +434,31 @@ FILE: [ResolvedTo(IMPORTS)] script2.kts
         [ResolvedTo(CONSTANT_EVALUATION)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(CONSTANT_EVALUATION)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] fun f([ResolvedTo(RAW_FIR)] p: Int?): Int { LAZY_BLOCK }
+        public? final? [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] fun f([ResolvedTo(RAW_FIR)] p: Int?): Int { LAZY_BLOCK }
 
-        public? final? [ResolvedTo(RAW_FIR)] fun consume([ResolvedTo(RAW_FIR)] x: Int): R|kotlin/Unit| { LAZY_BLOCK }
+        public? final? [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] fun consume([ResolvedTo(RAW_FIR)] x: Int): R|kotlin/Unit| { LAZY_BLOCK }
 
-        public? final? [ResolvedTo(RAW_FIR)] val x: Int? = LAZY_EXPRESSION
+        public? final? [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val x: Int? = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): Int?
 
-        public? final? [ResolvedTo(RAW_FIR)] val y: <implicit> = LAZY_EXPRESSION
+        public? final? [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val y: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public? final? [ResolvedTo(RAW_FIR)] val z: <implicit> = LAZY_EXPRESSION
+        public? final? [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val z: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public? final? [ResolvedTo(RAW_FIR)] fun foo(): <implicit> { LAZY_BLOCK }
+        public? final? [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] fun foo(): <implicit> { LAZY_BLOCK }
 
-        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+        [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] init { LAZY_BLOCK }
 
-        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+        [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] init { LAZY_BLOCK }
 
-        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+        [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] init { LAZY_BLOCK }
 
-        public? final? [ResolvedTo(RAW_FIR)] val zz: <implicit> = LAZY_EXPRESSION
+        public? final? [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val zz: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-script2.kts>] class A : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-script2.kts>, ScriptTopLevelDeclaration=true] class A : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -477,31 +477,31 @@ FILE: [ResolvedTo(IMPORTS)] script2.kts
         [ResolvedTo(ANNOTATION_ARGUMENTS)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(ANNOTATION_ARGUMENTS)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] fun f([ResolvedTo(RAW_FIR)] p: Int?): Int { LAZY_BLOCK }
+        public? final? [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] fun f([ResolvedTo(RAW_FIR)] p: Int?): Int { LAZY_BLOCK }
 
-        public? final? [ResolvedTo(RAW_FIR)] fun consume([ResolvedTo(RAW_FIR)] x: Int): R|kotlin/Unit| { LAZY_BLOCK }
+        public? final? [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] fun consume([ResolvedTo(RAW_FIR)] x: Int): R|kotlin/Unit| { LAZY_BLOCK }
 
-        public? final? [ResolvedTo(RAW_FIR)] val x: Int? = LAZY_EXPRESSION
+        public? final? [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val x: Int? = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): Int?
 
-        public? final? [ResolvedTo(RAW_FIR)] val y: <implicit> = LAZY_EXPRESSION
+        public? final? [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val y: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public? final? [ResolvedTo(RAW_FIR)] val z: <implicit> = LAZY_EXPRESSION
+        public? final? [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val z: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public? final? [ResolvedTo(RAW_FIR)] fun foo(): <implicit> { LAZY_BLOCK }
+        public? final? [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] fun foo(): <implicit> { LAZY_BLOCK }
 
-        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+        [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] init { LAZY_BLOCK }
 
-        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+        [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] init { LAZY_BLOCK }
 
-        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+        [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] init { LAZY_BLOCK }
 
-        public? final? [ResolvedTo(RAW_FIR)] val zz: <implicit> = LAZY_EXPRESSION
+        public? final? [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val zz: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-script2.kts>] class A : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-script2.kts>, ScriptTopLevelDeclaration=true] class A : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -520,37 +520,37 @@ FILE: [ResolvedTo(IMPORTS)] script2.kts
         [ResolvedTo(BODY_RESOLVE)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(ANNOTATION_ARGUMENTS)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] fun f([ResolvedTo(RAW_FIR)] p: Int?): Int { LAZY_BLOCK }
+        public? final? [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] fun f([ResolvedTo(RAW_FIR)] p: Int?): Int { LAZY_BLOCK }
 
-        public final [ResolvedTo(CONTRACTS)] fun consume([ResolvedTo(CONTRACTS)] x: R|kotlin/Int|): R|kotlin/Unit| { LAZY_BLOCK }
+        public final [ResolvedTo(CONTRACTS)] [ScriptTopLevelDeclaration=true] fun consume([ResolvedTo(CONTRACTS)] x: R|kotlin/Int|): R|kotlin/Unit| { LAZY_BLOCK }
 
-        public final [ResolvedTo(BODY_RESOLVE)] val x: R|kotlin/Int?| = Int(1)
+        public final [ResolvedTo(BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] val x: R|kotlin/Int?| = Int(1)
             public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int?|
 
-        public final [ResolvedTo(BODY_RESOLVE)] val y: R|kotlin/Int| = R|/x|!!
+        public final [ResolvedTo(BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] val y: R|kotlin/Int| = R|/x|!!
             public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
 
-        public final [ResolvedTo(BODY_RESOLVE)] val z: R|kotlin/Int| = R|/x|.R|kotlin/Int.plus<Inapplicable(UNSAFE_CALL): kotlin/Int.plus>#|(Int(1))
+        public final [ResolvedTo(BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] val z: R|kotlin/Int| = R|/x|.R|kotlin/Int.plus<Inapplicable(UNSAFE_CALL): kotlin/Int.plus>#|(Int(1))
             public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
 
-        public? final? [ResolvedTo(RAW_FIR)] fun foo(): <implicit> { LAZY_BLOCK }
+        public? final? [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] fun foo(): <implicit> { LAZY_BLOCK }
 
-        [ResolvedTo(BODY_RESOLVE)] init {
+        [ResolvedTo(BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] init {
             R|/consume|(R|/x|.R|kotlin/Int.plus<Inapplicable(UNSAFE_CALL): kotlin/Int.plus>#|(Int(1)))
         }
 
-        [ResolvedTo(BODY_RESOLVE)] init {
+        [ResolvedTo(BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] init {
             R|/x|!!
         }
 
-        [ResolvedTo(BODY_RESOLVE)] init {
+        [ResolvedTo(BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] init {
             R|/consume|(R|/x|.R|kotlin/Int.plus<Inapplicable(UNSAFE_CALL): kotlin/Int.plus>#|(Int(1)))
         }
 
-        public final [ResolvedTo(BODY_RESOLVE)] val zz: R|kotlin/Int| = R|/x|.R|kotlin/Int.plus<Inapplicable(UNSAFE_CALL): kotlin/Int.plus>#|(Int(1))
+        public final [ResolvedTo(BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] val zz: R|kotlin/Int| = R|/x|.R|kotlin/Int.plus<Inapplicable(UNSAFE_CALL): kotlin/Int.plus>#|(Int(1))
             public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
 
-        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-script2.kts>] class A : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-script2.kts>, ScriptTopLevelDeclaration=true] class A : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -569,44 +569,44 @@ FILE: [ResolvedTo(BODY_RESOLVE)] script2.kts
         [ResolvedTo(BODY_RESOLVE)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(BODY_RESOLVE)] fun f([ResolvedTo(BODY_RESOLVE)] p: R|kotlin/Int?|): R|kotlin/Int| {
+        public final [ResolvedTo(BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] fun f([ResolvedTo(BODY_RESOLVE)] p: R|kotlin/Int?|): R|kotlin/Int| {
             [ResolvedTo(BODY_RESOLVE)] lval fy: R|kotlin/Int| = R|<local>/p|!!
             [ResolvedTo(BODY_RESOLVE)] lval fz: R|kotlin/Int| = R|<local>/p|.R|kotlin/Int.plus|(Int(1))
             ^f R|<local>/fz|
         }
 
-        public final [ResolvedTo(BODY_RESOLVE)] fun consume([ResolvedTo(BODY_RESOLVE)] x: R|kotlin/Int|): R|kotlin/Unit| {
+        public final [ResolvedTo(BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] fun consume([ResolvedTo(BODY_RESOLVE)] x: R|kotlin/Int|): R|kotlin/Unit| {
         }
 
-        public final [ResolvedTo(BODY_RESOLVE)] val x: R|kotlin/Int?| = Int(1)
+        public final [ResolvedTo(BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] val x: R|kotlin/Int?| = Int(1)
             public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int?|
 
-        public final [ResolvedTo(BODY_RESOLVE)] val y: R|kotlin/Int| = R|/x|!!
+        public final [ResolvedTo(BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] val y: R|kotlin/Int| = R|/x|!!
             public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
 
-        public final [ResolvedTo(BODY_RESOLVE)] val z: R|kotlin/Int| = R|/x|.R|kotlin/Int.plus<Inapplicable(UNSAFE_CALL): kotlin/Int.plus>#|(Int(1))
+        public final [ResolvedTo(BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] val z: R|kotlin/Int| = R|/x|.R|kotlin/Int.plus<Inapplicable(UNSAFE_CALL): kotlin/Int.plus>#|(Int(1))
             public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
 
-        public final [ResolvedTo(BODY_RESOLVE)] fun foo(): R|kotlin/Int| {
+        public final [ResolvedTo(BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] fun foo(): R|kotlin/Int| {
             ^foo R|/x|.R|kotlin/Int.plus<Inapplicable(UNSAFE_CALL): kotlin/Int.plus>#|(Int(1))
         }
 
-        [ResolvedTo(BODY_RESOLVE)] init {
+        [ResolvedTo(BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] init {
             R|/consume|(R|/x|.R|kotlin/Int.plus<Inapplicable(UNSAFE_CALL): kotlin/Int.plus>#|(Int(1)))
         }
 
-        [ResolvedTo(BODY_RESOLVE)] init {
+        [ResolvedTo(BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] init {
             R|/x|!!
         }
 
-        [ResolvedTo(BODY_RESOLVE)] init {
+        [ResolvedTo(BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] init {
             R|/consume|(R|/x|.R|kotlin/Int.plus<Inapplicable(UNSAFE_CALL): kotlin/Int.plus>#|(Int(1)))
         }
 
-        public final [ResolvedTo(BODY_RESOLVE)] val zz: R|kotlin/Int| = R|/x|.R|kotlin/Int.plus<Inapplicable(UNSAFE_CALL): kotlin/Int.plus>#|(Int(1))
+        public final [ResolvedTo(BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] val zz: R|kotlin/Int| = R|/x|.R|kotlin/Int.plus<Inapplicable(UNSAFE_CALL): kotlin/Int.plus>#|(Int(1))
             public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
 
-        public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol <script-script2.kts>] class A : R|kotlin/Any| {
+        public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol <script-script2.kts>, ScriptTopLevelDeclaration=true] class A : R|kotlin/Any| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=A] constructor(): R|A| {
                 super<R|kotlin/Any|>()
             }

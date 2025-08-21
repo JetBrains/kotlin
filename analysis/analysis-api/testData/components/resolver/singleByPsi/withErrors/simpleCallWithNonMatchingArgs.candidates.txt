@@ -4,6 +4,7 @@ KtCallExpression(14,20): 'foo(1)'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -11,6 +12,7 @@ KtCallExpression(14,20): 'foo(1)'
           returnType = kotlin.Unit
           symbol = /foo(): kotlin.Unit
           valueParameters = []
+          contextParameters = []
           callableId = /foo
       typeArgumentsMapping = {}
     diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for 'fun foo(): Unit'.>

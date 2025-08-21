@@ -1,10 +1,10 @@
 // RUN_PIPELINE_TILL: BACKEND
-// FIR_IDENTICAL
 // WITH_EXTRA_CHECKERS
 // DIAGNOSTICS: +UNUSED_EXPRESSION, +UNUSED_LAMBDA_EXPRESSION, -UNUSED_VARIABLE
 
 fun run(block: () -> Unit) {}
 fun <T> consume(block: () -> T) {}
+fun consumeLong(l: Long) {}
 
 class TestClass() {
     val testLambda1 = run {
@@ -55,6 +55,61 @@ fun testWhen() {
             ""
         }
     }
+
+    when {
+        else -> Unit
+    }
+
+    when (a) {
+        "" -> Unit
+    }
+
+    when {
+        else -> {
+            Unit
+        }
+    }
+
+    when {
+        else -> when {
+            else -> {
+                Unit
+            }
+        }
+    }
+
+    consume {
+        <!NO_ELSE_IN_WHEN!>when<!> (a) {
+            "" -> ""
+        }
+    }
+}
+
+fun testIfElse(
+    x: String?,
+    transformer: (String) -> Int,
+) {
+    val a =
+        if (x == null) transformer
+        else { str -> str.length }
+
+    val b =
+        if (x == null) 0L
+        else 0
+
+    val c: Long =
+        if (x == null) 0
+        else 0
+
+    consumeLong(if(x == null) 0 else 1)
+}
+
+fun testWhile(
+    x: Boolean,
+) {
+    while (x) {
+        Unit
+    }
 }
 
 fun testTry() {
@@ -89,7 +144,7 @@ fun testLambda() {
 
     run {
         <!UNUSED_EXPRESSION!>""<!>
-        Unit // actually unused
+        Unit
     }
 
     consume {
@@ -99,7 +154,7 @@ fun testLambda() {
 
     consume {
         <!UNUSED_EXPRESSION!>""<!>
-        Unit // actually unused
+        Unit
     }
 
     consume<Unit> {
@@ -108,6 +163,10 @@ fun testLambda() {
 
     consume<Unit> {
         <!UNUSED_EXPRESSION!>""<!>
-        Unit // actually unused
+        Unit
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, equalityExpression, functionDeclaration, functionalType, ifExpression, init,
+lambdaLiteral, localProperty, nullableType, primaryConstructor, propertyDeclaration, stringLiteral, tryExpression,
+typeParameter, unnamedLocalVariable, whenExpression, whenWithSubject, whileLoop */

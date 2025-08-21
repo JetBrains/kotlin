@@ -10,3 +10,6 @@ val Some.foo get(): Int =
     } else {
         1
     }
+
+/* GENERATED_FIR_TAGS: classDeclaration, comparisonExpression, elvisExpression, getter, ifExpression, integerLiteral,
+nullableType, primaryConstructor, propertyDeclaration, propertyWithExtensionReceiver, safeCall */

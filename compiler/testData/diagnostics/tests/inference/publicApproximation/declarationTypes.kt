@@ -57,3 +57,7 @@ fun test(cls: Cls, obj: Obj) {
     <!DEBUG_INFO_EXPRESSION_TYPE("Bound1")!>obj.publicProperty<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("Bound1")!>obj.publicMemberFunction()<!>
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, getter, interfaceDeclaration,
+intersectionType, localFunction, localProperty, objectDeclaration, propertyDeclaration, propertyWithExtensionReceiver,
+typeConstraint, typeParameter, vararg */

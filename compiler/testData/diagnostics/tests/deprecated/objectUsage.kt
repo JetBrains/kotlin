@@ -9,3 +9,5 @@ fun useObject() {
     <!DEPRECATION!>Obsolete<!>.use()
     val x = <!DEPRECATION!>Obsolete<!>
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, localProperty, objectDeclaration, propertyDeclaration, stringLiteral */

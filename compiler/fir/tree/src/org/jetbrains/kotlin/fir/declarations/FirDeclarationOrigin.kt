@@ -40,6 +40,7 @@ sealed class FirDeclarationOrigin(
         object ForwardDeclaration : Synthetic()
         object ScriptTopLevelDestructuringDeclarationContainer : Synthetic()
         object FakeHiddenInPreparationForNewJdk : Synthetic()
+        object ImplicitWhenSubject : Synthetic()
     }
 
     object DynamicScope : FirDeclarationOrigin()
@@ -63,8 +64,17 @@ sealed class FirDeclarationOrigin(
     }
 
     object FromOtherReplSnippet : FirDeclarationOrigin(fromSource = false)
+    object ForeignValue : FirDeclarationOrigin(fromSource = false)
 
-    class Plugin(val key: GeneratedDeclarationKey) : FirDeclarationOrigin(displayName = "Plugin[$key]", generated = true)
+    class Plugin(val key: GeneratedDeclarationKey) : FirDeclarationOrigin(displayName = "Plugin[$key]", generated = true) {
+        override fun equals(other: Any?): Boolean {
+            if (this === other) return true
+            if (other !is Plugin) return false
+            return key == other.key
+        }
+
+        override fun hashCode(): Int = key.hashCode()
+    }
 
     override fun toString(): String {
         return displayName ?: this::class.simpleName!!

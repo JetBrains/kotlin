@@ -10,3 +10,6 @@ val some: Map<String, String> by lazy {
         foo(it)
     }
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, classReference, functionDeclaration, inline, lambdaLiteral,
+nullableType, propertyDeclaration, propertyDelegate, reified, starProjection, typeParameter */

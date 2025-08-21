@@ -13,3 +13,6 @@ fun test_2() {
     var f = Foo()
     f += Foo()
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, assignment, classDeclaration, functionDeclaration, localProperty, operator,
+propertyDeclaration, thisExpression */

@@ -14,3 +14,6 @@ fun bar(i: I1) {
         foo(i as I2)
     }
 }
+
+/* GENERATED_FIR_TAGS: asExpression, functionDeclaration, ifExpression, interfaceDeclaration, intersectionType,
+isExpression, smartcast */

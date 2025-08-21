@@ -13,3 +13,6 @@ val m = object : X {
         <!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>
     }
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, functionDeclaration, interfaceDeclaration, localFunction, override,
+propertyDeclaration */

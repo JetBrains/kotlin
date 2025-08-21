@@ -21,3 +21,6 @@ public <!NOTHING_TO_INLINE!>inline<!> fun <T> Function1<Int, Int>?.submit() {
 public <!NOTHING_TO_INLINE!>inline<!> fun <T> submit(<!NULLABLE_INLINE_PARAMETER!>action: Function1<Int, Int>?<!>) {
 
 }
+
+/* GENERATED_FIR_TAGS: funWithExtensionReceiver, functionDeclaration, functionalType, inline, integerLiteral, noinline,
+nullableType, safeCall, thisExpression, typeParameter */

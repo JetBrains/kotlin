@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.objcexport.analysisApiUtils
 
 import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.export.utilities.isHashCode
+import org.jetbrains.kotlin.analysis.api.export.utilities.isSuspend
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.types.KaFunctionType
 import org.jetbrains.kotlin.analysis.api.types.KaType
@@ -162,7 +164,7 @@ internal fun KaSession.isObjCVoid(type: KaType): Boolean {
  * [ObjCExportMapper.bridgeReturnType]
  */
 private fun ObjCExportContext.bridgeReturnType(symbol: KaCallableSymbol): MethodBridge.ReturnValue {
-    val sessionReturnType = exportSession.exportSessionReturnType(symbol)
+    val sessionReturnType = exportSession.overrideReturnType(symbol)
 
     if (analysisSession.isArrayConstructor(symbol)) {
         return MethodBridge.ReturnValue.Instance.FactoryResult
@@ -193,7 +195,7 @@ private fun ObjCExportContext.bridgeReturnType(symbol: KaCallableSymbol): Method
     val successReturnValueBridge = MethodBridge.ReturnValue.Mapped(returnTypeBridge)
 
     return if (symbol.hasThrowsAnnotation) {
-        val canReturnZero = !returnTypeBridge.isReferenceOrPointer() || with(analysisSession) { sessionReturnType.canBeNull }
+        val canReturnZero = !returnTypeBridge.isReferenceOrPointer() || with(analysisSession) { sessionReturnType.isNullable }
         MethodBridge.ReturnValue.WithError.ZeroForError(
             successReturnValueBridge,
             successMayBeZero = canReturnZero

@@ -19,3 +19,5 @@ class A {
         <!UNRESOLVED_REFERENCE!>println<!>("Fest")
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, stringLiteral */

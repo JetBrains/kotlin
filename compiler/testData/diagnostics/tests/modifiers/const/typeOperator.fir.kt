@@ -15,3 +15,6 @@ const val isOperator3 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER, USELESS_IS_CHECK
 const val isOperator4 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER, USELESS_IS_CHECK!>"1" !is MyClass<!>
 
 fun f(): String = ""
+
+/* GENERATED_FIR_TAGS: asExpression, classDeclaration, const, functionDeclaration, integerLiteral, isExpression,
+nullableType, propertyDeclaration, stringLiteral */

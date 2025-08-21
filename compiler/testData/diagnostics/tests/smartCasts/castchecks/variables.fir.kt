@@ -67,3 +67,7 @@ fun f(a: SomeClass?) {
         c.foo
     }
 }
+
+/* GENERATED_FIR_TAGS: asExpression, assignment, equalityExpression, functionDeclaration, ifExpression, integerLiteral,
+interfaceDeclaration, localProperty, nullableType, objectDeclaration, override, propertyDeclaration, safeCall, smartcast,
+stringLiteral */

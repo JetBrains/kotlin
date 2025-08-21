@@ -13,7 +13,7 @@ val a: () -> Unit = l@{
 
 val b: () -> Unit = l@{
     // Error, coercion can't be applied at this position!
-    if (true) return@l <!RETURN_TYPE_MISMATCH!>"hello"<!>
+    if (true) return@l <!RETURN_TYPE_MISMATCH, RETURN_TYPE_MISMATCH!>"hello"<!>
 
     // However, this is OK, because here coercion is applied
     "hello"
@@ -24,3 +24,6 @@ val c: () -> Unit = {
     // (compare that with the previous case, where we didn't used expected type Unit for "hello")
     materialize()
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionalType, ifExpression, integerLiteral, lambdaLiteral, nullableType,
+propertyDeclaration, stringLiteral, typeParameter */

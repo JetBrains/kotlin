@@ -6,12 +6,15 @@
 package org.jetbrains.kotlin.buildtools.internal
 
 import org.jetbrains.kotlin.buildtools.api.CompilerExecutionStrategyConfiguration
-import java.io.File
+import java.time.Duration
 
 internal sealed interface CompilerExecutionStrategy {
     data object InProcess : CompilerExecutionStrategy
 
-    data class Daemon(val jvmArguments: List<String>) : CompilerExecutionStrategy
+    data class Daemon(
+        val jvmArguments: List<String>,
+        val shutdownDelay: Duration? = null,
+    ) : CompilerExecutionStrategy
 }
 
 internal class CompilerExecutionStrategyConfigurationImpl : CompilerExecutionStrategyConfiguration {
@@ -25,6 +28,14 @@ internal class CompilerExecutionStrategyConfigurationImpl : CompilerExecutionStr
 
     override fun useDaemonStrategy(jvmArguments: List<String>): CompilerExecutionStrategyConfiguration {
         selectedStrategy = CompilerExecutionStrategy.Daemon(jvmArguments)
+        return this
+    }
+
+    override fun useDaemonStrategy(
+        jvmArguments: List<String>,
+        shutdownDelay: Duration,
+    ): CompilerExecutionStrategyConfiguration {
+        selectedStrategy = CompilerExecutionStrategy.Daemon(jvmArguments, shutdownDelay)
         return this
     }
 }

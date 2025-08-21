@@ -3,11 +3,12 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-@file:Suppress("PackageDirectoryMismatch", "TYPEALIAS_EXPANSION_DEPRECATION") // Old package for compatibility
+@file:Suppress("PackageDirectoryMismatch", "TYPEALIAS_EXPANSION_DEPRECATION_ERROR") // Old package for compatibility
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.plugin.DeprecatedHasCompilerOptions
+import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.DefaultKotlinCompilationFriendPathsResolver
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinCompilationLanguageSettingsConfigurator
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinJvmCompilationAssociator
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.factory.JvmWithJavaCompilationDependencyConfigurationsFactory
@@ -17,8 +18,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.factory.plus
 import org.jetbrains.kotlin.gradle.utils.filesProvider
 import org.jetbrains.kotlin.gradle.utils.javaSourceSets
 
-@Suppress("DEPRECATION")
-class KotlinWithJavaCompilationFactory<KotlinOptionsType : KotlinCommonOptions, CO : KotlinCommonCompilerOptions> internal constructor(
+class KotlinWithJavaCompilationFactory<KotlinOptionsType : Any, CO : KotlinCommonCompilerOptions> internal constructor(
     override val target: KotlinWithJavaTarget<KotlinOptionsType, CO>,
     val compilerOptionsFactory: () -> DeprecatedHasCompilerOptions<CO>,
     val kotlinOptionsFactory: (CO) -> KotlinOptionsType
@@ -45,9 +45,19 @@ class KotlinWithJavaCompilationFactory<KotlinOptionsType : KotlinCommonOptions, 
             compilerOptionsFactory = { _, _ ->
                 val compilerOptions = compilerOptionsFactory()
                 val kotlinOptions = kotlinOptionsFactory(compilerOptions.options)
-                KotlinCompilationImplFactory.KotlinCompilerOptionsFactory.Options(compilerOptions, kotlinOptions)
+                @Suppress("DEPRECATION_ERROR")
+                KotlinCompilationImplFactory.KotlinCompilerOptionsFactory.Options(
+                    compilerOptions,
+                    kotlinOptions as KotlinCommonOptions,
+                )
             },
             compilationAssociator = KotlinJvmCompilationAssociator,
+            compilationFriendPathsResolver = DefaultKotlinCompilationFriendPathsResolver(
+                friendArtifactResolver = DefaultKotlinCompilationFriendPathsResolver.FriendArtifactResolver.composite(
+                    DefaultKotlinCompilationFriendPathsResolver.DefaultFriendArtifactResolver,
+                    DefaultKotlinCompilationFriendPathsResolver.AdditionalJvmFriendArtifactResolver
+                )
+            ),
             compilationOutputFactory = { _, compilationName ->
                 KotlinWithJavaCompilationOutput(project.javaSourceSets.maybeCreate(compilationName))
             },

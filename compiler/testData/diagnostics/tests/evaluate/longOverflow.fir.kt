@@ -64,3 +64,6 @@ class A {
         val l19: Long = longMinValue / -1
     }
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, classDeclaration, functionDeclaration, integerLiteral, localProperty,
+multiplicativeExpression, propertyDeclaration, unaryExpression */

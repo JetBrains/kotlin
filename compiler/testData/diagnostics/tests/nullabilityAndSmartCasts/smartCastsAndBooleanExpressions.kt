@@ -7,3 +7,6 @@ fun foo(b: Boolean?, c: Boolean) {
         if (<!DEBUG_INFO_SMARTCAST!>b<!> || c) {}
     }
 }
+
+/* GENERATED_FIR_TAGS: andExpression, disjunctionExpression, equalityExpression, functionDeclaration, ifExpression,
+nullableType, smartcast */

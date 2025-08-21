@@ -1,9 +1,11 @@
 import gradle.GradlePluginVariant
 import gradle.publishGradlePluginsJavadoc
 import org.gradle.api.Project
+import org.gradle.kotlin.dsl.named
 import org.jetbrains.dokka.gradle.GradleDokkaSourceSetBuilder
 import org.gradle.kotlin.dsl.withType
 import org.jetbrains.dokka.gradle.AbstractDokkaLeafTask
+import org.jetbrains.dokka.gradle.DokkaTaskPartial
 import javax.inject.Inject
 
 /*
@@ -14,7 +16,8 @@ import javax.inject.Inject
 abstract class PluginApiReferenceExtension @Inject constructor(
     private val project: Project
 ) {
-    fun enableForGradlePluginVariants(variants: Set<GradlePluginVariant>) {
+    fun enableForAllGradlePluginVariants() {
+        val variants = GradlePluginVariant.values()
         if (project.kotlinBuildProperties.publishGradlePluginsJavadoc) {
             variants.forEach { variant ->
                 project.generateJavadocForPluginVariant(variant)
@@ -30,6 +33,14 @@ abstract class PluginApiReferenceExtension @Inject constructor(
 
     fun enableKotlinlangDocumentation() {
         project.configureTaskForKotlinlang()
+    }
+
+    fun moduleName(name: String) {
+        if (!project.kotlinBuildProperties.publishGradlePluginsJavadoc) return
+
+        project.tasks.named<DokkaTaskPartial>("dokkaHtmlPartial").configure {
+            moduleName.set(name)
+        }
     }
 
     private var _failOnWarning: Boolean = false

@@ -15,3 +15,6 @@ fun foo(numbers: Collection<Int>) {
 }
 
 fun use(vararg a: Any?) = a
+
+/* GENERATED_FIR_TAGS: assignment, comparisonExpression, continue, forLoop, functionDeclaration, ifExpression,
+integerLiteral, localProperty, nullableType, outProjection, propertyDeclaration, vararg */

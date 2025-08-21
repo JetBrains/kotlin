@@ -20,9 +20,7 @@ import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.compile.AbstractCompile
 import org.gradle.api.tasks.compile.JavaCompile
 import org.gradle.process.CommandLineArgumentProvider
-import org.gradle.tooling.provider.model.ToolingModelBuilderRegistry
 import org.jetbrains.kotlin.gradle.internal.kapt.KaptProperties
-import org.jetbrains.kotlin.gradle.model.builder.KaptModelBuilder
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmAndroidCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinWithJavaCompilation
@@ -39,13 +37,11 @@ import java.util.concurrent.Callable
 import javax.inject.Inject
 
 // apply plugin: 'kotlin-kapt'
-class Kapt3GradleSubplugin @Inject internal constructor(private val registry: ToolingModelBuilderRegistry) :
+class Kapt3GradleSubplugin @Inject internal constructor() :
     KotlinCompilerPluginSupportPlugin {
 
     override fun apply(target: Project) {
         target.extensions.create("kapt", KaptExtension::class.java)
-
-        registry.register(KaptModelBuilder())
     }
 
     companion object {
@@ -111,7 +107,7 @@ class Kapt3GradleSubplugin @Inject internal constructor(private val registry: To
 
             project.configurations.findResolvable(configurationName)?.let { return it }
             val aptConfiguration = project.configurations.createResolvable(configurationName).apply {
-                attributes.setAttribute(Usage.USAGE_ATTRIBUTE, project.objects.named(Usage.JAVA_RUNTIME))
+                attributes.attribute(Usage.USAGE_ATTRIBUTE, project.objects.named(Usage.JAVA_RUNTIME))
             }
 
             if (aptConfiguration.name != MAIN_KAPT_CONFIGURATION_NAME) {
@@ -176,7 +172,7 @@ class Kapt3GradleSubplugin @Inject internal constructor(private val registry: To
             }
         }
 
-        @Suppress("TYPEALIAS_EXPANSION_DEPRECATION")
+        @Suppress("TYPEALIAS_EXPANSION_DEPRECATION", "DEPRECATION")
         val androidVariantData: DeprecatedAndroidBaseVariant? = (kotlinCompilation as? KotlinJvmAndroidCompilation)?.androidVariant
 
         val sourceSetName = if (androidVariantData != null) {
@@ -282,7 +278,7 @@ class Kapt3GradleSubplugin @Inject internal constructor(private val registry: To
 
             kotlinCompilation.compileTaskProvider.configure { task ->
                 with(task as AbstractKotlinCompile<*>) {
-                    setSource(sourcesOutputDir, kotlinSourcesOutputDir)
+                    source(sourcesOutputDir, kotlinSourcesOutputDir)
                     libraries.from(classesOutputDir)
                 }
             }
@@ -317,12 +313,13 @@ class Kapt3GradleSubplugin @Inject internal constructor(private val registry: To
             task.kaptClasspathConfigurationNames.value(kaptClasspathConfigurations.map { it.name }).disallowChanges()
 
             KaptWithAndroid.androidVariantData(this)?.annotationProcessorOptionProviders?.let {
-                task.annotationProcessorOptionProviders.add(it)
+                task.annotationProcessorOptionsProviders.addAll(it)
             }
 
             val pluginOptions: Provider<CompilerPluginOptions> = getDslKaptApOptions().toCompilerPluginOptions()
 
             task.kaptPluginOptions.add(pluginOptions)
+            task.annotationProcessorOptionsProviders.finalizeValueOnRead()
         }
 
         return project.registerTask(taskName, KaptWithoutKotlincTask::class.java, emptyList()).also {
@@ -429,7 +426,7 @@ internal fun buildKaptSubpluginOptions(
     pluginOptions += FilesSubpluginOption("classes", generatedClassesDir)
     pluginOptions += FilesSubpluginOption("incrementalData", incrementalDataDir)
 
-    @Suppress("DEPRECATION") val annotationProcessors = kaptExtension.processors
+    @Suppress("DEPRECATION_ERROR") val annotationProcessors = kaptExtension.processors
     if (annotationProcessors.isNotEmpty()) {
         pluginOptions += SubpluginOption("processors", annotationProcessors)
     }
@@ -446,10 +443,8 @@ internal fun buildKaptSubpluginOptions(
         "${kaptExtension.strictMode}"
     )
     pluginOptions += SubpluginOption("stripMetadata", "${kaptExtension.stripMetadata}")
-    pluginOptions += SubpluginOption("keepKdocCommentsInStubs", "${KaptProperties.isKaptKeepKdocCommentsInStubs(project).get()}")
     pluginOptions += SubpluginOption("showProcessorTimings", "${kaptExtension.showProcessorStats}")
     pluginOptions += SubpluginOption("detectMemoryLeaks", kaptExtension.detectMemoryLeaks)
-    pluginOptions += SubpluginOption("useK2", "${KaptProperties.isUseK2(project).get()}")
     pluginOptions += SubpluginOption("infoAsWarnings", "${KaptProperties.isInfoAsWarnings(project).get()}")
     pluginOptions += FilesSubpluginOption("stubs", kaptStubsDir)
 

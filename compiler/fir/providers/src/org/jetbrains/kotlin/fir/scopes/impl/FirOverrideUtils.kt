@@ -18,14 +18,17 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirPropertyAccessorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.name.StandardClassIds
 
+@ScopeFunctionRequiresPrewarm
 fun filterOutOverriddenFunctions(extractedOverridden: Collection<MemberWithBaseScope<FirNamedFunctionSymbol>>): Collection<MemberWithBaseScope<FirNamedFunctionSymbol>> {
     return filterOutOverridden(extractedOverridden, FirTypeScope::processDirectOverriddenFunctionsWithBaseScope)
 }
 
+@ScopeFunctionRequiresPrewarm
 fun filterOutOverriddenProperties(extractedOverridden: Collection<MemberWithBaseScope<FirPropertySymbol>>): Collection<MemberWithBaseScope<FirPropertySymbol>> {
     return filterOutOverridden(extractedOverridden, FirTypeScope::processDirectOverriddenPropertiesWithBaseScope)
 }
 
+@ScopeFunctionRequiresPrewarm
 fun <D : FirCallableSymbol<*>> filterOutOverridden(
     extractedOverridden: Collection<MemberWithBaseScope<D>>,
     processAllOverridden: ProcessOverriddenWithBaseScope<D>,
@@ -78,17 +81,17 @@ inline fun <D> chooseIntersectionVisibilityOrNull(
     toSymbol: (D) -> FirCallableSymbol<*>,
     isAbstract: (D) -> Boolean,
 ): Visibility? {
-    val nonAbstract = nonSubsumedOverrides.filter {
+    val nonAbstractOverrides = nonSubsumedOverrides.filter {
         // Kotlin's Cloneable interface contains phantom `protected open fun clone()`.
         !isAbstract(it) && toSymbol(it).callableId != StandardClassIds.Callables.clone
     }
-    val allAreAbstract = nonAbstract.isEmpty()
+    val allAreAbstract = nonAbstractOverrides.isEmpty()
 
     if (allAreAbstract) {
         return findMaxVisibilityOrNull(nonSubsumedOverrides, toSymbol)
     }
 
-    return nonAbstract.singleOrNull()?.let(toSymbol)?.rawStatus?.visibility
+    return nonAbstractOverrides.mapTo(mutableSetOf()) { toSymbol(it).rawStatus.visibility }.singleOrNull()
 }
 
 val FirCallableSymbol<*>.isAbstractAccordingToRawStatus: Boolean

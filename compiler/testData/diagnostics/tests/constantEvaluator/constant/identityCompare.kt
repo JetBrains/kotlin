@@ -28,3 +28,5 @@ const val notEqual8 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER, FORBIDDEN_IDENTITY
 
 const val notEqual9 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER, EQUALITY_NOT_APPLICABLE, FORBIDDEN_IDENTITY_EQUALS!>uint !== int<!>
 const val notEqual10 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER, EQUALITY_NOT_APPLICABLE, FORBIDDEN_IDENTITY_EQUALS!>int !== uint<!>
+
+/* GENERATED_FIR_TAGS: const, equalityExpression, integerLiteral, propertyDeclaration, unsignedLiteral */

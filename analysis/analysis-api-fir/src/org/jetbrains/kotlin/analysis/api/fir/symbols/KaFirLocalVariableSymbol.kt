@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -20,14 +20,16 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaLocalVariableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.errorWithFirSpecificEntries
+import org.jetbrains.kotlin.fir.declarations.utils.isLateInit
 import org.jetbrains.kotlin.fir.symbols.impl.FirErrorPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.psi.*
 
-internal sealed class KaFirLocalOrErrorVariableSymbol private constructor(
+internal sealed class KaFirLocalOrErrorVariableSymbol(
     final override val backingPsi: KtDeclaration?,
     final override val analysisSession: KaFirSession,
     final override val lazyFirSymbol: Lazy<FirVariableSymbol<*>>,
@@ -52,6 +54,12 @@ internal sealed class KaFirLocalOrErrorVariableSymbol private constructor(
 
     override val returnType: KaType
         get() = withValidityAssertion { firSymbol.returnType(builder) }
+
+    override val isLateInit: Boolean
+        // Note that for loop parameters having the `lateinit` keyword, the NON-PSI version returns `false`.
+        // This happens because `lateinit` is not propagated to the FIR status of the loop parameter symbol.
+        // See changes in KT-76578
+        get() = withValidityAssertion { backingPsi?.hasModifier(KtTokens.LATEINIT_KEYWORD) ?: firSymbol.isLateInit }
 
     override fun createPointer(): KaSymbolPointer<KaLocalVariableSymbol> = withValidityAssertion {
         psiBasedSymbolPointerOfTypeIfSource<KaLocalVariableSymbol>()?.let { return it }

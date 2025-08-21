@@ -9,8 +9,10 @@ import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.tooling.BuildKotlinToolingMetadataTask
+import org.jetbrains.kotlin.gradle.util.resolveRepoArtifactPath
 import org.jetbrains.kotlin.gradle.util.replaceText
 import org.jetbrains.kotlin.konan.target.KonanTarget
+import org.jetbrains.kotlin.test.TestMetadata
 import org.jetbrains.kotlin.tooling.KotlinToolingMetadata
 import org.jetbrains.kotlin.tooling.parseJsonOrThrow
 import org.junit.jupiter.api.DisplayName
@@ -29,6 +31,10 @@ class KotlinToolingMetadataMppIT : KGPBaseTest() {
 
     private val buildKotlinToolingMetadataTaskName
         get() = BuildKotlinToolingMetadataTask.defaultTaskName
+
+    override val defaultBuildOptions: BuildOptions
+        // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
+        get() = super.defaultBuildOptions.copy(isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED)
 
     @GradleTest
     @DisplayName("Check published metadata contains right data")
@@ -60,8 +66,12 @@ class KotlinToolingMetadataMppIT : KGPBaseTest() {
                 )
 
                 /* Check metadata file in published repository */
-                val publishedMetadataJson = localRepository.resolve(
-                    "com/example/bar/my-lib-bar/1.0/my-lib-bar-1.0-kotlin-tooling-metadata.json"
+                val publishedMetadataJson = localRepository.resolveRepoArtifactPath(
+                    "com.example.bar",
+                    "my-lib-bar",
+                    "1.0",
+                    classifier = "kotlin-tooling-metadata",
+                    extension = "json",
                 ).readText()
 
                 assertEquals(
@@ -112,6 +122,7 @@ class KotlinToolingMetadataMppIT : KGPBaseTest() {
 
     @GradleTest
     @DisplayName("KotlinToolingMetadata tasks are avaialbe in Kotlin JS browser project")
+    @TestMetadata("kotlin-js-browser-project")
     fun tasksAreAvailableInKotlinJsBrowser(
         gradleVersion: GradleVersion,
         @TempDir localRepository: Path

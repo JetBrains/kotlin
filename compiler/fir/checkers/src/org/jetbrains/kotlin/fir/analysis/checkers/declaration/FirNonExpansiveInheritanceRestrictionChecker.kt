@@ -30,7 +30,8 @@ import org.jetbrains.kotlin.utils.addToStdlib.runIf
  * @see org.jetbrains.kotlin.resolve.NonExpansiveInheritanceRestrictionChecker
  */
 object FirNonExpansiveInheritanceRestrictionChecker : FirRegularClassChecker(MppCheckerKind.Common) {
-    override fun check(declaration: FirRegularClass, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirRegularClass) {
         if (declaration.typeParameters.isEmpty()) return
 
         val graph = buildTypeGraph(declaration, context.session)
@@ -42,14 +43,14 @@ object FirNonExpansiveInheritanceRestrictionChecker : FirRegularClassChecker(Mpp
 
         for (ref in declaration.typeParameters) {
             if (problemNodes.remove(TypeParameterNode(declaration.symbol, ref.symbol))) {
-                reporter.reportOn(ref.source ?: declaration.source, FirErrors.EXPANSIVE_INHERITANCE, context)
+                reporter.reportOn(ref.source ?: declaration.source, FirErrors.EXPANSIVE_INHERITANCE)
                 return
             }
         }
 
         val containers = problemNodes.map { it.container }
         if (containers.any { it.origin !is FirDeclarationOrigin.Java }) return
-        reporter.reportOn(declaration.source, FirErrors.EXPANSIVE_INHERITANCE_IN_JAVA, containers, context)
+        reporter.reportOn(declaration.source, FirErrors.EXPANSIVE_INHERITANCE_IN_JAVA, containers)
     }
 
     private fun buildTypeGraph(
@@ -123,7 +124,7 @@ object FirNonExpansiveInheritanceRestrictionChecker : FirRegularClassChecker(Mpp
                         val bounds = SmartSet.create<ConeKotlinType>()
                         constituentTypeParameterSymbol.resolvedBounds.mapNotNullTo(bounds) { substitutor!!.substituteOrNull(it.coneType) }
                         typeProjection.type?.let(bounds::add)
-                        val boundClosure = bounds.flatMapTo(SmartSet.create()) { it.collectUpperBounds() }
+                        val boundClosure = bounds.flatMapTo(SmartSet.create()) { it.collectUpperBounds(session.typeContext) }
 
                         addEdges(
                             typeParameters = typeParameters,
@@ -153,7 +154,7 @@ object FirNonExpansiveInheritanceRestrictionChecker : FirRegularClassChecker(Mpp
 
     private class Graph<T> {
         val expansiveEdges = SmartSet.create<ExpansiveEdge<T>>()
-        private val edgeLists = mutableMapOf<T, MutableSet<T>>()
+        private val edgeLists = hashMapOf<T, MutableSet<T>>()
 
         fun addEdge(from: T, to: T, expansive: Boolean = false) {
             edgeLists.getOrPut(from) { SmartSet.create() }.add(to)

@@ -41,3 +41,7 @@ inline fun <T> TypeRemapper.withinScope(irTypeParametersContainer: IrTypeParamet
     leaveScope()
     return result
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, forLoop, funWithExtensionReceiver, functionDeclaration,
+functionalType, inline, interfaceDeclaration, lambdaLiteral, localProperty, nullableType, primaryConstructor,
+propertyDeclaration, thisExpression, typeParameter */

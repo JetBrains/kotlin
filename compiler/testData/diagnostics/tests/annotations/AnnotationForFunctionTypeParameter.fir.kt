@@ -26,3 +26,6 @@ class SomeClassTPA {
         fun <<!WRONG_ANNOTATION_TARGET!>@TA<!> @TPA(3) <!REPEATED_ANNOTATION!>@TPA<!> <!REPEATED_ANNOTATION, WRONG_ANNOTATION_TARGET!>@TA(<!TOO_MANY_ARGUMENTS!>12<!>)<!> <!REPEATED_ANNOTATION!>@TPA(<!ARGUMENT_TYPE_MISMATCH!>"Test"<!>)<!>  T> innerFun() = 12
     }
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, functionDeclaration, integerLiteral, localFunction,
+nullableType, primaryConstructor, propertyDeclaration, stringLiteral, typeParameter */

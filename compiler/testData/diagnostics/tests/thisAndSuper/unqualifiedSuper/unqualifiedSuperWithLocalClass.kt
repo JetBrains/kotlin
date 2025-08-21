@@ -21,3 +21,6 @@ fun withLocalClasses(param: Int): Interface {
     }
 
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, anonymousObjectExpression, classDeclaration, functionDeclaration, getter,
+integerLiteral, interfaceDeclaration, localClass, override, propertyDeclaration, superExpression */

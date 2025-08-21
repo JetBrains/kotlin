@@ -13,3 +13,6 @@ fun foo(x: Int): Boolean {
     }
     return x == 0
 }
+
+/* GENERATED_FIR_TAGS: contractConditionalEffect, contracts, equalityExpression, functionDeclaration, integerLiteral,
+lambdaLiteral */

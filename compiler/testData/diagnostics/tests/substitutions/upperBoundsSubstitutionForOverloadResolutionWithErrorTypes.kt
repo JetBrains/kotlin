@@ -8,3 +8,5 @@ fun <T> f1(c: Collection<T>): T{throw Exception()}
 fun <T> test(l: List<T>) {
     <!OVERLOAD_RESOLUTION_AMBIGUITY!>f1<!>(l)
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, nullableType, typeParameter */

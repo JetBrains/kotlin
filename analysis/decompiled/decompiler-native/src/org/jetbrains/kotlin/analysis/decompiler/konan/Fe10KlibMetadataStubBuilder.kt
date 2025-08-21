@@ -5,6 +5,7 @@
 package org.jetbrains.kotlin.analysis.decompiler.konan
 
 import com.intellij.openapi.fileTypes.FileType
+import com.intellij.openapi.project.DefaultProjectFactory
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiFileFactory
@@ -39,7 +40,8 @@ internal open class Fe10KlibMetadataStubBuilder(
             renderer
         )
 
-        return createFileStub(fileContent.project, ktFileText.text)
+        val project = fileContent.project ?: DefaultProjectFactory.getInstance().defaultProject
+        return createFileStub(project, ktFileText.text)
     }
 
     private fun createFileStub(project: Project, text: String): PsiFileStub<*> {
@@ -49,6 +51,6 @@ internal open class Fe10KlibMetadataStubBuilder(
 
         val psiFileFactory = PsiFileFactory.getInstance(project) as PsiFileFactoryImpl
         val file = psiFileFactory.trySetupPsiForFile(virtualFile, KotlinLanguage.INSTANCE, false, false)!!
-        return KtFileElementType.INSTANCE.builder.buildStubTree(file) as PsiFileStub<*>
+        return KtFileElementType.builder.buildStubTree(file) as PsiFileStub<*>
     }
 }

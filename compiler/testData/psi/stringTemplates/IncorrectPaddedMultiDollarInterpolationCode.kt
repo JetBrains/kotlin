@@ -1,3 +1,5 @@
+// COMPILATION_ERRORS
+
 // interpolation prefix length: 0, 1, 2, 4, 8
 // interpolation kinds: of arbitrary expression
 // string literal kinds: single-line, multi-line

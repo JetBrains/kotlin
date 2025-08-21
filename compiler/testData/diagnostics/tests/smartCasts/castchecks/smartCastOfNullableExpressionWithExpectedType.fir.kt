@@ -8,3 +8,6 @@ fun test(item: Item) {
         val href: String = item.link
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, equalityExpression, functionDeclaration, ifExpression, localProperty,
+nullableType, primaryConstructor, propertyDeclaration, smartcast */

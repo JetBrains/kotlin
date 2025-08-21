@@ -9,3 +9,5 @@ public class A {
 fun main() {
     A.main(arrayOf())
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaFunction */

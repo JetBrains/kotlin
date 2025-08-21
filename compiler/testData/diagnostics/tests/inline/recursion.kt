@@ -24,3 +24,7 @@ inline operator fun <T, V> Function1<T, V>.not() : Boolean {
 inline operator fun <T, V> Function1<T, V>.inc() : Function1<T, V> {
     return this<!RECURSION_IN_INLINE!>++<!>
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType,
+incrementDecrementExpression, infix, inline, integerLiteral, lambdaLiteral, nullableType, operator, thisExpression,
+typeParameter, typeWithExtension */

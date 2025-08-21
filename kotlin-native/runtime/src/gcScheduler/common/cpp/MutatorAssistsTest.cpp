@@ -5,9 +5,10 @@
 
 #include "MutatorAssists.hpp"
 
+#include <atomic>
 #include <map>
 #include <shared_mutex>
-#include <sstream>
+#include <thread>
 
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
@@ -67,6 +68,8 @@ public:
             return getMutator(threadData).assists();
         });
     }
+
+    Epoch completedEpoch(std::memory_order order) noexcept { return assists_.completedEpoch(order); }
 
     void safePoint() noexcept {
         if (!mm::test_support::safePointsAreActive()) return;
@@ -153,21 +156,48 @@ TEST_F(MutatorAssistsTest, StressEnableSafePointsByMutators) {
 
 TEST_F(MutatorAssistsTest, Assist) {
     constexpr Epoch epochsCount = 4;
-    std::array<std::atomic<bool>, epochsCount> canStart = {false};
-    std::array<std::atomic<size_t>, epochsCount> started = {0};
-    std::array<std::atomic<size_t>, epochsCount> finished = {0};
-    std::atomic<Epoch> gcCompleted = 0;
+    struct EpochData {
+        std::atomic<bool> canStart = false;
+        std::atomic<size_t> started = 0;
+        std::atomic<size_t> finished = 0;
+
+        void waitToStart() noexcept {
+            while (!canStart.load(std::memory_order_acquire)) {
+                std::this_thread::yield();
+            }
+            started.fetch_add(1, std::memory_order_release);
+        }
+
+        void start(size_t expectedCount) noexcept {
+            canStart.store(std::memory_order_release);
+            while (started.load(std::memory_order_acquire) < expectedCount) {
+                std::this_thread::yield();
+            }
+        }
+
+        void finish() noexcept {
+            finished.fetch_add(1, std::memory_order_release);
+        }
+
+        void waitFinished(size_t expectedCount) noexcept {
+            while (finished.load(std::memory_order_acquire) < expectedCount) {
+                std::this_thread::yield();
+            }
+        }
+    };
+    std::vector<EpochData> epochs(epochsCount);
     std::vector<std::unique_ptr<Mutator>> mutators;
+    std::atomic<bool> canStop = false;
     for (int i = 0; i < kDefaultThreadCount; ++i) {
         mutators.emplace_back(std::make_unique<Mutator>(*this, [&](Mutator&) noexcept {
             for (Epoch epoch = 0; epoch < epochsCount; ++epoch) {
-                while (!canStart[epoch].load(std::memory_order_relaxed)) {
-                    std::this_thread::yield();
-                }
-                started[epoch].fetch_add(1, std::memory_order_relaxed);
+                epochs[epoch].waitToStart();
                 safePoint();
-                EXPECT_THAT(gcCompleted.load(std::memory_order_relaxed), epoch);
-                finished[epoch].fetch_add(1, std::memory_order_relaxed);
+                EXPECT_THAT(completedEpoch(std::memory_order_relaxed), epoch + 1);
+                epochs[epoch].finish();
+            }
+            while (!canStop.load(std::memory_order_acquire)) {
+                std::this_thread::yield();
             }
         }));
     }
@@ -179,34 +209,30 @@ TEST_F(MutatorAssistsTest, Assist) {
     }
     for (Epoch epoch = 0; epoch < epochsCount; ++epoch) {
         requestAssists(epoch + 1);
-        canStart[epoch].store(true, std::memory_order_relaxed);
-        while (started[epoch].load(std::memory_order_relaxed) < mutators.size()) {
-            std::this_thread::yield();
-        }
-        while (!std::all_of(mutators.begin(), mutators.end(), [epoch](auto& m) noexcept {
-            auto [waitingEpoch, waiting] = m->assists().startedWaiting(std::memory_order_relaxed);
-            return waitingEpoch == epoch + 1 && waiting;
-        })) {
-            std::this_thread::yield();
-        }
-        gcCompleted.store(epoch, std::memory_order_relaxed);
+        epochs[epoch].start(mutators.size());
         for (auto& m : mutators) {
+            Epoch waitingEpoch = 0;
+            bool waiting = false;
+            while (true) {
+                std::tie(waitingEpoch, waiting) = m->assists().startedWaiting(std::memory_order_acquire);
+                if (waiting) break;
+                EXPECT_THAT(waitingEpoch, epoch); // If not waiting, should be exactly the previous epoch.
+                std::this_thread::yield();
+            }
+            EXPECT_THAT(waitingEpoch, epoch + 1);
             EXPECT_THAT(m->threadData().state(), ThreadState::kNative);
-            // And already checked that all of them have started waiting for epoch.
         }
         completeEpoch(epoch + 1);
-        while (finished[epoch].load(std::memory_order_relaxed) < mutators.size()) {
-            std::this_thread::yield();
-        }
+        epochs[epoch].waitFinished(mutators.size());
         for (auto& m : mutators) {
-            if (epoch != epochsCount - 1) {
-                EXPECT_THAT(m->threadData().state(), ThreadState::kRunnable);
-            }
+            EXPECT_THAT(m->threadData().state(), ThreadState::kRunnable);
             auto [waitingEpoch, waiting] = m->assists().startedWaiting(std::memory_order_relaxed);
             EXPECT_THAT(waitingEpoch, epoch + 1);
             EXPECT_FALSE(waiting);
         }
     }
+    canStop.store(true, std::memory_order_release);
+    mutators.clear();
 }
 
 TEST_F(MutatorAssistsTest, AssistNoSync) {

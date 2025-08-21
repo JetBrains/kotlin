@@ -47,3 +47,6 @@ public class JavaClass {
      */
     public void setSomething5(int value) { }
 }
+
+/* GENERATED_FIR_TAGS: assignment, functionDeclaration, incrementDecrementExpression, integerLiteral, javaProperty,
+javaType */

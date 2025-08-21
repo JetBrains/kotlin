@@ -29,3 +29,6 @@ fun main() {
     val emptyBoxIn = MyBoxIn<String?>()
     emptyBoxIn.fooExt(null)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, dnnType, funWithExtensionReceiver, functionDeclaration, in, localProperty,
+nullableType, out, primaryConstructor, propertyDeclaration, typeConstraint, typeParameter */

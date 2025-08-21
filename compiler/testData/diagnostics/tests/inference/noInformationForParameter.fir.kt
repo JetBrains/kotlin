@@ -5,7 +5,7 @@ package noInformationForParameter
 import java.util.*
 
 fun test() {
-    val n = <!CANNOT_INFER_PARAMETER_TYPE, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>newList<!>()
+    val n = <!CANNOT_INFER_PARAMETER_TYPE!>newList<!>()
 
     val n1 : List<String> = newList()
 }
@@ -13,3 +13,6 @@ fun test() {
 fun <S> newList() : ArrayList<S> {
     return ArrayList<S>()
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaFunction, localProperty, nullableType, propertyDeclaration,
+typeParameter */

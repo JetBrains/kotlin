@@ -24,3 +24,6 @@ fun main(a: A<String>, b: B<String>, c: ArrayList<String>) {
     c.remove("")
     c.removeAt(0)
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, flexibleType, functionDeclaration, integerLiteral, javaType,
+nullableType, override, stringLiteral, typeParameter */

@@ -21,7 +21,7 @@ open class Base {
     var varFakeOverrideGetterAndSetter: Int = 0
 }
 
-<!JAVA_DIRECT_ACTUAL_WITHOUT_EXPECT{JVM}, JAVA_DIRECT_ACTUAL_WITHOUT_EXPECT{JVM}!>expect<!> class Foo {
+<!JAVA_DIRECT_ACTUAL_WITHOUT_EXPECT{JVM;JVM}!>expect<!> class Foo {
     val valOverriddenGetter: Int
     val <!KOTLIN_ACTUAL_ANNOTATION_MISSING{JVM}!>valOverriddenGetter_missingAnootation<!>: Int
     val valFakeOverrideGetter: Int
@@ -60,3 +60,5 @@ open class Base {
     @Override public int getVarOverriddenGetterAndSetter_missingBothAnnotations() { return 0; }
     @Override public void setVarOverriddenGetterAndSetter_missingBothAnnotations(int value) {}
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, expect, integerLiteral, propertyDeclaration */

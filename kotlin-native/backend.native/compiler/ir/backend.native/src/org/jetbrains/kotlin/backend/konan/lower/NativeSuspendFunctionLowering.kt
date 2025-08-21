@@ -1,9 +1,12 @@
 package org.jetbrains.kotlin.backend.konan.lower
 
+import org.jetbrains.kotlin.backend.common.FileLoweringPass
+import org.jetbrains.kotlin.backend.common.collectTailSuspendCalls
 import org.jetbrains.kotlin.backend.common.descriptors.synthesizedName
 import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.NativeGenerationState
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
@@ -25,13 +28,67 @@ import org.jetbrains.kotlin.resolve.calls.checkers.isRestrictedSuspendFunction
 
 internal class NativeSuspendFunctionsLowering(
         generationState: NativeGenerationState
-) : AbstractSuspendFunctionsLowering<Context>(generationState.context) {
-    private val symbols = context.ir.symbols
+) : AbstractSuspendFunctionsLowering<Context>(generationState.context), FileLoweringPass {
+    private val symbols = context.symbols
     private val fileLowerState = generationState.fileLowerState
     private val saveCoroutineState = symbols.saveCoroutineState
     private val restoreCoroutineState = symbols.restoreCoroutineState
 
     override val stateMachineMethodName = Name.identifier("invokeSuspend")
+
+    override fun lower(irFile: IrFile) {
+        irFile.transformDeclarationsFlat(::tryTransformSuspendFunction)
+        irFile.acceptVoid(object : IrVisitorVoid() {
+            override fun visitElement(element: IrElement) {
+                element.acceptChildrenVoid(this)
+            }
+
+            override fun visitClass(declaration: IrClass) {
+                declaration.acceptChildrenVoid(this)
+                if (declaration.origin != DECLARATION_ORIGIN_COROUTINE_IMPL)
+                    declaration.transformDeclarationsFlat(::tryTransformSuspendFunction)
+            }
+        })
+    }
+
+    private fun tryTransformSuspendFunction(element: IrElement): List<IrDeclaration>? {
+        val function = (element as? IrSimpleFunction) ?: return null
+        if (!function.isSuspend || function.modality == Modality.ABSTRACT) return null
+
+        val (tailSuspendCalls, hasNotTailSuspendCalls) = collectTailSuspendCalls(context, function)
+        return if (hasNotTailSuspendCalls) {
+            listOf<IrDeclaration>(buildCoroutine(function, isSuspendLambdaInvokeMethod = false), function)
+        } else {
+            // Otherwise, no suspend calls at all or all of them are tail calls - no need in a state machine.
+            // Have to simplify them though (convert them to proper return statements).
+            simplifyTailSuspendCalls(function, tailSuspendCalls)
+            null
+        }
+    }
+
+    private fun IrCall.isReturnIfSuspendedCall() =
+            symbol == context.symbols.returnIfSuspended
+
+    private fun simplifyTailSuspendCalls(irFunction: IrSimpleFunction, tailSuspendCalls: Set<IrCall>) {
+        if (tailSuspendCalls.isEmpty()) return
+
+        val irBuilder = context.createIrBuilder(irFunction.symbol)
+        irFunction.body!!.transformChildrenVoid(object : IrElementTransformerVoid() {
+            override fun visitCall(expression: IrCall): IrExpression {
+                val shortCut = if (expression.isReturnIfSuspendedCall())
+                    expression.arguments[0]!!
+                else expression
+
+                shortCut.transformChildrenVoid(this)
+
+                return if (!expression.isSuspend || expression !in tailSuspendCalls)
+                    shortCut
+                else irBuilder.at(expression).irReturn(
+                        irBuilder.generateDelegatedCall(irFunction.returnType, shortCut)
+                )
+            }
+        })
+    }
 
     @OptIn(ObsoleteDescriptorBasedAPI::class)
     override fun getCoroutineBaseClass(function: IrFunction): IrClassSymbol =
@@ -44,16 +101,11 @@ internal class NativeSuspendFunctionsLowering(
     override fun nameForCoroutineClass(function: IrFunction) =
             fileLowerState.getCoroutineImplUniqueName(function).synthesizedName
 
-    override fun initializeStateMachine(coroutineConstructors: List<IrConstructor>, coroutineClassThis: IrValueDeclaration) {
-        // Nothing to do: it's redundant to initialize the "label" field with null
-        // since all freshly allocated objects are zeroed out.
-    }
-
     override fun IrBlockBodyBuilder.generateCoroutineStart(invokeSuspendFunction: IrFunction, receiver: IrExpression) {
         +irReturn(
                 irCall(invokeSuspendFunction).apply {
-                    dispatchReceiver = receiver
-                    putValueArgument(0, irSuccess(irGetObject(symbols.unit)))
+                    arguments[0] = receiver
+                    arguments[1] = irSuccess(irGetObject(symbols.unit))
                 }
         )
     }
@@ -64,11 +116,10 @@ internal class NativeSuspendFunctionsLowering(
             argumentToPropertiesMap: Map<IrValueParameter, IrField>,
     ) {
         val originalBody = transformingFunction.body!!
-        val resultArgument = stateMachineFunction.valueParameters.single()
+
+        val (thisReceiver, resultArgument) = stateMachineFunction.parameters.also { check(it.size == 2) }
 
         val coroutineClass = stateMachineFunction.parentAsClass
-
-        val thisReceiver = stateMachineFunction.dispatchReceiverParameter!!
 
         val labelField = coroutineClass.addField(Name.identifier("label"), symbols.nativePtrType, true)
 
@@ -157,10 +208,7 @@ internal class NativeSuspendFunctionsLowering(
             irBuilder.run {
                 val children = when (expression) {
                     is IrSetField -> listOf(expression.receiver, expression.value)
-                    is IrMemberAccessExpression<*> -> (
-                            listOf(expression.dispatchReceiver, expression.extensionReceiver)
-                                    + (0 until expression.valueArgumentsCount).map { expression.getValueArgument(it) }
-                            )
+                    is IrMemberAccessExpression<*> -> expression.arguments
                     else -> throw Error("Unexpected expression: $expression")
                 }
 
@@ -221,12 +269,12 @@ internal class NativeSuspendFunctionsLowering(
                 when {
                     expression.isReturnIfSuspendedCall -> {
                         calledSaveState = true
-                        val firstArgument = newChildren[2]!!
-                        newChildren[2] = irBlock(firstArgument) {
+                        val firstArgument = newChildren[0]!!
+                        newChildren[0] = irBlock(firstArgument) {
                             +saveState()
                             +firstArgument
                         }
-                        suspendCall = newChildren[2]
+                        suspendCall = newChildren[0]
                     }
                     expression.isSuspendCall -> {
                         val lastChildIndex = newChildren.indexOfLast { it != null }
@@ -257,10 +305,8 @@ internal class NativeSuspendFunctionsLowering(
                         expression.value = newChildren[1]!!
                     }
                     is IrMemberAccessExpression<*> -> {
-                        expression.dispatchReceiver = newChildren[0]
-                        expression.extensionReceiver = newChildren[1]
-                        newChildren.drop(2).forEachIndexed { index, newChild ->
-                            expression.putValueArgument(index, newChild)
+                        newChildren.forEachIndexed { index, newChild ->
+                            expression.arguments[index] = newChild
                         }
                     }
                 }
@@ -381,7 +427,7 @@ internal class NativeSuspendFunctionsLowering(
 
     private fun IrBuilderWithScope.irGetOrThrow(result: IrExpression): IrExpression =
             irCall(symbols.kotlinResultGetOrThrow.owner).apply {
-                extensionReceiver = result
+                arguments[0] = result
             } // TODO: consider inlining getOrThrow function body here.
 
     private fun IrBuilderWithScope.irExceptionOrNull(result: IrExpression): IrExpression {
@@ -395,7 +441,7 @@ internal class NativeSuspendFunctionsLowering(
     fun IrBlockBodyBuilder.irSuccess(value: IrExpression): IrMemberAccessExpression<*> {
         val createResult = symbols.kotlinResult.owner.constructors.single { it.isPrimary }
         return irCall(createResult).apply {
-            putValueArgument(0, value)
+            arguments[0] = value
         }
     }
 }

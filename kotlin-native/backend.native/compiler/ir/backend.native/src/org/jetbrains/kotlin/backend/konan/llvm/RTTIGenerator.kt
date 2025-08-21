@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.backend.konan.ir.*
 import org.jetbrains.kotlin.backend.konan.ir.isArray
 import org.jetbrains.kotlin.backend.konan.llvm.objcexport.WritableTypeInfoPointer
 import org.jetbrains.kotlin.backend.konan.llvm.objcexport.generateWritableTypeInfoForSyntheticInterface
+import org.jetbrains.kotlin.backend.konan.llvm.runtime.RuntimeModule
 import org.jetbrains.kotlin.backend.konan.lower.hasSyntheticNameToBeHiddenInReflection
 import org.jetbrains.kotlin.backend.konan.lower.getObjectClassInstanceFunction
 import org.jetbrains.kotlin.builtins.PrimitiveType
@@ -32,8 +33,8 @@ internal class RTTIGenerator(
             context.irBuiltIns.byteClass, context.irBuiltIns.shortClass, context.irBuiltIns.intClass,
             context.irBuiltIns.longClass,
             context.irBuiltIns.floatClass, context.irBuiltIns.doubleClass) +
-            context.ir.symbols.primitiveTypesToPrimitiveArrays.values +
-            context.ir.symbols.unsignedTypesToUnsignedArrays.values
+            context.symbols.primitiveTypesToPrimitiveArrays.values +
+            context.symbols.unsignedTypesToUnsignedArrays.values
 
     // TODO: extend logic here by taking into account final acyclic classes.
     private fun checkAcyclicFieldType(type: IrType): Boolean = acyclicCache.getOrPut(type) {
@@ -48,7 +49,7 @@ internal class RTTIGenerator(
     }
 
     private fun checkAcyclicClass(irClass: IrClass): Boolean = when {
-        irClass.symbol == context.ir.symbols.array -> false
+        irClass.symbol == context.symbols.array -> false
         irClass.isArray -> true
         context.getLayoutBuilder(irClass).getFields(llvm).all { checkAcyclicFieldType(it.type) } -> true
         else -> false
@@ -207,9 +208,9 @@ internal class RTTIGenerator(
 
         val superType = when {
             irClass.isAny() -> NullPointer(runtime.typeInfoType)
-            irClass.isKotlinObjCClass() -> context.ir.symbols.any.owner.typeInfoPtr
+            irClass.isKotlinObjCClass() -> context.symbols.any.owner.typeInfoPtr
             else -> {
-                val superTypeOrAny = irClass.getSuperClassNotAny() ?: context.ir.symbols.any.owner
+                val superTypeOrAny = irClass.getSuperClassNotAny() ?: context.symbols.any.owner
                 superTypeOrAny.typeInfoPtr
             }
         }
@@ -256,7 +257,7 @@ internal class RTTIGenerator(
                 llvmDeclarations.writableTypeInfoGlobal,
                 associatedObjects = genAssociatedObjects(irClass),
                 processObjectInMark = when {
-                    irClass.symbol == context.ir.symbols.array -> llvm.Kotlin_processArrayInMark.toConstPointer()
+                    irClass.symbol == context.symbols.array -> llvm.Kotlin_processArrayInMark.toConstPointer()
                     else -> genProcessObjectInMark(llvmDeclarations.bodyType)
                 },
                 requiredAlignment = llvmDeclarations.alignment
@@ -388,8 +389,11 @@ internal class RTTIGenerator(
     }
 
     private val debugRuntimeOrNull: LLVMModuleRef? by lazy {
-        context.config.runtimeNativeLibraries.singleOrNull { it.endsWith("debug.bc")}?.let {
-            parseBitcodeFile(context, context.messageCollector, llvm.llvmContext, it)
+        if (generationState.runtimeModulesConfig.containsDebuggingRuntime) {
+            val path = generationState.runtimeModulesConfig.absolutePathFor(RuntimeModule.DEBUG)
+            parseBitcodeFile(context, context.messageCollector, llvm.llvmContext, path)
+        } else {
+            null
         }
     }
 
@@ -502,7 +506,7 @@ internal class RTTIGenerator(
 
         val size = LLVMStoreSizeOfType(llvmTargetData, bodyType.llvmBodyType).toInt()
 
-        val superClass = context.ir.symbols.any.owner
+        val superClass = context.symbols.any.owner
 
         assert(superClass.implementedInterfaces.isEmpty())
         val interfaces = (listOf(irClass) + irClass.implementedInterfaces)
@@ -594,7 +598,7 @@ internal class RTTIGenerator(
                 relativeName = irClass.name.asString()
                 flags = 0 // Forbid to use package and relative names in KClass.[simpleName|qualifiedName].
             }
-            irClass.isLocal -> {
+            irClass.isOriginallyLocal -> {
                 relativeName = irClass.name.asString()
                 flags = TF_REFLECTION_SHOW_REL_NAME // Only allow relative name to be used in KClass.simpleName.
             }

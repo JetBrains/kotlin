@@ -26,3 +26,6 @@ actual typealias Foo = FooImpl
 actual annotation class Ann(
     actual val p: KClass<*> = <!ACTUAL_ANNOTATION_CONFLICTING_DEFAULT_ARGUMENT_VALUE!>FooImpl.Nested::class<!>
 )
+
+/* GENERATED_FIR_TAGS: actual, annotationDeclaration, classDeclaration, classReference, expect, nestedClass,
+primaryConstructor, propertyDeclaration, starProjection, typeAliasDeclaration */

@@ -66,3 +66,6 @@ class KotlinSubclassOfJavaSubclassGetterOverridesInBase : EmptySubclass() {
         return "1"
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, flexibleType, functionDeclaration, init, javaProperty, javaType, override,
+stringLiteral, superExpression */

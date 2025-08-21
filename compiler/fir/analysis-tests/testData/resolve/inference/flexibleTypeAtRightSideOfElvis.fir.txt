@@ -15,7 +15,7 @@ FILE: main.kt
     }
     public final fun testWithStatic4(x1: R|kotlin/String?|, w: R|kotlin/Int|): R|kotlin/String| {
         lvar x: R|kotlin/String?|
-        R|<local>/x| = R|<local>/x1| ?: when (R|<local>/w|) {
+        R|<local>/x| = R|<local>/x1| ?: when (lval <when-subject>: R|kotlin/Int| = R|<local>/w|) {
             ==($subj$, Int(42)) ->  {
                 Q|JavaClass|.R|/JavaClass.X*s|
             }

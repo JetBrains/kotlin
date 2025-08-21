@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.ir.IrDiagnosticReporter
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrPackageFragment
-import org.jetbrains.kotlin.ir.declarations.IrParameterKind
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.ir.util.hasDefaultValue
@@ -22,6 +21,7 @@ import org.jetbrains.kotlin.name.StandardClassIds
  * [IrJavaDirectActualizationDefaultParametersInExpectKmpChecker]
  */
 internal object IrJavaDirectActualizationDefaultParametersInActualKmpChecker : IrExpectActualChecker {
+    @OptIn(IrExpectActualMap.MappingForCheckers::class)
     override fun check(context: IrExpectActualChecker.Context) = with(context) {
         for ((expectSymbol, actualSymbol) in expectActualMap.expectToActual) {
             if (actualSymbol !is IrClassSymbol) continue

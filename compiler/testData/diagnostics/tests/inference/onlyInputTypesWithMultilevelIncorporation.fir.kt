@@ -14,3 +14,6 @@ fun main() {
         intArrayOf(1, 2, 3).associateWith { it.toString() }
     )
 }
+
+/* GENERATED_FIR_TAGS: annotationUseSiteTargetFile, functionDeclaration, integerLiteral, lambdaLiteral, nullableType,
+stringLiteral, typeParameter */

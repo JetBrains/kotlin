@@ -20,6 +20,7 @@ package androidx.compose.compiler.test
 
 import androidx.compose.runtime.*
 import androidx.compose.runtime.mock.*
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.StandardTestDispatcher
@@ -231,9 +232,11 @@ class CompositionTests {
         var state by mutableStateOf(TestComposeEnum.A)
         compose {
             EnumParameter(state)
+            EnumNullableParameter(if (state == TestComposeEnum.A) state else null)
         }
         validate {
             Text(state.name)
+            Text(if (state == TestComposeEnum.A) state.name else "null")
         }
 
         state = TestComposeEnum.B
@@ -255,7 +258,178 @@ class CompositionTests {
         advance()
         revalidate()
     }
+
+    @Test
+    fun varargsInComposable() = compositionTest {
+        compose {
+            MultipleText("a", "b", "c")
+            MultipleText()
+        }
+        validate {
+            Text("a")
+            Text("b")
+            Text("c")
+        }
+    }
+
+    @Test
+    fun varargsInRestartableComposable() = compositionTest {
+        val state1 = mutableStateOf(Unit, neverEqualPolicy())
+        var counter = 0
+        compose {
+            RestartableVararg(state1) { counter++ }
+        }
+
+        assertEquals(1, counter)
+        state1.value = Unit
+        advance()
+
+        assertEquals(2, counter)
+    }
+
+    // this test emulates behavior of Circuit / Molecule which rely on functions being
+    // restartable in interfaces
+    @Test
+    fun interfaceComposableSkips() = compositionTest {
+        var innerCounter = 0
+        val innerState = mutableIntStateOf(0)
+        val presenter = PresenterImpl {
+            innerCounter++
+            innerState.value
+        }
+
+        var counter = 0
+        val state = mutableIntStateOf(0)
+
+        compose {
+            state.value // read to restart this scope
+            counter++
+            presenter.Content()
+        }
+        assertEquals(1, innerCounter)
+        assertEquals(1, counter)
+
+        state.value++
+        advance()
+        assertEquals(1, innerCounter)
+        assertEquals(2, counter)
+
+        innerState.value++
+        advance()
+        assertEquals(2, innerCounter)
+        assertEquals(2, counter)
+    }
+
+    // regression test for KT-74102
+    @Test
+    fun conditionInInlineFun() = compositionTest {
+        var condition by mutableStateOf<Int?>(null)
+        compose {
+            // unused, but triggers the bug
+            val str1 = condition?.let { stringResource() }.orEmpty()
+            val str2 = condition?.let { stringResource() }.orEmpty()
+
+            val text = remember { "str1" }
+            Text(text)
+
+            val text1 = remember { "str2" }
+            Text(text1)
+        }
+
+        validate {
+            Text("str1")
+            Text("str2")
+        }
+
+        condition = 1
+        advance()
+        revalidate()
+    }
+
+    @Test
+    fun earlyReturnInKey() = compositionTest {
+        compose {
+            Text(returnKey("a_key", "first"))
+
+            key("key") {
+                Text("before")
+                return@compose
+                @Suppress("UNREACHABLE_CODE")
+                Text("after")
+            }
+        }
+
+        validate {
+            Text("first")
+            Text("before")
+        }
+    }
+
+    // regression test for b/401484249
+    @Test
+    fun composableCallInArray() = compositionTest {
+        var count by mutableIntStateOf(10)
+        compose {
+            StringArray(count)
+            val text = remember { 0 }.toString()
+            Text(text)
+        }
+
+        validate {
+            Text("0")
+        }
+
+        count -= 5
+        advance()
+        revalidate()
+    }
+
+    @Test
+    fun conditionalCallInMovableGroup() = compositionTest {
+        var condition by mutableStateOf(false)
+        val states = mutableStateListOf(1)
+        compose {
+            states.forEach { state ->
+                key(state) {
+                    if (condition) {
+                        val lambda: suspend CoroutineScope.() -> Unit = { use(state) }
+                        // This call is load bearing because it doesn't introduce the group
+                        // regardless of OptimizeNonSkippingGroups flag (as opposed to remember)
+                        LaunchedEffect(state, lambda)
+                    }
+                    TwoLambdas(
+                        lambda1 = { use(states); use(state) },
+                        lambda2 = { use(states); use(state) }
+                    )
+                }
+            }
+        }
+
+        condition = true
+        advance()
+    }
+
+    @Test
+    fun inlineWithNoinlineDefault() = compositionTest {
+        compose {
+            inlineWithNoinlineDefault {
+                it?.invoke()
+            }
+            inlineWithNoinlineDefault(
+                default = { Text("Not default") }
+            ) {
+                it?.invoke()
+            }
+        }
+        validate {
+            Text("Default")
+            Text("Not default")
+        }
+    }
 }
+
+@Composable
+fun stringResource() = "string"
 
 @Composable
 fun getCondition() = remember { false }
@@ -287,6 +461,13 @@ class CrossInlineState(content: @Composable () -> Unit = { }) {
     }
 }
 
+public inline fun inlineWithNoinlineDefault(
+    noinline default: @Composable (() -> Unit)? = { Text("Default") },
+    content: (@Composable (() -> Unit)?) -> Unit
+) {
+    content(default)
+}
+
 @JvmInline
 value class Data(val string: String)
 
@@ -310,6 +491,69 @@ fun EnumParameter(enum: TestComposeEnum) {
 }
 
 @Composable
+fun EnumNullableParameter(enum: TestComposeEnum?) {
+    Text(enum?.name ?: "null")
+}
+
+@Composable
 fun EnumParameterLambda(enum: () -> TestComposeEnum) {
     Text(enum().name)
 }
+
+@Composable
+fun returnKey(key: String, value: String): String {
+    key(key) {
+        return value
+    }
+}
+
+@Composable
+fun MultipleText(vararg strings: String = emptyArray()) {
+    strings.forEach { Text(it) }
+}
+
+@Composable
+fun RestartableVararg(vararg states: State<Unit> = emptyArray(), invoke: () -> Unit) {
+    invoke()
+    for (state in states) {
+        state.value
+    }
+}
+
+interface Presenter {
+    @Composable fun Content()
+}
+
+class PresenterImpl(
+    private val onCompose: () -> Unit
+) : Presenter {
+    @Composable
+    override fun Content() {
+        onCompose()
+        Text("Hello")
+    }
+}
+
+@Composable
+fun StringArray(count: Int) =
+    Array(count) {
+        TwoRemembers()
+    }
+
+@Composable
+fun TwoRemembers(): String {
+    val string = remember { "string" }
+    val string2 by remember { mutableStateOf(string) }
+    return string2
+}
+
+@Composable
+fun TwoLambdas(
+    lambda1: () -> Unit,
+    lambda2: (Int) -> Unit
+) {
+    use(lambda1)
+    use(lambda2)
+}
+
+private fun use(value: Any?) { }

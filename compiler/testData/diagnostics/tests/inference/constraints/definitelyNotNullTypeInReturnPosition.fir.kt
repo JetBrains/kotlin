@@ -165,11 +165,11 @@ class Main<L>(x: L?, y: L) {
     val x170 = foo17(x)
     val x171 = foo17(y)
 
-    val x180 = <!CANNOT_INFER_PARAMETER_TYPE, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>Bar<!>().<!UNRESOLVED_REFERENCE!>foo18<!>(x)
-    val x181 = <!CANNOT_INFER_PARAMETER_TYPE, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>Bar<!>().<!UNRESOLVED_REFERENCE!>foo18<!>(y)
+    val x180 = <!CANNOT_INFER_PARAMETER_TYPE!>Bar<!>().<!UNRESOLVED_REFERENCE!>foo18<!>(x)
+    val x181 = <!CANNOT_INFER_PARAMETER_TYPE!>Bar<!>().<!UNRESOLVED_REFERENCE!>foo18<!>(y)
 
-    val x200: L = <!CANNOT_INFER_PARAMETER_TYPE, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>Bar<!>().<!UNRESOLVED_REFERENCE!>foo19<!>()
-    val x201: L = <!CANNOT_INFER_PARAMETER_TYPE, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>Bar<!>().<!UNRESOLVED_REFERENCE!>foo19<!>()
+    val x200: L = <!CANNOT_INFER_PARAMETER_TYPE!>Bar<!>().<!UNRESOLVED_REFERENCE!>foo19<!>()
+    val x201: L = <!CANNOT_INFER_PARAMETER_TYPE!>Bar<!>().<!UNRESOLVED_REFERENCE!>foo19<!>()
 
     val x210 = foo21(x)
     val x211 = foo21(y)
@@ -278,3 +278,9 @@ class Inv1<T>
 class Inv2<T>
 fun <K : Comparable<K>> Inv1<K>.assertStableSorted() {}
 fun <K : Comparable<K>> Inv2<K>.assertStableSorted() = Inv1<K>().assertStableSorted()
+
+/* GENERATED_FIR_TAGS: andExpression, asExpression, checkNotNullCall, classDeclaration, dnnType, equalityExpression,
+funWithExtensionReceiver, functionDeclaration, functionalType, getter, ifExpression, in, inProjection, init,
+interfaceDeclaration, intersectionType, lambdaLiteral, localProperty, nullableType, out, outProjection,
+primaryConstructor, propertyDeclaration, propertyWithExtensionReceiver, smartcast, stringLiteral, typeAliasDeclaration,
+typeAliasDeclarationWithTypeParameter, typeConstraint, typeParameter */

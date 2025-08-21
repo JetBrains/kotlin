@@ -1,0 +1,24 @@
+KtFile: specialNames.kt
+  PACKAGE_DIRECTIVE
+    <empty list>
+  IMPORT_LIST
+    <empty list>
+  OBJECT_DECLARATION
+    PsiElement(object)('object')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('SpecialNames')
+    PsiWhiteSpace(' ')
+    CLASS_BODY
+      PsiElement(LBRACE)('{')
+      PsiWhiteSpace('\n    ')
+      PROPERTY
+        PsiElement(val)('val')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('`1M`')
+        PsiWhiteSpace(' ')
+        PsiElement(EQ)('=')
+        PsiWhiteSpace(' ')
+        INTEGER_CONSTANT
+          PsiElement(INTEGER_LITERAL)('1')
+      PsiWhiteSpace('\n')
+      PsiElement(RBRACE)('}')

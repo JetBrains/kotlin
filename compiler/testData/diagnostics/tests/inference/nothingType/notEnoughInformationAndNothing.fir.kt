@@ -18,22 +18,26 @@ fun test1(b: Boolean?) {
 }
 
 fun test2() {
-    <!CANNOT_INFER_PARAMETER_TYPE, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>select<!>(
-        <!CANNOT_INFER_PARAMETER_TYPE, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>materialize<!>()
+    <!CANNOT_INFER_PARAMETER_TYPE!>select<!>(
+        <!CANNOT_INFER_PARAMETER_TYPE!>materialize<!>()
     )
     select(materialize(), materialize<String>())
     select(materialize(), null, Inv<String>())
-    <!NEW_INFERENCE_ERROR!>select(
+    select(
         <!CANNOT_INFER_PARAMETER_TYPE!>materialize<!>(),
         null
-    )<!>
-    <!CANNOT_INFER_PARAMETER_TYPE, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>select<!>(
-        <!CANNOT_INFER_PARAMETER_TYPE, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>materialize<!>(),
-        <!CANNOT_INFER_PARAMETER_TYPE, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>materialize<!>()
+    )
+    <!CANNOT_INFER_PARAMETER_TYPE!>select<!>(
+        <!CANNOT_INFER_PARAMETER_TYPE!>materialize<!>(),
+        <!CANNOT_INFER_PARAMETER_TYPE!>materialize<!>()
     )
     select(
-        <!CANNOT_INFER_PARAMETER_TYPE, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>materialize<!>(),
-        <!CANNOT_INFER_PARAMETER_TYPE, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>materialize<!>(),
+        <!CANNOT_INFER_PARAMETER_TYPE!>materialize<!>(),
+        <!CANNOT_INFER_PARAMETER_TYPE!>materialize<!>(),
         null
     )
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, equalityExpression, funWithExtensionReceiver, functionDeclaration,
+functionalType, infix, lambdaLiteral, localProperty, nullableType, propertyDeclaration, smartcast, starProjection,
+typeParameter, typeWithExtension, vararg, whenExpression, whenWithSubject */

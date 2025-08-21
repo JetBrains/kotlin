@@ -7,20 +7,20 @@ plugins {
 
 android {
 
-    namespace "com.example.lib2"
+    namespace = "com.example.lib2"
 
-    compileSdkVersion 34
+    compileSdkVersion = 34
 
     defaultConfig {
-        minSdkVersion 22
-        targetSdkVersion 34
-        versionCode 1
-        versionName "1.0"
+        minSdkVersion = 22
+        targetSdkVersion = 34
+        versionCode = 1
+        versionName = "1.0"
     }
 
     compileOptions {
-        sourceCompatibility 1.8
-        targetCompatibility 1.8
+        sourceCompatibility = 1.8
+        targetCompatibility = 1.8
     }
 
     buildTypes.release.minifyEnabled = false

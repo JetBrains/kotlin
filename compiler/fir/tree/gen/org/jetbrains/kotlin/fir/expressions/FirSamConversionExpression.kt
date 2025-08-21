@@ -23,6 +23,7 @@ abstract class FirSamConversionExpression : FirExpression() {
     abstract override val coneTypeOrNull: ConeKotlinType?
     abstract override val annotations: List<FirAnnotation>
     abstract val expression: FirExpression
+    abstract val usesFunctionKindConversion: Boolean
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
         visitor.visitSamConversionExpression(this, data)

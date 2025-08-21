@@ -19,3 +19,6 @@ fun main() {
 
     println("pi_sequential_reduce $pi $n $elapseTime")
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, functionDeclaration, integerLiteral, javaFunction, lambdaLiteral,
+localProperty, multiplicativeExpression, propertyDeclaration, rangeExpression, stringLiteral */

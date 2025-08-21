@@ -106,4 +106,45 @@ class Ranges {
             if (i > 0) println("$i...") else println("Launch!")
         }
     }
+
+    @Sample
+    fun closedRangeContains() {
+        val range = 1..10
+        assertTrue(5 in range)
+        // Both lower and upper bounds are contained within the range
+        assertTrue(1 in range)
+        assertTrue(10 in range)
+        // Values lying outside bounds are not contained within the range
+        assertFalse(0 in range)
+        assertFalse(11 in range)
+
+        val stringRange = "AA".."ZZ"
+        assertTrue("AA" in stringRange)
+        assertTrue("AB" in stringRange)
+        assertTrue("ZZ" in stringRange)
+        // Note that "contains" relies on "compareTo" implementation, so in some cases results may not be intuitive.
+        // Here, "AAA" is lexicographically greater than "AA", but lower than "ZZ", thus the range contains it.
+        assertTrue("AAA" in stringRange)
+    }
+
+    @Sample
+    fun openEndRangeContains() {
+        val range = 1..<10
+        assertTrue(5 in range)
+        // The range includes the lower bound, but the upper bound is excluded
+        assertTrue(1 in range)
+        assertFalse(10 in range)
+        assertTrue(9 in range)
+        // Values lying outside bounds are not contained within the range
+        assertFalse(0 in range)
+        assertFalse(11 in range)
+
+        val stringRange = "AA"..<"ZZ"
+        assertTrue("AA" in stringRange)
+        assertTrue("AB" in stringRange)
+        assertFalse("ZZ" in stringRange)
+        // Note that "contains" relies on "compareTo" implementation, so in some cases results may not be intuitive.
+        // Here, "ZYX" is lexicographically greater than "AA", but lower than "ZZ", thus the range contains it.
+        assertTrue("ZYX" in stringRange)
+    }
 }

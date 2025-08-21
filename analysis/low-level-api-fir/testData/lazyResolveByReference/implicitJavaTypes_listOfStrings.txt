@@ -1,5 +1,5 @@
 BODY_RESOLVE:
-TARGET: public final [ResolvedTo(BODY_RESOLVE)] var listOfStrings: R|ft<kotlin/collections/MutableList<kotlin/String!>, kotlin/collections/List<kotlin/String!>?>|
+TARGET: public final [ResolvedTo(BODY_RESOLVE)] [HasBackingFieldKey=true] var listOfStrings: R|ft<kotlin/collections/MutableList<kotlin/String!>, kotlin/collections/List<kotlin/String!>?>|
     public [ResolvedTo(BODY_RESOLVE)] get(): R|ft<kotlin/collections/MutableList<kotlin/String!>, kotlin/collections/List<kotlin/String!>?>|
     public [ResolvedTo(BODY_RESOLVE)] set([ResolvedTo(BODY_RESOLVE)] value: R|ft<kotlin/collections/MutableList<kotlin/String!>, kotlin/collections/List<kotlin/String!>?>|): R|kotlin/Unit|
 

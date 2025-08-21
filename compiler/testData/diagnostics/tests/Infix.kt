@@ -1,5 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
+// RENDER_DIAGNOSTICS_FULL_TEXT
 class Pair<out A, out B>(val first: A, val second: B)
 
 class Example {
@@ -38,3 +39,7 @@ fun test() {
 
     a <!INFIX_MODIFIER_REQUIRED!>withLambda<!> { }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType, infix,
+integerLiteral, lambdaLiteral, localProperty, nullableType, out, primaryConstructor, propertyDeclaration, thisExpression,
+typeParameter */

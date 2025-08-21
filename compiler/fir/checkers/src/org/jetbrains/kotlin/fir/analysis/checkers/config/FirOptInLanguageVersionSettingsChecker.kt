@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.declarations.getAnnotationByClassId
+import org.jetbrains.kotlin.fir.declarations.hasAnnotationWithClassId
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.transformers.PackageResolutionResult
 import org.jetbrains.kotlin.fir.resolve.transformers.resolveToPackageOrClass
@@ -18,15 +18,20 @@ import org.jetbrains.kotlin.resolve.checkers.OptInNames
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationLevelValue
 
 object FirOptInLanguageVersionSettingsChecker : FirLanguageVersionSettingsChecker() {
-    override fun check(context: CheckerContext, reporter: BaseDiagnosticsCollector.RawReporter) {
+    context(context: CheckerContext)
+    override fun check(reporter: BaseDiagnosticsCollector.RawReporter) {
         context.languageVersionSettings.getFlag(AnalysisFlags.optIn).forEach { fqNameAsString ->
             if (fqNameAsString != OptInNames.REQUIRES_OPT_IN_FQ_NAME.asString()) {
-                checkOptInMarkerArgument(context, fqNameAsString, reporter)
+                checkOptInMarkerArgument(fqNameAsString, reporter)
             }
         }
     }
 
-    private fun checkOptInMarkerArgument(context: CheckerContext, fqNameAsString: String, reporter: BaseDiagnosticsCollector.RawReporter) {
+    context(context: CheckerContext)
+    private fun checkOptInMarkerArgument(
+        fqNameAsString: String,
+        reporter: BaseDiagnosticsCollector.RawReporter
+    ) {
         val packageOrClass = resolveToPackageOrClass(context.session.symbolProvider, FqName(fqNameAsString))
         val symbol = (packageOrClass as? PackageResolutionResult.PackageOrClass)?.classSymbol
 
@@ -37,7 +42,7 @@ object FirOptInLanguageVersionSettingsChecker : FirLanguageVersionSettingsChecke
             return
         }
 
-        if (symbol.getAnnotationByClassId(OptInNames.REQUIRES_OPT_IN_CLASS_ID, context.session) == null) {
+        if (!symbol.hasAnnotationWithClassId(OptInNames.REQUIRES_OPT_IN_CLASS_ID, context.session)) {
             reporter.reportWarning("Class $fqNameAsString is not an opt-in requirement marker")
             return
         }

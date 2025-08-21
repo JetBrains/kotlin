@@ -8,3 +8,6 @@ fun test(s: String?) {
     }
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.collections.List<kotlin.String>")!>list<!>
 }
+
+/* GENERATED_FIR_TAGS: callableReference, functionDeclaration, lambdaLiteral, localProperty, nullableType,
+propertyDeclaration, safeCall */

@@ -15,3 +15,7 @@ fun <E> List<Ref<*>>.getElement(i: Int): Ref<E> = this[i] <!UNCHECKED_CAST!>as R
 fun test(list: List<Ref<*>>) {
     val data: String by try { list.getElement(0) } finally {}
 }
+
+/* GENERATED_FIR_TAGS: asExpression, classDeclaration, data, funWithExtensionReceiver, functionDeclaration,
+integerLiteral, localProperty, nullableType, operator, primaryConstructor, propertyDeclaration, propertyDelegate,
+starProjection, thisExpression, tryExpression, typeParameter */

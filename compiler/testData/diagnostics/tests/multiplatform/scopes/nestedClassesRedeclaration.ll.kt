@@ -42,3 +42,5 @@ actual class C {
 actual abstract class D {
     class N
 }
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, nestedClass, primaryConstructor */

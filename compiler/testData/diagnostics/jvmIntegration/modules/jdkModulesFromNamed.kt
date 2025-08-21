@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // JDK_KIND: FULL_JDK_11
 // MODULE: main
 // FILE: module-info.java
@@ -22,3 +23,5 @@ fun main() {
     val s: javax.<!UNRESOLVED_REFERENCE!>swing<!>.JFrame? = null
     <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(s)
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, localProperty, nullableType, propertyDeclaration */

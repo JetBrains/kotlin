@@ -1,6 +1,6 @@
 // KT-61929
 // WITH_SDTLIB
-// IGNORE_BACKEND: JVM
+
 package foo
 
 fun doSomething(lambda: () -> Unit) { lambda() }

@@ -8,6 +8,7 @@ class A {
         private field = 1
 
     val b: Number
+        @Suppress("WRONG_MODIFIER_TARGET")
         internal field = a + 2
 
     val c = 1

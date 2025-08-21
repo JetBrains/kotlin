@@ -36,3 +36,7 @@ val test4 = generate {
     yield(3)
     barReturnType()
 }
+
+/* GENERATED_FIR_TAGS: annotationUseSiteTargetFile, classDeclaration, classReference, functionDeclaration,
+functionalType, integerLiteral, lambdaLiteral, nullableType, propertyDeclaration, suspend, typeParameter,
+typeWithExtension */

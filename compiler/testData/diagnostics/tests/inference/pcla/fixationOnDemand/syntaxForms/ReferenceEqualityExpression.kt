@@ -57,3 +57,6 @@ interface BaseType
 class ScopeOwner: BaseType
 
 object Interloper: BaseType
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, equalityExpression, functionDeclaration, functionalType,
+interfaceDeclaration, lambdaLiteral, localProperty, nullableType, objectDeclaration, propertyDeclaration, typeParameter */

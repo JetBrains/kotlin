@@ -13,3 +13,6 @@ fun test() {
 fun <BK, BV> build(
     transformer: (Set<BK>) -> Map<BK, BV?>,
 ) {}
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionalType, lambdaLiteral, localProperty, nullableType,
+propertyDeclaration, typeParameter */

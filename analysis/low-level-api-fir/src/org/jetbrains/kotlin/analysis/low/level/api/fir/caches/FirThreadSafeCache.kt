@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.caches
 
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.analysis.api.platform.caches.getOrPutWithNullableValue
+import org.jetbrains.kotlin.analysis.api.platform.caches.nullValueToNull
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.caches.FirCache
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
@@ -31,8 +33,9 @@ internal class FirThreadSafeCache<K : Any, V, CONTEXT>(
     override fun fixInconsistentValue(
         key: K,
         context: CONTEXT & Any,
-        inconsistencyMessage: String,
         mapping: (oldValue: V, newValue: V & Any) -> V & Any,
+        inconsistencyMessage: String,
+        buildAdditionalAttachments: (ExceptionAttachmentBuilder.(K, CONTEXT) -> Unit)?,
     ): V & Any {
         val newValue = createValue(key, context)
         checkWithAttachment(
@@ -44,6 +47,9 @@ internal class FirThreadSafeCache<K : Any, V, CONTEXT>(
 
         LOG.logErrorWithAttachment(inconsistencyMessage) {
             buildAttachments(key, context, newValue)
+            if (buildAdditionalAttachments != null) {
+                buildAdditionalAttachments(key, context)
+            }
         }
 
         val result = map.merge(key, newValue) { old, _ ->

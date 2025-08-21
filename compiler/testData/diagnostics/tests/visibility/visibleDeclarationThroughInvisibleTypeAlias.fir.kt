@@ -8,3 +8,5 @@ fun main() {
     <!INVISIBLE_REFERENCE("typealias Attribute = PlatformAttr; private; file")!>Attribute<!>()
     PlatformAttr()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, typeAliasDeclaration */

@@ -188,7 +188,7 @@ class ClassStabilityTransformer(
             constructorTypeArgumentsCount = 0,
             origin = null
         ).also {
-            it.putValueArgument(0, irConst(parameterMask))
+            it.arguments[0] = irConst(parameterMask)
         }
 
         if (useK2 && cls.hasFirDeclaration()) {
@@ -201,7 +201,9 @@ class ClassStabilityTransformer(
             classStabilityInferredCollection?.addClass(cls, parameterMask)
         }
 
-        cls.addStabilityMarkerField(stableExpr)
+        if (cls.visibility.isPublicAPI || cls.visibility == DescriptorVisibilities.INTERNAL) {
+            cls.addStabilityMarkerField(stableExpr)
+        }
         return result
     }
 

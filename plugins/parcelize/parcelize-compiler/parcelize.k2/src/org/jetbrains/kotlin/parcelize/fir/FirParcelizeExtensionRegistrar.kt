@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.parcelize.fir.diagnostics.KtErrorsParcelize
 
 class FirParcelizeExtensionRegistrar(
     private val parcelizeAnnotationFqNames: List<FqName>,
@@ -17,6 +18,8 @@ class FirParcelizeExtensionRegistrar(
     override fun ExtensionRegistrarContext.configurePlugin() {
         +::FirParcelizeDeclarationGenerator.bind(parcelizeAnnotationFqNames)
         +::firParcelizeCheckersExtension
+
+        registerDiagnosticContainers(KtErrorsParcelize)
     }
 
     private fun firParcelizeCheckersExtension(session: FirSession) =

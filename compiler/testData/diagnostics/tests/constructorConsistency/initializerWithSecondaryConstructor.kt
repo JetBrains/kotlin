@@ -20,3 +20,6 @@ class Foo {
 
     constructor()
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, const, functionDeclaration, init, nullableType, propertyDeclaration,
+secondaryConstructor */

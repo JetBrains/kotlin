@@ -1,6 +1,5 @@
 // ISSUE: KT-52757
 
-// IGNORE_LIGHT_ANALYSIS
 // IGNORE_BACKEND_K1: ANY
 // Reason: red code
 

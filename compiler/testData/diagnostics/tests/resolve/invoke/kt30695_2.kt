@@ -42,3 +42,6 @@ fun testFlexibleReceiver() {
     flexible.<!UNSAFE_IMPLICIT_INVOKE_CALL!>nullableExtensionProperty<!>()
     flexible?.<!UNSAFE_IMPLICIT_INVOKE_CALL!>nullableExtensionProperty<!>()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, flexibleType, functionDeclaration, getter, javaFunction, localProperty,
+nullableType, operator, propertyDeclaration, propertyWithExtensionReceiver, safeCall */

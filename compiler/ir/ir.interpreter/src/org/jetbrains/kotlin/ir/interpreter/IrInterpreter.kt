@@ -122,6 +122,8 @@ class IrInterpreter(internal val environment: IrInterpreterEnvironment, internal
             is IrPropertyReference -> interpretPropertyReference(element)
             is IrClassReference -> interpretClassReference(element)
             is IrGetClass -> interpretGetClass(element)
+            is IrRichFunctionReference -> interpretRichFunctionReference(element)
+            is IrRichPropertyReference -> interpretRichPropertyReference(element)
             else -> TODO("${element.javaClass} not supported for interpretation")
         }
     }
@@ -488,7 +490,8 @@ class IrInterpreter(internal val environment: IrInterpreterEnvironment, internal
                             .first { it.name == OperatorNameConventions.INVOKE && it.parameters.size == samFunction.parameters.size }
                         val functionClass = invokeFunction.getLastOverridden().parentAsClass
 
-                        val newInvoke = invokeFunction.deepCopyWithSymbols(samClass).apply { dispatchReceiverParameter = null }
+                        val newInvoke = invokeFunction.deepCopyWithSymbols(samClass)
+                        newInvoke.parameters = newInvoke.nonDispatchParameters
                         KFunctionState(newInvoke, functionClass, environment).apply {
                             this.funInterface = typeOperand
                             invokeFunction.dispatchReceiverParameter?.symbol?.let { upValues[it] = Variable(state) }
@@ -634,5 +637,23 @@ class IrInterpreter(internal val environment: IrInterpreterEnvironment, internal
     private fun interpretGetClass(expression: IrGetClass) {
         val irClass = callStack.popState().irClass
         callStack.pushState(KClassState(irClass, expression.type.classOrNull!!.owner))
+    }
+
+    private fun interpretRichFunctionReference(reference: IrRichFunctionReference) {
+        val irFunction = reference.invokeFunction
+        val boundValues = reference.boundValues.map { callStack.popState() }
+        val function = KFunctionState(
+            reference,
+            environment,
+            boundValues
+        )
+        if (irFunction.isLocal) callStack.storeUpValues(function)
+        callStack.pushState(function)
+    }
+
+    private fun interpretRichPropertyReference(reference: IrRichPropertyReference) {
+        val boundValues = reference.boundValues.map { callStack.popState() }
+        val propertyState = KPropertyState(callInterceptor, reference, boundValues)
+        callStack.pushState(propertyState)
     }
 }

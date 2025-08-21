@@ -89,23 +89,19 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
     }
 
     override fun KotlinTypeMarker.asFlexibleType(): FlexibleTypeMarker? {
-        assert(this is ConeKotlinType)
         return this as? ConeFlexibleType
     }
 
     override fun KotlinTypeMarker.isError(): Boolean {
-        assert(this is ConeKotlinType)
         return this is ConeErrorType || this is ConeErrorType || this.typeConstructor().isError() ||
                 (this is ConeClassLikeType && this.lookupTag is ConeClassLikeErrorLookupTag)
     }
 
     override fun KotlinTypeMarker.isUninferredParameter(): Boolean {
-        assert(this is ConeKotlinType)
         return this is ConeErrorType && this.isUninferredParameter
     }
 
     override fun FlexibleTypeMarker.asDynamicType(): ConeDynamicType? {
-        assert(this is ConeKotlinType)
         return this as? ConeDynamicType
     }
 
@@ -129,7 +125,6 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
     }
 
     override fun RigidTypeMarker.asDefinitelyNotNullType(): DefinitelyNotNullTypeMarker? {
-        require(this is ConeKotlinType)
         return this as? ConeDefinitelyNotNullType
     }
 
@@ -155,7 +150,7 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
 
     override fun CapturedTypeMarker.captureStatus(): CaptureStatus {
         require(this is ConeCapturedType)
-        return this.captureStatus
+        return this.constructor.captureStatus
     }
 
     override fun CapturedTypeMarker.isOldCapturedType(): Boolean = false
@@ -187,12 +182,11 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
 
     override fun CapturedTypeMarker.lowerType(): KotlinTypeMarker? {
         require(this is ConeCapturedType)
-        if (!this.isMarkedNullable) return this.lowerType
-        return this.lowerType?.makeNullable()
+        if (!this.isMarkedNullable) return this.constructor.lowerType
+        return this.constructor.lowerType?.makeNullable()
     }
 
     override fun TypeArgumentMarker.isStarProjection(): Boolean {
-        require(this is ConeTypeProjection)
         return this is ConeStarProjection
     }
 
@@ -338,7 +332,7 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
     override fun TypeConstructorMarker.isDenotable(): Boolean {
         require(this is ConeTypeConstructorMarker)
         return when (this) {
-            is ConeClassifierLookupTag -> true
+            is ConeClassifierLookupTag -> this !is ConeClassLikeErrorLookupTag
 
             is ConeStubTypeConstructor,
             is ConeCapturedTypeConstructor,
@@ -452,9 +446,13 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
         return ConeTypeIntersector.intersectTypes(this as ConeInferenceContext, types as Collection<ConeKotlinType>)
     }
 
-    override fun KotlinTypeMarker.isNullableType(): Boolean {
+    override fun KotlinTypeMarker.isNullableType(considerTypeVariableBounds: Boolean): Boolean {
         require(this is ConeKotlinType)
-        return canBeNull(session)
+        return canBeNull(session, considerTypeVariableBounds)
+    }
+
+    override fun KotlinTypeMarker.isNullableType(): Boolean {
+        return isNullableType(considerTypeVariableBounds = true)
     }
 
     private fun TypeConstructorMarker.toFirRegularClass(): FirRegularClass? {
@@ -533,13 +531,30 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
 
     override fun TypeConstructorMarker.isMultiFieldValueClass(): Boolean {
         val fields = getValueClassProperties() ?: return false
-        return this@ConeTypeContext.valueClassLoweringKind(fields) == ValueClassKind.MultiField
+        return isMultiFieldValueClassRecursionAware(fields, visited = hashSetOf())
+    }
+
+    private fun TypeConstructorMarker.isMultiFieldValueClassRecursionAware(
+        fields: List<Pair<Name, RigidTypeMarker>>,
+        visited: MutableSet<TypeConstructorMarker>,
+    ): Boolean {
+        if (fields.size > 1) return true
+        val fieldType = fields.singleOrNull()?.second ?: return false
+        if (!visited.add(this)) return false
+
+        val typeConstructor = fieldType.typeConstructor()
+        return !fieldType.isNullableType() && typeConstructor.getValueClassProperties()?.let {
+            typeConstructor.isMultiFieldValueClassRecursionAware(it, visited)
+        } == true
     }
 
     override fun TypeConstructorMarker.getValueClassProperties(): List<Pair<Name, RigidTypeMarker>>? {
         val firClass = toClassLikeSymbol()?.fullyExpandedClass(session)?.fir ?: return null
         if (!firClass.isInlineOrValue) return null
-        return firClass.primaryConstructorIfAny(session)?.valueParameterSymbols?.map { it.name to it.resolvedReturnType as RigidTypeMarker }
+        return firClass.primaryConstructorIfAny(session)
+            ?.valueParameterSymbols
+            ?.map { it.name to it.resolvedReturnType as RigidTypeMarker }
+            ?.takeIf { it.isNotEmpty() }
     }
 
     override fun TypeConstructorMarker.isInnerClass(): Boolean {
@@ -560,11 +575,6 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
         return unsubstitutedUnderlyingTypeForInlineClass(session)
     }
 
-    override fun KotlinTypeMarker.getSubstitutedUnderlyingType(): KotlinTypeMarker? {
-        require(this is ConeKotlinType)
-        return substitutedUnderlyingTypeForInlineClass(session, this@ConeTypeContext)
-    }
-
     override fun TypeConstructorMarker.getPrimitiveType(): PrimitiveType? =
         getClassFqNameUnsafe()?.let(StandardNames.FqNames.fqNameToPrimitiveType::get)
 
@@ -579,7 +589,7 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
         return classId.asSingleFqName().toUnsafe()
     }
 
-    override fun TypeParameterMarker.getName() = (this as ConeTypeParameterLookupTag).name
+    override fun TypeParameterMarker.getName(): Name = (this as ConeTypeParameterLookupTag).name
 
     override fun TypeParameterMarker.isReified(): Boolean {
         require(this is ConeTypeParameterLookupTag)

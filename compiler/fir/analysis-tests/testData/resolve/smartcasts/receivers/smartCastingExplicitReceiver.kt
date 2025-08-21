@@ -9,3 +9,6 @@ class C : I {
 fun I.bar() {
     (this as C).foo()
 }
+
+/* GENERATED_FIR_TAGS: asExpression, classDeclaration, funWithExtensionReceiver, functionDeclaration,
+interfaceDeclaration, smartcast, stringLiteral, thisExpression */

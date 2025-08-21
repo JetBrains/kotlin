@@ -12,7 +12,7 @@ data object DataObject {
     when {
       other !is DataObject -> return false
     }
-    val tmp_0: DataObject = other as DataObject
+    val tmp_0: DataObject = other /*as DataObject */
     return true
   }
 
@@ -25,4 +25,3 @@ data object DataObject {
   }
 
 }
-

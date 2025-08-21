@@ -19,3 +19,6 @@ object O: KSuspendFunction0<Unit> {
     override suspend fun invoke() {
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, interfaceDeclaration, objectDeclaration, operator,
+override, suspend */

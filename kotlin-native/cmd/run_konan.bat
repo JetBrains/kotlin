@@ -11,7 +11,6 @@ rem ##########################################################################
 
 setlocal enabledelayedexpansion
 call :set_home
-call :set_path
 
 set "TOOL_NAME=%1"
 shift
@@ -54,9 +53,8 @@ if not "!ARG!" == "" (
 set "KONAN_LIB=%_KONAN_HOME%\konan\lib"
 
 set "KONAN_JAR=%KONAN_LIB%\kotlin-native-compiler-embeddable.jar"
-set TROVE_JAR="%KONAN_LIB%\trove4j.jar"
 
-set "KONAN_CLASSPATH=%KONAN_JAR%;%TROVE_JAR%"
+set "KONAN_CLASSPATH=%KONAN_JAR%"
 set JAVA_OPTS=-ea ^
     -Xmx3G ^
     -XX:TieredStopAtLevel=1 ^
@@ -78,13 +76,6 @@ rem # subroutines
   set _BIN_DIR=
   for %%i in (%~sf0) do set _BIN_DIR=%_BIN_DIR%%%~dpsi
   set _KONAN_HOME=%_BIN_DIR%..
-goto :eof
-
-:set_path
-  rem libclang.dll is dynamically linked and thus requires correct PATH to be loaded.
-  rem TODO: remove this hack.
-  if "%KONAN_DATA_DIR%"=="" (set KONAN_DATA_DIR=%USERPROFILE%\.konan)
-  set "PATH=%KONAN_DATA_DIR%\dependencies\llvm-11.1.0-windows-x64\bin;%PATH%"
 goto :eof
 
 :end

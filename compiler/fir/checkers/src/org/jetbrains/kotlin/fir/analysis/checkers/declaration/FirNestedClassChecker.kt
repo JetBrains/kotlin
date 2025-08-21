@@ -13,45 +13,45 @@ import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NESTED_CLASS_NOT_ALLOWED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NESTED_CLASS_NOT_ALLOWED_IN_LOCAL
-import org.jetbrains.kotlin.fir.declarations.FirAnonymousObject
-import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
-import org.jetbrains.kotlin.fir.declarations.utils.effectiveVisibility
-import org.jetbrains.kotlin.fir.declarations.utils.isCompanion
-import org.jetbrains.kotlin.fir.declarations.utils.isInner
-import org.jetbrains.kotlin.fir.declarations.utils.isLocal
+import org.jetbrains.kotlin.fir.declarations.utils.*
+import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousObjectSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 
 // No need to visit anonymous object since an anonymous object is always inner. This aligns with
 // compiler/frontend/src/org/jetbrains/kotlin/resolve/ModifiersChecker.java:198
 object FirNestedClassChecker : FirRegularClassChecker(MppCheckerKind.Common) {
-    override fun check(declaration: FirRegularClass, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirRegularClass) {
+        if (declaration.isReplSnippetDeclaration != null) return
         // Local enums / objects / companion objects are handled with different diagnostic codes.
         // Exception is companion of local inner class.
         val isCompanion = declaration.isCompanion
         if (!isCompanion && (declaration.classKind.isSingleton || declaration.classKind == ClassKind.ENUM_CLASS) && declaration.isLocal) return
-        val containingDeclaration = context.containingDeclarations.lastOrNull() as? FirClass ?: return
+        val containingDeclaration = context.containingDeclarations.lastOrNull() as? FirClassSymbol ?: return
 
         if (isCompanion && !containingDeclaration.isInner) return
 
         // Since 1.3, enum entries can contain inner classes only.
         // Companion objects are reported with code WRONG_MODIFIER_CONTAINING_DECLARATION instead
         if (containingDeclaration.classKind == ClassKind.ENUM_ENTRY && !declaration.isInner && !isCompanion) {
-            reporter.reportOn(declaration.source, NESTED_CLASS_NOT_ALLOWED, declaration.description, context)
+            reporter.reportOn(declaration.source, NESTED_CLASS_NOT_ALLOWED, declaration.description)
             return
         }
 
-        val containerIsLocal = containingDeclaration.effectiveVisibility == EffectiveVisibility.Local
+        val containerIsLocal = containingDeclaration.effectiveVisibility == EffectiveVisibility.Local &&
+                containingDeclaration.isReplSnippetDeclaration != true
 
         if (!declaration.isInner && (containingDeclaration.isInner || containerIsLocal || context.isInsideAnonymousObject)) {
             if (declaration.isLocal && isCompanion) {
-                reporter.reportOn(declaration.source, NESTED_CLASS_NOT_ALLOWED_IN_LOCAL, declaration.description, context)
+                reporter.reportOn(declaration.source, NESTED_CLASS_NOT_ALLOWED_IN_LOCAL, declaration.description)
             } else {
-                reporter.reportOn(declaration.source, NESTED_CLASS_NOT_ALLOWED, declaration.description, context)
+                reporter.reportOn(declaration.source, NESTED_CLASS_NOT_ALLOWED, declaration.description)
             }
         }
     }
 
-    private val CheckerContext.isInsideAnonymousObject get() = containingDeclarations.any { it is FirAnonymousObject }
+    private val CheckerContext.isInsideAnonymousObject get() = containingDeclarations.any { it is FirAnonymousObjectSymbol }
 
     // Note: here we don't differentiate anonymous object like in FE1.0
     // (org.jetbrains.kotlin.resolve.ModifiersChecker.DetailedClassKind) because this case has been ruled out in the first place.

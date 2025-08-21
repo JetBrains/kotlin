@@ -12,7 +12,7 @@ open class B {
     open fun baz() {}
 }
 
-<!CANNOT_INFER_VISIBILITY, MANY_IMPL_MEMBER_NOT_IMPLEMENTED!>class C<!> : A, B() {
+<!MANY_IMPL_MEMBER_NOT_IMPLEMENTED!>class C<!> : A, B() {
     override fun foo() {
         super.foo()
 
@@ -22,3 +22,5 @@ open class B {
         baz()       // Ok
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, interfaceDeclaration, override, superExpression */

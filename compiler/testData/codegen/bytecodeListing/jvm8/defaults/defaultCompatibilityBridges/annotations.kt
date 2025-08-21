@@ -20,7 +20,7 @@ interface A {
 open class B : A
 
 // MODULE: main(library)
-// JVM_DEFAULT_MODE: all-compatibility
+// JVM_DEFAULT_MODE: enable
 // FILE: source.kt
 import base.*
 

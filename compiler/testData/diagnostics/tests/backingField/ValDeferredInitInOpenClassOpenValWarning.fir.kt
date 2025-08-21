@@ -46,3 +46,5 @@ open class Foo {
         <!VAL_REASSIGNMENT!>open_notInitializedInPlace_deferredinit3<!> = 1
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, getter, init, integerLiteral, propertyDeclaration */

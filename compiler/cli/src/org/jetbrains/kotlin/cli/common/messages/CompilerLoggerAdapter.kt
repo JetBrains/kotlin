@@ -30,7 +30,7 @@ private class CompilerLoggerAdapter(
     override fun fatal(message: String): Nothing {
         error(message)
         (messageCollector as? GroupingMessageCollector)?.flush()
-        throw CompilationErrorException()
+        throw CompilationErrorException(message)
     }
 
     private fun CompilerMessageSeverity.orError(): CompilerMessageSeverity = if (treatWarningsAsErrors) ERROR else this

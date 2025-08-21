@@ -9,3 +9,6 @@ enum class A(val c: Int) {
 
     constructor(): this(42)   
 }
+
+/* GENERATED_FIR_TAGS: enumDeclaration, enumEntry, integerLiteral, primaryConstructor, propertyDeclaration,
+secondaryConstructor */

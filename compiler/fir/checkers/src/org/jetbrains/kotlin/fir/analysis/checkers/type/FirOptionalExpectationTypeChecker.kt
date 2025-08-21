@@ -15,22 +15,22 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
-import org.jetbrains.kotlin.fir.types.coneType
 
 object FirOptionalExpectationTypeChecker : FirResolvedTypeRefChecker(MppCheckerKind.Common) {
-    override fun check(typeRef: FirResolvedTypeRef, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(typeRef: FirResolvedTypeRef) {
         val source = typeRef.source
         if (source?.kind is KtFakeSourceElementKind) return
         val classSymbol = typeRef.coneType.toRegularClassSymbol(context.session) ?: return
         if (!classSymbol.isOptionalAnnotationClass(context.session)) return
 
         if (!context.session.moduleData.isCommon) {
-            reporter.reportOn(source, FirErrors.OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE, context)
+            reporter.reportOn(source, FirErrors.OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE)
         }
 
         val annotationContainer = context.annotationContainers.lastOrNull()
         if (annotationContainer?.annotations?.any { it.annotationTypeRef == typeRef } == true) return
 
-        reporter.reportOn(source, FirErrors.OPTIONAL_DECLARATION_OUTSIDE_OF_ANNOTATION_ENTRY, context)
+        reporter.reportOn(source, FirErrors.OPTIONAL_DECLARATION_OUTSIDE_OF_ANNOTATION_ENTRY)
     }
 }

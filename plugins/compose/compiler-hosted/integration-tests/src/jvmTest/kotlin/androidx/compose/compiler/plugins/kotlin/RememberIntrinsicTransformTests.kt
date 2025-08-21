@@ -888,4 +888,33 @@ class RememberIntrinsicTransformTestsStrongSkipping(
             }
         """
     )
+
+    @Test
+    fun testConditionalGroupsBeforeRemember() = verifyGoldenComposeIrTransform(
+        source = """
+            import androidx.compose.runtime.*            
+
+            @Composable
+            fun LoginInputFields(
+                loginError: Int?,
+            ) {
+                val text = loginError?.let { stringResource(resource = it) }.orEmpty()
+
+                Checkbox(
+                    checked = false,
+                    onChecked = {},
+                )
+            }
+        """,
+        extra = """
+            import androidx.compose.runtime.*         
+
+            @Composable
+            fun Checkbox(checked: Boolean, onChecked: (Boolean) -> Unit) {
+            }
+
+            @Composable
+            fun stringResource(resource: Int): String = ""
+        """
+    )
 }

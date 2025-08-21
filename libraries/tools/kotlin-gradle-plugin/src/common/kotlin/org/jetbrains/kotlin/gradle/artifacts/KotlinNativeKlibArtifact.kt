@@ -10,7 +10,6 @@ import org.gradle.api.Project
 import org.gradle.api.artifacts.type.ArtifactTypeDefinition
 import org.gradle.api.file.Directory
 import org.gradle.api.file.DirectoryProperty
-import org.gradle.api.internal.plugins.DefaultArtifactPublicationSet
 import org.gradle.api.plugins.BasePlugin
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.TaskProvider
@@ -29,7 +28,6 @@ import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.utils.libsDirectory
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.gradle.utils.registerKlibArtifact
-import org.jetbrains.kotlin.gradle.utils.setAttribute
 
 internal val KotlinNativeKlibArtifact = KotlinTargetArtifact { target, apiElements, _ ->
     if (target !is KotlinNativeTarget) return@KotlinTargetArtifact
@@ -39,7 +37,7 @@ internal val KotlinNativeKlibArtifact = KotlinTargetArtifact { target, apiElemen
         it.description = "Assembles outputs for target '${target.name}'."
     }
 
-    apiElements.outgoing.attributes.setAttribute(ArtifactTypeDefinition.ARTIFACT_TYPE_ATTRIBUTE, NativeArtifactFormat.KLIB)
+    apiElements.outgoing.attributes.attribute(ArtifactTypeDefinition.ARTIFACT_TYPE_ATTRIBUTE, NativeArtifactFormat.KLIB)
 
     target.compilations.getByName(MAIN_COMPILATION_NAME).let { mainCompilation ->
         artifactsTask.dependsOn(mainCompilation.compileTaskProvider)
@@ -59,15 +57,13 @@ internal fun AbstractKotlinNativeCompilation.maybeCreateKlibPackingTask(
 ): TaskProvider<Zip> {
     return maybeCreateKlibPackingTask(
         classifier,
-        klibProducingTask.flatMap { it.klibDirectory },
-        klibProducingTask,
+        klibProducingTask.map { it.klibDirectory.get() },
     )
 }
 
 internal fun AbstractKotlinNativeCompilation.maybeCreateKlibPackingTask(
     classifier: String? = null,
     klibDirectoryProvider: Provider<Directory>,
-    producingTask: Any,
 ): TaskProvider<Zip> {
     val taskName = disambiguateName(lowerCamelCaseName(classifier, "klib"))
     return target.project.locateOrRegisterTask<Zip>(taskName) { task ->
@@ -78,7 +74,6 @@ internal fun AbstractKotlinNativeCompilation.maybeCreateKlibPackingTask(
         task.archiveBaseName.convention("${project.name}-$klibDisambiguator")
         task.isPreserveFileTimestamps = false
         task.isReproducibleFileOrder = true
-        task.dependsOn(producingTask)
     }
 }
 
@@ -93,11 +88,12 @@ internal fun createKlibArtifact(
         val packTask = compilation.maybeCreateKlibPackingTask(classifier, klibProducingTask)
         packTask.map { it.archiveFile.get().asFile }
     } else {
-        klibProducingTask.flatMap { it.klibFile }
+        klibProducingTask.map { it.klibFile }
     }
     with(compilation.project.configurations.getByName(apiElementsName)) {
         outgoing.registerKlibArtifact(packedArtifactFile, compilation.compilationName, classifier)
-        attributes.setAttribute(ArtifactTypeDefinition.ARTIFACT_TYPE_ATTRIBUTE, NativeArtifactFormat.KLIB) // should we do it here?
+        attributes.attribute(ArtifactTypeDefinition.ARTIFACT_TYPE_ATTRIBUTE, NativeArtifactFormat.KLIB)
+        Unit // should we do it here?
     }
 }
 

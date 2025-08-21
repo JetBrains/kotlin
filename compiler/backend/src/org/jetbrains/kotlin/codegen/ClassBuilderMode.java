@@ -16,8 +16,6 @@
 
 package org.jetbrains.kotlin.codegen;
 
-import org.jetbrains.annotations.TestOnly;
-
 public class ClassBuilderMode {
     public final boolean generateBodies;
     public final boolean generateSourceRetentionAnnotations;
@@ -53,14 +51,4 @@ public class ClassBuilderMode {
             /* bodies = */ false,
             /* sourceRetention = */ true
     );
-
-    private final static ClassBuilderMode LIGHT_ANALYSIS_FOR_TESTS = new ClassBuilderMode(
-            /* bodies = */ false,
-            /* sourceRetention = */ false
-    );
-
-    @TestOnly
-    public static ClassBuilderMode getLightAnalysisForTests() {
-        return LIGHT_ANALYSIS_FOR_TESTS;
-    }
 }

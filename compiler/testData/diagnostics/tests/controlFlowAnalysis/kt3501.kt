@@ -10,3 +10,5 @@ fun f(p: String) { // "p" is marked as unused
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, localClass */

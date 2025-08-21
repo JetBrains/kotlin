@@ -4,11 +4,13 @@
  */
 package kotlin.text
 
+import java.io.ObjectInputStream
 import java.util.Collections
 import java.util.EnumSet
 import java.util.regex.Matcher
 import java.util.regex.Pattern
 import kotlin.internal.IMPLEMENTATIONS
+import kotlin.internal.throwReadObjectNotSupported
 
 private interface FlagEnum {
     public val value: Int
@@ -235,8 +237,18 @@ internal constructor(private val nativePattern: Pattern) : Serializable {
     /**
      * Splits the [input] CharSequence to a list of strings around matches of this regular expression.
      *
+     * The last element of the resulting list corresponds to an [input] subsequence starting right
+     * after the last match (or at the beginning of [input] char sequence if there were no matches)
+     * and ending at the end of [input]. That implies that if [input] does not contain subsequences
+     * matching [this] regular expression, the resulting list will contain a single element
+     * corresponding to the whole [input] sequence.
+     * It also implies that for char sequences ending with a [this] regular expression match,
+     * the resulting list will end with an empty string.
+     *
      * @param limit Non-negative value specifying the maximum number of substrings the string can be split to.
      * Zero by default means no limit is set.
+     *
+     * @sample samples.text.Regexps.split
      */
     @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
     public actual fun split(input: CharSequence, limit: Int = 0): List<String> {
@@ -263,12 +275,19 @@ internal constructor(private val nativePattern: Pattern) : Serializable {
     /**
      * Splits the [input] CharSequence to a sequence of strings around matches of this regular expression.
      *
+     * The last element of the resulting sequence corresponds to an [input] subsequence starting right
+     * after the last match (or at the beginning of [input] char sequence if there were no matches)
+     * and ending at the end of [input]. That implies that if [input] does not contain subsequences
+     * matching [this] regular expression, the resulting sequence will contain a single element
+     * corresponding to the whole [input] sequence.
+     * It also implies that for char sequences ending with a [this] regular expression match,
+     * the resulting sequence will end with an empty string.
+     *
      * @param limit Non-negative value specifying the maximum number of substrings the string can be split to.
      * Zero by default means no limit is set.
      * @sample samples.text.Regexps.splitToSequence
      */
     @SinceKotlin("1.6")
-    @WasExperimental(ExperimentalStdlibApi::class)
     @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
     public actual fun splitToSequence(input: CharSequence, limit: Int = 0): Sequence<String> {
         requireNonNegativeLimit(limit)
@@ -308,6 +327,8 @@ internal constructor(private val nativePattern: Pattern) : Serializable {
     public fun toPattern(): Pattern = nativePattern
 
     private fun writeReplace(): Any = Serialized(nativePattern.pattern(), nativePattern.flags())
+
+    private fun readObject(input: ObjectInputStream): Unit = throwReadObjectNotSupported()
 
     private class Serialized(val pattern: String, val flags: Int) : Serializable {
         companion object {

@@ -18,3 +18,6 @@ fun test() {
     <!MISSING_DEPENDENCY_CLASS!>withConcreteReceiver<!> <!MISSING_DEPENDENCY_CLASS!>{}<!>
     <!MISSING_DEPENDENCY_CLASS!>withGenericReceiver<!> <!MISSING_DEPENDENCY_CLASS!>{}<!>
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionalType, interfaceDeclaration, lambdaLiteral, nullableType,
+starProjection, typeParameter, typeWithExtension */

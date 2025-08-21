@@ -107,6 +107,7 @@ KtDotQualifiedExpression(147,166): 'this@iterator.start'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = this@iterator
           isSafeNavigation = false
@@ -117,6 +118,7 @@ KtDotQualifiedExpression(147,166): 'this@iterator.start'
           receiverType = null
           returnType = kotlin.Int
           symbol = val start: kotlin.Int
+          contextParameters = []
           callableId = f/IntProgression.start
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -137,6 +139,7 @@ KtNameReferenceExpression(161,166): 'start'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = this@iterator
           isSafeNavigation = false
@@ -147,6 +150,7 @@ KtNameReferenceExpression(161,166): 'start'
           receiverType = null
           returnType = kotlin.Int
           symbol = val start: kotlin.Int
+          contextParameters = []
           callableId = f/IntProgression.start
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -169,10 +173,12 @@ KtBinaryExpression(196,224): 'current <= this@iterator.end'
           receiverType = null
           returnType = kotlin.Int
           symbol = other: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = current
           isSafeNavigation = false
@@ -188,8 +194,10 @@ KtBinaryExpression(196,224): 'current <= this@iterator.end'
               receiverType = null
               returnType = kotlin.Int
               symbol = other: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/Int.compareTo
       typeArgumentsMapping = {}
 
@@ -197,6 +205,7 @@ KtNameReferenceExpression(196,203): 'current'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaImplicitReceiverValue:
           symbol = <anonymous>
           type = f.<anonymous>
@@ -206,6 +215,7 @@ KtNameReferenceExpression(196,203): 'current'
           receiverType = null
           returnType = kotlin.Int
           symbol = var current: kotlin.Int
+          contextParameters = []
           callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -219,10 +229,12 @@ KtOperationReferenceExpression(204,206): '<='
           receiverType = null
           returnType = kotlin.Int
           symbol = other: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = current
           isSafeNavigation = false
@@ -238,8 +250,10 @@ KtOperationReferenceExpression(204,206): '<='
               receiverType = null
               returnType = kotlin.Int
               symbol = other: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/Int.compareTo
       typeArgumentsMapping = {}
 
@@ -247,6 +261,7 @@ KtDotQualifiedExpression(207,224): 'this@iterator.end'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = this@iterator
           isSafeNavigation = false
@@ -257,6 +272,7 @@ KtDotQualifiedExpression(207,224): 'this@iterator.end'
           receiverType = null
           returnType = kotlin.Int
           symbol = val end: kotlin.Int
+          contextParameters = []
           callableId = f/IntProgression.end
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -277,6 +293,7 @@ KtNameReferenceExpression(221,224): 'end'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = this@iterator
           isSafeNavigation = false
@@ -287,6 +304,7 @@ KtNameReferenceExpression(221,224): 'end'
           receiverType = null
           returnType = kotlin.Int
           symbol = val end: kotlin.Int
+          contextParameters = []
           callableId = f/IntProgression.end
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -315,6 +333,7 @@ KtPostfixExpression(256,265): 'current++'
       compoundOperation = KaCompoundUnaryOperation:
         kind = INC
         operationPartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+          contextArguments = []
           dispatchReceiver = KaExplicitReceiverValue:
             expression = current
             isSafeNavigation = false
@@ -325,9 +344,11 @@ KtPostfixExpression(256,265): 'current++'
             returnType = kotlin.Int
             symbol = kotlin/Int.inc(<dispatch receiver>: kotlin.Int): kotlin.Int
             valueParameters = []
+            contextParameters = []
             callableId = kotlin/Int.inc
         precedence = POSTFIX
       variablePartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaImplicitReceiverValue:
           symbol = <anonymous>
           type = f.<anonymous>
@@ -337,12 +358,14 @@ KtPostfixExpression(256,265): 'current++'
           receiverType = null
           returnType = kotlin.Int
           symbol = var current: kotlin.Int
+          contextParameters = []
           callableId = null
 
 KtNameReferenceExpression(256,263): 'current'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaImplicitReceiverValue:
           symbol = <anonymous>
           type = f.<anonymous>
@@ -352,6 +375,7 @@ KtNameReferenceExpression(256,263): 'current'
           receiverType = null
           returnType = kotlin.Int
           symbol = var current: kotlin.Int
+          contextParameters = []
           callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -362,6 +386,7 @@ KtOperationReferenceExpression(263,265): '++'
       compoundOperation = KaCompoundUnaryOperation:
         kind = INC
         operationPartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+          contextArguments = []
           dispatchReceiver = KaExplicitReceiverValue:
             expression = current
             isSafeNavigation = false
@@ -372,9 +397,11 @@ KtOperationReferenceExpression(263,265): '++'
             returnType = kotlin.Int
             symbol = kotlin/Int.inc(<dispatch receiver>: kotlin.Int): kotlin.Int
             valueParameters = []
+            contextParameters = []
             callableId = kotlin/Int.inc
         precedence = POSTFIX
       variablePartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaImplicitReceiverValue:
           symbol = <anonymous>
           type = f.<anonymous>
@@ -384,6 +411,7 @@ KtOperationReferenceExpression(263,265): '++'
           receiverType = null
           returnType = kotlin.Int
           symbol = var current: kotlin.Int
+          contextParameters = []
           callableId = null
 
 KtNamedFunction(269,330): 'fun usage() {'
@@ -413,16 +441,19 @@ KtCallExpression(297,318): 'IntProgression(1, 10)'
           receiverType = null
           returnType = kotlin.Int
           symbol = start: kotlin.Int
+          contextParameters = []
           callableId = null),
         10 -> (KaVariableSignature:
           name = end
           receiverType = null
           returnType = kotlin.Int
           symbol = end: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -435,14 +466,17 @@ KtCallExpression(297,318): 'IntProgression(1, 10)'
               receiverType = null
               returnType = kotlin.Int
               symbol = start: kotlin.Int
+              contextParameters = []
               callableId = null,
             KaVariableSignature:
               name = end
               receiverType = null
               returnType = kotlin.Int
               symbol = end: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
 
@@ -455,16 +489,19 @@ KtNameReferenceExpression(297,311): 'IntProgression'
           receiverType = null
           returnType = kotlin.Int
           symbol = start: kotlin.Int
+          contextParameters = []
           callableId = null),
         10 -> (KaVariableSignature:
           name = end
           receiverType = null
           returnType = kotlin.Int
           symbol = end: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -477,14 +514,17 @@ KtNameReferenceExpression(297,311): 'IntProgression'
               receiverType = null
               returnType = kotlin.Int
               symbol = start: kotlin.Int
+              contextParameters = []
               callableId = null,
             KaVariableSignature:
               name = end
               receiverType = null
               returnType = kotlin.Int
               symbol = end: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
 

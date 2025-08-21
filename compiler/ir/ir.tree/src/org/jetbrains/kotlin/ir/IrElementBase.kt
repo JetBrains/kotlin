@@ -16,8 +16,9 @@
 
 package org.jetbrains.kotlin.ir
 
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
+import org.jetbrains.kotlin.ir.visitors.IrTransformer
+import org.jetbrains.kotlin.ir.visitors.IrVisitor
+import java.util.IdentityHashMap
 
 abstract class IrElementBase : IrElement {
     /**
@@ -26,20 +27,16 @@ abstract class IrElementBase : IrElement {
      * Keys are of type [IrAttribute].
      * Values are arbitrary objects but cannot be null.
      */
-    private var attributeMap: Array<Any?>? = null
+    private var _attributes: Array<Any?>? = null
 
-
-    @Suppress("DEPRECATED_COMPILER_API")
-    override fun <D> transform(transformer: IrElementTransformer<D>, data: D): IrElement =
+    override fun <D> transform(transformer: IrTransformer<D>, data: D): IrElement =
         accept(transformer, data)
 
-    @Suppress("DEPRECATED_COMPILER_API")
-    override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
+    override fun <D> acceptChildren(visitor: IrVisitor<Unit, D>, data: D) {
         // No children by default
     }
 
-    @Suppress("DEPRECATED_COMPILER_API")
-    override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {
+    override fun <D> transformChildren(transformer: IrTransformer<D>, data: D) {
         // No children by default
     }
 
@@ -48,15 +45,15 @@ abstract class IrElementBase : IrElement {
      * Returns a snapshot of all attributes held by this element.
      * Designated mainly for debugging.
      */
-    val allAttributes: Map<IrAttribute<*, *>, Any>
+    val attributes: Map<IrAttribute<*, *>, Any>
         get() {
-            val attributeMap = attributeMap
+            val attributes = _attributes
                 ?: return emptyMap()
-            return buildMap(attributeMap.size / 2) {
-                for (i in attributeMap.indices step 2) {
-                    val key = attributeMap[i] as IrAttribute<*, *>?
+            return buildMap(attributes.size / 2) {
+                for (i in attributes.indices step 2) {
+                    val key = attributes[i] as IrAttribute<*, *>?
                         ?: break
-                    val value = attributeMap[i + 1]!!
+                    val value = attributes[i + 1]!!
                     put(key, value)
                 }
             }
@@ -68,7 +65,7 @@ abstract class IrElementBase : IrElement {
             return null
         } else {
             @Suppress("UNCHECKED_CAST")
-            return attributeMap!![foundIndex + 1] as T
+            return _attributes!![foundIndex + 1] as T
         }
     }
 
@@ -76,7 +73,7 @@ abstract class IrElementBase : IrElement {
         val foundIndex = findAttributeIndex(key)
         val previousValue: T? = if (foundIndex >= 0) {
             @Suppress("UNCHECKED_CAST")
-            attributeMap!![foundIndex + 1] as T
+            _attributes!![foundIndex + 1] as T
         } else null
 
         putAttribute(foundIndex, key, value)
@@ -84,12 +81,12 @@ abstract class IrElementBase : IrElement {
     }
 
     private fun findAttributeIndex(key: IrAttribute<*, *>): Int {
-        val attributeMap = attributeMap
+        val attributes = _attributes
             ?: return -1
 
         var i = 0
-        while (i < attributeMap.size) {
-            val foundKey = attributeMap[i]
+        while (i < attributes.size) {
+            val foundKey = attributes[i]
                 ?: break
             if (foundKey === key) {
                 return i
@@ -102,10 +99,10 @@ abstract class IrElementBase : IrElement {
 
     private fun <T : Any> initializeAttributes(firstKey: IrAttribute<*, T>, firstValue: T) {
         val initialSlots = 1
-        val attributeMap = arrayOfNulls<Any?>(initialSlots * 2)
-        attributeMap[0] = firstKey
-        attributeMap[1] = firstValue
-        this.attributeMap = attributeMap
+        val attributes = arrayOfNulls<Any?>(initialSlots * 2)
+        attributes[0] = firstKey
+        attributes[1] = firstValue
+        this._attributes = attributes
     }
 
     private fun <T : Any> putAttribute(existingIndex: Int, key: IrAttribute<*, T>, value: T?) {
@@ -113,10 +110,10 @@ abstract class IrElementBase : IrElement {
             if (value == null) {
                 removeAttributeAt(existingIndex)
             } else {
-                attributeMap!![existingIndex + 1] = value
+                _attributes!![existingIndex + 1] = value
             }
         } else if (value != null) {
-            if (attributeMap == null) {
+            if (_attributes == null) {
                 initializeAttributes(key, value)
             } else {
                 val newEntryIndex = existingIndex.inv()
@@ -126,33 +123,68 @@ abstract class IrElementBase : IrElement {
     }
 
     private fun <T : Any> addAttributeAt(index: Int, key: IrAttribute<*, T>, value: T) {
-        var attributeMap = attributeMap!!
-        if (attributeMap.size <= index) {
+        var attributes = _attributes!!
+        if (attributes.size <= index) {
             val newSlots = 2
-            attributeMap = attributeMap.copyOf(attributeMap.size + newSlots * 2)
-            this.attributeMap = attributeMap
+            attributes = attributes.copyOf(attributes.size + newSlots * 2)
+            this._attributes = attributes
         }
 
-        attributeMap[index] = key
-        attributeMap[index + 1] = value
+        attributes[index] = key
+        attributes[index + 1] = value
     }
 
     private fun removeAttributeAt(keyIndex: Int) {
         // It is expected that during the compilation process, attributes are mostly appended
         // and rarely removed, hence no need to shrink the array.
 
-        val attributeMap = attributeMap!!
+        val attributes = _attributes!!
 
-        var lastKeyIndex = attributeMap.size - 2
-        while (lastKeyIndex > keyIndex && attributeMap[lastKeyIndex] == null) {
+        var lastKeyIndex = attributes.size - 2
+        while (lastKeyIndex > keyIndex && attributes[lastKeyIndex] == null) {
             lastKeyIndex -= 2
         }
 
         if (lastKeyIndex > keyIndex) {
-            attributeMap[keyIndex] = attributeMap[lastKeyIndex]
-            attributeMap[keyIndex + 1] = attributeMap[lastKeyIndex + 1]
+            attributes[keyIndex] = attributes[lastKeyIndex]
+            attributes[keyIndex + 1] = attributes[lastKeyIndex + 1]
         }
-        attributeMap[lastKeyIndex] = null
-        attributeMap[lastKeyIndex + 1] = null
+        attributes[lastKeyIndex] = null
+        attributes[lastKeyIndex + 1] = null
+    }
+
+    internal fun copyAttributesFrom(other: IrElementBase, includeAll: Boolean) {
+        val srcAttributes = other._attributes ?: return
+        var dstAttributes = _attributes
+        val mergedAttributes = IdentityHashMap<IrAttribute<*, *>, Any?>((srcAttributes.size + (dstAttributes?.size ?: 0)) / 2)
+
+        if (dstAttributes != null) {
+            for (i in dstAttributes.indices step 2) {
+                val attr = dstAttributes[i] as IrAttribute<*, *>? ?: break
+                mergedAttributes[attr] = dstAttributes[i + 1]
+            }
+        }
+        for (i in srcAttributes.indices step 2) {
+            val attr = srcAttributes[i] as IrAttribute<*, *>? ?: break
+            if (attr.copyByDefault || includeAll) {
+                mergedAttributes[attr] = srcAttributes[i + 1]
+            }
+        }
+
+        if (mergedAttributes.isEmpty()) {
+            return
+        }
+
+        if (dstAttributes == null || dstAttributes.size <= mergedAttributes.size * 2) {
+            dstAttributes = arrayOfNulls(mergedAttributes.size * 2)
+            this._attributes = dstAttributes
+        }
+
+        var i = 0
+        for ((attr, value) in mergedAttributes) {
+            dstAttributes[i] = attr
+            dstAttributes[i + 1] = value
+            i += 2
+        }
     }
 }

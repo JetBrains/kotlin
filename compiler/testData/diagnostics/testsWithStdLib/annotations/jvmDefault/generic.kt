@@ -1,7 +1,7 @@
 // RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // JVM_TARGET: 1.8
-// JVM_DEFAULT_MODE: all
+// JVM_DEFAULT_MODE: no-compatibility
 
 interface A<T> {
     fun test(p: T) {
@@ -60,3 +60,5 @@ interface D2 : ANonDefault, D<String> {
 
     }
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, interfaceDeclaration, nullableType, override, typeParameter */

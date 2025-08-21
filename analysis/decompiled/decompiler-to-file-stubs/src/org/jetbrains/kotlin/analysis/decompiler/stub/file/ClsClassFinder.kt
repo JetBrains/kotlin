@@ -35,6 +35,7 @@ object ClsClassFinder {
      * Checks if this file is a compiled "internal" Kotlin class, i.e. a Kotlin class (not necessarily ABI-compatible with the current plugin)
      * which should NOT be decompiled (and, as a result, shown under the library in the Project view, be searchable via Find class, etc.)
      */
+    @JvmOverloads
     fun isKotlinInternalCompiledFile(
         file: VirtualFile,
         fileContent: ByteArray? = null,

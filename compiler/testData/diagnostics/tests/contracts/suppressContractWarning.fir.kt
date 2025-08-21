@@ -28,3 +28,5 @@ fun test2Suppress(block: () -> Unit) {
         callsInPlace(block, InvocationKind.EXACTLY_ONCE)
     }
 }
+
+/* GENERATED_FIR_TAGS: contractCallsEffect, contracts, functionDeclaration, functionalType, lambdaLiteral, stringLiteral */

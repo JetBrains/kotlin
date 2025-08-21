@@ -20,3 +20,6 @@ fun main() {
         <!DEBUG_INFO_EXPRESSION_TYPE("(kotlin.collections.MutableList<(TypeVariable(S)..TypeVariable(S)?)>..kotlin.collections.List<(TypeVariable(S)..TypeVariable(S)?)>?)")!>gg().foo<!>
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, flexibleType, functionDeclaration, functionalType, javaProperty, javaType,
+lambdaLiteral, nullableType, stringLiteral, suspend, typeParameter, typeWithExtension */

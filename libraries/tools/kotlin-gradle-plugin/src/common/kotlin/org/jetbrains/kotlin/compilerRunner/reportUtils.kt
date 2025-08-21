@@ -170,9 +170,9 @@ internal fun String.escapeJavaStyleString(
     return buildString {
         this@escapeJavaStyleString.forEach { ch ->
             when {
-                ch.toInt() > 0xfff -> append("\\u${ch.hex()}")
-                ch.toInt() > 0xff -> append("\\u0${ch.hex()}")
-                ch.toInt() >= 0x7f -> append("\\u00${ch.hex()}")
+                ch.code > 0xfff -> append("\\u${ch.hex()}")
+                ch.code > 0xff -> append("\\u0${ch.hex()}")
+                ch.code >= 0x7f -> append("\\u00${ch.hex()}")
                 ch < 32.toChar() -> when (ch) {
                     '\b' -> append('\\').append('b')
                     '\n' -> append('\\').append('n')
@@ -203,7 +203,7 @@ internal fun String.escapeJavaStyleString(
 }
 
 private fun Char.hex(): String {
-    return Integer.toHexString(toInt()).toUpperCase(Locale.ENGLISH)
+    return Integer.toHexString(code).uppercase()
 }
 
 private fun createLoggingMessageCollector(log: KotlinLogger): MessageCollector = object : MessageCollector {
@@ -222,6 +222,7 @@ private fun createLoggingMessageCollector(log: KotlinLogger): MessageCollector =
             CompilerMessageSeverity.EXCEPTION -> log.error(locMessage)
             CompilerMessageSeverity.ERROR,
             CompilerMessageSeverity.STRONG_WARNING,
+            CompilerMessageSeverity.FIXED_WARNING,
             CompilerMessageSeverity.WARNING,
             CompilerMessageSeverity.INFO,
             -> log.info(locMessage)

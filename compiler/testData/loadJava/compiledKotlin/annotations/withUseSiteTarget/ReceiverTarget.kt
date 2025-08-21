@@ -1,5 +1,6 @@
 // PLATFORM_DEPENDANT_METADATA
 //ALLOW_AST_ACCESS
+
 package test
 
 @Target(AnnotationTarget.VALUE_PARAMETER)

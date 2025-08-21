@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.unsubstitutedScope
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ABSTRACT_MEMBER_NOT_IMPLEMENTED_BY_ENUM_ENTRY
 import org.jetbrains.kotlin.fir.declarations.FirClass
-import org.jetbrains.kotlin.fir.declarations.FirEnumEntry
+import org.jetbrains.kotlin.fir.declarations.collectEnumEntries
 import org.jetbrains.kotlin.fir.declarations.utils.isAbstract
 import org.jetbrains.kotlin.fir.declarations.utils.isEnumClass
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
@@ -21,27 +21,30 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 
 sealed class FirNotImplementedOverrideSimpleEnumEntryChecker(mppKind: MppCheckerKind) : FirClassChecker(mppKind) {
     object Regular : FirNotImplementedOverrideSimpleEnumEntryChecker(MppCheckerKind.Platform) {
-        override fun check(declaration: FirClass, context: CheckerContext, reporter: DiagnosticReporter) {
+        context(context: CheckerContext, reporter: DiagnosticReporter)
+        override fun check(declaration: FirClass) {
             if (declaration.isExpect) return
-            super.check(declaration, context, reporter)
+            super.check(declaration)
         }
     }
 
     object ForExpectClass : FirNotImplementedOverrideSimpleEnumEntryChecker(MppCheckerKind.Common) {
-        override fun check(declaration: FirClass, context: CheckerContext, reporter: DiagnosticReporter) {
+        context(context: CheckerContext, reporter: DiagnosticReporter)
+        override fun check(declaration: FirClass) {
             if (!declaration.isExpect) return
-            super.check(declaration, context, reporter)
+            super.check(declaration)
         }
     }
 
-    override fun check(declaration: FirClass, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirClass) {
         if (!declaration.isEnumClass) return
 
         // Enum entries with an initializer are handled by FirNotImplementedOverrideChecker since they contain an AnonymousObject.
-        val enumEntries = declaration.declarations.filterIsInstance<FirEnumEntry>().filter { it.initializer == null && it.source != null }
+        val enumEntries = declaration.collectEnumEntries(context.session).filter { it.initializer == null && it.source != null }
         if (enumEntries.isEmpty()) return
 
-        val enumScope = declaration.unsubstitutedScope(context)
+        val enumScope = declaration.unsubstitutedScope()
 
         val notImplemented = mutableListOf<FirCallableSymbol<*>>()
         enumScope.processAllCallables { symbol ->
@@ -53,7 +56,7 @@ sealed class FirNotImplementedOverrideSimpleEnumEntryChecker(mppKind: MppChecker
         if (notImplemented.isEmpty()) return
 
         for (enumEntry in enumEntries) {
-            reporter.reportOn(enumEntry.source, ABSTRACT_MEMBER_NOT_IMPLEMENTED_BY_ENUM_ENTRY, enumEntry.symbol, notImplemented, context)
+            reporter.reportOn(enumEntry.source, ABSTRACT_MEMBER_NOT_IMPLEMENTED_BY_ENUM_ENTRY, enumEntry.symbol, notImplemented)
         }
     }
 }

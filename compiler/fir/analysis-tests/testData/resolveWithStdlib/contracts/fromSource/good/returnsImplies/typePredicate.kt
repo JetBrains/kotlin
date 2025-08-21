@@ -17,3 +17,6 @@ fun test(x: Any) {
         x.<!UNRESOLVED_REFERENCE!>length<!> // Error
     }
 }
+
+/* GENERATED_FIR_TAGS: classReference, contractConditionalEffect, contracts, functionDeclaration, ifExpression,
+isExpression, lambdaLiteral, smartcast */

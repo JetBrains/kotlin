@@ -49,3 +49,6 @@ fun test() {
 }
 
 fun foo(x: Int, y: String) {}
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, destructuringDeclaration, forLoop, functionDeclaration,
+integerLiteral, localProperty, operator, propertyDeclaration, stringLiteral, unnamedLocalVariable */

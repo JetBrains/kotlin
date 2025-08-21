@@ -30,7 +30,7 @@ FILE: whenWithGuardEnabled.fir.kt
 
     }
     public final fun SmartCastInGuard(x: R|kotlin/Any|): R|kotlin/Unit| {
-        ^SmartCastInGuard when (R|<local>/x|) {
+        ^SmartCastInGuard when (lval <when-subject>: R|kotlin/Any| = R|<local>/x|) {
             ($subj$ is R|kotlin/String|) ->  {
                 Q|kotlin/Unit|
             }
@@ -78,7 +78,7 @@ FILE: whenWithGuardEnabled.fir.kt
 
     }
     public final fun MultipleConditionsNotAllowed(x: R|kotlin/Any|): R|kotlin/Unit| {
-        ^MultipleConditionsNotAllowed when (R|<local>/x|) {
+        ^MultipleConditionsNotAllowed when (lval <when-subject>: R|kotlin/Any| = R|<local>/x|) {
             ($subj$ is R|kotlin/String|) ->  {
                 Q|kotlin/Unit|
             }
@@ -92,7 +92,7 @@ FILE: whenWithGuardEnabled.fir.kt
 
     }
     public final fun NonExhaustiveWithGuard(x: R|BooleanHolder|): R|kotlin/Unit| {
-        ^NonExhaustiveWithGuard when (R|<local>/x|) {
+        ^NonExhaustiveWithGuard when (lval <when-subject>: R|BooleanHolder| = R|<local>/x|) {
             ($subj$ is R|True|) ->  {
                 Q|kotlin/Unit|
             }
@@ -103,7 +103,7 @@ FILE: whenWithGuardEnabled.fir.kt
 
     }
     public final fun ExhaustiveWithGuard(x: R|BooleanHolder|): R|kotlin/Unit| {
-        ^ExhaustiveWithGuard when (R|<local>/x|) {
+        ^ExhaustiveWithGuard when (lval <when-subject>: R|BooleanHolder| = R|<local>/x|) {
             ($subj$ is R|True|) ->  {
                 Q|kotlin/Unit|
             }

@@ -11,18 +11,18 @@ import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileSystem
 import org.jetbrains.kotlin.backend.common.output.OutputFileCollection
-import org.jetbrains.kotlin.backend.common.output.SimpleOutputFileCollection
+import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.messages.OutputMessageUtil
 import org.jetbrains.kotlin.cli.common.modules.ModuleBuilder
 import org.jetbrains.kotlin.cli.common.output.writeAll
-import org.jetbrains.kotlin.cli.jvm.config.jvmClasspathRoots
+import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
+import org.jetbrains.kotlin.cli.jvm.config.VirtualJvmClasspathRoot
 import org.jetbrains.kotlin.cli.jvm.config.jvmModularRoots
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.*
-import org.jetbrains.kotlin.fir.BinaryModuleData
 import org.jetbrains.kotlin.fir.DependencyListForCliModule
 import org.jetbrains.kotlin.fir.session.IncrementalCompilationContext
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectFileSearchScope
@@ -33,7 +33,6 @@ import org.jetbrains.kotlin.modules.Module
 import org.jetbrains.kotlin.modules.TargetId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus
 import org.jetbrains.kotlin.psi.KtFile
 import java.io.File
@@ -69,20 +68,7 @@ fun getBuildFilePaths(buildFile: File?, sourceFilePaths: List<String>): List<Str
         (File(path).takeIf(File::isAbsolute) ?: buildFile.resolveSibling(path)).absolutePath
     }
 
-fun createOutputFilesFlushingCallbackIfPossible(configuration: CompilerConfiguration): (GenerationState) -> Unit {
-    if (configuration.get(JVMConfigurationKeys.OUTPUT_DIRECTORY) == null) {
-        return {}
-    }
-    return { state ->
-        val currentOutput = SimpleOutputFileCollection(state.factory.currentOutput)
-        writeOutput(configuration, currentOutput, null)
-        if (!configuration.get(JVMConfigurationKeys.RETAIN_OUTPUT_IN_MEMORY, false)) {
-            state.factory.releaseGeneratedOutput()
-        }
-    }
-}
-
-fun writeOutput(
+private fun writeOutput(
     configuration: CompilerConfiguration,
     outputFiles: OutputFileCollection,
     mainClassFqName: FqName?
@@ -103,14 +89,19 @@ fun writeOutput(
             outputFiles,
             messageCollector
         )
+        val sourceFiles = outputFiles.asList().flatMap { it.sourceFiles }.distinct()
+        configuration.fileMappingTracker?.recordSourceFilesToOutputFileMapping(
+            sourceFiles,
+            jarPath
+        )
         if (reportOutputFiles) {
-            val message = OutputMessageUtil.formatOutputMessage(outputFiles.asList().flatMap { it.sourceFiles }.distinct(), jarPath)
+            val message = OutputMessageUtil.formatOutputMessage(sourceFiles, jarPath)
             messageCollector.report(CompilerMessageSeverity.OUTPUT, message)
         }
         return
     }
 
-    outputFiles.writeAll(configuration.outputDirOrCurrentDirectory(), messageCollector, reportOutputFiles)
+    outputFiles.writeAll(configuration.outputDirOrCurrentDirectory(), messageCollector, reportOutputFiles, configuration.fileMappingTracker)
 }
 
 private fun CompilerConfiguration.outputDirOrCurrentDirectory(): File =
@@ -206,13 +197,24 @@ fun createLibraryListForJvm(
     configuration: CompilerConfiguration,
     friendPaths: List<String>
 ): DependencyListForCliModule {
-    val binaryModuleData = BinaryModuleData.initialize(
-        Name.identifier(moduleName),
-        JvmPlatforms.unspecifiedJvmPlatform,
-    )
-    val libraryList = DependencyListForCliModule.build(binaryModuleData) {
-        dependencies(configuration.jvmClasspathRoots.map { it.toPath() })
-        dependencies(configuration.jvmModularRoots.map { it.toPath() })
+    val contentRoots = configuration.getList(CLIConfigurationKeys.CONTENT_ROOTS)
+
+    val libraryList = DependencyListForCliModule.build(Name.identifier(moduleName)) {
+        dependencies(
+            contentRoots.mapNotNull {
+                when (it) {
+                    is JvmClasspathRoot -> it.file.path
+                    is VirtualJvmClasspathRoot if !it.isFriend -> it.file.toNioPath().toString()
+                    else -> null
+                }
+            }
+        )
+        friendDependencies(contentRoots
+                               .filterIsInstance<VirtualJvmClasspathRoot>()
+                               .filter { it.isFriend }
+                               .map { it.file.toNioPath().toString() })
+
+        dependencies(configuration.jvmModularRoots.map { it.path })
         friendDependencies(configuration[JVMConfigurationKeys.FRIEND_PATHS] ?: emptyList())
         friendDependencies(friendPaths)
     }

@@ -1,12 +1,15 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.analysis.api.descriptors.components
 
 import org.jetbrains.kotlin.analysis.api.KaNonPublicApi
-import org.jetbrains.kotlin.analysis.api.components.*
+import org.jetbrains.kotlin.analysis.api.components.KaCodeCompilationException
+import org.jetbrains.kotlin.analysis.api.components.KaCompilationResult
+import org.jetbrains.kotlin.analysis.api.components.KaCompilerFacility
+import org.jetbrains.kotlin.analysis.api.components.KaCompilerTarget
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisFacade.AnalysisMode
 import org.jetbrains.kotlin.analysis.api.descriptors.KaFe10Session
 import org.jetbrains.kotlin.analysis.api.descriptors.components.base.KaFe10SessionComponent
@@ -15,8 +18,8 @@ import org.jetbrains.kotlin.analysis.api.descriptors.utils.collectReachableInlin
 import org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnostic
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseSessionComponent
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaClassBuilderFactory
+import org.jetbrains.kotlin.analysis.api.impl.base.components.withPsiValidityAssertion
 import org.jetbrains.kotlin.analysis.api.impl.base.util.KaBaseCompiledFileForOutputFile
-import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.backend.jvm.FacadeClassSourceShimForFragmentCompilation
 import org.jetbrains.kotlin.backend.jvm.JvmGeneratorExtensionsImpl
 import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
@@ -54,7 +57,7 @@ internal class KaFe10CompilerFacility(
         configuration: CompilerConfiguration,
         target: KaCompilerTarget,
         allowedErrorFilter: (KaDiagnostic) -> Boolean
-    ): KaCompilationResult = withValidityAssertion {
+    ): KaCompilationResult = withPsiValidityAssertion(file) {
         try {
             compileUnsafe(file, configuration, target as KaCompilerTarget.Jvm, allowedErrorFilter)
         } catch (e: Throwable) {
@@ -131,7 +134,7 @@ internal class KaFe10CompilerFacility(
 
         codegenFactory.convertAndGenerate(filesToCompile, state, bindingContext)
         val outputFiles = state.factory.asList().map(::KaBaseCompiledFileForOutputFile)
-        return KaCompilationResult.Success(outputFiles, capturedValues = emptyList())
+        return KaCompilationResult.Success(outputFiles, capturedValues = emptyList(), canBeCached = true)
     }
 
     private fun computeErrors(diagnostics: Diagnostics, allowedErrorFilter: (KaDiagnostic) -> Boolean): List<KaDiagnostic> {

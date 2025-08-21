@@ -25,3 +25,6 @@ annotation class Anno2(vararg val x: String, val y: String)
 
 @Anno1(x = ["", Anno2(x = [""], y = "")], y = "")
 fun foo5() {}
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, collectionLiteral, functionDeclaration, inProjection, outProjection,
+primaryConstructor, propertyDeclaration, stringLiteral, vararg */

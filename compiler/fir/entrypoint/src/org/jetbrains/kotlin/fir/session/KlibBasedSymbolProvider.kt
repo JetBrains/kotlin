@@ -1,18 +1,26 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.fir.session
 
+import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
-import org.jetbrains.kotlin.fir.deserialization.*
+import org.jetbrains.kotlin.fir.deserialization.FirTypeDeserializer
+import org.jetbrains.kotlin.fir.deserialization.ModuleDataProvider
+import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
 import org.jetbrains.kotlin.library.KotlinLibrary
-import org.jetbrains.kotlin.library.metadata.*
+import org.jetbrains.kotlin.library.metadata.KlibDeserializedContainerSource
+import org.jetbrains.kotlin.library.metadata.getIncompatibility
+import org.jetbrains.kotlin.library.metadata.parseModuleHeader
+import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.serialization.deserialization.IncompatibleVersionErrorData
+import org.jetbrains.kotlin.util.toKlibMetadataVersion
 import org.jetbrains.kotlin.utils.SmartList
 import java.nio.file.Paths
 
@@ -30,6 +38,15 @@ class KlibBasedSymbolProvider(
     flexibleTypeFactory,
     defaultDeserializationOrigin,
 ) {
+    private val ownMetadataVersion: MetadataVersion = session.languageVersionSettings.languageVersion.toKlibMetadataVersion()
+
+    private val KotlinLibrary.incompatibility: IncompatibleVersionErrorData<MetadataVersion>?
+        get() {
+            if (session.languageVersionSettings.getFlag(AnalysisFlags.skipMetadataVersionCheck)) return null
+            return getIncompatibility(ownMetadataVersion)
+        }
+
+
     private val moduleHeaders by lazy {
         resolvedLibraries.associate { it to parseModuleHeader(it.moduleHeaderData) }
     }
@@ -71,6 +88,7 @@ class KlibBasedSymbolProvider(
         resolvedLibrary,
         moduleHeaders[resolvedLibrary]!!,
         deserializationConfiguration,
-        packageFqName
+        packageFqName,
+        resolvedLibrary.incompatibility
     )
 }

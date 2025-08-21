@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.ir.builders.irSet
 import org.jetbrains.kotlin.ir.builders.irSetField
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.irAttribute
 import org.jetbrains.kotlin.ir.symbols.IrVariableSymbol
 import org.jetbrains.kotlin.ir.util.addChild
 import org.jetbrains.kotlin.ir.util.overrides
@@ -32,13 +33,16 @@ import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 
 internal val DECLARATION_ORIGIN_COROUTINE_VAR_SPILLING = IrDeclarationOriginImpl("COROUTINE_VAR_SPILLING")
 
+internal var IrSuspensionPoint.liveVariablesAtSuspensionPoint: List<IrVariable>? by irAttribute(copyByDefault = false)
+internal var IrSuspensionPoint.visibleVariablesAtSuspensionPoint: List<IrVariable>? by irAttribute(copyByDefault = false)
+
 /**
  * Saves/restores coroutines variables before/after suspension.
  */
 internal class CoroutinesVarSpillingLowering(val generationState: NativeGenerationState) : BodyLoweringPass {
     private val context = generationState.context
     private val irFactory = context.irFactory
-    private val symbols = context.ir.symbols
+    private val symbols = context.symbols
     private val invokeSuspendFunction = symbols.invokeSuspendFunction
     private val saveCoroutineState = symbols.saveCoroutineState
     private val restoreCoroutineState = symbols.restoreCoroutineState
@@ -71,8 +75,8 @@ internal class CoroutinesVarSpillingLowering(val generationState: NativeGenerati
         val irBuilder = context.createIrBuilder(container.symbol, container.startOffset, container.endOffset)
         irBody.transformChildren(object : IrTransformer<List<IrVariable>>() {
             override fun visitSuspensionPoint(expression: IrSuspensionPoint, data: List<IrVariable>): IrExpression {
-                val liveVariables = generationState.liveVariablesAtSuspensionPoints[expression]
-                        ?: generationState.visibleVariablesAtSuspensionPoints[expression]
+                val liveVariables = expression.liveVariablesAtSuspensionPoint
+                        ?: expression.visibleVariablesAtSuspensionPoint
                         ?: error("No live variables for ${container.render()} at ${expression.suspensionPointIdParameter.name}")
                 expression.transformChildren(this, liveVariables)
 
@@ -110,10 +114,10 @@ internal class CoroutinesVarSpillingLowering(val generationState: NativeGenerati
  * Computes visible variables at suspension points.
  */
 internal class CoroutinesLivenessAnalysisFallback(val generationState: NativeGenerationState) : BodyLoweringPass {
-    private val invokeSuspendFunction = generationState.context.ir.symbols.invokeSuspendFunction
+    private val invokeSuspendFunction = generationState.context.symbols.invokeSuspendFunction
 
     override fun lower(irBody: IrBody, container: IrDeclaration) {
-        if (generationState.liveVariablesAtSuspensionPoints.isNotEmpty())
+        if (generationState.coroutinesLivenessAnalysisPhasePerformed)
             return
 
         val thisReceiver = (container as? IrSimpleFunction)?.dispatchReceiverParameter
@@ -157,7 +161,7 @@ internal class CoroutinesLivenessAnalysisFallback(val generationState: NativeGen
 
                 val visibleVariables = mutableListOf<IrVariable>()
                 scopeStack.forEach { visibleVariables += it }
-                generationState.visibleVariablesAtSuspensionPoints[expression] = visibleVariables
+                expression.visibleVariablesAtSuspensionPoint = visibleVariables
             }
         })
     }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -14,23 +14,22 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirPropertyChecker
-import org.jetbrains.kotlin.fir.analysis.checkers.declaration.primaryConstructorSymbol
 import org.jetbrains.kotlin.fir.declarations.FirProperty
-import org.jetbrains.kotlin.fir.declarations.FirRegularClass
+import org.jetbrains.kotlin.fir.declarations.declaredProperties
+import org.jetbrains.kotlin.fir.declarations.primaryConstructorIfAny
 import org.jetbrains.kotlin.fir.declarations.utils.fromPrimaryConstructor
 import org.jetbrains.kotlin.fir.declarations.utils.hasBackingField
 import org.jetbrains.kotlin.fir.declarations.utils.isCompanion
 import org.jetbrains.kotlin.fir.declarations.utils.isData
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
+import org.jetbrains.kotlin.fir.isVisible
 import org.jetbrains.kotlin.fir.java.hasJvmFieldAnnotation
 import org.jetbrains.kotlin.fir.resolve.fqName
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.lookupSuperTypes
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
-import org.jetbrains.kotlin.fir.symbols.SymbolInternals
-import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visibilityChecker
@@ -42,7 +41,8 @@ import org.jetbrains.kotlin.parcelize.ParcelizeNames.IGNORED_ON_PARCEL_FQ_NAMES
 import org.jetbrains.kotlin.parcelize.ParcelizeNames.PARCELER_ID
 
 class FirParcelizePropertyChecker(private val parcelizeAnnotations: List<ClassId>) : FirPropertyChecker(MppCheckerKind.Platform) {
-    override fun check(declaration: FirProperty, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirProperty) {
         val session = context.session
         val containingClassSymbol = declaration.dispatchReceiverType?.toRegularClassSymbol(session) ?: return
 
@@ -54,7 +54,7 @@ class FirParcelizePropertyChecker(private val parcelizeAnnotations: List<ClassId
                 !declaration.hasIgnoredOnParcel(session) &&
                 !containingClassSymbol.hasCustomParceler(session)
             ) {
-                reporter.reportOn(declaration.source, KtErrorsParcelize.PROPERTY_WONT_BE_SERIALIZED, context)
+                reporter.reportOn(declaration.source, KtErrorsParcelize.PROPERTY_WONT_BE_SERIALIZED)
             }
             if (fromPrimaryConstructor) {
                 checkParcelableClassProperty(declaration, containingClassSymbol, context, reporter)
@@ -62,9 +62,9 @@ class FirParcelizePropertyChecker(private val parcelizeAnnotations: List<ClassId
         }
 
         if (declaration.name == CREATOR_NAME && containingClassSymbol.isCompanion && declaration.hasJvmFieldAnnotation(session)) {
-            val outerClass = context.containingDeclarations.asReversed().getOrNull(1) as? FirRegularClass
-            if (outerClass != null && outerClass.symbol.isParcelize(session, parcelizeAnnotations)) {
-                reporter.reportOn(declaration.source, KtErrorsParcelize.CREATOR_DEFINITION_IS_NOT_ALLOWED, context)
+            val outerClass = context.containingDeclarations.asReversed().getOrNull(1) as? FirRegularClassSymbol
+            if (outerClass != null && outerClass.isParcelize(session, parcelizeAnnotations)) {
+                reporter.reportOn(declaration.source, KtErrorsParcelize.CREATOR_DEFINITION_IS_NOT_ALLOWED)
             }
         }
     }
@@ -81,7 +81,9 @@ class FirParcelizePropertyChecker(private val parcelizeAnnotations: List<ClassId
             return
         }
 
-        val customParcelerTypes = getCustomParcelerTypes(property.annotations + containingClassSymbol.annotations, session)
+        val customParcelerTypes = getCustomParcelerTypes(
+            property.annotations + containingClassSymbol.resolvedAnnotationsWithClassIds, session
+        )
         val unsupported = checkParcelableType(type, customParcelerTypes, context)
         if (type in unsupported) {
             reporter.reportOn(property.returnTypeRef.source, KtErrorsParcelize.PARCELABLE_TYPE_NOT_SUPPORTED, context)
@@ -94,8 +96,9 @@ class FirParcelizePropertyChecker(private val parcelizeAnnotations: List<ClassId
 
     private fun getCustomParcelerTypes(annotations: List<FirAnnotation>, session: FirSession): Set<ConeKotlinType> =
         annotations.mapNotNullTo(mutableSetOf()) { annotation ->
-            if (annotation.fqName(session) in ParcelizeNames.TYPE_PARCELER_FQ_NAMES && annotation.typeArguments.size == 2) {
-                annotation.typeArguments[0].toConeTypeProjection().type?.fullyExpandedType(session)
+            val resolvedAnnotation = annotation.resolvedType.fullyExpandedType(session)
+            if (annotation.fqName(session) in ParcelizeNames.TYPE_PARCELER_FQ_NAMES && resolvedAnnotation.typeArguments.size == 2) {
+                resolvedAnnotation.typeArguments[0].type?.fullyExpandedType(session)
             } else {
                 null
             }
@@ -139,9 +142,9 @@ class FirParcelizePropertyChecker(private val parcelizeAnnotations: List<ClassId
         }
 
         if (symbol.isData && (inDataClass || type.customAnnotations.any { it.fqName(session) == ParcelizeNames.DATA_CLASS_ANNOTATION_FQ_NAME })) {
-            val properties = symbol.declarationSymbols.filterIsInstance<FirPropertySymbol>().filter { it.fromPrimaryConstructor }
+            val properties = symbol.declaredProperties(context.session).filter { it.fromPrimaryConstructor }
             // Serialization uses the property getters, deserialization uses the constructor.
-            if (properties.any { !it.isVisible(context) } || symbol.primaryConstructorSymbol(session)?.isVisible(context) != true) {
+            if (properties.any { !it.isVisible(context) } || symbol.primaryConstructorIfAny(session)?.isVisible(context) != true) {
                 return setOf(type)
             }
             val typeMapping = symbol.typeParameterSymbols.zip(type.typeArguments).mapNotNull { (parameter, arg) ->
@@ -168,12 +171,11 @@ class FirParcelizePropertyChecker(private val parcelizeAnnotations: List<ClassId
     private fun ConeKotlinType.anySuperTypeConstructor(session: FirSession, predicate: (ConeKotlinType) -> Boolean): Boolean =
         with(session.typeContext) { anySuperTypeConstructor { it is ConeKotlinType && predicate(it) } }
 
-    @OptIn(SymbolInternals::class)
     private fun FirCallableSymbol<*>.isVisible(context: CheckerContext): Boolean {
         return context.session.visibilityChecker.isVisible(
-            fir,
+            this,
             context.session,
-            context.containingFile ?: return true,
+            context.containingFileSymbol ?: return true,
             context.containingDeclarations,
             dispatchReceiver = null
         )
@@ -227,7 +229,7 @@ class FirParcelizePropertyChecker(private val parcelizeAnnotations: List<ClassId
     }
 
     private fun FirRegularClassSymbol.hasCustomParceler(session: FirSession): Boolean {
-        val companionObjectSymbol = this.companionObjectSymbol ?: return false
+        val companionObjectSymbol = this.resolvedCompanionObjectSymbol ?: return false
         return lookupSuperTypes(companionObjectSymbol, lookupInterfaces = true, deep = true, session).any {
             it.classId == PARCELER_ID
         }

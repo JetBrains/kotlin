@@ -21,3 +21,5 @@ class Test {
 // FILE: main.kt
 
 val result = Test.rawAField.Inner<Double>().foo()
+
+/* GENERATED_FIR_TAGS: flexibleType, javaProperty, javaType, nullableType, propertyDeclaration */

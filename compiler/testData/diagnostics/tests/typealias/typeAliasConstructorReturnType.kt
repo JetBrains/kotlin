@@ -18,3 +18,5 @@ val test6 = PA(10, 20)
 val test7 = P2A<Int>(10, 20)
 val test8 = P2A(10, 20)
 
+/* GENERATED_FIR_TAGS: classDeclaration, integerLiteral, nullableType, primaryConstructor, propertyDeclaration,
+typeAliasDeclaration, typeAliasDeclarationWithTypeParameter, typeParameter */

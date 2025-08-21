@@ -20,7 +20,7 @@ class A {
 
         }
 
-        <!JS_STATIC_ON_OVERRIDE!>@JsStatic override fun toString(): String<!> = "TEST"
+        @JsStatic override fun toString(): String = "TEST"
     }
 
     object A {

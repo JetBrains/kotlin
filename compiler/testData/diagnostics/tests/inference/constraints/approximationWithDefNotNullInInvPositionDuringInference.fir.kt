@@ -22,3 +22,6 @@ class Inv<T>(x: T?) {}
 fun <K> foo(x: K) {
     test { Inv(x) }
 }
+
+/* GENERATED_FIR_TAGS: capturedType, classDeclaration, functionDeclaration, functionalType, inline, integerLiteral,
+interfaceDeclaration, lambdaLiteral, nullableType, outProjection, primaryConstructor, typeParameter, vararg */

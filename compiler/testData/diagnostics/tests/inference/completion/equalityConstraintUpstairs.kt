@@ -16,3 +16,6 @@ fun test(lower: Lower) {
     id<In<Upper>>(In(lower))
     id<Out<Upper>>(Out(lower))
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, in, interfaceDeclaration, nullableType, out,
+primaryConstructor, propertyDeclaration, typeParameter */

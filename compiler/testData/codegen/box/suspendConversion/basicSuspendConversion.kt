@@ -1,5 +1,3 @@
-// IGNORE_BACKEND: JVM
-
 // LANGUAGE: +SuspendConversion
 // DIAGNOSTICS: -UNUSED_PARAMETER
 

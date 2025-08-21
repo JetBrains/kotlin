@@ -17,3 +17,5 @@ actual annotation class ActualOnly
 
 @RequiresOptIn
 actual annotation class Both
+
+/* GENERATED_FIR_TAGS: actual, annotationDeclaration, annotationUseSiteTargetFile, classReference, expect */

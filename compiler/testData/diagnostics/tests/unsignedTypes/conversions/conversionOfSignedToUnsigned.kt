@@ -70,3 +70,6 @@ fun test() {
     takeUByte(<!TYPE_MISMATCH!>UINT_CONST<!>)
     takeUIntWithoutAnnotaion(<!TYPE_MISMATCH!>IMPLICIT_INT<!>)
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, const, functionDeclaration, integerLiteral, propertyDeclaration,
+unsignedLiteral, vararg */

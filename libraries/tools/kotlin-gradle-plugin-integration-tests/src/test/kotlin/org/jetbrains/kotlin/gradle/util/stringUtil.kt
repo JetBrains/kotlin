@@ -10,5 +10,7 @@ fun String.checkedReplace(original: String, replacement: String): String {
     return replace(original, replacement)
 }
 
-fun String.capitalize() = replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
+fun String.capitalize(): String =
+    replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
+
 fun String.removingTrailingNewline(): String = this.dropLastWhile { it == '\n' }

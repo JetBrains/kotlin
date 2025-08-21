@@ -37,3 +37,5 @@ fun test() {
     })
 }
 
+/* GENERATED_FIR_TAGS: annotationDeclaration, anonymousFunction, flexibleType, functionDeclaration, functionalType,
+integerLiteral, javaFunction, lambdaLiteral, nullableType, stringLiteral, typeParameter */

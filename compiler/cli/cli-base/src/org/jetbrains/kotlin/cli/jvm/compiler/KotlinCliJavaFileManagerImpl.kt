@@ -31,15 +31,19 @@ import org.jetbrains.kotlin.cli.jvm.index.SingleJavaFileRootsIndex
 import org.jetbrains.kotlin.load.java.JavaClassFinder
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.impl.JavaClassImpl
+import org.jetbrains.kotlin.load.java.structure.impl.source.SingleFileRootPsiPackage
 import org.jetbrains.kotlin.load.java.structure.impl.classFiles.BinaryClassSignatureParser
 import org.jetbrains.kotlin.load.java.structure.impl.classFiles.BinaryJavaClass
 import org.jetbrains.kotlin.load.java.structure.impl.classFiles.ClassifierResolutionContext
 import org.jetbrains.kotlin.load.java.structure.impl.classFiles.isNotTopLevelClass
 import org.jetbrains.kotlin.load.java.structure.impl.source.JavaElementSourceFactory
+import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.jvm.KotlinCliJavaFileManager
-import org.jetbrains.kotlin.util.PerformanceCounter
+import org.jetbrains.kotlin.util.PerformanceManager
+import org.jetbrains.kotlin.util.PhaseSideType
+import org.jetbrains.kotlin.util.tryMeasureSideTime
 import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.kotlin.utils.addIfNotNull
 
@@ -47,10 +51,10 @@ import org.jetbrains.kotlin.utils.addIfNotNull
 // Currently, the only relevant usage of this class as CoreJavaFileManager is at CoreJavaDirectoryService.getPackage,
 // which is indirectly invoked from PsiPackage.getSubPackages
 class KotlinCliJavaFileManagerImpl(private val myPsiManager: PsiManager) : CoreJavaFileManager(myPsiManager), KotlinCliJavaFileManager {
-    private val perfCounter = PerformanceCounter.create("Find Java class")
+    private var perfManager: PerformanceManager? = null
     private lateinit var index: JvmDependenciesIndex
     private lateinit var singleJavaFileRootsIndex: SingleJavaFileRootsIndex
-    private lateinit var packagePartProviders: List<JvmPackagePartProvider>
+    private lateinit var packagePartProviders: List<PackagePartProvider>
 
     /**
      * Caches the [VirtualFile]s found in [index] for the key [FqName].
@@ -69,18 +73,22 @@ class KotlinCliJavaFileManagerImpl(private val myPsiManager: PsiManager) : CoreJ
 
     fun initialize(
         index: JvmDependenciesIndex,
-        packagePartProviders: List<JvmPackagePartProvider>,
+        packagePartProviders: List<PackagePartProvider>,
         singleJavaFileRootsIndex: SingleJavaFileRootsIndex,
-        usePsiClassFilesReading: Boolean
+        usePsiClassFilesReading: Boolean,
+        perfManager: PerformanceManager?,
     ) {
         this.index = index
         this.packagePartProviders = packagePartProviders
         this.singleJavaFileRootsIndex = singleJavaFileRootsIndex
         this.usePsiClassFilesReading = usePsiClassFilesReading
+        this.perfManager = perfManager
     }
 
-    private fun findPsiClass(classId: ClassId, searchScope: GlobalSearchScope): PsiClass? = perfCounter.time {
-        findVirtualFileForTopLevelClass(classId, searchScope)?.findPsiClassInVirtualFile(classId.relativeClassName.asString())
+    private fun findPsiClass(classId: ClassId, searchScope: GlobalSearchScope): PsiClass? {
+        return perfManager.tryMeasureSideTime(PhaseSideType.FindJavaClass) {
+            findVirtualFileForTopLevelClass(classId, searchScope)?.findPsiClassInVirtualFile(classId.relativeClassName.asString())
+        }
     }
 
     private fun findVirtualFileForTopLevelClass(classId: ClassId, searchScope: GlobalSearchScope): VirtualFile? {
@@ -193,38 +201,39 @@ class KotlinCliJavaFileManagerImpl(private val myPsiManager: PsiManager) : CoreJ
         }
     }
 
-    override fun findClasses(qName: String, scope: GlobalSearchScope): Array<PsiClass> = perfCounter.time {
-        val result = ArrayList<PsiClass>(1)
-        forEachClassId(qName) { classId ->
-            val relativeClassName = classId.relativeClassName.asString()
+    override fun findClasses(qName: String, scope: GlobalSearchScope): Array<PsiClass> =
+        perfManager.tryMeasureSideTime(PhaseSideType.FindJavaClass) {
+            val result = ArrayList<PsiClass>(1)
+            forEachClassId(qName) { classId ->
+                val relativeClassName = classId.relativeClassName.asString()
 
-            // Search java sources first. For build tools, it makes sense to build new files passing all the
-            // class files for the previous build on the class path.
-            result.addIfNotNull(
-                singleJavaFileRootsIndex.findJavaSourceClass(classId)
-                    ?.takeIf { it in scope }
-                    ?.findPsiClassInVirtualFile(relativeClassName)
-            )
-
-            index.traverseDirectoriesInPackage(classId.packageFqName) { dir, rootType ->
-                val psiClass =
-                    findVirtualFileGivenPackage(dir, relativeClassName, rootType)
+                // Search java sources first. For build tools, it makes sense to build new files passing all the
+                // class files for the previous build on the class path.
+                result.addIfNotNull(
+                    singleJavaFileRootsIndex.findJavaSourceClass(classId)
                         ?.takeIf { it in scope }
                         ?.findPsiClassInVirtualFile(relativeClassName)
-                if (psiClass != null) {
-                    result.add(psiClass)
+                )
+
+                index.traverseDirectoriesInPackage(classId.packageFqName) { dir, rootType ->
+                    val psiClass =
+                        findVirtualFileGivenPackage(dir, relativeClassName, rootType)
+                            ?.takeIf { it in scope }
+                            ?.findPsiClassInVirtualFile(relativeClassName)
+                    if (psiClass != null) {
+                        result.add(psiClass)
+                    }
+                    // traverse all
+                    true
                 }
-                // traverse all
-                true
+
+                if (result.isNotEmpty()) {
+                    return@tryMeasureSideTime result.toTypedArray()
+                }
             }
 
-            if (result.isNotEmpty()) {
-                return@time result.toTypedArray()
-            }
+            PsiClass.EMPTY_ARRAY
         }
-
-        PsiClass.EMPTY_ARRAY
-    }
 
     override fun findPackage(packageName: String): PsiPackage? {
         var found = false
@@ -237,8 +246,12 @@ class KotlinCliJavaFileManagerImpl(private val myPsiManager: PsiManager) : CoreJ
         if (!found) {
             found = packagePartProviders.any { it.findPackageParts(packageName).isNotEmpty() }
         }
-        if (!found) {
-            found = singleJavaFileRootsIndex.hasPackage(packageFqName)
+        if (!found && singleJavaFileRootsIndex.hasPackage(packageFqName)) {
+            val packageInfoClassId = ClassId(packageFqName, SingleJavaFileRootsIndex.PACKAGE_INFO_CLASS_NAME)
+            val packageInfoVirtualFile = singleJavaFileRootsIndex.findJavaSourceClass(packageInfoClassId)
+            val packageInfoPsiFile = packageInfoVirtualFile?.let { myPsiManager.findFile(it) } as? PsiJavaFile
+            val annotationsList = packageInfoPsiFile?.packageStatement?.annotationList
+            return SingleFileRootPsiPackage(myPsiManager, packageName, annotationsList)
         }
 
         if (!found) return null

@@ -1,3 +1,5 @@
+// COMPILATION_ERRORS
+
 [data(1)] class A {
     fun foo() {
         [inline] fun bar() {

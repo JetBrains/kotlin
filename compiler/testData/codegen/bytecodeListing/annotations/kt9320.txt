@@ -23,22 +23,10 @@ public final class Kt9320Kt$foo$v$1 {
 }
 
 @kotlin.Metadata
-final class Kt9320Kt$foo$w$1 {
-    // source: 'kt9320.kt'
-    enclosing method Kt9320Kt.foo()V
-    public final static field INSTANCE: Kt9320Kt$foo$w$1
-    inner (anonymous) class Kt9320Kt$foo$w$1
-    static method <clinit>(): void
-    method <init>(): void
-    public final @Ann method invoke(p0: My): java.lang.Integer
-    public synthetic bridge method invoke(p0: java.lang.Object): java.lang.Object
-}
-
-@kotlin.Metadata
 public final class Kt9320Kt {
     // source: 'kt9320.kt'
     inner (anonymous) class Kt9320Kt$foo$v$1
-    inner (anonymous) class Kt9320Kt$foo$w$1
+    private final static @Ann method foo$lambda$0(p0: My): int
     public final static method foo(): void
 }
 

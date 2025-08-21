@@ -7,3 +7,5 @@ class Test {
 
 <!NOTHING_TO_INLINE!>inline<!> fun testFunction() = Test().<!NON_PUBLIC_CALL_FROM_PUBLIC_INLINE!>invoke<!>()
 <!NOTHING_TO_INLINE!>inline<!> fun testOperator() = <!NON_PUBLIC_CALL_FROM_PUBLIC_INLINE!>Test()<!>()
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, inline, operator, thisExpression */

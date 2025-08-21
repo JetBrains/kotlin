@@ -19,3 +19,5 @@ fun x(f : Foo) {
 }
 
 object R {}
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, objectDeclaration, propertyDeclaration */

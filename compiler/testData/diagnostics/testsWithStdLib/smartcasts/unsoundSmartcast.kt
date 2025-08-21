@@ -40,3 +40,6 @@ fun test5() {
     <!DEBUG_INFO_SMARTCAST!>x<!>(if (true) { x = null; 0 } else 0, <!DEBUG_INFO_SMARTCAST!>x<!>)
     <!DEBUG_INFO_SMARTCAST!>x<!>.inv()
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, assignment, checkNotNullCall, funWithExtensionReceiver, functionDeclaration,
+ifExpression, integerLiteral, localProperty, nullableType, operator, propertyDeclaration, smartcast */

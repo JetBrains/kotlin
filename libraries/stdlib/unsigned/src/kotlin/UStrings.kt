@@ -13,7 +13,6 @@ package kotlin.text
  * @throws IllegalArgumentException when [radix] is not a valid radix for number to string conversion.
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalUnsignedTypes::class)
 //@kotlin.internal.InlineOnly
 public /*inline*/ fun UByte.toString(radix: Int): String = this.toInt().toString(radix)
 
@@ -23,7 +22,6 @@ public /*inline*/ fun UByte.toString(radix: Int): String = this.toInt().toString
  * @throws IllegalArgumentException when [radix] is not a valid radix for number to string conversion.
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalUnsignedTypes::class)
 //@kotlin.internal.InlineOnly
 public /*inline*/ fun UShort.toString(radix: Int): String = this.toInt().toString(radix)
 
@@ -34,7 +32,6 @@ public /*inline*/ fun UShort.toString(radix: Int): String = this.toInt().toStrin
  * @throws IllegalArgumentException when [radix] is not a valid radix for number to string conversion.
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalUnsignedTypes::class)
 //@kotlin.internal.InlineOnly
 public /*inline*/ fun UInt.toString(radix: Int): String = uintToString(this.toInt(), checkRadix(radix))
 
@@ -44,7 +41,6 @@ public /*inline*/ fun UInt.toString(radix: Int): String = uintToString(this.toIn
  * @throws IllegalArgumentException when [radix] is not a valid radix for number to string conversion.
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalUnsignedTypes::class)
 public fun ULong.toString(radix: Int): String = ulongToString(this.toLong(), checkRadix(radix))
 
 
@@ -53,7 +49,6 @@ public fun ULong.toString(radix: Int): String = ulongToString(this.toLong(), che
  * @throws NumberFormatException if the string is not a valid representation of a number.
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalUnsignedTypes::class)
 public fun String.toUByte(): UByte = toUByteOrNull() ?: numberFormatError(this)
 
 /**
@@ -62,7 +57,6 @@ public fun String.toUByte(): UByte = toUByteOrNull() ?: numberFormatError(this)
  * @throws IllegalArgumentException when [radix] is not a valid radix for string to number conversion.
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalUnsignedTypes::class)
 public fun String.toUByte(radix: Int): UByte = toUByteOrNull(radix) ?: numberFormatError(this)
 
 
@@ -71,7 +65,6 @@ public fun String.toUByte(radix: Int): UByte = toUByteOrNull(radix) ?: numberFor
  * @throws NumberFormatException if the string is not a valid representation of a number.
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalUnsignedTypes::class)
 public fun String.toUShort(): UShort = toUShortOrNull() ?: numberFormatError(this)
 
 /**
@@ -80,7 +73,6 @@ public fun String.toUShort(): UShort = toUShortOrNull() ?: numberFormatError(thi
  * @throws IllegalArgumentException when [radix] is not a valid radix for string to number conversion.
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalUnsignedTypes::class)
 public fun String.toUShort(radix: Int): UShort = toUShortOrNull(radix) ?: numberFormatError(this)
 
 /**
@@ -88,7 +80,6 @@ public fun String.toUShort(radix: Int): UShort = toUShortOrNull(radix) ?: number
  * @throws NumberFormatException if the string is not a valid representation of a number.
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalUnsignedTypes::class)
 public fun String.toUInt(): UInt = toUIntOrNull() ?: numberFormatError(this)
 
 /**
@@ -97,7 +88,6 @@ public fun String.toUInt(): UInt = toUIntOrNull() ?: numberFormatError(this)
  * @throws IllegalArgumentException when [radix] is not a valid radix for string to number conversion.
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalUnsignedTypes::class)
 public fun String.toUInt(radix: Int): UInt = toUIntOrNull(radix) ?: numberFormatError(this)
 
 /**
@@ -105,7 +95,6 @@ public fun String.toUInt(radix: Int): UInt = toUIntOrNull(radix) ?: numberFormat
  * @throws NumberFormatException if the string is not a valid representation of a number.
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalUnsignedTypes::class)
 public fun String.toULong(): ULong = toULongOrNull() ?: numberFormatError(this)
 
 /**
@@ -114,7 +103,6 @@ public fun String.toULong(): ULong = toULongOrNull() ?: numberFormatError(this)
  * @throws IllegalArgumentException when [radix] is not a valid radix for string to number conversion.
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalUnsignedTypes::class)
 public fun String.toULong(radix: Int): ULong = toULongOrNull(radix) ?: numberFormatError(this)
 
 
@@ -126,7 +114,6 @@ public fun String.toULong(radix: Int): ULong = toULongOrNull(radix) ?: numberFor
  * or `null` if the string is not a valid representation of a number.
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalUnsignedTypes::class)
 public fun String.toUByteOrNull(): UByte? = toUByteOrNull(radix = 10)
 
 /**
@@ -136,7 +123,6 @@ public fun String.toUByteOrNull(): UByte? = toUByteOrNull(radix = 10)
  * @throws IllegalArgumentException when [radix] is not a valid radix for string to number conversion.
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalUnsignedTypes::class)
 public fun String.toUByteOrNull(radix: Int): UByte? {
     val int = this.toUIntOrNull(radix) ?: return null
     if (int > UByte.MAX_VALUE) return null
@@ -148,7 +134,6 @@ public fun String.toUByteOrNull(radix: Int): UByte? {
  * or `null` if the string is not a valid representation of a number.
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalUnsignedTypes::class)
 public fun String.toUShortOrNull(): UShort? = toUShortOrNull(radix = 10)
 
 /**
@@ -158,7 +143,6 @@ public fun String.toUShortOrNull(): UShort? = toUShortOrNull(radix = 10)
  * @throws IllegalArgumentException when [radix] is not a valid radix for string to number conversion.
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalUnsignedTypes::class)
 public fun String.toUShortOrNull(radix: Int): UShort? {
     val int = this.toUIntOrNull(radix) ?: return null
     if (int > UShort.MAX_VALUE) return null
@@ -170,7 +154,6 @@ public fun String.toUShortOrNull(radix: Int): UShort? {
  * or `null` if the string is not a valid representation of a number.
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalUnsignedTypes::class)
 public fun String.toUIntOrNull(): UInt? = toUIntOrNull(radix = 10)
 
 /**
@@ -180,7 +163,6 @@ public fun String.toUIntOrNull(): UInt? = toUIntOrNull(radix = 10)
  * @throws IllegalArgumentException when [radix] is not a valid radix for string to number conversion.
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalUnsignedTypes::class)
 public fun String.toUIntOrNull(radix: Int): UInt? {
     checkRadix(radix)
 
@@ -234,7 +216,6 @@ public fun String.toUIntOrNull(radix: Int): UInt? {
  * or `null` if the string is not a valid representation of a number.
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalUnsignedTypes::class)
 public fun String.toULongOrNull(): ULong? = toULongOrNull(radix = 10)
 
 /**
@@ -244,7 +225,6 @@ public fun String.toULongOrNull(): ULong? = toULongOrNull(radix = 10)
  * @throws IllegalArgumentException when [radix] is not a valid radix for string to number conversion.
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalUnsignedTypes::class)
 public fun String.toULongOrNull(radix: Int): ULong? {
     checkRadix(radix)
 

@@ -1,3 +1,6 @@
+// IGNORE_STANDALONE
+// KT-76042
+
 // IGNORE_FE10
 // MAIN_FILE_NAME: I
 // MODULE_KIND: LibraryBinaryDecompiled

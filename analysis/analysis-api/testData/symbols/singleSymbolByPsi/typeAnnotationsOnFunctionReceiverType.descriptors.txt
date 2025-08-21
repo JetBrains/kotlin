@@ -2,6 +2,7 @@ KaNamedFunctionSymbol:
   annotations: []
   callableId: /foo
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -49,7 +50,7 @@ KaNamedFunctionSymbol:
       type: @R|Anno3|() @R|Anno2|() @R|Anno1|()  @R|Anno3|()  SecondTypeAlias
     visibility: LOCAL
     getContainingFileSymbol: KaFileSymbol(typeAnnotationsOnFunctionReceiverType.kt)
-    getContainingJvmClassName: null
+    getContainingJvmClassName: TypeAnnotationsOnFunctionReceiverTypeKt
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
   returnType: KaUsualClassType:

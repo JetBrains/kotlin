@@ -21,3 +21,6 @@ fun test1() {
     val b2: String = <!TYPE_MISMATCH, TYPE_MISMATCH!>baz(::<!CALLABLE_REFERENCE_RESOLUTION_AMBIGUITY!>foo<!>)<!>
     val b3: Boolean = <!TYPE_MISMATCH, TYPE_MISMATCH!>baz(::<!CALLABLE_REFERENCE_RESOLUTION_AMBIGUITY!>foo<!>)<!>
 }
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, funWithExtensionReceiver, functionDeclaration,
+functionalType, infix, lambdaLiteral, localProperty, nullableType, propertyDeclaration, typeParameter, typeWithExtension */

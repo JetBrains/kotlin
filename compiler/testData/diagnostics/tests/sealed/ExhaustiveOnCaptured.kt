@@ -17,3 +17,7 @@ val FirCallableSymbol<*>.isExtension: Boolean
         is FirFunction -> true
         is FirVariable -> false
     }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, getter, isExpression, propertyDeclaration,
+propertyWithExtensionReceiver, sealed, smartcast, starProjection, typeConstraint, typeParameter, whenExpression,
+whenWithSubject */

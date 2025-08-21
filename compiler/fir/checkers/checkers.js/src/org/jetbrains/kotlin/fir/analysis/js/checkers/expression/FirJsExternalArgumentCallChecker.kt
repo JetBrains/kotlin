@@ -22,7 +22,8 @@ import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.name.JsStandardClassIds.Annotations.JsExternalArgument
 
 object FirJsExternalArgumentCallChecker : FirCallChecker(MppCheckerKind.Common) {
-    override fun check(expression: FirCall, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(expression: FirCall) {
         val arguments = expression.resolvedArgumentMapping ?: return
         for ((argument, parameter) in arguments) {
             if (parameter.hasAnnotation(JsExternalArgument, context.session)) {
@@ -33,8 +34,7 @@ object FirJsExternalArgumentCallChecker : FirCallChecker(MppCheckerKind.Common) 
                     reporter.reportOn(
                         unwrappedArg.source,
                         FirJsErrors.JS_EXTERNAL_ARGUMENT,
-                        type,
-                        context
+                        type
                     )
                 }
             }

@@ -21,3 +21,5 @@ package test
 
 // val p5a: -1
 <!DEBUG_INFO_CONSTANT_VALUE("-1")!>val p5a = -1.toShort()<!>
+
+/* GENERATED_FIR_TAGS: integerLiteral, propertyDeclaration, unaryExpression */

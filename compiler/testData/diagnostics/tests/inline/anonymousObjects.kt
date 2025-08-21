@@ -12,3 +12,6 @@ inline fun <R> inlineFun(p: () -> R) {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, functionDeclaration, functionalType, inline, localProperty,
+nullableType, propertyDeclaration, typeParameter */

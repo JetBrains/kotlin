@@ -5,29 +5,28 @@
 
 #pragma once
 
-#include "AllocatorImpl.hpp"
 #include "GC.hpp"
 #include "GCState.hpp"
-#include "GCThread.hpp"
-#include "SegregatedGCFinalizerProcessor.hpp"
+#include "MainGCThread.hpp"
+#include "StwmsGCTraits.hpp"
 
 namespace kotlin::gc {
 
 // Stop-the-world mark & sweep. The GC runs in a separate thread, finalizers run in another thread of their own.
 class GC::Impl : private Pinned {
 public:
-    Impl(alloc::Allocator& allocator, gcScheduler::GCScheduler& gcScheduler) noexcept :
-        finalizerProcessor_(state_), gcThread_(state_, finalizerProcessor_, allocator, gcScheduler) {}
+    Impl(alloc::Allocator& allocator, gcScheduler::GCScheduler& gcScheduler) noexcept
+        : gcThread_(state_, allocator, gcScheduler, mark_) {}
 
     GCStateHolder state_;
-    internal::SegregatedGCFinalizerProcessor<alloc::FinalizerQueueSingle, alloc::FinalizerQueueTraits> finalizerProcessor_;
-    internal::GCThread gcThread_;
+    internal::StwmsGCTraits::Mark mark_{};
+    internal::MainGCThread<internal::StwmsGCTraits> gcThread_;
 };
 
 class GC::ThreadData::Impl {};
 
 namespace barriers {
-class SpecialRefReleaseGuard::Impl {};
+class ExternalRCRefReleaseGuard::Impl {};
 } // namespace barriers
 
 } // namespace kotlin::gc

@@ -19,10 +19,11 @@ import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
-import org.jetbrains.kotlin.fir.scopes.retrieveDirectOverriddenOf
+import org.jetbrains.kotlin.fir.scopes.getDirectOverriddenSafe
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.unwrapSubstitutionOverrides
 import org.jetbrains.kotlin.name.ClassId
@@ -40,8 +41,14 @@ object FirNativeObjCNameUtilities {
             is FirFunctionSymbol<*> -> buildList {
                 add((this@getObjCNames as FirBasedSymbol<*>).getObjCName(session))
                 add(resolvedReceiverTypeRef?.getObjCName(session))
-                add(receiverParameter?.getObjCName(session))
+                add(receiverParameterSymbol?.getObjCName(session))
                 valueParameterSymbols.forEach { add(it.getObjCName(session)) }
+                contextParameterSymbols.forEach { add(it.getObjCName(session)) }
+            }
+            is FirPropertySymbol -> buildList {
+                add((this@getObjCNames as FirBasedSymbol<*>).getObjCName(session))
+                add(receiverParameterSymbol?.getObjCName(session))
+                contextParameterSymbols.forEach { add(it.getObjCName(session)) }
             }
             else -> listOf(getObjCName(session))
         }
@@ -69,17 +76,16 @@ object FirNativeObjCNameUtilities {
         }
     }
 
+    context(context: CheckerContext, reporter: DiagnosticReporter)
     fun checkCallableMember(
         firTypeScope: FirTypeScope,
         memberSymbol: FirCallableSymbol<*>,
         declarationToReport: FirDeclaration,
-        context: CheckerContext,
-        reporter: DiagnosticReporter
     ) {
         val overriddenSymbols =
-            firTypeScope.retrieveDirectOverriddenOf(memberSymbol).map { it.unwrapSubstitutionOverrides() }
+            firTypeScope.getDirectOverriddenSafe(memberSymbol).map { it.unwrapSubstitutionOverrides() }
         if (overriddenSymbols.isEmpty()) return
-        val objCNames = overriddenSymbols.map { it.getFirstBaseSymbol(context).getObjCNames(context.session) }
+        val objCNames = overriddenSymbols.map { it.getFirstBaseSymbol().getObjCNames(context.session) }
         if (!objCNames.allNamesEquals()) {
             val containingDeclarations = overriddenSymbols.mapNotNull {
                 it.containingClassLookupTag()?.toRegularClassSymbol(context.session)
@@ -88,18 +94,18 @@ object FirNativeObjCNameUtilities {
                 declarationToReport.source,
                 FirNativeErrors.INCOMPATIBLE_OBJC_NAME_OVERRIDE,
                 memberSymbol,
-                containingDeclarations,
-                context
+                containingDeclarations
             )
         }
     }
 
-    private fun FirCallableSymbol<*>.getFirstBaseSymbol(context: CheckerContext): FirCallableSymbol<*> {
+    context(context: CheckerContext)
+    private fun FirCallableSymbol<*>.getFirstBaseSymbol(): FirCallableSymbol<*> {
         val session = context.session
-        val ownScope = containingClassLookupTag()?.toSymbol(session)?.fullyExpandedClass(session)?.unsubstitutedScope(context)
+        val ownScope = containingClassLookupTag()?.toSymbol(session)?.fullyExpandedClass(session)?.unsubstitutedScope()
             ?: return this
-        val overriddenMemberSymbols = ownScope.retrieveDirectOverriddenOf(this).map { it.unwrapSubstitutionOverrides() }
-        return if (overriddenMemberSymbols.isEmpty()) this else overriddenMemberSymbols.first().getFirstBaseSymbol(context)
+        val overriddenMemberSymbols = ownScope.getDirectOverriddenSafe(this).map { it.unwrapSubstitutionOverrides() }
+        return if (overriddenMemberSymbols.isEmpty()) this else overriddenMemberSymbols.first().getFirstBaseSymbol()
     }
 
     private fun List<List<ObjCName?>>.allNamesEquals(): Boolean {

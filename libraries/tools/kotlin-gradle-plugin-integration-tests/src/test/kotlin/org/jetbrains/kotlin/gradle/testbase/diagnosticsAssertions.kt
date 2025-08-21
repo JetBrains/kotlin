@@ -9,18 +9,20 @@ import org.gradle.testkit.runner.BuildResult
 import org.jetbrains.kotlin.gradle.internals.*
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnosticFactory
+import java.io.File
+import kotlin.test.assertContentEquals
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
-fun BuildResult.assertHasDiagnostic(diagnosticFactory: ToolingDiagnosticFactory, withSubstring: String? = null) {
+internal fun BuildResult.assertHasDiagnostic(diagnosticFactory: ToolingDiagnosticFactory, withSubstring: String? = null) {
     output.assertHasDiagnostic(diagnosticFactory, withSubstring)
 }
 
-fun BuildResult.assertNoDiagnostic(diagnosticFactory: ToolingDiagnosticFactory, withSubstring: String? = null) {
+internal fun BuildResult.assertNoDiagnostic(diagnosticFactory: ToolingDiagnosticFactory, withSubstring: String? = null) {
     output.assertNoDiagnostic(diagnosticFactory, withSubstring)
 }
 
-fun String.assertHasDiagnostic(diagnosticFactory: ToolingDiagnosticFactory, withSubstring: String? = null) {
+internal fun String.assertHasDiagnostic(diagnosticFactory: ToolingDiagnosticFactory, withSubstring: String? = null) {
     val diagnosticsMessages = extractRenderedDiagnostics(diagnosticFactory, this)
     assertTrue(diagnosticsMessages.isNotEmpty(), "Diagnostic with id=${diagnosticFactory.id} not found. Full text output:\n\n" + this)
     if (withSubstring != null) {
@@ -35,7 +37,7 @@ fun String.assertHasDiagnostic(diagnosticFactory: ToolingDiagnosticFactory, with
     }
 }
 
-fun String.assertNoDiagnostic(diagnosticFactory: ToolingDiagnosticFactory, withSubstring: String? = null) {
+internal fun String.assertNoDiagnostic(diagnosticFactory: ToolingDiagnosticFactory, withSubstring: String? = null) {
     val diagnosticMessages = extractRenderedDiagnostics(diagnosticFactory, this)
     if (withSubstring != null) {
         val matchedWithSubstring = diagnosticMessages.find { withSubstring in it }
@@ -58,13 +60,18 @@ fun String.assertNoDiagnostic(diagnosticFactory: ToolingDiagnosticFactory, withS
     }
 }
 
+fun BuildResult.extractProjectsAndTheirDiagnostics(): String = extractProjectsAndTheirDiagnosticsInBlocks()
+    .joinToString(separator = "\n")
+    .trim()
+
 /**
  * NB: Needs parsable formatting of diagnostics, see [org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.internalDiagnosticsUseParsableFormat]
  * Because this mode is enabled by the 'kotlin.internal'-property, actual output will always contain
  * [org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics.InternalKotlinGradlePluginPropertiesUsed].
  * For the sake of clarity, this diagnostic is filtered by default.
  */
-fun BuildResult.extractProjectsAndTheirDiagnostics(): String = buildString {
+fun BuildResult.extractProjectsAndTheirDiagnosticsInBlocks(): List<String> {
+    val blocks = mutableListOf<String>()
     var diagnosticStarted = false
     var stacktraceStarted = false
     val currentDiagnostic = mutableListOf<String>()
@@ -107,9 +114,9 @@ fun BuildResult.extractProjectsAndTheirDiagnostics(): String = buildString {
 
         if (KotlinToolingDiagnostics.InternalKotlinGradlePluginPropertiesUsed.id in currentDiagnostic.first()) {
             val cleanedDiagnostic = filterKgpUtilityPropertiesFromDiagnostic(currentDiagnostic)
-            if (cleanedDiagnostic.isNotEmpty()) appendLine(cleanedDiagnostic.joinToString(separator = "\n", postfix = "\n"))
+            if (cleanedDiagnostic.isNotEmpty()) blocks += cleanedDiagnostic.joinToString(separator = "\n", postfix = "\n")
         } else {
-            appendLine(currentDiagnostic.joinToString(separator = "\n", postfix = "\n"))
+            blocks += currentDiagnostic.joinToString(separator = "\n", postfix = "\n")
         }
 
         currentDiagnostic.clear()
@@ -127,12 +134,22 @@ fun BuildResult.extractProjectsAndTheirDiagnostics(): String = buildString {
 
             line.startsWith(CONFIGURE_PROJECT_PREFIX)
                     || (line.contains(ENSURE_NO_KOTLIN_GRADLE_PLUGIN_ERRORS_TASK_NAME) && line.startsWith(TASK_EXECUTION_PREFIX)) -> {
-                appendLine() // additional empty line between projects
-                appendLine(line)
+                blocks += "\n$line"
             }
         }
     }
-}.trim()
+
+    return blocks
+}
+
+private const val EXPECTED_OUTPUT_BLOCK_SEPARATOR = "#block-separator"
+fun File.extractBlocksFromExpectedOutput(blockSeparator: String = EXPECTED_OUTPUT_BLOCK_SEPARATOR): List<String> =
+    readText().split(blockSeparator)
+
+fun assertBlocksEqual(expected: List<String>, actual: List<String>) = assertContentEquals(
+    expected.map { it.trim() }.sorted(),
+    actual.map { it.trim() }.sorted(),
+)
 
 /**
  * Filters from the report all internal utility-properties that KGP uses in tests.
@@ -217,4 +234,4 @@ private fun extractNextDiagnosticAndIndex(
 private const val CONFIGURE_PROJECT_PREFIX = "> Configure project"
 private const val TASK_EXECUTION_PREFIX = "> Task"
 private val DIAGNOSTIC_STACKTRACE_REGEX = Regex("""$KOTLIN_DIAGNOSTIC_STACKTRACE_START[^#]*$KOTLIN_DIAGNOSTIC_STACKTRACE_END_SEPARATOR""")
-private val DIAGNOSTIC_STACKTRACE_REPLACEMENT_STUB = """    <... stackframes are omitted for test stability ...>"""
+private const val DIAGNOSTIC_STACKTRACE_REPLACEMENT_STUB = """    <... stackframes are omitted for test stability ...>"""

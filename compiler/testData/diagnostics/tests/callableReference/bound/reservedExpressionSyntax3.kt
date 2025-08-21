@@ -28,3 +28,7 @@ class Test {
     val test2: () -> Right = <!RESERVED_SYNTAX_IN_CALLABLE_REFERENCE_LHS!>a.<!DEBUG_INFO_LEAKING_THIS!>b<!>.<!DEBUG_INFO_LEAKING_THIS!>c<!><!>?::foo
     val test2a: () -> Right = <!RESERVED_SYNTAX_IN_CALLABLE_REFERENCE_LHS!><!DEBUG_INFO_MISSING_UNRESOLVED!>a<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>b<!><<!DEBUG_INFO_MISSING_UNRESOLVED!>Int<!>>.<!DEBUG_INFO_MISSING_UNRESOLVED!>c<!><!>?::<!DEBUG_INFO_MISSING_UNRESOLVED!>foo<!>
 }
+
+/* GENERATED_FIR_TAGS: callableReference, checkNotNullCall, classDeclaration, funWithExtensionReceiver,
+functionDeclaration, functionalType, getter, integerLiteral, nestedClass, nullableType, objectDeclaration,
+propertyDeclaration, propertyWithExtensionReceiver, typeParameter */

@@ -6,3 +6,6 @@ fun calc(x: List<String>?, y: Int?): Int {
     val yy: Int = <!INITIALIZER_TYPE_MISMATCH!>y<!>
     return  yy + (x?.size ?: 0)
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, checkNotNullCall, elvisExpression, functionDeclaration, integerLiteral,
+localProperty, nullableType, propertyDeclaration, safeCall */

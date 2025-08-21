@@ -16,3 +16,6 @@ class Owner<in T> {
 
     fun foo(arg: Inner<*>) = arg.getT()
 }
+
+/* GENERATED_FIR_TAGS: capturedType, classDeclaration, functionDeclaration, in, inner, interfaceDeclaration,
+nullableType, out, primaryConstructor, propertyDeclaration, starProjection, typeConstraint, typeParameter */

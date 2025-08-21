@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -10,4 +10,31 @@ import org.jetbrains.kotlin.fir.analysis.checkers.expression.AbstractAtomicRefer
 import org.jetbrains.kotlin.name.JvmStandardClassIds
 
 object FirJvmAtomicReferenceToPrimitiveCallChecker :
-    AbstractAtomicReferenceToPrimitiveCallChecker(JvmStandardClassIds.ATOMIC_REFERENCE_CLASS_ID, MppCheckerKind.Platform)
+    AbstractAtomicReferenceToPrimitiveCallChecker(
+        JvmStandardClassIds.atomicByPrimitive,
+        MppCheckerKind.Platform,
+        JvmStandardClassIds.Callables.atomicReferenceCompareAndSet,
+        JvmStandardClassIds.Callables.atomicReferenceWeakCompareAndSet,
+        JvmStandardClassIds.Callables.atomicReferenceWeakCompareAndSetAcquire,
+        JvmStandardClassIds.Callables.atomicReferenceWeakCompareAndSetRelease,
+        JvmStandardClassIds.Callables.atomicReferenceWeakCompareAndSetPlain,
+        JvmStandardClassIds.Callables.atomicReferenceWeakCompareAndSetVolatile,
+        JvmStandardClassIds.Callables.atomicReferenceCompareAndExchange,
+        JvmStandardClassIds.Callables.atomicReferenceCompareAndExchangeAcquire,
+        JvmStandardClassIds.Callables.atomicReferenceCompareAndExchangeRelease,
+    )
+
+object FirJvmAtomicReferenceArrayToPrimitiveCallChecker :
+    AbstractAtomicReferenceToPrimitiveCallChecker(
+        JvmStandardClassIds.atomicArrayByPrimitive,
+        MppCheckerKind.Platform,
+        JvmStandardClassIds.Callables.atomicReferenceArrayCompareAndSet,
+        JvmStandardClassIds.Callables.atomicReferenceArrayWeakCompareAndSet,
+        JvmStandardClassIds.Callables.atomicReferenceArrayWeakCompareAndSetAcquire,
+        JvmStandardClassIds.Callables.atomicReferenceArrayWeakCompareAndSetRelease,
+        JvmStandardClassIds.Callables.atomicReferenceArrayWeakCompareAndSetPlain,
+        JvmStandardClassIds.Callables.atomicReferenceArrayWeakCompareAndSetVolatile,
+        JvmStandardClassIds.Callables.atomicReferenceArrayCompareAndExchange,
+        JvmStandardClassIds.Callables.atomicReferenceArrayCompareAndExchangeAcquire,
+        JvmStandardClassIds.Callables.atomicReferenceArrayCompareAndExchangeRelease,
+    )

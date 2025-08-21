@@ -48,3 +48,6 @@ class Y(i: Int) : X(i, <!UNRESOLVED_REFERENCE!>rrr<!>) {
 class Z(val i: Int) : X(<!UNRESOLVED_REFERENCE!>s<!>, <!UNRESOLVED_REFERENCE!>x<!>) {
     val x = 2
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, flexibleType, funWithExtensionReceiver, functionDeclaration, integerLiteral,
+javaFunction, operator, primaryConstructor, propertyDeclaration, stringLiteral, thisExpression */

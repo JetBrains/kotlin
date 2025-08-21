@@ -10,3 +10,5 @@ fun foo(a: LLL, b: LLL) {}
 fun test() {
     foo(0, 0)
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral, typeAliasDeclaration */

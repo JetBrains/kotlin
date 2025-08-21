@@ -14,7 +14,7 @@
 #include "GlobalsRegistry.hpp"
 #include "GC.hpp"
 #include "ShadowStack.hpp"
-#include "SpecialRefRegistry.hpp"
+#include "ExternalRCRefRegistry.hpp"
 #include "ThreadLocalStorage.hpp"
 #include "Utils.hpp"
 #include "ThreadSuspension.hpp"
@@ -31,7 +31,7 @@ public:
     explicit ThreadData(uintptr_t threadId) noexcept :
         threadId_(threadId),
         globalsThreadQueue_(GlobalsRegistry::Instance()),
-        specialRefRegistry_(SpecialRefRegistry::instance()),
+        externalRCRefRegistry_(ExternalRCRefRegistry::instance()),
         gcScheduler_(GlobalData::Instance().gcScheduler(), *this),
         allocator_(GlobalData::Instance().allocator()),
         gc_(GlobalData::Instance().gc(), *this),
@@ -45,7 +45,7 @@ public:
 
     ThreadLocalStorage& tls() noexcept { return tls_; }
 
-    SpecialRefRegistry::ThreadQueue& specialRefRegistry() noexcept { return specialRefRegistry_; }
+    ExternalRCRefRegistry::ThreadQueue& externalRCRefRegistry() noexcept { return externalRCRefRegistry_; }
 
     ThreadState state() noexcept { return suspensionData_.state(); }
 
@@ -66,12 +66,12 @@ public:
     void Publish() noexcept {
         // TODO: These use separate locks, which is inefficient.
         globalsThreadQueue_.Publish();
-        specialRefRegistry_.publish();
+        externalRCRefRegistry_.publish();
     }
 
     void ClearForTests() noexcept {
         globalsThreadQueue_.ClearForTests();
-        specialRefRegistry_.clearForTests();
+        externalRCRefRegistry_.clearForTests();
         allocator_.clearForTests();
     }
 
@@ -79,7 +79,7 @@ private:
     const uintptr_t threadId_;
     GlobalsRegistry::ThreadQueue globalsThreadQueue_;
     ThreadLocalStorage tls_;
-    SpecialRefRegistry::ThreadQueue specialRefRegistry_;
+    ExternalRCRefRegistry::ThreadQueue externalRCRefRegistry_;
     ShadowStack shadowStack_;
     gcScheduler::GCScheduler::ThreadData gcScheduler_;
     alloc::Allocator::ThreadData allocator_;

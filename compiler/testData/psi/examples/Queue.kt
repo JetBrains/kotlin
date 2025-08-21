@@ -1,3 +1,5 @@
+// COMPILATION_ERRORS
+
 class Queue<T> : IPushPop<T> {
   private class Item<T>(val data : T, var next : Item<T>)
 

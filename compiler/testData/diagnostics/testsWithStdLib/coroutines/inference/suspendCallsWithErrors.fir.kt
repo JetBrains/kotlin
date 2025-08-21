@@ -22,3 +22,6 @@ val test1 = generate {
 val test2: Int = generate {
     yield(<!ARGUMENT_TYPE_MISMATCH!>A()<!>)
 }
+
+/* GENERATED_FIR_TAGS: annotationUseSiteTargetFile, classDeclaration, classReference, functionDeclaration,
+functionalType, lambdaLiteral, nullableType, propertyDeclaration, suspend, typeParameter, typeWithExtension */

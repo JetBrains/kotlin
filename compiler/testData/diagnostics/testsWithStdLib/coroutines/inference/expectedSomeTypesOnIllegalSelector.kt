@@ -25,3 +25,7 @@ internal suspend fun foo(a: A) {
         }<!SYNTAX!><!>
     }
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, classDeclaration, funWithExtensionReceiver, functionDeclaration,
+functionalType, getter, interfaceDeclaration, lambdaLiteral, nullableType, operator, propertyDeclaration, suspend,
+typeParameter, typeWithExtension */

@@ -10,3 +10,5 @@ public fun foo(p: String?): Int {
     // Literal is not called so p.length is unsafe
     return p<!UNSAFE_CALL!>.<!>length
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, doWhileLoop, functionDeclaration, lambdaLiteral, nullableType */

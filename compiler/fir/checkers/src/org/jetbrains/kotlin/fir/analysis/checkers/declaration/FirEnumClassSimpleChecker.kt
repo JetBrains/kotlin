@@ -19,20 +19,21 @@ import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.name.StandardClassIds
 
 object FirEnumClassSimpleChecker : FirRegularClassChecker(MppCheckerKind.Common) {
-    override fun check(declaration: FirRegularClass, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirRegularClass) {
         if (!declaration.isEnumClass) {
             return
         }
 
-        declaration.findNonInterfaceSupertype(context)
+        declaration.findNonInterfaceSupertype()
             // Ignore Enum itself
             // If it's explicit, CLASS_CANNOT_BE_EXTENDED_DIRECTLY will be reported instead.
             // If it's implicit, it's fine.
-            ?.takeUnless { it.coneType.fullyExpandedType(context.session).classId == StandardClassIds.Enum }
-            ?.let { reporter.reportOn(it.source, FirErrors.CLASS_IN_SUPERTYPE_FOR_ENUM, context) }
+            ?.takeUnless { it.coneType.fullyExpandedType().classId == StandardClassIds.Enum }
+            ?.let { reporter.reportOn(it.source, FirErrors.CLASS_IN_SUPERTYPE_FOR_ENUM) }
 
         if (declaration.typeParameters.isNotEmpty()) {
-            reporter.reportOn(declaration.typeParameters.firstOrNull()?.source, FirErrors.TYPE_PARAMETERS_IN_ENUM, context)
+            reporter.reportOn(declaration.typeParameters.firstOrNull()?.source ?: declaration.source, FirErrors.TYPE_PARAMETERS_IN_ENUM)
         }
     }
 }

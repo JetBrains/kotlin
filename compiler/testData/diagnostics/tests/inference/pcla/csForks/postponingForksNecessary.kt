@@ -30,3 +30,7 @@ fun <T> bar(a: A<T>, w: T) {
         yield(<!TYPE_MISMATCH, TYPE_MISMATCH!>w<!>)
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType, ifExpression,
+integerLiteral, interfaceDeclaration, intersectionType, isExpression, lambdaLiteral, nullableType, smartcast, suspend,
+typeParameter, typeWithExtension */

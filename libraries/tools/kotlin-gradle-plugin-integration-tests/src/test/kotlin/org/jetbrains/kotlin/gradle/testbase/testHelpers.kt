@@ -6,10 +6,12 @@
 package org.jetbrains.kotlin.gradle.testbase
 
 import org.gradle.api.logging.LogLevel
+import org.gradle.api.tasks.testing.AbstractTestTask
+import org.gradle.api.tasks.testing.logging.TestLogEvent
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.plugin.mpp.KmpIsolatedProjectsSupport
 import org.jetbrains.kotlin.gradle.util.isTeamCityRun
-import java.nio.file.Paths
+import java.io.PrintWriter
 import java.nio.file.attribute.PosixFilePermission
 import kotlin.io.path.*
 import kotlin.test.fail
@@ -30,15 +32,13 @@ fun TestProject.makeSnapshotTo(
     if (isTeamCityRun) fail("Please remove `makeSnapshotTo()` call from test. It is utility for local debugging only!")
     if (!useSnapshotWithInjections && usesInjections) fail(
         """
-            Test project tries to make a snapshot with injections. Rebuilding test classes will result in the updated behavior in the snapshot.
-              
-            Please opt-in explicitly using "makeSnapshotTo(..., useSnapshotWithInjections = true)"
-            
+        Test project tries to make a snapshot with injections. Rebuilding test classes will result in the updated behavior in the snapshot.
+          
+        Please opt-in explicitly using "makeSnapshotTo(..., useSnapshotWithInjections = true)"
         """.trimIndent()
     )
 
-    val dest = Paths
-        .get(destinationPath)
+    val dest = Path(destinationPath)
         .resolve(projectName)
         .resolve(gradleVersion.version)
         .also {
@@ -48,27 +48,33 @@ fun TestProject.makeSnapshotTo(
 
     projectPath.copyRecursively(dest)
 
-    val gradlePropertiesFile = dest.resolve("gradle.properties")
-    val gradlePropertiesFromBuildOptions = buildOptions.asGradleProperties(gradleVersion).toMutableMap()
-    if (gradlePropertiesFile.exists()) {
-        val propertiesRegex = """^\s*(\S+)=(.*)""".toRegex()
-        val content = gradlePropertiesFile.readLines()
-            .map {
-                val trimmedLine = it.trimStart()
-                val match = propertiesRegex.matchEntire(trimmedLine) ?: return@map trimmedLine
-                val (key, value) = match.destructured
-                val overriddenValue = gradlePropertiesFromBuildOptions.remove(key)
-                if (overriddenValue != null && value != overriddenValue) {
-                    "# $trimmedLine // overridden by buildOptions with\n$key=$overriddenValue\n"
-                } else {
-                    "${trimmedLine}\n"
-                }
-            }
-        gradlePropertiesFile.writeLines(content)
-    }
+    val gradlePropertiesFromBuildOptions = buildOptions.asGradleProperties(gradleVersion)
+    val gradlePropertiesContent = gradlePropertiesFromBuildOptions.entries.joinToString("\n") { (k, v) -> "${k}=${v}" }
 
-    val gradlePropertiesContent = gradlePropertiesFromBuildOptions.entries.joinToString("\n") { "${it.key}=${it.value}" }
-    gradlePropertiesFile.appendText("# Gradle Properties from project's buildOptions\n$gradlePropertiesContent")
+    dest.walk()
+        .filter { it.isRegularFile() }
+        .filter { it.name == "settings.gradle" || it.name == "settings.gradle.kts" }
+        .map { it.resolveSibling("gradle.properties") }
+        .forEach { gradlePropertiesFile ->
+            if (gradlePropertiesFile.exists()) {
+                val propertiesRegex = """^\s*(\S+)=(.*)""".toRegex()
+                val content = gradlePropertiesFile.readLines()
+                    .map { it.trim() }
+                    .map { line ->
+                        val match = propertiesRegex.matchEntire(line) ?: return@map line
+                        val (key, value) = match.destructured
+                        val overriddenValue = gradlePropertiesFromBuildOptions[key]
+                        if (overriddenValue != null && value != overriddenValue) {
+                            "# $line // overridden by buildOptions with\n$key=$overriddenValue\n"
+                        } else {
+                            "${line}\n"
+                        }
+                    }
+                gradlePropertiesFile.writeLines(content)
+            }
+
+            gradlePropertiesFile.appendText("# Gradle Properties from project's buildOptions\n$gradlePropertiesContent\n")
+        }
 
     dest.resolve("run.sh").run {
         writeText(
@@ -79,13 +85,15 @@ fun TestProject.makeSnapshotTo(
             |""".trimMargin()
         )
 
-        setPosixFilePermissions(
-            setOf(
-                PosixFilePermission.OWNER_EXECUTE,
-                PosixFilePermission.OWNER_READ,
-                PosixFilePermission.OWNER_WRITE,
+        if ("Windows" !in System.getProperty("os.name")) {
+            setPosixFilePermissions(
+                setOf(
+                    PosixFilePermission.OWNER_EXECUTE,
+                    PosixFilePermission.OWNER_READ,
+                    PosixFilePermission.OWNER_WRITE,
+                )
             )
-        )
+        }
     }
 
     dest.resolve("run.bat").run {
@@ -98,15 +106,15 @@ fun TestProject.makeSnapshotTo(
         )
     }
 
-    val wrapperDir = dest.resolve("gradle").resolve("wrapper").apply { createDirectories() }
+    val wrapperDir = dest.resolve("gradle/wrapper").createDirectories()
     wrapperDir.resolve("gradle-wrapper.properties").writeText(
         """
-            distributionUrl=https\://services.gradle.org/distributions/gradle-${gradleVersion.version}-bin.zip
-            """.trimIndent()
+        distributionUrl=https\://services.gradle.org/distributions/gradle-${gradleVersion.version}-bin.zip
+        """.trimIndent()
     )
     // Copied from 'Wrapper' task class implementation
-    val projectRoot = Paths.get("../../../")
-    projectRoot.resolve("gradle").resolve("wrapper").resolve("gradle-wrapper.jar").run {
+    val projectRoot = Path("../../../")
+    projectRoot.resolve("gradle/wrapper/gradle-wrapper.jar").run {
         copyTo(wrapperDir.resolve(fileName))
     }
     projectRoot.resolve("gradlew").run {
@@ -144,7 +152,7 @@ private fun TestProject.formatEnvironmentForScript(envCommand: String): String {
  */
 fun GradleProject.addPropertyToGradleProperties(
     propertyName: String,
-    propertyValues: Map<String, String>
+    propertyValues: Map<String, String>,
 ) {
     if (!gradleProperties.exists()) gradleProperties.createFile()
 
@@ -202,7 +210,7 @@ fun GradleProject.addPropertyToGradleProperties(
  * deprecation warnings.
  */
 internal fun TestProject.addArchivesBaseNameCompat(
-    archivesBaseName: String
+    archivesBaseName: String,
 ) {
     if (gradleVersion >= GradleVersion.version(TestVersions.Gradle.G_8_5)) {
         buildGradle.appendText(
@@ -246,17 +254,13 @@ internal fun TestProject.chooseCompilerVersion(
 }
 
 internal fun TestProject.enablePassedTestLogging(level: LogLevel = DEFAULT_LOG_LEVEL) {
-    buildGradle.append(
-        //language=Gradle
-        """
-
-        tasks.withType(AbstractTestTask).configureEach {
-            testLogging {
-                get(LogLevel.$level).events("passed")
+    buildScriptInjection {
+        project.tasks.withType(AbstractTestTask::class.java).configureEach { task ->
+            task.testLogging {
+                it.get(level).events(TestLogEvent.PASSED)
             }
         }
-        """.trimIndent()
-    )
+    }
 }
 
 internal val TestProject.kmpIsolatedProjectsSupportEnabled: Boolean
@@ -268,3 +272,42 @@ internal val TestProject.kmpIsolatedProjectsSupportEnabled: Boolean
             KmpIsolatedProjectsSupport.AUTO, null -> buildOptions.isolatedProjects.toBooleanFlag(gradleVersion)
         }
     }
+
+val Throwable.fullMessage
+    get(): String = java.io.StringWriter().use {
+        PrintWriter(it).use {
+            this.printStackTrace(it)
+        }
+        it
+    }.toString()
+
+/**
+ * @return `true` if 'withJava()' method should not produce a configuration error.
+ */
+internal val TestProject.isWithJavaSupported: Boolean
+    get() = gradleVersion < GradleVersion.version(TestVersions.Gradle.G_8_7)
+
+/**
+ * Returns a list of subprojects for the [TestProject], explicitly specified by their names.
+ * This method can be used as an explicit alternative to `subprojects { ... }`.
+ * If a subproject name is an empty string (`""`) or a single dot (`"."`), it will be replaced by the [TestProject] itself.
+ *
+ * @return A list of subprojects corresponding to the specified names, with special handling for empty or dot names.
+ */
+internal fun TestProject.subprojects(firstName: String, vararg names: String): Iterable<GradleProject> {
+    return arrayOf(firstName, *names).map { name ->
+        when (name) {
+            "", "." -> this
+            else -> subProject(name)
+        }
+    }
+}
+
+/**
+ * Injects build script with a lambda that will be executed by every project's build script at configuration time.
+ *
+ * @see org.jetbrains.kotlin.gradle.testbase.buildScriptInjection
+ */
+internal fun Iterable<GradleProject>.buildScriptInjection(
+    code: GradleProjectBuildScriptInjectionContext.() -> Unit,
+) = forEach { project -> project.buildScriptInjection(code) }

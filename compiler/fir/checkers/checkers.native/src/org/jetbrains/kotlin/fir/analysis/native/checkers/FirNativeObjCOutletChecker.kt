@@ -14,49 +14,49 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors
 import org.jetbrains.kotlin.fir.backend.native.interop.isKotlinObjCClass
 import org.jetbrains.kotlin.fir.backend.native.interop.isObjCObjectType
 import org.jetbrains.kotlin.fir.declarations.FirClass
-import org.jetbrains.kotlin.fir.declarations.FirProperty
-import org.jetbrains.kotlin.fir.declarations.FirPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.hasAnnotation
+import org.jetbrains.kotlin.fir.declarations.processAllDeclaredCallables
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
-import org.jetbrains.kotlin.fir.types.coneType
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertyAccessorSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.name.NativeStandardInteropNames.objCOutletClassId
 
 object FirNativeObjCOutletChecker : FirClassChecker(MppCheckerKind.Platform) {
-    override fun check(declaration: FirClass, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirClass) {
         val session = context.session
 
-        fun checkCanGenerateFunctionImp(setter: FirPropertyAccessor) {
-            if (setter.valueParameters.size > 2)
-                reporter.reportOn(setter.source, FirNativeErrors.TWO_OR_LESS_PARAMETERS_ARE_SUPPORTED_HERE, context)
+        fun checkCanGenerateFunctionImp(setter: FirPropertyAccessorSymbol) {
+            if (setter.valueParameterSymbols.size > 2)
+                reporter.reportOn(setter.source, FirNativeErrors.TWO_OR_LESS_PARAMETERS_ARE_SUPPORTED_HERE)
         }
 
-        fun checkCanGenerateOutletSetterImp(property: FirProperty) {
+        fun checkCanGenerateOutletSetterImp(property: FirPropertySymbol) {
             if (!property.isVar) {
-                reporter.reportOn(property.source, FirNativeErrors.PROPERTY_MUST_BE_VAR, objCOutletClassId.asSingleFqName(), context)
+                reporter.reportOn(property.source, FirNativeErrors.PROPERTY_MUST_BE_VAR, objCOutletClassId.asSingleFqName())
                 return
             }
 
-            property.receiverParameter?.let {
-                reporter.reportOn(it.source, FirNativeErrors.MUST_NOT_HAVE_EXTENSION_RECEIVER, "@${objCOutletClassId.asFqNameString()}", context)
+            property.receiverParameterSymbol?.let {
+                reporter.reportOn(it.source, FirNativeErrors.MUST_NOT_HAVE_EXTENSION_RECEIVER, "@${objCOutletClassId.asFqNameString()}")
             }
 
-            val type = property.returnTypeRef
+            val type = property.resolvedReturnTypeRef
             if (!type.isObjCObjectType(session))
                 reporter.reportOn(
-                    property.returnTypeRef.source,
+                    property.resolvedReturnTypeRef.source,
                     FirNativeErrors.MUST_BE_OBJC_OBJECT_TYPE,
                     "@${objCOutletClassId.asSingleFqName()} type",
-                    type.coneType,
-                    context
+                    type.coneType
                 )
 
-            checkCanGenerateFunctionImp(property.setter!!)
+            checkCanGenerateFunctionImp(property.setterSymbol!!)
         }
 
         fun checkKotlinObjCClass(firClass: FirClass) {
-            for (decl in firClass.declarations) {
-                if (decl is FirProperty && decl.annotations.hasAnnotation(objCOutletClassId, session))
-                    checkCanGenerateOutletSetterImp(decl)
+            firClass.symbol.processAllDeclaredCallables(context.session) { symbol ->
+                if (symbol is FirPropertySymbol && symbol.hasAnnotation(objCOutletClassId, session))
+                    checkCanGenerateOutletSetterImp(symbol)
             }
         }
 

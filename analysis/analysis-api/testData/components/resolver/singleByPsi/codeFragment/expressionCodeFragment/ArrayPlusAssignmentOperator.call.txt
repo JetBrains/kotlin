@@ -5,6 +5,7 @@ KtOperationReferenceExpression(151,153): '+='
         kind = PLUS_ASSIGN
         operand = "value"
         operationPartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+          contextArguments = []
           dispatchReceiver = KaExplicitReceiverValue:
             expression = list[10]
             isSafeNavigation = false
@@ -20,10 +21,13 @@ KtOperationReferenceExpression(151,153): '+='
                 receiverType = null
                 returnType = kotlin.Any?
                 symbol = other: kotlin.Any?
+                contextParameters = []
                 callableId = null
             ]
+            contextParameters = []
             callableId = kotlin/String.plus
       getPartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = list
           isSafeNavigation = false
@@ -39,13 +43,16 @@ KtOperationReferenceExpression(151,153): '+='
               receiverType = null
               returnType = kotlin.Int
               symbol = index: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = /MyList.get
       indexArguments = [
         10
       ]
       setPartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = list
           isSafeNavigation = false
@@ -61,12 +68,15 @@ KtOperationReferenceExpression(151,153): '+='
               receiverType = null
               returnType = kotlin.Int
               symbol = index: kotlin.Int
+              contextParameters = []
               callableId = null,
             KaVariableSignature:
               name = value
               receiverType = null
               returnType = kotlin.String
               symbol = value: kotlin.String
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = /MyList.set

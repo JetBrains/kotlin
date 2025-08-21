@@ -4,7 +4,6 @@ KaUsualClassType:
   abbreviation: null
   annotations: []
   classId: Foo
-  nullability: NON_NULLABLE
   qualifiers: [
     KaResolvedClassTypeQualifier:
       name: Foo
@@ -14,7 +13,6 @@ KaUsualClassType:
           abbreviation: null
           annotations: []
           classId: First
-          nullability: NON_NULLABLE
           qualifiers: [
             KaResolvedClassTypeQualifier:
               name: First
@@ -23,11 +21,13 @@ KaUsualClassType:
           ]
           symbol: KaNamedClassSymbol(First)
           typeArguments: []
+          isMarkedNullable: false
+          isNullable: false
+          hasFlexibleNullability: false
         in KaUsualClassType:
           abbreviation: null
           annotations: []
           classId: Second
-          nullability: NON_NULLABLE
           qualifiers: [
             KaResolvedClassTypeQualifier:
               name: Second
@@ -36,11 +36,13 @@ KaUsualClassType:
           ]
           symbol: KaNamedClassSymbol(Second)
           typeArguments: []
+          isMarkedNullable: false
+          isNullable: false
+          hasFlexibleNullability: false
         out KaUsualClassType:
           abbreviation: null
           annotations: []
           classId: Third
-          nullability: NON_NULLABLE
           qualifiers: [
             KaResolvedClassTypeQualifier:
               name: Third
@@ -49,6 +51,9 @@ KaUsualClassType:
           ]
           symbol: KaNamedClassSymbol(Third)
           typeArguments: []
+          isMarkedNullable: false
+          isNullable: false
+          hasFlexibleNullability: false
       ]
   ]
   symbol: KaNamedClassSymbol(Foo)
@@ -57,7 +62,6 @@ KaUsualClassType:
       abbreviation: null
       annotations: []
       classId: First
-      nullability: NON_NULLABLE
       qualifiers: [
         KaResolvedClassTypeQualifier:
           name: First
@@ -66,11 +70,13 @@ KaUsualClassType:
       ]
       symbol: KaNamedClassSymbol(First)
       typeArguments: []
+      isMarkedNullable: false
+      isNullable: false
+      hasFlexibleNullability: false
     in KaUsualClassType:
       abbreviation: null
       annotations: []
       classId: Second
-      nullability: NON_NULLABLE
       qualifiers: [
         KaResolvedClassTypeQualifier:
           name: Second
@@ -79,11 +85,13 @@ KaUsualClassType:
       ]
       symbol: KaNamedClassSymbol(Second)
       typeArguments: []
+      isMarkedNullable: false
+      isNullable: false
+      hasFlexibleNullability: false
     out KaUsualClassType:
       abbreviation: null
       annotations: []
       classId: Third
-      nullability: NON_NULLABLE
       qualifiers: [
         KaResolvedClassTypeQualifier:
           name: Third
@@ -92,4 +100,10 @@ KaUsualClassType:
       ]
       symbol: KaNamedClassSymbol(Third)
       typeArguments: []
+      isMarkedNullable: false
+      isNullable: false
+      hasFlexibleNullability: false
   ]
+  isMarkedNullable: false
+  isNullable: false
+  hasFlexibleNullability: false

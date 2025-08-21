@@ -1,6 +1,6 @@
 FILE: incorrectGenericLambdaProperty.kt
     public final fun main(args: R|kotlin/Array<kotlin/String>|): R|kotlin/Unit| {
-        lval <T> passIt: R|(ERROR CLASS: No type for parameter) -> ERROR CLASS: Symbol not found for T| = fun <anonymous>(<destruct>: <ERROR TYPE REF: No type for parameter>): <ERROR TYPE REF: Symbol not found for T> <inline=Unknown>  {
+        lval <T> passIt: R|(ERROR CLASS: Cannot infer type for parameter <destruct>) -> ERROR CLASS: Symbol not found for T| = ERROR_EXPR(CS errors: _synthetic/ACCEPT_SPECIFIC_TYPE_CALL)fun <anonymous>(<destruct>: <ERROR TYPE REF: Cannot infer type for parameter <destruct>>): <ERROR TYPE REF: Symbol not found for T> <inline=NoInline>  {
             lval t: <ERROR TYPE REF: Symbol not found for T> = R|<local>/<destruct>|.<Unresolved name: component1>#()
             ^  {
                 R|<local>/t|

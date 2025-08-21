@@ -6,3 +6,5 @@ annotation class base
     <!WRONG_ANNOTATION_TARGET!>@base<!> init {
     }
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, init */

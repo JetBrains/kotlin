@@ -1,6 +1,7 @@
 class A<T : Any?> {
   private /* final field */ val contextReceiverField0: T
-  constructor($context_receiver_0: T) /* primary */ {
+  context($context_receiver_0: T)
+  constructor() /* primary */ {
     super/*Any*/()
     <this>.#contextReceiverField0 = $context_receiver_0
     /* <init>() */
@@ -11,7 +12,8 @@ class A<T : Any?> {
 
 class B<P : Any?> {
   private /* final field */ val contextReceiverField0: Collection<P>
-  constructor($context_receiver_0: Collection<P>) /* primary */ {
+  context($context_receiver_0: Collection<P>)
+  constructor() /* primary */ {
     super/*Any*/()
     <this>.#contextReceiverField0 = $context_receiver_0
     /* <init>() */
@@ -21,10 +23,10 @@ class B<P : Any?> {
 }
 
 fun Collection<Int>.bar() {
-  B<Int>($context_receiver_0 = <this>) /*~> Unit */
+  B<Int>(/* $context_receiver_0 = <this> */) /*~> Unit */
 }
 
 fun Int.foo() {
-  A<Int>($context_receiver_0 = <this>) /*~> Unit */
+  A<Int>(/* $context_receiver_0 = <this> */) /*~> Unit */
 }
 

@@ -1,6 +1,5 @@
 // ISSUE: KT-68495
 // WITH_STDLIB
-// IGNORE_BACKEND: JVM
 
 fun <T: Char> testContainsChar(arg: T): Boolean = arg in 'A'..'Z'
 

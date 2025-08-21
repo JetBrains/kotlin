@@ -5,11 +5,14 @@
 
 package org.jetbrains.kotlin.diagnostics
 
+import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 
 interface DiagnosticMarker {
     val psiElement: PsiElement
     val factoryName: String
+    val severity: Severity
+    val textRanges: List<TextRange>
 }
 
 interface DiagnosticWithParameters1Marker<A> : DiagnosticMarker {

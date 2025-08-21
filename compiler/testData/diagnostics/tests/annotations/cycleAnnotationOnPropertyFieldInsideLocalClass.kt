@@ -15,3 +15,6 @@ fun topLevelFun() {
             set(@Anno(<!ANNOTATION_ARGUMENT_MUST_BE_CONST!>variableToResolve<!>) value) = Unit
     }
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, annotationDeclaration, annotationUseSiteTargetField, classDeclaration,
+functionDeclaration, getter, integerLiteral, localClass, primaryConstructor, propertyDeclaration, setter, stringLiteral */

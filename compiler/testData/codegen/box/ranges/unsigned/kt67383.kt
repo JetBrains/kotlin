@@ -1,5 +1,4 @@
 // WITH_STDLIB
-// IGNORE_BACKEND: JVM
 
 fun ubyte_rangeTo() {
     var counter = 0

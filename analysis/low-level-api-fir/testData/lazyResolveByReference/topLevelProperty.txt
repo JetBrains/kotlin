@@ -1,5 +1,5 @@
 BODY_RESOLVE:
-TARGET: public final [ResolvedTo(BODY_RESOLVE)] val topLevelProperty: R|kotlin/Int|
+TARGET: public final [ResolvedTo(BODY_RESOLVE)] [HasBackingFieldKey=true] val topLevelProperty: R|kotlin/Int|
     public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
 
 FILE RAW TO BODY:

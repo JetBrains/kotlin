@@ -66,8 +66,8 @@ class LLFirBuiltinsSessionFactory(private val project: Project) {
     /**
      * Invalidates all builtins modules and sessions.
      *
-     * [invalidateAll] should be called after [global module state modification][org.jetbrains.kotlin.analysis.api.platform.modification.KotlinModificationTopics.GLOBAL_MODULE_STATE_MODIFICATION],
-     * as well as after [module state modification][org.jetbrains.kotlin.analysis.api.platform.modification.KotlinModificationTopics.MODULE_STATE_MODIFICATION]
+     * [invalidateAll] should be called after [global module state modification][org.jetbrains.kotlin.analysis.api.platform.modification.KotlinGlobalModuleStateModificationEvent],
+     * as well as after [module state modification][org.jetbrains.kotlin.analysis.api.platform.modification.KotlinModuleStateModificationEvent]
      * of a [KaBuiltinsModule]. Modification of builtins might affect any session, so in addition to the builtins sessions, all other
      * sessions should also be invalidated.
      *

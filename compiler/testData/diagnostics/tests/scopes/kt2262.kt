@@ -16,3 +16,5 @@ class Bar : Foo() {
         val j = i
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, inner, integerLiteral, propertyDeclaration, stringLiteral */

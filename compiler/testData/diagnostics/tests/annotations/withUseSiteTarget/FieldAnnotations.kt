@@ -36,3 +36,7 @@ class SomeClass {
 }
 
 class WithPrimaryConstructor(@field:Ann val a: String)
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, annotationUseSiteTargetField, classDeclaration, functionDeclaration,
+getter, integerLiteral, localProperty, nullableType, operator, primaryConstructor, propertyDeclaration, propertyDelegate,
+secondaryConstructor, starProjection, stringLiteral */

@@ -24,3 +24,5 @@ fun use2() {
 fun use3() {
     f()
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classReference, functionDeclaration */

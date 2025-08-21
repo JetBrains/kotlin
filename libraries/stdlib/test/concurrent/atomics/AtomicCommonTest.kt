@@ -78,6 +78,44 @@ class AtomicIntTest {
         assertEquals(56, atomic.compareAndExchange(18, 56))
         assertEquals(56, atomic.compareAndExchange(18, 56))
     }
+
+    @Test
+    fun toStringTest() {
+        assertEquals("42", AtomicInt(42).toString())
+    }
+
+    @Test
+    fun update() {
+        val a = AtomicInt(0)
+        a.update { cur -> cur + 4 }
+        assertEquals(4, a.load())
+        a.update { cur -> cur * 2 }
+        assertEquals(8, a.load())
+        a.update { cur -> cur }
+        assertEquals(8, a.load())
+    }
+
+    @Test
+    fun updateAndGet() {
+        val a = AtomicInt(0)
+        assertEquals(4, a.updateAndFetch { cur -> cur + 4 })
+        assertEquals(4, a.load())
+        assertEquals(8, a.updateAndFetch { cur -> cur * 2 })
+        assertEquals(8, a.load())
+        assertEquals(8, a.updateAndFetch { cur -> cur })
+        assertEquals(8, a.load())
+    }
+
+    @Test
+    fun getAndUpdate() {
+        val a = AtomicInt(0)
+        assertEquals(0, a.fetchAndUpdate { cur -> cur + 4 })
+        assertEquals(4, a.load())
+        assertEquals(4, a.fetchAndUpdate { cur -> cur * 2 })
+        assertEquals(8, a.load())
+        assertEquals(8, a.fetchAndUpdate { cur -> cur })
+        assertEquals(8, a.load())
+    }
 }
 
 class AtomicLongTest {
@@ -150,6 +188,44 @@ class AtomicLongTest {
         assertEquals(5424920024890000000, atomic.compareAndExchange(18, 56))
         assertEquals(5424920024890000000, atomic.compareAndExchange(18, 56))
     }
+
+    @Test
+    fun toStringTest() {
+        assertEquals("42", AtomicLong(42).toString())
+    }
+
+    @Test
+    fun update() {
+        val a = AtomicLong(0)
+        a.update { cur -> cur + 4 }
+        assertEquals(4L, a.load())
+        a.update { cur -> cur * 2 }
+        assertEquals(8L, a.load())
+        a.update { cur -> cur }
+        assertEquals(8L, a.load())
+    }
+
+    @Test
+    fun updateAndGet() {
+        val a = AtomicLong(0)
+        assertEquals(4L, a.updateAndFetch { cur -> cur + 4 })
+        assertEquals(4L, a.load())
+        assertEquals(8L, a.updateAndFetch { cur -> cur * 2 })
+        assertEquals(8L, a.load())
+        assertEquals(8L, a.updateAndFetch { cur -> cur })
+        assertEquals(8L, a.load())
+    }
+
+    @Test
+    fun getAndUpdate() {
+        val a = AtomicLong(0)
+        assertEquals(0L, a.fetchAndUpdate { cur -> cur + 4 })
+        assertEquals(4L, a.load())
+        assertEquals(4L, a.fetchAndUpdate { cur -> cur * 2 })
+        assertEquals(8L, a.load())
+        assertEquals(8L, a.fetchAndUpdate { cur -> cur })
+        assertEquals(8L, a.load())
+    }
 }
 
 class AtomicBooleanTest {
@@ -196,6 +272,11 @@ class AtomicBooleanTest {
         assertFalse(atomic.load())
         assertFalse(atomic.exchange(true))
         assertTrue(atomic.load())
+    }
+
+    @Test
+    fun toStringTest() {
+        assertEquals("true", AtomicBoolean(true).toString())
     }
 }
 
@@ -257,5 +338,56 @@ class AtomicReferenceTest {
         assertEquals(listOf(Data(2), Data(2), Data(2)), atomic.compareAndExchange(cur, listOf(Data(3), Data(3), Data(3))))
         assertEquals(listOf(Data(3), Data(3), Data(3)), atomic.compareAndExchange(cur, listOf(Data(4), Data(4), Data(4))))
         assertEquals(listOf(Data(3), Data(3), Data(3)), atomic.compareAndExchange(cur, listOf(Data(3), Data(3), Data(3))))
+    }
+
+    @Test
+    fun compareAndSetComparingByReference() {
+        val datum1 = Data(1)
+        val datum2 = Data(1)
+
+        val atomic = AtomicReference(datum1)
+
+        assertEquals(datum1, datum2)
+        assertNotSame(datum1, datum2)
+
+        // datum1 is equal to itself, CAS should succeed
+        assertTrue(atomic.compareAndSet(datum1, datum2))
+
+        // datum2 is not equal to datum1, they are two distinct, so CAS should fail
+        assertFalse(atomic.compareAndSet(datum1, Data(2)))
+    }
+
+    @Test
+    fun toStringTest() {
+        assertEquals("Data(value=42)", AtomicReference(Data(42)).toString())
+    }
+
+    @Test
+    fun update() {
+        val expected = Data(42)
+        val a = AtomicReference(Data(0))
+        a.update { expected }
+        assertSame(expected, a.load())
+    }
+
+    @Test
+    fun updateAndGet() {
+        val expected = Data(42)
+        val a = AtomicReference(Data(0))
+        assertSame(expected, a.updateAndFetch { expected })
+        assertSame(expected, a.load())
+        assertSame(expected, a.updateAndFetch { it })
+        assertSame(expected, a.load())
+    }
+
+    @Test
+    fun getAndUpdate() {
+        val expected = Data(42)
+        val old = Data(0)
+        val a = AtomicReference(old)
+        assertSame(old, a.fetchAndUpdate { expected })
+        assertSame(expected, a.load())
+        assertSame(expected, a.fetchAndUpdate { it })
+        assertSame(expected, a.load())
     }
 }

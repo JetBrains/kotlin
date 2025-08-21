@@ -5,12 +5,9 @@
 
 package kotlinx.metadata.klib
 
+import kotlinx.metadata.klib.impl.klibExtensions
 import kotlin.metadata.*
 import kotlin.metadata.internal.common.KmModuleFragment
-import kotlinx.metadata.klib.impl.klibExtensions
-
-val KmFunction.annotations: MutableList<KmAnnotation>
-    get() = klibExtensions.annotations
 
 var KmFunction.uniqId: UniqId?
     get() = klibExtensions.uniqId
@@ -24,9 +21,6 @@ var KmFunction.file: KlibSourceFile?
         klibExtensions.file = value
     }
 
-val KmClass.annotations: MutableList<KmAnnotation>
-    get() = klibExtensions.annotations
-
 var KmClass.uniqId: UniqId?
     get() = klibExtensions.uniqId
     set(value) {
@@ -39,25 +33,13 @@ var KmClass.file: KlibSourceFile?
         klibExtensions.file = value
     }
 
-val KmClass.klibEnumEntries: MutableList<KlibEnumEntry>
-    get() = klibExtensions.enumEntries
-
-val KmProperty.annotations: MutableList<KmAnnotation>
-    get() = klibExtensions.annotations
-
-val KmProperty.setterAnnotations: MutableList<KmAnnotation>
-    get() = klibExtensions.setterAnnotations
-
-val KmProperty.getterAnnotations: MutableList<KmAnnotation>
-    get() = klibExtensions.getterAnnotations
-
 var KmProperty.uniqId: UniqId?
     get() = klibExtensions.uniqId
     set(value) {
         klibExtensions.uniqId = value
     }
 
-var KmProperty.file: Int?
+var KmProperty.file: KlibSourceFile?
     get() = klibExtensions.file
     set(value) {
         klibExtensions.file = value
@@ -70,9 +52,6 @@ var KmProperty.compileTimeValue: KmAnnotationArgument?
     }
 
 val KmType.annotations: MutableList<KmAnnotation>
-    get() = klibExtensions.annotations
-
-val KmConstructor.annotations: MutableList<KmAnnotation>
     get() = klibExtensions.annotations
 
 var KmConstructor.uniqId: UniqId?
@@ -114,5 +93,14 @@ var KmTypeAlias.uniqId: UniqId?
         klibExtensions.uniqId = value
     }
 
-val KmValueParameter.annotations: MutableList<KmAnnotation>
-    get() = klibExtensions.annotations
+var KmEnumEntry.ordinal: Int?
+    get() = klibExtensions.ordinal
+    set(value) {
+        klibExtensions.ordinal = value
+    }
+
+var KmEnumEntry.uniqId: UniqId?
+    get() = klibExtensions.uniqId
+    set(value) {
+        klibExtensions.uniqId = value
+    }

@@ -43,3 +43,7 @@ fun test() {
 
     { y: Int -> fun(): Int {return 1} }
 }
+
+/* GENERATED_FIR_TAGS: anonymousFunction, classDeclaration, equalityExpression, funWithExtensionReceiver,
+functionDeclaration, functionalType, ifExpression, infix, integerLiteral, lambdaLiteral, localProperty, nullableType,
+propertyDeclaration, typeParameter, typeWithExtension, whenExpression, whenWithSubject */

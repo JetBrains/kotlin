@@ -83,16 +83,8 @@ private abstract class CompileToExecutableJob : WorkAction<CompileToExecutableJo
 
             compilerOutputFile.asFile.get().parentFile.mkdirs()
 
-            if (target.family.isAppleFamily) {
-                execClang.execToolchainClang(target) {
-                    executable = "clang++"
-                    this.args = args
-                }
-            } else {
-                execClang.execBareClang {
-                    executable = "clang++"
-                    this.args = args
-                }
+            execOperations.execLlvmUtility(platformManager.get(), "clang++") {
+                this.args = args
             }
         }
     }

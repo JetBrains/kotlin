@@ -1,0 +1,2 @@
+val property: kotlin.Int
+  get()

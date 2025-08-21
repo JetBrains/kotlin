@@ -20,4 +20,10 @@ class RemoteExpectActualTracker(
             facade.expectActualTracker_report(expectedFile.path, actualFile.path)
         }
     }
+
+    override fun reportExpectOfLenientStub(expectedFile: File) {
+        profiler.withMeasure(this) {
+            facade.expectActualTracker_reportExpectOfLenientStub(expectedFile.path)
+        }
+    }
 }

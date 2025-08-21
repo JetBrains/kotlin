@@ -32,14 +32,14 @@ fun abc3(
 // ------------------------------------------
 
 fun abc0(l: Function2<Composer, Int, Unit>) {
-  val hc = l.hashCode()
+  val hc = l as Any.hashCode()
 }
 fun abc1(l: Function3<String, Composer, Int, Unit>) {
-  val hc = l.hashCode()
+  val hc = l as Any.hashCode()
 }
 fun abc2(l: Function4<String, Int, Composer, Int, Unit>) {
-  val hc = l.hashCode()
+  val hc = l as Any.hashCode()
 }
 fun abc3(l: Function15<Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Composer, Int, Int, Any>) {
-  val hc = l.hashCode()
+  val hc = l as Any.hashCode()
 }

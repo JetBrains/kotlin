@@ -1,0 +1,4 @@
+$TESTDATA_DIR$/warningLevelOnEmptyFile.kt
+-d
+$TEMP_DIR$
+-Xwarning-level=UNCHECKED_CAST\:error

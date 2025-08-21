@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.analysis.api.projectStructure
 
 import com.intellij.openapi.util.Key
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiFile
+import com.intellij.psi.PsiFileFactory
 import com.intellij.testFramework.LightVirtualFile
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
@@ -100,6 +102,35 @@ public var KtFile.explicitModule: KaModule?
     }
 
 /**
+ * Returns the non-dangling module that represents the base context of the [KaDanglingFileModule], skipping any context modules which are
+ * themselves [KaDanglingFileModule]s.
+ *
+ * When a dangling file is a code fragment, the dangling file module may itself have a dangling file module as a context.
+ * [baseContextModule] can be used to find the non-dangling context at the base of the chain.
+ *
+ * @see KaDanglingFileModule.contextModule
+ */
+@KaPlatformInterface
+public val KaDanglingFileModule.baseContextModule: KaModule
+    get() {
+        var current: KaModule = this
+        while (current is KaDanglingFileModule) {
+            current = current.contextModule
+        }
+        return current
+    }
+
+/**
+ * Returns the [KaModule]'s [baseContextModule], or the module itself if it's not a [KaDanglingFileModule].
+ */
+@KaPlatformInterface
+public val KaModule.baseContextModuleOrSelf: KaModule
+    get() = when (this) {
+        is KaDanglingFileModule -> baseContextModule
+        else -> this
+    }
+
+/**
  * Whether the [KtFile] is a *dangling* file.
  *
  * @see org.jetbrains.kotlin.analysis.api.analyzeCopy
@@ -111,9 +142,20 @@ public val KtFile.isDangling: Boolean
         contextModule != null -> true
         virtualFile?.analysisContextModule != null -> false
         !isPhysical -> true
+        copyOrigin != null -> true
         analysisContext != null -> true
         doNotAnalyze != null -> true
         else -> false
+    }
+
+/**
+ * The original file if the given [PsiFile] is a file copy, or `null` otherwise.
+ */
+@KaExperimentalApi
+public val PsiFile.copyOrigin: PsiFile?
+    get() {
+        return originalFile.takeUnless { it == this }
+            ?: getUserData(PsiFileFactory.ORIGINAL_FILE)?.takeUnless { it == this }
     }
 
 /**
@@ -135,9 +177,10 @@ public val KtFile.danglingFileResolutionMode: KaDanglingFileResolutionMode?
  * Avoid using this function in client-side code. Use [analyzeCopy][org.jetbrains.kotlin.analysis.api.analyzeCopy] instead.
  */
 @KaImplementationDetail
+@OptIn(KaExperimentalApi::class)
 public fun <R> withDanglingFileResolutionMode(file: KtFile, mode: KaDanglingFileResolutionMode, action: () -> R): R {
     require(file.isDangling) { "'withDanglingFileResolutionMode()' is only available to dangling files" }
-    require(file.originalFile != file) { "'withDanglingFileResolutionMode()' is only available to file copies" }
+    require(file.copyOrigin != null) { "'withDanglingFileResolutionMode()' is only available to file copies" }
 
     val modeState = getOrCreateDanglingFileResolutionModeState(file)
 

@@ -17,3 +17,6 @@ suspend fun Scope.foo(
 
     "".<!ILLEGAL_RESTRICTED_SUSPENDING_FUNCTION_CALL!>a3<!>()
 }
+
+/* GENERATED_FIR_TAGS: funWithExtensionReceiver, functionDeclaration, functionalType, interfaceDeclaration,
+stringLiteral, suspend, thisExpression, typeWithExtension */

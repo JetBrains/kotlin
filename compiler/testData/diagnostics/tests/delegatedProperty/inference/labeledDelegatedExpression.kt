@@ -10,3 +10,6 @@ class A3 {
         throw Exception("$thisRef $desc")
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, nestedClass, nullableType,
+operator, propertyDeclaration, propertyDelegate, starProjection, stringLiteral, typeParameter */

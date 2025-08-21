@@ -26,19 +26,19 @@ KaKotlinPropertySymbol:
     deprecationStatus: null
   callableId: /SomeKotlinClass.foo
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
     annotations: []
     callableId: null
     compilerVisibility: Public
     contextReceivers: []
-    hasBody: false
     hasStableParameterNames: true
     isActual: false
-    isDefault: true
     isExpect: false
     isExtension: false
     isInline: false
+    isNotDefault: false
     isOverride: false
     location: PROPERTY
     modality: ABSTRACT
@@ -64,7 +64,7 @@ KaKotlinPropertySymbol:
         type: kotlin/String
       visibility: LOCAL
       getContainingFileSymbol: KaFileSymbol(main.kt)
-      getContainingJvmClassName: null
+      getContainingJvmClassName: SomeKotlinClass
       getContainingModule: KaSourceModule "Sources of main"
       deprecationStatus: null
     returnType: KaUsualClassType:
@@ -121,7 +121,7 @@ KaKotlinPropertySymbol:
       type: kotlin/String
     visibility: LOCAL
     getContainingFileSymbol: KaFileSymbol(main.kt)
-    getContainingJvmClassName: null
+    getContainingJvmClassName: SomeKotlinClass
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
   returnType: KaUsualClassType:
@@ -143,3 +143,4 @@ KaKotlinPropertySymbol:
   javaGetterName: getFoo
   javaSetterName: null
   setterDeprecationStatus: null
+  isInline: false

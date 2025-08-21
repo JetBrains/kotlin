@@ -9,7 +9,7 @@
   <url>https://kotlinlang.org/</url>
   <licenses>
     <license>
-      <name>The Apache License, Version 2.0</name>
+      <name>Apache-2.0</name>
       <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
     </license>
   </licenses>
@@ -54,12 +54,6 @@
       <groupId>org.jetbrains.kotlin</groupId>
       <artifactId>kotlin-daemon-embeddable</artifactId>
       <version>ArtifactsTest.version</version>
-      <scope>runtime</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.jetbrains.intellij.deps</groupId>
-      <artifactId>trove4j</artifactId>
-      <version>1.0.20200330</version>
       <scope>runtime</scope>
     </dependency>
     <dependency>

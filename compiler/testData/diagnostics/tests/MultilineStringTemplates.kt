@@ -43,3 +43,6 @@ fun new() : String {
   """
 
 }
+
+/* GENERATED_FIR_TAGS: equalityExpression, functionDeclaration, ifExpression, localProperty, propertyDeclaration,
+stringLiteral */

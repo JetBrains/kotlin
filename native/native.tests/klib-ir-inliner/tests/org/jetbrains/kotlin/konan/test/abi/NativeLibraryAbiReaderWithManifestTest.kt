@@ -9,23 +9,15 @@ import com.intellij.openapi.util.text.StringUtil
 import org.jetbrains.kotlin.konan.test.blackbox.AbstractNativeSimpleTest
 import org.jetbrains.kotlin.konan.test.blackbox.buildDir
 import org.jetbrains.kotlin.konan.test.blackbox.compileToLibrary
-import org.jetbrains.kotlin.konan.test.blackbox.support.group.FirPipeline
 import org.jetbrains.kotlin.library.abi.*
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Assertions.fail
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 
-@FirPipeline
-@Tag("frontend-fir")
 @Tag("klib")
-class FirNativeLibraryAbiReaderWithManifestTest : NativeLibraryAbiReaderWithManifestTest()
-
-@Tag("klib")
-class ClassicNativeLibraryAbiReaderWithManifestTest : NativeLibraryAbiReaderWithManifestTest()
-
 @OptIn(ExperimentalLibraryAbiReader::class)
-open class NativeLibraryAbiReaderWithManifestTest : AbstractNativeSimpleTest() {
+class NativeLibraryAbiReaderWithManifestTest : AbstractNativeSimpleTest() {
     @Test
     fun testRenderingAbiWithAndWithoutManifestInfo() {
         val sourceFile = buildDir.resolve("source.kt").apply { writeText("fun foo() = Unit") }

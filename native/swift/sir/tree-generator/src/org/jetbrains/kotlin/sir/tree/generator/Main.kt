@@ -5,9 +5,13 @@
 
 package org.jetbrains.kotlin.sir.tree.generator
 
+import org.jetbrains.kotlin.generators.tree.InterfaceAndAbstractClassConfigurator
+import org.jetbrains.kotlin.generators.tree.detectBaseTransformerTypes
 import org.jetbrains.kotlin.generators.tree.printer.TreeGenerator
 import org.jetbrains.kotlin.sir.tree.generator.model.Element
-import org.jetbrains.kotlin.sir.tree.generator.printer.*
+import org.jetbrains.kotlin.sir.tree.generator.printer.BuilderPrinter
+import org.jetbrains.kotlin.sir.tree.generator.printer.ElementPrinter
+import org.jetbrains.kotlin.sir.tree.generator.printer.ImplementationPrinter
 import java.io.File
 
 internal const val BASE_PACKAGE = "org.jetbrains.kotlin.sir"
@@ -17,18 +21,24 @@ typealias Model = org.jetbrains.kotlin.generators.tree.Model<Element>
 fun main(args: Array<String>) {
     val generationPath = args.firstOrNull()?.let { File(it) }
         ?: File("./native/swift/sir/gen/").canonicalFile
+
     val model = SwiftIrTree.build()
     TreeGenerator(generationPath, "native/swift/sir/tree-generator/Readme.md").run {
-        generateTree(
-            model,
-            pureAbstractElementType,
-            ::ElementPrinter,
-            emptyList(),
-            ImplementationConfigurator,
-            BuilderConfigurator(model),
-            ::ImplementationPrinter,
-            ::BuilderPrinter,
-        )
+        model.inheritFields()
+        detectBaseTransformerTypes(model)
+
+        ImplementationConfigurator.configureImplementations(model)
+        val implementations = model.elements.flatMap { it.implementations }
+        InterfaceAndAbstractClassConfigurator((model.elements + implementations))
+            .configureInterfacesAndAbstractClasses()
+        model.addPureAbstractElement(pureAbstractElementType)
+
+        val builderConfigurator = BuilderConfigurator(model)
+        builderConfigurator.configureBuilders()
+
+        printElements(model, ::ElementPrinter)
+        printElementImplementations(implementations, ::ImplementationPrinter)
+        printElementBuilders(implementations.mapNotNull { it.builder } + builderConfigurator.intermediateBuilders, :: BuilderPrinter)
     }
 }
 

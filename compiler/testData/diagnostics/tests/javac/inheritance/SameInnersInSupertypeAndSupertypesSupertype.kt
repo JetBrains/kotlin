@@ -33,3 +33,5 @@ package test
 import a.c
 
 fun test() = c().getY()
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaFunction, javaType */

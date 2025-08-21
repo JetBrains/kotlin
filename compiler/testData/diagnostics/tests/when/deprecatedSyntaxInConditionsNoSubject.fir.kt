@@ -60,3 +60,8 @@ fun testWithSubject_ok(x: Boolean, y: Boolean?, any: Any, z: Boolean) {
         b-- -> {}
     }
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, andExpression, asExpression, assignment, comparisonExpression,
+disjunctionExpression, elvisExpression, equalityExpression, funWithExtensionReceiver, functionDeclaration,
+incrementDecrementExpression, intersectionType, isExpression, localProperty, multiplicativeExpression, nullableType,
+operator, propertyDeclaration, rangeExpression, safeCall, smartcast, whenExpression, whenWithSubject */

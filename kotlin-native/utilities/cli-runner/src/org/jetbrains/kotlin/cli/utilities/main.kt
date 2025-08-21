@@ -23,9 +23,6 @@ private fun mainImpl(args: Array<String>, runFromDaemon: Boolean, konancMain: (A
             val konancArgs = invokeInterop("native", utilityArgs, runFromDaemon)
             konancArgs?.let { konancMain(it) }
         }
-        "jsinterop" -> {
-            error("wasm target in Kotlin/Native is removed. See https://kotl.in/native-targets-tiers")
-        }
         "klib" ->
             klibMain(utilityArgs)
         "defFileDependencies" ->
@@ -36,19 +33,18 @@ private fun mainImpl(args: Array<String>, runFromDaemon: Boolean, konancMain: (A
         "llvm" -> runLlvmTool(utilityArgs)
         "clang" -> runLlvmClangToolWithTarget(utilityArgs)
 
-        else ->
-            error("Unexpected utility name")
+        else -> error("Unexpected utility name: $utilityName")
     }
 }
 
 fun main(args: Array<String>) = mainImpl(args, false, ::konancMain)
+
 
 private fun setupClangEnv() {
     setEnv("LIBCLANG_DISABLE_CRASH_RECOVERY", "1")
 }
 
 fun daemonMain(args: Array<String>) = inProcessMain(args, ::konancMainWithGradleRenderer)
-
 fun daemonMainWithXcodeRenderer(args: Array<String>) = inProcessMain(args, ::konancMainWithXcodeRenderer)
 
 private fun inProcessMain(args: Array<String>, konancMain: (Array<String>) -> Unit) {
@@ -57,3 +53,4 @@ private fun inProcessMain(args: Array<String>, konancMain: (Array<String>) -> Un
         mainImpl(args, true, konancMain)
     }
 }
+

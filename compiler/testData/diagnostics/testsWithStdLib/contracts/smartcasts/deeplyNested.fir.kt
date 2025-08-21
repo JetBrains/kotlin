@@ -103,3 +103,6 @@ fun branchedAndNestedWithNativeOperators(x: Any?, y: Any?) {
     y.inc()
 }
 
+/* GENERATED_FIR_TAGS: andExpression, contractConditionalEffect, contracts, disjunctionExpression, equalityExpression,
+functionDeclaration, ifExpression, integerLiteral, intersectionType, isExpression, lambdaLiteral, nullableType,
+smartcast, stringLiteral */

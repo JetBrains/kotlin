@@ -21,3 +21,6 @@ fun test2() {
     // Error
     for (s in <!ITERATOR_ON_NULLABLE!>other<!>) {}
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, forLoop, funWithExtensionReceiver, functionDeclaration,
+localProperty, nullableType, operator, primaryConstructor, propertyDeclaration, typeParameter */

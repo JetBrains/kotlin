@@ -25,7 +25,6 @@ import kotlin.script.templates.standard.ScriptTemplateWithArgs
 internal const val KOTLIN_JAVA_STDLIB_JAR = "kotlin-stdlib.jar"
 internal const val KOTLIN_JAVA_REFLECT_JAR = "kotlin-reflect.jar"
 internal const val KOTLIN_JAVA_SCRIPT_RUNTIME_JAR = "kotlin-script-runtime.jar"
-internal const val TROVE4J_JAR = "trove4j.jar"
 internal const val KOTLIN_SCRIPTING_COMPILER_JAR = "kotlin-scripting-compiler.jar"
 internal const val KOTLIN_SCRIPTING_COMPILER_EMBEDDABLE_JAR = "kotlin-scripting-compiler-embeddable.jar"
 internal const val KOTLIN_SCRIPTING_COMPILER_IMPL_JAR = "kotlin-scripting-compiler-impl.jar"
@@ -368,7 +367,6 @@ object KotlinJars {
             KOTLIN_JAVA_STDLIB_JAR,
             KOTLIN_JAVA_REFLECT_JAR,
             KOTLIN_JAVA_SCRIPT_RUNTIME_JAR,
-            TROVE4J_JAR
         )
         val kotlinScriptingJars = if (withScripting) listOf(
             KOTLIN_SCRIPTING_COMPILER_JAR,

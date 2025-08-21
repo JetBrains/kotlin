@@ -4,6 +4,7 @@ KtNameReferenceExpression(172,175): 'foo'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = WithGeneratedCompanion
           isSafeNavigation = false
@@ -14,5 +15,6 @@ KtNameReferenceExpression(172,175): 'foo'
           returnType = kotlin.Int
           symbol = test/WithGeneratedCompanion.Companion.foo(<dispatch receiver>: test.WithGeneratedCompanion.Companion): kotlin.Int
           valueParameters = []
+          contextParameters = []
           callableId = test/WithGeneratedCompanion.Companion.foo
       typeArgumentsMapping = {}

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // JDK_KIND: FULL_JDK_11
 // MODULE: main
@@ -15,3 +16,5 @@ fun main() {
     val s: javax.swing.JFrame? = null
     println(s)
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, localProperty, nullableType, propertyDeclaration */

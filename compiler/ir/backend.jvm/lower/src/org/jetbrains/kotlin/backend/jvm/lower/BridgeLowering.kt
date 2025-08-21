@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.addFunction
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.IrParameterKind.DispatchReceiver
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
@@ -27,6 +28,7 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.isPrimitiveType
 import org.jetbrains.kotlin.ir.types.makeNullable
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.name.JvmStandardClassIds
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.org.objectweb.asm.Type
@@ -138,7 +140,7 @@ internal class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPas
                 original != null && MethodSignatureMapper.shouldBoxSingleValueParameterForSpecialCaseOfRemove(original)
             }
             if (remove != null) {
-                remove.valueParameters.last().let {
+                remove.parameters.last().let {
                     it.type = it.type.makeNullable()
                 }
             }
@@ -225,18 +227,13 @@ internal class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPas
                                 isFinal = false,
                             )
 
-                            // The part after '?:' is needed for methods with default implementations in collection interfaces:
-                            // MutableMap.remove() and getOrDefault().
-                            val superTarget = overriddenFromClass.takeIf { !it.isFakeOverride || !specialBridge.isOverriding }
-                                ?: specialBridge.overridden
-
-                            if (superBridge.signature == superTarget.jvmMethod) {
+                            if (superBridge.signature == targetFunction.jvmMethod) {
                                 // If the resulting bridge to a super member matches the signature of the bridge callee,
                                 // bridge is not needed.
                                 irFunction
                             } else {
                                 irClass.declarations.remove(irFunction)
-                                irClass.addSpecialBridge(superBridge, superTarget)
+                                irClass.addSpecialBridge(superBridge, targetFunction)
                             }
                         }
 
@@ -295,6 +292,10 @@ internal class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPas
             // This matches the behavior of the JVM backend, but it does mean that we generate superfluous bridges
             // for abstract methods overriding a special bridge for which we do not create a bridge due to,
             // e.g., signature clashes.
+            return
+        } else if (irFunction.hasAnnotation(JvmStandardClassIds.JVM_EXPOSE_BOXED_ANNOTATION_FQ_NAME)) {
+            // Do not generate bridge methods for exposed methods, since we already generate bridges for
+            // their mangled counterparts. Generating both bridges will lead to declaration clash.
             return
         }
 
@@ -390,10 +391,8 @@ internal class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPas
             // However, we cannot link in the new function as the new accessor for the property, since there might still
             // be references to the original fake override stub.
             copyCorrespondingPropertyFrom(irFunction)
-            dispatchReceiverParameter = thisReceiver?.copyTo(this, type = defaultType)
-            valueParameters = irFunction.valueParameters.map { param ->
-                param.copyTo(this, type = param.type)
-            }
+            thisReceiver?.let { parameters += it.copyTo(this, type = defaultType) }
+            parameters += irFunction.nonDispatchParameters.map { it.copyTo(this, type = it.type) }
             overriddenSymbols = irFunction.overriddenSymbols.toList()
         }
 
@@ -446,7 +445,7 @@ internal class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPas
         val body = this.body as? IrBlockBody ?: return false
         if (body.statements.size != 1) return false
         val irCall = body.statements[0] as? IrCall ?: return false
-        return irCall.symbol == context.ir.symbols.throwUnsupportedOperationException
+        return irCall.symbol == context.symbols.throwUnsupportedOperationException
     }
 
     private fun IrType.isTypeParameterWithPrimitiveUpperBound(): Boolean =
@@ -529,7 +528,7 @@ internal class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPas
         } else {
             // If the signature of this method will be changed in the output to take a boxed argument instead of a primitive,
             // rewrite the argument so that code will be generated for a boxed argument and not a primitive.
-            valueParameters.forEachIndexed { i, p ->
+            nonDispatchParameters.forEachIndexed { i, p ->
                 if (AsmUtil.isPrimitive(context.defaultTypeMapper.mapType(p.type)) && ourSignature.argumentTypes[i].sort == Type.OBJECT) {
                     p.type = p.type.makeNullable()
                 }
@@ -547,7 +546,7 @@ internal class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPas
     ) {
         val visibleTypeParameters = collectVisibleTypeParameters(this)
         parameters = from.parameters.map { param ->
-            if (param.kind == IrParameterKind.DispatchReceiver) {
+            if (param.kind == DispatchReceiver) {
                 // This is a workaround for a bug affecting fake overrides. Sometimes we encounter fake overrides
                 // with dispatch receivers pointing at a superclass instead of the current class.
                 irClass.thisReceiver!!.copyTo(this, type = irClass.defaultType)
@@ -586,7 +585,7 @@ internal class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPas
                     val argument = irGet(param).let { argument ->
                         if (param == bridge.dispatchReceiverParameter) argument else irCastIfNeeded(argument, targetParam.type.upperBound)
                     }
-                    putArgument(targetParam, argument)
+                    arguments[targetParam] = argument
                 }
             } else {
                 this@irBlock.addBoxedAndUnboxedMfvcArguments(target, bridge, this)
@@ -596,7 +595,7 @@ internal class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPas
 
     private fun getStructure(function: IrSimpleFunction): List<MemoizedMultiFieldValueClassReplacements.RemappedParameter>? {
         val structure = function.parameterTemplateStructureOfThisNewMfvcBidingFunction ?: return null
-        require(structure.sumOf { it.valueParameters.size } == function.parameters.size) {
+        require(structure.sumOf { it.parameters.size } == function.parameters.size) {
             "Bad parameters structure: $structure"
         }
 
@@ -615,7 +614,7 @@ internal class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPas
             }
         for ((parameter, argument) in parameters2arguments) {
             if (argument != null) {
-                irCall.putArgument(parameter, argument)
+                irCall.arguments[parameter] = argument
             }
         }
     }

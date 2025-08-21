@@ -1,0 +1,1 @@
+override fun doSmth(x: kotlin.collections.List<T1 & kotlin.Any>): kotlin.collections.List<T1 & kotlin.Any>

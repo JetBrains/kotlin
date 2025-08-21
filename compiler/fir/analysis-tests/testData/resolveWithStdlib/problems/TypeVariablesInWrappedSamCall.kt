@@ -4,7 +4,7 @@
 fun main() {
     val flag = true
     consumeTicker(
-        select(if (flag) null else <!ARGUMENT_TYPE_MISMATCH, ARGUMENT_TYPE_MISMATCH!>{ <!CANNOT_INFER_PARAMETER_TYPE!>num<!> -> num.dec() }<!>, null)
+        select(if (flag) null else <!ARGUMENT_TYPE_MISMATCH, ARGUMENT_TYPE_MISMATCH!>{ <!CANNOT_INFER_VALUE_PARAMETER_TYPE!>num<!> -> num.dec() }<!>, null)
     )
 }
 
@@ -15,3 +15,6 @@ fun consumeTicker(ticker: Ticker?) {}
 fun interface Ticker {
     fun tick(num: Int)
 }
+
+/* GENERATED_FIR_TAGS: funInterface, functionDeclaration, ifExpression, interfaceDeclaration, lambdaLiteral,
+localProperty, nullableType, propertyDeclaration, typeParameter */

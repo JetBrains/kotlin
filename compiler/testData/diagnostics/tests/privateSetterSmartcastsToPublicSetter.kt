@@ -43,3 +43,7 @@ fun main(test: Base) {
     test.publicInDerived2--
     --test.publicInDerived2
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, assignment, classDeclaration, functionDeclaration, getter, ifExpression,
+incrementDecrementExpression, integerLiteral, isExpression, localProperty, override, propertyDeclaration, setter,
+smartcast */

@@ -31,7 +31,7 @@ class SerializedMetadata(
     val fragmentNames: List<String>
 )
 
-class SerializedDeclaration(val id: Int, val declarationName: String, val bytes: ByteArray) {
+class SerializedDeclaration(val id: Int, val bytes: ByteArray) {
     val size = bytes.size
 }
 
@@ -44,8 +44,10 @@ class SerializedIrFile(
     val strings: ByteArray,
     val bodies: ByteArray,
     val declarations: ByteArray,
+    val inlineDeclarations: ByteArray,
     val debugInfo: ByteArray?,
     val backendSpecificMetadata: ByteArray?,
+    val fileEntries: ByteArray?,
 )
 
 class SerializedIrModule(val files: Collection<SerializedIrFile>)

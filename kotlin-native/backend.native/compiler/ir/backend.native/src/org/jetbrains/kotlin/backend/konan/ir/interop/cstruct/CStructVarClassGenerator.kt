@@ -76,7 +76,7 @@ internal class CStructVarClassGenerator(
                             startOffset, endOffset,
                             context.irBuiltIns.unitType, symbols.cStructVarConstructorSymbol
                     ).also {
-                        it.putValueArgument(0, irGet(irConstructor.valueParameters[0]))
+                        it.arguments[0] = irGet(irConstructor.parameters[0])
                     }
                     +irInstanceInitializer(symbolTable.descriptorExtension.referenceClass(irClass.descriptor))
                 }

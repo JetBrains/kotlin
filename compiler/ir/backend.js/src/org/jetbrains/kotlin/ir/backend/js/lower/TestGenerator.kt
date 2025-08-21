@@ -24,12 +24,13 @@ import org.jetbrains.kotlin.ir.expressions.IrBlockBody
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrTypeOperator
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrRichFunctionReferenceImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrTypeOperatorCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.fromSymbolOwner
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.defaultType
-import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
+import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.filterIsInstanceAnd
@@ -90,12 +91,22 @@ class TestGenerator(val context: JsCommonBackendContext) {
         function.parent = parentFunction
         function.body = body
 
+        val refClass = context.symbols.functionN(0)
+        val testFunReference = IrRichFunctionReferenceImpl(
+            startOffset = UNDEFINED_OFFSET,
+            endOffset = UNDEFINED_OFFSET,
+            type = refClass.typeWith(function.returnType),
+            reflectionTargetSymbol = null,
+            overriddenFunctionSymbol = refClass.owner.selectSAMOverriddenFunction().symbol,
+            invokeFunction = function,
+            origin = null,
+            isRestrictedSuspension = false,
+        )
+
         (parentFunction.body as IrBlockBody).statements += JsIrBuilder.buildCall(this).apply {
             arguments[0] = JsIrBuilder.buildString(context.irBuiltIns.stringType, name)
             arguments[1] = JsIrBuilder.buildBoolean(context.irBuiltIns.booleanType, ignored)
-
-            val refType = IrSimpleTypeImpl(context.ir.symbols.functionN(0), false, emptyList(), emptyList())
-            arguments[2] = JsIrBuilder.buildFunctionExpression(refType, function)
+            arguments[2] = testFunReference
         }
 
         return function
@@ -225,8 +236,18 @@ class TestGenerator(val context: JsCommonBackendContext) {
                 )
             }
 
-            val refType = IrSimpleTypeImpl(context.ir.symbols.functionN(0), false, emptyList(), emptyList())
-            val finallyLambda = JsIrBuilder.buildFunctionExpression(refType, afterFunction)
+            val refClass = context.symbols.functionN(0)
+            val finallyLambda = IrRichFunctionReferenceImpl(
+                startOffset = UNDEFINED_OFFSET,
+                endOffset = UNDEFINED_OFFSET,
+                type = refClass.typeWith(afterFunction.returnType),
+                reflectionTargetSymbol = null,
+                overriddenFunctionSymbol = refClass.owner.selectSAMOverriddenFunction().symbol,
+                invokeFunction = afterFunction,
+                origin = null,
+                isRestrictedSuspension = false,
+            )
+
             val finally = promiseSymbol.owner.declarations
                 .findIsInstanceAnd<IrSimpleFunction> { it.name.asString() == "finally" }!!
 

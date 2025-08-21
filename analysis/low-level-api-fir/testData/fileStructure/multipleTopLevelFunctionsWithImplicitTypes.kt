@@ -1,4 +1,4 @@
-fun foo1() = 1/* DeclarationStructureElement */
+/* RootStructureElement */fun foo1() = 1/* DeclarationStructureElement */
 
 fun foo2() = 2/* DeclarationStructureElement */
 

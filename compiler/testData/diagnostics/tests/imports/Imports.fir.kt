@@ -100,3 +100,7 @@ class A() {
         object C : B() {}
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, equalityExpression, funWithExtensionReceiver,
+functionDeclaration, ifExpression, integerLiteral, nestedClass, objectDeclaration, primaryConstructor,
+propertyDeclaration, stringLiteral */

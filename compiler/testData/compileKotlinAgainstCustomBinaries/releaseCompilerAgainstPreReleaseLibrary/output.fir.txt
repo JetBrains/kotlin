@@ -29,4 +29,22 @@ compiler/testData/compileKotlinAgainstCustomBinaries/releaseCompilerAgainstPreRe
 compiler/testData/compileKotlinAgainstCustomBinaries/releaseCompilerAgainstPreReleaseLibrary/source.kt:13:5: error: class 'a.AKt' was compiled by a pre-release version of Kotlin and cannot be loaded by this version of the compiler.
     bar = 239
     ^^^
+compiler/testData/compileKotlinAgainstCustomBinaries/releaseCompilerAgainstPreReleaseLibrary/source.kt:16:5: error: class 'a.AKt' was compiled by a pre-release version of Kotlin and cannot be loaded by this version of the compiler.
+    baz {}
+    ^^^^^^
+compiler/testData/compileKotlinAgainstCustomBinaries/releaseCompilerAgainstPreReleaseLibrary/source.kt:16:9: error: class 'a.A' was compiled by a pre-release version of Kotlin and cannot be loaded by this version of the compiler.
+    baz {}
+        ^^
+compiler/testData/compileKotlinAgainstCustomBinaries/releaseCompilerAgainstPreReleaseLibrary/source.kt:19:9: error: class 'a.A' was compiled by a pre-release version of Kotlin and cannot be loaded by this version of the compiler.
+val a = A {
+        ^^^
+compiler/testData/compileKotlinAgainstCustomBinaries/releaseCompilerAgainstPreReleaseLibrary/source.kt:19:9: error: class 'a.AKt' was compiled by a pre-release version of Kotlin and cannot be loaded by this version of the compiler.
+val a = A {
+        ^^^
+compiler/testData/compileKotlinAgainstCustomBinaries/releaseCompilerAgainstPreReleaseLibrary/source.kt:20:5: error: class 'a.A' was compiled by a pre-release version of Kotlin and cannot be loaded by this version of the compiler.
+    "".toA()
+    ^^^^^^^^
+compiler/testData/compileKotlinAgainstCustomBinaries/releaseCompilerAgainstPreReleaseLibrary/source.kt:20:5: error: class 'a.AKt' was compiled by a pre-release version of Kotlin and cannot be loaded by this version of the compiler.
+    "".toA()
+    ^^^^^^^^
 COMPILATION_ERROR

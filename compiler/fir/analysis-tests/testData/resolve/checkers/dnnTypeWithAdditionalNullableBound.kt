@@ -6,3 +6,6 @@
 fun <T> f(x: <!INCORRECT_LEFT_COMPONENT_OF_INTERSECTION!>T<!> & Any) where T : CharSequence, T : Any? {}
 
 class A<T>(val x: <!INCORRECT_LEFT_COMPONENT_OF_INTERSECTION!>T<!> & Any) where T : CharSequence, T : Any? {}
+
+/* GENERATED_FIR_TAGS: classDeclaration, dnnType, functionDeclaration, nullableType, primaryConstructor,
+propertyDeclaration, typeConstraint, typeParameter */

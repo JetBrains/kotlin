@@ -21,6 +21,9 @@ import org.jetbrains.kotlin.config.phaser.invokeToplevel
 import org.jetbrains.kotlin.progress.CompilationCanceledException
 import org.jetbrains.kotlin.progress.CompilationCanceledStatus
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus
+import org.jetbrains.kotlin.util.CompilerType
+import org.jetbrains.kotlin.util.PerformanceManager
+import org.jetbrains.kotlin.util.forEachStringMeasurement
 import java.io.File
 
 abstract class AbstractCliPipeline<A : CommonCompilerArguments> {
@@ -33,9 +36,9 @@ abstract class AbstractCliPipeline<A : CommonCompilerArguments> {
         ProgressIndicatorAndCompilationCanceledStatus.setCompilationCanceledStatus(canceledStatus)
         val rootDisposable = Disposer.newDisposable("Disposable for ${CLICompiler::class.simpleName}.execImpl")
         setIdeaIoUseFallback() // TODO (KT-73573): probably could be removed
-        val performanceManager = createPerformanceManager(arguments, services)
+        val performanceManager = createPerformanceManager(arguments, services).apply { compilerType = CompilerType.K2 }
         if (arguments.reportPerf || arguments.dumpPerf != null) {
-            performanceManager.enableCollectingPerformanceStatistics()
+            performanceManager.enableExtendedStats()
         }
 
         val messageCollector = GroupingMessageCollector(
@@ -66,13 +69,13 @@ abstract class AbstractCliPipeline<A : CommonCompilerArguments> {
             performanceManager.notifyCompilationFinished()
             if (arguments.reportPerf) {
                 messageCollector.report(CompilerMessageSeverity.LOGGING, "PERF: " + performanceManager.getTargetInfo())
-                for (measurement in performanceManager.getMeasurementResults()) {
-                    messageCollector.report(CompilerMessageSeverity.LOGGING, "PERF: " + measurement.render(), null)
+                performanceManager.forEachStringMeasurement {
+                    messageCollector.report(CompilerMessageSeverity.LOGGING, "PERF: $it", null)
                 }
             }
 
             if (arguments.dumpPerf != null) {
-                performanceManager.dumpPerformanceReport(File(arguments.dumpPerf!!))
+                performanceManager.dumpPerformanceReport(arguments.dumpPerf!!)
             }
 
             if (messageCollector.hasErrors()) ExitCode.COMPILATION_ERROR else code
@@ -130,13 +133,15 @@ abstract class AbstractCliPipeline<A : CommonCompilerArguments> {
     }
 
     abstract fun createCompoundPhase(arguments: A): CompilerPhase<PipelineContext, ArgumentsPipelineArtifact<A>, *>
-    abstract val defaultPerformanceManager: CommonCompilerPerformanceManager
+    abstract val defaultPerformanceManager: PerformanceManager
 
     /**
      * Some CLIs might support non-standard performance managers, so this method is needed to be able to create such a manager if needed.
      */
-    protected open fun createPerformanceManager(arguments: A, services: Services): CommonCompilerPerformanceManager {
-        return defaultPerformanceManager
+    protected open fun createPerformanceManager(arguments: A, services: Services): PerformanceManager {
+        return defaultPerformanceManager.apply {
+            detailedPerf = arguments.detailedPerf
+        }
     }
 
     protected open fun isKaptMode(arguments: A): Boolean = false

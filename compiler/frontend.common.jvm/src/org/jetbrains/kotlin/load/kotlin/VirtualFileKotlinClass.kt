@@ -13,9 +13,17 @@ import org.jetbrains.kotlin.load.kotlin.KotlinClassFinder.Result.KotlinClass
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.util.PerformanceCounter
+import org.jetbrains.kotlin.util.PerformanceManager
+import org.jetbrains.kotlin.util.PhaseSideType
+import org.jetbrains.kotlin.util.tryMeasureSideTime
 import java.io.FileNotFoundException
 import java.io.IOException
+import java.nio.file.Path
+import java.nio.file.Paths
+
+interface LibraryContainerAwareVirtualFile {
+    fun getContainingLibraryPath(): Path
+}
 
 class VirtualFileKotlinClass private constructor(
     val file: VirtualFile,
@@ -31,6 +39,16 @@ class VirtualFileKotlinClass private constructor(
     override val containingLibrary: String?
         get() = file.path.split("!/").firstOrNull()
 
+    override val containingLibraryPath: PathHolder?
+        // we should return not the file itself, but the root - LibraryPathFilter later uses `startsWith`
+        get() {
+            val containingLibraryPath =
+                if (file is LibraryContainerAwareVirtualFile) file.getContainingLibraryPath() else containingLibrary?.let { Paths.get(it) }
+            return containingLibraryPath?.let {
+                PathHolder(containingLibraryPath)
+            }
+        }
+
     override fun getFileContents(): ByteArray {
         try {
             return file.contentsToByteArray()
@@ -45,10 +63,14 @@ class VirtualFileKotlinClass private constructor(
 
     companion object Factory {
         private val LOG = Logger.getInstance(VirtualFileKotlinClass::class.java)
-        private val perfCounter = PerformanceCounter.create("Binary class from Kotlin file")
 
-        internal fun create(file: VirtualFile, metadataVersion: MetadataVersion, fileContent: ByteArray?): KotlinClassFinder.Result? {
-            return perfCounter.time {
+        internal fun create(
+            file: VirtualFile,
+            metadataVersion: MetadataVersion,
+            fileContent: ByteArray?,
+            perfManager: PerformanceManager?,
+        ): KotlinClassFinder.Result? {
+            return perfManager.tryMeasureSideTime(PhaseSideType.BinaryClassFromKotlinFile) {
                 assert(file.extension == JavaClassFileType.INSTANCE.defaultExtension || file.fileType == JavaClassFileType.INSTANCE) { "Trying to read binary data from a non-class file $file" }
 
                 try {
@@ -58,11 +80,13 @@ class VirtualFileKotlinClass private constructor(
                             VirtualFileKotlinClass(file, name, classVersion, header, innerClasses)
                         }
 
-                        return@time kotlinJvmBinaryClass?.let { KotlinClass(it, byteContent) }
+                        return@tryMeasureSideTime kotlinJvmBinaryClass?.let { KotlinClass(it, byteContent) }
                             ?: KotlinClassFinder.Result.ClassFileContent(byteContent)
                     }
-                } catch (e: FileNotFoundException) {
+                } catch (_: FileNotFoundException) {
                     // Valid situation. User can delete jar file.
+                } catch (_: java.nio.file.NoSuchFileException) {
+                    // Same (see FL-32618 as an exception example)
                 } catch (e: Throwable) {
                     if (e is ControlFlowException) throw e
                     throw logFileReadingErrorMessage(e, file)

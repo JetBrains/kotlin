@@ -1,4 +1,3 @@
-fun foo() {/* DeclarationStructureElement */
+/* RootStructureElement */fun foo() {/* DeclarationStructureElement */
     println("")
 }
-

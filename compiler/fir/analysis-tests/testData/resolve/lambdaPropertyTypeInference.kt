@@ -70,3 +70,8 @@ class BooCase2() {
         val FILTER: (KotlinClass) -> Boolean = { true }
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, equalityExpression, funWithExtensionReceiver,
+functionDeclaration, functionalType, ifExpression, infix, javaType, lambdaLiteral, localProperty, nullableType,
+objectDeclaration, operator, override, primaryConstructor, propertyDeclaration, smartcast, typeParameter,
+typeWithExtension */

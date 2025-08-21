@@ -14,3 +14,6 @@ class Z : X, Y {
 object ZO : X, Y {
     fun <!VIRTUAL_MEMBER_HIDDEN!>foo<!>(<!MULTIPLE_DEFAULTS_INHERITED_FROM_SUPERTYPES!>a : Int<!>) {}
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, interfaceDeclaration, objectDeclaration,
+override */

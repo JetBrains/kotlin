@@ -1,0 +1,11 @@
+/diagnosticMessages.kt:(123,125): error: Type parameter has cyclic upper bounds: F0, E0.
+
+/diagnosticMessages.kt:(132,134): error: Type parameter has cyclic upper bounds: F0, E0.
+
+/diagnosticMessages.kt:(182,184): error: Type parameter has cyclic upper bounds: F1, E1.
+
+/diagnosticMessages.kt:(191,193): error: Type parameter has cyclic upper bounds: F1, E1.
+
+/diagnosticMessages.kt:(200,202): error: Type parameter has cyclic upper bounds: E1, K1.
+
+/diagnosticMessages.kt:(209,211): error: Type parameter has cyclic upper bounds: E1, K1.

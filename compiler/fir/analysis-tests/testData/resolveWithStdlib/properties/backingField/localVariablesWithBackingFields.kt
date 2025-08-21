@@ -21,3 +21,7 @@ val A.cc: Number
 fun A.cc() {
     val it = <!UNRESOLVED_REFERENCE!>a<!> + 2
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, assignment, classDeclaration, funWithExtensionReceiver, functionDeclaration,
+integerLiteral, lambdaLiteral, localProperty, nullableType, propertyDeclaration, propertyDelegate,
+propertyWithExtensionReceiver */

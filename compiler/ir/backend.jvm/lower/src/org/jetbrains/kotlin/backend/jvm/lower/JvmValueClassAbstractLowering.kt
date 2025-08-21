@@ -9,11 +9,10 @@ import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
 import org.jetbrains.kotlin.backend.common.pop
 import org.jetbrains.kotlin.backend.common.push
-import org.jetbrains.kotlin.backend.jvm.InlineClassAbi
-import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
-import org.jetbrains.kotlin.backend.jvm.MemoizedValueClassAbstractReplacements
-import org.jetbrains.kotlin.backend.jvm.getRequiresMangling
-import org.jetbrains.kotlin.backend.jvm.ir.findInterfaceImplementation
+import org.jetbrains.kotlin.backend.jvm.*
+import org.jetbrains.kotlin.backend.jvm.ir.isBoxedInlineClassType
+import org.jetbrains.kotlin.backend.jvm.ir.isInlineClassType
+import org.jetbrains.kotlin.backend.jvm.ir.shouldBeExposedByAnnotationOrFlag
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
@@ -48,6 +47,15 @@ internal abstract class JvmValueClassAbstractLowering(
                 if (constructorReplacement != null) {
                     addBindingsFor(function, constructorReplacement)
                     return transformFlattenedConstructor(function, constructorReplacement)
+                } else if (function.shouldBeExposed()) {
+                    val constructorWithPotentialMarker = if (function.areAllParamsBoxedInlineClasses()) {
+                        // no replacement -> return listOf(function),
+                        // but `transformFunctionFlat` accepts null as initial fun as well for optimization reasons
+                        function.withAddedMarkerParameterToNonExposedConstructor() ?: return null
+                    } else {
+                        function
+                    }
+                    return listOfNotNull(constructorWithPotentialMarker, createExposedConstructor(constructorWithPotentialMarker))
                 }
             }
             function.transformChildrenVoid()
@@ -80,8 +88,25 @@ internal abstract class JvmValueClassAbstractLowering(
         }
     }
 
+    private fun IrConstructor.areAllParamsBoxedInlineClasses(): Boolean {
+        // If all inline class parameters are boxes in non-exposed constructor, we need to add an additional
+        // parameter to non-exposed constructor to distinguish it from exposed one
+        val inlineClassParams = parameters.filter { it.type.isInlineClassType() }
+        return inlineClassParams.isNotEmpty() && inlineClassParams.all { it.type.isBoxedInlineClassType() }
+    }
+
+    // Returns true if not just an annotation exists, but if it is also applicable to the constructor
+    private fun IrConstructor.shouldBeExposed(): Boolean =
+        shouldBeExposedByAnnotationOrFlag(context.config.languageVersionSettings) &&
+                parameters.any { it.type.isInlineClassType() } &&
+                !constructedClass.isSpecificLoweringLogicApplicable()
+
+    abstract fun IrConstructor.withAddedMarkerParameterToNonExposedConstructor(): IrConstructor?
+
+    abstract fun createExposedConstructor(constructor: IrConstructor): IrConstructor?
+
     private fun transformFlattenedConstructor(function: IrConstructor, replacement: IrConstructor): List<IrDeclaration> {
-        replacement.valueParameters.forEach {
+        replacement.parameters.forEach {
             it.defaultValue?.patchDeclarationParents(replacement)
             visitParameter(it)
         }
@@ -109,7 +134,7 @@ internal abstract class JvmValueClassAbstractLowering(
     }
 
     private fun transformSimpleFunctionFlat(function: IrSimpleFunction, replacement: IrSimpleFunction): List<IrDeclaration> {
-        replacement.valueParameters.forEach {
+        replacement.parameters.forEach {
             it.defaultValue?.patchDeclarationParents(replacement)
             visitParameter(it)
         }
@@ -119,8 +144,9 @@ internal abstract class JvmValueClassAbstractLowering(
         replacement.copyAttributes(function)
 
         // Don't create a wrapper for functions which are only used in an unboxed context
-        if (function.overriddenSymbols.isEmpty() || replacement.dispatchReceiverParameter != null)
-            return listOf(replacement)
+        if (!(function.shouldBeExposedByAnnotationOrFlag(context.config.languageVersionSettings) && !function.isFakeOverride) &&
+            (function.overriddenSymbols.isEmpty() || replacement.dispatchReceiverParameter != null)
+        ) return listOf(replacement)
 
         val bridgeFunction = createBridgeFunction(function, replacement)
 
@@ -178,9 +204,10 @@ internal abstract class JvmValueClassAbstractLowering(
     protected enum class SpecificMangle { Inline, MultiField }
 
     protected abstract val specificMangle: SpecificMangle
+
     private fun createBridgeFunction(
         function: IrSimpleFunction,
-        replacement: IrSimpleFunction
+        replacement: IrSimpleFunction,
     ): IrSimpleFunction {
         val bridgeFunction = createBridgeDeclaration(
             function,
@@ -193,10 +220,10 @@ internal abstract class JvmValueClassAbstractLowering(
                     useOldMangleRules = false
                 )
                 // If the original function has signature which need mangling we still need to replace it with a mangled version.
-                (!function.isFakeOverride || function.findInterfaceImplementation(context.config.jvmDefaultMode) != null) && when (specificMangle) {
-                    SpecificMangle.Inline -> function.signatureRequiresMangling(includeInline = true, includeMFVC = false)
-                    SpecificMangle.MultiField -> function.signatureRequiresMangling(includeInline = false, includeMFVC = true)
-                } -> replacement.name
+                (!function.isFakeOverride ||
+                        context.cachedDeclarations.getClassFakeOverrideReplacement(function) != ClassFakeOverrideReplacement.None) &&
+                        function.signatureRequiresMangling()
+                    -> replacement.name
                 // Since we remove the corresponding property symbol from the bridge we need to resolve getter/setter
                 // names at this point.
                 replacement.isGetter ->
@@ -223,15 +250,14 @@ internal abstract class JvmValueClassAbstractLowering(
         return bridgeFunction
     }
 
-    private fun IrSimpleFunction.signatureRequiresMangling(includeInline: Boolean = true, includeMFVC: Boolean = true) =
-        nonDispatchParameters.any { it.type.getRequiresMangling(includeInline, includeMFVC) } ||
+    private fun IrSimpleFunction.signatureRequiresMangling(): Boolean {
+        if (shouldBeExposedByAnnotationOrFlag(context.config.languageVersionSettings)) return false
+        val includeInline = specificMangle == SpecificMangle.Inline
+        val includeMFVC = specificMangle == SpecificMangle.MultiField
+        return nonDispatchParameters.any { it.type.getRequiresMangling(includeInline, includeMFVC) } ||
                 context.config.functionsWithInlineClassReturnTypesMangled &&
-                returnType.getRequiresMangling(includeInline = includeInline, includeMFVC = false)
-
-    protected fun typedArgumentList(function: IrFunction, expression: IrMemberAccessExpression<*>) = listOfNotNull(
-        function.dispatchReceiverParameter?.let { it to expression.dispatchReceiver },
-        function.extensionReceiverParameter?.let { it to expression.extensionReceiver }
-    ) + function.valueParameters.map { it to expression.getValueArgument(it.indexInOldValueParameters) }
+                returnType.getRequiresMangling(includeInline, includeMFVC = false)
+    }
 
 
     // We may need to add a bridge method for inline class methods with static replacements. Ideally, we'd do this in BridgeLowering,
@@ -291,7 +317,23 @@ internal abstract class JvmValueClassAbstractLowering(
     final override fun visitLocalDelegatedPropertyReference(expression: IrLocalDelegatedPropertyReference) =
         super.visitLocalDelegatedPropertyReference(expression)
 
-    final override fun visitRawFunctionReference(expression: IrRawFunctionReference) = super.visitRawFunctionReference(expression)
+    final override fun visitRawFunctionReference(expression: IrRawFunctionReference): IrExpression {
+        if (expression.needsDummySignature) return super.visitRawFunctionReference(expression)
+        val function = expression.symbol.owner
+
+        fun getReflectionReplacement(): IrFunction? {
+            replacements.getReplacementFunction(function)?.let { return it }
+            if (function is IrConstructor) {
+                replacements.getReplacementForRegularClassConstructor(function)?.let { return it }
+            }
+            return null
+        }
+
+        val replacement = getReflectionReplacement() ?: return super.visitRawFunctionReference(expression)
+        expression.symbol = replacement.symbol
+        return super.visitRawFunctionReference(expression)
+    }
+
     final override fun visitFunctionExpression(expression: IrFunctionExpression) = super.visitFunctionExpression(expression)
     final override fun visitClassReference(expression: IrClassReference) = super.visitClassReference(expression)
     final override fun visitInstanceInitializerCall(expression: IrInstanceInitializerCall) = super.visitInstanceInitializerCall(expression)
@@ -313,7 +355,6 @@ internal abstract class JvmValueClassAbstractLowering(
         super.visitDynamicOperatorExpression(expression)
 
     final override fun visitDynamicMemberExpression(expression: IrDynamicMemberExpression) = super.visitDynamicMemberExpression(expression)
-    final override fun visitErrorDeclaration(declaration: IrErrorDeclaration) = super.visitErrorDeclaration(declaration)
     final override fun visitErrorExpression(expression: IrErrorExpression) = super.visitErrorExpression(expression)
     final override fun visitErrorCallExpression(expression: IrErrorCallExpression) = super.visitErrorCallExpression(expression)
 

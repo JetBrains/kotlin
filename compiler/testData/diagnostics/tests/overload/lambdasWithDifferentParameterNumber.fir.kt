@@ -11,3 +11,5 @@ fun test() {
     f {}
     g {}
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionalType, lambdaLiteral, typeWithExtension */

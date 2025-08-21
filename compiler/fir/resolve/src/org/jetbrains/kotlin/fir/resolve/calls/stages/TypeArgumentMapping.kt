@@ -36,13 +36,14 @@ sealed class TypeArgumentMapping {
 }
 
 internal object MapTypeArguments : ResolutionStage() {
-    override suspend fun check(candidate: Candidate, callInfo: CallInfo, sink: CheckerSink, context: ResolutionContext) {
-        val typeArguments = callInfo.typeArguments
+    context(sink: CheckerSink, context: ResolutionContext)
+    override suspend fun check(candidate: Candidate) {
+        val typeArguments = candidate.callInfo.typeArguments
         val owner = candidate.symbol.fir as FirTypeParameterRefsOwner
 
         if (typeArguments.isEmpty()) {
             if (owner is FirCallableDeclaration && owner.dispatchReceiverType?.isRaw() == true) {
-                candidate.typeArgumentMapping = computeDefaultMappingForRawTypeMember(owner, context)
+                candidate.typeArgumentMapping = computeDefaultMappingForRawTypeMember(owner)
             } else {
                 candidate.typeArgumentMapping = TypeArgumentMapping.NoExplicitArguments
             }
@@ -52,7 +53,7 @@ internal object MapTypeArguments : ResolutionStage() {
         val desiredTypeParameterCount = owner.typeParameters.size
         if (
             typeArguments.size == desiredTypeParameterCount ||
-            callInfo.callKind == CallKind.DelegatingConstructorCall ||
+            candidate.callInfo.callKind == CallKind.DelegatingConstructorCall ||
             (owner as? FirDeclaration)?.origin is FirDeclarationOrigin.DynamicScope
         ) {
             candidate.typeArgumentMapping = TypeArgumentMapping.Mapped(typeArguments)
@@ -65,10 +66,8 @@ internal object MapTypeArguments : ResolutionStage() {
         }
     }
 
-    private fun computeDefaultMappingForRawTypeMember(
-        owner: FirTypeParameterRefsOwner,
-        context: ResolutionContext
-    ): TypeArgumentMapping.Mapped {
+    context(context: ResolutionContext)
+    private fun computeDefaultMappingForRawTypeMember(owner: FirTypeParameterRefsOwner): TypeArgumentMapping.Mapped {
         // There might be some minor inconsistencies where in K2, there might be a raw type, while in K1, there was a regular flexible type
         // And in that case for K2 we would start a regular inference process leads to TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER because raw scopes
         // don't leave type variables there (see KT-54526)
@@ -89,16 +88,18 @@ internal object MapTypeArguments : ResolutionStage() {
 }
 
 internal object NoTypeArguments : ResolutionStage() {
-    override suspend fun check(candidate: Candidate, callInfo: CallInfo, sink: CheckerSink, context: ResolutionContext) {
+    context(sink: CheckerSink, context: ResolutionContext)
+    override suspend fun check(candidate: Candidate) {
         candidate.typeArgumentMapping = TypeArgumentMapping.NoExplicitArguments
-        if (callInfo.typeArguments.isNotEmpty()) {
+        if (candidate.callInfo.typeArguments.isNotEmpty()) {
             sink.yieldDiagnostic(InapplicableCandidate)
         }
     }
 }
 
 internal object InitializeEmptyArgumentMap : ResolutionStage() {
-    override suspend fun check(candidate: Candidate, callInfo: CallInfo, sink: CheckerSink, context: ResolutionContext) {
+    context(sink: CheckerSink, context: ResolutionContext)
+    override suspend fun check(candidate: Candidate) {
         candidate.initializeArgumentMapping(arguments = emptyList(), argumentMapping = LinkedHashMap())
     }
 }

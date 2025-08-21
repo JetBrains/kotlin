@@ -11,3 +11,6 @@ abstract class J {
         foo(s)
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, flexibleType, functionDeclaration, javaFunction, localProperty,
+propertyDeclaration, starProjection, typeConstraint, typeParameter */

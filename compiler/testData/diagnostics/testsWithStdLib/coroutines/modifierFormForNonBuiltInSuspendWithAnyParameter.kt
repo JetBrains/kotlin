@@ -1,6 +1,7 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 // SKIP_TXT
+// LANGUAGE: -ParseLambdaWithSuspendModifier
 
 fun <R> suspend(block: R) = block
 
@@ -83,3 +84,6 @@ fun bar() {
 
     A() suspend ""
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, callableReference, classDeclaration, functionDeclaration, functionalType,
+infix, lambdaLiteral, localProperty, nullableType, propertyDeclaration, stringLiteral, suspend, typeParameter */

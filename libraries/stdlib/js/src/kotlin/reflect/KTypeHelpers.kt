@@ -2,16 +2,12 @@
  * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
+package kotlin.reflect.js.internal
 
-// a package is omitted to get declarations directly under the module
-
-// TODO: Remove once JsReflectionAPICallChecker supports more reflection types
-@file:Suppress("Unsupported")
-
+import kotlin.internal.UsedFromCompilerGeneratedCode
 import kotlin.reflect.*
-import kotlin.reflect.js.internal.*
 
-@JsName("createKType")
+@UsedFromCompilerGeneratedCode
 internal fun createKType(
     classifier: KClassifier,
     arguments: Array<KTypeProjection>,
@@ -19,18 +15,18 @@ internal fun createKType(
 ) =
     KTypeImpl(classifier, arguments.asList(), isMarkedNullable)
 
-@JsName("createDynamicKType")
+@UsedFromCompilerGeneratedCode
 internal fun createDynamicKType(): KType = DynamicKType
 
-@JsName("markKTypeNullable")
 internal fun markKTypeNullable(kType: KType) = KTypeImpl(kType.classifier!!, kType.arguments, true)
 
-@JsName("createKTypeParameter")
+@UsedFromCompilerGeneratedCode
 internal fun createKTypeParameter(
     name: String,
     upperBounds: Array<KType>,
     variance: String,
     isReified: Boolean,
+    container: String,
 ): KTypeParameter {
     val kVariance = when (variance) {
         "in" -> KVariance.IN
@@ -38,21 +34,21 @@ internal fun createKTypeParameter(
         else -> KVariance.INVARIANT
     }
 
-    return KTypeParameterImpl(name, upperBounds.asList(), kVariance, isReified)
+    return KTypeParameterImpl(name, upperBounds.asList(), kVariance, isReified, container)
 }
 
-@JsName("getStarKTypeProjection")
+@UsedFromCompilerGeneratedCode
 internal fun getStarKTypeProjection(): KTypeProjection =
     KTypeProjection.STAR
 
-@JsName("createCovariantKTypeProjection")
+@UsedFromCompilerGeneratedCode
 internal fun createCovariantKTypeProjection(type: KType): KTypeProjection =
     KTypeProjection.covariant(type)
 
-@JsName("createInvariantKTypeProjection")
+@UsedFromCompilerGeneratedCode
 internal fun createInvariantKTypeProjection(type: KType): KTypeProjection =
     KTypeProjection.invariant(type)
 
-@JsName("createContravariantKTypeProjection")
+@UsedFromCompilerGeneratedCode
 internal fun createContravariantKTypeProjection(type: KType): KTypeProjection =
     KTypeProjection.contravariant(type)

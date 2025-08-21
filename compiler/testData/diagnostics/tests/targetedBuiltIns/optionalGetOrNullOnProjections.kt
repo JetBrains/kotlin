@@ -13,3 +13,5 @@ fun c(s: Stream<*>) = s.findAny().getOrNull()
 fun d(c: Collection<Any?>) = c.stream().findAny().<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>getOrNull<!>()
 fun e(c: Collection<<!REDUNDANT_PROJECTION!>out<!> Any?>) = c.stream().findAny().getOrNull()
 fun f(c: Collection<*>) = c.stream().findAny().getOrNull()
+
+/* GENERATED_FIR_TAGS: capturedType, flexibleType, functionDeclaration, nullableType, outProjection, starProjection */

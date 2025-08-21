@@ -4,6 +4,7 @@ KtNameReferenceExpression(160,163): 'bar'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaImplicitReceiverValue:
           symbol = <anonymous>
           type = <anonymous>
@@ -13,6 +14,7 @@ KtNameReferenceExpression(160,163): 'bar'
           returnType = kotlin.Unit
           symbol = bar(<dispatch receiver>: <anonymous>): kotlin.Unit
           valueParameters = []
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true

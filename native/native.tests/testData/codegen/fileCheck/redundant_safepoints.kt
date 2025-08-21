@@ -17,16 +17,17 @@ fun f(): Any {
 
 fun g() = f()
 
-// CHECK-LABEL: define ptr @"kfun:#h(kotlin.Boolean){}kotlin.Any"
+// CHECK-LABEL: define {{(noundef )?}}ptr @"kfun:#h(kotlin.Boolean){}kotlin.Any"
 @Retain
 fun h(cond: Boolean): Any {
-    // CHECK-SMALLBINARY: {{call .*Kotlin_mm_safePointFunctionPrologue}}
+    // We have to check actual _call_ to a function, not just callee mention.
+    // CHECK-SMALLBINARY: {{call .*Kotlin_mm_safePointFunctionPrologue\(\)}}
     // CHECK-BIGBINARY-OPT: _ZN12_GLOBAL__N_115safePointActionE
 
     // CHECK-SMALLBINARY-NOT: _ZN12_GLOBAL__N_115safePointActionE
-    // CHECK-BIGBINARY-OPT-NOT: {{call .*Kotlin_mm_safePointFunctionPrologue}}
+    // CHECK-BIGBINARY-OPT-NOT: {{call .*Kotlin_mm_safePointFunctionPrologue\(\)}}
 
-    // CHECK-SMALLBINARY-NOT: {{call .*Kotlin_mm_safePointFunctionPrologue}}
+    // CHECK-SMALLBINARY-NOT: {{call .*Kotlin_mm_safePointFunctionPrologue\(\)}}
     // CHECK-BIGBINARY-OPT-NOT: _ZN12_GLOBAL__N_115safePointActionE
     if (cond) {
         return listOf(C(), C())
@@ -36,16 +37,16 @@ fun h(cond: Boolean): Any {
 // CHECK-LABEL: ret
 }
 
-// CHECK-LABEL: define {{(nonnull )?}}ptr @"kfun:#box(){}kotlin.String"
+// CHECK-LABEL: define {{(noundef )?}}{{(nonnull )?}}ptr @"kfun:#box(){}kotlin.String"
 @Retain
 fun box(): String {
-    // CHECK-SMALLBINARY: {{call .*Kotlin_mm_safePointFunctionPrologue}}
+    // CHECK-SMALLBINARY: {{call .*Kotlin_mm_safePointFunctionPrologue\(\)}}
     // CHECK-BIGBINARY-OPT: _ZN12_GLOBAL__N_115safePointActionE
 
     // CHECK-SMALLBINARY-NOT: _ZN12_GLOBAL__N_115safePointActionE
-    // CHECK-BIGBINARY-OPT-NOT: {{call .*Kotlin_mm_safePointFunctionPrologue}}
+    // CHECK-BIGBINARY-OPT-NOT: {{call .*Kotlin_mm_safePointFunctionPrologue\(\)}}
 
-    // CHECK-SMALLBINARY-NOT: {{call .*Kotlin_mm_safePointFunctionPrologue}}
+    // CHECK-SMALLBINARY-NOT: {{call .*Kotlin_mm_safePointFunctionPrologue\(\)}}
     // CHECK-BIGBINARY-OPT-NOT: _ZN12_GLOBAL__N_115safePointActionE
     println(g())
     println(h(true))

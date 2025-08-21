@@ -2,3 +2,5 @@
 fun test(x: Int?) {
      <!ARGUMENT_TYPE_MISMATCH!>x<!> in 1..2
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral, nullableType, rangeExpression */

@@ -9,11 +9,13 @@ import org.gradle.api.Project
 import org.gradle.kotlin.dsl.getByType
 import org.gradle.kotlin.dsl.named
 import org.jetbrains.kotlin.compose.compiler.gradle.testUtils.buildProjectWithJvm
+import org.jetbrains.kotlin.compose.compiler.gradle.testUtils.buildProjectWithMPP
 import org.jetbrains.kotlin.compose.compiler.gradle.testUtils.composeOptions
+import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
+import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 class ExtensionConfigurationTest {
@@ -31,7 +33,7 @@ class ExtensionConfigurationTest {
     }
 
     @Test
-    fun testIncludeMetricsDestination() {
+    fun testIncludeMetricsDestinationJvm() {
         testComposeOptions(
             { extension, project ->
                 extension.metricsDestination.value(
@@ -41,10 +43,82 @@ class ExtensionConfigurationTest {
         ) { options, project ->
             assertTrue(
                 options.contains(
-                    "metricsDestination" to project.layout.buildDirectory.dir("composeMetrics").get().asFile.path
+                    "metricsDestination" to project.layout.buildDirectory.dir("composeMetrics").get().asFile
+                        .resolve(KotlinCompilation.MAIN_COMPILATION_NAME).path
                 )
             )
         }
+    }
+
+    @Test
+    fun testIncludeMetricsDestinationKmp() {
+        val project = buildProjectWithMPP {
+            val composeExtension = extensions.getByType<ComposeCompilerGradlePluginExtension>()
+            composeExtension.metricsDestination.value(project.layout.buildDirectory.dir("composeMetrics"))
+
+            with(extensions.getByType<KotlinMultiplatformExtension>()) {
+                jvm()
+            }
+        }
+
+        project.evaluate()
+
+        val jvmTask = project.tasks.named<KotlinJvmCompile>("compileKotlinJvm").get()
+        val composeOptions = jvmTask.composeOptions()
+        assertTrue(
+            composeOptions.contains(
+                "metricsDestination" to project.layout.buildDirectory.dir("composeMetrics").get().asFile
+                    .resolve("jvm").resolve(KotlinCompilation.MAIN_COMPILATION_NAME).path
+            )
+        )
+    }
+
+    @Test
+    fun testIncludeMetricsDestinationKmpCustomTargetName() {
+        val project = buildProjectWithMPP {
+            val composeExtension = extensions.getByType<ComposeCompilerGradlePluginExtension>()
+            composeExtension.metricsDestination.value(project.layout.buildDirectory.dir("composeMetrics"))
+
+            with(extensions.getByType<KotlinMultiplatformExtension>()) {
+                jvm("desktop")
+            }
+        }
+
+        project.evaluate()
+
+        val jvmTask = project.tasks.named<KotlinJvmCompile>("compileKotlinDesktop").get()
+        val composeOptions = jvmTask.composeOptions()
+        assertTrue(
+            composeOptions.contains(
+                "metricsDestination" to project.layout.buildDirectory.dir("composeMetrics").get().asFile
+                    .resolve("desktop").resolve(KotlinCompilation.MAIN_COMPILATION_NAME).path
+            )
+        )
+    }
+
+    @Test
+    fun testIncludeMetricsDestinationKmpCustomCompilation() {
+        val project = buildProjectWithMPP {
+            val composeExtension = extensions.getByType<ComposeCompilerGradlePluginExtension>()
+            composeExtension.metricsDestination.value(project.layout.buildDirectory.dir("composeMetrics"))
+
+            with(extensions.getByType<KotlinMultiplatformExtension>()) {
+                jvm {
+                    compilations.register("jdk9")
+                }
+            }
+        }
+
+        project.evaluate()
+
+        val jvmTask = project.tasks.named<KotlinJvmCompile>("compileJdk9KotlinJvm").get()
+        val composeOptions = jvmTask.composeOptions()
+        assertTrue(
+            composeOptions.contains(
+                "metricsDestination" to project.layout.buildDirectory.dir("composeMetrics").get().asFile
+                    .resolve("jvm").resolve("jdk9").path
+            )
+        )
     }
 
     @Test
@@ -120,6 +194,7 @@ class ExtensionConfigurationTest {
 
     @Test
     fun disableIntrinsicRemember() {
+        @Suppress("DEPRECATION")
         testComposeFeatureFlags(listOf("-IntrinsicRemember")) { extension ->
             extension.featureFlags.value(setOf(ComposeFeatureFlag.IntrinsicRemember.disabled()))
         }
@@ -127,22 +202,23 @@ class ExtensionConfigurationTest {
 
     @Test
     fun disableStrongSkipping() {
+        @Suppress("DEPRECATION")
         testComposeFeatureFlags(listOf("-StrongSkipping")) { extension ->
             extension.featureFlags.value(setOf(ComposeFeatureFlag.StrongSkipping.disabled()))
         }
     }
 
     @Test
-    fun enableNonSkippingGroupOptimization() {
-        testComposeFeatureFlags(listOf("OptimizeNonSkippingGroups")) { extension ->
-            extension.featureFlags.value(setOf(ComposeFeatureFlag.OptimizeNonSkippingGroups))
+    fun disableNonSkippingGroupOptimization() {
+        testComposeFeatureFlags(listOf("-OptimizeNonSkippingGroups")) { extension ->
+            extension.featureFlags.value(setOf(ComposeFeatureFlag.OptimizeNonSkippingGroups.disabled()))
         }
     }
 
     @Test
-    fun enablePausableComposition() {
-        testComposeFeatureFlags(listOf("PausableComposition")) { extension ->
-            extension.featureFlags.value(setOf(ComposeFeatureFlag.PausableComposition))
+    fun disablePausableComposition() {
+        testComposeFeatureFlags(listOf("-PausableComposition")) { extension ->
+            extension.featureFlags.value(setOf(ComposeFeatureFlag.PausableComposition.disabled()))
         }
     }
 
@@ -172,6 +248,7 @@ class ExtensionConfigurationTest {
 
     @Test
     fun enableMultipleFlags() {
+        @Suppress("DEPRECATION")
         testComposeFeatureFlags(listOf("OptimizeNonSkippingGroups", "-StrongSkipping", "-IntrinsicRemember")) { extension ->
             extension.featureFlags.set(
                 setOf(

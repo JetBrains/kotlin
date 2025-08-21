@@ -1,3 +1,5 @@
+// COMPILATION_ERRORS
+
 fun foo()
 fun @[a] foo()
 fun @[a] T.foo()

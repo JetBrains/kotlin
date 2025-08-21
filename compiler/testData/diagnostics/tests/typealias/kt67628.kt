@@ -16,3 +16,7 @@ suspend fun hasNext(): Boolean {
 
     return result is IteratorYieldResult
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, elvisExpression, functionDeclaration, interfaceDeclaration, isExpression,
+localProperty, nullableType, outProjection, propertyDeclaration, starProjection, suspend, typeAliasDeclaration,
+typeParameter */

@@ -11,3 +11,5 @@ class Outer<out E, in F> {
     fun foo(x: Inner) {}
     fun bar(): Inner? = null
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, in, inner, nullableType, out, typeParameter */

@@ -8,3 +8,5 @@ fun foo() {
 
     run(fun <!ANONYMOUS_FUNCTION_WITH_NAME!>foo<!>() {})
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, localClass, localFunction */

@@ -40,3 +40,5 @@ fun test() {
     fooByte(<!TYPE_MISMATCH!>p5<!>)
     fooByte(<!TYPE_MISMATCH!>p6<!>)
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral, propertyDeclaration, unaryExpression */

@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.container.tests
 
 import org.jetbrains.kotlin.container.*
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import javax.inject.Inject
 import kotlin.test.*
 

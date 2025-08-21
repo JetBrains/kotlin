@@ -6,7 +6,8 @@ plugins {
 description = "Kotlin/Native utils"
 
 dependencies {
-    compileOnly(kotlinStdlib())
+    val coreDepsVersion = libs.versions.kotlin.`for`.gradle.plugins.compilation.get()
+    compileOnly("org.jetbrains.kotlin:kotlin-stdlib:$coreDepsVersion")
     api(project(":kotlin-util-io"))
     api(project(":kotlin-util-klib"))
     api(platform(project(":kotlin-gradle-plugins-bom")))

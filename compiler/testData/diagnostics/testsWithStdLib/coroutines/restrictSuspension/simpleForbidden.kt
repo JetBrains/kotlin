@@ -14,3 +14,6 @@ fun test() {
         <!ILLEGAL_RESTRICTED_SUSPENDING_FUNCTION_CALL!>suspendFun<!>()
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType, lambdaLiteral,
+nullableType, suspend, typeWithExtension */

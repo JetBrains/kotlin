@@ -1,7 +1,7 @@
 // FIR_IDENTICAL
+// IGNORE_BACKEND_K1: NATIVE
+// REASON: ClassicFrontendFacade.performNativeModuleResolve expects DependencyKind.Source, not DependencyKind.Binary
 // ISSUE: KT-69965
-// IGNORE_BACKEND: JS_IR
-// REASON: KT-69965 missing @[Source] annotation on return type of IrCall to `fun source()`
 
 // MODULE: lib
 // FILE: lib.kt

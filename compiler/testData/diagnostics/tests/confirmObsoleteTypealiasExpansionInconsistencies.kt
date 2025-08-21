@@ -14,3 +14,6 @@ class Test {
     val containerCall = GenericContainer<FooAlias>()
     lateinit var containerType: GenericContainer<FooAlias>
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, lateinit, nullableType, propertyDeclaration, typeAliasDeclaration,
+typeParameter */

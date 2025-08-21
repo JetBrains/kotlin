@@ -55,3 +55,6 @@ fun test(c: C) {
         v6 = ""  // FE1.0/FIR: Resolves to top-level v6
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, functionDeclaration, getter, lambdaLiteral, propertyDeclaration,
+setter, stringLiteral */

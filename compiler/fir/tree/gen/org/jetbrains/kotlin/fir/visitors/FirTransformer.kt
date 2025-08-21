@@ -1011,6 +1011,14 @@ abstract class FirTransformer<in D> : FirVisitor<FirElement, D>() {
         return transformResolvedNamedReference(resolvedNamedReference, data)
     }
 
+    open fun transformPropertyWithExplicitBackingFieldResolvedNamedReference(propertyWithExplicitBackingFieldResolvedNamedReference: FirPropertyWithExplicitBackingFieldResolvedNamedReference, data: D): FirReference {
+        return transformElement(propertyWithExplicitBackingFieldResolvedNamedReference, data)
+    }
+
+    final override fun visitPropertyWithExplicitBackingFieldResolvedNamedReference(propertyWithExplicitBackingFieldResolvedNamedReference: FirPropertyWithExplicitBackingFieldResolvedNamedReference, data: D): FirReference {
+        return transformPropertyWithExplicitBackingFieldResolvedNamedReference(propertyWithExplicitBackingFieldResolvedNamedReference, data)
+    }
+
     open fun transformResolvedCallableReference(resolvedCallableReference: FirResolvedCallableReference, data: D): FirReference {
         return transformElement(resolvedCallableReference, data)
     }
@@ -1075,12 +1083,12 @@ abstract class FirTransformer<in D> : FirVisitor<FirElement, D>() {
         return transformResolvedTypeRef(resolvedTypeRef, data)
     }
 
-    open fun transformTypeRefWithNullability(typeRefWithNullability: FirTypeRefWithNullability, data: D): FirTypeRef {
-        return transformElement(typeRefWithNullability, data)
+    open fun transformUnresolvedTypeRef(unresolvedTypeRef: FirUnresolvedTypeRef, data: D): FirTypeRef {
+        return transformElement(unresolvedTypeRef, data)
     }
 
-    final override fun visitTypeRefWithNullability(typeRefWithNullability: FirTypeRefWithNullability, data: D): FirTypeRef {
-        return transformTypeRefWithNullability(typeRefWithNullability, data)
+    final override fun visitUnresolvedTypeRef(unresolvedTypeRef: FirUnresolvedTypeRef, data: D): FirTypeRef {
+        return transformUnresolvedTypeRef(unresolvedTypeRef, data)
     }
 
     open fun transformUserTypeRef(userTypeRef: FirUserTypeRef, data: D): FirTypeRef {
@@ -1139,6 +1147,14 @@ abstract class FirTransformer<in D> : FirVisitor<FirElement, D>() {
         return transformErrorNamedReference(errorNamedReference, data)
     }
 
+    open fun transformErrorSuperReference(errorSuperReference: FirErrorSuperReference, data: D): FirReference {
+        return transformElement(errorSuperReference, data)
+    }
+
+    final override fun visitErrorSuperReference(errorSuperReference: FirErrorSuperReference, data: D): FirReference {
+        return transformErrorSuperReference(errorSuperReference, data)
+    }
+
     open fun transformIntersectionTypeRef(intersectionTypeRef: FirIntersectionTypeRef, data: D): FirTypeRef {
         return transformElement(intersectionTypeRef, data)
     }
@@ -1153,6 +1169,14 @@ abstract class FirTransformer<in D> : FirVisitor<FirElement, D>() {
 
     final override fun visitThisReceiverExpression(thisReceiverExpression: FirThisReceiverExpression, data: D): FirStatement {
         return transformThisReceiverExpression(thisReceiverExpression, data)
+    }
+
+    open fun transformSuperReceiverExpression(superReceiverExpression: FirSuperReceiverExpression, data: D): FirStatement {
+        return transformElement(superReceiverExpression, data)
+    }
+
+    final override fun visitSuperReceiverExpression(superReceiverExpression: FirSuperReceiverExpression, data: D): FirStatement {
+        return transformSuperReceiverExpression(superReceiverExpression, data)
     }
 
     open fun transformInaccessibleReceiverExpression(inaccessibleReceiverExpression: FirInaccessibleReceiverExpression, data: D): FirStatement {
@@ -1249,6 +1273,14 @@ abstract class FirTransformer<in D> : FirVisitor<FirElement, D>() {
 
     final override fun visitLegacyRawContractDescription(legacyRawContractDescription: FirLegacyRawContractDescription, data: D): FirContractDescription {
         return transformLegacyRawContractDescription(legacyRawContractDescription, data)
+    }
+
+    open fun transformLazyContractDescription(lazyContractDescription: FirLazyContractDescription, data: D): FirContractDescription {
+        return transformElement(lazyContractDescription, data)
+    }
+
+    final override fun visitLazyContractDescription(lazyContractDescription: FirLazyContractDescription, data: D): FirContractDescription {
+        return transformLazyContractDescription(lazyContractDescription, data)
     }
 
     open fun transformErrorContractDescription(errorContractDescription: FirErrorContractDescription, data: D): FirContractDescription {

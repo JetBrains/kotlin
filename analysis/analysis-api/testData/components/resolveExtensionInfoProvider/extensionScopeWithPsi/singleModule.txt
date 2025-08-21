@@ -69,6 +69,7 @@ callables: 5
     annotations: []
     callableId: generated/genTopLevelFun1
     compilerVisibility: Public
+    contextParameters: []
     contextReceivers: []
     contractEffects: []
     hasStableParameterNames: true
@@ -130,6 +131,7 @@ callables: 5
     annotations: []
     callableId: generated/genTopLevelExtension1
     compilerVisibility: Public
+    contextParameters: []
     contextReceivers: []
     contractEffects: []
     hasStableParameterNames: true
@@ -204,19 +206,19 @@ callables: 5
       visibility: PRIVATE
     callableId: generated/genTopLevelVal1
     compilerVisibility: Public
+    contextParameters: []
     contextReceivers: []
     getter: KaPropertyGetterSymbol:
       annotations: []
       callableId: null
       compilerVisibility: Public
       contextReceivers: []
-      hasBody: false
       hasStableParameterNames: true
       isActual: false
-      isDefault: true
       isExpect: false
       isExtension: false
       isInline: false
+      isNotDefault: false
       isOverride: false
       location: PROPERTY
       modality: FINAL
@@ -283,19 +285,19 @@ callables: 5
       visibility: PRIVATE
     callableId: generated/genTopLevelVar1
     compilerVisibility: Public
+    contextParameters: []
     contextReceivers: []
     getter: KaPropertyGetterSymbol:
       annotations: []
       callableId: null
       compilerVisibility: Public
       contextReceivers: []
-      hasBody: false
       hasStableParameterNames: true
       isActual: false
-      isDefault: true
       isExpect: false
       isExtension: false
       isInline: false
+      isNotDefault: false
       isOverride: false
       location: PROPERTY
       modality: FINAL
@@ -336,13 +338,12 @@ callables: 5
       callableId: null
       compilerVisibility: Internal
       contextReceivers: []
-      hasBody: false
       hasStableParameterNames: true
       isActual: false
-      isDefault: true
       isExpect: false
       isExtension: false
       isInline: false
+      isNotDefault: false
       isOverride: false
       location: PROPERTY
       modality: FINAL
@@ -435,19 +436,19 @@ callables: 5
       visibility: PRIVATE
     callableId: generated/genExtensionVal1
     compilerVisibility: Public
+    contextParameters: []
     contextReceivers: []
     getter: KaPropertyGetterSymbol:
       annotations: []
       callableId: null
       compilerVisibility: Public
       contextReceivers: []
-      hasBody: true
       hasStableParameterNames: true
       isActual: false
-      isDefault: false
       isExpect: false
       isExtension: false
       isInline: false
+      isNotDefault: true
       isOverride: false
       location: PROPERTY
       modality: FINAL

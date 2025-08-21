@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // SKIP_KT_DUMP
 // TARGET_BACKEND: JVM
 
@@ -22,6 +23,7 @@ public class JavaSeparate3 {
 }
 
 // MODULE: main(separate)
+// DISABLE_JAVA_FACADE
 
 // FILE: Java1.java
 public class Java1 extends JavaSeparate1 {

@@ -13,13 +13,14 @@ import org.jetbrains.kotlin.backend.konan.driver.BasicPhaseContext
 import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
 import org.jetbrains.kotlin.backend.konan.driver.utilities.LlvmIrHolder
 import org.jetbrains.kotlin.backend.konan.llvm.*
+import org.jetbrains.kotlin.backend.konan.llvm.runtime.RuntimeModule
+import org.jetbrains.kotlin.backend.konan.llvm.runtime.RuntimeModulesConfig
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExport
 import org.jetbrains.kotlin.backend.konan.serialization.CacheDeserializationStrategy
 import org.jetbrains.kotlin.backend.konan.serialization.SerializedClassFields
 import org.jetbrains.kotlin.backend.konan.serialization.SerializedEagerInitializedFile
 import org.jetbrains.kotlin.backend.konan.serialization.SerializedInlineFunctionReference
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.expressions.IrSuspensionPoint
 
 internal class FileLowerState {
     private var functionReferenceCount = 0
@@ -32,8 +33,7 @@ internal class FileLowerState {
     fun getFunctionReferenceImplUniqueName(prefix: String) =
             "$prefix${functionReferenceCount++}"
 
-    fun getCStubUniqueName(prefix: String) =
-            "$prefix${cStubCount++}"
+    fun getCStubIndex() = cStubCount++
 }
 
 internal interface BitcodePostProcessingContext : PhaseContext, LlvmIrHolder {
@@ -67,16 +67,15 @@ internal class NativeGenerationState(
     val inlineFunctionBodies = mutableListOf<SerializedInlineFunctionReference>()
     val classFields = mutableListOf<SerializedClassFields>()
     val eagerInitializedFiles = mutableListOf<SerializedEagerInitializedFile>()
-    val calledFromExportedInlineFunctions = mutableSetOf<IrFunction>()
-    val constructedFromExportedInlineFunctions = mutableSetOf<IrClass>()
-    val liveVariablesAtSuspensionPoints = mutableMapOf<IrSuspensionPoint, List<IrVariable>>()
-    val visibleVariablesAtSuspensionPoints = mutableMapOf<IrSuspensionPoint, List<IrVariable>>()
+    var coroutinesLivenessAnalysisPhasePerformed = false
 
     lateinit var fileLowerState: FileLowerState
 
     val producedLlvmModuleContainsStdlib get() = llvmModuleSpecification.containsModule(context.stdlibModule)
 
-    private val runtimeDelegate = lazy { Runtime(this, llvmContext, config.distribution.compilerInterface(config.target)) }
+    internal val runtimeModulesConfig = RuntimeModulesConfig(config)
+
+    private val runtimeDelegate = lazy { Runtime(this, llvmContext, runtimeModulesConfig.absolutePathFor(RuntimeModule.COMPILER_INTERFACE)) }
     private val llvmDelegate = lazy { CodegenLlvmHelpers(this, LLVMModuleCreateWithNameInContext(llvmModuleName, llvmContext)!!) }
     private val debugInfoDelegate = lazy { DebugInfo(this) }
 

@@ -1,0 +1,6 @@
+KtNameReferenceExpression(122,125): 'foo'
+  KtSimpleNameReference:
+    (in ROOT) val foo: kotlin.Boolean
+
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)

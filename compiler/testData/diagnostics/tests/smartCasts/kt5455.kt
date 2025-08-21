@@ -28,3 +28,6 @@ fun test2(b: B?) {
         (b as A).foo()
     }
 }
+
+/* GENERATED_FIR_TAGS: asExpression, classDeclaration, equalityExpression, functionDeclaration, ifExpression,
+integerLiteral, isExpression, nullableType, safeCall, smartcast */

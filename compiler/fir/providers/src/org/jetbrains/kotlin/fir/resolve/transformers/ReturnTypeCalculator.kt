@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -19,7 +19,7 @@ abstract class ReturnTypeCalculator {
 
     fun tryCalculateReturnType(declaration: FirCallableDeclaration): FirResolvedTypeRef {
         return tryCalculateReturnTypeOrNull(declaration)
-            ?: errorWithAttachment("Return type cannot be calculated for ${declaration::class.simpleName}") {
+            ?: errorWithAttachment("${this::class.simpleName}: Return type cannot be calculated for ${declaration::class.simpleName}") {
                 withFirEntry("declaration", declaration)
             }
     }

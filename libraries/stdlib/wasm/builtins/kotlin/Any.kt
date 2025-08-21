@@ -13,11 +13,6 @@ import kotlin.random.*
  * The root of the Kotlin class hierarchy. Every Kotlin class has [Any] as a superclass.
  */
 public actual open class Any @WasmPrimitiveConstructor actual constructor() {
-    // Pointer to runtime type info
-    // Initialized by a compiler
-    @Suppress("MUST_BE_INITIALIZED_OR_BE_ABSTRACT")
-    internal var typeInfo: Int
-
     /**
      * Indicates whether some other object is "equal to" this one.
      *
@@ -33,6 +28,8 @@ public actual open class Any @WasmPrimitiveConstructor actual constructor() {
     public actual open operator fun equals(other: Any?): Boolean =
         wasm_ref_eq(this, other)
 
+    internal var _hashCode: Int = 0
+    
     /**
      * Returns a hash code value for the object.
      *
@@ -40,7 +37,6 @@ public actual open class Any @WasmPrimitiveConstructor actual constructor() {
      * * Whenever it is invoked on the same object more than once, the `hashCode` method must consistently return the same integer, provided no information used in `equals` comparisons on the object is modified.
      * * If two objects are equal according to the `equals()` method, then calling the `hashCode` method on each of the two objects must produce the same integer result.
      */
-    internal var _hashCode: Int = 0
     public actual open fun hashCode(): Int {
         return identityHashCode()
     }
@@ -48,13 +44,8 @@ public actual open class Any @WasmPrimitiveConstructor actual constructor() {
     /**
      * Returns a string representation of the object.
      */
-    public actual open fun toString(): String {
-        val typeInfoPtr = this.typeInfo
-        val packageName = getPackageName(typeInfoPtr)
-        val simpleName = getSimpleName(typeInfoPtr)
-        val qualifiedName = if (packageName.isEmpty()) simpleName else "$packageName.$simpleName"
-        return "$qualifiedName@${identityHashCode()}"
-    }
+    public actual open fun toString(): String =
+        "${getQualifiedName(wasmGetObjectRtti(this))}@${identityHashCode()}"
 }
 
 // Don't use outside, otherwise it could break classes reusing `_hashCode` field, like String.

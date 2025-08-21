@@ -33,3 +33,5 @@ import kotlin.annotation.AnnotationRetention;
 
 @Retention(AnnotationRetention.RUNTIME)
 public @interface JavaTypealiasKotlinAnnotationImpl {}
+
+/* GENERATED_FIR_TAGS: actual, annotationDeclaration, expect, javaType, typeAliasDeclaration */

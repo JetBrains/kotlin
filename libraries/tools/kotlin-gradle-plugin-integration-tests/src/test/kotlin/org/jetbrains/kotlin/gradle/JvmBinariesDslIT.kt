@@ -69,9 +69,8 @@ class JvmBinariesDslIT : KGPBaseTest() {
 
             build("runJvm") {
                 assertTasksExecuted(":multiplatform:runJvm")
-                val jdk21path = Jvm.forHome(File(System.getProperty("jdk21Home"))).javaExecutable.absolutePath
                 assertOutputContains(
-                    "Successfully started process 'command '${jdk21path}''"
+                    "Successfully started process 'command '${jdk21Info.javaExecutable}''"
                 )
             }
         }
@@ -185,6 +184,64 @@ class JvmBinariesDslIT : KGPBaseTest() {
 
             val runScript = if (OS.WINDOWS.isCurrentOs) "multiplatform.bat" else "multiplatform"
             assertScriptExecutionIsSuccessful(projectPath.resolve("multiplatform/build/install/multiplatform-jvmTestCustom/bin/$runScript"))
+        }
+    }
+
+    @DisplayName("Test binary distribution is runnable")
+    @GradleTest
+    fun testBinaryDistributionIsRunnable(gradleVersion: GradleVersion) {
+        project("mppRunJvm", gradleVersion) {
+            with(subProject("multiplatform")) {
+                buildScriptInjection {
+                    kotlinMultiplatform.jvmToolchain(17)
+                    kotlinMultiplatform.jvm {
+                        binaries {
+                            executable(KotlinCompilation.TEST_COMPILATION_NAME) {
+                                mainClass.set("JvmMainTestKt")
+                            }
+                        }
+                    }
+                }
+
+                kotlinSourcesDir("jvmMain").resolve("MainPrinter.kt").writeText(
+                    //language=kotlin
+                    """
+                    |class MainPrinter {
+                    |    fun print10() {
+                    |        println("10")
+                    |    }
+                    |}
+                    """.trimMargin()
+                )
+                kotlinSourcesDir("jvmTest")
+                    .also { it.createDirectories() }
+                    .resolve("JvmMainTest.kt")
+                    .writeText(
+                        //language=kotlin
+                        """
+                        |fun main() {
+                        |   val mainPrinter = MainPrinter()
+                        |   mainPrinter.print10()
+                        |}
+                        """.trimMargin()
+                    )
+            }
+
+            build("installJvmTestDist") {
+                assertTasksExecuted(
+                    ":multiplatform:jvmTestJar",
+                    ":multiplatform:startScriptsForJvmTest",
+                    ":multiplatform:installJvmTestDist",
+                )
+
+                assertDirectoryInProjectExists("multiplatform/build/install/multiplatform-jvmTest/bin")
+                assertFileInProjectExists("multiplatform/build/install/multiplatform-jvmTest/bin/multiplatform")
+                assertFileInProjectExists("multiplatform/build/install/multiplatform-jvmTest/bin/multiplatform.bat")
+                assertDirectoryInProjectExists("multiplatform/build/install/multiplatform-jvmTest/lib")
+            }
+
+            val runScript = if (OS.WINDOWS.isCurrentOs) "multiplatform.bat" else "multiplatform"
+            assertScriptExecutionIsSuccessful(projectPath.resolve("multiplatform/build/install/multiplatform-jvmTest/bin/$runScript"))
         }
     }
 
@@ -306,7 +363,6 @@ class JvmBinariesDslIT : KGPBaseTest() {
 
             subProject("multiplatform").buildScriptInjection {
                 kotlinMultiplatform.jvm {
-                    withJava()
                     binaries {
                         executable {
                             mainClass.set("org.example.JvmMainKt")
@@ -333,7 +389,7 @@ class JvmBinariesDslIT : KGPBaseTest() {
         processBuilder.redirectErrorStream(true)
         processBuilder.redirectOutput(outputFile)
         // Prevent the distribution script picking up the wrong JDK
-        processBuilder.environment()["JAVA_HOME"] = System.getProperty("jdk17Home")
+        processBuilder.environment()["JAVA_HOME"] = jdk17Info.jdkPath
         val process = processBuilder.start()
         assertEquals(0, process.waitFor(), "Distribution run failed:\n${outputFile.readText()}")
     }

@@ -1,6 +1,6 @@
 // FIR_IDENTICAL
 // RUN_PIPELINE_TILL: FRONTEND
-// DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER -TOPLEVEL_TYPEALIASES_ONLY
+// DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER -TOPLEVEL_TYPEALIASES_ONLY -UNSUPPORTED_FEATURE
 
 class C<T> {
     inner class D
@@ -24,3 +24,6 @@ fun test7(x: C<*>.TC) = x
 
 fun test8(x: C.SSDA) = x
 fun test9(x: C.SSC) = x
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, inner, nullableType, starProjection, typeAliasDeclaration,
+typeAliasDeclarationWithTypeParameter, typeParameter */

@@ -16,7 +16,6 @@ import kotlin.internal.*
  * A range of values of type `UInt`.
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalUnsignedTypes::class)
 public class UIntRange(start: UInt, endInclusive: UInt) : UIntProgression(start, endInclusive, 1), ClosedRange<UInt>, OpenEndRange<UInt> {
     override val start: UInt get() = first
     override val endInclusive: UInt get() = last
@@ -57,7 +56,6 @@ public class UIntRange(start: UInt, endInclusive: UInt) : UIntProgression(start,
  * A progression of values of type `UInt`.
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalUnsignedTypes::class)
 public open class UIntProgression
 internal constructor(
     start: UInt,

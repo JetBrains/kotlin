@@ -12,7 +12,8 @@ class C {
 }
 
 fun box(): String {
-  return contextual(f = local fun <anonymous>($context_receiver_0: C): String {
+  return contextual(f = context($context_receiver_0: C)
+  local fun <anonymous>(): String {
     return $context_receiver_0.<get-result>()
   }
 )

@@ -4,6 +4,7 @@ KtCallExpression(75,78): 'f()'
       argumentMapping = {}
       isImplicitInvoke = true
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = f
           isSafeNavigation = false
@@ -19,8 +20,10 @@ KtCallExpression(75,78): 'f()'
               receiverType = null
               returnType = kotlin.Any
               symbol = vararg a: kotlin.Any
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = /Foo.invoke
       typeArgumentsMapping = {}
     isInBestCandidates = true

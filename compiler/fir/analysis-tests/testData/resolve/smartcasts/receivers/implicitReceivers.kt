@@ -35,8 +35,8 @@ fun Any?.test_2() {
 }
 
 fun test_3(a: Any, b: Any, c: Any) {
-    <!CANNOT_INFER_PARAMETER_TYPE, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>with<!>(a) wa@{
-        <!CANNOT_INFER_PARAMETER_TYPE, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>with<!>(b) wb@{
+    <!CANNOT_INFER_PARAMETER_TYPE!>with<!>(a) wa@{
+        <!CANNOT_INFER_PARAMETER_TYPE!>with<!>(b) wb@{
             with(c) wc@{
                 this@wb as A
                 this@wb.foo()
@@ -83,3 +83,7 @@ fun Any.test_6() {
     this <!CAST_NEVER_SUCCEEDS!>as<!> String
     length
 }
+
+/* GENERATED_FIR_TAGS: asExpression, classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType,
+ifExpression, integerLiteral, intersectionType, isExpression, lambdaLiteral, nullableType, smartcast, starProjection,
+thisExpression, typeParameter, typeWithExtension, whenExpression */

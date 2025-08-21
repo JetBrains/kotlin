@@ -33,3 +33,5 @@ fun foo() {
     Outer.PublicNested()
     Outer().PublicInner()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, inner, nestedClass, superExpression */

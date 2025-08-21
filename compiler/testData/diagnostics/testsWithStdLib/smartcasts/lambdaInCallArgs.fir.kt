@@ -48,3 +48,6 @@ fun test_4() {
         )
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, equalityExpression, functionDeclaration, functionalType, ifExpression, lambdaLiteral,
+localProperty, nullableType, propertyDeclaration, smartcast, stringLiteral */

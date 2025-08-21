@@ -7,3 +7,6 @@ fun test() {
     val b: Int
     run { b = 1 }<!UNNECESSARY_SAFE_CALL!>?.<!>let {} // K1: UNNECESSARY_SAFE_CALL, K2: UNEXPECTED_SAFE_CALL
 }
+
+/* GENERATED_FIR_TAGS: assignment, functionDeclaration, integerLiteral, lambdaLiteral, localProperty, nullableType,
+propertyDeclaration, safeCall */

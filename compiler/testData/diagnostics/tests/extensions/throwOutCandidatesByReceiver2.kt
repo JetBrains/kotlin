@@ -14,3 +14,6 @@ fun test(a1: A, a2: A) {
 public operator fun <T: Comparable<T>> T.rangeTo(that: T): ClosedRange<T> {
     throw UnsupportedOperationException()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, localProperty, operator,
+propertyDeclaration, rangeExpression, stringLiteral, typeConstraint, typeParameter */

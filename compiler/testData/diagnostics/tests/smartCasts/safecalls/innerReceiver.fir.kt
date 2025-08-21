@@ -7,3 +7,5 @@ fun calc(x: String?, y: String?): Int {
     // No smart cast possible
     return y<!UNSAFE_CALL!>.<!>length
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, functionDeclaration, integerLiteral, nullableType, safeCall, smartcast */

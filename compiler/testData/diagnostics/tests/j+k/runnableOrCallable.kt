@@ -14,3 +14,6 @@ abstract class Logger(val service: ScheduledExecutorService) {
         future = service.schedule(this::flush, 0L, TimeUnit.MILLISECONDS)
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, callableReference, classDeclaration, flexibleType, functionDeclaration, javaFunction,
+javaProperty, lateinit, primaryConstructor, propertyDeclaration, samConversion, thisExpression */

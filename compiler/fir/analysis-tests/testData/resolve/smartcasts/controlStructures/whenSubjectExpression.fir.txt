@@ -1,6 +1,6 @@
 FILE: whenSubjectExpression.kt
     public final fun whenWithSubjectExpression(x: R|kotlin/Any|): R|kotlin/Unit| {
-        when (R|<local>/x|) {
+        when (lval <when-subject>: R|kotlin/Any| = R|<local>/x|) {
             ($subj$ !is R|kotlin/Double|) ->  {
                 Int(-1)
             }

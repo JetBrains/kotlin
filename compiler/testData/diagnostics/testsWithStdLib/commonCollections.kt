@@ -28,3 +28,6 @@ fun foo() {
 
     hm.remove("")
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, integerLiteral, intersectionType, javaFunction, localProperty,
+nullableType, propertyDeclaration, stringLiteral */

@@ -18,3 +18,6 @@ class DefaultArgsInNestedClassImpl {
 }
 
 <!DEFAULT_ARGUMENTS_IN_EXPECT_WITH_ACTUAL_TYPEALIAS!>actual typealias DefaultArgsInNestedClass = DefaultArgsInNestedClassImpl<!>
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, functionDeclaration, nestedClass, stringLiteral,
+typeAliasDeclaration */

@@ -32,10 +32,12 @@ object SirSwiftModule : SirModule() {
     val double = struct("Double")
     val float = struct("Float")
 
-    val uint = struct("UInt")
+    val unsafeMutableRawPointer = struct("UnsafeMutableRawPointer")
+    val int = struct("Int")
 
     val void = struct("Void")
     val never = struct("Never")
+    val anyHashable = struct("AnyHashable")
     val string = struct("String")
 
     val array = struct("Array")

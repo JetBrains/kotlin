@@ -55,6 +55,10 @@ class ExpressionCheckersDiagnosticComponent(
         checkers.allPropertyAccessExpressionCheckers.check(propertyAccessExpression, data)
     }
 
+    override fun visitSuperReceiverExpression(superReceiverExpression: FirSuperReceiverExpression, data: CheckerContext) {
+        checkers.allSuperReceiverExpressionCheckers.check(superReceiverExpression, data)
+    }
+
     override fun visitIntegerLiteralOperatorCall(integerLiteralOperatorCall: FirIntegerLiteralOperatorCall, data: CheckerContext) {
         checkers.allIntegerLiteralOperatorCallCheckers.check(integerLiteralOperatorCall, data)
     }
@@ -261,7 +265,9 @@ class ExpressionCheckersDiagnosticComponent(
     ) {
         for (checker in this) {
             try {
-                checker.check(element, context, reporter)
+                context(context, reporter) {
+                    checker.check(element)
+                }
             } catch (e: Exception) {
                 rethrowExceptionWithDetails("Exception in expression checkers", e) {
                     withFirEntry("element", element)

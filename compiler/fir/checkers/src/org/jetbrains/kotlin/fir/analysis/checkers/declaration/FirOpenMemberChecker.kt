@@ -15,29 +15,29 @@ import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.hasModifier
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
-import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirClass
-import org.jetbrains.kotlin.fir.declarations.FirConstructor
+import org.jetbrains.kotlin.fir.declarations.processAllDeclaredCallables
 import org.jetbrains.kotlin.fir.declarations.utils.isOpen
 import org.jetbrains.kotlin.fir.declarations.utils.isOverride
+import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.lexer.KtTokens
 
 object FirOpenMemberChecker : FirClassChecker(MppCheckerKind.Common) {
-    override fun check(declaration: FirClass, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirClass) {
         if (declaration.canHaveOpenMembers) return
-        for (memberDeclaration in declaration.declarations) {
-            if (memberDeclaration !is FirCallableDeclaration ||
-                // Marking a constructor `open` is an error covered by diagnostic code WRONG_MODIFIER_TARGET
-                memberDeclaration is FirConstructor
-            ) continue
-            val source = memberDeclaration.source ?: continue
+        declaration.symbol.processAllDeclaredCallables(context.session) { memberDeclaration ->
+            if (// Marking a constructor `open` is an error covered by diagnostic code WRONG_MODIFIER_TARGET
+                memberDeclaration is FirConstructorSymbol
+            ) return@processAllDeclaredCallables
+            val source = memberDeclaration.source ?: return@processAllDeclaredCallables
             if (memberDeclaration.isOpen && !memberDeclaration.isOverride && declaration.classKind == ClassKind.ANNOTATION_CLASS ||
                 memberDeclaration.hasModifier(KtTokens.OPEN_KEYWORD) && source.shouldReportOpenFromSource
             ) {
                 if (declaration.classKind == ClassKind.OBJECT) {
-                    reporter.reportOn(source, FirErrors.NON_FINAL_MEMBER_IN_OBJECT, context)
+                    reporter.reportOn(source, FirErrors.NON_FINAL_MEMBER_IN_OBJECT)
                 } else {
-                    reporter.reportOn(source, FirErrors.NON_FINAL_MEMBER_IN_FINAL_CLASS, context)
+                    reporter.reportOn(source, FirErrors.NON_FINAL_MEMBER_IN_FINAL_CLASS)
                 }
             }
         }

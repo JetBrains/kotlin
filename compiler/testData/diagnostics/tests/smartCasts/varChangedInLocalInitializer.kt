@@ -9,3 +9,6 @@ fun foo() {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, functionDeclaration, init, integerLiteral, localClass,
+localProperty, nullableType, propertyDeclaration, smartcast */

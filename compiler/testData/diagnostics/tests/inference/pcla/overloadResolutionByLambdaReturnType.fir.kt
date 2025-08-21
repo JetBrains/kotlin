@@ -16,3 +16,6 @@ fun main() {
         ""
     }
 }
+
+/* GENERATED_FIR_TAGS: classReference, functionDeclaration, functionalType, integerLiteral, lambdaLiteral, nullableType,
+stringLiteral, typeParameter, typeWithExtension */

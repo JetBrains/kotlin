@@ -69,7 +69,10 @@ internal tailrec fun FirDeclaration.ktSymbolOrigin(): KaSymbolOrigin = when (ori
     is FirDeclarationOrigin.Java.Source -> KaSymbolOrigin.JAVA_SOURCE
     is FirDeclarationOrigin.Java.Library -> KaSymbolOrigin.JAVA_LIBRARY
     FirDeclarationOrigin.SamConstructor -> KaSymbolOrigin.SAM_CONSTRUCTOR
-    FirDeclarationOrigin.Enhancement, FirDeclarationOrigin.RenamedForOverride -> javaOriginBasedOnSessionKind()
+    FirDeclarationOrigin.Enhancement, FirDeclarationOrigin.RenamedForOverride -> when (source?.kind) {
+        KtFakeSourceElementKind.EnumGeneratedDeclaration -> KaSymbolOrigin.SOURCE_MEMBER_GENERATED
+        else -> javaOriginBasedOnSessionKind()
+    }
     FirDeclarationOrigin.IntersectionOverride -> KaSymbolOrigin.INTERSECTION_OVERRIDE
     FirDeclarationOrigin.Delegated -> KaSymbolOrigin.DELEGATED
     FirDeclarationOrigin.Synthetic.FakeHiddenInPreparationForNewJdk -> KaSymbolOrigin.LIBRARY
@@ -111,6 +114,7 @@ internal tailrec fun FirDeclaration.ktSymbolOrigin(): KaSymbolOrigin = when (ori
     is FirDeclarationOrigin.SubstitutionOverride -> KaSymbolOrigin.SUBSTITUTION_OVERRIDE
     FirDeclarationOrigin.DynamicScope -> KaSymbolOrigin.JS_DYNAMIC
     is FirDeclarationOrigin.ScriptCustomization -> KaSymbolOrigin.PLUGIN
+    is FirDeclarationOrigin.ForeignValue -> KaSymbolOrigin.SOURCE
     is FirDeclarationOrigin.FromOtherReplSnippet ->
         errorWithAttachment("Unsupported origin: ${origin::class.simpleName}") {
             withFirEntry("declaration", this@ktSymbolOrigin)

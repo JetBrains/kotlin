@@ -6,30 +6,31 @@
 package org.jetbrains.kotlin.konan.test.blackbox
 
 import com.intellij.testFramework.TestDataPath
+import org.jetbrains.kotlin.config.nativeBinaryOptions.GC
+import org.jetbrains.kotlin.config.nativeBinaryOptions.GCSchedulerType
 import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.test.blackbox.support.*
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.*
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationResult.Companion.assertSuccess
-import org.jetbrains.kotlin.konan.test.blackbox.support.group.FirPipeline
+import org.jetbrains.kotlin.konan.test.blackbox.support.group.ClassicPipeline
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestExecutable
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunCheck
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunChecks
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.*
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.createTestProvider
 import org.jetbrains.kotlin.native.executors.runProcess
+import org.jetbrains.kotlin.test.KotlinTestUtils.assertEqualsToFile
 import org.jetbrains.kotlin.test.KtAssert.fail
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
 import org.junit.jupiter.api.Assumptions
-import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import java.io.File
 import kotlin.time.Duration
 
+@ClassicPipeline()
 @TestDataPath("\$PROJECT_ROOT")
 class ClassicFrameworkTest : FrameworkTestBase()
 
-@FirPipeline
-@Tag("frontend-fir")
 @TestDataPath("\$PROJECT_ROOT")
 class FirFrameworkTest : FrameworkTestBase()
 
@@ -85,10 +86,10 @@ abstract class FrameworkTestBase : AbstractNativeSimpleTest() {
             val shortOutText = result.stdout.lines().take(100)
             val shortErrText = result.stderr.lines().take(100)
             fail("FileCheck matching of ${fileCheckDump.absolutePath}\n" +
-                        "with '--check-prefixes ${testCase.checks.fileCheckMatcher.prefixes}'\n" +
-                        "failed with result=$result:\n" +
-                        shortOutText.joinToString("\n") + "\n" +
-                        shortErrText.joinToString("\n")
+                         "with '--check-prefixes ${testCase.checks.fileCheckMatcher.prefixes}'\n" +
+                         "failed with result=$result:\n" +
+                         shortOutText.joinToString("\n") + "\n" +
+                         shortErrText.joinToString("\n")
             )
         }
     }
@@ -339,7 +340,7 @@ abstract class FrameworkTestBase : AbstractNativeSimpleTest() {
         // test must make huge amount of repetitions to make sure there's no race conditions, so bigger timeout is needed. Double is not enough
         val checks = TestRunChecks.Default(testRunSettings.get<Timeouts>().executionTimeout * 10)
         val testCase = generateObjCFramework(testName, checks = checks)
-        val swiftExtraOpts = if (testRunSettings.get<GCScheduler>() != GCScheduler.AGGRESSIVE) listOf() else
+        val swiftExtraOpts = if (testRunSettings.get<GCScheduler>().scheduler != GCSchedulerType.AGGRESSIVE) listOf() else
             listOf("-D", "AGGRESSIVE_GC")
         compileAndRunSwift(testName, testCase, swiftExtraOpts)
     }
@@ -352,9 +353,16 @@ abstract class FrameworkTestBase : AbstractNativeSimpleTest() {
     }
 
     @Test
+    fun testKT78837() {
+        val testName = "kt78837"
+        val testCase = generateObjCFramework(testName)
+        compileAndRunSwift(testName, testCase)
+    }
+
+    @Test
     fun testPermanentObjects() {
         val testName = "permanentObjects"
-        Assumptions.assumeFalse(testRunSettings.get<GCType>() == GCType.NOOP) { "Test requires GC to actually happen" }
+        Assumptions.assumeFalse(testRunSettings.get<GCType>().gc == GC.NOOP) { "Test requires GC to actually happen" }
 
         val testCase = generateObjCFramework(testName, listOf("-opt-in=kotlin.native.internal.InternalForKotlinNative"))
         compileAndRunSwift(testName, testCase)
@@ -365,6 +373,20 @@ abstract class FrameworkTestBase : AbstractNativeSimpleTest() {
         val testName = "reflection"
         val testCase = generateObjCFramework(testName, listOf("-opt-in=kotlin.native.internal.InternalForKotlinNative"))
         compileAndRunSwift(testName, testCase)
+    }
+
+    @Test
+    fun testLatin1Disabled() {
+        val testName = "latin1"
+        val testCase = generateObjCFramework(testName, listOf("-Xbinary=latin1Strings=false"))
+        compileAndRunSwift(testName, testCase)
+    }
+
+    @Test
+    fun testLatin1Enabled() {
+        val testName = "latin1"
+        val testCase = generateObjCFramework(testName, listOf("-Xbinary=latin1Strings=true"))
+        compileAndRunSwift(testName, testCase, swiftExtraOpts=listOf("-D", "ENABLE_LATIN1"))
     }
 
     @Test
@@ -401,6 +423,44 @@ abstract class FrameworkTestBase : AbstractNativeSimpleTest() {
         objCExportTestImpl("Static", listOf("-Xbinary=objcExportSuspendFunctionLaunchThreadRestriction=main"),
                            listOf("-D", "DISALLOW_SUSPEND_ANY_THREAD"), true, false)
     }
+
+    @Test
+    fun objCExportDumpObjcSelectorToSignatureMapping() {
+        Assumptions.assumeTrue(testRunSettings.get<KotlinNativeTargets>().testTarget.family == Family.OSX)
+        val testName = "selectorToSignatureDump"
+        val testDir = testSuiteDir.resolve(testName)
+        val dumpFile = buildDir.resolve("dump.txt")
+        val goldenFile = testDir.resolve("golden.txt")
+        val freeCompilerArgs = TestCompilerArgs(
+            listOf(
+                "-module-name", testName,
+                "-Xbinary=bundleId=$testName",
+                "-Xbinary=bundleVersion=FooBundleVersion",
+                "-Xbinary=bundleShortVersionString=FooBundleShortVersionString",
+                "-Xbinary=dumpObjcSelectorToSignatureMapping=${dumpFile.absolutePath}",
+                "-Xomit-framework-binary"
+            )
+        )
+        val testCase = generateObjCFrameworkTestCase(
+            TestKind.STANDALONE_NO_TR, extras, testName,
+            listOf(
+                testDir.resolve("main.kt"),
+            ),
+            freeCompilerArgs
+        )
+        testCompilationFactory.testCaseToObjCFrameworkCompilation(testCase, testRunSettings).result.assertSuccess()
+
+        fun File.parseDump(): List<Set<String>> =
+            readText().split("\n\n").map { it.lines().drop(1).toSet() }
+
+        val dump = dumpFile.parseDump()
+        val golden = goldenFile.parseDump()
+        if (dump != golden) {
+            // The following assert will fail here, and provide better UX than asserting that dump is equal to golden
+            assertEqualsToFile(goldenFile, dumpFile.readText())
+        }
+    }
+
 
     private fun objCExportTestImpl(
         suffix: String,
@@ -462,11 +522,11 @@ abstract class FrameworkTestBase : AbstractNativeSimpleTest() {
         }
         val swiftExtraOpts = buildList {
             addAll(swiftOpts)
-            if (testRunSettings.get<GCScheduler>() == GCScheduler.AGGRESSIVE) {
+            if (testRunSettings.get<GCScheduler>().scheduler == GCSchedulerType.AGGRESSIVE) {
                 add("-D")
                 add("AGGRESSIVE_GC")
             }
-            if (testRunSettings.get<GCType>() == GCType.NOOP) {
+            if (testRunSettings.get<GCType>().gc == GC.NOOP) {
                 add("-D")
                 add("NOOP_GC")
             }

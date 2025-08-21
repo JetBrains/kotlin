@@ -21,13 +21,14 @@ import androidx.compose.compiler.plugins.kotlin.analysis.StabilityInferencer
 import androidx.compose.compiler.plugins.kotlin.k1.ComposeDescriptorSerializerContext
 import androidx.compose.compiler.plugins.kotlin.lower.*
 import androidx.compose.compiler.plugins.kotlin.lower.hiddenfromobjc.AddHiddenFromObjCLowering
-import org.jetbrains.kotlin.backend.common.IrValidatorConfig
+import com.intellij.openapi.progress.ProgressManager
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
-import org.jetbrains.kotlin.backend.common.validateIr
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
-import org.jetbrains.kotlin.config.IrVerificationMode
+import org.jetbrains.kotlin.descriptors.annotations.KotlinRetention
+import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.ir.util.getAnnotationRetention
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.platform.isJs
 import org.jetbrains.kotlin.platform.isWasm
@@ -37,18 +38,19 @@ import org.jetbrains.kotlin.platform.konan.isNative
 class ComposeIrGenerationExtension(
     @Suppress("unused") private val liveLiteralsEnabled: Boolean = false,
     @Suppress("unused") private val liveLiteralsV2Enabled: Boolean = false,
-    private val generateFunctionKeyMetaAnnotations: Boolean = false,
+    private val generateFunctionKeyMetaAnnotations: Boolean? = null,
     private val sourceInformationEnabled: Boolean = true,
     private val traceMarkersEnabled: Boolean = true,
     private val metricsDestination: String? = null,
     private val reportsDestination: String? = null,
-    private val irVerificationMode: IrVerificationMode = IrVerificationMode.NONE,
     private val useK2: Boolean = false,
     private val stableTypeMatchers: Set<FqNameMatcher> = emptySet(),
     private val moduleMetricsFactory: ((StabilityInferencer, FeatureFlags) -> ModuleMetrics)? = null,
     private val descriptorSerializerContext: ComposeDescriptorSerializerContext? = null,
     private val featureFlags: FeatureFlags,
     private val skipIfRuntimeNotFound: Boolean = false,
+    private val indyJvmLambdasEnabled: Boolean = true,
+    private val targetRuntimeVersion: ComposeRuntimeVersion? = null,
     private val messageCollector: MessageCollector,
 ) : IrGenerationExtension {
     var metrics: ModuleMetrics = EmptyModuleMetrics
@@ -67,22 +69,6 @@ class ComposeIrGenerationExtension(
             pluginContext.moduleDescriptor,
             stableTypeMatchers,
         )
-
-        val irValidatorConfig = IrValidatorConfig(
-            checkProperties = true,
-            checkTypes = false, // TODO: Re-enable checking types (KT-68663)
-        )
-
-        // Input check.  This should always pass, else something is horribly wrong upstream.
-        // Necessary because oftentimes the issue is upstream (compiler bug, prior plugin, etc)
-        validateIr(messageCollector, irVerificationMode) {
-            performBasicIrValidation(
-                moduleFragment,
-                pluginContext.irBuiltIns,
-                phaseName = "Before Compose Compiler Plugin",
-                irValidatorConfig,
-            )
-        }
 
         if (useK2) {
             moduleFragment.acceptVoid(ComposableLambdaAnnotator(pluginContext))
@@ -119,6 +105,8 @@ class ComposeIrGenerationExtension(
             messageCollector
         ).lower(moduleFragment)
 
+        ProgressManager.checkCanceled()
+
         if (liveLiteralsEnabled || liveLiteralsV2Enabled) {
             LiveLiteralTransformer(
                 liveLiteralsEnabled = true,
@@ -133,6 +121,8 @@ class ComposeIrGenerationExtension(
 
         ComposableFunInterfaceLowering(pluginContext).lower(moduleFragment)
 
+        ProgressManager.checkCanceled()
+
         val functionKeyTransformer = DurableFunctionKeyTransformer(
             pluginContext,
             metrics,
@@ -146,6 +136,8 @@ class ComposeIrGenerationExtension(
             CopyDefaultValuesFromExpectLowering(pluginContext).lower(moduleFragment)
         }
 
+        ProgressManager.checkCanceled()
+
         // Generate default wrappers for virtual functions
         ComposableDefaultParamLowering(
             pluginContext,
@@ -154,6 +146,8 @@ class ComposeIrGenerationExtension(
             featureFlags
         ).lower(moduleFragment)
 
+        ProgressManager.checkCanceled()
+
         // Memoize normal lambdas and wrap composable lambdas
         ComposerLambdaMemoization(
             pluginContext,
@@ -161,6 +155,8 @@ class ComposeIrGenerationExtension(
             stabilityInferencer,
             featureFlags,
         ).lower(moduleFragment)
+
+        ProgressManager.checkCanceled()
 
         // transform all composable functions to have an extra synthetic composer
         // parameter. this will also transform all types and calls to include the extra
@@ -171,6 +167,8 @@ class ComposeIrGenerationExtension(
             metrics,
             featureFlags,
         ).lower(moduleFragment)
+
+        ProgressManager.checkCanceled()
 
         ComposableTargetAnnotationsTransformer(
             pluginContext,
@@ -183,12 +181,16 @@ class ComposeIrGenerationExtension(
         // previous transform
         ComposerIntrinsicTransformer(pluginContext).lower(moduleFragment)
 
+        ProgressManager.checkCanceled()
+
         ComposableFunctionBodyTransformer(
             pluginContext,
             metrics,
             stabilityInferencer,
             sourceInformationEnabled,
             traceMarkersEnabled,
+            indyEnabled = indyJvmLambdasEnabled && pluginContext.platform.isJvm(),
+            targetRuntimeVersion,
             featureFlags,
         ).lower(moduleFragment)
 
@@ -210,7 +212,9 @@ class ComposeIrGenerationExtension(
             ).lower(moduleFragment)
         }
 
-        if (generateFunctionKeyMetaAnnotations) {
+        if (generateFunctionKeyMetaAnnotations == true ||
+            (generateFunctionKeyMetaAnnotations == null && !pluginContext.keyMetaAnnotation.hasRuntimeRetention())
+        ) {
             functionKeyTransformer.realizeKeyMetaAnnotations(moduleFragment)
         }
 
@@ -220,15 +224,12 @@ class ComposeIrGenerationExtension(
         if (reportsDestination != null) {
             metrics.saveReportsTo(reportsDestination)
         }
+    }
 
-        // Verify that our transformations didn't break something
-        validateIr(messageCollector, irVerificationMode) {
-            performBasicIrValidation(
-                moduleFragment,
-                pluginContext.irBuiltIns,
-                phaseName = "After Compose Compiler Plugin",
-                irValidatorConfig,
-            )
-        }
+    private val IrPluginContext.keyMetaAnnotation: IrClass?
+        get() = referenceClass(ComposeClassIds.FunctionKeyMeta)?.owner
+
+    private fun IrClass?.hasRuntimeRetention(): Boolean {
+        return this?.getAnnotationRetention()?.let { it == KotlinRetention.RUNTIME } ?: true
     }
 }

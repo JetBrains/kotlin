@@ -36,3 +36,5 @@ class Test(b: Boolean) {
     }
 }
 
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, functionDeclaration, ifExpression, lambdaLiteral,
+localProperty, primaryConstructor, propertyDeclaration, propertyDelegate, whenExpression */

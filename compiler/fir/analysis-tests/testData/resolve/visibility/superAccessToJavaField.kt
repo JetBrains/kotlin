@@ -23,3 +23,6 @@ interface MyBase : Base
 abstract class Implementation : Derived(), MyBase {
     val parentNode: String? get() = super.parent
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, flexibleType, getter, interfaceDeclaration, javaProperty, javaType,
+nullableType, propertyDeclaration, superExpression */

@@ -45,3 +45,7 @@ object KT31853 {
         <!DEBUG_INFO_EXPRESSION_TYPE("KT31853.A<*>")!>a<!>
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, ifExpression, interfaceDeclaration, lambdaLiteral,
+localProperty, nestedClass, nullableType, objectDeclaration, out, propertyDeclaration, sealed, starProjection,
+typeConstraint, typeParameter */

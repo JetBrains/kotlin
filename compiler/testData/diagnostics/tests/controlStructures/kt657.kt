@@ -19,3 +19,6 @@ fun foo() =
 fun cond1() = false
 
 fun cond2() = true
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, isExpression, nullableType,
+primaryConstructor, rangeExpression, typeParameter, whenExpression */

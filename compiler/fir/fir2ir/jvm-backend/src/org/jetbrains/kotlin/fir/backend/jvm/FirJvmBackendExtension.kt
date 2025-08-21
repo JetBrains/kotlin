@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.backend.Fir2IrComponents
 import org.jetbrains.kotlin.fir.backend.FirMetadataSource
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
+import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.serialization.FirElementAwareStringTable
 import org.jetbrains.kotlin.fir.serialization.FirElementSerializer
 import org.jetbrains.kotlin.fir.serialization.TypeApproximatorForMetadataSerializer
@@ -58,7 +59,6 @@ class FirJvmBackendExtension(
             val fir = metadata.fir
 
             val typeApproximator = TypeApproximatorForMetadataSerializer(session)
-            // Get rid of special serializer extension after KT-57919, i.e. when we serialize all the annotations by default
             val firSerializerExtension = object : FirJvmSerializerExtension(
                 session,
                 JvmSerializationBindings(),
@@ -76,19 +76,26 @@ class FirJvmBackendExtension(
                     override fun getPackageFqNameIndexByString(fqName: String): Int = stringTable.getPackageFqNameIndexByString(fqName)
                 }
             ) {
+                override val isOptionalAnnotationClassSerialization: Boolean
+                    get() = true
+
                 override fun serializeClass(
                     klass: FirClass,
                     proto: ProtoBuf.Class.Builder,
                     versionRequirementTable: MutableVersionRequirementTable,
                     childSerializer: FirElementSerializer,
                 ) {
-                    klass.serializeAnnotations(
-                        session,
-                        additionalMetadataProvider,
-                        annotationSerializer,
-                        proto,
-                        BuiltInSerializerProtocol.classAnnotation
-                    )
+                    // Before 2.2, annotations were written to the `BuiltInsProtoBuf.classAnnotation` extension.
+                    // Starting from 2.2, they are written to the `ProtoBuf.Class.annotation` field (KT-57919).
+                    if (!context.config.metadataVersion.isAtLeast(2, 2, 0)) {
+                        klass.serializeAnnotations(
+                            session,
+                            additionalMetadataProvider,
+                            annotationSerializer,
+                            proto,
+                            BuiltInSerializerProtocol.classAnnotation
+                        )
+                    }
                     super.serializeClass(klass, proto, versionRequirementTable, childSerializer)
                 }
             }
@@ -101,7 +108,8 @@ class FirJvmBackendExtension(
                 typeApproximator,
                 context.config.languageVersionSettings
             )
-            return serializer.classProto(fir).build()
+            val file = session.firProvider.getFirClassifierContainerFileIfAny(fir.symbol)
+            return serializer.classProto(fir, file).build()
         }
     }
 

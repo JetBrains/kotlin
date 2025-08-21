@@ -12,7 +12,7 @@ public class FlagImpl(internal val offset: Int, internal val bitWidth: Int, inte
     internal constructor(field: F.FlagField<*>, value: Int) : this(field.offset, field.bitWidth, value)
 
     @IgnoreInApiDump
-    internal constructor(field: F.BooleanFlagField) : this(field, 1)
+    public constructor(field: F.BooleanFlagField) : this(field, 1)
 
     internal operator fun plus(flags: Int): Int =
         (flags and (((1 shl bitWidth) - 1) shl offset).inv()) + (value shl offset)

@@ -122,3 +122,7 @@ class FooOuter : Base() {
     }
 
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, anonymousObjectExpression, classDeclaration, enumDeclaration, enumEntry,
+functionDeclaration, inline, inner, interfaceDeclaration, lambdaLiteral, nestedClass, override, sealed, stringLiteral,
+superExpression */

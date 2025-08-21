@@ -21,3 +21,5 @@ const val compareLong5 = LONG < 2L
 const val compareLong6 = LONG <= 3L
 const val compareLong7 = LONG > 4L
 const val compareLong8 = LONG >= 5L
+
+/* GENERATED_FIR_TAGS: comparisonExpression, const, integerLiteral, propertyDeclaration */

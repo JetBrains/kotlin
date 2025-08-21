@@ -52,6 +52,108 @@ public class FirIdeDependentAnalysisSourceModuleVisibilityCheckerTestGenerated e
   }
 
   @Test
+  @TestMetadata("implicitReceiverSuperClass.kt")
+  public void testImplicitReceiverSuperClass() {
+    runTest("analysis/analysis-api/testData/components/visibilityChecker/visibility/implicitReceiverSuperClass.kt");
+  }
+
+  @Test
+  @TestMetadata("implicitReceiverSuperInterfaceFromJavaPackagePrivate.kt")
+  public void testImplicitReceiverSuperInterfaceFromJavaPackagePrivate() {
+    runTest("analysis/analysis-api/testData/components/visibilityChecker/visibility/implicitReceiverSuperInterfaceFromJavaPackagePrivate.kt");
+  }
+
+  @Test
+  @TestMetadata("implicitReceiverSuperInterfaceFromJavaPublic.kt")
+  public void testImplicitReceiverSuperInterfaceFromJavaPublic() {
+    runTest("analysis/analysis-api/testData/components/visibilityChecker/visibility/implicitReceiverSuperInterfaceFromJavaPublic.kt");
+  }
+
+  @Test
+  @TestMetadata("implicitReceiverSuperInterfaceHierarchy.kt")
+  public void testImplicitReceiverSuperInterfaceHierarchy() {
+    runTest("analysis/analysis-api/testData/components/visibilityChecker/visibility/implicitReceiverSuperInterfaceHierarchy.kt");
+  }
+
+  @Test
+  @TestMetadata("implicitReceiverSuperInterfaceInternal.kt")
+  public void testImplicitReceiverSuperInterfaceInternal() {
+    runTest("analysis/analysis-api/testData/components/visibilityChecker/visibility/implicitReceiverSuperInterfaceInternal.kt");
+  }
+
+  @Test
+  @TestMetadata("implicitReceiverSuperInterfaceNested.kt")
+  public void testImplicitReceiverSuperInterfaceNested() {
+    runTest("analysis/analysis-api/testData/components/visibilityChecker/visibility/implicitReceiverSuperInterfaceNested.kt");
+  }
+
+  @Test
+  @TestMetadata("implicitReceiverSuperInterfacePrivate.kt")
+  public void testImplicitReceiverSuperInterfacePrivate() {
+    runTest("analysis/analysis-api/testData/components/visibilityChecker/visibility/implicitReceiverSuperInterfacePrivate.kt");
+  }
+
+  @Test
+  @TestMetadata("implicitReceiverSuperInterfaceTypealias.kt")
+  public void testImplicitReceiverSuperInterfaceTypealias() {
+    runTest("analysis/analysis-api/testData/components/visibilityChecker/visibility/implicitReceiverSuperInterfaceTypealias.kt");
+  }
+
+  @Test
+  @TestMetadata("implicitReceiverUnrelatedInterface.kt")
+  public void testImplicitReceiverUnrelatedInterface() {
+    runTest("analysis/analysis-api/testData/components/visibilityChecker/visibility/implicitReceiverUnrelatedInterface.kt");
+  }
+
+  @Test
+  @TestMetadata("implicitReceiversMultipleSuperInterfacePrivate.kt")
+  public void testImplicitReceiversMultipleSuperInterfacePrivate() {
+    runTest("analysis/analysis-api/testData/components/visibilityChecker/visibility/implicitReceiversMultipleSuperInterfacePrivate.kt");
+  }
+
+  @Test
+  @TestMetadata("InsideAnonymousObjectPrivate.kt")
+  public void testInsideAnonymousObjectPrivate() {
+    runTest("analysis/analysis-api/testData/components/visibilityChecker/visibility/InsideAnonymousObjectPrivate.kt");
+  }
+
+  @Test
+  @TestMetadata("InsideAnonymousObjectProtected.kt")
+  public void testInsideAnonymousObjectProtected() {
+    runTest("analysis/analysis-api/testData/components/visibilityChecker/visibility/InsideAnonymousObjectProtected.kt");
+  }
+
+  @Test
+  @TestMetadata("InsideAnonymousObjectPublic.kt")
+  public void testInsideAnonymousObjectPublic() {
+    runTest("analysis/analysis-api/testData/components/visibilityChecker/visibility/InsideAnonymousObjectPublic.kt");
+  }
+
+  @Test
+  @TestMetadata("InsideLocalClassAndAnonymousObject.kt")
+  public void testInsideLocalClassAndAnonymousObject() {
+    runTest("analysis/analysis-api/testData/components/visibilityChecker/visibility/InsideLocalClassAndAnonymousObject.kt");
+  }
+
+  @Test
+  @TestMetadata("InsideLocalClassPrivate.kt")
+  public void testInsideLocalClassPrivate() {
+    runTest("analysis/analysis-api/testData/components/visibilityChecker/visibility/InsideLocalClassPrivate.kt");
+  }
+
+  @Test
+  @TestMetadata("InsideLocalClassProtected.kt")
+  public void testInsideLocalClassProtected() {
+    runTest("analysis/analysis-api/testData/components/visibilityChecker/visibility/InsideLocalClassProtected.kt");
+  }
+
+  @Test
+  @TestMetadata("InsideLocalClassPublic.kt")
+  public void testInsideLocalClassPublic() {
+    runTest("analysis/analysis-api/testData/components/visibilityChecker/visibility/InsideLocalClassPublic.kt");
+  }
+
+  @Test
   @TestMetadata("internalClassInBinaryLibrary.kt")
   public void testInternalClassInBinaryLibrary() {
     runTest("analysis/analysis-api/testData/components/visibilityChecker/visibility/internalClassInBinaryLibrary.kt");
@@ -121,6 +223,18 @@ public class FirIdeDependentAnalysisSourceModuleVisibilityCheckerTestGenerated e
   @TestMetadata("privateMemberFunctionInSourceModule.kt")
   public void testPrivateMemberFunctionInSourceModule() {
     runTest("analysis/analysis-api/testData/components/visibilityChecker/visibility/privateMemberFunctionInSourceModule.kt");
+  }
+
+  @Test
+  @TestMetadata("privateTopLevelFunctionFromContextModule.kt")
+  public void testPrivateTopLevelFunctionFromContextModule() {
+    runTest("analysis/analysis-api/testData/components/visibilityChecker/visibility/privateTopLevelFunctionFromContextModule.kt");
+  }
+
+  @Test
+  @TestMetadata("privateTopLevelFunctionFromContextModuleRecursive.kt")
+  public void testPrivateTopLevelFunctionFromContextModuleRecursive() {
+    runTest("analysis/analysis-api/testData/components/visibilityChecker/visibility/privateTopLevelFunctionFromContextModuleRecursive.kt");
   }
 
   @Test

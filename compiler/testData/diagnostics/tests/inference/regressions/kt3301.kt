@@ -20,3 +20,5 @@ fun test122() {
 
 //from library
 fun <T> array(vararg t: T): Array<T> {<!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>
+
+/* GENERATED_FIR_TAGS: functionDeclaration, interfaceDeclaration, nullableType, objectDeclaration, typeParameter, vararg */

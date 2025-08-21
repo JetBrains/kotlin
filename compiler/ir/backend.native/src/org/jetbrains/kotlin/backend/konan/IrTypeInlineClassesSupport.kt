@@ -49,6 +49,7 @@ inline fun <R> IrType.unwrapToPrimitiveOrReference(
 ): R = IrTypeInlineClassesSupport.unwrapToPrimitiveOrReference(this, eachInlinedClass, ifPrimitive, ifReference)
 
 @OptIn(UnsafeDuringIrConstructionAPI::class, InternalKotlinNativeApi::class)
+@PublishedApi
 internal object IrTypeInlineClassesSupport : InlineClassesSupport<IrClass, IrType>() {
 
     override fun isNullable(type: IrType): Boolean = type.isNullable()
@@ -80,7 +81,7 @@ internal object IrTypeInlineClassesSupport : InlineClassesSupport<IrClass, IrTyp
     }
 
     override fun getInlinedClassUnderlyingType(clazz: IrClass): IrType =
-            clazz.constructors.firstOrNull { it.isPrimary }?.valueParameters?.single()?.type
+            clazz.constructors.firstOrNull { it.isPrimary }?.parameters?.single()?.type
                     ?: clazz.declarations.filterIsInstance<IrProperty>().atMostOne { it.backingField?.takeUnless { it.isStatic } != null }?.backingField?.type
                     ?: clazz.inlineClassRepresentation!!.underlyingType
 

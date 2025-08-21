@@ -15,3 +15,5 @@ fun test() {
 }
 
 fun bar(x: <!UNRESOLVED_REFERENCE!>Unresolved<!>) = x + 1
+
+/* GENERATED_FIR_TAGS: additiveExpression, functionDeclaration, integerLiteral, nullableType, typeParameter */

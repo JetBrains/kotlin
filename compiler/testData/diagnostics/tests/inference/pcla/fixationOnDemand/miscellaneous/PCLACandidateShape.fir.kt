@@ -44,7 +44,7 @@ fun testC() {
         // should fix OTv := ScopeOwner for scope navigation
         sotvOwner.provide().function()
         // expected: Interloper </: ScopeOwner
-        sotvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("Interloper; FOT (of fun <FOT, SOT : FOT, TOT : SOT> pcla) & Any & TOT (of fun <FOT, SOT : FOT, TOT : SOT> pcla) & Any & ScopeOwner")!>Interloper<!>)
+        sotvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("Interloper; uninferred FOT (of fun <FOT, SOT : FOT, TOT : SOT> pcla) & uninferred TOT (of fun <FOT, SOT : FOT, TOT : SOT> pcla) & ScopeOwner")!>Interloper<!>)
     }
     // expected: kotlin.Triple<ScopeOwner, ScopeOwner, ScopeOwner>
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Triple<ScopeOwner, ScopeOwner, ScopeOwner>")!>resultCA<!>
@@ -83,3 +83,7 @@ class ScopeOwner: BaseType {
 }
 
 object Interloper: BaseType
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, functionDeclaration, functionalType, ifExpression,
+interfaceDeclaration, lambdaLiteral, localFunction, localProperty, nullableType, objectDeclaration, propertyDeclaration,
+typeConstraint, typeParameter */

@@ -44,18 +44,19 @@ internal object JvmDeserializedContainerSourceProvider : DeserializedContainerSo
         return when (stubOrigin) {
             is KotlinStubOrigin.Facade -> {
                 val className = JvmClassName.byInternalName(stubOrigin.className)
-                JvmStubDeserializedFacadeContainerSource(className, facadeClassName = null)
+                val jvmClassName = if (stubOrigin.jvmClassName != null) JvmClassName.byInternalName(stubOrigin.jvmClassName!!) else null
+                JvmStubDeserializedFacadeContainerSource(className = className, jvmClassName = jvmClassName, facadeClassName = null)
             }
             is KotlinStubOrigin.MultiFileFacade -> {
                 val className = JvmClassName.byInternalName(stubOrigin.className)
                 val facadeClassName = JvmClassName.byInternalName(stubOrigin.facadeClassName)
-                JvmStubDeserializedFacadeContainerSource(className, facadeClassName)
+                JvmStubDeserializedFacadeContainerSource(className = className, jvmClassName = null, facadeClassName)
             }
             else -> {
                 val virtualFile = file.virtualFile
                 val classId = ClassId(file.packageFqName, Name.identifier(virtualFile.nameWithoutExtension))
                 val className = JvmClassName.byClassId(classId)
-                JvmStubDeserializedFacadeContainerSource(className, facadeClassName = null)
+                JvmStubDeserializedFacadeContainerSource(className = className, jvmClassName = null, facadeClassName = null)
             }
         }
     }

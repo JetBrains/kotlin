@@ -36,3 +36,6 @@ fun test() {
     intersectAfterSmartCast(O1, O2).<!UNRESOLVED_REFERENCE!>base<!>()
     intersectArgWithSmartCastFromLambda(O1, O2).<!UNRESOLVED_REFERENCE!>base<!>()
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionalType, ifExpression, interfaceDeclaration, intersectionType,
+isExpression, lambdaLiteral, nullableType, objectDeclaration, smartcast, typeParameter, vararg */

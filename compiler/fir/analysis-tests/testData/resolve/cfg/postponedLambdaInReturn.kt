@@ -49,3 +49,8 @@ fun test3() {
     }
     y<!UNSAFE_CALL!>.<!>length // bad
 }
+
+/* GENERATED_FIR_TAGS: asExpression, assignment, classDeclaration, classReference, contractCallsEffect, contracts,
+crossinline, functionDeclaration, functionalType, ifExpression, inline, lambdaLiteral, lateinit, localProperty,
+nullableType, propertyDeclaration, stringLiteral, tryExpression, typeConstraint, typeParameter, typeWithExtension,
+whileLoop */

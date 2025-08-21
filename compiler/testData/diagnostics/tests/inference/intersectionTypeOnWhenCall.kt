@@ -15,3 +15,6 @@ fun foo(cond: Boolean) {
         false -> first
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, equalityExpression, functionDeclaration, intersectionType, localProperty,
+nullableType, outProjection, propertyDeclaration, smartcast, typeParameter, whenExpression, whenWithSubject */

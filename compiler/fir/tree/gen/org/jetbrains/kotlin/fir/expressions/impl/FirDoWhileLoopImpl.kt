@@ -38,9 +38,10 @@ internal class FirDoWhileLoopImpl(
     }
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirDoWhileLoopImpl {
+        transformAnnotations(transformer, data)
         transformBlock(transformer, data)
         transformCondition(transformer, data)
-        transformOtherChildren(transformer, data)
+        transformLabel(transformer, data)
         return this
     }
 
@@ -59,8 +60,7 @@ internal class FirDoWhileLoopImpl(
         return this
     }
 
-    override fun <D> transformOtherChildren(transformer: FirTransformer<D>, data: D): FirDoWhileLoopImpl {
-        transformAnnotations(transformer, data)
+    override fun <D> transformLabel(transformer: FirTransformer<D>, data: D): FirDoWhileLoopImpl {
         label = label?.transform(transformer, data)
         return this
     }

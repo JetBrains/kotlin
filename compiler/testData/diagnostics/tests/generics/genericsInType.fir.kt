@@ -35,3 +35,6 @@ fun Foo<String>.<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>Bar<!>.ext() {}
 
 fun ex1(a: Foo<!TYPE_ARGUMENTS_FOR_OUTER_CLASS_WHEN_NESTED_REFERENCED!><String><!>.Bar<String>): Foo<!TYPE_ARGUMENTS_FOR_OUTER_CLASS_WHEN_NESTED_REFERENCED!><String><!>.Bar<String> {
 <!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>
+
+/* GENERATED_FIR_TAGS: classDeclaration, classReference, funWithExtensionReceiver, functionDeclaration, nestedClass,
+nullableType, typeConstraint, typeParameter */

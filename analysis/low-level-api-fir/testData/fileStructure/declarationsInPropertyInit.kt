@@ -1,4 +1,4 @@
-class A {/* ClassDeclarationStructureElement */
+/* RootStructureElement */class A {/* ClassDeclarationStructureElement */
     val a = myRun {
         class X()
 

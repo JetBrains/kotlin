@@ -56,3 +56,7 @@ fun main() {
 
     val x2: (Int) -> Unit = selectNumber(id(::foo6), id { x -> <!DEBUG_INFO_EXPRESSION_TYPE("{Comparable<*> & Number}")!>x<!> }, id { <!DEBUG_INFO_EXPRESSION_TYPE("{Comparable<*> & Number}")!>it<!> })
 }
+
+/* GENERATED_FIR_TAGS: callableReference, capturedType, functionDeclaration, functionalType, integerLiteral,
+interfaceDeclaration, intersectionType, lambdaLiteral, localProperty, nullableType, outProjection, propertyDeclaration,
+typeConstraint, typeParameter, vararg */

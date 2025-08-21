@@ -1,6 +1,6 @@
 // RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// JVM_DEFAULT_MODE: all
+// JVM_DEFAULT_MODE: no-compatibility
 // JVM_TARGET: 1.8
 // FILE: JavaInterface.java
 
@@ -157,3 +157,6 @@ fun test() {
     KotlinClass().testOverride()
     KotlinClassIndirectInheritance().testOverride()
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, classDeclaration, flexibleType, functionDeclaration, getter,
+interfaceDeclaration, javaFunction, javaType, override, propertyDeclaration, stringLiteral, superExpression */

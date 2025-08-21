@@ -9,29 +9,31 @@
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import org.gradle.api.Project
-import org.jetbrains.kotlin.gradle.DeprecatedTargetPresetApi
+import org.gradle.api.provider.Provider
 import org.jetbrains.kotlin.gradle.internal.properties.nativeProperties
 import org.jetbrains.kotlin.gradle.plugin.*
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.targets.android.internal.InternalKotlinTargetPreset
-import org.jetbrains.kotlin.gradle.targets.native.internal.*
+import org.jetbrains.kotlin.gradle.targets.native.internal.setupCInteropCommonizerDependencies
+import org.jetbrains.kotlin.gradle.targets.native.internal.setupCInteropPropagatedDependencies
 import org.jetbrains.kotlin.gradle.utils.SingleActionPerProject
 import org.jetbrains.kotlin.gradle.utils.setupNativeCompiler
+import org.jetbrains.kotlin.gradle.utils.Future
+import org.jetbrains.kotlin.gradle.utils.future
+import org.jetbrains.kotlin.gradle.utils.lenient
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 
-@DeprecatedTargetPresetApi
-abstract class AbstractKotlinNativeTargetPreset<T : KotlinNativeTarget>(
-    private val name: String,
+internal abstract class AbstractKotlinNativeTargetPreset<T : KotlinNativeTarget>(
+    override val name: String,
     val project: Project,
-    val konanTarget: KonanTarget
+    val konanTarget: KonanTarget,
 ) : InternalKotlinTargetPreset<T> {
 
     init {
-        // This is required to obtain Kotlin/Native home in IDE plugin:
+        // This is required to obtain Kotlin/Native home in the IDE plugin:
         setupNativeHomePrivateProperty()
     }
-
-    override fun getName(): String = name
 
     private fun setupNativeHomePrivateProperty() = with(project) {
         if (!extensions.extraProperties.has(KOTLIN_NATIVE_HOME_PRIVATE_PROPERTY))
@@ -54,7 +56,7 @@ abstract class AbstractKotlinNativeTargetPreset<T : KotlinNativeTarget>(
         val result = instantiateTarget(name).apply {
             targetName = name
             disambiguationClassifier = name
-            preset = this@AbstractKotlinNativeTargetPreset
+            targetPreset = this@AbstractKotlinNativeTargetPreset
 
             val compilationFactory = KotlinNativeCompilationFactory(this)
             compilations = project.container(compilationFactory.itemClass, compilationFactory)
@@ -76,8 +78,7 @@ abstract class AbstractKotlinNativeTargetPreset<T : KotlinNativeTarget>(
 
 }
 
-@DeprecatedTargetPresetApi
-open class KotlinNativeTargetPreset(name: String, project: Project, konanTarget: KonanTarget) :
+internal open class KotlinNativeTargetPreset(name: String, project: Project, konanTarget: KonanTarget) :
     AbstractKotlinNativeTargetPreset<KotlinNativeTarget>(name, project, konanTarget) {
 
     override fun createTargetConfigurator(): AbstractKotlinTargetConfigurator<KotlinNativeTarget> =
@@ -88,8 +89,7 @@ open class KotlinNativeTargetPreset(name: String, project: Project, konanTarget:
     }
 }
 
-@DeprecatedTargetPresetApi
-open class KotlinNativeTargetWithHostTestsPreset(name: String, project: Project, konanTarget: KonanTarget) :
+internal open class KotlinNativeTargetWithHostTestsPreset(name: String, project: Project, konanTarget: KonanTarget) :
     AbstractKotlinNativeTargetPreset<KotlinNativeTargetWithHostTests>(name, project, konanTarget) {
 
     override fun createTargetConfigurator(): AbstractKotlinTargetConfigurator<KotlinNativeTargetWithHostTests> =
@@ -99,8 +99,7 @@ open class KotlinNativeTargetWithHostTestsPreset(name: String, project: Project,
         project.objects.newInstance(KotlinNativeTargetWithHostTests::class.java, project, konanTarget)
 }
 
-@DeprecatedTargetPresetApi
-open class KotlinNativeTargetWithSimulatorTestsPreset(name: String, project: Project, konanTarget: KonanTarget) :
+internal open class KotlinNativeTargetWithSimulatorTestsPreset(name: String, project: Project, konanTarget: KonanTarget) :
     AbstractKotlinNativeTargetPreset<KotlinNativeTargetWithSimulatorTests>(name, project, konanTarget) {
 
     override fun createTargetConfigurator(): AbstractKotlinTargetConfigurator<KotlinNativeTargetWithSimulatorTests> =
@@ -123,7 +122,28 @@ internal val KonanTarget.isCurrentHost: Boolean
  *
  * Ideally, these APIs should be in [HostManager] instead of KGP-side wrappers. Refer to KT-64512 for that
  */
-internal fun KonanTarget.enabledOnCurrentHostForKlibCompilation(provider: PropertiesProvider) =
-    HostManager().isEnabled(this) || provider.enableKlibsCrossCompilation
+@Deprecated("Use crossCompilationOnCurrentHostSupported instead")
+internal fun KonanTarget.enabledOnCurrentHostForKlibCompilation(
+    provider: PropertiesProvider,
+) = if (provider.enableKlibsCrossCompilation) {
+    // If cross-compilation is enabled, allow compilation for all targets
+    true
+} else {
+    // If cross-compilation is disabled use standard HostManager enablement check
+    HostManager().isEnabled(this)
+}
 
-internal fun KonanTarget.enabledOnCurrentHostForBinariesCompilation() = HostManager().isEnabled(this)
+internal val AbstractKotlinNativeCompilation.crossCompilationOnCurrentHostSupported: Future<Boolean>
+    get() = when (this) {
+        is KotlinNativeCompilation -> target.crossCompilationOnCurrentHostSupported
+        else -> project.future { true }
+    }
+
+// The same as `KotlinNativeTarget.publishable`, but with a fallback to `enabledOnCurrentHostForKlibCompilation`
+@Suppress("DEPRECATION")
+internal val KotlinNativeTarget.crossCompilationPublishable: Boolean
+    get() = crossCompilationOnCurrentHostSupported.lenient.getOrNull()
+        ?: konanTarget.enabledOnCurrentHostForKlibCompilation(project.kotlinPropertiesProvider)
+
+internal val KonanTarget.enabledOnCurrentHostForBinariesCompilation
+    get() = HostManager().isEnabled(this)

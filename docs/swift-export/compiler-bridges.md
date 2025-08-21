@@ -17,10 +17,10 @@ By default, Kotlin/Native makes a few assumptions when it compiles the code:
 3. It can use its own calling convention. For example, almost all Kotlin/Native functions have an additional parameter for a shadow stack.
 
 This makes impossible calling Kotlin/Native binaries from the outside easily. Instead, we have to add a small C-compatible layer:
-1. This layer should not pass arbitrary objects. Only special wrappers (`SpecialRef`) that are tracked by the GC.
+1. This layer should not pass arbitrary objects. Only special wrappers (`ExternalRCRef`) that are tracked by the GC.
 2. Function names in this layer should be predictable.
 3. Functions are excluded from dead code elimination.
-4. Non-trivial function signatures are converted in a predicatable way. For example, `suspend fun foo()` are wrapped with `foo_wrapper(cont: SpecialRef)`
+4. Non-trivial function signatures are converted in a predicatable way. For example, `suspend fun foo()` are wrapped with `foo_wrapper(cont: ExternalRCRef)`
 
 So for the given Kotlin function
 ```kotlin
@@ -31,7 +31,7 @@ public fun foo(a: Foo): Bar { ... }
 We can automatically create the following wrapper:
 ```kotlin
 @CWrapper("pkg_foo_wrapper")
-public fun foo_wrapper(a: SpecialRef): SpecialRef {
+public fun foo_wrapper(a: ExternalRCRef): ExternalRCRef {
   val a_inner = unwrap(a)
   val result_inner = pkg.foo(a_inner)
   return wrap(result_inner)
@@ -71,7 +71,7 @@ When Swift export encounters a Kotlin function `fun foo(a: Foo): Bar`, it create
 1. Kotlin declaration
 ```kotlin
 @CWrapper("pkg_foo_wrapper")
-public fun foo_wrapper(a: SpecialRef): SpecialRef {
+public fun foo_wrapper(a: ExternalRCRef): ExternalRCRef {
   val a_inner = unwrap(a)
   val result_inner = pkg.foo(a_inner)
   return wrap(result_inner)
@@ -86,9 +86,9 @@ void* pkg_foo_wrapper(void* a);
 import KotlinBridges
  
 public func foo(a: Foo) -> Bar {
-    let a_ref = convertToSpecialRef(a)
+    let a_ref = convertToExternalRCRef(a)
     let result_ref = pkg_foo_wrapper(a_ref)
-    return convertFromSpecialRef(result_ref)
+    return convertFromExternalRCRef(result_ref)
 }
 ```
 

@@ -2,8 +2,8 @@
 // RUN_PIPELINE_TILL: FIR2IR
 // MODULE: m1-common
 // FILE: common.kt
-<!EXPECT_ACTUAL_INCOMPATIBILITY{JVM}!>expect<!> class Foo {
-    var <!EXPECT_ACTUAL_MISMATCH{JVM}!>foo<!>: Int
+<!EXPECT_ACTUAL_IR_INCOMPATIBILITY{JVM}!>expect<!> class Foo {
+    var <!EXPECT_ACTUAL_IR_MISMATCH{JVM}!>foo<!>: Int
 }
 
 // MODULE: m2-jvm()()(m1-common)
@@ -14,3 +14,5 @@ actual typealias <!NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS!>Foo<!> = JavaFoo
 public class JavaFoo {
     public int foo = 0;
 }
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, javaType, propertyDeclaration, typeAliasDeclaration */

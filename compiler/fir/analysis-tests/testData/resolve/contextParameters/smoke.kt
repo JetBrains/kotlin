@@ -37,3 +37,7 @@ val p4 get() = s
 
 context(`_`: Any)
 fun escapedBackTick() {}
+
+/* GENERATED_FIR_TAGS: additiveExpression, classDeclaration, functionDeclaration, functionDeclarationWithContext, getter,
+ifExpression, isExpression, propertyDeclaration, propertyDeclarationWithContext, secondaryConstructor, setter, smartcast,
+stringLiteral, thisExpression */

@@ -1,6 +1,8 @@
 // SKIP_KT_DUMP
 // FIR_IDENTICAL
 // TARGET_BACKEND: JVM
+// RUN_PIPELINE_TILL: FIR2IR
+// DISABLE_NEXT_PHASE_SUGGESTION: K2 fails at backend stage
 
 // FILE: Java1.java
 public interface Java1 {
@@ -36,8 +38,8 @@ class C : Java3()
 
 class D : Java3() {
     val a = 10
-    fun foo(t: Int) {}
-    fun bar(): Int { return 10 }
+    <!ACCIDENTAL_OVERRIDE!>fun foo(t: Int) {}<!>
+    <!ACCIDENTAL_OVERRIDE!>fun bar(): Int { return 10 }<!>
 }
 
 fun test(b: B, d: D){

@@ -12,9 +12,8 @@ import java.io.File
 import kotlin.test.assertIs
 
 class SpaceCodeOwnersTest : TestCase() {
-    private val ownersFile = File(".space/CODEOWNERS")
+    private val ownersFile = File(System.getProperty("codeOwnersTest.spaceCodeOwnersFile"))
     private val owners = parseCodeOwners(ownersFile)
-
 
     fun testOwnerListNoDuplicates() {
         val duplicatedOwnerListEntries = owners.permittedOwners.groupBy { it.name }
@@ -31,6 +30,22 @@ class SpaceCodeOwnersTest : TestCase() {
                 }
             )
         }
+    }
+
+    fun testOwnersAreAddedByTeamsOrEmailAddress() {
+        val invalidOwners = owners.permittedOwners
+            .filterNot { it.name.first() == '"' && it.name.last() == '"' }
+            .filterNot { it.name.contains('@') }
+
+        if (invalidOwners.isEmpty()) return
+
+        fail(
+            buildString {
+                appendLine("Owner(s) ${invalidOwners.joinToString { it.name }} do not meet the required criteria:")
+                appendLine("1. Team name in quotations")
+                appendLine("2. User email address")
+            }
+        )
     }
 
     fun testAllOwnersInOwnerList() {
@@ -235,6 +250,12 @@ private sealed class OwnershipPattern {
             return "line $line |# $UNKNOWN_DIRECTIVE: $pattern"
         }
     }
+
+    data class NoOwnerPattern(override val pattern: String, override val line: Int) : OwnershipPattern() {
+        override fun toString(): String {
+            return "line $line |# $NO_OWNER_DIRECTIVE: $pattern"
+        }
+    }
 }
 
 private fun String.quoteIfContainsSpaces() = if (contains(' ')) "\"$this\"" else this
@@ -249,16 +270,18 @@ private fun parseCodeOwners(file: File): CodeOwners {
     val ownersPattern = "(\"[^\"]+\")|(\\S+)".toRegex()
 
     fun parseOwnerNames(ownerString: String): List<String> {
-        return ownersPattern.findAll(ownerString).map { it.value.removeSurrounding("\"") }.toList()
+        return ownersPattern.findAll(ownerString).map { it.value }.toList()
     }
 
     val permittedOwners = mutableListOf<CodeOwners.OwnerListEntry>()
     val patterns = mutableListOf<OwnershipPattern>()
+    val excludedPatterns = mutableListOf<OwnershipPattern.NoOwnerPattern>()
 
     file.useLines { lines ->
 
         for ((index, line) in lines.withIndex()) {
             val lineNumber = index + 1
+
             if (line.startsWith("#")) {
                 val unknownDirective = parseDirective(line, UNKNOWN_DIRECTIVE)
                 if (unknownDirective != null) {
@@ -272,7 +295,12 @@ private fun parseCodeOwners(file: File): CodeOwners {
                         CodeOwners.OwnerListEntry(owner, lineNumber)
                     }
                 }
-            } else if (line.isNotBlank()) {
+
+                val noOwnerDirective = parseDirective(line, NO_OWNER_DIRECTIVE)
+                if (noOwnerDirective != null) {
+                    excludedPatterns += OwnershipPattern.NoOwnerPattern(noOwnerDirective.trim(), lineNumber)
+                }
+            } else if (line.isNotBlank() && line !in excludedPatterns.map { it.pattern }) {
                 // Note: Space CODEOWNERS grammar is ambiguous, as it is impossible to distinguish between file pattern with spaces
                 // and team name, so we re-use similar logic
                 // ex:
@@ -292,3 +320,4 @@ private fun parseCodeOwners(file: File): CodeOwners {
 
 private const val OWNER_LIST_DIRECTIVE = "OWNER_LIST"
 private const val UNKNOWN_DIRECTIVE = "UNKNOWN"
+private const val NO_OWNER_DIRECTIVE = "NO_OWNER"

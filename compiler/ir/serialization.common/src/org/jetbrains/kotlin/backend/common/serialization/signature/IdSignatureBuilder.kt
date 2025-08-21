@@ -101,7 +101,7 @@ abstract class IdSignatureBuilder<Declaration : Any, Mangler : KotlinMangler<Dec
     private fun buildContainerSignature(container: IdSignature): IdSignature.CompositeSignature {
         val localName = classFqnSegments.joinToString(".")
         val localHash = hashId
-        return IdSignature.CompositeSignature(container, IdSignature.LocalSignature(localName, localHash, description))
+        return IdSignature.CompositeSignature(container, IdSignature.LocalSignature(localName, localHash))
     }
 
     protected fun build(): IdSignature {

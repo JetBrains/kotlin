@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.fir.declarations.builder.buildProperty
 import org.jetbrains.kotlin.fir.declarations.builder.buildSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.builder.buildValueParameter
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
-import org.jetbrains.kotlin.fir.expressions.FirOperationNameConventions
 import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.scope
@@ -31,9 +30,12 @@ import org.jetbrains.kotlin.fir.scopes.DelicateScopeAPI
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.symbols.impl.*
-import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.types.ConeDynamicType
+import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
+import org.jetbrains.kotlin.fir.types.create
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
+import org.jetbrains.kotlin.fir.types.toLookupTag
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
@@ -159,11 +161,7 @@ class FirDynamicMembersStorage(val session: FirSession) : FirSessionComponent {
         origin = FirDeclarationOrigin.DynamicScope
         resolvePhase = FirResolvePhase.BODY_RESOLVE
 
-        returnTypeRef = if (name in FirOperationNameConventions.ASSIGNMENT_NAMES) {
-            session.builtinTypes.unitType
-        } else {
-            dynamicTypeRef
-        }
+        returnTypeRef = dynamicTypeRef
 
         val parameter = buildValueParameter {
             moduleData = session.moduleData
@@ -172,7 +170,7 @@ class FirDynamicMembersStorage(val session: FirSession) : FirSessionComponent {
             resolvePhase = FirResolvePhase.BODY_RESOLVE
             returnTypeRef = anyArrayTypeRef
             this.name = Name.identifier("args")
-            this.symbol = FirValueParameterSymbol(this.name)
+            this.symbol = FirValueParameterSymbol()
             isCrossinline = false
             isNoinline = false
             isVararg = true
@@ -183,7 +181,7 @@ class FirDynamicMembersStorage(val session: FirSession) : FirSessionComponent {
 
     private fun buildPseudoPropertyByName(name: Name): FirProperty = buildProperty {
         this.name = name
-        this.symbol = FirPropertySymbol(CallableId(DYNAMIC_FQ_NAME, this.name))
+        this.symbol = FirRegularPropertySymbol(CallableId(DYNAMIC_FQ_NAME, this.name))
 
         status = FirResolvedDeclarationStatusImpl(
             Visibilities.Public,
@@ -196,7 +194,6 @@ class FirDynamicMembersStorage(val session: FirSession) : FirSessionComponent {
         resolvePhase = FirResolvePhase.BODY_RESOLVE
         returnTypeRef = dynamicTypeRef
         isVar = true
-        isLocal = false
     }
 }
 

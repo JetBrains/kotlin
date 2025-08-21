@@ -1,6 +1,7 @@
 // SKIP_KT_DUMP
 // TARGET_BACKEND: JVM
 // DUMP_EXTERNAL_CLASS: JavaChild
+// DISABLE_JAVA_FACADE
 
 // FILE: JavaChild.java
 

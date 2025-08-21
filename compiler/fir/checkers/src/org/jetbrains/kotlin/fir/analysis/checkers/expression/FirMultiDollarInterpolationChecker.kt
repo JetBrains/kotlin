@@ -7,31 +7,23 @@ package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
-import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
+import org.jetbrains.kotlin.fir.analysis.checkers.requireFeatureSupport
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirLiteralExpression
 import org.jetbrains.kotlin.fir.expressions.FirStringConcatenationCall
-import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.types.ConstantValueKind
 
 abstract class FirMultiDollarInterpolationChecker<E : FirExpression> : FirExpressionChecker<E>(MppCheckerKind.Common) {
     abstract fun E.getInterpolationPrefix(): String?
 
-    override fun check(expression: E, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(expression: E) {
         // no interpolation prefix => always OK
         if (expression.getInterpolationPrefix().isNullOrEmpty()) return
 
-        if (!context.session.languageVersionSettings.supportsFeature(LanguageFeature.MultiDollarInterpolation)) {
-            reporter.reportOn(
-                expression.source,
-                FirErrors.UNSUPPORTED_FEATURE,
-                LanguageFeature.MultiDollarInterpolation to context.session.languageVersionSettings,
-                context
-            )
-        }
+        expression.requireFeatureSupport(LanguageFeature.MultiDollarInterpolation)
     }
 }
 

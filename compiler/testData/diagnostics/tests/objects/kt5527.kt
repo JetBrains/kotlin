@@ -18,3 +18,6 @@ fun bar() {
 }
 
 fun useInt(i: Int) = i
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, localProperty, nestedClass, objectDeclaration,
+propertyDeclaration */

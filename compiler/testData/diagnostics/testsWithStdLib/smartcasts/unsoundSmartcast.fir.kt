@@ -40,3 +40,6 @@ fun test5() {
     x(if (true) { x = null; 0 } else 0, <!ARGUMENT_TYPE_MISMATCH!>x<!>)
     x<!UNSAFE_CALL!>.<!>inv()
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, assignment, checkNotNullCall, funWithExtensionReceiver, functionDeclaration,
+ifExpression, integerLiteral, localProperty, nullableType, operator, propertyDeclaration, smartcast */

@@ -1,3 +1,5 @@
+// COMPILATION_ERRORS
+
 class foo {
 
     class foo {

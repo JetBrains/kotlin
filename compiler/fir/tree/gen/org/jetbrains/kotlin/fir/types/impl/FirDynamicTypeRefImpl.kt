@@ -20,10 +20,12 @@ import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.fir.visitors.transformInplace
 
 internal class FirDynamicTypeRefImpl(
-    override val source: KtSourceElement?,
     override var annotations: MutableOrEmptyList<FirAnnotation>,
+    override val source: KtSourceElement,
     override val isMarkedNullable: Boolean,
 ) : FirDynamicTypeRef() {
+    override val customRenderer: Boolean
+        get() = false
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         annotations.forEach { it.accept(visitor, data) }

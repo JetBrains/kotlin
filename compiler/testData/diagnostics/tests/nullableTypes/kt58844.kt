@@ -11,3 +11,5 @@ fun main(args: Array<String>) {
     intFun(<!TYPE_MISMATCH!>intVar?.toInt()<!>)
     byteFun(<!TYPE_MISMATCH!>byteVar?.toByte()<!>)
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral, localProperty, nullableType, propertyDeclaration, safeCall */

@@ -14,3 +14,5 @@ actual class Foo {
     actual val bar = "bar"
     fun bar() = bar
 }
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, functionDeclaration, propertyDeclaration, stringLiteral */

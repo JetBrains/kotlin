@@ -7,10 +7,12 @@ KtNameReferenceExpression(35,46): 'invokeLater'
           receiverType = null
           returnType = java.lang.Runnable!
           symbol = doRun: java.lang.Runnable!
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -23,8 +25,10 @@ KtNameReferenceExpression(35,46): 'invokeLater'
               receiverType = null
               returnType = java.lang.Runnable!
               symbol = doRun: java.lang.Runnable!
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = javax/swing/SwingUtilities.invokeLater
       typeArgumentsMapping = {}
     isInBestCandidates = true

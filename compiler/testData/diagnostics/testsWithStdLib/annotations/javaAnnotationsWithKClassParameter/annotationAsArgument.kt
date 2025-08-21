@@ -19,3 +19,5 @@ public @interface B {
 @A(b = B(y = 3)) class MyClass2
 
 @A(arg = String::class, b = B(arg = Boolean::class)) class MyClass3
+
+/* GENERATED_FIR_TAGS: classDeclaration, classReference, integerLiteral, javaFunction, javaType */

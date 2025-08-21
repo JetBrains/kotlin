@@ -9,3 +9,6 @@ val x = object {
 }
 
 fun bar(x: Int) = x
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, funWithExtensionReceiver, functionDeclaration, lambdaLiteral,
+localProperty, propertyDeclaration, stringLiteral */

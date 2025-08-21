@@ -8,3 +8,6 @@ fun foo() {
     throw bar(x)
     throw bar(x)
 }
+
+/* GENERATED_FIR_TAGS: equalityExpression, functionDeclaration, ifExpression, localProperty, nullableType,
+propertyDeclaration, smartcast */

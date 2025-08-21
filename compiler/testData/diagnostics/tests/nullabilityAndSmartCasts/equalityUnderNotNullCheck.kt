@@ -5,3 +5,6 @@ fun test(a: Any?) {
         a == ""
     }
 }
+
+/* GENERATED_FIR_TAGS: equalityExpression, functionDeclaration, ifExpression, isExpression, nullableType, smartcast,
+stringLiteral */

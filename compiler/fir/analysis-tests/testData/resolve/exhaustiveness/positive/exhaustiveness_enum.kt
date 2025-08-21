@@ -55,3 +55,7 @@ fun test_3(e: Enum) {
         Enum.C -> 2
     }
 }
+
+/* GENERATED_FIR_TAGS: disjunctionExpression, enumDeclaration, enumEntry, equalityExpression, functionDeclaration,
+integerLiteral, isExpression, localProperty, nullableType, propertyDeclaration, smartcast, whenExpression,
+whenWithSubject */

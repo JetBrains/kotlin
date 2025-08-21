@@ -405,3 +405,6 @@ enum class EnumerationDE {
 
 
 class UserKlass
+
+/* GENERATED_FIR_TAGS: classDeclaration, enumDeclaration, enumEntry, functionDeclaration, primaryConstructor,
+secondaryConstructor */

@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.descriptors.VariableDescriptorWithAccessors
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
-import org.jetbrains.kotlin.load.java.components.JavaDeprecationSettings
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache
 import org.jetbrains.kotlin.modules.TargetId
 import org.jetbrains.kotlin.psi.KtClassOrObject
@@ -32,6 +31,7 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.DelegatingBindingTrace
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver
+import org.jetbrains.kotlin.resolve.deprecation.DeprecationSettings
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.types.KotlinType
@@ -47,10 +47,10 @@ class GenerationState(
     val generateDeclaredClassFilter: GenerateClassFilter? = null,
     val targetId: TargetId? = null,
     moduleName: String? = configuration.moduleName,
-    private val onIndependentPartCompilationEnd: (GenerationState) -> Unit = {},
     val jvmBackendClassResolver: JvmBackendClassResolver = JvmBackendClassResolverForModuleWithDependencies(module),
     val ignoreErrors: Boolean = false,
     diagnosticReporter: DiagnosticReporter? = null,
+    compiledCodeProvider: CompiledCodeProvider = CompiledCodeProvider.Empty
 ) {
     val diagnosticReporter: DiagnosticReporter =
         diagnosticReporter ?: DiagnosticReporterFactory.createReporter(configuration.messageCollector)
@@ -62,7 +62,7 @@ class GenerationState(
 
     val config = JvmBackendConfig(configuration)
 
-    val inlineCache: InlineCache = InlineCache()
+    val inlineCache: InlineCache = InlineCache(compiledCodeProvider)
 
     val incrementalCacheForThisTarget: IncrementalCache? = configuration.incrementalCompilationComponents?.let { components ->
         val targetId = targetId
@@ -74,7 +74,7 @@ class GenerationState(
     }
 
     val deprecationProvider = DeprecationResolver(
-        LockBasedStorageManager.NO_LOCKS, config.languageVersionSettings, JavaDeprecationSettings
+        LockBasedStorageManager.NO_LOCKS, config.languageVersionSettings, DeprecationSettings.Default
     )
 
     val moduleName: String = moduleName ?: JvmCodegenUtil.getModuleName(module)
@@ -125,9 +125,5 @@ class GenerationState(
         }
 
         return org.jetbrains.kotlin.codegen.extensions.ClassBuilderInterceptorExtension.getInstances(project) + adapted
-    }
-
-    fun afterIndependentPart() {
-        onIndependentPartCompilationEnd(this)
     }
 }

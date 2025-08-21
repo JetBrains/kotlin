@@ -19,3 +19,6 @@ class G2 : WithVarPrivateSet(), IVar {
 fun main() {
     G2().foo()
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, functionDeclaration, integerLiteral, interfaceDeclaration,
+propertyDeclaration */

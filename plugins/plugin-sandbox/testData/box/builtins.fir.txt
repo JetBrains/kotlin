@@ -41,7 +41,7 @@ FILE: builtins.kt
         ^foo14 R|kotlin/TODO|()
     }
     public final fun foo15(): R|() -> kotlin/Int| {
-        ^foo15 fun <anonymous>(): R|kotlin/Int| <inline=Unknown>  {
+        ^foo15 fun <anonymous>(): R|kotlin/Int| <inline=NoInline>  {
             ^ Int(15)
         }
 

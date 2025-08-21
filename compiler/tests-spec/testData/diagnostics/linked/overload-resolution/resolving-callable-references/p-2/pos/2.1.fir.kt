@@ -30,11 +30,11 @@ fun case1() {
     val case = Case1()
 
     <!DEBUG_INFO_EXPRESSION_TYPE("testsCase1.A")!>process(case::foo, A())<!>
-    process(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.reflect.KFunction1<testsCase1.A, testsCase1.A>")!>case::foo<!>, A())
+    process(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.reflect.KFunction1<@ParameterName(...) testsCase1.A, testsCase1.A>")!>case::foo<!>, A())
     process(case:: foo, A())
 
     <!DEBUG_INFO_EXPRESSION_TYPE("testsCase1.B")!>process(case::foo, B())<!>
-    process(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.reflect.KFunction1<testsCase1.B, testsCase1.B>")!>case::foo<!>, B())
+    process(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.reflect.KFunction1<@ParameterName(...) testsCase1.B, testsCase1.B>")!>case::foo<!>, B())
     process(case:: foo, B())
 
 }

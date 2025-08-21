@@ -7,8 +7,10 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve
 
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDesignation
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLFirClassWithAllCallablesResolveTarget
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLFirPartialBodyResolveTarget
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLFirResolveTarget
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLFirWholeElementResolveTarget
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLPartialBodyResolveRequest
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.asResolveTarget
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.throwUnexpectedFirElementError
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.tryCollectDesignation
@@ -36,6 +38,12 @@ internal object LLFirResolveDesignationCollector {
 
     fun getDesignationToResolveRecursively(target: FirElementWithResolveState): LLFirResolveTarget? {
         return getDesignationToResolve(target, ::LLFirWholeElementResolveTarget)
+    }
+
+    fun getDesignationToResolveForPartialBody(request: LLPartialBodyResolveRequest): LLFirResolveTarget? {
+        return getDesignationToResolve(request.target) {
+            LLFirPartialBodyResolveTarget(it, request)
+        }
     }
 
     private fun getDesignationToResolve(

@@ -16,3 +16,5 @@ fun lambda() {
         return <!NO_THIS!>this<!LABEL_RESOLVE_WILL_CHANGE!>@lambda<!><!>
     }
 }
+
+/* GENERATED_FIR_TAGS: anonymousFunction, functionDeclaration, localProperty, propertyDeclaration, thisExpression */

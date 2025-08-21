@@ -33,3 +33,6 @@ fun <TP1: OClass1, TP2: OClass2> test(
   tp1 as FClass2
   tp1 as TP2
 }
+
+/* GENERATED_FIR_TAGS: asExpression, classDeclaration, functionDeclaration, interfaceDeclaration, intersectionType,
+smartcast, typeConstraint, typeParameter */

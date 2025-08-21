@@ -74,7 +74,7 @@ class BooleanPropertyInExternalLowering(
                 return JsIrBuilder.buildCall(
                     target = context.intrinsics.jsNativeBoolean
                 ).apply {
-                    putValueArgument(0, expression)
+                    arguments[0] = expression
                 }
             }
 
@@ -83,11 +83,8 @@ class BooleanPropertyInExternalLowering(
                 val call = JsIrBuilder.buildCall(
                     target = function!!
                 ).apply {
-                    putValueArgument(
-                        0,
-                        property.fqNameWhenAvailable?.asString().toIrConst(context.irBuiltIns.stringType)
-                    )
-                    putValueArgument(1, irGet(tmp))
+                    arguments[0] = property.fqNameWhenAvailable?.asString().toIrConst(context.irBuiltIns.stringType)
+                    arguments[1] = irGet(tmp)
                 }
 
                 +call
@@ -96,7 +93,7 @@ class BooleanPropertyInExternalLowering(
                     JsIrBuilder.buildCall(
                         target = this@ExternalBooleanPropertyProcessor.context.intrinsics.jsNativeBoolean
                     ).apply {
-                        putValueArgument(0, irGet(tmp))
+                        arguments[0] = irGet(tmp)
                     }
                 } else irGet(tmp)
                 +newBooleanGet

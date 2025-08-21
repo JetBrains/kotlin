@@ -1,4 +1,4 @@
-// IGNORE_BACKEND: JVM, JS_IR, JS_IR_ES6, WASM
+// IGNORE_BACKEND: JS_IR, JS_IR_ES6, WASM
 
 val any = Any()
 fun <T> foo(): T = any as T

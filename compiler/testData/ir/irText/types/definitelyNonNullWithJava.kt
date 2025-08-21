@@ -6,9 +6,9 @@
 import org.jetbrains.annotations.*;
 
 public interface A<T> {
-    public T foo(T x) { return x; }
+    default T foo(T x) { return x; }
     @NotNull
-    public T bar(@NotNull T x) {}
+    default T bar(@NotNull T x) { return x; }
 }
 
 // FILE: main.kt

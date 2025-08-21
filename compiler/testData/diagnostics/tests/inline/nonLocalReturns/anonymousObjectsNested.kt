@@ -48,3 +48,6 @@ inline fun <R> inlineFun(p: () -> R) {
 inline fun <R> doCall(p: () -> R) {
     p()
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, crossinline, functionDeclaration, functionalType, init, inline,
+lambdaLiteral, localProperty, nullableType, propertyDeclaration, typeParameter */

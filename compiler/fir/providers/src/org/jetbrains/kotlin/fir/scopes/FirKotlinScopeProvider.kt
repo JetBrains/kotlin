@@ -69,7 +69,7 @@ class FirKotlinScopeProvider(
             }
             val declaredMemberScopeWithPossiblySynthesizedMembers =
                 // Related: https://youtrack.jetbrains.com/issue/KT-20427#focus=Comments-27-8652759.0-0
-                if (klass is FirRegularClass && !klass.isExpect && (klass.isData || klass.isInlineOrValue)) {
+                if (klass is FirRegularClass && !klass.isExpect && (klass.isData || klass.isInlineOrValue) && klass.origin != FirDeclarationOrigin.Library) {
                     // See also KT-58926 (we apply delegation first, and data/value classes after it)
                     FirClassAnySynthesizedMemberScope(useSiteSession, possiblyDelegatedDeclaredMemberScope, klass, scopeSession)
                 } else {
@@ -168,7 +168,7 @@ class FirKotlinScopeProvider(
 
         override fun processFunctionsByName(name: Name, processor: (FirNamedFunctionSymbol) -> Unit) {
             declaredMemberScope.processFunctionsByName(name) {
-                if (FirPlatformDeclarationFilter.isFunctionAvailable(it.fir, session)) {
+                if (FirPlatformDeclarationFilter.isNotPlatformDependent(it.fir, session)) {
                     processor(it)
                 }
             }
@@ -190,14 +190,14 @@ class FirKotlinScopeProvider(
 }
 
 object FirPlatformDeclarationFilter {
-    fun isFunctionAvailable(function: FirSimpleFunction, session: FirSession): Boolean {
-        // Optimization: only check the annotations for functions named "getOrDefault" and "remove",
-        // since only two functions with these names in kotlin.collections.Map are currently annotated with @PlatformDependent.
-        // This also allows to optimize more heavyweight FirJvmPlatformDeclarationFilter as it uses this function
+    fun isNotPlatformDependent(function: FirSimpleFunction, session: FirSession): Boolean {
+        // Optimization: only check the annotations for specially named functions
+        // as only those in List and Map are annotated as `@PlatformIndependent`.
+        // This also allows optimizing more heavyweight FirJvmPlatformDeclarationFilter as it uses this function
         return function.name !in namesToCheck || !function.symbol.hasAnnotation(StandardNames.FqNames.platformDependentClassId, session)
     }
 
-    private val namesToCheck = listOf("getOrDefault", "remove").map(Name::identifier)
+    private val namesToCheck = listOf("getOrDefault", "remove", "first", "last").mapTo(hashSetOf(), Name::identifier)
 }
 
 data class ConeSubstitutionScopeKey(
@@ -214,7 +214,7 @@ fun FirClass.unsubstitutedScope(
     memberRequiredPhase: FirResolvePhase?,
 ): FirTypeScope {
     val scope = scopeProvider.getUseSiteMemberScope(this, useSiteSession, scopeSession, memberRequiredPhase)
-    if (withForcedTypeCalculator) return FirScopeWithCallableCopyReturnTypeUpdater(scope, CallableCopyTypeCalculator.Forced)
+    if (withForcedTypeCalculator) return FirScopeWithCallableCopyReturnTypeUpdater(scope, CallableCopyTypeCalculator.CalculateDeferredForceLazyResolution)
     return scope
 }
 

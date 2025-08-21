@@ -8,3 +8,5 @@ abstract class TestType<V: Any> {
 class Derived: TestType<Long>() {
     inner class DerivedInner(item: Long): Inner(item)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, inner, primaryConstructor, propertyDeclaration, typeConstraint, typeParameter */

@@ -31,6 +31,8 @@ abstract class AbstractSignatureParts<TAnnotation : Any> {
     open val forceOnlyHeadTypeConstructor: Boolean
         get() = false
 
+    abstract val isK2: Boolean
+
     abstract fun TAnnotation.forceWarning(unenhancedType: KotlinTypeMarker?): Boolean
 
     abstract val KotlinTypeMarker.annotations: Iterable<TAnnotation>
@@ -43,6 +45,9 @@ abstract class AbstractSignatureParts<TAnnotation : Any> {
 
     open val KotlinTypeMarker.isNotNullTypeParameterCompat: Boolean
         get() = false
+
+    open val KotlinTypeMarker.shouldPropagateBoundNullness: Boolean
+        get() = true
 
     private val KotlinTypeMarker.nullabilityQualifier: NullabilityQualifier?
         get() = with(typeSystem) {
@@ -67,7 +72,7 @@ abstract class AbstractSignatureParts<TAnnotation : Any> {
         return JavaTypeQualifiers(forErrorsOrWarnings, mutability, isNotNullTypeParameter, forErrorsOrWarnings != forErrors)
     }
 
-    private fun TypeAndDefaultQualifiers.extractQualifiersFromAnnotations(): JavaTypeQualifiers {
+    private fun TypeAndDefaultQualifiers.extractQualifiersFromAnnotations(defaultTypeQualifier: JavaDefaultQualifiers?): JavaTypeQualifiers {
         if (type == null && with(typeSystem) { typeParameterForArgument?.getVariance() } == TypeVariance.IN) {
             // Star projections can only be enhanced in one way: `?` -> `? extends <something>`. Given a Kotlin type `C<in T>
             // (declaration-site variance), this is not a valid enhancement due to conflicting variances.
@@ -101,12 +106,6 @@ abstract class AbstractSignatureParts<TAnnotation : Any> {
             )
         }
 
-        val applicabilityType = when {
-            isHeadTypeConstructor || typeParameterBounds -> containerApplicabilityType
-            else -> AnnotationQualifierApplicabilityType.TYPE_USE
-        }
-        val defaultTypeQualifier = defaultQualifiers?.get(applicabilityType)
-
         val referencedParameterBoundsNullability = typeParameterUse?.boundsNullability
         // For type parameter uses, we have *three* options:
         //   T!! - NOT_NULL, isNotNullTypeParameter = true
@@ -133,6 +132,16 @@ abstract class AbstractSignatureParts<TAnnotation : Any> {
         return JavaTypeQualifiers(result?.qualifier, annotationsMutability, definitelyNotNull, result?.isForWarningOnly == true)
     }
 
+    private fun TypeAndDefaultQualifiers.extractDefaultQualifier(): JavaDefaultQualifiers? {
+        val isHeadTypeConstructor = typeParameterForArgument == null
+        val typeParameterBounds = containerApplicabilityType == AnnotationQualifierApplicabilityType.TYPE_PARAMETER_BOUNDS
+        val applicabilityType = when {
+            isHeadTypeConstructor || typeParameterBounds -> containerApplicabilityType
+            else -> AnnotationQualifierApplicabilityType.TYPE_USE
+        }
+        return defaultQualifiers?.get(applicabilityType)
+    }
+
     protected abstract fun getDefaultNullability(
         referencedParameterBoundsNullability: NullabilityQualifierWithMigrationStatus?,
         defaultTypeQualifiers: JavaDefaultQualifiers?
@@ -155,11 +164,35 @@ abstract class AbstractSignatureParts<TAnnotation : Any> {
         get() = with(typeSystem) {
             if (!isFromJava) return null
             val bounds = getUpperBounds()
+            if (bounds.all { it.isError() }) return null
+
+            val haveNullabilityQualifier = bounds.filter { it.nullabilityQualifier != null }
+            val haveEnhancedForWarnings by lazy(LazyThreadSafetyMode.NONE) { bounds.mapNotNull { it.enhancedForWarnings } }
+
             val enhancedBounds = when {
-                bounds.all { it.isError() } -> return null
                 // TODO: what if e.g. one bound is nullable and another is not null for warnings?
-                bounds.any { it.nullabilityQualifier != null } -> bounds
-                bounds.any { it.enhancedForWarnings != null } -> bounds.mapNotNull { it.enhancedForWarnings }
+                haveNullabilityQualifier.isNotEmpty() -> {
+                    if (haveNullabilityQualifier.none { it.shouldPropagateBoundNullness }) {
+                        // Bounds contain only annotations which should not propagate nullability.
+                        // Currently, this is only true for JSpecify annotations.
+                        // However, use-site type arguments should be made flexible in case they are not covered by another qualifier.
+                        // See KT-65594 as an example.
+                        return NullabilityQualifierWithMigrationStatus(NullabilityQualifier.FORCE_FLEXIBILITY, isForWarningOnly = false)
+                    }
+
+                    bounds
+                }
+                haveEnhancedForWarnings.isNotEmpty() -> {
+                    if (haveEnhancedForWarnings.none { it.shouldPropagateBoundNullness }) {
+                        // Bounds contain only annotations which should not propagate nullability.
+                        // Currently, this is only true for JSpecify annotations.
+                        // However, use-site type arguments should be made flexible in case they are not covered by another qualifier.
+                        // See KT-65594 as an example.
+                        return NullabilityQualifierWithMigrationStatus(NullabilityQualifier.FORCE_FLEXIBILITY, isForWarningOnly = true)
+                    }
+
+                    haveEnhancedForWarnings
+                }
                 else -> return null
             }
             val qualifier = if (enhancedBounds.all { it.isNullableType() }) NullabilityQualifier.NULLABLE else NullabilityQualifier.NOT_NULL
@@ -182,9 +215,17 @@ abstract class AbstractSignatureParts<TAnnotation : Any> {
         val onlyHeadTypeConstructor = forceOnlyHeadTypeConstructor ||
                 (isCovariant && overrides.any { !this@computeIndexedQualifiers.isEqual(it) })
 
-        val treeSize = if (onlyHeadTypeConstructor) 1 else indexedThisType.size
-        val computedResult = Array(treeSize) { index ->
-            val qualifiers = indexedThisType[index].extractQualifiersFromAnnotations()
+        val computedResult = Array(if (forceOnlyHeadTypeConstructor) 1 else indexedThisType.size) { index ->
+            // Specifically, for JSpecify, when the return type is covariant, a default qualifier should be used to determine
+            // nullity rather than the override's types. This is true in general for JSpecify, but that is not working yet (KT-71441).
+            val defaultQualifier by lazy(mode = LazyThreadSafetyMode.NONE) { indexedThisType[index].extractDefaultQualifier() }
+            if (isK2 && defaultQualifier?.preferQualifierOverSupertype == true) {
+                return@Array indexedThisType[index].extractQualifiersFromAnnotations(defaultQualifier)
+            } else if (index > 0 && onlyHeadTypeConstructor) {
+                return@Array JavaTypeQualifiers.NONE
+            }
+
+            val qualifiers = indexedThisType[index].extractQualifiersFromAnnotations(defaultQualifier)
             val superQualifiers = indexedFromSupertypes.mapNotNull { it.getOrNull(index)?.type?.extractQualifiers() }
             qualifiers.computeQualifiersForOverride(
                 superQualifiers,

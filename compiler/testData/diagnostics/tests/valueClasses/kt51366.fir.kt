@@ -13,3 +13,6 @@ value class FileSize(val bytesSize: Long, val x: Int): <!WRONG_NUMBER_OF_TYPE_AR
     fun getMB() = getKB() / 1024
     fun getGB() = getMB() / 1024
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, functionDeclaration, integerLiteral,
+multiplicativeExpression, primaryConstructor, propertyDeclaration, value */

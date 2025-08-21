@@ -30,8 +30,8 @@ import kotlin.internal.InlineOnly
  *
  * @sample samples.text.HexFormats.Extensions.byteArrayToHexString
  */
-@ExperimentalStdlibApi
-@SinceKotlin("1.9")
+@WasExperimental(ExperimentalStdlibApi::class)
+@SinceKotlin("2.2")
 @ExperimentalUnsignedTypes
 @InlineOnly
 public inline fun UByteArray.toHexString(format: HexFormat = HexFormat.Default): String = storage.toHexString(format)
@@ -61,8 +61,8 @@ public inline fun UByteArray.toHexString(format: HexFormat = HexFormat.Default):
  *
  * @sample samples.text.HexFormats.Extensions.byteArrayToHexString
  */
-@ExperimentalStdlibApi
-@SinceKotlin("1.9")
+@WasExperimental(ExperimentalStdlibApi::class)
+@SinceKotlin("2.2")
 @ExperimentalUnsignedTypes
 @InlineOnly
 public inline fun UByteArray.toHexString(
@@ -90,8 +90,8 @@ public inline fun UByteArray.toHexString(
  *
  * @sample samples.text.HexFormats.Extensions.hexToByteArray
  */
-@ExperimentalStdlibApi
-@SinceKotlin("1.9")
+@WasExperimental(ExperimentalStdlibApi::class)
+@SinceKotlin("2.2")
 @ExperimentalUnsignedTypes
 @InlineOnly
 public inline fun String.hexToUByteArray(format: HexFormat = HexFormat.Default): UByteArray =
@@ -119,8 +119,8 @@ public inline fun String.hexToUByteArray(format: HexFormat = HexFormat.Default):
  *
  * @sample samples.text.HexFormats.Extensions.byteToHexString
  */
-@ExperimentalStdlibApi
-@SinceKotlin("1.9")
+@WasExperimental(ExperimentalStdlibApi::class)
+@SinceKotlin("2.2")
 @InlineOnly
 public inline fun UByte.toHexString(format: HexFormat = HexFormat.Default): String = data.toHexString(format)
 
@@ -146,8 +146,8 @@ public inline fun UByte.toHexString(format: HexFormat = HexFormat.Default): Stri
  *
  * @sample samples.text.HexFormats.Extensions.hexToByte
  */
-@ExperimentalStdlibApi
-@SinceKotlin("1.9")
+@WasExperimental(ExperimentalStdlibApi::class)
+@SinceKotlin("2.2")
 @InlineOnly
 public inline fun String.hexToUByte(format: HexFormat = HexFormat.Default): UByte = hexToByte(format).toUByte()
 
@@ -173,8 +173,8 @@ public inline fun String.hexToUByte(format: HexFormat = HexFormat.Default): UByt
  *
  * @sample samples.text.HexFormats.Extensions.shortToHexString
  */
-@ExperimentalStdlibApi
-@SinceKotlin("1.9")
+@WasExperimental(ExperimentalStdlibApi::class)
+@SinceKotlin("2.2")
 @InlineOnly
 public inline fun UShort.toHexString(format: HexFormat = HexFormat.Default): String = data.toHexString(format)
 
@@ -200,8 +200,8 @@ public inline fun UShort.toHexString(format: HexFormat = HexFormat.Default): Str
  *
  * @sample samples.text.HexFormats.Extensions.hexToShort
  */
-@ExperimentalStdlibApi
-@SinceKotlin("1.9")
+@WasExperimental(ExperimentalStdlibApi::class)
+@SinceKotlin("2.2")
 @InlineOnly
 public inline fun String.hexToUShort(format: HexFormat = HexFormat.Default): UShort = hexToShort(format).toUShort()
 
@@ -227,8 +227,8 @@ public inline fun String.hexToUShort(format: HexFormat = HexFormat.Default): USh
  *
  * @sample samples.text.HexFormats.Extensions.intToHexString
  */
-@ExperimentalStdlibApi
-@SinceKotlin("1.9")
+@WasExperimental(ExperimentalStdlibApi::class)
+@SinceKotlin("2.2")
 @InlineOnly
 public inline fun UInt.toHexString(format: HexFormat = HexFormat.Default): String = data.toHexString(format)
 
@@ -254,8 +254,8 @@ public inline fun UInt.toHexString(format: HexFormat = HexFormat.Default): Strin
  *
  * @sample samples.text.HexFormats.Extensions.hexToInt
  */
-@ExperimentalStdlibApi
-@SinceKotlin("1.9")
+@WasExperimental(ExperimentalStdlibApi::class)
+@SinceKotlin("2.2")
 @InlineOnly
 public inline fun String.hexToUInt(format: HexFormat = HexFormat.Default): UInt = hexToInt(format).toUInt()
 
@@ -281,8 +281,8 @@ public inline fun String.hexToUInt(format: HexFormat = HexFormat.Default): UInt 
  *
  * @sample samples.text.HexFormats.Extensions.longToHexString
  */
-@ExperimentalStdlibApi
-@SinceKotlin("1.9")
+@WasExperimental(ExperimentalStdlibApi::class)
+@SinceKotlin("2.2")
 @InlineOnly
 public inline fun ULong.toHexString(format: HexFormat = HexFormat.Default): String = data.toHexString(format)
 
@@ -308,7 +308,7 @@ public inline fun ULong.toHexString(format: HexFormat = HexFormat.Default): Stri
  *
  * @sample samples.text.HexFormats.Extensions.hexToLong
  */
-@ExperimentalStdlibApi
-@SinceKotlin("1.9")
+@WasExperimental(ExperimentalStdlibApi::class)
+@SinceKotlin("2.2")
 @InlineOnly
 public inline fun String.hexToULong(format: HexFormat = HexFormat.Default): ULong = hexToLong(format).toULong()

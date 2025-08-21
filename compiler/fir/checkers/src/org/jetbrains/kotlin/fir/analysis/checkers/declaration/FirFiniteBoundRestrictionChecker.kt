@@ -23,13 +23,15 @@ import org.jetbrains.kotlin.fir.types.ProjectionKind
 import org.jetbrains.kotlin.fir.types.forEachType
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.resolve.toTypeParameterSymbol
+import org.jetbrains.kotlin.fir.types.typeContext
 import org.jetbrains.kotlin.utils.DFS
 
 /**
  * @see org.jetbrains.kotlin.resolve.FiniteBoundRestrictionChecker
  */
 object FirFiniteBoundRestrictionChecker : FirRegularClassChecker(MppCheckerKind.Common) {
-    override fun check(declaration: FirRegularClass, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirRegularClass) {
         if (declaration.typeParameters.isEmpty()) return
 
         // TODO, KT-61103: Improve documentation on finite bounds validation, especially B-closure and constituent types definition.
@@ -44,7 +46,7 @@ object FirFiniteBoundRestrictionChecker : FirRegularClassChecker(MppCheckerKind.
 
         for (ref in declaration.typeParameters) {
             if (problemNodes.remove(ref.toConeType())) {
-                reporter.reportOn(ref.source, FirErrors.FINITE_BOUNDS_VIOLATION, context)
+                reporter.reportOn(ref.source, FirErrors.FINITE_BOUNDS_VIOLATION)
                 return
             }
         }
@@ -52,8 +54,8 @@ object FirFiniteBoundRestrictionChecker : FirRegularClassChecker(MppCheckerKind.
         val problemSymbols = problemNodes.mapNotNullTo(mutableSetOf()) { it.toTypeParameterSymbol(context.session) }
 
         val containers = problemSymbols.map { it.containingDeclarationSymbol }
-        if (containers.any { it.origin !is FirDeclarationOrigin.Java  }) return
-        reporter.reportOn(declaration.source, FirErrors.FINITE_BOUNDS_VIOLATION_IN_JAVA, containers, context)
+        if (containers.any { it.origin !is FirDeclarationOrigin.Java }) return
+        reporter.reportOn(declaration.source, FirErrors.FINITE_BOUNDS_VIOLATION_IN_JAVA, containers)
     }
 
     private fun buildTypeEdges(declaration: FirRegularClass, session: FirSession): Map<ConeKotlinType, Set<ConeKotlinType>> {
@@ -62,7 +64,7 @@ object FirFiniteBoundRestrictionChecker : FirRegularClassChecker(MppCheckerKind.
         val visitedSymbols = mutableSetOf<FirClassifierSymbol<*>>()
         fun visit(coneType: ConeKotlinType) {
             val constituentTypes = mutableSetOf<ConeKotlinType>()
-            for (type in coneType.collectUpperBounds()) {
+            for (type in coneType.collectUpperBounds(session.typeContext)) {
                 type.forEachType { constituentTypes.add(it) }
             }
 

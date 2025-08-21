@@ -18,3 +18,5 @@ import bar.*
 fun <T> test(l: List<T>) {
     <!OVERLOAD_RESOLUTION_AMBIGUITY!>f<!>(l)
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, nullableType, typeParameter */

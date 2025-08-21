@@ -13,3 +13,5 @@ fun test(expr: B) {
     checkTypeEquality(B(), expr)
     checkTypeEquality(C(), <!ARGUMENT_TYPE_MISMATCH!>expr<!>)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, nullableType, stringLiteral, typeParameter */

@@ -1,0 +1,2 @@
+FILE: localTypeAliasInsideLocalClass.kt
+    public? final? fun f(): R|kotlin/Unit| { LAZY_BLOCK }

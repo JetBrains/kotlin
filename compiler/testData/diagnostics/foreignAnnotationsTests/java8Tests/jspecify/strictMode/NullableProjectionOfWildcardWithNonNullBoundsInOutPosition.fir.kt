@@ -19,10 +19,7 @@ public class FromJava<T extends Object> {
 fun <T> accept(arg: T) {}
 
 fun test() {
-    // jspecify_nullness_mismatch
     accept<Any>(<!ARGUMENT_TYPE_MISMATCH!>FromJava.IMPLICIT_BOUNDS.produce()<!>)
-    // jspecify_nullness_mismatch
     accept<String>(<!ARGUMENT_TYPE_MISMATCH!>FromJava.EXPLICIT_UPPER_BOUND.produce()<!>)
-    // jspecify_nullness_mismatch
     accept<Any>(<!ARGUMENT_TYPE_MISMATCH!>FromJava.EXPLICIT_LOWER_BOUND.produce()<!>)
 }

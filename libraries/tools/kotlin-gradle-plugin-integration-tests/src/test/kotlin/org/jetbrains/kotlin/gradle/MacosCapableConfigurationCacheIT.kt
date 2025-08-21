@@ -51,7 +51,10 @@ class MacosCapableConfigurationCacheIT : AbstractConfigurationCacheIT() {
             )
         }
 
-        project("native-configuration-cache", gradleVersion) {
+        project(
+            "native-configuration-cache",
+            gradleVersion,
+        ) {
             testConfigurationCacheOf(
                 "build",
                 executedTaskNames = expectedTasks,

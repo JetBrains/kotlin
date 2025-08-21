@@ -11,4 +11,4 @@ abstract interface /B { // /B|null[0]
     abstract fun b(): kotlin/Int // /B.b|b(){}[0]
 }
 final val /c // /c|(A;B){}c[0]
-    final fun context(/A, /B) <get-c>(): kotlin/Int // /c.<get-c>|<get-c>(A;B)(){}[0]
+    final fun (context(/A, /B)).<get-c>(): kotlin/Int // /c.<get-c>|<get-c>(A;B)(){}[0]

@@ -28,10 +28,8 @@ public class X extends J {
 
 public class J1<T> {
     public T f = null;
-    public static T s = null;
 
     public T f2 = null;
-    public static T s2 = null;
 }
 
 // FILE: X1.java

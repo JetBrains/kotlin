@@ -8,3 +8,6 @@ class Outer {
         constructor(x: Int, y: Int, z: Int = x + foo(this@Outer)) : this(x + foo(this@Outer))
     }
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, classDeclaration, functionDeclaration, inner, integerLiteral,
+secondaryConstructor, thisExpression */

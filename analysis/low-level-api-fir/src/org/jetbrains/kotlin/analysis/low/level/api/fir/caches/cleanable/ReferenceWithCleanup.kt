@@ -5,7 +5,10 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.caches.cleanable
 
-internal interface ReferenceWithCleanup<K, V> {
+import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirInternals
+
+@LLFirInternals
+interface ReferenceWithCleanup<K, V> {
     val key: K
     val cleaner: ValueReferenceCleaner<V>
     fun get(): V?

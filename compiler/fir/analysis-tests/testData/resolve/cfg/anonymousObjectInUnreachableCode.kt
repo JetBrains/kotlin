@@ -5,3 +5,5 @@ fun test() {
     return
     object {}
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, functionDeclaration */

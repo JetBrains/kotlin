@@ -44,3 +44,7 @@ fun <PTV> parallelInOutBuild(
 ): Buildee<PTV> {
     return null!!
 }
+
+/* GENERATED_FIR_TAGS: assignment, capturedType, checkNotNullCall, classDeclaration, functionDeclaration, functionalType,
+in, inProjection, lambdaLiteral, localProperty, nullableType, out, outProjection, primaryConstructor,
+propertyDeclaration, stringLiteral, typeParameter, typeWithExtension */

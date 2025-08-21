@@ -18,14 +18,11 @@ package org.jetbrains.kotlin.noarg.gradle
 
 import org.gradle.api.Project
 import org.gradle.api.provider.Provider
-import org.gradle.tooling.provider.model.ToolingModelBuilderRegistry
 import org.jetbrains.kotlin.gradle.plugin.*
-import org.jetbrains.kotlin.noarg.gradle.model.builder.NoArgModelBuilder
 import javax.inject.Inject
 
 class NoArgGradleSubplugin
 @Inject internal constructor(
-    private val registry: ToolingModelBuilderRegistry
 ) : KotlinCompilerPluginSupportPlugin {
 
     companion object {
@@ -42,7 +39,6 @@ class NoArgGradleSubplugin
 
     override fun apply(target: Project) {
         target.extensions.create("noArg", NoArgExtension::class.java)
-        registry.register(NoArgModelBuilder())
     }
 
     override fun isApplicable(kotlinCompilation: KotlinCompilation<*>): Boolean = true

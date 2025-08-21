@@ -66,3 +66,7 @@ fun test2y(): Any =
 
 fun test2z(): Any =
         run { if (true) ListData(listOf()) else FlagData(true) }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, comparisonExpression, functionDeclaration, ifExpression,
+integerLiteral, interfaceDeclaration, isExpression, lambdaLiteral, nullableType, primaryConstructor, propertyDeclaration,
+smartcast, starProjection, typeConstraint, typeParameter, vararg, whenExpression, whenWithSubject */

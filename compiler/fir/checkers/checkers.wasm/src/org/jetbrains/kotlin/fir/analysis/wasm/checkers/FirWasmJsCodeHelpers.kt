@@ -13,10 +13,20 @@ import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirReturnExpression
 import org.jetbrains.kotlin.fir.expressions.impl.FirSingleExpressionBlock
 import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
+import org.jetbrains.kotlin.fir.symbols.SymbolInternals
+import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.name.WebCommonStandardClassIds
+
+
+@OptIn(SymbolInternals::class)
+fun FirNamedFunctionSymbol.hasValidJsCodeBody(): Boolean = fir.hasValidJsCodeBody()
 
 fun FirSimpleFunction.hasValidJsCodeBody(): Boolean =
     body?.isValidJsCodeBody() == true
+
+@OptIn(SymbolInternals::class)
+fun FirPropertySymbol.hasValidJsCodeBody(): Boolean = fir.hasValidJsCodeBody()
 
 fun FirProperty.hasValidJsCodeBody(): Boolean =
     this.initializer?.isJsCodeCall() == true

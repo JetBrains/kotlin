@@ -4,6 +4,7 @@ KtNameReferenceExpression(94,100): 'invoke'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = globalA
           isSafeNavigation = false
@@ -14,5 +15,6 @@ KtNameReferenceExpression(94,100): 'invoke'
           returnType = kotlin.Unit
           symbol = /A.invoke(<dispatch receiver>: A): kotlin.Unit
           valueParameters = []
+          contextParameters = []
           callableId = /A.invoke
       typeArgumentsMapping = {}

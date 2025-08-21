@@ -22,8 +22,6 @@ public object Debugging {
      *
      * Make sure that after exiting `main()` only a single thread with Kotlin runtime remains.
      * Run GC collecting everything including globals.
-     *
-     * When enabled together with [Platform.isCleanersLeakCheckerActive] additionally checks that no cleaners get executed after `main()`
      */
     public var forceCheckedShutdown: Boolean
         get() = Debugging_getForceCheckedShutdown()

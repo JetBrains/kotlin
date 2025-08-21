@@ -30,3 +30,6 @@ fun main() {
 public class Jaba {
     public int modCount = 0;
 }
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, functionDeclaration, getter, integerLiteral, javaProperty,
+javaType, localProperty, propertyDeclaration, setter, stringLiteral */

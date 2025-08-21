@@ -14,7 +14,7 @@ interface I {
     val foo: Int
 }
 
-actual typealias <!NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS!>Foo<!> = JavaFoo
+actual typealias <!EXPECT_ACTUAL_INCOMPATIBLE_CLASS_SCOPE!>Foo<!> = JavaFoo
 
 // FILE: JavaFoo.java
 public class JavaFoo implements I {
@@ -25,3 +25,6 @@ public class JavaFoo implements I {
         return 0;
     }
 }
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, interfaceDeclaration, javaType, propertyDeclaration,
+typeAliasDeclaration */

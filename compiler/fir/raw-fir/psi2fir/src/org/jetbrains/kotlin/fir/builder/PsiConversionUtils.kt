@@ -5,46 +5,49 @@
 
 package org.jetbrains.kotlin.fir.builder
 
-import org.jetbrains.kotlin.*
+import org.jetbrains.kotlin.KtFakeSourceElementKind
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.fir.FirExpressionRef
 import org.jetbrains.kotlin.fir.FirModuleData
+import org.jetbrains.kotlin.fir.buildWhenSubjectAccess
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirVariable
 import org.jetbrains.kotlin.fir.declarations.builder.buildProperty
 import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.diagnostics.ConeSyntaxDiagnostic
 import org.jetbrains.kotlin.fir.expressions.*
-import org.jetbrains.kotlin.fir.expressions.builder.*
-import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
+import org.jetbrains.kotlin.fir.expressions.builder.buildBlock
+import org.jetbrains.kotlin.fir.expressions.builder.buildEqualityOperatorCall
+import org.jetbrains.kotlin.fir.expressions.builder.buildTypeOperatorCall
+import org.jetbrains.kotlin.fir.symbols.impl.FirLocalPropertySymbol
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImplWithoutSource
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.psi
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.toKtPsiSourceElement
 
 internal fun KtWhenCondition.toFirWhenCondition(
-    whenRefWithSubject: FirExpressionRef<FirWhenExpression>,
-    convert: KtExpression?.(String) -> FirExpression,
+    subjectVariable: FirVariable?,
+    convert: KtExpression?.(String, fallbackSource: KtElement) -> FirExpression,
     toFirOrErrorTypeRef: KtTypeReference?.() -> FirTypeRef,
 ): FirExpression {
     val firSubjectSource = this.toKtPsiSourceElement(KtFakeSourceElementKind.WhenGeneratedSubject)
-    val firSubjectExpression = buildWhenSubjectExpression {
-        source = firSubjectSource
-        whenRef = whenRefWithSubject
-    }
+    val firSubjectExpression = buildWhenSubjectAccess(firSubjectSource, subjectVariable)
+
     return when (this) {
         is KtWhenConditionWithExpression -> {
             buildEqualityOperatorCall {
                 source = (expression ?: firstChild)?.toKtPsiSourceElement(KtFakeSourceElementKind.WhenCondition)
                 operation = FirOperation.EQ
                 argumentList = buildBinaryArgumentList(
-                    firSubjectExpression, expression.convert("No expression in condition with expression")
+                    firSubjectExpression, expression.convert("No expression in condition with expression", this@toFirWhenCondition)
                 )
             }
         }
         is KtWhenConditionInRange -> {
-            val firRange = rangeExpression.convert("No range in condition with range")
+            val firRange = rangeExpression.convert("No range in condition with range", this)
             firRange.generateContainsOperation(
                 firSubjectExpression,
                 isNegated,
@@ -67,12 +70,12 @@ internal fun KtWhenCondition.toFirWhenCondition(
 }
 
 internal fun Array<KtWhenCondition>.toFirWhenCondition(
-    subject: FirExpressionRef<FirWhenExpression>,
-    convert: KtExpression?.(String) -> FirExpression,
+    subjectVariable: FirVariable?,
+    convert: KtExpression?.(String, fallbackSource: KtElement) -> FirExpression,
     toFirOrErrorTypeRef: KtTypeReference?.() -> FirTypeRef,
 ): FirExpression {
     val conditions = this.map { condition ->
-        condition.toFirWhenCondition(subject, convert, toFirOrErrorTypeRef)
+        condition.toFirWhenCondition(subjectVariable, convert, toFirOrErrorTypeRef)
     }
 
     require(conditions.isNotEmpty())
@@ -97,9 +100,8 @@ internal fun generateTemporaryVariable(
         returnTypeRef = typeRef ?: FirImplicitTypeRefImplWithoutSource
         this.name = name
         this.initializer = initializer
-        symbol = FirPropertySymbol(name)
+        symbol = FirLocalPropertySymbol()
         isVar = false
-        isLocal = true
         status = FirDeclarationStatusImpl(Visibilities.Local, Modality.FINAL)
         (source.psi as? KtAnnotated)?.extractAnnotationsTo(this)
     }
@@ -122,18 +124,17 @@ internal fun generateTemporaryVariable(
         extractAnnotationsTo,
     )
 
+context(c: DestructuringContext<KtDestructuringDeclarationEntry>)
 internal fun AbstractRawFirBuilder<*>.generateDestructuringBlock(
-    c: DestructuringContext<KtDestructuringDeclarationEntry>,
     moduleData: FirModuleData,
     multiDeclaration: KtDestructuringDeclaration,
     container: FirVariable,
     tmpVariable: Boolean,
 ): FirBlock {
     return buildBlock {
-        source = multiDeclaration.toKtPsiSourceElement()
+        source = multiDeclaration.toKtPsiSourceElement(KtFakeSourceElementKind.DestructuringBlock)
         addDestructuringVariables(
             statements,
-            c,
             moduleData,
             multiDeclaration,
             container,
@@ -143,9 +144,9 @@ internal fun AbstractRawFirBuilder<*>.generateDestructuringBlock(
     }
 }
 
+context(c: DestructuringContext<KtDestructuringDeclarationEntry>)
 internal fun AbstractRawFirBuilder<*>.addDestructuringVariables(
     destination: MutableList<in FirVariable>,
-    c: DestructuringContext<KtDestructuringDeclarationEntry>,
     moduleData: FirModuleData,
     multiDeclaration: KtDestructuringDeclaration,
     container: FirVariable,
@@ -155,13 +156,12 @@ internal fun AbstractRawFirBuilder<*>.addDestructuringVariables(
 ) {
     addDestructuringVariables(
         destination,
-        c,
         moduleData,
         container,
         multiDeclaration.entries,
-        multiDeclaration.isVar,
-        tmpVariable,
-        forceLocal,
-        configure
+        isNameBased = !multiDeclaration.hasSquareBrackets() && (multiDeclaration.isFullForm || nameBasedDestructuringShortForm),
+        isTmpVariable = tmpVariable,
+        forceLocal = forceLocal,
+        configure,
     )
 }

@@ -54,6 +54,10 @@ public interface KParameter : KAnnotatedElement {
         /** Instance required to make a call to the member, or an outer class instance for an inner class constructor. */
         INSTANCE,
 
+        /** Context parameter. */
+        @ExperimentalContextParameters
+        CONTEXT,
+
         /** Extension receiver of an extension function or property. */
         EXTENSION_RECEIVER,
 

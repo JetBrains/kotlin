@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle.targets.js.ir
 import org.gradle.api.Action
 import org.gradle.api.DomainObjectSet
 import org.gradle.api.file.Directory
+import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Sync
@@ -20,22 +21,35 @@ import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinBrowserJsIr.Companion.WEBPACK_TASK_NAME
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrSubTarget.Companion.DISTRIBUTION_TASK_NAME
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrSubTarget.Companion.RUN_TASK_NAME
-import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin.Companion.kotlinNodeJsRootExtension
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
+import org.jetbrains.kotlin.gradle.targets.js.webTargetVariant
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpack
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig.Mode
 import org.jetbrains.kotlin.gradle.targets.js.webpack.WebpackDevtool
+import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsRootExtension
 import org.jetbrains.kotlin.gradle.tasks.dependsOn
-import org.jetbrains.kotlin.gradle.utils.*
+import org.jetbrains.kotlin.gradle.utils.archivesName
+import org.jetbrains.kotlin.gradle.utils.domainObjectSet
+import org.jetbrains.kotlin.gradle.utils.relativeOrAbsolute
+import org.jetbrains.kotlin.gradle.utils.withType
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
+import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsRootPlugin.Companion.kotlinNodeJsRootExtension as wasmKotlinNodeJsRootExtension
 
 class WebpackConfigurator(private val subTarget: KotlinJsIrSubTarget) : SubTargetConfigurator<KotlinWebpack, KotlinWebpack> {
 
     private val project = subTarget.project
 
-    private val nodeJs = project.rootProject.kotlinNodeJsRootExtension
+    private val nodeJsRoot = subTarget.target.webTargetVariant(
+        { project.rootProject.kotlinNodeJsRootExtension },
+        { project.rootProject.wasmKotlinNodeJsRootExtension },
+    )
+
+    internal val isWasm: Boolean = subTarget.target.webTargetVariant(
+        jsVariant = false,
+        wasmVariant = true,
+    )
 
     private val webpackTaskConfigurations = project.objects.domainObjectSet<Action<KotlinWebpack>>()
     private val runTaskConfigurations = project.objects.domainObjectSet<Action<KotlinWebpack>>()
@@ -47,6 +61,13 @@ class WebpackConfigurator(private val subTarget: KotlinJsIrSubTarget) : SubTarge
         val processResourcesTask = project.tasks.named(compilation.processResourcesTaskName)
 
         val assembleTaskProvider = project.tasks.named(LifecycleBasePlugin.ASSEMBLE_TASK_NAME)
+
+        val npmToolingDir: DirectoryProperty = project.objects.directoryProperty().fileProvider(
+            subTarget.target.webTargetVariant(
+                { compilation.npmProject.dir.map { it.asFile } },
+                { (nodeJsRoot as WasmNodeJsRootExtension).npmTooling.map { it.dir } },
+            )
+        )
 
         compilation.binaries
             .withType<Executable>()
@@ -87,8 +108,8 @@ class WebpackConfigurator(private val subTarget: KotlinJsIrSubTarget) : SubTarge
                         ).also { it.finalizeValueOnRead() },
                         entryModuleName = binary.linkTask.flatMap { it.compilerOptions.moduleName },
                         configurationActions = webpackTaskConfigurations,
-                        nodeJs = nodeJs,
                         defaultArchivesName = archivesName,
+                        npmToolingDir = npmToolingDir,
                     )
                 }
 
@@ -121,6 +142,13 @@ class WebpackConfigurator(private val subTarget: KotlinJsIrSubTarget) : SubTarge
         val target = compilation.target
         val project = target.project
 
+        val npmToolingDir: DirectoryProperty = project.objects.directoryProperty().fileProvider(
+            subTarget.target.webTargetVariant(
+                { compilation.npmProject.dir.map { it.asFile } },
+                { (nodeJsRoot as WasmNodeJsRootExtension).npmTooling.map { it.dir } },
+            )
+        )
+
         compilation.binaries
             .withType<Executable>()
             .configureEach { binary ->
@@ -145,6 +173,7 @@ class WebpackConfigurator(private val subTarget: KotlinJsIrSubTarget) : SubTarge
 
                     val npmProject = compilation.npmProject
                     val resourcesDir = compilation.output.resourcesDir
+                    val rootDir = project.rootDir
                     task.devServerProperty.convention(
                         npmProject.dist.zip(npmProject.dir) { distDirectory, dir ->
                             KotlinWebpackConfig.DevServer(
@@ -152,7 +181,11 @@ class WebpackConfigurator(private val subTarget: KotlinJsIrSubTarget) : SubTarge
                                 static = mutableListOf(
                                     distDirectory.asFile.normalize().relativeOrAbsolute(dir.asFile),
                                     resourcesDir.relativeOrAbsolute(dir.asFile),
-                                ),
+                                ).apply {
+                                    if (mode == KotlinJsBinaryMode.DEVELOPMENT) {
+                                        add(rootDir.relativeOrAbsolute(dir.asFile))
+                                    }
+                                },
                                 client = KotlinWebpackConfig.DevServer.Client(
                                     KotlinWebpackConfig.DevServer.Client.Overlay(
                                         errors = true,
@@ -168,7 +201,7 @@ class WebpackConfigurator(private val subTarget: KotlinJsIrSubTarget) : SubTarge
                     )
 
 
-                    task.doNotTrackStateCompat("Tracked by external webpack tool")
+                    task.doNotTrackState("Tracked by external webpack tool")
 
                     task.dependsOn(linkSyncTask)
 
@@ -183,8 +216,8 @@ class WebpackConfigurator(private val subTarget: KotlinJsIrSubTarget) : SubTarge
                         ).also { it.finalizeValueOnRead() },
                         entryModuleName = binary.linkTask.flatMap { it.compilerOptions.moduleName },
                         configurationActions = runTaskConfigurations,
-                        nodeJs = nodeJs,
                         defaultArchivesName = archivesName,
+                        npmToolingDir = npmToolingDir,
                     )
                 }
             }
@@ -200,19 +233,37 @@ class WebpackConfigurator(private val subTarget: KotlinJsIrSubTarget) : SubTarge
         inputFilesDirectory: Provider<Directory>,
         entryModuleName: Provider<String>,
         configurationActions: DomainObjectSet<Action<KotlinWebpack>>,
-        nodeJs: NodeJsRootExtension,
         defaultArchivesName: Property<String>,
+        npmToolingDir: DirectoryProperty,
     ) {
         val target = binary.target
 
         dependsOn(
-            nodeJs.npmInstallTaskProvider,
             target.project.tasks.named(compilation.processResourcesTaskName)
         )
 
-        dependsOn(nodeJs.packageManagerExtension.map { it.postInstallTasks })
+        dependsOn(nodeJsRoot.npmInstallTaskProvider)
+
+        dependsOn(nodeJsRoot.packageManagerExtension.map { it.postInstallTasks })
 
         configureOptimization(mode)
+
+        this.npmToolingEnvDir
+            .value(npmToolingDir)
+            .disallowChanges()
+
+        val isWasm = this@WebpackConfigurator.isWasm
+
+        this.getIsWasm.value(isWasm).disallowChanges()
+
+        if (isWasm) {
+            dependsOn((nodeJsRoot as WasmNodeJsRootExtension).toolingInstallTaskProvider)
+        }
+
+        this.versions.value(nodeJsRoot.versions)
+            .disallowChanges()
+        this.rootPackageDir.value(nodeJsRoot.rootPackageDirectory)
+            .disallowChanges()
 
         this.inputFilesDirectory.set(inputFilesDirectory)
 

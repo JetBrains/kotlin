@@ -958,6 +958,12 @@ public class FirJsES6BoxTestGenerated extends AbstractFirJsES6BoxTest {
     }
 
     @Test
+    @TestMetadata("kt61183.kt")
+    public void testKt61183() {
+      runTest("js/js.translator/testData/box/coroutines/kt61183.kt");
+    }
+
+    @Test
     @TestMetadata("lambdaWithValueClass.kt")
     public void testLambdaWithValueClass() {
       runTest("js/js.translator/testData/box/coroutines/lambdaWithValueClass.kt");
@@ -1904,6 +1910,12 @@ public class FirJsES6BoxTestGenerated extends AbstractFirJsES6BoxTest {
     }
 
     @Test
+    @TestMetadata("specialCallableMember.kt")
+    public void testSpecialCallableMember() {
+      runTest("js/js.translator/testData/box/dynamic/specialCallableMember.kt");
+    }
+
+    @Test
     @TestMetadata("unaryOperations.kt")
     public void testUnaryOperations() {
       runTest("js/js.translator/testData/box/dynamic/unaryOperations.kt");
@@ -2432,6 +2444,47 @@ public class FirJsES6BoxTestGenerated extends AbstractFirJsES6BoxTest {
     }
 
     @Nested
+    @TestMetadata("js/js.translator/testData/box/esModules/escapedIdentifiers")
+    @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
+    public class EscapedIdentifiers {
+      @Test
+      public void testAllFilesPresentInEscapedIdentifiers() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/esModules/escapedIdentifiers"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+      }
+
+      @Test
+      @TestMetadata("externalEscapedTopLevel.kt")
+      public void testExternalEscapedTopLevel() {
+        runTest("js/js.translator/testData/box/esModules/escapedIdentifiers/externalEscapedTopLevel.kt");
+      }
+
+      @Test
+      @TestMetadata("topLevelExportedClass.kt")
+      public void testTopLevelExportedClass() {
+        runTest("js/js.translator/testData/box/esModules/escapedIdentifiers/topLevelExportedClass.kt");
+      }
+
+      @Test
+      @TestMetadata("topLevelExportedCompanion.kt")
+      public void testTopLevelExportedCompanion() {
+        runTest("js/js.translator/testData/box/esModules/escapedIdentifiers/topLevelExportedCompanion.kt");
+      }
+
+      @Test
+      @TestMetadata("topLevelExportedFunction.kt")
+      public void testTopLevelExportedFunction() {
+        runTest("js/js.translator/testData/box/esModules/escapedIdentifiers/topLevelExportedFunction.kt");
+      }
+
+      @Test
+      @TestMetadata("topLevelExportedVariable.kt")
+      public void testTopLevelExportedVariable() {
+        runTest("js/js.translator/testData/box/esModules/escapedIdentifiers/topLevelExportedVariable.kt");
+      }
+    }
+
+    @Nested
     @TestMetadata("js/js.translator/testData/box/esModules/export")
     @TestDataPath("$PROJECT_ROOT")
     @Tag("es6")
@@ -2439,6 +2492,12 @@ public class FirJsES6BoxTestGenerated extends AbstractFirJsES6BoxTest {
       @Test
       public void testAllFilesPresentInExport() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/esModules/export"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+      }
+
+      @Test
+      @TestMetadata("allTheExportedEntitiesAreEnumerable.kt")
+      public void testAllTheExportedEntitiesAreEnumerable() {
+        runTest("js/js.translator/testData/box/esModules/export/allTheExportedEntitiesAreEnumerable.kt");
       }
 
       @Test
@@ -2712,6 +2771,18 @@ public class FirJsES6BoxTestGenerated extends AbstractFirJsES6BoxTest {
       @TestMetadata("perFileExportedApi.kt")
       public void testPerFileExportedApi() {
         runTest("js/js.translator/testData/box/esModules/jsExport/perFileExportedApi.kt");
+      }
+
+      @Test
+      @TestMetadata("privateDataClass.kt")
+      public void testPrivateDataClass() {
+        runTest("js/js.translator/testData/box/esModules/jsExport/privateDataClass.kt");
+      }
+
+      @Test
+      @TestMetadata("privateDataClassInFile.kt")
+      public void testPrivateDataClassInFile() {
+        runTest("js/js.translator/testData/box/esModules/jsExport/privateDataClassInFile.kt");
       }
 
       @Test
@@ -3140,6 +3211,12 @@ public class FirJsES6BoxTestGenerated extends AbstractFirJsES6BoxTest {
     }
 
     @Test
+    @TestMetadata("allTheExportedEntitiesAreEnumerable.kt")
+    public void testAllTheExportedEntitiesAreEnumerable() {
+      runTest("js/js.translator/testData/box/export/allTheExportedEntitiesAreEnumerable.kt");
+    }
+
+    @Test
     @TestMetadata("bridgeSavingAfterExport.kt")
     public void testBridgeSavingAfterExport() {
       runTest("js/js.translator/testData/box/export/bridgeSavingAfterExport.kt");
@@ -3308,6 +3385,12 @@ public class FirJsES6BoxTestGenerated extends AbstractFirJsES6BoxTest {
     }
 
     @Test
+    @TestMetadata("exportedAbstractClassWithInheritance.kt")
+    public void testExportedAbstractClassWithInheritance() {
+      runTest("js/js.translator/testData/box/export/exportedAbstractClassWithInheritance.kt");
+    }
+
+    @Test
     @TestMetadata("nonIndetifierModuleName.kt")
     public void testNonIndetifierModuleName() {
       runTest("js/js.translator/testData/box/export/nonIndetifierModuleName.kt");
@@ -3359,6 +3442,12 @@ public class FirJsES6BoxTestGenerated extends AbstractFirJsES6BoxTest {
     @TestMetadata("overridenMethod.kt")
     public void testOverridenMethod() {
       runTest("js/js.translator/testData/box/export/overridenMethod.kt");
+    }
+
+    @Test
+    @TestMetadata("overridenMethodDoesNotClashWithMethod.kt")
+    public void testOverridenMethodDoesNotClashWithMethod() {
+      runTest("js/js.translator/testData/box/export/overridenMethodDoesNotClashWithMethod.kt");
     }
 
     @Test
@@ -5874,6 +5963,12 @@ public class FirJsES6BoxTestGenerated extends AbstractFirJsES6BoxTest {
     }
 
     @Test
+    @TestMetadata("callableReferenceOfLocalKT77102.kt")
+    public void testCallableReferenceOfLocalKT77102() {
+      runTest("js/js.translator/testData/box/inline/callableReferenceOfLocalKT77102.kt");
+    }
+
+    @Test
     @TestMetadata("classObject.kt")
     public void testClassObject() {
       runTest("js/js.translator/testData/box/inline/classObject.kt");
@@ -7495,6 +7590,12 @@ public class FirJsES6BoxTestGenerated extends AbstractFirJsES6BoxTest {
     }
 
     @Test
+    @TestMetadata("contextParameters.kt")
+    public void testContextParameters() {
+      runTest("js/js.translator/testData/box/jsCode/contextParameters.kt");
+    }
+
+    @Test
     @TestMetadata("continue.kt")
     public void testContinue() {
       runTest("js/js.translator/testData/box/jsCode/continue.kt");
@@ -7725,6 +7826,18 @@ public class FirJsES6BoxTestGenerated extends AbstractFirJsES6BoxTest {
     @TestMetadata("jsExportInClass.kt")
     public void testJsExportInClass() {
       runTest("js/js.translator/testData/box/jsExport/jsExportInClass.kt");
+    }
+
+    @Test
+    @TestMetadata("privateDataClass.kt")
+    public void testPrivateDataClass() {
+      runTest("js/js.translator/testData/box/jsExport/privateDataClass.kt");
+    }
+
+    @Test
+    @TestMetadata("privateDataClassInFile.kt")
+    public void testPrivateDataClassInFile() {
+      runTest("js/js.translator/testData/box/jsExport/privateDataClassInFile.kt");
     }
 
     @Test
@@ -8414,12 +8527,6 @@ public class FirJsES6BoxTestGenerated extends AbstractFirJsES6BoxTest {
     }
 
     @Test
-    @TestMetadata("clashedDeclLinkage.kt")
-    public void testClashedDeclLinkage() {
-      runTest("js/js.translator/testData/box/multiModule/clashedDeclLinkage.kt");
-    }
-
-    @Test
     @TestMetadata("clashedInternalDeclarations.kt")
     public void testClashedInternalDeclarations() {
       runTest("js/js.translator/testData/box/multiModule/clashedInternalDeclarations.kt");
@@ -8978,6 +9085,12 @@ public class FirJsES6BoxTestGenerated extends AbstractFirJsES6BoxTest {
     @TestMetadata("exception.kt")
     public void testException() {
       runTest("js/js.translator/testData/box/native/exception.kt");
+    }
+
+    @Test
+    @TestMetadata("externalLong.kt")
+    public void testExternalLong() {
+      runTest("js/js.translator/testData/box/native/externalLong.kt");
     }
 
     @Test
@@ -10442,6 +10555,12 @@ public class FirJsES6BoxTestGenerated extends AbstractFirJsES6BoxTest {
     }
 
     @Test
+    @TestMetadata("overrideStableNameProperties.kt")
+    public void testOverrideStableNameProperties() {
+      runTest("js/js.translator/testData/box/propertyOverride/overrideStableNameProperties.kt");
+    }
+
+    @Test
     @TestMetadata("overrideValFromTraits.kt")
     public void testOverrideValFromTraits() {
       runTest("js/js.translator/testData/box/propertyOverride/overrideValFromTraits.kt");
@@ -10569,36 +10688,6 @@ public class FirJsES6BoxTestGenerated extends AbstractFirJsES6BoxTest {
     @TestMetadata("external.kt")
     public void testExternal() {
       runTest("js/js.translator/testData/box/reflection/external.kt");
-    }
-
-    @Test
-    @TestMetadata("findAssociatedObject.kt")
-    public void testFindAssociatedObject() {
-      runTest("js/js.translator/testData/box/reflection/findAssociatedObject.kt");
-    }
-
-    @Test
-    @TestMetadata("findAssociatedObjectAndDCE.kt")
-    public void testFindAssociatedObjectAndDCE() {
-      runTest("js/js.translator/testData/box/reflection/findAssociatedObjectAndDCE.kt");
-    }
-
-    @Test
-    @TestMetadata("findAssociatedObjectInSeparatedFile.kt")
-    public void testFindAssociatedObjectInSeparatedFile() {
-      runTest("js/js.translator/testData/box/reflection/findAssociatedObjectInSeparatedFile.kt");
-    }
-
-    @Test
-    @TestMetadata("findAssociatedObjectLazyness.kt")
-    public void testFindAssociatedObjectLazyness() {
-      runTest("js/js.translator/testData/box/reflection/findAssociatedObjectLazyness.kt");
-    }
-
-    @Test
-    @TestMetadata("findAssociatedObject_oldBE.kt")
-    public void testFindAssociatedObject_oldBE() {
-      runTest("js/js.translator/testData/box/reflection/findAssociatedObject_oldBE.kt");
     }
 
     @Test

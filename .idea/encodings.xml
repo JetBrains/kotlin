@@ -52,7 +52,7 @@
     <file url="file://$PROJECT_DIR$/libraries/tools/maven-archetypes/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/libraries/tools/maven-archetypes/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/plugins/allopen/allopen.cli/resources" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/plugins/kapt3/kapt3-compiler/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/plugins/kapt/kapt-compiler/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/plugins/kotlinx-serialization/kotlinx-serialization.cli/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/plugins/lombok/lombok.cli/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/plugins/noarg/noarg.cli/resources" charset="UTF-8" />

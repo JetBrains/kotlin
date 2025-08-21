@@ -19,18 +19,20 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirPrimaryConstructor
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.expressions.FirDelegatedConstructorCall
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 
 // See old FE's [DeclarationsChecker]
 object FirExpectConsistencyChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
-    override fun check(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirDeclaration) {
         val source = declaration.source ?: return
         if (source.kind is KtFakeSourceElementKind) return
 
-        val lastClass = context.containingDeclarations.lastOrNull() as? FirClass
+        val lastClass = context.containingDeclarations.lastOrNull() as? FirClassSymbol<*>
         if (declaration is FirAnonymousInitializer) {
             if (lastClass?.isExpect == true) {
-                reporter.reportOn(source, FirErrors.EXPECTED_DECLARATION_WITH_BODY, context)
+                reporter.reportOn(source, FirErrors.EXPECTED_DECLARATION_WITH_BODY)
             }
             return
         }
@@ -40,36 +42,36 @@ object FirExpectConsistencyChecker : FirBasicDeclarationChecker(MppCheckerKind.C
         }
 
         getConstructorDelegationCall(declaration)?.let { delegatedConstructor ->
-            reporter.reportOn(delegatedConstructor.source, FirErrors.EXPECTED_CLASS_CONSTRUCTOR_DELEGATION_CALL, context)
+            reporter.reportOn(delegatedConstructor.source, FirErrors.EXPECTED_CLASS_CONSTRUCTOR_DELEGATION_CALL)
         }
         for (superTypeRef in getClassSuperTypeReferencesWithInitializers(declaration)) {
-            reporter.reportOn(superTypeRef.source, FirErrors.SUPERTYPE_INITIALIZED_IN_EXPECTED_CLASS, context)
+            reporter.reportOn(superTypeRef.source, FirErrors.SUPERTYPE_INITIALIZED_IN_EXPECTED_CLASS)
         }
         for (propertyParameter in getConstructorProhibitedPropertyParameters(declaration, lastClass)) {
-            reporter.reportOn(propertyParameter.source, FirErrors.EXPECTED_CLASS_CONSTRUCTOR_PROPERTY_PARAMETER, context)
+            reporter.reportOn(propertyParameter.source, FirErrors.EXPECTED_CLASS_CONSTRUCTOR_PROPERTY_PARAMETER)
         }
         if (isProhibitedEnumConstructor(declaration, lastClass)) {
-            reporter.reportOn(source, FirErrors.EXPECTED_ENUM_CONSTRUCTOR, context)
+            reporter.reportOn(source, FirErrors.EXPECTED_ENUM_CONSTRUCTOR)
         }
         if (isProhibitedEnumEntryWithBody(declaration)) {
-            reporter.reportOn(source, FirErrors.EXPECTED_ENUM_ENTRY_WITH_BODY, context)
+            reporter.reportOn(source, FirErrors.EXPECTED_ENUM_ENTRY_WITH_BODY)
         }
         if (isProhibitedEnumEntryWithInitializer(declaration)) {
-            reporter.reportOn(source, FirErrors.SUPERTYPE_INITIALIZED_IN_EXPECTED_CLASS, context)
+            reporter.reportOn(source, FirErrors.SUPERTYPE_INITIALIZED_IN_EXPECTED_CLASS)
         }
 
         if (isProhibitedPrivateDeclaration(declaration)) {
-            reporter.reportOn(source, FirErrors.EXPECTED_PRIVATE_DECLARATION, context)
+            reporter.reportOn(source, FirErrors.EXPECTED_PRIVATE_DECLARATION)
         }
 
         if (isProhibitedDeclarationWithBody(declaration)) {
-            reporter.reportOn(source, FirErrors.EXPECTED_DECLARATION_WITH_BODY, context)
+            reporter.reportOn(source, FirErrors.EXPECTED_DECLARATION_WITH_BODY)
         }
     }
 
     private fun getConstructorProhibitedPropertyParameters(
         declaration: FirMemberDeclaration,
-        containingClass: FirClass?,
+        containingClass: FirClassSymbol<*>?,
     ): List<FirValueParameter> {
         if (declaration is FirPrimaryConstructor &&
             containingClass != null && containingClass.classKind != ClassKind.ANNOTATION_CLASS && !containingClass.isInlineOrValue
@@ -103,7 +105,7 @@ object FirExpectConsistencyChecker : FirBasicDeclarationChecker(MppCheckerKind.C
         return declaration !is FirConstructor && declaration !is FirPropertyAccessor && Visibilities.isPrivate(declaration.visibility)
     }
 
-    private fun isProhibitedEnumConstructor(declaration: FirMemberDeclaration, lastClass: FirClass?): Boolean {
+    private fun isProhibitedEnumConstructor(declaration: FirMemberDeclaration, lastClass: FirClassSymbol<*>?): Boolean {
         return declaration is FirConstructor && lastClass?.classKind == ClassKind.ENUM_CLASS
     }
 

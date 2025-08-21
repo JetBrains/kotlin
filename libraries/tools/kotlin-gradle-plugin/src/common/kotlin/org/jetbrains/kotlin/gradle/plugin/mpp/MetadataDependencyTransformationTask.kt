@@ -20,8 +20,8 @@ import org.gradle.api.provider.SetProperty
 import org.gradle.api.tasks.*
 import org.gradle.work.DisableCachingByDefault
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
-import org.jetbrains.kotlin.gradle.plugin.diagnostics.PreparedKotlinToolingDiagnosticsCollector
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.UsesKotlinToolingDiagnostics
+import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.consumption.KmpResolutionStrategy
 import org.jetbrains.kotlin.gradle.targets.metadata.dependsOnClosureWithInterCompilationDependencies
 import org.jetbrains.kotlin.gradle.tasks.dependsOn
 import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
@@ -32,7 +32,11 @@ import javax.inject.Inject
 
 /* Keep typealias for source compatibility */
 @Suppress("unused")
-@Deprecated("Task was renamed to MetadataDependencyTransformationTask", replaceWith = ReplaceWith("MetadataDependencyTransformationTask"))
+@Deprecated(
+    "Task was renamed to MetadataDependencyTransformationTask. Scheduled for removal in Kotlin 2.3.",
+    replaceWith = ReplaceWith("MetadataDependencyTransformationTask"),
+    level = DeprecationLevel.ERROR
+)
 typealias TransformKotlinGranularMetadata = MetadataDependencyTransformationTask
 
 internal const val TRANSFORM_ALL_SOURCESETS_DEPENDENCIES_METADATA = "transformDependenciesMetadata"
@@ -59,12 +63,13 @@ internal fun Project.locateOrRegisterMetadataDependencyTransformationTask(
 abstract class MetadataDependencyTransformationTask
 @Inject constructor(
     kotlinSourceSet: KotlinSourceSet,
-    private val objectFactory: ObjectFactory,
+    objectFactory: ObjectFactory,
     private val projectLayout: ProjectLayout
 ) : DefaultTask(), UsesKotlinToolingDiagnostics {
 
     //region Task Configuration State & Inputs
-    private val transformationParameters = GranularMetadataTransformation.Params(project, kotlinSourceSet)
+    @get:Internal
+    internal val transformationParameters = GranularMetadataTransformation.Params(project, kotlinSourceSet)
 
     @Suppress("unused") // task inputs for up-to-date checks
     @get:Nested
@@ -108,7 +113,20 @@ abstract class MetadataDependencyTransformationTask
         flatMap { resolution ->
             when (resolution) {
                 is MetadataDependencyResolution.ChooseVisibleSourceSets -> resolution.toTransformedLibrariesRecords()
-                is MetadataDependencyResolution.KeepOriginalDependency -> resolution.toTransformedLibrariesRecords()
+                is MetadataDependencyResolution.KeepOriginalDependency -> when (transformationParameters.kmpResolutionStrategy) {
+                    /**
+                     * We probably actually want:
+                     * is MetadataDependencyResolution.KeepOriginalDependency -> emptyList()
+                     *
+                     * in both cases
+                     *
+                     * This used to resolve pre-HMPP metadata jar, but now it just leaks files to metadata compilation classpath
+                     *
+                     * This is especially problematic for lenient resolution
+                     */
+                    KmpResolutionStrategy.InterlibraryUklibAndPSMResolution_PreferUklibs -> emptyList()
+                    KmpResolutionStrategy.StandardKMPResolution -> resolution.toTransformedLibrariesRecords()
+                }
                 is MetadataDependencyResolution.Exclude -> emptyList()
             }
         }
@@ -153,7 +171,6 @@ abstract class MetadataDependencyTransformationTask
                 val serializableKey = identifier.serializableUniqueKey
                 visibleParentSourceSetsByModuleId[serializableKey].orEmpty().filterNotNull().toSet()
             },
-            kotlinToolingDiagnosticsCollector = PreparedKotlinToolingDiagnosticsCollector.create(this)
         )
 
         if (outputsDir.isDirectory) {
@@ -166,18 +183,24 @@ abstract class MetadataDependencyTransformationTask
         KotlinMetadataLibrariesIndexFile(transformedLibrariesIndexFile.get().asFile).write(transformedLibrariesRecords)
     }
 
-    internal fun allTransformedLibraries(): Provider<List<File>> {
-        val ownRecords = transformedLibrariesIndexFile.map { it.records() }
-
-        return parentLibrariesIndexFiles.zip(ownRecords) { parent, own ->
-            val allRecords = own + parent.flatMap { it.records() }
-            allRecords.distinctBy { it.moduleId to it.sourceSetName }.map { File(it.file) }
+    internal fun ownTransformedLibraries(): Provider<List<File>> {
+        return transformedLibrariesIndexFile.map { file ->
+            transformedLibraries(file.records())
         }
     }
+
+    internal fun allTransformedLibraries(): Provider<List<File>> =
+        parentLibrariesIndexFiles.zip(ownTransformedLibraries()) { parent, own ->
+            own + transformedLibraries(parent.flatMap { it.records() })
+        }
 
     companion object {
         @JvmStatic
         private fun RegularFile.records() = KotlinMetadataLibrariesIndexFile(asFile).read()
+
+        private fun transformedLibraries(records: List<TransformedMetadataLibraryRecord>): List<File> {
+            return records.distinctBy { it.moduleId to it.sourceSetName }.map { File(it.file) }
+        }
     }
 }
 

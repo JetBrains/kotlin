@@ -1,0 +1,10 @@
+FILE: topLevelDestructuring2.kt
+    public final class C : R|kotlin/Any| {
+        public constructor(): R|C| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = <Unresolved name: Pair>#(Int(1), Int(2))
+
+
+    }

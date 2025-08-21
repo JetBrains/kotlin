@@ -13,7 +13,7 @@ fun testSimpleValInWhenSubject() {
 
 fun testValWithoutInitializerWhenSubject() {
     when (<!ILLEGAL_DECLARATION_IN_WHEN_SUBJECT!>val y: Any<!>) {
-        <!EXPECTED_CONDITION, USELESS_IS_CHECK!>is String<!> -> <!UNINITIALIZED_VARIABLE!>y<!>.<!UNRESOLVED_REFERENCE!>length<!>
+        is String -> <!UNINITIALIZED_VARIABLE!>y<!>.length
     }
 }
 
@@ -33,3 +33,7 @@ fun testExtensionPropertyInWhenSubject() {
         "" -> <!UNRESOLVED_REFERENCE!>a<!>
     }
 }
+
+/* GENERATED_FIR_TAGS: equalityExpression, funWithExtensionReceiver, functionDeclaration, integerLiteral, isExpression,
+localProperty, propertyDeclaration, propertyWithExtensionReceiver, smartcast, stringLiteral, whenExpression,
+whenWithSubject */

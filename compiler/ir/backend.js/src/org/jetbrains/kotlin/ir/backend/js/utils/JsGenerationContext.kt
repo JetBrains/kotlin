@@ -55,9 +55,9 @@ class JsGenerationContext(
         )
     }
 
-    fun newDeclaration(func: IrFunction? = null, localNames: LocalNameGenerator? = null): JsGenerationContext {
+    fun newDeclaration(func: IrFunction? = null, localNames: LocalNameGenerator? = null, fileEntry: IrFileEntry = currentFileEntry): JsGenerationContext {
         return JsGenerationContext(
-            currentFileEntry = currentFileEntry,
+            currentFileEntry = fileEntry,
             currentFunction = func,
             currentInlineFunction = currentInlineFunction,
             staticContext = staticContext,
@@ -98,8 +98,7 @@ class JsGenerationContext(
     fun checkIfJsCode(symbol: IrFunctionSymbol): Boolean = symbol == staticContext.backendContext.intrinsics.jsCode
 
     fun checkIfHasAssociatedJsCode(symbol: IrFunctionSymbol): Boolean {
-        val originalSymbol = symbol.owner.originalFunction.symbol
-        return staticContext.backendContext.getJsCodeForFunction(originalSymbol) != null
+        return staticContext.backendContext.getJsCodeForFunction(symbol) != null
     }
 
     fun getStartLocationForIrElement(irElement: IrElement, originalName: String? = null) =

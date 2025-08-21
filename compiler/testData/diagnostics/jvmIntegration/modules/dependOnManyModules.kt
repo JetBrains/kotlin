@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // JDK_KIND: FULL_JDK_11
 // MODULE: moduleA
@@ -53,3 +54,5 @@ fun usage() {
     B()
     C()
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, javaFunction */

@@ -12,3 +12,6 @@ fun foo(a: Any) {
     // Should compile in 1.2
     (a as? String)?.indexOf(<!DEBUG_INFO_SMARTCAST!>a<!>.toLowerCase())
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, funWithExtensionReceiver, functionDeclaration, nullableType, safeCall,
+smartcast, thisExpression */

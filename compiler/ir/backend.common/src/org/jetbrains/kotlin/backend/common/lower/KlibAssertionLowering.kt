@@ -36,7 +36,7 @@ import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
  * ```
  */
 abstract class KlibAssertionWrapperLowering(val context: LoweringContext) : FileLoweringPass {
-    private val asserts = context.ir.symbols.asserts.toSet()
+    private val asserts = context.symbols.asserts.toSet()
 
     protected abstract val isAssertionArgumentEvaluationEnabled: IrSimpleFunctionSymbol
 

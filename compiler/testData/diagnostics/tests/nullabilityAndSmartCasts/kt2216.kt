@@ -20,3 +20,6 @@ fun foo() {
     baz(<!TYPE_MISMATCH!>y<!>, <!TYPE_MISMATCH!>y<!>, if (y == null) return else y, y)
     baz(y, z!!, z, y)
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, checkNotNullCall, equalityExpression, functionDeclaration, ifExpression,
+integerLiteral, localProperty, nullableType, propertyDeclaration, smartcast */

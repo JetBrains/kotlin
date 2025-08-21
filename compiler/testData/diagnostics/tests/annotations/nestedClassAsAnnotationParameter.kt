@@ -37,3 +37,7 @@ enum class E(
 
     class Nested
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, classReference, enumDeclaration, enumEntry,
+functionDeclaration, interfaceDeclaration, nestedClass, nullableType, primaryConstructor, propertyDeclaration,
+starProjection, typeParameter */

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -65,4 +65,6 @@ class PersistentSetMultimap<K, V> private constructor(private val map: Persisten
     operator fun get(key: K): Set<V> {
         return map[key] ?: emptySet()
     }
+
+    val entries: ImmutableSet<Map.Entry<K, PersistentSet<V>>> get() = map.entries
 }

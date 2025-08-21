@@ -16,9 +16,24 @@
     />
 
     <registryKey
+        defaultValue="100"
+        description="A frequency in milliseconds for re-acquiring a phase lock during parallel resolve to perform `checkCanceled()`."
+        key="kotlin.analysis.ll.locking.interval"
+        restartRequired="true"
+    />
+
+
+    <registryKey
         defaultValue="true"
-        description="Enable the JVM builtin actualization workaround (KT-72390) when depending on stdlib sources. Only applies to modules which depend on stdlib sources regardless of this setting."
-        key="kotlin.analysis.jvmBuiltinActualizationForStdlibSources"
+        description="Perform partial body analysis in Kotlin. Speeds up occasional reference resolution, e.g. in Find Usages."
+        key="kotlin.analysis.partialBodyAnalysis"
+        restartRequired="true"
+    />
+
+    <registryKey
+        defaultValue="5"
+        description="Maximum number of partial body analysis attempts, after which the body is analyzed entirely."
+        key="kotlin.analysis.partialBodyAnalysis.attemptCount"
         restartRequired="true"
     />
 
@@ -34,7 +49,7 @@
         serviceImplementation="org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSessionInvalidationEventPublisher"
     />
     <projectService serviceImplementation="org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirGlobalResolveComponents"/>
-    <projectService serviceImplementation="org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirResolveSessionService"/>
+    <projectService serviceImplementation="org.jetbrains.kotlin.analysis.low.level.api.fir.LLResolutionFacadeService"/>
     <projectService
         serviceImplementation="org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.LLFirDeclarationModificationService"
     />
@@ -53,28 +68,8 @@
 
   <projectListeners>
     <listener
-        class="org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSessionInvalidationService$LLKotlinModuleStateModificationListener"
-        topic="org.jetbrains.kotlin.analysis.api.platform.modification.KotlinModuleStateModificationListener"
-    />
-    <listener
-        class="org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSessionInvalidationService$LLKotlinModuleOutOfBlockModificationListener"
-        topic="org.jetbrains.kotlin.analysis.api.platform.modification.KotlinModuleOutOfBlockModificationListener"
-    />
-    <listener
-        class="org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSessionInvalidationService$LLKotlinGlobalModuleStateModificationListener"
-        topic="org.jetbrains.kotlin.analysis.api.platform.modification.KotlinGlobalModuleStateModificationListener"
-    />
-    <listener
-        class="org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSessionInvalidationService$LLKotlinGlobalSourceModuleStateModificationListener"
-        topic="org.jetbrains.kotlin.analysis.api.platform.modification.KotlinGlobalSourceModuleStateModificationListener"
-    />
-    <listener
-        class="org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSessionInvalidationService$LLKotlinGlobalSourceOutOfBlockModificationListener"
-        topic="org.jetbrains.kotlin.analysis.api.platform.modification.KotlinGlobalSourceOutOfBlockModificationListener"
-    />
-    <listener
-        class="org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSessionInvalidationService$LLKotlinCodeFragmentContextModificationListener"
-        topic="org.jetbrains.kotlin.analysis.api.platform.modification.KotlinCodeFragmentContextModificationListener"
+        class="org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSessionInvalidationService$LLKotlinModificationEventListener"
+        topic="org.jetbrains.kotlin.analysis.api.platform.modification.KotlinModificationEventListener"
     />
     <listener
         class="org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSessionInvalidationService$LLPsiModificationTrackerListener"
@@ -87,10 +82,6 @@
     <listener
         class="org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.LLFirInBlockModificationTracker$Listener"
         topic="org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.LLFirInBlockModificationListener"
-    />
-    <listener
-        class="org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSessionInvalidationService$LLKotlinGlobalScriptModuleStateModificationListener"
-        topic="org.jetbrains.kotlin.analysis.api.platform.modification.KotlinGlobalScriptModuleStateModificationListener"
     />
   </projectListeners>
 </idea-plugin>

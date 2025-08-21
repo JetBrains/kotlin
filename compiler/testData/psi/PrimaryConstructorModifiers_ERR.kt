@@ -1,3 +1,5 @@
+// COMPILATION_ERRORS
+
 open class A
 
 open class AB private {

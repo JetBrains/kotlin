@@ -35,3 +35,6 @@ fun main() {
     val cls = DOMElementTestClasses.cls2
     cls()
 }
+
+/* GENERATED_FIR_TAGS: enumDeclaration, enumEntry, functionDeclaration, interfaceDeclaration, localProperty, operator,
+propertyDeclaration */

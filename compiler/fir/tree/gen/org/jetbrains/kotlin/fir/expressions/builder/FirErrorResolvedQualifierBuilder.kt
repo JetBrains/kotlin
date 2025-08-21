@@ -36,6 +36,7 @@ class FirErrorResolvedQualifierBuilder : FirAbstractResolvedQualifierBuilder, Fi
     override var symbol: FirClassLikeSymbol<*>? = null
     override var explicitParent: FirResolvedQualifier? = null
     override var isNullableLHSForCallableReference: Boolean = false
+    override var resolvedToCompanionObject: Boolean by kotlin.properties.Delegates.notNull<Boolean>()
     override var canBeValue: Boolean = false
     override var isFullyQualified: Boolean = false
     override val nonFatalDiagnostics: MutableList<ConeDiagnostic> = mutableListOf()
@@ -52,6 +53,7 @@ class FirErrorResolvedQualifierBuilder : FirAbstractResolvedQualifierBuilder, Fi
             symbol,
             explicitParent,
             isNullableLHSForCallableReference,
+            resolvedToCompanionObject,
             canBeValue,
             isFullyQualified,
             nonFatalDiagnostics.toMutableOrEmpty(),
@@ -63,13 +65,6 @@ class FirErrorResolvedQualifierBuilder : FirAbstractResolvedQualifierBuilder, Fi
 
     @Deprecated("Modification of 'classId' has no impact for FirErrorResolvedQualifierBuilder", level = DeprecationLevel.HIDDEN)
     override var classId: ClassId?
-        get() = throw IllegalStateException()
-        set(_) {
-            throw IllegalStateException()
-        }
-
-    @Deprecated("Modification of 'resolvedToCompanionObject' has no impact for FirErrorResolvedQualifierBuilder", level = DeprecationLevel.HIDDEN)
-    override var resolvedToCompanionObject: Boolean
         get() = throw IllegalStateException()
         set(_) {
             throw IllegalStateException()

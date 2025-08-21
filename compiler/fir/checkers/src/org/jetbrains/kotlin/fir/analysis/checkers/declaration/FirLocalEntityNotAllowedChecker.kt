@@ -12,14 +12,16 @@ import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
-import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.utils.isCompanion
+import org.jetbrains.kotlin.fir.declarations.utils.isReplSnippetDeclaration
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 
 object FirLocalEntityNotAllowedChecker : FirRegularClassChecker(MppCheckerKind.Common) {
-    override fun check(declaration: FirRegularClass, context: CheckerContext, reporter: DiagnosticReporter) {
-        if (declaration.visibility != Visibilities.Local) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirRegularClass) {
+        if (declaration.visibility != Visibilities.Local || declaration.isReplSnippetDeclaration == true) {
             return
         }
 
@@ -27,9 +29,9 @@ object FirLocalEntityNotAllowedChecker : FirRegularClassChecker(MppCheckerKind.C
 
         when {
             declaration.classKind == ClassKind.OBJECT && !declaration.isCompanion ->
-                reporter.reportOn(declaration.source, FirErrors.LOCAL_OBJECT_NOT_ALLOWED, declaration.name, context)
-            declaration.classKind == ClassKind.INTERFACE && container !is FirClass ->
-                reporter.reportOn(declaration.source, FirErrors.LOCAL_INTERFACE_NOT_ALLOWED, declaration.name, context)
+                reporter.reportOn(declaration.source, FirErrors.LOCAL_OBJECT_NOT_ALLOWED, declaration.name)
+            declaration.classKind == ClassKind.INTERFACE && container !is FirClassSymbol ->
+                reporter.reportOn(declaration.source, FirErrors.LOCAL_INTERFACE_NOT_ALLOWED, declaration.name)
             else -> {
             }
         }

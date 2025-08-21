@@ -31,3 +31,7 @@ fun testProjections1(x: Pair<in Int, out String>) = F(<!TYPE_MISMATCH, TYPE_MISM
 fun testProjections2(x: Pair<in Int, out Number>) = F(<!TYPE_MISMATCH, TYPE_MISMATCH!>x<!>)
 fun testProjections3(x: Pair<in Number, out Int>) = F(<!TYPE_MISMATCH!>x<!>)
 fun testProjections4(x: Pair<in Int, in Int>) = F(<!TYPE_MISMATCH, TYPE_MISMATCH!>x<!>)
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, inProjection, integerLiteral, nullableType, outProjection,
+primaryConstructor, propertyDeclaration, stringLiteral, typeAliasDeclaration, typeAliasDeclarationWithTypeParameter,
+typeConstraint, typeParameter */

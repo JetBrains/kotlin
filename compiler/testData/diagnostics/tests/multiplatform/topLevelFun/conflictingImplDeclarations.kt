@@ -10,3 +10,5 @@ expect fun <!AMBIGUOUS_ACTUALS{JVM}!>foo<!>()
 
 <!CONFLICTING_OVERLOADS!>actual fun foo()<!> {}
 <!CONFLICTING_OVERLOADS!>actual fun foo()<!> {}
+
+/* GENERATED_FIR_TAGS: actual, expect, functionDeclaration */

@@ -3,44 +3,55 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-@file:OptIn(DeprecatedTargetPresetApi::class, InternalKotlinGradlePluginApi::class)
+@file:OptIn(InternalKotlinGradlePluginApi::class)
 
 package org.jetbrains.kotlin.generators.gradle.dsl
 
 import org.gradle.api.Action
-import org.jetbrains.kotlin.gradle.DeprecatedTargetPresetApi
+import org.gradle.api.NamedDomainObjectCollection
+import org.gradle.api.model.ObjectFactory
+import org.jetbrains.kotlin.generators.arguments.getPrinterToFile
 import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
-import org.jetbrains.kotlin.gradle.plugin.KotlinTargetsContainerWithPresets
+import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
+import org.jetbrains.kotlin.gradle.plugin.KotlinTargetsContainer
+import org.jetbrains.kotlin.utils.Printer
 import java.io.File
+import javax.inject.Inject
 
 fun main() {
-    generateKotlinTargetContainerWithPresetFunctionsInterface()
+    generateKotlinTargetContainerWithPresetFunctionsInterface(::getPrinterToFile)
 }
 
-private val parentInterface = KotlinTargetsContainerWithPresets::class
+private val parentInterface = KotlinTargetsContainer::class
 
-@Suppress("DEPRECATION_ERROR")
-private val presetsProperty = KotlinTargetsContainerWithPresets::presets.name
-
-private fun generateKotlinTargetContainerWithPresetFunctionsInterface() {
+internal fun generateKotlinTargetContainerWithPresetFunctionsInterface(withPrinterToFile: (targetFile: File, Printer.() -> Unit) -> Unit) {
     // Generate KotlinMultiplatformExtension subclass with member functions for the presets:
     val functions = allPresetEntries.map { kotlinPreset ->
-        generatePresetFunctions(kotlinPreset, presetsProperty, "configureOrCreate")
+        generatePresetFunctions(kotlinPreset)
     }
 
-    val parentInterfaceName =
-        typeName(parentInterface.java.canonicalName)
+    val defaultFunctionsImplementation = allPresetEntries.map { kotlinPreset ->
+        generateDefaultPresetFunctionImplementation(kotlinPreset)
+    }
 
     val className =
         typeName("org.jetbrains.kotlin.gradle.dsl.KotlinTargetContainerWithPresetFunctions")
+    val defaultImplementationClassname =
+        typeName("org.jetbrains.kotlin.gradle.dsl.DefaultKotlinTargetContainerWithPresetFunctions")
 
     val deprecatedMessageVal = typeName("org.jetbrains.kotlin.konan.target.DEPRECATED_TARGET_MESSAGE")
 
     val imports = allPresetEntries
         .flatMap { it.typeNames() }
-        .plus(parentInterfaceName)
+        .plus(typeName(parentInterface.java.canonicalName))
         .plus(deprecatedMessageVal)
         .plus(typeName(Action::class.java.canonicalName))
+        .plus(typeName(NamedDomainObjectCollection::class.java.canonicalName))
+        .plus(typeName(KotlinTarget::class.java.canonicalName))
+        .plus(typeName(ObjectFactory::class.java.canonicalName))
+        .plus(typeName(Inject::class.java.canonicalName))
+        .plus(typeName("org.jetbrains.kotlin.gradle.utils.newInstance"))
+        .plus(typeName("org.jetbrains.kotlin.gradle.targets.android.internal.InternalKotlinTargetPreset"))
         .filter { it.packageName() != className.packageName() }
         .flatMap { it.collectFqNames() }
         .toSortedSet()
@@ -55,34 +66,41 @@ private fun generateKotlinTargetContainerWithPresetFunctionsInterface() {
         imports,
         generatedCodeWarning,
         extraTopLevelDeclarations,
-        "@KotlinGradlePluginDsl\ninterface ${className.renderShort()} : ${parentInterfaceName.renderShort()} {",
+        "@KotlinGradlePluginPublicDsl\ninterface ${className.renderShort()} : ${parentInterface.simpleName} {",
         functions.joinToString("\n\n") { it.indented(4) },
+        "}",
+        defaultContainerClassHeader(defaultImplementationClassname, className),
+        defaultFunctionsImplementation.joinToString("\n") { it.indented(4) },
         "}"
-    ).joinToString("\n\n")
+    )
+        .filter { it.isNotBlank() }
+        .joinToString("\n\n")
 
     val targetFile = File("$kotlinGradlePluginSourceRoot/${className.fqName.replace(".", "/")}.kt")
-    targetFile.writeText(code)
+
+    withPrinterToFile(targetFile) {
+        println(code)
+    }
 }
+
+private fun KotlinPresetEntry.deprecated(replaceWithArguments: List<String>? = null): String {
+    val deprecation = deprecation ?: return ""
+
+    val deprecationAnnotation = if (deprecation.replaceWithOtherPreset != null && replaceWithArguments != null) {
+        val replaceWith = "ReplaceWith(\"${deprecation.replaceWithOtherPreset}(${replaceWithArguments.joinToString(",")})\")"
+        "@Deprecated(${deprecation.message}, level = DeprecationLevel.${deprecation.level.name}, replaceWith = $replaceWith)"
+    } else {
+        "@Deprecated(${deprecation.message}, level = DeprecationLevel.${deprecation.level.name})"
+    }
+
+    // magic indent is needed to make the result look pretty
+    return "$deprecationAnnotation\n    "
+}
+
 
 private fun generatePresetFunctions(
     presetEntry: KotlinPresetEntry,
-    getPresetsExpression: String,
-    configureOrCreateFunctionName: String,
 ): String {
-    fun deprecated(replaceWithArguments: List<String>? = null): String {
-        val deprecation = presetEntry.deprecation ?: return ""
-
-        val deprecationAnnotation = if (deprecation.replaceWithOtherPreset != null && replaceWithArguments != null) {
-            val replaceWith = "ReplaceWith(\"${deprecation.replaceWithOtherPreset}(${replaceWithArguments.joinToString(",")})\")"
-            "@Deprecated(${deprecation.message}, level = DeprecationLevel.${deprecation.level.name}, replaceWith = $replaceWith)"
-        } else {
-            "@Deprecated(${deprecation.message}, level = DeprecationLevel.${deprecation.level.name})"
-        }
-
-        // magic indent is needed to make the result look pretty
-        return "\n    $deprecationAnnotation\n    "
-    }
-
     val suppress = if (presetEntry.deprecation != null) {
         val suppressDeprecationId = when (presetEntry.deprecation.level) {
             DeprecationLevel.WARNING -> "DEPRECATION"
@@ -94,9 +112,32 @@ private fun generatePresetFunctions(
         ""
     }
 
-    // Suppress presets deprecation to prevent warnings inside kotlin-gradle-plugin
-    val suppressPresetsDeprecation = "@Suppress(\"DEPRECATION\")"
+    val presetName = presetEntry.presetName
+    val entityName = presetEntry.entityName
 
+    return """
+    ${presetEntry.deprecated()}fun $presetName(
+        name: String = "$entityName",
+        configure: ${presetEntry.targetType.renderShort()}.() -> Unit = { }
+    ): ${presetEntry.targetType.renderShort()}
+    
+    ${presetEntry.deprecated(emptyList())}${suppress}fun $presetName() = $presetName("$entityName") { }
+    
+    ${presetEntry.deprecated(listOf("name"))}${suppress}fun $presetName(name: String) = $presetName(name) { }
+    
+    ${presetEntry.deprecated()}${suppress}fun $presetName(
+        name: String,
+        configure: Action<${presetEntry.targetType.renderShort()}>
+    ) = $presetName(name) { configure.execute(this) }
+    
+    ${presetEntry.deprecated()}${suppress}fun $presetName(configure: Action<${presetEntry.targetType.renderShort()}>) = $presetName { configure.execute(this) }
+""".trimIndent()
+}
+
+private fun generateDefaultPresetFunctionImplementation(
+    presetEntry: KotlinPresetEntry,
+    configureOrCreateFunctionName: String = "configureOrCreate",
+): String {
     val alsoBlockAfterConfiguration = if (presetEntry.alsoBlockAfterConfiguration != null) {
         """
             .also {
@@ -111,20 +152,33 @@ private fun generatePresetFunctions(
     val entityName = presetEntry.entityName
 
     return """
-    ${deprecated()}fun $presetName(
-        name: String = "$entityName",
-        configure: ${presetEntry.targetType.renderShort()}.() -> Unit = { }
+    ${presetEntry.deprecated()}override fun $presetName(
+        name: String,
+        configure: ${presetEntry.targetType.renderShort()}.() -> Unit
     ): ${presetEntry.targetType.renderShort()} =
         $configureOrCreateFunctionName(
             name,
-            ${suppressPresetsDeprecation}
-            $getPresetsExpression.getByName("$entityName") as ${presetEntry.presetType.renderShort()},
+            presets.getByName("$entityName") as ${presetEntry.presetType.renderShort()},
             configure
         )$alsoBlockAfterConfiguration
-
-    ${deprecated(emptyList())}${suppress}fun $presetName() = $presetName("$entityName") { }
-    ${deprecated(listOf("name"))}${suppress}fun $presetName(name: String) = $presetName(name) { }
-    ${deprecated()}${suppress}fun $presetName(name: String, configure: Action<${presetEntry.targetType.renderShort()}>) = $presetName(name) { configure.execute(this) }
-    ${deprecated()}${suppress}fun $presetName(configure: Action<${presetEntry.targetType.renderShort()}>) = $presetName { configure.execute(this) }
-""".trimIndent()
+    
+    """.trimIndent()
 }
+
+//language=kotlin
+private fun defaultContainerClassHeader(
+    defaultImplementationClassname: TypeName,
+    className: TypeName,
+) = """
+internal fun ObjectFactory.${defaultImplementationClassname.renderShort()}(
+    targets: NamedDomainObjectCollection<KotlinTarget>
+): ${defaultImplementationClassname.renderShort()} = newInstance<${defaultImplementationClassname.renderShort()}>(targets)
+
+internal abstract class ${defaultImplementationClassname.renderShort()} @Inject constructor(
+    objectFactory: ObjectFactory,
+    override val targets: NamedDomainObjectCollection<KotlinTarget>,
+) : ${className.renderShort()}, ${parentInterface.simpleName} {
+
+    val presets: NamedDomainObjectCollection<InternalKotlinTargetPreset<*>> =
+        objectFactory.domainObjectContainer(InternalKotlinTargetPreset::class.java)
+""".trimIndent()

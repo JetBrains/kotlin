@@ -230,5 +230,5 @@ internal class KFunctionImpl private constructor(
         (container.hashCode() * 31 + name.hashCode()) * 31 + signature.hashCode()
 
     override fun toString(): String =
-        ReflectionObjectRenderer.renderFunction(descriptor)
+        ReflectionObjectRenderer.renderFunction(this)
 }

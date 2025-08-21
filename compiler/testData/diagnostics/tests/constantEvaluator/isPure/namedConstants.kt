@@ -8,3 +8,5 @@ val NAMED_CONSTANT = 1
 
 // val prop2: false
 <!DEBUG_INFO_CONSTANT_VALUE("false")!>val prop2 = NAMED_CONSTANT + 1<!>
+
+/* GENERATED_FIR_TAGS: additiveExpression, integerLiteral, propertyDeclaration */

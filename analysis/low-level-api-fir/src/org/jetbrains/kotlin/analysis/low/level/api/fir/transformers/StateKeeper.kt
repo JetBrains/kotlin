@@ -272,6 +272,9 @@ internal inline fun <Target : FirElementWithResolveState, Context : Any, Result>
         prepareTarget(target)
         preservedState.postProcess()
         return action()
+    } catch (e: PartialBodyAnalysisSuspendedException) {
+        // Partial body analysis is complete (and successful), no need for restoration
+        throw e
     } catch (e: Throwable) {
         preservedState?.restore()
         throw e

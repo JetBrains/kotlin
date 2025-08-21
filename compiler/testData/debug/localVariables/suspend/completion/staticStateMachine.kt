@@ -1,4 +1,4 @@
-// API_VERSION: LATEST
+// LANGUAGE: +JvmNullOutSpilledCoroutineLocals
 
 // FILE: test.kt
 suspend fun foo() {}

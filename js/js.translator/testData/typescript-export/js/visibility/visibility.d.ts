@@ -1,5 +1,6 @@
 declare namespace JS_TESTS {
     type Nullable<T> = T | null | undefined
+    function KtSingleton<T>(): T & (abstract new() => any);
     interface publicInterface {
     }
     const publicVal: number;
@@ -7,28 +8,74 @@ declare namespace JS_TESTS {
     class publicClass {
         constructor();
     }
+    namespace publicClass {
+        /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+        namespace $metadata$ {
+            const constructor: abstract new () => publicClass;
+        }
+    }
     class Class {
         constructor();
         protected get protectedVal(): number;
         protected protectedFun(): number;
         get publicVal(): number;
         publicFun(): number;
-        protected static get protectedNestedObject(): {
-        };
-        protected static get Companion(): {
-            get companionObjectProp(): number;
-        };
     }
     namespace Class {
+        /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+        namespace $metadata$ {
+            const constructor: abstract new () => Class;
+        }
         class protectedClass {
             constructor();
+        }
+        namespace protectedClass {
+            /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+            namespace $metadata$ {
+                const constructor: abstract new () => protectedClass;
+            }
+        }
+        abstract class protectedNestedObject extends KtSingleton<protectedNestedObject.$metadata$.constructor>() {
+            private constructor();
+        }
+        namespace protectedNestedObject {
+            /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+            namespace $metadata$ {
+                abstract class constructor {
+                    private constructor();
+                }
+            }
+        }
+        abstract class Companion extends KtSingleton<Companion.$metadata$.constructor>() {
+            private constructor();
+        }
+        namespace Companion {
+            /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+            namespace $metadata$ {
+                abstract class constructor {
+                    get companionObjectProp(): number;
+                    private constructor();
+                }
+            }
         }
         class classWithProtectedConstructors {
             protected constructor();
             protected static createWithString(arg: string): Class.classWithProtectedConstructors;
         }
+        namespace classWithProtectedConstructors {
+            /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+            namespace $metadata$ {
+                const constructor: abstract new () => classWithProtectedConstructors;
+            }
+        }
         class publicClass {
             constructor();
+        }
+        namespace publicClass {
+            /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+            namespace $metadata$ {
+                const constructor: abstract new () => publicClass;
+            }
         }
     }
     abstract class EnumClass {
@@ -45,5 +92,11 @@ declare namespace JS_TESTS {
         get ordinal(): 0 | 1;
         static values(): Array<EnumClass>;
         static valueOf(value: string): EnumClass;
+    }
+    namespace EnumClass {
+        /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+        namespace $metadata$ {
+            const constructor: abstract new () => EnumClass;
+        }
     }
 }

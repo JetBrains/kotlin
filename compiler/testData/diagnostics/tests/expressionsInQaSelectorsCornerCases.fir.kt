@@ -18,7 +18,7 @@ fun main() {
 
     5.(Int::b)().inv()
 
-    val d = Int::<!CANNOT_INFER_PARAMETER_TYPE, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>a<!>
+    val d = Int::<!CANNOT_INFER_PARAMETER_TYPE!>a<!>
     5.(d)('=').inv()
 
     val e: Int.(Char) -> Int = Int::a
@@ -34,3 +34,7 @@ fun rain() {
 
     <!NO_RECEIVER_ALLOWED!>5.(Int::x)()<!>.inv()
 }
+
+/* GENERATED_FIR_TAGS: callableReference, funWithExtensionReceiver, functionDeclaration, functionalType, getter,
+integerLiteral, localProperty, nullableType, propertyDeclaration, propertyWithExtensionReceiver, thisExpression,
+typeParameter, typeWithExtension */

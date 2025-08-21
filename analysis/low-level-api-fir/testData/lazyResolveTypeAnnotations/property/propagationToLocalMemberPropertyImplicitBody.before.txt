@@ -1,134 +1,134 @@
 @R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/Collection<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/Int>>?
-  context -> FirPropertySymbol <local>/doo
-  anchor -> [FirPropertySymbol util/bar]
+  context -> FirRegularPropertySymbol <local>/doo
+  anchor -> [FirRegularPropertySymbol util/bar]
 
 @R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/Collection<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/Int>
-  context -> FirPropertySymbol <local>/doo
-  anchor -> [FirPropertySymbol util/bar]
+  context -> FirRegularPropertySymbol <local>/doo
+  anchor -> [FirRegularPropertySymbol util/bar]
 
 @R|util/Anno|(LAZY_EXPRESSION)  kotlin/Int
-  context -> FirPropertySymbol <local>/doo
-  anchor -> [FirPropertySymbol util/bar]
+  context -> FirRegularPropertySymbol <local>/doo
+  anchor -> [FirRegularPropertySymbol util/bar]
 
 @R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/Collection<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/Int>>?
-  context -> FirPropertyAccessorSymbol special/accessor from FirPropertySymbol <local>/doo
-  anchor -> [FirPropertySymbol util/bar]
+  context -> FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/doo
+  anchor -> [FirRegularPropertySymbol util/bar]
 
 @R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/Collection<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/Int>
-  context -> FirPropertyAccessorSymbol special/accessor from FirPropertySymbol <local>/doo
-  anchor -> [FirPropertySymbol util/bar]
+  context -> FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/doo
+  anchor -> [FirRegularPropertySymbol util/bar]
 
 @R|util/Anno|(LAZY_EXPRESSION)  kotlin/Int
-  context -> FirPropertyAccessorSymbol special/accessor from FirPropertySymbol <local>/doo
-  anchor -> [FirPropertySymbol util/bar]
+  context -> FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/doo
+  anchor -> [FirRegularPropertySymbol util/bar]
 
 @R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/Collection<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/Int>>?
-  context -> FirBackingFieldSymbol <local>/field from FirPropertySymbol <local>/doo
-  anchor -> [FirPropertySymbol util/bar]
+  context -> FirBackingFieldSymbol <local>/field from FirRegularPropertySymbol <local>/doo
+  anchor -> [FirRegularPropertySymbol util/bar]
 
 @R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/Collection<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/Int>
-  context -> FirBackingFieldSymbol <local>/field from FirPropertySymbol <local>/doo
-  anchor -> [FirPropertySymbol util/bar]
+  context -> FirBackingFieldSymbol <local>/field from FirRegularPropertySymbol <local>/doo
+  anchor -> [FirRegularPropertySymbol util/bar]
 
 @R|util/Anno|(LAZY_EXPRESSION)  kotlin/Int
-  context -> FirBackingFieldSymbol <local>/field from FirPropertySymbol <local>/doo
-  anchor -> [FirPropertySymbol util/bar]
+  context -> FirBackingFieldSymbol <local>/field from FirRegularPropertySymbol <local>/doo
+  anchor -> [FirRegularPropertySymbol util/bar]
 
 @R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/Collection<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/Int>>?
-  context -> FirPropertySymbol <local>/foo
-  anchor -> [FirPropertySymbol util/bar]
+  context -> FirRegularPropertySymbol <local>/foo
+  anchor -> [FirRegularPropertySymbol util/bar]
 
 @R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/Collection<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/Int>
-  context -> FirPropertySymbol <local>/foo
-  anchor -> [FirPropertySymbol util/bar]
+  context -> FirRegularPropertySymbol <local>/foo
+  anchor -> [FirRegularPropertySymbol util/bar]
 
 @R|util/Anno|(LAZY_EXPRESSION)  kotlin/Int
-  context -> FirPropertySymbol <local>/foo
-  anchor -> [FirPropertySymbol util/bar]
+  context -> FirRegularPropertySymbol <local>/foo
+  anchor -> [FirRegularPropertySymbol util/bar]
 
 @R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/Collection<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/Int>>?
-  context -> FirPropertyAccessorSymbol special/accessor from FirPropertySymbol <local>/foo
-  anchor -> [FirPropertySymbol util/bar]
+  context -> FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/foo
+  anchor -> [FirRegularPropertySymbol util/bar]
 
 @R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/Collection<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/Int>
-  context -> FirPropertyAccessorSymbol special/accessor from FirPropertySymbol <local>/foo
-  anchor -> [FirPropertySymbol util/bar]
+  context -> FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/foo
+  anchor -> [FirRegularPropertySymbol util/bar]
 
 @R|util/Anno|(LAZY_EXPRESSION)  kotlin/Int
-  context -> FirPropertyAccessorSymbol special/accessor from FirPropertySymbol <local>/foo
-  anchor -> [FirPropertySymbol util/bar]
+  context -> FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/foo
+  anchor -> [FirRegularPropertySymbol util/bar]
 
 @R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/Collection<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/Int>>?
-  context -> FirValueParameterSymbol <local>/value from FirPropertyAccessorSymbol special/accessor from FirPropertySymbol <local>/foo
-  anchor -> [FirPropertySymbol util/bar]
+  context -> FirValueParameterSymbol <local>/value from FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/foo
+  anchor -> [FirRegularPropertySymbol util/bar]
 
 @R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/Collection<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/Int>
-  context -> FirValueParameterSymbol <local>/value from FirPropertyAccessorSymbol special/accessor from FirPropertySymbol <local>/foo
-  anchor -> [FirPropertySymbol util/bar]
+  context -> FirValueParameterSymbol <local>/value from FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/foo
+  anchor -> [FirRegularPropertySymbol util/bar]
 
 @R|util/Anno|(LAZY_EXPRESSION)  kotlin/Int
-  context -> FirValueParameterSymbol <local>/value from FirPropertyAccessorSymbol special/accessor from FirPropertySymbol <local>/foo
-  anchor -> [FirPropertySymbol util/bar]
+  context -> FirValueParameterSymbol <local>/value from FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/foo
+  anchor -> [FirRegularPropertySymbol util/bar]
 
 @R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/Collection<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/Int>>?
-  context -> FirBackingFieldSymbol <local>/field from FirPropertySymbol <local>/foo
-  anchor -> [FirPropertySymbol util/bar]
+  context -> FirBackingFieldSymbol <local>/field from FirRegularPropertySymbol <local>/foo
+  anchor -> [FirRegularPropertySymbol util/bar]
 
 @R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/Collection<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/Int>
-  context -> FirBackingFieldSymbol <local>/field from FirPropertySymbol <local>/foo
-  anchor -> [FirPropertySymbol util/bar]
+  context -> FirBackingFieldSymbol <local>/field from FirRegularPropertySymbol <local>/foo
+  anchor -> [FirRegularPropertySymbol util/bar]
 
 @R|util/Anno|(LAZY_EXPRESSION)  kotlin/Int
-  context -> FirBackingFieldSymbol <local>/field from FirPropertySymbol <local>/foo
-  anchor -> [FirPropertySymbol util/bar]
+  context -> FirBackingFieldSymbol <local>/field from FirRegularPropertySymbol <local>/foo
+  anchor -> [FirRegularPropertySymbol util/bar]
 
 @R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/Collection<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/Int>>?
-  context -> FirPropertySymbol <local>/baz
-  anchor -> [FirPropertySymbol util/bar]
+  context -> FirRegularPropertySymbol <local>/baz
+  anchor -> [FirRegularPropertySymbol util/bar]
 
 @R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/Collection<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/Int>
-  context -> FirPropertySymbol <local>/baz
-  anchor -> [FirPropertySymbol util/bar]
+  context -> FirRegularPropertySymbol <local>/baz
+  anchor -> [FirRegularPropertySymbol util/bar]
 
 @R|util/Anno|(LAZY_EXPRESSION)  kotlin/Int
-  context -> FirPropertySymbol <local>/baz
-  anchor -> [FirPropertySymbol util/bar]
+  context -> FirRegularPropertySymbol <local>/baz
+  anchor -> [FirRegularPropertySymbol util/bar]
 
 @R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/Collection<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/Int>>?
-  context -> FirPropertyAccessorSymbol special/accessor from FirPropertySymbol <local>/baz
-  anchor -> [FirPropertySymbol util/bar]
+  context -> FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/baz
+  anchor -> [FirRegularPropertySymbol util/bar]
 
 @R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/Collection<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/Int>
-  context -> FirPropertyAccessorSymbol special/accessor from FirPropertySymbol <local>/baz
-  anchor -> [FirPropertySymbol util/bar]
+  context -> FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/baz
+  anchor -> [FirRegularPropertySymbol util/bar]
 
 @R|util/Anno|(LAZY_EXPRESSION)  kotlin/Int
-  context -> FirPropertyAccessorSymbol special/accessor from FirPropertySymbol <local>/baz
-  anchor -> [FirPropertySymbol util/bar]
+  context -> FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/baz
+  anchor -> [FirRegularPropertySymbol util/bar]
 
 @R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/Collection<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/Int>>?
-  context -> FirValueParameterSymbol <local>/value from FirPropertyAccessorSymbol special/accessor from FirPropertySymbol <local>/baz
-  anchor -> [FirPropertySymbol util/bar]
+  context -> FirValueParameterSymbol <local>/value from FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/baz
+  anchor -> [FirRegularPropertySymbol util/bar]
 
 @R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/Collection<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/Int>
-  context -> FirValueParameterSymbol <local>/value from FirPropertyAccessorSymbol special/accessor from FirPropertySymbol <local>/baz
-  anchor -> [FirPropertySymbol util/bar]
+  context -> FirValueParameterSymbol <local>/value from FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/baz
+  anchor -> [FirRegularPropertySymbol util/bar]
 
 @R|util/Anno|(LAZY_EXPRESSION)  kotlin/Int
-  context -> FirValueParameterSymbol <local>/value from FirPropertyAccessorSymbol special/accessor from FirPropertySymbol <local>/baz
-  anchor -> [FirPropertySymbol util/bar]
+  context -> FirValueParameterSymbol <local>/value from FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/baz
+  anchor -> [FirRegularPropertySymbol util/bar]
 
 @R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/Collection<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/Int>>?
-  context -> FirBackingFieldSymbol <local>/field from FirPropertySymbol <local>/baz
-  anchor -> [FirPropertySymbol util/bar]
+  context -> FirBackingFieldSymbol <local>/field from FirRegularPropertySymbol <local>/baz
+  anchor -> [FirRegularPropertySymbol util/bar]
 
 @R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/Collection<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/Int>
-  context -> FirBackingFieldSymbol <local>/field from FirPropertySymbol <local>/baz
-  anchor -> [FirPropertySymbol util/bar]
+  context -> FirBackingFieldSymbol <local>/field from FirRegularPropertySymbol <local>/baz
+  anchor -> [FirRegularPropertySymbol util/bar]
 
 @R|util/Anno|(LAZY_EXPRESSION)  kotlin/Int
-  context -> FirBackingFieldSymbol <local>/field from FirPropertySymbol <local>/baz
-  anchor -> [FirPropertySymbol util/bar]
+  context -> FirBackingFieldSymbol <local>/field from FirRegularPropertySymbol <local>/baz
+  anchor -> [FirRegularPropertySymbol util/bar]
 
 FILE: [ResolvedTo(IMPORTS)] propagationToLocalMemberPropertyImplicitBody.kt
     @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
@@ -148,7 +148,7 @@ FILE: [ResolvedTo(IMPORTS)] propagationToLocalMemberPropertyImplicitBody.kt
     public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun lambda([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] action: R|() -> kotlin/Unit|): R|kotlin/Unit| {
         ^lambda R|<local>/action|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()
     }
-    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [PostponedSymbolsForAnnotationResolutionKey=[FirPropertySymbol util/bar]] fun foo(): R|kotlin/Unit| {
+    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [PostponedSymbolsForAnnotationResolutionKey=[FirRegularPropertySymbol util/bar]] fun foo(): R|kotlin/Unit| {
         ^foo R|util/lambda|(<L> = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=kotlin/Function0<kotlin/Unit>] lambda@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
             local final [ResolvedTo(RAW_FIR)] class Local : R|kotlin/Any| {
                 public [ResolvedTo(RAW_FIR)] [ContainingClassKey=Local] constructor(): R|<local>/Local| {

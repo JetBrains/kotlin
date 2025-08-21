@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrarAdapter
+import org.jetbrains.kotlinx.atomicfu.compiler.diagnostic.AtomicfuErrors
 import org.jetbrains.kotlinx.atomicfu.compiler.diagnostic.AtomicfuFirCheckers
 
 class AtomicfuComponentRegistrar : CompilerPluginRegistrar() {
@@ -42,5 +43,6 @@ class AtomicfuComponentRegistrar : CompilerPluginRegistrar() {
 class AtomicfuFirExtensionRegistrar : FirExtensionRegistrar() {
     override fun ExtensionRegistrarContext.configurePlugin() {
         +::AtomicfuFirCheckers
+        registerDiagnosticContainers(AtomicfuErrors)
     }
 }

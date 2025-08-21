@@ -79,5 +79,7 @@ fun test(d: dynamic) {
     <!DEBUG_INFO_DYNAMIC!>d[1]<!> <!DEBUG_INFO_DYNAMIC!>*=<!> 1
     <!DEBUG_INFO_DYNAMIC!>d[1]<!> <!DEBUG_INFO_DYNAMIC!>/=<!> 1
     <!DEBUG_INFO_DYNAMIC!>d[1]<!> <!DEBUG_INFO_DYNAMIC!>%=<!> 1
+
+    <!DEBUG_INFO_EXPRESSION_TYPE("dynamic")!>d.plusAssign(1)<!>
 }
 

@@ -7,10 +7,12 @@ KtCallExpression(54,58): 'y(1)'
           receiverType = null
           returnType = kotlin.Int
           symbol = a: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = a
           isSafeNavigation = true
@@ -26,7 +28,9 @@ KtCallExpression(54,58): 'y(1)'
               receiverType = null
               returnType = kotlin.Int
               symbol = a: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = /A.y
       typeArgumentsMapping = {}

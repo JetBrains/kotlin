@@ -16,12 +16,12 @@ import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.expressions.impl.FirSingleExpressionBlock
 
 object FirSingleNamedFunctionChecker : FirBlockChecker(MppCheckerKind.Common) {
-    override fun check(expression: FirBlock, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(expression: FirBlock) {
         if (expression is FirSingleExpressionBlock && expression.statement is FirSimpleFunction) {
             reporter.reportOn(
                 expression.statement.source,
-                FirErrors.SINGLE_ANONYMOUS_FUNCTION_WITH_NAME,
-                context
+                FirErrors.SINGLE_ANONYMOUS_FUNCTION_WITH_NAME
             )
         }
     }

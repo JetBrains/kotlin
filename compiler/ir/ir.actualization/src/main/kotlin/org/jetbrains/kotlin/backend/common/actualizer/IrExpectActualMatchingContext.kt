@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.TypeCheckerState
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
+import org.jetbrains.kotlin.types.model.TypeConstructorMarker
 import org.jetbrains.kotlin.types.model.TypeSubstitutorMarker
 import org.jetbrains.kotlin.types.model.TypeSystemContext
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
@@ -415,7 +416,7 @@ internal abstract class IrExpectActualMatchingContext(
     }
 
     private fun createTypeCheckerState(): TypeCheckerState {
-        return typeContext.newTypeCheckerState(errorTypesEqualToAnything = true, stubTypesEqualToAnything = false)
+        return createIrTypeCheckerState(this)
     }
 
     override fun isSubtypeOf(superType: KotlinTypeMarker, subType: KotlinTypeMarker): Boolean {
@@ -424,6 +425,13 @@ internal abstract class IrExpectActualMatchingContext(
             subType = subType.actualize(),
             superType = superType.actualize()
         )
+    }
+
+    // TODO(KT-76728): potentially slow place
+    override fun TypeConstructorMarker.supertypes(): Collection<KotlinTypeMarker> {
+        return with(typeContext) {
+            supertypes().map { it.actualize() }
+        }
     }
 
     private fun KotlinTypeMarker.actualize(): IrType {
@@ -438,7 +446,7 @@ internal abstract class IrExpectActualMatchingContext(
         }
 
         private fun substituteOrNull(type: IrType): IrType? {
-            if (type !is IrSimpleTypeImpl) return null
+            if (type !is IrSimpleType) return null
             val newClassifier = (type.classifier.owner as? IrClass)?.let { expectToActualClassMap[it.classIdOrFail] }
             val newArguments = ArrayList<IrTypeArgument>(type.arguments.size)
             var argumentsChanged = false
@@ -458,8 +466,7 @@ internal abstract class IrExpectActualMatchingContext(
                 classifier = newClassifier ?: type.classifier,
                 type.nullability,
                 newArguments,
-                type.annotations,
-                type.abbreviation
+                type.annotations
             )
         }
 
@@ -505,7 +512,11 @@ internal abstract class IrExpectActualMatchingContext(
         get() = this is IrPropertySymbol && owner.isPropertyForJavaField()
 
     override val CallableSymbolMarker.canBeActualizedByJavaField: Boolean
-        get() = this is IrPropertySymbol && callableId == abstractMutableListModCountCallableId
+        get() = this is IrPropertySymbol && canBeActualizedByJavaField()
+
+    private fun IrPropertySymbol.canBeActualizedByJavaField(): Boolean {
+        return callableId == abstractMutableListModCountCallableId || owner.overriddenSymbols.any { it.canBeActualizedByJavaField() }
+    }
 
     override fun onMatchedMembers(
         expectSymbol: DeclarationSymbolMarker,
@@ -591,6 +602,34 @@ internal abstract class IrExpectActualMatchingContext(
     override val checkEnumEntriesForAnnotationsCompatibility = false
 
     override fun skipCheckingAnnotationsOfActualClassMember(actualMember: DeclarationSymbolMarker): Boolean = error("Should not be called")
+
+    /**
+     * We want to skip checking if the topmost top-level declaration for both symbols came from dependencies
+     */
+    override fun skipCheckingOnExpectActualPair(
+        expectMember: DeclarationSymbolMarker,
+        actualMember: DeclarationSymbolMarker,
+    ): Boolean {
+        val expectContainingClass = expectMember.asIr().topmostParentClassifier()
+        val actualContainingClass = actualMember.asIr().topmostParentClassifier()
+        return expectContainingClass.origin.isExternal && actualContainingClass.origin.isExternal
+    }
+
+    private val IrDeclarationOrigin.isExternal: Boolean
+        get() = when (this) {
+            IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB,
+            IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB -> true
+            else -> false
+        }
+
+    private tailrec fun IrDeclaration.topmostParentClassifier(): IrDeclaration {
+        val parent = parent
+        return when {
+            parent is IrClass || parent is IrTypeAlias -> parent.topmostParentClassifier()
+            this is IrClass || this is IrTypeAlias -> this
+            else -> this
+        }
+    }
 
     override fun findPotentialExpectClassMembersForActual(
         expectClass: RegularClassSymbolMarker,

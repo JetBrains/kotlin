@@ -16,3 +16,6 @@ class Out<out F>
 fun test(a: C<out CharSequence>, y: Out<CharSequence>) {
     a + <!TYPE_MISMATCH("Out<Nothing>; Out<CharSequence>")!>y<!>
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, annotationDeclaration, capturedType, classDeclaration, functionDeclaration,
+nullableType, operator, out, outProjection, thisExpression, typeParameter */

@@ -37,3 +37,6 @@ class E {
     }
     private companion object
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, functionDeclaration, integerLiteral, nestedClass,
+objectDeclaration, primaryConstructor, propertyDeclaration */

@@ -113,6 +113,6 @@ fun test2() {
 }
 
 fun Host.test3(v: B) {
-  (<this>, v).plusAssign(b = B(s = 1000))
+  <this>.plusAssign(/* <this> = v, */ b = B(s = 1000))
 }
 

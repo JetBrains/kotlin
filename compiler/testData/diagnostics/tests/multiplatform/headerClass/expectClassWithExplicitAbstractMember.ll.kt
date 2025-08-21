@@ -24,3 +24,6 @@ expect abstract class AbstractClass : Foo {
 }
 
 // MODULE: m1-jvm()()(m1-common)
+
+/* GENERATED_FIR_TAGS: classDeclaration, expect, functionDeclaration, interfaceDeclaration, override,
+propertyDeclaration */

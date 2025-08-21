@@ -26,3 +26,6 @@ class MyClass4
 
 @Ann2(<!ARGUMENT_TYPE_MISMATCH!>arrayOf(B2::class)<!>)
 class MyClass5
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, classReference, collectionLiteral, outProjection,
+primaryConstructor, propertyDeclaration */

@@ -16,3 +16,6 @@ fun test(x: Any?) {
     myAssert(x is String)
     x.length
 }
+
+/* GENERATED_FIR_TAGS: contractConditionalEffect, contracts, functionDeclaration, ifExpression, isExpression,
+lambdaLiteral, nullableType, smartcast, stringLiteral */

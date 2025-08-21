@@ -10,3 +10,5 @@ fun main(x: Any?) {
         x.<!UNRESOLVED_REFERENCE!>length<!>
     }
 }
+
+/* GENERATED_FIR_TAGS: disjunctionExpression, functionDeclaration, ifExpression, isExpression, nullableType, smartcast */

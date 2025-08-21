@@ -8,7 +8,7 @@ public interface Sam {
 annotation class SamWithReceiver
 
 fun test() {
-    Sam <!ARGUMENT_TYPE_MISMATCH!>{ a, <!CANNOT_INFER_PARAMETER_TYPE!>b<!> ->
+    Sam <!ARGUMENT_TYPE_MISMATCH!>{ a, <!CANNOT_INFER_VALUE_PARAMETER_TYPE!>b<!> ->
         System.out.println(a)
     }<!>
 

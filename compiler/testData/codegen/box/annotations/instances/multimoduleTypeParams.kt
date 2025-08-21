@@ -1,7 +1,8 @@
-// IGNORE_BACKEND_K1: JVM
 // IGNORE_DEXING
 // WITH_STDLIB
 // LANGUAGE: +InstantiationOfAnnotationClasses
+
+// JVM_ABI_K1_K2_DIFF: K2 serializes annotation parameter default values (KT-59526).
 
 // MODULE: lib
 // FILE: lib.kt

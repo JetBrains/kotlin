@@ -19,3 +19,6 @@ fun main2() {
 }
 
 fun bar(x: Any) {}
+
+/* GENERATED_FIR_TAGS: classDeclaration, data, functionDeclaration, isExpression, localProperty, primaryConstructor,
+propertyDeclaration, smartcast, stringLiteral, whenExpression, whenWithSubject */

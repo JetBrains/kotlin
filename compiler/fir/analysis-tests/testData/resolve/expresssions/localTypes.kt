@@ -13,3 +13,7 @@ fun foo() {
         fun <T : Foo> id(arg: T): T = arg
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, getter, integerLiteral,
+interfaceDeclaration, localClass, localProperty, propertyDeclaration, propertyWithExtensionReceiver, stringLiteral,
+typeConstraint, typeParameter */

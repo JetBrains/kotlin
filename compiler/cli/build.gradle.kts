@@ -18,7 +18,7 @@ dependencies {
     api(project(":compiler:fir:resolve"))
     api(project(":compiler:fir:providers"))
     api(project(":compiler:fir:semantics"))
-    api(project(":compiler:fir:java"))
+    api(project(":compiler:fir:fir-jvm"))
     api(project(":compiler:fir:entrypoint"))
     api(project(":compiler:fir:fir2ir"))
     implementation(project(":compiler:fir:fir2ir:jvm-backend"))
@@ -34,11 +34,6 @@ dependencies {
     compileOnly(toolsJarApi())
     compileOnly(intellijCore())
     compileOnly(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
-
-    testApi(project(":compiler:backend"))
-    testApi(project(":compiler:cli"))
-    testApi(projectTests(":compiler:tests-common"))
-    testImplementation(libs.junit4)
 }
 
 sourceSets {
@@ -46,15 +41,7 @@ sourceSets {
         projectDefault()
         java.srcDirs("../builtins-serializer/src")
     }
-    "test" { }
 }
 
-allprojects {
-    optInToExperimentalCompilerApi()
-}
-
-testsJar {}
-
-projectTest {
-    workingDir = rootDir
-}
+optInToExperimentalCompilerApi()
+optInToK1Deprecation()

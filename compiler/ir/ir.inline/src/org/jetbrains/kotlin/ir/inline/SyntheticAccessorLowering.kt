@@ -10,10 +10,10 @@ import org.jetbrains.kotlin.backend.common.LoweringContext
 import org.jetbrains.kotlin.backend.common.lower.inline.KlibSyntheticAccessorGenerator
 import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.backend.common.reportWarning
-import org.jetbrains.kotlin.config.KlibConfigurationKeys
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities.isPrivate
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.*
@@ -36,14 +36,13 @@ import org.jetbrains.kotlin.utils.addToStdlib.runIf
  * - By the point it's executed, all _private_ inline functions have already been inlined.
  */
 @PhaseDescription("SyntheticAccessorLowering")
-class SyntheticAccessorLowering(private val context: LoweringContext) : FileLoweringPass {
+class SyntheticAccessorLowering(private val context: LoweringContext, isExecutedOnFirstPhase: Boolean = false) : FileLoweringPass {
     /**
      * Whether the visibility of a generated accessor should be narrowed from _public_ to _internal_ if an accessor is only used
      * in _internal_ inline functions and therefore is not a part of public ABI.
      * This "narrowing" is supposed to be used only during the first phase of compilation.
      */
-    private val narrowAccessorVisibilities =
-        context.configuration.getBoolean(KlibConfigurationKeys.SYNTHETIC_ACCESSORS_WITH_NARROWED_VISIBILITY)
+    private val narrowAccessorVisibilities = isExecutedOnFirstPhase
 
     private val accessorGenerator = KlibSyntheticAccessorGenerator(context)
 
@@ -159,7 +158,7 @@ class SyntheticAccessorLowering(private val context: LoweringContext) : FileLowe
         val generatedAccessors = currentFile::generatedAccessors.getOrSetIfNull(::GeneratedAccessors)
 
         override fun visitFunction(declaration: IrFunction, data: TransformerData?): IrStatement {
-            val newData = data ?: runIf(declaration.isInline && !declaration.isConsideredAsPrivateForInlining()) {
+            val newData = data ?: runIf(declaration.isInline && !declaration.symbol.isConsideredAsPrivateForInlining()) {
                 // By the time this lowering is executed, there must be no private inline functions; however,
                 // there are exceptions, for example, `suspendCoroutineUninterceptedOrReturn` which are somewhat magical.
                 // If we encounter one, ignore it.
@@ -257,7 +256,7 @@ class SyntheticAccessorLowering(private val context: LoweringContext) : FileLowe
     }
 }
 
-private var IrFile.generatedAccessors: GeneratedAccessors? by irAttribute(followAttributeOwner = false)
+private var IrFile.generatedAccessors: GeneratedAccessors? by irAttribute(copyByDefault = false)
 
 private class GeneratedAccessors {
     private val accessors = HashMap<IrFunction, GeneratedAccessor>()
@@ -289,13 +288,15 @@ private class GeneratedAccessor(
 
     fun computeNarrowedVisibility(): DescriptorVisibility {
         for (inlineFunction in inlineFunctions) {
-            when (val visibility = inlineFunction.visibility) {
-                DescriptorVisibilities.PUBLIC, DescriptorVisibilities.PROTECTED -> return DescriptorVisibilities.PUBLIC
-                DescriptorVisibilities.INTERNAL -> if (inlineFunction.isPublishedApi()) return DescriptorVisibilities.PUBLIC
-                else -> irError("Unexpected visibility of inline function: $visibility") {
-                    withIrEntry("inlineFunction", inlineFunction)
+            val inlineFunctionIsEffectivelyPublicAbi = inlineFunction.parentsWithSelf
+                .filterIsInstance<IrDeclarationWithVisibility>()
+                .all { declaration ->
+                    val visibility = declaration.visibility.delegate
+                    visibility.isPublicAPI || (visibility is Visibilities.Internal && declaration.isPublishedApi())
                 }
-            }
+
+            if (inlineFunctionIsEffectivelyPublicAbi)
+                return DescriptorVisibilities.PUBLIC
         }
 
         return DescriptorVisibilities.INTERNAL

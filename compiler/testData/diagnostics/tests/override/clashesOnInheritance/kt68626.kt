@@ -15,3 +15,6 @@ abstract class NonParametrizedParent : TestClass()
 
 class OverloadsBroken : ParametrizedParent<OverloadsBroken>()
 class OverloadsWork : NonParametrizedParent()
+
+/* GENERATED_FIR_TAGS: additiveExpression, classDeclaration, funWithExtensionReceiver, functionDeclaration,
+interfaceDeclaration, operator, starProjection, thisExpression, typeConstraint, typeParameter */

@@ -33,11 +33,11 @@ dependencies {
     testImplementation(project(":analysis:decompiled:decompiler-to-psi"))
     testImplementation(project(":analysis:decompiled:decompiler-to-file-stubs"))
     testImplementation(intellijCore())
-    testImplementation(projectTests(":analysis:decompiled:decompiler-to-file-stubs"))
+    testImplementation(testFixtures(project(":analysis:decompiled:decompiler-to-file-stubs")))
     testRuntimeOnly(project(":kotlin-compiler"))
-    testRuntimeOnly(commonDependency("org.jetbrains.intellij.deps", "trove4j"))
     testRuntimeOnly(project(":kotlin-scripting-ide-common")) { isTransitive = false }
 
+    embeddableTestRuntime(project(":compiler:tests-mutes:mutes-junit4"))
     embeddableTestRuntime(project(":kotlin-scripting-ide-services"))
     embeddableTestRuntime(project(":kotlin-scripting-compiler-impl-embeddable"))
     embeddableTestRuntime(project(":kotlin-scripting-dependencies"))

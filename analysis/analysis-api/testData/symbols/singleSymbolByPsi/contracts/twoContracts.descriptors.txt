@@ -5,6 +5,7 @@ KaNamedFunctionSymbol:
   ]
   callableId: /twoContracts
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: [
     KaContractConditionalContractEffectDeclaration:
@@ -18,8 +19,8 @@ KaNamedFunctionSymbol:
           left:
             KaContractIsNullPredicateExpression:
               argument:
-                KaContractParameterValue:
-                  parameterSymbol:
+                KaContractExplicitParameterValue:
+                  symbol:
                     KaValueParameterSymbol:
                       annotations: []
                       callableId: null
@@ -53,8 +54,8 @@ KaNamedFunctionSymbol:
           right:
             KaContractIsNullPredicateExpression:
               argument:
-                KaContractParameterValue:
-                  parameterSymbol:
+                KaContractExplicitParameterValue:
+                  symbol:
                     KaValueParameterSymbol:
                       annotations: []
                       callableId: null
@@ -88,8 +89,8 @@ KaNamedFunctionSymbol:
           operation: AND
     KaContractCallsInPlaceContractEffectDeclaration:
       valueParameterReference:
-        KaContractParameterValue:
-          parameterSymbol:
+        KaContractExplicitParameterValue:
+          symbol:
             KaValueParameterSymbol:
               annotations: []
               callableId: null

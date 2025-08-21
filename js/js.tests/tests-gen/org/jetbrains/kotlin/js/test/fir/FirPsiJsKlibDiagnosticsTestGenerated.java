@@ -77,9 +77,21 @@ public class FirPsiJsKlibDiagnosticsTestGenerated extends AbstractFirPsiJsDiagno
     }
 
     @Test
+    @TestMetadata("privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt")
+    public void testPrivateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib() {
+      runTest("compiler/testData/diagnostics/klibSerializationTests/privateTypeUsageInsideNonPrivateInlineFunction/privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt");
+    }
+
+    @Test
     @TestMetadata("privateTypesInsideInternalInlineFunctionWarning.kt")
     public void testPrivateTypesInsideInternalInlineFunctionWarning() {
       runTest("compiler/testData/diagnostics/klibSerializationTests/privateTypeUsageInsideNonPrivateInlineFunction/privateTypesInsideInternalInlineFunctionWarning.kt");
+    }
+
+    @Test
+    @TestMetadata("privateTypesInsideInternalInlineFunctionWarningWithInlinedFunInKlib.kt")
+    public void testPrivateTypesInsideInternalInlineFunctionWarningWithInlinedFunInKlib() {
+      runTest("compiler/testData/diagnostics/klibSerializationTests/privateTypeUsageInsideNonPrivateInlineFunction/privateTypesInsideInternalInlineFunctionWarningWithInlinedFunInKlib.kt");
     }
 
     @Test
@@ -168,9 +180,21 @@ public class FirPsiJsKlibDiagnosticsTestGenerated extends AbstractFirPsiJsDiagno
       }
 
       @Test
+      @TestMetadata("leakingPrivateClassThroughtPrivateTopLevelFunErrorWithInlinedFunInKlib.kt")
+      public void testLeakingPrivateClassThroughtPrivateTopLevelFunErrorWithInlinedFunInKlib() {
+        runTest("compiler/testData/diagnostics/klibSerializationTests/privateTypeUsageInsideNonPrivateInlineFunction/topLevelPrivate/leakingPrivateClassThroughtPrivateTopLevelFunErrorWithInlinedFunInKlib.kt");
+      }
+
+      @Test
       @TestMetadata("leakingPrivateClassThroughtPrivateTopLevelFunWarning.kt")
       public void testLeakingPrivateClassThroughtPrivateTopLevelFunWarning() {
         runTest("compiler/testData/diagnostics/klibSerializationTests/privateTypeUsageInsideNonPrivateInlineFunction/topLevelPrivate/leakingPrivateClassThroughtPrivateTopLevelFunWarning.kt");
+      }
+
+      @Test
+      @TestMetadata("leakingPrivateClassThroughtPrivateTopLevelFunWarningWithInlinedFunInKlib.kt")
+      public void testLeakingPrivateClassThroughtPrivateTopLevelFunWarningWithInlinedFunInKlib() {
+        runTest("compiler/testData/diagnostics/klibSerializationTests/privateTypeUsageInsideNonPrivateInlineFunction/topLevelPrivate/leakingPrivateClassThroughtPrivateTopLevelFunWarningWithInlinedFunInKlib.kt");
       }
 
       @Test
@@ -183,6 +207,18 @@ public class FirPsiJsKlibDiagnosticsTestGenerated extends AbstractFirPsiJsDiagno
       @TestMetadata("leakingPrivateClassThroughtTypecheckWarning.kt")
       public void testLeakingPrivateClassThroughtTypecheckWarning() {
         runTest("compiler/testData/diagnostics/klibSerializationTests/privateTypeUsageInsideNonPrivateInlineFunction/topLevelPrivate/leakingPrivateClassThroughtTypecheckWarning.kt");
+      }
+
+      @Test
+      @TestMetadata("usePrivateClassThroughGenericType.kt")
+      public void testUsePrivateClassThroughGenericType() {
+        runTest("compiler/testData/diagnostics/klibSerializationTests/privateTypeUsageInsideNonPrivateInlineFunction/topLevelPrivate/usePrivateClassThroughGenericType.kt");
+      }
+
+      @Test
+      @TestMetadata("usePrivateClassThroughtPrivateTopLevelFun.kt")
+      public void testUsePrivateClassThroughtPrivateTopLevelFun() {
+        runTest("compiler/testData/diagnostics/klibSerializationTests/privateTypeUsageInsideNonPrivateInlineFunction/topLevelPrivate/usePrivateClassThroughtPrivateTopLevelFun.kt");
       }
     }
   }

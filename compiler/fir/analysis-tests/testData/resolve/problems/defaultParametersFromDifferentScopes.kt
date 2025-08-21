@@ -18,3 +18,5 @@ class Impl : Foo, Bar {
 fun main() {
     Impl().some()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, interfaceDeclaration, override */

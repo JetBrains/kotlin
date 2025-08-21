@@ -18,3 +18,5 @@ open class C01 {
 fun main(){
     C02().some() // K2: x = -1 y = 2
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, interfaceDeclaration, stringLiteral */

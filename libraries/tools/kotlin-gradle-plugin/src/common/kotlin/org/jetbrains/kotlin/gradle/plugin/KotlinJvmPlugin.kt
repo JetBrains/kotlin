@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.gradle.plugin
 import org.gradle.api.*
 import org.gradle.tooling.provider.model.ToolingModelBuilderRegistry
 import org.jetbrains.kotlin.gradle.dsl.*
-import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.tasks.*
 
@@ -18,9 +17,7 @@ const val KOTLIN_DSL_NAME = "kotlin"
 const val KOTLIN_JS_DSL_NAME = "kotlin2js"
 const val KOTLIN_OPTIONS_DSL_NAME = "kotlinOptions"
 
-internal open class KotlinJvmPlugin(
-    registry: ToolingModelBuilderRegistry
-) : AbstractKotlinPlugin(KotlinTasksProvider(), registry) {
+internal open class KotlinJvmPlugin : AbstractKotlinPlugin(KotlinTasksProvider()) {
 
     internal companion object {
         private const val targetName = "" // use empty suffix for the task names
@@ -55,12 +52,5 @@ internal open class KotlinJvmPlugin(
             kotlinExtension.compilerOptions,
             target.compilerOptions
         )
-    }
-
-    override fun configureClassInspectionForIC(project: Project) {
-        // For new IC this task is not needed
-        if (!project.kotlinPropertiesProvider.useClasspathSnapshot.get()) {
-            super.configureClassInspectionForIC(project)
-        }
     }
 }

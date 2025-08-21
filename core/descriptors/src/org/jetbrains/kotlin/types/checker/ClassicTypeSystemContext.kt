@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.types.checker
 
 import org.jetbrains.kotlin.builtins.*
 import org.jetbrains.kotlin.builtins.StandardNames.FqNames
+import org.jetbrains.kotlin.builtins.functions.AllowedToUsedOnlyInK1
 import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
@@ -22,7 +23,6 @@ import org.jetbrains.kotlin.resolve.calls.inference.CapturedType
 import org.jetbrains.kotlin.resolve.constants.IntegerLiteralTypeConstructor
 import org.jetbrains.kotlin.resolve.descriptorUtil.*
 import org.jetbrains.kotlin.resolve.scopes.SubstitutingScope
-import org.jetbrains.kotlin.resolve.substitutedUnderlyingType
 import org.jetbrains.kotlin.resolve.unsubstitutedUnderlyingType
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.error.ErrorTypeKind
@@ -360,11 +360,6 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
         return this.asTypeProjection()
     }
 
-    override fun TypeConstructorMarker.isUnitTypeConstructor(): Boolean {
-        require(this is TypeConstructor, this::errorMessage)
-        return KotlinBuiltIns.isTypeConstructorForGivenClass(this, FqNames.unit)
-    }
-
     /**
      *
      * SingleClassifierType is one of the following types:
@@ -499,7 +494,7 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
         return hasNoInferInternal(this)
     }
 
-    override fun TypeVariableMarker.freshTypeConstructor(): TypeConstructorMarker {
+    override fun TypeVariableMarker.freshTypeConstructor(): TypeVariableTypeConstructorMarker {
         errorSupportedOnlyInTypeInference()
     }
 
@@ -511,12 +506,14 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
         }
     }
 
+    @AllowedToUsedOnlyInK1
     override fun CapturedTypeMarker.withNotNullProjection(): KotlinTypeMarker {
         require(this is NewCapturedType, this::errorMessage)
 
         return NewCapturedType(captureStatus, constructor, lowerType, attributes, isMarkedNullable, isProjectionNotNull = true)
     }
 
+    @AllowedToUsedOnlyInK1
     override fun CapturedTypeMarker.isProjectionNotNull(): Boolean {
         require(this is NewCapturedType, this::errorMessage)
         return this.isProjectionNotNull
@@ -534,7 +531,8 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
 
     override fun CapturedTypeMarker.isOldCapturedType(): Boolean = this is CapturedType
 
-    override fun CapturedTypeMarker.hasRawSuperType(): Boolean {
+    @K2Only
+    override fun CapturedTypeMarker.hasRawSuperTypeRecursive(): Boolean {
         error("Is not expected to be called in K1")
     }
 
@@ -548,6 +546,7 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
         arguments: List<TypeArgumentMarker>,
         nullable: Boolean,
         isExtensionFunction: Boolean,
+        contextParameterCount: Int,
         attributes: List<AnnotationMarker>?
     ): SimpleTypeMarker {
         require(constructor is TypeConstructor, constructor::errorMessage)
@@ -797,10 +796,10 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
         return unsubstitutedUnderlyingType()
     }
 
-    override fun KotlinTypeMarker.getSubstitutedUnderlyingType(): KotlinTypeMarker? {
-        require(this is KotlinType, this::errorMessage)
-        return substitutedUnderlyingType()
-    }
+    override fun typeSubstitutorForUnderlyingType(map: Map<TypeConstructorMarker, KotlinTypeMarker>): TypeSubstitutorMarker =
+        map.map { (parameter, argument) ->
+            (parameter as TypeConstructor) to (argument as KotlinType).asTypeProjection()
+        }.toMap().let { TypeSubstitutor.create(it) }
 
     override fun TypeConstructorMarker.getPrimitiveType(): PrimitiveType? {
         require(this is TypeConstructor, this::errorMessage)
@@ -863,6 +862,11 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
         return this.isBuiltinExtensionFunctionalType
     }
 
+    override fun KotlinTypeMarker.contextParameterCount(): Int {
+        require(this is KotlinType, this::errorMessage)
+        return this.contextFunctionTypeParamsCount()
+    }
+
     override fun KotlinTypeMarker.extractArgumentsForFunctionTypeOrSubtype(): List<KotlinTypeMarker> {
         require(this is KotlinType, this::errorMessage)
         return this.getPureArgumentsForFunctionalTypeOrSubtype()
@@ -899,7 +903,7 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
         return (baseType.memberScope as? SubstitutingScope)?.substitutor
     }
 
-    override fun useRefinedBoundsForTypeVariableInFlexiblePosition(): Boolean = false
+    override fun usePreciseSimplificationToFlexibleLowerConstraint(): Boolean = false
 
     override fun substitutionSupertypePolicy(type: RigidTypeMarker): TypeCheckerState.SupertypesPolicy {
         require(type is SimpleType, type::errorMessage)

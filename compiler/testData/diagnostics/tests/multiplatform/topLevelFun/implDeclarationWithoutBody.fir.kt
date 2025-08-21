@@ -11,3 +11,5 @@ expect fun foo()
 actual <!NON_MEMBER_FUNCTION_NO_BODY!>fun foo()<!>
 
 actual <!NON_MEMBER_FUNCTION_NO_BODY!>fun <!ACTUAL_WITHOUT_EXPECT!>bar<!>()<!>
+
+/* GENERATED_FIR_TAGS: actual, expect, functionDeclaration */

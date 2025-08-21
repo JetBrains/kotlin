@@ -247,9 +247,7 @@ message Class {
   optional Type inline_class_underlying_type = 18;
   optional int32 inline_class_underlying_type_id = 19 [(type_id_in_table) = true];
 
-  repeated int32 multi_field_value_class_underlying_name = 22 [packed = true, (name_id_in_table) = true];
-  repeated Type multi_field_value_class_underlying_type = 23;
-  repeated int32 multi_field_value_class_underlying_type_id = 24 [packed = true, (type_id_in_table) = true];
+  repeated Annotation annotation = 25;
 
   optional TypeTable type_table = 30;
 
@@ -299,6 +297,8 @@ message Constructor {
   repeated int32 version_requirement = 31;
   repeated CompilerPluginData compiler_plugin_data = 32;
 
+  repeated Annotation annotation = 3;
+
   extensions 100 to 18999;
 }
 
@@ -333,6 +333,8 @@ message Function {
   repeated Type context_receiver_type = 10;
   repeated int32 context_receiver_type_id = 11 [packed = true, (type_id_in_table) = true];
 
+  repeated ValueParameter context_parameter = 13;
+
   repeated ValueParameter value_parameter = 6;
 
   optional TypeTable type_table = 30;
@@ -342,6 +344,9 @@ message Function {
 
   optional Contract contract = 32;
   repeated CompilerPluginData compiler_plugin_data = 33;
+
+  repeated Annotation annotation = 12;
+  repeated Annotation extension_receiver_annotation = 34;
 
   extensions 100 to 18999;
 }
@@ -378,6 +383,8 @@ message Property {
   repeated Type context_receiver_type = 12;
   repeated int32 context_receiver_type_id = 13 [packed = true, (type_id_in_table) = true];
 
+  repeated ValueParameter context_parameter = 17;
+
   optional ValueParameter setter_value_parameter = 6;
 
   /*
@@ -399,6 +406,13 @@ message Property {
   repeated int32 version_requirement = 31;
   repeated CompilerPluginData compiler_plugin_data = 32;
 
+  repeated Annotation annotation = 14;
+  repeated Annotation getter_annotation = 15;
+  repeated Annotation setter_annotation = 16;
+  repeated Annotation extension_receiver_annotation = 33;
+  repeated Annotation backing_field_annotation = 34;
+  repeated Annotation delegate_field_annotation = 35;
+
   extensions 100 to 18999;
 }
 
@@ -418,6 +432,10 @@ message ValueParameter {
 
   optional Type vararg_element_type = 4;
   optional int32 vararg_element_type_id = 6 [(type_id_in_table) = true];
+
+  repeated Annotation annotation = 7;
+
+  optional Annotation.Argument.Value annotation_parameter_default_value = 8;
 
   extensions 100 to 199;
 }
@@ -451,6 +469,8 @@ message TypeAlias {
 message EnumEntry {
   optional int32 name = 1 [(name_id_in_table) = true];
 
+  repeated Annotation annotation = 2;
+
   extensions 100 to 199;
 }
 
@@ -478,6 +498,16 @@ enum MemberKind {
   FAKE_OVERRIDE = 1;
   DELEGATION = 2;
   SYNTHESIZED = 3;
+}
+
+enum ReturnValueStatus {
+   UNSPECIFIED = 0;
+   MUST_USE = 1;
+   EXPLICITLY_IGNORABLE = 2;
+   /*
+    3 represents @MustUse AND @Ignorable state, which is semantically incorrect.
+    We can reserve this state for future potential extensions.
+    */
 }
 
 message VersionRequirement {
@@ -560,7 +590,7 @@ message Effect {
 
   repeated Expression effect_constructor_argument = 2;
 
-  // If present, then whole message is clause of form 'Effect -> Expression', where 'Effect'
+  // If present and condition_kind is 0 or absent, then whole message is clause of form 'Effect -> Expression', where 'Effect'
   // is given by other fields in this message, and 'Expression' is stored in this field.
   optional Expression conclusion_of_conditional_effect = 3;
 
@@ -570,6 +600,17 @@ message Effect {
     AT_LEAST_ONCE = 2;
   }
   optional InvocationKind kind = 4;
+
+  enum EffectConditionKind {
+    CONCLUSION_CONDITION = 0; // also default
+    RETURNS_CONDITION = 1; // "implies returns" condition. If condition_kind set to it, then then whole message is clause of form
+                           // 'Expression -> ReturnsEffect', where 'ReturnsEffect' is given by other fields
+                           // and 'Expression' is stored in the conclusion_of_conditional_effect
+    HOLDSIN_CONDITION = 2; // "holdsIn" condition. If condition_kind set to it, then then whole message is clause of form
+                           // 'Expression holdsIn Block ', where 'Block' where 'Block' is given by effect_constructor_argument
+                           // and 'Expression' is stored in the conclusion_of_conditional_effect
+  }
+  optional EffectConditionKind condition_kind = 5;
 }
 
 // We use some trickery to optimize memory footprint of contract-expressions:

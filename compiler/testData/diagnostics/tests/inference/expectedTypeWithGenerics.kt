@@ -16,3 +16,6 @@ fun <S, D: S> g() {
 
     val y2 = foo() as D
 }
+
+/* GENERATED_FIR_TAGS: asExpression, classDeclaration, functionDeclaration, intersectionType, localFunction,
+localProperty, nullableType, propertyDeclaration, typeConstraint, typeParameter */

@@ -32,3 +32,5 @@ fun useSiteTestOpenClasses() {
     <!OPT_IN_USAGE_ERROR!>OpenKlassOptInApiInheritorD<!>() // usage opt-in is required
     OpenKlassOptInApiInheritorE() // usage opt-in isn't required
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, classReference, functionDeclaration */

@@ -4,6 +4,7 @@ KtCallExpression(202,209): '(foo)()'
       argumentMapping = {}
       isImplicitInvoke = true
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = (foo)
           isSafeNavigation = false
@@ -14,15 +15,17 @@ KtCallExpression(202,209): '(foo)()'
           returnType = r.MyClass
           symbol = r/MyClass.invoke(<dispatch receiver>: r.MyClass): r.MyClass
           valueParameters = []
+          contextParameters = []
           callableId = r/MyClass.invoke
       typeArgumentsMapping = {}
     isInBestCandidates = true
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
       isImplicitInvoke = true
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = (foo)
           isSafeNavigation = false
@@ -38,18 +41,21 @@ KtCallExpression(202,209): '(foo)()'
               receiverType = null
               returnType = kotlin.String
               symbol = s: kotlin.String
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = r/MyClass.invoke
       typeArgumentsMapping = {}
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 's'.>
     isInBestCandidates = false
-  
+
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -57,15 +63,17 @@ KtCallExpression(202,209): '(foo)()'
           returnType = kotlin.Int
           symbol = r/foo(): kotlin.Int
           valueParameters = []
+          contextParameters = []
           callableId = r/foo
       typeArgumentsMapping = {}
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -78,8 +86,10 @@ KtCallExpression(202,209): '(foo)()'
               receiverType = null
               returnType = kotlin.Boolean
               symbol = b: kotlin.Boolean
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = r/foo
       typeArgumentsMapping = {}
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'b'.>

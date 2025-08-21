@@ -654,3 +654,8 @@ fun test66() {
         x = 10
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, checkNotNullCall, contractCallsEffect, contracts, doWhileLoop, elvisExpression,
+forLoop, functionDeclaration, functionalType, ifExpression, integerLiteral, isExpression, lambdaLiteral, localFunction,
+localProperty, nullableType, propertyDeclaration, rangeExpression, safeCall, smartcast, stringLiteral, typeParameter,
+whenExpression, whenWithSubject, whileLoop */

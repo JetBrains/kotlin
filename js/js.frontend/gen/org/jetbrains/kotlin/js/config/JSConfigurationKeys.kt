@@ -31,9 +31,6 @@ object JSConfigurationKeys {
     val OUTPUT_NAME = CompilerConfigurationKey.create<String>("Name of output KLib file")
 
     @JvmField
-    val TRANSITIVE_LIBRARIES = CompilerConfigurationKey.create<List<String>>("library files for transitive dependencies")
-
-    @JvmField
     val LIBRARIES = CompilerConfigurationKey.create<List<String>>("library file paths")
 
     @JvmField
@@ -88,9 +85,6 @@ object JSConfigurationKeys {
     val FRIEND_PATHS_DISABLED = CompilerConfigurationKey.create<Boolean>("disable support for friend paths")
 
     @JvmField
-    val FRIEND_PATHS = CompilerConfigurationKey.create<List<String>>("friend module paths")
-
-    @JvmField
     val METADATA_ONLY = CompilerConfigurationKey.create<Boolean>("generate .meta.js and .kjsm files only")
 
     @JvmField
@@ -113,6 +107,9 @@ object JSConfigurationKeys {
 
     @JvmField
     val COMPILE_LAMBDAS_AS_ES6_ARROW_FUNCTIONS = CompilerConfigurationKey.create<Boolean>("lower Kotlin lambdas into arrow functions instead of anonymous functions")
+
+    @JvmField
+    val COMPILE_LONG_AS_BIGINT = CompilerConfigurationKey.create<Boolean>("compile Long as BigInt")
 
     @JvmField
     val GENERATE_REGION_COMMENTS = CompilerConfigurationKey.create<Boolean>("generate special comments at the start and the end of each file block, it allows to fold them and navigate to them in the IDEA")
@@ -205,10 +202,6 @@ var CompilerConfiguration.outputName: String?
     get() = get(JSConfigurationKeys.OUTPUT_NAME)
     set(value) { put(JSConfigurationKeys.OUTPUT_NAME, requireNotNull(value) { "nullable values are not allowed" }) }
 
-var CompilerConfiguration.transitiveLibraries: List<String>
-    get() = getList(JSConfigurationKeys.TRANSITIVE_LIBRARIES)
-    set(value) { put(JSConfigurationKeys.TRANSITIVE_LIBRARIES, value) }
-
 var CompilerConfiguration.libraries: List<String>
     get() = getList(JSConfigurationKeys.LIBRARIES)
     set(value) { put(JSConfigurationKeys.LIBRARIES, value) }
@@ -281,10 +274,6 @@ var CompilerConfiguration.friendPathsDisabled: Boolean
     get() = getBoolean(JSConfigurationKeys.FRIEND_PATHS_DISABLED)
     set(value) { put(JSConfigurationKeys.FRIEND_PATHS_DISABLED, value) }
 
-var CompilerConfiguration.friendPaths: List<String>
-    get() = getList(JSConfigurationKeys.FRIEND_PATHS)
-    set(value) { put(JSConfigurationKeys.FRIEND_PATHS, value) }
-
 var CompilerConfiguration.metadataOnly: Boolean
     get() = getBoolean(JSConfigurationKeys.METADATA_ONLY)
     set(value) { put(JSConfigurationKeys.METADATA_ONLY, value) }
@@ -316,6 +305,10 @@ var CompilerConfiguration.compileSuspendAsJsGenerator: Boolean
 var CompilerConfiguration.compileLambdasAsEs6ArrowFunctions: Boolean
     get() = getBoolean(JSConfigurationKeys.COMPILE_LAMBDAS_AS_ES6_ARROW_FUNCTIONS)
     set(value) { put(JSConfigurationKeys.COMPILE_LAMBDAS_AS_ES6_ARROW_FUNCTIONS, value) }
+
+var CompilerConfiguration.compileLongAsBigint: Boolean
+    get() = getBoolean(JSConfigurationKeys.COMPILE_LONG_AS_BIGINT)
+    set(value) { put(JSConfigurationKeys.COMPILE_LONG_AS_BIGINT, value) }
 
 var CompilerConfiguration.generateRegionComments: Boolean
     get() = getBoolean(JSConfigurationKeys.GENERATE_REGION_COMMENTS)

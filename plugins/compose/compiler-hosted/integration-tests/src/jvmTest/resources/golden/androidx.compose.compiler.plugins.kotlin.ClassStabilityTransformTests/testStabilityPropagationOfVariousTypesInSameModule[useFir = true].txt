@@ -55,12 +55,12 @@ class UnstableDelegateProp {
 @Composable
 fun A(y: Any, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
-  sourceInformation(%composer, "C(A)<A(X(li...>,<A(Stab...>,<A(Unst...>,<A(Sing...>,<A(Sing...>,<A(Sing...>:Test.kt")
+  sourceInformation(%composer, "C(A)N(y)<A(X(li...>,<A(Stab...>,<A(Unst...>,<A(Sing...>,<A(Sing...>,<A(Sing...>:Test.kt")
   val %dirty = %changed
   if (%changed and 0b0110 == 0) {
     %dirty = %dirty or if (%composer.changedInstance(y)) 0b0100 else 0b0010
   }
-  if (%dirty and 0b0011 != 0b0010 || !%composer.skipping) {
+  if (%composer.shouldExecute(%dirty and 0b0011 != 0b0010, %dirty and 0b0001)) {
     if (isTraceInProgress()) {
       traceEventStart(<>, %dirty, -1, <>)
     }

@@ -30,7 +30,10 @@ fun test(
     TA.<!UNRESOLVED_REFERENCE!>Inner<!>()
 
     Generic<Boolean>().Inner()
-    <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>Generic<!><<!CANNOT_INFER_PARAMETER_TYPE!>_<!>>().Inner()
-    <!CANNOT_INFER_PARAMETER_TYPE, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>Generic<!>().Inner()
+    Generic<<!CANNOT_INFER_PARAMETER_TYPE!>_<!>>().Inner()
+    <!CANNOT_INFER_PARAMETER_TYPE!>Generic<!>().Inner()
     TA().Inner()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, inner, nestedClass, nullableType, typeAliasDeclaration,
+typeParameter */

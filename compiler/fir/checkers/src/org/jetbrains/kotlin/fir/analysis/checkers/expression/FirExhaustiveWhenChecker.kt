@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.KtSourceElement
-import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
@@ -23,51 +22,52 @@ import org.jetbrains.kotlin.fir.expressions.ExhaustivenessStatus
 import org.jetbrains.kotlin.fir.expressions.FirWhenExpression
 import org.jetbrains.kotlin.fir.expressions.impl.FirElseIfTrueCondition
 import org.jetbrains.kotlin.fir.expressions.impl.FirEmptyExpressionBlock
-import org.jetbrains.kotlin.fir.expressions.isExhaustive
-import org.jetbrains.kotlin.fir.languageVersionSettings
-import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.isBooleanOrNullableBoolean
-import org.jetbrains.kotlin.fir.types.lowerBoundIfFlexible
-import org.jetbrains.kotlin.fir.types.resolvedType
 
 object FirExhaustiveWhenChecker : FirWhenExpressionChecker(MppCheckerKind.Common) {
-    override fun check(expression: FirWhenExpression, context: CheckerContext, reporter: DiagnosticReporter) {
-        reportNotExhaustive(expression, context, reporter)
-        reportElseMisplaced(expression, reporter, context)
-        reportRedundantElse(expression, context, reporter)
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(expression: FirWhenExpression) {
+        reportNotExhaustive(expression)
+        reportElseMisplaced(expression)
+        reportRedundantElse(expression)
     }
 
-    private fun reportEmptyThenInExpression(whenExpression: FirWhenExpression, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    private fun reportEmptyThenInExpression(
+        whenExpression: FirWhenExpression,
+    ) {
         val source = whenExpression.source ?: return
 
         if (source.isIfExpression && whenExpression.usedAsExpression) {
             val thenBranch = whenExpression.branches.firstOrNull()
             if (thenBranch == null || thenBranch.result is FirEmptyExpressionBlock) {
-                reporter.reportOn(source, FirErrors.INVALID_IF_AS_EXPRESSION, context)
+                reporter.reportOn(source, FirErrors.INVALID_IF_AS_EXPRESSION)
             }
         }
     }
 
-    private fun reportNotExhaustive(whenExpression: FirWhenExpression, context: CheckerContext, reporter: DiagnosticReporter) {
-        if (whenExpression.isExhaustive) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    private fun reportNotExhaustive(whenExpression: FirWhenExpression) {
+        val exhaustivenessStatus = whenExpression.exhaustivenessStatus ?: return
+        if (exhaustivenessStatus !is ExhaustivenessStatus.NotExhaustive) {
             // whenExpression.isExhaustive is checked as otherwise the constraint is checked below
-            reportEmptyThenInExpression(whenExpression, context, reporter)
+            reportEmptyThenInExpression(whenExpression)
             return
         }
 
         val source = whenExpression.source ?: return
 
-        val subjectType = whenExpression.subject?.resolvedType?.fullyExpandedType(context.session)?.lowerBoundIfFlexible()
+        val subjectType = exhaustivenessStatus.subjectType
         val subjectClassSymbol = subjectType?.toRegularClassSymbol(context.session)
 
         if (whenExpression.usedAsExpression) {
             if (source.isIfExpression) {
-                reporter.reportOn(source, FirErrors.INVALID_IF_AS_EXPRESSION, context)
+                reporter.reportOn(source, FirErrors.INVALID_IF_AS_EXPRESSION)
                 return
             } else if (source.isWhenExpression) {
-                reportNoElseInWhen(reporter, source, whenExpression, subjectClassSymbol, context)
+                reportNoElseInWhen(source, whenExpression, subjectClassSymbol)
             }
         } else {
             if (subjectClassSymbol == null) return
@@ -78,20 +78,15 @@ object FirExhaustiveWhenChecker : FirWhenExpressionChecker(MppCheckerKind.Common
                 else -> return
             }
 
-            if (context.session.languageVersionSettings.supportsFeature(LanguageFeature.ProhibitNonExhaustiveWhenOnAlgebraicTypes)) {
-                reportNoElseInWhen(reporter, source, whenExpression, subjectClassSymbol, context)
-            } else {
-                reporter.reportOn(source, FirErrors.NON_EXHAUSTIVE_WHEN_STATEMENT, kind.displayName, whenExpression.missingCases, context)
-            }
+            reportNoElseInWhen(source, whenExpression, subjectClassSymbol)
         }
     }
 
+    context(reporter: DiagnosticReporter, context: CheckerContext)
     private fun reportNoElseInWhen(
-        reporter: DiagnosticReporter,
         source: KtSourceElement,
         whenExpression: FirWhenExpression,
         subjectClassSymbol: FirRegularClassSymbol?,
-        context: CheckerContext,
     ) {
         val description = when (subjectClassSymbol?.isExpect) {
             true -> {
@@ -100,7 +95,7 @@ object FirExhaustiveWhenChecker : FirWhenExpressionChecker(MppCheckerKind.Common
             }
             else -> ""
         }
-        reporter.reportOn(source, FirErrors.NO_ELSE_IN_WHEN, whenExpression.missingCases, description, context)
+        reporter.reportOn(source, FirErrors.NO_ELSE_IN_WHEN, whenExpression.missingCases, description)
     }
 
     private val FirWhenExpression.missingCases: List<WhenMissingCase>
@@ -112,25 +107,25 @@ object FirExhaustiveWhenChecker : FirWhenExpressionChecker(MppCheckerKind.Common
         Boolean("Boolean")
     }
 
+    context(reporter: DiagnosticReporter, context: CheckerContext)
     private fun reportElseMisplaced(
         expression: FirWhenExpression,
-        reporter: DiagnosticReporter,
-        context: CheckerContext
     ) {
         val branchesCount = expression.branches.size
         for (indexedValue in expression.branches.withIndex()) {
             val branch = indexedValue.value
             if (branch.condition is FirElseIfTrueCondition && indexedValue.index < branchesCount - 1) {
-                reporter.reportOn(branch.source, FirErrors.ELSE_MISPLACED_IN_WHEN, context)
+                reporter.reportOn(branch.source, FirErrors.ELSE_MISPLACED_IN_WHEN)
             }
         }
     }
 
-    private fun reportRedundantElse(whenExpression: FirWhenExpression, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    private fun reportRedundantElse(whenExpression: FirWhenExpression) {
         if (whenExpression.exhaustivenessStatus == ExhaustivenessStatus.RedundantlyExhaustive) {
             for (branch in whenExpression.branches) {
                 if (branch.source == null || branch.condition !is FirElseIfTrueCondition) continue
-                reporter.reportOn(branch.source, FirErrors.REDUNDANT_ELSE_IN_WHEN, context)
+                reporter.reportOn(branch.source, FirErrors.REDUNDANT_ELSE_IN_WHEN)
             }
         }
     }

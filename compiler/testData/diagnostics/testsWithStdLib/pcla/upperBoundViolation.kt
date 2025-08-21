@@ -10,3 +10,6 @@ fun main() {
         <!UPPER_BOUND_VIOLATION_IN_CONSTRAINT!>printGenericNumber(this[0])<!>
     }
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral, lambdaLiteral, stringLiteral, thisExpression, typeConstraint,
+typeParameter */

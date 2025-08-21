@@ -15,3 +15,6 @@ expect open class Foo : Base
 actual open class Foo : Base() {
     fun <T : Comparable<T>> foo(t: T) {}
 }
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, functionDeclaration, nullableType, typeConstraint,
+typeParameter */

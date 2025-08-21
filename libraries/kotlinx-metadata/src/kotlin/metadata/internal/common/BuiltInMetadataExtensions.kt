@@ -16,11 +16,11 @@ import kotlin.metadata.internal.extensions.*
 import kotlin.metadata.internal.readAnnotation
 import kotlin.metadata.internal.writeAnnotation
 
+@OptIn(ExperimentalAnnotationsInMetadata::class)
 public class BuiltInsMetadataExtensions : MetadataExtensions {
     override fun readClassExtensions(kmClass: KmClass, proto: ProtoBuf.Class, c: ReadContext) {
-        val ext = kmClass.builtins
         proto.getExtension(BuiltInsProtoBuf.classAnnotation).forEach { annotation ->
-            ext.annotations.add(annotation.readAnnotation(c.strings))
+            kmClass.annotations.add(annotation.readAnnotation(c.strings))
         }
     }
 
@@ -35,23 +35,28 @@ public class BuiltInsMetadataExtensions : MetadataExtensions {
     }
 
     override fun readFunctionExtensions(kmFunction: KmFunction, proto: ProtoBuf.Function, c: ReadContext) {
-        val ext = kmFunction.builtins
         proto.getExtension(BuiltInsProtoBuf.functionAnnotation).forEach { annotation ->
-            ext.annotations.add(annotation.readAnnotation(c.strings))
+            kmFunction.annotations.add(annotation.readAnnotation(c.strings))
         }
     }
 
     override fun readPropertyExtensions(kmProperty: KmProperty, proto: ProtoBuf.Property, c: ReadContext) {
-        val ext = kmProperty.builtins
         proto.getExtension(BuiltInsProtoBuf.propertyAnnotation).forEach { annotation ->
-            ext.annotations.add(annotation.readAnnotation(c.strings))
+            kmProperty.annotations.add(annotation.readAnnotation(c.strings))
+        }
+        proto.getExtension(BuiltInsProtoBuf.propertyGetterAnnotation).forEach { annotation ->
+            kmProperty.getter.annotations.add(annotation.readAnnotation(c.strings))
+        }
+        kmProperty.setter?.let { setter ->
+            proto.getExtension(BuiltInsProtoBuf.propertySetterAnnotation).forEach { annotation ->
+                setter.annotations.add(annotation.readAnnotation(c.strings))
+            }
         }
     }
 
     override fun readConstructorExtensions(kmConstructor: KmConstructor, proto: ProtoBuf.Constructor, c: ReadContext) {
-        val ext = kmConstructor.builtins
         proto.getExtension(BuiltInsProtoBuf.constructorAnnotation).forEach { annotation ->
-            ext.annotations.add(annotation.readAnnotation(c.strings))
+            kmConstructor.annotations.add(annotation.readAnnotation(c.strings))
         }
     }
 
@@ -60,6 +65,9 @@ public class BuiltInsMetadataExtensions : MetadataExtensions {
         proto.getExtension(BuiltInsProtoBuf.typeParameterAnnotation).forEach { annotation ->
             ext.annotations.add(annotation.readAnnotation(c.strings))
         }
+    }
+
+    override fun readEnumEntryExtensions(kmEnumEntry: KmEnumEntry, proto: ProtoBuf.EnumEntry, c: ReadContext) {
     }
 
     override fun readTypeExtensions(kmType: KmType, proto: ProtoBuf.Type, c: ReadContext) {
@@ -73,14 +81,13 @@ public class BuiltInsMetadataExtensions : MetadataExtensions {
     }
 
     override fun readValueParameterExtensions(kmValueParameter: KmValueParameter, proto: ProtoBuf.ValueParameter, c: ReadContext) {
-        val ext = kmValueParameter.builtins
         proto.getExtension(BuiltInsProtoBuf.parameterAnnotation).forEach { annotation ->
-            ext.annotations.add(annotation.readAnnotation(c.strings))
+            kmValueParameter.annotations.add(annotation.readAnnotation(c.strings))
         }
     }
 
     override fun writeClassExtensions(kmClass: KmClass, proto: ProtoBuf.Class.Builder, c: WriteContext) {
-        for (annotation in extension { kmClass.annotations }) {
+        for (annotation in kmClass.annotations) {
             proto.addExtension(BuiltInsProtoBuf.classAnnotation, annotation.writeAnnotation(c.strings).build())
         }
     }
@@ -97,19 +104,25 @@ public class BuiltInsMetadataExtensions : MetadataExtensions {
     }
 
     override fun writeFunctionExtensions(kmFunction: KmFunction, proto: ProtoBuf.Function.Builder, c: WriteContext) {
-        for (annotation in extension { kmFunction.annotations }) {
+        for (annotation in kmFunction.annotations) {
             proto.addExtension(BuiltInsProtoBuf.functionAnnotation, annotation.writeAnnotation(c.strings).build())
         }
     }
 
     override fun writePropertyExtensions(kmProperty: KmProperty, proto: ProtoBuf.Property.Builder, c: WriteContext) {
-        for (annotation in extension { kmProperty.annotations }) {
+        for (annotation in kmProperty.annotations) {
             proto.addExtension(BuiltInsProtoBuf.propertyAnnotation, annotation.writeAnnotation(c.strings).build())
+        }
+        for (annotation in kmProperty.getter.annotations) {
+            proto.addExtension(BuiltInsProtoBuf.propertyGetterAnnotation, annotation.writeAnnotation(c.strings).build())
+        }
+        for (annotation in kmProperty.setter?.annotations.orEmpty()) {
+            proto.addExtension(BuiltInsProtoBuf.propertySetterAnnotation, annotation.writeAnnotation(c.strings).build())
         }
     }
 
     override fun writeConstructorExtensions(kmConstructor: KmConstructor, proto: ProtoBuf.Constructor.Builder, c: WriteContext) {
-        for (annotation in extension { kmConstructor.annotations }) {
+        for (annotation in kmConstructor.annotations) {
             proto.addExtension(BuiltInsProtoBuf.constructorAnnotation, annotation.writeAnnotation(c.strings).build())
         }
     }
@@ -118,6 +131,9 @@ public class BuiltInsMetadataExtensions : MetadataExtensions {
         for (annotation in extension { kmTypeParameter.annotations }) {
             proto.addExtension(BuiltInsProtoBuf.typeParameterAnnotation, annotation.writeAnnotation(c.strings).build())
         }
+    }
+
+    override fun writeEnumEntryExtensions(enumEntry: KmEnumEntry, proto: ProtoBuf.EnumEntry.Builder, c: WriteContext) {
     }
 
     override fun writeTypeExtensions(type: KmType, proto: ProtoBuf.Type.Builder, c: WriteContext) {
@@ -130,7 +146,7 @@ public class BuiltInsMetadataExtensions : MetadataExtensions {
     }
 
     override fun writeValueParameterExtensions(valueParameter: KmValueParameter, proto: ProtoBuf.ValueParameter.Builder, c: WriteContext) {
-        for (annotation in extension { valueParameter.annotations }) {
+        for (annotation in valueParameter.annotations) {
             proto.addExtension(BuiltInsProtoBuf.parameterAnnotation, annotation.writeAnnotation(c.strings).build())
         }
     }
@@ -151,6 +167,8 @@ public class BuiltInsMetadataExtensions : MetadataExtensions {
     override fun createConstructorExtension(): KmConstructorExtension = BuiltInConstructorExtension()
 
     override fun createTypeParameterExtension(): KmTypeParameterExtension = BuiltInTypeParameterExtension()
+
+    override fun createEnumEntryExtension(): KmEnumEntryExtension? = null
 
     override fun createTypeExtension(): KmTypeExtension = BuiltInTypeExtension()
 

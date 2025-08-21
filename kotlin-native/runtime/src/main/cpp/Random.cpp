@@ -47,7 +47,7 @@ RUNTIME_NORETURN __attribute__((format(printf, 1, 2))) void throwReadingRandomBy
 
 extern "C" {
 
-// Mostly taken from kotlin-native/runtime/src/mimalloc/c/random.c
+// Mostly taken from mimalloc's random.c
 void Kotlin_Uuid_getRandomBytes(KRef byteArray, KInt size) {
     kotlin::ThreadStateGuard guard(kotlin::ThreadState::kNative);
     ArrayHeader* array = byteArray->array();

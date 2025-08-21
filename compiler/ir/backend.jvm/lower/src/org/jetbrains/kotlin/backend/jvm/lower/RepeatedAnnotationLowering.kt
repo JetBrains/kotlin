@@ -105,7 +105,7 @@ internal class RepeatedAnnotationLowering(private val context: JvmBackendContext
         val metaAnnotations = annotationClass.annotations
         val jvmRepeatable = metaAnnotations.find { it.isAnnotation(JvmAnnotationNames.REPEATABLE_ANNOTATION) }
         return if (jvmRepeatable != null) {
-            val containerClassReference = jvmRepeatable.getValueArgument(0)
+            val containerClassReference = jvmRepeatable.arguments[0]
             require(containerClassReference is IrClassReference) {
                 "Repeatable annotation container value must be a class reference: $annotationClass"
             }
@@ -123,14 +123,11 @@ internal class RepeatedAnnotationLowering(private val context: JvmBackendContext
     ): IrConstructorCall {
         val annotationType = annotationClass.typeWith()
         return IrConstructorCallImpl.fromSymbolOwner(containerClass.defaultType, containerClass.primaryConstructor!!.symbol).apply {
-            putValueArgument(
-                0,
-                IrVarargImpl(
-                    UNDEFINED_OFFSET, UNDEFINED_OFFSET,
-                    context.irBuiltIns.arrayClass.typeWith(annotationType),
-                    annotationType,
-                    entries
-                )
+            arguments[0] = IrVarargImpl(
+                UNDEFINED_OFFSET, UNDEFINED_OFFSET,
+                context.irBuiltIns.arrayClass.typeWith(annotationType),
+                annotationType,
+                entries
             )
         }
     }

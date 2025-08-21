@@ -1,5 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// DIAGNOSTICS: -TYPE_PARAMETER_AS_REIFIED -TYPE_PARAMETER_OF_PROPERTY_NOT_USED_IN_RECEIVER -UNUSED_VARIABLE -UNUSED_PARAMETER
+// DIAGNOSTICS: -TYPE_PARAMETER_AS_REIFIED -TYPE_PARAMETER_OF_PROPERTY_NOT_USED_IN_RECEIVER -UNUSED_VARIABLE -UNUSED_PARAMETER -INCORRECT_TYPE_PARAMETER_OF_PROPERTY
 
 fun <T> <!KCLASS_WITH_NULLABLE_TYPE_PARAMETER_IN_SIGNATURE!>test1<!>() = T::class
 fun <T : Any> test2() = T::class
@@ -32,3 +32,6 @@ class Foo<T> {
     val p = T::class
     fun f() = T::class
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, classReference, functionDeclaration, getter, localFunction,
+localProperty, nullableType, propertyDeclaration, starProjection, typeConstraint, typeParameter */

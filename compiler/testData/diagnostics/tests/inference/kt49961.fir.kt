@@ -9,3 +9,6 @@ class Xyz {
         }<!>
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, collectionLiteral, elvisExpression, functionDeclaration, localProperty,
+nullableType, propertyDeclaration, tryExpression */

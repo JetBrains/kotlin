@@ -22,3 +22,5 @@ class TestFun
 package testing.other
 
 fun TestFun() = 12
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, propertyDeclaration */

@@ -1,4 +1,4 @@
-/* RootScriptStructureElement */var x: Int/* DeclarationStructureElement */
+/* RootStructureElement *//* RootScriptStructureElement */var x: Int/* DeclarationStructureElement */
     get() = field
     set(value) {
         field = value

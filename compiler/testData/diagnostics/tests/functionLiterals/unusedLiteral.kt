@@ -13,3 +13,6 @@ fun unusedLiteralInDoWhile(){
             val <!UNUSED_VARIABLE!>i<!> = 1
     }<!> while(false)
 }
+
+/* GENERATED_FIR_TAGS: doWhileLoop, functionDeclaration, integerLiteral, lambdaLiteral, localProperty,
+propertyDeclaration */

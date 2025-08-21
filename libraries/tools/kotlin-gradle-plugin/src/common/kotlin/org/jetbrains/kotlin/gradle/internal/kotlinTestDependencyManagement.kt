@@ -146,7 +146,7 @@ private fun KotlinCompilation<*>.kotlinTestCapabilityForJvmSourceSet(
 ): Provider<String>? {
     val compilationTarget = target
 
-    @Suppress("TYPEALIAS_EXPANSION_DEPRECATION")
+    @Suppress("TYPEALIAS_EXPANSION_DEPRECATION", "DEPRECATION")
     val testTaskList: List<TaskProvider<out Task>> = when {
         compilationTarget is KotlinTargetWithTests<*, *> -> compilationTarget
             .findTestRunsByCompilation(this)

@@ -13,5 +13,7 @@ expect open class Foo : Base<String>
 // FILE: jvm.kt
 
 actual open class Foo : Base<String>() {
-    final override fun <!ACTUAL_WITHOUT_EXPECT!>foo<!>(t: String) {}
+    final override fun <!EXPECT_ACTUAL_INCOMPATIBLE_MODALITY!>foo<!>(t: String) {}
 }
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, functionDeclaration, nullableType, override, typeParameter */

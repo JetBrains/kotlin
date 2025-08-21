@@ -13,4 +13,7 @@ public expect abstract class AbstractMutableMap<K, V> : MutableMap<K, V> {
 
 import java.util.AbstractMap
 
-public actual abstract class <!NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS!>AbstractMutableMap<!><K, V>() : MutableMap<K, V>, AbstractMap<K, V>()
+public actual abstract class <!EXPECT_ACTUAL_INCOMPATIBLE_CLASS_SCOPE, EXPECT_ACTUAL_INCOMPATIBLE_CLASS_SCOPE, EXPECT_ACTUAL_INCOMPATIBLE_CLASS_SCOPE, EXPECT_ACTUAL_INCOMPATIBLE_CLASS_SCOPE, EXPECT_ACTUAL_INCOMPATIBLE_CLASS_SCOPE, EXPECT_ACTUAL_INCOMPATIBLE_CLASS_SCOPE, EXPECT_ACTUAL_INCOMPATIBLE_CLASS_SCOPE, EXPECT_ACTUAL_INCOMPATIBLE_CLASS_SCOPE, EXPECT_ACTUAL_INCOMPATIBLE_CLASS_SCOPE, EXPECT_ACTUAL_INCOMPATIBLE_CLASS_SCOPE!>AbstractMutableMap<!><K, V>() : MutableMap<K, V>, AbstractMap<K, V>()
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, nullableType, override, primaryConstructor, propertyDeclaration,
+typeParameter */

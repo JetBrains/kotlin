@@ -21,6 +21,9 @@ import org.junit.jupiter.api.DisplayName
 @MppGradlePluginTests
 open class MultiModuleIncrementalCompilationIT : KmpIncrementalITBase() {
 
+    override val defaultBuildOptions: BuildOptions
+        get() = super.defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)
+
     /**
      * Tests api change across the module + sourceSet boundary
      */
@@ -59,7 +62,7 @@ open class MultiModuleIncrementalCompilationIT : KmpIncrementalITBase() {
         usedInAppPlatform.replaceWithVersion("1_addNewPublicApi")
 
         fun testIndividualTarget(moduleTask: String, extraAssertions: BuildResult.() -> Unit = {}) {
-            build(":app:$moduleTask", buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)) {
+            build(":app:$moduleTask") {
                 val targetTasks = setOf(
                     ":app:$moduleTask",
                     ":lib:$moduleTask"

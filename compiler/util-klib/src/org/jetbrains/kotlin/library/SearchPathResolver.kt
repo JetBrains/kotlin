@@ -8,10 +8,8 @@ import org.jetbrains.kotlin.util.Logger
 import org.jetbrains.kotlin.util.WithLogger
 import org.jetbrains.kotlin.util.removeSuffixIfPresent
 import java.nio.file.InvalidPathException
+import java.nio.file.Path
 import java.nio.file.Paths
-
-@Deprecated("Use KOTLIN_NATIVE_STDLIB_NAME, KOTLIN_JS_STDLIB_NAME or KOTLIN_WASM_STDLIB_NAME instead", level = DeprecationLevel.HIDDEN)
-const val KOTLIN_STDLIB_NAME: String = "stdlib"
 
 const val KOTLIN_NATIVE_STDLIB_NAME: String = "stdlib"
 const val KOTLIN_JS_STDLIB_NAME: String = "kotlin"
@@ -55,28 +53,21 @@ interface SearchPathResolver<L : KotlinLibrary> : WithLogger {
         }
 
         companion object {
-            fun lookUpByAbsolutePath(absoluteLibraryPath: File): File? =
-                when {
-                    absoluteLibraryPath.isFile -> {
-                        // It's a really existing file.
-                        when (absoluteLibraryPath.extension) {
-                            KLIB_FILE_EXTENSION -> absoluteLibraryPath
-                            "jar" -> {
-                                // A special workaround for old JS stdlib, that was packed in a JAR file.
-                                absoluteLibraryPath
-                            }
-                            else -> {
-                                // A file with an unexpected extension.
-                                null
-                            }
-                        }
-                    }
-                    absoluteLibraryPath.isDirectory -> {
-                        // It's a really existing directory.
-                        absoluteLibraryPath
-                    }
-                    else -> null
-                }
+            fun lookUpByAbsolutePath(absoluteLibraryPath: File): File? {
+                if (!absoluteLibraryPath.isFile && !absoluteLibraryPath.isDirectory) return null
+
+                val rawPath: String = absoluteLibraryPath.path
+                // The "official" way of `Paths.get(path).toRealPath()` does not work on Windows
+                //   if the path starts with `/C:` - `sun.nio.fs.WindowsPathParser.normalize`
+                //   throws `InvalidPathException: Illegal char <:>`.
+                val javaPath: Path = if (System.getProperty("os.name").contains("Windows") && rawPath.startsWith("/"))
+                    Paths.get(rawPath.removePrefix("/"))
+                else
+                    Paths.get(rawPath)
+
+                // Resolve the path to eliminate symlinks that might be in any path segment.
+                return File(javaPath.toRealPath().toString())
+            }
         }
     }
 
@@ -136,12 +127,12 @@ abstract class KotlinLibrarySearchPathResolver<L : KotlinLibrary>(
     override val searchRoots: List<SearchRoot> by lazy {
         val searchRoots = mutableListOf<SearchRoot?>()
 
-        // Current working dir:
-        searchRoots += currentDirHead?.let { SearchRoot(searchRootPath = it, allowLookupByRelativePath = true) }
-
         // Current Kotlin/Native distribution:
         searchRoots += distHead?.let { SearchRoot(searchRootPath = it) }
         searchRoots += distPlatformHead?.let { SearchRoot(searchRootPath = it) }
+
+        // Current working dir:
+        searchRoots += currentDirHead?.let { SearchRoot(searchRootPath = it, allowLookupByRelativePath = true) }
 
         searchRoots.filterNotNull()
     }
@@ -212,7 +203,7 @@ abstract class KotlinLibrarySearchPathResolver<L : KotlinLibrary>(
     override fun resolve(unresolved: LenientUnresolvedLibrary, isDefaultLink: Boolean): L? {
         return resolveOrNull(unresolved, isDefaultLink)
             ?: run {
-                logger.warning("KLIB resolver: Could not find \"${unresolved.path}\" in ${searchRoots.map { it.searchRootPath.absolutePath }}")
+                logger.log("KLIB resolver: Could not find \"${unresolved.path}\" in ${searchRoots.map { it.searchRootPath.absolutePath }}")
                 null
             }
     }
@@ -294,6 +285,7 @@ abstract class KotlinLibraryProperResolverWithAttributes<L : KotlinLibrary>(
     @Deprecated(
         "Please use the KotlinLibraryProperResolverWithAttributes constructor which does not has 'repositories' and 'localKotlinDir' value parameters",
         ReplaceWith("KotlinLibraryProperResolverWithAttributes<L>(directLibs, distributionKlib, skipCurrentDir, logger, knownIrProviders)"),
+        DeprecationLevel.ERROR
     )
     constructor(
         @Suppress("UNUSED_PARAMETER") repositories: List<String>,
@@ -314,7 +306,7 @@ abstract class KotlinLibraryProperResolverWithAttributes<L : KotlinLibrary>(
         // Rejecting a library at this stage has disadvantages - the diagnostics are not-understandable.
         // Please, don't add checks for other versions here. For example, check for the metadata version should be
         // implemented in KlibDeserializedContainerSource.incompatibility
-        if (candidateAbiVersion?.isCompatible() != true) {
+        if (candidateAbiVersion?.isCompatible() != true && candidate.hasAbi) {
             logger.strongWarning("KLIB resolver: Skipping '$candidatePath' having incompatible ABI version '${candidateAbiVersion}'. " +
                         "The library was produced by '$candidateCompilerVersion' compiler.\n" +
                         "The current Kotlin compiler can consume libraries having ABI version <= '${KotlinAbiVersion.CURRENT}'.\n" +

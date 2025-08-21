@@ -11,13 +11,44 @@
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
+#include "ExternalRCRef.hpp"
+#include "ObjectTestSupport.hpp"
 #include "ShadowStack.hpp"
-#include "StableRef.hpp"
 #include "TestSupport.hpp"
 
 using namespace kotlin;
 
 namespace {
+
+struct Payload {
+    static constexpr test_support::NoRefFields<Payload> kFields = {};
+};
+
+test_support::TypeInfoHolder typeHolder{test_support::TypeInfoHolder::ObjectBuilder<Payload>()};
+
+using Object = test_support::Object<Payload>;
+
+std::unique_ptr<Object> allocateObject() noexcept {
+    return std::make_unique<Object>(typeHolder.typeInfo());
+}
+
+class Global : private Pinned {
+public:
+    explicit Global(mm::ThreadData& threadData) noexcept {
+        mm::GlobalsRegistry::Instance().RegisterStorageForGlobal(&threadData, &location_);
+        location_ = allocateObject().release()->header();
+    }
+
+    KRef& operator*() noexcept { return location_; }
+
+    ~Global() {
+        // Delete the allocated global.
+        std::unique_ptr<Object> obj(&Object::FromObjHeader(location_));
+        location_ = nullptr;
+    }
+private:
+    ObjHeader* location_ = nullptr;
+};
 
 // TODO: All the test helpers to create the rootset should be abstracted out.
 
@@ -26,10 +57,13 @@ class StackEntry : private Pinned {
 public:
     static_assert(LocalsCount > 0, "Must have at least 1 object on stack");
 
-    explicit StackEntry(mm::ShadowStack& shadowStack) : shadowStack_(shadowStack), value_(std::make_unique<ObjHeader>()) {
+    explicit StackEntry(mm::ShadowStack& shadowStack) : shadowStack_(shadowStack) {
+        objects_.reserve(LocalsCount);
         // Fill `locals_` with some values.
         for (size_t i = 0; i < LocalsCount; ++i) {
-            (*this)[i] = value_.get() + i;
+            auto object = allocateObject();
+            (*this)[i] = object->header();
+            objects_.push_back(std::move(object));
         }
 
         shadowStack_.EnterFrame(data_.data(), 0, kTotalCount);
@@ -41,7 +75,7 @@ public:
 
 private:
     mm::ShadowStack& shadowStack_;
-    std::unique_ptr<ObjHeader> value_;
+    std::vector<std::unique_ptr<Object>> objects_;
 
     // The following is what the compiler creates on the stack.
     static inline constexpr int kFrameOverlayCount = sizeof(FrameOverlay) / sizeof(ObjHeader**);
@@ -94,51 +128,44 @@ TEST(ThreadRootSetTest, Empty) {
 
 TEST(GlobalRootSetTest, Basic) {
     RunInNewThread([](mm::ThreadData& threadData) {
-        mm::GlobalsRegistry globals;
-        mm::GlobalsRegistry::ThreadQueue globalsProducer(globals);
-        ObjHeader* global1 = reinterpret_cast<ObjHeader*>(1);
-        ObjHeader* global2 = reinterpret_cast<ObjHeader*>(2);
-        globalsProducer.Insert(&global1);
-        globalsProducer.Insert(&global2);
+        Global global1(threadData);
+        Global global2(threadData);
 
-        mm::SpecialRefRegistry specialRefsRegistry;
-        mm::SpecialRefRegistry::ThreadQueue stableRefsProducer(specialRefsRegistry);
-        ObjHeader* stableRef1 = reinterpret_cast<ObjHeader*>(3);
-        ObjHeader* stableRef2 = reinterpret_cast<ObjHeader*>(4);
-        ObjHeader* stableRef3 = reinterpret_cast<ObjHeader*>(5);
-        auto stableRefHandle1 = stableRefsProducer.createStableRef(stableRef1);
-        auto stableRefHandle2 = stableRefsProducer.createStableRef(stableRef2);
-        auto stableRefHandle3 = stableRefsProducer.createStableRef(stableRef3);
+        mm::ExternalRCRefRegistry externalRCRefsRegistry;
+        mm::ExternalRCRefRegistry::ThreadQueue stableRefsProducer(externalRCRefsRegistry);
+        auto stableRef1 = allocateObject();
+        auto stableRef2 = allocateObject();
+        auto stableRef3 = allocateObject();
+        mm::OwningExternalRCRef stableRefHandle1(stableRefsProducer.createExternalRCRefImpl(stableRef1->header(), 1).toRaw());
+        mm::OwningExternalRCRef stableRefHandle2(stableRefsProducer.createExternalRCRefImpl(stableRef2->header(), 1).toRaw());
+        mm::OwningExternalRCRef stableRefHandle3(stableRefsProducer.createExternalRCRefImpl(stableRef3->header(), 1).toRaw());
 
-        globalsProducer.Publish();
+        threadData.globalsThreadQueue().Publish();
         stableRefsProducer.publish();
 
-        mm::GlobalRootSet iter(globals, specialRefsRegistry);
+        mm::GlobalRootSet iter(mm::GlobalsRegistry::Instance(), externalRCRefsRegistry);
 
         std::vector<mm::GlobalRootSet::Value> actual;
         for (auto object : iter) {
             actual.push_back(object);
         }
 
-        auto asGlobal = [](ObjHeader*& object) -> mm::GlobalRootSet::Value { return {object, mm::GlobalRootSet::Source::kGlobal}; };
-        auto asStableRef = [](ObjHeader*& object) -> mm::GlobalRootSet::Value { return {object, mm::GlobalRootSet::Source::kStableRef}; };
+        auto asGlobal = [](Global& global) -> mm::GlobalRootSet::Value { return {*global, mm::GlobalRootSet::Source::kGlobal}; };
+        auto asStableRef = [](std::unique_ptr<Object>& object) -> mm::GlobalRootSet::Value { return {object->header(), mm::GlobalRootSet::Source::kStableRef}; };
         EXPECT_THAT(
                 actual,
                 testing::UnorderedElementsAre(
                         asGlobal(global1), asGlobal(global2), asStableRef(stableRef1), asStableRef(stableRef2), asStableRef(stableRef3)));
-
-        std::move(stableRefHandle1).dispose();
-        std::move(stableRefHandle2).dispose();
-        std::move(stableRefHandle3).dispose();
+        mm::GlobalsRegistry::Instance().ClearForTests();
     });
 }
 
 TEST(GlobalRootSetTest, Empty) {
     RunInNewThread([](mm::ThreadData& threadData) {
         mm::GlobalsRegistry globals;
-        mm::SpecialRefRegistry specialRefsRegistry;
+        mm::ExternalRCRefRegistry externalRCRefsRegistry;
 
-        mm::GlobalRootSet iter(globals, specialRefsRegistry);
+        mm::GlobalRootSet iter(globals, externalRCRefsRegistry);
 
         std::vector<mm::GlobalRootSet::Value> actual;
         for (auto object : iter) {

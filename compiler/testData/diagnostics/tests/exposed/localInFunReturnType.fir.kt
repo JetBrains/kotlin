@@ -59,3 +59,6 @@ fun valid7() = run {
     class Local
     My<My<*>>(My(Local()))
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, classDeclaration, functionDeclaration, lambdaLiteral, localClass,
+localFunction, nullableType, outProjection, primaryConstructor, propertyDeclaration, starProjection, typeParameter */

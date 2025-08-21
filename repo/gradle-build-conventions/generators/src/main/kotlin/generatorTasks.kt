@@ -66,7 +66,35 @@ fun Project.generatedSourcesTask(
         generatorClasspath(project(generatorProject))
     }
 
-    val generationRoot = layout.projectDirectory.dir("gen")
+    return generatedSourcesTask(
+        taskName,
+        generatorClasspath,
+        generatorRoot,
+        generatorMainClass,
+        argsProvider,
+        dependOnTaskOutput = dependOnTaskOutput,
+    )
+}
+
+/**
+ * The utility can be used for sources generation by third-party tools.
+ * For instance, it's used for Kotlin and KDoc lexer generations by JFlex.
+ */
+fun Project.generatedSourcesTask(
+    taskName: String,
+    generatorClasspath: Configuration,
+    generatorRoot: String,
+    generatorMainClass: String,
+    argsProvider: JavaExec.(generationRoot: Directory) -> List<String> = { listOf(it.toString()) },
+    dependOnTaskOutput: Boolean = true,
+    commonSourceSet: Boolean = false,
+): TaskProvider<JavaExec> {
+    val genPath = if (commonSourceSet) {
+        "common/src/gen"
+    } else {
+        "gen"
+    }
+    val generationRoot = layout.projectDirectory.dir(genPath)
     val task = tasks.register<JavaExec>(taskName) {
         workingDir = rootDir
         classpath = generatorClasspath
@@ -84,19 +112,19 @@ fun Project.generatedSourcesTask(
         outputs.dir(generationRoot)
     }
 
-    sourceSets.named("main") {
-        val dependency: Any = when (dependOnTaskOutput) {
-            true -> task
-            false -> generationRoot
+    if (!commonSourceSet) {
+        sourceSets.named("main") {
+            val dependency: Any = when (dependOnTaskOutput) {
+                true -> task
+                false -> generationRoot
+            }
+            java.srcDirs(dependency)
         }
-        java.srcDirs(dependency)
     }
 
-    if (kotlinBuildProperties.isInIdeaSync) {
-        apply(plugin = "idea")
-        (this as org.gradle.api.plugins.ExtensionAware).extensions.configure<IdeaModel>("idea") {
-            this.module.generatedSourceDirs.add(generationRoot.asFile)
-        }
+    apply(plugin = "idea")
+    (this as org.gradle.api.plugins.ExtensionAware).extensions.configure<IdeaModel>("idea") {
+        this.module.generatedSourceDirs.add(generationRoot.asFile)
     }
     return task
 }

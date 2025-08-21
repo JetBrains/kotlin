@@ -29,3 +29,6 @@ fun main() {
     // resulting expression type: TypePair<Parent, Child>
     val test: TypePair<Parent, Child> = <!TYPE_MISMATCH!>result<!>
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionalType, lambdaLiteral, localProperty, nullableType,
+propertyDeclaration, typeConstraint, typeParameter */

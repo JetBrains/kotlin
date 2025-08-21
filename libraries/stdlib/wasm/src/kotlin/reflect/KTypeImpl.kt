@@ -21,8 +21,11 @@ internal class KTypeImpl(
 
     override fun toString(): String {
         val kClass = (classifier as? KClass<*>)
+
+        @Suppress("UNSUPPORTED_REFLECTION_API")
         val classifierName = when {
             kClass == null -> classifier.toString()
+            kClass.qualifiedName != null -> kClass.qualifiedName
             kClass.simpleName != null -> kClass.simpleName
             else -> "(non-denotable type)"
         }

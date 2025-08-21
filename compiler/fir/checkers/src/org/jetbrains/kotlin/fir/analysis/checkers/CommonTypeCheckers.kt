@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers
 
+import org.jetbrains.kotlin.fir.analysis.checkers.type.FirInlineExposedLessVisibleTypeChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.type.*
 
 object CommonTypeCheckers : TypeCheckers() {
@@ -14,7 +15,6 @@ object CommonTypeCheckers : TypeCheckers() {
 
     override val resolvedTypeRefCheckers: Set<FirResolvedTypeRefChecker> = setOf(
         FirTypeAnnotationChecker,
-        FirSuspendModifierChecker,
         FirDeprecatedTypeChecker,
         FirOptInUsageTypeRefChecker,
         FirStarProjectionModifierChecker,
@@ -22,12 +22,15 @@ object CommonTypeCheckers : TypeCheckers() {
         FirDuplicateParameterNameInFunctionTypeChecker,
         FirOptionalExpectationTypeChecker,
         FirIncompatibleClassTypeChecker,
-        FirContextReceiversTypeChecker,
-        FirContextReceiversDeprecatedTypeChecker,
+        FirContextualFunctionTypeChecker,
         FirKotlinActualAnnotationHasNoEffectInKotlinTypeChecker,
         FirProjectionRelationChecker,
-        FirCommonAtomicReferenceToPrimitiveTypeChecker,
+        FirUpperBoundViolatedTypeChecker,
         FirArrayOfNothingTypeChecker,
+        FirInlineExposedLessVisibleTypeChecker,
+        RedundantNullableChecker,
+        PlatformClassMappedToKotlinTypeRefChecker,
+        FirMissingDependencyClassInTypeAliasTypeChecker,
     )
 
     override val intersectionTypeRefCheckers: Set<FirIntersectionTypeRefChecker> = setOf(
@@ -37,5 +40,6 @@ object CommonTypeCheckers : TypeCheckers() {
     override val functionTypeRefCheckers: Set<FirFunctionTypeRefChecker> = setOf(
         FirUnsupportedDefaultValueInFunctionTypeParameterChecker,
         FirUnsupportedModifiersInFunctionTypeParameterChecker,
+        FirDslMarkerPropagationChecker,
     )
 }

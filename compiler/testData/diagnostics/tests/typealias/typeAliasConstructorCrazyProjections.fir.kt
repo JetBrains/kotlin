@@ -14,3 +14,7 @@ fun <T> listOf(): List<T> = null!!
 val test1 = <!CONSTRUCTOR_OR_SUPERTYPE_ON_TYPEALIAS_WITH_TYPE_PROJECTION_ERROR, UPPER_BOUND_VIOLATED!>BOutIn(<!ARGUMENT_TYPE_MISMATCH!><!CANNOT_INFER_PARAMETER_TYPE!>listOf<!>()<!>, null!!)<!>
 
 val test2 = <!CONSTRUCTOR_OR_SUPERTYPE_ON_TYPEALIAS_WITH_TYPE_PROJECTION_ERROR, UPPER_BOUND_VIOLATED!>BInIn(listOf(), null!!)<!>
+
+/* GENERATED_FIR_TAGS: capturedType, checkNotNullCall, classDeclaration, functionDeclaration, inProjection, nullableType,
+outProjection, primaryConstructor, propertyDeclaration, typeAliasDeclaration, typeAliasDeclarationWithTypeParameter,
+typeConstraint, typeParameter */

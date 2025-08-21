@@ -9,3 +9,5 @@ fun foo() {
     JavaEnum.values()
     JavaEnum.valueOf("")
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, javaFunction, javaType, stringLiteral */

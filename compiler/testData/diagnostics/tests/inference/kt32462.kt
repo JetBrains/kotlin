@@ -25,3 +25,6 @@ fun test_2() {
         A::toC
     )<!>
 }
+
+/* GENERATED_FIR_TAGS: callableReference, functionDeclaration, interfaceDeclaration, lambdaLiteral, nullableType,
+typeParameter */

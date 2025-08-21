@@ -16,3 +16,6 @@ fun test(a: A?, b: B?) {
         c.test()
     }
 }
+
+/* GENERATED_FIR_TAGS: asExpression, equalityExpression, functionDeclaration, ifExpression, interfaceDeclaration,
+intersectionType, localProperty, nullableType, propertyDeclaration, smartcast, typeParameter */

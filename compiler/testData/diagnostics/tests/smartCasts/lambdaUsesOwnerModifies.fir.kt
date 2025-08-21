@@ -9,3 +9,6 @@ fun foo(arg: Int?) {
     }
     x = null  
 }
+
+/* GENERATED_FIR_TAGS: assignment, equalityExpression, functionDeclaration, ifExpression, lambdaLiteral, localProperty,
+nullableType, propertyDeclaration, smartcast */

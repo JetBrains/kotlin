@@ -24,23 +24,21 @@ object FirMissingConstructorKeywordSyntaxChecker : FirDeclarationSyntaxChecker<F
 
     override fun isApplicable(element: FirConstructor, source: KtSourceElement): Boolean = true
 
+    context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun checkPsi(
         element: FirConstructor,
         source: KtPsiSourceElement,
         psi: KtDeclaration,
-        context: CheckerContext,
-        reporter: DiagnosticReporter
     ) {
         if (psi is KtConstructor<*> && psi.modifierList != null && psi.getConstructorKeyword() == null) {
-            reporter.reportOn(source, FirErrors.MISSING_CONSTRUCTOR_KEYWORD, context)
+            reporter.reportOn(source, FirErrors.MISSING_CONSTRUCTOR_KEYWORD)
         }
     }
 
+    context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun checkLightTree(
         element: FirConstructor,
         source: KtLightSourceElement,
-        context: CheckerContext,
-        reporter: DiagnosticReporter
     ) {
         if (source.kind !is KtRealSourceElementKind) return
         var hasModifiers = false
@@ -53,7 +51,7 @@ object FirMissingConstructorKeywordSyntaxChecker : FirDeclarationSyntaxChecker<F
             }
         }
         if (hasModifiers && !hasConstructorKeyword) {
-            reporter.reportOn(source, FirErrors.MISSING_CONSTRUCTOR_KEYWORD, context)
+            reporter.reportOn(source, FirErrors.MISSING_CONSTRUCTOR_KEYWORD)
         }
     }
 

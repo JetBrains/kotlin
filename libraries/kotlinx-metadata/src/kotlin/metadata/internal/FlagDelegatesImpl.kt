@@ -4,14 +4,14 @@
  */
 package kotlin.metadata.internal
 
-import kotlin.metadata.*
-import kotlin.metadata.internal.FlagImpl as Flag
 import kotlin.enums.EnumEntries
+import kotlin.metadata.*
 import kotlin.reflect.KMutableProperty1
 import kotlin.reflect.KProperty
-import org.jetbrains.kotlin.metadata.deserialization.Flags.FlagField as ProtoFlagSet
 import org.jetbrains.kotlin.metadata.deserialization.Flags as ProtoFlags
+import org.jetbrains.kotlin.metadata.deserialization.Flags.FlagField as ProtoFlagSet
 import org.jetbrains.kotlin.protobuf.Internal.EnumLite as ProtoEnumLite
+import kotlin.metadata.internal.FlagImpl as Flag
 
 internal class EnumFlagDelegate<Node, E : Enum<E>>(
     val flags: KMutableProperty1<Node, Int>,
@@ -55,21 +55,27 @@ internal fun <Node> modalityDelegate(flags: KMutableProperty1<Node, Int>) =
 internal fun <Node> memberKindDelegate(flags: KMutableProperty1<Node, Int>) =
     EnumFlagDelegate(flags, ProtoFlags.MEMBER_KIND, MemberKind.entries, MemberKind.entries.map { it.flag })
 
-internal fun classBooleanFlag(flag: Flag) = BooleanFlagDelegate(KmClass::flags, flag)
+public fun classBooleanFlag(flag: Flag): BooleanFlagDelegate<KmClass> =
+    BooleanFlagDelegate(KmClass::flags, flag)
 
-internal fun functionBooleanFlag(flag: Flag) = BooleanFlagDelegate(KmFunction::flags, flag)
+public fun functionBooleanFlag(flag: Flag): BooleanFlagDelegate<KmFunction> =
+    BooleanFlagDelegate(KmFunction::flags, flag)
 
-internal fun constructorBooleanFlag(flag: Flag) = BooleanFlagDelegate(KmConstructor::flags, flag)
+public fun constructorBooleanFlag(flag: Flag): BooleanFlagDelegate<KmConstructor> =
+    BooleanFlagDelegate(KmConstructor::flags, flag)
 
-internal fun propertyBooleanFlag(flag: Flag) = BooleanFlagDelegate(KmProperty::flags, flag)
+public fun propertyBooleanFlag(flag: Flag): BooleanFlagDelegate<KmProperty> =
+    BooleanFlagDelegate(KmProperty::flags, flag)
 
-internal fun propertyAccessorBooleanFlag(flag: Flag) = BooleanFlagDelegate(KmPropertyAccessorAttributes::flags, flag)
+public fun propertyAccessorBooleanFlag(flag: Flag): BooleanFlagDelegate<KmPropertyAccessorAttributes> =
+    BooleanFlagDelegate(KmPropertyAccessorAttributes::flags, flag)
+
+public fun valueParameterBooleanFlag(flag: Flag): BooleanFlagDelegate<KmValueParameter> =
+    BooleanFlagDelegate(KmValueParameter::flags, flag)
+
+internal fun typeAliasBooleanFlag(flag: Flag) = BooleanFlagDelegate(KmTypeAlias::flags, flag)
 
 internal fun typeBooleanFlag(flag: Flag) = BooleanFlagDelegate(KmType::flags, flag)
-
-internal fun valueParameterBooleanFlag(flag: Flag) = BooleanFlagDelegate(KmValueParameter::flags, flag)
-
-internal fun <Node> annotationsOn(flags: KMutableProperty1<Node, Int>) = BooleanFlagDelegate(flags, Flag(ProtoFlags.HAS_ANNOTATIONS))
 
 // Used for kotlin-metadata-jvm tests:
 public fun _flagAccess(kmClass: KmClass): Int = kmClass.flags
@@ -78,4 +84,4 @@ public fun _flagAccess(kmFunc: KmFunction): Int = kmFunc.flags
 
 public fun _flagAccess(kmType: KmType): Int = kmType.flags
 
-public fun _flagAccess(kmConstr: KmConstructor): Int = kmConstr.flags
+public fun _flagAccess(kmConstructor: KmConstructor): Int = kmConstructor.flags

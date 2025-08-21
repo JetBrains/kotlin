@@ -32,3 +32,6 @@ actual annotation class A3(actual val x: Int = 42, actual val y: String = "OK")
 actual annotation class A4(actual val x: Int, actual val y: String = "OK")
 
 actual annotation class A5(actual val x: Int = 239, actual val y: String = "OK")
+
+/* GENERATED_FIR_TAGS: actual, annotationDeclaration, expect, functionDeclaration, integerLiteral, primaryConstructor,
+propertyDeclaration, stringLiteral */

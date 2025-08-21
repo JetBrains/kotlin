@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.ir.interpreter.preprocessor
 
+import org.jetbrains.kotlin.backend.common.linkage.partial.reflectionTargetLinkageError
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
@@ -22,22 +23,32 @@ import org.jetbrains.kotlin.name.SpecialNames
 // This code will be optimized but not completely turned into "ab" result.
 class IrInterpreterKCallableNamePreprocessor : IrInterpreterPreprocessor() {
     override fun visitCall(expression: IrCall, data: IrInterpreterPreprocessorData): IrElement {
-        if (!expression.isKCallableNameCall(data.irBuiltIns)) return super.visitCall(expression, data)
+        if (!expression.isInterpretableKCallableNameCall(data.irBuiltIns)) return super.visitCall(expression, data)
+        return handleCallableReference(expression, data)
+    }
 
-        val callableReference = expression.dispatchReceiver as? IrCallableReference<*> ?: return super.visitCall(expression, data)
-
-        val boundArgs = callableReference.arguments.filterNotNull()
+    private fun handleCallableReference(expression: IrCall, data: IrInterpreterPreprocessorData): IrElement {
+        val callableReference = expression.dispatchReceiver
+        val boundArgs = when (callableReference) {
+            is IrCallableReference<*> -> callableReference.arguments.filterNotNull()
+            is IrRichCallableReference<*> -> callableReference.boundValues.toList() // make a copy
+            else -> return super.visitCall(expression, data)
+        }
 
         // Transform reference from bound to unbound one
         val typeArguments = (callableReference.type as IrSimpleType).arguments.map { it.typeOrNull!! }
         if (boundArgs.isNotEmpty() && callableReference.type.isKFunction()) {
+            val newTypeArgs = when (callableReference) {
+                is IrCallableReference<*> -> {
+                    val typeArgIterator = typeArguments.iterator()
+                    callableReference.arguments
+                        .mapTo(mutableListOf()) { it?.type ?: typeArgIterator.next() }
+                        .also { it.add(typeArgIterator.next()) /* add the return type */ }
+                }
+                else -> boundArgs.map { it.type } + typeArguments
+            }
+
             val kFunction = data.irBuiltIns.kFunctionN(typeArguments.size)
-
-            val typeArgIterator = typeArguments.iterator()
-            val newTypeArgs = callableReference.arguments
-                .mapTo(mutableListOf()) { it?.type ?: typeArgIterator.next() }
-                .also { it.add(typeArgIterator.next()) /* add the return type */ }
-
             callableReference.type = kFunction.typeWith(*newTypeArgs.toTypedArray<IrType>())
         }
 
@@ -45,7 +56,11 @@ class IrInterpreterKCallableNamePreprocessor : IrInterpreterPreprocessor() {
         expression.symbol = data.irBuiltIns.kCallableClass.owner.properties.single { it.name.asString() == "name" }.getter!!.symbol
 
         // Callable reference shouldn't have any bound arguments
-        callableReference.arguments.fill(null)
+        when (callableReference) {
+            is IrCallableReference<*> -> callableReference.arguments.fill(null)
+            is IrRichCallableReference<*> -> callableReference.boundValues.clear()
+            else -> return super.visitCall(expression, data)
+        }
 
         val boundArgsWithoutThis = boundArgs.filterNot { it is IrGetValue && it.symbol.owner.name == SpecialNames.THIS }
         if (boundArgsWithoutThis.isEmpty()) return expression
@@ -57,8 +72,16 @@ class IrInterpreterKCallableNamePreprocessor : IrInterpreterPreprocessor() {
     }
 
     companion object {
-        fun IrCall.isKCallableNameCall(irBuiltIns: IrBuiltIns): Boolean {
-            if (this.dispatchReceiver !is IrCallableReference<*>) return false
+        fun IrCall.isInterpretableKCallableNameCall(irBuiltIns: IrBuiltIns): Boolean {
+            val receiver = this.dispatchReceiver
+            if (receiver !is IrCallableReference<*> && receiver !is IrRichCallableReference<*>) {
+                return false
+            }
+
+            if (receiver is IrRichCallableReference<*> && receiver.reflectionTargetLinkageError != null) {
+                // There was a partial linkage error of reflectionTargetSymbol -> we don't have accurate information about the callable's name.
+                return false
+            }
 
             val directMember: IrOverridableMember = this.symbol.owner.let { it.property ?: it }
 

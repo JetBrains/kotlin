@@ -24,3 +24,7 @@ fun whenWithNamedSubject(y: BooleanHolder) {
         else -> Unit
     }
 }
+
+/* GENERATED_FIR_TAGS: andExpression, classDeclaration, equalityExpression, functionDeclaration, guardCondition,
+ifExpression, integerLiteral, intersectionType, isExpression, localProperty, nullableType, objectDeclaration,
+primaryConstructor, propertyDeclaration, sealed, smartcast, typeParameter, whenExpression, whenWithSubject */

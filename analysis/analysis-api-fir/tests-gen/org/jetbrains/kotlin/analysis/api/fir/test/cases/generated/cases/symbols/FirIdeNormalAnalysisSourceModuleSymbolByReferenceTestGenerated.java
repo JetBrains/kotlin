@@ -42,6 +42,18 @@ public class FirIdeNormalAnalysisSourceModuleSymbolByReferenceTestGenerated exte
   }
 
   @Test
+  @TestMetadata("abstractOverrideFunctionFromLibrary.kt")
+  public void testAbstractOverrideFunctionFromLibrary() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByReference/abstractOverrideFunctionFromLibrary.kt");
+  }
+
+  @Test
+  @TestMetadata("abstractOverridePropertyFromLibrary.kt")
+  public void testAbstractOverridePropertyFromLibrary() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByReference/abstractOverridePropertyFromLibrary.kt");
+  }
+
+  @Test
   @TestMetadata("accessorField.kt")
   public void testAccessorField() {
     runTest("analysis/analysis-api/testData/symbols/symbolByReference/accessorField.kt");
@@ -68,6 +80,12 @@ public class FirIdeNormalAnalysisSourceModuleSymbolByReferenceTestGenerated exte
   @TestMetadata("constructorParameterViaTypeAlias_withTypeParametersFixed.kt")
   public void testConstructorParameterViaTypeAlias_withTypeParametersFixed() {
     runTest("analysis/analysis-api/testData/symbols/symbolByReference/constructorParameterViaTypeAlias_withTypeParametersFixed.kt");
+  }
+
+  @Test
+  @TestMetadata("constructorProperty.kt")
+  public void testConstructorProperty() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByReference/constructorProperty.kt");
   }
 
   @Test
@@ -131,6 +149,12 @@ public class FirIdeNormalAnalysisSourceModuleSymbolByReferenceTestGenerated exte
   }
 
   @Test
+  @TestMetadata("contextParametersInTypesLibrary.kt")
+  public void testContextParametersInTypesLibrary() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByReference/contextParametersInTypesLibrary.kt");
+  }
+
+  @Test
   @TestMetadata("enumEntries.kt")
   public void testEnumEntries() {
     runTest("analysis/analysis-api/testData/symbols/symbolByReference/enumEntries.kt");
@@ -152,6 +176,24 @@ public class FirIdeNormalAnalysisSourceModuleSymbolByReferenceTestGenerated exte
   @TestMetadata("explicitLambdaParameter.kt")
   public void testExplicitLambdaParameter() {
     runTest("analysis/analysis-api/testData/symbols/symbolByReference/explicitLambdaParameter.kt");
+  }
+
+  @Test
+  @TestMetadata("funInterfaceOneMethod.kt")
+  public void testFunInterfaceOneMethod() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByReference/funInterfaceOneMethod.kt");
+  }
+
+  @Test
+  @TestMetadata("funInterfaceOneMethodFromLibrary.kt")
+  public void testFunInterfaceOneMethodFromLibrary() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByReference/funInterfaceOneMethodFromLibrary.kt");
+  }
+
+  @Test
+  @TestMetadata("funInterfaceTwoMethods.kt")
+  public void testFunInterfaceTwoMethods() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByReference/funInterfaceTwoMethods.kt");
   }
 
   @Test
@@ -179,6 +221,30 @@ public class FirIdeNormalAnalysisSourceModuleSymbolByReferenceTestGenerated exte
   }
 
   @Test
+  @TestMetadata("inlineExtensionPropertyFromCompanion.kt")
+  public void testInlineExtensionPropertyFromCompanion() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByReference/inlineExtensionPropertyFromCompanion.kt");
+  }
+
+  @Test
+  @TestMetadata("inlineExtensionPropertyFromCompanionLibrary.kt")
+  public void testInlineExtensionPropertyFromCompanionLibrary() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByReference/inlineExtensionPropertyFromCompanionLibrary.kt");
+  }
+
+  @Test
+  @TestMetadata("inlinePropertyFromCompanion.kt")
+  public void testInlinePropertyFromCompanion() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByReference/inlinePropertyFromCompanion.kt");
+  }
+
+  @Test
+  @TestMetadata("inlinePropertyFromCompanionLibrary.kt")
+  public void testInlinePropertyFromCompanionLibrary() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByReference/inlinePropertyFromCompanionLibrary.kt");
+  }
+
+  @Test
   @TestMetadata("javaClassWithEmptyAnnotationName.kt")
   public void testJavaClassWithEmptyAnnotationName() {
     runTest("analysis/analysis-api/testData/symbols/symbolByReference/javaClassWithEmptyAnnotationName.kt");
@@ -194,6 +260,36 @@ public class FirIdeNormalAnalysisSourceModuleSymbolByReferenceTestGenerated exte
   @TestMetadata("javaFieldWithTypeAnnotation.kt")
   public void testJavaFieldWithTypeAnnotation() {
     runTest("analysis/analysis-api/testData/symbols/symbolByReference/javaFieldWithTypeAnnotation.kt");
+  }
+
+  @Test
+  @TestMetadata("javaField_intersectionOverride.kt")
+  public void testJavaField_intersectionOverride() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByReference/javaField_intersectionOverride.kt");
+  }
+
+  @Test
+  @TestMetadata("javaInterfaceOneMethod.kt")
+  public void testJavaInterfaceOneMethod() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByReference/javaInterfaceOneMethod.kt");
+  }
+
+  @Test
+  @TestMetadata("javaInterfaceOneMethodFromLibrary.kt")
+  public void testJavaInterfaceOneMethodFromLibrary() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByReference/javaInterfaceOneMethodFromLibrary.kt");
+  }
+
+  @Test
+  @TestMetadata("javaInterfaceTwoMethods.kt")
+  public void testJavaInterfaceTwoMethods() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByReference/javaInterfaceTwoMethods.kt");
+  }
+
+  @Test
+  @TestMetadata("javaInterfaceTwoMethodsFromLibrary.kt")
+  public void testJavaInterfaceTwoMethodsFromLibrary() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByReference/javaInterfaceTwoMethodsFromLibrary.kt");
   }
 
   @Test
@@ -335,6 +431,12 @@ public class FirIdeNormalAnalysisSourceModuleSymbolByReferenceTestGenerated exte
   }
 
   @Test
+  @TestMetadata("libraryNestedTypeAlias.kt")
+  public void testLibraryNestedTypeAlias() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByReference/libraryNestedTypeAlias.kt");
+  }
+
+  @Test
   @TestMetadata("libraryProperty.kt")
   public void testLibraryProperty() {
     runTest("analysis/analysis-api/testData/symbols/symbolByReference/libraryProperty.kt");
@@ -380,6 +482,24 @@ public class FirIdeNormalAnalysisSourceModuleSymbolByReferenceTestGenerated exte
   @TestMetadata("nestedAnnotation.kt")
   public void testNestedAnnotation() {
     runTest("analysis/analysis-api/testData/symbols/symbolByReference/nestedAnnotation.kt");
+  }
+
+  @Test
+  @TestMetadata("openConstructorProperty.kt")
+  public void testOpenConstructorProperty() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByReference/openConstructorProperty.kt");
+  }
+
+  @Test
+  @TestMetadata("openConstructorPropertyInAbstractClass.kt")
+  public void testOpenConstructorPropertyInAbstractClass() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByReference/openConstructorPropertyInAbstractClass.kt");
+  }
+
+  @Test
+  @TestMetadata("openConstructorPropertyInFinalClass.kt")
+  public void testOpenConstructorPropertyInFinalClass() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByReference/openConstructorPropertyInFinalClass.kt");
   }
 
   @Test
@@ -497,6 +617,12 @@ public class FirIdeNormalAnalysisSourceModuleSymbolByReferenceTestGenerated exte
   }
 
   @Test
+  @TestMetadata("syntheticPropertyNoJavaOrigin.kt")
+  public void testSyntheticPropertyNoJavaOrigin() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByReference/syntheticPropertyNoJavaOrigin.kt");
+  }
+
+  @Test
   @TestMetadata("typeAnnotationOnBackingField.kt")
   public void testTypeAnnotationOnBackingField() {
     runTest("analysis/analysis-api/testData/symbols/symbolByReference/typeAnnotationOnBackingField.kt");
@@ -506,6 +632,12 @@ public class FirIdeNormalAnalysisSourceModuleSymbolByReferenceTestGenerated exte
   @TestMetadata("typeParameter.kt")
   public void testTypeParameter() {
     runTest("analysis/analysis-api/testData/symbols/symbolByReference/typeParameter.kt");
+  }
+
+  @Test
+  @TestMetadata("unstableSmartcastImplicitWhenSubject.kt")
+  public void testUnstableSmartcastImplicitWhenSubject() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByReference/unstableSmartcastImplicitWhenSubject.kt");
   }
 
   @Test
@@ -567,6 +699,12 @@ public class FirIdeNormalAnalysisSourceModuleSymbolByReferenceTestGenerated exte
     @TestMetadata("generatedCompanionWorksAsValue.kt")
     public void testGeneratedCompanionWorksAsValue() {
       runTest("analysis/analysis-api/testData/symbols/symbolByReference/withTestCompilerPluginEnabled/generatedCompanionWorksAsValue.kt");
+    }
+
+    @Test
+    @TestMetadata("generatedLocalClass.kt")
+    public void testGeneratedLocalClass() {
+      runTest("analysis/analysis-api/testData/symbols/symbolByReference/withTestCompilerPluginEnabled/generatedLocalClass.kt");
     }
 
     @Test

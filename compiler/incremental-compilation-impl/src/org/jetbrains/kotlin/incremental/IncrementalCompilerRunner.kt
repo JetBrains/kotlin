@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.incremental
@@ -27,21 +16,20 @@ import org.jetbrains.kotlin.build.report.metrics.GradleBuildPerformanceMetric
 import org.jetbrains.kotlin.build.report.metrics.GradleBuildTime
 import org.jetbrains.kotlin.build.report.metrics.measure
 import org.jetbrains.kotlin.build.report.warn
-import org.jetbrains.kotlin.cli.common.*
+import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.messages.MessageCollectorImpl
-import org.jetbrains.kotlin.compilerRunner.MessageCollectorToOutputItemsCollectorAdapter
 import org.jetbrains.kotlin.compilerRunner.OutputItemsCollectorImpl
 import org.jetbrains.kotlin.compilerRunner.toGeneratedFile
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.incremental.ChangedFiles.DeterminableFiles
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
+import org.jetbrains.kotlin.incremental.components.ICFileMappingTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
-import org.jetbrains.kotlin.incremental.dirtyFiles.DirtyFilesCachedHistory
 import org.jetbrains.kotlin.incremental.dirtyFiles.DirtyFilesContainer
-import org.jetbrains.kotlin.incremental.parsing.classesFqNames
+import org.jetbrains.kotlin.incremental.dirtyFiles.DirtyFilesProvider
 import org.jetbrains.kotlin.incremental.storage.BasicFileToPathConverter
 import org.jetbrains.kotlin.incremental.storage.FileLocations
 import org.jetbrains.kotlin.incremental.util.ExceptionLocation
@@ -50,7 +38,7 @@ import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.progress.CompilationCanceledStatus
 import org.jetbrains.kotlin.util.removeSuffixIfPresent
-import org.jetbrains.kotlin.util.toMetadataVersion
+import org.jetbrains.kotlin.util.toJvmMetadataVersion
 import java.io.File
 import java.nio.file.Files
 
@@ -76,6 +64,11 @@ abstract class IncrementalCompilerRunner<
     private val outputDirs: Collection<File>?,
 
     /**
+     * Kotlin source files extensions. Set can be extended, usually for scripting purposes
+     */
+    protected val kotlinSourceFilesExtensions: Set<String> = DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS,
+
+    /**
      * Various options. Boolean flags, both stable and experimental, should be added there.
      * Non-trivial configuration should NOT be added there.
      */
@@ -85,9 +78,7 @@ abstract class IncrementalCompilerRunner<
     protected val cacheDirectory = File(workingDir, cacheDirName)
     protected val lastBuildInfoFile = File(workingDir, LAST_BUILD_INFO_FILE_NAME)
     private val abiSnapshotFile = File(workingDir, ABI_SNAPSHOT_FILE_NAME)
-    private val dirtyFilesCachedHistory = DirtyFilesCachedHistory(workingDir)
-
-    protected open val kotlinSourceFilesExtensions: Set<String> = DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS
+    internal val dirtyFilesProvider: DirtyFilesProvider = DirtyFilesProvider(workingDir, kotlinSourceFilesExtensions, reporter)
 
     /**
      * Creates an instance of [IncrementalCompilationContext] that holds common incremental compilation context mostly required for [CacheManager]
@@ -368,13 +359,7 @@ abstract class IncrementalCompilerRunner<
         reporter: BuildReporter<GradleBuildTime, GradleBuildPerformanceMetric>,
     ): Map<String, AbiSnapshot> = emptyMap()
 
-    protected fun initDirtyFiles(dirtyFiles: DirtyFilesContainer, changedFiles: DeterminableFiles.Known) {
-        dirtyFiles.add(changedFiles.modified, "was modified since last time")
-        dirtyFiles.add(changedFiles.removed, "was removed since last time")
-        dirtyFiles.add(dirtyFilesCachedHistory.read(), "was not compiled last time")
-    }
-
-    protected sealed class CompilationMode {
+    sealed class CompilationMode {
         class Incremental(val dirtyFiles: DirtyFilesContainer) : CompilationMode()
         class Rebuild(val reason: BuildAttribute) : CompilationMode()
     }
@@ -396,6 +381,7 @@ abstract class IncrementalCompilerRunner<
         args: Args,
         lookupTracker: LookupTracker,
         expectActualTracker: ExpectActualTracker,
+        fileMappingTracker: ICFileMappingTracker,
         caches: CacheManager,
         dirtySources: Set<File>,
         isIncremental: Boolean,
@@ -404,6 +390,7 @@ abstract class IncrementalCompilerRunner<
             register(LookupTracker::class.java, lookupTracker)
             register(ExpectActualTracker::class.java, expectActualTracker)
             register(CompilationCanceledStatus::class.java, EmptyCompilationCanceledStatus)
+            register(ICFileMappingTracker::class.java, fileMappingTracker)
         }
 
     protected abstract fun runCompiler(
@@ -480,7 +467,7 @@ abstract class IncrementalCompilerRunner<
 
         // TODO: ideally we should read arguments not here but at earlier stages
         val metadataVersionFromLanguageVersion =
-            LanguageVersion.fromVersionString(args.languageVersion)?.toMetadataVersion() ?: MetadataVersion.INSTANCE
+            LanguageVersion.fromVersionString(args.languageVersion)?.toJvmMetadataVersion() ?: MetadataVersion.INSTANCE
 
         while (dirtySources.any() || runWithNoDirtyKotlinSources(caches)) {
             val complementaryFiles = caches.platformCache.getComplementaryFilesRecursive(dirtySources)
@@ -490,6 +477,11 @@ abstract class IncrementalCompilerRunner<
 
             val lookupTracker = LookupTrackerImpl(getLookupTrackerDelegate())
             val expectActualTracker = ExpectActualTrackerImpl()
+
+            val outputItemsCollector = OutputItemsCollectorImpl()
+            val transactionOutputsRegistrar = TransactionOutputsRegistrar(transaction, outputItemsCollector)
+            val fileMappingTracker = ICFileMappingTrackerImpl(transactionOutputsRegistrar)
+
             val (sourcesToCompile, removedKotlinSources) = dirtySources.partition { it.exists() && allKotlinSources.contains(it) }
 
             icContext.fragmentContext?.let {
@@ -499,20 +491,16 @@ abstract class IncrementalCompilerRunner<
             }
 
             val services = makeServices(
-                args, lookupTracker, expectActualTracker, caches,
+                args, lookupTracker, expectActualTracker, fileMappingTracker, caches,
                 dirtySources.toSet(), compilationMode is CompilationMode.Incremental
             ).build()
 
             args.reportOutputFiles = true
-            val outputItemsCollector = OutputItemsCollectorImpl()
-            val transactionOutputsRegistrar = TransactionOutputsRegistrar(transaction, outputItemsCollector)
             val bufferingMessageCollector = MessageCollectorImpl()
-            val messageCollectorAdapter =
-                MessageCollectorToOutputItemsCollectorAdapter(bufferingMessageCollector, transactionOutputsRegistrar)
 
             val compiledSources = reporter.measure(GradleBuildTime.COMPILATION_ROUND) {
                 runCompiler(
-                    sourcesToCompile, args, caches, services, messageCollectorAdapter,
+                    sourcesToCompile, args, caches, services, bufferingMessageCollector,
                     allKotlinSources, compilationMode is CompilationMode.Incremental
                 )
             }.let { (ec, compiled) ->
@@ -522,7 +510,15 @@ abstract class IncrementalCompilerRunner<
 
             dirtySources.addAll(compiledSources)
             allDirtySources.addAll(dirtySources)
-            dirtyFilesCachedHistory.store(transaction, allDirtySources)
+            dirtyFilesProvider.cachedHistory.store(transaction, allDirtySources)
+
+            outputItemsCollector.outputs.firstOrNull { !it.outputFile.exists() }?.let { brokenOutput ->
+                reporter.warn { "Expected output item, but file doesn't exist: ${brokenOutput.outputFile}" }
+                reporter.reportCompileIteration(compilationMode is CompilationMode.Incremental, compiledSources, exitCode)
+                bufferingMessageCollector.forward(originalMessageCollector)
+                check(exitCode != ExitCode.OK) { "Expected compiler error, but got exitCode=$exitCode" }
+                break
+            }
 
             val generatedFiles = outputItemsCollector.outputs.map {
                 it.toGeneratedFile(metadataVersionFromLanguageVersion)
@@ -543,7 +539,7 @@ abstract class IncrementalCompilerRunner<
 
             if (exitCode != ExitCode.OK) break
 
-            dirtyFilesCachedHistory.clear(withTransaction = transaction)
+            dirtyFilesProvider.cachedHistory.clear(withTransaction = transaction)
 
             val changesCollector = ChangesCollector()
             reporter.measure(GradleBuildTime.IC_UPDATE_CACHES) {
@@ -624,30 +620,6 @@ abstract class IncrementalCompilerRunner<
 
     open fun getLookupTrackerDelegate(): LookupTracker = LookupTracker.DO_NOTHING
 
-    protected fun getRemovedClassesChanges(
-        caches: IncrementalCachesManager<*>,
-        changedFiles: DeterminableFiles.Known,
-    ): DirtyData {
-        val removedClasses = HashSet<String>()
-        val dirtyFiles = changedFiles.modified.filterTo(HashSet()) { it.isKotlinFile(kotlinSourceFilesExtensions) }
-        val removedFiles = changedFiles.removed.filterTo(HashSet()) { it.isKotlinFile(kotlinSourceFilesExtensions) }
-
-        val existingClasses = classesFqNames(dirtyFiles)
-        val previousClasses = caches.platformCache
-            .classesFqNamesBySources(dirtyFiles + removedFiles)
-            .map { it.asString() }
-
-        for (fqName in previousClasses) {
-            if (fqName !in existingClasses) {
-                removedClasses.add(fqName)
-            }
-        }
-
-        val changesCollector = ChangesCollector()
-        removedClasses.forEach { changesCollector.collectSignature(FqName(it), areSubclassesAffected = true) }
-        return changesCollector.getChangedAndImpactedSymbols(listOf(caches.platformCache), reporter)
-    }
-
     open fun runWithNoDirtyKotlinSources(caches: CacheManager): Boolean = false
 
     private fun processChangesAfterBuild(
@@ -680,61 +652,33 @@ abstract class IncrementalCompilerRunner<
         override fun checkCanceled() {
         }
     }
-
-    protected fun reportPerformanceData(defaultPerformanceManager: CommonCompilerPerformanceManager) {
-        defaultPerformanceManager.getMeasurementResults().forEach {
-            when (it) {
-                is CompilerInitializationMeasurement -> reporter.addTimeMetricMs(GradleBuildTime.COMPILER_INITIALIZATION, it.milliseconds)
-                is CodeAnalysisMeasurement -> {
-                    reporter.addTimeMetricMs(GradleBuildTime.CODE_ANALYSIS, it.milliseconds)
-                    it.lines?.apply {
-                        reporter.addMetric(GradleBuildPerformanceMetric.ANALYZED_LINES_NUMBER, this.toLong())
-                        if (it.milliseconds > 0) {
-                            reporter.addMetric(GradleBuildPerformanceMetric.ANALYSIS_LPS, this * 1000 / it.milliseconds)
-                        }
-                    }
-                }
-                is CodeGenerationMeasurement -> {
-                    reporter.addTimeMetricMs(GradleBuildTime.CODE_GENERATION, it.milliseconds)
-                    it.lines?.apply {
-                        reporter.addMetric(GradleBuildPerformanceMetric.CODE_GENERATED_LINES_NUMBER, this.toLong())
-                        if (it.milliseconds > 0) {
-                            reporter.addMetric(GradleBuildPerformanceMetric.CODE_GENERATION_LPS, this * 1000 / it.milliseconds)
-                        }
-                    }
-                }
-                is IRMeasurement -> {
-                    when (it.kind) {
-                        IRMeasurement.Kind.TRANSLATION -> reportIrMeasurements(it, GradleBuildTime.IR_TRANSLATION, GradleBuildPerformanceMetric.IR_TRANSLATION_LINES_NUMBER)
-                        IRMeasurement.Kind.LOWERING -> reportIrMeasurements(it, GradleBuildTime.IR_LOWERING, GradleBuildPerformanceMetric.IR_LOWERING_LINES_NUMBER)
-                        IRMeasurement.Kind.GENERATION -> reportIrMeasurements(it, GradleBuildTime.IR_GENERATION, GradleBuildPerformanceMetric.IR_GENERATION_LINES_NUMBER)
-                    }
-                }
-            }
-        }
-    }
-
-    private fun reportIrMeasurements(it: IRMeasurement, timeMetric: GradleBuildTime, lineMetric: GradleBuildPerformanceMetric) {
-        reporter.addTimeMetricMs(timeMetric, it.milliseconds)
-        it.lines?.also {
-            reporter.addMetric(lineMetric, it.toLong())
-        }
-    }
 }
 
 @Deprecated("Temporary function to reuse the logic. KT-62759")
 fun extractKotlinSourcesFromFreeCompilerArguments(
     compilerArguments: CommonCompilerArguments,
     kotlinFilenameExtensions: Set<String>,
+    includeJavaSources: Boolean, // Java files should be passed too to the incremental JVM compiler so that it could track changes in Java sources
 ): List<File> {
-    val dotExtensions = kotlinFilenameExtensions.map { ".$it" }
+    val kotlinDotExtensions = kotlinFilenameExtensions.map { ".$it" }
     val freeArgs = arrayListOf<String>()
     val allKotlinFiles = arrayListOf<File>()
     for (arg in compilerArguments.freeArgs) {
         val file = File(arg)
-        if (file.isFile && dotExtensions.any { ext -> file.path.endsWith(ext, ignoreCase = true) }) {
+        if (!file.isFile) {
+            freeArgs.add(arg)
+            continue
+        }
+
+        if (kotlinDotExtensions.any { ext -> file.path.endsWith(ext, ignoreCase = true) }) {
+            // a kotlin source file
             allKotlinFiles.add(file)
+        } else if (includeJavaSources && file.path.endsWith(".java", ignoreCase = true)) {
+            // a java source file
+            allKotlinFiles.add(file)
+            freeArgs.add(arg)
         } else {
+            // an unknown file
             freeArgs.add(arg)
         }
     }

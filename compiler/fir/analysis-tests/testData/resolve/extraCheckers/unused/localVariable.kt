@@ -41,3 +41,7 @@ object Delegate {
 
 @Target(AnnotationTarget.LOCAL_VARIABLE)
 annotation class Anno
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, functionDeclaration, integerLiteral, localClass,
+localFunction, localProperty, nullableType, objectDeclaration, operator, propertyDeclaration, propertyDelegate,
+starProjection, stringLiteral */

@@ -180,7 +180,7 @@ KtNameReferenceExpression(625,628): 'foo'
 
 KtNameReferenceExpression(651,655): 'this'
   KtSimpleNameReference:
-    (in <local>: MyClass.InnerOuter.InnerNested.<no name>.f.<no name>) extension receiver with type one.MyClass
+    extension receiver with type one.MyClass
 
 KtCallExpression(656,661): 'foo()'
   KtInvokeFunctionReference:
@@ -192,7 +192,7 @@ KtNameReferenceExpression(656,659): 'foo'
 
 KtNameReferenceExpression(682,686): 'this'
   KtSimpleNameReference:
-    (in <local>: MyClass.InnerOuter.InnerNested.<no name>.f.<no name>) extension receiver with type one.MyClass
+    extension receiver with type one.MyClass
 
 KtLabelReferenceExpression(686,691): '@anon'
   KtSimpleNameReference:
@@ -272,7 +272,7 @@ KtNameReferenceExpression(891,894): 'foo'
 
 KtNameReferenceExpression(917,921): 'this'
   KtSimpleNameReference:
-    (in <local>: MyClass.InnerOuter.InnerNested.<no name>.<no name>) extension receiver with type one.MyClass.InnerOuter.InnerNested
+    extension receiver with type one.MyClass.InnerOuter.InnerNested
 
 KtCallExpression(922,927): 'foo()'
   KtInvokeFunctionReference:
@@ -284,7 +284,7 @@ KtNameReferenceExpression(922,925): 'foo'
 
 KtNameReferenceExpression(948,952): 'this'
   KtSimpleNameReference:
-    (in <local>: MyClass.InnerOuter.InnerNested.<no name>.<no name>) extension receiver with type one.MyClass.InnerOuter.InnerNested
+    extension receiver with type one.MyClass.InnerOuter.InnerNested
 
 KtLabelReferenceExpression(952,959): '@myWith'
   KtSimpleNameReference:
@@ -360,7 +360,7 @@ KtLabelReferenceExpression(1132,1138): 'label@'
 
 KtNameReferenceExpression(1160,1164): 'this'
   KtSimpleNameReference:
-    (in <local>: MyClass.InnerOuter.InnerNested.<no name>.<no name>) extension receiver with type one.MyClass.InnerOuter.InnerNested
+    extension receiver with type one.MyClass.InnerOuter.InnerNested
 
 KtLabelReferenceExpression(1164,1170): '@label'
   KtSimpleNameReference:
@@ -400,4 +400,4 @@ KtNameReferenceExpression(1272,1276): 'body'
 
 KtNameReferenceExpression(1277,1281): 'this'
   KtSimpleNameReference:
-    (in <local>: myWith) extension receiver with type T
+    extension receiver with type T

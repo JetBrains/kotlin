@@ -24,3 +24,6 @@ fun foo(args: Array<String>) {
     main2(args)
     (A::main)(args)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, flexibleType, funWithExtensionReceiver, functionDeclaration, functionalType,
+infix, javaCallableReference, localProperty, nullableType, propertyDeclaration, typeParameter, typeWithExtension */

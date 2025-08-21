@@ -29,6 +29,38 @@ public final class ValueClassInSignatureKt /* ValueClassInSignatureKt*/ {
   @org.jetbrains.annotations.NotNull()
   private static @org.jetbrains.annotations.NotNull() java.lang.String topLevelProp;
 
+  @kotlin.jvm.JvmName(name = "specialName")
+  @kotlin.jvm.JvmOverloads()
+  public static final void specialName();//  specialName()
+
+  @kotlin.jvm.JvmName(name = "specialName")
+  @kotlin.jvm.JvmOverloads()
+  public static final void specialName(int);//  specialName(int)
+
+  @kotlin.jvm.JvmName(name = "specialName")
+  @kotlin.jvm.JvmOverloads()
+  public static final void specialName(int, @org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String);//  specialName(int, @org.jetbrains.annotations.NotNull() java.lang.String)
+
+  @kotlin.jvm.JvmName(name = "specialName")
+  @kotlin.jvm.JvmOverloads()
+  public static final void specialName(int, @org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String, int);//  specialName(int, @org.jetbrains.annotations.NotNull() java.lang.String, int)
+
+  @kotlin.jvm.JvmName(name = "specialName")
+  @kotlin.jvm.JvmOverloads()
+  public static final void specialName(int, @org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String, int, @org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String);//  specialName(int, @org.jetbrains.annotations.NotNull() java.lang.String, int, @org.jetbrains.annotations.NotNull() java.lang.String)
+
+  @kotlin.jvm.JvmOverloads()
+  public static final void withJvmOverloads();//  withJvmOverloads()
+
+  @kotlin.jvm.JvmOverloads()
+  public static final void withJvmOverloads(int);//  withJvmOverloads(int)
+
+  @kotlin.jvm.JvmOverloads()
+  public static final void withJvmOverloadsInDifferentPositions();//  withJvmOverloadsInDifferentPositions()
+
+  @kotlin.jvm.JvmOverloads()
+  public static final void withJvmOverloadsInDifferentPositions(int);//  withJvmOverloadsInDifferentPositions(int)
+
   @org.jetbrains.annotations.NotNull()
   public static final @org.jetbrains.annotations.NotNull() java.lang.String getTopLevelProp();//  getTopLevelProp()
 

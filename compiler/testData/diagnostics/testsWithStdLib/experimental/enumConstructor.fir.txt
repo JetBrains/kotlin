@@ -1,0 +1,120 @@
+FILE: enumConstructor.fir.kt
+    @R|kotlin/RequiresOptIn|() public final annotation class O : R|kotlin/Annotation| {
+        public constructor(): R|O| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final enum class Enum1 : R|kotlin/Enum<Enum1>| {
+        @R|O|() private constructor(): R|Enum1| {
+            super<R|kotlin/Enum<Enum1>|>()
+        }
+
+        public final static enum entry ENTRY: R|Enum1| = object : R|Enum1| {
+            private constructor(): R|<anonymous>| {
+                super<R|Enum1|>()
+            }
+
+        }
+
+        public final static enum entry ENTRY2: R|Enum1|
+        @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|O|))) public final static enum entry ENTRY3: R|Enum1| = object : R|Enum1| {
+            private constructor(): R|<anonymous>| {
+                super<R|Enum1|>()
+            }
+
+        }
+
+        public final static fun values(): R|kotlin/Array<Enum1>| {
+        }
+
+        public final static fun valueOf(value: R|kotlin/String|): R|Enum1| {
+        }
+
+        public final static val entries: R|kotlin/enums/EnumEntries<Enum1>|
+            public get(): R|kotlin/enums/EnumEntries<Enum1>|
+
+    }
+    public final enum class Enum2 : R|kotlin/Enum<Enum2>| {
+        public final static enum entry ENTRY: R|Enum2| = object : R|Enum2| {
+            private constructor(): R|<anonymous>| {
+                super<R|Enum2|>()
+            }
+
+        }
+
+        public final static enum entry ENTRY2: R|Enum2| = object : R|Enum2| {
+            private constructor(): R|<anonymous>| {
+                super<R|Enum2|>()
+            }
+
+        }
+
+        public final static enum entry ENTRY3: R|Enum2| = object : R|Enum2| {
+            private constructor(): R|<anonymous>| {
+                super<R|Enum2|>(Int(0))
+            }
+
+        }
+
+        public final val x: R|kotlin/Int|
+            public get(): R|kotlin/Int|
+
+        @R|O|() private constructor(x: R|kotlin/Int| = Int(0)): R|Enum2| {
+            super<R|kotlin/Enum<Enum2>|>()
+            this@R|/Enum2|.R|/Enum2.x| = R|<local>/x|
+        }
+
+        public final static fun values(): R|kotlin/Array<Enum2>| {
+        }
+
+        public final static fun valueOf(value: R|kotlin/String|): R|Enum2| {
+        }
+
+        public final static val entries: R|kotlin/enums/EnumEntries<Enum2>|
+            public get(): R|kotlin/enums/EnumEntries<Enum2>|
+
+    }
+    public final enum class Enum3 : R|kotlin/Enum<Enum3>| {
+        @R|O|() private constructor(x: R|kotlin/Int| = Int(42)): R|Enum3| {
+            super<R|kotlin/Enum<Enum3>|>()
+        }
+
+        public final static enum entry ENTRY: R|Enum3| = object : R|Enum3| {
+            private constructor(): R|<anonymous>| {
+                super<R|Enum3|>()
+            }
+
+        }
+
+        public final static enum entry ENTRY2: R|Enum3| = object : R|Enum3| {
+            private constructor(): R|<anonymous>| {
+                super<R|Enum3|>()
+            }
+
+        }
+
+        public final static enum entry ENTRY3: R|Enum3| = object : R|Enum3| {
+            private constructor(): R|<anonymous>| {
+                super<R|Enum3|>(Int(3))
+            }
+
+        }
+
+        public final val x: R|kotlin/Int| = R|<local>/x|
+            public get(): R|kotlin/Int|
+
+        @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|O|))) private constructor(): R|Enum3| {
+            this<R|Enum3|>(Int(0))
+        }
+
+        public final static fun values(): R|kotlin/Array<Enum3>| {
+        }
+
+        public final static fun valueOf(value: R|kotlin/String|): R|Enum3| {
+        }
+
+        public final static val entries: R|kotlin/enums/EnumEntries<Enum3>|
+            public get(): R|kotlin/enums/EnumEntries<Enum3>|
+
+    }

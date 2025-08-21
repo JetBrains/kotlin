@@ -20,7 +20,7 @@ internal class KaFirArrayAccessReference(
     expression: KtArrayAccessExpression,
 ) : KtArrayAccessReference(expression), KaFirReference {
     override fun KaFirSession.computeSymbols(): Collection<KaSymbol> {
-        val fir = element.getOrBuildFir(firResolveSession) ?: return emptyList()
+        val fir = element.getOrBuildFir(resolutionFacade) ?: return emptyList()
         return when (fir) {
             is FirFunctionCall -> fir.getCandidateSymbols().map { it.fir.buildSymbol(firSymbolBuilder) }
             is FirResolvedNamedReference -> listOf(fir.resolvedSymbol.buildSymbol(firSymbolBuilder))

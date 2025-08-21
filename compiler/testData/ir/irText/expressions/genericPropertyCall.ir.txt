@@ -2,19 +2,19 @@ FILE fqName:<root> fileName:/genericPropertyCall.kt
   PROPERTY name:test visibility:public modality:FINAL [val]
     FIELD PROPERTY_BACKING_FIELD name:test type:kotlin.String visibility:private [final,static]
       EXPRESSION_BODY
-        CALL 'public final fun <get-id> <T> (): T of <root>.<get-id> declared in <root>' type=kotlin.String origin=GET_PROPERTY
-          <T>: kotlin.String
-          $receiver: CONST String type=kotlin.String value="abc"
-    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test> visibility:public modality:FINAL <> () returnType:kotlin.String
+        CALL 'public final fun <get-id> <T> (<this>: T of <root>.<get-id>): T of <root>.<get-id> declared in <root>' type=kotlin.String origin=GET_PROPERTY
+          TYPE_ARG T: kotlin.String
+          ARG <this>: CONST String type=kotlin.String value="abc"
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test> visibility:public modality:FINAL returnType:kotlin.String
       correspondingProperty: PROPERTY name:test visibility:public modality:FINAL [val]
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-test> (): kotlin.String declared in <root>'
           GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test type:kotlin.String visibility:private [final,static]' type=kotlin.String origin=null
   PROPERTY name:id visibility:public modality:FINAL [val]
-    FUN name:<get-id> visibility:public modality:FINAL <T> ($receiver:T of <root>.<get-id>) returnType:T of <root>.<get-id>
-      correspondingProperty: PROPERTY name:id visibility:public modality:FINAL [val]
+    FUN name:<get-id> visibility:public modality:FINAL returnType:T of <root>.<get-id>
       TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
-      $receiver: VALUE_PARAMETER name:<this> type:T of <root>.<get-id>
+      VALUE_PARAMETER kind:ExtensionReceiver name:<this> index:0 type:T of <root>.<get-id>
+      correspondingProperty: PROPERTY name:id visibility:public modality:FINAL [val]
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public final fun <get-id> <T> (): T of <root>.<get-id> declared in <root>'
+        RETURN type=kotlin.Nothing from='public final fun <get-id> <T> (<this>: T of <root>.<get-id>): T of <root>.<get-id> declared in <root>'
           GET_VAR '<this>: T of <root>.<get-id> declared in <root>.<get-id>' type=T of <root>.<get-id> origin=null

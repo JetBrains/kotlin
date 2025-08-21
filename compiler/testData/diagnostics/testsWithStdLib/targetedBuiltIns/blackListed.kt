@@ -21,3 +21,6 @@ fun bar(x: MutableList<String>, y: java.util.ArrayList<String>, z: A) {
 
     z.<!DEPRECATION_ERROR!>sort<!> { a, b -> a.length - b.length }
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, classDeclaration, functionDeclaration, inProjection, lambdaLiteral, override,
+superExpression */

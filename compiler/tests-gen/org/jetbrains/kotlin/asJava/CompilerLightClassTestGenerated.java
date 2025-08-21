@@ -44,6 +44,11 @@ public class CompilerLightClassTestGenerated extends AbstractCompilerLightClassT
     runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/AnnotatedPropertyWithSites.kt");
   }
 
+  @TestMetadata("annotatedReturnType.kt")
+  public void testAnnotatedReturnType() {
+    runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/annotatedReturnType.kt");
+  }
+
   @TestMetadata("annotationBinaryRetention.kt")
   public void testAnnotationBinaryRetention() {
     runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/annotationBinaryRetention.kt");
@@ -137,6 +142,11 @@ public class CompilerLightClassTestGenerated extends AbstractCompilerLightClassT
   @TestMetadata("Constructors.kt")
   public void testConstructors() {
     runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/Constructors.kt");
+  }
+
+  @TestMetadata("contextParameters.kt")
+  public void testContextParameters() {
+    runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/contextParameters.kt");
   }
 
   @TestMetadata("DataClassWithCustomImplementedMembers.kt")
@@ -349,6 +359,21 @@ public class CompilerLightClassTestGenerated extends AbstractCompilerLightClassT
     runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/SubstitutionOverride.kt");
   }
 
+  @TestMetadata("SuperTypeWithBound.kt")
+  public void testSuperTypeWithBound() {
+    runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/SuperTypeWithBound.kt");
+  }
+
+  @TestMetadata("SuperTypeWithBound2.kt")
+  public void testSuperTypeWithBound2() {
+    runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/SuperTypeWithBound2.kt");
+  }
+
+  @TestMetadata("SuperTypeWithBoundKotlinCollection.kt")
+  public void testSuperTypeWithBoundKotlinCollection() {
+    runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/SuperTypeWithBoundKotlinCollection.kt");
+  }
+
   @TestMetadata("Throws.kt")
   public void testThrows() {
     runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/Throws.kt");
@@ -362,6 +387,11 @@ public class CompilerLightClassTestGenerated extends AbstractCompilerLightClassT
   @TestMetadata("UnitAsTypeAlias.kt")
   public void testUnitAsTypeAlias() {
     runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/UnitAsTypeAlias.kt");
+  }
+
+  @TestMetadata("valueClassAsContextParameter.kt")
+  public void testValueClassAsContextParameter() {
+    runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/valueClassAsContextParameter.kt");
   }
 
   @TestMetadata("ValueClassInParametersWithJvmName.kt")
@@ -469,6 +499,11 @@ public class CompilerLightClassTestGenerated extends AbstractCompilerLightClassT
     @TestMetadata("AnnotationModifiers.kt")
     public void testAnnotationModifiers() {
       runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/compilationErrors/AnnotationModifiers.kt");
+    }
+
+    @TestMetadata("EnumCompanion.kt")
+    public void testEnumCompanion() {
+      runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/compilationErrors/EnumCompanion.kt");
     }
 
     @TestMetadata("EnumNameOverride.kt")
@@ -652,6 +687,11 @@ public class CompilerLightClassTestGenerated extends AbstractCompilerLightClassT
       runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/facades/AllPrivate.kt");
     }
 
+    @TestMetadata("contextParameters.kt")
+    public void testContextParameters() {
+      runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/facades/contextParameters.kt");
+    }
+
     @TestMetadata("DelegatedProperty.kt")
     public void testDelegatedProperty() {
       runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/facades/DelegatedProperty.kt");
@@ -690,6 +730,11 @@ public class CompilerLightClassTestGenerated extends AbstractCompilerLightClassT
     @TestMetadata("SingleJvmClassName.kt")
     public void testSingleJvmClassName() {
       runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/facades/SingleJvmClassName.kt");
+    }
+
+    @TestMetadata("valueClassAsContextParameter.kt")
+    public void testValueClassAsContextParameter() {
+      runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/facades/valueClassAsContextParameter.kt");
     }
 
     @TestMetadata("ValueClassInParametersWithJvmName.kt")

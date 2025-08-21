@@ -50,3 +50,6 @@ class ActualTypealiasImpl
 actual fun function() {}
 
 actual val property: Clazz = null!!
+
+/* GENERATED_FIR_TAGS: actual, annotationDeclaration, checkNotNullCall, classDeclaration, enumDeclaration, expect,
+functionDeclaration, interfaceDeclaration, nestedClass, objectDeclaration, propertyDeclaration, typeAliasDeclaration */

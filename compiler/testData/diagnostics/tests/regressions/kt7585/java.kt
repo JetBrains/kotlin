@@ -29,3 +29,6 @@ fun foo(): String {
     matrix = Pair(MyWrapper(A()), TheirWrapper(E()))
     return matrix.toString()
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, data, functionDeclaration, javaFunction, javaType, localProperty,
+nullableType, out, outProjection, primaryConstructor, propertyDeclaration, starProjection, typeParameter */

@@ -9,3 +9,5 @@ fun test1() {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, ifExpression, integerLiteral, lambdaLiteral */

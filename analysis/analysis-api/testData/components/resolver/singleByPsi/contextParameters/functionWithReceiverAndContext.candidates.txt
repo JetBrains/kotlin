@@ -1,0 +1,59 @@
+KtCallExpression(106,111): 'foo()'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = [
+          KaImplicitReceiverValue:
+            symbol = KaReceiverParameterSymbol:
+              annotations: []
+              callableId: null
+              compilerVisibility: Public
+              contextReceivers: []
+              isActual: false
+              isExpect: false
+              isExtension: false
+              isVal: true
+              location: LOCAL
+              modality: FINAL
+              name: <receiver>
+              origin: SOURCE
+              owningCallableSymbol: KaNamedFunctionSymbol(/usage)
+              receiverParameter: null
+              returnType: KaUsualClassType:
+                annotations: []
+                typeArguments: []
+                type: kotlin/Int
+              visibility: PUBLIC
+            type = kotlin.Int,
+          KaImplicitReceiverValue:
+            symbol = contextParameter: kotlin.String
+            type = kotlin.String
+        ]
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /foo(): kotlin.Unit
+          valueParameters = []
+          contextParameters = [
+            KaVariableSignature:
+              name = int
+              receiverType = null
+              returnType = kotlin.Int
+              symbol = int: kotlin.Int
+              contextParameters = []
+              callableId = null,
+            KaVariableSignature:
+              name = string
+              receiverType = null
+              returnType = kotlin.String
+              symbol = string: kotlin.String
+              contextParameters = []
+              callableId = null
+          ]
+          callableId = /foo
+      typeArgumentsMapping = {}
+    isInBestCandidates = true

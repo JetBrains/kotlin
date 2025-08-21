@@ -11,3 +11,6 @@ public fun box() : MyClass? {
     j.hashCode()
     return i
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, funWithExtensionReceiver, functionDeclaration,
+incrementDecrementExpression, localProperty, nullableType, operator, propertyDeclaration */

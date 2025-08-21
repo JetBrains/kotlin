@@ -22,7 +22,7 @@ fun test_1(value: Any?): String? {
     val tmp_2: Any? = value
     when {
       EQEQ(arg0 = tmp_2, arg1 = null) -> null
-      else -> tmp_2.let<Any, Nothing>(block = local fun <anonymous>(it: Any): Nothing {
+      else -> let<Any, Nothing>(/* <this> = tmp_2, */ block = local fun <anonymous>(it: Any): Nothing {
         return "O"
       }
 )
@@ -36,7 +36,7 @@ fun test_2(value: Any?): String? {
       val tmp_3: Any? = value
       when {
         EQEQ(arg0 = tmp_3, arg1 = null) -> null
-        else -> tmp_3.let<Any, Nothing>(block = local fun <anonymous>(it: Any): Nothing {
+        else -> let<Any, Nothing>(/* <this> = tmp_3, */ block = local fun <anonymous>(it: Any): Nothing {
           return "K"
         }
 )

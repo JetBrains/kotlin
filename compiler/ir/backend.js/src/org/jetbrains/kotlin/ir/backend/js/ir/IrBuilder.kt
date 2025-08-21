@@ -133,13 +133,15 @@ object JsIrBuilder {
         name: String,
         type: IrType,
         isAssignable: Boolean = false,
-        origin: IrDeclarationOrigin = SYNTHESIZED_DECLARATION
+        origin: IrDeclarationOrigin = SYNTHESIZED_DECLARATION,
+        kind: IrParameterKind = IrParameterKind.Regular,
     ): IrValueParameter =
         buildValueParameter(parent) {
             this.origin = origin
             this.name = Name.identifier(name)
             this.type = type
             this.isAssignable = isAssignable
+            this.kind = kind
         }
 
     fun buildGetObjectValue(type: IrType, classSymbol: IrClassSymbol) =
@@ -148,8 +150,13 @@ object JsIrBuilder {
     fun buildGetValue(symbol: IrValueSymbol, origin: IrStatementOrigin = JsStatementOrigins.SYNTHESIZED_STATEMENT) =
         IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, symbol.owner.type, symbol, origin)
 
-    fun buildSetValue(symbol: IrValueSymbol, value: IrExpression) =
-        IrSetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, symbol.owner.type, symbol, value, JsStatementOrigins.SYNTHESIZED_STATEMENT)
+    fun buildSetValue(
+        symbol: IrValueSymbol,
+        value: IrExpression,
+        startOffset: Int = UNDEFINED_OFFSET,
+        endOffset: Int = UNDEFINED_OFFSET,
+    ) =
+        IrSetValueImpl(startOffset, endOffset, symbol.owner.type, symbol, value, JsStatementOrigins.SYNTHESIZED_STATEMENT)
 
     fun buildSetVariable(symbol: IrVariableSymbol, value: IrExpression, type: IrType) =
         IrSetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, type, symbol, value, JsStatementOrigins.SYNTHESIZED_STATEMENT)
@@ -189,9 +196,6 @@ object JsIrBuilder {
 
     fun buildComposite(type: IrType, statements: List<IrStatement> = emptyList()) =
         IrCompositeImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, type, JsStatementOrigins.SYNTHESIZED_STATEMENT, statements)
-
-    fun buildFunctionExpression(type: IrType, function: IrSimpleFunction) =
-        IrFunctionExpressionImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, type, function, JsStatementOrigins.SYNTHESIZED_STATEMENT)
 
     fun buildVar(
         type: IrType,

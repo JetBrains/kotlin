@@ -41,6 +41,7 @@ internal class IntrinsicType {
         const val OBJC_CREATE_SUPER_STRUCT      = "OBJC_CREATE_SUPER_STRUCT"
         const val OBJC_INIT_BY                  = "OBJC_INIT_BY"
         const val OBJC_GET_SELECTOR             = "OBJC_GET_SELECTOR"
+        const val BLOCK_PTR_TO_FUNCTION_OBJECT = "BLOCK_PTR_TO_FUNCTION_OBJECT"
 
         // Other
         const val INTEROP_READ_BITS             = "INTEROP_READ_BITS"

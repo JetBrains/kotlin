@@ -90,11 +90,25 @@ fun List<FirAnnotation>.hasAnnotationSafe(classId: ClassId, session: FirSession)
     return this.any { it.toAnnotationClassIdSafe(session) == classId }
 }
 
+fun <D> FirBasedSymbol<D>.getAnnotationWithResolvedArgumentsByClassId(
+    classId: ClassId,
+    session: FirSession
+): FirAnnotation? where D : FirAnnotationContainer, D : FirDeclaration {
+    return resolvedAnnotationsWithArguments.getAnnotationByClassId(classId, session)
+}
+
+fun <D> FirBasedSymbol<D>.hasAnnotationWithClassId(
+    classId: ClassId,
+    session: FirSession
+): Boolean where D : FirAnnotationContainer, D : FirDeclaration {
+    return resolvedAnnotationsWithClassIds.getAnnotationByClassId(classId, session) != null
+}
+
 fun <D> FirBasedSymbol<D>.getAnnotationByClassId(
     classId: ClassId,
     session: FirSession
 ): FirAnnotation? where D : FirAnnotationContainer, D : FirDeclaration {
-    return fir.getAnnotationByClassId(classId, session)
+    return resolvedAnnotationsWithClassIds.getAnnotationByClassId(classId, session)
 }
 
 fun FirAnnotationContainer.getAnnotationByClassId(classId: ClassId, session: FirSession): FirAnnotation? {
@@ -187,7 +201,7 @@ fun FirExpression.extractEnumValueArgumentInfo(): EnumValueArgumentInfo? {
                 val entrySymbol = calleeReference.toResolvedEnumEntrySymbol() ?: return null
                 EnumValueArgumentInfo(entrySymbol.callableId.classId!!, entrySymbol.callableId.callableName)
             } else {
-                val enumEntryName = (calleeReference as? FirNamedReference)?.name ?: return null
+                val enumEntryName = calleeReference.name
                 EnumValueArgumentInfo(null, enumEntryName)
             }
         }

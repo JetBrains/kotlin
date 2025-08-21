@@ -31,3 +31,6 @@ fun foo3(o1: Out3<*>, o2: Out3<<!REDUNDANT_PROJECTION!>out<!> Out3<*>>, o3: Out3
     <!DEBUG_INFO_EXPRESSION_TYPE("Out3<Out3<*>>")!>o2.copy(o1)<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("Out3<Out3<*>>")!>o3.copy(o1)<!>
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, interfaceDeclaration, nullableType, out, outProjection, starProjection,
+stringLiteral, typeConstraint, typeParameter */

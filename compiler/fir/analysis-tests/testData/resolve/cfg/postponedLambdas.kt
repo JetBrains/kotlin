@@ -5,3 +5,5 @@
 fun test(a: Any, b: Any, c: Any) {
     foo(a, { "" }, b)
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, inline, lambdaLiteral, stringLiteral, vararg */

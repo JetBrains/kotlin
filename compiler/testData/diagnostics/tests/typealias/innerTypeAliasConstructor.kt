@@ -1,5 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER -TOPLEVEL_TYPEALIASES_ONLY
+// DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER -TOPLEVEL_TYPEALIASES_ONLY -UNSUPPORTED_FEATURE
 
 class Pair<X, Y>(val x: X, val y: Y)
 
@@ -18,3 +18,6 @@ val test1 = c.<!UNRESOLVED_REFERENCE!>P1<!><String>("", 1)
 val test2 = c.<!UNRESOLVED_REFERENCE!>P2<!><String>(1, "")
 val test3 = c.<!UNRESOLVED_REFERENCE!>P1<!>("", 1)
 val test4 = c.<!UNRESOLVED_REFERENCE!>P2<!>(1, "")
+
+/* GENERATED_FIR_TAGS: classDeclaration, integerLiteral, nullableType, primaryConstructor, propertyDeclaration,
+stringLiteral, typeAliasDeclaration, typeAliasDeclarationWithTypeParameter, typeParameter */

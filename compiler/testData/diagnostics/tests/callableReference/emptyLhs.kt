@@ -41,3 +41,6 @@ fun A.fail2() {
     ::memberVal
     ::memberFun
 }
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, funWithExtensionReceiver, functionDeclaration, getter,
+integerLiteral, propertyDeclaration, propertyWithExtensionReceiver */

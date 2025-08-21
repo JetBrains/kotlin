@@ -13,8 +13,8 @@ import org.jetbrains.kotlin.generators.tree.nullable
 import org.jetbrains.kotlin.generators.tree.printer.*
 import org.jetbrains.kotlin.generators.util.printBlock
 import org.jetbrains.kotlin.ir.generator.BASE_PACKAGE
-import org.jetbrains.kotlin.ir.generator.legacyTransformerType
-import org.jetbrains.kotlin.ir.generator.legacyVisitorType
+import org.jetbrains.kotlin.ir.generator.irTransformerType
+import org.jetbrains.kotlin.ir.generator.irVisitorType
 import org.jetbrains.kotlin.ir.generator.model.Element
 import org.jetbrains.kotlin.ir.generator.model.Field
 import org.jetbrains.kotlin.ir.generator.model.ListField
@@ -43,14 +43,14 @@ internal class ElementPrinter(printer: ImportCollectingPrinter) : AbstractElemen
 
         printAcceptMethod(
             element = element,
-            visitorClass = legacyVisitorType,
+            visitorClass = irVisitorType,
             hasImplementation = !element.isRootElement,
             treeName = "IR",
         )
 
         printTransformMethod(
             element = element,
-            transformerClass = legacyTransformerType,
+            transformerClass = irTransformerType,
             implementation = "accept(transformer, data)".takeIf { !element.isRootElement },
             returnType = element,
             treeName = "IR",
@@ -59,7 +59,7 @@ internal class ElementPrinter(printer: ImportCollectingPrinter) : AbstractElemen
         if (element.hasAcceptChildrenMethod) {
             printAcceptChildrenMethod(
                 element = element,
-                visitorClass = legacyVisitorType,
+                visitorClass = irVisitorType,
                 visitorResultType = StandardTypes.unit,
                 override = !element.isRootElement,
             )
@@ -88,7 +88,7 @@ internal class ElementPrinter(printer: ImportCollectingPrinter) : AbstractElemen
         if (element.hasTransformChildrenMethod) {
             printTransformChildrenMethod(
                 element = element,
-                transformerClass = legacyTransformerType,
+                transformerClass = irTransformerType,
                 returnType = StandardTypes.unit,
                 override = !element.isRootElement,
             )

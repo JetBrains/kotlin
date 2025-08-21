@@ -21,7 +21,7 @@ constructor(name: String) : org.jetbrains.kotlin.gradle.targets.js.webpack.Kotli
 }
 
 kotlin {
-    target {
+    js {
         browser {
             webpackTask {
                 cssSupport {
@@ -63,11 +63,12 @@ kotlin {
 
                 val workDir = webpackTask.flatMap { it.outputDirectory.asFile }
 
-                val npmProject = mainCompilation.npmProject
+                val nodeJsExecutable = rootProject.the<org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsEnvSpec>()
+                    .executable
                 val projectName = project.name
                 doFirst {
                     this as Exec
-                    npmProject.useTool(this, "webpack/bin/webpack", args = listOf())
+                    this.executable(nodeJsExecutable.get())
                     this.args = listOf("./$projectName.js")
                     workingDir(workDir)
                 }
@@ -77,7 +78,7 @@ kotlin {
 }
 
 tasks.withType<org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrLink>().configureEach {
-    kotlinOptions {
-        moduleKind = "es"
+    compilerOptions {
+        moduleKind.set(org.jetbrains.kotlin.gradle.dsl.JsModuleKind.MODULE_ES)
     }
 }

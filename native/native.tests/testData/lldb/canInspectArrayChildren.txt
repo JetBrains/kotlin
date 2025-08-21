@@ -1,5 +1,5 @@
 > b main.kt:5
 > r
 > fr var xs
-(ObjHeader *) xs = [..., ..., ...]
+(ObjHeader *) xs = [3, 5, 8]
 > q

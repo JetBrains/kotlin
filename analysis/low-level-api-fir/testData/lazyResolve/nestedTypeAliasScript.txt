@@ -4,7 +4,7 @@ FILE: [ResolvedTo(RAW_FIR)] nestedTypeAliasScript.kts
         [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-nestedTypeAliasScript.kts>] class OuterClass<[ResolvedTo(RAW_FIR)] T1> : SuperForOuter {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-nestedTypeAliasScript.kts>, ScriptTopLevelDeclaration=true] class OuterClass<[ResolvedTo(RAW_FIR)] T1> : SuperForOuter {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=OuterClass] constructor<[ResolvedTo(RAW_FIR)] T1>(): R|OuterClass<T1>| {
                 LAZY_super<SuperForOuter>
             }
@@ -20,14 +20,14 @@ FILE: [ResolvedTo(RAW_FIR)] nestedTypeAliasScript.kts
 
         }
 
-        public open [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-nestedTypeAliasScript.kts>] class Another : R|kotlin/Any| {
+        public open [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-nestedTypeAliasScript.kts>, ScriptTopLevelDeclaration=true] class Another : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Another] constructor(): R|Another| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public open [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-nestedTypeAliasScript.kts>] class SuperForOuter : R|kotlin/Any| {
+        public open [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-nestedTypeAliasScript.kts>, ScriptTopLevelDeclaration=true] class SuperForOuter : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=SuperForOuter] constructor(): R|SuperForOuter| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -41,7 +41,7 @@ FILE: [ResolvedTo(IMPORTS)] nestedTypeAliasScript.kts
         [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-nestedTypeAliasScript.kts>] class OuterClass<[ResolvedTo(RAW_FIR)] T1> : SuperForOuter {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-nestedTypeAliasScript.kts>, ScriptTopLevelDeclaration=true] class OuterClass<[ResolvedTo(RAW_FIR)] T1> : SuperForOuter {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=OuterClass] constructor<[ResolvedTo(RAW_FIR)] T1>(): R|OuterClass<T1>| {
                 LAZY_super<SuperForOuter>
             }
@@ -57,14 +57,14 @@ FILE: [ResolvedTo(IMPORTS)] nestedTypeAliasScript.kts
 
         }
 
-        public open [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-nestedTypeAliasScript.kts>] class Another : R|kotlin/Any| {
+        public open [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-nestedTypeAliasScript.kts>, ScriptTopLevelDeclaration=true] class Another : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Another] constructor(): R|Another| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public open [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-nestedTypeAliasScript.kts>] class SuperForOuter : R|kotlin/Any| {
+        public open [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-nestedTypeAliasScript.kts>, ScriptTopLevelDeclaration=true] class SuperForOuter : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=SuperForOuter] constructor(): R|SuperForOuter| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -78,7 +78,7 @@ FILE: [ResolvedTo(IMPORTS)] nestedTypeAliasScript.kts
         [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-nestedTypeAliasScript.kts>] class OuterClass<[ResolvedTo(RAW_FIR)] T1> : SuperForOuter {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-nestedTypeAliasScript.kts>, ScriptTopLevelDeclaration=true] class OuterClass<[ResolvedTo(RAW_FIR)] T1> : SuperForOuter {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=OuterClass] constructor<[ResolvedTo(RAW_FIR)] T1>(): R|OuterClass<T1>| {
                 LAZY_super<SuperForOuter>
             }
@@ -94,14 +94,14 @@ FILE: [ResolvedTo(IMPORTS)] nestedTypeAliasScript.kts
 
         }
 
-        public open [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-nestedTypeAliasScript.kts>] class Another : R|kotlin/Any| {
+        public open [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-nestedTypeAliasScript.kts>, ScriptTopLevelDeclaration=true] class Another : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Another] constructor(): R|Another| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public open [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-nestedTypeAliasScript.kts>] class SuperForOuter : R|kotlin/Any| {
+        public open [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-nestedTypeAliasScript.kts>, ScriptTopLevelDeclaration=true] class SuperForOuter : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=SuperForOuter] constructor(): R|SuperForOuter| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -115,7 +115,7 @@ FILE: [ResolvedTo(IMPORTS)] nestedTypeAliasScript.kts
         [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-nestedTypeAliasScript.kts>] class OuterClass<[ResolvedTo(RAW_FIR)] T1> : SuperForOuter {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-nestedTypeAliasScript.kts>, ScriptTopLevelDeclaration=true] class OuterClass<[ResolvedTo(RAW_FIR)] T1> : SuperForOuter {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=OuterClass] constructor<[ResolvedTo(RAW_FIR)] T1>(): R|OuterClass<T1>| {
                 LAZY_super<SuperForOuter>
             }
@@ -131,14 +131,14 @@ FILE: [ResolvedTo(IMPORTS)] nestedTypeAliasScript.kts
 
         }
 
-        public open [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-nestedTypeAliasScript.kts>] class Another : R|kotlin/Any| {
+        public open [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-nestedTypeAliasScript.kts>, ScriptTopLevelDeclaration=true] class Another : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Another] constructor(): R|Another| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public open [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-nestedTypeAliasScript.kts>] class SuperForOuter : R|kotlin/Any| {
+        public open [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-nestedTypeAliasScript.kts>, ScriptTopLevelDeclaration=true] class SuperForOuter : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=SuperForOuter] constructor(): R|SuperForOuter| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -152,7 +152,7 @@ FILE: [ResolvedTo(IMPORTS)] nestedTypeAliasScript.kts
         [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol <script-nestedTypeAliasScript.kts>] class OuterClass<[ResolvedTo(SUPER_TYPES)] T1> : R|SuperForOuter| {
+        public final? [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol <script-nestedTypeAliasScript.kts>, ScriptTopLevelDeclaration=true] class OuterClass<[ResolvedTo(SUPER_TYPES)] T1> : R|SuperForOuter| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=OuterClass] constructor<[ResolvedTo(SUPER_TYPES)] T1>(): R|OuterClass<T1>| {
                 LAZY_super<SuperForOuter>
             }
@@ -168,14 +168,14 @@ FILE: [ResolvedTo(IMPORTS)] nestedTypeAliasScript.kts
 
         }
 
-        public open [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol <script-nestedTypeAliasScript.kts>] class Another : R|kotlin/Any| {
+        public open [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol <script-nestedTypeAliasScript.kts>, ScriptTopLevelDeclaration=true] class Another : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Another] constructor(): R|Another| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public open [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol <script-nestedTypeAliasScript.kts>] class SuperForOuter : R|kotlin/Any| {
+        public open [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol <script-nestedTypeAliasScript.kts>, ScriptTopLevelDeclaration=true] class SuperForOuter : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=SuperForOuter] constructor(): R|SuperForOuter| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -189,7 +189,7 @@ FILE: [ResolvedTo(IMPORTS)] nestedTypeAliasScript.kts
         [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(TYPES)] [ContainingScriptKey=FirScriptSymbol <script-nestedTypeAliasScript.kts>] class OuterClass<[ResolvedTo(TYPES)] T1> : R|SuperForOuter| {
+        public final? [ResolvedTo(TYPES)] [ContainingScriptKey=FirScriptSymbol <script-nestedTypeAliasScript.kts>, ScriptTopLevelDeclaration=true] class OuterClass<[ResolvedTo(TYPES)] T1> : R|SuperForOuter| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=OuterClass] constructor<[ResolvedTo(TYPES)] T1>(): R|OuterClass<T1>| {
                 LAZY_super<SuperForOuter>
             }
@@ -205,14 +205,14 @@ FILE: [ResolvedTo(IMPORTS)] nestedTypeAliasScript.kts
 
         }
 
-        public open [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol <script-nestedTypeAliasScript.kts>] class Another : R|kotlin/Any| {
+        public open [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol <script-nestedTypeAliasScript.kts>, ScriptTopLevelDeclaration=true] class Another : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Another] constructor(): R|Another| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public open [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol <script-nestedTypeAliasScript.kts>] class SuperForOuter : R|kotlin/Any| {
+        public open [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol <script-nestedTypeAliasScript.kts>, ScriptTopLevelDeclaration=true] class SuperForOuter : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=SuperForOuter] constructor(): R|SuperForOuter| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -226,7 +226,7 @@ FILE: [ResolvedTo(IMPORTS)] nestedTypeAliasScript.kts
         [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-nestedTypeAliasScript.kts>] class OuterClass<[ResolvedTo(STATUS)] T1> : R|SuperForOuter| {
+        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-nestedTypeAliasScript.kts>, ScriptTopLevelDeclaration=true] class OuterClass<[ResolvedTo(STATUS)] T1> : R|SuperForOuter| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=OuterClass] constructor<[ResolvedTo(STATUS)] T1>(): R|OuterClass<T1>| {
                 LAZY_super<SuperForOuter>
             }
@@ -242,14 +242,14 @@ FILE: [ResolvedTo(IMPORTS)] nestedTypeAliasScript.kts
 
         }
 
-        public open [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol <script-nestedTypeAliasScript.kts>] class Another : R|kotlin/Any| {
+        public open [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol <script-nestedTypeAliasScript.kts>, ScriptTopLevelDeclaration=true] class Another : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Another] constructor(): R|Another| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public open [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol <script-nestedTypeAliasScript.kts>] class SuperForOuter : R|kotlin/Any| {
+        public open [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol <script-nestedTypeAliasScript.kts>, ScriptTopLevelDeclaration=true] class SuperForOuter : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=SuperForOuter] constructor(): R|SuperForOuter| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -263,7 +263,7 @@ FILE: [ResolvedTo(IMPORTS)] nestedTypeAliasScript.kts
         [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-nestedTypeAliasScript.kts>] class OuterClass<[ResolvedTo(STATUS)] T1> : R|SuperForOuter| {
+        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-nestedTypeAliasScript.kts>, ScriptTopLevelDeclaration=true] class OuterClass<[ResolvedTo(STATUS)] T1> : R|SuperForOuter| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=OuterClass] constructor<[ResolvedTo(STATUS)] T1>(): R|OuterClass<T1>| {
                 LAZY_super<SuperForOuter>
             }
@@ -279,14 +279,14 @@ FILE: [ResolvedTo(IMPORTS)] nestedTypeAliasScript.kts
 
         }
 
-        public open [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol <script-nestedTypeAliasScript.kts>] class Another : R|kotlin/Any| {
+        public open [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol <script-nestedTypeAliasScript.kts>, ScriptTopLevelDeclaration=true] class Another : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Another] constructor(): R|Another| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public open [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol <script-nestedTypeAliasScript.kts>] class SuperForOuter : R|kotlin/Any| {
+        public open [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol <script-nestedTypeAliasScript.kts>, ScriptTopLevelDeclaration=true] class SuperForOuter : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=SuperForOuter] constructor(): R|SuperForOuter| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -300,7 +300,7 @@ FILE: [ResolvedTo(IMPORTS)] nestedTypeAliasScript.kts
         [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-nestedTypeAliasScript.kts>] class OuterClass<[ResolvedTo(STATUS)] T1> : R|SuperForOuter| {
+        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-nestedTypeAliasScript.kts>, ScriptTopLevelDeclaration=true] class OuterClass<[ResolvedTo(STATUS)] T1> : R|SuperForOuter| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=OuterClass] constructor<[ResolvedTo(STATUS)] T1>(): R|OuterClass<T1>| {
                 LAZY_super<SuperForOuter>
             }
@@ -316,14 +316,14 @@ FILE: [ResolvedTo(IMPORTS)] nestedTypeAliasScript.kts
 
         }
 
-        public open [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol <script-nestedTypeAliasScript.kts>] class Another : R|kotlin/Any| {
+        public open [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol <script-nestedTypeAliasScript.kts>, ScriptTopLevelDeclaration=true] class Another : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Another] constructor(): R|Another| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public open [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol <script-nestedTypeAliasScript.kts>] class SuperForOuter : R|kotlin/Any| {
+        public open [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol <script-nestedTypeAliasScript.kts>, ScriptTopLevelDeclaration=true] class SuperForOuter : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=SuperForOuter] constructor(): R|SuperForOuter| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -337,7 +337,7 @@ FILE: [ResolvedTo(IMPORTS)] nestedTypeAliasScript.kts
         [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-nestedTypeAliasScript.kts>] class OuterClass<[ResolvedTo(STATUS)] T1> : R|SuperForOuter| {
+        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-nestedTypeAliasScript.kts>, ScriptTopLevelDeclaration=true] class OuterClass<[ResolvedTo(STATUS)] T1> : R|SuperForOuter| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=OuterClass] constructor<[ResolvedTo(STATUS)] T1>(): R|OuterClass<T1>| {
                 LAZY_super<SuperForOuter>
             }
@@ -353,14 +353,14 @@ FILE: [ResolvedTo(IMPORTS)] nestedTypeAliasScript.kts
 
         }
 
-        public open [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol <script-nestedTypeAliasScript.kts>] class Another : R|kotlin/Any| {
+        public open [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol <script-nestedTypeAliasScript.kts>, ScriptTopLevelDeclaration=true] class Another : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Another] constructor(): R|Another| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public open [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol <script-nestedTypeAliasScript.kts>] class SuperForOuter : R|kotlin/Any| {
+        public open [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol <script-nestedTypeAliasScript.kts>, ScriptTopLevelDeclaration=true] class SuperForOuter : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=SuperForOuter] constructor(): R|SuperForOuter| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -374,7 +374,7 @@ FILE: [ResolvedTo(IMPORTS)] nestedTypeAliasScript.kts
         [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-nestedTypeAliasScript.kts>] class OuterClass<[ResolvedTo(STATUS)] T1> : R|SuperForOuter| {
+        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-nestedTypeAliasScript.kts>, ScriptTopLevelDeclaration=true] class OuterClass<[ResolvedTo(STATUS)] T1> : R|SuperForOuter| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=OuterClass] constructor<[ResolvedTo(STATUS)] T1>(): R|OuterClass<T1>| {
                 LAZY_super<SuperForOuter>
             }
@@ -390,14 +390,14 @@ FILE: [ResolvedTo(IMPORTS)] nestedTypeAliasScript.kts
 
         }
 
-        public open [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol <script-nestedTypeAliasScript.kts>] class Another : R|kotlin/Any| {
+        public open [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol <script-nestedTypeAliasScript.kts>, ScriptTopLevelDeclaration=true] class Another : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Another] constructor(): R|Another| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public open [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol <script-nestedTypeAliasScript.kts>] class SuperForOuter : R|kotlin/Any| {
+        public open [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol <script-nestedTypeAliasScript.kts>, ScriptTopLevelDeclaration=true] class SuperForOuter : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=SuperForOuter] constructor(): R|SuperForOuter| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -411,7 +411,7 @@ FILE: [ResolvedTo(IMPORTS)] nestedTypeAliasScript.kts
         [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-nestedTypeAliasScript.kts>] class OuterClass<[ResolvedTo(STATUS)] T1> : R|SuperForOuter| {
+        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-nestedTypeAliasScript.kts>, ScriptTopLevelDeclaration=true] class OuterClass<[ResolvedTo(STATUS)] T1> : R|SuperForOuter| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=OuterClass] constructor<[ResolvedTo(STATUS)] T1>(): R|OuterClass<T1>| {
                 LAZY_super<SuperForOuter>
             }
@@ -427,14 +427,14 @@ FILE: [ResolvedTo(IMPORTS)] nestedTypeAliasScript.kts
 
         }
 
-        public open [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol <script-nestedTypeAliasScript.kts>] class Another : R|kotlin/Any| {
+        public open [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol <script-nestedTypeAliasScript.kts>, ScriptTopLevelDeclaration=true] class Another : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Another] constructor(): R|Another| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public open [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol <script-nestedTypeAliasScript.kts>] class SuperForOuter : R|kotlin/Any| {
+        public open [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol <script-nestedTypeAliasScript.kts>, ScriptTopLevelDeclaration=true] class SuperForOuter : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=SuperForOuter] constructor(): R|SuperForOuter| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -448,7 +448,7 @@ FILE: [ResolvedTo(IMPORTS)] nestedTypeAliasScript.kts
         [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-nestedTypeAliasScript.kts>] class OuterClass<[ResolvedTo(STATUS)] T1> : R|SuperForOuter| {
+        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-nestedTypeAliasScript.kts>, ScriptTopLevelDeclaration=true] class OuterClass<[ResolvedTo(STATUS)] T1> : R|SuperForOuter| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=OuterClass] constructor<[ResolvedTo(STATUS)] T1>(): R|OuterClass<T1>| {
                 LAZY_super<SuperForOuter>
             }
@@ -464,14 +464,14 @@ FILE: [ResolvedTo(IMPORTS)] nestedTypeAliasScript.kts
 
         }
 
-        public open [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol <script-nestedTypeAliasScript.kts>] class Another : R|kotlin/Any| {
+        public open [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol <script-nestedTypeAliasScript.kts>, ScriptTopLevelDeclaration=true] class Another : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Another] constructor(): R|Another| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public open [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol <script-nestedTypeAliasScript.kts>] class SuperForOuter : R|kotlin/Any| {
+        public open [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol <script-nestedTypeAliasScript.kts>, ScriptTopLevelDeclaration=true] class SuperForOuter : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=SuperForOuter] constructor(): R|SuperForOuter| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -485,7 +485,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] nestedTypeAliasScript.kts
         [ResolvedTo(BODY_RESOLVE)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol <script-nestedTypeAliasScript.kts>] class OuterClass<[ResolvedTo(BODY_RESOLVE)] T1> : R|SuperForOuter| {
+        public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol <script-nestedTypeAliasScript.kts>, ScriptTopLevelDeclaration=true] class OuterClass<[ResolvedTo(BODY_RESOLVE)] T1> : R|SuperForOuter| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=OuterClass] constructor<[ResolvedTo(BODY_RESOLVE)] T1>(): R|OuterClass<T1>| {
                 super<R|SuperForOuter|>()
             }
@@ -501,14 +501,14 @@ FILE: [ResolvedTo(BODY_RESOLVE)] nestedTypeAliasScript.kts
 
         }
 
-        public open [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol <script-nestedTypeAliasScript.kts>] class Another : R|kotlin/Any| {
+        public open [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol <script-nestedTypeAliasScript.kts>, ScriptTopLevelDeclaration=true] class Another : R|kotlin/Any| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Another] constructor(): R|Another| {
                 super<R|kotlin/Any|>()
             }
 
         }
 
-        public open [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol <script-nestedTypeAliasScript.kts>] class SuperForOuter : R|kotlin/Any| {
+        public open [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol <script-nestedTypeAliasScript.kts>, ScriptTopLevelDeclaration=true] class SuperForOuter : R|kotlin/Any| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=SuperForOuter] constructor(): R|SuperForOuter| {
                 super<R|kotlin/Any|>()
             }

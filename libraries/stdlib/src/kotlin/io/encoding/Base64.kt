@@ -52,16 +52,20 @@ package kotlin.io.encoding
  * @sample samples.io.encoding.Base64Samples.encodingDifferences
  * @sample samples.io.encoding.Base64Samples.padding
  */
-@SinceKotlin("1.8")
-@ExperimentalEncodingApi
+@SinceKotlin("2.2")
+@WasExperimental(ExperimentalEncodingApi::class)
 public open class Base64 private constructor(
     internal val isUrlSafe: Boolean,
     internal val isMimeScheme: Boolean,
+    internal val mimeLineLength: Int,
     internal val paddingOption: PaddingOption
 ) {
     init {
         require(!isUrlSafe || !isMimeScheme)
     }
+
+    private val mimeGroupsPerLine: Int = mimeLineLength / symbolsPerGroup
+
 
     /**
      * An enumeration of the possible padding options for Base64 encoding and decoding.
@@ -145,7 +149,7 @@ public open class Base64 private constructor(
     @SinceKotlin("2.0")
     public fun withPadding(option: PaddingOption): Base64 {
         return if (paddingOption == option) this
-        else Base64(isUrlSafe, isMimeScheme, option)
+        else Base64(isUrlSafe, isMimeScheme, mimeLineLength, option)
     }
 
     /**
@@ -393,7 +397,7 @@ public open class Base64 private constructor(
 
         val encodeSize = encodeSize(endIndex - startIndex)
         val destination = ByteArray(encodeSize)
-        encodeIntoByteArrayImpl(source, destination, 0, startIndex, endIndex)
+        val _ = encodeIntoByteArrayImpl(source, destination, 0, startIndex, endIndex)
         return destination
     }
 
@@ -467,6 +471,9 @@ public open class Base64 private constructor(
         var size = groups * symbolsPerGroup
         if (trailingBytes != 0) { // trailing symbols
             size += if (shouldPadOnEncode()) symbolsPerGroup else trailingBytes + 1
+        }
+        if (size < 0) { // Int overflow
+            throw IllegalArgumentException("Input is too big")
         }
         if (isMimeScheme) { // line separators
             size += ((size - 1) / mimeLineLength) * 2
@@ -696,7 +703,7 @@ public open class Base64 private constructor(
      *
      * @sample samples.io.encoding.Base64Samples.defaultEncodingSample
      */
-    public companion object Default : Base64(isUrlSafe = false, isMimeScheme = false, PaddingOption.PRESENT) {
+    public companion object Default : Base64(isUrlSafe = false, isMimeScheme = false, mimeLineLength = -1, paddingOption = PaddingOption.PRESENT) {
 
         private const val bitsPerByte: Int = 8
         private const val bitsPerSymbol: Int = 6
@@ -706,8 +713,8 @@ public open class Base64 private constructor(
 
         internal const val padSymbol: Byte = 61 // '='
 
-        internal const val mimeLineLength: Int = 76
-        private const val mimeGroupsPerLine: Int = mimeLineLength / symbolsPerGroup
+        private const val lineLengthMime: Int = 76
+        private const val lineLengthPem: Int = 64
         internal val mimeLineSeparatorSymbols: ByteArray = byteArrayOf('\r'.code.toByte(), '\n'.code.toByte())
 
         /**
@@ -725,7 +732,7 @@ public open class Base64 private constructor(
          *
          * @sample samples.io.encoding.Base64Samples.urlSafeEncodingSample
          */
-        public val UrlSafe: Base64 = Base64(isUrlSafe = true, isMimeScheme = false, PaddingOption.PRESENT)
+        public val UrlSafe: Base64 = Base64(isUrlSafe = true, isMimeScheme = false, mimeLineLength = -1, paddingOption = PaddingOption.PRESENT)
 
         /**
          * The encoding specified by [`RFC 2045 section 6.8`](https://www.rfc-editor.org/rfc/rfc2045#section-6.8),
@@ -742,7 +749,24 @@ public open class Base64 private constructor(
          *
          * @sample samples.io.encoding.Base64Samples.mimeEncodingSample
          */
-        public val Mime: Base64 = Base64(isUrlSafe = false, isMimeScheme = true, PaddingOption.PRESENT)
+        public val Mime: Base64 = Base64(isUrlSafe = false, isMimeScheme = true, mimeLineLength = lineLengthMime, paddingOption = PaddingOption.PRESENT)
+
+        /**
+         * The encoding specified by [`RFC 1421 section 4.3.2.4`](https://www.rfc-editor.org/rfc/rfc1421#section-4.3.2.4),
+         * Base64 Content-Transfer-Encoding.
+         *
+         * Uses the encoding alphabet as specified in Table 1 of RFC 1421 for encoding and decoding,
+         * consisting of `'A'..'Z'`, `'a'..'z'`, `'+'` and `'/'` characters.
+         *
+         * This instance is configured with the padding option set to [PaddingOption.PRESENT].
+         * Use the [withPadding] function to create a new instance with a different padding option if necessary.
+         *
+         * Encode operation adds CRLF every 64 symbols. No line separator is added to the end of the encoded output.
+         * Decode operation ignores all line separators and other characters outside the base64 alphabet.
+         *
+         * @sample samples.io.encoding.Base64Samples.pemEncodingSample
+         */
+        public val Pem: Base64 = Base64(isUrlSafe = false, isMimeScheme = true, mimeLineLength = lineLengthPem, paddingOption = PaddingOption.PRESENT)
     }
 }
 
@@ -755,7 +779,6 @@ private val base64EncodeMap = byteArrayOf(
     119, 120, 121, 122, 48,  49,  50,  51,  52,  53,  54,  55,  56,  57,  43,  47,  /* 48 - 63 */
 )
 
-@ExperimentalEncodingApi
 private val base64DecodeMap = IntArray(256).apply {
     this.fill(-1)
     this[Base64.padSymbol.toInt()] = -2
@@ -772,7 +795,6 @@ private val base64UrlEncodeMap = byteArrayOf(
     119, 120, 121, 122, 48,  49,  50,  51,  52,  53,  54,  55,  56,  57,  45,  95,  /* 48 - 63 */
 )
 
-@ExperimentalEncodingApi
 private val base64UrlDecodeMap = IntArray(256).apply {
     this.fill(-1)
     this[Base64.padSymbol.toInt()] = -2
@@ -783,14 +805,12 @@ private val base64UrlDecodeMap = IntArray(256).apply {
 
 
 @SinceKotlin("1.8")
-@ExperimentalEncodingApi
 internal fun isInMimeAlphabet(symbol: Int): Boolean {
     return symbol in base64DecodeMap.indices && base64DecodeMap[symbol] != -1
 }
 
 
 @SinceKotlin("1.8")
-@ExperimentalEncodingApi
 internal expect fun Base64.platformCharsToBytes(
     source: CharSequence,
     startIndex: Int,
@@ -799,7 +819,6 @@ internal expect fun Base64.platformCharsToBytes(
 
 
 @SinceKotlin("1.8")
-@ExperimentalEncodingApi
 internal expect fun Base64.platformEncodeToString(
     source: ByteArray,
     startIndex: Int,
@@ -807,7 +826,6 @@ internal expect fun Base64.platformEncodeToString(
 ): String
 
 @SinceKotlin("1.8")
-@ExperimentalEncodingApi
 internal expect fun Base64.platformEncodeIntoByteArray(
     source: ByteArray,
     destination: ByteArray,
@@ -817,7 +835,6 @@ internal expect fun Base64.platformEncodeIntoByteArray(
 ): Int
 
 @SinceKotlin("1.8")
-@ExperimentalEncodingApi
 internal expect fun Base64.platformEncodeToByteArray(
     source: ByteArray,
     startIndex: Int,

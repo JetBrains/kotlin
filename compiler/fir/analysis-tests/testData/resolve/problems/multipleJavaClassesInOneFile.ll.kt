@@ -21,3 +21,5 @@ fun test() {
     val some = Some()
     val another = Another()
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, javaFunction, javaType, localProperty, propertyDeclaration */

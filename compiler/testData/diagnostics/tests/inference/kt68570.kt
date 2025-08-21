@@ -15,3 +15,6 @@ fun main(map: Map<Foo, Bar>) {
 
 fun <T : Any> takeMap(map: Map<Foo, T>, doSomething: (T) -> Unit) {}
 fun <T : Any> takeMap2(doSomething: (T) -> Unit, map: Map<Foo, T>) {}
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionalType, lambdaLiteral, stringLiteral,
+typeConstraint, typeParameter */

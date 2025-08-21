@@ -5,6 +5,7 @@ KtDotQualifiedExpression(53,61): 's.action'
         argumentMapping = {}
         isImplicitInvoke = true
         partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+          contextArguments = []
           dispatchReceiver = KaExplicitReceiverValue:
             expression = action
             isSafeNavigation = false
@@ -23,8 +24,10 @@ KtDotQualifiedExpression(53,61): 's.action'
                 receiverType = null
                 returnType = kotlin.String
                 symbol = p1: P1
+                contextParameters = []
                 callableId = null
             ]
+            contextParameters = []
             callableId = kotlin/Function1.invoke
         typeArgumentsMapping = {}
     ]

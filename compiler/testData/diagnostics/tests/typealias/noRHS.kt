@@ -7,3 +7,5 @@ typealias<!SYNTAX!><!>
 <!SYNTAX!><!>typealias A2 =
 
 <!SYNTAX!><!>typealias Valid = String
+
+/* GENERATED_FIR_TAGS: typeAliasDeclaration */

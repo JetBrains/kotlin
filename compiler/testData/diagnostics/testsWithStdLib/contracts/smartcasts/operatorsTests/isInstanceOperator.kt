@@ -59,3 +59,5 @@ fun testInversionSpilling(x: Any?) {
     x.<!UNRESOLVED_REFERENCE!>length<!>
 }
 
+/* GENERATED_FIR_TAGS: contractConditionalEffect, contracts, functionDeclaration, ifExpression, isExpression,
+lambdaLiteral, nullableType, smartcast */

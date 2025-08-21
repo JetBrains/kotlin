@@ -18,3 +18,5 @@ fun test() {
     WithCompactCtor("")
     WithExplicitCanonicalCtor("")
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, javaFunction, javaType, stringLiteral */

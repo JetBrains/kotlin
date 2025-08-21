@@ -56,14 +56,10 @@ public interface Cleaner
  *
  * If [block] throws an exception, the behavior is unspecified.
  *
- * Cleaners should not be kept in globals, because if cleaner is not deallocated
- * before exiting main(), it'll never get executed.
- * Use `Platform.isCleanersLeakCheckerActive` to warn about unexecuted cleaners.
- *
- * If cleaners are not GC'd before main() exits, then it's not guaranteed that
- * they will be run. Moreover, it depends on `Platform.isCleanersLeakCheckerActive`.
- * With the checker enabled, cleaners will be run (and therefore not reported as
- * unexecuted cleaners); with the checker disabled - they might not get run.
+ * Cleaners cannot be used to perform actions during the program shutdown:
+ * * cleaners that are referenced from globals will not be garbage collected at all,
+ * * cleaners that become unreferenced just before exiting main() might not be garbage collected,
+     because the GC might not get a chance to run.
  *
  * @param argument must be shareable
  * @param block must not capture anything
@@ -78,39 +74,3 @@ public interface Cleaner
 @OptIn(ExperimentalNativeApi::class)
 public fun <T> createCleaner(argument: T, block: (T) -> Unit): Cleaner =
         kotlin.native.ref.createCleanerImpl(argument, block) as Cleaner
-
-/**
- * Perform GC on a worker that executes Cleaner blocks.
- */
-@InternalForKotlinNative
-@OptIn(kotlin.native.runtime.NativeRuntimeApi::class, ObsoleteWorkersApi::class)
-public fun performGCOnCleanerWorker(): Unit =
-    getCleanerWorker().execute(TransferMode.SAFE, {}) {
-        GC.collect()
-    }.result
-
-/**
- * Wait for a worker that executes Cleaner blocks to complete its scheduled tasks.
- */
-@InternalForKotlinNative
-@OptIn(ObsoleteWorkersApi::class)
-public fun waitCleanerWorker(): Unit =
-    getCleanerWorker().execute(TransferMode.SAFE, {}) {
-        Unit
-    }.result
-
-@GCUnsafeCall("Kotlin_CleanerImpl_getCleanerWorker")
-@OptIn(ObsoleteWorkersApi::class)
-internal external fun getCleanerWorker(): Worker
-
-@ExportForCppRuntime("Kotlin_CleanerImpl_shutdownCleanerWorker")
-@OptIn(ObsoleteWorkersApi::class)
-private fun shutdownCleanerWorker(worker: Worker, executeScheduledCleaners: Boolean) {
-    worker.requestTermination(executeScheduledCleaners).result
-}
-
-@ExportForCppRuntime("Kotlin_CleanerImpl_createCleanerWorker")
-@OptIn(ObsoleteWorkersApi::class)
-private fun createCleanerWorker(): Worker {
-    return Worker.start(errorReporting = false, name = "Cleaner worker")
-}

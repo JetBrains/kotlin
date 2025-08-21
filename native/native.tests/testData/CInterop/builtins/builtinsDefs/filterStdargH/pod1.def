@@ -1,3 +1,3 @@
 language = C
 headers = stdarg.h
-headerFilter = stdarg.h
+headerFilter = __stdarg*.h

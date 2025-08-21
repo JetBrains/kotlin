@@ -15,3 +15,6 @@ fun box(): String {
     object : Foo() {}.contains(1)
     return "OK"
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, callableReference, classDeclaration, funWithExtensionReceiver,
+functionDeclaration, integerLiteral, objectDeclaration, stringLiteral, thisExpression, vararg */

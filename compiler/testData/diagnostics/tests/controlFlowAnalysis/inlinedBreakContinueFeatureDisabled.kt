@@ -37,3 +37,6 @@ fun test3() {
         bar({}, { <!BREAK_OR_CONTINUE_JUMPS_ACROSS_FUNCTION_BOUNDARY!>continue<!> }, { <!BREAK_OR_CONTINUE_JUMPS_ACROSS_FUNCTION_BOUNDARY!>break<!> })
     }
 }
+
+/* GENERATED_FIR_TAGS: anonymousFunction, break, continue, crossinline, functionDeclaration, functionalType, inline,
+lambdaLiteral, noinline, whileLoop */

@@ -1,0 +1,16 @@
+FILE: typeAliasExpansionCapturesOuterTypeParametersErrorMessage.kt
+    public final class C<T> : R|kotlin/Any| {
+        public constructor<T>(): R|C<T>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final inner class Inner<Outer(T)> : R|kotlin/Any| {
+            public C<T>.constructor(): R|C.Inner<T>| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+        public final typealias TA = R|C.Inner<T>|
+
+    }

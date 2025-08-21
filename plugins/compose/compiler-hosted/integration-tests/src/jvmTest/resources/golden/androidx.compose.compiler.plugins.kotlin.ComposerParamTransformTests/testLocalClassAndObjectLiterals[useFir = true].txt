@@ -50,7 +50,7 @@ fun Wat(%composer: Composer?, %changed: Int) {
 @NonRestartableComposable
 @Composable
 fun Foo(x: Int, %composer: Composer?, %changed: Int) {
-  sourceInformationMarkerStart(%composer, <>, "C(Foo)<Wat()>,<goo()>,<baz()>:Test.kt#2487m")
+  sourceInformationMarkerStart(%composer, <>, "C(Foo)N(x)<Wat()>,<goo()>,<baz()>:Test.kt#2487m")
   if (isTraceInProgress()) {
     traceEventStart(<>, %changed, -1, <>)
   }

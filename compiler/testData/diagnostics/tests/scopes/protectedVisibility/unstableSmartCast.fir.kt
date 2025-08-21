@@ -17,3 +17,7 @@ class Derived : BaseOuter() {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType, ifExpression,
+infix, integerLiteral, isExpression, lambdaLiteral, nullableType, primaryConstructor, propertyDeclaration, smartcast,
+stringLiteral, typeParameter, typeWithExtension */

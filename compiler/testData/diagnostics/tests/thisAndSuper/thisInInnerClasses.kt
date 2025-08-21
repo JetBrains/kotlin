@@ -10,3 +10,7 @@ class A(val a:Int) {
     val Int.xx : Int get() = checkSubtype<Int>(this)
   }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType, getter, infix,
+inner, nullableType, primaryConstructor, propertyDeclaration, propertyWithExtensionReceiver, thisExpression,
+typeParameter, typeWithExtension */

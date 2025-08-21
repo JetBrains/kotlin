@@ -11,14 +11,16 @@
     <parent>
         <groupId>org.jetbrains.kotlin</groupId>
         <artifactId>kotlin-project</artifactId>
-        <version>2.2.255-SNAPSHOT</version>
+        <version>2.3.255-SNAPSHOT</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
 
     <artifactId>kotlin-maven-allopen</artifactId>
     <packaging>jar</packaging>
 
+    <name>Kotlin Maven All-open</name>
     <description>All-open plugin for Maven</description>
+    <url>https://kotlinlang.org/</url>
 
     <dependencies>
         <dependency>
@@ -35,7 +37,7 @@
         </dependency>
         <dependency>
             <groupId>org.jetbrains.kotlin</groupId>
-            <artifactId>kotlin-allopen-compiler-plugin</artifactId>
+            <artifactId>kotlin-allopen-compiler-plugin-embeddable</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>

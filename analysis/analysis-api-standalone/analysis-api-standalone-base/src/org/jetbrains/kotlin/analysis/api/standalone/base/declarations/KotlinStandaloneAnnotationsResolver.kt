@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.analysis.api.platform.declarations.KotlinDeclaration
 import org.jetbrains.kotlin.analysis.api.platform.declarations.createDeclarationProvider
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.parentOrNull
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.utils.filterIsInstanceAnd
 
@@ -26,7 +27,7 @@ import org.jetbrains.kotlin.utils.filterIsInstanceAnd
 private class KotlinStandaloneAnnotationsResolver(
     private val project: Project,
     ktFiles: Collection<KtFile>,
-    scope: GlobalSearchScope
+    scope: GlobalSearchScope,
 ) : KotlinAnnotationsResolver {
     private val declarationProvider: KotlinDeclarationProvider by lazy {
         project.createDeclarationProvider(scope, contextualModule = null)
@@ -61,19 +62,76 @@ private class KotlinStandaloneAnnotationsResolver(
             .toSet()
     }
 
-    override fun annotationsOnDeclaration(declaration: KtAnnotated): Set<ClassId> {
-        return declaration.annotationEntries.asSequence()
-            .mapNotNull { it.typeReference?.text }
-            .map { ClassId.topLevel(FqName(it)) }
-            .filter { it.resolveToAnnotation() != null }
-            .toSet()
+    override fun annotationsOnDeclaration(declaration: KtAnnotated): Set<ClassId> = declaration.annotationEntries
+        .asSequence()
+        .flatMap { it.typeReference?.resolveAnnotationClassIds().orEmpty() }
+        .toSet()
+
+    /**
+     * Examples of usage:
+     *
+     * - `Baz` -> `FqName("Baz")`
+     * - `Bar.Baz` -> `FqName("Bar.Baz")`
+     * - `foo.bar.Baz<A, B>` -> `FqName("foo.bar.Baz")`
+     */
+    private fun KtUserType.referencedFqName(): FqName? {
+        val allTypes = generateSequence(this) { it.qualifier }.toList().asReversed()
+        val allQualifiers = allTypes.map { it.referencedName ?: return null }
+
+        return FqName.fromSegments(allQualifiers)
     }
 
-    private fun ClassId.resolveToAnnotation(): KtClass? {
-        val classes = declarationProvider.getAllClassesByClassId(this)
-        val annotations = classes.filterIsInstanceAnd<KtClass> { it.isAnnotation() }
+    private fun KtTypeReference.resolveAnnotationClassIds(candidates: MutableSet<ClassId> = mutableSetOf()): Set<ClassId> {
+        val annotationTypeElement = typeElement as? KtUserType
+        val referencedName = annotationTypeElement?.referencedFqName() ?: return emptySet()
+        if (referencedName.isRoot) return emptySet()
 
-        return annotations.singleOrNull()
+        if (!referencedName.parent().isRoot) {
+            // we assume here that the annotation is used by its fully-qualified name
+            return buildSet { referencedName.resolveToClassIds(this) }
+        }
+
+        val targetName = referencedName.shortName()
+        for (import in containingKtFile.importDirectives) {
+            val importedName = import.importedFqName ?: continue
+            when {
+                import.isAllUnder -> importedName.child(targetName).resolveToClassIds(candidates)
+                importedName.shortName() == targetName -> importedName.resolveToClassIds(candidates)
+            }
+        }
+
+        containingKtFile.packageFqName.child(targetName).resolveToClassIds(candidates)
+        return candidates
+    }
+
+    private fun FqName.toClassIdSequence(): Sequence<ClassId> {
+        var currentName = shortNameOrSpecial()
+        if (currentName.isSpecial) return emptySequence()
+        var currentParent = parentOrNull() ?: return emptySequence()
+        var currentRelativeName = currentName.asString()
+
+        return sequence {
+            while (true) {
+                yield(ClassId(currentParent, FqName(currentRelativeName), isLocal = false))
+                currentName = currentParent.shortNameOrSpecial()
+                if (currentName.isSpecial) break
+                currentParent = currentParent.parentOrNull() ?: break
+                currentRelativeName = "${currentName.asString()}.$currentRelativeName"
+            }
+        }
+    }
+
+    fun FqName.resolveToClassIds(to: MutableSet<ClassId>) {
+        toClassIdSequence().mapNotNullTo(to) { classId ->
+            val classes = declarationProvider.getAllClassesByClassId(classId)
+            val typeAliases = declarationProvider.getAllTypeAliasesByClassId(classId)
+            typeAliases.singleOrNull()?.getTypeReference()?.resolveAnnotationClassIds(to)
+
+            val annotations = classes.filterIsInstanceAnd<KtClass> { it.isAnnotation() }
+            annotations.singleOrNull()?.let {
+                classId
+            }
+        }
     }
 }
 

@@ -7,7 +7,7 @@ fun testStandardNavigation() {
         // should fix OTv := ScopeOwner<Value> for scope navigation
         otvOwner.provide().fieldBackedProperty
         // expected: Interloper </: ScopeOwner<Value>
-        otvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("Interloper; ScopeOwner<SOT (of class ScopeOwner<SOT>)>")!>Interloper<!>)
+        otvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("Interloper; ScopeOwner<uninferred SOT (of class ScopeOwner<SOT>)>")!>Interloper<!>)
     }
     // expected: ScopeOwner<Value>
     <!DEBUG_INFO_EXPRESSION_TYPE("ScopeOwner<Value>")!>resultA<!>
@@ -19,7 +19,7 @@ fun testSafeNavigation() {
         // should fix OTv := ScopeOwner<Value>? for scope navigation
         otvOwner.provide()?.fieldBackedProperty
         // expected: Interloper </: ScopeOwner<Value>?
-        otvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("Interloper; ScopeOwner<SOT (of fun <SOT> Nullable)>?")!>Interloper<!>)
+        otvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("Interloper; ScopeOwner<uninferred SOT (of fun <SOT> Nullable)>?")!>Interloper<!>)
     }
     // expected: ScopeOwner<Value>?
     <!DEBUG_INFO_EXPRESSION_TYPE("ScopeOwner<Value>?")!>resultA<!>
@@ -45,3 +45,7 @@ class ScopeOwner<SOT>(value: SOT): BaseType {
 }
 
 object Interloper: BaseType
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, companionObject, functionDeclaration, functionalType,
+interfaceDeclaration, lambdaLiteral, localProperty, nullableType, objectDeclaration, primaryConstructor,
+propertyDeclaration, safeCall, typeParameter */

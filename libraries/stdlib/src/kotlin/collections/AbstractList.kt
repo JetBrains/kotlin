@@ -49,6 +49,11 @@ public abstract class AbstractList<out E> protected constructor() : AbstractColl
         }
 
         override val size: Int get() = _size
+
+        override fun subList(fromIndex: Int, toIndex: Int): List<E> {
+            checkRangeIndexes(fromIndex, toIndex, _size)
+            return SubList(list, this.fromIndex + fromIndex, this.fromIndex + toIndex)
+        }
     }
 
     /**

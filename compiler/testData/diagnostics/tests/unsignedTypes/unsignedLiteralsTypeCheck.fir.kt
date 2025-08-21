@@ -22,3 +22,5 @@ val h2: UShort = 0xFFu
 
 val b1 = 0b11u
 val b2: UByte = 0b11u
+
+/* GENERATED_FIR_TAGS: nullableType, propertyDeclaration, starProjection, unaryExpression, unsignedLiteral */

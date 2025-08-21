@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -14,13 +14,9 @@ import org.jetbrains.kotlin.analysis.api.impl.base.symbols.toKtClassKind
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.types.KaType
-import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
-import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
 import org.jetbrains.kotlin.fir.declarations.utils.*
-import org.jetbrains.kotlin.fir.extensions.extensionService
-import org.jetbrains.kotlin.fir.extensions.statusTransformerExtensions
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.ClassId
@@ -79,19 +75,14 @@ internal class KaFirNamedClassSymbol private constructor(
 
     override val modality: KaSymbolModality
         get() = withValidityAssertion {
-            backingPsi?.kaSymbolModality
-                ?: firSymbol.optionallyResolvedStatus.modality?.asKaSymbolModality
-                ?: when (classKind) { // default modality
-                    KaClassKind.INTERFACE -> KaSymbolModality.ABSTRACT
-                    else -> KaSymbolModality.FINAL
-                }
+            backingPsi?.kaSymbolModality ?: firSymbol.modality.asKaSymbolModality
         }
 
     override val visibility: KaSymbolVisibility
         get() = withValidityAssertion {
-            backingPsi?.visibility?.asKaSymbolVisibility ?: when (val possiblyRawVisibility = firSymbol.fir.visibility) {
+            backingPsi?.visibility?.asKaSymbolVisibility ?: when (val visibility = firSymbol.possiblyRawVisibility) {
                 Visibilities.Unknown -> if (firSymbol.fir.isLocal) KaSymbolVisibility.LOCAL else KaSymbolVisibility.PUBLIC
-                else -> possiblyRawVisibility.asKaSymbolVisibility
+                else -> visibility.asKaSymbolVisibility
             }
         }
 
@@ -118,9 +109,6 @@ internal class KaFirNamedClassSymbol private constructor(
             }
         }
 
-    override val isFun: Boolean
-        get() = withValidityAssertion { backingPsi?.hasModifier(KtTokens.FUN_KEYWORD) ?: firSymbol.isFun }
-
     override val isExternal: Boolean
         get() = withValidityAssertion { backingPsi?.hasModifier(KtTokens.EXTERNAL_KEYWORD) ?: firSymbol.isExternal }
 
@@ -140,7 +128,18 @@ internal class KaFirNamedClassSymbol private constructor(
 
     override val companionObject: KaNamedClassSymbol?
         get() = withValidityAssertion {
-            firSymbol.companionObjectSymbol?.let {
+            if (backingPsi != null) {
+                backingPsi.companionObjects.firstOrNull()?.let {
+                    return KaFirNamedClassSymbol(it, analysisSession)
+                }
+
+                // No compiler plugin – no new companion object possibility
+                if (!analysisSession.hasDeclarationGeneratorCompilerPlugin(backingPsi)) {
+                    return null
+                }
+            }
+
+            firSymbol.resolvedCompanionObjectSymbol?.let {
                 builder.classifierBuilder.buildNamedClassSymbol(it)
             }
         }
@@ -152,36 +151,20 @@ internal class KaFirNamedClassSymbol private constructor(
 
     override val classKind: KaClassKind
         get() = withValidityAssertion {
-            val classKind = when (backingPsi) {
-                null -> firSymbol.classKind
-                is KtObjectDeclaration -> ClassKind.OBJECT
+            when (backingPsi) {
+                null -> firSymbol.classKind.toKtClassKind(isCompanionObject = firSymbol.isCompanion)
+                is KtObjectDeclaration -> if (backingPsi.isCompanion()) KaClassKind.COMPANION_OBJECT else KaClassKind.OBJECT
                 is KtClass -> when {
-                    backingPsi.isInterface() -> ClassKind.INTERFACE
-                    backingPsi.isEnum() -> ClassKind.ENUM_CLASS
-                    backingPsi.isAnnotation() -> ClassKind.ANNOTATION_CLASS
-                    else -> ClassKind.CLASS
+                    backingPsi.isInterface() -> KaClassKind.INTERFACE
+                    backingPsi.isEnum() -> KaClassKind.ENUM_CLASS
+                    backingPsi.isAnnotation() -> KaClassKind.ANNOTATION_CLASS
+                    else -> KaClassKind.CLASS
                 }
+
                 else -> throw AssertionError("Unexpected class or object: ${backingPsi::class.simpleName}")
             }
-
-            val isCompanionObject = (backingPsi as? KtObjectDeclaration)?.isCompanion() ?: firSymbol.isCompanion
-            classKind.toKtClassKind(isCompanionObject = isCompanionObject)
         }
 
     override val location: KaSymbolLocation
         get() = withValidityAssertion { backingPsi?.location ?: getSymbolKind() }
-
-    /**
-     * We can use [FirRegularClassSymbol.rawStatus] to avoid unnecessary resolve unless there are status transformers present.
-     * If they are present, we have to resort to [FirRegularClassSymbol.resolvedStatus] instead - otherwise we can observe incorrect status
-     * properties.
-     *
-     * TODO This optimization should become obsolete after KT-56551 is fixed.
-     */
-    private val FirRegularClassSymbol.optionallyResolvedStatus: FirDeclarationStatus
-        get() = if (moduleData.session.extensionService.statusTransformerExtensions.isNotEmpty()) {
-            resolvedStatus
-        } else {
-            rawStatus
-        }
 }

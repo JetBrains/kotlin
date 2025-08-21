@@ -16,7 +16,8 @@ FILE: enumEntryWithAnnotations.kt
             @FunAnno(String(fun)) public? final? fun foo(): @Anno(String(return type)) A<@Anno(String(nested return type)) B> {
             }
 
-            <ERROR PROPERTY: Destructuring declarations are only allowed for local variables/values>
+            public final val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = IntegerLiteral(1).to#(IntegerLiteral(2))
+
 
         }
 

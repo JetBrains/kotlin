@@ -25,7 +25,7 @@ internal class KaFirFileSymbol private constructor(
     constructor(file: KtFile, session: KaFirSession) : this(
         backingPsi = file,
         lazyFirSymbol = lazyPub {
-            file.getOrBuildFirFile(session.firResolveSession).symbol
+            file.getOrBuildFirFile(session.resolutionFacade).symbol
         },
         analysisSession = session,
     )

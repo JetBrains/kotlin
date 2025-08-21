@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -33,6 +33,7 @@ public fun <R> Sequence<*>.filterIsInstance(klass: Class<R>): Sequence<R> {
  * 
  * @sample samples.collections.Collections.Filtering.filterIsInstanceToJVM
  */
+@IgnorableReturnValue
 public fun <C : MutableCollection<in R>, R> Sequence<*>.filterIsInstanceTo(destination: C, klass: Class<R>): C {
     @Suppress("UNCHECKED_CAST")
     for (element in this) if (klass.isInstance(element)) destination.add(element as R)

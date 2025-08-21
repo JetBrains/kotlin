@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.gradle.native
 
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.BrokenOnMacosTest
+import org.jetbrains.kotlin.gradle.BrokenOnMacosTestFailureExpectation
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.junit.jupiter.api.DisplayName
 
@@ -13,14 +15,13 @@ import org.junit.jupiter.api.DisplayName
 @NativeGradlePluginTests
 class NativeWithConfigurationCacheIT : KGPBaseTest() {
 
-    override val defaultBuildOptions: BuildOptions = super.defaultBuildOptions.copy(configurationCache = BuildOptions.ConfigurationCacheValue.ENABLED)
-
     @DisplayName(
         "Configuration phase should be reused from configuration cache for the second build " +
                 "(downloading konan does not affect cache inputs)"
     )
     @GradleTestVersions(minVersion = TestVersions.Gradle.G_8_1) // Since 8.1 Gradle on configuration cache it detects when the build logic accesses the "outside world" more strict https://docs.gradle.org/8.1.1/release-notes.html#configuration-inputs-detection-improvements
     @GradleTest
+    @BrokenOnMacosTest(failureExpectation = BrokenOnMacosTestFailureExpectation.ALWAYS)
     fun testConfigurationCacheReusedSecondTime(gradleVersion: GradleVersion) {
         nativeProject(
             "native-with-configuration-cache",

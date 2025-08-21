@@ -54,6 +54,12 @@ public class FirLightTreeOldFrontendDiagnosticsWithoutAliasExpansionTestGenerate
     }
 
     @Test
+    @TestMetadata("errorProneAtomicArrayPrimitives.kt")
+    public void testErrorProneAtomicArrayPrimitives() {
+      runTest("compiler/testData/diagnostics/tests/errorProneAtomicArrayPrimitives.kt");
+    }
+
+    @Test
     @TestMetadata("errorProneAtomicReferencePrimitives.kt")
     public void testErrorProneAtomicReferencePrimitives() {
       runTest("compiler/testData/diagnostics/tests/errorProneAtomicReferencePrimitives.kt");
@@ -99,12 +105,6 @@ public class FirLightTreeOldFrontendDiagnosticsWithoutAliasExpansionTestGenerate
     @TestMetadata("kt56612.kt")
     public void testKt56612() {
       runTest("compiler/testData/diagnostics/tests/kt56612.kt");
-    }
-
-    @Test
-    @TestMetadata("kt56665.kt")
-    public void testKt56665() {
-      runTest("compiler/testData/diagnostics/tests/kt56665.kt");
     }
 
     @Test
@@ -168,6 +168,12 @@ public class FirLightTreeOldFrontendDiagnosticsWithoutAliasExpansionTestGenerate
     }
 
     @Test
+    @TestMetadata("synchronizedOnJavaValueBasedWarning.kt")
+    public void testSynchronizedOnJavaValueBasedWarning() {
+      runTest("compiler/testData/diagnostics/tests/synchronizedOnJavaValueBasedWarning.kt");
+    }
+
+    @Test
     @TestMetadata("typealiasAnnotationWithFixedTypeArgument.kt")
     public void testTypealiasAnnotationWithFixedTypeArgument() {
       runTest("compiler/testData/diagnostics/tests/typealiasAnnotationWithFixedTypeArgument.kt");
@@ -201,6 +207,12 @@ public class FirLightTreeOldFrontendDiagnosticsWithoutAliasExpansionTestGenerate
     @TestMetadata("compiler/testData/diagnostics/tests/annotations")
     @TestDataPath("$PROJECT_ROOT")
     public class Annotations {
+      @Test
+      @TestMetadata("annotationArgumentScopeForNestedTypeAlias.kt")
+      public void testAnnotationArgumentScopeForNestedTypeAlias() {
+        runTest("compiler/testData/diagnostics/tests/annotations/annotationArgumentScopeForNestedTypeAlias.kt");
+      }
+
       @Test
       @TestMetadata("annotationOnParameterInFunctionType.kt")
       public void testAnnotationOnParameterInFunctionType() {
@@ -292,6 +304,18 @@ public class FirLightTreeOldFrontendDiagnosticsWithoutAliasExpansionTestGenerate
       @TestMetadata("AsTypeAlias.kt")
       public void testAsTypeAlias() {
         runTest("compiler/testData/diagnostics/tests/cast/AsTypeAlias.kt");
+      }
+
+      @Test
+      @TestMetadata("classVsClassIsCheckTypealias.kt")
+      public void testClassVsClassIsCheckTypealias() {
+        runTest("compiler/testData/diagnostics/tests/cast/classVsClassIsCheckTypealias.kt");
+      }
+
+      @Test
+      @TestMetadata("classVsClassIsCheckWithTypeParameter.kt")
+      public void testClassVsClassIsCheckWithTypeParameter() {
+        runTest("compiler/testData/diagnostics/tests/cast/classVsClassIsCheckWithTypeParameter.kt");
       }
     }
 
@@ -385,9 +409,37 @@ public class FirLightTreeOldFrontendDiagnosticsWithoutAliasExpansionTestGenerate
     }
 
     @Nested
+    @TestMetadata("compiler/testData/diagnostics/tests/crv")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Crv {
+      @Test
+      @TestMetadata("ignorabilityOnClassMembers.kt")
+      public void testIgnorabilityOnClassMembers() {
+        runTest("compiler/testData/diagnostics/tests/crv/ignorabilityOnClassMembers.kt");
+      }
+    }
+
+    @Nested
     @TestMetadata("compiler/testData/diagnostics/tests/cyclicHierarchy")
     @TestDataPath("$PROJECT_ROOT")
     public class CyclicHierarchy {
+      @Test
+      @TestMetadata("withTypeAlias.kt")
+      public void testWithTypeAlias() {
+        runTest("compiler/testData/diagnostics/tests/cyclicHierarchy/withTypeAlias.kt");
+      }
+
+      @Test
+      @TestMetadata("withTypeAlias0.kt")
+      public void testWithTypeAlias0() {
+        runTest("compiler/testData/diagnostics/tests/cyclicHierarchy/withTypeAlias0.kt");
+      }
+
+      @Test
+      @TestMetadata("withTypeAlias2.kt")
+      public void testWithTypeAlias2() {
+        runTest("compiler/testData/diagnostics/tests/cyclicHierarchy/withTypeAlias2.kt");
+      }
     }
 
     @Nested
@@ -721,12 +773,6 @@ public class FirLightTreeOldFrontendDiagnosticsWithoutAliasExpansionTestGenerate
       }
 
       @Test
-      @TestMetadata("selectOfLambdaWithExtensionDisabled.kt")
-      public void testSelectOfLambdaWithExtensionDisabled() {
-        runTest("compiler/testData/diagnostics/tests/inference/selectOfLambdaWithExtensionDisabled.kt");
-      }
-
-      @Test
       @TestMetadata("selectOfLambdaWithExtensionEnabled.kt")
       public void testSelectOfLambdaWithExtensionEnabled() {
         runTest("compiler/testData/diagnostics/tests/inference/selectOfLambdaWithExtensionEnabled.kt");
@@ -861,6 +907,42 @@ public class FirLightTreeOldFrontendDiagnosticsWithoutAliasExpansionTestGenerate
     @TestDataPath("$PROJECT_ROOT")
     public class Inline {
       @Test
+      @TestMetadata("exposingObjects.kt")
+      public void testExposingObjects() {
+        runTest("compiler/testData/diagnostics/tests/inline/exposingObjects.kt");
+      }
+
+      @Test
+      @TestMetadata("exposingObjectsAfter.kt")
+      public void testExposingObjectsAfter() {
+        runTest("compiler/testData/diagnostics/tests/inline/exposingObjectsAfter.kt");
+      }
+
+      @Test
+      @TestMetadata("exposingPrivateTypeInInternal.kt")
+      public void testExposingPrivateTypeInInternal() {
+        runTest("compiler/testData/diagnostics/tests/inline/exposingPrivateTypeInInternal.kt");
+      }
+
+      @Test
+      @TestMetadata("exposingPrivateTypeInInternalAfter.kt")
+      public void testExposingPrivateTypeInInternalAfter() {
+        runTest("compiler/testData/diagnostics/tests/inline/exposingPrivateTypeInInternalAfter.kt");
+      }
+
+      @Test
+      @TestMetadata("exposingPrivateTypeInPublic.kt")
+      public void testExposingPrivateTypeInPublic() {
+        runTest("compiler/testData/diagnostics/tests/inline/exposingPrivateTypeInPublic.kt");
+      }
+
+      @Test
+      @TestMetadata("exposingPrivateTypeInPublicAfter.kt")
+      public void testExposingPrivateTypeInPublicAfter() {
+        runTest("compiler/testData/diagnostics/tests/inline/exposingPrivateTypeInPublicAfter.kt");
+      }
+
+      @Test
       @TestMetadata("usageIsNotInlinable.kt")
       public void testUsageIsNotInlinable() {
         runTest("compiler/testData/diagnostics/tests/inline/usageIsNotInlinable.kt");
@@ -949,12 +1031,46 @@ public class FirLightTreeOldFrontendDiagnosticsWithoutAliasExpansionTestGenerate
     @TestMetadata("compiler/testData/diagnostics/tests/multimodule")
     @TestDataPath("$PROJECT_ROOT")
     public class Multimodule {
+      @Test
+      @TestMetadata("accessibleTypeAliasIfItsRhsIsInDependencies.kt")
+      public void testAccessibleTypeAliasIfItsRhsIsInDependencies() {
+        runTest("compiler/testData/diagnostics/tests/multimodule/accessibleTypeAliasIfItsRhsIsInDependencies.kt");
+      }
+
+      @Test
+      @TestMetadata("inaccessibleTypeAliasNoForbidTypeAliasWithMissingDependencyType.kt")
+      public void testInaccessibleTypeAliasNoForbidTypeAliasWithMissingDependencyType() {
+        runTest("compiler/testData/diagnostics/tests/multimodule/inaccessibleTypeAliasNoForbidTypeAliasWithMissingDependencyType.kt");
+      }
+
+      @Test
+      @TestMetadata("inaccessibleTypeAliasWithForbidTypeAliasWithMissingDependencyType.kt")
+      public void testInaccessibleTypeAliasWithForbidTypeAliasWithMissingDependencyType() {
+        runTest("compiler/testData/diagnostics/tests/multimodule/inaccessibleTypeAliasWithForbidTypeAliasWithMissingDependencyType.kt");
+      }
     }
 
     @Nested
     @TestMetadata("compiler/testData/diagnostics/tests/namedArguments")
     @TestDataPath("$PROJECT_ROOT")
     public class NamedArguments {
+    }
+
+    @Nested
+    @TestMetadata("compiler/testData/diagnostics/tests/nullableTypes")
+    @TestDataPath("$PROJECT_ROOT")
+    public class NullableTypes {
+      @Test
+      @TestMetadata("nullableSupertypeWithTypealiases.kt")
+      public void testNullableSupertypeWithTypealiases() {
+        runTest("compiler/testData/diagnostics/tests/nullableTypes/nullableSupertypeWithTypealiases.kt");
+      }
+
+      @Test
+      @TestMetadata("nullableSupertypeWithoutTypealiases.kt")
+      public void testNullableSupertypeWithoutTypealiases() {
+        runTest("compiler/testData/diagnostics/tests/nullableTypes/nullableSupertypeWithoutTypealiases.kt");
+      }
     }
 
     @Nested
@@ -967,6 +1083,11 @@ public class FirLightTreeOldFrontendDiagnosticsWithoutAliasExpansionTestGenerate
     @TestMetadata("compiler/testData/diagnostics/tests/operatorsOverloading")
     @TestDataPath("$PROJECT_ROOT")
     public class OperatorsOverloading {
+      @Test
+      @TestMetadata("missingCompareToTypeMismatchOnInapplicableOperatorFun.kt")
+      public void testMissingCompareToTypeMismatchOnInapplicableOperatorFun() {
+        runTest("compiler/testData/diagnostics/tests/operatorsOverloading/missingCompareToTypeMismatchOnInapplicableOperatorFun.kt");
+      }
     }
 
     @Nested
@@ -1043,6 +1164,16 @@ public class FirLightTreeOldFrontendDiagnosticsWithoutAliasExpansionTestGenerate
     @TestMetadata("compiler/testData/diagnostics/tests/override")
     @TestDataPath("$PROJECT_ROOT")
     public class Override {
+      @Nested
+      @TestMetadata("compiler/testData/diagnostics/tests/override/clashesOnInheritance")
+      @TestDataPath("$PROJECT_ROOT")
+      public class ClashesOnInheritance {
+        @Test
+        @TestMetadata("inconsistentTypeParameterValuesOnAnonymousObject.kt")
+        public void testInconsistentTypeParameterValuesOnAnonymousObject() {
+          runTest("compiler/testData/diagnostics/tests/override/clashesOnInheritance/inconsistentTypeParameterValuesOnAnonymousObject.kt");
+        }
+      }
     }
 
     @Nested
@@ -1077,6 +1208,18 @@ public class FirLightTreeOldFrontendDiagnosticsWithoutAliasExpansionTestGenerate
     @TestMetadata("compiler/testData/diagnostics/tests/redeclarations")
     @TestDataPath("$PROJECT_ROOT")
     public class Redeclarations {
+      @Test
+      @TestMetadata("LocalDeclarations.kt")
+      public void testLocalDeclarations() {
+        runTest("compiler/testData/diagnostics/tests/redeclarations/LocalDeclarations.kt");
+      }
+
+      @Test
+      @TestMetadata("privateTypeAliases.kt")
+      public void testPrivateTypeAliases() {
+        runTest("compiler/testData/diagnostics/tests/redeclarations/privateTypeAliases.kt");
+      }
+
       @Test
       @TestMetadata("RedeclarationOfMain.kt")
       public void testRedeclarationOfMain() {
@@ -1186,15 +1329,15 @@ public class FirLightTreeOldFrontendDiagnosticsWithoutAliasExpansionTestGenerate
       }
 
       @Test
-      @TestMetadata("samConversionToGenericWrongNullabilityDnnRepresentation.kt")
-      public void testSamConversionToGenericWrongNullabilityDnnRepresentation() {
-        runTest("compiler/testData/diagnostics/tests/samConversions/samConversionToGenericWrongNullabilityDnnRepresentation.kt");
-      }
-
-      @Test
       @TestMetadata("samConversionToGenericWrongNullabilityForbidden.kt")
       public void testSamConversionToGenericWrongNullabilityForbidden() {
         runTest("compiler/testData/diagnostics/tests/samConversions/samConversionToGenericWrongNullabilityForbidden.kt");
+      }
+
+      @Test
+      @TestMetadata("samConversionToGenericWrongNullabilityForbiddenAndNoFlexible.kt")
+      public void testSamConversionToGenericWrongNullabilityForbiddenAndNoFlexible() {
+        runTest("compiler/testData/diagnostics/tests/samConversions/samConversionToGenericWrongNullabilityForbiddenAndNoFlexible.kt");
       }
     }
 
@@ -1296,6 +1439,17 @@ public class FirLightTreeOldFrontendDiagnosticsWithoutAliasExpansionTestGenerate
         public void testTypealiasesOnImport() {
           runTest("compiler/testData/diagnostics/tests/sourceCompatibility/apiVersion/typealiasesOnImport.kt");
         }
+      }
+    }
+
+    @Nested
+    @TestMetadata("compiler/testData/diagnostics/tests/subtyping")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Subtyping {
+      @Test
+      @TestMetadata("extFunctionTypeAsSuperType.kt")
+      public void testExtFunctionTypeAsSuperType() {
+        runTest("compiler/testData/diagnostics/tests/subtyping/extFunctionTypeAsSuperType.kt");
       }
     }
 
@@ -2105,6 +2259,17 @@ public class FirLightTreeOldFrontendDiagnosticsWithoutAliasExpansionTestGenerate
     }
 
     @Nested
+    @TestMetadata("compiler/testData/diagnostics/tests/unnamedLocalVariables")
+    @TestDataPath("$PROJECT_ROOT")
+    public class UnnamedLocalVariables {
+      @Test
+      @TestMetadata("unnamedTypeArgumentVsNamedUnderscore.kt")
+      public void testUnnamedTypeArgumentVsNamedUnderscore() {
+        runTest("compiler/testData/diagnostics/tests/unnamedLocalVariables/unnamedTypeArgumentVsNamedUnderscore.kt");
+      }
+    }
+
+    @Nested
     @TestMetadata("compiler/testData/diagnostics/tests/unsignedTypes")
     @TestDataPath("$PROJECT_ROOT")
     public class UnsignedTypes {
@@ -2476,6 +2641,12 @@ public class FirLightTreeOldFrontendDiagnosticsWithoutAliasExpansionTestGenerate
       public void testCheckEnhancedUpperBoundsWithEnabledImprovements() {
         runTest("compiler/testData/diagnostics/testsWithStdLib/java/checkEnhancedUpperBoundsWithEnabledImprovements.kt");
       }
+    }
+
+    @Nested
+    @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/pcla")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Pcla {
     }
 
     @Nested

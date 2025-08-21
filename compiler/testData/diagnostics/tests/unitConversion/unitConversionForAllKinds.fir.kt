@@ -15,3 +15,6 @@ fun test(g: () -> String, h: (Float) -> String) {
 
     <!CANNOT_INFER_PARAMETER_TYPE!>fooGeneric<!>(<!ARGUMENT_TYPE_MISMATCH!>h<!>)
 }
+
+/* GENERATED_FIR_TAGS: callableReference, functionDeclaration, functionalType, lambdaLiteral, nullableType,
+stringLiteral, typeParameter */

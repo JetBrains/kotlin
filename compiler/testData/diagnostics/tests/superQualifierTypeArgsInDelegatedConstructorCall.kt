@@ -15,3 +15,6 @@ class C : B<Int> {
         class LocalClass2 : A(super<B<!TYPE_ARGUMENTS_REDUNDANT_IN_SUPER_QUALIFIER!><Int><!>>.f())
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, inner, interfaceDeclaration, localClass, nullableType,
+primaryConstructor, superExpression, typeParameter */

@@ -26,10 +26,10 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.types.Variance
 
 object FirProjectionRelationChecker : FirResolvedTypeRefChecker(MppCheckerKind.Common) {
-    override fun check(typeRef: FirResolvedTypeRef, context: CheckerContext, reporter: DiagnosticReporter) {
-        if (typeRef.source?.kind?.shouldSkipErrorTypeReporting != false) return
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(typeRef: FirResolvedTypeRef) {
         val type = typeRef.coneType.abbreviatedTypeOrSelf
-        val fullyExpandedType = type.fullyExpandedType(context.session)
+        val fullyExpandedType = type.fullyExpandedType()
 
         val potentiallyProblematicArguments = collectPotentiallyProblematicArguments(typeRef, context.session)
 
@@ -61,8 +61,7 @@ object FirProjectionRelationChecker : FirResolvedTypeRefChecker(MppCheckerKind.C
                         if (type != fullyExpandedType) FirErrors.CONFLICTING_PROJECTION_IN_TYPEALIAS_EXPANSION else FirErrors.CONFLICTING_PROJECTION
                     else
                         FirErrors.REDUNDANT_PROJECTION,
-                    fullyExpandedType,
-                    context
+                    fullyExpandedType
                 )
             }
         }

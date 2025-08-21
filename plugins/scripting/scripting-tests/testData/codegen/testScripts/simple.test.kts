@@ -1,4 +1,4 @@
 
 val rv = "O" + "K"
 
-// expected: rv: OK
+// EXPECTED: rv == OK

@@ -18,3 +18,6 @@ fun <E> myBuildList(@<!OPT_IN_USAGE_ERROR!>BuilderInference<!> builderAction: Mu
 }
 
 fun takeList(list: List<String>) {}
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionalType, lambdaLiteral, localProperty, nullableType,
+propertyDeclaration, stringLiteral, typeParameter, typeWithExtension */

@@ -1,32 +1,29 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
-import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.checkers.getContainingClassSymbol
+import org.jetbrains.kotlin.fir.resolve.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.SELF_CALL_IN_NESTED_OBJECT_CONSTRUCTOR_ERROR
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.fullyExpandedClass
+import org.jetbrains.kotlin.fir.declarations.primaryConstructorIfAny
 import org.jetbrains.kotlin.fir.expressions.*
-import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.resolve.getSuperClassSymbolOrAny
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
 object FirObjectConstructorChecker : FirRegularClassChecker(MppCheckerKind.Common) {
-    override fun check(declaration: FirRegularClass, context: CheckerContext, reporter: DiagnosticReporter) {
-        if (!context.session.languageVersionSettings.supportsFeature(LanguageFeature.ProhibitSelfCallsInNestedObjects))
-            return
-
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirRegularClass) {
         if (declaration.classKind != ClassKind.OBJECT)
             return
 
@@ -35,7 +32,7 @@ object FirObjectConstructorChecker : FirRegularClassChecker(MppCheckerKind.Commo
         if (objectSymbol.getContainingClassSymbol() != objectSymbol.getSuperClassSymbolOrAny(context.session))
             return
 
-        objectSymbol.primaryConstructorSymbol(context.session)?.resolvedDelegatedConstructorCall
+        objectSymbol.primaryConstructorIfAny(context.session)?.resolvedDelegatedConstructorCall
             ?.accept(objectRefVisitor, Data(objectSymbol, context, reporter))
     }
 
@@ -54,7 +51,7 @@ object FirObjectConstructorChecker : FirRegularClassChecker(MppCheckerKind.Commo
             if (resolvedQualifier.symbol == data.objectSymbol) {
                 data.reporter.reportOn(resolvedQualifier.source, SELF_CALL_IN_NESTED_OBJECT_CONSTRUCTOR_ERROR, data.context)
             } else if (resolvedQualifier.resolvedToCompanionObject) {
-                val companionSymbol = resolvedQualifier.symbol?.fullyExpandedClass(data.context.session)?.companionObjectSymbol
+                val companionSymbol = resolvedQualifier.symbol?.fullyExpandedClass(data.context.session)?.resolvedCompanionObjectSymbol
                 if (companionSymbol == data.objectSymbol) {
                     data.reporter.reportOn(resolvedQualifier.source, SELF_CALL_IN_NESTED_OBJECT_CONSTRUCTOR_ERROR, data.context)
                 }

@@ -824,7 +824,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] TypeReference.kt
         }
 
         public open override [ResolvedTo(BODY_RESOLVE)] fun hashCode(): R|kotlin/Int| {
-            ^hashCode this@R|kotlin/jvm/internal/TypeReference|.R|kotlin/jvm/internal/TypeReference.classifier|.R|kotlin/Any.hashCode|().R|kotlin/Int.times|(Int(31)).R|kotlin/Int.plus|(this@R|kotlin/jvm/internal/TypeReference|.R|kotlin/jvm/internal/TypeReference.arguments|.R|kotlin/Any.hashCode|()).R|kotlin/Int.times|(Int(31)).R|kotlin/Int.plus|(this@R|kotlin/jvm/internal/TypeReference|.R|kotlin/jvm/internal/TypeReference.flags|.R|kotlin/Any.hashCode|())
+            ^hashCode this@R|kotlin/jvm/internal/TypeReference|.R|kotlin/jvm/internal/TypeReference.classifier|.R|kotlin/Any.hashCode|().R|kotlin/Int.times|(Int(31)).R|kotlin/Int.plus|(this@R|kotlin/jvm/internal/TypeReference|.R|kotlin/jvm/internal/TypeReference.arguments|.R|kotlin/Any.hashCode|()).R|kotlin/Int.times|(Int(31)).R|kotlin/Int.plus|(this@R|kotlin/jvm/internal/TypeReference|.R|kotlin/jvm/internal/TypeReference.flags|.R|kotlin/Int.hashCode|())
         }
 
         public open override [ResolvedTo(BODY_RESOLVE)] fun toString(): R|kotlin/String| {
@@ -844,7 +844,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] TypeReference.kt
                     (this@R|kotlin/jvm/internal/TypeReference|, R|<local>/javaClass|).R|kotlin/jvm/internal/TypeReference.arrayClassName|
                 }
                 R|<local>/convertPrimitiveToWrapper| && R|<local>/javaClass|.R|java/lang/Class.isPrimitive| ->  {
-                    (this@R|kotlin/jvm/internal/TypeReference|.R|kotlin/jvm/internal/TypeReference.classifier| as R|kotlin/reflect/KClass<*>|).R|kotlin/jvm/javaObjectType|<R|CapturedType(*)|>.R|java/lang/Class.name|
+                    this@R|kotlin/jvm/internal/TypeReference|.R|kotlin/jvm/internal/TypeReference.classifier|.R|kotlin/jvm/javaObjectType|<R|CapturedType(*)|>.R|java/lang/Class.name|
                 }
                 else ->  {
                     R|<local>/javaClass|.R|java/lang/Class.name|
@@ -856,7 +856,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] TypeReference.kt
                     String()
                 }
                 else ->  {
-                    this@R|kotlin/jvm/internal/TypeReference|.R|kotlin/jvm/internal/TypeReference.arguments|.R|kotlin/collections/joinToString|<R|kotlin/reflect/KTypeProjection|>(String(, ), String(<), String(>), <L> = [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=kotlin/Function1<T, kotlin/CharSequence>?] joinToString@fun <anonymous>([ResolvedTo(BODY_RESOLVE)] it: R|kotlin/reflect/KTypeProjection|): R|kotlin/CharSequence| <inline=NoInline>  {
+                    this@R|kotlin/jvm/internal/TypeReference|.R|kotlin/jvm/internal/TypeReference.arguments|.R|kotlin/collections/joinToString|<R|kotlin/reflect/KTypeProjection|>(String(, ), String(<), String(>), <L> = [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=kotlin/Function1<TypeVariable(T), kotlin/CharSequence>?] joinToString@fun <anonymous>([ResolvedTo(BODY_RESOLVE)] it: R|kotlin/reflect/KTypeProjection|): R|kotlin/CharSequence| <inline=NoInline>  {
                         ^ (this@R|kotlin/jvm/internal/TypeReference|, R|<local>/it|).R|kotlin/jvm/internal/TypeReference.asString|()
                     }
                     )
@@ -897,7 +897,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] TypeReference.kt
 
         private final [ResolvedTo(BODY_RESOLVE)] val [ResolvedTo(BODY_RESOLVE)] R|java/lang/Class<*>|.arrayClassName: R|kotlin/String|
             private [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=TypeReference] get(): R|kotlin/String| {
-                ^ when (this@R|kotlin/jvm/internal/TypeReference.arrayClassName|) {
+                ^ when ([ResolvedTo(BODY_RESOLVE)] lval <when-subject>: R|java/lang/Class<*>| = this@R|kotlin/jvm/internal/TypeReference.arrayClassName|) {
                     ==($subj$, <getClass>(Q|kotlin/BooleanArray|).R|kotlin/jvm/java|<R|kotlin/BooleanArray|>) ->  {
                         String(kotlin.BooleanArray)
                     }
@@ -936,8 +936,8 @@ FILE: [ResolvedTo(BODY_RESOLVE)] TypeReference.kt
                 }
             }
 
-            [ResolvedTo(BODY_RESOLVE)] lval typeString: R|kotlin/String| = (this@R|kotlin/jvm/internal/TypeReference.asString|.R|kotlin/reflect/KTypeProjection.type| as? R|kotlin/jvm/internal/TypeReference|)?.{ $subj$.R|kotlin/jvm/internal/TypeReference.asString|(Boolean(true)) } ?: this@R|kotlin/jvm/internal/TypeReference.asString|.R|kotlin/reflect/KTypeProjection.type|.<Ambiguity: toString, [kotlin/toString, kotlin/toString]>#()
-            ^asString when (this@R|kotlin/jvm/internal/TypeReference.asString|.R|kotlin/reflect/KTypeProjection.variance|) {
+            [ResolvedTo(BODY_RESOLVE)] lval typeString: R|kotlin/String| = (this@R|kotlin/jvm/internal/TypeReference.asString|.R|kotlin/reflect/KTypeProjection.type| as? R|kotlin/jvm/internal/TypeReference|)?.{ $subj$.R|kotlin/jvm/internal/TypeReference.asString|(Boolean(true)) } ?: this@R|kotlin/jvm/internal/TypeReference.asString|.R|kotlin/reflect/KTypeProjection.type|.R|kotlin/toString|()
+            ^asString when ([ResolvedTo(BODY_RESOLVE)] lval <when-subject>: R|kotlin/reflect/KVariance?| = this@R|kotlin/jvm/internal/TypeReference.asString|.R|kotlin/reflect/KTypeProjection.variance|) {
                 ==($subj$, Q|kotlin/reflect/KVariance|.R|kotlin/reflect/KVariance.INVARIANT|) ->  {
                     R|<local>/typeString|
                 }

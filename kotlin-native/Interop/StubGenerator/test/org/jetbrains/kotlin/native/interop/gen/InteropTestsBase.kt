@@ -24,6 +24,14 @@ abstract class InteropTestsBase {
         System.load(System.getProperty("kotlin.native.llvm.libclang"))
     }
 
+    private val propertyOverrides = buildMap {
+        System.getProperty("kotlin.native.propertyOverrides").splitToSequence(";").forEach {
+            val kvp = it.split("=", limit = 2)
+            check(kvp.size == 2)
+            put(kvp[0], kvp[1])
+        }
+    }
+
     @Rule
     @JvmField
     val testFilesFactory = TestFilesFactory()
@@ -43,7 +51,7 @@ abstract class InteropTestsBase {
     }
 
     protected fun buildNativeLibraryFrom(defFile: File, headersDirectory: File, imports: Imports = ImportsMock()): NativeLibrary {
-        val tool = prepareTool(HostManager.hostName, KotlinPlatform.NATIVE, runFromDaemon = true)
+        val tool = prepareTool(HostManager.hostName, KotlinPlatform.NATIVE, runFromDaemon = true, propertyOverrides = propertyOverrides)
         val cinteropArguments = CInteropArguments()
         cinteropArguments.argParser.parse(arrayOf(
                 "-compiler-option", "-I${headersDirectory.absolutePath}"

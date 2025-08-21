@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.unwrapSafeCall
 import org.jetbrains.kotlin.analysis.api.fir.utils.unwrap
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseSessionComponent
-import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
+import org.jetbrains.kotlin.analysis.api.impl.base.components.withPsiValidityAssertion
 import org.jetbrains.kotlin.analysis.api.types.KaErrorType
 import org.jetbrains.kotlin.analysis.api.types.KaFunctionType
 import org.jetbrains.kotlin.analysis.api.types.KaType
@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
-import org.jetbrains.kotlin.fir.references.FirSuperReference
 import org.jetbrains.kotlin.fir.resolve.constructFunctionType
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
@@ -47,7 +46,7 @@ internal class KaFirExpressionTypeProvider(
 ) : KaBaseSessionComponent<KaFirSession>(), KaExpressionTypeProvider, KaFirSessionComponent {
 
     override val KtExpression.expressionType: KaType?
-        get() = withValidityAssertion {
+        get() = withPsiValidityAssertion {
             // There are various cases where we have no corresponding fir due to invalid code
             // Some examples:
             // ```
@@ -55,13 +54,14 @@ internal class KaFirExpressionTypeProvider(
             //   true, false -> {}
             // }
             // ```
-            // `false` does not have a corresponding elements on the FIR side and hence the containing `FirWhenBranch` is returned.
+            // `false` does not have a corresponding element on the FIR side,
+            // and hence the containing `FirWhenBranch` is returned.
             // ```
             // @Volatile
             // private var
             // ```
-            // Volatile does not have corresponding element, so `FirFileImpl` is returned
-            val fir = unwrap().getOrBuildFir(firResolveSession) ?: return null
+            // Volatile does not have a corresponding element, so `FirFileImpl` is returned
+            val fir = unwrap().getOrBuildFir(resolutionFacade) ?: return null
             return try {
                 getKtExpressionType(this, fir)
             } catch (e: Exception) {
@@ -73,33 +73,30 @@ internal class KaFirExpressionTypeProvider(
         }
 
     private fun getKtExpressionType(expression: KtExpression, fir: FirElement): KaType? = when (fir) {
-        is FirFunctionCall -> getReturnTypeForArrayStyleAssignmentTarget(expression, fir) ?: fir.resolvedType.asKtType()
-        is FirPropertyAccessExpression -> {
+        is FirFunctionCall -> getReturnTypeForArrayStyleAssignmentTarget(expression, fir) ?: fir.resolvedType.asKaType()
+        is FirSuperReceiverExpression -> {
             // For unresolved `super`, we manually create an intersection type so that IDE features like completion can work correctly.
             val containingClass = (fir.dispatchReceiver as? FirThisReceiverExpression)?.calleeReference?.boundSymbol as? FirClassSymbol<*>
-
-            if (fir.calleeReference is FirSuperReference && fir.resolvedType is ConeErrorType && containingClass != null) {
-                val superTypes = containingClass.resolvedSuperTypes
-                when (superTypes.size) {
-                    0 -> analysisSession.builtinTypes.any
-                    1 -> superTypes.single().asKtType()
-                    else -> ConeIntersectionType(superTypes).asKtType()
-                }
-            } else {
-                fir.resolvedType.asKtType()
+            val superTypes = containingClass?.resolvedSuperTypes
+            when (superTypes?.size) {
+                null -> fir.resolvedType.asKaType()
+                0 -> analysisSession.builtinTypes.any
+                1 -> superTypes.single().asKaType()
+                else -> ConeIntersectionType(superTypes).asKaType()
             }
         }
+        is FirPropertyAccessExpression -> fir.resolvedType.asKaType()
         is FirVariableAssignment -> {
             if (fir.lValue.source?.psi == expression) {
-                fir.lValue.resolvedType.asKtType()
+                fir.lValue.resolvedType.asKaType()
             } else if (expression is KtUnaryExpression && expression.operationToken in KtTokens.INCREMENT_AND_DECREMENT) {
-                fir.rValue.resolvedType.asKtType()
+                fir.rValue.resolvedType.asKaType()
             } else {
                 analysisSession.builtinTypes.unit
             }
         }
-        is FirExpression -> fir.resolvedType.asKtType()
-        is FirNamedReference -> fir.getCorrespondingTypeIfPossible()?.asKtType()
+        is FirExpression -> fir.resolvedType.asKaType()
+        is FirNamedReference -> fir.getCorrespondingTypeIfPossible()?.asKaType()
         is FirStatement -> with(analysisSession) { builtinTypes.unit }
         is FirTypeRef, is FirImport, is FirPackageDirective, is FirLabel, is FirTypeParameterRef -> null
 
@@ -116,7 +113,8 @@ internal class KaFirExpressionTypeProvider(
      *
      * ---
      *
-     * Why not just always provide null for name references? In such case, the following case would be a problem:
+     * Why not just always provide null for name references?
+     * In such a case, the following case would be a problem:
      *
      * ```kt
      * fun usage(action: String.(Int) -> String) {
@@ -124,15 +122,17 @@ internal class KaFirExpressionTypeProvider(
      * }
      * ```
      *
-     * The user might want to know the type of the `action` callback. If we always return null for the named references,
-     * we won't be able to handle this request, and just return null. So the user will only be able to see the type
+     * The user might want to know the type of the `action` callback.
+     * If we always return null for the named references,
+     * we won't be able to handle this request and just return null.
+     * So the user will only be able to see the type
      * of the whole expression instead, and that is not what he wants.
      */
     private fun FirNamedReference.getCorrespondingTypeIfPossible(): ConeKotlinType? =
         findOuterPropertyAccessExpression()?.resolvedType
 
     /**
-     * Finds an outer expression for [this] named reference in cases when it is a part of a property access.
+     * Finds an outer expression for [this] named reference in cases when it is a part of property access.
      *
      * Otherwise, return null.
      */
@@ -140,7 +140,7 @@ internal class KaFirExpressionTypeProvider(
         val referenceExpression = psi as? KtExpression ?: return null
         val outerExpression = referenceExpression.getOutermostParenthesizerOrThis().parent as? KtElement ?: return null
 
-        return when (val outerFirElement = outerExpression.getOrBuildFir(firResolveSession)) {
+        return when (val outerFirElement = outerExpression.getOrBuildFir(resolutionFacade)) {
             is FirVariableAssignment -> outerFirElement.lValue
             is FirPropertyAccessExpression -> outerFirElement
             is FirImplicitInvokeCall -> outerFirElement.explicitReceiver
@@ -157,12 +157,22 @@ internal class KaFirExpressionTypeProvider(
     ): KaType? {
         // When we're in a call like `a[x] = y`, we want to get the `set` call's last argument's type.
         if (fir.calleeReference !is FirResolvedNamedReference || fir.calleeReference.name != OperatorNameConventions.SET) return null
-        if (expression !is KtArrayAccessExpression) return null
-        val assignment = expression.parent as? KtBinaryExpression ?: return null
-        if (assignment.operationToken !in KtTokens.ALL_ASSIGNMENTS) return null
-        if (assignment.left != expression) return null
+
+        when (expression) {
+            is KtArrayAccessExpression -> {
+                val assignment = expression.parent as? KtBinaryExpression ?: return null
+                if (assignment.operationToken !in KtTokens.ALL_ASSIGNMENTS) return null
+                if (assignment.left != expression) return null
+            }
+            is KtUnaryExpression -> {
+                if (expression.baseExpression !is KtArrayAccessExpression) return null
+                if (expression.operationToken !in KtTokens.INCREMENT_AND_DECREMENT) return null
+            }
+            else -> return null
+        }
+
         val setTargetParameterType = fir.argumentsToSubstitutedValueParameters()?.values?.lastOrNull()?.substitutedType ?: return null
-        return setTargetParameterType.asKtType()
+        return setTargetParameterType.asKaType()
     }
 
     private data class SubstitutedValueParameter(val parameter: FirValueParameter, val substitutedType: ConeKotlinType)
@@ -179,18 +189,19 @@ internal class KaFirExpressionTypeProvider(
         }
     }
 
-    override val KtDeclaration.returnType: KaType
-        get() = withValidityAssertion {
+    override val KtDeclarationWithReturnType.returnType: KaType
+        get() = withPsiValidityAssertion {
             inferReturnTypeByPsi()?.let { return it }
 
-            val firDeclaration = if (this is KtParameter && ownerFunction == null) {
-                getOrBuildFir(firResolveSession)
+            val firDeclaration = if (this is KtParameter && ownerDeclaration == null) {
+                getOrBuildFir(resolutionFacade)
             } else {
-                resolveToFirSymbol(firResolveSession, FirResolvePhase.TYPES).fir
+                resolveToFirSymbol(resolutionFacade, FirResolvePhase.TYPES).fir
             }
+
             return when (firDeclaration) {
-                is FirCallableDeclaration -> firDeclaration.symbol.resolvedReturnType.asKtType()
-                is FirFunctionTypeParameter -> firDeclaration.returnTypeRef.coneType.asKtType()
+                is FirCallableDeclaration -> firDeclaration.symbol.resolvedReturnType.asKaType()
+                is FirFunctionTypeParameter -> firDeclaration.returnTypeRef.coneType.asKaType()
                 else -> unexpectedElementError<FirElement>(firDeclaration)
             }
         }
@@ -199,17 +210,17 @@ internal class KaFirExpressionTypeProvider(
      * Optimization: try to determine the return type of the declaration (function, property, or property getter)
      * by inspecting its body expression if it has an implicit return type.
      */
-    private fun KtDeclaration.inferReturnTypeByPsi(): KaType? {
-        fun KtDeclaration.isPropertyGetter() = this is KtPropertyAccessor && isGetter
+    private fun KtDeclarationWithReturnType.inferReturnTypeByPsi(): KaType? {
+        fun KtDeclarationWithReturnType.isPropertyGetter() = this is KtPropertyAccessor && isGetter
 
-        fun KtDeclaration.hasDeclaredReturnType() = when (this) {
+        fun KtDeclarationWithReturnType.hasDeclaredReturnType() = when (this) {
             is KtNamedFunction -> typeReference != null
-            is KtProperty -> typeReference != null || getter?.returnTypeReference != null
-            is KtPropertyAccessor -> returnTypeReference != null
+            is KtProperty -> typeReference != null || getter?.typeReference != null
+            is KtPropertyAccessor -> typeReference != null
             else -> false
         }
 
-        fun KtDeclaration.isEmptyFunction() =
+        fun KtDeclarationWithReturnType.isEmptyFunction() =
             this is KtNamedFunction && hasBlockBody() && bodyBlockExpression?.statements?.isEmpty() == true
 
         if (this !is KtNamedFunction && this !is KtProperty && !isPropertyGetter()) return null
@@ -244,17 +255,17 @@ internal class KaFirExpressionTypeProvider(
     )
 
     override val KtFunction.functionType: KaType
-        get() = withValidityAssertion {
-            val firFunction = resolveToFirSymbol(firResolveSession, FirResolvePhase.TYPES).fir as FirFunction
+        get() = withPsiValidityAssertion {
+            val firFunction = resolveToFirSymbol(resolutionFacade, FirResolvePhase.TYPES).fir as FirFunction
             firFunction.symbol.calculateReturnType()
-            return firFunction.constructFunctionType(firFunction.specialFunctionTypeKind(firResolveSession.useSiteFirSession)).asKtType()
+            return firFunction.constructFunctionType(firFunction.specialFunctionTypeKind(resolutionFacade.useSiteFirSession)).asKaType()
         }
 
     override val PsiElement.expectedType: KaType?
-        get() = withValidityAssertion {
+        get() = withPsiValidityAssertion {
             val unwrapped = unwrap()
             val expectedType = getExpectedTypeByReturnExpression(unwrapped)
-                ?: getExpressionTypeByIfOrBooleanCondition(unwrapped)
+                ?: getExpectedTypeByIfOrBooleanCondition(unwrapped)
                 ?: getExpectedTypeByTypeCast(unwrapped)
                 ?: getExpectedTypeOfFunctionParameter(unwrapped)
                 ?: getExpectedTypeOfIndexingParameter(unwrapped)
@@ -269,6 +280,7 @@ internal class KaFirExpressionTypeProvider(
                 ?: getExpectedTypeOfElvisOperand(unwrapped)
                 ?: getExpectedTypeByWhenEntryValue(unwrapped)
                 ?: getExpectedTypeByDelegatedSuperType(unwrapped)
+                ?: getExpectedTypeOfParameterDefaultValue(unwrapped)
             return expectedType
         }
 
@@ -276,6 +288,11 @@ internal class KaFirExpressionTypeProvider(
         val entry =
             expression.unwrapQualified<KtDelegatedSuperTypeEntry> { delegated, expr -> delegated.delegateExpression == expr } ?: return null
         return with(analysisSession) { entry.typeReference?.type }
+    }
+
+    private fun getExpectedTypeOfParameterDefaultValue(expression: PsiElement): KaType? {
+        val parameter = expression.unwrapQualified<KtParameter> { param, expr -> param.defaultValue == expr }
+        return parameter?.returnType
     }
 
     private fun getExpectedTypeByTypeCast(expression: PsiElement): KaType? {
@@ -286,35 +303,40 @@ internal class KaFirExpressionTypeProvider(
 
     private fun getExpectedTypeOfFunctionParameter(expression: PsiElement): KaType? {
         val (ktCallElement, argumentExpression) = expression.getFunctionCallAsWithThisAsParameter() ?: return null
-        val firCall = ktCallElement.getOrBuildFir(firResolveSession)?.unwrapSafeCall() as? FirCall ?: return null
+        val firCall = ktCallElement.getOrBuildFir(resolutionFacade)?.unwrapSafeCall() as? FirCall ?: return null
 
-        val callee = (firCall.toReference(firResolveSession.useSiteFirSession) as? FirResolvedNamedReference)?.resolvedSymbol
+        val callee = (firCall.toReference(resolutionFacade.useSiteFirSession) as? FirResolvedNamedReference)?.resolvedSymbol
         if (callee?.fir?.origin == FirDeclarationOrigin.SamConstructor) {
             val substitutor = (firCall as? FirQualifiedAccessExpression)
                 ?.createConeSubstitutorFromTypeArguments(rootModuleSession, discardErrorTypes = true)
                 ?: ConeSubstitutor.Empty
-            return substitutor.substituteOrSelf((callee.fir as FirSimpleFunction).returnTypeRef.coneType).asKtType()
+            return substitutor.substituteOrSelf((callee.fir as FirSimpleFunction).returnTypeRef.coneType).asKaType()
         }
 
         val argumentsToParameters = firCall.argumentsToSubstitutedValueParameters(substituteWithErrorTypes = false) ?: return null
-        val (firParameterForExpression, substitutedType) =
-            argumentsToParameters.entries.firstOrNull { (arg, _) ->
-                when (arg) {
-                    // TODO: better to utilize. See `createArgumentMapping` in [KtFirCallResolver]
-                    is FirNamedArgumentExpression, is FirSpreadArgumentExpression ->
-                        arg.psi == argumentExpression.parent
-                    else ->
-                        arg.psi == argumentExpression.unwrap()
+        val (substitutedType, shouldUnwrapVararg) =
+            argumentsToParameters.entries.firstNotNullOfOrNull { (arg, parameter) ->
+                val substitutedParameterType = parameter.substitutedType
+                when {
+                    arg is FirVarargArgumentsExpression -> arg.arguments.firstNotNullOfOrNull { varargArgument ->
+                        when {
+                            varargArgument is FirSpreadArgumentExpression && varargArgument.psi == argumentExpression.parent -> substitutedParameterType to false
+                            varargArgument.psi == argumentExpression.unwrap() -> substitutedParameterType to true
+                            else -> null
+                        }
+                    }
+                    arg.psi == argumentExpression.unwrap() -> substitutedParameterType to false
+                    else -> null
                 }
-            }?.value ?: return null
-        return if (firParameterForExpression.isVararg)
-            substitutedType.varargElementType().asKtType()
+            } ?: return null
+        return if (shouldUnwrapVararg)
+            substitutedType.varargElementType().asKaType()
         else
-            substitutedType.asKtType()
+            substitutedType.asKaType()
     }
 
     /**
-     * Expected type of the indexing parameter in array access, for example, in the following code:
+     * The expected type of the indexing parameter in array access, for example, in the following code:
      * ```
      * val map = mapOf<Int, String>()
      * map[k] = v
@@ -325,17 +347,18 @@ internal class KaFirExpressionTypeProvider(
         val arrayAccessExpression = expression.unwrapQualified<KtArrayAccessExpression> { arrayAccessExpression, currentExpression ->
             currentExpression in arrayAccessExpression.indexExpressions
         } ?: return null
-        val firCall = arrayAccessExpression.getOrBuildFirSafe<FirFunctionCall>(firResolveSession) ?: return null
+        val firCall = arrayAccessExpression.getOrBuildFirSafe<FirFunctionCall>(resolutionFacade) ?: return null
         val firArgument = firCall.argumentList.arguments.firstOrNull { it.psi == expression } ?: return null
 
         val argumentsToParameters = firCall.argumentsToSubstitutedValueParameters(substituteWithErrorTypes = false) ?: return null
-        return argumentsToParameters[firArgument]?.substitutedType?.asKtType()
+        return argumentsToParameters[firArgument]?.substitutedType?.asKaType()
     }
 
     private fun PsiElement.getFunctionCallAsWithThisAsParameter(): KtCallWithArgument? {
         val valueArgument = unwrapQualified<KtValueArgument> { valueArg, expr ->
             // If `valueArg` is [KtLambdaArgument], its [getArgumentExpression] could be labeled expression (e.g., l@{ ... }).
-            // That is not exactly `expr`, which would be [KtLambdaExpression]. So, we need [unwrap] here.
+            // That is not exactly `expr`, which would be [KtLambdaExpression].
+            // So, we need to [unwrap] here.
             valueArg.getArgumentExpression()?.unwrap() == expr
         } ?: return null
         val callExpression =
@@ -349,11 +372,11 @@ internal class KaFirExpressionTypeProvider(
     private fun getExpectedTypeOfInfixFunctionParameter(expression: PsiElement): KaType? {
         val infixCallExpression =
             expression.unwrapQualified<KtBinaryExpression> { binaryExpr, expr -> binaryExpr.right == expr } ?: return null
-        val firCall = infixCallExpression.getOrBuildFirSafe<FirFunctionCall>(firResolveSession) ?: return null
+        val firCall = infixCallExpression.getOrBuildFirSafe<FirFunctionCall>(resolutionFacade) ?: return null
 
         // There is only one parameter for infix functions; get its type
         val argumentsToParameters = firCall.argumentsToSubstitutedValueParameters(substituteWithErrorTypes = false) ?: return null
-        return argumentsToParameters.values.singleOrNull()?.substitutedType?.asKtType()
+        return argumentsToParameters.values.singleOrNull()?.substitutedType?.asKaType()
     }
 
     private fun getExpectedTypeByReturnExpression(expression: PsiElement): KaType? {
@@ -365,7 +388,7 @@ internal class KaFirExpressionTypeProvider(
     private fun PsiElement.getReturnExpressionWithThisType(): KtReturnExpression? =
         unwrapQualified { returnExpr, target -> returnExpr.returnedExpression == target }
 
-    private fun getExpressionTypeByIfOrBooleanCondition(expression: PsiElement): KaType? = when {
+    private fun getExpectedTypeByIfOrBooleanCondition(expression: PsiElement): KaType? = when {
         expression.isWhileLoopCondition() || expression.isIfCondition() -> with(analysisSession) { builtinTypes.boolean }
         else -> null
     }
@@ -438,7 +461,7 @@ internal class KaFirExpressionTypeProvider(
             .mapNotNull { it.expression }
             .filter { entryExpression -> entryExpression != expression }
         val types = entryExpressions.mapNotNull { getKtExpressionNonErrorType(it) }
-        return analysisSession.firSession.typeContext.intersectTypesOrNull(types.map { it.coneType })?.asKtType()
+        return analysisSession.firSession.typeContext.intersectTypesOrNull(types.map { it.coneType })?.asKaType()
     }
 
     private fun getExpectedTypeByTryExpression(expression: PsiElement): KaType? {
@@ -469,7 +492,7 @@ internal class KaFirExpressionTypeProvider(
     }
 
     private fun KaType.withNullability(nullable: Boolean): KaType =
-        coneType.withNullability(nullable, analysisSession.firSession.typeContext).asKtType()
+        coneType.withNullability(nullable, analysisSession.firSession.typeContext).asKaType()
 
     private fun getExpectedTypeByWhenEntryValue(expression: PsiElement): KaType? {
         val condition = expression.parent as? KtWhenConditionWithExpression ?: return null
@@ -490,17 +513,17 @@ internal class KaFirExpressionTypeProvider(
         unwrapQualified<KtIfExpression> { ifExpr, cond -> ifExpr.condition == cond } != null
 
     override val KtExpression.isDefinitelyNull: Boolean
-        get() = withValidityAssertion { getDefiniteNullability(this) == DefiniteNullability.DEFINITELY_NULL }
+        get() = withPsiValidityAssertion { getDefiniteNullability(this) == DefiniteNullability.DEFINITELY_NULL }
 
     override val KtExpression.isDefinitelyNotNull: Boolean
-        get() = withValidityAssertion { getDefiniteNullability(this) == DefiniteNullability.DEFINITELY_NOT_NULL }
+        get() = withPsiValidityAssertion { getDefiniteNullability(this) == DefiniteNullability.DEFINITELY_NOT_NULL }
 
     private fun getDefiniteNullability(expression: KtExpression): DefiniteNullability {
         fun FirExpression.isNotNullable() = with(analysisSession.firSession.typeContext) {
             !resolvedType.isNullableType()
         }
 
-        when (val fir = expression.getOrBuildFir(analysisSession.firResolveSession)) {
+        when (val fir = expression.getOrBuildFir(analysisSession.resolutionFacade)) {
             is FirSmartCastExpression -> if (fir.isStable) {
                 if (fir.smartcastTypeWithoutNullableNothing != null) {
                     return DefiniteNullability.DEFINITELY_NULL
@@ -520,10 +543,9 @@ internal class KaFirExpressionTypeProvider(
 private data class KtCallWithArgument(val call: KtCallElement, val argument: KtExpression)
 
 private inline fun <reified R : Any> PsiElement.unwrapQualified(check: (R, PsiElement) -> Boolean): R? {
-    val parent = nonContainerParent
-    return when {
-        parent is R && check(parent, this) -> parent
-        parent is KtQualifiedExpression && parent.selectorExpression == this -> {
+    return when (val parent = nonContainerParent) {
+        is R if check(parent, this) -> parent
+        is KtQualifiedExpression if parent.selectorExpression == this -> {
             val grandParent = parent.nonContainerParent
             when {
                 grandParent is R && check(grandParent, parent) -> grandParent

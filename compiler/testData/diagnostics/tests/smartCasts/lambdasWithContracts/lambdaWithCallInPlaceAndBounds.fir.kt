@@ -377,3 +377,7 @@ fun test33() {
         x = 10
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, checkNotNullCall, contractCallsEffect, contracts, equalityExpression,
+functionDeclaration, functionalType, ifExpression, integerLiteral, isExpression, lambdaLiteral, localProperty,
+nullableType, propertyDeclaration, smartcast, stringLiteral, typeParameter, whileLoop */

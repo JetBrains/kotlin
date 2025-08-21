@@ -18,7 +18,8 @@ import org.jetbrains.kotlin.fir.types.FirUserTypeRef
 import org.jetbrains.kotlin.fir.types.coneType
 
 object FirSuperReferenceChecker : FirQualifiedAccessExpressionChecker(MppCheckerKind.Common) {
-    override fun check(expression: FirQualifiedAccessExpression, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(expression: FirQualifiedAccessExpression) {
         val superReference = (expression.calleeReference as? FirSuperReference)?.takeIf { it.hadExplicitTypeInSource() } ?: return
 
         val superTypeRef = superReference.superTypeRef
@@ -30,7 +31,7 @@ object FirSuperReferenceChecker : FirQualifiedAccessExpressionChecker(MppChecker
             typeArgumentList.typeArguments.isNotEmpty() &&
             superType.typeArguments.all { it !is ConeErrorType }
         ) {
-            reporter.reportOn(typeArgumentList.source, FirErrors.TYPE_ARGUMENTS_REDUNDANT_IN_SUPER_QUALIFIER, context)
+            reporter.reportOn(typeArgumentList.source, FirErrors.TYPE_ARGUMENTS_REDUNDANT_IN_SUPER_QUALIFIER)
         }
     }
 }

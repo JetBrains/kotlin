@@ -3,7 +3,7 @@
 public class DeclSite {
     private int x;
 
-    public void setX(value: int) {
+    public void setX(int value) {
         x = value;
     }
 

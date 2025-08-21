@@ -20,3 +20,6 @@ fun test(param: String) {
     <!UNRESOLVED_REFERENCE!>inner_bar<!>
     <!UNRESOLVED_REFERENCE!>fun_param<!>
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, anonymousFunction, functionDeclaration, integerLiteral, interfaceDeclaration,
+localProperty, propertyDeclaration */

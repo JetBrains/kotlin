@@ -7,16 +7,19 @@ KtOperationReferenceExpression(105,106): '='
           receiverType = null
           returnType = kotlin.Int
           symbol = i: kotlin.Int
+          contextParameters = []
           callableId = null),
         4 -> (KaVariableSignature:
           name = v
           receiverType = null
           returnType = kotlin.Int
           symbol = v: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = variable
           isSafeNavigation = false
@@ -32,14 +35,17 @@ KtOperationReferenceExpression(105,106): '='
               receiverType = null
               returnType = kotlin.Int
               symbol = i: kotlin.Int
+              contextParameters = []
               callableId = null,
             KaVariableSignature:
               name = v
               receiverType = null
               returnType = kotlin.Int
               symbol = v: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = /MyClass.set
       typeArgumentsMapping = {}
     isInBestCandidates = true

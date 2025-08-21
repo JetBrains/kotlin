@@ -19,3 +19,6 @@ actual annotation class <!NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS!>A<!>(val x:
 
 @A(<!TYPE_MISMATCH!>"abc"<!>, <!TOO_MANY_ARGUMENTS!>"foo"<!>, <!TOO_MANY_ARGUMENTS!>"bar"<!>)
 fun test2() {}
+
+/* GENERATED_FIR_TAGS: actual, annotationDeclaration, expect, functionDeclaration, outProjection, primaryConstructor,
+propertyDeclaration, stringLiteral, vararg */

@@ -62,6 +62,7 @@ abstract class AbstractConfigurationPhase<A : CommonCompilerArguments>(
         printVersion = arguments.version
         // TODO(KT-73711): move script-related configuration to JVM CLI
         scriptMode = arguments.script
+        replMode = arguments.repl
         setupCommonArguments(arguments, ::createMetadataVersion)
         val paths = computeKotlinPaths(messageCollector, arguments)?.also {
             kotlinPaths = it
@@ -77,7 +78,8 @@ abstract class AbstractConfigurationPhase<A : CommonCompilerArguments>(
         val arguments = input.arguments
         val pluginClasspaths = arguments.pluginClasspaths.orEmpty().toMutableList()
         val pluginOptions = arguments.pluginOptions.orEmpty().toMutableList()
-        val pluginConfigurations = arguments.pluginConfigurations.orEmpty().toMutableList()
+        val pluginConfigurations = arguments.pluginConfigurations?.asList().orEmpty()
+        val pluginOrderConstraints = arguments.pluginOrderConstraints?.asList().orEmpty()
         val messageCollector = configuration.messageCollector
 
         if (!checkPluginsArguments(messageCollector, useK2 = true, pluginClasspaths, pluginOptions, pluginConfigurations)) {
@@ -116,7 +118,14 @@ abstract class AbstractConfigurationPhase<A : CommonCompilerArguments>(
         pluginClasspaths.addAll(scriptingPluginClasspath)
         pluginOptions.addAll(scriptingPluginOptions)
 
-        PluginCliParser.loadPluginsSafe(pluginClasspaths, pluginOptions, pluginConfigurations, configuration)
+        PluginCliParser.loadPluginsSafe(
+            pluginClasspaths,
+            pluginOptions,
+            pluginConfigurations,
+            pluginOrderConstraints,
+            configuration,
+            input.rootDisposable
+        )
     }
 
     private fun tryLoadScriptingPluginFromCurrentClassLoader(

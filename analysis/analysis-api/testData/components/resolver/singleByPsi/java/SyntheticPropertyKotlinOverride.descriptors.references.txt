@@ -1,0 +1,108 @@
+<caret_1>:
+  KtNameReferenceExpression(268,277): 'something'
+    KtSimpleNameReference:
+      (in KotlinClass) var KotlinClass.something: kotlin.Int
+
+    SyntheticPropertyAccessorReference:
+      (in KotlinClass) override fun getSomething(): kotlin.Int
+
+<caret_2>:
+  KtNameReferenceExpression(295,304): 'something'
+    KtSimpleNameReference:
+      (in KotlinClass) var KotlinClass.something: kotlin.Int
+
+    SyntheticPropertyAccessorReference:
+      (in KotlinClass) override fun setSomething(value: kotlin.Int)
+
+<caret_3>:
+  KtNameReferenceExpression(325,334): 'something'
+    KtSimpleNameReference:
+      (in KotlinClass) var KotlinClass.something: kotlin.Int
+
+    SyntheticPropertyAccessorReference:
+      (in KotlinClass) override fun getSomething(): kotlin.Int
+
+    SyntheticPropertyAccessorReference:
+      (in KotlinClass) override fun setSomething(value: kotlin.Int)
+
+<caret_4>:
+  KtNameReferenceExpression(356,365): 'something'
+    KtSimpleNameReference:
+      (in KotlinClass) var KotlinClass.something: kotlin.Int
+
+    SyntheticPropertyAccessorReference:
+      (in KotlinClass) override fun getSomething(): kotlin.Int
+
+    SyntheticPropertyAccessorReference:
+      (in KotlinClass) override fun setSomething(value: kotlin.Int)
+
+<caret_5>:
+  KtNameReferenceExpression(386,395): 'something'
+    KtSimpleNameReference:
+      (in KotlinClass) var KotlinClass.something: kotlin.Int
+
+    SyntheticPropertyAccessorReference:
+      (in KotlinClass) override fun getSomething(): kotlin.Int
+
+    SyntheticPropertyAccessorReference:
+      (in KotlinClass) override fun setSomething(value: kotlin.Int)
+
+<caret_6>:
+  KtNameReferenceExpression(400,409): 'something'
+    KtSimpleNameReference:
+      (in KotlinClass) var KotlinClass.something: kotlin.Int
+
+    SyntheticPropertyAccessorReference:
+      (in KotlinClass) override fun getSomething(): kotlin.Int
+
+    SyntheticPropertyAccessorReference:
+      (in KotlinClass) override fun setSomething(value: kotlin.Int)
+
+<caret_7>:
+  KtNameReferenceExpression(507,516): 'something'
+    KtSimpleNameReference:
+      (in KotlinClass) var KotlinClass.something: kotlin.Int
+
+    SyntheticPropertyAccessorReference:
+      (in KotlinClass) override fun getSomething(): kotlin.Int
+
+<caret_8>:
+  KtNameReferenceExpression(536,545): 'something'
+    KtSimpleNameReference:
+      (in KotlinClass) var KotlinClass.something: kotlin.Int
+
+    SyntheticPropertyAccessorReference:
+      (in KotlinClass) override fun setSomething(value: kotlin.Int)
+
+<caret_9>:
+  KtNameReferenceExpression(568,577): 'something'
+    KtSimpleNameReference:
+      (in KotlinClass) var KotlinClass.something: kotlin.Int
+
+    SyntheticPropertyAccessorReference:
+      (in KotlinClass) override fun getSomething(): kotlin.Int
+
+    SyntheticPropertyAccessorReference:
+      (in KotlinClass) override fun setSomething(value: kotlin.Int)
+
+<caret_10>:
+  KtNameReferenceExpression(601,610): 'something'
+    KtSimpleNameReference:
+      (in KotlinClass) var KotlinClass.something: kotlin.Int
+
+    SyntheticPropertyAccessorReference:
+      (in KotlinClass) override fun getSomething(): kotlin.Int
+
+    SyntheticPropertyAccessorReference:
+      (in KotlinClass) override fun setSomething(value: kotlin.Int)
+
+<caret_11>:
+  KtNameReferenceExpression(633,642): 'something'
+    KtSimpleNameReference:
+      (in KotlinClass) var KotlinClass.something: kotlin.Int
+
+    SyntheticPropertyAccessorReference:
+      (in KotlinClass) override fun getSomething(): kotlin.Int
+
+    SyntheticPropertyAccessorReference:
+      (in KotlinClass) override fun setSomething(value: kotlin.Int)

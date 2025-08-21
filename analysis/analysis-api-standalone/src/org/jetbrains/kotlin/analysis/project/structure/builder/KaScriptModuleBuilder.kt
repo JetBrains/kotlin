@@ -5,10 +5,10 @@
 
 package org.jetbrains.kotlin.analysis.project.structure.builder
 
+import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaScriptModule
 import org.jetbrains.kotlin.analysis.project.structure.impl.KaScriptModuleImpl
-import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreProjectEnvironment
 import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.config.LanguageVersionSettings
@@ -20,9 +20,7 @@ import kotlin.contracts.contract
 
 @KaExperimentalApi
 @KtModuleBuilderDsl
-public class KtScriptModuleBuilder(
-    private val kotlinCoreProjectEnvironment: KotlinCoreProjectEnvironment
-) : KtModuleBuilder() {
+public class KtScriptModuleBuilder(private val project: Project) : KtModuleBuilder() {
     public lateinit var file: KtFile
 
     public var languageVersionSettings: LanguageVersionSettings =
@@ -34,7 +32,7 @@ public class KtScriptModuleBuilder(
             directDependsOnDependencies,
             directFriendDependencies,
             platform,
-            kotlinCoreProjectEnvironment.project,
+            project,
             file,
             languageVersionSettings
         )
@@ -47,5 +45,5 @@ public inline fun KtModuleProviderBuilder.buildKtScriptModule(init: KtScriptModu
     contract {
         callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
-    return KtScriptModuleBuilder(kotlinCoreProjectEnvironment).apply(init).build()
+    return KtScriptModuleBuilder(project).apply(init).build()
 }

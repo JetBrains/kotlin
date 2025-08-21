@@ -5,16 +5,23 @@
 
 package org.jetbrains.kotlin.backend.jvm.lower
 
+import org.jetbrains.kotlin.backend.jvm.ir.JvmIrBuilder
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrStatement
+import org.jetbrains.kotlin.ir.builders.irBoolean
+import org.jetbrains.kotlin.ir.builders.irCall
+import org.jetbrains.kotlin.ir.builders.irInt
+import org.jetbrains.kotlin.ir.builders.irString
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
+import org.jetbrains.kotlin.ir.declarations.IrParameterKind
 import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.util.getPackageFragment
 import org.jetbrains.kotlin.ir.util.shallowCopyOrNull
 import org.jetbrains.kotlin.ir.util.statements
+import org.jetbrains.org.objectweb.asm.Handle
 
 internal val IrSimpleFunction.returnsResultOfStdlibCall: Boolean
     get() {
@@ -48,15 +55,13 @@ internal fun IrProperty.getSingletonOrConstantForOptimizableDelegatedProperty():
     fun IrExpression.isInlineable(): Boolean =
         when (this) {
             is IrConst, is IrGetSingletonValue -> true
-            is IrCall ->
-                dispatchReceiver?.isInlineable() != false
-                        && extensionReceiver?.isInlineable() != false
-                        && valueArgumentsCount == 0
-                        && symbol.owner.run {
-                    modality == Modality.FINAL
-                            && origin == IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR
-                            && ((body?.statements?.singleOrNull() as? IrReturn)?.value as? IrGetField)?.symbol?.owner?.isFinal == true
-                }
+            is IrCall -> symbol.owner.run {
+                parameters.none { it.kind == IrParameterKind.Regular || it.kind == IrParameterKind.Context }
+                        && arguments.all { it == null || it.isInlineable() }
+                        && modality == Modality.FINAL
+                        && origin == IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR
+                        && ((body?.statements?.singleOrNull() as? IrReturn)?.value as? IrGetField)?.symbol?.owner?.isFinal == true
+            }
             is IrGetValue ->
                 symbol.owner.origin == IrDeclarationOrigin.INSTANCE_RECEIVER
             else -> false
@@ -80,4 +85,13 @@ internal val IrMemberAccessExpression<*>.constInitializer: IrExpression?
             field!!.owner.takeIf { it.isFinal && it.isStatic }
         }
         return constPropertyField?.initializer?.expression?.shallowCopyOrNull()
+    }
+
+internal fun JvmIrBuilder.jvmMethodHandle(handle: Handle): IrCall =
+    irCall(backendContext.symbols.jvmMethodHandle).apply {
+        arguments[0] = irInt(handle.tag)
+        arguments[1] = irString(handle.owner)
+        arguments[2] = irString(handle.name)
+        arguments[3] = irString(handle.desc)
+        arguments[4] = irBoolean(handle.isInterface)
     }

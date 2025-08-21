@@ -26,3 +26,6 @@ actual open class Foo : Base() {
 
     override fun injected(): String = "" // covariant override
 }
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, functionDeclaration, integerLiteral, override,
+propertyDeclaration, stringLiteral */

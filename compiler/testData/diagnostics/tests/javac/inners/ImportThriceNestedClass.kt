@@ -49,3 +49,5 @@ package b
 
 fun test() = x().getB()
 fun test2() = y().getB()
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaFunction, javaType */

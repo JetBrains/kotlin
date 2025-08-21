@@ -1,11 +1,12 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.analysis.api.symbols
 
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.descriptors.Visibilities
@@ -19,6 +20,7 @@ import org.jetbrains.kotlin.descriptors.Visibility
  * - `val (a, _) = Pair(1, 2)` leads to `KaDestructuringDeclarationSymbol(entries = [a, _])`
  * - `Pair(1, _).let { (a, b) -> }` leads to `KaDestructuringDeclarationSymbol(entries = [a, _])`
  */
+@SubclassOptInRequired(KaImplementationDetail::class)
 public abstract class KaDestructuringDeclarationSymbol : KaDeclarationSymbol {
     /**
      * A list of [KaVariableSymbol]s which were created from this destructuring declaration.

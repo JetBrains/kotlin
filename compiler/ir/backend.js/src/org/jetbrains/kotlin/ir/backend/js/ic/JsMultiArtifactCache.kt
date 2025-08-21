@@ -19,15 +19,6 @@ abstract class JsMultiArtifactCache<T : JsMultiArtifactCache.CacheInfo> {
 
     open fun commitOnyTypeScriptFiles(cacheInfo: T): Boolean = false
 
-    protected fun File.writeIfNotNull(data: String?) {
-        if (data != null) {
-            parentFile?.mkdirs()
-            writeText(data)
-        } else {
-            delete()
-        }
-    }
-
     protected fun CodedInputStream.fetchJsIrModuleHeaderNames(): JsIrModuleHeaderNames {
         val definitions = mutableSetOf<String>()
         val nameBindings = mutableMapOf<String, String>()

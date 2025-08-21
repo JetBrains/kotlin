@@ -36,3 +36,6 @@ abstract class Foo<C : Bar, D : Baz, E : D, F : BazBaz> {
         f.<!FUNCTION_CALL_EXPECTED!>isSomethingElse<!>
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, javaProperty, javaType, propertyDeclaration,
+typeConstraint, typeParameter */

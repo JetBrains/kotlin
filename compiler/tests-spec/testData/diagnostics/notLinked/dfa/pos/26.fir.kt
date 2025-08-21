@@ -59,9 +59,9 @@ inline fun <reified T : CharSequence>case_3(x: Any?) {
 inline fun <reified T : CharSequence>case_4(x: Any?) {
     (x as? T)!!
     if (<!USELESS_IS_CHECK!>x is T?<!>) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("T? & Any")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("T? & Any")!>x<!>.length
-        <!DEBUG_INFO_EXPRESSION_TYPE("T? & Any")!>x<!>.get(0)
+        <!DEBUG_INFO_EXPRESSION_TYPE("T & Any")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("T & Any")!>x<!>.length
+        <!DEBUG_INFO_EXPRESSION_TYPE("T & Any")!>x<!>.get(0)
     }
 }
 
@@ -69,9 +69,9 @@ inline fun <reified T : CharSequence>case_4(x: Any?) {
 inline fun <reified T : CharSequence>case_5(x: Any?) {
     if (x as? T != null) {
         if (<!USELESS_IS_CHECK!>x is T?<!>) {
-            <!DEBUG_INFO_EXPRESSION_TYPE("T? & Any")!>x<!>
-            <!DEBUG_INFO_EXPRESSION_TYPE("T? & Any")!>x<!>.length
-            <!DEBUG_INFO_EXPRESSION_TYPE("T? & Any")!>x<!>.get(0)
+            <!DEBUG_INFO_EXPRESSION_TYPE("T & Any")!>x<!>
+            <!DEBUG_INFO_EXPRESSION_TYPE("T & Any")!>x<!>.length
+            <!DEBUG_INFO_EXPRESSION_TYPE("T & Any")!>x<!>.get(0)
         }
     }
 }

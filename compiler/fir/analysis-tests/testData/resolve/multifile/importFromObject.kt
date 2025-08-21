@@ -15,3 +15,5 @@ import a.A.foo
 fun bar() {
     foo()
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, objectDeclaration */

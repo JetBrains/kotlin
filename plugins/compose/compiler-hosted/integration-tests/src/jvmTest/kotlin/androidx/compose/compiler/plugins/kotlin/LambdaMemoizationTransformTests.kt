@@ -17,7 +17,6 @@
 package androidx.compose.compiler.plugins.kotlin
 
 import androidx.compose.compiler.plugins.EnumTestProtos
-import androidx.compose.compiler.plugins.StabilityTestProtos
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
@@ -36,7 +35,7 @@ class LambdaMemoizationTransformTests(useFir: Boolean) : AbstractIrTransformTest
             languageVersion = languageVersionSettings.languageVersion,
             apiVersion = languageVersionSettings.apiVersion,
             specificFeatures = mapOf(
-                LanguageFeature.ContextReceivers to LanguageFeature.State.ENABLED
+                LanguageFeature.ContextParameters to LanguageFeature.State.ENABLED
             )
         )
     }
@@ -563,29 +562,6 @@ class LambdaMemoizationTransformTests(useFir: Boolean) : AbstractIrTransformTest
         )
     }
 
-    // Reference to function with context receivers does not currently support memoization.
-    @Test
-    fun testNonComposableFunctionReferenceWithStableContextReceiverNotMemoized() {
-        verifyGoldenComposeIrTransform(
-            source = """
-                import androidx.compose.runtime.Composable
-                import androidx.compose.runtime.remember
-
-                class StableReceiver
-                class Stable {
-                    context(StableReceiver)
-                    fun qux() {}
-                }
-
-                @Composable
-                fun Something() {
-                    val x = remember { Stable() }
-                    val shouldNotMemoize = x::qux
-                }
-            """
-        )
-    }
-
     @Test
     fun testUnstableReceiverFunctionReferenceNotMemoized() = verifyGoldenComposeIrTransform(
         """
@@ -1092,5 +1068,129 @@ class LambdaMemoizationTransformTests(useFir: Boolean) : AbstractIrTransformTest
             Classpath.jarFor<EnumTestProtos>(), // protobuf-test-classes
             Classpath.jarFor<EnumLite>() // protobuf-lite
         )
+    )
+
+    @Test
+    fun testLocalObjectCapture() = verifyGoldenComposeIrTransform(
+        """
+            import androidx.compose.runtime.*
+    
+            @Composable
+            fun Test(strings: List<String>) {
+                val objects = strings.map { string -> 
+                    val stringVar = string
+                    object {
+                        val value get() = stringVar
+                    }
+                }
+                val lambda = { 
+                    objects.forEach { println(it.value) }
+                }
+            }
+        """
+    )
+
+    @Test
+    fun composableLambdaInInlineDefaultParam() = verifyGoldenComposeIrTransform(
+        extra = """
+            import androidx.compose.runtime.*
+
+            class NavGraphBuilder
+            object BottomSheetDefaults {
+                @Composable fun DragHandle() {}
+            }
+        """,
+        source = """
+            import androidx.compose.runtime.*
+
+            public inline fun <reified T : Any> NavGraphBuilder.bottomSheet(
+              noinline dragHandle: @Composable (() -> Unit)? = { BottomSheetDefaults.DragHandle() },
+            ) {
+            }
+        """,
+    )
+
+    // Validate fix for CMP-7873
+    @Test
+    fun testComposableInInitBlock() = verifyGoldenComposeIrTransform(
+        """
+            import androidx.compose.runtime.*
+
+            fun setContent(content: @Composable () -> Unit) {}
+
+            class ComposeScreenSaverView {
+                init {
+                    val specsInit = 10
+                    val prefsInit by mutableStateOf(11)
+            
+                    setContent {
+                        val imgLoaderInit = remember(prefsInit, specsInit) {
+                            123
+                        }
+                    }
+                }
+            }
+        """,
+    )
+
+    // Validate fix for CMP-8044
+    @Test
+    fun composeCaptureTemporaryVar() = verifyGoldenComposeIrTransform(
+        """
+            import androidx.compose.runtime.Composable
+
+            data class ChatRequestConfig(val a: Int = 10)
+
+            @Composable
+            fun TextField(
+                onValueChange: (String) -> Unit
+            ) {}
+
+            @Composable
+            fun App() {
+                val currentRequestConfig = ChatRequestConfig(321)
+                fun updateRequestConfig() {
+                    val config = ChatRequestConfig(currentRequestConfig.a ?: 10)
+                }
+
+                TextField(
+                    onValueChange = {
+                        updateRequestConfig()
+                    }
+                )
+            }
+        """
+    )
+
+
+    // Regression test for b/436870733
+    @Test
+    fun lambdaInAnonymousClass() = verifyGoldenComposeIrTransform(
+        """
+        import androidx.compose.runtime.Composable
+
+        @Composable
+        fun test() {
+          val foo =
+            object {
+              val bar = run { {} }
+            }
+        }
+        """,
+    )
+
+    // Regression test for b/436870733
+    @Test
+    fun lambdaInNamedClass() = verifyGoldenComposeIrTransform(
+        """
+        import androidx.compose.runtime.Composable
+
+        @Composable
+        fun test() {
+            class Foo {
+              val bar = run { {} }
+            }
+        }
+        """,
     )
 }

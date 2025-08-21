@@ -1,11 +1,11 @@
 [versions]
 dexMemberList = "4.1.1"
-dokka = "1.9.20"
-gradle-custom-user-data = "2.0.2"
-develocity = "3.17.5"
+dokka = "2.0.0"
+gradle-custom-user-data = "2.3"
+develocity = "3.19.2"
 gradle-plugin-publish = "1.2.1"
 # Version for foojay should be also synced with version in repo/gradle-settings-conventions/settings.gradle.kts
-gradle-toolchains-foojay-resolver = "0.4.0"
+gradle-toolchains-foojay-resolver = "0.9.0"
 # guava and failureaccess should be aligned relatively
 guava = "33.3.1-jre"
 failureaccess = "1.0.2"
@@ -16,15 +16,15 @@ kotlinx-serialization = "1.7.3"
 # Check the version in this file: https://github.com/JetBrains/intellij-community/blob/cc37866d3827c51712f9856f5e580d405784d1ef/.idea/libraries/kotlinx_coroutines_core.xml
 kotlinx-coroutines = "1.8.0"
 shadow = "8.3.0" # Should be in sync with version in kotlin-native/
-spdx = "0.8.0-dev-14"
+spdx = "0.10.0-dev-15"
 proguard = "7.4.2"
-ktor = "2.3.13"
+ktor = "3.1.3"
 kotlinx-metadataJvm = "0.9.0"
-kotlinx-bcv = "0.15.1"
+kotlinx-bcv = "0.17.0"
 gson = "2.11.0"
 jetbrains-ideaExt = "1.0.1"
-jackson = "2.18.1"
-jgit = "7.0.0.202409031743-r"
+jackson = "2.19.0"
+jgit = "7.2.1.202505142326-r"
 jsoup = "1.17.2"
 junit4 = "4.13.2"
 junit5 = "5.10.1"
@@ -39,9 +39,11 @@ lincheck = "2.28.1"
 xerces = "2.12.2"
 caffeine = "2.9.3" # We cannot use the latest version of Caffeine (`3.x`) because it doesn't support Java 8.
 compose-stable = "1.7.0-alpha08" # Used for Compose compiler plugin tests
-androidx-collections = "1.5.0-alpha02" # Used for Compose compiler plugin tests
+androidx-collections = "1.5.0" # Used for Compose compiler plugin tests
 ant = "1.10.14"
-kotlin-for-gradle-plugins-compilation = "2.0.20-RC"
+# It is recommended to skip at least one major release, e.g., use 2.0.21 when the default bootstrap version is 2.2.
+# This ensures additional verification that Gradle-related code does not get dependencies of higher LV
+kotlin-for-gradle-plugins-compilation = "2.0.21"
 intellij-asm = "9.6.1"
 diff-utils = "4.12"
 opentelemetry-api = "1.41.0"
@@ -55,9 +57,15 @@ protobuf = "4.28.2"
 woodstox-core = "7.1.0"
 http-client = "4.5.14"
 json = "20231013"
-dataframe = "0.14.1"
+dataframe = "1.0.0-Beta2"
+commons-beanutils = "1.11.0"
 commons-compress = "1.27.1"
 commons-io = "2.18.0"
+dataframe-dev = "1.0.0-dev-7570"
+org-jetbrains-syntax-api = "0.3.340"
+org-jetbrains-annotations = "26.0.2"
+schema-kenerator = "2.1.2"
+kotlinpoet = "2.2.0"
 
 [libraries]
 dexMemberList = { module = "com.jakewharton.dex:dex-member-list", version.ref = "dexMemberList" }
@@ -80,7 +88,14 @@ proguard-gradlePlugin = { module = "com.guardsquare:proguard-gradle", version.re
 node-gradlePlugin = { module = "com.github.node-gradle:gradle-node-plugin", version.ref = "gradle-node-plugin" }
 woodstox-core = { module = "com.fasterxml.woodstox:woodstox-core", version.ref = "woodstox-core" }
 dataframe = { module = "org.jetbrains.kotlinx:dataframe", version.ref = "dataframe" }
+dataframeCore = { module = "org.jetbrains.kotlinx:dataframe-core", version.ref = "dataframe" }
+dataframeCsv = { module = "org.jetbrains.kotlinx:dataframe-csv", version.ref = "dataframe" }
+dataframeJson = { module = "org.jetbrains.kotlinx:dataframe-json", version.ref = "dataframe" }
+dataframe-compiler-plugin-core = { module = "org.jetbrains.kotlinx.dataframe:dataframe-compiler-plugin-core", version.ref = "dataframe-dev" }
+dataframe-core-dev = { module = "org.jetbrains.kotlinx:dataframe-core", version.ref = "dataframe-dev" }
+dataframe-csv-dev = { module = "org.jetbrains.kotlinx:dataframe-csv", version.ref = "dataframe-dev" }
 
+apache-commons-beanutils = { module = "commons-beanutils:commons-beanutils", version.ref = "commons-beanutils" }
 apache-commons-compress = { module = "org.apache.commons:commons-compress", version.ref = "commons-compress" }
 apache-commons-io = { module = "commons-io:commons-io", version.ref = "commons-io" }
 
@@ -142,6 +157,15 @@ kotlinx-bcv = { module = "org.jetbrains.kotlinx:binary-compatibility-validator",
 
 androidx-collections = { module = "androidx.collection:collection", version.ref = "androidx-collections" }
 oshi-core = { module = "com.github.oshi:oshi-core", version.ref = "oshi" }
+
+org-jetbrains-syntax-api = { module = "org.jetbrains:syntax-api", version.ref = "org-jetbrains-syntax-api" }
+org-jetbrains-annotations = { module = "org.jetbrains:annotations", version.ref = "org-jetbrains-annotations" }
+
+schema-kenerator-core = { module = "io.github.smiley4:schema-kenerator-core", version.ref="schema-kenerator" }
+schema-kenerator-serialization = { module = "io.github.smiley4:schema-kenerator-serialization", version.ref="schema-kenerator" }
+schema-kenerator-jsonschema = { module = "io.github.smiley4:schema-kenerator-jsonschema", version.ref="schema-kenerator" }
+
+kotlinpoet = { module = "com.squareup:kotlinpoet", version.ref = "kotlinpoet" }
 
 [plugins]
 jetbrains-ideaExt = { id = "org.jetbrains.gradle.plugin.idea-ext", version.ref = "jetbrains-ideaExt" }

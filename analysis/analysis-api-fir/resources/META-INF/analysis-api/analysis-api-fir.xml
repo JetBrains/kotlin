@@ -4,6 +4,8 @@
   <xi:include href="/META-INF/analysis-api/symbol-light-classes.xml"/>
 
   <extensions defaultExtensionNs="com.intellij">
+    <psi.classFileDecompiler implementation="org.jetbrains.kotlin.analysis.decompiler.konan.K2KotlinNativeMetadataDecompiler"/>
+
     <projectService
         serviceInterface="org.jetbrains.kotlin.analysis.api.session.KaSessionProvider"
         serviceImplementation="org.jetbrains.kotlin.analysis.api.fir.KaFirSessionProvider"
@@ -47,6 +49,17 @@
         key="kotlin.analysis.postComputeEnhancedJavaFunctionsCache"
         restartRequired="true"
     />
+
+    <registryKey
+        defaultValue="true"
+        description="When compiling against kotlin-stdlib sources (in the Kotlin compiler project), substitute sources with compiled binaries"
+        key="kotlin.analysis.compilerFacility.useStdlibBuildOutput"
+        restartRequired="true"
+    />
+  </extensions>
+
+  <extensions defaultExtensionNs="org.jetbrains.kotlin">
+    <kotlinContentScopeRefiner implementation="org.jetbrains.kotlin.analysis.api.fir.projectStructure.KaFirLibraryTargetPlatformContentScopeRefiner"/>
   </extensions>
 
   <projectListeners>

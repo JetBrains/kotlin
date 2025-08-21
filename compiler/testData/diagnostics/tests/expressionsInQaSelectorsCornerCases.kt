@@ -34,3 +34,7 @@ fun rain() {
 
     5.<!FUNCTION_EXPECTED!>(Int::x)<!>().<!DEBUG_INFO_MISSING_UNRESOLVED!>inv<!>()
 }
+
+/* GENERATED_FIR_TAGS: callableReference, funWithExtensionReceiver, functionDeclaration, functionalType, getter,
+integerLiteral, localProperty, nullableType, propertyDeclaration, propertyWithExtensionReceiver, thisExpression,
+typeParameter, typeWithExtension */

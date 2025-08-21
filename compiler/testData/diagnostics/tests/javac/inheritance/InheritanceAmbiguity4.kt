@@ -47,3 +47,5 @@ public class test extends x2 implements i3 {
 package a
 
 fun test1() = test().<!MISSING_DEPENDENCY_CLASS!>getO<!>()
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaFunction, javaType */

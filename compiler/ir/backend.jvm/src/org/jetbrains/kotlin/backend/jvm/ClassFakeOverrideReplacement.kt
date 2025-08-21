@@ -16,9 +16,9 @@ sealed class ClassFakeOverrideReplacement {
     /**
      * The fake override should be replaced by a "DefaultImpls redirection" method. There are two cases when this is happening:
      *
-     * 1) In the `-Xjvm-default=disable` mode, we generate a method which calls the method from the super-interface's DefaultImpls.
-     * 2) In the compatibility mode (`-Xjvm-default=all-compatibility` without `@JvmDefaultWithoutCompatibility` on the class),
-     *    we generate a method which calls the super method.
+     * 1) In the `-jvm-default=disable` mode, we generate a method which calls the method from the super-interface's DefaultImpls.
+     * 2) In the `-jvm-default=enable` mode (without `@JvmDefaultWithoutCompatibility` on the class), we generate a method which calls
+     *    the super method.
      *
      * For example:
      *
@@ -27,11 +27,11 @@ sealed class ClassFakeOverrideReplacement {
      *     }
      *     class B : A
      *
-     * Suppose that `A` is compiled with `-Xjvm-default=disable`.
+     * Suppose that `A` is compiled with `-jvm-default=disable`.
      *
-     * If `B` is compiled with `-Xjvm-default=disable`, the fake override `B.f` will be replaced by a method which calls `A$DefaultImpls.f`.
+     * If `B` is compiled with `-jvm-default=disable`, the fake override `B.f` will be replaced by a method which calls `A$DefaultImpls.f`.
      *
-     * If `B` is compiled with `-Xjvm-default=all-compatibility`, the fake override will be replaced by a method which calls `super.f`.
+     * If `B` is compiled with `-jvm-default=enable`, the fake override will be replaced by a method which calls `super.f`.
      *
      * @param newFunction the newly created non-fake function in the same class, whose body (in case this class is from sources) will be
      *   filled by the corresponding lowering phase (`InheritedDefaultMethodsOnClassesLowering`).
@@ -46,8 +46,8 @@ sealed class ClassFakeOverrideReplacement {
     ) : ClassFakeOverrideReplacement()
 
     /**
-     * "Default compatibility bridge" is a method which is generated in a class in `-Xjvm-default=all/all-compatibility` modes, to keep
-     * behavior in diamond hierarchies the same as in the `-Xjvm-default=disable` mode. Example:
+     * "Default compatibility bridge" is a method which is generated in a class in `-jvm-default=enable/no-compatibility` modes, to keep
+     * behavior in diamond hierarchies the same as in the `-jvm-default=disable` mode. Example:
      *
      *     interface Base {
      *         fun foo(): String = "Fail"
@@ -59,7 +59,7 @@ sealed class ClassFakeOverrideReplacement {
      *     }
      *     class Bottom : Left(), Right
      *
-     * If Base and Left are compiled with `-Xjvm-default=disable`, but Right and Bottom are compiled with `all/all-compatibility`,
+     * If Base and Left are compiled with `-jvm-default=disable`, but Right and Bottom are compiled with `enable/no-compatibility`,
      * we generate a _default compatibility bridge_ in Bottom which calls `super<Right>.foo()`. Without this bridge, calls to `Bottom.foo()`
      * would result in "Fail" because there's a DefaultImpls bridge in Left which is inherited in Bottom, and class methods win over default
      * interface methods in JVM during call resolution.

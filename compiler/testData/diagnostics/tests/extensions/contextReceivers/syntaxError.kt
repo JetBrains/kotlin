@@ -3,6 +3,8 @@
 // FIR_IDENTICAL
 // LANGUAGE: +ContextReceivers
 
-context(
-<!SYNTAX!><!>fun foo() {
+context(<!SYNTAX!><!>
+fun foo() {
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration */

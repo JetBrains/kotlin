@@ -32,22 +32,10 @@ var K2JVMCompilerArguments.classpathAsList: List<File>
         classpath = value.joinToString(separator = File.pathSeparator, transform = { it.absolutePath })
     }
 
-val K2JVMCompilerArguments.isK1ForcedByKapt: Boolean
-    // coordinated with org.jetbrains.kotlin.cli.common.ArgumentsKt.switchToFallbackModeIfNecessary
-    get() {
-        val isK2 = languageVersion?.startsWith('2') != false
-        val isKaptUsed = pluginOptions?.any { it.startsWith("plugin:org.jetbrains.kotlin.kapt3") } == true
-        return isK2 && isKaptUsed && !useK2Kapt
-    }
-
 fun K2JVMCompilerArguments.disablePreciseJavaTrackingIfK2(usePreciseJavaTrackingByDefault: Boolean): Boolean {
     // TODO: This should be removed after implementing of fir-based java tracker (KT-57147).
     //  See org.jetbrains.kotlin.incremental.CompilerRunnerUtilsKt.makeJvmIncrementally
-    val languageVersion = if (isK1ForcedByKapt) {
-        LanguageVersion.KOTLIN_1_9
-    } else {
-        LanguageVersion.fromVersionString(languageVersion) ?: LanguageVersion.LATEST_STABLE
-    }
+    val languageVersion = LanguageVersion.fromVersionString(languageVersion) ?: LanguageVersion.LATEST_STABLE
     return !languageVersion.usesK2 && usePreciseJavaTrackingByDefault
 }
 
@@ -69,35 +57,19 @@ fun makeJvmIncrementally(
     val buildReporter = BuildReporter(icReporter = reporter, buildMetricsReporter = DoNothingBuildMetricsReporter)
 
     withIncrementalCompilation(args) {
-        val languageVersion = LanguageVersion.fromVersionString(args.languageVersion) ?: LanguageVersion.LATEST_STABLE
-        val useK2 = languageVersion.usesK2
+        val verifiedPreciseJavaTracking = args.disablePreciseJavaTrackingIfK2(usePreciseJavaTrackingByDefault = true)
 
-        val compiler =
-            if (useK2 && args.useFirIC && args.useFirLT /* TODO by @Ilya.Chernikov: move LT check into runner */) {
-                IncrementalFirJvmCompilerRunner(
-                    cachesDir,
-                    buildReporter,
-                    buildHistoryFile,
-                    outputDirs = null,
-                    EmptyModulesApiHistory,
-                    kotlinExtensions,
-                    ClasspathChanges.ClasspathSnapshotDisabled
-                )
-            } else {
-                val verifiedPreciseJavaTracking = args.disablePreciseJavaTrackingIfK2(usePreciseJavaTrackingByDefault = true)
-                IncrementalJvmCompilerRunner(
-                    cachesDir,
-                    buildReporter,
-                    // Use precise setting in case of non-Gradle build
-                    usePreciseJavaTracking = verifiedPreciseJavaTracking,
-                    buildHistoryFile = buildHistoryFile,
-                    outputDirs = null,
-                    modulesApiHistory = EmptyModulesApiHistory,
-                    kotlinSourceFilesExtensions = kotlinExtensions,
-                    classpathChanges = ClasspathChanges.ClasspathSnapshotDisabled
-                )
-            }
-        //TODO by @Ilya.Chernikov set properly
+        val compiler = BuildHistoryJvmICRunner(
+            cachesDir,
+            buildReporter,
+            buildHistoryFile = buildHistoryFile,
+            outputDirs = null,
+            modulesApiHistory = EmptyModulesApiHistory,
+            kotlinSourceFilesExtensions = kotlinExtensions,
+            icFeatures = IncrementalCompilationFeatures(
+                usePreciseJavaTracking = verifiedPreciseJavaTracking
+            ),
+        )
         compiler.compile(sourceFiles, args, messageCollector, changedFiles = ChangedFiles.DeterminableFiles.ToBeComputed)
     }
 }

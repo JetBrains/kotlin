@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // MODULE: library
 // FILE: test/A.java
@@ -26,3 +27,5 @@ package test
 
 fun foo3() = foo1().bar(strList)
 val foo4 = foo2.bar(strList)
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, flexibleType, functionDeclaration, javaProperty, propertyDeclaration */

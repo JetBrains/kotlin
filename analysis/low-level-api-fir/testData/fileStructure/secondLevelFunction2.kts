@@ -1,4 +1,4 @@
-/* RootScriptStructureElement */var x: Int = 0/* DeclarationStructureElement */
+/* RootStructureElement *//* RootScriptStructureElement */var x: Int = 0/* DeclarationStructureElement */
 
 if (true) {
     class LocalClass {
@@ -9,6 +9,6 @@ if (true) {
     val prop = LocalClass().foo()
     fun foo(y: Int) = y + 20
     x = foo(prop)
-}
+}/* DeclarationStructureElement */
 
-x
+x/* DeclarationStructureElement */

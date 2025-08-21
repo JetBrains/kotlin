@@ -16,3 +16,6 @@ class Owner<test> {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, functionDeclaration, inner, integerLiteral, localProperty,
+nullableType, objectDeclaration, propertyDeclaration, typeParameter */

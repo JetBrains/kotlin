@@ -32,3 +32,6 @@ fun interface F6 {
     fun getFunctionDelegate(x: Any?): Function<*>? = null
     fun invoke()
 }
+
+/* GENERATED_FIR_TAGS: funInterface, functionDeclaration, getter, interfaceDeclaration, nullableType,
+propertyDeclaration, propertyWithExtensionReceiver, starProjection */

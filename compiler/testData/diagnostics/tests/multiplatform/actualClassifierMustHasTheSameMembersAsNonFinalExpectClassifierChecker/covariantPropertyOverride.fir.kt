@@ -14,5 +14,8 @@ expect open class Foo : Base
 // FILE: jvm.kt
 
 actual open class Foo : Base() {
-    override val <!ACTUAL_WITHOUT_EXPECT!>foo<!>: String = ""
+    override val <!EXPECT_ACTUAL_INCOMPATIBLE_RETURN_TYPE!>foo<!>: String = ""
 }
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, functionDeclaration, override, propertyDeclaration,
+stringLiteral */

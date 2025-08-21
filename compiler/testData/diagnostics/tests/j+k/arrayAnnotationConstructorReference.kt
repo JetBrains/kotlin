@@ -14,3 +14,6 @@ import kotlin.reflect.*
 fun test() {
     val x: KFunction1<Array<out String>, Ann> = ::<!CALLABLE_REFERENCE_TO_ANNOTATION_CONSTRUCTOR!>Ann<!>
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, javaCallableReference, javaType, localProperty, outProjection,
+propertyDeclaration */

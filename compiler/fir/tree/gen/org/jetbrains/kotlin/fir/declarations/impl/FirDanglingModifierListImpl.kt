@@ -33,19 +33,24 @@ internal class FirDanglingModifierListImpl(
     override val attributes: FirDeclarationAttributes,
     override val diagnostic: ConeDiagnostic,
     override val symbol: FirDanglingModifierSymbol,
+    override var contextParameters: MutableOrEmptyList<FirValueParameter>,
 ) : FirDanglingModifierList() {
 
     init {
         symbol.bind(this)
         resolveState = resolvePhase.asResolveState()
+        @Suppress("SENSELESS_COMPARISON")
+        require(source != null || origin != FirDeclarationOrigin.Source) { "${this::class.simpleName} with Source origin was instantiated without a source element." }
     }
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         annotations.forEach { it.accept(visitor, data) }
+        contextParameters.forEach { it.accept(visitor, data) }
     }
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirDanglingModifierListImpl {
         transformAnnotations(transformer, data)
+        transformContextParameters(transformer, data)
         return this
     }
 
@@ -54,7 +59,16 @@ internal class FirDanglingModifierListImpl(
         return this
     }
 
+    override fun <D> transformContextParameters(transformer: FirTransformer<D>, data: D): FirDanglingModifierListImpl {
+        contextParameters.transformInplace(transformer, data)
+        return this
+    }
+
     override fun replaceAnnotations(newAnnotations: List<FirAnnotation>) {
         annotations = newAnnotations.toMutableOrEmpty()
+    }
+
+    override fun replaceContextParameters(newContextParameters: List<FirValueParameter>) {
+        contextParameters = newContextParameters.toMutableOrEmpty()
     }
 }

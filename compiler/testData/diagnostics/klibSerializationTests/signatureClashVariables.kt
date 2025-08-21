@@ -15,12 +15,12 @@ package com.example.klib.serialization.diagnostics
 val valueSeparateModules = 0
 private val privateValueSeparateFiles = 0
 
-<!CONFLICTING_KLIB_SIGNATURES_ERROR!><!CONFLICTING_KLIB_SIGNATURES_ERROR!>@Suppress("REDECLARATION") val valueSeparateFiles<!> = 0<!>
+@Suppress("REDECLARATION") <!CONFLICTING_KLIB_SIGNATURES_ERROR!><!CONFLICTING_KLIB_SIGNATURES_ERROR!>val valueSeparateFiles<!> = 0<!>
 
-<!CONFLICTING_KLIB_SIGNATURES_ERROR!>@Suppress("REDECLARATION") val myDelegated: Long by lazy { 0L }<!>
+@Suppress("REDECLARATION") <!CONFLICTING_KLIB_SIGNATURES_ERROR!>val myDelegated: Long by lazy { 0L }<!>
 
-<!CONFLICTING_KLIB_SIGNATURES_ERROR!>@Suppress("REDECLARATION")
-var Int.extensionValue: Int
+@Suppress("REDECLARATION")
+<!CONFLICTING_KLIB_SIGNATURES_ERROR!>var Int.extensionValue: Int
 <!CONFLICTING_KLIB_SIGNATURES_ERROR!>get() = 0<!>
 set(value) = TODO()<!>
 
@@ -29,26 +29,26 @@ package com.example.klib.serialization.diagnostics
 
 private val privateValueSeparateFiles = 0
 
-<!CONFLICTING_KLIB_SIGNATURES_ERROR!><!CONFLICTING_KLIB_SIGNATURES_ERROR!>@Suppress("REDECLARATION") val valueSeparateFiles<!> = 0<!>
+@Suppress("REDECLARATION") <!CONFLICTING_KLIB_SIGNATURES_ERROR!><!CONFLICTING_KLIB_SIGNATURES_ERROR!>val valueSeparateFiles<!> = 0<!>
 
-<!CONFLICTING_KLIB_SIGNATURES_ERROR!><!CONFLICTING_KLIB_SIGNATURES_ERROR!>@Suppress("REDECLARATION") val valueSingleFile: Int<!> = 0<!>
-<!CONFLICTING_KLIB_SIGNATURES_ERROR!><!CONFLICTING_KLIB_SIGNATURES_ERROR!>@Suppress("REDECLARATION") val valueSingleFile: String<!> = ""<!>
+@Suppress("REDECLARATION") <!CONFLICTING_KLIB_SIGNATURES_ERROR!><!CONFLICTING_KLIB_SIGNATURES_ERROR!>val valueSingleFile: Int<!> = 0<!>
+@Suppress("REDECLARATION") <!CONFLICTING_KLIB_SIGNATURES_ERROR!><!CONFLICTING_KLIB_SIGNATURES_ERROR!>val valueSingleFile: String<!> = ""<!>
 
-<!CONFLICTING_KLIB_SIGNATURES_ERROR!>@Suppress("REDECLARATION") val myDelegated: Int by lazy { 1 }<!>
+@Suppress("REDECLARATION") <!CONFLICTING_KLIB_SIGNATURES_ERROR!>val myDelegated: Int by lazy { 1 }<!>
 
-<!CONFLICTING_KLIB_SIGNATURES_ERROR!>@Suppress("REDECLARATION")
-val Int.extensionValue: Int
+@Suppress("REDECLARATION")
+<!CONFLICTING_KLIB_SIGNATURES_ERROR!>val Int.extensionValue: Int
 <!CONFLICTING_KLIB_SIGNATURES_ERROR!>get() = 0<!><!>
 
 class Container {
-    <!CONFLICTING_KLIB_SIGNATURES_ERROR!><!CONFLICTING_KLIB_SIGNATURES_ERROR!>@Suppress("REDECLARATION") val valueSameClass<!> = 0<!>
-    <!CONFLICTING_KLIB_SIGNATURES_ERROR!><!CONFLICTING_KLIB_SIGNATURES_ERROR!>@Suppress("REDECLARATION") val valueSameClass<!> = 0<!>
+    @Suppress("REDECLARATION") <!CONFLICTING_KLIB_SIGNATURES_ERROR!><!CONFLICTING_KLIB_SIGNATURES_ERROR!>val valueSameClass<!> = 0<!>
+    @Suppress("REDECLARATION") <!CONFLICTING_KLIB_SIGNATURES_ERROR!><!CONFLICTING_KLIB_SIGNATURES_ERROR!>val valueSameClass<!> = 0<!>
 
     companion object{
-        <!CONFLICTING_KLIB_SIGNATURES_ERROR!><!CONFLICTING_KLIB_SIGNATURES_ERROR!>@Suppress("REDECLARATION") val valueSameClassCompanion<!> = 0<!>
-        <!CONFLICTING_KLIB_SIGNATURES_ERROR!><!CONFLICTING_KLIB_SIGNATURES_ERROR!>@Suppress("REDECLARATION") val valueSameClassCompanion<!> = 0<!>
+        @Suppress("REDECLARATION") <!CONFLICTING_KLIB_SIGNATURES_ERROR!><!CONFLICTING_KLIB_SIGNATURES_ERROR!>val valueSameClassCompanion<!> = 0<!>
+        @Suppress("REDECLARATION") <!CONFLICTING_KLIB_SIGNATURES_ERROR!><!CONFLICTING_KLIB_SIGNATURES_ERROR!>val valueSameClassCompanion<!> = 0<!>
     }
 
-    <!CONFLICTING_KLIB_SIGNATURES_ERROR!>@Suppress("REDECLARATION") val String.valueSameClassExtension: String <!CONFLICTING_KLIB_SIGNATURES_ERROR!>get() = ""<!><!>
-    <!CONFLICTING_KLIB_SIGNATURES_ERROR!>@Suppress("REDECLARATION") val String.valueSameClassExtension: String <!CONFLICTING_KLIB_SIGNATURES_ERROR!>get() = ""<!><!>
+    @Suppress("REDECLARATION") <!CONFLICTING_KLIB_SIGNATURES_ERROR!>val String.valueSameClassExtension: String <!CONFLICTING_KLIB_SIGNATURES_ERROR!>get() = ""<!><!>
+    @Suppress("REDECLARATION") <!CONFLICTING_KLIB_SIGNATURES_ERROR!>val String.valueSameClassExtension: String <!CONFLICTING_KLIB_SIGNATURES_ERROR!>get() = ""<!><!>
 }

@@ -24,7 +24,7 @@ fun main(args: Array<String>) {
     System.setProperty("java.awt.headless", "true")
 
     generateTestGroupSuite(args) {
-        testGroup("core/descriptors.runtime/tests", "compiler/testData") {
+        testGroup("core/descriptors.runtime/tests-gen", "compiler/testData") {
             testClass<AbstractJvmRuntimeDescriptorLoaderTest> {
                 model("loadJava/compiledKotlin")
                 model("loadJava/compiledJava", extension = "java", excludeDirs = listOf("sam", "kotlinSignature/propagation"))

@@ -1,3 +1,4 @@
 expression: PARENTHESIZED
 text: (Companion)
 isUsedAsExpression: true
+isUsedAsResultOfLambda: false

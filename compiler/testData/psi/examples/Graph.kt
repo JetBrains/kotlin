@@ -1,3 +1,5 @@
+// COMPILATION_ERRORS
+
 class Vertex<V>(val data : V)
 
 class Edge<V, E>(val from : V, val data : E, val to : V)

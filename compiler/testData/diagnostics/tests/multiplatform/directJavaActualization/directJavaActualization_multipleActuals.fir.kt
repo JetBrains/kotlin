@@ -22,3 +22,5 @@ public class Foo {
 class <!ACTUAL_MISSING, CLASSIFIER_REDECLARATION!>Foo<!><T>(t: T) {
     fun <!ACTUAL_MISSING!>foo<!>() {}
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, expect, functionDeclaration, nullableType, primaryConstructor, typeParameter */

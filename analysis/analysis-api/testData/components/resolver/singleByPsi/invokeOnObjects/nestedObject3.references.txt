@@ -1,3 +1,0 @@
-KtNameReferenceExpression(125,128): 'Foo'
-  KtSimpleNameReference:
-    (in foo.bar.baz) object Foo

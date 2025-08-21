@@ -176,7 +176,7 @@ public final annotation class JvmNamed : kotlin/Annotation {
 
   // getter: uglyJvmName()Ljava/lang/String;
   public final val value: kotlin/String
-    public final /* non-default */ get
+    public final get
 
   // module name: test-module
 }

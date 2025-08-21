@@ -424,7 +424,7 @@ internal class StackLocalsManagerImpl(
 
             val objectHeader = structGep(type, stackSlot, 0, "objHeader")
             val typeInfo = codegen.typeInfoForAllocation(irClass)
-            setTypeInfoForLocalObject(runtime.objHeaderType, objectHeader, typeInfo)
+            setTypeInfoForStackObject(runtime.objHeaderType, objectHeader, typeInfo)
             val gcRootSetSlot = createRootSetSlot()
             StackLocal(null, irClass, stackSlot, objectHeader, gcRootSetSlot)
         }
@@ -452,7 +452,7 @@ internal class StackLocalsManagerImpl(
         }
     }
 
-    private val symbols = functionGenerationContext.context.ir.symbols
+    private val symbols = functionGenerationContext.context.symbols
     private val llvm = functionGenerationContext.llvm
 
     // TODO: find better place?
@@ -477,7 +477,7 @@ internal class StackLocalsManagerImpl(
             val arraySlot = LLVMBuildAlloca(builder, arrayType, "")!!
             // Set array size in ArrayHeader.
             val arrayHeaderSlot = structGep(arrayType, arraySlot, 0, "arrayHeader")
-            setTypeInfoForLocalObject(runtime.arrayHeaderType, arrayHeaderSlot, typeInfo)
+            setTypeInfoForStackObject(runtime.arrayHeaderType, arrayHeaderSlot, typeInfo)
             val sizeField = structGep(runtime.arrayHeaderType, arrayHeaderSlot, 1, "count_")
             store(count, sizeField)
 
@@ -504,7 +504,7 @@ internal class StackLocalsManagerImpl(
 
     private fun clean(stackLocal: StackLocal, refsOnly: Boolean) = with(functionGenerationContext) {
         if (stackLocal.isArray) {
-            if (stackLocal.irClass.symbol == context.ir.symbols.array) {
+            if (stackLocal.irClass.symbol == context.symbols.array) {
                 call(llvm.zeroArrayRefsFunction, listOf(stackLocal.objHeaderPtr))
             } else if (!refsOnly) {
                 val arrayType = localArrayType(stackLocal.irClass, stackLocal.arraySize!!)
@@ -541,9 +541,9 @@ internal class StackLocalsManagerImpl(
         }
     }
 
-    private fun setTypeInfoForLocalObject(headerType: LLVMTypeRef, header: LLVMValueRef, typeInfoPointer: LLVMValueRef) = with(functionGenerationContext) {
+    private fun setTypeInfoForStackObject(headerType: LLVMTypeRef, header: LLVMValueRef, typeInfoPointer: LLVMValueRef) = with(functionGenerationContext) {
         val typeInfo = structGep(headerType, header, 0, "typeInfoOrMeta_")
-        // Set tag OBJECT_TAG_PERMANENT_CONTAINER | OBJECT_TAG_NONTRIVIAL_CONTAINER.
+        // Set tag OBJECT_TAG_STACK.
         val typeInfoValue = intToPtr(or(ptrToInt(typeInfoPointer, codegen.intPtrType),
                 codegen.immThreeIntPtrType), kTypeInfoPtr)
         store(typeInfoValue, typeInfo)
@@ -904,11 +904,18 @@ internal abstract class FunctionGenerationContext(
         resultSlot: LLVMValueRef? = null
     ): LLVMValueRef {
         val typeInfo = codegen.typeInfoValue(irClass)
-        return if (lifetime == Lifetime.STACK) {
-            require(LLVMIsConstant(count) != 0) { "Expected a constant for the size of a stack-allocated array" }
-            stackLocalsManager.allocArray(irClass, count)
-        } else {
-            call(llvm.allocArrayFunction, listOf(typeInfo, count), lifetime, exceptionHandler, resultSlot = resultSlot)
+        return when (lifetime) {
+            is Lifetime.STACK_ARRAY -> stackLocalsManager.allocArray(irClass, llvm.int32(lifetime.size))
+            Lifetime.STACK -> {
+                require(irClass.symbol == context.irBuiltIns.stringClass) {
+                    "For stack arrays the STACK_ARRAY lifetime should be used, not STACK: ${irClass.render()}"
+                }
+                require(LLVMIsConstant(count) != 0) { "Expected a constant for the size of a stack-allocated string" }
+                stackLocalsManager.allocArray(irClass, count)
+            }
+            else -> {
+                call(llvm.allocArrayFunction, listOf(typeInfo, count), lifetime, exceptionHandler, resultSlot = resultSlot)
+            }
         }
     }
 
@@ -1166,7 +1173,7 @@ internal abstract class FunctionGenerationContext(
         val exceptionRawPtr = call(llvm.cxaBeginCatchFunction, listOf(exceptionRecord))
 
         // This will take care of ARC - need to be done in the catching scope, i.e. before __cxa_end_catch
-        val exception = call(context.ir.symbols.createForeignException.owner.llvmFunction,
+        val exception = call(context.symbols.createForeignException.owner.llvmFunction,
                 listOf(exceptionRawPtr),
                 Lifetime.GLOBAL, exceptionHandler)
 
@@ -1223,12 +1230,16 @@ internal abstract class FunctionGenerationContext(
         positionAtEnd(bbExit)
     }
 
-    internal fun debugLocation(startLocationInfo: LocationInfo, endLocation: LocationInfo?): DILocationRef? {
-        if (!context.shouldContainLocationDebugInfo()) return null
-        update(currentBlock, startLocationInfo, endLocation)
-        val debugLocation = codegen.generateLocationInfo(startLocationInfo)
-        currentPositionHolder.setBuilderDebugLocation(debugLocation)
-        return debugLocation
+    internal fun debugLocation(startLocationInfo: LocationInfo, endLocation: LocationInfo?) {
+        if (!context.shouldContainLocationDebugInfo()) return
+
+        // If there is no actual offset, use the previous one if it exists.
+        if (startLocationInfo.line != 0 || basicBlockToLastLocation[currentBlock] == null)
+            update(currentBlock, startLocationInfo, endLocation)
+        if (startLocationInfo.line != 0 || !currentPositionHolder.hasDebugLocation()) {
+            val debugLocation = codegen.generateLocationInfo(startLocationInfo)
+            currentPositionHolder.setBuilderDebugLocation(debugLocation)
+        }
     }
 
     fun indirectBr(address: LLVMValueRef, destinations: Collection<LLVMBasicBlockRef>): LLVMValueRef? {
@@ -1554,6 +1565,8 @@ internal abstract class FunctionGenerationContext(
             if (!context.shouldContainLocationDebugInfo()) return
             LLVMBuilderSetDebugLocation(builder, debugLocation)
         }
+
+        fun hasDebugLocation() = context.shouldContainLocationDebugInfo() && LLVMGetCurrentDebugLocation2(builder) != null
     }
 
     private var currentPositionHolder: PositionHolder = PositionHolder()

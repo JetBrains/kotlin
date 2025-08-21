@@ -83,6 +83,9 @@ object JvmConfigurationUpdater : ConfigurationUpdater<K2JVMCompilerArguments>() 
             configuration.freeArgsForScript += arguments.freeArgs
             configuration.expressionToEvaluate = arguments.expression
             configuration.defaultExtensionForScripts = arguments.defaultScriptExtension
+        } else {
+            configuration.replMode = arguments.repl
+            configuration.freeArgsForScript += arguments.freeArgs
         }
         // should be called after configuring jdk home from build file
         configuration.configureJdkClasspathRoots()
@@ -95,6 +98,7 @@ object JvmConfigurationUpdater : ConfigurationUpdater<K2JVMCompilerArguments>() 
         inlineConstTracker = services[InlineConstTracker::class.java]
         enumWhenTracker = services[EnumWhenTracker::class.java]
         importTracker = services[ImportTracker::class.java]
+        fileMappingTracker = services[ICFileMappingTracker::class.java]
         incrementalCompilationComponents = services[IncrementalCompilationComponents::class.java]
         putIfNotNull(ClassicFrontendSpecificJvmConfigurationKeys.JAVA_CLASSES_TRACKER, services[JavaClassesTracker::class.java])
     }

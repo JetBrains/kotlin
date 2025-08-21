@@ -17,3 +17,5 @@ public class FooImpl {
 // FILE: jvm.kt
 
 actual typealias Foo = FooImpl
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, functionDeclaration, javaType, typeAliasDeclaration */

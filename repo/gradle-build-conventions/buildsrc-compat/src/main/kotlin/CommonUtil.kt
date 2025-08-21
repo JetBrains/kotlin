@@ -11,6 +11,7 @@ import org.gradle.api.plugins.JavaPluginExtension
 import org.gradle.api.tasks.JavaExec
 import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.SourceSetOutput
+import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.bundling.AbstractArchiveTask
 import org.gradle.internal.os.OperatingSystem
 import org.gradle.kotlin.dsl.*
@@ -18,10 +19,9 @@ import proguard.gradle.ProGuardTask
 import java.io.File
 import java.util.*
 import java.util.concurrent.Callable
+import kotlin.properties.PropertyDelegateProvider
 
 inline fun <reified T : Task> Project.task(noinline configuration: T.() -> Unit) = tasks.registering(T::class, configuration)
-
-inline fun <reified T : Task> Project.eagerTask(noinline configuration: T.() -> Unit) = tasks.creating(T::class, configuration)
 
 fun Project.callGroovy(name: String, vararg args: Any?): Any? {
     return (property(name) as Closure<*>).call(*args)
@@ -57,14 +57,22 @@ var Project.javaHome: String?
         extra["javaHome"] = v
     }
 
-fun Project.generator(fqName: String, sourceSet: SourceSet? = null, configure: JavaExec.() -> Unit = {}) = smartJavaExec {
-    group = "Generate"
-    classpath = (sourceSet ?: testSourceSet).runtimeClasspath
-    mainClass.set(fqName)
-    workingDir = rootDir
-    systemProperty("line.separator", "\n")
-    systemProperty("idea.ignore.disabled.plugins", "true")
-    configure()
+fun Project.generator(
+    fqName: String,
+    sourceSet: SourceSet? = null,
+    configure: JavaExec.() -> Unit = {}
+) = PropertyDelegateProvider<Any?, TaskProvider<JavaExec>> { _, property ->
+    smartJavaExec(
+        name = property.name,
+        classpath = (sourceSet ?: testSourceSet).runtimeClasspath,
+        mainClass = fqName
+    ) {
+        group = "Generate"
+        workingDir = rootDir
+        systemProperty("line.separator", "\n")
+        systemProperty("idea.ignore.disabled.plugins", "true")
+        configure()
+    }
 }
 
 fun Project.getBooleanProperty(name: String): Boolean? = this.findProperty(name)?.let {
@@ -72,12 +80,6 @@ fun Project.getBooleanProperty(name: String): Boolean? = this.findProperty(name)
     if (v.isBlank()) true
     else v.toBoolean()
 }
-
-inline fun CopySourceSpec.from(crossinline filesProvider: () -> Any?): CopySourceSpec = from(Callable { filesProvider() })
-
-fun Project.javaPluginExtension(): JavaPluginExtension = extensions.getByType()
-
-fun Project.findJavaPluginExtension(): JavaPluginExtension? = extensions.findByType()
 
 fun JavaExec.pathRelativeToWorkingDir(file: File): String = file.relativeTo(workingDir).invariantSeparatorsPath
 
@@ -100,7 +102,3 @@ fun getMvnwCmd(): List<String> = when {
     OperatingSystem.current().isWindows -> listOf("cmd", "/c", "mvnw.cmd")
     else -> listOf("./mvnw")
 }
-
-fun String.capitalize(): String = capitalize(Locale.ROOT)
-
-fun String.capitalize(locale: Locale): String = replaceFirstChar { if (it.isLowerCase()) it.titlecase(locale) else it.toString() }

@@ -26,3 +26,6 @@ fun main() {
     J2 { <!NULL_FOR_NONNULL_TYPE, NULL_FOR_NONNULL_TYPE!>null<!> }
     J2 { <!TYPE_MISMATCH, TYPE_MISMATCH!>it?.length?.toString()<!> }
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, functionDeclaration, javaType, lambdaLiteral, nullableType, safeCall,
+stringLiteral */

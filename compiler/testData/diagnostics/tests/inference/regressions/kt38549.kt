@@ -17,3 +17,6 @@ class TestRepo : CrudRepository<Int, String>
 interface CrudRepository<T, K> {
     fun <S : T?> save(entity: S): S = TODO()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionalType, inline, interfaceDeclaration,
+lambdaLiteral, nullableType, reified, suspend, typeConstraint, typeParameter, typeWithExtension */

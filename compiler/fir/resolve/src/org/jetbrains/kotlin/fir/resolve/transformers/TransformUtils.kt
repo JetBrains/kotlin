@@ -9,11 +9,14 @@ import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.copyWithNewSourceKind
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.isSubstitutionOrIntersectionOverride
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
+import org.jetbrains.kotlin.fir.unwrapFakeOverrides
 
 internal fun FirValueParameter.transformVarargTypeToArrayType(session: FirSession) {
     if (isVararg) {
@@ -55,12 +58,19 @@ fun FirAnonymousFunction.transformInlineStatus(
     functionIsInline: Boolean,
     session: FirSession,
 ) {
-    val functionalKindOfParameter = parameter.returnTypeRef.coneType.functionTypeKind(session)
+    val containingFunction = parameter.containingDeclarationSymbol as? FirFunctionSymbol
+    val originalParameter = if (containingFunction?.isSubstitutionOrIntersectionOverride == true) {
+        containingFunction.unwrapFakeOverrides().valueParameterSymbols.firstOrNull { it.name == parameter.name }?.fir ?: parameter
+    } else {
+        parameter
+    }
+
+    val functionalKindOfParameter = originalParameter.returnTypeRef.coneType.functionTypeKind(session)
     val inlineStatus = when {
         functionalKindOfParameter == null -> InlineStatus.NoInline
         !functionalKindOfParameter.isInlineable -> InlineStatus.NoInline
-        parameter.isNoinline -> InlineStatus.NoInline
-        parameter.isCrossinline && functionIsInline -> InlineStatus.CrossInline
+        originalParameter.isNoinline -> InlineStatus.NoInline
+        originalParameter.isCrossinline && functionIsInline -> InlineStatus.CrossInline
         functionIsInline -> InlineStatus.Inline
         else -> InlineStatus.NoInline
     }

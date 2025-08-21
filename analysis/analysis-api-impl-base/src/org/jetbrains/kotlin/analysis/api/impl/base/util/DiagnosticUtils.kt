@@ -31,7 +31,7 @@ class KaNonBoundToPsiErrorDiagnostic(
 fun Severity.toAnalysisApiSeverity(): KaSeverity {
     return when (this) {
         ERROR -> KaSeverity.ERROR
-        WARNING -> KaSeverity.WARNING
+        WARNING, FIXED_WARNING -> KaSeverity.WARNING
         INFO -> KaSeverity.INFO
     }
 }

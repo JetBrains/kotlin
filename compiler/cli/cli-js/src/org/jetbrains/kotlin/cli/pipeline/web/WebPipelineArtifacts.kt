@@ -20,20 +20,25 @@ import java.io.File
 
 data class WebFrontendPipelineArtifact(
     val analyzedOutput: AnalyzedFirOutput,
-    val configuration: CompilerConfiguration,
-    val diagnosticCollector: BaseDiagnosticsCollector,
+    override val configuration: CompilerConfiguration,
+    override val diagnosticCollector: BaseDiagnosticsCollector,
     val moduleStructure: ModulesStructure,
+    val hasErrors: Boolean,
 ) : FrontendPipelineArtifact() {
     override val result: FirResult
         get() = FirResult(analyzedOutput.output)
+
+    override fun withNewDiagnosticCollectorImpl(newDiagnosticsCollector: BaseDiagnosticsCollector) =
+        copy(diagnosticCollector = newDiagnosticsCollector)
 }
 
 data class JsFir2IrPipelineArtifact(
     override val result: Fir2IrActualizedResult,
     val analyzedFirOutput: AnalyzedFirOutput,
     val configuration: CompilerConfiguration,
-    val diagnosticCollector: BaseDiagnosticsCollector,
+    override val diagnosticCollector: BaseDiagnosticsCollector,
     val moduleStructure: ModulesStructure,
+    val hasErrors: Boolean,
 ) : Fir2IrPipelineArtifact()
 
 data class JsSerializedKlibPipelineArtifact(

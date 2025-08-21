@@ -1,0 +1,62 @@
+{
+    "formatVersion": "1.1",
+    "component": {
+        "group": "foo",
+        "module": "direct",
+        "version": "1.0",
+        "attributes": {
+            "org.gradle.status": "release"
+        },
+        "requiresDependency": {
+            "group": "foo",
+            "module": "direct",
+            "version": {
+                "requires": "1.0"
+            }
+        }
+    },
+    "createdBy": {
+        "gradle": {
+            "version": "8.11.1"
+        }
+    },
+    "variants": [
+        {
+            "name": "metadataApiElements",
+            "attributes": {
+                "foo": "bar",
+                "bar": "baz"
+            },
+            "dependencies": [
+                {
+                    "group": "foo",
+                    "module": "transitive",
+                    "version": {
+                        "requires": "1.0"
+                    }
+                }
+            ],
+            "files": [
+                {
+                    "url": "bar-1.0-psm.jar",
+                    "name": "bar-1.0-psm.jar",
+                    "size": 0
+                }
+            ]
+        },
+        {
+            "name": "jvmApiElements-published",
+            "attributes": {
+                "jvm": "true"
+            },
+            "dependencies": [],
+            "files": [
+                {
+                    "url": "bar-1.0.jar",
+                    "name": "bar-1.0.jar",
+                    "size": 0
+                }
+            ]
+        }
+    ]
+}

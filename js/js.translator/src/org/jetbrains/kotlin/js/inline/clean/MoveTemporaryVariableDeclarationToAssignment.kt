@@ -6,7 +6,9 @@
 package org.jetbrains.kotlin.js.inline.clean
 
 import org.jetbrains.kotlin.js.backend.ast.*
+import org.jetbrains.kotlin.js.backend.ast.metadata.HasMetadata
 import org.jetbrains.kotlin.js.backend.ast.metadata.synthetic
+import org.jetbrains.kotlin.js.backend.ast.metadata.wasMovedFromItsDeclarationPlace
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
 import java.util.LinkedHashSet
 
@@ -38,7 +40,10 @@ class MoveTemporaryVariableDeclarationToAssignment(private val body: JsBlock) {
     private val varWithoutInitDeclarations = hashSetOf<JsName>()
     private val varBeforeAssignmentUsages = hashSetOf<JsName>()
 
-    private val removedVarDeclarations = hashSetOf<JsName>()
+    private val removedVarDeclarations = hashMapOf<JsName, JsVars.JsVar>()
+    private val HasMetadata.couldBeMovedToAssignment: Boolean
+        get() = synthetic || wasMovedFromItsDeclarationPlace
+
 
     fun apply(): Boolean {
         analyze()
@@ -66,14 +71,14 @@ class MoveTemporaryVariableDeclarationToAssignment(private val body: JsBlock) {
             }
 
             override fun visit(x: JsVars.JsVar) {
-                if (x.initExpression == null && x.synthetic) {
+                if (x.initExpression == null && x.couldBeMovedToAssignment) {
                     varWithoutInitDeclarations += x.name
                 }
                 super.visit(x)
             }
 
             override fun visitVars(x: JsVars) {
-                if (x.synthetic) {
+                if (x.couldBeMovedToAssignment) {
                     for (variable in x) {
                         if (variable.initExpression == null) {
                             varWithoutInitDeclarations += variable.name
@@ -164,7 +169,7 @@ class MoveTemporaryVariableDeclarationToAssignment(private val body: JsBlock) {
 
             override fun endVisit(x: JsVars.JsVar, ctx: JsContext<*>) {
                 if (canRemoveDeclarationWithoutInit(x.name)) {
-                    removedVarDeclarations += x.name
+                    removedVarDeclarations[x.name] = x
                     ctx.removeMe()
                     hasChanges = true
                 } else {
@@ -185,9 +190,13 @@ class MoveTemporaryVariableDeclarationToAssignment(private val body: JsBlock) {
                 val assignment = JsAstUtils.decomposeAssignmentToVariable(x.expression)
                 if (assignment != null) {
                     val (name, initExpr) = assignment
-                    if (removedVarDeclarations.remove(name)) {
-                        val varDeclarationWithInit = JsVars.JsVar(name, initExpr).apply { synthetic = true }
-                        val vars = JsVars(varDeclarationWithInit).apply { synthetic = true }
+                    val removedVar = removedVarDeclarations.remove(name)
+                    if (removedVar != null) {
+                        val varDeclarationWithInit = JsVars.JsVar(name, initExpr).apply {
+                            synthetic = removedVar.synthetic
+                            source = x.expression.source
+                        }
+                        val vars = JsVars(varDeclarationWithInit).apply { synthetic = removedVar.synthetic }
                         ctx.replaceMe(vars)
                     }
                     accept(initExpr)

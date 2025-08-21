@@ -7,3 +7,5 @@ class Foo {
         bar = ""
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, init, lateinit, propertyDeclaration, stringLiteral */

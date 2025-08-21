@@ -32,3 +32,6 @@ fun main() {
         val x: StringBuilder = get(0)
     }
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, functionDeclaration, integerLiteral, interfaceDeclaration,
+lambdaLiteral, localProperty, override, propertyDeclaration, stringLiteral, thisExpression */

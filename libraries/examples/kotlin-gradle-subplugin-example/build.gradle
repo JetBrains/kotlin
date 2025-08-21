@@ -17,15 +17,12 @@ dependencies {
     // Use this dependency instead when building apart from the other modules:
     // compile "org.jetbrains.kotlin:kotlin-gradle-plugin-api:$kotlin_version"
 
-    compileOnly RepoDependencies.kotlinStdlib(project)
-    compileOnly project(':compiler')
-    compileOnly project(':compiler:plugin-api')
-    compileOnly project(':compiler:cli-common')
-    compileOnly project(':compiler:cli')
-    
-    compileOnly gradleApi()
+    // kotlin-for-gradle-plugins-compilation
+    String btaBootstrapVersion = libs.versions.kotlin.for.gradle.plugins.compilation.get()
+    compileOnly("org.jetbrains.kotlin:kotlin-compiler-embeddable:$btaBootstrapVersion")
+    compileOnly("org.jetbrains.kotlin:kotlin-stdlib:$btaBootstrapVersion")
 
-    compileOnly project(':dependencies:intellij-core')
+    compileOnly gradleApi()
 }
 
 GradleCommonKt.configureCommonPublicationSettingsForGradle(project, false, false)
@@ -49,12 +46,12 @@ def shadowJarTask = EmbeddableKt.embeddableCompilerDummyForDependenciesRewriting
     "${EmbeddableKt.EMBEDDABLE_COMPILER_TASK_NAME}${sourceSet.jarTaskName.capitalize()}"
 ) {
     def emptyClassifier = provider { "" }
-    RepoArtifacts.setupPublicJar(
+    SetupPublicJar.setupPublicJar(
         it,
         jarTask.flatMap { it.archiveBaseName },
         jarTask.flatMap { emptyClassifier }
     )
-    RepoArtifacts.addEmbeddedRuntime(it)
+    AddEmbeddedRuntime.addEmbeddedRuntime(it)
     it.from(sourceSet.output)
 
     // When Gradle traverses the inputs, reject the shaded compiler JAR,

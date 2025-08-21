@@ -10,9 +10,9 @@ fun noCoercionLastExpressionUsedAsReturnArgument() {
 }
 
 fun noCoercionBlockHasExplicitType() {
-    val b: () -> Int = <!INITIALIZER_TYPE_MISMATCH!>{
-        if (true) 42
-    }<!>
+    val b: () -> Int = {
+        <!RETURN_TYPE_MISMATCH!>if (true) 42<!>
+    }
 }
 
 fun noCoercionBlockHasExplicitReturn() {
@@ -24,3 +24,7 @@ fun noCoercionBlockHasExplicitReturn() {
 }
 
 fun noCoercionInExpressionBody(): Unit = <!RETURN_TYPE_MISMATCH!>"hello"<!>
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType, ifExpression,
+infix, integerLiteral, lambdaLiteral, localProperty, nullableType, propertyDeclaration, stringLiteral, typeParameter,
+typeWithExtension */

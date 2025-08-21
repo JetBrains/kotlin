@@ -1,3 +1,5 @@
+// COMPILATION_ERRORS
+
 fun f1(t : T) : X = something(t)
 
 val f1 = {t : T -> something(t)}

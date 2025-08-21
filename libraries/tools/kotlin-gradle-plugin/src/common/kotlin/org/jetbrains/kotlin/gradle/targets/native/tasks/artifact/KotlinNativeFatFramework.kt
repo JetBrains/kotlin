@@ -2,6 +2,7 @@
  * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
+@file:Suppress("DEPRECATION")
 
 package org.jetbrains.kotlin.gradle.targets.native.tasks.artifact
 
@@ -12,7 +13,6 @@ import org.gradle.api.provider.Provider
 import org.gradle.language.base.plugins.LifecycleBasePlugin
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.BITCODE_EMBEDDING_DEPRECATION_MESSAGE
-import org.jetbrains.kotlin.gradle.plugin.mpp.BitcodeEmbeddingMode
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeOutputKind
 import org.jetbrains.kotlin.gradle.tasks.FatFrameworkTask
@@ -31,8 +31,9 @@ abstract class KotlinNativeFatFrameworkConfigImpl @Inject constructor(artifactNa
         this.targets = targets.toSet()
     }
 
-    @Deprecated(BITCODE_EMBEDDING_DEPRECATION_MESSAGE)
-    override var embedBitcode: BitcodeEmbeddingMode? = null
+    @Suppress("DEPRECATION_ERROR")
+    @Deprecated(BITCODE_EMBEDDING_DEPRECATION_MESSAGE, level = DeprecationLevel.ERROR)
+    override var embedBitcode: org.jetbrains.kotlin.gradle.plugin.mpp.BitcodeEmbeddingMode? = null
 
     override fun validate() {
         super.validate()
@@ -63,20 +64,25 @@ abstract class KotlinNativeFatFrameworkConfigImpl @Inject constructor(artifactNa
     }
 }
 
+@Deprecated(KotlinArtifactsExtension.KOTLIN_NATIVE_ARTIFACTS_DEPRECATION)
 class KotlinNativeFatFrameworkImpl(
     override val artifactName: String,
     override val modules: Set<Any>,
     override val modes: Set<NativeBuildType>,
     override val isStatic: Boolean,
     override val linkerOptions: List<String>,
-    @Suppress("DEPRECATION")
-    @Deprecated("Please migrate to toolOptionsConfigure DSL. More details are here: https://kotl.in/u1r8ln")
+    @Suppress("DEPRECATION_ERROR")
+    @Deprecated(
+        message = "Please migrate to toolOptionsConfigure DSL. More details are here: https://kotl.in/u1r8ln",
+        level = DeprecationLevel.ERROR,
+    )
     override val kotlinOptionsFn: KotlinCommonToolOptions.() -> Unit,
     override val toolOptionsConfigure: KotlinCommonCompilerToolOptions.() -> Unit,
     override val binaryOptions: Map<String, String>,
     override val targets: Set<KonanTarget>,
-    @Deprecated(BITCODE_EMBEDDING_DEPRECATION_MESSAGE)
-    override val embedBitcode: BitcodeEmbeddingMode? = null,
+    @Suppress("DEPRECATION_ERROR")
+    @Deprecated(BITCODE_EMBEDDING_DEPRECATION_MESSAGE, level = DeprecationLevel.ERROR)
+    override val embedBitcode: org.jetbrains.kotlin.gradle.plugin.mpp.BitcodeEmbeddingMode? = null,
     extensions: ExtensionAware
 ) : KotlinNativeFatFramework, ExtensionAware by extensions {
     override fun getName() = lowerCamelCaseName(artifactName, "FatFramework")

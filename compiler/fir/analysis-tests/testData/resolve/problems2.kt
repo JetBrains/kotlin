@@ -29,3 +29,7 @@ val KonanTarget.presetName
 // Substitution for field declared in Java super-type does not work (KotlinStringLiteralTextEscaper.myHost)
 // Super is not resolved in anonymous object
 // TypeParameterDescriptor.name is not resolved
+
+/* GENERATED_FIR_TAGS: classDeclaration, data, functionDeclaration, getter, integerLiteral, interfaceDeclaration,
+nestedClass, nullableType, primaryConstructor, propertyDeclaration, propertyWithExtensionReceiver, stringLiteral,
+thisExpression, typeParameter */

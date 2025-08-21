@@ -20,25 +20,29 @@ KaKotlinPropertySymbol:
       typeArguments: []
       type: kotlin/Int
     visibility: PRIVATE
+    getDispatchReceiver(): KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: Abc
     getContainingFileSymbol: KaFileSymbol(dataClass.kt)
     getContainingJvmClassName: Abc
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
   callableId: /Abc.firstProperty
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
     annotations: []
     callableId: null
     compilerVisibility: Public
     contextReceivers: []
-    hasBody: false
     hasStableParameterNames: true
     isActual: false
-    isDefault: true
     isExpect: false
     isExtension: false
     isInline: false
+    isNotDefault: false
     isOverride: false
     location: PROPERTY
     modality: FINAL
@@ -97,6 +101,7 @@ KaKotlinPropertySymbol:
   javaGetterName: getFirstProperty
   javaSetterName: null
   setterDeprecationStatus: null
+  isInline: false
 
 KaKotlinPropertySymbol:
   annotations: []
@@ -120,25 +125,29 @@ KaKotlinPropertySymbol:
       typeArguments: []
       type: kotlin/Double
     visibility: PRIVATE
+    getDispatchReceiver(): KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: Abc
     getContainingFileSymbol: KaFileSymbol(dataClass.kt)
     getContainingJvmClassName: Abc
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
   callableId: /Abc.secondProperty
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
     annotations: []
     callableId: null
     compilerVisibility: Public
     contextReceivers: []
-    hasBody: false
     hasStableParameterNames: true
     isActual: false
-    isDefault: true
     isExpect: false
     isExtension: false
     isInline: false
+    isNotDefault: false
     isOverride: false
     location: PROPERTY
     modality: FINAL
@@ -197,6 +206,7 @@ KaKotlinPropertySymbol:
   javaGetterName: getSecondProperty
   javaSetterName: null
   setterDeprecationStatus: null
+  isInline: false
 
 KaKotlinPropertySymbol:
   annotations: []
@@ -220,25 +230,29 @@ KaKotlinPropertySymbol:
       typeArguments: []
       type: kotlin/String
     visibility: PRIVATE
+    getDispatchReceiver(): KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: Abc
     getContainingFileSymbol: KaFileSymbol(dataClass.kt)
     getContainingJvmClassName: Abc
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
   callableId: /Abc.thirdProperty
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
     annotations: []
     callableId: null
     compilerVisibility: Public
     contextReceivers: []
-    hasBody: false
     hasStableParameterNames: true
     isActual: false
-    isDefault: true
     isExpect: false
     isExtension: false
     isInline: false
+    isNotDefault: false
     isOverride: false
     location: PROPERTY
     modality: FINAL
@@ -297,11 +311,13 @@ KaKotlinPropertySymbol:
   javaGetterName: getThirdProperty
   javaSetterName: null
   setterDeprecationStatus: null
+  isInline: false
 
 KaNamedFunctionSymbol:
   annotations: []
   callableId: /Abc.check
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -361,25 +377,29 @@ KaKotlinPropertySymbol:
       typeArguments: []
       type: kotlin/Long
     visibility: PRIVATE
+    getDispatchReceiver(): KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: Abc
     getContainingFileSymbol: KaFileSymbol(dataClass.kt)
     getContainingJvmClassName: Abc
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
   callableId: /Abc.bodyProperty
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
     annotations: []
     callableId: null
     compilerVisibility: Public
     contextReceivers: []
-    hasBody: true
     hasStableParameterNames: true
     isActual: false
-    isDefault: false
     isExpect: false
     isExtension: false
     isInline: false
+    isNotDefault: true
     isOverride: false
     location: PROPERTY
     modality: FINAL
@@ -480,11 +500,13 @@ KaKotlinPropertySymbol:
   javaGetterName: getBodyProperty
   javaSetterName: null
   setterDeprecationStatus: null
+  isInline: false
 
 KaNamedFunctionSymbol:
   annotations: []
   callableId: /Abc.component1
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -526,6 +548,7 @@ KaNamedFunctionSymbol:
   annotations: []
   callableId: /Abc.component2
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -567,6 +590,7 @@ KaNamedFunctionSymbol:
   annotations: []
   callableId: /Abc.component3
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -608,6 +632,7 @@ KaNamedFunctionSymbol:
   annotations: []
   callableId: /Abc.copy
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -737,6 +762,7 @@ KaNamedFunctionSymbol:
   annotations: []
   callableId: /Abc.equals
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -808,6 +834,7 @@ KaNamedFunctionSymbol:
   annotations: []
   callableId: /Abc.hashCode
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -849,6 +876,7 @@ KaNamedFunctionSymbol:
   annotations: []
   callableId: /Abc.toString
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -934,25 +962,29 @@ KaConstructorSymbol:
             typeArguments: []
             type: kotlin/Int
           visibility: PRIVATE
+          getDispatchReceiver(): KaUsualClassType:
+            annotations: []
+            typeArguments: []
+            type: Abc
           getContainingFileSymbol: KaFileSymbol(dataClass.kt)
           getContainingJvmClassName: Abc
           getContainingModule: KaSourceModule "Sources of main"
           deprecationStatus: null
         callableId: /Abc.firstProperty
         compilerVisibility: Public
+        contextParameters: []
         contextReceivers: []
         getter: KaPropertyGetterSymbol:
           annotations: []
           callableId: null
           compilerVisibility: Public
           contextReceivers: []
-          hasBody: false
           hasStableParameterNames: true
           isActual: false
-          isDefault: true
           isExpect: false
           isExtension: false
           isInline: false
+          isNotDefault: false
           isOverride: false
           location: PROPERTY
           modality: FINAL
@@ -1011,6 +1043,7 @@ KaConstructorSymbol:
         javaGetterName: getFirstProperty
         javaSetterName: null
         setterDeprecationStatus: null
+        isInline: false
       hasDefaultValue: false
       isActual: false
       isCrossinline: false
@@ -1061,25 +1094,29 @@ KaConstructorSymbol:
             typeArguments: []
             type: kotlin/Double
           visibility: PRIVATE
+          getDispatchReceiver(): KaUsualClassType:
+            annotations: []
+            typeArguments: []
+            type: Abc
           getContainingFileSymbol: KaFileSymbol(dataClass.kt)
           getContainingJvmClassName: Abc
           getContainingModule: KaSourceModule "Sources of main"
           deprecationStatus: null
         callableId: /Abc.secondProperty
         compilerVisibility: Public
+        contextParameters: []
         contextReceivers: []
         getter: KaPropertyGetterSymbol:
           annotations: []
           callableId: null
           compilerVisibility: Public
           contextReceivers: []
-          hasBody: false
           hasStableParameterNames: true
           isActual: false
-          isDefault: true
           isExpect: false
           isExtension: false
           isInline: false
+          isNotDefault: false
           isOverride: false
           location: PROPERTY
           modality: FINAL
@@ -1138,6 +1175,7 @@ KaConstructorSymbol:
         javaGetterName: getSecondProperty
         javaSetterName: null
         setterDeprecationStatus: null
+        isInline: false
       hasDefaultValue: false
       isActual: false
       isCrossinline: false
@@ -1188,25 +1226,29 @@ KaConstructorSymbol:
             typeArguments: []
             type: kotlin/String
           visibility: PRIVATE
+          getDispatchReceiver(): KaUsualClassType:
+            annotations: []
+            typeArguments: []
+            type: Abc
           getContainingFileSymbol: KaFileSymbol(dataClass.kt)
           getContainingJvmClassName: Abc
           getContainingModule: KaSourceModule "Sources of main"
           deprecationStatus: null
         callableId: /Abc.thirdProperty
         compilerVisibility: Public
+        contextParameters: []
         contextReceivers: []
         getter: KaPropertyGetterSymbol:
           annotations: []
           callableId: null
           compilerVisibility: Public
           contextReceivers: []
-          hasBody: false
           hasStableParameterNames: true
           isActual: false
-          isDefault: true
           isExpect: false
           isExtension: false
           isInline: false
+          isNotDefault: false
           isOverride: false
           location: PROPERTY
           modality: FINAL
@@ -1265,6 +1307,7 @@ KaConstructorSymbol:
         javaGetterName: getThirdProperty
         javaSetterName: null
         setterDeprecationStatus: null
+        isInline: false
       hasDefaultValue: false
       isActual: false
       isCrossinline: false

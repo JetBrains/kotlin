@@ -19,3 +19,5 @@ fun test() {
 fun <Foo> test2(f: Foo) {
     a.acceptFoo(<!ARGUMENT_TYPE_MISMATCH!>f<!>)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, nullableType, typeParameter */

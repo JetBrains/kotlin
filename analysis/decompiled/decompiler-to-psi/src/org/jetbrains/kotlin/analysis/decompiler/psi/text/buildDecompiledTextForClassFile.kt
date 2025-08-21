@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.analysis.decompiler.stub.file.ClsClassFinder.findMul
 import org.jetbrains.kotlin.analysis.decompiler.stub.file.ClsKotlinBinaryClassCache
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
-import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.types.asFlexibleType
 import org.jetbrains.kotlin.types.error.ErrorType
@@ -31,7 +30,7 @@ fun buildDecompiledTextForClassFile(
     val classId = classHeader.classId
 
     if (!classHeader.metadataVersion.isCompatibleWithCurrentCompilerVersion()) {
-        return createIncompatibleAbiVersionDecompiledText(MetadataVersion.INSTANCE, classHeader.metadataVersion)
+        return DecompiledText(createIncompatibleMetadataVersionDecompiledText(classHeader.metadataVersion))
     }
 
     fun buildText(declarations: List<DeclarationDescriptor>) = buildDecompiledText(

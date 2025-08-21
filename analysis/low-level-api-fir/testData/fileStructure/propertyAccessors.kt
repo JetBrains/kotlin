@@ -1,4 +1,4 @@
-var x: Int = 10/* DeclarationStructureElement */
+/* RootStructureElement */var x: Int = 10/* DeclarationStructureElement */
     get() = field
     set(value) {
         field = value

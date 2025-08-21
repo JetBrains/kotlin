@@ -13,3 +13,6 @@ fun list(start: SomeObject) {
         e = <!DEBUG_INFO_SMARTCAST!>e<!>.next()
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, data, equalityExpression, functionDeclaration, localProperty,
+nullableType, primaryConstructor, propertyDeclaration, smartcast, whileLoop */

@@ -63,3 +63,7 @@ internal class TowerDataElementsForName4() {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, classReference, forLoop, integerLiteral, lambdaLiteral, localClass,
+localProperty, nullableType, primaryConstructor, propertyDeclaration, propertyDelegate, starProjection, stringLiteral,
+thisExpression */

@@ -20,12 +20,12 @@ object ImplicitIntegerCoercionModuleCapability : FirModuleCapability() {
 private val implicitIntegerCoercionAnnotationClassId =
     ClassId(StandardNames.KOTLIN_INTERNAL_FQ_NAME, Name.identifier("ImplicitIntegerCoercion"))
 
-val FirCallableSymbol<*>.isMarkedWithImplicitIntegerCoercion
+val FirCallableSymbol<*>.isMarkedWithImplicitIntegerCoercion: Boolean
     get() =
         fir.moduleData.capabilities.contains(ImplicitIntegerCoercionModuleCapability) ||
                 resolvedAnnotationClassIds.any { it == implicitIntegerCoercionAnnotationClassId }
 
-val FirCallableDeclaration.isMarkedWithImplicitIntegerCoercion
+val FirCallableDeclaration.isMarkedWithImplicitIntegerCoercion: Boolean
     get() =
         moduleData.capabilities.contains(ImplicitIntegerCoercionModuleCapability) ||
                 symbol.resolvedAnnotationClassIds.any { it == implicitIntegerCoercionAnnotationClassId }

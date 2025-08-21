@@ -18,3 +18,5 @@ actual class Foo : Base() {
     <!ACTUAL_WITHOUT_EXPECT!>public<!> actual override fun foo() {
     }
 }
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, functionDeclaration, override */

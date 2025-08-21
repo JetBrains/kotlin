@@ -4,6 +4,7 @@ KtNameReferenceExpression(32,35): 'foo'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -11,6 +12,7 @@ KtNameReferenceExpression(32,35): 'foo'
           returnType = kotlin.Unit
           symbol = /foo(): kotlin.Unit
           valueParameters = []
+          contextParameters = []
           callableId = /foo
       typeArgumentsMapping = {}
     isInBestCandidates = true

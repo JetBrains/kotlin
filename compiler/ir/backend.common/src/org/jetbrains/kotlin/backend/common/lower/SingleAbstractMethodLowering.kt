@@ -172,9 +172,9 @@ abstract class SingleAbstractMethodLowering(val context: CommonBackendContext) :
         //       about type parameters in `visitTypeOperator`.
         val wrappedFunctionClass =
             if (originalSuperMethod.isSuspend)
-                context.ir.symbols.suspendFunctionN(originalSuperMethod.nonDispatchParameters.size).owner
+                context.symbols.suspendFunctionN(originalSuperMethod.nonDispatchParameters.size).owner
             else
-                context.ir.symbols.functionN(originalSuperMethod.nonDispatchParameters.size).owner
+                context.symbols.functionN(originalSuperMethod.nonDispatchParameters.size).owner
         val wrappedFunctionType = getWrappedFunctionType(wrappedFunctionClass)
 
         val subclass = context.irFactory.buildClass {
@@ -247,10 +247,10 @@ abstract class SingleAbstractMethodLowering(val context: CommonBackendContext) :
 
         subclass.addFakeOverrides(
             context.typeSystem,
-            // Built function overrides originalSuperMethod, while, if parent class is already lowered, it would
+            // Built function overrides the originalSuperMethod, while, if the parent class is already lowered, it would
             // transformedSuperMethod in its declaration list. We need not fake override in that case.
-            // Later lowerings will fix it and replace function with one overriding transformedSuperMethod.
-            ignoredParentSymbols = listOf(transformedSuperMethod.symbol)
+            // Later lowerings will fix it and replace the function with one overriding transformedSuperMethod.
+            mapOf(superClass to (superClass.declarationsAtFunctionReferenceLowering ?: superClass.declarations.filter { it !== transformedSuperMethod }))
         )
 
         postprocessCreatedObjectProxy(subclass)
@@ -265,7 +265,7 @@ abstract class SingleAbstractMethodLowering(val context: CommonBackendContext) :
 
     private fun getAdditionalSupertypes(supertype: IrType) =
         if (supertype.needEqualsHashCodeMethods)
-            listOf(context.ir.symbols.functionAdapter.typeWith())
+            listOf(context.symbols.functionAdapter.typeWith())
         else emptyList()
 }
 
@@ -286,7 +286,7 @@ class SamEqualsHashCodeMethodsGenerator(
     private val samSuperType: IrType,
     private val obtainFunctionDelegate: IrBuilderWithScope.(receiver: IrExpression) -> IrExpression,
 ) {
-    private val functionAdapterClass = context.ir.symbols.functionAdapter.owner
+    private val functionAdapterClass = context.symbols.functionAdapter.owner
 
     private val builtIns: IrBuiltIns get() = context.irBuiltIns
     private val getFunctionDelegate = functionAdapterClass.functions.single { it.name.asString() == "getFunctionDelegate" }

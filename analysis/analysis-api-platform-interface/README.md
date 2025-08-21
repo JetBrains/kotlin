@@ -107,7 +107,7 @@ The platform interface has the following important subpackages:
   for static code (used by Standalone) and [`KotlinReadActionConfinementLifetimeToken`](src/org/jetbrains/kotlin/analysis/api/platform/lifetime/KotlinReadActionConfinementLifetimeToken.kt) 
   for modifiable code (used by IntelliJ).
 - `modification`: Message topics and services for publishing modification events. See 
-  [`KotlinModificationTopics`](src/org/jetbrains/kotlin/analysis/api/platform/modification/KotlinModificationTopics.kt).
+  [`KotlinModificationEvent`](src/org/jetbrains/kotlin/analysis/api/platform/modification/KotlinModificationEvent.kt).
 - `packages`: Platform components which provide information about packages, see "information about the code" above.
 - `permissions`: Services for permission handling. [`KaAnalysisPermissionChecker`](src/org/jetbrains/kotlin/analysis/api/platform/permissions/KaAnalysisPermissionChecker.kt)
   can be used by lifetime tokens to implement `isAccessible`, but is also used internally to check permissions when 

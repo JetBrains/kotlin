@@ -5,6 +5,8 @@
 
 package kotlin.random
 
+import kotlin.internal.ReadObjectParameterType
+import kotlin.internal.throwReadObjectNotSupported
 import kotlin.math.nextDown
 
 /**
@@ -218,6 +220,7 @@ public abstract class Random {
      *
      * @sample samples.random.Randoms.nextBytes
      */
+    @IgnorableReturnValue
     public open fun nextBytes(array: ByteArray, fromIndex: Int = 0, toIndex: Int = array.size): ByteArray {
         require(fromIndex in 0..array.size && toIndex in 0..array.size) { "fromIndex ($fromIndex) or toIndex ($toIndex) are out of range: 0..${array.size}." }
         require(fromIndex <= toIndex) { "fromIndex ($fromIndex) must be not greater than toIndex ($toIndex)." }
@@ -250,6 +253,7 @@ public abstract class Random {
      *
      * @sample samples.random.Randoms.nextBytes
      */
+    @IgnorableReturnValue
     public open fun nextBytes(array: ByteArray): ByteArray = nextBytes(array, 0, array.size)
 
     /**
@@ -278,6 +282,8 @@ public abstract class Random {
 
         private fun writeReplace(): Any = Serialized
 
+        private fun readObject(input: ReadObjectParameterType): Unit = throwReadObjectNotSupported()
+
         override fun nextBits(bitCount: Int): Int = defaultRandom.nextBits(bitCount)
         override fun nextInt(): Int = defaultRandom.nextInt()
         override fun nextInt(until: Int): Int = defaultRandom.nextInt(until)
@@ -295,6 +301,7 @@ public abstract class Random {
 
         override fun nextFloat(): Float = defaultRandom.nextFloat()
 
+        @IgnorableReturnValue
         override fun nextBytes(array: ByteArray): ByteArray = defaultRandom.nextBytes(array)
         override fun nextBytes(size: Int): ByteArray = defaultRandom.nextBytes(size)
         override fun nextBytes(array: ByteArray, fromIndex: Int, toIndex: Int): ByteArray =

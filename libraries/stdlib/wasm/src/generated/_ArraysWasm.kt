@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -20,7 +20,7 @@ import kotlin.ranges.reversed
  */
 @kotlin.internal.InlineOnly
 public actual inline fun <T> Array<out T>.elementAt(index: Int): T {
-    return get(index)
+    return elementAtOrElse(index) { throw IndexOutOfBoundsException("index: $index, size: $size}") }
 }
 
 /**
@@ -30,7 +30,7 @@ public actual inline fun <T> Array<out T>.elementAt(index: Int): T {
  */
 @kotlin.internal.InlineOnly
 public actual inline fun ByteArray.elementAt(index: Int): Byte {
-    return get(index)
+    return elementAtOrElse(index) { throw IndexOutOfBoundsException("index: $index, size: $size}") }
 }
 
 /**
@@ -40,7 +40,7 @@ public actual inline fun ByteArray.elementAt(index: Int): Byte {
  */
 @kotlin.internal.InlineOnly
 public actual inline fun ShortArray.elementAt(index: Int): Short {
-    return get(index)
+    return elementAtOrElse(index) { throw IndexOutOfBoundsException("index: $index, size: $size}") }
 }
 
 /**
@@ -50,7 +50,7 @@ public actual inline fun ShortArray.elementAt(index: Int): Short {
  */
 @kotlin.internal.InlineOnly
 public actual inline fun IntArray.elementAt(index: Int): Int {
-    return get(index)
+    return elementAtOrElse(index) { throw IndexOutOfBoundsException("index: $index, size: $size}") }
 }
 
 /**
@@ -60,7 +60,7 @@ public actual inline fun IntArray.elementAt(index: Int): Int {
  */
 @kotlin.internal.InlineOnly
 public actual inline fun LongArray.elementAt(index: Int): Long {
-    return get(index)
+    return elementAtOrElse(index) { throw IndexOutOfBoundsException("index: $index, size: $size}") }
 }
 
 /**
@@ -70,7 +70,7 @@ public actual inline fun LongArray.elementAt(index: Int): Long {
  */
 @kotlin.internal.InlineOnly
 public actual inline fun FloatArray.elementAt(index: Int): Float {
-    return get(index)
+    return elementAtOrElse(index) { throw IndexOutOfBoundsException("index: $index, size: $size}") }
 }
 
 /**
@@ -80,7 +80,7 @@ public actual inline fun FloatArray.elementAt(index: Int): Float {
  */
 @kotlin.internal.InlineOnly
 public actual inline fun DoubleArray.elementAt(index: Int): Double {
-    return get(index)
+    return elementAtOrElse(index) { throw IndexOutOfBoundsException("index: $index, size: $size}") }
 }
 
 /**
@@ -90,7 +90,7 @@ public actual inline fun DoubleArray.elementAt(index: Int): Double {
  */
 @kotlin.internal.InlineOnly
 public actual inline fun BooleanArray.elementAt(index: Int): Boolean {
-    return get(index)
+    return elementAtOrElse(index) { throw IndexOutOfBoundsException("index: $index, size: $size}") }
 }
 
 /**
@@ -100,7 +100,7 @@ public actual inline fun BooleanArray.elementAt(index: Int): Boolean {
  */
 @kotlin.internal.InlineOnly
 public actual inline fun CharArray.elementAt(index: Int): Char {
-    return get(index)
+    return elementAtOrElse(index) { throw IndexOutOfBoundsException("index: $index, size: $size}") }
 }
 
 /**
@@ -331,167 +331,6 @@ public actual fun <T> Array<out T>?.contentDeepToString(): String {
  * Elements are compared for equality using the [equals][Any.equals] function.
  * For floating point numbers, this means `NaN` is equal to itself and `-0.0` is not equal to `0.0`.
  * 
- * If the arrays contain nested arrays, use [contentDeepEquals] to recursively compare their elements.
- * 
- * @param other the array to compare with this array.
- * @return `true` if the two arrays are structurally equal, `false` otherwise.
- * 
- * @sample samples.collections.Arrays.ContentOperations.arrayContentEquals
- */
-@Deprecated("Use Kotlin compiler 1.4 to avoid deprecation warning.")
-@SinceKotlin("1.1")
-@DeprecatedSinceKotlin(hiddenSince = "1.4")
-public infix fun <T> Array<out T>.contentEquals(other: Array<out T>): Boolean {
-    return this.contentEquals(other)
-}
-
-/**
- * Checks if the two specified arrays are *structurally* equal to one another.
- * 
- * Two arrays are considered structurally equal if they have the same size, and elements at corresponding indices are equal.
- * 
- * @param other the array to compare with this array.
- * @return `true` if the two arrays are structurally equal, `false` otherwise.
- * 
- * @sample samples.collections.Arrays.ContentOperations.intArrayContentEquals
- */
-@Deprecated("Use Kotlin compiler 1.4 to avoid deprecation warning.")
-@SinceKotlin("1.1")
-@DeprecatedSinceKotlin(hiddenSince = "1.4")
-public infix fun ByteArray.contentEquals(other: ByteArray): Boolean {
-    return this.contentEquals(other)
-}
-
-/**
- * Checks if the two specified arrays are *structurally* equal to one another.
- * 
- * Two arrays are considered structurally equal if they have the same size, and elements at corresponding indices are equal.
- * 
- * @param other the array to compare with this array.
- * @return `true` if the two arrays are structurally equal, `false` otherwise.
- * 
- * @sample samples.collections.Arrays.ContentOperations.intArrayContentEquals
- */
-@Deprecated("Use Kotlin compiler 1.4 to avoid deprecation warning.")
-@SinceKotlin("1.1")
-@DeprecatedSinceKotlin(hiddenSince = "1.4")
-public infix fun ShortArray.contentEquals(other: ShortArray): Boolean {
-    return this.contentEquals(other)
-}
-
-/**
- * Checks if the two specified arrays are *structurally* equal to one another.
- * 
- * Two arrays are considered structurally equal if they have the same size, and elements at corresponding indices are equal.
- * 
- * @param other the array to compare with this array.
- * @return `true` if the two arrays are structurally equal, `false` otherwise.
- * 
- * @sample samples.collections.Arrays.ContentOperations.intArrayContentEquals
- */
-@Deprecated("Use Kotlin compiler 1.4 to avoid deprecation warning.")
-@SinceKotlin("1.1")
-@DeprecatedSinceKotlin(hiddenSince = "1.4")
-public infix fun IntArray.contentEquals(other: IntArray): Boolean {
-    return this.contentEquals(other)
-}
-
-/**
- * Checks if the two specified arrays are *structurally* equal to one another.
- * 
- * Two arrays are considered structurally equal if they have the same size, and elements at corresponding indices are equal.
- * 
- * @param other the array to compare with this array.
- * @return `true` if the two arrays are structurally equal, `false` otherwise.
- * 
- * @sample samples.collections.Arrays.ContentOperations.intArrayContentEquals
- */
-@Deprecated("Use Kotlin compiler 1.4 to avoid deprecation warning.")
-@SinceKotlin("1.1")
-@DeprecatedSinceKotlin(hiddenSince = "1.4")
-public infix fun LongArray.contentEquals(other: LongArray): Boolean {
-    return this.contentEquals(other)
-}
-
-/**
- * Checks if the two specified arrays are *structurally* equal to one another.
- * 
- * Two arrays are considered structurally equal if they have the same size, and elements at corresponding indices are equal.
- * Elements are compared for equality using the [equals][Any.equals] function.
- * This means `NaN` is equal to itself and `-0.0` is not equal to `0.0`.
- * 
- * @param other the array to compare with this array.
- * @return `true` if the two arrays are structurally equal, `false` otherwise.
- * 
- * @sample samples.collections.Arrays.ContentOperations.doubleArrayContentEquals
- */
-@Deprecated("Use Kotlin compiler 1.4 to avoid deprecation warning.")
-@SinceKotlin("1.1")
-@DeprecatedSinceKotlin(hiddenSince = "1.4")
-public infix fun FloatArray.contentEquals(other: FloatArray): Boolean {
-    return this.contentEquals(other)
-}
-
-/**
- * Checks if the two specified arrays are *structurally* equal to one another.
- * 
- * Two arrays are considered structurally equal if they have the same size, and elements at corresponding indices are equal.
- * Elements are compared for equality using the [equals][Any.equals] function.
- * This means `NaN` is equal to itself and `-0.0` is not equal to `0.0`.
- * 
- * @param other the array to compare with this array.
- * @return `true` if the two arrays are structurally equal, `false` otherwise.
- * 
- * @sample samples.collections.Arrays.ContentOperations.doubleArrayContentEquals
- */
-@Deprecated("Use Kotlin compiler 1.4 to avoid deprecation warning.")
-@SinceKotlin("1.1")
-@DeprecatedSinceKotlin(hiddenSince = "1.4")
-public infix fun DoubleArray.contentEquals(other: DoubleArray): Boolean {
-    return this.contentEquals(other)
-}
-
-/**
- * Checks if the two specified arrays are *structurally* equal to one another.
- * 
- * Two arrays are considered structurally equal if they have the same size, and elements at corresponding indices are equal.
- * 
- * @param other the array to compare with this array.
- * @return `true` if the two arrays are structurally equal, `false` otherwise.
- * 
- * @sample samples.collections.Arrays.ContentOperations.booleanArrayContentEquals
- */
-@Deprecated("Use Kotlin compiler 1.4 to avoid deprecation warning.")
-@SinceKotlin("1.1")
-@DeprecatedSinceKotlin(hiddenSince = "1.4")
-public infix fun BooleanArray.contentEquals(other: BooleanArray): Boolean {
-    return this.contentEquals(other)
-}
-
-/**
- * Checks if the two specified arrays are *structurally* equal to one another.
- * 
- * Two arrays are considered structurally equal if they have the same size, and elements at corresponding indices are equal.
- * 
- * @param other the array to compare with this array.
- * @return `true` if the two arrays are structurally equal, `false` otherwise.
- * 
- * @sample samples.collections.Arrays.ContentOperations.charArrayContentEquals
- */
-@Deprecated("Use Kotlin compiler 1.4 to avoid deprecation warning.")
-@SinceKotlin("1.1")
-@DeprecatedSinceKotlin(hiddenSince = "1.4")
-public infix fun CharArray.contentEquals(other: CharArray): Boolean {
-    return this.contentEquals(other)
-}
-
-/**
- * Checks if the two specified arrays are *structurally* equal to one another.
- * 
- * Two arrays are considered structurally equal if they have the same size, and elements at corresponding indices are equal.
- * Elements are compared for equality using the [equals][Any.equals] function.
- * For floating point numbers, this means `NaN` is equal to itself and `-0.0` is not equal to `0.0`.
- * 
  * The arrays are also considered structurally equal if both are `null`.
  * 
  * If the arrays contain nested arrays, use [contentDeepEquals] to recursively compare their elements.
@@ -703,96 +542,6 @@ public actual infix fun CharArray?.contentEquals(other: CharArray?): Boolean {
 /**
  * Returns a hash code based on the contents of this array as if it is [List].
  */
-@Deprecated("Use Kotlin compiler 1.4 to avoid deprecation warning.")
-@SinceKotlin("1.1")
-@DeprecatedSinceKotlin(hiddenSince = "1.4")
-public fun <T> Array<out T>.contentHashCode(): Int {
-    return this.contentHashCode()
-}
-
-/**
- * Returns a hash code based on the contents of this array as if it is [List].
- */
-@Deprecated("Use Kotlin compiler 1.4 to avoid deprecation warning.")
-@SinceKotlin("1.1")
-@DeprecatedSinceKotlin(hiddenSince = "1.4")
-public fun ByteArray.contentHashCode(): Int {
-    return this.contentHashCode()
-}
-
-/**
- * Returns a hash code based on the contents of this array as if it is [List].
- */
-@Deprecated("Use Kotlin compiler 1.4 to avoid deprecation warning.")
-@SinceKotlin("1.1")
-@DeprecatedSinceKotlin(hiddenSince = "1.4")
-public fun ShortArray.contentHashCode(): Int {
-    return this.contentHashCode()
-}
-
-/**
- * Returns a hash code based on the contents of this array as if it is [List].
- */
-@Deprecated("Use Kotlin compiler 1.4 to avoid deprecation warning.")
-@SinceKotlin("1.1")
-@DeprecatedSinceKotlin(hiddenSince = "1.4")
-public fun IntArray.contentHashCode(): Int {
-    return this.contentHashCode()
-}
-
-/**
- * Returns a hash code based on the contents of this array as if it is [List].
- */
-@Deprecated("Use Kotlin compiler 1.4 to avoid deprecation warning.")
-@SinceKotlin("1.1")
-@DeprecatedSinceKotlin(hiddenSince = "1.4")
-public fun LongArray.contentHashCode(): Int {
-    return this.contentHashCode()
-}
-
-/**
- * Returns a hash code based on the contents of this array as if it is [List].
- */
-@Deprecated("Use Kotlin compiler 1.4 to avoid deprecation warning.")
-@SinceKotlin("1.1")
-@DeprecatedSinceKotlin(hiddenSince = "1.4")
-public fun FloatArray.contentHashCode(): Int {
-    return this.contentHashCode()
-}
-
-/**
- * Returns a hash code based on the contents of this array as if it is [List].
- */
-@Deprecated("Use Kotlin compiler 1.4 to avoid deprecation warning.")
-@SinceKotlin("1.1")
-@DeprecatedSinceKotlin(hiddenSince = "1.4")
-public fun DoubleArray.contentHashCode(): Int {
-    return this.contentHashCode()
-}
-
-/**
- * Returns a hash code based on the contents of this array as if it is [List].
- */
-@Deprecated("Use Kotlin compiler 1.4 to avoid deprecation warning.")
-@SinceKotlin("1.1")
-@DeprecatedSinceKotlin(hiddenSince = "1.4")
-public fun BooleanArray.contentHashCode(): Int {
-    return this.contentHashCode()
-}
-
-/**
- * Returns a hash code based on the contents of this array as if it is [List].
- */
-@Deprecated("Use Kotlin compiler 1.4 to avoid deprecation warning.")
-@SinceKotlin("1.1")
-@DeprecatedSinceKotlin(hiddenSince = "1.4")
-public fun CharArray.contentHashCode(): Int {
-    return this.contentHashCode()
-}
-
-/**
- * Returns a hash code based on the contents of this array as if it is [List].
- */
 @SinceKotlin("1.4")
 public actual fun <T> Array<out T>?.contentHashCode(): Int {
     if (this === null) return 0
@@ -903,114 +652,6 @@ public actual fun CharArray?.contentHashCode(): Int {
  * 
  * @sample samples.collections.Arrays.ContentOperations.contentToString
  */
-@Deprecated("Use Kotlin compiler 1.4 to avoid deprecation warning.")
-@SinceKotlin("1.1")
-@DeprecatedSinceKotlin(hiddenSince = "1.4")
-public fun <T> Array<out T>.contentToString(): String {
-    return this.contentToString()
-}
-
-/**
- * Returns a string representation of the contents of the specified array as if it is [List].
- * 
- * @sample samples.collections.Arrays.ContentOperations.contentToString
- */
-@Deprecated("Use Kotlin compiler 1.4 to avoid deprecation warning.")
-@SinceKotlin("1.1")
-@DeprecatedSinceKotlin(hiddenSince = "1.4")
-public fun ByteArray.contentToString(): String {
-    return this.contentToString()
-}
-
-/**
- * Returns a string representation of the contents of the specified array as if it is [List].
- * 
- * @sample samples.collections.Arrays.ContentOperations.contentToString
- */
-@Deprecated("Use Kotlin compiler 1.4 to avoid deprecation warning.")
-@SinceKotlin("1.1")
-@DeprecatedSinceKotlin(hiddenSince = "1.4")
-public fun ShortArray.contentToString(): String {
-    return this.contentToString()
-}
-
-/**
- * Returns a string representation of the contents of the specified array as if it is [List].
- * 
- * @sample samples.collections.Arrays.ContentOperations.contentToString
- */
-@Deprecated("Use Kotlin compiler 1.4 to avoid deprecation warning.")
-@SinceKotlin("1.1")
-@DeprecatedSinceKotlin(hiddenSince = "1.4")
-public fun IntArray.contentToString(): String {
-    return this.contentToString()
-}
-
-/**
- * Returns a string representation of the contents of the specified array as if it is [List].
- * 
- * @sample samples.collections.Arrays.ContentOperations.contentToString
- */
-@Deprecated("Use Kotlin compiler 1.4 to avoid deprecation warning.")
-@SinceKotlin("1.1")
-@DeprecatedSinceKotlin(hiddenSince = "1.4")
-public fun LongArray.contentToString(): String {
-    return this.contentToString()
-}
-
-/**
- * Returns a string representation of the contents of the specified array as if it is [List].
- * 
- * @sample samples.collections.Arrays.ContentOperations.contentToString
- */
-@Deprecated("Use Kotlin compiler 1.4 to avoid deprecation warning.")
-@SinceKotlin("1.1")
-@DeprecatedSinceKotlin(hiddenSince = "1.4")
-public fun FloatArray.contentToString(): String {
-    return this.contentToString()
-}
-
-/**
- * Returns a string representation of the contents of the specified array as if it is [List].
- * 
- * @sample samples.collections.Arrays.ContentOperations.contentToString
- */
-@Deprecated("Use Kotlin compiler 1.4 to avoid deprecation warning.")
-@SinceKotlin("1.1")
-@DeprecatedSinceKotlin(hiddenSince = "1.4")
-public fun DoubleArray.contentToString(): String {
-    return this.contentToString()
-}
-
-/**
- * Returns a string representation of the contents of the specified array as if it is [List].
- * 
- * @sample samples.collections.Arrays.ContentOperations.contentToString
- */
-@Deprecated("Use Kotlin compiler 1.4 to avoid deprecation warning.")
-@SinceKotlin("1.1")
-@DeprecatedSinceKotlin(hiddenSince = "1.4")
-public fun BooleanArray.contentToString(): String {
-    return this.contentToString()
-}
-
-/**
- * Returns a string representation of the contents of the specified array as if it is [List].
- * 
- * @sample samples.collections.Arrays.ContentOperations.contentToString
- */
-@Deprecated("Use Kotlin compiler 1.4 to avoid deprecation warning.")
-@SinceKotlin("1.1")
-@DeprecatedSinceKotlin(hiddenSince = "1.4")
-public fun CharArray.contentToString(): String {
-    return this.contentToString()
-}
-
-/**
- * Returns a string representation of the contents of the specified array as if it is [List].
- * 
- * @sample samples.collections.Arrays.ContentOperations.contentToString
- */
 @SinceKotlin("1.4")
 public actual fun <T> Array<out T>?.contentToString(): String {
     return this?.joinToString(", ", "[", "]") ?: "null"
@@ -1113,6 +754,7 @@ public actual fun CharArray?.contentToString(): String {
  * @return the [destination] array.
  */
 @SinceKotlin("1.3")
+@IgnorableReturnValue
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun <T> Array<out T>.copyInto(destination: Array<T>, destinationOffset: Int = 0, startIndex: Int = 0, endIndex: Int = size): Array<T> {
     AbstractList.checkRangeIndexes(startIndex, endIndex, this.size)
@@ -1139,6 +781,7 @@ public actual fun <T> Array<out T>.copyInto(destination: Array<T>, destinationOf
  * @return the [destination] array.
  */
 @SinceKotlin("1.3")
+@IgnorableReturnValue
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun ByteArray.copyInto(destination: ByteArray, destinationOffset: Int = 0, startIndex: Int = 0, endIndex: Int = size): ByteArray {
     AbstractList.checkRangeIndexes(startIndex, endIndex, this.size)
@@ -1165,6 +808,7 @@ public actual fun ByteArray.copyInto(destination: ByteArray, destinationOffset: 
  * @return the [destination] array.
  */
 @SinceKotlin("1.3")
+@IgnorableReturnValue
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun ShortArray.copyInto(destination: ShortArray, destinationOffset: Int = 0, startIndex: Int = 0, endIndex: Int = size): ShortArray {
     AbstractList.checkRangeIndexes(startIndex, endIndex, this.size)
@@ -1191,6 +835,7 @@ public actual fun ShortArray.copyInto(destination: ShortArray, destinationOffset
  * @return the [destination] array.
  */
 @SinceKotlin("1.3")
+@IgnorableReturnValue
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun IntArray.copyInto(destination: IntArray, destinationOffset: Int = 0, startIndex: Int = 0, endIndex: Int = size): IntArray {
     AbstractList.checkRangeIndexes(startIndex, endIndex, this.size)
@@ -1217,6 +862,7 @@ public actual fun IntArray.copyInto(destination: IntArray, destinationOffset: In
  * @return the [destination] array.
  */
 @SinceKotlin("1.3")
+@IgnorableReturnValue
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun LongArray.copyInto(destination: LongArray, destinationOffset: Int = 0, startIndex: Int = 0, endIndex: Int = size): LongArray {
     AbstractList.checkRangeIndexes(startIndex, endIndex, this.size)
@@ -1243,6 +889,7 @@ public actual fun LongArray.copyInto(destination: LongArray, destinationOffset: 
  * @return the [destination] array.
  */
 @SinceKotlin("1.3")
+@IgnorableReturnValue
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun FloatArray.copyInto(destination: FloatArray, destinationOffset: Int = 0, startIndex: Int = 0, endIndex: Int = size): FloatArray {
     AbstractList.checkRangeIndexes(startIndex, endIndex, this.size)
@@ -1269,6 +916,7 @@ public actual fun FloatArray.copyInto(destination: FloatArray, destinationOffset
  * @return the [destination] array.
  */
 @SinceKotlin("1.3")
+@IgnorableReturnValue
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun DoubleArray.copyInto(destination: DoubleArray, destinationOffset: Int = 0, startIndex: Int = 0, endIndex: Int = size): DoubleArray {
     AbstractList.checkRangeIndexes(startIndex, endIndex, this.size)
@@ -1295,6 +943,7 @@ public actual fun DoubleArray.copyInto(destination: DoubleArray, destinationOffs
  * @return the [destination] array.
  */
 @SinceKotlin("1.3")
+@IgnorableReturnValue
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun BooleanArray.copyInto(destination: BooleanArray, destinationOffset: Int = 0, startIndex: Int = 0, endIndex: Int = size): BooleanArray {
     AbstractList.checkRangeIndexes(startIndex, endIndex, this.size)
@@ -1321,6 +970,7 @@ public actual fun BooleanArray.copyInto(destination: BooleanArray, destinationOf
  * @return the [destination] array.
  */
 @SinceKotlin("1.3")
+@IgnorableReturnValue
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun CharArray.copyInto(destination: CharArray, destinationOffset: Int = 0, startIndex: Int = 0, endIndex: Int = size): CharArray {
     AbstractList.checkRangeIndexes(startIndex, endIndex, this.size)

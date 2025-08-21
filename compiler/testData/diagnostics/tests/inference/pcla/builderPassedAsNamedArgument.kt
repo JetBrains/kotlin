@@ -20,3 +20,6 @@ fun foo() {
 
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>t2<!>
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionalType, lambdaLiteral, localProperty, nullableType,
+propertyDeclaration, suspend, thisExpression, typeParameter, typeWithExtension */

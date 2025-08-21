@@ -40,18 +40,15 @@ class IdSignatureRenderer private constructor(private val showDescriptionForPubl
     private fun StringBuilder.render(signature: IdSignature.LocalSignature): StringBuilder = with(signature) {
         append("Local[").append(localFqn)
         hashSig?.let { append(",").append(hashSig) }
-        renderDescriptionForLocalSignature(description) // Always include description for local signatures if there is any.
         append(']')
     }
 
     private fun StringBuilder.render(signature: IdSignature.FileLocalSignature): StringBuilder = with(signature) {
         render(container).append(':').append(id)
-        renderDescriptionForLocalSignature(description) // Always include description for local signatures if there is any.
     }
 
     private fun StringBuilder.render(signature: IdSignature.ScopeLocalDeclaration): StringBuilder = with(signature) {
         append('#').append(id)
-        renderDescriptionForLocalSignature(description) // Always include description for local signatures if there is any.
     }
 
     private fun StringBuilder.render(signature: IdSignature.SpecialFakeOverrideSignature): StringBuilder =
@@ -61,11 +58,6 @@ class IdSignatureRenderer private constructor(private val showDescriptionForPubl
         append("ic#").append(stage).append(':')
         render(original)
         append('-').append(index)
-    }
-
-    private fun StringBuilder.renderDescriptionForLocalSignature(description: String?): StringBuilder {
-        description?.let { append('|').append(description) }
-        return this
     }
 
     companion object {

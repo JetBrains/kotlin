@@ -24,7 +24,9 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.types.SmartcastStability
 import java.util.*
 
-sealed class DataFlowVariable
+sealed class DataFlowVariable {
+    abstract val originalType: ConeKotlinType
+}
 
 private enum class PropertyStability(
     val inherentInstability: SmartcastStability?,
@@ -56,7 +58,7 @@ class RealVariable(
     val isImplicit: Boolean,
     val dispatchReceiver: RealVariable?,
     val extensionReceiver: RealVariable?,
-    val originalType: ConeKotlinType,
+    override val originalType: ConeKotlinType,
 ) : DataFlowVariable() {
     companion object {
         fun local(symbol: FirVariableSymbol<*>): RealVariable =
@@ -116,7 +118,7 @@ class RealVariable(
     }
 
     private fun hasFinalType(flow: Flow, session: FirSession): Boolean =
-        originalType.isFinal(session) || flow.getTypeStatement(this)?.exactType?.any { it.isFinal(session) } == true
+        originalType.isFinal(session) || flow.getTypeStatement(this)?.upperTypes?.any { it.isFinal(session) } == true
 
     private val propertyStability: PropertyStability by lazy {
         when (val fir = symbol.fir) {
@@ -150,7 +152,9 @@ class RealVariable(
     }
 }
 
-data class SyntheticVariable(val fir: FirExpression) : DataFlowVariable()
+data class SyntheticVariable(val fir: FirExpression) : DataFlowVariable() {
+    override val originalType: ConeKotlinType get() = fir.resolvedType
+}
 
 private fun ConeKotlinType.isFinal(session: FirSession): Boolean = when (this) {
     is ConeFlexibleType -> lowerBound.isFinal(session)
@@ -163,7 +167,5 @@ private fun ConeKotlinType.isFinal(session: FirSession): Boolean = when (this) {
 private fun FirVariable.isInCurrentOrFriendModule(session: FirSession): Boolean {
     val propertyModuleData = originalOrSelf().moduleData
     val currentModuleData = session.moduleData
-    return propertyModuleData == currentModuleData ||
-            propertyModuleData in currentModuleData.friendDependencies ||
-            propertyModuleData in currentModuleData.allDependsOnDependencies
+    return currentModuleData.canSeeInternalsOf(propertyModuleData)
 }

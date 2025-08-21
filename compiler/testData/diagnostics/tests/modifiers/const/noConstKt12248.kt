@@ -20,3 +20,6 @@ class Baz {
         val BAZ = Bar.BAR + 1
     }
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, classDeclaration, companionObject, integerLiteral, javaProperty,
+objectDeclaration, propertyDeclaration */

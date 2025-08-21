@@ -35,3 +35,6 @@ fun withNull(s: String?): String {
     // Error: nullable
     return <!TYPE_MISMATCH!>t<!>
 }
+
+/* GENERATED_FIR_TAGS: elvisExpression, equalityExpression, functionDeclaration, ifExpression, isExpression,
+localProperty, nullableType, propertyDeclaration, smartcast, stringLiteral, whenExpression */

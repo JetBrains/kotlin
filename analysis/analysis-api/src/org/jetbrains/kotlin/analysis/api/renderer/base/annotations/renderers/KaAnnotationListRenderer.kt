@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotated
 import org.jetbrains.kotlin.analysis.api.renderer.base.annotations.KaAnnotationRenderer
 import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaValueParameterSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaParameterSymbol
 import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
 
 @KaExperimentalApi
@@ -37,7 +37,7 @@ public interface KaAnnotationListRenderer {
             printer.printCollection(
                 annotations,
                 separator = when (owner) {
-                    is KaValueParameterSymbol -> " "
+                    is KaParameterSymbol -> " "
                     is KaDeclarationSymbol -> "\n"
                     else -> " "
                 }

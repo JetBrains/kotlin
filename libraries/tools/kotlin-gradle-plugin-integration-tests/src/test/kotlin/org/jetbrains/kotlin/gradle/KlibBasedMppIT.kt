@@ -29,10 +29,10 @@ import kotlin.test.assertTrue
 @MppGradlePluginTests
 open class KlibBasedMppIT : KGPBaseTest() {
 
-    override val defaultBuildOptions: BuildOptions = super
-        .defaultBuildOptions
+    override val defaultBuildOptions: BuildOptions = super.defaultBuildOptions
         .copyEnsuringK1()
-        .disableConfigurationCache_KT70416()
+        // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
+        .copy(isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED)
 
     @DisplayName("Could be compiled with project dependency")
     @GradleTest
@@ -183,7 +183,7 @@ open class KlibBasedMppIT : KGPBaseTest() {
     @GradleTest
     fun testHostSpecificBuildWithPublishedDependency(
         gradleVersion: GradleVersion,
-        @TempDir localRepo: Path
+        @TempDir localRepo: Path,
     ) {
         testBuildWithDependency(gradleVersion, localRepo) {
             publishProjectDepAndAddDependency(validateHostSpecificPublication = true, localRepo)
@@ -194,7 +194,7 @@ open class KlibBasedMppIT : KGPBaseTest() {
     @GradleTest
     fun testKotlinNativeImplPublishedDeps(
         gradleVersion: GradleVersion,
-        @TempDir localRepo: Path
+        @TempDir localRepo: Path,
     ) {
         testKotlinNativeImplementationDependencies(gradleVersion, localRepo) {
             build(":$transitiveDepModuleName:publish", ":$dependencyModuleName:publish")
@@ -304,7 +304,7 @@ open class KlibBasedMppIT : KGPBaseTest() {
     private fun testBuildWithDependency(
         gradleVersion: GradleVersion,
         localRepo: Path,
-        configureDependency: TestProject.() -> Unit
+        configureDependency: TestProject.() -> Unit,
     ) {
         project("common-klib-lib-and-app", gradleVersion, localRepoDir = localRepo) {
             includeOtherProjectAsSubmodule(

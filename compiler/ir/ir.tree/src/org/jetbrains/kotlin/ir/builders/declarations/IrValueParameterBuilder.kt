@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.ir.types.IrType
 const val UNDEFINED_PARAMETER_INDEX = -1
 
 class IrValueParameterBuilder : IrDeclarationBuilder() {
-    var kind: IrParameterKind? = null
+    var kind: IrParameterKind = IrParameterKind.Regular
     lateinit var type: IrType
 
     var varargElementType: IrType? = null
@@ -24,9 +24,7 @@ class IrValueParameterBuilder : IrDeclarationBuilder() {
     fun updateFrom(from: IrValueParameter) {
         super.updateFrom(from)
 
-        if (from._kind != null) {
-            kind = from._kind
-        }
+        kind = from.kind
         type = from.type
         varargElementType = from.varargElementType
         isCrossInline = from.isCrossinline

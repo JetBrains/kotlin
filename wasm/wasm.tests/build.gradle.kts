@@ -11,6 +11,7 @@ plugins {
     id("d8-configuration")
     id("binaryen-configuration")
     id("nodejs-configuration")
+    id("java-test-fixtures")
 }
 
 node {
@@ -21,9 +22,9 @@ node {
 
 repositories {
     ivy {
-        url = URI("https://archive.mozilla.org/pub/firefox/nightly/")
+        url = URI("https://archive.mozilla.org/pub/firefox/releases/")
         patternLayout {
-            artifact("2024/05/[revision]/[artifact]-[classifier].[ext]")
+            artifact("[revision]/jsshell/[artifact]-[classifier].[ext]")
         }
         metadataSources { artifact() }
         content { includeModule("org.mozilla", "jsshell") }
@@ -64,7 +65,7 @@ val currentOsType = run {
 }
 
 
-val jsShellVersion = "2024-05-07-09-13-07-mozilla-central"
+val jsShellVersion = "134.0.2"
 val jsShellSuffix = when (currentOsType) {
     OsType(OsName.LINUX, OsArch.X86_32) -> "linux-i686"
     OsType(OsName.LINUX, OsArch.X86_64) -> "linux-x86_64"
@@ -102,12 +103,12 @@ val wasmEdge by configurations.creating {
 }
 
 dependencies {
-    testApi(projectTests(":compiler:tests-common"))
-    testApi(projectTests(":compiler:tests-common-new"))
-    testImplementation(projectTests(":js:js.tests"))
-    testApi(intellijCore())
-    testApi(platform(libs.junit.bom))
-    testImplementation(libs.junit.jupiter.api)
+    testFixturesApi(testFixtures(project(":compiler:tests-common")))
+    testFixturesApi(testFixtures(project(":compiler:tests-common-new")))
+    testFixturesApi(testFixtures(project(":js:js.tests")))
+    testFixturesApi(intellijCore())
+    testFixturesApi(platform(libs.junit.bom))
+    testFixturesApi(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)
 
     jsShell("org.mozilla:jsshell:$jsShellVersion:$jsShellSuffix@zip")
@@ -123,16 +124,16 @@ dependencies {
     implicitDependencies("org.wasmedge:wasmedge:${wasmEdgeVersion.get()}:darwin_arm64@tar.gz")
 }
 
-val generationRoot = projectDir.resolve("tests-gen")
-
 optInToExperimentalCompilerApi()
+optInToK1Deprecation()
 
 sourceSets {
     "main" { }
     "test" {
         projectDefault()
-        this.java.srcDir(generationRoot.name)
+        generatedTestDir()
     }
+    "testFixtures" { projectDefault() }
 }
 
 fun Test.setupWasmStdlib(target: String) {
@@ -183,11 +184,11 @@ val installTsDependencies by task<NpmTask> {
     val packageLockFile = testDataDir.resolve("package-lock.json")
     val nodeModules = testDataDir.resolve("node_modules")
     inputs.file(testDataDir.resolve("package.json"))
-    outputs.file(packageLockFile)
+    inputs.file(packageLockFile)
     outputs.upToDateWhen { nodeModules.exists() }
 
     workingDir.set(testDataDir)
-    args.set(listOf("install"))
+    npmCommand.set(listOf("ci"))
 }
 
 val generateTypeScriptTests by parallel(

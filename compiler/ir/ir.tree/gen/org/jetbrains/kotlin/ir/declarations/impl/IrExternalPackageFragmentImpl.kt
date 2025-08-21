@@ -23,11 +23,17 @@ class IrExternalPackageFragmentImpl(
     override val symbol: IrExternalPackageFragmentSymbol,
     override var packageFqName: FqName,
 ) : IrExternalPackageFragment() {
-    override val startOffset: Int
+    override var startOffset: Int
         get() = UNDEFINED_OFFSET
+        set(value) {
+            error("Mutation of startOffset is not supported for this class.")
+        }
 
-    override val endOffset: Int
+    override var endOffset: Int
         get() = UNDEFINED_OFFSET
+        set(value) {
+            error("Mutation of endOffset is not supported for this class.")
+        }
 
     override var attributeOwnerId: IrElement = this
 

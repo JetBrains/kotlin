@@ -12,21 +12,22 @@ import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.classKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirFunctionChecker
-import org.jetbrains.kotlin.fir.analysis.checkers.getContainingClassSymbol
+import org.jetbrains.kotlin.fir.resolve.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors
 import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.getAnnotationByClassId
 import org.jetbrains.kotlin.name.JvmStandardClassIds.THROWS_ANNOTATION_CLASS_ID
 
 object FirJvmThrowsChecker : FirFunctionChecker(MppCheckerKind.Platform) {
-    override fun check(declaration: FirFunction, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirFunction) {
         val session = context.session
         val annotation = declaration.getAnnotationByClassId(THROWS_ANNOTATION_CLASS_ID, session) ?: return
 
         val containingClass = declaration.getContainingClassSymbol() ?: return
         when {
             containingClass.classKind == ClassKind.ANNOTATION_CLASS ->
-                reporter.reportOn(annotation.source, FirJvmErrors.THROWS_IN_ANNOTATION, context)
+                reporter.reportOn(annotation.source, FirJvmErrors.THROWS_IN_ANNOTATION)
         }
     }
 }

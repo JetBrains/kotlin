@@ -78,7 +78,7 @@ generated and written with all possible members explicitly declared, so they are
 The main way to get some declaration inside compiler is [FirSymbolProvider](https://github.com/JetBrains/kotlin/blob/master/compiler/fir/providers/src/org/jetbrains/kotlin/fir/resolve/providers/FirSymbolProvider.kt)
 and [FirScope](https://github.com/JetBrains/kotlin/blob/master/compiler/fir/tree/src/org/jetbrains/kotlin/fir/scopes/FirScope.kt).
 
-_Symbol provider_ is used to lookup for classes by their [ClassId](https://github.com/JetBrains/kotlin/blob/mastercore/compiler.common/src/org/jetbrains/kotlin/name/ClassId.java) and top-level functions and properties by
+_Symbol provider_ is used to lookup for classes by their [ClassId](https://github.com/JetBrains/kotlin/blob/master/core/compiler.common/src/org/jetbrains/kotlin/name/ClassId.kt) and top-level functions and properties by
 their [CallableId](https://github.com/JetBrains/kotlin/blob/master/core/compiler.common/src/org/jetbrains/kotlin/name/CallableId.kt).
 The main symbol provider is a composition of multiple symbol providers, each of them looks up for declaration in specific scopes:
 - In sources of current modules,

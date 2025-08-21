@@ -64,7 +64,7 @@ abstract class AbstractKotlinCompileTool<T : CommonToolArguments> @Inject constr
     }
 
     override fun setSource(vararg sources: Any) {
-        sourceFiles.from(sources)
+        sourceFiles.setFrom(sources)
     }
 
     fun disallowSourceChanges() {

@@ -1,8 +1,3 @@
-// IGNORE_BACKEND: JVM
-/* ^ code compiled by legacy JVM backend fails in run-time with
- * NoSuchMethodError: GenericLocalClassWithLeakingTypeParameterKt$testYield$1$buildee$1$Local: method <init>()V not found
- */
-
 // ISSUE: KT-60855
 /* ATTENTION:
  * this test monitors an unfixed compiler bug;

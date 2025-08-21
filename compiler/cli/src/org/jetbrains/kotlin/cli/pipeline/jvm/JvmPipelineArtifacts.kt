@@ -23,19 +23,30 @@ class JvmScriptPipelineArtifact(override val exitCode: ExitCode) : PipelineArtif
 
 data class JvmFrontendPipelineArtifact(
     override val result: FirResult,
-    val configuration: CompilerConfiguration,
+    override val configuration: CompilerConfiguration,
     val environment: VfsBasedProjectEnvironment,
-    val diagnosticCollector: BaseDiagnosticsCollector,
+    override val diagnosticCollector: BaseDiagnosticsCollector,
     val sourceFiles: List<KtSourceFile>,
-) : FrontendPipelineArtifact()
+) : FrontendPipelineArtifact() {
+    override fun withNewDiagnosticCollectorImpl(newDiagnosticsCollector: BaseDiagnosticsCollector) =
+        copy(diagnosticCollector = newDiagnosticsCollector)
+}
 
 data class JvmFir2IrPipelineArtifact(
     override val result: Fir2IrActualizedResult,
     val configuration: CompilerConfiguration,
     val environment: VfsBasedProjectEnvironment,
-    val diagnosticCollector: BaseDiagnosticsCollector,
+    override val diagnosticCollector: BaseDiagnosticsCollector,
     val sourceFiles: List<KtSourceFile>,
     val mainClassFqName: FqName?,
 ) : Fir2IrPipelineArtifact()
+
+data class JvmBackendPipelineArtifact(
+    val configuration: CompilerConfiguration,
+    val environment: VfsBasedProjectEnvironment,
+    val diagnosticCollector: BaseDiagnosticsCollector,
+    val mainClassFqName: FqName?,
+    val outputs: List<GenerationState>,
+) : PipelineArtifact()
 
 class JvmBinaryPipelineArtifact(val outputs: List<GenerationState>) : PipelineArtifact()

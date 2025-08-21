@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // JDK_KIND: FULL_JDK_11
 // MODULE: moduleA
@@ -25,3 +26,5 @@ import foo.Foo
 fun usage() {
     Foo()
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, javaFunction */

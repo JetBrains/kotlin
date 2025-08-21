@@ -13,3 +13,5 @@ expect class <!IMPLICIT_JVM_ACTUALIZATION{JVM}!>Foo<!> {
 // FILE: Foo.java
 @kotlin.annotations.jvm.KotlinActual public class Foo {
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, expect, objectDeclaration */

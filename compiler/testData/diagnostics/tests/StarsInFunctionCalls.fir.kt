@@ -12,3 +12,5 @@ public fun main() {
     getTT<Int, <!PROJECTION_ON_NON_CLASS_TYPE_ARGUMENT!>*<!>>()
     foo(getTTT<Int, <!PROJECTION_ON_NON_CLASS_TYPE_ARGUMENT!>*<!>, Int>(1))
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral, nullableType, typeParameter */

@@ -32,3 +32,6 @@ class E: A() {
         val a: A = foo() // todo: discuss
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, init, javaFunction, javaType, localClass, localFunction,
+localProperty, override, propertyDeclaration, stringLiteral */

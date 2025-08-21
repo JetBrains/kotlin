@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.analysis.api.base.KaConstantValue
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.types.KaTypeMappingMode
-import org.jetbrains.kotlin.analysis.api.types.KaTypeNullability
 import org.jetbrains.kotlin.asJava.builder.LightMemberOrigin
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.light.classes.symbol.*
@@ -41,20 +40,19 @@ internal class SymbolLightFieldForProperty private constructor(
     private val backingFieldSymbolPointer: KaSymbolPointer<KaBackingFieldSymbol>?,
 ) : SymbolLightField(containingClass, lightMemberOrigin), NotEvaluatedConstAware {
     internal constructor(
-        ktAnalysisSession: KaSession,
         propertySymbol: KaPropertySymbol,
         fieldName: String,
         containingClass: SymbolLightClassBase,
         lightMemberOrigin: LightMemberOrigin?,
         isStatic: Boolean,
     ) : this(
-        propertySymbolPointer = with(ktAnalysisSession) { propertySymbol.createPointer() },
+        propertySymbolPointer = propertySymbol.createPointer(),
         fieldName = fieldName,
         containingClass = containingClass,
         lightMemberOrigin = lightMemberOrigin,
         isStatic = isStatic,
         kotlinOrigin = propertySymbol.sourcePsiSafe<KtCallableDeclaration>(),
-        backingFieldSymbolPointer = with(ktAnalysisSession) { propertySymbol.backingFieldSymbol?.createPointer() },
+        backingFieldSymbolPointer = propertySymbol.backingFieldSymbol?.createPointer(),
     )
 
     private inline fun <T> withPropertySymbol(crossinline action: KaSession.(KaPropertySymbol) -> T): T {
@@ -185,7 +183,7 @@ internal class SymbolLightFieldForProperty private constructor(
         else -> null
     }
 
-    private val _modifierList: PsiModifierList by lazyPub {
+    override fun getModifierList(): PsiModifierList = cachedValue {
         SymbolLightMemberModifierList(
             containingDeclaration = this,
             modifiersBox = GranularModifiersBox(
@@ -199,17 +197,15 @@ internal class SymbolLightFieldForProperty private constructor(
                 additionalAnnotationsProvider = NullabilityAnnotationsProvider {
                     withPropertySymbol { propertySymbol ->
                         when {
-                            propertySymbol.isDelegatedProperty -> KaTypeNullability.NON_NULLABLE
-                            !(propertySymbol is KaKotlinPropertySymbol && propertySymbol.isLateInit) -> getTypeNullability(propertySymbol.returnType)
-                            else -> KaTypeNullability.UNKNOWN
+                            propertySymbol.isDelegatedProperty -> NullabilityAnnotation.NON_NULLABLE
+                            !(propertySymbol is KaKotlinPropertySymbol && propertySymbol.isLateInit) -> getRequiredNullabilityAnnotation(propertySymbol.returnType)
+                            else -> NullabilityAnnotation.NOT_REQUIRED
                         }
                     }
                 }
             ),
         )
     }
-
-    override fun getModifierList(): PsiModifierList = _modifierList
 
     private val _initializerValue: KaConstantValue? by lazyPub {
         withPropertySymbol { propertySymbol ->

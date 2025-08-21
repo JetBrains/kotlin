@@ -14,14 +14,13 @@ import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
 import org.jetbrains.kotlin.fir.expressions.builder.buildExpressionStub
-import org.jetbrains.kotlin.fir.expressions.builder.buildResolvedQualifier
 import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
 import org.jetbrains.kotlin.fir.resolve.DoubleColonLHS
 import org.jetbrains.kotlin.fir.resolve.calls.*
+import org.jetbrains.kotlin.fir.resolve.calls.ExpressionReceiverValue
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.*
-import org.jetbrains.kotlin.fir.resolve.setTypeOfQualifier
+import org.jetbrains.kotlin.fir.resolve.toImplicitResolvedQualifierReceiver
 import org.jetbrains.kotlin.fir.scopes.FirScope
-import org.jetbrains.kotlin.fir.scopes.impl.FirWhenSubjectImportingScope
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
@@ -116,15 +115,10 @@ internal abstract class FirBaseTowerResolveTask(
         constructorFilter = ConstructorFilter.OnlyNested,
         contextReceiverGroup = null,
         staticOwnerOwnerSymbol?.let {
-            val resolvedQualifier = buildResolvedQualifier {
-                packageFqName = it.classId.packageFqName
-                relativeClassFqName = it.classId.relativeClassName
-                this.symbol = it
-                this.source = source?.fakeElement(KtFakeSourceElementKind.ImplicitReceiver)
-            }.apply {
-                setTypeOfQualifier(components)
-            }
-            ExpressionReceiverValue(resolvedQualifier)
+            ExpressionReceiverValue(it.toImplicitResolvedQualifierReceiver(
+                components,
+                source?.fakeElement(KtFakeSourceElementKind.ImplicitReceiver)
+            ))
         }
     )
 
@@ -173,8 +167,7 @@ internal abstract class FirBaseTowerResolveTask(
                 onScope(
                     scope,
                     lexical.staticScopeOwnerSymbol,
-                    if (scope is FirWhenSubjectImportingScope) TowerGroup.UnqualifiedEnum(depth)
-                    else parentGroup.NonLocal(depth)
+                    parentGroup.NonLocal(depth)
                 )
             }
 

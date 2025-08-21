@@ -32,3 +32,6 @@ fun test_3(cond: Boolean) {
         true -> 1
     }
 }
+
+/* GENERATED_FIR_TAGS: equalityExpression, functionDeclaration, integerLiteral, localProperty, nullableType,
+propertyDeclaration, smartcast, whenExpression, whenWithSubject */

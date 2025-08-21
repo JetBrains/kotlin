@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.targets.js.ir
 
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
+import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
@@ -15,29 +16,37 @@ import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation.Companion.MAIN_COMPILATION_NAME
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.resources.publication.setUpResourcesVariant
-import org.jetbrains.kotlin.gradle.targets.js.JsAggregatingExecutionSource
-import org.jetbrains.kotlin.gradle.targets.js.KotlinJsReportAggregatingTestRun
-import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTestRunFactory
-import org.jetbrains.kotlin.gradle.targets.js.KotlinWasmTargetType
-import org.jetbrains.kotlin.gradle.targets.js.binaryen.BinaryenExec
+import org.jetbrains.kotlin.gradle.targets.js.*
 import org.jetbrains.kotlin.gradle.targets.js.dsl.*
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTargetConfigurator.Companion.configureJsDefaultOptions
-import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsPlugin
+import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsPlugin
+import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
+import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin.Companion.kotlinNodeJsRootExtension
+import org.jetbrains.kotlin.gradle.targets.wasm.npm.WasmNpmResolverPlugin
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmResolverPlugin
 import org.jetbrains.kotlin.gradle.targets.js.typescript.TypeScriptValidationTask
+import org.jetbrains.kotlin.gradle.targets.wasm.binaryen.BinaryenExec
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 import org.jetbrains.kotlin.utils.addIfNotNull
 import javax.inject.Inject
+import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsRootPlugin.Companion.kotlinNodeJsRootExtension as wasmKotlinNodeJsRootExtension
+
+internal fun ObjectFactory.KotlinJsIrTarget(
+    project: Project,
+    platformType: KotlinPlatformType,
+    isMpp: Boolean,
+): KotlinJsIrTarget = newInstance(project, platformType, isMpp)
 
 abstract class KotlinJsIrTarget
 @Inject
 constructor(
     project: Project,
     platformType: KotlinPlatformType,
+    internal val isMpp: Boolean
 ) :
     KotlinTargetWithBinaries<KotlinJsIrCompilation, KotlinJsBinaryContainer>(project, platformType),
     KotlinTargetWithTests<JsAggregatingExecutionSource, KotlinJsReportAggregatingTestRun>,
@@ -47,7 +56,16 @@ constructor(
     KotlinJsSubTargetContainerDsl,
     KotlinWasmSubTargetContainerDsl {
 
+    @Deprecated(
+        message = "Internal Kotlin Gradle Plugin API. Scheduled for removal in Kotlin 2.4."
+    )
+    constructor(
+        project: Project,
+        platformType: KotlinPlatformType,
+    ) : this(project, platformType, true)
+
     private val propertiesProvider = PropertiesProvider(project)
+    internal val shouldGenerateTypeScriptDefinitions: Property<Boolean> = project.objects.property<Boolean>(false)
 
     override val subTargets: NamedDomainObjectContainer<KotlinJsIrSubTargetWithBinary> = project.container(
         KotlinJsIrSubTargetWithBinary::class.java
@@ -57,13 +75,10 @@ constructor(
         project.container(KotlinJsReportAggregatingTestRun::class.java, KotlinJsTestRunFactory(this))
     }
 
-    open var isMpp: Boolean? = null
-        internal set
-
     override var wasmTargetType: KotlinWasmTargetType? = null
         internal set
 
-    @Deprecated("Use outputModuleName with Provider API instead")
+    @Deprecated("Use outputModuleName with Provider API instead. Scheduled for removal in Kotlin 2.3.", level = DeprecationLevel.ERROR)
     override var moduleName: String?
         get() = outputModuleName.get()
         set(value) {
@@ -111,7 +126,7 @@ constructor(
     override fun createUsageContexts(producingCompilation: KotlinCompilation<*>): Set<DefaultKotlinUsageContext> {
         val usageContexts = super.createUsageContexts(producingCompilation)
 
-        if (isMpp!!) return usageContexts
+        if (isMpp) return usageContexts
 
         return usageContexts +
                 DefaultKotlinUsageContext(
@@ -160,21 +175,18 @@ constructor(
     }
 
     private val commonLazyDelegate = lazy {
-        NpmResolverPlugin.apply(project)
+        webTargetVariant(
+            { NpmResolverPlugin.apply(project) },
+            { WasmNpmResolverPlugin.apply(project) },
+        )
         compilations.all { compilation ->
             compilation.binaries
                 .withType(JsIrBinary::class.java)
                 .all { binary ->
                     val syncTask = binary.linkSyncTask
-                    val tsValidationTask = registerTypeScriptCheckTask(binary)
 
                     binary.linkTask.configure {
-
                         it.finalizedBy(syncTask)
-
-                        if (binary.generateTs) {
-                            it.finalizedBy(tsValidationTask)
-                        }
                     }
                 }
         }
@@ -186,6 +198,12 @@ constructor(
         val linkTask = binary.linkTask
         val compilation = binary.compilation
         return project.registerTask(binary.validateGeneratedTsTaskName, listOf(compilation)) {
+            it.versions.value(
+                compilation.webTargetVariant(
+                    { project.rootProject.kotlinNodeJsRootExtension.versions },
+                    { project.rootProject.wasmKotlinNodeJsRootExtension.versions },
+                )
+            ).disallowChanges()
             it.inputDir.set(linkTask.flatMap { it.destinationDirectory })
             it.validationStrategy.set(
                 when (binary.mode) {
@@ -196,7 +214,10 @@ constructor(
         }
     }
 
-    @Deprecated("Binaryen is enabled by default. This call is redundant.")
+    @Deprecated(
+        "Binaryen is enabled by default. This call is redundant. Scheduled for removal in Kotlin 2.3.",
+        level = DeprecationLevel.ERROR
+    )
     override fun applyBinaryen(body: BinaryenExec.() -> Unit) {
     }
 
@@ -221,8 +242,8 @@ constructor(
         if (wasmTargetType != KotlinWasmTargetType.WASI) {
             commonLazy
         } else {
-            NodeJsPlugin.apply(project)
-            NodeJsRootPlugin.apply(project.rootProject)
+            WasmNodeJsPlugin.apply(project)
+            WasmNodeJsRootPlugin.apply(project.rootProject)
         }
 
         addSubTarget(KotlinNodeJsIr::class.java) {
@@ -241,7 +262,10 @@ constructor(
     //d8
     @OptIn(ExperimentalWasmDsl::class)
     private val d8LazyDelegate = lazy {
-        NodeJsRootPlugin.apply(project.rootProject)
+        webTargetVariant(
+            { NodeJsRootPlugin.apply(project.rootProject) },
+            { WasmNodeJsRootPlugin.apply(project.rootProject) },
+        )
 
         addSubTarget(KotlinD8Ir::class.java) {
             configureSubTarget()
@@ -321,14 +345,17 @@ constructor(
     }
 
     override fun generateTypeScriptDefinitions() {
+        shouldGenerateTypeScriptDefinitions.set(true)
         compilations
             .all {
                 it.binaries
                     .withType(JsIrBinary::class.java)
-                    .all {
-                        it.generateTs = true
-                        it.linkTask.configure { linkTask ->
+                    .all { binary ->
+                        val tsValidationTask = registerTypeScriptCheckTask(binary)
+
+                        binary.linkTask.configure { linkTask ->
                             linkTask.compilerOptions.freeCompilerArgs.add(GENERATE_D_TS)
+                            linkTask.finalizedBy(tsValidationTask)
                         }
                     }
             }
@@ -343,14 +370,18 @@ constructor(
     internal companion object {
         private val DECAMELIZE_REGEX = "([A-Z])".toRegex()
 
-        internal fun buildNpmProjectName(project: Project, targetName: String): String {
+        internal fun buildNpmProjectName(
+            project: Project,
+            targetName: String,
+            defaultTargetName: String,
+        ): String {
             val rootProjectName = project.rootProject.name
 
             val localName = if (project != project.rootProject) {
                 (rootProjectName + project.path).replace(":", "-")
             } else rootProjectName
 
-            val targetPartName = if (targetName.isNotEmpty() && targetName.toLowerCaseAsciiOnly() != "js") {
+            val targetPartName = if (targetName.isNotEmpty() && targetName != defaultTargetName) {
                 targetName
                     .replace(DECAMELIZE_REGEX) {
                         it.groupValues

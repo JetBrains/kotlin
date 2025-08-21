@@ -24,3 +24,6 @@ class E : A(), D
 fun main() {
     E().foo(42)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, interfaceDeclaration, javaType,
+nullableType, stringLiteral, typeParameter */

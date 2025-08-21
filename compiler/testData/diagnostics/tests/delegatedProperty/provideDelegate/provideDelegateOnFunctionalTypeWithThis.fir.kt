@@ -22,3 +22,7 @@ fun box(): String {
     Right().prop()
     return "OK"
 }
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, funWithExtensionReceiver, functionDeclaration,
+functionalType, lambdaLiteral, nullableType, operator, override, primaryConstructor, propertyDeclaration,
+propertyDelegate, starProjection, stringLiteral, thisExpression, typeParameter */

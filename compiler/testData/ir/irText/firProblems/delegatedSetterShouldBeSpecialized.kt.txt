@@ -7,10 +7,10 @@ class MyClass {
   var delegatedToTopLevel: Int /* by */
     field = ::topLevelInt
     get(): Int {
-      return <this>.#delegatedToTopLevel$delegate.getValue<Int>(thisRef = <this>, property = MyClass::delegatedToTopLevel)
+      return getValue<Int>(/* <this> = <this>.#delegatedToTopLevel$delegate, */ thisRef = <this>, property = MyClass::delegatedToTopLevel)
     }
     set(<set-?>: Int) {
-      return <this>.#delegatedToTopLevel$delegate.setValue<Int>(thisRef = <this>, property = MyClass::delegatedToTopLevel, value = <set-?>)
+      return setValue<Int>(/* <this> = <this>.#delegatedToTopLevel$delegate, */ thisRef = <this>, property = MyClass::delegatedToTopLevel, value = <set-?>)
     }
 
   constructor() /* primary */ {

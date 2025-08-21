@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.cli.common.modules.ModuleChunk
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.CompilerConfigurationKey
+import org.jetbrains.kotlin.util.PerformanceManager
 import org.jetbrains.kotlin.utils.KotlinPaths
 
 object CLIConfigurationKeys {
@@ -46,7 +47,10 @@ object CLIConfigurationKeys {
     val ALLOW_KOTLIN_PACKAGE = CompilerConfigurationKey.create<Boolean>("allow kotlin package")
 
     @JvmField
-    val PERF_MANAGER = CompilerConfigurationKey.create<CommonCompilerPerformanceManager>("performance manager")
+    val PERF_MANAGER = CompilerConfigurationKey.create<PerformanceManager>("performance manager")
+
+    @JvmField
+    val DETAILED_PERF = CompilerConfigurationKey.create<Boolean>("Enable more detailed performance statistics.")
 
     // Used in Eclipse plugin (see KotlinCLICompiler)
     @JvmField
@@ -64,7 +68,10 @@ object CLIConfigurationKeys {
     val PRINT_VERSION = CompilerConfigurationKey.create<Boolean>("Print compiler version")
 
     @JvmField
-    val SCRIPT_MODE = CompilerConfigurationKey.create<Boolean>("Compile and evaluate kotlin script")
+    val SCRIPT_MODE = CompilerConfigurationKey.create<Boolean>("Compile and evaluate Kotlin script")
+
+    @JvmField
+    val REPL_MODE = CompilerConfigurationKey.create<Boolean>("Run Kotlin REPL (deprecated)")
 
     @JvmField
     val KOTLIN_PATHS = CompilerConfigurationKey.create<KotlinPaths>("Kotlin paths")
@@ -84,6 +91,10 @@ object CLIConfigurationKeys {
     @JvmField
     val DEFAULT_EXTENSION_FOR_SCRIPTS = CompilerConfigurationKey.create<String>("Default extension for scripts")
 
+    // Defines what kind of application environment should be created. Should be set to `true` only in tests
+    @JvmField
+    val TEST_ENVIRONMENT = CompilerConfigurationKey.create<Boolean>("test environment")
+
 }
 
 var CompilerConfiguration.contentRoots: List<ContentRoot>
@@ -102,9 +113,13 @@ var CompilerConfiguration.allowKotlinPackage: Boolean
     get() = getBoolean(CLIConfigurationKeys.ALLOW_KOTLIN_PACKAGE)
     set(value) { put(CLIConfigurationKeys.ALLOW_KOTLIN_PACKAGE, value) }
 
-var CompilerConfiguration.perfManager: CommonCompilerPerformanceManager?
+var CompilerConfiguration.perfManager: PerformanceManager?
     get() = get(CLIConfigurationKeys.PERF_MANAGER)
     set(value) { put(CLIConfigurationKeys.PERF_MANAGER, requireNotNull(value) { "nullable values are not allowed" }) }
+
+var CompilerConfiguration.detailedPerf: Boolean
+    get() = getBoolean(CLIConfigurationKeys.DETAILED_PERF)
+    set(value) { put(CLIConfigurationKeys.DETAILED_PERF, value) }
 
 var CompilerConfiguration.intellijPluginRoot: String?
     get() = get(CLIConfigurationKeys.INTELLIJ_PLUGIN_ROOT)
@@ -125,6 +140,10 @@ var CompilerConfiguration.printVersion: Boolean
 var CompilerConfiguration.scriptMode: Boolean
     get() = getBoolean(CLIConfigurationKeys.SCRIPT_MODE)
     set(value) { put(CLIConfigurationKeys.SCRIPT_MODE, value) }
+
+var CompilerConfiguration.replMode: Boolean
+    get() = getBoolean(CLIConfigurationKeys.REPL_MODE)
+    set(value) { put(CLIConfigurationKeys.REPL_MODE, value) }
 
 var CompilerConfiguration.kotlinPaths: KotlinPaths?
     get() = get(CLIConfigurationKeys.KOTLIN_PATHS)
@@ -149,4 +168,8 @@ var CompilerConfiguration.freeArgsForScript: List<String>
 var CompilerConfiguration.defaultExtensionForScripts: String?
     get() = get(CLIConfigurationKeys.DEFAULT_EXTENSION_FOR_SCRIPTS)
     set(value) { putIfNotNull(CLIConfigurationKeys.DEFAULT_EXTENSION_FOR_SCRIPTS, value) }
+
+var CompilerConfiguration.testEnvironment: Boolean
+    get() = getBoolean(CLIConfigurationKeys.TEST_ENVIRONMENT)
+    set(value) { put(CLIConfigurationKeys.TEST_ENVIRONMENT, value) }
 

@@ -6,16 +6,18 @@
 package org.jetbrains.kotlin.ir.backend.js.checkers
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactoryToRendererMap
-import org.jetbrains.kotlin.diagnostics.error0
-import org.jetbrains.kotlin.diagnostics.error1
-import org.jetbrains.kotlin.diagnostics.error2
-import org.jetbrains.kotlin.diagnostics.rendering.*
-import org.jetbrains.kotlin.diagnostics.warning0
-import org.jetbrains.kotlin.diagnostics.warning1
-import org.jetbrains.kotlin.diagnostics.warning2
+import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.diagnostics.*
+import org.jetbrains.kotlin.diagnostics.rendering.BaseDiagnosticRendererFactory
+import org.jetbrains.kotlin.diagnostics.rendering.CommonRenderers
+import org.jetbrains.kotlin.diagnostics.rendering.Renderer
+import org.jetbrains.kotlin.ir.IrDiagnosticRenderers
+import org.jetbrains.kotlin.ir.IrFileEntry
+import org.jetbrains.kotlin.ir.declarations.IrValueDeclaration
 
-object JsKlibErrors {
+object JsKlibErrors : KtDiagnosticsContainer() {
+    val CLASHED_FILES_IN_CASE_INSENSITIVE_FS by error1<PsiElement, List<IrFileEntry>>()
+
     val EXPORTING_JS_NAME_CLASH by error2<PsiElement, String, List<JsKlibExport>>()
     val EXPORTING_JS_NAME_CLASH_ES by warning2<PsiElement, String, List<JsKlibExport>>()
 
@@ -23,9 +25,12 @@ object JsKlibErrors {
     val JSCODE_NO_JAVASCRIPT_PRODUCED by error0<PsiElement>()
     val JSCODE_ERROR by error1<PsiElement, String>()
     val JSCODE_WARNING by warning1<PsiElement, String>()
+    val JS_CODE_CAPTURES_INLINABLE_FUNCTION by deprecationError1<PsiElement, IrValueDeclaration>(
+        LanguageFeature.ForbidCaptureInlinableLambdasInJsCode
+    )
 
-    init {
-        RootDiagnosticRendererFactory.registerFactory(KtDefaultJsKlibErrorMessages)
+    override fun getRendererFactory(): BaseDiagnosticRendererFactory {
+        return KtDefaultJsKlibErrorMessages
     }
 }
 
@@ -39,7 +44,17 @@ private object KtDefaultJsKlibErrorMessages : BaseDiagnosticRendererFactory() {
         }
     }
 
-    override val MAP = KtDiagnosticFactoryToRendererMap("KT").also { map ->
+    @JvmField
+    val JS_CLASHED_FILES = Renderer<List<IrFileEntry>> { files ->
+        files.joinToString("\n", limit = 10) { "    ${it.name}" }
+    }
+
+    override val MAP by KtDiagnosticFactoryToRendererMap("KT") { map ->
+        map.put(
+            JsKlibErrors.CLASHED_FILES_IN_CASE_INSENSITIVE_FS,
+            "The file has the same package and name (or @JsFileName value) but different casing as the following files:\n{0}\nThis may cause issues in case-insensitive filesystems. To fix it, consider renaming file, adding @JsFileName annotation or changing its package.",
+            JS_CLASHED_FILES
+        )
         map.put(
             JsKlibErrors.EXPORTING_JS_NAME_CLASH,
             "Exporting name ''{0}'' clashes with {1}",
@@ -69,6 +84,11 @@ private object KtDefaultJsKlibErrorMessages : BaseDiagnosticRendererFactory() {
             JsKlibErrors.JSCODE_WARNING,
             "JavaScript warning: {0}",
             CommonRenderers.STRING
+        )
+        map.put(
+            JsKlibErrors.JS_CODE_CAPTURES_INLINABLE_FUNCTION,
+            "Illegal capturing of inline parameter ''{0}''. Add ''noinline'' modifier to the parameter declaration",
+            IrDiagnosticRenderers.DECLARATION_NAME
         )
     }
 }

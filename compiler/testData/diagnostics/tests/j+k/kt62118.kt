@@ -39,3 +39,6 @@ public class J extends K {
     @Override
     public void setX(String value) {}
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, functionDeclaration, integerLiteral, javaFunction, javaType,
+localProperty, nullableType, override, primaryConstructor, propertyDeclaration, stringLiteral, typeParameter */

@@ -38,6 +38,7 @@ public class Flags {
 
     public static final BooleanFlagField IS_SECONDARY = FlagField.booleanAfter(VISIBILITY);
     public static final BooleanFlagField IS_CONSTRUCTOR_WITH_NON_STABLE_PARAMETER_NAMES = FlagField.booleanAfter(IS_SECONDARY);
+    public static final FlagField<ProtoBuf.ReturnValueStatus> RETURN_VALUE_STATUS_CTOR = FlagField.after(IS_CONSTRUCTOR_WITH_NON_STABLE_PARAMETER_NAMES, ProtoBuf.ReturnValueStatus.values());
 
     // Callables
 
@@ -53,6 +54,7 @@ public class Flags {
     public static final BooleanFlagField IS_SUSPEND = FlagField.booleanAfter(IS_EXTERNAL_FUNCTION);
     public static final BooleanFlagField IS_EXPECT_FUNCTION = FlagField.booleanAfter(IS_SUSPEND);
     public static final BooleanFlagField IS_FUNCTION_WITH_NON_STABLE_PARAMETER_NAMES = FlagField.booleanAfter(IS_EXPECT_FUNCTION);
+    public static final FlagField<ProtoBuf.ReturnValueStatus> RETURN_VALUE_STATUS_FUNCTION = FlagField.after(IS_FUNCTION_WITH_NON_STABLE_PARAMETER_NAMES, ProtoBuf.ReturnValueStatus.values());
 
     // Properties
 
@@ -65,6 +67,7 @@ public class Flags {
     public static final BooleanFlagField IS_EXTERNAL_PROPERTY = FlagField.booleanAfter(HAS_CONSTANT);
     public static final BooleanFlagField IS_DELEGATED = FlagField.booleanAfter(IS_EXTERNAL_PROPERTY);
     public static final BooleanFlagField IS_EXPECT_PROPERTY = FlagField.booleanAfter(IS_DELEGATED);
+    public static final FlagField<ProtoBuf.ReturnValueStatus> RETURN_VALUE_STATUS_PROPERTY = FlagField.after(IS_EXPECT_PROPERTY, ProtoBuf.ReturnValueStatus.values());
 
     // Parameters
 
@@ -122,12 +125,14 @@ public class Flags {
             boolean hasAnnotations,
             @NotNull ProtoBuf.Visibility visibility,
             boolean isSecondary,
-            boolean hasStableParameterNames
+            boolean hasStableParameterNames,
+            ProtoBuf.ReturnValueStatus returnValueStatus
     ) {
         return HAS_ANNOTATIONS.toFlags(hasAnnotations)
                | VISIBILITY.toFlags(visibility)
                | IS_SECONDARY.toFlags(isSecondary)
                | IS_CONSTRUCTOR_WITH_NON_STABLE_PARAMETER_NAMES.toFlags(!hasStableParameterNames)
+               | RETURN_VALUE_STATUS_CTOR.toFlags(returnValueStatus)
                 ;
     }
 
@@ -143,7 +148,8 @@ public class Flags {
             boolean isExternal,
             boolean isSuspend,
             boolean isExpect,
-            boolean hasStableParameterNames
+            boolean hasStableParameterNames,
+            ProtoBuf.ReturnValueStatus returnValueStatus
     ) {
         return HAS_ANNOTATIONS.toFlags(hasAnnotations)
                | VISIBILITY.toFlags(visibility)
@@ -157,6 +163,7 @@ public class Flags {
                | IS_SUSPEND.toFlags(isSuspend)
                | IS_EXPECT_FUNCTION.toFlags(isExpect)
                | IS_FUNCTION_WITH_NON_STABLE_PARAMETER_NAMES.toFlags(!hasStableParameterNames)
+               | RETURN_VALUE_STATUS_FUNCTION.toFlags(returnValueStatus)
                 ;
     }
 
@@ -173,7 +180,8 @@ public class Flags {
             boolean lateInit,
             boolean isExternal,
             boolean isDelegated,
-            boolean isExpect
+            boolean isExpect,
+            ProtoBuf.ReturnValueStatus returnValueStatus
     ) {
         return HAS_ANNOTATIONS.toFlags(hasAnnotations)
                | VISIBILITY.toFlags(visibility)
@@ -188,6 +196,7 @@ public class Flags {
                | IS_EXTERNAL_PROPERTY.toFlags(isExternal)
                | IS_DELEGATED.toFlags(isDelegated)
                | IS_EXPECT_PROPERTY.toFlags(isExpect)
+               | RETURN_VALUE_STATUS_PROPERTY.toFlags(returnValueStatus)
                 ;
     }
 

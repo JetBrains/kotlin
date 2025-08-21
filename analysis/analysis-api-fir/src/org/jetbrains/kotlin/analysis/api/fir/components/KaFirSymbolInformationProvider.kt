@@ -5,14 +5,13 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.components
 
-import org.jetbrains.kotlin.analysis.api.components.KaSymbolInformationProvider
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirNamedClassSymbolBase
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirPackageSymbol
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirPsiJavaClassSymbol
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirSymbol
 import org.jetbrains.kotlin.analysis.api.fir.utils.firSymbol
-import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseSessionComponent
+import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseSymbolInformationProvider
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.descriptors.ClassKind
@@ -20,14 +19,25 @@ import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.fir.analysis.checkers.getAllowedAnnotationTargets
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.resolve.calls.FirSimpleSyntheticPropertySymbol
+import org.jetbrains.kotlin.fir.resolve.calls.noJavaOrigin
 import org.jetbrains.kotlin.fir.symbols.impl.FirBackingFieldSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationInfo
+import org.jetbrains.kotlin.resolve.deprecation.DeprecationLevelValue
 import org.jetbrains.kotlin.resolve.deprecation.SimpleDeprecationInfo
 
 internal class KaFirSymbolInformationProvider(
     override val analysisSessionProvider: () -> KaFirSession
-) : KaBaseSessionComponent<KaFirSession>(), KaSymbolInformationProvider, KaFirSessionComponent {
+) : KaBaseSymbolInformationProvider<KaFirSession>(), KaFirSessionComponent {
+    private companion object {
+        private val OBSOLETE_SYMBOL_DEPRECATION_INFO = SimpleDeprecationInfo(
+            deprecationLevel = DeprecationLevelValue.HIDDEN,
+            propagatesToOverrides = true,
+            message = null,
+        )
+    }
+
     override val KaSymbol.deprecationStatus: DeprecationInfo?
         get() = withValidityAssertion {
             if (this is KaFirPackageSymbol || this is KaReceiverParameterSymbol) return null
@@ -38,16 +48,20 @@ internal class KaFirSymbolInformationProvider(
                 return null
             }
 
+            val firSymbol = this.firSymbol
+
+            // A symbol exists for compatibility reasons and should never be referenced in user code
+            val isObsoleteSymbol = firSymbol.origin == FirDeclarationOrigin.Synthetic.FakeHiddenInPreparationForNewJdk
+                    || (firSymbol is FirSimpleSyntheticPropertySymbol && firSymbol.noJavaOrigin)
+
+            if (isObsoleteSymbol) {
+                return OBSOLETE_SYMBOL_DEPRECATION_INFO
+            }
+
             return when (firSymbol) {
-                is FirPropertySymbol -> {
-                    firSymbol.getDeprecationForCallSite(analysisSession.firSession, AnnotationUseSiteTarget.PROPERTY)
-                }
-                is FirBackingFieldSymbol -> {
-                    firSymbol.getDeprecationForCallSite(analysisSession.firSession, AnnotationUseSiteTarget.FIELD)
-                }
-                else -> {
-                    firSymbol.getDeprecationForCallSite(analysisSession.firSession)
-                }
+                is FirPropertySymbol -> firSymbol.getDeprecationForCallSite(analysisSession.firSession, AnnotationUseSiteTarget.PROPERTY)
+                is FirBackingFieldSymbol -> firSymbol.getDeprecationForCallSite(analysisSession.firSession, AnnotationUseSiteTarget.FIELD)
+                else -> firSymbol.getDeprecationForCallSite(analysisSession.firSession)
             }?.toDeprecationInfo()
         }
 

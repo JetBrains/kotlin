@@ -19,3 +19,5 @@ class J extends I {
 open class K : <!CYCLIC_INHERITANCE_HIERARCHY!>J<!>() {
     fun baz() {}
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, javaType */

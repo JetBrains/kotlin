@@ -22,3 +22,6 @@ fun JavaAnnotationOwner.buildLazyValueForMap() = lazy {
 abstract class BinaryJavaMethodBase(): MapBasedJavaAnnotationOwner {
     override val annotationsByFqNameHash by buildLazyValueForMap()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, interfaceDeclaration,
+lambdaLiteral, nullableType, override, primaryConstructor, propertyDeclaration, propertyDelegate, safeCall */

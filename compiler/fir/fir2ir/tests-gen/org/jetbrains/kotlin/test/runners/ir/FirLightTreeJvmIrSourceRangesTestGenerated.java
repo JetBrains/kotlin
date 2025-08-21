@@ -68,6 +68,12 @@ public class FirLightTreeJvmIrSourceRangesTestGenerated extends AbstractFirLight
   }
 
   @Test
+  @TestMetadata("kt63267_smartCastOnExtensionReceiver.kt")
+  public void testKt63267_smartCastOnExtensionReceiver() {
+    runTest("compiler/testData/ir/sourceRanges/kt63267_smartCastOnExtensionReceiver.kt");
+  }
+
+  @Test
   @TestMetadata("kt63779.kt")
   public void testKt63779() {
     runTest("compiler/testData/ir/sourceRanges/kt63779.kt");
@@ -77,6 +83,12 @@ public class FirLightTreeJvmIrSourceRangesTestGenerated extends AbstractFirLight
   @TestMetadata("kt63779_2.kt")
   public void testKt63779_2() {
     runTest("compiler/testData/ir/sourceRanges/kt63779_2.kt");
+  }
+
+  @Test
+  @TestMetadata("kt63779_3.kt")
+  public void testKt63779_3() {
+    runTest("compiler/testData/ir/sourceRanges/kt63779_3.kt");
   }
 
   @Test
@@ -95,6 +107,12 @@ public class FirLightTreeJvmIrSourceRangesTestGenerated extends AbstractFirLight
   @TestMetadata("postfixIncrementDecrement.kt")
   public void testPostfixIncrementDecrement() {
     runTest("compiler/testData/ir/sourceRanges/postfixIncrementDecrement.kt");
+  }
+
+  @Test
+  @TestMetadata("supercall.kt")
+  public void testSupercall() {
+    runTest("compiler/testData/ir/sourceRanges/supercall.kt");
   }
 
   @Test

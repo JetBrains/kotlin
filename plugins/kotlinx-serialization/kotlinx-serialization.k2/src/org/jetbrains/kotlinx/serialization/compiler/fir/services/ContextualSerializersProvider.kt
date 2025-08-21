@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.fir.caches.FirCache
 import org.jetbrains.kotlin.fir.caches.createCache
 import org.jetbrains.kotlin.fir.caches.firCachesFactory
 import org.jetbrains.kotlin.fir.caches.getValue
-import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.getAnnotationByClassId
 import org.jetbrains.kotlin.fir.declarations.getTargetType
 import org.jetbrains.kotlin.fir.declarations.hasAnnotation
@@ -22,6 +21,7 @@ import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirFileSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
@@ -34,19 +34,19 @@ import org.jetbrains.kotlinx.serialization.compiler.resolve.*
 
 
 class ContextualSerializersProvider(session: FirSession) : FirExtensionSessionComponent(session) {
-    private val contextualKClassListCache: FirCache<FirFile, Set<ConeKotlinType>, Nothing?> =
-        session.firCachesFactory.createCache { file ->
+    private val contextualKClassListCache: FirCache<FirFileSymbol, Set<ConeKotlinType>, Nothing?> =
+        session.firCachesFactory.createCache { fileSymbol ->
             buildSet {
-                addAll(getKClassListFromFileAnnotation(file, SerializationAnnotations.contextualClassId))
-                addAll(getKClassListFromFileAnnotation(file, SerializationAnnotations.contextualOnFileClassId))
+                addAll(getKClassListFromFileAnnotation(fileSymbol, SerializationAnnotations.contextualClassId))
+                addAll(getKClassListFromFileAnnotation(fileSymbol, SerializationAnnotations.contextualOnFileClassId))
             }
         }
 
-    fun getContextualKClassListForFile(file: FirFile): Set<ConeKotlinType> {
-        return contextualKClassListCache.getValue(file)
+    fun getContextualKClassListForFile(fileSymbol: FirFileSymbol): Set<ConeKotlinType> {
+        return contextualKClassListCache.getValue(fileSymbol)
     }
 
-    private val additionalSerializersInScopeCache: FirCache<FirFile, Map<Pair<FirClassSymbol<*>, Boolean>, FirClassSymbol<*>>, Nothing?> =
+    private val additionalSerializersInScopeCache: FirCache<FirFileSymbol, Map<Pair<FirClassSymbol<*>, Boolean>, FirClassSymbol<*>>, Nothing?> =
         session.firCachesFactory.createCache { file ->
             getKClassListFromFileAnnotation(file, SerializationAnnotations.additionalSerializersClassId).associateBy(
                 keySelector = {
@@ -59,7 +59,7 @@ class ContextualSerializersProvider(session: FirSession) : FirExtensionSessionCo
             )
         }
 
-    fun getAdditionalSerializersInScopeForFile(file: FirFile): Map<Pair<FirClassSymbol<*>, Boolean>, FirClassSymbol<*>> {
+    fun getAdditionalSerializersInScopeForFile(file: FirFileSymbol): Map<Pair<FirClassSymbol<*>, Boolean>, FirClassSymbol<*>> {
         return additionalSerializersInScopeCache.getValue(file)
     }
 
@@ -69,8 +69,8 @@ class ContextualSerializersProvider(session: FirSession) : FirExtensionSessionCo
         else -> emptyList()
     }
 
-    private fun getKClassListFromFileAnnotation(file: FirFile, annotationClassId: ClassId): List<ConeKotlinType> {
-        val annotation = file.symbol.resolvedAnnotationsWithArguments.getAnnotationByClassId(
+    private fun getKClassListFromFileAnnotation(file: FirFileSymbol, annotationClassId: ClassId): List<ConeKotlinType> {
+        val annotation = file.resolvedAnnotationsWithArguments.getAnnotationByClassId(
             annotationClassId, session
         ) ?: return emptyList()
         val annotationArgument = annotation.argumentMapping.mapping.values.firstOrNull()

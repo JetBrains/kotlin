@@ -1,6 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
-// LANGUAGE: +ForbidUsingExtensionPropertyTypeParameterInDelegate
 // WITH_REFLECT
 
 import kotlin.reflect.KProperty
@@ -29,3 +28,7 @@ fun main() {
     a.add(a.leakingT)
     println(a) // [1, 2, 3, xx]!
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, elvisExpression, functionDeclaration, functionalType,
+integerLiteral, lambdaLiteral, localProperty, nullableType, operator, primaryConstructor, propertyDeclaration,
+propertyDelegate, propertyWithExtensionReceiver, starProjection, stringLiteral, typeParameter */

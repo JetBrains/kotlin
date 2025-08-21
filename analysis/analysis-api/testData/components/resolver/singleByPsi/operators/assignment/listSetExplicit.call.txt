@@ -7,16 +7,19 @@ KtNameReferenceExpression(54,57): 'set'
           receiverType = null
           returnType = kotlin.Int
           symbol = index: kotlin.Int
+          contextParameters = []
           callableId = null),
         1 -> (KaVariableSignature:
           name = element
           receiverType = null
           returnType = kotlin.Int
           symbol = element: E
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = l
           isSafeNavigation = false
@@ -32,13 +35,16 @@ KtNameReferenceExpression(54,57): 'set'
               receiverType = null
               returnType = kotlin.Int
               symbol = index: kotlin.Int
+              contextParameters = []
               callableId = null,
             KaVariableSignature:
               name = element
               receiverType = null
               returnType = kotlin.Int
               symbol = element: E
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/collections/MutableList.set
       typeArgumentsMapping = {}

@@ -28,3 +28,6 @@ fun <T : Any> testWithParameter(y: X.Y<T>, t: Any) {
 fun <T : Any> testWithCapturedParameter(y: X.Y<out T>, t: Any) {
     X().foo(y, <!MEMBER_PROJECTED_OUT!>t<!>)
 }
+
+/* GENERATED_FIR_TAGS: capturedType, classDeclaration, functionDeclaration, inProjection, nestedClass, outProjection,
+starProjection, typeConstraint, typeParameter */

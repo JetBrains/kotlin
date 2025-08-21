@@ -17,3 +17,6 @@ fun IB.extFun(x: IA) {}
 fun testWithExpectedType() {
     val extFun_AA_B: IA.(IA) -> Unit = IB::<!NONE_APPLICABLE!>extFun<!> // extFun is unresolved, type of IB::extFun is implicit
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType,
+interfaceDeclaration, localProperty, propertyDeclaration, typeWithExtension */

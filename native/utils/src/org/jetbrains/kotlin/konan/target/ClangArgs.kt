@@ -34,7 +34,7 @@ sealed class ClangArgs(
     // TODO: Should be dropped in favor of real MSVC target.
     private val argsForWindowsJni = forJni && target == KonanTarget.MINGW_X64
 
-    private val clangArgsSpecificForKonanSources : List<String>
+    val clangArgsSpecificForKonanSources: List<String>
         get() {
             val konanOptions = listOfNotNull(
                     target.architecture.name.takeIf { target != KonanTarget.WATCHOS_ARM64 },
@@ -42,6 +42,7 @@ sealed class ClangArgs(
                     target.family.name.takeIf { target.family != Family.MINGW },
                     "WINDOWS".takeIf { target.family == Family.MINGW },
                     "MACOSX".takeIf { target.family == Family.OSX },
+                    "APPLE".takeIf { target.family.isAppleFamily },
 
                     "NO_64BIT_ATOMIC".takeUnless { target.supports64BitAtomics() },
                     "NO_UNALIGNED_ACCESS".takeUnless { target.supportsUnalignedAccess() },
@@ -97,9 +98,7 @@ sealed class ClangArgs(
             else -> configurables.targetTriple.toString()
         }
         add(listOf("-target", targetString))
-        val hasCustomSysroot = configurables is ZephyrConfigurables
-                || configurables is WasmConfigurables
-                || configurables is AndroidConfigurables
+        val hasCustomSysroot = configurables is AndroidConfigurables
                 || argsForWindowsJni
         if (!hasCustomSysroot) {
             when (configurables) {
@@ -168,8 +167,15 @@ sealed class ClangArgs(
         else -> emptyArray()
     }
 
+    // Kept for compatibility, remove later.
     val clangArgsForKonanSources =
             clangXXArgs + clangArgsSpecificForKonanSources
+
+    val clangArgsForKonanCxxSources =
+            (clangXXArgs + clangArgsSpecificForKonanSources).asList()
+
+    val clangArgsForKonanCSources =
+            (clangArgs + clangArgsSpecificForKonanSources).asList()
 
     private val libclangSpecificArgs =
             // libclang works not exactly the same way as the clang binary and

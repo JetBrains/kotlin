@@ -6,11 +6,7 @@
 @file:Suppress("PackageDirectoryMismatch") // Old package for compatibility
 package org.jetbrains.kotlin.gradle.plugin.cocoapods
 
-import org.gradle.api.DefaultTask
-import org.gradle.api.NamedDomainObjectContainer
-import org.gradle.api.Plugin
-import org.gradle.api.Project
-import org.gradle.api.Task
+import org.gradle.api.*
 import org.gradle.api.file.Directory
 import org.gradle.api.file.ProjectLayout
 import org.gradle.api.file.RegularFile
@@ -18,9 +14,9 @@ import org.gradle.api.plugins.ExtensionAware
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.TaskProvider
-import org.gradle.api.tasks.wrapper.Wrapper
 import org.jetbrains.kotlin.daemon.common.trimQuotes
 import org.jetbrains.kotlin.gradle.dsl.*
+import org.jetbrains.kotlin.gradle.internal.properties.propertiesService
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.addExtension
@@ -31,10 +27,7 @@ import org.jetbrains.kotlin.gradle.plugin.ide.Idea222Api
 import org.jetbrains.kotlin.gradle.plugin.ide.ideaImportDependsOn
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.*
-import org.jetbrains.kotlin.gradle.plugin.mpp.apple.AppleSdk
-import org.jetbrains.kotlin.gradle.plugin.mpp.apple.AppleTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.FrameworkCopy.Companion.dsymFile
-import org.jetbrains.kotlin.gradle.utils.whenEvaluated
 import org.jetbrains.kotlin.gradle.targets.native.cocoapods.CocoapodsPluginDiagnostics
 import org.jetbrains.kotlin.gradle.targets.native.cocoapods.KotlinArtifactsPodspecExtension
 import org.jetbrains.kotlin.gradle.targets.native.cocoapods.kotlinArtifactsPodspecExtension
@@ -42,9 +35,6 @@ import org.jetbrains.kotlin.gradle.targets.native.tasks.*
 import org.jetbrains.kotlin.gradle.targets.native.tasks.artifact.kotlinArtifactsExtension
 import org.jetbrains.kotlin.gradle.tasks.*
 import org.jetbrains.kotlin.gradle.utils.*
-import org.jetbrains.kotlin.gradle.utils.asValidTaskName
-import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
-import org.jetbrains.kotlin.gradle.utils.newInstance
 import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
@@ -113,7 +103,7 @@ private fun AppleTarget.toBuildDependenciesTaskName(pod: CocoapodsDependency): S
 
 private fun Project.getPodBuildTaskProvider(
     target: KotlinNativeTarget,
-    pod: CocoapodsDependency
+    pod: CocoapodsDependency,
 ): Provider<PodBuildTask> {
     return providerOfTask(target.appleTarget.toBuildDependenciesTaskName(pod))
 }
@@ -161,7 +151,7 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
 
     private fun Project.createCopyFrameworkTask(
         frameworkFile: Provider<File>,
-        buildingTask: TaskProvider<*>
+        buildingTask: TaskProvider<*>,
     ) = registerTask<FrameworkCopy>(SYNC_TASK_NAME) { task ->
         task.group = TASK_GROUP
         task.description = "Copies a framework for given platform and build type into the CocoaPods build directory"
@@ -176,7 +166,7 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
         project: Project,
         kotlinExtension: KotlinMultiplatformExtension,
         requestedBuildType: NativeBuildType,
-        requestedPlatforms: List<KonanTarget>
+        requestedPlatforms: List<KonanTarget>,
     ) {
         val fatTargets = requestedPlatforms.associateWith { kotlinExtension.targetsForPlatform(it) }
 
@@ -211,7 +201,7 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
         project: Project,
         kotlinExtension: KotlinMultiplatformExtension,
         requestedBuildType: NativeBuildType,
-        requestedPlatform: KonanTarget
+        requestedPlatform: KonanTarget,
     ) {
         val targets = kotlinExtension.targetsForPlatform(requestedPlatform)
 
@@ -225,14 +215,17 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
     private fun createSyncTask(
         project: Project,
         kotlinExtension: KotlinMultiplatformExtension,
-        cocoapodsExtension: CocoapodsExtension
+        cocoapodsExtension: CocoapodsExtension,
     ) = project.whenEvaluated {
-        val xcodeConfiguration = project.findProperty(CONFIGURATION_PROPERTY)?.toString() ?: return@whenEvaluated
-        val platforms = project.findProperty(PLATFORM_PROPERTY)?.toString()?.split(",", " ")?.filter { it.isNotBlank() }
-        val archs = project.findProperty(ARCHS_PROPERTY)?.toString()?.split(",", " ")?.filter { it.isNotBlank() }
+        val xcodeConfiguration = project.propertiesService.flatMap { it.property(CONFIGURATION_PROPERTY, project) }
+        val platforms = project.propertiesService.flatMap { it.property(PLATFORM_PROPERTY, project) }
+            .map { it.split(",", " ").filter(String::isNotBlank) }
+        val archs = project.propertiesService.flatMap { it.property(ARCHS_PROPERTY, project) }
+            .map { it.split(",", " ").filter(String::isNotBlank) }
 
-        if (platforms == null || archs == null) {
-            check(project.findProperty(TARGET_PROPERTY) == null) {
+        if (platforms.isPresent.not() || archs.isPresent.not()) {
+            val target = project.propertiesService.flatMap { it.property(TARGET_PROPERTY, project) }
+            check(target.isPresent.not()) {
                 """
                 $TARGET_PROPERTY property was dropped in favor of $PLATFORM_PROPERTY and $ARCHS_PROPERTY. 
                 Podspec file might be outdated. Sync project with Gradle files or run the 'podspec' task manually to regenerate it.
@@ -241,17 +234,17 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
             return@whenEvaluated
         }
 
-        check(platforms.size == 1) {
+        check(platforms.get().size == 1) {
             "$PLATFORM_PROPERTY has to contain a single value only. If building for multiple platforms is required, consider using XCFrameworks"
         }
 
-        val platform = platforms.first()
+        val platform = platforms.get().first()
 
-        val nativeTargets = AppleSdk.defineNativeTargets(platform, archs)
+        val nativeTargets = AppleSdk.defineNativeTargets(platform, archs.get())
 
         check(nativeTargets.isNotEmpty()) { "Could not identify native targets for platform: '$platform' and architectures: '$archs'" }
 
-        val requestedBuildType = cocoapodsExtension.xcodeConfigurationToNativeBuildType[xcodeConfiguration]
+        val requestedBuildType = cocoapodsExtension.xcodeConfigurationToNativeBuildType[xcodeConfiguration.get()]
 
         check(requestedBuildType != null) {
             """
@@ -271,18 +264,21 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
     }
 
     private fun reportDeprecatedPropertiesUsage(project: Project) {
-        listOf(CFLAGS_PROPERTY, FRAMEWORK_PATHS_PROPERTY, HEADER_PATHS_PROPERTY)
-            .filter { project.findProperty(it) != null }
-            .takeIf { it.isNotEmpty() }
-            ?.let {
-                project.reportDiagnostic(CocoapodsPluginDiagnostics.DeprecatedPropertiesUsed(it))
-            }
+        val deprecatedProperties = listOf(CFLAGS_PROPERTY, FRAMEWORK_PATHS_PROPERTY, HEADER_PATHS_PROPERTY)
+
+        val presentPropertyNames = deprecatedProperties.filter { propertyName ->
+            project.propertiesService.flatMap { it.property(propertyName, project) }.orNull != null
+        }
+
+        if (presentPropertyNames.isNotEmpty()) {
+            project.reportDiagnostic(CocoapodsPluginDiagnostics.DeprecatedPropertiesUsed(presentPropertyNames))
+        }
     }
 
     private fun createInterops(
         project: Project,
         kotlinExtension: KotlinMultiplatformExtension,
-        cocoapodsExtension: CocoapodsExtension
+        cocoapodsExtension: CocoapodsExtension,
     ) {
         val moduleNames = mutableSetOf<String>()
 
@@ -312,10 +308,14 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
                         interopTask.onlyIf { HostManager.hostIsMac }
 
                         with(interop) {
-                            @Suppress("DEPRECATION") // deprecated property is used intentionally during deprecation period
+                            @Suppress("DEPRECATION_ERROR") // deprecated property is used intentionally during deprecation period
                             defFileProperty.set(defTask.flatMap { it.defFile.asFile })
                             _packageNameProp.set(project.provider { pod.packageName })
                             _extraOptsProp.addAll(project.provider { pod.extraOpts })
+                            _extraOptsProp.addAll(pod.useClangModules.map { useModules ->
+                                val hasNoHeaders = pod.headers.isNullOrEmpty()
+                                if (useModules && hasNoHeaders) listOf("-compiler-option", "-fmodules") else emptyList()
+                            })
                         }
 
                         val podBuildTaskProvider = project.getPodBuildTaskProvider(target, pod)
@@ -382,7 +382,7 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
 
     private fun registerDummyFrameworkTask(
         project: Project,
-        cocoapodsExtension: CocoapodsExtension
+        cocoapodsExtension: CocoapodsExtension,
     ): TaskProvider<DummyFrameworkTask> {
         return project.registerTask<DummyFrameworkTask>(DUMMY_FRAMEWORK_TASK_NAME) { task ->
             task.frameworkName.convention(cocoapodsExtension.podFrameworkName)
@@ -392,8 +392,12 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
 
     private fun registerPodspecTask(
         project: Project,
-        cocoapodsExtension: CocoapodsExtension
+        cocoapodsExtension: CocoapodsExtension,
     ): TaskProvider<PodspecTask> {
+        val generateWrapper = project.propertiesService.flatMap {
+            it.property(GENERATE_WRAPPER_PROPERTY, project)
+        }.map { it.toBoolean() }.orElse(false)
+
         return project.registerTask<PodspecTask>(POD_SPEC_TASK_NAME) { task ->
             task.group = TASK_GROUP
             task.description = "Generates a podspec file for CocoaPods import"
@@ -403,14 +407,14 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
 
             task.configure(cocoapodsExtension, project)
 
-            task.gradleWrapperPath.set(project.gradleWrapperPath())
-            val generateWrapper = project.findProperty(GENERATE_WRAPPER_PROPERTY)?.toString()?.toBoolean() ?: false
-            if (generateWrapper) {
+            task.gradleWrapperFile.set(File(project.rootDir, "gradlew"))
+            if (generateWrapper.get()) {
                 task.dependsOn(":wrapper")
             }
         }
     }
 
+    @Suppress("DEPRECATION")
     private fun registerPodspecTask(
         project: Project,
         artifact: KotlinNativeArtifact,
@@ -448,6 +452,7 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
         }
     }
 
+    @Suppress("DEPRECATION")
     private fun injectPodspecExtensionToArtifacts(
         project: Project,
         artifactsExtension: KotlinArtifactsExtension,
@@ -468,7 +473,7 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
     private fun registerPodInstallTask(
         project: Project,
         cocoapodsExtension: CocoapodsExtension,
-        dummyFrameworkTaskProvider: TaskProvider<DummyFrameworkTask>
+        dummyFrameworkTaskProvider: TaskProvider<DummyFrameworkTask>,
     ): TaskProvider<PodInstallTask> {
         val podspecTaskProvider = registerPodspecTask(project, cocoapodsExtension)
         return project.registerTask<PodInstallTask>(POD_INSTALL_TASK_NAME) { task ->
@@ -530,7 +535,7 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
     private fun registerPodBuildTasks(
         project: Project,
         kotlinExtension: KotlinMultiplatformExtension,
-        cocoapodsExtension: CocoapodsExtension
+        cocoapodsExtension: CocoapodsExtension,
     ) {
         val schemeNames = mutableSetOf<String>()
 
@@ -650,7 +655,7 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
     private fun registerPodXCFrameworkTask(
         project: Project,
         cocoapodsExtension: CocoapodsExtension,
-        buildType: NativeBuildType
+        buildType: NativeBuildType,
     ): TaskProvider<XCFrameworkTask> =
         with(project) {
             registerTask(lowerCamelCaseName(POD_FRAMEWORK_PREFIX, "publish", buildType.getName(), "XCFramework")) { task ->
@@ -672,7 +677,7 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
         project: Project,
         cocoapodsExtension: CocoapodsExtension,
         xcFrameworkTask: TaskProvider<XCFrameworkTask>,
-        buildType: NativeBuildType
+        buildType: NativeBuildType,
     ): TaskProvider<PodspecTask> {
         val task = project.registerTask<PodspecTask>(lowerCamelCaseName(POD_FRAMEWORK_PREFIX, "spec", buildType.getName())) { task ->
             task.description = "Generates podspec for ${buildType.getName().capitalizeAsciiOnly()} XCFramework publishing"
@@ -704,13 +709,13 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
         tvos.set(cocoapodsExtension.tvos)
         watchos.set(cocoapodsExtension.watchos)
         projectPath.set(project.taskProjectPath())
-        hasPodfile.set(project.hasPodfileOwnOrParent())
+        hasPodfile.setProvider { cocoapodsExtension.podfile != null }
     }
 
     private fun registerPodPublishFatFrameworkTasks(
         project: Project,
         xcFrameworkTask: TaskProvider<XCFrameworkTask>,
-        buildType: NativeBuildType
+        buildType: NativeBuildType,
     ) =
         with(project) {
             multiplatformExtension.supportedAppleTargets().all { target ->
@@ -784,10 +789,6 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
         }
     }
 
-    private fun Project.gradleWrapperPath(): Provider<String?> {
-        return provider { rootProject.tasks.locateTask<Wrapper>("wrapper")?.get()?.scriptFile?.absolutePath }
-    }
-
     private fun Project.taskProjectPath(): String {
         return if (project.depth != 0) project.path else ""
     }
@@ -798,13 +799,6 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
 
     private val KotlinMultiplatformExtension?.cocoapodsExtensionOrNull: CocoapodsExtension?
         get() = (this as? ExtensionAware)?.extensions?.findByName(COCOAPODS_EXTENSION_NAME) as? CocoapodsExtension
-
-    private fun Project.hasPodfileOwnOrParent(): Provider<Boolean> {
-        return provider {
-            multiplatformExtensionOrNull?.cocoapodsExtensionOrNull?.podfile != null
-                    || (parent?.hasPodfileOwnOrParent()?.get() ?: false)
-        }
-    }
 
     // Enable cinterop commonization if it is not explicitly specified
     private fun Project.enableCInteropCommonizationSetByExternalPlugin() {
@@ -878,6 +872,8 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
  *
  * Only needed in *.kts build files. In Groovy you can use the same syntax but without explicit extension import
  */
+@Suppress("DEPRECATION")
+@Deprecated(KotlinArtifactsExtension.KOTLIN_NATIVE_ARTIFACTS_DEPRECATION)
 fun KotlinNativeArtifactConfig.withPodspec(configure: KotlinArtifactsPodspecExtension.() -> Unit) {
     val extension = cast<ExtensionAware>().kotlinArtifactsPodspecExtension
 

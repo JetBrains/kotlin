@@ -14,3 +14,6 @@ fun test() {
 <!NOTHING_TO_INLINE!>inline<!> fun lambdaAny(p: Any) {
     p.toString()
 }
+
+/* GENERATED_FIR_TAGS: break, continue, equalityExpression, forLoop, functionDeclaration, ifExpression, inline,
+integerLiteral, lambdaLiteral, localProperty, propertyDeclaration, rangeExpression */

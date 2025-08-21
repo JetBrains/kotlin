@@ -1,4 +1,4 @@
-class A {/* ClassDeclarationStructureElement */
+/* RootStructureElement */class A {/* ClassDeclarationStructureElement */
     class B {/* ClassDeclarationStructureElement */
         fun x() {/* DeclarationStructureElement */
         }

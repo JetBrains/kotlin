@@ -20,3 +20,5 @@ fun main() {
     println(test(x = 5))
     println(test(5))
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, functionDeclaration, integerLiteral */

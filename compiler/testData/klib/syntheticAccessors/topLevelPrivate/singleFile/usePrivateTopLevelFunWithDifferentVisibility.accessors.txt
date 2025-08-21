@@ -32,7 +32,7 @@ public inline fun inlineAllEffectivelyPublic1(): String
     /* ACCESSOR use-site */ access$allEffectivelyPublic$tUsePrivateTopLevelFunWithDifferentVisibilityKt()
 internal inline fun inlineAllEffectivelyPublic2(): String
     /* ACCESSOR use-site */ access$allEffectivelyPublic$tUsePrivateTopLevelFunWithDifferentVisibilityKt()
-/* ACCESSOR declaration */ public fun access$onlyInternal$tUsePrivateTopLevelFunWithDifferentVisibilityKt(): String
+/* ACCESSOR declaration */ internal fun access$onlyInternal$tUsePrivateTopLevelFunWithDifferentVisibilityKt(): String
     /* TARGET use-site */ onlyInternal()
 /* ACCESSOR declaration */ public fun access$internalAndPublic$tUsePrivateTopLevelFunWithDifferentVisibilityKt(): String
     /* TARGET use-site */ internalAndPublic()

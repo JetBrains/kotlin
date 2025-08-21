@@ -40,3 +40,6 @@ fun <T> makeInv(arg: T): Inv<T> = TODO()
 fun <T> makeOut(arg: T): Out<T> = TODO()
 fun <T> makeIn(arg: T): In<T> = TODO()
 fun <T> makeInIn(arg: T): In<In<T>> = TODO()
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, in, interfaceDeclaration, intersectionType, nullableType,
+out, typeParameter */

@@ -15,6 +15,13 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.PreparedKotlinCompila
 import org.jetbrains.kotlin.gradle.utils.getFile
 import java.io.Serializable
 
+/**
+ * _This is an internal KGP utility and should not be used in user buildscripts._
+ *
+ * Contains details about the npm dependencies that can affect a Kotlin Compilation.
+ *
+ * The resolution is produced by [KotlinCompilationNpmResolver].
+ */
 class KotlinCompilationNpmResolution(
     var internalDependencies: Collection<InternalDependency>,
     var internalCompositeDependencies: Collection<CompositeDependency>,
@@ -59,7 +66,6 @@ class KotlinCompilationNpmResolution(
         npmResolutionManager: KotlinNpmResolutionManager,
         logger: Logger,
     ): PreparedKotlinCompilationNpmResolution {
-
         return resolution ?: prepareWithDependencies(
             npmResolutionManager,
             logger
@@ -125,14 +131,16 @@ class KotlinCompilationNpmResolution(
     fun createPackageJson(
         resolution: PreparedKotlinCompilationNpmResolution,
         npmProjectMain: Provider<String>,
+        npmProjectTypes: Provider<String>,
         packageJsonHandlers: ListProperty<Action<PackageJson>>,
     ) {
         val packageJson = packageJson(
-            npmProjectName,
-            npmProjectVersion,
-            npmProjectMain.get(),
-            resolution.externalNpmDependencies,
-            packageJsonHandlers.get()
+            name = npmProjectName,
+            version = npmProjectVersion,
+            main = npmProjectMain.get(),
+            types = npmProjectTypes.orNull,
+            npmDependencies = resolution.externalNpmDependencies,
+            packageJsonHandlers = packageJsonHandlers.get()
         )
 
         packageJsonHandlers.get().forEach {
@@ -156,12 +164,12 @@ class KotlinCompilationNpmResolution(
                     if (dependencies.size > 1) {
                         logger.warn(
                             """
-                                Transitive npm dependency version clash for compilation "${compilationDisambiguatedName}"
-                                    Candidates:
-                                ${dependencies.joinToString("\n") { "\t\t" + it.name + "@" + it.version }}
-                                    Selected:
-                                        ${selected.name}@${selected.version}
-                                """.trimIndent()
+                            Transitive npm dependency version clash for compilation "$compilationDisambiguatedName"
+                                Candidates:
+                            ${dependencies.joinToString("\n") { "\t\t" + it.name + "@" + it.version }}
+                                Selected:
+                                    ${selected.name}@${selected.version}
+                            """.trimIndent()
                         )
                     }
                 }

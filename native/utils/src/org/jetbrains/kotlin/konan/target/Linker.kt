@@ -70,12 +70,11 @@ class LinkerArguments(
     val debug: Boolean,
     val kind: LinkerOutputKind,
     val outputDsymBundle: String,
-    val mimallocEnabled: Boolean,
     val sanitizer: SanitizerKind? = null,
 )
 
 // TODO: This is for compatibility with CompileToExecutable.kt. Remove after advancing the bootstrap.
-@Suppress("unused")
+@Suppress("unused", "UNUSED_PARAMETER")
 fun LinkerFlags.finalLinkCommands(
     objectFiles: List<ObjectFile>, executable: ExecutableFile,
     libraries: List<String>, linkerArgs: List<String>,
@@ -86,7 +85,7 @@ fun LinkerFlags.finalLinkCommands(
 ): List<Command> = with(this) {
     LinkerArguments(
         TempFiles(),
-        objectFiles, executable, libraries, linkerArgs, optimize, debug, kind, outputDsymBundle, mimallocEnabled, sanitizer
+        objectFiles, executable, libraries, linkerArgs, optimize, debug, kind, outputDsymBundle,sanitizer
     ).finalLinkCommands()
 }
 
@@ -486,15 +485,8 @@ class MingwLinker(targetProperties: MingwConfigurables)
             +listOf("-target", targetTriple.toString())
             +listOf("-o", executable)
             +objectFiles
-            // --gc-sections flag may affect profiling.
-            // See https://clang.llvm.org/docs/SourceBasedCodeCoverage.html#drawbacks-and-limitations.
-            // TODO: switching to lld may help.
             if (optimize) {
-                // TODO: Can be removed after LLD update.
-                //  See KT-48085.
-                if (!dynamic) {
-                    +linkerOptimizationFlags
-                }
+                +linkerOptimizationFlags
             }
             if (!debug) +linkerNoDebugFlags
             if (dynamic) +linkerDynamicFlags

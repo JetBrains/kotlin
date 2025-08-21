@@ -1,0 +1,248 @@
+KtFile: contextParametersOnCallableMembers.kt
+  PACKAGE_DIRECTIVE
+    <empty list>
+  IMPORT_LIST
+    <empty list>
+  PsiComment(EOL_COMMENT)('// LANGUAGE: +ContextParameters')
+  PsiWhiteSpace('\n\n')
+  CLASS
+    MODIFIER_LIST
+      PsiElement(annotation)('annotation')
+    PsiWhiteSpace(' ')
+    PsiElement(class)('class')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('MyAnnotation')
+  PsiWhiteSpace('\n')
+  CLASS
+    PsiElement(class)('class')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('A')
+    PsiWhiteSpace(' ')
+    CLASS_BODY
+      PsiElement(LBRACE)('{')
+      PsiWhiteSpace('\n    ')
+      PROPERTY
+        PsiElement(val)('val')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('x')
+        PsiWhiteSpace(' ')
+        PsiElement(EQ)('=')
+        PsiWhiteSpace(' ')
+        INTEGER_CONSTANT
+          PsiElement(INTEGER_LITERAL)('1')
+      PsiWhiteSpace('\n')
+      PsiElement(RBRACE)('}')
+  PsiWhiteSpace('\n')
+  CLASS
+    PsiElement(class)('class')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('B')
+  PsiWhiteSpace('\n\n')
+  CLASS
+    PsiElement(class)('class')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('ContextParametersOnCallableMembers')
+    PsiWhiteSpace(' ')
+    CLASS_BODY
+      PsiElement(LBRACE)('{')
+      PsiWhiteSpace('\n    ')
+      FUN
+        MODIFIER_LIST
+          CONTEXT_RECEIVER_LIST
+            PsiElement(context)('context')
+            PsiElement(LPAR)('(')
+            VALUE_PARAMETER
+              PsiElement(IDENTIFIER)('a')
+              PsiElement(COLON)(':')
+              PsiWhiteSpace(' ')
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('A')
+            PsiElement(COMMA)(',')
+            PsiWhiteSpace(' ')
+            VALUE_PARAMETER
+              PsiElement(IDENTIFIER)('_')
+              PsiElement(COLON)(':')
+              PsiWhiteSpace(' ')
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('B')
+            PsiElement(RPAR)(')')
+          PsiWhiteSpace('\n    ')
+          ANNOTATION_ENTRY
+            PsiElement(AT)('@')
+            CONSTRUCTOR_CALLEE
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('MyAnnotation')
+        PsiWhiteSpace('\n    ')
+        PsiElement(fun)('fun')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('Int')
+        PsiElement(DOT)('.')
+        PsiElement(IDENTIFIER)('function')
+        VALUE_PARAMETER_LIST
+          PsiElement(LPAR)('(')
+          PsiElement(RPAR)(')')
+        PsiElement(COLON)(':')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('Int')
+        PsiWhiteSpace(' ')
+        PsiElement(EQ)('=')
+        PsiWhiteSpace(' ')
+        DOT_QUALIFIED_EXPRESSION
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('a')
+          PsiElement(DOT)('.')
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('x')
+      PsiWhiteSpace('\n\n    ')
+      PROPERTY
+        MODIFIER_LIST
+          CONTEXT_RECEIVER_LIST
+            PsiElement(context)('context')
+            PsiElement(LPAR)('(')
+            VALUE_PARAMETER
+              PsiElement(IDENTIFIER)('a')
+              PsiElement(COLON)(':')
+              PsiWhiteSpace(' ')
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('A')
+            PsiElement(COMMA)(',')
+            PsiWhiteSpace(' ')
+            VALUE_PARAMETER
+              PsiElement(IDENTIFIER)('_')
+              PsiElement(COLON)(':')
+              PsiWhiteSpace(' ')
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('B')
+            PsiElement(RPAR)(')')
+          PsiWhiteSpace('\n    ')
+          ANNOTATION_ENTRY
+            PsiElement(AT)('@')
+            CONSTRUCTOR_CALLEE
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('MyAnnotation')
+        PsiWhiteSpace('\n    ')
+        PsiElement(val)('val')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('Int')
+        PsiElement(DOT)('.')
+        PsiElement(IDENTIFIER)('property')
+        PsiElement(COLON)(':')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('Int')
+        PsiWhiteSpace(' ')
+        PROPERTY_ACCESSOR
+          PsiElement(get)('get')
+          VALUE_PARAMETER_LIST
+            PsiElement(LPAR)('(')
+            PsiElement(RPAR)(')')
+          PsiWhiteSpace(' ')
+          PsiElement(EQ)('=')
+          PsiWhiteSpace(' ')
+          DOT_QUALIFIED_EXPRESSION
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('a')
+            PsiElement(DOT)('.')
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('x')
+      PsiWhiteSpace('\n\n    ')
+      PROPERTY
+        MODIFIER_LIST
+          CONTEXT_RECEIVER_LIST
+            PsiElement(context)('context')
+            PsiElement(LPAR)('(')
+            VALUE_PARAMETER
+              PsiElement(IDENTIFIER)('a')
+              PsiElement(COLON)(':')
+              PsiWhiteSpace(' ')
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('A')
+            PsiElement(COMMA)(',')
+            PsiWhiteSpace(' ')
+            VALUE_PARAMETER
+              PsiElement(IDENTIFIER)('_')
+              PsiElement(COLON)(':')
+              PsiWhiteSpace(' ')
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('B')
+            PsiElement(RPAR)(')')
+          PsiWhiteSpace('\n    ')
+          ANNOTATION_ENTRY
+            PsiElement(AT)('@')
+            CONSTRUCTOR_CALLEE
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('MyAnnotation')
+        PsiWhiteSpace('\n    ')
+        PsiElement(var)('var')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('Int')
+        PsiElement(DOT)('.')
+        PsiElement(IDENTIFIER)('propertyWithSetter')
+        PsiElement(COLON)(':')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('Int')
+        PsiWhiteSpace('\n        ')
+        PROPERTY_ACCESSOR
+          PsiElement(get)('get')
+          VALUE_PARAMETER_LIST
+            PsiElement(LPAR)('(')
+            PsiElement(RPAR)(')')
+          PsiWhiteSpace(' ')
+          PsiElement(EQ)('=')
+          PsiWhiteSpace(' ')
+          DOT_QUALIFIED_EXPRESSION
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('a')
+            PsiElement(DOT)('.')
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('x')
+        PsiWhiteSpace('\n        ')
+        PROPERTY_ACCESSOR
+          PsiElement(set)('set')
+          VALUE_PARAMETER_LIST
+            PsiElement(LPAR)('(')
+            VALUE_PARAMETER
+              PsiElement(IDENTIFIER)('v')
+            PsiElement(RPAR)(')')
+          PsiWhiteSpace(' ')
+          BLOCK
+            PsiElement(LBRACE)('{')
+            PsiWhiteSpace(' ')
+            PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n')
+      PsiElement(RBRACE)('}')

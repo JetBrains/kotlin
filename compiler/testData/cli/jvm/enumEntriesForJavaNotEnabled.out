@@ -7,6 +7,7 @@ This mode is not recommended for production use,
 as no stability/compatibility guarantees are given on
 compiler or generated code. Use it at your own risk!
 
+warning: language version 1.9 is deprecated and its support will be removed in a future version of Kotlin
 compiler/testData/cli/jvm/enumEntriesForJavaNotEnabled.kt:4:49: error: the feature "enum entries" is disabled
     val entries = java.util.concurrent.TimeUnit.entries
                                                 ^^^^^^^

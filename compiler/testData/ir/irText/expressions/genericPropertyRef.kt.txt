@@ -1,13 +1,13 @@
 val <T : Any?> Value<T>.additionalText: Int /* by */
   field = DVal(kmember = Value::text)
   get(): Int {
-    return #additionalText$delegate.getValue(t = <this>, p = ::additionalText/*<T>()*/)
+    return #additionalText$delegate.getValue(t = <this>, p = ::additionalText/*<T>() */)
   }
 
 val <T : Any?> Value<T>.additionalValue: Int /* by */
   field = DVal(kmember = Value::value)
   get(): Int {
-    return #additionalValue$delegate.getValue(t = <this>, p = ::additionalValue/*<T>()*/)
+    return #additionalValue$delegate.getValue(t = <this>, p = ::additionalValue/*<T>() */)
   }
 
 var recivier: Any?
@@ -21,7 +21,7 @@ var value2: Any?
   set
 
 val barRef: KMutableProperty1<String?, String?>
-  field = ::bar/*<String?>()*/
+  field = ::bar/*<String?>() */
   get
 
 class DVal {

@@ -7,3 +7,6 @@ fun foo(arg: Int?) {
         x.hashCode()
     }
 }
+
+/* GENERATED_FIR_TAGS: equalityExpression, functionDeclaration, ifExpression, lambdaLiteral, localProperty, nullableType,
+propertyDeclaration, smartcast */

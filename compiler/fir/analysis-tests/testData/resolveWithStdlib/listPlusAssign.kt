@@ -1,5 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // COMPARE_WITH_LIGHT_TREE
+// LANGUAGE: +ForbidParenthesizedLhsInAssignments
 
 fun List<String>.modify() {
     <!VARIABLE_EXPECTED!>this<!> += "Alpha"
@@ -20,3 +21,6 @@ fun Set<String>.modify() {
 fun Any.modifySet() {
     (this <!UNCHECKED_CAST!>as Set<Int><!>) += 42
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, asExpression, assignment, funWithExtensionReceiver, functionDeclaration,
+integerLiteral, nullableType, operator, stringLiteral, thisExpression, typeParameter */

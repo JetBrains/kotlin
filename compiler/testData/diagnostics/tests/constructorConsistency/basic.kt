@@ -12,3 +12,6 @@ class My {
 }
 
 fun bar(arg: My) = arg.x
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, functionDeclaration, localProperty, propertyDeclaration,
+secondaryConstructor, thisExpression */

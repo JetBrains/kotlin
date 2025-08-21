@@ -9,39 +9,52 @@ repositories {
     mavenCentral()
 }
 
-fun createPlatformDependenciesTestTask(sourceSet: DefaultKotlinSourceSet) {
-    tasks.create("check${sourceSet.name.capitalize()}PlatformDependencies") {
-        tasks.maybeCreate("checkPlatformDependencies").dependsOn(this)
+abstract class CheckPlatformDependenciesTestTask : DefaultTask() {
+    @get:InputFiles
+    abstract val dependencies: ConfigurableFileCollection
 
+    @get:Input
+    abstract val sourceSetName: Property<String>
+
+    fun setSourceSet(sourceSet: DefaultKotlinSourceSet) {
         // Dependencies forwarded to the IDE will be attached to the intransitiveMetadataConfiguration
-        val dependenciesConfiguration = configurations.getByName(sourceSet.intransitiveMetadataConfigurationName)
-        dependsOn("commonize")
+        dependencies.setFrom(project.configurations.getByName(sourceSet.intransitiveMetadataConfigurationName))
+        sourceSetName.set(sourceSet.name)
+    }
 
-        doLast {
-            val dependencies = dependenciesConfiguration.files
+    @TaskAction
+    fun action() {
+        val sourceSetName = sourceSetName.get()
+        dependencies.forEach { dependency ->
+            logger.quiet("$sourceSetName dependency: ${dependency.path}")
+        }
 
-            dependencies.forEach { dependency ->
-                logger.quiet("${sourceSet.name} dependency: ${dependency.path}")
-            }
-
-            dependencies.forEach { dependency ->
-                if ("klib${File.separator}commonized" in dependency.path) {
-                    throw AssertionError(
-                        "${sourceSet.name}: Found unexpected commonized dependency ${dependency.path}"
-                    )
-                }
-            }
-
-            if (dependencies.isEmpty()) {
-                throw AssertionError("${sourceSet.name}: Expected at least one platform dependency")
-            }
-
-            val platformKlibPattern = "klib${File.separator}platform"
-            if (dependencies.none { dependency -> platformKlibPattern in dependency.path }) {
-                throw AssertionError("${sourceSet.name}: Expected at least one dependency from '$platformKlibPattern'")
+        dependencies.forEach { dependency ->
+            if ("klib${File.separator}commonized" in dependency.path) {
+                throw AssertionError(
+                    "$sourceSetName: Found unexpected commonized dependency ${dependency.path}"
+                )
             }
         }
+
+        if (dependencies.isEmpty) {
+            throw AssertionError("$sourceSetName: Expected at least one platform dependency")
+        }
+
+        val platformKlibPattern = "klib${File.separator}platform"
+        if (dependencies.none { dependency -> platformKlibPattern in dependency.path }) {
+            throw AssertionError("$sourceSetName: Expected at least one dependency from '$platformKlibPattern'")
+        }
     }
+}
+
+fun createPlatformDependenciesTestTask(sourceSet: DefaultKotlinSourceSet) {
+    val taskName = "check${sourceSet.name.capitalize()}PlatformDependencies"
+    val task = tasks.register<CheckPlatformDependenciesTestTask>(taskName) {
+        setSourceSet(sourceSet)
+        dependsOn("commonize")
+    }
+    tasks.maybeCreate("checkPlatformDependencies").dependsOn(task)
 }
 
 kotlin {

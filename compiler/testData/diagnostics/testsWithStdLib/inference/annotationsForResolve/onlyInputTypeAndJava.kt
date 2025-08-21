@@ -16,3 +16,6 @@ fun <@kotlin.internal.OnlyInputTypes K> TestBase<out K>.foo(key: K) = null
 fun foo(result: Test<*>) {
     result.foo("sd") // Type inference failed (NI), OK in OI
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, funWithExtensionReceiver, functionDeclaration, javaType, nullableType,
+outProjection, starProjection, stringLiteral, typeParameter */

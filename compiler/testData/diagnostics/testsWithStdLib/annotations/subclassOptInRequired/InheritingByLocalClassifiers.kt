@@ -30,3 +30,6 @@ fun foo() {
     @ApiMarker data class LocalDataKlassC(val arg: Int): Interface
     @ApiMarker object: Interface {}
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, anonymousObjectExpression, classDeclaration, classReference, data,
+functionDeclaration, interfaceDeclaration, localClass, primaryConstructor, propertyDeclaration */

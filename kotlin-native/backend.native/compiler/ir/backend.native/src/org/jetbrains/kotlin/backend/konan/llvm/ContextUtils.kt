@@ -51,6 +51,10 @@ internal sealed class Lifetime(val slotType: SlotType) {
         }
     }
 
+    class STACK_ARRAY(val size: Int) : Lifetime(SlotType.STACK) {
+        override fun toString() = "STACK_ARRAY[$size]"
+    }
+
     // If reference is frame-local (only obtained from some call and never leaves).
     object LOCAL : Lifetime(SlotType.ARENA) {
         override fun toString(): String {
@@ -166,7 +170,7 @@ internal interface ContextUtils : RuntimeAware {
             return LLVMLinkage.LLVMExternalLinkage
         if (context.config.producePerFileCache) {
             val originalFunction = irFunction.originalConstructor ?: irFunction
-            if (originalFunction in generationState.calledFromExportedInlineFunctions)
+            if (originalFunction.isCalledFromExportedInlineFunction)
                 return LLVMLinkage.LLVMExternalLinkage
         }
 
@@ -274,6 +278,10 @@ internal class ConstInt8(llvm: CodegenLlvmHelpers, val value: Byte) : ConstValue
     override val llvm = LLVMConstInt(llvm.int8Type, value.toLong(), 1)!!
 }
 
+internal class ConstUInt8(llvm: CodegenLlvmHelpers, val value: UByte) : ConstValue {
+    override val llvm = LLVMConstInt(llvm.int8Type, value.toLong(), 1)!!
+}
+
 internal class ConstInt16(llvm: CodegenLlvmHelpers, val value: Short) : ConstValue {
     override val llvm = LLVMConstInt(llvm.int16Type, value.toLong(), 1)!!
 }
@@ -371,7 +379,7 @@ internal class CodegenLlvmHelpers(private val generationState: NativeGenerationS
         val found = LLVMGetNamedFunction(module, llvmFunctionProto.name)
         if (found != null) {
             require(getGlobalFunctionType(found) == llvmFunctionProto.signature.llvmFunctionType) {
-                "Expected: ${LLVMPrintTypeToString(llvmFunctionProto.signature.llvmFunctionType)!!.toKString()} " +
+                "Inconsistent function type of ${llvmFunctionProto.name}. Expected: ${LLVMPrintTypeToString(llvmFunctionProto.signature.llvmFunctionType)!!.toKString()}, " +
                         "found: ${LLVMPrintTypeToString(getGlobalFunctionType(found))!!.toKString()}"
             }
             require(LLVMGetLinkage(found) == llvmFunctionProto.linkage)
@@ -440,10 +448,11 @@ internal class CodegenLlvmHelpers(private val generationState: NativeGenerationS
     val initRuntimeIfNeeded = importRtFunction("Kotlin_initRuntimeIfNeeded", false)
     val Kotlin_getExceptionObject = importRtFunction("Kotlin_getExceptionObject", true)
 
-    val kRefSharedHolderInitLocal = importRtFunction("KRefSharedHolder_initLocal", false)
-    val kRefSharedHolderInit = importRtFunction("KRefSharedHolder_init", false)
-    val kRefSharedHolderDispose = importRtFunction("KRefSharedHolder_dispose", false)
-    val kRefSharedHolderRef = importRtFunction("KRefSharedHolder_ref", false)
+    // These cannot be `Kotlin_native_internal_ref_`, because when compiling module with stdlib, these functions
+    // are already present.
+    val Kotlin_mm_createRetainedExternalRCRef by lazy { importRtFunction("Kotlin_mm_createRetainedExternalRCRef", false) }
+    val Kotlin_mm_releaseExternalRCRef by lazy { importRtFunction("Kotlin_mm_releaseExternalRCRef", false) }
+    val Kotlin_mm_disposeExternalRCRef by lazy { importRtFunction("Kotlin_mm_disposeExternalRCRef", false) }
 
     val createKotlinObjCClass by lazy { importRtFunction("CreateKotlinObjCClass", false) }
     val getObjCKotlinTypeInfo by lazy { importRtFunction("GetObjCKotlinTypeInfo", false) }
@@ -521,6 +530,10 @@ internal class CodegenLlvmHelpers(private val generationState: NativeGenerationS
     val voidType = LLVMVoidTypeInContext(llvmContext)!!
     val int8PtrType = pointerType(int8Type)
     val int8PtrPtrType = pointerType(int8PtrType)
+    val int32PtrType = pointerType(int32Type)
+    val int32PtrPtrType = pointerType(int32PtrType)
+    val voidPtrType = pointerType(voidType)
+    val voidPtrPtrType = pointerType(voidPtrType)
 
     fun structType(vararg types: LLVMTypeRef): LLVMTypeRef = structType(types.toList())
 
@@ -541,6 +554,7 @@ internal class CodegenLlvmHelpers(private val generationState: NativeGenerationS
 
     fun constInt1(value: Boolean) = ConstInt1(this, value)
     fun constInt8(value: Byte) = ConstInt8(this, value)
+    fun constUInt8(value: UByte) = ConstUInt8(this, value)
     fun constInt16(value: Short) = ConstInt16(this, value)
     fun constChar16(value: Char) = ConstChar16(this, value)
     fun constInt32(value: Int) = ConstInt32(this, value)
@@ -573,11 +587,10 @@ internal class CodegenLlvmHelpers(private val generationState: NativeGenerationS
     )
 
     val llvmEhTypeidFor = llvmIntrinsic(
-            "llvm.eh.typeid.for",
+            "llvm.eh.typeid.for.p0",
             functionType(int32Type, false, int8PtrType),
             *listOfNotNull(
                     "nounwind",
-                    "readnone".takeIf { HostManager.hostIsMac } // See https://youtrack.jetbrains.com/issue/KT-69002
             ).toTypedArray()
     )
 
@@ -640,4 +653,10 @@ internal class CodegenLlvmHelpers(private val generationState: NativeGenerationS
     }
 }
 
-class IrStaticInitializer(val konanLibrary: KotlinLibrary?, val initializer: LlvmCallable)
+class IrStaticInitializer(val konanLibrary: KotlinLibrary?, val runtimeInitializer: RuntimeInitializer)
+
+/**
+ * Function of the [CodeGeneratorVisitor.kInitFuncType] type (aka `Initializer` in `Runtime.h`).
+ */
+@JvmInline
+value class RuntimeInitializer(val llvmCallable: LlvmCallable)

@@ -4,6 +4,7 @@ KtPrefixExpression(47,58): '++foo.value'
       compoundOperation = KaCompoundUnaryOperation:
         kind = INC
         operationPartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+          contextArguments = []
           dispatchReceiver = KaExplicitReceiverValue:
             expression = foo.value
             isSafeNavigation = false
@@ -14,9 +15,11 @@ KtPrefixExpression(47,58): '++foo.value'
             returnType = kotlin.Int
             symbol = kotlin/Int.inc(<dispatch receiver>: kotlin.Int): kotlin.Int
             valueParameters = []
+            contextParameters = []
             callableId = kotlin/Int.inc
         precedence = PREFIX
       variablePartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:
           expression = foo
@@ -27,5 +30,6 @@ KtPrefixExpression(47,58): '++foo.value'
           receiverType = CInt32VarX<kotlin.Int>
           returnType = kotlin.Int
           symbol = var value: T
+          contextParameters = []
           callableId = /value
     isInBestCandidates = true

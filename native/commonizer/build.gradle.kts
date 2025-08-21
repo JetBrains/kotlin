@@ -39,13 +39,15 @@ dependencies {
     api(kotlinStdlib())
 
     testImplementation(libs.junit4)
-    testImplementation(projectTests(":compiler:tests-common"))
+    testImplementation(testFixtures(project(":compiler:tests-common")))
     testImplementation(project(":kotlinx-metadata-klib")) { isTransitive = false }
     testImplementation(project(":kotlin-metadata")) { isTransitive = false }
     testImplementation(project(":native:kotlin-klib-commonizer-api"))
     testImplementation(project(":kotlin-tooling-core"))
     testApi(intellijCore())
 }
+
+optInToK1Deprecation()
 
 val runCommonizer by tasks.registering(JavaExec::class) {
     classpath(configurations.compileOnly, sourceSets.main.get().runtimeClasspath)

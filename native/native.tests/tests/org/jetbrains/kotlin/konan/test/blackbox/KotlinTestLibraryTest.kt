@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.konan.test.blackbox
 
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestCaseId
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestRunnerType
-import org.jetbrains.kotlin.konan.test.blackbox.support.group.FirPipeline
 import org.jetbrains.kotlin.konan.test.blackbox.support.group.PredefinedTestCases
 import org.jetbrains.kotlin.konan.test.blackbox.support.group.UsePartialLinkage
 import org.junit.jupiter.api.Tag
@@ -15,7 +14,6 @@ import org.junit.jupiter.api.TestFactory
 import org.jetbrains.kotlin.konan.test.blackbox.support.group.PredefinedTestCase as TC
 
 @Tag("kotlin-test")
-@Tag("frontend-fir")
 @PredefinedTestCases(
     TC(
         name = "default",
@@ -24,7 +22,6 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.group.PredefinedTestCase
         sourceLocations = ["libraries/kotlin.test/common/src/test/kotlin/**.kt"]
     )
 )
-@FirPipeline
 @UsePartialLinkage(UsePartialLinkage.Mode.DISABLED)
 class KotlinTestLibraryTest : AbstractNativeBlackBoxTest() {
     @TestFactory

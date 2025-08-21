@@ -70,7 +70,7 @@ public actual inline fun tan(x: Double): Double = nativeMath.tan(x)
  * the returned value is an angle in the range from `-PI/2` to `PI/2` radians.
  *
  * Special cases:
- *    - `asin(x)` is `NaN`, when `abs(x) > 1` or x is `NaN`
+ *   - `asin(x)` is `NaN`, when `abs(x) > 1` or x is `NaN`
  */
 @SinceKotlin("1.2")
 @InlineOnly
@@ -81,7 +81,7 @@ public actual inline fun asin(x: Double): Double = nativeMath.asin(x)
  * the returned value is an angle in the range from `0.0` to `PI` radians.
  *
  * Special cases:
- *    - `acos(x)` is `NaN`, when `abs(x) > 1` or x is `NaN`
+ *   - `acos(x)` is `NaN`, when `abs(x) > 1` or x is `NaN`
  */
 @SinceKotlin("1.2")
 @InlineOnly
@@ -106,8 +106,8 @@ public actual inline fun atan(x: Double): Double = nativeMath.atan(x)
  * Special cases:
  *   - `atan2(0.0, 0.0)` is `0.0`
  *   - `atan2(0.0, x)` is  `0.0` for `x > 0` and `PI` for `x < 0`
- *   - `atan2(-0.0, x)` is `-0.0` for 'x > 0` and `-PI` for `x < 0`
- *   - `atan2(y, +Inf)` is `0.0` for `0 < y < +Inf` and `-0.0` for '-Inf < y < 0`
+ *   - `atan2(-0.0, x)` is `-0.0` for `x > 0` and `-PI` for `x < 0`
+ *   - `atan2(y, +Inf)` is `0.0` for `0 < y < +Inf` and `-0.0` for `-Inf < y < 0`
  *   - `atan2(y, -Inf)` is `PI` for `0 < y < +Inf` and `-PI` for `-Inf < y < 0`
  *   - `atan2(y, 0.0)` is `PI/2` for `y > 0` and `-PI/2` for `y < 0`
  *   - `atan2(+Inf, x)` is `PI/2` for finite `x`y
@@ -310,9 +310,11 @@ public actual inline fun expm1(x: Double): Double = nativeMath.expm1(x)
  *   - `log(x, b)` is `NaN` when `x < 0` or `b <= 0` or `b == 1.0`
  *   - `log(+Inf, +Inf)` is `NaN`
  *   - `log(+Inf, b)` is `+Inf` for `b > 1` and `-Inf` for `b < 1`
- *   - `log(0.0, b)` is `-Inf` for `b > 1` and `+Inf` for `b > 1`
+ *   - `log(0.0, b)` is `-Inf` for `b > 1` and `+Inf` for `b < 1`
  *
  * See also logarithm functions for common fixed bases: [ln], [log10] and [log2].
+ *
+ * @sample samples.math.MathSamples.Doubles.logarithm
  */
 @SinceKotlin("1.2")
 public actual fun log(x: Double, base: Double): Double {
@@ -328,6 +330,8 @@ public actual fun log(x: Double, base: Double): Double {
  *   - `ln(x)` is `NaN` when `x < 0.0`
  *   - `ln(+Inf)` is `+Inf`
  *   - `ln(0.0)` is `-Inf`
+ *
+ * @sample samples.math.MathSamples.Doubles.naturalLogarithm
  */
 @SinceKotlin("1.2")
 @InlineOnly
@@ -337,6 +341,8 @@ public actual inline fun ln(x: Double): Double = nativeMath.log(x)
  * Computes the common logarithm (base 10) of the value [x].
  *
  * @see [ln] function for special cases.
+ *
+ * @sample samples.math.MathSamples.Doubles.logBase10
  */
 @SinceKotlin("1.2")
 @InlineOnly
@@ -346,6 +352,8 @@ public actual inline fun log10(x: Double): Double = nativeMath.log10(x)
  * Computes the binary logarithm (base 2) of the value [x].
  *
  * @see [ln] function for special cases.
+ *
+ * @sample samples.math.MathSamples.Doubles.logBase2
  */
 @SinceKotlin("1.2")
 public actual fun log2(x: Double): Double = nativeMath.log(x) / LN2
@@ -363,6 +371,8 @@ public actual fun log2(x: Double): Double = nativeMath.log(x) / LN2
  *
  * @see [ln] function
  * @see [expm1] function
+ *
+ * @sample samples.math.MathSamples.Doubles.naturalLogarithmPlusOne
  */
 @SinceKotlin("1.2")
 @InlineOnly
@@ -370,11 +380,14 @@ public actual inline fun ln1p(x: Double): Double = nativeMath.log1p(x)
 
 /**
  * Rounds the given value [x] to an integer towards positive infinity.
-
- * @return the smallest double value that is greater than or equal to the given value [x] and is a mathematical integer.
  *
  * Special cases:
  *   - `ceil(x)` is `x` where `x` is `NaN` or `+Inf` or `-Inf` or already a mathematical integer.
+ *
+ * @return the smallest double value that is greater than or equal to the given value [x] and is a mathematical integer.
+ *
+ * @sample samples.math.MathSamples.Doubles.ceil
+ * @sample samples.math.MathSamples.Doubles.roundingModes
  */
 @SinceKotlin("1.2")
 @InlineOnly
@@ -382,11 +395,14 @@ public actual inline fun ceil(x: Double): Double = nativeMath.ceil(x)
 
 /**
  * Rounds the given value [x] to an integer towards negative infinity.
-
- * @return the largest double value that is smaller than or equal to the given value [x] and is a mathematical integer.
  *
  * Special cases:
  *   - `floor(x)` is `x` where `x` is `NaN` or `+Inf` or `-Inf` or already a mathematical integer.
+ *
+ * @return the largest double value that is smaller than or equal to the given value [x] and is a mathematical integer.
+ *
+ * @sample samples.math.MathSamples.Doubles.floor
+ * @sample samples.math.MathSamples.Doubles.roundingModes
  */
 @SinceKotlin("1.2")
 @InlineOnly
@@ -395,10 +411,13 @@ public actual inline fun floor(x: Double): Double = nativeMath.floor(x)
 /**
  * Rounds the given value [x] to an integer towards zero.
  *
- * @return the value [x] having its fractional part truncated.
- *
  * Special cases:
  *   - `truncate(x)` is `x` where `x` is `NaN` or `+Inf` or `-Inf` or already a mathematical integer.
+ *
+ * @return the value [x] having its fractional part truncated.
+ *
+ * @sample samples.math.MathSamples.Doubles.truncate
+ * @sample samples.math.MathSamples.Doubles.roundingModes
  */
 @SinceKotlin("1.2")
 public actual fun truncate(x: Double): Double = when {
@@ -412,6 +431,9 @@ public actual fun truncate(x: Double): Double = when {
  *
  * Special cases:
  *   - `round(x)` is `x` where `x` is `NaN` or `+Inf` or `-Inf` or already a mathematical integer.
+ *
+ * @sample samples.math.MathSamples.Doubles.round
+ * @sample samples.math.MathSamples.Doubles.roundingModes
  */
 @SinceKotlin("1.2")
 @InlineOnly
@@ -613,6 +635,7 @@ public actual inline fun Double.nextTowards(to: Double): Double = nativeMath.nex
  *   - `x.roundToInt() == Int.MIN_VALUE` when `x < Int.MIN_VALUE`
  *
  * @throws IllegalArgumentException when this value is `NaN`
+ * @sample samples.math.MathSamples.Doubles.roundToInt
  */
 @SinceKotlin("1.2")
 public actual fun Double.roundToInt(): Int = when {
@@ -631,6 +654,7 @@ public actual fun Double.roundToInt(): Int = when {
  *   - `x.roundToLong() == Long.MIN_VALUE` when `x < Long.MIN_VALUE`
  *
  * @throws IllegalArgumentException when this value is `NaN`
+ * @sample samples.math.MathSamples.Doubles.roundToLong
  */
 @SinceKotlin("1.2")
 public actual fun Double.roundToLong(): Long =
@@ -674,7 +698,7 @@ public actual inline fun tan(x: Float): Float = nativeMath.tan(x.toDouble()).toF
  * the returned value is an angle in the range from `-PI/2` to `PI/2` radians.
  *
  * Special cases:
- *    - `asin(x)` is `NaN`, when `abs(x) > 1` or x is `NaN`
+ *   - `asin(x)` is `NaN`, when `abs(x) > 1` or x is `NaN`
  */
 @SinceKotlin("1.2")
 @InlineOnly
@@ -685,7 +709,7 @@ public actual inline fun asin(x: Float): Float = nativeMath.asin(x.toDouble()).t
  * the returned value is an angle in the range from `0.0` to `PI` radians.
  *
  * Special cases:
- *    - `acos(x)` is `NaN`, when `abs(x) > 1` or x is `NaN`
+ *   - `acos(x)` is `NaN`, when `abs(x) > 1` or x is `NaN`
  */
 @SinceKotlin("1.2")
 @InlineOnly
@@ -710,8 +734,8 @@ public actual inline fun atan(x: Float): Float = nativeMath.atan(x.toDouble()).t
  * Special cases:
  *   - `atan2(0.0, 0.0)` is `0.0`
  *   - `atan2(0.0, x)` is  `0.0` for `x > 0` and `PI` for `x < 0`
- *   - `atan2(-0.0, x)` is `-0.0` for 'x > 0` and `-PI` for `x < 0`
- *   - `atan2(y, +Inf)` is `0.0` for `0 < y < +Inf` and `-0.0` for '-Inf < y < 0`
+ *   - `atan2(-0.0, x)` is `-0.0` for `x > 0` and `-PI` for `x < 0`
+ *   - `atan2(y, +Inf)` is `0.0` for `0 < y < +Inf` and `-0.0` for `-Inf < y < 0`
  *   - `atan2(y, -Inf)` is `PI` for `0 < y < +Inf` and `-PI` for `-Inf < y < 0`
  *   - `atan2(y, 0.0)` is `PI/2` for `y > 0` and `-PI/2` for `y < 0`
  *   - `atan2(+Inf, x)` is `PI/2` for finite `x`y
@@ -857,9 +881,11 @@ public actual inline fun expm1(x: Float): Float = nativeMath.expm1(x.toDouble())
  *   - `log(x, b)` is `NaN` when `x < 0` or `b <= 0` or `b == 1.0`
  *   - `log(+Inf, +Inf)` is `NaN`
  *   - `log(+Inf, b)` is `+Inf` for `b > 1` and `-Inf` for `b < 1`
- *   - `log(0.0, b)` is `-Inf` for `b > 1` and `+Inf` for `b > 1`
+ *   - `log(0.0, b)` is `-Inf` for `b > 1` and `+Inf` for `b < 1`
  *
  * See also logarithm functions for common fixed bases: [ln], [log10] and [log2].
+ *
+ * @sample samples.math.MathSamples.Floats.logarithm
  */
 @SinceKotlin("1.2")
 public actual fun log(x: Float, base: Float): Float {
@@ -875,6 +901,8 @@ public actual fun log(x: Float, base: Float): Float {
  *   - `ln(x)` is `NaN` when `x < 0.0`
  *   - `ln(+Inf)` is `+Inf`
  *   - `ln(0.0)` is `-Inf`
+ *
+ * @sample samples.math.MathSamples.Floats.naturalLogarithm
  */
 @SinceKotlin("1.2")
 @InlineOnly
@@ -884,6 +912,8 @@ public actual inline fun ln(x: Float): Float = nativeMath.log(x.toDouble()).toFl
  * Computes the common logarithm (base 10) of the value [x].
  *
  * @see [ln] function for special cases.
+ *
+ * @sample samples.math.MathSamples.Floats.logBase10
  */
 @SinceKotlin("1.2")
 @InlineOnly
@@ -893,6 +923,8 @@ public actual inline fun log10(x: Float): Float = nativeMath.log10(x.toDouble())
  * Computes the binary logarithm (base 2) of the value [x].
  *
  * @see [ln] function for special cases.
+ *
+ * @sample samples.math.MathSamples.Floats.logBase2
  */
 @SinceKotlin("1.2")
 public actual fun log2(x: Float): Float = (nativeMath.log(x.toDouble()) / LN2).toFloat()
@@ -910,6 +942,8 @@ public actual fun log2(x: Float): Float = (nativeMath.log(x.toDouble()) / LN2).t
  *
  * @see [ln] function
  * @see [expm1] function
+ *
+ * @sample samples.math.MathSamples.Floats.naturalLogarithmPlusOne
  */
 @SinceKotlin("1.2")
 @InlineOnly
@@ -917,11 +951,14 @@ public actual inline fun ln1p(x: Float): Float = nativeMath.log1p(x.toDouble()).
 
 /**
  * Rounds the given value [x] to an integer towards positive infinity.
-
- * @return the smallest Float value that is greater than or equal to the given value [x] and is a mathematical integer.
  *
  * Special cases:
  *   - `ceil(x)` is `x` where `x` is `NaN` or `+Inf` or `-Inf` or already a mathematical integer.
+ *
+ * @return the smallest Float value that is greater than or equal to the given value [x] and is a mathematical integer.
+ *
+ * @sample samples.math.MathSamples.Floats.ceil
+ * @sample samples.math.MathSamples.Floats.roundingModes
  */
 @SinceKotlin("1.2")
 @InlineOnly
@@ -929,11 +966,14 @@ public actual inline fun ceil(x: Float): Float = nativeMath.ceil(x.toDouble()).t
 
 /**
  * Rounds the given value [x] to an integer towards negative infinity.
-
- * @return the largest Float value that is smaller than or equal to the given value [x] and is a mathematical integer.
  *
  * Special cases:
  *   - `floor(x)` is `x` where `x` is `NaN` or `+Inf` or `-Inf` or already a mathematical integer.
+ *
+ * @return the largest Float value that is smaller than or equal to the given value [x] and is a mathematical integer.
+ *
+ * @sample samples.math.MathSamples.Floats.floor
+ * @sample samples.math.MathSamples.Floats.roundingModes
  */
 @SinceKotlin("1.2")
 @InlineOnly
@@ -942,10 +982,13 @@ public actual inline fun floor(x: Float): Float = nativeMath.floor(x.toDouble())
 /**
  * Rounds the given value [x] to an integer towards zero.
  *
- * @return the value [x] having its fractional part truncated.
- *
  * Special cases:
  *   - `truncate(x)` is `x` where `x` is `NaN` or `+Inf` or `-Inf` or already a mathematical integer.
+ *
+ * @return the value [x] having its fractional part truncated.
+ *
+ * @sample samples.math.MathSamples.Floats.truncate
+ * @sample samples.math.MathSamples.Floats.roundingModes
  */
 @SinceKotlin("1.2")
 public actual fun truncate(x: Float): Float = when {
@@ -959,6 +1002,9 @@ public actual fun truncate(x: Float): Float = when {
  *
  * Special cases:
  *   - `round(x)` is `x` where `x` is `NaN` or `+Inf` or `-Inf` or already a mathematical integer.
+ *
+ * @sample samples.math.MathSamples.Floats.round
+ * @sample samples.math.MathSamples.Floats.roundingModes
  */
 @SinceKotlin("1.2")
 @InlineOnly
@@ -1159,6 +1205,7 @@ public inline fun Float.nextTowards(to: Float): Float = nativeMath.nextAfter(thi
  *   - `x.roundToInt() == Int.MIN_VALUE` when `x < Int.MIN_VALUE`
  *
  * @throws IllegalArgumentException when this value is `NaN`
+ * @sample samples.math.MathSamples.Floats.roundToInt
  */
 @SinceKotlin("1.2")
 public actual fun Float.roundToInt(): Int =
@@ -1173,6 +1220,7 @@ public actual fun Float.roundToInt(): Int =
  *   - `x.roundToLong() == Long.MIN_VALUE` when `x < Long.MIN_VALUE`
  *
  * @throws IllegalArgumentException when this value is `NaN`
+ * @sample samples.math.MathSamples.Floats.roundToLong
  */
 @SinceKotlin("1.2")
 public actual fun Float.roundToLong(): Long = toDouble().roundToLong()

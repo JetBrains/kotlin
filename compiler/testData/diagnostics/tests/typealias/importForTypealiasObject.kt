@@ -18,3 +18,5 @@ import something.TWC
 
 val test1 = T.hashCode()
 val test2 = TWC.hashCode()
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, objectDeclaration, propertyDeclaration, typeAliasDeclaration */

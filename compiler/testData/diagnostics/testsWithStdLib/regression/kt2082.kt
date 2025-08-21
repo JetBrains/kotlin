@@ -9,3 +9,6 @@ fun foo(c : Collection<String>) = {
 
 fun bar() : String? = null
 fun zoo(s : String) : Boolean = true
+
+/* GENERATED_FIR_TAGS: equalityExpression, functionDeclaration, ifExpression, lambdaLiteral, localProperty, nullableType,
+propertyDeclaration */

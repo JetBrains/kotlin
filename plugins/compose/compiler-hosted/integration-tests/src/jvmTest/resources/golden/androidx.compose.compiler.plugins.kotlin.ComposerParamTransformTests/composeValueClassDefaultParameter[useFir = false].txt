@@ -27,7 +27,7 @@ abstract class Test {
 fun Example(data: Data?, intData: IntData, %composer: Composer?, %changed: Int, %default: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(Example)P(0:Data,1:IntData):Test.kt")
-  if (%changed and 0b0001 != 0 || !%composer.skipping) {
+  if (%composer.shouldExecute(%changed and 0b0001 != 0, %changed and 0b0001)) {
     if (%default and 0b0001 != 0) {
       data = Data("")
     }
@@ -51,7 +51,7 @@ fun Example(data: Data?, intData: IntData, %composer: Composer?, %changed: Int, 
 fun ExampleNullable(data: Data?, intData: IntData, %composer: Composer?, %changed: Int, %default: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(ExampleNullable)P(0:Data,1:IntData):Test.kt")
-  if (%changed and 0b0001 != 0 || !%composer.skipping) {
+  if (%composer.shouldExecute(%changed and 0b0001 != 0, %changed and 0b0001)) {
     if (%default and 0b0001 != 0) {
       data = Data("")
     }
@@ -75,7 +75,7 @@ fun ExampleNullable(data: Data?, intData: IntData, %composer: Composer?, %change
 fun ExampleNullableData(data: NullableData?, intData: IntData, %composer: Composer?, %changed: Int, %default: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(ExampleNullableData)P(0:NullableData,1:IntData):Test.kt")
-  if (%changed and 0b0001 != 0 || !%composer.skipping) {
+  if (%composer.shouldExecute(%changed and 0b0001 != 0, %changed and 0b0001)) {
     if (%default and 0b0001 != 0) {
       data = NullableData(null)
     }
@@ -99,7 +99,7 @@ fun ExampleNullableData(data: NullableData?, intData: IntData, %composer: Compos
 private fun PrivateExample(data: Data?, intData: IntData, %composer: Composer?, %changed: Int, %default: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(PrivateExample)P(0:Data,1:IntData):Test.kt")
-  if (%changed and 0b0001 != 0 || !%composer.skipping) {
+  if (%composer.shouldExecute(%changed and 0b0001 != 0, %changed and 0b0001)) {
     if (%default and 0b0001 != 0) {
       data = Data("")
     }
@@ -123,7 +123,7 @@ private fun PrivateExample(data: Data?, intData: IntData, %composer: Composer?, 
 internal fun InternalExample(data: Data?, intData: IntData, %composer: Composer?, %changed: Int, %default: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(InternalExample)P(0:Data,1:IntData):Test.kt")
-  if (%changed and 0b0001 != 0 || !%composer.skipping) {
+  if (%composer.shouldExecute(%changed and 0b0001 != 0, %changed and 0b0001)) {
     if (%default and 0b0001 != 0) {
       data = Data("")
     }
@@ -148,7 +148,7 @@ internal fun InternalExample(data: Data?, intData: IntData, %composer: Composer?
 internal fun PublishedExample(data: Data?, intData: IntData, %composer: Composer?, %changed: Int, %default: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(PublishedExample)P(0:Data,1:IntData):Test.kt")
-  if (%changed and 0b0001 != 0 || !%composer.skipping) {
+  if (%composer.shouldExecute(%changed and 0b0001 != 0, %changed and 0b0001)) {
     if (%default and 0b0001 != 0) {
       data = Data("")
     }
@@ -174,7 +174,7 @@ abstract class Test {
   private fun PrivateExample(data: Data?, %composer: Composer?, %changed: Int, %default: Int) {
     %composer = %composer.startRestartGroup(<>)
     sourceInformation(%composer, "C(PrivateExample)P(0:Data):Test.kt")
-    if (%changed and 0b0001 != 0 || !%composer.skipping) {
+    if (%composer.shouldExecute(%changed and 0b0001 != 0, %changed and 0b0001)) {
       if (%default and 0b0001 != 0) {
         data = Data("")
       }
@@ -196,7 +196,7 @@ abstract class Test {
   fun PublicExample(data: Data?, %composer: Composer?, %changed: Int, %default: Int) {
     %composer = %composer.startRestartGroup(<>)
     sourceInformation(%composer, "C(PublicExample)P(0:Data):Test.kt")
-    if (%changed and 0b0001 != 0 || !%composer.skipping) {
+    if (%composer.shouldExecute(%changed and 0b0001 != 0, %changed and 0b0001)) {
       if (%default and 0b0001 != 0) {
         data = Data("")
       }
@@ -218,7 +218,7 @@ abstract class Test {
   internal fun InternalExample(data: Data?, %composer: Composer?, %changed: Int, %default: Int) {
     %composer = %composer.startRestartGroup(<>)
     sourceInformation(%composer, "C(InternalExample)P(0:Data):Test.kt")
-    if (%changed and 0b0001 != 0 || !%composer.skipping) {
+    if (%composer.shouldExecute(%changed and 0b0001 != 0, %changed and 0b0001)) {
       if (%default and 0b0001 != 0) {
         data = Data("")
       }
@@ -241,7 +241,7 @@ abstract class Test {
   internal fun PublishedExample(data: Data?, %composer: Composer?, %changed: Int, %default: Int) {
     %composer = %composer.startRestartGroup(<>)
     sourceInformation(%composer, "C(PublishedExample)P(0:Data):Test.kt")
-    if (%changed and 0b0001 != 0 || !%composer.skipping) {
+    if (%composer.shouldExecute(%changed and 0b0001 != 0, %changed and 0b0001)) {
       if (%default and 0b0001 != 0) {
         data = Data("")
       }
@@ -263,7 +263,7 @@ abstract class Test {
   protected fun ProtectedExample(data: Data?, %composer: Composer?, %changed: Int, %default: Int) {
     %composer = %composer.startRestartGroup(<>)
     sourceInformation(%composer, "C(ProtectedExample)P(0:Data):Test.kt")
-    if (%changed and 0b0001 != 0 || !%composer.skipping) {
+    if (%composer.shouldExecute(%changed and 0b0001 != 0, %changed and 0b0001)) {
       if (%default and 0b0001 != 0) {
         data = Data("")
       }

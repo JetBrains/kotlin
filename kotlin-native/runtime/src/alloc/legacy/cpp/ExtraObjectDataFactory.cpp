@@ -12,10 +12,12 @@ using namespace kotlin;
 
 mm::ExtraObjectData& alloc::ExtraObjectDataFactory::ThreadQueue::CreateExtraObjectDataForObject(
         ObjHeader* baseObject, const TypeInfo* info) noexcept {
+    AssertThreadState(ThreadState::kRunnable);
     return **Emplace(baseObject, info);
 }
 
 void alloc::ExtraObjectDataFactory::ThreadQueue::DestroyExtraObjectData(mm::ExtraObjectData& data) noexcept {
+    AssertThreadState(ThreadState::kRunnable);
     Erase(&Queue::Node::fromValue(data));
 }
 

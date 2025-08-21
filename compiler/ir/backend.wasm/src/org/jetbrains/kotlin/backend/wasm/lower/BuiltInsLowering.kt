@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
 import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
+import org.jetbrains.kotlin.backend.wasm.getJsClassForExternalClass
 import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.ClassKind
@@ -101,7 +102,7 @@ class BuiltInsLowering(val context: WasmBackendContext) : FileLoweringPass {
 
                 // For eqeqSymbol use overridden `Any.equals(Any?)` if there is any.
                 if (call.symbol === irBuiltins.eqeqSymbol && !lhsType.isNullable() && !lhsType.isNothing()) {
-                    return irCall(call, lhsType.findEqualsMethod().symbol, argumentsAsReceivers = true)
+                    return irCall(call, lhsType.findEqualsMethod().symbol)
                 }
 
                 val fallbackEqFun = if (call.symbol === irBuiltins.eqeqeqSymbol) symbols.refEq else symbols.nullableEquals
@@ -165,7 +166,7 @@ class BuiltInsLowering(val context: WasmBackendContext) : FileLoweringPass {
             in symbols.startCoroutineUninterceptedOrReturnIntrinsics -> {
                 val arity = symbols.startCoroutineUninterceptedOrReturnIntrinsics.indexOf(symbol)
                 val newSymbol = irBuiltins.suspendFunctionN(arity).getSimpleFunction("invoke")!!
-                return irCall(call, newSymbol, argumentsAsReceivers = true)
+                return irCall(call, newSymbol)
             }
             context.reflectionSymbols.getKClass -> {
                 val type = call.typeArguments[0]!!
@@ -178,7 +179,11 @@ class BuiltInsLowering(val context: WasmBackendContext) : FileLoweringPass {
                     kclassConstructor = symbols.jsRelatedSymbols.kExternalClassImpl.owner.constructors.first()
                     constructorArgument = getExternalKClassCtorArgument(type, builder)
                 } else {
-                    kclassConstructor = symbols.reflectionSymbols.kClassImpl.owner.constructors.first()
+                    if (type.isInterface()) {
+                        kclassConstructor = symbols.reflectionSymbols.kClassInterfaceImpl.owner.constructors.first()
+                    } else {
+                        kclassConstructor = symbols.reflectionSymbols.kClassImpl.owner.constructors.first()
+                    }
                     constructorArgument = getKClassCtorArgument(type, builder)
                 }
 
@@ -209,15 +214,15 @@ class BuiltInsLowering(val context: WasmBackendContext) : FileLoweringPass {
     private fun getKClassCtorArgument(type: IrType, builder: DeclarationIrBuilder): IrExpression {
         val klass = type.classOrNull?.owner ?: error("Invalid type")
 
-        val typeId = builder.irCall(symbols.wasmTypeId).also {
-            it.typeArguments[0] = type
-        }
-
         if (!klass.isInterface) {
-            return builder.irCall(context.wasmSymbols.reflectionSymbols.getTypeInfoTypeDataByPtr).also {
-                it.arguments[0] = typeId
+            return builder.irCall(symbols.wasmGetTypeRtti).also {
+                it.typeArguments[0] = type
             }
         } else {
+            val typeId = builder.irCall(symbols.wasmTypeId).also {
+                it.typeArguments[0] = type
+            }
+
             val fqName = type.classFqName!!
             val fqnShouldBeEmitted =
                 context.configuration.languageVersionSettings.getFlag(AnalysisFlags.allowFullyQualifiedNameInKClass)
@@ -235,7 +240,7 @@ class BuiltInsLowering(val context: WasmBackendContext) : FileLoweringPass {
     private fun getExternalKClassCtorArgument(type: IrType, builder: DeclarationIrBuilder): IrExpression {
         val klass = type.classOrNull?.owner ?: error("Invalid type")
         check(klass.kind != ClassKind.INTERFACE) { "External interface must not be a class literal" }
-        return builder.irCall(context.mapping.wasmGetJsClass[klass]!!)
+        return builder.irCall(klass.getJsClassForExternalClass!!)
     }
 
     override fun lower(irFile: IrFile) {

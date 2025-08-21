@@ -1,9 +1,6 @@
-// KT-72862: No function found for symbol
-// IGNORE_NATIVE: cacheMode=STATIC_USE_HEADERS_EVERYWHERE
 // KT-72840: java.lang.AssertionError: AFTER mandatory stack transformations: incorrect bytecode
 // IGNORE_BACKEND: JVM_IR
-// IGNORE_BACKEND: ANDROID, ANDROID_IR
-// IGNORE_LIGHT_ANALYSIS
+// IGNORE_BACKEND: ANDROID
 
 // MODULE: lib
 // FILE: A.kt

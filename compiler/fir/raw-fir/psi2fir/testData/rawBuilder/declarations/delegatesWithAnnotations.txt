@@ -30,5 +30,5 @@ FILE: delegatesWithAnnotations.kt
             ^ D|/variable|.getValue#(Null(null), ::R|/variable|)
         }
         @PROPERTY_SETTER:Anno(<strcat>(String(set: value annotation ), x#)) public? set(@SETTER_PARAMETER:Anno(<strcat>(String(setparam: value annotation ), x#)) <set-?>: <implicit>): R|kotlin/Unit| {
-            ^ D|/variable|.setValue#(Null(null), ::R|/variable|, R|<local>/variable|)
+            ^ D|/variable|.setValue#(Null(null), ::R|/variable|, R|<local>/<set-?>|)
         }

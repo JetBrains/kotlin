@@ -19,21 +19,21 @@ import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.name.WasmStandardClassIds
 
 object FirWasmExternalFileChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
-    override fun check(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirDeclaration) {
         if (!context.isTopLevel || declaration.symbol.isEffectivelyExternal(context.session)) {
             return
         }
 
-        val targetAnnotations = context.containingFile
-            ?.annotations
+        val targetAnnotations = context.containingFileSymbol
+            ?.resolvedAnnotationsWithClassIds
             ?.firstOrNull { it.toAnnotationClassId(context.session) in WasmStandardClassIds.Annotations.annotationsRequiringExternal }
 
         if (targetAnnotations != null) {
             reporter.reportOn(
                 declaration.source,
                 FirWasmErrors.NON_EXTERNAL_DECLARATION_IN_INAPPROPRIATE_FILE,
-                targetAnnotations.resolvedType,
-                context
+                targetAnnotations.resolvedType
             )
         }
     }

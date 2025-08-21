@@ -17,3 +17,5 @@ fun foo(a: () -> Unit, b: () -> Unit) {
 
     b()
 }
+
+/* GENERATED_FIR_TAGS: contractCallsEffect, contracts, functionDeclaration, functionalType, lambdaLiteral, localFunction */

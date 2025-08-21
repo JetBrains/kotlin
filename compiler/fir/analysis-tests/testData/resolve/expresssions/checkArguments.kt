@@ -15,3 +15,5 @@ fun foo() {
     val rb = bar(b)
     val rc = bar(c)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, localProperty, propertyDeclaration */

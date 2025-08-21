@@ -5,12 +5,14 @@
 
 package org.jetbrains.kotlin.fir.types
 
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
 import org.jetbrains.kotlin.builtins.functions.isBasicFunctionOrKFunction
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.computeTypeAttributes
 import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.fir.declarations.getStringArgument
 import org.jetbrains.kotlin.fir.declarations.hasAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.builder.buildAnnotation
@@ -19,6 +21,7 @@ import org.jetbrains.kotlin.fir.originalForSubstitutionOverride
 import org.jetbrains.kotlin.fir.originalOrSelf
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.scopes.CallableCopyTypeCalculator
+import org.jetbrains.kotlin.fir.scopes.ScopeFunctionRequiresPrewarm
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.scopes.processOverriddenFunctions
 import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
@@ -27,6 +30,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.utils.exceptions.withConeTypeEntry
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addToStdlib.runUnless
@@ -45,9 +49,13 @@ fun ConeRigidType.functionTypeKind(session: FirSession, expandTypeAliases: Boole
     return targetType.lookupTag.functionTypeKind(session)
 }
 
-private fun ConeClassLikeLookupTag.functionTypeKind(session: FirSession): FunctionTypeKind? {
+fun ConeClassLikeLookupTag.functionTypeKind(session: FirSession): FunctionTypeKind? {
     val classId = classId
-    return session.functionTypeService.getKindByClassNamePrefix(classId.packageFqName, classId.shortClassName.asString())
+    return classId.functionTypeKind(session)
+}
+
+fun ClassId.functionTypeKind(session: FirSession): FunctionTypeKind? {
+    return session.functionTypeService.getKindByClassNamePrefix(packageFqName, shortClassName.asString())
 }
 
 private inline fun ConeKotlinType.isFunctionTypeWithPredicate(
@@ -65,6 +73,11 @@ private inline fun ConeKotlinType.isFunctionTypeWithPredicate(
 // Function
 fun ConeKotlinType.isBasicFunctionType(session: FirSession): Boolean {
     return isFunctionTypeWithPredicate(session) { it == FunctionTypeKind.Function }
+}
+
+// Function, KFunction
+fun ConeKotlinType.isBasicFunctionOrKFunctionType(session: FirSession): Boolean {
+    return isFunctionTypeWithPredicate(session) { it.isBasicFunctionOrKFunction }
 }
 
 // Function, SuspendFunction, KSuspendFunction, [Custom]Function, K[Custom]Function
@@ -224,7 +237,7 @@ fun ConeKotlinType.findContributedInvokeSymbol(
     val baseInvokeSymbol = expectedFunctionType.findBaseInvokeSymbol(session, scopeSession) ?: return null
 
     val callableCopyTypeCalculator = if (shouldCalculateReturnTypesOfFakeOverrides) {
-        CallableCopyTypeCalculator.Forced
+        CallableCopyTypeCalculator.CalculateDeferredForceLazyResolution
     } else {
         CallableCopyTypeCalculator.DoNothing
     }
@@ -247,7 +260,8 @@ fun ConeKotlinType.findContributedInvokeSymbol(
     var overriddenInvoke: FirFunctionSymbol<*>? = null
     if (declaredInvoke != null) {
         // Make sure the user-contributed or type-substituted invoke we just found above is an override of base invoke.
-        scope.processOverriddenFunctions(declaredInvoke!!) { functionSymbol ->
+        @OptIn(ScopeFunctionRequiresPrewarm::class) // processFunctionsByName is called above
+        scope.processOverriddenFunctions(declaredInvoke) { functionSymbol ->
             if (functionSymbol == baseInvokeSymbol || functionSymbol.originalForSubstitutionOverride == baseInvokeSymbol) {
                 overriddenInvoke = functionSymbol
                 ProcessorAction.STOP
@@ -320,4 +334,17 @@ fun FirFunction.specialFunctionTypeKind(session: FirSession): FunctionTypeKind? 
     return (symbol as? FirNamedFunctionSymbol)?.let {
         session.functionTypeService.extractSingleSpecialKindForFunction(it)
     }
+}
+
+/**
+ * Access the [ParameterName] of the [ConeKotlinType].
+ * This can be the name via lambda syntax or by explicit annotation.
+ */
+fun ConeKotlinType.valueParameterName(session: FirSession): Name? {
+    val attribute = attributes.parameterNameAttribute ?: return null
+    if (attribute.name != null) return attribute.name
+
+    val annotation = attribute.annotations.first() // Attribute precondition.
+    val name = annotation.getStringArgument(StandardNames.NAME, session) ?: return null
+    return Name.identifier(name)
 }

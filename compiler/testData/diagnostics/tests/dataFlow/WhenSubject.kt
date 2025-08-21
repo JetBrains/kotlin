@@ -9,3 +9,6 @@ fun test(e : Expr) {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, ifExpression, integerLiteral, interfaceDeclaration,
+isExpression, primaryConstructor, propertyDeclaration, whenExpression, whenWithSubject */

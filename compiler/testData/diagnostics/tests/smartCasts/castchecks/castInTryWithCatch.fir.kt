@@ -33,3 +33,5 @@ fun castAtAll(s: Any) {
     }
     s.length
 }
+
+/* GENERATED_FIR_TAGS: asExpression, functionDeclaration, localProperty, propertyDeclaration, smartcast, tryExpression */

@@ -32,3 +32,6 @@ open class Derived2 : Derived1("")
 fun testFunction(d: Derived1) {
     d.<!INVISIBLE_SETTER!>foo<!> = "other"
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, functionDeclaration, init, primaryConstructor, propertyDeclaration,
+stringLiteral, thisExpression */

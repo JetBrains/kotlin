@@ -7,6 +7,7 @@ package org.jetbrains.sir.lightclasses.utils;
 
 import org.jetbrains.kotlin.sir.*
 import org.jetbrains.kotlin.utils.findIsInstanceAnd
+import org.jetbrains.kotlin.utils.zipIfSizesAreEqual
 
 internal inline val <reified T : SirClassMemberDeclaration> T.overridableCandidates: List<T>
     get() =
@@ -17,7 +18,7 @@ internal inline val <reified T : SirClassMemberDeclaration> T.overridableCandida
             .toList()
 
 
-private val SirClass.superClassDeclaration: SirClass? get() = (superClass as? SirNominalType)?.typeDeclaration as? SirClass
+internal val SirClassInhertingDeclaration.superClassDeclaration: SirClass? get() = superClass?.typeDeclaration as? SirClass
 
 internal fun SirType.isSubtypeOf(other: SirType): Boolean = when (this) {
     is SirOptionalType -> (other as? SirOptionalType)?.let { wrappedType.isSubtypeOf(it.wrappedType) } ?: false
@@ -28,12 +29,22 @@ internal fun SirType.isSubtypeOf(other: SirType): Boolean = when (this) {
         } else {
             this.typeDeclaration.isSubclassOf(other.typeDeclaration)
         }
+        is SirExistentialType -> this.typeArguments.isEmpty() && this.typeDeclaration == other.protocols.singleOrNull()
         else -> false
     }
+    is SirExistentialType -> when (other) {
+        is SirExistentialType -> this.protocols == other.protocols
+        is SirNominalType -> other.isSubtypeOf(this)
+        else -> false
+    }
+    is SirFunctionalType -> other is SirFunctionalType
+            && this.returnType.isSubtypeOf(other.returnType)
+            && this.parameterTypes.zipIfSizesAreEqual(other.parameterTypes)?.all { it.second.isSubtypeOf(it.first) } ?: false
+
     else -> false
 }
 
-private fun SirDeclaration.isSubclassOf(other: SirDeclaration): Boolean = this == other || this is SirClass && (superClass as? SirNominalType)?.typeDeclaration?.isSubclassOf(other) ?: false
+private fun SirDeclaration.isSubclassOf(other: SirDeclaration): Boolean = this == other || this is SirClass && superClass?.typeDeclaration?.isSubclassOf(other) ?: false
 
 private fun SirInit.bestOverrideCandidate(): SirInit? = (this.parent as? SirClass)?.superClassDeclaration?.let { cls ->
     cls.overrideableInitializers.firstOrNull { other -> this.parameters.isSuitableForOverrideOf(other.parameters) }
@@ -129,3 +140,14 @@ public fun SirClass.calculateAllAvailableInitializers(): List<SirInit> {
 
 private val SirDeclaration.isUnsuitablyDeprecatedToOverride: Boolean
     get() = attributes.findIsInstanceAnd<SirAttribute.Available> { it.unavailable } != null
+
+
+/**
+ * Checks if a declaration directly (within the inheritance clause) or indirectly (through another conformance)
+ * declares conformance to [protocol]. This only considers the current declaration (i.e. disregards extensions)
+ *
+ * @param protocol
+ */
+internal fun SirDeclaration.declaresConformance(protocol: SirProtocol): Boolean = this == protocol
+        || this is SirProtocolConformingDeclaration && protocols.any { it.declaresConformance(protocol) }
+        || this is SirClassInhertingDeclaration && (superClassDeclaration?.declaresConformance(protocol) ?: false)

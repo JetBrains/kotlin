@@ -7,8 +7,10 @@
 package org.jetbrains.kotlin.gradle.plugin.ide
 
 import org.gradle.api.Project
+import org.gradle.api.Task
 import org.gradle.api.logging.Logger
 import org.gradle.api.logging.Logging
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.ExternalKotlinTargetApi
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
@@ -27,6 +29,7 @@ import org.jetbrains.kotlin.gradle.plugin.ide.IdeMultiplatformImport.Priority.Co
 import org.jetbrains.kotlin.gradle.plugin.ide.IdeMultiplatformImport.SourceSetConstraint
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeCompilation
 import org.jetbrains.kotlin.gradle.plugin.sources.internal
+import org.jetbrains.kotlin.gradle.targets.metadata.isMultipleKotlinTargetSourceSet
 import org.jetbrains.kotlin.gradle.targets.metadata.isNativeSourceSet
 import org.jetbrains.kotlin.gradle.targets.metadata.isSingleKotlinTargetSourceSet
 import org.jetbrains.kotlin.gradle.targets.metadata.isSinglePlatformTypeSourceSet
@@ -132,6 +135,13 @@ interface IdeMultiplatformImport {
      */
     @ExternalKotlinTargetApi
     fun registerImportAction(action: IdeMultiplatformImportAction)
+
+    /**
+     * Adds [Task.dependsOn] relation on all registered resolvers for given [task].
+     */
+    @ExperimentalKotlinGradlePluginApi
+    @ExternalKotlinTargetApi
+    fun addDependencyOnResolvers(task: Task)
 
     /**
      * Any [IdeDependencyResolver] has to be registered for a given dependency resolution phase in which it participates
@@ -297,6 +307,11 @@ interface IdeMultiplatformImport {
             val isSingleKotlinTarget = SourceSetConstraint { isSingleKotlinTargetSourceSet(it) }
 
             /**
+             * Matches SourceSets which participate in compilations of multiple [KotlinTarget]
+             */
+            val isMultipleKotlinTarget = SourceSetConstraint { isMultipleKotlinTargetSourceSet(it) }
+
+            /**
              * Matches SourceSets that do not have any other SourceSets that declare a 'dependsOn' this SourceSet
              */
             val isLeaf = SourceSetConstraint { sourceSet ->
@@ -337,7 +352,7 @@ interface IdeMultiplatformImport {
 }
 
 internal val Project.kotlinIdeMultiplatformImport: IdeMultiplatformImport by projectStoredProperty {
-    IdeMultiplatformImport(project.kotlinExtension)
+    IdeMultiplatformImport(kotlinExtension)
 }
 
 internal val IdeMultiplatformImportSetupAction = KotlinProjectSetupAction {

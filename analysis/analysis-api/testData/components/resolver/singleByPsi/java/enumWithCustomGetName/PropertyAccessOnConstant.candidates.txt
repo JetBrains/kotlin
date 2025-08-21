@@ -2,6 +2,7 @@ KtNameReferenceExpression(54,58): 'name'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = JavaEnum.A
           isSafeNavigation = false
@@ -12,14 +13,16 @@ KtNameReferenceExpression(54,58): 'name'
           receiverType = null
           returnType = kotlin.String
           symbol = val name: kotlin.String
+          contextParameters = []
           callableId = kotlin/Enum.name
       simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
-  
+
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = JavaEnum.A
           isSafeNavigation = false
@@ -30,6 +33,7 @@ KtNameReferenceExpression(54,58): 'name'
           receiverType = null
           returnType = kotlin.String!
           symbol = val name: kotlin.String!
+          contextParameters = []
           callableId = /JavaEnum.name
       simpleAccess = Read
       typeArgumentsMapping = {}

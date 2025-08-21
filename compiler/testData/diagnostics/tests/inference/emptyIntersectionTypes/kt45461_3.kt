@@ -10,3 +10,6 @@ fun <K : <!FINAL_UPPER_BOUND!>String<!>> main() {
     val foo = Foo<K>()
     Bar<String>().takeFoo(foo) // error in 1.3.72, no error in 1.4.31
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, inProjection, localProperty, nullableType,
+propertyDeclaration, typeConstraint, typeParameter */

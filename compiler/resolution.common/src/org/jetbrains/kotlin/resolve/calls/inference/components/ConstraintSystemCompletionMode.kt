@@ -6,16 +6,19 @@
 package org.jetbrains.kotlin.resolve.calls.inference.components
 
 enum class ConstraintSystemCompletionMode(
-    val allLambdasShouldBeAnalyzed: Boolean,
+    val allPostponedAtomsShouldBeAnalyzed: Boolean,
+    // Actually, it's related to all ConeFunctionTypeRelatedPostponedResolvedAtom including callable references
+    val allLambdasShouldBeAnalyzed: Boolean = allPostponedAtomsShouldBeAnalyzed,
     val shouldForkPointConstraintsBeResolved: Boolean,
     val fixNotInferredTypeVariablesToErrorType: Boolean,
 ) {
     FULL(
-        allLambdasShouldBeAnalyzed = true,
+        allPostponedAtomsShouldBeAnalyzed = true,
         shouldForkPointConstraintsBeResolved = true,
         fixNotInferredTypeVariablesToErrorType = true,
     ),
     PCLA_POSTPONED_CALL(
+        allPostponedAtomsShouldBeAnalyzed = false,
         allLambdasShouldBeAnalyzed = true,
         shouldForkPointConstraintsBeResolved = false,
         fixNotInferredTypeVariablesToErrorType = false,
@@ -32,16 +35,33 @@ enum class ConstraintSystemCompletionMode(
      * ```
      */
     PARTIAL(
+        allPostponedAtomsShouldBeAnalyzed = false,
         allLambdasShouldBeAnalyzed = false,
         shouldForkPointConstraintsBeResolved = false,
         fixNotInferredTypeVariablesToErrorType = false,
     ),
+
+    @ExclusiveForOverloadResolutionByLambdaReturnType
     UNTIL_FIRST_LAMBDA(
+        allPostponedAtomsShouldBeAnalyzed = false,
         allLambdasShouldBeAnalyzed = false,
         /* See testData/diagnostics/tests/inference/inferenceForkRegressionSimple.kt */
         shouldForkPointConstraintsBeResolved = true,
-        // This one is quite questionable, but should not matter too much
-        // because anyway overload ambiguity would be reported for error candidates
-        fixNotInferredTypeVariablesToErrorType = true,
-    ),
+        // We shouldn't do it here because of input type semi-fixing
+        fixNotInferredTypeVariablesToErrorType = false,
+    );
+
+    @OptIn(ExclusiveForOverloadResolutionByLambdaReturnType::class)
+    fun isUntilFirstLambda(): Boolean = this == UNTIL_FIRST_LAMBDA
+
+    init {
+        // allPostponedAtomsShouldBeAnalyzed => allLambdasShouldBeAnalyzed
+        assert(!allPostponedAtomsShouldBeAnalyzed || allLambdasShouldBeAnalyzed)
+    }
+
+    @RequiresOptIn(
+        "This mode should be used only for OverloadResolutionByLambdaReturnTypeResolver. " +
+                "Consider using isUntilFirstLambda() if you need just to check this mode."
+    )
+    annotation class ExclusiveForOverloadResolutionByLambdaReturnType
 }

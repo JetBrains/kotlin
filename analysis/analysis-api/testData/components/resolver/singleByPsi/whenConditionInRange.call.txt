@@ -7,10 +7,12 @@ KtWhenConditionInRange(169,181): 'in MyClass()'
           receiverType = null
           returnType = kotlin.Int
           symbol = int: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:
           expression = MyClass()
@@ -26,8 +28,10 @@ KtWhenConditionInRange(169,181): 'in MyClass()'
               receiverType = null
               returnType = kotlin.Int
               symbol = int: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = /contains
       typeArgumentsMapping = {
         T -> (MyClass)

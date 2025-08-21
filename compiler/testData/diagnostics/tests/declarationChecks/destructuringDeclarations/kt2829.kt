@@ -16,3 +16,6 @@ fun b(s: String) {
 data class Pair<A, B>(val a: A, val b: B)
 
 fun println(a: Any?) = a
+
+/* GENERATED_FIR_TAGS: additiveExpression, classDeclaration, data, destructuringDeclaration, functionDeclaration,
+localProperty, nullableType, primaryConstructor, propertyDeclaration, stringLiteral, typeParameter */

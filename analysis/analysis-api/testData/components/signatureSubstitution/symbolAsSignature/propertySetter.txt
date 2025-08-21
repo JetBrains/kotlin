@@ -13,6 +13,8 @@ KaFunctionSignature:
       receiverType = null
       returnType = kotlin.Int
       symbol = value: kotlin.Int
+      contextParameters = []
       callableId = null
   ]
+  contextParameters = []
   callableId = null

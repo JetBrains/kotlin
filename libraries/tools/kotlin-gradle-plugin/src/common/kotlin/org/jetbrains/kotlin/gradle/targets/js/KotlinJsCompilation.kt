@@ -3,7 +3,7 @@
 * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
 */
 
-@file:Suppress("PackageDirectoryMismatch", "DEPRECATION", "TYPEALIAS_EXPANSION_DEPRECATION")
+@file:Suppress("PackageDirectoryMismatch", "DEPRECATION", "TYPEALIAS_EXPANSION_DEPRECATION", "TYPEALIAS_EXPANSION_DEPRECATION_ERROR")
 
 // Old package for compatibility
 package org.jetbrains.kotlin.gradle.plugin.mpp
@@ -16,11 +16,10 @@ import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.cli.common.arguments.K2JsArgumentConstants
 import org.jetbrains.kotlin.gradle.dsl.JsModuleKind
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsCompilerOptions
-import org.jetbrains.kotlin.gradle.dsl.KotlinJsOptions
 import org.jetbrains.kotlin.gradle.plugin.DeprecatedHasCompilerOptions
+import org.jetbrains.kotlin.gradle.plugin.KotlinAnyOptionsDeprecated
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
-import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinCompilationImpl
 import org.jetbrains.kotlin.gradle.targets.js.ir.JsBinary
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsBinaryContainer
@@ -31,7 +30,7 @@ import javax.inject.Inject
 
 open class KotlinJsCompilation @Inject internal constructor(
     compilation: KotlinCompilationImpl,
-) : DeprecatedAbstractKotlinCompilationToRunnableFiles<KotlinJsOptions>(compilation),
+) : DeprecatedAbstractKotlinCompilationToRunnableFiles<KotlinAnyOptionsDeprecated>(compilation),
     HasBinaries<KotlinJsBinaryContainer> {
 
     override val target: KotlinJsIrTarget
@@ -57,7 +56,11 @@ open class KotlinJsCompilation @Inject internal constructor(
             buildNpmProjectName(targetModuleName, compilationName)
         }
 
-    @Deprecated("Use compilationName instead", ReplaceWith("compilationName"))
+    @Deprecated(
+        "Use compilationName instead. Scheduled for removal in Kotlin 2.3.",
+        ReplaceWith("compilationName"),
+        level = DeprecationLevel.ERROR
+    )
     val compilationPurpose: String get() = compilationName
 
     override val processResourcesTaskName: String
@@ -73,13 +76,21 @@ open class KotlinJsCompilation @Inject internal constructor(
         return compilation.attributes
     }
 
-    @Suppress("DEPRECATION")
-    @Deprecated("Accessing task instance directly is deprecated", replaceWith = ReplaceWith("compileTaskProvider"))
+    @Suppress("DEPRECATION_ERROR")
+    @Deprecated(
+        "Accessing task instance directly is deprecated. Scheduled for removal in Kotlin 2.3.",
+        replaceWith = ReplaceWith("compileTaskProvider"),
+        level = DeprecationLevel.ERROR
+    )
     override val compileKotlinTask: Kotlin2JsCompile
         get() = compilation.compileKotlinTask as Kotlin2JsCompile
 
-    @Suppress("UNCHECKED_CAST", "DEPRECATION")
-    @Deprecated("Replaced with compileTaskProvider", replaceWith = ReplaceWith("compileTaskProvider"))
+    @Suppress("UNCHECKED_CAST", "DEPRECATION_ERROR")
+    @Deprecated(
+        "Replaced with compileTaskProvider. Scheduled for removal in Kotlin 2.3",
+        replaceWith = ReplaceWith("compileTaskProvider"),
+        level = DeprecationLevel.ERROR
+    )
     override val compileKotlinTaskProvider: TaskProvider<out Kotlin2JsCompile>
         get() = compilation.compileKotlinTaskProvider as TaskProvider<out Kotlin2JsCompile>
 
@@ -117,7 +128,6 @@ open class KotlinJsCompilation @Inject internal constructor(
 val KotlinJsCompilation.fileExtension: Provider<String>
     get() {
         val isWasm = platformType == KotlinPlatformType.wasm
-        @Suppress("DEPRECATION")
         return compilerOptions.options.moduleKind
             .orElse(
                 compilerOptions.options.target.map {

@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics
 
 import com.intellij.openapi.diagnostic.thisLogger
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinProjectStructureProvider
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getFirResolveSession
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getResolutionFacade
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.resolveToFirSymbol
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkCanceled
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.forEachDeclaration
@@ -72,11 +72,11 @@ internal open class LLFirDiagnosticVisitor(
 
             val project = contextElement.project
             val module = KotlinProjectStructureProvider.getModule(project, contextElement, useSiteModule = null)
-            val resolveSession = module.getFirResolveSession(project)
+            val resolutionFacade = module.getResolutionFacade(project)
 
             // Register containing declarations of a context element
             contextElement.parentsOfType<KtDeclaration>().toList().asReversed()
-                .map { it.resolveToFirSymbol(resolveSession).fir }
+                .map { it.resolveToFirSymbol(resolutionFacade).fir }
                 .run(::process)
 
             return

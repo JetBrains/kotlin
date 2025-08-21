@@ -11,11 +11,11 @@ import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportPropertyName
 
 fun ObjCExportContext.getObjCPropertyName(symbol: KaVariableSymbol): ObjCExportPropertyName {
     val resolveObjCNameAnnotation = symbol.resolveObjCNameAnnotation()
-    val stringName = exportSession.exportSessionSymbolName(symbol)
+    val stringName = exportSession.overrideObjCNameOrSymbolName(symbol)
     val propertyName = stringName.mangleIfReservedObjCName()
 
     return ObjCExportPropertyName(
         objCName = resolveObjCNameAnnotation?.objCName ?: propertyName,
-        swiftName = resolveObjCNameAnnotation?.swiftName ?: propertyName
+        swiftName = resolveObjCNameAnnotation?.swiftName ?: resolveObjCNameAnnotation?.objCName ?: propertyName
     )
 }

@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.ir.declarations.IrOverridableMember
 import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.overrides.IrExternalOverridabilityCondition
 import org.jetbrains.kotlin.ir.overrides.MemberWithOriginal
+import org.jetbrains.kotlin.ir.util.nonDispatchParameters
 
 /**
  * Describes method overriding rules for Objective-C methods.
@@ -65,16 +66,12 @@ object IrObjCOverridabilityCondition : IrExternalOverridabilityCondition {
         // The original Objective-C method selector is represented as
         // function name and parameter names (except first).
 
-        if (first.valueParameters.size != second.valueParameters.size) {
+        if (first.nonDispatchParameters.size != second.nonDispatchParameters.size) {
             return false
         }
 
-        first.valueParameters.forEachIndexed { index, parameter ->
-            if (index > 0 && parameter.name != second.valueParameters[index].name) {
-                return false
-            }
+        return first.nonDispatchParameters.zip(second.nonDispatchParameters).drop(1).all {
+            it.first.name == it.second.name
         }
-
-        return true
     }
 }

@@ -37,3 +37,6 @@ fun f(x : Long?): Long {
     var a = x ?: (fun() {} <!USELESS_ELVIS!>?: fun() {}<!>)
     return <!TYPE_MISMATCH!>a<!>
 }
+
+/* GENERATED_FIR_TAGS: anonymousFunction, checkNotNullCall, elvisExpression, functionDeclaration, functionalType,
+ifExpression, lambdaLiteral, localProperty, nullableType, propertyDeclaration */

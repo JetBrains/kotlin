@@ -27,3 +27,6 @@ fun main() {
         x.length // Arrays don't become raw
     }
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, forLoop, functionDeclaration, javaFunction, javaProperty, localProperty,
+propertyDeclaration */

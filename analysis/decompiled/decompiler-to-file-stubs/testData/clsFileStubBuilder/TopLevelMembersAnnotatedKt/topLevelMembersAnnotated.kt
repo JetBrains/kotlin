@@ -1,4 +1,4 @@
-// FIR_IDENTICAL
+// KNM_FE10_IGNORE
 package a.b.c.topLevelMembersAnnotated
 
 import d.e.f.*

@@ -12,8 +12,8 @@ import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.dsl.NativeCacheKind
 import org.jetbrains.kotlin.gradle.plugin.mpp.KmpIsolatedProjectsSupport
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompilerExecutionStrategy
 import org.jetbrains.kotlin.gradle.report.BuildReportType
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompilerExecutionStrategy
 import org.jetbrains.kotlin.gradle.testbase.BuildOptions.IsolatedProjectsMode
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
@@ -21,7 +21,8 @@ import org.junit.jupiter.api.condition.OS
 import java.io.File
 import java.nio.file.Path
 import java.util.*
-import kotlin.io.path.absolutePathString
+import kotlin.io.path.absolute
+import kotlin.io.path.invariantSeparatorsPathString
 
 val DEFAULT_LOG_LEVEL = LogLevel.INFO
 
@@ -30,14 +31,20 @@ data class BuildOptions(
     val stacktraceMode: String? = StacktraceOption.FULL_STACKTRACE_LONG_OPTION,
     val kotlinVersion: String = TestVersions.Kotlin.CURRENT,
     val warningMode: WarningMode = WarningMode.Fail,
-    val configurationCache: ConfigurationCacheValue = ConfigurationCacheValue.AUTO,
-    val isolatedProjects: IsolatedProjectsMode = IsolatedProjectsMode.DISABLED,
+    val ignoreWarningModeSeverityOverride: Boolean? = null, // Do not change ToolingDiagnostic severity when warningMode is defined as Fail
+    val configurationCache: ConfigurationCacheValue = ConfigurationCacheValue.ENABLED,
+    val isolatedProjects: IsolatedProjectsMode = IsolatedProjectsMode.AUTO,
     val configurationCacheProblems: ConfigurationCacheProblems = ConfigurationCacheProblems.FAIL,
     val parallel: Boolean = true,
     val incremental: Boolean? = null,
-    val useGradleClasspathSnapshot: Boolean? = null,
     val maxWorkers: Int = (Runtime.getRuntime().availableProcessors() / 4 - 1).coerceAtLeast(2),
-    // On Windows OS enabling watch-fs prevents deleting temp directory, which fails the tests
+    /**
+     * Enable File System Watching
+     *
+     * Disabled by default on Windows OS because  enabling watch-fs prevents deleting temp directory, which fails the tests.
+     *
+     * See https://docs.gradle.org/current/userguide/file_system_watching.html
+     */
     val fileSystemWatchEnabled: Boolean = !OS.WINDOWS.isCurrentOs,
     val buildCacheEnabled: Boolean = false,
     val kaptOptions: KaptOptions? = null,
@@ -45,6 +52,7 @@ data class BuildOptions(
     val jsOptions: JsOptions? = JsOptions(),
     val buildReport: List<BuildReportType> = emptyList(),
     val usePreciseJavaTracking: Boolean? = null,
+    val useFirJvmRunner: Boolean? = null,
     val languageVersion: String? = null,
     val languageApiVersion: String? = null,
     val freeArgs: List<String> = emptyList(),
@@ -71,6 +79,18 @@ data class BuildOptions(
      * @see [KGPDaemonsBaseTest]
      */
     val customKotlinDaemonRunFilesDirectory: File? = null,
+    /**
+     * Enable verbose VFS logging to view information about Virtual File System (VFS) changes at the beginning and end of a build.
+     *
+     * https://docs.gradle.org/current/userguide/file_system_watching.html#logging
+     */
+    val verboseVfsLogging: Boolean? = null,
+    /**
+     * Enable `--continuous` build.
+     *
+     * Note that `--continuous` *disables* `--no-daemon`.
+     */
+    val continuousBuild: Boolean? = null,
 ) {
     enum class ConfigurationCacheValue {
 
@@ -89,14 +109,14 @@ data class BuildOptions(
         fun toBooleanFlag(gradleVersion: GradleVersion): Boolean? = when (this) {
             DISABLED -> false
             ENABLED -> true
-            AUTO -> if (HostManager.hostIsMac && gradleVersion >= GradleVersion.version("8.0")) true else null
+            AUTO -> if (HostManager.hostIsMac && gradleVersion >= GradleVersion.version(TestVersions.Gradle.G_8_0)) true else null
             UNSPECIFIED -> null
         }
     }
 
     enum class IsolatedProjectsMode {
 
-        /** Enable Gradle Isolated Projects For [TestVersions.Gradle.MAX_SUPPORTED]; Disabled in other cases */
+        /** Enable Gradle Isolated Projects For [TestVersions.Gradle.G_8_5]; Disabled in other cases */
         AUTO,
 
         /** Always disable Isolated Projects */
@@ -106,7 +126,8 @@ data class BuildOptions(
         ENABLED;
 
         fun toBooleanFlag(gradleVersion: GradleVersion) = when (this) {
-            AUTO -> gradleVersion >= GradleVersion.version(TestVersions.Gradle.MAX_SUPPORTED)
+            // according to https://docs.gradle.org/current/userguide/isolated_projects.html#how_do_i_use_it
+            AUTO -> gradleVersion >= GradleVersion.version(TestVersions.Gradle.G_8_5)
             DISABLED -> false
             ENABLED -> true
         }
@@ -144,7 +165,6 @@ data class BuildOptions(
         val cocoapodsPlatform: String? = null,
         val cocoapodsConfiguration: String? = null,
         val cocoapodsArchs: String? = null,
-        val swiftExportEnabled: Boolean? = null,
         val distributionType: String? = null,
         val distributionDownloadFromMaven: Boolean? = true,
         val reinstall: Boolean? = null,
@@ -153,6 +173,7 @@ data class BuildOptions(
         val version: String? = System.getProperty("kotlinNativeVersion"),
         val cacheOrchestration: String? = null,
         val incremental: Boolean? = null,
+        val enableKlibsCrossCompilation: Boolean? = null,
     )
 
     fun toArguments(
@@ -181,10 +202,14 @@ data class BuildOptions(
             arguments.add("-Dorg.gradle.configuration-cache.parallel=true")
         }
 
-        if (gradleVersion >= GradleVersion.version("7.1")) {
-            val isolatedProjectsFlag = isolatedProjects.toBooleanFlag(gradleVersion)
-            arguments.add("-Dorg.gradle.unsafe.isolated-projects=$isolatedProjectsFlag")
+        // If isolated projects _explicitly_ enabled, but the configuration cache is disabled, emit the error
+        if (isolatedProjects == IsolatedProjectsMode.ENABLED && configurationCacheFlag != true) {
+            throw IllegalArgumentException("Isolated projects can't be enabled, if the configuration cache is disabled!")
         }
+        // Isolated projects can't be enabled, if the configuration cache is disabled
+        val isolatedProjectsFlag = isolatedProjects.toBooleanFlag(gradleVersion) && configurationCacheFlag == true
+        arguments.add("-Dorg.gradle.unsafe.isolated-projects=$isolatedProjectsFlag")
+
         if (parallel) {
             arguments.add("--parallel")
             arguments.add("--max-workers=$maxWorkers")
@@ -200,12 +225,18 @@ data class BuildOptions(
             arguments.add("-Pkotlin.incremental=$incremental")
         }
 
-        useGradleClasspathSnapshot?.let { arguments.add("-Pkotlin.incremental.useClasspathSnapshot=$it") }
-
         if (fileSystemWatchEnabled) {
             arguments.add("--watch-fs")
         } else {
             arguments.add("--no-watch-fs")
+        }
+
+        if (verboseVfsLogging != null) {
+            arguments.add("-Dorg.gradle.vfs.verbose=$verboseVfsLogging")
+        }
+
+        if (continuousBuild == true) {
+            arguments.add("--continuous")
         }
 
         arguments.add(if (buildCacheEnabled) "--build-cache" else "--no-build-cache")
@@ -229,6 +260,7 @@ data class BuildOptions(
         }
 
         if (androidVersion != null) {
+            arguments.add("-Dandroid_tools_version=${androidVersion}")
             arguments.add("-Pandroid_tools_version=${androidVersion}")
         }
         arguments.add("-Ptest_fixes_version=${TestVersions.Kotlin.CURRENT}")
@@ -239,6 +271,10 @@ data class BuildOptions(
 
         if (usePreciseJavaTracking != null) {
             arguments.add("-Pkotlin.incremental.usePreciseJavaTracking=$usePreciseJavaTracking")
+        }
+
+        if (useFirJvmRunner != null) {
+            arguments.add("-Pkotlin.incremental.jvm.fir=$useFirJvmRunner")
         }
 
         if (statisticsForceValidation) {
@@ -285,16 +321,20 @@ data class BuildOptions(
             arguments.add("-Pkotlin.internal.diagnostics.showStacktrace=$showDiagnosticsStacktrace")
         }
 
+        if (ignoreWarningModeSeverityOverride != null) {
+            arguments.add("-Pkotlin.internal.diagnostics.ignoreWarningMode=$ignoreWarningModeSeverityOverride")
+        }
+
         if (stacktraceMode != null) {
             arguments.add("--$stacktraceMode")
         }
 
         konanDataDir?.let {
-            arguments.add("-Pkonan.data.dir=${konanDataDir.toAbsolutePath().normalize()}")
+            arguments.add("-Pkonan.data.dir=${konanDataDir.normalize().absolute().invariantSeparatorsPathString}")
         }
 
         if (kotlinUserHome != null) {
-            arguments.add("-Pkotlin.user.home=${kotlinUserHome.absolutePathString()}")
+            arguments.add("-Pkotlin.user.home=${kotlinUserHome.normalize().absolute().invariantSeparatorsPathString}")
         }
 
         if (compilerArgumentsLogLevel != null) {
@@ -330,9 +370,6 @@ data class BuildOptions(
         nativeOptions.cocoapodsConfiguration?.let {
             arguments.add("-Pkotlin.native.cocoapods.configuration=${it}")
         }
-        nativeOptions.swiftExportEnabled?.let {
-            arguments.add("-Pkotlin.experimental.swift-export.enabled=${it}")
-        }
         nativeOptions.distributionDownloadFromMaven?.let {
             arguments.add("-Pkotlin.native.distribution.downloadFromMaven=${it}")
         }
@@ -356,6 +393,9 @@ data class BuildOptions(
         }
         nativeOptions.incremental?.let {
             arguments.add("-Pkotlin.incremental.native=${it}")
+        }
+        nativeOptions.enableKlibsCrossCompilation?.let {
+            arguments.add("-Pkotlin.native.enableKlibsCrossCompilation=${it}")
         }
     }
 
@@ -395,10 +435,64 @@ fun BuildOptions.withBundledKotlinNative() = copy(
     )
 )
 
+fun BuildOptions.disableConfigurationCacheForGradle7(
+    currentGradleVersion: GradleVersion,
+) = if (currentGradleVersion < GradleVersion.version(TestVersions.Gradle.G_8_0)) {
+    copy(configurationCache = BuildOptions.ConfigurationCacheValue.DISABLED)
+} else {
+    this
+}
+
 // TODO: KT-70416 :resolveIdeDependencies doesn't support Configuration Cache & Project Isolation
 fun BuildOptions.disableConfigurationCache_KT70416() = copy(configurationCache = BuildOptions.ConfigurationCacheValue.DISABLED)
+
+fun BuildOptions.disableKlibsCrossCompilation() = copy(
+    nativeOptions = nativeOptions.copy(enableKlibsCrossCompilation = false)
+)
 
 fun BuildOptions.disableKmpIsolatedProjectSupport() = copy(kmpIsolatedProjectsSupport = KmpIsolatedProjectsSupport.DISABLE)
 
 fun BuildOptions.enableIsolatedProjects() = copy(isolatedProjects = IsolatedProjectsMode.ENABLED)
 fun BuildOptions.disableIsolatedProjects() = copy(isolatedProjects = IsolatedProjectsMode.DISABLED)
+
+/**
+ * Before 8.12 Gradle fails IP CC serialization with "cannot access 'Project.group' functionality on another project"
+ */
+fun BuildOptions.disableIsolatedProjectsBecauseOfSubprojectGroupAccessInPublicationBeforeGradle12(
+    currentGradleVersion: GradleVersion,
+) = copy(
+    isolatedProjects =
+        if (currentGradleVersion > GradleVersion.version(TestVersions.Gradle.G_8_11)) isolatedProjects
+        else IsolatedProjectsMode.DISABLED
+)
+
+fun BuildOptions.suppressWarningForOldKotlinVersion(
+    currentGradleVersion: GradleVersion,
+) = suppressDeprecationWarningsSinceGradleVersion(
+    gradleVersion = TestVersions.Gradle.G_8_14,
+    currentGradleVersion = currentGradleVersion,
+    reason =
+        """
+        Old Kotlin versions produces deprecation warnings with latest Gradle release.
+        """.trimIndent()
+)
+
+// Lint tasks produces deprecation warning since Gradle 8.14: https://issuetracker.google.com/issues/408334529
+// On a non-first run if WarningMode was not changed, the Lint task does not produce a deprecation warning!
+// Fixed in AGP 8.12-alpha06
+fun BuildOptions.suppressAgpWarningSinceGradle814(
+    currentGradleVersion: GradleVersion,
+    warningMode: WarningMode = WarningMode.Summary,
+): BuildOptions {
+    return when {
+        warningMode == WarningMode.Summary -> suppressDeprecationWarningsSinceGradleVersion(
+            gradleVersion = TestVersions.Gradle.G_8_14,
+            currentGradleVersion = currentGradleVersion,
+            reason = "AGP produces deprecation warning on resolve: https://issuetracker.google.com/issues/408334529"
+        )
+        currentGradleVersion >= GradleVersion.version(TestVersions.Gradle.G_8_14) -> copy(warningMode = warningMode)
+        else -> this
+    }
+}
+
+fun rerunTask(taskName: String) = arrayOf(taskName, "--rerun")

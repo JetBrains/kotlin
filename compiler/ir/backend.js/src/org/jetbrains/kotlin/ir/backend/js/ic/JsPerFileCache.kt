@@ -415,8 +415,7 @@ class JsPerFileCache(private val moduleArtifacts: List<JsModuleArtifact>) : JsMu
 
     override fun commitCompiledJsCode(cacheInfo: CachedFileInfo, compilationOutputs: CompilationOutputsBuilt) =
         cacheInfo.cachedFiles?.let { (jsCodeFile, jsMapFile, tsDeclarationsFile) ->
-            tsDeclarationsFile?.writeIfNotNull(compilationOutputs.tsDefinitions?.raw)
-            compilationOutputs.writeJsCodeIntoModuleCache(jsCodeFile, jsMapFile)
+            compilationOutputs.writeJsCodeIntoModuleCache(jsCodeFile, tsDeclarationsFile, jsMapFile)
         } ?: compilationOutputs
 
     override fun loadJsIrModule(cacheInfo: CachedFileInfo): JsIrModule = cacheInfo.loadJsIrModule()

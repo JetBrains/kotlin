@@ -7,10 +7,12 @@ KtOperationReferenceExpression(58,65): 'infixOp'
           receiverType = null
           returnType = kotlin.String
           symbol = rhs: kotlin.String
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:
           expression = 4
@@ -26,8 +28,10 @@ KtOperationReferenceExpression(58,65): 'infixOp'
               receiverType = null
               returnType = kotlin.String
               symbol = rhs: kotlin.String
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = /infixOp
       typeArgumentsMapping = {}
     isInBestCandidates = true

@@ -53,6 +53,9 @@ public final class kotlin/ExceptionsKt {
 	public static final fun stackTraceToString (Ljava/lang/Throwable;)Ljava/lang/String;
 }
 
+public abstract interface annotation class kotlin/ExperimentalContextParameters : java/lang/annotation/Annotation {
+}
+
 public abstract interface annotation class kotlin/ExperimentalMultiplatform : java/lang/annotation/Annotation {
 }
 
@@ -72,6 +75,9 @@ public abstract interface annotation class kotlin/ExtensionFunctionType : java/l
 }
 
 public abstract interface class kotlin/Function {
+}
+
+public abstract interface annotation class kotlin/IgnorableReturnValue : java/lang/annotation/Annotation {
 }
 
 public final class kotlin/KotlinNothingValueException : java/lang/RuntimeException {
@@ -137,6 +143,9 @@ public abstract interface annotation class kotlin/Metadata : java/lang/annotatio
 	public abstract fun pn ()Ljava/lang/String;
 	public abstract fun xi ()I
 	public abstract fun xs ()Ljava/lang/String;
+}
+
+public abstract interface annotation class kotlin/MustUseReturnValue : java/lang/annotation/Annotation {
 }
 
 public class kotlin/NoWhenBranchMatchedException : java/lang/RuntimeException {
@@ -2997,6 +3006,8 @@ public abstract interface class kotlin/contracts/ConditionalEffect : kotlin/cont
 
 public abstract interface class kotlin/contracts/ContractBuilder {
 	public abstract fun callsInPlace (Lkotlin/Function;Lkotlin/contracts/InvocationKind;)Lkotlin/contracts/CallsInPlace;
+	public abstract fun holdsIn (ZLkotlin/Function;)Lkotlin/contracts/HoldsIn;
+	public abstract fun implies (ZLkotlin/contracts/ReturnsNotNull;)V
 	public abstract fun returns ()Lkotlin/contracts/Returns;
 	public abstract fun returns (Ljava/lang/Object;)Lkotlin/contracts/Returns;
 	public abstract fun returnsNotNull ()Lkotlin/contracts/ReturnsNotNull;
@@ -3010,6 +3021,12 @@ public abstract interface class kotlin/contracts/Effect {
 }
 
 public abstract interface annotation class kotlin/contracts/ExperimentalContracts : java/lang/annotation/Annotation {
+}
+
+public abstract interface annotation class kotlin/contracts/ExperimentalExtendedContracts : java/lang/annotation/Annotation {
+}
+
+public abstract interface class kotlin/contracts/HoldsIn : kotlin/contracts/Effect {
 }
 
 public final class kotlin/contracts/InvocationKind : java/lang/Enum {
@@ -3151,6 +3168,19 @@ public final class kotlin/coroutines/intrinsics/IntrinsicsKt {
 	public static final fun wrapWithContinuationImpl (Lkotlin/jvm/functions/Function3;Ljava/lang/Object;Ljava/lang/Object;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 }
 
+public abstract class kotlin/coroutines/jvm/internal/BaseContinuationImpl : java/io/Serializable, kotlin/coroutines/Continuation, kotlin/coroutines/jvm/internal/CoroutineStackFrame {
+	public fun <init> (Lkotlin/coroutines/Continuation;)V
+	public fun create (Ljava/lang/Object;Lkotlin/coroutines/Continuation;)Lkotlin/coroutines/Continuation;
+	public fun create (Lkotlin/coroutines/Continuation;)Lkotlin/coroutines/Continuation;
+	public fun getCallerFrame ()Lkotlin/coroutines/jvm/internal/CoroutineStackFrame;
+	public final fun getCompletion ()Lkotlin/coroutines/Continuation;
+	public fun getStackTraceElement ()Ljava/lang/StackTraceElement;
+	protected abstract fun invokeSuspend (Ljava/lang/Object;)Ljava/lang/Object;
+	protected fun releaseIntercepted ()V
+	public final fun resumeWith (Ljava/lang/Object;)V
+	public fun toString ()Ljava/lang/String;
+}
+
 public final class kotlin/coroutines/jvm/internal/Boxing {
 	public static final fun boxBoolean (Z)Ljava/lang/Boolean;
 	public static final fun boxByte (B)Ljava/lang/Byte;
@@ -3167,6 +3197,33 @@ public abstract interface class kotlin/coroutines/jvm/internal/CoroutineStackFra
 	public abstract fun getStackTraceElement ()Ljava/lang/StackTraceElement;
 }
 
+public abstract interface annotation class kotlin/coroutines/jvm/internal/DebugMetadata : java/lang/annotation/Annotation {
+	public abstract fun c ()Ljava/lang/String;
+	public abstract fun f ()Ljava/lang/String;
+	public abstract fun i ()[I
+	public abstract fun l ()[I
+	public abstract fun m ()Ljava/lang/String;
+	public abstract fun n ()[Ljava/lang/String;
+	public abstract fun nl ()[I
+	public abstract fun s ()[Ljava/lang/String;
+	public abstract fun v ()I
+}
+
+public final class kotlin/coroutines/jvm/internal/DebugMetadataKt {
+	public static final fun getNextLineNumber (Lkotlin/coroutines/jvm/internal/BaseContinuationImpl;)I
+	public static final fun getSpilledVariableFieldMapping (Lkotlin/coroutines/jvm/internal/BaseContinuationImpl;)[Ljava/lang/String;
+	public static final fun getStackTraceElement (Lkotlin/coroutines/jvm/internal/BaseContinuationImpl;)Ljava/lang/StackTraceElement;
+}
+
+public final class kotlin/coroutines/jvm/internal/GeneratedCodeMarkers {
+	public static final fun checkCOROUTINE_SUSPENDED ()V
+	public static final fun checkContinuation ()V
+	public static final fun checkResult ()V
+	public static final fun lambdaArgumentsUnspilling ()V
+	public static final fun tableswitch ()V
+	public static final fun unreachable ()V
+}
+
 public final class kotlin/coroutines/jvm/internal/SpillingKt {
 	public static final fun nullOutSpilledVariable (Ljava/lang/Object;)Ljava/lang/Object;
 }
@@ -3177,6 +3234,9 @@ public abstract interface class kotlin/enums/EnumEntries : java/util/List, kotli
 public final class kotlin/enums/EnumEntriesKt {
 	public static final fun enumEntries (Lkotlin/jvm/functions/Function0;)Lkotlin/enums/EnumEntries;
 	public static final fun enumEntries ([Ljava/lang/Enum;)Lkotlin/enums/EnumEntries;
+}
+
+public abstract interface annotation class kotlin/experimental/ExpectRefinement : java/lang/annotation/Annotation {
 }
 
 public abstract interface annotation class kotlin/experimental/ExperimentalNativeApi : java/lang/annotation/Annotation {
@@ -3338,7 +3398,7 @@ public final class kotlin/io/TextStreamsKt {
 
 public class kotlin/io/encoding/Base64 {
 	public static final field Default Lkotlin/io/encoding/Base64$Default;
-	public synthetic fun <init> (ZZLkotlin/io/encoding/Base64$PaddingOption;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public synthetic fun <init> (ZZILkotlin/io/encoding/Base64$PaddingOption;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun decode (Ljava/lang/CharSequence;II)[B
 	public final fun decode ([BII)[B
 	public static synthetic fun decode$default (Lkotlin/io/encoding/Base64;Ljava/lang/CharSequence;IIILjava/lang/Object;)[B
@@ -3360,6 +3420,7 @@ public class kotlin/io/encoding/Base64 {
 
 public final class kotlin/io/encoding/Base64$Default : kotlin/io/encoding/Base64 {
 	public final fun getMime ()Lkotlin/io/encoding/Base64;
+	public final fun getPem ()Lkotlin/io/encoding/Base64;
 	public final fun getUrlSafe ()Lkotlin/io/encoding/Base64;
 }
 
@@ -3495,6 +3556,10 @@ public abstract interface annotation class kotlin/jvm/JvmDefaultWithCompatibilit
 }
 
 public abstract interface annotation class kotlin/jvm/JvmDefaultWithoutCompatibility : java/lang/annotation/Annotation {
+}
+
+public abstract interface annotation class kotlin/jvm/JvmExposeBoxed : java/lang/annotation/Annotation {
+	public abstract fun jvmName ()Ljava/lang/String;
 }
 
 public abstract interface annotation class kotlin/jvm/JvmField : java/lang/annotation/Annotation {
@@ -3691,6 +3756,9 @@ public final class kotlin/jvm/internal/BooleanSpreadBuilder : kotlin/jvm/interna
 	public final fun add (Z)V
 	public synthetic fun getSize (Ljava/lang/Object;)I
 	public final fun toArray ()[Z
+}
+
+public final class kotlin/jvm/internal/BoxingConstructorMarker {
 }
 
 public final class kotlin/jvm/internal/ByteCompanionObject {
@@ -5099,6 +5167,7 @@ public abstract interface class kotlin/reflect/KParameter : kotlin/reflect/KAnno
 }
 
 public final class kotlin/reflect/KParameter$Kind : java/lang/Enum {
+	public static final field CONTEXT Lkotlin/reflect/KParameter$Kind;
 	public static final field EXTENSION_RECEIVER Lkotlin/reflect/KParameter$Kind;
 	public static final field INSTANCE Lkotlin/reflect/KParameter$Kind;
 	public static final field VALUE Lkotlin/reflect/KParameter$Kind;
@@ -5364,6 +5433,7 @@ public final class kotlin/sequences/SequencesKt {
 	public static final fun scan (Lkotlin/sequences/Sequence;Ljava/lang/Object;Lkotlin/jvm/functions/Function2;)Lkotlin/sequences/Sequence;
 	public static final fun scanIndexed (Lkotlin/sequences/Sequence;Ljava/lang/Object;Lkotlin/jvm/functions/Function3;)Lkotlin/sequences/Sequence;
 	public static final fun sequence (Lkotlin/jvm/functions/Function2;)Lkotlin/sequences/Sequence;
+	public static final fun sequenceOf (Ljava/lang/Object;)Lkotlin/sequences/Sequence;
 	public static final fun sequenceOf ([Ljava/lang/Object;)Lkotlin/sequences/Sequence;
 	public static final fun shuffled (Lkotlin/sequences/Sequence;)Lkotlin/sequences/Sequence;
 	public static final fun shuffled (Lkotlin/sequences/Sequence;Lkotlin/random/Random;)Lkotlin/sequences/Sequence;
@@ -6164,6 +6234,10 @@ public final class kotlin/time/Clock$System : kotlin/time/Clock {
 	public fun now ()Lkotlin/time/Instant;
 }
 
+public final class kotlin/time/ClocksKt {
+	public static final fun fromTimeSource (Lkotlin/time/TimeSource;Lkotlin/time/Instant;)Lkotlin/time/Clock;
+}
+
 public abstract interface class kotlin/time/ComparableTimeMark : java/lang/Comparable, kotlin/time/TimeMark {
 	public abstract fun compareTo (Lkotlin/time/ComparableTimeMark;)I
 	public abstract fun equals (Ljava/lang/Object;)Z
@@ -6291,6 +6365,7 @@ public final class kotlin/time/Instant$Companion {
 	public final fun getDISTANT_PAST ()Lkotlin/time/Instant;
 	public final fun now ()Lkotlin/time/Instant;
 	public final fun parse (Ljava/lang/CharSequence;)Lkotlin/time/Instant;
+	public final fun parseOrNull (Ljava/lang/CharSequence;)Lkotlin/time/Instant;
 }
 
 public final class kotlin/time/MeasureTimeKt {

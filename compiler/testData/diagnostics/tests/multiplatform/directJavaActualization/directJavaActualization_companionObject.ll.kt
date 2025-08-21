@@ -13,3 +13,5 @@ expect class Foo {
 // FILE: Foo.java
 @kotlin.annotations.jvm.KotlinActual public class Foo {
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, expect, objectDeclaration */

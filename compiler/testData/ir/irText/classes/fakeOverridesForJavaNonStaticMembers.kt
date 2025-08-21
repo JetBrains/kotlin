@@ -13,7 +13,7 @@ import a.Base
 class Test2 : Base()
 
 // FILE: a/Base.java
-package a
+package a;
 
 public class Base {
     public void publicMethod() {}

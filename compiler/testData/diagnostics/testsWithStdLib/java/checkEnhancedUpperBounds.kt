@@ -36,3 +36,6 @@ fun main3() {
     val x2 = <!UPPER_BOUND_VIOLATED_IN_TYPEALIAS_EXPANSION_BASED_ON_JAVA_ANNOTATIONS!>A<Int?>()<!> // TODO: support reporting errors on typealias constructor calls
     val y: <!UPPER_BOUND_VIOLATED_IN_TYPEALIAS_EXPANSION_BASED_ON_JAVA_ANNOTATIONS!>A3<Int?><!> = <!UPPER_BOUND_VIOLATED_IN_TYPEALIAS_EXPANSION_BASED_ON_JAVA_ANNOTATIONS!>A3<Int?>()<!>
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, javaType, localProperty, nullableType, propertyDeclaration,
+typeAliasDeclaration, typeAliasDeclarationWithTypeParameter, typeConstraint, typeParameter */

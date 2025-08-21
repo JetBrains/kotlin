@@ -24,7 +24,9 @@ import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
-import org.jetbrains.kotlin.ir.linkage.IrDeserializer
+import org.jetbrains.kotlin.backend.common.linkage.IrDeserializer
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationWithName
+import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.ReferenceSymbolTable
@@ -36,21 +38,29 @@ import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 
-open class IrPluginContextImpl constructor(
+@Suppress("DEPRECATION")
+open class IrPluginContextImpl(
     private val module: ModuleDescriptor,
     @Deprecated("", level = DeprecationLevel.ERROR)
     @OptIn(ObsoleteDescriptorBasedAPI::class, FirIncompatiblePluginAPI::class)
     override val bindingContext: BindingContext,
     override val languageVersionSettings: LanguageVersionSettings,
     private val st: ReferenceSymbolTable,
+    @property:Deprecated("This API is deprecated. It will be removed after the 2.3 release", level = DeprecationLevel.WARNING)
     @OptIn(ObsoleteDescriptorBasedAPI::class, FirIncompatiblePluginAPI::class)
     override val typeTranslator: TypeTranslator,
     override val irBuiltIns: IrBuiltIns,
     val linker: IrDeserializer,
+    @property:Deprecated(
+        "Consider using diagnosticReporter instead. See https://youtrack.jetbrains.com/issue/KT-78277 for more details",
+        level = DeprecationLevel.WARNING
+    )
     override val messageCollector: MessageCollector,
     diagnosticReporter: DiagnosticReporter = DiagnosticReporterFactory.createReporter(messageCollector),
-    override val symbols: BuiltinSymbolsBase = BuiltinSymbolsBase(irBuiltIns)
 ) : IrPluginContext {
+    @Deprecated("This API is deprecated. Use `irBuiltIns` instead.", level = DeprecationLevel.ERROR)
+    override val symbols: BuiltinSymbolsBase
+        get() = error("`symbols` are deprecated")
 
     override val afterK2: Boolean = false
 
@@ -103,7 +113,6 @@ open class IrPluginContextImpl constructor(
         }
     }
 
-    @ExperimentalAPIForScriptingPlugin
     override val diagnosticReporter: IrDiagnosticReporter =
         KtDiagnosticReporterWithImplicitIrBasedContext(diagnosticReporter, languageVersionSettings)
 
@@ -119,6 +128,7 @@ open class IrPluginContextImpl constructor(
         return symbols
     }
 
+    @Deprecated("This API is deprecated. It will be removed after the 2.3 release", level = DeprecationLevel.WARNING)
     @OptIn(ObsoleteDescriptorBasedAPI::class, FirIncompatiblePluginAPI::class)
     override fun referenceClass(fqName: FqName): IrClassSymbol? {
         assert(!fqName.isRoot)
@@ -130,6 +140,7 @@ open class IrPluginContextImpl constructor(
         }
     }
 
+    @Deprecated("This API is deprecated. It will be removed after the 2.3 release", level = DeprecationLevel.WARNING)
     @OptIn(ObsoleteDescriptorBasedAPI::class, FirIncompatiblePluginAPI::class)
     override fun referenceTypeAlias(fqName: FqName): IrTypeAliasSymbol? {
         assert(!fqName.isRoot)
@@ -141,12 +152,14 @@ open class IrPluginContextImpl constructor(
         }
     }
 
+    @Deprecated("This API is deprecated. It will be removed after the 2.3 release", level = DeprecationLevel.WARNING)
     @OptIn(FirIncompatiblePluginAPI::class)
     override fun referenceConstructors(classFqn: FqName): Collection<IrConstructorSymbol> {
         val classSymbol = referenceClass(classFqn) ?: error("Cannot find class $classFqn")
         return classSymbol.owner.declarations.filterIsInstance<IrConstructor>().map { it.symbol }
     }
 
+    @Deprecated("This API is deprecated. It will be removed after the 2.3 release", level = DeprecationLevel.WARNING)
     @OptIn(ObsoleteDescriptorBasedAPI::class, FirIncompatiblePluginAPI::class)
     override fun referenceFunctions(fqName: FqName): Collection<IrSimpleFunctionSymbol> {
         assert(!fqName.isRoot)
@@ -156,6 +169,7 @@ open class IrPluginContextImpl constructor(
         }
     }
 
+    @Deprecated("This API is deprecated. It will be removed after the 2.3 release", level = DeprecationLevel.WARNING)
     @OptIn(ObsoleteDescriptorBasedAPI::class, FirIncompatiblePluginAPI::class)
     override fun referenceProperties(fqName: FqName): Collection<IrPropertySymbol> {
         assert(!fqName.isRoot)
@@ -185,6 +199,10 @@ open class IrPluginContextImpl constructor(
         return referenceProperties(callableId.asSingleFqName())
     }
 
+    override fun recordLookup(declaration: IrDeclarationWithName, fromFile: IrFile) {}
+
+    @Deprecated("This API is deprecated. It will be removed after the 2.3 release", level = DeprecationLevel.WARNING)
+    @FirIncompatiblePluginAPI
     override fun referenceTopLevel(
         signature: IdSignature,
         kind: IrDeserializer.TopLevelSymbolKind,

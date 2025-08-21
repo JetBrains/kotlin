@@ -8,11 +8,14 @@ package org.jetbrains.kotlin.gradle.experimental
 import org.gradle.api.logging.LogLevel
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.cli.common.arguments.K2NativeCompilerArguments
+import org.jetbrains.kotlin.gradle.BrokenOnMacosTest
+import org.jetbrains.kotlin.gradle.BrokenOnMacosTestFailureExpectation
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.parseCompilerArgumentsFromBuildOutput
 import org.jetbrains.kotlin.konan.target.HostManager
+import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.io.TempDir
 import java.nio.file.Path
@@ -115,15 +118,12 @@ class TryNextIT : KGPBaseTest() {
                     """
                     |##### 'kotlin.experimental.tryNext' results #####
                     |:compileCommonMainKotlinMetadata: $nextKotlinLanguageVersion language version
-                    |:compileKotlinLinuxX64: $nextKotlinLanguageVersion language version${
-                        if (HostManager.hostIsMac)
-                            "\n|:compileKotlinMacosArm64: $nextKotlinLanguageVersion language version\n" +
-                                    "|:compileKotlinMacosX64: $nextKotlinLanguageVersion language version"
-                        else ""
-                    }
+                    |:compileKotlinLinuxX64: $nextKotlinLanguageVersion language version
+                    |:compileKotlinMacosArm64: $nextKotlinLanguageVersion language version
+                    |:compileKotlinMacosX64: $nextKotlinLanguageVersion language version
                     |:compileKotlinMingwX64: $nextKotlinLanguageVersion language version
                     |:compileNativeMainKotlinMetadata: $nextKotlinLanguageVersion language version
-                    |##### 100% ${if (HostManager.hostIsMac) "(6/6)" else "(4/4)"} tasks have been compiled with Kotlin $nextKotlinLanguageVersion #####
+                    |##### 100% (6/6) tasks have been compiled with Kotlin $nextKotlinLanguageVersion #####
                     """.trimMargin().normalizeLineEndings()
                 )
             }
@@ -172,7 +172,11 @@ class TryNextIT : KGPBaseTest() {
             "new-mpp-published",
             gradleVersion,
             localRepoDir = localRepository,
-            buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)
+            buildOptions = defaultBuildOptions.copy(
+                logLevel = LogLevel.DEBUG,
+                // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
+                isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED,
+            ),
         ) {
             enableTryNext()
 
@@ -274,7 +278,11 @@ class TryNextIT : KGPBaseTest() {
         project(
             "kotlin-js-nodejs-project",
             gradleVersion,
-            buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)
+            buildOptions = defaultBuildOptions.copy(
+                logLevel = LogLevel.DEBUG,
+                // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
+                isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED,
+            ),
         ) {
             enableTryNext()
 
@@ -293,6 +301,10 @@ class TryNextIT : KGPBaseTest() {
         project(
             "kotlin-js-nodejs-project",
             gradleVersion,
+            buildOptions = defaultBuildOptions.copy(
+                // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
+                isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED,
+            ),
         ) {
             enableTryNext()
 
@@ -314,8 +326,13 @@ class TryNextIT : KGPBaseTest() {
     @DisplayName("Native: check that only expected tasks use languageVersion")
     @NativeGradlePluginTests
     @GradleTest
+    @TestMetadata("native-configuration-cache")
+    @BrokenOnMacosTest(failureExpectation = BrokenOnMacosTestFailureExpectation.ALWAYS)
     fun smokeTestForNativeTasks(gradleVersion: GradleVersion) {
-        project("native-configuration-cache", gradleVersion) {
+        project(
+            "native-configuration-cache",
+            gradleVersion,
+        ) {
             enableTryNext()
             build("build") {
                 if (HostManager.hostIsMac) {
@@ -327,10 +344,11 @@ class TryNextIT : KGPBaseTest() {
                             |:lib:compileKotlinIosSimulatorArm64: $nextKotlinLanguageVersion language version
                             |:lib:compileKotlinIosX64: $nextKotlinLanguageVersion language version
                             |:lib:compileKotlinLinuxX64: $nextKotlinLanguageVersion language version
+                            |:lib:compileTestKotlinIosArm64: $nextKotlinLanguageVersion language version
                             |:lib:compileTestKotlinIosSimulatorArm64: $nextKotlinLanguageVersion language version
                             |:lib:compileTestKotlinIosX64: $nextKotlinLanguageVersion language version
                             |:lib:compileTestKotlinLinuxX64: $nextKotlinLanguageVersion language version
-                            |##### 100% (8/8) tasks have been compiled with Kotlin $nextKotlinLanguageVersion #####
+                            |##### 100% (9/9) tasks have been compiled with Kotlin $nextKotlinLanguageVersion #####
                         """.trimMargin().normalizeLineEndings()
                     )
                 } else {

@@ -10,3 +10,5 @@ class Some {
         handle.set(this, false)
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, javaFunction, javaType, thisExpression */

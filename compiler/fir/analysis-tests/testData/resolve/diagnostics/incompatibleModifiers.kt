@@ -29,3 +29,6 @@ class X {
     <!INCOMPATIBLE_MODIFIERS!>inner<!> <!INCOMPATIBLE_MODIFIERS!>data<!> class Y(val i: Int)
     <!INCOMPATIBLE_MODIFIERS!>sealed<!> <!INCOMPATIBLE_MODIFIERS!>inner<!> class Z
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, crossinline, data, functionDeclaration, functionalType, inline, inner,
+integerLiteral, noinline, primaryConstructor, propertyDeclaration, sealed */

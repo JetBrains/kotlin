@@ -7,7 +7,7 @@ dependencies {
     testImplementation(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)
 
-    testImplementation(projectTests(":native:native.tests"))
+    testImplementation(testFixtures(project(":native:native.tests")))
 }
 
 sourceSets {
@@ -20,8 +20,9 @@ sourceSets {
 
 testsJar {}
 
+val testTags = findProperty("kotlin.native.tests.tags")?.toString()
 nativeTest(
     "test",
-    null,
+    testTags,
     allowParallelExecution = false, // Driver tests run Native compiler from CLI. This is resource-intensive and should be done isolated.
 )

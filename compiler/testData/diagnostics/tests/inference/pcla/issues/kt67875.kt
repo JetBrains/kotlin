@@ -28,3 +28,6 @@ object Foo {
 
     private val myClassType: MyClass<String> = myClass
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, functionalType, inline, javaFunction, javaType, lambdaLiteral,
+objectDeclaration, propertyDeclaration, stringLiteral, typeConstraint, typeParameter, typeWithExtension */

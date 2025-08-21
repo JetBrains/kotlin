@@ -13,3 +13,5 @@ public enum MyEnum {
 fun foo() {
     MyEnum.A.getOrdinal()
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, javaFunction, javaProperty, javaType */

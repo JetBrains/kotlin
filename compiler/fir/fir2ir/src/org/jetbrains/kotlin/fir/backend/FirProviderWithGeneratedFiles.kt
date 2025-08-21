@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirProviderImpl
 import org.jetbrains.kotlin.fir.scopes.kotlinScopeProvider
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirReplSnippetSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirScriptSymbol
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -59,6 +60,10 @@ class FirProviderWithGeneratedFiles(
 
     override fun getFirScriptByFilePath(path: String): FirScriptSymbol? {
         return providers.firstNotNullOfOrNull { it.getFirScriptByFilePath(path) }
+    }
+
+    override fun getFirReplSnippetContainerFile(symbol: FirReplSnippetSymbol): FirFile? {
+        return providers.firstNotNullOfOrNull { it.getFirReplSnippetContainerFile(symbol) }
     }
 
     override fun getFirFilesByPackage(fqName: FqName): List<FirFile> {

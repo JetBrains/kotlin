@@ -1,3 +1,4 @@
+// KNM_FE10_IGNORE
 package test
 
 typealias StringAlias = String

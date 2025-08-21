@@ -5,3 +5,6 @@ fun <T> f(t: <!UNSUPPORTED_FEATURE!>@ContextFunctionTypeParams(42)<!> T, tt: <!U
 fun test() {
     val f: <!UNSUPPORTED_FEATURE!>@ContextFunctionTypeParams(1)<!> @ExtensionFunctionType (Int, String) -> Unit = {}
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionalType, integerLiteral, lambdaLiteral, localProperty, nullableType,
+propertyDeclaration, typeParameter */

@@ -1,5 +1,6 @@
 package
 
+public val illegalDefaultSetter: kotlin.String = ""
 public val p: kotlin.Int = 1
 public var x: kotlin.Int
 public val xx: kotlin.Int

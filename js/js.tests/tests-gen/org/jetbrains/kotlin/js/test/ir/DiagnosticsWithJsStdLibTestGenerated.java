@@ -46,9 +46,21 @@ public class DiagnosticsWithJsStdLibTestGenerated extends AbstractDiagnosticsTes
   }
 
   @Test
+  @TestMetadata("externalFunctionsWithContextParameters.kt")
+  public void testExternalFunctionsWithContextParameters() {
+    runTest("compiler/testData/diagnostics/testsWithJsStdLib/externalFunctionsWithContextParameters.kt");
+  }
+
+  @Test
   @TestMetadata("externalInterfaceClassLiteral.kt")
   public void testExternalInterfaceClassLiteral() {
     runTest("compiler/testData/diagnostics/testsWithJsStdLib/externalInterfaceClassLiteral.kt");
+  }
+
+  @Test
+  @TestMetadata("externalNestedTypealias.kt")
+  public void testExternalNestedTypealias() {
+    runTest("compiler/testData/diagnostics/testsWithJsStdLib/externalNestedTypealias.kt");
   }
 
   @Test
@@ -112,9 +124,21 @@ public class DiagnosticsWithJsStdLibTestGenerated extends AbstractDiagnosticsTes
   }
 
   @Test
+  @TestMetadata("kt42271.kt")
+  public void testKt42271() {
+    runTest("compiler/testData/diagnostics/testsWithJsStdLib/kt42271.kt");
+  }
+
+  @Test
   @TestMetadata("localClassMetadata.kt")
   public void testLocalClassMetadata() {
     runTest("compiler/testData/diagnostics/testsWithJsStdLib/localClassMetadata.kt");
+  }
+
+  @Test
+  @TestMetadata("localInsideInlineInsideLocal.kt")
+  public void testLocalInsideInlineInsideLocal() {
+    runTest("compiler/testData/diagnostics/testsWithJsStdLib/localInsideInlineInsideLocal.kt");
   }
 
   @Test
@@ -167,6 +191,29 @@ public class DiagnosticsWithJsStdLibTestGenerated extends AbstractDiagnosticsTes
     @TestMetadata("arrays_after.kt")
     public void testArrays_after() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLib/classLiteral/arrays_after.kt");
+    }
+  }
+
+  @Nested
+  @TestMetadata("compiler/testData/diagnostics/testsWithJsStdLib/defaultArguments")
+  @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
+  public class DefaultArguments {
+    @Test
+    public void testAllFilesPresentInDefaultArguments() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJsStdLib/defaultArguments"), Pattern.compile("^([^_](.+))\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), TargetBackend.JS_IR, true);
+    }
+
+    @Test
+    @TestMetadata("inheritedDefaultValue.kt")
+    public void testInheritedDefaultValue() {
+      runTest("compiler/testData/diagnostics/testsWithJsStdLib/defaultArguments/inheritedDefaultValue.kt");
+    }
+
+    @Test
+    @TestMetadata("inheritedDefaultValueWithIntersectionOverride.kt")
+    public void testInheritedDefaultValueWithIntersectionOverride() {
+      runTest("compiler/testData/diagnostics/testsWithJsStdLib/defaultArguments/inheritedDefaultValueWithIntersectionOverride.kt");
     }
   }
 
@@ -337,6 +384,12 @@ public class DiagnosticsWithJsStdLibTestGenerated extends AbstractDiagnosticsTes
     }
 
     @Test
+    @TestMetadata("jsonParseInsideIf.kt")
+    public void testJsonParseInsideIf() {
+      runTest("compiler/testData/diagnostics/testsWithJsStdLib/dynamicTypes/jsonParseInsideIf.kt");
+    }
+
+    @Test
     @TestMetadata("kt57960.kt")
     public void testKt57960() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLib/dynamicTypes/kt57960.kt");
@@ -504,6 +557,18 @@ public class DiagnosticsWithJsStdLibTestGenerated extends AbstractDiagnosticsTes
     }
 
     @Test
+    @TestMetadata("contextParameters.kt")
+    public void testContextParameters() {
+      runTest("compiler/testData/diagnostics/testsWithJsStdLib/export/contextParameters.kt");
+    }
+
+    @Test
+    @TestMetadata("expectActualExports.kt")
+    public void testExpectActualExports() {
+      runTest("compiler/testData/diagnostics/testsWithJsStdLib/export/expectActualExports.kt");
+    }
+
+    @Test
     @TestMetadata("extendingNonExportedType.kt")
     public void testExtendingNonExportedType() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLib/export/extendingNonExportedType.kt");
@@ -519,6 +584,12 @@ public class DiagnosticsWithJsStdLibTestGenerated extends AbstractDiagnosticsTes
     @TestMetadata("jsExportOnNestedDeclarations.kt")
     public void testJsExportOnNestedDeclarations() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLib/export/jsExportOnNestedDeclarations.kt");
+    }
+
+    @Test
+    @TestMetadata("nestedTypealias.kt")
+    public void testNestedTypealias() {
+      runTest("compiler/testData/diagnostics/testsWithJsStdLib/export/nestedTypealias.kt");
     }
 
     @Test
@@ -612,6 +683,29 @@ public class DiagnosticsWithJsStdLibTestGenerated extends AbstractDiagnosticsTes
   }
 
   @Nested
+  @TestMetadata("compiler/testData/diagnostics/testsWithJsStdLib/jsCode")
+  @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
+  public class JsCode {
+    @Test
+    public void testAllFilesPresentInJsCode() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJsStdLib/jsCode"), Pattern.compile("^([^_](.+))\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), TargetBackend.JS_IR, true);
+    }
+
+    @Test
+    @TestMetadata("compileTimeStringWithTopLevelVal.kt")
+    public void testCompileTimeStringWithTopLevelVal() {
+      runTest("compiler/testData/diagnostics/testsWithJsStdLib/jsCode/compileTimeStringWithTopLevelVal.kt");
+    }
+
+    @Test
+    @TestMetadata("nestedTypealias.kt")
+    public void testNestedTypealias() {
+      runTest("compiler/testData/diagnostics/testsWithJsStdLib/jsCode/nestedTypealias.kt");
+    }
+  }
+
+  @Nested
   @TestMetadata("compiler/testData/diagnostics/testsWithJsStdLib/jvmDeclarations")
   @TestDataPath("$PROJECT_ROOT")
   @Tag("legacy-frontend")
@@ -636,6 +730,12 @@ public class DiagnosticsWithJsStdLibTestGenerated extends AbstractDiagnosticsTes
     @Test
     public void testAllFilesPresentInModule() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJsStdLib/module"), Pattern.compile("^([^_](.+))\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), TargetBackend.JS_IR, true);
+    }
+
+    @Test
+    @TestMetadata("contextParameters.kt")
+    public void testContextParameters() {
+      runTest("compiler/testData/diagnostics/testsWithJsStdLib/module/contextParameters.kt");
     }
 
     @Test
@@ -678,6 +778,12 @@ public class DiagnosticsWithJsStdLibTestGenerated extends AbstractDiagnosticsTes
     @TestMetadata("prohibitedOnNonNative.kt")
     public void testProhibitedOnNonNative() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLib/module/prohibitedOnNonNative.kt");
+    }
+
+    @Test
+    @TestMetadata("typealias.kt")
+    public void testTypealias() {
+      runTest("compiler/testData/diagnostics/testsWithJsStdLib/module/typealias.kt");
     }
 
     @Test
@@ -1000,6 +1106,12 @@ public class DiagnosticsWithJsStdLibTestGenerated extends AbstractDiagnosticsTes
     @TestMetadata("topLevelMethodAndProperty.kt")
     public void testTopLevelMethodAndProperty() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLib/name/topLevelMethodAndProperty.kt");
+    }
+
+    @Test
+    @TestMetadata("withContextParameters.kt")
+    public void testWithContextParameters() {
+      runTest("compiler/testData/diagnostics/testsWithJsStdLib/name/withContextParameters.kt");
     }
   }
 

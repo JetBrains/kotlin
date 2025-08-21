@@ -5,39 +5,37 @@
 
 package org.jetbrains.kotlin.backend.konan.lower
 
-import org.jetbrains.kotlin.backend.common.getCompilerMessageLocation
-import org.jetbrains.kotlin.backend.common.lower.*
+import org.jetbrains.kotlin.backend.common.lower.ArrayConstructorLowering
+import org.jetbrains.kotlin.backend.common.lower.LateinitLowering
+import org.jetbrains.kotlin.backend.common.lower.SharedVariablesLowering
+import org.jetbrains.kotlin.backend.common.lower.UpgradeCallableReferences
 import org.jetbrains.kotlin.backend.common.lower.inline.LocalClassesInInlineLambdasLowering
-import org.jetbrains.kotlin.backend.common.lower.inline.OuterThisInInlineFunctionsSpecialAccessorLowering
 import org.jetbrains.kotlin.backend.konan.Context
-import org.jetbrains.kotlin.backend.konan.ir.konanLibrary
-import org.jetbrains.kotlin.backend.konan.reportCompilationError
-import org.jetbrains.kotlin.ir.builders.Scope
+import org.jetbrains.kotlin.backend.konan.NativeGenerationState
 import org.jetbrains.kotlin.ir.declarations.IrFunction
-import org.jetbrains.kotlin.ir.expressions.IrCall
-import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.inline.CallInlinerStrategy
 import org.jetbrains.kotlin.ir.inline.InlineFunctionResolverReplacingCoroutineIntrinsics
 import org.jetbrains.kotlin.ir.inline.InlineMode
+import org.jetbrains.kotlin.ir.inline.OuterThisInInlineFunctionsSpecialAccessorLowering
 import org.jetbrains.kotlin.ir.inline.SyntheticAccessorLowering
 import org.jetbrains.kotlin.ir.irAttribute
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
-import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.util.getPackageFragment
-import org.jetbrains.kotlin.library.isHeader
 
-private var IrFunction.wasLowered: Boolean? by irAttribute(followAttributeOwner = true)
+private var IrFunction.wasLowered: Boolean? by irAttribute(copyByDefault = true)
 
 internal class NativeInlineFunctionResolver(
-        context: Context,
+        val generationState: NativeGenerationState,
         inlineMode: InlineMode,
-) : InlineFunctionResolverReplacingCoroutineIntrinsics<Context>(context, inlineMode) {
+) : InlineFunctionResolverReplacingCoroutineIntrinsics<Context>(
+        context = generationState.context,
+        inlineMode = inlineMode,
+) {
     override fun getFunctionDeclaration(symbol: IrFunctionSymbol): IrFunction? {
         val function = super.getFunctionDeclaration(symbol) ?: return null
 
+        if (function.isExternal && function.body == null) return null
         if (function.body != null) {
             // TODO this `if` check can be dropped after KT-72441
-            if (function.getPackageFragment().konanLibrary?.isHeader == true && function.wasLowered != true) {
+            if (function.wasLowered != true) {
                 lower(function)
                 function.wasLowered = true
             }
@@ -46,6 +44,7 @@ internal class NativeInlineFunctionResolver(
 
         context.getInlineFunctionDeserializer(function).deserializeInlineFunction(function)
         lower(function)
+        function.wasLowered = true
 
         return function
     }
@@ -61,29 +60,12 @@ internal class NativeInlineFunctionResolver(
 
         SharedVariablesLowering(context).lower(body, function)
 
-        OuterThisInInlineFunctionsSpecialAccessorLowering(context).lowerWithoutAddingAccessorsToParents(function)
-
         LocalClassesInInlineLambdasLowering(context).lower(body, function)
 
         ArrayConstructorLowering(context).lower(body, function)
 
-        NativeIrInliner(context, inlineMode = InlineMode.PRIVATE_INLINE_FUNCTIONS).lower(body, function)
+        NativeIrInliner(generationState, inlineMode = InlineMode.PRIVATE_INLINE_FUNCTIONS).lower(body, function)
+        OuterThisInInlineFunctionsSpecialAccessorLowering(context).lowerWithoutAddingAccessorsToParents(function)
         SyntheticAccessorLowering(context).lowerWithoutAddingAccessorsToParents(function)
-    }
-
-    override val callInlinerStrategy: CallInlinerStrategy = NativeCallInlinerStrategy()
-
-    inner class NativeCallInlinerStrategy : CallInlinerStrategy {
-        private lateinit var builder: NativeRuntimeReflectionIrBuilder
-        override fun at(scope: Scope, expression: IrExpression) {
-            val symbols = this@NativeInlineFunctionResolver.context.ir.symbols
-            builder = context.createIrBuilder(scope.scopeOwnerSymbol, expression.startOffset, expression.endOffset)
-                    .toNativeRuntimeReflectionBuilder(symbols) { message ->
-                        this@NativeInlineFunctionResolver.context.reportCompilationError(message, getCompilerMessageLocation())
-                    }
-        }
-        override fun postProcessTypeOf(expression: IrCall, nonSubstitutedTypeArgument: IrType): IrExpression {
-            return builder.irKType(nonSubstitutedTypeArgument)
-        }
     }
 }

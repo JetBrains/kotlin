@@ -14,8 +14,10 @@ import org.jetbrains.kotlin.fir.declarations.builder.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.utils.classId
 import org.jetbrains.kotlin.fir.declarations.utils.compilerPluginMetadata
+import org.jetbrains.kotlin.fir.deserialization.toResolvedQualifier
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.expressions.buildUnaryArgumentList
 import org.jetbrains.kotlin.fir.expressions.builder.*
 import org.jetbrains.kotlin.fir.lazy.AbstractFir2IrLazyDeclaration
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
@@ -27,6 +29,7 @@ import org.jetbrains.kotlin.fir.serialization.FirAdditionalMetadataProvider
 import org.jetbrains.kotlin.fir.serialization.providedDeclarationsForMetadataService
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImplWithoutSource
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
@@ -56,10 +59,10 @@ class Fir2IrIrGeneratedDeclarationsRegistrar(private val components: Fir2IrCompo
 
     override fun addMetadataVisibleAnnotationsToElement(declaration: IrDeclaration, annotations: List<IrConstructorCall>) {
         require(declaration.origin != IrDeclarationOrigin.FAKE_OVERRIDE) {
-            "FAKE_OVERRIDE declarations are not preserved in metadata and should not be marked with annotations"
+            "FAKE_OVERRIDE declarations are not preserved in metadata and should not be marked with annotations: ${declaration.render()}"
         }
         require(annotations.all { it.typeArguments.isEmpty() }) {
-            "Saving annotations with type arguments from IR to metadata is not supported"
+            "Saving annotations with type arguments from IR to metadata is not supported: ${declaration.render()}"
         }
         annotations.forEach {
             require(it.symbol.owner.constructedClass.isAnnotationClass) { "${it.render()} is not an annotation constructor call" }
@@ -85,7 +88,7 @@ class Fir2IrIrGeneratedDeclarationsRegistrar(private val components: Fir2IrCompo
             }
             is IrValueParameter -> findFirDeclaration(declaration.parent as IrDeclaration).first to ChildDeclarationKind.ValueParameter(declaration.name)
             is IrTypeParameter -> findFirDeclaration(declaration.parent as IrDeclaration).first to ChildDeclarationKind.TypeParameter(declaration.name)
-            else -> error("Declaration with annotations should be `IrMetadataSourceOwner`, `IrValueParameter` or `IrTypeParameter`")
+            else -> error("Declaration with annotations should be `IrMetadataSourceOwner`, `IrValueParameter` or `IrTypeParameter`, but got ${declaration.render()}")
         }
     }
 
@@ -132,37 +135,14 @@ class Fir2IrIrGeneratedDeclarationsRegistrar(private val components: Fir2IrCompo
         }
 
         with(TypeConverter(irFunction, firFunction)) {
-            with(firFunction) {
-                replaceReturnTypeRef(irFunction.returnType.toConeType().toFirResolvedTypeRef())
-                val valueParameters = irFunction.valueParameters.map {
-                    buildValueParameter {
-                        moduleData = session.moduleData
-                        origin = GeneratedForMetadata.origin
-                        returnTypeRef = it.type.toConeType().toFirResolvedTypeRef()
-                        name = it.name
-                        symbol = FirValueParameterSymbol(name)
-                        if (it.defaultValue != null) {
-                            defaultValue = buildExpressionStub {
-                                coneTypeOrNull = this@buildValueParameter.returnTypeRef.coneType
-                            }
-                        }
-                        containingDeclarationSymbol = firFunction.symbol
-                        isCrossinline = it.isCrossinline
-                        isNoinline = it.isNoinline
-                        isVararg = it.isVararg
-                        annotations.addAll(it.convertAnnotations())
-                        resolvePhase = FirResolvePhase.BODY_RESOLVE
-                    }
-                }
-                replaceValueParameters(valueParameters)
+            updateFunctionCommon(firFunction, irFunction)
 
+            with(firFunction) {
                 for ((firParameter, irParameter) in typeParameters.zip(irFunction.typeParameters)) {
                     val newBounds = irParameter.superTypes.map { it.toConeType().toFirResolvedTypeRef() }
                     firParameter.replaceBounds(newBounds)
                     firParameter.replaceAnnotations(irParameter.convertAnnotations())
                 }
-
-                replaceAnnotations(irFunction.convertAnnotations())
             }
         }
 
@@ -197,32 +177,8 @@ class Fir2IrIrGeneratedDeclarationsRegistrar(private val components: Fir2IrCompo
         }
 
         with(TypeConverter(irConstructor, firConstructor)) {
-            with(firConstructor) {
-                replaceReturnTypeRef(irConstructor.returnType.toConeType().toFirResolvedTypeRef())
-                val valueParameters = irConstructor.valueParameters.map {
-                    buildValueParameter {
-                        moduleData = session.moduleData
-                        origin = GeneratedForMetadata.origin
-                        returnTypeRef = it.type.toConeType().toFirResolvedTypeRef()
-                        name = it.name
-                        symbol = FirValueParameterSymbol(name)
-                        if (it.defaultValue != null) {
-                            defaultValue = buildExpressionStub {
-                                coneTypeOrNull = this@buildValueParameter.returnTypeRef.coneType
-                            }
-                        }
-                        containingDeclarationSymbol = firConstructor.symbol
-                        isCrossinline = it.isCrossinline
-                        isNoinline = it.isNoinline
-                        isVararg = it.isVararg
-                        annotations.addAll(it.convertAnnotations())
-                        resolvePhase = FirResolvePhase.BODY_RESOLVE
-                    }
-                }
-                replaceValueParameters(valueParameters)
-                replaceAnnotations(irConstructor.convertAnnotations())
-                containingClassForStaticMemberAttr = constructedClass.symbol.toLookupTag()
-            }
+            updateFunctionCommon(firConstructor, irConstructor)
+            firConstructor.containingClassForStaticMemberAttr = constructedClass.symbol.toLookupTag()
         }
 
         session.providedDeclarationsForMetadataService.registerDeclaration(firConstructor)
@@ -230,12 +186,66 @@ class Fir2IrIrGeneratedDeclarationsRegistrar(private val components: Fir2IrCompo
         irConstructor.metadata = FirMetadataSource.Function(firConstructor)
     }
 
+    private fun TypeConverter.updateFunctionCommon(firFunction: FirFunction, irFunction: IrFunction) = with(firFunction) {
+        replaceReturnTypeRef(irFunction.returnType.toConeType().toFirResolvedTypeRef())
+        val contextParameters = mutableListOf<FirValueParameter>()
+        val valueParameters = mutableListOf<FirValueParameter>()
+
+        for (parameter in irFunction.parameters) {
+            when (parameter.kind) {
+                IrParameterKind.DispatchReceiver -> {} // dispatch receiver is handled separately
+                IrParameterKind.ExtensionReceiver -> {
+                    replaceReceiverParameter(buildReceiverParameter {
+                        moduleData = session.moduleData
+                        origin = GeneratedForMetadata.origin
+                        symbol = FirReceiverParameterSymbol()
+                        typeRef = parameter.type.toConeType().toFirResolvedTypeRef()
+                        containingDeclarationSymbol = firFunction.symbol
+                        annotations.addAll(parameter.convertAnnotations())
+                    })
+                }
+                IrParameterKind.Regular, IrParameterKind.Context -> {
+                    val isContext = parameter.kind == IrParameterKind.Context
+                    buildValueParameter {
+                        moduleData = session.moduleData
+                        origin = GeneratedForMetadata.origin
+                        returnTypeRef = parameter.type.toConeType().toFirResolvedTypeRef()
+                        name = parameter.name
+                        symbol = FirValueParameterSymbol()
+                        if (parameter.defaultValue != null) {
+                            defaultValue = buildExpressionStub {
+                                coneTypeOrNull = this@buildValueParameter.returnTypeRef.coneType
+                            }
+                        }
+                        containingDeclarationSymbol = firFunction.symbol
+                        isCrossinline = parameter.isCrossinline
+                        isNoinline = parameter.isNoinline
+                        isVararg = parameter.isVararg
+                        annotations.addAll(parameter.convertAnnotations())
+                        resolvePhase = FirResolvePhase.BODY_RESOLVE
+                        valueParameterKind = if (isContext) FirValueParameterKind.ContextParameter else FirValueParameterKind.Regular
+                    }.also {
+                        if (isContext) {
+                            contextParameters += it
+                        } else {
+                            valueParameters += it
+                        }
+                    }
+                }
+            }
+        }
+
+        replaceValueParameters(valueParameters)
+        replaceContextParameters(contextParameters)
+        replaceAnnotations(irFunction.convertAnnotations())
+    }
+
     fun createAdditionalMetadataProvider(): FirAdditionalMetadataProvider {
         return Provider()
     }
 
     private fun IrDeclarationParent.toFirClass(): FirRegularClass? {
-        return (this as? IrClass)?.classIdOrFail?.toLookupTag()?.toRegularClassSymbol(session)?.fir
+        return ((this as? IrClass)?.metadata as? FirMetadataSource.Class)?.fir as? FirRegularClass
     }
 
     private fun IrAnnotationContainer.convertAnnotations(): List<FirAnnotation> {
@@ -360,24 +370,17 @@ class Fir2IrIrGeneratedDeclarationsRegistrar(private val components: Fir2IrCompo
                 }
             }
             is IrGetEnumValue -> {
-                val enumClassType: ConeKotlinType = with(emptyTypeConverter) { this@toFirExpression.type.toConeType() }
                 val enumClassId = (this.symbol.owner.parent as IrClass).classId!!
-                val enumClassLookupTag = enumClassId.toLookupTag()
                 val enumVariantName = this.symbol.owner.name
                 val enumEntrySymbol = session.symbolProvider.getClassLikeSymbolByClassId(enumClassId)?.let { classSymbol ->
                     (classSymbol as? FirRegularClassSymbol)?.declarationSymbols
                         ?.filterIsInstance<FirEnumEntrySymbol>()
                         ?.find { it.name == enumVariantName }
-                } ?: error("Could not resolve FirEnumEntry for $enumVariantName")
+                } ?: error("Could not resolve FirEnumEntry for $enumClassId.$enumVariantName")
 
                 buildPropertyAccessExpression {
-                    val receiver = buildResolvedQualifier {
-                        coneTypeOrNull = enumClassType
-                        packageFqName = enumClassId.packageFqName
-                        relativeClassFqName = enumClassId.relativeClassName
-                        symbol = enumClassLookupTag.toSymbol(session)
-                    }
-                    coneTypeOrNull = enumClassType
+                    val receiver = enumClassId.toResolvedQualifier(session)
+                    coneTypeOrNull = receiver.resolvedType
                     calleeReference = buildResolvedNamedReference {
                         name = enumVariantName
                         resolvedSymbol = enumEntrySymbol
@@ -391,7 +394,7 @@ class Fir2IrIrGeneratedDeclarationsRegistrar(private val components: Fir2IrCompo
                 val varargElements = this.elements.map { element ->
                     when (element) {
                         is IrExpression -> element.toFirExpression()
-                        else -> error("Unsupported ir type: $element")
+                        else -> error("Unsupported ir type: ${element.render()}")
                     }
                 }
 
@@ -406,7 +409,21 @@ class Fir2IrIrGeneratedDeclarationsRegistrar(private val components: Fir2IrCompo
                     }
                 }
             }
-            else -> error("Unsupported ir type: $this")
+            is IrClassReference -> {
+                buildGetClassCall {
+                    with(emptyTypeConverter) {
+                        val resolvedType = this@toFirExpression.type.toConeType()
+                        coneTypeOrNull = resolvedType
+                        argumentList = buildUnaryArgumentList(
+                            buildClassReferenceExpression {
+                                coneTypeOrNull = this@toFirExpression.classType.toConeType()
+                                classTypeRef = buildResolvedTypeRef { coneType = resolvedType }
+                            }
+                        )
+                    }
+                }
+            }
+            else -> error("Unsupported ir type: ${this.render()}")
         }
     }
 
@@ -418,11 +435,10 @@ class Fir2IrIrGeneratedDeclarationsRegistrar(private val components: Fir2IrCompo
                 .constructClassType()
                 .toFirResolvedTypeRef()
             argumentMapping = buildAnnotationArgumentMapping {
-                for (i in 0 until this@toFirAnnotation.valueArgumentsCount) {
-                    val argName = this@toFirAnnotation.symbol.owner.valueParameters[i].name
-                    this@toFirAnnotation.getValueArgument(i)?.let { argument ->
-                        this.mapping[argName] = argument.toFirExpression()
-                    }
+                for ((i, argument) in this@toFirAnnotation.arguments.withIndex()) {
+                    if (argument == null) continue
+                    val argName = this@toFirAnnotation.symbol.owner.parameters[i].name
+                    this.mapping[argName] = argument.toFirExpression()
                 }
             }
         }

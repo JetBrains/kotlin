@@ -6,11 +6,9 @@
 package org.jetbrains.kotlin.backend.jvm
 
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
-import org.jetbrains.kotlin.backend.common.Mapping
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
-import org.jetbrains.kotlin.backend.common.ir.Ir
+import org.jetbrains.kotlin.backend.common.lower.ClosureAnnotator.ClosureBuilder
 import org.jetbrains.kotlin.backend.common.lower.InnerClassesSupport
-import org.jetbrains.kotlin.backend.common.lower.LocalDeclarationsLowering
 import org.jetbrains.kotlin.backend.jvm.MemoizedMultiFieldValueClassReplacements.RemappedParameter.MultiFieldValueClassMapping
 import org.jetbrains.kotlin.backend.jvm.MemoizedMultiFieldValueClassReplacements.RemappedParameter.RegularMapping
 import org.jetbrains.kotlin.backend.jvm.caches.BridgeLoweringCache
@@ -23,21 +21,22 @@ import org.jetbrains.kotlin.codegen.state.JvmBackendConfig
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.ir.IrBuiltIns
+import org.jetbrains.kotlin.ir.IrProvider
 import org.jetbrains.kotlin.ir.KtDiagnosticReporterWithImplicitIrBasedContext
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
-import org.jetbrains.kotlin.ir.linkage.IrProvider
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
 import org.jetbrains.kotlin.ir.types.defaultType
-import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.util.SymbolTable
+import org.jetbrains.kotlin.ir.util.dump
+import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
-import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmBackendErrors
 import org.jetbrains.org.objectweb.asm.Type
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
@@ -51,17 +50,17 @@ class JvmBackendContext(
     val irDeserializer: JvmIrDeserializer,
     val irProviders: List<IrProvider>,
     val irPluginContext: IrPluginContext?,
+    val evaluatorData: JvmEvaluatorData?
 ) : CommonBackendContext {
-    data class LocalFunctionData(
-        val localContext: LocalDeclarationsLowering.LocalFunctionContext,
-        val newParameterToOld: Map<IrValueParameter, IrValueParameter>,
-        val newParameterToCaptured: Map<IrValueParameter, IrValueSymbol>,
+    class SharedLocalDeclarationsData(
+        val closureBuilders: MutableMap<IrDeclaration, ClosureBuilder> = mutableMapOf<IrDeclaration, ClosureBuilder>(),
+        val transformedDeclarations: MutableMap<IrSymbolOwner, IrDeclaration> = mutableMapOf<IrSymbolOwner, IrDeclaration>(),
+        val newParameterToCaptured: MutableMap<IrValueParameter, IrValueSymbol> = mutableMapOf(),
+        val newParameterToOld: MutableMap<IrValueParameter, IrValueParameter> = mutableMapOf(),
+        val oldParameterToNew: MutableMap<IrValueParameter, IrValueParameter> = mutableMapOf(),
     )
 
     val config: JvmBackendConfig = state.config
-
-    // If this is not null, the JVM IR backend is invoked in the context of Evaluate Expression in the IDE.
-    var evaluatorData: JvmEvaluatorData? = null
 
     override val irFactory: IrFactory = IrFactoryImpl
 
@@ -74,13 +73,11 @@ class JvmBackendContext(
         this, generatorExtensions.cachedFields
     )
 
-    override val mapping: Mapping = Mapping()
-
     val ktDiagnosticReporter = KtDiagnosticReporterWithImplicitIrBasedContext(state.diagnosticReporter, config.languageVersionSettings)
 
-    override val ir = JvmIr()
+    override val symbols = JvmSymbols(this)
 
-    override val sharedVariablesManager = JvmSharedVariablesManager(state.module, ir.symbols, irBuiltIns, irFactory)
+    override val sharedVariablesManager = JvmSharedVariablesManager(state.module, symbols, irBuiltIns, irFactory)
 
     lateinit var getIntrinsic: (IrFunctionSymbol) -> IntrinsicMarker?
 
@@ -147,11 +144,8 @@ class JvmBackendContext(
     override val optimizeNullChecksUsingKotlinNullability: Boolean
         get() = false
 
-    inner class JvmIr : Ir() {
-        override val symbols = JvmSymbols(this@JvmBackendContext)
-
-        override fun shouldGenerateHandlerParameterForDefaultBodyFun() = true
-    }
+    override val shouldGenerateHandlerParameterForDefaultBodyFun: Boolean
+        get() = true
 
     override fun remapMultiFieldValueClassStructure(
         oldFunction: IrFunction,
@@ -169,16 +163,16 @@ class JvmBackendContext(
             when (oldRemapping) {
                 is RegularMapping -> parametersMapping[oldRemapping.valueParameter]?.let(::RegularMapping)
                 is MultiFieldValueClassMapping -> {
-                    val newParameters = oldRemapping.valueParameters.map { parametersMapping[it] }
+                    val newParameters = oldRemapping.parameters.map { parametersMapping[it] }
                     when {
                         newParameters.all { it == null } -> null
-                        newParameters.none { it == null } -> oldRemapping.copy(valueParameters = newParameters.map { it!! })
+                        newParameters.none { it == null } -> oldRemapping.copy(parameters = newParameters.map { it!! })
                         else -> error("Illegal new parameters:\n${newParameters.joinToString("\n") { it?.dump() ?: "null" }}")
                     }
                 }
             }
         }
-        val remappedParameters = newRemapsFromOld.flatMap { remap -> remap.valueParameters.map { it to remap } }.toMap()
+        val remappedParameters = newRemapsFromOld.flatMap { remap -> remap.parameters.map { it to remap } }.toMap()
         val newBinding = newFunction.parameters.map { remappedParameters[it] ?: RegularMapping(it) }.distinct()
         newFunction.parameterTemplateStructureOfThisNewMfvcBidingFunction = newBinding
     }

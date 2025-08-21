@@ -5,16 +5,16 @@
 
 package org.jetbrains.kotlin.objcexport
 
-import com.intellij.util.containers.addIfNotNull
+import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassKind
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaFunctionSymbol
 import org.jetbrains.kotlin.backend.konan.descriptors.arrayTypes
 import org.jetbrains.kotlin.backend.konan.objcexport.*
-import org.jetbrains.kotlin.objcexport.analysisApiUtils.getSuperClassSymbolNotAny
-import org.jetbrains.kotlin.objcexport.analysisApiUtils.hasExportForCompilerAnnotation
-import org.jetbrains.kotlin.objcexport.analysisApiUtils.isCompanion
+import org.jetbrains.kotlin.analysis.api.export.utilities.getSuperClassSymbolNotAny
+import org.jetbrains.kotlin.analysis.api.export.utilities.hasExportForCompilerAnnotation
+import org.jetbrains.kotlin.analysis.api.export.utilities.isCompanion
 import org.jetbrains.kotlin.objcexport.analysisApiUtils.isVisibleInObjC
 
 fun ObjCExportContext.translateToObjCConstructors(symbol: KaClassSymbol): List<ObjCMethod> {

@@ -27,3 +27,6 @@ fun main(c: CollectionWithSize) {
     CompressionType.ZIP::name checkType { _<kotlin.reflect.KProperty0<Double>>() }
     c::size checkType { _<kotlin.reflect.KProperty0<String>>() }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, flexibleType, funWithExtensionReceiver, functionDeclaration, functionalType,
+infix, javaCallableReference, javaProperty, javaType, lambdaLiteral, nullableType, typeParameter, typeWithExtension */

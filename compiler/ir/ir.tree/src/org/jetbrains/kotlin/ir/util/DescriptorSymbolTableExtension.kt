@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.ir.util
 
+import org.jetbrains.kotlin.DeprecatedForRemovalCompilerApi
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
@@ -366,6 +367,7 @@ open class DescriptorSymbolTableExtension(table: SymbolTable) : SymbolTableExten
         endOffset: Int,
         origin: IrDeclarationOrigin,
         descriptor: ParameterDescriptor,
+        kind: IrParameterKind,
         type: IrType,
         varargElementType: IrType? = null,
         name: Name? = null,
@@ -375,6 +377,7 @@ open class DescriptorSymbolTableExtension(table: SymbolTable) : SymbolTableExten
                 startOffset = startOffset,
                 endOffset = endOffset,
                 origin = origin,
+                kind = kind,
                 name = name ?: nameProvider.nameForDeclaration(descriptor),
                 type = type,
                 isAssignable = isAssignable,

@@ -78,5 +78,9 @@ tasks.withType<Test>().configureEach {
     })
 
     systemProperty("kotlin.native.interop.indexer.temp", layout.buildDirectory.dir("testTemp").get().asFile)
+
+    // Use ARM64 JDK on ARM64 Mac as required by the K/N compiler.
+    // See https://youtrack.jetbrains.com/issue/KTI-2421#focus=Comments-27-12231298.0-0.
+    javaLauncher.set(project.getToolchainLauncherFor(JdkMajorVersion.JDK_11_0))
 }
 

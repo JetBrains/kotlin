@@ -8,3 +8,6 @@ class A <!MISSING_CONSTRUCTOR_KEYWORD!>private (val x: Int)<!> {
         class C <!MISSING_CONSTRUCTOR_KEYWORD!>private @Ann(3) (args: Int)<!>
     }
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, functionDeclaration, inner, integerLiteral, localClass,
+primaryConstructor, propertyDeclaration */

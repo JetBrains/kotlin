@@ -1,37 +1,37 @@
 @R|one/two/Anno|(i = Int(0).R|kotlin/Int.plus|(this@R|one/two/MyDataClass.Companion|.R|one/two/MyDataClass.Companion.constant|))  one/two/MyDataClass.MyClass<@R|one/two/Anno|(i = Int(1).R|kotlin/Int.plus|(this@R|one/two/MyDataClass.Companion|.R|one/two/MyDataClass.Companion.constant|))  one/two/MyDataClass.MyClass<@R|one/two/Anno|(i = Int(2).R|kotlin/Int.plus|(this@R|one/two/MyDataClass.Companion|.R|one/two/MyDataClass.Companion.constant|))  kotlin/Int>>
-  context -> FirPropertySymbol one/two/MyDataClass.prop
+  context -> FirRegularPropertySymbol one/two/MyDataClass.prop
   anchor -> [FirConstructorSymbol one/two/MyDataClass.MyDataClass]
 
 @R|one/two/Anno|(i = Int(1).R|kotlin/Int.plus|(this@R|one/two/MyDataClass.Companion|.R|one/two/MyDataClass.Companion.constant|))  one/two/MyDataClass.MyClass<@R|one/two/Anno|(i = Int(2).R|kotlin/Int.plus|(this@R|one/two/MyDataClass.Companion|.R|one/two/MyDataClass.Companion.constant|))  kotlin/Int>
-  context -> FirPropertySymbol one/two/MyDataClass.prop
+  context -> FirRegularPropertySymbol one/two/MyDataClass.prop
   anchor -> [FirConstructorSymbol one/two/MyDataClass.MyDataClass]
 
 @R|one/two/Anno|(i = Int(2).R|kotlin/Int.plus|(this@R|one/two/MyDataClass.Companion|.R|one/two/MyDataClass.Companion.constant|))  kotlin/Int
-  context -> FirPropertySymbol one/two/MyDataClass.prop
+  context -> FirRegularPropertySymbol one/two/MyDataClass.prop
   anchor -> [FirConstructorSymbol one/two/MyDataClass.MyDataClass]
 
 @R|one/two/Anno|(i = Int(0).R|kotlin/Int.plus|(this@R|one/two/MyDataClass.Companion|.R|one/two/MyDataClass.Companion.constant|))  one/two/MyDataClass.MyClass<@R|one/two/Anno|(i = Int(1).R|kotlin/Int.plus|(this@R|one/two/MyDataClass.Companion|.R|one/two/MyDataClass.Companion.constant|))  one/two/MyDataClass.MyClass<@R|one/two/Anno|(i = Int(2).R|kotlin/Int.plus|(this@R|one/two/MyDataClass.Companion|.R|one/two/MyDataClass.Companion.constant|))  kotlin/Int>>
-  context -> FirPropertyAccessorSymbol special/accessor from FirPropertySymbol one/two/MyDataClass.prop
+  context -> FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol one/two/MyDataClass.prop
   anchor -> [FirConstructorSymbol one/two/MyDataClass.MyDataClass]
 
 @R|one/two/Anno|(i = Int(1).R|kotlin/Int.plus|(this@R|one/two/MyDataClass.Companion|.R|one/two/MyDataClass.Companion.constant|))  one/two/MyDataClass.MyClass<@R|one/two/Anno|(i = Int(2).R|kotlin/Int.plus|(this@R|one/two/MyDataClass.Companion|.R|one/two/MyDataClass.Companion.constant|))  kotlin/Int>
-  context -> FirPropertyAccessorSymbol special/accessor from FirPropertySymbol one/two/MyDataClass.prop
+  context -> FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol one/two/MyDataClass.prop
   anchor -> [FirConstructorSymbol one/two/MyDataClass.MyDataClass]
 
 @R|one/two/Anno|(i = Int(2).R|kotlin/Int.plus|(this@R|one/two/MyDataClass.Companion|.R|one/two/MyDataClass.Companion.constant|))  kotlin/Int
-  context -> FirPropertyAccessorSymbol special/accessor from FirPropertySymbol one/two/MyDataClass.prop
+  context -> FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol one/two/MyDataClass.prop
   anchor -> [FirConstructorSymbol one/two/MyDataClass.MyDataClass]
 
 @R|one/two/Anno|(i = Int(0).R|kotlin/Int.plus|(this@R|one/two/MyDataClass.Companion|.R|one/two/MyDataClass.Companion.constant|))  one/two/MyDataClass.MyClass<@R|one/two/Anno|(i = Int(1).R|kotlin/Int.plus|(this@R|one/two/MyDataClass.Companion|.R|one/two/MyDataClass.Companion.constant|))  one/two/MyDataClass.MyClass<@R|one/two/Anno|(i = Int(2).R|kotlin/Int.plus|(this@R|one/two/MyDataClass.Companion|.R|one/two/MyDataClass.Companion.constant|))  kotlin/Int>>
-  context -> FirBackingFieldSymbol <local>/field from FirPropertySymbol one/two/MyDataClass.prop
+  context -> FirBackingFieldSymbol <local>/field from FirRegularPropertySymbol one/two/MyDataClass.prop
   anchor -> [FirConstructorSymbol one/two/MyDataClass.MyDataClass]
 
 @R|one/two/Anno|(i = Int(1).R|kotlin/Int.plus|(this@R|one/two/MyDataClass.Companion|.R|one/two/MyDataClass.Companion.constant|))  one/two/MyDataClass.MyClass<@R|one/two/Anno|(i = Int(2).R|kotlin/Int.plus|(this@R|one/two/MyDataClass.Companion|.R|one/two/MyDataClass.Companion.constant|))  kotlin/Int>
-  context -> FirBackingFieldSymbol <local>/field from FirPropertySymbol one/two/MyDataClass.prop
+  context -> FirBackingFieldSymbol <local>/field from FirRegularPropertySymbol one/two/MyDataClass.prop
   anchor -> [FirConstructorSymbol one/two/MyDataClass.MyDataClass]
 
 @R|one/two/Anno|(i = Int(2).R|kotlin/Int.plus|(this@R|one/two/MyDataClass.Companion|.R|one/two/MyDataClass.Companion.constant|))  kotlin/Int
-  context -> FirBackingFieldSymbol <local>/field from FirPropertySymbol one/two/MyDataClass.prop
+  context -> FirBackingFieldSymbol <local>/field from FirRegularPropertySymbol one/two/MyDataClass.prop
   anchor -> [FirConstructorSymbol one/two/MyDataClass.MyDataClass]
 
 FILE: [ResolvedTo(IMPORTS)] propertyTypeCollisionAndAnnotations.kt

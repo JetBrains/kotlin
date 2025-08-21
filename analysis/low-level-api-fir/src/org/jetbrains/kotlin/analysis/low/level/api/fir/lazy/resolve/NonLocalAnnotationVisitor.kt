@@ -106,6 +106,7 @@ internal abstract class NonLocalAnnotationVisitor<T> : FirVisitor<Unit, T>() {
 
     override fun visitDanglingModifierList(danglingModifierList: FirDanglingModifierList, data: T) {
         visitAnnotationContainer(danglingModifierList, data)
+        danglingModifierList.contextParameters.forEach { it.accept(this, data) }
     }
 
     override fun visitScript(script: FirScript, data: T) {

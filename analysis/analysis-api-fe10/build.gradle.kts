@@ -3,6 +3,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 plugins {
     kotlin("jvm")
     id("jps-compatible")
+    id("java-test-fixtures")
 }
 
 dependencies {
@@ -20,26 +21,24 @@ dependencies {
     implementation(project(":compiler:backend.jvm"))
     implementation(project(":compiler:backend.jvm.entrypoint"))
 
-    testApi(platform(libs.junit.bom))
-    testImplementation(libs.junit.jupiter.api)
+    testFixturesApi(platform(libs.junit.bom))
+    testFixturesApi(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)
-    testImplementation(project(":analysis:analysis-api-platform-interface"))
-    testImplementation(project(":analysis:analysis-api-standalone:analysis-api-standalone-base"))
-    testImplementation(projectTests(":compiler:tests-common"))
-    testApi(projectTests(":compiler:test-infrastructure-utils"))
-    testApi(projectTests(":compiler:test-infrastructure"))
-    testImplementation(projectTests(":compiler:tests-common-new"))
-    testImplementation(projectTests(":analysis:analysis-api-impl-base"))
-    testImplementation(projectTests(":analysis:analysis-test-framework"))
+    testFixturesImplementation(project(":analysis:analysis-api-platform-interface"))
+    testFixturesImplementation(project(":analysis:analysis-api-standalone:analysis-api-standalone-base"))
+    testFixturesImplementation(testFixtures(project(":compiler:tests-common")))
+    testFixturesApi(testFixtures(project(":compiler:test-infrastructure-utils")))
+    testFixturesApi(testFixtures(project(":compiler:test-infrastructure")))
+    testFixturesImplementation(testFixtures(project(":compiler:tests-common-new")))
+    testFixturesApi(testFixtures(project(":analysis:analysis-api-impl-base")))
+    testFixturesApi(testFixtures(project(":analysis:analysis-test-framework")))
 
 }
 
 sourceSets {
     "main" { projectDefault() }
-    "test" {
-        projectDefault()
-        generatedTestDir()
-    }
+    "test" { generatedTestDir() }
+    "testFixtures" { projectDefault() }
 }
 
 tasks.withType<KotlinJvmCompile>().configureEach {
@@ -53,12 +52,13 @@ tasks.withType<KotlinJvmCompile>().configureEach {
                 "org.jetbrains.kotlin.analysis.api.KaIdeApi",
                 "org.jetbrains.kotlin.analysis.api.KaPlatformInterface",
                 "org.jetbrains.kotlin.analysis.api.permissions.KaAllowProhibitedAnalyzeFromWriteAction",
+                "org.jetbrains.kotlin.analysis.api.KaContextParameterApi",
             )
         )
-        freeCompilerArgs.add("-Xcontext-parameters")
     }
 }
 
+optInToK1Deprecation()
 
 projectTest(jUnitMode = JUnitMode.JUnit5) {
     dependsOn(":dist")

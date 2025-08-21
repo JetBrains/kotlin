@@ -85,7 +85,7 @@ internal class HeaderProcessor(
     private val scopeOwnerSymbol: () -> IrSymbol
 ) {
 
-    private val symbols = context.ir.symbols
+    private val symbols = context.symbols
 
     /**
      * Extracts information for building the for-loop (as a [ForLoopHeader]) from the given

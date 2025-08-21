@@ -1,20 +1,26 @@
+import org.jetbrains.kotlin.buildtools.api.ExperimentalBuildToolsApi
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
+
 plugins {
     `kotlin-dsl`
     id("org.jetbrains.kotlin.jvm")
 }
 
 kotlin {
+    @OptIn(ExperimentalKotlinGradlePluginApi::class, ExperimentalBuildToolsApi::class)
+    compilerVersion = libs.versions.kotlin.`for`.gradle.plugins.compilation
     jvmToolchain(11)
 
     compilerOptions {
         allWarningsAsErrors.set(true)
+        freeCompilerArgs.add("-Xsuppress-version-warnings")
     }
 }
 
 repositories {
-    maven("https://maven.pkg.jetbrains.space/kotlin/p/kotlin/kotlin-dependencies")
-    mavenCentral()
-    google()
+    maven("https://redirector.kotlinlang.org/maven/kotlin-dependencies")
+    mavenCentral { setUrl("https://cache-redirector.jetbrains.com/maven-central") }
+    google { setUrl("https://cache-redirector.jetbrains.com/dl.google.com/dl/android/maven2") }
     gradlePluginPortal()
 
     extra["bootstrapKotlinRepo"]?.let {
@@ -51,6 +57,11 @@ configurations.all {
         if (requested.group == "com.fasterxml.woodstox" && requested.name == "woodstox-core") {
             useVersion("6.4.0")
             because("CVE-2022-40156, CVE-2022-40155, CVE-2022-40154, CVE-2022-40153, CVE-2022-40152")
+        }
+
+        if (requested.group.startsWith("com.fasterxml.jackson")) {
+            useVersion("2.16.0")
+            because("CVE-2025-49128, CVE-2025-52999")
         }
     }
 }

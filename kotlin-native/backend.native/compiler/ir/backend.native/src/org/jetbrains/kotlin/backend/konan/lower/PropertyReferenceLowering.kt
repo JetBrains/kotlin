@@ -17,8 +17,8 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.*
 
 internal class PropertyReferencesConstructorsSet(
-    val local: IrConstructorSymbol,
-    val byRecieversCount: List<IrConstructorSymbol>
+        val local: IrConstructorSymbol,
+        val byRecieversCount: List<IrConstructorSymbol>
 ) {
     constructor(local: IrClassSymbol, byRecieversCount: List<IrClassSymbol>) : this(
             local.constructors.single(),
@@ -28,8 +28,8 @@ internal class PropertyReferencesConstructorsSet(
 
 internal val KonanSymbols.immutablePropertiesConstructors
     get() = PropertyReferencesConstructorsSet(
-        kLocalDelegatedPropertyImpl,
-        listOf(kProperty0Impl, kProperty1Impl, kProperty2Impl)
+            kLocalDelegatedPropertyImpl,
+            listOf(kProperty0Impl, kProperty1Impl, kProperty2Impl)
     )
 
 internal val KonanSymbols.mutablePropertiesConstructors
@@ -39,41 +39,43 @@ internal val KonanSymbols.mutablePropertiesConstructors
     )
 
 internal class PropertyReferenceLowering(generationState: NativeGenerationState) : AbstractPropertyReferenceLowering<Context>(generationState.context) {
-    private val symbols = context.ir.symbols
+    private val symbols = context.symbols
     private val immutableSymbols = symbols.immutablePropertiesConstructors
     private val mutableSymbols = symbols.mutablePropertiesConstructors
 
     override fun functionReferenceClass(arity: Int): IrClassSymbol {
-        return symbols.kFunctionN(arity)
+        return context.irBuiltIns.kFunctionN(arity).symbol
     }
 
     override fun IrBuilderWithScope.createKProperty(
             reference: IrRichPropertyReference,
             typeArguments: List<IrType>,
-            name: String,
             getterReference: IrRichFunctionReference,
-            setterReference: IrRichFunctionReference?
-    ) : IrExpression {
+            setterReference: IrRichFunctionReference?,
+    ): IrExpression {
         val constructor = if (setterReference != null) {
             mutableSymbols
         } else {
             immutableSymbols
         }.byRecieversCount[typeArguments.size - 1]
         return irCall(constructor, reference.type, typeArguments).apply {
-            arguments[0] = irString(name)
-            arguments[1] = getterReference
-            setterReference?.let { arguments[2] = it }
+            arguments[0] = propertyReferenceNameExpression(reference)
+            arguments[1] = propertyReferenceLinkageErrorExpression(reference)
+            arguments[2] = getterReference
+            setterReference?.let { arguments[3] = it }
         }
     }
 
     override fun IrBuilderWithScope.createLocalKProperty(
             reference: IrRichPropertyReference,
             propertyName: String,
-            propertyType: IrType
+            propertyType: IrType,
+            isMutable: Boolean,
     ): IrConstantValue {
+        val constructor = (if (isMutable) mutableSymbols else immutableSymbols).local.owner
         return toNativeConstantReflectionBuilder(symbols).run {
             irConstantObject(
-                    symbols.kLocalDelegatedPropertyImpl.owner,
+                    constructor.constructedClass,
                     mapOf(
                             "name" to irConstantPrimitive(irString(propertyName)),
                             "returnType" to irKType(propertyType)

@@ -21,15 +21,15 @@ import org.jetbrains.kotlin.ir.util.IrElementConstructorIndicator
 
 class IrRichPropertyReferenceImpl internal constructor(
     @Suppress("UNUSED_PARAMETER") constructorIndicator: IrElementConstructorIndicator?,
-    override val startOffset: Int,
-    override val endOffset: Int,
+    override var startOffset: Int,
+    override var endOffset: Int,
     override var type: IrType,
     override var reflectionTargetSymbol: IrDeclarationWithAccessorsSymbol?,
+    override var origin: IrStatementOrigin?,
     override var getterFunction: IrSimpleFunction,
     override var setterFunction: IrSimpleFunction?,
-    override var origin: IrStatementOrigin?,
 ) : IrRichPropertyReference() {
     override var attributeOwnerId: IrElement = this
 
-    override val boundValues: MutableList<IrExpression> = ArrayList()
+    override val boundValues: MutableList<IrExpression> = ArrayList(0)
 }

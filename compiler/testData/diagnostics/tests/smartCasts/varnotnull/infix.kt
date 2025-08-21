@@ -9,4 +9,7 @@ fun box() : Int {
     } else {
         return <!DEBUG_INFO_SMARTCAST!>a<!> + d
     }
-} 
+}
+
+/* GENERATED_FIR_TAGS: additiveExpression, equalityExpression, functionDeclaration, ifExpression, integerLiteral,
+localProperty, nullableType, propertyDeclaration, smartcast */

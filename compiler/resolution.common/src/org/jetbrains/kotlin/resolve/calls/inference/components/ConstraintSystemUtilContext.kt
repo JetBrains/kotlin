@@ -5,7 +5,8 @@
 
 package org.jetbrains.kotlin.resolve.calls.inference.components
 
-import org.jetbrains.kotlin.resolve.calls.inference.model.ArgumentConstraintPosition
+import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintPosition
 import org.jetbrains.kotlin.resolve.calls.inference.model.FixVariableConstraintPosition
 import org.jetbrains.kotlin.resolve.calls.model.PostponedAtomWithRevisableExpectedType
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
@@ -18,7 +19,11 @@ import org.jetbrains.kotlin.types.model.TypeVariableMarker
  */
 interface ConstraintSystemUtilContext {
     /**
-     * TODO: Get rid of this function once KT-59138 is fixed and the relevant feature for disabling it will be removed
+     * DNN-related hack that softens slightly restrictions in
+     * [org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintInjector.TypeCheckerStateForConstraintInjector.runIsSubtypeOf]
+     *
+     * TODO: get rid of this function once [LanguageFeature.DontMakeExplicitJavaTypeArgumentsFlexible] is removed
+     * Use-sites should be treated as always returning false
      */
     fun TypeVariableMarker.shouldBeFlexible(): Boolean
     fun TypeVariableMarker.hasOnlyInputTypesAttribute(): Boolean
@@ -27,12 +32,18 @@ interface ConstraintSystemUtilContext {
     fun KotlinTypeMarker.refineType(): KotlinTypeMarker
 
     // PostponedArgumentInputTypesResolver
-    fun createArgumentConstraintPosition(argument: PostponedAtomWithRevisableExpectedType): ArgumentConstraintPosition<*>
+    fun createArgumentConstraintPosition(argument: PostponedAtomWithRevisableExpectedType): ConstraintPosition
     fun <T> createFixVariableConstraintPosition(variable: TypeVariableMarker, atom: T): FixVariableConstraintPosition<T>
     fun extractLambdaParameterTypesFromDeclaration(declaration: PostponedAtomWithRevisableExpectedType): List<KotlinTypeMarker?>?
     fun PostponedAtomWithRevisableExpectedType.isFunctionExpression(): Boolean
     fun PostponedAtomWithRevisableExpectedType.isFunctionExpressionWithReceiver(): Boolean
+    fun PostponedAtomWithRevisableExpectedType.contextParameterCountOfFunctionExpression(): Int
     fun PostponedAtomWithRevisableExpectedType.isLambda(): Boolean
+
+    /**
+     * Only implemented in K2.
+     */
+    fun PostponedAtomWithRevisableExpectedType.isSuspend(): Boolean
     fun createTypeVariableForLambdaReturnType(): TypeVariableMarker
     fun createTypeVariableForLambdaParameterType(argument: PostponedAtomWithRevisableExpectedType, index: Int): TypeVariableMarker
     fun createTypeVariableForCallableReferenceReturnType(): TypeVariableMarker
@@ -40,8 +51,6 @@ interface ConstraintSystemUtilContext {
         argument: PostponedAtomWithRevisableExpectedType,
         index: Int
     ): TypeVariableMarker
-
-    val isForcedConsiderExtensionReceiverFromConstrainsInLambda get() = false
 
     val isForcedAllowForkingInferenceSystem get() = false
 }

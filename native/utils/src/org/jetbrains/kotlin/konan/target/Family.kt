@@ -20,12 +20,6 @@ enum class Family(
     MINGW("exe", "", "dll", "lib", "a"),
     ANDROID("kexe", "lib", "so", "lib", "a");
 
-    @Deprecated(message = REMOVED_TARGET_MESSAGE, level = DeprecationLevel.ERROR)
-    object WASM
-
-    @Deprecated(message = REMOVED_TARGET_MESSAGE, level = DeprecationLevel.ERROR)
-    object ZEPHYR
-
     val isAppleFamily: Boolean
         get() = this == OSX || this == IOS || this == TVOS || this == WATCHOS
 }

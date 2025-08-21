@@ -13,3 +13,6 @@ open class Base<T> {
 }
 
 class Derived: Base<String>()
+
+/* GENERATED_FIR_TAGS: asExpression, assignment, classDeclaration, init, intersectionType, nullableType,
+propertyDeclaration, smartcast, stringLiteral, thisExpression, typeParameter */

@@ -2,75 +2,75 @@ FILE fqName:<root> fileName:/kt69534.kt
   CLASS CLASS name:Sas modality:SEALED visibility:public superTypes:[kotlin.Any]
     sealedSubclasses:
       CLASS CLASS name:Sas2 modality:FINAL visibility:public superTypes:[<root>.Sas]
-    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Sas
-    CONSTRUCTOR visibility:protected <> () returnType:<root>.Sas [primary]
+    thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.Sas
+    CONSTRUCTOR visibility:protected returnType:<root>.Sas [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Sas modality:SEALED visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
-    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
-    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
       overridden:
         public open fun hashCode (): kotlin.Int declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
       overridden:
         public open fun toString (): kotlin.String declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
   CLASS CLASS name:Sas2 modality:FINAL visibility:public superTypes:[<root>.Sas]
-    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Sas2<E of <root>.Sas2>
+    thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.Sas2<E of <root>.Sas2>
     TYPE_PARAMETER name:E index:0 variance: superTypes:[kotlin.Any] reified:false
     PROPERTY name:error visibility:public modality:FINAL [val]
       FIELD PROPERTY_BACKING_FIELD name:error type:E of <root>.Sas2 visibility:private [final]
         EXPRESSION_BODY
           GET_VAR 'error: E of <root>.Sas2 declared in <root>.Sas2.<init>' type=E of <root>.Sas2 origin=INITIALIZE_PROPERTY_FROM_PARAMETER
-      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-error> visibility:public modality:FINAL <> ($this:<root>.Sas2<E of <root>.Sas2>) returnType:E of <root>.Sas2
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-error> visibility:public modality:FINAL returnType:E of <root>.Sas2
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Sas2<E of <root>.Sas2>
         correspondingProperty: PROPERTY name:error visibility:public modality:FINAL [val]
-        $this: VALUE_PARAMETER name:<this> type:<root>.Sas2<E of <root>.Sas2>
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public final fun <get-error> (): E of <root>.Sas2 declared in <root>.Sas2'
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:error type:E of <root>.Sas2 visibility:private [final]' type=E of <root>.Sas2 origin=null
               receiver: GET_VAR '<this>: <root>.Sas2<E of <root>.Sas2> declared in <root>.Sas2.<get-error>' type=<root>.Sas2<E of <root>.Sas2> origin=null
-    CONSTRUCTOR visibility:public <> (error:E of <root>.Sas2) returnType:<root>.Sas2<E of <root>.Sas2> [primary]
-      VALUE_PARAMETER name:error index:0 type:E of <root>.Sas2
+    CONSTRUCTOR visibility:public returnType:<root>.Sas2<E of <root>.Sas2> [primary]
+      VALUE_PARAMETER kind:Regular name:error index:0 type:E of <root>.Sas2
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'protected constructor <init> () declared in <root>.Sas'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Sas2 modality:FINAL visibility:public superTypes:[<root>.Sas]' type=kotlin.Unit
-    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Sas
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
-    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
       overridden:
         public open fun hashCode (): kotlin.Int declared in <root>.Sas
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
       overridden:
         public open fun toString (): kotlin.String declared in <root>.Sas
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-  FUN name:box visibility:public modality:FINAL <> () returnType:kotlin.String
+  FUN name:box visibility:public modality:FINAL returnType:kotlin.String
     BLOCK_BODY
       TRY type=kotlin.Unit
         try: BLOCK type=kotlin.Unit origin=null
           VAR name:sas type:<root>.Sas2<kotlin.String> [val]
             CONSTRUCTOR_CALL 'public constructor <init> (error: E of <root>.Sas2) declared in <root>.Sas2' type=<root>.Sas2<kotlin.String> origin=null
-              <class: E>: kotlin.String
-              error: CONST String type=kotlin.String value="Error"
-          CALL 'public final fun foo (): kotlin.Nothing declared in <root>' type=kotlin.Nothing origin=null
-            $receiver: GET_VAR 'val sas: <root>.Sas2<kotlin.String> declared in <root>.box' type=<root>.Sas2<kotlin.String> origin=null
+              TYPE_ARG (of class) E: kotlin.String
+              ARG error: CONST String type=kotlin.String value="Error"
+          CALL 'public final fun foo (<this>: <root>.Sas): kotlin.Nothing declared in <root>' type=kotlin.Nothing origin=null
+            ARG <this>: GET_VAR 'val sas: <root>.Sas2<kotlin.String> declared in <root>.box' type=<root>.Sas2<kotlin.String> origin=null
         CATCH parameter=val e: kotlin.Throwable declared in <root>.box
           VAR CATCH_PARAMETER name:e type:kotlin.Throwable [val]
           BLOCK type=kotlin.Unit origin=null
       RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
         CONST String type=kotlin.String value="OK"
-  FUN name:foo visibility:public modality:FINAL <> ($receiver:<root>.Sas) returnType:kotlin.Nothing
-    $receiver: VALUE_PARAMETER name:<this> type:<root>.Sas
+  FUN name:foo visibility:public modality:FINAL returnType:kotlin.Nothing
+    VALUE_PARAMETER kind:ExtensionReceiver name:<this> index:0 type:<root>.Sas
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='public final fun foo (): kotlin.Nothing declared in <root>'
+      RETURN type=kotlin.Nothing from='public final fun foo (<this>: <root>.Sas): kotlin.Nothing declared in <root>'
         BLOCK type=kotlin.Nothing origin=WHEN
           VAR IR_TEMPORARY_VARIABLE name:tmp_0 type:<root>.Sas [val]
             GET_VAR '<this>: <root>.Sas declared in <root>.foo' type=<root>.Sas origin=null
@@ -83,13 +83,13 @@ FILE fqName:<root> fileName:/kt69534.kt
                   BRANCH
                     if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.Throwable
                       CALL 'public final fun <get-error> (): E of <root>.Sas2 declared in <root>.Sas2' type=kotlin.Any origin=GET_PROPERTY
-                        $this: TYPE_OP type=<root>.Sas2<out kotlin.Any> origin=IMPLICIT_CAST typeOperand=<root>.Sas2<out kotlin.Any>
+                        ARG <this>: TYPE_OP type=<root>.Sas2<out kotlin.Any> origin=IMPLICIT_CAST typeOperand=<root>.Sas2<out kotlin.Any>
                           GET_VAR '<this>: <root>.Sas declared in <root>.foo' type=<root>.Sas origin=IMPLICIT_ARGUMENT
                     then: BLOCK type=kotlin.Nothing origin=null
                       THROW type=kotlin.Nothing
                         TYPE_OP type=kotlin.Throwable origin=IMPLICIT_CAST typeOperand=kotlin.Throwable
                           CALL 'public final fun <get-error> (): E of <root>.Sas2 declared in <root>.Sas2' type=kotlin.Any origin=GET_PROPERTY
-                            $this: TYPE_OP type=<root>.Sas2<out kotlin.Any> origin=IMPLICIT_CAST typeOperand=<root>.Sas2<out kotlin.Any>
+                            ARG <this>: TYPE_OP type=<root>.Sas2<out kotlin.Any> origin=IMPLICIT_CAST typeOperand=<root>.Sas2<out kotlin.Any>
                               GET_VAR '<this>: <root>.Sas declared in <root>.foo' type=<root>.Sas origin=IMPLICIT_ARGUMENT
                   BRANCH
                     if: CONST Boolean type=kotlin.Boolean value=true

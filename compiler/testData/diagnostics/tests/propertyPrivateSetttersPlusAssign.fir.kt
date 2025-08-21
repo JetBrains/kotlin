@@ -14,3 +14,6 @@ fun main() {
     test.<!INVISIBLE_SETTER!>x<!>--
     --test.<!INVISIBLE_SETTER!>x<!>
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, assignment, classDeclaration, functionDeclaration,
+incrementDecrementExpression, integerLiteral, localProperty, propertyDeclaration */

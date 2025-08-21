@@ -31,3 +31,5 @@ class TestKlass: Derived() {
 fun test(arg: Derived) {
     arg.f()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, javaType */

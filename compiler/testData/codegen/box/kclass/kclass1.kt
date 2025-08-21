@@ -3,10 +3,11 @@
  * that can be found in the LICENSE file.
  */
 // Unsupported [This reflection API is not supported yet in JavaScript]
-// IGNORE_BACKEND: JS_IR, JS_IR_ES6, WASM
+// IGNORE_BACKEND: JS_IR, JS_IR_ES6
 // IGNORE_IR_DESERIALIZATION_TEST: JS_IR
 // ^^^ Source code is not compiled in JS.
 // WITH_STDLIB
+// WASM_ALLOW_FQNAME_IN_KCLASS
 
 package codegen.kclass.kclass1
 

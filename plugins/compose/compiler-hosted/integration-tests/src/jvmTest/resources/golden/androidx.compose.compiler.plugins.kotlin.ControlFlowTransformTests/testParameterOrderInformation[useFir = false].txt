@@ -174,7 +174,7 @@ fun Test01(p0: Int, p1: Int, p2: Int, p3: Int, %composer: Composer?, %changed: I
   if (%changed and 0b110000000000 == 0) {
     %dirty = %dirty or if (%composer.changed(p3)) 0b100000000000 else 0b010000000000
   }
-  if (%dirty and 0b010010010011 != 0b010010010010 || !%composer.skipping) {
+  if (%composer.shouldExecute(%dirty and 0b010010010011 != 0b010010010010, %dirty and 0b0001)) {
     if (isTraceInProgress()) {
       traceEventStart(<>, %dirty, -1, <>)
     }
@@ -209,7 +209,7 @@ fun Test02(p0: Int, p1: Int, p3: Int, p2: Int, %composer: Composer?, %changed: I
   if (%changed and 0b110000000000 == 0) {
     %dirty = %dirty or if (%composer.changed(p2)) 0b100000000000 else 0b010000000000
   }
-  if (%dirty and 0b010010010011 != 0b010010010010 || !%composer.skipping) {
+  if (%composer.shouldExecute(%dirty and 0b010010010011 != 0b010010010010, %dirty and 0b0001)) {
     if (isTraceInProgress()) {
       traceEventStart(<>, %dirty, -1, <>)
     }
@@ -244,7 +244,7 @@ fun Test03(p0: Int, p2: Int, p1: Int, p3: Int, %composer: Composer?, %changed: I
   if (%changed and 0b110000000000 == 0) {
     %dirty = %dirty or if (%composer.changed(p3)) 0b100000000000 else 0b010000000000
   }
-  if (%dirty and 0b010010010011 != 0b010010010010 || !%composer.skipping) {
+  if (%composer.shouldExecute(%dirty and 0b010010010011 != 0b010010010010, %dirty and 0b0001)) {
     if (isTraceInProgress()) {
       traceEventStart(<>, %dirty, -1, <>)
     }
@@ -279,7 +279,7 @@ fun Test04(p0: Int, p2: Int, p3: Int, p1: Int, %composer: Composer?, %changed: I
   if (%changed and 0b110000000000 == 0) {
     %dirty = %dirty or if (%composer.changed(p1)) 0b100000000000 else 0b010000000000
   }
-  if (%dirty and 0b010010010011 != 0b010010010010 || !%composer.skipping) {
+  if (%composer.shouldExecute(%dirty and 0b010010010011 != 0b010010010010, %dirty and 0b0001)) {
     if (isTraceInProgress()) {
       traceEventStart(<>, %dirty, -1, <>)
     }
@@ -314,7 +314,7 @@ fun Test05(p0: Int, p3: Int, p1: Int, p2: Int, %composer: Composer?, %changed: I
   if (%changed and 0b110000000000 == 0) {
     %dirty = %dirty or if (%composer.changed(p2)) 0b100000000000 else 0b010000000000
   }
-  if (%dirty and 0b010010010011 != 0b010010010010 || !%composer.skipping) {
+  if (%composer.shouldExecute(%dirty and 0b010010010011 != 0b010010010010, %dirty and 0b0001)) {
     if (isTraceInProgress()) {
       traceEventStart(<>, %dirty, -1, <>)
     }
@@ -349,7 +349,7 @@ fun Test06(p0: Int, p3: Int, p2: Int, p1: Int, %composer: Composer?, %changed: I
   if (%changed and 0b110000000000 == 0) {
     %dirty = %dirty or if (%composer.changed(p1)) 0b100000000000 else 0b010000000000
   }
-  if (%dirty and 0b010010010011 != 0b010010010010 || !%composer.skipping) {
+  if (%composer.shouldExecute(%dirty and 0b010010010011 != 0b010010010010, %dirty and 0b0001)) {
     if (isTraceInProgress()) {
       traceEventStart(<>, %dirty, -1, <>)
     }
@@ -384,7 +384,7 @@ fun Test07(p1: Int, p0: Int, p2: Int, p3: Int, %composer: Composer?, %changed: I
   if (%changed and 0b110000000000 == 0) {
     %dirty = %dirty or if (%composer.changed(p3)) 0b100000000000 else 0b010000000000
   }
-  if (%dirty and 0b010010010011 != 0b010010010010 || !%composer.skipping) {
+  if (%composer.shouldExecute(%dirty and 0b010010010011 != 0b010010010010, %dirty and 0b0001)) {
     if (isTraceInProgress()) {
       traceEventStart(<>, %dirty, -1, <>)
     }
@@ -419,7 +419,7 @@ fun Test08(p1: Int, p0: Int, p3: Int, p2: Int, %composer: Composer?, %changed: I
   if (%changed and 0b110000000000 == 0) {
     %dirty = %dirty or if (%composer.changed(p2)) 0b100000000000 else 0b010000000000
   }
-  if (%dirty and 0b010010010011 != 0b010010010010 || !%composer.skipping) {
+  if (%composer.shouldExecute(%dirty and 0b010010010011 != 0b010010010010, %dirty and 0b0001)) {
     if (isTraceInProgress()) {
       traceEventStart(<>, %dirty, -1, <>)
     }
@@ -454,7 +454,7 @@ fun Test09(p1: Int, p2: Int, p0: Int, p3: Int, %composer: Composer?, %changed: I
   if (%changed and 0b110000000000 == 0) {
     %dirty = %dirty or if (%composer.changed(p3)) 0b100000000000 else 0b010000000000
   }
-  if (%dirty and 0b010010010011 != 0b010010010010 || !%composer.skipping) {
+  if (%composer.shouldExecute(%dirty and 0b010010010011 != 0b010010010010, %dirty and 0b0001)) {
     if (isTraceInProgress()) {
       traceEventStart(<>, %dirty, -1, <>)
     }
@@ -489,7 +489,7 @@ fun Test00(p1: Int, p2: Int, p3: Int, p0: Int, %composer: Composer?, %changed: I
   if (%changed and 0b110000000000 == 0) {
     %dirty = %dirty or if (%composer.changed(p0)) 0b100000000000 else 0b010000000000
   }
-  if (%dirty and 0b010010010011 != 0b010010010010 || !%composer.skipping) {
+  if (%composer.shouldExecute(%dirty and 0b010010010011 != 0b010010010010, %dirty and 0b0001)) {
     if (isTraceInProgress()) {
       traceEventStart(<>, %dirty, -1, <>)
     }
@@ -524,7 +524,7 @@ fun Test11(p1: Int, p3: Int, p0: Int, p2: Int, %composer: Composer?, %changed: I
   if (%changed and 0b110000000000 == 0) {
     %dirty = %dirty or if (%composer.changed(p2)) 0b100000000000 else 0b010000000000
   }
-  if (%dirty and 0b010010010011 != 0b010010010010 || !%composer.skipping) {
+  if (%composer.shouldExecute(%dirty and 0b010010010011 != 0b010010010010, %dirty and 0b0001)) {
     if (isTraceInProgress()) {
       traceEventStart(<>, %dirty, -1, <>)
     }
@@ -559,7 +559,7 @@ fun Test12(p1: Int, p3: Int, p2: Int, p0: Int, %composer: Composer?, %changed: I
   if (%changed and 0b110000000000 == 0) {
     %dirty = %dirty or if (%composer.changed(p0)) 0b100000000000 else 0b010000000000
   }
-  if (%dirty and 0b010010010011 != 0b010010010010 || !%composer.skipping) {
+  if (%composer.shouldExecute(%dirty and 0b010010010011 != 0b010010010010, %dirty and 0b0001)) {
     if (isTraceInProgress()) {
       traceEventStart(<>, %dirty, -1, <>)
     }
@@ -594,7 +594,7 @@ fun Test13(p2: Int, p0: Int, p1: Int, p3: Int, %composer: Composer?, %changed: I
   if (%changed and 0b110000000000 == 0) {
     %dirty = %dirty or if (%composer.changed(p3)) 0b100000000000 else 0b010000000000
   }
-  if (%dirty and 0b010010010011 != 0b010010010010 || !%composer.skipping) {
+  if (%composer.shouldExecute(%dirty and 0b010010010011 != 0b010010010010, %dirty and 0b0001)) {
     if (isTraceInProgress()) {
       traceEventStart(<>, %dirty, -1, <>)
     }
@@ -629,7 +629,7 @@ fun Test14(p2: Int, p0: Int, p3: Int, p1: Int, %composer: Composer?, %changed: I
   if (%changed and 0b110000000000 == 0) {
     %dirty = %dirty or if (%composer.changed(p1)) 0b100000000000 else 0b010000000000
   }
-  if (%dirty and 0b010010010011 != 0b010010010010 || !%composer.skipping) {
+  if (%composer.shouldExecute(%dirty and 0b010010010011 != 0b010010010010, %dirty and 0b0001)) {
     if (isTraceInProgress()) {
       traceEventStart(<>, %dirty, -1, <>)
     }
@@ -664,7 +664,7 @@ fun Test15(p2: Int, p1: Int, p0: Int, p3: Int, %composer: Composer?, %changed: I
   if (%changed and 0b110000000000 == 0) {
     %dirty = %dirty or if (%composer.changed(p3)) 0b100000000000 else 0b010000000000
   }
-  if (%dirty and 0b010010010011 != 0b010010010010 || !%composer.skipping) {
+  if (%composer.shouldExecute(%dirty and 0b010010010011 != 0b010010010010, %dirty and 0b0001)) {
     if (isTraceInProgress()) {
       traceEventStart(<>, %dirty, -1, <>)
     }
@@ -699,7 +699,7 @@ fun Test16(p2: Int, p1: Int, p3: Int, p0: Int, %composer: Composer?, %changed: I
   if (%changed and 0b110000000000 == 0) {
     %dirty = %dirty or if (%composer.changed(p0)) 0b100000000000 else 0b010000000000
   }
-  if (%dirty and 0b010010010011 != 0b010010010010 || !%composer.skipping) {
+  if (%composer.shouldExecute(%dirty and 0b010010010011 != 0b010010010010, %dirty and 0b0001)) {
     if (isTraceInProgress()) {
       traceEventStart(<>, %dirty, -1, <>)
     }
@@ -734,7 +734,7 @@ fun Test17(p2: Int, p3: Int, p0: Int, p1: Int, %composer: Composer?, %changed: I
   if (%changed and 0b110000000000 == 0) {
     %dirty = %dirty or if (%composer.changed(p1)) 0b100000000000 else 0b010000000000
   }
-  if (%dirty and 0b010010010011 != 0b010010010010 || !%composer.skipping) {
+  if (%composer.shouldExecute(%dirty and 0b010010010011 != 0b010010010010, %dirty and 0b0001)) {
     if (isTraceInProgress()) {
       traceEventStart(<>, %dirty, -1, <>)
     }
@@ -769,7 +769,7 @@ fun Test18(p2: Int, p3: Int, p1: Int, p0: Int, %composer: Composer?, %changed: I
   if (%changed and 0b110000000000 == 0) {
     %dirty = %dirty or if (%composer.changed(p0)) 0b100000000000 else 0b010000000000
   }
-  if (%dirty and 0b010010010011 != 0b010010010010 || !%composer.skipping) {
+  if (%composer.shouldExecute(%dirty and 0b010010010011 != 0b010010010010, %dirty and 0b0001)) {
     if (isTraceInProgress()) {
       traceEventStart(<>, %dirty, -1, <>)
     }
@@ -804,7 +804,7 @@ fun Test19(p3: Int, p0: Int, p1: Int, p2: Int, %composer: Composer?, %changed: I
   if (%changed and 0b110000000000 == 0) {
     %dirty = %dirty or if (%composer.changed(p2)) 0b100000000000 else 0b010000000000
   }
-  if (%dirty and 0b010010010011 != 0b010010010010 || !%composer.skipping) {
+  if (%composer.shouldExecute(%dirty and 0b010010010011 != 0b010010010010, %dirty and 0b0001)) {
     if (isTraceInProgress()) {
       traceEventStart(<>, %dirty, -1, <>)
     }
@@ -839,7 +839,7 @@ fun Test20(p3: Int, p0: Int, p2: Int, p1: Int, %composer: Composer?, %changed: I
   if (%changed and 0b110000000000 == 0) {
     %dirty = %dirty or if (%composer.changed(p1)) 0b100000000000 else 0b010000000000
   }
-  if (%dirty and 0b010010010011 != 0b010010010010 || !%composer.skipping) {
+  if (%composer.shouldExecute(%dirty and 0b010010010011 != 0b010010010010, %dirty and 0b0001)) {
     if (isTraceInProgress()) {
       traceEventStart(<>, %dirty, -1, <>)
     }
@@ -874,7 +874,7 @@ fun Test21(p3: Int, p1: Int, p0: Int, p2: Int, %composer: Composer?, %changed: I
   if (%changed and 0b110000000000 == 0) {
     %dirty = %dirty or if (%composer.changed(p2)) 0b100000000000 else 0b010000000000
   }
-  if (%dirty and 0b010010010011 != 0b010010010010 || !%composer.skipping) {
+  if (%composer.shouldExecute(%dirty and 0b010010010011 != 0b010010010010, %dirty and 0b0001)) {
     if (isTraceInProgress()) {
       traceEventStart(<>, %dirty, -1, <>)
     }
@@ -909,7 +909,7 @@ fun Test22(p3: Int, p1: Int, p2: Int, p0: Int, %composer: Composer?, %changed: I
   if (%changed and 0b110000000000 == 0) {
     %dirty = %dirty or if (%composer.changed(p0)) 0b100000000000 else 0b010000000000
   }
-  if (%dirty and 0b010010010011 != 0b010010010010 || !%composer.skipping) {
+  if (%composer.shouldExecute(%dirty and 0b010010010011 != 0b010010010010, %dirty and 0b0001)) {
     if (isTraceInProgress()) {
       traceEventStart(<>, %dirty, -1, <>)
     }
@@ -944,7 +944,7 @@ fun Test23(p3: Int, p2: Int, p0: Int, p1: Int, %composer: Composer?, %changed: I
   if (%changed and 0b110000000000 == 0) {
     %dirty = %dirty or if (%composer.changed(p1)) 0b100000000000 else 0b010000000000
   }
-  if (%dirty and 0b010010010011 != 0b010010010010 || !%composer.skipping) {
+  if (%composer.shouldExecute(%dirty and 0b010010010011 != 0b010010010010, %dirty and 0b0001)) {
     if (isTraceInProgress()) {
       traceEventStart(<>, %dirty, -1, <>)
     }
@@ -979,7 +979,7 @@ fun Test24(p3: Int, p2: Int, p1: Int, p0: Int, %composer: Composer?, %changed: I
   if (%changed and 0b110000000000 == 0) {
     %dirty = %dirty or if (%composer.changed(p0)) 0b100000000000 else 0b010000000000
   }
-  if (%dirty and 0b010010010011 != 0b010010010010 || !%composer.skipping) {
+  if (%composer.shouldExecute(%dirty and 0b010010010011 != 0b010010010010, %dirty and 0b0001)) {
     if (isTraceInProgress()) {
       traceEventStart(<>, %dirty, -1, <>)
     }

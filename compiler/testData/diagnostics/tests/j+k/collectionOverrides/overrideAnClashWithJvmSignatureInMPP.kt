@@ -6,6 +6,7 @@
 // LANGUAGE: +MultiPlatformProjects
 // IGNORE_NON_REVERSED_RESOLVE
 // IGNORE_REVERSED_RESOLVE
+// IGNORE_PARTIAL_BODY_ANALYSIS
 
 // MODULE: common
 // FILE: Common.kt
@@ -46,3 +47,6 @@ fun foo(a: A, ka: KA) {
     a.get(0)
     ka.get(0)
 }
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, functionDeclaration, integerLiteral, javaFunction, javaType,
+override, primaryConstructor */

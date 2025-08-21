@@ -24,3 +24,5 @@ package test
 import a.b
 
 fun test() = b().getY()
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaFunction, javaType */

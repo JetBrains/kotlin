@@ -196,7 +196,7 @@ class NativeDownloadAndPlatformLibsIT : KGPBaseTest() {
     @GradleTest
     fun testNoGenerationForUnsupportedHost(gradleVersion: GradleVersion) {
         platformLibrariesProject(KonanTarget.IOS_X64.presetName, gradleVersion = gradleVersion) {
-            buildWithLightDist("assemble") {
+            buildWithLightDist("assemble", buildOptions = defaultBuildOptions.disableKlibsCrossCompilation()) {
                 assertOutputDoesNotContain(generateRegex)
             }
         }

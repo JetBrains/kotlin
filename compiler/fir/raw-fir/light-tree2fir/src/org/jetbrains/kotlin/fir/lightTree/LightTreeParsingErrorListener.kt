@@ -13,21 +13,18 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.KtDiagnostic
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.builder.FirSyntaxErrors
-
-fun interface LightTreeParsingErrorListener {
-    fun onError(startOffset: Int, endOffset: Int, message: String?)
-}
+import org.jetbrains.kotlin.parsing.KotlinLightParser
 
 fun DiagnosticReporter.toKotlinParsingErrorListener(
     sourceFile: KtSourceFile,
     languageVersionSettings: LanguageVersionSettings
-): LightTreeParsingErrorListener {
+): KotlinLightParser.LightTreeParsingErrorListener {
     val diagnosticContext = object : DiagnosticContext {
         override val containingFilePath = sourceFile.path
         override val languageVersionSettings: LanguageVersionSettings get() = languageVersionSettings
         override fun isDiagnosticSuppressed(diagnostic: KtDiagnostic): Boolean = false
     }
-    return LightTreeParsingErrorListener { startOffset, endOffset, message ->
+    return KotlinLightParser.LightTreeParsingErrorListener { startOffset, endOffset, message ->
         reportOn(
             KtOffsetsOnlySourceElement(startOffset, endOffset),
             FirSyntaxErrors.SYNTAX,

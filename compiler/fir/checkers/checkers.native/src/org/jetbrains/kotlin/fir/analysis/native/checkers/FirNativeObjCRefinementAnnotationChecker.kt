@@ -26,7 +26,8 @@ object FirNativeObjCRefinementAnnotationChecker : FirRegularClassChecker(MppChec
     private val hidesFromObjCSupportedTargets = arrayOf(KotlinTarget.FUNCTION, KotlinTarget.PROPERTY, KotlinTarget.CLASS)
     private val refinesInSwiftSupportedTargets = arrayOf(KotlinTarget.FUNCTION, KotlinTarget.PROPERTY)
 
-    override fun check(declaration: FirRegularClass, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirRegularClass) {
         if (declaration.classKind != ClassKind.ANNOTATION_CLASS) return
         val session = context.session
         val (objCAnnotation, swiftAnnotation) = declaration.annotations.findMetaAnnotations(session)
@@ -34,20 +35,19 @@ object FirNativeObjCRefinementAnnotationChecker : FirRegularClassChecker(MppChec
         if (objCAnnotation != null && swiftAnnotation != null) {
             reporter.reportOn(
                 swiftAnnotation.source,
-                FirNativeErrors.REDUNDANT_SWIFT_REFINEMENT,
-                context
+                FirNativeErrors.REDUNDANT_SWIFT_REFINEMENT
             )
         }
         val targets = declaration.getAllowedAnnotationTargets(session)
 
         objCAnnotation?.let {
             if ((targets - hidesFromObjCSupportedTargets).isNotEmpty()) {
-                reporter.reportOn(it.source, FirNativeErrors.INVALID_OBJC_HIDES_TARGETS, context)
+                reporter.reportOn(it.source, FirNativeErrors.INVALID_OBJC_HIDES_TARGETS)
             }
         }
         swiftAnnotation?.let {
             if ((targets - refinesInSwiftSupportedTargets).isNotEmpty()) {
-                reporter.reportOn(it.source, FirNativeErrors.INVALID_REFINES_IN_SWIFT_TARGETS, context)
+                reporter.reportOn(it.source, FirNativeErrors.INVALID_REFINES_IN_SWIFT_TARGETS)
             }
         }
     }

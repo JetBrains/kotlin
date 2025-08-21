@@ -1,3 +1,0 @@
-> Configure project :
-
-> Task :checkKotlinGradlePluginConfigurationErrors SKIPPED

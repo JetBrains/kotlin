@@ -26,3 +26,5 @@ fun test() {
 
 fun foo(j: J) {}
 fun bar(j: J?) {}
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaProperty, javaType, nullableType */

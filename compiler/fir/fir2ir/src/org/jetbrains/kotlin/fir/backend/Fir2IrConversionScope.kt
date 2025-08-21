@@ -83,10 +83,22 @@ class Fir2IrConversionScope(val configuration: Fir2IrConfiguration) {
 
     fun scope(): Scope = scopeStack.last()
 
-    fun parentAccessorOfPropertyFromStack(propertySymbol: IrPropertySymbol): IrSimpleFunction {
+    fun parentAccessorOfPropertyFromStack(propertySymbol: IrPropertySymbol): IrSimpleFunction? {
         // It is safe to access an owner of property symbol here, because this function may be called
         // only from property accessor of corresponding property
         // We inside accessor -> accessor is built -> property is built
+        @OptIn(UnsafeDuringIrConstructionAPI::class)
+        val property = propertySymbol.owner
+        for (parent in _parentStack.asReversed()) {
+            when (parent) {
+                property.getter -> return parent as IrSimpleFunction
+                property.setter -> return parent as IrSimpleFunction
+            }
+        }
+        return null
+    }
+
+    fun parentAccessorOfDelegatedPropertyFromStack(propertySymbol: IrLocalDelegatedPropertySymbol): IrSimpleFunction {
         @OptIn(UnsafeDuringIrConstructionAPI::class)
         val property = propertySymbol.owner
         for (parent in _parentStack.asReversed()) {

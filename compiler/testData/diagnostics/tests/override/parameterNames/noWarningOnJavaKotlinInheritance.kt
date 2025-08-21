@@ -1,5 +1,4 @@
-// RUN_PIPELINE_TILL: FIR2IR
-// DISABLE_NEXT_PHASE_SUGGESTION: Cannot serialize error type: ERROR CLASS: Symbol not found for JavaInterface
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // MODULE: lib
 // FILE: JavaInterface.java
@@ -28,3 +27,5 @@ class BothTraitsSubclass : JavaInterface, KotlinInterface {
         super.foo(someOtherName)
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, interfaceDeclaration, override, superExpression */

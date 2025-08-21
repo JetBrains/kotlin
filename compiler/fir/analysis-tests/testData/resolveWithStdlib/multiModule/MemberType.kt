@@ -38,3 +38,6 @@ class DerivedWrapper : Wrapper(MyList()) {
         list.set(2, 3)
     }
 }
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, functionDeclaration, integerLiteral, primaryConstructor,
+propertyDeclaration */

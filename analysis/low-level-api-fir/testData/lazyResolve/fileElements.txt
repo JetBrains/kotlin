@@ -76,7 +76,7 @@ FILE: [ResolvedTo(IMPORTS)] fileElements.kt
 
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] fileElements.kt
-    @FILE:R|kotlin/Deprecated|[CompilerRequiredAnnotations](String(deprecated file))
+    @FILE:Deprecated[Unresolved](LAZY_EXPRESSION)
     @FILE:Anno[Unresolved](LAZY_EXPRESSION)
     public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/Anno.i] i: Int): R|one/Anno| {
@@ -114,7 +114,7 @@ FILE: [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] fileElements.kt
 
 COMPANION_GENERATION:
 FILE: [ResolvedTo(COMPANION_GENERATION)] fileElements.kt
-    @FILE:R|kotlin/Deprecated|[CompilerRequiredAnnotations](String(deprecated file))
+    @FILE:Deprecated[Unresolved](LAZY_EXPRESSION)
     @FILE:Anno[Unresolved](LAZY_EXPRESSION)
     public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/Anno.i] i: Int): R|one/Anno| {
@@ -152,7 +152,7 @@ FILE: [ResolvedTo(COMPANION_GENERATION)] fileElements.kt
 
 SUPER_TYPES:
 FILE: [ResolvedTo(SUPER_TYPES)] fileElements.kt
-    @FILE:R|kotlin/Deprecated|[CompilerRequiredAnnotations](String(deprecated file))
+    @FILE:Deprecated[Unresolved](LAZY_EXPRESSION)
     @FILE:Anno[Unresolved](LAZY_EXPRESSION)
     public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/Anno.i] i: Int): R|one/Anno| {
@@ -190,7 +190,7 @@ FILE: [ResolvedTo(SUPER_TYPES)] fileElements.kt
 
 TYPES:
 FILE: [ResolvedTo(TYPES)] fileElements.kt
-    @FILE:R|kotlin/Deprecated|[Types](String(deprecated file))
+    @FILE:R|kotlin/Deprecated|[Types](LAZY_EXPRESSION)
     @FILE:R|one/Anno|[Types](LAZY_EXPRESSION)
     public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/Anno.i] i: Int): R|one/Anno| {
@@ -228,7 +228,7 @@ FILE: [ResolvedTo(TYPES)] fileElements.kt
 
 STATUS:
 FILE: [ResolvedTo(STATUS)] fileElements.kt
-    @FILE:R|kotlin/Deprecated|[Types](String(deprecated file))
+    @FILE:R|kotlin/Deprecated|[Types](LAZY_EXPRESSION)
     @FILE:R|one/Anno|[Types](LAZY_EXPRESSION)
     public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/Anno.i] i: Int): R|one/Anno| {
@@ -266,7 +266,7 @@ FILE: [ResolvedTo(STATUS)] fileElements.kt
 
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fileElements.kt
-    @FILE:R|kotlin/Deprecated|[Types](String(deprecated file))
+    @FILE:R|kotlin/Deprecated|[Types](LAZY_EXPRESSION)
     @FILE:R|one/Anno|[Types](LAZY_EXPRESSION)
     public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/Anno.i] i: Int): R|one/Anno| {
@@ -304,7 +304,7 @@ FILE: [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fileElements.kt
 
 CONTRACTS:
 FILE: [ResolvedTo(CONTRACTS)] fileElements.kt
-    @FILE:R|kotlin/Deprecated|[Types](String(deprecated file))
+    @FILE:R|kotlin/Deprecated|[Types](LAZY_EXPRESSION)
     @FILE:R|one/Anno|[Types](LAZY_EXPRESSION)
     public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/Anno.i] i: Int): R|one/Anno| {
@@ -342,7 +342,7 @@ FILE: [ResolvedTo(CONTRACTS)] fileElements.kt
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fileElements.kt
-    @FILE:R|kotlin/Deprecated|[Types](String(deprecated file))
+    @FILE:R|kotlin/Deprecated|[Types](LAZY_EXPRESSION)
     @FILE:R|one/Anno|[Types](LAZY_EXPRESSION)
     public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/Anno.i] i: Int): R|one/Anno| {
@@ -380,7 +380,7 @@ FILE: [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fileElements.kt
 
 CONSTANT_EVALUATION:
 FILE: [ResolvedTo(CONSTANT_EVALUATION)] fileElements.kt
-    @FILE:R|kotlin/Deprecated|[Types](String(deprecated file))
+    @FILE:R|kotlin/Deprecated|[Types](LAZY_EXPRESSION)
     @FILE:R|one/Anno|[Types](LAZY_EXPRESSION)
     public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/Anno.i] i: Int): R|one/Anno| {

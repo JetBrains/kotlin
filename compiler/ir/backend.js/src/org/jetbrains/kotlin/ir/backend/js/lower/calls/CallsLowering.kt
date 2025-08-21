@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.expressions.IrFieldAccessExpression
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.ir.visitors.IrTransformer
@@ -22,6 +23,7 @@ class CallsLowering(val context: JsIrBackendContext) : BodyLoweringPass {
     private val transformers = listOf(
         NumberOperatorCallsTransformer(context),
         NumberConversionCallsTransformer(context),
+        BoxedLongCallsTransformer(context),
         EqualityAndComparisonCallsTransformer(context),
         PrimitiveContainerMemberCallTransformer(context),
         MethodsOfAnyCallsTransformer(context),
@@ -52,10 +54,24 @@ class CallsLowering(val context: JsIrBackendContext) : BodyLoweringPass {
                 }
                 return call
             }
+
+            override fun visitFieldAccess(expression: IrFieldAccessExpression, data: IrDeclaration): IrExpression {
+                val access = super.visitFieldAccess(expression, data)
+                if (access is IrFieldAccessExpression) {
+                    for (transformer in transformers) {
+                        val newAccess = transformer.transformFieldAccess(access)
+                        if (newAccess !== access) {
+                            return newAccess
+                        }
+                    }
+                }
+                return access
+            }
         }, container)
     }
 }
 
 interface CallsTransformer {
     fun transformFunctionAccess(call: IrFunctionAccessExpression, doNotIntrinsify: Boolean): IrExpression
+    fun transformFieldAccess(access: IrFieldAccessExpression): IrExpression = access
 }

@@ -9,14 +9,15 @@ import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirModuleResolveComponents
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
 import org.jetbrains.kotlin.analysis.api.platform.declarations.KotlinDeclarationProvider
-import org.jetbrains.kotlin.analysis.low.level.api.fir.resolve.extensions.llResolveExtensionTool
+import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.LLEmptyKotlinSymbolProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.LLKotlinSourceSymbolProvider
+import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.LLKotlinSymbolProvider
+import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.LLModuleSpecificSymbolProviderAccess
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.LLContainingClassCalculator
 import org.jetbrains.kotlin.fir.ThreadSafeMutableState
 import org.jetbrains.kotlin.fir.declarations.FirClassLikeDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.resolve.providers.*
-import org.jetbrains.kotlin.fir.resolve.providers.impl.FirEmptySymbolProvider
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirSymbolEntry
@@ -34,33 +35,27 @@ internal class LLFirProvider(
     disregardSelfDeclarations: Boolean = false,
     declarationProviderFactory: (GlobalSearchScope) -> KotlinDeclarationProvider?,
 ) : FirProvider() {
-    // TODO (KT-73290): Once the content scope refactoring is implemented, we can get rid of this property altogether and simply use the
-    //                  `KaModule`'s content scope. We'll also be able to get rid of `declarationProviderFactory`, as the declaration
-    //                  provider can then be built directly over the content scope.
-    val searchScope: GlobalSearchScope =
-        session.ktModule.contentScope.run {
-            val notShadowedScope = session.llResolveExtensionTool?.shadowedSearchScope?.let { GlobalSearchScope.notScope(it) }
-            if (notShadowedScope != null) {
-                this.intersectWith(notShadowedScope)
-            } else {
-                this
-            }
+    override val symbolProvider: LLKotlinSymbolProvider =
+        if (!disregardSelfDeclarations) {
+            LLKotlinSourceSymbolProvider(session, moduleComponents, canContainKotlinPackage, declarationProviderFactory)
+        } else {
+            LLEmptyKotlinSymbolProvider(session)
         }
-
-    private val sourceSymbolProvider =
-        LLKotlinSourceSymbolProvider(session, moduleComponents, searchScope, canContainKotlinPackage, declarationProviderFactory)
-
-    override val symbolProvider: FirSymbolProvider =
-        if (disregardSelfDeclarations) FirEmptySymbolProvider(session) else sourceSymbolProvider
 
     override val isPhasedFirAllowed: Boolean get() = true
 
     override fun getFirClassifierByFqName(classId: ClassId): FirClassLikeDeclaration? =
-        sourceSymbolProvider.getClassLikeSymbolByClassId(classId)?.fir
+        symbolProvider.getClassLikeSymbolByClassId(classId)?.fir
 
+    /**
+     * @param classLikeDeclaration The [KtClassLikeDeclaration] must be contained in the module associated with this [LLFirProvider]. See
+     *  [LLModuleSpecificSymbolProviderAccess] for details.
+     */
     fun getFirClassifierByDeclaration(classLikeDeclaration: KtClassLikeDeclaration): FirClassLikeDeclaration? {
         val classId = classLikeDeclaration.getClassId() ?: return null
-        return sourceSymbolProvider.getClassLikeSymbolByClassId(classId, classLikeDeclaration)?.fir
+
+        @OptIn(LLModuleSpecificSymbolProviderAccess::class)
+        return symbolProvider.getClassLikeSymbolByPsi(classId, classLikeDeclaration)?.fir
     }
 
     override fun getFirClassifierContainerFile(fqName: ClassId): FirFile {
@@ -96,10 +91,14 @@ internal class LLFirProvider(
     // TODO: implement
     override fun getFirScriptByFilePath(path: String): FirScriptSymbol? = null
 
+    override fun getFirReplSnippetContainerFile(symbol: FirReplSnippetSymbol): FirFile? {
+        return moduleComponents.cache.getContainerFirFile(symbol.fir)
+    }
+
     override fun getFirFilesByPackage(fqName: FqName): List<FirFile> = error("Should not be called in FIR IDE")
 
     override fun getClassNamesInPackage(fqName: FqName): Set<Name> =
-        sourceSymbolProvider.symbolNamesProvider.getTopLevelClassifierNamesInPackage(fqName)
+        symbolProvider.symbolNamesProvider.getTopLevelClassifierNamesInPackage(fqName)
             ?: errorWithAttachment("Cannot compute the set of class names in the given package") {
                 withEntry("packageFqName", fqName.asString())
             }

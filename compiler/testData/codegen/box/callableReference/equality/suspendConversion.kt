@@ -1,8 +1,8 @@
 // LANGUAGE: +SuspendConversion
-// IGNORE_BACKEND: WASM
-// WASM_MUTE_REASON: FAILS_IN_JS_IR
 // IGNORE_BACKEND: JS_IR
 // IGNORE_BACKEND: JS_IR_ES6
+// IGNORE_BACKEND_K2_MULTI_MODULE: ANY
+// ^^^ Cannot split to two modules due to cyclic import
 // FILE: suspendCovnersion.kt
 
 

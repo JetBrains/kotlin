@@ -46,6 +46,7 @@ internal object HeapTypeTags {
     const val FUNC = 3u
     const val NO_EXTERN = 4u
     const val NONE = 5u
+    const val NO_FUNC = 5u
     const val STRUCT = 6u
     const val HEAP_TYPE = 7u
 }
@@ -113,7 +114,7 @@ internal object ExportTags {
 
 internal object LocationTags {
     const val NO_LOCATION = 0u
-    const val LOCATION = 1u
+    const val DEFINED_LOCATION = 1u
     const val IGNORED_LOCATION = 2u
     const val NEXT_LOCATION = 3u
 }
@@ -126,7 +127,6 @@ internal object IdSignatureTags {
     const val LOCAL = 4u
     const val LOWERED_DECLARATION = 5u
     const val SCOPE_LOCAL_DECLARATION = 6u
-    const val SPECIAL_FAKE_OVERRIDE = 7u
     const val FILE = 8u
 }
 

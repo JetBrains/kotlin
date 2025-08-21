@@ -30,3 +30,6 @@ fun test_2(x: Any) {
     val s: String = cast(x)
     <!DEBUG_INFO_SMARTCAST!>x<!>.length
 }
+
+/* GENERATED_FIR_TAGS: asExpression, contractConditionalEffect, contracts, functionDeclaration, ifExpression, inline,
+isExpression, lambdaLiteral, localProperty, nullableType, propertyDeclaration, reified, smartcast, typeParameter */

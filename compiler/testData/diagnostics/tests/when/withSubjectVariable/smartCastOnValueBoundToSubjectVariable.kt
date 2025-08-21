@@ -49,3 +49,8 @@ fun test6(x: Inv<out String?>) {
         is String -> x.data.length // should be ok
     }
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, capturedType, checkNotNullCall, classDeclaration, dnnType, elvisExpression,
+equalityExpression, functionDeclaration, integerLiteral, intersectionType, isExpression, lambdaLiteral, localProperty,
+nullableType, outProjection, primaryConstructor, propertyDeclaration, safeCall, smartcast, stringLiteral, typeParameter,
+whenExpression, whenWithSubject */

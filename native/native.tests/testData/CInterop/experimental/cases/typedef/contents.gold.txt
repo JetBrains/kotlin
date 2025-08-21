@@ -27,16 +27,22 @@ library {
 
     package {
 
+      @kotlinx/cinterop/ExperimentalForeignApi
       public typealias MyInt = kotlin/Int /* = kotlin/Int */
 
+      @kotlinx/cinterop/ExperimentalForeignApi
       public typealias MyIntVar = kotlinx/cinterop/IntVarOf<dependency/MyInt^> /* = kotlinx/cinterop/IntVarOf<kotlin/Int /* = dependency/MyInt^ */> */
 
+      @kotlinx/cinterop/ExperimentalForeignApi
       public typealias MyPointer = kotlinx/cinterop/COpaquePointer^ /* = kotlinx/cinterop/CPointer<out kotlinx/cinterop/CPointed> /* = kotlinx/cinterop/COpaquePointer^ */ */
 
+      @kotlinx/cinterop/ExperimentalForeignApi
       public typealias MyPointerVar = kotlinx/cinterop/CPointerVarOf<dependency/MyPointer^> /* = kotlinx/cinterop/CPointerVarOf<kotlinx/cinterop/CPointer<out kotlinx/cinterop/CPointed> /* = dependency/MyPointer^ */> */
 
+      @kotlinx/cinterop/ExperimentalForeignApi
       public typealias MyS = cnames/structs/S /* = cnames/structs/S */
 
+      @kotlinx/cinterop/ExperimentalForeignApi
       public typealias MyT = dependency/T /* = dependency/T */
     }
   }

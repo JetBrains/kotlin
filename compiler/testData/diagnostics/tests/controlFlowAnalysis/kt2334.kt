@@ -5,3 +5,5 @@
 fun foo() {
     <!NON_MEMBER_FUNCTION_NO_BODY!>fun bar()<!>
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, localFunction */

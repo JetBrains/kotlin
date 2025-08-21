@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.commonizer.utils
 
 import kotlin.metadata.*
-import kotlinx.metadata.klib.annotations
 
 internal const val KNI_BRIDGE_FUNCTION_PREFIX = "kniBridge"
 
@@ -15,6 +14,7 @@ internal inline fun KmFunction.isKniBridgeFunction() =
     name.startsWith(KNI_BRIDGE_FUNCTION_PREFIX)
 
 @Suppress("NOTHING_TO_INLINE")
+@OptIn(ExperimentalAnnotationsInMetadata::class)
 internal inline fun KmFunction.isTopLevelDeprecatedFunction(isTopLevel: Boolean) =
     isTopLevel && annotations.any { it.className == DEPRECATED_ANNOTATION_FULL_NAME }
 

@@ -50,3 +50,6 @@ fun main(x: Continuation<String>) {
         K3().foo(8, x)
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionalType, integerLiteral, interfaceDeclaration,
+javaFunction, javaType, lambdaLiteral, nullableType, override, stringLiteral, suspend */

@@ -7,13 +7,13 @@ package org.jetbrains.kotlin.objcexport.tests
 
 import org.jetbrains.kotlin.analysis.api.analyze
 import org.jetbrains.kotlin.builtins.StandardNames
+import org.jetbrains.kotlin.export.test.InlineSourceCodeAnalysis
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.objcexport.getObjCReceiverType
-import org.jetbrains.kotlin.objcexport.testUtils.InlineSourceCodeAnalysis
-import org.jetbrains.kotlin.objcexport.testUtils.getClassOrFail
-import org.jetbrains.kotlin.objcexport.testUtils.getFunctionOrFail
-import org.jetbrains.kotlin.objcexport.testUtils.getPropertyOrFail
+import org.jetbrains.kotlin.export.test.getClassOrFail
+import org.jetbrains.kotlin.export.test.getFunctionOrFail
+import org.jetbrains.kotlin.export.test.getPropertyOrFail
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 

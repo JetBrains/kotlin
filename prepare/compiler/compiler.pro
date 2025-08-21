@@ -350,8 +350,9 @@
 -keepclassmembers class com.intellij.openapi.application.Application {
     void addApplicationListener(com.intellij.openapi.application.ApplicationListener, com.intellij.openapi.Disposable);
 }
--keepclassmembers class com.intellij.openapi.extensions.ExtensionPointName {
+-keep class com.intellij.openapi.extensions.ExtensionPointName {
     java.util.List getExtensionList(com.intellij.openapi.extensions.AreaInstance);
+    **[] getExtensions();
 }
 -keepclassmembers class kotlinx.collections.immutable.ExtensionsKt {
     kotlinx.collections.immutable.PersistentMap toPersistentHashMap(java.util.Map);
@@ -378,6 +379,22 @@
 -keepclassmembers class com.intellij.util.indexing.FileContentImpl {
     public static com.intellij.util.indexing.FileContent createByFile(com.intellij.openapi.vfs.VirtualFile);
 }
+-keep class io.opentelemetry.api.GlobalOpenTelemetry {
+    public *;
+}
+-keep class io.opentelemetry.api.OpenTelemetry {
+    public *;
+}
+-keep class io.opentelemetry.api.metrics.LongCounter {
+    public *;
+}
+-keep class io.opentelemetry.api.metrics.LongCounterBuilder {
+    public *;
+}
+-keep class io.opentelemetry.api.metrics.Meter {
+    public *;
+}
+
 # Uses a ClassLoader method from JDK 9+
 -dontwarn org.jetbrains.kotlin.buildtools.internal.ClassLoaderUtilsKt
 

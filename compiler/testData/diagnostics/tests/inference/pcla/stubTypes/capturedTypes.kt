@@ -45,3 +45,6 @@ fun main() {
         ""
     }
 }
+
+/* GENERATED_FIR_TAGS: asExpression, classDeclaration, classReference, functionDeclaration, functionalType, inProjection,
+interfaceDeclaration, lambdaLiteral, nullableType, outProjection, stringLiteral, typeParameter, typeWithExtension */

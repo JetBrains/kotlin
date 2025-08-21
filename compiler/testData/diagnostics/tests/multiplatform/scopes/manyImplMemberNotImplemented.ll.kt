@@ -35,8 +35,8 @@ actual interface I1 {
     fun f() {}
 }
 
-actual open <!CANNOT_INFER_VISIBILITY, MANY_IMPL_MEMBER_NOT_IMPLEMENTED!>class Expect1_1<!> : C1(), I1
-actual open <!CANNOT_INFER_VISIBILITY, MANY_IMPL_MEMBER_NOT_IMPLEMENTED!>class Expect1_2<!> : I1, C1()
+actual open <!MANY_IMPL_MEMBER_NOT_IMPLEMENTED!>class Expect1_1<!> : C1(), I1
+actual open <!MANY_IMPL_MEMBER_NOT_IMPLEMENTED!>class Expect1_2<!> : I1, C1()
 
 
 actual abstract class C2 actual constructor() {
@@ -49,3 +49,5 @@ actual interface I2 {
 
 actual open class Expect2_1 : C2(), I2
 actual open class Expect2_2 : I2, C2()
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, functionDeclaration, interfaceDeclaration, primaryConstructor */

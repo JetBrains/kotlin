@@ -11,3 +11,5 @@ public class A {
 import aa.A
 
 fun foo(a: A) = a.f()
+
+/* GENERATED_FIR_TAGS: functionDeclaration, javaFunction, javaType */

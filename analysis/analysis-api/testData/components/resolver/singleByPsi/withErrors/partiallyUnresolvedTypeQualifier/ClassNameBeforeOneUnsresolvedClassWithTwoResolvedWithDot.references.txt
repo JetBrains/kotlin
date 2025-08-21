@@ -1,3 +1,0 @@
-KtNameReferenceExpression(53,56): 'Foo'
-  KtSimpleNameReference:
-    (in ROOT) class Foo

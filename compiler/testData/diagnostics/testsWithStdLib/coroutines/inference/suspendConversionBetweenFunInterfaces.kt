@@ -21,3 +21,6 @@ suspend fun <T> Flow<T>.foo(
     collect(function)
     collect(funInterface)
 }
+
+/* GENERATED_FIR_TAGS: funInterface, funWithExtensionReceiver, functionDeclaration, functionalType, in,
+interfaceDeclaration, nullableType, operator, out, override, samConversion, suspend, typeParameter */

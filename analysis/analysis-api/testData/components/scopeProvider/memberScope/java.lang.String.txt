@@ -59,6 +59,7 @@ KaNamedFunctionSymbol:
   annotations: []
   callableId: java/lang/String.hash32
   compilerVisibility: PackageVisibility
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: false
@@ -136,13 +137,12 @@ KaSyntheticJavaPropertySymbol:
     callableId: java/lang/String.length
     compilerVisibility: Public
     contextReceivers: []
-    hasBody: false
     hasStableParameterNames: true
     isActual: false
-    isDefault: false
     isExpect: false
     isExtension: false
     isInline: false
+    isNotDefault: true
     isOverride: false
     location: PROPERTY
     modality: OPEN
@@ -206,6 +206,7 @@ KaNamedFunctionSymbol:
   annotations: []
   callableId: java/lang/String.isEmpty
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: false
@@ -247,6 +248,7 @@ KaNamedFunctionSymbol:
   annotations: []
   callableId: java/lang/String.codePointAt
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: false
@@ -318,6 +320,7 @@ KaNamedFunctionSymbol:
   annotations: []
   callableId: java/lang/String.codePointBefore
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: false
@@ -389,6 +392,7 @@ KaNamedFunctionSymbol:
   annotations: []
   callableId: java/lang/String.codePointCount
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: false
@@ -489,6 +493,7 @@ KaNamedFunctionSymbol:
   annotations: []
   callableId: java/lang/String.offsetByCodePoints
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: false
@@ -589,6 +594,7 @@ KaNamedFunctionSymbol:
   annotations: []
   callableId: java/lang/String.getChars
   compilerVisibility: PackageVisibility
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: false
@@ -688,6 +694,7 @@ KaNamedFunctionSymbol:
   annotations: []
   callableId: java/lang/String.getChars
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: false
@@ -848,6 +855,7 @@ KaNamedFunctionSymbol:
   ]
   callableId: java/lang/String.getBytes
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: false
@@ -1005,6 +1013,7 @@ KaNamedFunctionSymbol:
   annotations: []
   callableId: java/lang/String.getBytes
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: false
@@ -1074,6 +1083,7 @@ KaNamedFunctionSymbol:
   annotations: []
   callableId: java/lang/String.getBytes
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: false
@@ -1143,6 +1153,7 @@ KaNamedFunctionSymbol:
   annotations: []
   callableId: java/lang/String.getBytes
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: false
@@ -1183,6 +1194,7 @@ KaNamedFunctionSymbol:
   annotations: []
   callableId: java/lang/String.equals
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: false
@@ -1254,6 +1266,7 @@ KaNamedFunctionSymbol:
   annotations: []
   callableId: java/lang/String.contentEquals
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: false
@@ -1324,6 +1337,7 @@ KaNamedFunctionSymbol:
   annotations: []
   callableId: java/lang/String.contentEquals
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: false
@@ -1394,6 +1408,7 @@ KaNamedFunctionSymbol:
   annotations: []
   callableId: java/lang/String.equalsIgnoreCase
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: false
@@ -1464,6 +1479,7 @@ KaNamedFunctionSymbol:
   annotations: []
   callableId: java/lang/String.compareTo
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: false
@@ -1534,6 +1550,7 @@ KaNamedFunctionSymbol:
   annotations: []
   callableId: java/lang/String.compareToIgnoreCase
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: false
@@ -1604,6 +1621,7 @@ KaNamedFunctionSymbol:
   annotations: []
   callableId: java/lang/String.regionMatches
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: false
@@ -1761,6 +1779,7 @@ KaNamedFunctionSymbol:
   annotations: []
   callableId: java/lang/String.regionMatches
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: false
@@ -1947,6 +1966,7 @@ KaNamedFunctionSymbol:
   annotations: []
   callableId: java/lang/String.startsWith
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: false
@@ -2046,6 +2066,7 @@ KaNamedFunctionSymbol:
   annotations: []
   callableId: java/lang/String.startsWith
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: false
@@ -2116,6 +2137,7 @@ KaNamedFunctionSymbol:
   annotations: []
   callableId: java/lang/String.endsWith
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: false
@@ -2186,6 +2208,7 @@ KaNamedFunctionSymbol:
   annotations: []
   callableId: java/lang/String.hashCode
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: false
@@ -2227,6 +2250,7 @@ KaNamedFunctionSymbol:
   annotations: []
   callableId: java/lang/String.indexOf
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: false
@@ -2298,6 +2322,7 @@ KaNamedFunctionSymbol:
   annotations: []
   callableId: java/lang/String.indexOf
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: false
@@ -2398,6 +2423,7 @@ KaNamedFunctionSymbol:
   annotations: []
   callableId: java/lang/String.indexOf
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: false
@@ -2468,6 +2494,7 @@ KaNamedFunctionSymbol:
   annotations: []
   callableId: java/lang/String.indexOf
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: false
@@ -2567,6 +2594,7 @@ KaNamedFunctionSymbol:
   annotations: []
   callableId: java/lang/String.indexOfSupplementary
   compilerVisibility: Private
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: false
@@ -2667,6 +2695,7 @@ KaNamedFunctionSymbol:
   annotations: []
   callableId: java/lang/String.lastIndexOf
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: false
@@ -2738,6 +2767,7 @@ KaNamedFunctionSymbol:
   annotations: []
   callableId: java/lang/String.lastIndexOf
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: false
@@ -2838,6 +2868,7 @@ KaNamedFunctionSymbol:
   annotations: []
   callableId: java/lang/String.lastIndexOf
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: false
@@ -2908,6 +2939,7 @@ KaNamedFunctionSymbol:
   annotations: []
   callableId: java/lang/String.lastIndexOf
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: false
@@ -3007,6 +3039,7 @@ KaNamedFunctionSymbol:
   annotations: []
   callableId: java/lang/String.lastIndexOfSupplementary
   compilerVisibility: Private
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: false
@@ -3107,6 +3140,7 @@ KaNamedFunctionSymbol:
   annotations: []
   callableId: java/lang/String.substring
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: false
@@ -3177,6 +3211,7 @@ KaNamedFunctionSymbol:
   annotations: []
   callableId: java/lang/String.substring
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: false
@@ -3276,6 +3311,7 @@ KaNamedFunctionSymbol:
   annotations: []
   callableId: java/lang/String.subSequence
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: false
@@ -3376,6 +3412,7 @@ KaNamedFunctionSymbol:
   annotations: []
   callableId: java/lang/String.concat
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: false
@@ -3445,6 +3482,7 @@ KaNamedFunctionSymbol:
   annotations: []
   callableId: java/lang/String.replace
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: false
@@ -3544,6 +3582,7 @@ KaNamedFunctionSymbol:
   annotations: []
   callableId: java/lang/String.replace
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: false
@@ -3641,6 +3680,7 @@ KaNamedFunctionSymbol:
   annotations: []
   callableId: java/lang/String.matches
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: false
@@ -3711,6 +3751,7 @@ KaNamedFunctionSymbol:
   annotations: []
   callableId: java/lang/String.contains
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: false
@@ -3781,6 +3822,7 @@ KaNamedFunctionSymbol:
   annotations: []
   callableId: java/lang/String.replaceFirst
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: false
@@ -3878,6 +3920,7 @@ KaNamedFunctionSymbol:
   annotations: []
   callableId: java/lang/String.replaceAll
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: false
@@ -3975,6 +4018,7 @@ KaNamedFunctionSymbol:
   annotations: []
   callableId: java/lang/String.split
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: false
@@ -4073,6 +4117,7 @@ KaNamedFunctionSymbol:
   annotations: []
   callableId: java/lang/String.split
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: false
@@ -4142,6 +4187,7 @@ KaNamedFunctionSymbol:
   annotations: []
   callableId: java/lang/String.toLowerCase
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: false
@@ -4211,6 +4257,7 @@ KaNamedFunctionSymbol:
   annotations: []
   callableId: java/lang/String.toLowerCase
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: false
@@ -4251,6 +4298,7 @@ KaNamedFunctionSymbol:
   annotations: []
   callableId: java/lang/String.toUpperCase
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: false
@@ -4320,6 +4368,7 @@ KaNamedFunctionSymbol:
   annotations: []
   callableId: java/lang/String.toUpperCase
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: false
@@ -4360,6 +4409,7 @@ KaNamedFunctionSymbol:
   annotations: []
   callableId: java/lang/String.trim
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: false
@@ -4400,6 +4450,7 @@ KaNamedFunctionSymbol:
   annotations: []
   callableId: java/lang/String.toString
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: false
@@ -4441,6 +4492,7 @@ KaNamedFunctionSymbol:
   annotations: []
   callableId: java/lang/String.toCharArray
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: false
@@ -4481,6 +4533,7 @@ KaNamedFunctionSymbol:
   annotations: []
   callableId: java/lang/String.intern
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: false
@@ -4521,6 +4574,7 @@ KaNamedFunctionSymbol:
   annotations: []
   callableId: java/lang/String.get
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: false

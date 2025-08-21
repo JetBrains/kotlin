@@ -26,6 +26,7 @@ object JsDeclarationCheckers : DeclarationCheckers() {
             FirJsNameChecker,
             FirJsExportAnnotationChecker,
             FirJsExportDeclarationChecker,
+            FirJsExportedActualMatchExpectChecker,
             FirJsBuiltinNameClashChecker,
             FirJsNameCharsChecker,
             FirJsStaticChecker

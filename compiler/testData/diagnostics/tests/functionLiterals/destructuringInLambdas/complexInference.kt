@@ -46,3 +46,7 @@ fun bar(aInstance: A, bInstance: B) {
         d checkType { _<Short>() }
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, data, funWithExtensionReceiver, functionDeclaration, functionalType, infix,
+lambdaLiteral, localProperty, nullableType, primaryConstructor, propertyDeclaration, stringLiteral, typeParameter,
+typeWithExtension */

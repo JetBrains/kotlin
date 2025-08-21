@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.dfa.*
-import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.utils.DFS
 import org.jetbrains.kotlin.utils.Printer
@@ -154,8 +153,21 @@ private class ControlFlowGraphRenderer(
     }
 
     private fun PersistentFlow.renderHtmlLike(): String {
-        return buildString {
-            for ((variable, variableName) in allVariablesForDebug.map { it to it.renderHtmlLike() }.sortedBy { it.second }) {
+        // Flow entities come from unordered maps, so, to ensure a consistent output, we need to sort them.
+        // Even though there might be several items with the same (often synthetic) name, the text may still differ.
+        class OutputEntity(val name: String, val text: String) : Comparable<OutputEntity> {
+            override fun compareTo(other: OutputEntity): Int {
+                return compareValuesBy(this, other, { it.name }, { it.text })
+            }
+        }
+
+        val variables = allVariablesForDebug
+        val variableOutputs = ArrayList<OutputEntity>(variables.size)
+
+        for (variable in variables) {
+            val variableName = variable.renderHtmlLike()
+
+            val variableText = buildString {
                 append("<BR/>")
                 append("<B>").append(variableName).append("</B>")
                 if (variable is RealVariable) {
@@ -164,19 +176,38 @@ private class ControlFlowGraphRenderer(
                         append(" = ").append(aliased.renderHtmlLike())
                     } else {
                         getTypeStatement(variable)?.let {
-                            append(": ").append(it.exactType.renderHtmlLike())
+                            append(": ").append(it.renderTypeHtmlLike())
                         }
                     }
                 } else if (variable is SyntheticVariable) {
                     append(" = '").append(variable.fir.render().renderHtmlLike()).append("'")
                 }
-                getImplications(variable)?.forEach {
-                    append("<BR/> ").append(it.condition.operation.renderHtmlLike())
-                    append(" =&gt; ").append(it.effect.renderHtmlLike())
+
+                val implications = getImplications(variable).orEmpty()
+                val implicationOutputs = ArrayList<OutputEntity>(implications.size)
+
+                for (implication in implications) {
+                    val implicationName = implication.effect.variable.renderHtmlLike()
+
+                    val implicationText = buildString {
+                        append("<BR/> ").append(implication.condition.operation.renderHtmlLike())
+                        append(" =&gt; ").append(implication.effect.renderHtmlLike())
+                    }
+
+                    implicationOutputs.add(OutputEntity(implicationName, implicationText))
                 }
+
+                implicationOutputs.sort()
+                implicationOutputs.joinTo(this, separator = "") { it.text }
+
                 append("<BR/>")
             }
+
+            variableOutputs.add(OutputEntity(variableName, variableText))
         }
+
+        variableOutputs.sort()
+        return variableOutputs.joinToString(separator = "") { it.text }
     }
 
     private val firElementIndices = mutableMapOf<FirElement, Int>()
@@ -188,11 +219,11 @@ private class ControlFlowGraphRenderer(
 
     private fun Statement.renderHtmlLike(): String = when (this) {
         is OperationStatement -> "${variable.renderHtmlLike()} ${operation.renderHtmlLike()}"
-        is TypeStatement -> "${variable.renderHtmlLike()}: ${exactType.renderHtmlLike()}"
+        is TypeStatement -> "${variable.renderHtmlLike()}: ${renderTypeHtmlLike()}"
     }
 
-    private fun Set<ConeKotlinType>.renderHtmlLike(): String =
-        joinToString(separator = " & ").renderHtmlLike()
+    private fun TypeStatement.renderTypeHtmlLike(): String =
+        renderType().renderHtmlLike()
 
     /**
      * Sanitize string for rendering with HTML-like syntax.

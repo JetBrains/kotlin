@@ -14,3 +14,6 @@ class A {
         return y
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, lambdaLiteral, localProperty, propertyDeclaration,
+stringLiteral, typeConstraint, typeParameter */

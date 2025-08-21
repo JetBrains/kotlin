@@ -28,11 +28,11 @@
 #include "Utils.hpp"
 
 typedef enum {
-  // Must match to permTag() in Kotlin.
-  OBJECT_TAG_PERMANENT_CONTAINER = 1 << 0,
-  OBJECT_TAG_NONTRIVIAL_CONTAINER = 1 << 1,
-  // Keep in sync with immTypeInfoMask in Kotlin.
-  OBJECT_TAG_MASK = (1 << 2) - 1
+    OBJECT_TAG_HEAP = 0,
+    OBJECT_TAG_PERMANENT = 1, // Must match to permanentTag() in Kotlin.
+    OBJECT_TAG_STACK = 3,
+    // Keep in sync with immTypeInfoMask in Kotlin.
+    OBJECT_TAG_MASK = (1 << 2) - 1
 } ObjectTag;
 
 struct ArrayHeader;
@@ -96,10 +96,8 @@ struct ObjHeader {
   void* CasAssociatedObject(void* expectedObj, void* obj);
 #endif
 
-  inline bool local() const {
-    unsigned bits = getPointerBits(typeInfoOrMetaRelaxed(), OBJECT_TAG_MASK);
-    return (bits & (OBJECT_TAG_PERMANENT_CONTAINER | OBJECT_TAG_NONTRIVIAL_CONTAINER)) ==
-        (OBJECT_TAG_PERMANENT_CONTAINER | OBJECT_TAG_NONTRIVIAL_CONTAINER);
+  inline bool stack() const {
+    return getPointerBits(typeInfoOrMetaRelaxed(), OBJECT_TAG_MASK) == OBJECT_TAG_STACK;
   }
 
   // Unsafe cast to ArrayHeader. Use carefully!
@@ -108,10 +106,12 @@ struct ObjHeader {
   const ArrayHeader* array() const { return reinterpret_cast<const ArrayHeader*>(this); }
 
   inline bool permanent() const {
-    return hasPointerBits(typeInfoOrMetaRelaxed(), OBJECT_TAG_PERMANENT_CONTAINER);
+    return getPointerBits(typeInfoOrMetaRelaxed(), OBJECT_TAG_MASK) == OBJECT_TAG_PERMANENT;
   }
 
-  inline bool heap() const { return getPointerBits(typeInfoOrMetaRelaxed(), OBJECT_TAG_MASK) == 0; }
+  inline bool heap() const {
+    return getPointerBits(typeInfoOrMetaRelaxed(), OBJECT_TAG_MASK) == OBJECT_TAG_HEAP;
+  }
 
   static MetaObjHeader* createMetaObject(ObjHeader* object);
   static void destroyMetaObject(ObjHeader* object);
@@ -139,10 +139,6 @@ ALWAYS_INLINE inline bool isNullOrMarker(const ObjHeader* obj) noexcept {
 }
 
 struct FrameOverlay;
-
-namespace kotlin::mm {
-struct RawSpecialRef;
-} // namespace kotlin::mm
 
 #ifdef __cplusplus
 extern "C" {
@@ -241,14 +237,6 @@ void SetCurrentFrame(ObjHeader** start) RUNTIME_NOTHROW;
 FrameOverlay* getCurrentFrame() RUNTIME_NOTHROW;
 void CheckCurrentFrame(ObjHeader** frame) RUNTIME_NOTHROW;
 
-// Creates a stable pointer out of the object.
-void* CreateStablePointer(ObjHeader* obj) RUNTIME_NOTHROW;
-// Disposes a stable pointer to the object.
-void DisposeStablePointer(void* pointer) RUNTIME_NOTHROW;
-// Translate stable pointer to object reference.
-OBJ_GETTER(DerefStablePointer, void*) RUNTIME_NOTHROW;
-// Move stable pointer ownership.
-OBJ_GETTER(AdoptStablePointer, void*) RUNTIME_NOTHROW;
 // Add TLS object storage, called by the generated code.
 void AddTLSRecord(MemoryState* memory, void** key, int size) RUNTIME_NOTHROW;
 // Allocate storage for TLS. `AddTLSRecord` cannot be called after this.

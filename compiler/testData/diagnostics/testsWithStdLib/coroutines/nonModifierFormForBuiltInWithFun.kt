@@ -1,6 +1,7 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 // SKIP_TXT
+// LANGUAGE: -ParseLambdaWithSuspendModifier
 
 infix fun Int.suspend(c: () -> Unit) { c() }
 
@@ -29,3 +30,6 @@ fun main(suspend: WLambdaInvoke) {
 class WLambdaInvoke {
     operator fun Int.invoke(l: () -> Unit) {}
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, anonymousFunction, classDeclaration, funWithExtensionReceiver,
+functionDeclaration, functionalType, infix, integerLiteral, lambdaLiteral, operator */

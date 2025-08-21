@@ -30,9 +30,21 @@ public class ReplViaApiEvaluationTestGenerated extends AbstractReplViaApiEvaluat
   }
 
   @Test
+  @TestMetadata("class_inheritor_captures_property.repl.kts")
+  public void testClass_inheritor_captures_property_repl() {
+    runTest("plugins/scripting/scripting-tests/testData/codegen/repl/class_inheritor_captures_property.repl.kts");
+  }
+
+  @Test
   @TestMetadata("class_mutates_top_level_properties.repl.kts")
   public void testClass_mutates_top_level_properties_repl() {
     runTest("plugins/scripting/scripting-tests/testData/codegen/repl/class_mutates_top_level_properties.repl.kts");
+  }
+
+  @Test
+  @TestMetadata("class_property_initializer_depends_on_expected_type.repl.kts")
+  public void testClass_property_initializer_depends_on_expected_type_repl() {
+    runTest("plugins/scripting/scripting-tests/testData/codegen/repl/class_property_initializer_depends_on_expected_type.repl.kts");
   }
 
   @Test
@@ -42,9 +54,51 @@ public class ReplViaApiEvaluationTestGenerated extends AbstractReplViaApiEvaluat
   }
 
   @Test
+  @TestMetadata("class_with_companion.repl.kts")
+  public void testClass_with_companion_repl() {
+    runTest("plugins/scripting/scripting-tests/testData/codegen/repl/class_with_companion.repl.kts");
+  }
+
+  @Test
+  @TestMetadata("custom_delegate.repl.kts")
+  public void testCustom_delegate_repl() {
+    runTest("plugins/scripting/scripting-tests/testData/codegen/repl/custom_delegate.repl.kts");
+  }
+
+  @Test
+  @TestMetadata("delegated_extension_property_2.repl.kts")
+  public void testDelegated_extension_property_2_repl() {
+    runTest("plugins/scripting/scripting-tests/testData/codegen/repl/delegated_extension_property_2.repl.kts");
+  }
+
+  @Test
+  @TestMetadata("delegated_extension_property.repl.kts")
+  public void testDelegated_extension_property_repl() {
+    runTest("plugins/scripting/scripting-tests/testData/codegen/repl/delegated_extension_property.repl.kts");
+  }
+
+  @Test
+  @TestMetadata("extension_function.repl.kts")
+  public void testExtension_function_repl() {
+    runTest("plugins/scripting/scripting-tests/testData/codegen/repl/extension_function.repl.kts");
+  }
+
+  @Test
   @TestMetadata("function_calls_class.repl.kts")
   public void testFunction_calls_class_repl() {
     runTest("plugins/scripting/scripting-tests/testData/codegen/repl/function_calls_class.repl.kts");
+  }
+
+  @Test
+  @TestMetadata("function_returns_anonymous_object.repl.kts")
+  public void testFunction_returns_anonymous_object_repl() {
+    runTest("plugins/scripting/scripting-tests/testData/codegen/repl/function_returns_anonymous_object.repl.kts");
+  }
+
+  @Test
+  @TestMetadata("function_returns_class.repl.kts")
+  public void testFunction_returns_class_repl() {
+    runTest("plugins/scripting/scripting-tests/testData/codegen/repl/function_returns_class.repl.kts");
   }
 
   @Test
@@ -60,6 +114,12 @@ public class ReplViaApiEvaluationTestGenerated extends AbstractReplViaApiEvaluat
   }
 
   @Test
+  @TestMetadata("lazy_property.repl.kts")
+  public void testLazy_property_repl() {
+    runTest("plugins/scripting/scripting-tests/testData/codegen/repl/lazy_property.repl.kts");
+  }
+
+  @Test
   @TestMetadata("mutating_property.repl.kts")
   public void testMutating_property_repl() {
     runTest("plugins/scripting/scripting-tests/testData/codegen/repl/mutating_property.repl.kts");
@@ -72,15 +132,33 @@ public class ReplViaApiEvaluationTestGenerated extends AbstractReplViaApiEvaluat
   }
 
   @Test
-  @TestMetadata("property_with_custom_accessors_different_snippet.repl.kts")
-  public void testProperty_with_custom_accessors_different_snippet_repl() {
-    runTest("plugins/scripting/scripting-tests/testData/codegen/repl/property_with_custom_accessors_different_snippet.repl.kts");
+  @TestMetadata("property_uses_anonymous_object.repl.kts")
+  public void testProperty_uses_anonymous_object_repl() {
+    runTest("plugins/scripting/scripting-tests/testData/codegen/repl/property_uses_anonymous_object.repl.kts");
   }
 
   @Test
-  @TestMetadata("property_with_custom_accessors_same_snippet.repl.kts")
-  public void testProperty_with_custom_accessors_same_snippet_repl() {
-    runTest("plugins/scripting/scripting-tests/testData/codegen/repl/property_with_custom_accessors_same_snippet.repl.kts");
+  @TestMetadata("property_with_lambda.repl.kts")
+  public void testProperty_with_lambda_repl() {
+    runTest("plugins/scripting/scripting-tests/testData/codegen/repl/property_with_lambda.repl.kts");
+  }
+
+  @Test
+  @TestMetadata("resolve_annotations.repl.kts")
+  public void testResolve_annotations_repl() {
+    runTest("plugins/scripting/scripting-tests/testData/codegen/repl/resolve_annotations.repl.kts");
+  }
+
+  @Test
+  @TestMetadata("sealed_hierarchies.repl.kts")
+  public void testSealed_hierarchies_repl() {
+    runTest("plugins/scripting/scripting-tests/testData/codegen/repl/sealed_hierarchies.repl.kts");
+  }
+
+  @Test
+  @TestMetadata("simple_data_class.repl.kts")
+  public void testSimple_data_class_repl() {
+    runTest("plugins/scripting/scripting-tests/testData/codegen/repl/simple_data_class.repl.kts");
   }
 
   @Test
@@ -105,5 +183,11 @@ public class ReplViaApiEvaluationTestGenerated extends AbstractReplViaApiEvaluat
   @TestMetadata("single_snippet.repl.kts")
   public void testSingle_snippet_repl() {
     runTest("plugins/scripting/scripting-tests/testData/codegen/repl/single_snippet.repl.kts");
+  }
+
+  @Test
+  @TestMetadata("type_aliases.repl.kts")
+  public void testType_aliases_repl() {
+    runTest("plugins/scripting/scripting-tests/testData/codegen/repl/type_aliases.repl.kts");
   }
 }

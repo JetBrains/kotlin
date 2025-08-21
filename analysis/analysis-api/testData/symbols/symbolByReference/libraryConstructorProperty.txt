@@ -20,25 +20,29 @@ KaKotlinPropertySymbol:
       typeArguments: []
       type: kotlin/String
     visibility: PRIVATE
+    getDispatchReceiver(): KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: one/SimpleClass
     getContainingFileSymbol: null
     getContainingJvmClassName: one.SimpleClass
     getContainingModule: KaLibraryModule "Library lib"
     deprecationStatus: null
   callableId: one/SimpleClass.constructorProperty
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
     annotations: []
     callableId: null
     compilerVisibility: Public
     contextReceivers: []
-    hasBody: false
     hasStableParameterNames: true
     isActual: false
-    isDefault: true
     isExpect: false
     isExtension: false
     isInline: false
+    isNotDefault: false
     isOverride: false
     location: PROPERTY
     modality: FINAL
@@ -97,3 +101,4 @@ KaKotlinPropertySymbol:
   javaGetterName: getConstructorProperty
   javaSetterName: null
   setterDeprecationStatus: null
+  isInline: false

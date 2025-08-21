@@ -21,3 +21,5 @@ fun test(a: A<Runnable>, b: B, c: C<Runnable>) {
     C<Runnable>().f { }
     C.g<Runnable> <!ARGUMENT_TYPE_MISMATCH!>{ }<!>
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaFunction, javaType, lambdaLiteral, samConversion */

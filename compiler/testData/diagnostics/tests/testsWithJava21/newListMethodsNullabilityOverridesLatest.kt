@@ -67,3 +67,5 @@ abstract class A8 : ArrayList<String>() {
     <!WRONG_NULLABILITY_FOR_JAVA_OVERRIDE!>override<!> fun removeFirst(): String? = super.removeFirst()
     <!WRONG_NULLABILITY_FOR_JAVA_OVERRIDE!>override<!> fun removeLast(): String? = super.removeLast()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, nullableType, override, superExpression, typeParameter */

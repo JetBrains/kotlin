@@ -41,3 +41,5 @@ fun test(j: J) {
     j.<!DEPRECATION!>kotlinWarning<!>()
     j.<!DEPRECATION_ERROR!>kotlinError<!>()
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, javaFunction, javaType */

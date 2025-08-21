@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.testbase
 
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser
+import java.io.File
 import java.nio.file.Files
 import java.nio.file.Path
 import java.util.zip.ZipFile
@@ -17,10 +18,19 @@ import kotlin.test.*
  * Asserts file under [file] path exists and is a regular file.
  */
 fun assertFileExists(
+    file: File,
+    message: String? = null,
+) = assertFileExists(
+    file.toPath(),
+    message
+)
+
+fun assertFileExists(
     file: Path,
+    message: String? = null,
 ) {
     assert(file.exists()) {
-        buildString {
+        message ?: buildString {
             appendLine("File '${file}' does not exist!")
             if (file.parent.exists()) {
                 val parentDirEntries = file.parent.listDirectoryEntries()
@@ -212,9 +222,10 @@ fun GradleProject.assertDirectoryInProjectDoesNotExist(
 
 fun assertDirectoryDoesNotExist(
     dirPath: Path,
+    message: String? = null,
 ) {
     assert(!Files.exists(dirPath)) {
-        buildString {
+        message ?: buildString {
             append("Directory $dirPath is expected to not exist. ")
             if (Files.isDirectory(dirPath)) {
                 appendLine("The directory contents: ")

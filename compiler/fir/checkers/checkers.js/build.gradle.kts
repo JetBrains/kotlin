@@ -19,7 +19,7 @@ dependencies {
      *   diagnostics framework from FE 1.0
      */
     implementation(project(":compiler:frontend"))
-    implementation(project(":compiler:psi"))
+    implementation(project(":compiler:psi:psi-api"))
 
     compileOnly(intellijCore())
 }

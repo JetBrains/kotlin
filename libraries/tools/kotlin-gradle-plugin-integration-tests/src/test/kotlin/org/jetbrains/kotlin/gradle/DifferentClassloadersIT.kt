@@ -21,7 +21,12 @@ class DifferentClassloadersIT : KGPBaseTest() {
     @DisplayName("Different classloaders message is not displayed")
     @GradleTest
     fun testDifferentClassloadersNotDisplayed(gradleVersion: GradleVersion) {
-        project("differentClassloaders", gradleVersion) {
+        project(
+            "differentClassloaders",
+            gradleVersion,
+            // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
+            buildOptions = defaultBuildOptions.disableIsolatedProjects(),
+        ) {
             build("publish", "-PmppProjectDependency=true") {
                 assertOutputDoesNotContain(MULTIPLE_KOTLIN_PLUGINS_LOADED_WARNING)
                 assertOutputDoesNotContain(MULTIPLE_KOTLIN_PLUGINS_SPECIFIC_PROJECTS_WARNING)
@@ -32,7 +37,12 @@ class DifferentClassloadersIT : KGPBaseTest() {
     @DisplayName("Different classloader message is displayed on different plugin versions")
     @GradleTest
     fun testDetectingDifferentClassLoaders(gradleVersion: GradleVersion) {
-        project("differentClassloaders", gradleVersion) {
+        project(
+            "differentClassloaders",
+            gradleVersion,
+            // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
+            buildOptions = defaultBuildOptions.disableIsolatedProjects(),
+        ) {
             setupDifferentClassloadersProject()
 
             // after enabling isolated projects support by default we should not fail the build
@@ -45,7 +55,12 @@ class DifferentClassloadersIT : KGPBaseTest() {
     @DisplayName("KT-50598: Different classloaders message can be disabled")
     @GradleTest
     fun differentClassloadersWarningCanBeDisabled(gradleVersion: GradleVersion) {
-        project("differentClassloaders", gradleVersion) {
+        project(
+            "differentClassloaders",
+            gradleVersion,
+            // CC should be explicitly disabled because it hides the warning on subsequent builds
+            buildOptions = defaultBuildOptions.copy(configurationCache = BuildOptions.ConfigurationCacheValue.DISABLED),
+        ) {
             setupDifferentClassloadersProject()
 
             fun checkThatWarningIsShown() {

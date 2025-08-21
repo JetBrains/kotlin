@@ -7,14 +7,14 @@ package org.jetbrains.kotlin.gradle
 
 import org.gradle.api.JavaVersion
 import org.gradle.api.logging.LogLevel
-import org.gradle.internal.jvm.JavaInfo
-import org.gradle.internal.jvm.Jvm
+import org.gradle.api.tasks.compile.JavaCompile
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.kotlin.gradle.tasks.UsesKotlinJavaToolchain
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.gradle.util.replaceText
 import org.junit.jupiter.api.DisplayName
-import java.io.File
 import kotlin.io.path.appendText
 
 @DisplayName("Kotlin Java Toolchain support")
@@ -29,7 +29,7 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
             gradleVersion = gradleVersion
         ) {
             build("assemble") {
-                assertJdkHomeIsUsingJdk(getUserJdk().javaHomeRealPath)
+                assertJdkHomeIsUsingJdk(getUserJdk().jdkRealPath)
             }
         }
     }
@@ -45,12 +45,12 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
             setJavaCompilationCompatibility(JavaVersion.VERSION_11)
 
             useJdkToCompile(
-                getJdk11Path(),
+                jdk11Info.jdkPath,
                 JavaVersion.VERSION_11
             )
 
             build("assemble") {
-                assertJdkHomeIsUsingJdk(getJdk11().javaHomeRealPath)
+                assertJdkHomeIsUsingJdk(jdk11Info.jdkRealPath)
             }
         }
     }
@@ -97,7 +97,7 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
             gradleVersion = gradleVersion,
             projectPathAdditionalSuffix = "1/cache-test",
             buildOptions = defaultBuildOptions.copy(buildCacheEnabled = true),
-            buildJdk = getJdk17().javaHome!!
+            buildJdk = jdk17Info.javaHome
         ) {
             enableLocalBuildCache(buildCache)
             useToolchainExtension(11)
@@ -110,7 +110,7 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
             gradleVersion = gradleVersion,
             projectPathAdditionalSuffix = "2/cache-test",
             buildOptions = defaultBuildOptions.copy(buildCacheEnabled = true),
-            buildJdk = getJdk17().javaHome!!
+            buildJdk = jdk17Info.javaHome
         ) {
             enableLocalBuildCache(buildCache)
             useToolchainExtension(11)
@@ -295,13 +295,31 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
     }
 
     @JvmGradlePluginTests
-    @DisplayName("Toolchain should be correctly supported in multiplatform plugin jvm targets")
+    @DisplayName("Toolchain should be correctly supported in multiplatform plugin jvm with 'withJava()' targets")
+    @GradleTest
+    internal fun toolchainCorrectlySupportedInMPPluginWithJava(gradleVersion: GradleVersion) {
+        project(
+            projectName = "mppJvmWithJava".fullProjectName,
+            gradleVersion = gradleVersion
+        ) {
+            if (!isWithJavaSupported) buildGradle.replaceText("withJava()", "")
+            useToolchainToCompile(11)
+
+            build("assemble") {
+                assertJdkHomeIsUsingJdk(getToolchainExecPathFromLogs())
+            }
+        }
+    }
+
+    @JvmGradlePluginTests
+    @DisplayName("Toolchain should be correctly supported in multiplatform plugin jvm with 'withJava()' targets")
     @GradleTest
     internal fun toolchainCorrectlySupportedInMPPlugin(gradleVersion: GradleVersion) {
         project(
             projectName = "mppJvmWithJava".fullProjectName,
             gradleVersion = gradleVersion
         ) {
+            if (!isWithJavaSupported) buildGradle.replaceText("withJava()", "")
             useToolchainToCompile(11)
 
             build("assemble") {
@@ -320,7 +338,7 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
             buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)
         ) {
             useJdkToCompile(
-                getJdk11Path(),
+                jdk11Info.jdkPath,
                 JavaVersion.VERSION_11
             )
 
@@ -351,7 +369,7 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
             setJvmTarget("17")
 
             useJdkToCompile(
-                getJdk11Path(),
+                jdk11Info.jdkPath,
                 JavaVersion.VERSION_11
             )
 
@@ -429,7 +447,7 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
             )
 
             build("build") {
-                assertOutputContains("[KOTLIN] Kotlin compilation 'jdkHome' argument: ${getJdk11Path().replace("\\\\", "\\")}")
+                assertOutputContains("[KOTLIN] Kotlin compilation 'jdkHome' argument: ${jdk11Info.jdkPath.replace("\\\\", "\\")}")
             }
         }
     }
@@ -526,7 +544,7 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
         project(
             projectName = "simple".fullProjectName,
             gradleVersion = gradleVersion,
-            buildJdk = getJdk17().javaHome
+            buildJdk = jdk17Info.javaHome
         ) {
             useToolchainExtension(8)
 
@@ -543,7 +561,7 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
         project(
             projectName = "simple".fullProjectName,
             gradleVersion = gradleVersion,
-            buildJdk = getJdk11().javaHome
+            buildJdk = jdk11Info.javaHome
         ) {
             //language=properties
             gradleProperties.append(
@@ -614,7 +632,7 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
         project(
             projectName = "simple".fullProjectName,
             gradleVersion = gradleVersion,
-            buildJdk = getJdk17().javaHome
+            buildJdk = jdk17Info.javaHome
         ) {
             //language=Groovy
             buildGradle.append(
@@ -651,32 +669,18 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
             gradleVersion = gradleVersion,
             buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)
         ) {
-            //language=Groovy
-            subProject("lib").buildGradle.appendText(
-                """
-                |
-                |tasks.named("compileJava", JavaCompile) {
-                |    targetCompatibility = JavaVersion.VERSION_11
-                |    sourceCompatibility = JavaVersion.VERSION_11
-                |}
-                """.trimMargin()
-            )
-
-            //language=Groovy
-            buildGradle.appendText(
-                """
-                |
-                |allprojects {
-                |    tasks.withType(org.jetbrains.kotlin.gradle.tasks.UsesKotlinJavaToolchain.class)
-                |         .configureEach {
-                |              kotlinJavaToolchain.jdk.use(
-                |                  "${getJdk11Path()}",
-                |                  JavaVersion.VERSION_11
-                |              )
-                |         }
-                |}
-                """.trimMargin()
-            )
+            subProject("lib").buildScriptInjection {
+                project.tasks.named("compileJava", JavaCompile::class.java).configure { task ->
+                    task.targetCompatibility = JavaVersion.VERSION_11.toString()
+                    task.sourceCompatibility = JavaVersion.VERSION_11.toString()
+                }
+                project.tasks.withType(UsesKotlinJavaToolchain::class.java).configureEach { task ->
+                    task.kotlinJavaToolchain.jdk.use(
+                        jdk11Info.jdkPath,
+                        JavaVersion.VERSION_11
+                    )
+                }
+            }
 
             build(":lib:compileKotlin") {
                 assertOutputDoesNotContain("-jvm-target 17")
@@ -729,7 +733,8 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
         project(
             "android".fullProjectName,
             gradleVersion,
-            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion, logLevel = LogLevel.DEBUG),
+            buildOptions = defaultBuildOptions
+                .copy(androidVersion = agpVersion, logLevel = LogLevel.DEBUG),
             buildJdk = providedJdk.location
         ) {
             buildGradle.appendText(
@@ -759,19 +764,6 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
     private fun BuildResult.assertJdkHomeIsUsingJdk(
         javaexecPath: String
     ) = assertOutputContains("[KOTLIN] Kotlin compilation 'jdkHome' argument: $javaexecPath")
-
-    private fun getUserJdk(): JavaInfo = Jvm.forHome(File(System.getProperty("java.home")))
-    private fun getJdk11(): JavaInfo = Jvm.forHome(File(System.getProperty("jdk11Home")))
-    private fun getJdk17(): JavaInfo = Jvm.forHome(File(System.getProperty("jdk17Home")))
-    // replace required for windows paths so Groovy will not complain about unexpected char '\'
-    private fun getJdk11Path(): String = getJdk11().javaHome.absolutePath.replace("\\", "\\\\")
-    private fun getJdk17Path(): String = getJdk17().javaHome.absolutePath.replace("\\", "\\\\")
-    private val JavaInfo.javaHomeRealPath
-        get() = javaHome
-            .toPath()
-            .toRealPath()
-            .toAbsolutePath()
-            .toString()
 
     private val String.fullProjectName get() = "kotlin-java-toolchain/$this"
 

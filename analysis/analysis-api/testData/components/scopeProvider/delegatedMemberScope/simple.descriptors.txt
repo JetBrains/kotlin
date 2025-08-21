@@ -26,19 +26,19 @@ KaKotlinPropertySymbol:
     deprecationStatus: null
   callableId: /I.zoo
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
     annotations: []
     callableId: null
     compilerVisibility: Public
     contextReceivers: []
-    hasBody: false
     hasStableParameterNames: true
     isActual: false
-    isDefault: true
     isExpect: false
     isExtension: false
     isInline: false
+    isNotDefault: false
     isOverride: false
     location: PROPERTY
     modality: OPEN
@@ -64,7 +64,7 @@ KaKotlinPropertySymbol:
         type: kotlin/Int
       visibility: LOCAL
       getContainingFileSymbol: KaFileSymbol(simple.kt)
-      getContainingJvmClassName: null
+      getContainingJvmClassName: I
       getContainingModule: KaSourceModule "Sources of main"
       deprecationStatus: null
     returnType: KaUsualClassType:
@@ -121,7 +121,7 @@ KaKotlinPropertySymbol:
       type: kotlin/Int
     visibility: LOCAL
     getContainingFileSymbol: KaFileSymbol(simple.kt)
-    getContainingJvmClassName: null
+    getContainingJvmClassName: I
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
   returnType: KaUsualClassType:
@@ -133,13 +133,12 @@ KaKotlinPropertySymbol:
     callableId: null
     compilerVisibility: Public
     contextReceivers: []
-    hasBody: false
     hasStableParameterNames: true
     isActual: false
-    isDefault: true
     isExpect: false
     isExtension: false
     isInline: false
+    isNotDefault: false
     isOverride: false
     location: PROPERTY
     modality: OPEN
@@ -194,7 +193,7 @@ KaKotlinPropertySymbol:
         type: kotlin/Int
       visibility: LOCAL
       getContainingFileSymbol: KaFileSymbol(simple.kt)
-      getContainingJvmClassName: null
+      getContainingJvmClassName: I
       getContainingModule: KaSourceModule "Sources of main"
       deprecationStatus: null
     returnType: KaUsualClassType:
@@ -255,11 +254,13 @@ KaKotlinPropertySymbol:
   javaGetterName: getZoo
   javaSetterName: setZoo
   setterDeprecationStatus: null
+  isInline: false
 
 KaNamedFunctionSymbol:
   annotations: []
   callableId: /I.foo
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -301,6 +302,7 @@ KaNamedFunctionSymbol:
   annotations: []
   callableId: /I.smth
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -341,7 +343,7 @@ KaNamedFunctionSymbol:
       type: kotlin/Int
     visibility: LOCAL
     getContainingFileSymbol: KaFileSymbol(simple.kt)
-    getContainingJvmClassName: null
+    getContainingJvmClassName: I
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
   returnType: KaUsualClassType:
@@ -389,19 +391,19 @@ KaKotlinPropertySymbol:
     deprecationStatus: null
   callableId: /I.foo
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
     annotations: []
     callableId: null
     compilerVisibility: Public
     contextReceivers: []
-    hasBody: false
     hasStableParameterNames: true
     isActual: false
-    isDefault: true
     isExpect: false
     isExtension: false
     isInline: false
+    isNotDefault: false
     isOverride: false
     location: PROPERTY
     modality: OPEN
@@ -460,6 +462,7 @@ KaKotlinPropertySymbol:
   javaGetterName: getFoo
   javaSetterName: null
   setterDeprecationStatus: null
+  isInline: false
 
 KaKotlinPropertySymbol:
   annotations: []
@@ -489,19 +492,19 @@ KaKotlinPropertySymbol:
     deprecationStatus: null
   callableId: /I.bar
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
     annotations: []
     callableId: null
     compilerVisibility: Public
     contextReceivers: []
-    hasBody: false
     hasStableParameterNames: true
     isActual: false
-    isDefault: true
     isExpect: false
     isExtension: false
     isInline: false
+    isNotDefault: false
     isOverride: false
     location: PROPERTY
     modality: OPEN
@@ -550,13 +553,12 @@ KaKotlinPropertySymbol:
     callableId: null
     compilerVisibility: Public
     contextReceivers: []
-    hasBody: false
     hasStableParameterNames: true
     isActual: false
-    isDefault: true
     isExpect: false
     isExtension: false
     isInline: false
+    isNotDefault: false
     isOverride: false
     location: PROPERTY
     modality: OPEN
@@ -649,6 +651,7 @@ KaKotlinPropertySymbol:
   javaGetterName: getBar
   javaSetterName: setBar
   setterDeprecationStatus: null
+  isInline: false
 
 KaKotlinPropertySymbol:
   annotations: []
@@ -678,19 +681,19 @@ KaKotlinPropertySymbol:
     deprecationStatus: null
   callableId: /I.doo
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
     annotations: []
     callableId: null
     compilerVisibility: Public
     contextReceivers: []
-    hasBody: false
     hasStableParameterNames: true
     isActual: false
-    isDefault: true
     isExpect: false
     isExtension: false
     isInline: false
+    isNotDefault: false
     isOverride: false
     location: PROPERTY
     modality: OPEN
@@ -716,7 +719,7 @@ KaKotlinPropertySymbol:
         type: kotlin/Int
       visibility: LOCAL
       getContainingFileSymbol: KaFileSymbol(simple.kt)
-      getContainingJvmClassName: null
+      getContainingJvmClassName: I
       getContainingModule: KaSourceModule "Sources of main"
       deprecationStatus: null
     returnType: KaUsualClassType:
@@ -773,7 +776,7 @@ KaKotlinPropertySymbol:
       type: kotlin/Int
     visibility: LOCAL
     getContainingFileSymbol: KaFileSymbol(simple.kt)
-    getContainingJvmClassName: null
+    getContainingJvmClassName: I
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
   returnType: KaUsualClassType:
@@ -795,3 +798,4 @@ KaKotlinPropertySymbol:
   javaGetterName: getDoo
   javaSetterName: null
   setterDeprecationStatus: null
+  isInline: false

@@ -13,3 +13,6 @@ class Outer<OuterParam> {
 fun main() {
     Outer.Nested<OuterParam>()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, interfaceDeclaration, nestedClass, nullableType,
+typeConstraint, typeParameter */

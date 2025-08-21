@@ -8,14 +8,16 @@ package org.jetbrains.kotlin.fir.backend
 import org.jetbrains.kotlin.backend.common.IrSpecialAnnotationsProvider
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.backend.Fir2IrCommonMemberStorage.DataValueClassGeneratedMembersInfo
 import org.jetbrains.kotlin.fir.backend.generators.*
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.descriptors.FirModuleDescriptor
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.ir.IrLock
-import org.jetbrains.kotlin.ir.declarations.IrFactory
-import org.jetbrains.kotlin.ir.linkage.IrProvider
+import org.jetbrains.kotlin.ir.IrProvider
+import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.util.KotlinMangler
+import org.jetbrains.kotlin.ir.util.SymbolRemapper
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 class Fir2IrComponentsStorage(
@@ -26,11 +28,13 @@ class Fir2IrComponentsStorage(
     override val configuration: Fir2IrConfiguration,
     override val visibilityConverter: Fir2IrVisibilityConverter,
     commonMemberStorage: Fir2IrCommonMemberStorage,
+    generatedDataValueClassSyntheticFunctionsStorage: MutableMap<IrClass, DataValueClassGeneratedMembersInfo>,
     override val irMangler: KotlinMangler.IrMangler,
     kotlinBuiltIns: KotlinBuiltIns,
     override val specialAnnotationsProvider: IrSpecialAnnotationsProvider?,
     override val firProvider: FirProviderWithGeneratedFiles,
     syntheticIrBuiltinsSymbolsContainer: Fir2IrSyntheticIrBuiltinsSymbolsContainer,
+    fakeOverrideResolver: SymbolRemapper,
 ) : Fir2IrComponents {
     override val lock: IrLock = commonMemberStorage.lock
 
@@ -48,7 +52,8 @@ class Fir2IrComponentsStorage(
     override val callablesGenerator: Fir2IrCallableDeclarationsGenerator = Fir2IrCallableDeclarationsGenerator(this)
     override val classifiersGenerator: Fir2IrClassifiersGenerator = Fir2IrClassifiersGenerator(this)
     override val lazyDeclarationsGenerator: Fir2IrLazyDeclarationsGenerator = Fir2IrLazyDeclarationsGenerator(this)
-    override val dataClassMembersGenerator: Fir2IrDataClassMembersGenerator = Fir2IrDataClassMembersGenerator(this, commonMemberStorage)
+    override val dataClassMembersGenerator: Fir2IrDataClassMembersGenerator =
+        Fir2IrDataClassMembersGenerator(this, generatedDataValueClassSyntheticFunctionsStorage)
 
     // builtins should go after storages and generators, because they use them during initialization
     override val builtins: Fir2IrBuiltinSymbolsContainer = Fir2IrBuiltinSymbolsContainer(this, syntheticIrBuiltinsSymbolsContainer)
@@ -63,7 +68,11 @@ class Fir2IrComponentsStorage(
     override val callGenerator: CallAndReferenceGenerator = CallAndReferenceGenerator(this, fir2IrVisitor, conversionScope)
 
     override val lazyFakeOverrideGenerator: Fir2IrLazyFakeOverrideGenerator = Fir2IrLazyFakeOverrideGenerator(this)
-    override val symbolsMappingForLazyClasses: Fir2IrSymbolsMappingForLazyClasses = Fir2IrSymbolsMappingForLazyClasses()
+    override val symbolsMappingForLazyClasses: Fir2IrSymbolsMappingForLazyClasses =
+        Fir2IrSymbolsMappingForLazyClasses(fakeOverrideResolver)
 
     override val annotationsFromPluginRegistrar: Fir2IrIrGeneratedDeclarationsRegistrar = Fir2IrIrGeneratedDeclarationsRegistrar(this)
+
+    override val adapterGenerator: AdapterGenerator = AdapterGenerator(this, conversionScope)
+    override val implicitCastInserter: Fir2IrImplicitCastInserter = Fir2IrImplicitCastInserter(this)
 }

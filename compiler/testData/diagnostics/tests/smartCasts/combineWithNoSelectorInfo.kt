@@ -13,3 +13,6 @@ interface Request {
     fun getRequestURI(): String?
     fun getMethod(): String?
 }
+
+/* GENERATED_FIR_TAGS: asExpression, equalityExpression, functionDeclaration, ifExpression, integerLiteral,
+interfaceDeclaration, localProperty, nullableType, propertyDeclaration, safeCall */

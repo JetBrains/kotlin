@@ -11,3 +11,6 @@ fun <T> test(foo: List<T>): T {
 }
 
 fun <S, T: S> Iterable<T>.reduce(operation: (S, T) -> S): S = throw Exception()
+
+/* GENERATED_FIR_TAGS: funWithExtensionReceiver, functionDeclaration, functionalType, ifExpression, lambdaLiteral,
+nullableType, typeConstraint, typeParameter */

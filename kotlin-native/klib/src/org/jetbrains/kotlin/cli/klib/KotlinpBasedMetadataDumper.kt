@@ -29,8 +29,8 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 import org.jetbrains.kotlin.types.*
 
 internal class KotlinpBasedMetadataDumper(
-        private val output: KlibToolOutput,
-        private val signatureRenderer: IdSignatureRenderer?, // `null` means no signatures should be rendered.
+    private val output: KlibToolOutput,
+    private val signatureRenderer: IdSignatureRenderer?, // `null` means no signatures should be rendered.
 ) {
 
     private val printer = Printer(output)
@@ -43,58 +43,58 @@ internal class KotlinpBasedMetadataDumper(
      */
     fun dumpLibrary(library: KotlinLibrary, testMode: Boolean) {
         val moduleMetadata = loadModuleMetadata(library)
-                .let { originalModuleMetadata -> if (testMode) preprocessMetadataForTests(originalModuleMetadata) else originalModuleMetadata }
+            .let { originalModuleMetadata -> if (testMode) preprocessMetadataForTests(originalModuleMetadata) else originalModuleMetadata }
 
         val signatureComputer = prepareSignatureComputer(library, moduleMetadata)
 
         KlibKotlinp(
-                Settings(isVerbose = true, sortDeclarations = testMode),
-                signatureComputer
+            Settings(isVerbose = true, sortDeclarations = testMode),
+            signatureComputer
         ).renderModule(moduleMetadata, printer)
     }
 
     private fun preprocessMetadataForTests(originalModuleMetadata: KlibModuleMetadata) = KlibModuleMetadata(
-            name = originalModuleMetadata.name,
-            fragments = originalModuleMetadata.fragments.groupBy { it.fqName }.mapNotNull { (packageFqName, fragments) ->
-                val classNames = fragments.flatMap { it.className }.sorted()
-                val classes = fragments.flatMap { it.classes }.sortedBy { it.name }
-                val functions = fragments.flatMap { it.pkg?.functions.orEmpty() }.sortedBy { it.sortingKey() }
-                val properties = fragments.flatMap { it.pkg?.properties.orEmpty() }.sortedBy { it.sortingKey() }
-                val typeAliases = fragments.flatMap { it.pkg?.typeAliases.orEmpty() }.sortedBy { it.name }
+        name = originalModuleMetadata.name,
+        fragments = originalModuleMetadata.fragments.groupBy { it.fqName }.mapNotNull { (packageFqName, fragments) ->
+            val classNames = fragments.flatMap { it.className }.sorted()
+            val classes = fragments.flatMap { it.classes }.sortedBy { it.name }
+            val functions = fragments.flatMap { it.pkg?.functions.orEmpty() }.sortedBy { it.sortingKey() }
+            val properties = fragments.flatMap { it.pkg?.properties.orEmpty() }.sortedBy { it.sortingKey() }
+            val typeAliases = fragments.flatMap { it.pkg?.typeAliases.orEmpty() }.sortedBy { it.name }
 
-                if (classNames.isEmpty() && classes.isEmpty() && functions.isEmpty() && properties.isEmpty() && typeAliases.isEmpty())
-                    return@mapNotNull null
+            if (classNames.isEmpty() && classes.isEmpty() && functions.isEmpty() && properties.isEmpty() && typeAliases.isEmpty())
+                return@mapNotNull null
 
-                classes.forEach { clazz ->
-                    clazz.constructors.sortBy { it.sortingKey() }
-                    clazz.functions.sortBy { it.sortingKey() }
-                    clazz.properties.sortBy { it.sortingKey() }
-                    clazz.typeAliases.sortBy { it.name }
-                }
+            classes.forEach { clazz ->
+                clazz.constructors.sortBy { it.sortingKey() }
+                clazz.functions.sortBy { it.sortingKey() }
+                clazz.properties.sortBy { it.sortingKey() }
+                clazz.typeAliases.sortBy { it.name }
+            }
 
-                KmModuleFragment().apply {
-                    this.fqName = packageFqName
-                    this.className += classNames
-                    this.classes += classes
+            KmModuleFragment().apply {
+                this.fqName = packageFqName
+                this.className += classNames
+                this.classes += classes
 
-                    if (functions.isNotEmpty() || properties.isNotEmpty() || typeAliases.isNotEmpty()) {
-                        this.pkg = KmPackage().apply {
-                            this.functions += functions
-                            this.properties += properties
-                            this.typeAliases += typeAliases
-                        }
+                if (functions.isNotEmpty() || properties.isNotEmpty() || typeAliases.isNotEmpty()) {
+                    this.pkg = KmPackage().apply {
+                        this.functions += functions
+                        this.properties += properties
+                        this.typeAliases += typeAliases
                     }
                 }
-            }.sortedBy { it.fqName.orEmpty() },
-            annotations = originalModuleMetadata.annotations
+            }
+        }.sortedBy { it.fqName.orEmpty() },
+        annotations = originalModuleMetadata.annotations
     )
 
     private fun loadModuleMetadata(library: KotlinLibrary) = KlibModuleMetadata.read(
-            object : KlibModuleMetadata.MetadataLibraryProvider {
-                override val moduleHeaderData get() = library.moduleHeaderData
-                override fun packageMetadata(fqName: String, partName: String) = library.packageMetadata(fqName, partName)
-                override fun packageMetadataParts(fqName: String) = library.packageMetadataParts(fqName)
-            }
+        object : KlibModuleMetadata.MetadataLibraryProvider {
+            override val moduleHeaderData get() = library.moduleHeaderData
+            override fun packageMetadata(fqName: String, partName: String) = library.packageMetadata(fqName, partName)
+            override fun packageMetadataParts(fqName: String) = library.packageMetadataParts(fqName)
+        }
     )
 
     private fun prepareSignatureComputer(library: KotlinLibrary, moduleMetadata: KlibModuleMetadata): ExternalSignatureComputer? {
@@ -183,7 +183,7 @@ private class SignaturesCollector(private val renderer: IdSignatureRenderer) : D
 
     private fun DeclarationDescriptor.qualifiedName(): String {
         fun ClassifierDescriptorWithTypeParameters.classIdOrFail() = classId
-                ?: error("Failed to compute class ID for ${this::class.java}, $this")
+            ?: error("Failed to compute class ID for ${this::class.java}, $this")
 
         return when (this) {
             is ClassifierDescriptorWithTypeParameters -> classIdOrFail()
@@ -197,23 +197,23 @@ private class SignaturesCollector(private val renderer: IdSignatureRenderer) : D
     }
 
     private fun ConstructorDescriptor.id() = ConstructorId(
-            qualifiedName = qualifiedName(),
-            parameters = valueParameters.map { it.id(ignoreName = false) }
+        qualifiedName = qualifiedName(),
+        parameters = valueParameters.map { it.id(ignoreName = false) }
     )
 
     private fun PropertyDescriptor.id() = PropertyId(
-            qualifiedName = qualifiedName(),
-            contextReceivers = contextReceiverParameters.map { it.type.id() },
-            extensionReceiver = extensionReceiverParameter?.type?.id(),
-            returnType = type.id()
+        qualifiedName = qualifiedName(),
+        contextReceivers = contextReceiverParameters.map { it.type.id() },
+        extensionReceiver = extensionReceiverParameter?.type?.id(),
+        returnType = type.id()
     )
 
     private fun FunctionDescriptor.id(ignoreParameterNames: Boolean = false) = FunctionId(
-            qualifiedName = qualifiedName(),
-            contextReceivers = contextReceiverParameters.map { it.type.id() },
-            extensionReceiver = extensionReceiverParameter?.type?.id(),
-            parameters = valueParameters.map { it.id(ignoreParameterNames) },
-            returnType = returnType?.id() ?: error("Function without return type: ${this::class.java}, $this")
+        qualifiedName = qualifiedName(),
+        contextReceivers = contextReceiverParameters.map { it.type.id() },
+        extensionReceiver = extensionReceiverParameter?.type?.id(),
+        parameters = valueParameters.map { it.id(ignoreParameterNames) },
+        returnType = returnType?.id() ?: error("Function without return type: ${this::class.java}, $this")
     )
 
     private fun Variance.id() = when (this) {
@@ -236,8 +236,8 @@ private class SignaturesCollector(private val renderer: IdSignatureRenderer) : D
     }
 
     private fun ValueParameterDescriptor.id(ignoreName: Boolean) =
-            if (ignoreName) ParameterId(type.id(), isVararg) else ParameterId(name.asString(), type.id(), isVararg)
+        if (ignoreName) ParameterId(type.id(), isVararg) else ParameterId(name.asString(), type.id(), isVararg)
 
     private fun DeclarationDescriptor?.unexpectedDeclarationType(): Nothing =
-            error(if (this == null) "Declaration descriptor is null" else "Unexpected declaration type: ${this::class.java}, $this")
+        error(if (this == null) "Declaration descriptor is null" else "Unexpected declaration type: ${this::class.java}, $this")
 }

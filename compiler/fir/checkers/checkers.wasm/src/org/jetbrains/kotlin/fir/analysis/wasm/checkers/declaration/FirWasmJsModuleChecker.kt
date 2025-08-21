@@ -21,19 +21,20 @@ import org.jetbrains.kotlin.fir.declarations.utils.isEffectivelyExternal
 import org.jetbrains.kotlin.name.WebCommonStandardClassIds.Annotations.JsModule
 
 object FirWasmJsModuleChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
-    override fun check(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirDeclaration) {
         if (declaration is FirFile || !declaration.hasAnnotation(JsModule, context.session)) return
 
         if (declaration is FirProperty && declaration.isVar) {
-            reporter.reportOn(declaration.source, FirWasmErrors.JS_MODULE_PROHIBITED_ON_VAR, context)
+            reporter.reportOn(declaration.source, FirWasmErrors.JS_MODULE_PROHIBITED_ON_VAR)
         }
 
         if (!declaration.symbol.isEffectivelyExternal(context.session)) {
-            reporter.reportOn(declaration.source, FirWasmErrors.JS_MODULE_PROHIBITED_ON_NON_EXTERNAL, context)
+            reporter.reportOn(declaration.source, FirWasmErrors.JS_MODULE_PROHIBITED_ON_NON_EXTERNAL)
         }
 
-        if (context.isTopLevel && context.containingFile?.hasAnnotation(JsModule, context.session) == true) {
-            reporter.reportOn(declaration.source, FirWasmErrors.NESTED_JS_MODULE_PROHIBITED, context)
+        if (context.isTopLevel && context.containingFileSymbol?.hasAnnotation(JsModule, context.session) == true) {
+            reporter.reportOn(declaration.source, FirWasmErrors.NESTED_JS_MODULE_PROHIBITED)
         }
     }
 }

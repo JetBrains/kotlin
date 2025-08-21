@@ -37,3 +37,5 @@ class B: A() {
         Y().T_Y()
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, functionDeclaration, init, nestedClass, objectDeclaration */

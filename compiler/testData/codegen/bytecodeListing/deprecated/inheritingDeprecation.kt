@@ -1,3 +1,5 @@
+// JVM_DEFAULT_MODE: enable
+
 interface IFoo {
     @Deprecated("")
     val prop: String get() = ""

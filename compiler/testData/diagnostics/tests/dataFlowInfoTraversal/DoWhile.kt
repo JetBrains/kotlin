@@ -15,3 +15,6 @@ fun foo() {
     } while (y != null)
     bar(<!DEBUG_INFO_CONSTANT, TYPE_MISMATCH!>y<!>)
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, doWhileLoop, equalityExpression, functionDeclaration, integerLiteral,
+localProperty, nullableType, propertyDeclaration, smartcast */

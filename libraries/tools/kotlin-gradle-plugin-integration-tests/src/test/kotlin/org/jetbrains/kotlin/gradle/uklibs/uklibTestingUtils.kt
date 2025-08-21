@@ -7,11 +7,16 @@ package org.jetbrains.kotlin.gradle.uklibs
 
 import org.gradle.api.Project
 import org.gradle.api.artifacts.repositories.MavenArtifactRepository
+import org.gradle.api.initialization.ConfigurableIncludedBuild
+import org.gradle.api.plugins.ExtraPropertiesExtension
 import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPublication
+import org.jetbrains.kotlin.gradle.dsl.KotlinJvmExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.internal.properties.nativeProperties
-import org.jetbrains.kotlin.gradle.plugin.extraProperties
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
+import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.consumption.KmpResolutionStrategy
+import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.publication.KmpPublicationStrategy
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.internal.compilerRunner.native.nativeCompilerClasspath
 import java.io.File
@@ -29,9 +34,15 @@ fun Project.applyMultiplatform(
     (extensions.getByName("kotlin") as KotlinMultiplatformExtension).configure()
 }
 
+fun Project.applyJvm(
+    configure: KotlinJvmExtension.() -> Unit
+) {
+    plugins.apply("org.jetbrains.kotlin.jvm")
+    (extensions.getByName("kotlin") as KotlinJvmExtension).configure()
+}
+
 data class PublisherConfiguration(
     val group: String = "foo",
-    val name: String = "producer",
     val version: String = "1.0",
     val repoPath: String = "repo",
 ) : Serializable
@@ -42,14 +53,32 @@ data class PublishedProject(
     val name: String,
     val version: String,
 ) : Serializable {
-    val coordinate: String = "$group:$name:$version"
+    data class Component(
+        private val path: File,
+        private val artifactsPrefix: String,
+    ) {
+        val pom: File get() = path.resolve("${artifactsPrefix}.pom")
+        val uklib: File get() = path.resolve("${artifactsPrefix}.uklib")
+        val jar: File get() = path.resolve("${artifactsPrefix}.jar")
+        val psmJar: File get() = path.resolve("${artifactsPrefix}-psm.jar")
+        val gradleMetadata: File get() = path.resolve("${artifactsPrefix}.module")
+    }
 
-    val rootComponent: File get() = repository.resolve(group).resolve(name).resolve(version)
-    val pom: File get() = rootComponent.resolve("${name}-${version}.pom")
-    val uklib: File get() = rootComponent.resolve("${name}-${version}.uklib")
+    val rootCoordinate: String = "$group:$name:$version"
+    val rootComponent: Component
+        get() = Component(
+            repository.resolve(group).resolve(name).resolve(version),
+            "${name}-${version}",
+        )
+    val jvmMultiplatformComponent: Component
+        get() = Component(
+            repository.resolve(group).resolve("${name}-jvm").resolve(version),
+            "${name}-jvm-${version}",
+        )
 }
 
-fun Project.applyMavenPublish(
+fun Project.setupMavenPublication(
+    repositoryName: String,
     publisherConfiguration: PublisherConfiguration,
 ) {
     plugins.apply("maven-publish")
@@ -59,65 +88,141 @@ fun Project.applyMavenPublish(
 
     val publishingExtension = extensions.getByType(PublishingExtension::class.java)
     publishingExtension.repositories.maven {
+        it.name = repositoryName
         it.url = uri(
             layout.projectDirectory.dir(publisherConfiguration.repoPath)
         )
     }
-
-    publishingExtension.publications.withType(MavenPublication::class.java).configureEach {
-        val components = it.artifactId.split("-", limit = 2)
-        if (components.size > 1) {
-            it.artifactId = "${publisherConfiguration.name}-${components[1]}"
-        } else {
-            it.artifactId = publisherConfiguration.name
-        }
-    }
 }
 
 fun TestProject.publishReturn(
-    publisherConfiguration: PublisherConfiguration,
+    publisherConfiguration: PublisherConfiguration = PublisherConfiguration(
+        group = "default_kotlin_${generateIdentifier()}"
+    ),
+    repositoryIdentifier: String,
 ): ReturnFromBuildScriptAfterExecution<PublishedProject> {
     buildScriptInjection {
-        project.applyMavenPublish(publisherConfiguration)
+        if (project.hasProperty(repositoryIdentifier)) {
+            project.setupMavenPublication(repositoryIdentifier, publisherConfiguration)
+        }
     }
-
     return buildScriptReturn {
         PublishedProject(
             project.layout.projectDirectory.dir(publisherConfiguration.repoPath).asFile,
             publisherConfiguration.group,
-            publisherConfiguration.name,
+            project.name,
             publisherConfiguration.version,
         )
     }
 }
 
+/**
+ * Configures and publishes a Kotlin publication to a temporary directory. The returned [PublishedProject][org.jetbrains.kotlin.gradle.uklibs.PublishedProject]
+ * can be added to the repositories list using [addPublishedProjectToRepositories][org.jetbrains.kotlin.gradle.uklibs.addPublishedProjectToRepositories]
+ * and added to dependencies using [PublishedProject.rootCoordinate][org.jetbrains.kotlin.gradle.uklibs.PublishedProject.rootCoordinate]
+ *
+ * See [BuildScriptInjectionIT.publishAndConsumeProject][org.jetbrains.kotlin.gradle.BuildScriptInjectionIT.publishAndConsumeProject] for an example of usage
+ */
 fun TestProject.publish(
-    publisherConfiguration: PublisherConfiguration,
+    vararg buildArguments: String = emptyArray(),
+    publisherConfiguration: PublisherConfiguration = PublisherConfiguration(
+        group = "default_kotlin_${generateIdentifier()}"
+    ),
     deriveBuildOptions: TestProject.() -> BuildOptions = { buildOptions },
-): PublishedProject = publishReturn(publisherConfiguration).buildAndReturn(
-    "publishAllPublicationsToMavenRepository",
-    deriveBuildOptions = deriveBuildOptions,
-)
+): PublishedProject {
+    val repositoryIdentifier = "_KotlinPublication_${generateIdentifier()}_"
+    return publishReturn(
+        publisherConfiguration = publisherConfiguration,
+        repositoryIdentifier = repositoryIdentifier,
+    ).buildAndReturn(
+        "publishAllPublicationsTo${repositoryIdentifier}Repository",
+        "-P${repositoryIdentifier}",
+        *buildArguments,
+        deriveBuildOptions = deriveBuildOptions,
+    )
+}
 
-private const val transferDependencyResolutionRepositoriesIntoProjectRepositories = "transferDependencyResolutionRepositoriesIntoProjectRepositories"
+/**
+ * Publish a Java publication to a temporary repository
+ *
+ * @see TestProject.publish
+ */
+fun TestProject.publishJava(
+    publisherConfiguration: PublisherConfiguration = PublisherConfiguration(
+        group = "default_java_${generateIdentifier()}"
+    ),
+    deriveBuildOptions: TestProject.() -> BuildOptions = { buildOptions },
+): PublishedProject {
+    val repositoryIdentifier = "_JavaPublication_${generateIdentifier()}_"
+    buildScriptInjection {
+        if (project.hasProperty(repositoryIdentifier)) {
+            project.setupMavenPublication(repositoryIdentifier, publisherConfiguration)
+            val publishingExtension = project.extensions.getByType(PublishingExtension::class.java)
+
+            publishingExtension.publications.create("java", MavenPublication::class.java) {
+                it.from(project.components.getByName("java"))
+            }
+        }
+    }
+    return buildScriptReturn {
+        PublishedProject(
+            project.layout.projectDirectory.dir(publisherConfiguration.repoPath).asFile,
+            publisherConfiguration.group,
+            project.name,
+            publisherConfiguration.version,
+        )
+    }.buildAndReturn(
+        "publishAllPublicationsTo${repositoryIdentifier}Repository",
+        "-P${repositoryIdentifier}",
+        deriveBuildOptions = deriveBuildOptions,
+    )
+}
+
+/**
+ * Publish a Java platform publication to a temporary repository
+ *
+ * @see TestProject.publish
+ */
+fun TestProject.publishJavaPlatform(
+    publisherConfiguration: PublisherConfiguration = PublisherConfiguration(
+        group = "default_javaPlatform_${generateIdentifier()}"
+    ),
+    deriveBuildOptions: TestProject.() -> BuildOptions = { buildOptions },
+): PublishedProject {
+    val repositoryIdentifier = "_JavaPlatformPublication_${generateIdentifier()}_"
+    buildScriptInjection {
+        if (project.hasProperty(repositoryIdentifier)) {
+            project.setupMavenPublication(repositoryIdentifier, publisherConfiguration)
+            val publishingExtension = project.extensions.getByType(PublishingExtension::class.java)
+
+            publishingExtension.publications.create("javaPlatform", MavenPublication::class.java) {
+                it.from(project.components.getByName("javaPlatform"))
+            }
+        }
+    }
+    return buildScriptReturn {
+        PublishedProject(
+            project.layout.projectDirectory.dir(publisherConfiguration.repoPath).asFile,
+            publisherConfiguration.group,
+            project.name,
+            publisherConfiguration.version,
+        )
+    }.buildAndReturn(
+        "publishAllPublicationsTo${repositoryIdentifier}Repository",
+        "-P${repositoryIdentifier}",
+        deriveBuildOptions = deriveBuildOptions,
+    )
+}
+
 fun TestProject.addPublishedProjectToRepositories(
     publishedProject: PublishedProject,
     configuration: MavenArtifactRepository.() -> Unit = {},
 ) {
+    transferDependencyResolutionRepositoriesIntoProjectRepositories()
     settingsBuildScriptInjection {
         settings.dependencyResolutionManagement.repositories.maven {
             it.url = publishedProject.repository.toURI()
             it.configuration()
-        }
-        if (!settings.extraProperties.has(transferDependencyResolutionRepositoriesIntoProjectRepositories)) {
-            settings.extraProperties.set(transferDependencyResolutionRepositoriesIntoProjectRepositories, true)
-            // Transfer dependencyResolutionManagement into project for compatibility with Gradle <8.1 because we emit repositories in the
-            // build script there
-            settings.gradle.beforeProject { project ->
-                settings.dependencyResolutionManagement.repositories.all { rep ->
-                    project.repositories.add(rep)
-                }
-            }
         }
     }
 }
@@ -132,6 +237,19 @@ fun TestProject.include(
     }
 }
 
+fun TestProject.includeBuild(
+    subproject: TestProject,
+    configure: ConfigurableIncludedBuild.() -> Unit = {},
+) {
+    val includeBuildIdentifier = "included_${generateIdentifier()}"
+    Files.createSymbolicLink(projectPath.resolve(includeBuildIdentifier), subproject.projectPath)
+    settingsBuildScriptInjection {
+        settings.includeBuild(includeBuildIdentifier) {
+            it.configure()
+        }
+    }
+}
+
 fun TestProject.dumpKlibMetadataSignatures(klib: File): String {
     val dumpName = "dump_${UUID.randomUUID().toString().replace("-", "_")}"
     val outputFile = projectPath.resolve(dumpName).toFile()
@@ -140,8 +258,7 @@ fun TestProject.dumpKlibMetadataSignatures(klib: File): String {
     buildScriptInjection {
         project.tasks.register(dumpName) {
             val nativeCompilerClasspath = project.objects.nativeCompilerClasspath(
-                project.nativeProperties.actualNativeHomeDirectory,
-                project.nativeProperties.shouldUseEmbeddableCompilerJar,
+                project.nativeProperties.actualNativeHomeDirectory
             )
             it.inputs.files(nativeCompilerClasspath)
             it.doLast {
@@ -179,4 +296,32 @@ fun TestProject.dumpKlibMetadataSignatures(klib: File): String {
     build(dumpName)
 
     return outputFile.readText()
+}
+
+val Project.propertiesExtension: ExtraPropertiesExtension
+    get() = extensions.getByType(ExtraPropertiesExtension::class.java)
+
+internal fun Project.setUklibPublicationStrategy(strategy: KmpPublicationStrategy = KmpPublicationStrategy.UklibPublicationInASingleComponentWithKMPPublication) {
+    propertiesExtension.set(
+        PropertiesProvider.PropertyNames.KOTLIN_KMP_PUBLICATION_STRATEGY,
+        strategy.propertyName,
+    )
+    when (strategy) {
+        KmpPublicationStrategy.UklibPublicationInASingleComponentWithKMPPublication -> Unit
+        KmpPublicationStrategy.StandardKMPPublication -> Unit
+    }
+}
+
+internal fun Project.setUklibResolutionStrategy(strategy: KmpResolutionStrategy = KmpResolutionStrategy.InterlibraryUklibAndPSMResolution_PreferUklibs) {
+    propertiesExtension.set(
+        PropertiesProvider.PropertyNames.KOTLIN_KMP_RESOLUTION_STRATEGY,
+        strategy.propertyName,
+    )
+}
+
+fun Project.computeTransformedLibraryChecksum(enable: Boolean = false) {
+    propertiesExtension.set(
+        PropertiesProvider.PropertyNames.KOTLIN_MPP_COMPUTE_TRANSFORMED_LIBRARY_CHECKSUM,
+        enable.toString(),
+    )
 }

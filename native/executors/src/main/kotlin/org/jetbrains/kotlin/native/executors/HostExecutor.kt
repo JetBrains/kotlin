@@ -18,6 +18,7 @@ import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.logging.Logger
 import kotlin.time.Duration
+import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
 import kotlin.time.ExperimentalTime
 import kotlin.time.TimeSource
@@ -153,8 +154,12 @@ class HostExecutor : Executor {
     private val logger = Logger.getLogger(HostExecutor::class.java.name)
 
     override fun execute(request: ExecuteRequest): ExecuteResponse {
+        val args = if (HostManager.hostIsMingw) request.args.map { arg ->
+            require('\"' !in arg) { "Unexpected double quote in argument: $arg" }
+            if (listOf("=", " ", ";", ",").any { it in arg }) "\"$arg\"" else arg
+        } else request.args
         val workingDirectory = request.workingDirectory ?: File(request.executableAbsolutePath).parentFile
-        val commandLine = "${request.executableAbsolutePath}${request.args.joinToString(separator = " ", prefix = " ")}"
+        val commandLine = "${request.executableAbsolutePath}${args.joinToString(separator = " ", prefix = " ")}"
         val environmentFormatted =
             request.environment.entries.joinToString(prefix = "{", postfix = "}") { "\"${it.key}\": \"${it.value}\"" }
         logger.info(
@@ -165,7 +170,7 @@ class HostExecutor : Executor {
                 |And timeout: ${request.timeout}
                 """.trimMargin()
         )
-        return ProcessBuilder(listOf(request.executableAbsolutePath) + request.args).apply {
+        return ProcessBuilder(listOf(request.executableAbsolutePath) + args).apply {
             directory(workingDirectory)
             environment().putAll(request.environment)
         }.scoped { process ->
@@ -175,7 +180,14 @@ class HostExecutor : Executor {
             }
             suspend fun cancel() {
                 streams.cancel()
-                process.destroyForcibly()
+                // Give the process a chance to gracefully terminate, so that it can finish any child processes.
+                // This is important for `XcodeSimulatorExecutor`: the main executable is `xcrun`, which runs the process we are interested
+                // in; forcibly terminating `xcrun` will not terminate the child process, while graceful termination does that.
+                process.destroy()
+                if (!process.waitFor(1.minutes)) {
+                    logger.warning("Process failed to exit gracefully, forcing termination")
+                    process.destroyForcibly()
+                }
                 streams.drain()
             }
             if (isTimeout) {
@@ -194,7 +206,9 @@ class HostExecutor : Executor {
                     }
                 } catch (e: TimeoutCancellationException) {
                     logger.warning("Failed to join the streams in $waitStreamsDuration.")
-                    cancel()
+                    streams.cancel()
+                    process.destroyForcibly()
+                    streams.drain()
                 }
                 ExecuteResponse(exitCode, duration)
             }

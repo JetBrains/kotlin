@@ -43,3 +43,5 @@ fun test() {
     D.bar()
     D.baz()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, javaFunction, javaProperty, javaType */

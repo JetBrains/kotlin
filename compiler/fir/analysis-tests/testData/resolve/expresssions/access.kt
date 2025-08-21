@@ -17,7 +17,7 @@ class Bar {
     fun bar(): Bar = this
 
     // NB: unused
-    operator fun String.<!EXTENSION_SHADOWED_BY_MEMBER!>plus<!>(bar: Bar): String {
+    operator fun String.plus(bar: Bar): String {
         return ""
     }
 
@@ -62,3 +62,6 @@ fun f() {
 
     abc()
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, classDeclaration, funWithExtensionReceiver, functionDeclaration,
+integerLiteral, localFunction, localProperty, operator, propertyDeclaration, stringLiteral, thisExpression */

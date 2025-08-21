@@ -4,10 +4,12 @@
 // FILE: common.kt
 
 interface A
-<!EXPECT_ACTUAL_INCOMPATIBILITY{JVM}!>expect<!> fun <T : A> foo(t: T): String
+<!EXPECT_ACTUAL_IR_INCOMPATIBILITY{JVM}!>expect<!> fun <T : A> foo(t: T): String
 
 // MODULE: m2-jvm()()(m1-common)
 // FILE: jvm.kt
 
 fun <T : A> <!ACTUAL_MISSING!>foo<!>(t: T): T = TODO()
 fun <T> foo(t: T): String = TODO()
+
+/* GENERATED_FIR_TAGS: expect, functionDeclaration, interfaceDeclaration, nullableType, typeConstraint, typeParameter */

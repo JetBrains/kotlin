@@ -12,3 +12,6 @@ fun <T, R : Base> bar(f: (T) -> Inv<R>, p: Int = 4) {}
 fun test() {
     bar(::foo)
 }
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, functionDeclaration, functionalType, integerLiteral,
+interfaceDeclaration, nullableType, stringLiteral, typeConstraint, typeParameter */

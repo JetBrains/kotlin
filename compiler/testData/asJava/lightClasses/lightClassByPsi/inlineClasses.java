@@ -1,5 +1,18 @@
+public final class ConstructorWithInlineContextParameter /* ConstructorWithInlineContextParameter*/ {
+  public  ConstructorWithInlineContextParameter(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String);//  .ctor(@org.jetbrains.annotations.NotNull() java.lang.String)
+}
+
+public final class ConstructorWithInlineContextParameterAndJvmOverloads /* ConstructorWithInlineContextParameterAndJvmOverloads*/ {
+  @kotlin.jvm.JvmOverloads()
+  public  ConstructorWithInlineContextParameterAndJvmOverloads();//  .ctor()
+
+  @kotlin.jvm.JvmOverloads()
+  public  ConstructorWithInlineContextParameterAndJvmOverloads(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String);//  .ctor(@org.jetbrains.annotations.NotNull() java.lang.String)
+}
+
 public enum Foo /* Foo*/ {
-  ;
+  A,
+  B;
 
   private final int x;
 
@@ -30,6 +43,8 @@ public final class InlinedDelegate /* InlinedDelegate*/<T>  {
   public boolean equals(@org.jetbrains.annotations.Nullable() @org.jetbrains.annotations.Nullable() java.lang.Object);//  equals(@org.jetbrains.annotations.Nullable() java.lang.Object)
 
   public final T getNode();//  getNode()
+
+  public final void setNode(T);//  setNode(T)
 
   public int hashCode();//  hashCode()
 }

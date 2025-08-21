@@ -14,3 +14,6 @@ data <!DATA_CLASS_WITHOUT_PARAMETERS!>class A3<!> {
 }
 
 data class A4 <!DATA_CLASS_WITHOUT_PARAMETERS!>internal constructor()<!>
+
+/* GENERATED_FIR_TAGS: classDeclaration, data, integerLiteral, primaryConstructor, propertyDeclaration,
+secondaryConstructor, stringLiteral */

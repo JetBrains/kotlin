@@ -51,7 +51,7 @@ open class FirBackingFieldImpl @FirImplementationDetail constructor(
     override val containerSource: DeserializedContainerSource?
         get() = null
     override val dispatchReceiverType: ConeSimpleKotlinType?
-        get() = null
+        get() = propertySymbol.dispatchReceiverType
     override val contextParameters: List<FirValueParameter>
         get() = emptyList()
     override val delegate: FirExpression?
@@ -68,6 +68,8 @@ open class FirBackingFieldImpl @FirImplementationDetail constructor(
     init {
         symbol.bind(this)
         resolveState = resolvePhase.asResolveState()
+        @Suppress("SENSELESS_COMPARISON")
+        require(source != null || origin != FirDeclarationOrigin.Source) { "${this::class.simpleName} with Source origin was instantiated without a source element." }
     }
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {

@@ -1,4 +1,5 @@
 // FILE: A.kt
+
 class A {
     inner class Inner{
         private fun privateMethod() = "OK"

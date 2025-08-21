@@ -19,3 +19,6 @@ class Out<out T> {}
 fun main(o: Out<Nothing?>) {
     takeConvertor(Convertor { o })
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, flexibleType, functionDeclaration, javaType, lambdaLiteral, nullableType, out,
+typeParameter */

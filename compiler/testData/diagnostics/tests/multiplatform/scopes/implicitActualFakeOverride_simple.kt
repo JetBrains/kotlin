@@ -15,3 +15,5 @@ interface FooProvider {
 }
 
 actual class Foo : FooProvider
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, functionDeclaration, integerLiteral, interfaceDeclaration */

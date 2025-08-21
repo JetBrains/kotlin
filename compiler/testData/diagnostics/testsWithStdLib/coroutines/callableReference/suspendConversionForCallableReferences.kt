@@ -15,3 +15,6 @@ fun box() {
         go2(<!TYPE_MISMATCH!>x::id<!>)
     }
 }
+
+/* GENERATED_FIR_TAGS: funWithExtensionReceiver, functionDeclaration, functionalType, inline, lambdaLiteral,
+localProperty, propertyDeclaration, stringLiteral, suspend, thisExpression */

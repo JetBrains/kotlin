@@ -18,7 +18,8 @@ import org.jetbrains.kotlin.fir.declarations.utils.isMethodOfAny
 import org.jetbrains.kotlin.fir.declarations.utils.isOverride
 
 object FirAnyDeprecationChecker : FirSimpleFunctionChecker(MppCheckerKind.Common) {
-    override fun check(declaration: FirSimpleFunction, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirSimpleFunction) {
         if (!declaration.isOverride || !declaration.symbol.isMethodOfAny) return
         val deprecationAnnotations =
             context.session.annotationPlatformSupport.deprecationAnnotationsWithOverridesPropagation
@@ -27,7 +28,7 @@ object FirAnyDeprecationChecker : FirSimpleFunctionChecker(MppCheckerKind.Common
             val isOptInMarker =
                 annotation.getAnnotationClassForOptInMarker(context.session) != null
             if (isDeprecationMarker || isOptInMarker)
-                reporter.reportOn(annotation.source, FirErrors.POTENTIALLY_NON_REPORTED_ANNOTATION, context)
+                reporter.reportOn(annotation.source, FirErrors.POTENTIALLY_NON_REPORTED_ANNOTATION)
         }
     }
 }

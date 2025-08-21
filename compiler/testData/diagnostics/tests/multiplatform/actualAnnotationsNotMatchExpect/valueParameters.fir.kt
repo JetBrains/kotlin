@@ -9,7 +9,7 @@ expect fun inMethod(@Ann arg: String)
 
 expect class InConstructor(@Ann arg: String)
 
-<!EXPECT_ACTUAL_MISMATCH{JVM}!>expect<!> fun withIncopatibility(@Ann p1: String, @Ann p2: String)
+<!EXPECT_ACTUAL_IR_MISMATCH{JVM}!>expect<!> fun withIncopatibility(@Ann p1: String, @Ann p2: String)
 
 // MODULE: m1-jvm()()(m1-common)
 // FILE: jvm.kt
@@ -18,3 +18,5 @@ expect class InConstructor(@Ann arg: String)
 actual class InConstructor <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual<!> constructor(arg: String) {}
 
 actual fun <!ACTUAL_WITHOUT_EXPECT!>withIncopatibility<!>(p1: String) {}
+
+/* GENERATED_FIR_TAGS: actual, annotationDeclaration, classDeclaration, expect, functionDeclaration, primaryConstructor */

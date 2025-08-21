@@ -4,6 +4,7 @@ KtCallExpression(34,37): 'A()'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -11,5 +12,6 @@ KtCallExpression(34,37): 'A()'
           returnType = A
           symbol = <constructor>(): A
           valueParameters = []
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}

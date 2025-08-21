@@ -46,8 +46,8 @@ internal val DECLARATION_ORIGIN_INLINE_CLASS_SPECIAL_FUNCTION = IrDeclarationOri
 private fun IrClass.defaultOrNullableType(hasQuestionMark: Boolean) =
         if (hasQuestionMark) this.defaultType.makeNullable() else this.defaultType
 
-private var IrClass.boxFunction: IrSimpleFunction? by irAttribute(followAttributeOwner = false)
-private var IrClass.unboxFunction: IrSimpleFunction? by irAttribute(followAttributeOwner = false)
+private var IrClass.boxFunction: IrSimpleFunction? by irAttribute(copyByDefault = false)
+private var IrClass.unboxFunction: IrSimpleFunction? by irAttribute(copyByDefault = false)
 
 internal fun Context.getBoxFunction(inlinedClass: IrClass): IrSimpleFunction = inlinedClass::boxFunction.getOrSetIfNull {
     require(inlinedClass.isUsedAsBoxClass())
@@ -61,7 +61,7 @@ internal fun Context.getBoxFunction(inlinedClass: IrClass): IrSimpleFunction = i
 
     val isNullable = inlinedClass.inlinedClassIsNullable()
     val unboxedType = inlinedClass.defaultOrNullableType(isNullable)
-    val boxedType = if (isNullable) ir.symbols.irBuiltIns.anyNType else ir.symbols.irBuiltIns.anyType
+    val boxedType = if (isNullable) symbols.irBuiltIns.anyNType else symbols.irBuiltIns.anyType
 
     irFactory.buildFun {
         startOffset = inlinedClass.startOffset
@@ -71,7 +71,6 @@ internal fun Context.getBoxFunction(inlinedClass: IrClass): IrSimpleFunction = i
         returnType = boxedType
     }.also { function ->
         function.parent = parent
-        function.attributeOwnerId = inlinedClass // To be able to get the file.
 
         function.addValueParameter {
             startOffset = inlinedClass.startOffset
@@ -94,7 +93,7 @@ internal fun Context.getUnboxFunction(inlinedClass: IrClass): IrSimpleFunction =
 
     val isNullable = inlinedClass.inlinedClassIsNullable()
     val unboxedType = inlinedClass.defaultOrNullableType(isNullable)
-    val boxedType = if (isNullable) ir.symbols.irBuiltIns.anyNType else ir.symbols.irBuiltIns.anyType
+    val boxedType = if (isNullable) symbols.irBuiltIns.anyNType else symbols.irBuiltIns.anyType
 
     irFactory.buildFun {
         startOffset = inlinedClass.startOffset
@@ -104,7 +103,6 @@ internal fun Context.getUnboxFunction(inlinedClass: IrClass): IrSimpleFunction =
         returnType = unboxedType
     }.also { function ->
         function.parent = parent
-        function.attributeOwnerId = inlinedClass // To be able to get the file.
 
         function.addValueParameter {
             startOffset = inlinedClass.startOffset

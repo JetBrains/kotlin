@@ -1,4 +1,4 @@
-class A
+/* RootStructureElement */class A
 
     (val a: Int)/* DeclarationStructureElement */
 

@@ -15,3 +15,5 @@ annotation class meta
         @base <!WRONG_ANNOTATION_TARGET!>@meta<!> class Local
     }
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, functionDeclaration, localClass, nestedClass */

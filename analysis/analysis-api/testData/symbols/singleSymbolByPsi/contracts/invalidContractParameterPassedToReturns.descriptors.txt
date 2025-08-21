@@ -5,6 +5,7 @@ KaNamedFunctionSymbol:
   ]
   callableId: /invalidContract
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true

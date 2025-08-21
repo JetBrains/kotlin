@@ -20,3 +20,6 @@ class C : B() {
 fun foo() {
     C().<!BASE_CLASS_FIELD_SHADOWS_DERIVED_CLASS_PROPERTY!>size<!>
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, getter, integerLiteral, interfaceDeclaration, javaType,
+override, propertyDeclaration */

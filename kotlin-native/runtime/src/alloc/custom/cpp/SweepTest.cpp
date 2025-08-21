@@ -27,7 +27,7 @@ using ExtraObjectCell = typename kotlin::alloc::ExtraObjectCell;
 } // namespace
 
 TEST_F(CustomAllocatorTest, ExtraDataSweepFullFinalizedPage) {
-    auto* page = FixedBlockPage::Create(kExtraObjCellSize.inCells());
+    auto* page = FixedBlockPage::Create(ExtraObjectCell::size().inCells());
     while (ExtraObjectCell* cell = allocExtraObjectCell(page)) {
         cell->Data()->setFlag(kotlin::mm::ExtraObjectData::FLAGS_SWEEPABLE);
     }

@@ -13,3 +13,6 @@ public class Arrays {
         return (T[]) null;
     }
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, funWithExtensionReceiver, functionDeclaration, integerLiteral, javaFunction,
+localProperty, nullableType, propertyDeclaration, thisExpression, typeParameter */

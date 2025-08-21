@@ -5,3 +5,6 @@ interface T {
 }
 
 data class A(val x: Int) : T
+
+/* GENERATED_FIR_TAGS: classDeclaration, data, functionDeclaration, interfaceDeclaration, primaryConstructor,
+propertyDeclaration */

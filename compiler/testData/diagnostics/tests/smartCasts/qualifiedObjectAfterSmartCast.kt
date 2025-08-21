@@ -12,3 +12,6 @@ fun <V> typeOf(value: V): Any {
         else -> ""
     }
 }
+
+/* GENERATED_FIR_TAGS: equalityExpression, functionDeclaration, nestedClass, nullableType, objectDeclaration,
+stringLiteral, typeParameter, whenExpression, whenWithSubject */

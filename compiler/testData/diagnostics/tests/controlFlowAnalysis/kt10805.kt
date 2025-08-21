@@ -12,3 +12,5 @@ else if (true) {
 else {
     null!!
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, ifExpression, lambdaLiteral, propertyDeclaration */

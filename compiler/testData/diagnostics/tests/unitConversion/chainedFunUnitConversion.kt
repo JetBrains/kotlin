@@ -14,3 +14,6 @@ fun test(f: () -> Int, s: SubInt) {
     foo(f)
     foo(s)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funInterface, functionDeclaration, functionalType, interfaceDeclaration,
+samConversion */

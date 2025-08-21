@@ -39,3 +39,7 @@ fun createArgumentMapping(
         }.toMap(mapping)
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, classReference, contractCallsEffect, contracts, elvisExpression,
+functionDeclaration, functionalType, lambdaLiteral, localProperty, nullableType, primaryConstructor, propertyDeclaration,
+propertyDelegate, safeCall, typeWithExtension */

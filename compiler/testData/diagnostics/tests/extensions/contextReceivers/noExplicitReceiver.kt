@@ -21,3 +21,6 @@ fun A.q(b: B) {
     }
     <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>f<!>()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionDeclarationWithContext,
+lambdaLiteral */

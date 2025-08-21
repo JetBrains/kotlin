@@ -7,3 +7,5 @@ fun test() {
         <!UNRESOLVED_REFERENCE!>unresolved<!>.toString()
     }
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, ifExpression, intersectionType, lambdaLiteral */

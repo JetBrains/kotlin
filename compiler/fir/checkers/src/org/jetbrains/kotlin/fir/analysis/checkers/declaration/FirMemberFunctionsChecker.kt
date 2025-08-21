@@ -14,25 +14,25 @@ import org.jetbrains.kotlin.fir.analysis.checkers.contains
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.getModifierList
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
-import org.jetbrains.kotlin.fir.declarations.FirClass
-import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.utils.*
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.utils.addToStdlib.lastIsInstanceOrNull
 
 // See old FE's [DeclarationsChecker]
 object FirMemberFunctionsChecker : FirSimpleFunctionChecker(MppCheckerKind.Common) {
-    override fun check(declaration: FirSimpleFunction, context: CheckerContext, reporter: DiagnosticReporter) {
-        val containingDeclaration = context.containingDeclarations.lastIsInstanceOrNull<FirClass>() ?: return
-        checkFunction(containingDeclaration, declaration, context, reporter)
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirSimpleFunction) {
+        val containingDeclaration = context.containingDeclarations.lastIsInstanceOrNull<FirClassSymbol<*>>() ?: return
+        checkFunction(containingDeclaration, declaration)
     }
 
+    context(context: CheckerContext, reporter: DiagnosticReporter)
     private fun checkFunction(
-        containingDeclaration: FirClass,
+        containingDeclaration: FirClassSymbol<*>,
         function: FirSimpleFunction,
-        context: CheckerContext,
-        reporter: DiagnosticReporter
     ) {
         val source = function.source ?: return
         if (source.kind is KtFakeSourceElementKind) return
@@ -43,32 +43,31 @@ object FirMemberFunctionsChecker : FirSimpleFunctionChecker(MppCheckerKind.Commo
         val hasAbstractModifier = KtTokens.ABSTRACT_KEYWORD in modifierList
         val isAbstract = function.isAbstract || hasAbstractModifier
         if (isAbstract) {
-            if (containingDeclaration is FirRegularClass && !containingDeclaration.canHaveAbstractDeclaration) {
+            if (containingDeclaration is FirRegularClassSymbol && !containingDeclaration.canHaveAbstractDeclaration) {
                 reporter.reportOn(
                     source,
                     FirErrors.ABSTRACT_FUNCTION_IN_NON_ABSTRACT_CLASS,
                     functionSymbol,
-                    containingDeclaration.symbol,
-                    context
+                    containingDeclaration
                 )
             }
             if (function.hasBody) {
-                reporter.reportOn(source, FirErrors.ABSTRACT_FUNCTION_WITH_BODY, functionSymbol, context)
+                reporter.reportOn(source, FirErrors.ABSTRACT_FUNCTION_WITH_BODY, functionSymbol)
             }
         }
-        val isInsideExpectClass = isInsideExpectClass(containingDeclaration, context)
-        val isInsideExternal = isInsideExternalClass(containingDeclaration, context)
+        val isInsideExpectClass = isInsideExpectClass(containingDeclaration)
+        val isInsideExternal = isInsideExternalClass(containingDeclaration)
         val hasOpenModifier = KtTokens.OPEN_KEYWORD in modifierList
         if (!function.hasBody) {
             if (containingDeclaration.isInterface) {
                 if (Visibilities.isPrivate(function.visibility)) {
-                    reporter.reportOn(source, FirErrors.PRIVATE_FUNCTION_WITH_NO_BODY, functionSymbol, context)
+                    reporter.reportOn(source, FirErrors.PRIVATE_FUNCTION_WITH_NO_BODY, functionSymbol)
                 }
                 if (!isInsideExpectClass && !hasAbstractModifier && hasOpenModifier) {
-                    reporter.reportOn(source, FirErrors.REDUNDANT_OPEN_IN_INTERFACE, context)
+                    reporter.reportOn(source, FirErrors.REDUNDANT_OPEN_IN_INTERFACE)
                 }
             } else if (!isInsideExpectClass && !hasAbstractModifier && !function.isExternal && !isInsideExternal) {
-                reporter.reportOn(source, FirErrors.NON_ABSTRACT_FUNCTION_WITH_NO_BODY, functionSymbol, context)
+                reporter.reportOn(source, FirErrors.NON_ABSTRACT_FUNCTION_WITH_NO_BODY, functionSymbol)
             }
         }
     }

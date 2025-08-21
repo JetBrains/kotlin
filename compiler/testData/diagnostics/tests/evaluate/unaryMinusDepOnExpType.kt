@@ -35,3 +35,5 @@ fun test() {
     fooShort(<!TYPE_MISMATCH!>-1.toShort()<!>)
     fooShort((-1).toShort())
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral, unaryExpression */

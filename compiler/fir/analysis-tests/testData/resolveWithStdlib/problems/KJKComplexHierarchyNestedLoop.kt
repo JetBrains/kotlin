@@ -32,3 +32,5 @@ abstract class SuperClass {
 interface SuperI {
     fun superI() {}
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, interfaceDeclaration, javaType, nestedClass */

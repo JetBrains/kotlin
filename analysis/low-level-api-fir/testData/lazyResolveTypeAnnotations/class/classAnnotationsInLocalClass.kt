@@ -11,6 +11,6 @@ fun fo<caret>o() {
         val prop = 0
 
         @Anno("class $prop")
-        class InnerClass<@Anno("type param $prop") T : @Anno("bound $prop") List<@Anno("nested bound $prop") Int>> : @Anno("super type $prop") A<@Anno("nested super type $prop") List<@Anno("nested nested super type $prop") Int>>()
+        inner class InnerClass<@Anno("type param $prop") T : @Anno("bound $prop") List<@Anno("nested bound $prop") Int>> : @Anno("super type $prop") A<@Anno("nested super type $prop") List<@Anno("nested nested super type $prop") Int>>()
     }
 }

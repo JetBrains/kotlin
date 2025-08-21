@@ -5,12 +5,14 @@
 
 package org.jetbrains.kotlin.ir.backend.js.lower
 
+import jdk.nashorn.internal.objects.NativeFunction.function
 import org.jetbrains.kotlin.backend.common.DeclarationTransformer
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irBlockBody
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.diagnostics.rendering.parameters
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
@@ -44,12 +46,12 @@ private class ExportedCollectionsInfo(context: JsIrBackendContext) {
     )
 
     val exportableSymbols = setOf(
-        context.ir.symbols.list,
-        context.ir.symbols.mutableList,
-        context.ir.symbols.set,
-        context.ir.symbols.mutableSet,
-        context.ir.symbols.map,
-        context.ir.symbols.mutableMap,
+        context.symbols.list,
+        context.symbols.mutableList,
+        context.symbols.set,
+        context.symbols.mutableSet,
+        context.symbols.map,
+        context.symbols.mutableMap,
     )
 }
 
@@ -89,12 +91,12 @@ class PrepareCollectionsToExportLowering(private val context: JsIrBackendContext
     }
 
     private val typesToItsFactoryMethods = hashMapOf(
-        context.ir.symbols.list to FactoryMethod("fromJsArray", context.intrinsics.jsCreateListFrom),
-        context.ir.symbols.mutableList to FactoryMethod("fromJsArray", context.intrinsics.jsCreateMutableListFrom),
-        context.ir.symbols.set to FactoryMethod("fromJsSet", context.intrinsics.jsCreateSetFrom),
-        context.ir.symbols.mutableSet to FactoryMethod("fromJsSet", context.intrinsics.jsCreateMutableSetFrom),
-        context.ir.symbols.map to FactoryMethod("fromJsMap", context.intrinsics.jsCreateMapFrom),
-        context.ir.symbols.mutableMap to FactoryMethod("fromJsMap", context.intrinsics.jsCreateMutableMapFrom)
+        context.symbols.list to FactoryMethod("fromJsArray", context.intrinsics.jsCreateListFrom),
+        context.symbols.mutableList to FactoryMethod("fromJsArray", context.intrinsics.jsCreateMutableListFrom),
+        context.symbols.set to FactoryMethod("fromJsSet", context.intrinsics.jsCreateSetFrom),
+        context.symbols.mutableSet to FactoryMethod("fromJsSet", context.intrinsics.jsCreateMutableSetFrom),
+        context.symbols.map to FactoryMethod("fromJsMap", context.intrinsics.jsCreateMapFrom),
+        context.symbols.mutableMap to FactoryMethod("fromJsMap", context.intrinsics.jsCreateMutableMapFrom)
     )
 
     private fun IrClass.addCompanionWithJsFactoryFunction() {
@@ -140,7 +142,7 @@ class PrepareCollectionsToExportLowering(private val context: JsIrBackendContext
         ).also {
             it.parent = companionObject
             it.copyValueAndTypeParametersFrom(factoryMethodForTheCollectionSymbol.owner)
-            it.dispatchReceiverParameter = companionObject.thisReceiver?.copyTo(it)
+            it.parameters = listOfNotNull(companionObject.thisReceiver?.copyTo(it)) + it.nonDispatchParameters
             it.body = context.createIrBuilder(it.symbol).run {
                 irBlockBody(it) {
                     +irReturn(

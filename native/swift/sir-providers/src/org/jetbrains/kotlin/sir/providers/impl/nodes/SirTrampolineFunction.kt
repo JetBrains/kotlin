@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.sir.providers.impl.nodes
 
 import org.jetbrains.kotlin.sir.*
+import org.jetbrains.kotlin.sir.util.allParameters
 import org.jetbrains.kotlin.sir.util.name
 import org.jetbrains.kotlin.sir.util.swiftFqName
 
@@ -21,6 +22,7 @@ public class SirTrampolineFunction(
     override val isOverride: Boolean get() = false
     override val isInstance: Boolean get() = false
     override val modality: SirModality get() = SirModality.UNSPECIFIED
+    override val fixity: SirFixity? get() = source.fixity
 
     override val attributes: List<SirAttribute> get() = source.attributes
 
@@ -39,12 +41,14 @@ public class SirTrampolineFunction(
 
     override val errorType: SirType get() = source.errorType
 
+    override val bridges: List<SirBridge> = emptyList()
+
     override var body: SirFunctionBody?
         get() = SirFunctionBody(
             listOf(
-                "${"try ".takeIf { source.errorType != SirType.never } ?: ""}${source.swiftFqName}(${this.parameters.joinToString { it.forward ?: error("unreachable") }})"
+                "${"try ".takeIf { source.errorType != SirType.never } ?: ""}${source.swiftFqName}(${this.allParameters.joinToString { it.forward ?: error("unreachable") }})"
             )
-        )
+        ).takeUnless { attributes.any { it is SirAttribute.Available && it.isUnusable } }
         set(_) = Unit
 }
 

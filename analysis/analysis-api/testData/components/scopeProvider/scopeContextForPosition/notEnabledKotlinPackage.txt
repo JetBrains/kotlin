@@ -1,9 +1,12 @@
 element: param
-implicit receivers:
-  type: KaClassErrorType:
-    annotations: []
-    type: ERROR_TYPE
-  owner symbol: KaFirNamedClassSymbol
+implicit values:
+  KaImplicitReceiver:
+    scopeIndexInTower = 2
+    type = KaClassErrorType:
+      annotations: []
+      type: ERROR_TYPE
+    ownerSymbol = KaNamedClassSymbol:
+      kotlin/myPackage/SomeClass
 
 scopes:
   LocalScope, index = 0

@@ -41,11 +41,11 @@ fun FirDeclaration.getRetentionAnnotation(session: FirSession): FirAnnotation? {
 }
 
 private fun FirRegularClassSymbol.getRetentionAnnotation(session: FirSession): FirAnnotation? {
-    return getAnnotationByClassId(StandardClassIds.Annotations.Retention, session)
+    return getAnnotationWithResolvedArgumentsByClassId(StandardClassIds.Annotations.Retention, session)
 }
 
 fun FirClassLikeSymbol<*>.getExplicitAnnotationRetention(session: FirSession): AnnotationRetention? {
-    return getAnnotationByClassId(StandardClassIds.Annotations.Retention, session)?.getRetention()
+    return getAnnotationWithResolvedArgumentsByClassId(StandardClassIds.Annotations.Retention, session)?.getRetention()
 }
 
 fun FirClassLikeSymbol<*>.getAnnotationRetention(session: FirSession): AnnotationRetention {

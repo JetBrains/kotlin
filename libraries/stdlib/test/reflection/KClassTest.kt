@@ -14,7 +14,9 @@ class KClassTest {
     @Test
     fun className() {
         assertEquals("KClassTest", KClassTest::class.simpleName)
-//        assertEquals(null, object {}::class.simpleName) // doesn't work as documented in JDK < 9, see KT-23072
+        testExceptOn(TestPlatform.Jvm) {
+            assertEquals(null, object {}::class.simpleName) // doesn't work as documented in JDK < 9, see KT-23072
+        }
     }
 
     @Test

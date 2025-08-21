@@ -1,4 +1,14 @@
 // FILE: 1.kt
+SMAP
+1.kt
+Kotlin
+*S Kotlin
+*F
++ 1 1.kt
+test/Introspector$SchemaRetriever$inSchema$lambda$1
+*L
+1#1,14:1
+*E
 
 // FILE: 2.kt
 SMAP
@@ -31,7 +41,7 @@ test/Introspector$SchemaRetriever$inSchema$lambda$1
 + 2 2.kt
 IntrospectorImpl$SchemaRetriever
 *L
-1#1,10:1
-22#2:11
+1#1,14:1
+22#2:15
 *E
 

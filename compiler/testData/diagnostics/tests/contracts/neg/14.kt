@@ -29,3 +29,6 @@ fun builder(): ContractBuilder.() -> Unit = {}
 inline fun case_9(block: () -> Unit) {
     (<!CONTRACT_NOT_ALLOWED!>contract<!>(builder()))
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionalType, inline, integerLiteral, lambdaLiteral, propertyDeclaration,
+typeWithExtension */

@@ -1,1 +1,2 @@
+warning: argument "-Xsuppress-warning" is deprecated. Use "-Xwarning-level=UNCHECKED_CAST:disabled" instead
 OK

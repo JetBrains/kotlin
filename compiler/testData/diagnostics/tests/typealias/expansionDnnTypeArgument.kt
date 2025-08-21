@@ -20,3 +20,6 @@ fun test2(map: Inv1<String?>) {
 }
 
 fun expectMap(x: Inv2<String, String>) {}
+
+/* GENERATED_FIR_TAGS: dnnType, functionDeclaration, interfaceDeclaration, localProperty, nullableType,
+propertyDeclaration, stringLiteral, typeAliasDeclaration, typeAliasDeclarationWithTypeParameter, typeParameter */

@@ -33,16 +33,10 @@ class SubpluginEnvironment(
             val pluginId = subplugin.getCompilerPluginId()
             project.logger.kotlinDebug { "Loading subplugin $pluginId" }
 
-
-            if (kotlinCompilation is AbstractKotlinNativeCompilation && !kotlinCompilation.useGenericPluginArtifact) {
-                subplugin.getPluginArtifactForNative()?.let { artifact ->
-                    project.addMavenDependency(kotlinCompilation.internal.configurations.pluginConfiguration.name, artifact)
-                }
-            } else {
-                project.addMavenDependency(
-                    kotlinCompilation.internal.configurations.pluginConfiguration.name, subplugin.getPluginArtifact()
-                )
-            }
+            project.addMavenDependency(
+                kotlinCompilation.internal.configurations.pluginConfiguration.name,
+                subplugin.getPluginArtifact()
+            )
 
             val subpluginOptionsProvider = subplugin.applyToCompilation(kotlinCompilation)
             val subpluginId = subplugin.getCompilerPluginId()
@@ -108,20 +102,21 @@ class SubpluginEnvironment(
     }
 }
 
+@Suppress("DEPRECATION")
 internal fun addCompilationSourcesToExternalCompileTask(
     compilation: KotlinCompilation<*>,
     task: TaskProvider<out AbstractKotlinCompileTool<*>>
 ) {
-    if (compilation is KotlinJvmAndroidCompilation) {
+    if (compilation is KotlinJvmAndroidCompilation && compilation.androidVariant != null) {
         compilation.androidVariant.forEachKotlinSourceDirectorySet(compilation.project) { sourceSet ->
-            task.configure { it.setSource(sourceSet) }
+            task.configure { it.source(sourceSet) }
         }
         compilation.androidVariant.forEachJavaSourceDir { sources ->
-            task.configure { it.setSource(sources.dir) }
+            task.configure { it.source(sources.dir) }
         }
     } else {
         task.configure { taskInstance ->
-            compilation.allKotlinSourceSets.forEach { sourceSet -> taskInstance.setSource(sourceSet.kotlin) }
+            compilation.allKotlinSourceSets.forEach { sourceSet -> taskInstance.source(sourceSet.kotlin) }
         }
     }
 }

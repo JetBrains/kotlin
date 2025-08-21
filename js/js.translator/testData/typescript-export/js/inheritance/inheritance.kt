@@ -57,6 +57,14 @@ object O2 : OC(true, "O2") {
 }
 
 @JsExport
+object O3 : OC(true, "O2") {
+    @JsName("foo")  // TODO: Should work without JsName
+    fun foo(): Int = 10
+
+    class SomeNestedClass
+}
+
+@JsExport
 interface I3 {
     val foo: String
     var bar: String
@@ -212,3 +220,6 @@ fun <T> acceptMoreGenericForthLike(forth: T) where T: IB, T: IC, T: Second {}
 
 @JsExport
 val fifth = Fifth<Boolean>()
+
+@JsExport open class MyRootException : RuntimeException()
+@JsExport open class MySpecificException : MyRootException()

@@ -22,3 +22,6 @@ fun main() {
         else -> KotlinCommonCompilation()
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, interfaceDeclaration, intersectionType, localProperty, out,
+primaryConstructor, propertyDeclaration, typeConstraint, typeParameter, whenExpression */

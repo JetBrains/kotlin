@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.cli.common.LegacyK2CliPipeline
 import org.jetbrains.kotlin.cli.common.config.KotlinSourceRoot
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
+import org.jetbrains.kotlin.cli.common.perfManager
 import org.jetbrains.kotlin.cli.jvm.compiler.*
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment.Companion.configureProjectEnvironment
 import org.jetbrains.kotlin.cli.jvm.config.*
@@ -37,8 +38,6 @@ import org.jetbrains.kotlin.cli.jvm.index.SingleJavaFileRootsIndex
 import org.jetbrains.kotlin.cli.jvm.modules.CliJavaModuleFinder
 import org.jetbrains.kotlin.cli.jvm.modules.CliJavaModuleResolver
 import org.jetbrains.kotlin.codegen.ClassBuilderFactories
-import org.jetbrains.kotlin.codegen.ClassBuilderMode
-import org.jetbrains.kotlin.codegen.OriginCollectingClassBuilderFactory
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
@@ -59,6 +58,9 @@ import org.jetbrains.kotlin.load.kotlin.VirtualFileFinderFactory
 import org.jetbrains.kotlin.load.kotlin.incremental.IncrementalPackagePartProvider
 import org.jetbrains.kotlin.modules.TargetId
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleResolver
+import org.jetbrains.kotlin.util.PhaseType
+import org.jetbrains.kotlin.util.PotentiallyIncorrectPhaseTimeMeasurement
+import org.jetbrains.kotlin.util.tryMeasurePhaseTime
 import java.io.File
 
 @LegacyK2CliPipeline
@@ -70,16 +72,10 @@ fun convertAnalyzedFirToIr(
 ): ModuleCompilerIrBackendInput {
     val extensions = JvmFir2IrExtensions(configuration, JvmIrDeserializerImpl())
 
-    val kaptMode = configuration.getBoolean(JVMConfigurationKeys.SKIP_BODIES)
-
-    val irGenerationExtensions = if (!kaptMode) {
-        IrGenerationExtension.getInstances(environment.projectEnvironment.project)
-    } else {
-        emptyList()
-    }
     val (moduleFragment, components, pluginContext, irActualizedResult, _, symbolTable) =
         analysisResults.convertToIrAndActualizeForJvm(
-            extensions, configuration, environment.diagnosticsReporter, irGenerationExtensions,
+            extensions, configuration, environment.diagnosticsReporter,
+            IrGenerationExtension.getInstances(environment.projectEnvironment.project),
         )
 
     return ModuleCompilerIrBackendInput(
@@ -100,9 +96,6 @@ fun FirResult.convertToIrAndActualizeForJvm(
     diagnosticsReporter: BaseDiagnosticsCollector,
     irGeneratorExtensions: Collection<IrGenerationExtension>,
 ): Fir2IrActualizedResult {
-    val performanceManager = configuration[CLIConfigurationKeys.PERF_MANAGER]
-    performanceManager?.notifyIRTranslationStarted()
-
     val fir2IrConfiguration = Fir2IrConfiguration.forJvmCompilation(configuration, diagnosticsReporter)
 
     return convertToIrAndActualize(
@@ -114,74 +107,68 @@ fun FirResult.convertToIrAndActualizeForJvm(
         DefaultBuiltIns.Instance,
         ::JvmIrTypeSystemContext,
         JvmIrSpecialAnnotationSymbolProvider,
-        if (configuration.languageVersionSettings.getFlag(AnalysisFlags.stdlibCompilation)
-            && configuration.languageVersionSettings.getFlag(JvmAnalysisFlags.expectBuiltinsAsPartOfStdlib)
-        ) {
+        if (configuration.languageVersionSettings.getFlag(AnalysisFlags.stdlibCompilation)) {
             { emptyList() }
         } else {
-            {
-                listOfNotNull(
-                    FirJvmBuiltinProviderActualDeclarationExtractor.initializeIfNeeded(it),
-                    FirDirectJavaActualDeclarationExtractor.initializeIfNeeded(it)
-                )
-            }
-        }
-    ).also { performanceManager?.notifyIRTranslationFinished() }
+            { listOfNotNull(FirDirectJavaActualDeclarationExtractor.initializeIfNeeded(it)) }
+        },
+    )
 }
 
 @LegacyK2CliPipeline
 fun generateCodeFromIr(
     input: ModuleCompilerIrBackendInput,
     environment: ModuleCompilerEnvironment
-): ModuleCompilerOutput {
-    val builderFactory =
-        if (input.configuration.getBoolean(JVMConfigurationKeys.SKIP_BODIES)) OriginCollectingClassBuilderFactory(ClassBuilderMode.KAPT3)
-        else ClassBuilderFactories.BINARIES
-
+): GenerationState {
     val generationState = GenerationState(
         environment.projectEnvironment.project,
         input.irModuleFragment.descriptor,
         input.configuration,
-        builderFactory,
+        ClassBuilderFactories.BINARIES,
         targetId = input.targetId,
         moduleName = input.targetId.name,
-        onIndependentPartCompilationEnd =
-            if (input.configuration.getBoolean(JVMConfigurationKeys.SKIP_BODIES)) {
-                // Do not output class file stubs to disk in the kapt mode.
-                {}
-            } else createOutputFilesFlushingCallbackIfPossible(input.configuration),
         jvmBackendClassResolver = FirJvmBackendClassResolver(input.components),
         diagnosticReporter = environment.diagnosticsReporter,
     )
 
     val performanceManager = input.configuration[CLIConfigurationKeys.PERF_MANAGER]
-    performanceManager?.notifyGenerationStarted()
-    performanceManager?.notifyIRLoweringStarted()
-    val backendInput = JvmIrCodegenFactory.BackendInput(
-        input.irModuleFragment,
-        input.pluginContext.irBuiltIns,
-        input.symbolTable,
-        input.components.irProviders,
-        input.extensions,
-        FirJvmBackendExtension(
-            input.components,
-            input.irActualizedResult?.actualizedExpectDeclarations?.extractFirDeclarations()
-        ),
-        input.pluginContext,
-    )
+    @OptIn(PotentiallyIncorrectPhaseTimeMeasurement::class)
+    performanceManager?.notifyCurrentPhaseFinishedIfNeeded() // It should be `notifyIRGenerationFinished`, but this phase not always started or already finished
+    lateinit var codegenFactory: JvmIrCodegenFactory
+    val codegenInput = performanceManager.tryMeasurePhaseTime(PhaseType.IrLowering) {
+        val backendInput = JvmIrCodegenFactory.BackendInput(
+            input.irModuleFragment,
+            input.pluginContext.irBuiltIns,
+            input.symbolTable,
+            input.components.irProviders,
+            input.extensions,
+            FirJvmBackendExtension(
+                input.components,
+                input.irActualizedResult?.actualizedExpectDeclarations?.extractFirDeclarations()
+            ),
+            input.pluginContext,
+        )
 
-    val codegenFactory = JvmIrCodegenFactory(input.configuration)
-    val codegenInput = codegenFactory.invokeLowerings(generationState, backendInput)
+        codegenFactory = JvmIrCodegenFactory(input.configuration)
+        codegenFactory.invokeLowerings(generationState, backendInput)
+    }
 
-    performanceManager?.notifyIRLoweringFinished()
-    performanceManager?.notifyIRGenerationStarted()
+    performanceManager.tryMeasurePhaseTime(PhaseType.Backend) {
+        codegenFactory.invokeCodegen(codegenInput)
 
-    codegenFactory.invokeCodegen(codegenInput)
+        if (input.configuration.outputDirectory != null) {
+            writeOutputsIfNeeded(
+                environment.projectEnvironment.project,
+                input.configuration,
+                input.configuration.messageCollector,
+                environment.diagnosticsReporter.hasErrors,
+                listOf(generationState),
+                mainClassFqName = null,
+            )
+        }
+    }
 
-    performanceManager?.notifyIRGenerationFinished()
-    performanceManager?.notifyGenerationFinished()
-
-    return ModuleCompilerOutput(generationState, builderFactory)
+    return generationState
 }
 
 fun createIncrementalCompilationScope(
@@ -189,7 +176,17 @@ fun createIncrementalCompilationScope(
     projectEnvironment: VfsBasedProjectEnvironment,
     incrementalExcludesScope: AbstractProjectFileSearchScope?
 ): AbstractProjectFileSearchScope? {
-    if (!needCreateIncrementalCompilationScope(configuration)) return null
+    if (configuration.get(JVMConfigurationKeys.MODULES) == null) {
+        return null
+    }
+
+    val incrementalCompilationComponents = configuration.get(JVMConfigurationKeys.INCREMENTAL_COMPILATION_COMPONENTS)
+    if (incrementalCompilationComponents == null) {
+        return null
+    } else if (incrementalCompilationComponents is ProjectFileSearchScopeProvider) {
+        return incrementalCompilationComponents.createSearchScope(projectEnvironment)
+    }
+
     val dir = configuration[JVMConfigurationKeys.OUTPUT_DIRECTORY] ?: return null
     return projectEnvironment.getSearchScopeByDirectories(setOf(dir)).let {
         if (incrementalExcludesScope?.isEmpty != false) it
@@ -197,10 +194,8 @@ fun createIncrementalCompilationScope(
     }
 }
 
-private fun needCreateIncrementalCompilationScope(configuration: CompilerConfiguration): Boolean {
-    if (configuration.get(JVMConfigurationKeys.MODULES) == null) return false
-    if (configuration.get(JVMConfigurationKeys.INCREMENTAL_COMPILATION_COMPONENTS) == null) return false
-    return true
+interface ProjectFileSearchScopeProvider {
+    fun createSearchScope(projectEnvironment: VfsBasedProjectEnvironment): AbstractProjectFileSearchScope
 }
 
 fun createContextForIncrementalCompilation(
@@ -251,7 +246,7 @@ fun createProjectEnvironment(
     messageCollector: MessageCollector
 ): VfsBasedProjectEnvironment {
     setupIdeaStandaloneExecution()
-    val appEnv = KotlinCoreEnvironment.getOrCreateApplicationEnvironmentForProduction(parentDisposable, configuration)
+    val appEnv = KotlinCoreEnvironment.getOrCreateApplicationEnvironment(parentDisposable, configuration)
     // TODO: get rid of projEnv too - seems that all needed components could be easily extracted
     val projectEnvironment = KotlinCoreEnvironment.ProjectEnvironment(parentDisposable, appEnv, configuration)
 
@@ -301,12 +296,14 @@ fun createProjectEnvironment(
         }
     }
 
+    val perfManager = configuration.perfManager
+
     project.registerService(
         JavaModuleResolver::class.java,
         CliJavaModuleResolver(classpathRootsResolver.javaModuleGraph, javaModules, javaModuleFinder.systemModules.toList(), project)
     )
 
-    val fileFinderFactory = CliVirtualFileFinderFactory(rootsIndex, releaseTarget != null)
+    val fileFinderFactory = CliVirtualFileFinderFactory(rootsIndex, releaseTarget != null, perfManager)
     project.registerService(VirtualFileFinderFactory::class.java, fileFinderFactory)
     project.registerService(MetadataFinderFactory::class.java, CliMetadataFinderFactory(fileFinderFactory))
 
@@ -322,7 +319,8 @@ fun createProjectEnvironment(
             rootsIndex,
             it.packagePartProviders,
             SingleJavaFileRootsIndex(singleJavaFileRoots),
-            configuration.getBoolean(JVMConfigurationKeys.USE_PSI_CLASS_FILES_READING)
+            configuration.getBoolean(JVMConfigurationKeys.USE_PSI_CLASS_FILES_READING),
+            perfManager,
         )
     }
 }
@@ -343,6 +341,8 @@ private fun contentRootToVirtualFile(
             else localFileSystem.findExistingRoot(root, "Java module root", messageCollector)
         is JavaSourceRoot ->
             localFileSystem.findExistingRoot(root, "Java source root", messageCollector)
+        is VirtualJvmClasspathRoot ->
+            root.file
         else ->
             throw IllegalStateException("Unexpected root: $root")
     }

@@ -10,3 +10,5 @@ expect class ExpectClass : BaseClass {}
 // MODULE: m2-jvm()()(m1-common)
 // FILE: jvm.kt
 actual class ExpectClass(val x: Int) : BaseClass(x)
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, primaryConstructor, propertyDeclaration */

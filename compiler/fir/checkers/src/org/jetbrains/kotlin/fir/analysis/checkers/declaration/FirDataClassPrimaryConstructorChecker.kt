@@ -17,7 +17,8 @@ import org.jetbrains.kotlin.fir.declarations.primaryConstructorIfAny
 import org.jetbrains.kotlin.fir.declarations.utils.isData
 
 object FirDataClassPrimaryConstructorChecker : FirRegularClassChecker(MppCheckerKind.Common) {
-    override fun check(declaration: FirRegularClass, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirRegularClass) {
         if (declaration.classKind != ClassKind.CLASS || !declaration.isData) {
             return
         }
@@ -25,20 +26,20 @@ object FirDataClassPrimaryConstructorChecker : FirRegularClassChecker(MppChecker
         val primaryConstructor = declaration.primaryConstructorIfAny(context.session)
 
         if (primaryConstructor?.source == null) {
-            reporter.reportOn(declaration.source, FirErrors.DATA_CLASS_WITHOUT_PARAMETERS, context)
+            reporter.reportOn(declaration.source, FirErrors.DATA_CLASS_WITHOUT_PARAMETERS)
             return
         }
 
         val valueParameters = primaryConstructor.valueParameterSymbols
         if (valueParameters.isEmpty()) {
-            reporter.reportOn(primaryConstructor.source, FirErrors.DATA_CLASS_WITHOUT_PARAMETERS, context)
+            reporter.reportOn(primaryConstructor.source, FirErrors.DATA_CLASS_WITHOUT_PARAMETERS)
         }
         for (parameter in valueParameters) {
             if (parameter.isVararg) {
-                reporter.reportOn(parameter.source, FirErrors.DATA_CLASS_VARARG_PARAMETER, context)
+                reporter.reportOn(parameter.source, FirErrors.DATA_CLASS_VARARG_PARAMETER)
             }
             if (parameter.source?.hasValOrVar() != true) {
-                reporter.reportOn(parameter.source, FirErrors.DATA_CLASS_NOT_PROPERTY_PARAMETER, context)
+                reporter.reportOn(parameter.source, FirErrors.DATA_CLASS_NOT_PROPERTY_PARAMETER)
             }
         }
     }

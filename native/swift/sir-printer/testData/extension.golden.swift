@@ -1,4 +1,6 @@
-public extension Swift.Int32 {
+public protocol my_protocol {
+}
+extension Swift.Int32 {
 }
 private extension Swift.Int32 {
 }
@@ -6,9 +8,9 @@ private extension Swift.Int32 {
 /// this is a documented extension
 /// (is it even possible? Printer don't actually care)
 ///
-public extension Swift.Int32 {
+extension Swift.Int32 {
 }
-public extension Swift.Int32 {
+extension Swift.Int32 {
     public class Foo {
     }
     public var my_variable1: Swift.Bool {
@@ -20,13 +22,17 @@ public extension Swift.Int32 {
         stub()
     }
 }
-public extension Test.my_enum {
+extension Test.my_enum {
     public class Foo {
     }
 }
-public extension MyDependencyModule.my_external_enum {
+extension MyDependencyModule.my_external_enum {
     public class Foo {
     }
+}
+extension Test.my_enum: Test.my_protocol where Self == Test.my_protocol {
+}
+extension Test.my_enum: Test.my_protocol where NestedType1.NestedType2 == Test.my_protocol, NestedType1.NestedType2 : Test.my_protocol {
 }
 public enum my_enum {
 }

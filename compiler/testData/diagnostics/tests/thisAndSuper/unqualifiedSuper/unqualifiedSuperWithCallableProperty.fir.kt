@@ -19,3 +19,6 @@ class DerivedUsingFun : BaseWithCallableProp(), InterfaceWithFun {
     override fun bar(): String =
             super.bar()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, interfaceDeclaration, lambdaLiteral, override,
+propertyDeclaration, stringLiteral, superExpression */

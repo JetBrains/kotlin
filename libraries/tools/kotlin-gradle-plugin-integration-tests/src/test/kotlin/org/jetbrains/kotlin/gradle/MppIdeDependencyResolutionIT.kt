@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle
 
+import org.gradle.kotlin.dsl.kotlin
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.commonizer.CommonizerTarget
@@ -16,12 +17,20 @@ import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinSourceDependency.Type.Regu
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinUnresolvedBinaryDependency
 import org.jetbrains.kotlin.gradle.idea.tcs.extras.*
 import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.*
+import org.jetbrains.kotlin.gradle.idea.testFixtures.utils.*
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_KMP_STRICT_RESOLVE_IDE_DEPENDENCIES
+import org.jetbrains.kotlin.gradle.plugin.ide.IdeDependencyResolver
+import org.jetbrains.kotlin.gradle.plugin.ide.IdeMultiplatformImport
+import org.jetbrains.kotlin.gradle.plugin.ide.IdeMultiplatformImportImpl
+import org.jetbrains.kotlin.gradle.plugin.ide.kotlinIdeMultiplatformImport
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.gradle.uklibs.include
 import org.jetbrains.kotlin.gradle.util.*
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget.*
-import org.junit.AssumptionViolatedException
+import org.junit.jupiter.api.Assumptions.assumeTrue
 import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.io.TempDir
 import java.io.File
 import java.nio.ByteBuffer
@@ -102,7 +111,7 @@ class MppIdeDependencyResolutionIT : KGPBaseTest() {
         project(
             projectName = "cinteropImport",
             gradleVersion = gradleVersion,
-            localRepoDir = defaultLocalRepo(gradleVersion)
+            localRepoDir = defaultLocalRepo(gradleVersion),
         ) {
             build(":dep-with-cinterop:publishAllPublicationsToBuildRepository")
 
@@ -279,9 +288,7 @@ class MppIdeDependencyResolutionIT : KGPBaseTest() {
 
     @GradleTest
     fun `test cinterops - commonized interop name should include targets unsupported on host`(gradleVersion: GradleVersion) {
-        if (HostManager.hostIsMac) {
-            throw AssumptionViolatedException("Host shouldn't support ios target")
-        }
+        assumeTrue(!HostManager.hostIsMac) { "Host shouldn't support ios target" }
 
         project("cinterop-ios", gradleVersion) {
             resolveIdeDependencies { dependencies ->
@@ -388,10 +395,12 @@ class MppIdeDependencyResolutionIT : KGPBaseTest() {
             resolveIdeDependencies(":consumer") { dependencies ->
                 dependencies["commonMain"].assertMatches(
                     kotlinNativeDistributionDependencies,
+                    unresolvedDependenciesDiagnosticMatcher("project :producer"),
                 )
 
                 dependencies["linuxMain"].assertMatches(
                     kotlinNativeDistributionDependencies,
+                    unresolvedDependenciesDiagnosticMatcher("project :producer"),
                     dependsOnDependency(":consumer/commonMain"),
                     dependsOnDependency(":consumer/nativeMain")
                 )
@@ -404,7 +413,7 @@ class MppIdeDependencyResolutionIT : KGPBaseTest() {
                     binaryCoordinates("this:does:not-exist"),
                     IdeaKotlinDependencyMatcher("Project Dependency: producer") { dependency ->
                         dependency is IdeaKotlinUnresolvedBinaryDependency && ":producer" in dependency.cause.orEmpty()
-                    }
+                    },
                 )
             }
         }
@@ -502,6 +511,8 @@ class MppIdeDependencyResolutionIT : KGPBaseTest() {
 
             resolveIdeDependencies { dependencies ->
                 assertNoCompileTasksGotExecuted()
+                dependencies.assertResolvedDependenciesOnly()
+
                 dependencies["jvmMain"].getOrFail(
                     projectArtifactDependency(
                         Regular,
@@ -510,6 +521,211 @@ class MppIdeDependencyResolutionIT : KGPBaseTest() {
                     )
                 )
             }
+        }
+    }
+
+    @GradleTest
+    fun `KT-74727 intermediate platform-specific source set with project dependency`(gradleVersion: GradleVersion) {
+        project("base-kotlin-multiplatform-library", gradleVersion) {
+            includeOtherProjectAsSubmodule("base-kotlin-multiplatform-library", newSubmoduleName = "kmp-lib") {
+                buildScriptInjection {
+                    kotlinMultiplatform.apply {
+                        jvm()
+                        linuxX64()
+                    }
+                }
+            }
+
+            buildScriptInjection {
+                kotlinMultiplatform.apply {
+                    jvm()
+                    sourceSets.commonMain.dependencies { // since only jvm is declared commonMain here is JVM-specific source set
+                        api(project(":kmp-lib"))
+                    }
+                }
+            }
+
+            resolveIdeDependencies { dependencies ->
+                assertNoCompileTasksGotExecuted()
+                dependencies.assertResolvedDependenciesOnly()
+
+                val expectedJvmDependencies = listOf(
+                    jetbrainsAnnotationDependencies,
+                    kotlinStdlibDependencies,
+                    // FIXME: KT-74782 This is technically a bug, as we should expect that "kmp-lib" would be resolved
+                    //  as bunch of regular source dependencies. i.e. :kmp-lib:commonMain and :kmp-lib:jvmMain
+                    //  but IDEA is smart enough to convert this projectArtifactDependency to beforementioned source dependencies
+                    projectArtifactDependency(
+                        Regular,
+                        ":kmp-lib",
+                        FilePathRegex(".*/kmp-lib-jvm.jar")
+                    )
+                )
+                dependencies["commonMain"]
+                    .assertMatches(expectedJvmDependencies)
+                dependencies["jvmMain"]
+                    .assertMatches(expectedJvmDependencies + dependsOnDependency(":/commonMain"))
+
+                val friendDependencies = listOf(
+                    friendSourceDependency(":/commonMain"),
+                    friendSourceDependency(":/jvmMain"),
+                )
+
+                dependencies["commonTest"]
+                    .assertMatches(expectedJvmDependencies + friendDependencies)
+                dependencies["jvmTest"]
+                    .assertMatches(expectedJvmDependencies + friendDependencies + dependsOnDependency(":/commonTest") )
+            }
+        }
+    }
+
+    @GradleTest
+    fun `KT-75605 dependency to kmp project from test source set`(gradleVersion: GradleVersion) {
+        project("base-kotlin-multiplatform-library", gradleVersion) {
+            includeOtherProjectAsSubmodule("base-kotlin-multiplatform-library", newSubmoduleName = "test-utils") {
+                buildScriptInjection {
+                    kotlinMultiplatform.apply {
+                        jvm()
+                        linuxX64()
+                        linuxArm64()
+                        iosX64()
+                    }
+                }
+            }
+
+            buildScriptInjection {
+                kotlinMultiplatform.apply {
+                    jvm()
+                    linuxX64()
+                    linuxArm64()
+                    iosX64()
+
+                    sourceSets.commonTest.dependencies {
+                        api(project(":test-utils"))
+                    }
+                }
+            }
+
+            resolveIdeDependencies { dependencies ->
+                assertNoCompileTasksGotExecuted()
+                dependencies.assertResolvedDependenciesOnly()
+
+                dependencies["commonTest"].assertMatches(
+                    friendSourceDependency(":/commonMain"),
+                    regularSourceDependency(":test-utils/commonMain"),
+                    kotlinStdlibDependencies
+                )
+                dependencies["nativeTest"].assertMatches(
+                    friendSourceDependency(":/commonMain"),
+                    friendSourceDependency(":/nativeMain"),
+                    dependsOnDependency(":/commonTest"),
+                    regularSourceDependency(":test-utils/commonMain"),
+                    regularSourceDependency(":test-utils/nativeMain"),
+                    kotlinNativeDistributionDependencies, // kotlin-stdlib is part of native distribution
+                )
+            }
+        }
+    }
+
+    @OptIn(ExternalKotlinTargetApi::class)
+    @GradleTest
+    fun `IDE resolution strict mode`(gradleVersion: GradleVersion) {
+        class Foo : Exception()
+        class Bar : Exception()
+        val baz = "baz"
+        val project = project("empty", gradleVersion) {
+            plugins { kotlin("multiplatform") }
+            buildScriptInjection {
+                kotlinMultiplatform.jvm()
+                project.kotlinIdeMultiplatformImport.registerDependencyResolver(
+                    resolver = IdeDependencyResolver { throw Foo() },
+                    constraint = IdeMultiplatformImport.SourceSetConstraint.unconstrained,
+                    phase = IdeMultiplatformImport.DependencyResolutionPhase.PreDependencyResolution,
+                )
+                project.kotlinIdeMultiplatformImport.registerDependencyResolver(
+                    resolver = IdeDependencyResolver { throw Bar() },
+                    constraint = IdeMultiplatformImport.SourceSetConstraint.unconstrained,
+                    phase = IdeMultiplatformImport.DependencyResolutionPhase.SourcesAndDocumentationResolution,
+                )
+                project.kotlinIdeMultiplatformImport.registerDependencyResolver(
+                    resolver = IdeDependencyResolver {
+                        (project.kotlinIdeMultiplatformImport as IdeMultiplatformImportImpl).importLogger.warn(baz)
+                        emptySet()
+                    },
+                    constraint = IdeMultiplatformImport.SourceSetConstraint.unconstrained,
+                    phase = IdeMultiplatformImport.DependencyResolutionPhase.SourceDependencyResolution,
+                )
+            }
+        }
+        project.resolveIdeDependencies(strictMode = false) {
+            assertOutputContains("e: org.jetbrains.kotlin.gradle.plugin.ide")
+        }
+        assertThrows<Exception> { project.resolveIdeDependencies(strictMode = true) {} }
+
+        val events = project.catchBuildFailures<org.jetbrains.kotlin.gradle.plugin.ide.IdeMultiplatformImportLogger.Events>().buildAndReturn(
+            ":resolveIdeDependencies", "-P${KOTLIN_KMP_STRICT_RESOLVE_IDE_DEPENDENCIES}=true"
+        ).unwrap().single()
+        assertEquals<List<Class<*>>>(
+            listOf(
+                Foo::class.java,
+                Bar::class.java,
+            ),
+            events.errors.map { it.cause!!.javaClass }
+        )
+        assertEquals(
+            listOf(baz),
+            events.warnings.map { it.message }
+        )
+    }
+
+    @GradleTest
+    fun `KT-77414 detached source sets don't fail IDE resolution`(gradleVersion: GradleVersion) {
+        project("empty", gradleVersion) {
+            val producer = project("empty", gradleVersion) {
+                plugins { kotlin("multiplatform") }
+                buildScriptInjection { kotlinMultiplatform.jvm() }
+            }
+            val producerName = "producer"
+            include(producer, producerName)
+
+            plugins { kotlin("multiplatform") }
+            buildScriptInjection {
+                kotlinMultiplatform.jvm()
+                kotlinMultiplatform.sourceSets.create("detached").dependencies {
+                    implementation(project(":${producerName}"))
+                }
+            }
+        }.resolveIdeDependencies(strictMode = true) {}
+    }
+
+    @GradleAndroidTest
+    fun `KT-77404 jvm+android commonTest sees stdlib and annotations`(
+        gradleVersion: GradleVersion,
+        agpVersion: String,
+        jdkVersion: JdkVersions.ProvidedJdk,
+    ) {
+        project(
+            "base-kotlin-multiplatform-android-library",
+            gradleVersion,
+            buildJdk = jdkVersion.location,
+            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion),
+        ) {
+            buildScriptInjection {
+                applyDefaultAndroidLibraryConfiguration()
+
+                kotlinMultiplatform.jvm()
+                kotlinMultiplatform.androidTarget()
+            }
+        }.resolveIdeDependencies() { dependencies ->
+            dependencies["commonMain"].assertMatches(
+                kotlinStdlibDependencies,
+                jetbrainsAnnotationDependencies,
+            )
+            dependencies["commonTest"].assertMatches(
+                kotlinStdlibDependencies,
+                jetbrainsAnnotationDependencies,
+                friendSourceDependency(":/commonMain")
+            )
         }
     }
 

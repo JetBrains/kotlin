@@ -7,6 +7,20 @@ package {
 
   // module name: test-module
 }
+// LambdaKt$test$f$1.class
+// ------------------------------------------
+lambda {
+
+  // signature: invoke()V
+  local final fun <anonymous>(): kotlin/Unit
+}
+// LambdaKt$test$g$1.class
+// ------------------------------------------
+lambda {
+
+  // signature: invoke(Lkotlin/Unit;[ILjava/util/Set;)Ljava/lang/String;
+  local final fun kotlin/Unit.<no name provided>(s: kotlin/IntArray?, t: kotlin/collections/Set<kotlin/Double>): kotlin/String
+}
 // META-INF/test-module.kotlin_module
 // ------------------------------------------
 module {

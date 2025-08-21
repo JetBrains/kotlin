@@ -39,6 +39,12 @@ public class JsPartialLinkageNoICTestCaseGenerated extends AbstractJsPartialLink
   }
 
   @Test
+  @TestMetadata("callableReferenceTypeTransformations")
+  public void testCallableReferenceTypeTransformations() {
+    runTest("compiler/testData/klib/partial-linkage/callableReferenceTypeTransformations/");
+  }
+
+  @Test
   @TestMetadata("changeClassVisibility")
   public void testChangeClassVisibility() {
     runTest("compiler/testData/klib/partial-linkage/changeClassVisibility/");
@@ -75,6 +81,12 @@ public class JsPartialLinkageNoICTestCaseGenerated extends AbstractJsPartialLink
   }
 
   @Test
+  @TestMetadata("fakeOverridesUnboundClassifiers")
+  public void testFakeOverridesUnboundClassifiers() {
+    runTest("compiler/testData/klib/partial-linkage/fakeOverridesUnboundClassifiers/");
+  }
+
+  @Test
   @TestMetadata("functionTransformations")
   public void testFunctionTransformations() {
     runTest("compiler/testData/klib/partial-linkage/functionTransformations/");
@@ -87,9 +99,45 @@ public class JsPartialLinkageNoICTestCaseGenerated extends AbstractJsPartialLink
   }
 
   @Test
-  @TestMetadata("kt73511")
-  public void testKt73511() {
-    runTest("compiler/testData/klib/partial-linkage/kt73511/");
+  @TestMetadata("inlineFunctions-noInliningInKlibs")
+  public void testInlineFunctions_noInliningInKlibs() {
+    runTest("compiler/testData/klib/partial-linkage/inlineFunctions-noInliningInKlibs/");
+  }
+
+  @Test
+  @TestMetadata("inlineFunctions-withInliningInKlibs")
+  public void testInlineFunctions_withInliningInKlibs() {
+    runTest("compiler/testData/klib/partial-linkage/inlineFunctions-withInliningInKlibs/");
+  }
+
+  @Test
+  @TestMetadata("inlineFunctions-withInliningInKlibsNative")
+  public void testInlineFunctions_withInliningInKlibsNative() {
+    runTest("compiler/testData/klib/partial-linkage/inlineFunctions-withInliningInKlibsNative/");
+  }
+
+  @Test
+  @TestMetadata("interop-changedFunction")
+  public void testInterop_changedFunction() {
+    runTest("compiler/testData/klib/partial-linkage/interop-changedFunction/");
+  }
+
+  @Test
+  @TestMetadata("modifyInlineFunction")
+  public void testModifyInlineFunction() {
+    runTest("compiler/testData/klib/partial-linkage/modifyInlineFunction/");
+  }
+
+  @Test
+  @TestMetadata("modifyInlinePropertyGetter")
+  public void testModifyInlinePropertyGetter() {
+    runTest("compiler/testData/klib/partial-linkage/modifyInlinePropertyGetter/");
+  }
+
+  @Test
+  @TestMetadata("modifyInlinePropertySetter")
+  public void testModifyInlinePropertySetter() {
+    runTest("compiler/testData/klib/partial-linkage/modifyInlinePropertySetter/");
   }
 
   @Test
@@ -111,15 +159,27 @@ public class JsPartialLinkageNoICTestCaseGenerated extends AbstractJsPartialLink
   }
 
   @Test
-  @TestMetadata("propertyTransformations")
-  public void testPropertyTransformations() {
-    runTest("compiler/testData/klib/partial-linkage/propertyTransformations/");
+  @TestMetadata("referenceOperations")
+  public void testReferenceOperations() {
+    runTest("compiler/testData/klib/partial-linkage/referenceOperations/");
+  }
+
+  @Test
+  @TestMetadata("referenceOperationsNative")
+  public void testReferenceOperationsNative() {
+    runTest("compiler/testData/klib/partial-linkage/referenceOperationsNative/");
   }
 
   @Test
   @TestMetadata("referencingUnusableDeclarations")
   public void testReferencingUnusableDeclarations() {
     runTest("compiler/testData/klib/partial-linkage/referencingUnusableDeclarations/");
+  }
+
+  @Test
+  @TestMetadata("referencingUnusableDeclarationsWithOldReferences")
+  public void testReferencingUnusableDeclarationsWithOldReferences() {
+    runTest("compiler/testData/klib/partial-linkage/referencingUnusableDeclarationsWithOldReferences/");
   }
 
   @Test
@@ -144,6 +204,18 @@ public class JsPartialLinkageNoICTestCaseGenerated extends AbstractJsPartialLink
   @TestMetadata("removeEnumEntry")
   public void testRemoveEnumEntry() {
     runTest("compiler/testData/klib/partial-linkage/removeEnumEntry/");
+  }
+
+  @Test
+  @TestMetadata("removeInlineFunction")
+  public void testRemoveInlineFunction() {
+    runTest("compiler/testData/klib/partial-linkage/removeInlineFunction/");
+  }
+
+  @Test
+  @TestMetadata("removeInlineProperty")
+  public void testRemoveInlineProperty() {
+    runTest("compiler/testData/klib/partial-linkage/removeInlineProperty/");
   }
 
   @Test

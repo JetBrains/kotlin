@@ -22,10 +22,10 @@ dependencies {
     testRuntimeOnly(libs.junit.jupiter.engine)
     testImplementation(libs.junit.jupiter.api)
 
-    testImplementation(projectTests(":analysis:analysis-api-impl-base"))
-    testImplementation(projectTests(":analysis:analysis-test-framework"))
-    testImplementation(projectTests(":analysis:analysis-api-fir"))
-    testRuntimeOnly(projectTests(":analysis:low-level-api-fir"))
+    testImplementation(testFixtures(project(":analysis:analysis-api-impl-base")))
+    testImplementation(testFixtures(project(":analysis:analysis-test-framework")))
+    testImplementation(testFixtures(project(":analysis:analysis-api-fir")))
+    testRuntimeOnly(testFixtures(project(":analysis:low-level-api-fir")))
 }
 
 sourceSets {
@@ -38,7 +38,7 @@ sourceSets {
 
 
 val test by nativeTest("test", null) {
-    dependsOn(":dist")
+    dependsOn(":dist", ":kotlin-native:distInvalidateStaleCaches")
 }
 
 

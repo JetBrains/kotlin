@@ -2,17 +2,19 @@ package org.jetbrains.kotlin.gradle
 
 import org.gradle.api.logging.LogLevel
 import org.gradle.util.GradleVersion
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompilerExecutionStrategy
-import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompilerExecutionStrategy
+import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.io.TempDir
 import java.nio.file.Path
 import java.util.zip.ZipFile
-import kotlin.io.path.*
+import kotlin.io.path.absolute
+import kotlin.io.path.appendText
+import kotlin.io.path.invariantSeparatorsPathString
 
 @JvmGradlePluginTests
 @DisplayName("KGP simple tests")
@@ -55,6 +57,17 @@ class SimpleKotlinGradleIT : KGPBaseTest() {
     }
 
     @GradleTest
+    @DisplayName("Warnings with set warningLevel are reported")
+    fun testWarningLevels(gradleVersion: GradleVersion) {
+        project("warningLevelUsage", gradleVersion) {
+            build("build") {
+                assertTasksExecuted(":compileKotlin")
+                assertOutputContains("""w:.*NOTHING_TO_INLINE.*""".toRegex())
+            }
+        }
+    }
+
+    @GradleTest
     @DisplayName("Plugin should allow to add custom Kotlin directory")
     fun testKotlinCustomDirectory(gradleVersion: GradleVersion) {
         project("customSrcDir", gradleVersion) {
@@ -75,7 +88,7 @@ class SimpleKotlinGradleIT : KGPBaseTest() {
     fun testLanguageVersion(gradleVersion: GradleVersion) {
         project("languageVersion", gradleVersion) {
             buildAndFail("build") {
-                assertOutputContains("The feature \"generic inline class parameter\" is only available since language version 1.8")
+                assertOutputContains("The feature \"break continue in inline lambdas\" is only available since language version 2.2")
             }
         }
     }
@@ -268,7 +281,7 @@ class SimpleKotlinGradleIT : KGPBaseTest() {
             gradleProperties.appendText(
                 """
                 |
-                |kotlin.user.home=${tempDir.resolve("kotlin-cache").absolutePathString().normalizePath()}
+                |kotlin.user.home=${tempDir.resolve("kotlin-cache").absolute().normalize().invariantSeparatorsPathString}
                 """.trimMargin()
             )
 

@@ -15,3 +15,5 @@ object Object {
 import singlePrivateObject.<!INVISIBLE_REFERENCE!>SinglePrivateObject<!>.clbl
 
 import singlePrivateObject.<!INVISIBLE_REFERENCE!>SinglePrivateObject<!>.Shmobject
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, nestedClass, objectDeclaration, typeAliasDeclaration */

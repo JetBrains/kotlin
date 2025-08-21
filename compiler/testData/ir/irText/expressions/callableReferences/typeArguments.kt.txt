@@ -1,13 +1,13 @@
 val test1: Function1<Int, Unit>
-  field = ::topLevel1/*<Int>()*/
+  field = ::topLevel1/*<Int>() */
   get
 
 val test2: Function1<List<String>, Unit>
-  field = ::topLevel2/*<String>()*/
+  field = ::topLevel2/*<String>() */
   get
 
 val test3: Function1<Int, Unit>
-  field = Host::objectMember/*<Int>()*/
+  field = Host::objectMember/*<Int>() */
   get
 
 object Host {

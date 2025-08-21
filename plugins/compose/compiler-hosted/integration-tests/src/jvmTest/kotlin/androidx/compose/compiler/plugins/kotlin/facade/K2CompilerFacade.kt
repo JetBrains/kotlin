@@ -35,9 +35,9 @@ import org.jetbrains.kotlin.codegen.ClassBuilderFactories
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
+import org.jetbrains.kotlin.diagnostics.KtPsiDiagnostic
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmBackendClassResolver
@@ -45,7 +45,6 @@ import org.jetbrains.kotlin.fir.backend.jvm.FirJvmBackendExtension
 import org.jetbrains.kotlin.fir.backend.jvm.JvmFir2IrExtensions
 import org.jetbrains.kotlin.fir.backend.utils.extractFirDeclarations
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
-import org.jetbrains.kotlin.fir.java.FirProjectSessionProvider
 import org.jetbrains.kotlin.fir.pipeline.Fir2IrActualizedResult
 import org.jetbrains.kotlin.fir.pipeline.FirResult
 import org.jetbrains.kotlin.fir.pipeline.buildResolveAndCheckFirFromKtFiles
@@ -65,7 +64,7 @@ class FirAnalysisResult(
     val reporter: BaseDiagnosticsCollector,
 ) : AnalysisResult {
     override val diagnostics: Map<String, List<AnalysisResult.Diagnostic>>
-        get() = reporter.diagnostics.groupBy(
+        get() = reporter.diagnostics.filterIsInstance<KtPsiDiagnostic>().groupBy(
             keySelector = { it.psiElement.containingFile.name },
             valueTransform = { AnalysisResult.Diagnostic(it.factoryName, it.textRanges) }
         )
@@ -85,28 +84,23 @@ class K2CompilerFacade(environment: KotlinCoreEnvironment) : KotlinCompilerFacad
 
     private fun createSourceSession(
         moduleData: FirModuleData,
-        projectSessionProvider: FirProjectSessionProvider,
         projectEnvironment: AbstractProjectEnvironment,
         librarySession: FirSession,
     ): FirSession {
-        return FirJvmSessionFactory.createModuleBasedSession(
+        return FirJvmSessionFactory.createSourceSession(
             moduleData,
-            projectSessionProvider,
             PsiBasedProjectFileSearchScope(
                 TopDownAnalyzerFacadeForJVM.AllJavaSourcesInProjectScope(
                     project
                 )
             ),
             projectEnvironment,
-            { null },
+            createIncrementalCompilationSymbolProviders = { null },
             FirExtensionRegistrar.getInstances(project),
-            configuration.languageVersionSettings,
-            configuration.get(JVMConfigurationKeys.JVM_TARGET) ?: error("JVM_TARGET is not specified in compiler configuration"),
-            configuration.get(CommonConfigurationKeys.LOOKUP_TRACKER),
-            configuration.get(CommonConfigurationKeys.ENUM_WHEN_TRACKER),
-            configuration.get(CommonConfigurationKeys.IMPORT_TRACKER),
+            configuration,
             predefinedJavaComponents = null,
             needRegisterJavaElementFinder = true,
+            isForLeafHmppModule = false,
             init = {
                 registerComponent(
                     FirBuiltinSyntheticFunctionInterfaceProvider::class,
@@ -122,12 +116,7 @@ class K2CompilerFacade(environment: KotlinCoreEnvironment) : KotlinCompilerFacad
     ): FirAnalysisResult {
         val rootModuleName = configuration.get(CommonConfigurationKeys.MODULE_NAME, "main")
 
-        val projectSessionProvider = FirProjectSessionProvider()
-        val binaryModuleData = BinaryModuleData.initialize(
-            Name.identifier(rootModuleName),
-            CommonPlatforms.defaultCommonPlatform,
-        )
-        val dependencyList = DependencyListForCliModule.build(binaryModuleData)
+        val dependencyList = DependencyListForCliModule.build(Name.identifier(rootModuleName))
         val projectEnvironment = VfsBasedProjectEnvironment(
             project,
             VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.FILE_PROTOCOL),
@@ -135,9 +124,17 @@ class K2CompilerFacade(environment: KotlinCoreEnvironment) : KotlinCompilerFacad
         )
         val librariesScope = PsiBasedProjectFileSearchScope(ProjectScope.getLibrariesScope(project))
 
-        val librarySession = FirJvmSessionFactory.createLibrarySession(
+        val sharedLibrarySession = FirJvmSessionFactory.createSharedLibrarySession(
             Name.identifier(rootModuleName),
-            projectSessionProvider,
+            projectEnvironment,
+            FirExtensionRegistrar.getInstances(project),
+            projectEnvironment.getPackagePartProvider(librariesScope),
+            configuration.languageVersionSettings,
+            predefinedJavaComponents = null,
+        )
+
+        val librarySession = FirJvmSessionFactory.createLibrarySession(
+            sharedLibrarySession,
             dependencyList.moduleDataProvider,
             projectEnvironment,
             FirExtensionRegistrar.getInstances(project),
@@ -147,31 +144,29 @@ class K2CompilerFacade(environment: KotlinCoreEnvironment) : KotlinCompilerFacad
             predefinedJavaComponents = null,
         )
 
-        val commonModuleData = FirModuleDataImpl(
+        val commonModuleData = FirSourceModuleData(
             Name.identifier("$rootModuleName-common"),
             dependencyList.regularDependencies,
             dependencyList.dependsOnDependencies,
-            dependencyList.friendsDependencies,
+            dependencyList.friendDependencies,
             CommonPlatforms.defaultCommonPlatform,
         )
 
-        val platformModuleData = FirModuleDataImpl(
+        val platformModuleData = FirSourceModuleData(
             Name.identifier(rootModuleName),
             dependencyList.regularDependencies,
             dependencyList.dependsOnDependencies + commonModuleData,
-            dependencyList.friendsDependencies,
+            dependencyList.friendDependencies,
             JvmPlatforms.jvm8,
         )
 
         val commonSession = createSourceSession(
             commonModuleData,
-            projectSessionProvider,
             projectEnvironment,
             librarySession,
         )
         val platformSession = createSourceSession(
             platformModuleData,
-            projectSessionProvider,
             projectEnvironment,
             librarySession,
         )

@@ -5,9 +5,10 @@
 
 package kotlin.script.experimental.jvmhost.test
 
-import org.junit.Assert
-import org.junit.Test
 import kotlin.script.experimental.api.*
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 class ExternalDeclarationsResolveOrderTest {
 
@@ -17,12 +18,12 @@ class ExternalDeclarationsResolveOrderTest {
             constructorArgs("OK", 42)
         }
 
-        Assert.assertTrue(
-            "test failed:\n  ${res.render()}",
-            res is ResultWithDiagnostics.Success
+        assertTrue(
+            res is ResultWithDiagnostics.Success,
+            "test failed:\n  ${res.render()}"
         )
 
-        Assert.assertEquals(
+        assertEquals(
             "OK42",
             (res.valueOrThrow().returnValue as ResultValue.Value).value
         )
@@ -34,12 +35,12 @@ class ExternalDeclarationsResolveOrderTest {
             constructorArgs("OK", 42)
         }
 
-        Assert.assertTrue(
-            "test failed:\n  ${res.render()}",
-            res is ResultWithDiagnostics.Success
+        assertTrue(
+            res is ResultWithDiagnostics.Success,
+            "test failed:\n  ${res.render()}"
         )
 
-        Assert.assertEquals(
+        assertEquals(
             "OK42",
             (res.valueOrThrow().returnValue as ResultValue.Value).value
         )

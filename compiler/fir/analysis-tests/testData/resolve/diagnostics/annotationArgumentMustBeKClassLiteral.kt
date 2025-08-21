@@ -23,3 +23,6 @@ fun bar() = Foo::class
     ]
 )
 fun test1() {}
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, classReference, collectionLiteral, functionDeclaration,
+integerLiteral, primaryConstructor, propertyDeclaration, starProjection, stringLiteral */

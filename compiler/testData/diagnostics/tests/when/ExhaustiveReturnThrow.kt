@@ -23,3 +23,6 @@ fun foo(dir: Direction): Int {
     // Error: Unreachable code. Return is not required.
     <!UNREACHABLE_CODE!>if (dir == Direction.SOUTH) return 2<!>
 }
+
+/* GENERATED_FIR_TAGS: enumDeclaration, enumEntry, equalityExpression, functionDeclaration, ifExpression, integerLiteral,
+smartcast, stringLiteral, whenExpression, whenWithSubject */

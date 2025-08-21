@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.ir.types
 
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.builtins.StandardNames
+import org.jetbrains.kotlin.builtins.functions.AllowedToUsedOnlyInK1
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
@@ -97,6 +98,7 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
 
     // Note: `isProjectionNotNull` is used inside inference along with intersection types.
     // IrTypes are not used in type inference and do not have intersection type so implemenation is default (false)
+    @AllowedToUsedOnlyInK1
     override fun CapturedTypeMarker.isProjectionNotNull(): Boolean = false
 
     override fun CapturedTypeMarker.captureStatus(): CaptureStatus =
@@ -262,7 +264,7 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
                 } else null
 
                 IrCapturedType(
-                    status, lowerType, argument, typeParameters[index], SimpleTypeNullability.DEFINITELY_NOT_NULL, emptyList(), null
+                    status, lowerType, argument, typeParameters[index], SimpleTypeNullability.DEFINITELY_NOT_NULL, emptyList()
                 )
             }
         }
@@ -339,6 +341,7 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
         arguments: List<TypeArgumentMarker>,
         nullable: Boolean,
         isExtensionFunction: Boolean,
+        contextParameterCount: Int,
         attributes: List<AnnotationMarker>?
     ): IrSimpleType {
         val ourAnnotations = attributes?.memoryOptimizedFilterIsInstance<IrConstructorCall>()
@@ -474,15 +477,6 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
 
     override fun KotlinTypeMarker.getUnsubstitutedUnderlyingType(): KotlinTypeMarker? =
         (this as IrType).classOrNull?.owner?.inlineClassRepresentation?.underlyingType
-
-    override fun KotlinTypeMarker.getSubstitutedUnderlyingType(): KotlinTypeMarker? =
-        getUnsubstitutedUnderlyingType()?.let { type ->
-            // Taking only the type parameters of the class (and not its outer classes) is OK since inner classes are always top level
-            IrTypeSubstitutor(
-                (this as IrType).getClass()!!.typeParameters.memoryOptimizedMap { it.symbol },
-                (this as? IrSimpleType)?.arguments.orEmpty(),
-            ).substitute(type as IrType)
-        }
 
     override fun TypeConstructorMarker.getPrimitiveType(): PrimitiveType? =
         getNameForClassUnderKotlinPackage()?.let(PrimitiveType::getByShortName)

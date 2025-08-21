@@ -30,3 +30,7 @@ fun ifIs(x: Int?, cond: Boolean) {
     }
     checkSubtype<Int>(<!ARGUMENT_TYPE_MISMATCH!>x<!>)
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, equalityExpression, funWithExtensionReceiver,
+functionDeclaration, functionalType, ifExpression, infix, integerLiteral, isExpression, nullableType, smartcast,
+typeParameter, typeWithExtension */

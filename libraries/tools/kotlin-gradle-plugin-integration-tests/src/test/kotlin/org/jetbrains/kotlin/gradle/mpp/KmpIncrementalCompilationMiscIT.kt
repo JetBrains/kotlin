@@ -26,6 +26,8 @@ class KmpIncrementalCompilationWithLocalClassesIT : KGPBaseTest() {
     override val defaultBuildOptions: BuildOptions
         get() = super.defaultBuildOptions.copy(
             enableUnsafeIncrementalCompilationForMultiplatform = true,
+            // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
+            isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED,
         )
 
     @Disabled("Broken, see KT-59153")
@@ -152,6 +154,8 @@ class KmpIncrementalCompilationSetExpansionIT : KGPBaseTest() {
         get() = super.defaultBuildOptions.copy(
             // it's more convenient to set up the test project using common sourceset
             enableUnsafeIncrementalCompilationForMultiplatform = true,
+            // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
+            isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED,
         )
 
     @DisplayName("Inline cycle with monotonous expansion")

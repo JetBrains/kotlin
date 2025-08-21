@@ -33,3 +33,6 @@ fun test() {
 
     <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>foo<!>(::<!CALLABLE_REFERENCE_RESOLUTION_AMBIGUITY!>multiple<!>, ::<!CALLABLE_REFERENCE_RESOLUTION_AMBIGUITY!>multiple<!>)
 }
+
+/* GENERATED_FIR_TAGS: callableReference, functionDeclaration, functionalType, interfaceDeclaration, intersectionType,
+localProperty, nullableType, propertyDeclaration, typeParameter */

@@ -24,3 +24,6 @@ class C {
         try {} finally { }
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, init, primaryConstructor, propertyDeclaration, secondaryConstructor,
+stringLiteral, thisExpression, tryExpression */

@@ -124,3 +124,8 @@ val <G> G.delegatedReadableProperty: Value by Any()
 var <H> H.delegatedWriteableProperty: Value by Any()
 
 object Interloper: BaseType
+
+/* GENERATED_FIR_TAGS: callableReference, checkNotNullCall, classDeclaration, companionObject, funWithExtensionReceiver,
+functionDeclaration, functionalType, getter, inner, interfaceDeclaration, lambdaLiteral, localProperty, nullableType,
+objectDeclaration, operator, primaryConstructor, propertyDeclaration, propertyDelegate, propertyWithExtensionReceiver,
+setter, typeParameter */

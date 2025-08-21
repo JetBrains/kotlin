@@ -17,3 +17,6 @@ fun foo(b: B, cond: Boolean) {
 
     x.bar()
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, elvisExpression, functionDeclaration, ifExpression, interfaceDeclaration,
+localProperty, nullableType, propertyDeclaration, typeConstraint, typeParameter */

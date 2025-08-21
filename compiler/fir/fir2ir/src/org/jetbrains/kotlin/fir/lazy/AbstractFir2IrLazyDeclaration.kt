@@ -5,9 +5,15 @@
 
 package org.jetbrains.kotlin.fir.lazy
 
+import org.jetbrains.kotlin.fir.FirEvaluatorResult
 import org.jetbrains.kotlin.fir.backend.Fir2IrComponents
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.fir.expressions.FirAnnotation
+import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.expressions.FirExpressionEvaluator
+import org.jetbrains.kotlin.fir.expressions.builder.buildAnnotationArgumentMapping
+import org.jetbrains.kotlin.fir.expressions.builder.buildAnnotationCopy
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrFactory
@@ -15,9 +21,6 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyDeclarationBase
 import org.jetbrains.kotlin.ir.declarations.lazy.lazyVar
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
-import org.jetbrains.kotlin.ir.util.DeclarationStubGenerator
-import org.jetbrains.kotlin.ir.util.TypeTranslator
-import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 import kotlin.properties.ReadWriteProperty
 
 interface AbstractFir2IrLazyDeclaration<F> :
@@ -34,15 +37,26 @@ interface AbstractFir2IrLazyDeclaration<F> :
         // an annotated built-in function in sources, like arrayOfNull (KT-70856).
         // For any other project, built-ins functions come from libraries and it's not actual.
         fir.lazyResolveToPhase(FirResolvePhase.ANNOTATION_ARGUMENTS)
-        fir.annotations.mapNotNull {
-            callGenerator.convertToIrConstructorCall(it) as? IrConstructorCall
+        fir.annotations.mapNotNull { annotation ->
+            val effectiveAnnotation = evaluateAnnotationArguments(annotation)
+            callGenerator.convertToIrConstructorCall(effectiveAnnotation) as? IrConstructorCall
         }
     }
 
-    override val stubGenerator: DeclarationStubGenerator
-        get() = shouldNotBeCalled()
-    override val typeTranslator: TypeTranslator
-        get() = shouldNotBeCalled()
+    private fun evaluateAnnotationArguments(annotation: FirAnnotation): FirAnnotation {
+        val evaluationResult = FirExpressionEvaluator.evaluateAnnotationArguments(annotation, session) ?: return annotation
+
+        return buildAnnotationCopy(annotation) {
+            argumentMapping = buildAnnotationArgumentMapping {
+                source = annotation.argumentMapping.source
+
+                for ((name, expression) in annotation.argumentMapping.mapping) {
+                    val evaluatedExpression = (evaluationResult[name] as? FirEvaluatorResult.Evaluated)?.result as? FirExpression
+                    mapping[name] = evaluatedExpression ?: expression
+                }
+            }
+        }
+    }
 }
 
 internal fun mutationNotSupported(): Nothing =

@@ -12,8 +12,11 @@ import org.jetbrains.kotlin.backend.common.pop
 import org.jetbrains.kotlin.backend.common.push
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
+import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.JsCommonBackendContext
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
+import org.jetbrains.kotlin.ir.backend.js.wasMovedFromItsDeclarationPlace
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.*
@@ -29,6 +32,7 @@ import org.jetbrains.kotlin.ir.util.isElseBranch
 import org.jetbrains.kotlin.ir.util.isSuspend
 import org.jetbrains.kotlin.ir.util.previousOffset
 import org.jetbrains.kotlin.ir.visitors.*
+import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 
 class SuspendState(type: IrType) {
     val entryBlock: IrContainerExpression = JsIrBuilder.buildComposite(type)
@@ -36,7 +40,7 @@ class SuspendState(type: IrType) {
     var id = -1
 }
 
-private var IrComposite.suspendState: SuspendState? by irAttribute(followAttributeOwner = false)
+private var IrComposite.suspendState: SuspendState? by irAttribute(copyByDefault = false)
 
 data class LoopBounds(val headState: SuspendState, val exitState: SuspendState)
 
@@ -84,6 +88,7 @@ class StateMachineBuilder(
 
     val entryState = SuspendState(unit)
     val rootExceptionTrap = buildExceptionTrapState()
+    val allTheIntermediateLocals = mutableListOf<IrVariable>()
     private val globalExceptionVar = JsIrBuilder.buildVar(exceptionSymbolGetter.returnType.makeNotNull(), function.owner, "e")
     lateinit var globalCatch: IrCatch
 
@@ -180,10 +185,13 @@ class StateMachineBuilder(
         return lastExpression.type.isNothing()
     }
 
-    private fun maybeDoDispatch(target: SuspendState) {
+    private fun maybeDoDispatch(target: SuspendState): Boolean {
         if (!isBlockEnded()) {
             doDispatch(target)
+            return true
         }
+
+        return false
     }
 
     private fun doDispatch(target: SuspendState, andContinue: Boolean = true) = doDispatchImpl(target, currentBlock, andContinue)
@@ -299,7 +307,7 @@ class StateMachineBuilder(
             val irReturn = JsIrBuilder.buildReturn(function, getSuspendResultAsType(anyN), nothing)
             val check = JsIrBuilder.buildCall(eqeqeqSymbol).apply {
                 arguments[0] = getSuspendResultAsType(anyN)
-                arguments[1] = JsIrBuilder.buildCall(context.ir.symbols.coroutineSuspendedGetter)
+                arguments[1] = JsIrBuilder.buildCall(context.symbols.coroutineSuspendedGetter)
             }
 
             val suspensionBlock = JsIrBuilder.buildBlock(unit, listOf(irReturn))
@@ -425,6 +433,7 @@ class StateMachineBuilder(
             branches = expression.branches
         }
 
+        var exitStateDispatched = false
         for (branch in branches) {
             if (!isElseBranch(branch)) {
                 branch.condition.acceptVoid(this)
@@ -440,23 +449,24 @@ class StateMachineBuilder(
                 currentBlock = branchBlock
                 branch.result.acceptVoid(this)
 
-                if (!isBlockEnded()) {
-                    doDispatch(exitState)
-                }
+                maybeDoDispatch(exitState).ifTrue { exitStateDispatched = true }
 
                 currentState = dispatchState
                 currentBlock = elseBlock
             } else {
                 branch.result.acceptVoid(this)
-                if (!isBlockEnded()) {
-                    doDispatch(exitState)
-                }
+
+                maybeDoDispatch(exitState).ifTrue { exitStateDispatched = true }
+
                 break
             }
         }
 
-        maybeDoDispatch(exitState)
-        updateState(exitState)
+        maybeDoDispatch(exitState).ifTrue { exitStateDispatched = true }
+
+        if (exitStateDispatched) {
+            updateState(exitState)
+        }
 
         if (varSymbol != null) {
             addStatement(JsIrBuilder.buildGetValue(varSymbol))
@@ -475,10 +485,29 @@ class StateMachineBuilder(
         transformLastExpression { expression.apply { argument = it } }
     }
 
+    /**
+     * During the splitting of a suspend function into states, we may encounter a situation when a variable is initialized
+     * in one scope but is used in a different, which cause invalid access to the variable.
+     * To prevent such a situation, all the locals are moved to the beginning of the function containing edges of the state machine.
+     */
     override fun visitVariable(declaration: IrVariable) {
-        if (declaration !in suspendableNodes) return addStatement(declaration)
-        declaration.acceptChildrenVoid(this)
-        transformLastExpression { declaration.apply { initializer = it } }
+        registerLocal(declaration)
+
+        val initializer = declaration.initializer
+        declaration.initializer = null
+
+        val startOffset = declaration.startOffset
+        val endOffset = declaration.endOffset
+        declaration.startOffset = UNDEFINED_OFFSET
+        declaration.endOffset = UNDEFINED_OFFSET
+
+        if (declaration !in suspendableNodes) {
+            initializer?.let { addStatement(JsIrBuilder.buildSetValue(declaration.symbol, it, startOffset, endOffset)) }
+            return
+        }
+
+        initializer?.acceptVoid(this)
+        transformLastExpression { JsIrBuilder.buildSetValue(declaration.symbol, it, startOffset, endOffset) }
     }
 
     override fun visitGetField(expression: IrGetField) {
@@ -550,7 +579,7 @@ class StateMachineBuilder(
                     arg.acceptVoid(this)
                     val irVar = tempVar(arg.type, "ARGUMENT")
                     transformLastExpression {
-                        irVar.apply { initializer = it }
+                        JsIrBuilder.buildSetValue(irVar.symbol, it)
                     }
                     @Suppress("UNCHECKED_CAST")
                     JsIrBuilder.buildGetValue(irVar.symbol) as E
@@ -759,5 +788,10 @@ class StateMachineBuilder(
         )
 
     private fun tempVar(type: IrType, name: String = "tmp") =
-        JsIrBuilder.buildVar(type, function.owner, name)
+        JsIrBuilder.buildVar(type, function.owner, name, origin = IrDeclarationOrigin.IR_TEMPORARY_VARIABLE)
+            .also(::registerLocal)
+
+    private fun registerLocal(variable: IrVariable) {
+        allTheIntermediateLocals.add(variable.apply { wasMovedFromItsDeclarationPlace = true })
+    }
 }

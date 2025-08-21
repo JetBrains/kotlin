@@ -27,7 +27,7 @@ fun Test(condition: Boolean) {
 @Composable
 @NonRestartableComposable
 fun Test(condition: Boolean, %composer: Composer?, %changed: Int) {
-  sourceInformationMarkerStart(%composer, <>, "C(Test)<Text("...>,<Inline...>,<Text("...>:Test.kt")
+  sourceInformationMarkerStart(%composer, <>, "C(Test)N(condition)<Text("...>,<Inline...>,<Text("...>:Test.kt")
   if (isTraceInProgress()) {
     traceEventStart(<>, %changed, -1, <>)
   }

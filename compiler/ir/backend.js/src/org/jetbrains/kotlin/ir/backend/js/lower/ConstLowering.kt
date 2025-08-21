@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.ir.util.constructors
 import org.jetbrains.kotlin.ir.util.isUnsigned
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
+import org.jetbrains.kotlin.js.config.compileLongAsBigint
 
 class ConstTransformer(private val context: JsIrBackendContext) : IrElementTransformerVoid() {
     private fun <C> lowerConst(
@@ -33,22 +34,28 @@ class ConstTransformer(private val context: JsIrBackendContext) : IrElementTrans
         vararg args: C
     ): IrExpression {
         val constructor = irClass.constructors.single { it.owner.isPrimary }
-        val argType = constructor.owner.valueParameters.first().type
+        val argType = constructor.owner.parameters[0].type
 
         return IrConstructorCallImpl.fromSymbolOwner(
-                expression.startOffset,
-                expression.endOffset,
-                irClass.defaultType,
-                constructor
-            ).apply {
+            expression.startOffset,
+            expression.endOffset,
+            irClass.defaultType,
+            constructor
+        ).apply {
             for (i in args.indices) {
-                putValueArgument(i, carrierFactory(startOffset, endOffset, argType, args[i]))
+                arguments[i] = carrierFactory(startOffset, endOffset, argType, args[i])
             }
         }
     }
 
-    private fun createLong(expression: IrConst, v: Long): IrExpression =
-        lowerConst(expression, context.intrinsics.longClassSymbol, IrConstImpl.Companion::int, v.toInt(), (v shr 32).toInt())
+    private fun createLong(expression: IrConst, v: Long): IrExpression {
+        if (context.configuration.compileLongAsBigint) {
+            // We don't just return `expression` because `expression.type` may be `ULong`,
+            // which will confuse the autoboxing lowering downstream.
+            return IrConstImpl.long(expression.startOffset, expression.endOffset, context.irBuiltIns.longType, v)
+        }
+        return lowerConst(expression, context.intrinsics.longClassSymbol, IrConstImpl.Companion::int, v.toInt(), (v shr 32).toInt())
+    }
 
     override fun visitConst(expression: IrConst): IrExpression {
         with(context.intrinsics) {

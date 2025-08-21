@@ -1,3 +1,5 @@
+// COMPILATION_ERRORS
+
 fun foo() {
     class foo
     fun foo()

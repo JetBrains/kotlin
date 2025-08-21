@@ -22,3 +22,6 @@ class Test {
 
     fun useInt(i: Int) = i
 }
+
+/* GENERATED_FIR_TAGS: andExpression, classDeclaration, equalityExpression, functionDeclaration, ifExpression,
+nullableType, propertyDeclaration, smartcast, thisExpression */

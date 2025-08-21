@@ -49,7 +49,12 @@ fun <T> bar(a: Any): T = a <!UNCHECKED_CAST!>as T<!>
 fun <T> foo() {
     foo<Color.<!ENUM_ENTRY_AS_TYPE!>RED<!>>()
     foo<RedAlias>()
-    bar<Color.<!ENUM_ENTRY_AS_TYPE!>RED<!>>(<!ARGUMENT_TYPE_MISMATCH!>Color.RED<!>)
+    <!INAPPLICABLE_CANDIDATE!>bar<!><Color.<!ENUM_ENTRY_AS_TYPE!>RED<!>>(Color.RED)
 }
 
 fun Array<Color.<!ENUM_ENTRY_AS_TYPE!>RED<!>>.foo(entries: Array<Color.<!ENUM_ENTRY_AS_TYPE!>RED<!>>): Array<Color.<!ENUM_ENTRY_AS_TYPE!>RED<!>> = null!!
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, asExpression, assignment, checkNotNullCall, classDeclaration,
+enumDeclaration, enumEntry, funWithExtensionReceiver, functionDeclaration, ifExpression, interfaceDeclaration,
+isExpression, localClass, localFunction, localProperty, nullableType, primaryConstructor, propertyDeclaration, setter,
+smartcast, typeAliasDeclaration, typeConstraint, typeParameter */

@@ -88,3 +88,6 @@ fun main() {
         foo()
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType, lambdaLiteral,
+nullableType, starProjection, suspend, thisExpression, typeParameter, typeWithExtension */

@@ -28,26 +28,6 @@ fun KonanTarget.pointerBits() = when (architecture) {
     Architecture.ARM32 -> 32
 }
 
-fun KonanTarget.supportsMimallocAllocator(): Boolean =
-     when(this) {
-        is KonanTarget.LINUX_X64 -> true
-        is KonanTarget.MINGW_X64 -> true
-        is KonanTarget.MACOS_X64 -> true
-        is KonanTarget.MACOS_ARM64 -> true
-        is KonanTarget.LINUX_ARM64 -> true
-        is KonanTarget.LINUX_ARM32_HFP -> true
-        is KonanTarget.ANDROID_X64 -> true
-        is KonanTarget.ANDROID_ARM64 -> true
-        is KonanTarget.IOS_ARM64 -> true
-        is KonanTarget.IOS_X64 -> true
-        is KonanTarget.IOS_SIMULATOR_ARM64 -> true
-        is KonanTarget.WATCHOS_ARM32, is KonanTarget.WATCHOS_ARM64,
-        is KonanTarget.WATCHOS_SIMULATOR_ARM64, is KonanTarget.WATCHOS_X64,
-        is KonanTarget.TVOS_ARM64, is KonanTarget.TVOS_SIMULATOR_ARM64, is KonanTarget.TVOS_X64,
-        is KonanTarget.ANDROID_X86, is KonanTarget.ANDROID_ARM32 -> false // aren't tested.
-        else -> false
-    }
-
 fun KonanTarget.supportsLibBacktrace(): Boolean =
         this.family.isAppleFamily ||
                 this.family == Family.LINUX ||
@@ -89,7 +69,6 @@ fun KonanTarget.supportsIosCrashLog(): Boolean = when (this) {
  * and general ABI requires 4-byte alignment on 64-bit long fields as mentioned in
  * https://developer.apple.com/library/archive/documentation/Xcode/Conceptual/iPhoneOSABIReference/Articles/ARMv6FunctionCallingConventions.html#//apple_ref/doc/uid/TP40009021-SW1
  * See https://github.com/ktorio/ktor/issues/941 for the context.
- * TODO: reconsider once target MIPS can do proper 64-bit load/store/CAS.
  */
 fun KonanTarget.supports64BitAtomics(): Boolean = when (architecture) {
     Architecture.ARM32 -> false

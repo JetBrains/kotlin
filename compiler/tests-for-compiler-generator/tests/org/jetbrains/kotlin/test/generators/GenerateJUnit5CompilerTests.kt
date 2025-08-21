@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.test.generators
 import org.jetbrains.kotlin.generators.TestGroup.TestClass
 import org.jetbrains.kotlin.generators.generateTestGroupSuiteWithJUnit5
 import org.jetbrains.kotlin.generators.util.TestGeneratorUtil
+import org.jetbrains.kotlin.generators.util.TestGeneratorUtil.canFreezeIDE
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.runners.*
 import org.jetbrains.kotlin.test.runners.codegen.*
@@ -108,24 +109,12 @@ fun generateJUnit5CompilerTests(args: Array<String>, mainClassName: String?) {
                 model("codegen/script", pattern = "^(.*)\\.kts?$", excludedPattern = excludedCustomTestdataPattern)
             }
 
-            testClass<AbstractIrBlackBoxCodegenWithIrInlinerTest> {
-                model("codegen/box", excludeDirs = k2BoxTestDir)
-            }
-
-            testClass<AbstractIrSteppingWithBytecodeInlinerTest> {
+            testClass<AbstractIrSteppingTest> {
                 model("debug/stepping")
             }
 
-            testClass<AbstractIrSteppingWithIrInlinerTest> {
-                model("debug/stepping")
-            }
-
-            testClass<AbstractIrLocalVariableBytecodeInlinerTest> {
+            testClass<AbstractIrLocalVariableTest> {
                 model("debug/localVariables")
-            }
-
-            testClass<AbstractIrLocalVariableIrInlinerTest> {
-                model("debug/localVariables", excludeDirs = inlineScopesTestDir)
             }
 
             testClass<AbstractIrBlackBoxCodegenTest>("IrBlackBoxModernJdkCodegenTestGenerated") {
@@ -147,12 +136,7 @@ fun generateJUnit5CompilerTests(args: Array<String>, mainClassName: String?) {
                 model("codegen/bytecodeText")
             }
 
-            testClass<AbstractIrBlackBoxInlineCodegenWithBytecodeInlinerTest> {
-                model("codegen/boxInline")
-                model("klib/syntheticAccessors")
-            }
-
-            testClass<AbstractIrBlackBoxInlineCodegenWithIrInlinerTest> {
+            testClass<AbstractIrBlackBoxInlineCodegenTest> {
                 model("codegen/boxInline")
                 model("klib/syntheticAccessors")
             }
@@ -195,31 +179,20 @@ fun generateJUnit5CompilerTests(args: Array<String>, mainClassName: String?) {
                 model("codegen/bytecodeText")
             }
 
-            testClass<AbstractFirSteppingWithBytecodeInlinerTestWithInlineScopes> {
+            testClass<AbstractFirSteppingTestWithInlineScopes> {
                 model("debug/stepping")
             }
 
-            testClass<AbstractFirSteppingWithIrInlinerTestWithInlineScopes> {
-                model("debug/stepping")
-            }
-
-            testClass<AbstractFirLocalVariableBytecodeInlinerTestWithInlineScopes> {
+            testClass<AbstractFirLocalVariableTestWithInlineScopes> {
                 model("debug/localVariables", excludeDirs = inlineScopesNewFormatToOld)
             }
 
-            testClass<AbstractFirLocalVariableIrInlinerTestWithInlineScopes> {
-                model("debug/localVariables", excludeDirs = inlineScopesTestDir)
-            }
-
-            testClass<AbstractFirBlackBoxInlineCodegenWithBytecodeInlinerTestWithInlineScopes> {
+            testClass<AbstractFirBlackBoxInlineCodegenTestWithInlineScopes> {
                 model("codegen/boxInline", excludeDirs = k2BoxTestDir)
             }
 
-            testClass<AbstractFirBlackBoxInlineCodegenWithIrInlinerTestWithInlineScopes> {
-                model("codegen/boxInline")
-            }
-
             testClass<AbstractFirSerializeCompileKotlinAgainstInlineKotlinTestWithInlineScopes> {
+                model("codegen/box")
                 model("codegen/boxInline")
             }
 
@@ -304,6 +277,11 @@ fun generateJUnit5CompilerTests(args: Array<String>, mainClassName: String?) {
                 model("loadJava/compiledKotlin", extension = "kt")
                 model("loadJava/compiledKotlinWithStdlib", extension = "kt")
             }
+
+            testClass<AbstractFirLoadCompiledJvmWithAnnotationsInMetadataKotlinTest> {
+                model("loadJava/compiledKotlin", extension = "kt")
+                model("loadJava/compiledKotlinWithStdlib", extension = "kt")
+            }
         }
 
         testGroup(testsRoot = "compiler/fir/fir2ir/tests-gen", testDataRoot = "compiler/testData") {
@@ -312,7 +290,10 @@ fun generateJUnit5CompilerTests(args: Array<String>, mainClassName: String?) {
             }
 
             testClass<AbstractFirPsiBlackBoxCodegenTest> {
-                model("codegen/box", excludeDirs = k1BoxTestDir, excludeDirsRecursively = listOf("lightTree"))
+                model("codegen/box", excludeDirs = k1BoxTestDir)
+            }
+            testClass<AbstractJvmLightTreeBlackBoxCodegenWithSeparateKmpCompilationTest> {
+                model("codegen/box/${k2BoxTestDir.first()}")
             }
 
             testClass<AbstractFirLightTreeBlackBoxCodegenTest>("FirLightTreeBlackBoxModernJdkCodegenTestGenerated") {
@@ -323,20 +304,11 @@ fun generateJUnit5CompilerTests(args: Array<String>, mainClassName: String?) {
                 model("codegen/boxModernJdk")
             }
 
-            testClass<AbstractFirPsiBlackBoxInlineCodegenWithBytecodeInlinerTest> {
+            testClass<AbstractFirPsiBlackBoxInlineCodegenTest> {
                 model("codegen/boxInline")
             }
 
-            testClass<AbstractFirPsiBlackBoxInlineCodegenWithIrInlinerTest> {
-                model("codegen/boxInline")
-            }
-
-            testClass<AbstractFirLightTreeBlackBoxInlineCodegenWithBytecodeInlinerTest> {
-                model("codegen/boxInline")
-                model("klib/syntheticAccessors")
-            }
-
-            testClass<AbstractFirLightTreeBlackBoxInlineCodegenWithIrInlinerTest> {
+            testClass<AbstractFirLightTreeBlackBoxInlineCodegenTest> {
                 model("codegen/boxInline")
                 model("klib/syntheticAccessors")
             }
@@ -398,10 +370,12 @@ fun generateJUnit5CompilerTests(args: Array<String>, mainClassName: String?) {
             }
 
             testClass<AbstractFirLightTreeSerializeCompileKotlinAgainstInlineKotlinTest> {
+                model("codegen/box")
                 model("codegen/boxInline")
             }
 
             testClass<AbstractFirPsiSerializeCompileKotlinAgainstInlineKotlinTest> {
+                model("codegen/box")
                 model("codegen/boxInline")
             }
 
@@ -424,49 +398,27 @@ fun generateJUnit5CompilerTests(args: Array<String>, mainClassName: String?) {
             testClass<AbstractFirScriptCodegenTest> {
                 model("codegen/script", pattern = "^(.*)\\.kts?$", excludedPattern = excludedCustomTestdataPattern)
             }
-
-            testClass<AbstractFirPsiJvmIntegrationDiagnosticTest> {
-                model("diagnostics/jvmIntegration", pattern = TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME)
-            }
-
-            testClass<AbstractFirLightTreeJvmIntegrationDiagnosticTest> {
-                model("diagnostics/jvmIntegration", pattern = TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME)
-            }
         }
 
         testGroup("compiler/fir/analysis-tests/tests-gen", "compiler/fir/analysis-tests/testData") {
             fun model(allowKts: Boolean, onlyTypealiases: Boolean = false): TestClass.() -> Unit = {
+                val relativeRootPaths = listOf(
+                    "resolve",
+                    "resolveWithStdlib",
+                )
                 val pattern = when (allowKts) {
                     true -> TestGeneratorUtil.KT_OR_KTS_WITHOUT_DOTS_IN_NAME
                     false -> TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME
                 }
-                val excludeLightTreeForPsi =
-                    if (baseTestClassName == AbstractFirPsiDiagnosticTest::class.java.name) listOf("lightTree") else emptyList()
 
-                model(
-                    "resolve",
-                    pattern = pattern,
-                    excludeDirsRecursively = excludeLightTreeForPsi,
-                    skipSpecificFile = skipSpecificFileForFirDiagnosticTest(onlyTypealiases),
-                    skipTestAllFilesCheck = onlyTypealiases
-                )
-                model(
-                    "resolveWithStdlib",
-                    pattern = pattern,
-                    excludeDirsRecursively = excludeLightTreeForPsi,
-                    skipSpecificFile = skipSpecificFileForFirDiagnosticTest(onlyTypealiases),
-                    skipTestAllFilesCheck = onlyTypealiases
-                )
-
-                // Those files might contain code which when being analyzed in the IDE might accidentally freeze it, thus we use a fake
-                // file extension for it.
-                model(
-                    "resolveFreezesIDE",
-                    pattern = """^(.+)\.(nkt)$""",
-                    excludeDirsRecursively = excludeLightTreeForPsi,
-                    skipSpecificFile = skipSpecificFileForFirDiagnosticTest(onlyTypealiases),
-                    skipTestAllFilesCheck = onlyTypealiases
-                )
+                for (path in relativeRootPaths) {
+                    model(
+                        path,
+                        pattern = pattern.canFreezeIDE,
+                        skipSpecificFile = skipSpecificFileForFirDiagnosticTest(onlyTypealiases),
+                        skipTestAllFilesCheck = onlyTypealiases
+                    )
+                }
             }
 
             testClass<AbstractFirLightTreeDiagnosticsWithLatestLanguageVersionTest>(init = model(allowKts = false))
@@ -511,16 +463,15 @@ fun generateJUnit5CompilerTests(args: Array<String>, mainClassName: String?) {
             fun TestClass.phasedModel(allowKts: Boolean, excludeDirsRecursively: List<String> = emptyList()) {
                 val relativeRootPaths = listOf(
                     "testData/diagnostics/tests",
+                    "testData/diagnostics/testsWithAnyBackend",
                     "testData/diagnostics/testsWithStdLib",
+                    "testData/diagnostics/jvmIntegration",
                     "fir/analysis-tests/testData/resolve",
                     "fir/analysis-tests/testData/resolveWithStdlib",
-                    // Those files might contain code which when being analyzed in the IDE might accidentally freeze it, thus we use a fake
-                    // file extension `nkt` for it.
-                    "fir/analysis-tests/testData/resolveFreezesIDE",
                 )
-                val pattern = when {
-                    allowKts -> "^(.*)\\.(kts?|nkt)$"
-                    else -> "^(.*)\\.(kt|nkt)$"
+                val pattern = when (allowKts) {
+                    true -> TestGeneratorUtil.KT_OR_KTS
+                    false -> TestGeneratorUtil.KT
                 }
 
                 for (path in relativeRootPaths) {
@@ -528,7 +479,7 @@ fun generateJUnit5CompilerTests(args: Array<String>, mainClassName: String?) {
                         path,
                         excludeDirs = listOf("declarations/multiplatform/k1"),
                         skipTestAllFilesCheck = true,
-                        pattern = pattern,
+                        pattern = pattern.canFreezeIDE,
                         excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN,
                         excludeDirsRecursively = excludeDirsRecursively,
                     )
@@ -538,7 +489,7 @@ fun generateJUnit5CompilerTests(args: Array<String>, mainClassName: String?) {
                 phasedModel(allowKts = false)
             }
             testClass<AbstractPhasedJvmDiagnosticPsiTest> {
-                phasedModel(allowKts = true, excludeDirsRecursively = listOf("lightTree"))
+                phasedModel(allowKts = true)
             }
         }
     }

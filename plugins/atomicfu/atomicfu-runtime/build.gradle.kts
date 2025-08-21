@@ -16,7 +16,7 @@ repositories {
 }
 
 kotlin {
-    js() {
+    js {
         browser()
         nodejs()
     }
@@ -34,7 +34,7 @@ dependencies {
     implicitDependenciesOnJdkVariantsOfBootstrapStdlib(project)
 }
 
-val emptyJavadocJar by tasks.creating(Jar::class) {
+val emptyJavadocJar by tasks.registering(Jar::class) {
     archiveClassifier.set("javadoc")
 }
 

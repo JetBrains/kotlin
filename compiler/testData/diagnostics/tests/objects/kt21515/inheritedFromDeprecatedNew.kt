@@ -100,3 +100,5 @@ open class C : O.B() {
     // DEPRECATED: Classifiers from supertypes of our own companion
     open class r : <!UNRESOLVED_REFERENCE!>FromDelta<!>()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, nestedClass, objectDeclaration */

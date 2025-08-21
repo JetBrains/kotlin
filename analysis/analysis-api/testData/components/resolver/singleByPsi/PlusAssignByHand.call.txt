@@ -2,6 +2,7 @@ KtOperationReferenceExpression(195,196): '='
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaVariableSignature:
@@ -9,6 +10,7 @@ KtOperationReferenceExpression(195,196): '='
           receiverType = null
           returnType = test.WithOperator
           symbol = var variable: test.WithOperator
+          contextParameters = []
           callableId = null
       simpleAccess = Write:
         value = variable + foo

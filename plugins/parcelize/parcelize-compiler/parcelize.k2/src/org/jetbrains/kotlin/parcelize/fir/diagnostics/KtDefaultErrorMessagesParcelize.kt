@@ -48,7 +48,7 @@ import org.jetbrains.kotlin.parcelize.fir.diagnostics.KtErrorsParcelize.REDUNDAN
 import org.jetbrains.kotlin.parcelize.fir.diagnostics.KtErrorsParcelize.VALUE_PARAMETER_USED_IN_CLASS_BODY
 
 object KtDefaultErrorMessagesParcelize : BaseDiagnosticRendererFactory() {
-    override val MAP = KtDiagnosticFactoryToRendererMap("Parcelize").also { map ->
+    override val MAP by KtDiagnosticFactoryToRendererMap("Parcelize") { map ->
         map.put(
             PARCELABLE_SHOULD_BE_CLASS,
             "'Parcelable' must be a class."

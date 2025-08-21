@@ -1,5 +1,3 @@
-// IDENTICAL_KLIB_SYNTHETIC_ACCESSOR_DUMPS
-
 private class Private{
     fun foo() = "OK"
 }

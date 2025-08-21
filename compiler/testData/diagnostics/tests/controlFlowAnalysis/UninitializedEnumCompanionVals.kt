@@ -16,3 +16,6 @@ enum class B(val z: Any) {
         val x = B.Y.ordinal
     }
 }
+
+/* GENERATED_FIR_TAGS: companionObject, enumDeclaration, enumEntry, objectDeclaration, primaryConstructor,
+propertyDeclaration */

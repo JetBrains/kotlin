@@ -28,7 +28,7 @@ fun test_1(e: A) {
 
     val d = when (e) {
         is E -> 1
-        <!USELESS_IS_CHECK!>is A<!> -> 2
+        is A -> 2
     }.plus(0)
 }
 
@@ -53,3 +53,6 @@ fun test_2(e: A) {
         is C -> 1
     }.plus(0)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, isExpression, localProperty,
+propertyDeclaration, sealed, smartcast, whenExpression, whenWithSubject */

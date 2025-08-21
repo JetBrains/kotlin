@@ -40,15 +40,15 @@ fun main(args : Array<String>) {
     foo2()({})
     foo2()<!TOO_MANY_ARGUMENTS!>{}<!>
     (foo2()){}
-    (foo2())<!ARGUMENT_TYPE_MISMATCH!>{<!CANNOT_INFER_PARAMETER_TYPE!>x<!> -> }<!>
-    foo2()(<!ARGUMENT_TYPE_MISMATCH!>{<!CANNOT_INFER_PARAMETER_TYPE!>x<!> -> }<!>)
+    (foo2())<!ARGUMENT_TYPE_MISMATCH!>{<!CANNOT_INFER_VALUE_PARAMETER_TYPE!>x<!> -> }<!>
+    foo2()(<!ARGUMENT_TYPE_MISMATCH!>{<!CANNOT_INFER_VALUE_PARAMETER_TYPE!>x<!> -> }<!>)
 
     val a = fooT1(1)()
     checkSubtype<Int>(a)
 
     val b = fooT2<Int>()(1)
     checkSubtype<Int>(b)
-    <!CANNOT_INFER_PARAMETER_TYPE, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>fooT2<!>()(1) // : Any?
+    <!CANNOT_INFER_PARAMETER_TYPE!>fooT2<!>()(1) // : Any?
 
     <!FUNCTION_EXPECTED!>1<!>()
     <!FUNCTION_EXPECTED!>1<!>{}
@@ -85,3 +85,7 @@ fun test() {
     1<!UNNECESSARY_SAFE_CALL!>?.<!>(fun Int.() = 1)()
     1.<!NO_RECEIVER_ALLOWED!>{}<!>()
 }
+
+/* GENERATED_FIR_TAGS: anonymousFunction, classDeclaration, funWithExtensionReceiver, functionDeclaration,
+functionalType, ifExpression, infix, integerLiteral, lambdaLiteral, localProperty, nullableType, propertyDeclaration,
+safeCall, stringLiteral, typeParameter, typeWithExtension */

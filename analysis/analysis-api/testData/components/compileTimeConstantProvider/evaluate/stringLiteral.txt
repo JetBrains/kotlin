@@ -1,3 +1,5 @@
 expression: "42"
 constant: "42"
 constantValueKind: StringValue
+constantValueSource: STRING_TEMPLATE
+constantValueSourceText: "42"

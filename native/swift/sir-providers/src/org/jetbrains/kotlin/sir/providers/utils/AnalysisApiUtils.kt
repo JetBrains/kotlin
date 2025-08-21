@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolModality
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 import kotlin.Throws
 
@@ -25,7 +24,7 @@ public val KaDeclarationSymbol.deprecatedAnnotation: Deprecated?
         val arguments = it.arguments.associate { it.name.asString() to it.expression }
 
         val message = (arguments["message"] as? KaAnnotationValue.ConstantValue?)
-            ?.value.toString().removeSurrounding("\"") ?: ""
+            ?.value.toString().removeSurrounding("\"")
 
         val level = (arguments["level"] as? KaAnnotationValue.EnumEntryValue?)
             ?.callableId?.let {

@@ -19,12 +19,13 @@ import org.jetbrains.kotlin.fir.expressions.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.expressions.unwrapSmartcastExpression
 
 object FirTypeArgumentsNotAllowedExpressionChecker : FirQualifiedAccessExpressionChecker(MppCheckerKind.Common) {
-    override fun check(expression: FirQualifiedAccessExpression, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(expression: FirQualifiedAccessExpression) {
         // analyze type parameters near
         // package names
         val explicitReceiver = expression.explicitReceiver?.unwrapSmartcastExpression()
         if (explicitReceiver is FirResolvedQualifier && explicitReceiver.symbol == null && explicitReceiver.typeArguments.isNotEmpty()) {
-            reporter.reportOn(explicitReceiver.source, FirErrors.TYPE_ARGUMENTS_NOT_ALLOWED, "for packages", context)
+            reporter.reportOn(explicitReceiver.source, FirErrors.TYPE_ARGUMENTS_NOT_ALLOWED, "for packages")
             return
         }
 
@@ -34,7 +35,7 @@ object FirTypeArgumentsNotAllowedExpressionChecker : FirQualifiedAccessExpressio
             expression.toResolvedCallableSymbol()?.typeParameterSymbols?.isNotEmpty() == true &&
             explicitReceiver.toResolvedCallableSymbol()?.typeParameterSymbols?.isNotEmpty() == true
         ) {
-            reporter.reportOn(expression.calleeReference.source, FirErrors.TYPE_ARGUMENTS_NOT_ALLOWED, "on implicit invoke call", context)
+            reporter.reportOn(expression.calleeReference.source, FirErrors.TYPE_ARGUMENTS_NOT_ALLOWED, "on implicit invoke call")
             return
         }
     }

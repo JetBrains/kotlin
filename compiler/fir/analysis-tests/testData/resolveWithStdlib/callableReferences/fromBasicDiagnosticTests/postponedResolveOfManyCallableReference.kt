@@ -15,3 +15,6 @@ fun test(a: A, b: B) {
     bar2(::foo, a)
     bar2(::foo, b)
 }
+
+/* GENERATED_FIR_TAGS: callableReference, functionDeclaration, functionalType, interfaceDeclaration, localProperty,
+nullableType, propertyDeclaration, typeParameter */

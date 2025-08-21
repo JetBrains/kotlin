@@ -27,7 +27,10 @@ class MppJvmWithJavaIT : KGPBaseTest() {
     ): Unit = doTestJvmWithJava(gradleVersion, testJavaSupportInJvmTargets = false)
 
     @GradleTest
-    @GradleTestVersions(minVersion = TestVersions.Gradle.G_8_3) // Shadow requires Gradle 8.3+
+    @GradleTestVersions(
+        minVersion = TestVersions.Gradle.G_8_3, // Shadow requires Gradle 8.3+
+        maxVersion = TestVersions.Gradle.G_8_6, // last version where 'withJava()' method has warning deprecation
+    )
     @TestMetadata(value = "new-mpp-lib-and-app")
     fun testJavaSupportInJvmTargets(
         gradleVersion: GradleVersion,
@@ -40,6 +43,8 @@ class MppJvmWithJavaIT : KGPBaseTest() {
         project(
             projectName = "new-mpp-lib-and-app/sample-lib",
             gradleVersion = gradleVersion,
+            // KT-76289 KAPT Gradle Project Isolation Violation
+            buildOptions = defaultBuildOptions.disableIsolatedProjects(),
         ) {
             includeOtherProjectAsSubmodule(
                 otherProjectName = "sample-lib-gradle-kotlin-dsl",
@@ -181,7 +186,7 @@ class MppJvmWithJavaIT : KGPBaseTest() {
 
             build(
                 "clean", "build", "run", "shadowJar",
-                buildOptions = defaultBuildOptions
+                buildOptions = buildOptions
                     .suppressDeprecationWarningsOn("KT-66542: withJava() produces deprecation warning") {
                         gradleVersion >= GradleVersion.version(TestVersions.Gradle.G_8_7)
                     }

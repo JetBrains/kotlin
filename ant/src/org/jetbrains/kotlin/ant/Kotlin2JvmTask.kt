@@ -84,6 +84,7 @@ class Kotlin2JvmTask : KotlinCompilerBaseTask() {
         if (!fork)
             super.execute()
         else {
+            warnAntDeprecation()
             exec()
         }
     }

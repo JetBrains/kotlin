@@ -13,3 +13,6 @@ val x : (Int) -> Int = {@test <!RETURN_TYPE_MISMATCH!>x<!> <!SYNTAX!>: Int -> x<
 
 class Hello(@test args: Any) {
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, functionDeclaration, functionalType, integerLiteral,
+lambdaLiteral, primaryConstructor, propertyDeclaration, setter */

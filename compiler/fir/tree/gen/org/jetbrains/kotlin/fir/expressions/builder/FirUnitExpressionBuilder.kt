@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.fir.expressions.impl.FirUnitExpression
 
 @FirBuilderDsl
 class FirUnitExpressionBuilder : FirAnnotationContainerBuilder {
-    override var source: KtSourceElement? = null
+    var source: KtSourceElement? = null
     override val annotations: MutableList<FirAnnotation> = mutableListOf()
 
     @OptIn(FirImplementationDetail::class)

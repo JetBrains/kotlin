@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.gradle.testing.internal.configureConventions
 import org.jetbrains.kotlin.gradle.testing.internal.kotlinTestRegistry
 import org.jetbrains.kotlin.gradle.utils.domainObjectSet
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
+import org.jetbrains.kotlin.gradle.utils.whenEvaluated
 
 interface KotlinJsIrSubTargetWithBinary : KotlinJsSubTargetDsl, Named {
     fun processBinary()
@@ -148,8 +149,6 @@ abstract class KotlinJsIrSubTarget(
                 ?.joinToString()
 
             testJs.configureConventions()
-
-            configureDefaultTestFramework(testJs)
         }
 
         testRun.executionTask = testJs
@@ -159,6 +158,12 @@ abstract class KotlinJsIrSubTarget(
                 testJs,
                 parentTestRun.executionTask
             )
+        }
+
+        project.whenEvaluated {
+            testJs.configure {
+                configureDefaultTestFramework(it)
+            }
         }
     }
 

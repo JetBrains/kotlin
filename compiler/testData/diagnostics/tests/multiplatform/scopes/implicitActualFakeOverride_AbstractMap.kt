@@ -14,3 +14,6 @@ public expect abstract class AbstractMutableMap<K, V> : MutableMap<K, V> {
 import java.util.AbstractMap
 
 public actual abstract class AbstractMutableMap<K, V>() : MutableMap<K, V>, AbstractMap<K, V>()
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, nullableType, override, primaryConstructor, propertyDeclaration,
+typeParameter */

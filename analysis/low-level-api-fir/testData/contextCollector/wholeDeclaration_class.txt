@@ -21,6 +21,7 @@ FILE: [ResolvedTo(IMPORTS)] wholeDeclaration_class.kt
     }
     context([ResolvedTo(RAW_FIR)] ContextReceiver)
     public final? [ResolvedTo(RAW_FIR)] class MyClass<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+        context([ResolvedTo(RAW_FIR)] ContextReceiver)
         public? [ResolvedTo(RAW_FIR)] constructor<[ResolvedTo(RAW_FIR)] T>([ResolvedTo(RAW_FIR)] param: String): R|test/MyClass<T>| {
             LAZY_super<R|kotlin/Any|>
         }

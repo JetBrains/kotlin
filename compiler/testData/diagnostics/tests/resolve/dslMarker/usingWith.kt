@@ -24,3 +24,6 @@ fun test(a: A, b: B) {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, functionDeclaration, integerLiteral, lambdaLiteral,
+thisExpression */

@@ -145,13 +145,7 @@ class CinteropIT : KGPBaseTest() {
     @GradleTestVersions(minVersion = TestVersions.Gradle.G_8_1) // Gradle supports checking file existence with configuration cache only since 8.1 version
     @GradleTest
     fun cinteropWithOptionalDefFileAndConfigurationCache(gradleVersion: GradleVersion) {
-        nativeProject(
-            "cinterop-with-header",
-            gradleVersion = gradleVersion,
-            buildOptions = defaultBuildOptions.copy(
-                configurationCache = BuildOptions.ConfigurationCacheValue.ENABLED
-            )
-        ) {
+        nativeProject("cinterop-with-header", gradleVersion = gradleVersion) {
             val dummyHeaderPath = projectPath.resolve("libs").resolve("include").resolve("dummy.h").toFile().absolutePath
             // first build with non-existing .def file and configuration cache enabled
             build(":assemble") {

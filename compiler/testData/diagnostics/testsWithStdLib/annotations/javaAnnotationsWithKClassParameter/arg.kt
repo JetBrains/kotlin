@@ -7,3 +7,5 @@ public @interface A {
 
 // FILE: b.kt
 @A(arg = String::class) class MyClass3
+
+/* GENERATED_FIR_TAGS: classDeclaration, classReference, javaType */

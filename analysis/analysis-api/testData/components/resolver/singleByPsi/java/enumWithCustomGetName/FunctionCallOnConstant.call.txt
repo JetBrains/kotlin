@@ -4,6 +4,7 @@ KtNameReferenceExpression(54,61): 'getName'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = JavaEnum.A
           isSafeNavigation = false
@@ -14,5 +15,6 @@ KtNameReferenceExpression(54,61): 'getName'
           returnType = kotlin.String!
           symbol = /JavaEnum.getName(<dispatch receiver>: JavaEnum): kotlin.String!
           valueParameters = []
+          contextParameters = []
           callableId = /JavaEnum.getName
       typeArgumentsMapping = {}

@@ -13,3 +13,7 @@ fun <F : Foo> test(map: MutableMap<String, Bar<F>>) {
 }
 
 fun <K, V> MutableMap<K, V>.getOrPut1(key: K, defaultValue: () -> V): V = throw Exception()
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType,
+interfaceDeclaration, javaFunction, lambdaLiteral, nullableType, primaryConstructor, propertyDeclaration, stringLiteral,
+typeConstraint, typeParameter */

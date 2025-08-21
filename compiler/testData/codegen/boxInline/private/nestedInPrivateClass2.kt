@@ -1,3 +1,5 @@
+// TARGET_BACKEND: JVM
+// ^ This is no supposed to work on KLIB-backends, see KT-69681
 // FILE: 1.kt
 
 package test

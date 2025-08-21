@@ -86,7 +86,6 @@ private class ConeUnresolvedTypeQualifierErrorDiagnosticPointer(
     builder: KaSymbolByFirBuilder
 ) : ConeDiagnosticPointer {
     private val qualifierPointers = coneDiagnostic.qualifiers.map { FirQualifierPartPointer(it, builder) }
-    private val isNullable = coneDiagnostic.isNullable
 
     override fun restore(session: KaFirSession): ConeDiagnostic? {
         val qualifiers = buildList {
@@ -96,7 +95,7 @@ private class ConeUnresolvedTypeQualifierErrorDiagnosticPointer(
             }
         }
 
-        return ConeUnresolvedTypeQualifierError(qualifiers, isNullable)
+        return ConeUnresolvedTypeQualifierError(qualifiers)
     }
 }
 

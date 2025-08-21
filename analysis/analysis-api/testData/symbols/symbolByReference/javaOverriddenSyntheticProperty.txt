@@ -12,13 +12,12 @@ KaSyntheticJavaPropertySymbol:
     callableId: /JavaClass.getFoo
     compilerVisibility: Public
     contextReceivers: []
-    hasBody: false
     hasStableParameterNames: true
     isActual: false
-    isDefault: false
     isExpect: false
     isExtension: true
     isInline: false
+    isNotDefault: true
     isOverride: false
     location: PROPERTY
     modality: OPEN

@@ -21,3 +21,5 @@ actual class AnnotationOnExpectOnly
 actual class AnnotationInside {
     actual fun onlyOnExpect() {}
 }
+
+/* GENERATED_FIR_TAGS: actual, annotationDeclaration, classDeclaration, expect, functionDeclaration */

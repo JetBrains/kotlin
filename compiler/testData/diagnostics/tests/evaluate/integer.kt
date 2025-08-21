@@ -9,3 +9,5 @@ val a7: Long = 0x1L
 val a8: Long = 0X1L
 val a9: Long = 0b1L
 val a10: Long = 0B1L
+
+/* GENERATED_FIR_TAGS: propertyDeclaration */

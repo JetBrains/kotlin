@@ -209,7 +209,7 @@ abstract class BenchmarkingPlugin: Plugin<Project> {
         return result
     }
 
-    @Suppress("DEPRECATION")
+    @Suppress("DEPRECATION_ERROR") // TODO(KT-76654): fix properly
     protected open fun getCompilerFlags(project: Project, nativeTarget: KotlinNativeTarget) =
             compilerFlagsFromBinary(project) + nativeTarget.compilations.main.kotlinOptions.freeCompilerArgs.map { "\"$it\"" }
 

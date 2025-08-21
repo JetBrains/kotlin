@@ -2,6 +2,7 @@ KaNamedFunctionSymbol:
   annotations: []
   callableId: null
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -61,25 +62,29 @@ KaKotlinPropertySymbol:
       typeArguments: []
       type: kotlin/Int
     visibility: PRIVATE
+    getDispatchReceiver(): KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: <anonymous>
     getContainingFileSymbol: KaFileSymbol(anonymousObject.kt)
     getContainingJvmClassName: null
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
   callableId: null
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
     annotations: []
     callableId: null
     compilerVisibility: Public
     contextReceivers: []
-    hasBody: false
     hasStableParameterNames: true
     isActual: false
-    isDefault: true
     isExpect: false
     isExtension: false
     isInline: false
+    isNotDefault: false
     isOverride: false
     location: PROPERTY
     modality: FINAL
@@ -138,6 +143,7 @@ KaKotlinPropertySymbol:
   javaGetterName: getData
   javaSetterName: null
   setterDeprecationStatus: null
+  isInline: false
 
 KaAnonymousObjectSymbol:
   annotations: []
@@ -184,25 +190,29 @@ KaKotlinPropertySymbol:
       typeArguments: []
       type: java/lang/Runnable
     visibility: PRIVATE
+    getDispatchReceiver(): KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: AnonymousContainer
     getContainingFileSymbol: KaFileSymbol(anonymousObject.kt)
     getContainingJvmClassName: AnonymousContainer
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
   callableId: /AnonymousContainer.anonymousObject
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
     annotations: []
     callableId: null
     compilerVisibility: Public
     contextReceivers: []
-    hasBody: false
     hasStableParameterNames: true
     isActual: false
-    isDefault: true
     isExpect: false
     isExtension: false
     isInline: false
+    isNotDefault: false
     isOverride: false
     location: PROPERTY
     modality: FINAL
@@ -261,6 +271,7 @@ KaKotlinPropertySymbol:
   javaGetterName: getAnonymousObject
   javaSetterName: null
   setterDeprecationStatus: null
+  isInline: false
 
 KaNamedClassSymbol:
   annotations: []

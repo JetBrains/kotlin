@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 fun one() = 1
 fun two() = 2
 

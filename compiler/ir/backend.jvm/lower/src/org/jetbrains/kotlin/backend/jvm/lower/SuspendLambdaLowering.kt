@@ -15,7 +15,10 @@ import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.continuationClassVarsCountByType
 import org.jetbrains.kotlin.backend.jvm.ir.hasChild
+import org.jetbrains.kotlin.backend.jvm.ir.isInlineClassType
 import org.jetbrains.kotlin.backend.jvm.ir.isReadOfCrossinline
+import org.jetbrains.kotlin.backend.jvm.originalOfSuspendForInline
+import org.jetbrains.kotlin.backend.jvm.unboxInlineClass
 import org.jetbrains.kotlin.codegen.coroutines.COROUTINE_LABEL_FIELD_NAME
 import org.jetbrains.kotlin.codegen.coroutines.INVOKE_SUSPEND_METHOD_NAME
 import org.jetbrains.kotlin.codegen.coroutines.SUSPEND_FUNCTION_COMPLETION_PARAMETER_NAME
@@ -32,7 +35,10 @@ import org.jetbrains.kotlin.ir.expressions.IrBlock
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
 import org.jetbrains.kotlin.ir.expressions.IrGetValue
-import org.jetbrains.kotlin.ir.expressions.impl.*
+import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrErrorExpressionImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrInstanceInitializerCallImpl
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
@@ -46,6 +52,7 @@ import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
+import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
 import org.jetbrains.org.objectweb.asm.Type
 
 private fun IrFunction.capturesCrossinline(): Boolean {
@@ -69,7 +76,7 @@ internal abstract class SuspendLoweringUtils(protected val context: JvmBackendCo
             startOffset = startOffset, endOffset = endOffset
         ).apply {
             overriddenSymbols = listOf(function.symbol)
-            valueParameters = function.valueParameters.map { it.copyTo(this, type = it.type.substitute(typeSubstitution)) }
+            parameters += function.nonDispatchParameters.map { it.copyTo(this, type = it.type.substitute(typeSubstitution)) }
         }
     }
 
@@ -86,7 +93,7 @@ internal abstract class SuspendLoweringUtils(protected val context: JvmBackendCo
     protected fun IrSimpleFunction.generateErrorForInlineBody() {
         val message = "This is a stub representing a copy of a suspend method without the state machine " +
                 "(used by the inliner). Since the difference is at the bytecode level, the body is " +
-                "still on the original function. Use suspendForInlineToOriginal() to retrieve it."
+                "still on the original function. Use originalOfSuspendForInline to retrieve it."
         body = context.irFactory.createExpressionBody(
             startOffset,
             endOffset,
@@ -98,7 +105,7 @@ internal abstract class SuspendLoweringUtils(protected val context: JvmBackendCo
         addValueParameter(SUSPEND_FUNCTION_COMPLETION_PARAMETER_NAME, continuationType())
 
     protected fun IrFunction.continuationType(): IrType =
-        context.ir.symbols.continuationClass.typeWith(returnType).makeNullable()
+        context.symbols.continuationClass.typeWith(returnType).makeNullable()
 }
 
 /**
@@ -128,7 +135,7 @@ internal class SuspendLambdaLowering(context: JvmBackendContext) : SuspendLoweri
             +continuation
             +irCall(continuation.constructors.single().symbol).apply {
                 // Pass null as completion parameter
-                putValueArgument(0, irNull())
+                arguments[0] = irNull()
             }
         }
 
@@ -143,15 +150,15 @@ internal class SuspendLambdaLowering(context: JvmBackendContext) : SuspendLoweri
             copyAttributes(reference)
 
             val function = reference.symbol.owner
-            val extensionReceiver = function.extensionReceiverParameter?.type?.classOrNull
+            val extensionReceiver = function.parameters.firstOrNull { it.kind == IrParameterKind.ExtensionReceiver }?.type?.classOrNull
             val isRestricted = extensionReceiver != null && extensionReceiver.owner.annotations.any {
                 it.type.classOrNull?.isClassWithFqName(FqNameUnsafe("kotlin.coroutines.RestrictsSuspension")) == true
             }
             val suspendLambda =
-                if (isRestricted) context.ir.symbols.restrictedSuspendLambdaClass.owner
-                else context.ir.symbols.suspendLambdaClass.owner
+                if (isRestricted) context.symbols.restrictedSuspendLambdaClass.owner
+                else context.symbols.suspendLambdaClass.owner
             val arity = (reference.type as IrSimpleType).arguments.size - 1
-            val functionNClass = context.ir.symbols.getJvmFunctionClass(arity + 1)
+            val functionNClass = context.symbols.getJvmFunctionClass(arity + 1)
             val functionNType = functionNClass.typeWith(
                 function.parameters.subList(0, arity).map { it.type }
                         + function.continuationType()
@@ -177,28 +184,30 @@ internal class SuspendLambdaLowering(context: JvmBackendContext) : SuspendLoweri
             val varsCountByType = HashMap<Type, Int>()
 
             val parametersFields = function.parameters.map {
+                val unboxedType = it.type.unboxInlineClass()
                 val field = if (it in usedParams) addField {
-                    val normalizedType = context.defaultTypeMapper.mapType(it.type).normalize()
+                    val normalizedType = context.defaultTypeMapper.mapType(unboxedType).normalize()
                     val index = varsCountByType[normalizedType]?.plus(1) ?: 0
                     varsCountByType[normalizedType] = index
                     // Rename `$this` to avoid being caught by inlineCodegenUtils.isCapturedFieldName()
                     name = Name.identifier("${normalizedType.descriptor[0]}$$index")
-                    type = if (normalizedType == AsmTypes.OBJECT_TYPE) context.irBuiltIns.anyNType else it.type
+                    type = if (normalizedType == AsmTypes.OBJECT_TYPE) context.irBuiltIns.anyNType else unboxedType
                     origin = LocalDeclarationsLowering.DECLARATION_ORIGIN_FIELD_FOR_CAPTURED_VALUE
                     isFinal = false
                     visibility =
-                        if (it.indexInOldValueParameters < 0) DescriptorVisibilities.PRIVATE else JavaDescriptorVisibilities.PACKAGE_VISIBILITY
+                        if (it.kind == IrParameterKind.Regular) JavaDescriptorVisibilities.PACKAGE_VISIBILITY
+                        else DescriptorVisibilities.PRIVATE
                 } else null
-                ParameterInfo(field, it.type, it.name, it.origin)
+                ParameterInfo(field, unboxedType, it.type, it.name, it.origin)
             }
 
             this.continuationClassVarsCountByType = varsCountByType
             val constructor = addPrimaryConstructorForLambda(suspendLambda, arity)
             val invokeToOverride = functionNClass.functions.single {
-                it.owner.valueParameters.size == arity + 1 && it.owner.name.asString() == "invoke"
+                it.owner.nonDispatchParameters.size == arity + 1 && it.owner.name.asString() == "invoke"
             }
             val createToOverride = suspendLambda.symbol.functions.singleOrNull {
-                it.owner.valueParameters.size == arity + 1 && it.owner.name.asString() == "create"
+                it.owner.nonDispatchParameters.size == arity + 1 && it.owner.name.asString() == "create"
             }
             val invokeSuspend = addInvokeSuspendForLambda(function, suspendLambda, parametersFields)
             if (function.capturesCrossinline()) {
@@ -219,10 +228,10 @@ internal class SuspendLambdaLowering(context: JvmBackendContext) : SuspendLoweri
         parameterInfos: List<ParameterInfo>
     ): IrSimpleFunction {
         val superMethod = suspendLambda.functions.single {
-            it.name.asString() == INVOKE_SUSPEND_METHOD_NAME && it.valueParameters.size == 1 &&
-                    it.valueParameters[0].type.isKotlinResult()
+            it.name.asString() == INVOKE_SUSPEND_METHOD_NAME && it.hasShape(regularParameters = 1, dispatchReceiver = true) &&
+                    it.parameters[1].type.isKotlinResult()
         }
-        return addFunctionOverride(superMethod, irFunction.startOffset, irFunction.endOffset).apply {
+        return addFunctionOverride(superMethod, irFunction.startOffset, irFunction.endOffset).apply override@{
             val localVals: List<IrVariable?> = parameterInfos.map { param ->
                 if (param.isUsed) {
                     buildVariable(
@@ -231,14 +240,14 @@ internal class SuspendLambdaLowering(context: JvmBackendContext) : SuspendLoweri
                         endOffset = UNDEFINED_OFFSET,
                         origin = JvmLoweredDeclarationOrigin.SUSPEND_LAMBDA_PARAMETER,
                         name = param.name,
-                        type = param.type
+                        type = param.fieldType
                     ).apply {
-                        val receiver = IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, dispatchReceiverParameter!!.symbol)
-                        val initializerBlock = IrBlockImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, type)
-                        initializerBlock.statements += IrGetFieldImpl(
-                            UNDEFINED_OFFSET, UNDEFINED_OFFSET, param.field!!.symbol, type, receiver
-                        )
-                        initializer = initializerBlock
+                        context.createIrBuilder(this@override.symbol).apply {
+                            val receiver = irGet(dispatchReceiverParameter!!)
+                            initializer = irBlock(resultType = type) {
+                                +irGetField(receiver, param.field!!, param.fieldType)
+                            }
+                        }
                     }
                 } else null
             }
@@ -248,15 +257,25 @@ internal class SuspendLambdaLowering(context: JvmBackendContext) : SuspendLoweri
                     override fun visitGetValue(expression: IrGetValue): IrExpression {
                         val parameter = (expression.symbol.owner as? IrValueParameter)?.takeIf { it.parent == irFunction }
                             ?: return expression
-                        val varIndex = if (parameter.indexInOldValueParameters < 0) irFunction.contextReceiverParametersCount
-                        else if (parameter.indexInOldValueParameters < irFunction.contextReceiverParametersCount || irFunction.extensionReceiverParameter == null) parameter.indexInOldValueParameters
-                        else parameter.indexInOldValueParameters + 1
-                        val lvar = localVals[varIndex]
-                            ?: return expression
-                        return IrGetValueImpl(expression.startOffset, expression.endOffset, lvar.symbol)
+                        val lvar = localVals[parameter.indexInParameters] ?: return expression
+                        val param = parameterInfos[parameter.indexInParameters]
+                        // suspend lambda's parameters are all Any?, meaning, that inline classes are boxed
+                        // however, lowered suspend lambda's fields contain unboxed inline classes.
+                        // Thus, we need to update all types of suspend lambda argument's usages.
+                        return IrGetValueImpl(expression.startOffset, expression.endOffset, lvar.symbol).coerceToBoxedIfNeeded(param)
                     }
                 }, null)
-                context.irFactory.createBlockBody(UNDEFINED_OFFSET, UNDEFINED_OFFSET, localVals.filterNotNull() + body.statements)
+
+                val generatedCodeMarkers =
+                    if (this@SuspendLambdaLowering.context.config.enhancedCoroutinesDebugging) {
+                        this@SuspendLambdaLowering.context.symbols.generatedCodeMarkersInCoroutinesClass.functions.map {
+                            IrCallImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, it.owner.returnType, it)
+                        }.toList()
+                    } else emptyList()
+
+                context.irFactory.createBlockBody(
+                    UNDEFINED_OFFSET, UNDEFINED_OFFSET, generatedCodeMarkers + localVals.filterNotNull() + body.statements
+                )
             }
 
             copyAnnotationsFrom(irFunction)
@@ -272,7 +291,8 @@ internal class SuspendLambdaLowering(context: JvmBackendContext) : SuspendLoweri
         ).apply {
             copyAttributes(invokeSuspend)
             generateErrorForInlineBody()
-            valueParameters = invokeSuspend.valueParameters.map { it.copyTo(this) }
+            parameters += invokeSuspend.nonDispatchParameters.map { it.copyTo(this) }
+            originalOfSuspendForInline = invokeSuspend
         }
     }
 
@@ -287,10 +307,7 @@ internal class SuspendLambdaLowering(context: JvmBackendContext) : SuspendLoweri
         invokeToOverride: IrSimpleFunctionSymbol
     ) = addFunctionOverride(invokeToOverride.owner) { function ->
         val newlyCreatedObject = irCall(create).also { createCall ->
-            createCall.dispatchReceiver = irGet(function.dispatchReceiverParameter!!)
-            for ((index, param) in function.valueParameters.withIndex()) {
-                createCall.putValueArgument(index, irGet(param))
-            }
+            createCall.arguments.assignFrom(function.parameters, ::irGet)
         }
         +irReturn(callInvokeSuspend(invokeSuspend, irImplicitCast(newlyCreatedObject, defaultType)))
     }
@@ -319,11 +336,12 @@ internal class SuspendLambdaLowering(context: JvmBackendContext) : SuspendLoweri
         constructor: IrFunction,
         fieldsForUnbound: List<ParameterInfo>
     ): IrExpression {
+        val nonDispatchParameters = scope.nonDispatchParameters
         val constructorCall = irCall(constructor).also {
             for (typeParameter in constructor.parentAsClass.typeParameters) {
                 it.typeArguments[typeParameter.index] = typeParameter.defaultType
             }
-            it.putValueArgument(0, irGet(scope.valueParameters.last()))
+            it.arguments[0] = irGet(nonDispatchParameters.last())
         }
         if (fieldsForUnbound.none { it.isUsed }) {
             return constructorCall
@@ -331,21 +349,39 @@ internal class SuspendLambdaLowering(context: JvmBackendContext) : SuspendLoweri
         val result = irTemporary(constructorCall, "result")
         for ((index, field) in fieldsForUnbound.withIndex()) {
             if (field.isUsed) {
-                +irSetField(irGet(result), field.field!!, irGet(scope.valueParameters[index]))
+                +irSetField(irGet(result), field.field!!, irGet(nonDispatchParameters[index]).coerceToUnboxedIfNeeded(field))
             }
         }
         return irGet(result)
     }
 
-    private fun IrBlockBodyBuilder.callInvokeSuspend(invokeSuspend: IrSimpleFunction, lambda: IrExpression): IrExpression =
-        irCallOp(invokeSuspend.symbol, invokeSuspend.returnType, lambda, irCall(
-            this@SuspendLambdaLowering.context.ir.symbols.unsafeCoerceIntrinsic,
-            this@SuspendLambdaLowering.context.ir.symbols.resultOfAnyType
+    private fun IrExpression.coerceToUnboxedIfNeeded(field: ParameterInfo): IrExpression =
+        if (!field.boxedType.isInlineClassType()) this
+        else IrCallImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, field.fieldType, context.symbols.unsafeCoerceIntrinsic).apply {
+            typeArguments[0] = field.boxedType
+            typeArguments[1] = field.fieldType
+            arguments[0] = this@coerceToUnboxedIfNeeded
+        }
+
+    private fun IrExpression.coerceToBoxedIfNeeded(field: ParameterInfo): IrExpression =
+        if (!field.boxedType.isInlineClassType()) this
+        else IrCallImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, field.boxedType, context.symbols.unsafeCoerceIntrinsic).apply {
+            typeArguments[0] = field.fieldType
+            typeArguments[1] = field.boxedType
+            arguments[0] = this@coerceToBoxedIfNeeded
+        }
+
+    private fun IrBlockBodyBuilder.callInvokeSuspend(invokeSuspend: IrSimpleFunction, lambda: IrExpression): IrExpression {
+        val argument = irCall(
+            this@SuspendLambdaLowering.context.symbols.unsafeCoerceIntrinsic,
+            this@SuspendLambdaLowering.context.symbols.resultOfAnyType
         ).apply {
             typeArguments[0] = context.irBuiltIns.anyNType
             typeArguments[1] = type
-            putValueArgument(0, irUnit())
-        })
+            arguments[0] = irUnit()
+        }
+        return irCallOp(invokeSuspend.symbol, invokeSuspend.returnType, lambda, argument)
+    }
 
     private fun IrClass.addPrimaryConstructorForLambda(superClass: IrClass, arity: Int): IrConstructor =
         addConstructor {
@@ -356,18 +392,24 @@ internal class SuspendLambdaLowering(context: JvmBackendContext) : SuspendLoweri
         }.also { constructor ->
             val completionParameterSymbol = constructor.addCompletionValueParameter()
             val superClassConstructor = superClass.constructors.single {
-                it.valueParameters.size == 2 && it.valueParameters[0].type.isInt() && it.valueParameters[1].type.isNullableContinuation()
+                it.hasShape(regularParameters = 2) && it.parameters[0].type.isInt() && it.parameters[1].type.isNullableContinuation()
             }
             constructor.body = context.createIrBuilder(constructor.symbol).irBlockBody {
                 +irDelegatingConstructorCall(superClassConstructor).also {
-                    it.putValueArgument(0, irInt(arity + 1))
-                    it.putValueArgument(1, irGet(completionParameterSymbol))
+                    it.arguments[0] = irInt(arity + 1)
+                    it.arguments[1] = irGet(completionParameterSymbol)
                 }
                 +IrInstanceInitializerCallImpl(startOffset, endOffset, symbol, context.irBuiltIns.unitType)
             }
         }
 }
 
-private data class ParameterInfo(val field: IrField?, val type: IrType, val name: Name, val origin: IrDeclarationOrigin) {
+private data class ParameterInfo(
+    val field: IrField?,
+    val fieldType: IrType,
+    val boxedType: IrType,
+    val name: Name,
+    val origin: IrDeclarationOrigin,
+) {
     val isUsed = field != null
 }

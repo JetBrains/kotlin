@@ -5,3 +5,5 @@ inline fun foo(f: () -> Unit) {
     }
     ff(<!USAGE_IS_NOT_INLINABLE!>f<!>)
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionalType, inline, lambdaLiteral, localProperty, propertyDeclaration */

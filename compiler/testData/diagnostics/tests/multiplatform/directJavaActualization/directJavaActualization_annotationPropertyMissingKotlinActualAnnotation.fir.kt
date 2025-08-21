@@ -12,3 +12,5 @@ expect annotation class Foo(val <!KOTLIN_ACTUAL_ANNOTATION_MISSING{JVM}!>foo<!>:
 @kotlin.annotations.jvm.KotlinActual public @interface Foo {
     int foo();
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, expect, primaryConstructor, propertyDeclaration */

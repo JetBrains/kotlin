@@ -1,24 +1,18 @@
 import java.io.File
 pluginManagement {
-    apply(from = "../../../repo/scripts/cache-redirector.settings.gradle.kts")
-    apply(from = "../../../repo/scripts/kotlin-bootstrap.settings.gradle.kts")
+    includeBuild("../../../repo/gradle-settings-conventions")
 
     repositories {
-        maven("https://maven.pkg.jetbrains.space/kotlin/p/kotlin/kotlin-dependencies")
-        mavenCentral()
+        maven("https://redirector.kotlinlang.org/maven/kotlin-dependencies")
+        mavenCentral { setUrl("https://cache-redirector.jetbrains.com/maven-central") }
         gradlePluginPortal()
     }
 }
 
-buildscript {
-    repositories {
-        maven("https://maven.pkg.jetbrains.space/kotlin/p/kotlin/kotlin-dependencies")
-        mavenCentral()
-    }
-    val buildGradlePluginVersion = extra["kotlin.build.gradlePlugin.version"]
-    dependencies {
-        classpath("org.jetbrains.kotlin:kotlin-build-gradle-plugin:$buildGradlePluginVersion")
-    }
+plugins {
+    id("kotlin-bootstrap")
+    id("develocity")
+    id("jvm-toolchain-provisioning")
+    id("kotlin-daemon-config")
+    id("cache-redirector")
 }
-
-//include("tools")

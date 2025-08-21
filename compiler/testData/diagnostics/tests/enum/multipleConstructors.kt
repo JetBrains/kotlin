@@ -8,3 +8,6 @@ enum class E(val x: Int, val y: Int) {
     constructor(): this(0, 0)
     constructor(x: Int): this(x, 0)
 }
+
+/* GENERATED_FIR_TAGS: enumDeclaration, enumEntry, integerLiteral, primaryConstructor, propertyDeclaration,
+secondaryConstructor */

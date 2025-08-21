@@ -11,3 +11,6 @@ class Panel(supplier: Supplier<String>?)
 fun main(s: String?) {
     Panel(s?.let { { it } })
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, lambdaLiteral, nullableType, primaryConstructor, safeCall,
+samConversion */

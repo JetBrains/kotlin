@@ -23,3 +23,7 @@ fun test() {
 
     callFun<Int, Wrapper<Int>>(::createWrapper).baz(::foo)
 }
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, funWithExtensionReceiver, functionDeclaration,
+functionalType, inProjection, intersectionType, nullableType, primaryConstructor, propertyDeclaration, starProjection,
+typeConstraint, typeParameter */

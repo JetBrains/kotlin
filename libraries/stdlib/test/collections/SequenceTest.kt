@@ -5,6 +5,7 @@
 
 package test.collections
 
+import test.collections.behaviors.sequenceBehavior
 import kotlin.random.Random
 import kotlin.test.*
 
@@ -757,6 +758,38 @@ public class SequenceTest {
         assertEquals(listOf(42), sequenceOf(42).toList())
         assertEquals(listOf(3, 2, 1), sequenceOf(3, 2, 1).toList())
         assertEquals(listOf(1, 2, 1, 3, 2, 3), sequenceOf(1, 2, 1, 3, 2, 3).toList())
+    }
+
+    @Test fun sequenceOfEmpty() {
+        compare(emptyList<Int>().asSequence(), sequenceOf<Int>()) {
+            sequenceBehavior()
+        }
+    }
+
+    @Test fun sequenceOfSingleElement() {
+        compare(listOf(42).asSequence(), sequenceOf(42)) {
+            sequenceBehavior()
+        }
+    }
+
+    @Test fun sequenceOfVararg() {
+        compare(listOf(1, 2, 3).asSequence(), sequenceOf(1, 2, 3)) {
+            sequenceBehavior()
+        }
+
+        compare(listOf(1, 2, 1, 3, 2, 3).asSequence().constrainOnce(), sequenceOf(1, 2, 1, 3, 2, 3).constrainOnce()) {
+            sequenceBehavior(isConstrainOnce = true)
+        }
+    }
+
+    @Test fun sequenceOfCanBeUsedWithMethodReferences() {
+        val strings = listOf("a", "b", "c")
+
+        for ((expected, actual) in (strings.map { listOf(it).asSequence() } zip strings.map(::sequenceOf))) {
+            compare(expected, actual) {
+                sequenceBehavior()
+            }
+        }
     }
 
     /*

@@ -73,10 +73,11 @@ class JsPerModuleCache(
 
     override fun commitCompiledJsCode(cacheInfo: CachedModuleInfo, compilationOutputs: CompilationOutputsBuilt): CompilationOutputs =
         cacheInfo.artifact.artifactsDir?.let { cacheDir ->
-            val jsCodeFile = File(cacheDir, CACHED_MODULE_JS)
-            val jsMapFile = File(cacheDir, CACHED_MODULE_JS_MAP)
-            File(cacheDir, CACHED_MODULE_D_TS).writeIfNotNull(compilationOutputs.tsDefinitions?.raw)
-            compilationOutputs.writeJsCodeIntoModuleCache(jsCodeFile, jsMapFile)
+            compilationOutputs.writeJsCodeIntoModuleCache(
+                File(cacheDir, CACHED_MODULE_JS),
+                File(cacheDir, CACHED_MODULE_D_TS),
+                File(cacheDir, CACHED_MODULE_JS_MAP)
+            )
         } ?: compilationOutputs
 
     override fun loadProgramHeadersFromCache(): List<CachedModuleInfo> {

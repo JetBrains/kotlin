@@ -5,3 +5,5 @@
         fun smth(s: String) = 1
         return smth("awd")
     }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, getter, integerLiteral, localFunction, propertyDeclaration, stringLiteral */

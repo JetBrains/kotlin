@@ -18,17 +18,14 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
 import org.jetbrains.kotlin.gradle.plugin.mpp.getHostSpecificSourceSets
 import org.jetbrains.kotlin.gradle.plugin.usageByName
 import org.jetbrains.kotlin.gradle.targets.metadata.findMetadataCompilation
-import org.jetbrains.kotlin.gradle.targets.metadata.isKotlinGranularMetadataEnabled
 import org.jetbrains.kotlin.gradle.targets.native.internal.includeCommonizedCInteropMetadata
 import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
 import org.jetbrains.kotlin.gradle.utils.copyAttributesTo
 import org.jetbrains.kotlin.gradle.utils.createConsumable
-import org.jetbrains.kotlin.gradle.utils.setAttribute
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 
 internal val KotlinNativeHostSpecificMetadataArtifact = KotlinTargetArtifact { target, apiElements, _ ->
     if (target !is KotlinNativeTarget) return@KotlinTargetArtifact
-    if (!target.project.isKotlinGranularMetadataEnabled) return@KotlinTargetArtifact
     val project = target.project
 
     target.project.configurations.createConsumable(target.hostSpecificMetadataElementsConfigurationName).also { configuration ->
@@ -39,7 +36,7 @@ internal val KotlinNativeHostSpecificMetadataArtifact = KotlinTargetArtifact { t
                 target.project.providers,
                 dest = configuration.attributes
             )
-            configuration.setAttribute(
+            configuration.attributes.attribute(
                 Usage.USAGE_ATTRIBUTE,
                 target.project.usageByName(KotlinUsages.KOTLIN_METADATA)
             )
@@ -55,8 +52,10 @@ internal val KotlinNativeHostSpecificMetadataArtifact = KotlinTargetArtifact { t
         metadataJar.group = BasePlugin.BUILD_GROUP
         metadataJar.description = "Assembles Kotlin metadata of target '${target.name}'."
 
-        val publishable = target.publishable
-        metadataJar.onlyIf { publishable }
+        val provider = target.project.provider {
+            target.publishable
+        }
+        metadataJar.onlyIf { provider.get() }
 
         project.launch {
             val metadataCompilations = hostSpecificSourceSets.mapNotNull {

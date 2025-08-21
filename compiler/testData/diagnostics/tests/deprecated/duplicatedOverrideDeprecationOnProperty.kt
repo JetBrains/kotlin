@@ -44,3 +44,6 @@ object B : A {
             field = value
         }
 }
+
+/* GENERATED_FIR_TAGS: assignment, getter, interfaceDeclaration, objectDeclaration, override, propertyDeclaration,
+setter, stringLiteral */

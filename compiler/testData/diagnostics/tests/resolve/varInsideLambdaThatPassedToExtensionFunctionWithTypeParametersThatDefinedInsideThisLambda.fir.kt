@@ -16,3 +16,6 @@ fun test(){
         x<!UNSAFE_CALL!>.<!>length
     }
 }
+
+/* GENERATED_FIR_TAGS: equalityExpression, functionDeclaration, functionalType, ifExpression, lambdaLiteral,
+localProperty, nullableType, propertyDeclaration, smartcast, stringLiteral, typeParameter, typeWithExtension */

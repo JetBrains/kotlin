@@ -1,3 +1,5 @@
+// COMPILATION_ERRORS
+
 fun foo() {
   f(a)
   g<bar>(a)

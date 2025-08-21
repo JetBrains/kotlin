@@ -1,18 +1,18 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.fir.renderer
 
 import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
-import org.jetbrains.kotlin.fir.types.ConeClassifierLookupTag
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.types.model.TypeConstructorMarker
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 
 open class ConeTypeRenderer(
-    private val attributeRenderer: ConeAttributeRenderer = ConeAttributeRenderer.ToString
+    private val attributeRenderer: ConeAttributeRenderer = ConeAttributeRenderer.ToString,
+    private var renderCapturedDetails: Boolean = false,
 ) {
     lateinit var builder: StringBuilder
     lateinit var idRenderer: ConeIdRenderer
@@ -37,17 +37,38 @@ open class ConeTypeRenderer(
             builder.append(it)
             builder.append(" ")
         }
-        val typeArguments = type.typeArguments
-        val isExtension = type.isExtensionFunctionType
-        val (receiver, otherTypeArguments) = if (isExtension && typeArguments.size >= 2 && typeArguments.first() != ConeStarProjection) {
-            typeArguments.first() to typeArguments.drop(1)
-        } else {
-            null to typeArguments.toList()
+
+        var contextParameters: List<ConeTypeProjection> = emptyList()
+        var receiverParameter: ConeTypeProjection? = null
+        var regularParameters: List<ConeTypeProjection> = type.typeArguments.asList()
+
+        val numberOfContextParameters = type.contextParameterNumberForFunctionType
+        if (numberOfContextParameters > 0 && regularParameters.size >= numberOfContextParameters + 1) {
+            contextParameters = regularParameters.subList(0, numberOfContextParameters)
+            regularParameters = regularParameters.subList(numberOfContextParameters, regularParameters.size)
         }
-        val arguments = otherTypeArguments.subList(0, otherTypeArguments.size - 1)
-        val returnType = otherTypeArguments.last()
-        if (receiver != null) {
-            receiver.render()
+
+        if (type.isExtensionFunctionType && regularParameters.size >= 2 && regularParameters.first() != ConeStarProjection) {
+            receiverParameter = regularParameters.first()
+            regularParameters = regularParameters.subList(1, regularParameters.size)
+        }
+
+        if (contextParameters.isNotEmpty()) {
+            builder.append("context(")
+            for ((index, contextParameter) in contextParameters.withIndex()) {
+                if (index != 0) {
+                    builder.append(", ")
+                }
+
+                contextParameter.render()
+            }
+            builder.append(") ")
+        }
+
+        val arguments = regularParameters.subList(0, regularParameters.size - 1)
+        val returnType = regularParameters.last()
+        if (receiverParameter != null) {
+            receiverParameter.render()
             builder.append(".")
         }
         builder.append("(")
@@ -66,7 +87,7 @@ open class ConeTypeRenderer(
 
     fun render(
         type: ConeKotlinType,
-        nullabilityMarker: String = if (type !is ConeFlexibleType && type !is ConeErrorType && type.isMarkedNullable) "?" else "",
+        nullabilityMarker: String = if (type !is ConeFlexibleType && type.isMarkedNullable) "?" else "",
     ) {
         if (type !is ConeFlexibleType && type !is ConeDefinitelyNotNullType) {
             // We don't render attributes for flexible/definitely not null types here,
@@ -89,8 +110,6 @@ open class ConeTypeRenderer(
             is ConeFlexibleType -> {
                 render(type)
             }
-
-            is ConeErrorType -> builder.append("ERROR CLASS: ${type.diagnostic.reason}")
 
             is ConeSimpleKotlinType -> {
                 val hasTypeArguments = type is ConeClassLikeType && type.typeArguments.isNotEmpty()
@@ -118,7 +137,19 @@ open class ConeTypeRenderer(
                 builder.append("CapturedType(")
                 constructor.projection.render()
                 builder.append(")")
+                if (renderCapturedDetails) {
+                    builder.append(
+                        " with lowerType=${constructor.lowerType?.let(::render)}, supertypes=["
+                    )
+                    // To prevent recursion
+                    renderCapturedDetails = false
+                    constructor.supertypes?.forEach(::render)
+                    renderCapturedDetails = true
+                    builder.append("]")
+                }
             }
+
+            is ConeClassLikeErrorLookupTag -> builder.append("ERROR CLASS: ${constructor.diagnostic.reason}")
 
             is ConeClassLikeLookupTag -> idRenderer.renderClassId(constructor.classId)
             is ConeClassifierLookupTag -> builder.append(constructor.name.asString())

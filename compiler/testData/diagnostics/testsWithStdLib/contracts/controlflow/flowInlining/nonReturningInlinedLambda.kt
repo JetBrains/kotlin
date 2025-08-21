@@ -33,3 +33,6 @@ fun withLabeledReturn2(y: Int) {
     }
     println(y)
 }
+
+/* GENERATED_FIR_TAGS: assignment, contractCallsEffect, contracts, functionDeclaration, functionalType, inline,
+integerLiteral, lambdaLiteral, localProperty, propertyDeclaration */

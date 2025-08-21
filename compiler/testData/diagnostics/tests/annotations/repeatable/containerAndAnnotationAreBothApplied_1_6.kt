@@ -142,3 +142,6 @@ fun ks4() {}
 @KS
 @KS.Container([KS(), KS()])
 fun ks5() {}
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classReference, collectionLiteral, functionDeclaration, javaFunction,
+javaType, nestedClass, primaryConstructor, propertyDeclaration */

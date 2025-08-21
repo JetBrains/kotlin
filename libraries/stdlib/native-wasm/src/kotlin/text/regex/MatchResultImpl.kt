@@ -242,7 +242,7 @@ constructor (internal val input: CharSequence,
     }
 
     private fun checkGroup(group: Int) {
-        if (group < 0 || group > groupCount) {
+        if (group < 0 || group >= groupCount) {
             throw IndexOutOfBoundsException("Group index out of bounds: $group")
         }
     }

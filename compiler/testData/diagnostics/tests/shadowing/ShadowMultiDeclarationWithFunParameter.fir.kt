@@ -13,3 +13,6 @@ fun foo(a: A, c: Int) {
 
     val e = a.toString() + b + c
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, classDeclaration, destructuringDeclaration, forLoop, functionDeclaration,
+integerLiteral, lambdaLiteral, localProperty, operator, propertyDeclaration */

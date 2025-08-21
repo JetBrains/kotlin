@@ -1,4 +1,4 @@
-class B {/* ClassDeclarationStructureElement */
+/* RootStructureElement */class B {/* ClassDeclarationStructureElement */
     fun q(): C {/* DeclarationStructureElement */}
     private val y = q()/* DeclarationStructureElement */
 

@@ -30,3 +30,6 @@ fun test() {
 }
 
 fun foo(j: J) {}
+
+/* GENERATED_FIR_TAGS: assignment, equalityExpression, functionDeclaration, ifExpression, javaProperty, javaType,
+localProperty, nullableType, propertyDeclaration, smartcast */

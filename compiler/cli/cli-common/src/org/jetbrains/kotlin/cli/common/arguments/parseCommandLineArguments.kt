@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.cli.common.arguments
 
 import org.jetbrains.kotlin.cli.common.CompilerSystemProperties
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
-import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.utils.SmartList
@@ -27,6 +26,10 @@ import java.util.concurrent.ConcurrentHashMap
 import kotlin.reflect.KClass
 import kotlin.reflect.cast
 
+/**
+ * @property isObsolete Set to `true`if you want the compiler to treat this option as unknown and show the appropriate diagnostics,
+ * but you still want it around for some reason.
+ */
 @Target(AnnotationTarget.FIELD)
 annotation class Argument(
     val value: String,
@@ -35,7 +38,8 @@ annotation class Argument(
     @property:RawDelimiter
     val delimiter: String = Delimiters.default,
     val valueDescription: String = "",
-    val description: String
+    val description: String,
+    val isObsolete: Boolean = false,
 ) {
     @RequiresOptIn(
         message = "The raw delimiter value needs to be resolved. See 'resolvedDelimiter'. Using the raw value requires opt-in",
@@ -47,6 +51,8 @@ annotation class Argument(
         const val default = ","
         const val none = ""
         const val pathSeparator = "<path_separator>"
+        const val space = " "
+        const val semicolon = ";"
     }
 }
 
@@ -212,6 +218,11 @@ private fun <A : CommonToolArguments> parsePreprocessedCommandLineArguments(
             continue
         }
 
+        if (argument.isObsolete) {
+            // Add to unknown to show the diagnostic, but keep parsing.
+            errors.value.unknownArgs.add(arg)
+        }
+
         val deprecatedName = argument.deprecatedName
         if (deprecatedName == key) {
             errors.value.deprecatedArguments[deprecatedName] = argument.value
@@ -319,16 +330,3 @@ fun validateArguments(errors: ArgumentParseErrors?): String? {
     return null
 }
 
-/**
- * Instructs the annotated argument to enable the specified [LanguageFeature] when set to `true`.
- */
-@Target(AnnotationTarget.FIELD)
-@Repeatable
-annotation class Enables(val feature: LanguageFeature)
-
-/**
- * Instructs the annotated argument to disable the specified [LanguageFeature] when set to `true`.
- */
-@Target(AnnotationTarget.FIELD)
-@Repeatable
-annotation class Disables(val feature: LanguageFeature)

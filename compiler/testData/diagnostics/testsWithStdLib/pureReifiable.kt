@@ -11,3 +11,5 @@ fun test() {
     foo<Array<String>>(arrayOf(""))
     foo(arrayOf(""))
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, inline, nullableType, reified, stringLiteral, typeParameter */

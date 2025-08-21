@@ -44,7 +44,9 @@ TEST_F(CustomAllocatorTest, HeapReuseFixedBlockPages) {
     const int MAX = FixedBlockPage::MAX_BLOCK_SIZE + 1;
     TypeInfo fakeTypes[MAX];
     for (int i = MIN; i < MAX; ++i) {
-        fakeTypes[i] = {.typeInfo_ = &fakeTypes[i], .instanceSize_ = 8 * (i - 1), .flags_ = 0};
+        fakeTypes[i].typeInfo_ = &fakeTypes[i];
+        fakeTypes[i].instanceSize_ = 8 * (i - 1);
+        fakeTypes[i].flags_ = 0;
     }
     FixedBlockPage* pages[MAX];
     for (int blocks = MIN; blocks < MAX; ++blocks) {
@@ -67,7 +69,10 @@ TEST_F(CustomAllocatorTest, HeapReuseNextFitPages) {
     const uint32_t BLOCKSIZE = FixedBlockPage::MAX_BLOCK_SIZE + 42;
     NextFitPage* page = heap.GetNextFitPage(BLOCKSIZE, finalizerQueue());
     uint8_t* obj = page->TryAllocate(BLOCKSIZE);
-    TypeInfo fakeType = {.typeInfo_ = &fakeType, .instanceSize_ = 8 * (BLOCKSIZE - 1), .flags_ = 0};
+    TypeInfo fakeType{};
+    fakeType.typeInfo_ = &fakeType;
+    fakeType.instanceSize_ = 8 * (BLOCKSIZE - 1);
+    fakeType.flags_ = 0;
     size_t size = installType(obj, &fakeType);
     EXPECT_EQ(size, static_cast<size_t>(BLOCKSIZE * 8));
     mark(obj); // to make the page survive a sweep

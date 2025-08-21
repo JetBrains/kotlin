@@ -16,3 +16,6 @@ fun foo(s: Sealed) = when(s) {
     Sealed.NonFirst.Fourth -> 4
     // no else required
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, equalityExpression, functionDeclaration, integerLiteral, isExpression,
+nestedClass, objectDeclaration, primaryConstructor, sealed, smartcast, whenExpression, whenWithSubject */

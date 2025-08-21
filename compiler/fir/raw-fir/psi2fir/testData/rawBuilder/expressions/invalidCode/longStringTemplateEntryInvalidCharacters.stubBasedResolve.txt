@@ -1,0 +1,2 @@
+FILE: [ResolvedTo(BODY_RESOLVE)] longStringTemplateEntryInvalidCharacters.kt
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun test(): R|kotlin/Unit| { LAZY_BLOCK }

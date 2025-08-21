@@ -12,7 +12,7 @@ interface A<TA, UA> {
 open class B<UB> : A<Int, UB>
 
 // MODULE: lib2(lib1)
-// JVM_DEFAULT_MODE: all-compatibility
+// JVM_DEFAULT_MODE: enable
 // FILE: lib2.kt
 package lib2
 
@@ -25,7 +25,7 @@ interface C<TC> : A<TC, Double> {
 open class D : B<Double>(), C<Int>
 
 // MODULE: main(lib1, lib2)
-// JVM_DEFAULT_MODE: all
+// JVM_DEFAULT_MODE: no-compatibility
 // FILE: box.kt
 import lib2.*
 

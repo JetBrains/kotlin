@@ -109,6 +109,11 @@ object Main {
                     restAsArguments()
                     break
                 }
+                "-repl" == arg || "-Xrepl" == arg -> {
+                    setRunner(ReplRunner())
+                    compilerArguments.add("-Xrepl")
+                    break
+                }
                 "-no-stdlib" == arg -> {
                     noStdLib = true
                     compilerArguments.add(arg)
@@ -236,7 +241,7 @@ or, in case of guess, according to the following rules:
                              (compiler arguments are ignored and no Kotlin stdlib is added to the classpath)
   script.kts                 Compiles and runs the given script, passing <arguments> to it
   -expression (-e) '2+2'     Evaluates the expression and prints the result, passing <arguments> to it
-  <no command>               Runs Kotlin REPL
+  -repl                      Runs Kotlin REPL
 arguments are passed to the main function when running class or jar file, and for standard script definitions
 as the 'args' parameter when running script or expression
 """)

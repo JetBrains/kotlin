@@ -45,3 +45,7 @@ fun useWithContextReceivers() {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: asExpression, classDeclaration, functionDeclaration, functionDeclarationWithContext,
+functionalType, getter, integerLiteral, lambdaLiteral, localProperty, primaryConstructor, propertyDeclaration,
+propertyDeclarationWithContext, stringLiteral, typeWithContext */

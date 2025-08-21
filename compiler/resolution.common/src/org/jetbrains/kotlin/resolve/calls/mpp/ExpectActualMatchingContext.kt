@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualCheckingCompatibility
+import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualIncompatibility
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualMatchingCompatibility
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
@@ -161,7 +161,8 @@ interface ExpectActualMatchingContext<T : DeclarationSymbolMarker> : TypeSystemC
 
     fun onIncompatibleMembersFromClassScope(
         expectSymbol: DeclarationSymbolMarker,
-        actualSymbolsByIncompatibility: Map<ExpectActualCheckingCompatibility.Incompatible<*>, List<DeclarationSymbolMarker>>,
+        actualSymbol: DeclarationSymbolMarker,
+        incompatibility: ExpectActualIncompatibility<*>,
         containingExpectClassSymbol: RegularClassSymbolMarker?,
         containingActualClassSymbol: RegularClassSymbolMarker?,
     ) {}
@@ -217,6 +218,8 @@ interface ExpectActualMatchingContext<T : DeclarationSymbolMarker> : TypeSystemC
      * ```
      */
     fun skipCheckingAnnotationsOfActualClassMember(actualMember: DeclarationSymbolMarker): Boolean
+
+    fun skipCheckingOnExpectActualPair(expectMember: DeclarationSymbolMarker, actualMember: DeclarationSymbolMarker): Boolean = false
 
     fun findPotentialExpectClassMembersForActual(
         expectClass: RegularClassSymbolMarker,

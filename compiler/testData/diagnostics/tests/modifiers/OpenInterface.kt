@@ -15,3 +15,5 @@
     abstract val abstractValWithGetter: Any <!ABSTRACT_PROPERTY_WITH_GETTER!>get() = 42<!>
     abstract var abstractValWithSetter: Any <!ABSTRACT_PROPERTY_WITH_SETTER!>set(value) {}<!>
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, getter, integerLiteral, interfaceDeclaration, propertyDeclaration, setter */

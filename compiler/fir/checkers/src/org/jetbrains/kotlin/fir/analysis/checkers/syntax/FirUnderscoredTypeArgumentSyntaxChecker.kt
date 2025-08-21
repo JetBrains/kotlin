@@ -22,12 +22,13 @@ object FirUnderscoredTypeArgumentSyntaxChecker : FirExpressionSyntaxChecker<FirF
     override fun isApplicable(element: FirFunctionCall, source: KtSourceElement): Boolean =
         element.typeArguments.isNotEmpty()
 
+    private const val MESSAGE = "Underscore type arguments cannot be annotated."
+
+    context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun checkPsi(
         element: FirFunctionCall,
         source: KtPsiSourceElement,
         psi: PsiElement,
-        context: CheckerContext,
-        reporter: DiagnosticReporter
     ) {
         for (typeProjection in element.typeArguments) {
             val psiTypeArgument = typeProjection.source?.psi as? KtTypeProjection ?: continue
@@ -38,17 +39,16 @@ object FirUnderscoredTypeArgumentSyntaxChecker : FirExpressionSyntaxChecker<FirF
             for (annotation in typeReference.annotationEntries) {
                 reporter.reportOn(
                     annotation.toKtPsiSourceElement(), FirErrors.UNSUPPORTED,
-                    "annotations on an underscored type argument", context
+                    MESSAGE
                 )
             }
         }
     }
 
+    context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun checkLightTree(
         element: FirFunctionCall,
         source: KtLightSourceElement,
-        context: CheckerContext,
-        reporter: DiagnosticReporter,
     ) {
         for (typeProjection in element.typeArguments) {
             val lightTreeTypeArgument = typeProjection.source?.lighterASTNode ?: continue
@@ -60,7 +60,7 @@ object FirUnderscoredTypeArgumentSyntaxChecker : FirExpressionSyntaxChecker<FirF
             for (annotation in annotations) {
                 reporter.reportOn(
                     source.buildChildSourceElement(annotation), FirErrors.UNSUPPORTED,
-                    "annotations on an underscored type argument", context
+                    MESSAGE
                 )
             }
         }

@@ -30,20 +30,23 @@ expect annotation class ANNO01
 // FILE: jvm.kt
 
 actual object E01
-actual object <!ACTUAL_WITHOUT_EXPECT!>E02<!>
-actual object <!ACTUAL_WITHOUT_EXPECT!>E03<!>
+actual object <!EXPECT_ACTUAL_INCOMPATIBLE_VISIBILITY!>E02<!>
+actual object <!EXPECT_ACTUAL_INCOMPATIBLE_CLASS_KIND!>E03<!>
 
-actual object <!ACTUAL_WITHOUT_EXPECT!>E04<!>
+actual object <!EXPECT_ACTUAL_INCOMPATIBLE_VISIBILITY!>E04<!>
 
 actual object <!NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS!>E05<!>
 actual object <!NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS!>E06<!>
 
-actual object <!ACTUAL_WITHOUT_EXPECT!>I01<!>
+actual object <!EXPECT_ACTUAL_INCOMPATIBLE_CLASS_KIND!>I01<!>
 
 actual object M01 {
     actual fun foo() {}
 }
 
-actual object <!ACTUAL_WITHOUT_EXPECT!>ENUM01<!>
+actual object <!EXPECT_ACTUAL_INCOMPATIBLE_CLASS_KIND, EXPECT_ACTUAL_INCOMPATIBLE_SUPERTYPES!>ENUM01<!>
 
-actual object <!ACTUAL_WITHOUT_EXPECT!>ANNO01<!>
+actual object <!EXPECT_ACTUAL_INCOMPATIBLE_CLASS_KIND, EXPECT_ACTUAL_INCOMPATIBLE_SUPERTYPES!>ANNO01<!>
+
+/* GENERATED_FIR_TAGS: actual, annotationDeclaration, classDeclaration, enumDeclaration, expect, functionDeclaration,
+interfaceDeclaration, objectDeclaration, primaryConstructor, secondaryConstructor */

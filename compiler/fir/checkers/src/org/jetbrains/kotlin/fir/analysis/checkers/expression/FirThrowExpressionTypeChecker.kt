@@ -14,7 +14,8 @@ import org.jetbrains.kotlin.fir.expressions.FirThrowExpression
 import org.jetbrains.kotlin.fir.types.*
 
 object FirThrowExpressionTypeChecker : FirThrowExpressionChecker(MppCheckerKind.Common) {
-    override fun check(expression: FirThrowExpression, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(expression: FirThrowExpression) {
         val expectedType = context.session.builtinTypes.throwableType.coneType
         val actualType = expression.exception.resolvedType
 
@@ -24,8 +25,7 @@ object FirThrowExpressionTypeChecker : FirThrowExpressionChecker(MppCheckerKind.
                 FirErrors.TYPE_MISMATCH,
                 expectedType,
                 actualType,
-                context.session.typeContext.isTypeMismatchDueToNullability(expectedType, actualType),
-                context,
+                context.session.typeContext.isTypeMismatchDueToNullability(expectedType, actualType)
             )
         }
     }

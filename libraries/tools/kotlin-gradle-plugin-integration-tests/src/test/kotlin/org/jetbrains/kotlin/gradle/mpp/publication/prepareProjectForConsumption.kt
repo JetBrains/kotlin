@@ -6,7 +6,8 @@
 package org.jetbrains.kotlin.gradle.mpp.publication
 
 import org.gradle.api.DefaultTask
-import org.gradle.api.artifacts.result.ResolutionResult
+import org.gradle.api.artifacts.result.DependencyResult
+import org.gradle.api.artifacts.result.ResolvedComponentResult
 import org.gradle.api.artifacts.result.UnresolvedDependencyResult
 import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskAction
@@ -156,13 +157,20 @@ private fun GradleProject.prepareKmpConsumer(consumer: Scenario.Project, depende
 
 
 private abstract class ResolveDependenciesTask : DefaultTask() {
+    private class ResolutionResult(
+        val dependencies: Set<DependencyResult>,
+        val components: Set<ResolvedComponentResult>,
+    )
+
     @get:OutputDirectory
     val outDir: File = project.file("resolvedDependenciesReports")
 
-    private val configurations = mutableMapOf<String, ResolutionResult>()
+    private val configurations = mutableMapOf<String, ResolveDependenciesTask.ResolutionResult>()
     fun reportForConfiguration(name: String) {
         val configuration = project.configurations.findByName(name) ?: return
-        configurations[name] = configuration.incoming.resolutionResult
+        configurations[name] = configuration.incoming.resolutionResult.let { result ->
+            ResolutionResult(result.allDependencies, result.allComponents)
+        }
     }
 
     @TaskAction
@@ -172,16 +180,16 @@ private abstract class ResolveDependenciesTask : DefaultTask() {
         }
     }
 
-    private fun reportResolutionResult(name: String, resolutionResult: ResolutionResult) {
+    private fun reportResolutionResult(name: String, resolutionResult: ResolveDependenciesTask.ResolutionResult) {
         val content = buildString {
             // report errors if any
-            resolutionResult.allDependencies
+            resolutionResult.dependencies
                 .filterIsInstance<UnresolvedDependencyResult>()
                 .forEach {
                     appendLine("ERROR: ${it.attempted} -> ${it.failure}")
                 }
 
-            resolutionResult.allComponents
+            resolutionResult.components
                 .map { component -> "${component.id} => ${component.variants.map { it.displayName }}" }
                 .sorted()
                 .joinToString("\n")

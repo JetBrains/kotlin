@@ -14,3 +14,6 @@ fun foo() {
         <!SMARTCAST_IMPOSSIBLE!>i<!>.hashCode()
     }
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, assignment, equalityExpression, functionDeclaration, functionalType,
+ifExpression, integerLiteral, localProperty, nullableType, propertyDeclaration, smartcast */

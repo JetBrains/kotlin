@@ -26,3 +26,6 @@ class B4 : A(1) {
         class Local : A()
     }
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, classDeclaration, functionDeclaration, init, integerLiteral,
+localClass, primaryConstructor, secondaryConstructor */

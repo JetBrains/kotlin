@@ -5,9 +5,12 @@
 
 package org.jetbrains.kotlin.kotlinp.jvm
 
+import org.jetbrains.kotlin.kotlinp.Kotlinp
+import org.jetbrains.kotlin.kotlinp.Printer
+import org.jetbrains.kotlin.kotlinp.Settings
+import org.jetbrains.kotlin.kotlinp.printString
 import kotlin.metadata.*
 import kotlin.metadata.jvm.*
-import org.jetbrains.kotlin.kotlinp.*
 
 class JvmKotlinp(settings: Settings) : Kotlinp(settings) {
     fun printClassFile(classFile: KotlinClassMetadata): String = printString {
@@ -87,8 +90,8 @@ class JvmKotlinp(settings: Settings) : Kotlinp(settings) {
         appendLine("}")
     }
 
-    override fun getAnnotations(typeParameter: KmTypeParameter) = typeParameter.annotations
-    override fun getAnnotations(type: KmType) = type.annotations
+    override fun getAnnotations(typeParameter: KmTypeParameter): List<KmAnnotation> = typeParameter.annotations
+    override fun getAnnotations(type: KmType): List<KmAnnotation> = type.annotations
 
     override fun sortConstructors(constructors: List<KmConstructor>) = constructors.sortedBy { it.signature.toString() }
     override fun sortFunctions(functions: List<KmFunction>) = functions.sortedBy { it.signature.toString() }
@@ -176,13 +179,6 @@ class JvmKotlinp(settings: Settings) : Kotlinp(settings) {
                 appendLine()
                 appendCommentedLine("module name: ", it)
             }
-        }
-    }
-
-    override fun Printer.appendEnumEntries(clazz: KmClass) {
-        clazz.enumEntries.forEach { enumEntry ->
-            appendLine()
-            appendLine(enumEntry, ",")
         }
     }
 

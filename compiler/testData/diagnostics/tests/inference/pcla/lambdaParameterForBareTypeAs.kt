@@ -27,3 +27,7 @@ fun main(a: A<String>) {
 
     <!DEBUG_INFO_EXPRESSION_TYPE("A<kotlin.String>")!>x<!>
 }
+
+/* GENERATED_FIR_TAGS: asExpression, classDeclaration, functionDeclaration, functionalType, inProjection,
+interfaceDeclaration, lambdaLiteral, localProperty, nullableType, propertyDeclaration, smartcast, suspend,
+thisExpression, typeParameter, typeWithExtension */

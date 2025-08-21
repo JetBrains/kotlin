@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.testbase.BuildOptions.ConfigurationCacheProblems
+import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
 
@@ -19,15 +20,14 @@ import org.junit.jupiter.api.condition.OS
 @NativeGradlePluginTests
 class JsSetupConfigurationCacheIT : KGPBaseTest() {
 
-    override val defaultBuildOptions =
-        super.defaultBuildOptions.copy(
-            configurationCache = BuildOptions.ConfigurationCacheValue.ENABLED,
-            configurationCacheProblems = ConfigurationCacheProblems.FAIL
-        )
+    override val defaultBuildOptions: BuildOptions
+        // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
+        get() = super.defaultBuildOptions.copy(isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED)
 
     // hack to be run on Mac m*
     @DisplayName("Check Node.JS setup on different platforms")
     @GradleTest
+    @TestMetadata("kotlin-js-browser-project")
     fun checkNodeJsSetup(gradleVersion: GradleVersion) {
         project(
             "kotlin-js-browser-project",
@@ -45,6 +45,7 @@ class JsSetupConfigurationCacheIT : KGPBaseTest() {
     // hack to be run on Mac m*
     @DisplayName("Check Node.JS setup on different platforms with Yarn")
     @GradleTest
+    @TestMetadata("kotlin-js-browser-project")
     fun checkNodeJsSetupYarn(gradleVersion: GradleVersion) {
         project(
             "kotlin-js-browser-project",

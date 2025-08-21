@@ -23,3 +23,6 @@ fun main() {
 
     generic.child.children[0].foo[0].length // OK
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, integerLiteral, javaFunction, javaProperty, localProperty,
+nullableType, propertyDeclaration, starProjection */

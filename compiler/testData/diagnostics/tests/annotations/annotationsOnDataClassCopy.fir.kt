@@ -17,3 +17,6 @@ data class Foo(
     @param:NoTarget @param:Both val p2: String,
     @property:NoTarget @property:Both val p3: Boolean,
 )
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, annotationUseSiteTargetParam, annotationUseSiteTargetProperty,
+classDeclaration, data, primaryConstructor, propertyDeclaration */

@@ -26,3 +26,5 @@ var v: String = ""
     set(value): <!WRONG_SETTER_RETURN_TYPE!>String<!> {
         field = value
     }
+
+/* GENERATED_FIR_TAGS: assignment, getter, integerLiteral, propertyDeclaration, setter, stringLiteral */

@@ -31,7 +31,7 @@ fun test(a: A, b: B, c: C) {
         val k = three(a, b, c)
         checkSubtype<A>(k)
         checkSubtype<B>(<!ARGUMENT_TYPE_MISMATCH!>k<!>)
-        val l: Int = <!INITIALIZER_TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH!>three(a, b, c)<!>
+        val l: Int = <!INITIALIZER_TYPE_MISMATCH!>three(a, b, c)<!>
 
         use(d, e, f, g, h, k, l)
     }
@@ -61,3 +61,8 @@ fun rr(s: String?) {
 fun <T> arrayListOf(vararg values: T): MutableList<T> = throw Exception()
 
 fun use(vararg a: Any) = a
+
+/* GENERATED_FIR_TAGS: andExpression, classDeclaration, equalityExpression, funWithExtensionReceiver,
+functionDeclaration, functionalType, ifExpression, infix, interfaceDeclaration, intersectionType, isExpression,
+localProperty, nullableType, outProjection, propertyDeclaration, smartcast, stringLiteral, typeParameter,
+typeWithExtension, vararg */

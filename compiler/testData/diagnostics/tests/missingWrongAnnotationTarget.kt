@@ -11,3 +11,6 @@ fun wrongAnnotationTargetInWhenSubject() {
         0 -> {}
     }
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, equalityExpression, functionDeclaration, integerLiteral, localProperty,
+propertyDeclaration, whenExpression, whenWithSubject */

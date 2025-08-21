@@ -74,7 +74,7 @@ class EDH: ErrorDeprecated(), HiddenDeprecated {
 }
 
 class NED: ErrorDeprecated(), NoDeprecation {
-    override var <!OVERRIDE_DEPRECATION!>p<!>: Int
+    override var p: Int
         get() = 3
         set(value) {
         }
@@ -135,3 +135,6 @@ fun use(
     diff.<!DEPRECATION_ERROR!>p<!>
     diff.<!UNRESOLVED_REFERENCE!>p<!> = 1
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, functionDeclaration, getter, integerLiteral, interfaceDeclaration,
+override, propertyDeclaration, setter, stringLiteral */

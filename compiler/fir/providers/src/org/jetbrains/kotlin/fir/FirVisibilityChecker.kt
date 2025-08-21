@@ -5,16 +5,16 @@
 
 package org.jetbrains.kotlin.fir
 
-import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.expressions.FirPropertyAccessExpression
+import org.jetbrains.kotlin.fir.expressions.FirSuperReceiverExpression
 import org.jetbrains.kotlin.fir.expressions.FirThisReceiverExpression
-import org.jetbrains.kotlin.fir.references.FirSuperReference
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.resolve.providers.getContainingFile
@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.packageName
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
@@ -32,29 +33,18 @@ abstract class FirModuleVisibilityChecker : FirSessionComponent {
     abstract fun isInFriendModule(declaration: FirMemberDeclaration): Boolean
 
     class Standard(val session: FirSession) : FirModuleVisibilityChecker() {
-        private val useSiteModuleData = session.moduleData
-        private val allDependsOnDependencies = useSiteModuleData.allDependsOnDependencies
-
         override fun isInFriendModule(declaration: FirMemberDeclaration): Boolean {
-            return when (declaration.moduleData) {
-                useSiteModuleData,
-                in useSiteModuleData.friendDependencies,
-                in allDependsOnDependencies -> true
-
-                else -> false
-            }
+            return session.moduleData.canSeeInternalsOf(declaration.moduleData)
         }
     }
 }
 
-abstract class FirModulePrivateVisibilityChecker : FirSessionComponent {
-    abstract fun canSeePrivateDeclaration(declaration: FirMemberDeclaration): Boolean
-
-    open class Standard(private val session: FirSession) : FirModulePrivateVisibilityChecker() {
-        override fun canSeePrivateDeclaration(declaration: FirMemberDeclaration): Boolean {
-            return session.moduleData == declaration.moduleData
-        }
-    }
+/**
+ * Extension to support cases where private declarations are visible despite the different module.
+ */
+abstract class FirPrivateVisibleFromDifferentModuleExtension : FirSessionComponent {
+    abstract fun canSeePrivateDeclarationsOfModule(otherModuleData: FirModuleData): Boolean
+    abstract fun canSeePrivateTopLevelDeclarationsFromFile(useSiteFile: FirFile, targetFile: FirFile): Boolean
 }
 
 abstract class FirVisibilityChecker : FirSessionComponent {
@@ -211,7 +201,6 @@ abstract class FirVisibilityChecker : FirSessionComponent {
         supertypeSupplier: SupertypeSupplier
     ): Boolean {
         val symbol = declaration.symbol
-        val provider = session.firProvider
 
         return when (declaration.visibility) {
             Visibilities.Internal -> {
@@ -219,11 +208,11 @@ abstract class FirVisibilityChecker : FirSessionComponent {
             }
             Visibilities.Private, Visibilities.PrivateToThis -> {
                 val ownerLookupTag = symbol.getOwnerLookupTag()
-                if (session.modulePrivateVisibilityChecker.canSeePrivateDeclaration(declaration)) {
+                if (canSeePrivateDeclarationsOfModule(session, declaration.moduleData)) {
                     when {
                         ownerLookupTag == null -> {
                             // Top-level: visible in file
-                            provider.getContainingFile(symbol) == useSiteFile
+                            canSeePrivateTopLevelDeclarationFromFile(session, useSiteFile, symbol)
                         }
                         else -> {
                             // Member: visible inside parent class, including all its member classes
@@ -392,7 +381,7 @@ abstract class FirVisibilityChecker : FirSessionComponent {
     ): Boolean {
         if (dispatchReceiver == null) return true
         var dispatchReceiverType = dispatchReceiver.resolvedType
-        if (dispatchReceiver is FirPropertyAccessExpression && dispatchReceiver.calleeReference is FirSuperReference) {
+        if (dispatchReceiver is FirSuperReceiverExpression) {
             // Special 'super' case: type of this, not of super, should be taken for the check below
             dispatchReceiverType = dispatchReceiver.dispatchReceiver!!.resolvedType
         }
@@ -410,10 +399,7 @@ abstract class FirVisibilityChecker : FirSessionComponent {
         }
 
         if (isSyntheticProperty) {
-            return if (session.languageVersionSettings.supportsFeature(LanguageFeature.ImproveReportingDiagnosticsOnProtectedMembersOfBaseClass))
-                containingUseSiteClass.classId.packageFqName == ownerLookupTag.classId.packageFqName
-            else
-                true
+            return containingUseSiteClass.classId.packageFqName == ownerLookupTag.classId.packageFqName
         }
 
         return false
@@ -467,10 +453,7 @@ abstract class FirVisibilityChecker : FirSessionComponent {
                     )
                 ) return true
             } else if (containingDeclaration is FirFile) {
-                if (isSyntheticProperty &&
-                    session.languageVersionSettings.supportsFeature(LanguageFeature.ImproveReportingDiagnosticsOnProtectedMembersOfBaseClass) &&
-                    containingDeclaration.packageFqName == ownerLookupTag.classId.packageFqName
-                ) {
+                if (isSyntheticProperty && containingDeclaration.packageFqName == ownerLookupTag.classId.packageFqName) {
                     return true
                 }
             }
@@ -478,10 +461,29 @@ abstract class FirVisibilityChecker : FirSessionComponent {
 
         return false
     }
+
+    private fun canSeePrivateDeclarationsOfModule(session: FirSession, otherModuleData: FirModuleData): Boolean {
+        return session.moduleData == otherModuleData ||
+                session.privateVisibleFromDifferentModulesExtension?.canSeePrivateDeclarationsOfModule(otherModuleData) == true
+    }
+
+    private fun canSeePrivateTopLevelDeclarationFromFile(
+        session: FirSession,
+        useSiteFile: FirFile,
+        declarationSymbol: FirBasedSymbol<*>,
+    ): Boolean {
+        val declarationContainingFile = declarationSymbol.moduleData.session.firProvider.getContainingFile(declarationSymbol)
+            ?: return false
+        return useSiteFile == declarationContainingFile ||
+                session.privateVisibleFromDifferentModulesExtension?.canSeePrivateTopLevelDeclarationsFromFile(
+                    useSiteFile,
+                    declarationContainingFile
+                ) == true
+    }
 }
 
 val FirSession.moduleVisibilityChecker: FirModuleVisibilityChecker? by FirSession.nullableSessionComponentAccessor()
-val FirSession.modulePrivateVisibilityChecker: FirModulePrivateVisibilityChecker by FirSession.sessionComponentAccessor()
+private val FirSession.privateVisibleFromDifferentModulesExtension: FirPrivateVisibleFromDifferentModuleExtension? by FirSession.nullableSessionComponentAccessor()
 val FirSession.visibilityChecker: FirVisibilityChecker by FirSession.sessionComponentAccessor()
 
 fun FirBasedSymbol<*>.getOwnerLookupTag(): ConeClassLikeLookupTag? {
@@ -562,22 +564,65 @@ private fun FirClassLikeDeclaration.containingNonLocalClass(session: FirSession)
     }
 }
 
-/**
- * The returned fir can be passed to the visibility checker, but don't
- * use it for anything else.
- */
-val <D, S : FirBasedSymbol<D>> S.firForVisibilityChecker: D
-    get() = fir.also {
-        lazyResolveToPhase(FirResolvePhase.STATUS)
-    }
-
 fun FirVisibilityChecker.isVisible(
-    symbol: FirCallableSymbol<*>,
+    symbol: FirBasedSymbol<*>,
     session: FirSession,
-    useSiteFile: FirFile,
-    containingDeclarations: List<FirDeclaration>,
+    useSiteFileSymbol: FirFileSymbol,
+    containingDeclarations: List<FirBasedSymbol<*>>,
     dispatchReceiver: FirExpression?,
+    skipCheckForContainingClassVisibility: Boolean = false,
 ): Boolean {
     symbol.lazyResolveToPhase(FirResolvePhase.STATUS)
-    return isVisible(symbol.fir, session, useSiteFile, containingDeclarations, dispatchReceiver)
+    val declaration = symbol.fir as? FirMemberDeclaration ?: error("Not a member declaration: $symbol")
+    return isVisible(
+        declaration = declaration,
+        session,
+        useSiteFile = useSiteFileSymbol.fir,
+        containingDeclarations.map { it.fir },
+        dispatchReceiver,
+        skipCheckForContainingClassVisibility = skipCheckForContainingClassVisibility,
+    )
+}
+
+fun FirVisibilityChecker.isClassLikeVisible(
+    symbol: FirClassLikeSymbol<*>,
+    session: FirSession,
+    useSiteFileSymbol: FirFileSymbol,
+    containingDeclarations: List<FirBasedSymbol<*>>,
+): Boolean {
+    symbol.lazyResolveToPhase(FirResolvePhase.STATUS)
+    return isClassLikeVisible(
+        declaration = symbol.fir,
+        session,
+        useSiteFileSymbol.fir,
+        containingDeclarations.map { it.fir },
+    )
+}
+
+fun FirCallableDeclaration.isVisibleInClass(parentClass: FirClass): Boolean {
+    return symbol.isVisibleInClass(parentClass.symbol, symbol.resolvedStatus)
+}
+
+fun FirBasedSymbol<*>.isVisibleInClass(parentClassSymbol: FirClassSymbol<*>): Boolean {
+    val status = when (this) {
+        is FirCallableSymbol<*> -> resolvedStatus
+        is FirClassLikeSymbol -> resolvedStatus
+        else -> return true
+    }
+    return isVisibleInClass(parentClassSymbol, status)
+}
+
+fun FirBasedSymbol<*>.isVisibleInClass(classSymbol: FirClassSymbol<*>, status: FirDeclarationStatus): Boolean {
+    val classPackage = classSymbol.classId.packageFqName
+    val packageName = when (this) {
+        is FirCallableSymbol<*> -> callableId.packageName
+        is FirClassLikeSymbol<*> -> classId.packageFqName
+        else -> return true
+    }
+    val visibility = status.visibility
+    if (visibility == Visibilities.Private || !visibility.visibleFromPackage(classPackage, packageName)) return false
+    if (visibility == Visibilities.Internal) {
+        return classSymbol.moduleData.canSeeInternalsOf(moduleData)
+    }
+    return true
 }

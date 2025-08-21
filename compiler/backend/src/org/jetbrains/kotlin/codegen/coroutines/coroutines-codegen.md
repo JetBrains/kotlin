@@ -1035,6 +1035,12 @@ receiver, `J$0` - the first argument, `L$1` - the second one.
 This way, we can reuse spilled variables cleanup logic for parameters. If we used separate fields for parameters, we would need to manually
 push `null` to them as we do for spilled variable fields if we do not need them anymore.
 
+We unspill the lambda parameter before state-machine in `invokeSuspend` - this way, their values are visible in debugger.
+
+If lambda parameter is unboxed inline class with reference underlying type, we store only unboxed value.
+
+We store the parameters in `create`, if there is one, or in `invoke`'s mangled function.
+
 #### invoke
 `invoke` is basically `startCoroutine` without an interception. In `invoke`, we call `create` and resume a new instance with dummy value by
 calling `invokeSuspend`. We cannot just call `invokeSuspend` without calling the constructor first because that would not create a
@@ -3238,6 +3244,10 @@ Continuation's `toString` method uses the debug metadata to show the location wh
 Note that tail-call optimization removes continuations. So, there are gaps in the async stack trace. Additionally, only line numbers of
 suspension points are stored; thus, line numbers are not always accurate.
 
+Since 2.2.20 - we store linenumbers of next statements after suspension points in the metadata annotation.
+The debugger is expected to use this information to set a breakpoint there when step-over is pressed.
+This way, step-over works even if the suspension point suspends. 
+
 ### Probes
 `kotlin.coroutines.jvm.internal` package contains probe functions replaced by the debugger to show current coroutines (in a broad sense)
 and their statuses: suspended or running.
@@ -3251,3 +3261,26 @@ The compiler cleans up dead variables by calling `kotlin.coroutines.jvm.internal
 expected to replace the variable, just like probes.
 
 See "Spilled Variables Cleanup" section.
+
+### Generated Code Markers
+`-Xenhanced-coroutines-debugging` forces the compiler to generate additional linenumbers before the compiler generated code in suspend
+functions and lambdas in order to distinguish them from user code. Additionally, LVT entries are added.
+
+The additional linenumbers mark
+1. Continuation check at the beginning of a suspend function.
+2. Unspilling of arguments of a suspend lambda.
+3. State-machine header (TABLESWITCH of the state-machine).
+4. Check of $result variable at the beginning of the state-machine and after each suspend call.
+5. Check for COROUTINE_SUSPENDED marker after each suspend call.
+6. Default label, which throws IllegalStateException - which is unreachable in normal execution.
+
+The additional LVT entries are
+1. $ecd$checkContinuation$<linenumber>
+2. $ecd$lambdaArgumentsUnspilling$<linenumber>
+3. $ecd$tableswitch$<linenumber>
+4. $ecd$checkResult$<linenumber>
+5. $ecd$checkCOROUTINE_SUSPENDED$<linenumber>
+6. $ecd$unreachable$<linenumber>
+
+These linenumbers are mapped to `GeneratedCodeMarkers.kt` file in stdlib via SMAP by inliner, and point to one-line marker inline function.
+This way, even if unsupported version of debugger is used, it will assume, that this is just normal inlining taking place. 

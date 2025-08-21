@@ -30,3 +30,6 @@ class WidgetWrapper<D : Data<E>, E>(val data: D)
 fun foo(w: Widget<*, *>) {
     <!TYPE_MISMATCH!>WidgetWrapper<!>(data = w.data)
 }
+
+/* GENERATED_FIR_TAGS: capturedType, classDeclaration, functionDeclaration, nullableType, primaryConstructor,
+propertyDeclaration, starProjection, typeConstraint, typeParameter */

@@ -16,7 +16,7 @@ class K1JvmVersionRequirementTest : AbstractJvmVersionRequirementTest() {
         doTest(
             VersionRequirement.Version(1, 4, 0), DeprecationLevel.ERROR, null,
             ProtoBuf.VersionRequirement.VersionKind.COMPILER_VERSION, null,
-            analysisFlags = mapOf(JvmAnalysisFlags.jvmDefaultMode to JvmDefaultMode.ALL),
+            analysisFlags = mapOf(JvmAnalysisFlags.jvmDefaultMode to JvmDefaultMode.NO_COMPATIBILITY),
             fqNamesWithRequirements = listOf(
                 "test.Base",
                 "test.Derived",
@@ -34,7 +34,7 @@ class K1JvmVersionRequirementTest : AbstractJvmVersionRequirementTest() {
         doTest(
             VersionRequirement.Version(1, 4, 0), DeprecationLevel.ERROR, null,
             ProtoBuf.VersionRequirement.VersionKind.COMPILER_VERSION, null,
-            analysisFlags = mapOf(JvmAnalysisFlags.jvmDefaultMode to JvmDefaultMode.ALL_COMPATIBILITY),
+            analysisFlags = mapOf(JvmAnalysisFlags.jvmDefaultMode to JvmDefaultMode.ENABLE),
             fqNamesWithRequirements = emptyList(),
             fqNamesWithoutRequirement = listOf(
                 "test.Base",

@@ -9,3 +9,6 @@ fun foo() {
     v = "abc"
     <!DEBUG_INFO_SMARTCAST!>v<!>.length
 }
+
+/* GENERATED_FIR_TAGS: assignment, functionDeclaration, integerLiteral, localProperty, propertyDeclaration, smartcast,
+stringLiteral */

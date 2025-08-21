@@ -19,7 +19,7 @@ expect class WithDefaultArgFromSuper : I {
     override fun methodWithDefaultArg(s: String)
 }
 
-<!EXPECT_ACTUAL_INCOMPATIBILITY{JVM}!>expect<!> open class WithIncompatibility {
+<!EXPECT_ACTUAL_IR_INCOMPATIBILITY{JVM}!>expect<!> open class WithIncompatibility {
     fun foo(p: String = "common")
 }
 
@@ -30,13 +30,13 @@ class AImpl {
     fun foo(p1: String = "impl", p2: String = "impl", p3: String) {}
 }
 
-<!DEFAULT_ARGUMENTS_IN_EXPECT_WITH_ACTUAL_TYPEALIAS!>actual typealias <!NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS!>A<!> = AImpl<!>
+<!DEFAULT_ARGUMENTS_IN_EXPECT_WITH_ACTUAL_TYPEALIAS!>actual typealias <!EXPECT_ACTUAL_INCOMPATIBLE_CLASS_SCOPE!>A<!> = AImpl<!>
 
 class BImpl {
     fun foo(s: String = "impl") {}
 }
 
-actual typealias <!NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS!>B<!> = BImpl
+actual typealias <!EXPECT_ACTUAL_INCOMPATIBLE_CLASS_SCOPE!>B<!> = BImpl
 
 class WithDefaultArgFromSuperImpl : I {
     override fun methodWithDefaultArg(s: String) {}
@@ -48,4 +48,7 @@ class WithIncompatibilityImpl {
     fun foo(p: String) {}
 }
 
-<!DEFAULT_ARGUMENTS_IN_EXPECT_WITH_ACTUAL_TYPEALIAS!>actual typealias WithIncompatibility = WithIncompatibilityImpl<!>
+<!DEFAULT_ARGUMENTS_IN_EXPECT_WITH_ACTUAL_TYPEALIAS!>actual typealias <!EXPECT_ACTUAL_INCOMPATIBLE_MODALITY!>WithIncompatibility<!> = WithIncompatibilityImpl<!>
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, functionDeclaration, interfaceDeclaration, override,
+stringLiteral, typeAliasDeclaration */

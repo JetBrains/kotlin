@@ -29,6 +29,8 @@ internal class FirLazyBlockImpl : FirLazyBlock() {
         get() = error("FirLazyBlock should be calculated before accessing")
     override val statements: List<FirStatement>
         get() = error("FirLazyBlock should be calculated before accessing")
+    override val isUnitCoerced: Boolean
+        get() = error("FirLazyBlock should be calculated before accessing")
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {}
 
@@ -54,4 +56,6 @@ internal class FirLazyBlockImpl : FirLazyBlock() {
     }
 
     override fun replaceAnnotations(newAnnotations: List<FirAnnotation>) {}
+
+    override fun replaceIsUnitCoerced(newIsUnitCoerced: Boolean) {}
 }

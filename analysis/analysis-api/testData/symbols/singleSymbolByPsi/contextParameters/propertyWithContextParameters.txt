@@ -26,6 +26,65 @@ KaKotlinPropertySymbol:
     deprecationStatus: null
   callableId: /foo
   compilerVisibility: Public
+  contextParameters: [
+    KaContextParameterSymbol:
+      annotations: []
+      callableId: null
+      compilerVisibility: Public
+      contextReceivers: []
+      isActual: false
+      isExpect: false
+      isExtension: false
+      isVal: true
+      location: LOCAL
+      modality: FINAL
+      name: parameter1
+      origin: SOURCE
+      receiverParameter: null
+      returnType: KaUsualClassType:
+        annotations: [
+          Anno(position = "12")
+            psi: KtAnnotationEntry
+        ]
+        typeArguments: []
+        type: @R|Anno|(position = <strcat>(String(1), String(2)))  kotlin/String
+      visibility: PUBLIC
+      getContainingFileSymbol: KaFileSymbol(propertyWithContextParameters.kt)
+      getContainingJvmClassName: PropertyWithContextParametersKt
+      getContainingModule: KaSourceModule "Sources of main"
+      deprecationStatus: null
+    KaContextParameterSymbol:
+      annotations: []
+      callableId: null
+      compilerVisibility: Public
+      contextReceivers: []
+      isActual: false
+      isExpect: false
+      isExtension: false
+      isVal: true
+      location: LOCAL
+      modality: FINAL
+      name: parameter2
+      origin: SOURCE
+      receiverParameter: null
+      returnType: KaUsualClassType:
+        annotations: []
+        typeArguments: [
+          KaUsualClassType:
+            annotations: [
+              Anno(position = "str")
+                psi: KtAnnotationEntry
+            ]
+            typeArguments: []
+            type: @R|Anno|(position = String(str))  kotlin/Int
+        ]
+        type: kotlin/collections/List<@R|Anno|(position = String(str))  kotlin/Int>
+      visibility: PUBLIC
+      getContainingFileSymbol: KaFileSymbol(propertyWithContextParameters.kt)
+      getContainingJvmClassName: PropertyWithContextParametersKt
+      getContainingModule: KaSourceModule "Sources of main"
+      deprecationStatus: null
+  ]
   contextReceivers: [
     KaContextReceiver:
       label: parameter1
@@ -35,7 +94,7 @@ KaKotlinPropertySymbol:
             psi: KtAnnotationEntry
         ]
         typeArguments: []
-        type: @R|Anno|(position = String(1).R|kotlin/String.plus|(String(2)))  kotlin/String
+        type: @R|Anno|(position = <strcat>(String(1), String(2)))  kotlin/String
     KaContextReceiver:
       label: parameter2
       type: KaUsualClassType:
@@ -56,13 +115,12 @@ KaKotlinPropertySymbol:
     callableId: null
     compilerVisibility: Public
     contextReceivers: []
-    hasBody: true
     hasStableParameterNames: true
     isActual: false
-    isDefault: false
     isExpect: false
     isExtension: false
     isInline: false
+    isNotDefault: true
     isOverride: false
     location: PROPERTY
     modality: FINAL
@@ -113,3 +171,4 @@ KaKotlinPropertySymbol:
   javaGetterName: getFoo
   javaSetterName: null
   setterDeprecationStatus: null
+  isInline: false

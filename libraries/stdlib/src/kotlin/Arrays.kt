@@ -8,15 +8,13 @@
 
 package kotlin
 
-import kotlin.internal.ActualizeByJvmBuiltinProvider
-
 /**
- * An array of bytes. When targeting the JVM, instances of this class are represented as `byte[]`.
+ * An array of bytes.
+ * When targeting the JVM, instances of this class are represented as `byte[]`.
  *
  * See [Kotlin language documentation](https://kotlinlang.org/docs/arrays.html)
  * for more information on arrays.
  */
-@ActualizeByJvmBuiltinProvider
 public expect class ByteArray
 /**
  * Creates a new array of the specified [size], with all elements initialized to zero.
@@ -44,7 +42,8 @@ public constructor(size: Int) {
      * ```
      *
      * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException] except in Kotlin/JS
-     * where the behavior is unspecified.
+     * where the behavior is unspecified, and in Kotlin/Wasm where a [trap](https://webassembly.github.io/spec/core/intro/overview.html#trap) will be raised instead,
+     * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
      */
     public operator fun get(index: Int): Byte
 
@@ -57,7 +56,8 @@ public constructor(size: Int) {
      * ```
      *
      * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException] except in Kotlin/JS
-     * where the behavior is unspecified.
+     * where the behavior is unspecified, and in Kotlin/Wasm where a [trap](https://webassembly.github.io/spec/core/intro/overview.html#trap) will be raised instead,
+     * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
      */
     public operator fun set(index: Int, value: Byte): Unit
 
@@ -71,12 +71,12 @@ public constructor(size: Int) {
 }
 
 /**
- * An array of chars. When targeting the JVM, instances of this class are represented as `char[]`.
+ * An array of chars.
+ * When targeting the JVM, instances of this class are represented as `char[]`.
  *
  * See [Kotlin language documentation](https://kotlinlang.org/docs/arrays.html)
  * for more information on arrays.
  */
-@ActualizeByJvmBuiltinProvider
 public expect class CharArray
 /**
  * Creates a new array of the specified [size], with all elements initialized to null char (`\u0000').
@@ -104,7 +104,8 @@ public constructor(size: Int) {
      * ```
      *
      * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException] except in Kotlin/JS
-     * where the behavior is unspecified.
+     * where the behavior is unspecified, and in Kotlin/Wasm where a [trap](https://webassembly.github.io/spec/core/intro/overview.html#trap) will be raised instead,
+     * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
      */
     public operator fun get(index: Int): Char
 
@@ -117,7 +118,8 @@ public constructor(size: Int) {
      * ```
      *
      * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException] except in Kotlin/JS
-     * where the behavior is unspecified.
+     * where the behavior is unspecified, and in Kotlin/Wasm where a [trap](https://webassembly.github.io/spec/core/intro/overview.html#trap) will be raised instead,
+     * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
      */
     public operator fun set(index: Int, value: Char): Unit
 
@@ -131,12 +133,12 @@ public constructor(size: Int) {
 }
 
 /**
- * An array of shorts. When targeting the JVM, instances of this class are represented as `short[]`.
+ * An array of shorts.
+ * When targeting the JVM, instances of this class are represented as `short[]`.
  *
  * See [Kotlin language documentation](https://kotlinlang.org/docs/arrays.html)
  * for more information on arrays.
  */
-@ActualizeByJvmBuiltinProvider
 public expect class ShortArray
 /**
  * Creates a new array of the specified [size], with all elements initialized to zero.
@@ -164,7 +166,8 @@ public constructor(size: Int) {
      * ```
      *
      * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException] except in Kotlin/JS
-     * where the behavior is unspecified.
+     * where the behavior is unspecified, and in Kotlin/Wasm where a [trap](https://webassembly.github.io/spec/core/intro/overview.html#trap) will be raised instead,
+     * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
      */
     public operator fun get(index: Int): Short
 
@@ -177,7 +180,8 @@ public constructor(size: Int) {
      * ```
      *
      * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException] except in Kotlin/JS
-     * where the behavior is unspecified.
+     * where the behavior is unspecified, and in Kotlin/Wasm where a [trap](https://webassembly.github.io/spec/core/intro/overview.html#trap) will be raised instead,
+     * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
      */
     public operator fun set(index: Int, value: Short): Unit
 
@@ -191,12 +195,12 @@ public constructor(size: Int) {
 }
 
 /**
- * An array of ints. When targeting the JVM, instances of this class are represented as `int[]`.
+ * An array of ints.
+ * When targeting the JVM, instances of this class are represented as `int[]`.
  *
  * See [Kotlin language documentation](https://kotlinlang.org/docs/arrays.html)
  * for more information on arrays.
  */
-@ActualizeByJvmBuiltinProvider
 public expect class IntArray
 /**
  * Creates a new array of the specified [size], with all elements initialized to zero.
@@ -224,7 +228,8 @@ public constructor(size: Int) {
      * ```
      *
      * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException] except in Kotlin/JS
-     * where the behavior is unspecified.
+     * where the behavior is unspecified, and in Kotlin/Wasm where a [trap](https://webassembly.github.io/spec/core/intro/overview.html#trap) will be raised instead,
+     * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
      */
     public operator fun get(index: Int): Int
 
@@ -237,7 +242,8 @@ public constructor(size: Int) {
      * ```
      *
      * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException] except in Kotlin/JS
-     * where the behavior is unspecified.
+     * where the behavior is unspecified, and in Kotlin/Wasm where a [trap](https://webassembly.github.io/spec/core/intro/overview.html#trap) will be raised instead,
+     * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
      */
     public operator fun set(index: Int, value: Int): Unit
 
@@ -251,12 +257,12 @@ public constructor(size: Int) {
 }
 
 /**
- * An array of longs. When targeting the JVM, instances of this class are represented as `long[]`.
+ * An array of longs.
+ * When targeting the JVM, instances of this class are represented as `long[]`.
  *
  * See [Kotlin language documentation](https://kotlinlang.org/docs/arrays.html)
  * for more information on arrays.
  */
-@ActualizeByJvmBuiltinProvider
 public expect class LongArray
 /**
  * Creates a new array of the specified [size], with all elements initialized to zero.
@@ -284,7 +290,8 @@ public constructor(size: Int) {
      * ```
      *
      * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException] except in Kotlin/JS
-     * where the behavior is unspecified.
+     * where the behavior is unspecified, and in Kotlin/Wasm where a [trap](https://webassembly.github.io/spec/core/intro/overview.html#trap) will be raised instead,
+     * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
      */
     public operator fun get(index: Int): Long
 
@@ -297,7 +304,8 @@ public constructor(size: Int) {
      * ```
      *
      * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException] except in Kotlin/JS
-     * where the behavior is unspecified.
+     * where the behavior is unspecified, and in Kotlin/Wasm where a [trap](https://webassembly.github.io/spec/core/intro/overview.html#trap) will be raised instead,
+     * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
      */
     public operator fun set(index: Int, value: Long): Unit
 
@@ -311,12 +319,12 @@ public constructor(size: Int) {
 }
 
 /**
- * An array of floats. When targeting the JVM, instances of this class are represented as `float[]`.
+ * An array of floats.
+ * When targeting the JVM, instances of this class are represented as `float[]`.
  *
  * See [Kotlin language documentation](https://kotlinlang.org/docs/arrays.html)
  * for more information on arrays.
  */
-@ActualizeByJvmBuiltinProvider
 public expect class FloatArray
 /**
  * Creates a new array of the specified [size], with all elements initialized to zero.
@@ -344,7 +352,8 @@ public constructor(size: Int) {
      * ```
      *
      * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException] except in Kotlin/JS
-     * where the behavior is unspecified.
+     * where the behavior is unspecified, and in Kotlin/Wasm where a [trap](https://webassembly.github.io/spec/core/intro/overview.html#trap) will be raised instead,
+     * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
      */
     public operator fun get(index: Int): Float
 
@@ -357,7 +366,8 @@ public constructor(size: Int) {
      * ```
      *
      * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException] except in Kotlin/JS
-     * where the behavior is unspecified.
+     * where the behavior is unspecified, and in Kotlin/Wasm where a [trap](https://webassembly.github.io/spec/core/intro/overview.html#trap) will be raised instead,
+     * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
      */
     public operator fun set(index: Int, value: Float): Unit
 
@@ -371,12 +381,12 @@ public constructor(size: Int) {
 }
 
 /**
- * An array of doubles. When targeting the JVM, instances of this class are represented as `double[]`.
+ * An array of doubles.
+ * When targeting the JVM, instances of this class are represented as `double[]`.
  *
  * See [Kotlin language documentation](https://kotlinlang.org/docs/arrays.html)
  * for more information on arrays.
  */
-@ActualizeByJvmBuiltinProvider
 public expect class DoubleArray
 /**
  * Creates a new array of the specified [size], with all elements initialized to zero.
@@ -404,7 +414,8 @@ public constructor(size: Int) {
      * ```
      *
      * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException] except in Kotlin/JS
-     * where the behavior is unspecified.
+     * where the behavior is unspecified, and in Kotlin/Wasm where a [trap](https://webassembly.github.io/spec/core/intro/overview.html#trap) will be raised instead,
+     * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
      */
     public operator fun get(index: Int): Double
 
@@ -417,7 +428,8 @@ public constructor(size: Int) {
      * ```
      *
      * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException] except in Kotlin/JS
-     * where the behavior is unspecified.
+     * where the behavior is unspecified, and in Kotlin/Wasm where a [trap](https://webassembly.github.io/spec/core/intro/overview.html#trap) will be raised instead,
+     * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
      */
     public operator fun set(index: Int, value: Double): Unit
 
@@ -431,12 +443,12 @@ public constructor(size: Int) {
 }
 
 /**
- * An array of booleans. When targeting the JVM, instances of this class are represented as `boolean[]`.
+ * An array of booleans.
+ * When targeting the JVM, instances of this class are represented as `boolean[]`.
  *
  * See [Kotlin language documentation](https://kotlinlang.org/docs/arrays.html)
  * for more information on arrays.
  */
-@ActualizeByJvmBuiltinProvider
 public expect class BooleanArray
 /**
  * Creates a new array of the specified [size], with all elements initialized to `false`.
@@ -464,7 +476,8 @@ public constructor(size: Int) {
      * ```
      *
      * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException] except in Kotlin/JS
-     * where the behavior is unspecified.
+     * where the behavior is unspecified, and in Kotlin/Wasm where a [trap](https://webassembly.github.io/spec/core/intro/overview.html#trap) will be raised instead,
+     * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
      */
     public operator fun get(index: Int): Boolean
 
@@ -477,7 +490,8 @@ public constructor(size: Int) {
      * ```
      *
      * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException] except in Kotlin/JS
-     * where the behavior is unspecified.
+     * where the behavior is unspecified, and in Kotlin/Wasm where a [trap](https://webassembly.github.io/spec/core/intro/overview.html#trap) will be raised instead,
+     * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
      */
     public operator fun set(index: Int, value: Boolean): Unit
 

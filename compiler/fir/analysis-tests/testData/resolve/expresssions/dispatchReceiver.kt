@@ -9,3 +9,5 @@
 
      fun check() = delegate.check() // Should not resolve
  }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, interfaceDeclaration, lateinit, propertyDeclaration */

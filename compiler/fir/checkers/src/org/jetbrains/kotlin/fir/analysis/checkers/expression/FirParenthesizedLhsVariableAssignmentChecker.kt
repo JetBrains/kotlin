@@ -14,7 +14,8 @@ import org.jetbrains.kotlin.fir.expressions.FirVariableAssignment
 import org.jetbrains.kotlin.psi.psiUtil.hasUnwrappableAsAssignmentLhs
 
 object FirParenthesizedLhsVariableAssignmentChecker : FirVariableAssignmentChecker(MppCheckerKind.Platform) {
-    override fun check(expression: FirVariableAssignment, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(expression: FirVariableAssignment) {
         // LHS contains an unwrapped expression, and it's easier to walk it up here
         // than to set the proper non-unwrapped source in raw FIR builders.
 
@@ -26,7 +27,7 @@ object FirParenthesizedLhsVariableAssignmentChecker : FirVariableAssignmentCheck
         val isLhsParenthesized = expression.source.hasUnwrappableAsAssignmentLhs()
 
         if (isLhsParenthesized) {
-            reporter.reportOn(expression.source, FirErrors.WRAPPED_LHS_IN_ASSIGNMENT, context)
+            reporter.reportOn(expression.source, FirErrors.WRAPPED_LHS_IN_ASSIGNMENT)
         }
     }
 }

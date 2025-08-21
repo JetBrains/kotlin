@@ -28,3 +28,6 @@ inline fun <reified X : Number?> test5() = X::class.java
 fun test6() = A.getA()::class.java
 fun test7() = A.getKClass().java
 
+/* GENERATED_FIR_TAGS: capturedType, classDeclaration, classReference, flexibleType, funWithExtensionReceiver,
+functionDeclaration, functionalType, infix, inline, javaFunction, javaType, nullableType, outProjection, reified,
+typeConstraint, typeParameter, typeWithExtension */

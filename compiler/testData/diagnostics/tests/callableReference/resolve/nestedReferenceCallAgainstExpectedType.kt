@@ -24,3 +24,6 @@ val l1: (A) -> Unit
         false -> { ::foo }
         else -> ::bar
     }
+
+/* GENERATED_FIR_TAGS: callableReference, comparisonExpression, functionDeclaration, functionalType, getter,
+ifExpression, integerLiteral, interfaceDeclaration, propertyDeclaration, whenExpression */

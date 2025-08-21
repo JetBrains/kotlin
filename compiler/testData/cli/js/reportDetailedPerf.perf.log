@@ -1,0 +1,12 @@
+Kotlin to JS compiler performance report
+                INIT        $UINT>>$ ms
+             ANALYZE        $UINT>>$ ms            $REAL>>$ loc/s
+   TRANSLATION to IR        $UINT>>$ ms            $REAL>>$ loc/s
+     IR PRE-LOWERING        $UINT>>$ ms            $REAL>>$ loc/s
+       DYNAMIC PHASE        $UINT>>$ ms            $REAL>>$ loc/s (UpgradeCallableReferences)
+       DYNAMIC PHASE        $UINT>>$ ms            $REAL>>$ loc/s (AvoidLocalFOsInInlineFunctionsLowering)
+    IR SERIALIZATION        $UINT>>$ ms            $REAL>>$ loc/s
+        KLIB WRITING        $UINT>>$ ms            $REAL>>$ loc/s
+GC time for PS MarkSweep is $UINT$ ms, $UINT$ collections
+GC time for PS Scavenge is $UINT$ ms, $UINT$ collections
+JIT time is $UINT$ ms

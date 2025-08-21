@@ -5,24 +5,25 @@
 
 package org.jetbrains.kotlin.backend.wasm
 
-import org.jetbrains.kotlin.backend.common.ir.Ir
+import org.jetbrains.kotlin.backend.common.compilationException
+import org.jetbrains.kotlin.backend.common.ir.KlibSharedVariablesManager
 import org.jetbrains.kotlin.backend.common.linkage.partial.createPartialLinkageSupportForLowerings
+import org.jetbrains.kotlin.backend.common.linkage.partial.partialLinkageConfig
 import org.jetbrains.kotlin.backend.common.lower.InnerClassesSupport
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.JsModuleAndQualifierReference
-import org.jetbrains.kotlin.backend.wasm.lower.WasmSharedVariablesManager
 import org.jetbrains.kotlin.backend.wasm.utils.WasmInlineClassesUtils
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.config.phaseConfig
 import org.jetbrains.kotlin.config.phaser.PhaseConfig
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.ir.*
 import org.jetbrains.kotlin.ir.IrBuiltIns
-import org.jetbrains.kotlin.ir.backend.js.*
+import org.jetbrains.kotlin.ir.backend.js.JsCommonBackendContext
+import org.jetbrains.kotlin.ir.backend.js.PropertyLazyInitialization
+import org.jetbrains.kotlin.ir.backend.js.ReflectionSymbols
 import org.jetbrains.kotlin.ir.backend.js.lower.JsInnerClassesSupport
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrExternalPackageFragmentImpl
-import org.jetbrains.kotlin.ir.linkage.partial.partialLinkageConfig
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFileSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
@@ -38,7 +39,7 @@ import org.jetbrains.kotlin.wasm.config.wasmTarget
 class WasmBackendContext(
     val module: ModuleDescriptor,
     override val irBuiltIns: IrBuiltIns,
-    val symbolTable: SymbolTable,
+    override val symbolTable: SymbolTable,
     val irModuleFragment: IrModuleFragment,
     propertyLazyInitialization: Boolean,
     override val configuration: CompilerConfiguration,
@@ -55,14 +56,14 @@ class WasmBackendContext(
     // Place to store declarations excluded from code generation
     private val excludedDeclarations = mutableMapOf<FqName, IrPackageFragment>()
 
-    fun getExcludedPackageFragment(fqName: FqName): IrPackageFragment = excludedDeclarations.getOrPut(fqName) {
+    fun getExcludedPackageFragmentOrCreate(fqName: FqName): IrPackageFragment = excludedDeclarations.getOrPut(fqName) {
         IrExternalPackageFragmentImpl(
             DescriptorlessExternalPackageFragmentSymbol(),
             fqName
         )
     }
 
-    override val mapping = JsMapping()
+    fun getExcludedPackageFragment(fqName: FqName): IrPackageFragment? = excludedDeclarations.get(fqName)
 
     class CrossFileContext {
         var mainFunctionWrapper: IrSimpleFunction? = null
@@ -76,6 +77,10 @@ class WasmBackendContext(
         val classAssociatedObjects: MutableMap<IrClass, MutableList<Pair<IrClass, IrClass>>> = mutableMapOf()
 
         var testFunctionDeclarator: IrSimpleFunction? = null
+
+        var objectInstanceFieldInitializer: IrSimpleFunction? = null
+        var stringPoolFieldInitializer: IrSimpleFunction? = null
+        var nonConstantFieldInitializer: IrSimpleFunction? = null
     }
 
     val fileContexts = mutableMapOf<IrFile, CrossFileContext>()
@@ -85,14 +90,13 @@ class WasmBackendContext(
     override val jsPromiseSymbol: IrClassSymbol?
         get() = if (configuration.wasmTarget == WasmTarget.JS) wasmSymbols.jsRelatedSymbols.jsPromise else null
 
-    override val innerClassesSupport: InnerClassesSupport = JsInnerClassesSupport(mapping, irFactory)
+    override val innerClassesSupport: InnerClassesSupport = JsInnerClassesSupport(irFactory)
 
     override val internalPackageFqn = FqName("kotlin.wasm")
 
-    override val sharedVariablesManager = WasmSharedVariablesManager(this)
-
     val wasmSymbols: WasmSymbols = WasmSymbols(irBuiltIns, configuration)
     override val symbols = wasmSymbols
+    override val sharedVariablesManager = KlibSharedVariablesManager(wasmSymbols)
     override val reflectionSymbols: ReflectionSymbols get() = wasmSymbols.reflectionSymbols
 
     override val enumEntries = wasmSymbols.enumEntries
@@ -101,10 +105,8 @@ class WasmBackendContext(
     override val propertyLazyInitialization: PropertyLazyInitialization =
         PropertyLazyInitialization(enabled = propertyLazyInitialization, eagerInitialization = wasmSymbols.eagerInitialization)
 
-    override val ir = object : Ir() {
-        override val symbols: WasmSymbols = wasmSymbols
-        override fun shouldGenerateHandlerParameterForDefaultBodyFun() = true
-    }
+    override val shouldGenerateHandlerParameterForDefaultBodyFun: Boolean
+        get() = true
 
     override val inlineClassesUtils = WasmInlineClassesUtils(wasmSymbols)
 
@@ -132,4 +134,40 @@ class WasmBackendContext(
         FqName("kotlin")
     )
 
+    companion object {
+        internal const val SPECIAL_INTERFACE_TABLE_SIZE = 22
+        private fun getSpecialITableTypes(context: WasmBackendContext) = listOf(
+            context.irBuiltIns.collectionClass,
+            context.irBuiltIns.setClass,
+            context.irBuiltIns.listClass,
+            context.irBuiltIns.mapClass,
+            context.irBuiltIns.mapEntryClass,
+            context.irBuiltIns.iterableClass,
+            context.irBuiltIns.iteratorClass,
+            context.irBuiltIns.listIteratorClass,
+            context.irBuiltIns.mutableCollectionClass,
+            context.irBuiltIns.mutableSetClass,
+            context.irBuiltIns.mutableListClass,
+            context.irBuiltIns.mutableMapClass,
+            context.irBuiltIns.mutableMapEntryClass,
+            context.irBuiltIns.mutableIterableClass,
+            context.irBuiltIns.mutableIteratorClass,
+            context.irBuiltIns.mutableListIteratorClass,
+            context.irBuiltIns.comparableClass,
+            context.irBuiltIns.charSequenceClass,
+            context.wasmSymbols.enumEntries,
+            context.wasmSymbols.continuationClass,
+            context.wasmSymbols.sequence!!,
+            context.wasmSymbols.appendable,
+            //FUNCTION_INTERFACE_CLASS
+        )
+    }
+
+    internal val specialSlotITableTypes by lazy {
+        getSpecialITableTypes(this).also {
+            if (it.size != SPECIAL_INTERFACE_TABLE_SIZE) {
+                compilationException("Invalid special size count", null)
+            }
+        }
+    }
 }

@@ -31,3 +31,6 @@ fun main() {
         plus(1)
     }
 }
+
+/* GENERATED_FIR_TAGS: funWithExtensionReceiver, functionDeclaration, functionalType, infix, integerLiteral,
+lambdaLiteral, localProperty, nullableType, propertyDeclaration, stringLiteral, typeParameter, typeWithExtension */

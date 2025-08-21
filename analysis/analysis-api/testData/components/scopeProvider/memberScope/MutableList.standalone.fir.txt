@@ -1,7 +1,11 @@
 KaNamedFunctionSymbol:
-  annotations: []
+  annotations: [
+    kotlin/IgnorableReturnValue()
+      psi: null
+  ]
   callableId: kotlin/collections/MutableList.add
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -13,7 +17,7 @@ KaNamedFunctionSymbol:
   isInfix: false
   isInline: false
   isOperator: false
-  isOverride: false
+  isOverride: true
   isStatic: false
   isSuspend: false
   isTailRec: false
@@ -76,6 +80,7 @@ KaNamedFunctionSymbol:
   annotations: []
   callableId: kotlin/collections/MutableList.add
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -176,9 +181,13 @@ KaNamedFunctionSymbol:
   deprecationStatus: null
 
 KaNamedFunctionSymbol:
-  annotations: []
+  annotations: [
+    kotlin/IgnorableReturnValue()
+      psi: null
+  ]
   callableId: kotlin/collections/MutableList.remove
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -190,7 +199,7 @@ KaNamedFunctionSymbol:
   isInfix: false
   isInline: false
   isOperator: false
-  isOverride: false
+  isOverride: true
   isStatic: false
   isSuspend: false
   isTailRec: false
@@ -250,9 +259,13 @@ KaNamedFunctionSymbol:
   deprecationStatus: null
 
 KaNamedFunctionSymbol:
-  annotations: []
+  annotations: [
+    kotlin/IgnorableReturnValue()
+      psi: null
+  ]
   callableId: kotlin/collections/MutableList.addAll
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -264,7 +277,7 @@ KaNamedFunctionSymbol:
   isInfix: false
   isInline: false
   isOperator: false
-  isOverride: false
+  isOverride: true
   isStatic: false
   isSuspend: false
   isTailRec: false
@@ -329,9 +342,13 @@ KaNamedFunctionSymbol:
   deprecationStatus: null
 
 KaNamedFunctionSymbol:
-  annotations: []
+  annotations: [
+    kotlin/IgnorableReturnValue()
+      psi: null
+  ]
   callableId: kotlin/collections/MutableList.addAll
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -437,9 +454,13 @@ KaNamedFunctionSymbol:
   deprecationStatus: null
 
 KaNamedFunctionSymbol:
-  annotations: []
+  annotations: [
+    kotlin/IgnorableReturnValue()
+      psi: null
+  ]
   callableId: kotlin/collections/MutableList.removeAll
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -451,7 +472,7 @@ KaNamedFunctionSymbol:
   isInfix: false
   isInline: false
   isOperator: false
-  isOverride: false
+  isOverride: true
   isStatic: false
   isSuspend: false
   isTailRec: false
@@ -516,9 +537,13 @@ KaNamedFunctionSymbol:
   deprecationStatus: null
 
 KaNamedFunctionSymbol:
-  annotations: []
+  annotations: [
+    kotlin/IgnorableReturnValue()
+      psi: null
+  ]
   callableId: kotlin/collections/MutableList.retainAll
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -530,7 +555,7 @@ KaNamedFunctionSymbol:
   isInfix: false
   isInline: false
   isOperator: false
-  isOverride: false
+  isOverride: true
   isStatic: false
   isSuspend: false
   isTailRec: false
@@ -598,6 +623,7 @@ KaNamedFunctionSymbol:
   annotations: []
   callableId: kotlin/collections/MutableList.clear
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -609,7 +635,7 @@ KaNamedFunctionSymbol:
   isInfix: false
   isInline: false
   isOperator: false
-  isOverride: false
+  isOverride: true
   isStatic: false
   isSuspend: false
   isTailRec: false
@@ -640,9 +666,13 @@ KaNamedFunctionSymbol:
   deprecationStatus: null
 
 KaNamedFunctionSymbol:
-  annotations: []
+  annotations: [
+    kotlin/IgnorableReturnValue()
+      psi: null
+  ]
   callableId: kotlin/collections/MutableList.set
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -742,9 +772,13 @@ KaNamedFunctionSymbol:
   deprecationStatus: null
 
 KaNamedFunctionSymbol:
-  annotations: []
+  annotations: [
+    kotlin/IgnorableReturnValue()
+      psi: null
+  ]
   callableId: kotlin/collections/MutableList.removeAt
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -819,6 +853,7 @@ KaNamedFunctionSymbol:
   annotations: []
   callableId: kotlin/collections/MutableList.listIterator
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -830,7 +865,7 @@ KaNamedFunctionSymbol:
   isInfix: false
   isInline: false
   isOperator: false
-  isOverride: false
+  isOverride: true
   isStatic: false
   isSuspend: false
   isTailRec: false
@@ -868,6 +903,7 @@ KaNamedFunctionSymbol:
   annotations: []
   callableId: kotlin/collections/MutableList.listIterator
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -879,7 +915,7 @@ KaNamedFunctionSymbol:
   isInfix: false
   isInline: false
   isOperator: false
-  isOverride: false
+  isOverride: true
   isStatic: false
   isSuspend: false
   isTailRec: false
@@ -947,6 +983,7 @@ KaNamedFunctionSymbol:
   annotations: []
   callableId: kotlin/collections/MutableList.subList
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -958,7 +995,7 @@ KaNamedFunctionSymbol:
   isInfix: false
   isInline: false
   isOperator: false
-  isOverride: false
+  isOverride: true
   isStatic: false
   isSuspend: false
   isTailRec: false
@@ -1056,6 +1093,7 @@ KaKotlinPropertySymbol:
   backingFieldSymbol: null
   callableId: kotlin/collections/MutableList.size
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   getter: null
   hasBackingField: false
@@ -1101,11 +1139,13 @@ KaKotlinPropertySymbol:
   javaGetterName: getSize
   javaSetterName: null
   setterDeprecationStatus: null
+  isInline: false
 
 KaNamedFunctionSymbol:
   annotations: []
   callableId: kotlin/collections/MutableList.isEmpty
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -1151,6 +1191,7 @@ KaNamedFunctionSymbol:
   annotations: []
   callableId: kotlin/collections/MutableList.contains
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -1225,6 +1266,7 @@ KaNamedFunctionSymbol:
   annotations: []
   callableId: kotlin/collections/MutableList.iterator
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -1274,6 +1316,7 @@ KaNamedFunctionSymbol:
   annotations: []
   callableId: kotlin/collections/MutableList.containsAll
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -1353,6 +1396,7 @@ KaNamedFunctionSymbol:
   annotations: []
   callableId: kotlin/collections/MutableList.get
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -1427,6 +1471,7 @@ KaNamedFunctionSymbol:
   annotations: []
   callableId: kotlin/collections/MutableList.indexOf
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -1501,6 +1546,7 @@ KaNamedFunctionSymbol:
   annotations: []
   callableId: kotlin/collections/MutableList.lastIndexOf
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -1575,6 +1621,7 @@ KaNamedFunctionSymbol:
   annotations: []
   callableId: kotlin/Any.equals
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -1646,6 +1693,7 @@ KaNamedFunctionSymbol:
   annotations: []
   callableId: kotlin/Any.hashCode
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -1687,6 +1735,7 @@ KaNamedFunctionSymbol:
   annotations: []
   callableId: kotlin/Any.toString
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -1728,6 +1777,7 @@ KaNamedFunctionSymbol:
   annotations: []
   callableId: kotlin/collections/MutableList.getFirst
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -1772,6 +1822,7 @@ KaNamedFunctionSymbol:
   annotations: []
   callableId: kotlin/collections/MutableList.getLast
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true

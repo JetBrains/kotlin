@@ -94,6 +94,11 @@ public final class IrInlinedFunctionBlock extends
             inlinedFunctionEndOffset_ = input.readInt32();
             break;
           }
+          case 48: {
+            bitField0_ |= 0x00000020;
+            inlinedFunctionFileEntryId_ = input.readInt32();
+            break;
+          }
         }
       }
     } catch (org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException e) {
@@ -146,13 +151,21 @@ public final class IrInlinedFunctionBlock extends
   public static final int INLINED_FUNCTION_FILE_ENTRY_FIELD_NUMBER = 2;
   private org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry inlinedFunctionFileEntry_;
   /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry inlined_function_file_entry = 2;</code>
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry inlined_function_file_entry = 2;</code>
+   *
+   * <pre>
+   * Required: either `inlined_function_file_entry` or `inlined_function_file_entry_id` is present.
+   * </pre>
    */
   public boolean hasInlinedFunctionFileEntry() {
     return ((bitField0_ & 0x00000002) == 0x00000002);
   }
   /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry inlined_function_file_entry = 2;</code>
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry inlined_function_file_entry = 2;</code>
+   *
+   * <pre>
+   * Required: either `inlined_function_file_entry` or `inlined_function_file_entry_id` is present.
+   * </pre>
    */
   public org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry getInlinedFunctionFileEntry() {
     return inlinedFunctionFileEntry_;
@@ -203,12 +216,36 @@ public final class IrInlinedFunctionBlock extends
     return inlinedFunctionEndOffset_;
   }
 
+  public static final int INLINED_FUNCTION_FILE_ENTRY_ID_FIELD_NUMBER = 6;
+  private int inlinedFunctionFileEntryId_;
+  /**
+   * <code>optional int32 inlined_function_file_entry_id = 6;</code>
+   *
+   * <pre>
+   * Required: either `inlined_function_file_entry` or `inlined_function_file_entry_id` is present.
+   * </pre>
+   */
+  public boolean hasInlinedFunctionFileEntryId() {
+    return ((bitField0_ & 0x00000020) == 0x00000020);
+  }
+  /**
+   * <code>optional int32 inlined_function_file_entry_id = 6;</code>
+   *
+   * <pre>
+   * Required: either `inlined_function_file_entry` or `inlined_function_file_entry_id` is present.
+   * </pre>
+   */
+  public int getInlinedFunctionFileEntryId() {
+    return inlinedFunctionFileEntryId_;
+  }
+
   private void initFields() {
     inlinedFunctionSymbol_ = 0L;
     inlinedFunctionFileEntry_ = org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry.getDefaultInstance();
     base_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrBlock.getDefaultInstance();
     inlinedFunctionStartOffset_ = 0;
     inlinedFunctionEndOffset_ = 0;
+    inlinedFunctionFileEntryId_ = 0;
   }
   private byte memoizedIsInitialized = -1;
   public final boolean isInitialized() {
@@ -216,10 +253,6 @@ public final class IrInlinedFunctionBlock extends
     if (isInitialized == 1) return true;
     if (isInitialized == 0) return false;
 
-    if (!hasInlinedFunctionFileEntry()) {
-      memoizedIsInitialized = 0;
-      return false;
-    }
     if (!hasBase()) {
       memoizedIsInitialized = 0;
       return false;
@@ -232,9 +265,11 @@ public final class IrInlinedFunctionBlock extends
       memoizedIsInitialized = 0;
       return false;
     }
-    if (!getInlinedFunctionFileEntry().isInitialized()) {
-      memoizedIsInitialized = 0;
-      return false;
+    if (hasInlinedFunctionFileEntry()) {
+      if (!getInlinedFunctionFileEntry().isInitialized()) {
+        memoizedIsInitialized = 0;
+        return false;
+      }
     }
     if (!getBase().isInitialized()) {
       memoizedIsInitialized = 0;
@@ -261,6 +296,9 @@ public final class IrInlinedFunctionBlock extends
     }
     if (((bitField0_ & 0x00000010) == 0x00000010)) {
       output.writeInt32(5, inlinedFunctionEndOffset_);
+    }
+    if (((bitField0_ & 0x00000020) == 0x00000020)) {
+      output.writeInt32(6, inlinedFunctionFileEntryId_);
     }
     output.writeRawBytes(unknownFields);
   }
@@ -290,6 +328,10 @@ public final class IrInlinedFunctionBlock extends
     if (((bitField0_ & 0x00000010) == 0x00000010)) {
       size += org.jetbrains.kotlin.protobuf.CodedOutputStream
         .computeInt32Size(5, inlinedFunctionEndOffset_);
+    }
+    if (((bitField0_ & 0x00000020) == 0x00000020)) {
+      size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+        .computeInt32Size(6, inlinedFunctionFileEntryId_);
     }
     size += unknownFields.size();
     memoizedSerializedSize = size;
@@ -395,6 +437,8 @@ public final class IrInlinedFunctionBlock extends
       bitField0_ = (bitField0_ & ~0x00000008);
       inlinedFunctionEndOffset_ = 0;
       bitField0_ = (bitField0_ & ~0x00000010);
+      inlinedFunctionFileEntryId_ = 0;
+      bitField0_ = (bitField0_ & ~0x00000020);
       return this;
     }
 
@@ -438,6 +482,10 @@ public final class IrInlinedFunctionBlock extends
         to_bitField0_ |= 0x00000010;
       }
       result.inlinedFunctionEndOffset_ = inlinedFunctionEndOffset_;
+      if (((from_bitField0_ & 0x00000020) == 0x00000020)) {
+        to_bitField0_ |= 0x00000020;
+      }
+      result.inlinedFunctionFileEntryId_ = inlinedFunctionFileEntryId_;
       result.bitField0_ = to_bitField0_;
       return result;
     }
@@ -459,16 +507,15 @@ public final class IrInlinedFunctionBlock extends
       if (other.hasInlinedFunctionEndOffset()) {
         setInlinedFunctionEndOffset(other.getInlinedFunctionEndOffset());
       }
+      if (other.hasInlinedFunctionFileEntryId()) {
+        setInlinedFunctionFileEntryId(other.getInlinedFunctionFileEntryId());
+      }
       setUnknownFields(
           getUnknownFields().concat(other.unknownFields));
       return this;
     }
 
     public final boolean isInitialized() {
-      if (!hasInlinedFunctionFileEntry()) {
-        
-        return false;
-      }
       if (!hasBase()) {
         
         return false;
@@ -481,9 +528,11 @@ public final class IrInlinedFunctionBlock extends
         
         return false;
       }
-      if (!getInlinedFunctionFileEntry().isInitialized()) {
-        
-        return false;
+      if (hasInlinedFunctionFileEntry()) {
+        if (!getInlinedFunctionFileEntry().isInitialized()) {
+          
+          return false;
+        }
       }
       if (!getBase().isInitialized()) {
         
@@ -545,19 +594,31 @@ public final class IrInlinedFunctionBlock extends
 
     private org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry inlinedFunctionFileEntry_ = org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry.getDefaultInstance();
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry inlined_function_file_entry = 2;</code>
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry inlined_function_file_entry = 2;</code>
+     *
+     * <pre>
+     * Required: either `inlined_function_file_entry` or `inlined_function_file_entry_id` is present.
+     * </pre>
      */
     public boolean hasInlinedFunctionFileEntry() {
       return ((bitField0_ & 0x00000002) == 0x00000002);
     }
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry inlined_function_file_entry = 2;</code>
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry inlined_function_file_entry = 2;</code>
+     *
+     * <pre>
+     * Required: either `inlined_function_file_entry` or `inlined_function_file_entry_id` is present.
+     * </pre>
      */
     public org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry getInlinedFunctionFileEntry() {
       return inlinedFunctionFileEntry_;
     }
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry inlined_function_file_entry = 2;</code>
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry inlined_function_file_entry = 2;</code>
+     *
+     * <pre>
+     * Required: either `inlined_function_file_entry` or `inlined_function_file_entry_id` is present.
+     * </pre>
      */
     public Builder setInlinedFunctionFileEntry(org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry value) {
       if (value == null) {
@@ -569,7 +630,11 @@ public final class IrInlinedFunctionBlock extends
       return this;
     }
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry inlined_function_file_entry = 2;</code>
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry inlined_function_file_entry = 2;</code>
+     *
+     * <pre>
+     * Required: either `inlined_function_file_entry` or `inlined_function_file_entry_id` is present.
+     * </pre>
      */
     public Builder setInlinedFunctionFileEntry(
         org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry.Builder builderForValue) {
@@ -579,7 +644,11 @@ public final class IrInlinedFunctionBlock extends
       return this;
     }
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry inlined_function_file_entry = 2;</code>
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry inlined_function_file_entry = 2;</code>
+     *
+     * <pre>
+     * Required: either `inlined_function_file_entry` or `inlined_function_file_entry_id` is present.
+     * </pre>
      */
     public Builder mergeInlinedFunctionFileEntry(org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry value) {
       if (((bitField0_ & 0x00000002) == 0x00000002) &&
@@ -594,7 +663,11 @@ public final class IrInlinedFunctionBlock extends
       return this;
     }
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry inlined_function_file_entry = 2;</code>
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry inlined_function_file_entry = 2;</code>
+     *
+     * <pre>
+     * Required: either `inlined_function_file_entry` or `inlined_function_file_entry_id` is present.
+     * </pre>
      */
     public Builder clearInlinedFunctionFileEntry() {
       inlinedFunctionFileEntry_ = org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry.getDefaultInstance();
@@ -723,6 +796,54 @@ public final class IrInlinedFunctionBlock extends
     public Builder clearInlinedFunctionEndOffset() {
       bitField0_ = (bitField0_ & ~0x00000010);
       inlinedFunctionEndOffset_ = 0;
+      
+      return this;
+    }
+
+    private int inlinedFunctionFileEntryId_ ;
+    /**
+     * <code>optional int32 inlined_function_file_entry_id = 6;</code>
+     *
+     * <pre>
+     * Required: either `inlined_function_file_entry` or `inlined_function_file_entry_id` is present.
+     * </pre>
+     */
+    public boolean hasInlinedFunctionFileEntryId() {
+      return ((bitField0_ & 0x00000020) == 0x00000020);
+    }
+    /**
+     * <code>optional int32 inlined_function_file_entry_id = 6;</code>
+     *
+     * <pre>
+     * Required: either `inlined_function_file_entry` or `inlined_function_file_entry_id` is present.
+     * </pre>
+     */
+    public int getInlinedFunctionFileEntryId() {
+      return inlinedFunctionFileEntryId_;
+    }
+    /**
+     * <code>optional int32 inlined_function_file_entry_id = 6;</code>
+     *
+     * <pre>
+     * Required: either `inlined_function_file_entry` or `inlined_function_file_entry_id` is present.
+     * </pre>
+     */
+    public Builder setInlinedFunctionFileEntryId(int value) {
+      bitField0_ |= 0x00000020;
+      inlinedFunctionFileEntryId_ = value;
+      
+      return this;
+    }
+    /**
+     * <code>optional int32 inlined_function_file_entry_id = 6;</code>
+     *
+     * <pre>
+     * Required: either `inlined_function_file_entry` or `inlined_function_file_entry_id` is present.
+     * </pre>
+     */
+    public Builder clearInlinedFunctionFileEntryId() {
+      bitField0_ = (bitField0_ & ~0x00000020);
+      inlinedFunctionFileEntryId_ = 0;
       
       return this;
     }

@@ -14,3 +14,6 @@ expect class Foo : I
 actual class Foo : I by object : I {
     override fun foo() {}
 }
+
+/* GENERATED_FIR_TAGS: actual, anonymousObjectExpression, classDeclaration, expect, functionDeclaration,
+inheritanceDelegation, interfaceDeclaration, override */

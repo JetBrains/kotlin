@@ -1,0 +1,73 @@
+KaNamedFunctionSymbol:
+  annotations: []
+  callableId: /KotlinInterface.doSmth
+  compilerVisibility: Public
+  contextParameters: []
+  contextReceivers: []
+  contractEffects: []
+  hasStableParameterNames: true
+  isActual: false
+  isBuiltinFunctionInvoke: false
+  isExpect: false
+  isExtension: false
+  isExternal: false
+  isInfix: false
+  isInline: false
+  isOperator: false
+  isOverride: true
+  isStatic: false
+  isSuspend: false
+  isTailRec: false
+  location: CLASS
+  modality: ABSTRACT
+  name: doSmth
+  origin: SOURCE
+  receiverParameter: null
+  returnType: KaDefinitelyNotNullType:
+    annotations: []
+    type: T1 & Any
+  typeParameters: []
+  valueParameters: [
+    KaValueParameterSymbol:
+      annotations: []
+      callableId: null
+      compilerVisibility: Local
+      contextReceivers: []
+      generatedPrimaryConstructorProperty: null
+      hasDefaultValue: false
+      isActual: false
+      isCrossinline: false
+      isExpect: false
+      isExtension: false
+      isImplicitLambdaParameter: false
+      isNoinline: false
+      isVal: true
+      isVararg: false
+      location: LOCAL
+      modality: FINAL
+      name: x
+      origin: SOURCE
+      receiverParameter: null
+      returnType: KaDefinitelyNotNullType:
+        annotations: []
+        type: T1 & Any
+      visibility: LOCAL
+      getContainingFileSymbol: KaFileSymbol(KotlinInterface.kt)
+      getContainingJvmClassName: KotlinInterface
+      getContainingModule: KaSourceModule "Sources of main"
+      deprecationStatus: null
+  ]
+  visibility: PUBLIC
+  getDispatchReceiver(): KaUsualClassType:
+    annotations: []
+    typeArguments: [
+      KaTypeParameterType:
+        annotations: []
+        type: T1
+    ]
+    type: KotlinInterface<T1>
+  getContainingFileSymbol: KaFileSymbol(KotlinInterface.kt)
+  getContainingJvmClassName: KotlinInterface
+  canBeOperator: false
+  getContainingModule: KaSourceModule "Sources of main"
+  deprecationStatus: null

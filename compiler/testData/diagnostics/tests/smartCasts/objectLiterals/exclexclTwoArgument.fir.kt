@@ -20,3 +20,7 @@ fun foo(): Int {
     }
     else return -1
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, anonymousObjectExpression, checkNotNullCall, classDeclaration,
+functionDeclaration, ifExpression, integerLiteral, interfaceDeclaration, isExpression, localProperty, nullableType,
+override, primaryConstructor, propertyDeclaration, smartcast */

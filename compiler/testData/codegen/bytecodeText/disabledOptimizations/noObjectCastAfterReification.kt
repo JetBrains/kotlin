@@ -1,4 +1,4 @@
-// KOTLIN_CONFIGURATION_FLAGS: +JVM.DISABLE_OPTIMIZATION
+// DISABLE_OPTIMIZATION
 
 inline fun <reified T> foo(s: Any) {
     s as T

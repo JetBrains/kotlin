@@ -4,7 +4,6 @@ KaUsualClassType:
   abbreviation: null
   annotations: []
   classId: Foo
-  nullability: NULLABLE
   qualifiers: [
     KaResolvedClassTypeQualifier:
       name: Foo
@@ -13,3 +12,6 @@ KaUsualClassType:
   ]
   symbol: KaNamedClassSymbol(Foo)
   typeArguments: []
+  isMarkedNullable: true
+  isNullable: true
+  hasFlexibleNullability: false

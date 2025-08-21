@@ -12,3 +12,5 @@ public abstract class Aaa {
 class Bbb() : Aaa() {
     override fun foo(vararg args: String?) = Unit
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, javaType, override, primaryConstructor, vararg */

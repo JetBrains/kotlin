@@ -15,7 +15,6 @@
 #include "ObjectFactoryAllocator.hpp"
 #include "ObjectTestSupport.hpp"
 #include "TestSupport.hpp"
-#include "WeakRef.hpp"
 
 using namespace kotlin;
 
@@ -195,7 +194,7 @@ public:
     }
 
     std::vector<ObjHeader*> Sweep() {
-        gc::processWeaks<ProcessWeakTraits>(gc::GCHandle::getByEpoch(0), specialRefRegistry_);
+        gc::processWeaks<ProcessWeakTraits>(gc::GCHandle::getByEpoch(0), externalRCRefRegistry_);
         alloc::SweepExtraObjects<SweepTraits>(gc::GCHandle::getByEpoch(0), extraObjectFactory_);
         auto finalizers = alloc::Sweep<SweepTraits>(gc::GCHandle::getByEpoch(0), objectFactory_);
         finalizers.mergeIntoRegular();
@@ -255,9 +254,9 @@ public:
         auto& extraObjectData = InstallExtraData(objHeader);
         auto* setHeader = extraObjectData.GetOrSetRegularWeakReferenceImpl(objHeader, weakReference.header());
         EXPECT_EQ(setHeader, weakReference.header());
-        weakReference->weakRef = static_cast<mm::RawSpecialRef*>(specialRefRegistryThreadQueue_.createWeakRef(objHeader));
+        weakReference->weakRef = externalRCRefRegistryThreadQueue_.createExternalRCRefImpl(objHeader, 0).toRaw();
         weakReference->referred = objHeader;
-        specialRefRegistryThreadQueue_.publish();
+        externalRCRefRegistryThreadQueue_.publish();
         return weakReference;
     }
 
@@ -271,8 +270,8 @@ private:
     ObjectFactory::ThreadQueue objectFactoryThreadQueue_{objectFactory_, alloc::AllocatorBasic()};
     ExtraObjectsDataFactory extraObjectFactory_;
     ExtraObjectsDataFactory::ThreadQueue extraObjectFactoryThreadQueue_{extraObjectFactory_};
-    mm::SpecialRefRegistry specialRefRegistry_;
-    mm::SpecialRefRegistry::ThreadQueue specialRefRegistryThreadQueue_{specialRefRegistry_};
+    mm::ExternalRCRefRegistry externalRCRefRegistry_;
+    mm::ExternalRCRefRegistry::ThreadQueue externalRCRefRegistryThreadQueue_{externalRCRefRegistry_};
 
     std::vector<ObjectFactory::FinalizerQueue> finalizers_;
 };

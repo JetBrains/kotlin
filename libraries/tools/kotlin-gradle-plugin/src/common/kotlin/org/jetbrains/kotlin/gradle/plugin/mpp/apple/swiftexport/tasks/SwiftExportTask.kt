@@ -13,19 +13,22 @@ import org.gradle.api.provider.Property
 import org.gradle.api.tasks.*
 import org.gradle.work.DisableCachingByDefault
 import org.gradle.workers.WorkerExecutor
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.UsesKotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.SwiftExportAction
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.SwiftExportTaskParameters
-import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.createSwiftExportedModule
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.createFullyExportedSwiftExportedModule
 import org.jetbrains.kotlin.gradle.targets.native.toolchain.KotlinNativeProvider
-import org.jetbrains.kotlin.gradle.targets.native.toolchain.konanDistribution
 import org.jetbrains.kotlin.gradle.utils.getFile
+import org.jetbrains.kotlin.konan.target.Distribution
 import javax.inject.Inject
 
 @DisableCachingByDefault(because = "Swift Export is experimental, so no caching for now")
 internal abstract class SwiftExportTask @Inject constructor(
     private val workerExecutor: WorkerExecutor,
     private val fileSystem: FileSystemOperations,
-) : DefaultTask() {
+) : DefaultTask(), UsesKotlinToolingDiagnostics {
 
     internal abstract class ModuleInput {
         @get:Input
@@ -53,8 +56,15 @@ internal abstract class SwiftExportTask @Inject constructor(
     @get:Nested
     abstract val parameters: SwiftExportTaskParameters
 
+    @get:Internal
+    abstract val ignoreExperimentalDiagnostic: Property<Boolean>
+
     @TaskAction
     fun run() {
+        if (!ignoreExperimentalDiagnostic.get()) {
+            warnAboutExperimentalSwiftExportFeature()
+        }
+
         cleanup()
 
         // Run Swift Export with process isolation to avoid leakage for AA/IntelliJ classes. See KT-73438
@@ -65,7 +75,7 @@ internal abstract class SwiftExportTask @Inject constructor(
         val swiftModules = parameters.swiftModules.map {
             it.toMutableList().apply {
                 add(
-                    createSwiftExportedModule(
+                    createFullyExportedSwiftExportedModule(
                         mainModuleInput.moduleName.get(),
                         mainModuleInput.flattenPackage.orNull,
                         mainModuleInput.artifact.getFile()
@@ -81,7 +91,8 @@ internal abstract class SwiftExportTask @Inject constructor(
             workParameters.swiftModulesFile.set(parameters.swiftModulesFile)
             workParameters.swiftModules.set(swiftModules)
             workParameters.swiftExportSettings.set(parameters.swiftExportSettings)
-            workParameters.konanDistribution.set(kotlinNativeProvider.flatMap { it.konanDistribution })
+            workParameters.konanDistribution.set(kotlinNativeProvider.flatMap { it.bundleDirectory }.map { Distribution(it) })
+            workParameters.konanTarget.set(parameters.konanTarget)
         }
     }
 
@@ -89,5 +100,15 @@ internal abstract class SwiftExportTask @Inject constructor(
         fileSystem.delete {
             it.delete(parameters.outputPath)
         }
+    }
+
+    private fun warnAboutExperimentalSwiftExportFeature() {
+        reportDiagnostic(
+            KotlinToolingDiagnostics.ExperimentalFeatureWarning(
+                "Swift Export",
+                "https://kotl.in/1cr522",
+                "To suppress this message add '${PropertiesProvider.PropertyNames.KOTLIN_SWIFT_EXPORT_EXPERIMENTAL_NOWARN}=true' to your gradle.properties"
+            )
+        )
     }
 }

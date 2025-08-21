@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM
 // MODULE: lib
 // FILE: lib.kt
 import kotlin.reflect.KProperty

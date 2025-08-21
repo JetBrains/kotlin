@@ -118,7 +118,7 @@ open class ClasspathSnapshot protected constructor(
     }
 
     private fun getHashesToAnalyze(filesToLoad: List<File>): HashMap<String, ByteArray> {
-        val hashAbiSize = filesToLoad.sumBy { dataForFiles[it]!!.classAbiHash.size }
+        val hashAbiSize = filesToLoad.sumOf { dataForFiles[it]!!.classAbiHash.size }
         return HashMap<String, ByteArray>(hashAbiSize).also { hashes ->
             filesToLoad.forEach {
                 hashes.putAll(dataForFiles[it]!!.classAbiHash)

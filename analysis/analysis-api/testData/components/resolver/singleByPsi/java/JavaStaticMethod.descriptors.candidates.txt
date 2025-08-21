@@ -4,6 +4,7 @@ KtNameReferenceExpression(589,592): 'bar'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -11,6 +12,7 @@ KtNameReferenceExpression(589,592): 'bar'
           returnType = kotlin.Unit
           symbol = pkg/Foo.bar(): kotlin.Unit
           valueParameters = []
+          contextParameters = []
           callableId = pkg/Foo.bar
       typeArgumentsMapping = {}
     isInBestCandidates = true

@@ -12,3 +12,6 @@ typealias Obsolete = Relevant
 fun test1() = <!DEPRECATION!>Obsolete<!>
 fun test2() = <!DEPRECATION!>Obsolete<!>.value
 fun test3() = <!DEPRECATION!>Obsolete<!>.toString()
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, functionDeclaration, objectDeclaration, propertyDeclaration,
+stringLiteral, typeAliasDeclaration */

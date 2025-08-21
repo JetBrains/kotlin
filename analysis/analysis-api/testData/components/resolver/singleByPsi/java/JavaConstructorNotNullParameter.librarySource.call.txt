@@ -7,10 +7,12 @@ KtNameReferenceExpression(51,60): 'JavaClass'
           receiverType = null
           returnType = @EnhancedNullability kotlin.String
           symbol = p0: @EnhancedNullability kotlin.String
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -23,7 +25,9 @@ KtNameReferenceExpression(51,60): 'JavaClass'
               receiverType = null
               returnType = @EnhancedNullability kotlin.String
               symbol = p0: @EnhancedNullability kotlin.String
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}

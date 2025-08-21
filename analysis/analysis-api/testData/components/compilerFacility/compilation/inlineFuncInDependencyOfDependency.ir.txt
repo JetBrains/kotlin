@@ -1,8 +1,8 @@
 MODULE_FRAGMENT
   FILE fqName:home fileName:main.kt
-    FUN name:Greeting visibility:public modality:FINAL <> (name:kotlin.String) returnType:kotlin.Unit
-      VALUE_PARAMETER name:name index:0 type:kotlin.String
+    FUN name:Greeting visibility:public modality:FINAL returnType:kotlin.Unit
+      VALUE_PARAMETER kind:Regular name:name index:0 type:kotlin.String
       BLOCK_BODY
         CALL 'public final fun Text (text: kotlin.String): kotlin.Unit declared in com.example.jvmLib' type=kotlin.Unit origin=null
-          text: CALL 'public final fun foo (name: kotlin.String): kotlin.String declared in com.example.common.CommonKt' type=kotlin.String origin=null
-            name: GET_VAR 'name: kotlin.String declared in home.Greeting' type=kotlin.String origin=null
+          ARG text: CALL 'public final fun foo (name: kotlin.String): kotlin.String declared in com.example.common.CommonKt' type=kotlin.String origin=null
+            ARG name: GET_VAR 'name: kotlin.String declared in home.Greeting' type=kotlin.String origin=null

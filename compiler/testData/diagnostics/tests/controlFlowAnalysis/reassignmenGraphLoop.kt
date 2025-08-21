@@ -16,3 +16,6 @@ fun test(loop: Boolean) {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, doWhileLoop, functionDeclaration, ifExpression, lambdaLiteral, localProperty,
+propertyDeclaration, stringLiteral, tryExpression, whileLoop */

@@ -1,5 +1,6 @@
 // RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
+// LATEST_LV_DIFFERENCE
 // LANGUAGE_VERSION: 2.0
 // API_VERSION: 2.0
 // ALLOW_DANGEROUS_LANGUAGE_VERSION_TESTING
@@ -42,3 +43,6 @@ abstract class A4 : LinkedList<String>() {
     <!WRONG_NULLABILITY_FOR_JAVA_OVERRIDE!>override<!> fun removeFirst(): String? = super.removeFirst()
     <!WRONG_NULLABILITY_FOR_JAVA_OVERRIDE!>override<!> fun removeLast(): String? = super.removeLast()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, flexibleType, functionDeclaration, nullableType, override, superExpression,
+typeParameter */

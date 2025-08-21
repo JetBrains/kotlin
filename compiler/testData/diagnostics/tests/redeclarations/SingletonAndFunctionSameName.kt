@@ -20,3 +20,5 @@ enum class <!CONFLICTING_OVERLOADS!>En<!> {
 
     fun SUBCLASS() = ENTRY()
 }
+
+/* GENERATED_FIR_TAGS: enumDeclaration, enumEntry, functionDeclaration, integerLiteral, nestedClass, objectDeclaration */

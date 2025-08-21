@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -19,17 +19,20 @@ import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.expressions.builder.buildAnnotation
 import org.jetbrains.kotlin.fir.expressions.builder.buildAnnotationArgumentMapping
 import org.jetbrains.kotlin.fir.expressions.builder.buildLiteralExpression
-import org.jetbrains.kotlin.fir.symbols.*
+import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
+import org.jetbrains.kotlin.fir.types.toLookupTag
 import org.jetbrains.kotlin.fir.utils.exceptions.withConeTypeEntry
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.hasSuspendModifier
 import org.jetbrains.kotlin.psi.psiUtil.unwrapNullability
@@ -78,7 +81,10 @@ internal class StubBasedFirTypeDeserializer(
 
                     variance = typeParameter.variance
                     isReified = typeParameter.hasModifier(KtTokens.REIFIED_KEYWORD)
-                    annotations += annotationDeserializer.loadAnnotations(typeParameter)
+                    annotations += annotationDeserializer.loadAnnotations(
+                        ktAnnotated = typeParameter,
+                        useSiteTargetFilter = StubBasedAnnotationDeserializer.TYPE_ANNOTATIONS_FILTER,
+                    )
                 }
             }
 
@@ -97,20 +103,22 @@ internal class StubBasedFirTypeDeserializer(
         }
     }
 
-    private fun computeClassifier(classId: ClassId?): ConeClassLikeLookupTag? {
-        return classId?.toLookupTag()
-    }
+    fun typeRef(typeReference: KtTypeReference): FirTypeRef = buildResolvedTypeRef {
+        source = KtRealPsiSourceElement(typeReference)
+        annotations += annotationDeserializer.loadAnnotations(
+            ktAnnotated = typeReference,
+            useSiteTargetFilter = StubBasedAnnotationDeserializer.TYPE_ANNOTATIONS_FILTER,
+        )
 
-    fun typeRef(typeReference: KtTypeReference): FirTypeRef {
-        return buildResolvedTypeRef {
-            source = KtRealPsiSourceElement(typeReference)
-            annotations += annotationDeserializer.loadAnnotations(typeReference)
-            coneType = type(typeReference, annotations.computeTypeAttributes(moduleData.session, shouldExpandTypeAliases = false))
-        }
+        coneType = type(typeReference, annotations.computeTypeAttributes(moduleData.session, shouldExpandTypeAliases = false))
     }
 
     fun type(typeReference: KtTypeReference): ConeKotlinType {
-        val annotations = annotationDeserializer.loadAnnotations(typeReference).toMutableList()
+        val annotations = annotationDeserializer.loadAnnotations(
+            typeReference,
+            StubBasedAnnotationDeserializer.TYPE_ANNOTATIONS_FILTER,
+        ).toMutableList()
+
         val parent = (typeReference.stub ?: loadStubByElement(typeReference))?.parentStub
         if (parent is KotlinParameterStubImpl) {
             parent.functionTypeParameterName?.let { paramName ->
@@ -146,21 +154,20 @@ internal class StubBasedFirTypeDeserializer(
                 return deserializeClassType(type)
             }
             is KotlinFlexibleTypeBean -> {
-                val lowerBound = type(type.lowerBound)
-                val upperBound = type(type.upperBound)
-                return ConeFlexibleType(
-                    lowerBound as? ConeSimpleKotlinType
-                        ?: errorWithAttachment("Unexpected lower bound ${lowerBound?.let { it::class }}") {
-                            withConeTypeEntry("lowerBound", lowerBound)
-                        },
-                    upperBound as? ConeSimpleKotlinType
-                        ?: errorWithAttachment("Unexpected lower bound ${upperBound?.let { it::class }}") {
-                            withConeTypeEntry("upperBound", upperBound)
-                        },
-                )
+                val lowerBound = type(type.lowerBound).asRigidType
+                val upperBound = type(type.upperBound).asRigidType
+                return ConeFlexibleType(lowerBound, upperBound, isTrivial = false)
             }
         }
     }
+
+    private val ConeKotlinType?.asRigidType: ConeRigidType
+        get() = when (this) {
+            is ConeRigidType -> this
+            null, is ConeFlexibleType -> errorWithAttachment("Unexpected cone type ${this?.let { it::class.simpleName }}") {
+                withConeTypeEntry("bound", this@asRigidType)
+            }
+        }
 
     private fun deserializeClassType(typeBean: KotlinClassTypeBean): ConeClassLikeType {
         val projections = typeBean.arguments.map { typeArgumentBean ->
@@ -215,7 +222,7 @@ internal class StubBasedFirTypeDeserializer(
 
             // If an upper bound is specified, `typeReference` represents a flexible type. The cone type deserialized from `typeReference`
             // is defined as the lower bound of this flexible type.
-            ConeFlexibleType(coneType, upperBoundType as ConeSimpleKotlinType)
+            ConeFlexibleType(coneType, upperBoundType as ConeSimpleKotlinType, isTrivial = false)
         } else {
             coneType
         }
@@ -255,8 +262,9 @@ internal class StubBasedFirTypeDeserializer(
                 }
             }.toTypedArray()
             is KtFunctionType -> buildList {
+                typeElement.contextReceiversTypeReferences.mapTo(this) { type(it).toTypeProjection(Variance.INVARIANT) }
                 typeElement.receiver?.let { add(type(it.typeReference).toTypeProjection(Variance.INVARIANT)) }
-                addAll(typeElement.parameters.map { type(it.typeReference!!).toTypeProjection(Variance.INVARIANT) })
+                typeElement.parameters.mapTo(this) { type(it.typeReference!!).toTypeProjection(Variance.INVARIANT) }
                 add(type(typeElement.returnTypeReference!!).toTypeProjection(Variance.INVARIANT))
             }.toTypedArray()
             else -> errorWithAttachment("not supported ${typeElement?.let { it::class }}") {
@@ -268,12 +276,22 @@ internal class StubBasedFirTypeDeserializer(
             constructor,
             arguments,
             isMarkedNullable = isNullable,
-            if (typeElement is KtFunctionType && typeElement.receiver != null) {
-                ConeAttributes.WithExtensionFunctionType.add(attributes)
-            } else {
-                attributes
-            }
+            attributes.withExtensionFunctionTypeIfNeeded(typeElement).withContextParametersFunctionTypeIfNeeded(typeElement),
         )
+    }
+
+    private fun ConeAttributes.withExtensionFunctionTypeIfNeeded(typeElement: KtTypeElement): ConeAttributes {
+        if (typeElement !is KtFunctionType) return this
+        if (typeElement.receiver == null) return this
+        return add(ConeAttributes.WithExtensionFunctionType)
+    }
+
+    private fun ConeAttributes.withContextParametersFunctionTypeIfNeeded(typeElement: KtTypeElement): ConeAttributes {
+        if (typeElement !is KtFunctionType) return this
+        val contextParametersCount = typeElement.contextReceiverList?.contextReceivers()?.size ?: 0
+        if (contextParametersCount <= 0) return this
+
+        return add(CompilerConeAttributes.ContextFunctionTypeParams(contextParametersCount))
     }
 
     private fun simpleTypeOrError(typeReference: KtTypeReference, attributes: ConeAttributes): ConeRigidType =
@@ -289,10 +307,26 @@ internal class StubBasedFirTypeDeserializer(
     private fun typeSymbol(typeReference: KtTypeReference): ConeClassifierLookupTag? {
         val typeElement = typeReference.typeElement?.unwrapNullability()
         if (typeElement is KtFunctionType) {
-            val arity = (if (typeElement.receiver != null) 1 else 0) + typeElement.parameters.size
+            val arity = typeElement.totalParameterCount
             val isSuspend = typeElement.isSuspend()
-            val functionClassId = if (isSuspend) StandardNames.getSuspendFunctionClassId(arity) else StandardNames.getFunctionClassId(arity)
-            return computeClassifier(functionClassId)
+            val functionClassId = when {
+                isSuspend -> StandardNames.getSuspendFunctionClassId(arity)
+
+                /*
+                 * Since 2.1 any `@Composable FunctionN` type is serialized to metadata as `ComposableFunctionN`, which is consistent with
+                 * how composable functions are treated in sources (with compose plugin enabled). But there are old libraries compiled
+                 * with 2.0 or less, which still have `@Composable FunctionN` types. To handle such libraries in the CLI compiler plugins
+                 * are passed to the library session so they could be applied to deserialized classes.
+                 * But it's impossible to do the same in the IDE, because there libraries don't know anything about source modules they
+                 * will be used in. So to work around this issue this conversion for Composable functions is hardcoded
+                 */
+                typeReference.annotationEntries.any {
+                    StubBasedAnnotationDeserializer.getAnnotationClassId(it) == composableClassId
+                } -> getComposableFunctionClassId(arity)
+
+                else -> StandardNames.getFunctionClassId(arity)
+            }
+            return functionClassId.toLookupTag()
         }
         if (typeElement is KtIntersectionType) {
             val leftTypeRef = typeElement.getLeftTypeRef() ?: return null
@@ -301,7 +335,12 @@ internal class StubBasedFirTypeDeserializer(
         }
         val type = typeElement as KtUserType
         val referencedName = type.referencedName
-        return typeParameterSymbol(referencedName!!) ?: computeClassifier(type.classId())
+        return typeParameterSymbol(referencedName!!) ?: type.classId().toLookupTag()
+    }
+
+    private fun getComposableFunctionClassId(arity: Int): ClassId {
+        val name = Name.identifier("$composableFunctionPrefix$arity")
+        return ClassId(internalComposePackageFqName, name)
     }
 
 
@@ -325,6 +364,15 @@ internal class StubBasedFirTypeDeserializer(
             KtProjectionKind.STAR -> throw AssertionError("* should not be here")
         }
         return type.toTypeProjection(variance)
+    }
+
+    companion object {
+        private val internalComposePackageFqName = FqName("androidx.compose.runtime.internal")
+        private val composableClassId = ClassId(
+            FqName("androidx.compose.runtime"),
+            Name.identifier("Composable"),
+        )
+        private val composableFunctionPrefix = "ComposableFunction"
     }
 }
 

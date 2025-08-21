@@ -7,10 +7,12 @@ KtNameReferenceExpression(174,179): 'check'
           receiverType = null
           returnType = {dependency2.ListAlias<{dependency3.SetAlias<{dependency1.StringAlias=} kotlin.String>=} kotlin.collections.Set<{dependency1.StringAlias=} kotlin.String>>=} kotlin.collections.List<{dependency3.SetAlias<{dependency1.StringAlias=} kotlin.String>=} kotlin.collections.Set<{dependency1.StringAlias=} kotlin.String>>
           symbol = list: {dependency2.ListAlias<{dependency3.SetAlias<{dependency1.StringAlias=} kotlin.String>=} kotlin.collections.Set<{dependency1.StringAlias=} kotlin.String>>=} kotlin.collections.List<{dependency3.SetAlias<{dependency1.StringAlias=} kotlin.String>=} kotlin.collections.Set<{dependency1.StringAlias=} kotlin.String>>
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = m
           isSafeNavigation = false
@@ -26,7 +28,9 @@ KtNameReferenceExpression(174,179): 'check'
               receiverType = null
               returnType = {dependency2.ListAlias<{dependency3.SetAlias<{dependency1.StringAlias=} kotlin.String>=} kotlin.collections.Set<{dependency1.StringAlias=} kotlin.String>>=} kotlin.collections.List<{dependency3.SetAlias<{dependency1.StringAlias=} kotlin.String>=} kotlin.collections.Set<{dependency1.StringAlias=} kotlin.String>>
               symbol = list: {dependency2.ListAlias<{dependency3.SetAlias<{dependency1.StringAlias=} kotlin.String>=} kotlin.collections.Set<{dependency1.StringAlias=} kotlin.String>>=} kotlin.collections.List<{dependency3.SetAlias<{dependency1.StringAlias=} kotlin.String>=} kotlin.collections.Set<{dependency1.StringAlias=} kotlin.String>>
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = dependency4/MyInterface.check
       typeArgumentsMapping = {}

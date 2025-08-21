@@ -2,6 +2,7 @@ KaNamedFunctionSymbol:
   annotations: []
   callableId: pack/KClient.localFun
   compilerVisibility: Local
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true

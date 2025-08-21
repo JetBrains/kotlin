@@ -39,3 +39,6 @@ class Delegate {
         prop = value
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, functionDeclaration, incrementDecrementExpression, integerLiteral,
+localProperty, nullableType, operator, propertyDeclaration, propertyDelegate, setter, starProjection */

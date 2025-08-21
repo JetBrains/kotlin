@@ -13,21 +13,18 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.delegatedPropertySourceOrThis
 import org.jetbrains.kotlin.fir.analysis.checkers.getReturnedExpressions
+import org.jetbrains.kotlin.fir.analysis.checkers.isPrimaryConstructor
 import org.jetbrains.kotlin.fir.analysis.diagnostics.toFirDiagnostics
-import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.declarations.FirErrorFunction
 import org.jetbrains.kotlin.fir.declarations.FirErrorPrimaryConstructor
 import org.jetbrains.kotlin.fir.declarations.FirErrorProperty
-import org.jetbrains.kotlin.fir.declarations.impl.FirPrimaryConstructor
+import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.diagnostics.*
 import org.jetbrains.kotlin.fir.expressions.*
-import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
-import org.jetbrains.kotlin.fir.references.FirNamedReference
-import org.jetbrains.kotlin.fir.references.FirResolvedErrorReference
-import org.jetbrains.kotlin.fir.references.FirThisReference
+import org.jetbrains.kotlin.fir.references.*
 import org.jetbrains.kotlin.fir.resolve.diagnostics.*
+import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousFunctionSymbol
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.fir.types.ConeErrorType
 
 class ErrorNodeDiagnosticCollectorComponent(
     session: FirSession,
@@ -42,7 +39,11 @@ class ErrorNodeDiagnosticCollectorComponent(
         if (errorTypeRef.isLambdaReturnTypeRefThatDoesntNeedReporting(data)) return
         if (errorTypeRef.hasExpandedTypeAliasDeclarationSiteError()) return
 
-        reportFirDiagnostic(errorTypeRef.diagnostic, errorTypeRef.source, data)
+        reportFirDiagnostic(
+            errorTypeRef.diagnostic, errorTypeRef.source, data,
+            // We provide a value parameter in case errorTypeRef is a type of this parameter
+            valueParameter = data.containingElements.getOrNull(data.containingElements.lastIndex - 1) as? FirValueParameter
+        )
     }
 
     /**
@@ -53,7 +54,7 @@ class ErrorNodeDiagnosticCollectorComponent(
         if (source?.kind != KtFakeSourceElementKind.ImplicitFunctionReturnType) return false
 
         val containingDeclaration = data.containingDeclarations.lastOrNull()
-        if (containingDeclaration !is FirAnonymousFunction || containingDeclaration.returnTypeRef != this) return false
+        if (containingDeclaration !is FirAnonymousFunctionSymbol || containingDeclaration.resolvedReturnTypeRef != this) return false
 
         return containingDeclaration.getReturnedExpressions().any { it.hasDiagnostic(diagnostic) } ||
                 data.callsOrAssignments.any { it is FirExpression && it.hasDiagnostic(diagnostic) }
@@ -95,7 +96,11 @@ class ErrorNodeDiagnosticCollectorComponent(
         processErrorReference(resolvedErrorReference, resolvedErrorReference.diagnostic, data)
     }
 
-    private fun processErrorReference(reference: FirNamedReference, diagnostic: ConeDiagnostic, context: CheckerContext) {
+    override fun visitErrorSuperReference(errorSuperReference: FirErrorSuperReference, data: CheckerContext) {
+        processErrorReference(errorSuperReference, errorSuperReference.diagnostic, data)
+    }
+
+    private fun processErrorReference(reference: FirReference, diagnostic: ConeDiagnostic, context: CheckerContext) {
         var source = reference.source
         val callOrAssignment = context.callsOrAssignments.lastOrNull()?.takeIf {
             // Use the source of the enclosing FirQualifiedAccess if it is exactly the call to the erroneous callee.
@@ -116,7 +121,9 @@ class ErrorNodeDiagnosticCollectorComponent(
             ) return
         }
 
-        source = source?.delegatedPropertySourceOrThis(context)
+        with(context) {
+            source = source?.delegatedPropertySourceOrThis()
+        }
 
         reportFirDiagnostic(diagnostic, source, context, callOrAssignment?.source)
     }
@@ -133,18 +140,16 @@ class ErrorNodeDiagnosticCollectorComponent(
     }
 
     override fun visitErrorExpression(errorExpression: FirErrorExpression, data: CheckerContext) {
-        val source = errorExpression.source
         val diagnostic = errorExpression.diagnostic
-        if (source == null) {
-            // ConeSyntaxDiagnostic and DiagnosticKind.ExpressionExpected with no source (see check above) are typically symptoms of some
-            // syntax error that was already reported during parsing.
-            if (diagnostic is ConeSyntaxDiagnostic) return
-            if (diagnostic is ConeSimpleDiagnostic && diagnostic.kind == DiagnosticKind.ExpressionExpected) return
-        }
+
+        // Syntax errors are reported separately, no need to report them again.
+        if (diagnostic is ConeSyntaxDiagnostic) return
+
         if (diagnostic == ConeContextParameterWithDefaultValue &&
-            data.containingDeclarations.let { it.elementAtOrNull(it.lastIndex - 1) } is FirPrimaryConstructor
+            data.containingDeclarations.let { it.elementAtOrNull(it.lastIndex - 1) }.isPrimaryConstructor()
         ) return
-        reportFirDiagnostic(diagnostic, source, data)
+
+        reportFirDiagnostic(diagnostic, errorExpression.source, data)
     }
 
     override fun visitErrorFunction(errorFunction: FirErrorFunction, data: CheckerContext) {
@@ -186,8 +191,9 @@ class ErrorNodeDiagnosticCollectorComponent(
         source: KtSourceElement?,
         context: CheckerContext,
         callOrAssignmentSource: KtSourceElement? = null,
+        valueParameter: FirValueParameter? = null
     ) {
-        reportFirDiagnostic(diagnostic, source, context, session, reporter, callOrAssignmentSource)
+        reportFirDiagnostic(diagnostic, source, context, session, reporter, callOrAssignmentSource, valueParameter)
     }
 
     companion object {
@@ -198,9 +204,10 @@ class ErrorNodeDiagnosticCollectorComponent(
             session: FirSession = context.session,
             reporter: DiagnosticReporter,
             callOrAssignmentSource: KtSourceElement? = null,
+            valueParameter: FirValueParameter? = null,
         ) {
             // Will be handled by [FirDestructuringDeclarationChecker]
-            if (source?.elementType == KtNodeTypes.DESTRUCTURING_DECLARATION_ENTRY) {
+            if (source?.elementType == KtNodeTypes.DESTRUCTURING_DECLARATION_ENTRY && source.kind != KtFakeSourceElementKind.DesugaredNameBasedDestructuring) {
                 return
             }
 
@@ -221,7 +228,12 @@ class ErrorNodeDiagnosticCollectorComponent(
                 return
             }
 
-            for (coneDiagnostic in diagnostic.toFirDiagnostics(session, source, callOrAssignmentSource)) {
+            // If something is wrong with the `when` subject access, then there's already an error on the `when` subject itself.
+            if (source?.kind is KtFakeSourceElementKind.UnresolvedWhenConditionSubject) {
+                return
+            }
+
+            for (coneDiagnostic in diagnostic.toFirDiagnostics(session, source, callOrAssignmentSource, valueParameter)) {
                 reporter.report(coneDiagnostic, context)
             }
         }

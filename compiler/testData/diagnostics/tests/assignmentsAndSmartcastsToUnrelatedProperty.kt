@@ -20,3 +20,7 @@ fun A.foo() {
         ++a
     }
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, assignment, classDeclaration, funWithExtensionReceiver, functionDeclaration,
+ifExpression, incrementDecrementExpression, integerLiteral, interfaceDeclaration, intersectionType, isExpression,
+propertyDeclaration, smartcast, thisExpression */

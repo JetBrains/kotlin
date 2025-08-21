@@ -18,3 +18,6 @@ fun test(x: List<Int>, y: List<String>) {
     z = A<Double, String>("", y)
     z = A<Double, CharSequence>("", y)
 }
+
+/* GENERATED_FIR_TAGS: assignment, flexibleType, functionDeclaration, javaFunction, javaType, localProperty,
+propertyDeclaration, stringLiteral */

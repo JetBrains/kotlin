@@ -31,6 +31,8 @@ library {
 
       @kotlinx/cinterop/internal/ConstantValue.UInt(value = 2u)
       THREE,
+
+      // has Enum.entries
     }
 
     public final companion object dependency/E1.Companion {
@@ -71,8 +73,10 @@ library {
       public final const val FOUR: kotlin/UInt /* = dependency/E2^ */ /* = 4u */
         public final get
 
+      @kotlinx/cinterop/ExperimentalForeignApi
       public typealias E2 = kotlin/UInt /* = kotlin/UInt */
 
+      @kotlinx/cinterop/ExperimentalForeignApi
       public typealias E2Var = kotlinx/cinterop/UIntVarOf<dependency/E2^> /* = kotlinx/cinterop/UIntVarOf<kotlin/UInt /* = dependency/E2^ */> */
     }
   }

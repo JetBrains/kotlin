@@ -8,3 +8,5 @@ fun foo(<!UNUSED_PARAMETER!>x<!>: String): String {
         throw NullPointerException()
     }
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, tryExpression */

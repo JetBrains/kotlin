@@ -1,3 +1,6 @@
+// DISABLE_DEPENDED_MODE
+// KT-76810
+
 // MODULE: lib
 
 // FILE: lib.kt

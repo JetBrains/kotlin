@@ -19,3 +19,6 @@ fun test(x: Inv<Int>, y: Inv<String>) {
     A<String>("", y)
     A<CharSequence>("", <!ARGUMENT_TYPE_MISMATCH!>y<!>)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, flexibleType, functionDeclaration, javaFunction, javaType, nullableType,
+stringLiteral, typeParameter */

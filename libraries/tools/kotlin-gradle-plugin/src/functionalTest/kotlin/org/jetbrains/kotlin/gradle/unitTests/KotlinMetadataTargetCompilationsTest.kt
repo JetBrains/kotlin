@@ -80,11 +80,11 @@ class KotlinMetadataTargetCompilationsTest {
         }
     }
 
-    private fun NamedDomainObjectContainer<KotlinCompilation<*>>.assertExists(name: String) {
+    private fun NamedDomainObjectContainer<KotlinCompilation<Any>>.assertExists(name: String) {
         if (name !in names) fail("Missing '$name' compilation")
     }
 
-    private fun NamedDomainObjectContainer<KotlinCompilation<*>>.assertExistsNot(name: String) {
+    private fun NamedDomainObjectContainer<KotlinCompilation<Any>>.assertExistsNot(name: String) {
         if (name in names) fail("Unexpected '$name' compilation")
     }
 }

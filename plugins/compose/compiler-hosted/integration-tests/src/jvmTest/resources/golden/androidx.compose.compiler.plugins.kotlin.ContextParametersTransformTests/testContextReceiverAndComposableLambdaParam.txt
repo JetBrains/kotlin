@@ -17,14 +17,15 @@ import androidx.compose.runtime.Composable
 
 @Composable
 @ComposableInferredTarget(scheme = "[0[0]]")
-fun Test(%context_receiver_0: Foo, a: String, b: Function3<String, Composer, Int, Unit>, %composer: Composer?, %changed: Int) {
+context(%context_receiver_0: Foo)
+fun Test(a: String, b: Function3<String, Composer, Int, Unit>, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
-  sourceInformation(%composer, "C(Test)<b("yay...>:Test.kt")
+  sourceInformation(%composer, "C(Test)N(a,b)<b("yay...>:Test.kt")
   val %dirty = %changed
   if (%changed and 0b000110000000 == 0) {
     %dirty = %dirty or if (%composer.changedInstance(b)) 0b000100000000 else 0b10000000
   }
-  if (%dirty and 0b10000001 != 0b10000000 || !%composer.skipping) {
+  if (%composer.shouldExecute(%dirty and 0b10000001 != 0b10000000, %dirty and 0b0001)) {
     if (isTraceInProgress()) {
       traceEventStart(<>, %dirty, -1, <>)
     }

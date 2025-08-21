@@ -14,3 +14,6 @@ fun bar(a: Number): Int {
     checkSubtype<Int>(<!DEBUG_INFO_SMARTCAST!>a<!>)
     return result
 }
+
+/* GENERATED_FIR_TAGS: asExpression, classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType,
+infix, integerLiteral, localProperty, nullableType, propertyDeclaration, smartcast, typeParameter, typeWithExtension */

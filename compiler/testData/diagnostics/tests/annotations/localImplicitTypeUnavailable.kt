@@ -22,3 +22,6 @@ fun check() {
     val a = A().bar
     val b = A().baz()
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, classReference, functionDeclaration, getter, inner,
+localClass, localProperty, nullableType, primaryConstructor, propertyDeclaration, starProjection */

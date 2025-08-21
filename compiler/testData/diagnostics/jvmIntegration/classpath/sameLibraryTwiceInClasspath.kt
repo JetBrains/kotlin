@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // MODULE: library1
 // FILE: source.kt
@@ -32,3 +33,5 @@ val testObjectProperty = TopLevelObject
 val outer = Outer()
 val inn3r = Outer().Inner()
 val nested = Outer.Nested()
+
+/* GENERATED_FIR_TAGS: classDeclaration, inner, nestedClass, objectDeclaration, propertyDeclaration */

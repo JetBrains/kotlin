@@ -3,8 +3,8 @@ FIR element: FirErrorPropertyImpl
 FIR source kind: KtRealSourceElementKind
 
 FIR element rendered:
-<ERROR PROPERTY: Destructuring declarations are only allowed for local variables/values>
+public final [ResolvedTo(BODY_RESOLVE)] val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = ERROR_EXPR(Initializer required for destructuring declaration)
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] destructionWithNoRValue.kt
-    <ERROR PROPERTY: Destructuring declarations are only allowed for local variables/values>
+    public final [ResolvedTo(BODY_RESOLVE)] val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = ERROR_EXPR(Initializer required for destructuring declaration)

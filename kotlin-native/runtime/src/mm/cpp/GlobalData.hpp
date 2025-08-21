@@ -12,7 +12,7 @@
 #include "GCScheduler.hpp"
 #include "GlobalsRegistry.hpp"
 #include "ManuallyScoped.hpp"
-#include "SpecialRefRegistry.hpp"
+#include "ExternalRCRefRegistry.hpp"
 #include "ThreadRegistry.hpp"
 #include "Utils.hpp"
 
@@ -31,7 +31,7 @@ public:
 
     ThreadRegistry& threadRegistry() noexcept { return threadRegistry_; }
     GlobalsRegistry& globalsRegistry() noexcept { return globalsRegistry_; }
-    SpecialRefRegistry& specialRefRegistry() noexcept { return specialRefRegistry_; }
+    ExternalRCRefRegistry& externalRCRefRegistry() noexcept { return externalRCRefRegistry_; }
     gcScheduler::GCScheduler& gcScheduler() noexcept { return gcScheduler_; }
     alloc::Allocator& allocator() noexcept { return allocator_; }
     gc::GC& gc() noexcept { return gc_; }
@@ -46,7 +46,7 @@ private:
     ThreadRegistry threadRegistry_;
     AppStateTracking appStateTracking_;
     GlobalsRegistry globalsRegistry_;
-    SpecialRefRegistry specialRefRegistry_;
+    ExternalRCRefRegistry externalRCRefRegistry_;
     gcScheduler::GCScheduler gcScheduler_;
     alloc::Allocator allocator_;
     gc::GC gc_{allocator_, gcScheduler_};

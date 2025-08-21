@@ -12,9 +12,9 @@ import org.jetbrains.org.objectweb.asm.ClassReader.SKIP_FRAMES
 import org.jetbrains.org.objectweb.asm.ClassVisitor
 import org.jetbrains.org.objectweb.asm.MethodVisitor
 import org.jetbrains.org.objectweb.asm.Opcodes.API_VERSION
-import org.junit.Assert.*
-import org.junit.Ignore
-import org.junit.Test
+import org.junit.jupiter.api.Disabled
+import org.junit.jupiter.api.Test
+import kotlin.test.*
 import java.io.File
 import java.util.zip.ZipFile
 
@@ -50,10 +50,10 @@ class JarContentTest {
                 // kotlin/Array appears as constant because it is used in ArrayKClassValue.toString()
                 if (constant == "kotlin/Array<") continue
                 // Explicitly checking types that are programmatically built don't appear as string constants.
-                assertNull("$constant found at ${entry.name}", PREDEFINED_STRINGS.find { it in constant })
+                assertNull(PREDEFINED_STRINGS.find { it in constant }, "$constant found at ${entry.name}")
 
                 // Implicitly checking none of string constants starts with "kotlin/" prefix, just in case.
-                assertFalse("$constant found at ${entry.name}", constant.startsWith("kotlin/"))
+                assertFalse(constant.startsWith("kotlin/"), "$constant found at ${entry.name}")
             }
         }
     }

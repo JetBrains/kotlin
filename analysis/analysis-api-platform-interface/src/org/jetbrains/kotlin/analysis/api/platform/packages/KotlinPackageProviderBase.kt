@@ -41,16 +41,15 @@ public abstract class KotlinPackageProviderBase(
         }
     }
 
-    override fun getSubPackageFqNames(packageFqName: FqName, platform: TargetPlatform, nameFilter: (Name) -> Boolean): Set<Name> =
+    override fun getSubpackageNames(packageFqName: FqName, platform: TargetPlatform): Set<Name> =
         buildSet {
-            addAll(getKotlinOnlySubPackagesFqNames(packageFqName, nameFilter))
-            addAll(getPlatformSpecificSubPackagesFqNames(packageFqName, platform, nameFilter))
+            addAll(getKotlinOnlySubpackageNames(packageFqName))
+            addAll(getPlatformSpecificSubpackageNames(packageFqName, platform))
         }
 
-    override fun getPlatformSpecificSubPackagesFqNames(
+    override fun getPlatformSpecificSubpackageNames(
         packageFqName: FqName,
-        platform: TargetPlatform,
-        nameFilter: (Name) -> Boolean
+        platform: TargetPlatform
     ): Set<Name> = when {
         platform.isJvm() -> {
             val fqNameString = packageFqName.asString()
@@ -59,7 +58,6 @@ public abstract class KotlinPackageProviderBase(
                     val psiPackage = finder.findPackage(fqNameString) ?: return@forEachNonKotlinPsiElementFinder
                     for (subPackage in finder.getSubPackages(psiPackage, searchScope)) {
                         val name = subPackage.name?.let(Name::identifierIfValid) ?: continue
-                        if (!nameFilter(name)) continue
                         add(name)
                     }
                 }

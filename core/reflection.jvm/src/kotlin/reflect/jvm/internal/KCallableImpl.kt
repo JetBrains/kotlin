@@ -7,7 +7,13 @@ package kotlin.reflect.jvm.internal
 
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.PropertyAccessorDescriptor
+import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
+import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.kotlin.load.java.descriptors.JavaCallableMemberDescriptor
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPropertyDescriptor
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedSimpleFunctionDescriptor
 import org.jetbrains.kotlin.types.asSimpleType
 import java.lang.reflect.ParameterizedType
 import java.lang.reflect.Type
@@ -37,25 +43,38 @@ internal abstract class KCallableImpl<out R> : KCallable<R>, KTypeParameterOwner
 
     override val annotations: List<Annotation> get() = _annotations()
 
+    private val _receiverParameters = ReflectProperties.lazySoft {
+        val result = ArrayList<KParameter>()
+        val instanceReceiver = descriptor.instanceReceiverParameter
+        if (instanceReceiver != null) {
+            result.add(KParameterImpl(this, result.size, KParameter.Kind.INSTANCE) { instanceReceiver })
+        }
+
+        val contextParameters = descriptor.computeContextParameters()
+        for (i in contextParameters.indices) {
+            @OptIn(ExperimentalContextParameters::class)
+            result.add(KParameterImpl(this, result.size, KParameter.Kind.CONTEXT) { contextParameters[i] })
+        }
+
+        val extensionReceiver = descriptor.extensionReceiverParameter
+        if (extensionReceiver != null) {
+            result.add(KParameterImpl(this, result.size, KParameter.Kind.EXTENSION_RECEIVER) { extensionReceiver })
+        }
+        result
+    }
+
+    val receiverParameters: List<KParameter> get() = _receiverParameters()
+
     private val _parameters = ReflectProperties.lazySoft {
         val descriptor = descriptor
         val result = ArrayList<KParameter>()
-        var index = 0
 
         if (!isBound) {
-            val instanceReceiver = descriptor.instanceReceiverParameter
-            if (instanceReceiver != null) {
-                result.add(KParameterImpl(this, index++, KParameter.Kind.INSTANCE) { instanceReceiver })
-            }
-
-            val extensionReceiver = descriptor.extensionReceiverParameter
-            if (extensionReceiver != null) {
-                result.add(KParameterImpl(this, index++, KParameter.Kind.EXTENSION_RECEIVER) { extensionReceiver })
-            }
+            result.addAll(receiverParameters)
         }
 
         for (i in descriptor.valueParameters.indices) {
-            result.add(KParameterImpl(this, index++, KParameter.Kind.VALUE) { descriptor.valueParameters[i] })
+            result.add(KParameterImpl(this, result.size, KParameter.Kind.VALUE) { descriptor.valueParameters[i] })
         }
 
         // Constructor parameters of Java annotations are not ordered in any way, we order them by name here to be more stable.
@@ -67,6 +86,30 @@ internal abstract class KCallableImpl<out R> : KCallable<R>, KTypeParameterOwner
 
         result.trimToSize()
         result
+    }
+
+    private fun CallableMemberDescriptor.computeContextParameters(): List<ValueParameterDescriptor> {
+        val (nameResolver, contextParameters) = when (this) {
+            is DeserializedSimpleFunctionDescriptor -> nameResolver to proto.contextParameterList
+            is DeserializedPropertyDescriptor -> nameResolver to proto.contextParameterList
+            is PropertyAccessorDescriptor -> (correspondingProperty as? DeserializedPropertyDescriptor)?.let {
+                it.nameResolver to it.proto.contextParameterList
+            }
+            else -> null
+        } ?: return emptyList()
+        return contextReceiverParameters.mapIndexed { index, parameter ->
+            ValueParameterDescriptorImpl(
+                this, null, index,
+                parameter.annotations,
+                Name.guessByFirstCharacter(nameResolver.getString(contextParameters[index].name)),
+                parameter.type,
+                declaresDefaultValue = false,
+                isCrossinline = false,
+                isNoinline = false,
+                varargElementType = null,
+                parameter.source,
+            )
+        }
     }
 
     override val parameters: List<KParameter>

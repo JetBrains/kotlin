@@ -4,6 +4,7 @@ KtConstructorCalleeExpression(31,32): 'A'
       argumentMapping = {}
       kind = SUPER_CALL
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -11,6 +12,7 @@ KtConstructorCalleeExpression(31,32): 'A'
           returnType = A
           symbol = <constructor>(): A
           valueParameters = []
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for 'constructor(): A'.>

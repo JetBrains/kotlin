@@ -1,12 +1,21 @@
+// IGNORE_BACKEND: JS_IR
+// IGNORE_HMPP: JS_IR
+// FILE: foo/some.kt
 package foo
 
 import org.jetbrains.kotlin.plugin.sandbox.DummyFunction
 
-@DummyFunction
+@DummyFunction("first.kt")
 class First
 
-@DummyFunction
+@DummyFunction("first")
+class OtherFirst
+
+@DummyFunction("second")
 class Second
+
+@DummyFunction
+class Third
 
 fun box(): String {
     val result1 = dummyFirst(First())
@@ -17,3 +26,11 @@ fun box(): String {
 
     return "OK"
 }
+
+// FILE: bar/other.kt
+package bar
+
+import org.jetbrains.kotlin.plugin.sandbox.DummyFunction
+
+@DummyFunction("first.kt")
+class First

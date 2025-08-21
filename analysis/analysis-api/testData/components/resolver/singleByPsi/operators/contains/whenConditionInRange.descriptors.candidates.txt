@@ -7,10 +7,12 @@ KtOperationReferenceExpression(169,171): 'in'
           receiverType = null
           returnType = kotlin.Int
           symbol = int: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:
           expression = MyClass()
@@ -26,8 +28,10 @@ KtOperationReferenceExpression(169,171): 'in'
               receiverType = null
               returnType = kotlin.Int
               symbol = int: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = /contains
       typeArgumentsMapping = {
         T -> (MyClass)

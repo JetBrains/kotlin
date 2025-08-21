@@ -57,6 +57,7 @@ internal enum class IntrinsicType {
     OBJC_CREATE_SUPER_STRUCT,
     OBJC_INIT_BY,
     OBJC_GET_SELECTOR,
+    BLOCK_PTR_TO_FUNCTION_OBJECT,
     // Other
     CREATE_UNINITIALIZED_INSTANCE,
     CREATE_UNINITIALIZED_ARRAY,
@@ -187,11 +188,11 @@ internal class IntrinsicGenerator(private val environment: IntrinsicGeneratorEnv
         }
         return when (getIntrinsicType(callSite)) {
             IntrinsicType.IMMUTABLE_BLOB -> {
-                val arg = callSite.getValueArgument(0) as IrConst
+                val arg = callSite.arguments[0] as IrConst
                 codegen.llvm.staticData.createImmutableBlob(arg)
             }
             IntrinsicType.OBJC_GET_SELECTOR -> {
-                val selector = (callSite.getValueArgument(0) as IrConst).value as String
+                val selector = (callSite.arguments[0] as IrConst).value as String
                 environment.functionGenerationContext.genObjCSelector(selector)
             }
             else -> null
@@ -283,6 +284,7 @@ internal class IntrinsicGenerator(private val environment: IntrinsicGeneratorEnv
                 IntrinsicType.COMPARE_AND_SET_FIELD,
                 IntrinsicType.COMPARE_AND_EXCHANGE_FIELD,
                 IntrinsicType.GET_AND_SET_FIELD,
+                IntrinsicType.BLOCK_PTR_TO_FUNCTION_OBJECT,
                 IntrinsicType.GET_AND_ADD_FIELD ->
                     reportNonLoweredIntrinsic(intrinsicType)
                 IntrinsicType.OBJC_INIT_BY,
@@ -334,7 +336,7 @@ internal class IntrinsicGenerator(private val environment: IntrinsicGeneratorEnv
 
     private fun FunctionGenerationContext.emitCmpExchange(callSite: IrCall, args: List<LLVMValueRef>, mode: CmpExchangeMode, resultSlot: LLVMValueRef?): LLVMValueRef {
         require(args.size == 3) { "The call to ${callSite.symbol.owner.name.asString()} expects 3 value arguments." }
-        return if (callSite.symbol.owner.valueParameters.last().type.binaryTypeIsReference()) {
+        return if (callSite.symbol.owner.parameters.last().type.binaryTypeIsReference()) {
             when (mode) {
                 CmpExchangeMode.SET -> call(llvm.CompareAndSetVolatileHeapRef, args)
                 CmpExchangeMode.SWAP -> call(llvm.CompareAndSwapVolatileHeapRef, args,
@@ -353,7 +355,7 @@ internal class IntrinsicGenerator(private val environment: IntrinsicGeneratorEnv
 
     private fun FunctionGenerationContext.emitAtomicRMW(callSite: IrCall, args: List<LLVMValueRef>, op: LLVMAtomicRMWBinOp, resultSlot: LLVMValueRef?): LLVMValueRef {
         require(args.size == 2) { "The call to ${callSite.symbol.owner.name.asString()} expects 2 value arguments." }
-        return if (callSite.symbol.owner.valueParameters.last().type.binaryTypeIsReference()) {
+        return if (callSite.symbol.owner.parameters.last().type.binaryTypeIsReference()) {
             require(op == LLVMAtomicRMWBinOp.LLVMAtomicRMWBinOpXchg)
             call(llvm.GetAndSetVolatileHeapRef, args,
                     environment.calculateLifetime(callSite), resultSlot = resultSlot)
@@ -390,7 +392,7 @@ internal class IntrinsicGenerator(private val environment: IntrinsicGeneratorEnv
     }
 
     private fun FunctionGenerationContext.arrayGetElementAddress(callSite: IrCall, array: LLVMValueRef, index: LLVMValueRef): LLVMValueRef {
-        val receiver = callSite.extensionReceiver
+        val receiver = callSite.arguments[0]
         require(receiver != null)
         return when {
             receiver.type.isIntArray() -> call(llvm.Kotlin_intArrayGetElementAddress, listOf(array, index))
@@ -403,7 +405,7 @@ internal class IntrinsicGenerator(private val environment: IntrinsicGeneratorEnv
     private fun FunctionGenerationContext.emitAtomicSetArrayElement(callSite: IrCall, args: List<LLVMValueRef>): LLVMValueRef {
         require(args.size == 3) { "The call to ${callSite.symbol.owner.name.asString()} expects 3 value arguments." }
         val address = arrayGetElementAddress(callSite, args[0], args[1])
-        val isObjectType = callSite.symbol.owner.valueParameters.last().type.binaryTypeIsReference()
+        val isObjectType = callSite.symbol.owner.parameters.last().type.binaryTypeIsReference()
         storeAny(args[2], address, isObjectRef = isObjectType, onStack = false, isVolatile = true)
         return theUnitInstanceRef.llvm
     }
@@ -464,7 +466,7 @@ internal class IntrinsicGenerator(private val environment: IntrinsicGeneratorEnv
     }
 
     private fun FunctionGenerationContext.emitCreateEmptyString(callSite: IrCall, resultSlot: LLVMValueRef?): LLVMValueRef {
-        val clazz = context.ir.symbols.string.owner
+        val clazz = context.symbols.string.owner
         val size = llvm.constInt32(runtime.stringHeaderExtraSize / 2).llvm // in Chars
         return allocArray(clazz, size, environment.calculateLifetime(callSite), environment.exceptionHandler, resultSlot)
     }
@@ -489,7 +491,7 @@ internal class IntrinsicGenerator(private val environment: IntrinsicGeneratorEnv
 
     private fun FunctionGenerationContext.emitWritePrimitive(callSite: IrCall, args: List<LLVMValueRef>): LLVMValueRef {
         val function = callSite.symbol.owner
-        val pointerType = pointerType(function.valueParameters.last().type.toLLVMType(llvm))
+        val pointerType = pointerType(function.parameters.last().type.toLLVMType(llvm))
         val rawPointer = args[1]
         val pointer = bitcast(pointerType, rawPointer)
         store(args[2], pointer)
@@ -545,15 +547,15 @@ internal class IntrinsicGenerator(private val environment: IntrinsicGeneratorEnv
         val bitsWithPaddingType = LLVMIntTypeInContext(llvm.llvmContext, bitsWithPaddingNum)!!
 
         // 0011111000:
-        val discardBitsMask = LLVMConstShl(
-                LLVMConstZExt(
-                        LLVMConstAllOnes(bitsType), // 11111
-                        bitsWithPaddingType
+        val discardBitsMask = shl(
+                zext(
+                        LLVMConstAllOnes(bitsType)!!, // 11111
+                        bitsWithPaddingType,
                 ), // 1111100000
-                LLVMConstInt(bitsWithPaddingType, prefixBitsNum.toLong(), 0)
+                prefixBitsNum
         )
 
-        val preservedBitsMask = LLVMConstNot(discardBitsMask)!!
+        val preservedBitsMask = not(discardBitsMask)
 
         val bitsWithPaddingPtr = bitcast(pointerType(bitsWithPaddingType), gep(llvm.int8Type, ptr, llvm.int64(offset / 8)))
 
@@ -760,7 +762,7 @@ internal class IntrinsicGenerator(private val environment: IntrinsicGeneratorEnv
 
     private fun FunctionGenerationContext.emitThrowIfZero(divider: LLVMValueRef) {
         ifThen(icmpEq(divider, Zero(divider.type).llvm)) {
-            val throwArithExc = codegen.llvmFunction(context.ir.symbols.throwArithmeticException.owner)
+            val throwArithExc = codegen.llvmFunction(context.symbols.throwArithmeticException.owner)
             call(throwArithExc, emptyList(), Lifetime.GLOBAL, environment.exceptionHandler)
             unreachable()
         }
@@ -768,7 +770,7 @@ internal class IntrinsicGenerator(private val environment: IntrinsicGeneratorEnv
 
     private fun FunctionGenerationContext.emitThrowIfOOB(index: LLVMValueRef, size: LLVMValueRef) {
         ifThen(icmpUGe(index, size)) {
-            val throwIndexOutOfBoundsException = codegen.llvmFunction(context.ir.symbols.throwIndexOutOfBoundsException.owner)
+            val throwIndexOutOfBoundsException = codegen.llvmFunction(context.symbols.throwIndexOutOfBoundsException.owner)
             call(throwIndexOutOfBoundsException, emptyList(), Lifetime.GLOBAL, environment.exceptionHandler)
             unreachable()
         }

@@ -29,7 +29,7 @@ internal fun findMacros(
         nativeIndex: NativeIndexImpl,
         compilation: CompilationWithPCH,
         translationUnits: List<CXTranslationUnit>,
-        headers: Set<CXFile?>
+        headers: Set<ClangFile?>
 ) {
     val names = collectMacroNames(nativeIndex, translationUnits, headers)
     // TODO: apply user-defined filters.
@@ -286,16 +286,12 @@ enum class VisitorState {
     EXPECT_END, INVALID
 }
 
-private fun collectMacroNames(nativeIndex: NativeIndexImpl, translationUnits: List<CXTranslationUnit>, headers: Set<CXFile?>): List<String> {
+private fun collectMacroNames(nativeIndex: NativeIndexImpl, translationUnits: List<CXTranslationUnit>, headers: Set<ClangFile?>): List<String> {
     val result = mutableSetOf<String>()
 
     translationUnits.forEach {
         visitChildren(it) { cursor, _ ->
-            val file = memScoped {
-                val fileVar = alloc<CXFileVar>()
-                clang_getFileLocation(clang_getCursorLocation(cursor), fileVar.ptr, null, null, null)
-                fileVar.value
-            }
+            val file = getContainingFile(cursor)
 
             if (cursor.kind == CXCursorKind.CXCursor_MacroDefinition &&
                     nativeIndex.library.includesDeclaration(cursor) &&

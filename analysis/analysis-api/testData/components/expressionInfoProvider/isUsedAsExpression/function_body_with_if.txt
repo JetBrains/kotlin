@@ -4,3 +4,4 @@ text: if (n == 1)
     else
         "two"
 isUsedAsExpression: true
+isUsedAsResultOfLambda: false

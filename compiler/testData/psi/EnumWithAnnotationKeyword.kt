@@ -1,3 +1,5 @@
+// COMPILATION_ERRORS
+
 data annotation enum class E {
     D
 }

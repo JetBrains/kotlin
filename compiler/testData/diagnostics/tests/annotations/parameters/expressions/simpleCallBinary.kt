@@ -13,3 +13,5 @@ annotation class Ann(
 @Ann(1.plus(1), 1.minus(1), 1.times(1), 1.div(1), 1.rem(1)) class MyClass
 
 // EXPECTED: @Ann(p1 = 2, p2 = 0, p3 = 1, p4 = 1, p5 = 0)
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, integerLiteral, primaryConstructor, propertyDeclaration */

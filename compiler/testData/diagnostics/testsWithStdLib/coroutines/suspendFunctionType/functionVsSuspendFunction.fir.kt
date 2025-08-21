@@ -1,5 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LANGUAGE: -SuspendConversion
+// LANGUAGE: -SuspendConversion, -DiscriminateSuspendInOverloadResolution
 // DIAGNOSTICS: -UNUSED_PARAMETER
 
 fun useSuspendFn(sfn: suspend () -> Unit) = sfn
@@ -18,3 +18,5 @@ fun test5() = useSuspendFn {}
 fun test5(sfn: suspend () -> Unit) = ambiguous(sfn)
 fun test6(fn: () -> Unit) = ambiguous(fn)
 fun test7(): () -> Unit = <!OVERLOAD_RESOLUTION_AMBIGUITY!>ambiguous<!> {}
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionalType, lambdaLiteral, suspend */

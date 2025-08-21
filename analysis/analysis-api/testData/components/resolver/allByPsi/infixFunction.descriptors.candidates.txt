@@ -55,10 +55,12 @@ KtBinaryExpression(37,45): 'this - i'
           receiverType = null
           returnType = kotlin.Int
           symbol = other: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = this
           isSafeNavigation = false
@@ -74,8 +76,10 @@ KtBinaryExpression(37,45): 'this - i'
               receiverType = null
               returnType = kotlin.Int
               symbol = other: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/Int.minus
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -95,10 +99,12 @@ KtOperationReferenceExpression(42,43): '-'
           receiverType = null
           returnType = kotlin.Int
           symbol = other: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = this
           isSafeNavigation = false
@@ -114,8 +120,10 @@ KtOperationReferenceExpression(42,43): '-'
               receiverType = null
               returnType = kotlin.Int
               symbol = other: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/Int.minus
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -124,6 +132,7 @@ KtNameReferenceExpression(44,45): 'i'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaVariableSignature:
@@ -131,6 +140,7 @@ KtNameReferenceExpression(44,45): 'i'
           receiverType = null
           returnType = kotlin.Int
           symbol = i: kotlin.Int
+          contextParameters = []
           callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -169,10 +179,12 @@ KtBinaryExpression(98,117): 'parameter myMinus 5'
           receiverType = null
           returnType = kotlin.Int
           symbol = i: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:
           expression = parameter
@@ -188,8 +200,10 @@ KtBinaryExpression(98,117): 'parameter myMinus 5'
               receiverType = null
               returnType = kotlin.Int
               symbol = i: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = /myMinus
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -198,6 +212,7 @@ KtNameReferenceExpression(98,107): 'parameter'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaVariableSignature:
@@ -205,6 +220,7 @@ KtNameReferenceExpression(98,107): 'parameter'
           receiverType = null
           returnType = kotlin.Int
           symbol = parameter: kotlin.Int
+          contextParameters = []
           callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -219,10 +235,12 @@ KtOperationReferenceExpression(108,115): 'myMinus'
           receiverType = null
           returnType = kotlin.Int
           symbol = i: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:
           expression = parameter
@@ -238,8 +256,10 @@ KtOperationReferenceExpression(108,115): 'myMinus'
               receiverType = null
               returnType = kotlin.Int
               symbol = i: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = /myMinus
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -259,10 +279,12 @@ KtBinaryExpression(145,171): 'newParameter + 1 myMinus 4'
           receiverType = null
           returnType = kotlin.Int
           symbol = i: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:
           expression = newParameter + 1
@@ -278,8 +300,10 @@ KtBinaryExpression(145,171): 'newParameter + 1 myMinus 4'
               receiverType = null
               returnType = kotlin.Int
               symbol = i: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = /myMinus
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -293,10 +317,12 @@ KtBinaryExpression(145,161): 'newParameter + 1'
           receiverType = null
           returnType = kotlin.Int
           symbol = other: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = newParameter
           isSafeNavigation = false
@@ -312,8 +338,10 @@ KtBinaryExpression(145,161): 'newParameter + 1'
               receiverType = null
               returnType = kotlin.Int
               symbol = other: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/Int.plus
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -322,6 +350,7 @@ KtNameReferenceExpression(145,157): 'newParameter'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaVariableSignature:
@@ -329,6 +358,7 @@ KtNameReferenceExpression(145,157): 'newParameter'
           receiverType = null
           returnType = kotlin.Int
           symbol = val newParameter: kotlin.Int
+          contextParameters = []
           callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -343,10 +373,12 @@ KtOperationReferenceExpression(158,159): '+'
           receiverType = null
           returnType = kotlin.Int
           symbol = other: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = newParameter
           isSafeNavigation = false
@@ -362,8 +394,10 @@ KtOperationReferenceExpression(158,159): '+'
               receiverType = null
               returnType = kotlin.Int
               symbol = other: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/Int.plus
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -380,10 +414,12 @@ KtOperationReferenceExpression(162,169): 'myMinus'
           receiverType = null
           returnType = kotlin.Int
           symbol = i: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:
           expression = newParameter + 1
@@ -399,8 +435,10 @@ KtOperationReferenceExpression(162,169): 'myMinus'
               receiverType = null
               returnType = kotlin.Int
               symbol = i: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = /myMinus
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -420,10 +458,12 @@ KtDotQualifiedExpression(195,249): 'newParameter.plus(parameter.myMinus(oneMoreP
           receiverType = null
           returnType = kotlin.Double
           symbol = other: kotlin.Double
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = newParameter
           isSafeNavigation = false
@@ -439,13 +479,15 @@ KtDotQualifiedExpression(195,249): 'newParameter.plus(parameter.myMinus(oneMoreP
               receiverType = null
               returnType = kotlin.Double
               symbol = other: kotlin.Double
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/Int.plus
       typeArgumentsMapping = {}
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Int but Double was expected>
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -454,10 +496,12 @@ KtDotQualifiedExpression(195,249): 'newParameter.plus(parameter.myMinus(oneMoreP
           receiverType = null
           returnType = kotlin.Float
           symbol = other: kotlin.Float
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = newParameter
           isSafeNavigation = false
@@ -473,13 +517,15 @@ KtDotQualifiedExpression(195,249): 'newParameter.plus(parameter.myMinus(oneMoreP
               receiverType = null
               returnType = kotlin.Float
               symbol = other: kotlin.Float
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/Int.plus
       typeArgumentsMapping = {}
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Int but Float was expected>
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -488,10 +534,12 @@ KtDotQualifiedExpression(195,249): 'newParameter.plus(parameter.myMinus(oneMoreP
           receiverType = null
           returnType = kotlin.Byte
           symbol = other: kotlin.Byte
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = newParameter
           isSafeNavigation = false
@@ -507,13 +555,15 @@ KtDotQualifiedExpression(195,249): 'newParameter.plus(parameter.myMinus(oneMoreP
               receiverType = null
               returnType = kotlin.Byte
               symbol = other: kotlin.Byte
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/Int.plus
       typeArgumentsMapping = {}
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Int but Byte was expected>
     isInBestCandidates = false
-  
+
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -522,10 +572,12 @@ KtDotQualifiedExpression(195,249): 'newParameter.plus(parameter.myMinus(oneMoreP
           receiverType = null
           returnType = kotlin.Int
           symbol = other: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = newParameter
           isSafeNavigation = false
@@ -541,12 +593,14 @@ KtDotQualifiedExpression(195,249): 'newParameter.plus(parameter.myMinus(oneMoreP
               receiverType = null
               returnType = kotlin.Int
               symbol = other: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/Int.plus
       typeArgumentsMapping = {}
     isInBestCandidates = true
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -555,10 +609,12 @@ KtDotQualifiedExpression(195,249): 'newParameter.plus(parameter.myMinus(oneMoreP
           receiverType = null
           returnType = kotlin.Short
           symbol = other: kotlin.Short
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = newParameter
           isSafeNavigation = false
@@ -574,13 +630,15 @@ KtDotQualifiedExpression(195,249): 'newParameter.plus(parameter.myMinus(oneMoreP
               receiverType = null
               returnType = kotlin.Short
               symbol = other: kotlin.Short
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/Int.plus
       typeArgumentsMapping = {}
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Int but Short was expected>
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -589,10 +647,12 @@ KtDotQualifiedExpression(195,249): 'newParameter.plus(parameter.myMinus(oneMoreP
           receiverType = null
           returnType = kotlin.Long
           symbol = other: kotlin.Long
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = newParameter
           isSafeNavigation = false
@@ -608,13 +668,15 @@ KtDotQualifiedExpression(195,249): 'newParameter.plus(parameter.myMinus(oneMoreP
               receiverType = null
               returnType = kotlin.Long
               symbol = other: kotlin.Long
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/Int.plus
       typeArgumentsMapping = {}
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Int but Long was expected>
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -623,10 +685,12 @@ KtDotQualifiedExpression(195,249): 'newParameter.plus(parameter.myMinus(oneMoreP
           receiverType = null
           returnType = kotlin.Any?
           symbol = other: kotlin.Any?
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:
           expression = newParameter
@@ -642,8 +706,10 @@ KtDotQualifiedExpression(195,249): 'newParameter.plus(parameter.myMinus(oneMoreP
               receiverType = null
               returnType = kotlin.Any?
               symbol = other: kotlin.Any?
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/plus
       typeArgumentsMapping = {}
     diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with plus>
@@ -653,6 +719,7 @@ KtNameReferenceExpression(195,207): 'newParameter'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaVariableSignature:
@@ -660,6 +727,7 @@ KtNameReferenceExpression(195,207): 'newParameter'
           receiverType = null
           returnType = kotlin.Int
           symbol = val newParameter: kotlin.Int
+          contextParameters = []
           callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -674,10 +742,12 @@ KtCallExpression(208,249): 'plus(parameter.myMinus(oneMoreParameter))'
           receiverType = null
           returnType = kotlin.Double
           symbol = other: kotlin.Double
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = newParameter
           isSafeNavigation = false
@@ -693,13 +763,15 @@ KtCallExpression(208,249): 'plus(parameter.myMinus(oneMoreParameter))'
               receiverType = null
               returnType = kotlin.Double
               symbol = other: kotlin.Double
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/Int.plus
       typeArgumentsMapping = {}
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Int but Double was expected>
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -708,10 +780,12 @@ KtCallExpression(208,249): 'plus(parameter.myMinus(oneMoreParameter))'
           receiverType = null
           returnType = kotlin.Float
           symbol = other: kotlin.Float
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = newParameter
           isSafeNavigation = false
@@ -727,13 +801,15 @@ KtCallExpression(208,249): 'plus(parameter.myMinus(oneMoreParameter))'
               receiverType = null
               returnType = kotlin.Float
               symbol = other: kotlin.Float
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/Int.plus
       typeArgumentsMapping = {}
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Int but Float was expected>
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -742,10 +818,12 @@ KtCallExpression(208,249): 'plus(parameter.myMinus(oneMoreParameter))'
           receiverType = null
           returnType = kotlin.Byte
           symbol = other: kotlin.Byte
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = newParameter
           isSafeNavigation = false
@@ -761,13 +839,15 @@ KtCallExpression(208,249): 'plus(parameter.myMinus(oneMoreParameter))'
               receiverType = null
               returnType = kotlin.Byte
               symbol = other: kotlin.Byte
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/Int.plus
       typeArgumentsMapping = {}
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Int but Byte was expected>
     isInBestCandidates = false
-  
+
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -776,10 +856,12 @@ KtCallExpression(208,249): 'plus(parameter.myMinus(oneMoreParameter))'
           receiverType = null
           returnType = kotlin.Int
           symbol = other: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = newParameter
           isSafeNavigation = false
@@ -795,12 +877,14 @@ KtCallExpression(208,249): 'plus(parameter.myMinus(oneMoreParameter))'
               receiverType = null
               returnType = kotlin.Int
               symbol = other: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/Int.plus
       typeArgumentsMapping = {}
     isInBestCandidates = true
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -809,10 +893,12 @@ KtCallExpression(208,249): 'plus(parameter.myMinus(oneMoreParameter))'
           receiverType = null
           returnType = kotlin.Short
           symbol = other: kotlin.Short
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = newParameter
           isSafeNavigation = false
@@ -828,13 +914,15 @@ KtCallExpression(208,249): 'plus(parameter.myMinus(oneMoreParameter))'
               receiverType = null
               returnType = kotlin.Short
               symbol = other: kotlin.Short
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/Int.plus
       typeArgumentsMapping = {}
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Int but Short was expected>
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -843,10 +931,12 @@ KtCallExpression(208,249): 'plus(parameter.myMinus(oneMoreParameter))'
           receiverType = null
           returnType = kotlin.Long
           symbol = other: kotlin.Long
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = newParameter
           isSafeNavigation = false
@@ -862,13 +952,15 @@ KtCallExpression(208,249): 'plus(parameter.myMinus(oneMoreParameter))'
               receiverType = null
               returnType = kotlin.Long
               symbol = other: kotlin.Long
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/Int.plus
       typeArgumentsMapping = {}
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Int but Long was expected>
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -877,10 +969,12 @@ KtCallExpression(208,249): 'plus(parameter.myMinus(oneMoreParameter))'
           receiverType = null
           returnType = kotlin.Any?
           symbol = other: kotlin.Any?
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:
           expression = newParameter
@@ -896,8 +990,10 @@ KtCallExpression(208,249): 'plus(parameter.myMinus(oneMoreParameter))'
               receiverType = null
               returnType = kotlin.Any?
               symbol = other: kotlin.Any?
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/plus
       typeArgumentsMapping = {}
     diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with plus>
@@ -912,10 +1008,12 @@ KtNameReferenceExpression(208,212): 'plus'
           receiverType = null
           returnType = kotlin.Double
           symbol = other: kotlin.Double
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = newParameter
           isSafeNavigation = false
@@ -931,13 +1029,15 @@ KtNameReferenceExpression(208,212): 'plus'
               receiverType = null
               returnType = kotlin.Double
               symbol = other: kotlin.Double
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/Int.plus
       typeArgumentsMapping = {}
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with plus>
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -946,10 +1046,12 @@ KtNameReferenceExpression(208,212): 'plus'
           receiverType = null
           returnType = kotlin.Float
           symbol = other: kotlin.Float
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = newParameter
           isSafeNavigation = false
@@ -965,13 +1067,15 @@ KtNameReferenceExpression(208,212): 'plus'
               receiverType = null
               returnType = kotlin.Float
               symbol = other: kotlin.Float
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/Int.plus
       typeArgumentsMapping = {}
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with plus>
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -980,10 +1084,12 @@ KtNameReferenceExpression(208,212): 'plus'
           receiverType = null
           returnType = kotlin.Byte
           symbol = other: kotlin.Byte
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = newParameter
           isSafeNavigation = false
@@ -999,13 +1105,15 @@ KtNameReferenceExpression(208,212): 'plus'
               receiverType = null
               returnType = kotlin.Byte
               symbol = other: kotlin.Byte
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/Int.plus
       typeArgumentsMapping = {}
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with plus>
     isInBestCandidates = false
-  
+
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -1014,10 +1122,12 @@ KtNameReferenceExpression(208,212): 'plus'
           receiverType = null
           returnType = kotlin.Int
           symbol = other: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = newParameter
           isSafeNavigation = false
@@ -1033,12 +1143,14 @@ KtNameReferenceExpression(208,212): 'plus'
               receiverType = null
               returnType = kotlin.Int
               symbol = other: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/Int.plus
       typeArgumentsMapping = {}
     isInBestCandidates = true
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -1047,10 +1159,12 @@ KtNameReferenceExpression(208,212): 'plus'
           receiverType = null
           returnType = kotlin.Short
           symbol = other: kotlin.Short
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = newParameter
           isSafeNavigation = false
@@ -1066,13 +1180,15 @@ KtNameReferenceExpression(208,212): 'plus'
               receiverType = null
               returnType = kotlin.Short
               symbol = other: kotlin.Short
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/Int.plus
       typeArgumentsMapping = {}
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with plus>
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -1081,10 +1197,12 @@ KtNameReferenceExpression(208,212): 'plus'
           receiverType = null
           returnType = kotlin.Long
           symbol = other: kotlin.Long
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = newParameter
           isSafeNavigation = false
@@ -1100,13 +1218,15 @@ KtNameReferenceExpression(208,212): 'plus'
               receiverType = null
               returnType = kotlin.Long
               symbol = other: kotlin.Long
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/Int.plus
       typeArgumentsMapping = {}
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with plus>
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -1115,10 +1235,12 @@ KtNameReferenceExpression(208,212): 'plus'
           receiverType = null
           returnType = kotlin.Any?
           symbol = other: kotlin.Any?
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:
           expression = newParameter
@@ -1134,8 +1256,10 @@ KtNameReferenceExpression(208,212): 'plus'
               receiverType = null
               returnType = kotlin.Any?
               symbol = other: kotlin.Any?
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/plus
       typeArgumentsMapping = {}
     diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with plus>
@@ -1156,10 +1280,12 @@ KtDotQualifiedExpression(213,248): 'parameter.myMinus(oneMoreParameter)'
           receiverType = null
           returnType = kotlin.Int
           symbol = i: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:
           expression = parameter
@@ -1175,8 +1301,10 @@ KtDotQualifiedExpression(213,248): 'parameter.myMinus(oneMoreParameter)'
               receiverType = null
               returnType = kotlin.Int
               symbol = i: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = /myMinus
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -1185,6 +1313,7 @@ KtNameReferenceExpression(213,222): 'parameter'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaVariableSignature:
@@ -1192,6 +1321,7 @@ KtNameReferenceExpression(213,222): 'parameter'
           receiverType = null
           returnType = kotlin.Int
           symbol = parameter: kotlin.Int
+          contextParameters = []
           callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -1206,10 +1336,12 @@ KtCallExpression(223,248): 'myMinus(oneMoreParameter)'
           receiverType = null
           returnType = kotlin.Int
           symbol = i: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:
           expression = parameter
@@ -1225,8 +1357,10 @@ KtCallExpression(223,248): 'myMinus(oneMoreParameter)'
               receiverType = null
               returnType = kotlin.Int
               symbol = i: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = /myMinus
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -1240,10 +1374,12 @@ KtNameReferenceExpression(223,230): 'myMinus'
           receiverType = null
           returnType = kotlin.Int
           symbol = i: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:
           expression = parameter
@@ -1259,8 +1395,10 @@ KtNameReferenceExpression(223,230): 'myMinus'
               receiverType = null
               returnType = kotlin.Int
               symbol = i: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = /myMinus
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -1275,6 +1413,7 @@ KtNameReferenceExpression(231,247): 'oneMoreParameter'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaVariableSignature:
@@ -1282,6 +1421,7 @@ KtNameReferenceExpression(231,247): 'oneMoreParameter'
           receiverType = null
           returnType = kotlin.Int
           symbol = val oneMoreParameter: kotlin.Int
+          contextParameters = []
           callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}

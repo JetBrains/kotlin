@@ -24,14 +24,16 @@ package a
 
 actual annotation class A(actual val x: Int)
 
-// MODULE: common2
+// MODULE: common2(common)
 // FILE: common2.kt
 
 package usage
 
 import a.B
 
-@B("OK")
+const val s = "OK"
+
+@B(s)
 @B.C(true)
 fun ok() = "OK"
 

@@ -16,3 +16,5 @@ fun test() {
     B::foo
     B::fas
 }
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, functionDeclaration */

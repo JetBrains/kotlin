@@ -1,1 +1,1 @@
-[ResolvedTo(BODY_RESOLVE)] @R|MyAnno|[Types]() variable: R|kotlin/String|
+[ResolvedTo(TYPES)] @R|MyAnno|[Types]() variable: R|kotlin/String|

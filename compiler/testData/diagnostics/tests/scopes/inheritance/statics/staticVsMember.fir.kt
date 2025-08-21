@@ -68,3 +68,6 @@ class G: F() {
         val b: String = bar
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, functionDeclaration, init, javaFunction, javaProperty,
+javaType, localProperty, objectDeclaration, propertyDeclaration, stringLiteral */

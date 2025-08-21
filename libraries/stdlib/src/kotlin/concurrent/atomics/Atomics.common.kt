@@ -1,16 +1,16 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 @file:kotlin.jvm.JvmMultifileClass
 @file:kotlin.jvm.JvmName("AtomicsKt")
 
-@file:Suppress("NEWER_VERSION_IN_SINCE_KOTLIN", "API_NOT_AVAILABLE")
-
 package kotlin.concurrent.atomics
 
-import kotlin.internal.ActualizeByJvmBuiltinProvider
+import kotlin.contracts.InvocationKind
+import kotlin.contracts.contract
+import kotlin.internal.InlineOnly
 
 /**
  * An [Int] value that may be updated atomically.
@@ -20,14 +20,16 @@ import kotlin.internal.ActualizeByJvmBuiltinProvider
  * When targeting the Native backend, [AtomicInt] stores a volatile [Int] variable and atomically updates it.
  * For additional details about atomicity guarantees for reads and writes see [kotlin.concurrent.Volatile].
  *
- * When targeting the JVM, instances of [AtomicInt] are represented by [java.util.concurrent.atomic.AtomicInteger].
+ * When targeting the JVM, instances of [AtomicInt] are represented by
+ * [java.util.concurrent.atomic.AtomicInteger](https://docs.oracle.com/javase/8/docs/api/java/util/concurrent/atomic/AtomicInteger.html).
  * For details about guarantees of volatile accesses and updates of atomics refer to The Java Language Specification (17.4 Memory Model).
  *
  * For JS and Wasm [AtomicInt] is implemented trivially and is not thread-safe since these platforms do not support multi-threading.
+ *
+ * @constructor Creates a new [AtomicInt] initialized with the specified value.
  */
 @SinceKotlin("2.1")
 @ExperimentalAtomicApi
-@ActualizeByJvmBuiltinProvider
 public expect class AtomicInt public constructor(value: Int) {
     /**
      * Atomically loads the value from this [AtomicInt].
@@ -102,7 +104,7 @@ public expect class AtomicInt public constructor(value: Int) {
  */
 @SinceKotlin("2.1")
 @ExperimentalAtomicApi
-public operator fun AtomicInt.plusAssign(delta: Int): Unit { this.addAndFetch(delta) }
+public operator fun AtomicInt.plusAssign(delta: Int): Unit { val _ = this.addAndFetch(delta) }
 
 /**
  * Atomically subtracts the [given value][delta] from the current value of this [AtomicInt].
@@ -111,7 +113,7 @@ public operator fun AtomicInt.plusAssign(delta: Int): Unit { this.addAndFetch(de
  */
 @SinceKotlin("2.1")
 @ExperimentalAtomicApi
-public operator fun AtomicInt.minusAssign(delta: Int): Unit { this.addAndFetch(-delta) }
+public operator fun AtomicInt.minusAssign(delta: Int): Unit { val _ = this.addAndFetch(-delta) }
 
 /**
  * Atomically increments the current value of this [AtomicInt] by one and returns the old value.
@@ -150,6 +152,86 @@ public fun AtomicInt.decrementAndFetch(): Int = this.addAndFetch(-1)
 public fun AtomicInt.fetchAndDecrement(): Int = this.fetchAndAdd(-1)
 
 /**
+ * Atomically updates the value of this [AtomicInt] with the value obtained by calling the [transform] function on the current value.
+ *
+ * [transform] may be invoked more than once to recompute a result.
+ * That may happen, for example, when this atomic integer value was concurrently updated while [transform] was applied,
+ * or due to a spurious compare-and-set failure.
+ * The latter is implementation-specific, and it should not be relied upon.
+ *
+ * On platforms that do no support multi-threading (JS and Wasm), this operation has a trivial implementation
+ * and [transform] will be invoked exactly once.
+ *
+ * It's recommended to keep [transform] fast and free of side effects.
+ *
+ * @sample samples.concurrent.atomics.AtomicInt.update
+ */
+@Suppress("EXPECTED_DECLARATION_WITH_BODY", "WRONG_INVOCATION_KIND")
+@SinceKotlin("2.2")
+@ExperimentalAtomicApi
+@InlineOnly
+public expect inline fun AtomicInt.update(transform: (Int) -> Int): Unit {
+    contract {
+        callsInPlace(transform, InvocationKind.AT_LEAST_ONCE)
+    }
+    error("Unreachable")
+}
+
+/**
+ * Atomically updates the value of this [AtomicInt] with the value obtained by calling the [transform] function on the current value
+ * and returns the value replaced by the updated one.
+ *
+ * [transform] may be invoked more than once to recompute a result.
+ * That may happen, for example, when this atomic integer value was concurrently updated while [transform] was applied,
+ * or due to a spurious compare-and-set failure.
+ * The latter is implementation-specific, and it should not be relied upon.
+ *
+ * On platforms that do no support multi-threading (JS and Wasm), this operation has a trivial implementation
+ * and [transform] will be invoked exactly once.
+ *
+ * It's recommended to keep [transform] fast and free of side effects.
+ *
+ * @sample samples.concurrent.atomics.AtomicInt.fetchAndUpdate
+ */
+@Suppress("EXPECTED_DECLARATION_WITH_BODY", "WRONG_INVOCATION_KIND")
+@SinceKotlin("2.2")
+@ExperimentalAtomicApi
+@InlineOnly
+public expect inline fun AtomicInt.fetchAndUpdate(transform: (Int) -> Int): Int {
+    contract {
+        callsInPlace(transform, InvocationKind.AT_LEAST_ONCE)
+    }
+    error("Unreachable")
+}
+
+/**
+ * Atomically updates the value of this [AtomicInt] with the value obtained by calling the [transform] function on the current value
+ * and returns the new value.
+ *
+ * [transform] may be invoked more than once to recompute a result.
+ * That may happen, for example, when this atomic integer value was concurrently updated while [transform] was applied,
+ * or due to a spurious compare-and-set failure.
+ * The latter is implementation-specific, and it should not be relied upon.
+ *
+ * On platforms that do no support multi-threading (JS and Wasm), this operation has a trivial implementation
+ * and [transform] will be invoked exactly once.
+ *
+ * It's recommended to keep [transform] fast and free of side effects.
+ *
+ * @sample samples.concurrent.atomics.AtomicInt.updateAndFetch
+ */
+@Suppress("EXPECTED_DECLARATION_WITH_BODY", "WRONG_INVOCATION_KIND")
+@SinceKotlin("2.2")
+@ExperimentalAtomicApi
+@InlineOnly
+public expect inline fun AtomicInt.updateAndFetch(transform: (Int) -> Int): Int {
+    contract {
+        callsInPlace(transform, InvocationKind.AT_LEAST_ONCE)
+    }
+    error("Unreachable")
+}
+
+/**
  * A [Long] value that may be updated atomically.
  *
  * Platform-specific implementation details:
@@ -157,13 +239,15 @@ public fun AtomicInt.fetchAndDecrement(): Int = this.fetchAndAdd(-1)
  * When targeting the Native backend, [AtomicLong] stores a volatile [Long] variable and atomically updates it.
  * For additional details about atomicity guarantees for reads and writes see [kotlin.concurrent.Volatile].
  *
- * When targeting the JVM, instances of [AtomicLong] are represented by [java.util.concurrent.atomic.AtomicLong].
+ * When targeting the JVM, instances of [AtomicLong] are represented by
+ * [java.util.concurrent.atomic.AtomicLong](https://docs.oracle.com/javase/8/docs/api/java/util/concurrent/atomic/AtomicLong.html).
  * For details about guarantees of volatile accesses and updates of atomics refer to The Java Language Specification (17.4 Memory Model).
  *
  * For JS and Wasm [AtomicLong] is implemented trivially and is not thread-safe since these platforms do not support multi-threading.
+ *
+ * @constructor Creates a new [AtomicLong] initialized with the specified value.
  */
 @SinceKotlin("2.1")
-@ActualizeByJvmBuiltinProvider
 @ExperimentalAtomicApi
 public expect class AtomicLong public constructor(value: Long) {
     /**
@@ -239,7 +323,7 @@ public expect class AtomicLong public constructor(value: Long) {
  */
 @SinceKotlin("2.1")
 @ExperimentalAtomicApi
-public operator fun AtomicLong.plusAssign(delta: Long): Unit { this.addAndFetch(delta) }
+public operator fun AtomicLong.plusAssign(delta: Long): Unit { val _ = this.addAndFetch(delta) }
 
 /**
  * Atomically subtracts the [given value][delta] from the current value of this [AtomicLong].
@@ -248,7 +332,7 @@ public operator fun AtomicLong.plusAssign(delta: Long): Unit { this.addAndFetch(
  */
 @SinceKotlin("2.1")
 @ExperimentalAtomicApi
-public operator fun AtomicLong.minusAssign(delta: Long): Unit { this.addAndFetch(-delta) }
+public operator fun AtomicLong.minusAssign(delta: Long): Unit { val _ = this.addAndFetch(-delta) }
 
 /**
  * Atomically increments the current value of this [AtomicLong] by one and returns the old value.
@@ -287,6 +371,85 @@ public fun AtomicLong.decrementAndFetch(): Long = this.addAndFetch(-1)
 public fun AtomicLong.fetchAndDecrement(): Long = this.fetchAndAdd(-1)
 
 /**
+ * Atomically updates the value of this [AtomicLong] with the value obtained by calling the [transform] function on the current value.
+ *
+ * [transform] may be invoked more than once to recompute a result.
+ * That may happen, for example, when this atomic long value was concurrently updated while [transform] was applied,
+ * or due to a spurious compare-and-set failure.
+ * The latter is implementation-specific, and it should not be relied upon.
+ *
+ * On platforms that do no support multi-threading (JS and Wasm), this operation has a trivial implementation
+ * and [transform] will be invoked exactly once.
+ *
+ * It's recommended to keep [transform] fast and free of side effects.
+ *
+ * @sample samples.concurrent.atomics.AtomicLong.update
+ */
+@Suppress("EXPECTED_DECLARATION_WITH_BODY", "WRONG_INVOCATION_KIND")
+@SinceKotlin("2.2")
+@ExperimentalAtomicApi
+@InlineOnly
+public expect inline fun AtomicLong.update(transform: (Long) -> Long): Unit {
+    contract {
+        callsInPlace(transform, InvocationKind.AT_LEAST_ONCE)
+    }
+    error("Unreachable")
+}
+
+/**
+ * Atomically updates the value of this [AtomicLong] with the value obtained by calling the [transform] function on the current value
+ * and returns the value replaced by the updated one.
+ *
+ * [transform] may be invoked more than once to recompute a result.
+ * That may happen, for example, when this atomic long value was concurrently updated while [transform] was applied,
+ * or due to a spurious compare-and-set failure.
+ * The latter is implementation-specific, and it should not be relied upon.
+ *
+ * On platforms that do no support multi-threading (JS and Wasm), this operation has a trivial implementation
+ * and [transform] will be invoked exactly once.
+ *
+ * It's recommended to keep [transform] fast and free of side effects.
+ *
+ * @sample samples.concurrent.atomics.AtomicLong.fetchAndUpdate
+ */
+@Suppress("EXPECTED_DECLARATION_WITH_BODY", "WRONG_INVOCATION_KIND")
+@SinceKotlin("2.2")
+@ExperimentalAtomicApi
+@InlineOnly
+public expect inline fun AtomicLong.fetchAndUpdate(transform: (Long) -> Long): Long {
+    contract {
+        callsInPlace(transform, InvocationKind.AT_LEAST_ONCE)
+    }
+    error("Unreachable")
+}
+
+/**
+ * Atomically updates the value of this [AtomicLong] with the value obtained by calling the [transform] function on the current value
+ * and returns the new value.
+ *
+ * That may happen, for example, when this atomic long value was concurrently updated while [transform] was applied,
+ * or due to a spurious compare-and-set failure.
+ * The latter is implementation-specific, and it should not be relied upon.
+ *
+ * On platforms that do no support multi-threading (JS and Wasm), this operation has a trivial implementation
+ * and [transform] will be invoked exactly once.
+ *
+ * It's recommended to keep [transform] fast and free of side effects.
+ *
+ * @sample samples.concurrent.atomics.AtomicLong.updateAndFetch
+ */
+@Suppress("EXPECTED_DECLARATION_WITH_BODY", "WRONG_INVOCATION_KIND")
+@SinceKotlin("2.2")
+@ExperimentalAtomicApi
+@InlineOnly
+public expect inline fun AtomicLong.updateAndFetch(transform: (Long) -> Long): Long {
+    contract {
+        callsInPlace(transform, InvocationKind.AT_LEAST_ONCE)
+    }
+    error("Unreachable")
+}
+
+/**
  * A [Boolean] value that may be updated atomically.
  *
  * Platform-specific implementation details:
@@ -294,14 +457,17 @@ public fun AtomicLong.fetchAndDecrement(): Long = this.fetchAndAdd(-1)
  * When targeting the Native backend, [AtomicBoolean] stores a volatile [Boolean] variable and atomically updates it.
  * For additional details about atomicity guarantees for reads and writes see [kotlin.concurrent.Volatile].
  *
- * When targeting the JVM, instances of [AtomicBoolean] are represented by [java.util.concurrent.atomic.AtomicInteger].
+ * When targeting the JVM, instances of [AtomicBoolean] are represented by
+ * [java.util.concurrent.atomic.AtomicBoolean](https://docs.oracle.com/javase/8/docs/api/java/util/concurrent/atomic/AtomicBoolean.html).
  * For details about guarantees of volatile accesses and updates of atomics refer to The Java Language Specification (17.4 Memory Model).
  *
  * For JS and Wasm [AtomicBoolean] is implemented trivially and is not thread-safe since these platforms do not support multi-threading.
+ *
+ * @constructor Creates a new [AtomicBoolean] initialized with the specified value.
+ *
  */
 @SinceKotlin("2.1")
 @ExperimentalAtomicApi
-@ActualizeByJvmBuiltinProvider
 public expect class AtomicBoolean public constructor(value: Boolean) {
     /**
      * Atomically loads the value from this [AtomicBoolean].
@@ -361,14 +527,16 @@ public expect class AtomicBoolean public constructor(value: Boolean) {
  * When targeting the Native backend, [AtomicReference] stores a volatile variable of type [T] and atomically updates it.
  * For additional details about atomicity guarantees for reads and writes see [kotlin.concurrent.Volatile].
  *
- * When targeting the JVM, instances of [AtomicReference] are represented by [java.util.concurrent.atomic.AtomicReference].
+ * When targeting the JVM, instances of [AtomicReference] are represented by
+ * [java.util.concurrent.atomic.AtomicReference](https://docs.oracle.com/javase/8/docs/api/java/util/concurrent/atomic/AtomicReference.html).
  * For details about guarantees of volatile accesses and updates of atomics refer to The Java Language Specification (17.4 Memory Model).
  *
  * For JS and Wasm [AtomicReference] is implemented trivially and is not thread-safe since these platforms do not support multi-threading.
+ *
+ * @constructor Creates a new [AtomicReference] initialized with the specified value.
  */
 @SinceKotlin("2.1")
 @ExperimentalAtomicApi
-@ActualizeByJvmBuiltinProvider
 public expect class AtomicReference<T> public constructor(value: T) {
     /**
      * Atomically loads the value from this [AtomicReference].
@@ -420,4 +588,82 @@ public expect class AtomicReference<T> public constructor(value: T) {
      * This operation does not provide any atomicity guarantees.
      */
     public override fun toString(): String
+}
+
+/**
+ * Atomically updates the value of this [AtomicReference] with the value obtained by calling the [transform] function on the current value.
+ *
+ * [transform] may be invoked more than once to recompute a result.
+ * That may happen, for example, when this atomic reference was concurrently updated while [transform] was applied,
+ * or due to a spurious compare-and-set failure.
+ * The latter is implementation-specific, and it should not be relied upon.
+ *
+ * On platforms that do no support multi-threading (JS and Wasm), this operation has a trivial implementation
+ * and [transform] will be invoked exactly once.
+ *
+ * @sample samples.concurrent.atomics.AtomicReference.update
+ */
+@Suppress("EXPECTED_DECLARATION_WITH_BODY", "WRONG_INVOCATION_KIND")
+@SinceKotlin("2.2")
+@ExperimentalAtomicApi
+@InlineOnly
+public expect inline fun <T> AtomicReference<T>.update(transform: (T) -> T): Unit {
+    contract {
+        callsInPlace(transform, InvocationKind.AT_LEAST_ONCE)
+    }
+    error("Unreachable")
+}
+
+/**
+ * Atomically updates the value of this [AtomicReference] with the value obtained by calling the [transform] function on the current value
+ * and returns the value replaced by the updated one.
+ *
+ * [transform] may be invoked more than once to recompute a result.
+ * That may happen, for example, when this atomic reference was concurrently updated while [transform] was applied,
+ * or due to a spurious compare-and-set failure.
+ * The latter is implementation-specific, and it should not be relied upon.
+ *
+ * On platforms that do no support multi-threading (JS and Wasm), this operation has a trivial implementation
+ * and [transform] will be invoked exactly once.
+ *
+ * It's recommended to keep [transform] fast and free of side effects.
+ *
+ * @sample samples.concurrent.atomics.AtomicReference.fetchAndUpdate
+ */
+@Suppress("EXPECTED_DECLARATION_WITH_BODY", "WRONG_INVOCATION_KIND")
+@SinceKotlin("2.2")
+@ExperimentalAtomicApi
+@InlineOnly
+public expect inline fun <T> AtomicReference<T>.fetchAndUpdate(transform: (T) -> T): T {
+    contract {
+        callsInPlace(transform, InvocationKind.AT_LEAST_ONCE)
+    }
+    error("Unreachable")
+}
+
+/**
+ * Atomically updates the value of this [AtomicReference] with the value obtained by calling the [transform] function on the current value
+ * and returns the new value.
+ *
+ * [transform] may be invoked more than once to recompute a result.
+ * That may happen, for example, when this atomic reference was concurrently updated while [transform] was applied,
+ * or due to a spurious compare-and-set failure.
+ * The latter is implementation-specific, and it should not be relied upon.
+ *
+ * On platforms that do no support multi-threading (JS and Wasm), this operation has a trivial implementation
+ * and [transform] will be invoked exactly once.
+ *
+ * It's recommended to keep [transform] fast and free of side effects.
+ *
+ * @sample samples.concurrent.atomics.AtomicReference.updateAndFetch
+ */
+@Suppress("EXPECTED_DECLARATION_WITH_BODY", "WRONG_INVOCATION_KIND")
+@SinceKotlin("2.2")
+@ExperimentalAtomicApi
+@InlineOnly
+public expect inline fun <T> AtomicReference<T>.updateAndFetch(transform: (T) -> T): T {
+    contract {
+        callsInPlace(transform, InvocationKind.AT_LEAST_ONCE)
+    }
+    error("Unreachable")
 }

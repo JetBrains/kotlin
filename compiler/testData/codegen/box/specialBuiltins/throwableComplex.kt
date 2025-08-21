@@ -1,8 +1,3 @@
-
-// Super calls to Throwable properties are not supported
-// IGNORE_BACKEND: JS_IR
-// IGNORE_BACKEND: JS_IR_ES6
-
 open class Base(message: String? = null, cause: Throwable? = null) : Throwable(message, cause)
 
 open class Base2(message: String? = null, cause: Throwable? = null): Base(message, cause)

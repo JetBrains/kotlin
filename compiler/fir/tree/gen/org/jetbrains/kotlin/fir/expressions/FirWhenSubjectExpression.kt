@@ -10,20 +10,30 @@ package org.jetbrains.kotlin.fir.expressions
 
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.FirExpressionRef
+import org.jetbrains.kotlin.fir.FirImplementationDetail
+import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
+import org.jetbrains.kotlin.fir.references.FirNamedReference
+import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.fir.types.FirTypeProjection
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
 /**
  * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTree.whenSubjectExpression]
  */
-abstract class FirWhenSubjectExpression : FirExpression() {
-    abstract override val source: KtSourceElement?
+abstract class FirWhenSubjectExpression : FirPropertyAccessExpression() {
     @UnresolvedExpressionTypeAccess
     abstract override val coneTypeOrNull: ConeKotlinType?
     abstract override val annotations: List<FirAnnotation>
-    abstract val whenRef: FirExpressionRef<FirWhenExpression>
+    abstract override val contextArguments: List<FirExpression>
+    abstract override val typeArguments: List<FirTypeProjection>
+    abstract override val explicitReceiver: FirExpression?
+    abstract override val dispatchReceiver: FirExpression?
+    abstract override val extensionReceiver: FirExpression?
+    abstract override val source: KtSourceElement?
+    abstract override val nonFatalDiagnostics: List<ConeDiagnostic>
+    abstract override val calleeReference: FirNamedReference
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
         visitor.visitWhenSubjectExpression(this, data)
@@ -36,5 +46,30 @@ abstract class FirWhenSubjectExpression : FirExpression() {
 
     abstract override fun replaceAnnotations(newAnnotations: List<FirAnnotation>)
 
+    abstract override fun replaceContextArguments(newContextArguments: List<FirExpression>)
+
+    abstract override fun replaceTypeArguments(newTypeArguments: List<FirTypeProjection>)
+
+    abstract override fun replaceExplicitReceiver(newExplicitReceiver: FirExpression?)
+
+    abstract override fun replaceDispatchReceiver(newDispatchReceiver: FirExpression?)
+
+    abstract override fun replaceExtensionReceiver(newExtensionReceiver: FirExpression?)
+
+    @FirImplementationDetail
+    abstract override fun replaceSource(newSource: KtSourceElement?)
+
+    abstract override fun replaceNonFatalDiagnostics(newNonFatalDiagnostics: List<ConeDiagnostic>)
+
+    abstract override fun replaceCalleeReference(newCalleeReference: FirNamedReference)
+
+    abstract override fun replaceCalleeReference(newCalleeReference: FirReference)
+
     abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirWhenSubjectExpression
+
+    abstract override fun <D> transformTypeArguments(transformer: FirTransformer<D>, data: D): FirWhenSubjectExpression
+
+    abstract override fun <D> transformExplicitReceiver(transformer: FirTransformer<D>, data: D): FirWhenSubjectExpression
+
+    abstract override fun <D> transformCalleeReference(transformer: FirTransformer<D>, data: D): FirWhenSubjectExpression
 }

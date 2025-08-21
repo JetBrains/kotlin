@@ -115,3 +115,7 @@ public class J2 {
 private class Hidden {
     <!REDUNDANT_VISIBILITY_MODIFIER!>public<!> fun f(): Int = 5
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, assignment, classDeclaration, functionDeclaration, getter, inline,
+integerLiteral, interfaceDeclaration, localClass, multiplicativeExpression, propertyDeclaration, secondaryConstructor,
+setter */

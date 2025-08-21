@@ -14,7 +14,7 @@ fun box(stepId: Int, isWasm: Boolean): String {
         10 -> "_class Function9_"
         11 -> "__"
         12 -> if (!isWasm) "class Function9_" else "class getString\$lambda_"
-        13 -> if (!isWasm) "true_" else "false_"
+        13 -> "true_"
         14 -> "false_"
         // TODO: I would expect, that it should be SuspendFunction5_,
         //  but it seems a feature of Kotlin/JS runtime.

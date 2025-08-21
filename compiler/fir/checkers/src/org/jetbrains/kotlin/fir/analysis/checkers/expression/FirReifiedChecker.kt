@@ -9,26 +9,29 @@ import org.jetbrains.kotlin.KtRealSourceElementKind
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
-import org.jetbrains.kotlin.diagnostics.chooseFactory
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
+import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
+import org.jetbrains.kotlin.fir.expressions.allReceiverExpressions
+import org.jetbrains.kotlin.fir.expressions.arguments
+import org.jetbrains.kotlin.fir.references.FirReference
+import org.jetbrains.kotlin.fir.references.FirResolvedErrorReference
 import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
-import org.jetbrains.kotlin.fir.resolve.toClassSymbol
-import org.jetbrains.kotlin.fir.symbols.SymbolInternals
+import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.fir.visibilityChecker
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.text
 
 object FirReifiedChecker : FirQualifiedAccessExpressionChecker(MppCheckerKind.Common) {
-    override fun check(expression: FirQualifiedAccessExpression, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(expression: FirQualifiedAccessExpression) {
         val calleeReference = expression.calleeReference
         val typeArguments = expression.typeArguments
         val callableSymbol = calleeReference.toResolvedCallableSymbol()
@@ -42,11 +45,12 @@ object FirReifiedChecker : FirQualifiedAccessExpressionChecker(MppCheckerKind.Co
             val typeArgumentProjection = typeArguments.elementAt(index)
             val source = typeArgumentProjection.source ?: calleeReference.source ?: continue
 
-            val typeArgument = typeArgumentProjection.toConeTypeProjection().type?.fullyExpandedType(context.session) ?: continue
+            val typeArgument = typeArgumentProjection.toConeTypeProjection().type?.fullyExpandedType() ?: continue
             val typeParameter = typeParameters[index]
 
             val isExplicit = typeArgumentProjection.source?.kind == KtRealSourceElementKind
             val isPlaceHolder = isExplicit && typeArgumentProjection.source.text == "_"
+            val isInferred = !isExplicit || isPlaceHolder
 
             if (typeParameter.isReifiedTypeParameterOrFromKotlinArray()) {
                 checkArgumentAndReport(
@@ -56,17 +60,34 @@ object FirReifiedChecker : FirQualifiedAccessExpressionChecker(MppCheckerKind.Co
                     isExplicit = isExplicit,
                     isArray = false,
                     isPlaceHolder = isPlaceHolder,
-                    context,
-                    reporter,
                     fullyExpandedType = typeArgument,
                 )
             } else if (
-                varargTypeParameter == typeParameter && isTypeArgumentVisibilityBroken(context, typeArgument) && (!isExplicit || isPlaceHolder)
+                varargTypeParameter == typeParameter && typeArgument.isTypeVisibilityBroken(checkTypeArguments = false) && isInferred
             ) {
                 reporter.reportOn(
-                    source, FirErrors.INFERRED_INVISIBLE_VARARG_TYPE_ARGUMENT, typeParameter, typeArgument, varargParameter, context
+                    source, FirErrors.INFERRED_INVISIBLE_VARARG_TYPE_ARGUMENT, typeParameter, typeArgument, varargParameter
                 )
             }
+        }
+        validateReturnTypeVisibility(expression, calleeReference, callableSymbol)
+    }
+
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    private fun validateReturnTypeVisibility(
+        expression: FirQualifiedAccessExpression,
+        calleeReference: FirReference,
+        callableSymbol: FirCallableSymbol<*>,
+    ) {
+        val returnType = expression.resolvedType
+        if (calleeReference is FirResolvedErrorReference) return
+        if (expression.typeArguments.any { it is FirTypeProjectionWithVariance && it.typeRef is FirErrorTypeRef }) return
+        if (expression !is FirFunctionCall) return
+        val hasNestedVisibilityErrorsInParameters = (expression.allReceiverExpressions + expression.arguments)
+            .any { it.resolvedType is ConeErrorType || it.resolvedType.isTypeVisibilityBroken(checkTypeArguments = true) }
+        if (hasNestedVisibilityErrorsInParameters) return
+        if (returnType.isTypeVisibilityBroken(checkTypeArguments = true)) {
+            reporter.reportOn(expression.source, FirErrors.INFERRED_INVISIBLE_RETURN_TYPE, callableSymbol, returnType)
         }
     }
 
@@ -76,12 +97,13 @@ object FirReifiedChecker : FirQualifiedAccessExpressionChecker(MppCheckerKind.Co
                 containingDeclaration is FirRegularClassSymbol && containingDeclaration.classId == StandardClassIds.Array
     }
 
-    private fun ConeKotlinType.cannotBeReified(languageVersionSettings: LanguageVersionSettings) = when (this) {
+    private fun ConeKotlinType.cannotBeReified(languageVersionSettings: LanguageVersionSettings): Boolean = when (this) {
         is ConeCapturedType -> true
         is ConeDynamicType -> true
-        else -> isUnsupportedNothingAsReifiedOrInArray(languageVersionSettings)
+        else -> unsupportedKindOfNothingAsReifiedOrInArray(languageVersionSettings) != null
     }
 
+    context(context: CheckerContext, reporter: DiagnosticReporter)
     private fun checkArgumentAndReport(
         typeArgument: ConeKotlinType,
         typeParameter: FirTypeParameterSymbol,
@@ -89,9 +111,7 @@ object FirReifiedChecker : FirQualifiedAccessExpressionChecker(MppCheckerKind.Co
         isExplicit: Boolean,
         isArray: Boolean,
         isPlaceHolder: Boolean,
-        context: CheckerContext,
-        reporter: DiagnosticReporter,
-        fullyExpandedType: ConeKotlinType = typeArgument.fullyExpandedType(context.session),
+        fullyExpandedType: ConeKotlinType = typeArgument.fullyExpandedType(),
     ) {
         if (fullyExpandedType.classId == StandardClassIds.Array) {
             // Type aliases can transform type arguments arbitrarily (drop, nest, etc...).
@@ -104,14 +124,12 @@ object FirReifiedChecker : FirQualifiedAccessExpressionChecker(MppCheckerKind.Co
                     isExplicit,
                     isArray = true,
                     isPlaceHolder = isPlaceHolder,
-                    context,
-                    reporter,
                 )
             }
             return
         }
-        if (isTypeArgumentVisibilityBroken(context, fullyExpandedType) && (!isExplicit || isPlaceHolder)) {
-            reporter.reportOn(source, FirErrors.INFERRED_INVISIBLE_REIFIED_TYPE_ARGUMENT, typeParameter, fullyExpandedType, context)
+        if (fullyExpandedType.isTypeVisibilityBroken(checkTypeArguments = false) && (!isExplicit || isPlaceHolder)) {
+            reporter.reportOn(source, FirErrors.INFERRED_INVISIBLE_REIFIED_TYPE_ARGUMENT, typeParameter, fullyExpandedType)
         }
 
         if (typeArgument is ConeTypeParameterType) {
@@ -119,30 +137,18 @@ object FirReifiedChecker : FirQualifiedAccessExpressionChecker(MppCheckerKind.Co
             if (!symbol.isReified) {
                 reporter.reportOn(
                     source,
-                    if (isArray) FirErrors.TYPE_PARAMETER_AS_REIFIED_ARRAY.chooseFactory(context) else FirErrors.TYPE_PARAMETER_AS_REIFIED,
+                    if (isArray) FirErrors.TYPE_PARAMETER_AS_REIFIED_ARRAY_ERROR else FirErrors.TYPE_PARAMETER_AS_REIFIED,
                     symbol,
-                    context
                 )
             }
         } else if (typeArgument is ConeDefinitelyNotNullType && isExplicit) {
             // We sometimes infer type arguments to DNN types, which seems to be ok. Only report explicit DNN types written by user.
-            reporter.reportOn(source, FirErrors.DEFINITELY_NON_NULLABLE_AS_REIFIED, context)
+            reporter.reportOn(source, FirErrors.DEFINITELY_NON_NULLABLE_AS_REIFIED)
         } else if (typeArgument.cannotBeReified(context.languageVersionSettings)) {
-            reporter.reportOn(source, FirErrors.REIFIED_TYPE_FORBIDDEN_SUBSTITUTION, typeArgument, context)
+            reporter.reportOn(source, FirErrors.REIFIED_TYPE_FORBIDDEN_SUBSTITUTION, typeArgument)
         } else if (typeArgument is ConeIntersectionType) {
-            reporter.reportOn(source, FirErrors.TYPE_INTERSECTION_AS_REIFIED, typeParameter, typeArgument.intersectedTypes, context)
+            reporter.reportOn(source, FirErrors.TYPE_INTERSECTION_AS_REIFIED, typeParameter, typeArgument.intersectedTypes)
         }
     }
 
-    @OptIn(SymbolInternals::class)
-    private fun isTypeArgumentVisibilityBroken(
-        context: CheckerContext,
-        fullyExpandedType: ConeKotlinType,
-    ): Boolean {
-        val visibilityChecker = context.session.visibilityChecker
-        val classSymbol = fullyExpandedType.toClassSymbol(context.session)
-        val containingFile = context.containingFile
-        if (classSymbol == null || containingFile == null) return false
-        return !visibilityChecker.isClassLikeVisible(classSymbol.fir, context.session, containingFile, context.containingDeclarations)
-    }
 }

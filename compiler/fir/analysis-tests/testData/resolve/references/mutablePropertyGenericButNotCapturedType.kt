@@ -23,3 +23,6 @@ fun <S: CharSequence> testGenericTypeWithBounds() {
     val mutableProperty = Klass<S>::mutableProperty
     mutableProperty.set(Klass<S>(), Generic<S>())
 }
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, functionDeclaration, localProperty, nullableType,
+propertyDeclaration, thisExpression, typeConstraint, typeParameter */

@@ -1,0 +1,14 @@
+Classifier names:
+
+Callable names:
+  allAnnotations
+  both
+  custom
+  memberFunctionWithReceiver
+  memberFunctionWithReceiverWithNullableReceiver
+  memberPropertyWithReceiver
+  variable
+  withCustomGetter
+  withCustomSetter
+  withDefaultGetter
+  withDefaultSetter

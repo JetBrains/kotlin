@@ -40,3 +40,6 @@ private fun <K, V : Any, M> containsNullable(
     { option, key -> <!DEBUG_INFO_EXPRESSION_TYPE("CreatorNullable<kotlin.collections.Map<out K, V?>, V?>")!>option.withParameterObjectNullable(createGetParameterObject(plant, key))<!> },
     assertionCreator
 )
+
+/* GENERATED_FIR_TAGS: asExpression, classDeclaration, functionDeclaration, functionalType, interfaceDeclaration,
+lambdaLiteral, nullableType, out, outProjection, typeConstraint, typeParameter, typeWithExtension */

@@ -16,12 +16,14 @@ import org.jetbrains.kotlin.fir.analysis.checkers.declaration.PlatformConflictDe
 import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors
 import org.jetbrains.kotlin.fir.backend.native.interop.getObjCMethodInfoFromOverriddenFunctions
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.isEnabled
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.name.NativeStandardInteropNames.Annotations.objCSignatureOverrideClassId
 import org.jetbrains.kotlin.utils.SmartSet
 
-private fun FirFunctionSymbol<*>.isInheritedFromObjc(context: CheckerContext): Boolean {
+context(context: CheckerContext)
+private fun FirFunctionSymbol<*>.isInheritedFromObjc(): Boolean {
     return getObjCMethodInfoFromOverriddenFunctions(context.session, context.scopeSession) != null
 }
 
@@ -37,14 +39,17 @@ private fun FirFunctionSymbol<*>.hasDifferentParameterNames(other: FirFunctionSy
 }
 
 object NativeConflictDeclarationsDiagnosticDispatcher : PlatformConflictDeclarationsDiagnosticDispatcher {
+    context(context: CheckerContext)
     override fun getDiagnostic(
         conflictingDeclaration: FirBasedSymbol<*>,
-        symbols: SmartSet<FirBasedSymbol<*>>,
-        context: CheckerContext
+        symbols: SmartSet<FirBasedSymbol<*>>
     ): KtDiagnosticFactory1<Collection<FirBasedSymbol<*>>>? {
-        if (context.languageVersionSettings.supportsFeature(LanguageFeature.ObjCSignatureOverrideAnnotation)) {
+        if (LanguageFeature.ObjCSignatureOverrideAnnotation.isEnabled()) {
             if (conflictingDeclaration is FirFunctionSymbol<*> && symbols.all { it is FirFunctionSymbol<*> }) {
-                if (conflictingDeclaration.isInheritedFromObjc(context) && symbols.all { (it as FirFunctionSymbol<*>).isInheritedFromObjc(context) }) {
+                if (conflictingDeclaration.isInheritedFromObjc() && symbols.all {
+                        (it as FirFunctionSymbol<*>).isInheritedFromObjc(
+                        )
+                    }) {
                     if (symbols.all { (it as FirFunctionSymbol<*>).hasDifferentParameterNames(conflictingDeclaration) }) {
                         if (conflictingDeclaration.hasAnnotation(objCSignatureOverrideClassId, context.session)) {
                             return null
@@ -55,19 +60,19 @@ object NativeConflictDeclarationsDiagnosticDispatcher : PlatformConflictDeclarat
                 }
             }
         }
-        return PlatformConflictDeclarationsDiagnosticDispatcher.DEFAULT.getDiagnostic(conflictingDeclaration, symbols, context)
+        return PlatformConflictDeclarationsDiagnosticDispatcher.DEFAULT.getDiagnostic(conflictingDeclaration, symbols)
     }
 }
 
 object FirNativeObjcOverrideApplicabilityChecker : FirFunctionChecker(MppCheckerKind.Platform) {
-    override fun check(
-        declaration: FirFunction,
-        context: CheckerContext,
-        reporter: DiagnosticReporter,
-    ) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirFunction) {
         if (declaration.hasAnnotation(objCSignatureOverrideClassId, context.session)) {
-            if (!declaration.symbol.isInheritedFromObjc(context)) {
-                reporter.reportOn(declaration.getAnnotationByClassId(objCSignatureOverrideClassId, context.session)?.source, FirNativeErrors.INAPPLICABLE_OBJC_OVERRIDE, context)
+            if (!declaration.symbol.isInheritedFromObjc()) {
+                reporter.reportOn(
+                    declaration.getAnnotationByClassId(objCSignatureOverrideClassId, context.session)?.source,
+                    FirNativeErrors.INAPPLICABLE_OBJC_OVERRIDE
+                )
             }
         }
     }

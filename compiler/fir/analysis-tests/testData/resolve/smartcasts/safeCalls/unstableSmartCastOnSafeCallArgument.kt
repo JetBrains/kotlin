@@ -20,3 +20,6 @@ fun foo(foo: Foo) {
         takesNonNull(<!ARGUMENT_TYPE_MISMATCH!>foo.bar?.buz<!>) // NOT OK
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, equalityExpression, functionDeclaration, ifExpression, nullableType,
+propertyDeclaration, safeCall, smartcast */

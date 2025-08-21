@@ -12,3 +12,6 @@ val msn: MyString? = null
 
 val msc: MyStringContainer = Container(ms)
 val msc1 = MyStringContainer(null)
+
+/* GENERATED_FIR_TAGS: classDeclaration, nullableType, primaryConstructor, propertyDeclaration, stringLiteral,
+typeAliasDeclaration, typeParameter */

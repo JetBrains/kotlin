@@ -10,3 +10,4 @@ if (b) {
 
 val y = <!UNRESOLVED_REFERENCE!>x<!>
 
+/* GENERATED_FIR_TAGS: ifExpression, init, integerLiteral, localProperty, propertyDeclaration */

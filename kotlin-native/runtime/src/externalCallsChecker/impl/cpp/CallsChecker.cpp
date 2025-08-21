@@ -19,8 +19,9 @@
 using namespace kotlin;
 
 // this values will be substituted by compiler
-extern "C" const void** Kotlin_callsCheckerKnownFunctions = nullptr;
-extern "C" int Kotlin_callsCheckerKnownFunctionsCount = 0;
+extern "C" const void*** Kotlin_callsCheckerKnownFunctions;
+extern "C" const int** Kotlin_callsCheckerKnownFunctionsCounts;
+extern "C" const int Kotlin_callsCheckerKnownFunctionsCountsCount;
 
 extern "C" const char* Kotlin_callsCheckerGoodFunctionNames[] = {
         "\x01_mprotect",
@@ -58,6 +59,7 @@ extern "C" const char* Kotlin_callsCheckerGoodFunctionNames[] = {
         "_Znwm", // new
         "_Znwy", // operator new(unsigned long long)
         "_ZdlPv", // delete
+        "_ZdlPvm", // operator delete(void*, unsigned long)
         "_ZNSt3__16thread20hardware_concurrencyEv", // std::__1::thread::hardware_concurrency()
         "_ZNSt6thread20hardware_concurrencyEv", // std::thread::hardware_concurrency()
         "__mingw_vsnprintf",
@@ -197,6 +199,8 @@ extern "C" const char* Kotlin_callsCheckerGoodFunctionNames[] = {
         "CFStringCreateCopy",
         "CFStringGetCharacters",
         "CFStringGetLength",
+        "CFStringGetFastestEncoding",
+        "_Block_copy",
         "_Block_object_assign",
         "class_getName",
         "class_getSuperclass",
@@ -234,7 +238,9 @@ extern "C" const char* Kotlin_callsCheckerGoodFunctionNames[] = {
         "llvm.cttz.*",
         "llvm.dbg.*",
         "llvm.eh.typeid.for",
+        "llvm.eh.typeid.for.p0",
         "llvm.exp.*",
+        "llvm.exp10.*",
         "llvm.experimental.noalias.scope.decl",
         "llvm.fabs.*",
         "llvm.fabs.*",
@@ -251,6 +257,7 @@ extern "C" const char* Kotlin_callsCheckerGoodFunctionNames[] = {
         "llvm.objc.autorelease",
         "llvm.objc.autoreleaseReturnValue",
         "llvm.objc.retain",
+        "llvm.vector.*",
 
         // Not used in Runnable state, but this would be ok.
         // If we don't include it to the good functions list, the code generator will emit redundant state check at the callsite,
@@ -262,6 +269,13 @@ extern "C" const char* Kotlin_callsCheckerGoodFunctionNames[] = {
         "llvm.pow.*",
         "llvm.rint.*",
         "llvm.sin.*",
+        "llvm.sinh.*",
+        "llvm.cosh.*",
+        "llvm.asin.*",
+        "llvm.acos.*",
+        "llvm.tan.*",
+        "llvm.tanh.*",
+        "llvm.atan.*",
         "llvm.smax.*",
         "llvm.smin.*",
         "llvm.sqrt.*",
@@ -298,8 +312,10 @@ namespace {
 class KnownFunctionChecker {
 public:
     KnownFunctionChecker() {
-        for (int i = 0; i < Kotlin_callsCheckerKnownFunctionsCount; i++) {
-            known_functions_.insert(Kotlin_callsCheckerKnownFunctions[i]);
+        for (int i = 0; i < Kotlin_callsCheckerKnownFunctionsCountsCount; i++) {
+            for (int j = 0; j < *Kotlin_callsCheckerKnownFunctionsCounts[i]; j++) {
+                known_functions_.insert(Kotlin_callsCheckerKnownFunctions[i][j]);
+            }
         }
         std::copy(
                 std::begin(Kotlin_callsCheckerGoodFunctionNames), std::end(Kotlin_callsCheckerGoodFunctionNames),

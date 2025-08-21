@@ -23,7 +23,8 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 
 object FirOptInImportsChecker : FirFileChecker(MppCheckerKind.Common) {
-    override fun check(declaration: FirFile, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirFile) {
         declaration.imports.forEach { import ->
             if (import !is FirResolvedImport) return@forEach
             val source = import.source ?: return@forEach
@@ -32,26 +33,25 @@ object FirOptInImportsChecker : FirFileChecker(MppCheckerKind.Common) {
             val parentClassSymbol = context.session.symbolProvider.getClassLikeSymbolByClassId(resolvedParentClassId) ?: return@forEach
 
             when (parentClassSymbol) {
-                is FirRegularClassSymbol -> parentClassSymbol.checkContainingClasses(source, context, reporter)
+                is FirRegularClassSymbol -> parentClassSymbol.checkContainingClasses(source)
                 is FirTypeAliasSymbol -> {
                     val expandedClassSymbol = parentClassSymbol.fullyExpandedClass(context.session) ?: return@forEach
-                    expandedClassSymbol.checkContainingClasses(source, context, reporter)
+                    expandedClassSymbol.checkContainingClasses(source)
                 }
                 else -> return@forEach
             }
         }
     }
 
+    context(context: CheckerContext, reporter: DiagnosticReporter)
     private tailrec fun FirClassLikeSymbol<*>.checkContainingClasses(
         source: KtSourceElement,
-        context: CheckerContext,
-        reporter: DiagnosticReporter,
     ) {
         if (isExperimentalMarker(context.session)) {
-            reporter.reportOn(source, FirErrors.OPT_IN_MARKER_CAN_ONLY_BE_USED_AS_ANNOTATION_OR_ARGUMENT_IN_OPT_IN, context)
+            reporter.reportOn(source, FirErrors.OPT_IN_MARKER_CAN_ONLY_BE_USED_AS_ANNOTATION_OR_ARGUMENT_IN_OPT_IN)
         }
         val containingClassSymbol = this.getContainingClassLookupTag()?.toSymbol(context.session) ?: return
-        containingClassSymbol.checkContainingClasses(source, context, reporter)
+        containingClassSymbol.checkContainingClasses(source)
     }
 
 }

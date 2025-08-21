@@ -9,6 +9,7 @@ FILE: contextReceivers.kt
         }
     context(A, b@B)
     public final? class C : R|kotlin/Any| {
+        context(A, b@B)
         public? [ContainingClassKey=C] constructor(): R|C| {
             super<R|kotlin/Any|>()
         }

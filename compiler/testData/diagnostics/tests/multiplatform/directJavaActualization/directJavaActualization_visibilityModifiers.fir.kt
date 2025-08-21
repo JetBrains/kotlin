@@ -12,7 +12,7 @@ expect open class Foo {
 
 internal expect class Bar
 
-<!EXPECT_ACTUAL_INCOMPATIBILITY{JVM}!>expect<!> class Baz
+<!EXPECT_ACTUAL_IR_INCOMPATIBILITY{JVM}!>expect<!> class Baz
 
 public expect class Qux
 
@@ -41,3 +41,5 @@ class Baz { }
 // FILE: Qux.java
 @kotlin.annotations.jvm.KotlinActual
 public class Qux { }
+
+/* GENERATED_FIR_TAGS: classDeclaration, expect, functionDeclaration */

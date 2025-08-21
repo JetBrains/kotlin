@@ -21,3 +21,6 @@ fun <L : Any, K> messageBusFlow(
         subscribe(topic, listener())
     }
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionalType, interfaceDeclaration, lambdaLiteral, nullableType, safeCall,
+suspend, typeConstraint, typeParameter, typeWithExtension */

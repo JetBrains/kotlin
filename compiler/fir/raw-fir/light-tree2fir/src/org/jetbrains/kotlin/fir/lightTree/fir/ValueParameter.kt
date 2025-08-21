@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -34,10 +34,10 @@ import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.builder.buildAnnotationCallCopy
 import org.jetbrains.kotlin.fir.expressions.builder.buildErrorExpression
 import org.jetbrains.kotlin.fir.expressions.builder.buildPropertyAccessExpression
-import org.jetbrains.kotlin.fir.lightTree.fir.modifier.Modifier
+import org.jetbrains.kotlin.fir.lightTree.fir.modifier.ModifierList
 import org.jetbrains.kotlin.fir.references.builder.buildPropertyFromParameterResolvedNamedReference
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.FirErrorTypeRef
@@ -51,7 +51,7 @@ class ValueParameter(
     private val valueParameterSymbol: FirValueParameterSymbol,
     private val isVal: Boolean,
     private val isVar: Boolean,
-    private val modifiers: Modifier,
+    private val modifiers: ModifierList,
     private val valueParameterAnnotations: List<FirAnnotationCall>,
     val returnTypeRef: FirTypeRef,
     val source: KtSourceElement,
@@ -144,7 +144,7 @@ class ValueParameter(
             }
 
             isVar = this@ValueParameter.isVar
-            val propertySymbol = FirPropertySymbol(callableId)
+            val propertySymbol = FirRegularPropertySymbol(callableId)
             val remappedAnnotations = valueParameterAnnotations.map {
                 // We don't need error annotation calls here,
                 // it allows us to avoid double-reporting of INAPPLICABLE_ALL_TARGET_IN_MULTI_ANNOTATION
@@ -156,7 +156,6 @@ class ValueParameter(
 
             symbol = propertySymbol
             dispatchReceiverType = currentDispatchReceiver
-            isLocal = false
             status = FirDeclarationStatusImpl(modifiers.getVisibility(), modifiers.getModality(isClassOrObject = false)).apply {
                 this.isExpect = isExpect
                 isActual = modifiers.hasActual()
@@ -182,24 +181,27 @@ class ValueParameter(
             annotations += remappedAnnotations.filterConstructorPropertyRelevantAnnotations(this.isVar)
 
             getter = FirDefaultPropertyGetter(
-                defaultAccessorSource,
-                moduleData,
-                FirDeclarationOrigin.Source,
-                type.copyWithNewSourceKind(KtFakeSourceElementKind.DefaultAccessor),
-                modifiers.getVisibility(),
-                symbol,
+                source = defaultAccessorSource,
+                moduleData = moduleData,
+                origin = FirDeclarationOrigin.Source,
+                propertyTypeRef = type.copyWithNewSourceKind(KtFakeSourceElementKind.DefaultAccessor),
+                visibility = status.visibility,
+                propertySymbol = symbol,
+                modality = status.modality,
                 isInline = modifiers.hasInline(),
             ).also {
                 it.initContainingClassAttr(context)
                 it.replaceAnnotations(remappedAnnotations.filterUseSiteTarget(PROPERTY_GETTER))
             }
+
             setter = if (this.isVar) FirDefaultPropertySetter(
-                defaultAccessorSource,
-                moduleData,
-                FirDeclarationOrigin.Source,
-                type.copyWithNewSourceKind(KtFakeSourceElementKind.DefaultAccessor),
-                modifiers.getVisibility(),
-                symbol,
+                source = defaultAccessorSource,
+                moduleData = moduleData,
+                origin = FirDeclarationOrigin.Source,
+                propertyTypeRef = type.copyWithNewSourceKind(KtFakeSourceElementKind.DefaultAccessor),
+                visibility = status.visibility,
+                propertySymbol = symbol,
+                modality = status.modality,
                 parameterAnnotations = remappedAnnotations.filterUseSiteTarget(SETTER_PARAMETER),
                 isInline = modifiers.hasInline(),
             ).also {

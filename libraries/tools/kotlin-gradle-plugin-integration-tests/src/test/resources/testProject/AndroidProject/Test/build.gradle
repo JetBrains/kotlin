@@ -14,30 +14,30 @@ java {
 }
 
 android {
-    compileSdkVersion 34
-    namespace 'org.jetbrains.kotlin.gradle.test.android.test'
+    compileSdkVersion = 34
+    namespace = 'org.jetbrains.kotlin.gradle.test.android.test'
 
     defaultConfig {
-        minSdkVersion 22
-        targetSdkVersion 34
+        minSdkVersion = 22
+        targetSdkVersion = 34
 
-        testApplicationId 'org.jetbrains.kotlin.gradle.test.androidalfa'
+        testApplicationId = 'org.jetbrains.kotlin.gradle.test.androidalfa'
     }
 
     // Needed for older AGP. It can be removed when the lowest supported AGP version is 4.2.0 or newer.
     compileOptions {
-        sourceCompatibility 1.8
-        targetCompatibility 1.8
+        sourceCompatibility = 1.8
+        targetCompatibility = 1.8
     }
 
     targetProjectPath ':Android'
     flavorDimensions "myFlavor"
     productFlavors {
         flavor1 {
-            dimension "myFlavor"
+            dimension = "myFlavor"
         }
         flavor2 {
-            dimension "myFlavor"
+            dimension = "myFlavor"
         }
     }
     lintOptions.abortOnError = false

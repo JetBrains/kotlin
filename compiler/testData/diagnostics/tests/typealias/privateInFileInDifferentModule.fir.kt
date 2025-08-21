@@ -24,3 +24,5 @@ private val test2co = TA
 
 private class C
 private typealias TA = Int
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, objectDeclaration, propertyDeclaration, typeAliasDeclaration */

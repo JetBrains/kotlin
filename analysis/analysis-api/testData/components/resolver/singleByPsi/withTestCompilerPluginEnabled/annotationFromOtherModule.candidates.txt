@@ -4,6 +4,7 @@ KtNameReferenceExpression(140,151): 'materialize'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = myClass
           isSafeNavigation = false
@@ -14,6 +15,7 @@ KtNameReferenceExpression(140,151): 'materialize'
           returnType = test.MyClass
           symbol = test/MyClass.materialize(<dispatch receiver>: test.MyClass): test.MyClass
           valueParameters = []
+          contextParameters = []
           callableId = test/MyClass.materialize
       typeArgumentsMapping = {}
     isInBestCandidates = true

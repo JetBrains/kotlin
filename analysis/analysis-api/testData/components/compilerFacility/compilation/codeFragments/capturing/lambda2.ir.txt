@@ -1,13 +1,13 @@
 MODULE_FRAGMENT
   FILE fqName:<root> fileName:fragment.kt
     CLASS CLASS name:CodeFragment modality:FINAL visibility:public superTypes:[kotlin.Any]
-      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.CodeFragment
-      CONSTRUCTOR visibility:public <> () returnType:<root>.CodeFragment [primary]
+      thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.CodeFragment
+      CONSTRUCTOR visibility:public returnType:<root>.CodeFragment [primary]
         BLOCK_BODY
           DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
-      FUN name:run visibility:public modality:FINAL <> () returnType:kotlin.String
+      FUN name:run visibility:public modality:FINAL returnType:kotlin.String
         EXPRESSION_BODY
           BLOCK type=kotlin.String origin=null
             CALL 'public abstract fun invoke (): R of kotlin.Function0 [operator] declared in kotlin.Function0' type=kotlin.String origin=INVOKE
-              $this: CALL 'public final fun <get-privateClazzLambda> (): kotlin.Function0<kotlin.String> declared in <root>.Clazz' type=kotlin.Function0<kotlin.String> origin=GET_PROPERTY
-                $this: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.Clazz' type=<root>.Clazz origin=null
+              ARG <this>: CALL 'public final fun <get-privateClazzLambda> (): kotlin.Function0<kotlin.String> declared in <root>.Clazz' type=kotlin.Function0<kotlin.String> origin=GET_PROPERTY
+                ARG <this>: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.Clazz' type=<root>.Clazz origin=null

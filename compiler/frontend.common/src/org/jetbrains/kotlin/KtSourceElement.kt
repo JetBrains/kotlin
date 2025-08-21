@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -199,11 +199,27 @@ sealed class KtFakeSourceElementKind(final override val shouldSkipErrorTypeRepor
     object EnumSuperTypeRef : KtFakeSourceElementKind()
 
     /**
+     * for record classes we can have an implicit supertype ref to `Record` with a fake source.
+     */
+    object RecordSuperTypeRef : KtFakeSourceElementKind()
+
+    /**
      * `when (x) { "abc" -> 42 }` --> `when(val $subj = x) { $subj == "abc" -> 42 }`
      * where `$subj == "42"` has fake psi source which refers to "42" as inner expression
      * and `$subj` fake source refers to "42" as `KtWhenCondition`.
      */
     object WhenCondition : KtFakeSourceElementKind()
+
+    /**
+     * for additional FIR built for code fragments
+     */
+    object CodeFragment : KtFakeSourceElementKind()
+
+    /**
+     * `when { is Int -> 42 }` --> `when { $subj is Int -> 42 }`
+     * where `$subj` is unresolved because there was no subject.
+     */
+    object UnresolvedWhenConditionSubject : KtFakeSourceElementKind()
 
     /**
      * for primary constructor parameter the corresponding class property is generated
@@ -267,11 +283,19 @@ sealed class KtFakeSourceElementKind(final override val shouldSkipErrorTypeRepor
      */
     object ArrayTypeFromVarargParameter : KtFakeSourceElementKind()
 
+    sealed class DestructuringInitializer : KtFakeSourceElementKind()
+
     /**
      * `val (a,b) = x` --> `val a = x.component1(); val b = x.component2()`
      * where componentN calls will have the fake source elements refer to the corresponding KtDestructuringDeclarationEntry
      */
-    object DesugaredComponentFunctionCall : KtFakeSourceElementKind()
+    object DesugaredComponentFunctionCall : DestructuringInitializer()
+
+    /**
+     * `(val a, val bb = b) = x` --> `val a = x.a; val bb = x.b`
+     * where property accesses a and b will have the fake source elements refer to the corresponding KtDestructuringDeclarationEntry
+     */
+    object DesugaredNameBasedDestructuring : DestructuringInitializer()
 
     /**
      * when smart casts applied to the expression, it is wrapped into FirSmartCastExpression
@@ -361,6 +385,23 @@ sealed class KtFakeSourceElementKind(final override val shouldSkipErrorTypeRepor
      * While it doesn't have an explicit source, it still has a type that might be a ConeErrorType
      */
     object LambdaReceiver : KtFakeSourceElementKind()
+
+    /**
+     * Example:
+     *
+     * ```kotlin
+     * fun foo() {
+     *     val (a, b) = listOf(1, 2)
+     * }
+     * ```
+     *
+     * When constructing the FIR for a destructuring declaration, we initially create an `FirBlock`
+     * containing the properties `<destruct>`, `a`, and `b`.
+     * If the original PSI is well-formed, this block is discarded,
+     * and the properties are added to the outer block (i.e., to the function body).
+     * However, if the PSI is invalid, this synthetic block may persist in the FIR tree.
+     */
+    object DestructuringBlock : KtFakeSourceElementKind()
 
     /**
      * `{ (a, b) -> foo() }` -> `{ x -> val (a, b) = x; { foo() } }`
@@ -491,6 +532,11 @@ sealed class KtFakeSourceElementKind(final override val shouldSkipErrorTypeRepor
     object SamConversion : KtFakeSourceElementKind()
 
     /**
+     * For synthetic functions created for SAM constructors.
+     */
+    object SamConstructor : KtFakeSourceElementKind()
+
+    /**
      * For it.functionFromAny() calls on a stub type
      */
     object CastToAnyForStubTypes : KtFakeSourceElementKind()
@@ -504,6 +550,22 @@ sealed class KtFakeSourceElementKind(final override val shouldSkipErrorTypeRepor
      * For plugin-generated things
      */
     object PluginGenerated : KtFakeSourceElementKind()
+
+    /**
+     * To store some diagnostic for erroneously resolved top-level lambda
+     * See [org.jetbrains.kotlin.config.LanguageFeature.ResolveTopLevelLambdasAsSyntheticCallArgument] and its usages
+     */
+    object ErrorExpressionForTopLevelLambda : KtFakeSourceElementKind()
+
+    /**
+     * Arbitrary error expression for which we failed to build the real PSI.
+     */
+    object ErrorExpression : KtFakeSourceElementKind()
+
+    /**
+     * When resolving ENTRY as `MyEnum.ENTRY` this is used for the `MyEnum` part
+     */
+    object QualifierForContextSensitiveResolution : KtFakeSourceElementKind()
 }
 
 sealed class AbstractKtSourceElement {
@@ -723,48 +785,95 @@ open class KtFakePsiSourceElement(
     }
 }
 
-private class KtFakePsiSourceElementWithOffsets(
+@SuspiciousFakeSourceCheck
+class KtFakePsiSourceElementWithCustomOffsetStrategy(
     psi: PsiElement,
     kind: KtFakeSourceElementKind,
-    override val startOffset: Int,
-    override val endOffset: Int,
+    val strategy: KtSourceElementOffsetStrategy.Custom,
 ) : KtFakePsiSourceElement(psi, kind) {
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (other !is KtFakePsiSourceElementWithOffsets) return false
-        if (!super.equals(other)) return false
+    override val startOffset: Int
+        get() = strategy.startOffset
 
-        if (kind != other.kind) return false
-        if (startOffset != other.startOffset) return false
-        return endOffset == other.endOffset
-    }
+    override val endOffset: Int
+        get() = strategy.endOffset
 
-    override fun hashCode(): Int {
-        var result = super.hashCode()
-        result = 31 * result + kind.hashCode()
-        result = 31 * result + startOffset
-        result = 31 * result + endOffset
-        return result
+    override fun equals(other: Any?): Boolean = this === other ||
+            other is KtFakePsiSourceElementWithCustomOffsetStrategy &&
+            super.equals(other) &&
+            strategy == other.strategy
+
+    override fun hashCode(): Int = 31 * super.hashCode() + strategy.hashCode()
+}
+
+/**
+ * Represents a strategy for getting offsets for [KtSourceElement]s.
+ *
+ * @see fakeElement
+ */
+sealed class KtSourceElementOffsetStrategy {
+    /**
+     * The default strategy, which uses offsets from the original element.
+     */
+    data object Default : KtSourceElementOffsetStrategy()
+
+    /**
+     * Represents a strategy with custom [startOffset] and [endOffset]s.
+     */
+    sealed class Custom : KtSourceElementOffsetStrategy() {
+        abstract val startOffset: Int
+        abstract val endOffset: Int
+
+        class Initialized(override val startOffset: Int, override val endOffset: Int) : Custom() {
+            override fun equals(other: Any?): Boolean = this === other ||
+                    other is Initialized &&
+                    startOffset == other.startOffset &&
+                    endOffset == other.endOffset
+
+            override fun hashCode(): Int = 31 * startOffset.hashCode() + endOffset.hashCode()
+        }
+
+        class Delegated(val startOffsetAnchor: KtSourceElement, val endOffsetAnchor: KtSourceElement) : Custom() {
+            override val startOffset: Int
+                get() = startOffsetAnchor.startOffset
+
+            override val endOffset: Int
+                get() = endOffsetAnchor.endOffset
+
+            override fun equals(other: Any?): Boolean = this === other ||
+                    other is Delegated &&
+                    startOffsetAnchor == other.startOffsetAnchor &&
+                    endOffsetAnchor == other.endOffsetAnchor
+
+            override fun hashCode(): Int = 31 * startOffsetAnchor.hashCode() + endOffsetAnchor.hashCode()
+        }
     }
 }
 
 fun KtSourceElement.fakeElement(
     newKind: KtFakeSourceElementKind,
-    startOffset: Int = -1,
-    endOffset: Int = -1,
+    offsetStrategy: KtSourceElementOffsetStrategy = KtSourceElementOffsetStrategy.Default,
 ): KtSourceElement {
     if (kind == newKind) return this
     return when (this) {
-        is KtLightSourceElement -> KtLightSourceElement(
-            lighterASTNode,
-            if (startOffset != -1) startOffset else this.startOffset,
-            if (endOffset != -1) endOffset else this.endOffset,
-            treeStructure,
-            newKind
-        )
-        is KtPsiSourceElement -> when {
-            startOffset != -1 && endOffset != -1 -> KtFakePsiSourceElementWithOffsets(psi, newKind, startOffset, endOffset)
-            else -> KtFakePsiSourceElement(psi, newKind)
+        is KtLightSourceElement -> {
+            val (startOffset, endOffset) = if (offsetStrategy is KtSourceElementOffsetStrategy.Custom) {
+                offsetStrategy.startOffset to offsetStrategy.endOffset
+            } else {
+                startOffset to endOffset
+            }
+
+            KtLightSourceElement(
+                lighterASTNode,
+                startOffset,
+                endOffset,
+                treeStructure,
+                newKind
+            )
+        }
+
+        is KtPsiSourceElement -> when (offsetStrategy) {
+            is KtSourceElementOffsetStrategy.Default -> KtFakePsiSourceElement(psi, newKind)
+            is KtSourceElementOffsetStrategy.Custom -> KtFakePsiSourceElementWithCustomOffsetStrategy(psi, newKind, offsetStrategy)
         }
     }
 }

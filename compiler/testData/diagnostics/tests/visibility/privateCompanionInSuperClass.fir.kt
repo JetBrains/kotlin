@@ -23,3 +23,6 @@ class Derived : Base() {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, classDeclaration, companionObject, functionDeclaration, integerLiteral,
+objectDeclaration, propertyDeclaration, stringLiteral */

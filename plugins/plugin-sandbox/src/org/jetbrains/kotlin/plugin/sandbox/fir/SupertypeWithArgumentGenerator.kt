@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.fir.declarations.getAnnotationByClassId
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.extensions.FirDeclarationPredicateRegistrar
 import org.jetbrains.kotlin.fir.extensions.FirSupertypeGenerationExtension
-import org.jetbrains.kotlin.fir.extensions.buildUserTypeFromQualifierParts
+import org.jetbrains.kotlin.fir.extensions.typeFromQualifierParts
 import org.jetbrains.kotlin.fir.extensions.predicate.DeclarationPredicate
 import org.jetbrains.kotlin.fir.extensions.predicateBasedProvider
 import org.jetbrains.kotlin.fir.references.impl.FirSimpleNamedReference
@@ -41,7 +41,11 @@ class SupertypeWithArgumentGenerator(session: FirSession) : FirSupertypeGenerati
         val annotation = classLikeDeclaration.getAnnotationByClassId(annotationClassId, session) ?: return emptyList()
         val getClassArgument = (annotation as? FirAnnotationCall)?.argument as? FirGetClassCall ?: return emptyList()
 
-        val typeToResolve = buildUserTypeFromQualifierParts(isMarkedNullable = false) {
+        val resolvedArgument = typeFromQualifierParts(
+            isMarkedNullable = false,
+            source = classLikeDeclaration.source!!,
+            typeResolver = typeResolver
+        ) {
             fun visitQualifiers(expression: FirExpression) {
                 if (expression !is FirPropertyAccessExpression) return
                 expression.explicitReceiver?.let { visitQualifiers(it) }
@@ -49,8 +53,6 @@ class SupertypeWithArgumentGenerator(session: FirSession) : FirSupertypeGenerati
             }
             visitQualifiers(getClassArgument.argument)
         }
-
-        val resolvedArgument = typeResolver.resolveUserType(typeToResolve).coneType
 
         return listOf(supertypeClassId.constructClassLikeType(arrayOf(resolvedArgument), isMarkedNullable = false))
     }

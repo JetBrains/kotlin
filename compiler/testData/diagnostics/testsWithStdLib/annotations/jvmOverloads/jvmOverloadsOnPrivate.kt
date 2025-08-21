@@ -23,3 +23,6 @@ fun foo() {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, classDeclaration, functionDeclaration, localClass, localFunction,
+localProperty, propertyDeclaration, stringLiteral */

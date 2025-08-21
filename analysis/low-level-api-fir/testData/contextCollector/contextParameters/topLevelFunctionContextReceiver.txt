@@ -1,0 +1,23 @@
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+
+FILE: [ResolvedTo(IMPORTS)] topLevelFunctionContextReceiver.kt
+    public final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] constructor(): R|one/A| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    context([ResolvedTo(RAW_FIR)] A, [ResolvedTo(RAW_FIR)] Int)
+    public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] p: Boolean): R|kotlin/Unit| { LAZY_BLOCK }

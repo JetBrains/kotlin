@@ -11,3 +11,5 @@ fun test_2(x: Int) {
 fun test_3(x: Int) {
     when (val y = x) {}
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, localProperty, propertyDeclaration, whenExpression, whenWithSubject */

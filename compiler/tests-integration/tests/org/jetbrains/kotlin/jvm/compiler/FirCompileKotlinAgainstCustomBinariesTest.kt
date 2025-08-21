@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -7,11 +7,15 @@ package org.jetbrains.kotlin.jvm.compiler
 
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.cliArgument
+import org.jetbrains.kotlin.cli.js.K2JSCompiler
+import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersion
+import org.jetbrains.kotlin.config.forcesPreReleaseBinariesIfEnabled
 import org.jetbrains.kotlin.utils.PathUtil
-import org.jetbrains.kotlin.util.toMetadataVersion
+import org.jetbrains.kotlin.util.toJvmMetadataVersion
+import java.io.File
 import java.util.jar.JarFile
 
 class FirCompileKotlinAgainstCustomBinariesTest : AbstractCompileKotlinAgainstCustomBinariesTest() {
@@ -37,7 +41,10 @@ class FirCompileKotlinAgainstCustomBinariesTest : AbstractCompileKotlinAgainstCu
         // Specifically, use K1
         val libraryUsingAnnotation = compileLibrary(
             "libraryUsingAnnotation",
-            additionalOptions = listOf(CommonCompilerArguments::languageVersion.cliArgument, "1.8"),
+            additionalOptions = listOf(
+                CommonCompilerArguments::languageVersion.cliArgument, "1.9",
+                CommonCompilerArguments::suppressVersionWarnings.cliArgument,
+            ),
             extraClassPath = listOf(libraryAnnotation)
         )
 
@@ -49,7 +56,7 @@ class FirCompileKotlinAgainstCustomBinariesTest : AbstractCompileKotlinAgainstCu
     }
 
     fun testStrictMetadataVersionSemanticsOldVersion() {
-        val nextMetadataVersion = languageVersion.toMetadataVersion().next()
+        val nextMetadataVersion = languageVersion.toJvmMetadataVersion().next()
         val library = compileLibrary(
             "library", additionalOptions = listOf("-Xgenerate-strict-metadata-version", "-Xmetadata-version=$nextMetadataVersion")
         )
@@ -72,5 +79,54 @@ class FirCompileKotlinAgainstCustomBinariesTest : AbstractCompileKotlinAgainstCu
             stdlib.getInputStream(classFromStdlib).readBytes(),
             KotlinCompilerVersion.isPreRelease()
         )
+    }
+
+    fun testReleaseCompilerAgainstPreReleaseFeatureJs() {
+        val arbitraryPoisoningFeature = LanguageFeature.entries.firstOrNull { it.forcesPreReleaseBinariesIfEnabled() } ?: return
+
+        val poisonedLibrary = compileJsLibrary(
+            libraryName = "poisonedLibrary",
+            additionalOptions = listOf("-XXLanguage:+$arbitraryPoisoningFeature",)
+        ) {}
+
+        val library = compileJsLibrary(
+            libraryName = "library"
+        ) {}
+
+        compileKotlin(
+            fileName = "source.kt",
+            output = File(tmpdir, "usage.js"),
+            classpath = listOf(poisonedLibrary, library),
+            compiler = K2JSCompiler()
+        ) { compilerOutput ->
+            compilerOutput.replace(arbitraryPoisoningFeature.name, "<!POISONING_LANGUAGE_FEATURE!>")
+        }
+    }
+
+    fun testReleaseCompilerWithoutUsageOfPreReleaseFeatureJs() {
+        val arbitraryPoisoningFeature = LanguageFeature.entries.firstOrNull { it.forcesPreReleaseBinariesIfEnabled() } ?: return
+
+        val poisonedLibrary = compileJsLibrary(
+            libraryName = "poisonedLibrary",
+            additionalOptions = listOf("-XXLanguage:+$arbitraryPoisoningFeature",)
+        ) {}
+
+        val library = compileJsLibrary(
+            libraryName = "library"
+        ) {}
+
+        compileKotlin(
+            fileName = "source.kt",
+            output = File(tmpdir, "usage.js"),
+            classpath = listOf(poisonedLibrary, library),
+            compiler = K2JSCompiler()
+        ) { compilerOutput ->
+            compilerOutput.replace(arbitraryPoisoningFeature.name, "<!POISONING_LANGUAGE_FEATURE!>")
+        }
+    }
+
+    fun testDataClassCompiledWith1_0_5Compiler() {
+        val library = File(testDataDirectory, "VeryOldLibraryWithDataClass.jar")
+        compileKotlin("source.kt", tmpdir, listOf(library), K2JVMCompiler())
     }
 }

@@ -16,3 +16,6 @@ interface NextMissing {
 interface NextMissing2 {
     operator fun hasNext(): Boolean
 }
+
+/* GENERATED_FIR_TAGS: forLoop, funWithExtensionReceiver, functionDeclaration, interfaceDeclaration, localProperty,
+operator, propertyDeclaration */

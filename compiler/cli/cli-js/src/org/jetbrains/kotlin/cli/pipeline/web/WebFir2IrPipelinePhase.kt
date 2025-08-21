@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.cli.pipeline.CheckCompilationErrors
 import org.jetbrains.kotlin.cli.pipeline.PerformanceNotifications
 import org.jetbrains.kotlin.cli.pipeline.PipelinePhase
 import org.jetbrains.kotlin.config.languageVersionSettings
+import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.fir.backend.Fir2IrConfiguration
@@ -32,18 +33,19 @@ import org.jetbrains.kotlin.storage.LockBasedStorageManager
 
 object WebFir2IrPipelinePhase : PipelinePhase<WebFrontendPipelineArtifact, JsFir2IrPipelineArtifact>(
     name = "JsFir2IrPipelinePhase",
-    preActions = setOf(PerformanceNotifications.IrTranslationStarted),
-    postActions = setOf(PerformanceNotifications.IrTranslationFinished, CheckCompilationErrors.CheckDiagnosticCollector)
+    preActions = setOf(PerformanceNotifications.TranslationToIrStarted),
+    postActions = setOf(PerformanceNotifications.TranslationToIrFinished, CheckCompilationErrors.CheckDiagnosticCollector)
 ) {
     override fun executePhase(input: WebFrontendPipelineArtifact): JsFir2IrPipelineArtifact? {
-        val (analyzedOutput, configuration, diagnosticsReporter, moduleStructure) = input
+        val (analyzedOutput, configuration, diagnosticsReporter, moduleStructure, hasErrors) = input
         val fir2IrActualizedResult = transformFirToIr(moduleStructure, analyzedOutput.output, diagnosticsReporter)
         return JsFir2IrPipelineArtifact(
             fir2IrActualizedResult,
             analyzedOutput,
             configuration,
             diagnosticsReporter,
-            moduleStructure
+            moduleStructure,
+            hasErrors = hasErrors || configuration.messageCollector.hasErrors() || diagnosticsReporter.hasErrors,
         )
     }
 
@@ -57,7 +59,7 @@ object WebFir2IrPipelinePhase : PipelinePhase<WebFrontendPipelineArtifact, JsFir
         var builtInsModule: KotlinBuiltIns? = null
         val dependencies = mutableListOf<ModuleDescriptorImpl>()
 
-        val librariesDescriptors = moduleStructure.allDependencies.map { resolvedLibrary ->
+        val librariesDescriptors = moduleStructure.klibs.all.map { resolvedLibrary ->
             val storageManager = LockBasedStorageManager("ModulesStructure")
 
             val moduleDescriptor = JsFactories.DefaultDeserializedDescriptorFactory.createDescriptorOptionalBuiltIns(

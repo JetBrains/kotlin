@@ -60,3 +60,7 @@ fun test_3(foo: Foo): Int {
     }
     return x + 1
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, assignment, classDeclaration, contractCallsEffect, contractConditionalEffect,
+contracts, functionDeclaration, functionalType, inline, integerLiteral, isExpression, lambdaLiteral, localProperty,
+nullableType, propertyDeclaration, reified, smartcast, typeParameter */

@@ -1,5 +1,5 @@
 // FIR_IDENTICAL
-@file:OptIn(ExperimentalAssociatedObjects::class)
+@file:OptIn(ExperimentalAssociatedObjects::class, ExperimentalWasmJsInterop::class)
 
 import kotlin.reflect.AssociatedObjectKey
 import kotlin.reflect.ExperimentalAssociatedObjects

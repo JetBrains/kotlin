@@ -19,3 +19,5 @@ expect fun interface <!IMPLICIT_JVM_ACTUALIZATION{JVM}!>Foo<!> {
 public interface Base {
     void bar();
 }
+
+/* GENERATED_FIR_TAGS: expect, funInterface, functionDeclaration, interfaceDeclaration */

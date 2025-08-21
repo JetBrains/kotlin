@@ -16,8 +16,9 @@ import org.jetbrains.kotlin.fir.resolve.toSymbol
 
 
 object FirJsModuleGetClassCallChecker : FirGetClassCallChecker(MppCheckerKind.Common) {
-    override fun check(expression: FirGetClassCall, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(expression: FirGetClassCall) {
         val callee = expression.argument.resolvedType.toSymbol(context.session) ?: return
-        checkJsModuleUsage(callee, context, reporter, expression.source)
+        checkJsModuleUsage(callee, expression.source)
     }
 }

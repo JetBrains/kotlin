@@ -17,3 +17,6 @@ object BaseImpl : Base {
 }
 
 actual class Foo : Base by BaseImpl
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, functionDeclaration, inheritanceDelegation, integerLiteral,
+interfaceDeclaration, objectDeclaration, override */

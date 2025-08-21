@@ -17,14 +17,13 @@ import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.*
-import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptionsDeprecated
-import org.jetbrains.kotlin.gradle.dsl.KotlinCompileDeprecated
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
 import org.jetbrains.kotlin.tooling.core.HasMutableExtras
+import java.util.Locale.getDefault
 
 /**
  * # Kotlin compilation
- * Represents the configuration of a Kotlin Compiler invocation.
+ * Represents the configuration of a Kotlin compiler invocation.
  * The [KotlinCompilation] API is designed to ensure the correct and consistent propagation of any compilation changes
  * to all underlying tasks and configurations.
  * Use the [KotlinCompilation] API instead of getting tasks, configurations,
@@ -53,7 +52,7 @@ import org.jetbrains.kotlin.tooling.core.HasMutableExtras
  * The results of the main compilation are publishable
  * and exposed via the [KotlinTarget.apiElementsConfigurationName] consumable configuration.
  *
- Here's an example of how to use consume the outputs of the main JVM Compilation for custom processing:
+ * Here's an example of how to use the outputs of the main JVM Compilation for custom processing:
  *
  * ```kotlin
  * // build.gradle.kts
@@ -88,9 +87,14 @@ import org.jetbrains.kotlin.tooling.core.HasMutableExtras
  * There are no "main" or "test" Kotlin Compilations for the Metadata Target.
  * Instead, there is a dedicated compilation for each shared source set.
  *
+ * ## Future changes
+ *
+ * In future releases, the [KotlinCompilation] interface will no longer have a parameter of generic type.
+ * To avoid compile-time errors after updating to the latest version of the Kotlin Gradle plugin,
+ * use the [KotlinCompilationCompat] typealias.
  */
 @KotlinGradlePluginDsl
-interface KotlinCompilation<out T : KotlinCommonOptionsDeprecated> : Named,
+interface KotlinCompilation<UNUSED : KotlinAnyOptionsDeprecated> : Named,
     HasProject,
     HasMutableExtras,
     HasAttributes,
@@ -123,7 +127,11 @@ interface KotlinCompilation<out T : KotlinCommonOptionsDeprecated> : Named,
     /**
      * @suppress
      */
-    @Deprecated("Use defaultSourceSet.name instead", ReplaceWith("defaultSourceSet.name"))
+    @Deprecated(
+        "Use defaultSourceSet.name instead. Scheduled for removal in Kotlin 2.3",
+        ReplaceWith("defaultSourceSet.name"),
+        level = DeprecationLevel.ERROR
+    )
     val defaultSourceSetName: String get() = defaultSourceSet.name
 
     /**
@@ -194,57 +202,67 @@ interface KotlinCompilation<out T : KotlinCommonOptionsDeprecated> : Named,
         "To configure compilation compiler options use 'compileTaskProvider':\ncompilation.compileTaskProvider.configure{\n" +
                 "    compilerOptions {}\n}"
     )
-    @Suppress("DEPRECATION")
+    @Suppress("DEPRECATION_ERROR")
     val compilerOptions: HasCompilerOptions<*>
 
     /**
      * @suppress
      */
+    @Suppress("DEPRECATION", "TYPEALIAS_EXPANSION_DEPRECATION_ERROR")
     @Deprecated(
-        message = "Accessing task instance directly is deprecated",
-        replaceWith = ReplaceWith("compileTaskProvider")
+        message = "Accessing task instance directly is deprecated. Scheduled for removal in Kotlin 2.3.",
+        replaceWith = ReplaceWith("compileTaskProvider"),
+        level = DeprecationLevel.ERROR,
     )
-    val compileKotlinTask: KotlinCompileDeprecated<T>
+    val compileKotlinTask: KotlinCompileDeprecated<KotlinCommonOptionsDeprecated>
 
     /**
      * @suppress
      */
+    @Suppress("DEPRECATION", "TYPEALIAS_EXPANSION_DEPRECATION_ERROR")
     @Deprecated(
-        message = "Replaced with compileTaskProvider",
-        replaceWith = ReplaceWith("compileTaskProvider")
+        message = "Replaced with compileTaskProvider. Scheduled for removal in Kotlin 2.3.",
+        replaceWith = ReplaceWith("compileTaskProvider"),
+        level = DeprecationLevel.ERROR,
     )
-    val compileKotlinTaskProvider: TaskProvider<out KotlinCompileDeprecated<T>>
+    val compileKotlinTaskProvider: TaskProvider<out KotlinCompileDeprecated<KotlinCommonOptionsDeprecated>>
 
     /**
      * @suppress
      */
+    @Suppress("TYPEALIAS_EXPANSION_DEPRECATION_ERROR")
     @OptIn(InternalKotlinGradlePluginApi::class)
     @Deprecated(
-        message = KOTLIN_OPTIONS_DEPRECATION_MESSAGE
+        message = KOTLIN_OPTIONS_DEPRECATION_MESSAGE,
+        level = DeprecationLevel.ERROR,
     )
-    val kotlinOptions: T
+    val kotlinOptions: KotlinCommonOptionsDeprecated
 
     /**
      * @suppress
      */
+    @Suppress("TYPEALIAS_EXPANSION_DEPRECATION_ERROR")
     @OptIn(InternalKotlinGradlePluginApi::class)
     @Deprecated(
-        message = KOTLIN_OPTIONS_DEPRECATION_MESSAGE
+        message = KOTLIN_OPTIONS_DEPRECATION_MESSAGE,
+        level = DeprecationLevel.ERROR,
     )
-    fun kotlinOptions(configure: T.() -> Unit) {
-        @Suppress("DEPRECATION")
+    fun kotlinOptions(configure: KotlinCommonOptionsDeprecated.() -> Unit) {
+        @Suppress("DEPRECATION_ERROR")
         configure(kotlinOptions)
     }
 
     /**
      * @suppress
      */
+    @Suppress("TYPEALIAS_EXPANSION_DEPRECATION_ERROR")
     @OptIn(InternalKotlinGradlePluginApi::class)
     @Deprecated(
-        message = KOTLIN_OPTIONS_DEPRECATION_MESSAGE
+        message = KOTLIN_OPTIONS_DEPRECATION_MESSAGE,
+        level = DeprecationLevel.ERROR,
     )
-    fun kotlinOptions(configure: Action<@UnsafeVariance T>) {
-        @Suppress("DEPRECATION")
+    fun kotlinOptions(configure: Action<KotlinCommonOptionsDeprecated>) {
+        @Suppress("DEPRECATION_ERROR")
         configure.execute(kotlinOptions)
     }
 
@@ -318,7 +336,10 @@ interface KotlinCompilation<out T : KotlinCommonOptionsDeprecated> : Named,
      * Further details:
      * https://kotl.in/compilation-source-deprecation
      */
-    @Deprecated("scheduled for removal with Kotlin 2.1")
+    @Deprecated(
+        "Scheduled for removal with Kotlin 2.3. Please see the migration guide: https://kotl.in/compilation-source-deprecation",
+        level = DeprecationLevel.ERROR,
+    )
     fun source(sourceSet: KotlinSourceSet)
 
     /**
@@ -334,7 +355,11 @@ interface KotlinCompilation<out T : KotlinCommonOptionsDeprecated> : Named,
     /**
      * @suppress
      */
-    @Deprecated("Use 'associatedCompilations' instead", ReplaceWith("associatedCompilations.toList()"))
+    @Deprecated(
+        "Use 'associatedCompilations' instead",
+        ReplaceWith("associatedCompilations.toList(). Scheduled for removal in Kotlin 2.3."),
+        level = DeprecationLevel.ERROR
+    )
     val associateWith: List<KotlinCompilation<*>> get() = associatedCompilations.toList()
 
     /**
@@ -368,14 +393,14 @@ interface KotlinCompilation<out T : KotlinCommonOptionsDeprecated> : Named,
      * This property provides a unique name for the compilation based on the target name, allowing for easy distinction among them throughout the project.
      */
     val disambiguatedName
-        get() = target.disambiguationClassifier + name
+        get() = target.disambiguationClassifier + name.replaceFirstChar { it.titlecase(getDefault()) }
 }
 
 /**
  * @suppress
  */
-@Deprecated("Scheduled for removal with Kotlin 2.1")
-interface KotlinCompilationToRunnableFiles<T : KotlinCommonOptionsDeprecated> : KotlinCompilation<T> {
+@Deprecated("Scheduled for removal with Kotlin 2.3.", level = DeprecationLevel.ERROR)
+interface KotlinCompilationToRunnableFiles<T : KotlinAnyOptionsDeprecated> : KotlinCompilation<T> {
     override val runtimeDependencyConfigurationName: String
 
     override var runtimeDependencyFiles: FileCollection
@@ -384,22 +409,22 @@ interface KotlinCompilationToRunnableFiles<T : KotlinCommonOptionsDeprecated> : 
 /**
  * @suppress
  */
-@Suppress("Deprecation")
+@Suppress("Deprecation_ERROR")
 typealias DeprecatedKotlinCompilationToRunnableFiles<T> = KotlinCompilationToRunnableFiles<T>
 
 /**
  * @suppress
  */
-@Deprecated("Scheduled for removal with Kotlin 2.1")
-@Suppress("EXTENSION_SHADOWED_BY_MEMBER", "deprecation") // kept for compatibility
+@Deprecated("Scheduled for removal with Kotlin 2.3.", level = DeprecationLevel.ERROR)
+@Suppress("EXTENSION_SHADOWED_BY_MEMBER", "DEPRECATION_ERROR", "TYPEALIAS_EXPANSION_DEPRECATION_ERROR") // kept for compatibility
 val <T : KotlinCommonOptionsDeprecated> KotlinCompilation<T>.runtimeDependencyConfigurationName: String?
     get() = (this as? KotlinCompilationToRunnableFiles<T>)?.runtimeDependencyConfigurationName
 
 /**
  * @suppress
  */
-@Deprecated("Scheduled for removal with Kotlin 2.1")
-interface KotlinCompilationWithResources<T : KotlinCommonOptionsDeprecated> : KotlinCompilation<T> {
+@Deprecated("Scheduled for removal after providing a replacement: KT-56644")
+interface KotlinCompilationWithResources<T : KotlinAnyOptionsDeprecated> : KotlinCompilation<T> {
     val processResourcesTaskName: String
 }
 
@@ -408,3 +433,13 @@ interface KotlinCompilationWithResources<T : KotlinCommonOptionsDeprecated> : Ko
  */
 @Suppress("Deprecation")
 typealias DeprecatedKotlinCompilationWithResources<T> = KotlinCompilationWithResources<T>
+
+/**
+ * Provides compile-time compatibility with changes in the [KotlinCompilation] interface.
+ */
+typealias KotlinCompilationCompat = KotlinCompilation<KotlinAnyOptionsDeprecated>
+
+/**
+ * Provides compile-time compatibility with the `kotlinOptions` DSL deprecation.
+ */
+typealias KotlinAnyOptionsDeprecated = Any

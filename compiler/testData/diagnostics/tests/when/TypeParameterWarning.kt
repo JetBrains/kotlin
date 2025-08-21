@@ -35,3 +35,7 @@ fun String.put(value: JsonObject?, node: ObjectNode) {
 fun TODO(): Nothing = null!!
 fun <K> select(vararg values: K): K = values[0]
 
+/* GENERATED_FIR_TAGS: capturedType, checkNotNullCall, classDeclaration, equalityExpression, flexibleType,
+funWithExtensionReceiver, functionDeclaration, ifExpression, integerLiteral, interfaceDeclaration, isExpression,
+javaFunction, javaType, nullableType, outProjection, primaryConstructor, smartcast, thisExpression, typeParameter,
+vararg, whenExpression, whenWithSubject */

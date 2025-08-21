@@ -20,7 +20,7 @@ interface Fir2IrTypeParametersContainer : IrTypeParametersContainer, Fir2IrCompo
             classifierStorage.getIrTypeParameter(typeParameter, index).apply {
                 parent = this@Fir2IrTypeParametersContainer
                 if (superTypes.isEmpty()) {
-                    superTypes = typeParameter.bounds.map { it.toIrType(typeConverter) }
+                    superTypes = typeParameter.bounds.map { it.toIrType() }
                 }
             }
         }

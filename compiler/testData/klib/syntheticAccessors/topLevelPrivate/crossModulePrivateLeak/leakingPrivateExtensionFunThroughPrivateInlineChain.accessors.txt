@@ -2,20 +2,29 @@
 
 /* FILE package=<root> fileName=a.kt */
 
+/* TARGET declaration */ private fun String.privateExtension(): String
+private inline fun String.privateInlineExtension1(): String
+    /* TARGET use-site */ privateExtension(/* <this> = <this> */)
+private inline fun String.privateInlineExtension2(): String
+    /* TARGET use-site */ privateExtension(/* <this> = this */)
+private inline fun String.privateInlineExtension3(): String
+    /* TARGET use-site */ privateExtension(/* <this> = this */)
+private inline fun String.privateInlineExtension4(): String
+    /* TARGET use-site */ privateExtension(/* <this> = this */)
 internal inline fun String.internalInlineExtension(): String
     /* ACCESSOR use-site */ access$privateExtension$tAKt($receiver = this)
 internal fun topLevelFun(): String
     /* ACCESSOR use-site */ access$privateExtension$tAKt($receiver = this)
 internal inline fun topLevelInlineFun(): String
     /* ACCESSOR use-site */ access$privateExtension$tAKt($receiver = this)
-private inline fun String.privateInlineExtension4(): String
-    /* TARGET use-site */ this.privateExtension()
-private inline fun String.privateInlineExtension3(): String
-    /* TARGET use-site */ this.privateExtension()
-private inline fun String.privateInlineExtension2(): String
-    /* TARGET use-site */ this.privateExtension()
-private inline fun String.privateInlineExtension1(): String
-    /* TARGET use-site */ <this>.privateExtension()
-/* TARGET declaration */ private fun String.privateExtension(): String
-/* ACCESSOR declaration */ public fun access$privateExtension$tAKt($receiver: String): String
-    /* TARGET use-site */ $receiver.privateExtension()
+/* ACCESSOR declaration */ internal fun access$privateExtension$tAKt($receiver: String): String
+    /* TARGET use-site */ privateExtension(/* <this> = $receiver */)
+
+
+/* MODULE name=<main> */
+
+/* FILE package=<root> fileName=main.kt */
+
+public fun box(): String
+    /* ACCESSOR use-site */ access$privateExtension$tAKt($receiver = this)
+    /* ACCESSOR use-site */ access$privateExtension$tAKt($receiver = this)

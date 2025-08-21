@@ -32,3 +32,6 @@ class A() {
         }
 
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, getter, integerLiteral, primaryConstructor, propertyDeclaration,
+setter, stringLiteral */

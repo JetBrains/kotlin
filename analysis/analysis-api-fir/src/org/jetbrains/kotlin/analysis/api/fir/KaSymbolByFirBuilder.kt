@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.types.KaSubstitutor
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.api.types.KaTypeProjection
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLResolutionFacade
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.errorWithFirSpecificEntries
 import org.jetbrains.kotlin.descriptors.ClassKind
@@ -74,9 +74,9 @@ internal class KaSymbolByFirBuilder(
     val analysisSession: KaFirSession,
     val token: KaLifetimeToken,
 ) {
-    private val firResolveSession: LLFirResolveSession get() = analysisSession.firResolveSession
+    private val resolutionFacade: LLResolutionFacade get() = analysisSession.resolutionFacade
     private val firProvider: FirSymbolProvider get() = rootSession.symbolProvider
-    val rootSession: LLFirSession get() = firResolveSession.useSiteFirSession
+    val rootSession: LLFirSession get() = resolutionFacade.useSiteFirSession
 
     val classifierBuilder = ClassifierSymbolBuilder()
     val functionBuilder = FunctionSymbolBuilder()
@@ -258,17 +258,16 @@ internal class KaSymbolByFirBuilder(
 
     inner class VariableSymbolBuilder {
         fun buildVariableSymbol(firSymbol: FirVariableSymbol<*>): KaVariableSymbol = when (firSymbol) {
+            is FirErrorPropertySymbol -> buildErrorVariableSymbol(firSymbol)
             is FirPropertySymbol -> when {
                 firSymbol.isLocal -> buildLocalVariableSymbol(firSymbol)
                 firSymbol is FirSyntheticPropertySymbol -> buildSyntheticJavaPropertySymbol(firSymbol)
                 else -> buildPropertySymbol(firSymbol)
             }
-            is FirValueParameterSymbol -> buildValueParameterSymbol(firSymbol)
+            is FirValueParameterSymbol -> buildParameterSymbol(firSymbol)
             is FirFieldSymbol -> buildFieldSymbol(firSymbol)
             is FirEnumEntrySymbol -> buildEnumEntrySymbol(firSymbol) // TODO enum entry should not be callable
             is FirBackingFieldSymbol -> buildBackingFieldSymbol(firSymbol)
-            is FirErrorPropertySymbol -> buildErrorVariableSymbol(firSymbol)
-
             is FirDelegateFieldSymbol -> throwUnexpectedElementError(firSymbol)
         }
 
@@ -310,8 +309,20 @@ internal class KaSymbolByFirBuilder(
             return KaFirSyntheticJavaPropertySymbol(firSymbol, analysisSession)
         }
 
-        // TODO(KT-72639) support context parameters
+        fun buildParameterSymbol(firSymbol: FirValueParameterSymbol): KaParameterSymbol = when (firSymbol.fir.valueParameterKind) {
+            FirValueParameterKind.Regular -> buildValueParameterSymbol(firSymbol)
+            FirValueParameterKind.ContextParameter, FirValueParameterKind.LegacyContextReceiver -> buildContextParameterSymbol(firSymbol)
+        }
+
         fun buildValueParameterSymbol(firSymbol: FirValueParameterSymbol): KaValueParameterSymbol {
+            requireWithAttachment(
+                firSymbol.fir.valueParameterKind == FirValueParameterKind.Regular,
+                { "${FirValueParameterKind.Regular} is expected, but found ${firSymbol.fir.valueParameterKind}" },
+            ) {
+                withFirSymbolEntry("symbol", firSymbol)
+            }
+
+
             val functionSymbol = firSymbol.containingDeclarationSymbol
 
             (functionSymbol as? FirFunctionSymbol)?.fir?.unwrapSubstitutionOverrideIfNeeded()?.let { unwrappedFunction ->
@@ -327,26 +338,56 @@ internal class KaSymbolByFirBuilder(
                 return buildValueParameterSymbol(unwrappedParameter)
             }
 
-            return if (functionSymbol is FirPropertyAccessorSymbol && functionSymbol.fir is FirDefaultPropertyAccessor) {
-                val owner = functionBuilder.buildPropertyAccessorSymbol(functionSymbol)
-                requireWithAttachment(
-                    owner is KaFirDefaultPropertySetterSymbol,
-                    { "Unexpected owner type: ${owner::class.simpleName}" }
-                ) {
-                    withFirSymbolEntry("function", functionSymbol)
+            return when (functionSymbol) {
+                is FirPropertyAccessorSymbol if functionSymbol.fir is FirDefaultPropertyAccessor -> {
+                    val owner = functionBuilder.buildPropertyAccessorSymbol(functionSymbol)
+                    requireWithAttachment(
+                        owner is KaFirDefaultPropertySetterSymbol,
+                        { "Unexpected owner type: ${owner::class.simpleName}" }
+                    ) {
+                        withFirSymbolEntry("function", functionSymbol)
+                    }
+
+                    KaFirDefaultSetterValueParameter(owner)
                 }
 
-                KaFirDefaultSetterValueParameter(owner)
-            } else
-                KaFirValueParameterSymbol(firSymbol, analysisSession)
+                else -> KaFirValueParameterSymbol(firSymbol, analysisSession)
+            }
         }
 
+        fun buildContextParameterSymbol(firSymbol: FirValueParameterSymbol): KaContextParameterSymbol {
+            requireWithAttachment(
+                firSymbol.fir.valueParameterKind != FirValueParameterKind.Regular,
+                { "${FirValueParameterKind.Regular} is not expected" },
+            ) {
+                withFirSymbolEntry("symbol", firSymbol)
+            }
+
+            val callableSymbol = firSymbol.containingDeclarationSymbol as? FirCallableSymbol<*>
+            callableSymbol?.fir?.unwrapSubstitutionOverrideIfNeeded()?.let { unwrappedCallable ->
+                val originalIndex = callableSymbol.fir.contextParameters.indexOf(firSymbol.fir)
+                if (originalIndex == -1) {
+                    errorWithAttachment("Containing callable doesn't have the corresponding parameter") {
+                        withFirSymbolEntry("contextParameter", firSymbol)
+                        withFirSymbolEntry("callable", callableSymbol)
+                    }
+                }
+
+                val unwrappedParameter = unwrappedCallable.contextParameters[originalIndex]
+                return buildContextParameterSymbol(unwrappedParameter.symbol)
+            }
+
+            return KaFirContextParameterSymbol(firSymbol, analysisSession)
+        }
 
         fun buildFieldSymbol(firSymbol: FirFieldSymbol): KaJavaFieldSymbol {
             firSymbol.unwrapImportedFromObjectOrStatic(::buildFieldSymbol)?.let { return it }
             firSymbol.fir.unwrapSubstitutionOverrideIfNeeded()?.let { return buildFieldSymbol(it.symbol) }
 
-            checkRequirementForBuildingSymbol<KaFirJavaFieldSymbol>(firSymbol, firSymbol.fir.isJavaFieldOrSubstitutionOverrideOfJavaField())
+            checkRequirementForBuildingSymbol<KaFirJavaFieldSymbol>(
+                firSymbol,
+                firSymbol.fir.isJavaFieldOrFakeOverrideOfJavaField()
+            )
             return KaFirJavaFieldSymbol(firSymbol, analysisSession)
         }
 
@@ -372,9 +413,12 @@ internal class KaSymbolByFirBuilder(
             return backingFieldSymbol
         }
 
-        private fun FirField.isJavaFieldOrSubstitutionOverrideOfJavaField(): Boolean = when (this) {
+        private fun FirField.isJavaFieldOrFakeOverrideOfJavaField(): Boolean = when (this) {
             is FirJavaField -> true
-            is FirFieldImpl -> (this as FirField).originalForSubstitutionOverride?.isJavaFieldOrSubstitutionOverrideOfJavaField() == true
+            is FirFieldImpl -> {
+                // KT-75894: not just type substitution, but intersection is possible too.
+                (this as FirField).originalIfFakeOverride()?.isJavaFieldOrFakeOverrideOfJavaField() == true
+            }
             else -> throwUnexpectedElementError(this)
         }
     }
@@ -453,7 +497,7 @@ internal class KaSymbolByFirBuilder(
             //
             // If we have such a type alias pointing to a function type, it is most likely the abbreviation of an expanded function type. An
             // abbreviation shouldn't be expanded, and so there shouldn't be any implicit expansion here.
-            return coneType.functionTypeKind(analysisSession.firResolveSession.useSiteFirSession, expandTypeAliases = false) != null
+            return coneType.functionTypeKind(analysisSession.resolutionFacade.useSiteFirSession, expandTypeAliases = false) != null
         }
 
         fun buildKtType(coneType: FirTypeRef): KaType = buildKtType(coneType.coneType)

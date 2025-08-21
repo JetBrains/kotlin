@@ -5,6 +5,7 @@ KaNamedFunctionSymbol:
   ]
   callableId: test/Foo
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true

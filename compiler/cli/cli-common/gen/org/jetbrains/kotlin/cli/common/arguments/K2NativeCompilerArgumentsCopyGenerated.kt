@@ -26,7 +26,6 @@ fun copyK2NativeCompilerArguments(from: K2NativeCompilerArguments, to: K2NativeC
     to.debugInfoFormatVersion = from.debugInfoFormatVersion
     to.debugPrefixMap = from.debugPrefixMap?.copyOf()
     to.destroyRuntimeMode = from.destroyRuntimeMode
-    to.dumpSyntheticAccessorsTo = from.dumpSyntheticAccessorsTo
     to.emitLazyObjCHeader = from.emitLazyObjCHeader
     to.enableAssertions = from.enableAssertions
     to.exportKDoc = from.exportKDoc
@@ -49,7 +48,9 @@ fun copyK2NativeCompilerArguments(from: K2NativeCompilerArguments, to: K2NativeC
     to.lazyIrForCaches = from.lazyIrForCaches
     to.libraries = from.libraries?.copyOf()
     to.libraryToAddToCache = from.libraryToAddToCache
+    @Suppress("DEPRECATION")
     to.libraryVersion = from.libraryVersion
+    @Suppress("DEPRECATION")
     to.lightDebugDeprecated = from.lightDebugDeprecated
     to.lightDebugString = from.lightDebugString
     to.linkerArguments = from.linkerArguments?.copyOf()
@@ -63,10 +64,10 @@ fun copyK2NativeCompilerArguments(from: K2NativeCompilerArguments, to: K2NativeC
     to.manifestNativeTargets = from.manifestNativeTargets?.copyOf()
     to.memoryModel = from.memoryModel
     to.moduleName = from.moduleName
-    to.narrowedSyntheticAccessorsVisibility = from.narrowedSyntheticAccessorsVisibility
     to.nativeLibraries = from.nativeLibraries?.copyOf()
     to.noObjcGenerics = from.noObjcGenerics
     to.nodefaultlibs = from.nodefaultlibs
+    @Suppress("DEPRECATION")
     to.noendorsedlibs = from.noendorsedlibs
     to.nomain = from.nomain
     to.nopack = from.nopack
@@ -86,7 +87,7 @@ fun copyK2NativeCompilerArguments(from: K2NativeCompilerArguments, to: K2NativeC
     to.runtimeFile = from.runtimeFile
     to.runtimeLogs = from.runtimeLogs
     to.saveDependenciesPath = from.saveDependenciesPath
-    to.saveLlvmIrAfter = from.saveLlvmIrAfter.copyOf()
+    to.saveLlvmIrAfter = from.saveLlvmIrAfter?.copyOf()
     to.saveLlvmIrDirectory = from.saveLlvmIrDirectory
     to.serializedDependencies = from.serializedDependencies
     to.shortModuleName = from.shortModuleName

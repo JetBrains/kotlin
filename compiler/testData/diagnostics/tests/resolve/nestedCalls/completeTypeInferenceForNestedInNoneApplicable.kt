@@ -9,3 +9,5 @@ fun test() {
 }
 
 fun <T> emptyList(): List<T> {throw Exception()}
+
+/* GENERATED_FIR_TAGS: functionDeclaration, nullableType, typeParameter */

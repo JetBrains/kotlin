@@ -13,6 +13,7 @@ FILE: [ResolvedTo(RAW_FIR)] contextReceiver.kt
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
     context([ResolvedTo(RAW_FIR)] List<@Anno[Unresolved](LAZY_EXPRESSION) Int>)
     public final? [ResolvedTo(RAW_FIR)] class Foo : R|kotlin/Any| {
+        context([ResolvedTo(RAW_FIR)] List<@Anno[Unresolved](LAZY_EXPRESSION) Int>)
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor(): R|Foo| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -34,6 +35,7 @@ FILE: [ResolvedTo(IMPORTS)] contextReceiver.kt
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
     context([ResolvedTo(RAW_FIR)] List<@Anno[Unresolved](LAZY_EXPRESSION) Int>)
     public final? [ResolvedTo(RAW_FIR)] class Foo : R|kotlin/Any| {
+        context([ResolvedTo(RAW_FIR)] List<@Anno[Unresolved](LAZY_EXPRESSION) Int>)
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor(): R|Foo| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -55,6 +57,7 @@ FILE: [ResolvedTo(IMPORTS)] contextReceiver.kt
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
     context([ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] List<@Anno[Unresolved](LAZY_EXPRESSION) Int>)
     public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] class Foo : R|kotlin/Any| {
+        context([ResolvedTo(RAW_FIR)] List<@Anno[Unresolved](LAZY_EXPRESSION) Int>)
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor(): R|Foo| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -76,6 +79,7 @@ FILE: [ResolvedTo(IMPORTS)] contextReceiver.kt
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
     context([ResolvedTo(COMPANION_GENERATION)] List<@Anno[Unresolved](LAZY_EXPRESSION) Int>)
     public final? [ResolvedTo(COMPANION_GENERATION)] class Foo : R|kotlin/Any| {
+        context([ResolvedTo(RAW_FIR)] List<@Anno[Unresolved](LAZY_EXPRESSION) Int>)
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor(): R|Foo| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -97,6 +101,7 @@ FILE: [ResolvedTo(IMPORTS)] contextReceiver.kt
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
     context([ResolvedTo(SUPER_TYPES)] List<@Anno[Unresolved](LAZY_EXPRESSION) Int>)
     public final? [ResolvedTo(SUPER_TYPES)] class Foo : R|kotlin/Any| {
+        context([ResolvedTo(RAW_FIR)] List<@Anno[Unresolved](LAZY_EXPRESSION) Int>)
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor(): R|Foo| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -118,6 +123,7 @@ FILE: [ResolvedTo(IMPORTS)] contextReceiver.kt
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
     context([ResolvedTo(TYPES)] R|kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/Int>|)
     public final? [ResolvedTo(TYPES)] class Foo : R|kotlin/Any| {
+        context([ResolvedTo(RAW_FIR)] List<@Anno[Unresolved](LAZY_EXPRESSION) Int>)
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor(): R|Foo| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -139,6 +145,7 @@ FILE: [ResolvedTo(IMPORTS)] contextReceiver.kt
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
     context([ResolvedTo(STATUS)] R|kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/Int>|)
     public final [ResolvedTo(STATUS)] class Foo : R|kotlin/Any| {
+        context([ResolvedTo(RAW_FIR)] List<@Anno[Unresolved](LAZY_EXPRESSION) Int>)
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor(): R|Foo| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -160,6 +167,7 @@ FILE: [ResolvedTo(IMPORTS)] contextReceiver.kt
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
     context([ResolvedTo(EXPECT_ACTUAL_MATCHING)] R|kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/Int>|)
     public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] class Foo : R|kotlin/Any| {
+        context([ResolvedTo(RAW_FIR)] List<@Anno[Unresolved](LAZY_EXPRESSION) Int>)
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor(): R|Foo| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -181,6 +189,7 @@ FILE: [ResolvedTo(IMPORTS)] contextReceiver.kt
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
     context([ResolvedTo(CONTRACTS)] R|kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/Int>|)
     public final [ResolvedTo(CONTRACTS)] class Foo : R|kotlin/Any| {
+        context([ResolvedTo(RAW_FIR)] List<@Anno[Unresolved](LAZY_EXPRESSION) Int>)
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor(): R|Foo| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -202,6 +211,7 @@ FILE: [ResolvedTo(IMPORTS)] contextReceiver.kt
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
     context([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] R|kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/Int>|)
     public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] class Foo : R|kotlin/Any| {
+        context([ResolvedTo(RAW_FIR)] List<@Anno[Unresolved](LAZY_EXPRESSION) Int>)
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor(): R|Foo| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -223,6 +233,7 @@ FILE: [ResolvedTo(IMPORTS)] contextReceiver.kt
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
     context([ResolvedTo(CONSTANT_EVALUATION)] R|kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/Int>|)
     public final [ResolvedTo(CONSTANT_EVALUATION)] class Foo : R|kotlin/Any| {
+        context([ResolvedTo(RAW_FIR)] List<@Anno[Unresolved](LAZY_EXPRESSION) Int>)
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor(): R|Foo| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -244,6 +255,7 @@ FILE: [ResolvedTo(IMPORTS)] contextReceiver.kt
         public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/String|
     context([ResolvedTo(ANNOTATION_ARGUMENTS)] R|kotlin/collections/List<@R|Anno|(position = <strcat>(String(context receiver type ), R|/prop|))  kotlin/Int>|)
     public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class Foo : R|kotlin/Any| {
+        context([ResolvedTo(RAW_FIR)] List<@Anno[Unresolved](LAZY_EXPRESSION) Int>)
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor(): R|Foo| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -265,6 +277,7 @@ FILE: [ResolvedTo(IMPORTS)] contextReceiver.kt
         public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/String|
     context([ResolvedTo(BODY_RESOLVE)] R|kotlin/collections/List<@R|Anno|(position = <strcat>(String(context receiver type ), R|/prop|))  kotlin/Int>|)
     public final [ResolvedTo(BODY_RESOLVE)] class Foo : R|kotlin/Any| {
+        context([ResolvedTo(BODY_RESOLVE)] R|kotlin/collections/List<@R|Anno|(position = <strcat>(String(context receiver type ), R|/prop|))  kotlin/Int>|)
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Foo] constructor(): R|Foo| {
             super<R|kotlin/Any|>()
         }
@@ -286,6 +299,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] contextReceiver.kt
         public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/String|
     context([ResolvedTo(BODY_RESOLVE)] R|kotlin/collections/List<@R|Anno|(position = <strcat>(String(context receiver type ), R|/prop|))  kotlin/Int>|)
     public final [ResolvedTo(BODY_RESOLVE)] class Foo : R|kotlin/Any| {
+        context([ResolvedTo(BODY_RESOLVE)] R|kotlin/collections/List<@R|Anno|(position = <strcat>(String(context receiver type ), R|/prop|))  kotlin/Int>|)
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Foo] constructor(): R|Foo| {
             super<R|kotlin/Any|>()
         }

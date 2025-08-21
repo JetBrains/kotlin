@@ -12,6 +12,7 @@ import org.jetbrains.annotations.NotNull
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.light.classes.symbol.annotations.ComputeAllAtOnceAnnotationsBox
 import org.jetbrains.kotlin.light.classes.symbol.annotations.SymbolLightSimpleAnnotation
+import org.jetbrains.kotlin.light.classes.symbol.cachedValue
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassForInterface
 import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightMethodBase
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightClassModifierList
@@ -45,15 +46,13 @@ internal class SymbolLightParameterForDefaultImplsReceiver(containingDeclaration
 
     override fun isVarArgs(): Boolean = false
 
-    private val _modifierList: PsiModifierList by lazyPub {
+    override fun getModifierList(): PsiModifierList = cachedValue {
         SymbolLightClassModifierList(
             this,
             annotationsBox = ComputeAllAtOnceAnnotationsBox { modifierList ->
                 listOf(SymbolLightSimpleAnnotation(NotNull::class.java.name, modifierList))
             })
     }
-
-    override fun getModifierList(): PsiModifierList = _modifierList
 
     override fun hasModifierProperty(name: String): Boolean = false
 

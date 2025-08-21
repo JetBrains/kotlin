@@ -18,3 +18,6 @@ fun test(foo: A.() -> Int) {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType, infix,
+lambdaLiteral, nullableType, thisExpression, typeParameter, typeWithExtension */

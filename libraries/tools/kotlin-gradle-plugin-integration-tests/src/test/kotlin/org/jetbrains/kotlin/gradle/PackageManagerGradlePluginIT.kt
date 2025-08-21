@@ -5,24 +5,27 @@
 
 package org.jetbrains.kotlin.gradle
 
+import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.targets.js.nodejs.JsPlatformDisambiguator
 import org.jetbrains.kotlin.gradle.targets.js.npm.LockCopyTask
 import org.jetbrains.kotlin.gradle.targets.js.npm.LockCopyTask.Companion.KOTLIN_JS_STORE
 import org.jetbrains.kotlin.gradle.targets.js.npm.LockCopyTask.Companion.PACKAGE_LOCK
-import org.jetbrains.kotlin.gradle.targets.js.npm.LockCopyTask.Companion.PACKAGE_LOCK_MISMATCH_MESSAGE
-import org.jetbrains.kotlin.gradle.targets.js.npm.LockCopyTask.Companion.RESTORE_PACKAGE_LOCK_NAME
-import org.jetbrains.kotlin.gradle.targets.js.npm.LockCopyTask.Companion.STORE_PACKAGE_LOCK_NAME
-import org.jetbrains.kotlin.gradle.targets.js.npm.LockCopyTask.Companion.UPGRADE_PACKAGE_LOCK
+import org.jetbrains.kotlin.gradle.targets.js.npm.LockCopyTask.Companion.RESTORE_PACKAGE_LOCK_BASE_NAME
+import org.jetbrains.kotlin.gradle.targets.js.npm.LockCopyTask.Companion.STORE_PACKAGE_LOCK_BASE_NAME
+import org.jetbrains.kotlin.gradle.targets.js.npm.LockCopyTask.Companion.UPGRADE_PACKAGE_LOCK_BASE_NAME
+import org.jetbrains.kotlin.gradle.targets.js.npm.LockCopyTask.Companion.YARN_LOCK
 import org.jetbrains.kotlin.gradle.targets.js.npm.fromSrcPackageJson
 import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnPlugin
+import org.jetbrains.kotlin.gradle.targets.wasm.yarn.WasmYarnRootEnvSpec
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
-import kotlin.io.path.deleteExisting
 import kotlin.io.path.deleteRecursively
 import kotlin.io.path.notExists
 import kotlin.io.path.readText
 import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 class NpmGradlePluginIT : PackageManagerGradlePluginIT() {
     override val yarn: Boolean = false
@@ -31,11 +34,11 @@ class NpmGradlePluginIT : PackageManagerGradlePluginIT() {
 
     override val extension = "npm.NpmExtension"
 
-    override val upgradeTaskName: String = UPGRADE_PACKAGE_LOCK
+    override val upgradeTaskName: String = JsPlatformDisambiguator.extensionName(UPGRADE_PACKAGE_LOCK_BASE_NAME)
 
-    override val storeTaskName = STORE_PACKAGE_LOCK_NAME
+    override val storeTaskName = JsPlatformDisambiguator.extensionName(STORE_PACKAGE_LOCK_BASE_NAME)
 
-    override val restoreTaskName = RESTORE_PACKAGE_LOCK_NAME
+    override val restoreTaskName = JsPlatformDisambiguator.extensionName(RESTORE_PACKAGE_LOCK_BASE_NAME)
 
     override val reportNewLockFile = "reportNewPackageLock"
 
@@ -45,14 +48,15 @@ class NpmGradlePluginIT : PackageManagerGradlePluginIT() {
 
     override val mismatchReportType = "npm.LockFileMismatchReport"
 
-    override val lockFileName: String = LockCopyTask.PACKAGE_LOCK
+    override val lockFileName: String = PACKAGE_LOCK
 
     override val setProperty: (String) -> String = { ".set($it)" }
 
-    override val mismatchReportMessage: String = PACKAGE_LOCK_MISMATCH_MESSAGE
+    override val mismatchReportMessage: String = LockCopyTask.packageLockMismatchMessage(upgradeTaskName)
 
     @DisplayName("package-lock is OS independent")
     @GradleTest
+    @JsGradlePluginTests
     @OsCondition(enabledOnCI = [OS.WINDOWS])
     fun testPackageLockOsIndependent(gradleVersion: GradleVersion) {
         project("kotlin-js-package-lock-project", gradleVersion) {
@@ -64,6 +68,71 @@ class NpmGradlePluginIT : PackageManagerGradlePluginIT() {
             }
         }
     }
+
+    @GradleTest
+    @JsGradlePluginTests
+    fun `when transitive npm dependency version changes - expect package json is rebuilt`(
+        gradleVersion: GradleVersion,
+    ) {
+        project("js-composite-build", gradleVersion) {
+
+            /**
+             * Verify the `package.json` task is initially executed, and afterwards is up-to-date.
+             * And assert that compilation tasks don't run.
+             */
+            fun validateTasks() {
+
+                fun BuildResult.assertCompileTasksNotRun() {
+                    assertTasksAreNotInTaskGraph(
+                        buildList {
+                            add(":compileKotlinJs")
+                            add(":lib:lib-2:compileKotlinJs")
+                            add(":base:compileKotlinJs")
+                        }
+                    )
+                }
+
+                build(":rootPackageJson") {
+                    assertTasksExecuted(":rootPackageJson")
+                    assertCompileTasksNotRun()
+                }
+                build(":rootPackageJson") {
+                    assertTasksUpToDate(":rootPackageJson")
+                    assertCompileTasksNotRun()
+                }
+            }
+
+            fun assertDependencyUpdateReRunsRootPackageJsonTask(
+                old: String,
+                new: String,
+            ) {
+                // modify a dependency in the composite 'base' build
+                projectPath.resolve("base/build.gradle.kts").modify { content ->
+                    require(old in content) { "dependency $old not defined in buildscript" }
+                    content.replace(old, new)
+                }
+
+                // Because a npm dependency in a dependency changed,
+                // the root project package.json task should be re-run.
+                validateTasks()
+            }
+
+            assertDependencyUpdateReRunsRootPackageJsonTask(
+                """implementation(npm("decamelize", "1.1.1"))""",
+                """implementation(npm("decamelize", "1.1.2"))""",
+            )
+
+            assertDependencyUpdateReRunsRootPackageJsonTask(
+                """api(npm("cowsay", "1.6.0"))""",
+                """api(npm("cowsay", "1.5.0"))""",
+            )
+
+            assertDependencyUpdateReRunsRootPackageJsonTask(
+                """runtimeOnly(npm("uuid", "11.1.0"))""",
+                """runtimeOnly(npm("uuid", "10.0.0"))""",
+            )
+        }
+    }
 }
 
 class YarnGradlePluginIT : PackageManagerGradlePluginIT() {
@@ -73,11 +142,11 @@ class YarnGradlePluginIT : PackageManagerGradlePluginIT() {
 
     override val extension: String = "yarn.YarnRootExtension"
 
-    override val upgradeTaskName: String = YarnPlugin.UPGRADE_YARN_LOCK
+    override val upgradeTaskName: String = JsPlatformDisambiguator.extensionName(YarnPlugin.UPGRADE_YARN_LOCK_BASE_NAME)
 
-    override val storeTaskName = YarnPlugin.STORE_YARN_LOCK_NAME
+    override val storeTaskName = JsPlatformDisambiguator.extensionName(YarnPlugin.STORE_YARN_LOCK_BASE_NAME)
 
-    override val restoreTaskName: String = YarnPlugin.RESTORE_YARN_LOCK_NAME
+    override val restoreTaskName: String = JsPlatformDisambiguator.extensionName(YarnPlugin.RESTORE_YARN_LOCK_BASE_NAME)
 
     override val reportNewLockFile: String = "reportNewYarnLock"
 
@@ -91,10 +160,9 @@ class YarnGradlePluginIT : PackageManagerGradlePluginIT() {
 
     override val setProperty: (String) -> String = { " = $it" }
 
-    override val mismatchReportMessage: String = YarnPlugin.YARN_LOCK_MISMATCH_MESSAGE
+    override val mismatchReportMessage: String = YarnPlugin.yarnLockMismatchMessage(upgradeTaskName)
 }
 
-@JsGradlePluginTests
 abstract class PackageManagerGradlePluginIT : KGPBaseTest() {
 
     abstract val yarn: Boolean
@@ -127,13 +195,21 @@ abstract class PackageManagerGradlePluginIT : KGPBaseTest() {
         get() = super.defaultBuildOptions.copy(
             jsOptions = super.defaultBuildOptions.jsOptions?.copy(
                 yarn = yarn
-            )
+            ),
+            // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
+            isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED,
         )
 
     @DisplayName("js composite build works with lock file persistence")
     @GradleTest
+    @JsGradlePluginTests
     fun testJsCompositeBuildWithUpgradeLockFile(gradleVersion: GradleVersion) {
-        project("js-composite-build", gradleVersion) {
+        project(
+            "js-composite-build",
+            gradleVersion,
+            // `:compileKotlinJs` task is not compatible with CC on Gradle 7
+            buildOptions = defaultBuildOptions.disableConfigurationCacheForGradle7(gradleVersion),
+        ) {
             testJsCompositeBuildWithUpgradeLockFile(
                 upgradeTaskName,
                 storeTaskName
@@ -162,8 +238,12 @@ abstract class PackageManagerGradlePluginIT : KGPBaseTest() {
 
     @DisplayName("Failing with lock file update")
     @GradleTest
+    @JsGradlePluginTests
     fun testFailingWithLockFileUpdate(gradleVersion: GradleVersion) {
-        project("kotlin-js-package-lock-project", gradleVersion) {
+        project(
+            "kotlin-js-package-lock-project",
+            gradleVersion,
+        ) {
             testFailingWithLockFileUpdate(
                 storeTaskName = storeTaskName,
                 restoreTaskName = restoreTaskName,
@@ -194,7 +274,7 @@ abstract class PackageManagerGradlePluginIT : KGPBaseTest() {
             assertTasksExecuted(":$storeTaskName")
         }
 
-        projectPath.resolve(LockCopyTask.KOTLIN_JS_STORE).deleteRecursively()
+        projectPath.resolve(KOTLIN_JS_STORE).deleteRecursively()
 
         buildGradleKts.modify {
             it + "\n" +
@@ -302,7 +382,7 @@ abstract class PackageManagerGradlePluginIT : KGPBaseTest() {
             it.replace("implementation(npm(\"decamelize\", \"6.0.0\"))", "")
         }
 
-        projectPath.resolve(LockCopyTask.KOTLIN_JS_STORE).deleteRecursively()
+        projectPath.resolve(KOTLIN_JS_STORE).deleteRecursively()
 
         buildGradleKts.modify {
             it + "\n" +
@@ -368,11 +448,15 @@ abstract class PackageManagerGradlePluginIT : KGPBaseTest() {
 
         // check if everything ok without build/js/yarn.lock
         build("clean") {
-            assertTasksExecuted(":clean")
+            assertDirectoryInProjectExists(KOTLIN_JS_STORE)
+            assertFileInProjectExists("$KOTLIN_JS_STORE/$lockFileName")
+            assertFileInProjectNotExists("build/js/${lockFileName}")
         }
 
         build("clean") {
-            assertTasksUpToDate(":clean")
+            assertDirectoryInProjectExists(KOTLIN_JS_STORE)
+            assertFileInProjectExists("$KOTLIN_JS_STORE/$lockFileName")
+            assertFileInProjectNotExists("build/js/${lockFileName}")
         }
 
         buildAndFail(storeTaskName) {
@@ -380,7 +464,7 @@ abstract class PackageManagerGradlePluginIT : KGPBaseTest() {
             assertTasksFailed(":$storeTaskName")
         }
 
-        projectPath.resolve(LockCopyTask.KOTLIN_JS_STORE).deleteRecursively()
+        projectPath.resolve(KOTLIN_JS_STORE).deleteRecursively()
 
         //check if independent tasks can be executed
         build("help") {
@@ -390,6 +474,7 @@ abstract class PackageManagerGradlePluginIT : KGPBaseTest() {
 
     @DisplayName("Lock file persistence")
     @GradleTest
+    @JsGradlePluginTests
     fun testLockStore(gradleVersion: GradleVersion) {
         project("nodeJsDownload", gradleVersion) {
             testLockStore(
@@ -404,10 +489,10 @@ abstract class PackageManagerGradlePluginIT : KGPBaseTest() {
         lockFile: String,
     ) {
         build("assemble", taskName) {
-            assertFileExists(projectPath.resolve(LockCopyTask.KOTLIN_JS_STORE).resolve(lockFile))
+            assertFileExists(projectPath.resolve(KOTLIN_JS_STORE).resolve(lockFile))
             assert(
                 projectPath
-                    .resolve(LockCopyTask.KOTLIN_JS_STORE)
+                    .resolve(KOTLIN_JS_STORE)
                     .resolve(lockFile)
                     .readText() == projectPath.resolve("build/js/${lockFile}").readText()
             )
@@ -416,6 +501,7 @@ abstract class PackageManagerGradlePluginIT : KGPBaseTest() {
 
     @DisplayName("Package manager ignore scripts")
     @GradleTest
+    @JsGradlePluginTests
     fun testIgnoreScripts(gradleVersion: GradleVersion) {
         project("nodeJsDownload", gradleVersion) {
             testIgnoreScripts(
@@ -478,6 +564,7 @@ abstract class PackageManagerGradlePluginIT : KGPBaseTest() {
 
     @DisplayName("Change rootPackageJson after its generation")
     @GradleTest
+    @JsGradlePluginTests
     fun testChangeRootPackageJsonAfterGeneration(gradleVersion: GradleVersion) {
         project("kotlin-js-package-lock-project", gradleVersion) {
             buildGradleKts.modify {
@@ -491,7 +578,7 @@ abstract class PackageManagerGradlePluginIT : KGPBaseTest() {
                 |            doLast {
                 |                val file = rootPackageJsonFile.get().asFile
                 |                val rootPackageJson = org.jetbrains.kotlin.gradle.targets.js.npm.fromSrcPackageJson(file) 
-                |                    ?: error("Null PackageJson from ${"$"}file")
+                |                    ?: error("Null PackageJson from ${'$'}file")
                 |                rootPackageJson.version = "foo"
                 |                rootPackageJson.saveTo(file)
                 |            }
@@ -517,7 +604,7 @@ abstract class PackageManagerGradlePluginIT : KGPBaseTest() {
             }
 
             projectPath.resolve("build/js/$lockFileName").deleteRecursively()
-            projectPath.resolve(LockCopyTask.KOTLIN_JS_STORE).deleteRecursively()
+            projectPath.resolve(KOTLIN_JS_STORE).deleteRecursively()
 
             build("kotlinNpmInstall", storeTaskName) {
                 assertTasksUpToDate(":rootPackageJson")

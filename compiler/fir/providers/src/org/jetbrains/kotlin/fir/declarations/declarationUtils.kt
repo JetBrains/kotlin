@@ -7,7 +7,9 @@ package org.jetbrains.kotlin.fir.declarations
 
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.SessionHolder
 import org.jetbrains.kotlin.fir.declarations.utils.isInlineOrValue
+import org.jetbrains.kotlin.fir.declarations.utils.isSealed
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.scopes.*
 import org.jetbrains.kotlin.fir.scopes.impl.declaredMemberScope
@@ -17,29 +19,210 @@ import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.coneTypeSafe
+import org.jetbrains.kotlin.fir.types.functionTypeKind
+import org.jetbrains.kotlin.fir.types.isMarkedNullable
 import org.jetbrains.kotlin.fir.types.isNullableAny
 import org.jetbrains.kotlin.fir.unwrapSubstitutionOverrides
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.util.PrivateForInline
 
+/**
+ * Returns all constructors of a given class, including generated ones. Resolve phase is not guaranteed.
+ *
+ * @param session given use-site session
+ */
 fun FirClass.constructors(session: FirSession): List<FirConstructorSymbol> {
     val result = mutableListOf<FirConstructorSymbol>()
     session.declaredMemberScope(this, memberRequiredPhase = null).processDeclaredConstructors { result += it }
     return result
 }
 
+/**
+ * Returns all constructors of a given class, including generated ones. Resolve phase is not guaranteed.
+ *
+ * @param session given use-site session
+ */
+fun FirClassSymbol<*>.constructors(session: FirSession): List<FirConstructorSymbol> {
+    val result = mutableListOf<FirConstructorSymbol>()
+    session.declaredMemberScope(this, memberRequiredPhase = null).processDeclaredConstructors { result += it }
+    return result
+}
+
+/**
+ * Process all callables (including functions, enum entries and properties, excluding constructors) declared directly in a given class.
+ *
+ * This function processed only declared callables, including generated callables, but excluding constructors.
+ * Inherited callables are not processed.
+ *
+ * @param session given use-site session
+ * @param memberRequiredPhase the required phase for processed members, status phase is the default one
+ */
+fun FirClassSymbol<*>.processAllDeclaredCallables(
+    session: FirSession,
+    memberRequiredPhase: FirResolvePhase = FirResolvePhase.STATUS,
+    processor: (FirCallableSymbol<*>) -> Unit
+) {
+    session.declaredMemberScope(this, memberRequiredPhase).processAllCallables(processor)
+}
+
+/**
+ * Returns all properties and enum entries declared in a given class, including generated ones. Inherited properties are excluded.
+ *
+ * @param session given use-site session
+ * @param memberRequiredPhase the required phase for properties, status phase is the default one
+ */
+fun FirClassSymbol<*>.declaredProperties(
+    session: FirSession,
+    memberRequiredPhase: FirResolvePhase = FirResolvePhase.STATUS,
+): List<FirPropertySymbol> {
+    val result = mutableListOf<FirPropertySymbol>()
+    processAllDeclaredCallables(session, memberRequiredPhase) {
+        if (it is FirPropertySymbol) {
+            result += it
+        }
+    }
+    return result
+}
+
+/**
+ * Returns all functions declared in a given class, including generated functions. Inherited functions are excluded.
+ *
+ * @param session given use-site session
+ * @param memberRequiredPhase the required phase for functions, status phase is the default one
+ */
+fun FirClassSymbol<*>.declaredFunctions(
+    session: FirSession,
+    memberRequiredPhase: FirResolvePhase = FirResolvePhase.STATUS,
+): List<FirNamedFunctionSymbol> {
+    val result = mutableListOf<FirNamedFunctionSymbol>()
+    processAllDeclaredCallables(session, memberRequiredPhase) {
+        if (it is FirNamedFunctionSymbol) {
+            result += it
+        }
+    }
+    return result
+}
+
+/**
+ * Process all classifiers (nested type aliases, objects and classes, including generated ones) declared directly in a given class.
+ *
+ * @param session given use-site session
+ * @param memberRequiredPhase the required phase for processed members, status phase is the default one
+ */
+fun FirClassSymbol<*>.processAllClassifiers(
+    session: FirSession,
+    memberRequiredPhase: FirResolvePhase = FirResolvePhase.STATUS,
+    processor: (FirClassifierSymbol<*>) -> Unit
+) {
+    session.declaredMemberScope(this, memberRequiredPhase).processAllClassifiers(processor)
+}
+
+/**
+ * Returns all declarations declared in a given class, including generated ones. Inherited declarations are excluded.
+ *
+ * This function processes nested classes, nested objects, nested type aliases,
+ * member functions, member properties, enum entries, constructors.
+ * Anonymous initializers can't be processed this way.
+ *
+ * @param session given use-site session
+ * @param memberRequiredPhase the required phase for declarations, status phase is the default one
+ */
+fun FirClass.processAllDeclarations(
+    session: FirSession,
+    memberRequiredPhase: FirResolvePhase = FirResolvePhase.STATUS,
+    processor: (FirBasedSymbol<*>) -> Unit
+) {
+    session.declaredMemberScope(this, memberRequiredPhase).let {
+        it.processAllClassifiers(processor)
+        it.processAllCallables(processor)
+        it.processDeclaredConstructors(processor)
+    }
+    declarations.forEach {
+        if (it !is FirAnonymousInitializer) return@forEach
+        processor(it.symbol)
+    }
+}
+
+/**
+ * Returns all declarations declared in a given class, including generated ones. Inherited declarations are excluded.
+ *
+ * This function processes nested classes, nested objects, nested type aliases,
+ * member functions, member properties, enum entries, constructors.
+ * Anonymous initializers can't be processed this way.
+ *
+ * @param session given use-site session
+ * @param memberRequiredPhase the required phase for declarations, status phase is the default one
+ */
+@Suppress("unused")
+fun FirClassSymbol<*>.processAllDeclarations(
+    session: FirSession,
+    memberRequiredPhase: FirResolvePhase = FirResolvePhase.STATUS,
+    processor: (FirBasedSymbol<*>) -> Unit
+) {
+    fir.processAllDeclarations(session, memberRequiredPhase, processor)
+}
+
+/**
+ * Returns the primary constructor of a given class, if any. Resolve phase is not guaranteed.
+ *
+ * @param session given use-site session
+ */
 fun FirClass.primaryConstructorIfAny(session: FirSession): FirConstructorSymbol? {
     return constructors(session).find(FirConstructorSymbol::isPrimary)
 }
 
-// TODO: dog shit, rewrite with scopes
-fun FirClass.collectEnumEntries(): Collection<FirEnumEntry> {
-    assert(classKind == ClassKind.ENUM_CLASS)
-    return declarations.filterIsInstance<FirEnumEntry>()
+/**
+ * Returns the primary constructor of a given class, if any. Resolve phase is not guaranteed.
+ *
+ * @param session given use-site session
+ */
+fun FirClassSymbol<*>.primaryConstructorIfAny(session: FirSession): FirConstructorSymbol? {
+    return constructors(session).find(FirConstructorSymbol::isPrimary)
 }
 
-fun FirClassSymbol<*>.collectEnumEntries(): Collection<FirEnumEntrySymbol> {
-    return fir.collectEnumEntries().map { it.symbol }
+/**
+ * Returns all enum entries declared in a given class, including generated ones. Resolve phase is not guaranteed.
+ *
+ * @param session given use-site session
+ */
+fun FirClass.collectEnumEntries(session: FirSession): List<FirEnumEntry> {
+    assert(classKind == ClassKind.ENUM_CLASS)
+    val result = mutableListOf<FirEnumEntry>()
+    session.declaredMemberScope(this, memberRequiredPhase = null).processAllProperties {
+        if (it is FirEnumEntrySymbol) {
+            result.add(it.fir)
+        }
+    }
+    return result
+}
+
+/**
+ * Returns all enum entries declared in a given class, including generated ones. Resolve phase is not guaranteed.
+ *
+ * @param session given use-site session
+ */
+fun FirClassSymbol<*>.collectEnumEntries(session: FirSession): List<FirEnumEntrySymbol> {
+    return fir.collectEnumEntries(session).map { it.symbol }
+}
+
+context(holder: SessionHolder)
+fun FirEnumEntrySymbol.getComplementarySymbols(): List<FirEnumEntrySymbol>? = resolvedReturnType
+    .toRegularClassSymbol(holder.session)
+    ?.collectEnumEntries(holder.session)
+    ?.filter { it != this }
+
+context(holder: SessionHolder)
+fun FirRegularClassSymbol.getComplementarySymbols(): List<FirRegularClassSymbol>? {
+    val superTypes = getSuperTypes(holder.session)
+        .mapNotNullTo(mutableSetOf()) { it.toRegularClassSymbol(holder.session) }
+
+    return superTypes.flatMap { superType ->
+        if (!superType.isSealed) return@flatMap emptyList()
+
+        superType.fir.getSealedClassInheritors(holder.session)
+            .mapNotNull { it.toSymbol(holder.session) as? FirRegularClassSymbol }
+            .filter { it != this@getComplementarySymbols && it !in superTypes }
+    }
 }
 
 /**
@@ -118,13 +301,13 @@ private fun FirFunction.containsDefaultValue(index: Int): Boolean = valueParamet
 fun FirFunction.itOrExpectHasDefaultParameterValue(index: Int): Boolean =
     containsDefaultValue(index) || symbol.getSingleMatchedExpectForActualOrNull()?.fir?.containsDefaultValue(index) == true
 
-fun FirSimpleFunction.isEquals(session: FirSession): Boolean {
+fun FirNamedFunctionSymbol.isEquals(session: FirSession): Boolean {
     if (name != OperatorNameConventions.EQUALS) return false
-    if (valueParameters.size != 1) return false
-    if (contextParameters.isNotEmpty()) return false
-    if (receiverParameter != null) return false
-    val parameter = valueParameters.first()
-    return parameter.returnTypeRef.coneType.fullyExpandedType(session).isNullableAny
+    if (valueParameterSymbols.size != 1) return false
+    if (contextParameterSymbols.isNotEmpty()) return false
+    if (receiverParameterSymbol != null) return false
+    val parameter = valueParameterSymbols.first()
+    return parameter.resolvedReturnTypeRef.coneType.fullyExpandedType(session).isNullableAny
 }
 
 /**
@@ -132,6 +315,7 @@ fun FirSimpleFunction.isEquals(session: FirSession): Boolean {
  *
  * @see org.jetbrains.kotlin.fir.scopes.impl.FirTypeIntersectionScopeContext.convertGroupedCallablesToIntersectionResults
  */
+@ScopeFunctionRequiresPrewarm
 fun MemberWithBaseScope<FirCallableSymbol<*>>.isTrivialIntersection(): Boolean {
     return baseScope
         .getDirectOverriddenMembersWithBaseScope(member)
@@ -139,6 +323,7 @@ fun MemberWithBaseScope<FirCallableSymbol<*>>.isTrivialIntersection(): Boolean {
         .mapTo(mutableSetOf()) { it.member.unwrapSubstitutionOverrides() }.size == 1
 }
 
+@ScopeFunctionRequiresPrewarm
 fun FirIntersectionCallableSymbol.getNonSubsumedOverriddenSymbols(
     session: FirSession,
     scopeSession: ScopeSession,
@@ -149,6 +334,7 @@ fun FirIntersectionCallableSymbol.getNonSubsumedOverriddenSymbols(
     return MemberWithBaseScope(this, dispatchReceiverScope).getNonSubsumedOverriddenSymbols()
 }
 
+@ScopeFunctionRequiresPrewarm
 fun MemberWithBaseScope<FirCallableSymbol<*>>.getNonSubsumedOverriddenSymbols(): List<FirCallableSymbol<*>> {
     return flattenIntersectionsRecursively()
         .nonSubsumed()
@@ -156,6 +342,7 @@ fun MemberWithBaseScope<FirCallableSymbol<*>>.getNonSubsumedOverriddenSymbols():
         .map { it.member }
 }
 
+@ScopeFunctionRequiresPrewarm
 fun Collection<MemberWithBaseScope<FirCallableSymbol<*>>>.getNonSubsumedNonPhantomOverriddenSymbols(): List<MemberWithBaseScope<FirCallableSymbol<*>>> {
     // It's crucial that we only unwrap phantom intersection overrides.
     // See comments in the following tests for explanation:
@@ -178,12 +365,14 @@ fun FirCallableSymbol<*>.dispatchReceiverScope(session: FirSession, scopeSession
     ) ?: FirTypeScope.Empty
 }
 
+@ScopeFunctionRequiresPrewarm
 fun MemberWithBaseScope<FirCallableSymbol<*>>.flattenIntersectionsRecursively(): List<MemberWithBaseScope<FirCallableSymbol<*>>> {
     if (member.unwrapSubstitutionOverrides<FirCallableSymbol<*>>().origin != FirDeclarationOrigin.IntersectionOverride) return listOf(this)
 
     return baseScope.getDirectOverriddenMembersWithBaseScope(member).flatMap { it.flattenIntersectionsRecursively() }
 }
 
+@ScopeFunctionRequiresPrewarm
 fun MemberWithBaseScope<FirCallableSymbol<*>>.flattenPhantomIntersectionsRecursively(): List<MemberWithBaseScope<FirCallableSymbol<*>>> {
     val symbol = member.unwrapSubstitutionOverrides<FirCallableSymbol<*>>()
 
@@ -198,6 +387,7 @@ fun MemberWithBaseScope<FirCallableSymbol<*>>.flattenPhantomIntersectionsRecursi
  * A callable declaration D [subsumes](https://kotlinlang.org/spec/inheritance.html#matching-and-subsumption-of-declarations)
  * a callable declaration B if D overrides B.
  */
+@ScopeFunctionRequiresPrewarm
 fun Collection<MemberWithBaseScope<FirCallableSymbol<*>>>.nonSubsumed(): List<MemberWithBaseScope<FirCallableSymbol<*>>> {
     val baseMembers = mutableSetOf<FirCallableSymbol<*>>()
     for ((member, scope) in this) {
@@ -216,4 +406,10 @@ fun Collection<MemberWithBaseScope<FirCallableSymbol<*>>>.nonSubsumed(): List<Me
         }
     }
     return filter { (member, _) -> member.unwrapSubstitutionOverrides<FirCallableSymbol<*>>() !in baseMembers }
+}
+
+fun FirValueParameter.isInlinable(session: FirSession): Boolean {
+    if (isNoinline) return false
+    val fullyExpandedType = returnTypeRef.coneType.fullyExpandedType(session)
+    return !fullyExpandedType.isMarkedNullable && fullyExpandedType.functionTypeKind(session)?.isInlineable == true
 }

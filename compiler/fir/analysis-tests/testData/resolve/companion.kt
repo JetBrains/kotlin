@@ -16,3 +16,5 @@ abstract class Another {
 
     abstract val x: InCompanion
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, nestedClass, objectDeclaration, propertyDeclaration */

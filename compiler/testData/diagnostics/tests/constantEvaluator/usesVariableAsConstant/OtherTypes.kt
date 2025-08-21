@@ -21,3 +21,5 @@ val x = 1
 
 // val prop5: true
 <!DEBUG_INFO_CONSTANT_VALUE("true")!>val prop5 = intArrayOf(1, 2, x, x)<!>
+
+/* GENERATED_FIR_TAGS: enumDeclaration, enumEntry, functionDeclaration, integerLiteral, propertyDeclaration */

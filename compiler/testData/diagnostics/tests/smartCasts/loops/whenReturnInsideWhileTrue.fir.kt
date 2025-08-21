@@ -12,3 +12,6 @@ public fun foo(x: String?): Int {
     // but we are not able to detect it
     return x.length
 }
+
+/* GENERATED_FIR_TAGS: break, equalityExpression, functionDeclaration, integerLiteral, nullableType, smartcast,
+stringLiteral, whenExpression, whenWithSubject, whileLoop */

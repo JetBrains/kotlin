@@ -2,7 +2,9 @@
 // WITH_STDLIB
 
 fun main() {
-    <!CANNOT_INFER_PARAMETER_TYPE, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>buildList<!> {
+    <!CANNOT_INFER_PARAMETER_TYPE!>buildList<!> {
         println(get(0))
     }
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral, lambdaLiteral */

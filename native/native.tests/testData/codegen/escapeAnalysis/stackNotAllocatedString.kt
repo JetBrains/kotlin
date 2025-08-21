@@ -9,7 +9,7 @@ import kotlin.native.internal.*
 
 fun box(): String {
     val s = String()
-    assertFalse(s.isLocal())
+    assertFalse(s.isStack())
 
     return "OK"
 }

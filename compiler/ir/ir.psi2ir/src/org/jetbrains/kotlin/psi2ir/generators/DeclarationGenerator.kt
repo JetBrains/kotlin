@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.psi2ir.generators
 
 import org.jetbrains.kotlin.backend.common.BackendException
-import org.jetbrains.kotlin.backend.common.CodegenUtil
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
@@ -47,27 +46,18 @@ class DeclarationGenerator(override val context: GeneratorContext) : Generator {
                 is KtScript ->
                     ScriptGenerator(this).generateScriptDeclaration(ktDeclaration)
                 else ->
-                    context.irFactory.createErrorDeclaration(
-                        ktDeclaration.startOffsetSkippingComments, ktDeclaration.endOffset,
-                        getOrFail(BindingContext.DECLARATION_TO_DESCRIPTOR, ktDeclaration)
-                    )
+                    null
             }
         } catch (e: BackendException) {
             throw e
         } catch (e: Throwable) {
             rethrowIntellijPlatformExceptionIfNeeded(e)
             when {
-                context.configuration.ignoreErrors -> {
-                    context.irFactory.createErrorDeclaration(
-                        ktDeclaration.startOffsetSkippingComments, ktDeclaration.endOffset,
-                        getOrFail(BindingContext.DECLARATION_TO_DESCRIPTOR, ktDeclaration)
-                    )
-                }
                 e is ErrorExpressionException ->
-                    CodegenUtil.reportBackendException(e.cause ?: e, "psi2ir", PsiDiagnosticUtils.atLocation(e.ktElement), e.message)
+                    BackendException.report(e.cause ?: e, "psi2ir", PsiDiagnosticUtils.atLocation(e.ktElement), e.message)
                 else -> {
                     val psiFile = ktDeclaration.containingKtFile
-                    CodegenUtil.reportBackendException(e, "psi2ir", psiFile.virtualFile?.path ?: psiFile.name)
+                    BackendException.report(e, "psi2ir", psiFile.virtualFile?.path ?: psiFile.name)
                 }
             }
         }

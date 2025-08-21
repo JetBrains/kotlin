@@ -240,12 +240,38 @@ open class NativeInteropPlugin : Plugin<Project> {
             suffixes {
                 (".c" to ".$obj") {
                     tool(*hostPlatform.clangForJni.clangC("").toTypedArray())
-                    val cflags = cCompilerArgs + commonCompilerArgs + includeDirs.map { "-I${it.absolutePath}" } + hostPlatform.clangForJni.hostCompilerArgsForJni
+
+                    // Ideally, this shouldn't be here.
+                    // https://youtrack.jetbrains.com/issue/KT-77091 tracks that.
+                    val ignoreWarningFlags = buildList {
+                        // cinterop generates code like `#define __DATE__ "__DATE__"`:
+                        add("-Wno-builtin-macro-redefined")
+                        // cinterop generates wrappers calling deprecated declarations:
+                        add("-Wno-deprecated-declarations")
+                        // cinterop generates pointer casts that discard `const`:
+                        add("-Wno-incompatible-pointer-types-discards-qualifiers")
+                        // cinterop generates wrappers that pass `void*` for function pointer parameters:
+                        add("-Wno-pedantic")
+
+                        if (HostManager.hostIsMingw) {
+                            // hostPlatform.clangForJni.clangC includes -L$path arguments.
+                            // They come from WindowsKit.CustomPath.libraryDirectories through .compilerFlags().
+                            add("-Wno-unused-command-line-argument")
+                        }
+                    }
+
+                    val cflags = cCompilerArgs +
+                            commonCompilerArgs +
+                            ignoreWarningFlags +
+                            "-Werror" +
+                            includeDirs.map { "-I${it.absolutePath}" } +
+                            hostPlatform.clangForJni.hostCompilerArgsForJni
+
                     flags(*cflags.toTypedArray(), "-c", "-o", ruleOut(), ruleInFirst())
                 }
                 (".cpp" to ".$obj") {
                     tool(*hostPlatform.clang.clangCXX("").toTypedArray())
-                    val cxxflags = cppCompilerArgs + commonCompilerArgs + includeDirs.map { "-I${it.absolutePath}" }
+                    val cxxflags = cppCompilerArgs + commonCompilerArgs + "-Werror" + includeDirs.map { "-I${it.absolutePath}" }
                     flags(*cxxflags.toTypedArray(), "-c", "-o", ruleOut(), ruleInFirst())
                 }
             }

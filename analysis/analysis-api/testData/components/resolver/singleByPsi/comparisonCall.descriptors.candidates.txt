@@ -7,10 +7,12 @@ KtBinaryExpression(31,36): 'i < j'
           receiverType = null
           returnType = kotlin.Int
           symbol = other: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = i
           isSafeNavigation = false
@@ -26,8 +28,10 @@ KtBinaryExpression(31,36): 'i < j'
               receiverType = null
               returnType = kotlin.Int
               symbol = other: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/Int.compareTo
       typeArgumentsMapping = {}
     isInBestCandidates = true

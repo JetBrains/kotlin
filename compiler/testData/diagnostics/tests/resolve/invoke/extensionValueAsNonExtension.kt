@@ -22,3 +22,6 @@ fun foo(): A.() -> Int {
 
     return null!!
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, functionDeclaration, functionalType, init, localProperty,
+propertyDeclaration, typeWithExtension */

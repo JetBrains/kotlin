@@ -24,3 +24,5 @@ open class OpenClass {
         <!CONTRACT_NOT_ALLOWED!>contract<!>(l)
     }
 }
+
+/* GENERATED_FIR_TAGS: anonymousFunction, classDeclaration, functionDeclaration, functionalType, typeWithExtension */

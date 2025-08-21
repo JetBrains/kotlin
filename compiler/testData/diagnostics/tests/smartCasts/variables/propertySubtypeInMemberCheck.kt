@@ -13,3 +13,6 @@ class MyClass(var p: Any) {
         return -1
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, functionDeclaration, ifExpression, integerLiteral, isExpression,
+primaryConstructor, propertyDeclaration, smartcast, stringLiteral */

@@ -2,6 +2,7 @@ KtNameReferenceExpression(53,61): 'instance'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = ktClass
           isSafeNavigation = false
@@ -12,6 +13,7 @@ KtNameReferenceExpression(53,61): 'instance'
           receiverType = null
           returnType = KtSubClass
           symbol = val instance: KtSubClass
+          contextParameters = []
           callableId = /KtClass.instance
       simpleAccess = Read
       typeArgumentsMapping = {}

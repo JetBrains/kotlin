@@ -40,3 +40,6 @@ fun <F : B<F>> test_3(b: B<F>) {
         <!DEBUG_INFO_SMARTCAST!>b<!>.symbol.bar()
     }
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, ifExpression, interfaceDeclaration, intersectionType, isExpression, override,
+propertyDeclaration, smartcast, starProjection, typeConstraint, typeParameter */

@@ -6,3 +6,6 @@ val x3 = foo<<!UNRESOLVED_REFERENCE!>unresolved<!>.() -> Float> { this.<!DEBUG_I
 val x4 = foo<(Array<<!UNRESOLVED_REFERENCE!>unresolved<!>>) -> Int> { <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>it<!>.size }
 
 fun <T> bar() = foo<(T) -> String> { it.toString() }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionalType, lambdaLiteral, nullableType, propertyDeclaration,
+thisExpression, typeParameter, typeWithExtension */

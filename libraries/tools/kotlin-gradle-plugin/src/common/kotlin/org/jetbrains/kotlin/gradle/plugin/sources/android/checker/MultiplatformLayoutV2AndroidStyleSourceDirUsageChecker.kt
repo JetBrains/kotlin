@@ -5,10 +5,12 @@
 
 package org.jetbrains.kotlin.gradle.plugin.sources.android.checker
 
+import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnosticsCollector
+import org.jetbrains.kotlin.gradle.plugin.launchInStage
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
 import org.jetbrains.kotlin.gradle.plugin.sources.android.KotlinAndroidSourceSetLayout
 import org.jetbrains.kotlin.gradle.utils.*
@@ -26,17 +28,19 @@ internal object MultiplatformLayoutV2AndroidStyleSourceDirUsageChecker : KotlinA
         @Suppress("TYPEALIAS_EXPANSION_DEPRECATION") androidSourceSet: DeprecatedAndroidSourceSet
     ) {
         if (target.project.kotlinPropertiesProvider.ignoreMppAndroidSourceSetLayoutV2AndroidStyleDirs) return
-        val projectRoot = target.project.rootDir
-        val androidStyleSourceDir = target.project.file("src/${androidSourceSet.name}/kotlin")
-        if (androidStyleSourceDir in kotlinSourceSet.kotlin.srcDirs && androidStyleSourceDir.exists()) {
-            val kotlinStyleSourceDirToUse = target.project.file("src/${kotlinSourceSet.name}/kotlin")
-            diagnosticsCollector.report(
-                target.project,
-                KotlinToolingDiagnostics.AndroidStyleSourceDirUsageWarning(
-                    androidStyleSourceDir.relativeTo(projectRoot).toString(),
-                    kotlinStyleSourceDirToUse.relativeTo(projectRoot).toString(),
+        target.project.launchInStage(KotlinPluginLifecycle.Stage.AfterFinaliseDsl) {
+            val androidStyleSourceDir = target.project.file("src/${androidSourceSet.name}/kotlin")
+            if (androidStyleSourceDir in kotlinSourceSet.kotlin.srcDirs && androidStyleSourceDir.exists()) {
+                val projectRoot = target.project.rootDir
+                val kotlinStyleSourceDirToUse = target.project.file("src/${kotlinSourceSet.name}/kotlin")
+                diagnosticsCollector.report(
+                    target.project,
+                    KotlinToolingDiagnostics.AndroidStyleSourceDirUsageWarning(
+                        androidStyleSourceDir.relativeTo(projectRoot).toString(),
+                        kotlinStyleSourceDirToUse.relativeTo(projectRoot).toString(),
+                    )
                 )
-            )
+            }
         }
     }
 }

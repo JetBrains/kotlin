@@ -61,3 +61,6 @@ class B : Java1() {
     override var e: <!VAR_TYPE_MISMATCH_ON_OVERRIDE!>String?<!> = super.e
     override var f: <!VAR_TYPE_MISMATCH_ON_OVERRIDE!>String?<!> = super.f
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, javaFunction, javaProperty, javaType, nullableType,
+override, propertyDeclaration, stringLiteral, superExpression */

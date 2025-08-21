@@ -7,7 +7,7 @@ fun testStandardNavigation() {
         // should fix OTv := ScopeOwner<Value> for scope navigation
         otvOwner.provide().accessorBackedProperty
         // expected: Interloper </: ScopeOwner<Value>
-        otvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("Interloper; ScopeOwner<SOT (of class ScopeOwner<SOT>)>")!>Interloper<!>)
+        otvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("Interloper; ScopeOwner<uninferred SOT (of class ScopeOwner<SOT>)>")!>Interloper<!>)
     }
     // expected: ScopeOwner<Value>
     <!DEBUG_INFO_EXPRESSION_TYPE("ScopeOwner<Value>")!>resultA<!>
@@ -17,7 +17,7 @@ fun testStandardNavigation() {
         // should fix OTv := ScopeOwner<Value> for scope navigation
         otvOwner.provide().delegatedProperty
         // expected: Interloper </: ScopeOwner<Value>
-        otvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("Interloper; ScopeOwner<SOT (of class ScopeOwner<SOT>)>")!>Interloper<!>)
+        otvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("Interloper; ScopeOwner<uninferred SOT (of class ScopeOwner<SOT>)>")!>Interloper<!>)
     }
     // expected: ScopeOwner<Value>
     <!DEBUG_INFO_EXPRESSION_TYPE("ScopeOwner<Value>")!>resultB<!>
@@ -29,7 +29,7 @@ fun testSafeNavigation() {
         // should fix OTv := ScopeOwner<Value>? for scope navigation
         otvOwner.provide()?.accessorBackedProperty
         // expected: Interloper </: ScopeOwner<Value>?
-        otvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("Interloper; ScopeOwner<SOT (of fun <SOT> Nullable)>?")!>Interloper<!>)
+        otvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("Interloper; ScopeOwner<uninferred SOT (of fun <SOT> Nullable)>?")!>Interloper<!>)
     }
     // expected: ScopeOwner<Value>?
     <!DEBUG_INFO_EXPRESSION_TYPE("ScopeOwner<Value>?")!>resultA<!>
@@ -39,7 +39,7 @@ fun testSafeNavigation() {
         // should fix OTv := ScopeOwner<Value>? for scope navigation
         otvOwner.provide()?.delegatedProperty
         // expected: Interloper </: ScopeOwner<Value>?
-        otvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("Interloper; ScopeOwner<SOT (of fun <SOT> Nullable)>?")!>Interloper<!>)
+        otvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("Interloper; ScopeOwner<uninferred SOT (of fun <SOT> Nullable)>?")!>Interloper<!>)
     }
     // expected: ScopeOwner<Value>?
     <!DEBUG_INFO_EXPRESSION_TYPE("ScopeOwner<Value>?")!>resultB<!>
@@ -70,3 +70,8 @@ operator fun <X> X.getValue(reference: X, property: Any?): Value = Value
 val <B> B.delegatedProperty: Value by Any()
 
 object Interloper: BaseType
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, companionObject, funWithExtensionReceiver,
+functionDeclaration, functionalType, getter, interfaceDeclaration, lambdaLiteral, localProperty, nullableType,
+objectDeclaration, operator, primaryConstructor, propertyDeclaration, propertyDelegate, propertyWithExtensionReceiver,
+safeCall, typeParameter */

@@ -11,16 +11,33 @@ import com.google.gson.GsonBuilder
 import org.gradle.api.provider.Provider
 import org.jetbrains.kotlin.gradle.targets.js.NpmVersions
 import org.jetbrains.kotlin.gradle.targets.js.RequiredKotlinJsDependency
-import org.jetbrains.kotlin.gradle.targets.js.appendConfigsFromDir
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinWebpackRulesContainer
 import org.jetbrains.kotlin.gradle.targets.js.dsl.WebpackRulesDsl
-import org.jetbrains.kotlin.gradle.targets.js.jsQuoted
+import org.jetbrains.kotlin.gradle.targets.js.internal.appendConfigsFromDir
+import org.jetbrains.kotlin.gradle.targets.js.internal.jsQuoted
 import org.jetbrains.kotlin.gradle.utils.appendLine
 import org.jetbrains.kotlin.gradle.utils.relativeOrAbsolute
 import java.io.File
 import java.io.Serializable
 import java.io.StringWriter
 
+/**
+ * Configuration options used to generate [webpack](https://webpack.js.org/)
+ * configuration used to bundle Kotlin JS and Wasm targets.
+ *
+ * Some options are directly translated to webpack configuration options,
+ * while others are specific to Kotlin.
+ *
+ * Be aware that changing these options can result in a broken bundle,
+ * or produce subtly broken JS code.
+ * If you are not sure: do not configure these options,
+ * the defaults should work for most use cases.
+ *
+ * For more information about how Kotlin JS and Wasm use Webpack, see
+ * https://kotl.in/js-project-setup/webpack-bundling
+ *
+ * @see org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
+ */
 @Suppress("MemberVisibilityCanBePrivate")
 data class KotlinWebpackConfig(
     val npmProjectDir: Provider<File>? = null,
@@ -41,7 +58,8 @@ data class KotlinWebpackConfig(
     var sourceMaps: Boolean = false,
     var export: Boolean = true,
     var progressReporter: Boolean = false,
-    var resolveFromModulesFirst: Boolean = false
+    var resolveFromModulesFirst: Boolean = false,
+    var resolveLoadersFromKotlinToolingDir: Boolean = false,
 ) : WebpackRulesDsl {
 
     val entryInput: String?
@@ -94,14 +112,14 @@ data class KotlinWebpackConfig(
         var proxy: MutableList<Proxy>? = null,
         var static: MutableList<String>? = null,
         var contentBase: MutableList<String>? = null,
-        var client: Client? = null
+        var client: Client? = null,
     ) : Serializable {
         data class Client(
-            var overlay: Any /* Overlay | Boolean */
+            var overlay: Any, /* Overlay | Boolean */
         ) : Serializable {
             data class Overlay(
                 var errors: Boolean,
-                var warnings: Boolean
+                var warnings: Boolean,
             ) : Serializable
         }
 
@@ -110,20 +128,20 @@ data class KotlinWebpackConfig(
             val target: String,
             val pathRewrite: MutableMap<String, String>? = null,
             val secure: Boolean? = null,
-            val changeOrigin: Boolean? = null
+            val changeOrigin: Boolean? = null,
         ) : Serializable
     }
 
     @Suppress("unused")
     data class Optimization(
         var runtimeChunk: Any?,
-        var splitChunks: Any?
+        var splitChunks: Any?,
     ) : Serializable
 
     @Suppress("unused")
     data class WatchOptions(
         var aggregateTimeout: Int? = null,
-        var ignored: Any? = null
+        var ignored: Any? = null,
     ) : Serializable
 
     fun save(configFile: File) {
@@ -134,6 +152,14 @@ data class KotlinWebpackConfig(
 
     fun appendTo(target: Appendable) {
         with(target) {
+            val resolveLoaders = if (resolveLoadersFromKotlinToolingDir) {
+                """
+                resolveLoader: {
+                  modules: ['node_modules', process.env['KOTLIN_TOOLING_DIR']]
+                }
+                """.trimIndent()
+            } else ""
+
             //language=JavaScript 1.8
             appendLine(
                 """
@@ -147,7 +173,8 @@ data class KotlinWebpackConfig(
                       plugins: [],
                       module: {
                         rules: []
-                      }
+                      },
+                      $resolveLoaders
                     };
                     
                 """.trimIndent()
@@ -286,6 +313,7 @@ data class KotlinWebpackConfig(
         //language=JavaScript 1.8
         appendLine(
             """
+                config.output = config.output || {}
                 config.output.path = require('path').resolve(__dirname, ${outputPathInput!!.jsQuoted()})
             """.trimIndent()
         )

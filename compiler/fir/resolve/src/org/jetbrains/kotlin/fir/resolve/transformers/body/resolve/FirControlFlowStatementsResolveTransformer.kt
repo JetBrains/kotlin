@@ -10,16 +10,12 @@ import org.jetbrains.kotlin.fir.FirTargetElement
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirElseIfTrueCondition
 import org.jetbrains.kotlin.fir.expressions.impl.FirEmptyExpressionBlock
-import org.jetbrains.kotlin.fir.languageVersionSettings
+import org.jetbrains.kotlin.fir.isEnabled
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
-import org.jetbrains.kotlin.fir.resolve.ResolutionMode
-import org.jetbrains.kotlin.fir.resolve.expectedType
-import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
+import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.inference.TemporaryInferenceSessionHook
-import org.jetbrains.kotlin.fir.resolve.transformExpressionUsingSmartcastInfo
 import org.jetbrains.kotlin.fir.resolve.transformers.FirSyntheticCallGenerator
 import org.jetbrains.kotlin.fir.resolve.transformers.FirWhenExhaustivenessTransformer
-import org.jetbrains.kotlin.fir.resolve.withExpectedType
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visitors.transformSingle
 
@@ -33,27 +29,26 @@ class FirControlFlowStatementsResolveTransformer(transformer: FirAbstractBodyRes
     // ------------------------------- Loops -------------------------------
 
     override fun transformWhileLoop(whileLoop: FirWhileLoop, data: ResolutionMode): FirStatement {
-        val context = ResolutionMode.ContextIndependent
         return whileLoop.also(dataFlowAnalyzer::enterWhileLoop)
             .transformCondition(transformer, withExpectedType(session.builtinTypes.booleanType))
             .also(dataFlowAnalyzer::exitWhileLoopCondition)
-            .transformBlock(transformer, context).also(dataFlowAnalyzer::exitWhileLoop)
-            .transformOtherChildren(transformer, context)
+            .transformBlock(transformer, ResolutionMode.ContextIndependent).also(dataFlowAnalyzer::exitWhileLoop)
+            .transformLabel(transformer, ResolutionMode.ContextIndependent)
+            .transformAnnotations(transformer, ResolutionMode.ContextIndependent)
     }
 
     override fun transformDoWhileLoop(doWhileLoop: FirDoWhileLoop, data: ResolutionMode): FirStatement {
         // Do-while has a specific scope structure (its block and condition effectively share the scope)
         return context.forBlock(session) {
-            val context = ResolutionMode.ContextIndependent
             doWhileLoop.also(dataFlowAnalyzer::enterDoWhileLoop)
                 .also {
-                    transformer.expressionsTransformer?.transformBlockInCurrentScope(it.block, context)
+                    transformer.expressionsTransformer?.transformBlockInCurrentScope(it.block, ResolutionMode.ContextIndependent)
                 }
                 .also(dataFlowAnalyzer::enterDoWhileLoopCondition)
                 .transformCondition(transformer, withExpectedType(session.builtinTypes.booleanType))
                 .also(dataFlowAnalyzer::exitDoWhileLoop)
-                .transformOtherChildren(transformer, context)
-        }
+                .transformLabel(transformer, ResolutionMode.ContextIndependent)
+        }.transformAnnotations(transformer, ResolutionMode.ContextIndependent)
     }
 
     // ------------------------------- When expressions -------------------------------
@@ -66,60 +61,58 @@ class FirControlFlowStatementsResolveTransformer(transformer: FirAbstractBodyRes
         dataFlowAnalyzer.enterWhenExpression(whenExpression)
         return context.withWhenExpression(whenExpression, session) with@{
             @Suppress("NAME_SHADOWING")
-            var whenExpression = whenExpression.transformSubject(transformer, ResolutionMode.ContextIndependent)
-            val subjectType = whenExpression.subject?.resolvedType?.fullyExpandedType(session)
+            var whenExpression = whenExpression.transformSubjectVariable(transformer, ResolutionMode.ContextIndependent)
+            val subjectType = whenExpression.subjectVariable?.initializer?.resolvedType?.fullyExpandedType()
             var completionNeeded = false
-            context.withWhenSubjectType(subjectType, components) {
-                when {
-                    whenExpression.branches.isEmpty() -> {
-                        whenExpression.resultType = session.builtinTypes.unitType.coneType
-                    }
-                    whenExpression.isOneBranch() && data.forceFullCompletion && data !is ResolutionMode.WithExpectedType -> {
-                        whenExpression = whenExpression.transformBranches(transformer, ResolutionMode.ContextIndependent)
-                        whenExpression.resultType = whenExpression.branches.first().result.resolvedType
-                        // when with one branch cannot be completed if it's not already complete in the first place
-                    }
-                    else -> {
-                        val resolutionModeForBranches =
-                            (data as? ResolutionMode.WithExpectedType)
-                                // Currently we don't use information from cast, but probably we could have
-                                ?.takeUnless { it.fromCast }
-                                ?.copy(forceFullCompletion = false)
-                                ?: ResolutionMode.ContextDependent
-                        whenExpression = whenExpression.transformBranches(
-                            transformer,
-                            resolutionModeForBranches,
-                        )
-
-                        whenExpression = syntheticCallGenerator.generateCalleeForWhenExpression(
-                            whenExpression,
-                            resolutionContext,
-                            data,
-                        )
-                        completionNeeded = true
-                    }
+            when {
+                whenExpression.branches.isEmpty() -> {
+                    whenExpression.resultType = session.builtinTypes.unitType.coneType
                 }
-                whenExpression = whenExpression.transformSingle(whenExhaustivenessTransformer, null)
-
-                // This is necessary to perform outside the place where the synthetic call is created because
-                // exhaustiveness is not yet computed there, but at the same time to compute it properly
-                // we need having branches condition bes analyzed that is why we can't have call
-                // `whenExpression.transformSingle(whenExhaustivenessTransformer, null)` at the beginning
-                if (completionNeeded) {
-                    val completionResult = callCompleter.completeCall(
-                        whenExpression,
-                        // For non-exhaustive when expressions, we should complete then as independent because below
-                        // their type is artificially replaced with Unit, while candidate symbol's return type remains the same
-                        // So when combining two when's the inner one was erroneously resolved as a normal dependent exhaustive sub-expression
-                        // At the same time, it all looks suspicious and inconsistent, so we hope it would be investigated at KT-55175
-                        if (whenExpression.isProperlyExhaustive) data else ResolutionMode.ContextIndependent,
+                whenExpression.isOneBranch() && data.forceFullCompletion && data !is ResolutionMode.WithExpectedType -> {
+                    whenExpression = whenExpression.transformBranches(transformer, ResolutionMode.ContextIndependent)
+                    whenExpression.resultType = whenExpression.branches.first().result.resolvedType
+                    // when with one branch cannot be completed if it's not already complete in the first place
+                }
+                else -> {
+                    val resolutionModeForBranches =
+                        (data as? ResolutionMode.WithExpectedType)
+                            // Currently we don't use information from cast, but probably we could have
+                            ?.takeUnless { it.fromCast }
+                            ?.copy(forceFullCompletion = false)
+                            ?: ResolutionMode.ContextDependent
+                    whenExpression = whenExpression.transformBranches(
+                        transformer,
+                        resolutionModeForBranches,
                     )
-                    whenExpression = completionResult
+
+                    whenExpression = syntheticCallGenerator.generateCalleeForWhenExpression(
+                        whenExpression,
+                        resolutionContext,
+                        data,
+                    )
+                    completionNeeded = true
                 }
-                dataFlowAnalyzer.exitWhenExpression(whenExpression, data.forceFullCompletion)
-                whenExpression.replaceReturnTypeIfNotExhaustive(session)
-                whenExpression
             }
+            whenExpression = whenExpression.transformSingle(whenExhaustivenessTransformer, null)
+
+            // This is necessary to perform outside the place where the synthetic call is created because
+            // exhaustiveness is not yet computed there, but at the same time to compute it properly
+            // we need having branches condition bes analyzed that is why we can't have call
+            // `whenExpression.transformSingle(whenExhaustivenessTransformer, null)` at the beginning
+            if (completionNeeded) {
+                val completionResult = callCompleter.completeCall(
+                    whenExpression,
+                    // For non-exhaustive when expressions, we should complete then as independent because below
+                    // their type is artificially replaced with Unit, while candidate symbol's return type remains the same
+                    // So when combining two when's the inner one was erroneously resolved as a normal dependent exhaustive sub-expression
+                    // At the same time, it all looks suspicious and inconsistent, so we hope it would be investigated at KT-55175
+                    if (whenExpression.isProperlyExhaustive) data else ResolutionMode.ContextIndependent,
+                )
+                whenExpression = completionResult
+            }
+            dataFlowAnalyzer.exitWhenExpression(whenExpression, data.forceFullCompletion)
+            whenExpression.replaceReturnTypeIfNotExhaustive(session)
+            whenExpression
         }
     }
 
@@ -132,9 +125,8 @@ class FirControlFlowStatementsResolveTransformer(transformer: FirAbstractBodyRes
 
     override fun transformWhenBranch(whenBranch: FirWhenBranch, data: ResolutionMode): FirWhenBranch {
         dataFlowAnalyzer.enterWhenBranchCondition(whenBranch)
-        return context.withWhenSubjectImportingScope {
-            whenBranch.transformCondition(transformer, withExpectedType(session.builtinTypes.booleanType))
-        }.also { dataFlowAnalyzer.exitWhenBranchCondition(it) }
+        return whenBranch.transformCondition(transformer, withExpectedType(session.builtinTypes.booleanType))
+            .also { dataFlowAnalyzer.exitWhenBranchCondition(it) }
             .transformResult(transformer, data)
             .also { dataFlowAnalyzer.exitWhenBranchResult(it) }
 
@@ -201,7 +193,7 @@ class FirControlFlowStatementsResolveTransformer(transformer: FirAbstractBodyRes
             labeledElement.symbol in context.anonymousFunctionsAnalyzedInDependentContext -> ResolutionMode.ContextDependent
 
             expectedTypeRef is FirResolvedTypeRef ->
-                ResolutionMode.WithExpectedType(expectedTypeRef, expectedTypeMismatchIsReportedInChecker = true)
+                ResolutionMode.WithExpectedType(expectedTypeRef)
 
             else -> ResolutionMode.ContextIndependent
         }
@@ -249,7 +241,7 @@ class FirControlFlowStatementsResolveTransformer(transformer: FirAbstractBodyRes
             transformer,
             withExpectedType(
                 data.expectedType,
-                mayBeCoercionToUnitApplied = (data as? ResolutionMode.WithExpectedType)?.mayBeCoercionToUnitApplied == true
+                lastStatementInBlock = (data as? ResolutionMode.WithExpectedType)?.lastStatementInBlock == true
             )
         )
 
@@ -282,7 +274,12 @@ class FirControlFlowStatementsResolveTransformer(transformer: FirAbstractBodyRes
         }
 
         session.typeContext.run {
-            if (result.resolvedType.isNullableType()) {
+            // If the result type is a type variable type, we're part of a call argument.
+            // In that case, we could have an unresolved lambda argument on the RHS which will lead to an exception in
+            // result.rhs.resolvedType.
+            // Also, we don't want to turn type variables into DNNs because it can lead to contradictions in the constraint system.
+            // compiler/testData/diagnostics/tests/controlStructures/lambdasInExclExclAndElvis.kt breaks otherwise.
+            if (result.resolvedType.let { it !is ConeTypeVariableType && it.isNullableType() }) {
                 val rhsResolvedType = result.rhs.resolvedType
                 // This part of the code is a kind of workaround, and it probably will be resolved by KT-55692
                 if (!rhsResolvedType.isNullableType()) {
@@ -304,19 +301,19 @@ class FirControlFlowStatementsResolveTransformer(transformer: FirAbstractBodyRes
         data: ResolutionMode,
     ): ResolutionMode {
         val expectedType = data.expectedType
-        val mayBeCoercionToUnitApplied = (data as? ResolutionMode.WithExpectedType)?.mayBeCoercionToUnitApplied == true
+        val lastStatementInBlock = (data as? ResolutionMode.WithExpectedType)?.lastStatementInBlock == true
 
         val isObsoleteCompilerMode =
-            !session.languageVersionSettings.supportsFeature(LanguageFeature.ElvisInferenceImprovementsIn21)
+            !LanguageFeature.ElvisInferenceImprovementsIn21.isEnabled()
         return when {
-            mayBeCoercionToUnitApplied && expectedType?.isUnitOrFlexibleUnit == true ->
+            lastStatementInBlock && expectedType?.isUnitOrFlexibleUnit == true ->
                 when {
                     isObsoleteCompilerMode ->
                         // The problematic part is that we even forget about nullability
                         // And forcefully run coercion to Unit of nullable LHS
                         withExpectedType(
                             expectedType, // Always Unit here
-                            mayBeCoercionToUnitApplied = true
+                            lastStatementInBlock = true
                         )
                     else -> ResolutionMode.ContextDependent
                 }
@@ -339,7 +336,11 @@ class FirControlFlowStatementsResolveTransformer(transformer: FirAbstractBodyRes
                     if (!lowerBound.isNullableType()) {
                         this@makeConeFlexibleTypeWithNotNullableLowerBound
                     } else {
-                        ConeFlexibleType(lowerBound.makeConeTypeDefinitelyNotNullOrNotNull(typeContext) as ConeRigidType, upperBound)
+                        ConeFlexibleType(
+                            lowerBound.makeConeTypeDefinitelyNotNullOrNotNull(typeContext) as ConeRigidType,
+                            upperBound,
+                            isTrivial = false,
+                        )
                     }
                 }
                 is ConeIntersectionType -> ConeIntersectionType(
@@ -347,7 +348,8 @@ class FirControlFlowStatementsResolveTransformer(transformer: FirAbstractBodyRes
                 )
                 is ConeSimpleKotlinType -> ConeFlexibleType(
                     makeConeTypeDefinitelyNotNullOrNotNull(typeContext) as ConeRigidType,
-                    this@makeConeFlexibleTypeWithNotNullableLowerBound
+                    this@makeConeFlexibleTypeWithNotNullableLowerBound,
+                    isTrivial = false,
                 )
             }
         }

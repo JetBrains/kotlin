@@ -142,18 +142,9 @@ private class MoveExternalInlineFunctionsWithBodiesOutsideLowering(private val c
                     proxyFunction.symbol,
                     proxyFunction.typeParameters.size,
                 ).apply {
-                    var extensionReceiverOffset = -1
-
-                    originalFunction.dispatchReceiverParameter.takeIf { originalFunction.parentClassOrNull?.isCompanion != true }?.let {
-                        val extensionReceiverIndex = proxyFunction.parameters.indexOfFirst { it.kind == IrParameterKind.ExtensionReceiver }
-                        if (extensionReceiverIndex == -1) compilationException("Extension receiver not found", originalFunction)
-                        arguments[extensionReceiverIndex] = IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, it.symbol)
-                        extensionReceiverOffset = 0
-                    }
-
                     for ((index, parameter) in originalFunction.parameters.withIndex()) {
                         if (parameter.kind != IrParameterKind.Regular) continue
-                        arguments[index + extensionReceiverOffset] = IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, parameter.symbol)
+                        arguments[index - 1] = IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, parameter.symbol)
                     }
 
                     val typeParameters = originalFunction.typeParameters.ifEmpty { originalFunction.parentAsClass.typeParameters }
@@ -221,9 +212,8 @@ private class MoveExternalInlineFunctionsWithBodiesOutsideLowering(private val c
                     jsFunction,
                     0,
                 ).apply {
-                    val proxyFunctionRegularParameters = proxyFunction.parameters.filter { it.kind == IrParameterKind.Regular }
                     val objectAssignCall =
-                        "Object.assign({}, ${selfName.identifier}, ${createValueParametersObject(proxyFunctionRegularParameters.drop(1))})"
+                        "Object.assign({}, ${selfName.identifier}, ${createValueParametersObject(proxyFunction.parameters.drop(1))})"
                     arguments[0] = objectAssignCall.toIrConst(context.irBuiltIns.stringType)
                 }
             )

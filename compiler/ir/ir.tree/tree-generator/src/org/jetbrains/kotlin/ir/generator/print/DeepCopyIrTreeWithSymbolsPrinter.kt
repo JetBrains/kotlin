@@ -80,7 +80,9 @@ internal class DeepCopyIrTreeWithSymbolsPrinter(
         println()
         printInitBlock()
         println()
-        println("override fun ${irTypeType.render()}.remapType() = typeRemapper.remapType(this)")
+        println("// You can't call super from extension version, so we must create non-extension to make it easily overridable")
+        println("protected open fun remapTypeImpl(type: ${irTypeType.render()}) = typeRemapper.remapType(type)")
+        println("final override fun ${irTypeType.render()}.remapType() = remapTypeImpl(this)")
     }
 
     private fun ImportCollectingPrinter.printInitBlock() {
@@ -119,22 +121,16 @@ internal class DeepCopyIrTreeWithSymbolsPrinter(
             withIndent {
                 val implementation = element.implementations.singleOrNull() ?: error("Ambiguous implementation")
                 print(implementation.render())
-                if (useWithShapeConstructor(element)) {
-                    print("WithShape")
-                }
                 val constructorArguments: List<Field> = implementation.fieldsInConstructor.filter { !it.deepCopyExcludeFromConstructor }
                 println("(")
                 withIndent {
-                    if (implementation.hasConstructorIndicator && !useWithShapeConstructor(element)) {
+                    if (implementation.hasConstructorIndicator) {
                         println("constructorIndicator = null,")
                     }
                     for (field in constructorArguments) {
                         print(field.name, " = ")
                         copyField(element, field)
                         println(",")
-                    }
-                    if (useWithShapeConstructor(element)) {
-                        printWithShapeExtraArguments(element)
                     }
                 }
                 val fieldsInApply = implementation.fieldsInBody.filter { !it.deepCopyExcludeFromApply && it !in constructorArguments }
@@ -194,9 +190,6 @@ internal class DeepCopyIrTreeWithSymbolsPrinter(
         }
     }
 
-    private fun useWithShapeConstructor(element: Element): Boolean =
-        element.isSubclassOfAny(IrTree.functionAccessExpression, IrTree.functionReference, IrTree.propertyReference)
-
     private fun ImportCollectingPrinter.printApply(element: Element, applyFields: List<Field>) {
         print(").apply")
         printBlock {
@@ -217,7 +210,8 @@ internal class DeepCopyIrTreeWithSymbolsPrinter(
                         println()
                     }
                     field is ListField && field.mutability == ListField.Mutability.MutableList -> {
-                        print("${element.visitorParameterName}.${field.name}.mapTo(${field.name}) { it")
+                        addImport(ArbitraryImportable("org.jetbrains.kotlin.utils.addToStdlib", "assignFrom"))
+                        print("${field.name}.assignFrom(${element.visitorParameterName}.${field.name}) { it")
                         copyValue(field)
                         println(" }")
                     }
@@ -231,7 +225,7 @@ internal class DeepCopyIrTreeWithSymbolsPrinter(
                 println("parameters = ${element.visitorParameterName}.parameters.memoryOptimizedMap { it.transform() }")
             }
             if (element.isSubclassOf(IrTree.valueParameter)) {
-                println("_kind = ${element.visitorParameterName}._kind")
+                println("kind = ${element.visitorParameterName}.kind")
             }
             if (element.isSubclassOf(IrTree.file)) {
                 println("module = transformedModule ?: ${element.visitorParameterName}.module")
@@ -241,16 +235,6 @@ internal class DeepCopyIrTreeWithSymbolsPrinter(
             }
 
             println("processAttributes(", element.visitorParameterName, ")")
-        }
-    }
-
-    private fun ImportCollectingPrinter.printWithShapeExtraArguments(element: Element) {
-        println("typeArgumentsCount = ${element.visitorParameterName}.typeArguments.size,")
-        println("hasDispatchReceiver = ${element.visitorParameterName}.targetHasDispatchReceiver,")
-        println("hasExtensionReceiver = ${element.visitorParameterName}.targetHasExtensionReceiver,")
-        if (!element.isSubclassOf(IrTree.propertyReference)) {
-            println("valueArgumentsCount = ${element.visitorParameterName}.valueArgumentsCount,")
-            println("contextParameterCount = ${element.visitorParameterName}.targetContextParameterCount,")
         }
     }
 }

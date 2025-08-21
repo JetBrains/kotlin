@@ -6,5 +6,7 @@ fun foo() {
     fun A.foo() {}
     (fun A.<!ANONYMOUS_FUNCTION_WITH_NAME!>foo<!>() {})
 
-    <!CANNOT_INFER_PARAMETER_TYPE, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>run<!>(fun <!ANONYMOUS_FUNCTION_WITH_NAME!>foo<!>() {})
+    <!CANNOT_INFER_PARAMETER_TYPE!>run<!>(fun <!ANONYMOUS_FUNCTION_WITH_NAME!>foo<!>() {})
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, localClass, localFunction */

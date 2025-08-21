@@ -13,3 +13,6 @@ fun foo() {
     baz(<!UNSAFE_CALL!>!<!>b)
     if (b != null) baz(!<!DEBUG_INFO_SMARTCAST!>b<!>)
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, equalityExpression, functionDeclaration, ifExpression, integerLiteral,
+localProperty, nullableType, propertyDeclaration, smartcast, unaryExpression */

@@ -27,6 +27,7 @@ KaLocalVariableSymbol:
   isActual: false
   isExpect: false
   isExtension: false
+  isLateInit: false
   isVal: true
   location: LOCAL
   modality: FINAL
@@ -47,6 +48,7 @@ KaNamedFunctionSymbol:
   annotations: []
   callableId: /f
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true

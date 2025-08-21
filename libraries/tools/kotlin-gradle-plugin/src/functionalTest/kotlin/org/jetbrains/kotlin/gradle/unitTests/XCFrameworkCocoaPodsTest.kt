@@ -3,6 +3,8 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("FunctionName")
+
 package org.jetbrains.kotlin.gradle.unitTests
 
 import org.gradle.api.Project
@@ -52,7 +54,7 @@ class XCFrameworkCocoaPodsTest {
                 project.buildFile("bin/iosArm64/podReleaseFramework/foo.framework"),
                 project.buildFile("fooXCFrameworkTemp/fatframework/release/iosSimulator/foo.framework"),
             ),
-            xcframeworkTask.xcframeworkSlices().map { it.file }.toSet()
+            xcframeworkTask.xcframeworkSlices().map { it.descriptor.file }.toSet()
         )
     }
 

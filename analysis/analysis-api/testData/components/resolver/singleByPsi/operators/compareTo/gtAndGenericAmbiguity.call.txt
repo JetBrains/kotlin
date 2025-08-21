@@ -8,10 +8,12 @@ KtOperationReferenceExpression(97,98): '>'
             receiverType = null
             returnType = kotlin.Int
             symbol = number: kotlin.Int
+            contextParameters = []
             callableId = null)
         }
         isImplicitInvoke = false
         partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+          contextArguments = []
           dispatchReceiver = null
           extensionReceiver = KaExplicitReceiverValue:
             expression = m
@@ -27,8 +29,10 @@ KtOperationReferenceExpression(97,98): '>'
                 receiverType = null
                 returnType = kotlin.Int
                 symbol = number: kotlin.Int
+                contextParameters = []
                 callableId = null
             ]
+            contextParameters = []
             callableId = /compareTo
         typeArgumentsMapping = {},
       KaSimpleFunctionCall:
@@ -38,10 +42,12 @@ KtOperationReferenceExpression(97,98): '>'
             receiverType = null
             returnType = kotlin.Int
             symbol = int: kotlin.Int
+            contextParameters = []
             callableId = null)
         }
         isImplicitInvoke = false
         partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+          contextArguments = []
           dispatchReceiver = null
           extensionReceiver = KaExplicitReceiverValue:
             expression = m
@@ -57,8 +63,10 @@ KtOperationReferenceExpression(97,98): '>'
                 receiverType = null
                 returnType = kotlin.Int
                 symbol = int: kotlin.Int
+                contextParameters = []
                 callableId = null
             ]
+            contextParameters = []
             callableId = /compareTo
         typeArgumentsMapping = {}
     ]

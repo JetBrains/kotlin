@@ -81,12 +81,6 @@ val JpsModule.kotlinCompilerSettings: CompilerSettings
 val JpsModule.kotlinCompilerArguments
     get() = getCompilerArguments<CommonCompilerArguments>()
 
-val JpsModule.k2MetadataCompilerArguments
-    get() = getCompilerArguments<K2MetadataCompilerArguments>()
-
-val JpsModule.k2JsCompilerArguments
-    get() = getCompilerArguments<K2JSCompilerArguments>()
-
 val JpsModule.k2JvmCompilerArguments
     get() = getCompilerArguments<K2JVMCompilerArguments>()
 
@@ -111,8 +105,10 @@ class JpsKotlinFacetModuleExtension(settings: KotlinFacetSettings) : JpsElementB
         val FACET_NAME = "Kotlin"
     }
 
+    @Deprecated("Deprecated by IJ platform, don't use it")
     override fun createCopy() = JpsKotlinFacetModuleExtension(settings)
 
+    @Deprecated("Deprecated by IJ platform, don't use it")
     override fun applyChanges(modified: JpsKotlinFacetModuleExtension) {
         this.settings = modified.settings
     }

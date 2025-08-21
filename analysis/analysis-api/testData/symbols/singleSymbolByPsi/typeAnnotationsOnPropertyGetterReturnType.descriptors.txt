@@ -3,13 +3,12 @@ KaPropertyGetterSymbol:
   callableId: null
   compilerVisibility: Public
   contextReceivers: []
-  hasBody: true
   hasStableParameterNames: true
   isActual: false
-  isDefault: false
   isExpect: false
   isExtension: false
   isInline: false
+  isNotDefault: true
   isOverride: false
   location: PROPERTY
   modality: FINAL

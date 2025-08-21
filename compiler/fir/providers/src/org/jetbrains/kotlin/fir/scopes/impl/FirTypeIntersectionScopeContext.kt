@@ -29,6 +29,7 @@ import kotlin.contracts.contract
 
 typealias MembersByScope<D> = List<Pair<FirTypeScope, List<D>>>
 
+@OptIn(ScopeFunctionRequiresPrewarm::class)
 class FirTypeIntersectionScopeContext(
     val session: FirSession,
     private val overrideChecker: FirOverrideChecker,
@@ -157,7 +158,8 @@ class FirTypeIntersectionScopeContext(
             val groupWithInvisible =
                 overrideService.extractBothWaysOverridable(allMembersWithScope.maxByVisibility(), allMembersWithScope, overrideChecker)
             val group = groupWithInvisible.filter { it.isVisible() }.ifEmpty { groupWithInvisible }
-            val mostSpecific = overrideService.selectMostSpecificMembers(group, ReturnTypeCalculatorForFullBodyResolve.Default)
+            // Since this can be called during STATUS phase, we can't use ReturnTypeCalculatorForFullBodyResolve.Default.
+            val mostSpecific = overrideService.selectMostSpecificMembers(group, ReturnTypeCalculatorForFullBodyResolve.Status)
             val nonTrivial = if (forClassUseSiteScope) {
                 // Create a non-trivial intersection override when the base methods come from different scopes,
                 // even if one of them is more specific than the others, i.e. when there is more than one method that is not subsumed.
@@ -296,6 +298,7 @@ class FirTypeIntersectionScopeContext(
         }
 
         val realOverridden = extractedOverridden.flatMap { realOverridden(it.member, it.baseScope, processDirectOverridden) }
+
         val filteredOverridden = filterOutOverridden(realOverridden, processDirectOverridden)
 
         return filteredOverridden.minOf { (it.member.fir as FirMemberDeclaration).modality ?: Modality.ABSTRACT }

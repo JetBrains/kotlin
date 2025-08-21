@@ -1,4 +1,5 @@
 > Task :checkKotlinGradlePluginConfigurationErrors FAILED
-e: [CommonMainOrTestWithDependsOnDiagnostic | ERROR] commonMain can't declare dependsOn on other source sets
+e: [CommonMainOrTestWithDependsOnDiagnostic | ERROR] Invalid `dependsOn` Configuration in Common Source Set
+commonMain can't declare dependsOn on other source sets
 Please remove the `dependsOn` configuration from the commonMain source set
 #diagnostic-end

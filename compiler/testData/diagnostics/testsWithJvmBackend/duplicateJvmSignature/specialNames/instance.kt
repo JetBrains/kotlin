@@ -1,5 +1,3 @@
-// FIR_IDENTICAL
-
 object O {
     val INSTANCE: O = null!!
 }

@@ -2,12 +2,11 @@
  * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
+@file:OptIn(ExperimentalAnnotationsInMetadata::class)
 
 package org.jetbrains.kotlin.commonizer.metadata
 
 import kotlinx.metadata.klib.*
-import kotlin.metadata.*
-import kotlin.metadata.internal.common.KmModuleFragment
 import org.jetbrains.kotlin.commonizer.cir.*
 import org.jetbrains.kotlin.commonizer.metadata.TypeAliasExpansion.*
 import org.jetbrains.kotlin.commonizer.utils.DEFAULT_SETTER_VALUE_NAME
@@ -16,6 +15,8 @@ import org.jetbrains.kotlin.commonizer.utils.compactMap
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.serialization.deserialization.DYNAMIC_TYPE_DESERIALIZER_ID
 import org.jetbrains.kotlin.types.Variance
+import kotlin.metadata.*
+import kotlin.metadata.internal.common.KmModuleFragment
 
 internal fun CirModule.serializeModule(
     fragments: Collection<KmModuleFragment>
@@ -90,8 +91,9 @@ internal fun CirClass.serializeClass(
         val shortClassName = directNestedClass.name.substringAfterLast('.')
 
         if (directNestedClass.kind == ClassKind.ENUM_ENTRY) {
-            clazz.enumEntries += shortClassName
-            clazz.klibEnumEntries += KlibEnumEntry(name = shortClassName, annotations = directNestedClass.annotations)
+            clazz.kmEnumEntries += KmEnumEntry(shortClassName).apply {
+                annotations.addAll(directNestedClass.annotations)
+            }
         } else {
             clazz.nestedClasses += shortClassName
         }
@@ -152,8 +154,8 @@ internal fun CirProperty.serializeProperty(
     this.getter?.let { property.getter.modifiersFrom(it, this, this) }
     property.setter = this.setter?.let { KmPropertyAccessorAttributes().apply { modifiersFrom(it, it, this@serializeProperty) } }
     annotations.mapTo(property.annotations) { it.serializeAnnotation() }
-    getter?.annotations?.mapTo(property.getterAnnotations) { it.serializeAnnotation() }
-    setter?.annotations?.mapTo(property.setterAnnotations) { it.serializeAnnotation() }
+    getter?.annotations?.mapTo(property.getter.annotations) { it.serializeAnnotation() }
+    setter?.annotations?.mapTo(property.setter!!.annotations) { it.serializeAnnotation() }
     // TODO unclear where to write backing/delegate field annotations, see KT-44625
     property.compileTimeValue = compileTimeInitializer.takeIf { it !is CirConstantValue.NullValue }?.serializeConstantValue()
     typeParameters.serializeTypeParameters(context, output = property.typeParameters)

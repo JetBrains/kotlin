@@ -95,23 +95,22 @@ fun <F : FirClassLikeDeclaration> F.runContractAndBodiesResolutionForLocalClass(
         implicitBodyResolveComputationSession,
         designationMap,
         outerTransformer = components.transformer,
+        outerBodyResolveContext = components.context,
     )
 
-    val newContext = components.context.createSnapshotForLocalClasses(returnTypeCalculator, targetedClasses)
-    returnTypeCalculator.outerBodyResolveContext = newContext
+    return components.context.forLocalClasses(returnTypeCalculator, targetedClasses) {
+        runContractResolveForLocalClass(components.session, components.scopeSession, components.context)
 
-    runContractResolveForLocalClass(components.session, components.scopeSession, components.context, targetedClasses)
-
-    val transformer = FirImplicitAwareBodyResolveTransformer(
-        components.session, components.scopeSession,
-        implicitBodyResolveComputationSession,
-        FirResolvePhase.BODY_RESOLVE,
-        implicitTypeOnly = false,
-        returnTypeCalculator,
-        outerBodyResolveContext = newContext,
-    )
-
-    return this.transform(transformer, resolutionMode)
+        val transformer = FirImplicitAwareBodyResolveTransformer(
+            components.session, components.scopeSession,
+            implicitBodyResolveComputationSession,
+            FirResolvePhase.BODY_RESOLVE,
+            implicitTypeOnly = false,
+            returnTypeCalculator,
+            outerBodyResolveContext = components.context,
+        )
+        this.transform(transformer, resolutionMode)
+    }
 }
 
 open class FirImplicitAwareBodyResolveTransformer(
@@ -194,17 +193,12 @@ open class ReturnTypeCalculatorWithJump(
     val implicitBodyResolveComputationSession: ImplicitBodyResolveComputationSession,
     val designationMapForLocalClasses: Map<FirCallableDeclaration, List<FirClassLikeDeclaration>> = mapOf(),
     val outerTransformer: FirAbstractBodyResolveTransformerDispatcher? = null,
+    val outerBodyResolveContext: BodyResolveContext? = null
 ) : ReturnTypeCalculator() {
     override val callableCopyTypeCalculator: CallableCopyTypeCalculator = CallableCopyTypeCalculatorWithJump()
 
     @OptIn(PrivateForInline::class)
-    var outerBodyResolveContext: BodyResolveContext? = null
-        set(context) {
-            field = context
-            outerTowerDataContexts = context?.regularTowerDataContexts
-        }
-
-    var outerTowerDataContexts: FirRegularTowerDataContexts? = null
+    val outerTowerDataContexts: FirRegularTowerDataContexts? = outerBodyResolveContext?.regularTowerDataContexts
 
     override fun tryCalculateReturnTypeOrNull(declaration: FirCallableDeclaration): FirResolvedTypeRef {
         // Local declarations must be handled by `ReturnTypeCalculatorForFullBodyResolve` to avoid resolution cycles in LL FIR.

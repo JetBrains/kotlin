@@ -13,3 +13,6 @@ fun testCompound1() {
 }
 
 fun todo(): Nothing = throw Exception()
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, funWithExtensionReceiver, functionDeclaration, integerLiteral, localFunction,
+multiplicativeExpression, operator, stringLiteral */

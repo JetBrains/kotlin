@@ -31,19 +31,19 @@ KaValueParameterSymbol:
       deprecationStatus: null
     callableId: pack/Anno.an
     compilerVisibility: Public
+    contextParameters: []
     contextReceivers: []
     getter: KaPropertyGetterSymbol:
       annotations: []
       callableId: null
       compilerVisibility: Public
       contextReceivers: []
-      hasBody: false
       hasStableParameterNames: true
       isActual: false
-      isDefault: true
       isExpect: false
       isExtension: false
       isInline: false
+      isNotDefault: false
       isOverride: false
       location: PROPERTY
       modality: FINAL
@@ -102,6 +102,7 @@ KaValueParameterSymbol:
     javaGetterName: getAn
     javaSetterName: null
     setterDeprecationStatus: null
+    isInline: false
   hasDefaultValue: true
   isActual: false
   isCrossinline: false

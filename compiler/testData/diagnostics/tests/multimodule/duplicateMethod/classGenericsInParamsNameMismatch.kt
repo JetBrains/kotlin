@@ -36,3 +36,6 @@ fun <Y> test(b: B<Y>?, y: Y) {
         b?.foo(y)
     }
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, ifExpression, interfaceDeclaration, isExpression, nullableType, override,
+safeCall, smartcast, typeParameter */

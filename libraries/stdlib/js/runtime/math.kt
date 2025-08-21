@@ -5,6 +5,8 @@
 @file:JsQualifier("Math")
 package kotlin.js
 
+import kotlin.internal.UsedFromCompilerGeneratedCode
+
 @JsPolyfill("""
 if (typeof Math.imul === "undefined") {
   Math.imul = function imul(a, b) {
@@ -12,4 +14,5 @@ if (typeof Math.imul === "undefined") {
   }
 }
 """)
+@UsedFromCompilerGeneratedCode
 internal external fun imul(a_local: Int, b_local: Int): Int

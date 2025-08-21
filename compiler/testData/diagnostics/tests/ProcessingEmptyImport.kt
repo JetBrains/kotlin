@@ -3,3 +3,5 @@
 import<!SYNTAX!><!>
 
 fun firstFun() {}
+
+/* GENERATED_FIR_TAGS: functionDeclaration */

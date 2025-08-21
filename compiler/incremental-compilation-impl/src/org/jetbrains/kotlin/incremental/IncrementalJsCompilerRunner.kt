@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.build.report.metrics.BuildAttribute
 import org.jetbrains.kotlin.build.report.metrics.DoNothingBuildMetricsReporter
 import org.jetbrains.kotlin.build.report.metrics.GradleBuildPerformanceMetric
 import org.jetbrains.kotlin.build.report.metrics.GradleBuildTime
+import org.jetbrains.kotlin.build.report.reportPerformanceData
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
@@ -22,8 +23,10 @@ import org.jetbrains.kotlin.cli.js.K2JSCompiler
 import org.jetbrains.kotlin.config.IncrementalCompilation
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
+import org.jetbrains.kotlin.incremental.components.ICFileMappingTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
-import org.jetbrains.kotlin.incremental.dirtyFiles.DirtyFilesContainer
+import org.jetbrains.kotlin.incremental.dirtyFiles.getClasspathChanges
+import org.jetbrains.kotlin.incremental.dirtyFiles.getRemovedClassesChanges
 import org.jetbrains.kotlin.incremental.js.*
 import org.jetbrains.kotlin.incremental.multiproject.EmptyModulesApiHistory
 import org.jetbrains.kotlin.incremental.multiproject.ModulesApiHistory
@@ -114,8 +117,7 @@ class IncrementalJsCompilerRunner(
         }
         val lastBuildInfo = BuildInfo.read(lastBuildInfoFile, messageCollector) ?: return CompilationMode.Rebuild(BuildAttribute.INVALID_LAST_BUILD_INFO)
 
-        val dirtyFiles = DirtyFilesContainer(caches, reporter, kotlinSourceFilesExtensions)
-        initDirtyFiles(dirtyFiles, changedFiles)
+        val dirtyFiles = dirtyFilesProvider.getInitializedDirtyFiles(caches, changedFiles)
 
         val libs = (args.libraries ?: "").split(File.pathSeparator).map { File(it) }
         //TODO(valtman) check for JS
@@ -136,7 +138,7 @@ class IncrementalJsCompilerRunner(
             }
         }
 
-        val removedClassesChanges = getRemovedClassesChanges(caches, changedFiles)
+        val removedClassesChanges = getRemovedClassesChanges(caches, changedFiles, kotlinSourceFilesExtensions, reporter)
         dirtyFiles.addByDirtySymbols(removedClassesChanges.dirtyLookupSymbols)
         dirtyFiles.addByDirtyClasses(removedClassesChanges.dirtyClassesFqNames)
         dirtyFiles.addByDirtyClasses(removedClassesChanges.dirtyClassesFqNamesForceRecompile)
@@ -151,11 +153,12 @@ class IncrementalJsCompilerRunner(
         args: K2JSCompilerArguments,
         lookupTracker: LookupTracker,
         expectActualTracker: ExpectActualTracker,
+        fileMappingTracker: ICFileMappingTracker,
         caches: IncrementalJsCachesManager,
         dirtySources: Set<File>,
         isIncremental: Boolean
     ): Services.Builder =
-        super.makeServices(args, lookupTracker, expectActualTracker, caches, dirtySources, isIncremental).apply {
+        super.makeServices(args, lookupTracker, expectActualTracker, fileMappingTracker, caches, dirtySources, isIncremental).apply {
             if (isIncremental) {
                 if (scopeExpansion == CompileScopeExpansionMode.ALWAYS) {
                     val nextRoundChecker = IncrementalNextRoundCheckerImpl(caches, dirtySources)
@@ -199,7 +202,7 @@ class IncrementalJsCompilerRunner(
             compiler.exec(messageCollector, services, args) to sourcesToCompile
         } finally {
             args.freeArgs = freeArgsBackup
-            reportPerformanceData(compiler.defaultPerformanceManager)
+            reporter.reportPerformanceData(compiler.defaultPerformanceManager.unitStats)
         }
     }
 

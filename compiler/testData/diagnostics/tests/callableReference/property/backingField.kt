@@ -6,3 +6,5 @@ val i: Int = 10
         ::<!UNSUPPORTED_REFERENCES_TO_VARIABLES_AND_PARAMETERS!>field<!>
         return field
     }
+
+/* GENERATED_FIR_TAGS: getter, integerLiteral, propertyDeclaration */

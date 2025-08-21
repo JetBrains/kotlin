@@ -20,3 +20,5 @@ public interface I {
 actual interface Foo : I {
     actual override fun foo(param: String)
 }
+
+/* GENERATED_FIR_TAGS: actual, expect, functionDeclaration, interfaceDeclaration, javaType, override */

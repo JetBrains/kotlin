@@ -4,6 +4,7 @@ KtPrefixExpression(191,200): '-variable'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = variable
           isSafeNavigation = false
@@ -14,6 +15,7 @@ KtPrefixExpression(191,200): '-variable'
           returnType = MyClass
           symbol = /MyClass.unaryMinus(<dispatch receiver>: MyClass): MyClass
           valueParameters = []
+          contextParameters = []
           callableId = /MyClass.unaryMinus
       typeArgumentsMapping = {}
     isInBestCandidates = true

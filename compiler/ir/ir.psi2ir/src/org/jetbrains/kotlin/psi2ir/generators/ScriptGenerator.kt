@@ -60,7 +60,8 @@ internal class ScriptGenerator(declarationGenerator: DeclarationGenerator) : Dec
                     UNDEFINED_OFFSET, UNDEFINED_OFFSET,
                     origin,
                     descriptor,
-                    type
+                    kind,
+                    type,
                 ) { symbol ->
                     context.irFactory.createValueParameter(
                         startOffset = UNDEFINED_OFFSET,
@@ -81,10 +82,7 @@ internal class ScriptGenerator(declarationGenerator: DeclarationGenerator) : Dec
 
             irScript.thisReceiver = makeParameter(
                 descriptor.thisAsReceiverParameter, IrDeclarationOrigin.INSTANCE_RECEIVER, IrParameterKind.DispatchReceiver
-            ).also {
-                @OptIn(DelicateIrParameterIndexSetter::class)
-                it.indexInOldValueParameters = descriptor.thisAsReceiverParameter.indexOrMinusOne
-            }
+            )
 
             irScript.baseClass = descriptor.typeConstructor.supertypes.single().toIrType()
 
@@ -139,7 +137,7 @@ internal class ScriptGenerator(declarationGenerator: DeclarationGenerator) : Dec
                 val type = providedProperty.type.toIrType()
                 val valueParameter = context.symbolTable.descriptorExtension.declareValueParameter(
                     UNDEFINED_OFFSET, UNDEFINED_OFFSET,
-                    IrDeclarationOrigin.SCRIPT_PROVIDED_PROPERTY, parameter, type
+                    IrDeclarationOrigin.SCRIPT_PROVIDED_PROPERTY, parameter, IrParameterKind.Regular, type
                 ) { symbol ->
                     context.irFactory.createValueParameter(
                         startOffset = UNDEFINED_OFFSET,
@@ -190,7 +188,7 @@ internal class ScriptGenerator(declarationGenerator: DeclarationGenerator) : Dec
                     containerSource = containerSource
                 )
             }.also { irConstructor ->
-                irConstructor.valueParameters = buildList {
+                irConstructor.parameters = buildList {
                     addIfNotNull(irScript.earlierScriptsParameter)
                     addAll(explicitCallParams)
                     addAll(irScript.implicitReceiversParameters)

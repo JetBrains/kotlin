@@ -45,3 +45,6 @@ fun <TP1: OC1, TP2: T2, TP3: OC2> test(
   tp2 as T5
   tp1 as TP3
 }
+
+/* GENERATED_FIR_TAGS: asExpression, classDeclaration, functionDeclaration, interfaceDeclaration, intersectionType,
+smartcast, typeConstraint, typeParameter */

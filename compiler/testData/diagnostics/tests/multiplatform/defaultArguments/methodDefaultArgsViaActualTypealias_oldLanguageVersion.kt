@@ -16,3 +16,5 @@ class AImpl {
 }
 
 actual typealias A = AImpl
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, functionDeclaration, stringLiteral, typeAliasDeclaration */

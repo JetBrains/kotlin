@@ -84,7 +84,7 @@ KtNameReferenceExpression(286,289): 'Int'
 
 KtNameReferenceExpression(295,304): 'Companion'
   KtSimpleNameReference:
-    (in second.MyClass) companion object : @second.Anno(i = 6) second.Base<@second.Anno(i = 7) second.Base<@second.Anno(i = 8) kotlin.Int>>
+    (in second.MyClass) companion object : @second.Anno(i = error("non-annotation value")) second.Base<@second.Anno(i = error("non-annotation value")) second.Base<@second.Anno(i = error("non-annotation value")) kotlin.Int>>
 
 KtNameReferenceExpression(311,315): 'Anno'
   KtSimpleNameReference:
@@ -140,11 +140,16 @@ KtValueArgument(406,415): '6 + inner'
 
 KtOperationReferenceExpression(408,409): '+'
   KtSimpleNameReference:
-    (in kotlin.Int) operator fun plus(other: kotlin.Int): kotlin.Int
+    0: (in kotlin.Int) operator fun plus(other: kotlin.Byte): kotlin.Int
+    1: (in kotlin.Int) operator fun plus(other: kotlin.Double): kotlin.Double
+    2: (in kotlin.Int) operator fun plus(other: kotlin.Float): kotlin.Float
+    3: (in kotlin.Int) operator fun plus(other: kotlin.Int): kotlin.Int
+    4: (in kotlin.Int) operator fun plus(other: kotlin.Long): kotlin.Long
+    5: (in kotlin.Int) operator fun plus(other: kotlin.Short): kotlin.Int
 
 KtNameReferenceExpression(410,415): 'inner'
   KtSimpleNameReference:
-    (in second.MyClass.Companion) const val inner: kotlin.Int
+    (in second) const val inner: kotlin.String
 
 KtNameReferenceExpression(417,421): 'Base'
   KtSimpleNameReference:
@@ -160,11 +165,16 @@ KtValueArgument(428,437): '7 + inner'
 
 KtOperationReferenceExpression(430,431): '+'
   KtSimpleNameReference:
-    (in kotlin.Int) operator fun plus(other: kotlin.Int): kotlin.Int
+    0: (in kotlin.Int) operator fun plus(other: kotlin.Byte): kotlin.Int
+    1: (in kotlin.Int) operator fun plus(other: kotlin.Double): kotlin.Double
+    2: (in kotlin.Int) operator fun plus(other: kotlin.Float): kotlin.Float
+    3: (in kotlin.Int) operator fun plus(other: kotlin.Int): kotlin.Int
+    4: (in kotlin.Int) operator fun plus(other: kotlin.Long): kotlin.Long
+    5: (in kotlin.Int) operator fun plus(other: kotlin.Short): kotlin.Int
 
 KtNameReferenceExpression(432,437): 'inner'
   KtSimpleNameReference:
-    (in second.MyClass.Companion) const val inner: kotlin.Int
+    (in second) const val inner: kotlin.String
 
 KtNameReferenceExpression(439,443): 'Base'
   KtSimpleNameReference:
@@ -180,11 +190,16 @@ KtValueArgument(450,459): '8 + inner'
 
 KtOperationReferenceExpression(452,453): '+'
   KtSimpleNameReference:
-    (in kotlin.Int) operator fun plus(other: kotlin.Int): kotlin.Int
+    0: (in kotlin.Int) operator fun plus(other: kotlin.Byte): kotlin.Int
+    1: (in kotlin.Int) operator fun plus(other: kotlin.Double): kotlin.Double
+    2: (in kotlin.Int) operator fun plus(other: kotlin.Float): kotlin.Float
+    3: (in kotlin.Int) operator fun plus(other: kotlin.Int): kotlin.Int
+    4: (in kotlin.Int) operator fun plus(other: kotlin.Long): kotlin.Long
+    5: (in kotlin.Int) operator fun plus(other: kotlin.Short): kotlin.Int
 
 KtNameReferenceExpression(454,459): 'inner'
   KtSimpleNameReference:
-    (in second.MyClass.Companion) const val inner: kotlin.Int
+    (in second) const val inner: kotlin.String
 
 KtNameReferenceExpression(461,464): 'Int'
   KtSimpleNameReference:

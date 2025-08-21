@@ -1,2 +1,2 @@
-error: -api-version (1.9) cannot be greater than -language-version (1.8)
+error: -api-version (2.2) cannot be greater than -language-version (2.1)
 COMPILATION_ERROR

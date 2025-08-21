@@ -85,3 +85,7 @@ fun threeLevelsReturnWithUnknown(x: Int?): Int? {
     }
     return <!UNINITIALIZED_VARIABLE!>y<!>.inc()
 }
+
+/* GENERATED_FIR_TAGS: assignment, contractCallsEffect, contracts, equalityExpression, funWithExtensionReceiver,
+functionDeclaration, functionalType, ifExpression, inline, integerLiteral, lambdaLiteral, localProperty, nullableType,
+propertyDeclaration, thisExpression, typeParameter */

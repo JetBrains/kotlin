@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -7,17 +7,16 @@ package org.jetbrains.kotlin.analysis.api.components
 
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
+import org.jetbrains.kotlin.analysis.api.KaContextParameterApi
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.compile.CodeFragmentCapturedValue
 import org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnostic
-import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.CompilerConfigurationKey
 import org.jetbrains.kotlin.psi.KtCodeFragment
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 import java.io.File
 
 /**
@@ -28,18 +27,37 @@ import java.io.File
  * [analysis block][org.jetbrains.kotlin.analysis.api.analyze].
  */
 @KaExperimentalApi
-public sealed class KaCompilationResult {
+public sealed class KaCompilationResult(
+    /** A list of exceptions that were thrown during compilation but workaround somehow */
+    public val mutedExceptions: List<Throwable>,
+) {
     /**
      * A successful compilation result.
      *
      * @property output Output files produced by the compiler. For the JVM target, these are class files and '.kotlin_module'.
      * @property capturedValues Context values captured by a [KtCodeFragment]. Empty for an ordinary [KtFile].
+     * @property canBeCached When the flag is raised, this compilation result is safe to cache and avoid re-compilation
+     *  Suppose we have the following code and evaluating `T::class`
+     *
+     *  inline fun <reified T> foo() {
+     *      //Breakpoint!
+     *      println()
+     *  }
+     *
+     *  fun main() {
+     *      foo<Int>()
+     *      foo<String>()
+     *  }
+     *
+     *  We should emit different bytecode in <Int> and <String> calls, yet we are at the same line and compiling the same code.
      */
     @KaExperimentalApi
     public class Success(
         public val output: List<KaCompiledFile>,
-        public val capturedValues: List<CodeFragmentCapturedValue>
-    ) : KaCompilationResult()
+        public val capturedValues: List<CodeFragmentCapturedValue>,
+        public var canBeCached: Boolean,
+        mutedExceptions: List<Throwable> = emptyList(),
+    ) : KaCompilationResult(mutedExceptions)
 
     /**
      * A failed compilation result.
@@ -47,10 +65,14 @@ public sealed class KaCompilationResult {
      * @property errors Non-recoverable errors which occurred either during code analysis or during code generation.
      */
     @KaExperimentalApi
-    public class Failure(public val errors: List<KaDiagnostic>) : KaCompilationResult()
+    public class Failure(
+        public val errors: List<KaDiagnostic>,
+        mutedExceptions: List<Throwable> = emptyList(),
+    ) : KaCompilationResult(mutedExceptions)
 }
 
 @KaExperimentalApi
+@SubclassOptInRequired(KaImplementationDetail::class)
 public interface KaCompiledFile {
     /**
      * The path of the compiled file relative to the root of the output directory.
@@ -89,7 +111,8 @@ public sealed class KaCompilerTarget {
     @KaExperimentalApi
     public class Jvm(
         public val isTestMode: Boolean,
-        public val compiledClassHandler: KaCompiledClassHandler? = null,
+        public val compiledClassHandler: KaCompiledClassHandler?,
+        public val debuggerExtension: DebuggerExtension?,
     ) : KaCompilerTarget()
 }
 
@@ -111,6 +134,7 @@ public fun interface KaCompiledClassHandler {
 }
 
 @KaExperimentalApi
+@SubclassOptInRequired(KaImplementationDetail::class)
 public interface KaCompilerFacility : KaSessionComponent {
     @KaExperimentalApi
     public companion object {
@@ -158,3 +182,30 @@ public interface KaCompilerFacility : KaSessionComponent {
  */
 @KaExperimentalApi
 public class KaCodeCompilationException(cause: Throwable) : RuntimeException(cause)
+
+/**
+ * Provides an extension point for compiler to retrieve additional information from debugger API
+ *
+ * Used for debugger's code fragments compilation.
+ *
+ * @property stack A sequence of PSI elements of the expressions (function calls or property accesses) in the current execution stack,
+ * listed from the top to the bottom.
+ */
+@KaExperimentalApi
+public class DebuggerExtension(public val stack: Sequence<PsiElement?>)
+
+/**
+ * @see KaCompilerFacility.compile
+ */
+@KaContextParameterApi
+@KaExperimentalApi
+@Throws(KaCodeCompilationException::class)
+context(context: KaCompilerFacility)
+public fun compile(
+    file: KtFile,
+    configuration: CompilerConfiguration,
+    target: KaCompilerTarget,
+    allowedErrorFilter: (KaDiagnostic) -> Boolean
+): KaCompilationResult {
+    return with(context) { compile(file, configuration, target, allowedErrorFilter) }
+}

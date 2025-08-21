@@ -14,3 +14,6 @@ fun test() {
     val a = select(::foo, ::bar)
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.reflect.KFunction0<Parent>")!>a<!>
 }
+
+/* GENERATED_FIR_TAGS: callableReference, functionDeclaration, interfaceDeclaration, localProperty, nullableType,
+propertyDeclaration, typeParameter */

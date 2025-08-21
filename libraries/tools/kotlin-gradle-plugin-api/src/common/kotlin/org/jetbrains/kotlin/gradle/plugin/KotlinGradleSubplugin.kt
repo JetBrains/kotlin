@@ -241,6 +241,13 @@ interface KotlinCompilerPluginSupportPlugin : Plugin<Project> {
      *
      * Otherwise, [getPluginArtifact] is used by default.
      */
+    @Deprecated(
+        message = "This function is no longer used as only the embeddable compiler is supported. " +
+                "The 'kotlin.native.useEmbeddableCompilerJar' property has been removed and " +
+                "getPluginArtifact() is always used instead.",
+        level = DeprecationLevel.WARNING,
+        replaceWith = ReplaceWith("getPluginArtifact()")
+    ) // Since 2.2.20
     fun getPluginArtifactForNative(): SubpluginArtifact? = null
 }
 
@@ -259,11 +266,3 @@ open class SubpluginArtifact(val groupId: String, val artifactId: String, val ve
  * @suppress this class should not be a part of KGP-API
  */
 class JetBrainsSubpluginArtifact(artifactId: String) : SubpluginArtifact(groupId = "org.jetbrains.kotlin", artifactId = artifactId)
-
-/**
- * @suppress
- * Marker interface left here for backward compatibility with older plugin versions.
- * Remove once minimal supported Gradle version will use Kotlin 1.7+.
- */
-@Deprecated(level = DeprecationLevel.HIDDEN, message = "")
-interface KotlinGradleSubplugin

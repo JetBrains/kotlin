@@ -18,3 +18,5 @@ public abstract sealed class J permits J1 {
 // FILE: J1.java
 public final class J1 extends J {
 }
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, javaType, typeAliasDeclaration */

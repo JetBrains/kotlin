@@ -80,3 +80,6 @@ enum class ExtractionTarget(val targetName: String) {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, companionObject, enumDeclaration, enumEntry, functionDeclaration,
+integerLiteral, interfaceDeclaration, lambdaLiteral, objectDeclaration, primaryConstructor, propertyDeclaration */

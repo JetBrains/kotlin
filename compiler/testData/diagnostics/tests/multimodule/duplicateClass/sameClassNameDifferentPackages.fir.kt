@@ -20,3 +20,5 @@ class A
 fun test() {
     val a: A = <!INITIALIZER_TYPE_MISMATCH!>B().a<!>
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, localProperty, propertyDeclaration */

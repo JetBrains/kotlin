@@ -11,3 +11,6 @@ fun main() {
         <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE, OVERLOAD_RESOLUTION_AMBIGUITY, OVERLOAD_RESOLUTION_AMBIGUITY_BECAUSE_OF_STUB_TYPES!>println<!>(<!STUB_TYPE_IN_ARGUMENT_CAUSES_AMBIGUITY!>secondParameter<!>)
     }
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral, lambdaLiteral, localProperty, propertyDeclaration,
+stringLiteral */

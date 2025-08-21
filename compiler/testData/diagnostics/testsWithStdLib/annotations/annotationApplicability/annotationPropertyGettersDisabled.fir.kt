@@ -12,3 +12,6 @@ annotation class A(
     <!VOLATILE_ON_VALUE, WRONG_ANNOTATION_TARGET_WARNING!>@Volatile<!> val s: Int,
     <!WRONG_ANNOTATION_TARGET_WARNING!>@Transient<!> val t: Int,
 )
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, annotationUseSiteTargetPropertyGetter, classReference, primaryConstructor,
+propertyDeclaration, stringLiteral */

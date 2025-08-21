@@ -1,3 +1,5 @@
+// COMPILATION_ERRORS
+
 fun parserBug() {
     // No closing backtick — not an identifier
     """

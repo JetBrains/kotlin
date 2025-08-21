@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.fir.visitors.transformInplace
 import org.jetbrains.kotlin.name.Name
 
-@OptIn(FirImplementationDetail::class, ResolveStateAccess::class)
+@OptIn(FirImplementationDetail::class, ResolveStateAccess::class, DirectDeclarationsAccess::class)
 internal class FirRegularClassImpl(
     override val source: KtSourceElement?,
     resolvePhase: FirResolvePhase,
@@ -39,6 +39,7 @@ internal class FirRegularClassImpl(
     override var deprecationsProvider: DeprecationsProvider,
     override val scopeProvider: FirScopeProvider,
     override val classKind: ClassKind,
+    @property:DirectDeclarationsAccess
     override val declarations: MutableList<FirDeclaration>,
     override var annotations: MutableOrEmptyList<FirAnnotation>,
     override val name: Name,
@@ -54,6 +55,8 @@ internal class FirRegularClassImpl(
     init {
         symbol.bind(this)
         resolveState = resolvePhase.asResolveState()
+        @Suppress("SENSELESS_COMPARISON")
+        require(source != null || origin != FirDeclarationOrigin.Source) { "${this::class.simpleName} with Source origin was instantiated without a source element." }
     }
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {

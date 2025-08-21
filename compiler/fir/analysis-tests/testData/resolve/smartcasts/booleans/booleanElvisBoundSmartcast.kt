@@ -20,3 +20,6 @@ fun test_2(a: A?) {
         a.foo() // OK
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, elvisExpression, functionDeclaration, ifExpression, nullableType,
+primaryConstructor, propertyDeclaration, safeCall, smartcast */

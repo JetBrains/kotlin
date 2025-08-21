@@ -1,3 +1,5 @@
+// COMPILATION_ERRORS
+
 fun oneBit(index : Int) = 1 shl index
 
 fun setBit(x : Int, index : Int) = x or oneBit(index)

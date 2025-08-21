@@ -6,19 +6,27 @@
 package org.jetbrains.kotlin.ir.backend.js.transformers.irToJs
 
 import org.jetbrains.kotlin.backend.js.TsCompilationStrategy
-import org.jetbrains.kotlin.ir.backend.js.export.TypeScriptFragment
-import org.jetbrains.kotlin.ir.backend.js.export.toTypeScript
+import org.jetbrains.kotlin.ir.backend.js.tsexport.TypeScriptFragment
+import org.jetbrains.kotlin.ir.backend.js.tsexport.toTypeScript
 import org.jetbrains.kotlin.js.backend.ast.ESM_EXTENSION
+import org.jetbrains.kotlin.js.backend.ast.ESM_TS_DEFINITION_EXTENSION
 import org.jetbrains.kotlin.js.backend.ast.JsProgram
 import org.jetbrains.kotlin.js.backend.ast.REGULAR_EXTENSION
+import org.jetbrains.kotlin.js.backend.ast.TS_DEFINITION_EXTENSION
 import org.jetbrains.kotlin.serialization.js.ModuleKind
 import java.io.File
 import java.nio.file.Files
 
-val ModuleKind.extension: String
+val ModuleKind.jsExtension: String
     get() = when (this) {
         ModuleKind.ES -> ESM_EXTENSION
         else -> REGULAR_EXTENSION
+    }
+
+val ModuleKind.dtsExtension: String
+    get() = when (this) {
+        ModuleKind.ES -> ESM_TS_DEFINITION_EXTENSION
+        else -> TS_DEFINITION_EXTENSION
     }
 
 abstract class CompilationOutputs {
@@ -46,21 +54,21 @@ abstract class CompilationOutputs {
             writtenFiles += jsMapFile
 
             out.tsDefinitions.takeIf { dtsStrategy == TsCompilationStrategy.EACH_FILE }?.let {
-                val tsFile = jsFile.dtsForJsFile
+                val tsFile = jsFile.createDtsForJsFile(moduleKind)
                 tsFile.writeText(listOf(it).toTypeScript(name, moduleKind))
                 writtenFiles += tsFile
             }
         }
 
         dependencies.forEach { (name, content) ->
-            outputDir.resolve("$name${moduleKind.extension}").writeAsJsFile(content)
+            outputDir.resolve("$name${moduleKind.jsExtension}").writeAsJsFile(content)
         }
 
-        val outputJsFile = outputDir.resolve("$outputName${moduleKind.extension}")
+        val outputJsFile = outputDir.resolve("$outputName${moduleKind.jsExtension}")
         outputJsFile.writeAsJsFile(this)
 
         if (dtsStrategy == TsCompilationStrategy.MERGED) {
-            val dtsFile = outputJsFile.dtsForJsFile
+            val dtsFile = outputJsFile.createDtsForJsFile(moduleKind)
             dtsFile.writeText(getFullTsDefinition(moduleName, moduleKind))
             writtenFiles += dtsFile
         }
@@ -69,7 +77,11 @@ abstract class CompilationOutputs {
     }
 
     fun deleteNonWrittenFiles(outputDir: File, writtenFiles: Set<File>) {
-        Files.walk(outputDir.toPath()).map { it.toFile() }.filter { it != outputDir && it !in writtenFiles }.forEach(File::delete)
+        Files.walk(outputDir.toPath())
+            .parallel()
+            .map { it.toFile() }
+            .filter { it != outputDir && it !in writtenFiles }
+            .forEach(File::delete)
     }
 
     fun getFullTsDefinition(moduleName: String, moduleKind: ModuleKind): String {
@@ -83,8 +95,8 @@ abstract class CompilationOutputs {
     protected val File.mapForJsFile
         get() = resolveSibling("$name.map").normalizedAbsoluteFile
 
-    protected val File.dtsForJsFile
-        get() = resolveSibling("$nameWithoutExtension.d.ts").normalizedAbsoluteFile
+    protected fun File.createDtsForJsFile(moduleKind: ModuleKind) =
+        resolveSibling("$nameWithoutExtension${moduleKind.dtsExtension}").normalizedAbsoluteFile
 }
 
 private fun File.copyModificationTimeFrom(from: File) {
@@ -96,6 +108,15 @@ private fun File.copyModificationTimeFrom(from: File) {
 
 private fun File.asSourceMappingUrl(): String {
     return "\n//# sourceMappingURL=${name}\n"
+}
+
+
+internal fun File.writeIfNotNull(data: String?) {
+    if (data != null) {
+        writeText(data)
+    } else {
+        delete()
+    }
 }
 
 class CompilationOutputsBuilt(
@@ -112,9 +133,15 @@ class CompilationOutputsBuilt(
         outputJsFile.writeText(rawJsCode + sourceMappingUrl)
     }
 
-    fun writeJsCodeIntoModuleCache(outputJsFile: File, outputJsMapFile: File?): CompilationOutputsBuiltForCache {
-        sourceMap?.let { outputJsMapFile?.writeText(it) }
+    fun writeJsCodeIntoModuleCache(
+        outputJsFile: File,
+        outputTsFile: File?,
+        outputJsMapFile: File?
+    ): CompilationOutputsBuiltForCache {
+        outputJsFile.parentFile?.mkdirs()
         outputJsFile.writeText(rawJsCode)
+        outputTsFile?.writeIfNotNull(tsDefinitions?.raw)
+        sourceMap?.let { outputJsMapFile?.writeText(it) }
         return CompilationOutputsBuiltForCache(outputJsFile, outputJsMapFile, this)
     }
 }

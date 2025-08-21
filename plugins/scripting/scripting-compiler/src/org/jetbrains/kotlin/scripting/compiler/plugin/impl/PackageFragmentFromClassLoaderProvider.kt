@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.jvm.JavaDescriptorResolver
 import org.jetbrains.kotlin.resolve.jvm.extensions.PackageFragmentProviderExtension
 import org.jetbrains.kotlin.storage.StorageManager
-import org.jetbrains.kotlin.util.toMetadataVersion
+import org.jetbrains.kotlin.util.toJvmMetadataVersion
 import kotlin.script.experimental.api.ScriptCompilationConfiguration
 import kotlin.script.experimental.jvm.ClassLoaderByConfiguration
 
@@ -71,7 +71,7 @@ class PackageFragmentFromClassLoaderProviderExtension(
             makeDeserializationComponentsForJava(
                 module, storageManager, notFoundClasses, lazyJavaPackageFragmentProvider,
                 reflectKotlinClassFinder, deserializedDescriptorResolver, RuntimeErrorReporter,
-                languageVersionSettings.languageVersion.toMetadataVersion()
+                languageVersionSettings.languageVersion.toJvmMetadataVersion()
             )
 
         deserializedDescriptorResolver.setComponents(deserializationComponentsForJava)

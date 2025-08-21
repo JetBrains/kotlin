@@ -42,3 +42,6 @@ fun <T> bar() {
         val something = listOf<Example>()
     }
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, classDeclaration, data, functionDeclaration, inner, localClass,
+nestedClass, nullableType, primaryConstructor, propertyDeclaration, typeParameter */

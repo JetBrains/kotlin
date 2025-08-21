@@ -16,16 +16,20 @@ import org.jetbrains.kotlin.fir.declarations.utils.classId
 import org.jetbrains.kotlin.fir.declarations.utils.isInner
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.declarations.utils.superConeTypes
+import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.ConeErrorType
 
 object FirThrowableSubclassChecker : FirClassChecker(MppCheckerKind.Common) {
-    override fun check(declaration: FirClass, context: CheckerContext, reporter: DiagnosticReporter) {
-        if (!declaration.hasThrowableSupertype(context))
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirClass) {
+        if (!declaration.hasThrowableSupertype())
             return
 
         if (declaration.typeParameters.isNotEmpty()) {
             declaration.typeParameters.firstOrNull()?.source?.let {
-                reporter.reportOn(it, FirErrors.GENERIC_THROWABLE_SUBCLASS, context)
+                reporter.reportOn(it, FirErrors.GENERIC_THROWABLE_SUBCLASS)
             }
 
             val shouldReport = when (declaration) {
@@ -34,23 +38,30 @@ object FirThrowableSubclassChecker : FirClassChecker(MppCheckerKind.Common) {
             }
 
             if (shouldReport) {
-                reporter.reportOn(declaration.source, FirErrors.INNER_CLASS_OF_GENERIC_THROWABLE_SUBCLASS, context)
+                reporter.reportOn(declaration.source, FirErrors.INNER_CLASS_OF_GENERIC_THROWABLE_SUBCLASS)
             }
-        } else if (declaration.hasGenericOuterDeclaration(context)) {
-            reporter.reportOn(declaration.source, FirErrors.INNER_CLASS_OF_GENERIC_THROWABLE_SUBCLASS, context)
+        } else if (declaration.hasGenericOuterDeclaration()) {
+            reporter.reportOn(declaration.source, FirErrors.INNER_CLASS_OF_GENERIC_THROWABLE_SUBCLASS)
         }
     }
 
-    private fun FirClass.hasThrowableSupertype(context: CheckerContext) =
+    context(context: CheckerContext)
+    private fun FirClass.hasThrowableSupertype() =
         superConeTypes.any { it !is ConeErrorType && it.isSubtypeOfThrowable(context.session) }
 
-    private fun FirClass.hasGenericOuterDeclaration(context: CheckerContext): Boolean {
+    context(context: CheckerContext)
+    private fun FirClass.hasGenericOuterDeclaration(): Boolean {
         if (!classId.isLocal) return false
         for (containingDeclaration in context.containingDeclarations.asReversed()) {
-            if (containingDeclaration is FirTypeParameterRefsOwner && containingDeclaration.typeParameters.isNotEmpty()) {
+            val hasTypeParameters = when (containingDeclaration) {
+                is FirCallableSymbol -> containingDeclaration.typeParameterSymbols.isNotEmpty()
+                is FirClassLikeSymbol -> containingDeclaration.typeParameterSymbols.isNotEmpty()
+                else -> false
+            }
+            if (hasTypeParameters) {
                 return true
             }
-            if (containingDeclaration is FirRegularClass && !containingDeclaration.isLocal && !containingDeclaration.isInner) {
+            if (containingDeclaration is FirRegularClassSymbol && !containingDeclaration.isLocal && !containingDeclaration.isInner) {
                 return false
             }
         }

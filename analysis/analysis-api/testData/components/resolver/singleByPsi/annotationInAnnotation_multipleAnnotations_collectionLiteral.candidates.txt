@@ -7,9 +7,11 @@ KtAnnotationEntry(121,198): '@AnnotationArray(annos = [Annotation("v1", "v2"), A
           receiverType = null
           returnType = Annotation
           symbol = vararg annos: Annotation
+          contextParameters = []
           callableId = null)
       }
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -22,8 +24,10 @@ KtAnnotationEntry(121,198): '@AnnotationArray(annos = [Annotation("v1", "v2"), A
               receiverType = null
               returnType = Annotation
               symbol = vararg annos: Annotation
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true

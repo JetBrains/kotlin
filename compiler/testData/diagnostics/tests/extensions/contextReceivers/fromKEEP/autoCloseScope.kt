@@ -1,6 +1,5 @@
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: BACKEND
 // DIAGNOSTICS: -CONTEXT_RECEIVERS_DEPRECATED
-// FIR_IDENTICAL
 // LANGUAGE: +ContextReceivers
 
 class File(name: String)
@@ -35,3 +34,7 @@ fun test() {
         // All files are closed at the end
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionDeclarationWithContext,
+functionalType, interfaceDeclaration, lambdaLiteral, localProperty, override, primaryConstructor, propertyDeclaration,
+stringLiteral, tryExpression, typeWithContext */

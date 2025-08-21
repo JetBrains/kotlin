@@ -21,7 +21,8 @@ import org.jetbrains.kotlin.fir.expressions.unwrapArgument
 import org.jetbrains.kotlin.fir.references.isError
 
 object FirInlinedLambdaNonSourceAnnotationsChecker : FirAnonymousFunctionChecker(MppCheckerKind.Common) {
-    override fun check(declaration: FirAnonymousFunction, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirAnonymousFunction) {
         if (declaration.inlineStatus != InlineStatus.Inline && declaration.inlineStatus != InlineStatus.CrossInline) {
             return
         }
@@ -42,7 +43,7 @@ object FirInlinedLambdaNonSourceAnnotationsChecker : FirAnonymousFunctionChecker
             val annotationSymbol = it.toAnnotationClassLikeSymbol(context.session) ?: continue
 
             if (annotationSymbol.getAnnotationRetention(context.session) != AnnotationRetention.SOURCE) {
-                reporter.reportOn(it.source, FirErrors.NON_SOURCE_ANNOTATION_ON_INLINED_LAMBDA_EXPRESSION, context)
+                reporter.reportOn(it.source, FirErrors.NON_SOURCE_ANNOTATION_ON_INLINED_LAMBDA_EXPRESSION)
             }
         }
     }

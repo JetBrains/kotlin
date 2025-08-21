@@ -2,6 +2,7 @@ KtNameReferenceExpression(93,99): 'action'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = foo
           isSafeNavigation = true
@@ -12,6 +13,7 @@ KtNameReferenceExpression(93,99): 'action'
           receiverType = null
           returnType = kotlin.Function0<kotlin.Unit>
           symbol = val action: kotlin.Function0<kotlin.Unit>
+          contextParameters = []
           callableId = test/Foo.action
       simpleAccess = Read
       typeArgumentsMapping = {}

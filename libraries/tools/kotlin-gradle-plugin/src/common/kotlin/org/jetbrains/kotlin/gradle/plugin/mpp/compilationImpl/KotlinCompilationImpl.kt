@@ -12,8 +12,7 @@ import org.gradle.api.GradleException
 import org.gradle.api.attributes.AttributeContainer
 import org.gradle.api.file.FileCollection
 import org.gradle.api.tasks.TaskProvider
-import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
-import org.jetbrains.kotlin.gradle.dsl.KotlinCompile
+import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics.KotlinCompilationSourceDeprecation
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.kotlinToolingDiagnosticsCollector
@@ -28,9 +27,9 @@ import org.jetbrains.kotlin.gradle.utils.ObservableSet
 import org.jetbrains.kotlin.tooling.core.MutableExtras
 import org.jetbrains.kotlin.tooling.core.mutableExtrasOf
 
-internal class KotlinCompilationImpl constructor(
+internal class KotlinCompilationImpl(
     private val params: Params,
-) : InternalKotlinCompilation<KotlinCommonOptions> {
+) : InternalKotlinCompilation<KotlinAnyOptionsDeprecated> {
 
     //region Params
 
@@ -42,8 +41,8 @@ internal class KotlinCompilationImpl constructor(
         val compilationTaskNames: KotlinCompilationTaskNamesContainer,
         val processResourcesTaskName: String?,
         val output: KotlinCompilationOutput,
-        @Suppress("TYPEALIAS_EXPANSION_DEPRECATION") val compilerOptions: DeprecatedHasCompilerOptions<*>,
-        val kotlinOptions: KotlinCommonOptions,
+        @Suppress("TYPEALIAS_EXPANSION_DEPRECATION_ERROR") val compilerOptions: DeprecatedHasCompilerOptions<*>,
+        @Suppress("DEPRECATION_ERROR") val kotlinOptions: KotlinCommonOptions,
         val compilationAssociator: KotlinCompilationAssociator,
         val compilationFriendPathsResolver: KotlinCompilationFriendPathsResolver,
         val compilationSourceSetInclusion: KotlinCompilationSourceSetInclusion,
@@ -93,7 +92,7 @@ internal class KotlinCompilationImpl constructor(
     override val kotlinSourceSets: ObservableSet<KotlinSourceSet>
         get() = sourceSets.kotlinSourceSets
 
-    @Deprecated("scheduled for removal with Kotlin 2.1")
+    @Suppress("OVERRIDE_DEPRECATION")
     override fun source(sourceSet: KotlinSourceSet) {
         project.kotlinToolingDiagnosticsCollector.report(project, KotlinCompilationSourceDeprecation(Throwable()))
         sourceSets.source(sourceSet)
@@ -150,13 +149,21 @@ internal class KotlinCompilationImpl constructor(
     override val compileAllTaskName: String
         get() = params.compilationTaskNames.compileAllTaskName
 
-    @Suppress("deprecation")
-    @Deprecated("Accessing task instance directly is deprecated", replaceWith = ReplaceWith("compileTaskProvider"))
+    @Suppress("deprecation_error")
+    @Deprecated(
+        "Accessing task instance directly is deprecated. Scheduled for removal in Kotlin 2.3.",
+        replaceWith = ReplaceWith("compileTaskProvider"),
+        level = DeprecationLevel.ERROR,
+    )
     override val compileKotlinTask: KotlinCompile<KotlinCommonOptions>
         get() = compileKotlinTaskProvider.get()
 
-    @Suppress("deprecation")
-    @Deprecated("Replaced with compileTaskProvider", replaceWith = ReplaceWith("compileTaskProvider"))
+    @Suppress("DEPRECATION_ERROR")
+    @Deprecated(
+        "Replaced with compileTaskProvider. Scheduled for removal in Kotlin 2.3.",
+        replaceWith = ReplaceWith("compileTaskProvider"),
+        level = DeprecationLevel.ERROR
+    )
     override val compileKotlinTaskProvider: TaskProvider<out KotlinCompile<KotlinCommonOptions>>
         get() = target.project.locateTask(compileKotlinTaskName) ?: throw GradleException("Couldn't locate  task $compileKotlinTaskName")
 
@@ -171,7 +178,7 @@ internal class KotlinCompilationImpl constructor(
 
     //region CompilerOptions & KotlinOptions
 
-    @Suppress("OVERRIDE_DEPRECATION")
+    @Suppress("OVERRIDE_DEPRECATION", "DEPRECATION_ERROR")
     override val kotlinOptions: KotlinCommonOptions
         get() = params.kotlinOptions
 
@@ -179,7 +186,7 @@ internal class KotlinCompilationImpl constructor(
         "To configure compilation compiler options use 'compileTaskProvider':\ncompilation.compileTaskProvider.configure{\n" +
                 "    compilerOptions {}\n}"
     )
-    @Suppress("TYPEALIAS_EXPANSION_DEPRECATION")
+    @Suppress("TYPEALIAS_EXPANSION_DEPRECATION_ERROR")
     override val compilerOptions: DeprecatedHasCompilerOptions<*>
         get() = params.compilerOptions
 

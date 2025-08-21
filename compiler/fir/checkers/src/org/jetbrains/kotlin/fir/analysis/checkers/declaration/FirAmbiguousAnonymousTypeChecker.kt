@@ -21,12 +21,13 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousObjectSymbol
 import org.jetbrains.kotlin.fir.types.*
 
 object FirAmbiguousAnonymousTypeChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
-    override fun check(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirDeclaration) {
         if (declaration !is FirFunction && declaration !is FirProperty) return
         // if source is not null then this type was declared in source
         // so it can not be inferred to anonymous type
         if (declaration.symbol.hasExplicitReturnType) return
-        if (context.containingDeclarations.any { it.isLocalMember || it is FirAnonymousObject }) return
+        if (context.containingDeclarations.any { it.isLocalMember || it is FirAnonymousObjectSymbol }) return
 
         if (!shouldApproximateAnonymousTypesOfNonLocalDeclaration(
                 declaration.visibilityForApproximation(context.containingDeclarations.lastOrNull()),
@@ -54,13 +55,12 @@ object FirAmbiguousAnonymousTypeChecker : FirBasicDeclarationChecker(MppCheckerK
             else -> error("Should not be there")
         }
 
-        type?.let { checkTypeAndArguments(it, context, reporter, source) }
+        type?.let { checkTypeAndArguments(it, source) }
     }
 
+    context(context: CheckerContext, reporter: DiagnosticReporter)
     private fun checkTypeAndArguments(
         type: ConeKotlinType,
-        context: CheckerContext,
-        reporter: DiagnosticReporter,
         reportOn: KtSourceElement?
     ) {
         val classSymbol = type.toSymbol(context.session)
@@ -71,14 +71,12 @@ object FirAmbiguousAnonymousTypeChecker : FirBasicDeclarationChecker(MppCheckerK
             reporter.reportOn(
                 reportOn,
                 FirErrors.AMBIGUOUS_ANONYMOUS_TYPE_INFERRED,
-                classSymbol.resolvedSuperTypeRefs.map { it.coneType },
-                context
-            )
+                classSymbol.resolvedSuperTypeRefs.map { it.coneType })
         }
         for (typeArgument in type.typeArguments) {
             checkTypeAndArguments(
                 typeArgument.type ?: continue,
-                context, reporter, reportOn
+                reportOn
             )
         }
     }

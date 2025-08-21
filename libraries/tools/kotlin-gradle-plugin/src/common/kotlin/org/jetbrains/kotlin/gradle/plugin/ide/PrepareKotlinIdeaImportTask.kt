@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.tooling.core.UnsafeApi
 
 @Idea222Api
 internal fun Project.ideaImportDependsOn(task: TaskProvider<*>) {
-    @OptIn(UnsafeApi::class)
     prepareKotlinIdeaImportTask.dependsOn(task)
 }
 

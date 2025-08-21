@@ -24,7 +24,12 @@ internal class ModuleDescriptorLoader(output: KlibToolOutput) {
     fun load(library: KotlinLibrary): ModuleDescriptorImpl {
         val storageManager = LockBasedStorageManager("klib")
 
-        val module = KlibFactories.DefaultDeserializedDescriptorFactory.createDescriptorAndNewBuiltIns(library, languageVersionSettings, storageManager, null)
+        val module = KlibFactories.DefaultDeserializedDescriptorFactory.createDescriptorAndNewBuiltIns(
+            library,
+            languageVersionSettings,
+            storageManager,
+            null
+        )
 
         val defaultModules = mutableListOf<ModuleDescriptorImpl>()
         if (!module.isNativeStdlib()) {

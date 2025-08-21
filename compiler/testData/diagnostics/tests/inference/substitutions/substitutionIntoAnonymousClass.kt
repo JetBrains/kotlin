@@ -24,3 +24,6 @@ class Foo<R> {
         Foo<Int>().bar<String>().baz().getR(<!TYPE_MISMATCH!>""<!>)
     }
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, anonymousObjectExpression, classDeclaration, funWithExtensionReceiver,
+functionDeclaration, integerLiteral, nullableType, stringLiteral, thisExpression, typeConstraint, typeParameter */

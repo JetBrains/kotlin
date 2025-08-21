@@ -1,14 +1,17 @@
 element: param1
-implicit receivers:
-  type: KaUsualClassType:
-    annotations: []
-    typeArguments: [
-      KaTypeParameterType:
-        annotations: []
-        type: TypeParam
-    ]
-    type: test/MyClass<TypeParam>
-  owner symbol: KaFirNamedClassSymbol
+implicit values:
+  KaImplicitReceiver:
+    scopeIndexInTower = 0
+    type = KaUsualClassType:
+      annotations: []
+      typeArguments: [
+        KaTypeParameterType:
+          annotations: []
+          type: TypeParam
+      ]
+      type: test/MyClass<TypeParam>
+    ownerSymbol = KaNamedClassSymbol:
+      test/MyClass
 
 scopes:
   TypeScope, index = 0
@@ -39,19 +42,19 @@ scopes:
           visibility: PRIVATE
         callableId: test/MyClass.property
         compilerVisibility: Public
+        contextParameters: []
         contextReceivers: []
         getter: KaPropertyGetterSymbol:
           annotations: []
           callableId: null
           compilerVisibility: Public
           contextReceivers: []
-          hasBody: false
           hasStableParameterNames: true
           isActual: false
-          isDefault: true
           isExpect: false
           isExtension: false
           isInline: false
+          isNotDefault: false
           isOverride: false
           location: PROPERTY
           modality: FINAL
@@ -94,6 +97,7 @@ scopes:
         annotations: []
         callableId: test/MyClass.member
         compilerVisibility: Public
+        contextParameters: []
         contextReceivers: []
         contractEffects: []
         hasStableParameterNames: true
@@ -125,6 +129,7 @@ scopes:
         annotations: []
         callableId: kotlin/Any.equals
         compilerVisibility: Public
+        contextParameters: []
         contextReceivers: []
         contractEffects: []
         hasStableParameterNames: true
@@ -182,6 +187,7 @@ scopes:
         annotations: []
         callableId: kotlin/Any.hashCode
         compilerVisibility: Public
+        contextParameters: []
         contextReceivers: []
         contractEffects: []
         hasStableParameterNames: true
@@ -213,6 +219,7 @@ scopes:
         annotations: []
         callableId: kotlin/Any.toString
         compilerVisibility: Public
+        contextParameters: []
         contextReceivers: []
         contractEffects: []
         hasStableParameterNames: true

@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.ir.builders.declarations.addFunction
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 
 class MyMethodGenerator : IrGenerationExtension {
     override fun generate(
@@ -28,7 +28,7 @@ class MyMethodGenerator : IrGenerationExtension {
 
 private class MyMethodTransformer(
     private val context: IrPluginContext,
-) : IrElementVisitorVoid {
+) : IrVisitorVoid() {
     override fun visitElement(element: IrElement) {
         element.acceptChildren(this, null)
     }

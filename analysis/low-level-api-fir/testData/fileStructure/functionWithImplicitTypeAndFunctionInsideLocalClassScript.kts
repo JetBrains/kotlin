@@ -1,4 +1,4 @@
-package myPack/* RootScriptStructureElement */
+package myPack/* RootStructureElement *//* RootScriptStructureElement */
 
 @Target(
     AnnotationTarget.PROPERTY,

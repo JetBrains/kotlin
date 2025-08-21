@@ -13,3 +13,6 @@ fun xxx() {
         .map { B(it) <!USELESS_CAST!>as A<!> }
         .reduce { a, b -> C(a, b) }
 }
+
+/* GENERATED_FIR_TAGS: asExpression, classDeclaration, functionDeclaration, interfaceDeclaration, lambdaLiteral,
+localClass, primaryConstructor, propertyDeclaration */

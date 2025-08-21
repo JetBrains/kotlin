@@ -21,3 +21,6 @@ class Q {
         x.g.checkType { _<Number>() }
     }
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType,
+infix, lambdaLiteral, localClass, nullableType, propertyDeclaration, typeParameter, typeWithExtension */

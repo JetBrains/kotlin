@@ -4,6 +4,7 @@
 // ENABLE_JVM_PREVIEW
 // WITH_STDLIB
 // JDK_KIND: FULL_JDK_17
+// JVM_DEFAULT_MODE: enable
 
 // D8 does not yet desugar java records.
 // IGNORE_DEXING

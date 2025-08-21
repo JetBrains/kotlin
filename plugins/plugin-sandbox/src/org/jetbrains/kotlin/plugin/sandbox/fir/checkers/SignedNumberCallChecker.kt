@@ -19,14 +19,15 @@ import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.resolvedType
 
 object SignedNumberCallChecker : FirFunctionCallChecker(MppCheckerKind.Common) {
-    override fun check(expression: FirFunctionCall, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(expression: FirFunctionCall) {
         val argumentMapping = expression.resolvedArgumentMapping ?: return
         for ((argument, parameter) in argumentMapping.entries) {
             val expectedSign = parameter.returnTypeRef.coneType.attributes.numberSign ?: continue
             val actualSign = argument.resolvedType.attributes.numberSign
             if (expectedSign != actualSign) {
                 reporter.reportOn(
-                    argument.source, PluginErrors.ILLEGAL_NUMBER_SIGN, expectedSign.asString(), actualSign.asString(), context
+                    argument.source, PluginErrors.ILLEGAL_NUMBER_SIGN, expectedSign.asString(), actualSign.asString()
                 )
             }
         }

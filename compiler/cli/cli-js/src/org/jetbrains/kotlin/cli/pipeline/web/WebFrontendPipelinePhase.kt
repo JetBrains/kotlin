@@ -7,8 +7,9 @@ package org.jetbrains.kotlin.cli.pipeline.web
 
 import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.cli.common.*
+import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
-import org.jetbrains.kotlin.cli.common.messages.MessageCollector
+import org.jetbrains.kotlin.cli.js.platformChecker
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.pipeline.CheckCompilationErrors
@@ -20,7 +21,6 @@ import org.jetbrains.kotlin.config.lookupTracker
 import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.config.useLightTree
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
-import org.jetbrains.kotlin.fir.BinaryModuleData
 import org.jetbrains.kotlin.fir.DependencyListForCliModule
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
@@ -33,17 +33,13 @@ import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.incremental.js.IncrementalDataProvider
 import org.jetbrains.kotlin.ir.backend.js.MainModule
 import org.jetbrains.kotlin.ir.backend.js.ModulesStructure
-import org.jetbrains.kotlin.ir.backend.js.checkers.JsStandardLibrarySpecialCompatibilityChecker
-import org.jetbrains.kotlin.ir.backend.js.checkers.WasmStandardLibrarySpecialCompatibilityChecker
+import org.jetbrains.kotlin.ir.backend.js.loadWebKlibsInProductionPipeline
 import org.jetbrains.kotlin.js.config.*
-import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.platform.js.JsPlatforms
-import org.jetbrains.kotlin.platform.wasm.WasmPlatforms
-import org.jetbrains.kotlin.platform.wasm.WasmTarget
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.wasm.config.WasmConfigurationKeys
-import java.nio.file.Paths
+import org.jetbrains.kotlin.util.PerformanceManager
+import org.jetbrains.kotlin.util.PhaseType
+import org.jetbrains.kotlin.util.PotentiallyIncorrectPhaseTimeMeasurement
 
 object WebFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, WebFrontendPipelineArtifact>(
     name = "JsFrontendPipelinePhase",
@@ -51,22 +47,29 @@ object WebFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, W
 ) {
     override fun executePhase(input: ConfigurationPipelineArtifact): WebFrontendPipelineArtifact? {
         val configuration = input.configuration
-        val performanceManager = configuration.perfManager
         val environmentForJS = KotlinCoreEnvironment.createForProduction(input.rootDisposable, configuration, EnvironmentConfigFiles.JS_CONFIG_FILES)
-        performanceManager?.notifyAnalysisStarted()
+        configuration.perfManager?.let {
+            @OptIn(PotentiallyIncorrectPhaseTimeMeasurement::class)
+            it.notifyCurrentPhaseFinishedIfNeeded()
+            it.notifyPhaseStarted(PhaseType.Analysis)
+        }
         val messageCollector = configuration.messageCollector
         val libraries = configuration.libraries
         val friendLibraries = configuration.friendLibraries
 
-        val mainModule = MainModule.SourceFiles(environmentForJS.getSourceFiles())
-        val moduleStructure = ModulesStructure(environmentForJS.project, mainModule, configuration, libraries, friendLibraries)
-
         val isWasm = configuration.wasmCompilation
-        runStandardLibrarySpecialCompatibilityChecks(moduleStructure.allDependencies, isWasm = isWasm, messageCollector)
+
+        val klibs = loadWebKlibsInProductionPipeline(configuration, configuration.platformChecker)
+
+        val mainModule = MainModule.SourceFiles(environmentForJS.getSourceFiles())
+        val moduleStructure = ModulesStructure(
+            project = environmentForJS.project,
+            mainModule = mainModule,
+            compilerConfiguration = configuration,
+            klibs = klibs,
+        )
 
         val lookupTracker = configuration.lookupTracker ?: LookupTracker.DO_NOTHING
-
-        performanceManager?.notifyAnalysisStarted()
 
         val kotlinPackageUsageIsFine: Boolean
         val analyzedOutput = if (configuration.useLightTree) {
@@ -93,6 +96,7 @@ object WebFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, W
                 libraries = libraries,
                 friendLibraries = friendLibraries,
                 diagnosticsReporter = input.diagnosticCollector,
+                performanceManager = configuration.perfManager,
                 incrementalDataProvider = configuration.incrementalDataProvider,
                 lookupTracker = lookupTracker,
                 useWasmPlatform = isWasm,
@@ -127,12 +131,12 @@ object WebFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, W
 
         if (!kotlinPackageUsageIsFine) return null
 
-        performanceManager?.notifyAnalysisFinished()
         return WebFrontendPipelineArtifact(
             analyzedOutput,
             configuration,
             input.diagnosticCollector,
             moduleStructure,
+            hasErrors = messageCollector.hasErrors() || input.diagnosticCollector.hasErrors,
         )
     }
 
@@ -146,6 +150,9 @@ object WebFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, W
         lookupTracker: LookupTracker?,
         useWasmPlatform: Boolean,
     ): AnalyzedFirWithPsiOutput {
+        for (ktFile in ktFiles) {
+            AnalyzerWithCompilerReport.reportSyntaxErrors(ktFile, diagnosticsReporter)
+        }
         val output = compileModuleToAnalyzedFir(
             moduleStructure,
             ktFiles,
@@ -171,6 +178,7 @@ object WebFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, W
         libraries: List<String>,
         friendLibraries: List<String>,
         diagnosticsReporter: BaseDiagnosticsCollector,
+        performanceManager: PerformanceManager?,
         incrementalDataProvider: IncrementalDataProvider?,
         lookupTracker: LookupTracker?,
         useWasmPlatform: Boolean,
@@ -185,7 +193,7 @@ object WebFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, W
             isCommonSource = { groupedSources.isCommonSourceForLt(it) },
             fileBelongsToModule = { file, it -> groupedSources.fileBelongsToModuleForLt(file, it) },
             buildResolveAndCheckFir = { session, files ->
-                buildResolveAndCheckFirViaLightTree(session, files, diagnosticsReporter, null)
+                buildResolveAndCheckFirViaLightTree(session, files, diagnosticsReporter, performanceManager?.let { it::addSourcesStats })
             },
             useWasmPlatform = useWasmPlatform,
         )
@@ -210,37 +218,26 @@ object WebFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, W
 
         val mainModuleName = moduleStructure.compilerConfiguration.get(CommonConfigurationKeys.MODULE_NAME)!!
         val escapedMainModuleName = Name.special("<$mainModuleName>")
-        val platform = if (useWasmPlatform) {
-            when (moduleStructure.compilerConfiguration.get(WasmConfigurationKeys.WASM_TARGET, WasmTarget.JS)) {
-                WasmTarget.JS -> WasmPlatforms.wasmJs
-                WasmTarget.WASI -> WasmPlatforms.wasmWasi
-            }
-        } else JsPlatforms.defaultJsPlatform
-        val binaryModuleData = BinaryModuleData.initialize(escapedMainModuleName, platform)
-        val dependencyList = DependencyListForCliModule.build(binaryModuleData) {
-            dependencies(libraries.map { Paths.get(it).toAbsolutePath() })
-            friendDependencies(friendLibraries.map { Paths.get(it).toAbsolutePath() })
+        val dependencyList = DependencyListForCliModule.build(escapedMainModuleName) {
+            dependencies(libraries)
+            friendDependencies(friendLibraries)
             // TODO: !!! dependencies module data?
         }
-
-        val resolvedLibraries = moduleStructure.allDependencies
 
         val sessionsWithSources = if (useWasmPlatform) {
             prepareWasmSessions(
                 files, moduleStructure.compilerConfiguration, escapedMainModuleName,
-                resolvedLibraries, dependencyList, extensionRegistrars,
+                moduleStructure.klibs.all, dependencyList, extensionRegistrars,
                 isCommonSource = isCommonSource,
                 fileBelongsToModule = fileBelongsToModule,
-                lookupTracker,
                 icData = incrementalDataProvider?.let(::KlibIcData),
             )
         } else {
             prepareJsSessions(
                 files, moduleStructure.compilerConfiguration, escapedMainModuleName,
-                resolvedLibraries, dependencyList, extensionRegistrars,
+                moduleStructure.klibs.all, dependencyList, extensionRegistrars,
                 isCommonSource = isCommonSource,
                 fileBelongsToModule = fileBelongsToModule,
-                lookupTracker,
                 icData = incrementalDataProvider?.let(::KlibIcData),
             )
         }
@@ -250,14 +247,5 @@ object WebFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, W
         }
 
         return outputs
-    }
-
-    private fun runStandardLibrarySpecialCompatibilityChecks(
-        libraries: List<KotlinLibrary>,
-        isWasm: Boolean,
-        messageCollector: MessageCollector,
-    ) {
-        val checker = if (isWasm) WasmStandardLibrarySpecialCompatibilityChecker else JsStandardLibrarySpecialCompatibilityChecker
-        checker.check(libraries, messageCollector)
     }
 }

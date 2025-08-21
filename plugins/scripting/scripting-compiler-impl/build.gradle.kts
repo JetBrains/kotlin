@@ -10,7 +10,7 @@ plugins {
 dependencies {
     compileOnly(project(":compiler:frontend"))
     compileOnly(project(":compiler:frontend.java"))
-    compileOnly(project(":compiler:psi"))
+    compileOnly(project(":compiler:psi:psi-api"))
     compileOnly(project(":compiler:plugin-api"))
     compileOnly(project(":compiler:cli"))
     compileOnly(project(":compiler:ir.serialization.js"))
@@ -32,7 +32,7 @@ dependencies {
     testApi(project(":compiler:cli"))
     testApi(project(":compiler:cli-common"))
     testApi(project(":compiler:frontend.java"))
-    testApi(projectTests(":compiler:tests-common"))
+    testApi(testFixtures(project(":compiler:tests-common")))
     testImplementation(libs.junit4)
 }
 

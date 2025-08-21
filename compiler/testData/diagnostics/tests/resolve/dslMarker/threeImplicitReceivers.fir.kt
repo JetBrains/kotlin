@@ -109,3 +109,6 @@ fun test() {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, funWithExtensionReceiver, functionDeclaration,
+functionalType, getter, lambdaLiteral, operator, propertyDeclaration, propertyWithExtensionReceiver, typeWithExtension */

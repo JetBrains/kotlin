@@ -18,3 +18,6 @@ annotation class Ann(
 ) class MyClass
 
 // EXPECTED: @Ann(p1 = 128, p2 = 2.toByte(), p3 = 128, p4 = 2, p5 = 2)
+
+/* GENERATED_FIR_TAGS: additiveExpression, annotationDeclaration, classDeclaration, integerLiteral, javaProperty,
+primaryConstructor, propertyDeclaration */

@@ -1,0 +1,365 @@
+KtFile: simpleLiterals.kt
+  PACKAGE_DIRECTIVE
+    <empty list>
+  IMPORT_LIST
+    <empty list>
+  CLASS
+    PsiComment(EOL_COMMENT)('// FILE: Simple.kt')
+    PsiWhiteSpace('\n')
+    MODIFIER_LIST
+      PsiElement(annotation)('annotation')
+    PsiWhiteSpace(' ')
+    PsiElement(class)('class')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('Simple')
+    PRIMARY_CONSTRUCTOR
+      VALUE_PARAMETER_LIST
+        PsiElement(LPAR)('(')
+        PsiWhiteSpace('\n    ')
+        VALUE_PARAMETER
+          PsiElement(val)('val')
+          PsiWhiteSpace(' ')
+          PsiElement(IDENTIFIER)('i')
+          PsiElement(COLON)(':')
+          PsiWhiteSpace(' ')
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('Int')
+        PsiElement(COMMA)(',')
+        PsiWhiteSpace('\n    ')
+        VALUE_PARAMETER
+          PsiElement(val)('val')
+          PsiWhiteSpace(' ')
+          PsiElement(IDENTIFIER)('l')
+          PsiElement(COLON)(':')
+          PsiWhiteSpace(' ')
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('Long')
+        PsiElement(COMMA)(',')
+        PsiWhiteSpace('\n    ')
+        VALUE_PARAMETER
+          PsiElement(val)('val')
+          PsiWhiteSpace(' ')
+          PsiElement(IDENTIFIER)('b')
+          PsiElement(COLON)(':')
+          PsiWhiteSpace(' ')
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('Byte')
+        PsiElement(COMMA)(',')
+        PsiWhiteSpace('\n\n    ')
+        VALUE_PARAMETER
+          PsiElement(val)('val')
+          PsiWhiteSpace(' ')
+          PsiElement(IDENTIFIER)('d')
+          PsiElement(COLON)(':')
+          PsiWhiteSpace(' ')
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('Double')
+        PsiElement(COMMA)(',')
+        PsiWhiteSpace('\n    ')
+        VALUE_PARAMETER
+          PsiElement(val)('val')
+          PsiWhiteSpace(' ')
+          PsiElement(IDENTIFIER)('f')
+          PsiElement(COLON)(':')
+          PsiWhiteSpace(' ')
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('Float')
+        PsiElement(COMMA)(',')
+        PsiWhiteSpace('\n\n    ')
+        VALUE_PARAMETER
+          PsiElement(val)('val')
+          PsiWhiteSpace(' ')
+          PsiElement(IDENTIFIER)('c')
+          PsiElement(COLON)(':')
+          PsiWhiteSpace(' ')
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('Char')
+        PsiElement(COMMA)(',')
+        PsiWhiteSpace('\n\n    ')
+        VALUE_PARAMETER
+          PsiElement(val)('val')
+          PsiWhiteSpace(' ')
+          PsiElement(IDENTIFIER)('b1')
+          PsiElement(COLON)(':')
+          PsiWhiteSpace(' ')
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('Boolean')
+        PsiElement(COMMA)(',')
+        PsiWhiteSpace('\n    ')
+        VALUE_PARAMETER
+          PsiElement(val)('val')
+          PsiWhiteSpace(' ')
+          PsiElement(IDENTIFIER)('b2')
+          PsiElement(COLON)(':')
+          PsiWhiteSpace(' ')
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('Boolean')
+        PsiElement(COMMA)(',')
+        PsiWhiteSpace('\n')
+        PsiElement(RPAR)(')')
+  PsiWhiteSpace('\n\n')
+  CLASS
+    PsiComment(EOL_COMMENT)('// FILE: WithSimple.kt')
+    PsiWhiteSpace('\n')
+    MODIFIER_LIST
+      ANNOTATION_ENTRY
+        PsiElement(AT)('@')
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('Simple')
+        VALUE_ARGUMENT_LIST
+          PsiElement(LPAR)('(')
+          PsiWhiteSpace('\n    ')
+          VALUE_ARGUMENT
+            INTEGER_CONSTANT
+              PsiElement(INTEGER_LITERAL)('12')
+          PsiElement(COMMA)(',')
+          PsiWhiteSpace('\n    ')
+          VALUE_ARGUMENT
+            INTEGER_CONSTANT
+              PsiElement(INTEGER_LITERAL)('12L')
+          PsiElement(COMMA)(',')
+          PsiWhiteSpace('\n    ')
+          VALUE_ARGUMENT
+            INTEGER_CONSTANT
+              PsiElement(INTEGER_LITERAL)('12')
+          PsiElement(COMMA)(',')
+          PsiWhiteSpace('\n\n    ')
+          VALUE_ARGUMENT
+            FLOAT_CONSTANT
+              PsiElement(FLOAT_CONSTANT)('3.3')
+          PsiElement(COMMA)(',')
+          PsiWhiteSpace('\n    ')
+          VALUE_ARGUMENT
+            FLOAT_CONSTANT
+              PsiElement(FLOAT_CONSTANT)('3.3F')
+          PsiElement(COMMA)(',')
+          PsiWhiteSpace('\n\n    ')
+          VALUE_ARGUMENT
+            CHARACTER_CONSTANT
+              PsiElement(CHARACTER_LITERAL)(''a'')
+          PsiElement(COMMA)(',')
+          PsiWhiteSpace('\n\n    ')
+          VALUE_ARGUMENT
+            BOOLEAN_CONSTANT
+              PsiElement(true)('true')
+          PsiElement(COMMA)(',')
+          PsiWhiteSpace('\n    ')
+          VALUE_ARGUMENT
+            BOOLEAN_CONSTANT
+              PsiElement(false)('false')
+          PsiWhiteSpace('\n')
+          PsiElement(RPAR)(')')
+    PsiWhiteSpace('\n')
+    PsiElement(class)('class')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('WithSimple')
+  PsiWhiteSpace('\n\n')
+  CLASS
+    PsiComment(EOL_COMMENT)('// FILE: WithNamedSimple.kt')
+    PsiWhiteSpace('\n')
+    MODIFIER_LIST
+      ANNOTATION_ENTRY
+        PsiElement(AT)('@')
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('Simple')
+        VALUE_ARGUMENT_LIST
+          PsiElement(LPAR)('(')
+          PsiWhiteSpace('\n    ')
+          VALUE_ARGUMENT
+            INTEGER_CONSTANT
+              PsiElement(INTEGER_LITERAL)('12')
+          PsiElement(COMMA)(',')
+          PsiWhiteSpace('\n    ')
+          VALUE_ARGUMENT
+            INTEGER_CONSTANT
+              PsiElement(INTEGER_LITERAL)('12L')
+          PsiElement(COMMA)(',')
+          PsiWhiteSpace('\n    ')
+          VALUE_ARGUMENT
+            INTEGER_CONSTANT
+              PsiElement(INTEGER_LITERAL)('12')
+          PsiElement(COMMA)(',')
+          PsiWhiteSpace('\n\n    ')
+          VALUE_ARGUMENT
+            VALUE_ARGUMENT_NAME
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('d')
+            PsiWhiteSpace(' ')
+            PsiElement(EQ)('=')
+            PsiWhiteSpace(' ')
+            FLOAT_CONSTANT
+              PsiElement(FLOAT_CONSTANT)('3.3')
+          PsiElement(COMMA)(',')
+          PsiWhiteSpace('\n    ')
+          VALUE_ARGUMENT
+            VALUE_ARGUMENT_NAME
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('f')
+            PsiWhiteSpace(' ')
+            PsiElement(EQ)('=')
+            PsiWhiteSpace(' ')
+            FLOAT_CONSTANT
+              PsiElement(FLOAT_CONSTANT)('3.3F')
+          PsiElement(COMMA)(',')
+          PsiWhiteSpace('\n\n    ')
+          VALUE_ARGUMENT
+            VALUE_ARGUMENT_NAME
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('c')
+            PsiWhiteSpace(' ')
+            PsiElement(EQ)('=')
+            PsiWhiteSpace(' ')
+            CHARACTER_CONSTANT
+              PsiElement(CHARACTER_LITERAL)(''a'')
+          PsiElement(COMMA)(',')
+          PsiWhiteSpace('\n\n    ')
+          VALUE_ARGUMENT
+            VALUE_ARGUMENT_NAME
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('b1')
+            PsiWhiteSpace(' ')
+            PsiElement(EQ)('=')
+            PsiWhiteSpace(' ')
+            BOOLEAN_CONSTANT
+              PsiElement(true)('true')
+          PsiElement(COMMA)(',')
+          PsiWhiteSpace('\n    ')
+          VALUE_ARGUMENT
+            VALUE_ARGUMENT_NAME
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('b2')
+            PsiWhiteSpace(' ')
+            PsiElement(EQ)('=')
+            PsiWhiteSpace(' ')
+            BOOLEAN_CONSTANT
+              PsiElement(false)('false')
+          PsiWhiteSpace('\n')
+          PsiElement(RPAR)(')')
+    PsiWhiteSpace('\n')
+    PsiElement(class)('class')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('WithNamedSimple')
+  PsiWhiteSpace('\n\n')
+  CLASS
+    PsiComment(EOL_COMMENT)('// FILE: WithSimpleOperations.kt')
+    PsiWhiteSpace('\n')
+    MODIFIER_LIST
+      ANNOTATION_ENTRY
+        PsiElement(AT)('@')
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('Simple')
+        VALUE_ARGUMENT_LIST
+          PsiElement(LPAR)('(')
+          PsiWhiteSpace('\n    ')
+          VALUE_ARGUMENT
+            BINARY_EXPRESSION
+              INTEGER_CONSTANT
+                PsiElement(INTEGER_LITERAL)('12')
+              PsiWhiteSpace(' ')
+              OPERATION_REFERENCE
+                PsiElement(DIV)('/')
+              PsiWhiteSpace(' ')
+              INTEGER_CONSTANT
+                PsiElement(INTEGER_LITERAL)('6')
+          PsiElement(COMMA)(',')
+          PsiWhiteSpace('\n    ')
+          VALUE_ARGUMENT
+            BINARY_EXPRESSION
+              INTEGER_CONSTANT
+                PsiElement(INTEGER_LITERAL)('12L')
+              PsiWhiteSpace(' ')
+              OPERATION_REFERENCE
+                PsiElement(PERC)('%')
+              PsiWhiteSpace(' ')
+              INTEGER_CONSTANT
+                PsiElement(INTEGER_LITERAL)('5L')
+          PsiElement(COMMA)(',')
+          PsiWhiteSpace('\n    ')
+          VALUE_ARGUMENT
+            INTEGER_CONSTANT
+              PsiElement(INTEGER_LITERAL)('12')
+          PsiElement(COMMA)(',')
+          PsiWhiteSpace('\n\n    ')
+          VALUE_ARGUMENT
+            BINARY_EXPRESSION
+              FLOAT_CONSTANT
+                PsiElement(FLOAT_CONSTANT)('3.3')
+              PsiWhiteSpace(' ')
+              OPERATION_REFERENCE
+                PsiElement(MINUS)('-')
+              PsiWhiteSpace(' ')
+              FLOAT_CONSTANT
+                PsiElement(FLOAT_CONSTANT)('3.0')
+          PsiElement(COMMA)(',')
+          PsiWhiteSpace('\n    ')
+          VALUE_ARGUMENT
+            BINARY_EXPRESSION
+              FLOAT_CONSTANT
+                PsiElement(FLOAT_CONSTANT)('3.3F')
+              PsiWhiteSpace(' ')
+              OPERATION_REFERENCE
+                PsiElement(MUL)('*')
+              PsiWhiteSpace(' ')
+              FLOAT_CONSTANT
+                PsiElement(FLOAT_CONSTANT)('2.0F')
+          PsiElement(COMMA)(',')
+          PsiWhiteSpace('\n\n    ')
+          VALUE_ARGUMENT
+            CHARACTER_CONSTANT
+              PsiElement(CHARACTER_LITERAL)(''a'')
+          PsiElement(COMMA)(',')
+          PsiWhiteSpace('\n\n    ')
+          VALUE_ARGUMENT
+            BINARY_EXPRESSION
+              BOOLEAN_CONSTANT
+                PsiElement(true)('true')
+              PsiWhiteSpace(' ')
+              OPERATION_REFERENCE
+                PsiElement(ANDAND)('&&')
+              PsiWhiteSpace(' ')
+              BOOLEAN_CONSTANT
+                PsiElement(false)('false')
+          PsiElement(COMMA)(',')
+          PsiWhiteSpace('\n    ')
+          VALUE_ARGUMENT
+            BINARY_EXPRESSION
+              BOOLEAN_CONSTANT
+                PsiElement(false)('false')
+              PsiWhiteSpace(' ')
+              OPERATION_REFERENCE
+                PsiElement(OROR)('||')
+              PsiWhiteSpace(' ')
+              BOOLEAN_CONSTANT
+                PsiElement(true)('true')
+          PsiElement(COMMA)(',')
+          PsiWhiteSpace('\n')
+          PsiElement(RPAR)(')')
+    PsiWhiteSpace('\n')
+    PsiElement(class)('class')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('WithSimpleOperations')

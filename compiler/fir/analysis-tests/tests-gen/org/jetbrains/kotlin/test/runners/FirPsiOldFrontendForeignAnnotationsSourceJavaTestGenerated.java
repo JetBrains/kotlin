@@ -23,7 +23,7 @@ public class FirPsiOldFrontendForeignAnnotationsSourceJavaTestGenerated extends 
   public class Tests {
     @Test
     public void testAllFilesPresentInTests() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/tests"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/tests"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|partialBody|fir|ll|latestLV)\\.kts?$"), true);
     }
 
     @Test
@@ -170,7 +170,7 @@ public class FirPsiOldFrontendForeignAnnotationsSourceJavaTestGenerated extends 
     public class ExternalAnnotations {
       @Test
       public void testAllFilesPresentInExternalAnnotations() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/tests/externalAnnotations"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/tests/externalAnnotations"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|partialBody|fir|ll|latestLV)\\.kts?$"), true);
       }
 
       @Test
@@ -223,12 +223,46 @@ public class FirPsiOldFrontendForeignAnnotationsSourceJavaTestGenerated extends 
     }
 
     @Nested
+    @TestMetadata("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jakarta")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Jakarta {
+      @Test
+      public void testAllFilesPresentInJakarta() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jakarta"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|partialBody|fir|ll|latestLV)\\.kts?$"), true);
+      }
+
+      @Test
+      @TestMetadata("default.kt")
+      public void testDefault() {
+        runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jakarta/default.kt");
+      }
+
+      @Test
+      @TestMetadata("errors.kt")
+      public void testErrors() {
+        runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jakarta/errors.kt");
+      }
+
+      @Test
+      @TestMetadata("ignore.kt")
+      public void testIgnore() {
+        runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jakarta/ignore.kt");
+      }
+
+      @Test
+      @TestMetadata("warnings.kt")
+      public void testWarnings() {
+        runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jakarta/warnings.kt");
+      }
+    }
+
+    @Nested
     @TestMetadata("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305")
     @TestDataPath("$PROJECT_ROOT")
     public class Jsr305 {
       @Test
       public void testAllFilesPresentInJsr305() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|partialBody|fir|ll|latestLV)\\.kts?$"), true);
       }
 
       @Test
@@ -267,7 +301,7 @@ public class FirPsiOldFrontendForeignAnnotationsSourceJavaTestGenerated extends 
       public class Ignore {
         @Test
         public void testAllFilesPresentInIgnore() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/ignore"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/ignore"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|partialBody|fir|ll|latestLV)\\.kts?$"), true);
         }
 
         @Test
@@ -283,7 +317,7 @@ public class FirPsiOldFrontendForeignAnnotationsSourceJavaTestGenerated extends 
       public class NullabilityWarnings {
         @Test
         public void testAllFilesPresentInNullabilityWarnings() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/nullabilityWarnings"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/nullabilityWarnings"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|partialBody|fir|ll|latestLV)\\.kts?$"), true);
         }
 
         @Test
@@ -352,7 +386,7 @@ public class FirPsiOldFrontendForeignAnnotationsSourceJavaTestGenerated extends 
         public class FromPlatformTypes {
           @Test
           public void testAllFilesPresentInFromPlatformTypes() {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/nullabilityWarnings/fromPlatformTypes"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/nullabilityWarnings/fromPlatformTypes"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|partialBody|fir|ll|latestLV)\\.kts?$"), true);
           }
 
           @Test
@@ -482,7 +516,7 @@ public class FirPsiOldFrontendForeignAnnotationsSourceJavaTestGenerated extends 
         public class TypeQualifierDefault {
           @Test
           public void testAllFilesPresentInTypeQualifierDefault() {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/nullabilityWarnings/typeQualifierDefault"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/nullabilityWarnings/typeQualifierDefault"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|partialBody|fir|ll|latestLV)\\.kts?$"), true);
           }
 
           @Test
@@ -541,7 +575,7 @@ public class FirPsiOldFrontendForeignAnnotationsSourceJavaTestGenerated extends 
       public class TypeQualifierDefault {
         @Test
         public void testAllFilesPresentInTypeQualifierDefault() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/typeQualifierDefault"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/typeQualifierDefault"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|partialBody|fir|ll|latestLV)\\.kts?$"), true);
         }
 
         @Test
@@ -606,7 +640,7 @@ public class FirPsiOldFrontendForeignAnnotationsSourceJavaTestGenerated extends 
     public class Jsr305NullabilityWarnings {
       @Test
       public void testAllFilesPresentInJsr305NullabilityWarnings() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305NullabilityWarnings"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305NullabilityWarnings"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|partialBody|fir|ll|latestLV)\\.kts?$"), true);
       }
 
       @Nested
@@ -615,7 +649,7 @@ public class FirPsiOldFrontendForeignAnnotationsSourceJavaTestGenerated extends 
       public class Migration {
         @Test
         public void testAllFilesPresentInMigration() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305NullabilityWarnings/migration"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305NullabilityWarnings/migration"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|partialBody|fir|ll|latestLV)\\.kts?$"), true);
         }
 
         @Test
@@ -680,7 +714,7 @@ public class FirPsiOldFrontendForeignAnnotationsSourceJavaTestGenerated extends 
     public class TypeQualifierDefault {
       @Test
       public void testAllFilesPresentInTypeQualifierDefault() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/tests/typeQualifierDefault"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/tests/typeQualifierDefault"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|partialBody|fir|ll|latestLV)\\.kts?$"), true);
       }
 
       @Test
@@ -697,7 +731,7 @@ public class FirPsiOldFrontendForeignAnnotationsSourceJavaTestGenerated extends 
   public class Java8Tests {
     @Test
     public void testAllFilesPresentInJava8Tests() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|partialBody|fir|ll|latestLV)\\.kts?$"), true);
     }
 
     @Test
@@ -736,7 +770,7 @@ public class FirPsiOldFrontendForeignAnnotationsSourceJavaTestGenerated extends 
     public class Jspecify {
       @Test
       public void testAllFilesPresentInJspecify() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|partialBody|fir|ll|latestLV)\\.kts?$"), true);
       }
 
       @Test
@@ -763,7 +797,7 @@ public class FirPsiOldFrontendForeignAnnotationsSourceJavaTestGenerated extends 
       public class StrictMode {
         @Test
         public void testAllFilesPresentInStrictMode() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|partialBody|fir|ll|latestLV)\\.kts?$"), true);
         }
 
         @Test
@@ -773,15 +807,15 @@ public class FirPsiOldFrontendForeignAnnotationsSourceJavaTestGenerated extends 
         }
 
         @Test
-        @TestMetadata("AnnotatedTypeParameterBoundsInNullUnmarkedContext.kt")
-        public void testAnnotatedTypeParameterBoundsInNullUnmarkedContext() {
-          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/AnnotatedTypeParameterBoundsInNullUnmarkedContext.kt");
-        }
-
-        @Test
         @TestMetadata("Captured.kt")
         public void testCaptured() {
           runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/Captured.kt");
+        }
+
+        @Test
+        @TestMetadata("CovariantReturn.kt")
+        public void testCovariantReturn() {
+          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/CovariantReturn.kt");
         }
 
         @Test
@@ -797,9 +831,21 @@ public class FirPsiOldFrontendForeignAnnotationsSourceJavaTestGenerated extends 
         }
 
         @Test
+        @TestMetadata("FakeOverride.kt")
+        public void testFakeOverride() {
+          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/FakeOverride.kt");
+        }
+
+        @Test
         @TestMetadata("IgnoreAnnotations.kt")
         public void testIgnoreAnnotations() {
           runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/IgnoreAnnotations.kt");
+        }
+
+        @Test
+        @TestMetadata("IncorrectAnnotationPlacement.kt")
+        public void testIncorrectAnnotationPlacement() {
+          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/IncorrectAnnotationPlacement.kt");
         }
 
         @Test
@@ -947,12 +993,6 @@ public class FirPsiOldFrontendForeignAnnotationsSourceJavaTestGenerated extends 
         }
 
         @Test
-        @TestMetadata("NullUnmarkedVsParametricNullness.kt")
-        public void testNullUnmarkedVsParametricNullness() {
-          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/NullUnmarkedVsParametricNullness.kt");
-        }
-
-        @Test
         @TestMetadata("NullUnmarkedVsTypeNullMarked.kt")
         public void testNullUnmarkedVsTypeNullMarked() {
           runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/NullUnmarkedVsTypeNullMarked.kt");
@@ -1001,6 +1041,12 @@ public class FirPsiOldFrontendForeignAnnotationsSourceJavaTestGenerated extends 
         }
 
         @Test
+        @TestMetadata("TypeParameterUseSite.kt")
+        public void testTypeParameterUseSite() {
+          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/TypeParameterUseSite.kt");
+        }
+
+        @Test
         @TestMetadata("UnannotatedWildcard.kt")
         public void testUnannotatedWildcard() {
           runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/UnannotatedWildcard.kt");
@@ -1031,19 +1077,13 @@ public class FirPsiOldFrontendForeignAnnotationsSourceJavaTestGenerated extends 
       public class WarnMode {
         @Test
         public void testAllFilesPresentInWarnMode() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|partialBody|fir|ll|latestLV)\\.kts?$"), true);
         }
 
         @Test
         @TestMetadata("AnnotatedBoundsOfWildcard.kt")
         public void testAnnotatedBoundsOfWildcard() {
           runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/AnnotatedBoundsOfWildcard.kt");
-        }
-
-        @Test
-        @TestMetadata("AnnotatedTypeParameterBoundsInNullUnmarkedContext.kt")
-        public void testAnnotatedTypeParameterBoundsInNullUnmarkedContext() {
-          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/AnnotatedTypeParameterBoundsInNullUnmarkedContext.kt");
         }
 
         @Test
@@ -1227,12 +1267,6 @@ public class FirPsiOldFrontendForeignAnnotationsSourceJavaTestGenerated extends 
         }
 
         @Test
-        @TestMetadata("NullUnmarkedVsParametricNullness.kt")
-        public void testNullUnmarkedVsParametricNullness() {
-          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/NullUnmarkedVsParametricNullness.kt");
-        }
-
-        @Test
         @TestMetadata("NullUnmarkedVsTypeNullMarked.kt")
         public void testNullUnmarkedVsTypeNullMarked() {
           runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/NullUnmarkedVsTypeNullMarked.kt");
@@ -1330,7 +1364,7 @@ public class FirPsiOldFrontendForeignAnnotationsSourceJavaTestGenerated extends 
     public class JspecifyOld {
       @Test
       public void testAllFilesPresentInJspecifyOld() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecifyOld"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecifyOld"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|partialBody|fir|ll|latestLV)\\.kts?$"), true);
       }
 
       @Test
@@ -1345,7 +1379,7 @@ public class FirPsiOldFrontendForeignAnnotationsSourceJavaTestGenerated extends 
       public class StrictMode {
         @Test
         public void testAllFilesPresentInStrictMode() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecifyOld/strictMode"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecifyOld/strictMode"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|partialBody|fir|ll|latestLV)\\.kts?$"), true);
         }
 
         @Test
@@ -1451,7 +1485,7 @@ public class FirPsiOldFrontendForeignAnnotationsSourceJavaTestGenerated extends 
       public class WarnMode {
         @Test
         public void testAllFilesPresentInWarnMode() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecifyOld/warnMode"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecifyOld/warnMode"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|partialBody|fir|ll|latestLV)\\.kts?$"), true);
         }
 
         @Test
@@ -1546,7 +1580,7 @@ public class FirPsiOldFrontendForeignAnnotationsSourceJavaTestGenerated extends 
     public class Jsr305 {
       @Test
       public void testAllFilesPresentInJsr305() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jsr305"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jsr305"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|partialBody|fir|ll|latestLV)\\.kts?$"), true);
       }
 
       @Test
@@ -1574,6 +1608,12 @@ public class FirPsiOldFrontendForeignAnnotationsSourceJavaTestGenerated extends 
       }
 
       @Test
+      @TestMetadata("springNotNullApiGenericOverride.kt")
+      public void testSpringNotNullApiGenericOverride() {
+        runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jsr305/springNotNullApiGenericOverride.kt");
+      }
+
+      @Test
       @TestMetadata("springNullableWithTypeUse.kt")
       public void testSpringNullableWithTypeUse() {
         runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jsr305/springNullableWithTypeUse.kt");
@@ -1598,7 +1638,7 @@ public class FirPsiOldFrontendForeignAnnotationsSourceJavaTestGenerated extends 
     public class Misc {
       @Test
       public void testAllFilesPresentInMisc() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/misc"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/misc"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|partialBody|fir|ll|latestLV)\\.kts?$"), true);
       }
 
       @Test
@@ -1717,7 +1757,7 @@ public class FirPsiOldFrontendForeignAnnotationsSourceJavaTestGenerated extends 
   public class Java11Tests {
     @Test
     public void testAllFilesPresentInJava11Tests() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|partialBody|fir|ll|latestLV)\\.kts?$"), true);
     }
 
     @Nested
@@ -1726,7 +1766,7 @@ public class FirPsiOldFrontendForeignAnnotationsSourceJavaTestGenerated extends 
     public class Jspecify {
       @Test
       public void testAllFilesPresentInJspecify() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecify"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecify"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|partialBody|fir|ll|latestLV)\\.kts?$"), true);
       }
 
       @Nested
@@ -1735,7 +1775,7 @@ public class FirPsiOldFrontendForeignAnnotationsSourceJavaTestGenerated extends 
       public class ModuleAnnotations {
         @Test
         public void testAllFilesPresentInModuleAnnotations() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecify/moduleAnnotations"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecify/moduleAnnotations"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|partialBody|fir|ll|latestLV)\\.kts?$"), true);
         }
 
         @Nested
@@ -1744,7 +1784,7 @@ public class FirPsiOldFrontendForeignAnnotationsSourceJavaTestGenerated extends 
         public class Strict {
           @Test
           public void testAllFilesPresentInStrict() {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecify/moduleAnnotations/strict"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecify/moduleAnnotations/strict"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|partialBody|fir|ll|latestLV)\\.kts?$"), true);
           }
 
           @Test
@@ -1838,7 +1878,7 @@ public class FirPsiOldFrontendForeignAnnotationsSourceJavaTestGenerated extends 
         public class Warn {
           @Test
           public void testAllFilesPresentInWarn() {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecify/moduleAnnotations/warn"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecify/moduleAnnotations/warn"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|partialBody|fir|ll|latestLV)\\.kts?$"), true);
           }
 
           @Test
@@ -1934,7 +1974,7 @@ public class FirPsiOldFrontendForeignAnnotationsSourceJavaTestGenerated extends 
     public class JspecifyOld {
       @Test
       public void testAllFilesPresentInJspecifyOld() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecifyOld"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecifyOld"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|partialBody|fir|ll|latestLV)\\.kts?$"), true);
       }
 
       @Nested
@@ -1943,7 +1983,7 @@ public class FirPsiOldFrontendForeignAnnotationsSourceJavaTestGenerated extends 
       public class ModuleAnnotations {
         @Test
         public void testAllFilesPresentInModuleAnnotations() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecifyOld/moduleAnnotations"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecifyOld/moduleAnnotations"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|partialBody|fir|ll|latestLV)\\.kts?$"), true);
         }
 
         @Nested
@@ -1952,7 +1992,7 @@ public class FirPsiOldFrontendForeignAnnotationsSourceJavaTestGenerated extends 
         public class Strict {
           @Test
           public void testAllFilesPresentInStrict() {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecifyOld/moduleAnnotations/strict"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecifyOld/moduleAnnotations/strict"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|partialBody|fir|ll|latestLV)\\.kts?$"), true);
           }
 
           @Test
@@ -2028,7 +2068,7 @@ public class FirPsiOldFrontendForeignAnnotationsSourceJavaTestGenerated extends 
         public class Warn {
           @Test
           public void testAllFilesPresentInWarn() {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecifyOld/moduleAnnotations/warn"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecifyOld/moduleAnnotations/warn"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|partialBody|fir|ll|latestLV)\\.kts?$"), true);
           }
 
           @Test

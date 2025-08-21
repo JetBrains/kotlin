@@ -7,10 +7,25 @@ package org.jetbrains.kotlin.gradle.util
 
 import com.android.build.api.dsl.ApplicationExtension
 import com.android.build.gradle.LibraryExtension
+import org.gradle.api.Action
 import org.gradle.api.Project
 import org.gradle.api.artifacts.verification.DependencyVerificationMode
 import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.api.plugins.ExtraPropertiesExtension
+import org.gradle.api.problems.Problem
+import org.gradle.api.problems.ProblemId
+import org.gradle.api.problems.ProblemReporter
+import org.gradle.api.problems.ProblemSpec
+import org.gradle.api.problems.internal.AdditionalDataBuilderFactory
+import org.gradle.api.problems.internal.InternalProblem
+import org.gradle.api.problems.internal.InternalProblemBuilder
+import org.gradle.api.problems.internal.InternalProblemReporter
+import org.gradle.api.problems.internal.InternalProblemSpec
+import org.gradle.api.problems.internal.InternalProblems
+import org.gradle.api.problems.internal.ProblemsInfrastructure
+import org.gradle.api.problems.internal.ProblemsProgressEventEmitterHolder
+import org.gradle.internal.operations.OperationIdentifier
+import org.gradle.internal.reflect.Instantiator
 import org.gradle.testfixtures.ProjectBuilder
 import org.gradle.testing.base.TestingExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
@@ -23,7 +38,8 @@ import org.jetbrains.kotlin.gradle.plugin.cocoapods.CocoapodsExtension
 import org.jetbrains.kotlin.gradle.plugin.getExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.KmpIsolatedProjectsSupport
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.SwiftExportExtension
-import org.jetbrains.kotlin.gradle.plugin.mpp.resources.resolve.KotlinTargetResourcesResolutionStrategy
+import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.consumption.KmpResolutionStrategy
+import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.publication.KmpPublicationStrategy
 import org.jetbrains.kotlin.gradle.targets.native.tasks.artifact.KotlinArtifactsExtensionImpl
 import org.jetbrains.kotlin.gradle.targets.native.tasks.artifact.kotlinArtifactsExtension
 import org.jetbrains.kotlin.gradle.utils.getFile
@@ -134,8 +150,16 @@ fun Project.enableMppResourcesPublication(enabled: Boolean = true) {
     propertiesExtension.set(PropertiesProvider.PropertyNames.KOTLIN_MPP_ENABLE_RESOURCES_PUBLICATION, enabled.toString())
 }
 
-fun Project.setMppResourcesResolutionStrategy(strategy: KotlinTargetResourcesResolutionStrategy) {
-    propertiesExtension.set(PropertiesProvider.PropertyNames.KOTLIN_MPP_RESOURCES_RESOLUTION_STRATEGY, strategy.propertyName)
+internal fun Project.setUklibPublicationStrategy(strategy: KmpPublicationStrategy = KmpPublicationStrategy.UklibPublicationInASingleComponentWithKMPPublication) {
+    propertiesExtension.set(PropertiesProvider.PropertyNames.KOTLIN_KMP_PUBLICATION_STRATEGY, strategy.propertyName)
+}
+
+fun Project.enableCrossCompilation(enabled: Boolean = true) {
+    propertiesExtension.set(PropertiesProvider.PropertyNames.KOTLIN_NATIVE_ENABLE_KLIBS_CROSSCOMPILATION, enabled.toString())
+}
+
+internal fun Project.setUklibResolutionStrategy(strategy: KmpResolutionStrategy) {
+    propertiesExtension.set(PropertiesProvider.PropertyNames.KOTLIN_KMP_RESOLUTION_STRATEGY, strategy.propertyName)
 }
 
 fun Project.enableIntransitiveMetadataConfiguration(enabled: Boolean = true) {
@@ -148,11 +172,6 @@ fun Project.enableDefaultStdlibDependency(enabled: Boolean = true) {
 
 fun Project.enableDefaultJsDomApiDependency(enabled: Boolean = true) {
     project.propertiesExtension.set(PropertiesProvider.PropertyNames.KOTLIN_JS_STDLIB_DOM_API_INCLUDED, enabled.toString())
-}
-
-
-fun Project.enableSwiftExport(enabled: Boolean = true) {
-    project.propertiesExtension.set(PropertiesProvider.PropertyNames.KOTLIN_SWIFT_EXPORT_ENABLED, enabled.toString())
 }
 
 fun Project.setMultiplatformAndroidSourceSetLayoutVersion(version: Int) {
@@ -185,4 +204,12 @@ fun Project.enableKmpProjectIsolationSupport(enabled: Boolean = true) {
 
 fun Project.enableNonPackedKlibsUsage(enabled: Boolean = true) {
     project.propertiesExtension.set(PropertiesProvider.PropertyNames.KOTLIN_USE_NON_PACKED_KLIBS, enabled.toString())
+}
+
+fun Project.enableEagerUnresolvedDependenciesDiagnostic(enabled: Boolean = true) {
+    project.propertiesExtension.set(PropertiesProvider.PropertyNames.KOTLIN_KMP_EAGER_UNRESOLVED_DEPENDENCIES_DIAGNOSTIC, enabled.toString())
+}
+
+fun Project.enableUnresolvedDependenciesDiagnostic(enabled: Boolean = true) {
+    project.propertiesExtension.set(PropertiesProvider.PropertyNames.KOTLIN_KMP_UNRESOLVED_DEPENDENCIES_DIAGNOSTIC, enabled.toString())
 }

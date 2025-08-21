@@ -331,7 +331,7 @@ class StandaloneSessionBuilderTest : TestWithDisposable() {
                         // addBinaryRoot(compiledJar)
                         // Instead, add [VirtualFile]
                         val virtualFiles =
-                            StandaloneProjectFactory.getVirtualFilesForLibraryRoots(listOf(compiledJar), kotlinCoreProjectEnvironment)
+                            StandaloneProjectFactory.getVirtualFilesForLibraryRoots(listOf(compiledJar), coreApplicationEnvironment)
                         addBinaryVirtualFiles(virtualFiles)
                         platform = JvmPlatforms.defaultJvmPlatform
                         libraryName = "dependent"
@@ -363,7 +363,7 @@ class StandaloneSessionBuilderTest : TestWithDisposable() {
                         // addBinaryRoot(compiledJar)
                         // Instead, add [VirtualFile]
                         val virtualFiles =
-                            StandaloneProjectFactory.getVirtualFilesForLibraryRoots(listOf(compiledJar), kotlinCoreProjectEnvironment)
+                            StandaloneProjectFactory.getVirtualFilesForLibraryRoots(listOf(compiledJar), coreApplicationEnvironment)
                         addBinaryVirtualFiles(virtualFiles)
                         platform = JvmPlatforms.defaultJvmPlatform
                         libraryName = "dependent"

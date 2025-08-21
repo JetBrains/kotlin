@@ -1,14 +1,14 @@
 @R|Anno|(position = <strcat>(String(receiver type ), R|/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested receiver type ), R|/prop|))  kotlin/collections/Collection<@R|Anno|(position = <strcat>(String(nested nested receiver type ), R|/prop|))  kotlin/String>>
   context -> FirNamedFunctionSymbol /bar
-  anchor -> [FirReceiverParameterSymbol from FirPropertySymbol /foo]
+  anchor -> [FirReceiverParameterSymbol from FirRegularPropertySymbol /foo]
 
 @R|Anno|(position = <strcat>(String(nested receiver type ), R|/prop|))  kotlin/collections/Collection<@R|Anno|(position = <strcat>(String(nested nested receiver type ), R|/prop|))  kotlin/String>
   context -> FirNamedFunctionSymbol /bar
-  anchor -> [FirReceiverParameterSymbol from FirPropertySymbol /foo]
+  anchor -> [FirReceiverParameterSymbol from FirRegularPropertySymbol /foo]
 
 @R|Anno|(position = <strcat>(String(nested nested receiver type ), R|/prop|))  kotlin/String
   context -> FirNamedFunctionSymbol /bar
-  anchor -> [FirReceiverParameterSymbol from FirPropertySymbol /foo]
+  anchor -> [FirReceiverParameterSymbol from FirRegularPropertySymbol /foo]
 
 FILE: [ResolvedTo(IMPORTS)] receiverAsImplicitReturnTypePropagation.kt
     @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
@@ -22,7 +22,7 @@ FILE: [ResolvedTo(IMPORTS)] receiverAsImplicitReturnTypePropagation.kt
     }
     public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val prop: R|kotlin/String| = String(str)
         public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/String|
-    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [PostponedSymbolsForAnnotationResolutionKey=[FirPropertySymbol /foo]] fun [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] R|kotlin/collections/List<kotlin/collections/Collection<kotlin/String>>|.bar(): R|@R|Anno|(position = <strcat>(String(receiver type ), R|/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested receiver type ), R|/prop|))  kotlin/collections/Collection<@R|Anno|(position = <strcat>(String(nested nested receiver type ), R|/prop|))  kotlin/String>>| {
+    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [PostponedSymbolsForAnnotationResolutionKey=[FirRegularPropertySymbol /foo]] fun [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] R|kotlin/collections/List<kotlin/collections/Collection<kotlin/String>>|.bar(): R|@R|Anno|(position = <strcat>(String(receiver type ), R|/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested receiver type ), R|/prop|))  kotlin/collections/Collection<@R|Anno|(position = <strcat>(String(nested nested receiver type ), R|/prop|))  kotlin/String>>| {
         ^bar this@R|/bar|.R|/foo|
     }
     public final [ResolvedTo(ANNOTATION_ARGUMENTS)] var [ResolvedTo(ANNOTATION_ARGUMENTS)] R|@R|Anno|(position = <strcat>(String(receiver type ), R|/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested receiver type ), R|/prop|))  kotlin/collections/Collection<@R|Anno|(position = <strcat>(String(nested nested receiver type ), R|/prop|))  kotlin/String>>|.foo: R|@R|Anno|(position = <strcat>(String(receiver type ), R|/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested receiver type ), R|/prop|))  kotlin/collections/Collection<@R|Anno|(position = <strcat>(String(nested nested receiver type ), R|/prop|))  kotlin/String>>|

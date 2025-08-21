@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.test
 
-import com.intellij.mock.*
 import org.jetbrains.kotlin.cli.common.*
 import org.jetbrains.kotlin.cli.common.messages.*
 import org.jetbrains.kotlin.compiler.plugin.*

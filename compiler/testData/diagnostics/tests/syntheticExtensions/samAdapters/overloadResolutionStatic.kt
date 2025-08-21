@@ -36,3 +36,7 @@ fun x(r: Runnable) {
     A.bar("") checkType { _<String>() }
     A.<!NONE_APPLICABLE!>bar<!>(123)
 }
+
+/* GENERATED_FIR_TAGS: asExpression, callableReference, classDeclaration, flexibleType, funWithExtensionReceiver,
+functionDeclaration, functionalType, infix, integerLiteral, javaFunction, lambdaLiteral, nullableType, samConversion,
+stringLiteral, typeParameter, typeWithExtension */

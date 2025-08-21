@@ -24,6 +24,7 @@ workspace.xml
 build/
 !**/src/**/build
 !**/test/**/build
+!**/tests-gen/**/build
 *.iml
 !**/testData/**/*.iml
 .idea/artifacts
@@ -60,3 +61,4 @@ kotlin-ide/
 .kotlin/
 .teamcity/
 .npmrc
+/.idea/AndroidProjectSystem.xml

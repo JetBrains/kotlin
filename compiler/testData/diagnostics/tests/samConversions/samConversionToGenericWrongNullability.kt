@@ -1,5 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LANGUAGE: -JavaTypeParameterDefaultRepresentationWithDNN -ProhibitReturningIncorrectNullabilityValuesFromSamConstructorLambdaOfJdkInterfaces
+// LANGUAGE: -ProhibitReturningIncorrectNullabilityValuesFromSamConstructorLambdaOfJdkInterfaces
 // RENDER_DIAGNOSTICS_FULL_TEXT
 // ISSUE: KT-57014, KT-66730
 // FULL_JDK
@@ -221,3 +221,8 @@ fun test()  {
         returnNullableString().foo2()
     }
 }
+
+/* GENERATED_FIR_TAGS: anonymousFunction, anonymousObjectExpression, checkNotNullCall, equalityExpression, flexibleType,
+funWithExtensionReceiver, functionDeclaration, functionalType, ifExpression, inline, integerLiteral, javaFunction,
+javaType, lambdaLiteral, localProperty, nullableType, override, propertyDeclaration, stringLiteral, tryExpression,
+typeAliasDeclaration, typeConstraint, typeParameter, whenExpression, whenWithSubject */

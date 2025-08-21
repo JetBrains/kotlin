@@ -14,3 +14,5 @@ class B : A() {
     protected fun baz() {}
     override fun foobaz() {}
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, override */

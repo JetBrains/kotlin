@@ -8,13 +8,11 @@ package org.jetbrains.kotlin.sir.printer
 import com.intellij.util.containers.addAllIfNotNull
 import org.jetbrains.kotlin.sir.*
 import org.jetbrains.kotlin.sir.builder.*
-import org.jetbrains.kotlin.sir.providers.utils.KotlinRuntimeModule
-import org.jetbrains.kotlin.sir.providers.utils.updateImports
 import org.jetbrains.kotlin.sir.util.SirSwiftModule
 import org.jetbrains.kotlin.sir.util.addChild
 import org.jetbrains.kotlin.test.services.JUnit5Assertions
 import org.jetbrains.kotlin.test.util.KtTestUtil
-import org.jetbrains.sir.printer.SirAsSwiftSourcesPrinter
+import org.jetbrains.sir.printer.impl.SirAsSwiftSourcesPrinter
 import org.junit.jupiter.api.Test
 import java.io.File
 
@@ -934,7 +932,6 @@ class SirAsSwiftSourcesPrinterTests {
 
     @Test
     fun `should print extensions`() {
-
         val externalDefinedEnum: SirEnum
         val externalModule = buildModule {
             name = "MyDependencyModule"
@@ -949,9 +946,24 @@ class SirAsSwiftSourcesPrinterTests {
             externalDefinedEnum.parent = this
         }.attachDeclarations()
 
-        val enum: SirEnum
+        val enum: SirEnum = buildEnum {
+            name = "my_enum"
+            origin = SirOrigin.Namespace(listOf("my_enum"))
+        }
+
+        val protocol: SirProtocol = buildProtocol {
+            name = "my_protocol"
+            origin = SirOrigin.Unknown
+        }
+
         val module = buildModule {
             name = "Test"
+            declarations.add(
+                enum
+            )
+            declarations.add(
+                protocol
+            )
             declarations.add(
                 buildExtension {
                     origin = SirOrigin.Unknown
@@ -976,7 +988,7 @@ class SirAsSwiftSourcesPrinterTests {
                     visibility = SirVisibility.PUBLIC
                     documentation = """
                         ///
-                        /// this is a documented extension 
+                        /// this is a documented extension
                         /// (is it even possible? Printer don't actually care)
                         ///
                     """.trimIndent()
@@ -1011,14 +1023,6 @@ class SirAsSwiftSourcesPrinterTests {
                     )
                 }.attachDeclarations()
             )
-
-            enum = buildEnum {
-                name = "my_enum"
-                origin = SirOrigin.Namespace(listOf("my_enum"))
-            }
-            declarations.add(
-                enum
-            )
             declarations.add(
                 buildExtension {
                     origin = SirOrigin.Unknown
@@ -1044,6 +1048,27 @@ class SirAsSwiftSourcesPrinterTests {
                     )
                 }.attachDeclarations()
             )
+            declarations.add(
+                buildExtension {
+                    origin = SirOrigin.Unknown
+
+                    extendedType = SirNominalType(enum)
+                    visibility = SirVisibility.PUBLIC
+                    protocols.add(protocol)
+                    constraints.add(SirTypeConstraint.Equality(SirNominalType(protocol)))
+                }
+            )
+            declarations.add(
+                buildExtension {
+                    origin = SirOrigin.Unknown
+
+                    extendedType = SirNominalType(enum)
+                    visibility = SirVisibility.PUBLIC
+                    protocols.add(protocol)
+                    constraints.add(SirTypeConstraint.Equality(SirNominalType(protocol), listOf("NestedType1", "NestedType2")))
+                    constraints.add(SirTypeConstraint.Conformance(SirNominalType(protocol), listOf("NestedType1", "NestedType2")))
+                }
+            )
         }.apply {
             enum.parent = this
         }.attachDeclarations()
@@ -1060,7 +1085,7 @@ class SirAsSwiftSourcesPrinterTests {
             name = "Test"
         }
 
-        module.updateImports(
+        module.imports.addAll(
             listOf(
                 SirImport(moduleName = "DEMO_PACKAGE"),
                 SirImport(moduleName = "ExportedModule", mode = SirImport.Mode.Exported),
@@ -1080,6 +1105,7 @@ class SirAsSwiftSourcesPrinterTests {
             module,
             stableDeclarationsOrder = false,
             renderDocComments = true,
+            renderDeclarationOrigins = false,
             emptyBodyStub = SirFunctionBody(listOf("stub()"))
         )
         JUnit5Assertions.assertEqualsToFile(expectedSwiftSrc, actualSwiftSrc)
@@ -1329,13 +1355,13 @@ class SirAsSwiftSourcesPrinterTests {
         val proto1 = buildProtocol {
             name = "Fooable"
         }.apply {
-            parent = KotlinRuntimeModule
+            parent = kotlinRuntimeModule
         }
 
         val proto2 = buildProtocol {
             name = "Barable"
         }.apply {
-            parent = KotlinRuntimeModule
+            parent = kotlinRuntimeModule
         }
 
         val module = buildModule {
@@ -1343,7 +1369,7 @@ class SirAsSwiftSourcesPrinterTests {
             declarations.add(
                 buildProtocol {
                     name = "Foo"
-                    superClass = SirNominalType(KotlinRuntimeModule.kotlinBase)
+                    superClass = SirNominalType(kotlinBase)
                     protocols.addAll(listOf(proto1, proto2))
 
                     declarations.add(
@@ -1391,6 +1417,17 @@ class SirAsSwiftSourcesPrinterTests {
             module,
             "testData/protocol_declarations"
         )
+    }
+
+    companion object {
+        val kotlinRuntimeModule = buildModule {
+            name = "KotlinRuntime"
+        }
+        val kotlinBase = kotlinRuntimeModule.addChild {
+            buildClass {
+                name = "KotlinBase"
+            }
+        }
     }
 }
 

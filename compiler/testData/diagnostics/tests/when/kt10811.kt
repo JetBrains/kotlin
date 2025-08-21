@@ -39,3 +39,6 @@ fun test4() : Maybe<String?> {
         else -> return Some<String?>("")
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, equalityExpression, functionDeclaration, ifExpression, interfaceDeclaration,
+nullableType, primaryConstructor, propertyDeclaration, stringLiteral, typeParameter, whenExpression, whenWithSubject */

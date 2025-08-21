@@ -9,7 +9,7 @@ import kotlin.metadata.*
 import kotlin.metadata.jvm.*
 import org.jetbrains.org.objectweb.asm.ClassWriter
 import org.jetbrains.org.objectweb.asm.Opcodes
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import java.net.URLClassLoader
 import kotlin.coroutines.CoroutineContext
 import kotlin.metadata.internal._flagAccess

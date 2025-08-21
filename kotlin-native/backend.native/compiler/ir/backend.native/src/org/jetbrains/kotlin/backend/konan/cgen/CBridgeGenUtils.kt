@@ -77,7 +77,7 @@ internal class KotlinBridgeBuilder(
         origin: IrDeclarationOrigin
 ) {
     private var counter = 0
-    private val bridge: IrFunction = createKotlinBridge(startOffset, endOffset, cName, stubs, isExternal, foreignExceptionMode, origin)
+    private val bridge: IrSimpleFunction = createKotlinBridge(startOffset, endOffset, cName, stubs, isExternal, foreignExceptionMode, origin)
     val irBuilder: IrBuilderWithScope = stubs.irBuiltIns.createIrBuilder(bridge.symbol).at(startOffset, endOffset)
 
     fun addParameter(type: IrType): IrValueParameter {
@@ -87,6 +87,7 @@ internal class KotlinBridgeBuilder(
                 startOffset = bridge.startOffset,
                 endOffset = bridge.endOffset,
                 origin = bridge.origin,
+                kind = IrParameterKind.Regular,
                 name = Name.identifier("p$index"),
                 type = type,
                 isAssignable = false,
@@ -97,7 +98,7 @@ internal class KotlinBridgeBuilder(
                 isHidden = false,
         ).apply {
             parent = bridge
-            bridge.valueParameters += this
+            bridge.parameters += listOf(this)
         }
     }
 
@@ -105,7 +106,7 @@ internal class KotlinBridgeBuilder(
         bridge.returnType = type
     }
 
-    fun build(): IrFunction = bridge
+    fun getBridge(): IrSimpleFunction = bridge
 }
 
 private fun createKotlinBridge(
@@ -116,7 +117,7 @@ private fun createKotlinBridge(
         isExternal: Boolean,
         foreignExceptionMode: ForeignExceptionMode.Mode,
         origin: IrDeclarationOrigin
-): IrFunction {
+): IrSimpleFunction {
     val bridge = stubs.irBuiltIns.irFactory.createSimpleFunction(
             startOffset,
             endOffset,
@@ -137,13 +138,8 @@ private fun createKotlinBridge(
     )
     if (isExternal) {
         bridge.annotations += buildSimpleAnnotation(stubs.irBuiltIns, startOffset, endOffset,
-                stubs.symbols.symbolName.owner, cBridgeName)
-        bridge.annotations += buildSimpleAnnotation(stubs.irBuiltIns, startOffset, endOffset,
                 stubs.symbols.filterExceptions.owner,
                 foreignExceptionMode.value)
-    } else {
-        bridge.annotations += buildSimpleAnnotation(stubs.irBuiltIns, startOffset, endOffset,
-                stubs.symbols.exportForCppRuntime.owner, cBridgeName)
     }
     return bridge
 }
@@ -174,7 +170,7 @@ internal class KotlinCBridgeBuilder(
 
     fun buildCSignature(name: String): String = cBridgeBuilder.buildSignature(name, stubs.language)
 
-    fun buildKotlinBridge() = kotlinBridgeBuilder.build()
+    fun getKotlinBridge() = kotlinBridgeBuilder.getBridge()
 }
 
 internal class KotlinCallBuilder(private val irBuilder: IrBuilderWithScope, private val symbols: KonanSymbols) {
@@ -209,14 +205,7 @@ internal class KotlinCallBuilder(private val irBuilder: IrBuilderWithScope, priv
         val arguments = this.arguments.toMutableList()
 
         val kotlinCall = irBuilder.irCall(function).run {
-            if (function.dispatchReceiverParameter != null) {
-                dispatchReceiver = arguments.removeAt(0)
-            }
-            if (function.extensionReceiverParameter != null) {
-                extensionReceiver = arguments.removeAt(0)
-            }
-            assert(arguments.size == function.valueParameters.size)
-            arguments.forEachIndexed { index, it -> putValueArgument(index, it) }
+            arguments.forEachIndexed { idx, arg -> this.arguments[idx] = arg }
 
             transformCall(this)
         }

@@ -11,7 +11,7 @@ If you would like to use fully self-contained artifact please refer to [`swift-e
 
 ### How to generate tests
 
-The test data is stored under [`testData`](testData) directory.
+The test data is stored under [`testData`](../swift-export-standalone-integration-tests/simple/testData) directory.
 When adding a new test case, don't forget to update the generated unit tests by running
 
 ```bash

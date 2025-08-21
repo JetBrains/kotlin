@@ -80,3 +80,7 @@ fun testUpperBound(contrS: Contr<String>, contrB: Contr<Byte>, contrN: Contr<Num
     val b = upperBound(1, contrB)
     b checkType { _<Byte>() }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType, in, infix,
+integerLiteral, interfaceDeclaration, intersectionType, lambdaLiteral, localProperty, nullableType, out, outProjection,
+propertyDeclaration, stringLiteral, typeParameter, typeWithExtension, vararg */

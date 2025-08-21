@@ -21,3 +21,6 @@ actual class E(i: I) : I by i
 actual class E2(i: I) : I by i {
     actual override fun f(x: Int): Int = x
 }
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, functionDeclaration, inheritanceDelegation, integerLiteral,
+interfaceDeclaration, override, primaryConstructor */

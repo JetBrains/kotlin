@@ -48,19 +48,19 @@ open class EH : ErrorDeprecated, HiddenDeprecated {
 }
 
 open class NW : WarningDeprecated, NotDeprecated {
-    override fun <!OVERRIDE_DEPRECATION!>f<!>() {
+    override fun f() {
 
     }
 }
 
 open class NE : ErrorDeprecated, NotDeprecated {
-    override fun <!OVERRIDE_DEPRECATION!>f<!>() {
+    override fun f() {
 
     }
 }
 
 open class NH : HiddenDeprecated, NotDeprecated {
-    override fun <!OVERRIDE_DEPRECATION!>f<!>() {
+    override fun f() {
 
     }
 }
@@ -72,14 +72,14 @@ open class WEH: WarningDeprecated, ErrorDeprecated, HiddenDeprecated {
 }
 
 open class NWEH: NotDeprecated, WarningDeprecated, ErrorDeprecated, HiddenDeprecated {
-    override fun <!OVERRIDE_DEPRECATION!>f<!>() {
+    override fun f() {
 
     }
 }
 
 class WE2: WE()
 
-<!CANNOT_INFER_VISIBILITY, MANY_IMPL_MEMBER_NOT_IMPLEMENTED!>class NWE2<!>: WE(), NotDeprecated
+<!MANY_IMPL_MEMBER_NOT_IMPLEMENTED!>class NWE2<!>: WE(), NotDeprecated
 
 class NWE3: WE(), NotDeprecated {
     override fun f() {
@@ -95,7 +95,7 @@ interface EW2: E2, W2 {
 }
 
 interface HEW2: EW2, HiddenDeprecated {
-    override fun <!OVERRIDE_DEPRECATION!>f<!>() {
+    override fun f() {
     }
 }
 
@@ -140,3 +140,6 @@ fun use(
 
     explicitError.<!DEPRECATION_ERROR!>f<!>()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, interfaceDeclaration, override, stringLiteral,
+superExpression */

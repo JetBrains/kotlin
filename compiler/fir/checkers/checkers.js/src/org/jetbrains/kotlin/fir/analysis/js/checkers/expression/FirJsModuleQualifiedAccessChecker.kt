@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirQualifiedAccessExpressionChecker
-import org.jetbrains.kotlin.fir.analysis.checkers.getContainingClassSymbol
+import org.jetbrains.kotlin.fir.resolve.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.analysis.js.checkers.checkJsModuleUsage
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.toResolvedBaseSymbol
@@ -18,12 +18,13 @@ import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 
 object FirJsModuleQualifiedAccessChecker : FirQualifiedAccessExpressionChecker(MppCheckerKind.Common) {
-    override fun check(expression: FirQualifiedAccessExpression, context: CheckerContext, reporter: DiagnosticReporter) {
-        checkReifiedTypeParameters(expression, context, reporter)
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(expression: FirQualifiedAccessExpression) {
+        checkReifiedTypeParameters(expression)
 
         val calleeSymbols = extractModuleCalleeSymbols(expression)
         for ((calleeSymbol, source) in calleeSymbols) {
-            checkJsModuleUsage(calleeSymbol, context, reporter, source ?: expression.source)
+            checkJsModuleUsage(calleeSymbol, source ?: expression.source)
         }
     }
 
@@ -49,11 +50,14 @@ object FirJsModuleQualifiedAccessChecker : FirQualifiedAccessExpressionChecker(M
         }
     }
 
-    private fun checkReifiedTypeParameters(expr: FirQualifiedAccessExpression, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    private fun checkReifiedTypeParameters(
+        expr: FirQualifiedAccessExpression,
+    ) {
         (expr as? FirFunctionCall)?.forAllReifiedTypeParameters { type, typeArgument ->
             val typeArgumentClass = type.toRegularClassSymbol(context.session) ?: return@forAllReifiedTypeParameters
             val source = typeArgument.source ?: expr.calleeReference.source ?: expr.source
-            checkJsModuleUsage(typeArgumentClass, context, reporter, source)
+            checkJsModuleUsage(typeArgumentClass, source)
         }
     }
 }

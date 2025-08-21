@@ -71,3 +71,7 @@ actual class OuterClassWithNamedCompanion {
 actual object OuterObject {
     actual object NestedObject
 }
+
+/* GENERATED_FIR_TAGS: actual, checkNotNullCall, classDeclaration, companionObject, expect, functionDeclaration,
+functionalType, inner, integerLiteral, interfaceDeclaration, lambdaLiteral, nestedClass, nullableType, objectDeclaration,
+operator, out, propertyDeclaration, propertyDelegate, starProjection, stringLiteral, typeParameter */

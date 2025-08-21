@@ -3,3 +3,4 @@ text: do {
             4
     } while (b)
 isUsedAsExpression: false
+isUsedAsResultOfLambda: false

@@ -3,8 +3,8 @@ FIR element: FirPropertyImpl
 FIR source kind: KtRealSourceElementKind
 
 FIR element rendered:
-private final [ResolvedTo(BODY_RESOLVE)] val branchManager: <ERROR TYPE REF: Symbol not found for Manager?> = Null(null)
-    private [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=KotlinFile] get(): <ERROR TYPE REF: Symbol not found for Manager?>
+private final [ResolvedTo(BODY_RESOLVE)] val branchManager: <ERROR TYPE REF: Symbol not found for Manager> = Null(null)
+    private [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=KotlinFile] get(): <ERROR TYPE REF: Symbol not found for Manager>
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] KotlinFile.kt
@@ -15,7 +15,7 @@ FILE: [ResolvedTo(IMPORTS)] KotlinFile.kt
             LAZY_super<R|kotlin/Any|>
         }
 
-        private final [ResolvedTo(BODY_RESOLVE)] val branchManager: <ERROR TYPE REF: Symbol not found for Manager?> = Null(null)
-            private [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=KotlinFile] get(): <ERROR TYPE REF: Symbol not found for Manager?>
+        private final [ResolvedTo(BODY_RESOLVE)] val branchManager: <ERROR TYPE REF: Symbol not found for Manager> = Null(null)
+            private [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=KotlinFile] get(): <ERROR TYPE REF: Symbol not found for Manager>
 
     }

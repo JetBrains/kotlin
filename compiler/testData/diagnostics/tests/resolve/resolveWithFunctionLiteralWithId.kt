@@ -32,3 +32,6 @@ fun test() {
         })
     })
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, functionDeclaration, functionalType, integerLiteral, lambdaLiteral,
+nullableType, objectDeclaration, propertyDeclaration, typeParameter */

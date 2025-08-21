@@ -16,3 +16,5 @@ fun bar(p: (String, Any, () -> String) -> Unit) {
     p(<!NO_VALUE_FOR_PARAMETER!>"y")<!> { "z" }
     p("v", Any()) { "w" }
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionalType, integerLiteral, lambdaLiteral, stringLiteral */

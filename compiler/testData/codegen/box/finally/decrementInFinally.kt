@@ -1,3 +1,5 @@
+// DUMP_IR
+
 fun box(): String {
     var variable = 0
     try {

@@ -7,10 +7,9 @@ package org.jetbrains.kotlin.gradle.report
 
 import org.gradle.api.logging.Logger
 import org.jetbrains.kotlin.build.report.metrics.BuildAttribute
-import org.jetbrains.kotlin.build.report.metrics.BuildTime
 import org.jetbrains.kotlin.build.report.metrics.GradleBuildTime
-import org.jetbrains.kotlin.gradle.internal.build.metrics.GradleBuildMetricsData
 import org.jetbrains.kotlin.gradle.internal.build.metrics.BuildOperationData
+import org.jetbrains.kotlin.gradle.internal.build.metrics.GradleBuildMetricsData
 import org.jetbrains.kotlin.gradle.logging.kotlinDebug
 import org.jetbrains.kotlin.gradle.report.data.BuildExecutionData
 import java.io.File
@@ -39,7 +38,7 @@ internal class MetricsWriter(
                     BuildOperationData(
                         path = data.path,
                         typeFqName = data.classFqName,
-                        buildTimesMs = data.buildMetrics.buildTimes.asMapMs().mapKeys { it.key.name },
+                        buildTimesMs = data.buildMetrics.buildTimes.buildTimesMapMs().mapKeys { it.key.name },
                         performanceMetrics = data.buildMetrics.buildPerformanceMetrics.asMap().mapKeys { it.key.name },
                         buildAttributes = data.buildMetrics.buildAttributes.asMap().mapKeys { it.key.name },
                         didWork = data.didWork

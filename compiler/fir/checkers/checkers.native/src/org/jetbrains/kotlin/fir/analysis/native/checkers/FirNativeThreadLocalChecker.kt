@@ -24,18 +24,19 @@ import org.jetbrains.kotlin.name.FqName
 object FirNativeThreadLocalChecker : FirBasicDeclarationChecker(MppCheckerKind.Platform) {
     private val threadLocalClassId = ClassId.topLevel(FqName("kotlin.native.concurrent.ThreadLocal"))
 
-    override fun check(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirDeclaration) {
         val isObject = declaration is FirClass && declaration.classKind == ClassKind.OBJECT
         val isOk = declaration is FirVariable &&
                 (declaration is FirProperty && declaration.hasBackingField || declaration.delegate != null) || isObject
         if (!isOk) {
-            reporter.reportIfHasAnnotation(declaration, threadLocalClassId, FirNativeErrors.INAPPLICABLE_THREAD_LOCAL, context)
+            reporter.reportIfHasAnnotation(declaration, threadLocalClassId, FirNativeErrors.INAPPLICABLE_THREAD_LOCAL)
         }
 
         if (declaration.source?.kind is KtFakeSourceElementKind) return
 
         if (!context.isTopLevel && !isObject) {
-            reporter.reportIfHasAnnotation(declaration, threadLocalClassId, FirNativeErrors.INAPPLICABLE_THREAD_LOCAL_TOP_LEVEL, context)
+            reporter.reportIfHasAnnotation(declaration, threadLocalClassId, FirNativeErrors.INAPPLICABLE_THREAD_LOCAL_TOP_LEVEL)
         }
     }
 }

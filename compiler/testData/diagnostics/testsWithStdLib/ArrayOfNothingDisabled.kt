@@ -1,6 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE -UNCHECKED_CAST -USELESS_CAST
-// LANGUAGE: +ProhibitNonReifiedArraysAsReifiedTypeArguments -NullableNothingInReifiedPosition
+// LANGUAGE: -NullableNothingInReifiedPosition
 class A<T>
 class C<T, G>
 class D<T>
@@ -59,3 +59,6 @@ class B<T>(val array: Array<T>)
 fun <T> bar() = B<Array<T>>(<!TYPE_PARAMETER_AS_REIFIED_ARRAY_ERROR!>arrayOf<!>())
 
 fun test7() = <!UNSUPPORTED!>bar<!><Nothing>()
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, asExpression, classDeclaration, functionDeclaration, inProjection,
+integerLiteral, lambdaLiteral, nullableType, outProjection, primaryConstructor, propertyDeclaration, typeParameter */

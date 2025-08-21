@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -10,33 +10,36 @@ import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.components.KaAnalysisScopeProvider
-import org.jetbrains.kotlin.analysis.api.getModule
-import org.jetbrains.kotlin.analysis.api.impl.base.sessions.KaGlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
-import org.jetbrains.kotlin.analysis.api.projectStructure.isDangling
-import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi.psiUtil.contains
+import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KaResolutionScope
 
 @KaImplementationDetail
 class KaBaseAnalysisScopeProviderImpl(
     override val analysisSessionProvider: () -> KaSession,
-    private val useSiteScope: KaGlobalSearchScope,
-) : KaBaseSessionComponent<KaSession>(), KaAnalysisScopeProvider {
+    private val resolutionScope: KaResolutionScope,
+) : KaBaseSessionComponent<KaSession>(), KaBaseAnalysisScopeProviderEx {
     override val analysisScope: GlobalSearchScope
-        get() = withValidityAssertion { useSiteScope }
+        get() = withValidityAssertion { resolutionScope }
+
+    override fun canBeAnalysedImpl(element: PsiElement): Boolean {
+        return resolutionScope.contains(element)
+    }
+}
+
+/**
+ * The implementation detail of [KaAnalysisScopeProvider] which exposes the internal implementation details
+ * to reuse it in other places.
+ */
+@KaImplementationDetail
+interface KaBaseAnalysisScopeProviderEx : KaAnalysisScopeProvider {
+    /**
+     * The implementation of [canBeAnalysed] without [withValidityAssertion] check.
+     *
+     * @see canBeAnalysed
+     */
+    fun canBeAnalysedImpl(element: PsiElement): Boolean
 
     override fun PsiElement.canBeAnalysed(): Boolean = withValidityAssertion {
-        return (useSiteScope.baseScope.contains(this) && !useSiteScope.shadowedScope.contains(this)) || this.isFromGeneratedModule()
-    }
-
-    private fun PsiElement.isFromGeneratedModule(): Boolean {
-        val ktFile = containingFile as? KtFile ?: return false
-        if (ktFile.isDangling) {
-            val module = analysisSession.getModule(ktFile)
-            return useSiteScope.isFromGeneratedModule(module)
-        }
-
-        val virtualFile = ktFile.virtualFile ?: return false
-        return useSiteScope.isFromGeneratedModule(virtualFile)
+        canBeAnalysedImpl(this)
     }
 }

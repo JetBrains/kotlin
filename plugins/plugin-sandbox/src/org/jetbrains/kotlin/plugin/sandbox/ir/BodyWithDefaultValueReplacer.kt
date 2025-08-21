@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.plugin.sandbox.ir
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFile
+import org.jetbrains.kotlin.ir.declarations.IrParameterKind
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.IrReturn
 import org.jetbrains.kotlin.ir.util.deepCopyWithoutPatchingParents
@@ -30,7 +31,7 @@ class BodyWithDefaultValueReplacer : IrVisitorVoid() {
 
     override fun visitSimpleFunction(declaration: IrSimpleFunction) {
         if (declaration.name != NAME) return
-        val defaultValue = declaration.valueParameters.first().defaultValue ?: return
+        val defaultValue = declaration.parameters.first { it.kind == IrParameterKind.Regular }.defaultValue ?: return
         val bodyReplacer = object : IrVisitorVoid() {
             override fun visitElement(element: IrElement) {
                 element.acceptChildrenVoid(this)

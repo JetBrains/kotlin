@@ -20,3 +20,5 @@ fun main() {
         a.length
     }
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionalType, lambdaLiteral, nullableType, typeParameter, typeWithContext */

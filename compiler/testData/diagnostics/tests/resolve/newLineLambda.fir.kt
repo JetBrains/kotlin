@@ -19,13 +19,13 @@ fun testNoArgs() {
     /*
         block comment with new line
     */
-    <!TOO_MANY_ARGUMENTS!>{}<!>
+    <!UNEXPECTED_TRAILING_LAMBDA_ON_A_NEW_LINE!>{}<!>
     noArgs() // comment
     // comment
-    <!TOO_MANY_ARGUMENTS!>{}<!>
+    <!UNEXPECTED_TRAILING_LAMBDA_ON_A_NEW_LINE!>{}<!>
     noArgs() <!TOO_MANY_ARGUMENTS!>{}<!> <!MANY_LAMBDA_EXPRESSION_ARGUMENTS!>{}<!>
     noArgs() <!TOO_MANY_ARGUMENTS!>{}<!>
-    <!MANY_LAMBDA_EXPRESSION_ARGUMENTS!>{}<!>
+    <!UNEXPECTED_TRAILING_LAMBDA_ON_A_NEW_LINE!>{}<!>
 }
 
 fun testLambdaArg() {
@@ -35,7 +35,7 @@ fun testLambdaArg() {
     {}
     oneLambdaArg()
     {}
-    <!MANY_LAMBDA_EXPRESSION_ARGUMENTS!>{}<!>
+    <!UNEXPECTED_TRAILING_LAMBDA_ON_A_NEW_LINE!>{}<!>
     oneLambdaArg(
         {},
         <!TOO_MANY_ARGUMENTS!>{}<!>
@@ -56,15 +56,15 @@ fun testLambdaArg() {
     oneLambdaArg() {}/*
         block comment with new line
     */
-    <!MANY_LAMBDA_EXPRESSION_ARGUMENTS!>{}<!>
+    <!UNEXPECTED_TRAILING_LAMBDA_ON_A_NEW_LINE!>{}<!>
     oneLambdaArg() {}// comment
     // comment
-    <!MANY_LAMBDA_EXPRESSION_ARGUMENTS!>{}<!>
+    <!UNEXPECTED_TRAILING_LAMBDA_ON_A_NEW_LINE!>{}<!>
     oneLambdaArg() {} <!MANY_LAMBDA_EXPRESSION_ARGUMENTS!>{}<!>
     oneLambdaArg() {}
-    <!MANY_LAMBDA_EXPRESSION_ARGUMENTS!>{}<!>
+    <!UNEXPECTED_TRAILING_LAMBDA_ON_A_NEW_LINE!>{}<!>
     oneLambdaArg() {} // comment
-    <!MANY_LAMBDA_EXPRESSION_ARGUMENTS!>{}<!>
+    <!UNEXPECTED_TRAILING_LAMBDA_ON_A_NEW_LINE!>{}<!>
 }
 
 fun testVararg() {
@@ -85,7 +85,7 @@ fun testVararg() {
     <!VARARG_OUTSIDE_PARENTHESES!>{}<!>
     varargFn(1,2,3) <!VARARG_OUTSIDE_PARENTHESES!>{}<!> <!MANY_LAMBDA_EXPRESSION_ARGUMENTS!>{}<!>
     varargFn(1,2,3) <!VARARG_OUTSIDE_PARENTHESES!>{}<!>
-    <!MANY_LAMBDA_EXPRESSION_ARGUMENTS!>{}<!>
+    <!UNEXPECTED_TRAILING_LAMBDA_ON_A_NEW_LINE!>{}<!>
 }
 
 fun testTwoLambdas() {
@@ -98,12 +98,12 @@ fun testTwoLambdas() {
     fun bar(): () -> Unit {
         twoLambdaArgs<!NO_VALUE_FOR_PARAMETER!>()<!>
         {}
-        <!MANY_LAMBDA_EXPRESSION_ARGUMENTS!>{}<!>
+        <!UNEXPECTED_TRAILING_LAMBDA_ON_A_NEW_LINE!>{}<!>
 
         return <!RETURN_TYPE_MISMATCH!>if (true) {
             twoLambdaArgs({})
             {}
-            <!MANY_LAMBDA_EXPRESSION_ARGUMENTS!>{}<!>
+            <!UNEXPECTED_TRAILING_LAMBDA_ON_A_NEW_LINE!>{}<!>
         } else {
             {}
         }<!>
@@ -112,7 +112,10 @@ fun testTwoLambdas() {
 
 fun f1(): (() -> Unit) -> (() -> Unit) -> Unit {
     return <!RETURN_TYPE_MISMATCH!>{ l1 ->
-        l1()
-        <!TOO_MANY_ARGUMENTS!>{ <!CANNOT_INFER_PARAMETER_TYPE!>l2<!> -> <!UNRESOLVED_REFERENCE!>l2<!>() }<!>
+        <!RETURN_TYPE_MISMATCH!>l1()
+        <!UNEXPECTED_TRAILING_LAMBDA_ON_A_NEW_LINE!>{ <!CANNOT_INFER_VALUE_PARAMETER_TYPE!>l2<!> -> <!UNRESOLVED_REFERENCE!>l2<!>() }<!><!>
     }<!>
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionalType, ifExpression, integerLiteral, lambdaLiteral, localFunction,
+vararg */

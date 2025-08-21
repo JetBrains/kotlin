@@ -1,11 +1,7 @@
 public final class C /* C*/ implements I {
-  private final int value;
-
-  @java.lang.Override()
   @org.jetbrains.annotations.NotNull()
   public @org.jetbrains.annotations.NotNull() java.lang.Integer foo();//  foo()
 
-  @java.lang.Override()
   @org.jetbrains.annotations.NotNull()
   public @org.jetbrains.annotations.NotNull() java.lang.Integer getValue();//  getValue()
 

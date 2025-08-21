@@ -17,10 +17,11 @@ import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.name.StandardClassIds
 
 object FirOptionalExpectationDeclarationChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
-    override fun check(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirDeclaration) {
         if (declaration !is FirMemberDeclaration || !declaration.isExpect) {
             declaration.getAnnotationByClassId(StandardClassIds.Annotations.OptionalExpectation, context.session)?.let {
-                reporter.reportOn(it.source, FirErrors.OPTIONAL_EXPECTATION_NOT_ON_EXPECTED, context)
+                reporter.reportOn(it.source, FirErrors.OPTIONAL_EXPECTATION_NOT_ON_EXPECTED)
             }
         }
     }

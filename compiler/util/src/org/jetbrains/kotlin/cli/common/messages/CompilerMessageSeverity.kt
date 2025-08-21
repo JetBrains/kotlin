@@ -15,6 +15,13 @@ enum class CompilerMessageSeverity {
      * Use it for problems related to configuration, not the diagnostics.
      */
     STRONG_WARNING,
+
+    /**
+     * Warning severity set by `-Xwarning-level=NAME:warning`.
+     * Unlike a normal warning it isn't suppressed by `-nowarn` flag
+     * and does not cause the compilation to fail with `-Werror` flag
+     */
+    FIXED_WARNING,
     WARNING,
     INFO,
     LOGGING,
@@ -29,13 +36,16 @@ enum class CompilerMessageSeverity {
         get() = this == EXCEPTION || this == ERROR
 
     val isWarning: Boolean
+        get() = this == STRONG_WARNING || this == WARNING || this == FIXED_WARNING
+
+    val isRegularWarning: Boolean
         get() = this == STRONG_WARNING || this == WARNING
 
     val presentableName: String
         get() = when (this) {
             EXCEPTION -> "exception"
             ERROR -> "error"
-            STRONG_WARNING, WARNING -> "warning"
+            STRONG_WARNING, WARNING, FIXED_WARNING -> "warning"
             INFO -> "info"
             LOGGING -> "logging"
             OUTPUT -> "output"

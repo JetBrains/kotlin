@@ -28,13 +28,13 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils.isEnumEntry
 import org.jetbrains.kotlin.resolve.MemberComparator
 import org.jetbrains.kotlin.resolve.RequireKotlinConstants
+import org.jetbrains.kotlin.resolve.ReturnValueStatus
 import org.jetbrains.kotlin.resolve.calls.components.isActualParameterWithAnyExpectedDefault
 import org.jetbrains.kotlin.resolve.constants.EnumValue
 import org.jetbrains.kotlin.resolve.constants.IntValue
 import org.jetbrains.kotlin.resolve.constants.NullValue
 import org.jetbrains.kotlin.resolve.constants.StringValue
 import org.jetbrains.kotlin.resolve.descriptorUtil.inlineClassRepresentation
-import org.jetbrains.kotlin.resolve.descriptorUtil.multiFieldValueClassRepresentation
 import org.jetbrains.kotlin.resolve.descriptorUtil.nonSourceAnnotations
 import org.jetbrains.kotlin.resolve.isValueClass
 import org.jetbrains.kotlin.serialization.deserialization.ProtoEnumFlags
@@ -175,16 +175,6 @@ class DescriptorSerializer private constructor(
             }
         }
 
-        classDescriptor.multiFieldValueClassRepresentation?.let { multiFieldValueClassRepresentation ->
-            val namesToTypes = multiFieldValueClassRepresentation.underlyingPropertyNamesToTypes
-            builder.addAllMultiFieldValueClassUnderlyingName(namesToTypes.map { (name, _) -> getSimpleNameIndex(name) })
-            if (useTypeTable()) {
-                builder.addAllMultiFieldValueClassUnderlyingTypeId(namesToTypes.map { (_, kotlinType) -> typeId(kotlinType) })
-            } else {
-                builder.addAllMultiFieldValueClassUnderlyingType(namesToTypes.map { (_, kotlinType) -> type(kotlinType).build() })
-            }
-        }
-
         if (versionRequirementTable == null) error("Version requirements must be serialized for classes: $classDescriptor")
 
         builder.addAllVersionRequirement(versionRequirementTable.serializeVersionRequirements(classDescriptor))
@@ -257,7 +247,7 @@ class DescriptorSerializer private constructor(
             ProtoEnumFlags.modality(descriptor.modality),
             ProtoEnumFlags.memberKind(descriptor.kind),
             descriptor.isVar, hasGetter, hasSetter, hasConstant, descriptor.isConst, descriptor.isLateInit, descriptor.isExternal,
-            descriptor.isDelegated, descriptor.isExpect
+            descriptor.isDelegated, descriptor.isExpect, ProtoBuf.ReturnValueStatus.UNSPECIFIED
         )
         if (flags != builder.flags) {
             builder.flags = flags
@@ -332,7 +322,8 @@ class DescriptorSerializer private constructor(
             ProtoEnumFlags.modality(descriptor.modality),
             ProtoEnumFlags.memberKind(descriptor.kind),
             descriptor.isOperator, descriptor.isInfix, descriptor.isInline, descriptor.isTailrec, descriptor.isExternal,
-            descriptor.isSuspend, descriptor.isExpect, shouldSerializeHasStableParameterNames(descriptor)
+            descriptor.isSuspend, descriptor.isExpect,
+            shouldSerializeHasStableParameterNames(descriptor), ProtoBuf.ReturnValueStatus.UNSPECIFIED,
         )
         if (flags != builder.flags) {
             builder.flags = flags
@@ -398,7 +389,7 @@ class DescriptorSerializer private constructor(
 
         val flags = Flags.getConstructorFlags(
             hasAnnotations(descriptor), ProtoEnumFlags.descriptorVisibility(normalizeVisibility(descriptor)), !descriptor.isPrimary,
-            shouldSerializeHasStableParameterNames(descriptor)
+            shouldSerializeHasStableParameterNames(descriptor), ProtoBuf.ReturnValueStatus.UNSPECIFIED
         )
         if (flags != builder.flags) {
             builder.flags = flags

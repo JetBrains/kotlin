@@ -1,8 +1,8 @@
 apply plugin: 'kotlin-multiplatform'
 apply plugin: 'maven-publish'
 
-group 'org.jetbrains.qa.combompp'
-version publishing_version
+group = 'org.jetbrains.qa.combompp'
+version = publishing_version
 
 buildscript {
     repositories {

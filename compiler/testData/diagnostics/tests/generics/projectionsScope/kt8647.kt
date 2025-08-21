@@ -8,3 +8,5 @@ interface Observable<T> {
 
 fun foo(o: Observable<out CharSequence>, y: Subscriber<in CharSequence>) = o.subscribe(y) // type safe
 
+/* GENERATED_FIR_TAGS: functionDeclaration, inProjection, interfaceDeclaration, nullableType, outProjection,
+typeParameter */

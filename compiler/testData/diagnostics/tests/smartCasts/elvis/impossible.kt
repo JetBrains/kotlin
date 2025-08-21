@@ -39,3 +39,7 @@ fun bar(list: BooleanList, arg: UnstableBoolean) {
         list.remove(arg.first)
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, elvisExpression, equalityExpression, funWithExtensionReceiver,
+functionDeclaration, getter, ifExpression, nullableType, propertyDeclaration, safeCall, smartcast, stringLiteral,
+thisExpression */

@@ -17,3 +17,6 @@ fun test() {
         person<!UNSAFE_CALL!>.<!>name // Smart cast doesn't work
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, ifExpression, localProperty, nullableType,
+primaryConstructor, propertyDeclaration, safeCall, smartcast */

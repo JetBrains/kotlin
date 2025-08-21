@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.sessions
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileModule
-import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
 import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.factories.LLLibrarySymbolProviderFactory
@@ -39,8 +38,8 @@ internal class LLFirJsSessionFactory(project: Project) : LLFirAbstractSessionFac
         }
     }
 
-    override fun createLibrarySession(module: KaModule): LLFirLibraryOrLibrarySourceResolvableModuleSession {
-        return doCreateLibrarySession(module) { context ->
+    override fun createResolvableLibrarySession(module: KaModule): LLFirLibraryOrLibrarySourceResolvableModuleSession {
+        return doCreateResolvableLibrarySession(module) { context ->
             registerJsComponents(moduleKind = null)
 
             register(
@@ -56,7 +55,7 @@ internal class LLFirJsSessionFactory(project: Project) : LLFirAbstractSessionFac
         }
     }
 
-    override fun createBinaryLibrarySession(module: KaLibraryModule): LLFirLibrarySession {
+    override fun createBinaryLibrarySession(module: KaModule): LLFirLibrarySession {
         return doCreateBinaryLibrarySession(module) {
             registerJsComponents(moduleKind = null)
         }
@@ -84,12 +83,10 @@ internal class LLFirJsSessionFactory(project: Project) : LLFirAbstractSessionFac
     override fun createProjectLibraryProvidersForScope(
         session: LLFirSession,
         scope: GlobalSearchScope,
-        isFallbackDependenciesProvider: Boolean,
     ): List<FirSymbolProvider> {
         return LLLibrarySymbolProviderFactory.fromSettings(project).createJsLibrarySymbolProvider(
             session,
             scope,
-            isFallbackDependenciesProvider,
         )
     }
 }

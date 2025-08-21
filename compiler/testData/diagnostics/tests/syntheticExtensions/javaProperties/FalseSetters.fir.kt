@@ -25,3 +25,6 @@ public class JavaClass {
     public int[] getSomething5() { return null; }
     public void setSomething5(int... value) { }
 }
+
+/* GENERATED_FIR_TAGS: assignment, flexibleType, functionDeclaration, incrementDecrementExpression, javaProperty,
+javaType */

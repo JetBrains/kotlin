@@ -1,0 +1,221 @@
+KtFile: annotatedFlexibleTypes.kt
+  PsiComment(EOL_COMMENT)('// WITH_KOTLIN_JVM_ANNOTATIONS')
+  PsiWhiteSpace('\n')
+  PsiComment(EOL_COMMENT)('// FILE: AnnotatedFlexibleTypes.kt')
+  PsiWhiteSpace('\n')
+  PACKAGE_DIRECTIVE
+    PsiElement(package)('package')
+    PsiWhiteSpace(' ')
+    REFERENCE_EXPRESSION
+      PsiElement(IDENTIFIER)('test')
+  IMPORT_LIST
+    <empty list>
+  PsiWhiteSpace('\n\n')
+  CLASS
+    MODIFIER_LIST
+      PsiElement(public)('public')
+    PsiWhiteSpace(' ')
+    PsiElement(class)('class')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('AnnotatedFlexibleTypes')
+    PRIMARY_CONSTRUCTOR
+      VALUE_PARAMETER_LIST
+        PsiElement(LPAR)('(')
+        VALUE_PARAMETER
+          PsiElement(val)('val')
+          PsiWhiteSpace(' ')
+          PsiElement(IDENTIFIER)('javaClass')
+          PsiElement(COLON)(':')
+          PsiWhiteSpace(' ')
+          TYPE_REFERENCE
+            USER_TYPE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('d')
+              PsiElement(DOT)('.')
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('JavaClass')
+        PsiElement(RPAR)(')')
+    PsiWhiteSpace(' ')
+    CLASS_BODY
+      PsiElement(LBRACE)('{')
+      PsiWhiteSpace('\n    ')
+      FUN
+        PsiElement(fun)('fun')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('foo')
+        VALUE_PARAMETER_LIST
+          PsiElement(LPAR)('(')
+          PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        PsiElement(EQ)('=')
+        PsiWhiteSpace(' ')
+        DOT_QUALIFIED_EXPRESSION
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('javaClass')
+          PsiElement(DOT)('.')
+          CALL_EXPRESSION
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('foo')
+            VALUE_ARGUMENT_LIST
+              PsiElement(LPAR)('(')
+              PsiElement(RPAR)(')')
+      PsiWhiteSpace('\n\n    ')
+      PROPERTY
+        PsiElement(val)('val')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('bar')
+        PsiWhiteSpace(' ')
+        PsiElement(EQ)('=')
+        PsiWhiteSpace(' ')
+        DOT_QUALIFIED_EXPRESSION
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('javaClass')
+          PsiElement(DOT)('.')
+          CALL_EXPRESSION
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('bar')
+            VALUE_ARGUMENT_LIST
+              PsiElement(LPAR)('(')
+              PsiElement(RPAR)(')')
+      PsiWhiteSpace('\n')
+      PsiElement(RBRACE)('}')
+  PsiWhiteSpace('\n\n')
+  PsiComment(EOL_COMMENT)('// FILE: d/JavaClass.java')
+  PsiWhiteSpace('\n')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(package)('package')
+  PsiWhiteSpace(' ')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(IDENTIFIER)('d')
+  PsiElement(SEMICOLON)(';')
+  PsiErrorElement:imports are only allowed in the beginning of file
+    <empty list>
+  PsiWhiteSpace('\n\n')
+  IMPORT_LIST
+    IMPORT_DIRECTIVE
+      PsiElement(import)('import')
+      PsiWhiteSpace(' ')
+      DOT_QUALIFIED_EXPRESSION
+        DOT_QUALIFIED_EXPRESSION
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('org')
+          PsiElement(DOT)('.')
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('jetbrains')
+        PsiElement(DOT)('.')
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('annotations')
+      PsiElement(DOT)('.')
+      PsiElement(MUL)('*')
+      PsiElement(SEMICOLON)(';')
+    PsiWhiteSpace('\n')
+    IMPORT_DIRECTIVE
+      PsiElement(import)('import')
+      PsiWhiteSpace(' ')
+      DOT_QUALIFIED_EXPRESSION
+        DOT_QUALIFIED_EXPRESSION
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('kotlin')
+          PsiElement(DOT)('.')
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('annotations')
+        PsiElement(DOT)('.')
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('jvm')
+      PsiElement(DOT)('.')
+      PsiElement(MUL)('*')
+      PsiElement(SEMICOLON)(';')
+  PsiWhiteSpace('\n\n')
+  CLASS
+    MODIFIER_LIST
+      PsiElement(public)('public')
+      PsiWhiteSpace(' ')
+      PsiElement(abstract)('abstract')
+    PsiWhiteSpace(' ')
+    PsiElement(class)('class')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('JavaClass')
+    PsiWhiteSpace(' ')
+    CLASS_BODY
+      PsiElement(LBRACE)('{')
+      PsiWhiteSpace('\n    ')
+      MODIFIER_LIST
+        ANNOTATION_ENTRY
+          PsiElement(AT)('@')
+          CONSTRUCTOR_CALLEE
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('NotNull')
+        PsiWhiteSpace('\n    ')
+        ANNOTATION_ENTRY
+          PsiElement(AT)('@')
+          CONSTRUCTOR_CALLEE
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('Nullable')
+        PsiWhiteSpace('\n    ')
+        PsiElement(public)('public')
+        PsiWhiteSpace(' ')
+        PsiElement(abstract)('abstract')
+      PsiWhiteSpace(' ')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(IDENTIFIER)('Integer')
+      PsiWhiteSpace(' ')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(IDENTIFIER)('foo')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(LPAR)('(')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(RPAR)(')')
+      PsiElement(SEMICOLON)(';')
+      PsiWhiteSpace('\n\n    ')
+      MODIFIER_LIST
+        ANNOTATION_ENTRY
+          PsiElement(AT)('@')
+          CONSTRUCTOR_CALLEE
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('Mutable')
+        PsiWhiteSpace('\n    ')
+        ANNOTATION_ENTRY
+          PsiElement(AT)('@')
+          CONSTRUCTOR_CALLEE
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('ReadOnly')
+        PsiWhiteSpace('\n    ')
+        PsiElement(public)('public')
+        PsiWhiteSpace(' ')
+        PsiElement(abstract)('abstract')
+      PsiWhiteSpace(' ')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(IDENTIFIER)('java')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(DOT)('.')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(IDENTIFIER)('util')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(DOT)('.')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(IDENTIFIER)('Collection')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(LT)('<')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(IDENTIFIER)('Integer')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(GT)('>')
+      PsiWhiteSpace(' ')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(IDENTIFIER)('bar')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(LPAR)('(')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(RPAR)(')')
+      PsiElement(SEMICOLON)(';')
+      PsiWhiteSpace('\n')
+      PsiElement(RBRACE)('}')

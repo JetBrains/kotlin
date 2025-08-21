@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrVariableImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetFieldImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrReturnImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrSetFieldImpl
 import org.jetbrains.kotlin.ir.symbols.impl.*
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.copyTo
@@ -157,7 +158,7 @@ fun IrProperty.addDefaultGetter(parentClass: IrClass, builtIns: IrBuiltIns) {
         origin = IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR
         returnType = field.type
     }.apply {
-        dispatchReceiverParameter = parentClass.thisReceiver!!.copyTo(this)
+        parameters = listOf(parentClass.thisReceiver!!.copyTo(this))
         body = factory.createBlockBody(
             UNDEFINED_OFFSET, UNDEFINED_OFFSET, listOf(
                 IrReturnImpl(
@@ -174,6 +175,36 @@ fun IrProperty.addDefaultGetter(parentClass: IrClass, builtIns: IrBuiltIns) {
                             dispatchReceiverParameter!!.symbol
                         )
                     )
+                )
+            )
+        )
+    }
+}
+
+fun IrProperty.addDefaultSetter(parentClass: IrClass, builtIns: IrBuiltIns) {
+    val field = backingField!!
+    addSetter {
+        origin = IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR
+        visibility = this@addDefaultSetter.visibility
+        returnType = builtIns.unitType
+    }.also { setter ->
+        val irValueParameter = buildValueParameter(setter) {
+            name = Name.identifier("value")
+            type = field.type
+            kind = IrParameterKind.Regular
+        }
+        setter.parameters = listOf(
+            parentClass.thisReceiver!!.copyTo(setter),
+            irValueParameter,
+        )
+        setter.body = factory.createBlockBody(
+            UNDEFINED_OFFSET, UNDEFINED_OFFSET, listOf(
+                IrSetFieldImpl(
+                    UNDEFINED_OFFSET, UNDEFINED_OFFSET,
+                    field.symbol,
+                    IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, setter.dispatchReceiverParameter!!.type, setter.dispatchReceiverParameter!!.symbol),
+                    IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, irValueParameter.type, irValueParameter.symbol),
+                    builtIns.unitType,
                 )
             )
         )
@@ -276,7 +307,7 @@ fun IrClass.addFunction(
     }.apply {
         if (!isStatic) {
             val thisReceiver = parentAsClass.thisReceiver!!
-            dispatchReceiverParameter = thisReceiver.copyTo(this, type = thisReceiver.type)
+            parameters = listOf(thisReceiver.copyTo(this, type = thisReceiver.type))
         }
     }
 

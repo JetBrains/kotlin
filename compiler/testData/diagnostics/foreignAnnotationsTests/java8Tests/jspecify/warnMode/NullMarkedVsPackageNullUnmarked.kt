@@ -59,10 +59,7 @@ fun test(
     a: nullunmarkedpackage.NullMarkedType,
     b: nullunmarkedpackage.UnannotatedType
 ) {
-    // jspecify_nullness_mismatch
     a.unannotatedConsume(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>)
-    // jspecify_nullness_mismatch
     b.nullMarkedConsume(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>)
-    // jspecify_nullness_mismatch
     nullunmarkedpackage.UnannotatedTypeWithNullMarkedConstructor(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>)
 }

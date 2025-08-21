@@ -19,17 +19,18 @@ import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
 import org.jetbrains.kotlin.name.WebCommonStandardClassIds
 
 object FirWasmDefinedExternallyCallChecker : FirBasicExpressionChecker(MppCheckerKind.Common) {
-    override fun check(expression: FirStatement, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(expression: FirStatement) {
         val symbol = expression.toReference(context.session)?.toResolvedCallableSymbol() ?: return
 
         if (symbol.callableId != WebCommonStandardClassIds.Callables.JsDefinedExternally) {
             return
         }
 
-        val container = context.closestNonLocal?.symbol ?: return
+        val container = context.closestNonLocal ?: return
 
         if (!container.isEffectivelyExternal(context.session)) {
-            reporter.reportOn(expression.source, FirWasmErrors.CALL_TO_DEFINED_EXTERNALLY_FROM_NON_EXTERNAL_DECLARATION, context)
+            reporter.reportOn(expression.source, FirWasmErrors.CALL_TO_DEFINED_EXTERNALLY_FROM_NON_EXTERNAL_DECLARATION)
         }
     }
 }

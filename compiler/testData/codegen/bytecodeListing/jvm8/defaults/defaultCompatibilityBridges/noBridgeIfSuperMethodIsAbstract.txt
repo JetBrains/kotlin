@@ -17,7 +17,7 @@ public interface base/A {
 public class base/B {
     // source: 'a.kt'
     public method <init>(): void
-    public method f(): void
+    public bridge method f(): void
     public final inner class base/A$DefaultImpls
 }
 Module: main

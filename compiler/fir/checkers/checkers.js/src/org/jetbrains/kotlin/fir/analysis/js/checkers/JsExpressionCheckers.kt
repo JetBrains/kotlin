@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.expression.*
 import org.jetbrains.kotlin.fir.analysis.js.checkers.expression.*
 import org.jetbrains.kotlin.fir.analysis.web.common.checkers.expression.FirJsCodeConstantArgumentChecker
 import org.jetbrains.kotlin.fir.analysis.web.common.checkers.expression.FirJsQualifierChecker
+import org.jetbrains.kotlin.fir.analysis.web.common.checkers.expression.FirWebReflectionAPICallChecker
 
 object JsExpressionCheckers : ExpressionCheckers() {
     override val annotationCallCheckers: Set<FirAnnotationCallChecker>
@@ -20,7 +21,7 @@ object JsExpressionCheckers : ExpressionCheckers() {
         get() = setOf(
             FirJsDefinedExternallyCallChecker,
             FirJsNativeRttiChecker,
-            FirJsReflectionAPICallChecker
+            FirWebReflectionAPICallChecker(isWasm = false),
         )
 
     override val functionCallCheckers: Set<FirFunctionCallChecker>

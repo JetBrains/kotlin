@@ -81,6 +81,7 @@ public class TypeSubstitutorTest extends KotlinTestWithEnvironment {
         // todo comments
         String text = FileUtil.loadFile(new File("compiler/testData/type-substitutor.kt"), true);
         KtFile ktFile = new KtPsiFactory(getProject()).createFile(text);
+        @SuppressWarnings("deprecation")
         AnalysisResult analysisResult = JvmResolveUtil.analyze(ktFile, getEnvironment());
         ModuleDescriptor module = analysisResult.getModuleDescriptor();
 

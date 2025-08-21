@@ -19,12 +19,13 @@ import org.jetbrains.kotlin.fir.declarations.utils.isOverride
 import org.jetbrains.kotlin.name.JsStandardClassIds
 
 object FirJsNameChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
-    override fun check(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirDeclaration) {
         if (declaration is FirProperty) {
             val accessors = listOfNotNull(declaration.getter?.symbol, declaration.setter?.symbol)
             val namedAccessorCount = accessors.count { it.getJsName(context.session) != null }
             if (namedAccessorCount > 0 && namedAccessorCount < accessors.size) {
-                reporter.reportOn(declaration.source, FirJsErrors.JS_NAME_IS_NOT_ON_ALL_ACCESSORS, context)
+                reporter.reportOn(declaration.source, FirJsErrors.JS_NAME_IS_NOT_ON_ALL_ACCESSORS)
             }
         }
 
@@ -32,33 +33,33 @@ object FirJsNameChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
         val jsNameSource = jsName.source ?: declaration.source
 
         if (declaration.symbol.getAnnotationStringParameter(JsStandardClassIds.Annotations.JsNative, context.session) != null) {
-            reporter.reportOn(jsNameSource, FirJsErrors.JS_NAME_PROHIBITED_FOR_NAMED_NATIVE, context)
+            reporter.reportOn(jsNameSource, FirJsErrors.JS_NAME_PROHIBITED_FOR_NAMED_NATIVE)
         }
 
         if (
             declaration is FirCallableDeclaration && declaration.isOverride ||
             declaration is FirPropertyAccessor && declaration.propertySymbol.isOverride
         ) {
-            reporter.reportOn(jsNameSource, FirJsErrors.JS_NAME_PROHIBITED_FOR_OVERRIDE, context)
+            reporter.reportOn(jsNameSource, FirJsErrors.JS_NAME_PROHIBITED_FOR_OVERRIDE)
         }
 
         when (declaration) {
             is FirConstructor -> {
                 if (declaration.isPrimary) {
-                    reporter.reportOn(jsNameSource, FirJsErrors.JS_NAME_ON_PRIMARY_CONSTRUCTOR_PROHIBITED, context)
+                    reporter.reportOn(jsNameSource, FirJsErrors.JS_NAME_ON_PRIMARY_CONSTRUCTOR_PROHIBITED)
                 }
             }
 
             is FirPropertyAccessor -> {
                 val property = declaration.propertySymbol
                 if (property.getJsName(context.session) != null) {
-                    reporter.reportOn(jsNameSource, FirJsErrors.JS_NAME_ON_ACCESSOR_AND_PROPERTY, context)
+                    reporter.reportOn(jsNameSource, FirJsErrors.JS_NAME_ON_ACCESSOR_AND_PROPERTY)
                 }
             }
 
             is FirProperty -> {
                 if (declaration.isExtension) {
-                    reporter.reportOn(jsNameSource, FirJsErrors.JS_NAME_PROHIBITED_FOR_EXTENSION_PROPERTY, context)
+                    reporter.reportOn(jsNameSource, FirJsErrors.JS_NAME_PROHIBITED_FOR_EXTENSION_PROPERTY)
                 }
             }
 

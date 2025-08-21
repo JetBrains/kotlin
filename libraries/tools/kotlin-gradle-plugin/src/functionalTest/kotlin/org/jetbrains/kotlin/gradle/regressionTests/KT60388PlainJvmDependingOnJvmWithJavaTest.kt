@@ -36,6 +36,7 @@ class KT60388PlainJvmDependingOnJvmWithJavaTest {
         )
 
         producer.multiplatformExtension.apply {
+            @Suppress("DEPRECATION")
             jvm().withJava()
         }
 
@@ -61,6 +62,7 @@ class KT60388PlainJvmDependingOnJvmWithJavaTest {
 
         producer.multiplatformExtension.apply {
             producer.plugins.apply("java")
+            @Suppress("DEPRECATION")
             jvm().withJava()
         }
 

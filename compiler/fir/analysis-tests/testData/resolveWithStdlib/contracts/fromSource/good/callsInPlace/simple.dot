@@ -82,7 +82,7 @@ digraph simple_kt {
                         29 [label="Function call arguments enter"];
                         30 [label="Function call arguments exit"];
                     }
-                    31 [label="Function call enter: R?C|kotlin/Function0.invoke|()"];
+                    31 [label="Function call enter: R|<local>/y|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()"];
                     32 [label="Function call exit: R|<local>/y|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()" style="filled" fillcolor=yellow];
                     33 [label="Exit block"];
                 }

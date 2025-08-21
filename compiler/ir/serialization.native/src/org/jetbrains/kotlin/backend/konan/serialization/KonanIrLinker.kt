@@ -68,8 +68,6 @@ class KonanIrLinker(
     val moduleDeserializers = mutableMapOf<ModuleDescriptor, KonanPartialModuleDeserializer>()
     val klibToModuleDeserializerMap = mutableMapOf<KotlinLibrary, KonanPartialModuleDeserializer>()
 
-    val inlineFunctionFilesTracker = InlineFunctionFilesTracker()
-
     override fun createModuleDeserializer(
         moduleDescriptor: ModuleDescriptor,
         klib: KotlinLibrary?,
@@ -105,13 +103,6 @@ class KonanIrLinker(
     override fun postProcess(inOrAfterLinkageStep: Boolean) {
         stubGenerator.unboundSymbolGeneration = true
         super.postProcess(inOrAfterLinkageStep)
-    }
-
-    override fun getFileOf(declaration: IrDeclaration): IrFile {
-        val packageFragment = declaration.getPackageFragment()
-        return packageFragment as? IrFile
-            ?: inlineFunctionFilesTracker.getOrNull(packageFragment as IrExternalPackageFragment)
-            ?: error("Unknown external package fragment: ${packageFragment.packageFragmentDescriptor}")
     }
 
     private val String.isForwardDeclarationModuleName: Boolean get() = this == KlibResolvedModuleDescriptorsFactoryImpl.Companion.FORWARD_DECLARATIONS_MODULE_NAME.asString()

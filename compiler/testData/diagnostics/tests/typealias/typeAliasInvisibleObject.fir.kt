@@ -7,3 +7,5 @@ typealias CAlias = C
 
 val <!EXPOSED_PROPERTY_TYPE!>test1<!> = <!INVISIBLE_REFERENCE!>CAlias<!>
 val <!EXPOSED_PROPERTY_TYPE!>test1a<!> = <!INVISIBLE_REFERENCE!>C<!>
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, objectDeclaration, propertyDeclaration, typeAliasDeclaration */

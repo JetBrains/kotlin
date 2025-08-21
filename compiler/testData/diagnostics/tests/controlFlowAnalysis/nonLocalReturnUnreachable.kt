@@ -25,3 +25,6 @@ fun test3(x: Any?): Boolean =
     x?.let {
         return true
     } ?: false
+
+/* GENERATED_FIR_TAGS: elvisExpression, functionDeclaration, functionalType, inline, lambdaLiteral, localFunction,
+localProperty, nullableType, propertyDeclaration, safeCall, stringLiteral */

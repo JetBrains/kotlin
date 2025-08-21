@@ -16,3 +16,5 @@ val enumMap = EnumMap(
         JavaEnum.A to "A"
     )
 )
+
+/* GENERATED_FIR_TAGS: flexibleType, javaFunction, javaProperty, javaType, propertyDeclaration, stringLiteral */

@@ -12,3 +12,5 @@ public fun foo(p: String?, r: String?): Int {
     // Auto cast possible
     return <!DEBUG_INFO_SMARTCAST!>p<!>.length
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, doWhileLoop, equalityExpression, functionDeclaration, nullableType, smartcast */

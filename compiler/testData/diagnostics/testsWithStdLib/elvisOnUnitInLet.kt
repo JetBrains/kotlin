@@ -9,3 +9,5 @@ fun foo(x: Int?) {
 
 fun smth() {}
 fun orElse() {}
+
+/* GENERATED_FIR_TAGS: elvisExpression, functionDeclaration, lambdaLiteral, nullableType, safeCall */

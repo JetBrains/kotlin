@@ -1,5 +1,6 @@
 plugins {
     kotlin("jvm")
+    kotlin("plugin.serialization")
 }
 
 dependencies {
@@ -8,7 +9,8 @@ dependencies {
     testApi(platform(libs.junit.bom))
     testImplementation(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)
-    testImplementation(projectTests(":compiler:tests-common-new"))
+    testImplementation(testFixtures(project(":compiler:tests-common-new")))
+    testImplementation(libs.kotlinx.serialization.json)
 }
 
 val defaultSnapshotVersion: String by extra
@@ -27,8 +29,11 @@ projectTest(jUnitMode = JUnitMode.JUnit5) {
     )
     val defaultMavenLocal: String = rootProject.projectDir.resolve("build/repo").absolutePath
     val mavenLocal = System.getProperty("maven.repo.local") ?: defaultMavenLocal
+    val defaultKotlincArtifactPath: String = rootProject.projectDir.resolve("dist/kotlinc").absolutePath
+    val kotlincArtifactPath = System.getProperty("kotlinc.dist.path") ?: defaultKotlincArtifactPath
     doFirst {
         systemProperty("maven.repo.local", mavenLocal)
+        systemProperty("kotlinc.dist.path", kotlincArtifactPath)
         systemProperty("kotlin.version", kotlinVersion)
     }
 }

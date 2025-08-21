@@ -2,6 +2,7 @@ KtNameReferenceExpression(47,53): 'length'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = out
           isSafeNavigation = false
@@ -12,6 +13,7 @@ KtNameReferenceExpression(47,53): 'length'
           receiverType = null
           returnType = kotlin.Int
           symbol = val length: kotlin.Int
+          contextParameters = []
           callableId = java/lang/StringBuilder.length
       simpleAccess = Read
       typeArgumentsMapping = {}

@@ -18,3 +18,7 @@ fun test() {
     }
     listOf(1, 2, 3).<!CANNOT_INFER_PARAMETER_TYPE, NO_CONTEXT_ARGUMENT!>iterator<!>(null)
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, funWithExtensionReceiver, functionDeclaration, functionDeclarationWithContext,
+functionalType, integerLiteral, lambdaLiteral, localProperty, nullableType, propertyDeclaration, thisExpression,
+typeAliasDeclaration, typeAliasDeclarationWithTypeParameter, typeParameter, vararg */

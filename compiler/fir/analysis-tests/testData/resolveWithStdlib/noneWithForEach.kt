@@ -18,3 +18,6 @@ fun foo(conflicting: List<Diagnostic>) {
         )
     }
 }
+
+/* GENERATED_FIR_TAGS: equalityExpression, functionDeclaration, interfaceDeclaration, lambdaLiteral, localProperty,
+propertyDeclaration */

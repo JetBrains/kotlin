@@ -14,3 +14,5 @@ expect class A {
 class <!ACTUAL_MISSING!>A<!> {
     actual fun foo() {}
 }
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, functionDeclaration */

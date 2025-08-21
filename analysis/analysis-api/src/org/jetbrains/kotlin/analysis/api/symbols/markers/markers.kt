@@ -5,7 +5,9 @@
 
 package org.jetbrains.kotlin.analysis.api.symbols.markers
 
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
+import org.jetbrains.kotlin.analysis.api.symbols.KaContextParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaTypeParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
@@ -16,6 +18,7 @@ import org.jetbrains.kotlin.name.Name
  *
  * @see org.jetbrains.kotlin.analysis.api.symbols.name
  */
+@SubclassOptInRequired(KaImplementationDetail::class)
 public interface KaNamedSymbol : KaSymbol {
     /**
      * The simple name of this [KaSymbol].
@@ -48,8 +51,29 @@ public interface KaNamedSymbol : KaSymbol {
  * @see org.jetbrains.kotlin.analysis.api.symbols.typeParameters
  */
 @KaImplementationDetail
+@SubclassOptInRequired(KaImplementationDetail::class)
 public interface KaTypeParameterOwnerSymbol : KaSymbol {
     public val typeParameters: List<KaTypeParameterSymbol>
 
     override fun createPointer(): KaSymbolPointer<KaTypeParameterOwnerSymbol>
+}
+
+/**
+ * A [KaSymbol] with [contextParameters].
+ *
+ * This class is an implementation detail and should not be used directly as a type.
+ * Consider using [contextParameters] directly from the symbol,
+ * or [contextParameters][org.jetbrains.kotlin.analysis.api.symbols.contextParameters] for [KaCallableSymbol][org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol]s.
+ *
+ * @see org.jetbrains.kotlin.analysis.api.symbols.contextParameters
+ */
+@KaExperimentalApi
+@KaImplementationDetail
+@SubclassOptInRequired(KaImplementationDetail::class)
+public interface KaContextParameterOwnerSymbol : KaSymbol {
+    /**
+     * A list of [KaContextParameterSymbol]s directly declared in the symbol.
+     */
+    @KaExperimentalApi
+    public val contextParameters: List<KaContextParameterSymbol>
 }

@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.*
 import org.jetbrains.kotlin.backend.wasm.utils.*
 import org.jetbrains.kotlin.ir.backend.js.dce.UsefulDeclarationProcessor
+import org.jetbrains.kotlin.ir.backend.js.objectGetInstanceFunction
 import org.jetbrains.kotlin.ir.backend.js.utils.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
@@ -31,8 +32,20 @@ internal class WasmUsefulDeclarationProcessor(
     override val bodyVisitor: BodyVisitorBase = object : BodyVisitorBase() {
         override fun visitConst(expression: IrConst, data: IrDeclaration) = when (expression.kind) {
             is IrConstKind.Null -> expression.type.enqueueType(data, "expression type")
-            is IrConstKind.String -> context.wasmSymbols.stringGetLiteral.owner
-                .enqueue(data, "String literal intrinsic getter stringGetLiteral")
+            is IrConstKind.String -> {
+                context.wasmSymbols.createString.owner.enqueue(
+                    data, "String literal construction"
+                )
+                if ((expression.value as String).fitsLatin1) {
+                    // TODO: remove after bootstrap
+                    context.wasmSymbols.wasmGetQualifierImpl.owner
+                        .enqueue(data, "String literal intrinsic getter wasmGetQualifierImpl")
+                } else {
+                    // TODO: remove after bootstrap
+                    context.wasmSymbols.wasmGetSimpleNameImpl.owner
+                        .enqueue(data, "String literal intrinsic getter wasmGetSimpleNameImpl")
+                }
+            }
             else -> Unit
         }
 
@@ -77,6 +90,7 @@ internal class WasmUsefulDeclarationProcessor(
                 true
             }
 
+            context.wasmSymbols.wasmGetTypeRtti,
             context.wasmSymbols.wasmTypeId,
             context.wasmSymbols.refCastNull,
             context.wasmSymbols.refTest,
@@ -109,6 +123,11 @@ internal class WasmUsefulDeclarationProcessor(
             if (function.hasWasmNoOpCastAnnotation()) return
             if (function.getWasmOpAnnotation() != null) return
 
+            if (function == context.wasmSymbols.tryGetAssociatedObject.owner) {
+                context.wasmSymbols.registerModuleDescriptor.owner
+                    .enqueue(function, "Module descriptor is a part of AO runtime")
+            }
+
             val isSuperCall = expression.superQualifierSymbol != null
             if (function is IrSimpleFunction && function.isOverridable && !isSuperCall) {
                 val klass = function.parentAsClass
@@ -128,9 +147,7 @@ internal class WasmUsefulDeclarationProcessor(
                 val annotationClass = annotation.symbol.owner.constructedClass
                 if (removeUnusedAssociatedObjects && !annotationClass.isReachable()) continue
 
-                annotation.associatedObject()?.let { obj ->
-                    context.mapping.objectToGetInstanceFunction[obj]?.enqueue(klass, "associated object factory")
-                }
+                annotation.associatedObject()?.objectGetInstanceFunction?.enqueue(klass, "associated object factory")
             }
         }
     }

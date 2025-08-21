@@ -20,6 +20,12 @@ import java.util.regex.Pattern;
 @TestDataPath("$PROJECT_ROOT")
 public class FirWasmInvalidationTestGenerated extends AbstractFirWasmInvalidationTest {
   @Test
+  @TestMetadata("addJsFunCall")
+  public void testAddJsFunCall() {
+    runTest("js/js.translator/testData/incremental/invalidation/addJsFunCall/");
+  }
+
+  @Test
   @TestMetadata("addUpdateRemoveDependentFile")
   public void testAddUpdateRemoveDependentFile() {
     runTest("js/js.translator/testData/incremental/invalidation/addUpdateRemoveDependentFile/");
@@ -34,6 +40,12 @@ public class FirWasmInvalidationTestGenerated extends AbstractFirWasmInvalidatio
   @Test
   public void testAllFilesPresentInInvalidation() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/incremental/invalidation"), Pattern.compile("^([^_](.+))$"), null, TargetBackend.WASM, false);
+  }
+
+  @Test
+  @TestMetadata("associatedObjectKey")
+  public void testAssociatedObjectKey() {
+    runTest("js/js.translator/testData/incremental/invalidation/associatedObjectKey/");
   }
 
   @Test

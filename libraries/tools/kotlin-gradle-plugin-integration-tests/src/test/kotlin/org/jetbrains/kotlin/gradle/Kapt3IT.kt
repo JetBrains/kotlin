@@ -18,15 +18,19 @@ package org.jetbrains.kotlin.gradle
 
 import org.gradle.api.JavaVersion
 import org.gradle.api.logging.LogLevel
+import org.gradle.api.logging.configuration.WarningMode
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.gradle.android.Kapt4AndroidExternalIT
 import org.jetbrains.kotlin.gradle.android.Kapt4AndroidIT
 import org.jetbrains.kotlin.gradle.tasks.USING_JVM_INCREMENTAL_COMPILATION_MESSAGE
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.addBeforeSubstring
 import org.jetbrains.kotlin.gradle.util.checkedReplace
+import org.jetbrains.kotlin.gradle.util.replaceText
 import org.jetbrains.kotlin.gradle.util.testResolveAllConfigurations
+import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
@@ -86,7 +90,6 @@ abstract class Kapt3BaseIT : KGPBaseTest() {
         projectName: String,
         gradleVersion: GradleVersion,
         buildOptions: BuildOptions = defaultBuildOptions,
-        forceOutput: EnableGradleDebug = EnableGradleDebug.AUTO,
         enableBuildScan: Boolean = false,
         addHeapDumpOptions: Boolean = true,
         enableGradleDebug: EnableGradleDebug = EnableGradleDebug.AUTO,
@@ -102,7 +105,6 @@ abstract class Kapt3BaseIT : KGPBaseTest() {
         projectName = projectName,
         gradleVersion = gradleVersion,
         buildOptions = buildOptions,
-        forceOutput = forceOutput,
         enableBuildScan = enableBuildScan,
         dependencyManagement = dependencyManagement,
         addHeapDumpOptions = addHeapDumpOptions,
@@ -130,10 +132,6 @@ abstract class Kapt3BaseIT : KGPBaseTest() {
  */
 @DisplayName("Kapt 3 with classloaders cache")
 open class Kapt3ClassLoadersCacheIT : Kapt3IT() {
-    override fun TestProject.customizeProject() {
-        forceK1Kapt()
-    }
-
     override fun kaptOptions(): BuildOptions.KaptOptions = super.kaptOptions().copy(
         classLoadersCacheSize = 10,
         includeCompileClasspath = false
@@ -203,10 +201,6 @@ open class Kapt3ClassLoadersCacheIT : Kapt3IT() {
 @DisplayName("Kapt 3 base checks")
 @OtherGradlePluginTests
 open class Kapt3IT : Kapt3BaseIT() {
-    override fun TestProject.customizeProject() {
-        forceK1Kapt()
-    }
-
     @DisplayName("Kapt is skipped when no annotation processors are added")
     @GradleTest
     fun testKaptSkipped(gradleVersion: GradleVersion) {
@@ -420,20 +414,10 @@ open class Kapt3IT : Kapt3BaseIT() {
     @DisplayName("Kapt is working with incremental compilation")
     @GradleTest
     fun testSimpleWithIC(gradleVersion: GradleVersion) {
-        doTestSimpleWithIC(gradleVersion)
-    }
-
-    @DisplayName("Kapt is working with incremental compilation, when kotlin.incremental.useClasspathSnapshot=true")
-    @GradleTest
-    fun testSimpleWithIC_withClasspathSnapshot(gradleVersion: GradleVersion) {
-        doTestSimpleWithIC(gradleVersion, useClasspathSnapshot = true)
-    }
-
-    private fun doTestSimpleWithIC(gradleVersion: GradleVersion, useClasspathSnapshot: Boolean? = null) {
         project(
             "simple".withPrefix,
             gradleVersion,
-            buildOptions = defaultBuildOptions.copy(incremental = true, useGradleClasspathSnapshot = useClasspathSnapshot)
+            buildOptions = defaultBuildOptions.copy(incremental = true)
         ) {
             build("clean", "build") {
                 assertTasksExecuted(":kaptGenerateStubsKotlin", ":kaptKotlin", ":compileKotlin", ":compileJava")
@@ -491,6 +475,7 @@ open class Kapt3IT : Kapt3BaseIT() {
 
     @DisplayName("passes arguments from kapt configuration")
     @GradleTest
+    @TestMetadata("kapt2/arguments")
     fun testArguments(gradleVersion: GradleVersion) {
         project("arguments".withPrefix, gradleVersion) {
             build("build") {
@@ -572,6 +557,7 @@ open class Kapt3IT : Kapt3BaseIT() {
 
     @DisplayName("Should incrementally rebuild on annotation processor arguments change")
     @GradleTest
+    @TestMetadata("kapt2/arguments")
     fun testChangeAPArgumentsICRebuild(gradleVersion: GradleVersion) {
         project("arguments".withPrefix, gradleVersion) {
             build("build") {
@@ -756,7 +742,8 @@ open class Kapt3IT : Kapt3BaseIT() {
 
             buildAndFail("build") {
                 val actual = getErrorMessages()
-                assertEquals(expected = genKotlinErrorString(4, 7), actual = actual)
+                val expectedPropertyLineNumber = if (buildOptions.languageVersion == LanguageVersion.KOTLIN_1_9.versionString) 4 else 5
+                assertEquals(expected = genKotlinErrorString(expectedPropertyLineNumber, 7), actual = actual)
             }
         }
     }
@@ -778,7 +765,9 @@ open class Kapt3IT : Kapt3BaseIT() {
         project(
             "localAnnotationProcessor".withPrefix,
             gradleVersion,
-            dependencyManagement = DependencyManagement.DefaultDependencyManagement(setOf("https://jitpack.io"))
+            dependencyManagement = DependencyManagement.DefaultDependencyManagement(setOf("https://jitpack.io")),
+            // KT-76289 KAPT Gradle Project Isolation Violation
+            buildOptions = defaultBuildOptions.copy(isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED),
         ) {
             build("build")
 
@@ -800,7 +789,7 @@ open class Kapt3IT : Kapt3BaseIT() {
             val exampleSubProjectBuildDir = subProject("example").projectPath.resolve("build")
             build(
                 "build",
-                buildOptions = defaultBuildOptions.copy(incremental = false)
+                buildOptions = buildOptions.copy(incremental = false)
             ) {
                 // Java stubs should not be generated for Kotlin sources generated by annotation processors.
                 assertFileNotExistsInTree(
@@ -925,7 +914,12 @@ open class Kapt3IT : Kapt3BaseIT() {
     @DisplayName("KT19179 and KT37241: kapt is not skipped and does not generate stubs for non-existent entries")
     @GradleTest
     open fun testKt19179andKt37241(gradleVersion: GradleVersion) {
-        project("kt19179".withPrefix, gradleVersion) {
+        project(
+            "kt19179".withPrefix,
+            gradleVersion,
+            // KT-76289 KAPT Gradle Project Isolation Violation
+            buildOptions = defaultBuildOptions.copy(isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED),
+        ) {
 
             build("build") {
                 val processorSubproject = subProject("processor")
@@ -985,7 +979,12 @@ open class Kapt3IT : Kapt3BaseIT() {
     @DisplayName("KT33847: Kapt does not included Filer-generated class files on compilation classpath")
     @GradleTest
     open fun testKt33847(gradleVersion: GradleVersion) {
-        project("kt33847".withPrefix, gradleVersion) {
+        project(
+            "kt33847".withPrefix,
+            gradleVersion,
+            // KT-76289 KAPT Gradle Project Isolation Violation
+            buildOptions = defaultBuildOptions.copy(isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED),
+        ) {
 
             build("build") {
                 val processorSubproject = subProject("processor")
@@ -1041,6 +1040,9 @@ open class Kapt3IT : Kapt3BaseIT() {
             gradleVersion,
             buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)
         ) {
+            if (!isWithJavaSupported) {
+                subProject("dac").buildGradle.replaceText("withJava()", "")
+            }
 
             build(":dac:compileKotlinJvm") {
                 assertTasksExecuted(
@@ -1184,7 +1186,9 @@ open class Kapt3IT : Kapt3BaseIT() {
         project(
             "localAnnotationProcessor".withPrefix,
             gradleVersion,
-            dependencyManagement = DependencyManagement.DefaultDependencyManagement(setOf("https://jitpack.io"))
+            dependencyManagement = DependencyManagement.DefaultDependencyManagement(setOf("https://jitpack.io")),
+            // KT-76289 KAPT Gradle Project Isolation Violation
+            buildOptions = defaultBuildOptions.copy(isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED),
         ) {
             build("assemble")
 
@@ -1210,7 +1214,19 @@ open class Kapt3IT : Kapt3BaseIT() {
     @GradleTest
     @OsCondition(supportedOn = [OS.WINDOWS], enabledOnCI = [OS.WINDOWS])
     fun testDifferentDisksSetupDoesNotFailConfiguration(gradleVersion: GradleVersion) {
-        project("simple".withPrefix, gradleVersion) {
+        project(
+            "simple".withPrefix,
+            gradleVersion,
+            buildOptions = defaultBuildOptions.copy(
+                /*
+                 * We need to set the warning mode to none and disable configuration cache
+                 * because the test fails when emitting the problems report
+                 * https://github.com/gradle/gradle/issues/32778
+                 */
+                warningMode = WarningMode.None,
+                configurationCache = BuildOptions.ConfigurationCacheValue.DISABLED,
+            ),
+        ) {
             fun findAnotherRoot() = ('A'..'Z').first { !projectPath.root.startsWith(it.toString()) }
 
             //language=Gradle
@@ -1244,7 +1260,12 @@ open class Kapt3IT : Kapt3BaseIT() {
     @DisplayName("KT-53135: check that JVM IR backend is enabled by default by verifying that repeatable annotations are supported")
     @GradleTest
     open fun testRepeatableAnnotations(gradleVersion: GradleVersion) {
-        project("repeatableAnnotations".withPrefix, gradleVersion) {
+        project(
+            "repeatableAnnotations".withPrefix,
+            gradleVersion,
+            // KT-76289 KAPT Gradle Project Isolation Violation
+            buildOptions = defaultBuildOptions.copy(isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED),
+        ) {
             build("build") {
                 assertKaptSuccessful()
                 assertTasksExecuted(":kaptGenerateStubsKotlin", ":kaptKotlin", ":compileKotlin")
@@ -1255,7 +1276,12 @@ open class Kapt3IT : Kapt3BaseIT() {
     @DisplayName("Kapt-generated Kotlin sources can be used in Kotlin")
     @GradleTest
     open fun useGeneratedKotlinSource(gradleVersion: GradleVersion) {
-        project("useGeneratedKotlinSource".withPrefix, gradleVersion) {
+        project(
+            "useGeneratedKotlinSource".withPrefix,
+            gradleVersion,
+            // KT-76289 KAPT Gradle Project Isolation Violation
+            buildOptions = defaultBuildOptions.copy(isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED),
+        ) {
             build("build") {
                 assertKaptSuccessful()
                 assertTasksExecuted(":kaptGenerateStubsKotlin", ":kaptKotlin", ":compileKotlin")
@@ -1310,7 +1336,12 @@ open class Kapt3IT : Kapt3BaseIT() {
     @DisplayName("Application of annotation processors is repeated as long as new source files are generated")
     @GradleTest
     open fun testMultipleProcessingPasses(gradleVersion: GradleVersion) {
-        project("multipass".withPrefix, gradleVersion) {
+        project(
+            "multipass".withPrefix,
+            gradleVersion,
+            // KT-76289 KAPT Gradle Project Isolation Violation
+            buildOptions = defaultBuildOptions.copy(isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED),
+        ) {
             build("build") {
                 assertKaptSuccessful()
                 assertOutputContains("No elements for AnnotationProcessor3")

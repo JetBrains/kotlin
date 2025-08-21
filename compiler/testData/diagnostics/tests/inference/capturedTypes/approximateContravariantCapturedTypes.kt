@@ -78,3 +78,7 @@ fun test4() {
 
     foo.x.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>bar<!>()
 }
+
+/* GENERATED_FIR_TAGS: assignment, callableReference, capturedType, classDeclaration, funWithExtensionReceiver,
+functionDeclaration, integerLiteral, localProperty, nullableType, primaryConstructor, propertyDeclaration,
+starProjection, stringLiteral, thisExpression, typeConstraint, typeParameter */

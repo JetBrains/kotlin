@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.config
 
+// TODO (KT-76785): Handling of duplicated names in KLIBs is a workaround that needs to be removed in the future.
 enum class DuplicatedUniqueNameStrategy(val alias: String) {
     DENY(Aliases.DENY),
     ALLOW_ALL_WITH_WARNING(Aliases.ALLOW_ALL_WITH_WARNING),
@@ -20,8 +21,6 @@ enum class DuplicatedUniqueNameStrategy(val alias: String) {
     }
 
     companion object {
-        const val ALL_ALIASES = "${Aliases.DENY}|${Aliases.ALLOW_ALL_WITH_WARNING}|${Aliases.ALLOW_FIRST_WITH_WARNING}"
-
         fun parseOrDefault(flagValue: String?, default: DuplicatedUniqueNameStrategy): DuplicatedUniqueNameStrategy =
             entries.singleOrNull { it.alias == flagValue } ?: default
     }

@@ -64,7 +64,7 @@ class Fir2IrClassifiersGenerator(private val c: Fir2IrComponents) : Fir2IrCompon
     }
 
     fun initializeTypeParameterBounds(typeParameter: FirTypeParameter, irTypeParameter: IrTypeParameter) {
-        irTypeParameter.superTypes = typeParameter.bounds.map { it.toIrType(c) }
+        irTypeParameter.superTypes = typeParameter.bounds.map { it.toIrType() }
     }
 
     // ------------------------------------ classes ------------------------------------
@@ -116,7 +116,7 @@ class Fir2IrClassifiersGenerator(private val c: Fir2IrComponents) : Fir2IrCompon
 
     fun processClassHeader(klass: FirClass, irClass: IrClass = classifierStorage.getIrClass(klass)): IrClass {
         irClass.declareTypeParameters(klass)
-        irClass.setThisReceiver(c, klass.typeParameters)
+        irClass.setThisReceiver(klass.typeParameters)
         irClass.declareSupertypes(klass)
         if (klass is FirRegularClass) {
             irClass.declareValueClassRepresentation(klass)
@@ -136,7 +136,7 @@ class Fir2IrClassifiersGenerator(private val c: Fir2IrComponents) : Fir2IrCompon
     }
 
     private fun IrClass.declareSupertypes(klass: FirClass) {
-        superTypes = klass.superTypeRefs.map { superTypeRef -> superTypeRef.toIrType(c) }
+        superTypes = klass.superTypeRefs.map { superTypeRef -> superTypeRef.toIrType() }
     }
 
     private fun IrClass.declareValueClassRepresentation(klass: FirRegularClass) {
@@ -165,7 +165,7 @@ class Fir2IrClassifiersGenerator(private val c: Fir2IrComponents) : Fir2IrCompon
     }
 
     private fun FirRegularClass.hasAbstractMembersInScope(): Boolean {
-        val scope = unsubstitutedScope(c)
+        val scope = unsubstitutedScope()
         val names = scope.getCallableNames()
         var hasAbstract = false
         for (name in names) {
@@ -198,7 +198,7 @@ class Fir2IrClassifiersGenerator(private val c: Fir2IrComponents) : Fir2IrCompon
     fun createLocalIrClassOnTheFly(klass: FirClass, processMembersOfClassesOnTheFlyImmediately: Boolean): LocalIrClassInfo {
         // finding the parent class that actually contains the [klass] in the tree - it is the root one that should be created on the fly
         val classOrLocalParent = generateSequence(klass) { c ->
-            (c as? FirRegularClass)?.containingClassForLocalAttr?.let { lookupTag ->
+            c.containingClassForLocalAttr?.let { lookupTag ->
                 (lookupTag.toClassSymbol(session)?.fir)?.takeIf {
                     it.declarations.contains(c)
                 }
@@ -287,7 +287,7 @@ class Fir2IrClassifiersGenerator(private val c: Fir2IrComponents) : Fir2IrCompon
             visibility = c.visibilityConverter.convertToDescriptorVisibility(typeAlias.visibility),
             symbol = symbol,
             isActual = typeAlias.isActual,
-            expandedType = typeAlias.expandedTypeRef.toIrType(c),
+            expandedType = typeAlias.expandedTypeRef.toIrType(),
         ).apply {
             this.parent = parent
             this.metadata = FirMetadataSource.TypeAlias(typeAlias)
@@ -325,7 +325,7 @@ class Fir2IrClassifiersGenerator(private val c: Fir2IrComponents) : Fir2IrCompon
                 setParent(containingFile)
                 addDeclarationToParent(this, containingFile)
                 typeParameters = emptyList()
-                setThisReceiver(c, emptyList())
+                setThisReceiver(emptyList())
                 superTypes = listOf(builtins.anyType)
             }
         }
@@ -415,7 +415,7 @@ class Fir2IrClassifiersGenerator(private val c: Fir2IrComponents) : Fir2IrCompon
             classifierStorage.getIrTypeParameter(typeParameter, index, typeOrigin).apply {
                 parent = irOwner
                 if (superTypes.isEmpty()) {
-                    superTypes = typeParameter.bounds.map { it.toIrType(c, typeOrigin) }
+                    superTypes = typeParameter.bounds.map { it.toIrType(typeOrigin) }
                 }
             }
         }
@@ -442,7 +442,7 @@ class Fir2IrClassifiersGenerator(private val c: Fir2IrComponents) : Fir2IrCompon
             setParent(irParent)
             addDeclarationToParent(this, irParent)
             typeParameters = emptyList()
-            setThisReceiver(c, emptyList())
+            setThisReceiver(emptyList())
             superTypes = listOf(builtins.anyType)
         }
     }

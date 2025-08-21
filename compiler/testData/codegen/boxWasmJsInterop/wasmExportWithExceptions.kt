@@ -1,5 +1,5 @@
 // TARGET_BACKEND: WASM
-// MODULE: main
+/// MODULE: main
 // FILE: main.kt
 
 import kotlin.wasm.WasmExport
@@ -14,11 +14,18 @@ fun box() = "OK"
 // FILE: entry.mjs
 import { runWithException } from "./index.mjs"
 
+let nothrow = false;
 try {
     runWithException()
-    throw "Unexpected successful call"
+    nothrow = true
 } catch(e) {
-    if (!(e instanceof WebAssembly.Exception)) {
-        throw "Expected to have WebAssembly.Exception, but '" + e.constructor.name + "' was received"
+    if (!(e instanceof Error)) {
+        throw Error("Expected instance of Error, but '" + e.name +"' ('" + e.constructor.name + "') was received")
+    }
+
+    if (e.name !== "AssertionError" ) {
+        throw Error("Wrong e.name = '" + e.name + "'")
     }
 }
+
+if (nothrow) throw Error("Unexpected successful call");

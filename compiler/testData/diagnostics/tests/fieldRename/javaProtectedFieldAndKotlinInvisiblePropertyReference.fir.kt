@@ -97,3 +97,7 @@ class DirectlyDerived : BaseJava() {
 fun test(d: Derived) {
     d::<!INVISIBLE_REFERENCE!>a<!> // Field is also invisible
 }
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, flexibleType, functionDeclaration, getter,
+javaCallableReference, javaProperty, javaType, localClass, propertyDeclaration, stringLiteral, thisExpression,
+typeAliasDeclaration */

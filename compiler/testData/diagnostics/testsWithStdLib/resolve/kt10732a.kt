@@ -10,3 +10,5 @@ fun <T1> bar(x: List<T1>) = x
 
 @JvmName("bar1")
 fun <T2> bar(x: List<T2>?) = x
+
+/* GENERATED_FIR_TAGS: funWithExtensionReceiver, functionDeclaration, nullableType, stringLiteral, typeParameter */

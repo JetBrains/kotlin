@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.types.model
 
+import org.jetbrains.kotlin.builtins.functions.AllowedToUsedOnlyInK1
 import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
 import org.jetbrains.kotlin.resolve.checkers.EmptyIntersectionTypeChecker
 import org.jetbrains.kotlin.resolve.checkers.EmptyIntersectionTypeInfo
@@ -77,14 +78,30 @@ interface TypeSystemBuiltInsContext {
 /**
  * Context that allow construction of types
  */
-interface TypeSystemTypeFactoryContext: TypeSystemBuiltInsContext {
+interface TypeSystemTypeFactoryContext : TypeSystemContext, TypeSystemBuiltInsContext {
     fun createFlexibleType(lowerBound: RigidTypeMarker, upperBound: RigidTypeMarker): KotlinTypeMarker
+
+    fun createTrivialFlexibleTypeOrSelf(lowerBound: KotlinTypeMarker): KotlinTypeMarker {
+        if (lowerBound.isFlexible()) return lowerBound
+        return createFlexibleType(lowerBound.lowerBoundIfFlexible(), lowerBound.lowerBoundIfFlexible().withNullability(true))
+    }
+
+    fun isTriviallyFlexible(flexibleType: FlexibleTypeMarker): Boolean = false
+
+    fun makeLowerBoundDefinitelyNotNullOrNotNull(flexibleType: FlexibleTypeMarker): KotlinTypeMarker {
+        return createFlexibleType(
+            flexibleType.lowerBound().makeDefinitelyNotNullOrNotNull(),
+            flexibleType.upperBound()
+        )
+    }
+
     fun createSimpleType(
         constructor: TypeConstructorMarker,
         arguments: List<TypeArgumentMarker>,
         nullable: Boolean,
         isExtensionFunction: Boolean = false,
-        attributes: List<AnnotationMarker>? = null
+        contextParameterCount: Int = 0,
+        attributes: List<AnnotationMarker>? = null,
     ): SimpleTypeMarker
 
     fun createTypeArgument(type: KotlinTypeMarker, variance: TypeVariance): TypeArgumentMarker
@@ -162,8 +179,6 @@ interface TypeSystemInferenceExtensionContextDelegate : TypeSystemInferenceExten
 interface TypeSystemInferenceExtensionContext : TypeSystemContext, TypeSystemBuiltInsContext, TypeSystemCommonSuperTypesContext {
     fun KotlinTypeMarker.contains(predicate: (KotlinTypeMarker) -> Boolean): Boolean
 
-    fun TypeConstructorMarker.isUnitTypeConstructor(): Boolean
-
     fun TypeConstructorMarker.getApproximatedIntegerLiteralType(expectedType: KotlinTypeMarker?): KotlinTypeMarker
 
     fun TypeConstructorMarker.isCapturedTypeConstructor(): Boolean
@@ -229,16 +244,16 @@ interface TypeSystemInferenceExtensionContext : TypeSystemContext, TypeSystemBui
 
     fun TypeConstructorMarker.isFinalClassConstructor(): Boolean
 
-    fun TypeVariableMarker.freshTypeConstructor(): TypeConstructorMarker
+    fun TypeVariableMarker.freshTypeConstructor(): TypeVariableTypeConstructorMarker
 
     fun CapturedTypeMarker.typeConstructorProjection(): TypeArgumentMarker
     fun CapturedTypeMarker.typeParameter(): TypeParameterMarker?
+
+    @AllowedToUsedOnlyInK1
     fun CapturedTypeMarker.withNotNullProjection(): KotlinTypeMarker
 
-    /**
-     * Only for K2.
-     */
-    fun CapturedTypeMarker.hasRawSuperType(): Boolean
+    @K2Only
+    fun CapturedTypeMarker.hasRawSuperTypeRecursive(): Boolean
 
     fun TypeVariableMarker.defaultType(): SimpleTypeMarker
 
@@ -266,6 +281,8 @@ interface TypeSystemInferenceExtensionContext : TypeSystemContext, TypeSystemBui
     fun KotlinTypeMarker.functionTypeKind(): FunctionTypeKind?
 
     fun KotlinTypeMarker.isExtensionFunctionType(): Boolean
+
+    fun KotlinTypeMarker.contextParameterCount(): Int
 
     fun KotlinTypeMarker.extractArgumentsForFunctionTypeOrSubtype(): List<KotlinTypeMarker>
 
@@ -307,20 +324,19 @@ interface TypeSystemInferenceExtensionContext : TypeSystemContext, TypeSystemBui
         }
 
     /**
-     * For case Foo <: (T..T?) return LowerConstraint for new constraint LowerConstraint <: T
-     * In K1, in case nullable it was just Foo?, so constraint was Foo? <: T
-     * But it's not 100% correct because prevent having not-nullable upper constraint on T while initial (Foo? <: (T..T?)) is not violated
+     * This flag handles the LowerConstraint returned for the case Foo(?) <: (T..T?)
      *
-     * In K2 (with +JavaTypeParameterDefaultRepresentationWithDNN), we try to have a correct one: (Foo & Any..Foo?) <: T
+     * With this flag (K2 +PreciseSimplificationFlexibleLowerConstraint),
+     * we use precise (Foo!!..Foo?) <: T for nullable type and (Foo!!..Foo) <: T for non-null type.
      *
-     * The same logic applies for T! <: UpperConstraint, as well
-     * In K1, it was reduced to T <: UpperConstraint..UpperConstraint?
-     * In K2 (with +JavaTypeParameterDefaultRepresentationWithDNN), we use UpperConstraint & Any..UpperConstraint?
+     * Without it (K1 or K2 -PreciseSimplificationToFlexibleLowerConstraint), we use Foo <: T for nullable type instead
+     * and it can lead to information loss. E.g. with initial constraints T = Bar, Bar? <: U, U? <: (T..T?)
+     * we infer a lower constraint U <: T and get Bar? <: Bar contradiction.
      *
-     * In future once we have only K2 (or FE 1.0 behavior is fixed) this method should be inlined to the use-site
-     * TODO: Get rid of this function once KT-59138 is fixed and the relevant feature for disabling it will be removed
+     * In K1 and early versions of K2 (2.0-2.2) this problem is mitigated with so-called TypePreservingVisibilityWrtHack,
+     * that allows us to use flexible types for explicit type arguments of Java type parameters
      */
-    fun useRefinedBoundsForTypeVariableInFlexiblePosition(): Boolean
+    fun usePreciseSimplificationToFlexibleLowerConstraint(): Boolean
 
     /**
      * It's only relevant for K2 (and is not expected to be implemented properly in other contexts)
@@ -339,8 +355,11 @@ interface TypeSystemInferenceExtensionContext : TypeSystemContext, TypeSystemBui
         val superType = intersectTypes(
             typesForRecursiveTypeParameters.map { type ->
                 type.replaceArgumentsDeeply {
-                    val constructor = it.getType()?.typeConstructor()
-                    if (constructor is TypeVariableTypeConstructorMarker && constructor == typeVariable) starProjection else it
+                    when (val typeConstructor = it.getType()?.typeConstructor()) {
+                        typeVariable -> starProjection
+                        is TypeVariableTypeConstructorMarker -> createTypeArgument(createUninferredType(typeConstructor), it.getVariance())
+                        else -> it
+                    }
                 }
             }
         )
@@ -351,9 +370,11 @@ interface TypeSystemInferenceExtensionContext : TypeSystemContext, TypeSystemBui
     fun createSubstitutorForSuperTypes(baseType: KotlinTypeMarker): TypeSubstitutorMarker?
 
     fun computeEmptyIntersectionTypeKind(types: Collection<KotlinTypeMarker>): EmptyIntersectionTypeInfo? =
-        EmptyIntersectionTypeChecker.computeEmptyIntersectionEmptiness(this, types)
+        EmptyIntersectionTypeChecker.computeEmptyIntersectionEmptiness(types)
 
     val isK2: Boolean
+
+    val allowSemiFixationToOtherTypeVariables: Boolean get() = false
 }
 
 
@@ -419,6 +440,8 @@ interface TypeSystemContext : TypeSystemOptimizationContext {
     fun CapturedTypeMarker.isOldCapturedType(): Boolean
     fun CapturedTypeMarker.typeConstructor(): CapturedTypeConstructorMarker
     fun CapturedTypeMarker.captureStatus(): CaptureStatus
+
+    @AllowedToUsedOnlyInK1
     fun CapturedTypeMarker.isProjectionNotNull(): Boolean
     fun CapturedTypeConstructorMarker.projection(): TypeArgumentMarker
 
@@ -508,6 +531,10 @@ interface TypeSystemContext : TypeSystemOptimizationContext {
     fun KotlinTypeMarker.typeConstructor(): TypeConstructorMarker =
         (asRigidType() ?: lowerBoundIfFlexible()).typeConstructor()
 
+    /**
+     * [considerTypeVariableBounds] is only relevant in K2.
+     */
+    fun KotlinTypeMarker.isNullableType(considerTypeVariableBounds: Boolean): Boolean = isNullableType()
     fun KotlinTypeMarker.isNullableType(): Boolean
 
     fun KotlinTypeMarker.isNullableAny() = this.typeConstructor().isAnyConstructor() && this.isNullableType()

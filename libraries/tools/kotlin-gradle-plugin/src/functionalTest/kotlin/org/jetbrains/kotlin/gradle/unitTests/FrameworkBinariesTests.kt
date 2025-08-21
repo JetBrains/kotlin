@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.gradle.tasks.FatFrameworkTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinNativeLink
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import org.jetbrains.kotlin.gradle.util.kotlin
-import org.jetbrains.kotlin.gradle.utils.setAttribute
+import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
 import org.jetbrains.kotlin.utils.addToStdlib.assertedCast
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -86,11 +86,11 @@ class FrameworkBinariesTests {
         val frameworkProducer = buildProjectWithMPP {
             kotlin {
                 iosArm64 {
-                    attributes.setAttribute(disambiguation1Attribute, "someValue")
+                    attributes.attribute(disambiguation1Attribute, "someValue")
                     binaries {
                         framework("main")
                         framework("custom") {
-                            attributes.setAttribute(disambiguation2Attribute, "someValue2")
+                            attributes.attribute(disambiguation2Attribute, "someValue2")
                         }
                     }
                 }
@@ -123,10 +123,10 @@ class FrameworkBinariesTests {
         val buildTypes = listOf("release", "debug")
         testCases.forEach { testCase ->
             buildTypes.forEach { buildType ->
-                val mainFrameworkConfiguration = frameworkProducer.configurations.getByName("main${buildType.capitalize()}Framework${testCase.target.capitalize()}")
+                val mainFrameworkConfiguration = frameworkProducer.configurations.getByName("main${buildType.capitalizeAsciiOnly()}Framework${testCase.target.capitalizeAsciiOnly()}")
                 mainFrameworkConfiguration.validateOutgoing(
                     OutgoingArtifactCheck(
-                        buildType = buildType.toUpperCase(),
+                        buildType = buildType.uppercase(),
                         frameworkTargets = setOf(testCase.targetAttribute),
                         frameworkName = "main.framework",
                         disambiguation1Attribute = testCase.expectedDisambiguation1Attribute,
@@ -154,9 +154,9 @@ class FrameworkBinariesTests {
             kotlin {
                 iosArm64 {
                     // Applying attributes at either target or framework level doesn't affect outgoing universal framework configuration
-                    attributes.setAttribute(disambiguation1Attribute, "someValue")
+                    attributes.attribute(disambiguation1Attribute, "someValue")
                     binaries.framework("main") {
-                        attributes.setAttribute(disambiguation2Attribute, "someValue2")
+                        attributes.attribute(disambiguation2Attribute, "someValue2")
                     }
                 }
                 iosX64 {
@@ -167,10 +167,10 @@ class FrameworkBinariesTests {
 
         val buildTypes = listOf("release", "debug")
         buildTypes.forEach { buildType ->
-            val universalFrameworkConfiguration = frameworkProducer.configurations.getByName("main${buildType.capitalize()}FrameworkIosFat")
+            val universalFrameworkConfiguration = frameworkProducer.configurations.getByName("main${buildType.capitalizeAsciiOnly()}FrameworkIosFat")
             universalFrameworkConfiguration.validateOutgoing(
                 OutgoingArtifactCheck(
-                    buildType = buildType.toUpperCase(),
+                    buildType = buildType.uppercase(),
                     frameworkTargets = setOf("ios_x64", "ios_arm64"),
                     frameworkName = "main.framework",
                     disambiguation1Attribute = null,

@@ -9,3 +9,6 @@ fun test(t: Tr<out String>) {
     // so TYPE_MISMATCH: String is not <: of Captured(out String)
     t.<!SETTER_PROJECTED_OUT!>v<!> += null!!
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, assignment, capturedType, checkNotNullCall, functionDeclaration,
+interfaceDeclaration, localProperty, nullableType, outProjection, propertyDeclaration, typeParameter */

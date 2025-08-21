@@ -19,7 +19,7 @@ The following environment variables must be set:
 export DEPLOY_VERSION=1.8.0
 export BUILD_NUMBER=1.8.0-release-345
 export KOTLIN_NATIVE_VERSION=1.8.0
-export DOCKER_CONTAINER_URL=kotlin.registry.jetbrains.space/p/kotlin/containers/kotlin-build-env:v6
+export DOCKER_CONTAINER_URL=registry.jetbrains.team/p/kt/containers-public/kotlin-build-env:v6
 ```
 
 Optional: The docker image can be built locally with the `kotlin-build-env.dockerfile` file.

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // JDK_KIND: FULL_JDK_11
 
@@ -44,3 +45,5 @@ import a.A
 fun usage(): String {
     return A().toString()
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, javaFunction */

@@ -22,13 +22,14 @@ import org.jetbrains.kotlin.resolve.checkers.OptInDescription
 import org.jetbrains.kotlin.resolve.checkers.OptInNames
 
 object FirOptInAnnotationClassChecker : FirRegularClassChecker(MppCheckerKind.Common) {
-    override fun check(declaration: FirRegularClass, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirRegularClass) {
         if (declaration.classKind != ClassKind.ANNOTATION_CLASS) return
         val session = context.session
         if (declaration.getAnnotationByClassId(OptInNames.REQUIRES_OPT_IN_CLASS_ID, session) == null) return
         if (declaration.getRetention(session) == AnnotationRetention.SOURCE) {
             val target = declaration.getRetentionAnnotation(session)
-            reporter.reportOn(target?.source, FirErrors.OPT_IN_MARKER_WITH_WRONG_RETENTION, context)
+            reporter.reportOn(target?.source, FirErrors.OPT_IN_MARKER_WITH_WRONG_RETENTION)
 
         }
         val wrongTargets = declaration.getAllowedAnnotationTargets(session).intersect(OptInDescription.WRONG_TARGETS_FOR_MARKER)
@@ -37,8 +38,7 @@ object FirOptInAnnotationClassChecker : FirRegularClassChecker(MppCheckerKind.Co
             reporter.reportOn(
                 target?.source,
                 FirErrors.OPT_IN_MARKER_WITH_WRONG_TARGET,
-                wrongTargets.joinToString(transform = KotlinTarget::description),
-                context
+                wrongTargets.joinToString(transform = KotlinTarget::description)
             )
         }
     }

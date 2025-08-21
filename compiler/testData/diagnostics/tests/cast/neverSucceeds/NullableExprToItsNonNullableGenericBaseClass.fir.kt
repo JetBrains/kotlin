@@ -18,3 +18,6 @@ fun test2(value: FooBar?) {
     value as Foo<*>?
     value as? Foo<*>?
 }
+
+/* GENERATED_FIR_TAGS: asExpression, classDeclaration, functionDeclaration, nullableType, smartcast, starProjection,
+typeParameter */

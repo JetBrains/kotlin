@@ -28,6 +28,9 @@ import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
 import org.jetbrains.kotlin.gradle.utils.KotlinJsCompilerOptionsDefault
 import javax.inject.Inject
 
+/**
+ * Compile executable JS or Wasm files from KLibs.
+ */
 @CacheableTask
 abstract class KotlinJsIrLink @Inject constructor(
     project: Project,
@@ -78,7 +81,7 @@ abstract class KotlinJsIrLink @Inject constructor(
         get() = super.taskBuildCacheableOutputDirectory
 
     @get:Internal
-    @get:Deprecated("Please use modeProperty instead.")
+    @get:Deprecated("Internal development property. Scheduled for removal in Kotlin 2.4.")
     var mode: KotlinJsBinaryMode
         get() = modeProperty.get()
         set(value) {

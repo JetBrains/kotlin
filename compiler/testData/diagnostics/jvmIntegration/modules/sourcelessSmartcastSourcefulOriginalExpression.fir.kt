@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // JDK_KIND: FULL_JDK_11
 
 // Inspired by:
@@ -9,3 +10,6 @@ fun Any.test() = when {
     this is <!JAVA_MODULE_DOES_NOT_EXPORT_PACKAGE!>sun.swing.ImageIconUIResource<!> -> description
     else -> "emptyness"
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, funWithExtensionReceiver, functionDeclaration, isExpression, javaProperty,
+smartcast, stringLiteral, thisExpression, whenExpression */

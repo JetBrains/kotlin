@@ -1,3 +1,5 @@
+// COMPILATION_ERRORS
+
 val ``: Int = 1
 
 fun ``() {}

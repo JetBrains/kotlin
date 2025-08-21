@@ -82,7 +82,8 @@ internal class CEnumClassGenerator(
                 descriptor.enumEntries.mapTo(enumIrClass.declarations) { entryDescriptor ->
                     createEnumEntry(descriptor, entryDescriptor)
                 }
-                enumClassMembersGenerator.generateSpecialMembers(enumIrClass)
+                // Always generate `.entries` for CEnums.
+                enumClassMembersGenerator.generateSpecialMembers(enumIrClass, withEnumEntries = true)
                 enumIrClass.addChild(cEnumCompanionGenerator.generate(enumIrClass))
                 enumIrClass.addChild(cEnumVarClassGenerator.generate(enumIrClass))
             }
@@ -102,7 +103,7 @@ internal class CEnumClassGenerator(
             ).also {
                 postLinkageSteps.add {
                     it.initializer = irBuiltIns.createIrBuilder(it.symbol, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET).run {
-                        irExprBody(irGet(irClass.primaryConstructor!!.valueParameters[0]))
+                        irExprBody(irGet(irClass.primaryConstructor!!.parameters[0]))
                     }
                 }
             }
@@ -135,7 +136,7 @@ internal class CEnumClassGenerator(
                             symbol = constructorSymbol,
                             typeArgumentsCount = 0,
                     ).also {
-                        it.putValueArgument(0, extractEnumEntryValue(entryDescriptor))
+                        it.arguments[0] = extractEnumEntryValue(entryDescriptor)
                     },
             )
         }

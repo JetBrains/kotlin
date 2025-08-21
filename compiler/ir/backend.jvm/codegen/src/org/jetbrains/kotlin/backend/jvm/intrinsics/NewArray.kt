@@ -18,7 +18,7 @@ import org.jetbrains.org.objectweb.asm.Type
 
 object NewArray : IntrinsicMethod() {
     override fun invoke(expression: IrFunctionAccessExpression, codegen: ExpressionCodegen, data: BlockInfo): PromisedValue {
-        codegen.gen(expression.getValueArgument(0)!!, Type.INT_TYPE, codegen.context.irBuiltIns.intType, data)
+        codegen.gen(expression.arguments[0]!!, Type.INT_TYPE, codegen.context.irBuiltIns.intType, data)
         return with(codegen) {
             val elementIrType = expression.type.getArrayElementType(context.irBuiltIns)
             if (expression.type.isArray() || expression.type.isNullableArray()) {

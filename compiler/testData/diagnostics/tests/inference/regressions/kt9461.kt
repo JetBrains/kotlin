@@ -17,3 +17,6 @@ fun test(c: C<E, Int>, e: E) {
     e.foo2 { c }
     e.foo2 ({ c })
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType, in,
+interfaceDeclaration, lambdaLiteral, nullableType, typeConstraint, typeParameter */

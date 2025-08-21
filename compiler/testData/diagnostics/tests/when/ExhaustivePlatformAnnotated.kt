@@ -119,3 +119,6 @@ fun test_12(): Int {
         <!REDUNDANT_ELSE_IN_WHEN!>else<!> -> 4
     }
 }
+
+/* GENERATED_FIR_TAGS: equalityExpression, flexibleType, functionDeclaration, integerLiteral, javaProperty, javaType,
+nullableType, smartcast, whenExpression, whenWithSubject */

@@ -48,6 +48,9 @@ import org.jetbrains.kotlin.library.impl.isKotlinLibrary
 import java.io.File
 import javax.inject.Inject
 
+/**
+ * Compile Kotlin/JS or Kotlin/Wasm targets into a KLib.
+ */
 @CacheableTask
 abstract class Kotlin2JsCompile @Inject constructor(
     final override val compilerOptions: KotlinJsCompilerOptions,
@@ -64,8 +67,11 @@ abstract class Kotlin2JsCompile @Inject constructor(
         compilerOptions.verbose.convention(logger.isDebugEnabled)
     }
 
-    @Suppress("DEPRECATION")
-    @Deprecated(KOTLIN_OPTIONS_DEPRECATION_MESSAGE)
+    @Suppress("DEPRECATION_ERROR")
+    @Deprecated(
+        message = KOTLIN_OPTIONS_DEPRECATION_MESSAGE,
+        level = DeprecationLevel.ERROR,
+    )
     override val kotlinOptions: KotlinJsOptions = KotlinJsOptionsCompat(
         { this },
         compilerOptions
@@ -116,7 +122,8 @@ abstract class Kotlin2JsCompile @Inject constructor(
     internal var executionTimeFreeCompilerArgs: List<String>? = null
 
     @get:Deprecated(
-        message = "Task.moduleName is not used in Kotlin/JS"
+        message = "Task.moduleName is not used in Kotlin/JS. Scheduled for removal in Kotlin 2.3.",
+        level = DeprecationLevel.ERROR,
     )
     @get:Optional
     @get:Input
@@ -179,6 +186,8 @@ abstract class Kotlin2JsCompile @Inject constructor(
             // Overriding freeArgs from compilerOptions with enhanced one + additional one set on execution phase
             // containing additional arguments based on the js compilation configuration
             args.freeArgs = executionTimeFreeCompilerArgs ?: enhancedFreeCompilerArgs.get().toList()
+
+            args.separateKmpCompilationScheme = separateKmpCompilation.get()
         }
 
         pluginClasspath { args ->
@@ -211,6 +220,9 @@ abstract class Kotlin2JsCompile @Inject constructor(
             if (multiPlatformEnabled.get()) {
                 if (compilerOptions.usesK2.get()) {
                     args.fragmentSources = multiplatformStructure.fragmentSourcesCompilerArgs(sources.files, sourceFileFilter)
+                    args.fragmentDependencies = if (separateKmpCompilation.get()) {
+                        multiplatformStructure.fragmentDependenciesCompilerArgs
+                    } else emptyArray()
                 } else {
                     args.commonSources = commonSourceSet.asFileTree.toPathsArray()
                 }
@@ -318,7 +330,7 @@ abstract class Kotlin2JsCompile @Inject constructor(
 
         val gradlePrintingMessageCollector = GradlePrintingMessageCollector(logger, args.allWarningsAsErrors)
         val gradleMessageCollector =
-            GradleErrorMessageCollector(logger, gradlePrintingMessageCollector, kotlinPluginVersion = getKotlinPluginVersion(logger))
+            GradleErrorMessageCollector(logger, gradlePrintingMessageCollector)
         val outputItemCollector = OutputItemsCollectorImpl()
         val compilerRunner = compilerRunner.get()
 

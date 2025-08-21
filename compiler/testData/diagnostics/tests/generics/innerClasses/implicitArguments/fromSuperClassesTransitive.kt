@@ -1,6 +1,6 @@
 // FIR_IDENTICAL
 // RUN_PIPELINE_TILL: FRONTEND
-// DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER -TOPLEVEL_TYPEALIASES_ONLY
+// DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER -TOPLEVEL_TYPEALIASES_ONLY -UNSUPPORTED_FEATURE
 // CHECK_TYPE
 open class Outer<X, Y> {
     inner class Inner<Z>
@@ -19,3 +19,7 @@ fun foo() {
     Derived().foo() checkType { _<Outer<Int, String>.Inner<Char>>() }
     Derived().baz() checkType { _<Map<Char, Int>>() }
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType,
+infix, inner, lambdaLiteral, nullableType, typeAliasDeclaration, typeAliasDeclarationWithTypeParameter, typeParameter,
+typeWithExtension */

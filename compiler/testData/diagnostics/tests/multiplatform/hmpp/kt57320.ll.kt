@@ -32,9 +32,13 @@ expect fun StringDemoInterface.plusK(): String
 // FILE: StringDemoInterfaceJs.kt
 actual typealias StringDemoInterface = KotlinXStringDemoInterface
 
-actual fun StringDemoInterface.<!ACTUAL_WITHOUT_EXPECT("actual fun KotlinXStringDemoInterface.plusK(): <ERROR TYPE REF: Unresolved name: value>; The following declaration is incompatible because return type is different:    expect fun StringDemoInterface.plusK(): String")!>plusK<!>() = <!EXPECT_CLASS_AS_FUNCTION!>StringValue<!>(value).plus("K").<!UNRESOLVED_REFERENCE!>value<!>
+actual fun StringDemoInterface.<!EXPECT_ACTUAL_INCOMPATIBLE_RETURN_TYPE!>plusK<!>() = <!EXPECT_CLASS_AS_FUNCTION!>StringValue<!>(value).plus("K").<!UNRESOLVED_REFERENCE!>value<!>
 
 // FILE: main.kt
 class StringDemo(override val value: String) : StringDemoInterface
 
 fun box() = StringDemo("O").plusK()
+
+/* GENERATED_FIR_TAGS: actual, additiveExpression, classDeclaration, expect, funWithExtensionReceiver,
+functionDeclaration, interfaceDeclaration, override, primaryConstructor, propertyDeclaration, stringLiteral,
+thisExpression, typeAliasDeclaration */

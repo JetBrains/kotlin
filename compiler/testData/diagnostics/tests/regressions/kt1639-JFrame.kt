@@ -12,3 +12,6 @@ class KFrame() : JFrame() {
         val x = this.rootPaneCheckingEnabled // make sure field is visible
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, init, javaProperty, localProperty, primaryConstructor, propertyDeclaration,
+thisExpression */

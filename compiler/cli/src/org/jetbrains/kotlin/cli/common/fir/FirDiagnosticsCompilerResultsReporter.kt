@@ -6,17 +6,13 @@
 package org.jetbrains.kotlin.cli.common.fir
 
 import org.jetbrains.kotlin.cli.common.messages.*
-import org.jetbrains.kotlin.diagnostics.DiagnosticUtils
-import org.jetbrains.kotlin.diagnostics.KtDiagnostic
-import org.jetbrains.kotlin.diagnostics.KtPsiDiagnostic
-import org.jetbrains.kotlin.diagnostics.Severity
+import org.jetbrains.kotlin.diagnostics.*
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
-import org.jetbrains.kotlin.diagnostics.rendering.RootDiagnosticRendererFactory
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import java.io.Closeable
 import java.io.File
 import java.io.InputStreamReader
-import java.util.TreeSet
+import java.util.*
 
 object FirDiagnosticsCompilerResultsReporter {
     fun reportToMessageCollector(
@@ -45,7 +41,7 @@ object FirDiagnosticsCompilerResultsReporter {
     }
 
     private fun reportByFile(
-        diagnosticsCollector: BaseDiagnosticsCollector, report: (KtDiagnostic, CompilerMessageSourceLocation) -> Unit
+        diagnosticsCollector: BaseDiagnosticsCollector, report: (KtDiagnostic, CompilerMessageSourceLocation?) -> Unit
     ): Boolean {
         var hasErrors = false
         for (filePath in diagnosticsCollector.diagnosticsByFilePath.keys) {
@@ -61,8 +57,8 @@ object FirDiagnosticsCompilerResultsReporter {
                 val offsetsToPositions = positionFinder.value?.let { finder ->
                     val sortedOffsets = TreeSet<Int>().apply {
                         for (diagnostic in diagnosticList) {
-                            if (diagnostic !is KtPsiDiagnostic) {
-                                val range = DiagnosticUtils.firstRange(diagnostic.textRanges)
+                            if (diagnostic is KtDiagnosticWithSource && diagnostic !is KtPsiDiagnostic) {
+                                val range = diagnostic.firstRange
                                 add(range.startOffset)
                                 add(range.endOffset)
                             }
@@ -72,32 +68,34 @@ object FirDiagnosticsCompilerResultsReporter {
                 }
 
                 for (diagnostic in diagnosticList.sortedWith(InFileDiagnosticsComparator)) {
-                    when (diagnostic) {
-                        is KtPsiDiagnostic -> {
-                            val file = diagnostic.element.psi.containingFile
-                            MessageUtil.psiFileToMessageLocation(
-                                file,
-                                file.name,
-                                DiagnosticUtils.getLineAndColumnRange(file, diagnostic.textRanges)
-                            )
-                        }
-                        else -> {
-                            // TODO: bring KtSourceFile and KtSourceFileLinesMapping here and rewrite reporting via it to avoid code duplication
-                            // NOTE: SequentialPositionFinder relies on the ascending order of the input offsets, so the code relies
-                            // on the the appropriate sorting above
-                            offsetsToPositions?.let {
-                                val range = DiagnosticUtils.firstRange(diagnostic.textRanges)
-                                val start = offsetsToPositions[range.startOffset]!!
-                                val end = offsetsToPositions[range.endOffset]!!
-                                MessageUtil.createMessageLocation(
-                                    filePath, start.lineContent, start.line, start.column, end.line, end.column
+                    val location = when (diagnostic) {
+                        is KtDiagnosticWithoutSource -> null
+                        is KtDiagnosticWithSource -> when (diagnostic) {
+                            is KtPsiDiagnostic -> {
+                                val file = diagnostic.element.psi.containingFile
+                                MessageUtil.psiFileToMessageLocation(
+                                    file,
+                                    file.name,
+                                    DiagnosticUtils.getLineAndColumnRange(file, diagnostic.textRanges)
                                 )
                             }
+                            else -> {
+                                // TODO: bring KtSourceFile and KtSourceFileLinesMapping here and rewrite reporting via it to avoid code duplication
+                                // NOTE: SequentialPositionFinder relies on the ascending order of the input offsets, so the code relies
+                                // on the the appropriate sorting above
+                                offsetsToPositions?.let {
+                                    val range = diagnostic.firstRange
+                                    val start = offsetsToPositions[range.startOffset]!!
+                                    val end = offsetsToPositions[range.endOffset]!!
+                                    MessageUtil.createMessageLocation(
+                                        filePath, start.lineContent, start.line, start.column, end.line, end.column
+                                    )
+                                }
+                            }
                         }
-                    }?.let { location ->
-                        report(diagnostic, location)
-                        hasErrors = hasErrors || diagnostic.severity == Severity.ERROR
                     }
+                    report(diagnostic, location)
+                    hasErrors = hasErrors || diagnostic.severity == Severity.ERROR
                 }
             } finally {
                 if (positionFinder.isInitialized()) {
@@ -110,14 +108,12 @@ object FirDiagnosticsCompilerResultsReporter {
 
     private fun reportDiagnosticToMessageCollector(
         diagnostic: KtDiagnostic,
-        location: CompilerMessageSourceLocation,
+        location: CompilerMessageSourceLocation?,
         reporter: MessageCollector,
         renderDiagnosticName: Boolean
     ) {
         val severity = AnalyzerWithCompilerReport.convertSeverity(diagnostic.severity)
-        val renderer = RootDiagnosticRendererFactory(diagnostic)
-
-        val message = renderer.render(diagnostic)
+        val message = diagnostic.renderMessage()
         val textToRender = when (renderDiagnosticName) {
             true -> "[${diagnostic.factoryName}] $message"
             false -> message
@@ -128,24 +124,24 @@ object FirDiagnosticsCompilerResultsReporter {
 
     private fun throwErrorDiagnosticAsException(
         diagnostic: KtDiagnostic,
-        location: CompilerMessageSourceLocation,
+        location: CompilerMessageSourceLocation?,
         messageRenderer: MessageRenderer
     ) {
         if (diagnostic.severity == Severity.ERROR) {
             val severity = AnalyzerWithCompilerReport.convertSeverity(diagnostic.severity)
-            val renderer = RootDiagnosticRendererFactory(diagnostic)
-            val diagnosticText = messageRenderer.render(severity, renderer.render(diagnostic), location)
+            val message = diagnostic.renderMessage()
+            val diagnosticText = messageRenderer.render(severity, message, location)
             throw IllegalStateException("${diagnostic.factory.name}: $diagnosticText")
         }
     }
 
     private object InFileDiagnosticsComparator : Comparator<KtDiagnostic> {
         override fun compare(o1: KtDiagnostic, o2: KtDiagnostic): Int {
-            val range1 = DiagnosticUtils.firstRange(o1.textRanges)
-            val range2 = DiagnosticUtils.firstRange(o2.textRanges)
+            val range1 = o1.firstRange
+            val range2 = o2.firstRange
 
             return if (range1 != range2) {
-                DiagnosticUtils.TEXT_RANGE_COMPARATOR.compare(range1, range2)
+                DiagnosticRangeUtils.TEXT_RANGE_COMPARATOR.compare(range1, range2)
             } else o1.factory.name.compareTo(o2.factory.name)
         }
     }

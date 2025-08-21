@@ -24,3 +24,5 @@ expect annotation class MyOptIn
 
 @RequiresOptIn
 actual annotation class MyOptIn
+
+/* GENERATED_FIR_TAGS: actual, annotationDeclaration, annotationUseSiteTargetFile, classReference, expect */

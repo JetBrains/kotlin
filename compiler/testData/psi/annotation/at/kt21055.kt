@@ -1,3 +1,5 @@
+// COMPILATION_ERRORS
+
 fun main(args: Array<String>) {
     val c = C(1, 2, 3, 4)
     val number = when (c) {

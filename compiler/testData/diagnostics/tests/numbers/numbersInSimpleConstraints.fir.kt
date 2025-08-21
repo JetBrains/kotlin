@@ -17,9 +17,9 @@ fun <T> otherGeneric(l: List<T>) {}
 fun test() {
     val a: Byte = id(1)
 
-    val b: Byte = <!INITIALIZER_TYPE_MISMATCH, TYPE_MISMATCH!>id(300)<!>
+    val b: Byte = <!INITIALIZER_TYPE_MISMATCH!>id(300)<!>
 
-    val c: Int = <!INITIALIZER_TYPE_MISMATCH, TYPE_MISMATCH!>id(9223372036854775807)<!>
+    val c: Int = <!INITIALIZER_TYPE_MISMATCH!>id(9223372036854775807)<!>
 
     val d = id(22)
     checkSubtype<Int>(d)
@@ -29,7 +29,7 @@ fun test() {
 
     val f: Byte = either(1, 2)
 
-    val g: Byte = <!INITIALIZER_TYPE_MISMATCH, TYPE_MISMATCH!>either(1, 300)<!>
+    val g: Byte = <!INITIALIZER_TYPE_MISMATCH!>either(1, 300)<!>
 
     other(<!ARGUMENT_TYPE_MISMATCH!>11<!>)
 
@@ -80,3 +80,7 @@ fun testUpperBound(contrS: Contr<String>, contrB: Contr<Byte>, contrN: Contr<Num
     val b = upperBound(1, contrB)
     b checkType { _<Byte>() }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType, in, infix,
+integerLiteral, interfaceDeclaration, intersectionType, lambdaLiteral, localProperty, nullableType, out, outProjection,
+propertyDeclaration, stringLiteral, typeParameter, typeWithExtension, vararg */

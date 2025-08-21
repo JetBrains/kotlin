@@ -1,3 +1,3 @@
-fun main() {/* DeclarationStructureElement */
+/* RootStructureElement */fun main() {/* DeclarationStructureElement */
 
 }

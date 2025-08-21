@@ -12,7 +12,7 @@ interface B {
 }
 
 interface D : C {
-    override fun foo(<!PARAMETER_NAME_CHANGED_ON_OVERRIDE!>d1<!>: Int, <!PARAMETER_NAME_CHANGED_ON_OVERRIDE!>d2<!>: Double)
+    override fun foo(<!PARAMETER_NAME_CHANGED_ON_OVERRIDE, PARAMETER_NAME_CHANGED_ON_OVERRIDE!>d1<!>: Int, <!PARAMETER_NAME_CHANGED_ON_OVERRIDE, PARAMETER_NAME_CHANGED_ON_OVERRIDE!>d2<!>: Double)
 }
 
 fun test1(d: D) {
@@ -22,3 +22,5 @@ fun test1(d: D) {
 fun test2(c: C) {
     c.foo(<!NAME_FOR_AMBIGUOUS_PARAMETER!>b1<!> = 1, <!NAME_FOR_AMBIGUOUS_PARAMETER!>b2<!> = 1.0)
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral, interfaceDeclaration, override */

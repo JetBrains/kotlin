@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.name.Name
 
 @FirBuilderDsl
 class FirEnumEntryBuilder : FirAnnotationContainerBuilder {
-    override var source: KtSourceElement? = null
+    var source: KtSourceElement? = null
     var resolvePhase: FirResolvePhase = FirResolvePhase.RAW_FIR
     lateinit var moduleData: FirModuleData
     lateinit var origin: FirDeclarationOrigin

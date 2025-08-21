@@ -34,3 +34,7 @@ val test4 = generate {
 
 // Util function
 fun <X> setOf(vararg x: X): Set<X> = TODO()
+
+/* GENERATED_FIR_TAGS: annotationUseSiteTargetFile, classDeclaration, classReference, functionDeclaration,
+functionalType, integerLiteral, intersectionType, lambdaLiteral, nullableType, propertyDeclaration, stringLiteral,
+suspend, typeParameter, typeWithExtension, vararg */

@@ -1,0 +1,25 @@
+warning: ATTENTION!
+This build uses unsafe internal compiler arguments:
+
+-XXLanguage:-AllowEagerSupertypeAccessibilityChecks
+
+This mode is not recommended for production use,
+as no stability/compatibility guarantees are given on
+compiler or generated code. Use it at your own risk!
+
+compiler/testData/compileKotlinAgainstCustomBinaries/incompleteHierarchyNoErrors/source.kt:12:32: warning: cannot access 'Super' which is a supertype of 'Sub'. This may be forbidden soon. Check the module classpath for missing or conflicting dependencies.
+fun simpleFun(arg: Sub): Sub = Sub()
+                               ^^^
+compiler/testData/compileKotlinAgainstCustomBinaries/incompleteHierarchyNoErrors/source.kt:20:18: warning: cannot access 'Super' which is a supertype of 'Sub'. This may be forbidden soon. Check the module classpath for missing or conflicting dependencies.
+    val x: Sub = Sub()
+                 ^^^
+compiler/testData/compileKotlinAgainstCustomBinaries/incompleteHierarchyNoErrors/source.kt:22:18: warning: cannot access 'Super' which is a supertype of 'Sub'. This may be forbidden soon. Check the module classpath for missing or conflicting dependencies.
+    useCallRef(::Sub)
+                 ^^^
+compiler/testData/compileKotlinAgainstCustomBinaries/incompleteHierarchyNoErrors/source.kt:23:15: warning: cannot access 'Super' which is a supertype of 'Sub'. This may be forbidden soon. Check the module classpath for missing or conflicting dependencies.
+    simpleFun(Sub())
+              ^^^
+compiler/testData/compileKotlinAgainstCustomBinaries/incompleteHierarchyNoErrors/source.kt:24:20: warning: cannot access 'Super' which is a supertype of 'Sub'. This may be forbidden soon. Check the module classpath for missing or conflicting dependencies.
+    inlineFun<Sub>(Sub())
+                   ^^^
+OK

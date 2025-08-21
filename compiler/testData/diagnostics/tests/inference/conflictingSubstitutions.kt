@@ -19,3 +19,6 @@ fun <T> list(value: T) : ArrayList<T> {
     list.add(value)
     return list
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, funWithExtensionReceiver, functionDeclaration, integerLiteral, intersectionType,
+javaFunction, localProperty, nullableType, propertyDeclaration, stringLiteral, typeParameter */

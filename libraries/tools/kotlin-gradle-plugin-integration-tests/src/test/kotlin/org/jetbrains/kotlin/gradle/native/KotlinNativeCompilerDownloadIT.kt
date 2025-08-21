@@ -5,12 +5,13 @@
 
 package org.jetbrains.kotlin.gradle.native
 
+import org.gradle.api.logging.LogLevel
 import org.gradle.internal.os.OperatingSystem
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.testbase.TestVersions.Kotlin.STABLE_RELEASE
+import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
 import org.jetbrains.kotlin.gradle.util.capitalize
-import org.jetbrains.kotlin.gradle.util.replaceFirst
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.presetName
 import org.junit.jupiter.api.DisplayName
@@ -19,6 +20,7 @@ import org.junit.jupiter.api.io.TempDir
 import java.nio.file.Path
 import kotlin.io.path.absolutePathString
 import kotlin.io.path.appendText
+import kotlin.io.path.writeText
 import kotlin.test.assertContains
 import kotlin.test.fail
 
@@ -141,26 +143,27 @@ class KotlinNativeCompilerDownloadIT : KGPBaseTest() {
                 konanDataDir = konanTemp,
             ),
         ) {
-            buildGradleKts.replaceFirst(
-                "plugins {",
+            buildGradleKts.writeText(
                 """
                 @file:Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
                 import org.jetbrains.kotlin.gradle.targets.native.toolchain.KotlinNativeBundleArtifactFormat
+                import org.jetbrains.kotlin.gradle.plugin.KOTLIN_NATIVE_BUNDLE_CONFIGURATION_NAME
                 plugins {
-                """.trimIndent()
-            )
-            buildGradleKts.appendText(
-                """
-                    
-                tasks.create("taskWithConfigurationResolvedConfiguration") {
-                    dependsOn(":commonizeNativeDistribution")
-                    doFirst {
-                        KotlinNativeBundleArtifactFormat.addKotlinNativeBundleConfiguration(project.rootProject)
-                    }
+                    kotlin("multiplatform") apply false
                 }
+                
+                repositories {
+                    mavenLocal()
+                    mavenCentral()
+                }
+                                                
+                KotlinNativeBundleArtifactFormat.addKotlinNativeBundleConfiguration(project.rootProject)
+                val nativeConfiguration = configurations.getByName(KOTLIN_NATIVE_BUNDLE_CONFIGURATION_NAME)
+                nativeConfiguration.resolve()
+                KotlinNativeBundleArtifactFormat.addKotlinNativeBundleConfiguration(project.rootProject)
                 """.trimIndent()
             )
-            build(":commonizeNativeDistribution", "taskWithConfigurationResolvedConfiguration")
+            build(":help")
         }
     }
 
@@ -204,14 +207,12 @@ class KotlinNativeCompilerDownloadIT : KGPBaseTest() {
                 assertNativeTasksClasspath(":native1:compileKotlin${nativeHostTargetName.capitalize()}") {
                     val konanLibsPath = customNativeHomePath.resolve(STABLE_VERSION_DIR_NAME).resolve("konan").resolve("lib")
                     assertContains(it, konanLibsPath.resolve("kotlin-native-compiler-embeddable.jar").absolutePathString())
-                    assertContains(it, konanLibsPath.resolve("trove4j.jar").absolutePathString())
                 }
 
                 // check that in second project we use k/n from default konan location
                 assertNativeTasksClasspath(":native2:compileKotlin${nativeHostTargetName.capitalize()}") {
                     val konanLibsPath = defaultKotlinNativeHomePath.resolve(STABLE_VERSION_DIR_NAME).resolve("konan").resolve("lib")
                     assertContains(it, konanLibsPath.resolve("kotlin-native-compiler-embeddable.jar").absolutePathString())
-                    assertContains(it, konanLibsPath.resolve("trove4j.jar").absolutePathString())
                 }
             }
         }
@@ -231,14 +232,67 @@ class KotlinNativeCompilerDownloadIT : KGPBaseTest() {
             val os = OperatingSystem.current()
             val expectedNativeDependencies = when {
                 os.isMacOsX -> listOf("lldb-4-macos", "apple-llvm-20200714-macos-aarch64-essentials", "libffi-3.3-1-macos-arm64")
-                os.isLinux -> listOf("x86_64-unknown-linux-gnu-gcc-8.3.0-glibc-2.19-kernel-4.9-2", "lldb-4-linux", "llvm-11.1.0-linux-x64-essentials", "libffi-3.2.1-2-linux-x86-64")
-                os.isWindows -> listOf("llvm-11.1.0-windows-x64-essentials", "libffi-3.3-windows-x64-1", "lldb-2-windows", "lld-12.0.1-windows-x64", "msys2-mingw-w64-x86_64-2")
+                os.isLinux -> listOf(
+                    "x86_64-unknown-linux-gnu-gcc-8.3.0-glibc-2.19-kernel-4.9-2",
+                    "lldb-4-linux",
+                    "llvm-11.1.0-linux-x64-essentials",
+                    "libffi-3.2.1-2-linux-x86-64"
+                )
+                os.isWindows -> listOf(
+                    "llvm-11.1.0-windows-x64-essentials",
+                    "libffi-3.3-windows-x64-1",
+                    "lldb-2-windows",
+                    "lld-12.0.1-windows-x64",
+                    "msys2-mingw-w64-x86_64-2"
+                )
                 else -> fail("Unsupported os: ${os.name}")
             }
 
             build("assemble") {
                 assertOutputContainsExactlyTimes("Extracting dependency:", expectedNativeDependencies.size)
-                assertOutputContainsExactlyTimes("Downloading dependency https://download.jetbrains.com/kotlin/native/", expectedNativeDependencies.size)
+                assertOutputContainsExactlyTimes(
+                    "Downloading dependency https://download.jetbrains.com/kotlin/native/",
+                    expectedNativeDependencies.size
+                )
+            }
+        }
+    }
+
+    @OsCondition(
+        supportedOn = [OS.MAC],
+        enabledOnCI = [OS.MAC],
+    )
+    @DisplayName(
+        "KT-77067 : native libraries should be filtered and not passed to the compiler"
+    )
+    @GradleTest
+    fun checkLinkNativeDistributionWithPlatform(gradleVersion: GradleVersion, @TempDir konanTemp: Path) {
+        project("empty", gradleVersion) {
+            addKgpToBuildScriptCompilationClasspath()
+            buildScriptInjection {
+                project.applyMultiplatform {
+                    macosArm64()
+                    sourceSets.commonMain.dependencies {
+                        sourceSets.commonMain.get().compileSource("class Main")
+                    }
+                    sourceSets.commonTest.dependencies {
+                        sourceSets.commonTest.get().compileSource("""
+                            @kotlin.test.Test
+                            fun test() {}
+                        """)
+                    }
+                }
+            }
+
+            build(
+                "clean", "linkDebugTestMacosArm64",
+                buildOptions = defaultBuildOptions.copy(
+                    logLevel = LogLevel.INFO,
+                    compilerArgumentsLogLevel = "info",
+                    konanDataDir = konanTemp,
+                )
+            ) {
+                assertOutputDoesNotContain("org.jetbrains.kotlin.native.platform.CoreLocation")
             }
         }
     }

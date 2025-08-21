@@ -56,6 +56,7 @@ fun debugCollectOverrides(symbol: FirCallableSymbol<*>, scope: FirTypeScope): Ma
     return process(scope, symbol)
 }
 
+@OptIn(ScopeFunctionRequiresPrewarm::class)
 fun FirNamedFunctionSymbol.overriddenFunctions(
     containingClass: FirClassSymbol<*>,
     session: FirSession,

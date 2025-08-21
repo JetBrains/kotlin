@@ -9,9 +9,9 @@ This project assembles API reference for Kotlin Gradle plugins to publish it to 
   Inside the structure of subdirectories 
 should follow [this specification](https://github.com/Kotlin/dokka/tree/1.9.20/dokka-subprojects/plugin-versioning#directory-structure).
 
-### Assembling
+### Generating
 
-To assemble API reference run:
+To generate the API reference, run:
 ```shell
 $ ./gradlew :gradle:documentation:dokkaKotlinlangDocumentation -Pteamcity=true
 ```

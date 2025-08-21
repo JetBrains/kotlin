@@ -20,3 +20,6 @@ fun main() {
         b.<!NO_CONTEXT_RECEIVER!>f<!>()
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionDeclarationWithContext,
+lambdaLiteral, localProperty, propertyDeclaration */

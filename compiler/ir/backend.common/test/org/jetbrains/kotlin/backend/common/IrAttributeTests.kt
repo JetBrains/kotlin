@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.common
 
 import org.jetbrains.kotlin.ir.*
+import org.jetbrains.kotlin.ir.declarations.copyAttributes
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.types.impl.IrErrorTypeImpl
@@ -15,11 +16,11 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
-private val fooAttr = irAttribute<IrExpression, Int>(followAttributeOwner = true).create(null, "foo")
+private val fooAttr = irAttribute<IrExpression, Int>(copyByDefault = true).create(null, "foo")
 private var IrExpression.foo: Int? by fooAttr
-private val barAttr = irAttribute<IrExpression, Boolean>(followAttributeOwner = true).create(null, "bar")
+private val barAttr = irAttribute<IrExpression, Boolean>(copyByDefault = true).create(null, "bar")
 private var IrExpression.bar: Boolean? by barAttr
-private val bazAttr = irAttribute<IrExpression, String>(followAttributeOwner = true).create(null, "baz")
+private val bazAttr = irAttribute<IrExpression, String>(copyByDefault = true).create(null, "baz")
 private var IrExpression.baz: String? by bazAttr
 
 class IrAttributeTests {
@@ -27,7 +28,7 @@ class IrAttributeTests {
         IrConstImpl.constNull(0, 0, IrErrorTypeImpl(null, listOf(), Variance.INVARIANT))
 
     private val IrElement.allAttributes: Map<IrAttribute<*, *>, Any>
-        get() = (this as IrElementBase).allAttributes
+        get() = (this as IrElementBase).attributes
 
 
     @Test
@@ -35,11 +36,11 @@ class IrAttributeTests {
         val element = createIrElement()
 
         assertEquals(null, element.foo)
-        assertTrue(element.allAttributes.isEmpty())
+        assertTrue(element.attributes.isEmpty())
 
         element.foo = 10
         assertEquals(10, element.foo)
-        assertEquals<Map<IrAttribute<*, *>, Any?>>(mapOf(fooAttr to 10), element.allAttributes)
+        assertEquals<Map<IrAttribute<*, *>, Any?>>(mapOf(fooAttr to 10), element.attributes)
     }
 
     @Test
@@ -83,7 +84,7 @@ class IrAttributeTests {
         assertEquals("test", element.baz)
         assertEquals<Map<IrAttribute<*, *>, Any?>>(
             mapOf(fooAttr to 10, barAttr to true, bazAttr to "test"),
-            element.allAttributes
+            element.attributes
         )
 
         element.foo = 200
@@ -92,7 +93,7 @@ class IrAttributeTests {
         assertEquals(null, element.bar)
         assertEquals<Map<IrAttribute<*, *>, Any?>>(
             mapOf(fooAttr to 200, bazAttr to "test"),
-            element.allAttributes
+            element.attributes
         )
     }
 
@@ -106,22 +107,63 @@ class IrAttributeTests {
             element.foo = it
             assertEquals(it, element.foo)
             assertEquals(true, element.bar)
-            assertEquals(2, element.allAttributes.size)
+            assertEquals(2, element.attributes.size)
 
             element.foo = null
         }
     }
 
     @Test
+    fun copyToEmpty() {
+        val element1 = createIrElement()
+        element1.foo = 10
+        element1.baz = "test"
+
+        val element2 = createIrElement()
+        element2.copyAttributes(element1)
+
+        assertEquals(element1.attributes, element2.attributes)
+    }
+
+    @Test
+    fun copyFromEmpty() {
+        val element1 = createIrElement()
+
+        val element2 = createIrElement()
+        element2.foo = 10
+        element2.baz = "test"
+        element2.copyAttributes(element1)
+
+        assertEquals(element2.foo, 10)
+        assertEquals(element2.baz, "test")
+    }
+
+    @Test
+    fun copyWithOverride() {
+        val element1 = createIrElement()
+        element1.foo = 10
+        element1.baz = "new"
+
+        val element2 = createIrElement()
+        element2.baz = "prev"
+        element2.bar = true
+        element2.copyAttributes(element1)
+
+        assertEquals(element2.foo, 10)
+        assertEquals(element2.bar, true)
+        assertEquals(element2.baz, "new")
+    }
+
+    @Test
     fun stressTest() {
         val element = createIrElement()
-        val attributes = List(10) { irAttribute<IrExpression, Int>(followAttributeOwner = false).create(null, "attr$it") }
+        val attributes = List(10) { irAttribute<IrExpression, Int>(copyByDefault = true).create(null, "attr$it") }
         val realAttributeValues = mutableMapOf<IrAttribute<IrExpression, Int>, Int?>()
 
         val rng = Random(1)
         repeat(1000) { i ->
             val attr = attributes.random(rng)
-            when (rng.nextInt(5)) {
+            when (rng.nextInt(6)) {
                 0 -> {
                     element[attr] = i
                     realAttributeValues[attr] = i
@@ -131,7 +173,13 @@ class IrAttributeTests {
                     realAttributeValues.remove(attr)
                 }
                 2 -> {
-                    assertEquals<Map<out IrAttribute<*, *>, Any?>>(element.allAttributes, realAttributeValues)
+                    val srcEl = createIrElement()
+                    srcEl[attr] = i
+                    element.copyAttributes(srcEl)
+                    realAttributeValues[attr] = i
+                }
+                3 -> {
+                    assertEquals<Map<out IrAttribute<*, *>, Any?>>(element.attributes, realAttributeValues)
                 }
                 else -> {
                     assertEquals(realAttributeValues[attr], element[attr])

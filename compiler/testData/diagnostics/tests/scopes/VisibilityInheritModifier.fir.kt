@@ -84,3 +84,6 @@ interface Q : R {
 class S : P, Q {
     <!CANNOT_WEAKEN_ACCESS_PRIVILEGE!>internal<!> override fun foo() {}
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, interfaceDeclaration, localProperty, override,
+propertyDeclaration, thisExpression */

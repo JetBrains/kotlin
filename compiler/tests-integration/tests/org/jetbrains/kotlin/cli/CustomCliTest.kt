@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.cli
 
+import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.cliArgument
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
@@ -21,7 +22,7 @@ private const val EMPTY_MAIN_FUN = "fun main() {}"
 
 class CustomCliTest : TestCaseWithTmpdir() {
     fun testArgfileWithNonTrivialWhitespaces() {
-        val text = "-include-runtime\r\n\t\t-language-version\n\t1.8\r\n-version"
+        val text = "-include-runtime\r\n\t\t-language-version\n\t2.0\r\n-version"
         val argfile = File(tmpdir, "argfile").apply { writeText(text, Charsets.UTF_8) }
         CompilerTestUtil.executeCompilerAssertSuccessful(K2JVMCompiler(), listOf("@" + argfile.absolutePath))
     }
@@ -42,6 +43,19 @@ class CustomCliTest : TestCaseWithTmpdir() {
         }
 
         compileAndCheckMainClass(listOf(main1Kt, main2Kt), expectedMainClass = null)
+    }
+
+    fun testInvalidContextMainClasses() {
+        val main1Kt = tmpdir.resolve("main1.kt").apply {
+            writeText(
+                """
+                    context(_: Array<String>)
+                    fun Array<String>.main() = println("hello")
+                """
+            )
+        }
+
+        compileAndCheckMainClass(listOf(main1Kt), expectedMainClass = null)
     }
 
     fun testExtensionFunctionMainClass() {
@@ -122,7 +136,7 @@ class CustomCliTest : TestCaseWithTmpdir() {
     }
 
     private fun makeCompilerArgs(sourceFiles: List<File>, jarFile: File): List<String> {
-        return listOf(K2JVMCompilerArguments::includeRuntime.cliArgument, K2JVMCompilerArguments::destination.cliArgument, jarFile.absolutePath) + sourceFiles.map { it.absolutePath }
+        return listOf(K2JVMCompilerArguments::includeRuntime.cliArgument, CommonCompilerArguments::contextParameters.cliArgument, K2JVMCompilerArguments::destination.cliArgument, jarFile.absolutePath) + sourceFiles.map { it.absolutePath }
     }
 
     private fun compileAndCheckMainClass(sourceFiles: List<File>, expectedMainClass: String?, messageRenderer: MessageRenderer? = null) {

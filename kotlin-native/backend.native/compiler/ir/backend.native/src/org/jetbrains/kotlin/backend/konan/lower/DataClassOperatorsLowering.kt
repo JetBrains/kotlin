@@ -35,14 +35,14 @@ internal class DataClassOperatorsLowering(val context: Context) : FileLoweringPa
             && expression.symbol != irBuiltins.dataClassArrayMemberHashCodeSymbol)
             return expression
 
-        val argument = expression.getValueArgument(0)!!
+        val argument = expression.arguments[0]!!
         val argumentClassifier = argument.type.classifierOrFail
 
         val isToString = expression.symbol == irBuiltins.dataClassArrayMemberToStringSymbol
         val newCalleeSymbol = if (isToString)
-            context.ir.symbols.arrayContentToString[argumentClassifier]!!
+            context.symbols.arrayContentToString[argumentClassifier]!!
         else
-            context.ir.symbols.arrayContentHashCode[argumentClassifier]!!
+            context.symbols.arrayContentHashCode[argumentClassifier]!!
 
         val newCallee = newCalleeSymbol.owner
 
@@ -55,7 +55,7 @@ internal class DataClassOperatorsLowering(val context: Context) : FileLoweringPa
             val typeArguments = (0 until newCallee.typeParameters.size).map { irBuiltins.anyNType }
 
             irCallWithSubstitutedType(newCallee, typeArguments).apply {
-                extensionReceiver = argument
+                arguments[0] = argument
             }
         }
     }

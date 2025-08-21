@@ -1,0 +1,37 @@
+FILE: combinationOfAllNotAllAndDefaultTarget.kt
+    @R|kotlin/annotation/Repeatable|() public final annotation class WithoutExplicitTarget : R|kotlin/Annotation| {
+        public constructor(): R|WithoutExplicitTarget| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    @R|kotlin/annotation/Repeatable|() @R|kotlin/annotation/Target|(allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|)) public final annotation class ParamPropertyField : R|kotlin/Annotation| {
+        public constructor(): R|ParamPropertyField| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final class Test : R|kotlin/Any| {
+        public constructor(@ALL:R|WithoutExplicitTarget|() @R|WithoutExplicitTarget|() a: R|kotlin/String|, @CONSTRUCTOR_PARAMETER:R|WithoutExplicitTarget|() @ALL:R|WithoutExplicitTarget|() b: R|kotlin/String|, @CONSTRUCTOR_PARAMETER:R|WithoutExplicitTarget|() @R|WithoutExplicitTarget|() c: R|kotlin/String|, @ALL:R|ParamPropertyField|() @R|ParamPropertyField|() d: R|kotlin/String|, @ALL:R|ParamPropertyField|() @CONSTRUCTOR_PARAMETER:R|ParamPropertyField|() e: R|kotlin/String|, @R|ParamPropertyField|() @CONSTRUCTOR_PARAMETER:R|ParamPropertyField|() f: R|kotlin/String|): R|Test| {
+            super<R|kotlin/Any|>()
+        }
+
+        @ALL:R|WithoutExplicitTarget|() @R|WithoutExplicitTarget|() field:@R|WithoutExplicitTarget|() public final val a: R|kotlin/String| = R|<local>/a|
+            @R|WithoutExplicitTarget|() public get(): R|kotlin/String|
+
+        @ALL:R|WithoutExplicitTarget|() field:@R|WithoutExplicitTarget|() public final val b: R|kotlin/String| = R|<local>/b|
+            @R|WithoutExplicitTarget|() public get(): R|kotlin/String|
+
+        @R|WithoutExplicitTarget|() public final val c: R|kotlin/String| = R|<local>/c|
+            public get(): R|kotlin/String|
+
+        @ALL:R|ParamPropertyField|() @R|ParamPropertyField|() field:@R|ParamPropertyField|() public final val d: R|kotlin/String| = R|<local>/d|
+            public get(): R|kotlin/String|
+
+        @ALL:R|ParamPropertyField|() field:@R|ParamPropertyField|() public final val e: R|kotlin/String| = R|<local>/e|
+            public get(): R|kotlin/String|
+
+        @R|ParamPropertyField|() public final val f: R|kotlin/String| = R|<local>/f|
+            public get(): R|kotlin/String|
+
+    }

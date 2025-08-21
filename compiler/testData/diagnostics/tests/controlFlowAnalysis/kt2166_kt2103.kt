@@ -17,3 +17,5 @@ fun foo1() : Boolean{
 }
 
 fun bar() : Boolean = true
+
+/* GENERATED_FIR_TAGS: continue, functionDeclaration, ifExpression, whileLoop */

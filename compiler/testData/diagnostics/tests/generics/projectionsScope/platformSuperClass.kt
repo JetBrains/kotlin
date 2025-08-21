@@ -22,3 +22,7 @@ fun test(clazz: Clazz<*>) {
         throw NullPointerException()
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, equalityExpression, flexibleType, funWithExtensionReceiver, functionDeclaration,
+functionalType, ifExpression, inProjection, infix, javaProperty, javaType, lambdaLiteral, nullableType, outProjection,
+starProjection, typeParameter, typeWithExtension */

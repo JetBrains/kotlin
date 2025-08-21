@@ -9,3 +9,5 @@ inline fun<reified T> foo(x: T) {
 
     bar<T>()
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, inline, localFunction, nullableType, reified, typeParameter */

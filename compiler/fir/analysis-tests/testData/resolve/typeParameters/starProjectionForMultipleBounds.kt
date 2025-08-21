@@ -15,3 +15,6 @@ fun process(c: Inv<*>) {
     c.value.doA()
     c.value.doB()
 }
+
+/* GENERATED_FIR_TAGS: capturedType, classDeclaration, functionDeclaration, interfaceDeclaration, primaryConstructor,
+propertyDeclaration, starProjection, typeConstraint, typeParameter */

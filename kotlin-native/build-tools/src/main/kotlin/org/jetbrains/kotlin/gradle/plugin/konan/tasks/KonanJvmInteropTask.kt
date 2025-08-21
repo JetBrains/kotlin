@@ -12,6 +12,7 @@ import org.gradle.api.file.ProjectLayout
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.ListProperty
+import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.CacheableTask
 import org.gradle.api.tasks.Classpath
@@ -49,6 +50,7 @@ private abstract class KonanJvmInteropAction @Inject constructor(
         val compilerOpts: ListProperty<String>
         val outputDirectory: DirectoryProperty
         val distribution: NativeDistributionProperty
+        val propertiesOverride: MapProperty<String, String>
         val platformManager: Property<PlatformManager>
     }
 
@@ -68,6 +70,9 @@ private abstract class KonanJvmInteropAction @Inject constructor(
             args("-flavor", "jvm")
             args("-def", parameters.defFile.get().asFile.absolutePath)
             args("-target", hostPlatform.target.name)
+            args("-Xoverride-konan-properties", parameters.propertiesOverride.get().entries.joinToString(separator = ";") { (key, value) ->
+                "$key=$value"
+            })
             args(parameters.compilerOpts.get().flatMap { listOf("-compiler-option", it) })
         }
     }
@@ -141,6 +146,7 @@ open class KonanJvmInteropTask @Inject constructor(
             this.compilerOpts.addAll(this@KonanJvmInteropTask.headersDirs.asCompilerArguments)
             this.outputDirectory.set(this@KonanJvmInteropTask.outputDirectory)
             this.distribution.set(platformManagerProvider.distribution)
+            this.propertiesOverride.set(platformManagerProvider.konanPropertiesOverride)
             this.platformManager.set(platformManagerProvider.platformManager)
         }
     }

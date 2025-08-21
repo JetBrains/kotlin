@@ -44,3 +44,6 @@ public interface C {
 class D : C {
     override fun foo(): <!RETURN_TYPE_MISMATCH_ON_OVERRIDE("foo; public abstract fun foo(): String defined in C")!>String?<!> = null
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, functionDeclaration, interfaceDeclaration, javaType,
+nullableType, override */

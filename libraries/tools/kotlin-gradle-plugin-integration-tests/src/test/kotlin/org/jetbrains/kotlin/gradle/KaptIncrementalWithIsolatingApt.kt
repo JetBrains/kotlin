@@ -25,10 +25,6 @@ import kotlin.test.assertEquals
 
 @DisplayName("Kapt incremental tests with isolating apt")
 open class KaptIncrementalWithIsolatingApt : KaptIncrementalIT() {
-    override fun TestProject.customizeProject() {
-        forceK1Kapt()
-    }
-
     override val defaultBuildOptions = super.defaultBuildOptions.copy(
         incremental = true,
         kaptOptions = super.defaultBuildOptions.kaptOptions!!.copy(
@@ -320,7 +316,10 @@ open class KaptIncrementalWithIsolatingApt : KaptIncrementalIT() {
                 """.trimMargin()
             )
 
-            build("clean", ":mylibrary:assembleDebug")
+            build(
+                "clean",
+                ":mylibrary:assembleDebug",
+            )
 
             subProject("baseLibrary")
                 .javaSourcesDir()

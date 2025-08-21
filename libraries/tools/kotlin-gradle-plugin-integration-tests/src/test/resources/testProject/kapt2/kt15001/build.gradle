@@ -1,19 +1,11 @@
 buildscript {
     repositories {
         mavenLocal()
-        maven { url 'https://maven.google.com' }
+        google()
         mavenCentral()
     }
     dependencies {
         classpath "com.android.tools.build:gradle:$android_tools_version"
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-    }
-}
-
-allprojects {
-    repositories {
-        mavenLocal()
-        maven { url 'https://maven.google.com' }
-        mavenCentral()
     }
 }

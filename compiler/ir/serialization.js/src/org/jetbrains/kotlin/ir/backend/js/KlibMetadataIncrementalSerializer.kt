@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.KtPsiSourceFile
 import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibMetadataSerializer
 import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibSingleFileMetadataSerializer
-import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.languageVersionSettings
@@ -20,8 +19,8 @@ import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
-import org.jetbrains.kotlin.library.metadata.KlibMetadataVersion
 import org.jetbrains.kotlin.metadata.ProtoBuf
+import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -29,6 +28,7 @@ import org.jetbrains.kotlin.resolve.BindingContextUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.serialization.DescriptorSerializer
+import org.jetbrains.kotlin.util.klibMetadataVersionOrDefault
 
 // TODO: need a refactoring between IncrementalSerializer and MonolithicSerializer.
 class KlibMetadataIncrementalSerializer(
@@ -36,17 +36,15 @@ class KlibMetadataIncrementalSerializer(
     private val bindingContext: BindingContext,
     private val moduleDescriptor: ModuleDescriptor,
     languageVersionSettings: LanguageVersionSettings,
-    metadataVersion: KlibMetadataVersion,
+    metadataVersion: MetadataVersion,
     project: Project,
-    exportKDoc: Boolean,
-    allowErrorTypes: Boolean = false
+    exportKDoc: Boolean
 ) : KlibMetadataSerializer(
     languageVersionSettings = languageVersionSettings,
     metadataVersion = metadataVersion,
     project = project,
     exportKDoc = exportKDoc,
-    skipExpects = true, // Incremental compilation is not supposed to work when producing pure metadata (IR-less) KLIBs.
-    allowErrorTypes = allowErrorTypes
+    skipExpects = true // Incremental compilation is not supposed to work when producing pure metadata (IR-less) KLIBs.
 ), KlibSingleFileMetadataSerializer<KtFile> {
 
     constructor(
@@ -55,17 +53,14 @@ class KlibMetadataIncrementalSerializer(
         project: Project,
         bindingContext: BindingContext,
         moduleDescriptor: ModuleDescriptor,
-        allowErrorTypes: Boolean,
     ) : this(
         ktFiles = files,
         bindingContext = bindingContext,
         moduleDescriptor = moduleDescriptor,
         languageVersionSettings = configuration.languageVersionSettings,
-        metadataVersion = configuration.get(CommonConfigurationKeys.METADATA_VERSION) as? KlibMetadataVersion
-            ?: KlibMetadataVersion.INSTANCE,
+        metadataVersion = configuration.klibMetadataVersionOrDefault(),
         project = project,
         exportKDoc = false,
-        allowErrorTypes = allowErrorTypes,
     )
 
     constructor(modulesStructure: ModulesStructure, moduleFragment: IrModuleFragment) : this(
@@ -74,7 +69,6 @@ class KlibMetadataIncrementalSerializer(
         modulesStructure.project,
         modulesStructure.jsFrontEndResult.bindingContext,
         moduleFragment.descriptor,
-        modulesStructure.jsFrontEndResult.hasErrors,
     )
 
     override fun serializeSingleFileMetadata(file: KtFile): ProtoBuf.PackageFragment {

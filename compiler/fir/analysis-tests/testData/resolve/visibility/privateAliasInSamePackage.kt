@@ -32,3 +32,6 @@ class Derived : Base<Key>()
 fun test(d: Derived) {
     d.get()?.foo()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, javaFunction, javaType, nullableType, safeCall,
+typeAliasDeclaration, typeParameter */

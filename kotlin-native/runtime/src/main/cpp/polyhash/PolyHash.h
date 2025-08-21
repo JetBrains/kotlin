@@ -6,9 +6,8 @@
 #ifndef RUNTIME_POLYHASH_H
 #define RUNTIME_POLYHASH_H
 
-#include <stdint.h>
-
 // Computes polynomial hash with base = 31.
-int polyHash(int length, uint16_t const* str);
+template <typename UnitType>
+int polyHash(int length, UnitType const* str);
 
 #endif  // RUNTIME_POLYHASH_H

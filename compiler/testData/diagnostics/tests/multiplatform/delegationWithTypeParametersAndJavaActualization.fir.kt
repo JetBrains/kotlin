@@ -69,3 +69,7 @@ fun test(){
     Test2(Base1Impl(), Base2Impl()).foo("1")
     Test2(Base1Impl(), Base2JavaImpl()).foo(1)
 }
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, functionDeclaration, inheritanceDelegation, integerLiteral,
+interfaceDeclaration, javaFunction, javaType, nullableType, override, primaryConstructor, propertyDeclaration,
+stringLiteral, typeAliasDeclaration, typeAliasDeclarationWithTypeParameter, typeParameter */

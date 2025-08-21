@@ -1,4 +1,4 @@
-@SinceKotlin("2.0")
+@SinceKotlin("2.2")
 fun new() {}
 
 fun useNew() {

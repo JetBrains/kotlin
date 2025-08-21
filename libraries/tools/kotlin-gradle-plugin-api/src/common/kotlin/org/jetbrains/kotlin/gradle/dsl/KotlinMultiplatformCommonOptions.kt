@@ -8,10 +8,18 @@ package org.jetbrains.kotlin.gradle.dsl
 /**
  * Compiler options for the Kotlin common platform.
  */
+@OptIn(org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi::class)
 @Deprecated(
-    "The kotlinOptions types are deprecated, please migrate to the compilerOptions types. More details are here: https://kotl.in/u1r8ln"
+    message = org.jetbrains.kotlin.gradle.dsl.KOTLIN_OPTIONS_DEPRECATION_MESSAGE,
+    level = DeprecationLevel.ERROR,
 )
 interface KotlinMultiplatformCommonOptions : org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions {
+
+    @OptIn(org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi::class)
+    @Deprecated(
+        message = org.jetbrains.kotlin.gradle.dsl.KOTLIN_OPTIONS_DEPRECATION_MESSAGE,
+        level = DeprecationLevel.ERROR,
+    )
     /**
      * @suppress
      */

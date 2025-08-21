@@ -24,3 +24,6 @@ fun bar(arg: Any?, block: () -> Int): Boolean contract <!UNSUPPORTED!>[
     }
     return false
 }
+
+/* GENERATED_FIR_TAGS: contractCallsEffect, contractConditionalEffect, contracts, equalityExpression,
+functionDeclaration, functionalType, ifExpression, isExpression, localProperty, nullableType, propertyDeclaration */

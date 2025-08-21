@@ -33,9 +33,22 @@ internal actual external fun String.nativeLastIndexOf(ch: Char, fromIndex: Int):
 /**
  * Returns the index within this string of the last occurrence of the specified character, starting from the specified offset.
  */
-@GCUnsafeCall("Kotlin_String_lastIndexOfString")
-@Escapes.Nothing
-internal actual external fun String.nativeLastIndexOf(str: String, fromIndex: Int): Int
+internal actual fun String.nativeLastIndexOf(str: String, fromIndex: Int): Int {
+    val count = length
+    val otherCount = str.length
+    if (fromIndex < 0 || otherCount > count) return -1
+
+    var start = fromIndex.coerceAtMost(count - otherCount)
+    if (otherCount == 0) return start
+
+    val firstChar = str[0]
+    while (true) {
+        val candidate = nativeLastIndexOf(firstChar, start)
+        if (candidate == -1) return -1
+        if (unsafeRangeEquals(candidate, str, 0, otherCount)) return candidate
+        start = candidate - 1
+    }
+}
 
 /**
  * Returns `true` if this string is equal to [other], optionally ignoring character case.
@@ -126,6 +139,11 @@ public actual fun String.replaceFirst(oldValue: String, newValue: String, ignore
  *
  * @param startIndex the start index (inclusive).
  * @param endIndex the end index (exclusive).
+ *
+ * @throws IndexOutOfBoundsException when [startIndex] is negative, [endIndex] exceeds the length if the string, or
+ *  if [startIndex] is greater than [endIndex].
+ *
+ * @sample samples.text.Strings.substringByStartAndEndIndices
  */
 @kotlin.internal.InlineOnly
 public actual inline fun String.substring(startIndex: Int, endIndex: Int): String =
@@ -133,6 +151,12 @@ public actual inline fun String.substring(startIndex: Int, endIndex: Int): Strin
 
 /**
  * Returns a substring of this string that starts at the specified [startIndex] and continues to the end of the string.
+ *
+ * @param startIndex the start index (inclusive).
+ *
+ * @throws IndexOutOfBoundsException when [startIndex] is negative or exceeds the length if the string.
+ *
+ * @sample samples.text.Strings.substringFromStartIndex
  */
 @kotlin.internal.InlineOnly
 public actual inline fun String.substring(startIndex: Int): String =
@@ -140,6 +164,13 @@ public actual inline fun String.substring(startIndex: Int): String =
 
 /**
  * Returns `true` if this string starts with the specified prefix.
+ *
+ * @param prefix the prefix from which this string should start with.
+ * @param ignoreCase the flag indicating if the string characters should be compared with the [prefix] characters
+ *  in a case-insensitive manner; by default, comparison is case-sensitive.
+ *
+ * @sample samples.text.Strings.startsWithPrefixCaseSensitive
+ * @sample samples.text.Strings.startsWithPrefixCaseInsensitive
  */
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun String.startsWith(prefix: String, ignoreCase: Boolean = false): Boolean =
@@ -147,6 +178,16 @@ public actual fun String.startsWith(prefix: String, ignoreCase: Boolean = false)
 
 /**
  * Returns `true` if a substring of this string starting at the specified offset [startIndex] starts with the specified prefix.
+ *
+ * @param prefix the prefix from which this string's substring beginning at [startIndex] should start with.
+ * @param startIndex the start index (inclusive).
+ * @param ignoreCase the flag indicating if the string characters should be compared with the [prefix] characters
+ *  in a case-insensitive manner; by default, comparison is case-sensitive.
+ *
+ * @throws IndexOutOfBoundsException if [startIndex] is negative or exceeds the length of the string.
+ *
+ * @sample samples.text.Strings.startsWithPrefixAtPositionCaseSensitive
+ * @sample samples.text.Strings.startsWithPrefixAtPositionCaseInsensitive
  */
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun String.startsWith(prefix: String, startIndex: Int, ignoreCase: Boolean = false): Boolean =
@@ -154,6 +195,13 @@ public actual fun String.startsWith(prefix: String, startIndex: Int, ignoreCase:
 
 /**
  * Returns `true` if this string ends with the specified suffix.
+ *
+ * @param suffix the suffix with which this string should end with.
+ * @param ignoreCase the flag indicating if the string characters should be compared with the [suffix] characters
+ *  in a case-insensitive manner; by default, comparison is case-sensitive.
+ *
+ * @sample samples.text.Strings.endsWithSuffixCaseSensitive
+ * @sample samples.text.Strings.endsWithSuffixCaseInsensitive
  */
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun String.endsWith(suffix: String, ignoreCase: Boolean = false): Boolean =
@@ -232,7 +280,6 @@ public actual fun String.toUpperCase(): String = uppercaseImpl()
  * @sample samples.text.Strings.uppercase
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalStdlibApi::class)
 public actual fun String.uppercase(): String = uppercaseImpl()
 
 /**
@@ -251,7 +298,6 @@ public actual fun String.toLowerCase(): String = lowercaseImpl()
  * @sample samples.text.Strings.lowercase
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalStdlibApi::class)
 public actual fun String.lowercase(): String = lowercaseImpl()
 
 /**
@@ -403,6 +449,7 @@ public actual fun String.toCharArray(startIndex: Int = 0, endIndex: Int = this.l
  * @throws IndexOutOfBoundsException when the subrange doesn't fit into the [destination] array starting at the specified [destinationOffset],
  *  or when that index is out of the [destination] array indices range.
  */
+@IgnorableReturnValue
 @SinceKotlin("2.0")
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun String.toCharArray(
@@ -450,6 +497,8 @@ public actual fun ByteArray.decodeToString(startIndex: Int = 0, endIndex: Int = 
  * Encodes this string to an array of bytes in UTF-8 encoding.
  *
  * Any malformed char sequence is replaced by the replacement byte sequence.
+ *
+ * @sample samples.text.Strings.encodeToByteArray
  */
 @SinceKotlin("1.3")
 public actual fun String.encodeToByteArray(): ByteArray = unsafeStringToUtf8(0, length)
@@ -464,6 +513,8 @@ public actual fun String.encodeToByteArray(): ByteArray = unsafeStringToUtf8(0, 
  * @throws IndexOutOfBoundsException if [startIndex] is less than zero or [endIndex] is greater than the length of this string.
  * @throws IllegalArgumentException if [startIndex] is greater than [endIndex].
  * @throws CharacterCodingException if this string contains malformed char sequence and [throwOnInvalidSequence] is true.
+ *
+ * @sample samples.text.Strings.encodeToByteArray
  */
 @SinceKotlin("1.3")
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")

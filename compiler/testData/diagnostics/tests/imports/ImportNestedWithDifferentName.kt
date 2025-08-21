@@ -10,3 +10,5 @@ interface A {
     val a: Nested
     val b: X
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, interfaceDeclaration, nestedClass, propertyDeclaration */

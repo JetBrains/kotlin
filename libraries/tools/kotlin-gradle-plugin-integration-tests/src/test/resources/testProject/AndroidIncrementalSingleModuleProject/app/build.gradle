@@ -1,7 +1,7 @@
 buildscript {
     repositories {
         mavenLocal()
-        maven { url 'https://maven.google.com' }
+        maven { url = 'https://maven.google.com' }
         mavenCentral()
     }
     dependencies {
@@ -15,28 +15,28 @@ apply plugin: 'kotlin-android'
 
 android {
 
-    namespace 'com.example'
+    namespace = 'com.example'
 
-    compileSdkVersion 23
+    compileSdkVersion = 23
 
     defaultConfig {
-        applicationId "com.example"
-        minSdkVersion 14
-        targetSdkVersion 23
-        versionCode 1
-        versionName "1.0"
+        applicationId = "com.example"
+        minSdkVersion = 14
+        targetSdkVersion = 23
+        versionCode = 1
+        versionName = "1.0"
     }
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled = false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
 
     // Needed for older AGP. It can be removed when the lowest supported AGP version is 4.2.0 or newer.
     compileOptions {
-        sourceCompatibility 1.8
-        targetCompatibility 1.8
+        sourceCompatibility = 1.8
+        targetCompatibility = 1.8
     }
     sourceSets {
         main.java.srcDirs += 'src/main/kotlin'
@@ -45,7 +45,7 @@ android {
 
 repositories {
     mavenLocal()
-    maven { url 'https://maven.google.com' }
+    google()
     mavenCentral()
 }
 

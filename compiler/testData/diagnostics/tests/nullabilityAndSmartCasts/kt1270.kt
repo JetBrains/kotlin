@@ -13,3 +13,6 @@ fun foo() {
 private class SomeClass() {
     val value : Int = 5
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, flexibleType, functionDeclaration, integerLiteral, javaFunction, localProperty,
+nullableType, primaryConstructor, propertyDeclaration, stringLiteral */

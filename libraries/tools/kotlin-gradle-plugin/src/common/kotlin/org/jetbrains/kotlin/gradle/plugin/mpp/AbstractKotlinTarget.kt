@@ -10,14 +10,13 @@ import org.gradle.api.Project
 import org.gradle.api.artifacts.ConfigurablePublishArtifact
 import org.gradle.api.attributes.AttributeContainer
 import org.gradle.api.publish.maven.MavenPublication
-import org.jetbrains.kotlin.gradle.DeprecatedTargetPresetApi
 import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
-import org.jetbrains.kotlin.gradle.PRESETS_API_IS_DEPRECATED_MESSAGE
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsageContext.MavenScope.COMPILE
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsageContext.MavenScope.RUNTIME
+import org.jetbrains.kotlin.gradle.targets.android.internal.InternalKotlinTargetPreset
 import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.tooling.core.MutableExtras
 import org.jetbrains.kotlin.tooling.core.mutableExtrasOf
@@ -26,6 +25,7 @@ import org.jetbrains.kotlin.utils.addIfNotNull
 
 internal const val PRIMARY_SINGLE_COMPONENT_NAME = "kotlin"
 
+@InternalKotlinGradlePluginApi
 abstract class AbstractKotlinTarget(
     final override val project: Project,
 ) : InternalKotlinTarget {
@@ -35,14 +35,6 @@ abstract class AbstractKotlinTarget(
     private val attributeContainer = HierarchyAttributeContainer(parent = null)
 
     override fun getAttributes(): AttributeContainer = attributeContainer
-
-    @Deprecated("Scheduled for removal with Kotlin 2.2", level = DeprecationLevel.ERROR)
-    override var useDisambiguationClassifierAsSourceSetNamePrefix: Boolean = true
-        internal set
-
-    @Deprecated("Scheduled for removal with Kotlin 2.2", level = DeprecationLevel.ERROR)
-    override var overrideDisambiguationClassifierOnIdeImport: String? = null
-        internal set
 
     override val apiElementsConfigurationName: String
         get() = disambiguateName("apiElements")
@@ -128,7 +120,7 @@ abstract class AbstractKotlinTarget(
         return listOfNotNull(
             COMPILE to apiElementsConfigurationName,
             (RUNTIME to runtimeElementsConfigurationName).takeIf {
-                @Suppress("DEPRECATION")
+                @Suppress("DEPRECATION_ERROR")
                 producingCompilation is KotlinCompilationToRunnableFiles
             }
         ).mapTo(mutableSetOf()) { (mavenScope, dependenciesConfigurationName) ->
@@ -185,12 +177,7 @@ abstract class AbstractKotlinTarget(
         publicationConfigureActions.all { action -> action.execute(publication) }
     }
 
-    @OptIn(DeprecatedTargetPresetApi::class)
-    @get:Deprecated(
-        PRESETS_API_IS_DEPRECATED_MESSAGE,
-        level = DeprecationLevel.ERROR,
-    )
-    override var preset: KotlinTargetPreset<out KotlinTarget>? = null
+    override var targetPreset: InternalKotlinTargetPreset<KotlinTarget>? = null
         internal set
 }
 

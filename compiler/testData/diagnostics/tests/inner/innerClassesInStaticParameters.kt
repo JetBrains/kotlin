@@ -11,3 +11,6 @@ class Test {
 
     inner class TestInner
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, functionDeclaration, inner, integerLiteral, nestedClass,
+objectDeclaration */

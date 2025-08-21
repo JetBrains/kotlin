@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.ir.generator.print
 
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.generators.tree.*
+import org.jetbrains.kotlin.generators.tree.imports.ArbitraryImportable
 import org.jetbrains.kotlin.generators.tree.printer.FunctionParameter
 import org.jetbrains.kotlin.generators.tree.printer.ImportCollectingPrinter
 import org.jetbrains.kotlin.generators.tree.printer.printFunctionDeclaration
@@ -17,6 +18,7 @@ import org.jetbrains.kotlin.ir.generator.model.Element
 import org.jetbrains.kotlin.ir.generator.model.Field
 import org.jetbrains.kotlin.ir.generator.model.ListField
 import org.jetbrains.kotlin.ir.generator.model.SimpleField
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.withIndent
 
 internal open class TypeVisitorPrinter(
@@ -106,15 +108,23 @@ internal open class TypeVisitorPrinter(
         println()
         println()
         printVisitTypeRecursivelyKDoc()
-        printVisitTypeMethod(name = "visitTypeRecursively", hasDataParameter = true, modality = Modality.OPEN, override = false)
+        printVisitTypeRecursively()
+        println()
+        printVisitAnnotationUsage(hasDataParameter = true, modality = Modality.OPEN, override = false)
+    }
+
+    protected fun ImportCollectingPrinter.printVisitTypeRecursively(hasDataParameter: Boolean = true) {
+        printVisitTypeMethod(name = "visitTypeRecursively", hasDataParameter, modality = Modality.OPEN, override = false)
         printBlock {
+            val data = runIf(hasDataParameter) { ", data" } ?: ""
             printlnMultiLine(
                 """
-                visitType(container, type, data)
+                visitType(container, type$data)
+                type.annotations.forEach { visitAnnotationUsage(it$data) }
                 if (type is ${irSimpleTypeType.render()}) {
                     type.arguments.forEach {
                         if (it is ${irTypeProjectionType.render()}) {
-                            visitTypeRecursively(container, it.type, data)
+                            visitTypeRecursively(container, it.type$data)
                         }
                     }
                 }
@@ -123,39 +133,115 @@ internal open class TypeVisitorPrinter(
         }
     }
 
+    protected fun ImportCollectingPrinter.printVisitAnnotationUsageDeclaration(
+        hasDataParameter: Boolean,
+        modality: Modality?,
+        override: Boolean,
+    ) {
+        printFunctionDeclaration(
+            name = "visitAnnotationUsage",
+            parameters = listOfNotNull(
+                FunctionParameter("annotationUsage", IrTree.constructorCall),
+                FunctionParameter("data", visitorDataType).takeIf { hasDataParameter },
+            ),
+            returnType = StandardTypes.unit,
+            modality = modality,
+            override = override,
+        )
+    }
+
+    protected fun ImportCollectingPrinter.printVisitAnnotationUsage(
+        hasDataParameter: Boolean,
+        modality: Modality,
+        override: Boolean,
+    ) {
+        printVisitAnnotationUsageDeclaration(hasDataParameter, modality, override)
+        printBlock {
+            val data = runIf(hasDataParameter) { ", data" } ?: ""
+            println("visitElement(annotationUsage$data)")
+            println("visitTypeRecursively(annotationUsage, annotationUsage.type$data)")
+        }
+    }
+
     protected fun ImportCollectingPrinter.printTypeRemappings(
         element: Element,
         irTypeFields: List<Field>,
         hasDataParameter: Boolean,
+        transformTypes: Boolean = false,
     ) {
-        val visitTypeMethodName = "visitTypeRecursively"
+        printTypeRemappingsOverridable(this, element, irTypeFields, hasDataParameter, transformTypes)
+    }
+
+    protected open fun printTypeRemappingsOverridable(
+        printer: ImportCollectingPrinter,
+        element: Element,
+        irTypeFields: List<Field>,
+        hasDataParameter: Boolean,
+        transformTypes: Boolean = false,
+    ): Unit = with(printer) {
+        val visitTypeMethodName = if (transformTypes) "transformTypeRecursively" else "visitTypeRecursively"
         val visitorParam = element.visitorParameterName
         fun addVisitTypeStatement(field: Field) {
             val access = "$visitorParam.${field.name}"
             when (field) {
                 is SimpleField -> {
-                    val argumentToPassToVisitType = if (field.nullable) {
-                        print(access, "?.let { ")
-                        "it"
+                    if (transformTypes) {
+                        print(access, " = ", visitTypeMethodName, "(", visitorParam, ", ", access)
+                        if (hasDataParameter) {
+                            print(", data")
+                        }
+                        println(")")
                     } else {
-                        access
+                        val argumentToPassToVisitType = if (field.nullable) {
+                            print(access, "?.let { ")
+                            "it"
+                        } else {
+                            access
+                        }
+                        print(visitTypeMethodName, "(", visitorParam, ", ", argumentToPassToVisitType)
+                        if (hasDataParameter) {
+                            print(", data")
+                        }
+                        print(")")
+                        if (field.nullable) {
+                            print(" }")
+                        }
+                        println()
                     }
-                    print(visitTypeMethodName, "(", visitorParam, ", ", argumentToPassToVisitType)
-                    if (hasDataParameter) {
-                        print(", data")
-                    }
-                    print(")")
-                    if (field.nullable) {
-                        print(" }")
-                    }
-                    println()
                 }
                 is ListField -> {
-                    print(access, ".forEach { ", visitTypeMethodName, "(", visitorParam, ", it")
-                    if (hasDataParameter) {
-                        print(", data")
+                    if (transformTypes) {
+                        when (field.mutability) {
+                            ListField.Mutability.Var -> {
+                                addImport(ArbitraryImportable("org.jetbrains.kotlin.utils", "memoryOptimizedMap"))
+                                print(access, " = ", access, ".memoryOptimizedMap")
+                                printBlock {
+                                    print(visitTypeMethodName, "(", visitorParam, ", it")
+                                    if (hasDataParameter) {
+                                        print(", data")
+                                    }
+                                    println(")")
+                                }
+                            }
+                            ListField.Mutability.MutableList, ListField.Mutability.Array -> {
+                                print(access, ".replaceAll")
+                                printBlock {
+                                    print(visitTypeMethodName, "(", visitorParam, ", it")
+                                    if (hasDataParameter) {
+                                        print(", data")
+                                    }
+                                    println(")")
+                                }
+                            }
+                        }
+
+                    } else {
+                        print(access, ".forEach { ", visitTypeMethodName, "(", visitorParam, ", it")
+                        if (hasDataParameter) {
+                            print(", data")
+                        }
+                        println(") }")
                     }
-                    println(") }")
                 }
             }
         }
@@ -167,21 +253,35 @@ internal open class TypeVisitorPrinter(
                                         |Please adjust logic of `${visitorType.simpleName}`'s generation.""".trimMargin()
                     )
                 }
-                println("for (type in ${visitorParam}.typeArguments) {")
-                withIndent {
-                    println("if (type != null) {")
-                    withIndent {
-                        print(visitTypeMethodName, "(", visitorParam, ", type")
+                if (transformTypes) {
+                    print(visitorParam, ".typeArguments.replaceAll")
+                    printBlock {
+                        print(visitTypeMethodName, "(", visitorParam, ", it")
                         if (hasDataParameter) {
                             print(", data")
                         }
                         println(")")
                     }
+                } else {
+                    println("for (type in ${visitorParam}.typeArguments) {")
+                    withIndent {
+                        println("if (type != null) {")
+                        withIndent {
+                            print(visitTypeMethodName, "(", visitorParam, ", type")
+                            if (hasDataParameter) {
+                                print(", data")
+                            }
+                            println(")")
+                        }
+                        println("}")
+                    }
                     println("}")
                 }
-                println("}")
             }
             IrTree.`class` -> {
+                if (transformTypes) {
+                    print(visitorParam, ".valueClassRepresentation = ")
+                }
                 println(visitorParam, ".valueClassRepresentation?.mapUnderlyingType {")
                 withIndent {
                     print(visitTypeMethodName, "(", visitorParam, ", it")
@@ -189,7 +289,9 @@ internal open class TypeVisitorPrinter(
                         print(", data")
                     }
                     println(")")
-                    println("it")
+                    if (!transformTypes) {
+                        println("it")
+                    }
                 }
                 println("}")
                 irTypeFields.forEach(::addVisitTypeStatement)
@@ -202,8 +304,9 @@ internal open class TypeVisitorPrinter(
 
     override fun printMethodsForElement(element: Element) {
         val irTypeFields = element.getFieldsWithIrTypeType()
-        if (irTypeFields.isEmpty()) return
-        if (element.parentInVisitor == null) return
+        val isAnnotationContainer = element in listOf(IrTree.declarationBase, IrTree.file)
+        if (!isAnnotationContainer && (irTypeFields.isEmpty() || element.parentInVisitor == null)) return
+
         printer.run {
             println()
             printVisitMethodDeclaration(
@@ -212,6 +315,9 @@ internal open class TypeVisitorPrinter(
             )
             printBlock {
                 printTypeRemappings(element, irTypeFields, hasDataParameter = true)
+                if (isAnnotationContainer) {
+                    println("${element.visitorParameterName}.annotations.forEach { visitAnnotationUsage(it, data) }")
+                }
                 println(
                     "return super.",
                     element.visitFunctionName,

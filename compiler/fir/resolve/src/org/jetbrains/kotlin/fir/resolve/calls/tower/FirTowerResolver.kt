@@ -5,9 +5,8 @@
 
 package org.jetbrains.kotlin.fir.resolve.calls.tower
 
-import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
-import org.jetbrains.kotlin.fir.references.FirSuperReference
+import org.jetbrains.kotlin.fir.expressions.FirSuperReceiverExpression
 import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
 import org.jetbrains.kotlin.fir.resolve.calls.InapplicableCandidate
 import org.jetbrains.kotlin.fir.resolve.calls.MissingInnerClassConstructorReceiver
@@ -80,12 +79,10 @@ class FirTowerResolver(
                 invokeResolveTowerExtension.enqueueResolveTasksForNoReceiver(info)
             }
             else -> {
-                if (receiver is FirQualifiedAccessExpression) {
-                    if (receiver.calleeReference is FirSuperReference) {
-                        manager.enqueueResolverTask { mainTask.runResolverForSuperReceiver(info, receiver) }
-                        invokeResolveTowerExtension.enqueueResolveTasksForSuperReceiver(info, receiver)
-                        return
-                    }
+                if (receiver is FirSuperReceiverExpression) {
+                    manager.enqueueResolverTask { mainTask.runResolverForSuperReceiver(info, receiver) }
+                    invokeResolveTowerExtension.enqueueResolveTasksForSuperReceiver(info, receiver)
+                    return
                 }
                 if (info.isImplicitInvoke) {
                     invokeResolveTowerExtension.enqueueResolveTasksForImplicitInvokeCall(info, receiver)

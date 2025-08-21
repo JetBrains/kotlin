@@ -7,15 +7,20 @@ package org.jetbrains.kotlin.backend.konan.lower
 
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
-import org.jetbrains.kotlin.backend.common.lower.*
-import org.jetbrains.kotlin.ir.objcinterop.isObjCForwardDeclaration
+import org.jetbrains.kotlin.backend.common.lower.IrBuildingTransformer
+import org.jetbrains.kotlin.backend.common.lower.at
+import org.jetbrains.kotlin.backend.common.lower.irBlock
+import org.jetbrains.kotlin.backend.konan.optimizations.STATEMENT_ORIGIN_NO_CAST_NEEDED
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrTypeOperator
 import org.jetbrains.kotlin.ir.expressions.IrTypeOperatorCall
-import org.jetbrains.kotlin.ir.types.*
-import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.objcinterop.isObjCForwardDeclaration
+import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.classOrNull
+import org.jetbrains.kotlin.ir.types.mergeNullability
+import org.jetbrains.kotlin.ir.util.eraseTypeParameters
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 
 internal class TypeOperatorLowering(val context: CommonBackendContext) : FileLoweringPass, IrBuildingTransformer(context) {
@@ -50,7 +55,9 @@ internal class TypeOperatorLowering(val context: CommonBackendContext) : FileLow
             +irLetS(expression.argument) { variable ->
                 irIfThenElse(expression.type,
                         condition = irIs(irGet(variable.owner), typeOperand),
-                        thenPart = irImplicitCast(irGet(variable.owner), typeOperand),
+                        thenPart = irBlock(origin = STATEMENT_ORIGIN_NO_CAST_NEEDED) {
+                            +irImplicitCast(irGet(variable.owner), typeOperand)
+                        },
                         elsePart = irNull())
             }
         }

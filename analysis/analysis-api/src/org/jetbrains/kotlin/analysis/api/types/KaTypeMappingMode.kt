@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -46,11 +46,24 @@ public enum class KaTypeMappingMode {
 
     /**
      * The optimal mode to convert a declaration's return type if it's part of the signature.
+     *
+     * For functions, consider using [FUNCTION_RETURN_TYPE].
      */
     RETURN_TYPE,
+
+    /**
+     * Same as [RETURN_TYPE], but Kotlin Unit is mapped to Java `void`.
+     * Should be used only for return types of functions (not properties or getters), because `void` type can't be used anywhere else.
+     */
+    FUNCTION_RETURN_TYPE,
 
     /**
      * The optimal mode to convert a value parameter's type if it's part of the signature.
      */
     VALUE_PARAMETER,
+
+    /**
+     * The same as [VALUE_PARAMETER], but value classes are boxed.
+     */
+    VALUE_PARAMETER_BOXED,
 }

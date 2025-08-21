@@ -20,11 +20,17 @@ import org.jetbrains.kotlin.name.Name
 class IrModuleFragmentImpl(
     override val descriptor: ModuleDescriptor,
 ) : IrModuleFragment() {
-    override val startOffset: Int
+    override var startOffset: Int
         get() = UNDEFINED_OFFSET
+        set(value) {
+            error("Mutation of startOffset is not supported for this class.")
+        }
 
-    override val endOffset: Int
+    override var endOffset: Int
         get() = UNDEFINED_OFFSET
+        set(value) {
+            error("Mutation of endOffset is not supported for this class.")
+        }
 
     override var attributeOwnerId: IrElement = this
 

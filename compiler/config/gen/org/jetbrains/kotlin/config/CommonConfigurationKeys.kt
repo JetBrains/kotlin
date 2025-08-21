@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.config.phaser.PhaseConfig
 import org.jetbrains.kotlin.constant.EvaluatedConstTracker
 import org.jetbrains.kotlin.incremental.components.EnumWhenTracker
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
+import org.jetbrains.kotlin.incremental.components.ICFileMappingTracker
 import org.jetbrains.kotlin.incremental.components.ImportTracker
 import org.jetbrains.kotlin.incremental.components.InlineConstTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
@@ -45,6 +46,9 @@ object CommonConfigurationKeys {
     val INLINE_CONST_TRACKER = CompilerConfigurationKey.create<InlineConstTracker>("inline constant tracker")
 
     @JvmField
+    val FILE_MAPPING_TRACKER = CompilerConfigurationKey.create<ICFileMappingTracker>("file mapping tracker")
+
+    @JvmField
     val ENUM_WHEN_TRACKER = CompilerConfigurationKey.create<EnumWhenTracker>("enum when tracker")
 
     @JvmField
@@ -70,6 +74,9 @@ object CommonConfigurationKeys {
 
     @JvmField
     val USE_FIR_EXPERIMENTAL_CHECKERS = CompilerConfigurationKey.create<Boolean>("fir not-public-ready checkers")
+
+    @JvmField
+    val DUMP_INFERENCE_LOGS = CompilerConfigurationKey.create<Boolean>("render the inference constraints dump file")
 
     @JvmField
     val PARALLEL_BACKEND_THREADS = CompilerConfigurationKey.create<Int>("Run codegen phase in parallel with N threads")
@@ -109,6 +116,10 @@ object CommonConfigurationKeys {
     @JvmField
     val DONT_SORT_SOURCE_FILES = CompilerConfigurationKey.create<Boolean>("don't sort source files in FS order")
 
+    // Internal for passing configuration in the scripting pipeline, impossible to set via compiler arguments
+    @JvmField
+    val SCRIPTING_HOST_CONFIGURATION = CompilerConfigurationKey.create<Any>("scripting host configuration")
+
 }
 
 var CompilerConfiguration.languageVersionSettings: LanguageVersionSettings
@@ -138,6 +149,10 @@ var CompilerConfiguration.expectActualTracker: ExpectActualTracker?
 var CompilerConfiguration.inlineConstTracker: InlineConstTracker?
     get() = get(CommonConfigurationKeys.INLINE_CONST_TRACKER)
     set(value) { putIfNotNull(CommonConfigurationKeys.INLINE_CONST_TRACKER, value) }
+
+var CompilerConfiguration.fileMappingTracker: ICFileMappingTracker?
+    get() = get(CommonConfigurationKeys.FILE_MAPPING_TRACKER)
+    set(value) { putIfNotNull(CommonConfigurationKeys.FILE_MAPPING_TRACKER, value) }
 
 var CompilerConfiguration.enumWhenTracker: EnumWhenTracker?
     get() = get(CommonConfigurationKeys.ENUM_WHEN_TRACKER)
@@ -174,6 +189,10 @@ var CompilerConfiguration.useFirExtraCheckers: Boolean
 var CompilerConfiguration.useFirExperimentalCheckers: Boolean
     get() = getBoolean(CommonConfigurationKeys.USE_FIR_EXPERIMENTAL_CHECKERS)
     set(value) { put(CommonConfigurationKeys.USE_FIR_EXPERIMENTAL_CHECKERS, value) }
+
+var CompilerConfiguration.dumpInferenceLogs: Boolean
+    get() = getBoolean(CommonConfigurationKeys.DUMP_INFERENCE_LOGS)
+    set(value) { put(CommonConfigurationKeys.DUMP_INFERENCE_LOGS, value) }
 
 var CompilerConfiguration.parallelBackendThreads: Int?
     get() = get(CommonConfigurationKeys.PARALLEL_BACKEND_THREADS)
@@ -222,4 +241,8 @@ var CompilerConfiguration.dontCreateSeparateSessionForScripts: Boolean
 var CompilerConfiguration.dontSortSourceFiles: Boolean
     get() = getBoolean(CommonConfigurationKeys.DONT_SORT_SOURCE_FILES)
     set(value) { put(CommonConfigurationKeys.DONT_SORT_SOURCE_FILES, value) }
+
+var CompilerConfiguration.scriptingHostConfiguration: Any?
+    get() = get(CommonConfigurationKeys.SCRIPTING_HOST_CONFIGURATION)
+    set(value) { put(CommonConfigurationKeys.SCRIPTING_HOST_CONFIGURATION, requireNotNull(value) { "nullable values are not allowed" }) }
 

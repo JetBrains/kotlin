@@ -17,3 +17,5 @@ interface B : <!CYCLIC_INHERITANCE_HIERARCHY!>A<!> {
 interface C extends B {
     void baz();
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, interfaceDeclaration */

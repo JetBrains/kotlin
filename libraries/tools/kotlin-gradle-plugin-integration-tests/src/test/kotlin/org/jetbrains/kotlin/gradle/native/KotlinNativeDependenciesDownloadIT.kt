@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.gradle.native
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.testbase.TestVersions.Kotlin.STABLE_RELEASE
+import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
+import org.jetbrains.kotlin.gradle.uklibs.include
 import org.jetbrains.kotlin.gradle.util.assertProcessRunResult
 import org.jetbrains.kotlin.gradle.util.runProcess
 import org.jetbrains.kotlin.konan.target.HostManager
@@ -17,7 +19,9 @@ import org.junit.jupiter.api.Assumptions
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
 import org.junit.jupiter.api.io.TempDir
+import java.io.File
 import java.nio.file.Path
+import kotlin.test.assertEquals
 
 // We temporarily disable it for windows until a proper fix is found for this issue: KT-62761
 @OsCondition(
@@ -73,7 +77,7 @@ class KotlinNativeDependenciesDownloadIT : KGPBaseTest() {
         if (HostManager.hostIsMac) Assumptions.assumeTrue(HostManager.host == KonanTarget.MACOS_ARM64)
         testNativeDependencies("native-simple-project", "assemble", gradleVersion)
     }
-    
+
     @DisplayName("checks that macos dependencies are not corrupted")
     @GradleTest
     @OsCondition(supportedOn = [OS.MAC], enabledOnCI = [OS.MAC])
@@ -131,6 +135,47 @@ class KotlinNativeDependenciesDownloadIT : KGPBaseTest() {
                 assertOutputContains(
                     "Kotlin Native bundle dependency was used. Please provide the corresponding version in 'kotlin.native.version' property instead of any other ways."
                 )
+            }
+        }
+    }
+
+    @DisplayName("Test kotlin native should be reinstalled only ones when `kotlin.native.reinstall` property is true")
+    @GradleTest
+    fun kotlinNativeReinstall(gradleVersion: GradleVersion) {
+        project("empty", gradleVersion) {
+            include(
+                project("empty", gradleVersion) {
+                    addKgpToBuildScriptCompilationClasspath()
+                    buildScriptInjection {
+                        project.applyMultiplatform {
+                            linuxArm64()
+                            sourceSets.commonMain.get().compileSource("class SomeClass")
+                        }
+                    }
+                },
+                "includedProject"
+            )
+            addKgpToBuildScriptCompilationClasspath()
+            buildScriptInjection {
+                project.applyMultiplatform {
+                    linuxArm64()
+                    sourceSets.commonMain.dependencies {
+                        implementation(project(":includedProject"))
+                        sourceSets.commonMain.get().compileSource("class Main")
+                    }
+                }
+            }
+
+            build(
+                "compileKotlinLinuxArm64",
+                buildOptions = defaultBuildOptions.copy(
+                    nativeOptions = defaultBuildOptions.nativeOptions.copy(
+                        reinstall = true
+                    ),
+                )
+            ) {
+                assertOutputContainsExactlyTimes("Moving Kotlin/Native")
+                assertOutputContainsExactlyTimes("Removing Kotlin/Native bundle")
             }
         }
     }

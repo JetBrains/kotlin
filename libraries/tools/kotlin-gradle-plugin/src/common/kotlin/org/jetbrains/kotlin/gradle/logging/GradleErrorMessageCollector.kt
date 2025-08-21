@@ -10,28 +10,26 @@ import org.jetbrains.kotlin.buildtools.api.KotlinLogger
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSourceLocation
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
+import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
 import java.io.File
-import java.io.FileWriter
 
 class GradleErrorMessageCollector(
-    private val logger: KotlinLogger,
+    val logger: KotlinLogger,
     private val delegate: MessageCollector? = null,
     private val acceptableMessageSeverity: List<CompilerMessageSeverity> = listOf(CompilerMessageSeverity.EXCEPTION),
-    private val kotlinPluginVersion: String? = null
+    val kotlinPluginVersion: String? = null,
 ) : MessageCollector {
+    private val buildErrorMessageCollector = BuildErrorMessageCollector(logger, kotlinPluginVersion)
 
     constructor(
         logger: Logger,
         delegate: MessageCollector? = null,
         acceptableMessageSeverity: List<CompilerMessageSeverity> = listOf(CompilerMessageSeverity.EXCEPTION),
-        kotlinPluginVersion: String? = null,
+        kotlinPluginVersion: String? = getKotlinPluginVersion(logger),
     ) : this(GradleKotlinLogger(logger), delegate, acceptableMessageSeverity, kotlinPluginVersion)
-
-    private val errors = ArrayList<String>()
 
     override fun clear() {
         delegate?.clear()
-        errors.clear()
     }
 
     fun report(error: Throwable, location: CompilerMessageSourceLocation?) {
@@ -42,32 +40,16 @@ class GradleErrorMessageCollector(
         delegate?.report(severity, message, location)
 
         if (severity in acceptableMessageSeverity) {
-            synchronized(errors) {
-                errors.add(message)
-            }
+            buildErrorMessageCollector.addError(message)
         }
     }
 
     override fun hasErrors(): Boolean {
-        return errors.isNotEmpty()
+        return buildErrorMessageCollector.hasErrors()
     }
 
     fun flush(files: Set<File>) {
-        if (!hasErrors()) {
-            return
-        }
-        for (file in files) {
-            file.parentFile.mkdirs()
-            file.createNewFile()
-            FileWriter(file).use {
-                kotlinPluginVersion?.also { version -> it.append("kotlin version: $version\n") }
-                for (error in errors) {
-                    it.append("error message: $error\n\n")
-                }
-                it.flush()
-            }
-            logger.debug("${errors.count()} errors were stored into file ${file.absolutePath}")
-        }
+        buildErrorMessageCollector.flush(files)
         clear()
     }
 }

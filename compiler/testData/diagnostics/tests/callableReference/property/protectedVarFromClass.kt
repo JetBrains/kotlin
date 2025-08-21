@@ -22,3 +22,5 @@ open class B : A() {
 }
 
 class C : B()
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, functionDeclaration, integerLiteral, propertyDeclaration */

@@ -22,3 +22,5 @@ public class Outer<Foo> {
 package a
 
 fun test() = Outer<String>().Inner().bar()
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaFunction, javaType */

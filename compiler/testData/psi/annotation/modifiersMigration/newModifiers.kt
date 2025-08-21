@@ -1,3 +1,5 @@
+// COMPILATION_ERRORS
+
 data annotation tailrec external noinline fun bar(data x: Int) {
     data inline noinline class A
 

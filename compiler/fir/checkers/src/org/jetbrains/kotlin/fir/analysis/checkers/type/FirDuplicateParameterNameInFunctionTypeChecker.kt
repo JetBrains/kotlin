@@ -12,18 +12,20 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.isSomeFunctionType
-import org.jetbrains.kotlin.fir.types.parameterName
+import org.jetbrains.kotlin.fir.types.valueParameterName
 import org.jetbrains.kotlin.fir.types.type
 
 object FirDuplicateParameterNameInFunctionTypeChecker : FirResolvedTypeRefChecker(MppCheckerKind.Common) {
-    override fun check(typeRef: FirResolvedTypeRef, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(typeRef: FirResolvedTypeRef) {
         if (!typeRef.coneType.isSomeFunctionType(context.session)) return
 
-        val nameToArgumentProjection = typeRef.coneType.typeArguments.dropLast(1).groupBy { it.type?.parameterName }
+        val nameToArgumentProjection = typeRef.coneType.typeArguments.dropLast(1)
+            .groupBy { it.type?.valueParameterName(context.session) }
 
         for ((name, projections) in nameToArgumentProjection) {
             if (name != null && projections.size >= 2) {
-                reporter.reportOn(typeRef.source, FirErrors.DUPLICATE_PARAMETER_NAME_IN_FUNCTION_TYPE, context)
+                reporter.reportOn(typeRef.source, FirErrors.DUPLICATE_PARAMETER_NAME_IN_FUNCTION_TYPE)
             }
         }
     }

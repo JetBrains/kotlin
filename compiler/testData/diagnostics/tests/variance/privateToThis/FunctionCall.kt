@@ -36,3 +36,6 @@ class Test<in I> {
 fun <I> test(t: Test<I>) {
     t.apply(t.<!INVISIBLE_MEMBER("foo; private/*private to this*/; 'Test'")!>foo<!>())
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, companionObject, functionDeclaration, in, init, lambdaLiteral,
+nullableType, objectDeclaration, thisExpression, typeParameter */

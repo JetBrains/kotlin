@@ -13,3 +13,5 @@ class MyDerived2a : MyBase(null)
 class MyDerived3 : MyAlias {
     constructor(x: Nothing?) : super(x)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, nullableType, primaryConstructor, secondaryConstructor, typeAliasDeclaration */

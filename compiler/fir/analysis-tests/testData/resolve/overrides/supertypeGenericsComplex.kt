@@ -13,3 +13,6 @@ fun f(list: MutableList<X>, s: MutableList<CharSequence>) {
     C().f(list, s)
     C().<!CANNOT_INFER_PARAMETER_TYPE!>f<!>(<!ARGUMENT_TYPE_MISMATCH!>s<!>, <!ARGUMENT_TYPE_MISMATCH!>list<!>)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, interfaceDeclaration, nullableType, out, typeConstraint,
+typeParameter */

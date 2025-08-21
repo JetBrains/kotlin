@@ -43,3 +43,6 @@ fun <R> fun4ValueArgument(p: () -> R) {
 inline fun <R> inlineFun(crossinline p: () -> R) {
     p()
 }
+
+/* GENERATED_FIR_TAGS: crossinline, functionDeclaration, functionalType, inline, lambdaLiteral, nullableType,
+typeParameter */

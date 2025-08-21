@@ -27,3 +27,5 @@ fun bar(x : C1, y : D1){
     y.foo(<!NAME_FOR_AMBIGUOUS_PARAMETER!>x<!> = 0)
     y.foo(<!NAME_FOR_AMBIGUOUS_PARAMETER!>y<!> = 0)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, interfaceDeclaration */

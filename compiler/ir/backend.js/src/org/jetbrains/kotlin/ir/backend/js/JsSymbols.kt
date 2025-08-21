@@ -5,8 +5,9 @@
 
 package org.jetbrains.kotlin.ir.backend.js
 
-import org.jetbrains.kotlin.backend.common.ir.Symbols
+import org.jetbrains.kotlin.backend.common.ir.KlibSymbols
 import org.jetbrains.kotlin.builtins.StandardNames.COLLECTIONS_PACKAGE_FQ_NAME
+import org.jetbrains.kotlin.builtins.StandardNames.TEXT_PACKAGE_FQ_NAME
 import org.jetbrains.kotlin.ir.InternalSymbolFinderAPI
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
@@ -18,13 +19,15 @@ import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classifierOrFail
 import org.jetbrains.kotlin.ir.types.makeNotNull
+import org.jetbrains.kotlin.ir.util.IdSignature
+import org.jetbrains.kotlin.ir.util.hasShape
 import org.jetbrains.kotlin.ir.util.kotlinPackageFqn
 import org.jetbrains.kotlin.name.JsStandardClassIds.BASE_JS_PACKAGE
 import org.jetbrains.kotlin.name.Name
 
 abstract class JsCommonSymbols(
     irBuiltIns: IrBuiltIns,
-) : Symbols(irBuiltIns) {
+) : KlibSymbols(irBuiltIns) {
     @OptIn(InternalSymbolFinderAPI::class)
     val coroutineSymbols = JsCommonCoroutineSymbols(irBuiltIns.symbolFinder)
 }
@@ -47,6 +50,9 @@ class JsSymbols(
 
     override val throwUninitializedPropertyAccessException =
         symbolFinder.topLevelFunction(kotlinPackageFqn, "throwUninitializedPropertyAccessException")
+
+    override val throwUnsupportedOperationException =
+        symbolFinder.topLevelFunction(kotlinPackageFqn, "throwUnsupportedOperationException")
 
     override val throwKotlinNothingValueException: IrSimpleFunctionSymbol =
         symbolFinder.topLevelFunction(kotlinPackageFqn, "throwKotlinNothingValueException")
@@ -97,6 +103,20 @@ class JsSymbols(
         return stageController.withInitialIr { super.suspendFunctionN(n) }
     }
 
+    internal val subStringFunction: IrSimpleFunctionSymbol =
+        symbolFinder.topLevelFunction(TEXT_PACKAGE_FQ_NAME, "substring") {
+            // FIXME(KT-74791): For some reason when compiling against the minimal stdlib, the symbols are unbound, but when compiling
+            //   against the full stdlib, they are bound but don't have `signature`, so we have to have this if.
+            if (it.isBound) {
+                it.owner.hasShape(
+                    extensionReceiver = true,
+                    regularParameters = 2,
+                    parameterTypes = listOf(irBuiltIns.stringType, irBuiltIns.intType, irBuiltIns.intType)
+                )
+            } else {
+                (it.signature as? IdSignature.CommonSignature)?.description == "substring@kotlin.String(kotlin.Int;kotlin.Int){}"
+            }
+        }
 
     private val getProgressionLastElementSymbols =
         symbolFinder.findFunctions(Name.identifier("getProgressionLastElement"), "kotlin", "internal")

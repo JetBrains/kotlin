@@ -35,3 +35,6 @@ fun test() {
           ))
     ))
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, anonymousFunction, functionDeclaration, functionalType, integerLiteral,
+nullableType, objectDeclaration, propertyDeclaration, typeParameter */

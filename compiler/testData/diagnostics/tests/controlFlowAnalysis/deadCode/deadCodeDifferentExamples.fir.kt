@@ -168,3 +168,7 @@ fun returnInWhile(a: Int) {
     do {return}
     while (<!UNREACHABLE_CODE!>1 > a<!>)
 }
+
+/* GENERATED_FIR_TAGS: break, comparisonExpression, disjunctionExpression, doWhileLoop, equalityExpression, forLoop,
+functionDeclaration, ifExpression, integerLiteral, javaFunction, localProperty, nullableType, propertyDeclaration,
+rangeExpression, stringLiteral, tryExpression, whileLoop */

@@ -12,3 +12,5 @@ interface B : A {
 fun <E> bar(e: E) where E : A, E : B {
     e.foo()
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, interfaceDeclaration, override, typeConstraint, typeParameter */

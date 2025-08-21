@@ -21,3 +21,5 @@ fun main2() {
     }
 }
 
+/* GENERATED_FIR_TAGS: equalityExpression, functionDeclaration, functionalType, ifExpression, integerLiteral,
+lambdaLiteral, nullableType, stringLiteral, typeParameter */

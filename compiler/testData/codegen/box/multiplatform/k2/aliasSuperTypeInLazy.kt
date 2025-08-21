@@ -1,14 +1,15 @@
 // LANGUAGE: +MultiPlatformProjects
-// MODULE: dep
+// MODULE: dep-common
 // FILE: dep.kt
-
 open class Base1() {
     val prop = "O"
     fun foo() = "K"
 }
 open class Base2 : Base1()
 
-// MODULE: lib-common(dep)
+// MODULE: dep()()(dep-common)
+
+// MODULE: lib-common(dep-common)
 // FILE: lib-common.kt
 
 open expect class BaseAlias() : Base1

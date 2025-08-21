@@ -18,3 +18,6 @@ private fun baz() = My(object : I1, I2 {})
 private <!NOTHING_TO_INLINE!>inline<!> fun <!AMBIGUOUS_ANONYMOUS_TYPE_INFERRED!>bazBaz<!>() = My(object : I1, I2 {})
 
 private <!NOTHING_TO_INLINE!>inline<!> fun bazBazBaz() = My(object : I1 {})
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, classDeclaration, functionDeclaration, inline, interfaceDeclaration,
+nullableType, outProjection, primaryConstructor, propertyDeclaration, typeParameter */

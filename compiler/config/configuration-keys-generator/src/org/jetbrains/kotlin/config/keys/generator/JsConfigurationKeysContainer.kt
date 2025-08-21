@@ -24,8 +24,6 @@ object JsConfigurationKeysContainer : KeysContainer("org.jetbrains.kotlin.js.con
 
     val OUTPUT_NAME by key<String>("Name of output KLib file")
 
-    val TRANSITIVE_LIBRARIES by key<List<String>>("library files for transitive dependencies")
-
     val LIBRARIES by key<List<String>>("library file paths")
 
     val FRIEND_LIBRARIES by key<List<String>>("friend library file paths")
@@ -62,8 +60,6 @@ object JsConfigurationKeysContainer : KeysContainer("org.jetbrains.kotlin.js.con
 
     val FRIEND_PATHS_DISABLED by key<Boolean>("disable support for friend paths")
 
-    val FRIEND_PATHS by key<List<String>>("friend module paths")
-
     val METADATA_ONLY by key<Boolean>("generate .meta.js and .kjsm files only")
 
     val DEVELOPER_MODE by key<Boolean>("enables additional checkers")
@@ -79,6 +75,8 @@ object JsConfigurationKeysContainer : KeysContainer("org.jetbrains.kotlin.js.con
     val COMPILE_SUSPEND_AS_JS_GENERATOR by key<Boolean>("force suspend functions compilation int JS generator functions")
 
     val COMPILE_LAMBDAS_AS_ES6_ARROW_FUNCTIONS by key<Boolean>("lower Kotlin lambdas into arrow functions instead of anonymous functions")
+
+    val COMPILE_LONG_AS_BIGINT by key<Boolean>("compile Long as BigInt")
 
     val GENERATE_REGION_COMMENTS by key<Boolean>(
         "generate special comments at the start and the end of each file block, it allows to fold them and navigate to them in the IDEA"

@@ -39,7 +39,7 @@ internal fun addSourcesToKotlinCompileTask(
     fun AbstractKotlinCompile<*>.configureAction() {
         // In this call, the super-implementation of `source` adds the directories files to the roots of the union file tree,
         // so it's OK to pass just the source roots.
-        setSource(Callable(sources))
+        source(Callable(sources))
         with(sourceFileExtensions.toSet()) {
             if (isNotEmpty()) {
                 include(flatMap { ext -> ext.fileExtensionCasePermutations().map { "**/*.$it" } })
@@ -96,15 +96,7 @@ internal fun KotlinCompilation<*>.moduleNameForCompilation(
 internal fun filterModuleName(moduleName: String): String =
     moduleName.replace(invalidModuleNameCharactersRegex, "_")
 
-internal inline fun <@Suppress("DEPRECATION") reified T : KotlinCommonOptions> InternalKotlinCompilation<*>.castKotlinOptionsType(
-): InternalKotlinCompilation<T> {
-    @Suppress("DEPRECATION")
-    this.kotlinOptions as T
-    @Suppress("UNCHECKED_CAST")
-    return this as InternalKotlinCompilation<T>
-}
-
-@Suppress("TYPEALIAS_EXPANSION_DEPRECATION")
+@Suppress("TYPEALIAS_EXPANSION_DEPRECATION_ERROR")
 internal inline fun <reified T : KotlinCommonCompilerOptions> DeprecatedHasCompilerOptions<*>.castCompilerOptionsType(): DeprecatedHasCompilerOptions<T> {
     this.options as T
     @Suppress("UNCHECKED_CAST")

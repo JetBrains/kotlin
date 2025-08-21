@@ -20,7 +20,7 @@ fun foo(m: MyRunnable) {}
 
 fun main() {
     JavaUsage.foo <!ARGUMENT_TYPE_MISMATCH!>{
-            <!CANNOT_INFER_PARAMETER_TYPE!>x<!> -> x <!UNRESOLVED_REFERENCE!>><!> 1
+            <!CANNOT_INFER_VALUE_PARAMETER_TYPE!>x<!> -> x <!UNRESOLVED_REFERENCE!>><!> 1
     }<!>
 
     JavaUsage.foo(<!ARGUMENT_TYPE_MISMATCH!>{ <!UNRESOLVED_REFERENCE!>it<!> > 1 }<!>)
@@ -29,3 +29,6 @@ fun main() {
 
     JavaUsage.foo(<!ARGUMENT_TYPE_MISMATCH!>x<!>)
 }
+
+/* GENERATED_FIR_TAGS: comparisonExpression, functionDeclaration, integerLiteral, javaFunction, javaType, lambdaLiteral,
+localProperty, propertyDeclaration */

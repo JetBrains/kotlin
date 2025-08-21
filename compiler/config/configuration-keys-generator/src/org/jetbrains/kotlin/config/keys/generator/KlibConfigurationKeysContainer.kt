@@ -6,7 +6,9 @@
 package org.jetbrains.kotlin.config.keys.generator
 
 import org.jetbrains.kotlin.config.DuplicatedUniqueNameStrategy
+import org.jetbrains.kotlin.config.KlibAbiCompatibilityLevel
 import org.jetbrains.kotlin.config.keys.generator.model.KeysContainer
+import org.jetbrains.kotlin.library.KotlinAbiVersion
 
 @Suppress("unused")
 object KlibConfigurationKeysContainer : KeysContainer("org.jetbrains.kotlin.config", "KlibConfigurationKeys") {
@@ -16,12 +18,12 @@ object KlibConfigurationKeysContainer : KeysContainer("org.jetbrains.kotlin.conf
 
     val PRODUCE_KLIB_SIGNATURES_CLASH_CHECKS by key<Boolean>("Turn on the checks on uniqueness of signatures")
 
-    val SYNTHETIC_ACCESSORS_DUMP_DIR by key<String>("Path to a directory to dump synthetic accessors and their use sites")
-
-    val SYNTHETIC_ACCESSORS_WITH_NARROWED_VISIBILITY by key<Boolean>(
-        "Narrow the visibility of generated synthetic accessors to _internal_" +
-                " if such accessors are only used in inline functions that are not a part of public ABI"
-    )
-
     val DUPLICATED_UNIQUE_NAME_STRATEGY by key<DuplicatedUniqueNameStrategy>("Duplicated KLIB dependencies handling strategy")
+
+    val CUSTOM_KLIB_ABI_VERSION by key<KotlinAbiVersion>("Custom KLIB ABI version", throwOnNull = false)
+
+    val KLIB_ABI_COMPATIBILITY_LEVEL by key<KlibAbiCompatibilityLevel>(
+        "KLIB ABI compatibility level",
+        defaultValue = "KlibAbiCompatibilityLevel.LATEST_STABLE"
+    )
 }

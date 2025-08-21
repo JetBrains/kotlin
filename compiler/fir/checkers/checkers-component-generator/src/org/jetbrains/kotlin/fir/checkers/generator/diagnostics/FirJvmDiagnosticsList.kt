@@ -42,6 +42,17 @@ object JVM_DIAGNOSTICS_LIST : DiagnosticList("FirJvmErrors") {
         val VALUE_CLASS_WITHOUT_JVM_INLINE_ANNOTATION by error<PsiElement>()
         val JVM_INLINE_WITHOUT_VALUE_CLASS by error<PsiElement>()
 
+        val INAPPLICABLE_JVM_EXPOSE_BOXED_WITH_NAME by error<PsiElement>()
+        val USELESS_JVM_EXPOSE_BOXED by warning<PsiElement>()
+        val JVM_EXPOSE_BOXED_CANNOT_EXPOSE_SUSPEND by error<PsiElement>()
+        val JVM_EXPOSE_BOXED_REQUIRES_NAME by error<PsiElement>()
+        val JVM_EXPOSE_BOXED_CANNOT_BE_THE_SAME by error<PsiElement>()
+        val JVM_EXPOSE_BOXED_CANNOT_BE_THE_SAME_AS_JVM_NAME by error<PsiElement>()
+        val JVM_EXPOSE_BOXED_CANNOT_EXPOSE_OPEN_ABSTRACT by error<PsiElement>()
+        val JVM_EXPOSE_BOXED_CANNOT_EXPOSE_SYNTHETIC by error<PsiElement>()
+        val JVM_EXPOSE_BOXED_CANNOT_EXPOSE_LOCALS by error<PsiElement>()
+        val JVM_EXPOSE_BOXED_CANNOT_EXPOSE_REIFIED by error<PsiElement>()
+
         val WRONG_NULLABILITY_FOR_JAVA_OVERRIDE by warning<PsiElement>(PositioningStrategy.OVERRIDE_MODIFIER) {
             parameter<FirCallableSymbol<*>>("override")
             parameter<FirCallableSymbol<*>>("base")
@@ -83,6 +94,11 @@ object JVM_DIAGNOSTICS_LIST : DiagnosticList("FirJvmErrors") {
             parameter<ConeKotlinType>("expectedType")
             parameter<String>("messageSuffix")
         }
+        val NULLABILITY_MISMATCH_BASED_ON_EXPLICIT_TYPE_ARGUMENTS_FOR_JAVA by warning<PsiElement> {
+            parameter<ConeKotlinType>("actualType")
+            parameter<ConeKotlinType>("expectedType")
+            parameter<String>("messageSuffix")
+        }
 
         val TYPE_MISMATCH_WHEN_FLEXIBILITY_CHANGES by warning<PsiElement> {
             parameter<ConeKotlinType>("actualType")
@@ -119,9 +135,7 @@ object JVM_DIAGNOSTICS_LIST : DiagnosticList("FirJvmErrors") {
         val OVERLOADS_ABSTRACT by error<KtAnnotationEntry>()
         val OVERLOADS_INTERFACE by error<KtAnnotationEntry>()
         val OVERLOADS_LOCAL by error<KtAnnotationEntry>()
-        val OVERLOADS_ANNOTATION_CLASS_CONSTRUCTOR by deprecationError<KtAnnotationEntry>(
-            ProhibitJvmOverloadsOnConstructorsOfAnnotationClasses
-        )
+        val OVERLOADS_ANNOTATION_CLASS_CONSTRUCTOR_ERROR by error<KtAnnotationEntry>()
         val OVERLOADS_PRIVATE by warning<KtAnnotationEntry>()
         val DEPRECATED_JAVA_ANNOTATION by warning<KtAnnotationEntry> {
             parameter<FqName>("kotlinName")
@@ -141,6 +155,11 @@ object JVM_DIAGNOSTICS_LIST : DiagnosticList("FirJvmErrors") {
         val JVM_SERIALIZABLE_LAMBDA_ON_INLINED_FUNCTION_LITERALS by deprecationError<KtAnnotationEntry>(
             featureForError = ForbidJvmSerializableLambdaOnInlinedFunctionLiterals
         )
+        val INCOMPATIBLE_ANNOTATION_TARGETS by warning<KtAnnotationEntry> {
+            parameter<Collection<String>>("missingJavaTargets")
+            parameter<Collection<String>>("correspondingKotlinTargets")
+        }
+        val ANNOTATION_TARGETS_ONLY_IN_JAVA by warning<KtAnnotationEntry>()
     }
 
     val SUPER by object : DiagnosticGroup("Super") {
@@ -181,11 +200,8 @@ object JVM_DIAGNOSTICS_LIST : DiagnosticList("FirJvmErrors") {
     }
 
     val JVM_DEFAULT by object : DiagnosticGroup("JVM Default") {
-        val JVM_DEFAULT_IN_DECLARATION by error<KtElement>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT) {
-            parameter<String>("annotation")
-        }
-        val JVM_DEFAULT_WITH_COMPATIBILITY_IN_DECLARATION by error<KtElement>()
-        val JVM_DEFAULT_WITH_COMPATIBILITY_NOT_ON_INTERFACE by error<KtElement>()
+        val JVM_DEFAULT_WITHOUT_COMPATIBILITY_NOT_IN_ENABLE_MODE by error<KtElement>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT)
+        val JVM_DEFAULT_WITH_COMPATIBILITY_NOT_IN_NO_COMPATIBILITY_MODE by error<KtElement>()
     }
 
     val EXTERNAL_DECLARATION by object : DiagnosticGroup("External Declaration") {
@@ -202,27 +218,25 @@ object JVM_DIAGNOSTICS_LIST : DiagnosticList("FirJvmErrors") {
             parameter<ClassId>("explicitContainerName")
         }
 
-        val REPEATABLE_CONTAINER_MUST_HAVE_VALUE_ARRAY by deprecationError<KtAnnotationEntry>(RepeatableAnnotationContainerConstraints) {
+        val REPEATABLE_CONTAINER_MUST_HAVE_VALUE_ARRAY_ERROR by error<KtAnnotationEntry> {
             parameter<ClassId>("container")
             parameter<ClassId>("annotation")
         }
-        val REPEATABLE_CONTAINER_HAS_NON_DEFAULT_PARAMETER by deprecationError<KtAnnotationEntry>(RepeatableAnnotationContainerConstraints) {
+        val REPEATABLE_CONTAINER_HAS_NON_DEFAULT_PARAMETER_ERROR by error<KtAnnotationEntry> {
             parameter<ClassId>("container")
             parameter<Name>("nonDefault")
         }
-        val REPEATABLE_CONTAINER_HAS_SHORTER_RETENTION by deprecationError<KtAnnotationEntry>(RepeatableAnnotationContainerConstraints) {
+        val REPEATABLE_CONTAINER_HAS_SHORTER_RETENTION_ERROR by error<KtAnnotationEntry> {
             parameter<ClassId>("container")
             parameter<String>("retention")
             parameter<ClassId>("annotation")
             parameter<String>("annotationRetention")
         }
-        val REPEATABLE_CONTAINER_TARGET_SET_NOT_A_SUBSET by deprecationError<KtAnnotationEntry>(RepeatableAnnotationContainerConstraints) {
+        val REPEATABLE_CONTAINER_TARGET_SET_NOT_A_SUBSET_ERROR by error<KtAnnotationEntry> {
             parameter<ClassId>("container")
             parameter<ClassId>("annotation")
         }
-        val REPEATABLE_ANNOTATION_HAS_NESTED_CLASS_NAMED_CONTAINER by deprecationError<KtAnnotationEntry>(
-            RepeatableAnnotationContainerConstraints
-        )
+        val REPEATABLE_ANNOTATION_HAS_NESTED_CLASS_NAMED_CONTAINER_ERROR by error<KtAnnotationEntry>()
     }
 
     val SUSPENSION_POINT by object : DiagnosticGroup("Suspension Point") {
@@ -245,16 +259,19 @@ object JVM_DIAGNOSTICS_LIST : DiagnosticList("FirJvmErrors") {
         val INAPPLICABLE_JVM_FIELD_WARNING by warning<KtAnnotationEntry> {
             parameter<String>("message")
         }
+        val IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE by warning<KtElement> {
+            parameter<ConeKotlinType>("type")
+        }
+        val SYNCHRONIZED_BLOCK_ON_JAVA_VALUE_BASED_CLASS by warning<KtElement> {
+            parameter<ConeKotlinType>("type")
+        }
         val SYNCHRONIZED_BLOCK_ON_VALUE_CLASS_OR_PRIMITIVE by deprecationError<PsiElement>(ProhibitSynchronizationByValueClassesAndPrimitives) {
             parameter<ConeKotlinType>("valueClassOrPrimitive")
         }
         val JVM_SYNTHETIC_ON_DELEGATE by error<KtAnnotationEntry>()
         val SUBCLASS_CANT_CALL_COMPANION_PROTECTED_NON_STATIC by error<PsiElement>(PositioningStrategy.REFERENCED_NAME_BY_QUALIFIED)
-        val CONCURRENT_HASH_MAP_CONTAINS_OPERATOR by deprecationError<PsiElement>(ProhibitConcurrentHashMapContains)
-        val SPREAD_ON_SIGNATURE_POLYMORPHIC_CALL by deprecationError<PsiElement>(
-            ProhibitSpreadOnSignaturePolymorphicCall,
-            PositioningStrategy.SPREAD_OPERATOR
-        )
+        val CONCURRENT_HASH_MAP_CONTAINS_OPERATOR_ERROR by error<PsiElement>()
+        val SPREAD_ON_SIGNATURE_POLYMORPHIC_CALL_ERROR by error<PsiElement>(PositioningStrategy.SPREAD_OPERATOR)
         val JAVA_SAM_INTERFACE_CONSTRUCTOR_REFERENCE by error<PsiElement>()
         val NO_REFLECTION_IN_CLASS_PATH by warning<PsiElement>()
         val SYNTHETIC_PROPERTY_WITHOUT_JAVA_ORIGIN by warning<PsiElement>(PositioningStrategy.REFERENCED_NAME_BY_QUALIFIED) {

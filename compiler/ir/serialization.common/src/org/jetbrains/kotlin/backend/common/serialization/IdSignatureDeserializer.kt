@@ -88,8 +88,7 @@ class IdSignatureDeserializer(
     private fun deserializeLocalIdSignature(proto: ProtoLocalSignature): IdSignature.LocalSignature {
         val localFqn = irInterner.string(libraryFile.deserializeFqName(proto.localFqNameList))
         val localHash = if (proto.hasLocalHash()) proto.localHash else null
-        val description = if (proto.hasDebugInfo()) libraryFile.debugInfo(proto.debugInfo) else null
-        return IdSignature.LocalSignature(localFqn, localHash, description)
+        return IdSignature.LocalSignature(localFqn, localHash)
     }
 
     @Suppress("UNUSED_PARAMETER")

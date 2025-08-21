@@ -110,7 +110,7 @@ class FunctionReferenceBuilder(
             isSuspend = callee.isSuspend
         }.apply {
             overriddenSymbols += superMethod
-            dispatchReceiverParameter = parentAsClass.thisReceiver!!.copyTo(this)
+            parameters += parentAsClass.thisReceiver!!.copyTo(this)
             createLambdaInvokeMethod()
         }
 
@@ -120,7 +120,7 @@ class FunctionReferenceBuilder(
         val valueParameterMap = callee.parameters.associate { param ->
             param to param.copyTo(this)
         }
-        valueParameters += valueParameterMap.values
+        parameters += valueParameterMap.values
         body = callee.moveBodyTo(this, valueParameterMap)
     }
 }

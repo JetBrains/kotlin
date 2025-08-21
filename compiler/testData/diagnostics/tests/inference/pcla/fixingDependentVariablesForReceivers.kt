@@ -42,3 +42,6 @@ fun main() {
         select("", get()).length
     }.length
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionalType, in, interfaceDeclaration, lambdaLiteral, nullableType,
+propertyDeclaration, stringLiteral, typeParameter, typeWithExtension */

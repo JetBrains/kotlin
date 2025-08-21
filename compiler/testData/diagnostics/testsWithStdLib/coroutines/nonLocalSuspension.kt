@@ -81,3 +81,7 @@ fun foo() {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, anonymousObjectExpression, assignment, classDeclaration, crossinline,
+functionDeclaration, functionalType, inline, integerLiteral, lambdaLiteral, localClass, localProperty, nullableType,
+objectDeclaration, propertyDeclaration, stringLiteral, suspend, typeParameter */

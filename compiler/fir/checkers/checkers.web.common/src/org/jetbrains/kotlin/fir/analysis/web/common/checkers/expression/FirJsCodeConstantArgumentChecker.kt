@@ -23,14 +23,15 @@ import org.jetbrains.kotlin.name.WebCommonStandardClassIds
 object FirJsCodeConstantArgumentChecker : FirFunctionCallChecker(MppCheckerKind.Common) {
     private val jsCodeCallableId = WebCommonStandardClassIds.Callables.Js
 
-    override fun check(expression: FirFunctionCall, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(expression: FirFunctionCall) {
         if (expression.calleeReference.toResolvedCallableSymbol()?.callableId != jsCodeCallableId) {
             return
         }
 
         val jsCodeExpression = expression.arguments.firstOrNull()
         if (jsCodeExpression == null || !jsCodeExpression.resolvedType.isString) {
-            reporter.reportOn(jsCodeExpression?.source ?: expression.source, FirWebCommonErrors.JSCODE_ARGUMENT_NON_CONST_EXPRESSION, context)
+            reporter.reportOn(jsCodeExpression?.source ?: expression.source, FirWebCommonErrors.JSCODE_ARGUMENT_NON_CONST_EXPRESSION)
             return
         }
 
@@ -44,7 +45,7 @@ object FirJsCodeConstantArgumentChecker : FirFunctionCallChecker(MppCheckerKind.
                     if (!canBeEvaluatedAtCompileTime(element as? FirExpression, context.session, allowErrors = true, calledOnCheckerStage = true)) {
                         lastReportedElement = element
                         val source = element.source ?: jsCodeExpression.source
-                        reporter.reportOn(source, FirWebCommonErrors.JSCODE_ARGUMENT_NON_CONST_EXPRESSION, context)
+                        reporter.reportOn(source, FirWebCommonErrors.JSCODE_ARGUMENT_NON_CONST_EXPRESSION)
                     }
                 }
             }

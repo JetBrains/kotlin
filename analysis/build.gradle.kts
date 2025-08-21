@@ -15,8 +15,10 @@ tasks.register("analysisAllTests") {
         ":analysis:analysis-api-standalone:test",
         ":analysis:low-level-api-fir:test",
         ":analysis:low-level-api-fir:tests-jdk11:test",
+        ":analysis:stubs:test",
         ":analysis:symbol-light-classes:test",
-        ":analysis:analysis-tools:analysis-api-kdoc-coverage-test:test"
+        ":compiler:psi:psi-api:apiCheck",
+        ":compiler:psi:psi-api:test",
     )
 
     if (kotlinBuildProperties.isKotlinNativeEnabled) {

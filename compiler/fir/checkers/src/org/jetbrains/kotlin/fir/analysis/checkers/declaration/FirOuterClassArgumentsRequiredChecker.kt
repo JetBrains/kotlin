@@ -19,18 +19,18 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.*
 
 object FirOuterClassArgumentsRequiredChecker : FirRegularClassChecker(MppCheckerKind.Common) {
-    override fun check(declaration: FirRegularClass, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirRegularClass) {
         // Checking the rest super types that weren't resolved on the first OUTER_CLASS_ARGUMENTS_REQUIRED check in FirTypeResolver
         for (superTypeRef in declaration.superTypeRefs) {
-            checkOuterClassArgumentsRequired(superTypeRef, declaration, context, reporter)
+            checkOuterClassArgumentsRequired(superTypeRef, declaration)
         }
     }
 
+    context(context: CheckerContext, reporter: DiagnosticReporter)
     private fun checkOuterClassArgumentsRequired(
         typeRef: FirTypeRef,
         declaration: FirRegularClass?,
-        context: CheckerContext,
-        reporter: DiagnosticReporter
     ) {
         if (typeRef !is FirResolvedTypeRef || typeRef is FirErrorTypeRef) {
             return
@@ -50,7 +50,7 @@ object FirOuterClassArgumentsRequiredChecker : FirRegularClassChecker(MppChecker
                     val typeParameter = typeParameters[index]
                     if (!isValidTypeParameterFromOuterDeclaration(typeParameter, declaration, context.session)) {
                         val outerClass = typeParameter.containingDeclarationSymbol as? FirRegularClassSymbol ?: break
-                        reporter.reportOn(typeRef.source, FirErrors.OUTER_CLASS_ARGUMENTS_REQUIRED, outerClass, context)
+                        reporter.reportOn(typeRef.source, FirErrors.OUTER_CLASS_ARGUMENTS_REQUIRED, outerClass)
                         break
                     }
                 }
@@ -59,7 +59,7 @@ object FirOuterClassArgumentsRequiredChecker : FirRegularClassChecker(MppChecker
 
         val typeRefAndSourcesForArguments = extractArgumentsTypeRefAndSource(typeRef) ?: return
         for (firTypeRefSource in typeRefAndSourcesForArguments) {
-            firTypeRefSource.typeRef?.let { checkOuterClassArgumentsRequired(it, declaration, context, reporter) }
+            firTypeRefSource.typeRef?.let { checkOuterClassArgumentsRequired(it, declaration) }
         }
     }
 }

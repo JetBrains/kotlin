@@ -24,3 +24,7 @@ fun foo(a: A) {
         1.u checkType { _<Int>() }
     }
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType,
+getter, infix, integerLiteral, lambdaLiteral, nullableType, propertyDeclaration, propertyWithExtensionReceiver,
+stringLiteral, thisExpression, typeParameter, typeWithExtension */

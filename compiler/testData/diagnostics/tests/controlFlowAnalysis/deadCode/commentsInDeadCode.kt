@@ -20,4 +20,4 @@ fun todo(): Nothing = throw Exception()
 
 fun bar(<!UNUSED_PARAMETER!>i<!>: Int, <!UNUSED_PARAMETER!>s<!>: String, <!UNUSED_PARAMETER!>a<!>: Any) {}
 
-
+/* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral, stringLiteral */

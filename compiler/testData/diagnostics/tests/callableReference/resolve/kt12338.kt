@@ -9,3 +9,5 @@ fun test() {
         true -> ::a
     }
 }
+
+/* GENERATED_FIR_TAGS: callableReference, functionDeclaration, whenExpression */

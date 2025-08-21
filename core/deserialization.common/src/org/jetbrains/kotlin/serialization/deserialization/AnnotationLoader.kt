@@ -51,6 +51,14 @@ interface AnnotationLoader<out A : Any> {
         kind: AnnotatedCallableKind
     ): List<A>
 
+    fun loadContextParameterAnnotations(
+        container: ProtoContainer,
+        callableProto: MessageLite,
+        kind: AnnotatedCallableKind,
+        parameterIndex: Int,
+        proto: ProtoBuf.ValueParameter?,
+    ): List<A>
+
     fun loadTypeAnnotations(
         proto: ProtoBuf.Type,
         nameResolver: NameResolver

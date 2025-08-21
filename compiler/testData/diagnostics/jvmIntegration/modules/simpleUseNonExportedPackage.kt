@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 // JDK_KIND: FULL_JDK_11
 // MODULE: moduleA
@@ -86,3 +87,6 @@ val k5: String = <!JAVA_MODULE_DOES_NOT_EXPORT_PACKAGE!>KImpl<!>.<!JAVA_MODULE_D
 
 val kf1: String = <!JAVA_MODULE_DOES_NOT_EXPORT_PACKAGE!>fileField<!>
 val kf2: String = <!JAVA_MODULE_DOES_NOT_EXPORT_PACKAGE!>fileMethod<!>()
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, flexibleType, functionDeclaration, javaFunction, javaProperty,
+objectDeclaration, propertyDeclaration, stringLiteral */

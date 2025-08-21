@@ -22,14 +22,15 @@ import org.jetbrains.kotlin.name.Name
  * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTree.script]
  */
 abstract class FirScript : FirDeclaration(), FirControlFlowGraphOwner {
-    abstract override val source: KtSourceElement?
     abstract override val annotations: List<FirAnnotation>
     abstract override val moduleData: FirModuleData
     abstract override val origin: FirDeclarationOrigin
     abstract override val attributes: FirDeclarationAttributes
     abstract override val controlFlowGraphReference: FirControlFlowGraphReference?
     abstract val name: Name
+    @DirectDeclarationsAccess
     abstract val declarations: List<FirDeclaration>
+    abstract override val source: KtSourceElement
     abstract override val symbol: FirScriptSymbol
     abstract val parameters: List<FirProperty>
     abstract val receivers: List<FirScriptReceiverParameter>

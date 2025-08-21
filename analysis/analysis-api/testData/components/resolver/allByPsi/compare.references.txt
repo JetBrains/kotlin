@@ -1,6 +1,6 @@
 KtOperationReferenceExpression(20,21): '>'
   KtSimpleNameReference:
-    (in kotlin.Int) open operator fun compareTo(other: kotlin.Int): kotlin.Int
+    (in kotlin.Int) override operator fun compareTo(other: kotlin.Int): kotlin.Int
 
 KtCallExpression(30,42): 'compareTo(2)'
   KtInvokeFunctionReference:
@@ -8,15 +8,15 @@ KtCallExpression(30,42): 'compareTo(2)'
 
 KtNameReferenceExpression(30,39): 'compareTo'
   KtSimpleNameReference:
-    (in kotlin.Int) open operator fun compareTo(other: kotlin.Int): kotlin.Int
+    (in kotlin.Int) override operator fun compareTo(other: kotlin.Int): kotlin.Int
 
 KtOperationReferenceExpression(43,44): '>'
   KtSimpleNameReference:
-    (in kotlin.Int) open operator fun compareTo(other: kotlin.Int): kotlin.Int
+    (in kotlin.Int) override operator fun compareTo(other: kotlin.Int): kotlin.Int
 
 KtOperationReferenceExpression(56,57): '<'
   KtSimpleNameReference:
-    (in kotlin.String) open operator fun compareTo(other: kotlin.String): kotlin.Int
+    (in kotlin.String) override operator fun compareTo(other: kotlin.String): kotlin.Int
 
 KtCallExpression(99,108): 'MyClass()'
   KtInvokeFunctionReference:

@@ -16,3 +16,5 @@ import some.Nls
 fun f() {
 
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, javaProperty, javaType */

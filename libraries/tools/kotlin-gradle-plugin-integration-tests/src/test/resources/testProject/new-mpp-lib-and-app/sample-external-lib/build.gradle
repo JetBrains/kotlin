@@ -61,7 +61,7 @@ kotlin.sourceSets.each { println it.kotlin.srcDirs }
 afterEvaluate {
     kotlin {
         jvm('jvm6').compilations.create('benchmark') {
-            assemble.dependsOn compileKotlinTask
+            assemble.dependsOn compileTaskProvider
         }
     }
 }

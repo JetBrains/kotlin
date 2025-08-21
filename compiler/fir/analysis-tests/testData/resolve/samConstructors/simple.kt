@@ -19,3 +19,6 @@ fun main() {
 
     foo(MyRunnable(x))
 }
+
+/* GENERATED_FIR_TAGS: comparisonExpression, functionDeclaration, integerLiteral, javaType, lambdaLiteral, localProperty,
+propertyDeclaration */

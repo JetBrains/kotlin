@@ -165,7 +165,16 @@ internal fun ObjCExportContext.mapToReferenceTypeIgnoringNullability(type: KaTyp
                  * 3.1 See detailed case doc at [ObjCExportContext.classifierContext]
                  * 3.2 When type parameter symbol is local
                  */
-                val upperBound = if (definingSymbol != null && classifierContext != null && definingSymbol != classifierContext) {
+                val classifierContextIsNotContainingDeclaration = if (definingSymbol != null && classifierContext != null) {
+                    /**
+                     * Originally symbols were compared directly, but that triggered SOE
+                     * So it's changed to classId check
+                     * See details at KT-71780
+                     */
+                    (definingSymbol as? KaClassSymbol)?.classId != classifierContext.classId
+                } else false
+
+                val upperBound = if (classifierContextIsNotContainingDeclaration) {
                     findUpperBoundMatchingTypeParameter(definingSymbol as KaClassSymbol, fullyExpandedType) ?: return ObjCIdType
                 } else if (isLocal) {
                     findUpperBoundMatchingTypeParameter(definingSymbol as KaClassSymbol, fullyExpandedType)
@@ -204,7 +213,7 @@ internal fun ObjCExportContext.translateTypeArgumentsToObjC(type: KaType): List<
         when (typeArgument) {
             is KaStarTypeProjection -> ObjCIdType
             is KaTypeArgumentWithVariance -> {
-                val isNullable = with(analysisSession) { typeArgument.type.canBeNull }
+                val isNullable = with(analysisSession) { typeArgument.type.isNullable }
                 /*
                 Kotlin `null` keys and values are represented as `NSNull` singleton in collections
                 */

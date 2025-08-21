@@ -10,3 +10,5 @@ interface Intermediate : ToSubstitute
 interface ToSubstitute : <!CYCLIC_INHERITANCE_HIERARCHY!>Main<!>
 
 interface Main : <!CYCLIC_INHERITANCE_HIERARCHY!>Intermediate<!>
+
+/* GENERATED_FIR_TAGS: interfaceDeclaration */

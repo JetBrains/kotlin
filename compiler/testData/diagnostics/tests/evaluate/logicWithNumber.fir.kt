@@ -7,3 +7,5 @@ fun bar() {
 fun foo() {
     42 and <!ARGUMENT_TYPE_MISMATCH!>false<!>
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral */

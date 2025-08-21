@@ -151,3 +151,7 @@ fun test12(){
         }
     }<!>
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, anonymousFunction, anonymousObjectExpression, classDeclaration,
+functionDeclaration, init, integerLiteral, lambdaLiteral, localClass, localFunction, localProperty, nullableType,
+propertyDeclaration, propertyDelegate, starProjection, stringLiteral */

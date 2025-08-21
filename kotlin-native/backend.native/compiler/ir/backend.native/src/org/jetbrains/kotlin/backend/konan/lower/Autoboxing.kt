@@ -7,11 +7,13 @@ package org.jetbrains.kotlin.backend.konan.lower
 
 import org.jetbrains.kotlin.backend.common.*
 import org.jetbrains.kotlin.backend.common.AbstractValueUsageTransformer
+import org.jetbrains.kotlin.backend.common.linkage.partial.ClassifierPartialLinkageStatus
+import org.jetbrains.kotlin.backend.common.linkage.partial.partialLinkageStatus
 import org.jetbrains.kotlin.utils.atMostOne
 import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.backend.konan.*
-import org.jetbrains.kotlin.backend.konan.cgen.hasCCallAnnotation
 import org.jetbrains.kotlin.backend.konan.ir.*
+import org.jetbrains.kotlin.backend.konan.optimizations.STATEMENT_ORIGIN_NO_CAST_NEEDED
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrStatement
@@ -50,7 +52,7 @@ internal class Autoboxing(val context: Context) : FileLoweringPass {
 }
 
 private class AutoboxingTransformer(val context: Context) : AbstractValueUsageTransformer(
-        context.ir.symbols,
+        context.symbols,
         context.irBuiltIns
 ) {
     private val insertSafeCasts = context.config.genericSafeCasts
@@ -70,6 +72,43 @@ private class AutoboxingTransformer(val context: Context) : AbstractValueUsageTr
         else -> {
             // Codegen expects the argument of type-checking operator to be an object reference:
             this.useAs(context.irBuiltIns.anyNType)
+        }
+    }
+
+    override fun visitBlock(expression: IrBlock): IrExpression {
+        if (expression.origin != STATEMENT_ORIGIN_NO_CAST_NEEDED)
+            return super.visitBlock(expression)
+        val irTypeOperatorCall = expression.statements.singleOrNull()
+                ?: error("Expected exactly one statement in IrBlock marked with $STATEMENT_ORIGIN_NO_CAST_NEEDED")
+        check(irTypeOperatorCall is IrTypeOperatorCall) {
+            "Expected a type operator call: ${irTypeOperatorCall::class.java}"
+        }
+        check(irTypeOperatorCall.operator == IrTypeOperator.IMPLICIT_CAST) {
+            "Expected an implicit cast: ${irTypeOperatorCall.operator}"
+        }
+        irTypeOperatorCall.argument = irTypeOperatorCall.argument.transform(this, null)
+
+        val expectedType = irTypeOperatorCall.typeOperand
+        val actualType = irTypeOperatorCall.argument.type
+        val expectedInlineClass = expectedType.getInlinedClassNative()
+        val actualInlineClass = actualType.getInlinedClassNative()
+        return when {
+            expectedInlineClass == actualInlineClass -> {
+                // No cast/box/unbox is needed.
+                if (expectedType == actualType)
+                    irTypeOperatorCall.argument
+                else irBuilders.peek()!!.irCallWithSubstitutedType(symbols.reinterpret.owner, listOf(actualType, expectedType)).apply {
+                    arguments[0] = irTypeOperatorCall.argument
+                }
+            }
+            expectedInlineClass != null && actualInlineClass != null -> {
+                // This will be a ClassCastException at runtime.
+                visitTypeOperator(irTypeOperatorCall)
+            }
+            else -> {
+                // A box/unbox operation is still needed.
+                irTypeOperatorCall.argument.adaptIfNecessary(actualType, expectedType, skipTypeCheck = true)
+            }
         }
     }
 
@@ -106,6 +145,10 @@ private class AutoboxingTransformer(val context: Context) : AbstractValueUsageTr
         val skipTypeCheck = forceSkipTypeCheck || !insertSafeCasts || (this as? IrTypeOperatorCall)?.operator == IrTypeOperator.CAST
         val actualType = when (this) {
             is IrGetField -> this.symbol.owner.type
+            is IrCall -> when (this.symbol) {
+                symbols.reinterpret -> this.typeArguments[1]!!
+                else -> this.type
+            }
             is IrTypeOperatorCall -> when (this.operator) {
                 IrTypeOperator.CAST -> context.irBuiltIns.anyNType
                 IrTypeOperator.IMPLICIT_CAST -> if (insertSafeCasts) this.type else context.irBuiltIns.anyNType
@@ -127,13 +170,9 @@ private class AutoboxingTransformer(val context: Context) : AbstractValueUsageTr
                 forceSkipTypeCheck = (currentFunction as? IrSimpleFunction)?.bridgeTarget == target)
     }
 
-    override fun IrExpression.useAsExtensionReceiver(expression: IrFunctionAccessExpression): IrExpression {
-        return this.useAsArgument(expression.target.extensionReceiverParameter!!)
-    }
-
-    override fun IrExpression.useAsValueArgument(expression: IrFunctionAccessExpression,
-                                                 parameter: IrValueParameter): IrExpression {
-        return this.useAsArgument(expression.target.valueParameters[parameter.indexInOldValueParameters])
+    override fun IrExpression.useAsNonDispatchArgument(expression: IrFunctionAccessExpression,
+                                                       parameter: IrValueParameter): IrExpression {
+        return this.useAsArgument(expression.target.parameters[parameter.indexInParameters])
     }
 
     /**
@@ -160,6 +199,10 @@ private class AutoboxingTransformer(val context: Context) : AbstractValueUsageTr
                 actualType.makeNotNull() == expectedType.makeNotNull() -> this
                 expectedType.isUnit() ->
                     irBuilders.peek()!!.at(this).irImplicitCoercionToUnit(this)
+                erasedExpectedClass.partialLinkageStatus is ClassifierPartialLinkageStatus.Unusable -> {
+                    this
+                }
+                //expectedType.isNothing() -> this // TODO
                 insertSafeCasts && !skipTypeCheck
                         // For type parameters, actualClass is null, and we
                         // conservatively insert type check for them (due to unsafe casts).
@@ -182,20 +225,14 @@ private class AutoboxingTransformer(val context: Context) : AbstractValueUsageTr
                 it.type = expectedType
                 return it
             }
-            val parameter = conversion.owner.valueParameters.single()
+            val parameter = conversion.owner.parameters.single()
             val argument = if (insertSafeCasts && !skipTypeCheck && expectedType.isInlinedNative())
                 this.checkedCast(actualType, conversion.owner.returnType)
             else this
 
             irBuilders.peek()!!.at(this)
-                    .irCall(conversion).apply { this.putValueArgument(parameter.indexInOldValueParameters, argument) }
+                    .irCall(conversion).apply { this.arguments[parameter.indexInParameters] = argument }
         }
-    }
-
-    override fun visitFunctionReference(expression: IrFunctionReference): IrExpression {
-        expression.transformChildrenVoid()
-        assert(expression.getArgumentsWithIr().isEmpty())
-        return expression
     }
 
     override fun visitCall(expression: IrCall): IrExpression {
@@ -209,7 +246,7 @@ private class AutoboxingTransformer(val context: Context) : AbstractValueUsageTr
 
                 assert(oldType.computePrimitiveBinaryTypeOrNull() == newType.computePrimitiveBinaryTypeOrNull())
 
-                expression.extensionReceiver = expression.extensionReceiver!!.useAs(oldType)
+                expression.arguments[0] = expression.arguments[0]!!.useAs(oldType)
 
                 expression
             }
@@ -222,7 +259,7 @@ private class AutoboxingTransformer(val context: Context) : AbstractValueUsageTr
 
 private class InlineClassTransformer(private val context: Context) : IrBuildingTransformer(context) {
 
-    private val symbols = context.ir.symbols
+    private val symbols = context.symbols
     private val irBuiltIns = context.irBuiltIns
 
     private val builtBoxUnboxFunctions = mutableListOf<IrFunction>()
@@ -272,7 +309,7 @@ private class InlineClassTransformer(private val context: Context) : IrBuildingT
                     .irCall(symbols.reinterpret, field.type,
                             listOf(parentClass.defaultType, field.type)
                     ).apply {
-                        extensionReceiver = expression.receiver!!
+                        arguments[0] = expression.receiver!!
                     }
         }
     }
@@ -328,13 +365,13 @@ private class InlineClassTransformer(private val context: Context) : IrBuildingT
             is BinaryType.Primitive -> {
                 assert(binary.type == PrimitiveBinaryType.POINTER)
                 irCall(symbols.areEqualByValue[binary.type]!!.owner).apply {
-                    putValueArgument(0, expression)
-                    putValueArgument(1, irNullPointer())
+                    arguments[0] =  expression
+                    arguments[1] =  irNullPointer()
                 }
             }
             is BinaryType.Reference -> irCall(context.irBuiltIns.eqeqeqSymbol).apply {
-                putValueArgument(0, expression)
-                putValueArgument(1, irNull())
+                arguments[0] = expression
+                arguments[1] = irNull()
             }
         }
     }
@@ -344,7 +381,7 @@ private class InlineClassTransformer(private val context: Context) : IrBuildingT
         val cache = BoxCache.values().toList().atMostOne { context.irBuiltIns.getKotlinClass(it) == irClass }
 
         function.body = builder.irBlockBody(function) {
-            val valueToBox = function.valueParameters[0]
+            val valueToBox = function.parameters[0]
             if (valueToBox.type.isNullable()) {
                 +irIfThen(
                         condition = irIsNull(irGet(valueToBox)),
@@ -355,10 +392,10 @@ private class InlineClassTransformer(private val context: Context) : IrBuildingT
             if (cache != null) {
                 +irIfThen(
                         condition = irCall(symbols.boxCachePredicates[cache]!!.owner).apply {
-                            putValueArgument(0, irGet(valueToBox))
+                            arguments[0] = irGet(valueToBox)
                         },
                         thenPart = irReturn(irCall(symbols.boxCacheGetters[cache]!!.owner).apply {
-                            putValueArgument(0, irGet(valueToBox))
+                            arguments[0] = irGet(valueToBox)
                         })
                 )
             }
@@ -387,7 +424,7 @@ private class InlineClassTransformer(private val context: Context) : IrBuildingT
         val builder = context.createIrBuilder(function.symbol)
 
         function.body = builder.irBlockBody(function) {
-            val boxParameter = function.valueParameters.single()
+            val boxParameter = function.parameters.single()
             if (boxParameter.type.isNullable()) {
                 +irIfThen(
                         condition = irEqeqeq(irGet(boxParameter), irNull()),
@@ -442,14 +479,14 @@ private class InlineClassTransformer(private val context: Context) : IrBuildingT
         this.at(expression)
         val loweredConstructor = this@InlineClassTransformer.context.getLoweredInlineClassConstructor(callee)
         return if (callee.isPrimary) this.irBlock {
-            val argument = irTemporary(expression.getValueArgument(0)!!, irType = loweredConstructor.valueParameters.single().type)
+            val argument = irTemporary(expression.arguments[0]!!, irType = loweredConstructor.parameters.single().type)
             +irCall(loweredConstructor).apply {
-                putValueArgument(0, irGet(argument))
+                arguments[0] = irGet(argument)
             }
             +irGet(argument)
         } else this.irCall(loweredConstructor).apply {
-            (0 until expression.valueArgumentsCount).forEach {
-                putValueArgument(it, expression.getValueArgument(it)!!)
+            for ((idx, arg) in expression.arguments.withIndex()) {
+                arguments[idx] = arg
             }
         }
     }
@@ -467,8 +504,8 @@ private class InlineClassTransformer(private val context: Context) : IrBuildingT
                 irGet(thisVar)
             }
 
-            val parameterMapping = result.valueParameters.associateBy {
-                irConstructor.valueParameters[it.indexInOldValueParameters].symbol
+            val parameterMapping = result.parameters.associateBy {
+                irConstructor.parameters[it.indexInParameters].symbol
             }
 
             (irConstructor.body as IrBlockBody).statements.forEach { statement ->
@@ -480,7 +517,7 @@ private class InlineClassTransformer(private val context: Context) : IrBuildingT
                         return irBlock(expression) {
                             thisVar = if (irConstructor.isPrimary) {
                                 // Note: block is empty in this case.
-                                result.valueParameters.single()
+                                result.parameters.single()
                             } else {
                                 val value = lowerConstructorCallToValue(expression, expression.symbol.owner)
                                 irTemporary(value)
@@ -525,7 +562,7 @@ private class InlineClassTransformer(private val context: Context) : IrBuildingT
             irClass.declarations.filterIsInstance<IrProperty>().mapNotNull { it.backingField?.takeUnless { it.isStatic } }.single()
 }
 
-private var IrConstructor.loweredInlineClassConstructor: IrSimpleFunction? by irAttribute(followAttributeOwner = false)
+private var IrConstructor.loweredInlineClassConstructor: IrSimpleFunction? by irAttribute(copyByDefault = false)
 
 private fun Context.getLoweredInlineClassConstructor(irConstructor: IrConstructor): IrSimpleFunction = irConstructor::loweredInlineClassConstructor.getOrSetIfNull {
     require(irConstructor.constructedClass.isInlined())
@@ -555,6 +592,6 @@ private fun Context.getLoweredInlineClassConstructor(irConstructor: IrConstructo
         // So it is just a trick to make [copyTo] happy:
         val remapTypeMap = irConstructor.constructedClass.typeParameters.associateBy { it }
 
-        valueParameters = irConstructor.valueParameters.map { it.copyTo(this, remapTypeMap = remapTypeMap) }
+        parameters = irConstructor.parameters.map { it.copyTo(this, remapTypeMap = remapTypeMap, defaultValue = null) }
     }
 }

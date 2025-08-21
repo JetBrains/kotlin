@@ -9,8 +9,10 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.backend.js.JsCommonBackendContext
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.JsLoweredDeclarationOrigin
-import org.jetbrains.kotlin.ir.backend.js.export.isExported
+import org.jetbrains.kotlin.ir.backend.js.tsexport.isExported
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
+import org.jetbrains.kotlin.ir.backend.js.objectGetInstanceFunction
+import org.jetbrains.kotlin.ir.backend.js.objectInstanceField
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.types.getClass
@@ -61,14 +63,7 @@ fun IrFunction.isEqualsInheritedFromAny(): Boolean =
             parameters[1].type.isNullableAny()
 
 val IrValueDeclaration.isDispatchReceiver: Boolean
-    get() {
-        val parent = this.parent
-        if (parent is IrClass)
-            return true
-        if (parent is IrFunction && parent.dispatchReceiverParameter == this)
-            return true
-        return false
-    }
+    get() = this is IrValueParameter && kind == IrParameterKind.DispatchReceiver
 
 fun IrBody.prependFunctionCall(
     call: IrCall
@@ -94,10 +89,10 @@ fun IrBody.prependFunctionCall(
 }
 
 fun JsCommonBackendContext.findUnitGetInstanceFunction(): IrSimpleFunction =
-    mapping.objectToGetInstanceFunction[irBuiltIns.unitClass.owner]!!
+    irBuiltIns.unitClass.owner.objectGetInstanceFunction!!
 
 fun JsCommonBackendContext.findUnitInstanceField(): IrField =
-    mapping.objectToInstanceField[irBuiltIns.unitClass.owner]!!
+    irBuiltIns.unitClass.owner.objectInstanceField!!
 
 val JsCommonBackendContext.compileSuspendAsJsGenerator: Boolean
     get() = this is JsIrBackendContext && configuration[JSConfigurationKeys.COMPILE_SUSPEND_AS_JS_GENERATOR] == true

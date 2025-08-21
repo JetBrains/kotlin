@@ -12,3 +12,6 @@ fun test(c: Any) {
         c.foo<String, Int>()
     }
 }
+
+/* GENERATED_FIR_TAGS: andExpression, functionDeclaration, ifExpression, interfaceDeclaration, intersectionType,
+isExpression, nullableType, smartcast, typeParameter */

@@ -21,15 +21,15 @@ import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirPropertyChecker
+import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirCallableReferenceAccessChecker
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.utils.hasBackingField
+import org.jetbrains.kotlin.fir.expressions.FirCallableReferenceAccess
+import org.jetbrains.kotlin.fir.references.toResolvedPropertySymbol
 
 object ComposablePropertyChecker : FirPropertyChecker(MppCheckerKind.Common) {
-    override fun check(
-        declaration: FirProperty,
-        context: CheckerContext,
-        reporter: DiagnosticReporter,
-    ) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirProperty) {
         // `@Composable` is only applicable to property getters, but in K1 we were also checking
         // properties with the annotation on the setter.
         if (declaration.getter?.hasComposableAnnotation(context.session) != true &&
@@ -39,15 +39,32 @@ object ComposablePropertyChecker : FirPropertyChecker(MppCheckerKind.Common) {
         }
 
         if (declaration.isVar) {
-            reporter.reportOn(declaration.source, ComposeErrors.COMPOSABLE_VAR, context)
+            reporter.reportOn(declaration.source, ComposeErrors.COMPOSABLE_VAR)
         }
 
         if (declaration.hasBackingField) {
             reporter.reportOn(
                 declaration.source,
-                ComposeErrors.COMPOSABLE_PROPERTY_BACKING_FIELD,
-                context
+                ComposeErrors.COMPOSABLE_PROPERTY_BACKING_FIELD
             )
         }
     }
+}
+
+object ComposablePropertyReferenceChecker : FirCallableReferenceAccessChecker(MppCheckerKind.Common) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(expression: FirCallableReferenceAccess) {
+        val property = expression.calleeReference.toResolvedPropertySymbol()
+        if (
+            property != null
+            && !property.hasDelegate
+            && property.isComposable(context.session)
+        ) {
+            reporter.reportOn(
+                expression.source,
+                ComposeErrors.COMPOSABLE_PROPERTY_REFERENCE
+            )
+        }
+    }
+
 }

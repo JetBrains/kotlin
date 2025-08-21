@@ -12,3 +12,6 @@ class Some(classNames: () -> Collection<String>) {
 
     fun getNonDeclaredClassifierNames(): Set<String>? = null
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, classDeclaration, elvisExpression, functionDeclaration, functionalType,
+lambdaLiteral, localProperty, nullableType, primaryConstructor, propertyDeclaration, propertyDelegate */

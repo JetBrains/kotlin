@@ -57,3 +57,5 @@ fun test(_ab: a.b) {
     val _ab2 = a.b()
     _ab2.some_ab()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, localProperty, nestedClass, propertyDeclaration */

@@ -21,7 +21,8 @@ import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.fir.types.type
 
 object FirRecursiveProblemChecker : FirBasicExpressionChecker(MppCheckerKind.Common) {
-    override fun check(expression: FirStatement, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(expression: FirStatement) {
         if (
             expression !is FirExpression ||
             expression.source?.kind is KtFakeSourceElementKind
@@ -32,7 +33,7 @@ object FirRecursiveProblemChecker : FirBasicExpressionChecker(MppCheckerKind.Com
         fun checkConeType(coneType: ConeKotlinType?) {
             if (coneType?.hasDiagnosticKind(DiagnosticKind.RecursionInImplicitTypes) == true) {
                 val source = expression.source
-                reporter.reportOn(source, FirErrors.TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM, context)
+                reporter.reportOn(source, FirErrors.TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM)
             } else if (coneType is ConeClassLikeType) {
                 for (typeArgument in coneType.typeArguments) {
                     checkConeType(typeArgument.type)

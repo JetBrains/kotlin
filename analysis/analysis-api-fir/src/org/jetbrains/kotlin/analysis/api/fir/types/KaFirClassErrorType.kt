@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaClassLikeSymbol
 import org.jetbrains.kotlin.analysis.api.types.*
 import org.jetbrains.kotlin.analysis.utils.errors.requireIsInstance
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
-import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnosticWithNullability
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnmatchedTypeArgumentsError
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedError
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedSymbolError
@@ -52,13 +51,16 @@ internal class KaFirClassErrorType(
             }
         }
 
+    @Deprecated(
+        "Use `isMarkedNullable`, `isNullable` or `hasFlexibleNullability` instead. See KDocs for the migration guide",
+        replaceWith = ReplaceWith("this.isMarkedNullable")
+    )
+    @Suppress("Deprecation")
     override val nullability: KaTypeNullability
         get() = withValidityAssertion {
             val coneType = coneType
             if (coneType is ConeErrorType) {
-                val diagnostic = coneType.diagnostic as? ConeDiagnosticWithNullability
-                    ?: return@withValidityAssertion KaTypeNullability.UNKNOWN
-                KaTypeNullability.create(diagnostic.isNullable)
+                coneType.nullable?.let(KaTypeNullability::create) ?: KaTypeNullability.UNKNOWN
             } else {
                 KaTypeNullability.create(coneType.isMarkedNullable)
             }
@@ -105,8 +107,8 @@ private class KaFirClassErrorTypePointer(
     builder: KaSymbolByFirBuilder,
 ) : KaTypePointer<KaClassErrorType> {
     private val coneTypePointer: ConeTypePointer<*> = if (coneType !is ConeErrorType) {
-        val classSymbol = builder.classifierBuilder.buildClassLikeSymbolByLookupTag(coneType.lookupTag)
-        if (classSymbol != null) {
+        val classLikeSymbol = builder.classifierBuilder.buildClassLikeSymbolByLookupTag(coneType.lookupTag)
+        if (classLikeSymbol != null) {
             coneType.createPointer(builder)
         } else {
             val coneErrorType = ConeErrorType(
@@ -114,7 +116,8 @@ private class KaFirClassErrorTypePointer(
                 isUninferredParameter = false,
                 delegatedType = null,
                 typeArguments = coneType.typeArguments,
-                attributes = coneType.attributes
+                attributes = coneType.attributes,
+                nullable = coneType.isMarkedNullable,
             )
             coneErrorType.createPointer(builder)
         }

@@ -1,0 +1,27 @@
+@Anno(String(str))
+owner -> FirConstructorSymbol /Clazz.Clazz
+context -> FirConstructorSymbol /Clazz.Clazz
+
+@Anno(String(str))
+owner -> FirConstructorSymbol /Another.Another
+context -> FirConstructorSymbol /Another.Another
+
+@SharedTypeAnno()
+owner -> FirValueParameterSymbol <local>/<unused var> from FirConstructorSymbol /OneMore.OneMore
+context -> FirValueParameterSymbol <local>/<unused var> from FirConstructorSymbol /OneMore.OneMore
+
+@SharedAnno()
+owner -> FirValueParameterSymbol <local>/<unused var> from FirConstructorSymbol /OneMore.OneMore
+context -> FirValueParameterSymbol <local>/<unused var> from FirConstructorSymbol /OneMore.OneMore
+
+@Anno(String(str))
+owner -> FirConstructorSymbol /OneMore.OneMore
+context -> FirConstructorSymbol /OneMore.OneMore
+
+@SharedTypeAnno()
+owner -> FirValueParameterSymbol <local>/<unused var> from FirRegularClassSymbol OneMore
+context -> FirValueParameterSymbol <local>/<unused var> from FirRegularClassSymbol OneMore
+
+@SharedAnno()
+owner -> FirValueParameterSymbol <local>/<unused var> from FirRegularClassSymbol OneMore
+context -> FirValueParameterSymbol <local>/<unused var> from FirRegularClassSymbol OneMore

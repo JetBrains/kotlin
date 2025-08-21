@@ -8,31 +8,63 @@ package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 import org.jetbrains.kotlin.KtRealSourceElementKind
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
+import org.jetbrains.kotlin.fir.analysis.checkers.checkMissingDependencySuperTypes
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirMissingDependencyClassProxy
+import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirMissingDependencyClassProxy.MissingTypeOrigin
+import org.jetbrains.kotlin.fir.resolve.getContainingClassSymbol
+import org.jetbrains.kotlin.fir.correspondingProperty
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
+import org.jetbrains.kotlin.fir.declarations.utils.isData
 import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousFunctionSymbol
-import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.name.Name
 
+/**
+ * In this checker, we check for two cases of missing dependency type:
+ * - implicit type of lambda parameter
+ * ```
+ * foo { x -> ...}
+ * ```
+ * - explicit type of data class constructor parameter
+ * ```
+ * data class Foo(val x: Some)
+ * ```
+ * The second check is required, as we might call `x.toString/hashCode/equals` in the implictly generated functions of data class,
+ * which wouldn't be checked by use-site checkers
+ */
 object FirMissingDependencyClassForParameterChecker : FirValueParameterChecker(MppCheckerKind.Common), FirMissingDependencyClassProxy {
-    override fun check(
-        declaration: FirValueParameter,
-        context: CheckerContext,
-        reporter: DiagnosticReporter,
-    ) {
-        val containingFunctionSymbol = declaration.containingDeclarationSymbol
-        if (containingFunctionSymbol !is FirAnonymousFunctionSymbol) return
-        if (declaration.returnTypeRef.source?.kind is KtRealSourceElementKind) return
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirValueParameter) {
+        val containingDeclaration = declaration.containingDeclarationSymbol
 
-        val missingTypes = mutableSetOf<ConeKotlinType>()
-        considerType(declaration.returnTypeRef.coneType, missingTypes, context)
+        when {
+            containingDeclaration is FirAnonymousFunctionSymbol -> {
+                checkLambdaParameter(declaration)
+            }
+            declaration.correspondingProperty != null && containingDeclaration.getContainingClassSymbol()?.isData == true -> {
+                checkDataClassParameter(declaration)
+            }
+        }
+    }
+
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    private fun checkLambdaParameter(parameter: FirValueParameter) {
+        if (parameter.returnTypeRef.source?.kind is KtRealSourceElementKind) return
+
+        val missingTypes = mutableSetOf<ConeClassLikeType>()
+        considerType(parameter.returnTypeRef.coneType, missingTypes)
         reportMissingTypes(
-            declaration.source, missingTypes, context, reporter,
-            missingTypeOrigin = FirMissingDependencyClassProxy.MissingTypeOrigin.LambdaParameter(
-                declaration.name.takeIf { !it.isSpecial } ?: Name.identifier("_")
+            parameter.source, missingTypes,
+            missingTypeOrigin = MissingTypeOrigin.LambdaParameter(
+                parameter.name.takeIf { !it.isSpecial } ?: Name.identifier("_")
             )
         )
+    }
+
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    private fun checkDataClassParameter(parameter: FirValueParameter) {
+        checkMissingDependencySuperTypes(parameter.returnTypeRef.coneType, parameter.source)
     }
 }

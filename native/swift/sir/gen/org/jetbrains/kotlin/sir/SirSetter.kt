@@ -8,6 +8,8 @@
 
 package org.jetbrains.kotlin.sir
 
+import org.jetbrains.kotlin.sir.util.*
+
 /**
  * Generated from: [org.jetbrains.kotlin.sir.tree.generator.SwiftIrTree.setter]
  */
@@ -17,7 +19,11 @@ abstract class SirSetter : SirAccessor() {
     abstract override val documentation: String?
     abstract override var parent: SirDeclarationParent
     abstract override val attributes: List<SirAttribute>
+    abstract override val bridges: List<SirBridge>
     abstract override var body: SirFunctionBody?
     abstract override val errorType: SirType
     abstract val parameterName: String
+    override fun toString(): String {
+        return this.debugString
+    }
 }

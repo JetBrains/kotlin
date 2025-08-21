@@ -112,3 +112,5 @@ suspend fun main(args: Array<String>) {}
 package valid8
 typealias S = String
 suspend fun main(args: Array<S>) {}
+
+/* GENERATED_FIR_TAGS: functionDeclaration, suspend, typeAliasDeclaration, vararg */

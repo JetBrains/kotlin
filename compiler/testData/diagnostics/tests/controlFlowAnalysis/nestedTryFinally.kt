@@ -24,3 +24,6 @@ fun sample(): String? {
     } finally {}
     return null
 }
+
+/* GENERATED_FIR_TAGS: assignment, functionDeclaration, ifExpression, localProperty, nullableType, propertyDeclaration,
+stringLiteral, tryExpression */

@@ -14,3 +14,5 @@ fun test() {
     foo(<!ARGUMENT_TYPE_MISMATCH!>F().p()<!>)
     foo(<!ARGUMENT_TYPE_MISMATCH!>r()<!>)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, nullableType */

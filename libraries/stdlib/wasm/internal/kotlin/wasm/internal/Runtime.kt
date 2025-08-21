@@ -21,12 +21,6 @@ internal fun unsafeRawMemoryToWasmCharArray(srcAddr: Int, dstOffset: Int, dstLen
     }
 }
 
-// Returns starting address of unused linear memory.
-@ExcludedFromCodegen
-@PublishedApi
-internal fun unsafeGetScratchRawMemory(): Int =
-    implementedAsIntrinsic
-
 // Assumes there is enough space at the destination, fails with wasm trap otherwise.
 internal fun unsafeWasmCharArrayToRawMemory(src: WasmCharArray, srcOffset: Int, srcLength: Int, dstAddr: Int) {
     var curAddr = dstAddr
@@ -126,11 +120,14 @@ internal fun consumeFloatIntoVoid(a: Float): Void =
 internal fun consumeDoubleIntoVoid(a: Double): Void =
     implementedAsIntrinsic
 
+// TODO make intrinsic after bootstrap
+internal fun getWasmAbiVersion(): Int = 0
+
 @ExcludedFromCodegen
 internal fun stringGetPoolSize(): Int =
     implementedAsIntrinsic
 
-// This initializer is a special case in FieldInitializersLowering
+// This initializer is a special case in FieldInitializersLowering (remove after bootstrap)
 @Suppress("DEPRECATION")
 @OptIn(ExperimentalStdlibApi::class)
 @EagerInitialization

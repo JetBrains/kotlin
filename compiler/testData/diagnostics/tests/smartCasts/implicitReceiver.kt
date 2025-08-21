@@ -53,3 +53,8 @@ val Received<String>.thisIsFine: Boolean
     } else {
         false
     }
+
+/* GENERATED_FIR_TAGS: classDeclaration, data, equalityExpression, funWithExtensionReceiver, functionDeclaration, getter,
+ifExpression, integerLiteral, intersectionType, isExpression, nestedClass, nullableType, out, primaryConstructor,
+propertyDeclaration, propertyWithExtensionReceiver, safeCall, sealed, smartcast, starProjection, stringLiteral,
+thisExpression, typeParameter, whenExpression, whenWithSubject */

@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.ir.createExtensionReceiver
 import org.jetbrains.kotlin.backend.common.lower.at
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
-import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.ir.isAny
 import org.jetbrains.kotlin.backend.konan.ir.isArray
@@ -33,8 +32,8 @@ import org.jetbrains.kotlin.ir.visitors.IrTransformer
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.utils.addToStdlib.getOrSetIfNull
 
-internal var IrConstructor.loweredConstructorFunction: IrSimpleFunction? by irAttribute(followAttributeOwner = false)
-internal var IrSimpleFunction.originalConstructor: IrConstructor? by irAttribute(followAttributeOwner = false)
+internal var IrConstructor.loweredConstructorFunction: IrSimpleFunction? by irAttribute(copyByDefault = false)
+internal var IrSimpleFunction.originalConstructor: IrConstructor? by irAttribute(copyByDefault = false)
 
 internal fun Context.getLoweredConstructorFunction(irConstructor: IrConstructor): IrSimpleFunction =
         irConstructor::loweredConstructorFunction.getOrSetIfNull {
@@ -55,12 +54,17 @@ internal fun Context.getLoweredConstructorFunction(irConstructor: IrConstructor)
                     type = parentClass.defaultType
                 }
 
-                require(irConstructor.extensionReceiverParameter == null) { "A constructor with an extension receiver: ${irConstructor.render()}" }
-                irConstructor.dispatchReceiverParameter?.let { outerReceiverParameter ->
-                    parameters += createExtensionReceiver(outerReceiverParameter.type)
-                }
+                require(irConstructor.parameters.none { it.kind == IrParameterKind.ExtensionReceiver }) { "A constructor with an extension receiver: ${irConstructor.render()}" }
 
-                valueParameters = irConstructor.valueParameters.map { it.copyTo(function, type = it.type) }
+                irConstructor.parameters.forEach {
+                    if (it.kind == IrParameterKind.DispatchReceiver) {
+                        parameters += createExtensionReceiver(it.type)
+                    } else {
+                        // Erase the default value as it might be unlowered because of cross-file calls.
+                        // Leaving it as is might lead to problems like KT-74739.
+                        parameters += it.copyTo(function, type = it.type, varargElementType = it.varargElementType, defaultValue = null)
+                    }
+                }
 
                 annotations = irConstructor.annotations
             }
@@ -72,10 +76,10 @@ internal val LOWERED_DELEGATING_CONSTRUCTOR_CALL by IrStatementOriginImpl
  * Replaces constructor calls by (alloc + static call).
  */
 internal class ConstructorsLowering(private val context: Context) : FileLoweringPass, IrTransformer<IrDeclaration?>() {
-    private val createUninitializedInstance = context.ir.symbols.createUninitializedInstance
-    private val createUninitializedArray = context.ir.symbols.createUninitializedArray
-    private val createEmptyString = context.ir.symbols.createEmptyString
-    private val initInstance = context.ir.symbols.initInstance
+    private val createUninitializedInstance = context.symbols.createUninitializedInstance
+    private val createUninitializedArray = context.symbols.createUninitializedArray
+    private val createEmptyString = context.symbols.createEmptyString
+    private val initInstance = context.symbols.initInstance
 
     override fun lower(irFile: IrFile) {
         irFile.transform(this, data = null)
@@ -131,10 +135,11 @@ internal class ConstructorsLowering(private val context: Context) : FileLowering
                             irBuilder.at(expression).irGet(loweredConstructorFunction.dispatchReceiverParameter!!)
                         constructor.dispatchReceiverParameter -> {
                             require(constructedClass.isInner) { "Expected an inner class: ${constructedClass.render()}" }
-                            irBuilder.at(expression).irGet(loweredConstructorFunction.extensionReceiverParameter!!)
+                            irBuilder.at(expression).irGet(loweredConstructorFunction.parameters.find { it.kind == IrParameterKind.ExtensionReceiver }!!)
                         }
-                        is IrValueParameter ->
-                            irBuilder.at(expression).irGet(loweredConstructorFunction.valueParameters[value.indexInOldValueParameters])
+                        is IrValueParameter -> {
+                            irBuilder.at(expression).irGet(loweredConstructorFunction.parameters[value.indexInParameters + 1])
+                        }
                         else -> expression
                     }
                 }
@@ -162,8 +167,8 @@ internal class ConstructorsLowering(private val context: Context) : FileLowering
     override fun visitConstructorCall(expression: IrConstructorCall, data: IrDeclaration?): IrExpression {
         expression.transformChildren(this, data)
 
-        require(expression.extensionReceiver == null) { "A constructor call cannot have the extension receiver: ${expression.render()}" }
         val constructor = expression.symbol.owner
+        require(constructor.parameters.none { it.kind == IrParameterKind.ExtensionReceiver }) { "A constructor call cannot have the extension receiver: ${expression.render()}" }
         val constructedType = constructor.constructedClassType
         val loweredConstructorFunction = context.getLoweredConstructorFunction(constructor)
         val irBuilder = context.createIrBuilder(data!!.symbol, expression.startOffset, expression.endOffset)
@@ -173,19 +178,19 @@ internal class ConstructorsLowering(private val context: Context) : FileLowering
             }
             constructor.constructedClass.isArray -> {
                 require(expression.dispatchReceiver == null) { "An array constructor call cannot have the dispatch receiver: ${expression.render()}" }
-                require(expression.valueArgumentsCount == 1) { "Expected a call to the array constructor with a single argument: ${expression.render()}" }
+                require(expression.arguments.size == 1) { "Expected a call to the array constructor with a single argument: ${expression.render()}" }
                 irBuilder.irCall(createUninitializedArray, constructedType, listOf(constructedType)).apply {
-                    putValueArgument(0, expression.getValueArgument(0)!!)
+                    arguments[0] = expression.arguments[0]!!
                 }
             }
             constructedType.isString() -> irBuilder.run {
                 require(expression.dispatchReceiver == null) { "A string constructor call cannot have the dispatch receiver: ${expression.render()}" }
-                require(expression.valueArgumentsCount == 0) { "Expected a call to the string constructor with no arguments: ${expression.render()}" }
+                require(expression.arguments.isEmpty()) { "Expected a call to the string constructor with no arguments: ${expression.render()}" }
                 irBuilder.irCall(createEmptyString, constructedType)
             }
             constructedType.isAny() -> {
                 require(expression.dispatchReceiver == null) { "A kotlin.Any constructor call cannot have the dispatch receiver: ${expression.render()}" }
-                require(expression.valueArgumentsCount == 0) { "Expected a call to the kotlin.Any constructor with no arguments: ${expression.render()}" }
+                require(expression.arguments.isEmpty()) { "Expected a call to the kotlin.Any constructor with no arguments: ${expression.render()}" }
                 irBuilder.irCall(createUninitializedInstance, constructedType, listOf(constructedType))
             }
             else -> irBuilder.irBlock {
@@ -204,8 +209,8 @@ internal class ConstructorsLowering(private val context: Context) : FileLowering
         if (callee.symbol != initInstance)
             return super.visitCall(expression, data)
 
-        val instance = expression.getValueArgument(0)
-        val constructorCall = expression.getValueArgument(1) as IrConstructorCall
+        val instance = expression.arguments[0]
+        val constructorCall = expression.arguments[1] as IrConstructorCall
         val loweredConstructorFunction = context.getLoweredConstructorFunction(constructorCall.symbol.owner)
         val irBuilder = context.createIrBuilder(data!!.symbol, expression.startOffset, expression.endOffset)
         return irBuilder.irCall(loweredConstructorFunction).apply {
@@ -223,10 +228,9 @@ internal class ConstructorsLowering(private val context: Context) : FileLowering
             error("No outer receiver is supplied for an inner class constructor call: ${callSite.render()}")
         if (outerReceiver != null && !constructedClass.isInner)
             error("The outer receiver is supplied for a non-inner class constructor call: ${callSite.render()}")
-        require(callSite.extensionReceiver == null) { "Unexpected extension receiver: ${callSite.render()}" }
-        this.extensionReceiver = outerReceiver
-        (0..<callSite.valueArgumentsCount).forEach {
-            putValueArgument(it, callSite.getValueArgument(it))
+        require(callSite.symbol.owner.parameters.none { it.kind == IrParameterKind.ExtensionReceiver}) { "Unexpected extension receiver: ${callSite.render()}" }
+        (0..<callSite.arguments.size).forEach {
+            arguments[it + 1] = callSite.arguments[it]
         }
     }
 }

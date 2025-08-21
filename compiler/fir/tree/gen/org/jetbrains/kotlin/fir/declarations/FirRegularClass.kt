@@ -35,6 +35,7 @@ abstract class FirRegularClass : FirClass() {
     abstract override val scopeProvider: FirScopeProvider
     abstract override val controlFlowGraphReference: FirControlFlowGraphReference?
     abstract override val classKind: ClassKind
+    @DirectDeclarationsAccess
     abstract override val declarations: List<FirDeclaration>
     abstract override val annotations: List<FirAnnotation>
     abstract val name: Name

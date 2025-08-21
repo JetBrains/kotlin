@@ -7,7 +7,6 @@ KaClassErrorType:
     KaNamedClassSymbol(Either)
   ]
   errorMessage: Wrong number of type arguments
-  nullability: UNKNOWN
   presentableText: Either
   qualifiers: [
     KaResolvedClassTypeQualifier:
@@ -15,3 +14,6 @@ KaClassErrorType:
       symbol: KaNamedClassSymbol(Either)
       typeArguments: []
   ]
+  isMarkedNullable: false
+  isNullable: true
+  hasFlexibleNullability: true

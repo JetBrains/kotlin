@@ -1,3 +1,5 @@
+IGNORE_BACKEND: NATIVE, WASM
+
 MODULES: lib1, lib2, main
 
 STEP 0:

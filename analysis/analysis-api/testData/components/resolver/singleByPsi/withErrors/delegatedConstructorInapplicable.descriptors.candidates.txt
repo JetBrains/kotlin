@@ -7,10 +7,12 @@ KtConstructorCalleeExpression(40,41): 'A'
           receiverType = null
           returnType = kotlin.String
           symbol = x: kotlin.String
+          contextParameters = []
           callableId = null)
       }
       kind = SUPER_CALL
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -23,8 +25,10 @@ KtConstructorCalleeExpression(40,41): 'A'
               receiverType = null
               returnType = kotlin.String
               symbol = x: kotlin.String
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with <init>>

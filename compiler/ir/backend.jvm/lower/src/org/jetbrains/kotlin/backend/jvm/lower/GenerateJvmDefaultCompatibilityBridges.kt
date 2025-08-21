@@ -21,9 +21,10 @@ import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.ir.util.transformInPlace
+import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
 
 /**
- * Generates default compatibility bridges for classes in `-Xjvm-default=all/all-compatibility` modes.
+ * Generates default compatibility bridges for classes in `-jvm-default=enable/no-compatibility` modes.
  * See [org.jetbrains.kotlin.backend.jvm.ClassFakeOverrideReplacement.DefaultCompatibilityBridge].
  */
 @PhaseDescription(name = "GenerateJvmDefaultCompatibilityBridges")
@@ -52,15 +53,11 @@ class GenerateJvmDefaultCompatibilityBridges(private val context: JvmBackendCont
             body = irExprBody(irBlock {
                 +irCall(superFunction.symbol, returnType).apply {
                     superQualifierSymbol = superFunction.parentAsClass.symbol
-
-                    dispatchReceiver = irGet(dispatchReceiverParameter!!)
-                    extensionReceiverParameter?.let { extensionReceiver = irGet(it) }
                     for ((index, parameter) in typeParameters.withIndex()) {
                         typeArguments[index] = parameter.defaultType
                     }
-                    for ((index, parameter) in valueParameters.withIndex()) {
-                        putValueArgument(index, irGet(parameter))
-                    }
+
+                    arguments.assignFrom(parameters, ::irGet)
                 }
             })
         }

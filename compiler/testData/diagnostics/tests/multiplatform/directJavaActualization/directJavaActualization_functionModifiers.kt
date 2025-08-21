@@ -40,3 +40,5 @@ public class JavaModifiers {
     @kotlin.annotations.jvm.KotlinActual
     public default void qux(){};
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, expect, functionDeclaration, infix, inline, operator, suspend */

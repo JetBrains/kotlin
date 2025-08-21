@@ -1,24 +1,29 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.analysis.decompiler.psi.text
 
+import com.intellij.openapi.util.IntellijInternalApi
 import org.jetbrains.kotlin.analysis.decompiler.stub.COMPILED_DEFAULT_INITIALIZER
 import org.jetbrains.kotlin.analysis.decompiler.stub.COMPILED_DEFAULT_PARAMETER_VALUE
 import org.jetbrains.kotlin.analysis.decompiler.stub.computeParameterName
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.contracts.description.ContractProviderKey
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.metadata.deserialization.getExtensionOrNull
+import org.jetbrains.kotlin.metadata.jvm.JvmProtoBuf
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.psiUtil.quoteIfNeeded
+import org.jetbrains.kotlin.psi.stubs.StubUtils
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.renderer.DescriptorRendererModifier
 import org.jetbrains.kotlin.renderer.DescriptorRendererOptions
 import org.jetbrains.kotlin.renderer.render
 import org.jetbrains.kotlin.resolve.DescriptorUtils.isEnumEntry
 import org.jetbrains.kotlin.resolve.descriptorUtil.secondaryConstructors
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPropertyDescriptor
 import org.jetbrains.kotlin.types.isFlexible
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 
@@ -132,36 +137,80 @@ private fun buildDecompiledTextImpl(
                         append(DECOMPILED_CODE_COMMENT).append(" }")
                     }
                 } else {
+                    if (descriptor is PropertyDescriptor && descriptor.isDelegated) {
+                        builder.append(" by ").append(COMPILED_DEFAULT_INITIALIZER)
+                    }
+
                     // descriptor instanceof PropertyDescriptor
                     builder.append(" ").append(DECOMPILED_CODE_COMMENT)
                 }
             }
+
+            (descriptor as? DeserializedPropertyDescriptor)?.proto
+                ?.getExtensionOrNull(JvmProtoBuf.propertySignature)
+                ?.hasField()
+                ?.let { hasBackingField ->
+                    @OptIn(IntellijInternalApi::class)
+                    builder.append(' ')
+                        .append(StubUtils.HAS_BACKING_FIELD_COMMENT_PREFIX)
+                        .append(hasBackingField)
+                        .append(" */")
+                }
+
             if (descriptor is PropertyDescriptor) {
                 for (accessor in descriptor.accessors) {
-                    if (accessor.isDefault) continue
+                    val isNonDefault = !accessor.isDefault
+                    val accessorVisibility = accessor.visibility
+                    val accessorModality = accessor.modality
+                    val isExternalAccessor = accessor.isExternal
+                    val isInlineAccessor = accessor.isInline
+                    val accessorAnnotations = accessor.annotations
+                    if (!isNonDefault &&
+                        accessorVisibility == descriptor.visibility &&
+                        accessorModality == descriptor.modality &&
+                        !isExternalAccessor &&
+                        !isInlineAccessor &&
+                        accessorAnnotations.isEmpty()
+                    ) continue
+
                     builder.append("\n$indent    ")
-                    builder.append(accessor.visibility.internalDisplayName).append(" ")
-                    builder.append(accessor.modality.name.toLowerCaseAsciiOnly()).append(" ")
-                    if (accessor.isExternal) {
-                        builder.append("external ")
-                    }
-                    for (annotation in accessor.annotations) {
+                    for (annotation in accessorAnnotations) {
                         builder.append(descriptorRenderer.renderAnnotation(annotation))
                         builder.append(" ")
                     }
+
+                    builder.append(accessorVisibility.internalDisplayName).append(" ")
+                    builder.append(accessorModality.name.toLowerCaseAsciiOnly()).append(" ")
+                    if (isExternalAccessor) {
+                        builder.append("external ")
+                    }
+
+                    if (isInlineAccessor) {
+                        builder.append("inline ")
+                    }
+
                     if (accessor is PropertyGetterDescriptor) {
                         builder.append("get")
-                    } else if (accessor is PropertySetterDescriptor) {
-                        builder.append("set(")
-                        val parameterDescriptor = accessor.valueParameters[0]
-                        for (annotation in parameterDescriptor.annotations) {
-                            builder.append(descriptorRenderer.renderAnnotation(annotation))
-                            builder.append(" ")
+                        if (isNonDefault) {
+                            builder.append("()")
                         }
-                        val parameterName = computeParameterName(parameterDescriptor.name)
-                        builder.append(parameterName.asString()).append(": ")
-                            .append(descriptorRenderer.renderType(parameterDescriptor.type))
-                        builder.append(")")
+                    } else if (accessor is PropertySetterDescriptor) {
+                        builder.append("set")
+                        if (isNonDefault) {
+                            builder.append("(")
+                            val parameterDescriptor = accessor.valueParameters[0]
+                            for (annotation in parameterDescriptor.annotations) {
+                                builder.append(descriptorRenderer.renderAnnotation(annotation))
+                                builder.append(" ")
+                            }
+                            val parameterName = computeParameterName(parameterDescriptor.name)
+                            builder.append(parameterName.asString()).append(": ")
+                                .append(descriptorRenderer.renderType(parameterDescriptor.type))
+                            builder.append(")")
+                        }
+                    }
+
+                    if (isNonDefault) {
                         builder.append(" {").append(DECOMPILED_CODE_COMMENT).append(" }")
                     }
                 }

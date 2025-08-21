@@ -3,6 +3,7 @@ description = "Kotlin Power-Assert Compiler Plugin"
 plugins {
     kotlin("jvm")
     id("jps-compatible")
+    id("java-test-fixtures")
 }
 
 val junit5Classpath by configurations.creating
@@ -11,12 +12,12 @@ dependencies {
     embedded(project(":kotlin-power-assert-compiler-plugin.backend")) { isTransitive = false }
     embedded(project(":kotlin-power-assert-compiler-plugin.cli")) { isTransitive = false }
 
-    testImplementation(project(":kotlin-power-assert-compiler-plugin.backend"))
+    testFixturesApi(project(":kotlin-power-assert-compiler-plugin.backend"))
 
-    testImplementation(platform(libs.junit.bom))
-    testImplementation(libs.junit.jupiter.api)
+    testFixturesApi(platform(libs.junit.bom))
+    testFixturesApi(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)
-    testImplementation(projectTests(":compiler:tests-common-new"))
+    testFixturesApi(testFixtures(project(":compiler:tests-common-new")))
 
     testRuntimeOnly(commonDependency("org.codehaus.woodstox:stax2-api"))
     testRuntimeOnly(commonDependency("com.fasterxml:aalto-xml"))
@@ -28,10 +29,8 @@ optInToExperimentalCompilerApi()
 
 sourceSets {
     "main" { none() }
-    "test" {
-        projectDefault()
-        generatedTestDir()
-    }
+    "test" { generatedTestDir() }
+    "testFixtures" { projectDefault() }
 }
 
 publish()

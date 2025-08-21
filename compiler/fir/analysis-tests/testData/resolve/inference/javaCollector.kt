@@ -16,3 +16,6 @@ fun foo(){
         )
     )
 }
+
+/* GENERATED_FIR_TAGS: callableReference, flexibleType, functionDeclaration, inProjection, javaFunction, lambdaLiteral,
+outProjection, samConversion, starProjection, stringLiteral */

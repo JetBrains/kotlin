@@ -3,7 +3,7 @@
 // MODULE: m1-common
 // FILE: common.kt
 
-<!EXPECT_ACTUAL_INCOMPATIBILITY{JVM}!>expect<!> annotation class A<!EXPECT_ACTUAL_INCOMPATIBILITY{JVM}!>(vararg val x: String)<!>
+<!EXPECT_ACTUAL_IR_INCOMPATIBILITY{JVM}!>expect<!> annotation class A<!EXPECT_ACTUAL_IR_INCOMPATIBILITY{JVM}!>(vararg val x: String)<!>
 
 @A("abc", "foo", "bar")
 fun test() {}
@@ -15,7 +15,10 @@ fun test() {}
 // In K1, different return types are mistakenly considered as expect-actual mismatch ("strong incompatibility" in old terminology)
 // In K2, different return types are considered as expect-actual incompatibility ("weak incompatibility" in old terminology)
 // ACTUAL_MISSING is not reported only when there is a mismatch => K2 is correct
-actual annotation class A<!ACTUAL_WITHOUT_EXPECT!>(val <!ACTUAL_MISSING!>x<!>: Array<String>)<!>
+actual annotation class A<!EXPECT_ACTUAL_INCOMPATIBLE_VALUE_PARAMETER_VARARG!>(val <!ACTUAL_MISSING!>x<!>: Array<String>)<!>
 
 @A(<!ARGUMENT_TYPE_MISMATCH!>"abc"<!>, <!TOO_MANY_ARGUMENTS!>"foo"<!>, <!TOO_MANY_ARGUMENTS!>"bar"<!>)
 fun test2() {}
+
+/* GENERATED_FIR_TAGS: actual, annotationDeclaration, expect, functionDeclaration, outProjection, primaryConstructor,
+propertyDeclaration, stringLiteral, vararg */

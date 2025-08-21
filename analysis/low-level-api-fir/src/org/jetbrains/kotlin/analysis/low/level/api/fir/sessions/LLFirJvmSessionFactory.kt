@@ -9,14 +9,13 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.platform.packages.createPackagePartProvider
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileModule
-import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
 import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.factories.LLLibrarySymbolProviderFactory
 import org.jetbrains.kotlin.analysis.low.level.api.fir.projectStructure.moduleData
 import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.LLFirJavaSymbolProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.LLModuleWithDependenciesSymbolProvider
-import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.nullableJavaSymbolProvider
+import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.nullableJavaSymbolProvider
 import org.jetbrains.kotlin.fir.SessionConfiguration
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmTypeMapper
 import org.jetbrains.kotlin.fir.deserialization.SingleModuleDataProvider
@@ -58,8 +57,8 @@ internal class LLFirJvmSessionFactory(project: Project) : LLFirAbstractSessionFa
         }
     }
 
-    override fun createLibrarySession(module: KaModule): LLFirLibraryOrLibrarySourceResolvableModuleSession {
-        return doCreateLibrarySession(module) { context ->
+    override fun createResolvableLibrarySession(module: KaModule): LLFirLibraryOrLibrarySourceResolvableModuleSession {
+        return doCreateResolvableLibrarySession(module) { context ->
             registerJavaComponents(JavaModuleResolver.getInstance(project))
             val javaSymbolProvider = LLFirJavaSymbolProvider(this, context.contentScope)
             register(
@@ -78,7 +77,7 @@ internal class LLFirJvmSessionFactory(project: Project) : LLFirAbstractSessionFa
         }
     }
 
-    override fun createBinaryLibrarySession(module: KaLibraryModule): LLFirLibrarySession {
+    override fun createBinaryLibrarySession(module: KaModule): LLFirLibrarySession {
         return doCreateBinaryLibrarySession(module) {
             registerJavaComponents(JavaModuleResolver.getInstance(project))
             register(FirJvmTypeMapper::class, FirJvmTypeMapper(this))
@@ -115,7 +114,6 @@ internal class LLFirJvmSessionFactory(project: Project) : LLFirAbstractSessionFa
     override fun createProjectLibraryProvidersForScope(
         session: LLFirSession,
         scope: GlobalSearchScope,
-        isFallbackDependenciesProvider: Boolean,
     ): List<FirSymbolProvider> {
         val moduleData = session.moduleData
         val moduleDataProvider = SingleModuleDataProvider(moduleData)
@@ -129,7 +127,6 @@ internal class LLFirJvmSessionFactory(project: Project) : LLFirAbstractSessionFa
                     firJavaFacade,
                     packagePartProvider,
                     scope,
-                    isFallbackDependenciesProvider,
                 )
             )
             addIfNotNull(

@@ -30,3 +30,6 @@ fun check(b: Boolean, l: List<String>) {
             .member()
     }.length
 }
+
+/* GENERATED_FIR_TAGS: capturedType, checkNotNullCall, classDeclaration, functionDeclaration, functionalType,
+lambdaLiteral, nullableType, starProjection, stringLiteral, suspend, typeConstraint, typeParameter, typeWithExtension */

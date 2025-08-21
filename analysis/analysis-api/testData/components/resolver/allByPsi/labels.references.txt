@@ -32,9 +32,9 @@ KtLabelReferenceExpression(108,114): 'myFor@'
 
 KtForExpression(115,161): 'for (i in 0..1) {'
   KtForLoopInReference:
-    0: (in kotlin.collections.IntIterator) operator fun next(): kotlin.Int
+    0: (in kotlin.collections.IntIterator) override operator fun next(): kotlin.Int
     1: (in kotlin.collections.Iterator) operator fun hasNext(): kotlin.Boolean
-    2: (in kotlin.ranges.IntProgression) open operator fun iterator(): kotlin.collections.IntIterator
+    2: (in kotlin.ranges.IntProgression) override operator fun iterator(): kotlin.collections.IntIterator
 
 KtOperationReferenceExpression(126,128): '..'
   KtSimpleNameReference:

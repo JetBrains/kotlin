@@ -6,6 +6,7 @@
 // LANGUAGE: +MultiPlatformProjects
 // IGNORE_NON_REVERSED_RESOLVE
 // IGNORE_REVERSED_RESOLVE
+// IGNORE_PARTIAL_BODY_ANALYSIS
 
 // MODULE: common
 // FILE: Common.kt
@@ -14,11 +15,11 @@ expect abstract class B() {
 }
 
 expect abstract class KA : B {
-    override fun <!ACCIDENTAL_OVERRIDE_CLASH_BY_JVM_SIGNATURE("'fun get(index: Int): Char' defined in '/A'; a renamed function; 'fun charAt(index: Int): Char' defined in '/A'")!>get<!>(index: Int): Char
+    override fun <!ACCIDENTAL_OVERRIDE_CLASH_BY_JVM_SIGNATURE("'fun get(index: Int): Char' defined in 'A'; a renamed function; 'fun charAt(index: Int): Char' defined in 'A'")!>get<!>(index: Int): Char
 }
 
 abstract class KA2() : B() {
-    override fun <!ACCIDENTAL_OVERRIDE_CLASH_BY_JVM_SIGNATURE("'fun get(index: Int): Char' defined in '/A'; a renamed function; 'fun charAt(index: Int): Char' defined in '/A'")!>get<!>(index: Int): Char = 'A'
+    override fun <!ACCIDENTAL_OVERRIDE_CLASH_BY_JVM_SIGNATURE("'fun get(index: Int): Char' defined in 'A'; a renamed function; 'fun charAt(index: Int): Char' defined in 'A'")!>get<!>(index: Int): Char = 'A'
 }
 
 // MODULE: jvm()()(common)
@@ -46,3 +47,6 @@ fun foo(a: A, ka: KA) {
     a.get(0)
     ka.get(0)
 }
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, functionDeclaration, integerLiteral, javaFunction, javaType,
+override, primaryConstructor */

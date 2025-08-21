@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.scripting.compiler.test
 
-import junit.framework.TestCase
 import kotlinx.coroutines.runBlocking
 import org.jetbrains.kotlin.scripting.compiler.plugin.getBaseCompilerArgumentsFromProperty
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.ScriptJvmCompilerIsolated
@@ -15,9 +14,11 @@ import kotlin.reflect.full.declaredMembers
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.host.toScriptSource
 import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
+import kotlin.test.*
 
-class ScriptCompilerTest : TestCase() {
+class ScriptCompilerTest {
 
+    @Test
     fun testCompilationWithRefinementError() {
         val res = compile("nonsense".toScriptSource()) {
             refineConfiguration {
@@ -32,6 +33,7 @@ class ScriptCompilerTest : TestCase() {
         assertTrue(res.reports.none { it.message.contains("nonsense") })
     }
 
+    @Test
     fun testDeprecationAnnotation() {
         val res = compile("""
             @Deprecated("BECAUSE")
@@ -43,6 +45,7 @@ class ScriptCompilerTest : TestCase() {
         assertTrue(res.reports.any { it.message.contains("deprecatedFunction(): Unit' is deprecated. BECAUSE") })
     }
 
+    @Test
     fun testSimpleVarAccess() {
         val res = compileToClass(
             """
@@ -56,6 +59,7 @@ class ScriptCompilerTest : TestCase() {
         assertNotNull(scriptInstance)
     }
 
+    @Test
     fun testLambdaWithProperty() {
         val versionProperties = java.util.Properties()
         "".reader().use { propInput ->
@@ -77,6 +81,7 @@ class ScriptCompilerTest : TestCase() {
         assertNotNull(scriptInstance)
     }
 
+    @Test
     fun testTypeAliases() {
         val res = compileToClass(
             """
@@ -94,6 +99,7 @@ class ScriptCompilerTest : TestCase() {
         assertEquals("Clazz", nestedClasses[0].simpleName)
     }
 
+    @Test
     fun testDestructingDeclarations() {
         val res = compileToClass(
             """
@@ -119,6 +125,7 @@ class ScriptCompilerTest : TestCase() {
         assertNull(namesToMembers["_"])
     }
 
+    @Test
     fun testSimpleReflection() {
         val res = compileToClass(
             """

@@ -71,3 +71,6 @@ fun gau(flag: Boolean, arg: String?) {
 
     <!DEBUG_INFO_SMARTCAST!>x<!>.hashCode()
 }
+
+/* GENERATED_FIR_TAGS: assignment, elvisExpression, equalityExpression, functionDeclaration, ifExpression, localProperty,
+nullableType, propertyDeclaration, smartcast, stringLiteral, whenExpression */

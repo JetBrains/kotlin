@@ -9,3 +9,6 @@ fun main() {
     command<!UNNECESSARY_SAFE_CALL!>?.<!>equals(null)
     command.equals(null)
 }
+
+/* GENERATED_FIR_TAGS: funWithExtensionReceiver, functionDeclaration, integerLiteral, localProperty, nullableType,
+propertyDeclaration, safeCall */

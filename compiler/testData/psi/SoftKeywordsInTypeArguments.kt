@@ -1,3 +1,5 @@
+// COMPILATION_ERRORS
+
 class Foo<out abstract, out out> {}
 
 fun f() {

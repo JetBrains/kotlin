@@ -1,1 +1,1 @@
-class A(val x: String)/* DeclarationStructureElement *//* ClassDeclarationStructureElement */
+/* RootStructureElement */class A(val x: String)/* DeclarationStructureElement *//* ClassDeclarationStructureElement */

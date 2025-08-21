@@ -49,15 +49,16 @@ internal class VarargLowering(val context: JvmBackendContext) : FileLoweringPass
         val function = expression.symbol
 
         // Replace empty varargs with empty arrays
-        for (i in 0 until expression.valueArgumentsCount) {
-            if (expression.getValueArgument(i) != null)
-                continue
+        val irFunction = function.owner
+        for ((parameter, argument) in irFunction.parameters zip expression.arguments) {
+            if (argument != null) continue
 
-            val parameter = function.owner.valueParameters[i]
             if (parameter.varargElementType != null && !parameter.hasDefaultValue()) {
                 // Compute the correct type for the array argument.
                 val arrayType = parameter.type.substitute(expression.typeSubstitutionMap).makeNotNull()
-                expression.putValueArgument(i, createBuilder().irArrayOf(arrayType))
+                // Cannot use `expression.arguments[parameter]` to get argument
+                // because of the different owner in the case of polymorphic varargs calls (e.g. `invokeExact` call)
+                expression.arguments[parameter.indexInParameters] = createBuilder().irArrayOf(arrayType)
             }
         }
 
@@ -75,7 +76,7 @@ internal class VarargLowering(val context: JvmBackendContext) : FileLoweringPass
                     val spread = element.expression
                     if (spread is IrFunctionAccessExpression && spread.symbol.owner.isArrayOf()) {
                         // Skip empty arrays and don't copy immediately created arrays
-                        val argument = spread.getValueArgument(0) ?: continue@loop
+                        val argument = spread.arguments[0] ?: continue@loop
                         if (argument is IrVararg) {
                             addVararg(argument)
                             continue@loop
@@ -107,10 +108,8 @@ internal fun IrFunction.isArrayOf(): Boolean {
     }
     return parent.packageFqName == StandardNames.BUILT_INS_PACKAGE_FQ_NAME &&
             name.asString().let { it in PRIMITIVE_ARRAY_OF_NAMES || it == ARRAY_OF_NAME } &&
-            extensionReceiverParameter == null &&
-            dispatchReceiverParameter == null &&
-            valueParameters.size == 1 &&
-            valueParameters[0].isVararg
+            hasShape(regularParameters = 1) &&
+            parameters[0].isVararg
 }
 
 internal fun IrFunction.isEmptyArray(): Boolean = isTopLevelInPackage("emptyArray", StandardNames.BUILT_INS_PACKAGE_FQ_NAME)

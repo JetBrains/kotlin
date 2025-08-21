@@ -16,3 +16,6 @@ class A {
 
   operator fun setValue(t: Any?, p: KProperty<*>, i: Base) {}
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, nullableType, operator, propertyDeclaration,
+propertyDelegate, setter, starProjection */

@@ -1,0 +1,7 @@
+KtOperationReferenceExpression(34,35): '+'
+  KtSimpleNameReference:
+    (in kotlin.String) operator fun plus(other: kotlin.Any?): kotlin.String
+
+KtOperationReferenceExpression(40,41): '+'
+  KtSimpleNameReference:
+    (in kotlin.String) operator fun plus(other: kotlin.Any?): kotlin.String

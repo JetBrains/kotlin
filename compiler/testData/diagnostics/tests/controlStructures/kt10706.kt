@@ -9,3 +9,6 @@ fun fn(c: Char?): Any? =
             }
             else -> TODO()
         }
+
+/* GENERATED_FIR_TAGS: equalityExpression, functionDeclaration, ifExpression, integerLiteral, nullableType, smartcast,
+stringLiteral, whenExpression, whenWithSubject */

@@ -107,6 +107,27 @@ class MavenResolverTest : ResolversTestBase() {
         assertEquals("jar", artifact.extension)
     }
 
+    fun testDeepTransitive() {
+        // The test tries to ensure that transitive dependencies beyond the immediate ones are resolved
+        // It was discovered (see KT-76424) that updating org.apache.maven:maven-core beyond v3.8.8
+        // causes the resolution (most likely - dependency tree walking) to return only immediate transitive dependencies
+        // Note: the test is quite indirect and very dependent on the version of the checked artefact, so it may need to be updated, if
+        // the dependencies tree changes
+        val expectedThreshold = 20
+        val dependency = "org.gitlab4j:gitlab4j-api:5.8.0"
+
+        var transitiveFiles: Iterable<File>
+
+        resolveAndCheck(dependency, options = parseOptions("transitive=true")) { files ->
+            transitiveFiles = files
+            true
+        }
+
+        val tCount = transitiveFiles.count()
+
+        assertTrue(tCount > expectedThreshold)
+    }
+
     fun testSourcesResolution() {
         resolveAndCheck("junit:junit:4.11", options = parseOptions("classifier=sources extension=jar")) { files ->
             assertEquals(2, files.count())

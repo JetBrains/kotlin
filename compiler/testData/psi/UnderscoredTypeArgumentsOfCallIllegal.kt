@@ -1,3 +1,5 @@
+// COMPILATION_ERRORS
+
 fun main() {
     val y: Foo<__> = 1
     val y: Foo<_, __> = 1

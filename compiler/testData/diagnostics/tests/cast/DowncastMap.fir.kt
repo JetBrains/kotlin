@@ -9,3 +9,6 @@ fun p(p: Map<String, Int>) {
         p[""] = 1
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, functionDeclaration, ifExpression, integerLiteral, interfaceDeclaration, isExpression,
+nullableType, operator, out, smartcast, stringLiteral, typeParameter */

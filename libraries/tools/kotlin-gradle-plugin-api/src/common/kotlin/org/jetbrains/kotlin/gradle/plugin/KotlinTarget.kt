@@ -3,8 +3,6 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-@file:Suppress("TYPEALIAS_EXPANSION_DEPRECATION")
-
 package org.jetbrains.kotlin.gradle.plugin
 
 import org.gradle.api.Action
@@ -14,10 +12,6 @@ import org.gradle.api.attributes.AttributeContainer
 import org.gradle.api.attributes.HasAttributes
 import org.gradle.api.component.SoftwareComponent
 import org.gradle.api.publish.maven.MavenPublication
-import org.jetbrains.kotlin.gradle.PRESETS_API_IS_DEPRECATED_MESSAGE
-import org.jetbrains.kotlin.gradle.DeprecatedTargetPresetApi
-import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
-import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptionsDeprecated
 import org.jetbrains.kotlin.gradle.dsl.KotlinGradlePluginDsl
 import org.jetbrains.kotlin.tooling.core.HasMutableExtras
 
@@ -72,20 +66,6 @@ interface KotlinTarget : Named, HasAttributes, HasProject, HasMutableExtras {
     val disambiguationClassifier: String? get() = targetName
 
     /**
-     * @suppress
-     * Long deprecation cycle, because IDE might be calling into this via reflection.
-     */
-    @Deprecated("Scheduled for removal with Kotlin 2.2", level = DeprecationLevel.ERROR)
-    val useDisambiguationClassifierAsSourceSetNamePrefix: Boolean
-
-    /**
-     * @suppress
-     * Long deprecation cycle, because IDE might be calling into this via reflection.
-     */
-    @Deprecated("Scheduled for removal with Kotlin 2.2", level = DeprecationLevel.ERROR)
-    val overrideDisambiguationClassifierOnIdeImport: String?
-
-    /**
      * Represents the type of Kotlin platform associated with the target.
      */
     val platformType: KotlinPlatformType
@@ -96,7 +76,7 @@ interface KotlinTarget : Named, HasAttributes, HasProject, HasMutableExtras {
      * Allows access to the default [main][KotlinCompilation.MAIN_COMPILATION_NAME] or [test][KotlinCompilation.TEST_COMPILATION_NAME]
      * compilations, or the creation of additional compilations.
      */
-    val compilations: NamedDomainObjectContainer<out KotlinCompilation<KotlinCommonOptionsDeprecated>>
+    val compilations: NamedDomainObjectContainer<out KotlinCompilation<out Any>>
 
     /**
      * The name of the task responsible for assembling the final artifact for this target.
@@ -166,15 +146,16 @@ interface KotlinTarget : Named, HasAttributes, HasProject, HasMutableExtras {
      */
     fun attributes(configure: Action<AttributeContainer>) = attributes { configure.execute(this) }
 
+    // Workaround for https://youtrack.jetbrains.com/issue/CMP-7891/Compose-Gradle-plugin-is-using-deprecated-Presets-API
     /**
      * @suppress
      */
-    @OptIn(DeprecatedTargetPresetApi::class, InternalKotlinGradlePluginApi::class)
+    @Suppress("DEPRECATION_ERROR")
     @get:Deprecated(
-        PRESETS_API_IS_DEPRECATED_MESSAGE,
-        level = DeprecationLevel.ERROR,
+        "Not supported",
+        level = DeprecationLevel.HIDDEN
     )
-    val preset: KotlinTargetPreset<out KotlinTarget>?
+    val preset: KotlinTargetPreset<out KotlinTarget>? get() = null
 
     /**
      * @suppress
@@ -186,8 +167,8 @@ interface KotlinTarget : Named, HasAttributes, HasProject, HasMutableExtras {
      */
     @Deprecated(
         "Accessing 'sourceSets' container on the Kotlin target level DSL is deprecated. " +
-                "Consider configuring 'sourceSets' on the Kotlin extension level.",
-        level = DeprecationLevel.WARNING
+                "Consider configuring 'sourceSets' on the Kotlin extension level. This API is scheduled for removal in Kotlin 2.3.",
+        level = DeprecationLevel.ERROR
     )
     val sourceSets: NamedDomainObjectContainer<KotlinSourceSet>
 }
@@ -215,3 +196,10 @@ interface KotlinTargetWithTests<E : KotlinExecution.ExecutionSource, T : KotlinT
         const val DEFAULT_TEST_RUN_NAME = "test"
     }
 }
+
+// Workaround for https://youtrack.jetbrains.com/issue/CMP-7891/Compose-Gradle-plugin-is-using-deprecated-Presets-API
+@Deprecated(
+    "Not supported",
+    level = DeprecationLevel.HIDDEN
+)
+interface KotlinTargetPreset<T : KotlinTarget>

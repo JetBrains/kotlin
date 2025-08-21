@@ -34,3 +34,7 @@ fun <T> testLocal(x: Any) {
     if (x is <!CANNOT_CHECK_FOR_ERASED!>C<!>) {}
     if (x is <!CANNOT_CHECK_FOR_ERASED!>CA<!>) {}
 }
+
+/* GENERATED_FIR_TAGS: asExpression, classDeclaration, functionDeclaration, ifExpression, inProjection, isExpression,
+localClass, nullableType, outProjection, starProjection, typeAliasDeclaration, typeAliasDeclarationWithTypeParameter,
+typeParameter */

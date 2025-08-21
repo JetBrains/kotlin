@@ -78,7 +78,7 @@ internal fun publishedConfigurationName(originalVariantName: String) = originalV
 
 internal class KotlinTargetSoftwareComponentImpl @UnsafeApi constructor(
     private val adhocComponent: AdhocComponentWithVariants,
-    private val kotlinComponent: KotlinTargetComponent,
+    internal val kotlinComponent: KotlinTargetComponent,
 ) : KotlinTargetSoftwareComponent() {
 
     override fun getCoordinates() =

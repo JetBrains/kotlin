@@ -1,6 +1,7 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
+import org.jetbrains.kotlin.ideaExt.idea
 
 plugins {
     kotlin("jvm")
@@ -20,7 +21,7 @@ val generateTests by generator("org.jetbrains.kotlin.jps.GenerateJpsPluginTestsK
 
 dependencies {
     compileOnly(project(":jps:jps-platform-api-signatures"))
-    testImplementation(projectTests(":generators:test-generator"))
+    testImplementation(testFixtures(project(":generators:test-generator")))
 
     @Suppress("UNCHECKED_CAST")
     rootProject.extra["kotlinJpsPluginEmbeddedDependencies"]
@@ -72,7 +73,7 @@ dependencies {
     testRuntimeOnly(intellijJDom())
     testRuntimeOnly(libs.kotlinx.coroutines.core.jvm)
 
-    testImplementation(projectTests(":compiler:incremental-compilation-impl"))
+    testImplementation(testFixtures(project(":compiler:incremental-compilation-impl")))
     testImplementation(jpsBuild())
 
     compilerModules.forEach {
@@ -91,8 +92,14 @@ sourceSets {
     "test" {
         Ide.IJ {
             java.srcDirs("jps-tests/test")
+            java.srcDirs("jps-tests/tests-gen")
         }
     }
+}
+
+apply(plugin = "idea")
+idea {
+    this.module.generatedSourceDirs.add(projectDir.resolve("jps-tests").resolve("tests-gen"))
 }
 
 java {
@@ -110,7 +117,7 @@ tasks.compileKotlin {
     compilerOptions.jvmTarget = JvmTarget.JVM_1_8
 }
 
-projectTest(parallel = true) {
+projectTest(parallel = true, defineJDKEnvVariables = listOf(JdkMajorVersion.JDK_11_0)) {
     // do not replace with compile/runtime dependency,
     // because it forces Intellij reindexing after each compiler change
     dependsOn(":kotlin-compiler:dist")
@@ -140,11 +147,6 @@ projectTest(parallel = true) {
 
 testsJar {}
 
-tasks.withType<KotlinCompilationTask<*>>().configureEach {
-    compilerOptions.apiVersion.value(KotlinVersion.KOTLIN_1_8).finalizeValueOnRead()
-    compilerOptions.languageVersion.value(KotlinVersion.KOTLIN_1_8).finalizeValueOnRead()
-}
-
 /**
  * Dependency Security Overrides
  *
@@ -152,10 +154,11 @@ tasks.withType<KotlinCompilationTask<*>>().configureEach {
  *
  * Affected Library:
  * └── io.netty
- *    ├── netty-buffer:* → 4.1.115.Final
- *    └── netty-codec-http2:* → 4.1.115.Final
+ *    ├── netty-buffer:* → 4.1.118.Final
+ *    └── netty-codec-http2:* → 4.1.118.Final
  *
  * Mitigated Vulnerabilities:
+ * - CVE-2025-25193: Denial of Service Vulnerability
  * - CVE-2024-47535: Network security vulnerability
  * - CVE-2024-29025: Remote code execution risk
  * - CVE-2023-4586: Information disclosure vulnerability
@@ -171,8 +174,8 @@ configurations.all {
                 "netty-codec-http2",
             ).contains(requested.name)
         ) {
-            useVersion("4.1.115.Final")
-            because("CVE-2024-47535, CVE-2024-29025, CVE-2023-4586, CVE-2023-34462")
+            useVersion("4.1.118.Final")
+            because("CVE-2025-25193, CVE-2024-47535, CVE-2024-29025, CVE-2023-4586, CVE-2023-34462")
         }
     }
 }

@@ -39,7 +39,7 @@ internal fun ClassNode.isEffectivelyPublic(classVisibility: ClassVisibility?) =
 
 
 private val ClassNode.innerClassNode: InnerClassNode? get() = innerClasses.singleOrNull { it.name == name }
-private fun ClassNode.isLocal() = outerMethod != null
+private fun ClassNode.isLocal() = outerClass != null // using outerMethod is unreliable, because even for local classes outerMethod can sometimes be null
 private fun ClassNode.isInner() = innerClassNode != null
 private fun ClassNode.isWhenMappings() = isSynthetic(access) && name.endsWith("\$WhenMappings")
 private fun ClassNode.isSyntheticAnnotationClass() = isSynthetic(access) && name.contains("\$annotationImpl\$")

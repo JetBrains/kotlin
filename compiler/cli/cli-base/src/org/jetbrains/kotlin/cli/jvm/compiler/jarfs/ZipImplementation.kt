@@ -74,8 +74,9 @@ internal fun LargeDynamicMappedBuffer.parseCentralDirectory(): List<ZipEntryDesc
                 "$i: $headerConst"
             }
 
-            val versionNeededToExtract =
-                getShort(6).toInt()
+            //  see the comment to the commented usage below
+//            val versionNeededToExtract =
+//                getShort(6).toInt()
 
             val compressionMethod = getShort(10).toInt()
 
@@ -114,11 +115,11 @@ internal fun LargeDynamicMappedBuffer.parseCentralDirectory(): List<ZipEntryDesc
             currentStart += 46 + fileNameLength + extraLength + fileCommentLength
 
             // We support version needed to extract 1.0, 2.0 and 4.5. However, there are zip
-            // files in the eco-system with entries with invalid version to extract
-            // of 0. Therefore, we just check that the version is between 0 and 20 and additionally for version 4.5.
-            require(versionNeededToExtract in 0..20 || versionNeededToExtract == 45) {
-                "Unexpected versionNeededToExtract ($versionNeededToExtract) at $name"
-            }
+            // files with incorrect version in the wild, e.g. see KT-74490
+            // since there is no such check in the JDK zip implementation, the check here is also disabled
+//            require(versionNeededToExtract in 0..20 || versionNeededToExtract == 45) {
+//                "Unexpected versionNeededToExtract ($versionNeededToExtract) at $name"
+//            }
 
             val compressionKind = when (compressionMethod) {
                 0 -> ZipEntryDescription.CompressionKind.PLAIN

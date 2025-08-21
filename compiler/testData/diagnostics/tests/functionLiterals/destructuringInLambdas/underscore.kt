@@ -61,3 +61,7 @@ fun bar() {
         b checkType { _<Short>() }
     }<!>
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, data, funWithExtensionReceiver, functionDeclaration, functionalType, infix,
+lambdaLiteral, localProperty, nullableType, primaryConstructor, propertyDeclaration, typeParameter, typeWithExtension,
+unnamedLocalVariable */

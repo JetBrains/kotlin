@@ -21,3 +21,5 @@ public class a {
 package a
 
 fun test() = a().forecast().test()
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaFunction, javaType */

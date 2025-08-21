@@ -95,7 +95,7 @@ class WasmIrToText(
             debugInformationGenerator?.addSourceLocation(
                 SourceLocationMappingToText(
                     it,
-                    SourceLocation.DefinedLocation("", "", stringBuilder.lineNumber, stringBuilder.columnNumber),
+                    SourceLocation.DefinedLocation("", stringBuilder.lineNumber, stringBuilder.columnNumber),
                 )
             )
         }
@@ -258,8 +258,8 @@ class WasmIrToText(
                 }
             }
             is WasmImmediate.BlockType.Function -> {
-                val parameters = type.type.parameterTypes
-                val results = type.type.resultTypes
+                val parameters = type.type.owner.parameterTypes
+                val results = type.type.owner.resultTypes
                 if (parameters.isNotEmpty()) {
                     sameLineList("param") { parameters.forEach { appendType(it) } }
                 }
@@ -277,23 +277,27 @@ class WasmIrToText(
         }
     }
 
+    private fun appendWasmTypeList(typeList: List<WasmTypeDeclaration>) {
+        typeList.forEach { type ->
+            when (type) {
+                is WasmStructDeclaration ->
+                    appendStructTypeDeclaration(type)
+                is WasmArrayDeclaration ->
+                    appendArrayTypeDeclaration(type)
+                is WasmFunctionType ->
+                    appendFunctionTypeDeclaration(type)
+            }
+        }
+    }
+
     fun appendWasmModule(module: WasmModule) {
         with(module) {
             newLineList("module") {
-                functionTypes.forEach { appendFunctionTypeDeclaration(it) }
-
-                if(recGroupTypes.isNotEmpty()) {
-                    newLineList("rec") {
-                        recGroupTypes.forEach {
-                            when (it) {
-                                is WasmStructDeclaration ->
-                                    appendStructTypeDeclaration(it)
-                                is WasmArrayDeclaration ->
-                                    appendArrayTypeDeclaration(it)
-                                is WasmFunctionType ->
-                                    appendFunctionTypeDeclaration(it)
-                            }
-                        }
+                recGroups.forEach { recGroup ->
+                    if (recGroup.size > 1) {
+                        newLineList("rec") { appendWasmTypeList(recGroup) }
+                    } else {
+                        appendWasmTypeList(recGroup)
                     }
                 }
 

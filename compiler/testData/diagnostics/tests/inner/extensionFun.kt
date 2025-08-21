@@ -28,3 +28,5 @@ fun Outer.foo() {
     <!UNRESOLVED_REFERENCE!>Nested<!>()
     Inner()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, inner, nestedClass */

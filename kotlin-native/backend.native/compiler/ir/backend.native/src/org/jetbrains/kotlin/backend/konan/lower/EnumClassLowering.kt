@@ -38,8 +38,8 @@ import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addToStdlib.getOrSetIfNull
 
-private var IrClass.enumValueGetter: IrSimpleFunction? by irAttribute(followAttributeOwner = false)
-private var IrClass.enumEntriesMap: Map<Name, LoweredEnumEntryDescription>? by irAttribute(followAttributeOwner = false)
+private var IrClass.enumValueGetter: IrSimpleFunction? by irAttribute(copyByDefault = false)
+private var IrClass.enumEntriesMap: Map<Name, LoweredEnumEntryDescription>? by irAttribute(copyByDefault = false)
 
 internal data class LoweredEnumEntryDescription(val ordinal: Int, val getterId: Int)
 
@@ -119,9 +119,9 @@ internal class EnumUsageLowering(val context: Context) : IrTransformer<IrBuilder
 
         val irClassSymbol = expression.typeArguments[0]!!.classifierOrNull as? IrClassSymbol
 
-        if (irClassSymbol == null || irClassSymbol == context.ir.symbols.enum) {
+        if (irClassSymbol == null || irClassSymbol == context.symbols.enum) {
             // Either a type parameter or a type parameter erased to 'Enum'.
-            return data.irCall(context.ir.symbols.throwIllegalStateException)
+            return data.irCall(context.symbols.throwIllegalStateException)
         }
 
         val irClass = irClassSymbol.owner
@@ -140,7 +140,7 @@ internal class EnumUsageLowering(val context: Context) : IrTransformer<IrBuilder
             IntrinsicType.ENUM_VALUE_OF -> {
                 val function = irClass.findStaticMethod(Name.identifier("valueOf"))
                 data.irCall(function).apply {
-                    putValueArgument(0, expression.getValueArgument(0)!!)
+                    arguments[0] = expression.arguments[0]!!
                 }
             }
             IntrinsicType.ENUM_ENTRIES -> {
@@ -152,18 +152,17 @@ internal class EnumUsageLowering(val context: Context) : IrTransformer<IrBuilder
                 } else {
                     // fallback for enums from old klibs
                     val valuesFunction = irClass.findStaticMethod(Name.identifier("values"))
-                    data.irCallWithSubstitutedType(context.ir.symbols.createEnumEntries, listOf(irClass.defaultType)).apply {
-                        putValueArgument(0, data.irCall(valuesFunction))
+                    data.irCallWithSubstitutedType(context.symbols.createEnumEntries, listOf(irClass.defaultType)).apply {
+                        arguments[0] = data.irCall(valuesFunction)
                     }
                 }
             }
-            else -> TODO("Unsupported intrinsic type ${intrinsicType}")
         }
     }
 
     private fun IrBuilderWithScope.loadEnumEntry(enumClass: IrClass, name: Name) = with (enumsSupport) {
         irCall(getValueGetter(enumClass).symbol, enumClass.defaultType).apply {
-            putValueArgument(0, irInt(enumEntriesMap(enumClass).getValue(name).getterId))
+            arguments[0] = irInt(enumEntriesMap(enumClass).getValue(name).getterId)
         }
     }
 
@@ -171,7 +170,7 @@ internal class EnumUsageLowering(val context: Context) : IrTransformer<IrBuilder
 
 internal class EnumClassLowering(val context: Context) : FileLoweringPass {
     private val enumsSupport = context.enumsSupport
-    private val symbols = context.ir.symbols
+    private val symbols = context.symbols
     private val createUninitializedInstance = symbols.createUninitializedInstance
     private val createEnumEntries = symbols.createEnumEntries
     private val initInstance = symbols.initInstance
@@ -243,14 +242,14 @@ internal class EnumClassLowering(val context: Context) : FileLoweringPass {
                     declaration.body = when (body.kind) {
                         IrSyntheticBodyKind.ENUM_VALUEOF -> context.createIrBuilder(declaration.symbol).irBlockBody(declaration) {
                             +irReturn(irCallWithSubstitutedType(symbols.valueOfForEnum, listOf(irClass.defaultType)).apply {
-                                putValueArgument(0, irGet(declaration.valueParameters[0]))
-                                putValueArgument(1, irGetField(null, valuesField))
+                                arguments[0] = irGet(declaration.parameters[0])
+                                arguments[1] = irGetField(null, valuesField)
                             })
                         }
 
                         IrSyntheticBodyKind.ENUM_VALUES -> context.createIrBuilder(declaration.symbol).irBlockBody(declaration) {
                             +irReturn(irCallWithSubstitutedType(symbols.valuesForEnum, listOf(irClass.defaultType)).apply {
-                                putValueArgument(0, irGetField(null, valuesField))
+                                arguments[0] = irGetField(null, valuesField)
                             })
                         }
 
@@ -269,7 +268,7 @@ internal class EnumClassLowering(val context: Context) : FileLoweringPass {
                 valueGetter.body = irBlockBody(valueGetter) {
                     +irReturn(irCall(arrayGet, irClass.defaultType).apply {
                         dispatchReceiver = irGetField(null, valuesField)
-                        putValueArgument(0, irGet(valueGetter.valueParameters[0]))
+                        arguments[1] = irGet(valueGetter.parameters[0])
                     })
                 }
             }
@@ -278,8 +277,8 @@ internal class EnumClassLowering(val context: Context) : FileLoweringPass {
 
         private fun IrBlockBuilder.irInitInstanceCall(instance: IrCall, constructor: IrConstructorCall): IrCall =
                 irCall(initInstance).apply {
-                    putValueArgument(0, instance)
-                    putValueArgument(1, constructor)
+                    arguments[0] = instance
+                    arguments[1] = constructor
                 }
 
         private fun defineValuesField(enumEntries: List<IrEnumEntry>) {
@@ -331,12 +330,12 @@ internal class EnumClassLowering(val context: Context) : FileLoweringPass {
                                 .map {
                                     irCall(arrayGet, irClass.defaultType).apply {
                                         dispatchReceiver = irGet(irValuesArray)
-                                        putValueArgument(0, irInt(it.getterId))
+                                        arguments[1] = irInt(it.getterId)
                                     }
                                 }
                 )
                 +irCallWithSubstitutedType(createEnumEntries, listOf(irClass.defaultType)).apply {
-                    putValueArgument(0, irEntriesArray)
+                    arguments[0] = irEntriesArray
                 }
             })
         }
@@ -345,7 +344,7 @@ internal class EnumClassLowering(val context: Context) : FileLoweringPass {
             enumEntries.forEach {
                 val instance = irCall(arrayGet).apply {
                     dispatchReceiver = irGet(instances)
-                    putValueArgument(0, irInt(enumEntriesMap[it.name]!!.getterId))
+                    arguments[1] = irInt(enumEntriesMap[it.name]!!.getterId)
                 }
                 val initializer = it.initializerExpression!!.expression
                 when {

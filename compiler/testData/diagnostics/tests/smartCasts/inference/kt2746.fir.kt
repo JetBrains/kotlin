@@ -17,3 +17,6 @@ fun test2(a: Any) {
         val c1: C<String> = f(a)
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, ifExpression, isExpression, localProperty, nullableType,
+primaryConstructor, propertyDeclaration, smartcast, typeParameter */

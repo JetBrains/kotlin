@@ -12,11 +12,12 @@ import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.isBuiltInWasmRefType
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.isExternalType
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.toJsStringLiteral
+import org.jetbrains.kotlin.backend.wasm.topLevelFunctionForNestedExternal
+import org.jetbrains.kotlin.backend.wasm.utils.getJsBuiltinDescriptor
 import org.jetbrains.kotlin.backend.wasm.utils.getJsFunAnnotation
 import org.jetbrains.kotlin.backend.wasm.utils.getWasmImportDescriptor
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.utils.getJsNameOrKotlinName
 import org.jetbrains.kotlin.ir.backend.js.utils.isJsExport
 import org.jetbrains.kotlin.ir.builders.*
@@ -25,7 +26,6 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.expressions.impl.IrInstanceInitializerCallImpl
-import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.util.isNullable
@@ -59,10 +59,10 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
         if (declaration.isPropertyAccessor) return null
         if (declaration.parent !is IrPackageFragment) return null
         if (!isExported && !isExternal) return null
-        if (declaration.getWasmImportDescriptor() != null) return null
+        if (declaration.getWasmImportDescriptor() != null || declaration.getJsBuiltinDescriptor() != null) return null
         check(!(isExported && isExternal)) { "Exported external declarations are not supported: ${declaration.fqNameWhenAvailable}" }
         check(declaration.parent !is IrClass) { "Interop members are not supported:  ${declaration.fqNameWhenAvailable}" }
-        if (context.mapping.wasmNestedExternalToNewTopLevelFunction[declaration] != null) return null
+        if (declaration.topLevelFunctionForNestedExternal != null) return null
 
         additionalDeclarations.clear()
         currentParent = declaration.parent
@@ -183,6 +183,7 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
         )
 
         newFun.parameters.forEachIndexed { index, newParameter ->
+            newParameter.defaultValue = null
             val adapter = valueParametersAdapters[index]
             if (adapter != null) {
                 newParameter.type = adapter.fromType

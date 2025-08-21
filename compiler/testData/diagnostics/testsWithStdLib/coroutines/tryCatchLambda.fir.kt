@@ -8,10 +8,13 @@ fun <T> genericBuilder(c: suspend () -> T): T = null!!
 fun foo() {
     var result = ""
     genericBuilder<String> {
-        <!ARGUMENT_TYPE_MISMATCH!>try {
+        <!RETURN_TYPE_MISMATCH!>try {
             await("")
         } catch(e: Exception) {
             result = "fail"
         }<!>
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, checkNotNullCall, functionDeclaration, functionalType, lambdaLiteral, localProperty,
+nullableType, propertyDeclaration, stringLiteral, suspend, tryExpression, typeParameter */

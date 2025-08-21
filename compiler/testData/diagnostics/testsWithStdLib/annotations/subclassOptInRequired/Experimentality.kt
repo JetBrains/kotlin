@@ -12,3 +12,5 @@ open class OpenKlassA
 @OptIn(ExperimentalSubclassOptIn::class)
 @SubclassOptInRequired(ApiMarker::class)
 open class OpenKlassB
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, classReference */

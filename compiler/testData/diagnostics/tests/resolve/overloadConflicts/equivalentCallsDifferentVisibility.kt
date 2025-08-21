@@ -13,3 +13,5 @@ private val lock = "2"
 fun test() {
     lock
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, propertyDeclaration, stringLiteral */

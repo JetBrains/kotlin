@@ -10,7 +10,7 @@ interface A<T> {
 abstract class B<T> : A<T>
 
 // MODULE: main(lib)
-// JVM_DEFAULT_MODE: all
+// JVM_DEFAULT_MODE: no-compatibility
 // FILE: main.kt
 abstract class C : B<String>()
 

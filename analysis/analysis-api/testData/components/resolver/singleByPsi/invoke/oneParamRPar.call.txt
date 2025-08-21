@@ -7,10 +7,12 @@ KtCallExpression(76,80): 'f(1)'
           receiverType = null
           returnType = kotlin.Any
           symbol = vararg a: kotlin.Any
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = true
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = f
           isSafeNavigation = false
@@ -26,7 +28,9 @@ KtCallExpression(76,80): 'f(1)'
               receiverType = null
               returnType = kotlin.Any
               symbol = vararg a: kotlin.Any
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = /Foo.invoke
       typeArgumentsMapping = {}

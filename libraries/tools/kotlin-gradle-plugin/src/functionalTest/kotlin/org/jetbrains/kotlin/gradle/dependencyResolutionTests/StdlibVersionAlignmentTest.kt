@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.gradle.targets.js.KotlinWasmTargetType
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinWasmTargetDsl
 import org.jetbrains.kotlin.gradle.util.*
 import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
-import kotlin.test.Test
+import org.junit.Test
 
 private val KotlinToolingVersion.advanceMajor: KotlinToolingVersion
     get() = KotlinToolingVersion(major + 1, minor, patch, classifier)

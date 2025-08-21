@@ -1,6 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// FIR_IDENTICAL
 // DIAGNOSTICS: -UNUSED_EXPRESSION -UNUSED_PARAMETER -UNUSED_VARIABLE -NOTHING_TO_INLINE -PRIVATE_CLASS_MEMBER_FROM_INLINE
+// LANGUAGE: +ForbidExposingLessVisibleTypesInInline
 private class Z public constructor(){
     public val publicProperty:Int = 12
     public fun publicFun() {}
@@ -47,3 +47,6 @@ internal class Z2 {
         Z2().privateFun()
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, inline, integerLiteral, primaryConstructor,
+propertyDeclaration */

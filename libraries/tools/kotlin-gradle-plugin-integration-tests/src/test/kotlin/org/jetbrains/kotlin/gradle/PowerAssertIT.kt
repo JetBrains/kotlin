@@ -16,7 +16,12 @@ class PowerAssertIT : KGPBaseTest() {
     @DisplayName("power-assert works")
     @GradleTest
     fun testPowerAssertSimple(gradleVersion: GradleVersion) {
-        project("powerAssertSimple", gradleVersion) {
+        project(
+            "powerAssertSimple",
+            gradleVersion,
+            // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
+            buildOptions = defaultBuildOptions.copy(isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED),
+        ) {
             build("check")
         }
     }

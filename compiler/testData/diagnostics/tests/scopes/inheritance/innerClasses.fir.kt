@@ -65,3 +65,6 @@ class F: A() {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, functionDeclaration, init, inner, nestedClass,
+objectDeclaration */

@@ -15,3 +15,5 @@ public @interface A {
 @A() fun test4() {}
 
 @A fun test5() {}
+
+/* GENERATED_FIR_TAGS: collectionLiteral, functionDeclaration, javaType, stringLiteral */

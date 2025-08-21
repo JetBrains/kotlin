@@ -353,14 +353,16 @@ private fun Path.deleteRecursivelyImpl(): List<Exception> {
     val collector = ExceptionsCollector()
     var useInsecure = true
 
-    // TODO: KT-54077
-    this.parent?.let { parent ->
+    // Will be `null` if this is a root, like a `/` on a Unix-like system, or `C:` on Windows
+    fileName?.let { fileName ->
+        val parent = this.parent // is `null` for single-component relative paths
+            ?: fileSystem.getPath("") // in that case, use the current working directory
         val directoryStream = try { Files.newDirectoryStream(parent) } catch (_: Throwable) { null }
         directoryStream?.use { stream ->
             if (stream is SecureDirectoryStream<Path>) {
                 useInsecure = false
                 collector.path = parent
-                stream.handleEntry(this.fileName, null, collector)
+                stream.handleEntry(fileName, null, collector)
             }
         }
     }

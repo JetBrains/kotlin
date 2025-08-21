@@ -4,6 +4,8 @@ KtFile: IncorrectMultiDollarInterpolationCode.kt
   IMPORT_LIST
     <empty list>
   FUN
+    PsiComment(EOL_COMMENT)('// COMPILATION_ERRORS')
+    PsiWhiteSpace('\n')
     PsiComment(EOL_COMMENT)('// interpolation prefix length: 0, 1, 2, 4, 8')
     PsiWhiteSpace('\n')
     PsiComment(EOL_COMMENT)('// interpolation kinds: of arbitrary expression')
@@ -30,7 +32,8 @@ KtFile: IncorrectMultiDollarInterpolationCode.kt
         PsiElement(CLOSING_QUOTE)('"')
       PsiWhiteSpace('\n    ')
       STRING_TEMPLATE
-        PsiElement(INTERPOLATION_PREFIX)('$')
+        STRING_INTERPOLATION_PREFIX
+          PsiElement(INTERPOLATION_PREFIX)('$')
         PsiElement(OPEN_QUOTE)('"')
         LONG_STRING_TEMPLATE_ENTRY
           PsiElement(LONG_TEMPLATE_ENTRY_START)('${')
@@ -40,7 +43,8 @@ KtFile: IncorrectMultiDollarInterpolationCode.kt
         PsiElement(CLOSING_QUOTE)('"')
       PsiWhiteSpace('\n    ')
       STRING_TEMPLATE
-        PsiElement(INTERPOLATION_PREFIX)('$$')
+        STRING_INTERPOLATION_PREFIX
+          PsiElement(INTERPOLATION_PREFIX)('$$')
         PsiElement(OPEN_QUOTE)('"')
         LONG_STRING_TEMPLATE_ENTRY
           PsiElement(LONG_TEMPLATE_ENTRY_START)('$${')
@@ -50,7 +54,8 @@ KtFile: IncorrectMultiDollarInterpolationCode.kt
         PsiElement(CLOSING_QUOTE)('"')
       PsiWhiteSpace('\n    ')
       STRING_TEMPLATE
-        PsiElement(INTERPOLATION_PREFIX)('$$$$')
+        STRING_INTERPOLATION_PREFIX
+          PsiElement(INTERPOLATION_PREFIX)('$$$$')
         PsiElement(OPEN_QUOTE)('"')
         LONG_STRING_TEMPLATE_ENTRY
           PsiElement(LONG_TEMPLATE_ENTRY_START)('$$$${')
@@ -60,7 +65,8 @@ KtFile: IncorrectMultiDollarInterpolationCode.kt
         PsiElement(CLOSING_QUOTE)('"')
       PsiWhiteSpace('\n    ')
       STRING_TEMPLATE
-        PsiElement(INTERPOLATION_PREFIX)('$$$$$$$$')
+        STRING_INTERPOLATION_PREFIX
+          PsiElement(INTERPOLATION_PREFIX)('$$$$$$$$')
         PsiElement(OPEN_QUOTE)('"')
         LONG_STRING_TEMPLATE_ENTRY
           PsiElement(LONG_TEMPLATE_ENTRY_START)('$$$$$$$${')
@@ -79,7 +85,8 @@ KtFile: IncorrectMultiDollarInterpolationCode.kt
         PsiElement(CLOSING_QUOTE)('"""')
       PsiWhiteSpace('\n    ')
       STRING_TEMPLATE
-        PsiElement(INTERPOLATION_PREFIX)('$')
+        STRING_INTERPOLATION_PREFIX
+          PsiElement(INTERPOLATION_PREFIX)('$')
         PsiElement(OPEN_QUOTE)('"""')
         LONG_STRING_TEMPLATE_ENTRY
           PsiElement(LONG_TEMPLATE_ENTRY_START)('${')
@@ -89,7 +96,8 @@ KtFile: IncorrectMultiDollarInterpolationCode.kt
         PsiElement(CLOSING_QUOTE)('"""')
       PsiWhiteSpace('\n    ')
       STRING_TEMPLATE
-        PsiElement(INTERPOLATION_PREFIX)('$$')
+        STRING_INTERPOLATION_PREFIX
+          PsiElement(INTERPOLATION_PREFIX)('$$')
         PsiElement(OPEN_QUOTE)('"""')
         LONG_STRING_TEMPLATE_ENTRY
           PsiElement(LONG_TEMPLATE_ENTRY_START)('$${')
@@ -99,7 +107,8 @@ KtFile: IncorrectMultiDollarInterpolationCode.kt
         PsiElement(CLOSING_QUOTE)('"""')
       PsiWhiteSpace('\n    ')
       STRING_TEMPLATE
-        PsiElement(INTERPOLATION_PREFIX)('$$$$')
+        STRING_INTERPOLATION_PREFIX
+          PsiElement(INTERPOLATION_PREFIX)('$$$$')
         PsiElement(OPEN_QUOTE)('"""')
         LONG_STRING_TEMPLATE_ENTRY
           PsiElement(LONG_TEMPLATE_ENTRY_START)('$$$${')
@@ -109,7 +118,8 @@ KtFile: IncorrectMultiDollarInterpolationCode.kt
         PsiElement(CLOSING_QUOTE)('"""')
       PsiWhiteSpace('\n    ')
       STRING_TEMPLATE
-        PsiElement(INTERPOLATION_PREFIX)('$$$$$$$$')
+        STRING_INTERPOLATION_PREFIX
+          PsiElement(INTERPOLATION_PREFIX)('$$$$$$$$')
         PsiElement(OPEN_QUOTE)('"""')
         LONG_STRING_TEMPLATE_ENTRY
           PsiElement(LONG_TEMPLATE_ENTRY_START)('$$$$$$$${')
@@ -148,7 +158,8 @@ KtFile: IncorrectMultiDollarInterpolationCode.kt
         PsiElement(CLOSING_QUOTE)('"')
       PsiWhiteSpace('\n    ')
       STRING_TEMPLATE
-        PsiElement(INTERPOLATION_PREFIX)('$')
+        STRING_INTERPOLATION_PREFIX
+          PsiElement(INTERPOLATION_PREFIX)('$')
         PsiElement(OPEN_QUOTE)('"')
         LONG_STRING_TEMPLATE_ENTRY
           PsiElement(LONG_TEMPLATE_ENTRY_START)('${')
@@ -159,7 +170,8 @@ KtFile: IncorrectMultiDollarInterpolationCode.kt
         PsiElement(CLOSING_QUOTE)('"')
       PsiWhiteSpace('\n    ')
       STRING_TEMPLATE
-        PsiElement(INTERPOLATION_PREFIX)('$$')
+        STRING_INTERPOLATION_PREFIX
+          PsiElement(INTERPOLATION_PREFIX)('$$')
         PsiElement(OPEN_QUOTE)('"')
         LONG_STRING_TEMPLATE_ENTRY
           PsiElement(LONG_TEMPLATE_ENTRY_START)('$${')
@@ -170,7 +182,8 @@ KtFile: IncorrectMultiDollarInterpolationCode.kt
         PsiElement(CLOSING_QUOTE)('"')
       PsiWhiteSpace('\n    ')
       STRING_TEMPLATE
-        PsiElement(INTERPOLATION_PREFIX)('$$$$')
+        STRING_INTERPOLATION_PREFIX
+          PsiElement(INTERPOLATION_PREFIX)('$$$$')
         PsiElement(OPEN_QUOTE)('"')
         LONG_STRING_TEMPLATE_ENTRY
           PsiElement(LONG_TEMPLATE_ENTRY_START)('$$$${')
@@ -181,7 +194,8 @@ KtFile: IncorrectMultiDollarInterpolationCode.kt
         PsiElement(CLOSING_QUOTE)('"')
       PsiWhiteSpace('\n    ')
       STRING_TEMPLATE
-        PsiElement(INTERPOLATION_PREFIX)('$$$$$$$$')
+        STRING_INTERPOLATION_PREFIX
+          PsiElement(INTERPOLATION_PREFIX)('$$$$$$$$')
         PsiElement(OPEN_QUOTE)('"')
         LONG_STRING_TEMPLATE_ENTRY
           PsiElement(LONG_TEMPLATE_ENTRY_START)('$$$$$$$${')
@@ -202,7 +216,8 @@ KtFile: IncorrectMultiDollarInterpolationCode.kt
         PsiElement(CLOSING_QUOTE)('"""')
       PsiWhiteSpace('\n    ')
       STRING_TEMPLATE
-        PsiElement(INTERPOLATION_PREFIX)('$')
+        STRING_INTERPOLATION_PREFIX
+          PsiElement(INTERPOLATION_PREFIX)('$')
         PsiElement(OPEN_QUOTE)('"""')
         LONG_STRING_TEMPLATE_ENTRY
           PsiElement(LONG_TEMPLATE_ENTRY_START)('${')
@@ -213,7 +228,8 @@ KtFile: IncorrectMultiDollarInterpolationCode.kt
         PsiElement(CLOSING_QUOTE)('"""')
       PsiWhiteSpace('\n    ')
       STRING_TEMPLATE
-        PsiElement(INTERPOLATION_PREFIX)('$$')
+        STRING_INTERPOLATION_PREFIX
+          PsiElement(INTERPOLATION_PREFIX)('$$')
         PsiElement(OPEN_QUOTE)('"""')
         LONG_STRING_TEMPLATE_ENTRY
           PsiElement(LONG_TEMPLATE_ENTRY_START)('$${')
@@ -224,7 +240,8 @@ KtFile: IncorrectMultiDollarInterpolationCode.kt
         PsiElement(CLOSING_QUOTE)('"""')
       PsiWhiteSpace('\n    ')
       STRING_TEMPLATE
-        PsiElement(INTERPOLATION_PREFIX)('$$$$')
+        STRING_INTERPOLATION_PREFIX
+          PsiElement(INTERPOLATION_PREFIX)('$$$$')
         PsiElement(OPEN_QUOTE)('"""')
         LONG_STRING_TEMPLATE_ENTRY
           PsiElement(LONG_TEMPLATE_ENTRY_START)('$$$${')
@@ -235,7 +252,8 @@ KtFile: IncorrectMultiDollarInterpolationCode.kt
         PsiElement(CLOSING_QUOTE)('"""')
       PsiWhiteSpace('\n    ')
       STRING_TEMPLATE
-        PsiElement(INTERPOLATION_PREFIX)('$$$$$$$$')
+        STRING_INTERPOLATION_PREFIX
+          PsiElement(INTERPOLATION_PREFIX)('$$$$$$$$')
         PsiElement(OPEN_QUOTE)('"""')
         LONG_STRING_TEMPLATE_ENTRY
           PsiElement(LONG_TEMPLATE_ENTRY_START)('$$$$$$$${')
@@ -275,7 +293,8 @@ KtFile: IncorrectMultiDollarInterpolationCode.kt
         PsiElement(CLOSING_QUOTE)('"')
       PsiWhiteSpace('\n    ')
       STRING_TEMPLATE
-        PsiElement(INTERPOLATION_PREFIX)('$')
+        STRING_INTERPOLATION_PREFIX
+          PsiElement(INTERPOLATION_PREFIX)('$')
         PsiElement(OPEN_QUOTE)('"')
         LONG_STRING_TEMPLATE_ENTRY
           PsiElement(LONG_TEMPLATE_ENTRY_START)('${')
@@ -286,7 +305,8 @@ KtFile: IncorrectMultiDollarInterpolationCode.kt
         PsiElement(CLOSING_QUOTE)('"')
       PsiWhiteSpace('\n    ')
       STRING_TEMPLATE
-        PsiElement(INTERPOLATION_PREFIX)('$$')
+        STRING_INTERPOLATION_PREFIX
+          PsiElement(INTERPOLATION_PREFIX)('$$')
         PsiElement(OPEN_QUOTE)('"')
         LONG_STRING_TEMPLATE_ENTRY
           PsiElement(LONG_TEMPLATE_ENTRY_START)('$${')
@@ -297,7 +317,8 @@ KtFile: IncorrectMultiDollarInterpolationCode.kt
         PsiElement(CLOSING_QUOTE)('"')
       PsiWhiteSpace('\n    ')
       STRING_TEMPLATE
-        PsiElement(INTERPOLATION_PREFIX)('$$$$')
+        STRING_INTERPOLATION_PREFIX
+          PsiElement(INTERPOLATION_PREFIX)('$$$$')
         PsiElement(OPEN_QUOTE)('"')
         LONG_STRING_TEMPLATE_ENTRY
           PsiElement(LONG_TEMPLATE_ENTRY_START)('$$$${')
@@ -308,7 +329,8 @@ KtFile: IncorrectMultiDollarInterpolationCode.kt
         PsiElement(CLOSING_QUOTE)('"')
       PsiWhiteSpace('\n    ')
       STRING_TEMPLATE
-        PsiElement(INTERPOLATION_PREFIX)('$$$$$$$$')
+        STRING_INTERPOLATION_PREFIX
+          PsiElement(INTERPOLATION_PREFIX)('$$$$$$$$')
         PsiElement(OPEN_QUOTE)('"')
         LONG_STRING_TEMPLATE_ENTRY
           PsiElement(LONG_TEMPLATE_ENTRY_START)('$$$$$$$${')
@@ -329,7 +351,8 @@ KtFile: IncorrectMultiDollarInterpolationCode.kt
         PsiElement(CLOSING_QUOTE)('"""')
       PsiWhiteSpace('\n    ')
       STRING_TEMPLATE
-        PsiElement(INTERPOLATION_PREFIX)('$')
+        STRING_INTERPOLATION_PREFIX
+          PsiElement(INTERPOLATION_PREFIX)('$')
         PsiElement(OPEN_QUOTE)('"""')
         LONG_STRING_TEMPLATE_ENTRY
           PsiElement(LONG_TEMPLATE_ENTRY_START)('${')
@@ -340,7 +363,8 @@ KtFile: IncorrectMultiDollarInterpolationCode.kt
         PsiElement(CLOSING_QUOTE)('"""')
       PsiWhiteSpace('\n    ')
       STRING_TEMPLATE
-        PsiElement(INTERPOLATION_PREFIX)('$$')
+        STRING_INTERPOLATION_PREFIX
+          PsiElement(INTERPOLATION_PREFIX)('$$')
         PsiElement(OPEN_QUOTE)('"""')
         LONG_STRING_TEMPLATE_ENTRY
           PsiElement(LONG_TEMPLATE_ENTRY_START)('$${')
@@ -351,7 +375,8 @@ KtFile: IncorrectMultiDollarInterpolationCode.kt
         PsiElement(CLOSING_QUOTE)('"""')
       PsiWhiteSpace('\n    ')
       STRING_TEMPLATE
-        PsiElement(INTERPOLATION_PREFIX)('$$$$')
+        STRING_INTERPOLATION_PREFIX
+          PsiElement(INTERPOLATION_PREFIX)('$$$$')
         PsiElement(OPEN_QUOTE)('"""')
         LONG_STRING_TEMPLATE_ENTRY
           PsiElement(LONG_TEMPLATE_ENTRY_START)('$$$${')
@@ -362,7 +387,8 @@ KtFile: IncorrectMultiDollarInterpolationCode.kt
         PsiElement(CLOSING_QUOTE)('"""')
       PsiWhiteSpace('\n    ')
       STRING_TEMPLATE
-        PsiElement(INTERPOLATION_PREFIX)('$$$$$$$$')
+        STRING_INTERPOLATION_PREFIX
+          PsiElement(INTERPOLATION_PREFIX)('$$$$$$$$')
         PsiElement(OPEN_QUOTE)('"""')
         LONG_STRING_TEMPLATE_ENTRY
           PsiElement(LONG_TEMPLATE_ENTRY_START)('$$$$$$$${')
@@ -400,7 +426,8 @@ KtFile: IncorrectMultiDollarInterpolationCode.kt
         PsiElement(CLOSING_QUOTE)('"')
       PsiWhiteSpace('\n    ')
       STRING_TEMPLATE
-        PsiElement(INTERPOLATION_PREFIX)('$')
+        STRING_INTERPOLATION_PREFIX
+          PsiElement(INTERPOLATION_PREFIX)('$')
         PsiElement(OPEN_QUOTE)('"')
         SHORT_STRING_TEMPLATE_ENTRY
           PsiElement(SHORT_TEMPLATE_ENTRY_START)('$')
@@ -409,7 +436,8 @@ KtFile: IncorrectMultiDollarInterpolationCode.kt
         PsiElement(CLOSING_QUOTE)('"')
       PsiWhiteSpace('\n    ')
       STRING_TEMPLATE
-        PsiElement(INTERPOLATION_PREFIX)('$$')
+        STRING_INTERPOLATION_PREFIX
+          PsiElement(INTERPOLATION_PREFIX)('$$')
         PsiElement(OPEN_QUOTE)('"')
         SHORT_STRING_TEMPLATE_ENTRY
           PsiElement(SHORT_TEMPLATE_ENTRY_START)('$$')
@@ -418,7 +446,8 @@ KtFile: IncorrectMultiDollarInterpolationCode.kt
         PsiElement(CLOSING_QUOTE)('"')
       PsiWhiteSpace('\n    ')
       STRING_TEMPLATE
-        PsiElement(INTERPOLATION_PREFIX)('$$$$')
+        STRING_INTERPOLATION_PREFIX
+          PsiElement(INTERPOLATION_PREFIX)('$$$$')
         PsiElement(OPEN_QUOTE)('"')
         SHORT_STRING_TEMPLATE_ENTRY
           PsiElement(SHORT_TEMPLATE_ENTRY_START)('$$$$')
@@ -427,7 +456,8 @@ KtFile: IncorrectMultiDollarInterpolationCode.kt
         PsiElement(CLOSING_QUOTE)('"')
       PsiWhiteSpace('\n    ')
       STRING_TEMPLATE
-        PsiElement(INTERPOLATION_PREFIX)('$$$$$$$$')
+        STRING_INTERPOLATION_PREFIX
+          PsiElement(INTERPOLATION_PREFIX)('$$$$$$$$')
         PsiElement(OPEN_QUOTE)('"')
         SHORT_STRING_TEMPLATE_ENTRY
           PsiElement(SHORT_TEMPLATE_ENTRY_START)('$$$$$$$$')
@@ -444,7 +474,8 @@ KtFile: IncorrectMultiDollarInterpolationCode.kt
         PsiElement(CLOSING_QUOTE)('"')
       PsiWhiteSpace('\n    ')
       STRING_TEMPLATE
-        PsiElement(INTERPOLATION_PREFIX)('$')
+        STRING_INTERPOLATION_PREFIX
+          PsiElement(INTERPOLATION_PREFIX)('$')
         PsiElement(OPEN_QUOTE)('"')
         SHORT_STRING_TEMPLATE_ENTRY
           PsiElement(SHORT_TEMPLATE_ENTRY_START)('$')
@@ -453,7 +484,8 @@ KtFile: IncorrectMultiDollarInterpolationCode.kt
         PsiElement(CLOSING_QUOTE)('"')
       PsiWhiteSpace('\n    ')
       STRING_TEMPLATE
-        PsiElement(INTERPOLATION_PREFIX)('$$')
+        STRING_INTERPOLATION_PREFIX
+          PsiElement(INTERPOLATION_PREFIX)('$$')
         PsiElement(OPEN_QUOTE)('"')
         SHORT_STRING_TEMPLATE_ENTRY
           PsiElement(SHORT_TEMPLATE_ENTRY_START)('$$')
@@ -462,7 +494,8 @@ KtFile: IncorrectMultiDollarInterpolationCode.kt
         PsiElement(CLOSING_QUOTE)('"')
       PsiWhiteSpace('\n    ')
       STRING_TEMPLATE
-        PsiElement(INTERPOLATION_PREFIX)('$$$$')
+        STRING_INTERPOLATION_PREFIX
+          PsiElement(INTERPOLATION_PREFIX)('$$$$')
         PsiElement(OPEN_QUOTE)('"')
         SHORT_STRING_TEMPLATE_ENTRY
           PsiElement(SHORT_TEMPLATE_ENTRY_START)('$$$$')
@@ -471,7 +504,8 @@ KtFile: IncorrectMultiDollarInterpolationCode.kt
         PsiElement(CLOSING_QUOTE)('"')
       PsiWhiteSpace('\n    ')
       STRING_TEMPLATE
-        PsiElement(INTERPOLATION_PREFIX)('$$$$$$$$')
+        STRING_INTERPOLATION_PREFIX
+          PsiElement(INTERPOLATION_PREFIX)('$$$$$$$$')
         PsiElement(OPEN_QUOTE)('"')
         SHORT_STRING_TEMPLATE_ENTRY
           PsiElement(SHORT_TEMPLATE_ENTRY_START)('$$$$$$$$')
@@ -489,7 +523,8 @@ KtFile: IncorrectMultiDollarInterpolationCode.kt
         PsiElement(CLOSING_QUOTE)('"')
       PsiWhiteSpace('\n    ')
       STRING_TEMPLATE
-        PsiElement(INTERPOLATION_PREFIX)('$')
+        STRING_INTERPOLATION_PREFIX
+          PsiElement(INTERPOLATION_PREFIX)('$')
         PsiElement(OPEN_QUOTE)('"')
         LONG_STRING_TEMPLATE_ENTRY
           PsiElement(LONG_TEMPLATE_ENTRY_START)('${')
@@ -499,7 +534,8 @@ KtFile: IncorrectMultiDollarInterpolationCode.kt
         PsiElement(CLOSING_QUOTE)('"')
       PsiWhiteSpace('\n    ')
       STRING_TEMPLATE
-        PsiElement(INTERPOLATION_PREFIX)('$$')
+        STRING_INTERPOLATION_PREFIX
+          PsiElement(INTERPOLATION_PREFIX)('$$')
         PsiElement(OPEN_QUOTE)('"')
         LONG_STRING_TEMPLATE_ENTRY
           PsiElement(LONG_TEMPLATE_ENTRY_START)('$${')
@@ -509,7 +545,8 @@ KtFile: IncorrectMultiDollarInterpolationCode.kt
         PsiElement(CLOSING_QUOTE)('"')
       PsiWhiteSpace('\n    ')
       STRING_TEMPLATE
-        PsiElement(INTERPOLATION_PREFIX)('$$$$')
+        STRING_INTERPOLATION_PREFIX
+          PsiElement(INTERPOLATION_PREFIX)('$$$$')
         PsiElement(OPEN_QUOTE)('"')
         LONG_STRING_TEMPLATE_ENTRY
           PsiElement(LONG_TEMPLATE_ENTRY_START)('$$$${')
@@ -519,7 +556,8 @@ KtFile: IncorrectMultiDollarInterpolationCode.kt
         PsiElement(CLOSING_QUOTE)('"')
       PsiWhiteSpace('\n    ')
       STRING_TEMPLATE
-        PsiElement(INTERPOLATION_PREFIX)('$$$$$$$$')
+        STRING_INTERPOLATION_PREFIX
+          PsiElement(INTERPOLATION_PREFIX)('$$$$$$$$')
         PsiElement(OPEN_QUOTE)('"')
         LONG_STRING_TEMPLATE_ENTRY
           PsiElement(LONG_TEMPLATE_ENTRY_START)('$$$$$$$${')
@@ -537,7 +575,8 @@ KtFile: IncorrectMultiDollarInterpolationCode.kt
         PsiElement(CLOSING_QUOTE)('"""')
       PsiWhiteSpace('\n    ')
       STRING_TEMPLATE
-        PsiElement(INTERPOLATION_PREFIX)('$')
+        STRING_INTERPOLATION_PREFIX
+          PsiElement(INTERPOLATION_PREFIX)('$')
         PsiElement(OPEN_QUOTE)('"""')
         SHORT_STRING_TEMPLATE_ENTRY
           PsiElement(SHORT_TEMPLATE_ENTRY_START)('$')
@@ -546,7 +585,8 @@ KtFile: IncorrectMultiDollarInterpolationCode.kt
         PsiElement(CLOSING_QUOTE)('"""')
       PsiWhiteSpace('\n    ')
       STRING_TEMPLATE
-        PsiElement(INTERPOLATION_PREFIX)('$$')
+        STRING_INTERPOLATION_PREFIX
+          PsiElement(INTERPOLATION_PREFIX)('$$')
         PsiElement(OPEN_QUOTE)('"""')
         SHORT_STRING_TEMPLATE_ENTRY
           PsiElement(SHORT_TEMPLATE_ENTRY_START)('$$')
@@ -555,7 +595,8 @@ KtFile: IncorrectMultiDollarInterpolationCode.kt
         PsiElement(CLOSING_QUOTE)('"""')
       PsiWhiteSpace('\n    ')
       STRING_TEMPLATE
-        PsiElement(INTERPOLATION_PREFIX)('$$$$')
+        STRING_INTERPOLATION_PREFIX
+          PsiElement(INTERPOLATION_PREFIX)('$$$$')
         PsiElement(OPEN_QUOTE)('"""')
         SHORT_STRING_TEMPLATE_ENTRY
           PsiElement(SHORT_TEMPLATE_ENTRY_START)('$$$$')
@@ -564,7 +605,8 @@ KtFile: IncorrectMultiDollarInterpolationCode.kt
         PsiElement(CLOSING_QUOTE)('"""')
       PsiWhiteSpace('\n    ')
       STRING_TEMPLATE
-        PsiElement(INTERPOLATION_PREFIX)('$$$$$$$$')
+        STRING_INTERPOLATION_PREFIX
+          PsiElement(INTERPOLATION_PREFIX)('$$$$$$$$')
         PsiElement(OPEN_QUOTE)('"""')
         SHORT_STRING_TEMPLATE_ENTRY
           PsiElement(SHORT_TEMPLATE_ENTRY_START)('$$$$$$$$')
@@ -581,7 +623,8 @@ KtFile: IncorrectMultiDollarInterpolationCode.kt
         PsiElement(CLOSING_QUOTE)('"""')
       PsiWhiteSpace('\n    ')
       STRING_TEMPLATE
-        PsiElement(INTERPOLATION_PREFIX)('$')
+        STRING_INTERPOLATION_PREFIX
+          PsiElement(INTERPOLATION_PREFIX)('$')
         PsiElement(OPEN_QUOTE)('"""')
         SHORT_STRING_TEMPLATE_ENTRY
           PsiElement(SHORT_TEMPLATE_ENTRY_START)('$')
@@ -590,7 +633,8 @@ KtFile: IncorrectMultiDollarInterpolationCode.kt
         PsiElement(CLOSING_QUOTE)('"""')
       PsiWhiteSpace('\n    ')
       STRING_TEMPLATE
-        PsiElement(INTERPOLATION_PREFIX)('$$')
+        STRING_INTERPOLATION_PREFIX
+          PsiElement(INTERPOLATION_PREFIX)('$$')
         PsiElement(OPEN_QUOTE)('"""')
         SHORT_STRING_TEMPLATE_ENTRY
           PsiElement(SHORT_TEMPLATE_ENTRY_START)('$$')
@@ -599,7 +643,8 @@ KtFile: IncorrectMultiDollarInterpolationCode.kt
         PsiElement(CLOSING_QUOTE)('"""')
       PsiWhiteSpace('\n    ')
       STRING_TEMPLATE
-        PsiElement(INTERPOLATION_PREFIX)('$$$$')
+        STRING_INTERPOLATION_PREFIX
+          PsiElement(INTERPOLATION_PREFIX)('$$$$')
         PsiElement(OPEN_QUOTE)('"""')
         SHORT_STRING_TEMPLATE_ENTRY
           PsiElement(SHORT_TEMPLATE_ENTRY_START)('$$$$')
@@ -608,7 +653,8 @@ KtFile: IncorrectMultiDollarInterpolationCode.kt
         PsiElement(CLOSING_QUOTE)('"""')
       PsiWhiteSpace('\n    ')
       STRING_TEMPLATE
-        PsiElement(INTERPOLATION_PREFIX)('$$$$$$$$')
+        STRING_INTERPOLATION_PREFIX
+          PsiElement(INTERPOLATION_PREFIX)('$$$$$$$$')
         PsiElement(OPEN_QUOTE)('"""')
         SHORT_STRING_TEMPLATE_ENTRY
           PsiElement(SHORT_TEMPLATE_ENTRY_START)('$$$$$$$$')
@@ -626,7 +672,8 @@ KtFile: IncorrectMultiDollarInterpolationCode.kt
         PsiElement(CLOSING_QUOTE)('"""')
       PsiWhiteSpace('\n    ')
       STRING_TEMPLATE
-        PsiElement(INTERPOLATION_PREFIX)('$')
+        STRING_INTERPOLATION_PREFIX
+          PsiElement(INTERPOLATION_PREFIX)('$')
         PsiElement(OPEN_QUOTE)('"""')
         LONG_STRING_TEMPLATE_ENTRY
           PsiElement(LONG_TEMPLATE_ENTRY_START)('${')
@@ -636,7 +683,8 @@ KtFile: IncorrectMultiDollarInterpolationCode.kt
         PsiElement(CLOSING_QUOTE)('"""')
       PsiWhiteSpace('\n    ')
       STRING_TEMPLATE
-        PsiElement(INTERPOLATION_PREFIX)('$$')
+        STRING_INTERPOLATION_PREFIX
+          PsiElement(INTERPOLATION_PREFIX)('$$')
         PsiElement(OPEN_QUOTE)('"""')
         LONG_STRING_TEMPLATE_ENTRY
           PsiElement(LONG_TEMPLATE_ENTRY_START)('$${')
@@ -646,7 +694,8 @@ KtFile: IncorrectMultiDollarInterpolationCode.kt
         PsiElement(CLOSING_QUOTE)('"""')
       PsiWhiteSpace('\n    ')
       STRING_TEMPLATE
-        PsiElement(INTERPOLATION_PREFIX)('$$$$')
+        STRING_INTERPOLATION_PREFIX
+          PsiElement(INTERPOLATION_PREFIX)('$$$$')
         PsiElement(OPEN_QUOTE)('"""')
         LONG_STRING_TEMPLATE_ENTRY
           PsiElement(LONG_TEMPLATE_ENTRY_START)('$$$${')
@@ -656,7 +705,8 @@ KtFile: IncorrectMultiDollarInterpolationCode.kt
         PsiElement(CLOSING_QUOTE)('"""')
       PsiWhiteSpace('\n    ')
       STRING_TEMPLATE
-        PsiElement(INTERPOLATION_PREFIX)('$$$$$$$$')
+        STRING_INTERPOLATION_PREFIX
+          PsiElement(INTERPOLATION_PREFIX)('$$$$$$$$')
         PsiElement(OPEN_QUOTE)('"""')
         LONG_STRING_TEMPLATE_ENTRY
           PsiElement(LONG_TEMPLATE_ENTRY_START)('$$$$$$$${')
@@ -693,7 +743,8 @@ KtFile: IncorrectMultiDollarInterpolationCode.kt
         PsiElement(CLOSING_QUOTE)('"')
       PsiWhiteSpace('\n    ')
       STRING_TEMPLATE
-        PsiElement(INTERPOLATION_PREFIX)('$')
+        STRING_INTERPOLATION_PREFIX
+          PsiElement(INTERPOLATION_PREFIX)('$')
         PsiElement(OPEN_QUOTE)('"')
         SHORT_STRING_TEMPLATE_ENTRY
           PsiElement(SHORT_TEMPLATE_ENTRY_START)('$')
@@ -702,7 +753,8 @@ KtFile: IncorrectMultiDollarInterpolationCode.kt
         PsiElement(CLOSING_QUOTE)('"')
       PsiWhiteSpace('\n    ')
       STRING_TEMPLATE
-        PsiElement(INTERPOLATION_PREFIX)('$$')
+        STRING_INTERPOLATION_PREFIX
+          PsiElement(INTERPOLATION_PREFIX)('$$')
         PsiElement(OPEN_QUOTE)('"')
         SHORT_STRING_TEMPLATE_ENTRY
           PsiElement(SHORT_TEMPLATE_ENTRY_START)('$$')
@@ -711,7 +763,8 @@ KtFile: IncorrectMultiDollarInterpolationCode.kt
         PsiElement(CLOSING_QUOTE)('"')
       PsiWhiteSpace('\n    ')
       STRING_TEMPLATE
-        PsiElement(INTERPOLATION_PREFIX)('$$$$')
+        STRING_INTERPOLATION_PREFIX
+          PsiElement(INTERPOLATION_PREFIX)('$$$$')
         PsiElement(OPEN_QUOTE)('"')
         SHORT_STRING_TEMPLATE_ENTRY
           PsiElement(SHORT_TEMPLATE_ENTRY_START)('$$$$')
@@ -720,7 +773,8 @@ KtFile: IncorrectMultiDollarInterpolationCode.kt
         PsiElement(CLOSING_QUOTE)('"')
       PsiWhiteSpace('\n    ')
       STRING_TEMPLATE
-        PsiElement(INTERPOLATION_PREFIX)('$$$$$$$$')
+        STRING_INTERPOLATION_PREFIX
+          PsiElement(INTERPOLATION_PREFIX)('$$$$$$$$')
         PsiElement(OPEN_QUOTE)('"')
         SHORT_STRING_TEMPLATE_ENTRY
           PsiElement(SHORT_TEMPLATE_ENTRY_START)('$$$$$$$$')
@@ -741,7 +795,8 @@ KtFile: IncorrectMultiDollarInterpolationCode.kt
         PsiElement(CLOSING_QUOTE)('"')
       PsiWhiteSpace('\n    ')
       STRING_TEMPLATE
-        PsiElement(INTERPOLATION_PREFIX)('$')
+        STRING_INTERPOLATION_PREFIX
+          PsiElement(INTERPOLATION_PREFIX)('$')
         PsiElement(OPEN_QUOTE)('"')
         LONG_STRING_TEMPLATE_ENTRY
           PsiElement(LONG_TEMPLATE_ENTRY_START)('${')
@@ -754,7 +809,8 @@ KtFile: IncorrectMultiDollarInterpolationCode.kt
         PsiElement(CLOSING_QUOTE)('"')
       PsiWhiteSpace('\n    ')
       STRING_TEMPLATE
-        PsiElement(INTERPOLATION_PREFIX)('$$')
+        STRING_INTERPOLATION_PREFIX
+          PsiElement(INTERPOLATION_PREFIX)('$$')
         PsiElement(OPEN_QUOTE)('"')
         LONG_STRING_TEMPLATE_ENTRY
           PsiElement(LONG_TEMPLATE_ENTRY_START)('$${')
@@ -767,7 +823,8 @@ KtFile: IncorrectMultiDollarInterpolationCode.kt
         PsiElement(CLOSING_QUOTE)('"')
       PsiWhiteSpace('\n    ')
       STRING_TEMPLATE
-        PsiElement(INTERPOLATION_PREFIX)('$$$$')
+        STRING_INTERPOLATION_PREFIX
+          PsiElement(INTERPOLATION_PREFIX)('$$$$')
         PsiElement(OPEN_QUOTE)('"')
         LONG_STRING_TEMPLATE_ENTRY
           PsiElement(LONG_TEMPLATE_ENTRY_START)('$$$${')
@@ -780,7 +837,8 @@ KtFile: IncorrectMultiDollarInterpolationCode.kt
         PsiElement(CLOSING_QUOTE)('"')
       PsiWhiteSpace('\n    ')
       STRING_TEMPLATE
-        PsiElement(INTERPOLATION_PREFIX)('$$$$$$$$')
+        STRING_INTERPOLATION_PREFIX
+          PsiElement(INTERPOLATION_PREFIX)('$$$$$$$$')
         PsiElement(OPEN_QUOTE)('"')
         LONG_STRING_TEMPLATE_ENTRY
           PsiElement(LONG_TEMPLATE_ENTRY_START)('$$$$$$$${')
@@ -801,7 +859,8 @@ KtFile: IncorrectMultiDollarInterpolationCode.kt
         PsiElement(CLOSING_QUOTE)('"""')
       PsiWhiteSpace('\n    ')
       STRING_TEMPLATE
-        PsiElement(INTERPOLATION_PREFIX)('$')
+        STRING_INTERPOLATION_PREFIX
+          PsiElement(INTERPOLATION_PREFIX)('$')
         PsiElement(OPEN_QUOTE)('"""')
         SHORT_STRING_TEMPLATE_ENTRY
           PsiElement(SHORT_TEMPLATE_ENTRY_START)('$')
@@ -810,7 +869,8 @@ KtFile: IncorrectMultiDollarInterpolationCode.kt
         PsiElement(CLOSING_QUOTE)('"""')
       PsiWhiteSpace('\n    ')
       STRING_TEMPLATE
-        PsiElement(INTERPOLATION_PREFIX)('$$')
+        STRING_INTERPOLATION_PREFIX
+          PsiElement(INTERPOLATION_PREFIX)('$$')
         PsiElement(OPEN_QUOTE)('"""')
         SHORT_STRING_TEMPLATE_ENTRY
           PsiElement(SHORT_TEMPLATE_ENTRY_START)('$$')
@@ -819,7 +879,8 @@ KtFile: IncorrectMultiDollarInterpolationCode.kt
         PsiElement(CLOSING_QUOTE)('"""')
       PsiWhiteSpace('\n    ')
       STRING_TEMPLATE
-        PsiElement(INTERPOLATION_PREFIX)('$$$$')
+        STRING_INTERPOLATION_PREFIX
+          PsiElement(INTERPOLATION_PREFIX)('$$$$')
         PsiElement(OPEN_QUOTE)('"""')
         SHORT_STRING_TEMPLATE_ENTRY
           PsiElement(SHORT_TEMPLATE_ENTRY_START)('$$$$')
@@ -828,7 +889,8 @@ KtFile: IncorrectMultiDollarInterpolationCode.kt
         PsiElement(CLOSING_QUOTE)('"""')
       PsiWhiteSpace('\n    ')
       STRING_TEMPLATE
-        PsiElement(INTERPOLATION_PREFIX)('$$$$$$$$')
+        STRING_INTERPOLATION_PREFIX
+          PsiElement(INTERPOLATION_PREFIX)('$$$$$$$$')
         PsiElement(OPEN_QUOTE)('"""')
         SHORT_STRING_TEMPLATE_ENTRY
           PsiElement(SHORT_TEMPLATE_ENTRY_START)('$$$$$$$$')
@@ -849,7 +911,8 @@ KtFile: IncorrectMultiDollarInterpolationCode.kt
         PsiElement(CLOSING_QUOTE)('"""')
       PsiWhiteSpace('\n    ')
       STRING_TEMPLATE
-        PsiElement(INTERPOLATION_PREFIX)('$')
+        STRING_INTERPOLATION_PREFIX
+          PsiElement(INTERPOLATION_PREFIX)('$')
         PsiElement(OPEN_QUOTE)('"""')
         LONG_STRING_TEMPLATE_ENTRY
           PsiElement(LONG_TEMPLATE_ENTRY_START)('${')
@@ -862,7 +925,8 @@ KtFile: IncorrectMultiDollarInterpolationCode.kt
         PsiElement(CLOSING_QUOTE)('"""')
       PsiWhiteSpace('\n    ')
       STRING_TEMPLATE
-        PsiElement(INTERPOLATION_PREFIX)('$$')
+        STRING_INTERPOLATION_PREFIX
+          PsiElement(INTERPOLATION_PREFIX)('$$')
         PsiElement(OPEN_QUOTE)('"""')
         LONG_STRING_TEMPLATE_ENTRY
           PsiElement(LONG_TEMPLATE_ENTRY_START)('$${')
@@ -875,7 +939,8 @@ KtFile: IncorrectMultiDollarInterpolationCode.kt
         PsiElement(CLOSING_QUOTE)('"""')
       PsiWhiteSpace('\n    ')
       STRING_TEMPLATE
-        PsiElement(INTERPOLATION_PREFIX)('$$$$')
+        STRING_INTERPOLATION_PREFIX
+          PsiElement(INTERPOLATION_PREFIX)('$$$$')
         PsiElement(OPEN_QUOTE)('"""')
         LONG_STRING_TEMPLATE_ENTRY
           PsiElement(LONG_TEMPLATE_ENTRY_START)('$$$${')
@@ -888,7 +953,8 @@ KtFile: IncorrectMultiDollarInterpolationCode.kt
         PsiElement(CLOSING_QUOTE)('"""')
       PsiWhiteSpace('\n    ')
       STRING_TEMPLATE
-        PsiElement(INTERPOLATION_PREFIX)('$$$$$$$$')
+        STRING_INTERPOLATION_PREFIX
+          PsiElement(INTERPOLATION_PREFIX)('$$$$$$$$')
         PsiElement(OPEN_QUOTE)('"""')
         LONG_STRING_TEMPLATE_ENTRY
           PsiElement(LONG_TEMPLATE_ENTRY_START)('$$$$$$$${')
@@ -928,7 +994,8 @@ KtFile: IncorrectMultiDollarInterpolationCode.kt
         PsiElement(CLOSING_QUOTE)('"')
       PsiWhiteSpace('\n    ')
       STRING_TEMPLATE
-        PsiElement(INTERPOLATION_PREFIX)('$')
+        STRING_INTERPOLATION_PREFIX
+          PsiElement(INTERPOLATION_PREFIX)('$')
         PsiElement(OPEN_QUOTE)('"')
         SHORT_STRING_TEMPLATE_ENTRY
           PsiElement(SHORT_TEMPLATE_ENTRY_START)('$')
@@ -937,7 +1004,8 @@ KtFile: IncorrectMultiDollarInterpolationCode.kt
         PsiElement(CLOSING_QUOTE)('"')
       PsiWhiteSpace('\n    ')
       STRING_TEMPLATE
-        PsiElement(INTERPOLATION_PREFIX)('$$')
+        STRING_INTERPOLATION_PREFIX
+          PsiElement(INTERPOLATION_PREFIX)('$$')
         PsiElement(OPEN_QUOTE)('"')
         SHORT_STRING_TEMPLATE_ENTRY
           PsiElement(SHORT_TEMPLATE_ENTRY_START)('$$')
@@ -946,7 +1014,8 @@ KtFile: IncorrectMultiDollarInterpolationCode.kt
         PsiElement(CLOSING_QUOTE)('"')
       PsiWhiteSpace('\n    ')
       STRING_TEMPLATE
-        PsiElement(INTERPOLATION_PREFIX)('$$$$')
+        STRING_INTERPOLATION_PREFIX
+          PsiElement(INTERPOLATION_PREFIX)('$$$$')
         PsiElement(OPEN_QUOTE)('"')
         SHORT_STRING_TEMPLATE_ENTRY
           PsiElement(SHORT_TEMPLATE_ENTRY_START)('$$$$')
@@ -955,7 +1024,8 @@ KtFile: IncorrectMultiDollarInterpolationCode.kt
         PsiElement(CLOSING_QUOTE)('"')
       PsiWhiteSpace('\n    ')
       STRING_TEMPLATE
-        PsiElement(INTERPOLATION_PREFIX)('$$$$$$$$')
+        STRING_INTERPOLATION_PREFIX
+          PsiElement(INTERPOLATION_PREFIX)('$$$$$$$$')
         PsiElement(OPEN_QUOTE)('"')
         SHORT_STRING_TEMPLATE_ENTRY
           PsiElement(SHORT_TEMPLATE_ENTRY_START)('$$$$$$$$')
@@ -976,7 +1046,8 @@ KtFile: IncorrectMultiDollarInterpolationCode.kt
         PsiElement(CLOSING_QUOTE)('"')
       PsiWhiteSpace('\n    ')
       STRING_TEMPLATE
-        PsiElement(INTERPOLATION_PREFIX)('$')
+        STRING_INTERPOLATION_PREFIX
+          PsiElement(INTERPOLATION_PREFIX)('$')
         PsiElement(OPEN_QUOTE)('"')
         LONG_STRING_TEMPLATE_ENTRY
           PsiElement(LONG_TEMPLATE_ENTRY_START)('${')
@@ -989,7 +1060,8 @@ KtFile: IncorrectMultiDollarInterpolationCode.kt
         PsiElement(CLOSING_QUOTE)('"')
       PsiWhiteSpace('\n    ')
       STRING_TEMPLATE
-        PsiElement(INTERPOLATION_PREFIX)('$$')
+        STRING_INTERPOLATION_PREFIX
+          PsiElement(INTERPOLATION_PREFIX)('$$')
         PsiElement(OPEN_QUOTE)('"')
         LONG_STRING_TEMPLATE_ENTRY
           PsiElement(LONG_TEMPLATE_ENTRY_START)('$${')
@@ -1005,7 +1077,8 @@ KtFile: IncorrectMultiDollarInterpolationCode.kt
         PsiElement(CLOSING_QUOTE)('"')
       PsiWhiteSpace('\n    ')
       STRING_TEMPLATE
-        PsiElement(INTERPOLATION_PREFIX)('$$$$')
+        STRING_INTERPOLATION_PREFIX
+          PsiElement(INTERPOLATION_PREFIX)('$$$$')
         PsiElement(OPEN_QUOTE)('"')
         LONG_STRING_TEMPLATE_ENTRY
           PsiElement(LONG_TEMPLATE_ENTRY_START)('$$$${')
@@ -1027,7 +1100,8 @@ KtFile: IncorrectMultiDollarInterpolationCode.kt
         PsiElement(CLOSING_QUOTE)('"')
       PsiWhiteSpace('\n    ')
       STRING_TEMPLATE
-        PsiElement(INTERPOLATION_PREFIX)('$$$$$$$$')
+        STRING_INTERPOLATION_PREFIX
+          PsiElement(INTERPOLATION_PREFIX)('$$$$$$$$')
         PsiElement(OPEN_QUOTE)('"')
         LONG_STRING_TEMPLATE_ENTRY
           PsiElement(LONG_TEMPLATE_ENTRY_START)('$$$$$$$${')
@@ -1069,7 +1143,8 @@ KtFile: IncorrectMultiDollarInterpolationCode.kt
         PsiElement(CLOSING_QUOTE)('"""')
       PsiWhiteSpace('\n    ')
       STRING_TEMPLATE
-        PsiElement(INTERPOLATION_PREFIX)('$')
+        STRING_INTERPOLATION_PREFIX
+          PsiElement(INTERPOLATION_PREFIX)('$')
         PsiElement(OPEN_QUOTE)('"""')
         SHORT_STRING_TEMPLATE_ENTRY
           PsiElement(SHORT_TEMPLATE_ENTRY_START)('$')
@@ -1078,7 +1153,8 @@ KtFile: IncorrectMultiDollarInterpolationCode.kt
         PsiElement(CLOSING_QUOTE)('"""')
       PsiWhiteSpace('\n    ')
       STRING_TEMPLATE
-        PsiElement(INTERPOLATION_PREFIX)('$$')
+        STRING_INTERPOLATION_PREFIX
+          PsiElement(INTERPOLATION_PREFIX)('$$')
         PsiElement(OPEN_QUOTE)('"""')
         SHORT_STRING_TEMPLATE_ENTRY
           PsiElement(SHORT_TEMPLATE_ENTRY_START)('$$')
@@ -1087,7 +1163,8 @@ KtFile: IncorrectMultiDollarInterpolationCode.kt
         PsiElement(CLOSING_QUOTE)('"""')
       PsiWhiteSpace('\n    ')
       STRING_TEMPLATE
-        PsiElement(INTERPOLATION_PREFIX)('$$$$')
+        STRING_INTERPOLATION_PREFIX
+          PsiElement(INTERPOLATION_PREFIX)('$$$$')
         PsiElement(OPEN_QUOTE)('"""')
         SHORT_STRING_TEMPLATE_ENTRY
           PsiElement(SHORT_TEMPLATE_ENTRY_START)('$$$$')
@@ -1096,7 +1173,8 @@ KtFile: IncorrectMultiDollarInterpolationCode.kt
         PsiElement(CLOSING_QUOTE)('"""')
       PsiWhiteSpace('\n    ')
       STRING_TEMPLATE
-        PsiElement(INTERPOLATION_PREFIX)('$$$$$$$$')
+        STRING_INTERPOLATION_PREFIX
+          PsiElement(INTERPOLATION_PREFIX)('$$$$$$$$')
         PsiElement(OPEN_QUOTE)('"""')
         SHORT_STRING_TEMPLATE_ENTRY
           PsiElement(SHORT_TEMPLATE_ENTRY_START)('$$$$$$$$')
@@ -1117,7 +1195,8 @@ KtFile: IncorrectMultiDollarInterpolationCode.kt
         PsiElement(CLOSING_QUOTE)('"""')
       PsiWhiteSpace('\n    ')
       STRING_TEMPLATE
-        PsiElement(INTERPOLATION_PREFIX)('$')
+        STRING_INTERPOLATION_PREFIX
+          PsiElement(INTERPOLATION_PREFIX)('$')
         PsiElement(OPEN_QUOTE)('"""')
         LONG_STRING_TEMPLATE_ENTRY
           PsiElement(LONG_TEMPLATE_ENTRY_START)('${')
@@ -1130,7 +1209,8 @@ KtFile: IncorrectMultiDollarInterpolationCode.kt
         PsiElement(CLOSING_QUOTE)('"""')
       PsiWhiteSpace('\n    ')
       STRING_TEMPLATE
-        PsiElement(INTERPOLATION_PREFIX)('$$')
+        STRING_INTERPOLATION_PREFIX
+          PsiElement(INTERPOLATION_PREFIX)('$$')
         PsiElement(OPEN_QUOTE)('"""')
         LONG_STRING_TEMPLATE_ENTRY
           PsiElement(LONG_TEMPLATE_ENTRY_START)('$${')
@@ -1146,7 +1226,8 @@ KtFile: IncorrectMultiDollarInterpolationCode.kt
         PsiElement(CLOSING_QUOTE)('"""')
       PsiWhiteSpace('\n    ')
       STRING_TEMPLATE
-        PsiElement(INTERPOLATION_PREFIX)('$$$$')
+        STRING_INTERPOLATION_PREFIX
+          PsiElement(INTERPOLATION_PREFIX)('$$$$')
         PsiElement(OPEN_QUOTE)('"""')
         LONG_STRING_TEMPLATE_ENTRY
           PsiElement(LONG_TEMPLATE_ENTRY_START)('$$$${')
@@ -1168,7 +1249,8 @@ KtFile: IncorrectMultiDollarInterpolationCode.kt
         PsiElement(CLOSING_QUOTE)('"""')
       PsiWhiteSpace('\n    ')
       STRING_TEMPLATE
-        PsiElement(INTERPOLATION_PREFIX)('$$$$$$$$')
+        STRING_INTERPOLATION_PREFIX
+          PsiElement(INTERPOLATION_PREFIX)('$$$$$$$$')
         PsiElement(OPEN_QUOTE)('"""')
         LONG_STRING_TEMPLATE_ENTRY
           PsiElement(LONG_TEMPLATE_ENTRY_START)('$$$$$$$${')
@@ -1236,7 +1318,8 @@ KtFile: IncorrectMultiDollarInterpolationCode.kt
         PsiElement(CLOSING_QUOTE)('"')
       PsiWhiteSpace('\n    ')
       STRING_TEMPLATE
-        PsiElement(INTERPOLATION_PREFIX)('$')
+        STRING_INTERPOLATION_PREFIX
+          PsiElement(INTERPOLATION_PREFIX)('$')
         PsiElement(OPEN_QUOTE)('"')
         LONG_STRING_TEMPLATE_ENTRY
           PsiElement(LONG_TEMPLATE_ENTRY_START)('${')
@@ -1252,7 +1335,8 @@ KtFile: IncorrectMultiDollarInterpolationCode.kt
         PsiElement(CLOSING_QUOTE)('"')
       PsiWhiteSpace('\n    ')
       STRING_TEMPLATE
-        PsiElement(INTERPOLATION_PREFIX)('$$')
+        STRING_INTERPOLATION_PREFIX
+          PsiElement(INTERPOLATION_PREFIX)('$$')
         PsiElement(OPEN_QUOTE)('"')
         LONG_STRING_TEMPLATE_ENTRY
           PsiElement(LONG_TEMPLATE_ENTRY_START)('$${')
@@ -1268,7 +1352,8 @@ KtFile: IncorrectMultiDollarInterpolationCode.kt
         PsiElement(CLOSING_QUOTE)('"')
       PsiWhiteSpace('\n    ')
       STRING_TEMPLATE
-        PsiElement(INTERPOLATION_PREFIX)('$$$$')
+        STRING_INTERPOLATION_PREFIX
+          PsiElement(INTERPOLATION_PREFIX)('$$$$')
         PsiElement(OPEN_QUOTE)('"')
         LONG_STRING_TEMPLATE_ENTRY
           PsiElement(LONG_TEMPLATE_ENTRY_START)('$$$${')
@@ -1284,7 +1369,8 @@ KtFile: IncorrectMultiDollarInterpolationCode.kt
         PsiElement(CLOSING_QUOTE)('"')
       PsiWhiteSpace('\n    ')
       STRING_TEMPLATE
-        PsiElement(INTERPOLATION_PREFIX)('$$$$$$$$')
+        STRING_INTERPOLATION_PREFIX
+          PsiElement(INTERPOLATION_PREFIX)('$$$$$$$$')
         PsiElement(OPEN_QUOTE)('"')
         LONG_STRING_TEMPLATE_ENTRY
           PsiElement(LONG_TEMPLATE_ENTRY_START)('$$$$$$$${')
@@ -1315,7 +1401,8 @@ KtFile: IncorrectMultiDollarInterpolationCode.kt
         PsiElement(CLOSING_QUOTE)('"""')
       PsiWhiteSpace('\n    ')
       STRING_TEMPLATE
-        PsiElement(INTERPOLATION_PREFIX)('$')
+        STRING_INTERPOLATION_PREFIX
+          PsiElement(INTERPOLATION_PREFIX)('$')
         PsiElement(OPEN_QUOTE)('"""')
         LONG_STRING_TEMPLATE_ENTRY
           PsiElement(LONG_TEMPLATE_ENTRY_START)('${')
@@ -1331,7 +1418,8 @@ KtFile: IncorrectMultiDollarInterpolationCode.kt
         PsiElement(CLOSING_QUOTE)('"""')
       PsiWhiteSpace('\n    ')
       STRING_TEMPLATE
-        PsiElement(INTERPOLATION_PREFIX)('$$')
+        STRING_INTERPOLATION_PREFIX
+          PsiElement(INTERPOLATION_PREFIX)('$$')
         PsiElement(OPEN_QUOTE)('"""')
         LONG_STRING_TEMPLATE_ENTRY
           PsiElement(LONG_TEMPLATE_ENTRY_START)('$${')
@@ -1347,7 +1435,8 @@ KtFile: IncorrectMultiDollarInterpolationCode.kt
         PsiElement(CLOSING_QUOTE)('"""')
       PsiWhiteSpace('\n    ')
       STRING_TEMPLATE
-        PsiElement(INTERPOLATION_PREFIX)('$$$$')
+        STRING_INTERPOLATION_PREFIX
+          PsiElement(INTERPOLATION_PREFIX)('$$$$')
         PsiElement(OPEN_QUOTE)('"""')
         LONG_STRING_TEMPLATE_ENTRY
           PsiElement(LONG_TEMPLATE_ENTRY_START)('$$$${')
@@ -1363,7 +1452,8 @@ KtFile: IncorrectMultiDollarInterpolationCode.kt
         PsiElement(CLOSING_QUOTE)('"""')
       PsiWhiteSpace('\n    ')
       STRING_TEMPLATE
-        PsiElement(INTERPOLATION_PREFIX)('$$$$$$$$')
+        STRING_INTERPOLATION_PREFIX
+          PsiElement(INTERPOLATION_PREFIX)('$$$$$$$$')
         PsiElement(OPEN_QUOTE)('"""')
         LONG_STRING_TEMPLATE_ENTRY
           PsiElement(LONG_TEMPLATE_ENTRY_START)('$$$$$$$${')
@@ -1464,7 +1554,8 @@ KtFile: IncorrectMultiDollarInterpolationCode.kt
           PsiElement(LPAR)('(')
           VALUE_ARGUMENT
             STRING_TEMPLATE
-              PsiElement(INTERPOLATION_PREFIX)('$')
+              STRING_INTERPOLATION_PREFIX
+                PsiElement(INTERPOLATION_PREFIX)('$')
               PsiElement(OPEN_QUOTE)('"')
               SHORT_STRING_TEMPLATE_ENTRY
                 PsiElement(SHORT_TEMPLATE_ENTRY_START)('$')
@@ -1484,7 +1575,8 @@ KtFile: IncorrectMultiDollarInterpolationCode.kt
           PsiElement(LPAR)('(')
           VALUE_ARGUMENT
             STRING_TEMPLATE
-              PsiElement(INTERPOLATION_PREFIX)('$$')
+              STRING_INTERPOLATION_PREFIX
+                PsiElement(INTERPOLATION_PREFIX)('$$')
               PsiElement(OPEN_QUOTE)('"')
               SHORT_STRING_TEMPLATE_ENTRY
                 PsiElement(SHORT_TEMPLATE_ENTRY_START)('$$')
@@ -1504,7 +1596,8 @@ KtFile: IncorrectMultiDollarInterpolationCode.kt
           PsiElement(LPAR)('(')
           VALUE_ARGUMENT
             STRING_TEMPLATE
-              PsiElement(INTERPOLATION_PREFIX)('$$$$')
+              STRING_INTERPOLATION_PREFIX
+                PsiElement(INTERPOLATION_PREFIX)('$$$$')
               PsiElement(OPEN_QUOTE)('"')
               SHORT_STRING_TEMPLATE_ENTRY
                 PsiElement(SHORT_TEMPLATE_ENTRY_START)('$$$$')
@@ -1524,7 +1617,8 @@ KtFile: IncorrectMultiDollarInterpolationCode.kt
           PsiElement(LPAR)('(')
           VALUE_ARGUMENT
             STRING_TEMPLATE
-              PsiElement(INTERPOLATION_PREFIX)('$$$$$$$$')
+              STRING_INTERPOLATION_PREFIX
+                PsiElement(INTERPOLATION_PREFIX)('$$$$$$$$')
               PsiElement(OPEN_QUOTE)('"')
               SHORT_STRING_TEMPLATE_ENTRY
                 PsiElement(SHORT_TEMPLATE_ENTRY_START)('$$$$$$$$')
@@ -1563,7 +1657,8 @@ KtFile: IncorrectMultiDollarInterpolationCode.kt
           PsiElement(LPAR)('(')
           VALUE_ARGUMENT
             STRING_TEMPLATE
-              PsiElement(INTERPOLATION_PREFIX)('$')
+              STRING_INTERPOLATION_PREFIX
+                PsiElement(INTERPOLATION_PREFIX)('$')
               PsiElement(OPEN_QUOTE)('"')
               SHORT_STRING_TEMPLATE_ENTRY
                 PsiElement(SHORT_TEMPLATE_ENTRY_START)('$')
@@ -1583,7 +1678,8 @@ KtFile: IncorrectMultiDollarInterpolationCode.kt
           PsiElement(LPAR)('(')
           VALUE_ARGUMENT
             STRING_TEMPLATE
-              PsiElement(INTERPOLATION_PREFIX)('$$')
+              STRING_INTERPOLATION_PREFIX
+                PsiElement(INTERPOLATION_PREFIX)('$$')
               PsiElement(OPEN_QUOTE)('"')
               SHORT_STRING_TEMPLATE_ENTRY
                 PsiElement(SHORT_TEMPLATE_ENTRY_START)('$$')
@@ -1603,7 +1699,8 @@ KtFile: IncorrectMultiDollarInterpolationCode.kt
           PsiElement(LPAR)('(')
           VALUE_ARGUMENT
             STRING_TEMPLATE
-              PsiElement(INTERPOLATION_PREFIX)('$$$$')
+              STRING_INTERPOLATION_PREFIX
+                PsiElement(INTERPOLATION_PREFIX)('$$$$')
               PsiElement(OPEN_QUOTE)('"')
               SHORT_STRING_TEMPLATE_ENTRY
                 PsiElement(SHORT_TEMPLATE_ENTRY_START)('$$$$')
@@ -1623,7 +1720,8 @@ KtFile: IncorrectMultiDollarInterpolationCode.kt
           PsiElement(LPAR)('(')
           VALUE_ARGUMENT
             STRING_TEMPLATE
-              PsiElement(INTERPOLATION_PREFIX)('$$$$$$$$')
+              STRING_INTERPOLATION_PREFIX
+                PsiElement(INTERPOLATION_PREFIX)('$$$$$$$$')
               PsiElement(OPEN_QUOTE)('"')
               SHORT_STRING_TEMPLATE_ENTRY
                 PsiElement(SHORT_TEMPLATE_ENTRY_START)('$$$$$$$$')
@@ -1670,7 +1768,8 @@ KtFile: IncorrectMultiDollarInterpolationCode.kt
           PsiElement(LPAR)('(')
           VALUE_ARGUMENT
             STRING_TEMPLATE
-              PsiElement(INTERPOLATION_PREFIX)('$')
+              STRING_INTERPOLATION_PREFIX
+                PsiElement(INTERPOLATION_PREFIX)('$')
               PsiElement(OPEN_QUOTE)('"')
               LONG_STRING_TEMPLATE_ENTRY
                 PsiElement(LONG_TEMPLATE_ENTRY_START)('${')
@@ -1698,7 +1797,8 @@ KtFile: IncorrectMultiDollarInterpolationCode.kt
           PsiElement(LPAR)('(')
           VALUE_ARGUMENT
             STRING_TEMPLATE
-              PsiElement(INTERPOLATION_PREFIX)('$$')
+              STRING_INTERPOLATION_PREFIX
+                PsiElement(INTERPOLATION_PREFIX)('$$')
               PsiElement(OPEN_QUOTE)('"')
               LONG_STRING_TEMPLATE_ENTRY
                 PsiElement(LONG_TEMPLATE_ENTRY_START)('$${')
@@ -1726,7 +1826,8 @@ KtFile: IncorrectMultiDollarInterpolationCode.kt
           PsiElement(LPAR)('(')
           VALUE_ARGUMENT
             STRING_TEMPLATE
-              PsiElement(INTERPOLATION_PREFIX)('$$$$')
+              STRING_INTERPOLATION_PREFIX
+                PsiElement(INTERPOLATION_PREFIX)('$$$$')
               PsiElement(OPEN_QUOTE)('"')
               LONG_STRING_TEMPLATE_ENTRY
                 PsiElement(LONG_TEMPLATE_ENTRY_START)('$$$${')
@@ -1754,7 +1855,8 @@ KtFile: IncorrectMultiDollarInterpolationCode.kt
           PsiElement(LPAR)('(')
           VALUE_ARGUMENT
             STRING_TEMPLATE
-              PsiElement(INTERPOLATION_PREFIX)('$$$$$$$$')
+              STRING_INTERPOLATION_PREFIX
+                PsiElement(INTERPOLATION_PREFIX)('$$$$$$$$')
               PsiElement(OPEN_QUOTE)('"')
               LONG_STRING_TEMPLATE_ENTRY
                 PsiElement(LONG_TEMPLATE_ENTRY_START)('$$$$$$$${')
@@ -1801,7 +1903,8 @@ KtFile: IncorrectMultiDollarInterpolationCode.kt
           PsiElement(LPAR)('(')
           VALUE_ARGUMENT
             STRING_TEMPLATE
-              PsiElement(INTERPOLATION_PREFIX)('$')
+              STRING_INTERPOLATION_PREFIX
+                PsiElement(INTERPOLATION_PREFIX)('$')
               PsiElement(OPEN_QUOTE)('"""')
               SHORT_STRING_TEMPLATE_ENTRY
                 PsiElement(SHORT_TEMPLATE_ENTRY_START)('$')
@@ -1821,7 +1924,8 @@ KtFile: IncorrectMultiDollarInterpolationCode.kt
           PsiElement(LPAR)('(')
           VALUE_ARGUMENT
             STRING_TEMPLATE
-              PsiElement(INTERPOLATION_PREFIX)('$$')
+              STRING_INTERPOLATION_PREFIX
+                PsiElement(INTERPOLATION_PREFIX)('$$')
               PsiElement(OPEN_QUOTE)('"""')
               SHORT_STRING_TEMPLATE_ENTRY
                 PsiElement(SHORT_TEMPLATE_ENTRY_START)('$$')
@@ -1841,7 +1945,8 @@ KtFile: IncorrectMultiDollarInterpolationCode.kt
           PsiElement(LPAR)('(')
           VALUE_ARGUMENT
             STRING_TEMPLATE
-              PsiElement(INTERPOLATION_PREFIX)('$$$$')
+              STRING_INTERPOLATION_PREFIX
+                PsiElement(INTERPOLATION_PREFIX)('$$$$')
               PsiElement(OPEN_QUOTE)('"""')
               SHORT_STRING_TEMPLATE_ENTRY
                 PsiElement(SHORT_TEMPLATE_ENTRY_START)('$$$$')
@@ -1861,7 +1966,8 @@ KtFile: IncorrectMultiDollarInterpolationCode.kt
           PsiElement(LPAR)('(')
           VALUE_ARGUMENT
             STRING_TEMPLATE
-              PsiElement(INTERPOLATION_PREFIX)('$$$$$$$$')
+              STRING_INTERPOLATION_PREFIX
+                PsiElement(INTERPOLATION_PREFIX)('$$$$$$$$')
               PsiElement(OPEN_QUOTE)('"""')
               SHORT_STRING_TEMPLATE_ENTRY
                 PsiElement(SHORT_TEMPLATE_ENTRY_START)('$$$$$$$$')
@@ -1900,7 +2006,8 @@ KtFile: IncorrectMultiDollarInterpolationCode.kt
           PsiElement(LPAR)('(')
           VALUE_ARGUMENT
             STRING_TEMPLATE
-              PsiElement(INTERPOLATION_PREFIX)('$')
+              STRING_INTERPOLATION_PREFIX
+                PsiElement(INTERPOLATION_PREFIX)('$')
               PsiElement(OPEN_QUOTE)('"""')
               SHORT_STRING_TEMPLATE_ENTRY
                 PsiElement(SHORT_TEMPLATE_ENTRY_START)('$')
@@ -1920,7 +2027,8 @@ KtFile: IncorrectMultiDollarInterpolationCode.kt
           PsiElement(LPAR)('(')
           VALUE_ARGUMENT
             STRING_TEMPLATE
-              PsiElement(INTERPOLATION_PREFIX)('$$')
+              STRING_INTERPOLATION_PREFIX
+                PsiElement(INTERPOLATION_PREFIX)('$$')
               PsiElement(OPEN_QUOTE)('"""')
               SHORT_STRING_TEMPLATE_ENTRY
                 PsiElement(SHORT_TEMPLATE_ENTRY_START)('$$')
@@ -1940,7 +2048,8 @@ KtFile: IncorrectMultiDollarInterpolationCode.kt
           PsiElement(LPAR)('(')
           VALUE_ARGUMENT
             STRING_TEMPLATE
-              PsiElement(INTERPOLATION_PREFIX)('$$$$')
+              STRING_INTERPOLATION_PREFIX
+                PsiElement(INTERPOLATION_PREFIX)('$$$$')
               PsiElement(OPEN_QUOTE)('"""')
               SHORT_STRING_TEMPLATE_ENTRY
                 PsiElement(SHORT_TEMPLATE_ENTRY_START)('$$$$')
@@ -1960,7 +2069,8 @@ KtFile: IncorrectMultiDollarInterpolationCode.kt
           PsiElement(LPAR)('(')
           VALUE_ARGUMENT
             STRING_TEMPLATE
-              PsiElement(INTERPOLATION_PREFIX)('$$$$$$$$')
+              STRING_INTERPOLATION_PREFIX
+                PsiElement(INTERPOLATION_PREFIX)('$$$$$$$$')
               PsiElement(OPEN_QUOTE)('"""')
               SHORT_STRING_TEMPLATE_ENTRY
                 PsiElement(SHORT_TEMPLATE_ENTRY_START)('$$$$$$$$')
@@ -2007,7 +2117,8 @@ KtFile: IncorrectMultiDollarInterpolationCode.kt
           PsiElement(LPAR)('(')
           VALUE_ARGUMENT
             STRING_TEMPLATE
-              PsiElement(INTERPOLATION_PREFIX)('$')
+              STRING_INTERPOLATION_PREFIX
+                PsiElement(INTERPOLATION_PREFIX)('$')
               PsiElement(OPEN_QUOTE)('"""')
               LONG_STRING_TEMPLATE_ENTRY
                 PsiElement(LONG_TEMPLATE_ENTRY_START)('${')
@@ -2035,7 +2146,8 @@ KtFile: IncorrectMultiDollarInterpolationCode.kt
           PsiElement(LPAR)('(')
           VALUE_ARGUMENT
             STRING_TEMPLATE
-              PsiElement(INTERPOLATION_PREFIX)('$$')
+              STRING_INTERPOLATION_PREFIX
+                PsiElement(INTERPOLATION_PREFIX)('$$')
               PsiElement(OPEN_QUOTE)('"""')
               LONG_STRING_TEMPLATE_ENTRY
                 PsiElement(LONG_TEMPLATE_ENTRY_START)('$${')
@@ -2063,7 +2175,8 @@ KtFile: IncorrectMultiDollarInterpolationCode.kt
           PsiElement(LPAR)('(')
           VALUE_ARGUMENT
             STRING_TEMPLATE
-              PsiElement(INTERPOLATION_PREFIX)('$$$$')
+              STRING_INTERPOLATION_PREFIX
+                PsiElement(INTERPOLATION_PREFIX)('$$$$')
               PsiElement(OPEN_QUOTE)('"""')
               LONG_STRING_TEMPLATE_ENTRY
                 PsiElement(LONG_TEMPLATE_ENTRY_START)('$$$${')
@@ -2091,7 +2204,8 @@ KtFile: IncorrectMultiDollarInterpolationCode.kt
           PsiElement(LPAR)('(')
           VALUE_ARGUMENT
             STRING_TEMPLATE
-              PsiElement(INTERPOLATION_PREFIX)('$$$$$$$$')
+              STRING_INTERPOLATION_PREFIX
+                PsiElement(INTERPOLATION_PREFIX)('$$$$$$$$')
               PsiElement(OPEN_QUOTE)('"""')
               LONG_STRING_TEMPLATE_ENTRY
                 PsiElement(LONG_TEMPLATE_ENTRY_START)('$$$$$$$${')
@@ -2154,7 +2268,8 @@ KtFile: IncorrectMultiDollarInterpolationCode.kt
     PsiElement(EQ)('=')
     PsiWhiteSpace(' ')
     STRING_TEMPLATE
-      PsiElement(INTERPOLATION_PREFIX)('$')
+      STRING_INTERPOLATION_PREFIX
+        PsiElement(INTERPOLATION_PREFIX)('$')
       PsiElement(OPEN_QUOTE)('"')
       SHORT_STRING_TEMPLATE_ENTRY
         PsiElement(SHORT_TEMPLATE_ENTRY_START)('$')
@@ -2173,7 +2288,8 @@ KtFile: IncorrectMultiDollarInterpolationCode.kt
     PsiElement(EQ)('=')
     PsiWhiteSpace(' ')
     STRING_TEMPLATE
-      PsiElement(INTERPOLATION_PREFIX)('$$')
+      STRING_INTERPOLATION_PREFIX
+        PsiElement(INTERPOLATION_PREFIX)('$$')
       PsiElement(OPEN_QUOTE)('"')
       SHORT_STRING_TEMPLATE_ENTRY
         PsiElement(SHORT_TEMPLATE_ENTRY_START)('$$')
@@ -2192,7 +2308,8 @@ KtFile: IncorrectMultiDollarInterpolationCode.kt
     PsiElement(EQ)('=')
     PsiWhiteSpace(' ')
     STRING_TEMPLATE
-      PsiElement(INTERPOLATION_PREFIX)('$$$$')
+      STRING_INTERPOLATION_PREFIX
+        PsiElement(INTERPOLATION_PREFIX)('$$$$')
       PsiElement(OPEN_QUOTE)('"')
       SHORT_STRING_TEMPLATE_ENTRY
         PsiElement(SHORT_TEMPLATE_ENTRY_START)('$$$$')
@@ -2211,7 +2328,8 @@ KtFile: IncorrectMultiDollarInterpolationCode.kt
     PsiElement(EQ)('=')
     PsiWhiteSpace(' ')
     STRING_TEMPLATE
-      PsiElement(INTERPOLATION_PREFIX)('$$$$$$$$')
+      STRING_INTERPOLATION_PREFIX
+        PsiElement(INTERPOLATION_PREFIX)('$$$$$$$$')
       PsiElement(OPEN_QUOTE)('"')
       SHORT_STRING_TEMPLATE_ENTRY
         PsiElement(SHORT_TEMPLATE_ENTRY_START)('$$$$$$$$')
@@ -2248,7 +2366,8 @@ KtFile: IncorrectMultiDollarInterpolationCode.kt
     PsiElement(EQ)('=')
     PsiWhiteSpace(' ')
     STRING_TEMPLATE
-      PsiElement(INTERPOLATION_PREFIX)('$')
+      STRING_INTERPOLATION_PREFIX
+        PsiElement(INTERPOLATION_PREFIX)('$')
       PsiElement(OPEN_QUOTE)('"')
       SHORT_STRING_TEMPLATE_ENTRY
         PsiElement(SHORT_TEMPLATE_ENTRY_START)('$')
@@ -2267,7 +2386,8 @@ KtFile: IncorrectMultiDollarInterpolationCode.kt
     PsiElement(EQ)('=')
     PsiWhiteSpace(' ')
     STRING_TEMPLATE
-      PsiElement(INTERPOLATION_PREFIX)('$$')
+      STRING_INTERPOLATION_PREFIX
+        PsiElement(INTERPOLATION_PREFIX)('$$')
       PsiElement(OPEN_QUOTE)('"')
       SHORT_STRING_TEMPLATE_ENTRY
         PsiElement(SHORT_TEMPLATE_ENTRY_START)('$$')
@@ -2286,7 +2406,8 @@ KtFile: IncorrectMultiDollarInterpolationCode.kt
     PsiElement(EQ)('=')
     PsiWhiteSpace(' ')
     STRING_TEMPLATE
-      PsiElement(INTERPOLATION_PREFIX)('$$$$')
+      STRING_INTERPOLATION_PREFIX
+        PsiElement(INTERPOLATION_PREFIX)('$$$$')
       PsiElement(OPEN_QUOTE)('"')
       SHORT_STRING_TEMPLATE_ENTRY
         PsiElement(SHORT_TEMPLATE_ENTRY_START)('$$$$')
@@ -2305,7 +2426,8 @@ KtFile: IncorrectMultiDollarInterpolationCode.kt
     PsiElement(EQ)('=')
     PsiWhiteSpace(' ')
     STRING_TEMPLATE
-      PsiElement(INTERPOLATION_PREFIX)('$$$$$$$$')
+      STRING_INTERPOLATION_PREFIX
+        PsiElement(INTERPOLATION_PREFIX)('$$$$$$$$')
       PsiElement(OPEN_QUOTE)('"')
       SHORT_STRING_TEMPLATE_ENTRY
         PsiElement(SHORT_TEMPLATE_ENTRY_START)('$$$$$$$$')
@@ -2350,7 +2472,8 @@ KtFile: IncorrectMultiDollarInterpolationCode.kt
     PsiElement(EQ)('=')
     PsiWhiteSpace(' ')
     STRING_TEMPLATE
-      PsiElement(INTERPOLATION_PREFIX)('$')
+      STRING_INTERPOLATION_PREFIX
+        PsiElement(INTERPOLATION_PREFIX)('$')
       PsiElement(OPEN_QUOTE)('"')
       LONG_STRING_TEMPLATE_ENTRY
         PsiElement(LONG_TEMPLATE_ENTRY_START)('${')
@@ -2377,7 +2500,8 @@ KtFile: IncorrectMultiDollarInterpolationCode.kt
     PsiElement(EQ)('=')
     PsiWhiteSpace(' ')
     STRING_TEMPLATE
-      PsiElement(INTERPOLATION_PREFIX)('$$')
+      STRING_INTERPOLATION_PREFIX
+        PsiElement(INTERPOLATION_PREFIX)('$$')
       PsiElement(OPEN_QUOTE)('"')
       LONG_STRING_TEMPLATE_ENTRY
         PsiElement(LONG_TEMPLATE_ENTRY_START)('$${')
@@ -2404,7 +2528,8 @@ KtFile: IncorrectMultiDollarInterpolationCode.kt
     PsiElement(EQ)('=')
     PsiWhiteSpace(' ')
     STRING_TEMPLATE
-      PsiElement(INTERPOLATION_PREFIX)('$$$$')
+      STRING_INTERPOLATION_PREFIX
+        PsiElement(INTERPOLATION_PREFIX)('$$$$')
       PsiElement(OPEN_QUOTE)('"')
       LONG_STRING_TEMPLATE_ENTRY
         PsiElement(LONG_TEMPLATE_ENTRY_START)('$$$${')
@@ -2431,7 +2556,8 @@ KtFile: IncorrectMultiDollarInterpolationCode.kt
     PsiElement(EQ)('=')
     PsiWhiteSpace(' ')
     STRING_TEMPLATE
-      PsiElement(INTERPOLATION_PREFIX)('$$$$$$$$')
+      STRING_INTERPOLATION_PREFIX
+        PsiElement(INTERPOLATION_PREFIX)('$$$$$$$$')
       PsiElement(OPEN_QUOTE)('"')
       LONG_STRING_TEMPLATE_ENTRY
         PsiElement(LONG_TEMPLATE_ENTRY_START)('$$$$$$$${')
@@ -2476,7 +2602,8 @@ KtFile: IncorrectMultiDollarInterpolationCode.kt
     PsiElement(EQ)('=')
     PsiWhiteSpace(' ')
     STRING_TEMPLATE
-      PsiElement(INTERPOLATION_PREFIX)('$')
+      STRING_INTERPOLATION_PREFIX
+        PsiElement(INTERPOLATION_PREFIX)('$')
       PsiElement(OPEN_QUOTE)('"""')
       SHORT_STRING_TEMPLATE_ENTRY
         PsiElement(SHORT_TEMPLATE_ENTRY_START)('$')
@@ -2495,7 +2622,8 @@ KtFile: IncorrectMultiDollarInterpolationCode.kt
     PsiElement(EQ)('=')
     PsiWhiteSpace(' ')
     STRING_TEMPLATE
-      PsiElement(INTERPOLATION_PREFIX)('$$')
+      STRING_INTERPOLATION_PREFIX
+        PsiElement(INTERPOLATION_PREFIX)('$$')
       PsiElement(OPEN_QUOTE)('"""')
       SHORT_STRING_TEMPLATE_ENTRY
         PsiElement(SHORT_TEMPLATE_ENTRY_START)('$$')
@@ -2514,7 +2642,8 @@ KtFile: IncorrectMultiDollarInterpolationCode.kt
     PsiElement(EQ)('=')
     PsiWhiteSpace(' ')
     STRING_TEMPLATE
-      PsiElement(INTERPOLATION_PREFIX)('$$$$')
+      STRING_INTERPOLATION_PREFIX
+        PsiElement(INTERPOLATION_PREFIX)('$$$$')
       PsiElement(OPEN_QUOTE)('"""')
       SHORT_STRING_TEMPLATE_ENTRY
         PsiElement(SHORT_TEMPLATE_ENTRY_START)('$$$$')
@@ -2533,7 +2662,8 @@ KtFile: IncorrectMultiDollarInterpolationCode.kt
     PsiElement(EQ)('=')
     PsiWhiteSpace(' ')
     STRING_TEMPLATE
-      PsiElement(INTERPOLATION_PREFIX)('$$$$$$$$')
+      STRING_INTERPOLATION_PREFIX
+        PsiElement(INTERPOLATION_PREFIX)('$$$$$$$$')
       PsiElement(OPEN_QUOTE)('"""')
       SHORT_STRING_TEMPLATE_ENTRY
         PsiElement(SHORT_TEMPLATE_ENTRY_START)('$$$$$$$$')
@@ -2570,7 +2700,8 @@ KtFile: IncorrectMultiDollarInterpolationCode.kt
     PsiElement(EQ)('=')
     PsiWhiteSpace(' ')
     STRING_TEMPLATE
-      PsiElement(INTERPOLATION_PREFIX)('$')
+      STRING_INTERPOLATION_PREFIX
+        PsiElement(INTERPOLATION_PREFIX)('$')
       PsiElement(OPEN_QUOTE)('"""')
       SHORT_STRING_TEMPLATE_ENTRY
         PsiElement(SHORT_TEMPLATE_ENTRY_START)('$')
@@ -2589,7 +2720,8 @@ KtFile: IncorrectMultiDollarInterpolationCode.kt
     PsiElement(EQ)('=')
     PsiWhiteSpace(' ')
     STRING_TEMPLATE
-      PsiElement(INTERPOLATION_PREFIX)('$$')
+      STRING_INTERPOLATION_PREFIX
+        PsiElement(INTERPOLATION_PREFIX)('$$')
       PsiElement(OPEN_QUOTE)('"""')
       SHORT_STRING_TEMPLATE_ENTRY
         PsiElement(SHORT_TEMPLATE_ENTRY_START)('$$')
@@ -2608,7 +2740,8 @@ KtFile: IncorrectMultiDollarInterpolationCode.kt
     PsiElement(EQ)('=')
     PsiWhiteSpace(' ')
     STRING_TEMPLATE
-      PsiElement(INTERPOLATION_PREFIX)('$$$$')
+      STRING_INTERPOLATION_PREFIX
+        PsiElement(INTERPOLATION_PREFIX)('$$$$')
       PsiElement(OPEN_QUOTE)('"""')
       SHORT_STRING_TEMPLATE_ENTRY
         PsiElement(SHORT_TEMPLATE_ENTRY_START)('$$$$')
@@ -2627,7 +2760,8 @@ KtFile: IncorrectMultiDollarInterpolationCode.kt
     PsiElement(EQ)('=')
     PsiWhiteSpace(' ')
     STRING_TEMPLATE
-      PsiElement(INTERPOLATION_PREFIX)('$$$$$$$$')
+      STRING_INTERPOLATION_PREFIX
+        PsiElement(INTERPOLATION_PREFIX)('$$$$$$$$')
       PsiElement(OPEN_QUOTE)('"""')
       SHORT_STRING_TEMPLATE_ENTRY
         PsiElement(SHORT_TEMPLATE_ENTRY_START)('$$$$$$$$')
@@ -2672,7 +2806,8 @@ KtFile: IncorrectMultiDollarInterpolationCode.kt
     PsiElement(EQ)('=')
     PsiWhiteSpace(' ')
     STRING_TEMPLATE
-      PsiElement(INTERPOLATION_PREFIX)('$')
+      STRING_INTERPOLATION_PREFIX
+        PsiElement(INTERPOLATION_PREFIX)('$')
       PsiElement(OPEN_QUOTE)('"""')
       LONG_STRING_TEMPLATE_ENTRY
         PsiElement(LONG_TEMPLATE_ENTRY_START)('${')
@@ -2699,7 +2834,8 @@ KtFile: IncorrectMultiDollarInterpolationCode.kt
     PsiElement(EQ)('=')
     PsiWhiteSpace(' ')
     STRING_TEMPLATE
-      PsiElement(INTERPOLATION_PREFIX)('$$')
+      STRING_INTERPOLATION_PREFIX
+        PsiElement(INTERPOLATION_PREFIX)('$$')
       PsiElement(OPEN_QUOTE)('"""')
       LONG_STRING_TEMPLATE_ENTRY
         PsiElement(LONG_TEMPLATE_ENTRY_START)('$${')
@@ -2726,7 +2862,8 @@ KtFile: IncorrectMultiDollarInterpolationCode.kt
     PsiElement(EQ)('=')
     PsiWhiteSpace(' ')
     STRING_TEMPLATE
-      PsiElement(INTERPOLATION_PREFIX)('$$$$')
+      STRING_INTERPOLATION_PREFIX
+        PsiElement(INTERPOLATION_PREFIX)('$$$$')
       PsiElement(OPEN_QUOTE)('"""')
       LONG_STRING_TEMPLATE_ENTRY
         PsiElement(LONG_TEMPLATE_ENTRY_START)('$$$${')
@@ -2753,7 +2890,8 @@ KtFile: IncorrectMultiDollarInterpolationCode.kt
     PsiElement(EQ)('=')
     PsiWhiteSpace(' ')
     STRING_TEMPLATE
-      PsiElement(INTERPOLATION_PREFIX)('$$$$$$$$')
+      STRING_INTERPOLATION_PREFIX
+        PsiElement(INTERPOLATION_PREFIX)('$$$$$$$$')
       PsiElement(OPEN_QUOTE)('"""')
       LONG_STRING_TEMPLATE_ENTRY
         PsiElement(LONG_TEMPLATE_ENTRY_START)('$$$$$$$${')

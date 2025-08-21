@@ -124,3 +124,7 @@ class ScopeOwner: BaseType {
 fun Any.fix() {}
 
 object Interloper: BaseType
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, companionObject, funWithExtensionReceiver,
+functionDeclaration, functionalType, interfaceDeclaration, lambdaLiteral, localProperty, nullableType, objectDeclaration,
+propertyDeclaration, safeCall, typeParameter */

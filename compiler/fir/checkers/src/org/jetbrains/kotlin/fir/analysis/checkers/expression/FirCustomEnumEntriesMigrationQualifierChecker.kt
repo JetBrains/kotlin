@@ -13,14 +13,16 @@ import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
+import org.jetbrains.kotlin.fir.isEnabled
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeResolutionResultOverridesOtherToPreserveCompatibility
 
 object FirCustomEnumEntriesMigrationQualifierChecker : FirResolvedQualifierChecker(MppCheckerKind.Common) {
-    override fun check(expression: FirResolvedQualifier, context: CheckerContext, reporter: DiagnosticReporter) {
-        if (context.languageVersionSettings.supportsFeature(LanguageFeature.PrioritizedEnumEntries)) return
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(expression: FirResolvedQualifier) {
+        if (LanguageFeature.PrioritizedEnumEntries.isEnabled()) return
         if (expression.symbol?.name != StandardNames.ENUM_ENTRIES) return
         if (expression.nonFatalDiagnostics.none { it is ConeResolutionResultOverridesOtherToPreserveCompatibility }) return
 
-        reporter.reportOn(expression.source, FirErrors.DEPRECATED_ACCESS_TO_ENTRIES_AS_QUALIFIER, context)
+        reporter.reportOn(expression.source, FirErrors.DEPRECATED_ACCESS_TO_ENTRIES_AS_QUALIFIER)
     }
 }

@@ -7,3 +7,7 @@ fun test() {
     val i : Int? = 10
     val i2 : Int = i._sure() // inferred type is Int? but Int was excepted
 }
+
+/* GENERATED_FIR_TAGS: dnnType, equalityExpression, funWithExtensionReceiver, functionDeclaration, ifExpression,
+integerLiteral, localProperty, nullableType, propertyDeclaration, smartcast, thisExpression, typeConstraint,
+typeParameter */

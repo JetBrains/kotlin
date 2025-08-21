@@ -15,7 +15,9 @@ fun main() {
         x.toString()
     }
 
-    <!CANNOT_INFER_PARAMETER_TYPE, CANNOT_INFER_PARAMETER_TYPE, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>MyFunction<!> { <!CANNOT_INFER_PARAMETER_TYPE!>x<!> ->
+    <!CANNOT_INFER_PARAMETER_TYPE, CANNOT_INFER_PARAMETER_TYPE!>MyFunction<!> { <!CANNOT_INFER_PARAMETER_TYPE!>x<!> ->
         ""
     }
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaType, lambdaLiteral, stringLiteral */

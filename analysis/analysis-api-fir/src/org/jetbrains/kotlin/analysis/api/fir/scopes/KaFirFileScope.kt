@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassifierSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaConstructorSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaPackageSymbol
+import org.jetbrains.kotlin.fir.declarations.DirectDeclarationsAccess
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
@@ -33,6 +34,7 @@ internal class KaFirFileScope(
 
     override fun getAllPossibleNames(): Set<Name> = withValidityAssertion { allNamesCached }
 
+    @OptIn(DirectDeclarationsAccess::class)
     private val backingCallableNames: Set<Name> by cached {
         val result = mutableSetOf<Name>()
         owner.firSymbol.fir.declarations
@@ -49,6 +51,7 @@ internal class KaFirFileScope(
 
     override fun getPossibleCallableNames(): Set<Name> = withValidityAssertion { backingCallableNames }
 
+    @OptIn(DirectDeclarationsAccess::class)
     private val _classifierNames: Set<Name> by cached {
         val result = mutableSetOf<Name>()
         owner.firSymbol.fir.declarations
@@ -61,6 +64,7 @@ internal class KaFirFileScope(
 
     override fun getPossibleClassifierNames(): Set<Name> = withValidityAssertion { _classifierNames }
 
+    @OptIn(DirectDeclarationsAccess::class)
     override fun callables(nameFilter: (Name) -> Boolean): Sequence<KaCallableSymbol> = withValidityAssertion {
         sequence {
             owner.firSymbol.fir.declarations.forEach { firDeclaration ->
@@ -83,6 +87,7 @@ internal class KaFirFileScope(
         return callables { it in namesSet }
     }
 
+    @OptIn(DirectDeclarationsAccess::class)
     override fun classifiers(nameFilter: (Name) -> Boolean): Sequence<KaClassifierSymbol> = withValidityAssertion {
         sequence {
             owner.firSymbol.fir.declarations.forEach { firDeclaration ->

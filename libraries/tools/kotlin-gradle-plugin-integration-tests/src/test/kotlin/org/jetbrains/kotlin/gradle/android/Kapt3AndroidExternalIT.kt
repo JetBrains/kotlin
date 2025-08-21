@@ -9,19 +9,13 @@ import org.gradle.api.JavaVersion
 import org.gradle.api.logging.LogLevel
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.Kapt3BaseIT
-import org.jetbrains.kotlin.gradle.forceK1Kapt
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.junit.jupiter.api.DisplayName
-import java.io.File
 import kotlin.io.path.appendText
 
 @DisplayName("android with kapt3 external dependencies tests")
 @AndroidGradlePluginTests
 open class Kapt3AndroidExternalIT : Kapt3BaseIT() {
-    override fun TestProject.customizeProject() {
-        forceK1Kapt()
-    }
-
     // Deprecated and doesn't work with Gradle 8 + AGP 8, so keeping max Gradle version as 7.6
     // For example: https://github.com/JakeWharton/butterknife/issues/1686
     @DisplayName("kapt works with butterknife")
@@ -119,14 +113,15 @@ open class Kapt3AndroidExternalIT : Kapt3BaseIT() {
         jdkVersion: JdkVersions.ProvidedJdk,
     ) {
         val realmVersion = if (agpVersion != TestVersions.AGP.AGP_73) {
-            "10.13.0-transformer-api"
+            "10.19.0"
         } else {
             "10.11.0"
         }
         project(
             "android-realm".withPrefix,
             gradleVersion,
-            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion, freeArgs = listOf("-Prealm_version=$realmVersion")),
+            buildOptions = defaultBuildOptions
+                .copy(androidVersion = agpVersion, freeArgs = listOf("-Prealm_version=$realmVersion")),
             buildJdk = jdkVersion.location,
         ) {
             if (gradleVersion <= GradleVersion.version(TestVersions.Gradle.G_7_6)) {
@@ -162,8 +157,8 @@ open class Kapt3AndroidExternalIT : Kapt3BaseIT() {
             "android-databinding".withPrefix,
             gradleVersion,
             buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion),
-            // TODO: remove the `if` when we drop support for [TestVersions.AGP.AGP_42]
-            buildJdk = if (jdkVersion.version >= JavaVersion.VERSION_11) jdkVersion.location else File(System.getProperty("jdk11Home"))
+            // remove the `if` when we drop support for [TestVersions.AGP.AGP_42]
+            buildJdk = if (jdkVersion.version >= JavaVersion.VERSION_11) jdkVersion.location else jdk11Info.javaHome
         ) {
             // Remove the once minimal supported AGP version will be 8.1.0: https://issuetracker.google.com/issues/260059413
             gradleProperties.appendText(
@@ -239,7 +234,8 @@ open class Kapt3AndroidExternalIT : Kapt3BaseIT() {
         project(
             "mpp-android-kapt".withPrefix,
             gradleVersion,
-            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion, logLevel = LogLevel.DEBUG),
+            buildOptions = defaultBuildOptions
+                .copy(androidVersion = agpVersion, logLevel = LogLevel.DEBUG),
             buildJdk = jdkVersion.location
         ) {
             build(":shared:compileDebugKotlinAndroid") {

@@ -10,3 +10,6 @@ fun test(b: Boolean) {
             null
         }
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionalType, ifExpression, lambdaLiteral, localProperty, nullableType,
+propertyDeclaration, suspend */

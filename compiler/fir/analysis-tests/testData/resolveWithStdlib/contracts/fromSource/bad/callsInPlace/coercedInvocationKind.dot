@@ -68,14 +68,14 @@ digraph coercedInvocationKind_kt {
                 18 [label="Function call arguments enter"];
                 19 [label="Function call arguments exit"];
             }
-            20 [label="Function call enter: R?C|kotlin/Function0.invoke|()"];
+            20 [label="Function call enter: R|<local>/block|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()"];
             21 [label="Function call exit: R|<local>/block|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()" style="filled" fillcolor=yellow];
             subgraph cluster_11 {
                 color=blue
                 22 [label="Function call arguments enter"];
                 23 [label="Function call arguments exit"];
             }
-            24 [label="Function call enter: R?C|kotlin/Function0.invoke|()"];
+            24 [label="Function call enter: R|<local>/block|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()"];
             25 [label="Function call exit: R|<local>/block|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()" style="filled" fillcolor=yellow];
             26 [label="Exit block"];
         }
@@ -111,14 +111,14 @@ digraph coercedInvocationKind_kt {
                 32 [label="Function call arguments enter"];
                 33 [label="Function call arguments exit"];
             }
-            34 [label="Function call enter: R?C|kotlin/Function0.invoke|()"];
+            34 [label="Function call enter: R|<local>/block|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()"];
             35 [label="Function call exit: R|<local>/block|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()" style="filled" fillcolor=yellow];
             subgraph cluster_16 {
                 color=blue
                 36 [label="Function call arguments enter"];
                 37 [label="Function call arguments exit"];
             }
-            38 [label="Function call enter: R?C|kotlin/Function0.invoke|()"];
+            38 [label="Function call enter: R|<local>/block|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()"];
             39 [label="Function call exit: R|<local>/block|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()" style="filled" fillcolor=yellow];
             40 [label="Exit block"];
         }

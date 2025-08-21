@@ -12,3 +12,7 @@ fun foo() {
     if (x is Int && bar(x)*bar(x) == bar(x)) bar(x)
     bar(<!ARGUMENT_TYPE_MISMATCH!>x<!>)
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, andExpression, disjunctionExpression, equalityExpression, functionDeclaration,
+ifExpression, integerLiteral, isExpression, localProperty, multiplicativeExpression, nullableType, propertyDeclaration,
+smartcast */

@@ -28,3 +28,6 @@ fun test(arg: String): Boolean {
         else -> false
     }
 }
+
+/* GENERATED_FIR_TAGS: enumDeclaration, enumEntry, equalityExpression, functionDeclaration, whenExpression,
+whenWithSubject */

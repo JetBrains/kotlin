@@ -1,4 +1,4 @@
-Diagnostics from elements:
+Diagnostics from file:
   for PSI element of type KtNameReferenceExpression at (71,21-39)
     DEPRECATION      text ranges: [(302,320)]
       PSI: KtNameReferenceExpression at (71,21-39)

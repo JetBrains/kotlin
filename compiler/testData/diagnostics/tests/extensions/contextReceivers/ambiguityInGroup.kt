@@ -27,3 +27,6 @@ fun test() {
     <!AMBIGUOUS_CALL_WITH_IMPLICIT_CONTEXT_RECEIVER!><!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>supertypeExtensionGeneric<!>()<!>
     <!MULTIPLE_ARGUMENTS_APPLICABLE_FOR_CONTEXT_RECEIVER!>supertypeContextual()<!>
 }
+
+/* GENERATED_FIR_TAGS: funWithExtensionReceiver, functionDeclaration, functionDeclarationWithContext,
+interfaceDeclaration, typeConstraint, typeParameter */

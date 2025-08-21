@@ -17,3 +17,6 @@ interface C : B {
 }
 
 fun cond(): Boolean = true
+
+/* GENERATED_FIR_TAGS: funWithExtensionReceiver, functionDeclaration, functionalType, getter, ifExpression,
+interfaceDeclaration, lambdaLiteral, nullableType, propertyDeclaration, thisExpression, typeWithExtension */

@@ -41,3 +41,6 @@ fun main() {
     w.f<!UNSAFE_CALL!>.<!>f = z
     w.f!!.f = z
 }
+
+/* GENERATED_FIR_TAGS: assignment, checkNotNullCall, classDeclaration, functionDeclaration, localProperty, nullableType,
+propertyDeclaration, smartcast */

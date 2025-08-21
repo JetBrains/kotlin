@@ -19,6 +19,7 @@ Tower Data Context:
 FILE: [ResolvedTo(IMPORTS)] declaredInClass_fromContextReceiver.kt
     context([ResolvedTo(STATUS)] MyParam@R|MyParam|)
     public final [ResolvedTo(STATUS)] class Outer<[ResolvedTo(STATUS)] MyParam> : R|kotlin/Any| {
+        context([ResolvedTo(BODY_RESOLVE)] MyParam@R|MyParam|)
         public [ResolvedTo(BODY_RESOLVE)] constructor<[ResolvedTo(STATUS)] MyParam>(): R|test/Outer<MyParam>| {
             super<R|kotlin/Any|>()
         }

@@ -40,3 +40,6 @@ fun case3(x: Any){
         else -> try { 1 } catch (e: Exception) { {1 }}
     }
 }
+
+/* GENERATED_FIR_TAGS: equalityExpression, functionDeclaration, integerLiteral, lambdaLiteral, localProperty,
+propertyDeclaration, stringLiteral, tryExpression, whenExpression, whenWithSubject */

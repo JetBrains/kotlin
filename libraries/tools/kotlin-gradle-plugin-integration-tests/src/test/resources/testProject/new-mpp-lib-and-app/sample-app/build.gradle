@@ -27,7 +27,7 @@ kotlin {
             attributes.attribute(TargetJvmVersion.TARGET_JVM_VERSION_ATTRIBUTE, 8)
 
             compilations.main {
-                tasks.getByName(compileKotlinTaskName) {
+                compileTaskProvider.configure {
                     kotlinOptions {
                         jvmTarget = '1.8'
                     }
@@ -72,10 +72,12 @@ kotlin {
 }
 
 tasks.register("resolveRuntimeDependencies") {
+    def configName = kotlin.jvm("jvm6").compilations["main"].runtimeDependencyConfigurationName
+    def runtimeDependencies = configurations[configName].getIncoming().getFiles()
+    inputs.files(runtimeDependencies).withPropertyName("runtimeDependencies")
     doFirst {
         // KT-26301
-        def configName = kotlin.jvm("jvm6").compilations["main"].runtimeDependencyConfigurationName
-        configurations[configName].resolve()
+        runtimeDependencies.getFiles()
     }
 }
 

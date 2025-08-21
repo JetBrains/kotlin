@@ -27,3 +27,6 @@ fun test() {
     val aCompanion = A.Companion
     aCompanion.entries
 }
+
+/* GENERATED_FIR_TAGS: companionObject, enumDeclaration, functionDeclaration, integerLiteral, lambdaLiteral,
+localProperty, objectDeclaration, propertyDeclaration, thisExpression */

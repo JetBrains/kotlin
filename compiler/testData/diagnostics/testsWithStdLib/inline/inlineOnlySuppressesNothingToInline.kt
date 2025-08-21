@@ -31,3 +31,6 @@ inline fun Function1<Int, Int>?.test6() {
 inline fun test2(s : ((Int) -> Int)?) {
 
 }
+
+/* GENERATED_FIR_TAGS: funWithExtensionReceiver, functionDeclaration, functionalType, inline, noinline, nullableType,
+typeWithExtension */

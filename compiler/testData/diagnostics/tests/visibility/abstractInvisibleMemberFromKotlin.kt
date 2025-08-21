@@ -1,6 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
-// LANGUAGE: +ProhibitInvisibleAbstractMethodsInSuperclasses
 // MODULE: base
 // FILE: Base.kt
 package base
@@ -47,3 +46,5 @@ fun foo() {
     ImplDirectFromBaseWithOverride().foo()
     ImplViaIntermediate().foo()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, objectDeclaration, override, stringLiteral */

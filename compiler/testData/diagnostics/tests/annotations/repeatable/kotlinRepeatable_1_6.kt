@@ -33,3 +33,6 @@ annotation class repexpr
 @repann @repann fun foo(@repann @repann x: Int): Int {
     @repexpr @repexpr return x
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, functionDeclaration, integerLiteral, primaryConstructor,
+propertyDeclaration */

@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.util.isNullable
 import org.jetbrains.kotlin.ir.util.erasedUpperBound
 
 /**
@@ -43,7 +44,7 @@ fun IrType.defaultValue(startOffset: Int, endOffset: Int, context: JvmBackendCon
 
     val underlyingType = unboxInlineClass()
     val defaultValueForUnderlyingType = IrConstImpl.defaultValueForType(startOffset, endOffset, underlyingType)
-    return IrCallImpl.fromSymbolOwner(startOffset, endOffset, this, context.ir.symbols.unsafeCoerceIntrinsic).also {
+    return IrCallImpl.fromSymbolOwner(startOffset, endOffset, this, context.symbols.unsafeCoerceIntrinsic).also {
         it.typeArguments[0] = underlyingType
         it.typeArguments[1] = this
         it.arguments[0] = defaultValueForUnderlyingType
@@ -58,6 +59,9 @@ fun IrType.isInlineClassType(): Boolean {
         erasedUpperBound.isSingleFieldValueClass
     }
 }
+
+fun IrType.isBoxedInlineClassType(): Boolean =
+    isInlineClassType() && isNullable() && unboxInlineClass().let { it.isPrimitiveType() || it.isNullable() }
 
 fun IrType.isMultiFieldValueClassType(): Boolean = erasedUpperBound.isMultiFieldValueClass
 

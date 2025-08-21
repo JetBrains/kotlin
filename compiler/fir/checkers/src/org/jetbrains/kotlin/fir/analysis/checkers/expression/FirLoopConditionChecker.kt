@@ -13,9 +13,10 @@ import org.jetbrains.kotlin.fir.expressions.FirErrorLoop
 import org.jetbrains.kotlin.fir.expressions.FirLoop
 
 object FirLoopConditionChecker : FirLoopExpressionChecker(MppCheckerKind.Common) {
-    override fun check(expression: FirLoop, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(expression: FirLoop) {
         if (expression is FirErrorLoop) return
         val condition = expression.condition
-        checkCondition(condition, context, reporter)
+        checkCondition(condition)
     }
 }

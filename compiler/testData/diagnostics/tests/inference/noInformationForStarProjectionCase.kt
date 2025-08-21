@@ -11,3 +11,5 @@ fun main() {
         <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>mutableListOf<!>()
     )
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, localProperty, propertyDeclaration, starProjection */

@@ -34,3 +34,5 @@ public class MutableLong extends Number {
         return this.longValue();
     }
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaFunction, javaType */

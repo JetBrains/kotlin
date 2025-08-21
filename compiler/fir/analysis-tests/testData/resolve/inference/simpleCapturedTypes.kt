@@ -20,3 +20,7 @@ private fun getSetterInfos(kc: KC<out Ann>) {
     val x2 = kc.idR()
     val x3 = kc.idP
 }
+
+/* GENERATED_FIR_TAGS: capturedType, funWithExtensionReceiver, functionDeclaration, getter, interfaceDeclaration,
+localProperty, nullableType, outProjection, propertyDeclaration, propertyWithExtensionReceiver, thisExpression,
+typeParameter */

@@ -145,19 +145,9 @@ object ImplementationConfigurator : AbstractIrTreeImplementationConfigurator() {
 
         impl(moduleFragment) {
             implementation.putImplementationOptInInConstructor = false
-            default("startOffset", undefinedOffset(), withGetter = true)
-            default("endOffset", undefinedOffset(), withGetter = true)
+            defaultWithErrorOnSet("startOffset", undefinedOffset())
+            defaultWithErrorOnSet("endOffset", undefinedOffset())
             default("name", "descriptor.name", withGetter = true)
-        }
-
-        impl(errorDeclaration) {
-            implementation.bindOwnedSymbol = false
-            default("symbol") {
-                value = "error(\"Should never be called\")"
-                withGetter = true
-            }
-            isMutable("descriptor")
-            isLateinit("descriptor")
         }
 
         impl(externalPackageFragment) {
@@ -166,8 +156,8 @@ object ImplementationConfigurator : AbstractIrTreeImplementationConfigurator() {
             additionalImports(
                 ArbitraryImportable(Packages.descriptors, "ModuleDescriptor"),
             )
-            default("startOffset", undefinedOffset(), withGetter = true)
-            default("endOffset", undefinedOffset(), withGetter = true)
+            defaultWithErrorOnSet("startOffset", undefinedOffset())
+            defaultWithErrorOnSet("endOffset", undefinedOffset())
             implementation.generationCallback = {
                 println()
                 printlnMultiLine(
@@ -188,17 +178,10 @@ object ImplementationConfigurator : AbstractIrTreeImplementationConfigurator() {
         impl(file) {
             implementation.putImplementationOptInInConstructor = false
             implementation.constructorParameterOrderOverride = listOf("fileEntry", "symbol", "packageFqName")
-            default("startOffset", "0", withGetter = true)
-            default("endOffset", "fileEntry.maxOffset", withGetter = true)
+            defaultWithErrorOnSet("startOffset", "0")
+            defaultWithErrorOnSet("endOffset", "fileEntry.maxOffset")
             isMutable("module")
             isLateinit("module")
-            implementation.generationCallback = {
-                println()
-                println("internal val isInsideModule: Boolean")
-                withIndent {
-                    println("get() = ::module.isInitialized")
-                }
-            }
         }
 
         allImplOf(loop) {
@@ -421,6 +404,10 @@ object ImplementationConfigurator : AbstractIrTreeImplementationConfigurator() {
 
         impl(localDelegatedPropertyReference) {
             recordTargetShapeOnSymbolChange()
+        }
+
+        allImplOf(richCallableReference) {
+            default("boundValues", "ArrayList(0)")
         }
     }
 

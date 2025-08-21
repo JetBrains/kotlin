@@ -11,8 +11,11 @@ value class Box(val name: String)
 fun main() {
     val test = Box("Test")
     val rest = Box("Rest")
-    val box = <!ATOMIC_REF_WITHOUT_CONSISTENT_IDENTITY!>AtomicReference(test)<!>
+    val box = AtomicReference(test)
 
-    box.compareAndSet(test, rest)
+    <!ATOMIC_REF_WITHOUT_CONSISTENT_IDENTITY!>box.compareAndSet(test, rest)<!>
     println(box.get())
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, flexibleType, functionDeclaration, javaFunction, localProperty,
+primaryConstructor, propertyDeclaration, stringLiteral, value */

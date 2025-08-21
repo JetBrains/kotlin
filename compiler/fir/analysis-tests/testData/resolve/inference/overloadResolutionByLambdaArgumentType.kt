@@ -10,3 +10,6 @@ fun test(){
     A<Int>().foo<Int> {} // (1)
     A<Int>().<!NONE_APPLICABLE!>foo<!><Any> {} // error
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType, integerLiteral,
+lambdaLiteral, nullableType, typeParameter, typeWithExtension */

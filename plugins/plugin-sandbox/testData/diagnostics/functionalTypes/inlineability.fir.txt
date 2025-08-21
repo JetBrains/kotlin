@@ -12,7 +12,7 @@ FILE: inlineability.kt
         ^myNotInlineable R|<local>/f|.R|SubstitutionOverride<some/MyNotInlineableFunction0.invoke: R|kotlin/Unit|>|()
     }
     public final inline fun testUsageNotInlineable(regularInline: R|() -> kotlin/Unit|, noinline regularNoinline: R|() -> kotlin/Unit|, myInline: R|@R|org/jetbrains/kotlin/plugin/sandbox/MyInlineable|()  some/MyInlineableFunction0<kotlin/Unit>|, myNoinline: R|@R|org/jetbrains/kotlin/plugin/sandbox/MyNotInlineable|()  some/MyNotInlineableFunction0<kotlin/Unit>|): R|kotlin/Any?| {
-        ^testUsageNotInlineable when (Int(1)) {
+        ^testUsageNotInlineable when (lval <when-subject>: R|kotlin/Int| = Int(1)) {
             ==($subj$, Int(1)) ->  {
                 R|<local>/regularInline|
             }

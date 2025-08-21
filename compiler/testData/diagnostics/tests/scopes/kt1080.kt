@@ -18,3 +18,5 @@ class Some: <!UNRESOLVED_REFERENCE!>Test<!>()
 package b.d
 
 public open class Test
+
+/* GENERATED_FIR_TAGS: classDeclaration */

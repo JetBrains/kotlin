@@ -19,6 +19,7 @@ class DefaultKotlinCompilationOutput(
                 "Please either use 'resourcesDir' to get the resource location or 'KotlinSourceSet.resources' to configure additional " +
                 "resources location for compilation.",
         replaceWith = ReplaceWith("resourcesDir"),
+        level = DeprecationLevel.ERROR,
     )
     override var resourcesDirProvider: Any
 ) : KotlinCompilationOutput, Callable<FileCollection> {
@@ -28,12 +29,12 @@ class DefaultKotlinCompilationOutput(
     override val allOutputs: ConfigurableFileCollection = project.files().apply {
         from(classesDirs)
         from(Callable {
-            @Suppress("DEPRECATION")
+            @Suppress("DEPRECATION_ERROR")
             resourcesDirProvider
         })
     }
 
-    @Suppress("DEPRECATION")
+    @Suppress("DEPRECATION_ERROR")
     override val resourcesDir: File
         get() = project.file(resourcesDirProvider)
 

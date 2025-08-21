@@ -23,7 +23,7 @@ internal object DuplicateSourceSetChecker : KotlinGradleProjectChecker {
         val kotlin = project.multiplatformExtensionOrNull ?: return
         val sourceSetNames = kotlin.awaitSourceSets().map { it.name }
         val duplicateSourceSets = sourceSetNames
-            .groupBy { it.toLowerCase() }
+            .groupBy { it.lowercase() }
             .filter { (_, values) -> values.size > 1 }
 
         if (duplicateSourceSets.isNotEmpty()) {

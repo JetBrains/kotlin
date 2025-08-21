@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirQualifiedAccessExpressionChecker
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
+import org.jetbrains.kotlin.fir.isEnabled
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.isArrayTypeOrNullableArrayType
@@ -22,25 +23,25 @@ import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.fir.types.type
 
 object FirArrayOfNullableNothingExpressionChecker : FirQualifiedAccessExpressionChecker(MppCheckerKind.Common) {
-    override fun check(expression: FirQualifiedAccessExpression, context: CheckerContext, reporter: DiagnosticReporter) {
-        if (!context.languageVersionSettings.supportsFeature(LanguageFeature.NullableNothingInReifiedPosition)) return
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(expression: FirQualifiedAccessExpression) {
+        if (!LanguageFeature.NullableNothingInReifiedPosition.isEnabled()) return
         val resolvedType = expression.resolvedType
-        checkTypeAndTypeArguments(resolvedType, expression.calleeReference.source, context, reporter)
+        checkTypeAndTypeArguments(resolvedType, expression.calleeReference.source)
     }
 
+    context(context: CheckerContext, reporter: DiagnosticReporter)
     private fun checkTypeAndTypeArguments(
         type: ConeKotlinType,
         source: KtSourceElement?,
-        context: CheckerContext,
-        reporter: DiagnosticReporter,
     ) {
-        val fullyExpandedType = type.fullyExpandedType(context.session)
+        val fullyExpandedType = type.fullyExpandedType()
         if (fullyExpandedType.isArrayOfNullableNothing()) {
-            reporter.reportOn(source, FirErrors.UNSUPPORTED, "Array<Nothing?> isn't supported in JVM", context)
+            reporter.reportOn(source, FirErrors.UNSUPPORTED, "'Array<Nothing?>' is not supported on the JVM.")
         } else {
             for (typeArg in fullyExpandedType.typeArguments) {
                 val typeArgType = typeArg.type ?: continue
-                checkTypeAndTypeArguments(typeArgType, source, context, reporter)
+                checkTypeAndTypeArguments(typeArgType, source)
             }
         }
     }

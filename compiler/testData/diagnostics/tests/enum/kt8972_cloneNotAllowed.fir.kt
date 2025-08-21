@@ -5,3 +5,5 @@ enum class E : Cloneable {
         return <!AMBIGUOUS_SUPER!>super<!>.clone()
     }
 }
+
+/* GENERATED_FIR_TAGS: enumDeclaration, enumEntry, functionDeclaration, override, superExpression */

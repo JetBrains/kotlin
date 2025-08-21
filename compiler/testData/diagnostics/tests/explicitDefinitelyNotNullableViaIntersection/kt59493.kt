@@ -36,3 +36,6 @@ fun main() {
     val r07 = <!DEBUG_INFO_EXPRESSION_TYPE("Mem")!>Baz<String?>().baz(<!TYPE_MISMATCH!>String::length<!>)<!>
     val r08: Ext = Baz<String?>().baz(id(String::length))
 }
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, dnnType, funWithExtensionReceiver, functionDeclaration,
+localProperty, nullableType, propertyDeclaration, starProjection, typeParameter */

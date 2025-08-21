@@ -6,3 +6,5 @@ fun main(): Boolean {
     var liteProfileReached = false
     return liteProfileReached
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, localProperty, propertyDeclaration */

@@ -29,3 +29,4 @@ fun test3() {
 fun test4(a: Function0<Host>) {
   a.invoke().plusAssign(x = 1)
 }
+

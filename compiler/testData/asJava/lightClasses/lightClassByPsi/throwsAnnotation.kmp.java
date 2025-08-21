@@ -7,9 +7,10 @@ public final class C /* C*/ {
   public final void baz();//  baz()
 
   @kotlin.Throws(exceptionClasses = {kotlin.Exception.class})
-  public  C(int);//  .ctor(int)
-
   public  C();//  .ctor()
+
+  @kotlin.Throws(exceptionClasses = {kotlin.Exception.class})
+  public  C(int);//  .ctor(int)
 }
 
 public final class MyException /* MyException*/ extends kotlin.Exception {

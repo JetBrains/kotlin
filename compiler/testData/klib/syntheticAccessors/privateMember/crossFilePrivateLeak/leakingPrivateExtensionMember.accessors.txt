@@ -10,7 +10,16 @@ public class A
     /* TARGET declaration */ private fun Int.privateExtensionMethod(): Int
     private val Int.privateExtensionVar: Int
         /* TARGET declaration */ private fun Int.<get-privateExtensionVar>(): Int
-    /* ACCESSOR declaration */ public /* static */ fun access$privateExtensionMethod($this: A, $receiver: Int): Int
-        /* TARGET use-site */ ($this, $receiver).privateExtensionMethod()
-    /* ACCESSOR declaration */ public /* static */ fun access$<get-privateExtensionVar>($this: A, $receiver: Int): Int
-        /* TARGET use-site */ ($this, $receiver).<get-privateExtensionVar>()
+    /* ACCESSOR declaration */ internal /* static */ fun access$privateExtensionMethod($this: A, $receiver: Int): Int
+        /* TARGET use-site */ $this.privateExtensionMethod(/* <this> = $receiver */)
+    /* ACCESSOR declaration */ internal /* static */ fun access$<get-privateExtensionVar>($this: A, $receiver: Int): Int
+        /* TARGET use-site */ $this.<get-privateExtensionVar>(/* <this> = $receiver */)
+
+
+/* FILE package=<root> fileName=main.kt */
+
+public fun box(): String
+    /* LOCAL declaration @0 */ local fun <anonymous>($this$run: A)
+        /* ACCESSOR use-site */ access$privateExtensionMethod($this = this, $receiver = 21)
+        /* ACCESSOR use-site */ access$<get-privateExtensionVar>($this = this, $receiver = 21)
+    /* INVOKE @0 */ local fun <anonymous>($this$run: A)

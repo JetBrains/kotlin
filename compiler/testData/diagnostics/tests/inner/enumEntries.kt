@@ -12,3 +12,5 @@ enum class E {
     
     fun outerFun() = 42
 }
+
+/* GENERATED_FIR_TAGS: enumDeclaration, enumEntry, functionDeclaration, integerLiteral */

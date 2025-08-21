@@ -1,7 +1,7 @@
 // RUN_PIPELINE_TILL: BACKEND
-// FIR_IDENTICAL
+// FIR_DUMP
 // FULL_JDK
-// LANGUAGE: -JavaTypeParameterDefaultRepresentationWithDNN
+// LANGUAGE: -DontMakeExplicitJavaTypeArgumentsFlexible
 
 import java.util.Comparator;
 
@@ -10,3 +10,6 @@ fun foo() {
         it != ""
     }
 }
+
+/* GENERATED_FIR_TAGS: equalityExpression, flexibleType, functionDeclaration, inProjection, javaFunction, lambdaLiteral,
+outProjection, samConversion, stringLiteral */

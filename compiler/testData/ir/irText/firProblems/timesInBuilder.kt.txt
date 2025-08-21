@@ -58,9 +58,9 @@ fun <T : Comparable<T>> Column.select(t: T, r: T): Expression {
 
 private fun test(x: Long) {
   return countIssues(restrictionsBuilder = local fun ArgumentsBuilder.<anonymous>() {
-    ($this$countIssues, <get-spentTime>().lessEq<Int>(t = 2.times(other = 60))).unaryPlus()
-    ($this$countIssues, <get-spentTime>().lessEq<Int>(t = id<Int>(arg = 2.times(other = 60)))).unaryPlus()
-    ($this$countIssues, <get-spentTime>().select<Long>(t = 2.times(other = 60).toLong(), r = x)).unaryPlus()
+    $this$countIssues.unaryPlus(/* <this> = lessEq<Int>(/* <this> = <get-spentTime>(), */ t = 2.times(other = 60)) */)
+    $this$countIssues.unaryPlus(/* <this> = lessEq<Int>(/* <this> = <get-spentTime>(), */ t = id<Int>(arg = 2.times(other = 60))) */)
+    $this$countIssues.unaryPlus(/* <this> = select<Long>(/* <this> = <get-spentTime>(), */ t = 2.times(other = 60).toLong(), r = x) */)
   }
 )
 }

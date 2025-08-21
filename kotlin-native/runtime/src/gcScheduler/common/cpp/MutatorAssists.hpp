@@ -86,6 +86,7 @@ public:
     }
 
     Epoch assistsRequested(std::memory_order order) noexcept { return assistsEpoch_.load(order); }
+    Epoch completedEpoch(std::memory_order order) noexcept { return completedEpoch_.load(order); }
 
 private:
     void markEpochCompleted(Epoch epoch) noexcept;

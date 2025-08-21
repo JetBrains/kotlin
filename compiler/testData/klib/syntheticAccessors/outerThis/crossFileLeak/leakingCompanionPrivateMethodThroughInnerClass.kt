@@ -1,4 +1,5 @@
 // FILE: Outer.kt
+
 class Outer {
     companion object {
         private fun privateMethod() = "OK"

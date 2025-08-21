@@ -10,13 +10,13 @@ import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirPropertyAccessExpressionChecker
-import org.jetbrains.kotlin.fir.analysis.checkers.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors
 import org.jetbrains.kotlin.fir.declarations.utils.isCompanion
 import org.jetbrains.kotlin.fir.expressions.FirPropertyAccessExpression
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.symbol
 import org.jetbrains.kotlin.fir.resolve.defaultType
+import org.jetbrains.kotlin.fir.resolve.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
@@ -26,11 +26,8 @@ import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.name.JvmStandardClassIds
 
 object FirJavaClassOnCompanionChecker : FirPropertyAccessExpressionChecker(MppCheckerKind.Common) {
-    override fun check(
-        expression: FirPropertyAccessExpression,
-        context: CheckerContext,
-        reporter: DiagnosticReporter,
-    ) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(expression: FirPropertyAccessExpression) {
         val reference = expression.calleeReference as? FirResolvedNamedReference ?: return
         if ((reference.symbol as? FirCallableSymbol)?.callableId != JvmStandardClassIds.Callables.JavaClass) return
 
@@ -44,6 +41,6 @@ object FirJavaClassOnCompanionChecker : FirPropertyAccessExpressionChecker(MppCh
             arrayOf(containingClassSymbol.defaultType()), isMarkedNullable = actualType.isMarkedNullable
         )
 
-        reporter.reportOn(expression.source, FirJvmErrors.JAVA_CLASS_ON_COMPANION, actualType, expectedType, context)
+        reporter.reportOn(expression.source, FirJvmErrors.JAVA_CLASS_ON_COMPANION, actualType, expectedType)
     }
 }

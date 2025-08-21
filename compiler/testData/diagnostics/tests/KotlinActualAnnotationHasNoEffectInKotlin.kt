@@ -19,3 +19,6 @@ typealias Duh = KotlinActual
 
 @[KotlinActual]
 fun bar() {}
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, classReference, functionDeclaration, functionalType, javaCallableReference,
+javaFunction, lambdaLiteral, localProperty, propertyDeclaration, typeAliasDeclaration */

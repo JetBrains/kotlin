@@ -5,3 +5,6 @@ class Outer<E : Any> {
 }
 
 val x: Outer<<!UPPER_BOUND_VIOLATED!>String?<!>>.Inner<String, Int> = null!!
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, inner, nullableType, propertyDeclaration, typeConstraint,
+typeParameter */

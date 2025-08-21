@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirTypeAlias
 import org.jetbrains.kotlin.fir.declarations.getSingleMatchedExpectForActualOrNull
 import org.jetbrains.kotlin.fir.declarations.utils.isActual
+import org.jetbrains.kotlin.fir.isEnabled
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.scopes.collectAllFunctions
 import org.jetbrains.kotlin.fir.scopes.getDeclaredConstructors
@@ -32,42 +33,44 @@ import org.jetbrains.kotlin.resolve.calls.mpp.ActualTypealiasToSpecialAnnotation
 import org.jetbrains.kotlin.types.Variance
 
 object FirActualTypeAliasChecker : FirTypeAliasChecker(MppCheckerKind.Common) {
-    override fun check(declaration: FirTypeAlias, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirTypeAlias) {
         if (!declaration.isActual) return
 
-        declaration.checkDefaultArgumentsInExpectWithActualTypeAlias(context, reporter)
+        declaration.checkDefaultArgumentsInExpectWithActualTypeAlias()
 
         val expandedType = declaration.expandedTypeRef.coneType.abbreviatedTypeOrSelf as? ConeClassLikeType ?: return
         val expandedTypeSymbol = expandedType.toSymbol(context.session) ?: return
 
         if (expandedTypeSymbol is FirTypeAliasSymbol) {
-            reporter.reportOn(declaration.source, FirErrors.ACTUAL_TYPE_ALIAS_NOT_TO_CLASS, context)
+            reporter.reportOn(declaration.source, FirErrors.ACTUAL_TYPE_ALIAS_NOT_TO_CLASS)
         }
 
-        declaration.checkTypeAliasToClassWithDeclarationSiteVariance(expandedTypeSymbol, context, reporter)
-        declaration.checkTypeAliasWithUseSiteVariance(expandedType, context, reporter)
-        declaration.checkTypeAliasWithComplexSubstitution(expandedType, context, reporter)
+        declaration.checkTypeAliasToClassWithDeclarationSiteVariance(expandedTypeSymbol)
+        declaration.checkTypeAliasWithUseSiteVariance(expandedType)
+        declaration.checkTypeAliasWithComplexSubstitution(expandedType)
 
-        if (context.languageVersionSettings.supportsFeature(LanguageFeature.MultiplatformRestrictions)) {
+        if (LanguageFeature.MultiplatformRestrictions.isEnabled()) {
             // an earlier check ensures we have an ACTUAL_TYPE_ALIAS_NOT_TO_CLASS error on non-expanded type alias
             if (expandedType.isNothing) {
-                reporter.reportOn(declaration.source, FirErrors.ACTUAL_TYPE_ALIAS_TO_NOTHING, context)
+                reporter.reportOn(declaration.source, FirErrors.ACTUAL_TYPE_ALIAS_TO_NOTHING)
             }
 
             if (expandedType.isMarkedNullable) {
-                reporter.reportOn(declaration.source, FirErrors.ACTUAL_TYPE_ALIAS_TO_NULLABLE_TYPE, context)
+                reporter.reportOn(declaration.source, FirErrors.ACTUAL_TYPE_ALIAS_TO_NULLABLE_TYPE)
             }
 
             if (expandedTypeSymbol.classKind == ClassKind.ANNOTATION_CLASS) {
                 val classId = expandedTypeSymbol.classId
                 if (isAnnotationProhibitedInActualTypeAlias(classId)) {
-                    reporter.reportOn(declaration.source, FirErrors.ACTUAL_TYPEALIAS_TO_SPECIAL_ANNOTATION, classId, context)
+                    reporter.reportOn(declaration.source, FirErrors.ACTUAL_TYPEALIAS_TO_SPECIAL_ANNOTATION, classId)
                 }
             }
         }
     }
 
-    private fun FirTypeAlias.checkDefaultArgumentsInExpectWithActualTypeAlias(context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    private fun FirTypeAlias.checkDefaultArgumentsInExpectWithActualTypeAlias() {
         if (context.languageVersionSettings.let {
                 !it.supportsFeature(LanguageFeature.MultiplatformRestrictions) || !it.supportsFeature(LanguageFeature.MultiplatformRestrictions)
             }
@@ -88,7 +91,6 @@ object FirActualTypeAliasChecker : FirTypeAliasChecker(MppCheckerKind.Common) {
             FirErrors.DEFAULT_ARGUMENTS_IN_EXPECT_WITH_ACTUAL_TYPEALIAS,
             expectClassSymbol,
             membersWithDefaultValueParameters,
-            context
         )
     }
 
@@ -117,36 +119,31 @@ object FirActualTypeAliasChecker : FirTypeAliasChecker(MppCheckerKind.Common) {
         return result
     }
 
-    private fun FirTypeAlias.checkTypeAliasToClassWithDeclarationSiteVariance(
-        expandedTypeSymbol: FirClassLikeSymbol<*>,
-        context: CheckerContext,
-        reporter: DiagnosticReporter,
-    ) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    private fun FirTypeAlias.checkTypeAliasToClassWithDeclarationSiteVariance(expandedTypeSymbol: FirClassLikeSymbol<*>) {
         for (typeParameterSymbol in expandedTypeSymbol.typeParameterSymbols) {
             if (typeParameterSymbol.variance != Variance.INVARIANT) {
-                reporter.reportOn(source, FirErrors.ACTUAL_TYPE_ALIAS_TO_CLASS_WITH_DECLARATION_SITE_VARIANCE, context)
+                reporter.reportOn(source, FirErrors.ACTUAL_TYPE_ALIAS_TO_CLASS_WITH_DECLARATION_SITE_VARIANCE)
                 break
             }
         }
     }
 
+    context(context: CheckerContext, reporter: DiagnosticReporter)
     private fun FirTypeAlias.checkTypeAliasWithUseSiteVariance(
         expandedType: ConeClassLikeType,
-        context: CheckerContext,
-        reporter: DiagnosticReporter,
     ) {
         for (typeArgument in expandedType.typeArguments) {
             if (typeArgument.kind != ProjectionKind.INVARIANT) {
-                reporter.reportOn(source, FirErrors.ACTUAL_TYPE_ALIAS_WITH_USE_SITE_VARIANCE, context)
+                reporter.reportOn(source, FirErrors.ACTUAL_TYPE_ALIAS_WITH_USE_SITE_VARIANCE)
                 break
             }
         }
     }
 
+    context(context: CheckerContext, reporter: DiagnosticReporter)
     private fun FirTypeAlias.checkTypeAliasWithComplexSubstitution(
         expandedType: ConeClassLikeType,
-        context: CheckerContext,
-        reporter: DiagnosticReporter,
     ) {
         var reportActualTypeAliasWithComplexSubstitution = false
         if (typeParameters.size != expandedType.typeArguments.size) {
@@ -166,7 +163,7 @@ object FirActualTypeAliasChecker : FirTypeAliasChecker(MppCheckerKind.Common) {
             }
         }
         if (reportActualTypeAliasWithComplexSubstitution) {
-            reporter.reportOn(source, FirErrors.ACTUAL_TYPE_ALIAS_WITH_COMPLEX_SUBSTITUTION, context)
+            reporter.reportOn(source, FirErrors.ACTUAL_TYPE_ALIAS_WITH_COMPLEX_SUBSTITUTION)
         }
     }
 }

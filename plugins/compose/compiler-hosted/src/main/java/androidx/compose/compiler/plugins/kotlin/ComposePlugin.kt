@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.extensions.internal.TypeResolutionInterceptor
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrarAdapter
 import org.jetbrains.kotlin.resolve.diagnostics.DiagnosticSuppressor
 import org.jetbrains.kotlin.serialization.DescriptorSerializerPlugin
+import org.jetbrains.kotlin.utils.exceptions.rethrowIntellijPlatformExceptionIfNeeded
 import java.io.FileNotFoundException
 
 internal const val COMPOSE_PLUGIN_ID = "androidx.compose.compiler.plugins.kotlin"
@@ -82,6 +83,10 @@ object ComposeConfiguration {
         )
     val SKIP_IR_LOWERING_IF_RUNTIME_NOT_FOUND_KEY =
         CompilerConfigurationKey<Boolean>("Skip IR lowering transformation when finding Compose runtime fails")
+    val TARGET_RUNTIME_VERSION_KEY =
+        CompilerConfigurationKey<String>(
+            "Target Compose runtime version for the compiler."
+        )
 }
 
 @OptIn(ExperimentalCompilerApi::class)
@@ -220,6 +225,14 @@ class ComposeCommandLineProcessor : CommandLineProcessor {
             required = false,
             allowMultipleOccurrences = false
         )
+        val TARGET_RUNTIME_VERSION_OPTION = CliOption(
+            "targetRuntimeVersion",
+            "<version>",
+            "Override target Compose runtime version for the compiler. " +
+                    "Normally, this is determined through the Compose runtime dependency at compile time.",
+            required = false,
+            allowMultipleOccurrences = false
+        )
     }
 
     override val pluginId = PLUGIN_ID
@@ -241,6 +254,7 @@ class ComposeCommandLineProcessor : CommandLineProcessor {
         TRACE_MARKERS_OPTION,
         FEATURE_FLAG_OPTION,
         SKIP_IR_LOWERING_IF_RUNTIME_NOT_FOUND_OPTION,
+        TARGET_RUNTIME_VERSION_OPTION,
     )
 
     override fun processOption(
@@ -356,6 +370,12 @@ class ComposeCommandLineProcessor : CommandLineProcessor {
             ComposeConfiguration.SKIP_IR_LOWERING_IF_RUNTIME_NOT_FOUND_KEY,
             value == "true"
         )
+        TARGET_RUNTIME_VERSION_OPTION -> {
+            configuration.put(
+                ComposeConfiguration.TARGET_RUNTIME_VERSION_KEY,
+                value
+            )
+        }
         else -> throw CliOptionProcessingException("Unknown option: ${option.optionName}")
     }
 }
@@ -397,8 +417,8 @@ class ComposeCommandLineProcessor : CommandLineProcessor {
 enum class FeatureFlag(val featureName: String, val default: Boolean) {
     StrongSkipping("StrongSkipping", default = true),
     IntrinsicRemember("IntrinsicRemember", default = true),
-    OptimizeNonSkippingGroups("OptimizeNonSkippingGroups", default = false),
-    PausableComposition("PausableComposition", default = false),
+    OptimizeNonSkippingGroups("OptimizeNonSkippingGroups", default = true),
+    PausableComposition("PausableComposition", default = true),
     ;
 
     val disabledName get() = "-$featureName"
@@ -654,7 +674,7 @@ class ComposePluginRegistrar : CompilerPluginRegistrar() {
             val liveLiteralsV2Enabled = configuration.getBoolean(
                 ComposeConfiguration.LIVE_LITERALS_V2_ENABLED_KEY,
             )
-            val generateFunctionKeyMetaAnnotations = configuration.getBoolean(
+            val generateFunctionKeyMetaAnnotations = configuration.get(
                 ComposeConfiguration.GENERATE_FUNCTION_KEY_META_ANNOTATION_KEY,
             )
             val sourceInformationEnabled = configuration.getBoolean(
@@ -676,7 +696,6 @@ class ComposePluginRegistrar : CompilerPluginRegistrar() {
                 ComposeConfiguration.REPORTS_DESTINATION_KEY,
                 ""
             ).ifBlank { null }
-            val irVerificationMode = configuration.get(CommonConfigurationKeys.VERIFY_IR, IrVerificationMode.NONE)
 
             val useK2 = configuration.languageVersionSettings.languageVersion.usesK2
 
@@ -704,6 +723,10 @@ class ComposePluginRegistrar : CompilerPluginRegistrar() {
             )
             featureFlags.validateFeatureFlags(configuration)
 
+            val targetRuntimeVersion = configuration.get(
+                ComposeConfiguration.TARGET_RUNTIME_VERSION_KEY,
+            )?.let { ComposeRuntimeVersion.fromString(it) }
+
             // Compatibility with older features configuration options
             // New features should not create a explicit option
             featureFlags.setFeature(FeatureFlag.IntrinsicRemember, intrinsicRememberEnabled)
@@ -725,6 +748,7 @@ class ComposePluginRegistrar : CompilerPluginRegistrar() {
                     )
                     emptySet()
                 } catch (e: Exception) {
+                    rethrowIntellijPlatformExceptionIfNeeded(e)
                     configuration.messageCollector.report(
                         CompilerMessageSeverity.ERROR,
                         e.message ?: "Error parsing stability configuration at $path"
@@ -738,6 +762,13 @@ class ComposePluginRegistrar : CompilerPluginRegistrar() {
                 ?: emptySet()
             stableTypeMatchers.addAll(testingMatchers)
 
+            val jvmLambdaScheme = configuration.get(JVMConfigurationKeys.LAMBDAS)
+                ?: if (configuration.languageVersionSettings.supportsFeature(LanguageFeature.LightweightLambdas)) {
+                    JvmClosureGenerationScheme.INDY
+                } else {
+                    JvmClosureGenerationScheme.CLASS
+                }
+
             return ComposeIrGenerationExtension(
                 liveLiteralsEnabled = liveLiteralsEnabled,
                 liveLiteralsV2Enabled = liveLiteralsV2Enabled,
@@ -746,7 +777,6 @@ class ComposePluginRegistrar : CompilerPluginRegistrar() {
                 traceMarkersEnabled = traceMarkersEnabled,
                 metricsDestination = metricsDestination,
                 reportsDestination = reportsDestination,
-                irVerificationMode = irVerificationMode,
                 useK2 = useK2,
                 stableTypeMatchers = stableTypeMatchers,
                 moduleMetricsFactory = moduleMetricsFactory,
@@ -754,6 +784,8 @@ class ComposePluginRegistrar : CompilerPluginRegistrar() {
                 featureFlags = featureFlags,
                 skipIfRuntimeNotFound = skipIrLoweringIfRuntimeNotFound,
                 messageCollector = configuration.messageCollector,
+                indyJvmLambdasEnabled = jvmLambdaScheme == JvmClosureGenerationScheme.INDY,
+                targetRuntimeVersion = targetRuntimeVersion,
             )
         }
     }

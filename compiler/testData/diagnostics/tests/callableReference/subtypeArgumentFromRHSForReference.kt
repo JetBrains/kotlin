@@ -26,3 +26,6 @@ fun test(form: Form) {
     radio(form.get2(ChildHolder::child))
     radio(form.get3(ChildHolder::child))
 }
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, functionDeclaration, interfaceDeclaration, nullableType,
+primaryConstructor, propertyDeclaration, starProjection, typeConstraint, typeParameter */

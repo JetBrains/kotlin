@@ -29,3 +29,6 @@ class My {
 
     val w = "6"
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, assignment, classDeclaration, equalityExpression, ifExpression, init,
+integerLiteral, propertyDeclaration, setter, stringLiteral, thisExpression */

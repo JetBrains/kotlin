@@ -87,12 +87,12 @@ fun <T : Foo, R: Number, D: Int> main() {
     // with LHS and conflicting projection
     bar2<T>(Foo::<!OVERLOAD_RESOLUTION_AMBIGUITY!>resolve<!>)
     bar2<Foo>(Foo::<!OVERLOAD_RESOLUTION_AMBIGUITY!>resolve<!>)
-    <!CANNOT_INFER_PARAMETER_TYPE, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>bar2<!>(Foo::<!OVERLOAD_RESOLUTION_AMBIGUITY!>resolve<!>)
+    <!CANNOT_INFER_PARAMETER_TYPE!>bar2<!>(Foo::<!OVERLOAD_RESOLUTION_AMBIGUITY!>resolve<!>)
 
     // with LHS and Any? expected type
     bar3<T>(Foo::<!OVERLOAD_RESOLUTION_AMBIGUITY!>resolve<!>)
     bar3<Foo>(Foo::<!OVERLOAD_RESOLUTION_AMBIGUITY!>resolve<!>)
-    <!CANNOT_INFER_PARAMETER_TYPE, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>bar3<!>(Foo::<!OVERLOAD_RESOLUTION_AMBIGUITY!>resolve<!>)
+    <!CANNOT_INFER_PARAMETER_TYPE!>bar3<!>(Foo::<!OVERLOAD_RESOLUTION_AMBIGUITY!>resolve<!>)
 
     // with LHS and `Function` expected type
     bar4<T>(Foo::resolve) // ERROR before the fix in NI
@@ -126,3 +126,7 @@ fun <T : Foo, R: Number, D: Int> main() {
         <!CANNOT_INFER_PARAMETER_TYPE!>bar10<!>(::<!INAPPLICABLE_CANDIDATE!>x1<!>) // OK
     }
 }
+
+/* GENERATED_FIR_TAGS: callableReference, funWithExtensionReceiver, functionDeclaration, functionalType, getter,
+interfaceDeclaration, localFunction, nullableType, outProjection, propertyDeclaration, propertyWithExtensionReceiver,
+setter, stringLiteral, suspend, typeConstraint, typeParameter, typeWithExtension */

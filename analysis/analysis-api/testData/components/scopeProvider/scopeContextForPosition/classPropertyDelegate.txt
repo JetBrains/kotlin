@@ -1,10 +1,13 @@
 element: ::value
-implicit receivers:
-  type: KaUsualClassType:
-    annotations: []
-    typeArguments: []
-    type: test/Child
-  owner symbol: KaFirNamedClassSymbol
+implicit values:
+  KaImplicitReceiver:
+    scopeIndexInTower = 1
+    type = KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: test/Child
+    ownerSymbol = KaNamedClassSymbol:
+      test/Child
 
 scopes:
   LocalScope, index = 0
@@ -66,19 +69,19 @@ scopes:
           visibility: PRIVATE
         callableId: test/Child.constructorProp
         compilerVisibility: Public
+        contextParameters: []
         contextReceivers: []
         getter: KaPropertyGetterSymbol:
           annotations: []
           callableId: null
           compilerVisibility: Public
           contextReceivers: []
-          hasBody: false
           hasStableParameterNames: true
           isActual: false
-          isDefault: true
           isExpect: false
           isExtension: false
           isInline: false
+          isNotDefault: false
           isOverride: false
           location: PROPERTY
           modality: FINAL
@@ -121,6 +124,7 @@ scopes:
         annotations: []
         callableId: test/Child.childMember
         compilerVisibility: Public
+        contextParameters: []
         contextReceivers: []
         contractEffects: []
         hasStableParameterNames: true
@@ -172,19 +176,19 @@ scopes:
           visibility: PRIVATE
         callableId: test/Child.childProp
         compilerVisibility: Public
+        contextParameters: []
         contextReceivers: []
         getter: KaPropertyGetterSymbol:
           annotations: []
           callableId: null
           compilerVisibility: Public
           contextReceivers: []
-          hasBody: true
           hasStableParameterNames: true
           isActual: false
-          isDefault: false
           isExpect: false
           isExtension: false
           isInline: false
+          isNotDefault: true
           isOverride: false
           location: PROPERTY
           modality: FINAL
@@ -247,19 +251,19 @@ scopes:
           visibility: PRIVATE
         callableId: test/Base.value
         compilerVisibility: Public
+        contextParameters: []
         contextReceivers: []
         getter: KaPropertyGetterSymbol:
           annotations: []
           callableId: null
           compilerVisibility: Public
           contextReceivers: []
-          hasBody: false
           hasStableParameterNames: true
           isActual: false
-          isDefault: true
           isExpect: false
           isExtension: false
           isInline: false
+          isNotDefault: false
           isOverride: false
           location: PROPERTY
           modality: FINAL
@@ -302,6 +306,7 @@ scopes:
         annotations: []
         callableId: test/Base.baseMember
         compilerVisibility: Public
+        contextParameters: []
         contextReceivers: []
         contractEffects: []
         hasStableParameterNames: true
@@ -353,19 +358,19 @@ scopes:
           visibility: PRIVATE
         callableId: test/Base.baseProp
         compilerVisibility: Public
+        contextParameters: []
         contextReceivers: []
         getter: KaPropertyGetterSymbol:
           annotations: []
           callableId: null
           compilerVisibility: Public
           contextReceivers: []
-          hasBody: false
           hasStableParameterNames: true
           isActual: false
-          isDefault: true
           isExpect: false
           isExtension: false
           isInline: false
+          isNotDefault: false
           isOverride: false
           location: PROPERTY
           modality: FINAL
@@ -408,6 +413,7 @@ scopes:
         annotations: []
         callableId: kotlin/Any.equals
         compilerVisibility: Public
+        contextParameters: []
         contextReceivers: []
         contractEffects: []
         hasStableParameterNames: true
@@ -465,6 +471,7 @@ scopes:
         annotations: []
         callableId: kotlin/Any.hashCode
         compilerVisibility: Public
+        contextParameters: []
         contextReceivers: []
         contractEffects: []
         hasStableParameterNames: true
@@ -496,6 +503,7 @@ scopes:
         annotations: []
         callableId: kotlin/Any.toString
         compilerVisibility: Public
+        contextParameters: []
         contextReceivers: []
         contractEffects: []
         hasStableParameterNames: true
@@ -574,19 +582,19 @@ scopes:
                 visibility: PRIVATE
               callableId: test/Child.constructorProp
               compilerVisibility: Public
+              contextParameters: []
               contextReceivers: []
               getter: KaPropertyGetterSymbol:
                 annotations: []
                 callableId: null
                 compilerVisibility: Public
                 contextReceivers: []
-                hasBody: false
                 hasStableParameterNames: true
                 isActual: false
-                isDefault: true
                 isExpect: false
                 isExtension: false
                 isInline: false
+                isNotDefault: false
                 isOverride: false
                 location: PROPERTY
                 modality: FINAL

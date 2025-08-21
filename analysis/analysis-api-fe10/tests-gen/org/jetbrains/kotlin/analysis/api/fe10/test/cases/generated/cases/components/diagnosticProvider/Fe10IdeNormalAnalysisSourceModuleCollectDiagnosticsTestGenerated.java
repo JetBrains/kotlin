@@ -53,6 +53,24 @@ public class Fe10IdeNormalAnalysisSourceModuleCollectDiagnosticsTestGenerated ex
   }
 
   @Test
+  @TestMetadata("callablesFromScript.kt")
+  public void testCallablesFromScript() {
+    runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/callablesFromScript.kt");
+  }
+
+  @Test
+  @TestMetadata("contextParameters.kt")
+  public void testContextParameters() {
+    runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/contextParameters.kt");
+  }
+
+  @Test
+  @TestMetadata("contextParametersAsLibrary.kt")
+  public void testContextParametersAsLibrary() {
+    runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/contextParametersAsLibrary.kt");
+  }
+
+  @Test
   @TestMetadata("contracts.kt")
   public void testContracts() {
     runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/contracts.kt");
@@ -71,9 +89,27 @@ public class Fe10IdeNormalAnalysisSourceModuleCollectDiagnosticsTestGenerated ex
   }
 
   @Test
+  @TestMetadata("danglingAnnotationOnMemberFunction.kt")
+  public void testDanglingAnnotationOnMemberFunction() {
+    runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/danglingAnnotationOnMemberFunction.kt");
+  }
+
+  @Test
+  @TestMetadata("danglingAnnotationOnTopLevelFunction.kt")
+  public void testDanglingAnnotationOnTopLevelFunction() {
+    runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/danglingAnnotationOnTopLevelFunction.kt");
+  }
+
+  @Test
   @TestMetadata("declarationErrors.kt")
   public void testDeclarationErrors() {
     runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/declarationErrors.kt");
+  }
+
+  @Test
+  @TestMetadata("delegationByLambda.kt")
+  public void testDelegationByLambda() {
+    runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/delegationByLambda.kt");
   }
 
   @Test
@@ -209,6 +245,12 @@ public class Fe10IdeNormalAnalysisSourceModuleCollectDiagnosticsTestGenerated ex
   }
 
   @Test
+  @TestMetadata("unavailableRecord.kt")
+  public void testUnavailableRecord() {
+    runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/unavailableRecord.kt");
+  }
+
+  @Test
   @TestMetadata("unresolved.kt")
   public void testUnresolved() {
     runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/unresolved.kt");
@@ -272,6 +314,92 @@ public class Fe10IdeNormalAnalysisSourceModuleCollectDiagnosticsTestGenerated ex
   @TestMetadata("varargParameterFromLibraryWithFunctionalType.kt")
   public void testVarargParameterFromLibraryWithFunctionalType() {
     runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/varargParameterFromLibraryWithFunctionalType.kt");
+  }
+
+  @Nested
+  @TestMetadata("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/mustUseReturnValue")
+  @TestDataPath("$PROJECT_ROOT")
+  public class MustUseReturnValue {
+    @Test
+    public void testAllFilesPresentInMustUseReturnValue() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/mustUseReturnValue"), Pattern.compile("^(.+)\\.kt$"), null, true);
+    }
+
+    @Test
+    @TestMetadata("mustUseReturnValueFullEnabled.kt")
+    public void testMustUseReturnValueFullEnabled() {
+      runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/mustUseReturnValue/mustUseReturnValueFullEnabled.kt");
+    }
+
+    @Test
+    @TestMetadata("mustUseReturnValueFullEnabledFromLibrary.kt")
+    public void testMustUseReturnValueFullEnabledFromLibrary() {
+      runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/mustUseReturnValue/mustUseReturnValueFullEnabledFromLibrary.kt");
+    }
+
+    @Test
+    @TestMetadata("mustUseReturnValueHalfEnabled.kt")
+    public void testMustUseReturnValueHalfEnabled() {
+      runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/mustUseReturnValue/mustUseReturnValueHalfEnabled.kt");
+    }
+
+    @Test
+    @TestMetadata("mustUseReturnValueHalfEnabledFromLibrary.kt")
+    public void testMustUseReturnValueHalfEnabledFromLibrary() {
+      runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/mustUseReturnValue/mustUseReturnValueHalfEnabledFromLibrary.kt");
+    }
+  }
+
+  @Nested
+  @TestMetadata("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/redeclaration")
+  @TestDataPath("$PROJECT_ROOT")
+  public class Redeclaration {
+    @Test
+    public void testAllFilesPresentInRedeclaration() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/redeclaration"), Pattern.compile("^(.+)\\.kt$"), null, true);
+    }
+
+    @Test
+    @TestMetadata("classRedeclarationJavaJavaKotlin.kt")
+    public void testClassRedeclarationJavaJavaKotlin() {
+      runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/redeclaration/classRedeclarationJavaJavaKotlin.kt");
+    }
+
+    @Test
+    @TestMetadata("classRedeclarationJavaKotlin.kt")
+    public void testClassRedeclarationJavaKotlin() {
+      runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/redeclaration/classRedeclarationJavaKotlin.kt");
+    }
+
+    @Test
+    @TestMetadata("classRedeclarationJavaKotlinKotlin.kt")
+    public void testClassRedeclarationJavaKotlinKotlin() {
+      runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/redeclaration/classRedeclarationJavaKotlinKotlin.kt");
+    }
+
+    @Test
+    @TestMetadata("classRedeclarationKotlinKotlinKotlin.kt")
+    public void testClassRedeclarationKotlinKotlinKotlin() {
+      runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/redeclaration/classRedeclarationKotlinKotlinKotlin.kt");
+    }
+
+    @Test
+    @TestMetadata("functionRedeclaration.kt")
+    public void testFunctionRedeclaration() {
+      runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/redeclaration/functionRedeclaration.kt");
+    }
+
+    @Test
+    @TestMetadata("multiModuleClassRedeclaration.kt")
+    public void testMultiModuleClassRedeclaration() {
+      runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/redeclaration/multiModuleClassRedeclaration.kt");
+    }
+
+    @Test
+    @TestMetadata("propertyRedeclaration.kt")
+    public void testPropertyRedeclaration() {
+      runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/redeclaration/propertyRedeclaration.kt");
+    }
   }
 
   @Nested

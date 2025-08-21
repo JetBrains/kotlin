@@ -14,3 +14,5 @@ public class A {
 fun main(a: A) {
     a.foo(<!JAVA_TYPE_MISMATCH!>a.bar()<!>)
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaFunction, javaType */

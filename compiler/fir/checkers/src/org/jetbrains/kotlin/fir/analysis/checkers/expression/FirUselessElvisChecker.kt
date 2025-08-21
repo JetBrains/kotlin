@@ -12,30 +12,40 @@ import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.expressions.FirElvisExpression
+import org.jetbrains.kotlin.fir.isEnabled
 import org.jetbrains.kotlin.fir.types.ConeErrorType
 import org.jetbrains.kotlin.fir.types.canBeNull
 import org.jetbrains.kotlin.fir.types.isNullLiteral
 import org.jetbrains.kotlin.fir.types.resolvedType
 
 object FirUselessElvisChecker : FirElvisExpressionChecker(MppCheckerKind.Common) {
-    override fun check(expression: FirElvisExpression, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(expression: FirElvisExpression) {
         // If the overall expression is not resolved/completed, the corresponding error will be reported separately.
         // See [FirControlFlowStatementsResolveTransformer#transformElvisExpression],
         // where an error type is recorded as the expression's return type.
         if (expression.resolvedType is ConeErrorType) return
 
+        // Check if left side is null literal
+        if (expression.lhs.isNullLiteral) {
+            if (LanguageFeature.EnableDfaWarningsInK2.isEnabled()) {
+                reporter.reportOn(expression.source, FirErrors.USELESS_ELVIS_LEFT_IS_NULL)
+            }
+            return
+        }
+
         val lhsType = expression.lhs.resolvedType
         if (lhsType is ConeErrorType) return
         if (!lhsType.canBeNull(context.session)) {
-            if (context.languageVersionSettings.supportsFeature(LanguageFeature.EnableDfaWarningsInK2)) {
-                reporter.reportOn(expression.source, FirErrors.USELESS_ELVIS, lhsType, context)
+            if (LanguageFeature.EnableDfaWarningsInK2.isEnabled()) {
+                reporter.reportOn(expression.source, FirErrors.USELESS_ELVIS, lhsType)
             }
             return
         }
 
         if (expression.rhs.isNullLiteral) {
-            if (context.languageVersionSettings.supportsFeature(LanguageFeature.EnableDfaWarningsInK2)) {
-                reporter.reportOn(expression.source, FirErrors.USELESS_ELVIS_RIGHT_IS_NULL, context)
+            if (LanguageFeature.EnableDfaWarningsInK2.isEnabled()) {
+                reporter.reportOn(expression.source, FirErrors.USELESS_ELVIS_RIGHT_IS_NULL)
             }
         }
     }

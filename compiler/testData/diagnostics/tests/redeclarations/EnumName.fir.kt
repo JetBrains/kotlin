@@ -2,5 +2,7 @@
 enum class <!REDECLARATION, REDECLARATION!>A<!> {
     <!REDECLARATION!>name<!>,
     <!REDECLARATION!>ordinal<!>,
-    <!DEPRECATED_DECLARATION_OF_ENUM_ENTRY!>entries<!>,
+    <!DECLARATION_OF_ENUM_ENTRY_ENTRIES_ERROR!>entries<!>,
 }
+
+/* GENERATED_FIR_TAGS: enumDeclaration, enumEntry */

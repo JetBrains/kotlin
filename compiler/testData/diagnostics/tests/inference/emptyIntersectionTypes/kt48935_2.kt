@@ -12,3 +12,6 @@ fun main() {
     val func: (DoesNotImplementBase) -> Unit = { }
     exampleGenericFunction(func) // expected this to be a compilation error as the T: Base constraint should not be satisfied
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionalType, interfaceDeclaration, intersectionType, lambdaLiteral,
+localProperty, propertyDeclaration, typeConstraint, typeParameter */

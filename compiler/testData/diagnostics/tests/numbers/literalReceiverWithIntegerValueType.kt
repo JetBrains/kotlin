@@ -66,3 +66,5 @@ fun testByteOperatorInfixCall(c6: C<Byte>) {
     c6.takeT(<!INTEGER_OPERATOR_RESOLVE_WILL_CHANGE!>1 + 2<!>)
     c6.takeT(<!INTEGER_OPERATOR_RESOLVE_WILL_CHANGE!>1 shr 2<!>)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, nullableType, typeParameter */

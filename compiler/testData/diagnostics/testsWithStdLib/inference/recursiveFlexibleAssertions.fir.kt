@@ -85,3 +85,6 @@ fun test() {
     }
     <!DEBUG_INFO_EXPRESSION_TYPE("(AbstractAssert<*, out (kotlin.Any..kotlin.Any?)> & EnumerableAssert<*, out (kotlin.Comparable<kotlin.String & kotlin.Char> & java.io.Serializable..kotlin.Comparable<kotlin.String & kotlin.Char>? & java.io.Serializable?)>..AbstractAssert<*, out (kotlin.Any..kotlin.Any?)>? & EnumerableAssert<*, out (kotlin.Comparable<kotlin.String & kotlin.Char> & java.io.Serializable..kotlin.Comparable<kotlin.String & kotlin.Char>? & java.io.Serializable?)>?)")!>assertion<!>
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaFunction, javaProperty, localProperty, propertyDeclaration,
+starProjection, stringLiteral, whenExpression */

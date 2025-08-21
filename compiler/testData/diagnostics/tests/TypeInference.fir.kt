@@ -10,10 +10,13 @@ fun main() {
   val a : C<Int> = C();
   val x : C<in String> = C()
   val y : C<out String> = C()
-  val z : C<*> = <!CANNOT_INFER_PARAMETER_TYPE, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>C<!>()
+  val z : C<*> = <!CANNOT_INFER_PARAMETER_TYPE!>C<!>()
 
   val ba : C<Int> = bar();
   val bx : C<in String> = bar()
   val by : C<out String> = bar()
-  val bz : C<*> = <!CANNOT_INFER_PARAMETER_TYPE, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>bar<!>()
+  val bz : C<*> = <!CANNOT_INFER_PARAMETER_TYPE!>bar<!>()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, inProjection, localProperty, nullableType, outProjection,
+primaryConstructor, propertyDeclaration, starProjection, typeParameter */

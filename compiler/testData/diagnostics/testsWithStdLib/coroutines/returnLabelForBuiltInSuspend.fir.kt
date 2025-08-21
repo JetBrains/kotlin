@@ -1,5 +1,7 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // SKIP_TXT
+// LANGUAGE: -ParseLambdaWithSuspendModifier
+
 fun bar() {
     suspend {
         <!RETURN_FOR_BUILT_IN_SUSPEND!>return@suspend<!>
@@ -26,3 +28,5 @@ fun bar() {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, lambdaLiteral, localProperty, propertyDeclaration */

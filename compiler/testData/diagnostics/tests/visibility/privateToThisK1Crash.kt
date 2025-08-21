@@ -13,3 +13,6 @@ open class Base<in T>(t: T) {
 }
 
 class Derived<in T>(t: T) : Base<T>(t)
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, functionDeclaration, getter, in, lambdaLiteral, localProperty,
+nullableType, primaryConstructor, propertyDeclaration, propertyWithExtensionReceiver, stringLiteral, typeParameter */

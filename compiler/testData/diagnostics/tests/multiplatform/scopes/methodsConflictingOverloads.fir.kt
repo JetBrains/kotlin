@@ -38,3 +38,6 @@ actual abstract class D {
     actual <!CONFLICTING_OVERLOADS!>fun foo()<!> {}
     <!CONFLICTING_OVERLOADS!>fun <!ACTUAL_MISSING!>foo<!>()<!> {}
 }
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, functionDeclaration, interfaceDeclaration, override,
+primaryConstructor */

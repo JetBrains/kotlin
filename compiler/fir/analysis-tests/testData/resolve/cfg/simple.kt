@@ -7,3 +7,5 @@ fun test() {
     val y = x + 1
     foo()
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, functionDeclaration, integerLiteral, localProperty, propertyDeclaration */

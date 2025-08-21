@@ -12,3 +12,6 @@ fun foo(s: String) {
     // We don't have `strip` extension, so leave it for a while in gray list
     s.<!DEPRECATION!>strip<!>()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType, infix,
+integerLiteral, lambdaLiteral, nullableType, typeParameter, typeWithExtension */

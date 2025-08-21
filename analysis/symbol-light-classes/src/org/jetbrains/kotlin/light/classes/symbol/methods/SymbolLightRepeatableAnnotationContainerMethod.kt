@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -9,6 +9,7 @@ import com.intellij.psi.*
 import org.jetbrains.kotlin.asJava.classes.METHOD_INDEX_BASE
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.builtins.StandardNames
+import org.jetbrains.kotlin.light.classes.symbol.cachedValue
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassBase
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.InitializedModifiersBox
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightMemberModifierList
@@ -21,6 +22,7 @@ internal class SymbolLightRepeatableAnnotationContainerMethod(
     lightMemberOrigin = null,
     containingClass = containingClass,
     methodIndex = METHOD_INDEX_BASE,
+    isJvmExposedBoxed = false,
 ) {
     override fun getNameIdentifier(): PsiIdentifier? = null
     override fun isDeprecated(): Boolean = false
@@ -30,14 +32,12 @@ internal class SymbolLightRepeatableAnnotationContainerMethod(
     override fun getTypeParameterList(): PsiTypeParameterList? = null
     override fun isOverride(): Boolean = false
 
-    private val _modifierList by lazyPub {
+    override fun getModifierList(): PsiModifierList = cachedValue {
         SymbolLightMemberModifierList(
             containingDeclaration = this,
             modifiersBox = InitializedModifiersBox(PsiModifier.PUBLIC, PsiModifier.ABSTRACT),
         )
     }
-
-    override fun getModifierList(): PsiModifierList = _modifierList
 
     private val _parameterList by lazyPub {
         SymbolLightParameterList(this)
@@ -45,6 +45,7 @@ internal class SymbolLightRepeatableAnnotationContainerMethod(
 
     override fun getParameterList(): PsiParameterList = _parameterList
 
+    override fun isVarArgs(): Boolean = false
     override fun isConstructor(): Boolean = false
 
     private val _returnType by lazyPub {

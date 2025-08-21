@@ -15,6 +15,7 @@ FILE: annotationOnReceiver.kt
         }
     context(List<@ContextReceiverAnnotation(IntegerLiteral(9)) Short>, List<@ContextReceiverAnnotation() UInt>)
     public final? class MyClass : R|kotlin/Any| {
+        context(List<@ContextReceiverAnnotation(IntegerLiteral(9)) Short>, List<@ContextReceiverAnnotation() UInt>)
         public? [ContainingClassKey=MyClass] constructor(): R|MyClass| {
             super<R|kotlin/Any|>()
         }
@@ -22,10 +23,12 @@ FILE: annotationOnReceiver.kt
     }
     context(List<@ContextReceiverAnnotation(IntegerLiteral(10)) Short>, List<@ContextReceiverAnnotation() UInt>)
     public final? class MyClassWithExplicitConstructor : R|kotlin/Any| {
+        context(List<@ContextReceiverAnnotation(IntegerLiteral(10)) Short>, List<@ContextReceiverAnnotation() UInt>)
         public? [ContainingClassKey=MyClassWithExplicitConstructor] constructor(): R|MyClassWithExplicitConstructor| {
             super<R|kotlin/Any|>()
         }
 
+        context(List<@ContextReceiverAnnotation(IntegerLiteral(10)) Short>, List<@ContextReceiverAnnotation() UInt>)
         public? [ContainingClassKey=MyClassWithExplicitConstructor] constructor(i: Int): R|MyClassWithExplicitConstructor| {
             this<R|MyClassWithExplicitConstructor|>()
         }

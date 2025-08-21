@@ -16,3 +16,6 @@ interface T {
 class A {
     final <!NON_ABSTRACT_FUNCTION_WITH_NO_BODY!>fun foo()<!>
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, getter, integerLiteral, interfaceDeclaration,
+propertyDeclaration */

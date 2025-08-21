@@ -1,6 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
-// DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER -TOPLEVEL_TYPEALIASES_ONLY
+// DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER -TOPLEVEL_TYPEALIASES_ONLY -UNSUPPORTED_FEATURE
 // FILE: file1.kt
 package package1
 
@@ -25,3 +25,5 @@ import package2.Outer.A
 val testS: S = ""
 val testI: I = 42
 val testA: A = Any()
+
+/* GENERATED_FIR_TAGS: classDeclaration, integerLiteral, propertyDeclaration, stringLiteral, typeAliasDeclaration */

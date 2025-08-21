@@ -11,3 +11,5 @@ public abstract class OuterClass<T extends OuterClass<T>.InnerClass> {
 fun usage(o: OuterClass<*>.InnerClass) {
 
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, javaType, starProjection */

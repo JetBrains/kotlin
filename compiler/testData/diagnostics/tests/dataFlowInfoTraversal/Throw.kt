@@ -8,3 +8,6 @@ fun foo() {
     throw bar(<!DEBUG_INFO_SMARTCAST!>x<!>)
     <!UNREACHABLE_CODE!>throw bar(<!DEBUG_INFO_SMARTCAST!>x<!>)<!>
 }
+
+/* GENERATED_FIR_TAGS: equalityExpression, functionDeclaration, ifExpression, localProperty, nullableType,
+propertyDeclaration, smartcast */

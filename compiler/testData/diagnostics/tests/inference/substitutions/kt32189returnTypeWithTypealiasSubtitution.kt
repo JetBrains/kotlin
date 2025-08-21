@@ -36,3 +36,7 @@ fun problem() {
     val p = guess()
     consume(p ?: {})
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, elvisExpression, functionDeclaration, functionalType, lambdaLiteral,
+localProperty, nestedClass, nullableType, propertyDeclaration, stringLiteral, typeAliasDeclaration, typeParameter,
+typeWithExtension */

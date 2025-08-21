@@ -174,7 +174,7 @@ internal class EnumClassLowering(private val context: JvmBackendContext) : Class
 
         private fun buildEntriesField(valuesField: IrField): IrField = irClass.addField {
             name = Name.identifier(ENTRIES_FIELD_NAME)
-            type = context.ir.symbols.enumEntries.defaultType
+            type = context.symbols.enumEntries.defaultType
             visibility = DescriptorVisibilities.PRIVATE
             origin = IrDeclarationOrigin.FIELD_FOR_ENUM_ENTRIES
             isFinal = true
@@ -182,8 +182,8 @@ internal class EnumClassLowering(private val context: JvmBackendContext) : Class
         }.apply {
             initializer = context.createJvmIrBuilder(symbol).run {
                 irExprBody(
-                    irCall(this@EnumClassLowering.context.ir.symbols.createEnumEntries).apply {
-                        putValueArgument(0, irGetField(null, valuesField))
+                    irCall(this@EnumClassLowering.context.symbols.createEnumEntries).apply {
+                        arguments[0] = irGetField(null, valuesField)
                     }
                 )
             }
@@ -210,7 +210,7 @@ internal class EnumClassLowering(private val context: JvmBackendContext) : Class
                     addValueParameter(
                         "\$enum\$ordinal", context.irBuiltIns.intType, JvmLoweredDeclarationOrigin.ENUM_CONSTRUCTOR_SYNTHETIC_PARAMETER
                     )
-                    valueParameters += declaration.valueParameters.map { param ->
+                    parameters += declaration.parameters.map { param ->
                         param.copyTo(this).also { newParam ->
                             loweredEnumConstructorParameters[param.symbol] = newParam
                         }
@@ -228,15 +228,15 @@ internal class EnumClassLowering(private val context: JvmBackendContext) : Class
                     irExprBody(
                         when (body.kind) {
                             IrSyntheticBodyKind.ENUM_VALUES -> {
-                                irCall(this@EnumClassLowering.context.ir.symbols.objectCloneFunction, declaration.returnType).apply {
+                                irCall(this@EnumClassLowering.context.symbols.objectCloneFunction, declaration.returnType).apply {
                                     dispatchReceiver = irGetField(null, valuesField)
                                 }
                             }
 
                             IrSyntheticBodyKind.ENUM_VALUEOF ->
-                                irCall(backendContext.ir.symbols.enumValueOfFunction).apply {
-                                    putValueArgument(0, javaClassReference(irClass.defaultType))
-                                    putValueArgument(1, irGet(declaration.valueParameters[0]))
+                                irCall(backendContext.symbols.enumValueOfFunction).apply {
+                                    arguments[0] = javaClassReference(irClass.defaultType)
+                                    arguments[1] = irGet(declaration.parameters[0])
                                 }
 
                             IrSyntheticBodyKind.ENUM_ENTRIES -> {
@@ -300,15 +300,17 @@ internal class EnumClassLowering(private val context: JvmBackendContext) : Class
             ) {
                 call.copyTypeArgumentsFrom(original)
                 if (enumEntry != null) {
-                    call.putValueArgument(0, irString(enumEntry.name.asString()))
-                    call.putValueArgument(1, irInt(enumEntryOrdinals[enumEntry]!!))
+                    call.arguments[0] = irString(enumEntry.name.asString())
+                    call.arguments[1] = irInt(enumEntryOrdinals[enumEntry]!!)
                 } else {
                     val constructor = currentScope!!.scope.scopeOwnerSymbol as IrConstructorSymbol
-                    call.putValueArgument(0, irGet(constructor.owner.valueParameters[0]))
-                    call.putValueArgument(1, irGet(constructor.owner.valueParameters[1]))
+                    call.arguments[0] = irGet(constructor.owner.parameters[0])
+                    call.arguments[1] = irGet(constructor.owner.parameters[1])
                 }
-                for (index in 0 until original.valueArgumentsCount) {
-                    original.getValueArgument(index)?.let { call.putValueArgument(index + 2, it) }
+                for ((index, argument) in original.arguments.withIndex()) {
+                    if (argument != null) {
+                        call.arguments[index + 2] = argument
+                    }
                 }
             }
         }

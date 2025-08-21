@@ -16,3 +16,6 @@ fun test() {
     hidden(App::nullable, "foo")
     hiddenFun(App::nullableFun, "foo")
 }
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, functionDeclaration, nullableType, primaryConstructor,
+propertyDeclaration, stringLiteral, typeParameter */

@@ -7,10 +7,12 @@ KtNameReferenceExpression(175,180): 'check'
           receiverType = null
           returnType = {dependency3.AsymmetricAlias2<{dependency1.IntAlias=} kotlin.Int, {dependency2.AsymmetricAlias<{dependency1.BooleanAlias=} kotlin.Boolean, {dependency1.IntAlias=} kotlin.Int>=} kotlin.String>=} kotlin.collections.List<{dependency2.AsymmetricAlias<{dependency1.BooleanAlias=} kotlin.Boolean, {dependency1.IntAlias=} kotlin.Int>=} kotlin.String>
           symbol = list: {dependency3.AsymmetricAlias2<{dependency1.IntAlias=} kotlin.Int, {dependency2.AsymmetricAlias<{dependency1.BooleanAlias=} kotlin.Boolean, {dependency1.IntAlias=} kotlin.Int>=} kotlin.String>=} kotlin.collections.List<{dependency2.AsymmetricAlias<{dependency1.BooleanAlias=} kotlin.Boolean, {dependency1.IntAlias=} kotlin.Int>=} kotlin.String>
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = m
           isSafeNavigation = false
@@ -26,7 +28,9 @@ KtNameReferenceExpression(175,180): 'check'
               receiverType = null
               returnType = {dependency3.AsymmetricAlias2<{dependency1.IntAlias=} kotlin.Int, {dependency2.AsymmetricAlias<{dependency1.BooleanAlias=} kotlin.Boolean, {dependency1.IntAlias=} kotlin.Int>=} kotlin.String>=} kotlin.collections.List<{dependency2.AsymmetricAlias<{dependency1.BooleanAlias=} kotlin.Boolean, {dependency1.IntAlias=} kotlin.Int>=} kotlin.String>
               symbol = list: {dependency3.AsymmetricAlias2<{dependency1.IntAlias=} kotlin.Int, {dependency2.AsymmetricAlias<{dependency1.BooleanAlias=} kotlin.Boolean, {dependency1.IntAlias=} kotlin.Int>=} kotlin.String>=} kotlin.collections.List<{dependency2.AsymmetricAlias<{dependency1.BooleanAlias=} kotlin.Boolean, {dependency1.IntAlias=} kotlin.Int>=} kotlin.String>
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = dependency4/MyInterface.check
       typeArgumentsMapping = {}

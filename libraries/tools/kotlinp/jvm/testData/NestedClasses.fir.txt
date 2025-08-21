@@ -1,0 +1,92 @@
+// A.class
+// ------------------------------------------
+public abstract interface A : kotlin/Any {
+
+  // companion object: D
+
+  // nested class: B
+
+  // nested class: D
+
+  // module name: test-module
+
+  // has method bodies in interface
+
+  // is compiled in compatibility mode
+}
+// A$B.class
+// ------------------------------------------
+public abstract interface A.B : kotlin/Any {
+
+  // nested class: C
+
+  // module name: test-module
+
+  // has method bodies in interface
+
+  // is compiled in compatibility mode
+}
+// A$B$C.class
+// ------------------------------------------
+public abstract interface A.B.C : kotlin/Any {
+
+  // module name: test-module
+
+  // has method bodies in interface
+
+  // is compiled in compatibility mode
+}
+// A$D.class
+// ------------------------------------------
+public final companion object A.D : kotlin/Any {
+
+  // signature: <init>()V
+  private constructor()
+
+  // nested class: E
+
+  // nested class: F
+
+  // module name: test-module
+}
+// A$D$E.class
+// ------------------------------------------
+public final enum class A.D.E : kotlin/Enum<A.D.E> {
+
+  // signature: <init>(Ljava/lang/String;I)V
+  private constructor()
+
+  E1,
+
+  E2,
+
+  // module name: test-module
+
+  // has Enum.entries
+}
+// A$D$F.class
+// ------------------------------------------
+public sealed class A.D.F : kotlin/Any {
+
+  // signature: <init>()V
+  protected constructor()
+
+  // nested class: G
+
+  // sealed subclass: A.D.F.G
+
+  // module name: test-module
+}
+// A$D$F$G.class
+// ------------------------------------------
+public final class A.D.F.G : A.D.F {
+
+  // signature: <init>()V
+  public constructor()
+
+  // module name: test-module
+}
+// META-INF/test-module.kotlin_module
+// ------------------------------------------
+module {
+}

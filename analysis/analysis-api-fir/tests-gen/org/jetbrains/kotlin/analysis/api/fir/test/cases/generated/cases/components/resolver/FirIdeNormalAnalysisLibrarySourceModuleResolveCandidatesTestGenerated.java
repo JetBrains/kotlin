@@ -42,14 +42,8 @@ public class FirIdeNormalAnalysisLibrarySourceModuleResolveCandidatesTestGenerat
   }
 
   @Test
-  @TestMetadata("ActualizeBuiltins.kt")
-  public void testActualizeBuiltins() {
-    runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/ActualizeBuiltins.kt");
-  }
-
-  @Test
   public void testAllFilesPresentInSingleByPsi() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/singleByPsi"), Pattern.compile("^(.+)\\.kt$"), null, true, "withTestCompilerPluginEnabled", "withErrors", "missingDependency", "globallyDuplicateLibraries");
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/singleByPsi"), Pattern.compile("^(.+)\\.kt$"), null, true, "withTestCompilerPluginEnabled", "withErrors", "missingDependency");
   }
 
   @Test
@@ -857,6 +851,18 @@ public class FirIdeNormalAnalysisLibrarySourceModuleResolveCandidatesTestGenerat
   }
 
   @Test
+  @TestMetadata("javaSetterBuilderCall.kt")
+  public void testJavaSetterBuilderCall() {
+    runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/javaSetterBuilderCall.kt");
+  }
+
+  @Test
+  @TestMetadata("javaSetterCall.kt")
+  public void testJavaSetterCall() {
+    runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/javaSetterCall.kt");
+  }
+
+  @Test
   @TestMetadata("JsAsDynamic.kt")
   public void testJsAsDynamic() {
     runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/JsAsDynamic.kt");
@@ -1373,6 +1379,12 @@ public class FirIdeNormalAnalysisLibrarySourceModuleResolveCandidatesTestGenerat
   }
 
   @Test
+  @TestMetadata("suspendLambda.kt")
+  public void testSuspendLambda() {
+    runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/suspendLambda.kt");
+  }
+
+  @Test
   @TestMetadata("thisWithLabelToFunction_caretAtLabel.kt")
   public void testThisWithLabelToFunction_caretAtLabel() {
     runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/thisWithLabelToFunction_caretAtLabel.kt");
@@ -1463,6 +1475,12 @@ public class FirIdeNormalAnalysisLibrarySourceModuleResolveCandidatesTestGenerat
   }
 
   @Test
+  @TestMetadata("typealiasOfExpectTypeWithActualTypealias.kt")
+  public void testTypealiasOfExpectTypeWithActualTypealias() {
+    runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/typealiasOfExpectTypeWithActualTypealias.kt");
+  }
+
+  @Test
   @TestMetadata("unresolvableOperator_elvis_1.kt")
   public void testUnresolvableOperator_elvis_1() {
     runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/unresolvableOperator_elvis_1.kt");
@@ -1520,6 +1538,12 @@ public class FirIdeNormalAnalysisLibrarySourceModuleResolveCandidatesTestGenerat
   @TestMetadata("variableAsFunction.kt")
   public void testVariableAsFunction() {
     runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/variableAsFunction.kt");
+  }
+
+  @Test
+  @TestMetadata("variableAsFunctionWithKeywordParameterName.kt")
+  public void testVariableAsFunctionWithKeywordParameterName() {
+    runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/variableAsFunctionWithKeywordParameterName.kt");
   }
 
   @Test
@@ -1600,7 +1624,7 @@ public class FirIdeNormalAnalysisLibrarySourceModuleResolveCandidatesTestGenerat
   public class ArrayAccess {
     @Test
     public void testAllFilesPresentInArrayAccess() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/singleByPsi/arrayAccess"), Pattern.compile("^(.+)\\.kt$"), null, true, "withTestCompilerPluginEnabled", "withErrors", "missingDependency", "globallyDuplicateLibraries");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/singleByPsi/arrayAccess"), Pattern.compile("^(.+)\\.kt$"), null, true, "withTestCompilerPluginEnabled", "withErrors", "missingDependency");
     }
 
     @Test
@@ -1640,7 +1664,7 @@ public class FirIdeNormalAnalysisLibrarySourceModuleResolveCandidatesTestGenerat
   public class CallableReferences {
     @Test
     public void testAllFilesPresentInCallableReferences() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/singleByPsi/callableReferences"), Pattern.compile("^(.+)\\.kt$"), null, true, "withTestCompilerPluginEnabled", "withErrors", "missingDependency", "globallyDuplicateLibraries");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/singleByPsi/callableReferences"), Pattern.compile("^(.+)\\.kt$"), null, true, "withTestCompilerPluginEnabled", "withErrors", "missingDependency");
     }
 
     @Test
@@ -1800,7 +1824,7 @@ public class FirIdeNormalAnalysisLibrarySourceModuleResolveCandidatesTestGenerat
   public class CodeFragment {
     @Test
     public void testAllFilesPresentInCodeFragment() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/singleByPsi/codeFragment"), Pattern.compile("^(.+)\\.kt$"), null, true, "withTestCompilerPluginEnabled", "withErrors", "missingDependency", "globallyDuplicateLibraries");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/singleByPsi/codeFragment"), Pattern.compile("^(.+)\\.kt$"), null, true, "withTestCompilerPluginEnabled", "withErrors", "missingDependency");
     }
 
     @Nested
@@ -1809,7 +1833,7 @@ public class FirIdeNormalAnalysisLibrarySourceModuleResolveCandidatesTestGenerat
     public class BlockCodeFragment {
       @Test
       public void testAllFilesPresentInBlockCodeFragment() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/singleByPsi/codeFragment/blockCodeFragment"), Pattern.compile("^(.+)\\.kt$"), null, true, "withTestCompilerPluginEnabled", "withErrors", "missingDependency", "globallyDuplicateLibraries");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/singleByPsi/codeFragment/blockCodeFragment"), Pattern.compile("^(.+)\\.kt$"), null, true, "withTestCompilerPluginEnabled", "withErrors", "missingDependency");
       }
 
       @Test
@@ -1877,6 +1901,12 @@ public class FirIdeNormalAnalysisLibrarySourceModuleResolveCandidatesTestGenerat
       public void testSecondStatement() {
         runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/codeFragment/blockCodeFragment/SecondStatement.kt");
       }
+
+      @Test
+      @TestMetadata("UnsafeCastInLoop.kt")
+      public void testUnsafeCastInLoop() {
+        runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/codeFragment/blockCodeFragment/UnsafeCastInLoop.kt");
+      }
     }
 
     @Nested
@@ -1885,7 +1915,7 @@ public class FirIdeNormalAnalysisLibrarySourceModuleResolveCandidatesTestGenerat
     public class ExpressionCodeFragment {
       @Test
       public void testAllFilesPresentInExpressionCodeFragment() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/singleByPsi/codeFragment/expressionCodeFragment"), Pattern.compile("^(.+)\\.kt$"), null, true, "withTestCompilerPluginEnabled", "withErrors", "missingDependency", "globallyDuplicateLibraries");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/singleByPsi/codeFragment/expressionCodeFragment"), Pattern.compile("^(.+)\\.kt$"), null, true, "withTestCompilerPluginEnabled", "withErrors", "missingDependency");
       }
 
       @Test
@@ -1955,7 +1985,7 @@ public class FirIdeNormalAnalysisLibrarySourceModuleResolveCandidatesTestGenerat
     public class TypeCodeFragment {
       @Test
       public void testAllFilesPresentInTypeCodeFragment() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/singleByPsi/codeFragment/typeCodeFragment"), Pattern.compile("^(.+)\\.kt$"), null, true, "withTestCompilerPluginEnabled", "withErrors", "missingDependency", "globallyDuplicateLibraries");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/singleByPsi/codeFragment/typeCodeFragment"), Pattern.compile("^(.+)\\.kt$"), null, true, "withTestCompilerPluginEnabled", "withErrors", "missingDependency");
       }
 
       @Test
@@ -2014,7 +2044,7 @@ public class FirIdeNormalAnalysisLibrarySourceModuleResolveCandidatesTestGenerat
   public class ConstructorDelegatingReference {
     @Test
     public void testAllFilesPresentInConstructorDelegatingReference() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/singleByPsi/constructorDelegatingReference"), Pattern.compile("^(.+)\\.kt$"), null, true, "withTestCompilerPluginEnabled", "withErrors", "missingDependency", "globallyDuplicateLibraries");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/singleByPsi/constructorDelegatingReference"), Pattern.compile("^(.+)\\.kt$"), null, true, "withTestCompilerPluginEnabled", "withErrors", "missingDependency");
     }
 
     @Test
@@ -2054,7 +2084,7 @@ public class FirIdeNormalAnalysisLibrarySourceModuleResolveCandidatesTestGenerat
   public class ContextParameters {
     @Test
     public void testAllFilesPresentInContextParameters() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/singleByPsi/contextParameters"), Pattern.compile("^(.+)\\.kt$"), null, true, "withTestCompilerPluginEnabled", "withErrors", "missingDependency", "globallyDuplicateLibraries");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/singleByPsi/contextParameters"), Pattern.compile("^(.+)\\.kt$"), null, true, "withTestCompilerPluginEnabled", "withErrors", "missingDependency");
     }
 
     @Test
@@ -2106,6 +2136,60 @@ public class FirIdeNormalAnalysisLibrarySourceModuleResolveCandidatesTestGenerat
     }
 
     @Test
+    @TestMetadata("functionDeclarationSiteSubstitution.kt")
+    public void testFunctionDeclarationSiteSubstitution() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/contextParameters/functionDeclarationSiteSubstitution.kt");
+    }
+
+    @Test
+    @TestMetadata("functionFromContextReceiverFromClass.kt")
+    public void testFunctionFromContextReceiverFromClass() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/contextParameters/functionFromContextReceiverFromClass.kt");
+    }
+
+    @Test
+    @TestMetadata("functionFromContextReceiverFromComplexCase.kt")
+    public void testFunctionFromContextReceiverFromComplexCase() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/contextParameters/functionFromContextReceiverFromComplexCase.kt");
+    }
+
+    @Test
+    @TestMetadata("functionFromContextReceiverFromComplexCase2.kt")
+    public void testFunctionFromContextReceiverFromComplexCase2() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/contextParameters/functionFromContextReceiverFromComplexCase2.kt");
+    }
+
+    @Test
+    @TestMetadata("functionFromContextReceiverFromFunction.kt")
+    public void testFunctionFromContextReceiverFromFunction() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/contextParameters/functionFromContextReceiverFromFunction.kt");
+    }
+
+    @Test
+    @TestMetadata("functionFromContextReceiverFromFunctionComplexCase.kt")
+    public void testFunctionFromContextReceiverFromFunctionComplexCase() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/contextParameters/functionFromContextReceiverFromFunctionComplexCase.kt");
+    }
+
+    @Test
+    @TestMetadata("functionFromContextReceiverFromFunctionComplexCaseWithReceiver.kt")
+    public void testFunctionFromContextReceiverFromFunctionComplexCaseWithReceiver() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/contextParameters/functionFromContextReceiverFromFunctionComplexCaseWithReceiver.kt");
+    }
+
+    @Test
+    @TestMetadata("functionFromContextReceiverFromProperty.kt")
+    public void testFunctionFromContextReceiverFromProperty() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/contextParameters/functionFromContextReceiverFromProperty.kt");
+    }
+
+    @Test
+    @TestMetadata("functionFromContextReceiverFromProperty2.kt")
+    public void testFunctionFromContextReceiverFromProperty2() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/contextParameters/functionFromContextReceiverFromProperty2.kt");
+    }
+
+    @Test
     @TestMetadata("functionFromFunctionExplicitly.kt")
     public void testFunctionFromFunctionExplicitly() {
       runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/contextParameters/functionFromFunctionExplicitly.kt");
@@ -2115,6 +2199,30 @@ public class FirIdeNormalAnalysisLibrarySourceModuleResolveCandidatesTestGenerat
     @TestMetadata("functionFromPropertyExplicitly.kt")
     public void testFunctionFromPropertyExplicitly() {
       runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/contextParameters/functionFromPropertyExplicitly.kt");
+    }
+
+    @Test
+    @TestMetadata("functionNotEnoughContextWithContextParameter.kt")
+    public void testFunctionNotEnoughContextWithContextParameter() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/contextParameters/functionNotEnoughContextWithContextParameter.kt");
+    }
+
+    @Test
+    @TestMetadata("functionNotEnoughContextWithContextParameterAndUnrelatedReceiver.kt")
+    public void testFunctionNotEnoughContextWithContextParameterAndUnrelatedReceiver() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/contextParameters/functionNotEnoughContextWithContextParameterAndUnrelatedReceiver.kt");
+    }
+
+    @Test
+    @TestMetadata("functionNotEnoughContextWithContextReceiver.kt")
+    public void testFunctionNotEnoughContextWithContextReceiver() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/contextParameters/functionNotEnoughContextWithContextReceiver.kt");
+    }
+
+    @Test
+    @TestMetadata("functionNotEnoughContextWithReceiver.kt")
+    public void testFunctionNotEnoughContextWithReceiver() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/contextParameters/functionNotEnoughContextWithReceiver.kt");
     }
 
     @Test
@@ -2136,6 +2244,78 @@ public class FirIdeNormalAnalysisLibrarySourceModuleResolveCandidatesTestGenerat
     }
 
     @Test
+    @TestMetadata("functionUseSiteSubstitution.kt")
+    public void testFunctionUseSiteSubstitution() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/contextParameters/functionUseSiteSubstitution.kt");
+    }
+
+    @Test
+    @TestMetadata("functionUseSiteSubstitution2.kt")
+    public void testFunctionUseSiteSubstitution2() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/contextParameters/functionUseSiteSubstitution2.kt");
+    }
+
+    @Test
+    @TestMetadata("functionWithReceiverAndContext.kt")
+    public void testFunctionWithReceiverAndContext() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/contextParameters/functionWithReceiverAndContext.kt");
+    }
+
+    @Test
+    @TestMetadata("functionWithUnresolvedReceiverAndContext.kt")
+    public void testFunctionWithUnresolvedReceiverAndContext() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/contextParameters/functionWithUnresolvedReceiverAndContext.kt");
+    }
+
+    @Test
+    @TestMetadata("functionWithoutContext.kt")
+    public void testFunctionWithoutContext() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/contextParameters/functionWithoutContext.kt");
+    }
+
+    @Test
+    @TestMetadata("implicitInvoke.kt")
+    public void testImplicitInvoke() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/contextParameters/implicitInvoke.kt");
+    }
+
+    @Test
+    @TestMetadata("implicitInvoke2.kt")
+    public void testImplicitInvoke2() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/contextParameters/implicitInvoke2.kt");
+    }
+
+    @Test
+    @TestMetadata("propertyDeclarationSiteSubstitution.kt")
+    public void testPropertyDeclarationSiteSubstitution() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/contextParameters/propertyDeclarationSiteSubstitution.kt");
+    }
+
+    @Test
+    @TestMetadata("propertyNotEnoughContextWithContextParameter.kt")
+    public void testPropertyNotEnoughContextWithContextParameter() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/contextParameters/propertyNotEnoughContextWithContextParameter.kt");
+    }
+
+    @Test
+    @TestMetadata("propertyNotEnoughContextWithContextParameterAndUnrelatedReceiver.kt")
+    public void testPropertyNotEnoughContextWithContextParameterAndUnrelatedReceiver() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/contextParameters/propertyNotEnoughContextWithContextParameterAndUnrelatedReceiver.kt");
+    }
+
+    @Test
+    @TestMetadata("propertyNotEnoughContextWithContextReceiver.kt")
+    public void testPropertyNotEnoughContextWithContextReceiver() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/contextParameters/propertyNotEnoughContextWithContextReceiver.kt");
+    }
+
+    @Test
+    @TestMetadata("propertyNotEnoughContextWithReceiver.kt")
+    public void testPropertyNotEnoughContextWithReceiver() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/contextParameters/propertyNotEnoughContextWithReceiver.kt");
+    }
+
+    @Test
     @TestMetadata("propertyOutsideClass.kt")
     public void testPropertyOutsideClass() {
       runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/contextParameters/propertyOutsideClass.kt");
@@ -2152,6 +2332,54 @@ public class FirIdeNormalAnalysisLibrarySourceModuleResolveCandidatesTestGenerat
     public void testPropertyUsageInsideClass() {
       runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/contextParameters/propertyUsageInsideClass.kt");
     }
+
+    @Test
+    @TestMetadata("propertyUseSiteSubstitution.kt")
+    public void testPropertyUseSiteSubstitution() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/contextParameters/propertyUseSiteSubstitution.kt");
+    }
+
+    @Test
+    @TestMetadata("propertyUseSiteSubstitution2.kt")
+    public void testPropertyUseSiteSubstitution2() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/contextParameters/propertyUseSiteSubstitution2.kt");
+    }
+
+    @Test
+    @TestMetadata("propertyWithReceiverAndContext.kt")
+    public void testPropertyWithReceiverAndContext() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/contextParameters/propertyWithReceiverAndContext.kt");
+    }
+
+    @Test
+    @TestMetadata("propertyWithUnresolvedReceiverAndContext.kt")
+    public void testPropertyWithUnresolvedReceiverAndContext() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/contextParameters/propertyWithUnresolvedReceiverAndContext.kt");
+    }
+
+    @Test
+    @TestMetadata("propertyWithoutContext.kt")
+    public void testPropertyWithoutContext() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/contextParameters/propertyWithoutContext.kt");
+    }
+
+    @Test
+    @TestMetadata("smartCastedContextParameterFromFunction.kt")
+    public void testSmartCastedContextParameterFromFunction() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/contextParameters/smartCastedContextParameterFromFunction.kt");
+    }
+
+    @Test
+    @TestMetadata("smartCastedContextParameterFromFunction2.kt")
+    public void testSmartCastedContextParameterFromFunction2() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/contextParameters/smartCastedContextParameterFromFunction2.kt");
+    }
+
+    @Test
+    @TestMetadata("smartCastedContextParameterWithImplicitInvoke.kt")
+    public void testSmartCastedContextParameterWithImplicitInvoke() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/contextParameters/smartCastedContextParameterWithImplicitInvoke.kt");
+    }
   }
 
   @Nested
@@ -2160,7 +2388,7 @@ public class FirIdeNormalAnalysisLibrarySourceModuleResolveCandidatesTestGenerat
   public class DanglingAnnotations {
     @Test
     public void testAllFilesPresentInDanglingAnnotations() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/singleByPsi/danglingAnnotations"), Pattern.compile("^(.+)\\.kt$"), null, true, "withTestCompilerPluginEnabled", "withErrors", "missingDependency", "globallyDuplicateLibraries");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/singleByPsi/danglingAnnotations"), Pattern.compile("^(.+)\\.kt$"), null, true, "withTestCompilerPluginEnabled", "withErrors", "missingDependency");
     }
 
     @Test
@@ -2206,7 +2434,7 @@ public class FirIdeNormalAnalysisLibrarySourceModuleResolveCandidatesTestGenerat
   public class DelegatedPropertyAccessors {
     @Test
     public void testAllFilesPresentInDelegatedPropertyAccessors() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/singleByPsi/delegatedPropertyAccessors"), Pattern.compile("^(.+)\\.kt$"), null, true, "withTestCompilerPluginEnabled", "withErrors", "missingDependency", "globallyDuplicateLibraries");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/singleByPsi/delegatedPropertyAccessors"), Pattern.compile("^(.+)\\.kt$"), null, true, "withTestCompilerPluginEnabled", "withErrors", "missingDependency");
     }
 
     @Nested
@@ -2215,7 +2443,7 @@ public class FirIdeNormalAnalysisLibrarySourceModuleResolveCandidatesTestGenerat
     public class InSource {
       @Test
       public void testAllFilesPresentInInSource() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/singleByPsi/delegatedPropertyAccessors/inSource"), Pattern.compile("^(.+)\\.kt$"), null, true, "withTestCompilerPluginEnabled", "withErrors", "missingDependency", "globallyDuplicateLibraries");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/singleByPsi/delegatedPropertyAccessors/inSource"), Pattern.compile("^(.+)\\.kt$"), null, true, "withTestCompilerPluginEnabled", "withErrors", "missingDependency");
       }
 
       @Test
@@ -2261,7 +2489,7 @@ public class FirIdeNormalAnalysisLibrarySourceModuleResolveCandidatesTestGenerat
     public class InStandardLibrary {
       @Test
       public void testAllFilesPresentInInStandardLibrary() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/singleByPsi/delegatedPropertyAccessors/inStandardLibrary"), Pattern.compile("^(.+)\\.kt$"), null, true, "withTestCompilerPluginEnabled", "withErrors", "missingDependency", "globallyDuplicateLibraries");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/singleByPsi/delegatedPropertyAccessors/inStandardLibrary"), Pattern.compile("^(.+)\\.kt$"), null, true, "withTestCompilerPluginEnabled", "withErrors", "missingDependency");
       }
 
       @Test
@@ -2284,7 +2512,7 @@ public class FirIdeNormalAnalysisLibrarySourceModuleResolveCandidatesTestGenerat
   public class Expressions {
     @Test
     public void testAllFilesPresentInExpressions() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/singleByPsi/expressions"), Pattern.compile("^(.+)\\.kt$"), null, true, "withTestCompilerPluginEnabled", "withErrors", "missingDependency", "globallyDuplicateLibraries");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/singleByPsi/expressions"), Pattern.compile("^(.+)\\.kt$"), null, true, "withTestCompilerPluginEnabled", "withErrors", "missingDependency");
     }
 
     @Test
@@ -2339,6 +2567,12 @@ public class FirIdeNormalAnalysisLibrarySourceModuleResolveCandidatesTestGenerat
     @TestMetadata("arrayAccessConvention_op.kt")
     public void testArrayAccessConvention_op() {
       runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/expressions/arrayAccessConvention_op.kt");
+    }
+
+    @Test
+    @TestMetadata("candidateWithImplicitReturnType.kt")
+    public void testCandidateWithImplicitReturnType() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/expressions/candidateWithImplicitReturnType.kt");
     }
 
     @Test
@@ -2444,6 +2678,12 @@ public class FirIdeNormalAnalysisLibrarySourceModuleResolveCandidatesTestGenerat
     }
 
     @Test
+    @TestMetadata("stringConcatenation.kt")
+    public void testStringConcatenation() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/expressions/stringConcatenation.kt");
+    }
+
+    @Test
     @TestMetadata("unaryMinus.kt")
     public void testUnaryMinus() {
       runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/expressions/unaryMinus.kt");
@@ -2486,7 +2726,7 @@ public class FirIdeNormalAnalysisLibrarySourceModuleResolveCandidatesTestGenerat
   public class ForLoopIn {
     @Test
     public void testAllFilesPresentInForLoopIn() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/singleByPsi/forLoopIn"), Pattern.compile("^(.+)\\.kt$"), null, true, "withTestCompilerPluginEnabled", "withErrors", "missingDependency", "globallyDuplicateLibraries");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/singleByPsi/forLoopIn"), Pattern.compile("^(.+)\\.kt$"), null, true, "withTestCompilerPluginEnabled", "withErrors", "missingDependency");
     }
 
     @Nested
@@ -2495,7 +2735,7 @@ public class FirIdeNormalAnalysisLibrarySourceModuleResolveCandidatesTestGenerat
     public class InBuiltIns {
       @Test
       public void testAllFilesPresentInInBuiltIns() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/singleByPsi/forLoopIn/inBuiltIns"), Pattern.compile("^(.+)\\.kt$"), null, true, "withTestCompilerPluginEnabled", "withErrors", "missingDependency", "globallyDuplicateLibraries");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/singleByPsi/forLoopIn/inBuiltIns"), Pattern.compile("^(.+)\\.kt$"), null, true, "withTestCompilerPluginEnabled", "withErrors", "missingDependency");
       }
 
       @Test
@@ -2517,7 +2757,7 @@ public class FirIdeNormalAnalysisLibrarySourceModuleResolveCandidatesTestGenerat
     public class InLibrary {
       @Test
       public void testAllFilesPresentInInLibrary() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/singleByPsi/forLoopIn/inLibrary"), Pattern.compile("^(.+)\\.kt$"), null, true, "withTestCompilerPluginEnabled", "withErrors", "missingDependency", "globallyDuplicateLibraries");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/singleByPsi/forLoopIn/inLibrary"), Pattern.compile("^(.+)\\.kt$"), null, true, "withTestCompilerPluginEnabled", "withErrors", "missingDependency");
       }
 
       @Test
@@ -2539,7 +2779,7 @@ public class FirIdeNormalAnalysisLibrarySourceModuleResolveCandidatesTestGenerat
 
       @Test
       public void testAllFilesPresentInInSource() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/singleByPsi/forLoopIn/inSource"), Pattern.compile("^(.+)\\.kt$"), null, true, "withTestCompilerPluginEnabled", "withErrors", "missingDependency", "globallyDuplicateLibraries");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/singleByPsi/forLoopIn/inSource"), Pattern.compile("^(.+)\\.kt$"), null, true, "withTestCompilerPluginEnabled", "withErrors", "missingDependency");
       }
 
       @Test
@@ -2551,12 +2791,34 @@ public class FirIdeNormalAnalysisLibrarySourceModuleResolveCandidatesTestGenerat
   }
 
   @Nested
+  @TestMetadata("analysis/analysis-api/testData/components/resolver/singleByPsi/globallyDuplicateLibraries")
+  @TestDataPath("$PROJECT_ROOT")
+  public class GloballyDuplicateLibraries {
+    @Test
+    public void testAllFilesPresentInGloballyDuplicateLibraries() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/singleByPsi/globallyDuplicateLibraries"), Pattern.compile("^(.+)\\.kt$"), null, true, "withTestCompilerPluginEnabled", "withErrors", "missingDependency");
+    }
+
+    @Test
+    @TestMetadata("functionCallsInIndependentModulesWithGloballyDuplicateJavaLibrary.kt")
+    public void testFunctionCallsInIndependentModulesWithGloballyDuplicateJavaLibrary() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/globallyDuplicateLibraries/functionCallsInIndependentModulesWithGloballyDuplicateJavaLibrary.kt");
+    }
+
+    @Test
+    @TestMetadata("functionCallsInIndependentModulesWithGloballyDuplicateLibrary.kt")
+    public void testFunctionCallsInIndependentModulesWithGloballyDuplicateLibrary() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/globallyDuplicateLibraries/functionCallsInIndependentModulesWithGloballyDuplicateLibrary.kt");
+    }
+  }
+
+  @Nested
   @TestMetadata("analysis/analysis-api/testData/components/resolver/singleByPsi/invoke")
   @TestDataPath("$PROJECT_ROOT")
   public class Invoke {
     @Test
     public void testAllFilesPresentInInvoke() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/singleByPsi/invoke"), Pattern.compile("^(.+)\\.kt$"), null, true, "withTestCompilerPluginEnabled", "withErrors", "missingDependency", "globallyDuplicateLibraries");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/singleByPsi/invoke"), Pattern.compile("^(.+)\\.kt$"), null, true, "withTestCompilerPluginEnabled", "withErrors", "missingDependency");
     }
 
     @Test
@@ -2667,7 +2929,7 @@ public class FirIdeNormalAnalysisLibrarySourceModuleResolveCandidatesTestGenerat
     public class OnObjects {
       @Test
       public void testAllFilesPresentInOnObjects() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/singleByPsi/invoke/onObjects"), Pattern.compile("^(.+)\\.kt$"), null, true, "withTestCompilerPluginEnabled", "withErrors", "missingDependency", "globallyDuplicateLibraries");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/singleByPsi/invoke/onObjects"), Pattern.compile("^(.+)\\.kt$"), null, true, "withTestCompilerPluginEnabled", "withErrors", "missingDependency");
       }
 
       @Test
@@ -2692,6 +2954,12 @@ public class FirIdeNormalAnalysisLibrarySourceModuleResolveCandidatesTestGenerat
       @TestMetadata("companionObjectWithName2.kt")
       public void testCompanionObjectWithName2() {
         runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/invoke/onObjects/companionObjectWithName2.kt");
+      }
+
+      @Test
+      @TestMetadata("companionObject_typeAliased.kt")
+      public void testCompanionObject_typeAliased() {
+        runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/invoke/onObjects/companionObject_typeAliased.kt");
       }
 
       @Test
@@ -2729,76 +2997,12 @@ public class FirIdeNormalAnalysisLibrarySourceModuleResolveCandidatesTestGenerat
       public void testSimpleObject2() {
         runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/invoke/onObjects/simpleObject2.kt");
       }
-    }
-  }
 
-  @Nested
-  @TestMetadata("analysis/analysis-api/testData/components/resolver/singleByPsi/invokeOnObjects")
-  @TestDataPath("$PROJECT_ROOT")
-  public class InvokeOnObjects {
-    @Test
-    public void testAllFilesPresentInInvokeOnObjects() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/singleByPsi/invokeOnObjects"), Pattern.compile("^(.+)\\.kt$"), null, true, "withTestCompilerPluginEnabled", "withErrors", "missingDependency", "globallyDuplicateLibraries");
-    }
-
-    @Test
-    @TestMetadata("companionObject1.kt")
-    public void testCompanionObject1() {
-      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/invokeOnObjects/companionObject1.kt");
-    }
-
-    @Test
-    @TestMetadata("companionObject2.kt")
-    public void testCompanionObject2() {
-      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/invokeOnObjects/companionObject2.kt");
-    }
-
-    @Test
-    @TestMetadata("companionObjectWithName1.kt")
-    public void testCompanionObjectWithName1() {
-      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/invokeOnObjects/companionObjectWithName1.kt");
-    }
-
-    @Test
-    @TestMetadata("companionObjectWithName2.kt")
-    public void testCompanionObjectWithName2() {
-      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/invokeOnObjects/companionObjectWithName2.kt");
-    }
-
-    @Test
-    @TestMetadata("nestedObject1.kt")
-    public void testNestedObject1() {
-      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/invokeOnObjects/nestedObject1.kt");
-    }
-
-    @Test
-    @TestMetadata("nestedObject2.kt")
-    public void testNestedObject2() {
-      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/invokeOnObjects/nestedObject2.kt");
-    }
-
-    @Test
-    @TestMetadata("nestedObject3.kt")
-    public void testNestedObject3() {
-      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/invokeOnObjects/nestedObject3.kt");
-    }
-
-    @Test
-    @TestMetadata("nestedObject4.kt")
-    public void testNestedObject4() {
-      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/invokeOnObjects/nestedObject4.kt");
-    }
-
-    @Test
-    @TestMetadata("simpleObject1.kt")
-    public void testSimpleObject1() {
-      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/invokeOnObjects/simpleObject1.kt");
-    }
-
-    @Test
-    @TestMetadata("simpleObject2.kt")
-    public void testSimpleObject2() {
-      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/invokeOnObjects/simpleObject2.kt");
+      @Test
+      @TestMetadata("simpleObject_typeAliased.kt")
+      public void testSimpleObject_typeAliased() {
+        runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/invoke/onObjects/simpleObject_typeAliased.kt");
+      }
     }
   }
 
@@ -2808,7 +3012,7 @@ public class FirIdeNormalAnalysisLibrarySourceModuleResolveCandidatesTestGenerat
   public class Java {
     @Test
     public void testAllFilesPresentInJava() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/singleByPsi/java"), Pattern.compile("^(.+)\\.kt$"), null, true, "withTestCompilerPluginEnabled", "withErrors", "missingDependency", "globallyDuplicateLibraries");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/singleByPsi/java"), Pattern.compile("^(.+)\\.kt$"), null, true, "withTestCompilerPluginEnabled", "withErrors", "missingDependency");
     }
 
     @Test
@@ -2877,13 +3081,37 @@ public class FirIdeNormalAnalysisLibrarySourceModuleResolveCandidatesTestGenerat
       runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/java/SyntheticProperty.kt");
     }
 
+    @Test
+    @TestMetadata("SyntheticPropertyJavaOverride.kt")
+    public void testSyntheticPropertyJavaOverride() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/java/SyntheticPropertyJavaOverride.kt");
+    }
+
+    @Test
+    @TestMetadata("SyntheticPropertyJavaOverrideGeneric.kt")
+    public void testSyntheticPropertyJavaOverrideGeneric() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/java/SyntheticPropertyJavaOverrideGeneric.kt");
+    }
+
+    @Test
+    @TestMetadata("SyntheticPropertyKotlinOverride.kt")
+    public void testSyntheticPropertyKotlinOverride() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/java/SyntheticPropertyKotlinOverride.kt");
+    }
+
+    @Test
+    @TestMetadata("SyntheticPropertyKotlinOverrideGeneric.kt")
+    public void testSyntheticPropertyKotlinOverrideGeneric() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/java/SyntheticPropertyKotlinOverrideGeneric.kt");
+    }
+
     @Nested
     @TestMetadata("analysis/analysis-api/testData/components/resolver/singleByPsi/java/enumWithCustomGetName")
     @TestDataPath("$PROJECT_ROOT")
     public class EnumWithCustomGetName {
       @Test
       public void testAllFilesPresentInEnumWithCustomGetName() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/singleByPsi/java/enumWithCustomGetName"), Pattern.compile("^(.+)\\.kt$"), null, true, "withTestCompilerPluginEnabled", "withErrors", "missingDependency", "globallyDuplicateLibraries");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/singleByPsi/java/enumWithCustomGetName"), Pattern.compile("^(.+)\\.kt$"), null, true, "withTestCompilerPluginEnabled", "withErrors", "missingDependency");
       }
 
       @Test
@@ -2918,7 +3146,7 @@ public class FirIdeNormalAnalysisLibrarySourceModuleResolveCandidatesTestGenerat
   public class KDoc {
     @Test
     public void testAllFilesPresentInKDoc() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/singleByPsi/kDoc"), Pattern.compile("^(.+)\\.kt$"), null, true, "withTestCompilerPluginEnabled", "withErrors", "missingDependency", "globallyDuplicateLibraries");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/singleByPsi/kDoc"), Pattern.compile("^(.+)\\.kt$"), null, true, "withTestCompilerPluginEnabled", "withErrors", "missingDependency");
     }
 
     @Nested
@@ -2927,7 +3155,7 @@ public class FirIdeNormalAnalysisLibrarySourceModuleResolveCandidatesTestGenerat
     public class CompanionObject {
       @Test
       public void testAllFilesPresentInCompanionObject() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/singleByPsi/kDoc/companionObject"), Pattern.compile("^(.+)\\.kt$"), null, true, "withTestCompilerPluginEnabled", "withErrors", "missingDependency", "globallyDuplicateLibraries");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/singleByPsi/kDoc/companionObject"), Pattern.compile("^(.+)\\.kt$"), null, true, "withTestCompilerPluginEnabled", "withErrors", "missingDependency");
       }
 
       @Test
@@ -3003,7 +3231,7 @@ public class FirIdeNormalAnalysisLibrarySourceModuleResolveCandidatesTestGenerat
     public class Extensions {
       @Test
       public void testAllFilesPresentInExtensions() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/singleByPsi/kDoc/extensions"), Pattern.compile("^(.+)\\.kt$"), null, true, "withTestCompilerPluginEnabled", "withErrors", "missingDependency", "globallyDuplicateLibraries");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/singleByPsi/kDoc/extensions"), Pattern.compile("^(.+)\\.kt$"), null, true, "withTestCompilerPluginEnabled", "withErrors", "missingDependency");
       }
 
       @Test
@@ -3090,7 +3318,7 @@ public class FirIdeNormalAnalysisLibrarySourceModuleResolveCandidatesTestGenerat
       public class Generics {
         @Test
         public void testAllFilesPresentInGenerics() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/singleByPsi/kDoc/extensions/generics"), Pattern.compile("^(.+)\\.kt$"), null, true, "withTestCompilerPluginEnabled", "withErrors", "missingDependency", "globallyDuplicateLibraries");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/singleByPsi/kDoc/extensions/generics"), Pattern.compile("^(.+)\\.kt$"), null, true, "withTestCompilerPluginEnabled", "withErrors", "missingDependency");
         }
 
         @Test
@@ -3119,7 +3347,7 @@ public class FirIdeNormalAnalysisLibrarySourceModuleResolveCandidatesTestGenerat
     public class Imports {
       @Test
       public void testAllFilesPresentInImports() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/singleByPsi/kDoc/imports"), Pattern.compile("^(.+)\\.kt$"), null, true, "withTestCompilerPluginEnabled", "withErrors", "missingDependency", "globallyDuplicateLibraries");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/singleByPsi/kDoc/imports"), Pattern.compile("^(.+)\\.kt$"), null, true, "withTestCompilerPluginEnabled", "withErrors", "missingDependency");
       }
 
       @Test
@@ -3147,7 +3375,7 @@ public class FirIdeNormalAnalysisLibrarySourceModuleResolveCandidatesTestGenerat
     public class JavaDeclarations {
       @Test
       public void testAllFilesPresentInJavaDeclarations() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/singleByPsi/kDoc/javaDeclarations"), Pattern.compile("^(.+)\\.kt$"), null, true, "withTestCompilerPluginEnabled", "withErrors", "missingDependency", "globallyDuplicateLibraries");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/singleByPsi/kDoc/javaDeclarations"), Pattern.compile("^(.+)\\.kt$"), null, true, "withTestCompilerPluginEnabled", "withErrors", "missingDependency");
       }
 
       @Test
@@ -3241,7 +3469,7 @@ public class FirIdeNormalAnalysisLibrarySourceModuleResolveCandidatesTestGenerat
     public class LocalContext {
       @Test
       public void testAllFilesPresentInLocalContext() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/singleByPsi/kDoc/localContext"), Pattern.compile("^(.+)\\.kt$"), null, true, "withTestCompilerPluginEnabled", "withErrors", "missingDependency", "globallyDuplicateLibraries");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/singleByPsi/kDoc/localContext"), Pattern.compile("^(.+)\\.kt$"), null, true, "withTestCompilerPluginEnabled", "withErrors", "missingDependency");
       }
 
       @Test
@@ -3329,7 +3557,7 @@ public class FirIdeNormalAnalysisLibrarySourceModuleResolveCandidatesTestGenerat
     public class Packages {
       @Test
       public void testAllFilesPresentInPackages() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/singleByPsi/kDoc/packages"), Pattern.compile("^(.+)\\.kt$"), null, true, "withTestCompilerPluginEnabled", "withErrors", "missingDependency", "globallyDuplicateLibraries");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/singleByPsi/kDoc/packages"), Pattern.compile("^(.+)\\.kt$"), null, true, "withTestCompilerPluginEnabled", "withErrors", "missingDependency");
       }
 
       @Test
@@ -3351,7 +3579,7 @@ public class FirIdeNormalAnalysisLibrarySourceModuleResolveCandidatesTestGenerat
     public class Parameters {
       @Test
       public void testAllFilesPresentInParameters() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/singleByPsi/kDoc/parameters"), Pattern.compile("^(.+)\\.kt$"), null, true, "withTestCompilerPluginEnabled", "withErrors", "missingDependency", "globallyDuplicateLibraries");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/singleByPsi/kDoc/parameters"), Pattern.compile("^(.+)\\.kt$"), null, true, "withTestCompilerPluginEnabled", "withErrors", "missingDependency");
       }
 
       @Test
@@ -3379,6 +3607,12 @@ public class FirIdeNormalAnalysisLibrarySourceModuleResolveCandidatesTestGenerat
       }
 
       @Test
+      @TestMetadata("FunctionContextParameter.kt")
+      public void testFunctionContextParameter() {
+        runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/kDoc/parameters/FunctionContextParameter.kt");
+      }
+
+      @Test
       @TestMetadata("FunctionTypeParameter.kt")
       public void testFunctionTypeParameter() {
         runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/kDoc/parameters/FunctionTypeParameter.kt");
@@ -3397,7 +3631,13 @@ public class FirIdeNormalAnalysisLibrarySourceModuleResolveCandidatesTestGenerat
     public class Qualified {
       @Test
       public void testAllFilesPresentInQualified() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/singleByPsi/kDoc/qualified"), Pattern.compile("^(.+)\\.kt$"), null, true, "withTestCompilerPluginEnabled", "withErrors", "missingDependency", "globallyDuplicateLibraries");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/singleByPsi/kDoc/qualified"), Pattern.compile("^(.+)\\.kt$"), null, true, "withTestCompilerPluginEnabled", "withErrors", "missingDependency");
+      }
+
+      @Test
+      @TestMetadata("backtickedIdentifiers.kt")
+      public void testBacktickedIdentifiers() {
+        runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/kDoc/qualified/backtickedIdentifiers.kt");
       }
 
       @Nested
@@ -3406,7 +3646,7 @@ public class FirIdeNormalAnalysisLibrarySourceModuleResolveCandidatesTestGenerat
       public class Callables {
         @Test
         public void testAllFilesPresentInCallables() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/singleByPsi/kDoc/qualified/callables"), Pattern.compile("^(.+)\\.kt$"), null, true, "withTestCompilerPluginEnabled", "withErrors", "missingDependency", "globallyDuplicateLibraries");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/singleByPsi/kDoc/qualified/callables"), Pattern.compile("^(.+)\\.kt$"), null, true, "withTestCompilerPluginEnabled", "withErrors", "missingDependency");
         }
 
         @Test
@@ -3541,7 +3781,7 @@ public class FirIdeNormalAnalysisLibrarySourceModuleResolveCandidatesTestGenerat
         public class NotImported {
           @Test
           public void testAllFilesPresentInNotImported() {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/singleByPsi/kDoc/qualified/callables/notImported"), Pattern.compile("^(.+)\\.kt$"), null, true, "withTestCompilerPluginEnabled", "withErrors", "missingDependency", "globallyDuplicateLibraries");
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/singleByPsi/kDoc/qualified/callables/notImported"), Pattern.compile("^(.+)\\.kt$"), null, true, "withTestCompilerPluginEnabled", "withErrors", "missingDependency");
           }
 
           @Test
@@ -3672,7 +3912,7 @@ public class FirIdeNormalAnalysisLibrarySourceModuleResolveCandidatesTestGenerat
       public class ConflictResolution {
         @Test
         public void testAllFilesPresentInConflictResolution() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/singleByPsi/kDoc/qualified/conflictResolution"), Pattern.compile("^(.+)\\.kt$"), null, true, "withTestCompilerPluginEnabled", "withErrors", "missingDependency", "globallyDuplicateLibraries");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/singleByPsi/kDoc/qualified/conflictResolution"), Pattern.compile("^(.+)\\.kt$"), null, true, "withTestCompilerPluginEnabled", "withErrors", "missingDependency");
         }
 
         @Test
@@ -3688,7 +3928,7 @@ public class FirIdeNormalAnalysisLibrarySourceModuleResolveCandidatesTestGenerat
       public class FromOtherFile {
         @Test
         public void testAllFilesPresentInFromOtherFile() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/singleByPsi/kDoc/qualified/fromOtherFile"), Pattern.compile("^(.+)\\.kt$"), null, true, "withTestCompilerPluginEnabled", "withErrors", "missingDependency", "globallyDuplicateLibraries");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/singleByPsi/kDoc/qualified/fromOtherFile"), Pattern.compile("^(.+)\\.kt$"), null, true, "withTestCompilerPluginEnabled", "withErrors", "missingDependency");
         }
 
         @Test
@@ -3758,7 +3998,7 @@ public class FirIdeNormalAnalysisLibrarySourceModuleResolveCandidatesTestGenerat
       public class Stdlib {
         @Test
         public void testAllFilesPresentInStdlib() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/singleByPsi/kDoc/qualified/stdlib"), Pattern.compile("^(.+)\\.kt$"), null, true, "withTestCompilerPluginEnabled", "withErrors", "missingDependency", "globallyDuplicateLibraries");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/singleByPsi/kDoc/qualified/stdlib"), Pattern.compile("^(.+)\\.kt$"), null, true, "withTestCompilerPluginEnabled", "withErrors", "missingDependency");
         }
 
         @Test
@@ -3817,7 +4057,7 @@ public class FirIdeNormalAnalysisLibrarySourceModuleResolveCandidatesTestGenerat
     public class ThisQualifier {
       @Test
       public void testAllFilesPresentInThisQualifier() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/singleByPsi/kDoc/thisQualifier"), Pattern.compile("^(.+)\\.kt$"), null, true, "withTestCompilerPluginEnabled", "withErrors", "missingDependency", "globallyDuplicateLibraries");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/singleByPsi/kDoc/thisQualifier"), Pattern.compile("^(.+)\\.kt$"), null, true, "withTestCompilerPluginEnabled", "withErrors", "missingDependency");
       }
 
       @Test
@@ -3858,7 +4098,7 @@ public class FirIdeNormalAnalysisLibrarySourceModuleResolveCandidatesTestGenerat
   public class KotlinPackage {
     @Test
     public void testAllFilesPresentInKotlinPackage() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/singleByPsi/kotlinPackage"), Pattern.compile("^(.+)\\.kt$"), null, true, "withTestCompilerPluginEnabled", "withErrors", "missingDependency", "globallyDuplicateLibraries");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/singleByPsi/kotlinPackage"), Pattern.compile("^(.+)\\.kt$"), null, true, "withTestCompilerPluginEnabled", "withErrors", "missingDependency");
     }
 
     @Test
@@ -3881,12 +4121,56 @@ public class FirIdeNormalAnalysisLibrarySourceModuleResolveCandidatesTestGenerat
   }
 
   @Nested
+  @TestMetadata("analysis/analysis-api/testData/components/resolver/singleByPsi/libraryDependency")
+  @TestDataPath("$PROJECT_ROOT")
+  public class LibraryDependency {
+    @Test
+    public void testAllFilesPresentInLibraryDependency() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/singleByPsi/libraryDependency"), Pattern.compile("^(.+)\\.kt$"), null, true, "withTestCompilerPluginEnabled", "withErrors", "missingDependency");
+    }
+
+    @Test
+    @TestMetadata("memberFunctionCall.kt")
+    public void testMemberFunctionCall() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/libraryDependency/memberFunctionCall.kt");
+    }
+
+    @Test
+    @TestMetadata("topLevelFunctionCall.kt")
+    public void testTopLevelFunctionCall() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/libraryDependency/topLevelFunctionCall.kt");
+    }
+
+    @Nested
+    @TestMetadata("analysis/analysis-api/testData/components/resolver/singleByPsi/libraryDependency/fallbackDependencies")
+    @TestDataPath("$PROJECT_ROOT")
+    public class FallbackDependencies {
+      @Test
+      public void testAllFilesPresentInFallbackDependencies() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/singleByPsi/libraryDependency/fallbackDependencies"), Pattern.compile("^(.+)\\.kt$"), null, true, "withTestCompilerPluginEnabled", "withErrors", "missingDependency");
+      }
+
+      @Test
+      @TestMetadata("memberFunctionCall.kt")
+      public void testMemberFunctionCall() {
+        runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/libraryDependency/fallbackDependencies/memberFunctionCall.kt");
+      }
+
+      @Test
+      @TestMetadata("topLevelFunctionCall.kt")
+      public void testTopLevelFunctionCall() {
+        runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/libraryDependency/fallbackDependencies/topLevelFunctionCall.kt");
+      }
+    }
+  }
+
+  @Nested
   @TestMetadata("analysis/analysis-api/testData/components/resolver/singleByPsi/nestedTypes")
   @TestDataPath("$PROJECT_ROOT")
   public class NestedTypes {
     @Test
     public void testAllFilesPresentInNestedTypes() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/singleByPsi/nestedTypes"), Pattern.compile("^(.+)\\.kt$"), null, true, "withTestCompilerPluginEnabled", "withErrors", "missingDependency", "globallyDuplicateLibraries");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/singleByPsi/nestedTypes"), Pattern.compile("^(.+)\\.kt$"), null, true, "withTestCompilerPluginEnabled", "withErrors", "missingDependency");
     }
 
     @Test
@@ -3968,7 +4252,7 @@ public class FirIdeNormalAnalysisLibrarySourceModuleResolveCandidatesTestGenerat
   public class NonCalls {
     @Test
     public void testAllFilesPresentInNonCalls() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/singleByPsi/nonCalls"), Pattern.compile("^(.+)\\.kt$"), null, true, "withTestCompilerPluginEnabled", "withErrors", "missingDependency", "globallyDuplicateLibraries");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/singleByPsi/nonCalls"), Pattern.compile("^(.+)\\.kt$"), null, true, "withTestCompilerPluginEnabled", "withErrors", "missingDependency");
     }
 
     @Test
@@ -3996,7 +4280,7 @@ public class FirIdeNormalAnalysisLibrarySourceModuleResolveCandidatesTestGenerat
   public class Operators {
     @Test
     public void testAllFilesPresentInOperators() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/singleByPsi/operators"), Pattern.compile("^(.+)\\.kt$"), null, true, "withTestCompilerPluginEnabled", "withErrors", "missingDependency", "globallyDuplicateLibraries");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/singleByPsi/operators"), Pattern.compile("^(.+)\\.kt$"), null, true, "withTestCompilerPluginEnabled", "withErrors", "missingDependency");
     }
 
     @Nested
@@ -4005,7 +4289,7 @@ public class FirIdeNormalAnalysisLibrarySourceModuleResolveCandidatesTestGenerat
     public class Assignment {
       @Test
       public void testAllFilesPresentInAssignment() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/singleByPsi/operators/assignment"), Pattern.compile("^(.+)\\.kt$"), null, true, "withTestCompilerPluginEnabled", "withErrors", "missingDependency", "globallyDuplicateLibraries");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/singleByPsi/operators/assignment"), Pattern.compile("^(.+)\\.kt$"), null, true, "withTestCompilerPluginEnabled", "withErrors", "missingDependency");
       }
 
       @Test
@@ -4051,7 +4335,7 @@ public class FirIdeNormalAnalysisLibrarySourceModuleResolveCandidatesTestGenerat
     public class CompareTo {
       @Test
       public void testAllFilesPresentInCompareTo() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/singleByPsi/operators/compareTo"), Pattern.compile("^(.+)\\.kt$"), null, true, "withTestCompilerPluginEnabled", "withErrors", "missingDependency", "globallyDuplicateLibraries");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/singleByPsi/operators/compareTo"), Pattern.compile("^(.+)\\.kt$"), null, true, "withTestCompilerPluginEnabled", "withErrors", "missingDependency");
       }
 
       @Test
@@ -4139,7 +4423,7 @@ public class FirIdeNormalAnalysisLibrarySourceModuleResolveCandidatesTestGenerat
     public class Contains {
       @Test
       public void testAllFilesPresentInContains() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/singleByPsi/operators/contains"), Pattern.compile("^(.+)\\.kt$"), null, true, "withTestCompilerPluginEnabled", "withErrors", "missingDependency", "globallyDuplicateLibraries");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/singleByPsi/operators/contains"), Pattern.compile("^(.+)\\.kt$"), null, true, "withTestCompilerPluginEnabled", "withErrors", "missingDependency");
       }
 
       @Test
@@ -4161,7 +4445,7 @@ public class FirIdeNormalAnalysisLibrarySourceModuleResolveCandidatesTestGenerat
     public class Equals {
       @Test
       public void testAllFilesPresentInEquals() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/singleByPsi/operators/equals"), Pattern.compile("^(.+)\\.kt$"), null, true, "withTestCompilerPluginEnabled", "withErrors", "missingDependency", "globallyDuplicateLibraries");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/singleByPsi/operators/equals"), Pattern.compile("^(.+)\\.kt$"), null, true, "withTestCompilerPluginEnabled", "withErrors", "missingDependency");
       }
 
       @Test
@@ -4238,7 +4522,7 @@ public class FirIdeNormalAnalysisLibrarySourceModuleResolveCandidatesTestGenerat
   public class PackageReference {
     @Test
     public void testAllFilesPresentInPackageReference() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/singleByPsi/packageReference"), Pattern.compile("^(.+)\\.kt$"), null, true, "withTestCompilerPluginEnabled", "withErrors", "missingDependency", "globallyDuplicateLibraries");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/singleByPsi/packageReference"), Pattern.compile("^(.+)\\.kt$"), null, true, "withTestCompilerPluginEnabled", "withErrors", "missingDependency");
     }
 
     @Test
@@ -4272,7 +4556,7 @@ public class FirIdeNormalAnalysisLibrarySourceModuleResolveCandidatesTestGenerat
   public class QualifiedAccess {
     @Test
     public void testAllFilesPresentInQualifiedAccess() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/singleByPsi/qualifiedAccess"), Pattern.compile("^(.+)\\.kt$"), null, true, "withTestCompilerPluginEnabled", "withErrors", "missingDependency", "globallyDuplicateLibraries");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/singleByPsi/qualifiedAccess"), Pattern.compile("^(.+)\\.kt$"), null, true, "withTestCompilerPluginEnabled", "withErrors", "missingDependency");
     }
 
     @Test
@@ -4330,7 +4614,7 @@ public class FirIdeNormalAnalysisLibrarySourceModuleResolveCandidatesTestGenerat
   public class TypeAlias {
     @Test
     public void testAllFilesPresentInTypeAlias() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/singleByPsi/typeAlias"), Pattern.compile("^(.+)\\.kt$"), null, true, "withTestCompilerPluginEnabled", "withErrors", "missingDependency", "globallyDuplicateLibraries");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/singleByPsi/typeAlias"), Pattern.compile("^(.+)\\.kt$"), null, true, "withTestCompilerPluginEnabled", "withErrors", "missingDependency");
     }
 
     @Test
@@ -4394,7 +4678,7 @@ public class FirIdeNormalAnalysisLibrarySourceModuleResolveCandidatesTestGenerat
   public class TypeArgument {
     @Test
     public void testAllFilesPresentInTypeArgument() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/singleByPsi/typeArgument"), Pattern.compile("^(.+)\\.kt$"), null, true, "withTestCompilerPluginEnabled", "withErrors", "missingDependency", "globallyDuplicateLibraries");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/singleByPsi/typeArgument"), Pattern.compile("^(.+)\\.kt$"), null, true, "withTestCompilerPluginEnabled", "withErrors", "missingDependency");
     }
 
     @Nested
@@ -4403,7 +4687,7 @@ public class FirIdeNormalAnalysisLibrarySourceModuleResolveCandidatesTestGenerat
     public class Constant {
       @Test
       public void testAllFilesPresentInConstant() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/singleByPsi/typeArgument/constant"), Pattern.compile("^(.+)\\.kt$"), null, true, "withTestCompilerPluginEnabled", "withErrors", "missingDependency", "globallyDuplicateLibraries");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/singleByPsi/typeArgument/constant"), Pattern.compile("^(.+)\\.kt$"), null, true, "withTestCompilerPluginEnabled", "withErrors", "missingDependency");
       }
 
       @Test
@@ -4431,7 +4715,7 @@ public class FirIdeNormalAnalysisLibrarySourceModuleResolveCandidatesTestGenerat
     public class FunctionCall {
       @Test
       public void testAllFilesPresentInFunctionCall() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/singleByPsi/typeArgument/functionCall"), Pattern.compile("^(.+)\\.kt$"), null, true, "withTestCompilerPluginEnabled", "withErrors", "missingDependency", "globallyDuplicateLibraries");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/singleByPsi/typeArgument/functionCall"), Pattern.compile("^(.+)\\.kt$"), null, true, "withTestCompilerPluginEnabled", "withErrors", "missingDependency");
       }
 
       @Test
@@ -4519,7 +4803,7 @@ public class FirIdeNormalAnalysisLibrarySourceModuleResolveCandidatesTestGenerat
     public class PropertyAccess {
       @Test
       public void testAllFilesPresentInPropertyAccess() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/singleByPsi/typeArgument/propertyAccess"), Pattern.compile("^(.+)\\.kt$"), null, true, "withTestCompilerPluginEnabled", "withErrors", "missingDependency", "globallyDuplicateLibraries");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/singleByPsi/typeArgument/propertyAccess"), Pattern.compile("^(.+)\\.kt$"), null, true, "withTestCompilerPluginEnabled", "withErrors", "missingDependency");
       }
 
       @Test
@@ -4583,7 +4867,7 @@ public class FirIdeNormalAnalysisLibrarySourceModuleResolveCandidatesTestGenerat
     public class Type {
       @Test
       public void testAllFilesPresentInType() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/singleByPsi/typeArgument/type"), Pattern.compile("^(.+)\\.kt$"), null, true, "withTestCompilerPluginEnabled", "withErrors", "missingDependency", "globallyDuplicateLibraries");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/singleByPsi/typeArgument/type"), Pattern.compile("^(.+)\\.kt$"), null, true, "withTestCompilerPluginEnabled", "withErrors", "missingDependency");
       }
 
       @Test
@@ -4600,7 +4884,7 @@ public class FirIdeNormalAnalysisLibrarySourceModuleResolveCandidatesTestGenerat
   public class TypeParameter {
     @Test
     public void testAllFilesPresentInTypeParameter() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/singleByPsi/typeParameter"), Pattern.compile("^(.+)\\.kt$"), null, true, "withTestCompilerPluginEnabled", "withErrors", "missingDependency", "globallyDuplicateLibraries");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/singleByPsi/typeParameter"), Pattern.compile("^(.+)\\.kt$"), null, true, "withTestCompilerPluginEnabled", "withErrors", "missingDependency");
     }
 
     @Test

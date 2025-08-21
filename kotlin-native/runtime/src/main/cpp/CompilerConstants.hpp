@@ -7,7 +7,6 @@
 #define RUNTIME_COMPILER_CONSTANTS_H
 
 #include <cstdint>
-#include <string_view>
 
 #include "Common.h"
 
@@ -91,13 +90,15 @@ uint32_t concurrentMarkMaxIterations() noexcept;
 bool suspendFunctionsFromAnyThreadFromObjCEnabled() noexcept;
 AppStateTracking appStateTracking() noexcept;
 int getSourceInfo(void* addr, SourceInfo *result, int result_size) noexcept;
-bool mimallocUseDefaultOptions() noexcept;
-bool mimallocUseCompaction() noexcept;
+bool coreSymbolicationUseOnlyKotlinImage() noexcept;
 bool objcDisposeOnMain() noexcept;
 bool objcDisposeWithRunLoop() noexcept;
 bool enableSafepointSignposts() noexcept;
 bool globalDataLazyInit() noexcept;
 bool swiftExport() noexcept;
+bool latin1Strings() noexcept;
+uint8_t mmapTag() noexcept;
+const char* minidumpLocation() noexcept;
 
 #ifdef KONAN_ANDROID
 bool printToAndroidLogcat() noexcept;

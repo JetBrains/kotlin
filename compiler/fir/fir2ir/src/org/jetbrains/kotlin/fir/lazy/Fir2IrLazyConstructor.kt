@@ -28,8 +28,8 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptors.Deserializ
 
 class Fir2IrLazyConstructor(
     private val c: Fir2IrComponents,
-    override val startOffset: Int,
-    override val endOffset: Int,
+    override var startOffset: Int,
+    override var endOffset: Int,
     override var origin: IrDeclarationOrigin,
     override val fir: FirConstructor,
     override val symbol: IrConstructorSymbol,
@@ -40,7 +40,6 @@ class Fir2IrLazyConstructor(
         this.parent = parent
         symbol.bind(this)
         classifierStorage.preCacheTypeParameters(fir)
-        this.contextReceiverParametersCount = fir.contextParameters.size
     }
 
     override var annotations: List<IrConstructorCall> by createLazyAnnotations()
@@ -76,7 +75,7 @@ class Fir2IrLazyConstructor(
         set(_) = mutationNotSupported()
 
     override var returnType: IrType by lazyVar(lock) {
-        fir.returnTypeRef.toIrType(typeConverter)
+        fir.returnTypeRef.toIrType()
     }
 
     override var attributeOwnerId: IrElement = this

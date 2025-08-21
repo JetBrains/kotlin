@@ -7,10 +7,12 @@ KtDotQualifiedExpression(137,160): 'handler.act(::callback)'
           receiverType = null
           returnType = test.pkg.MyInterface!
           symbol = actor: test.pkg.MyInterface!
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = handler
           isSafeNavigation = false
@@ -26,8 +28,10 @@ KtDotQualifiedExpression(137,160): 'handler.act(::callback)'
               receiverType = null
               returnType = test.pkg.MyInterface!
               symbol = actor: test.pkg.MyInterface!
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = test/pkg/MyHandler.act
       typeArgumentsMapping = {}
     isInBestCandidates = true

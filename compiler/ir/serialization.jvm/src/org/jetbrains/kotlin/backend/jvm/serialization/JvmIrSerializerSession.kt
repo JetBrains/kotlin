@@ -9,8 +9,8 @@ import org.jetbrains.kotlin.backend.common.serialization.DeclarationTable
 import org.jetbrains.kotlin.backend.common.serialization.IrFileSerializer
 import org.jetbrains.kotlin.backend.common.serialization.IrSerializationSettings
 import org.jetbrains.kotlin.backend.jvm.serialization.proto.JvmIr
+import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JvmSerializeIrMode
-import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.visitors.IrVisitor
@@ -21,10 +21,10 @@ class JvmIrSerializerSession(
     declarationTable: DeclarationTable.Default,
     private val mode: JvmSerializeIrMode,
     private val fileClassFqName: FqName,
-    languageVersionSettings: LanguageVersionSettings,
+    configuration: CompilerConfiguration,
 ) : IrFileSerializer(
     IrSerializationSettings(
-        languageVersionSettings = languageVersionSettings,
+        configuration = configuration,
         bodiesOnlyForInlines = mode == JvmSerializeIrMode.INLINE,
     ),
     declarationTable,
@@ -51,6 +51,7 @@ class JvmIrSerializerSession(
 
         serializeAuxTables(proto)
         proto.fileFacadeFqName = fileClassFqName.asString()
+        protoIrFileEntryArray.forEach(proto::addFileEntry)
 
         return proto.build()
     }
@@ -64,6 +65,7 @@ class JvmIrSerializerSession(
         }
         serializeAuxTables(proto)
         proto.fileFacadeFqName = fileClassFqName.asString()
+        protoIrFileEntryArray.forEach(proto::addFileEntry)
 
         return proto.build()
     }

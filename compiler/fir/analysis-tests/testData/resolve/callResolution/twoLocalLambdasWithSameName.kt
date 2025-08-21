@@ -12,3 +12,6 @@ fun test(fn: R.() -> String) { // (1)
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, functionDeclaration, functionalType, interfaceDeclaration,
+localProperty, propertyDeclaration, typeWithExtension */

@@ -15,3 +15,6 @@ fun <V> test(key: Key<in Box<V>>) {
     val x = get(key)
     x?.let { acceptBox(it) }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, inProjection, lambdaLiteral, localProperty, nullableType,
+propertyDeclaration, safeCall, typeConstraint, typeParameter */

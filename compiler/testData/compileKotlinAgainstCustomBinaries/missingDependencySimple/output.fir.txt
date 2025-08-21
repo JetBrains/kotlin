@@ -4,9 +4,6 @@ compiler/testData/compileKotlinAgainstCustomBinaries/missingDependencySimple/sou
 compiler/testData/compileKotlinAgainstCustomBinaries/missingDependencySimple/source.kt:10:21: error: initializer type mismatch: expected 'String', actual 'A'.
     val x: String = b.foo()
                     ^^^^^^^
-compiler/testData/compileKotlinAgainstCustomBinaries/missingDependencySimple/source.kt:10:21: error: type mismatch: inferred type is 'A', but 'String' was expected.
-    val x: String = b.foo()
-                    ^^^^^^^
 compiler/testData/compileKotlinAgainstCustomBinaries/missingDependencySimple/source.kt:10:23: error: cannot access class 'A'. Check your module classpath for missing or conflicting dependencies.
     val x: String = b.foo()
                       ^^^

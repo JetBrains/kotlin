@@ -1,3 +1,5 @@
+// COMPILATION_ERRORS
+
 fun foo() {
     1._some
     1.__some

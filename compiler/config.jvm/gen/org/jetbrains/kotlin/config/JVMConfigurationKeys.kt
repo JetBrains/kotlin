@@ -36,9 +36,6 @@ object JVMConfigurationKeys {
     val DISABLE_STANDARD_SCRIPT_DEFINITION = CompilerConfigurationKey.create<Boolean>("Disable standard kotlin script support")
 
     @JvmField
-    val RETAIN_OUTPUT_IN_MEMORY = CompilerConfigurationKey.create<Boolean>("retain compiled classes in memory for further use, e.g. when running scripts")
-
-    @JvmField
     val DISABLE_CALL_ASSERTIONS = CompilerConfigurationKey.create<Boolean>("disable not-null call assertions")
 
     @JvmField
@@ -144,13 +141,10 @@ object JVMConfigurationKeys {
     val ENABLE_DEBUG_MODE = CompilerConfigurationKey.create<Boolean>("Enable debug mode")
 
     @JvmField
+    val ENHANCED_COROUTINES_DEBUGGING = CompilerConfigurationKey.create<Boolean>("Mark compiled generated code in coroutines")
+
+    @JvmField
     val NO_NEW_JAVA_ANNOTATION_TARGETS = CompilerConfigurationKey.create<Boolean>("Do not generate Java 1.8+ targets for Kotlin annotation classes")
-
-    @JvmField
-    val OLD_INNER_CLASSES_LOGIC = CompilerConfigurationKey.create<Boolean>("Use old logic for generation of InnerClasses attributes")
-
-    @JvmField
-    val ENABLE_IR_INLINER = CompilerConfigurationKey.create<Boolean>("Enable inlining on IR, instead of inlining on bytecode")
 
     @JvmField
     val USE_INLINE_SCOPES_NUMBERS = CompilerConfigurationKey.create<Boolean>("Use inline scopes numbers for inline marker variables")
@@ -161,9 +155,8 @@ object JVMConfigurationKeys {
     @JvmField
     val EXPRESSION_TO_EVALUATE = CompilerConfigurationKey.create<String>("Expression to evaluate in script mode")
 
-    // For test purposes only. Cannot be set via CLI arguments
     @JvmField
-    val USE_CLASS_BUILDER_FACTORY_FOR_TEST = CompilerConfigurationKey.create<Boolean>("Use ClassBuilderFactory.Test for GenerationState")
+    val WHEN_GENERATION_SCHEME = CompilerConfigurationKey.create<JvmWhenGenerationScheme>("Specifies generation scheme for type-checking 'when' expressions")
 
 }
 
@@ -190,10 +183,6 @@ var CompilerConfiguration.noJdk: Boolean
 var CompilerConfiguration.disableStandardScriptDefinition: Boolean
     get() = getBoolean(JVMConfigurationKeys.DISABLE_STANDARD_SCRIPT_DEFINITION)
     set(value) { put(JVMConfigurationKeys.DISABLE_STANDARD_SCRIPT_DEFINITION, value) }
-
-var CompilerConfiguration.retainOutputInMemory: Boolean
-    get() = getBoolean(JVMConfigurationKeys.RETAIN_OUTPUT_IN_MEMORY)
-    set(value) { put(JVMConfigurationKeys.RETAIN_OUTPUT_IN_MEMORY, value) }
 
 var CompilerConfiguration.disableCallAssertions: Boolean
     get() = getBoolean(JVMConfigurationKeys.DISABLE_CALL_ASSERTIONS)
@@ -335,17 +324,13 @@ var CompilerConfiguration.enableDebugMode: Boolean
     get() = getBoolean(JVMConfigurationKeys.ENABLE_DEBUG_MODE)
     set(value) { put(JVMConfigurationKeys.ENABLE_DEBUG_MODE, value) }
 
+var CompilerConfiguration.enhancedCoroutinesDebugging: Boolean
+    get() = getBoolean(JVMConfigurationKeys.ENHANCED_COROUTINES_DEBUGGING)
+    set(value) { put(JVMConfigurationKeys.ENHANCED_COROUTINES_DEBUGGING, value) }
+
 var CompilerConfiguration.noNewJavaAnnotationTargets: Boolean
     get() = getBoolean(JVMConfigurationKeys.NO_NEW_JAVA_ANNOTATION_TARGETS)
     set(value) { put(JVMConfigurationKeys.NO_NEW_JAVA_ANNOTATION_TARGETS, value) }
-
-var CompilerConfiguration.oldInnerClassesLogic: Boolean
-    get() = getBoolean(JVMConfigurationKeys.OLD_INNER_CLASSES_LOGIC)
-    set(value) { put(JVMConfigurationKeys.OLD_INNER_CLASSES_LOGIC, value) }
-
-var CompilerConfiguration.enableIrInliner: Boolean
-    get() = getBoolean(JVMConfigurationKeys.ENABLE_IR_INLINER)
-    set(value) { put(JVMConfigurationKeys.ENABLE_IR_INLINER, value) }
 
 var CompilerConfiguration.useInlineScopesNumbers: Boolean
     get() = getBoolean(JVMConfigurationKeys.USE_INLINE_SCOPES_NUMBERS)
@@ -359,7 +344,7 @@ var CompilerConfiguration.expressionToEvaluate: String?
     get() = get(JVMConfigurationKeys.EXPRESSION_TO_EVALUATE)
     set(value) { putIfNotNull(JVMConfigurationKeys.EXPRESSION_TO_EVALUATE, value) }
 
-var CompilerConfiguration.useClassBuilderFactoryForTest: Boolean
-    get() = getBoolean(JVMConfigurationKeys.USE_CLASS_BUILDER_FACTORY_FOR_TEST)
-    set(value) { put(JVMConfigurationKeys.USE_CLASS_BUILDER_FACTORY_FOR_TEST, value) }
+var CompilerConfiguration.whenGenerationScheme: JvmWhenGenerationScheme?
+    get() = get(JVMConfigurationKeys.WHEN_GENERATION_SCHEME)
+    set(value) { put(JVMConfigurationKeys.WHEN_GENERATION_SCHEME, requireNotNull(value) { "nullable values are not allowed" }) }
 

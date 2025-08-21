@@ -24,3 +24,6 @@ fun test_4(): CharSequence? {
     if (Other is <!INCOMPATIBLE_TYPES!>CharSequence<!>) return <!TYPE_MISMATCH!>Other<!>
     return null
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, ifExpression, inline, intersectionType, isExpression, nullableType,
+objectDeclaration, reified, smartcast, typeAliasDeclaration, typeParameter */

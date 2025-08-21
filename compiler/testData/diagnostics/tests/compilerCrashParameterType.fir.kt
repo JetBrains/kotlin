@@ -7,3 +7,5 @@ fun someSad(i: () -> String) = 42
 fun main(args: Array<String>) {
     { <!VALUE_PARAMETER_WITHOUT_EXPLICIT_TYPE!>x<!> -> someFun(x) } //here should be CANNOT_INFER_PARAMETER_TYPE
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionalType, integerLiteral, lambdaLiteral */

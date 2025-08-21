@@ -6,5 +6,11 @@ public class A
     internal inline fun internalInlineMethod(): String
         /* ACCESSOR use-site */ access$privateExtension$tAKt($receiver = <this>)
 /* TARGET declaration */ private fun A.privateExtension(): String
-/* ACCESSOR declaration */ public fun access$privateExtension$tAKt($receiver: A): String
-    /* TARGET use-site */ $receiver.privateExtension()
+/* ACCESSOR declaration */ internal fun access$privateExtension$tAKt($receiver: A): String
+    /* TARGET use-site */ privateExtension(/* <this> = $receiver */)
+
+
+/* FILE package=<root> fileName=main.kt */
+
+public fun box(): String
+    /* ACCESSOR use-site */ access$privateExtension$tAKt($receiver = this)

@@ -68,10 +68,6 @@ class PublicIdSignatureComputer(val mangler: KotlinMangler.IrMangler) : IdSignat
             override fun visitElement(element: IrElement) =
                 error("Unexpected element ${element.render()}")
 
-            override fun visitErrorDeclaration(declaration: IrErrorDeclaration) {
-                description = renderDeclarationForDescription(declaration)
-            }
-
             override fun visitPackageFragment(declaration: IrPackageFragment) {
                 packageFqn = declaration.packageFqName
             }
@@ -219,9 +215,9 @@ class FileLocalIdSignatureComputer(
     }
 
     fun computeFileLocalIdSignature(declaration: IrDeclaration, compatibleMode: Boolean): IdSignature = when (declaration) {
-        is IrValueDeclaration -> generateScopeLocalSignature(declaration.name.asString())
-        is IrAnonymousInitializer -> generateScopeLocalSignature("ANON INIT")
-        is IrLocalDelegatedProperty -> generateScopeLocalSignature(declaration.name.asString())
+        is IrValueDeclaration -> generateScopeLocalSignature()
+        is IrAnonymousInitializer -> generateScopeLocalSignature()
+        is IrLocalDelegatedProperty -> generateScopeLocalSignature()
 
         is IrSimpleFunction -> IdSignature.FileLocalSignature(
             container = computeContainerIdSignature(declaration, compatibleMode),
@@ -229,8 +225,7 @@ class FileLocalIdSignatureComputer(
                 declaration.stableIndexForFakeOverride(compatibleMode)
             } else {
                 ++localIndex
-            },
-            description = declaration.render()
+            }
         )
 
         is IrProperty -> IdSignature.FileLocalSignature(
@@ -239,19 +234,17 @@ class FileLocalIdSignatureComputer(
                 declaration.stableIndexForFakeOverride(compatibleMode)
             } else {
                 ++localIndex
-            },
-            description = declaration.render()
+            }
         )
 
         else -> IdSignature.FileLocalSignature(
             container = computeContainerIdSignature(declaration, compatibleMode),
-            id = ++localIndex,
-            description = declaration.render()
+            id = ++localIndex
         )
     }
 
-    fun generateScopeLocalSignature(description: String): IdSignature =
-        IdSignature.ScopeLocalDeclaration(scopeIndex++, description)
+    fun generateScopeLocalSignature(): IdSignature =
+        IdSignature.ScopeLocalDeclaration(scopeIndex++)
 
     /**
      * We shall have stable indices for local fake override functions/properties.
@@ -259,7 +252,9 @@ class FileLocalIdSignatureComputer(
      * with the fake override declaration constructed by the fake override builder component
      * (which does not know anything about indices in the IR file).
      *
-     * TODO: Consider using specialized signatures for local fake overrides, KT-72296
+     * Note: Since kotlin 2.2.0, references to local fake overrides are completely avoided, so
+     * such an index won't end up in any new klib. Its computation is still necessary to
+     * properly link IR coming from older klibs.
      */
     private fun IrOverridableDeclaration<*>.stableIndexForFakeOverride(compatibleMode: Boolean): Long =
         mangler.run { this@stableIndexForFakeOverride.signatureMangle(compatibleMode) }

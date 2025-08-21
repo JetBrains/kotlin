@@ -27,3 +27,7 @@ fun foo4(a: Int?, b: G) {
     checkSubtype<Int>(<!DEBUG_INFO_SMARTCAST!>a<!>)
     checkSubtype<Int>(r)
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, assignment, checkNotNullCall, classDeclaration, funWithExtensionReceiver,
+functionDeclaration, functionalType, infix, integerLiteral, interfaceDeclaration, localProperty, nullableType, operator,
+propertyDeclaration, smartcast, typeParameter, typeWithExtension */

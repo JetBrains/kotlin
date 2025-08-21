@@ -12,8 +12,8 @@ public class J extends A {
 
 // FILE: test.kt
 abstract class A {
-    public var a1 = 0
-    protected var a2 = 0
+    public open var a1 = 0
+    protected open var a2 = 0
 }
 
 class B: J() {}

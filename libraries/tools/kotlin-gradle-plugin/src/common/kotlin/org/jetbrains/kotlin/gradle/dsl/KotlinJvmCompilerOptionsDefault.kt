@@ -12,6 +12,9 @@ internal abstract class KotlinJvmCompilerOptionsDefault @javax.inject.Inject con
     override val javaParameters: org.gradle.api.provider.Property<kotlin.Boolean> =
         objectFactory.property(kotlin.Boolean::class.java).convention(false)
 
+    override val jvmDefault: org.gradle.api.provider.Property<org.jetbrains.kotlin.gradle.dsl.JvmDefaultMode> =
+        objectFactory.property(org.jetbrains.kotlin.gradle.dsl.JvmDefaultMode::class.java)
+
     override val jvmTarget: org.gradle.api.provider.Property<org.jetbrains.kotlin.gradle.dsl.JvmTarget> =
         objectFactory.property(org.jetbrains.kotlin.gradle.dsl.JvmTarget::class.java).convention(org.jetbrains.kotlin.gradle.dsl.JvmTarget.DEFAULT)
 

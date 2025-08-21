@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.gradle.plugin.sources.sourceSetDependencyConfigurati
 import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinStdlibConfigurationMetrics
 import org.jetbrains.kotlin.gradle.targets.js.npm.SemVer
 import org.jetbrains.kotlin.gradle.utils.forAllTargets
-import org.jetbrains.kotlin.gradle.utils.withType
 
 internal const val KOTLIN_STDLIB_COMMON_MODULE_NAME = "kotlin-stdlib-common"
 internal const val KOTLIN_STDLIB_MODULE_NAME = "kotlin-stdlib"
@@ -55,11 +54,11 @@ internal fun Project.configureStdlibDefaultDependency(
  * Aligning kotlin-stdlib-jdk8 and kotlin-stdlib-jdk7 dependencies versions with kotlin-stdlib (or kotlin-stdlib-jdk7)
  * when project stdlib version is >= 1.8.0
  */
-internal fun ConfigurationContainer.configureStdlibVersionAlignment() = all { configuration ->
+internal fun ConfigurationContainer.configureStdlibVersionAlignment() = configureEach { configuration ->
     configuration.withDependencies { dependencySet ->
         dependencySet
-            .withType<ExternalDependency>()
-            .configureEach { dependency ->
+            .filterIsInstance<ExternalDependency>()
+            .forEach { dependency ->
                 if (dependency.group == KOTLIN_MODULE_GROUP &&
                     (dependency.name == KOTLIN_STDLIB_MODULE_NAME || dependency.name == KOTLIN_STDLIB_JDK7_MODULE_NAME) &&
                     dependency.version != null &&

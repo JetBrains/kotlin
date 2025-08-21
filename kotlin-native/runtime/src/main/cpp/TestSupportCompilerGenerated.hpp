@@ -17,8 +17,6 @@ namespace test_support {
 
 namespace internal {
 
-extern testing::MockFunction<KInt()>* createCleanerWorkerMock;
-extern testing::MockFunction<void(KInt, bool)>* shutdownCleanerWorkerMock;
 extern testing::MockFunction<void(KRef)>* reportUnhandledExceptionMock;
 extern testing::MockFunction<void(KRef)>* Kotlin_runUnhandledExceptionHookMock;
 
@@ -71,16 +69,6 @@ private:
     testing::MockFunction<F>** globalMockLocation_;
     std::unique_ptr<Mock> mock_;
 };
-
-template<bool Strict = true>
-ScopedMockFunction<KInt(), Strict> ScopedCreateCleanerWorkerMock() {
-    return ScopedMockFunction<KInt(), Strict>(&internal::createCleanerWorkerMock);
-}
-
-template<bool Strict = true>
-ScopedMockFunction<void(KInt, bool), Strict> ScopedShutdownCleanerWorkerMock() {
-    return ScopedMockFunction<void(KInt, bool), Strict>(&internal::shutdownCleanerWorkerMock);
-}
 
 template<bool Strict = true>
 ScopedMockFunction<void(KRef), Strict> ScopedReportUnhandledExceptionMock() {

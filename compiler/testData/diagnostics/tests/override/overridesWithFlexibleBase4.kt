@@ -22,3 +22,5 @@ public interface CustomSubscriber<T> {
 <!ABSTRACT_MEMBER_NOT_IMPLEMENTED!>class LoggingObserverLegacy<!><T> : CustomObserver<T>, CustomSubscriber<T> {
     override fun onNext(value: T) {}
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, dnnType, functionDeclaration, javaType, nullableType, override, typeParameter */

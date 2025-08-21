@@ -1,23 +1,23 @@
 // FIR_IDENTICAL
 // TARGET_BACKEND: JVM
 // FILE: Modality.java
-public interface Modality
+public interface Modality {}
 
 // FILE: DeclarationDescriptor.java
-public interface DeclarationDescriptor
+public interface DeclarationDescriptor {}
 
 // FILE: DeclarationDescriptorWithVisibility.java
-public interface DeclarationDescriptorWithVisibility extends DeclarationDescriptor
+public interface DeclarationDescriptorWithVisibility extends DeclarationDescriptor {}
 
 // FILE: DeclarationDescriptorWithSource.java
-public interface DeclarationDescriptorWithSource extends DeclarationDescriptor
+public interface DeclarationDescriptorWithSource extends DeclarationDescriptor {}
 
 // FILE: DeclarationDescriptorNonRoot.java
-public interface DeclarationDescriptorNonRoot extends DeclarationDescriptorWithSource
+public interface DeclarationDescriptorNonRoot extends DeclarationDescriptorWithSource {}
 
 // FILE: CallableDescriptor.java
 public interface CallableDescriptor extends
-DeclarationDescriptorWithVisibility, DeclarationDescriptorNonRoot, Substitutable<CallableDescriptor>
+DeclarationDescriptorWithVisibility, DeclarationDescriptorNonRoot, Substitutable<CallableDescriptor> {}
 
 // FILE: MemberDescriptor.java
 public interface MemberDescriptor extends DeclarationDescriptorNonRoot, DeclarationDescriptorWithVisibility {

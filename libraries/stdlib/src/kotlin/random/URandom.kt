@@ -12,7 +12,6 @@ package kotlin.random
  * Generates a [UInt] random value uniformly distributed between [UInt.MIN_VALUE] and [UInt.MAX_VALUE] (inclusive).
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalUnsignedTypes::class)
 public fun Random.nextUInt(): UInt = nextInt().toUInt()
 
 /**
@@ -23,7 +22,6 @@ public fun Random.nextUInt(): UInt = nextInt().toUInt()
  * @throws IllegalArgumentException if [until] is zero.
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalUnsignedTypes::class)
 public fun Random.nextUInt(until: UInt): UInt = nextUInt(0u, until)
 
 /**
@@ -34,7 +32,6 @@ public fun Random.nextUInt(until: UInt): UInt = nextUInt(0u, until)
  * @throws IllegalArgumentException if [from] is greater than or equal to [until].
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalUnsignedTypes::class)
 public fun Random.nextUInt(from: UInt, until: UInt): UInt {
     checkUIntRangeBounds(from, until)
 
@@ -54,7 +51,6 @@ public fun Random.nextUInt(from: UInt, until: UInt): UInt {
  * @throws IllegalArgumentException if [range] is empty.
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalUnsignedTypes::class)
 public fun Random.nextUInt(range: UIntRange): UInt = when {
     range.isEmpty() -> throw IllegalArgumentException("Cannot get random in empty range: $range")
     range.last < UInt.MAX_VALUE -> nextUInt(range.first, range.last + 1u)
@@ -68,7 +64,6 @@ public fun Random.nextUInt(range: UIntRange): UInt = when {
  * Generates a [ULong] random value uniformly distributed between [ULong.MIN_VALUE] and [ULong.MAX_VALUE] (inclusive).
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalUnsignedTypes::class)
 public fun Random.nextULong(): ULong = nextLong().toULong()
 
 /**
@@ -79,7 +74,6 @@ public fun Random.nextULong(): ULong = nextLong().toULong()
  * @throws IllegalArgumentException if [until] is zero.
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalUnsignedTypes::class)
 public fun Random.nextULong(until: ULong): ULong = nextULong(0uL, until)
 
 /**
@@ -90,7 +84,6 @@ public fun Random.nextULong(until: ULong): ULong = nextULong(0uL, until)
  * @throws IllegalArgumentException if [from] is greater than or equal to [until].
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalUnsignedTypes::class)
 public fun Random.nextULong(from: ULong, until: ULong): ULong {
     checkULongRangeBounds(from, until)
 
@@ -110,7 +103,6 @@ public fun Random.nextULong(from: ULong, until: ULong): ULong {
  * @throws IllegalArgumentException if [range] is empty.
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalUnsignedTypes::class)
 public fun Random.nextULong(range: ULongRange): ULong = when {
     range.isEmpty() -> throw IllegalArgumentException("Cannot get random in empty range: $range")
     range.last < ULong.MAX_VALUE -> nextULong(range.first, range.last + 1u)

@@ -80,8 +80,12 @@ fun poll75(): Flow<String> {
 
 fun poll76(): Flow<String> {
     return flow {
-        val inv = <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>::<!CANNOT_INFER_PARAMETER_TYPE, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>Foo7<!><!NOT_NULL_ASSERTION_ON_CALLABLE_REFERENCE!>!!<!><!>
+        val inv = ::<!CANNOT_INFER_PARAMETER_TYPE!>Foo7<!><!NOT_NULL_ASSERTION_ON_CALLABLE_REFERENCE!>!!<!>
         inv
     }
 }
 
+/* GENERATED_FIR_TAGS: asExpression, callableReference, checkNotNullCall, classDeclaration, funWithExtensionReceiver,
+functionDeclaration, functionalType, getter, in, integerLiteral, interfaceDeclaration, lambdaLiteral, localProperty,
+nullableType, out, primaryConstructor, propertyDeclaration, propertyWithExtensionReceiver, setter, suspend,
+typeParameter, typeWithExtension */

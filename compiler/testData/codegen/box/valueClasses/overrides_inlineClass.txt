@@ -120,13 +120,13 @@ public final class DataClassException {
 public final class GenericFakeOverride {
     // source: 'overrides_inlineClass.kt'
     public method <init>(): void
-    public @org.jetbrains.annotations.NotNull method getP(): DPoint
+    public bridge @org.jetbrains.annotations.NotNull method getP(): DPoint
     public synthetic bridge method getP(): java.lang.Object
-    public @org.jetbrains.annotations.NotNull method getP1(): DPoint
+    public bridge @org.jetbrains.annotations.NotNull method getP1(): DPoint
     public synthetic bridge method getP1(): java.lang.Object
-    public method setP(@org.jetbrains.annotations.NotNull p0: DPoint): void
+    public bridge method setP(@org.jetbrains.annotations.NotNull p0: DPoint): void
     public synthetic bridge method setP(p0: java.lang.Object): void
-    public method setP1(@org.jetbrains.annotations.NotNull p0: DPoint): void
+    public bridge method setP1(@org.jetbrains.annotations.NotNull p0: DPoint): void
     public synthetic bridge method setP1(p0: java.lang.Object): void
     public final inner class GenericMFVCHolderWithImpls$DefaultImpls
 }
@@ -145,20 +145,20 @@ public final class GenericFakeOverrideMFVC {
     public final static method equals-impl0(p0: double, p1: double, p2: double, p3: double): boolean
     public final method getField1-3cLST_U(): double
     public final method getField2-3cLST_U(): double
-    public @org.jetbrains.annotations.NotNull method getP(): DPoint
+    public bridge @org.jetbrains.annotations.NotNull method getP(): DPoint
     public synthetic bridge method getP(): java.lang.Object
     public static @org.jetbrains.annotations.NotNull method getP-impl(p0: double, p1: double): DPoint
-    public @org.jetbrains.annotations.NotNull method getP1(): DPoint
+    public bridge @org.jetbrains.annotations.NotNull method getP1(): DPoint
     public synthetic bridge method getP1(): java.lang.Object
     public static @org.jetbrains.annotations.NotNull method getP1-impl(p0: double, p1: double): DPoint
     public method hashCode(): int
     public static method hashCode-impl(p0: double, p1: double): int
     public synthetic bridge method setP(p0: java.lang.Object): void
     public static method setP-nuuzChU(p0: double, p1: double, p2: double, p3: double): void
-    public method setP-nuuzChU(p0: java.lang.Object): void
+    public bridge method setP-nuuzChU(p0: java.lang.Object): void
     public synthetic bridge method setP1(p0: java.lang.Object): void
     public static method setP1-nuuzChU(p0: double, p1: double, p2: double, p3: double): void
-    public method setP1-nuuzChU(p0: java.lang.Object): void
+    public bridge method setP1-nuuzChU(p0: java.lang.Object): void
     public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
     public static method toString-impl(p0: double, p1: double): java.lang.String
     public synthetic final method unbox-impl-field1(): double
@@ -180,15 +180,15 @@ public final class GenericFakeOverrideMFVCWithMFVCUpperBound {
     public final static method equals-impl0(p0: double, p1: double, p2: double, p3: double): boolean
     public final method getField1-3cLST_U(): double
     public final method getField2-3cLST_U(): double
-    public @org.jetbrains.annotations.NotNull method getP(): DPoint
+    public bridge @org.jetbrains.annotations.NotNull method getP(): DPoint
     public static @org.jetbrains.annotations.NotNull method getP-impl(p0: double, p1: double): DPoint
-    public @org.jetbrains.annotations.NotNull method getP1(): DPoint
+    public bridge @org.jetbrains.annotations.NotNull method getP1(): DPoint
     public static @org.jetbrains.annotations.NotNull method getP1-impl(p0: double, p1: double): DPoint
     public method hashCode(): int
     public static method hashCode-impl(p0: double, p1: double): int
-    public method setP-nuuzChU(p0: double, p1: double): void
+    public bridge method setP-nuuzChU(p0: double, p1: double): void
     public static method setP-nuuzChU(p0: double, p1: double, p2: double, p3: double): void
-    public method setP1-nuuzChU(p0: double, p1: double): void
+    public bridge method setP1-nuuzChU(p0: double, p1: double): void
     public static method setP1-nuuzChU(p0: double, p1: double, p2: double, p3: double): void
     public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
     public static method toString-impl(p0: double, p1: double): java.lang.String
@@ -201,10 +201,10 @@ public final class GenericFakeOverrideMFVCWithMFVCUpperBound {
 public final class GenericFakeOverrideWithMFVCUpperBound {
     // source: 'overrides_inlineClass.kt'
     public method <init>(): void
-    public @org.jetbrains.annotations.NotNull method getP(): DPoint
-    public @org.jetbrains.annotations.NotNull method getP1(): DPoint
-    public method setP-nuuzChU(p0: double, p1: double): void
-    public method setP1-nuuzChU(p0: double, p1: double): void
+    public bridge @org.jetbrains.annotations.NotNull method getP(): DPoint
+    public bridge @org.jetbrains.annotations.NotNull method getP1(): DPoint
+    public bridge method setP-nuuzChU(p0: double, p1: double): void
+    public bridge method setP1-nuuzChU(p0: double, p1: double): void
     public final inner class GenericMFVCHolderWithMFVCUpperBoundWithImpls$DefaultImpls
 }
 
@@ -2503,10 +2503,10 @@ public final class RealOverride {
 public final class ReifiedFakeOverride {
     // source: 'overrides_inlineClass.kt'
     public method <init>(): void
-    public @org.jetbrains.annotations.NotNull method getP(): DPoint
-    public @org.jetbrains.annotations.NotNull method getP1(): DPoint
-    public method setP-nuuzChU(p0: double, p1: double): void
-    public method setP1-nuuzChU(p0: double, p1: double): void
+    public bridge @org.jetbrains.annotations.NotNull method getP(): DPoint
+    public bridge @org.jetbrains.annotations.NotNull method getP1(): DPoint
+    public bridge method setP-nuuzChU(p0: double, p1: double): void
+    public bridge method setP1-nuuzChU(p0: double, p1: double): void
     public final inner class ReifiedMFVCHolderWithImpls$DefaultImpls
 }
 
@@ -2524,15 +2524,15 @@ public final class ReifiedFakeOverrideMFVC {
     public final static method equals-impl0(p0: double, p1: double, p2: double, p3: double): boolean
     public final method getField1-3cLST_U(): double
     public final method getField2-3cLST_U(): double
-    public @org.jetbrains.annotations.NotNull method getP(): DPoint
+    public bridge @org.jetbrains.annotations.NotNull method getP(): DPoint
     public static @org.jetbrains.annotations.NotNull method getP-impl(p0: double, p1: double): DPoint
-    public @org.jetbrains.annotations.NotNull method getP1(): DPoint
+    public bridge @org.jetbrains.annotations.NotNull method getP1(): DPoint
     public static @org.jetbrains.annotations.NotNull method getP1-impl(p0: double, p1: double): DPoint
     public method hashCode(): int
     public static method hashCode-impl(p0: double, p1: double): int
-    public method setP-nuuzChU(p0: double, p1: double): void
+    public bridge method setP-nuuzChU(p0: double, p1: double): void
     public static method setP-nuuzChU(p0: double, p1: double, p2: double, p3: double): void
-    public method setP1-nuuzChU(p0: double, p1: double): void
+    public bridge method setP1-nuuzChU(p0: double, p1: double): void
     public static method setP1-nuuzChU(p0: double, p1: double, p2: double, p3: double): void
     public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
     public static method toString-impl(p0: double, p1: double): java.lang.String

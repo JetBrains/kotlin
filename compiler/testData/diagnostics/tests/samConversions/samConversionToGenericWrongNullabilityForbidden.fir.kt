@@ -1,5 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LANGUAGE: -JavaTypeParameterDefaultRepresentationWithDNN +ProhibitReturningIncorrectNullabilityValuesFromSamConstructorLambdaOfJdkInterfaces
+// LANGUAGE: +ProhibitReturningIncorrectNullabilityValuesFromSamConstructorLambdaOfJdkInterfaces -DontMakeExplicitJavaTypeArgumentsFlexible
 // ISSUE: KT-57014, KT-66730
 // FULL_JDK
 // JVM_TARGET: 1.8
@@ -90,13 +90,13 @@ fun main() {
 
     Supplier<String>(
         fun(): String {
-            if (true) return <!ARGUMENT_TYPE_MISMATCH, RETURN_TYPE_MISMATCH!>returnNullableString()<!>
+            if (true) return <!RETURN_TYPE_MISMATCH, RETURN_TYPE_MISMATCH!>returnNullableString()<!>
             return ""
         }
     )
 
     val sam4: Supplier<String> = Supplier {
-        <!ARGUMENT_TYPE_MISMATCH, ARGUMENT_TYPE_MISMATCH!>fun(): String {
+        <!RETURN_TYPE_MISMATCH, RETURN_TYPE_MISMATCH!>fun(): String {
             if (true) return <!RETURN_TYPE_MISMATCH!>returnNullableString()<!>
             return ""
         }<!>
@@ -110,7 +110,7 @@ fun main() {
     )
 
     val sam5: Supplier<String> = Supplier {
-        <!ARGUMENT_TYPE_MISMATCH, ARGUMENT_TYPE_MISMATCH!>fun(): String? {
+        <!RETURN_TYPE_MISMATCH, RETURN_TYPE_MISMATCH!>fun(): String? {
             if (true) return returnNullableString()
             return ""
         }<!>
@@ -165,25 +165,25 @@ import java.util.function.Supplier
 
 fun scopes () {
     Supplier<String> {
-        <!ARGUMENT_TYPE_MISMATCH!>run {
+        <!RETURN_TYPE_MISMATCH!>run {
             returnNullableString()
         }<!>
     }
 
     Supplier<String> {
-        <!ARGUMENT_TYPE_MISMATCH!>run {
-            return@run <!ARGUMENT_TYPE_MISMATCH, RETURN_TYPE_MISMATCH!>returnNullableString()<!>
+        <!RETURN_TYPE_MISMATCH!>run {
+            return@run <!RETURN_TYPE_MISMATCH, RETURN_TYPE_MISMATCH!>returnNullableString()<!>
         }<!>
     }
 
     Supplier<String> {
-        <!ARGUMENT_TYPE_MISMATCH!>run run@ {
-            return@run <!ARGUMENT_TYPE_MISMATCH, RETURN_TYPE_MISMATCH!>returnNullableString()<!>
+        <!RETURN_TYPE_MISMATCH!>run run@ {
+            return@run <!RETURN_TYPE_MISMATCH, RETURN_TYPE_MISMATCH!>returnNullableString()<!>
         }<!>
     }
 
     Supplier<String> lambda@ {
-        <!ARGUMENT_TYPE_MISMATCH!>run {
+        <!RETURN_TYPE_MISMATCH!>run {
             return@lambda returnNullableString()
         }<!>
     }
@@ -210,3 +210,8 @@ fun test()  {
         <!ARGUMENT_TYPE_MISMATCH!>returnNullableString().foo2()<!>
     }
 }
+
+/* GENERATED_FIR_TAGS: anonymousFunction, anonymousObjectExpression, checkNotNullCall, equalityExpression, flexibleType,
+funWithExtensionReceiver, functionDeclaration, functionalType, ifExpression, inline, integerLiteral, javaFunction,
+javaType, lambdaLiteral, localProperty, nullableType, override, propertyDeclaration, stringLiteral, tryExpression,
+typeAliasDeclaration, typeConstraint, typeParameter, whenExpression, whenWithSubject */

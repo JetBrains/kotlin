@@ -7,7 +7,7 @@ fun test(a : java.lang.annotation.RetentionPolicy) {
 }
 
 fun test() {
-  java.util.Collections.<!CANNOT_INFER_PARAMETER_TYPE, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>emptyList<!>()
+  java.util.Collections.<!CANNOT_INFER_PARAMETER_TYPE!>emptyList<!>()
   val a : Collection<String>? = java.util.Collections.emptyList()
 }
 
@@ -22,3 +22,5 @@ fun test(a : java.util.ArrayList<Int>) {
 fun test(a : java.lang.Class<Int>) {
 
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaFunction, localProperty, nullableType, propertyDeclaration */

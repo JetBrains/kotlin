@@ -1,21 +1,20 @@
 pluginManagement {
-    apply(from = "../scripts/cache-redirector.settings.gradle.kts")
-    apply(from = "../scripts/kotlin-bootstrap.settings.gradle.kts")
-
     includeBuild("../gradle-settings-conventions")
 
     repositories {
-        maven(url = "https://maven.pkg.jetbrains.space/kotlin/p/kotlin/kotlin-dependencies")
-        mavenCentral()
-        google()
+        maven(url = "https://redirector.kotlinlang.org/maven/kotlin-dependencies")
+        mavenCentral { setUrl("https://cache-redirector.jetbrains.com/maven-central") }
+        google { setUrl("https://cache-redirector.jetbrains.com/dl.google.com/dl/android/maven2") }
         gradlePluginPortal()
     }
 }
 
 plugins {
+    id("kotlin-bootstrap")
     id("develocity")
     id("jvm-toolchain-provisioning")
     id("kotlin-daemon-config")
+    id("cache-redirector")
 }
 
 dependencyResolutionManagement {
@@ -38,3 +37,4 @@ include(":gradle-plugins-common")
 include(":d8-configuration")
 include(":binaryen-configuration")
 include(":nodejs-configuration")
+include(":utilities")

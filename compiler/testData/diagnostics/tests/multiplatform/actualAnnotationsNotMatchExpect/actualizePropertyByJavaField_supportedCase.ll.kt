@@ -1,6 +1,6 @@
 // RUN_PIPELINE_TILL: BACKEND
 // TARGET_BACKEND: JVM_IR
-// IGNORE_BACKEND_K1: JVM_IR JVM
+// IGNORE_BACKEND_K1: JVM_IR
 // ISSUE: KT-66436
 
 // MODULE: common
@@ -23,3 +23,5 @@ public abstract class JavaAbstractMutableList {
 package kotlin.collections
 
 public actual abstract class <!ACTUAL_WITHOUT_EXPECT!>AbstractMutableList<!> <!ACTUAL_WITHOUT_EXPECT!>actual constructor()<!>: bar.JavaAbstractMutableList()
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, javaType, primaryConstructor, propertyDeclaration */

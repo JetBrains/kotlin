@@ -15,7 +15,7 @@ fun <T> bar(a: A<T>, w: T) {
     if (a is B) {
         baz(a, 1) // OK in FE1.0
         baz(a, w) // Type mismatch: Required Int, but found E
-        baz(a, <!ARGUMENT_TYPE_MISMATCH!>""<!>)
+        <!INAPPLICABLE_CANDIDATE!>baz<!>(a, "")
     }
 
     if (a is B || a is C) {
@@ -24,3 +24,6 @@ fun <T> bar(a: A<T>, w: T) {
 }
 
 fun <F> baz(a: A<F>, f: F) {}
+
+/* GENERATED_FIR_TAGS: disjunctionExpression, functionDeclaration, ifExpression, integerLiteral, interfaceDeclaration,
+intersectionType, isExpression, nullableType, smartcast, stringLiteral, typeParameter */

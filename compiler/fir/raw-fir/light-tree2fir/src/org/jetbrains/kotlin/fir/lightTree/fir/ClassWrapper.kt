@@ -12,11 +12,11 @@ import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.declarations.builder.FirClassBuilder
 import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.lightTree.fir.modifier.Modifier
+import org.jetbrains.kotlin.fir.lightTree.fir.modifier.ModifierList
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 
 class ClassWrapper(
-    val modifiers: Modifier,
+    val modifiers: ModifierList,
     private val classKind: ClassKind,
     val classBuilder: FirClassBuilder,
     val hasSecondaryConstructor: Boolean,

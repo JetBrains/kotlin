@@ -1,0 +1,51 @@
+KtFile: sealedInterface.kt
+  PsiComment(EOL_COMMENT)('// FIR_IDENTICAL')
+  PsiWhiteSpace('\n')
+  PACKAGE_DIRECTIVE
+    PsiElement(package)('package')
+    PsiWhiteSpace(' ')
+    REFERENCE_EXPRESSION
+      PsiElement(IDENTIFIER)('test')
+  IMPORT_LIST
+    <empty list>
+  PsiWhiteSpace('\n\n')
+  CLASS
+    MODIFIER_LIST
+      PsiElement(sealed)('sealed')
+    PsiWhiteSpace(' ')
+    PsiElement(interface)('interface')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('SealedInterface')
+    PsiWhiteSpace(' ')
+    CLASS_BODY
+      PsiElement(LBRACE)('{')
+      PsiWhiteSpace('\n    ')
+      CLASS
+        PsiElement(class)('class')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('Nested')
+        PsiWhiteSpace(' ')
+        PsiElement(COLON)(':')
+        PsiWhiteSpace(' ')
+        SUPER_TYPE_LIST
+          SUPER_TYPE_ENTRY
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('SealedInterface')
+      PsiWhiteSpace('\n    ')
+      OBJECT_DECLARATION
+        PsiElement(object)('object')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('Top')
+        PsiWhiteSpace(' ')
+        PsiElement(COLON)(':')
+        PsiWhiteSpace(' ')
+        SUPER_TYPE_LIST
+          SUPER_TYPE_ENTRY
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('SealedInterface')
+      PsiWhiteSpace('\n')
+      PsiElement(RBRACE)('}')

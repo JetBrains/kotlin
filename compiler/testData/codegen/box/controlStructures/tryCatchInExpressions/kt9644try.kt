@@ -1,6 +1,7 @@
-
+// FILE: lib.kt
 inline fun doCall(f: () -> Any) = f()
 
+// FILE: main.kt
 fun test1() {
     val localResult = doCall {
         try { "1" } catch (e: Exception) { "2" }

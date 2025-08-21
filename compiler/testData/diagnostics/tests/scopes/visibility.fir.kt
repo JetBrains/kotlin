@@ -42,7 +42,7 @@ class B {
 
 fun test3(a: A) {
     a.<!INVISIBLE_REFERENCE!>v<!> //todo .bMethod()
-    a.<!INVISIBLE_REFERENCE!>f<!>(0, 1) //todo .bMethod()
+    a.f(0, <!TOO_MANY_ARGUMENTS!>1<!>) //todo .bMethod()
 }
 
 interface T
@@ -94,3 +94,6 @@ fun test() {
     internal_fun()
     <!INVISIBLE_REFERENCE!>private_fun<!>()
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, functionDeclaration, incrementDecrementExpression, integerLiteral,
+interfaceDeclaration, propertyDeclaration */

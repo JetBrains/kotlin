@@ -106,36 +106,24 @@ public class FirLightTreeJsOldFrontendDiagnosticsWithBackendTestGenerated extend
   }
 
   @Nested
-  @TestMetadata("compiler/testData/diagnostics/testsWithJsStdLibAndBackendCompilation/inline")
+  @TestMetadata("compiler/testData/diagnostics/testsWithJsStdLibAndBackendCompilation/finalArtifactClashes")
   @TestDataPath("$PROJECT_ROOT")
-  public class Inline {
+  public class FinalArtifactClashes {
     @Test
-    public void testAllFilesPresentInInline() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJsStdLibAndBackendCompilation/inline"), Pattern.compile("^([^_](.+))\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), TargetBackend.JS_IR, true);
+    public void testAllFilesPresentInFinalArtifactClashes() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJsStdLibAndBackendCompilation/finalArtifactClashes"), Pattern.compile("^([^_](.+))\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), TargetBackend.JS_IR, true);
     }
 
     @Test
-    @TestMetadata("recursionCycle.kt")
-    public void testRecursionCycle() {
-      runTest("compiler/testData/diagnostics/testsWithJsStdLibAndBackendCompilation/inline/recursionCycle.kt");
+    @TestMetadata("fileNameAndPackagesClashes.kt")
+    public void testFileNameAndPackagesClashes() {
+      runTest("compiler/testData/diagnostics/testsWithJsStdLibAndBackendCompilation/finalArtifactClashes/fileNameAndPackagesClashes.kt");
     }
 
     @Test
-    @TestMetadata("recursionCycleLambda.kt")
-    public void testRecursionCycleLambda() {
-      runTest("compiler/testData/diagnostics/testsWithJsStdLibAndBackendCompilation/inline/recursionCycleLambda.kt");
-    }
-
-    @Test
-    @TestMetadata("recursionCycleWithPublicFun.kt")
-    public void testRecursionCycleWithPublicFun() {
-      runTest("compiler/testData/diagnostics/testsWithJsStdLibAndBackendCompilation/inline/recursionCycleWithPublicFun.kt");
-    }
-
-    @Test
-    @TestMetadata("recursionCycleWithStdlibCall.kt")
-    public void testRecursionCycleWithStdlibCall() {
-      runTest("compiler/testData/diagnostics/testsWithJsStdLibAndBackendCompilation/inline/recursionCycleWithStdlibCall.kt");
+    @TestMetadata("jsFileNameAndPackagesClashes.kt")
+    public void testJsFileNameAndPackagesClashes() {
+      runTest("compiler/testData/diagnostics/testsWithJsStdLibAndBackendCompilation/finalArtifactClashes/jsFileNameAndPackagesClashes.kt");
     }
   }
 
@@ -191,12 +179,6 @@ public class FirLightTreeJsOldFrontendDiagnosticsWithBackendTestGenerated extend
     }
 
     @Test
-    @TestMetadata("compileTimeStringWithTopLevelVal.kt")
-    public void testCompileTimeStringWithTopLevelVal() {
-      runTest("compiler/testData/diagnostics/testsWithJsStdLibAndBackendCompilation/jsCode/compileTimeStringWithTopLevelVal.kt");
-    }
-
-    @Test
     @TestMetadata("compileTimeStringWithVal.kt")
     public void testCompileTimeStringWithVal() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLibAndBackendCompilation/jsCode/compileTimeStringWithVal.kt");
@@ -233,6 +215,12 @@ public class FirLightTreeJsOldFrontendDiagnosticsWithBackendTestGenerated extend
     }
 
     @Test
+    @TestMetadata("jsCallCaptureInlinableFunction.kt")
+    public void testJsCallCaptureInlinableFunction() {
+      runTest("compiler/testData/diagnostics/testsWithJsStdLibAndBackendCompilation/jsCode/jsCallCaptureInlinableFunction.kt");
+    }
+
+    @Test
     @TestMetadata("lambdaWithoutNonLocalControlflow.kt")
     public void testLambdaWithoutNonLocalControlflow() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLibAndBackendCompilation/jsCode/lambdaWithoutNonLocalControlflow.kt");
@@ -260,6 +248,12 @@ public class FirLightTreeJsOldFrontendDiagnosticsWithBackendTestGenerated extend
       }
 
       @Test
+      @TestMetadata("defaultValue.kt")
+      public void testDefaultValue() {
+        runTest("compiler/testData/diagnostics/testsWithJsStdLibAndBackendCompilation/jsCode/inlinedReturnBreakContinue/defaultValue.kt");
+      }
+
+      @Test
       @TestMetadata("inlineFunctionWithMultipleParameters.kt")
       public void testInlineFunctionWithMultipleParameters() {
         runTest("compiler/testData/diagnostics/testsWithJsStdLibAndBackendCompilation/jsCode/inlinedReturnBreakContinue/inlineFunctionWithMultipleParameters.kt");
@@ -275,6 +269,12 @@ public class FirLightTreeJsOldFrontendDiagnosticsWithBackendTestGenerated extend
       @TestMetadata("loopWithinInlineFunction.kt")
       public void testLoopWithinInlineFunction() {
         runTest("compiler/testData/diagnostics/testsWithJsStdLibAndBackendCompilation/jsCode/inlinedReturnBreakContinue/loopWithinInlineFunction.kt");
+      }
+
+      @Test
+      @TestMetadata("noinlineParameter.kt")
+      public void testNoinlineParameter() {
+        runTest("compiler/testData/diagnostics/testsWithJsStdLibAndBackendCompilation/jsCode/inlinedReturnBreakContinue/noinlineParameter.kt");
       }
 
       @Test
@@ -334,22 +334,6 @@ public class FirLightTreeJsOldFrontendDiagnosticsWithBackendTestGenerated extend
     @TestMetadata("legalPackageName.kt")
     public void testLegalPackageName() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLibAndBackendCompilation/name/legalPackageName.kt");
-    }
-  }
-
-  @Nested
-  @TestMetadata("compiler/testData/diagnostics/testsWithJsStdLibAndBackendCompilation/unsupportedFeatures")
-  @TestDataPath("$PROJECT_ROOT")
-  public class UnsupportedFeatures {
-    @Test
-    public void testAllFilesPresentInUnsupportedFeatures() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJsStdLibAndBackendCompilation/unsupportedFeatures"), Pattern.compile("^([^_](.+))\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), TargetBackend.JS_IR, true);
-    }
-
-    @Test
-    @TestMetadata("annotations.kt")
-    public void testAnnotations() {
-      runTest("compiler/testData/diagnostics/testsWithJsStdLibAndBackendCompilation/unsupportedFeatures/annotations.kt");
     }
   }
 }

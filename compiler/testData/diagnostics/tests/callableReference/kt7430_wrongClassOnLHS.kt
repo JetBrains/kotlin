@@ -12,3 +12,6 @@ class Test(val name: String = "") {
 
     fun foo() {}
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, init, primaryConstructor, propertyDeclaration,
+stringLiteral */

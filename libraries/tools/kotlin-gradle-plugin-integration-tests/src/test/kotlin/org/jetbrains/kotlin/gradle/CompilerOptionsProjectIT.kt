@@ -6,9 +6,13 @@
 package org.jetbrains.kotlin.gradle
 
 import org.gradle.api.logging.LogLevel
+import org.gradle.kotlin.dsl.withType
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.cliArgument
+import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
+import org.jetbrains.kotlin.gradle.dsl.kotlinAndroidExtensionOrNull
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.junit.jupiter.api.DisplayName
 import kotlin.io.path.appendText
@@ -253,7 +257,7 @@ class CompilerOptionsProjectIT : KGPBaseTest() {
             "AndroidSimpleApp",
             gradleVersion,
             buildJdk = jdk.location,
-            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion)
+            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion),
         ) {
             buildGradle.appendText(
                 //language=Groovy
@@ -301,36 +305,19 @@ class CompilerOptionsProjectIT : KGPBaseTest() {
         project(
             "AndroidIncrementalMultiModule",
             gradleVersion,
-            buildOptions = defaultBuildOptions.copy(
-                androidVersion = agpVersion,
-            ),
+            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion),
             buildJdk = jdk.location
         ) {
-            buildGradle.appendText(
-                //language=groovy
-                """
-                |
-                |subprojects {
-                |    tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile.class).configureEach {
-                |        compilerOptions {
-                |            freeCompilerArgs.addAll("-progressive")
-                |        }
-                |    }
-                |}
-                """.trimMargin()
-            )
-
-            subProject("libAndroid").buildGradle.appendText(
-                //language=groovy
-                """
-                |
-                |android {
-                |    kotlinOptions {
-                |        freeCompilerArgs += ["-opt-in=com.example.roo.requiresOpt.FunTests"]
-                |    }
-                |}
-                """.trimMargin()
-            )
+            subprojects("app", "libAndroid", "libAndroidClassesOnly", "libJvmClassesOnly").buildScriptInjection {
+                project.tasks.withType<KotlinCompile>().configureEach { task ->
+                    task.compilerOptions.freeCompilerArgs.add("-progressive")
+                }
+                if (project.name == "libAndroid") {
+                    project.kotlinAndroidExtensionOrNull?.compilerOptions?.freeCompilerArgs?.add(
+                        "-opt-in=com.example.roo.requiresOpt.FunTests"
+                    )
+                }
+            }
 
             build(":libAndroid:compileDebugKotlin") {
                 assertTasksExecuted(":libAndroid:compileDebugKotlin")
@@ -428,9 +415,14 @@ class CompilerOptionsProjectIT : KGPBaseTest() {
     @DisplayName("Multiplatform compiler option DSL hierarchy")
     @JvmGradlePluginTests
     fun mppCompilerOptionsDsl(gradleVersion: GradleVersion) {
+        val latestStable = KotlinVersion.DEFAULT
+        val firstNonDeprecated = KotlinVersion.firstNonDeprecated
+        val firstSupported = KotlinVersion.firstSupported
         project(
             projectName = "mpp-default-hierarchy",
             gradleVersion = gradleVersion,
+            // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
+            buildOptions = defaultBuildOptions.copy(isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED),
         ) {
             buildGradle.modify {
                 it.substringBefore("kotlin {") +
@@ -441,10 +433,11 @@ class CompilerOptionsProjectIT : KGPBaseTest() {
                         |import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
                         |
                         |kotlin {
+                        |    jvmToolchain(11)
                         |    jvm {
                         |        compilerOptions {
-                        |            languageVersion = KotlinVersion.KOTLIN_1_8
-                        |            apiVersion = KotlinVersion.KOTLIN_1_8
+                        |            languageVersion = KotlinVersion.${latestStable.name}
+                        |            apiVersion = KotlinVersion.${latestStable.name}
                         |            jvmTarget.value(JvmTarget.JVM_11).disallowChanges()
                         |            javaParameters = true
                         |        }
@@ -452,8 +445,8 @@ class CompilerOptionsProjectIT : KGPBaseTest() {
                         |    
                         |    js {
                         |        compilerOptions {
-                        |            languageVersion = KotlinVersion.KOTLIN_2_0
-                        |            apiVersion = KotlinVersion.KOTLIN_2_0
+                        |            languageVersion = KotlinVersion.${firstNonDeprecated.name}
+                        |            apiVersion = KotlinVersion.${firstNonDeprecated.name}
                         |            friendModulesDisabled = true
                         |        }
                         |    }
@@ -465,8 +458,8 @@ class CompilerOptionsProjectIT : KGPBaseTest() {
                         |    }
                         |    
                         |    compilerOptions {
-                        |         languageVersion = KotlinVersion.KOTLIN_1_7
-                        |         apiVersion = KotlinVersion.KOTLIN_1_7
+                        |         languageVersion = KotlinVersion.${firstSupported.name}
+                        |         apiVersion = KotlinVersion.${firstSupported.name}
                         |    }    
                         |}
                         """.trimMargin()
@@ -475,7 +468,7 @@ class CompilerOptionsProjectIT : KGPBaseTest() {
             build(":compileCommonMainKotlinMetadata") {
                 assertCompilerArguments(
                     ":compileCommonMainKotlinMetadata",
-                    "-language-version 1.7", "-api-version 1.7",
+                    "-language-version ${firstSupported.version}", "-api-version ${firstSupported.version}",
                     logLevel = LogLevel.INFO
                 )
             }
@@ -483,8 +476,8 @@ class CompilerOptionsProjectIT : KGPBaseTest() {
             build(":compileKotlinJvm") {
                 assertCompilerArguments(
                     ":compileKotlinJvm",
-                    "-language-version 1.8",
-                    "-api-version 1.8",
+                    "-language-version ${latestStable.version}",
+                    "-api-version ${latestStable.version}",
                     "-java-parameters",
                     "-jvm-target 11",
                     logLevel = LogLevel.INFO
@@ -494,15 +487,16 @@ class CompilerOptionsProjectIT : KGPBaseTest() {
             build(":compileKotlinJs") {
                 assertCompilerArguments(
                     ":compileKotlinJs",
-                    "-language-version 2.0", "-api-version 2.0", "-Xfriend-modules-disabled",
+                    "-language-version ${firstNonDeprecated.version}", "-api-version ${firstNonDeprecated.version}",
+                    "-Xfriend-modules-disabled",
                     logLevel = LogLevel.INFO
                 )
             }
 
             build(":compileKotlinLinuxX64") {
                 extractNativeTasksCommandLineArgumentsFromOutput(":compileKotlinLinuxX64") {
-                    assertCommandLineArgumentsContain(CommonCompilerArguments::languageVersion.cliArgument, "1.7")
-                    assertCommandLineArgumentsContain(CommonCompilerArguments::apiVersion.cliArgument, "1.7")
+                    assertCommandLineArgumentsContain(CommonCompilerArguments::languageVersion.cliArgument, firstSupported.version)
+                    assertCommandLineArgumentsContain(CommonCompilerArguments::apiVersion.cliArgument, firstSupported.version)
                     assertCommandLineArgumentsContain("-progressive")
                 }
             }

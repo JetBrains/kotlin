@@ -3,19 +3,19 @@ KaKotlinPropertySymbol:
   backingFieldSymbol: null
   callableId: /A.zoo
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
     annotations: []
     callableId: null
     compilerVisibility: Public
     contextReceivers: []
-    hasBody: false
     hasStableParameterNames: true
     isActual: false
-    isDefault: true
     isExpect: false
     isExtension: false
     isInline: false
+    isNotDefault: false
     isOverride: true
     location: PROPERTY
     modality: ABSTRACT
@@ -110,13 +110,12 @@ KaKotlinPropertySymbol:
     callableId: null
     compilerVisibility: Public
     contextReceivers: []
-    hasBody: false
     hasStableParameterNames: true
     isActual: false
-    isDefault: true
     isExpect: false
     isExtension: false
     isInline: false
+    isNotDefault: false
     isOverride: true
     location: PROPERTY
     modality: ABSTRACT
@@ -232,11 +231,13 @@ KaKotlinPropertySymbol:
   javaGetterName: getZoo
   javaSetterName: setZoo
   setterDeprecationStatus: null
+  isInline: false
 
 KaNamedFunctionSymbol:
   annotations: []
   callableId: /A.foo
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -279,19 +280,19 @@ KaKotlinPropertySymbol:
   backingFieldSymbol: null
   callableId: /A.foo
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
     annotations: []
     callableId: null
     compilerVisibility: Public
     contextReceivers: []
-    hasBody: false
     hasStableParameterNames: true
     isActual: false
-    isDefault: true
     isExpect: false
     isExtension: false
     isInline: false
+    isNotDefault: false
     isOverride: true
     location: PROPERTY
     modality: ABSTRACT
@@ -350,11 +351,13 @@ KaKotlinPropertySymbol:
   javaGetterName: getFoo
   javaSetterName: null
   setterDeprecationStatus: null
+  isInline: false
 
 KaNamedFunctionSymbol:
   annotations: []
   callableId: /A.smth
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -420,19 +423,19 @@ KaKotlinPropertySymbol:
   backingFieldSymbol: null
   callableId: /A.bar
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
     annotations: []
     callableId: null
     compilerVisibility: Public
     contextReceivers: []
-    hasBody: false
     hasStableParameterNames: true
     isActual: false
-    isDefault: true
     isExpect: false
     isExtension: false
     isInline: false
+    isNotDefault: false
     isOverride: true
     location: PROPERTY
     modality: ABSTRACT
@@ -481,13 +484,12 @@ KaKotlinPropertySymbol:
     callableId: null
     compilerVisibility: Public
     contextReceivers: []
-    hasBody: false
     hasStableParameterNames: true
     isActual: false
-    isDefault: true
     isExpect: false
     isExtension: false
     isInline: false
+    isNotDefault: false
     isOverride: true
     location: PROPERTY
     modality: ABSTRACT
@@ -580,25 +582,26 @@ KaKotlinPropertySymbol:
   javaGetterName: getBar
   javaSetterName: setBar
   setterDeprecationStatus: null
+  isInline: false
 
 KaKotlinPropertySymbol:
   annotations: []
   backingFieldSymbol: null
   callableId: /A.doo
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
     annotations: []
     callableId: null
     compilerVisibility: Public
     contextReceivers: []
-    hasBody: false
     hasStableParameterNames: true
     isActual: false
-    isDefault: true
     isExpect: false
     isExtension: false
     isInline: false
+    isNotDefault: false
     isOverride: true
     location: PROPERTY
     modality: ABSTRACT
@@ -703,3 +706,4 @@ KaKotlinPropertySymbol:
   javaGetterName: getDoo
   javaSetterName: null
   setterDeprecationStatus: null
+  isInline: false

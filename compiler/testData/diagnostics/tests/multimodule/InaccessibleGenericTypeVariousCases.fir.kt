@@ -54,3 +54,7 @@ fun test() {
     ::<!MISSING_DEPENDENCY_CLASS!>consumeBoxedConcrete<!>
     ::<!MISSING_DEPENDENCY_CLASS!>consumeBoxedGeneric<!>
 }
+
+/* GENERATED_FIR_TAGS: anonymousFunction, callableReference, checkNotNullCall, funWithExtensionReceiver,
+functionDeclaration, functionalType, interfaceDeclaration, lambdaLiteral, nullableType, starProjection, typeParameter,
+typeWithExtension */

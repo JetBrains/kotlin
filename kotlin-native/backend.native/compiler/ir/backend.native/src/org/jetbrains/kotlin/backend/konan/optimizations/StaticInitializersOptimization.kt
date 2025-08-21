@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.backend.konan.optimizations
 
-import org.jetbrains.kotlin.backend.common.copy
+import org.jetbrains.kotlin.utils.copy
 import org.jetbrains.kotlin.backend.common.ir.isUnconditional
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irBlock
@@ -161,7 +161,7 @@ internal object StaticInitializersOptimization {
                 val result = mutableSetOf<IrSimpleFunction>()
                 initializedFiles.forEach { (function, functionInitializedFiles) ->
                     val containter = function.calledInitializer ?: return@forEach
-                    val backingField = (function as? IrSimpleFunction)?.correspondingPropertySymbol?.owner?.backingField
+                    val backingField = function.correspondingPropertySymbol?.owner?.backingField
                     val isDefaultAccessor = backingField != null && function.origin == IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR
                     val initializerCallCouldBeDropped =
                             functionInitializedFiles.get(containerIds[containter]!!)
@@ -229,8 +229,8 @@ internal object StaticInitializersOptimization {
             }
         }
 
-        private val executeImplSymbol = context.ir.symbols.executeImpl
-        private val getContinuationSymbol = context.ir.symbols.getContinuation
+        private val executeImplSymbol = context.symbols.executeImpl
+        private val getContinuationSymbol = context.symbols.getContinuation
 
         private var dummySet = mutableSetOf<IrCall>()
 
@@ -276,9 +276,9 @@ internal object StaticInitializersOptimization {
                 val call = callSite.call
                 val irCall = call.irCallSite ?: continue
                 if (irCall.origin == STATEMENT_ORIGIN_PRODUCER_INVOCATION)
-                    producerInvocations[irCall.dispatchReceiver!!] = irCall
+                    producerInvocations[irCall.arguments[0]!!] = irCall
                 else if (irCall.origin == STATEMENT_ORIGIN_JOB_INVOCATION)
-                    jobInvocations[irCall.getValueArgument(0) as IrCall] = irCall
+                    jobInvocations[irCall.arguments[0] as IrCall] = irCall
                 if (call !is DataFlowIR.Node.VirtualCall) continue
                 virtualCallSites.getOrPut(irCall) { mutableListOf() }.add(callSite)
             }
@@ -459,7 +459,7 @@ internal object StaticInitializersOptimization {
 
                 private fun processExecuteImpl(expression: IrCall, data: BitSet): BitSet {
                     var curData = processCall(expression, expression.symbol.owner, data)
-                    val producerInvocation = producerInvocations[expression.getValueArgument(2)!!]!!
+                    val producerInvocation = producerInvocations[expression.arguments[2]!!]!!
                     // Producer is invoked right here in the same thread, so can update the result.
                     // Albeit this call site is a fictitious one, it is always a virtual one, which aren't optimized for now.
                     curData = visitCall(producerInvocation, curData)

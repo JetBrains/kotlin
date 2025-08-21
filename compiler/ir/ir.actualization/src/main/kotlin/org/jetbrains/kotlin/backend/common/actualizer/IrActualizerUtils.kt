@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualAnnotationsIncompatibilityType
-import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualCheckingCompatibility
+import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualIncompatibility
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualMatchingCompatibility
 
 internal fun recordActualForExpectDeclaration(
@@ -99,22 +99,22 @@ internal fun IrDiagnosticReporter.reportAmbiguousActuals(expectSymbol: IrDeclara
     )
 }
 
-internal fun IrDiagnosticReporter.reportExpectActualIncompatibility(
+internal fun IrDiagnosticReporter.reportExpectActualIrIncompatibility(
     expectSymbol: IrSymbol,
     actualSymbol: IrSymbol,
-    incompatibility: ExpectActualCheckingCompatibility.Incompatible<*>,
+    incompatibility: ExpectActualIncompatibility<*>,
 ) {
     val expectDeclaration = expectSymbol.owner as IrDeclaration
     val actualDeclaration = actualSymbol.owner as IrDeclaration
     at(expectDeclaration).report(
-        IrActualizationErrors.EXPECT_ACTUAL_INCOMPATIBILITY,
+        IrActualizationErrors.EXPECT_ACTUAL_IR_INCOMPATIBILITY,
         expectDeclaration.getNameWithAssert().asString(),
         actualDeclaration.getNameWithAssert().asString(),
         incompatibility
     )
 }
 
-internal fun IrDiagnosticReporter.reportExpectActualMismatch(
+internal fun IrDiagnosticReporter.reportExpectActualIrMismatch(
     expectSymbol: IrSymbol,
     actualSymbol: IrSymbol,
     incompatibility: ExpectActualMatchingCompatibility.Mismatch,
@@ -122,7 +122,7 @@ internal fun IrDiagnosticReporter.reportExpectActualMismatch(
     val expectDeclaration = expectSymbol.owner as IrDeclaration
     val actualDeclaration = actualSymbol.owner as IrDeclaration
     at(expectDeclaration).report(
-        IrActualizationErrors.EXPECT_ACTUAL_MISMATCH,
+        IrActualizationErrors.EXPECT_ACTUAL_IR_MISMATCH,
         expectDeclaration.getNameWithAssert().asString(),
         actualDeclaration.getNameWithAssert().asString(),
         incompatibility

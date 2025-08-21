@@ -19,11 +19,8 @@ package androidx.compose.compiler.plugins.kotlin.analysis
 import androidx.compose.compiler.plugins.kotlin.AbstractComposeDiagnosticsTest
 import androidx.compose.compiler.plugins.kotlin.Classpath
 import org.junit.Test
-import org.junit.runner.RunWith
-import org.junit.runners.JUnit4
 
-@RunWith(JUnit4::class)
-class ComposableTargetCheckerTests : AbstractComposeDiagnosticsTest(useFir = false) {
+class ComposableTargetCheckerTests(useFir: Boolean) : AbstractComposeDiagnosticsTest(useFir) {
     @Test
     fun testExplicitTargetAnnotations() = check(
         """
@@ -225,8 +222,8 @@ class ComposableTargetCheckerTests : AbstractComposeDiagnosticsTest(useFir = fal
             W {
                 N()
             }
-            <!COMPOSE_APPLIER_PARAMETER_MISMATCH!>W<!> {
-                M()
+            ${psiParStart()}W${psiEnd()} {
+                ${firMisStart()}M${firEnd()}()
             }
         }
         """
@@ -439,7 +436,7 @@ class ComposableTargetCheckerTests : AbstractComposeDiagnosticsTest(useFir = fal
         }
 
         class Invalid : Base() {
-          <!COMPOSE_APPLIER_DECLARATION_MISMATCH!>@Composable @ComposableTarget("M") override fun Compose() { }<!>
+          ${psiDecStart()}@Composable @ComposableTarget("M") override fun ${firDecStart()}Compose${firEnd()}() { }${psiEnd()}
         }
 
         class Valid : Base () {
@@ -498,4 +495,59 @@ class ComposableTargetCheckerTests : AbstractComposeDiagnosticsTest(useFir = fal
              }
         """
     )
+
+    @Test
+    fun testDifferentWrapperTypes() = check(
+        """
+            import androidx.compose.runtime.*
+             
+            @Retention(AnnotationRetention.BINARY)
+            @ComposableTargetMarker(description = "An N Composable")
+            @Target(
+                AnnotationTarget.FILE,
+                AnnotationTarget.FUNCTION,
+                AnnotationTarget.PROPERTY_GETTER,
+                AnnotationTarget.TYPE,
+                AnnotationTarget.TYPE_PARAMETER,
+            )
+            annotation class NComposable()
+            
+            @Retention(AnnotationRetention.BINARY)
+            @ComposableTargetMarker(description = "An M Composable")
+            @Target(
+                AnnotationTarget.FILE,
+                AnnotationTarget.FUNCTION,
+                AnnotationTarget.PROPERTY_GETTER,
+                AnnotationTarget.TYPE,
+                AnnotationTarget.TYPE_PARAMETER,
+            )
+            annotation class MComposable()
+
+            @Composable @NComposable fun N() { }
+            @Composable @MComposable fun M() { }
+
+            @Composable fun NWrapper(content: @NComposable @Composable () -> Unit) {
+                 content()
+            }
+
+            @Composable fun MWrapper(content: @MComposable @Composable () -> Unit) {
+                 content()
+            }
+             
+            @Composable fun T() {
+                MWrapper {
+                    NWrapper {
+                        N()
+                    }
+                }
+            }
+        """
+    )
+
+    private fun firEnd() = if (useFir) "<!>" else ""
+    private fun psiEnd() = if (!useFir) "<!>" else ""
+    private fun firMisStart() = if (useFir) "<!COMPOSE_APPLIER_CALL_MISMATCH!>" else ""
+    private fun psiParStart() = if (!useFir) "<!COMPOSE_APPLIER_PARAMETER_MISMATCH!>" else ""
+    private fun firDecStart() = if (useFir) "<!COMPOSE_APPLIER_DECLARATION_MISMATCH!>" else ""
+    private fun psiDecStart() = if (!useFir) "<!COMPOSE_APPLIER_DECLARATION_MISMATCH!>" else ""
 }

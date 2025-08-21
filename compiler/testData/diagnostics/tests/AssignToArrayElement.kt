@@ -18,3 +18,6 @@ fun fn() {
         nullable[1] += 1
     }
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, assignment, equalityExpression, functionDeclaration, ifExpression,
+incrementDecrementExpression, integerLiteral, localProperty, nullableType, propertyDeclaration, smartcast */

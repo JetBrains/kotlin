@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // RUN_PIPELINE_TILL: FRONTEND
 // KT-302 Report an error when inheriting many implementations of the same member
 
@@ -12,3 +13,5 @@ interface B {
 }
 
 <!MANY_INTERFACES_MEMBER_NOT_IMPLEMENTED!>class C<!> : A, B {} //should be error here
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, interfaceDeclaration */

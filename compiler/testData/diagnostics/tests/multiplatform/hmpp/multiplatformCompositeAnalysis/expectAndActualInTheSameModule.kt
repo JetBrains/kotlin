@@ -65,3 +65,6 @@ actual fun <!EXPECT_AND_ACTUAL_IN_THE_SAME_MODULE!>platformFun<!>() {}
 expect val <!EXPECT_AND_ACTUAL_IN_THE_SAME_MODULE!>platformProperty<!>: String
 actual val <!EXPECT_AND_ACTUAL_IN_THE_SAME_MODULE!>platformProperty<!>: String
     get() = "hello"
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, functionDeclaration, getter, inner, integerLiteral, nestedClass,
+propertyDeclaration, stringLiteral */

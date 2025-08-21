@@ -10,7 +10,7 @@ fun main() {
     val pi = 4.0.toDouble() * delta * (1..n).reduce(
             {t, i ->
                 val x = (i - 0.5) * delta
-                <!ARGUMENT_TYPE_MISMATCH, TYPE_MISMATCH!>t + 1.0 / (1.0 + x * x)<!>
+                <!RETURN_TYPE_MISMATCH!>t + 1.0 / (1.0 + x * x)<!>
 
             })
     // !!! pi has error type here
@@ -19,3 +19,6 @@ fun main() {
 
     println("pi_sequential_reduce $pi $n $elapseTime")
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, functionDeclaration, integerLiteral, javaFunction, lambdaLiteral,
+localProperty, multiplicativeExpression, propertyDeclaration, rangeExpression, stringLiteral */

@@ -10,3 +10,7 @@ fun main() {
 }
 
 fun <T : Any> T?.sure() : T = this!!
+
+/* GENERATED_FIR_TAGS: additiveExpression, checkNotNullCall, flexibleType, funWithExtensionReceiver, functionDeclaration,
+integerLiteral, javaFunction, javaProperty, localProperty, nullableType, propertyDeclaration, thisExpression,
+typeConstraint, typeParameter */

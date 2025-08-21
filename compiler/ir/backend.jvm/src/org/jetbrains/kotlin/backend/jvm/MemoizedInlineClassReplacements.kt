@@ -5,10 +5,8 @@
 
 package org.jetbrains.kotlin.backend.jvm
 
-import org.jetbrains.kotlin.backend.jvm.ir.classFileContainsMethod
-import org.jetbrains.kotlin.backend.jvm.ir.extensionReceiverName
-import org.jetbrains.kotlin.backend.jvm.ir.isStaticValueClassReplacement
-import org.jetbrains.kotlin.backend.jvm.ir.parentClassId
+import org.jetbrains.kotlin.backend.jvm.ir.*
+import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
@@ -25,7 +23,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.InlineClassDescriptorResolver
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 
-var IrFunction.originalFunctionOfStaticInlineClassReplacement: IrFunction? by irAttribute(followAttributeOwner = false)
+var IrFunction.originalFunctionOfStaticInlineClassReplacement: IrFunction? by irAttribute(copyByDefault = false)
 
 /**
  * Keeps track of replacement functions and inline class box/unbox functions.
@@ -87,7 +85,9 @@ class MemoizedInlineClassReplacements(
 
     private val IrSimpleFunction.needsReplacement: Boolean
         get() {
-            if (!hasMangledParameters(includeMFVC = false) && !(mangleReturnTypes && hasMangledReturnType)) return false
+            if (!(shouldBeExposedByAnnotationOrFlag(context.config.languageVersionSettings) || hasMangledParameters(includeMFVC = false) ||
+                        mangleReturnTypes && hasMangledReturnType)
+            ) return false
             if (isFromJava()) return mangleCallsToJavaMethodsWithValueClasses && !overridesOnlyMethodsFromJava()
             return true
         }
@@ -163,11 +163,22 @@ class MemoizedInlineClassReplacements(
                 parameter.copyTo(
                     this,
                     defaultValue = null,
-                    name = if (parameter.kind == IrParameterKind.ExtensionReceiver) {
-                        // The function's name will be mangled, so preserve the old receiver name.
-                        Name.identifier(function.extensionReceiverName(context.config))
-                    } else parameter.name
+                    name = when (parameter.kind) {
+                        IrParameterKind.ExtensionReceiver -> {
+                            // The function's name will be mangled, so preserve the old receiver name.
+                            function.extensionReceiverName(context.config).let(Name::identifier)
+                        }
+                        IrParameterKind.Context -> {
+                            function.anonymousContextParameterName(parameter)?.let(Name::identifier) ?: parameter.name
+                        }
+                        else -> parameter.name
+                    },
+                    origin = when (parameter.kind) {
+                        IrParameterKind.Context -> IrDeclarationOrigin.MOVED_CONTEXT_RECEIVER
+                        else -> parameter.origin
+                    }
                 ).also {
+                    it.addOrInheritInlineClassPropertyNameParts(oldParameter = parameter)
                     // Assuming that constructors and non-override functions are always replaced with the unboxed
                     // equivalent, deep-copying the value here is unnecessary. See `JvmInlineClassLowering`.
                     it.defaultValue = parameter.defaultValue?.patchDeclarationParents(this)
@@ -180,22 +191,23 @@ class MemoizedInlineClassReplacements(
         buildReplacement(function, JvmLoweredDeclarationOrigin.STATIC_INLINE_CLASS_REPLACEMENT, noFakeOverride = true) {
             this.originalFunctionOfStaticInlineClassReplacement = function
 
-            var nextContextReceiverIndex = 0
             parameters += function.parameters.map { parameter ->
                 when (parameter.kind) {
                     IrParameterKind.DispatchReceiver -> {
                         // FAKE_OVERRIDEs have broken dispatch receivers
-                        function.parentAsClass.thisReceiver!!.copyTo(
+                        val parent = function.parentAsClass
+                        parent.thisReceiver!!.copyTo(
                             this,
-                            name = Name.identifier("arg0"),
-                            type = function.parentAsClass.defaultType, origin = IrDeclarationOrigin.MOVED_DISPATCH_RECEIVER,
+                            name = Name.identifier(AsmUtil.THIS),
+                            type = parent.defaultType,
+                            origin = IrDeclarationOrigin.MOVED_DISPATCH_RECEIVER,
                             kind = IrParameterKind.Regular,
                         )
                     }
                     IrParameterKind.Context -> {
                         parameter.copyTo(
                             this,
-                            name = Name.identifier("contextReceiver${nextContextReceiverIndex++}"),
+                            name = function.anonymousContextParameterName(parameter)?.let(Name::identifier) ?: parameter.name,
                             origin = IrDeclarationOrigin.MOVED_CONTEXT_RECEIVER,
                             kind = IrParameterKind.Regular,
                         )
@@ -209,12 +221,15 @@ class MemoizedInlineClassReplacements(
                         )
                     }
                     IrParameterKind.Regular -> {
-                        parameter.copyTo(this, defaultValue = null).also {
+                        parameter.copyTo(
+                            this,
+                            defaultValue = null,
+                        ).also {
                             // See comment next to a similar line above.
                             it.defaultValue = parameter.defaultValue?.patchDeclarationParents(this)
                         }
                     }
-                }
+                }.apply { addOrInheritInlineClassPropertyNameParts(oldParameter = parameter) }
             }
 
             context.remapMultiFieldValueClassStructure(function, this, parametersMappingOrNull = null)

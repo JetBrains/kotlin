@@ -14,13 +14,11 @@ import org.jetbrains.kotlin.backend.jvm.mapping.*
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.AsmUtil.*
-import org.jetbrains.kotlin.codegen.DescriptorAsmUtil.getNameForReceiverParameter
 import org.jetbrains.kotlin.codegen.coroutines.SuspensionPointKind
 import org.jetbrains.kotlin.codegen.coroutines.generateCoroutineSuspendedCheck
 import org.jetbrains.kotlin.codegen.inline.*
 import org.jetbrains.kotlin.codegen.inline.ReifiedTypeInliner.Companion.putNeedClassReificationMarker
-import org.jetbrains.kotlin.codegen.inline.ReifiedTypeInliner.OperationKind.AS
-import org.jetbrains.kotlin.codegen.inline.ReifiedTypeInliner.OperationKind.SAFE_AS
+import org.jetbrains.kotlin.codegen.inline.ReifiedTypeInliner.OperationKind.*
 import org.jetbrains.kotlin.codegen.intrinsics.TypeIntrinsics
 import org.jetbrains.kotlin.codegen.pseudoInsns.fakeAlwaysFalseIfeq
 import org.jetbrains.kotlin.codegen.pseudoInsns.fixStackAndJump
@@ -28,7 +26,10 @@ import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.codegen.state.JvmBackendConfig
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.LanguageVersionSettings
+import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.VariableAccessorDescriptor
 import org.jetbrains.kotlin.diagnostics.BackendErrors
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
@@ -214,12 +215,6 @@ class ExpressionCodegen(
         expression.accept(this, data).materializeAt(type, irType)
     }
 
-    // TODO remove
-    fun genToStackValue(expression: IrExpression, type: Type, irType: IrType, data: BlockInfo): StackValue {
-        gen(expression, type, irType, data)
-        return StackValue.onStack(type, irType.toIrBasedKotlinType())
-    }
-
     fun generate() {
         mv.visitCode()
         val startLabel = markNewLabel()
@@ -325,16 +320,18 @@ class ExpressionCodegen(
         if (irFunction.isSuspend)
             return
 
-        irFunction.extensionReceiverParameter?.let { generateNonNullAssertion(it) }
-
-        // Private operator functions don't have null checks on value parameters,
+        // Private operator functions have null only on the extension receiver
         // see `DescriptorAsmUtil.genNotNullAssertionsForParameters`.
-        if (DescriptorVisibilities.isPrivate(irFunction.visibility) && irFunction is IrSimpleFunction && irFunction.isOperator)
-            return
+        val isPrivateOperatorFunction =
+            DescriptorVisibilities.isPrivate(irFunction.visibility) && irFunction is IrSimpleFunction && irFunction.isOperator
 
-        for (parameter in irFunction.valueParameters) {
-            if (!parameter.origin.isSynthetic) {
-                generateNonNullAssertion(parameter)
+        for (parameter in irFunction.parameters) {
+            when (parameter.kind) {
+                IrParameterKind.ExtensionReceiver -> generateNonNullAssertion(parameter)
+                IrParameterKind.DispatchReceiver -> {}
+                IrParameterKind.Regular, IrParameterKind.Context -> {
+                    if (!isPrivateOperatorFunction && !parameter.origin.isSynthetic) generateNonNullAssertion(parameter)
+                }
             }
         }
     }
@@ -371,24 +368,31 @@ class ExpressionCodegen(
         if (!irFunction.isStatic) {
             mv.visitLocalVariable("this", classCodegen.type.descriptor, null, startLabel, endLabel, 0)
         }
-        val extensionReceiverParameter = irFunction.extensionReceiverParameter
-        if (extensionReceiverParameter != null) {
-            writeValueParameterInLocalVariableTable(extensionReceiverParameter, startLabel, endLabel, true)
-        }
-        for (param in irFunction.valueParameters) {
-            if (param.origin == IrDeclarationOrigin.MASK_FOR_DEFAULT_FUNCTION || param.origin == IrDeclarationOrigin.METHOD_HANDLER_IN_DEFAULT_FUNCTION)
-                continue
-            writeValueParameterInLocalVariableTable(param, startLabel, endLabel, false)
+        for (parameter in irFunction.parameters) {
+            fun writeToLVT(useReceiverNaming: Boolean) = writeValueParameterInLocalVariableTable(parameter, startLabel, endLabel, useReceiverNaming)
+            when (parameter.kind) {
+                IrParameterKind.DispatchReceiver -> {}
+                IrParameterKind.Context -> writeToLVT(useReceiverNaming = false)
+                IrParameterKind.ExtensionReceiver -> writeToLVT(useReceiverNaming = !parameter.hasFixedName)
+                IrParameterKind.Regular -> when (parameter.origin) {
+                    IrDeclarationOrigin.MASK_FOR_DEFAULT_FUNCTION, IrDeclarationOrigin.METHOD_HANDLER_IN_DEFAULT_FUNCTION -> {}
+                    else -> writeToLVT(useReceiverNaming = false)
+                }
+            }
         }
     }
 
-    private fun writeValueParameterInLocalVariableTable(param: IrValueParameter, startLabel: Label, endLabel: Label, isReceiver: Boolean) {
+    private fun writeValueParameterInLocalVariableTable(
+        param: IrValueParameter, startLabel: Label, endLabel: Label, useReceiverNaming: Boolean
+    ) {
         if (!param.isVisibleInLVT) return
 
         // If the parameter is an extension receiver parameter or a captured extension receiver from enclosing,
         // then generate name accordingly.
-        val name = if (param.origin == BOUND_RECEIVER_PARAMETER || isReceiver) {
+        val name = if (param.origin == BOUND_RECEIVER_PARAMETER || useReceiverNaming) {
             getNameForReceiverParameter(irFunction.toIrBasedDescriptor(), context.config.languageVersionSettings)
+        } else if (param.kind == IrParameterKind.Context) {
+            irFunction.anonymousContextParameterName(param) ?: param.name.asString()
         } else {
             param.name.asString()
         }
@@ -398,6 +402,22 @@ class ExpressionCodegen(
         mv.visitLocalVariable(
             name, type.descriptor, null, startLabel, endLabel, findLocalIndex(param.symbol)
         )
+    }
+
+    private fun getNameForReceiverParameter(descriptor: CallableDescriptor, languageVersionSettings: LanguageVersionSettings): String {
+        if (!languageVersionSettings.supportsFeature(LanguageFeature.NewCapturedReceiverFieldNamingConvention)) {
+            return RECEIVER_PARAMETER_NAME
+        }
+
+        val callableName =
+            if (descriptor is VariableAccessorDescriptor) descriptor.correspondingVariable.getName()
+            else descriptor.name
+
+        if (callableName.isSpecial) {
+            return RECEIVER_PARAMETER_NAME
+        }
+
+        return getLabeledThisName(callableName.asString(), LABELED_THIS_PARAMETER, RECEIVER_PARAMETER_NAME)
     }
 
     override fun visitBlock(expression: IrBlock, data: BlockInfo): PromisedValue {
@@ -429,7 +449,7 @@ class ExpressionCodegen(
     private val IrValueDeclaration.isVisibleInLVT: Boolean
         get() = origin != IrDeclarationOrigin.IR_TEMPORARY_VARIABLE &&
                 origin != IrDeclarationOrigin.FOR_LOOP_ITERATOR &&
-                origin != IrDeclarationOrigin.UNDERSCORE_PARAMETER &&
+                (origin != IrDeclarationOrigin.UNDERSCORE_PARAMETER || this is IrValueParameter && this.kind == IrParameterKind.Context) &&
                 origin != IrDeclarationOrigin.DESTRUCTURED_OBJECT_PARAMETER &&
                 origin != JvmLoweredDeclarationOrigin.TEMPORARY_MULTI_FIELD_VALUE_CLASS_VARIABLE &&
                 origin != JvmLoweredDeclarationOrigin.TEMPORARY_MULTI_FIELD_VALUE_CLASS_PARAMETER
@@ -466,58 +486,6 @@ class ExpressionCodegen(
                         variable.gaps.add(Gap(gapStart, restartLabel))
                     }
                 }
-            }
-        }
-    }
-
-    override fun visitInlinedFunctionBlock(inlinedBlock: IrInlinedFunctionBlock, data: BlockInfo): PromisedValue {
-        val info = BlockInfo(data)
-
-        val inlineCall = inlinedBlock.inlineCall!!
-        val callee = inlinedBlock.inlineDeclaration as? IrFunction
-
-        lineNumberMapper.beforeIrInline(inlinedBlock)
-
-        lineNumberMapper.noLineNumberScopeWithCondition(inlinedBlock.inlineDeclaration.isInlineOnly()) {
-            inlineCall.markLineNumber(startOffset = true)
-            mv.nop()
-
-            lineNumberMapper.buildSmapFor(inlinedBlock)
-
-            if (inlineCall.usesDefaultArguments()) {
-                // $default function has first LN pointing to original callee
-                callee?.markLineNumber(startOffset = true)
-                mv.nop()
-            }
-
-            val result = inlinedBlock.statements.fold(unitValue) { prev, exp ->
-                prev.discard()
-                exp.accept(this, info)
-            }
-
-            if (callee != null && (inlinedBlock.inlinedElement !is IrCallableReference<*> || callee.isInline)) {
-                setExtraLineNumberForVoidReturningFunction(callee)
-            }
-
-            // After `ReturnableBlockLowering` last return could transform, but we still need to place new LN there
-            val lastStatement = callee?.body?.statements?.lastOrNull()
-            if (lastStatement is IrReturn) {
-                val returnTarget = lastStatement.returnTargetSymbol.owner
-                if (returnTarget.attributeOwnerId == inlinedBlock.inlineDeclaration) {
-                    // if return is implicit we must put new LN at the end of expression
-                    inlinedBlock.statements.last().markLineNumber(startOffset = lastStatement.startOffset != lastStatement.endOffset)
-                    mv.nop()
-                }
-            }
-
-            lineNumberMapper.dropCurrentSmap()
-
-            return result.materialized().also {
-                if (info.variables.isNotEmpty()) {
-                    writeLocalVariablesInTable(info, markNewLabel())
-                }
-                // This block must be executed after `writeLocalVariablesInTable`
-                lineNumberMapper.afterIrInline(inlinedBlock)
             }
         }
     }
@@ -565,32 +533,17 @@ class ExpressionCodegen(
             callGenerator.genValueAndPut(parameter, argument, asmType, this, data)
         }
 
-        fun getValueArgument(i: Int): IrExpression =
-            expression.getValueArgument(i) ?: error(
-                "No argument for parameter ${callee.symbol.owner.valueParameters[i].render()}:\n${expression.dump()}"
-            )
+        val parameterAsmTypes = callable.signature.parameters
+        val hasDispatchReceiver = callee.dispatchReceiverParameter != null
 
-        expression.dispatchReceiver?.let { receiver ->
-            handleParameter(
-                callee.dispatchReceiverParameter!!,
-                receiver,
-                if (expression.superQualifierSymbol != null) typeMapper.mapTypeAsDeclaration(receiver.type) else callable.owner,
-            )
-        }
-
-        val valueParameterAsmTypes = callable.signature.valueParameters
-        val contextReceiverCount = callee.contextReceiverParametersCount
-        for (i in 0 until contextReceiverCount) {
-            handleParameter(callee.valueParameters[i], getValueArgument(i), valueParameterAsmTypes[i].asmType)
-        }
-
-        expression.extensionReceiver?.let { receiver ->
-            handleParameter(callee.extensionReceiverParameter!!, receiver, valueParameterAsmTypes[contextReceiverCount].asmType)
-        }
-
-        val valueParametersShift = if (callee.extensionReceiverParameter != null) 1 else 0
-        for (i in contextReceiverCount until callee.valueParameters.size) {
-            handleParameter(callee.valueParameters[i], getValueArgument(i), valueParameterAsmTypes[i + valueParametersShift].asmType)
+        for ((parameter, argument) in callee.parameters zip expression.arguments) {
+            if (argument == null) error("No argument for parameter ${parameter.render()}:\n${expression.dump()}")
+            val type = if (parameter.kind == IrParameterKind.DispatchReceiver) {
+                if (expression.superQualifierSymbol != null) typeMapper.mapTypeAsDeclaration(argument.type) else callable.owner
+            } else {
+                parameterAsmTypes[parameter.indexInParameters - if (hasDispatchReceiver) 1 else 0]
+            }
+            handleParameter(parameter, argument, type)
         }
 
         expression.markLineNumber(true)
@@ -650,6 +603,7 @@ class ExpressionCodegen(
 
     private fun IrFunctionAccessExpression.getSuspensionPointKind(): SuspensionPointKind =
         when {
+            this is IrCall && this.originalForReflectiveCall != null -> this.originalForReflectiveCall!!.getSuspensionPointKind()
             !symbol.owner.isSuspend || !irFunction.shouldContainSuspendMarkers() ->
                 SuspensionPointKind.NEVER
             // Copy-pasted bytecode blocks are not suspension points.
@@ -714,25 +668,15 @@ class ExpressionCodegen(
     }
 
     private fun generateConstructorArguments(expression: IrFunctionAccessExpression, signature: JvmMethodSignature, data: BlockInfo) {
-        expression.symbol.owner.valueParameters.forEachIndexed { i, irParameter ->
-            val arg = expression.getValueArgument(i)
-                ?: error("Null argument in ExpressionCodegen for parameter ${irParameter.render()}")
-            gen(arg, signature.valueParameters[i].asmType, irParameter.type, data)
+        for (parameter in expression.symbol.owner.parameters) {
+            val arg = expression.arguments[parameter] ?: error("Null argument in ExpressionCodegen for parameter ${parameter.render()}")
+            gen(arg, signature.parameters[parameter.indexInParameters], parameter.type, data)
         }
     }
 
     override fun visitVariable(declaration: IrVariable, data: BlockInfo): PromisedValue {
         val varType = typeMapper.mapType(declaration)
         val index = frameMap.enter(declaration.symbol, varType)
-        val name = declaration.name.asString()
-
-        if (state.configuration.getBoolean(JVMConfigurationKeys.USE_INLINE_SCOPES_NUMBERS) &&
-            state.configuration.getBoolean(JVMConfigurationKeys.ENABLE_IR_INLINER) &&
-            JvmAbi.isFakeLocalVariableForInline(name) &&
-            name.contains(INLINE_SCOPE_NUMBER_SEPARATOR)
-        ) {
-            declaration.name = Name.identifier(updateCallSiteLineNumber(name, lineNumberMapper.getLineNumber()))
-        }
 
         val initializer = declaration.initializer
         if (initializer != null) {
@@ -777,9 +721,10 @@ class ExpressionCodegen(
         val irValueDeclaration = expression.symbol.owner
         val realType = irValueDeclaration.realType
         val kotlinType = if (eraseType) realType.upperBound.withNullability(realType.isNullable()) else realType
-        StackValue.local(variableIndex, asmType, kotlinType.toIrBasedKotlinType())
+        StackValue.Local(variableIndex, asmType, kotlinType)
     } else {
-        genToStackValue(expression, type, parameterType, data)
+        gen(expression, type, parameterType, data)
+        StackValue.OnStack(type, parameterType)
     }
 
     // We do not mangle functions if Result is the only parameter of the function. This means that if a function
@@ -790,19 +735,18 @@ class ExpressionCodegen(
             val isBoxedResult = this is IrValueParameter && parent is IrSimpleFunction &&
                     parent.dispatchReceiverParameter != this &&
                     (parent.parent as? IrClass)?.isClassWithFqName(StandardNames.RESULT_FQ_NAME) != true &&
-                    parent.resultIsActuallyAny(indexInOldValueParameters) == true
+                    parent.resultIsActuallyAny(indexInParameters) == true
             return if (isBoxedResult) context.irBuiltIns.anyNType else type
         }
 
-    // Argument: null for return value, -1 for extension receiver, >= 0 for value parameter.
+    // Argument: null for return value, non-dispatch parameter index otherwise.
     //           (It does not make sense to check the dispatch receiver.)
     // Return: null if this is not a `Result<T>` type at all, false if this is an unboxed `Result<T>`,
     //         true if this is a `Result<T>` overriding `Any?` and so it is boxed.
     private fun IrSimpleFunction.resultIsActuallyAny(index: Int?): Boolean? {
         val type = when {
             index == null -> returnType
-            index < 0 -> extensionReceiverParameter!!.type
-            else -> valueParameters[index].type
+            else -> parameters[index].type
         }
         if (!type.eraseIfTypeParameter().isKotlinResult()) return null
         // If there's a bridge, it will unbox `Result` along with transforming all other arguments.
@@ -868,7 +812,12 @@ class ExpressionCodegen(
         val isFieldInitializer = expression.origin == IrStatementOrigin.INITIALIZE_FIELD
         val skip = (irFunction is IrConstructor || inClassInit) && isFieldInitializer && expressionValue is IrConst &&
                 isDefaultValueForType(expression.symbol.owner.type.asmType, expressionValue.value)
-        return if (skip) unitValue else super.visitSetField(expression, data)
+        if (skip) return unitValue
+        val isDelegatedPropertiesInitializer = expression.symbol.owner.name.asString() == JvmAbi.DELEGATED_PROPERTIES_ARRAY_NAME
+                && expression.symbol.owner.origin == JvmLoweredDeclarationOrigin.GENERATED_PROPERTY_REFERENCE
+        lineNumberMapper.noLineNumberScopeWithCondition(isDelegatedPropertiesInitializer) {
+            return super.visitSetField(expression, data)
+        }
     }
 
     /**
@@ -959,7 +908,8 @@ class ExpressionCodegen(
 
     override fun visitClass(declaration: IrClass, data: BlockInfo): PromisedValue {
         if (declaration.origin != JvmLoweredDeclarationOrigin.CONTINUATION_CLASS) {
-            val childCodegen = ClassCodegen.getOrCreate(declaration, context, enclosingFunctionForLocalObjects)
+            val childCodegen =
+                ClassCodegen.getOrCreate(declaration, context, classCodegen.intrinsicExtensions, enclosingFunctionForLocalObjects)
             childCodegen.generate()
             closureReifiedMarkers[declaration] = childCodegen.reifiedTypeParametersUsages
         }
@@ -1270,10 +1220,6 @@ class ExpressionCodegen(
         mv.nop()
         val endLabel = Label()
         val stackElement = unwindBlockStack(endLabel, data) { it.loop == jump.loop }
-        if ((jump.loop.body as? IrBlock)?.statements?.singleOrNull() is IrInlinedFunctionBlock) {
-            // There must be another line number because this jump is actually return from inlined function
-            jump.markLineNumber(startOffset = true)
-        }
         if (stackElement == null) {
             generateGlobalReturnFlagIfPossible(jump, jump.loop.nonLocalReturnLabel(jump is IrBreak))
             mv.areturn(Type.VOID_TYPE)
@@ -1323,6 +1269,7 @@ class ExpressionCodegen(
             val descriptorType = parameter.asmType
             val index = frameMap.enter(parameter, descriptorType)
             clause.markLineNumber(true)
+            putReifiedOperationMarkerIfTypeIsReifiedParameter(parameter.type, CATCH)
             mv.store(index, descriptorType)
             val afterStore = markNewLabel()
 
@@ -1470,7 +1417,7 @@ class ExpressionCodegen(
         assert(context.config.runtimeStringConcat.isDynamic) {
             "IrStringConcatenation expression should be presented only with dynamic concatenation: ${expression.dump()}"
         }
-        val generator = StringConcatGenerator(context.config.runtimeStringConcat, mv)
+        val generator = StringConcatGenerator(context.config.runtimeStringConcat, mv, typeMapper)
         expression.arguments.forEach { arg ->
             if (arg is IrConst) {
                 val type = when (arg.kind) {
@@ -1485,7 +1432,7 @@ class ExpressionCodegen(
                     IrConstKind.String -> JAVA_STRING_TYPE
                     IrConstKind.Null -> OBJECT_TYPE
                 }
-                generator.putValueOrProcessConstant(StackValue.constant(arg.value, type, null))
+                generator.putValueOrProcessConstant(arg.value, type)
             } else {
                 val value = arg.accept(this, data)
                 val generatingType = if (value.type == Type.VOID_TYPE) AsmTypes.UNIT_TYPE else value.type
@@ -1542,9 +1489,14 @@ class ExpressionCodegen(
         data: BlockInfo,
         signature: JvmMethodSignature
     ): IrCallGenerator {
+        // we do not inline into @JvmStatic wrappers to keep bytecode smaller, but for private ones
+        // inlining is preferred (compared to the necessity in extra access-method)
+        fun IrFunction.isNonPrivateJvmStaticWrapper() =
+            origin == JvmLoweredDeclarationOrigin.JVM_STATIC_WRAPPER && visibility != DescriptorVisibilities.PRIVATE
+
         if (!element.symbol.owner.isInlineFunctionCall(context) ||
             classCodegen.irClass.fileParent.fileEntry is MultifileFacadeFileEntry ||
-            irFunction.origin == JvmLoweredDeclarationOrigin.JVM_STATIC_WRAPPER ||
+            irFunction.isNonPrivateJvmStaticWrapper() ||
             irFunction.isInvokeSuspendOfContinuation()
         ) {
             return IrCallGenerator.DefaultCallGenerator
@@ -1568,7 +1520,7 @@ class ExpressionCodegen(
             }
 
         val mappings = TypeParameterMappings(typeMapper.typeSystem, typeArguments, allReified = false, typeMapper::mapTypeParameter)
-        val sourceCompiler = IrSourceCompilerForInline(state, element, callee, this, data)
+        val sourceCompiler = IrSourceCompilerForInline(state, element, callee, this, data, context.evaluatorData)
         val reifiedTypeInliner = ReifiedTypeInliner(
             mappings,
             IrInlineIntrinsicsSupport(classCodegen, element, irFunction.fileParent),
@@ -1582,7 +1534,9 @@ class ExpressionCodegen(
 
     override fun consumeReifiedOperationMarker(typeParameter: TypeParameterMarker) {
         require(typeParameter is IrTypeParameterSymbol)
-        if (irFunction != typeParameter.owner.parent) {
+        // For type parameter captured in code fragment, IR of method declaring it might be not built.
+        // Thus, we first check if we are inside the evaluator-generated method and avoid accessing non-existing typeParameter.owner.parent
+        if (context.evaluatorData?.evaluatorGeneratedFunction == irFunction || irFunction != typeParameter.owner.parent) {
             reifiedTypeParametersUsages.addUsedReifiedParameter(typeParameter.owner.name.asString())
         }
     }

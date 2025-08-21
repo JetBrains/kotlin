@@ -1,5 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER -TOPLEVEL_TYPEALIASES_ONLY -DEBUG_INFO_MISSING_UNRESOLVED
+// DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER -TOPLEVEL_TYPEALIASES_ONLY -UNSUPPORTED_FEATURE -DEBUG_INFO_MISSING_UNRESOLVED
 
 open class Base {
     open fun foo() {}
@@ -43,3 +43,6 @@ class TestSuperForGenericBase<T> : GB<T>() {
         super<<!NOT_A_SUPERTYPE!>U<!>>.foo()
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, nullableType, override, superExpression,
+typeAliasDeclaration, typeAliasDeclarationWithTypeParameter, typeParameter */

@@ -2,6 +2,7 @@
 
 // WITH_STDLIB
 
+// FILE: lib.kt
 inline fun <reified T : Any> check(expected: String) {
     val clazz = T::class.javaPrimitiveType!!
     assert (clazz.canonicalName == expected) {
@@ -16,6 +17,7 @@ inline fun <reified T : Any> checkNull() {
     }
 }
 
+// FILE: main.kt
 fun box(): String {
     check<Boolean>("boolean")
     check<Char>("char")

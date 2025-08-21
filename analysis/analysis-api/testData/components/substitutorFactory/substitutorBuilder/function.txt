@@ -16,6 +16,8 @@ KaFunctionSignature:
       receiverType = null
       returnType = kotlin.collections.List<kotlin.Long>
       symbol = x: kotlin.collections.List<B>
+      contextParameters = []
       callableId = null
   ]
+  contextParameters = []
   callableId = /fooo

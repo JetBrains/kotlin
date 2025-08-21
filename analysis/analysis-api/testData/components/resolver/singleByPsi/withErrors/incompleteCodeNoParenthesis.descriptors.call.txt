@@ -4,6 +4,7 @@ KtCallExpression(64,75): 'ALE<String>'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -11,5 +12,6 @@ KtCallExpression(64,75): 'ALE<String>'
           returnType = ALE<kotlin.String>
           symbol = <constructor>(): ALE<T>
           valueParameters = []
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}

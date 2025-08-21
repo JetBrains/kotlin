@@ -1,9 +1,9 @@
 val test1: Int
-  field = A.invoke(i = 42)
+  field = invoke(/* <this> = A, */ i = 42)
   get
 
 val test2: Int
-  field = En.X.invoke(i = 42)
+  field = invoke(/* <this> = En.X, */ i = 42)
   get
 
 enum class En : Enum<En> {

@@ -435,7 +435,7 @@ digraph jumps_kt {
                 147 [label="Function call arguments enter"];
                 148 [label="Function call arguments exit"];
             }
-            149 [label="Function call enter: R?C|kotlin/Function0.invoke|()"];
+            149 [label="Function call enter: R|<local>/block|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()"];
             150 [label="Function call exit: R|<local>/block|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()" style="filled" fillcolor=yellow];
             151 [label="Exit block"];
         }

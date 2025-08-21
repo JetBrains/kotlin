@@ -11,3 +11,7 @@ fun foo() {
 
     checkSubtype<Int>(a.b.c)
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, classDeclaration, funWithExtensionReceiver, functionDeclaration,
+functionalType, infix, integerLiteral, localProperty, nullableType, propertyDeclaration, typeParameter,
+typeWithExtension */

@@ -7,6 +7,7 @@ package samples.time
 
 import samples.*
 import kotlin.time.*
+import kotlin.time.Duration.Companion.seconds
 
 class Clocks {
     @Sample
@@ -34,5 +35,21 @@ class Clocks {
         // Then, one can write a completely deterministic test:
         val currentTimeForTests = formatCurrentTime(testClock)
         assertPrints(currentTimeForTests, "2023-01-02T22:35:01Z")
+    }
+
+    @Sample
+    fun timeSourceAsClock() {
+        // Creating a TimeSource
+        // When testing a Clock in combination of kotlinx-coroutines-test, use the testTimeSource of the TestDispatcher.
+        val timeSource = TestTimeSource()
+        // Creating a clock by setting the specified origin
+        val clock = timeSource.asClock(origin = Instant.parse("2023-01-02T22:00:00Z"))
+
+        assertPrints(clock.now(), "2023-01-02T22:00:00Z")
+
+        // Advancing time in the timeSource
+        timeSource += 10.seconds
+
+        assertPrints(clock.now(), "2023-01-02T22:00:10Z")
     }
 }

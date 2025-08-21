@@ -722,7 +722,7 @@ fun case_36(x: Any) {
 
     if (<!SENSELESS_COMPARISON!>x == z<!>) {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing")!>x<!>.<!CANNOT_INFER_PARAMETER_TYPE, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>java<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing")!>x<!>.<!CANNOT_INFER_PARAMETER_TYPE!>java<!>
     }
 }
 
@@ -744,7 +744,7 @@ fun case_38() {
     if (<!SENSELESS_COMPARISON!>Object.prop_2 != z<!>)
     else {
         Object.prop_2
-        Object.prop_2.<!CANNOT_INFER_PARAMETER_TYPE, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>java<!>
+        Object.prop_2.<!CANNOT_INFER_PARAMETER_TYPE!>java<!>
     }
 }
 
@@ -1002,7 +1002,7 @@ fun case_57(a: (() -> Unit)) {
 
     if (<!SENSELESS_COMPARISON!>a == z<!>) {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing")!>a<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing")!>a<!>.<!CANNOT_INFER_PARAMETER_TYPE, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>java<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing")!>a<!>.<!CANNOT_INFER_PARAMETER_TYPE!>java<!>
     }
 }
 
@@ -1324,7 +1324,7 @@ fun case_71(t: Any?) {
 fun case_72(t: Any?, z1: Nothing?) {
     <!CAN_BE_VAL!>var<!> z2 = null
 
-    if (t is Interface1? && t != z1 <!UNREACHABLE_CODE!>?:<!> z2 && t is Interface2?) {
+    if (t is Interface1? && t != z1 ?: z2 && t is Interface2?) {
         <!DEBUG_INFO_EXPRESSION_TYPE("Interface1? & Interface2?")!>t<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("Interface1? & Interface2?")!>t<!><!UNSAFE_CALL!>.<!>itest1()
         <!DEBUG_INFO_EXPRESSION_TYPE("Interface1? & Interface2?")!>t<!><!UNSAFE_CALL!>.<!>itest2()

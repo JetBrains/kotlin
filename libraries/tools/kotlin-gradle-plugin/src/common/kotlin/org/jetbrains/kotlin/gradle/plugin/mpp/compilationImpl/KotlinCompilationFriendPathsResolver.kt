@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.sources.getVisibleSourceSetsFromAssociateCompilations
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompileTool
 import org.jetbrains.kotlin.gradle.utils.filesProvider
+import org.jetbrains.kotlin.gradle.utils.javaSourceSets
 
 internal interface KotlinCompilationFriendPathsResolver {
     fun resolveFriendPaths(compilation: InternalKotlinCompilation<*>): Iterable<FileCollection>
@@ -75,6 +76,31 @@ internal class DefaultKotlinCompilationFriendPathsResolver(
             val archiveTasks = compilation.project.tasks.withType(AbstractArchiveTask::class.java)
             if (compilation.target.artifactsTaskName !in archiveTasks.names) return null
             return archiveTasks.named(compilation.target.artifactsTaskName)
+        }
+    }
+
+    /**
+     * Resolves additional friend artifacts in the case of the Java ecosystem.
+     * This specifically handles scenarios where plugins such as `java`, `groovy`, or `scala` create additional jar files,
+     * for example, for `test` or `test-fixtures` source sets.
+     * It identifies and includes those jar files as friend artifacts to the compilation.
+     * In some cases, Gradle falls back to dependency on jar files instead of class file directories.
+     */
+    object AdditionalJvmFriendArtifactResolver : FriendArtifactResolver {
+        override fun resolveFriendArtifacts(compilation: InternalKotlinCompilation<*>): FileCollection {
+            if (!compilation.project.kotlinPropertiesProvider.archivesTaskOutputAsFriendModule) return compilation.project.files()
+            val friendSourceSets = getVisibleSourceSetsFromAssociateCompilations(compilation.defaultSourceSet)
+            val project = compilation.project
+            val javaSourceSets = project.javaSourceSets
+            val archiveTasks = project.tasks.withType(AbstractArchiveTask::class.java)
+            return project.filesProvider {
+                friendSourceSets.mapNotNull {
+                    javaSourceSets.findByName(it.name)?.jarTaskName?.let { jarTaskName ->
+                        if (jarTaskName !in archiveTasks.names) return@mapNotNull null
+                        archiveTasks.named(jarTaskName).map { it.archiveFile }
+                    }
+                }
+            }
         }
     }
 

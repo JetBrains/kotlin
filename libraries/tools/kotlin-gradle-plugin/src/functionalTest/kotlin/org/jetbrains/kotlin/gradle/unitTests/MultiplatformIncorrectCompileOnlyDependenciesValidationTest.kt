@@ -8,7 +8,6 @@
 package org.jetbrains.kotlin.gradle.unitTests
 
 import org.gradle.api.Project
-import org.gradle.testfixtures.ProjectBuilder
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
@@ -293,7 +292,7 @@ class MultiplatformIncorrectCompileOnlyDependenciesValidationTest {
             val diagnostics = kotlinToolingDiagnosticsCollector.getDiagnosticsForProject(this)
             diagnostics.assertNoDiagnostics(IncorrectCompileOnlyDependencyWarning)
 
-            val deprecatedPropertyWarning = diagnostics.filter { it.id == KotlinToolingDiagnostics.DeprecatedGradleProperties.id }
+            val deprecatedPropertyWarning = diagnostics.filter { it.id == KotlinToolingDiagnostics.DeprecatedWarningGradleProperties.id }
                 .firstOrNull { it.message.contains("kotlin.native.ignoreIncorrectDependencies") }
             if (deprecatedPropertyWarning == null) {
                 fail("Expected warning regarding deprecated property `kotlin.native.ignoreIncorrectDependencies`, but found none.")

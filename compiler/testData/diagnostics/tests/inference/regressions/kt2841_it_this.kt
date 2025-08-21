@@ -18,3 +18,6 @@ fun test() {
         <!UNRESOLVED_REFERENCE!>xx<!>
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionalType, inline, interfaceDeclaration,
+lambdaLiteral, nullableType, thisExpression, typeConstraint, typeParameter, typeWithExtension */

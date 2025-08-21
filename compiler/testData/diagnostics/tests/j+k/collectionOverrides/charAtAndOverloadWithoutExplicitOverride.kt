@@ -23,3 +23,5 @@ abstract class KA : A()
 fun foo(a: A, ka: KA) {
     ka.get(0)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, javaFunction, javaType */

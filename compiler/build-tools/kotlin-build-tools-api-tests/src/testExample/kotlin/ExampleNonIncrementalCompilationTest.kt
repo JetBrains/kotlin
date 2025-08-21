@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.buildtools.api.tests.compilation
 
-import org.jetbrains.kotlin.buildtools.api.CompilerExecutionStrategyConfiguration
+import org.jetbrains.kotlin.buildtools.api.tests.CompilerExecutionStrategyConfiguration
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.assertions.assertLogContainsPatterns
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.assertions.assertOutputs
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.assertions.expectFailWithError
@@ -31,6 +31,35 @@ class ExampleNonIncrementalCompilationTest : BaseCompilationTest() {
             }
             module2.compile { module ->
                 assertOutputs(module, "AKt.class", "BKt.class")
+            }
+        }
+    }
+
+    @DisplayName("Verify that test infra supports packages")
+    @DefaultStrategyAgnosticCompilationTest
+    fun simpleMultiPackageTest(strategyConfig: CompilerExecutionStrategyConfiguration) {
+        project(strategyConfig) {
+            val module1 = module("empty")
+
+            val deepDir = module1.sourcesDirectory.resolve("org/example/packages")
+            deepDir.toFile().mkdirs()
+            deepDir.resolve("Serious.kt").writeText(
+                """
+                package org.example.packages
+
+                data class SeriousClass(val data: Int)
+                """.trimIndent()
+            )
+            module1.sourcesDirectory.resolve("usage.kt").writeText(
+                """
+                import org.example.packages.SeriousClass
+
+                val seriousClassInstance = SeriousClass(42)
+                """.trimIndent()
+            )
+
+            module1.compile { module ->
+                assertOutputs(module, "UsageKt.class", "org/example/packages/SeriousClass.class")
             }
         }
     }

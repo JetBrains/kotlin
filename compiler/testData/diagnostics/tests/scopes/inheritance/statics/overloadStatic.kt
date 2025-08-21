@@ -21,3 +21,5 @@ class E: B() {
         val a: Long = bar()
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, init, javaFunction, javaType, localProperty, propertyDeclaration */

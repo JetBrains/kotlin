@@ -7,10 +7,12 @@ KtOperationReferenceExpression(20,22): '<='
           receiverType = null
           returnType = kotlin.Int
           symbol = other: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = 1
           isSafeNavigation = false
@@ -26,7 +28,9 @@ KtOperationReferenceExpression(20,22): '<='
               receiverType = null
               returnType = kotlin.Int
               symbol = other: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/Int.compareTo
       typeArgumentsMapping = {}

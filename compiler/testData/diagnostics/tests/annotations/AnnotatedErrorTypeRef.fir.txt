@@ -8,5 +8,5 @@ FILE: AnnotatedErrorTypeRef.kt
         }
 
     }
-    public final val prop: @R|Anno|() <ERROR TYPE REF: Symbol not found for Foo?> = Null(null)
-        public get(): @R|Anno|() <ERROR TYPE REF: Symbol not found for Foo?>
+    public final val prop: @R|Anno|() <ERROR TYPE REF: Symbol not found for Foo> = Null(null)
+        public get(): @R|Anno|() <ERROR TYPE REF: Symbol not found for Foo>

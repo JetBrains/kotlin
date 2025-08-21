@@ -3,6 +3,8 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:kotlin.internal.JvmBuiltin
+
 package kotlin.ranges
 
 /**
@@ -24,6 +26,8 @@ public interface ClosedRange<T : Comparable<T>> {
      * Checks whether the specified [value] belongs to the range.
      *
      * A value belongs to the closed range if it is greater than or equal to the [start] bound and less than or equal to the [endInclusive] bound.
+     *
+     * @sample samples.ranges.Ranges.closedRangeContains
      */
     public operator fun contains(value: T): Boolean = value >= start && value <= endInclusive
 
@@ -59,6 +63,8 @@ public interface OpenEndRange<T : Comparable<T>> {
      * Checks whether the specified [value] belongs to the range.
      *
      * A value belongs to the open-ended range if it is greater than or equal to the [start] bound and strictly less than the [endExclusive] bound.
+     *
+     * @sample samples.ranges.Ranges.openEndRangeContains
      */
     public operator fun contains(value: T): Boolean = value >= start && value < endExclusive
 

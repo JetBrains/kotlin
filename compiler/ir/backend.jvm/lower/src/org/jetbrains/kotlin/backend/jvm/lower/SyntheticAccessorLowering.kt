@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin.JVM_STATIC_W
 import org.jetbrains.kotlin.backend.jvm.JvmSyntheticAccessorGenerator
 import org.jetbrains.kotlin.backend.jvm.ir.IrInlineScopeResolver
 import org.jetbrains.kotlin.backend.jvm.ir.findInlineCallSites
-import org.jetbrains.kotlin.backend.jvm.ir.inlineDeclaration
 import org.jetbrains.kotlin.backend.jvm.ir.isAssertionsDisabledField
 import org.jetbrains.kotlin.backend.jvm.lower.SyntheticAccessorLowering.Companion.isAccessible
 import org.jetbrains.kotlin.codegen.AsmUtil
@@ -120,20 +119,9 @@ private class SyntheticAccessorTransformer(
 ) : IrElementTransformerVoidWithContext() {
     private val accessorGenerator = JvmSyntheticAccessorGenerator(context)
     private val inlineScopeResolver: IrInlineScopeResolver = irFile.findInlineCallSites(context)
-    private var processingIrInlinedFun = false
-
-    private inline fun <T> withinIrInlinedFun(block: () -> T): T {
-        val oldProcessingInline = processingIrInlinedFun
-        try {
-            processingIrInlinedFun = true
-            return block()
-        } finally {
-            processingIrInlinedFun = oldProcessingInline
-        }
-    }
 
     private fun <T : IrFunction> T.save(): T {
-        assert(fileOrNull == irFile || processingIrInlinedFun) {
+        assert(fileOrNull == irFile) {
             "SyntheticAccessorLowering should not attempt to modify other files!\n" +
                     "While lowering this file: ${irFile.render()}\n" +
                     "Trying to add this accessor: ${render()}"
@@ -161,7 +149,7 @@ private class SyntheticAccessorTransformer(
         val generateSpecialAccessWithoutSyntheticAccessor =
             shouldGenerateSpecialAccessWithoutSyntheticAccessor(expression, withSuper, thisSymbol)
 
-        if (expression is IrCall && callee.symbol == context.ir.symbols.indyLambdaMetafactoryIntrinsic) {
+        if (expression is IrCall && callee.symbol == context.symbols.indyLambdaMetafactoryIntrinsic) {
             return super.visitExpression(handleLambdaMetafactoryIntrinsic(expression, thisSymbol))
         }
 
@@ -203,7 +191,7 @@ private class SyntheticAccessorTransformer(
         isAccessible(context, currentScope, inlineScopeResolver, withSuper, thisObjReference, fromOtherClassLoader = true)
 
     private fun handleLambdaMetafactoryIntrinsic(call: IrCall, thisSymbol: IrClassSymbol?): IrExpression {
-        val implFunRef = call.getValueArgument(1) as? IrFunctionReference
+        val implFunRef = call.arguments[1] as? IrFunctionReference
             ?: throw AssertionError("'implMethodReference' is expected to be 'IrFunctionReference': ${call.dump()}")
         val implFunSymbol = implFunRef.symbol
 
@@ -221,22 +209,14 @@ private class SyntheticAccessorTransformer(
 
         accessorRef.copyTypeArgumentsFrom(implFunRef)
 
-        val implFun = implFunSymbol.owner
-        var accessorArgIndex = 0
-        if (implFun.dispatchReceiverParameter != null) {
-            accessorRef.putValueArgument(accessorArgIndex++, implFunRef.dispatchReceiver)
-        }
-        if (implFun.extensionReceiverParameter != null) {
-            accessorRef.putValueArgument(accessorArgIndex++, implFunRef.extensionReceiver)
-        }
-        for (implArgIndex in 0 until implFunRef.valueArgumentsCount) {
-            accessorRef.putValueArgument(accessorArgIndex++, implFunRef.getValueArgument(implArgIndex))
+        for (implArgIndex in implFunRef.arguments.indices) {
+            accessorRef.arguments[implArgIndex] = implFunRef.arguments[implArgIndex]
         }
         if (accessor is IrConstructor) {
-            accessorRef.putValueArgument(accessorArgIndex, accessorGenerator.createAccessorMarkerArgument())
+            accessorRef.arguments[implFunRef.arguments.size] = accessorGenerator.createAccessorMarkerArgument()
         }
 
-        call.putValueArgument(1, accessorRef)
+        call.arguments[1] = accessorRef
         return call
     }
 
@@ -300,6 +280,21 @@ private class SyntheticAccessorTransformer(
         )
     }
 
+    override fun visitRawFunctionReference(expression: IrRawFunctionReference): IrExpression {
+        val function = expression.symbol.owner
+
+        if (function is IrConstructor) {
+            val generatedAccessor = when {
+                accessorGenerator.isOrShouldBeHiddenSinceHasMangledParams(function) -> accessorGenerator.getSyntheticConstructorWithMangledParams(function)
+                accessorGenerator.isOrShouldBeHiddenAsSealedClassConstructor(function) -> accessorGenerator.getSyntheticConstructorOfSealedClass(function)
+                else -> return super.visitRawFunctionReference(expression)
+            }
+            expression.symbol = generatedAccessor.symbol
+        }
+
+        return super.visitRawFunctionReference(expression)
+    }
+
     override fun visitConstructor(declaration: IrConstructor): IrStatement {
         when {
             accessorGenerator.isOrShouldBeHiddenSinceHasMangledParams(declaration) -> {
@@ -332,30 +327,6 @@ private class SyntheticAccessorTransformer(
         }
 
         return super.visitFunctionReference(expression)
-    }
-
-    override fun visitInlinedFunctionBlock(inlinedBlock: IrInlinedFunctionBlock): IrExpression {
-        if (inlinedBlock.isFunctionInlining()) {
-            val callee = inlinedBlock.inlineDeclaration
-            val parentClass = callee.parentClassOrNull ?: return super.visitInlinedFunctionBlock(inlinedBlock)
-            return withinIrInlinedFun {
-                withinScope(parentClass) {
-                    withinScope(callee) {
-                        super.visitInlinedFunctionBlock(inlinedBlock)
-                    }
-                }
-            }
-        }
-        return super.visitInlinedFunctionBlock(inlinedBlock)
-    }
-
-    override fun visitBlock(expression: IrBlock): IrExpression {
-        if (expression.origin == IrStatementOrigin.INLINE_ARGS_CONTAINER) {
-            return withinIrInlinedFun {
-                super.visitBlock(expression)
-            }
-        }
-        return super.visitBlock(expression)
     }
 }
 

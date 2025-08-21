@@ -18,18 +18,21 @@ val testJsr223Runtime by configurations.creating {
 val testCompilationClasspath by configurations.creating
 
 dependencies {
-    testImplementation(libs.junit4)
+    testApi(platform(libs.junit.bom))
+    testImplementation(libs.junit.jupiter.api)
+    testRuntimeOnly(libs.junit.jupiter.engine)
+    testApi(libs.junit.platform.launcher)
     testCompileOnly(project(":kotlin-scripting-jvm-host-unshaded"))
     testCompileOnly(project(":compiler:cli"))
     testCompileOnly(project(":core:util.runtime"))
 
-    testApi(projectTests(":compiler:test-infrastructure-utils"))
-    testApi(projectTests(":kotlin-scripting-compiler")) { isTransitive = false }
+    testImplementation(testFixtures(project(":compiler:test-infrastructure-utils")))
+    testImplementation(projectTests(":kotlin-scripting-compiler"))
 
     testRuntimeOnly(project(":kotlin-scripting-jsr223-unshaded"))
     testRuntimeOnly(project(":kotlin-compiler"))
 
-    embeddableTestRuntime(libs.junit4)
+    embeddableTestRuntime(libs.junit.jupiter.engine)
     embeddableTestRuntime(project(":kotlin-scripting-jsr223"))
     embeddableTestRuntime(project(":kotlin-scripting-compiler-embeddable"))
     embeddableTestRuntime(testSourceSet.output)
@@ -46,7 +49,7 @@ tasks.withType<KotlinJvmCompile>().configureEach {
     compilerOptions.freeCompilerArgs.add("-Xallow-kotlin-package")
 }
 
-projectTest(parallel = true) {
+projectTest(parallel = true, jUnitMode = JUnitMode.JUnit5, defineJDKEnvVariables = listOf(JdkMajorVersion.JDK_17_0)) {
     dependsOn(":dist")
     workingDir = rootDir
     val testRuntimeProvider = project.provider { testJsr223Runtime.asPath }
@@ -58,7 +61,7 @@ projectTest(parallel = true) {
     }
 }
 
-projectTest(taskName = "embeddableTest", parallel = true) {
+projectTest(taskName = "embeddableTest", jUnitMode = JUnitMode.JUnit5, parallel = true) {
     workingDir = rootDir
     dependsOn(embeddableTestRuntime)
     classpath = embeddableTestRuntime

@@ -69,8 +69,8 @@ fun IrFrameMap.leave(irDeclaration: IrSymbolOwner): Int {
 }
 
 fun JvmBackendContext.getSourceMapper(declaration: IrClass): SourceMapper {
-    val irFile = declaration.fileParentBeforeInline
-    val type = declaration.getAttributeOwnerBeforeInline()?.localClassType ?: defaultTypeMapper.mapClass(declaration)
+    val irFile = declaration.fileParent
+    val type = defaultTypeMapper.mapClass(declaration)
 
     val fileEntry = irFile.fileEntry
     // NOTE: apparently inliner requires the source range to cover the
@@ -105,7 +105,7 @@ private fun IrDeclaration.getVisibilityAccessFlagForAnonymous(): Int =
 
 fun IrClass.calculateInnerClassAccessFlags(context: JvmBackendContext): Int {
     val isLambda = superTypes.any {
-        it.classOrNull === context.ir.symbols.lambdaClass
+        it.classOrNull === context.symbols.lambdaClass
     }
     val visibility = when {
         isLambda -> getVisibilityAccessFlagForAnonymous()
@@ -293,7 +293,7 @@ val IrDeclaration.isAnnotatedWithDeprecated: Boolean
 
 internal fun IrDeclaration.isDeprecatedCallable(context: JvmBackendContext): Boolean =
     isAnnotatedWithDeprecated ||
-            annotations.any { it.symbol == context.ir.symbols.javaLangDeprecatedConstructorWithDeprecatedFlag }
+            annotations.any { it.symbol == context.symbols.javaLangDeprecatedConstructorWithDeprecatedFlag }
 
 internal fun IrFunction.isDeprecatedFunction(context: JvmBackendContext): Boolean =
     origin == JvmLoweredDeclarationOrigin.SYNTHETIC_METHOD_FOR_PROPERTY_OR_TYPEALIAS_ANNOTATIONS ||

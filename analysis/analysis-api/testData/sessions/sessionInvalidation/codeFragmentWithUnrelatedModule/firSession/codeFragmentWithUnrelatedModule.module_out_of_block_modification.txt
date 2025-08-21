@@ -1,0 +1,3 @@
+Invalidated sessions:
+fragment1.kt
+unrelatedModule

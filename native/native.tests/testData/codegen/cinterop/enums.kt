@@ -35,10 +35,9 @@ fun box(): String {
     assertEquals(values[0], E.A)
     assertEquals(values[1], E.B)
     assertEquals(values[2], E.C)
-// TODO: temporariry commented. Task for investigation is KT-56107
-//    val entries = E.entries
-//    assertEquals(entries[0], E.A)
-//    assertEquals(entries[1], E.B)
-//    assertEquals(entries[2], E.C)
+    val entries = E.entries
+    assertEquals(entries[0], E.A)
+    assertEquals(entries[1], E.B)
+    assertEquals(entries[2], E.C)
     return "OK"
 }

@@ -5,55 +5,67 @@
 
 package org.jetbrains.kotlin.gradle.plugin.diagnostics
 
-import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 import java.net.URI
 
-@InternalKotlinGradlePluginApi // used in integration tests
-abstract class ToolingDiagnosticFactory(
+internal abstract class ToolingDiagnosticFactory(
     private val predefinedSeverity: ToolingDiagnostic.Severity,
+    private val predefinedGroup: DiagnosticGroup,
 ) {
     open val id: String = this::class.simpleName!!
 
     /**
-     * Builds a diagnostic message with required name, message, and solution.
+     * Builds a diagnostic object with the specified severity, diagnostic group, throwable,
+     * and a builder function for constructing additional diagnostic details.
      *
-     * @param severity Optional severity level. If not provided, uses predefined severity.
-     * @param throwable Optional throwable to attach to the diagnostic.
-     * @param builder Builder block that must provide name, message, and at least one solution.
-     * @return Built [ToolingDiagnostic]
-     * @throws IllegalStateException if required fields are missing
+     * @param idSuffix An optional suffix to append to the diagnostic ID for uniqueness.
+     *        When provided, the final ID becomes "${id}_${idSuffix}". This is useful when
+     *        the same diagnostic factory needs to generate multiple distinct diagnostics
+     *        based on parameters (e.g., different feature names, component types, etc.).
+     * @param severity The severity level of the diagnostic (e.g., WARNING, ERROR, or FATAL).
+     *        Defaults to `predefinedSeverity` if not specified.
+     * @param group The diagnostic group to which the diagnostic belongs. Defaults to `predefinedGroup` if not specified.
+     * @param throwable An optional `Throwable` associated with the diagnostic, providing further context or details.
+     * @param builder A lambda function for building additional details of the diagnostic message, starting from the title step.
      */
     protected fun build(
+        idSuffix: String = "",
         severity: ToolingDiagnostic.Severity? = null,
+        group: DiagnosticGroup? = null,
         throwable: Throwable? = null,
         builder: ToolingDiagnostics.TitleStep.() -> ToolingDiagnostics.OptionalStep,
     ) = ToolingDiagnostics.diagnostic(
-        id = id,
+        id = if (idSuffix.isNotBlank()) "${id}_$idSuffix" else id,
+        group = group ?: predefinedGroup,
         severity = severity ?: predefinedSeverity,
         throwable = throwable,
         builder = builder
     )
 
     /**
-     * Builds a diagnostic message with specified title, description, and possible solutions.
+     * Builds a diagnostic object with the provided details and optional metadata.
      *
-     * @param title The title of the diagnostic message.
-     * @param description A detailed description of the diagnostic issue.
-     * @param solutions A vararg list of potential solutions or steps to address the issue.
-     * @param documentationUrl An optional URL pointing to related documentation or context.
-     * @param documentationHint A lambda that generates a hint string using the provided documentation URL.
-     * @param severity The severity of the diagnostic message. Defaults to the predefined severity if not provided.
-     * @param throwable An optional throwable associated with the diagnostic issue.
+     * @param idSuffix An optional suffix to append to the diagnostic ID for uniqueness.
+     * @param title The title of the diagnostic message, providing a concise summary of the issue.
+     * @param description A detailed description of the diagnostic issue, explaining its nature and context.
+     * @param solutions A list of potential solutions or actions to address the diagnostic issue.
+     * @param documentationUrl An optional URI pointing to related documentation or resources for additional context.
+     * @param documentationHint A lambda function that generates a hint string with the provided documentation URL.
+     *                          Defaults to "See $it for more details."
+     * @param severity The severity level of the diagnostic (e.g., WARNING, ERROR, or FATAL). Defaults to `predefinedSeverity` if not specified.
+     * @param group The diagnostic group to which the diagnostic belongs. Defaults to `predefinedGroup` if not specified.
+     * @param throwable An optional throwable providing further context or information about the diagnostic issue.
      */
-    protected fun buildDiagnostic(
+    private fun buildDiagnostic(
+        idSuffix: String = "",
         title: String,
         description: String,
         solutions: List<String>,
         documentationUrl: URI? = null,
         documentationHint: (String) -> String = { "See $it for more details." },
         severity: ToolingDiagnostic.Severity? = null,
+        group: DiagnosticGroup? = null,
         throwable: Throwable? = null,
-    ) = build(severity, throwable) {
+    ) = build(idSuffix, severity, group, throwable) {
         title(title)
             .description(description)
             .solutions { solutions }
@@ -63,50 +75,60 @@ abstract class ToolingDiagnosticFactory(
     }
 
     /**
-     * Builds a diagnostic message with a single solution overload.
+     * Builds a diagnostic object with the provided title, description, a single solution, and optional metadata.
      *
-     * @param title The title of the diagnostic message.
-     * @param description A detailed description of the diagnostic issue.
-     * @param solution A single potential solution or step to address the issue.
-     * @param documentationUrl An optional URL pointing to related documentation or context.
-     * @param documentationHint A lambda that generates a hint string using the provided documentation URL.
-     * @param severity The severity of the diagnostic message. Defaults to the predefined severity if not provided.
-     * @param throwable An optional throwable associated with the diagnostic issue.
+     * @param idSuffix An optional suffix to append to the diagnostic ID for uniqueness.
+     * @param title The title of the diagnostic message, providing a concise summary of the issue.
+     * @param description A detailed description of the diagnostic issue, explaining its nature and context.
+     * @param solution A single potential solution or action to address the diagnostic issue.
+     * @param documentationUrl An optional URI pointing to related documentation or resources for additional context.
+     * @param documentationHint A lambda function that generates a hint string with the provided documentation URL.
+     *                          Defaults to "See $it for more details."
+     * @param severity The severity level of the diagnostic (e.g., WARNING, ERROR, or FATAL).
+     * @param group The diagnostic group to which the diagnostic belongs.
+     * @param throwable An optional throwable providing further context or information about the diagnostic issue.
      */
     protected fun buildDiagnostic(
+        idSuffix: String = "",
         title: String,
         description: String,
         solution: String,  // Single solution overload
         documentationUrl: URI? = null,
         documentationHint: (String) -> String = { "See $it for more details." },
         severity: ToolingDiagnostic.Severity? = null,
+        group: DiagnosticGroup? = null,
         throwable: Throwable? = null,
     ) = buildDiagnostic(
+        idSuffix,
         title,
         description,
         listOf(solution),
         documentationUrl,
         documentationHint,
         severity,
+        group,
         throwable
     )
 }
 
-@InternalKotlinGradlePluginApi
-object ToolingDiagnostics {
-    @InternalKotlinGradlePluginApi
+/**
+ * Interface for building tooling diagnostics in the Kotlin Gradle Plugin.
+ *
+ * This builder provides methods to set various attributes of a tooling diagnostic,
+ * including its name, message, solutions, and documentation.
+ */
+internal object ToolingDiagnostics {
     interface TitleStep {
         fun title(value: String): DescriptionStep
         fun title(value: () -> String): DescriptionStep
     }
 
-    @InternalKotlinGradlePluginApi
     interface DescriptionStep {
         fun description(value: String): SolutionStep
         fun description(value: () -> String): SolutionStep
+        fun descriptionBuilder(value: () -> String): SolutionStep
     }
 
-    @InternalKotlinGradlePluginApi
     interface SolutionStep {
         fun solution(value: String): OptionalStep
         fun solutions(vararg values: String): OptionalStep
@@ -114,7 +136,6 @@ object ToolingDiagnostics {
         fun solutions(values: () -> List<String>): OptionalStep
     }
 
-    @InternalKotlinGradlePluginApi
     interface OptionalStep {
         fun documentationLink(
             url: URI,
@@ -124,10 +145,11 @@ object ToolingDiagnostics {
 
     private data class BuilderState(
         val id: String,
+        val group: DiagnosticGroup,
         val severity: ToolingDiagnostic.Severity,
         val throwable: Throwable?,
         val title: String? = null,
-        val description: String? = null,
+        val descriptionBuilder: (() -> String)? = null,
         val solutions: List<String> = emptyList(),
         val documentation: ToolingDiagnostic.Documentation? = null,
     ) {
@@ -138,11 +160,13 @@ object ToolingDiagnostics {
 
     private class BuilderImpl(
         id: String,
+        group: DiagnosticGroup,
         severity: ToolingDiagnostic.Severity,
         throwable: Throwable? = null,
     ) : TitleStep, DescriptionStep, SolutionStep, OptionalStep {
         private var state = BuilderState(
             id = id,
+            group = group,
             severity = severity,
             throwable = throwable
         )
@@ -155,7 +179,10 @@ object ToolingDiagnostics {
 
         override fun description(value: () -> String) = description(value())
         override fun description(value: String) = apply {
-            state = state.copy(description = value)
+            state = state.copy(descriptionBuilder = { value })
+        }
+        override fun descriptionBuilder(value: () -> String) = apply {
+            state = state.copy(descriptionBuilder = value)
         }
 
         override fun solution(value: () -> String) = solution(value())
@@ -181,10 +208,11 @@ object ToolingDiagnostics {
 
         fun build() = ToolingDiagnostic(
             identifier = ToolingDiagnostic.ID(
-                checkNotNull(state.id) { "ID is required in diagnostic ${state.title.orEmpty()}" },
-                checkNotNull(state.title) { "Title is required for diagnostic with ID ${state.id}" }
+                state.id,
+                checkNotNull(state.title) { "Title is required for diagnostic with ID ${state.id}" },
+                state.group
             ),
-            message = checkNotNull(state.description) { "Description is required for diagnostic with ID ${state.id}" },
+            messageBuilder = checkNotNull(state.descriptionBuilder) { "Description is required for diagnostic with ID ${state.id}" },
             severity = checkNotNull(state.severity) { "Severity is required for diagnostic with ID ${state.id}" },
             solutions = state.solutions,
             documentation = state.documentation,
@@ -204,8 +232,9 @@ object ToolingDiagnostics {
 
     internal fun diagnostic(
         id: String,
+        group: DiagnosticGroup,
         severity: ToolingDiagnostic.Severity,
         throwable: Throwable? = null,
         builder: TitleStep.() -> OptionalStep,
-    ) = BuilderImpl(id, severity, throwable).apply { builder() }.build()
+    ) = BuilderImpl(id, group, severity, throwable).apply { builder() }.build()
 }

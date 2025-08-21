@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.contracts.description.ConeCallsEffectDeclaration
 import org.jetbrains.kotlin.fir.contracts.effects
 import org.jetbrains.kotlin.fir.declarations.FirContractDescriptionOwner
 import org.jetbrains.kotlin.fir.declarations.FirFunction
+import org.jetbrains.kotlin.fir.declarations.utils.contextParametersForFunctionOrContainingProperty
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirResolvedArgumentList
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
@@ -33,10 +34,11 @@ import org.jetbrains.kotlin.fir.util.SetMultimap
 import org.jetbrains.kotlin.fir.util.setMultimapOf
 
 object FirCallsEffectAnalyzer : FirControlFlowChecker(MppCheckerKind.Common) {
-    override fun analyze(graph: ControlFlowGraph, reporter: DiagnosticReporter, context: CheckerContext) {
+    context(reporter: DiagnosticReporter, context: CheckerContext)
+    override fun analyze(graph: ControlFlowGraph) {
         // TODO, KT-59816: this is quadratic due to `graph.traverse`, surely there is a better way?
         for (subGraph in graph.subGraphs) {
-            analyze(subGraph, reporter, context)
+            analyze(subGraph)
         }
 
         val function = graph.declaration as? FirFunction ?: return
@@ -46,9 +48,18 @@ object FirCallsEffectAnalyzer : FirControlFlowChecker(MppCheckerKind.Common) {
             contract.effects?.forEach { firEffect ->
                 val effect = firEffect.effect as? ConeCallsEffectDeclaration ?: return@forEach
                 val index = effect.valueParameterReference.parameterIndex
-                val typeRef = if (index < 0) function.receiverParameter?.typeRef else function.valueParameters[index].returnTypeRef
+                val typeRef = when (index) {
+                    -1 -> function.receiverParameter?.typeRef
+                    in function.valueParameters.indices -> function.valueParameters[index].returnTypeRef
+                    else -> function.contextParametersForFunctionOrContainingProperty()[index - function.valueParameters.size].returnTypeRef
+                }
                 if (typeRef?.coneType?.isSomeFunctionType(context.session) != true) return@forEach
-                put(if (index < 0) function.symbol else function.valueParameters[index].symbol, firEffect)
+                val key = when (index) {
+                    -1 -> function.symbol
+                    in function.valueParameters.indices -> function.valueParameters[index].symbol
+                    else -> function.contextParametersForFunctionOrContainingProperty()[index - function.valueParameters.size].symbol
+                }
+                put(key, firEffect)
             }
         }
         if (argumentsCalledInPlace.isEmpty()) return
@@ -59,18 +70,18 @@ object FirCallsEffectAnalyzer : FirControlFlowChecker(MppCheckerKind.Common) {
         )
 
         for ((symbol, uses) in leakedSymbols) {
-            reporter.reportOn(argumentsCalledInPlace[symbol]?.source, FirErrors.LEAKED_IN_PLACE_LAMBDA, symbol, context)
+            reporter.reportOn(argumentsCalledInPlace[symbol]?.source, FirErrors.LEAKED_IN_PLACE_LAMBDA, symbol)
             for (use in uses) {
-                reporter.reportOn(use.source, FirErrors.LEAKED_IN_PLACE_LAMBDA, symbol, context)
+                reporter.reportOn(use.source, FirErrors.LEAKED_IN_PLACE_LAMBDA, symbol)
             }
         }
 
         for ((symbol, firEffect) in argumentsCalledInPlace) {
             val requiredRange = (firEffect.effect as ConeCallsEffectDeclaration).kind
-            val foundRange = invocationData.getValue(graph.exitNode)[NormalPath]?.get(symbol)?.withoutMarker ?: EventOccurrencesRange.ZERO
+            val foundRange = invocationData.getValue(graph.exitNode)[NormalPath]?.get(symbol)?.range?.withoutMarker ?: EventOccurrencesRange.ZERO
             val coercedFoundRange = foundRange.coerceToInvocationKind()
             if (foundRange !in requiredRange) {
-                reporter.reportOn(firEffect.source, FirErrors.WRONG_INVOCATION_KIND, symbol, requiredRange, coercedFoundRange, context)
+                reporter.reportOn(firEffect.source, FirErrors.WRONG_INVOCATION_KIND, symbol, requiredRange, coercedFoundRange)
             }
         }
     }
@@ -135,7 +146,7 @@ object FirCallsEffectAnalyzer : FirControlFlowChecker(MppCheckerKind.Common) {
             node.fir.forEachArgument { arg, range ->
                 if (range != null) {
                     val symbol = arg.qualifiedAccessSymbol()?.takeIf { it in lambdaSymbols } ?: return@forEachArgument
-                    dataForNode = dataForNode.addRange(symbol, range.at(node))
+                    dataForNode = dataForNode.addRange(symbol, EventOccurrencesRangeAtNode(range.at(node), mustBeLateinit = false))
                 }
             }
             return dataForNode
@@ -156,7 +167,12 @@ object FirCallsEffectAnalyzer : FirControlFlowChecker(MppCheckerKind.Common) {
         }
         (argumentList as? FirResolvedArgumentList)?.mapping?.forEach { (value, parameter) ->
             val index = functionSymbol?.valueParameterSymbols?.indexOf(parameter.symbol) ?: -1
-            block(value, if (index >= 0) effects?.find { it.valueParameterReference.parameterIndex == index }?.kind else null)
+            val range = if (index >= 0) effects?.find { it.valueParameterReference.parameterIndex == index }?.kind else null
+            block(value, range)
+        }
+        contextArguments.forEachIndexed { i, expression ->
+            val range = effects?.find { it.valueParameterReference.parameterIndex == i + functionSymbol.valueParameterSymbols.size }?.kind
+            block(expression, range)
         }
     }
 

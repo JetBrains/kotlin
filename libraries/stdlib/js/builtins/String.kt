@@ -13,9 +13,11 @@ package kotlin
  */
 public actual class String : Comparable<String>, CharSequence {
     public actual companion object {}
-    
+
     /**
      * Returns a string obtained by concatenating this string with the string representation of the given [other] object.
+     *
+     * @sample samples.text.Strings.stringPlus
      */
     @kotlin.internal.IntrinsicConstEvaluation
     public actual operator fun plus(other: Any?): String
@@ -26,8 +28,7 @@ public actual class String : Comparable<String>, CharSequence {
     /**
      * Returns the character of this string at the specified [index].
      *
-     * If the [index] is out of bounds of this string, throws an [IndexOutOfBoundsException] except in Kotlin/JS
-     * where the behavior is unspecified.
+     * If the [index] is out of bounds of this string, the behavior is unspecified.
      */
     @kotlin.internal.IntrinsicConstEvaluation
     public actual override fun get(index: Int): Char
@@ -37,6 +38,15 @@ public actual class String : Comparable<String>, CharSequence {
     @kotlin.internal.IntrinsicConstEvaluation
     public actual override fun compareTo(other: String): Int
 
+    /**
+     * Indicates if [other] object is equal to this [String].
+     *
+     * An [other] object is equal to this [String] if and only if it is also a [String],
+     * it has the same [length] as this String,
+     * and characters at the same positions in each string are equal to each other.
+     *
+     * @sample samples.text.Strings.stringEquals
+     */
     @kotlin.internal.IntrinsicConstEvaluation
     public actual override fun equals(other: Any?): Boolean
 

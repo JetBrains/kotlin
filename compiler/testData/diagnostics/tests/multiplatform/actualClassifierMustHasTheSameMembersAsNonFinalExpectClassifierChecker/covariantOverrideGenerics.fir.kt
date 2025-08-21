@@ -14,5 +14,8 @@ expect open class Foo<R, T : R> : Base<R> {
 // FILE: jvm.kt
 
 actual open class Foo<E, F : E> : Base<E>() {
-    override fun <!ACTUAL_WITHOUT_EXPECT!>foo<!>(): F = null!!
+    override fun <!EXPECT_ACTUAL_INCOMPATIBLE_RETURN_TYPE!>foo<!>(): F = null!!
 }
+
+/* GENERATED_FIR_TAGS: actual, checkNotNullCall, classDeclaration, expect, functionDeclaration, nullableType, override,
+typeConstraint, typeParameter */

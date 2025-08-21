@@ -61,10 +61,11 @@ class NativeIncrementalCompilationIT : KGPBaseTest() {
             }
 
 
-            // enabled incremental cache parameter
+            // enabled incremental cache parameter, disabled configuration cache
             val withIncrementalCacheBuildOptions = defaultBuildOptions.copy(
+                configurationCache = BuildOptions.ConfigurationCacheValue.DISABLED,
                 nativeOptions = defaultBuildOptions.nativeOptions.copy(
-                    incremental = true
+                    incremental = true,
                 )
             )
             build("clean", "linkDebugExecutableHost", buildOptions = withIncrementalCacheBuildOptions) {
@@ -75,7 +76,6 @@ class NativeIncrementalCompilationIT : KGPBaseTest() {
 
             // enabled incremental cache and configuration cache parameters
             val withIncrementalCacheAndConfigurationCacheBuildOptions = defaultBuildOptions.copy(
-                configurationCache = BuildOptions.ConfigurationCacheValue.ENABLED,
                 nativeOptions = defaultBuildOptions.nativeOptions.copy(
                     incremental = true
                 )
@@ -109,8 +109,8 @@ class NativeIncrementalCompilationIT : KGPBaseTest() {
                 |
                 |kotlin {
                 |    tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinNativeCompile>().configureEach {
-                |        kotlinOptions {
-                |            freeCompilerArgs += listOf("-Xbinary=gc=noop")
+                |        compilerOptions {
+                |            freeCompilerArgs.add("-Xbinary=gc=noop")
                 |        }
                 |    }
                 |}
@@ -193,19 +193,22 @@ class NativeIncrementalCompilationIT : KGPBaseTest() {
     @GradleTest
     fun inProjectDependencies(gradleVersion: GradleVersion) {
         nativeProject("native-incremental-multi-project", gradleVersion, configureSubProjects = true) {
+            // https://github.com/gradle/gradle/issues/33248
+            val libCachePrefix = "MultiProject" + (if (buildOptions.isolatedProjects.toBooleanFlag(gradleVersion)) "." else "")
+
             var fooKtCacheModified = 0L
             var barKtCacheModified = 0L
             var mainKtCacheModified = 0L
             val fooKtCache = getFileCache(
-                "MultiProject:library", "library/src/hostMain/kotlin/foo.kt",
+                "$libCachePrefix:library", "library/src/hostMain/kotlin/foo.kt",
                 executableProjectName = "program"
             )
             val barKtCache = getFileCache(
-                "MultiProject:program", "program/src/hostMain/kotlin/bar.kt",
+                "$libCachePrefix:program", "program/src/hostMain/kotlin/bar.kt",
                 executableProjectName = "program"
             )
             val mainKtCache = getFileCache(
-                "MultiProject:program", "program/src/hostMain/kotlin/main.kt",
+                "$libCachePrefix:program", "program/src/hostMain/kotlin/main.kt",
                 executableProjectName = "program"
             )
             build("linkDebugExecutableHost") {

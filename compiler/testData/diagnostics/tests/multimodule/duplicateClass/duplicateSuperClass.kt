@@ -30,3 +30,5 @@ import p.*
 fun test() {
     foo(M1().b)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, interfaceDeclaration, propertyDeclaration */

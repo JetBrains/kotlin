@@ -87,7 +87,7 @@ internal class EnumExternalEntriesLowering(private val context: JvmBackendContex
             return mappings.getOrPut(enumClass) {
                 mappingsClass.addField {
                     name = Name.identifier("entries\$${mappings.size}")
-                    type = context.ir.symbols.enumEntries.typeWith(enumClass.defaultType)
+                    type = context.symbols.enumEntries.typeWith(enumClass.defaultType)
                     origin = JvmLoweredDeclarationOrigin.ENUM_MAPPINGS_FOR_ENTRIES
                     isFinal = true
                     isStatic = true
@@ -116,8 +116,8 @@ internal class EnumExternalEntriesLowering(private val context: JvmBackendContex
             field.initializer =
                 context.createIrBuilder(field.symbol).run {
                     irExprBody(
-                        irCall(this@EnumExternalEntriesLowering.context.ir.symbols.createEnumEntries).apply {
-                            putValueArgument(0, irCall(enumValues))
+                        irCall(this@EnumExternalEntriesLowering.context.symbols.createEnumEntries).apply {
+                            arguments[0] = irCall(enumValues)
                         }
                     )
                 }

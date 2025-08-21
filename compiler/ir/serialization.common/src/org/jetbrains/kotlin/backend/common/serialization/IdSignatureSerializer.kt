@@ -59,7 +59,6 @@ class IdSignatureSerializer(
 
         proto.container = protoIdSignature(signature.container)
         proto.localId = signature.id
-        signature.description?.let { proto.debugInfo = serializeDebugInfo(it) }
 
         return proto.build()
     }
@@ -83,7 +82,6 @@ class IdSignatureSerializer(
 
         proto.addAllLocalFqName(serializeFqName(signature.localFqn))
         signature.hashSig?.let { proto.localHash = it }
-        signature.description?.let { proto.debugInfo = serializeDebugInfo(it) }
 
         return proto.build()
     }
@@ -98,8 +96,9 @@ class IdSignatureSerializer(
             is IdSignature.CompositeSignature -> proto.compositeSig = serializeCompositeSignature(idSignature)
             is IdSignature.LocalSignature -> proto.localSig = serializeLocalSignature(idSignature)
             is IdSignature.FileSignature -> proto.fileSig = serializeFileSignature(idSignature)
-            is IdSignature.SpecialFakeOverrideSignature -> {}
-            is IdSignature.LoweredDeclarationSignature -> error("LoweredDeclarationSignature is not expected here")
+            is IdSignature.SpecialFakeOverrideSignature,
+            is IdSignature.LoweredDeclarationSignature,
+                -> error("${idSignature::class.java} is not expected here")
         }
         return proto.build()
     }

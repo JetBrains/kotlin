@@ -10,13 +10,11 @@
 
 package org.jetbrains.kotlin.fir.builder
 
-import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 
 @FirBuilderDsl
 interface FirAnnotationContainerBuilder {
-    abstract var source: KtSourceElement?
     abstract val annotations: MutableList<FirAnnotation>
 
     fun build(): FirAnnotationContainer

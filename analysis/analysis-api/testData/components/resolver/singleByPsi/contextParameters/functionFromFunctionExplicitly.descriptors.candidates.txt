@@ -4,6 +4,7 @@ KtCallExpression(89,94): 'foo()'
       argumentMapping = {}
       isImplicitInvoke = true
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = foo
           isSafeNavigation = false
@@ -14,6 +15,7 @@ KtCallExpression(89,94): 'foo()'
           returnType = ERROR_TYPE
           symbol = /<Error class: unknown class>.<Error function>(): ERROR_TYPE
           valueParameters = []
+          contextParameters = []
           callableId = /<Error class: unknown class>.<Error function>
       typeArgumentsMapping = {}
     isInBestCandidates = false
@@ -23,6 +25,7 @@ KtCallExpression(89,94): 'foo()'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = param
           isSafeNavigation = false
@@ -33,6 +36,7 @@ KtCallExpression(89,94): 'foo()'
           returnType = ERROR_TYPE
           symbol = /<Error class: unknown class>.<Error function>(): ERROR_TYPE
           valueParameters = []
+          contextParameters = []
           callableId = /<Error class: unknown class>.<Error function>
       typeArgumentsMapping = {}
     isInBestCandidates = false

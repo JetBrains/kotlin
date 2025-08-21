@@ -37,3 +37,6 @@ fun bar(): Int {
         return 3
     }
 }
+
+/* GENERATED_FIR_TAGS: comparisonExpression, equalityExpression, functionDeclaration, ifExpression, integerLiteral,
+localProperty, propertyDeclaration, stringLiteral, whenExpression, whenWithSubject */

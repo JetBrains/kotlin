@@ -53,7 +53,8 @@ value class SerializedIrFileFingerprint private constructor(val fileFingerprint:
             val withSignaturesHash = cityHash128WithSeed(withTypesHash, file.signatures)
             val withStringsHash = cityHash128WithSeed(withSignaturesHash, file.strings)
             val withBodiesHash = cityHash128WithSeed(withStringsHash, file.bodies)
-            return FingerprintHash(cityHash128WithSeed(withBodiesHash, file.declarations))
+            val withFileEntriesHash = file.fileEntries?.let { cityHash128WithSeed(withBodiesHash, it) } ?: withBodiesHash
+            return FingerprintHash(cityHash128WithSeed(withFileEntriesHash, file.declarations))
         }
 
         private fun calculateFileFingerprint(lib: KotlinLibrary, fileIndex: Int): FingerprintHash {
@@ -62,7 +63,8 @@ value class SerializedIrFileFingerprint private constructor(val fileFingerprint:
             val withSignaturesHash = cityHash128WithSeed(withTypesHash, lib.signatures(fileIndex))
             val withStringsHash = cityHash128WithSeed(withSignaturesHash, lib.strings(fileIndex))
             val withBodiesHash = cityHash128WithSeed(withStringsHash, lib.bodies(fileIndex))
-            return FingerprintHash(cityHash128WithSeed(withBodiesHash, lib.declarations(fileIndex)))
+            val withFileEntriesHash = lib.fileEntries(fileIndex)?.let { cityHash128WithSeed(withBodiesHash, it) } ?: withBodiesHash
+            return FingerprintHash(cityHash128WithSeed(withFileEntriesHash, lib.declarations(fileIndex)))
         }
     }
 

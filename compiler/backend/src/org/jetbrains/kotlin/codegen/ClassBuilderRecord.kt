@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.codegen
 
-fun ClassBuilder.addRecordComponent(name: String, desc: String, signature: String?) {
-    newRecordComponent(name, desc, signature)
+import org.jetbrains.org.objectweb.asm.RecordComponentVisitor
+
+fun ClassBuilder.addRecordComponent(name: String, desc: String, signature: String?): RecordComponentVisitor {
+    return newRecordComponent(name, desc, signature)
 }

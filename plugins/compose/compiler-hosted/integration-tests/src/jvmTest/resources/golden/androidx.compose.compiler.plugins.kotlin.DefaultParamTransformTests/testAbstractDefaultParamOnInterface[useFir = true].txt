@@ -42,19 +42,16 @@ interface Test {
   abstract fun foo(param: Int, %composer: Composer?, %changed: Int)
   class ComposeDefaultImpls {
     @Composable
-    @ComposableInferredTarget(scheme = "[0[0]]")
     fun foo%default(param: Int, %this%: Test, %composer: Composer?, %changed: Int, %default: Int) {
       %composer = %composer.startRestartGroup(<>)
-      sourceInformation(%composer, "C(foo%default)<rememb...>:Test.kt")
+      sourceInformation(%composer, "C(foo%default)N(param)<rememb...>:Test.kt")
       val %dirty = %changed
       if (%default and 0b0001 != 0) {
         %dirty = %dirty or 0b0110
       } else if (%changed and 0b0110 == 0) {
         %dirty = %dirty or if (%composer.changed(param)) 0b0100 else 0b0010
       }
-      if (%default and 0b0010 != 0) {
-        %dirty = %dirty or 0b00110000
-      } else if (%changed and 0b00110000 == 0) {
+      if (%changed and 0b00110000 == 0) {
         %dirty = %dirty or if (if (%changed and 0b01000000 == 0) {
           %composer.changed(%this%)
         } else {
@@ -62,7 +59,7 @@ interface Test {
         }
         ) 0b00100000 else 0b00010000
       }
-      if (%dirty and 0b00010011 != 0b00010010 || !%composer.skipping) {
+      if (%composer.shouldExecute(%dirty and 0b00010011 != 0b00010010, %dirty and 0b0001)) {
         if (%default and 0b0001 != 0) {
           param = <block>{
             sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
@@ -96,16 +93,14 @@ interface TestBetween : Test {
     @Composable
     fun betweenFoo%default(param: Int, %this%: TestBetween, %composer: Composer?, %changed: Int, %default: Int) {
       %composer = %composer.startRestartGroup(<>)
-      sourceInformation(%composer, "C(betweenFoo%default)<rememb...>:Test.kt")
+      sourceInformation(%composer, "C(betweenFoo%default)N(param)<rememb...>:Test.kt")
       val %dirty = %changed
       if (%default and 0b0001 != 0) {
         %dirty = %dirty or 0b0110
       } else if (%changed and 0b0110 == 0) {
         %dirty = %dirty or if (%composer.changed(param)) 0b0100 else 0b0010
       }
-      if (%default and 0b0010 != 0) {
-        %dirty = %dirty or 0b00110000
-      } else if (%changed and 0b00110000 == 0) {
+      if (%changed and 0b00110000 == 0) {
         %dirty = %dirty or if (if (%changed and 0b01000000 == 0) {
           %composer.changed(%this%)
         } else {
@@ -113,7 +108,7 @@ interface TestBetween : Test {
         }
         ) 0b00100000 else 0b00010000
       }
-      if (%dirty and 0b00010011 != 0b00010010 || !%composer.skipping) {
+      if (%composer.shouldExecute(%dirty and 0b00010011 != 0b00010010, %dirty and 0b0001)) {
         if (%default and 0b0001 != 0) {
           param = <block>{
             sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
@@ -145,7 +140,7 @@ class TestImpl : TestBetween {
   @Composable
   override fun foo(param: Int, %composer: Composer?, %changed: Int) {
     %composer.startReplaceGroup(<>)
-    sourceInformation(%composer, "C(foo):Test.kt")
+    sourceInformation(%composer, "C(foo)N(param):Test.kt")
     if (isTraceInProgress()) {
       traceEventStart(<>, %changed, -1, <>)
     }
@@ -157,7 +152,7 @@ class TestImpl : TestBetween {
   @Composable
   override fun betweenFoo(param: Int, %composer: Composer?, %changed: Int) {
     %composer.startReplaceGroup(<>)
-    sourceInformation(%composer, "C(betweenFoo):Test.kt")
+    sourceInformation(%composer, "C(betweenFoo)N(param):Test.kt")
     if (isTraceInProgress()) {
       traceEventStart(<>, %changed, -1, <>)
     }
@@ -169,10 +164,9 @@ class TestImpl : TestBetween {
   static val %stable: Int = 0
 }
 @Composable
-@ComposableInferredTarget(scheme = "[0[0]]")
 fun CallWithDefaults(test: Test, testBetween: TestBetween, testImpl: TestImpl, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
-  sourceInformation(%composer, "C(CallWithDefaults)<foo()>,<foo(0)>,<foo()>,<foo(0)>,<betwee...>,<betwee...>,<foo()>,<foo(0)>,<betwee...>,<betwee...>:Test.kt")
+  sourceInformation(%composer, "C(CallWithDefaults)N(test,testBetween,testImpl)<foo()>,<foo(0)>,<foo()>,<foo(0)>,<betwee...>,<betwee...>,<foo()>,<foo(0)>,<betwee...>,<betwee...>:Test.kt")
   val %dirty = %changed
   if (%changed and 0b0110 == 0) {
     %dirty = %dirty or if (if (%changed and 0b1000 == 0) {
@@ -193,7 +187,7 @@ fun CallWithDefaults(test: Test, testBetween: TestBetween, testImpl: TestImpl, %
   if (%changed and 0b000110000000 == 0) {
     %dirty = %dirty or if (%composer.changed(testImpl)) 0b000100000000 else 0b10000000
   }
-  if (%dirty and 0b10010011 != 0b10010010 || !%composer.skipping) {
+  if (%composer.shouldExecute(%dirty and 0b10010011 != 0b10010010, %dirty and 0b0001)) {
     if (isTraceInProgress()) {
       traceEventStart(<>, %dirty, -1, <>)
     }

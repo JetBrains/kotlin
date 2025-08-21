@@ -22,3 +22,5 @@ interface I4 {
 }
 
 abstract class B : I3(), I4
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, interfaceDeclaration, propertyDeclaration */

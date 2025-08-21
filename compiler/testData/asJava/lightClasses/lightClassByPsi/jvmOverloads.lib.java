@@ -32,6 +32,30 @@ public final class C /* C*/ {
   public  C(@org.jetbrains.annotations.Nullable() java.lang.String, boolean, @org.jetbrains.annotations.NotNull() java.lang.String);//  .ctor(java.lang.String, boolean, java.lang.String)
 
   @kotlin.jvm.JvmOverloads()
+  public  C(int, @org.jetbrains.annotations.NotNull() java.lang.String[], double);//  .ctor(int, java.lang.String[], double)
+
+  @kotlin.jvm.JvmOverloads()
+  public  C(int, @org.jetbrains.annotations.NotNull() java.lang.String[], double, boolean);//  .ctor(int, java.lang.String[], double, boolean)
+
+  @kotlin.jvm.JvmOverloads()
+  public /* vararg */  C(int, @org.jetbrains.annotations.NotNull() java.lang.String...);//  .ctor(int, java.lang.String[])
+
+  @kotlin.jvm.JvmOverloads()
+  public final /* vararg */ void varargWithDefaultsBefore(int, @org.jetbrains.annotations.NotNull() java.lang.String...);//  varargWithDefaultsBefore(int, java.lang.String[])
+
+  @kotlin.jvm.JvmOverloads()
+  public final /* vararg */ void varargWithDefaultsBefore(int, double, @org.jetbrains.annotations.NotNull() java.lang.String...);//  varargWithDefaultsBefore(int, double, java.lang.String[])
+
+  @kotlin.jvm.JvmOverloads()
+  public final /* vararg */ void varargWithDefaultsBefore(int, double, boolean, @org.jetbrains.annotations.NotNull() java.lang.String...);//  varargWithDefaultsBefore(int, double, boolean, java.lang.String[])
+
+  @kotlin.jvm.JvmOverloads()
+  public final /* vararg */ void varargWithOneDefault(int, @org.jetbrains.annotations.NotNull() java.lang.String...);//  varargWithOneDefault(int, java.lang.String[])
+
+  @kotlin.jvm.JvmOverloads()
+  public final /* vararg */ void varargWithTwoDefaults(int, @org.jetbrains.annotations.NotNull() java.lang.String...);//  varargWithTwoDefaults(int, java.lang.String[])
+
+  @kotlin.jvm.JvmOverloads()
   public final void bar();//  bar()
 
   @kotlin.jvm.JvmOverloads()
@@ -75,6 +99,21 @@ public final class C /* C*/ {
 
   @kotlin.jvm.JvmOverloads()
   public final void foobarbaz(int, double, @org.jetbrains.annotations.NotNull() java.lang.String);//  foobarbaz(int, double, java.lang.String)
+
+  @kotlin.jvm.JvmOverloads()
+  public final void varargWithDefaultInMiddle(int, @org.jetbrains.annotations.NotNull() java.lang.String[], boolean);//  varargWithDefaultInMiddle(int, java.lang.String[], boolean)
+
+  @kotlin.jvm.JvmOverloads()
+  public final void varargWithDefaultInMiddle(int, @org.jetbrains.annotations.NotNull() java.lang.String[], double, boolean);//  varargWithDefaultInMiddle(int, java.lang.String[], double, boolean)
+
+  @kotlin.jvm.JvmOverloads()
+  public final void varargWithOneDefault(int, @org.jetbrains.annotations.NotNull() java.lang.String[], double);//  varargWithOneDefault(int, java.lang.String[], double)
+
+  @kotlin.jvm.JvmOverloads()
+  public final void varargWithTwoDefaults(int, @org.jetbrains.annotations.NotNull() java.lang.String[], double);//  varargWithTwoDefaults(int, java.lang.String[], double)
+
+  @kotlin.jvm.JvmOverloads()
+  public final void varargWithTwoDefaults(int, @org.jetbrains.annotations.NotNull() java.lang.String[], double, boolean);//  varargWithTwoDefaults(int, java.lang.String[], double, boolean)
 
   @org.jetbrains.annotations.NotNull()
   public final java.lang.String getP2();//  getP2()

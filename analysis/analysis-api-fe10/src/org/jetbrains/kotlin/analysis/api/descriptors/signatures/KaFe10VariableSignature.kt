@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -9,45 +9,51 @@ import org.jetbrains.kotlin.analysis.api.impl.base.signatures.KaBaseVariableSign
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.signatures.KaVariableSignature
+import org.jetbrains.kotlin.analysis.api.symbols.KaContextParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaVariableSymbol
 import org.jetbrains.kotlin.analysis.api.types.KaSubstitutor
 import org.jetbrains.kotlin.analysis.api.types.KaType
+import java.util.*
 
 internal class KaFe10VariableSignature<out S : KaVariableSymbol>(
     private val backingSymbol: S,
     private val backingReturnType: KaType,
     private val backingReceiverType: KaType?,
+    private val backingContextParameters: List<KaVariableSignature<KaContextParameterSymbol>>,
 ) : KaBaseVariableSignature<S>() {
     override val token: KaLifetimeToken get() = backingSymbol.token
     override val symbol: S get() = withValidityAssertion { backingSymbol }
     override val returnType: KaType get() = withValidityAssertion { backingReturnType }
     override val receiverType: KaType? get() = withValidityAssertion { backingReceiverType }
+    override val contextParameters: List<KaVariableSignature<KaContextParameterSymbol>> get() = withValidityAssertion { backingContextParameters }
 
     override fun substitute(substitutor: KaSubstitutor): KaVariableSignature<S> = withValidityAssertion {
         KaFe10VariableSignature(
-            symbol,
-            substitutor.substitute(returnType),
-            receiverType?.let { substitutor.substitute(it) },
+            backingSymbol = symbol,
+            backingReturnType = substitutor.substitute(returnType),
+            backingReceiverType = receiverType?.let(substitutor::substitute),
+            backingContextParameters = contextParameters.map { contextParameter ->
+                KaFe10VariableSignature(
+                    backingSymbol = contextParameter.symbol,
+                    backingReturnType = substitutor.substitute(contextParameter.returnType),
+                    backingReceiverType = contextParameter.receiverType?.let(substitutor::substitute),
+                    backingContextParameters = emptyList(),
+                )
+            }
         )
     }
 
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (javaClass != other?.javaClass) return false
+    override fun equals(other: Any?): Boolean = this === other ||
+            other is KaFe10VariableSignature<*> &&
+            other.backingSymbol == backingSymbol &&
+            other.backingReturnType == backingReturnType &&
+            other.backingReceiverType == backingReceiverType &&
+            other.backingContextParameters == backingContextParameters
 
-        other as KaFe10VariableSignature<*>
-
-        if (backingSymbol != other.backingSymbol) return false
-        if (backingReturnType != other.backingReturnType) return false
-        if (backingReceiverType != other.backingReceiverType) return false
-
-        return true
-    }
-
-    override fun hashCode(): Int {
-        var result = backingSymbol.hashCode()
-        result = 31 * result + backingReturnType.hashCode()
-        result = 31 * result + (backingReceiverType?.hashCode() ?: 0)
-        return result
-    }
+    override fun hashCode(): Int = Objects.hash(
+        backingSymbol,
+        backingReturnType,
+        backingReceiverType,
+        backingContextParameters,
+    )
 }

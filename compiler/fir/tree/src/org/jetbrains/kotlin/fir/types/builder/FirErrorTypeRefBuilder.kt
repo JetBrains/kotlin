@@ -20,7 +20,7 @@ import kotlin.contracts.contract
 
 @FirBuilderDsl
 class FirErrorTypeRefBuilder : FirAnnotationContainerBuilder {
-    override var source: KtSourceElement? = null
+    var source: KtSourceElement? = null
     override var annotations: MutableList<FirAnnotation> = mutableListOf()
     var coneType: ConeKotlinType? = null
     var delegatedTypeRef: FirTypeRef? = null
@@ -58,5 +58,6 @@ inline fun buildErrorTypeRefCopy(original: FirErrorTypeRef, init: FirErrorTypeRe
     copyBuilder.annotations = original.annotations.toMutableList()
     copyBuilder.delegatedTypeRef = original.delegatedTypeRef
     copyBuilder.diagnostic = original.diagnostic
+    copyBuilder.partiallyResolvedTypeRef = original.partiallyResolvedTypeRef
     return copyBuilder.apply(init).build()
 }

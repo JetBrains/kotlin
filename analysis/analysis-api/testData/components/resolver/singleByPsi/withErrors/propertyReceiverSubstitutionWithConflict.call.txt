@@ -3,6 +3,7 @@ KtDotQualifiedExpression(118,123): 'f.foo'
     candidateCalls = [
       KaSimpleVariableAccessCall:
         partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+          contextArguments = []
           dispatchReceiver = null
           extensionReceiver = KaExplicitReceiverValue:
             expression = f
@@ -13,11 +14,13 @@ KtDotQualifiedExpression(118,123): 'f.foo'
             receiverType = Foo<A>
             returnType = kotlin.Int
             symbol = val foo: kotlin.Int
+            contextParameters = []
             callableId = /foo
         simpleAccess = Read
         typeArgumentsMapping = {},
       KaSimpleVariableAccessCall:
         partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+          contextArguments = []
           dispatchReceiver = null
           extensionReceiver = KaExplicitReceiverValue:
             expression = f
@@ -28,6 +31,7 @@ KtDotQualifiedExpression(118,123): 'f.foo'
             receiverType = Foo<B>
             returnType = kotlin.String
             symbol = val foo: kotlin.String
+            contextParameters = []
             callableId = /foo
         simpleAccess = Read
         typeArgumentsMapping = {}

@@ -1,4 +1,6 @@
 KtFile: PackageLongNameLeadingDoubleDot.kt
+  PsiComment(EOL_COMMENT)('// COMPILATION_ERRORS')
+  PsiWhiteSpace('\n\n')
   PACKAGE_DIRECTIVE
     PsiElement(package)('package')
     PsiWhiteSpace(' ')

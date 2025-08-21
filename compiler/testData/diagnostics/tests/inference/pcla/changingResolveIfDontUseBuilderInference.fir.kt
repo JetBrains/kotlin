@@ -25,6 +25,10 @@ fun main() {
     } // `Map<CharSequence, String>` if we use builder inference, `Map<String, String>` if we don't
 
     val y: MutableMap<String, CharSequence> = build7 {
-        <!ARGUMENT_TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH!>id(run { this })<!>
+        <!RETURN_TYPE_MISMATCH!>id(run { this })<!>
     }
 }
+
+/* GENERATED_FIR_TAGS: classReference, funWithExtensionReceiver, functionDeclaration, functionalType, inProjection,
+lambdaLiteral, localProperty, nullableType, propertyDeclaration, starProjection, stringLiteral, thisExpression,
+typeConstraint, typeParameter, typeWithExtension */

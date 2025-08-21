@@ -13,3 +13,6 @@ fun test() {
         builder {}
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionalType, lambdaLiteral, nullableType, typeParameter,
+typeWithExtension */

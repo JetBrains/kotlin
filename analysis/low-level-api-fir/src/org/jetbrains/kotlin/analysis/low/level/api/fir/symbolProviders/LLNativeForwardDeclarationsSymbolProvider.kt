@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders
 
+import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.KtRealPsiSourceElement
 import org.jetbrains.kotlin.analysis.api.platform.declarations.KotlinDeclarationProvider
 import org.jetbrains.kotlin.analysis.api.platform.declarations.createForwardDeclarationProvider
@@ -70,12 +71,20 @@ internal class LLNativeForwardDeclarationsSymbolProvider(
         return classCache.getValue(classId, context = null)
     }
 
-    @FirSymbolProviderInternals
+    @LLModuleSpecificSymbolProviderAccess
     override fun getClassLikeSymbolByClassId(
         classId: ClassId,
         classLikeDeclaration: KtClassLikeDeclaration,
-    ): FirClassLikeSymbol<*>? {
-        return classCache.getValue(classId, classLikeDeclaration)
+    ): FirClassLikeSymbol<*>? =
+        classCache.getValue(classId, classLikeDeclaration)
+
+    @LLModuleSpecificSymbolProviderAccess
+    override fun getClassLikeSymbolByPsi(classId: ClassId, declaration: PsiElement): FirClassLikeSymbol<*>? {
+        if (declaration !is KtClassLikeDeclaration) return null
+
+        // Not all declarations in the module's scope are forward declarations. As such, we don't know whether `declaration` is in the scope
+        // of this specific symbol provider, and thus shouldn't blindly generate a forward declaration class for it.
+        return getClassLikeSymbolByClassId(classId)?.takeIf { it.hasPsi(declaration) }
     }
 
     override fun hasPackage(fqName: FqName): Boolean = packageProvider.doesKotlinOnlyPackageExist(fqName)

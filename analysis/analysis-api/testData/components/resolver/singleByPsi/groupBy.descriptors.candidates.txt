@@ -7,10 +7,12 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
           receiverType = null
           returnType = kotlin.Function1<ERROR_TYPE, ERROR_TYPE>
           symbol = keySelector: kotlin.Function1<T, K>
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:
           expression = nums.withIndex()
@@ -26,8 +28,10 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
               receiverType = null
               returnType = kotlin.Function1<ERROR_TYPE, ERROR_TYPE>
               symbol = keySelector: kotlin.Function1<T, K>
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/collections/groupBy
       typeArgumentsMapping = {
         T -> (ERROR_TYPE),
@@ -35,7 +39,7 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
       }
     diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for public inline fun <T, K> Array<out T>.groupBy(keySelector: (T) -> K): Map<K, List<T>> defined in kotlin.collections>
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -44,16 +48,19 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
           receiverType = null
           returnType = kotlin.Function1<ERROR_TYPE, ERROR_TYPE>
           symbol = keySelector: kotlin.Function1<T, K>
+          contextParameters = []
           callableId = null),
         { (idx, _) -> idx } -> (KaVariableSignature:
           name = valueTransform
           receiverType = null
           returnType = kotlin.Function1<ERROR_TYPE, ERROR_TYPE>
           symbol = valueTransform: kotlin.Function1<T, V>
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:
           expression = nums.withIndex()
@@ -69,14 +76,17 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
               receiverType = null
               returnType = kotlin.Function1<ERROR_TYPE, ERROR_TYPE>
               symbol = keySelector: kotlin.Function1<T, K>
+              contextParameters = []
               callableId = null,
             KaVariableSignature:
               name = valueTransform
               receiverType = null
               returnType = kotlin.Function1<ERROR_TYPE, ERROR_TYPE>
               symbol = valueTransform: kotlin.Function1<T, V>
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/collections/groupBy
       typeArgumentsMapping = {
         T -> (ERROR_TYPE),
@@ -85,7 +95,7 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
       }
     diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with groupBy>
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -94,16 +104,19 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
           receiverType = null
           returnType = kotlin.Function1<kotlin.Boolean, ERROR_TYPE>
           symbol = keySelector: kotlin.Function1<kotlin.Boolean, K>
+          contextParameters = []
           callableId = null),
         { (idx, _) -> idx } -> (KaVariableSignature:
           name = valueTransform
           receiverType = null
           returnType = kotlin.Function1<kotlin.Boolean, ERROR_TYPE>
           symbol = valueTransform: kotlin.Function1<kotlin.Boolean, V>
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:
           expression = nums.withIndex()
@@ -119,14 +132,17 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
               receiverType = null
               returnType = kotlin.Function1<kotlin.Boolean, ERROR_TYPE>
               symbol = keySelector: kotlin.Function1<kotlin.Boolean, K>
+              contextParameters = []
               callableId = null,
             KaVariableSignature:
               name = valueTransform
               receiverType = null
               returnType = kotlin.Function1<kotlin.Boolean, ERROR_TYPE>
               symbol = valueTransform: kotlin.Function1<kotlin.Boolean, V>
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/collections/groupBy
       typeArgumentsMapping = {
         K -> (ERROR_TYPE),
@@ -134,7 +150,7 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
       }
     diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with groupBy>
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -143,10 +159,12 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
           receiverType = null
           returnType = kotlin.Function1<kotlin.Boolean, ERROR_TYPE>
           symbol = keySelector: kotlin.Function1<kotlin.Boolean, K>
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:
           expression = nums.withIndex()
@@ -162,15 +180,17 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
               receiverType = null
               returnType = kotlin.Function1<kotlin.Boolean, ERROR_TYPE>
               symbol = keySelector: kotlin.Function1<kotlin.Boolean, K>
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/collections/groupBy
       typeArgumentsMapping = {
         K -> (ERROR_TYPE)
       }
     diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for public inline fun <K> BooleanArray.groupBy(keySelector: (Boolean) -> K): Map<K, List<Boolean>> defined in kotlin.collections>
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -179,16 +199,19 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
           receiverType = null
           returnType = kotlin.Function1<kotlin.Byte, ERROR_TYPE>
           symbol = keySelector: kotlin.Function1<kotlin.Byte, K>
+          contextParameters = []
           callableId = null),
         { (idx, _) -> idx } -> (KaVariableSignature:
           name = valueTransform
           receiverType = null
           returnType = kotlin.Function1<kotlin.Byte, ERROR_TYPE>
           symbol = valueTransform: kotlin.Function1<kotlin.Byte, V>
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:
           expression = nums.withIndex()
@@ -204,14 +227,17 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
               receiverType = null
               returnType = kotlin.Function1<kotlin.Byte, ERROR_TYPE>
               symbol = keySelector: kotlin.Function1<kotlin.Byte, K>
+              contextParameters = []
               callableId = null,
             KaVariableSignature:
               name = valueTransform
               receiverType = null
               returnType = kotlin.Function1<kotlin.Byte, ERROR_TYPE>
               symbol = valueTransform: kotlin.Function1<kotlin.Byte, V>
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/collections/groupBy
       typeArgumentsMapping = {
         K -> (ERROR_TYPE),
@@ -219,7 +245,7 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
       }
     diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with groupBy>
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -228,10 +254,12 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
           receiverType = null
           returnType = kotlin.Function1<kotlin.Byte, ERROR_TYPE>
           symbol = keySelector: kotlin.Function1<kotlin.Byte, K>
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:
           expression = nums.withIndex()
@@ -247,15 +275,17 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
               receiverType = null
               returnType = kotlin.Function1<kotlin.Byte, ERROR_TYPE>
               symbol = keySelector: kotlin.Function1<kotlin.Byte, K>
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/collections/groupBy
       typeArgumentsMapping = {
         K -> (ERROR_TYPE)
       }
     diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for public inline fun <K> ByteArray.groupBy(keySelector: (Byte) -> K): Map<K, List<Byte>> defined in kotlin.collections>
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -264,16 +294,19 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
           receiverType = null
           returnType = kotlin.Function1<kotlin.Char, ERROR_TYPE>
           symbol = keySelector: kotlin.Function1<kotlin.Char, K>
+          contextParameters = []
           callableId = null),
         { (idx, _) -> idx } -> (KaVariableSignature:
           name = valueTransform
           receiverType = null
           returnType = kotlin.Function1<kotlin.Char, ERROR_TYPE>
           symbol = valueTransform: kotlin.Function1<kotlin.Char, V>
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:
           expression = nums.withIndex()
@@ -289,14 +322,17 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
               receiverType = null
               returnType = kotlin.Function1<kotlin.Char, ERROR_TYPE>
               symbol = keySelector: kotlin.Function1<kotlin.Char, K>
+              contextParameters = []
               callableId = null,
             KaVariableSignature:
               name = valueTransform
               receiverType = null
               returnType = kotlin.Function1<kotlin.Char, ERROR_TYPE>
               symbol = valueTransform: kotlin.Function1<kotlin.Char, V>
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/collections/groupBy
       typeArgumentsMapping = {
         K -> (ERROR_TYPE),
@@ -304,7 +340,7 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
       }
     diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with groupBy>
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -313,10 +349,12 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
           receiverType = null
           returnType = kotlin.Function1<kotlin.Char, ERROR_TYPE>
           symbol = keySelector: kotlin.Function1<kotlin.Char, K>
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:
           expression = nums.withIndex()
@@ -332,15 +370,17 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
               receiverType = null
               returnType = kotlin.Function1<kotlin.Char, ERROR_TYPE>
               symbol = keySelector: kotlin.Function1<kotlin.Char, K>
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/collections/groupBy
       typeArgumentsMapping = {
         K -> (ERROR_TYPE)
       }
     diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for public inline fun <K> CharArray.groupBy(keySelector: (Char) -> K): Map<K, List<Char>> defined in kotlin.collections>
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -349,16 +389,19 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
           receiverType = null
           returnType = kotlin.Function1<kotlin.Char, ERROR_TYPE>
           symbol = keySelector: kotlin.Function1<kotlin.Char, K>
+          contextParameters = []
           callableId = null),
         { (idx, _) -> idx } -> (KaVariableSignature:
           name = valueTransform
           receiverType = null
           returnType = kotlin.Function1<kotlin.Char, ERROR_TYPE>
           symbol = valueTransform: kotlin.Function1<kotlin.Char, V>
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:
           expression = nums.withIndex()
@@ -374,14 +417,17 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
               receiverType = null
               returnType = kotlin.Function1<kotlin.Char, ERROR_TYPE>
               symbol = keySelector: kotlin.Function1<kotlin.Char, K>
+              contextParameters = []
               callableId = null,
             KaVariableSignature:
               name = valueTransform
               receiverType = null
               returnType = kotlin.Function1<kotlin.Char, ERROR_TYPE>
               symbol = valueTransform: kotlin.Function1<kotlin.Char, V>
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/text/groupBy
       typeArgumentsMapping = {
         K -> (ERROR_TYPE),
@@ -389,7 +435,7 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
       }
     diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with groupBy>
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -398,10 +444,12 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
           receiverType = null
           returnType = kotlin.Function1<kotlin.Char, ERROR_TYPE>
           symbol = keySelector: kotlin.Function1<kotlin.Char, K>
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:
           expression = nums.withIndex()
@@ -417,15 +465,17 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
               receiverType = null
               returnType = kotlin.Function1<kotlin.Char, ERROR_TYPE>
               symbol = keySelector: kotlin.Function1<kotlin.Char, K>
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/text/groupBy
       typeArgumentsMapping = {
         K -> (ERROR_TYPE)
       }
     diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for public inline fun <K> CharSequence.groupBy(keySelector: (Char) -> K): Map<K, List<Char>> defined in kotlin.text>
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -434,16 +484,19 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
           receiverType = null
           returnType = kotlin.Function1<kotlin.Double, ERROR_TYPE>
           symbol = keySelector: kotlin.Function1<kotlin.Double, K>
+          contextParameters = []
           callableId = null),
         { (idx, _) -> idx } -> (KaVariableSignature:
           name = valueTransform
           receiverType = null
           returnType = kotlin.Function1<kotlin.Double, ERROR_TYPE>
           symbol = valueTransform: kotlin.Function1<kotlin.Double, V>
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:
           expression = nums.withIndex()
@@ -459,14 +512,17 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
               receiverType = null
               returnType = kotlin.Function1<kotlin.Double, ERROR_TYPE>
               symbol = keySelector: kotlin.Function1<kotlin.Double, K>
+              contextParameters = []
               callableId = null,
             KaVariableSignature:
               name = valueTransform
               receiverType = null
               returnType = kotlin.Function1<kotlin.Double, ERROR_TYPE>
               symbol = valueTransform: kotlin.Function1<kotlin.Double, V>
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/collections/groupBy
       typeArgumentsMapping = {
         K -> (ERROR_TYPE),
@@ -474,7 +530,7 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
       }
     diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with groupBy>
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -483,10 +539,12 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
           receiverType = null
           returnType = kotlin.Function1<kotlin.Double, ERROR_TYPE>
           symbol = keySelector: kotlin.Function1<kotlin.Double, K>
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:
           expression = nums.withIndex()
@@ -502,15 +560,17 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
               receiverType = null
               returnType = kotlin.Function1<kotlin.Double, ERROR_TYPE>
               symbol = keySelector: kotlin.Function1<kotlin.Double, K>
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/collections/groupBy
       typeArgumentsMapping = {
         K -> (ERROR_TYPE)
       }
     diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for public inline fun <K> DoubleArray.groupBy(keySelector: (Double) -> K): Map<K, List<Double>> defined in kotlin.collections>
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -519,16 +579,19 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
           receiverType = null
           returnType = kotlin.Function1<kotlin.Float, ERROR_TYPE>
           symbol = keySelector: kotlin.Function1<kotlin.Float, K>
+          contextParameters = []
           callableId = null),
         { (idx, _) -> idx } -> (KaVariableSignature:
           name = valueTransform
           receiverType = null
           returnType = kotlin.Function1<kotlin.Float, ERROR_TYPE>
           symbol = valueTransform: kotlin.Function1<kotlin.Float, V>
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:
           expression = nums.withIndex()
@@ -544,14 +607,17 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
               receiverType = null
               returnType = kotlin.Function1<kotlin.Float, ERROR_TYPE>
               symbol = keySelector: kotlin.Function1<kotlin.Float, K>
+              contextParameters = []
               callableId = null,
             KaVariableSignature:
               name = valueTransform
               receiverType = null
               returnType = kotlin.Function1<kotlin.Float, ERROR_TYPE>
               symbol = valueTransform: kotlin.Function1<kotlin.Float, V>
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/collections/groupBy
       typeArgumentsMapping = {
         K -> (ERROR_TYPE),
@@ -559,7 +625,7 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
       }
     diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with groupBy>
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -568,10 +634,12 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
           receiverType = null
           returnType = kotlin.Function1<kotlin.Float, ERROR_TYPE>
           symbol = keySelector: kotlin.Function1<kotlin.Float, K>
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:
           expression = nums.withIndex()
@@ -587,15 +655,17 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
               receiverType = null
               returnType = kotlin.Function1<kotlin.Float, ERROR_TYPE>
               symbol = keySelector: kotlin.Function1<kotlin.Float, K>
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/collections/groupBy
       typeArgumentsMapping = {
         K -> (ERROR_TYPE)
       }
     diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for public inline fun <K> FloatArray.groupBy(keySelector: (Float) -> K): Map<K, List<Float>> defined in kotlin.collections>
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -604,16 +674,19 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
           receiverType = null
           returnType = kotlin.Function1<kotlin.Int, ERROR_TYPE>
           symbol = keySelector: kotlin.Function1<kotlin.Int, K>
+          contextParameters = []
           callableId = null),
         { (idx, _) -> idx } -> (KaVariableSignature:
           name = valueTransform
           receiverType = null
           returnType = kotlin.Function1<kotlin.Int, ERROR_TYPE>
           symbol = valueTransform: kotlin.Function1<kotlin.Int, V>
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:
           expression = nums.withIndex()
@@ -629,14 +702,17 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
               receiverType = null
               returnType = kotlin.Function1<kotlin.Int, ERROR_TYPE>
               symbol = keySelector: kotlin.Function1<kotlin.Int, K>
+              contextParameters = []
               callableId = null,
             KaVariableSignature:
               name = valueTransform
               receiverType = null
               returnType = kotlin.Function1<kotlin.Int, ERROR_TYPE>
               symbol = valueTransform: kotlin.Function1<kotlin.Int, V>
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/collections/groupBy
       typeArgumentsMapping = {
         K -> (ERROR_TYPE),
@@ -644,7 +720,7 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
       }
     diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with groupBy>
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -653,10 +729,12 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
           receiverType = null
           returnType = kotlin.Function1<kotlin.Int, ERROR_TYPE>
           symbol = keySelector: kotlin.Function1<kotlin.Int, K>
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:
           expression = nums.withIndex()
@@ -672,15 +750,17 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
               receiverType = null
               returnType = kotlin.Function1<kotlin.Int, ERROR_TYPE>
               symbol = keySelector: kotlin.Function1<kotlin.Int, K>
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/collections/groupBy
       typeArgumentsMapping = {
         K -> (ERROR_TYPE)
       }
     diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for public inline fun <K> IntArray.groupBy(keySelector: (Int) -> K): Map<K, List<Int>> defined in kotlin.collections>
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -689,16 +769,19 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
           receiverType = null
           returnType = kotlin.Function1<kotlin.Long, ERROR_TYPE>
           symbol = keySelector: kotlin.Function1<kotlin.Long, K>
+          contextParameters = []
           callableId = null),
         { (idx, _) -> idx } -> (KaVariableSignature:
           name = valueTransform
           receiverType = null
           returnType = kotlin.Function1<kotlin.Long, ERROR_TYPE>
           symbol = valueTransform: kotlin.Function1<kotlin.Long, V>
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:
           expression = nums.withIndex()
@@ -714,14 +797,17 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
               receiverType = null
               returnType = kotlin.Function1<kotlin.Long, ERROR_TYPE>
               symbol = keySelector: kotlin.Function1<kotlin.Long, K>
+              contextParameters = []
               callableId = null,
             KaVariableSignature:
               name = valueTransform
               receiverType = null
               returnType = kotlin.Function1<kotlin.Long, ERROR_TYPE>
               symbol = valueTransform: kotlin.Function1<kotlin.Long, V>
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/collections/groupBy
       typeArgumentsMapping = {
         K -> (ERROR_TYPE),
@@ -729,7 +815,7 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
       }
     diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with groupBy>
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -738,10 +824,12 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
           receiverType = null
           returnType = kotlin.Function1<kotlin.Long, ERROR_TYPE>
           symbol = keySelector: kotlin.Function1<kotlin.Long, K>
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:
           expression = nums.withIndex()
@@ -757,15 +845,17 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
               receiverType = null
               returnType = kotlin.Function1<kotlin.Long, ERROR_TYPE>
               symbol = keySelector: kotlin.Function1<kotlin.Long, K>
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/collections/groupBy
       typeArgumentsMapping = {
         K -> (ERROR_TYPE)
       }
     diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for public inline fun <K> LongArray.groupBy(keySelector: (Long) -> K): Map<K, List<Long>> defined in kotlin.collections>
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -774,16 +864,19 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
           receiverType = null
           returnType = kotlin.Function1<kotlin.Short, ERROR_TYPE>
           symbol = keySelector: kotlin.Function1<kotlin.Short, K>
+          contextParameters = []
           callableId = null),
         { (idx, _) -> idx } -> (KaVariableSignature:
           name = valueTransform
           receiverType = null
           returnType = kotlin.Function1<kotlin.Short, ERROR_TYPE>
           symbol = valueTransform: kotlin.Function1<kotlin.Short, V>
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:
           expression = nums.withIndex()
@@ -799,14 +892,17 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
               receiverType = null
               returnType = kotlin.Function1<kotlin.Short, ERROR_TYPE>
               symbol = keySelector: kotlin.Function1<kotlin.Short, K>
+              contextParameters = []
               callableId = null,
             KaVariableSignature:
               name = valueTransform
               receiverType = null
               returnType = kotlin.Function1<kotlin.Short, ERROR_TYPE>
               symbol = valueTransform: kotlin.Function1<kotlin.Short, V>
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/collections/groupBy
       typeArgumentsMapping = {
         K -> (ERROR_TYPE),
@@ -814,7 +910,7 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
       }
     diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with groupBy>
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -823,10 +919,12 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
           receiverType = null
           returnType = kotlin.Function1<kotlin.Short, ERROR_TYPE>
           symbol = keySelector: kotlin.Function1<kotlin.Short, K>
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:
           expression = nums.withIndex()
@@ -842,15 +940,17 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
               receiverType = null
               returnType = kotlin.Function1<kotlin.Short, ERROR_TYPE>
               symbol = keySelector: kotlin.Function1<kotlin.Short, K>
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/collections/groupBy
       typeArgumentsMapping = {
         K -> (ERROR_TYPE)
       }
     diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for public inline fun <K> ShortArray.groupBy(keySelector: (Short) -> K): Map<K, List<Short>> defined in kotlin.collections>
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -859,16 +959,19 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
           receiverType = null
           returnType = kotlin.Function1<kotlin.UByte, ERROR_TYPE>
           symbol = keySelector: kotlin.Function1<kotlin.UByte, K>
+          contextParameters = []
           callableId = null),
         { (idx, _) -> idx } -> (KaVariableSignature:
           name = valueTransform
           receiverType = null
           returnType = kotlin.Function1<kotlin.UByte, ERROR_TYPE>
           symbol = valueTransform: kotlin.Function1<kotlin.UByte, V>
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:
           expression = nums.withIndex()
@@ -884,14 +987,17 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
               receiverType = null
               returnType = kotlin.Function1<kotlin.UByte, ERROR_TYPE>
               symbol = keySelector: kotlin.Function1<kotlin.UByte, K>
+              contextParameters = []
               callableId = null,
             KaVariableSignature:
               name = valueTransform
               receiverType = null
               returnType = kotlin.Function1<kotlin.UByte, ERROR_TYPE>
               symbol = valueTransform: kotlin.Function1<kotlin.UByte, V>
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/collections/groupBy
       typeArgumentsMapping = {
         K -> (ERROR_TYPE),
@@ -899,7 +1005,7 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
       }
     diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with groupBy>
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -908,10 +1014,12 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
           receiverType = null
           returnType = kotlin.Function1<kotlin.UByte, ERROR_TYPE>
           symbol = keySelector: kotlin.Function1<kotlin.UByte, K>
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:
           expression = nums.withIndex()
@@ -927,15 +1035,17 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
               receiverType = null
               returnType = kotlin.Function1<kotlin.UByte, ERROR_TYPE>
               symbol = keySelector: kotlin.Function1<kotlin.UByte, K>
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/collections/groupBy
       typeArgumentsMapping = {
         K -> (ERROR_TYPE)
       }
     diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for public inline fun <K> UByteArray.groupBy(keySelector: (UByte) -> K): Map<K, List<UByte>> defined in kotlin.collections>
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -944,16 +1054,19 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
           receiverType = null
           returnType = kotlin.Function1<kotlin.UInt, ERROR_TYPE>
           symbol = keySelector: kotlin.Function1<kotlin.UInt, K>
+          contextParameters = []
           callableId = null),
         { (idx, _) -> idx } -> (KaVariableSignature:
           name = valueTransform
           receiverType = null
           returnType = kotlin.Function1<kotlin.UInt, ERROR_TYPE>
           symbol = valueTransform: kotlin.Function1<kotlin.UInt, V>
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:
           expression = nums.withIndex()
@@ -969,14 +1082,17 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
               receiverType = null
               returnType = kotlin.Function1<kotlin.UInt, ERROR_TYPE>
               symbol = keySelector: kotlin.Function1<kotlin.UInt, K>
+              contextParameters = []
               callableId = null,
             KaVariableSignature:
               name = valueTransform
               receiverType = null
               returnType = kotlin.Function1<kotlin.UInt, ERROR_TYPE>
               symbol = valueTransform: kotlin.Function1<kotlin.UInt, V>
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/collections/groupBy
       typeArgumentsMapping = {
         K -> (ERROR_TYPE),
@@ -984,7 +1100,7 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
       }
     diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with groupBy>
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -993,10 +1109,12 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
           receiverType = null
           returnType = kotlin.Function1<kotlin.UInt, ERROR_TYPE>
           symbol = keySelector: kotlin.Function1<kotlin.UInt, K>
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:
           expression = nums.withIndex()
@@ -1012,15 +1130,17 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
               receiverType = null
               returnType = kotlin.Function1<kotlin.UInt, ERROR_TYPE>
               symbol = keySelector: kotlin.Function1<kotlin.UInt, K>
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/collections/groupBy
       typeArgumentsMapping = {
         K -> (ERROR_TYPE)
       }
     diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for public inline fun <K> UIntArray.groupBy(keySelector: (UInt) -> K): Map<K, List<UInt>> defined in kotlin.collections>
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -1029,16 +1149,19 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
           receiverType = null
           returnType = kotlin.Function1<kotlin.ULong, ERROR_TYPE>
           symbol = keySelector: kotlin.Function1<kotlin.ULong, K>
+          contextParameters = []
           callableId = null),
         { (idx, _) -> idx } -> (KaVariableSignature:
           name = valueTransform
           receiverType = null
           returnType = kotlin.Function1<kotlin.ULong, ERROR_TYPE>
           symbol = valueTransform: kotlin.Function1<kotlin.ULong, V>
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:
           expression = nums.withIndex()
@@ -1054,14 +1177,17 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
               receiverType = null
               returnType = kotlin.Function1<kotlin.ULong, ERROR_TYPE>
               symbol = keySelector: kotlin.Function1<kotlin.ULong, K>
+              contextParameters = []
               callableId = null,
             KaVariableSignature:
               name = valueTransform
               receiverType = null
               returnType = kotlin.Function1<kotlin.ULong, ERROR_TYPE>
               symbol = valueTransform: kotlin.Function1<kotlin.ULong, V>
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/collections/groupBy
       typeArgumentsMapping = {
         K -> (ERROR_TYPE),
@@ -1069,7 +1195,7 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
       }
     diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with groupBy>
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -1078,10 +1204,12 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
           receiverType = null
           returnType = kotlin.Function1<kotlin.ULong, ERROR_TYPE>
           symbol = keySelector: kotlin.Function1<kotlin.ULong, K>
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:
           expression = nums.withIndex()
@@ -1097,15 +1225,17 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
               receiverType = null
               returnType = kotlin.Function1<kotlin.ULong, ERROR_TYPE>
               symbol = keySelector: kotlin.Function1<kotlin.ULong, K>
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/collections/groupBy
       typeArgumentsMapping = {
         K -> (ERROR_TYPE)
       }
     diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for public inline fun <K> ULongArray.groupBy(keySelector: (ULong) -> K): Map<K, List<ULong>> defined in kotlin.collections>
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -1114,16 +1244,19 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
           receiverType = null
           returnType = kotlin.Function1<kotlin.UShort, ERROR_TYPE>
           symbol = keySelector: kotlin.Function1<kotlin.UShort, K>
+          contextParameters = []
           callableId = null),
         { (idx, _) -> idx } -> (KaVariableSignature:
           name = valueTransform
           receiverType = null
           returnType = kotlin.Function1<kotlin.UShort, ERROR_TYPE>
           symbol = valueTransform: kotlin.Function1<kotlin.UShort, V>
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:
           expression = nums.withIndex()
@@ -1139,14 +1272,17 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
               receiverType = null
               returnType = kotlin.Function1<kotlin.UShort, ERROR_TYPE>
               symbol = keySelector: kotlin.Function1<kotlin.UShort, K>
+              contextParameters = []
               callableId = null,
             KaVariableSignature:
               name = valueTransform
               receiverType = null
               returnType = kotlin.Function1<kotlin.UShort, ERROR_TYPE>
               symbol = valueTransform: kotlin.Function1<kotlin.UShort, V>
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/collections/groupBy
       typeArgumentsMapping = {
         K -> (ERROR_TYPE),
@@ -1154,7 +1290,7 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
       }
     diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with groupBy>
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -1163,10 +1299,12 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
           receiverType = null
           returnType = kotlin.Function1<kotlin.UShort, ERROR_TYPE>
           symbol = keySelector: kotlin.Function1<kotlin.UShort, K>
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:
           expression = nums.withIndex()
@@ -1182,15 +1320,17 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
               receiverType = null
               returnType = kotlin.Function1<kotlin.UShort, ERROR_TYPE>
               symbol = keySelector: kotlin.Function1<kotlin.UShort, K>
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/collections/groupBy
       typeArgumentsMapping = {
         K -> (ERROR_TYPE)
       }
     diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for public inline fun <K> UShortArray.groupBy(keySelector: (UShort) -> K): Map<K, List<UShort>> defined in kotlin.collections>
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -1199,10 +1339,12 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
           receiverType = null
           returnType = kotlin.Function1<kotlin.collections.IndexedValue<kotlin.Int>, ERROR_TYPE>
           symbol = keySelector: kotlin.Function1<T, K>
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:
           expression = nums.withIndex()
@@ -1218,8 +1360,10 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
               receiverType = null
               returnType = kotlin.Function1<kotlin.collections.IndexedValue<kotlin.Int>, ERROR_TYPE>
               symbol = keySelector: kotlin.Function1<T, K>
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/collections/groupBy
       typeArgumentsMapping = {
         T -> (kotlin.collections.IndexedValue<kotlin.Int>),
@@ -1227,7 +1371,7 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
       }
     diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for public inline fun <T, K> Iterable<T>.groupBy(keySelector: (T) -> K): Map<K, List<T>> defined in kotlin.collections>
     isInBestCandidates = false
-  
+
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -1236,16 +1380,19 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
           receiverType = null
           returnType = kotlin.Function1<kotlin.collections.IndexedValue<kotlin.Int>, kotlin.Int>
           symbol = keySelector: kotlin.Function1<T, K>
+          contextParameters = []
           callableId = null),
         { (idx, _) -> idx } -> (KaVariableSignature:
           name = valueTransform
           receiverType = null
           returnType = kotlin.Function1<kotlin.collections.IndexedValue<kotlin.Int>, kotlin.Int>
           symbol = valueTransform: kotlin.Function1<T, V>
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:
           expression = nums.withIndex()
@@ -1261,14 +1408,17 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
               receiverType = null
               returnType = kotlin.Function1<kotlin.collections.IndexedValue<kotlin.Int>, kotlin.Int>
               symbol = keySelector: kotlin.Function1<T, K>
+              contextParameters = []
               callableId = null,
             KaVariableSignature:
               name = valueTransform
               receiverType = null
               returnType = kotlin.Function1<kotlin.collections.IndexedValue<kotlin.Int>, kotlin.Int>
               symbol = valueTransform: kotlin.Function1<T, V>
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/collections/groupBy
       typeArgumentsMapping = {
         T -> (kotlin.collections.IndexedValue<kotlin.Int>),
@@ -1276,7 +1426,7 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
         V -> (kotlin.Int)
       }
     isInBestCandidates = true
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -1285,16 +1435,19 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
           receiverType = null
           returnType = kotlin.Function1<kotlin.Pair<kotlin.Int, kotlin.Int>, ERROR_TYPE>
           symbol = keySelector: kotlin.Function1<kotlin.Pair<kotlin.Int, kotlin.Int>, K>
+          contextParameters = []
           callableId = null),
         { (idx, _) -> idx } -> (KaVariableSignature:
           name = valueTransform
           receiverType = null
           returnType = kotlin.Function1<kotlin.Pair<kotlin.Int, kotlin.Int>, kotlin.Int>
           symbol = valueTransform: kotlin.Function1<kotlin.Pair<kotlin.Int, kotlin.Int>, kotlin.Int>
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:
           expression = nums.withIndex()
@@ -1310,21 +1463,24 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
               receiverType = null
               returnType = kotlin.Function1<kotlin.Pair<kotlin.Int, kotlin.Int>, ERROR_TYPE>
               symbol = keySelector: kotlin.Function1<kotlin.Pair<kotlin.Int, kotlin.Int>, K>
+              contextParameters = []
               callableId = null,
             KaVariableSignature:
               name = valueTransform
               receiverType = null
               returnType = kotlin.Function1<kotlin.Pair<kotlin.Int, kotlin.Int>, kotlin.Int>
               symbol = valueTransform: kotlin.Function1<kotlin.Pair<kotlin.Int, kotlin.Int>, kotlin.Int>
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = /groupBy
       typeArgumentsMapping = {
         K -> (ERROR_TYPE)
       }
     diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with groupBy>
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -1333,10 +1489,12 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
           receiverType = null
           returnType = kotlin.Function1<ERROR_TYPE, ERROR_TYPE>
           symbol = keySelector: kotlin.Function1<T, K>
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:
           expression = nums.withIndex()
@@ -1352,8 +1510,10 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
               receiverType = null
               returnType = kotlin.Function1<ERROR_TYPE, ERROR_TYPE>
               symbol = keySelector: kotlin.Function1<T, K>
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/sequences/groupBy
       typeArgumentsMapping = {
         T -> (ERROR_TYPE),
@@ -1361,7 +1521,7 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
       }
     diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for public inline fun <T, K> Sequence<T>.groupBy(keySelector: (T) -> K): Map<K, List<T>> defined in kotlin.sequences>
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -1370,16 +1530,19 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
           receiverType = null
           returnType = kotlin.Function1<ERROR_TYPE, ERROR_TYPE>
           symbol = keySelector: kotlin.Function1<T, K>
+          contextParameters = []
           callableId = null),
         { (idx, _) -> idx } -> (KaVariableSignature:
           name = valueTransform
           receiverType = null
           returnType = kotlin.Function1<ERROR_TYPE, ERROR_TYPE>
           symbol = valueTransform: kotlin.Function1<T, V>
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:
           expression = nums.withIndex()
@@ -1395,14 +1558,17 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
               receiverType = null
               returnType = kotlin.Function1<ERROR_TYPE, ERROR_TYPE>
               symbol = keySelector: kotlin.Function1<T, K>
+              contextParameters = []
               callableId = null,
             KaVariableSignature:
               name = valueTransform
               receiverType = null
               returnType = kotlin.Function1<ERROR_TYPE, ERROR_TYPE>
               symbol = valueTransform: kotlin.Function1<T, V>
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/sequences/groupBy
       typeArgumentsMapping = {
         T -> (ERROR_TYPE),

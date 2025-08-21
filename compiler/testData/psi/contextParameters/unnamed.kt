@@ -5,3 +5,5 @@ fun unnamedFunction() {
 
 context(_: Int, another: String)
 val unnamedProperty: Int get() = 0
+
+// LANGUAGE: +ContextParameters

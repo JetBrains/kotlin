@@ -33,8 +33,15 @@ import java.io.Serializable
  */
 data class IncrementalCompilationFeatures(
     /**
-     * Snapshot-based cross-module IC if true, BuildHistory-based if false.
+     * Analyses changes in java files more carefully, but can run additional rounds of compilation.
+     *
+     * Only available in K1. See KT-57147
+     */
+    val usePreciseJavaTracking: Boolean = false,
+    /**
      * Snapshot-based IC is only available in JVM.
+     * BuildHistory-based IC is only available in JS.
+     * This field would be soon removed.
      */
     val withAbiSnapshot: Boolean = false,
     /**
@@ -71,6 +78,6 @@ data class IncrementalCompilationFeatures(
     companion object {
         val DEFAULT_CONFIGURATION = IncrementalCompilationFeatures()
 
-        const val serialVersionUID: Long = 2
+        const val serialVersionUID: Long = 3L
     }
 }

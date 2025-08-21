@@ -7,15 +7,16 @@ package org.jetbrains.kotlin.ir
 
 import org.jetbrains.kotlin.AbstractKtSourceElement
 import org.jetbrains.kotlin.config.LanguageVersionSettings
+import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticReporterWithContext.DiagnosticContextImpl
 import org.jetbrains.kotlin.diagnostics.rendering.Renderer
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
+import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.ir.util.fqNameWithoutFileClassesWhenAvailable
 import org.jetbrains.kotlin.ir.util.isPropertyAccessor
 
 interface IrDiagnosticReporter {
-    val languageVersionSettings: LanguageVersionSettings
     fun at(irDeclaration: IrDeclaration): DiagnosticContextImpl
     fun at(irElement: IrElement, containingIrFile: IrFile): DiagnosticContextImpl
     fun at(irElement: IrElement, containingIrDeclaration: IrDeclaration): DiagnosticContextImpl
@@ -39,7 +40,12 @@ object IrDiagnosticRenderers {
             }
             is IrConstructor -> "constructor"
             is IrProperty -> "property"
+            is IrClass -> declaration.kind.codeRepresentation ?: "declaration"
             else -> "declaration"
         }
+    }
+
+    val DECLARATION_KIND_AND_NAME = Renderer<IrDeclaration> { declaration ->
+        "${DECLARATION_KIND.render(declaration)} '${(declaration as? IrDeclarationWithName)?.fqNameWhenAvailable?.asString()}'"
     }
 }

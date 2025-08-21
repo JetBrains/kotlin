@@ -5,6 +5,7 @@ KaNamedFunctionSymbol:
   ]
   callableId: /isInstancePredicateContract
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: [
     KaContractConditionalContractEffectDeclaration:
@@ -13,8 +14,8 @@ KaNamedFunctionSymbol:
       condition:
         KaContractIsInstancePredicateExpression:
           argument:
-            KaContractParameterValue:
-              parameterSymbol:
+            KaContractExplicitParameterValue:
+              symbol:
                 KaValueParameterSymbol:
                   annotations: []
                   callableId: null

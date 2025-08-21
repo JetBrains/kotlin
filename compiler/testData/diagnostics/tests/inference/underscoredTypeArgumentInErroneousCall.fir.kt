@@ -11,3 +11,5 @@ fun main() {
 
     foo<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><String, <!OTHER_ERROR!>_<!>><!>()
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, nullableType, typeParameter */

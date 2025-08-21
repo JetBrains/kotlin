@@ -17,7 +17,8 @@ import org.jetbrains.kotlin.fir.expressions.arguments
 import org.jetbrains.kotlin.fir.render
 
 object FirReceiverAccessBeforeSuperCallChecker : FirInaccessibleReceiverChecker(MppCheckerKind.Common) {
-    override fun check(expression: FirInaccessibleReceiverExpression, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(expression: FirInaccessibleReceiverExpression) {
         val containingCall = context.callsOrAssignments.last() as FirQualifiedAccessExpression
         containingCall.run {
             require(
@@ -30,6 +31,6 @@ object FirReceiverAccessBeforeSuperCallChecker : FirInaccessibleReceiverChecker(
                 "Inaccessible receiver ${expression.render()} isn't found in receivers of a call/access ${this.render()}"
             }
         }
-        reporter.reportOn(containingCall.calleeReference.source, FirErrors.INSTANCE_ACCESS_BEFORE_SUPER_CALL, "<this>", context)
+        reporter.reportOn(containingCall.calleeReference.source, FirErrors.INSTANCE_ACCESS_BEFORE_SUPER_CALL, "<this>")
     }
 }

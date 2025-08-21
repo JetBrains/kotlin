@@ -1,6 +1,6 @@
 // WITH_STDLIB
 // LANGUAGE: +ImplicitSignedToUnsignedIntegerConversion
-// IGNORE_BACKEND_K1: JVM
+// IGNORE_BACKEND_K1: ANDROID
 // FILE: signedToUnsignedConversions_annotation.kt
 
 package kotlin.internal

@@ -11,3 +11,6 @@ object Outer {
     @Special(Nested::class)
     object Nested : @Special(Nested::class) Interface
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classReference, interfaceDeclaration, nestedClass, objectDeclaration,
+primaryConstructor, propertyDeclaration, starProjection */

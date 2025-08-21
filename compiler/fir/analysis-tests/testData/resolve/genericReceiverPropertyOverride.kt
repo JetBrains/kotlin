@@ -14,3 +14,6 @@ class C : B() {
         x.phasedFir
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, getter, nullableType, override, propertyDeclaration,
+propertyWithExtensionReceiver, typeParameter */

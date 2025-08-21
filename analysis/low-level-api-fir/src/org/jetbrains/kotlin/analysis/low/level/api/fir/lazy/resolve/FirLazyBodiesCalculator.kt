@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -16,10 +16,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.withFirDesignationEnt
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.forEachDeclaration
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.builder.PsiRawFirBuilder
-import org.jetbrains.kotlin.fir.contracts.FirErrorContractDescription
-import org.jetbrains.kotlin.fir.contracts.FirLegacyRawContractDescription
-import org.jetbrains.kotlin.fir.contracts.FirRawContractDescription
-import org.jetbrains.kotlin.fir.contracts.FirResolvedContractDescription
+import org.jetbrains.kotlin.fir.contracts.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.getExplicitBackingField
 import org.jetbrains.kotlin.fir.expressions.*
@@ -80,9 +77,8 @@ internal object FirLazyBodiesCalculator {
         firElement.accept(LazyAnnotationCalculatorVisitor, firElement.moduleData.session)
     }
 
-    fun calculateLazyArgumentsForAnnotation(annotationCall: FirAnnotationCall, session: FirSession): FirArgumentList {
-        require(needCalculatingAnnotationCall(annotationCall))
-        return createArgumentsForAnnotation(annotationCall, session)
+    fun calculateAnnotation(annotationCall: FirAnnotationCall, session: FirSession) {
+        calculateAnnotationCallIfNeeded(annotationCall, session)
     }
 
     fun createArgumentsForAnnotation(annotationCall: FirAnnotationCall, session: FirSession): FirArgumentList {
@@ -388,7 +384,7 @@ private fun rebindThisRef(
     }
 
     expression.replaceCalleeReference(buildImplicitThisReference {
-        this.boundSymbol = newTarget.receiverParameter!!.symbol
+        this.boundSymbol = newTarget.receiverParameterSymbol!!
     })
 }
 
@@ -663,7 +659,7 @@ private object LazyAnnotationCalculatorVisitor : NonLocalAnnotationVisitor<FirSe
 private fun calculateAnnotationCallIfNeeded(annotation: FirAnnotation, session: FirSession) {
     if (annotation !is FirAnnotationCall || !FirLazyBodiesCalculator.needCalculatingAnnotationCall(annotation)) return
 
-    val newArgumentList = FirLazyBodiesCalculator.calculateLazyArgumentsForAnnotation(annotation, session)
+    val newArgumentList = FirLazyBodiesCalculator.createArgumentsForAnnotation(annotation, session)
     annotation.replaceArgumentList(newArgumentList)
 }
 
@@ -725,6 +721,10 @@ private sealed class FirLazyBodiesCalculatorTransformer : FirTransformer<Persist
         return property
     }
 
+    override fun transformErrorProperty(errorProperty: FirErrorProperty, data: PersistentList<FirDeclaration>): FirStatement {
+        return transformProperty(errorProperty, data)
+    }
+
     override fun transformEnumEntry(enumEntry: FirEnumEntry, data: PersistentList<FirDeclaration>): FirStatement {
         if (enumEntry.initializer is FirLazyExpression) {
             val designation = FirDesignation(data, enumEntry)
@@ -762,10 +762,6 @@ private fun <E : FirElement> FirTransformer<PersistentList<FirDeclaration>>.recu
 ): E {
     if (element is FirFile || element is FirScript || element is FirRegularClass) {
         val newList = data.add(element as FirDeclaration)
-        element.forEachDeclaration {
-            it.transformSingle(this, newList)
-        }
-
         element.transformChildren(this, newList)
     }
 
@@ -780,17 +776,11 @@ private fun needCalculatingLazyContractsForFunction(function: FirFunction): Bool
 
     if (function !is FirContractDescriptionOwner) return false
 
-    val contractDescription = function.contractDescription
-    return when (contractDescription) {
+    return when (val contractDescription = function.contractDescription) {
+        null -> false
         is FirRawContractDescription -> contractDescription.rawEffects.any { it is FirLazyExpression }
-
-        // Q: Why is it null?
-        // A: There is an ambiguity between `null` and `FirLegacyRawContractDescription` as during PSI2FIR phase we cannot check the body
-        // to set up the description properly.
-        // So, potentially, all functions without `FirRawContractDescription` may have a contract.
-        null, is FirLegacyRawContractDescription -> function.body is FirLazyBlock
-
-        is FirErrorContractDescription, is FirResolvedContractDescription -> errorWithAttachment("Unexpected contract description type: ${contractDescription::class.simpleName}") {
+        is FirLazyContractDescription -> true
+        is FirLegacyRawContractDescription, is FirErrorContractDescription, is FirResolvedContractDescription -> errorWithAttachment("Unexpected contract description type: ${contractDescription::class.simpleName}") {
             withFirEntry("function", function)
         }
     }
@@ -881,5 +871,9 @@ private sealed class FirLazyContractsCalculatorTransformer : FirTransformer<Pers
         }
 
         return property
+    }
+
+    override fun transformErrorProperty(errorProperty: FirErrorProperty, data: PersistentList<FirDeclaration>): FirStatement {
+        return transformProperty(errorProperty, data)
     }
 }

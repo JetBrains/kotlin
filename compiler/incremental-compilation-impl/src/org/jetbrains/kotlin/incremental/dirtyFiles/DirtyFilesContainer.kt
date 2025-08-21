@@ -6,12 +6,7 @@
 package org.jetbrains.kotlin.incremental.dirtyFiles
 
 import org.jetbrains.kotlin.build.report.ICReporter
-import org.jetbrains.kotlin.incremental.IncrementalCachesManager
-import org.jetbrains.kotlin.incremental.LookupSymbol
-import org.jetbrains.kotlin.incremental.isKotlinFile
-import org.jetbrains.kotlin.incremental.mapClassesFqNamesToFiles
-import org.jetbrains.kotlin.incremental.mapLookupSymbolsToFiles
-import org.jetbrains.kotlin.incremental.withSubtypes
+import org.jetbrains.kotlin.incremental.*
 import org.jetbrains.kotlin.name.FqName
 import java.io.File
 

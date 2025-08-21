@@ -27,3 +27,6 @@ actual sealed class Owner {
         actual constructor(s: String) : this(0)
     }
 }
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, integerLiteral, nestedClass, primaryConstructor,
+propertyDeclaration, sealed, secondaryConstructor */

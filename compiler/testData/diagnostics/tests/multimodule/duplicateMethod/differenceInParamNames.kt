@@ -36,3 +36,6 @@ fun test(b: B?) {
         b?.foo(1, "")
     }
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, ifExpression, integerLiteral, interfaceDeclaration, isExpression,
+nullableType, override, safeCall, smartcast, stringLiteral */

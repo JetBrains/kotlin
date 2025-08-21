@@ -32,7 +32,7 @@ fun test_2() {
 }
 
 fun test_3() {
-    val x = create { <!ARGUMENT_TYPE_MISMATCH!>1.0<!> }
+    val x = create { <!RETURN_TYPE_MISMATCH!>1.0<!> }
 }
 
 @OverloadResolutionByLambdaReturnType
@@ -61,3 +61,6 @@ fun test_6(c: C) {
     val x = foo { c }
     takeString(x)
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, functionDeclaration, functionalType, integerLiteral, interfaceDeclaration,
+lambdaLiteral, localProperty, nullableType, propertyDeclaration, stringLiteral, typeParameter */

@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.backend.konan.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
-import org.jetbrains.kotlin.backend.common.Mapping
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.NativeGenerationState
@@ -26,9 +25,9 @@ import org.jetbrains.kotlin.ir.visitors.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addToStdlib.getOrSetIfNull
 
-private var IrClass.outerThisAccessor: IrSimpleFunction? by irAttribute(followAttributeOwner = false)
-private var IrProperty.lateinitPropertyAccessor: IrSimpleFunction? by irAttribute(followAttributeOwner = false)
-private var IrField.topLevelFieldAccessor: IrSimpleFunction? by irAttribute(followAttributeOwner = false)
+private var IrClass.outerThisAccessor: IrSimpleFunction? by irAttribute(copyByDefault = false)
+private var IrProperty.lateinitPropertyAccessor: IrSimpleFunction? by irAttribute(copyByDefault = false)
+private var IrField.topLevelFieldAccessor: IrSimpleFunction? by irAttribute(copyByDefault = false)
 
 /**
  * Allows to distinguish external declarations to internal ABI.
@@ -41,7 +40,7 @@ internal val INTERNAL_ABI_ORIGIN = IrDeclarationOriginImpl("INTERNAL_ABI")
  * In case of compiler caches, this means that it is not accessible as Lazy IR
  * and we have to explicitly add an external declaration.
  */
-internal class CachesAbiSupport(mapping: Mapping, private val irFactory: IrFactory) {
+internal class CachesAbiSupport(private val irFactory: IrFactory) {
     fun getOuterThisAccessor(irClass: IrClass): IrSimpleFunction {
         require(irClass.isInner) { "Expected an inner class but was: ${irClass.render()}" }
         return irClass::outerThisAccessor.getOrSetIfNull {
@@ -128,7 +127,7 @@ internal class ExportCachesAbiVisitor(val context: Context) : IrVisitor<Unit, Mu
     override fun visitClass(declaration: IrClass, data: MutableList<IrFunction>) {
         declaration.acceptChildren(this, data)
 
-        if (declaration.isLocal) return
+        if (declaration.isOriginallyLocal) return
 
 
         if (declaration.isInner) {
@@ -136,7 +135,7 @@ internal class ExportCachesAbiVisitor(val context: Context) : IrVisitor<Unit, Mu
             context.createIrBuilder(function.symbol).apply {
                 function.body = irBlockBody {
                     +irReturn(irGetField(
-                            irGet(function.valueParameters[0]),
+                            irGet(function.parameters[0]),
                             this@ExportCachesAbiVisitor.context.innerClassesSupport.getOuterThisField(declaration))
                     )
                 }
@@ -149,7 +148,7 @@ internal class ExportCachesAbiVisitor(val context: Context) : IrVisitor<Unit, Mu
         declaration.acceptChildren(this, data)
 
         if (!declaration.isLateinit || declaration.isFakeOverride
-                || DescriptorVisibilities.isPrivate(declaration.visibility) || declaration.isLocal)
+                || DescriptorVisibilities.isPrivate(declaration.visibility) || declaration.isOriginallyLocal)
             return
 
         val backingField = declaration.backingField ?: error("Lateinit property ${declaration.render()} should have a backing field")
@@ -157,7 +156,7 @@ internal class ExportCachesAbiVisitor(val context: Context) : IrVisitor<Unit, Mu
         val function = cachesAbiSupport.getLateinitPropertyAccessor(declaration)
         context.createIrBuilder(function.symbol).apply {
             function.body = irBlockBody {
-                +irReturn(irGetField(ownerClass?.let { irGet(function.valueParameters[0]) }, backingField))
+                +irReturn(irGetField(ownerClass?.let { irGet(function.parameters[0]) }, backingField))
             }
         }
         data.add(function)
@@ -210,7 +209,7 @@ internal class ImportCachesAbiTransformer(val generationState: NativeGenerationS
                 dependenciesTracker.add(irClass)
                 createIrBuilder().run {
                     irCall(accessor).apply {
-                        putValueArgument(0, expression.receiver)
+                        arguments[0] = expression.receiver
                     }
                 }
             }
@@ -221,7 +220,7 @@ internal class ImportCachesAbiTransformer(val generationState: NativeGenerationS
                 createIrBuilder().run {
                     irCall(accessor).apply {
                         if (irClass != null)
-                            putValueArgument(0, expression.receiver)
+                            arguments[0] = expression.receiver
                     }
                 }
             }

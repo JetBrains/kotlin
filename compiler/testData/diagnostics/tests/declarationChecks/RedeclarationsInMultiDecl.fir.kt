@@ -14,3 +14,6 @@ fun a() {
 
 
 fun use(a: Any): Any = a
+
+/* GENERATED_FIR_TAGS: classDeclaration, destructuringDeclaration, functionDeclaration, integerLiteral, localProperty,
+operator, propertyDeclaration */

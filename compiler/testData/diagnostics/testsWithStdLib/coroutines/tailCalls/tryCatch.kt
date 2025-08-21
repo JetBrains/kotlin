@@ -41,3 +41,6 @@ suspend fun tryCatchFinally(): Int {
         baz()
     }
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral, lambdaLiteral, localProperty, propertyDeclaration, suspend,
+tryExpression */

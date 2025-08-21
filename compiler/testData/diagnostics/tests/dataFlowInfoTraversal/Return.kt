@@ -16,3 +16,6 @@ fun foo(): Int {
 
     return <!DEBUG_INFO_CONSTANT, TYPE_MISMATCH!>z<!>
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, equalityExpression, functionDeclaration, ifExpression, integerLiteral,
+localProperty, nullableType, propertyDeclaration, smartcast */

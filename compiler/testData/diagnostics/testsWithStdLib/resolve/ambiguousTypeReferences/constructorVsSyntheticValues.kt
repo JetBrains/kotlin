@@ -23,3 +23,6 @@ val resultValuesRef = SomeClass::<!OVERLOAD_RESOLUTION_AMBIGUITY!>values<!>
 
 val resultEntries = take<SomeClass.entries.Companion>(SomeClass.entries)
 val resultEntriesRef = take<KFunction0<SomeClass.entries>>(SomeClass::entries)
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, companionObject, enumDeclaration, enumEntry,
+functionDeclaration, nestedClass, nullableType, objectDeclaration, propertyDeclaration, typeParameter */

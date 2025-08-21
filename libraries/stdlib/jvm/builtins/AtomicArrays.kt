@@ -1,14 +1,18 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
+
+@file:kotlin.internal.JvmBuiltin
+@file:kotlin.internal.SuppressBytecodeGeneration
+@file:Suppress("NON_ABSTRACT_FUNCTION_WITH_NO_BODY", "MUST_BE_INITIALIZED_OR_BE_ABSTRACT")
 
 package kotlin.concurrent.atomics
 
 /**
  * An array of ints in which elements may be updated atomically.
  *
- * Instances of [AtomicIntArray] are represented by [java.util.concurrent.atomic.AtomicIntegerArray] and provide the the same atomicity guarantees.
+ * Instances of [AtomicIntArray] are represented by [java.util.concurrent.atomic.AtomicIntegerArray] and provide the same atomicity guarantees.
  */
 @SinceKotlin("2.1")
 @ExperimentalAtomicApi
@@ -17,18 +21,24 @@ public actual class AtomicIntArray {
      * Creates a new [AtomicIntArray] of the given [size], with all elements initialized to zero.
      *
      * @throws RuntimeException if the specified [size] is negative.
+     *
+     * @sample samples.concurrent.atomics.AtomicIntArray.sizeCons
      */
     public actual constructor(size: Int)
 
     /**
      * Creates a new [AtomicIntArray] filled with elements of the given [array].
+     *
+     * @sample samples.concurrent.atomics.AtomicIntArray.intArrCons
      */
     public actual constructor(array: IntArray)
 
     /**
      * Returns the number of elements in the array.
+     *
+     * @sample samples.concurrent.atomics.AtomicIntArray.size
      */
-    public actual val size: Int get() = array.size
+    public actual val size: Int
 
     /**
      * Atomically loads the value from the element of this [AtomicIntArray] at the given [index].
@@ -36,6 +46,8 @@ public actual class AtomicIntArray {
      * Has the same memory effects as [java.util.concurrent.atomic.AtomicIntegerArray.get].
      *
      * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
+     *
+     * @sample samples.concurrent.atomics.AtomicIntArray.loadAt
      */
     public actual fun loadAt(index: Int): Int
 
@@ -45,6 +57,8 @@ public actual class AtomicIntArray {
      * Has the same memory effects as [java.util.concurrent.atomic.AtomicIntegerArray.set].
      *
      * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
+     *
+     * @sample samples.concurrent.atomics.AtomicIntArray.storeAt
      */
     public actual fun storeAt(index: Int, newValue: Int)
 
@@ -55,6 +69,8 @@ public actual class AtomicIntArray {
      * Has the same memory effects as [java.util.concurrent.atomic.AtomicIntegerArray.getAndSet].
      *
      * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
+     *
+     * @sample samples.concurrent.atomics.AtomicIntArray.exchangeAt
      */
     public actual fun exchangeAt(index: Int, newValue: Int): Int
 
@@ -68,6 +84,8 @@ public actual class AtomicIntArray {
      * Has the same memory effects as [java.util.concurrent.atomic.AtomicIntegerArray.compareAndSet].
      *
      * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
+     *
+     * @sample samples.concurrent.atomics.AtomicIntArray.compareAndSetAt
      */
     public actual fun compareAndSetAt(index: Int, expectedValue: Int, newValue: Int): Boolean
 
@@ -84,6 +102,8 @@ public actual class AtomicIntArray {
      * for users running JDK 9 or higher.
      *
      * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
+     *
+     * @sample samples.concurrent.atomics.AtomicIntArray.compareAndExchangeAt
      */
     public actual fun compareAndExchangeAt(index: Int, expectedValue: Int, newValue: Int): Int
 
@@ -93,6 +113,8 @@ public actual class AtomicIntArray {
      * Has the same memory effects as [java.util.concurrent.atomic.AtomicIntegerArray.getAndAdd].
      *
      * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
+     *
+     * @sample samples.concurrent.atomics.AtomicIntArray.fetchAndAddAt
      */
     public actual fun fetchAndAddAt(index: Int, delta: Int): Int
 
@@ -102,6 +124,8 @@ public actual class AtomicIntArray {
      * Has the same memory effects as [java.util.concurrent.atomic.AtomicIntegerArray.addAndGet].
      *
      * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
+     *
+     * @sample samples.concurrent.atomics.AtomicIntArray.addAndFetchAt
      */
     public actual fun addAndFetchAt(index: Int, delta: Int): Int
 
@@ -116,7 +140,7 @@ public actual class AtomicIntArray {
 /**
  * An array of longs in which elements may be updated atomically.
  *
- * Instances of [AtomicLongArray] are represented by [java.util.concurrent.atomic.AtomicLongArray] and provide the the same atomicity guarantees.
+ * Instances of [AtomicLongArray] are represented by [java.util.concurrent.atomic.AtomicLongArray] and provide the same atomicity guarantees.
  */
 @SinceKotlin("2.1")
 @ExperimentalAtomicApi
@@ -125,18 +149,24 @@ public actual class AtomicLongArray {
      * Creates a new [AtomicLongArray] of the given [size], with all elements initialized to zero.
      *
      * @throws RuntimeException if the specified [size] is negative.
+     *
+     * @sample samples.concurrent.atomics.AtomicLongArray.sizeCons
      */
     public actual constructor(size: Int)
 
     /**
      * Creates a new [AtomicLongArray] filled with elements of the given [array].
+     *
+     * @sample samples.concurrent.atomics.AtomicLongArray.longArrCons
      */
     public actual constructor(array: LongArray)
 
     /**
      * Returns the number of elements in the array.
+     *
+     * @sample samples.concurrent.atomics.AtomicLongArray.size
      */
-    public actual val size: Int get() = array.size
+    public actual val size: Int
 
     /**
      * Atomically loads the value from the element of this [AtomicLongArray] at the given [index].
@@ -144,6 +174,8 @@ public actual class AtomicLongArray {
      * Has the same memory effects as [java.util.concurrent.atomic.AtomicLongArray.get].
      *
      * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
+     *
+     * @sample samples.concurrent.atomics.AtomicLongArray.loadAt
      */
     public actual fun loadAt(index: Int): Long
 
@@ -153,6 +185,8 @@ public actual class AtomicLongArray {
      * Has the same memory effects as [java.util.concurrent.atomic.AtomicLongArray.set].
      *
      * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
+     *
+     * @sample samples.concurrent.atomics.AtomicLongArray.storeAt
      */
     public actual fun storeAt(index: Int, newValue: Long)
 
@@ -163,6 +197,8 @@ public actual class AtomicLongArray {
      * Has the same memory effects as [java.util.concurrent.atomic.AtomicLongArray.getAndSet].
      *
      * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
+     *
+     * @sample samples.concurrent.atomics.AtomicLongArray.exchangeAt
      */
     public actual fun exchangeAt(index: Int, newValue: Long): Long
 
@@ -176,6 +212,8 @@ public actual class AtomicLongArray {
      * Has the same memory effects as [java.util.concurrent.atomic.AtomicLongArray.compareAndSet].
      *
      * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
+     *
+     * @sample samples.concurrent.atomics.AtomicLongArray.compareAndSetAt
      */
     public actual fun compareAndSetAt(index: Int, expectedValue: Long, newValue: Long): Boolean
 
@@ -192,6 +230,8 @@ public actual class AtomicLongArray {
      * for users running JDK 9 or higher.
      *
      * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
+     *
+     * @sample samples.concurrent.atomics.AtomicLongArray.compareAndExchangeAt
      */
     public actual fun compareAndExchangeAt(index: Int, expectedValue: Long, newValue: Long): Long
 
@@ -201,6 +241,8 @@ public actual class AtomicLongArray {
      * Has the same memory effects as [java.util.concurrent.atomic.AtomicLongArray.getAndAdd].
      *
      * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
+     *
+     * @sample samples.concurrent.atomics.AtomicLongArray.fetchAndAddAt
      */
     public actual fun fetchAndAddAt(index: Int, delta: Long): Long
 
@@ -210,6 +252,8 @@ public actual class AtomicLongArray {
      * Has the same memory effects as [java.util.concurrent.atomic.AtomicLongArray.addAndGet].
      *
      * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
+     *
+     * @sample samples.concurrent.atomics.AtomicLongArray.addAndFetchAt
      */
     public actual fun addAndFetchAt(index: Int, delta: Long): Long
 
@@ -224,18 +268,22 @@ public actual class AtomicLongArray {
 /**
  * A generic array of objects in which elements may be updated atomically.
  *
- * Instances of [AtomicArray] are represented by [java.util.concurrent.atomic.AtomicReferenceArray] and provide the the same atomicity guarantees.
+ * Instances of [AtomicArray] are represented by [java.util.concurrent.atomic.AtomicReferenceArray] and provide the same atomicity guarantees.
  */
 @SinceKotlin("2.1")
 @ExperimentalAtomicApi
 public actual class AtomicArray<T> {
     /**
      * Creates a new [AtomicArray]<T> filled with elements of the given [array].
+     *
+     * @sample samples.concurrent.atomics.AtomicArray.arrCons
      */
     public actual constructor (array: Array<T>)
 
     /**
      * Returns the number of elements in the array.
+     *
+     * @sample samples.concurrent.atomics.AtomicArray.size
      */
     public actual val size: Int
 
@@ -245,6 +293,8 @@ public actual class AtomicArray<T> {
      * Has the same memory effects as [java.util.concurrent.atomic.AtomicReferenceArray.get].
      *
      * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
+     *
+     * @sample samples.concurrent.atomics.AtomicArray.loadAt
      */
     public actual fun loadAt(index: Int): T
 
@@ -254,6 +304,8 @@ public actual class AtomicArray<T> {
      * Has the same memory effects as [java.util.concurrent.atomic.AtomicReferenceArray.set].
      *
      * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
+     *
+     * @sample samples.concurrent.atomics.AtomicArray.storeAt
      */
     public actual fun storeAt(index: Int, newValue: T)
 
@@ -264,6 +316,8 @@ public actual class AtomicArray<T> {
      * Has the same memory effects as [java.util.concurrent.atomic.AtomicReferenceArray.getAndSet].
      *
      * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
+     *
+     * @sample samples.concurrent.atomics.AtomicArray.exchangeAt
      */
     public actual fun exchangeAt(index: Int, newValue: T): T
 
@@ -272,11 +326,13 @@ public actual class AtomicArray<T> {
      * if the current value equals the [expected value][expectedValue].
      * Returns true if the operation was successful and false only if the current value of the element was not equal to the expected value.
      *
-     * Comparison of values is done by value.
+     * Comparison of values is done by reference.
      *
      * Has the same memory effects as [java.util.concurrent.atomic.AtomicReferenceArray.compareAndSet].
      *
      * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
+     *
+     * @sample samples.concurrent.atomics.AtomicArray.compareAndSetAt
      */
     public actual fun compareAndSetAt(index: Int, expectedValue: T, newValue: T): Boolean
 
@@ -284,7 +340,7 @@ public actual class AtomicArray<T> {
      * Atomically stores the [new value][newValue] into the element of this [AtomicArray] at the given [index]
      * if the current value equals the [expected value][expectedValue] and returns the old value of the element in any case.
      *
-     * Comparison of values is done by value.
+     * Comparison of values is done by reference.
      *
      * In order to maintain compatibility with Java 8, [compareAndExchangeAt] is implemented using [java.util.concurrent.atomic.AtomicReferenceArray.compareAndSet],
      * since [java.util.concurrent.atomic.AtomicReferenceArray.compareAndExchange] method is only available starting from Java 9.
@@ -293,6 +349,8 @@ public actual class AtomicArray<T> {
      * for users running JDK 9 or higher.
      *
      * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
+     *
+     * @sample samples.concurrent.atomics.AtomicArray.compareAndExchangeAt
      */
     public actual fun compareAndExchangeAt(index: Int, expectedValue: T, newValue: T): T
 

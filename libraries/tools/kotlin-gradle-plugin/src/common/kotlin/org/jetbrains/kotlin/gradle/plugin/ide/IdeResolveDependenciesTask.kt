@@ -8,19 +8,21 @@ package org.jetbrains.kotlin.gradle.plugin.ide
 import com.google.gson.*
 import org.gradle.api.DefaultTask
 import org.gradle.api.Project
-import org.gradle.api.file.ConfigurableFileCollection
-import org.gradle.api.tasks.*
+import org.gradle.api.artifacts.result.ArtifactResult
+import org.gradle.api.artifacts.result.DependencyResult
+import org.gradle.api.provider.Property
+import org.gradle.api.tasks.Internal
+import org.gradle.api.tasks.TaskAction
+import org.gradle.api.tasks.TaskProvider
 import org.gradle.work.DisableCachingByDefault
-import org.gradle.work.NormalizeLineEndings
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinDependencyCoordinates
 import org.jetbrains.kotlin.gradle.plugin.KotlinProjectSetupAction
-import org.jetbrains.kotlin.gradle.plugin.sources.internal
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.checkers.KmpPartiallyResolvedDependenciesChecker
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.checkers.KmpPartiallyResolvedDependenciesCheckerProjectsEvaluated
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.checkers.locateOrRegisterPartiallyResolvedDependenciesCheckerTask
 import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
 import org.jetbrains.kotlin.gradle.utils.appendLine
-import org.jetbrains.kotlin.gradle.utils.filesProvider
-import org.jetbrains.kotlin.gradle.utils.lenientArtifactsView
-import org.jetbrains.kotlin.gradle.utils.notCompatibleWithConfigurationCacheCompat
 import org.jetbrains.kotlin.tooling.core.Extras
 import java.io.File
 import java.lang.reflect.Type
@@ -33,7 +35,10 @@ internal fun Project.locateOrRegisterIdeResolveDependenciesTask(): TaskProvider<
     return locateOrRegisterTask("resolveIdeDependencies") { task ->
         task.description = "Debugging/Diagnosing task that will resolve dependencies for the IDE"
         task.group = "ide"
-        task.notCompatibleWithConfigurationCacheCompat("Just a debugging util")
+        task.notCompatibleWithConfigurationCache("Just a debugging util")
+        task.kotlinIdeMultiplatformImport.value(project.kotlinIdeMultiplatformImport).finalizeValue()
+        // Fixes circular dependency on eager tasks initialization
+        task.kotlinIdeMultiplatformImport.get().addDependencyOnResolvers(task)
     }
 }
 
@@ -43,33 +48,41 @@ internal fun Project.locateOrRegisterIdeResolveDependenciesTask(): TaskProvider<
  * Outputs are written as json and protobufs
  */
 @DisableCachingByDefault(because = "Used for debugging/diagnostic purpose.")
-internal open class IdeResolveDependenciesTask : DefaultTask() {
+internal abstract class IdeResolveDependenciesTask : DefaultTask() {
+    private val outputDirectory = project.layout.buildDirectory.dir("ide/dependencies")
+    private val kotlinExtension = project.kotlinExtension
+    private val kotlinIdeMultiplatformImportStatistics = project.kotlinIdeMultiplatformImportStatistics
+    private val gsonFileAdapter = FileAdapter(project)
+
+    @get:Internal
+    internal abstract val kotlinIdeMultiplatformImport: Property<IdeMultiplatformImport>
+
     @TaskAction
     fun resolveDependencies() {
-        val outputDirectory = project.layout.buildDirectory.dir("ide/dependencies").get().asFile
+        val outputDirectory = outputDirectory.get().asFile
         outputDirectory.deleteRecursively()
         val gson = GsonBuilder().setStrictness(Strictness.LENIENT).setPrettyPrinting()
             .registerTypeHierarchyAdapter(IdeDependencyResolver::class.java, IdeDependencyResolverAdapter)
             .registerTypeHierarchyAdapter(Extras::class.java, ExtrasAdapter)
             .registerTypeHierarchyAdapter(IdeaKotlinDependencyCoordinates::class.java, IdeaKotlinDependencyCoordinatesAdapter)
-            .registerTypeAdapter(File::class.java, FileAdapter(project))
+            .registerTypeHierarchyAdapter(ArtifactResult::class.java, ToStringAdapter)
+            .registerTypeAdapter(File::class.java, gsonFileAdapter)
             .create()
 
-        val extension = project.kotlinExtension
-        extension.sourceSets.forEach { sourceSet ->
-            val dependencies = project.kotlinIdeMultiplatformImport.resolveDependencies(sourceSet)
+        kotlinExtension.sourceSets.forEach { sourceSet ->
+            val dependencies = kotlinIdeMultiplatformImport.get().resolveDependencies(sourceSet)
             val jsonOutput = outputDirectory.resolve("json/${sourceSet.name}.json")
             jsonOutput.parentFile.mkdirs()
             jsonOutput.writeText(gson.toJson(dependencies))
 
-            project.kotlinIdeMultiplatformImport.serialize(dependencies).forEachIndexed { index, proto ->
+            kotlinIdeMultiplatformImport.get().serialize(dependencies).forEachIndexed { index, proto ->
                 val protoOutput = outputDirectory.resolve("proto/${sourceSet.name}/$index.bin")
                 protoOutput.parentFile.mkdirs()
                 protoOutput.writeBytes(proto)
             }
         }
 
-        project.kotlinIdeMultiplatformImportStatistics.let { statistics ->
+        kotlinIdeMultiplatformImportStatistics.let { statistics ->
             val timeStatisticsFile = outputDirectory.resolve("times.txt")
             timeStatisticsFile.writeText(buildString {
                 statistics.getExecutionTimes().forEach { (clazz, time) ->
@@ -111,6 +124,12 @@ internal open class IdeResolveDependenciesTask : DefaultTask() {
             } else {
                 JsonPrimitive(src.path)
             }
+        }
+    }
+
+    object ToStringAdapter : JsonSerializer<Any> {
+        override fun serialize(src: Any, typeOfSrc: Type?, context: JsonSerializationContext?): JsonElement {
+            return JsonPrimitive(src.toString())
         }
     }
 }

@@ -23,3 +23,6 @@ open class B {
         <!UNRESOLVED_REFERENCE!>prop<!>
     }
 }
+
+/* GENERATED_FIR_TAGS: asExpression, classDeclaration, functionDeclaration, interfaceDeclaration, intersectionType,
+lambdaLiteral, propertyDeclaration, smartcast, thisExpression */

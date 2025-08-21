@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.resolve.calls.inference.components.*
 import org.jetbrains.kotlin.resolve.checkers.EmptyIntersectionTypeInfo
 import org.jetbrains.kotlin.types.AbstractTypeApproximator
 import org.jetbrains.kotlin.types.AbstractTypeChecker
+import org.jetbrains.kotlin.types.TypeApproximatorCachesPerConfiguration
 import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
 import org.jetbrains.kotlin.types.model.*
 import org.jetbrains.kotlin.utils.SmartList
@@ -28,10 +29,12 @@ class NewConstraintSystemImpl(
     TypeSystemInferenceExtensionContext by typeSystemContext,
     NewConstraintSystem,
     ConstraintSystemBuilder,
+    ConstraintSystemMarker,
     ConstraintInjector.Context,
     ResultTypeResolver.Context,
     PostponedArgumentsAnalyzerContext {
     private val utilContext = constraintInjector.constraintIncorporator.utilContext
+    private val inferenceLogger = constraintInjector.inferenceLogger
 
     private val postponedComputationsAfterAllVariablesAreFixed = mutableListOf<() -> Unit>()
 
@@ -51,25 +54,34 @@ class NewConstraintSystemImpl(
 
     override var atCompletionState: Boolean = false
 
+    override var allowSemiFixationToOtherTypeVariables: Boolean = false
+
     /**
      * @see [org.jetbrains.kotlin.resolve.calls.inference.components.VariableFixationFinder.Context.typeVariablesThatAreNotCountedAsProperTypes]
      * @see [org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirDeclarationsResolveTransformer.fixInnerVariablesForProvideDelegateIfNeeded]
      */
     @K2Only
-    override fun <R> withTypeVariablesThatAreCountedAsProperTypes(typeVariables: Set<TypeConstructorMarker>, block: () -> R): R {
+    override fun <R> withTypeVariablesThatAreCountedAsProperTypes(
+        typeVariables: Set<TypeConstructorMarker>,
+        allowSemiFixationToOtherTypeVariables: Boolean,
+        block: () -> R,
+    ): R {
         checkState(State.BUILDING)
         // Cleaning cache is necessary because temporarily we change the meaning of what does "proper type" mean
         properTypesCache.clear()
         notProperTypesCache.clear()
+        val previousAllowSemiFixationToOtherTypeVariables = this.allowSemiFixationToOtherTypeVariables
 
         require(typeVariablesThatAreCountedAsProperTypes == null) {
             "Currently there should be no nested withDisallowingOnlyThisTypeVariablesForProperTypes calls"
         }
 
         typeVariablesThatAreCountedAsProperTypes = typeVariables
+        this.allowSemiFixationToOtherTypeVariables = allowSemiFixationToOtherTypeVariables
 
         val result = block()
 
+        this.allowSemiFixationToOtherTypeVariables = previousAllowSemiFixationToOtherTypeVariables
         typeVariablesThatAreCountedAsProperTypes = null
         properTypesCache.clear()
         notProperTypesCache.clear()
@@ -132,13 +144,6 @@ class NewConstraintSystemImpl(
         return storage
     }
 
-    override fun addMissedConstraints(
-        position: IncorporationConstraintPosition,
-        constraints: MutableList<Pair<TypeVariableMarker, Constraint>>,
-    ) {
-        storage.missedConstraints.add(position to constraints)
-    }
-
     override fun asConstraintSystemCompleterContext() = apply {
         checkState(State.BUILDING)
 
@@ -156,6 +161,7 @@ class NewConstraintSystemImpl(
             ?.let { error("Type variable already registered: old: $it, new: $variable") }
         notProperTypesCache.clear()
         storage.notFixedTypeVariables[variable.freshTypeConstructor()] = MutableVariableWithConstraints(this, variable)
+        inferenceLogger?.logNewVariable(variable, this)
     }
 
     override fun markPostponedVariable(variable: TypeVariableMarker) {
@@ -205,21 +211,15 @@ class NewConstraintSystemImpl(
     override fun getBuiltFunctionalExpectedTypeForPostponedArgument(expectedTypeVariable: TypeConstructorMarker) =
         storage.builtFunctionalTypesForPostponedArgumentsByExpectedTypeVariables[expectedTypeVariable]
 
-    override fun addSubtypeConstraint(lowerType: KotlinTypeMarker, upperType: KotlinTypeMarker, position: ConstraintPosition) =
-        constraintInjector.addInitialSubtypeConstraint(
-            apply { checkState(State.BUILDING, State.COMPLETION, State.TRANSACTION) },
-            lowerType,
-            upperType,
-            position
-        )
+    override fun addSubtypeConstraint(lowerType: KotlinTypeMarker, upperType: KotlinTypeMarker, position: ConstraintPosition) {
+        checkState(State.BUILDING, State.COMPLETION, State.TRANSACTION)
+        constraintInjector.addInitialSubtypeConstraint(lowerType, upperType, position)
+    }
 
-    override fun addEqualityConstraint(a: KotlinTypeMarker, b: KotlinTypeMarker, position: ConstraintPosition) =
-        constraintInjector.addInitialEqualityConstraint(
-            apply { checkState(State.BUILDING, State.COMPLETION, State.TRANSACTION) },
-            a,
-            b,
-            position
-        )
+    override fun addEqualityConstraint(a: KotlinTypeMarker, b: KotlinTypeMarker, position: ConstraintPosition) {
+        checkState(State.BUILDING, State.COMPLETION, State.TRANSACTION)
+        constraintInjector.addInitialEqualityConstraint(a, b, position)
+    }
 
     override fun getProperSuperTypeConstructors(type: KotlinTypeMarker): List<TypeConstructorMarker> {
         checkState(State.BUILDING, State.COMPLETION, State.TRANSACTION)
@@ -250,7 +250,6 @@ class NewConstraintSystemImpl(
         private val beforeErrorsCount: Int,
         private val beforeMaxTypeDepthFromInitialConstraints: Int,
         private val beforeTypeVariablesTransactionSize: Int,
-        private val beforeMissedConstraintsCount: Int,
         private val beforeConstraintCountByVariables: Map<TypeConstructorMarker, Int>,
         private val beforeConstraintsFromAllForks: Int,
     ) : ConstraintSystemTransaction() {
@@ -267,7 +266,6 @@ class NewConstraintSystemImpl(
             }
             storage.maxTypeDepthFromInitialConstraints = beforeMaxTypeDepthFromInitialConstraints
             storage.errors.trimToSize(beforeErrorsCount)
-            storage.missedConstraints.trimToSize(beforeMissedConstraintsCount)
             storage.constraintsFromAllForkPoints.trimToSize(beforeConstraintsFromAllForks)
 
             val addedInitialConstraints = storage.initialConstraints.subList(
@@ -296,7 +294,6 @@ class NewConstraintSystemImpl(
             beforeErrorsCount = storage.errors.size,
             beforeMaxTypeDepthFromInitialConstraints = storage.maxTypeDepthFromInitialConstraints,
             beforeTypeVariablesTransactionSize = typeVariablesTransaction.size,
-            beforeMissedConstraintsCount = storage.missedConstraints.size,
             beforeConstraintCountByVariables = storage.notFixedTypeVariables.mapValues { it.value.rawConstraintsCount },
             beforeConstraintsFromAllForks = storage.constraintsFromAllForkPoints.size,
         ).also {
@@ -333,7 +330,7 @@ class NewConstraintSystemImpl(
         @OptIn(AssertionsOnly::class)
         runOuterCSRelatedAssertions(outerSystem, isAddingOuter = true)
 
-        doAddOtherSystem(outerSystem)
+        doAddOtherSystem(outerSystem, mergeMode = false)
     }
 
     @K2Only
@@ -356,9 +353,24 @@ class NewConstraintSystemImpl(
         @OptIn(AssertionsOnly::class)
         runOuterCSRelatedAssertions(otherSystem, isAddingOuter = false)
 
-        doAddOtherSystem(otherSystem)
+        doAddOtherSystem(otherSystem, mergeMode = false)
     }
 
+    @K2Only
+    @UnstableSystemMergeMode
+    override fun mergeOtherSystem(otherSystem: ConstraintStorage) {
+        @OptIn(AssertionsOnly::class)
+        runOuterCSRelatedAssertions(otherSystem, isAddingOuter = false)
+
+        doAddOtherSystem(otherSystem, mergeMode = true)
+    }
+
+    /**
+     * This function is only expected to be called when [otherSystem] is a superset of this CS,
+     * or in other words _this_ CS has used as a base/outer CS of the [otherSystem].
+     *
+     * Or one might say that [otherSystem] is expected to be a clone of the current CS with some additions: new variables, constraints, etc.
+     */
     fun replaceContentWith(otherSystem: ConstraintStorage) {
         @OptIn(AssertionsOnly::class)
         runOuterCSRelatedAssertions(otherSystem, isAddingOuter = false)
@@ -376,10 +388,10 @@ class NewConstraintSystemImpl(
             check(otherSystem.allTypeVariables.keys.containsAll(storage.allTypeVariables.keys))
         }
 
-        doAddOtherSystem(otherSystem)
+        doAddOtherSystem(otherSystem, mergeMode = false)
     }
 
-    private fun doAddOtherSystem(otherSystem: ConstraintStorage) {
+    private fun doAddOtherSystem(otherSystem: ConstraintStorage, mergeMode: Boolean) {
         if (otherSystem.allTypeVariables.isNotEmpty()) {
             otherSystem.allTypeVariables.forEach {
                 transactionRegisterVariable(it.value)
@@ -388,24 +400,59 @@ class NewConstraintSystemImpl(
             notProperTypesCache.clear()
         }
 
+        for ((k, v) in otherSystem.approximatorCaches) {
+            storage.approximatorCaches.getOrPut(k) { AbstractTypeApproximator.Cache() } += v
+        }
+
         for ((variable, constraints) in otherSystem.notFixedTypeVariables) {
-            notFixedTypeVariables[variable] = MutableVariableWithConstraints(this, constraints)
+            if (!mergeMode) {
+                notFixedTypeVariables[variable] = MutableVariableWithConstraints(this, constraints)
+            } else {
+                val previous = notFixedTypeVariables[variable]
+                if (previous != null) {
+                    @OptIn(UnstableSystemMergeMode::class)
+                    notFixedTypeVariables[variable] = MutableVariableWithConstraints(this, previous, constraints)
+                } else {
+                    notFixedTypeVariables[variable] = MutableVariableWithConstraints(this, constraints)
+                }
+            }
         }
 
         for ((variable, variablesThatReferenceGivenOne) in otherSystem.typeVariableDependencies) {
-            typeVariableDependencies[variable] = variablesThatReferenceGivenOne.toMutableSet()
+            if (!mergeMode || variable !in typeVariableDependencies) {
+                typeVariableDependencies[variable] = variablesThatReferenceGivenOne.toMutableSet()
+            } else {
+                typeVariableDependencies[variable]?.addAll(variablesThatReferenceGivenOne)
+            }
         }
 
-        storage.initialConstraints.addAll(otherSystem.initialConstraints)
+        // Merge mode: filtering identical constraints
+        if (mergeMode) {
+            storage.initialConstraints.addAllDistinct(otherSystem.initialConstraints)
+            storage.constraintsFromAllForkPoints.addAllDistinct(otherSystem.constraintsFromAllForkPoints)
+            storage.errors.addAllDistinct(otherSystem.errors)
+        } else {
+            storage.initialConstraints.addAll(otherSystem.initialConstraints)
+            storage.constraintsFromAllForkPoints.addAll(otherSystem.constraintsFromAllForkPoints)
+            storage.errors.addAll(otherSystem.errors)
+        }
 
         storage.maxTypeDepthFromInitialConstraints =
             max(storage.maxTypeDepthFromInitialConstraints, otherSystem.maxTypeDepthFromInitialConstraints)
-        storage.errors.addAll(otherSystem.errors)
+        // Keys are compared by identity only.
+        // Sometimes we create structurally identical type variables (at least in K2),
+        // and they should be considered different.
         storage.fixedTypeVariables.putAll(otherSystem.fixedTypeVariables)
+        // K1-only, so merge isn't important here
         storage.postponedTypeVariables.addAll(otherSystem.postponedTypeVariables)
-        storage.constraintsFromAllForkPoints.addAll(otherSystem.constraintsFromAllForkPoints)
 
         hasContradictionInForkPointsCache = null
+    }
+
+    private fun <T> MutableList<T>.addAllDistinct(other: List<T>) {
+        val set = identityHashSetFromSum(this, other)
+        clear()
+        addAll(set)
     }
 
     @AssertionsOnly
@@ -512,6 +559,9 @@ class NewConstraintSystemImpl(
     override val outerSystemVariablesPrefixSize: Int
         get() = storage.outerSystemVariablesPrefixSize
 
+    override val approximatorCaches: TypeApproximatorCachesPerConfiguration
+        get() = storage.approximatorCaches
+
     override val constraintsFromAllForkPoints: MutableList<Pair<IncorporationConstraintPosition, ForkPointData>>
         get() {
             checkState(State.BUILDING, State.COMPLETION, State.TRANSACTION)
@@ -603,8 +653,8 @@ class NewConstraintSystemImpl(
         constraintSetForForkBranch: ForkPointBranchDescription,
         position: IncorporationConstraintPosition,
     ) {
+        checkState(State.BUILDING, State.COMPLETION, State.TRANSACTION)
         constraintInjector.processGivenForkPointBranchConstraints(
-            this@NewConstraintSystemImpl.apply { checkState(State.BUILDING, State.COMPLETION, State.TRANSACTION) },
             constraintSetForForkBranch,
             position,
         )
@@ -618,6 +668,7 @@ class NewConstraintSystemImpl(
     override fun addError(error: ConstraintSystemError) {
         checkState(State.BUILDING, State.COMPLETION, State.TRANSACTION)
         storage.errors.add(error)
+        inferenceLogger?.logError(error, this)
     }
 
     // KotlinConstraintSystemCompleter.Context
@@ -630,14 +681,7 @@ class NewConstraintSystemImpl(
 
         checkInferredEmptyIntersection(variable, resultType)
 
-        constraintInjector.addInitialEqualityConstraint(this@NewConstraintSystemImpl, variable.defaultType(), resultType, position)
-
-        /*
-         * Checking missed constraint can introduce new type mismatch warnings.
-         * It's needed to deprecate green code which works only due to incorrect optimization in the constraint injector.
-         * TODO: remove this code (and `substituteMissedConstraints`) with removing `ProperTypeInferenceConstraintsProcessing` feature
-         */
-        checkMissedConstraints()
+        constraintInjector.addInitialEqualityConstraint(variable.defaultType(), resultType, position)
 
         val freshTypeConstructor = variable.freshTypeConstructor()
         val variableWithConstraints =
@@ -650,13 +694,10 @@ class NewConstraintSystemImpl(
         }
 
         for (otherVariableWithConstraints in notFixedTypeVariables.values) {
-            otherVariableWithConstraints.removeConstrains { containsTypeVariable(it.type, freshTypeConstructor) }
+            otherVariableWithConstraints.removeConstraints { it.type.containsTypeVariable(freshTypeConstructor) }
         }
 
         storage.fixedTypeVariables[freshTypeConstructor] = resultType
-
-        // Substitute freshly fixed type variable into missed constraints
-        substituteMissedConstraints()
 
         postponeOnlyInputTypesCheck(variableWithConstraints, resultType)
 
@@ -694,38 +735,6 @@ class NewConstraintSystemImpl(
         addError(
             errorFactory(upperTypes.toList(), emptyIntersectionTypeInfo.casingTypes.toList(), variable, emptyIntersectionTypeInfo.kind)
         )
-    }
-
-    private fun checkMissedConstraints() {
-        val constraintSystem = this@NewConstraintSystemImpl
-        val errorsByMissedConstraints = buildList {
-            runTransaction {
-                for ((position, constraints) in storage.missedConstraints) {
-                    val fixedVariableConstraints =
-                        constraints.filter { (typeVariable, _) -> typeVariable.freshTypeConstructor() in notFixedTypeVariables }
-                    constraintInjector.processMissedConstraints(constraintSystem, position, fixedVariableConstraints)
-                }
-                errors.filterIsInstance<NewConstraintError>().forEach(::add)
-                false
-            }
-        }
-        val constraintErrors = constraintSystem.errors.filterIsInstance<NewConstraintError>()
-        // Don't report warning if an error on the same call has already been reported
-        if (constraintErrors.isEmpty()) {
-            errorsByMissedConstraints.forEach {
-                constraintSystem.addError(it.transformToWarning())
-            }
-        }
-    }
-
-    private fun substituteMissedConstraints() {
-        val substitutor = buildCurrentSubstitutor()
-        for ((_, constraints) in storage.missedConstraints) {
-            for ((index, variableWithConstraint) in constraints.withIndex()) {
-                val (typeVariable, constraint) = variableWithConstraint
-                constraints[index] = typeVariable to constraint.replaceType(substitutor.safeSubstitute(constraint.type))
-            }
-        }
     }
 
     private fun ConstraintSystemUtilContext.postponeOnlyInputTypesCheck(
@@ -853,7 +862,7 @@ class NewConstraintSystemImpl(
 
     override fun removePostponedTypeVariablesFromConstraints(postponedTypeVariables: Set<TypeConstructorMarker>) {
         for ((_, variableWithConstraints) in storage.notFixedTypeVariables) {
-            variableWithConstraints.removeConstrains { constraint ->
+            variableWithConstraints.removeConstraints { constraint ->
                 constraint.type.contains { it is StubTypeMarker && it.getOriginalTypeVariable() in postponedTypeVariables }
             }
         }

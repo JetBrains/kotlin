@@ -36,3 +36,6 @@ fun <T> twoSealed(value: T) where T : Bird, T : <!ONLY_ONE_CLASS_BOUND_ALLOWED!>
         is <!INCOMPATIBLE_TYPES!>Kiwi<!> -> "kiwiwiwiwi"
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, interfaceDeclaration, isExpression, localProperty,
+propertyDeclaration, sealed, smartcast, stringLiteral, typeConstraint, typeParameter, whenExpression, whenWithSubject */

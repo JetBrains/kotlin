@@ -3,3 +3,5 @@ fun foo() {
     <!UNRESOLVED_REFERENCE!>x<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>yyy<!><<!UNRESOLVED_REFERENCE!>XXX<!>>()
     <!UNRESOLVED_REFERENCE!>x<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>yyy<!><Int>()
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration */

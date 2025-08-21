@@ -16,3 +16,5 @@ actual class Foo : Base() {
     public actual override fun foo() {
     }
 }
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, functionDeclaration, override */

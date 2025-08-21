@@ -11,3 +11,6 @@ fun main(s: String?) {
 
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.collections.List<kotlin.String>")!>a<!>
 }
+
+/* GENERATED_FIR_TAGS: destructuringDeclaration, elvisExpression, functionDeclaration, integerLiteral, lambdaLiteral,
+localProperty, nullableType, propertyDeclaration, safeCall, unnamedLocalVariable */

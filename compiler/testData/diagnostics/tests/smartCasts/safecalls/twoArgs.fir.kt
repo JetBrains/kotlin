@@ -5,3 +5,5 @@ fun calc(x: List<String>?): Int {
     // but not also here!
     return x<!UNSAFE_CALL!>.<!>size
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, functionDeclaration, integerLiteral, nullableType, safeCall, smartcast */

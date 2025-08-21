@@ -25,50 +25,52 @@ import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.isIntersectionOverride
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
-import org.jetbrains.kotlin.fir.scopes.getDirectOverriddenMembersWithBaseScope
+import org.jetbrains.kotlin.fir.scopes.getDirectOverriddenMembersWithBaseScopeSafe
 import org.jetbrains.kotlin.fir.scopes.processAllFunctions
 import org.jetbrains.kotlin.fir.scopes.processAllProperties
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 
 sealed class FirNativeObjCRefinementOverridesChecker(mppKind: MppCheckerKind) : FirClassChecker(mppKind) {
     object Regular : FirNativeObjCRefinementOverridesChecker(MppCheckerKind.Platform) {
-        override fun check(declaration: FirClass, context: CheckerContext, reporter: DiagnosticReporter) {
+        context(context: CheckerContext, reporter: DiagnosticReporter)
+        override fun check(declaration: FirClass) {
             if (declaration.isExpect) return
-            super.check(declaration, context, reporter)
+            super.check(declaration)
         }
     }
 
     object ForExpectClass : FirNativeObjCRefinementOverridesChecker(MppCheckerKind.Common) {
-        override fun check(declaration: FirClass, context: CheckerContext, reporter: DiagnosticReporter) {
+        context(context: CheckerContext, reporter: DiagnosticReporter)
+        override fun check(declaration: FirClass) {
             if (!declaration.isExpect) return
-            super.check(declaration, context, reporter)
+            super.check(declaration)
         }
     }
 
-    override fun check(declaration: FirClass, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirClass) {
         // We just need to check intersection overrides, all other declarations are checked by FirNativeObjCRefinementChecker
-        val baseScope = declaration.unsubstitutedScope(context)
+        val baseScope = declaration.unsubstitutedScope()
         baseScope.processAllFunctions { symbol ->
             if (!symbol.isIntersectionOverride) return@processAllFunctions
-            check(baseScope, symbol, declaration, context, reporter, emptyList(), emptyList())
+            check(baseScope, symbol, declaration, emptyList(), emptyList())
         }
         baseScope.processAllProperties { symbol ->
             if (!symbol.isIntersectionOverride) return@processAllProperties
-            check(baseScope, symbol, declaration, context, reporter, emptyList(), emptyList())
+            check(baseScope, symbol, declaration, emptyList(), emptyList())
         }
     }
 
     companion object {
+        context(context: CheckerContext, reporter: DiagnosticReporter)
         fun check(
             baseScope: FirTypeScope,
             memberSymbol: FirCallableSymbol<*>,
             declarationToReport: FirDeclaration,
-            context: CheckerContext,
-            reporter: DiagnosticReporter,
             objCAnnotations: List<FirAnnotation>,
             swiftAnnotations: List<FirAnnotation>
         ) {
-            val overriddenMemberSymbols = baseScope.getDirectOverriddenMembersWithBaseScope(memberSymbol)
+            val overriddenMemberSymbols = baseScope.getDirectOverriddenMembersWithBaseScopeSafe(memberSymbol)
             if (overriddenMemberSymbols.isEmpty()) return
             var isHiddenFromObjC = objCAnnotations.isNotEmpty()
             var isRefinedInSwift = swiftAnnotations.isNotEmpty()
@@ -80,10 +82,10 @@ sealed class FirNativeObjCRefinementOverridesChecker(mppKind: MppCheckerKind) : 
                 if (superIsRefinedInSwift) isRefinedInSwift = true else supersNotRefinedInSwift.add(symbol)
             }
             if (isHiddenFromObjC && supersNotHiddenFromObjC.isNotEmpty()) {
-                reporter.reportIncompatibleOverride(declarationToReport, objCAnnotations, supersNotHiddenFromObjC, context)
+                reporter.reportIncompatibleOverride(declarationToReport, objCAnnotations, supersNotHiddenFromObjC)
             }
             if (isRefinedInSwift && supersNotRefinedInSwift.isNotEmpty()) {
-                reporter.reportIncompatibleOverride(declarationToReport, swiftAnnotations, supersNotRefinedInSwift, context)
+                reporter.reportIncompatibleOverride(declarationToReport, swiftAnnotations, supersNotRefinedInSwift)
             }
         }
 
@@ -91,7 +93,7 @@ sealed class FirNativeObjCRefinementOverridesChecker(mppKind: MppCheckerKind) : 
             val (hasObjC, hasSwift) = hasRefinedAnnotations(session)
             if (hasObjC && hasSwift) return true to true
             // Note: `checkMember` requires all overridden symbols to be either refined or not refined.
-            val (overriddenMemberSymbol, scope) = baseScope.getDirectOverriddenMembersWithBaseScope(this).firstOrNull()
+            val (overriddenMemberSymbol, scope) = baseScope.getDirectOverriddenMembersWithBaseScopeSafe(this).firstOrNull()
                 ?: return hasObjC to hasSwift
             val (inheritsObjC, inheritsSwift) = overriddenMemberSymbol.inheritsRefinedAnnotations(session, scope)
             return (hasObjC || inheritsObjC) to (hasSwift || inheritsSwift)
@@ -120,18 +122,19 @@ sealed class FirNativeObjCRefinementOverridesChecker(mppKind: MppCheckerKind) : 
             return hasObjC to hasSwift
         }
 
+        context(context: CheckerContext)
         private fun DiagnosticReporter.reportIncompatibleOverride(
             declaration: FirDeclaration,
             annotations: List<FirAnnotation>,
-            notRefinedSupers: List<FirCallableSymbol<*>>,
-            context: CheckerContext
+            notRefinedSupers: List<FirCallableSymbol<*>>
         ) {
-            val containingDeclarations = notRefinedSupers.mapNotNull { it.containingClassLookupTag()?.toRegularClassSymbol(context.session) }
+            val containingDeclarations =
+                notRefinedSupers.mapNotNull { it.containingClassLookupTag()?.toRegularClassSymbol(context.session) }
             if (annotations.isEmpty()) {
-                reportOn(declaration.source, INCOMPATIBLE_OBJC_REFINEMENT_OVERRIDE, declaration.symbol, containingDeclarations, context)
+                reportOn(declaration.source, INCOMPATIBLE_OBJC_REFINEMENT_OVERRIDE, declaration.symbol, containingDeclarations)
             } else {
                 for (annotation in annotations) {
-                    reportOn(annotation.source, INCOMPATIBLE_OBJC_REFINEMENT_OVERRIDE, declaration.symbol, containingDeclarations, context)
+                    reportOn(annotation.source, INCOMPATIBLE_OBJC_REFINEMENT_OVERRIDE, declaration.symbol, containingDeclarations)
                 }
             }
         }

@@ -12,5 +12,8 @@ expect abstract class Foo() : Base
 // FILE: jvm.kt
 
 actual abstract class Foo : Base {
-    abstract override fun <!ACTUAL_WITHOUT_EXPECT!>foo<!>()
+    abstract override fun <!EXPECT_ACTUAL_INCOMPATIBLE_MODALITY!>foo<!>()
 }
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, functionDeclaration, interfaceDeclaration, override,
+primaryConstructor */

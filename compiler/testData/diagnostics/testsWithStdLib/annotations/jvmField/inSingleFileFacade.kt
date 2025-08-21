@@ -12,3 +12,5 @@ class C {
     @JvmField
     var g = 5
 }
+
+/* GENERATED_FIR_TAGS: annotationUseSiteTargetFile, classDeclaration, integerLiteral, propertyDeclaration, stringLiteral */

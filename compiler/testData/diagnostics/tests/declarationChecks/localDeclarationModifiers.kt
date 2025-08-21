@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// FIR_IDENTICAL
 package d
 
 class T {
@@ -12,3 +11,6 @@ fun foo() {
     <!WRONG_MODIFIER_TARGET!>override<!> fun T.<!EXTENSION_SHADOWED_BY_MEMBER!>baz<!>() = 2
     <!WRONG_MODIFIER_TARGET!>private<!> fun bar() = 2
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, integerLiteral, localFunction,
+localProperty, override, propertyDeclaration */

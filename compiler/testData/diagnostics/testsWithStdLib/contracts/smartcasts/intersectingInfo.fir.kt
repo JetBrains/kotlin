@@ -59,3 +59,5 @@ fun intersectingInfo2(x: Any?, y: Any?) {
     y.<!UNRESOLVED_REFERENCE!>inc<!>()
 }
 
+/* GENERATED_FIR_TAGS: andExpression, contractConditionalEffect, contracts, disjunctionExpression, functionDeclaration,
+ifExpression, isExpression, lambdaLiteral, nullableType, smartcast */

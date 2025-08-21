@@ -6,10 +6,10 @@
 package org.jetbrains.kotlin.fir.resolve
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
+import org.jetbrains.kotlin.KtRealSourceElementKind
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
 import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.fir.references.builder.buildResolvedErrorReference
 import org.jetbrains.kotlin.fir.resolve.calls.TypeParameterAsExpression
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.Candidate
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.FirNamedReferenceWithCandidate
-import org.jetbrains.kotlin.fir.resolve.calls.candidate.FirPropertyWithExplicitBackingFieldResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.calls.isVisible
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.FirAnonymousFunctionReturnExpressionInfo
 import org.jetbrains.kotlin.fir.resolve.diagnostics.*
@@ -40,6 +39,7 @@ import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
+import org.jetbrains.kotlin.fir.types.builder.buildTypeProjectionWithVariance
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
@@ -49,18 +49,19 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.resolve.ForbiddenNamedArgumentsTarget
+import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
 import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.types.SmartcastStability
+import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.model.safeSubstitute
 import org.jetbrains.kotlin.utils.addIfNotNull
-import org.jetbrains.kotlin.utils.addToStdlib.applyIf
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
-fun FirAnonymousFunction.shouldReturnUnit(returnStatements: Collection<FirExpression>): Boolean =
-    isLambda && returnStatements.any { it is FirUnitExpression }
+fun FirAnonymousFunction.lambdaWithExplicitEmptyReturns(returnStatements: Collection<FirExpression>): Boolean =
+    isLambda && returnStatements.any { it is FirUnitExpression && it.source?.kind == KtFakeSourceElementKind.ImplicitUnit.Return }
 
 /**
  * Infers the return type of an anonymous function from return expressions in its body.
@@ -145,10 +146,20 @@ internal fun FirAnonymousFunction.computeReturnType(
         return commonSuperType
     }
 
-    return if (isPassedAsFunctionArgument && !commonSuperType.fullyExpandedType(session).isUnit) {
-        expectedReturnType ?: commonSuperType
-    } else {
-        commonSuperType
+    return when {
+        // For `fun(): ExplicitType = ...` we choose it
+        !isLambda && returnTypeRef is FirResolvedTypeRef && returnTypeRef.source?.kind is KtRealSourceElementKind -> {
+            // Currently, in the case of a known return type, it's always chosen as `expectedReturnType`
+            // Probably, we should simplify this piece later
+            check(expectedReturnType === returnTypeRef.coneType) {
+                "Found $expectedReturnType and ${returnTypeRef.coneType}"
+            }
+
+            returnTypeRef.coneType
+        }
+        isPassedAsFunctionArgument && !commonSuperType.fullyExpandedType(session).isUnit ->
+            expectedReturnType ?: commonSuperType
+        else -> commonSuperType
     }
 }
 
@@ -247,10 +258,14 @@ fun FirAnonymousFunction.constructFunctionTypeRef(session: FirSession, kind: Fun
 
     /**
      * For lambdas, we drop reflect kinds here as lambda itself always has a non-reflect type
-     * For anonymous functions, this is handled in [org.jetbrains.kotlin.fir.resolve.inference.extractLambdaInfoFromFunctionType],
-     * see calculation of actualFunctionKind there.
+     * For anonymous functions, we just keep the kind from the declaration because there is no function kind conversion.
      */
-    val type = constructFunctionType(kindFromDeclaration ?: kind?.applyIf(isLambda) { nonReflectKind() })
+    val finalKind = if (isLambda) {
+        kindFromDeclaration ?: kind?.nonReflectKind()
+    } else {
+        kindFromDeclaration
+    }
+    val type = constructFunctionType(finalKind)
     val source = this@constructFunctionTypeRef.source?.fakeElement(KtFakeSourceElementKind.ImplicitTypeRef)
     return if (diagnostic == null) {
         buildResolvedTypeRef {
@@ -315,6 +330,7 @@ fun createKPropertyType(
 fun BodyResolveComponents.buildResolvedQualifierForClass(
     symbol: FirClassLikeSymbol<*>,
     sourceElement: KtSourceElement?,
+    explicitParent: FirResolvedQualifier?,
     // Note: we need type arguments here, see e.g. testIncompleteConstructorCall in diagnostic group
     typeArgumentsForQualifier: List<FirTypeProjection> = emptyList(),
     diagnostic: ConeDiagnostic? = null,
@@ -330,7 +346,7 @@ fun BodyResolveComponents.buildResolvedQualifierForClass(
         diagnostic,
         nonFatalDiagnostics,
         annotations,
-        explicitParent = null,
+        explicitParent,
     )
 }
 
@@ -351,24 +367,25 @@ fun BodyResolveComponents.buildResolvedQualifierForClass(
         FirErrorResolvedQualifierBuilder().apply { this.diagnostic = diagnostic }
     }
 
-    // If we resolve to some qualifier, the parent can't have implicitly resolved to the companion object.
-    // In a case like
-    // class Foo { companion object { class Bar } }
-    // Foo.Bar will be unresolved.
-    if (explicitParent?.resolvedToCompanionObject == true) {
-        explicitParent.replaceResolvedToCompanionObject(false)
-        explicitParent.resultType = session.builtinTypes.unitType.coneType
-    }
-
     return builder.apply {
         this.source = sourceElement
         this.packageFqName = packageFqName
         this.relativeClassFqName = relativeClassName
-        this.typeArguments.addAll(typeArgumentsForQualifier)
+        typeArgumentsForQualifier.mapTo(this.typeArguments) {
+            if (it !is FirPlaceholderProjection) return@mapTo it
+
+            buildTypeProjectionWithVariance {
+                this.source = it.source
+                this.variance = Variance.INVARIANT
+                this.typeRef = ConeErrorType(ConePlaceholderProjectionInQualifierResolution)
+                    .toFirResolvedTypeRef(source = it.source?.fakeElement(KtFakeSourceElementKind.ImplicitTypeRef))
+            }
+        }
         this.symbol = symbol
         nonFatalDiagnostics?.let(this.nonFatalDiagnostics::addAll)
         this.annotations.addAll(annotations)
         this.explicitParent = explicitParent
+        this.resolvedToCompanionObject = symbol?.fullyExpandedClass(session)?.resolvedCompanionObjectSymbol != null
     }.build().apply {
         if (symbol?.classId?.isLocal == true) {
             resultType = typeForQualifierByDeclaration(symbol.fir, session, element = this@apply, file)
@@ -378,6 +395,28 @@ fun BodyResolveComponents.buildResolvedQualifierForClass(
             setTypeOfQualifier(this@buildResolvedQualifierForClass)
         }
     }
+}
+
+fun FirResolvedQualifier.unsetResolvedToCompanionIf(condition: Boolean) {
+    if (condition) {
+        replaceResolvedToCompanionObject(false)
+    }
+}
+
+internal fun FirRegularClassSymbol.toImplicitResolvedQualifierReceiver(
+    bodyResolveComponents: BodyResolveComponents,
+    source: KtSourceElement?,
+): FirResolvedQualifier {
+    val resolvedQualifier = buildResolvedQualifier {
+        packageFqName = classId.packageFqName
+        relativeClassFqName = classId.relativeClassName
+        resolvedToCompanionObject = false
+        symbol = this@toImplicitResolvedQualifierReceiver
+        this.source = source
+    }.apply {
+        setTypeOfQualifier(bodyResolveComponents)
+    }
+    return resolvedQualifier
 }
 
 fun FirResolvedQualifier.setTypeOfQualifier(components: BodyResolveComponents) {
@@ -423,55 +462,17 @@ internal fun typeForQualifierByDeclaration(
     return null
 }
 
-private fun FirPropertySymbol.isEffectivelyFinal(session: FirSession): Boolean {
-    if (isFinal) return true
-    val containingClass = dispatchReceiverType?.toRegularClassSymbol(session)
-        ?: return false
-    return containingClass.modality == Modality.FINAL && containingClass.classKind != ClassKind.ENUM_CLASS
+fun <T : FirResolvable> BodyResolveComponents.typeFromCallee(access: T): ConeKotlinType {
+    return typeFromCallee(access.calleeReference)
 }
 
-private fun FirPropertyWithExplicitBackingFieldResolvedNamedReference.getNarrowedDownSymbol(session: FirSession): FirBasedSymbol<*> {
-    val propertyReceiver = resolvedSymbol as? FirPropertySymbol ?: return resolvedSymbol
-
-    // This can happen in case of 2 properties referencing
-    // each other recursively. See: Jet81.fir.kt
-    if (
-        propertyReceiver.fir.returnTypeRef is FirImplicitTypeRef ||
-        propertyReceiver.fir.backingField?.returnTypeRef is FirImplicitTypeRef
-    ) {
-        return resolvedSymbol
-    }
-
-    if (
-        propertyReceiver.isEffectivelyFinal(session) &&
-        hasVisibleBackingField &&
-        propertyReceiver.canNarrowDownGetterType
-    ) {
-        return propertyReceiver.fir.backingField?.symbol ?: resolvedSymbol
-    }
-
-    return resolvedSymbol
-}
-
-fun <T : FirResolvable> BodyResolveComponents.typeFromCallee(access: T): FirResolvedTypeRef {
-    val calleeReference = access.calleeReference
-    return typeFromCallee(access, calleeReference)
-}
-
-fun BodyResolveComponents.typeFromCallee(access: FirElement, calleeReference: FirReference): FirResolvedTypeRef {
+fun BodyResolveComponents.typeFromCallee(calleeReference: FirReference): ConeKotlinType {
     return when (calleeReference) {
-        is FirErrorNamedReference ->
-            buildErrorTypeRef {
-                source = access.source?.fakeElement(KtFakeSourceElementKind.ErrorTypeRef)
-                // The diagnostic is reported on the callee reference, no need to report it again on the error type ref.
-                diagnostic = ConeUnreportedDuplicateDiagnostic(calleeReference.diagnostic)
-            }
+        is FirErrorNamedReference -> {
+            ConeErrorType(ConeUnreportedDuplicateDiagnostic(calleeReference.diagnostic))
+        }
         is FirNamedReferenceWithCandidate -> {
             typeFromSymbol(calleeReference.candidateSymbol)
-        }
-        is FirPropertyWithExplicitBackingFieldResolvedNamedReference -> {
-            val symbol = calleeReference.getNarrowedDownSymbol(session)
-            typeFromSymbol(symbol)
         }
         is FirResolvedNamedReference -> {
             typeFromSymbol(calleeReference.resolvedSymbol)
@@ -479,17 +480,14 @@ fun BodyResolveComponents.typeFromCallee(access: FirElement, calleeReference: Fi
         is FirThisReference -> {
             val labelName = calleeReference.labelName
             val possibleImplicitReceivers = implicitValueStorage[labelName]
-            buildResolvedTypeRef {
-                source = null
-                coneType = when {
-                    possibleImplicitReceivers.size >= 2 -> ConeErrorType(
-                        ConeSimpleDiagnostic("Ambiguous this@$labelName", DiagnosticKind.AmbiguousLabel)
-                    )
-                    possibleImplicitReceivers.isEmpty() -> ConeErrorType(
-                        ConeSimpleDiagnostic("Unresolved this@$labelName", DiagnosticKind.UnresolvedLabel)
-                    )
-                    else -> possibleImplicitReceivers.single().type
-                }
+            when {
+                possibleImplicitReceivers.size >= 2 -> ConeErrorType(
+                    ConeSimpleDiagnostic("Ambiguous this@$labelName", DiagnosticKind.AmbiguousLabel)
+                )
+                possibleImplicitReceivers.isEmpty() -> ConeErrorType(
+                    ConeSimpleDiagnostic("Unresolved this@$labelName", DiagnosticKind.UnresolvedLabel)
+                )
+                else -> possibleImplicitReceivers.single().type
             }
         }
         else -> errorWithAttachment("Failed to extract type from: ${calleeReference::class.simpleName}") {
@@ -498,18 +496,15 @@ fun BodyResolveComponents.typeFromCallee(access: FirElement, calleeReference: Fi
     }
 }
 
-private fun BodyResolveComponents.typeFromSymbol(symbol: FirBasedSymbol<*>): FirResolvedTypeRef {
+private fun BodyResolveComponents.typeFromSymbol(symbol: FirBasedSymbol<*>): ConeKotlinType {
     return when (symbol) {
         is FirSyntheticPropertySymbol -> typeFromSymbol(symbol.getterSymbol!!.delegateFunctionSymbol)
         is FirCallableSymbol<*> -> {
             val returnTypeRef = returnTypeCalculator.tryCalculateReturnType(symbol.fir)
-            returnTypeRef.copyWithNewSource(null)
+            returnTypeRef.coneType
         }
         is FirClassifierSymbol<*> -> {
-            buildResolvedTypeRef {
-                source = null
-                coneType = symbol.constructType()
-            }
+            symbol.constructType()
         }
         else -> errorWithAttachment("Failed to extract type from symbol: ${symbol::class.java}") {
             withFirEntry("declaration", symbol.fir)
@@ -521,41 +516,74 @@ private val ConeKotlinType.isKindOfNothing
     get() = lowerBoundIfFlexible().let { it.isNothing || it.isNullableNothing }
 
 fun BodyResolveComponents.transformExpressionUsingSmartcastInfo(expression: FirExpression): FirExpression {
-    val (stability, typesFromSmartCast) = dataFlowAnalyzer.getTypeUsingSmartcastInfo(expression) ?: return expression
+    val smartcastStatement = dataFlowAnalyzer.getTypeUsingSmartcastInfo(expression) ?: return expression
 
     val originalTypeWithAliases = expression.resolvedType
-    val originalType = originalTypeWithAliases.fullyExpandedType(session)
+    val originalType = originalTypeWithAliases.fullyExpandedType()
 
-    val allTypes = if (originalType !is ConeStubType) typesFromSmartCast + originalType else typesFromSmartCast
-    if (allTypes.all { it is ConeDynamicType }) return expression
+    // TODO(KT-79370): This is a hack related to KT-78595, which should eventually be handled by resolution.
+    // Properties with type parameters must have custom getters and therefore can never be smart-cast.
+    // Resolution currently has trouble resolving type arguments that are part of smart-cast expressions.
+    // When type inference can handle type arguments in smart-cast expressions, this should be removed.
+    if (smartcastStatement.upperTypesStability == SmartcastStability.PROPERTY_WITH_GETTER && expression is FirPropertyAccessExpression) {
+        val symbol = expression.calleeReference.symbol
+        if (symbol is FirPropertySymbol && symbol.typeParameterSymbols.isNotEmpty()) {
+            return expression
+        }
+    }
 
-    val intersectedType = ConeTypeIntersector.intersectTypes(session.typeContext, allTypes)
-    if (intersectedType == originalType && intersectedType !is ConeDynamicType) return expression
+    val allUpperTypes = if (originalType !is ConeStubType) smartcastStatement.upperTypes + originalType else smartcastStatement.upperTypes
+
+    val intersectedUpperType = when {
+        allUpperTypes.any { it !is ConeDynamicType } -> ConeTypeIntersector.intersectTypes(session.typeContext, allUpperTypes)
+        else -> null
+    }.takeUnless {
+        it == originalType && it !is ConeDynamicType
+    }
+
+    if (
+        smartcastStatement.lowerTypes.isEmpty() &&
+        (intersectedUpperType == null || intersectedUpperType == originalType && intersectedUpperType !is ConeDynamicType)
+    ) {
+        return expression
+    }
 
     return buildSmartCastExpression {
         originalExpression = expression
-        smartcastStability = stability
+        smartcastStability = smartcastStatement.upperTypesStability
         smartcastType = buildResolvedTypeRef {
             source = expression.source?.fakeElement(KtFakeSourceElementKind.SmartCastedTypeRef)
-            coneType = intersectedType
+            coneType = intersectedUpperType ?: originalType
         }
         // Example (1): if (x is String) { ... }, where x: dynamic
         //   the dynamic type will "consume" all other, erasing information.
         // Example (2): if (x == null) { ... },
         //   we need to track the type without `Nothing?` so that resolution with this as receiver can go through properly.
+        val nonNothingTypes = allUpperTypes.filter { !it.isKindOfNothing }
         if (
-            intersectedType.isKindOfNothing &&
+            intersectedUpperType?.isKindOfNothing == true &&
             !originalType.isNullableNothing &&
             !originalType.isNothing &&
-            originalType !is ConeStubType
+            originalType !is ConeStubType &&
+            nonNothingTypes.isNotEmpty()
         ) {
             smartcastTypeWithoutNullableNothing = buildResolvedTypeRef {
                 source = expression.source?.fakeElement(KtFakeSourceElementKind.SmartCastedTypeRef)
-                coneType = ConeTypeIntersector.intersectTypes(session.typeContext, allTypes.filter { !it.isKindOfNothing })
+                coneType = ConeTypeIntersector.intersectTypes(session.typeContext, nonNothingTypes)
             }
         }
-        this.typesFromSmartCast = typesFromSmartCast
-        coneTypeOrNull = if (stability == SmartcastStability.STABLE_VALUE) intersectedType else originalTypeWithAliases
+        this.upperTypesFromSmartCast = smartcastStatement.upperTypes
+        coneTypeOrNull = when {
+            smartcastStatement.upperTypesStability == SmartcastStability.STABLE_VALUE && intersectedUpperType != null -> intersectedUpperType
+            else -> originalTypeWithAliases
+        }
+        // We don't have an analogue of `coneTypeOrNull` for non-types because we can't denote a union,
+        // and `commonSuperClass()` would not be correct.
+        // Imagine a `sealed class S` with variants `A : S()`, `B : S()`, `C : S()`.
+        // If `x: ¬(A | B)`, this doesn't yet mean that `x: ¬S`.
+        this.lowerTypesFromSmartCast = smartcastStatement.lowerTypes
+            .takeIf { smartcastStatement.lowerTypesStability == SmartcastStability.STABLE_VALUE }
+            .orEmpty()
     }
 }
 
@@ -604,14 +632,14 @@ fun FirAnnotation.getCorrespondingClassSymbolOrNull(session: FirSession): FirReg
 }
 
 fun BodyResolveComponents.initialTypeOfCandidate(candidate: Candidate): ConeKotlinType {
-    val typeRef = typeFromSymbol(candidate.symbol)
-    return typeRef.initialTypeOfCandidate(candidate)
+    val type = typeFromSymbol(candidate.symbol)
+    return type.initialTypeOfCandidate(candidate)
 }
 
-fun FirResolvedTypeRef.initialTypeOfCandidate(candidate: Candidate): ConeKotlinType {
+fun ConeKotlinType.initialTypeOfCandidate(candidate: Candidate): ConeKotlinType {
     val system = candidate.system
     val resultingSubstitutor = system.buildCurrentSubstitutor()
-    return resultingSubstitutor.safeSubstitute(system, candidate.substitutor.substituteOrSelf(coneType)) as ConeKotlinType
+    return resultingSubstitutor.safeSubstitute(system, candidate.substitutor.substituteOrSelf(this)) as ConeKotlinType
 }
 
 /**
@@ -759,6 +787,7 @@ fun FirNamedReferenceWithCandidate.toErrorReference(diagnostic: ConeDiagnostic):
     return when (calleeReference.candidateSymbol) {
         is FirErrorPropertySymbol, is FirErrorFunctionSymbol -> buildErrorNamedReference {
             source = calleeReference.source
+            name = calleeReference.name
             this.diagnostic = diagnostic
         }
         else -> buildResolvedErrorReference {
@@ -772,9 +801,6 @@ fun FirNamedReferenceWithCandidate.toErrorReference(diagnostic: ConeDiagnostic):
 
 val FirTypeParameterSymbol.defaultType: ConeTypeParameterType
     get() = ConeTypeParameterTypeImpl(toLookupTag(), isMarkedNullable = false)
-
-fun ConeClassLikeLookupTag.isRealOwnerOf(declarationSymbol: FirCallableSymbol<*>): Boolean =
-    this == declarationSymbol.dispatchReceiverClassLookupTagOrNull()
 
 val FirUserTypeRef.shortName: Name get() = qualifier.last().name
 
@@ -790,3 +816,28 @@ val FirThisReference.referencedMemberSymbol: FirBasedSymbol<*>?
             withFirEntry("FIR", fir = boundSymbol.fir)
         }
     }
+
+/**
+ * If the explicit receiver is a smartcast expression, we can choose to use the unwrapped expression as dispatch receiver.
+ * To maintain the invariant
+ * ```
+ * explicitReceiver != null => explicitReceiver == dispatchReceiver || explicitReceiver == extensionReceiver
+ * ```
+ * we update the explicit receiver here.
+ * We only do this if the candidate is successful, otherwise, we can lose the explicit receiver node in red code like
+ * ```
+ * fun f(s: String, action: (String.() -> Unit)?) {
+ *     s.action?.let { it() }
+ * }
+ * ```
+ */
+fun FirQualifiedAccessExpression.replaceExplicitReceiverIfNecessary(dispatchReceiver: FirExpression?, candidate: Candidate) {
+    if (
+        candidate.explicitReceiverKind == ExplicitReceiverKind.DISPATCH_RECEIVER && candidate.isSuccessful &&
+        // This condition is required for callable references when the explicit receiver is a resolved qualifier.
+        // In this case, the dispatch receiver is null and we don't want to overwrite the explicit receiver.
+        dispatchReceiver != null
+    ) {
+        replaceExplicitReceiver(dispatchReceiver)
+    }
+}

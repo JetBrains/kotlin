@@ -5,21 +5,24 @@
 
 package org.jetbrains.kotlin.gradle
 
-import org.gradle.api.logging.LogLevel
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.checkBytecodeContains
-import org.jetbrains.kotlin.test.util.JUnit4Assertions.assertTrue
 import org.junit.jupiter.api.DisplayName
 
 @DisplayName("Other plugins tests")
-class SubpuginsIT : KGPBaseTest() {
+class SubpluginsIT : KGPBaseTest() {
 
     @OtherGradlePluginTests
     @DisplayName("Subplugin example works as expected")
     @GradleTest
     fun testGradleSubplugin(gradleVersion: GradleVersion) {
-        project("kotlinGradleSubplugin", gradleVersion) {
+        project(
+            "kotlinGradleSubplugin",
+            gradleVersion,
+            buildOptions = defaultBuildOptions.copy(configurationCache = BuildOptions.ConfigurationCacheValue.DISABLED),
+        ) {
             build("compileKotlin", "build") {
                 assertTasksExecuted(":compileKotlin")
                 assertOutputContains("ExampleSubplugin loaded")
@@ -29,6 +32,29 @@ class SubpuginsIT : KGPBaseTest() {
             build("compileKotlin", "build") {
                 assertTasksUpToDate(":compileKotlin")
                 assertOutputContains("ExampleSubplugin loaded")
+                assertOutputDoesNotContain("Project component registration: exampleValue")
+            }
+        }
+    }
+
+    @OtherGradlePluginTests
+    @DisplayName("Subplugin example works as expected with configuration cache")
+    @GradleTest
+    fun testGradleSubpluginWithCC(gradleVersion: GradleVersion) {
+        project(
+            "kotlinGradleSubplugin",
+            gradleVersion,
+        ) {
+            build("compileKotlin", "build") {
+                assertTasksExecuted(":compileKotlin")
+                assertOutputContains("ExampleSubplugin loaded")
+                assertOutputContains("Project component registration: exampleValue")
+            }
+
+            build("compileKotlin", "build") {
+                assertTasksUpToDate(":compileKotlin")
+                assertConfigurationCacheReused()
+                assertOutputDoesNotContain("ExampleSubplugin loaded")
                 assertOutputDoesNotContain("Project component registration: exampleValue")
             }
         }
@@ -222,20 +248,15 @@ class SubpuginsIT : KGPBaseTest() {
     @DisplayName("KT-51378: Using 'kotlin-dsl' with latest plugin version in buildSrc module")
     @GradleTest
     fun testBuildSrcKotlinDSL(gradleVersion: GradleVersion) {
+        val languageVersionForBuildSrc = if (gradleVersion > GradleVersion.version(TestVersions.Gradle.G_8_2)) {
+            KotlinVersion.firstNonDeprecated.name
+        } else {
+            // Those Gradle versions embed Kotlin compiler <= 1.8.20, so are subject to KT-56526
+            // 2.0 is the highest version that can be used there
+            @Suppress("DEPRECATION")
+            KotlinVersion.KOTLIN_2_0
+        }
         project("buildSrcUsingKotlinCompilationAndKotlinPlugin", gradleVersion) {
-            val languageVersionConfiguration = if (gradleVersion == GradleVersion.version(TestVersions.Gradle.G_7_6)) {
-                """
-                afterEvaluate {
-                    tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
-                        // aligned with embedded Kotlin compiler: https://docs.gradle.org/current/userguide/compatibility.html#kotlin
-                        compilerOptions.apiVersion.set(org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_1_7)
-                        compilerOptions.languageVersion.set(org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_1_7)
-                    }
-                }
-                """.trimIndent()
-            } else {
-                ""
-            }
             subProject("buildSrc").buildGradleKts.modify {
                 //language=kts
                 """
@@ -253,7 +274,14 @@ class SubpuginsIT : KGPBaseTest() {
                     }
                 }
                 
-                $languageVersionConfiguration
+                afterEvaluate {
+                    tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
+                        // aligned with embedded Kotlin compiler: https://docs.gradle.org/current/userguide/compatibility.html#kotlin
+                        // the hardcoded values are fine as this block (and the test) are checking some old Gradle functionality
+                        compilerOptions.apiVersion.set(org.jetbrains.kotlin.gradle.dsl.KotlinVersion.$languageVersionForBuildSrc)
+                        compilerOptions.languageVersion.set(org.jetbrains.kotlin.gradle.dsl.KotlinVersion.$languageVersionForBuildSrc)
+                    }
+                }
                 
                 ${it.substringAfter("}")}
                 """.trimIndent()

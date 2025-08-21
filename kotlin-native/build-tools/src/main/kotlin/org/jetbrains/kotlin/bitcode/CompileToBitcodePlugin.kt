@@ -274,7 +274,7 @@ open class CompileToBitcodeExtension @Inject constructor(val project: Project) :
                     }
                     arguments.addAll(ClangFrontend.defaultCompilerFlags(headers))
                     arguments.addAll(allCompilerArgs)
-                    arguments.addAll(execClang.clangArgsForCppRuntime(target.name))
+                    arguments.addAll(execClang.clangArgsForCppRuntime(target.name, module.compiler.get()))
                     output.set(this@SourceSet.outputDirectory.map { it.asFile.absolutePath })
                 }
                 task.configure {
@@ -362,6 +362,9 @@ open class CompileToBitcodeExtension @Inject constructor(val project: Project) :
                 dependencies.add(project.tasks.named("downloadGoogleTest"))
                 compileTask.configure {
                     this.group = VERIFICATION_BUILD_TASK_GROUP
+
+                    // Without this explicit statement task dependency is not created even if it is requested in RuntimeTestingPlugin
+                    dependsOn(project.tasks.named("downloadGoogleTest"))
                 }
                 task.configure {
                     this.group = VERIFICATION_BUILD_TASK_GROUP
@@ -385,6 +388,9 @@ open class CompileToBitcodeExtension @Inject constructor(val project: Project) :
                 dependencies.add(project.tasks.named("downloadGoogleTest"))
                 compileTask.configure {
                     this.group = VERIFICATION_BUILD_TASK_GROUP
+
+                    // Without this explicit statement task dependency is not created even if it is requested in RuntimeTestingPlugin
+                    dependsOn(project.tasks.named("downloadGoogleTest"))
                 }
                 task.configure {
                     this.group = VERIFICATION_BUILD_TASK_GROUP

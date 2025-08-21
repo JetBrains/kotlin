@@ -11,7 +11,7 @@ fun test1(a: Any): String {
         val tmp_3: String? = tmp_1
         when {
           EQEQ(arg0 = tmp_3, arg1 = null) -> null
-          else -> tmp_3.<get-length>()
+          else -> tmp_3 /*as String */.<get-length>()
         }
       }
       val tmp_4: Boolean = EQEQ(arg0 = tmp_2, arg1 = 5)

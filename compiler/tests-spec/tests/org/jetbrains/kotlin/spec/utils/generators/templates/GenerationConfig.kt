@@ -52,7 +52,7 @@ abstract class GenerationSpecTestDataConfig {
                 else -> {
                     val element = secondFeature.config.getNextWithRepeat()
                     if (isRepeatableVar)
-                        repeatableElements[rule.varNumber!!] = element
+                        repeatableElements[rule.varNumber] = element
                     element
                 }
             }

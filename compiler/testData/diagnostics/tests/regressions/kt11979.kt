@@ -25,3 +25,7 @@ fun main() {
     val foo = Foo(BarR())
     test(foo, MyBar(2))
 }
+
+/* GENERATED_FIR_TAGS: capturedType, classDeclaration, functionDeclaration, getter, integerLiteral, interfaceDeclaration,
+localProperty, nullableType, outProjection, override, primaryConstructor, propertyDeclaration, starProjection,
+thisExpression, typeConstraint, typeParameter */

@@ -24,3 +24,6 @@ fun test() {
     val errBarViaBB = BB.<!UNRESOLVED_REFERENCE!>bar<!>()
     val errBarViaAA = AA.<!UNRESOLVED_REFERENCE!>bar<!>()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, javaFunction, javaType, localProperty, nestedClass,
+objectDeclaration, propertyDeclaration */

@@ -7,11 +7,11 @@
 
 package kotlin.metadata
 
+import org.jetbrains.kotlin.metadata.deserialization.Flags
+import kotlin.contracts.ExperimentalContracts
 import kotlin.metadata.internal.FlagImpl
 import kotlin.metadata.internal.extensions.*
 import kotlin.metadata.internal.propertyBooleanFlag
-import org.jetbrains.kotlin.metadata.deserialization.Flags
-import kotlin.contracts.ExperimentalContracts
 
 /**
  * Represents a Kotlin declaration container, such as a class or a package fragment.
@@ -91,7 +91,13 @@ public class KmClass : KmDeclarationContainer {
     /**
      * Names of enum entries, if this class is an enum class.
      */
+    @Deprecated("Use `kmEnumEntries` instead.")
     public val enumEntries: MutableList<String> = ArrayList(0)
+
+    /**
+     * Enum entries, if this class is an enum class.
+     */
+    public val kmEnumEntries: MutableList<KmEnumEntry> = ArrayList(0)
 
     /**
      * Names of direct subclasses of this class, if this class is `sealed`.
@@ -109,9 +115,22 @@ public class KmClass : KmDeclarationContainer {
     public var inlineClassUnderlyingType: KmType? = null
 
     /**
+     * Annotations on the class.
+     */
+    @ExperimentalAnnotationsInMetadata
+    public val annotations: MutableList<KmAnnotation> = ArrayList(0)
+
+    /**
      * Types of context receivers of the class.
+     *
+     * Context receivers feature is replaced with context parameters.
+     * Context parameters on classes are not supported.
+     * This field is still read and written to binary metadata for purposes of working with older Kotlin's files.
+     *
+     * See https://kotl.in/context-parameters for more information about the new proposal.
      */
     @ExperimentalContextReceivers
+    @Deprecated(CtxReceiversDeprecated, level = DeprecationLevel.WARNING) // WARNING instead of ERROR because no replacement
     public val contextReceiverTypes: MutableList<KmType> = ArrayList(0)
 
     /**
@@ -177,6 +196,12 @@ public class KmConstructor internal constructor(internal var flags: Int) {
      */
     public val versionRequirements: MutableList<KmVersionRequirement> = ArrayList(0)
 
+    /**
+     * Annotations on the constructor.
+     */
+    @ExperimentalAnnotationsInMetadata
+    public val annotations: MutableList<KmAnnotation> = ArrayList(0)
+
     internal val extensions: List<KmConstructorExtension> =
         MetadataExtensions.INSTANCES.map(MetadataExtensions::createConstructorExtension)
 }
@@ -204,15 +229,36 @@ public class KmFunction internal constructor(internal var flags: Int, public var
     public var receiverParameterType: KmType? = null
 
     /**
+     * Annotations on the extension receiver of the function, if this is an extension function.
+     */
+    public val extensionReceiverParameterAnnotations: MutableList<KmAnnotation> = ArrayList(0)
+
+    /**
      * Types of context receivers of the function.
+     *
+     * Context receivers feature is replaced with context parameters.
+     * This list is no longer being read or written. Please use [contextParameters] instead.
+     * Older Kotlin compilations with context receivers are represented as parameters with the "_" name.
+     *
+     * See https://kotl.in/context-parameters for more information about the new proposal.
      */
     @ExperimentalContextReceivers
+    @Deprecated(CtxReceiversDeprecated, level = DeprecationLevel.ERROR)
     public val contextReceiverTypes: MutableList<KmType> = ArrayList(0)
 
     /**
      * Value parameters of the function.
      */
     public val valueParameters: MutableList<KmValueParameter> = ArrayList()
+
+    /**
+     * Context parameters of the function.
+     *
+     * To support the legacy context receivers feature, this list may
+     * also contain parameters with the "_" name representing them.
+     */
+    @ExperimentalContextParameters
+    public val contextParameters: MutableList<KmValueParameter> = ArrayList()
 
     /**
      * Return type of the function.
@@ -230,6 +276,12 @@ public class KmFunction internal constructor(internal var flags: Int, public var
     @ExperimentalContracts
     public var contract: KmContract? = null
 
+    /**
+     * Annotations on the function.
+     */
+    @ExperimentalAnnotationsInMetadata
+    public val annotations: MutableList<KmAnnotation> = ArrayList(0)
+
     internal val extensions: List<KmFunctionExtension> =
         MetadataExtensions.INSTANCES.map(MetadataExtensions::createFunctionExtension)
 }
@@ -237,11 +289,17 @@ public class KmFunction internal constructor(internal var flags: Int, public var
 /**
  * Represents a Kotlin property accessor.
  *
- * Does not contain meaningful information except attributes, such as visibility and modality.
+ * Contains only accessor annotations and attributes, such as visibility and modality.
  * Attributes can be read and written using extension properties, e.g. [KmPropertyAccessorAttributes.visibility] or [KmPropertyAccessorAttributes.isNotDefault].
  */
 public class KmPropertyAccessorAttributes internal constructor(internal var flags: Int) {
     public constructor() : this(0)
+
+    /**
+     * Annotations on the property accessor.
+     */
+    @ExperimentalAnnotationsInMetadata
+    public val annotations: MutableList<KmAnnotation> = ArrayList(0)
 }
 
 /**
@@ -299,10 +357,32 @@ public class KmProperty internal constructor(
     public var receiverParameterType: KmType? = null
 
     /**
+     * Annotations on the extension receiver of the property, if this is an extension property.
+     */
+    @ExperimentalAnnotationsInMetadata
+    public val extensionReceiverParameterAnnotations: MutableList<KmAnnotation> = ArrayList(0)
+
+    /**
      * Types of context receivers of the property.
+     *
+     * Context receivers feature is replaced with context parameters.
+     * This list is no longer being read or written. Please use [contextParameters] instead.
+     * Older Kotlin compilations with context receivers are represented as parameters with the "_" name.
+     *
+     * See https://kotl.in/context-parameters for more information about the new proposal.
      */
     @ExperimentalContextReceivers
+    @Deprecated(CtxReceiversDeprecated, level = DeprecationLevel.ERROR)
     public val contextReceiverTypes: MutableList<KmType> = ArrayList(0)
+
+    /**
+     * Context parameters of the property.
+     *
+     * To support the legacy context receivers feature, this list may
+     * also contain parameters with the "_" name representing them.
+     */
+    @ExperimentalContextParameters
+    public val contextParameters: MutableList<KmValueParameter> = ArrayList()
 
     /**
      * Value parameter of the setter of this property, if this is a `var` property and parameter is present.
@@ -326,6 +406,24 @@ public class KmProperty internal constructor(
      * Version requirements on the property.
      */
     public val versionRequirements: MutableList<KmVersionRequirement> = ArrayList(0)
+
+    /**
+     * Annotations on the property.
+     */
+    @ExperimentalAnnotationsInMetadata
+    public val annotations: MutableList<KmAnnotation> = ArrayList(0)
+
+    /**
+     * Annotations on the property's backing field, or empty list if the property doesn't have one.
+     */
+    @ExperimentalAnnotationsInMetadata
+    public val backingFieldAnnotations: MutableList<KmAnnotation> = ArrayList(0)
+
+    /**
+     * Annotations on the property's delegate field, or empty list if the property is not delegated.
+     */
+    @ExperimentalAnnotationsInMetadata
+    public val delegateFieldAnnotations: MutableList<KmAnnotation> = ArrayList(0)
 
     internal val extensions: List<KmPropertyExtension> =
         MetadataExtensions.INSTANCES.map(MetadataExtensions::createPropertyExtension)
@@ -402,6 +500,17 @@ public class KmValueParameter internal constructor(
      */
     public var varargElementType: KmType? = null
 
+    /**
+     * Default value of the parameter, if this is a parameter of an annotation class constructor.
+     */
+    public var annotationParameterDefaultValue: KmAnnotationArgument? = null
+
+    /**
+     * Annotations on the value parameter.
+     */
+    @ExperimentalAnnotationsInMetadata
+    public val annotations: MutableList<KmAnnotation> = ArrayList(0)
+
     internal val extensions: List<KmValueParameterExtension> =
         MetadataExtensions.INSTANCES.mapNotNull(MetadataExtensions::createValueParameterExtension)
 }
@@ -433,6 +542,24 @@ public class KmTypeParameter internal constructor(
 
     internal val extensions: List<KmTypeParameterExtension> =
         MetadataExtensions.INSTANCES.map(MetadataExtensions::createTypeParameterExtension)
+}
+
+/**
+ * Represents an enum entry.
+ *
+ * @property name the name of the enum entry
+ */
+public class KmEnumEntry(public var name: String) {
+    /**
+     * Annotations on the enum entry.
+     */
+    @ExperimentalAnnotationsInMetadata
+    public val annotations: MutableList<KmAnnotation> = ArrayList(0)
+
+    internal val extensions: List<KmEnumEntryExtension> =
+        MetadataExtensions.INSTANCES.mapNotNull(MetadataExtensions::createEnumEntryExtension)
+
+    override fun toString(): String = name
 }
 
 /**

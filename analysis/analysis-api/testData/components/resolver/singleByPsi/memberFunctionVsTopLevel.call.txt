@@ -4,6 +4,7 @@ KtCallExpression(68,73): 'foo()'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaImplicitReceiverValue:
           symbol = test/A
           type = test.A
@@ -13,5 +14,6 @@ KtCallExpression(68,73): 'foo()'
           returnType = kotlin.Unit
           symbol = test/A.foo(<dispatch receiver>: test.A): kotlin.Unit
           valueParameters = []
+          contextParameters = []
           callableId = test/A.foo
       typeArgumentsMapping = {}

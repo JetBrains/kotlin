@@ -1,0 +1,10 @@
+fun bar(): String {
+  return try { // BLOCK
+    ""
+  }
+  catch (e: Exception){ // BLOCK
+    foo()
+  } /*!! String */
+
+}
+

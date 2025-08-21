@@ -19,3 +19,6 @@ typealias Test7 = TCAliasC<Collection<Any>>
 typealias Test8 = <!UPPER_BOUND_VIOLATED_IN_TYPEALIAS_EXPANSION!>TCAliasT1<Any><!>
 typealias Test9 = TCAliasC1<<!UPPER_BOUND_VIOLATED!>Any<!>>
 typealias Test10 = TCAliasC1<Collection<Any>>
+
+/* GENERATED_FIR_TAGS: classDeclaration, nullableType, typeAliasDeclaration, typeAliasDeclarationWithTypeParameter,
+typeConstraint, typeParameter */

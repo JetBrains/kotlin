@@ -8,6 +8,8 @@ package test.text
 import test.TestPlatform
 import test.testExceptOn
 import test.testOn
+import kotlin.math.pow
+import kotlin.math.round
 import kotlin.test.*
 
 private fun testOnNativeAndJvm(action: () -> Unit) {
@@ -802,4 +804,43 @@ class FpNumberToStringTest {
         assertEquals(Float.POSITIVE_INFINITY.toString(), "Infinity")
         assertEquals(Float.NEGATIVE_INFINITY.toString(), "-Infinity")
     }
+
+    @Test
+    fun kt74441() {
+        val a = identity(1e-45)
+        // Exact string is platform-dependent: "1.0E-45" or "1e-45"
+        assertEquals(a, a.toString().toDouble())
+    }
+
+    @Test
+    fun kt69107() {
+        val a = identity(0.30000001192092F)
+        assertEquals("0.3", (round(a * 10f) / 10f).toString())
+        assertEquals("0.3", (0.3f as Any).toString())
+    }
+
+    @Test
+    fun kt68948() {
+        val inlineTemplate = "${identity(3.4f)}"
+        assertEquals("3.4", inlineTemplate)
+
+        val floatVariable = identity(3.4f)
+        val variableTemplate = "$floatVariable"
+        assertEquals("3.4", variableTemplate)
+    }
+
+    @Test
+    fun kt59118() {
+        fun Float.roundDecimalPlaces(places: Int): Float {
+            if (places < 0) return this
+            val placesFactor: Float = 10f.pow(places.toFloat())
+            return round(this * placesFactor) / placesFactor
+        }
+
+        assertEquals("0.031398475", "" + identity(0.031398475f))
+        assertEquals("0.03", "" + 0.031398475f.roundDecimalPlaces(2))
+    }
+
+    // Prevent compiler constant folding
+    private fun <T> identity(x: T): T = x
 }

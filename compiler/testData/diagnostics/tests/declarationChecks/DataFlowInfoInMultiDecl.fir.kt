@@ -13,3 +13,6 @@ fun a(aa : A?, b : Any) {
         val (a1, b1) = b;
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, destructuringDeclaration, equalityExpression, functionDeclaration, ifExpression,
+integerLiteral, isExpression, localProperty, nullableType, operator, propertyDeclaration, smartcast */

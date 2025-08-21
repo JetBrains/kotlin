@@ -1,5 +1,5 @@
-// RUN_PIPELINE_TILL: FRONTEND
-// LANGUAGE: +ContextSensitiveEnumResolutionInWhen
+// RUN_PIPELINE_TILL: BACKEND
+// LANGUAGE: +ContextSensitiveResolutionUsingExpectedType
 // KT-58939
 
 enum class A {
@@ -7,7 +7,10 @@ enum class A {
     B,
 }
 
-fun test(a: A) = <!NO_ELSE_IN_WHEN!>when<!> (a) {
-    A.<!UNRESOLVED_REFERENCE!>A<!> -> "A"
-    A.<!UNRESOLVED_REFERENCE!>B<!> -> "B"
+fun test(a: A) = when (a) {
+    A.A -> "A"
+    A.B -> "B"
 }
+
+/* GENERATED_FIR_TAGS: enumDeclaration, enumEntry, equalityExpression, functionDeclaration, smartcast, stringLiteral,
+whenExpression, whenWithSubject */

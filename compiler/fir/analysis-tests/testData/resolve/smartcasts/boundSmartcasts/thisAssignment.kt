@@ -10,4 +10,5 @@ fun Any.test() {
     }
 }
 
-
+/* GENERATED_FIR_TAGS: funWithExtensionReceiver, functionDeclaration, ifExpression, interfaceDeclaration, isExpression,
+localProperty, propertyDeclaration, smartcast, thisExpression */

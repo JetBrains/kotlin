@@ -6,8 +6,9 @@
 package org.jetbrains.kotlin.diagnostics
 
 import org.jetbrains.kotlin.diagnostics.rendering.DiagnosticParameterRenderer
+import org.jetbrains.kotlin.diagnostics.rendering.toDeprecationWarningMessage
 
-class KtDiagnosticFactoryToRendererMap(val name: String) {
+class KtDiagnosticFactoryToRendererMap internal constructor(val name: String) {
     private val renderersMap: MutableMap<AbstractKtDiagnosticFactory, KtDiagnosticRenderer> = mutableMapOf()
 
     operator fun get(factory: AbstractKtDiagnosticFactory): KtDiagnosticRenderer? = renderersMap[factory]
@@ -17,6 +18,10 @@ class KtDiagnosticFactoryToRendererMap(val name: String) {
 
     fun containsKey(factory: AbstractKtDiagnosticFactory): Boolean {
         return renderersMap.containsKey(factory)
+    }
+
+    fun put(factory: KtSourcelessDiagnosticFactory, message: String) {
+        put(factory, KtSourcelessDiagnosticRenderer(message))
     }
 
     fun put(factory: KtDiagnosticFactory0, message: String) {
@@ -116,22 +121,16 @@ class KtDiagnosticFactoryToRendererMap(val name: String) {
     }
 
     private fun KtDiagnosticFactoryForDeprecation<*>.warningMessage(errorMessage: String): String {
-        return buildString {
-            append(errorMessage)
-            when {
-                errorMessage.endsWith(".") -> append(" ")
-                errorMessage.lastOrNull()?.isWhitespace() == true -> {}
-                else -> append(". ")
-            }
-            append("This will become an error")
-            val sinceVersion = deprecatingFeature.sinceVersion
-            if (sinceVersion != null) {
-                append(" in Kotlin ")
-                append(sinceVersion.versionString)
-            } else {
-                append(" in a future release")
-            }
-            append(".")
-        }
+        val deprecatingFeature = deprecatingFeature
+        return errorMessage.toDeprecationWarningMessage(deprecatingFeature)
+    }
+}
+
+fun KtDiagnosticFactoryToRendererMap(
+    name: String,
+    init: (KtDiagnosticFactoryToRendererMap) -> Unit,
+): Lazy<KtDiagnosticFactoryToRendererMap> {
+    return lazy(LazyThreadSafetyMode.SYNCHRONIZED) {
+        KtDiagnosticFactoryToRendererMap(name).also(init)
     }
 }

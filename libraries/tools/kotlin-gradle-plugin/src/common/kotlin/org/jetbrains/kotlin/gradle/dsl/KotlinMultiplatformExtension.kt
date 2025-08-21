@@ -9,10 +9,12 @@ import org.gradle.api.Action
 import org.gradle.api.InvalidUserCodeException
 import org.gradle.api.NamedDomainObjectCollection
 import org.gradle.api.Project
-import org.jetbrains.kotlin.gradle.DeprecatedTargetPresetApi
+import org.gradle.api.model.ObjectFactory
+import org.gradle.api.plugins.ExtensionContainer
+import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
+import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
-import org.jetbrains.kotlin.gradle.PRESETS_API_IS_DEPRECATED_MESSAGE
 import org.jetbrains.kotlin.gradle.internal.dsl.KotlinMultiplatformSourceSetConventionsImpl
 import org.jetbrains.kotlin.gradle.internal.syncCommonMultiplatformOptions
 import org.jetbrains.kotlin.gradle.plugin.*
@@ -23,36 +25,120 @@ import org.jetbrains.kotlin.gradle.plugin.hierarchy.KotlinHierarchyDslImpl
 import org.jetbrains.kotlin.gradle.plugin.hierarchy.redundantDependsOnEdgesTracker
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.targets.android.internal.InternalKotlinTargetPreset
-import org.jetbrains.kotlin.gradle.targets.android.internal.internal
+import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsTargetDsl
+import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinWasmJsTargetDsl
+import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinWasmWasiTargetDsl
+import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinWasmTargetPreset
 import org.jetbrains.kotlin.gradle.utils.KotlinCommonCompilerOptionsDefault
+import org.jetbrains.kotlin.gradle.utils.addConfigurationMetrics
 import org.jetbrains.kotlin.gradle.utils.newInstance
+import org.jetbrains.kotlin.statistics.metrics.BooleanMetrics
 import javax.inject.Inject
 
-@Suppress("DEPRECATION")
+internal fun ExtensionContainer.KotlinMultiplatformExtension(
+    objectFactory: ObjectFactory,
+): KotlinMultiplatformExtension {
+    val targetsContainer = objectFactory.newInstance<DefaultKotlinTargetsContainer>()
+    val presetsContainer = objectFactory.DefaultKotlinTargetContainerWithPresetFunctions(targetsContainer.targets)
+    return create(
+        KOTLIN_PROJECT_EXTENSION_NAME,
+        KotlinMultiplatformExtension::class.java,
+        targetsContainer,
+        presetsContainer,
+    )
+}
+
 @KotlinGradlePluginPublicDsl
 abstract class KotlinMultiplatformExtension
 @Inject
-@InternalKotlinGradlePluginApi
-constructor(
+internal constructor(
     project: Project,
-) :
+    private val targetsContainer: KotlinTargetsContainer,
+    internal val presetFunctions: DefaultKotlinTargetContainerWithPresetFunctions = project.objects
+        .DefaultKotlinTargetContainerWithPresetFunctions(targetsContainer.targets),
+) : KotlinTargetsContainer by targetsContainer,
     KotlinProjectExtension(project),
-    KotlinTargetContainerWithPresetFunctions,
+    KotlinTargetContainerWithPresetFunctions by presetFunctions,
     KotlinTargetContainerWithJsPresetFunctions,
     KotlinTargetContainerWithWasmPresetFunctions,
     KotlinHierarchyDsl,
     KotlinPublishingDsl,
     HasConfigurableKotlinCompilerOptions<KotlinCommonCompilerOptions>,
     KotlinMultiplatformSourceSetConventions by KotlinMultiplatformSourceSetConventionsImpl {
-    @Deprecated(
-        PRESETS_API_IS_DEPRECATED_MESSAGE,
-        level = DeprecationLevel.ERROR,
+
+    @InternalKotlinGradlePluginApi
+    constructor(
+        project: Project,
+    ) : this(
+        project = project,
+        targetsContainer = project.objects.newInstance<KotlinTargetsContainer>(),
     )
-    override val presets: NamedDomainObjectCollection<KotlinTargetPreset<*>> = project.container(KotlinTargetPreset::class.java)
 
-    final override val targets: NamedDomainObjectCollection<KotlinTarget> = project.container(KotlinTarget::class.java)
+    final override val targets: NamedDomainObjectCollection<KotlinTarget>
+        get() = targetsContainer.targets
 
-    @Deprecated("Because only the IR compiler is left, it's no longer necessary to know about the compiler type in properties")
+    override fun js(
+        name: String,
+        compiler: KotlinJsCompilerType,
+        configure: KotlinJsTargetDsl.() -> Unit,
+    ): KotlinJsTargetDsl {
+        @Suppress("UNCHECKED_CAST")
+        return presetFunctions.configureOrCreate(
+            name,
+            presetFunctions.presets.getByName(
+                "js"
+            ) as InternalKotlinTargetPreset<KotlinJsTargetDsl>,
+            configure
+        )
+    }
+
+    @ExperimentalWasmDsl
+    override fun wasmJs(
+        name: String,
+        configure: KotlinWasmJsTargetDsl.() -> Unit,
+    ): KotlinWasmJsTargetDsl =
+        presetFunctions.configureOrCreate(
+            name,
+            presetFunctions.presets.getByName("wasmJs") as KotlinWasmTargetPreset,
+            configure
+        )
+
+    @ExperimentalWasmDsl
+    override fun wasmWasi(
+        name: String,
+        configure: KotlinWasmWasiTargetDsl.() -> Unit,
+    ): KotlinWasmWasiTargetDsl =
+        presetFunctions.configureOrCreate(
+            name,
+            presetFunctions.presets.getByName("wasmWasi") as KotlinWasmTargetPreset,
+            configure
+        )
+
+    fun dependencies(configure: Action<KotlinDependencies>) = dependencies { configure.execute(this) }
+
+    fun dependencies(configure: KotlinDependencies.() -> Unit) {
+        project.addConfigurationMetrics {
+            it.put(BooleanMetrics.KMP_TOP_LEVEL_DEPENDENCIES_BLOCK, true)
+        }
+        when (val dependencies = dependencies) {
+            KotlinTopLevelDependenciesBlock.UnavailableInCurrentGradleVersion -> {
+                project.reportDiagnostic(
+                    KotlinToolingDiagnostics.KotlinTopLevelDependenciesUsedInIncompatibleGradleVersion(
+                        currentGradleVersion = GradleVersion.current(),
+                        minimumSupportedGradleVersion = MinSupportedGradleVersionWithDependencyCollectors,
+                    )
+                )
+            }
+            is KotlinTopLevelDependenciesBlock.Dependencies -> {
+                dependencies.block.configure()
+            }
+        }
+    }
+
+    @Deprecated(
+        "Because only the IR compiler is left, it's no longer necessary to know about the compiler type in properties. Scheduled for removal in Kotlin 2.3.",
+        level = DeprecationLevel.ERROR
+    )
     override val compilerTypeFromProperties: KotlinJsCompilerType? = null
 
     internal suspend fun awaitTargets(): NamedDomainObjectCollection<KotlinTarget> {
@@ -60,17 +146,25 @@ constructor(
         return targets
     }
 
-    private val presetExtension = project.objects.newInstance(
-        DefaultTargetsFromPresetExtension::class.java,
-        { this },
+    private val presetExtension = project.objects.DefaultTargetsFromPresetExtension(
         targets,
         project,
     )
 
+    @Suppress("DEPRECATION")
+    @Deprecated(
+        message = targetsExtensionDeprecationMessage,
+        level = DeprecationLevel.WARNING,
+    )
     fun targets(configure: Action<TargetsFromPresetExtension>) {
         configure.execute(presetExtension)
     }
 
+    @Suppress("DEPRECATION")
+    @Deprecated(
+        message = targetsExtensionDeprecationMessage,
+        level = DeprecationLevel.WARNING,
+    )
     fun targets(configure: TargetsFromPresetExtension.() -> Unit) {
         configure(presetExtension)
     }
@@ -93,32 +187,28 @@ constructor(
      * }
      * ```
      *
-     * Will create the following SourceSets:
-     * `[iosMain, iosTest, appleMain, appleTest, linuxMain, linuxTest, nativeMain, nativeTest]
+     * Will create the following shared [SourceSet][KotlinSourceSet]s:
      *
+     * - `iosMain`, `iosTest`
+     * - `appleMain`, `appleTest`
+     * - `linuxMain`, `linuxTest`
+     * - `nativeMain`, `nativeTest`
      *
      * Hierarchy:
-     * ```
-     *                                                                     common
-     *                                                                        |
-     *                                                      +-----------------+-------------------+
-     *                                                      |                                     |
-     *
-     *                                                    native                                 ...
-     *
-     *                                                     |
-     *                                                     |
-     *                                                     |
-     *         +----------------------+--------------------+-----------------------+
-     *         |                      |                    |                       |
-     *
-     *       apple                  linux                mingw              androidNative
-     *
-     *         |
-     *  +-----------+------------+------------+
-     *  |           |            |            |
-     *
-     * macos       ios         tvos        watchos
+     * ```text
+     *                                    common
+     *                                      │
+     *                         ┌────────────┴──────────────┐
+     *                         │                           │
+     *                       native                       ...
+     *                         │
+     *             ┌───────┬───┴───┬───────────┐
+     *             │       │       │           │
+     *           apple   linux   mingw   androidNative
+     *             │
+     *   ┌──────┬──┴──┬────────┐
+     *   │      │     │        │
+     * macos   ios   tvos   watchos
      * ```
      *
      * @see KotlinHierarchyTemplate.extend
@@ -152,98 +242,21 @@ constructor(
     }
 
     @ExperimentalKotlinGradlePluginApi
-    val targetHierarchy: DeprecatedKotlinTargetHierarchyDsl get() = DeprecatedKotlinTargetHierarchyDsl(this)
+    val targetHierarchy: @Suppress("DEPRECATION_ERROR") DeprecatedKotlinTargetHierarchyDsl
+        get() = @Suppress("DEPRECATION_ERROR") DeprecatedKotlinTargetHierarchyDsl(this)
 
     @Suppress("unused") // DSL
     val testableTargets: NamedDomainObjectCollection<KotlinTargetWithTests<*, *>>
         get() = targets.withType(KotlinTargetWithTests::class.java)
 
-    fun metadata(configure: KotlinOnlyTarget<KotlinMetadataCompilation<*>>.() -> Unit = { }): KotlinOnlyTarget<KotlinMetadataCompilation<*>> =
+    fun metadata(configure: KotlinOnlyTarget<KotlinMetadataCompilation<Any>>.() -> Unit = { }): KotlinOnlyTarget<KotlinMetadataCompilation<Any>> =
         @Suppress("UNCHECKED_CAST")
-        (targets.getByName(KotlinMetadataTarget.METADATA_TARGET_NAME) as KotlinOnlyTarget<KotlinMetadataCompilation<*>>).also(configure)
+        (targets.getByName(KotlinMetadataTarget.METADATA_TARGET_NAME) as KotlinOnlyTarget<KotlinMetadataCompilation<Any>>).also(configure)
 
-    fun metadata(configure: Action<KotlinOnlyTarget<KotlinMetadataCompilation<*>>>) = metadata { configure.execute(this) }
+    fun metadata(configure: Action<KotlinOnlyTarget<KotlinMetadataCompilation<Any>>>) = metadata { configure.execute(this) }
 
     fun withSourcesJar(publish: Boolean = true) {
         targets.all { it.withSourcesJar(publish) }
-    }
-
-    private fun warnAboutTargetFromPresetDeprecation() {
-        project.reportDiagnostic(KotlinToolingDiagnostics.TargetFromPreset())
-    }
-
-    @DeprecatedTargetPresetApi
-    @Deprecated(
-        KotlinToolingDiagnostics.TargetFromPreset.DEPRECATION_MESSAGE,
-        level = DeprecationLevel.ERROR
-    )
-    fun <T : KotlinTarget> targetFromPreset(
-        preset: KotlinTargetPreset<T>,
-        name: String = preset.name,
-        configure: T.() -> Unit = { },
-    ): T {
-        warnAboutTargetFromPresetDeprecation()
-        return targetFromPresetInternal(
-            preset = preset,
-            name = name,
-            configure = configure,
-        )
-    }
-
-    @DeprecatedTargetPresetApi
-    @Deprecated(
-        KotlinToolingDiagnostics.TargetFromPreset.DEPRECATION_MESSAGE,
-        level = DeprecationLevel.ERROR
-    )
-    fun <T : KotlinTarget> targetFromPreset(
-        preset: KotlinTargetPreset<T>,
-        name: String,
-        configure: Action<T>,
-    ): T {
-        warnAboutTargetFromPresetDeprecation()
-        return targetFromPresetInternal(
-            preset = preset,
-            name = name,
-            configure = configure,
-        )
-    }
-
-    @DeprecatedTargetPresetApi
-    @Deprecated(
-        KotlinToolingDiagnostics.TargetFromPreset.DEPRECATION_MESSAGE,
-        level = DeprecationLevel.ERROR
-    )
-    fun <T : KotlinTarget> targetFromPreset(preset: KotlinTargetPreset<T>): T {
-        warnAboutTargetFromPresetDeprecation()
-        return targetFromPresetInternal(
-            preset = preset
-        )
-    }
-
-    @DeprecatedTargetPresetApi
-    @Deprecated(
-        KotlinToolingDiagnostics.TargetFromPreset.DEPRECATION_MESSAGE,
-        level = DeprecationLevel.ERROR
-    )
-    fun <T : KotlinTarget> targetFromPreset(preset: KotlinTargetPreset<T>, name: String): T {
-        warnAboutTargetFromPresetDeprecation()
-        return targetFromPresetInternal(
-            preset = preset,
-            name = name
-        )
-    }
-
-    @DeprecatedTargetPresetApi
-    @Deprecated(
-        KotlinToolingDiagnostics.TargetFromPreset.DEPRECATION_MESSAGE,
-        level = DeprecationLevel.ERROR
-    )
-    fun <T : KotlinTarget> targetFromPreset(preset: KotlinTargetPreset<T>, configure: Action<T>): T {
-        warnAboutTargetFromPresetDeprecation()
-        return targetFromPresetInternal(
-            preset = preset,
-            configure = configure
-        )
     }
 
     internal val rootSoftwareComponent: KotlinSoftwareComponent by lazy {
@@ -264,77 +277,39 @@ constructor(
             }
 }
 
+private const val targetsExtensionDeprecationMessage =
+    "Usages of this DSL are deprecated, please migrate to top-level 'kotlin {}' extension."
+
+@Deprecated(
+    message = targetsExtensionDeprecationMessage,
+    level = DeprecationLevel.WARNING,
+)
 @KotlinGradlePluginPublicDsl
-interface TargetsFromPresetExtension : NamedDomainObjectCollection<KotlinTarget> {
+interface TargetsFromPresetExtension : NamedDomainObjectCollection<KotlinTarget>
 
-    @Deprecated(
-        KotlinToolingDiagnostics.FromPreset.DEPRECATION_MESSAGE,
-        level = DeprecationLevel.ERROR,
-    )
-    fun <T : KotlinTarget> fromPreset(
-        preset: KotlinTargetPreset<T>,
-        name: String,
-        configureAction: T.() -> Unit = {},
-    ): T
 
-    @Suppress("DeprecatedCallableAddReplaceWith")
-    @Deprecated(
-        KotlinToolingDiagnostics.FromPreset.DEPRECATION_MESSAGE,
-        level = DeprecationLevel.ERROR,
-    )
-    fun <T : KotlinTarget> fromPreset(
-        preset: KotlinTargetPreset<T>,
-        name: String,
-    ): T = @Suppress("DEPRECATION_ERROR") fromPreset(preset, name) {}
+internal fun ObjectFactory.DefaultTargetsFromPresetExtension(
+    targets: NamedDomainObjectCollection<KotlinTarget>,
+    project: Project,
+): DefaultTargetsFromPresetExtension = newInstance(
+    targets,
+    project,
+)
 
-    @Deprecated(
-        KotlinToolingDiagnostics.FromPreset.DEPRECATION_MESSAGE,
-        level = DeprecationLevel.ERROR,
-    )
-    fun <T : KotlinTarget> fromPreset(
-        preset: KotlinTargetPreset<T>,
-        name: String,
-        configureAction: Action<T>,
-    ): T
-}
-
-@Suppress("OVERRIDE_DEPRECATION")
+@Suppress("DEPRECATION")
 internal abstract class DefaultTargetsFromPresetExtension @Inject constructor(
-    private val targetsContainer: () -> KotlinTargetsContainerWithPresets,
     val targets: NamedDomainObjectCollection<KotlinTarget>,
     val project: Project,
 ) : TargetsFromPresetExtension,
-    NamedDomainObjectCollection<KotlinTarget> by targets {
+    NamedDomainObjectCollection<KotlinTarget> by targets
 
-    private fun warnAboutFromPresetDeprecation() {
-        project.reportDiagnostic(KotlinToolingDiagnostics.FromPreset())
-    }
+private fun KotlinTarget.isProducedFromPreset(kotlinTargetPreset: InternalKotlinTargetPreset<*>): Boolean =
+    internal.targetPreset == kotlinTargetPreset
 
-    override fun <T : KotlinTarget> fromPreset(
-        preset: KotlinTargetPreset<T>,
-        name: String,
-        configureAction: T.() -> Unit,
-    ): T {
-        warnAboutFromPresetDeprecation()
-        return targetsContainer().configureOrCreate(name, preset.internal, configureAction)
-    }
-
-    override fun <T : KotlinTarget> fromPreset(
-        preset: KotlinTargetPreset<T>,
-        name: String,
-        configureAction: Action<T>,
-    ) = @Suppress("DEPRECATION_ERROR") fromPreset(preset, name) {
-        configureAction.execute(this)
-    }
-}
-
-private fun KotlinTarget.isProducedFromPreset(kotlinTargetPreset: KotlinTargetPreset<*>): Boolean =
-    internal._preset == kotlinTargetPreset
-
-internal fun <T : KotlinTarget> KotlinTargetsContainerWithPresets.configureOrCreate(
+internal fun <T : KotlinTarget> DefaultKotlinTargetContainerWithPresetFunctions.configureOrCreate(
     targetName: String,
     targetPreset: InternalKotlinTargetPreset<T>,
-    configure: T.() -> Unit,
+    configure: T.() -> Unit = {},
 ): T {
     val existingTarget = targets.findByName(targetName)
     when {
@@ -373,3 +348,10 @@ internal suspend fun KotlinMultiplatformExtension.awaitMetadataTarget(): KotlinM
 internal fun KotlinMultiplatformExtension.supportedAppleTargets() = targets
     .withType(KotlinNativeTarget::class.java)
     .matching { it.konanTarget.family.isAppleFamily }
+
+private abstract class DefaultKotlinTargetsContainer @Inject constructor(
+    objectFactory: ObjectFactory,
+) : KotlinTargetsContainer {
+    override val targets: NamedDomainObjectCollection<KotlinTarget> =
+        objectFactory.domainObjectContainer(KotlinTarget::class.java)
+}

@@ -16,7 +16,8 @@ import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
 
 object RedundantSetterParameterTypeChecker : FirPropertyChecker(MppCheckerKind.Common) {
-    override fun check(declaration: FirProperty, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirProperty) {
         val setter = declaration.setter ?: return
         if (setter is FirDefaultPropertyAccessor) return
         val valueParameter = setter.valueParameters.firstOrNull() ?: return
@@ -24,7 +25,7 @@ object RedundantSetterParameterTypeChecker : FirPropertyChecker(MppCheckerKind.C
         val setterParameterTypeSource = valueParameter.returnTypeRef.source ?: return
 
         if (setterParameterTypeSource.kind !is KtFakeSourceElementKind && setterParameterTypeSource != propertyTypeSource) {
-            reporter.reportOn(setterParameterTypeSource, REDUNDANT_SETTER_PARAMETER_TYPE, context)
+            reporter.reportOn(setterParameterTypeSource, REDUNDANT_SETTER_PARAMETER_TYPE)
         }
     }
 }

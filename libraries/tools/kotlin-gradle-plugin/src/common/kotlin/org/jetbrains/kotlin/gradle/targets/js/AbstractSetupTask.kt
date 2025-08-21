@@ -13,6 +13,8 @@ import org.gradle.work.DisableCachingByDefault
 import org.jetbrains.kotlin.gradle.logging.kotlinInfo
 import org.jetbrains.kotlin.gradle.plugin.statistics.UrlRepoConfigurationMetrics
 import org.jetbrains.kotlin.gradle.plugin.statistics.UsesBuildFusService
+import org.jetbrains.kotlin.gradle.targets.js.internal.calculateDirHash
+import org.jetbrains.kotlin.gradle.targets.js.internal.toHex
 import org.jetbrains.kotlin.gradle.utils.getFile
 import org.jetbrains.kotlin.gradle.utils.mapOrNull
 import java.io.File
@@ -53,7 +55,10 @@ abstract class AbstractSetupTask<Env : AbstractEnv, Spec : EnvSpec<Env>>(
     @get:Input
     internal val ivyDependencyProvider: Provider<String> = env.map { it.ivyDependency }
 
-    @Deprecated("Use ivyDependencyProvider instead. It uses Gradle Provider API.")
+    @Deprecated(
+        "Use ivyDependencyProvider instead. It uses Gradle Provider API. Scheduled for removal in Kotlin 2.3.",
+        level = DeprecationLevel.ERROR
+    )
     val ivyDependency: String
         @Internal get() = ivyDependencyProvider.get()
 
@@ -68,7 +73,10 @@ abstract class AbstractSetupTask<Env : AbstractEnv, Spec : EnvSpec<Env>>(
         it.allowInsecureProtocol
     }
 
-    @Deprecated("Use downloadBaseUrlProvider instead. It uses Gradle Provider API.")
+    @Deprecated(
+        "Use downloadBaseUrlProvider instead. It uses Gradle Provider API. Scheduled for removal in Kotlin 2.3.",
+        level = DeprecationLevel.ERROR
+    )
     val downloadBaseUrl: String?
         @Internal
         get() = downloadBaseUrlProvider.orNull
@@ -80,7 +88,10 @@ abstract class AbstractSetupTask<Env : AbstractEnv, Spec : EnvSpec<Env>>(
             it.disallowChanges()
         }
 
-    @Deprecated("Use destinationProvider instead. It uses Gradle Provider API.")
+    @Deprecated(
+        "Use destinationProvider instead. It uses Gradle Provider API. Scheduled for removal in Kotlin 2.3.",
+        level = DeprecationLevel.ERROR
+    )
     val destination: File
         @Internal get() = destinationProvider.getFile()
 
@@ -95,7 +106,10 @@ abstract class AbstractSetupTask<Env : AbstractEnv, Spec : EnvSpec<Env>>(
             it.disallowChanges()
         }
 
-    @Deprecated("Use destinationHashFileProvider instead. It uses Gradle Provider API.")
+    @Deprecated(
+        "Use destinationHashFileProvider instead. It uses Gradle Provider API. Scheduled for removal in Kotlin 2.3.",
+        level = DeprecationLevel.ERROR
+    )
     val destinationHashFile: File
         @Internal get() = destinationHashFileProvider.getFile()
 

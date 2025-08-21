@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.ir.expressions
 
 import org.jetbrains.kotlin.CompilerVersionOfApiDeprecation
 import org.jetbrains.kotlin.DeprecatedCompilerApi
+import org.jetbrains.kotlin.DeprecatedForRemovalCompilerApi
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyAccessorDescriptor
 import org.jetbrains.kotlin.ir.declarations.IrFunction
@@ -15,12 +16,6 @@ import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.impl.IrTypeOperatorCallImpl
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.render
-
-val IrFunctionReference.isWithReflection: Boolean
-    get() = reflectionTarget != null
-
-val IrFunctionReference.isAdapterWithReflection: Boolean
-    get() = reflectionTarget != null && reflectionTarget != symbol
 
 var IrDynamicOperatorExpression.left: IrExpression
     get() = receiver
@@ -37,7 +32,7 @@ var IrDynamicOperatorExpression.right: IrExpression
             arguments[0] = value
     }
 
-@DeprecatedCompilerApi(CompilerVersionOfApiDeprecation._2_1_20)
+@DeprecatedForRemovalCompilerApi(CompilerVersionOfApiDeprecation._2_1_20)
 fun IrFunctionAccessExpression.putArgument(parameter: IrValueParameter, argument: IrExpression): Unit =
     putArgument(symbol.owner, parameter, argument)
 
@@ -99,7 +94,7 @@ val CallableDescriptor.typeParametersCount: Int
             else -> typeParameters.size
         }
 
-@DeprecatedCompilerApi(CompilerVersionOfApiDeprecation._2_1_20)
+@DeprecatedForRemovalCompilerApi(CompilerVersionOfApiDeprecation._2_1_20)
 fun IrMemberAccessExpression<*>.putArgument(
     @Suppress("unused") callee: IrFunction, // To be removed
     parameter: IrValueParameter,

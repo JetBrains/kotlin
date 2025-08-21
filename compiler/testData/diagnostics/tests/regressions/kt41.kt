@@ -11,3 +11,5 @@ fun bbb() {
   aaa()
   1 // Stupid error: unreachable code
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral */

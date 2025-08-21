@@ -1,22 +1,31 @@
 element: e
-implicit receivers:
-  type: KaUsualClassType:
-    annotations: []
-    typeArguments: []
-    type: A
-  owner symbol: KaFirAnonymousFunctionSymbol
+implicit values:
+  KaImplicitReceiver:
+    scopeIndexInTower = 1
+    type = KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: A
+    ownerSymbol = KaAnonymousFunctionSymbol:
+      <anonymous function>(): kotlin.Unit
 
-  type: KaUsualClassType:
-    annotations: []
-    typeArguments: []
-    type: B
-  owner symbol: KaFirAnonymousFunctionSymbol
+  KaImplicitReceiver:
+    scopeIndexInTower = 4
+    type = KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: B
+    ownerSymbol = KaAnonymousFunctionSymbol:
+      <anonymous function>(): kotlin.Unit
 
-  type: KaUsualClassType:
-    annotations: []
-    typeArguments: []
-    type: C
-  owner symbol: KaFirNamedClassSymbol
+  KaImplicitReceiver:
+    scopeIndexInTower = 11
+    type = KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: C
+    ownerSymbol = KaNamedClassSymbol:
+      /C
 
 scopes:
   LocalScope, index = 0
@@ -33,6 +42,7 @@ scopes:
         annotations: []
         callableId: /A.memberInA
         compilerVisibility: Public
+        contextParameters: []
         contextReceivers: []
         contractEffects: []
         hasStableParameterNames: true
@@ -64,6 +74,7 @@ scopes:
         annotations: []
         callableId: kotlin/Any.equals
         compilerVisibility: Public
+        contextParameters: []
         contextReceivers: []
         contractEffects: []
         hasStableParameterNames: true
@@ -121,6 +132,7 @@ scopes:
         annotations: []
         callableId: kotlin/Any.hashCode
         compilerVisibility: Public
+        contextParameters: []
         contextReceivers: []
         contractEffects: []
         hasStableParameterNames: true
@@ -152,6 +164,7 @@ scopes:
         annotations: []
         callableId: kotlin/Any.toString
         compilerVisibility: Public
+        contextParameters: []
         contextReceivers: []
         contractEffects: []
         hasStableParameterNames: true
@@ -223,6 +236,7 @@ scopes:
         annotations: []
         callableId: /B.memberInB
         compilerVisibility: Public
+        contextParameters: []
         contextReceivers: []
         contractEffects: []
         hasStableParameterNames: true
@@ -254,6 +268,7 @@ scopes:
         annotations: []
         callableId: kotlin/Any.equals
         compilerVisibility: Public
+        contextParameters: []
         contextReceivers: []
         contractEffects: []
         hasStableParameterNames: true
@@ -311,6 +326,7 @@ scopes:
         annotations: []
         callableId: kotlin/Any.hashCode
         compilerVisibility: Public
+        contextParameters: []
         contextReceivers: []
         contractEffects: []
         hasStableParameterNames: true
@@ -342,6 +358,7 @@ scopes:
         annotations: []
         callableId: kotlin/Any.toString
         compilerVisibility: Public
+        contextParameters: []
         contextReceivers: []
         contractEffects: []
         hasStableParameterNames: true
@@ -411,6 +428,7 @@ scopes:
         isActual: false
         isExpect: false
         isExtension: false
+        isLateInit: false
         isVal: true
         location: LOCAL
         modality: FINAL
@@ -467,6 +485,7 @@ scopes:
         isActual: false
         isExpect: false
         isExtension: false
+        isLateInit: false
         isVal: true
         location: LOCAL
         modality: FINAL
@@ -482,6 +501,7 @@ scopes:
         annotations: []
         callableId: null
         compilerVisibility: Local
+        contextParameters: []
         contextReceivers: []
         contractEffects: []
         hasStableParameterNames: true
@@ -621,6 +641,7 @@ scopes:
         annotations: []
         callableId: /C.methodInC
         compilerVisibility: Public
+        contextParameters: []
         contextReceivers: []
         contractEffects: []
         hasStableParameterNames: true
@@ -692,6 +713,7 @@ scopes:
         annotations: []
         callableId: kotlin/Any.equals
         compilerVisibility: Public
+        contextParameters: []
         contextReceivers: []
         contractEffects: []
         hasStableParameterNames: true
@@ -749,6 +771,7 @@ scopes:
         annotations: []
         callableId: kotlin/Any.hashCode
         compilerVisibility: Public
+        contextParameters: []
         contextReceivers: []
         contractEffects: []
         hasStableParameterNames: true
@@ -780,6 +803,7 @@ scopes:
         annotations: []
         callableId: kotlin/Any.toString
         compilerVisibility: Public
+        contextParameters: []
         contextReceivers: []
         contractEffects: []
         hasStableParameterNames: true
@@ -1037,6 +1061,7 @@ scopes:
         annotations: []
         callableId: /withA
         compilerVisibility: Public
+        contextParameters: []
         contextReceivers: []
         contractEffects: []
         hasStableParameterNames: true
@@ -1103,6 +1128,7 @@ scopes:
         annotations: []
         callableId: /withB
         compilerVisibility: Public
+        contextParameters: []
         contextReceivers: []
         contractEffects: []
         hasStableParameterNames: true
@@ -1169,6 +1195,7 @@ scopes:
         annotations: []
         callableId: /withJavaClass
         compilerVisibility: Public
+        contextParameters: []
         contextReceivers: []
         contractEffects: []
         hasStableParameterNames: true
@@ -1235,6 +1262,7 @@ scopes:
         annotations: []
         callableId: /topLevel
         compilerVisibility: Public
+        contextParameters: []
         contextReceivers: []
         contractEffects: []
         hasStableParameterNames: true

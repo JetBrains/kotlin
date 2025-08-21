@@ -24,3 +24,6 @@ abstract class Derived : Base() {
     abstract fun baz(x: Int?)
     abstract fun baz(y: String?)
 }
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, flexibleType, functionDeclaration, javaFunction, javaType,
+localProperty, nullableType, propertyDeclaration, samConversion */

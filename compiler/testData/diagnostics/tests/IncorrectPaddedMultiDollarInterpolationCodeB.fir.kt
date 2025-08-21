@@ -9,61 +9,61 @@
 // interpolation kinds: of arbitrary expression
 // string literal kinds: single-line, multi-line
 fun emptyInterpolation() {
-    "padding <!SYNTAX{LT}!>${<!SYNTAX!><!>}<!> padding"
-    <!UNSUPPORTED_FEATURE!>$"padding <!SYNTAX{LT}!>${<!SYNTAX!><!>}<!> padding"<!>
-    <!UNSUPPORTED_FEATURE!>$$"padding <!SYNTAX{LT}!>$${<!SYNTAX!><!>}<!> padding"<!>
-    <!UNSUPPORTED_FEATURE!>$$$$"padding <!SYNTAX{LT}!>$$$${<!SYNTAX!><!>}<!> padding"<!>
-    <!UNSUPPORTED_FEATURE!>$$$$$$$$"padding <!SYNTAX{LT}!>$$$$$$$${<!SYNTAX!><!>}<!> padding"<!>
+    "padding ${<!SYNTAX!><!>} padding"
+    <!UNSUPPORTED_FEATURE!>$"padding ${<!SYNTAX!><!>} padding"<!>
+    <!UNSUPPORTED_FEATURE!>$$"padding $${<!SYNTAX!><!>} padding"<!>
+    <!UNSUPPORTED_FEATURE!>$$$$"padding $$$${<!SYNTAX!><!>} padding"<!>
+    <!UNSUPPORTED_FEATURE!>$$$$$$$$"padding $$$$$$$${<!SYNTAX!><!>} padding"<!>
 
-    """padding <!SYNTAX{LT}!>${<!SYNTAX!><!>}<!> padding"""
-    <!UNSUPPORTED_FEATURE!>$"""padding <!SYNTAX{LT}!>${<!SYNTAX!><!>}<!> padding"""<!>
-    <!UNSUPPORTED_FEATURE!>$$"""padding <!SYNTAX{LT}!>$${<!SYNTAX!><!>}<!> padding"""<!>
-    <!UNSUPPORTED_FEATURE!>$$$$"""padding <!SYNTAX{LT}!>$$$${<!SYNTAX!><!>}<!> padding"""<!>
-    <!UNSUPPORTED_FEATURE!>$$$$$$$$"""padding <!SYNTAX{LT}!>$$$$$$$${<!SYNTAX!><!>}<!> padding"""<!>
+    """padding ${<!SYNTAX!><!>} padding"""
+    <!UNSUPPORTED_FEATURE!>$"""padding ${<!SYNTAX!><!>} padding"""<!>
+    <!UNSUPPORTED_FEATURE!>$$"""padding $${<!SYNTAX!><!>} padding"""<!>
+    <!UNSUPPORTED_FEATURE!>$$$$"""padding $$$${<!SYNTAX!><!>} padding"""<!>
+    <!UNSUPPORTED_FEATURE!>$$$$$$$$"""padding $$$$$$$${<!SYNTAX!><!>} padding"""<!>
 }
 
 // interpolation prefix length: 0, 1, 2, 4, 8
 // interpolation kinds: of arbitrary expression
 // string literal kinds: single-line, multi-line
 fun blankInterpolation() {
-    "padding <!SYNTAX{LT}!>${<!SYNTAX!><!>    }<!> padding"
-    <!UNSUPPORTED_FEATURE!>$"padding <!SYNTAX{LT}!>${<!SYNTAX!><!>    }<!> padding"<!>
-    <!UNSUPPORTED_FEATURE!>$$"padding <!SYNTAX{LT}!>$${<!SYNTAX!><!>    }<!> padding"<!>
-    <!UNSUPPORTED_FEATURE!>$$$$"padding <!SYNTAX{LT}!>$$$${<!SYNTAX!><!>    }<!> padding"<!>
-    <!UNSUPPORTED_FEATURE!>$$$$$$$$"padding <!SYNTAX{LT}!>$$$$$$$${<!SYNTAX!><!>    }<!> padding"<!>
+    "padding ${<!SYNTAX!><!>    } padding"
+    <!UNSUPPORTED_FEATURE!>$"padding ${<!SYNTAX!><!>    } padding"<!>
+    <!UNSUPPORTED_FEATURE!>$$"padding $${<!SYNTAX!><!>    } padding"<!>
+    <!UNSUPPORTED_FEATURE!>$$$$"padding $$$${<!SYNTAX!><!>    } padding"<!>
+    <!UNSUPPORTED_FEATURE!>$$$$$$$$"padding $$$$$$$${<!SYNTAX!><!>    } padding"<!>
 
-    """padding <!SYNTAX{LT}!>${<!SYNTAX!><!>    }<!> padding"""
-    <!UNSUPPORTED_FEATURE!>$"""padding <!SYNTAX{LT}!>${<!SYNTAX!><!>    }<!> padding"""<!>
-    <!UNSUPPORTED_FEATURE!>$$"""padding <!SYNTAX{LT}!>$${<!SYNTAX!><!>    }<!> padding"""<!>
-    <!UNSUPPORTED_FEATURE!>$$$$"""padding <!SYNTAX{LT}!>$$$${<!SYNTAX!><!>    }<!> padding"""<!>
-    <!UNSUPPORTED_FEATURE!>$$$$$$$$"""padding <!SYNTAX{LT}!>$$$$$$$${<!SYNTAX!><!>    }<!> padding"""<!>
+    """padding ${<!SYNTAX!><!>    } padding"""
+    <!UNSUPPORTED_FEATURE!>$"""padding ${<!SYNTAX!><!>    } padding"""<!>
+    <!UNSUPPORTED_FEATURE!>$$"""padding $${<!SYNTAX!><!>    } padding"""<!>
+    <!UNSUPPORTED_FEATURE!>$$$$"""padding $$$${<!SYNTAX!><!>    } padding"""<!>
+    <!UNSUPPORTED_FEATURE!>$$$$$$$$"""padding $$$$$$$${<!SYNTAX!><!>    } padding"""<!>
 }
 
 // interpolation prefix length: 0, 1, 2, 4, 8
 // interpolation kinds: of arbitrary expression
 // string literal kinds: single-line, multi-line
 fun linebreakInterpolation() {
-    "padding <!SYNTAX{LT}!>${<!SYNTAX!><!>
-    }<!> padding"
-    <!UNSUPPORTED_FEATURE!>$"padding <!SYNTAX{LT}!>${<!SYNTAX!><!>
-    }<!> padding"<!>
-    <!UNSUPPORTED_FEATURE!>$$"padding <!SYNTAX{LT}!>$${<!SYNTAX!><!>
-    }<!> padding"<!>
-    <!UNSUPPORTED_FEATURE!>$$$$"padding <!SYNTAX{LT}!>$$$${<!SYNTAX!><!>
-    }<!> padding"<!>
-    <!UNSUPPORTED_FEATURE!>$$$$$$$$"padding <!SYNTAX{LT}!>$$$$$$$${<!SYNTAX!><!>
-    }<!> padding"<!>
+    "padding ${<!SYNTAX!><!>
+    } padding"
+    <!UNSUPPORTED_FEATURE!>$"padding ${<!SYNTAX!><!>
+    } padding"<!>
+    <!UNSUPPORTED_FEATURE!>$$"padding $${<!SYNTAX!><!>
+    } padding"<!>
+    <!UNSUPPORTED_FEATURE!>$$$$"padding $$$${<!SYNTAX!><!>
+    } padding"<!>
+    <!UNSUPPORTED_FEATURE!>$$$$$$$$"padding $$$$$$$${<!SYNTAX!><!>
+    } padding"<!>
 
-    """padding <!SYNTAX{LT}!>${<!SYNTAX!><!>
-    }<!> padding"""
-    <!UNSUPPORTED_FEATURE!>$"""padding <!SYNTAX{LT}!>${<!SYNTAX!><!>
-    }<!> padding"""<!>
-    <!UNSUPPORTED_FEATURE!>$$"""padding <!SYNTAX{LT}!>$${<!SYNTAX!><!>
-    }<!> padding"""<!>
-    <!UNSUPPORTED_FEATURE!>$$$$"""padding <!SYNTAX{LT}!>$$$${<!SYNTAX!><!>
-    }<!> padding"""<!>
-    <!UNSUPPORTED_FEATURE!>$$$$$$$$"""padding <!SYNTAX{LT}!>$$$$$$$${<!SYNTAX!><!>
-    }<!> padding"""<!>
+    """padding ${<!SYNTAX!><!>
+    } padding"""
+    <!UNSUPPORTED_FEATURE!>$"""padding ${<!SYNTAX!><!>
+    } padding"""<!>
+    <!UNSUPPORTED_FEATURE!>$$"""padding $${<!SYNTAX!><!>
+    } padding"""<!>
+    <!UNSUPPORTED_FEATURE!>$$$$"""padding $$$${<!SYNTAX!><!>
+    } padding"""<!>
+    <!UNSUPPORTED_FEATURE!>$$$$$$$$"""padding $$$$$$$${<!SYNTAX!><!>
+    } padding"""<!>
 }
 
 // interpolation prefix length: 0, 1, 2, 4, 8
@@ -118,11 +118,11 @@ fun interpolationOfMisplacedDollar() {
     <!UNSUPPORTED_FEATURE!>$$$$"padding $$$$<!UNRESOLVED_REFERENCE!>`$`<!> padding"<!>
     <!UNSUPPORTED_FEATURE!>$$$$$$$$"padding $$$$$$$$<!UNRESOLVED_REFERENCE!>`$`<!> padding"<!>
 
-    "padding <!SYNTAX{LT}!>${<!SYNTAX!><!>$<!SYNTAX!><!>}<!> padding"
-    <!UNSUPPORTED_FEATURE!>$"padding <!SYNTAX{LT}!>${<!SYNTAX!><!>$<!SYNTAX!><!>}<!> padding"<!>
-    <!UNSUPPORTED_FEATURE!>$$"padding <!SYNTAX{LT}!>$${<!SYNTAX!><!>$<!SYNTAX!><!>}<!> padding"<!>
-    <!UNSUPPORTED_FEATURE!>$$$$"padding <!SYNTAX{LT}!>$$$${<!SYNTAX!><!>$<!SYNTAX!><!>}<!> padding"<!>
-    <!UNSUPPORTED_FEATURE!>$$$$$$$$"padding <!SYNTAX{LT}!>$$$$$$$${<!SYNTAX!><!>$<!SYNTAX!><!>}<!> padding"<!>
+    "padding ${<!SYNTAX!><!>$<!SYNTAX!><!>} padding"
+    <!UNSUPPORTED_FEATURE!>$"padding ${<!SYNTAX!><!>$<!SYNTAX!><!>} padding"<!>
+    <!UNSUPPORTED_FEATURE!>$$"padding $${<!SYNTAX!><!>$<!SYNTAX!><!>} padding"<!>
+    <!UNSUPPORTED_FEATURE!>$$$$"padding $$$${<!SYNTAX!><!>$<!SYNTAX!><!>} padding"<!>
+    <!UNSUPPORTED_FEATURE!>$$$$$$$$"padding $$$$$$$${<!SYNTAX!><!>$<!SYNTAX!><!>} padding"<!>
 
 
     """padding $<!UNRESOLVED_REFERENCE!>`$`<!> padding"""
@@ -131,11 +131,11 @@ fun interpolationOfMisplacedDollar() {
     <!UNSUPPORTED_FEATURE!>$$$$"""padding $$$$<!UNRESOLVED_REFERENCE!>`$`<!> padding"""<!>
     <!UNSUPPORTED_FEATURE!>$$$$$$$$"""padding $$$$$$$$<!UNRESOLVED_REFERENCE!>`$`<!> padding"""<!>
 
-    """padding <!SYNTAX{LT}!>${<!SYNTAX!><!>$<!SYNTAX!><!>}<!> padding"""
-    <!UNSUPPORTED_FEATURE!>$"""padding <!SYNTAX{LT}!>${<!SYNTAX!><!>$<!SYNTAX!><!>}<!> padding"""<!>
-    <!UNSUPPORTED_FEATURE!>$$"""padding <!SYNTAX{LT}!>$${<!SYNTAX!><!>$<!SYNTAX!><!>}<!> padding"""<!>
-    <!UNSUPPORTED_FEATURE!>$$$$"""padding <!SYNTAX{LT}!>$$$${<!SYNTAX!><!>$<!SYNTAX!><!>}<!> padding"""<!>
-    <!UNSUPPORTED_FEATURE!>$$$$$$$$"""padding <!SYNTAX{LT}!>$$$$$$$${<!SYNTAX!><!>$<!SYNTAX!><!>}<!> padding"""<!>
+    """padding ${<!SYNTAX!><!>$<!SYNTAX!><!>} padding"""
+    <!UNSUPPORTED_FEATURE!>$"""padding ${<!SYNTAX!><!>$<!SYNTAX!><!>} padding"""<!>
+    <!UNSUPPORTED_FEATURE!>$$"""padding $${<!SYNTAX!><!>$<!SYNTAX!><!>} padding"""<!>
+    <!UNSUPPORTED_FEATURE!>$$$$"""padding $$$${<!SYNTAX!><!>$<!SYNTAX!><!>} padding"""<!>
+    <!UNSUPPORTED_FEATURE!>$$$$$$$$"""padding $$$$$$$${<!SYNTAX!><!>$<!SYNTAX!><!>} padding"""<!>
 }
 
 // interpolation prefix length: 0, 1, 2, 4, 8
@@ -272,3 +272,6 @@ const val stringWithInterpolationAsInvalidConstantInitializer27 = <!CONST_VAL_WI
 const val stringWithInterpolationAsInvalidConstantInitializer28 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER, UNSUPPORTED_FEATURE!>$$"""padding $${0 + runTimeConstant} padding"""<!>
 const val stringWithInterpolationAsInvalidConstantInitializer29 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER, UNSUPPORTED_FEATURE!>$$$$"""padding $$$${0 + runTimeConstant} padding"""<!>
 const val stringWithInterpolationAsInvalidConstantInitializer30 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER, UNSUPPORTED_FEATURE!>$$$$$$$$"""padding $$$$$$$${0 + runTimeConstant} padding"""<!>
+
+/* GENERATED_FIR_TAGS: additiveExpression, annotationDeclaration, const, functionDeclaration, getter, integerLiteral,
+primaryConstructor, propertyDeclaration, stringLiteral */

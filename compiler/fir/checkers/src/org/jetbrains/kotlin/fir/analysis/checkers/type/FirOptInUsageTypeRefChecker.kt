@@ -17,22 +17,23 @@ import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirOptInUsageBaseCh
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirOptInUsageBaseChecker.loadExperimentalitiesFromSupertype
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.OPT_IN_CAN_ONLY_BE_USED_AS_ANNOTATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.OPT_IN_MARKER_CAN_ONLY_BE_USED_AS_ANNOTATION_OR_ARGUMENT_IN_OPT_IN
-import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.getContainingClassLookupTag
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.resolve.checkers.OptInNames
 
 object FirOptInUsageTypeRefChecker : FirResolvedTypeRefChecker(MppCheckerKind.Common) {
-    override fun check(typeRef: FirResolvedTypeRef, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(typeRef: FirResolvedTypeRef) {
         val source = typeRef.source
         val delegatedTypeRef = typeRef.delegatedTypeRef
         if (source?.kind !is KtRealSourceElementKind) return
         // ConeClassLikeType filters out all delegatedTypeRefs from here
-        val expandedTypealiasType = typeRef.coneType.fullyExpandedType(context.session).lowerBoundIfFlexible() as? ConeClassLikeType ?: return
+        val expandedTypealiasType = typeRef.coneType.fullyExpandedType().lowerBoundIfFlexible() as? ConeClassLikeType ?: return
         val coneType = expandedTypealiasType.abbreviatedTypeOrSelf as? ConeClassLikeType ?: return
         val symbol = coneType.toSymbol(context.session) ?: return
 
@@ -44,48 +45,46 @@ object FirOptInUsageTypeRefChecker : FirResolvedTypeRefChecker(MppCheckerKind.Co
         if (lastAnnotationCall == null || lastAnnotationCall.annotationTypeRef !== typeRef) {
             when {
                 classId == OptInNames.REQUIRES_OPT_IN_CLASS_ID || classId == OptInNames.OPT_IN_CLASS_ID ->
-                    reporter.reportOn(source, OPT_IN_CAN_ONLY_BE_USED_AS_ANNOTATION, context)
+                    reporter.reportOn(source, OPT_IN_CAN_ONLY_BE_USED_AS_ANNOTATION)
                 processedSymbol.isExperimentalMarker(context.session) ->
-                    reporter.reportOn(source, OPT_IN_MARKER_CAN_ONLY_BE_USED_AS_ANNOTATION_OR_ARGUMENT_IN_OPT_IN, context)
+                    reporter.reportOn(source, OPT_IN_MARKER_CAN_ONLY_BE_USED_AS_ANNOTATION_OR_ARGUMENT_IN_OPT_IN)
                 delegatedTypeRef is FirUserTypeRef && delegatedTypeRef.qualifier.isNotEmpty() -> {
-                    processedSymbol.checkContainingClasses(source, delegatedTypeRef.qualifier, context, reporter)
+                    processedSymbol.checkContainingClasses(source, delegatedTypeRef.qualifier)
                 }
             }
         }
-        val isSupertypeRef = typeRef in (context.containingDeclarations.lastOrNull() as? FirClass)?.superTypeRefs.orEmpty()
+        val isSupertypeRef = typeRef in (context.containingDeclarations.lastOrNull() as? FirClassSymbol)?.resolvedSuperTypeRefs.orEmpty()
         with(FirOptInUsageBaseChecker) {
             val experimentalities = mutableSetOf<FirOptInUsageBaseChecker.Experimentality>()
-            experimentalities.addAll(symbol.loadClassifierExperimentalities(context, isSupertypeRef))
+            experimentalities.addAll(symbol.loadClassifierExperimentalities(isSupertypeRef))
             if (typeAliasExpandedSymbol != null) {
                 experimentalities.addAll(
                     typeAliasExpandedSymbol.loadClassifierExperimentalities(
-                        context,
                         isSupertypeRef
                     )
                 )
             }
-            experimentalities.addAll(loadExperimentalitiesFromConeArguments(context, coneType.typeArguments.toList()))
-            reportNotAcceptedExperimentalities(experimentalities, typeRef, context, reporter)
+            experimentalities.addAll(loadExperimentalitiesFromConeArguments(coneType.typeArguments.toList()))
+            reportNotAcceptedExperimentalities(experimentalities, typeRef)
         }
     }
 
-    private fun FirClassLikeSymbol<*>.loadClassifierExperimentalities(context: CheckerContext, isSupertypeRef: Boolean) =
-        if (isSupertypeRef) loadExperimentalitiesFromSupertype(context) else loadExperimentalities(
-            context,
+    context(context: CheckerContext)
+    private fun FirClassLikeSymbol<*>.loadClassifierExperimentalities(isSupertypeRef: Boolean) =
+        if (isSupertypeRef) loadExperimentalitiesFromSupertype() else loadExperimentalities(
             fromSetter = false,
             dispatchReceiverType = null
         )
 
+    context(context: CheckerContext, reporter: DiagnosticReporter)
     private tailrec fun FirClassLikeSymbol<*>.checkContainingClasses(
         source: KtSourceElement,
         qualifier: List<FirQualifierPart>,
-        context: CheckerContext,
-        reporter: DiagnosticReporter,
     ) {
         val containingClassSymbol = this.getContainingClassLookupTag()?.toSymbol(context.session) ?: return
         if (qualifier.any { it.name == containingClassSymbol.name } && containingClassSymbol.isExperimentalMarker(context.session)) {
-            reporter.reportOn(source, OPT_IN_MARKER_CAN_ONLY_BE_USED_AS_ANNOTATION_OR_ARGUMENT_IN_OPT_IN, context)
+            reporter.reportOn(source, OPT_IN_MARKER_CAN_ONLY_BE_USED_AS_ANNOTATION_OR_ARGUMENT_IN_OPT_IN)
         }
-        containingClassSymbol.checkContainingClasses(source, qualifier, context, reporter)
+        containingClassSymbol.checkContainingClasses(source, qualifier)
     }
 }

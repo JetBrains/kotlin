@@ -14,6 +14,7 @@ import org.gradle.api.artifacts.Dependency
 import org.gradle.api.attributes.Attribute
 import org.gradle.api.attributes.HasAttributes
 import org.gradle.api.file.DirectoryProperty
+import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.AbstractExecTask
 import org.gradle.api.tasks.TaskProvider
@@ -23,6 +24,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinNativeLink
 import org.jetbrains.kotlin.gradle.utils.attributeOf
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.gradle.utils.maybeCreateResolvable
+import org.jetbrains.kotlin.gradle.utils.property
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toUpperCaseAsciiOnly
 import java.io.File
@@ -81,18 +83,23 @@ sealed class NativeBinary(
     }
 
     /** Additional arguments passed to the Kotlin/Native compiler. */
-    @Suppress("DEPRECATION")
     var freeCompilerArgs: List<String>
-        get() = linkTask.kotlinOptions.freeCompilerArgs
+        get() = linkTaskProvider.get().toolOptions.freeCompilerArgs.get()
         set(value) {
-            linkTask.kotlinOptions.freeCompilerArgs = value
+            linkTaskProvider.configure {
+                it.toolOptions.freeCompilerArgs.set(value)
+            }
         }
 
     // Link task access.
     val linkTaskName: String
         get() = lowerCamelCaseName("link", name, target.targetName)
 
-    @Deprecated("Use 'linkTaskProvider' instead", ReplaceWith("linkTaskProvider"))
+    @Deprecated(
+        "Use 'linkTaskProvider' instead. Scheduled for removal in Kotlin 2.3.",
+        ReplaceWith("linkTaskProvider"),
+        level = DeprecationLevel.ERROR
+    )
     val linkTask: KotlinNativeLink
         get() = linkTaskProvider.get()
 
@@ -189,6 +196,7 @@ class Executable constructor(
     val runTaskProvider: TaskProvider<AbstractExecTask<*>>?
         get() = runTaskName?.let { project.tasks.withType(AbstractExecTask::class.java).named(it) }
 
+    @Deprecated("Use `runTaskProvider` instead. Scheduled for removal in Kotlin 2.4.", ReplaceWith("runTaskProvider"))
     val runTask: AbstractExecTask<*>?
         get() = runTaskProvider?.get()
 }
@@ -288,20 +296,22 @@ class Framework(
         get() = NativeOutputKind.FRAMEWORK
 
     // Embedding bitcode.
-    @Deprecated(BITCODE_EMBEDDING_DEPRECATION_MESSAGE)
     /**
      * Embed bitcode for the framework or not. See [BitcodeEmbeddingMode].
      */
+    @Suppress("DEPRECATION_ERROR")
+    @Deprecated(BITCODE_EMBEDDING_DEPRECATION_MESSAGE, level = DeprecationLevel.ERROR)
     val embedBitcodeMode = project.objects.property(org.jetbrains.kotlin.gradle.plugin.mpp.BitcodeEmbeddingMode::class.java)
 
-    @Deprecated(BITCODE_EMBEDDING_DEPRECATION_MESSAGE)
+    @Suppress("DEPRECATION_ERROR")
+    @Deprecated(BITCODE_EMBEDDING_DEPRECATION_MESSAGE, level = DeprecationLevel.ERROR)
     var embedBitcode: org.jetbrains.kotlin.gradle.plugin.mpp.BitcodeEmbeddingMode = org.jetbrains.kotlin.gradle.plugin.mpp.BitcodeEmbeddingMode.DISABLE
 
     /**
      * Enable or disable embedding bitcode for the framework. See [BitcodeEmbeddingMode].
      */
-    @Suppress("DEPRECATION")
-    @Deprecated(BITCODE_EMBEDDING_DEPRECATION_MESSAGE, replaceWith = ReplaceWith(""))
+    @Suppress("DEPRECATION_ERROR")
+    @Deprecated(BITCODE_EMBEDDING_DEPRECATION_MESSAGE, level = DeprecationLevel.ERROR, replaceWith = ReplaceWith(""))
     fun embedBitcode(mode: org.jetbrains.kotlin.gradle.plugin.mpp.BitcodeEmbeddingMode) {
         embedBitcodeMode.set(mode)
     }
@@ -309,8 +319,8 @@ class Framework(
     /**
      * [embedBitcode] is deprecated and has no effect
      */
-    @Suppress("DEPRECATION")
-    @Deprecated(BITCODE_EMBEDDING_DEPRECATION_MESSAGE, replaceWith = ReplaceWith(""))
+    @Suppress("DEPRECATION_ERROR")
+    @Deprecated(BITCODE_EMBEDDING_DEPRECATION_MESSAGE, level = DeprecationLevel.ERROR, replaceWith = ReplaceWith(""))
     fun embedBitcode(mode: String) = embedBitcode(org.jetbrains.kotlin.gradle.plugin.mpp.BitcodeEmbeddingMode.valueOf(mode.toUpperCaseAsciiOnly()))
 
     /**
@@ -318,7 +328,14 @@ class Framework(
      */
     var isStatic = false
 
-    @Deprecated(BITCODE_EMBEDDING_DEPRECATION_MESSAGE)
+    /**
+     * Export KDocs to frameworks header file.
+     */
+    @ExperimentalKotlinGradlePluginApi
+    val exportKdoc: Property<Boolean> = project.objects.property(true)
+
+    @Suppress("DEPRECATION_ERROR")
+    @Deprecated(BITCODE_EMBEDDING_DEPRECATION_MESSAGE, level = DeprecationLevel.ERROR)
     object BitcodeEmbeddingMode {
         val DISABLE = org.jetbrains.kotlin.gradle.plugin.mpp.BitcodeEmbeddingMode.DISABLE
         val BITCODE = org.jetbrains.kotlin.gradle.plugin.mpp.BitcodeEmbeddingMode.BITCODE
@@ -331,5 +348,3 @@ class Framework(
         )
     }
 }
-
-

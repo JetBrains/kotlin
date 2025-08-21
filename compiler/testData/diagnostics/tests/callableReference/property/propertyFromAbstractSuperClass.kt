@@ -35,3 +35,6 @@ class Component(
 ) : SettingComponent<Module>(reference) {
     private val model = Model(::value, context)
 }
+
+/* GENERATED_FIR_TAGS: assignment, callableReference, classDeclaration, getter, override, primaryConstructor,
+propertyDeclaration, setter, typeConstraint, typeParameter */

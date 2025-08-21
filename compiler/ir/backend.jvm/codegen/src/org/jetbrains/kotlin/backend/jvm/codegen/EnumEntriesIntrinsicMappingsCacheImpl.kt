@@ -36,7 +36,10 @@ import org.jetbrains.kotlin.name.Name
 //    both `E.entries` and `enumEntries<E>` calls to the same enum in the same container.
 // 2) Static initializers have been lowered, so we're generating the `<clinit>` method manually, as opposed to adding static init sections
 //    as `EnumExternalEntriesLowering` does.
-class EnumEntriesIntrinsicMappingsCacheImpl(private val context: JvmBackendContext) : EnumEntriesIntrinsicMappingsCache() {
+class EnumEntriesIntrinsicMappingsCacheImpl(
+    private val context: JvmBackendContext,
+    val intrinsicExtensions: List<JvmIrIntrinsicExtension>,
+) : EnumEntriesIntrinsicMappingsCache() {
     private val storage = mutableMapOf<IrClass, MappingsClass>()
 
     private inner class MappingsClass(val containingClass: IrClass) {
@@ -57,7 +60,7 @@ class EnumEntriesIntrinsicMappingsCacheImpl(private val context: JvmBackendConte
         val field = mappingsClass.enums.getOrPut(enumClass) {
             mappingsClass.irClass.addField {
                 name = Name.identifier("entries\$${mappingsClass.enums.size}")
-                type = context.ir.symbols.enumEntries.typeWith(enumClass.defaultType)
+                type = context.symbols.enumEntries.typeWith(enumClass.defaultType)
                 origin = JvmLoweredDeclarationOrigin.ENUM_MAPPINGS_FOR_ENTRIES
                 isFinal = true
                 isStatic = true
@@ -83,14 +86,14 @@ class EnumEntriesIntrinsicMappingsCacheImpl(private val context: JvmBackendConte
                     val enumValues = enum.findEnumValuesFunction(backendContext)
                     +irSetField(
                         null, field,
-                        irCall(backendContext.ir.symbols.createEnumEntries).apply {
-                            putValueArgument(0, irCall(enumValues))
+                        irCall(backendContext.symbols.createEnumEntries).apply {
+                            arguments[0] = irCall(enumValues)
                         }
                     )
                 }
             }
 
-            ClassCodegen.getOrCreate(klass.irClass, backendContext).generate()
+            ClassCodegen.getOrCreate(klass.irClass, backendContext, intrinsicExtensions).generate()
         }
     }
 }

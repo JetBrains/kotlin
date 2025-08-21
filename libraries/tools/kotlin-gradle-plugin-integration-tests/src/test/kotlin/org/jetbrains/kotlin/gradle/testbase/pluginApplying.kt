@@ -5,16 +5,14 @@
 
 package org.jetbrains.kotlin.gradle.testbase
 
-import org.jetbrains.kotlin.gradle.util.modify
-import java.io.File
 import java.nio.file.Path
+import kotlin.io.path.name
+import kotlin.io.path.walk
 
 internal fun Path.applyPlugin(pluginId: String, artifactId: String, artifactVersionProperty: String) {
-    val pathFile = toFile()
-
     val groovyBuildScripts = setOf("build.gradle", "build-js.gradle")
     val kotlinBuildScripts = setOf("build.gradle.kts", "build-js.gradle.kts", "alternative.build.gradle.kts")
-    pathFile.walkTopDown()
+    walk()
         .filter { it.name in groovyBuildScripts || it.name in kotlinBuildScripts }
         .forEach { file ->
             when (file.name) {
@@ -24,7 +22,7 @@ internal fun Path.applyPlugin(pluginId: String, artifactId: String, artifactVers
         }
 }
 
-private fun File.updateBuildGradle(pluginId: String, artifactId: String, artifactVersionProperty: String) {
+private fun Path.updateBuildGradle(pluginId: String, artifactId: String, artifactVersionProperty: String) {
     modify {
         if (it.contains("plugins {")) {
             """
@@ -62,7 +60,7 @@ private fun String.modifyBuildScript(artifactId: String, artifactVersionProperty
     }
 
 
-private fun File.updateBuildGradleKts(pluginId: String, artifactId: String, artifactVersionProperty: String) {
+private fun Path.updateBuildGradleKts(pluginId: String, artifactId: String, artifactVersionProperty: String) {
     modify {
         if (it.contains("plugins {")) {
             if (it.substringAfter("plugins {").contains("""id("$pluginId")""")) return@modify it

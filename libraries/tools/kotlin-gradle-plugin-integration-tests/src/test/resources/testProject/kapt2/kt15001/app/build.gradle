@@ -3,25 +3,25 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
 
 android {
-    namespace "com.example.kt15001"
+    namespace = "com.example.kt15001"
 
-    compileSdkVersion 23
+    compileSdkVersion = 23
 
     kotlin {
         jvmToolchain(8)
     }
 
     defaultConfig {
-        applicationId "com.example.kt15001"
-        minSdkVersion 23
-        targetSdkVersion 23
-        versionCode 1
-        versionName "1.0"
+        applicationId = "com.example.kt15001"
+        minSdkVersion = 23
+        targetSdkVersion = 23
+        versionCode = 1
+        versionName = "1.0"
     }
     
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled = false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }

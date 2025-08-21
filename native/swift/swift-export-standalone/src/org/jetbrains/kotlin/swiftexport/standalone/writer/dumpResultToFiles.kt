@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.swiftexport.standalone.writer
 
-import org.jetbrains.kotlin.sir.bridge.*
 import org.jetbrains.kotlin.swiftexport.standalone.SwiftExportFiles
 import java.io.File
 
@@ -17,28 +16,6 @@ internal fun dumpTextAtPath(
     dumpTextAtFile(bridges.ktSrc, output.kotlinBridges.toFile())
     dumpTextAtFile(bridges.cSrc, output.cHeaderBridges.toFile())
     dumpTextAtFile(swift, output.swiftApi.toFile())
-}
-
-internal fun generateBridgeSources(
-    bridgeGenerator: BridgeGenerator,
-    requests: List<BridgeRequest>,
-    stableDeclarationsOrder: Boolean,
-): BridgeSources {
-    val kotlinBridgePrinter = createKotlinBridgePrinter()
-    val cBridgePrinter = createCBridgePrinter()
-
-    requests
-        .let { if (stableDeclarationsOrder) it.sortedWith(StableBridgeRequestComparator) else it }
-        .flatMap(bridgeGenerator::generateBridges)
-        .forEach {
-            kotlinBridgePrinter.add(it)
-            cBridgePrinter.add(it)
-        }
-
-    val actualKotlinSrc = kotlinBridgePrinter.print()
-    val actualCHeader = cBridgePrinter.print()
-
-    return BridgeSources(ktSrc = actualKotlinSrc, cSrc = actualCHeader)
 }
 
 internal fun dumpTextAtFile(text: Sequence<String>, file: File) {

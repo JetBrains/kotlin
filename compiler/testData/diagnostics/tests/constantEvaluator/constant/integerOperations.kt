@@ -29,3 +29,5 @@ package test
 
 // val x9: 79
 <!DEBUG_INFO_CONSTANT_VALUE("79")!>val x9 = (-123_456_789_321).mod(100)<!>
+
+/* GENERATED_FIR_TAGS: additiveExpression, integerLiteral, propertyDeclaration */

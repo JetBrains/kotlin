@@ -56,3 +56,6 @@ fun interface I {
 }
 
 fun acceptI(i: I) {}
+
+/* GENERATED_FIR_TAGS: classDeclaration, funInterface, funWithExtensionReceiver, functionDeclaration, inner,
+interfaceDeclaration, javaFunction, javaType, lambdaLiteral, nestedClass */

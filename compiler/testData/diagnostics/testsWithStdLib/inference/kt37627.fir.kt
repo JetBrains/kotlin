@@ -18,3 +18,6 @@ fun foo2(x: Int) {
 
     x
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, ifExpression, lambdaLiteral, localProperty, nullableType,
+propertyDeclaration, stringLiteral */

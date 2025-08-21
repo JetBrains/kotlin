@@ -1,4 +1,3 @@
-// LANGUAGE: -ProhibitGenericArrayClassLiteral
 import kotlin.reflect.KClass
 
 fun box(): String {
@@ -6,7 +5,7 @@ fun box(): String {
     check(js("String"), String::class)
     check(js("Boolean"), Boolean::class)
     check(js("Error"), Throwable::class)
-    check(js("Array"), Array<Any>::class)
+    check(js("Array"), Array::class)
     check(js("Function"), Function0::class)
 
     check(js("Number"), Byte::class)

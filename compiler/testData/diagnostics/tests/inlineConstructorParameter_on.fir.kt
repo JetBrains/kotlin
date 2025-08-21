@@ -22,3 +22,6 @@ enum class Bar() {
 fun main() {
     println(Foo.A.bar)
 }
+
+/* GENERATED_FIR_TAGS: enumDeclaration, enumEntry, functionDeclaration, getter, primaryConstructor, propertyDeclaration,
+stringLiteral */

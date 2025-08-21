@@ -47,3 +47,5 @@ fun test() {
     <!UNRESOLVED_REFERENCE!>v6<!> = ""
     <!API_NOT_AVAILABLE!>v7<!>
 }
+
+/* GENERATED_FIR_TAGS: assignment, functionDeclaration, getter, propertyDeclaration, setter, stringLiteral */

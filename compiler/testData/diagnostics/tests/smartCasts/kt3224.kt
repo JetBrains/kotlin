@@ -8,3 +8,6 @@ fun test(c : Class<*>) {
     c.getAnnotations();
     sc.getAnnotations();
 }
+
+/* GENERATED_FIR_TAGS: asExpression, flexibleType, functionDeclaration, localProperty, propertyDeclaration, smartcast,
+starProjection */

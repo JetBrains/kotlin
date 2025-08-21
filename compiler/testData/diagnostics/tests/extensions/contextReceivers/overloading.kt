@@ -29,3 +29,6 @@ fun test() {
         val c: Double = foo()
     }
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionDeclarationWithContext, integerLiteral, lambdaLiteral, localProperty,
+propertyDeclaration, stringLiteral */

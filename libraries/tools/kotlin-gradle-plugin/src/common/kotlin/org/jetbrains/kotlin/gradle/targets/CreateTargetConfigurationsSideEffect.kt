@@ -6,10 +6,8 @@
 package org.jetbrains.kotlin.gradle.targets
 
 import org.gradle.api.attributes.Category
-import org.gradle.api.attributes.Usage
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
 import org.jetbrains.kotlin.gradle.plugin.*
-import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.publishing.configureResourcesPublicationAttributes
 import org.jetbrains.kotlin.gradle.plugin.mpp.publishing.configureSourcesPublicationAttributes
@@ -18,7 +16,6 @@ import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
 import org.jetbrains.kotlin.gradle.utils.addSecondaryOutgoingJvmClassesVariant
 import org.jetbrains.kotlin.gradle.utils.maybeCreateConsumable
 import org.jetbrains.kotlin.gradle.utils.maybeCreateDependencyScope
-import org.jetbrains.kotlin.gradle.utils.setAttribute
 
 internal val CreateTargetConfigurationsSideEffect = KotlinTargetSideEffect { target ->
     val project = target.project
@@ -30,7 +27,7 @@ internal val CreateTargetConfigurationsSideEffect = KotlinTargetSideEffect { tar
     val compileConfiguration = mainCompilation.internal.configurations.deprecatedCompileConfiguration
     val implementationConfiguration = configurations.maybeCreateDependencyScope(mainCompilation.implementationConfigurationName)
 
-    @Suppress("TYPEALIAS_EXPANSION_DEPRECATION")
+    @Suppress("TYPEALIAS_EXPANSION_DEPRECATION_ERROR")
     val runtimeOnlyConfiguration = when (mainCompilation) {
         is DeprecatedKotlinCompilationToRunnableFiles<*> -> configurations.maybeCreateDependencyScope(mainCompilation.runtimeOnlyConfigurationName)
         else -> null
@@ -41,10 +38,10 @@ internal val CreateTargetConfigurationsSideEffect = KotlinTargetSideEffect { tar
     configurations.maybeCreateConsumable(target.apiElementsConfigurationName).apply {
         description = "API elements for main."
         isVisible = false
-        attributes.setAttribute(Usage.USAGE_ATTRIBUTE, KotlinUsages.producerApiUsage(target))
-        attributes.setAttribute(Category.CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))
+        KotlinUsages.configureProducerApiUsage(this, target)
+        attributes.attribute(Category.CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))
         extendsFrom(apiElementScope)
-        @Suppress("TYPEALIAS_EXPANSION_DEPRECATION")
+        @Suppress("TYPEALIAS_EXPANSION_DEPRECATION_ERROR")
         if (mainCompilation is DeprecatedKotlinCompilationToRunnableFiles) {
             val runtimeConfiguration = mainCompilation.internal.configurations.deprecatedRuntimeConfiguration
             runtimeConfiguration?.let { extendsFrom(it) }
@@ -59,13 +56,13 @@ internal val CreateTargetConfigurationsSideEffect = KotlinTargetSideEffect { tar
         }
     }
 
-    @Suppress("TYPEALIAS_EXPANSION_DEPRECATION")
+    @Suppress("TYPEALIAS_EXPANSION_DEPRECATION_ERROR")
     if (mainCompilation is DeprecatedKotlinCompilationToRunnableFiles<*>) {
         configurations.maybeCreateConsumable(target.runtimeElementsConfigurationName).apply {
             description = "Elements of runtime for main."
             isVisible = false
-            attributes.setAttribute(Usage.USAGE_ATTRIBUTE, KotlinUsages.producerRuntimeUsage(target))
-            attributes.setAttribute(Category.CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))
+            KotlinUsages.configureProducerRuntimeUsage(this, target)
+            attributes.attribute(Category.CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))
             val runtimeConfiguration = mainCompilation.internal.configurations.deprecatedRuntimeConfiguration
             extendsFrom(implementationConfiguration)
             extendsFrom(runtimeOnlyConfiguration)
@@ -100,7 +97,7 @@ internal val CreateTargetConfigurationsSideEffect = KotlinTargetSideEffect { tar
         val compileTestsConfiguration = testCompilation.internal.configurations.deprecatedCompileConfiguration
         val testImplementationConfiguration = configurations.maybeCreateDependencyScope(testCompilation.implementationConfigurationName)
 
-        @Suppress("TYPEALIAS_EXPANSION_DEPRECATION")
+        @Suppress("TYPEALIAS_EXPANSION_DEPRECATION_ERROR")
         val testRuntimeOnlyConfiguration = when (testCompilation) {
             is DeprecatedKotlinCompilationToRunnableFiles<*> -> configurations.maybeCreateDependencyScope(testCompilation.runtimeOnlyConfigurationName)
             else -> null
@@ -110,7 +107,7 @@ internal val CreateTargetConfigurationsSideEffect = KotlinTargetSideEffect { tar
         testImplementationConfiguration.extendsFrom(implementationConfiguration)
         testRuntimeOnlyConfiguration?.extendsFrom(runtimeOnlyConfiguration)
 
-        @Suppress("TYPEALIAS_EXPANSION_DEPRECATION")
+        @Suppress("TYPEALIAS_EXPANSION_DEPRECATION_ERROR")
         if (mainCompilation is DeprecatedKotlinCompilationToRunnableFiles &&
             testCompilation is DeprecatedKotlinCompilationToRunnableFiles
         ) {
@@ -120,14 +117,14 @@ internal val CreateTargetConfigurationsSideEffect = KotlinTargetSideEffect { tar
         }
     }
 
-    if (target is KotlinJsIrTarget && !target.isMpp!!) {
+    if (target is KotlinJsIrTarget && !target.isMpp) {
         target.project.configurations.maybeCreateConsumable(
             target.commonFakeApiElementsConfigurationName
         ).apply {
             description = "Common Fake API elements for main."
             isVisible = false
-            attributes.setAttribute(Usage.USAGE_ATTRIBUTE, KotlinUsages.producerApiUsage(target))
-            attributes.setAttribute(KotlinPlatformType.attribute, KotlinPlatformType.common)
+            KotlinUsages.configureProducerApiUsage(this, target)
+            attributes.attribute(KotlinPlatformType.attribute, KotlinPlatformType.common)
         }
     }
 }

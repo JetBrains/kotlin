@@ -24,12 +24,31 @@ sealed class ResolutionMode(
         companion object : ReceiverResolution(forCallableReference = false)
     }
 
+    /**
+     * This mode is intended to be used as a type hint for inference/resolution.
+     *
+     * For example, when resolving `val x: List<String> = emptyList()`, we would resolve `emptyList()`
+     * with ExpectedType(List<String>).
+     *
+     * But note that it's not the responsibility of each node transform function to ensure that the resulting expression
+     * has a suitable type.
+     *
+     * So, if necessary, all creators of that mode do ensure about the check.
+     *
+     * In the example, with variable initializer, it would be FirInitializerTypeMismatchChecker
+     * that reports an INITIALIZER_TYPE_MISMATCH error
+     *
+     */
     @OptIn(WithExpectedType.ExpectedTypeRefAccess::class)
     class WithExpectedType(
         @property:ExpectedTypeRefAccess
         val expectedTypeRef: FirResolvedTypeRef,
-        val mayBeCoercionToUnitApplied: Boolean = false,
-        val expectedTypeMismatchIsReportedInChecker: Boolean = false,
+        val lastStatementInBlock: Boolean = false,
+        /**
+         * For cases like findViewById() as MyView, it the expected type would be MyView.
+         * We only allow using it for a limited number of cases: when the LHS of cast is a call to the specifically shaped
+         * function (see `isFunctionForExpectTypeFromCastFeature`).
+         */
         val fromCast: Boolean = false,
         /**
          * Expected type is used for inferring array literal types in places where array literal syntax is supported
@@ -38,19 +57,7 @@ sealed class ResolutionMode(
          * it can contain type parameter types which aren't substituted to type variable types.
          */
         val arrayLiteralPosition: ArrayLiteralPosition? = null,
-        /**
-         * It might be ok if the types turn out to be incompatible.
-         * Consider the following examples with properties and their backing fields:
-         *
-         * ```
-         * val items: List field = mutableListOf()
-         * val s: String field = 10 get() = ...
-         * ```
-         *
-         * In these examples we should try using the property type information while resolving the initializer,
-         * but it's ok if it's not applicable
-         */
-        val shouldBeStrictlyEnforced: Boolean = true,
+        val hintForContextSensitiveResolution: ConeKotlinType? = null,
         /** Currently the only case for expected type when we don't force completion are when's branches */
         forceFullCompletion: Boolean = true,
     ) : ResolutionMode(forceFullCompletion) {
@@ -65,26 +72,21 @@ sealed class ResolutionMode(
 
         fun copy(
             expectedTypeRef: FirResolvedTypeRef = this.expectedTypeRef,
-            mayBeCoercionToUnitApplied: Boolean = this.mayBeCoercionToUnitApplied,
+            lastStatementInBlock: Boolean = this.lastStatementInBlock,
             forceFullCompletion: Boolean = this.forceFullCompletion,
-            shouldBeStrictlyEnforced: Boolean = this.shouldBeStrictlyEnforced,
         ): WithExpectedType = WithExpectedType(
             expectedTypeRef = expectedTypeRef,
-            mayBeCoercionToUnitApplied = mayBeCoercionToUnitApplied,
-            expectedTypeMismatchIsReportedInChecker = expectedTypeMismatchIsReportedInChecker,
+            lastStatementInBlock = lastStatementInBlock,
             fromCast = fromCast,
             arrayLiteralPosition = arrayLiteralPosition,
-            shouldBeStrictlyEnforced = shouldBeStrictlyEnforced,
             forceFullCompletion = forceFullCompletion
         )
 
         override fun toString(): String {
             return "WithExpectedType: ${expectedTypeRef.prettyString()}, " +
-                    "mayBeCoercionToUnitApplied=${mayBeCoercionToUnitApplied}, " +
-                    "expectedTypeMismatchIsReportedInChecker=${expectedTypeMismatchIsReportedInChecker}, " +
+                    "lastStatementInBlock=${lastStatementInBlock}, " +
                     "fromCast=${fromCast}, " +
                     "arrayLiteralPosition=${arrayLiteralPosition}, " +
-                    "shouldBeStrictlyEnforced=${shouldBeStrictlyEnforced}, " +
                     "forceFullCompletion=${forceFullCompletion}, "
         }
     }
@@ -99,6 +101,14 @@ sealed class ResolutionMode(
             return "WithStatus: ${status.render()}"
         }
     }
+
+    /**
+     * Should be used only for type refs transformations, it forces to replace implicit type refs.
+     * For other cases, it works just like [ContextIndependent], i.e., resolves yet unresolved explicit type references.
+     *
+     * See [org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirAbstractBodyResolveTransformerDispatcher.transformImplicitTypeRef]
+     */
+    class UpdateImplicitTypeRef(val newTypeRef: FirResolvedTypeRef) : ResolutionMode(forceFullCompletion = false)
 
     /**
      * This resolution mode is used for resolving the LHS of assignments.
@@ -132,27 +142,27 @@ val ResolutionMode.expectedType: ConeKotlinType?
 
 fun withExpectedType(
     expectedTypeRef: FirTypeRef,
-    expectedTypeMismatchIsReportedInChecker: Boolean = false,
     arrayLiteralPosition: ArrayLiteralPosition? = null,
+    hintForContextSensitiveResolution: ConeKotlinType? = null,
 ): ResolutionMode = when {
     expectedTypeRef is FirResolvedTypeRef -> ResolutionMode.WithExpectedType(
         expectedTypeRef,
-        expectedTypeMismatchIsReportedInChecker = expectedTypeMismatchIsReportedInChecker,
         arrayLiteralPosition = arrayLiteralPosition,
+        hintForContextSensitiveResolution = hintForContextSensitiveResolution,
     )
     else -> ResolutionMode.ContextIndependent
 }
 
 @JvmName("withExpectedTypeNullable")
-fun withExpectedType(coneType: ConeKotlinType?, mayBeCoercionToUnitApplied: Boolean = false): ResolutionMode {
-    return coneType?.let { withExpectedType(it, mayBeCoercionToUnitApplied) } ?: ResolutionMode.ContextDependent
+fun withExpectedType(coneType: ConeKotlinType?, lastStatementInBlock: Boolean = false): ResolutionMode {
+    return coneType?.let { withExpectedType(it, lastStatementInBlock) } ?: ResolutionMode.ContextDependent
 }
 
-fun withExpectedType(coneType: ConeKotlinType, mayBeCoercionToUnitApplied: Boolean = false): ResolutionMode {
+fun withExpectedType(coneType: ConeKotlinType, lastStatementInBlock: Boolean = false): ResolutionMode {
     val typeRef = buildResolvedTypeRef {
         this.coneType = coneType
     }
-    return ResolutionMode.WithExpectedType(typeRef, mayBeCoercionToUnitApplied)
+    return ResolutionMode.WithExpectedType(typeRef, lastStatementInBlock)
 }
 
 fun FirDeclarationStatus.mode(): ResolutionMode =

@@ -6,3 +6,6 @@ fun test() {
         this + it
     }
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, functionDeclaration, functionalType, lambdaLiteral, thisExpression,
+typeWithExtension */

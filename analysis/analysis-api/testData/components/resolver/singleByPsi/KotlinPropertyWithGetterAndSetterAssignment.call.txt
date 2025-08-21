@@ -3,6 +3,7 @@
     KaSuccessCallInfo:
       call = KaSimpleVariableAccessCall:
         partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+          contextArguments = []
           dispatchReceiver = KaExplicitReceiverValue:
             expression = a
             isSafeNavigation = false
@@ -13,6 +14,7 @@
             receiverType = null
             returnType = kotlin.Int
             symbol = var something: kotlin.Int
+            contextParameters = []
             callableId = /A.something
         simpleAccess = Read
         typeArgumentsMapping = {}
@@ -22,6 +24,7 @@
     KaSuccessCallInfo:
       call = KaSimpleVariableAccessCall:
         partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+          contextArguments = []
           dispatchReceiver = KaExplicitReceiverValue:
             expression = a
             isSafeNavigation = false
@@ -32,6 +35,7 @@
             receiverType = null
             returnType = kotlin.Int
             symbol = var something: kotlin.Int
+            contextParameters = []
             callableId = /A.something
         simpleAccess = Write:
           value = 1
@@ -42,6 +46,7 @@
     KaSuccessCallInfo:
       call = KaSimpleVariableAccessCall:
         partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+          contextArguments = []
           dispatchReceiver = KaExplicitReceiverValue:
             expression = a
             isSafeNavigation = false
@@ -52,6 +57,7 @@
             receiverType = null
             returnType = kotlin.Int
             symbol = var something: kotlin.Int
+            contextParameters = []
             callableId = /A.something
         simpleAccess = Read
         typeArgumentsMapping = {}
@@ -61,6 +67,7 @@
     KaSuccessCallInfo:
       call = KaSimpleVariableAccessCall:
         partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+          contextArguments = []
           dispatchReceiver = KaExplicitReceiverValue:
             expression = a
             isSafeNavigation = false
@@ -71,6 +78,7 @@
             receiverType = null
             returnType = kotlin.Int
             symbol = var something: kotlin.Int
+            contextParameters = []
             callableId = /A.something
         simpleAccess = Read
         typeArgumentsMapping = {}
@@ -80,6 +88,7 @@
     KaSuccessCallInfo:
       call = KaSimpleVariableAccessCall:
         partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+          contextArguments = []
           dispatchReceiver = KaExplicitReceiverValue:
             expression = a
             isSafeNavigation = false
@@ -90,6 +99,7 @@
             receiverType = null
             returnType = kotlin.Int
             symbol = var something: kotlin.Int
+            contextParameters = []
             callableId = /A.something
         simpleAccess = Write:
           value = --
@@ -100,6 +110,7 @@
     KaSuccessCallInfo:
       call = KaSimpleVariableAccessCall:
         partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+          contextArguments = []
           dispatchReceiver = KaImplicitReceiverValue:
             symbol = KaReceiverParameterSymbol:
               annotations: []
@@ -128,6 +139,7 @@
             receiverType = null
             returnType = kotlin.Int
             symbol = var something: kotlin.Int
+            contextParameters = []
             callableId = /A.something
         simpleAccess = Read
         typeArgumentsMapping = {}
@@ -137,6 +149,7 @@
     KaSuccessCallInfo:
       call = KaSimpleVariableAccessCall:
         partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+          contextArguments = []
           dispatchReceiver = KaExplicitReceiverValue:
             expression = a
             isSafeNavigation = true
@@ -147,6 +160,7 @@
             receiverType = null
             returnType = kotlin.Int
             symbol = var something: kotlin.Int
+            contextParameters = []
             callableId = /A.something
         simpleAccess = Read
         typeArgumentsMapping = {}

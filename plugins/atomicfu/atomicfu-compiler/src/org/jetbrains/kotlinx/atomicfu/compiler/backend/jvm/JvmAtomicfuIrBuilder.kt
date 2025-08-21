@@ -22,7 +22,10 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.constructors
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
+import org.jetbrains.kotlinx.atomicfu.compiler.backend.AtomicFieldUpdater
 import org.jetbrains.kotlinx.atomicfu.compiler.backend.AtomicHandlerType
+import org.jetbrains.kotlinx.atomicfu.compiler.backend.BoxedAtomic
 import org.jetbrains.kotlinx.atomicfu.compiler.backend.atomicfuRender
 import org.jetbrains.kotlinx.atomicfu.compiler.backend.common.AbstractAtomicfuIrBuilder
 import org.jetbrains.kotlinx.atomicfu.compiler.backend.common.AbstractAtomicSymbols
@@ -35,20 +38,20 @@ class JvmAtomicfuIrBuilder(
 
     override fun irCallFunction(
         symbol: IrSimpleFunctionSymbol,
-        dispatchReceiver: IrExpression?,
-        extensionReceiver: IrExpression?,
-        valueArguments: List<IrExpression?>,
+        arguments: List<IrExpression?>,
         valueType: IrType
     ): IrCall {
-        val irCall = irCall(symbol).apply {
-            this.dispatchReceiver = dispatchReceiver
-            this.extensionReceiver = extensionReceiver
-            valueArguments.forEachIndexed { i, arg ->
-                putValueArgument(i, arg?.let {
-                    val expectedParameterType = symbol.owner.valueParameters[i].type
-                    if (valueType.isBoolean() && !arg.type.isInt() && expectedParameterType.isInt()) toInt(it) else it
-                })
+        val castedArgs = arguments.mapIndexed { i, arg ->
+            val p = symbol.owner.parameters[i]
+            if (p.kind == IrParameterKind.Regular && arg != null &&
+                valueType.isBoolean() && !arg.type.isInt() && p.type.isInt()) {
+                toInt(arg)
+            } else {
+                arg
             }
+        }
+        val irCall = irCall(symbol).apply {
+            this.arguments.assignFrom(castedArgs)
         }
         return if (valueType.isBoolean() && symbol.owner.returnType.isInt()) toBoolean(irCall) else irCall
     }
@@ -85,12 +88,26 @@ class JvmAtomicfuIrBuilder(
         }
     }
 
-    fun irBoxedAtomicField(atomicProperty: IrProperty, parentContainer: IrDeclarationContainer): IrField {
+    fun buildBoxedAtomic(atomicfuProperty: IrProperty, parentContainer: IrDeclarationContainer): BoxedAtomic {
+        val atomicArrayField = irBoxedAtomicField(atomicfuProperty, parentContainer)
+        val atomicArrayProperty = buildPropertyWithAccessors(
+            atomicArrayField,
+            atomicfuProperty.visibility,
+            isVar = false,
+            isStatic = parentContainer is IrFile,
+            parentContainer
+        )
+        return BoxedAtomic(atomicArrayProperty)
+    }
+
+    private fun irBoxedAtomicField(
+        atomicProperty: IrProperty,
+        parentContainer: IrDeclarationContainer
+    ): IrField {
         val atomicfuField = requireNotNull(atomicProperty.backingField) {
             "The backing field of the atomic property ${atomicProperty.atomicfuRender()} declared in ${parentContainer.render()} should not be null." + CONSTRAINTS_MESSAGE
         }
-        return buildAndInitializeNewField(atomicfuField, parentContainer) { atomicFactoryCall: IrExpression ->
-            val initValue = atomicFactoryCall.getAtomicFactoryValueArgument()
+        return buildAndInitializeNewField(atomicfuField, parentContainer) { atomicFactoryCall: IrExpression? ->
             val valueType = atomicfuSymbols.atomicToPrimitiveType(atomicfuField.type as IrSimpleType)
             val atomicBoxType = atomicfuSymbols.javaAtomicBoxClassSymbol(valueType)
             context.irFactory.buildField {
@@ -101,16 +118,19 @@ class JvmAtomicfuIrBuilder(
                 visibility = DescriptorVisibilities.PRIVATE
                 origin = AbstractAtomicSymbols.ATOMICFU_GENERATED_FIELD
             }.apply {
-                this.initializer = context.irFactory.createExpressionBody(
-                    newJavaBoxedAtomic(atomicBoxType, initValue, (atomicFactoryCall as IrFunctionAccessExpression).dispatchReceiver)
-                )
+                if (atomicFactoryCall != null) {
+                    val initValue = atomicFactoryCall.getAtomicFactoryValueArgument()
+                    this.initializer = context.irFactory.createExpressionBody(
+                        newJavaBoxedAtomic(atomicBoxType, listOf(initValue))
+                    )
+                }
                 this.annotations = annotations
                 this.parent = parentContainer
             }
         }
     }
 
-    fun irJavaAtomicFieldUpdater(volatileField: IrField, parentClass: IrClass): IrField {
+    private fun irJavaAtomicFieldUpdater(volatileField: IrField, parentClass: IrClass): IrField {
         // Generate an atomic field updater for the volatile backing field of the given property:
         // val a = atomic(0)
         // volatile var a: Int = 0
@@ -130,13 +150,32 @@ class JvmAtomicfuIrBuilder(
         }
     }
 
+    /**
+     * Creates an [AtomicFieldUpdater] to replace an in-class atomicfu property on JVM:
+     * builds a volatile property of the type corresponding to the type of the atomic property, plus a Java atomic field updater:
+     * java.util.concurrent.atomic.Atomic(Integer|Long|Reference)FieldUpdater.
+     *
+     * Note that as there is no AtomicBooleanFieldUpdater in Java, AtomicBoolean is relpaced with a Volatile Int property
+     * and updated with j.u.c.a.AtomicIntegerFieldUpdater.
+     */
+    fun buildAtomicFieldUpdater(atomicfuProperty: IrProperty, parentClass: IrClass): AtomicFieldUpdater {
+        val volatilePropertyHandler = createVolatileProperty(atomicfuProperty, parentClass)
+        val atomicUpdaterField = irJavaAtomicFieldUpdater(volatilePropertyHandler.declaration.backingField!!, parentClass)
+        val atomicUpdaterProperty = buildPropertyWithAccessors(
+            atomicUpdaterField,
+            atomicfuProperty.visibility,
+            isVar = false,
+            isStatic = true,
+            parentClass
+        )
+        return AtomicFieldUpdater(volatilePropertyHandler, atomicUpdaterProperty)
+    }
+
     private fun newJavaBoxedAtomic(
         atomicBoxType: IrClassSymbol,
-        initValue: IrExpression,
-        dispatchReceiver: IrExpression?
+        arguments: List<IrExpression?>
     ) : IrFunctionAccessExpression = irCall(atomicBoxType.constructors.first()).apply {
-        putValueArgument(0, initValue)
-        this.dispatchReceiver = dispatchReceiver
+        this.arguments.assignFrom(arguments)
     }
 
     // val a$FU = j.u.c.a.AtomicIntegerFieldUpdater.newUpdater(A::class, "a")
@@ -146,12 +185,12 @@ class JvmAtomicfuIrBuilder(
         valueType: IrType,
         fieldName: String
     ) = irCall(atomicfuSymbols.newUpdater(fieldUpdaterClass)).apply {
-        putValueArgument(0, atomicfuSymbols.javaClassReference(parentClass.symbol.starProjectedType)) // tclass
+        arguments[0] = atomicfuSymbols.javaClassReference(parentClass.symbol.starProjectedType) // tclass
         if (fieldUpdaterClass == atomicfuSymbols.javaAtomicRefFieldUpdaterClass) {
-            putValueArgument(1, atomicfuSymbols.javaClassReference(valueType)) // vclass
-            putValueArgument(2, irString(fieldName)) // fieldName
+            arguments[1] = atomicfuSymbols.javaClassReference(valueType) // vclass
+            arguments[2] = irString(fieldName) // fieldName
         } else {
-            putValueArgument(1, irString(fieldName)) // fieldName
+            arguments[1] = irString(fieldName) // fieldName
         }
     }
 
@@ -160,6 +199,6 @@ class JvmAtomicfuIrBuilder(
         size: IrExpression,
         valueType: IrType,
         dispatchReceiver: IrExpression?
-    ) = callArraySizeConstructor(atomicArrayClass, size, dispatchReceiver)
+    ) = callArraySizeConstructor(atomicArrayClass, size)
         ?: error("Failed to find a constructor for the the given atomic array type ${atomicArrayClass.defaultType.render()}.")
 }

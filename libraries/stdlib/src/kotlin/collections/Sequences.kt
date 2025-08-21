@@ -8,6 +8,7 @@
 
 package kotlin.sequences
 
+import kotlin.internal.InlineOnly
 import kotlin.random.Random
 
 /**
@@ -35,6 +36,38 @@ public fun <T> Iterator<T>.asSequence(): Sequence<T> = Sequence { this }.constra
  * @sample samples.collections.Sequences.Building.sequenceOfValues
  */
 public fun <T> sequenceOf(vararg elements: T): Sequence<T> = elements.asSequence()
+
+/**
+ * Creates a [Sequence] that contains a single given element.
+ *
+ * @param element the single element to be contained in the resulting sequence.
+ * @return a sequence containing only the specified [element].
+ * @sample samples.collections.Sequences.Building.sequenceOfSingleValue
+ */
+@SinceKotlin("2.2")
+public fun <T> sequenceOf(element: T): Sequence<T> = Sequence {
+    object : Iterator<T> {
+        private var _hasNext: Boolean = true
+
+        override fun next(): T {
+            if (!_hasNext) throw NoSuchElementException()
+            _hasNext = false
+            return element
+        }
+
+        override fun hasNext(): Boolean = _hasNext
+    }
+}
+
+/**
+ * Creates an empty [Sequence].
+ *
+ * @return an empty sequence.
+ * @sample samples.collections.Sequences.Building.sequenceOfEmpty
+ */
+@SinceKotlin("2.2")
+@InlineOnly
+public inline fun <T> sequenceOf(): Sequence<T> = emptySequence()
 
 /**
  * Returns an empty sequence.
@@ -388,7 +421,7 @@ internal class SubSequence<T>(
         // Shouldn't be called from constructor to avoid premature iteration
         private fun drop() {
             while (position < startIndex && iterator.hasNext()) {
-                iterator.next()
+                val _ = iterator.next()
                 position++
             }
         }
@@ -511,7 +544,7 @@ internal class DropSequence<T>(
         // Shouldn't be called from constructor to avoid premature iteration
         private fun drop() {
             while (left > 0 && iterator.hasNext()) {
-                iterator.next()
+                val _ = iterator.next()
                 left--
             }
         }
@@ -694,4 +727,3 @@ public fun <T : Any> generateSequence(seed: T?, nextFunction: (T) -> T?): Sequen
  */
 public fun <T : Any> generateSequence(seedFunction: () -> T?, nextFunction: (T) -> T?): Sequence<T> =
     GeneratorSequence(seedFunction, nextFunction)
-

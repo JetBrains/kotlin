@@ -70,3 +70,6 @@ interface E : A {
         get() = 0
         <!CANNOT_WEAKEN_ACCESS_PRIVILEGE, PRIVATE_SETTER_FOR_OPEN_PROPERTY!>private<!> set(arg) {}
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, getter, integerLiteral, interfaceDeclaration, override, propertyDeclaration,
+setter */

@@ -182,25 +182,29 @@ KaConstructorSymbol:
             typeArguments: []
             type: kotlin/String
           visibility: PRIVATE
+          getDispatchReceiver(): KaUsualClassType:
+            annotations: []
+            typeArguments: []
+            type: Anno5
           getContainingFileSymbol: KaFileSymbol(typeAnnotations.kt)
           getContainingJvmClassName: Anno5
           getContainingModule: KaSourceModule "Sources of main"
           deprecationStatus: null
         callableId: /Anno5.s
         compilerVisibility: Public
+        contextParameters: []
         contextReceivers: []
         getter: KaPropertyGetterSymbol:
           annotations: []
           callableId: null
           compilerVisibility: Public
           contextReceivers: []
-          hasBody: false
           hasStableParameterNames: true
           isActual: false
-          isDefault: true
           isExpect: false
           isExtension: false
           isInline: false
+          isNotDefault: false
           isOverride: false
           location: PROPERTY
           modality: FINAL
@@ -259,6 +263,7 @@ KaConstructorSymbol:
         javaGetterName: getS
         javaSetterName: null
         setterDeprecationStatus: null
+        isInline: false
       hasDefaultValue: false
       isActual: false
       isCrossinline: false
@@ -358,6 +363,7 @@ KaNamedFunctionSymbol:
   annotations: []
   callableId: /X.f
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -456,25 +462,29 @@ KaKotlinPropertySymbol:
       typeArguments: []
       type: @R|Anno4|()  I
     visibility: PRIVATE
+    getDispatchReceiver(): KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: X
     getContainingFileSymbol: KaFileSymbol(typeAnnotations.kt)
     getContainingJvmClassName: X
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
   callableId: /X.x
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
     annotations: []
     callableId: null
     compilerVisibility: Public
     contextReceivers: []
-    hasBody: false
     hasStableParameterNames: true
     isActual: false
-    isDefault: true
     isExpect: false
     isExtension: false
     isInline: false
+    isNotDefault: false
     isOverride: false
     location: PROPERTY
     modality: FINAL
@@ -539,6 +549,7 @@ KaKotlinPropertySymbol:
   javaGetterName: getX
   javaSetterName: null
   setterDeprecationStatus: null
+  isInline: false
 
 KaNamedClassSymbol:
   annotations: []
@@ -595,6 +606,7 @@ KaNamedFunctionSymbol:
   annotations: []
   callableId: /foo
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -695,6 +707,7 @@ KaNamedFunctionSymbol:
   annotations: []
   callableId: /foo2
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true

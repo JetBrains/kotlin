@@ -66,3 +66,6 @@ val foo24: @Foo (@Foo () -> Unit, @Foo () -> Unit) -> Unit get() = {x, y -> }
 val foo25: @Foo (x: @Foo Any, @Foo Any) -> Unit get() = {x, y -> }
 
 val foo26: @Foo suspend () -> Unit = {}
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, asExpression, classDeclaration, functionDeclaration, functionalType,
+getter, ifExpression, isExpression, lambdaLiteral, localProperty, nullableType, propertyDeclaration, suspend */

@@ -14,3 +14,7 @@ fun failsWithClassCastException() {
         <!SMARTCAST_IMPOSSIBLE!>sometimesNotInt<!>.inc()
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, equalityExpression, functionDeclaration, ifExpression,
+incrementDecrementExpression, integerLiteral, isExpression, localProperty, multiplicativeExpression, nullableType,
+operator, propertyDeclaration, propertyDelegate, smartcast, stringLiteral */

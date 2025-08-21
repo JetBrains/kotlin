@@ -12,9 +12,9 @@ import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSourceLocation
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.diagnostics.KtDiagnostic
+import org.jetbrains.kotlin.diagnostics.KtDiagnosticWithSource
 import org.jetbrains.kotlin.diagnostics.Severity
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
-import org.jetbrains.kotlin.diagnostics.rendering.RootDiagnosticRendererFactory
 import org.jetbrains.kotlin.psi
 import org.jetbrains.kotlin.scripting.definitions.MessageReporter
 import kotlin.reflect.KMutableProperty1
@@ -92,6 +92,7 @@ class ScriptDiagnosticsMessageCollector(private val parentMessageCollector: Mess
 private fun CompilerMessageSeverity.toScriptingSeverity(): ScriptDiagnostic.Severity? = when (this) {
     CompilerMessageSeverity.EXCEPTION,
     CompilerMessageSeverity.ERROR -> ScriptDiagnostic.Severity.ERROR
+    CompilerMessageSeverity.FIXED_WARNING,
     CompilerMessageSeverity.STRONG_WARNING,
     CompilerMessageSeverity.WARNING -> ScriptDiagnostic.Severity.WARNING
     CompilerMessageSeverity.INFO -> ScriptDiagnostic.Severity.INFO
@@ -214,12 +215,11 @@ fun KtDiagnostic.asScriptDiagnostic(sourceCode: SourceCode): ScriptDiagnostic {
     val (diagnosticCode, scriptSeverity) = when (severity) {
         Severity.INFO -> ScriptDiagnostic.unspecifiedInfo to ScriptDiagnostic.Severity.INFO
         Severity.ERROR -> ScriptDiagnostic.unspecifiedError to ScriptDiagnostic.Severity.ERROR
-        Severity.WARNING -> ScriptDiagnostic.unspecifiedInfo to ScriptDiagnostic.Severity.WARNING
+        Severity.WARNING, Severity.FIXED_WARNING -> ScriptDiagnostic.unspecifiedInfo to ScriptDiagnostic.Severity.WARNING
     }
 
-    val renderer = RootDiagnosticRendererFactory(this)
-
-    val location = if (textRanges.isEmpty()) {
+    val textRanges = (this as? KtDiagnosticWithSource)?.textRanges
+    val location = if (textRanges.isNullOrEmpty()) {
         null
     } else {
         val firstRange = textRanges.first()
@@ -235,7 +235,7 @@ fun KtDiagnostic.asScriptDiagnostic(sourceCode: SourceCode): ScriptDiagnostic {
 
     return ScriptDiagnostic(
         diagnosticCode,
-        renderer.render(this),
+        this.renderMessage(),
         scriptSeverity,
         location
     )

@@ -10,7 +10,19 @@ public class A
 private var A.privateVar: Int
     /* TARGET declaration */ private fun A.<get-privateVar>(): Int
     /* TARGET declaration */ private fun A.<set-privateVar>(value: Int)
-/* ACCESSOR declaration */ public fun access$<get-privateVar>$tAKt($receiver: A): Int
-    /* TARGET use-site */ $receiver.<get-privateVar>()
-/* ACCESSOR declaration */ public fun access$<set-privateVar>$tAKt($receiver: A, value: Int)
-    /* TARGET use-site */ $receiver.<set-privateVar>(value = value)
+/* ACCESSOR declaration */ internal fun access$<get-privateVar>$tAKt($receiver: A): Int
+    /* TARGET use-site */ <get-privateVar>(/* <this> = $receiver */)
+/* ACCESSOR declaration */ internal fun access$<set-privateVar>$tAKt($receiver: A, value: Int)
+    /* TARGET use-site */ <set-privateVar>(/* <this> = $receiver, */ value = value)
+
+
+/* MODULE name=<main> */
+
+/* FILE package=<root> fileName=main.kt */
+
+public fun box(): String
+    /* LOCAL declaration @0 */ local fun <anonymous>($this$run: A)
+        /* ACCESSOR use-site */ access$<get-privateVar>$tAKt($receiver = this)
+        /* ACCESSOR use-site */ access$<set-privateVar>$tAKt($receiver = this, value = value)
+        /* ACCESSOR use-site */ access$<get-privateVar>$tAKt($receiver = this)
+    /* INVOKE @0 */ local fun <anonymous>($this$run: A)

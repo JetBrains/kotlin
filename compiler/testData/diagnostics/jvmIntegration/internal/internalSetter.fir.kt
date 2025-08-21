@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-69766
 // MODULE: lib
 class A {
@@ -39,3 +40,6 @@ fun test() {
     C().<!INVISIBLE_SETTER!>v<!> = 4
     D<Int>().<!INVISIBLE_SETTER!>v<!> = 4
 }
+
+/* GENERATED_FIR_TAGS: assignment, checkNotNullCall, classDeclaration, functionDeclaration, integerLiteral,
+interfaceDeclaration, nullableType, propertyDeclaration, typeParameter */

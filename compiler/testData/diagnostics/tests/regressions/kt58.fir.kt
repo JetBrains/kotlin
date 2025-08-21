@@ -90,3 +90,6 @@ fun t7() : Int {
 
 fun doSmth(i: Int) {
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionalType, integerLiteral, javaFunction, localProperty, nullableType,
+propertyDeclaration, tryExpression, typeParameter */

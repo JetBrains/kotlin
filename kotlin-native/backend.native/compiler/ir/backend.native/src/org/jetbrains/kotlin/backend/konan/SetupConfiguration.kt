@@ -5,13 +5,22 @@
 
 package org.jetbrains.kotlin.backend.konan
 
+import org.jetbrains.kotlin.backend.common.linkage.partial.setupPartialLinkageConfig
 import org.jetbrains.kotlin.cli.common.arguments.K2NativeCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.cliArgument
 import org.jetbrains.kotlin.cli.common.config.addKotlinSourceRoot
 import org.jetbrains.kotlin.cli.common.config.kotlinSourceRoots
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.*
-import org.jetbrains.kotlin.config.*
-import org.jetbrains.kotlin.ir.linkage.partial.setupPartialLinkageConfig
+import org.jetbrains.kotlin.config.CommonConfigurationKeys
+import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.getModuleNameForSource
+import org.jetbrains.kotlin.config.nativeBinaryOptions.BinaryOptionWithValue
+import org.jetbrains.kotlin.config.nativeBinaryOptions.BinaryOptions
+import org.jetbrains.kotlin.config.nativeBinaryOptions.Freezing
+import org.jetbrains.kotlin.config.nativeBinaryOptions.GC
+import org.jetbrains.kotlin.config.nativeBinaryOptions.MemoryModel
+import org.jetbrains.kotlin.config.nativeBinaryOptions.parseBinaryOptions
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.KonanTarget
@@ -32,6 +41,7 @@ fun CompilerConfiguration.setupFromArguments(arguments: K2NativeCompilerArgument
     arguments.kotlinHome?.let { put(KONAN_HOME, it) }
 
     put(NODEFAULTLIBS, arguments.nodefaultlibs || !arguments.libraryToAddToCache.isNullOrEmpty())
+    @Suppress("DEPRECATION")
     put(NOENDORSEDLIBS, arguments.noendorsedlibs || !arguments.libraryToAddToCache.isNullOrEmpty())
     put(NOSTDLIB, arguments.nostdlib || !arguments.libraryToAddToCache.isNullOrEmpty())
     put(NOPACK, arguments.nopack)
@@ -63,7 +73,7 @@ fun CompilerConfiguration.setupFromArguments(arguments: K2NativeCompilerArgument
     arguments.manifestFile?.let { put(MANIFEST_FILE, it) }
     arguments.runtimeFile?.let { put(RUNTIME_FILE, it) }
     arguments.temporaryFilesDir?.let { put(TEMPORARY_FILES_DIR, it) }
-    put(SAVE_LLVM_IR, arguments.saveLlvmIrAfter.toList())
+    put(SAVE_LLVM_IR, arguments.saveLlvmIrAfter.orEmpty().toList())
 
     if (arguments.optimization && arguments.debug) {
         report(WARNING, "Unsupported combination of flags: -opt and -g. Please pick one.")
@@ -73,6 +83,7 @@ fun CompilerConfiguration.setupFromArguments(arguments: K2NativeCompilerArgument
     put(OPTIMIZATION, arguments.optimization)
     put(DEBUG, arguments.debug)
     // TODO: remove after 1.4 release.
+    @Suppress("DEPRECATION")
     if (arguments.lightDebugDeprecated) {
         report(WARNING,
                 "-Xg0 is now deprecated and skipped by compiler. Light debug information is enabled by default for Darwin platforms." +
@@ -182,7 +193,7 @@ fun CompilerConfiguration.setupFromArguments(arguments: K2NativeCompilerArgument
 
     val libraryToAddToCache = parseLibraryToAddToCache(arguments, this@setupFromArguments, outputKind)
     if (libraryToAddToCache != null && !arguments.outputName.isNullOrEmpty())
-        report(ERROR, "${K2NativeCompilerArguments.ADD_CACHE} already implicitly sets output file name")
+        report(ERROR, "${K2NativeCompilerArguments::libraryToAddToCache.cliArgument} already implicitly sets output file name")
     libraryToAddToCache?.let { put(LIBRARY_TO_ADD_TO_CACHE, it) }
     put(CACHED_LIBRARIES, parseCachedLibraries(arguments, this@setupFromArguments))
     put(CACHE_DIRECTORIES, arguments.cacheDirectories.toNonNullList())
@@ -191,7 +202,7 @@ fun CompilerConfiguration.setupFromArguments(arguments: K2NativeCompilerArgument
     val incrementalCacheDir = arguments.incrementalCacheDir
     if ((incrementalCacheDir != null) xor (arguments.incrementalCompilation == true))
         report(ERROR, "For incremental compilation both flags should be supplied: " +
-                "-Xenable-incremental-compilation and ${K2NativeCompilerArguments.INCREMENTAL_CACHE_DIR}")
+                "-Xenable-incremental-compilation and ${K2NativeCompilerArguments::incrementalCacheDir.cliArgument}")
     incrementalCacheDir?.let { put(INCREMENTAL_CACHE_DIR, it) }
     arguments.filesToCache?.let { put(FILES_TO_CACHE, it.toList()) }
     put(MAKE_PER_FILE_CACHE, arguments.makePerFileCache)
@@ -231,18 +242,18 @@ fun CompilerConfiguration.setupFromArguments(arguments: K2NativeCompilerArgument
         "stms" -> GC.STOP_THE_WORLD_MARK_AND_SWEEP
         "cms" -> GC.PARALLEL_MARK_CONCURRENT_SWEEP
         else -> {
-            val validValues = enumValues<GC>().map {
+            val validValues = enumValues<GC>().joinToString("|") {
                 val fullName = "$it".lowercase()
-                it.shortcut?.let { short ->
+                it.shortcut.let { short ->
                     "$fullName (or: $short)"
-                } ?: fullName
-            }.joinToString("|")
+                }
+            }
             report(ERROR, "Unsupported argument -Xgc=${arguments.gc}. Use -Xbinary=gc= with values ${validValues}")
             null
         }
     }
     if (gcFromArgument != null) {
-        val newValue = gcFromArgument.shortcut ?: "$gcFromArgument".lowercase()
+        val newValue = gcFromArgument.shortcut
         report(WARNING, "-Xgc=${arguments.gc} compiler argument is deprecated. Use -Xbinary=gc=${newValue} instead")
     }
     // TODO: revise priority and/or report conflicting values.
@@ -250,7 +261,7 @@ fun CompilerConfiguration.setupFromArguments(arguments: K2NativeCompilerArgument
         putIfNotNull(BinaryOptions.gc, gcFromArgument)
     }
 
-    if (arguments.checkExternalCalls != null) {
+    if (arguments.checkExternalCalls) {
         report(WARNING, "-Xcheck-state-at-external-calls compiler argument is deprecated. Use -Xbinary=checkStateAtExternalCalls=true instead")
     }
     // TODO: revise priority and/or report conflicting values.
@@ -271,13 +282,13 @@ fun CompilerConfiguration.setupFromArguments(arguments: K2NativeCompilerArgument
         null -> null
         "std" -> AllocationMode.STD
         "mimalloc" -> {
-            report(STRONG_WARNING, "Usage of mimalloc in Kotlin/Native compiler is deprecated. Please remove -Xallocator=mimalloc compiler flag.")
-            AllocationMode.MIMALLOC
+            report(ERROR, "Usage of mimalloc in Kotlin/Native compiler is deprecated. Please remove -Xallocator=mimalloc compiler flag.")
+            AllocationMode.CUSTOM
         }
         "custom" -> AllocationMode.CUSTOM
         else -> {
-            report(ERROR, "Expected 'std', 'mimalloc', or 'custom' for allocator")
-            AllocationMode.STD
+            report(ERROR, "Expected 'std', or 'custom' for allocator")
+            AllocationMode.CUSTOM
         }
     })
     when (arguments.workerExceptionHandling) {
@@ -306,6 +317,7 @@ fun CompilerConfiguration.setupFromArguments(arguments: K2NativeCompilerArgument
     putIfNotNull(LLVM_VARIANT, when (val variant = arguments.llvmVariant) {
         "user" -> LlvmVariant.User
         "dev" -> LlvmVariant.Dev
+        "dev-with-asserts" -> LlvmVariant.DevWithAsserts
         null -> null
         else -> {
             val file = File(variant)
@@ -359,6 +371,7 @@ internal fun CompilerConfiguration.setupCommonOptionsForCaches(konanConfig: Kona
     put(LAZY_IR_FOR_CACHES, konanConfig.lazyIrForCaches)
     put(CommonConfigurationKeys.PARALLEL_BACKEND_THREADS, konanConfig.threadsCount)
     putIfNotNull(KONAN_DATA_DIR, konanConfig.distribution.localKonanDir.absolutePath)
+    putIfNotNull(BinaryOptions.minidumpLocation, konanConfig.minidumpLocation)
 }
 
 private fun Array<String>?.toNonNullList() = this?.asList().orEmpty()
@@ -371,7 +384,7 @@ private fun selectFrameworkType(
     return if (outputKind != CompilerOutputKind.FRAMEWORK && arguments.staticFramework) {
         configuration.report(
                 STRONG_WARNING,
-                "'${K2NativeCompilerArguments.STATIC_FRAMEWORK_FLAG}' is only supported when producing frameworks, " +
+                "'${K2NativeCompilerArguments::staticFramework.cliArgument}' is only supported when producing frameworks, " +
                         "but the compiler is producing ${outputKind.name.lowercase()}"
         )
         false
@@ -422,7 +435,7 @@ private fun selectIncludes(
     return if (includes.isNotEmpty() && outputKind == CompilerOutputKind.LIBRARY) {
         configuration.report(
                 ERROR,
-                "The ${K2NativeCompilerArguments.INCLUDE_ARG} flag is not supported when producing ${outputKind.name.lowercase()}"
+                "The ${K2NativeCompilerArguments::includes.cliArgument} flag is not supported when producing ${outputKind.name.lowercase()}"
         )
         emptyList()
     } else {
@@ -438,7 +451,7 @@ private fun parseCachedLibraries(
     if (libraryAndCache.size != 2) {
         configuration.report(
                 ERROR,
-                "incorrect ${K2NativeCompilerArguments.CACHED_LIBRARY} format: expected '<library>,<cache>', got '$it'"
+                "incorrect ${K2NativeCompilerArguments::cachedLibraries.cliArgument} format: expected '<library>,<cache>', got '$it'"
         )
         null
     } else {
@@ -454,7 +467,7 @@ private fun parseLibraryToAddToCache(
     val input = arguments.libraryToAddToCache
 
     return if (input != null && !outputKind.isCache) {
-        configuration.report(ERROR, "${K2NativeCompilerArguments.ADD_CACHE} can't be used when not producing cache")
+        configuration.report(ERROR, "${K2NativeCompilerArguments::libraryToAddToCache.cliArgument} can't be used when not producing cache")
         null
     } else {
         input
@@ -480,7 +493,7 @@ private fun parseShortModuleName(
     return if (input != null && outputKind != CompilerOutputKind.LIBRARY) {
         configuration.report(
                 STRONG_WARNING,
-                "${K2NativeCompilerArguments.SHORT_MODULE_NAME_ARG} is only supported when producing a Kotlin library, " +
+                "${K2NativeCompilerArguments::shortModuleName.cliArgument} is only supported when producing a Kotlin library, " +
                         "but the compiler is producing ${outputKind.name.lowercase()}"
         )
         null
@@ -502,43 +515,18 @@ private fun parseDebugPrefixMap(
     }
 }.toMap()
 
-class BinaryOptionWithValue<T : Any>(val option: BinaryOption<T>, val value: T)
-
 private fun <T : Any> CompilerConfiguration.put(binaryOptionWithValue: BinaryOptionWithValue<T>) {
-    this.put(binaryOptionWithValue.option.compilerConfigurationKey, binaryOptionWithValue.value)
+    this.put(binaryOptionWithValue.compilerConfigurationKey, binaryOptionWithValue.value)
 }
 
 fun parseBinaryOptions(
         arguments: K2NativeCompilerArguments,
         configuration: CompilerConfiguration
-): List<BinaryOptionWithValue<*>> {
-    val keyValuePairs = parseKeyValuePairs(arguments.binaryOptions, configuration) ?: return emptyList()
-
-    return keyValuePairs.mapNotNull { (key, value) ->
-        val option = BinaryOptions.getByName(key)
-        if (option == null) {
-            configuration.report(STRONG_WARNING, "Unknown binary option '$key'")
-            null
-        } else {
-            parseBinaryOption(option, value, configuration)
-        }
-    }
-}
-
-private fun <T : Any> parseBinaryOption(
-        option: BinaryOption<T>,
-        valueName: String,
-        configuration: CompilerConfiguration
-): BinaryOptionWithValue<T>? {
-    val value = option.valueParser.parse(valueName)
-    return if (value == null) {
-        configuration.report(STRONG_WARNING, "Unknown value '$valueName' of binary option '${option.name}'. " +
-                "Possible values are: ${option.valueParser.validValuesHint}")
-        null
-    } else {
-        BinaryOptionWithValue(option, value)
-    }
-}
+): List<BinaryOptionWithValue<*>> = parseBinaryOptions(
+        arguments.binaryOptions,
+        reportWarning = { configuration.report(STRONG_WARNING, it) },
+        reportError = { configuration.report(ERROR, it) },
+)
 
 private fun parseOverrideKonanProperties(
         arguments: K2NativeCompilerArguments,

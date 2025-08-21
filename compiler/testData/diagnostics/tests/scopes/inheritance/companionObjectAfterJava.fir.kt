@@ -51,3 +51,6 @@ class D: C() {
         D.<!UNRESOLVED_REFERENCE!>B_<!>()
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, functionDeclaration, init, interfaceDeclaration, javaType,
+nestedClass, objectDeclaration */

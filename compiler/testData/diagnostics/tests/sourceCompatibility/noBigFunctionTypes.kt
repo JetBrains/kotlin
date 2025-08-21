@@ -19,3 +19,6 @@ fun test(
     bar(<!UNSUPPORTED_FEATURE!>::foo<!>)
     bar(x)
 }
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, functionDeclaration, functionalType, outProjection,
+starProjection, vararg */

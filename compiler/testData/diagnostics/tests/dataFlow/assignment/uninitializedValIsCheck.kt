@@ -14,3 +14,6 @@ fun test(a: Any?, flag: Boolean, x: Any?) {
         b.<!UNRESOLVED_REFERENCE!>length<!>()
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, functionDeclaration, ifExpression, isExpression, localProperty, nullableType,
+propertyDeclaration, smartcast */

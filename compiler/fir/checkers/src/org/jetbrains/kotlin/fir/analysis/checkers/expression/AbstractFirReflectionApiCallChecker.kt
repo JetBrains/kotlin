@@ -25,20 +25,25 @@ import org.jetbrains.kotlin.name.Name
 
 // TODO (KT-60899): implement this checker for JS, similarly to K1's JsReflectionAPICallChecker.
 abstract class AbstractFirReflectionApiCallChecker : FirBasicExpressionChecker(MppCheckerKind.Common) {
-    protected abstract fun isWholeReflectionApiAvailable(context: CheckerContext): Boolean
-    protected abstract fun report(source: KtSourceElement?, context: CheckerContext, reporter: DiagnosticReporter)
+    context(context: CheckerContext)
+    protected abstract fun isWholeReflectionApiAvailable(): Boolean
 
-    protected open fun isAllowedKClassMember(name: Name, context: CheckerContext): Boolean = when (name) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    protected abstract fun report(source: KtSourceElement?)
+
+    context(context: CheckerContext)
+    protected open fun isAllowedKClassMember(name: Name): Boolean = when (name) {
         K_CLASS_SIMPLE_NAME, K_CLASS_IS_INSTANCE -> true
         K_CLASS_QUALIFIED_NAME -> context.languageVersionSettings.getFlag(AnalysisFlags.allowFullyQualifiedNameInKClass)
         else -> false
     }
 
-    final override fun check(expression: FirStatement, context: CheckerContext, reporter: DiagnosticReporter) {
-        if (isWholeReflectionApiAvailable(context)) return
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    final override fun check(expression: FirStatement) {
+        if (isWholeReflectionApiAvailable()) return
 
         // Do not report the diagnostic on kotlin-reflect sources.
-        if (isReflectionSource(context)) return
+        if (isReflectionSource()) return
 
         val resolvedReference = expression.toReference(context.session)?.resolved ?: return
         val referencedSymbol = resolvedReference.resolvedSymbol as? FirCallableSymbol ?: return
@@ -46,19 +51,21 @@ abstract class AbstractFirReflectionApiCallChecker : FirBasicExpressionChecker(M
         val containingClassId = (expression as? FirQualifiedAccessExpression)?.dispatchReceiver?.resolvedType?.fullyExpandedClassId(context.session)
         if (containingClassId == null || containingClassId.packageFqName != StandardNames.KOTLIN_REFLECT_FQ_NAME) return
 
-        if (!isAllowedReflectionApi(referencedSymbol.name, containingClassId, context)) {
-            report(resolvedReference.source ?: expression.source, context, reporter)
+        if (!isAllowedReflectionApi(referencedSymbol.name, containingClassId)) {
+            report(resolvedReference.source ?: expression.source)
         }
     }
 
-    protected open fun isAllowedReflectionApi(name: Name, containingClassId: ClassId, context: CheckerContext): Boolean =
+    context(context: CheckerContext)
+    protected open fun isAllowedReflectionApi(name: Name, containingClassId: ClassId): Boolean =
         name in ALLOWED_MEMBER_NAMES ||
-                containingClassId == K_CLASS && isAllowedKClassMember(name, context) ||
+                containingClassId == K_CLASS && isAllowedKClassMember(name) ||
                 (name.asString() == "get" || name.asString() == "set") && containingClassId in K_PROPERTY_CLASSES ||
                 containingClassId in ALLOWED_CLASSES
 
-    private fun isReflectionSource(context: CheckerContext): Boolean {
-        val containingFile = context.containingFile
+    context(context: CheckerContext)
+    private fun isReflectionSource(): Boolean {
+        val containingFile = context.containingFileSymbol
         return containingFile != null && containingFile.packageFqName.startsWith(StandardNames.KOTLIN_REFLECT_FQ_NAME)
     }
 
@@ -68,6 +75,9 @@ abstract class AbstractFirReflectionApiCallChecker : FirBasicExpressionChecker(M
         private val K_CLASS_SIMPLE_NAME = Name.identifier("simpleName")
         private val K_CLASS_IS_INSTANCE = Name.identifier("isInstance")
         private val K_CLASS_QUALIFIED_NAME = Name.identifier("qualifiedName")
+
+        @JvmStatic
+        protected val K_CLASS_IS_INTERFACE_NAME: Name = Name.identifier("isInterface")
 
         private val K_PROPERTY_CLASSES: Set<ClassId> =
             listOf(

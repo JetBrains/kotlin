@@ -42,7 +42,7 @@ internal class SymbolPsiArrayInitializerMemberValue(
         private val fieldUpdater = AtomicReferenceFieldUpdater.newUpdater(
             /* tclass = */ SymbolPsiArrayInitializerMemberValue::class.java,
             /* vclass = */ List::class.java,
-            /* fieldName = */ "cachedArguments",
+            /* fieldName = */ SymbolPsiArrayInitializerMemberValue::cachedArguments.name,
         )
     }
 }
@@ -112,7 +112,7 @@ internal class SymbolPsiLiteral(
     private val psiLiteral: PsiLiteralExpression,
 ) : SymbolPsiAnnotationMemberValue(kotlinOrigin, lightParent), PsiLiteralExpression {
     override fun getValue(): Any? = psiLiteral.value
-    override fun getText(): String = psiLiteral.text
+    override fun getText(): String = kotlinOrigin?.text ?: psiLiteral.text
     override fun getType(): PsiType? = psiLiteral.type
     override fun getReference(): PsiReference? = references.firstOrNull()
     override fun getReferences(): Array<out PsiReference> = kotlinOrigin?.references ?: PsiReference.EMPTY_ARRAY

@@ -11,3 +11,5 @@ enum class E {
 }
 
 fun f() = E.SECOND.<!UNRESOLVED_REFERENCE!>foo<!>()
+
+/* GENERATED_FIR_TAGS: enumDeclaration, enumEntry, functionDeclaration */

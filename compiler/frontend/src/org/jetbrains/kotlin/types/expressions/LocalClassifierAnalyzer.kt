@@ -118,6 +118,7 @@ class LocalClassifierAnalyzer(
             absentDescriptorHandler
         )
 
+        @Suppress("DEPRECATION")
         container.get<LazyTopDownAnalyzer>().analyzeDeclarations(
             TopDownAnalysisMode.LocalDeclarations,
             listOf(classOrObject),

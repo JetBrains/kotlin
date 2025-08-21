@@ -29,3 +29,6 @@ b.length
 <!MUST_BE_INITIALIZED!>val c: String<!>
 atMostOnce { <!VAL_REASSIGNMENT!>c<!> = "" }
 <!UNINITIALIZED_VARIABLE!>c<!>.length
+
+/* GENERATED_FIR_TAGS: assignment, contractCallsEffect, contracts, functionDeclaration, functionalType, init, inline,
+lambdaLiteral, localProperty, nullableType, propertyDeclaration, stringLiteral, typeParameter */

@@ -32,6 +32,7 @@ private const val root = "androidx.compose.runtime"
 private const val internalRoot = "$root.internal"
 private val rootFqName = FqName(root)
 private val internalRootFqName = FqName(internalRoot)
+private val toolingFqName = FqName("$root.tooling")
 
 object ComposeClassIds {
     private fun classIdFor(cname: String) =
@@ -40,11 +41,15 @@ object ComposeClassIds {
     internal fun internalClassIdFor(cname: String) =
         ClassId(internalRootFqName, Name.identifier(cname))
 
+    internal fun toolingClassIdFor(cname: String) =
+        ClassId(toolingFqName, Name.identifier(cname))
+
     val Composable = classIdFor("Composable")
     val ComposableInferredTarget = classIdFor("ComposableInferredTarget")
     val ComposableLambda = internalClassIdFor("ComposableLambda")
     val ComposableOpenTarget = classIdFor("ComposableOpenTarget")
     val ComposableTarget = classIdFor("ComposableTarget")
+    val ComposableTargetMarker = classIdFor("ComposableTargetMarker")
     val ComposeVersion = classIdFor("ComposeVersion")
     val Composer = classIdFor("Composer")
     val DisallowComposableCalls = classIdFor("DisallowComposableCalls")
@@ -56,6 +61,7 @@ object ComposeClassIds {
     val ReadOnlyComposable = classIdFor("ReadOnlyComposable")
     val State = classIdFor("State")
     val StabilityInferred = internalClassIdFor("StabilityInferred")
+    val SourceInformation = toolingClassIdFor("SourceInformation")
 }
 
 object ComposeCallableIds {
@@ -76,22 +82,22 @@ object ComposeCallableIds {
     val isLiveLiteralsEnabled =
         internalTopLevelCallableId("isLiveLiteralsEnabled")
     val isTraceInProgress =
-        topLevelCallableId(ComposeNames.IS_TRACE_IN_PROGRESS)
+        topLevelCallableId(ComposeNames.IsTraceInProgress)
     val liveLiteral = internalTopLevelCallableId("liveLiteral")
     val remember = topLevelCallableId("remember")
     val sourceInformation =
-        topLevelCallableId(ComposeNames.SOURCEINFORMATION)
+        topLevelCallableId(ComposeNames.SourceInformation)
     val sourceInformationMarkerEnd =
-        topLevelCallableId(ComposeNames.SOURCEINFORMATIONMARKEREND)
+        topLevelCallableId(ComposeNames.SourceInformationMarkerEnd)
     val sourceInformationMarkerStart =
-        topLevelCallableId(ComposeNames.SOURCEINFORMATIONMARKERSTART)
-    val traceEventEnd = topLevelCallableId(ComposeNames.TRACE_EVENT_END)
-    val traceEventStart = topLevelCallableId(ComposeNames.TRACE_EVENT_START)
-    val updateChangedFlags = topLevelCallableId(ComposeNames.UPDATE_CHANGED_FLAGS)
+        topLevelCallableId(ComposeNames.SourceInformationMarkerStart)
+    val traceEventEnd = topLevelCallableId(ComposeNames.TraceEventEnd)
+    val traceEventStart = topLevelCallableId(ComposeNames.TraceEventStart)
+    val updateChangedFlags = topLevelCallableId(ComposeNames.UpdateChangedFlags)
     val rememberComposableLambda =
-        internalTopLevelCallableId(ComposeNames.REMEMBER_COMPOSABLE_LAMBDA)
+        internalTopLevelCallableId(ComposeNames.RememberComposableLambda)
     val rememberComposableLambdaN =
-        internalTopLevelCallableId(ComposeNames.REMEMBER_COMPOSABLE_LAMBDAN)
+        internalTopLevelCallableId(ComposeNames.RememberComposableLambdaN)
 }
 
 object ComposeFqNames {
@@ -104,6 +110,7 @@ object ComposeFqNames {
     val ComposableTarget = ComposeClassIds.ComposableTarget.asSingleFqName()
     val ComposableTargetMarker = fqNameFor("ComposableTargetMarker")
     val ComposableTargetMarkerDescription = "description"
+    val ComposableTargetMarkerDescriptionName = Name.identifier(ComposableTargetMarkerDescription)
     val ComposableTargetApplierArgument = Name.identifier("applier")
     val ComposableOpenTarget = ComposeClassIds.ComposableOpenTarget.asSingleFqName()
     val ComposableOpenTargetIndexArgument = Name.identifier("index")

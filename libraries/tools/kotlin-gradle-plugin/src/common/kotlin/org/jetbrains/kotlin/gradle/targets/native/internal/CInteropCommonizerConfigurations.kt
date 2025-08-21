@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.gradle.targets.metadata.findMetadataCompilation
 import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.gradle.utils.createConsumable
 import org.jetbrains.kotlin.gradle.utils.createResolvable
-import org.jetbrains.kotlin.gradle.utils.setAttribute
 import org.jetbrains.kotlin.tooling.core.UnsafeApi
 
 /* Elements configuration */
@@ -115,7 +114,7 @@ internal suspend fun Project.locateOrCreateCommonizedCInteropDependencyConfigura
          * If artifacts are added using [CInteropCommonizerArtifactTypeAttribute.KLIB_COLLECTION_DIR] then a transformation
          * has to happen that will resolve the exact list of klibs.
          */
-        configuration.attributes.setAttribute(
+        configuration.attributes.attribute(
             CInteropCommonizerArtifactTypeAttribute.attribute,
             CInteropCommonizerArtifactTypeAttribute.KLIB
         )
@@ -129,7 +128,7 @@ private fun Project.setupBasicCommonizedCInteropConfigurationAttributes(
     configuration: Configuration,
     commonizerTarget: SharedCommonizerTarget,
 ) {
-    configuration.attributes.setAttribute(CommonizerTargetAttribute.attribute, commonizerTarget.identityString)
-    configuration.attributes.setAttribute(Usage.USAGE_ATTRIBUTE, objects.named(KotlinUsages.KOTLIN_COMMONIZED_CINTEROP))
-    configuration.attributes.setAttribute(Category.CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))
+    configuration.attributes.attribute(CommonizerTargetAttribute.attribute, commonizerTarget.identityString)
+    configuration.attributes.attribute(Usage.USAGE_ATTRIBUTE, objects.named(KotlinUsages.KOTLIN_COMMONIZED_CINTEROP))
+    configuration.attributes.attribute(Category.CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))
 }

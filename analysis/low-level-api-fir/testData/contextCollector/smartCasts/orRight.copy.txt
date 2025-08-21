@@ -17,6 +17,9 @@ Tower Data Context:
                 FirValueParameterSymbol obj: R|kotlin/Any|
     Element 7
         Scope: FirLocalScope
+Smart Casts:
+    FirValueParameterSymbol obj: R|kotlin/Any|
+    Types:
 
 FILE: [ResolvedTo(IMPORTS)] orRight.kt
     public final? [ResolvedTo(RAW_FIR)] interface Foo : R|kotlin/Any| {

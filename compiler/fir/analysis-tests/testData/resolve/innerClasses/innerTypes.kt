@@ -20,3 +20,5 @@ fun check() {
     accept(<!ARGUMENT_TYPE_MISMATCH!>Boxed<Int>().substitute()<!>) // illegal
     accept(Boxed<String>().substitute()) // ok
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, inner, nullableType, propertyDeclaration, typeParameter */

@@ -12,3 +12,5 @@ fun testIf1(b: Boolean) {
 
 fun todo(): Nothing = throw Exception()
 fun bar() {}
+
+/* GENERATED_FIR_TAGS: functionDeclaration, ifExpression, integerLiteral */

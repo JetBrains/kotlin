@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
 
 fun BodyResolveComponents.computeRepresentativeTypeForBareType(type: ConeClassLikeType, originalType: ConeKotlinType): ConeKotlinType? {
-    originalType.lowerBoundIfFlexible().fullyExpandedType(session).let {
+    originalType.lowerBoundIfFlexible().fullyExpandedType().let {
         if (it !== originalType) return computeRepresentativeTypeForBareType(type, it)
     }
 
@@ -34,12 +34,12 @@ fun BodyResolveComponents.computeRepresentativeTypeForBareType(type: ConeClassLi
         return computeRepresentativeTypeForBareType(type, it)
     }
 
-    val originalClassLookupTag = originalType.fullyExpandedType(session).classLikeLookupTagIfAny ?: return null
+    val originalClassLookupTag = originalType.fullyExpandedType().classLikeLookupTagIfAny ?: return null
 
     val castTypeAlias = type.abbreviatedTypeOrSelf.classLikeLookupTagIfAny?.toTypeAliasSymbol(session)?.fir
     if (castTypeAlias != null && !canBeUsedAsBareType(castTypeAlias)) return null
 
-    val expandedCastType = type.fullyExpandedType(session)
+    val expandedCastType = type.fullyExpandedType()
     val castClass = expandedCastType.lookupTag.toRegularClassSymbol(session)?.fir ?: return null
 
     val superTypeWithParameters = with(session.typeContext) {

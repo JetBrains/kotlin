@@ -7,3 +7,6 @@ fun test() {
     f.get(null)
     f.get("")
 }
+
+/* GENERATED_FIR_TAGS: callableReference, functionDeclaration, getter, integerLiteral, localProperty, nullableType,
+propertyDeclaration, propertyWithExtensionReceiver, stringLiteral */

@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.caches
 import com.github.benmanes.caffeine.cache.Cache
 import com.github.benmanes.caffeine.cache.Caffeine
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.analysis.api.platform.caches.getOrPutWithNullableValue
+import org.jetbrains.kotlin.analysis.api.platform.caches.nullValueToNull
 import org.jetbrains.kotlin.fir.caches.FirCache
 import org.jetbrains.kotlin.fir.caches.FirCachesFactory
 import org.jetbrains.kotlin.fir.caches.FirLazyValue
@@ -92,9 +94,9 @@ private class FirCaffeineCache<K : Any, V, CONTEXT>(
 ) : FirCache<K, V, CONTEXT>() {
 
     /**
-     * [Cache.get] cannot be used here as [createValue] may access the map recursively
+     * [Cache.get] cannot be used here as [createValue] may access the map recursively.
      */
-    override fun getValue(key: K, context: CONTEXT): V = cache.asMap().getOrPutWithNullableValue(key) {
+    override fun getValue(key: K, context: CONTEXT): V = cache.getOrPutWithNullableValue(key) {
         createValue(it, context)
     }
 

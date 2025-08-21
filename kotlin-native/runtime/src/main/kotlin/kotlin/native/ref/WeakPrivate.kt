@@ -8,6 +8,7 @@ package kotlin.native.ref
 import kotlinx.cinterop.*
 import kotlin.native.internal.*
 import kotlin.native.internal.escapeAnalysis.Escapes
+import kotlin.native.internal.ref.*
 
 /**
  *   Theory of operations:
@@ -38,13 +39,10 @@ import kotlin.native.internal.escapeAnalysis.Escapes
 @ExportTypeInfo("theRegularWeakReferenceImplTypeInfo")
 @HasFinalizer // TODO: Consider just using Cleaners.
 internal class RegularWeakReferenceImpl(
-    val weakRef: COpaquePointer,
+    val weakRef: ExternalRCRef,
     val referred: COpaquePointer, // TODO: This exists only for the ExtraObjectData's sake. Refactor and remove.
 ) : WeakReferenceImpl() {
-    @GCUnsafeCall("Konan_RegularWeakReferenceImpl_get")
-    @Escapes(0b11) // RegularWeakReferenceImpl must always escape to the heap (because of finalizers)
-                   // and the return value escapes because it must be on the heap for weak reference machinery
-    external override fun get(): Any?
+    override fun get(): Any? = dereferenceExternalRCRefOrNull(weakRef)
 }
 
 @PublishedApi
@@ -59,7 +57,8 @@ external internal fun getWeakReferenceImpl(referent: Any): WeakReferenceImpl
 
 // Create a counter object.
 @ExportForCppRuntime
-internal fun makeRegularWeakReferenceImpl(weakRef: COpaquePointer, referred: COpaquePointer) = RegularWeakReferenceImpl(weakRef, referred)
+internal fun makeRegularWeakReferenceImpl(referred: Any, referredOpaque: COpaquePointer) =
+    RegularWeakReferenceImpl(createUnretainedExternalRCRef(referred), referredOpaque)
 
 internal class PermanentWeakReferenceImpl(val referred: Any): kotlin.native.ref.WeakReferenceImpl() {
     override fun get(): Any? = referred

@@ -1,6 +1,5 @@
 // FIR_IDENTICAL
-// RUN_PIPELINE_TILL: FIR2IR
-// DISABLE_NEXT_PHASE_SUGGESTION
+// RUN_PIPELINE_TILL: BACKEND
 // ISSUE: KT-26045
 
 // MODULE: lib
@@ -14,3 +13,5 @@ fun test(a: A) {
     a.foo()
     a.bar()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration */

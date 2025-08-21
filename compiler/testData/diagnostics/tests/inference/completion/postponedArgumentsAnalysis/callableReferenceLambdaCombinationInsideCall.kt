@@ -9,3 +9,6 @@ fun test() {
     fun foo() {}
     select(id1(::foo), id2 { })
 }
+
+/* GENERATED_FIR_TAGS: callableReference, capturedType, functionDeclaration, integerLiteral, lambdaLiteral,
+localFunction, nullableType, outProjection, typeParameter, vararg */

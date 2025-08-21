@@ -16,9 +16,10 @@ import org.jetbrains.kotlin.psi.KtParameter
 abstract class FirFunctionalTypeParameterSyntaxChecker : FirFunctionTypeRefChecker(
     MppCheckerKind.Common
 ), FirSyntaxChecker<FirFunctionTypeParameter, KtParameter> {
-    override fun check(typeRef: FirFunctionTypeRef, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(typeRef: FirFunctionTypeRef) {
         for (parameter in typeRef.parameters) {
-            checkSyntax(parameter, context, reporter)
+            checkSyntax(parameter)
         }
     }
 }

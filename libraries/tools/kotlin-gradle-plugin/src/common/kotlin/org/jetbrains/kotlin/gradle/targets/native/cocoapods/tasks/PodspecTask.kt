@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.gradle.plugin.cocoapods.CocoapodsExtension.PodspecPl
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin.Companion.DUMMY_FRAMEWORK_TASK_NAME
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin.Companion.GENERATE_WRAPPER_PROPERTY
-import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin.Companion.POD_INSTALL_TASK_NAME
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin.Companion.SYNC_TASK_NAME
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.cocoapodsBuildDirs
 import org.jetbrains.kotlin.gradle.utils.getFile
@@ -97,7 +96,7 @@ abstract class PodspecTask @Inject constructor(private val projectLayout: Projec
 
     @get:Input
     @get:Optional
-    internal abstract val gradleWrapperPath: Property<String?>
+    internal abstract val gradleWrapperFile: Property<File?>
 
     @get:Input
     internal abstract val projectPath: Property<String>
@@ -229,13 +228,11 @@ abstract class PodspecTask @Inject constructor(private val projectLayout: Projec
                     """.trimIndent()
                 )
             }
-
         }
     }
 
     private fun gradleCommand(): String {
-        val gradleWrapperPath: String? = gradleWrapperPath.get()
-        val gradleWrapper = gradleWrapperPath?.let(::File)
+        val gradleWrapper = gradleWrapperFile.orNull
         require(gradleWrapper != null && gradleWrapper.exists()) {
             """
             The Gradle wrapper is required to run the build from Xcode.

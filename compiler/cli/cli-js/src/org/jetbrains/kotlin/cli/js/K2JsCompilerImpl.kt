@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.cli.js
 
 import com.intellij.openapi.Disposable
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.backend.js.JsGenerationGranularity
 import org.jetbrains.kotlin.cli.common.*
 import org.jetbrains.kotlin.cli.common.ExitCode.*
@@ -26,6 +27,9 @@ import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.TranslationMode
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImplForJsIC
 import org.jetbrains.kotlin.js.config.*
 import org.jetbrains.kotlin.serialization.js.ModuleKind
+import org.jetbrains.kotlin.util.PerformanceManager
+import org.jetbrains.kotlin.util.PhaseType
+import org.jetbrains.kotlin.util.PotentiallyIncorrectPhaseTimeMeasurement
 import java.io.File
 
 class Ir2JsTransformer private constructor(
@@ -103,7 +107,7 @@ class Ir2JsTransformer private constructor(
 
         val mode = TranslationMode.fromFlags(dce, granularity, minimizedMemberNames)
         return transformer
-            .also { performanceManager?.notifyIRGenerationStarted() }
+            .also { performanceManager?.notifyPhaseStarted(PhaseType.Backend) }
             .makeJsCodeGenerator(ir.allModules, mode)
     }
 
@@ -111,8 +115,7 @@ class Ir2JsTransformer private constructor(
         return makeJsCodeGenerator()
             .generateJsCode(relativeRequirePath = true, outJsProgram = false)
             .also {
-                performanceManager?.notifyIRGenerationFinished()
-                performanceManager?.notifyGenerationFinished()
+                performanceManager?.notifyPhaseFinished(PhaseType.Backend)
             }
     }
 }
@@ -124,7 +127,7 @@ internal class K2JsCompilerImpl(
     outputName: String,
     outputDir: File,
     messageCollector: MessageCollector,
-    performanceManager: CommonCompilerPerformanceManager?,
+    performanceManager: PerformanceManager?,
 ) : K2JsCompilerImplBase(
     arguments = arguments,
     configuration = configuration,
@@ -158,6 +161,7 @@ internal class K2JsCompilerImpl(
         return null
     }
 
+    @K1Deprecation
     override fun tryInitializeCompiler(rootDisposable: Disposable): KotlinCoreEnvironment? {
         JsConfigurationUpdater.fillConfiguration(configuration, arguments)
         if (messageCollector.hasErrors()) return null
@@ -170,9 +174,12 @@ internal class K2JsCompilerImpl(
             return null
         }
 
-        performanceManager?.notifyCompilerInitialized(
-            sourcesFiles.size, environmentForJS.countLinesOfCode(sourcesFiles), "$moduleName-${configuration.moduleKind}"
-        )
+        performanceManager?.apply {
+            targetDescription = moduleName
+            outputKind = configuration.moduleKind?.name
+            addSourcesStats(sourcesFiles.size, environmentForJS.countLinesOfCode(sourcesFiles))
+            notifyPhaseFinished(PhaseType.Initialization)
+        }
 
         return environmentForJS
     }
@@ -192,20 +199,22 @@ internal class K2JsCompilerImpl(
             arguments.granularity,
             arguments.dtsStrategy
         )
-        performanceManager?.notifyIRTranslationFinished()
+        @OptIn(PotentiallyIncorrectPhaseTimeMeasurement::class)
+        performanceManager?.notifyCurrentPhaseFinishedIfNeeded() // It should be `notifyPhaseFinished(PhaseMeasurementType.TranslationToIr)`, but it's not always started
         return OK
     }
 
     override fun compileNoIC(mainCallArguments: List<String>?, module: ModulesStructure, moduleKind: ModuleKind?): ExitCode {
         if (!arguments.irProduceJs) {
-            performanceManager?.notifyIRTranslationFinished()
+            @OptIn(PotentiallyIncorrectPhaseTimeMeasurement::class)
+            performanceManager?.notifyCurrentPhaseFinishedIfNeeded() // It should be `notifyPhaseFinished(PhaseMeasurementType.TranslationToIr)`, but it's not always started
             return OK
         }
 
         JsConfigurationUpdater.checkWasmArgumentsUsage(arguments, messageCollector)
 
         configuration.phaseConfig = createPhaseConfig(arguments).also {
-            if (arguments.listPhases) it.list(getJsPhases(configuration))
+            if (arguments.listPhases) it.list(getJsLowerings(configuration))
         }
         val ir2JsTransformer = Ir2JsTransformer(arguments, module, messageCollector, mainCallArguments)
         val outputs = JsBackendPipelinePhase.compileNonIncrementally(

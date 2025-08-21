@@ -17,3 +17,5 @@ class B : A() {
         get() = 23
         private set(i: Int) {}
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, getter, integerLiteral, override, propertyDeclaration, setter */

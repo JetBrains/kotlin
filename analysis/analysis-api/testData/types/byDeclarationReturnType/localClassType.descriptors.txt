@@ -2,7 +2,6 @@ KaUsualClassType:
   abbreviation: null
   annotations: []
   classId: B
-  nullability: NON_NULLABLE
   qualifiers: [
     KaResolvedClassTypeQualifier:
       name: B
@@ -11,6 +10,9 @@ KaUsualClassType:
   ]
   symbol: KaNamedClassSymbol(<local>/B)
   typeArguments: []
+  isMarkedNullable: false
+  isNullable: false
+  hasFlexibleNullability: false
 
 Rendered type:
 B

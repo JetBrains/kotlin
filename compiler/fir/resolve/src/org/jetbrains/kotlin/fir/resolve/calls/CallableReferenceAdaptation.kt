@@ -21,13 +21,17 @@ internal class CallableReferenceAdaptation(
         if (AbstractTypeChecker.RUN_SLOW_ASSERTIONS) {
             require(
                 defaults != 0 ||
-                        suspendConversionStrategy != CallableReferenceConversionStrategy.NoConversion ||
+                        hasFunctionKindConversion() ||
                         coercionStrategy != CoercionStrategy.NO_COERCION ||
                         mappedArguments.values.any { it is ResolvedCallArgument.VarargArgument }
             ) {
                 "Adaptation must be non-trivial."
             }
         }
+    }
+
+    fun hasFunctionKindConversion(): Boolean {
+        return suspendConversionStrategy != CallableReferenceConversionStrategy.NoConversion
     }
 }
 

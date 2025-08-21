@@ -95,9 +95,6 @@ object PathUtil {
 
     const val KOTLIN_JAVA_STDLIB_SRC_JAR_OLD = "kotlin-runtime-sources.jar"
 
-    const val TROVE4J_NAME = "trove4j"
-    const val TROVE4J_JAR = "$TROVE4J_NAME.jar"
-
     const val KOTLIN_COMPILER_NAME = "kotlin-compiler"
     const val KOTLIN_COMPILER_JAR = "$KOTLIN_COMPILER_NAME.jar"
 

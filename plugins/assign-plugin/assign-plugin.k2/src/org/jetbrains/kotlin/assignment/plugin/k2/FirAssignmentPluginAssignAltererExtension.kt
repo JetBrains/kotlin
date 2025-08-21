@@ -8,21 +8,24 @@ package org.jetbrains.kotlin.assignment.plugin.k2
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.declarations.DirectDeclarationsAccess
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.buildFunctionCall
 import org.jetbrains.kotlin.fir.expressions.builder.buildPropertyAccessExpression
 import org.jetbrains.kotlin.fir.extensions.FirAssignExpressionAltererExtension
+import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.references.builder.buildSimpleNamedReference
 import org.jetbrains.kotlin.fir.references.toResolvedVariableSymbol
+import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirBackingFieldSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFieldSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
-import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.upperBoundIfFlexible
 import org.jetbrains.kotlin.types.expressions.OperatorConventions.ASSIGN_METHOD
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
+@OptIn(DirectDeclarationsAccess::class)
 class FirAssignmentPluginAssignAltererExtension(
     session: FirSession
 ) : FirAssignExpressionAltererExtension(session) {
@@ -46,7 +49,7 @@ class FirAssignmentPluginAssignAltererExtension(
         session.annotationMatchingService.isAnnotated(resolvedReturnType.upperBoundIfFlexible().toRegularClassSymbol(session))
 
     private fun buildFunctionCall(variableAssignment: FirVariableAssignment): FirFunctionCall {
-        val leftArgument = variableAssignment.calleeReference!!
+        val leftArgument = variableAssignment.calleeReference as FirNamedReference
         val leftSymbol = leftArgument.toResolvedVariableSymbol()!!
         val leftResolvedType = leftSymbol.resolvedReturnTypeRef
         val rightArgument = variableAssignment.rValue

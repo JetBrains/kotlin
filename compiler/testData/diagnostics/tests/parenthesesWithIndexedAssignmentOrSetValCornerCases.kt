@@ -60,3 +60,7 @@ fun bad(c: C?) {
     <!UNSAFE_CALL!>c?.ppa[0]<!> += 10
     (<!UNSAFE_CALL!>c?.ppa[0]<!>) += 10
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, assignment, funWithExtensionReceiver, functionDeclaration, integerLiteral,
+lambdaLiteral, localProperty, nullableType, objectDeclaration, operator, propertyDeclaration, safeCall, stringLiteral,
+thisExpression */

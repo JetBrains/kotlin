@@ -151,3 +151,11 @@ var @receiver:[Ann Ann] C.t
     get() = A(1, 2)
     @[Ann Ann]
     set(@[<!ANNOTATION_ON_ILLEGAL_MULTI_FIELD_VALUE_CLASS_TYPED_TARGET!>Ann<!> <!ANNOTATION_ON_ILLEGAL_MULTI_FIELD_VALUE_CLASS_TYPED_TARGET!>Ann<!>] _) = Unit
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, annotationUseSiteTargetField, annotationUseSiteTargetFieldDelegate,
+annotationUseSiteTargetParam, annotationUseSiteTargetProperty, annotationUseSiteTargetPropertyGetter,
+annotationUseSiteTargetPropertySetter, annotationUseSiteTargetReceiver, annotationUseSiteTargetSetterParameter,
+callableReference, classDeclaration, equalityExpression, funWithExtensionReceiver, functionDeclaration, getter,
+ifExpression, init, integerLiteral, lambdaLiteral, localFunction, localProperty, nullableType, operator,
+primaryConstructor, propertyDeclaration, propertyDelegate, propertyWithExtensionReceiver, setter, starProjection,
+stringLiteral, typeAliasDeclaration, value */

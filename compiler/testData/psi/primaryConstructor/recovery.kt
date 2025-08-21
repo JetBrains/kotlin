@@ -1,3 +1,5 @@
+// COMPILATION_ERRORS
+
 class A0 @Ann (x: Int) {
     val x = 1
 }

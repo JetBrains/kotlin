@@ -89,3 +89,7 @@ class My {
 fun init() {
     <!VAL_REASSIGNMENT!>top<!> = 1
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, assignment, classDeclaration, functionDeclaration, ifExpression, init,
+integerLiteral, localClass, localFunction, localProperty, primaryConstructor, propertyDeclaration, secondaryConstructor,
+stringLiteral */

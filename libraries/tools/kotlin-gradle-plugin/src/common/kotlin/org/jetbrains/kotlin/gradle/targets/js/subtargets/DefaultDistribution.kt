@@ -37,14 +37,14 @@ class DefaultDistribution(
     private val targetName: Property<String>,
     override val distributionName: Property<String>,
 ) : Distribution {
-    @Deprecated("Use `distributionName` instead", ReplaceWith("distributionName"))
+    @Deprecated("Use `distributionName` instead. Scheduled for removal in Kotlin 2.3.", ReplaceWith("distributionName"), level = DeprecationLevel.ERROR)
     override var name: String?
         get() = distributionName.orNull
         set(value) {
             distributionName.set(value)
         }
 
-    @Deprecated("Use `outputDirectory` instead", ReplaceWith("outputDirectory"))
+    @Deprecated("Use `outputDirectory` instead. Scheduled for removal in Kotlin 2.3.", ReplaceWith("outputDirectory"), level = DeprecationLevel.ERROR)
     override var directory: File
         get() = outputDirectory.get().asFile
         set(value) {

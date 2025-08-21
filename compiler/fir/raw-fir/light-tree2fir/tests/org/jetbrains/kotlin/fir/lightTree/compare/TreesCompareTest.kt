@@ -58,8 +58,10 @@ class TreesCompareTest : AbstractRawFirBuilderTestCase() {
 
     private fun compareAll() {
         @OptIn(ObsoleteTestInfrastructure::class)
+        val session = FirSessionFactoryHelper.createEmptySession()
+
         val lightTreeConverter = LightTree2Fir(
-            session = FirSessionFactoryHelper.createEmptySession(),
+            session = session,
             scopeProvider = StubFirScopeProvider,
             diagnosticsReporter = null
         )
@@ -72,7 +74,7 @@ class TreesCompareTest : AbstractRawFirBuilderTestCase() {
 
                 //psi
                 val ktFile = createPsiFile(FileUtil.getNameWithoutExtension(PathUtil.getFileName(filePath)), fileText) as KtFile
-                val firFileFromPsi = ktFile.toFirFile()
+                val firFileFromPsi = ktFile.toFirFile(session)
                 val treeFromPsi = FirRenderer().renderElementAsString(firFileFromPsi)
                     .replace("<ERROR TYPE REF:.*?>".toRegex(), "<ERROR TYPE REF>")
 
@@ -80,11 +82,6 @@ class TreesCompareTest : AbstractRawFirBuilderTestCase() {
                 val firFileFromLightTree = lightTreeConverter.buildFirFile(text, KtIoFileSourceFile(file), linesMapping)
                 val treeFromLightTree = FirRenderer().renderElementAsString(firFileFromLightTree)
                     .replace("<ERROR TYPE REF:.*?>".toRegex(), "<ERROR TYPE REF>")
-
-                if (treeFromLightTree.contains("<strcat>")) {
-                    // temporarily ignore differences of string literal concatenations between light-tree and psi due to KT-29222
-                    return@compareBase true
-                }
 
                 if (treeFromLightTree != treeFromPsi) {
                     return@compareBase false
@@ -96,8 +93,10 @@ class TreesCompareTest : AbstractRawFirBuilderTestCase() {
 
     fun testCompareDiagnostics() {
         @OptIn(ObsoleteTestInfrastructure::class)
+        val session = FirSessionFactoryHelper.createEmptySession()
+
         val lightTreeConverter = LightTree2Fir(
-            session = FirSessionFactoryHelper.createEmptySession(),
+            session = session,
             scopeProvider = StubFirScopeProvider,
             diagnosticsReporter = null
         )
@@ -124,7 +123,7 @@ class TreesCompareTest : AbstractRawFirBuilderTestCase() {
                 //psi
                 val fileName = PathUtil.getFileName(filePath)
                 val ktFile = createPsiFile(FileUtil.getNameWithoutExtension(fileName), fileText) as KtFile
-                val firFileFromPsi = ktFile.toFirFile()
+                val firFileFromPsi = ktFile.toFirFile(session)
                 val treeFromPsi = FirRenderer().renderElementAsString(firFileFromPsi)
                     .replace("<Unsupported LValue.*?>".toRegex(), "<Unsupported LValue>")
                     .replace("<ERROR TYPE REF:.*?>".toRegex(), "<ERROR TYPE REF>")
@@ -139,11 +138,6 @@ class TreesCompareTest : AbstractRawFirBuilderTestCase() {
                 val treeFromLightTree = FirRenderer().renderElementAsString(firFileFromLightTree)
                     .replace("<Unsupported LValue.*?>".toRegex(), "<Unsupported LValue>")
                     .replace("<ERROR TYPE REF:.*?>".toRegex(), "<ERROR TYPE REF>")
-
-                if (treeFromLightTree.contains("<strcat>") || treeFromLightTree.contains("Not an expression")) {
-                    // temporarily ignore differences of string literal concatenations between light-tree and psi due to KT-29222
-                    return@compareBase true
-                }
 
                 if (treeFromLightTree != treeFromPsi) {
                     return@compareBase false

@@ -75,7 +75,7 @@ internal class StaticDefaultFunctionLowering(val context: JvmBackendContext) : I
         }
 
         val newCallee = getStaticFunctionWithReceivers(callee)
-        val newCall = irCall(expression, newCallee, receiversAsArguments = true)
+        val newCall = irCall(expression, newCallee)
 
         return super.visitCall(newCall)
     }

@@ -29,6 +29,12 @@ public class JsIrES6InvalidationPerFileTestGenerated extends AbstractJsIrES6Inva
   }
 
   @Test
+  @TestMetadata("addJsFunCall")
+  public void testAddJsFunCall() {
+    runTest("js/js.translator/testData/incremental/invalidation/addJsFunCall/");
+  }
+
+  @Test
   @TestMetadata("addUpdateRemoveDependentFile")
   public void testAddUpdateRemoveDependentFile() {
     runTest("js/js.translator/testData/incremental/invalidation/addUpdateRemoveDependentFile/");
@@ -43,6 +49,12 @@ public class JsIrES6InvalidationPerFileTestGenerated extends AbstractJsIrES6Inva
   @Test
   public void testAllFilesPresentInInvalidation() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/incremental/invalidation"), Pattern.compile("^([^_](.+))$"), null, TargetBackend.JS_IR_ES6, false);
+  }
+
+  @Test
+  @TestMetadata("associatedObjectKey")
+  public void testAssociatedObjectKey() {
+    runTest("js/js.translator/testData/incremental/invalidation/associatedObjectKey/");
   }
 
   @Test
@@ -148,6 +160,12 @@ public class JsIrES6InvalidationPerFileTestGenerated extends AbstractJsIrES6Inva
   }
 
   @Test
+  @TestMetadata("enumEntriesInlining")
+  public void testEnumEntriesInlining() {
+    runTest("js/js.translator/testData/incremental/invalidation/enumEntriesInlining/");
+  }
+
+  @Test
   @TestMetadata("enumsInInlineFunctions")
   public void testEnumsInInlineFunctions() {
     runTest("js/js.translator/testData/incremental/invalidation/enumsInInlineFunctions/");
@@ -163,6 +181,12 @@ public class JsIrES6InvalidationPerFileTestGenerated extends AbstractJsIrES6Inva
   @TestMetadata("exportsThroughInlineFunction")
   public void testExportsThroughInlineFunction() {
     runTest("js/js.translator/testData/incremental/invalidation/exportsThroughInlineFunction/");
+  }
+
+  @Test
+  @TestMetadata("externalOverriddenProperty")
+  public void testExternalOverriddenProperty() {
+    runTest("js/js.translator/testData/incremental/invalidation/externalOverriddenProperty/");
   }
 
   @Test
@@ -211,12 +235,6 @@ public class JsIrES6InvalidationPerFileTestGenerated extends AbstractJsIrES6Inva
   @TestMetadata("fastPath2")
   public void testFastPath2() {
     runTest("js/js.translator/testData/incremental/invalidation/fastPath2/");
-  }
-
-  @Test
-  @TestMetadata("fileNameCaseClash")
-  public void testFileNameCaseClash() {
-    runTest("js/js.translator/testData/incremental/invalidation/fileNameCaseClash/");
   }
 
   @Test

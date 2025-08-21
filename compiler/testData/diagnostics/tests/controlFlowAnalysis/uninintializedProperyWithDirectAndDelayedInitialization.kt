@@ -1,5 +1,5 @@
-// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
+// RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-56678
 
 class A {
@@ -17,3 +17,5 @@ class B {
     }
     val d = a
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, init, integerLiteral, propertyDeclaration */

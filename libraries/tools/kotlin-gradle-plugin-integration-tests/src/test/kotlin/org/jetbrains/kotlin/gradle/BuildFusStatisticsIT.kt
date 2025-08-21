@@ -21,9 +21,12 @@ class BuildFusStatisticsIT : KGPDaemonsBaseTest() {
         project(
             "buildSrcUsingKotlinCompilationAndKotlinPlugin",
             gradleVersion,
-            buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)
+            buildOptions = defaultBuildOptions
+                .copy(logLevel = LogLevel.DEBUG)
+                // on Gradle 7 with CC enabled `KotlinBuildStatsBeanService` is being instantiated in another classpath
+                .disableConfigurationCacheForGradle7(gradleVersion),
         ) {
-            build("assemble") {
+            build("assemble", "-Pkotlin.session.logger.root.path=$projectPath") {
                 //register build service for buildSrc.
                 when {
                     // until 8.0, Gradle was embedding the Kotlin version that used a slightly different approach to detect build finish,
@@ -86,9 +89,17 @@ class BuildFusStatisticsIT : KGPDaemonsBaseTest() {
                             "class org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatsBeanService is already instantiated in another classpath",
                             1
                         )
+
+                        // from buildSrc project
                         assertOutputContainsExactlyTimes(
                             "[KOTLIN] Initialize BuildFusService${'$'}Inject",
-                            2
+                            1
+                        )
+
+                        //from main project
+                        assertOutputContainsExactlyTimes(
+                            "[KOTLIN] Initialize FlowActionBuildFusService${'$'}Inject",
+                            1
                         )
                     }
                 }

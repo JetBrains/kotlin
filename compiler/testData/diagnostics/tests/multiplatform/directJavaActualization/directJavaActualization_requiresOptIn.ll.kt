@@ -11,3 +11,5 @@ expect annotation class Foo
 @kotlin.RequiresOptIn
 @kotlin.annotations.jvm.KotlinActual
 public @interface Foo {}
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, expect */

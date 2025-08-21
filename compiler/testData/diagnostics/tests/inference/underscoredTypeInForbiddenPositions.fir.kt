@@ -1,4 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
+// LATEST_LV_DIFFERENCE
 // LANGUAGE: +PartiallySpecifiedTypeArguments, +ContextParameters
 // DIAGNOSTICS: -UNCHECKED_CAST
 // WITH_STDLIB
@@ -43,14 +44,14 @@ fun <`_`> bar(): Foo<<!UNDERSCORE_USAGE_WITHOUT_BACKTICKS!>_<!>> = TODO()
 fun <`_`> bar1(): Foo<Foo<<!UNDERSCORE_USAGE_WITHOUT_BACKTICKS!>_<!>>> = TODO()
 
 fun test() {
-    val x1 = foo<Int, (<!UNRESOLVED_REFERENCE!>_<!>) -> Unit> { <!CANNOT_INFER_PARAMETER_TYPE!>{ it }<!> }
-    val x1cp = foo<Int, context(<!UNRESOLVED_REFERENCE!>_<!>) () -> Unit> { <!CANNOT_INFER_PARAMETER_TYPE!>{ "" }<!> }
+    val x1 = foo<Int, (<!UNRESOLVED_REFERENCE!>_<!>) -> Unit> { <!CANNOT_INFER_VALUE_PARAMETER_TYPE("it")!>{ it }<!> }
+    val x1cp = foo<Int, context(<!UNRESOLVED_REFERENCE!>_<!>) () -> Unit> { <!CANNOT_INFER_IT_PARAMETER_TYPE!>{ "" }<!> }
     val x2 = foo<Int, (Int) -> <!UNRESOLVED_REFERENCE!>_<!>> { <!UNRESOLVED_REFERENCE!>{ it }<!> }
-    val x3 = foo<Int, ((<!UNRESOLVED_REFERENCE!>_<!>)) -> <!UNRESOLVED_REFERENCE!>_<!>> { <!CANNOT_INFER_PARAMETER_TYPE!>{ it }<!> }
-    val x4 = <!CANNOT_INFER_PARAMETER_TYPE, CANNOT_INFER_PARAMETER_TYPE, FUNCTION_CALL_EXPECTED!>foo<!><!UNRESOLVED_REFERENCE!><<!>Int<!SYNTAX!>, _ -> Float><!> { <!UNRESOLVED_REFERENCE!>{ <!UNRESOLVED_REFERENCE!>it<!> }<!> }
-    val x5 = foo<Int, Foo<(<!UNRESOLVED_REFERENCE!>_<!>) -> Float>> { <!ARGUMENT_TYPE_MISMATCH!>{ it }<!> }
-    val x6 = foo<Int, Foo<(<!UNRESOLVED_REFERENCE!>_<!>) -> <!UNRESOLVED_REFERENCE!>_<!>>> { <!ARGUMENT_TYPE_MISMATCH!>{ it }<!> }
-    val x7 = foo<Int, Foo<(Int) -> <!UNRESOLVED_REFERENCE!>_<!>>> { <!ARGUMENT_TYPE_MISMATCH!>{ it }<!> }
+    val x3 = foo<Int, ((<!UNRESOLVED_REFERENCE!>_<!>)) -> <!UNRESOLVED_REFERENCE!>_<!>> { <!CANNOT_INFER_VALUE_PARAMETER_TYPE("it")!>{ it }<!> }
+    val x4 = <!CANNOT_INFER_PARAMETER_TYPE, CANNOT_INFER_PARAMETER_TYPE, FUNCTION_CALL_EXPECTED!>foo<!><!UNRESOLVED_REFERENCE!><<!>Int<!SYNTAX!>, _ -> Float><!> <!CANNOT_INFER_IT_PARAMETER_TYPE!>{ { <!UNRESOLVED_REFERENCE!>it<!> } }<!>
+    val x5 = foo<Int, Foo<(<!UNRESOLVED_REFERENCE!>_<!>) -> Float>> { <!RETURN_TYPE_MISMATCH!>{ it }<!> }
+    val x6 = foo<Int, Foo<(<!UNRESOLVED_REFERENCE!>_<!>) -> <!UNRESOLVED_REFERENCE!>_<!>>> { <!RETURN_TYPE_MISMATCH!>{ it }<!> }
+    val x7 = foo<Int, Foo<(Int) -> <!UNRESOLVED_REFERENCE!>_<!>>> { <!RETURN_TYPE_MISMATCH!>{ it }<!> }
 
     val z32: Pair<<!UNRESOLVED_REFERENCE!>_<!>, Float> = 1 to 1f
     val z34: Pair<((<!UNRESOLVED_REFERENCE!>_<!>)), Float> = 1 to 1f
@@ -76,3 +77,8 @@ fun test() {
 
 @Target(AnnotationTarget.TYPE)
 annotation class Anno(val x: Int)
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, anonymousObjectExpression, asExpression, classDeclaration,
+comparisonExpression, funWithExtensionReceiver, functionDeclaration, functionalType, ifExpression, integerLiteral,
+isExpression, lambdaLiteral, localProperty, nullableType, primaryConstructor, propertyDeclaration, stringLiteral,
+typeAliasDeclaration, typeAliasDeclarationWithTypeParameter, typeConstraint, typeParameter, typeWithContext */

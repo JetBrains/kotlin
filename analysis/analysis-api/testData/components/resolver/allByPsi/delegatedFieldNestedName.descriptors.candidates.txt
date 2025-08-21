@@ -25,9 +25,11 @@ KtAnnotationEntry(31,61): '@Target(AnnotationTarget.TYPE)'
           receiverType = null
           returnType = kotlin.annotation.AnnotationTarget
           symbol = vararg allowedTargets: kotlin.annotation.AnnotationTarget
+          contextParameters = []
           callableId = null)
       }
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -40,8 +42,10 @@ KtAnnotationEntry(31,61): '@Target(AnnotationTarget.TYPE)'
               receiverType = null
               returnType = kotlin.annotation.AnnotationTarget
               symbol = vararg allowedTargets: kotlin.annotation.AnnotationTarget
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -55,9 +59,11 @@ KtConstructorCalleeExpression(32,38): 'Target'
           receiverType = null
           returnType = kotlin.annotation.AnnotationTarget
           symbol = vararg allowedTargets: kotlin.annotation.AnnotationTarget
+          contextParameters = []
           callableId = null)
       }
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -70,8 +76,10 @@ KtConstructorCalleeExpression(32,38): 'Target'
               receiverType = null
               returnType = kotlin.annotation.AnnotationTarget
               symbol = vararg allowedTargets: kotlin.annotation.AnnotationTarget
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -91,9 +99,11 @@ KtNameReferenceExpression(32,38): 'Target'
           receiverType = null
           returnType = kotlin.annotation.AnnotationTarget
           symbol = vararg allowedTargets: kotlin.annotation.AnnotationTarget
+          contextParameters = []
           callableId = null)
       }
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -106,8 +116,10 @@ KtNameReferenceExpression(32,38): 'Target'
               receiverType = null
               returnType = kotlin.annotation.AnnotationTarget
               symbol = vararg allowedTargets: kotlin.annotation.AnnotationTarget
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -124,6 +136,7 @@ KtDotQualifiedExpression(39,60): 'AnnotationTarget.TYPE'
       argumentMapping = {}
       isImplicitInvoke = true
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:
           expression = TYPE
@@ -139,8 +152,10 @@ KtDotQualifiedExpression(39,60): 'AnnotationTarget.TYPE'
               receiverType = null
               returnType = ERROR_TYPE
               symbol = value: T
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/invoke
       typeArgumentsMapping = {
         T -> (ERROR_TYPE),
@@ -248,9 +263,11 @@ KtAnnotationEntry(225,241): '@Anno(0 + outer)'
           receiverType = null
           returnType = kotlin.Int
           symbol = i: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -263,8 +280,10 @@ KtAnnotationEntry(225,241): '@Anno(0 + outer)'
               receiverType = null
               returnType = kotlin.Int
               symbol = i: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -278,9 +297,11 @@ KtConstructorCalleeExpression(226,230): 'Anno'
           receiverType = null
           returnType = kotlin.Int
           symbol = i: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -293,8 +314,10 @@ KtConstructorCalleeExpression(226,230): 'Anno'
               receiverType = null
               returnType = kotlin.Int
               symbol = i: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -314,9 +337,11 @@ KtNameReferenceExpression(226,230): 'Anno'
           receiverType = null
           returnType = kotlin.Int
           symbol = i: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -329,8 +354,10 @@ KtNameReferenceExpression(226,230): 'Anno'
               receiverType = null
               returnType = kotlin.Int
               symbol = i: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -350,10 +377,12 @@ KtBinaryExpression(231,240): '0 + outer'
           receiverType = null
           returnType = kotlin.Int
           symbol = other: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = 0
           isSafeNavigation = false
@@ -369,8 +398,10 @@ KtBinaryExpression(231,240): '0 + outer'
               receiverType = null
               returnType = kotlin.Int
               symbol = other: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/Int.plus
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -387,10 +418,12 @@ KtOperationReferenceExpression(233,234): '+'
           receiverType = null
           returnType = kotlin.Int
           symbol = other: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = 0
           isSafeNavigation = false
@@ -406,8 +439,10 @@ KtOperationReferenceExpression(233,234): '+'
               receiverType = null
               returnType = kotlin.Int
               symbol = other: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/Int.plus
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -416,6 +451,7 @@ KtNameReferenceExpression(235,240): 'outer'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaVariableSignature:
@@ -423,6 +459,7 @@ KtNameReferenceExpression(235,240): 'outer'
           receiverType = null
           returnType = kotlin.Int
           symbol = val outer: kotlin.Int
+          contextParameters = []
           callableId = second/outer
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -455,9 +492,11 @@ KtAnnotationEntry(247,263): '@Anno(1 + outer)'
           receiverType = null
           returnType = kotlin.Int
           symbol = i: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -470,8 +509,10 @@ KtAnnotationEntry(247,263): '@Anno(1 + outer)'
               receiverType = null
               returnType = kotlin.Int
               symbol = i: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -485,9 +526,11 @@ KtConstructorCalleeExpression(248,252): 'Anno'
           receiverType = null
           returnType = kotlin.Int
           symbol = i: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -500,8 +543,10 @@ KtConstructorCalleeExpression(248,252): 'Anno'
               receiverType = null
               returnType = kotlin.Int
               symbol = i: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -521,9 +566,11 @@ KtNameReferenceExpression(248,252): 'Anno'
           receiverType = null
           returnType = kotlin.Int
           symbol = i: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -536,8 +583,10 @@ KtNameReferenceExpression(248,252): 'Anno'
               receiverType = null
               returnType = kotlin.Int
               symbol = i: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -557,10 +606,12 @@ KtBinaryExpression(253,262): '1 + outer'
           receiverType = null
           returnType = kotlin.Int
           symbol = other: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = 1
           isSafeNavigation = false
@@ -576,8 +627,10 @@ KtBinaryExpression(253,262): '1 + outer'
               receiverType = null
               returnType = kotlin.Int
               symbol = other: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/Int.plus
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -594,10 +647,12 @@ KtOperationReferenceExpression(255,256): '+'
           receiverType = null
           returnType = kotlin.Int
           symbol = other: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = 1
           isSafeNavigation = false
@@ -613,8 +668,10 @@ KtOperationReferenceExpression(255,256): '+'
               receiverType = null
               returnType = kotlin.Int
               symbol = other: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/Int.plus
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -623,6 +680,7 @@ KtNameReferenceExpression(257,262): 'outer'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaVariableSignature:
@@ -630,6 +688,7 @@ KtNameReferenceExpression(257,262): 'outer'
           receiverType = null
           returnType = kotlin.Int
           symbol = val outer: kotlin.Int
+          contextParameters = []
           callableId = second/outer
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -662,9 +721,11 @@ KtAnnotationEntry(269,285): '@Anno(2 + outer)'
           receiverType = null
           returnType = kotlin.Int
           symbol = i: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -677,8 +738,10 @@ KtAnnotationEntry(269,285): '@Anno(2 + outer)'
               receiverType = null
               returnType = kotlin.Int
               symbol = i: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -692,9 +755,11 @@ KtConstructorCalleeExpression(270,274): 'Anno'
           receiverType = null
           returnType = kotlin.Int
           symbol = i: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -707,8 +772,10 @@ KtConstructorCalleeExpression(270,274): 'Anno'
               receiverType = null
               returnType = kotlin.Int
               symbol = i: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -728,9 +795,11 @@ KtNameReferenceExpression(270,274): 'Anno'
           receiverType = null
           returnType = kotlin.Int
           symbol = i: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -743,8 +812,10 @@ KtNameReferenceExpression(270,274): 'Anno'
               receiverType = null
               returnType = kotlin.Int
               symbol = i: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -764,10 +835,12 @@ KtBinaryExpression(275,284): '2 + outer'
           receiverType = null
           returnType = kotlin.Int
           symbol = other: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = 2
           isSafeNavigation = false
@@ -783,8 +856,10 @@ KtBinaryExpression(275,284): '2 + outer'
               receiverType = null
               returnType = kotlin.Int
               symbol = other: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/Int.plus
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -801,10 +876,12 @@ KtOperationReferenceExpression(277,278): '+'
           receiverType = null
           returnType = kotlin.Int
           symbol = other: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = 2
           isSafeNavigation = false
@@ -820,8 +897,10 @@ KtOperationReferenceExpression(277,278): '+'
               receiverType = null
               returnType = kotlin.Int
               symbol = other: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/Int.plus
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -830,6 +909,7 @@ KtNameReferenceExpression(279,284): 'outer'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaVariableSignature:
@@ -837,6 +917,7 @@ KtNameReferenceExpression(279,284): 'outer'
           receiverType = null
           returnType = kotlin.Int
           symbol = val outer: kotlin.Int
+          contextParameters = []
           callableId = second/outer
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -869,9 +950,11 @@ KtAnnotationEntry(310,326): '@Anno(4 + outer)'
           receiverType = null
           returnType = kotlin.Int
           symbol = i: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -884,8 +967,10 @@ KtAnnotationEntry(310,326): '@Anno(4 + outer)'
               receiverType = null
               returnType = kotlin.Int
               symbol = i: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -899,9 +984,11 @@ KtConstructorCalleeExpression(311,315): 'Anno'
           receiverType = null
           returnType = kotlin.Int
           symbol = i: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -914,8 +1001,10 @@ KtConstructorCalleeExpression(311,315): 'Anno'
               receiverType = null
               returnType = kotlin.Int
               symbol = i: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -935,9 +1024,11 @@ KtNameReferenceExpression(311,315): 'Anno'
           receiverType = null
           returnType = kotlin.Int
           symbol = i: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -950,8 +1041,10 @@ KtNameReferenceExpression(311,315): 'Anno'
               receiverType = null
               returnType = kotlin.Int
               symbol = i: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -971,10 +1064,12 @@ KtBinaryExpression(316,325): '4 + outer'
           receiverType = null
           returnType = kotlin.Int
           symbol = other: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = 4
           isSafeNavigation = false
@@ -990,8 +1085,10 @@ KtBinaryExpression(316,325): '4 + outer'
               receiverType = null
               returnType = kotlin.Int
               symbol = other: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/Int.plus
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -1008,10 +1105,12 @@ KtOperationReferenceExpression(318,319): '+'
           receiverType = null
           returnType = kotlin.Int
           symbol = other: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = 4
           isSafeNavigation = false
@@ -1027,8 +1126,10 @@ KtOperationReferenceExpression(318,319): '+'
               receiverType = null
               returnType = kotlin.Int
               symbol = other: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/Int.plus
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -1037,6 +1138,7 @@ KtNameReferenceExpression(320,325): 'outer'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaVariableSignature:
@@ -1044,6 +1146,7 @@ KtNameReferenceExpression(320,325): 'outer'
           receiverType = null
           returnType = kotlin.Int
           symbol = val outer: kotlin.Int
+          contextParameters = []
           callableId = second/outer
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -1076,9 +1179,11 @@ KtAnnotationEntry(334,350): '@Anno(5 + outer)'
           receiverType = null
           returnType = kotlin.Int
           symbol = i: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -1091,8 +1196,10 @@ KtAnnotationEntry(334,350): '@Anno(5 + outer)'
               receiverType = null
               returnType = kotlin.Int
               symbol = i: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -1106,9 +1213,11 @@ KtConstructorCalleeExpression(335,339): 'Anno'
           receiverType = null
           returnType = kotlin.Int
           symbol = i: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -1121,8 +1230,10 @@ KtConstructorCalleeExpression(335,339): 'Anno'
               receiverType = null
               returnType = kotlin.Int
               symbol = i: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -1142,9 +1253,11 @@ KtNameReferenceExpression(335,339): 'Anno'
           receiverType = null
           returnType = kotlin.Int
           symbol = i: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -1157,8 +1270,10 @@ KtNameReferenceExpression(335,339): 'Anno'
               receiverType = null
               returnType = kotlin.Int
               symbol = i: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -1178,10 +1293,12 @@ KtBinaryExpression(340,349): '5 + outer'
           receiverType = null
           returnType = kotlin.Int
           symbol = other: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = 5
           isSafeNavigation = false
@@ -1197,8 +1314,10 @@ KtBinaryExpression(340,349): '5 + outer'
               receiverType = null
               returnType = kotlin.Int
               symbol = other: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/Int.plus
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -1215,10 +1334,12 @@ KtOperationReferenceExpression(342,343): '+'
           receiverType = null
           returnType = kotlin.Int
           symbol = other: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = 5
           isSafeNavigation = false
@@ -1234,8 +1355,10 @@ KtOperationReferenceExpression(342,343): '+'
               receiverType = null
               returnType = kotlin.Int
               symbol = other: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/Int.plus
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -1244,6 +1367,7 @@ KtNameReferenceExpression(344,349): 'outer'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaVariableSignature:
@@ -1251,6 +1375,7 @@ KtNameReferenceExpression(344,349): 'outer'
           receiverType = null
           returnType = kotlin.Int
           symbol = val outer: kotlin.Int
+          contextParameters = []
           callableId = second/outer
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -1295,9 +1420,11 @@ KtAnnotationEntry(400,416): '@Anno(6 + inner)'
           receiverType = null
           returnType = kotlin.Int
           symbol = i: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -1310,8 +1437,10 @@ KtAnnotationEntry(400,416): '@Anno(6 + inner)'
               receiverType = null
               returnType = kotlin.Int
               symbol = i: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -1325,9 +1454,11 @@ KtConstructorCalleeExpression(401,405): 'Anno'
           receiverType = null
           returnType = kotlin.Int
           symbol = i: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -1340,8 +1471,10 @@ KtConstructorCalleeExpression(401,405): 'Anno'
               receiverType = null
               returnType = kotlin.Int
               symbol = i: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -1361,9 +1494,11 @@ KtNameReferenceExpression(401,405): 'Anno'
           receiverType = null
           returnType = kotlin.Int
           symbol = i: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -1376,8 +1511,10 @@ KtNameReferenceExpression(401,405): 'Anno'
               receiverType = null
               returnType = kotlin.Int
               symbol = i: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -1401,6 +1538,7 @@ KtNameReferenceExpression(410,415): 'inner'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaVariableSignature:
@@ -1408,6 +1546,7 @@ KtNameReferenceExpression(410,415): 'inner'
           receiverType = null
           returnType = kotlin.String
           symbol = val inner: kotlin.String
+          contextParameters = []
           callableId = second/inner
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -1440,9 +1579,11 @@ KtAnnotationEntry(422,438): '@Anno(7 + inner)'
           receiverType = null
           returnType = kotlin.Int
           symbol = i: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -1455,8 +1596,10 @@ KtAnnotationEntry(422,438): '@Anno(7 + inner)'
               receiverType = null
               returnType = kotlin.Int
               symbol = i: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -1470,9 +1613,11 @@ KtConstructorCalleeExpression(423,427): 'Anno'
           receiverType = null
           returnType = kotlin.Int
           symbol = i: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -1485,8 +1630,10 @@ KtConstructorCalleeExpression(423,427): 'Anno'
               receiverType = null
               returnType = kotlin.Int
               symbol = i: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -1506,9 +1653,11 @@ KtNameReferenceExpression(423,427): 'Anno'
           receiverType = null
           returnType = kotlin.Int
           symbol = i: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -1521,8 +1670,10 @@ KtNameReferenceExpression(423,427): 'Anno'
               receiverType = null
               returnType = kotlin.Int
               symbol = i: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -1546,6 +1697,7 @@ KtNameReferenceExpression(432,437): 'inner'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaVariableSignature:
@@ -1553,6 +1705,7 @@ KtNameReferenceExpression(432,437): 'inner'
           receiverType = null
           returnType = kotlin.String
           symbol = val inner: kotlin.String
+          contextParameters = []
           callableId = second/inner
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -1585,9 +1738,11 @@ KtAnnotationEntry(444,460): '@Anno(8 + inner)'
           receiverType = null
           returnType = kotlin.Int
           symbol = i: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -1600,8 +1755,10 @@ KtAnnotationEntry(444,460): '@Anno(8 + inner)'
               receiverType = null
               returnType = kotlin.Int
               symbol = i: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -1615,9 +1772,11 @@ KtConstructorCalleeExpression(445,449): 'Anno'
           receiverType = null
           returnType = kotlin.Int
           symbol = i: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -1630,8 +1789,10 @@ KtConstructorCalleeExpression(445,449): 'Anno'
               receiverType = null
               returnType = kotlin.Int
               symbol = i: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -1651,9 +1812,11 @@ KtNameReferenceExpression(445,449): 'Anno'
           receiverType = null
           returnType = kotlin.Int
           symbol = i: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -1666,8 +1829,10 @@ KtNameReferenceExpression(445,449): 'Anno'
               receiverType = null
               returnType = kotlin.Int
               symbol = i: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -1691,6 +1856,7 @@ KtNameReferenceExpression(454,459): 'inner'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaVariableSignature:
@@ -1698,6 +1864,7 @@ KtNameReferenceExpression(454,459): 'inner'
           receiverType = null
           returnType = kotlin.String
           symbol = val inner: kotlin.String
+          contextParameters = []
           callableId = second/inner
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -1754,9 +1921,11 @@ KtAnnotationEntry(559,575): '@Anno(9 + inner)'
           receiverType = null
           returnType = kotlin.Int
           symbol = i: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -1769,8 +1938,10 @@ KtAnnotationEntry(559,575): '@Anno(9 + inner)'
               receiverType = null
               returnType = kotlin.Int
               symbol = i: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -1784,9 +1955,11 @@ KtConstructorCalleeExpression(560,564): 'Anno'
           receiverType = null
           returnType = kotlin.Int
           symbol = i: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -1799,8 +1972,10 @@ KtConstructorCalleeExpression(560,564): 'Anno'
               receiverType = null
               returnType = kotlin.Int
               symbol = i: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -1820,9 +1995,11 @@ KtNameReferenceExpression(560,564): 'Anno'
           receiverType = null
           returnType = kotlin.Int
           symbol = i: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -1835,8 +2012,10 @@ KtNameReferenceExpression(560,564): 'Anno'
               receiverType = null
               returnType = kotlin.Int
               symbol = i: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -1856,10 +2035,12 @@ KtBinaryExpression(565,574): '9 + inner'
           receiverType = null
           returnType = kotlin.Int
           symbol = other: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = 9
           isSafeNavigation = false
@@ -1875,8 +2056,10 @@ KtBinaryExpression(565,574): '9 + inner'
               receiverType = null
               returnType = kotlin.Int
               symbol = other: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/Int.plus
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -1893,10 +2076,12 @@ KtOperationReferenceExpression(567,568): '+'
           receiverType = null
           returnType = kotlin.Int
           symbol = other: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = 9
           isSafeNavigation = false
@@ -1912,8 +2097,10 @@ KtOperationReferenceExpression(567,568): '+'
               receiverType = null
               returnType = kotlin.Int
               symbol = other: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/Int.plus
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -1922,6 +2109,7 @@ KtNameReferenceExpression(569,574): 'inner'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaImplicitReceiverValue:
           symbol = second/MyClass.Companion
           type = second.MyClass.Companion
@@ -1931,14 +2119,16 @@ KtNameReferenceExpression(569,574): 'inner'
           receiverType = null
           returnType = kotlin.Int
           symbol = val inner: kotlin.Int
+          contextParameters = []
           callableId = second/MyClass.Companion.inner
       simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaVariableSignature:
@@ -1946,6 +2136,7 @@ KtNameReferenceExpression(569,574): 'inner'
           receiverType = null
           returnType = kotlin.String
           symbol = val inner: kotlin.String
+          contextParameters = []
           callableId = second/inner
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -1979,9 +2170,11 @@ KtAnnotationEntry(583,600): '@Anno(10 + inner)'
           receiverType = null
           returnType = kotlin.Int
           symbol = i: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -1994,8 +2187,10 @@ KtAnnotationEntry(583,600): '@Anno(10 + inner)'
               receiverType = null
               returnType = kotlin.Int
               symbol = i: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -2009,9 +2204,11 @@ KtConstructorCalleeExpression(584,588): 'Anno'
           receiverType = null
           returnType = kotlin.Int
           symbol = i: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -2024,8 +2221,10 @@ KtConstructorCalleeExpression(584,588): 'Anno'
               receiverType = null
               returnType = kotlin.Int
               symbol = i: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -2045,9 +2244,11 @@ KtNameReferenceExpression(584,588): 'Anno'
           receiverType = null
           returnType = kotlin.Int
           symbol = i: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -2060,8 +2261,10 @@ KtNameReferenceExpression(584,588): 'Anno'
               receiverType = null
               returnType = kotlin.Int
               symbol = i: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -2081,10 +2284,12 @@ KtBinaryExpression(589,599): '10 + inner'
           receiverType = null
           returnType = kotlin.Int
           symbol = other: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = 10
           isSafeNavigation = false
@@ -2100,8 +2305,10 @@ KtBinaryExpression(589,599): '10 + inner'
               receiverType = null
               returnType = kotlin.Int
               symbol = other: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/Int.plus
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -2118,10 +2325,12 @@ KtOperationReferenceExpression(592,593): '+'
           receiverType = null
           returnType = kotlin.Int
           symbol = other: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = 10
           isSafeNavigation = false
@@ -2137,8 +2346,10 @@ KtOperationReferenceExpression(592,593): '+'
               receiverType = null
               returnType = kotlin.Int
               symbol = other: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/Int.plus
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -2147,6 +2358,7 @@ KtNameReferenceExpression(594,599): 'inner'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaImplicitReceiverValue:
           symbol = second/MyClass.Companion
           type = second.MyClass.Companion
@@ -2156,14 +2368,16 @@ KtNameReferenceExpression(594,599): 'inner'
           receiverType = null
           returnType = kotlin.Int
           symbol = val inner: kotlin.Int
+          contextParameters = []
           callableId = second/MyClass.Companion.inner
       simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaVariableSignature:
@@ -2171,6 +2385,7 @@ KtNameReferenceExpression(594,599): 'inner'
           receiverType = null
           returnType = kotlin.String
           symbol = val inner: kotlin.String
+          contextParameters = []
           callableId = second/inner
       simpleAccess = Read
       typeArgumentsMapping = {}

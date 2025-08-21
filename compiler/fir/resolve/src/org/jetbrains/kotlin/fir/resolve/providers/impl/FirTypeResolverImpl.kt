@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.diagnostics.*
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirTypeCandidateCollector.TypeResolutionResult
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
-import org.jetbrains.kotlin.fir.resolve.transformers.ScopeClassDeclaration
 import org.jetbrains.kotlin.fir.scopes.impl.FirDefaultStarImportingScope
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
@@ -34,50 +33,73 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
 
     private fun resolveSymbol(
         symbol: FirBasedSymbol<*>,
-        qualifier: List<FirQualifierPart>,
+        remainingQualifier: List<FirQualifierPart>,
         qualifierResolver: FirQualifierResolver,
     ): FirBasedSymbol<*>? {
         return when (symbol) {
             is FirClassLikeSymbol<*> -> {
-                if (qualifier.size == 1) {
+                if (remainingQualifier.isEmpty()) {
                     symbol
                 } else {
-                    resolveLocalClassChain(symbol, qualifier)
-                        ?: qualifierResolver.resolveSymbolWithPrefix(qualifier, symbol.classId)
-                        ?: qualifierResolver.resolveEnumEntrySymbol(qualifier, symbol.classId)
+                    resolveLocalClassChain(symbol, remainingQualifier)
+                        ?: qualifierResolver.resolveSymbolWithPrefix(symbol.classId, remainingQualifier)
+                        ?: qualifierResolver.resolveEnumEntrySymbol(symbol.classId, remainingQualifier)
                 }
             }
-            is FirTypeParameterSymbol -> symbol.takeIf { qualifier.size == 1 }
+            is FirTypeParameterSymbol -> symbol.takeIf { remainingQualifier.isEmpty() }
             else -> error("!")
         }
     }
 
     private fun resolveUserTypeToSymbol(
         typeRef: FirUserTypeRef,
-        scopeClassDeclaration: ScopeClassDeclaration,
-        useSiteFile: FirFile?,
+        configuration: TypeResolutionConfiguration,
         supertypeSupplier: SupertypeSupplier,
         resolveDeprecations: Boolean
     ): TypeResolutionResult {
         session.lookupTracker?.recordUserTypeRefLookup(
-            typeRef, scopeClassDeclaration.scopes.flatMap { it.scopeOwnerLookupNames }, useSiteFile?.source
+            typeRef, configuration.scopes.flatMap { it.scopeOwnerLookupNames }, configuration.useSiteFile?.source
         )
 
         val qualifier = typeRef.qualifier
         val qualifierResolver = session.qualifierResolver
         val collector = FirTypeCandidateCollector(
             session,
-            useSiteFile,
-            scopeClassDeclaration.containingDeclarations,
+            configuration.useSiteFile,
+            configuration.containingClassDeclarations,
             supertypeSupplier,
             resolveDeprecations
         )
 
-        for (scope in scopeClassDeclaration.scopes) {
+        if (configuration.sealedClassForContextSensitiveResolution != null) {
+            val resolvedSymbol = resolveSymbol(configuration.sealedClassForContextSensitiveResolution, qualifier, qualifierResolver)
+
+            if (resolvedSymbol is FirRegularClassSymbol
+                && resolvedSymbol.fir.typeParameters.firstOrNull() !is FirOuterClassTypeParameterRef
+                // Only sealed subclasses are allowed
+                && resolvedSymbol.fir.isSubclassOf(
+                    configuration.sealedClassForContextSensitiveResolution.toLookupTag(), session, isStrict = true
+                )
+            ) {
+                collector.processCandidate(
+                    resolvedSymbol,
+                    // We don't allow inner classes capturing outer type parameters
+                    ConeSubstitutor.Empty,
+                )
+            }
+
+            // We need/expect no scopes for context-sensitive resolution
+            // See TypeResolutionConfiguration.Companion.createForContextSensitiveResolution
+            check(!configuration.scopes.iterator().hasNext())
+
+            return collector.getResult()
+        }
+
+        for (scope in configuration.scopes) {
             if (collector.applicability == CandidateApplicability.RESOLVED) break
             val name = qualifier.first().name
             val processor = { symbol: FirClassifierSymbol<*>, substitutorFromScope: ConeSubstitutor ->
-                val resolvedSymbol = resolveSymbol(symbol, qualifier, qualifierResolver)
+                val resolvedSymbol = resolveSymbol(symbol, qualifier.subList(1, qualifier.size), qualifierResolver)
 
                 if (resolvedSymbol != null) {
                     collector.processCandidate(resolvedSymbol, substitutorFromScope)
@@ -104,19 +126,21 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
         return collector.getResult()
     }
 
-    private fun resolveLocalClassChain(symbol: FirClassLikeSymbol<*>, qualifier: List<FirQualifierPart>): FirRegularClassSymbol? {
-        if (symbol !is FirRegularClassSymbol || !symbol.isLocal) {
+    private fun resolveLocalClassChain(outermostClassLikeSymbol: FirClassLikeSymbol<*>, remainingQualifier: List<FirQualifierPart>): FirClassLikeSymbol<*>? {
+        if (outermostClassLikeSymbol !is FirRegularClassSymbol || !outermostClassLikeSymbol.isLocal) {
             return null
         }
 
-        fun resolveLocalClassChain(classSymbol: FirRegularClassSymbol, qualifierIndex: Int): FirRegularClassSymbol? {
-            if (qualifierIndex == qualifier.size) {
-                return classSymbol
+        fun resolveLocalClassChain(classLikeSymbol: FirClassLikeSymbol<*>, qualifierIndex: Int): FirClassLikeSymbol<*>? {
+            if (qualifierIndex == remainingQualifier.size) {
+                return classLikeSymbol
             }
 
-            val qualifierName = qualifier[qualifierIndex].name
-            for (declarationSymbol in classSymbol.declarationSymbols) {
-                if (declarationSymbol is FirRegularClassSymbol) {
+            if (classLikeSymbol !is FirRegularClassSymbol) return null
+
+            val qualifierName = remainingQualifier[qualifierIndex].name
+            for (declarationSymbol in classLikeSymbol.declarationSymbols) {
+                if (declarationSymbol is FirClassLikeSymbol<*>) {
                     if (declarationSymbol.toLookupTag().name == qualifierName) {
                         return resolveLocalClassChain(declarationSymbol, qualifierIndex + 1)
                     }
@@ -126,23 +150,29 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
             return null
         }
 
-        return resolveLocalClassChain(symbol, 1)
+        return resolveLocalClassChain(outermostClassLikeSymbol, 0)
     }
 
     @OptIn(SymbolInternals::class)
     private fun FirQualifierResolver.resolveEnumEntrySymbol(
-        qualifier: List<FirQualifierPart>,
         classId: ClassId,
+        remainingQualifier: List<FirQualifierPart>,
     ): FirVariableSymbol<FirEnumEntry>? {
         // Assuming the current qualifier refers to an enum entry, we drop the last part so we get a reference to the enum class.
-        val enumClassSymbol = resolveSymbolWithPrefix(qualifier.dropLast(1), classId) ?: return null
+        val enumClassSymbol = resolveSymbolWithPrefix(classId, remainingQualifier.dropLast(1)) ?: return null
         val enumClassFir = enumClassSymbol.fir as? FirRegularClass ?: return null
         if (!enumClassFir.isEnumClass) return null
         val enumEntryMatchingLastQualifier = enumClassFir.declarations
-            .firstOrNull { it is FirEnumEntry && it.name == qualifier.last().name } as? FirEnumEntry
+            .firstOrNull { it is FirEnumEntry && it.name == remainingQualifier.last().name } as? FirEnumEntry
         return enumEntryMatchingLastQualifier?.symbol
     }
 
+    /**
+     * @return ConeErrorType only for completely unresolved symbols or ambiguity or type argument mapping problems
+     * @return regular ConeLookupTagBasedType if resolution is successful or a single erroneous candidate was found
+     *
+     * Thus, the visibility error should be handled further by just looking into TypeResolutionResult again
+     */
     @OptIn(SymbolInternals::class)
     private fun resolveUserType(
         typeRef: FirUserTypeRef,
@@ -181,16 +211,21 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
                     }
                 }
                 result is TypeResolutionResult.Ambiguity -> {
-                    ConeAmbiguityError(typeRef.qualifier.last().name, result.typeCandidates.first().applicability, result.typeCandidates)
+                    ConeAmbiguityError(
+                        typeRef.qualifier.last().name,
+                        result.typeCandidates.first().applicability,
+                        result.typeCandidates.associateWith { it.diagnostic }
+                    )
                 }
                 else -> {
-                    ConeUnresolvedTypeQualifierError(typeRef.qualifier, isNullable = typeRef.isMarkedNullable)
+                    ConeUnresolvedTypeQualifierError(typeRef.qualifier)
                 }
             }
             return ConeErrorType(
                 diagnostic,
                 typeArguments = resultingArguments,
-                attributes = typeRef.annotations.computeTypeAttributes(session, shouldExpandTypeAliases = true)
+                attributes = typeRef.annotations.computeTypeAttributes(session, shouldExpandTypeAliases = true),
+                nullable = typeRef.isMarkedNullable,
             )
         }
 
@@ -344,26 +379,25 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
 
     override fun resolveType(
         typeRef: FirTypeRef,
-        scopeClassDeclaration: ScopeClassDeclaration,
+        configuration: TypeResolutionConfiguration,
         areBareTypesAllowed: Boolean,
         isOperandOfIsOperator: Boolean,
         resolveDeprecations: Boolean,
-        useSiteFile: FirFile?,
         supertypeSupplier: SupertypeSupplier,
         expandTypeAliases: Boolean,
     ): FirTypeResolutionResult {
         return when (typeRef) {
             is FirResolvedTypeRef -> error("Do not resolve, resolved type-refs")
             is FirUserTypeRef -> {
-                val result = resolveUserTypeToSymbol(typeRef, scopeClassDeclaration, useSiteFile, supertypeSupplier, resolveDeprecations)
+                val result = resolveUserTypeToSymbol(typeRef, configuration, supertypeSupplier, resolveDeprecations)
                 val resolvedType = resolveUserType(
                     typeRef,
                     result,
                     areBareTypesAllowed,
-                    scopeClassDeclaration.topContainer ?: scopeClassDeclaration.containingDeclarations.lastOrNull(),
+                    configuration.topContainer ?: configuration.containingClassDeclarations.lastOrNull(),
                     isOperandOfIsOperator,
                 )
-                val resolvedTypeSymbol = resolvedType.toSymbol(session)
+                val resolvedTypeSymbol = result.resolvedCandidateOrNull()?.symbol
                 // We can expand typealiases from dependencies right away, as it won't depend on us back,
                 // so there will be no problems with recursion.
                 // In the ideal world, this should also work with some source dependencies as the only case
@@ -373,12 +407,15 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
                 val isFromLibraryDependency = resolvedTypeSymbol?.moduleData?.session?.kind == FirSession.Kind.Library
                 val resolvedExpandedType = when {
                     aliasedTypeExpansionGloballyDisabled -> resolvedType
-                    (expandTypeAliases || isFromLibraryDependency) && resolvedTypeSymbol is FirTypeAliasSymbol -> {
+                    isFromLibraryDependency && resolvedTypeSymbol is FirTypeAliasSymbol -> {
                         resolvedType.fullyExpandedType(resolvedTypeSymbol.moduleData.session)
+                    }
+                    expandTypeAliases && resolvedTypeSymbol is FirTypeAliasSymbol -> {
+                        resolvedType.fullyExpandedType(session)
                     }
                     else -> resolvedType
                 }
-                FirTypeResolutionResult(resolvedExpandedType, (result as? TypeResolutionResult.Resolved)?.typeCandidate?.diagnostic)
+                FirTypeResolutionResult(resolvedExpandedType, result.resolvedCandidateOrNull()?.diagnostic)
             }
             is FirFunctionTypeRef -> createFunctionType(typeRef)
             is FirDynamicTypeRef -> {
@@ -398,8 +435,7 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
             }
             else -> error(typeRef.render())
         }.also {
-            session.lookupTracker?.recordTypeResolveAsLookup(it.type, typeRef.source, useSiteFile?.source)
+            session.lookupTracker?.recordTypeResolveAsLookup(it.type, typeRef.source, configuration.useSiteFile?.source)
         }
     }
 }
-

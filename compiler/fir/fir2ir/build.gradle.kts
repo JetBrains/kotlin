@@ -1,8 +1,7 @@
-import org.jetbrains.kotlin.ideaExt.idea
-
 plugins {
     kotlin("jvm")
     id("jps-compatible")
+    id("java-test-fixtures")
 }
 
 dependencies {
@@ -18,15 +17,17 @@ dependencies {
     compileOnly(project(":compiler:ir.serialization.common"))
     compileOnly(project(":compiler:fir:fir-serialization"))
     compileOnly(project(":compiler:fir:fir-deserialization"))
+    compileOnly(project(":compiler:frontend.common.jvm"))
+    compileOnly(project(":compiler:config.jvm"))
 
     compileOnly(intellijCore())
 
     testCompileOnly(kotlinTest("junit"))
-    testApi(projectTests(":compiler:test-infrastructure"))
-    testApi(projectTests(":compiler:test-infrastructure-utils"))
-    testApi(projectTests(":compiler:tests-compiler-utils"))
-    testApi(projectTests(":compiler:tests-common-new"))
-    testApi(projectTests(":compiler:fir:analysis-tests"))
+    testFixturesApi(testFixtures(project(":compiler:test-infrastructure")))
+    testFixturesApi(testFixtures(project(":compiler:test-infrastructure-utils")))
+    testFixturesApi(testFixtures(project(":compiler:tests-compiler-utils")))
+    testFixturesApi(testFixtures(project(":compiler:tests-common-new")))
+    testFixturesApi(testFixtures(project(":compiler:fir:analysis-tests")))
 
     testApi(platform(libs.junit.bom))
     testImplementation(libs.junit.jupiter.api)
@@ -53,21 +54,10 @@ dependencies {
 
 optInToObsoleteDescriptorBasedAPI()
 
-val generationRoot = projectDir.resolve("tests-gen")
-
 sourceSets {
     "main" { projectDefault() }
-    "test" {
-        projectDefault()
-        this.java.srcDir(generationRoot.name)
-    }
-}
-
-if (kotlinBuildProperties.isInJpsBuildIdeaSync) {
-    apply(plugin = "idea")
-    idea {
-        this.module.generatedSourceDirs.add(generationRoot)
-    }
+    "test" { generatedTestDir() }
+    "testFixtures" { projectDefault() }
 }
 
 fun Test.configure(configureJUnit: JUnitPlatformOptions.() -> Unit = {}) {
@@ -105,8 +95,8 @@ if (kotlinBuildProperties.isTeamcityBuild) {
      * So to fix this inconvenience in local environment, those
      *   tasks just do nothing (and not inherit TestTask), so the IDEA won't see them
     */
-    tasks.create("aggregateTests")
-    tasks.create("nightlyTests")
+    tasks.register("aggregateTests")
+    tasks.register("nightlyTests")
 }
 
-testsJar()
+testsJarToBeUsedAlongWithFixtures()

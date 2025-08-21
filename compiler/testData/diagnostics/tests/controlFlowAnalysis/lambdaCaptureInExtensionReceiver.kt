@@ -24,3 +24,6 @@ fun test2() {
         if (true) { x = ""; "" } else { x = ""; "" }
     )
 }
+
+/* GENERATED_FIR_TAGS: assignment, funWithExtensionReceiver, functionDeclaration, functionalType, ifExpression, inline,
+lambdaLiteral, localProperty, propertyDeclaration, stringLiteral, thisExpression */

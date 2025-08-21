@@ -68,6 +68,7 @@ class EscapedIdentifiersLowering(context: JsIrBackendContext) : BodyLoweringPass
                 isCrossinline = false,
                 isNoinline = false,
                 isHidden = false,
+                kind = IrParameterKind.DispatchReceiver,
             ).also { it.parent = this }
 
         override fun visitGetValue(expression: IrGetValue): IrExpression {
@@ -124,19 +125,17 @@ class EscapedIdentifiersLowering(context: JsIrBackendContext) : BodyLoweringPass
             val property = function.correspondingPropertySymbol?.owner ?: function
 
             val updatedCall = if (
-                expression.dispatchReceiver != null ||
+                (function.dispatchReceiverParameter != null && function.parameters.size == expression.arguments.size) ||
                 !property.isEffectivelyExternal() ||
                 !property.needToBeWrappedWithGlobalThis()
             ) {
                 expression
             } else {
                 expression
-                    .apply {
-                        insertDispatchReceiver(globalThisReceiver)
-                    }
                     .also {
+                        it.arguments.add(0, globalThisReceiver)
                         if (function.dispatchReceiverParameter == null) {
-                            function.dispatchReceiverParameter = function.dummyDispatchReceiverParameter
+                            function.parameters = listOf(function.dummyDispatchReceiverParameter) + function.parameters
                         }
                     }
             }

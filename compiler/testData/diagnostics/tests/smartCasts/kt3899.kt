@@ -12,3 +12,7 @@ fun F() : MutableMap<String, String> {
     // Smart cast should be here
     return hashMapOf("sss" to <!DEBUG_INFO_SMARTCAST!>value<!>)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, data, equalityExpression, funWithExtensionReceiver, functionDeclaration,
+ifExpression, infix, localProperty, nullableType, primaryConstructor, propertyDeclaration, smartcast, stringLiteral,
+thisExpression */

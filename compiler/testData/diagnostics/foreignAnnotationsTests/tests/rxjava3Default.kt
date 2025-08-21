@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // FILE: A.java
 
 import io.reactivex.rxjava3.annotations.*;
@@ -24,20 +23,20 @@ public class A<T> {
 
 fun main(a: A<String>, a1: A<String?>) {
     a.foo("", null)?.length
-    <!RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>a.foo("", null)<!>.length
-    <!RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>a.foo(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>, "")<!>.length
+    a.foo("", null)<!UNSAFE_CALL!>.<!>length
+    a.foo(<!NULL_FOR_NONNULL_TYPE!>null<!>, "")<!UNSAFE_CALL!>.<!>length
     a.foo("", null)!!.length
 
     a.bar().length
     a.bar()<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>.length
 
     a.field?.length
-    <!RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>a.field<!>.length
+    a.field<!UNSAFE_CALL!>.<!>length
 
-    <!RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>a.baz("")<!>.length
+    <!SMARTCAST_IMPOSSIBLE!>a.baz("")<!>.length
     a.baz("")?.length
-    <!RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>a.baz(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>)<!>.length
+    <!SMARTCAST_IMPOSSIBLE!>a.baz(<!NULL_FOR_NONNULL_TYPE!>null<!>)<!>.length
 
     a1.baz("")!!.length
-    a1.baz(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>)!!.length
+    a1.baz(<!NULL_FOR_NONNULL_TYPE!>null<!>)!!.length
 }

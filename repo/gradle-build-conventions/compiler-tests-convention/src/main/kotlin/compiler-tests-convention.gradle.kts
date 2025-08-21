@@ -1,5 +1,3 @@
-import com.gradle.develocity.agent.gradle.test.TestRetryConfiguration
-
 val extension = extensions.create("compilerTests", CompilerTestsExtension::class)
 
 val provider = objects.newInstance<TestCompilerRuntimeArgumentProvider>().apply {
@@ -13,6 +11,16 @@ val provider = objects.newInstance<TestCompilerRuntimeArgumentProvider>().apply 
     scriptingPluginForTests.from(extension.scriptingPluginForTests)
     stdlibJsRuntimeForTests.from(extension.stdlibJsRuntimeForTests)
     testJsRuntimeForTests.from(extension.testJsRuntimeForTests)
+    mockJdkRuntimeJar.value(extension.mockJdkRuntime)
+    mockJdkRuntime.value(extension.mockJdkRuntime)
+    mockJDKModifiedRuntime.value(extension.mockJDKModifiedRuntime)
+    mockJdkAnnotationsJar.value(extension.mockJdkAnnotationsJar)
+    thirdPartyAnnotations.value(extension.thirdPartyAnnotations)
+    thirdPartyJava8Annotations.value(extension.thirdPartyJava8Annotations)
+    thirdPartyJava9Annotations.value(extension.thirdPartyJava9Annotations)
+    thirdPartyJsr305.value(extension.thirdPartyJsr305)
+    testDataMap.value(extension.testDataMap)
+    testDataFiles.value(extension.testDataFiles)
 }
 
 tasks.withType<Test>().configureEach {
@@ -20,7 +28,9 @@ tasks.withType<Test>().configureEach {
     outputs.doNotCacheIf("Caching tests is manually disabled using `kotlin.build.cache.tests.disabled` property") { disableTestsCache.get() == "true" }
     jvmArgumentProviders.add(provider)
     inputs.property("os.name", org.gradle.internal.os.OperatingSystem.current().name)
-    inputs.files(extension.testData).withPathSensitivity(PathSensitivity.RELATIVE)
+
+    val rootDir = project.rootDir
+    outputs.cacheIf { workingDir != rootDir }
 
     develocity.testRetry {
         maxRetries = if (kotlinBuildProperties.isTeamcityBuild) 3 else 0

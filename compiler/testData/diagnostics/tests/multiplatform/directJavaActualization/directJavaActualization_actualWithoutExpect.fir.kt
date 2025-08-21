@@ -7,7 +7,7 @@ open class Base() {
     open fun fakeOverride() {}
 }
 
-<!JAVA_DIRECT_ACTUAL_WITHOUT_EXPECT{JVM}, JAVA_DIRECT_ACTUAL_WITHOUT_EXPECT{JVM}, JAVA_DIRECT_ACTUAL_WITHOUT_EXPECT{JVM}!>expect<!> class Foo : Base
+<!JAVA_DIRECT_ACTUAL_WITHOUT_EXPECT{JVM;JVM;JVM}!>expect<!> class Foo : Base
 
 // MODULE: m2-jvm()()(m1-common)
 // FILE: Foo.java
@@ -16,3 +16,5 @@ open class Base() {
     @kotlin.annotations.jvm.KotlinActual public void foo() {}
     @kotlin.annotations.jvm.KotlinActual @Override void fakeOverride() {}
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, expect, functionDeclaration, primaryConstructor */

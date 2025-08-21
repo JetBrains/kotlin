@@ -1,4 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: -ForbidExposingPackagePrivateInInternal
 // FILE: javapackage/PackagePrivateGrandparentAbstractClass.java
 package javapackage;
 
@@ -19,3 +20,5 @@ internal class Child : KotlinParentClass() {
         <!INVISIBLE_MEMBER!>publicStaticMethod<!>()
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, javaFunction, javaType */

@@ -33,3 +33,7 @@ fun whileLoopContinueInnerOuter(x: Int?) {
     }
     checkSubtype<Int>(x)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, continue, doWhileLoop, equalityExpression, funWithExtensionReceiver,
+functionDeclaration, functionalType, ifExpression, infix, integerLiteral, nullableType, smartcast, typeParameter,
+typeWithExtension, whileLoop */

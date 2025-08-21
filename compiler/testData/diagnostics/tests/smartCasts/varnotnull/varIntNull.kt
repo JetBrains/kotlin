@@ -4,3 +4,6 @@ fun foo(): Int {
     i = null
     return <!TYPE_MISMATCH!>i + 1<!>
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, assignment, functionDeclaration, integerLiteral, localProperty, nullableType,
+propertyDeclaration, smartcast */

@@ -12,17 +12,21 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirFunctionCallChecker
 import org.jetbrains.kotlin.fir.analysis.diagnostics.wasm.FirWasmErrors
 import org.jetbrains.kotlin.fir.analysis.wasm.checkers.hasValidJsCodeBody
-import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isExtension
 import org.jetbrains.kotlin.fir.declarations.utils.isInline
 import org.jetbrains.kotlin.fir.declarations.utils.isSuspend
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirFileSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirScriptSymbol
 import org.jetbrains.kotlin.js.common.isValidES5Identifier
 import org.jetbrains.kotlin.name.WebCommonStandardClassIds
 
 object FirWasmJsCodeCallChecker : FirFunctionCallChecker(MppCheckerKind.Common) {
-    override fun check(expression: FirFunctionCall, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(expression: FirFunctionCall) {
         val symbol = expression.calleeReference.toResolvedCallableSymbol() ?: return
 
         if (symbol.callableId != WebCommonStandardClassIds.Callables.Js) {
@@ -31,54 +35,53 @@ object FirWasmJsCodeCallChecker : FirFunctionCallChecker(MppCheckerKind.Common) 
 
         val containingDeclarations = context.containingDeclarations
 
-        val containingDeclaration: FirDeclaration = containingDeclarations.lastOrNull() ?: return
+        val containingDeclaration = containingDeclarations.lastOrNull() ?: return
 
         val containingDeclarationOfContainingDeclaration =
             containingDeclarations.getOrNull(containingDeclarations.size - 2)
 
         val isContainingDeclarationTopLevel =
-            containingDeclarationOfContainingDeclaration is FirFile || containingDeclarationOfContainingDeclaration is FirScript
+            containingDeclarationOfContainingDeclaration is FirFileSymbol || containingDeclarationOfContainingDeclaration is FirScriptSymbol
 
         val source = expression.calleeReference.source
 
         if (!isContainingDeclarationTopLevel) {
-            reporter.reportOn(source, FirWasmErrors.JSCODE_WRONG_CONTEXT, context)
+            reporter.reportOn(source, FirWasmErrors.JSCODE_WRONG_CONTEXT)
             return
         }
 
         when (containingDeclaration) {
-            is FirSimpleFunction -> {
+            is FirNamedFunctionSymbol -> {
                 if (!containingDeclaration.hasValidJsCodeBody()) {
-                    reporter.reportOn(source, FirWasmErrors.JSCODE_WRONG_CONTEXT, context)
+                    reporter.reportOn(source, FirWasmErrors.JSCODE_WRONG_CONTEXT)
                 } else {
                     if (containingDeclaration.isSuspend) {
-                        reporter.reportOn(source, FirWasmErrors.JSCODE_UNSUPPORTED_FUNCTION_KIND, "suspend function", context)
+                        reporter.reportOn(source, FirWasmErrors.JSCODE_UNSUPPORTED_FUNCTION_KIND, "suspend function")
                     }
                     if (containingDeclaration.isInline) {
-                        reporter.reportOn(source, FirWasmErrors.JSCODE_UNSUPPORTED_FUNCTION_KIND, "inline function", context)
+                        reporter.reportOn(source, FirWasmErrors.JSCODE_UNSUPPORTED_FUNCTION_KIND, "inline function")
                     }
                     if (containingDeclaration.isExtension) {
                         reporter.reportOn(
                             source,
                             FirWasmErrors.JSCODE_UNSUPPORTED_FUNCTION_KIND,
-                            "function with extension receiver",
-                            context
+                            "function with extension receiver"
                         )
                     }
-                    for (parameter in containingDeclaration.valueParameters) {
+                    for (parameter in containingDeclaration.valueParameterSymbols) {
                         if (parameter.name.identifierOrNullIfSpecial?.isValidES5Identifier() != true) {
-                            reporter.reportOn(parameter.source, FirWasmErrors.JSCODE_INVALID_PARAMETER_NAME, context)
+                            reporter.reportOn(parameter.source, FirWasmErrors.JSCODE_INVALID_PARAMETER_NAME)
                         }
                     }
                 }
             }
-            is FirProperty -> {
+            is FirPropertySymbol -> {
                 if (!containingDeclaration.hasValidJsCodeBody()) {
-                    reporter.reportOn(source, FirWasmErrors.JSCODE_WRONG_CONTEXT, context)
+                    reporter.reportOn(source, FirWasmErrors.JSCODE_WRONG_CONTEXT)
                 }
             }
             else -> {
-                reporter.reportOn(source, FirWasmErrors.JSCODE_WRONG_CONTEXT, context)
+                reporter.reportOn(source, FirWasmErrors.JSCODE_WRONG_CONTEXT)
             }
         }
     }

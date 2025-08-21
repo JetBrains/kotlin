@@ -90,7 +90,6 @@ fun test2() {
     // String in Foo is not null
     isNotNullAndNullableStringInFoo(
         UtilNullMarked.getFooOfString(),
-        // jspecify_nullness_mismatch
         <!TYPE_MISMATCH!>UtilNullMarked.getFooOfString()<!>
     )
 }
@@ -99,7 +98,6 @@ fun test3() {
     // String in Foo is not null
     isNotNullAndNullableStringInFoo(
         UtilNullMarkedGeneric.getFooOfK(),
-        // jspecify_nullness_mismatch
         <!TYPE_MISMATCH!>UtilNullMarkedGeneric.getFooOfK()<!>
     )
 }

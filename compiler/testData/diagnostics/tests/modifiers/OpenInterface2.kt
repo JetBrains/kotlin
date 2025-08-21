@@ -8,3 +8,5 @@ interface A {
 
 <!REDUNDANT_MODIFIER_FOR_TARGET!>open<!> interface B : A {
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, interfaceDeclaration */

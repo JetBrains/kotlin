@@ -28,3 +28,7 @@ class Test {
     val test2: () -> Right = <!SAFE_CALLABLE_REFERENCE_CALL!>a.b.c?::foo<!>
     val test2a: () -> Right = <!SAFE_CALLABLE_REFERENCE_CALL!>a.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>b<!><Int>.c?::foo<!>
 }
+
+/* GENERATED_FIR_TAGS: callableReference, checkNotNullCall, classDeclaration, funWithExtensionReceiver,
+functionDeclaration, functionalType, getter, integerLiteral, nestedClass, nullableType, objectDeclaration,
+propertyDeclaration, propertyWithExtensionReceiver, typeParameter */

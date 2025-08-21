@@ -73,6 +73,10 @@ public interface KaRendererOtherModifiersProvider {
                     if (symbol.isLateInit) add(KtTokens.LATEINIT_KEYWORD)
                 }
 
+                if (symbol is KaLocalVariableSymbol) {
+                    if (symbol.isLateInit) add(KtTokens.LATEINIT_KEYWORD)
+                }
+
                 if (symbol is KaNamedClassSymbol) {
                     if (symbol.isExternal) add(KtTokens.EXTERNAL_KEYWORD)
                     if (symbol.isInline) add(KtTokens.INLINE_KEYWORD)

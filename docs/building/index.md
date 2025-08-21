@@ -31,7 +31,7 @@ export DEPLOY_VERSION=*
 export BUILD_NUMBER=*
 export MAVEN_BUILD_NUMBER=BUILD_NUMBER
 export KOTLIN_NATIVE_VERSION=DEPLOY_VERSION
-export DOCKER_CONTAINER_URL=kotlin.registry.jetbrains.space/p/kotlin/containers/kotlin-build-env:v6
+export DOCKER_CONTAINER_URL=registry.jetbrains.team/p/kt/containers-public/kotlin-build-env:v6
 ```
 
 ## Clone Kotlin repository

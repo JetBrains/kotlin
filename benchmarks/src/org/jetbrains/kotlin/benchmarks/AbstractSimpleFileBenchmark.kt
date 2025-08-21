@@ -137,6 +137,7 @@ abstract class AbstractSimpleFileBenchmark {
             )
         val moduleContext = context.withProject(env.project).withModule(module)
 
+        @Suppress("DEPRECATION")
         val result = TopDownAnalyzerFacadeForJVM.analyzeFilesWithJavaIntegration(
             moduleContext.project,
             listOf(file),

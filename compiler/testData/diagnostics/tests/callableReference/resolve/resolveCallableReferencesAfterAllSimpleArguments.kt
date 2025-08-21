@@ -14,3 +14,5 @@ fun test(a: A, b: B) {
     baz(a, <!TYPE_MISMATCH!>::fooB<!>)
     bar(<!TYPE_MISMATCH!>::fooB<!>, a)
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionalType, interfaceDeclaration, nullableType, typeParameter */

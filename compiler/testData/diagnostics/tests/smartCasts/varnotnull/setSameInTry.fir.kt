@@ -10,3 +10,6 @@ fun foo() {
     // Problem: here we do not see that 's' is always not-null
     s.hashCode()
 }
+
+/* GENERATED_FIR_TAGS: assignment, functionDeclaration, localProperty, nullableType, propertyDeclaration, smartcast,
+stringLiteral, tryExpression */

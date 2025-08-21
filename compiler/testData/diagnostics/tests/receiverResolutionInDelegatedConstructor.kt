@@ -35,3 +35,6 @@ fun Base.test3() {
 fun Base.test4() {
     class B : Base({ foo1() }) {}
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType, lambdaLiteral,
+localClass, nullableType, override, primaryConstructor, secondaryConstructor */

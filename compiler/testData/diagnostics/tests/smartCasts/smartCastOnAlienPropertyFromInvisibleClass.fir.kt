@@ -24,3 +24,6 @@ internal fun bar(i: Internal) {
         <!SMARTCAST_IMPOSSIBLE!>i.x<!>.length
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, ifExpression, isExpression, primaryConstructor,
+propertyDeclaration, smartcast, stringLiteral */

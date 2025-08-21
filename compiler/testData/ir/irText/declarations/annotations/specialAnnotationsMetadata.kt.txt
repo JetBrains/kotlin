@@ -27,7 +27,7 @@ fun unsafeVariance(): @UnsafeVariance String {
 fun main() {
   val mainExact: @Exact String = exact()
   val mainNoInfer: @NoInfer String = noInfer()
-  val mainUnsafeVariance: @UnsafeVariance String = unsafeVariance()
+  val mainUnsafeVariance: String = unsafeVariance()
   val mainExtensionFunctionType: @ExtensionFunctionType Function1<Int, Unit> = <get-extensionFunctionType>()
 }
 

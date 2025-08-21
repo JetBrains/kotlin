@@ -19,7 +19,7 @@ import kotlin.test.assertNotNull
 data class QueryResult(val json: Map<String, *>?, val error: String?)
 
 private val NSData.json: Map<String, *>?
-    get() = NSJSONSerialization.JSONObjectWithData(this, 0, null) as? Map<String, *>
+    get() = NSJSONSerialization.JSONObjectWithData(this, 0U, null) as? Map<String, *>
 
 fun main() {
     autoreleasepool {
@@ -53,7 +53,7 @@ class Controller : NSObject() {
 
         // Here we call continuator service to ensure we can access mutable state from continuation.
 
-        dispatch_async(dispatch_get_global_queue(QOS_CLASS_BACKGROUND.convert(), 0),
+        dispatch_async(dispatch_get_global_queue(QOS_CLASS_BACKGROUND.convert(), 0U),
                 Continuator.wrap({ println("In queue ${dispatch_get_current_queue()}")}) {
             println("After in queue ${dispatch_get_current_queue()}: $index")
         })

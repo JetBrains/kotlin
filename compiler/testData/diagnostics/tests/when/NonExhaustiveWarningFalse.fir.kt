@@ -23,3 +23,6 @@ fun foo(arg: X): String {
     }
     return res
 }
+
+/* GENERATED_FIR_TAGS: assignment, enumDeclaration, enumEntry, equalityExpression, functionDeclaration, localProperty,
+propertyDeclaration, smartcast, stringLiteral, whenExpression, whenWithSubject */

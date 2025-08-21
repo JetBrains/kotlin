@@ -31,28 +31,28 @@ import org.jetbrains.kotlin.load.kotlin.JvmPackagePartSource
 import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinarySourceElement
 
 object FirJvmInlineTargetQualifiedAccessChecker : FirQualifiedAccessExpressionChecker(MppCheckerKind.Common) {
-    override fun check(expression: FirQualifiedAccessExpression, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(expression: FirQualifiedAccessExpression) {
         val callableSymbol = expression.calleeReference.toResolvedCallableSymbol() ?: return
         if (callableSymbol.origin.fromSource) return
 
         val isInline = when (callableSymbol) {
             is FirFunctionSymbol<*> -> callableSymbol.isInline
             is FirPropertySymbol -> {
-                val accessor = if (expression.isLhsOfAssignment(context)) callableSymbol.setterSymbol else callableSymbol.getterSymbol
+                val accessor = if (expression.isLhsOfAssignment()) callableSymbol.setterSymbol else callableSymbol.getterSymbol
                 accessor != null && accessor.isInline
             }
             else -> false
         }
 
         if (isInline) {
-            checkInlineTargetVersion(callableSymbol, context, reporter, expression)
+            checkInlineTargetVersion(callableSymbol, expression)
         }
     }
 
+    context(context: CheckerContext, reporter: DiagnosticReporter)
     private fun checkInlineTargetVersion(
         callableSymbol: FirCallableSymbol<*>,
-        context: CheckerContext,
-        reporter: DiagnosticReporter,
         element: FirElement,
     ) {
         val currentJvmTarget = context.session.jvmTargetProvider?.jvmTarget ?: return
@@ -77,8 +77,7 @@ object FirJvmInlineTargetQualifiedAccessChecker : FirQualifiedAccessExpressionCh
                 element.toReference(context.session)?.source ?: element.source,
                 FirJvmErrors.INLINE_FROM_HIGHER_PLATFORM,
                 JvmTarget.getDescription(inlinedVersion),
-                JvmTarget.getDescription(currentVersion),
-                context,
+                JvmTarget.getDescription(currentVersion)
             )
         }
     }

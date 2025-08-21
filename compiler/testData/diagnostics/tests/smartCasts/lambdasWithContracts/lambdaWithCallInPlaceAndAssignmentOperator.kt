@@ -451,3 +451,7 @@ fun test45() {
         x.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>inc<!>()
     }
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, assignment, checkNotNullCall, contractCallsEffect, contracts,
+functionDeclaration, functionalType, incrementDecrementExpression, integerLiteral, isExpression, lambdaLiteral,
+localProperty, multiplicativeExpression, nullableType, propertyDeclaration, smartcast, stringLiteral, typeParameter */

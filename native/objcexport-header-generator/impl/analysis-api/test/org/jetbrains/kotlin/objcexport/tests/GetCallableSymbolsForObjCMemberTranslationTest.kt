@@ -8,10 +8,10 @@ package org.jetbrains.kotlin.objcexport.tests
 import org.jetbrains.kotlin.analysis.api.analyze
 import org.jetbrains.kotlin.analysis.api.symbols.KaNamedFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaNamedSymbol
+import org.jetbrains.kotlin.export.test.InlineSourceCodeAnalysis
 import org.jetbrains.kotlin.objcexport.getCallableSymbolsForObjCMemberTranslation
 import org.jetbrains.kotlin.objcexport.getStableCallableOrder
-import org.jetbrains.kotlin.objcexport.testUtils.InlineSourceCodeAnalysis
-import org.jetbrains.kotlin.objcexport.testUtils.getClassOrFail
+import org.jetbrains.kotlin.export.test.getClassOrFail
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 

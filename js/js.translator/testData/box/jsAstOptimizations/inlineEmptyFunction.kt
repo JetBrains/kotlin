@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_K1: JS_IR, JS_IR_ES6
 inline fun inlineFunction(x: Int) {}
 
 var OK : Any? = null

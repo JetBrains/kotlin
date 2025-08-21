@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -13,11 +13,12 @@ import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeDeprecated
 
 object FirDeprecatedQualifierChecker : FirResolvedQualifierChecker(MppCheckerKind.Common) {
-    override fun check(expression: FirResolvedQualifier, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(expression: FirResolvedQualifier) {
         expression.nonFatalDiagnostics.filterIsInstance<ConeDeprecated>().forEach { diagnostic ->
             FirDeprecationChecker.reportApiStatus(
                 diagnostic.source, diagnostic.symbol, isTypealiasExpansion = false,
-                diagnostic.deprecationInfo, reporter, context
+                diagnostic.deprecationInfo
             )
         }
         if (expression.resolvedToCompanionObject) {
@@ -27,8 +28,8 @@ object FirDeprecatedQualifierChecker : FirResolvedQualifierChecker(MppCheckerKin
             // is handled automatically when getting deprecationInfo
             // for the typealias symbol (in FirDeprecationChecker).
             // Below we check "the last transition".
-            val companionSymbol = expression.symbol?.fullyExpandedClass(context.session)?.companionObjectSymbol ?: return
-            FirDeprecationChecker.reportApiStatusIfNeeded(expression.source, companionSymbol, context, reporter)
+            val companionSymbol = expression.symbol?.fullyExpandedClass(context.session)?.resolvedCompanionObjectSymbol ?: return
+            FirDeprecationChecker.reportApiStatusIfNeeded(expression.source, companionSymbol)
         }
     }
 }

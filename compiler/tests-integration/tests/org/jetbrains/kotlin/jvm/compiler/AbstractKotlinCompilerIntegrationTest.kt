@@ -146,6 +146,7 @@ abstract class AbstractKotlinCompilerIntegrationTest : TestCaseWithTmpdir() {
         additionalOptions: List<String> = emptyList(),
         expectedFileName: String? = "output.txt",
         additionalSources: List<String> = emptyList(),
+        sanitizeCompilerOutput: (String) -> String = { it },
     ): Pair<String, ExitCode> {
         val args = mutableListOf<String>()
         val sourceFile = File(testDataDirectory, fileName)
@@ -161,7 +162,7 @@ abstract class AbstractKotlinCompilerIntegrationTest : TestCaseWithTmpdir() {
             args.add(K2JSCompilerArguments::outputDir.cliArgument)
             args.add(output.path)
             args.add(K2JSCompilerArguments::moduleName.cliArgument)
-            args.add("out")
+            args.add(fileName)
         } else if (compiler is K2JVMCompiler || compiler is KotlinMetadataCompiler) {
             if (classpath.isNotEmpty()) {
                 args.add(K2JVMCompilerArguments::classpath.cliArgument)
@@ -177,7 +178,7 @@ abstract class AbstractKotlinCompilerIntegrationTest : TestCaseWithTmpdir() {
 
         val result = AbstractCliTest.executeCompilerGrabOutput(compiler, args)
         if (expectedFileName != null) {
-            KotlinTestUtils.assertEqualsToFile(File(testDataDirectory, expectedFileName), normalizeOutput(result))
+            KotlinTestUtils.assertEqualsToFile(File(testDataDirectory, expectedFileName), sanitizeCompilerOutput(normalizeOutput(result)))
         }
         return result
     }

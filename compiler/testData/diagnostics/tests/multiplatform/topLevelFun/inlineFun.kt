@@ -11,3 +11,5 @@ expect fun nonInlineFun()
 
 <!ACTUAL_WITHOUT_EXPECT!>actual<!> fun inlineFun() { }
 actual fun nonInlineFun() { }
+
+/* GENERATED_FIR_TAGS: actual, expect, functionDeclaration, inline */

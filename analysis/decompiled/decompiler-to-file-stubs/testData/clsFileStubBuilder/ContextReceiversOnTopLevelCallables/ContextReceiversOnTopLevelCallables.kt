@@ -1,6 +1,6 @@
-// FIR_IDENTICAL
 // JVM_FILE_NAME: ContextReceiversOnTopLevelCallablesKt
 // LANGUAGE: +ContextReceivers
+// KNM_FE10_IGNORE
 
 annotation class MyAnnotation
 

@@ -77,7 +77,7 @@ class CodeConformanceTest : TestCase() {
             listOf(
                 "build",
                 "compiler/ir/serialization.js/build/fullRuntime",
-                "compiler/ir/serialization.js/build/reducedRuntime/src/libraries/stdlib/js-ir/runtime/longjs.kt",
+                "compiler/ir/serialization.js/build/reducedRuntime/src/libraries/stdlib/js-ir/runtime/boxedLong.kt",
                 "dependencies",
                 "dependencies/android-sdk/build",
                 "dependencies/protobuf/protobuf-relocated/build",
@@ -101,7 +101,7 @@ class CodeConformanceTest : TestCase() {
                 "libraries/stdlib/js-ir/.gradle",
                 "libraries/stdlib/js-ir/build",
                 "libraries/stdlib/js-ir/build/",
-                "libraries/stdlib/js-ir/runtime/longjs.kt",
+                "libraries/stdlib/js-ir/runtime/boxedLong.kt",
                 "libraries/stdlib/js-ir-minimal-for-test/.gradle",
                 "libraries/stdlib/js-ir-minimal-for-test/build",
                 "libraries/stdlib/js-v1/.gradle",
@@ -123,7 +123,6 @@ class CodeConformanceTest : TestCase() {
                 "libraries/tools/kotlin-gradle-plugin-integration-tests/build",
                 "libraries/tools/kotlin-gradle-plugin-integration-tests/.testKitDir",
                 "libraries/tools/kotlin-gradle-plugin-integration-tests/out",
-                "libraries/tools/kotlin-gradle-plugin-model/build",
                 "libraries/tools/kotlin-gradle-statistics/build",
                 "libraries/tools/kotlin-lombok/build",
                 "libraries/tools/kotlin-maven-plugin-test/target",
@@ -136,6 +135,8 @@ class CodeConformanceTest : TestCase() {
                 "kotlin-native", "libraries/stdlib/native-wasm", // Have a separate licences manager
                 "out",
                 "repo/codebase-tests/tests/org/jetbrains/kotlin/code/CodeConformanceTest.kt",
+                "repo/gradle-settings-conventions/kotlin-bootstrap/build/generated-sources",
+                "repo/gradle-settings-conventions/cache-redirector/build/generated-sources",
                 "repo/gradle-settings-conventions/jvm-toolchain-provisioning/build/generated-sources",
                 "repo/gradle-settings-conventions/develocity/build/generated-sources",
                 "repo/gradle-settings-conventions/kotlin-daemon-config/build/generated-sources",
@@ -147,6 +148,7 @@ class CodeConformanceTest : TestCase() {
                 "repo/gradle-build-conventions/binaryen-configuration/build/generated-sources",
                 "repo/gradle-build-conventions/d8-configuration/build/generated-sources",
                 "repo/gradle-build-conventions/nodejs-configuration/build/generated-sources",
+                "repo/gradle-build-conventions/gradle-plugins-common/build/generated-sources",
                 "repo/gradle-build-conventions/gradle-plugins-documentation/build/generated-sources",
                 "wasm/wasm.debug.browsers/node_modules",
                 "wasm/wasm.debug.browsers/.gradle",
@@ -172,6 +174,7 @@ class CodeConformanceTest : TestCase() {
             "compiler/build-tools/kotlin-build-statistics/src",
             "compiler/build-tools/kotlin-build-tools-api/src",
             "compiler/build-tools/kotlin-build-tools-impl/src",
+            "compiler/build-tools/kotlin-build-tools-compat/src",
             "compiler/build-tools/kotlin-build-tools-jdk-utils/src",
             "compiler/daemon/daemon-client/src",
             "compiler/daemon/daemon-common/src",
@@ -208,7 +211,6 @@ class CodeConformanceTest : TestCase() {
         }
 
         val atAuthorPattern = Pattern.compile("/\\*.+@author.+\\*/", Pattern.DOTALL)
-        val gradleEagerAttributeMethodRegex = "\\.attribute\\(.+,.+\\)".toRegex()
 
         @Suppress("SpellCheckingInspection") val tests = listOf(
             FileTestCase(
@@ -261,25 +263,6 @@ class CodeConformanceTest : TestCase() {
             ) { _, source ->
                 "gnu.trove" in source
             },
-            FileTestCase(
-                message = """
-                |KT-60644: Using Gradle 'AttributeContainer.attribute(key, value)' method leads to eager tasks creation in Kotlin
-                |Gradle plugin. Please use instead for KGP code 'HasAttributes.setAttributeProvider' or 'HasAttributes.setAttribute'
-                |(for simple values) extension methods and for other code 'AttributeContainer.attributeProvider(key, provider { value })'.
-                |
-                |%d files are affected. Please update these files or exclude them in this test:
-                |%s
-                """.trimMargin(),
-                allowedFiles = listOf(
-                    "libraries/tools/kotlin-gradle-plugin/src/common/kotlin/org/jetbrains/kotlin/gradle/utils/gradleAttributesContainerUtils.kt",
-                    "libraries/tools/kotlin-gradle-plugin-integration-tests/src/test/kotlin/org/jetbrains/kotlin/gradle/native/GeneralNativeIT.kt",
-                    "libraries/tools/kotlin-gradle-plugin-integration-tests/src/test/kotlin/org/jetbrains/kotlin/gradle/KotlinGradlePluginIT.kt",
-                    "repo/gradle-build-conventions/buildsrc-compat/src/main/kotlin/plugins/CustomVariantPublishingDsl.kt",
-                    "libraries/tools/kotlin-gradle-plugin/src/functionalTest/kotlin/org/jetbrains/kotlin/gradle/unitTests/KotlinPublishingAdhocSoftwareComponentTest.kt"
-                )
-            ) { _, source ->
-                gradleEagerAttributeMethodRegex.containsMatchIn(source)
-            }
         )
 
         val testCaseToMatchedFiles: Map<FileTestCase, MutableList<File>> = mutableMapOf<FileTestCase, MutableList<File>>()
@@ -398,30 +381,17 @@ class CodeConformanceTest : TestCase() {
 
         val repoCheckers = listOf(
             RepoAllowList(
-                // Please use cache-redirector for importing in tests
-                "https://maven.pkg.jetbrains.space/kotlin/p/kotlin/dev", root,
-                setOf("repo/scripts/cache-redirector.settings.gradle.kts")
-            ),
-            RepoAllowList(
-                "https://cache-redirector.jetbrains.com/maven.pkg.jetbrains.space/kotlin/p/kotlin/dev", root,
-                setOf("repo/scripts/cache-redirector.settings.gradle.kts")
-            ),
-            RepoAllowList(
-                // Please use cache-redirector for importing in tests
-                "https://maven.pkg.jetbrains.space/kotlin/p/kotlin/eap", root,
-                setOf("repo/scripts/cache-redirector.settings.gradle.kts")
-            ),
-            RepoAllowList(
-                "https://cache-redirector.jetbrains.com/maven.pkg.jetbrains.space/kotlin/p/kotlin/dev", root,
-                setOf("repo/scripts/cache-redirector.settings.gradle.kts")
+                // Please use redirector for importing in tests
+                "https://redirector.kotlinlang.org/maven/dev", root,
+                setOf("repo/gradle-settings-conventions/cache-redirector/src/main/kotlin/cache-redirector.settings.gradle.kts")
             ),
             RepoAllowList(
                 "kotlin/ktor", root,
-                setOf("repo/scripts/cache-redirector.settings.gradle.kts")
+                setOf("repo/gradle-settings-conventions/cache-redirector/src/main/kotlin/cache-redirector.settings.gradle.kts")
             ),
             RepoAllowList(
                 "bintray.com", root,
-                setOf("repo/scripts/cache-redirector.settings.gradle.kts"),
+                setOf("repo/gradle-settings-conventions/cache-redirector/src/main/kotlin/cache-redirector.settings.gradle.kts"),
                 exclude = "jcenter.bintray.com"
             )
         )

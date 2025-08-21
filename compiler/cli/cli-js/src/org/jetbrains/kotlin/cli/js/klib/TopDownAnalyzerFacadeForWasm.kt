@@ -1,10 +1,11 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.cli.js.klib
 
+import org.jetbrains.kotlin.K1_DEPRECATION_WARNING
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.context.ModuleContext
 import org.jetbrains.kotlin.descriptors.PackageFragmentProvider
@@ -15,7 +16,7 @@ import org.jetbrains.kotlin.js.analyze.AbstractTopDownAnalyzerFacadeForWeb
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.wasm.WasmPlatforms
 import org.jetbrains.kotlin.platform.wasm.WasmTarget
-import org.jetbrains.kotlin.resolve.CompilerDeserializationConfiguration
+import org.jetbrains.kotlin.resolve.KlibCompilerDeserializationConfiguration
 import org.jetbrains.kotlin.resolve.PlatformDependentAnalyzerServices
 import org.jetbrains.kotlin.wasm.resolve.WasmJsPlatformAnalyzerServices
 import org.jetbrains.kotlin.wasm.resolve.WasmWasiPlatformAnalyzerServices
@@ -31,12 +32,13 @@ abstract class TopDownAnalyzerFacadeForWasm : AbstractTopDownAnalyzerFacadeForWe
             incrementalData.compiledPackageParts.values.map { it.metadata },
             moduleContext.storageManager,
             moduleContext.module,
-            CompilerDeserializationConfiguration(languageVersionSettings),
+            KlibCompilerDeserializationConfiguration(languageVersionSettings),
             lookupTracker
         )
     }
 
     companion object {
+        @Deprecated(K1_DEPRECATION_WARNING, level = DeprecationLevel.WARNING)
         fun facadeFor(target: WasmTarget?): TopDownAnalyzerFacadeForWasm = when (target) {
             WasmTarget.WASI -> TopDownAnalyzerFacadeForWasmWasi
             else -> TopDownAnalyzerFacadeForWasmJs

@@ -11,61 +11,61 @@
 // interpolation kinds: of arbitrary expression
 // string literal kinds: single-line, multi-line
 fun emptyInterpolation() {
-    "<!SYNTAX{LT}!>${<!SYNTAX!><!>}<!>"
-    <!REDUNDANT_INTERPOLATION_PREFIX{LT}!>$"<!SYNTAX{LT}!>${<!SYNTAX!><!>}<!>"<!>
-    $$"<!SYNTAX{LT}!>$${<!SYNTAX!><!>}<!>"
-    $$$$"<!SYNTAX{LT}!>$$$${<!SYNTAX!><!>}<!>"
-    $$$$$$$$"<!SYNTAX{LT}!>$$$$$$$${<!SYNTAX!><!>}<!>"
+    "${<!SYNTAX!><!>}"
+    <!REDUNDANT_INTERPOLATION_PREFIX{LT}!>$"${<!SYNTAX!><!>}"<!>
+    $$"$${<!SYNTAX!><!>}"
+    $$$$"$$$${<!SYNTAX!><!>}"
+    $$$$$$$$"$$$$$$$${<!SYNTAX!><!>}"
 
-    """<!SYNTAX{LT}!>${<!SYNTAX!><!>}<!>"""
-    <!REDUNDANT_INTERPOLATION_PREFIX{LT}!>$"""<!SYNTAX{LT}!>${<!SYNTAX!><!>}<!>"""<!>
-    $$"""<!SYNTAX{LT}!>$${<!SYNTAX!><!>}<!>"""
-    $$$$"""<!SYNTAX{LT}!>$$$${<!SYNTAX!><!>}<!>"""
-    $$$$$$$$"""<!SYNTAX{LT}!>$$$$$$$${<!SYNTAX!><!>}<!>"""
+    """${<!SYNTAX!><!>}"""
+    <!REDUNDANT_INTERPOLATION_PREFIX{LT}!>$"""${<!SYNTAX!><!>}"""<!>
+    $$"""$${<!SYNTAX!><!>}"""
+    $$$$"""$$$${<!SYNTAX!><!>}"""
+    $$$$$$$$"""$$$$$$$${<!SYNTAX!><!>}"""
 }
 
 // interpolation prefix length: 0, 1, 2, 4, 8
 // interpolation kinds: of arbitrary expression
 // string literal kinds: single-line, multi-line
 fun blankInterpolation() {
-    "<!SYNTAX{LT}!>${<!SYNTAX!><!>    }<!>"
-    <!REDUNDANT_INTERPOLATION_PREFIX{LT}!>$"<!SYNTAX{LT}!>${<!SYNTAX!><!>    }<!>"<!>
-    $$"<!SYNTAX{LT}!>$${<!SYNTAX!><!>    }<!>"
-    $$$$"<!SYNTAX{LT}!>$$$${<!SYNTAX!><!>    }<!>"
-    $$$$$$$$"<!SYNTAX{LT}!>$$$$$$$${<!SYNTAX!><!>    }<!>"
+    "${<!SYNTAX!><!>    }"
+    <!REDUNDANT_INTERPOLATION_PREFIX{LT}!>$"${<!SYNTAX!><!>    }"<!>
+    $$"$${<!SYNTAX!><!>    }"
+    $$$$"$$$${<!SYNTAX!><!>    }"
+    $$$$$$$$"$$$$$$$${<!SYNTAX!><!>    }"
 
-    """<!SYNTAX{LT}!>${<!SYNTAX!><!>    }<!>"""
-    <!REDUNDANT_INTERPOLATION_PREFIX{LT}!>$"""<!SYNTAX{LT}!>${<!SYNTAX!><!>    }<!>"""<!>
-    $$"""<!SYNTAX{LT}!>$${<!SYNTAX!><!>    }<!>"""
-    $$$$"""<!SYNTAX{LT}!>$$$${<!SYNTAX!><!>    }<!>"""
-    $$$$$$$$"""<!SYNTAX{LT}!>$$$$$$$${<!SYNTAX!><!>    }<!>"""
+    """${<!SYNTAX!><!>    }"""
+    <!REDUNDANT_INTERPOLATION_PREFIX{LT}!>$"""${<!SYNTAX!><!>    }"""<!>
+    $$"""$${<!SYNTAX!><!>    }"""
+    $$$$"""$$$${<!SYNTAX!><!>    }"""
+    $$$$$$$$"""$$$$$$$${<!SYNTAX!><!>    }"""
 }
 
 // interpolation prefix length: 0, 1, 2, 4, 8
 // interpolation kinds: of arbitrary expression
 // string literal kinds: single-line, multi-line
 fun linebreakInterpolation() {
-    "<!SYNTAX{LT}!>${<!SYNTAX!><!>
-    }<!>"
-    <!REDUNDANT_INTERPOLATION_PREFIX{LT}!>$"<!SYNTAX{LT}!>${<!SYNTAX!><!>
-    }<!>"<!>
-    $$"<!SYNTAX{LT}!>$${<!SYNTAX!><!>
-    }<!>"
-    $$$$"<!SYNTAX{LT}!>$$$${<!SYNTAX!><!>
-    }<!>"
-    $$$$$$$$"<!SYNTAX{LT}!>$$$$$$$${<!SYNTAX!><!>
-    }<!>"
+    "${<!SYNTAX!><!>
+    }"
+    <!REDUNDANT_INTERPOLATION_PREFIX{LT}!>$"${<!SYNTAX!><!>
+    }"<!>
+    $$"$${<!SYNTAX!><!>
+    }"
+    $$$$"$$$${<!SYNTAX!><!>
+    }"
+    $$$$$$$$"$$$$$$$${<!SYNTAX!><!>
+    }"
 
-    """<!SYNTAX{LT}!>${<!SYNTAX!><!>
-    }<!>"""
-    <!REDUNDANT_INTERPOLATION_PREFIX{LT}!>$"""<!SYNTAX{LT}!>${<!SYNTAX!><!>
-    }<!>"""<!>
-    $$"""<!SYNTAX{LT}!>$${<!SYNTAX!><!>
-    }<!>"""
-    $$$$"""<!SYNTAX{LT}!>$$$${<!SYNTAX!><!>
-    }<!>"""
-    $$$$$$$$"""<!SYNTAX{LT}!>$$$$$$$${<!SYNTAX!><!>
-    }<!>"""
+    """${<!SYNTAX!><!>
+    }"""
+    <!REDUNDANT_INTERPOLATION_PREFIX{LT}!>$"""${<!SYNTAX!><!>
+    }"""<!>
+    $$"""$${<!SYNTAX!><!>
+    }"""
+    $$$$"""$$$${<!SYNTAX!><!>
+    }"""
+    $$$$$$$$"""$$$$$$$${<!SYNTAX!><!>
+    }"""
 }
 
 // interpolation prefix length: 0, 1, 2, 4, 8
@@ -120,11 +120,11 @@ fun interpolationOfMisplacedDollar() {
     $$$$"$$$$<!UNRESOLVED_REFERENCE!>`$`<!>"
     $$$$$$$$"$$$$$$$$<!UNRESOLVED_REFERENCE!>`$`<!>"
 
-    "<!SYNTAX{LT}!>${<!SYNTAX!><!>$<!SYNTAX!><!>}<!>"
-    <!REDUNDANT_INTERPOLATION_PREFIX{LT}!>$"<!SYNTAX{LT}!>${<!SYNTAX!><!>$<!SYNTAX!><!>}<!>"<!>
-    $$"<!SYNTAX{LT}!>$${<!SYNTAX!><!>$<!SYNTAX!><!>}<!>"
-    $$$$"<!SYNTAX{LT}!>$$$${<!SYNTAX!><!>$<!SYNTAX!><!>}<!>"
-    $$$$$$$$"<!SYNTAX{LT}!>$$$$$$$${<!SYNTAX!><!>$<!SYNTAX!><!>}<!>"
+    "${<!SYNTAX!><!>$<!SYNTAX!><!>}"
+    <!REDUNDANT_INTERPOLATION_PREFIX{LT}!>$"${<!SYNTAX!><!>$<!SYNTAX!><!>}"<!>
+    $$"$${<!SYNTAX!><!>$<!SYNTAX!><!>}"
+    $$$$"$$$${<!SYNTAX!><!>$<!SYNTAX!><!>}"
+    $$$$$$$$"$$$$$$$${<!SYNTAX!><!>$<!SYNTAX!><!>}"
 
 
     """$<!UNRESOLVED_REFERENCE!>`$`<!>"""
@@ -133,11 +133,11 @@ fun interpolationOfMisplacedDollar() {
     $$$$"""$$$$<!UNRESOLVED_REFERENCE!>`$`<!>"""
     $$$$$$$$"""$$$$$$$$<!UNRESOLVED_REFERENCE!>`$`<!>"""
 
-    """<!SYNTAX{LT}!>${<!SYNTAX!><!>$<!SYNTAX!><!>}<!>"""
-    <!REDUNDANT_INTERPOLATION_PREFIX{LT}!>$"""<!SYNTAX{LT}!>${<!SYNTAX!><!>$<!SYNTAX!><!>}<!>"""<!>
-    $$"""<!SYNTAX{LT}!>$${<!SYNTAX!><!>$<!SYNTAX!><!>}<!>"""
-    $$$$"""<!SYNTAX{LT}!>$$$${<!SYNTAX!><!>$<!SYNTAX!><!>}<!>"""
-    $$$$$$$$"""<!SYNTAX{LT}!>$$$$$$$${<!SYNTAX!><!>$<!SYNTAX!><!>}<!>"""
+    """${<!SYNTAX!><!>$<!SYNTAX!><!>}"""
+    <!REDUNDANT_INTERPOLATION_PREFIX{LT}!>$"""${<!SYNTAX!><!>$<!SYNTAX!><!>}"""<!>
+    $$"""$${<!SYNTAX!><!>$<!SYNTAX!><!>}"""
+    $$$$"""$$$${<!SYNTAX!><!>$<!SYNTAX!><!>}"""
+    $$$$$$$$"""$$$$$$$${<!SYNTAX!><!>$<!SYNTAX!><!>}"""
 }
 
 // interpolation prefix length: 0, 1, 2, 4, 8
@@ -296,3 +296,6 @@ fun separatedInterpolationPrefix() {
     <!SYNTAX!>$<!><!SYNTAX!>$$$ """padding"""<!>
     <!SYNTAX!>$<!><!SYNTAX!>$$$$$$$ """padding"""<!>
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, annotationDeclaration, const, functionDeclaration, getter, integerLiteral,
+primaryConstructor, propertyDeclaration, stringLiteral */

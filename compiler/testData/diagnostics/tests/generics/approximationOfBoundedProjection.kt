@@ -14,3 +14,6 @@ fun <T> getBoxWrapper(): BoxWrapper<T, *> = null!!
 class Element
 
 val box: Box<Element> = <!TYPE_MISMATCH!>getBoxWrapper<Element>().box<!>
+
+/* GENERATED_FIR_TAGS: capturedType, checkNotNullCall, classDeclaration, functionDeclaration, interfaceDeclaration,
+nullableType, propertyDeclaration, starProjection, typeConstraint, typeParameter */

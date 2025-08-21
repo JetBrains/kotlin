@@ -3,13 +3,12 @@ KaPropertyGetterSymbol:
   callableId: null
   compilerVisibility: Public
   contextReceivers: []
-  hasBody: true
   hasStableParameterNames: true
   isActual: false
-  isDefault: false
   isExpect: false
   isExtension: false
   isInline: false
+  isNotDefault: true
   isOverride: false
   location: PROPERTY
   modality: FINAL
@@ -25,7 +24,7 @@ KaPropertyGetterSymbol:
         psi: KtAnnotationEntry
     ]
     typeArguments: []
-    type: @R|Anno1|()  @R|Anno2|()  @R|Anno3|()  {@R|Anno3|()  SecondTypeAlias=} BaseInterface
+    type: {@R|Anno3|()  SecondTypeAlias=} @R|Anno1|()  @R|Anno2|()  @R|Anno3|()  BaseInterface
   valueParameters: []
   visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(typeAnnotationsOnPropertyGetterReturnType.kt)

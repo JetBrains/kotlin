@@ -25,3 +25,6 @@ class KlassB {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, equalityExpression, functionDeclaration, functionalType,
+ifExpression, init, lambdaLiteral, nullableType, primaryConstructor, propertyDeclaration, smartcast, stringLiteral */

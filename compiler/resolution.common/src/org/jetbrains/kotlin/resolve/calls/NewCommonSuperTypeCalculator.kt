@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.resolve.calls
 
-import org.jetbrains.kotlin.types.AbstractFlexibilityChecker.hasDifferentFlexibilityAtDepth
+import org.jetbrains.kotlin.types.AbstractFlexibilityChecker
 import org.jetbrains.kotlin.types.AbstractNullabilityChecker
 import org.jetbrains.kotlin.types.AbstractNullabilityChecker.hasPathByNotMarkedNullableNodes
 import org.jetbrains.kotlin.types.AbstractTypeChecker
@@ -13,7 +13,8 @@ import org.jetbrains.kotlin.types.TypeCheckerState
 import org.jetbrains.kotlin.types.model.*
 
 object NewCommonSuperTypeCalculator {
-    fun TypeSystemCommonSuperTypesContext.commonSuperType(types: List<KotlinTypeMarker>): KotlinTypeMarker {
+    context(c: TypeSystemCommonSuperTypesContext)
+    fun commonSuperType(types: List<KotlinTypeMarker>): KotlinTypeMarker {
         // Skip computation if the list has only one element.
         // It's not only an optimization, but it's required to not mess up attributes.
         // See compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/nullabilityWarnings/kt65193.kt
@@ -24,13 +25,14 @@ object NewCommonSuperTypeCalculator {
         types.singleOrNull()?.let { return it }
 
         val maxDepth = types.maxOfOrNull { it.typeDepth() } ?: 0
-        return commonSuperType(types, -maxDepth, true).replaceCustomAttributes(unionTypeAttributes(types))
+        return commonSuperType(types, -maxDepth, true).replaceCustomAttributes(c.unionTypeAttributes(types))
     }
 
-    private fun TypeSystemCommonSuperTypesContext.commonSuperType(
+    context(c: TypeSystemCommonSuperTypesContext)
+    private fun commonSuperType(
         types: List<KotlinTypeMarker>,
         depth: Int,
-        isTopLevelType: Boolean = false
+        isTopLevelType: Boolean = false,
     ): KotlinTypeMarker {
         if (types.isEmpty()) throw IllegalStateException("Empty collection for input")
 
@@ -56,8 +58,8 @@ object NewCommonSuperTypeCalculator {
             }
         }
 
-        val stateStubTypesEqualToAnything = newTypeCheckerState(errorTypesEqualToAnything = false, stubTypesEqualToAnything = true)
-        val stateStubTypesNotEqual = newTypeCheckerState(errorTypesEqualToAnything = false, stubTypesEqualToAnything = false)
+        val stateStubTypesEqualToAnything = c.newTypeCheckerState(errorTypesEqualToAnything = false, stubTypesEqualToAnything = true)
+        val stateStubTypesNotEqual = c.newTypeCheckerState(errorTypesEqualToAnything = false, stubTypesEqualToAnything = false)
 
         val lowerSuperType = commonSuperTypeForSimpleTypes(lowers, depth, stateStubTypesEqualToAnything, stateStubTypesNotEqual)
         if (!thereIsFlexibleTypes) return lowerSuperType
@@ -68,10 +70,10 @@ object NewCommonSuperTypeCalculator {
 
         if (!isTopLevelType) {
             val nonStubTypes =
-                types.filter { !isTypeVariable(it.lowerBoundIfFlexible()) && !isTypeVariable(it.upperBoundIfFlexible()) }
+                types.filter { !it.lowerBoundIfFlexible().isTypeVariable() && !it.upperBoundIfFlexible().isTypeVariable() }
             val equalToEachOtherTypes = nonStubTypes.filter { potentialCommonSuperType ->
                 nonStubTypes.all {
-                    AbstractTypeChecker.equalTypes(this, it, potentialCommonSuperType)
+                    AbstractTypeChecker.equalTypes(c, it, potentialCommonSuperType)
                 }
             }
 
@@ -81,51 +83,59 @@ object NewCommonSuperTypeCalculator {
             }
         }
 
-        return createFlexibleType(lowerSuperType, upperSuperType)
+        return c.createFlexibleType(lowerSuperType, upperSuperType)
     }
 
-    private fun TypeSystemCommonSuperTypesContext.commonSuperTypeForSimpleTypes(
+    context(c: TypeSystemCommonSuperTypesContext)
+    private fun commonSuperTypeForSimpleTypes(
         types: List<RigidTypeMarker>,
         depth: Int,
         stateStubTypesEqualToAnything: TypeCheckerState,
-        stateStubTypesNotEqual: TypeCheckerState
+        stateStubTypesNotEqual: TypeCheckerState,
     ): RigidTypeMarker {
         if (types.any { it.isError() }) {
-            return createErrorType("CST(${types.joinToString()}", delegatedType = null)
+            return c.createErrorType("CST(${types.joinToString()}", delegatedType = null)
         }
 
         // i.e. result type also should be marked nullable
         val allNotNull = types.all {
-            isTypeVariable(it) || isNotNullStubTypeForBuilderInference(it) || AbstractNullabilityChecker.isSubtypeOfAny(stateStubTypesEqualToAnything, it)
+            it.isTypeVariable() || it.isNotNullStubTypeForBuilderInference() || AbstractNullabilityChecker.isSubtypeOfAny(
+                stateStubTypesEqualToAnything,
+                it
+            )
         }
         val notNullTypes = if (!allNotNull) types.map { it.withNullability(false) } else types
 
-        val commonSuperType = commonSuperTypeForNotNullTypes(notNullTypes, depth, stateStubTypesEqualToAnything, stateStubTypesNotEqual)
+        val commonSuperType =
+            commonSuperTypeForNotNullTypes(notNullTypes, depth, stateStubTypesEqualToAnything, stateStubTypesNotEqual)
         return if (!allNotNull)
             refineNullabilityForUndefinedNullability(types, commonSuperType) ?: commonSuperType.withNullability(true)
         else
             commonSuperType
     }
 
-    private fun TypeSystemCommonSuperTypesContext.isCapturedStubTypeForVariableInSubtyping(type: RigidTypeMarker) =
-        type.asCapturedTypeUnwrappingDnn()?.typeConstructor()?.projection()?.takeUnless { it.isStarProjection() }
+    context(_: TypeSystemCommonSuperTypesContext)
+    private fun RigidTypeMarker.isCapturedStubTypeForVariableInSubtyping() =
+        asCapturedTypeUnwrappingDnn()?.typeConstructor()?.projection()?.takeUnless { it.isStarProjection() }
             ?.getType()?.asRigidType()?.isStubTypeForVariableInSubtyping() == true
 
-    private fun TypeSystemCommonSuperTypesContext.refineNullabilityForUndefinedNullability(
+    context(c: TypeSystemCommonSuperTypesContext)
+    private fun refineNullabilityForUndefinedNullability(
         types: List<RigidTypeMarker>,
-        commonSuperType: RigidTypeMarker
+        commonSuperType: RigidTypeMarker,
     ): RigidTypeMarker? {
         if (!commonSuperType.canHaveUndefinedNullability()) return null
 
         val actuallyNotNull =
-            types.all { hasPathByNotMarkedNullableNodes(it, commonSuperType.typeConstructor()) }
+            types.all { c.hasPathByNotMarkedNullableNodes(it, commonSuperType.typeConstructor()) }
         return if (actuallyNotNull) commonSuperType else null
     }
 
     // Makes representative sample, i.e. (A, B, A) -> (A, B)
-    private fun TypeSystemCommonSuperTypesContext.uniquify(
+    context(c: TypeSystemCommonSuperTypesContext)
+    private fun uniquify(
         types: List<RigidTypeMarker>,
-        stateStubTypesNotEqual: TypeCheckerState
+        stateStubTypesNotEqual: TypeCheckerState,
     ): List<RigidTypeMarker> {
         val uniqueTypes = arrayListOf<RigidTypeMarker>()
         for (type in types) {
@@ -133,7 +143,7 @@ object NewCommonSuperTypeCalculator {
                 val equalsModuloFlexibility = AbstractTypeChecker.equalTypes(stateStubTypesNotEqual, it, type) &&
                         !it.typeConstructor().isIntegerLiteralTypeConstructor()
 
-                !equalsModuloFlexibility || hasDifferentFlexibilityAtDepth(listOf(it, type))
+                !equalsModuloFlexibility || AbstractFlexibilityChecker.hasDifferentFlexibilityAtDepth(listOf(it, type))
             }
             if (isNewUniqueType) {
                 uniqueTypes += type
@@ -144,9 +154,10 @@ object NewCommonSuperTypeCalculator {
 
     // This function leaves only supertypes, i.e. A0 is a strong supertype for A iff A != A0 && A <: A0
     // Explanation: consider types (A : A0, B : B0, A0, B0), then CST(A, B, A0, B0) == CST(CST(A, A0), CST(B, B0)) == CST(A0, B0)
-    private fun TypeSystemCommonSuperTypesContext.filterSupertypes(
+    context(c: TypeSystemCommonSuperTypesContext)
+    private fun filterSupertypes(
         list: List<RigidTypeMarker>,
-        stateStubTypesNotEqual: TypeCheckerState
+        stateStubTypesNotEqual: TypeCheckerState,
     ): List<RigidTypeMarker> {
         val supertypes = list.toMutableList()
         val iterator = supertypes.iterator()
@@ -155,7 +166,7 @@ object NewCommonSuperTypeCalculator {
             val isSubtype = supertypes.any { supertype ->
                 supertype !== potentialSubtype &&
                         AbstractTypeChecker.isSubtypeOf(stateStubTypesNotEqual, potentialSubtype, supertype) &&
-                        !hasDifferentFlexibilityAtDepth(listOf(potentialSubtype, supertype))
+                        !AbstractFlexibilityChecker.hasDifferentFlexibilityAtDepth(listOf(potentialSubtype, supertype))
             }
 
             if (isSubtype) iterator.remove()
@@ -164,7 +175,8 @@ object NewCommonSuperTypeCalculator {
         return supertypes
     }
 
-    private fun TypeSystemCommonSuperTypesContext.commonSuperTypeForBuilderInferenceStubTypes(
+    context(c: TypeSystemCommonSuperTypesContext)
+    private fun commonSuperTypeForBuilderInferenceStubTypes(
         stubTypes: List<RigidTypeMarker>,
         stateStubTypesNotEqual: TypeCheckerState,
     ): RigidTypeMarker {
@@ -195,7 +207,7 @@ object NewCommonSuperTypeCalculator {
                 areThereAnyNullable -> it.withNullability(true)
                 else -> it
             }
-        } ?: nullableAnyType()
+        } ?: c.nullableAnyType()
     }
 
     /*
@@ -204,15 +216,16 @@ object NewCommonSuperTypeCalculator {
     *  - resulting type should be only proper type
     *  - one of the input types is definitely proper type
     * */
-    private fun TypeSystemCommonSuperTypesContext.commonSuperTypeForNotNullTypes(
+    context(c: TypeSystemCommonSuperTypesContext)
+    private fun commonSuperTypeForNotNullTypes(
         types: List<RigidTypeMarker>,
         depth: Int,
         stateStubTypesEqualToAnything: TypeCheckerState,
-        stateStubTypesNotEqual: TypeCheckerState
+        stateStubTypesNotEqual: TypeCheckerState,
     ): RigidTypeMarker {
         if (types.size == 1) return types.single()
 
-        val nonTypeVariables = types.filter { !it.isStubTypeForVariableInSubtyping() && !isCapturedStubTypeForVariableInSubtyping(it) }
+        val nonTypeVariables = types.filter { !it.isStubTypeForVariableInSubtyping() && !it.isCapturedStubTypeForVariableInSubtyping() }
 
         assert(nonTypeVariables.isNotEmpty()) {
             "There should be at least one non-stub type to compute common supertype but there are: $types"
@@ -233,30 +246,34 @@ object NewCommonSuperTypeCalculator {
         if (explicitSupertypes.size == 1) return explicitSupertypes.single()
         findErrorTypeInSupertypes(explicitSupertypes, stateStubTypesEqualToAnything)?.let { return it }
 
-        findCommonIntegerLiteralTypesSuperType(explicitSupertypes)?.let { return it }
+        c.findCommonIntegerLiteralTypesSuperType(explicitSupertypes)?.let { return it }
 
         return findSuperTypeConstructorsAndIntersectResult(explicitSupertypes, depth, stateStubTypesEqualToAnything)
     }
 
-    private fun TypeSystemCommonSuperTypesContext.isTypeVariable(type: RigidTypeMarker): Boolean {
-        return type.isStubTypeForVariableInSubtyping() || isCapturedTypeVariable(type)
+    context(c: TypeSystemCommonSuperTypesContext)
+    private fun RigidTypeMarker.isTypeVariable(): Boolean {
+        return isStubTypeForVariableInSubtyping() || this.isCapturedTypeVariable()
     }
 
-    private fun TypeSystemCommonSuperTypesContext.isNotNullStubTypeForBuilderInference(type: RigidTypeMarker): Boolean {
-        return type.isStubTypeForBuilderInference() && !type.isMarkedNullable()
+    context(c: TypeSystemCommonSuperTypesContext)
+    private fun RigidTypeMarker.isNotNullStubTypeForBuilderInference(): Boolean {
+        return isStubTypeForBuilderInference() && !isMarkedNullable()
     }
 
-    private fun TypeSystemCommonSuperTypesContext.isCapturedTypeVariable(type: RigidTypeMarker): Boolean {
+    context(c: TypeSystemCommonSuperTypesContext)
+    private fun RigidTypeMarker.isCapturedTypeVariable(): Boolean {
         val projectedType =
-            type.asCapturedTypeUnwrappingDnn()?.typeConstructor()?.projection()?.takeUnless {
+            asCapturedTypeUnwrappingDnn()?.typeConstructor()?.projection()?.takeUnless {
                 it.isStarProjection()
             }?.getType() ?: return false
         return projectedType.asRigidType()?.isStubTypeForVariableInSubtyping() == true
     }
 
-    private fun TypeSystemCommonSuperTypesContext.findErrorTypeInSupertypes(
+    context(c: TypeSystemCommonSuperTypesContext)
+    private fun findErrorTypeInSupertypes(
         types: List<RigidTypeMarker>,
-        stateStubTypesEqualToAnything: TypeCheckerState
+        stateStubTypesEqualToAnything: TypeCheckerState,
     ): SimpleTypeMarker? {
         for (type in types) {
             collectAllSupertypes(type, stateStubTypesEqualToAnything).firstOrNull { it.isError() }?.let { return it.toErrorType() }
@@ -264,12 +281,13 @@ object NewCommonSuperTypeCalculator {
         return null
     }
 
-    private fun TypeSystemCommonSuperTypesContext.findSuperTypeConstructorsAndIntersectResult(
+    context(c: TypeSystemCommonSuperTypesContext)
+    private fun findSuperTypeConstructorsAndIntersectResult(
         types: List<RigidTypeMarker>,
         depth: Int,
-        stateStubTypesEqualToAnything: TypeCheckerState
+        stateStubTypesEqualToAnything: TypeCheckerState,
     ): RigidTypeMarker =
-        intersectTypes(
+        c.intersectTypes(
             allCommonSuperTypeConstructors(types, stateStubTypesEqualToAnything)
                 .map { superTypeWithGivenConstructor(types, it, depth) }
         )
@@ -277,9 +295,10 @@ object NewCommonSuperTypeCalculator {
     /**
      * Note that if there is captured type C, then no one else is not subtype of C => lowerType cannot help here
      */
-    private fun TypeSystemCommonSuperTypesContext.allCommonSuperTypeConstructors(
+    context(c: TypeSystemCommonSuperTypesContext)
+    private fun allCommonSuperTypeConstructors(
         types: List<RigidTypeMarker>,
-        stateStubTypesEqualToAnything: TypeCheckerState
+        stateStubTypesEqualToAnything: TypeCheckerState,
     ): List<TypeConstructorMarker> {
         val result = collectAllSupertypes(types.first(), stateStubTypesEqualToAnything)
         // retain all super constructors of the first type that are present in the supertypes of all other types
@@ -296,9 +315,10 @@ object NewCommonSuperTypeCalculator {
         }
     }
 
-    private fun TypeSystemCommonSuperTypesContext.collectAllSupertypes(
+    context(c: TypeSystemCommonSuperTypesContext)
+    private fun collectAllSupertypes(
         type: RigidTypeMarker,
-        stateStubTypesEqualToAnything: TypeCheckerState
+        stateStubTypesEqualToAnything: TypeCheckerState,
     ) =
         LinkedHashSet<TypeConstructorMarker>().apply {
             stateStubTypesEqualToAnything.anySupertype(
@@ -308,18 +328,19 @@ object NewCommonSuperTypeCalculator {
             )
         }
 
-    private fun TypeSystemCommonSuperTypesContext.superTypeWithGivenConstructor(
+    context(c: TypeSystemCommonSuperTypesContext)
+    private fun superTypeWithGivenConstructor(
         types: List<RigidTypeMarker>,
         constructor: TypeConstructorMarker,
-        depth: Int
+        depth: Int,
     ): SimpleTypeMarker {
-        if (constructor.parametersCount() == 0) return createSimpleType(
+        if (constructor.parametersCount() == 0) return c.createSimpleType(
             constructor,
             emptyList(),
             nullable = false
         )
 
-        val typeCheckerContext = newTypeCheckerState(errorTypesEqualToAnything = false, stubTypesEqualToAnything = true)
+        val typeCheckerContext = c.newTypeCheckerState(errorTypesEqualToAnything = false, stubTypesEqualToAnything = true)
 
         /**
          * Sometimes one type can have several supertypes with given type constructor, suppose A <: List<Int> and A <: List<Double>.
@@ -361,7 +382,7 @@ object NewCommonSuperTypeCalculator {
                 val argumentType = argument.getType()?.asRigidType() ?: return argument
                 val argumentConstructor = argumentType.typeConstructor()
                 return if (argument.getVariance() == TypeVariance.OUT && argumentConstructor == constructor && argumentType.asArgumentList()[index].isStarProjection()) {
-                    createStarProjection(parameter)
+                    c.createStarProjection(parameter)
                 } else {
                     argument
                 }
@@ -369,17 +390,18 @@ object NewCommonSuperTypeCalculator {
 
             val argument =
                 if (thereIsStar || typeProjections.isEmpty() || checkRecursion(types, typeProjections, parameter)) {
-                    createStarProjection(parameter)
+                    c.createStarProjection(parameter)
                 } else {
                     collapseRecursiveArgumentIfPossible(calculateArgument(parameter, typeProjections, depth))
                 }
 
             arguments.add(argument)
         }
-        return createSimpleType(constructor, arguments, nullable = false, isExtensionFunction = types.all { it.isExtensionFunction() })
+        return c.createSimpleType(constructor, arguments, nullable = false, isExtensionFunction = types.all { it.isExtensionFunction() })
     }
 
-    private fun TypeSystemCommonSuperTypesContext.uncaptureFromSubtyping(typeArgument: TypeArgumentMarker): TypeArgumentMarker {
+    context(c: TypeSystemCommonSuperTypesContext)
+    private fun uncaptureFromSubtyping(typeArgument: TypeArgumentMarker): TypeArgumentMarker {
         val capturedType = typeArgument.getType()?.asRigidType()?.asCapturedTypeUnwrappingDnn() ?: return typeArgument
         if (capturedType.captureStatus() != CaptureStatus.FOR_SUBTYPING) return typeArgument
 
@@ -403,7 +425,8 @@ object NewCommonSuperTypeCalculator {
      * Captured star projections are replaced with their corresponding supertypes during this check.
      * The check is skipped for contravariant parameters, for which recursive cst calculation never happens.
      */
-    private fun TypeSystemCommonSuperTypesContext.checkRecursion(
+    context(c: TypeSystemCommonSuperTypesContext)
+    private fun checkRecursion(
         originalTypesForCst: List<RigidTypeMarker>,
         typeArgumentsForSuperConstructorParameter: List<TypeArgumentMarker>,
         parameter: TypeParameterMarker,
@@ -439,22 +462,26 @@ object NewCommonSuperTypeCalculator {
         return true
     }
 
-    private fun TypeSystemCommonSuperTypesContext.typeConstructorsWithExpandedStarProjections(types: Set<SimpleTypeMarker>) = sequence {
-        for (type in types) {
-            if (isCapturedStarProjection(type)) {
-                for (supertype in supertypesIfCapturedStarProjection(type).orEmpty()) {
-                    yield(supertype.lowerBoundIfFlexible().typeConstructor())
+    context(c: TypeSystemCommonSuperTypesContext)
+    private fun typeConstructorsWithExpandedStarProjections(types: Set<SimpleTypeMarker>) =
+        sequence {
+            for (type in types) {
+                if (isCapturedStarProjection(type)) {
+                    for (supertype in supertypesIfCapturedStarProjection(type).orEmpty()) {
+                        yield(supertype.lowerBoundIfFlexible().typeConstructor())
+                    }
+                } else {
+                    yield(type.typeConstructor())
                 }
-            } else {
-                yield(type.typeConstructor())
             }
         }
-    }
 
-    private fun TypeSystemCommonSuperTypesContext.isCapturedStarProjection(type: SimpleTypeMarker): Boolean =
+    context(c: TypeSystemCommonSuperTypesContext)
+    private fun isCapturedStarProjection(type: SimpleTypeMarker): Boolean =
         type.asCapturedType()?.typeConstructor()?.projection()?.isStarProjection() == true
 
-    private fun TypeSystemCommonSuperTypesContext.supertypesIfCapturedStarProjection(type: SimpleTypeMarker): Collection<KotlinTypeMarker>? {
+    context(c: TypeSystemCommonSuperTypesContext)
+    private fun supertypesIfCapturedStarProjection(type: SimpleTypeMarker): Collection<KotlinTypeMarker>? {
         val constructor = type.asCapturedType()?.typeConstructor() ?: return null
         return if (constructor.projection().isStarProjection())
             constructor.supertypes()
@@ -462,13 +489,14 @@ object NewCommonSuperTypeCalculator {
     }
 
     // no star projections in arguments
-    private fun TypeSystemCommonSuperTypesContext.calculateArgument(
+    context(c: TypeSystemCommonSuperTypesContext)
+    private fun calculateArgument(
         parameter: TypeParameterMarker,
         arguments: List<TypeArgumentMarker>,
-        depth: Int
+        depth: Int,
     ): TypeArgumentMarker {
         if (depth > 0) {
-            return createStarProjection(parameter)
+            return c.createStarProjection(parameter)
         }
 
         // Inv<A>, Inv<A> = Inv<A>
@@ -486,7 +514,7 @@ object NewCommonSuperTypeCalculator {
             if (thereIsOut) {
                 if (thereIsIn) {
                     // CS(Inv<out X>, Inv<in Y>) = Inv<*>
-                    return createStarProjection(parameter)
+                    return c.createStarProjection(parameter)
                 } else {
                     asOut = true
                 }
@@ -511,7 +539,7 @@ object NewCommonSuperTypeCalculator {
 
             val equalToEachOtherType = arguments.firstOrNull { potentialSuperType ->
                 arguments.all {
-                    AbstractTypeChecker.equalTypes(this, it.getType()!!, potentialSuperType.getType()!!, stubTypesEqualToAnything = false)
+                    AbstractTypeChecker.equalTypes(c, it.getType()!!, potentialSuperType.getType()!!, stubTypesEqualToAnything = false)
                 }
             }
 
@@ -523,22 +551,22 @@ object NewCommonSuperTypeCalculator {
                 // where the only stub types we can encounter here are 'stub types for type variables in subtyping'
                 // from ResultTypeResolver.
                 val variance = if (
-                    supportsImprovedVarianceInCst() &&
-                    argumentTypes.all { AbstractTypeChecker.equalTypes(this, it, cst, stubTypesEqualToAnything = true) }
+                    c.supportsImprovedVarianceInCst() &&
+                    argumentTypes.all { AbstractTypeChecker.equalTypes(c, it, cst, stubTypesEqualToAnything = true) }
                 ) {
                     TypeVariance.INV
                 } else {
                     TypeVariance.OUT
                 }
-                createTypeArgument(cst, variance)
+                c.createTypeArgument(cst, variance)
             } else {
                 val thereIsNotInv = arguments.any { it.getVariance() != TypeVariance.INV }
-                createTypeArgument(equalToEachOtherType.getType()!!, if (thereIsNotInv) TypeVariance.OUT else TypeVariance.INV)
+                c.createTypeArgument(equalToEachOtherType.getType()!!, if (thereIsNotInv) TypeVariance.OUT else TypeVariance.INV)
             }
         } else {
-            val type = intersectTypes(arguments.map { it.getType()!! })
+            val type = c.intersectTypes(arguments.map { it.getType()!! })
 
-            return if (parameter.getVariance() != TypeVariance.INV) type.asTypeArgument() else createTypeArgument(
+            return if (parameter.getVariance() != TypeVariance.INV) type.asTypeArgument() else c.createTypeArgument(
                 type,
                 TypeVariance.IN
             )

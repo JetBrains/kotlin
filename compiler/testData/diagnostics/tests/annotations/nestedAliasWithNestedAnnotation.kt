@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// FIR_IDENTICAL
 @Target(AnnotationTarget.TYPE, AnnotationTarget.TYPEALIAS, AnnotationTarget.TYPE_PARAMETER)
 annotation class Anno(val position: String)
 
@@ -11,3 +10,7 @@ interface OriginalInterface<T> {
         private const val prop = 0
     }
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, companionObject, const, integerLiteral, interfaceDeclaration, nullableType,
+objectDeclaration, primaryConstructor, propertyDeclaration, stringLiteral, typeAliasDeclaration,
+typeAliasDeclarationWithTypeParameter, typeConstraint, typeParameter */

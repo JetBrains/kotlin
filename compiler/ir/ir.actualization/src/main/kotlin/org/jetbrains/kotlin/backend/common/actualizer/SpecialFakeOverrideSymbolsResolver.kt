@@ -38,7 +38,7 @@ import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
  * and we can't guarantee that all real symbols are some specific preferred overrides, as they were right after Fir2Ir.
  *
  */
-class SpecialFakeOverrideSymbolsResolver(val expectActualMap: IrExpectActualMap) : SymbolRemapper.Empty() {
+class SpecialFakeOverrideSymbolsResolver() : SymbolRemapper.Empty() {
     /**
      * Map from (class, declaration) -> declarationInsideClass
      *
@@ -79,29 +79,10 @@ class SpecialFakeOverrideSymbolsResolver(val expectActualMap: IrExpectActualMap)
         if (this !is IrFakeOverrideSymbolBase<*, *, *>) {
             return this
         }
-        val actualizedClassSymbol = containingClassSymbol.actualize()
-        val actualizedOriginalSymbol = originalSymbol.actualize()
-        processClass(actualizedClassSymbol.owner)
-        when (val result = cachedFakeOverrides[actualizedClassSymbol to actualizedOriginalSymbol]) {
-            null -> {
-                if (originalSymbol in expectActualMap.propertyAccessorsActualizedByFields) {
-                    // This is an accessor of an expect property actualized by a Java field. Skip for now.
-                    // It will be handled later in SpecialFakeOverrideSymbolsActualizedByFieldsTransformer.
-                    return this
-                }
-                error("No override for $actualizedOriginalSymbol in $actualizedClassSymbol")
-            }
-            !is S -> error("Override for $actualizedOriginalSymbol in $actualizedClassSymbol has incompatible type: $result")
-            else -> return result
-        }
-    }
-
-    private fun IrClassSymbol.actualize(): IrClassSymbol {
-        return (this as IrSymbol).actualize() as IrClassSymbol
-    }
-
-    private fun IrSymbol.actualize(): IrSymbol {
-        return expectActualMap.expectToActual[this] ?: this
+        processClass(containingClassSymbol.owner)
+        val result = cachedFakeOverrides[containingClassSymbol to originalSymbol]
+        if (result == null) error("No override for $originalSymbol in $containingClassSymbol")
+        return result as? S ?: error("Override for $originalSymbol in $containingClassSymbol has incompatible type: $result")
     }
 
     private fun processClass(irClass: IrClass) {
@@ -230,7 +211,7 @@ class SpecialFakeOverrideSymbolsResolverVisitor(private val resolver: SpecialFak
 }
 
 class SpecialFakeOverrideSymbolsActualizedByFieldsTransformer(
-    private val expectActualMap: IrExpectActualMap
+    private val propertyAccessorsActualizedByFields: Map<IrSimpleFunctionSymbol, IrPropertySymbol>
 ) : IrElementTransformerVoid() {
     override fun visitCall(expression: IrCall): IrExpression {
         expression.transformChildrenVoid()
@@ -239,8 +220,11 @@ class SpecialFakeOverrideSymbolsActualizedByFieldsTransformer(
         val originalAccessorSymbol = fakeOverrideAccessorSymbol.originalSymbol
         val actualizedClassSymbol = fakeOverrideAccessorSymbol.containingClassSymbol
 
-        val actualFieldSymbol = expectActualMap.propertyAccessorsActualizedByFields[originalAccessorSymbol]?.owner?.resolveFakeOverride()?.backingField?.symbol
-            ?: error("No override for $originalAccessorSymbol in $actualizedClassSymbol")
+        if (originalAccessorSymbol !in propertyAccessorsActualizedByFields) return expression
+
+        val actualFieldSymbol =
+            propertyAccessorsActualizedByFields[originalAccessorSymbol]?.owner?.resolveFakeOverride()?.backingField?.symbol
+                ?: error("No override for $originalAccessorSymbol in $actualizedClassSymbol")
 
         return when {
             originalAccessorSymbol.owner.isGetter -> IrGetFieldImpl(
@@ -256,7 +240,7 @@ class SpecialFakeOverrideSymbolsActualizedByFieldsTransformer(
                 expression.startOffset, expression.endOffset,
                 symbol = actualFieldSymbol,
                 receiver = expression.dispatchReceiver,
-                value = expression.arguments[originalAccessorSymbol.owner.parameters.indexOfFirst{ it.kind == IrParameterKind.Regular }]!!,
+                value = expression.arguments[originalAccessorSymbol.owner.parameters.indexOfFirst { it.kind == IrParameterKind.Regular }]!!,
                 type = expression.type,
                 origin = expression.origin,
                 superQualifierSymbol = expression.superQualifierSymbol

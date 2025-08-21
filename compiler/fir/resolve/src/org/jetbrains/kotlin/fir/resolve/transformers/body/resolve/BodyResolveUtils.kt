@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.resolve.transformers.body.resolve
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.KtSourceElementOffsetStrategy
 import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
@@ -15,6 +16,7 @@ import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.buildSpreadArgumentExpression
 import org.jetbrains.kotlin.fir.expressions.builder.buildVarargArgumentsExpression
+import org.jetbrains.kotlin.fir.resolve.diagnostics.ConePostponedInferenceDiagnostic
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.ClassId
@@ -43,9 +45,8 @@ internal fun remapArgumentsWithVararg(
     val varargArgument = buildVarargArgumentsExpression {
         coneElementTypeOrNull = varargElementType
         coneTypeOrNull = varargArrayType
-        var startOffset = Int.MAX_VALUE
-        var endOffset = 0
         var firstVarargElementSource: KtSourceElement? = null
+        var lastVarargElementSource: KtSourceElement? = null
 
         for ((i, arg) in argumentList.withIndex()) {
             val valueParameter = argumentMapping[arg]
@@ -65,9 +66,12 @@ internal fun remapArgumentsWithVararg(
                 } else {
                     arg
                 }
-                startOffset = minOf(startOffset, arg.source?.startOffset ?: Int.MAX_VALUE)
-                endOffset = maxOf(endOffset, arg.source?.endOffset ?: 0)
-                if (firstVarargElementSource == null) firstVarargElementSource = arg.source
+
+                if (firstVarargElementSource == null) {
+                    firstVarargElementSource = arg.source
+                }
+
+                lastVarargElementSource = arg.source
             } else if (arguments.isEmpty()) {
                 // `arg` is BEFORE the vararg arguments.
                 newArgumentMapping[arg] = valueParameter
@@ -78,7 +82,18 @@ internal fun remapArgumentsWithVararg(
             }
         }
 
-        source = firstVarargElementSource?.fakeElement(KtFakeSourceElementKind.VarargArgument, startOffset, endOffset)
+        val strategy = when {
+            firstVarargElementSource != null && lastVarargElementSource != null -> {
+                KtSourceElementOffsetStrategy.Custom.Delegated(
+                    startOffsetAnchor = firstVarargElementSource,
+                    endOffsetAnchor = lastVarargElementSource,
+                )
+            }
+
+            else -> KtSourceElementOffsetStrategy.Default
+        }
+
+        source = firstVarargElementSource?.fakeElement(KtFakeSourceElementKind.VarargArgument, strategy)
     }
     newArgumentMapping[varargArgument] = varargParameter
 
@@ -91,14 +106,16 @@ internal fun remapArgumentsWithVararg(
 }
 
 fun FirBlock.writeResultType(session: FirSession) {
-    val resultExpression = when (val statement = statements.lastOrNull()) {
-        is FirExpression -> statement
-        else -> null
-    }
+    val resultExpression = statements.lastOrNull() as? FirExpression
 
-    // If a lambda contains another lambda as result expression, it won't be resolved at this point
     @OptIn(UnresolvedExpressionTypeAccess::class)
-    resultType = resultExpression?.coneTypeOrNull ?: session.builtinTypes.unitType.coneType
+    resultType = if (resultExpression == null) {
+        session.builtinTypes.unitType.coneType
+    } else {
+        // If a lambda contains another lambda as the result expression, it won't be resolved at this point.
+        // Set the block return type to an error so it is rewritten during call completion.
+        resultExpression.coneTypeOrNull ?: ConeErrorType(ConePostponedInferenceDiagnostic)
+    }
 }
 
 fun ConstantValueKind.expectedConeType(session: FirSession): ConeKotlinType {

@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
  *
  * Adds getter expression into `tryGetAssociatedObject` body:
  *
- *     internal fun tryGetAssociatedObject(klassId: Int, keyId: Int): Any? {
+ *     internal fun tryGetAssociatedObject(klassId: Long, keyId: Long): Any? {
  *         ...
  *         if (C.klassId == klassId) if (Key.klassId == keyId) return OBJ
  *         ...

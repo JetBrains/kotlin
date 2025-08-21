@@ -1,14 +1,18 @@
 diff --git a/build.gradle.kts b/build.gradle.kts
-index cc8f246fa..372ab197d 100644
+index 7b09530ec..b3ab4fdc1 100644
 --- a/build.gradle.kts
 +++ b/build.gradle.kts
-@@ -20,19 +20,15 @@ plugins {
+@@ -10,23 +10,15 @@ plugins {
  allprojects {
      buildscript {
          repositories {
--            mavenCentral()
-             mavenLocal()
-+            mavenCentral()
++            mavenLocal()
+             mavenCentral()
+-            mavenLocal {
+-                content {
+-                    includeGroup("com.expediagroup")
+-                }
+-            }
          }
      }
 
@@ -24,43 +28,72 @@ index cc8f246fa..372ab197d 100644
      }
  }
 
+diff --git a/buildSrc/build.gradle.kts b/buildSrc/build.gradle.kts
+index d185f9d2c..b7e355b79 100644
+--- a/buildSrc/build.gradle.kts
++++ b/buildSrc/build.gradle.kts
+@@ -4,6 +4,7 @@ plugins {
+ }
+
+ repositories {
++    mavenLocal()
+     // Use the plugin portal to apply community plugins in convention plugins.
+     gradlePluginPortal()
+ }
+diff --git a/buildSrc/gradle.properties b/buildSrc/gradle.properties
+new file mode 100644
+index 000000000..b67c10f36
+--- /dev/null
++++ b/buildSrc/gradle.properties
+@@ -0,0 +1 @@
++kotlinVersion=<kotlin_version>
+diff --git a/buildSrc/settings.gradle.kts b/buildSrc/settings.gradle.kts
+index 1b7980379..2721bac88 100644
+--- a/buildSrc/settings.gradle.kts
++++ b/buildSrc/settings.gradle.kts
+@@ -4,6 +4,8 @@ dependencyResolutionManagement {
+     versionCatalogs {
+         create("libs") {
+             from(files("../gradle/libs.versions.toml"))
++            val kotlinVersion = providers.gradleProperty("kotlinVersion").get()
++            version("kotlin", kotlinVersion)
+         }
+     }
+ }
+diff --git a/buildSrc/src/main/kotlin/com.expediagroup.graphql.conventions.gradle.kts b/buildSrc/src/main/kotlin/com.expediagroup.graphql.conventions.gradle.kts
+index ad18a8509..506d88f45 100644
+--- a/buildSrc/src/main/kotlin/com.expediagroup.graphql.conventions.gradle.kts
++++ b/buildSrc/src/main/kotlin/com.expediagroup.graphql.conventions.gradle.kts
+@@ -2,6 +2,7 @@ import org.gradle.accessors.dm.LibrariesForLibs
+ import org.jetbrains.dokka.gradle.DokkaTask
+ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+ import java.time.Instant
++import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
+ plugins {
+     kotlin("jvm")
+@@ -23,9 +24,9 @@ tasks {
+     }
+     val kotlinJvmVersion: String by project
+     withType<KotlinCompile> {
+-        kotlinOptions {
++        compilerOptions {
+             // intellij gets confused without it
+-            jvmTarget = kotlinJvmVersion
++            jvmTarget = JvmTarget.fromTarget(kotlinJvmVersion)
+             freeCompilerArgs = listOf("-Xjsr305=strict")
+         }
+     }
 diff --git a/gradle.properties b/gradle.properties
-index 5f87e678e..3fc4f5527 100644
+index f5051d1c8..d10a0f4d2 100644
 --- a/gradle.properties
 +++ b/gradle.properties
-@@ -15,7 +15,7 @@ org.gradle.jvmargs=-Xmx2g -XX:+HeapDumpOnOutOfMemoryError
+@@ -1,6 +1,8 @@
+ group = com.expediagroup
+ version = 9.0.0-SNAPSHOT
 
- # dependencies
- kotlinJvmVersion = 1.8
--kotlinVersion = 1.6.21
-+kotlinVersion = <kotlin_version>
- kotlinCoroutinesVersion = 1.6.4
- # kotlinx-serialization 1.3.3 calls Kotlin 1.7 API
- kotlinxSerializationVersion = 1.3.2
-diff --git a/gradle/wrapper/gradle-wrapper.properties b/gradle/wrapper/gradle-wrapper.properties
-index 8049c684f..068cdb2dc 100644
---- a/gradle/wrapper/gradle-wrapper.properties
-+++ b/gradle/wrapper/gradle-wrapper.properties
-@@ -1,5 +1,5 @@
- distributionBase=GRADLE_USER_HOME
- distributionPath=wrapper/dists
--distributionUrl=https\://services.gradle.org/distributions/gradle-7.5-bin.zip
-+distributionUrl=https\://services.gradle.org/distributions/gradle-7.6.3-bin.zip
- zipStoreBase=GRADLE_USER_HOME
- zipStorePath=wrapper/dists
-diff --git a/settings.gradle.kts b/settings.gradle.kts
-index dde7eff60..a30d11913 100644
---- a/settings.gradle.kts
-+++ b/settings.gradle.kts
-@@ -9,6 +9,11 @@ pluginManagement {
-     val pluginPublishPluginVersion: String by settings
-     val springBootVersion: String by settings
- 
-+    repositories {
-+        mavenLocal()
-+        gradlePluginPortal()
-+    }
++kotlinVersion=<kotlin_version>
 +
-     plugins {
-         kotlin("jvm") version kotlinVersion
-         kotlin("kapt") version kotlinVersion
+ # build config
+ org.gradle.caching=true
+ org.gradle.parallel=true

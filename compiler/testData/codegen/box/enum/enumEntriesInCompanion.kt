@@ -1,5 +1,4 @@
 // LANGUAGE: +EnumEntries
-// IGNORE_BACKEND: JVM
 // WITH_STDLIB
 
 enum class MyEnum {

@@ -27,7 +27,7 @@ fun Example(items: MutableList<Int>) {
 @NonRestartableComposable
 @Composable
 fun Example(items: MutableList<Int>, %composer: Composer?, %changed: Int) {
-  sourceInformationMarkerStart(%composer, <>, "C(Example)<A()>:Test.kt")
+  sourceInformationMarkerStart(%composer, <>, "C(Example)N(items)<A()>:Test.kt")
   if (isTraceInProgress()) {
     traceEventStart(<>, %changed, -1, <>)
   }

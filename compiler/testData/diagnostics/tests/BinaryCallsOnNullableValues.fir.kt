@@ -30,3 +30,7 @@ fun f(): Unit {
     <!CONDITION_TYPE_MISMATCH!>y<!> && true
     <!CONDITION_TYPE_MISMATCH!>y<!> && <!CONDITION_TYPE_MISMATCH!>1<!>
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, andExpression, assignment, classDeclaration, comparisonExpression,
+disjunctionExpression, equalityExpression, functionDeclaration, integerLiteral, intersectionType, localProperty,
+nullableType, operator, override, primaryConstructor, propertyDeclaration, rangeExpression, smartcast, stringLiteral */

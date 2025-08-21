@@ -29,6 +29,8 @@ val fatJarContentsStripVersions by configurations.creating
 
 val compilerVersion by configurations.creating
 
+val builtinsMetadata by configurations.creating
+
 // JPS build assumes fat jar is built from embedded configuration,
 // but we can't use it in gradle build since slightly more complex processing is required like stripping metadata & services from some jars
 if (kotlinBuildProperties.isInJpsBuildIdeaSync) {
@@ -97,7 +99,6 @@ val distLibraryProjects = listOfNotNull(
     ":kotlin-ant",
     ":kotlin-daemon",
     ":kotlin-daemon-client",
-    ":kotlin-imports-dumper-compiler-plugin",
     ":kotlin-main-kts",
     ":kotlin-preloader",
     // Although, Kotlin compiler is compiled against reflect of an older version (which is bundled into minimal supported IDEA). We put
@@ -112,13 +113,11 @@ val distLibraryProjects = listOfNotNull(
     ":kotlin-scripting-compiler-impl",
     ":kotlin-scripting-jvm",
     ":libraries:tools:mutability-annotations-compat",
-    ":plugins:android-extensions-compiler",
     ":plugins:jvm-abi-gen"
 )
 
 val distCompilerPluginProjects = listOf(
     ":kotlin-allopen-compiler-plugin",
-    ":kotlin-android-extensions-runtime",
     ":plugins:parcelize:parcelize-compiler",
     ":plugins:parcelize:parcelize-runtime",
     ":kotlin-noarg-compiler-plugin",
@@ -150,7 +149,6 @@ dependencies {
     api(kotlinStdlib("jdk8"))
     api(project(":kotlin-script-runtime"))
     api(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
-    api(commonDependency("org.jetbrains.intellij.deps", "trove4j"))
     api(libs.kotlinx.coroutines.core)
 
     proguardLibraries(project(":kotlin-annotations-jvm"))
@@ -171,7 +169,6 @@ dependencies {
     }
 
     librariesStripVersion(libs.kotlinx.coroutines.core) { isTransitive = false }
-    librariesStripVersion(commonDependency("org.jetbrains.intellij.deps:trove4j")) { isTransitive = false }
 
     distLibraryProjects.forEach {
         libraries(project(it)) { isTransitive = false }
@@ -217,9 +214,6 @@ dependencies {
 
     buildNumber(project(":prepare:build.version", configuration = "buildVersion"))
 
-    if (!kotlinBuildProperties.isInJpsBuildIdeaSync) {
-        fatJarContents(kotlinBuiltins())
-    }
     fatJarContents(commonDependency("javax.inject"))
     fatJarContents(commonDependency("org.jline", "jline"))
     fatJarContents(commonDependency("org.fusesource.jansi", "jansi"))
@@ -236,7 +230,7 @@ dependencies {
     fatJarContents(libs.intellij.asm) { isTransitive = false }
     fatJarContents(libs.guava) { isTransitive = false }
     //Gson is needed for kotlin-build-statistics. Build statistics could be enabled for JPS and Gradle builds. Gson will come from inteliij or KGP.
-    proguardLibraries(commonDependency("com.google.code.gson:gson")) { isTransitive = false}
+    proguardLibraries(commonDependency("com.google.code.gson:gson")) { isTransitive = false }
 
     fatJarContentsStripServices(commonDependency("com.fasterxml:aalto-xml")) { isTransitive = false }
     fatJarContents(commonDependency("org.codehaus.woodstox:stax2-api")) { isTransitive = false }
@@ -245,6 +239,8 @@ dependencies {
     fatJarContentsStripMetadata(intellijJDom()) { isTransitive = false }
     fatJarContentsStripMetadata(commonDependency("org.jetbrains.intellij.deps:log4j")) { isTransitive = false }
     fatJarContentsStripVersions(commonDependency("one.util:streamex")) { isTransitive = false }
+
+    builtinsMetadata(kotlinStdlib())
 }
 
 val librariesKotlinTestFiles = files(
@@ -265,7 +261,13 @@ publish()
 val distSbomTask = configureSbom(
     target = "Dist",
     documentName = "Kotlin Compiler Distribution",
-    setOf(configurations.runtimeClasspath.name, libraries.name, librariesKotlinTest.name, librariesStripVersion.name, compilerPlugins.name)
+    setOf(
+        configurations.runtimeClasspath.name,
+        libraries.name, librariesKotlinTest.name, librariesStripVersion.name,
+        compilerPlugins.name,
+        fatJarContents.name, fatJarContentsStripServices.name, fatJarContentsStripMetadata.name, fatJarContentsStripVersions.name,
+        proguardLibraries.name,
+    )
 )
 
 val packCompiler by task<Jar> {
@@ -295,7 +297,17 @@ val packCompiler by task<Jar> {
     dependsOn(fatJarContentsStripVersions)
     from {
         fatJarContentsStripVersions.files.map {
-            zipTree(it).matching { exclude("META-INF/versions/**") }
+            zipTree(it).matching {
+                includeEmptyDirs = false
+                exclude("META-INF/versions/**")
+            }
+        }
+    }
+
+    dependsOn(builtinsMetadata)
+    from {
+        builtinsMetadata.files.map {
+            zipTree(it).matching { include("**/*.kotlin_builtins") }
         }
     }
 }

@@ -1,4 +1,3 @@
-// DONT_TARGET_EXACT_BACKEND: JVM
 // ISSUE: KT-65002
 typealias Listener = (String) -> Unit
 

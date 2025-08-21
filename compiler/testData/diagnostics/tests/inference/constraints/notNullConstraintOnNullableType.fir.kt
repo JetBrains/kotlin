@@ -23,3 +23,7 @@ fun test(out: Out<Int>, i: In<Int>, inv: A<Int>) {
     // T? >: Int => error
     <!CANNOT_INFER_PARAMETER_TYPE!>doA<!>(<!ARGUMENT_TYPE_MISMATCH!>inv<!>)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType, in, infix,
+integerLiteral, interfaceDeclaration, lambdaLiteral, localProperty, nullableType, out, propertyDeclaration,
+typeConstraint, typeParameter, typeWithExtension */

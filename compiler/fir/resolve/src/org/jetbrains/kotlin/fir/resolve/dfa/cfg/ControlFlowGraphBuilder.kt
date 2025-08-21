@@ -26,11 +26,121 @@ import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
 
-data class FirAnonymousFunctionReturnExpressionInfo(val expression: FirExpression, val isExplicit: Boolean)
+data class FirAnonymousFunctionReturnExpressionInfo(
+    val expression: FirExpression,
+    val isExplicit: Boolean,
+    // FirReturnExpression for explicit return
+    // FirBlock for the last statement of a lambda
+    val containingStatement: FirStatement,
+)
 
 @OptIn(CfgInternals::class)
-class ControlFlowGraphBuilder {
-    private val graphs: Stack<ControlFlowGraph> = stackOf()
+class ControlFlowGraphBuilder private constructor(
+    private val graphs: Stack<ControlFlowGraph>,
+    private val lastNodes: Stack<CFGNode<*>>,
+
+    // ----------------------------------- Node caches -----------------------------------
+
+    private val exitTargetsForReturn: MutableMap<FirFunctionSymbol<*>, FunctionExitNode>,
+    private val enterToLocalClassesMembers: MutableMap<FirBasedSymbol<*>, Pair<CFGNode<*>, EdgeKind>>,
+
+    private val nonDirectJumps: ListMultimap<CFGNode<*>, JumpNode>, //return jumps via finally blocks, target -> jumps
+
+    private val argumentListSplitNodes: Stack<SplitPostponedLambdasNode?>,
+    private val postponedAnonymousFunctionNodes: MutableMap<FirFunctionSymbol<*>, Pair<CFGNode<*>, PostponedLambdaExitNode?>>,
+    private val anonymousFunctionCaptureNodes: MutableMap<FirFunctionSymbol<*>, AnonymousFunctionCaptureNode>,
+    private val postponedLambdaExits: Stack<PostponedLambdas>,
+
+    private val loopConditionEnterNodes: MutableMap<FirLoop, LoopConditionEnterNode>,
+    private val loopExitNodes: MutableMap<FirLoop, LoopExitNode>,
+
+    private val whenExitNodes: Stack<WhenExitNode>,
+
+    private val tryExitNodes: Stack<TryExpressionExitNode>,
+    private val catchNodes: Stack<List<CatchClauseEnterNode>>,
+    private val catchBlocksInProgress: Stack<CatchClauseEnterNode>,
+    private val finallyEnterNodes: Stack<FinallyBlockEnterNode>,
+    private val finallyBlocksInProgress: Stack<FinallyBlockEnterNode>,
+    private val finallyBlocksInProgressSet: MutableSet<FirElement>,
+
+    private val exitFunctionCallArgumentsNodes: Stack<FunctionCallArgumentsExitNode?>,
+    private val exitSafeCallNodes: Stack<ExitSafeCallNode>,
+    private val exitElvisExpressionNodes: Stack<ElvisExitNode>,
+    private val elvisRhsEnterNodes: Stack<ElvisRhsEnterNode>,
+    private val equalityOperatorCallLhsExitNodes: Stack<CFGNode<*>>,
+
+    private val notCompletedFunctionCalls: Stack<MutableList<FunctionCallExitNode>>,
+) {
+    constructor() : this(
+        graphs = stackOf(),
+        lastNodes = stackOf(),
+        exitTargetsForReturn = mutableMapOf(),
+        enterToLocalClassesMembers = mutableMapOf(),
+        nonDirectJumps = listMultimapOf(),
+        argumentListSplitNodes = stackOf(),
+        postponedAnonymousFunctionNodes = mutableMapOf(),
+        anonymousFunctionCaptureNodes = mutableMapOf(),
+        postponedLambdaExits = stackOf(),
+        loopConditionEnterNodes = mutableMapOf(),
+        loopExitNodes = mutableMapOf(),
+        whenExitNodes = stackOf(),
+        tryExitNodes = stackOf(),
+        catchNodes = stackOf(),
+        catchBlocksInProgress = stackOf(),
+        finallyEnterNodes = stackOf(),
+        finallyBlocksInProgress = stackOf(),
+        finallyBlocksInProgressSet = mutableSetOf(),
+        exitFunctionCallArgumentsNodes = stackOf(),
+        exitSafeCallNodes = stackOf(),
+        exitElvisExpressionNodes = stackOf(),
+        elvisRhsEnterNodes = stackOf(),
+        equalityOperatorCallLhsExitNodes = stackOf(),
+        notCompletedFunctionCalls = stackOf(),
+    )
+
+    /**
+     * Builds a deep independent copy of this [ControlFlowGraphBuilder].
+     * The copy is not affected by changes in this storage.
+     */
+    internal fun createSnapshot(copier: ControlFlowGraphCopier): ControlFlowGraphBuilder {
+        return ControlFlowGraphBuilder(
+            graphs = graphs.createSnapshot(copier::get),
+            lastNodes = lastNodes.createSnapshot(copier::get),
+            exitTargetsForReturn = exitTargetsForReturn.mapValuesTo(mutableMapOf()) { copier[it.value] },
+            enterToLocalClassesMembers = enterToLocalClassesMembers.mapValuesTo(mutableMapOf()) { (_, value) ->
+                Pair(copier[value.first], value.second)
+            },
+            nonDirectJumps = listMultimapOf<CFGNode<*>, JumpNode>().also { newNonDirectJumps ->
+                for ((node, jumps) in nonDirectJumps) {
+                    newNonDirectJumps.putAll(copier[node], jumps.map(copier::get))
+                }
+            },
+            argumentListSplitNodes = argumentListSplitNodes.createSnapshot { it?.let(copier::get) },
+            postponedAnonymousFunctionNodes = postponedAnonymousFunctionNodes.mapValuesTo(mutableMapOf()) { (_, value) ->
+                Pair(copier[value.first], value.second?.let(copier::get))
+            },
+            anonymousFunctionCaptureNodes = anonymousFunctionCaptureNodes.mapValuesTo(mutableMapOf()) { copier[it.value] },
+            postponedLambdaExits = postponedLambdaExits.createSnapshot { lambdas ->
+                val newExits = lambdas.exits.mapTo(mutableListOf()) { Pair(copier[it.first], it.second) }
+                PostponedLambdas(lambdas.lambdas, newExits)
+            },
+            loopConditionEnterNodes = loopConditionEnterNodes.mapValuesTo(mutableMapOf()) { copier[it.value] },
+            loopExitNodes = loopExitNodes.mapValuesTo(mutableMapOf()) { copier[it.value] },
+            whenExitNodes = whenExitNodes.createSnapshot(copier::get),
+            tryExitNodes = tryExitNodes.createSnapshot(copier::get),
+            catchNodes = catchNodes.createSnapshot { it.map(copier::get) },
+            catchBlocksInProgress = catchBlocksInProgress.createSnapshot(copier::get),
+            finallyEnterNodes = finallyEnterNodes.createSnapshot(copier::get),
+            finallyBlocksInProgress = finallyBlocksInProgress.createSnapshot(copier::get),
+            finallyBlocksInProgressSet = finallyBlocksInProgressSet.toMutableSet(),
+            exitFunctionCallArgumentsNodes = exitFunctionCallArgumentsNodes.createSnapshot { it?.let(copier::get) },
+            exitSafeCallNodes = exitSafeCallNodes.createSnapshot(copier::get),
+            exitElvisExpressionNodes = exitElvisExpressionNodes.createSnapshot(copier::get),
+            elvisRhsEnterNodes = elvisRhsEnterNodes.createSnapshot(copier::get),
+            equalityOperatorCallLhsExitNodes = equalityOperatorCallLhsExitNodes.createSnapshot(copier::get),
+            notCompletedFunctionCalls = notCompletedFunctionCalls.createSnapshot { it.mapTo(mutableListOf(), copier::get) },
+        )
+    }
 
     val isTopLevel: Boolean
         get() = graphs.isEmpty || graphs.topOrNull()?.kind == ControlFlowGraph.Kind.File
@@ -46,47 +156,11 @@ class ControlFlowGraphBuilder {
         // are inside the try and which aren't
         get() = graphs.size + tryExitNodes.size
 
-    private val lastNodes: Stack<CFGNode<*>> = stackOf()
     val lastNode: CFGNode<*>
         get() = lastNodes.top()
 
     val lastNodeOrNull: CFGNode<*>?
         get() = lastNodes.topOrNull()
-
-    // ----------------------------------- Node caches -----------------------------------
-
-    private val exitTargetsForReturn: MutableMap<FirFunctionSymbol<*>, FunctionExitNode> = mutableMapOf()
-    private val enterToLocalClassesMembers: MutableMap<FirBasedSymbol<*>, Pair<CFGNode<*>, EdgeKind>> = mutableMapOf()
-
-    //return jumps via finally blocks, target -> jumps
-    private val nonDirectJumps: ListMultimap<CFGNode<*>, JumpNode> = listMultimapOf()
-
-    private val argumentListSplitNodes: Stack<SplitPostponedLambdasNode?> = stackOf()
-    private val postponedAnonymousFunctionNodes =
-        mutableMapOf<FirFunctionSymbol<*>, Pair<CFGNode<*>, PostponedLambdaExitNode?>>()
-    private val anonymousFunctionCaptureNodes =
-        mutableMapOf<FirFunctionSymbol<*>, AnonymousFunctionCaptureNode>()
-    private val postponedLambdaExits: Stack<PostponedLambdas> = stackOf()
-
-    private val loopConditionEnterNodes: MutableMap<FirLoop, LoopConditionEnterNode> = mutableMapOf()
-    private val loopExitNodes: MutableMap<FirLoop, LoopExitNode> = mutableMapOf()
-
-    private val whenExitNodes: Stack<WhenExitNode> = stackOf()
-
-    private val tryExitNodes: Stack<TryExpressionExitNode> = stackOf()
-    private val catchNodes: Stack<List<CatchClauseEnterNode>> = stackOf()
-    private val catchBlocksInProgress: Stack<CatchClauseEnterNode> = stackOf()
-    private val finallyEnterNodes: Stack<FinallyBlockEnterNode> = stackOf()
-    private val finallyBlocksInProgress: Stack<FinallyBlockEnterNode> = stackOf()
-    private val finallyBlocksInProgressSet = mutableSetOf<FirElement>()
-
-    private val exitFunctionCallArgumentsNodes: Stack<FunctionCallArgumentsExitNode?> = stackOf()
-    private val exitSafeCallNodes: Stack<ExitSafeCallNode> = stackOf()
-    private val exitElvisExpressionNodes: Stack<ElvisExitNode> = stackOf()
-    private val elvisRhsEnterNodes: Stack<ElvisRhsEnterNode> = stackOf()
-    private val equalityOperatorCallLhsExitNodes: Stack<CFGNode<*>> = stackOf()
-
-    private val notCompletedFunctionCalls: Stack<MutableList<FunctionCallExitNode>> = stackOf()
 
     // ----------------------------------- Public API -----------------------------------
 
@@ -120,18 +194,18 @@ class ControlFlowGraphBuilder {
                         else ->
                             (lastStatement as? FirExpression
                                 ?: buildUnitExpression { source = fir.statements.lastOrNull()?.source ?: fir.source }).let {
-                                FirAnonymousFunctionReturnExpressionInfo(it, isExplicit = false)
+                                FirAnonymousFunctionReturnExpressionInfo(it, isExplicit = false, containingStatement = fir)
                             }
                     }
                 }
                 // fun() { terminatingExpression } -> nothing (checker will emit an error if return type is not Unit)
                 // fun() { throw } or fun() { returnsNothing() } -> Nothing-returning stub
                 else -> FirStub.takeIf { _ -> previousNodes.all { it is StubNode } }
-                    ?.let { FirAnonymousFunctionReturnExpressionInfo(it, isExplicit = false) }
+                    ?.let { FirAnonymousFunctionReturnExpressionInfo(it, isExplicit = false, containingStatement = fir) }
             }
             // lambda@{ return@lambda x } -> x
             is JumpNode -> (fir as? FirReturnExpression)?.takeIf { it.target.labeledElement.symbol == function.symbol }?.result?.let {
-                FirAnonymousFunctionReturnExpressionInfo(it, isExplicit = true)
+                FirAnonymousFunctionReturnExpressionInfo(it, isExplicit = true, containingStatement = fir)
             }
             else -> null // shouldn't happen? expression bodies are implicitly wrapped in `FirBlock`s
         }
@@ -149,7 +223,7 @@ class ControlFlowGraphBuilder {
 
     // ----------------------------------- Utils -----------------------------------
 
-    private inline fun <T, E : T, EnterNode, ExitNode> enterGraph(
+    private inline fun <T : FirElement, E : T?, EnterNode, ExitNode> enterGraph(
         fir: E,
         name: String,
         kind: ControlFlowGraph.Kind,
@@ -202,6 +276,7 @@ class ControlFlowGraphBuilder {
         }
         if (localFunctionNode != null) {
             addEdge(localFunctionNode, enterNode)
+            addBackEdge(enterNode.owner.exitNode, enterNode) // Local functions can be called repeatedly.
         } else {
             addEdgeIfLocalClassMember(enterNode)
         }
@@ -325,11 +400,17 @@ class ControlFlowGraphBuilder {
             // skipped. Or if the entry node is dead, because at the time we added the hack-edge we didn't know that.
             CFGNode.killEdge(splitNode, postponedExitNode, propagateDeadness = !isDefinitelyVisited)
         }
-        if (invocationKind?.canBeVisited() == true) {
-            addEdge(exitNode, postponedExitNode, propagateDeadness = isDefinitelyVisited)
-            if (invocationKind.canBeRevisited()) {
-                addBackEdge(postponedExitNode, splitNode)
+
+        if (invocationKind != null) {
+            if (invocationKind.canBeVisited()) {
+                addEdge(exitNode, postponedExitNode, propagateDeadness = isDefinitelyVisited)
+                if (invocationKind.canBeRevisited()) {
+                    addBackEdge(postponedExitNode, splitNode)
+                }
             }
+        } else {
+            // Non-in-place lambdas could be invoked repeatedly.
+            addBackEdge(graph.exitNode, graph.enterNode)
         }
 
         // Lambdas called inline do not capture any variables, so the capture edge needs to be marked as dead.
@@ -1622,8 +1703,6 @@ class ControlFlowGraphBuilder {
         val exits: MutableList<Pair<CFGNode<*>, EdgeKind>> = mutableListOf(),
     )
 }
-
-fun FirDeclaration?.isLocalClassOrAnonymousObject() = ((this as? FirRegularClass)?.isLocal == true) || this is FirAnonymousObject
 
 private val FirControlFlowGraphOwner.memberShouldHaveGraph: Boolean
     get() = when (this) {

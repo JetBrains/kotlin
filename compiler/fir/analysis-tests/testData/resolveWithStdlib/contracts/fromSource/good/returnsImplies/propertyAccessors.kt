@@ -1,4 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: -AllowContractsOnPropertyAccessors
+
 import kotlin.contracts.*
 
 interface A {
@@ -15,7 +17,7 @@ var Any?.isNotNull: Boolean
     }
     set(value) {
         <!CONTRACT_NOT_ALLOWED!>contract<!> {
-            <!WRONG_IMPLIES_CONDITION!>returns() implies (this@isNotNull != null)<!>
+            returns() implies (this@isNotNull != null)
             require(<!SENSELESS_COMPARISON!>this != null<!>)
         }
     }
@@ -30,3 +32,7 @@ fun test_2(a: A?) {
     a.isNotNull = true
     a.foo()
 }
+
+/* GENERATED_FIR_TAGS: assignment, classReference, contractConditionalEffect, contracts, equalityExpression,
+functionDeclaration, getter, ifExpression, interfaceDeclaration, lambdaLiteral, nullableType, propertyDeclaration,
+propertyWithExtensionReceiver, setter, smartcast, thisExpression */

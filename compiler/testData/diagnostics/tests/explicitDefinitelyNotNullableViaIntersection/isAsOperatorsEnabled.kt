@@ -16,3 +16,6 @@ inline fun <reified T> foo(v: Any?): T {
 
     return v as T <!SYNTAX!>& Any<!>
 }
+
+/* GENERATED_FIR_TAGS: asExpression, comparisonExpression, funWithExtensionReceiver, functionDeclaration, ifExpression,
+inline, integerLiteral, isExpression, nullableType, propertyDeclaration, reified, typeParameter */

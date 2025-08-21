@@ -14,3 +14,5 @@ annotation class ExperimentalAPI
 class Foo
 
 typealias Bar = <!OPT_IN_USAGE_ERROR!>Foo<!>
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, typeAliasDeclaration */

@@ -20,3 +20,6 @@ class C : A, B() {
         return super.hashCode()
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, interfaceDeclaration, nullableType, operator, override,
+superExpression */

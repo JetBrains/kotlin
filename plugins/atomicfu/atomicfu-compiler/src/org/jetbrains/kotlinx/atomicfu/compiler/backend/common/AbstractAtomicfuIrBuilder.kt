@@ -18,7 +18,9 @@ import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlinx.atomicfu.compiler.backend.AtomicArray
 import org.jetbrains.kotlinx.atomicfu.compiler.backend.AtomicHandlerType
+import org.jetbrains.kotlinx.atomicfu.compiler.backend.VolatilePropertyReference
 import org.jetbrains.kotlinx.atomicfu.compiler.backend.atomicfuRender
 import org.jetbrains.kotlinx.atomicfu.compiler.backend.common.AbstractAtomicfuTransformer.Companion.VOLATILE
 import org.jetbrains.kotlinx.atomicfu.compiler.diagnostic.AtomicfuErrorMessages.CONSTRAINTS_MESSAGE
@@ -61,9 +63,7 @@ abstract class AbstractAtomicfuIrBuilder(
      */
     abstract fun irCallFunction (
         symbol: IrSimpleFunctionSymbol,
-        dispatchReceiver: IrExpression?,
-        extensionReceiver: IrExpression?,
-        valueArguments: List<IrExpression?>,
+        arguments: List<IrExpression?>,
         valueType: IrType
     ): IrCall
 
@@ -82,9 +82,7 @@ abstract class AbstractAtomicfuIrBuilder(
         } ?: error("No $functionName function found in ${atomicHandlerClassSymbol.owner.render()}")
         return irCallFunction(
             functionSymbol,
-            dispatchReceiver = getAtomicHandler,
-            extensionReceiver = null,
-            valueArguments,
+            listOf(getAtomicHandler) + valueArguments,
             valueType
         )
     }
@@ -99,7 +97,9 @@ abstract class AbstractAtomicfuIrBuilder(
 
     fun irGetProperty(property: IrProperty, dispatchReceiver: IrExpression?) =
         irCall(property.getter?.symbol ?: error("Getter is not defined for the property ${property.atomicfuRender()}")).apply {
-            this.dispatchReceiver = dispatchReceiver?.deepCopyWithSymbols()
+            dispatchReceiver?.deepCopyWithSymbols()?.let {
+                arguments[0] = it
+            }
         }
 
     protected fun irVolatileField(
@@ -128,9 +128,9 @@ abstract class AbstractAtomicfuIrBuilder(
         val atomicfuField = requireNotNull(atomicfuProperty.backingField) {
             "The backing field of the atomic property ${atomicfuProperty.atomicfuRender()} declared in ${parentContainer.render()} should not be null." + CONSTRAINTS_MESSAGE
         }
-        return buildAndInitializeNewField(atomicfuField, parentContainer) { atomicFactoryCall: IrExpression ->
+        return buildAndInitializeNewField(atomicfuField, parentContainer) { atomicFactoryCall: IrExpression? ->
             val valueType = atomicfuSymbols.atomicToPrimitiveType(atomicfuField.type as IrSimpleType)
-            val initValue = atomicFactoryCall.getAtomicFactoryValueArgument()
+            val initValue = atomicFactoryCall?.getAtomicFactoryValueArgument()
             buildVolatileFieldOfType(atomicfuProperty.name.asString(), valueType, atomicfuField.annotations, initValue, parentContainer)
         }
     }
@@ -138,7 +138,7 @@ abstract class AbstractAtomicfuIrBuilder(
     // atomic(value = 0) -> 0
     internal fun IrExpression.getAtomicFactoryValueArgument(): IrExpression {
         require(this is IrCall) { "Expected atomic factory invocation but found: ${this.render()}" }
-        return getValueArgument(0)?.deepCopyWithSymbols()
+        return arguments[0]?.deepCopyWithSymbols()
             ?: error("Atomic factory should take at least one argument: ${this.render()}" + CONSTRAINTS_MESSAGE)
     }
 
@@ -150,15 +150,46 @@ abstract class AbstractAtomicfuIrBuilder(
         parentContainer: IrDeclarationContainer,
     ): IrField
 
-    fun irAtomicArrayField(
+    fun createVolatileProperty(atomicfuProperty: IrProperty, parentContainer: IrDeclarationContainer): VolatilePropertyReference {
+        val volatileField = buildVolatileField(atomicfuProperty, parentContainer)
+        val volatileProperty = buildPropertyWithAccessors(
+            volatileField,
+            atomicfuProperty.visibility,
+            isVar = true,
+            isStatic = false,
+            parentContainer
+        )
+        return VolatilePropertyReference(volatileProperty)
+    }
+
+    /**
+     * Creates an [AtomicArray] to replace an atomicfu array:
+     * On JVM: builds a Java atomic array: java.util.concurrent.atomic.Atomic(Integer|Long|Reference)Array.
+     *
+     * On Native: builds a Kotlin Native array: kotlin.concurrent.Atomic(Int|Long|*)Array.
+     *
+     * Generated only for JVM and Native.
+     */
+    fun createAtomicArray(atomicfuProperty: IrProperty, parentContainer: IrDeclarationContainer): AtomicArray {
+        val atomicArrayField = irAtomicArrayField(atomicfuProperty, parentContainer)
+        val atomicArrayProperty = buildPropertyWithAccessors(
+            atomicArrayField,
+            atomicfuProperty.visibility,
+            isVar = false,
+            isStatic = parentContainer is IrFile,
+            parentContainer
+        )
+        return AtomicArray(atomicArrayProperty)
+    }
+
+    private fun irAtomicArrayField(
         atomicfuProperty: IrProperty,
         parentContainer: IrDeclarationContainer
     ): IrField {
         val atomicfuArrayField = requireNotNull(atomicfuProperty.backingField) {
             "The backing field of the atomic array [${atomicfuProperty.atomicfuRender()}] should not be null." + CONSTRAINTS_MESSAGE
         }
-        return buildAndInitializeNewField(atomicfuArrayField, parentContainer) { atomicFactoryCall: IrExpression ->
-            val size = atomicFactoryCall.getArraySizeArgument()
+        return buildAndInitializeNewField(atomicfuArrayField, parentContainer) { atomicFactoryCall: IrExpression? ->
             val arrayClass = atomicfuSymbols.getAtomicArrayHanlderType(atomicfuArrayField.type)
             val valueType = atomicfuSymbols.atomicArrayToPrimitiveType(atomicfuArrayField.type)
             context.irFactory.buildField {
@@ -169,9 +200,12 @@ abstract class AbstractAtomicfuIrBuilder(
                 visibility = DescriptorVisibilities.PRIVATE
                 origin = AbstractAtomicSymbols.ATOMICFU_GENERATED_FIELD
             }.apply {
-                this.initializer = context.irFactory.createExpressionBody(
-                    newAtomicArray(arrayClass, size, valueType, (atomicFactoryCall as IrFunctionAccessExpression).dispatchReceiver)
-                )
+                if (atomicFactoryCall != null) {
+                    val size = atomicFactoryCall.getArraySizeArgument()
+                    this.initializer = context.irFactory.createExpressionBody(
+                        newAtomicArray(arrayClass, size, valueType, (atomicFactoryCall as IrFunctionAccessExpression).dispatchReceiver)
+                    )
+                }
                 this.annotations = annotations
                 this.parent = parentContainer
             }
@@ -183,19 +217,22 @@ abstract class AbstractAtomicfuIrBuilder(
         require(this is IrFunctionAccessExpression) {
             "Expected atomic array factory invocation, but found: ${this.render()}."
         }
-        return getValueArgument(0)?.deepCopyWithSymbols()
+        return arguments[0]?.deepCopyWithSymbols()
             ?: error("Atomic array factory should take at least one argument: ${this.render()}" + CONSTRAINTS_MESSAGE)
     }
 
     protected fun buildAndInitializeNewField(
         oldAtomicField: IrField,
         parentContainer: IrDeclarationContainer,
-        newFieldBuilder: (IrExpression) -> IrField
+        newFieldBuilder: (IrExpression?) -> IrField
     ): IrField {
         val initializer = oldAtomicField.initializer?.expression
         return if (initializer == null) {
             // replace field initialization in the init block
             val (initBlock, initExprWithIndex) = oldAtomicField.getInitBlockWithIndexedInitExpr(parentContainer)
+                ?: run {
+                    return newFieldBuilder(null)
+                }
             val atomicFactoryCall = initExprWithIndex.value.value
             val initExprIndex = initExprWithIndex.index
             newFieldBuilder(atomicFactoryCall).also { newField ->
@@ -220,7 +257,7 @@ abstract class AbstractAtomicfuIrBuilder(
         initBlock.body.statements[index] = irSetField(oldIrSetField.receiver, volatileFieldSymbol.owner, initExpr)
     }
 
-    private fun IrField.getInitBlockWithIndexedInitExpr(parentContainer: IrDeclarationContainer): Pair<IrAnonymousInitializer, IndexedValue<IrSetField>> {
+    private fun IrField.getInitBlockWithIndexedInitExpr(parentContainer: IrDeclarationContainer): Pair<IrAnonymousInitializer, IndexedValue<IrSetField>>? {
         for (declaration in parentContainer.declarations) {
             if (declaration is IrAnonymousInitializer) {
                 declaration.body.statements.withIndex().singleOrNull { it.value is IrSetField && (it.value as IrSetField).symbol == this.symbol }?.let {
@@ -229,41 +266,21 @@ abstract class AbstractAtomicfuIrBuilder(
                 }
             }
         }
-        error(
-            "Failed to find initialization of the property [${this.correspondingPropertySymbol?.owner?.render()}] in the init block of the class [${this.parent.render()}].\n" +
-                    "Please avoid complex data flow in property initialization, e.g. instead of this:\n" +
-                    "```\n" +
-                    "val a: AtomicInt\n" +
-                    "init {\n" +
-                    "  if (foo()) {\n" +
-                    "    a = atomic(0)\n" +
-                    "  } else { \n" +
-                    "    a = atomic(1)\n" +
-                    "  }\n" +
-                    "}\n" +
-                    "use simple direct assignment expression to initialize the property:\n" +
-                    "```\n" +
-                    "val a: AtomicInt\n" +
-                    "init {\n" +
-                    "  val initValue = if (foo()) 0 else 1\n" +
-                    "  a = atomic(initValue)\n" +
-                    "}\n" +
-                    "```\n" + CONSTRAINTS_MESSAGE
-        )
+        return null
     }
 
     private fun IrClassSymbol.getSingleArgCtorOrNull(predicate: (IrType) -> Boolean): IrConstructorSymbol? =
-        constructors.filter { it.owner.valueParameters.size == 1 && predicate(it.owner.valueParameters[0].type) }.singleOrNull()
+        constructors.filter {
+            it.owner.parameters.size == 1 && predicate(it.owner.parameters[0].type)
+        }.singleOrNull()
 
     protected fun callArraySizeConstructor(
         atomicArrayClass: IrClassSymbol,
-        size: IrExpression,
-        dispatchReceiver: IrExpression?,
+        size: IrExpression
     ): IrFunctionAccessExpression? =
         atomicArrayClass.getSingleArgCtorOrNull{ argType -> argType.isInt() }?.let { cons ->
             return irCall(cons).apply {
-                putValueArgument(0, size)
-                this.dispatchReceiver = dispatchReceiver
+                arguments[0] = size
             }
         }
 
@@ -277,10 +294,10 @@ abstract class AbstractAtomicfuIrBuilder(
             return irCall(cons).apply {
                 val arrayOfNulls = irCall(atomicfuSymbols.arrayOfNulls).apply {
                     typeArguments[0] = valueType
-                    putValueArgument(0, size)
+                    arguments[0] = size
                 }
                 typeArguments[0] = valueType
-                putValueArgument(0, arrayOfNulls)
+                arguments[0] = arrayOfNulls
                 this.dispatchReceiver = dispatchReceiver
             }
         }
@@ -294,9 +311,16 @@ abstract class AbstractAtomicfuIrBuilder(
 
     fun irPropertyReference(property: IrProperty, classReceiver: IrExpression?): IrPropertyReferenceImpl {
         val backingField = requireNotNull(property.backingField) { "Backing field of the property $property should not be null" }
+        val isInstanceProperty = property.parentClassOrNull != null
+        val receiversCount = if (isInstanceProperty && classReceiver == null) 1 else 0
+        val kPropertyClass = irBuiltIns.getKPropertyClass(property.isVar, receiversCount).owner
+        val substitutionMap = mutableMapOf<IrTypeParameterSymbol, IrType>()
+        if (receiversCount == 1)
+            substitutionMap[kPropertyClass.typeParameters[0].symbol] = property.parentAsClass.defaultType
+        substitutionMap[kPropertyClass.typeParameters.last().symbol] = backingField.type
         return IrPropertyReferenceImpl(
             UNDEFINED_OFFSET, UNDEFINED_OFFSET,
-            type = backingField.type,
+            type = kPropertyClass.defaultType.substitute(substitutionMap),
             symbol = property.symbol,
             typeArgumentsCount = 0,
             field = backingField.symbol,
@@ -316,7 +340,7 @@ abstract class AbstractAtomicfuIrBuilder(
             UNDEFINED_OFFSET, UNDEFINED_OFFSET,
             type = atomicfuSymbols.function0Type(irPropertyReference.type),
             function = irBuiltIns.irFactory.buildFun {
-                name = Name.identifier("<$propertyName-getter-${nextGetterCounterId()}>")
+                name = Name.identifier("<$propertyName-getter>")
                 origin = AbstractAtomicSymbols.ATOMICFU_GENERATED_FUNCTION
                 returnType = irPropertyReference.type
                 isInline = true
@@ -369,7 +393,9 @@ abstract class AbstractAtomicfuIrBuilder(
             returnType = field.type
             origin = AbstractAtomicSymbols.ATOMICFU_GENERATED_PROPERTY_ACCESSOR
         }.apply {
-            dispatchReceiverParameter = if (isStatic) null else (parentContainer as? IrClass)?.thisReceiver?.deepCopyWithSymbols(this)
+            parameters += listOfNotNull(
+                if (isStatic) null else (parentContainer as? IrClass)?.thisReceiver?.deepCopyWithSymbols(this)
+            )
             body = factory.createBlockBody(
                 UNDEFINED_OFFSET, UNDEFINED_OFFSET, listOf(
                     IrReturnImpl(
@@ -402,9 +428,12 @@ abstract class AbstractAtomicfuIrBuilder(
             returnType = irBuiltIns.unitType
             origin = AbstractAtomicSymbols.ATOMICFU_GENERATED_PROPERTY_ACCESSOR
         }.apply {
-            dispatchReceiverParameter = if (isStatic) null else (parentClass as? IrClass)?.thisReceiver?.deepCopyWithSymbols(this)
+            parameters += listOfNotNull(
+                if (isStatic) null else (parentClass as? IrClass)?.thisReceiver?.deepCopyWithSymbols(this)
+            )
             addValueParameter("value", field.type)
-            val value = IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, valueParameters[0].type, valueParameters[0].symbol)
+            val arg = parameters.last()
+            val value = IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET,arg.type,arg.symbol)
             body = factory.createBlockBody(
                 UNDEFINED_OFFSET, UNDEFINED_OFFSET, listOf(
                     IrReturnImpl(
@@ -484,8 +513,8 @@ abstract class AbstractAtomicfuIrBuilder(
                         nameHint = "atomicfu\$cur", false
                     )
                     +irCall(atomicfuSymbols.invoke1Symbol).apply {
-                        this.dispatchReceiver = irGet(action)
-                        putValueArgument(0, irGet(cur))
+                        arguments[0] = irGet(action)
+                        arguments[1] = irGet(cur)
                     }
                 }
             }
@@ -548,8 +577,8 @@ abstract class AbstractAtomicfuIrBuilder(
                     )
                     val upd = createTmpVariable(
                         irCall(atomicfuSymbols.invoke1Symbol).apply {
-                            dispatchReceiver = irGet(action)
-                            putValueArgument(0, irGet(cur))
+                            arguments[0] = irGet(action)
+                            arguments[1] = irGet(cur)
                         }, "atomicfu\$upd", false
                     )
                     +irIfThen(
@@ -571,12 +600,4 @@ abstract class AbstractAtomicfuIrBuilder(
                 }
             }
         }
-
-    companion object {
-        // This counter is used to ensure uniqueness of functions for refGetter lambdas,
-        // as several functions with the same name may be created in the same scope
-        private var refGetterCounter = AtomicInteger(0)
-
-        private fun nextGetterCounterId() = refGetterCounter.getAndIncrement()
-    }
 }

@@ -12,3 +12,5 @@ fun test() {
     }
 }
 
+/* GENERATED_FIR_TAGS: functionDeclaration, functionDeclarationWithContext, functionalType, integerLiteral,
+lambdaLiteral, nullableType, typeParameter */

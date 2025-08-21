@@ -42,3 +42,7 @@ fun B<in Any>.bar4(i: Inv<*>) {
         <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>ext<!>()
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType, inProjection,
+interfaceDeclaration, javaType, lambdaLiteral, nullableType, primaryConstructor, propertyDeclaration, starProjection,
+typeParameter, typeWithExtension */

@@ -28,13 +28,4 @@ public interface LocalSignatureOrBuilder extends
    * <code>optional int64 local_hash = 2;</code>
    */
   long getLocalHash();
-
-  /**
-   * <code>optional int32 debug_info = 3;</code>
-   */
-  boolean hasDebugInfo();
-  /**
-   * <code>optional int32 debug_info = 3;</code>
-   */
-  int getDebugInfo();
 }

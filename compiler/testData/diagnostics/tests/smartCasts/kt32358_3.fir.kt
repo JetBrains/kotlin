@@ -8,3 +8,6 @@ fun smartIt(p1: String?, p2: String?) {
     p1 ?: callIt { TODO() }
     p1.length // smartcast
 }
+
+/* GENERATED_FIR_TAGS: elvisExpression, functionDeclaration, functionalType, lambdaLiteral, nullableType, smartcast,
+typeParameter */

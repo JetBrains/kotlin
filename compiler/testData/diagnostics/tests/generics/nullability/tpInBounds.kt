@@ -38,3 +38,7 @@ class A<T : CharSequence?, E1 : T, E2: T?> {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, dnnType, equalityExpression, funWithExtensionReceiver,
+functionDeclaration, ifExpression, integerLiteral, localProperty, nullableType, propertyDeclaration, safeCall, smartcast,
+typeConstraint, typeParameter */

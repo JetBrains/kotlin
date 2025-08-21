@@ -1,6 +1,6 @@
 // FIR_IDENTICAL
 // RUN_PIPELINE_TILL: FRONTEND
-// DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER -TOPLEVEL_TYPEALIASES_ONLY
+// DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER -TOPLEVEL_TYPEALIASES_ONLY -UNSUPPORTED_FEATURE
 
 class Outer<TO> {
     <!WRONG_MODIFIER_TARGET!>inner<!> typealias LTO = List<TO>
@@ -29,3 +29,6 @@ fun <TF> foo() {
                 <!WRONG_MODIFIER_TARGET!>inner<!> typealias LTLF = List<TLF>
             }
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, classDeclaration, functionDeclaration, inner, localClass,
+localFunction, nestedClass, nullableType, typeAliasDeclaration, typeAliasDeclarationWithTypeParameter, typeParameter */

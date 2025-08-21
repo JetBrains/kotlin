@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.ir.declarations.IrParameterKind
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
@@ -95,7 +96,7 @@ class WrapJsComposableLambdaLowering(
         getTopLevelFunctions(ComposeCallableIds.remember)
             .map { it.owner }
             .first {
-                it.valueParameters.size == 2 && !it.valueParameters.first().isVararg
+                it.parameters.size == 2 && !it.parameters.first().isVararg
             }.symbol.owner
             .let {
                 composerParamTransformer.visitSimpleFunction(it) as IrSimpleFunction
@@ -110,7 +111,7 @@ class WrapJsComposableLambdaLowering(
      * this lowering might be skipped to avoid redundant code generation.
      */
     private fun shouldSkipLowering(): Boolean {
-        val function2 = context.function(2)
+        val function2 = context.irBuiltIns.functionN(2)
         val skipLowering = getTopLevelClass(ComposeClassIds.ComposableLambda).owner.superTypes.any {
             it.classOrNull == function2
         }
@@ -129,17 +130,15 @@ class WrapJsComposableLambdaLowering(
             ComposeCallableIds.composableLambda.asSingleFqName() -> {
                 transformComposableLambdaCall(
                     originalCall = original.deepCopyWithoutPatchingParents(), // To avoid duplicated IR nodes, since we reuse the call's args
-                    currentComposer = original.getValueArgument(0),
-                    lambda = original.getValueArgument(
-                        original.valueArgumentsCount - 1
-                    ) as IrFunctionExpression
+                    currentComposer = original.arguments.first(),
+                    lambda = original.arguments.last() as IrFunctionExpression
                 )
             }
             ComposeCallableIds.rememberComposableLambda.asSingleFqName() -> {
                 transformComposableLambdaCall(
                     originalCall = original.deepCopyWithoutPatchingParents(), // To avoid duplicated IR nodes, since we reuse the call's args
-                    currentComposer = original.getValueArgument(3),
-                    lambda = original.getValueArgument(2) as IrFunctionExpression
+                    currentComposer = original.arguments[3],
+                    lambda = original.arguments[2] as IrFunctionExpression
                 )
             }
             ComposeCallableIds.composableLambdaInstance.asSingleFqName() -> {
@@ -153,13 +152,12 @@ class WrapJsComposableLambdaLowering(
         lambda: IrFunctionExpression,
         dispatchReceiver: IrExpression,
     ): IrFunctionReferenceImpl {
-        val argumentsCount = lambda.function.valueParameters.size +
-                if (lambda.function.extensionReceiverParameter != null) 1 else 0
+        val argumentsCount = lambda.function.parameters.size
 
         val invokeSymbol = getTopLevelClass(ComposeClassIds.ComposableLambda)
             .functions.single {
                 it.owner.name.asString() == "invoke" &&
-                        argumentsCount == it.owner.valueParameters.size
+                        argumentsCount == it.owner.parameters.count { it.kind != IrParameterKind.DispatchReceiver }
             }
 
         return IrFunctionReferenceImpl(
@@ -200,10 +198,10 @@ class WrapJsComposableLambdaLowering(
             typeArgumentsCount = 1
         ).apply {
             typeArguments[0] = lambda.type
-            putValueArgument(0, irGet(composableLambdaVar)) // key1
-            putValueArgument(1, rememberBlock) // calculation
-            putValueArgument(2, currentComposer) // composer
-            putValueArgument(3, irConst(0)) // changed
+            arguments[0] = irGet(composableLambdaVar) // key1
+            arguments[1] = rememberBlock // calculation
+            arguments[2] = currentComposer // composer
+            arguments[3] = irConst(0) // changed
         }
 
         val runBlockSymbol = IrSimpleFunctionSymbolImpl()
@@ -220,8 +218,7 @@ class WrapJsComposableLambdaLowering(
     }
 
     private fun transformComposableLambdaInstanceCall(originalCall: IrCall): IrExpression {
-        val lambda = originalCall.getValueArgument(originalCall.valueArgumentsCount - 1)
-                as IrFunctionExpression
+        val lambda = originalCall.arguments.last() as IrFunctionExpression
 
         // create composableLambdaInstance::invoke function reference
         return functionReferenceForComposableLambda(lambda, originalCall)
@@ -239,7 +236,7 @@ class WrapJsComposableLambdaLowering(
             typeArgumentsCount = 1
         ).apply {
             typeArguments[0] = returnType
-            putValueArgument(0, runBlock)
+            arguments[0] = runBlock
         }
     }
 

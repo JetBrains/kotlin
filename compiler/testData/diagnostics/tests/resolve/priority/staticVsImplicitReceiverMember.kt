@@ -19,3 +19,6 @@ class C {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType, infix, inner,
+javaFunction, javaType, lambdaLiteral, nullableType, thisExpression, typeParameter, typeWithExtension */

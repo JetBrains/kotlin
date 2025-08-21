@@ -9,20 +9,23 @@ import com.intellij.openapi.util.text.StringUtil
 import com.intellij.util.applyIf
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
+import org.jetbrains.kotlin.ir.AbstractIrFileEntry
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrFileEntry
-import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.IrCapturedType
+import org.jetbrains.kotlin.ir.util.DumpIrTreeOptions.ReferenceRenderingStrategy
+import org.jetbrains.kotlin.ir.util.IdSignature.CommonSignature
 import org.jetbrains.kotlin.ir.visitors.IrVisitor
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.name.SpecialNames.IMPLICIT_SET_PARAMETER
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
-import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.addToStdlib.runUnless
@@ -31,8 +34,10 @@ import java.io.File
 fun IrElement.render(options: DumpIrTreeOptions = DumpIrTreeOptions()) =
     accept(RenderIrElementVisitor(options), null)
 
-open class RenderIrElementVisitor(private val options: DumpIrTreeOptions = DumpIrTreeOptions()) :
-    IrVisitor<String, Nothing?>() {
+open class RenderIrElementVisitor(
+    private val options: DumpIrTreeOptions = DumpIrTreeOptions(),
+    private var isUsedForIrDump: Boolean = false,
+) : IrVisitor<String, Nothing?>() {
 
     private val flagsRenderer = FlagsRenderer(options.declarationFlagsFilter, isReference = false)
     private val variableNameData = VariableNameData(options.normalizeNames)
@@ -66,11 +71,17 @@ open class RenderIrElementVisitor(private val options: DumpIrTreeOptions = DumpI
     private fun IrType.render(): String =
         this.renderTypeWithRenderer(this@RenderIrElementVisitor, options)
 
-    private fun IrSymbol.renderReference() =
-        if (isBound)
-            owner.accept(BoundSymbolReferenceRenderer(variableNameData, hideParameterNames, options), null)
+    private fun IrSymbol.renderReference(): String {
+        fun renderReferenceInClassicWay(): String = if (isBound)
+            owner.accept(BoundSymbolReferenceRenderer(variableNameData, hideParameterNames, options.copy(printSourceOffsets = false)), null)
         else
             "UNBOUND ${javaClass.simpleName}"
+
+        return when (val strategy = options.referenceRenderingStrategy) {
+            is ReferenceRenderingStrategy.Default -> renderReferenceInClassicWay()
+            is ReferenceRenderingStrategy.Custom -> strategy.renderReference(this) ?: renderReferenceInClassicWay()
+        }
+    }
 
     private class BoundSymbolReferenceRenderer(
         private val variableNameData: VariableNameData,
@@ -126,7 +137,7 @@ open class RenderIrElementVisitor(private val options: DumpIrTreeOptions = DumpI
         override fun visitValueParameter(declaration: IrValueParameter, data: Nothing?) =
             buildTrimEnd {
                 runUnless(hideParameterNames) {
-                    append(declaration.renderValueParameterName(options))
+                    append(declaration.renderValueParameterName(options, disambiguate = true))
                     append(": ")
                 }
                 append(declaration.type.renderTypeWithRenderer(null, options))
@@ -155,22 +166,17 @@ open class RenderIrElementVisitor(private val options: DumpIrTreeOptions = DumpI
 
                 renderTypeParameters(declaration)
 
-                appendIterableWith(declaration.valueParameters, "(", ")", ", ") { valueParameter ->
+                appendIterableWith(declaration.nonDispatchParameters, "(", ")", ", ") { valueParameter ->
                     val varargElementType = valueParameter.varargElementType
                     if (varargElementType != null) {
                         append("vararg ")
-                        runUnless(hideParameterNames) {
-                            append(valueParameter.renderValueParameterName(options))
-                            append(": ")
-                        }
-                        append(varargElementType.renderTypeWithRenderer(null, options))
-                    } else {
-                        runUnless(hideParameterNames) {
-                            append(valueParameter.renderValueParameterName(options))
-                            append(": ")
-                        }
-                        append(valueParameter.type.renderTypeWithRenderer(null, options))
                     }
+
+                    runUnless(hideParameterNames) {
+                        append(valueParameter.renderValueParameterName(options))
+                        append(": ")
+                    }
+                    append((varargElementType ?: valueParameter.type).renderTypeWithRenderer(null, options))
                 }
 
                 if (declaration is IrSimpleFunction) {
@@ -284,13 +290,17 @@ open class RenderIrElementVisitor(private val options: DumpIrTreeOptions = DumpI
 
     override fun visitFile(declaration: IrFile, data: Nothing?): String {
         val fileName = if (options.printFilePath) declaration.path else declaration.name
-        return "FILE fqName:${declaration.packageFqName} fileName:${options.filePathRenderer(declaration, fileName)}"
+        return declaration.runTrimEnd {
+            "FILE " +
+                    "fqName:${packageFqName} " +
+                    "fileName:${options.filePathRenderer(declaration, fileName)} " +
+                    renderLineStartOffsets(options)
+        }
     }
 
-    override fun visitFunction(declaration: IrFunction, data: Nothing?): String =
-        declaration.runTrimEnd {
-            "FUN ${renderOriginIfNonTrivial(options)}"
-        }
+    override fun visitFunction(declaration: IrFunction, data: Nothing?): String = declaration.runTrimEnd {
+        "FUN${renderOffsets(options)} ${renderOriginIfNonTrivial(options)}"
+    }
 
     override fun visitScript(declaration: IrScript, data: Nothing?) = "SCRIPT"
 
@@ -298,36 +308,45 @@ open class RenderIrElementVisitor(private val options: DumpIrTreeOptions = DumpI
 
     override fun visitSimpleFunction(declaration: IrSimpleFunction, data: Nothing?): String =
         declaration.runTrimEnd {
-            "FUN ${renderOriginIfNonTrivial(options)}" +
+            "FUN" +
+                    "${renderOffsets(options)} " +
+                    renderOriginIfNonTrivial(options) +
                     "name:$name " +
                     renderSignatureIfEnabled(options.printSignatures) +
                     "visibility:$visibility modality:$modality " +
-                    renderTypeParameters() + " " +
-                    renderValueParameterTypes() + " " +
+                    (if (!isUsedForIrDump) {
+                        renderTypeParameters() + " " +
+                        renderValueParameterTypes() + " "
+                    } else "") +
                     "returnType:${renderReturnType(this@RenderIrElementVisitor, options)} " +
                     renderSimpleFunctionFlags(flagsRenderer)
         }
 
-    private fun IrFunction.renderValueParameterTypes(): String = buildList {
-        addIfNotNull(dispatchReceiverParameter?.run { "\$this:${renderValueParameterType(options)}" })
-        addIfNotNull(extensionReceiverParameter?.run { "\$receiver:${type.render()}" })
-        valueParameters.mapTo(this) { "${it.renderValueParameterName(options)}:${it.type.render()}" }
-    }.joinToString(separator = ", ", prefix = "(", postfix = ")")
+    private fun IrFunction.renderValueParameterTypes(): String =
+        parameters.joinToString(separator = ", ", prefix = "(", postfix = ")") {
+            "${it.renderValueParameterName(options)}:${it.renderValueParameterType(options)}"
+        }
 
     override fun visitConstructor(declaration: IrConstructor, data: Nothing?): String =
         declaration.runTrimEnd {
-            "CONSTRUCTOR ${renderOriginIfNonTrivial(options)}" +
+            "CONSTRUCTOR" +
+                    "${renderOffsets(options)} " +
+                    renderOriginIfNonTrivial(options) +
                     renderSignatureIfEnabled(options.printSignatures) +
                     "visibility:$visibility " +
-                    renderTypeParameters() + " " +
-                    renderValueParameterTypes() + " " +
+                    (if (!isUsedForIrDump) {
+                        renderTypeParameters() + " " +
+                        renderValueParameterTypes() + " "
+                    } else "") +
                     "returnType:${renderReturnType(this@RenderIrElementVisitor, options)} " +
                     renderConstructorFlags(flagsRenderer)
         }
 
     override fun visitProperty(declaration: IrProperty, data: Nothing?): String =
         declaration.runTrimEnd {
-            "PROPERTY ${renderOriginIfNonTrivial(options)}" +
+            "PROPERTY" +
+                    "${renderOffsets(options)} " +
+                    renderOriginIfNonTrivial(options) +
                     "name:$name " +
                     renderSignatureIfEnabled(options.printSignatures) +
                     "visibility:$visibility modality:$modality " +
@@ -342,7 +361,11 @@ open class RenderIrElementVisitor(private val options: DumpIrTreeOptions = DumpI
 
     override fun visitVariable(declaration: IrVariable, data: Nothing?): String =
         declaration.runTrimEnd {
-            "VAR ${renderOriginIfNonTrivial(options)}name:${normalizedName(variableNameData)} type:${type.render()} " +
+            "VAR" +
+                    "${renderOffsets(options)} " +
+                    renderOriginIfNonTrivial(options) +
+                    "name:${normalizedName(variableNameData)} " +
+                    "type:${type.render()} " +
                     renderVariableFlags(flagsRenderer)
         }
 
@@ -350,50 +373,57 @@ open class RenderIrElementVisitor(private val options: DumpIrTreeOptions = DumpI
         renderEnumEntry(declaration, options)
 
     override fun visitAnonymousInitializer(declaration: IrAnonymousInitializer, data: Nothing?): String =
-        "ANONYMOUS_INITIALIZER isStatic=${declaration.isStatic}"
+        "ANONYMOUS_INITIALIZER${declaration.renderOffsets(options)} isStatic=${declaration.isStatic}"
 
     override fun visitTypeParameter(declaration: IrTypeParameter, data: Nothing?): String =
         renderTypeParameter(declaration, this, options)
 
     override fun visitValueParameter(declaration: IrValueParameter, data: Nothing?): String =
         declaration.runTrimEnd {
-            "VALUE_PARAMETER ${renderOriginIfNonTrivial(options)}" +
+            "VALUE_PARAMETER" +
+                    "${renderOffsets(options)} " +
+                    renderOriginIfNonTrivial(options) +
+                    "kind:$kind " +
                     "name:${renderValueParameterName(options)} " +
-                    (if (indexInOldValueParameters >= 0) "index:$indexInOldValueParameters " else "") +
+                    (if (indexInParameters >= 0) "index:$indexInParameters " else "") +
                     "type:${renderValueParameterType(options)} " +
                     (varargElementType?.let { "varargElementType:${it.render()} " } ?: "") +
                     renderValueParameterFlags(flagsRenderer)
         }
 
-    override fun visitLocalDelegatedProperty(declaration: IrLocalDelegatedProperty, data: Nothing?): String =
-        declaration.runTrimEnd {
-            "LOCAL_DELEGATED_PROPERTY ${declaration.renderOriginIfNonTrivial(options)}" +
-                    "name:$name type:${type.render()} flags:${renderLocalDelegatedPropertyFlags()}"
-        }
+    override fun visitLocalDelegatedProperty(declaration: IrLocalDelegatedProperty, data: Nothing?): String = declaration.runTrimEnd {
+        "LOCAL_DELEGATED_PROPERTY" +
+                "${renderOffsets(options)} " +
+                renderOriginIfNonTrivial(options) +
+                "name:$name type:${type.render()} flags:${renderLocalDelegatedPropertyFlags()}"
+    }
 
-    override fun visitTypeAlias(declaration: IrTypeAlias, data: Nothing?): String =
-        declaration.run {
-            "TYPEALIAS ${declaration.renderOriginIfNonTrivial(options)}" +
-                    "name:$name " +
-                    renderSignatureIfEnabled(options.printSignatures) +
-                    "visibility:$visibility expandedType:${expandedType.render()}" +
-                    renderTypeAliasFlags(flagsRenderer)
-        }
+    override fun visitTypeAlias(declaration: IrTypeAlias, data: Nothing?): String = declaration.run {
+        "TYPEALIAS" +
+                "${renderOffsets(options)} " +
+                renderOriginIfNonTrivial(options) +
+                "name:$name " +
+                renderSignatureIfEnabled(options.printSignatures) +
+                "visibility:$visibility expandedType:${expandedType.render()}" +
+                renderTypeAliasFlags(flagsRenderer)
+    }
 
     override fun visitExpressionBody(body: IrExpressionBody, data: Nothing?): String =
-        "EXPRESSION_BODY"
+        "EXPRESSION_BODY${body.renderOffsets(options)}"
 
     override fun visitBlockBody(body: IrBlockBody, data: Nothing?): String =
-        "BLOCK_BODY"
+        "BLOCK_BODY${body.renderOffsets(options)}"
 
     override fun visitSyntheticBody(body: IrSyntheticBody, data: Nothing?): String =
-        "SYNTHETIC_BODY kind=${body.kind}"
+        "SYNTHETIC_BODY${body.renderOffsets(options)} kind=${body.kind}"
 
     override fun visitExpression(expression: IrExpression, data: Nothing?): String =
         "? ${expression::class.java.simpleName} type=${expression.type.render()}"
 
     override fun visitConst(expression: IrConst, data: Nothing?): String =
-        "CONST ${expression.kind} type=${expression.type.render()} value=${expression.value?.escapeIfRequired()}"
+        "CONST" +
+                "${expression.renderOffsets(options)} " +
+                "${expression.kind} type=${expression.type.render()} value=${expression.value?.escapeIfRequired()}"
 
     private fun Any.escapeIfRequired() =
         when (this) {
@@ -403,10 +433,13 @@ open class RenderIrElementVisitor(private val options: DumpIrTreeOptions = DumpI
         }
 
     override fun visitVararg(expression: IrVararg, data: Nothing?): String =
-        "VARARG type=${expression.type.render()} varargElementType=${expression.varargElementType.render()}"
+        "VARARG" +
+                "${expression.renderOffsets(options)} " +
+                "type=${expression.type.render()} varargElementType=${expression.varargElementType.render()}"
 
     override fun visitSpreadElement(spread: IrSpreadElement, data: Nothing?): String =
-        "SPREAD_ELEMENT"
+        "SPREAD_ELEMENT${spread.renderOffsets(options)}"
+
 
     override fun visitBlock(expression: IrBlock, data: Nothing?): String {
         val prefix = when (expression) {
@@ -414,48 +447,64 @@ open class RenderIrElementVisitor(private val options: DumpIrTreeOptions = DumpI
             is IrInlinedFunctionBlock -> "INLINED_"
             else -> ""
         }
-        return "${prefix}BLOCK type=${expression.type.render()} origin=${expression.origin}"
+        return "${prefix}BLOCK" +
+                "${expression.renderOffsets(options)} " +
+                "type=${expression.type.render()} origin=${expression.origin}"
     }
 
     override fun visitComposite(expression: IrComposite, data: Nothing?): String =
-        "COMPOSITE type=${expression.type.render()} origin=${expression.origin}"
+        "COMPOSITE" +
+                "${expression.renderOffsets(options)} " +
+                "type=${expression.type.render()} origin=${expression.origin}"
 
     override fun visitReturn(expression: IrReturn, data: Nothing?): String =
-        "RETURN type=${expression.type.render()} from='${expression.returnTargetSymbol.renderReference()}'"
+        "RETURN" +
+                "${expression.renderOffsets(options)} " +
+                "type=${expression.type.render()} from='${expression.returnTargetSymbol.renderReference()}'"
 
     override fun visitCall(expression: IrCall, data: Nothing?): String =
-        "CALL '${expression.symbol.renderReference()}' ${expression.renderSuperQualifier()}" +
+        "CALL" +
+                "${expression.renderOffsets(options)} " +
+                "'${expression.symbol.renderReference()}' ${expression.renderSuperQualifier()}" +
                 "type=${expression.type.render()} origin=${expression.origin}"
 
     private fun IrCall.renderSuperQualifier(): String =
         superQualifierSymbol?.let { "superQualifier='${it.renderReference()}' " } ?: ""
 
     override fun visitConstructorCall(expression: IrConstructorCall, data: Nothing?): String =
-        "CONSTRUCTOR_CALL '${expression.symbol.renderReference()}' type=${expression.type.render()} origin=${expression.origin}"
+        "CONSTRUCTOR_CALL" +
+                "${expression.renderOffsets(options)} " +
+                "'${expression.symbol.renderReference()}' type=${expression.type.render()} origin=${expression.origin}"
 
     override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall, data: Nothing?): String =
-        "DELEGATING_CONSTRUCTOR_CALL '${expression.symbol.renderReference()}'"
+        "DELEGATING_CONSTRUCTOR_CALL${expression.renderOffsets(options)} '${expression.symbol.renderReference()}'"
 
     override fun visitEnumConstructorCall(expression: IrEnumConstructorCall, data: Nothing?): String =
-        "ENUM_CONSTRUCTOR_CALL '${expression.symbol.renderReference()}'"
+        "ENUM_CONSTRUCTOR_CALL${expression.renderOffsets(options)} '${expression.symbol.renderReference()}'"
 
     override fun visitInstanceInitializerCall(expression: IrInstanceInitializerCall, data: Nothing?): String =
-        "INSTANCE_INITIALIZER_CALL classDescriptor='${expression.classSymbol.renderReference()}' type=${expression.type.render()}"
+        "INSTANCE_INITIALIZER_CALL" +
+                "${expression.renderOffsets(options)} " +
+                "classDescriptor='${expression.classSymbol.renderReference()}' type=${expression.type.render()}"
 
     override fun visitGetValue(expression: IrGetValue, data: Nothing?): String =
-        "GET_VAR '${expression.symbol.renderReference()}' type=${expression.type.render()} origin=${expression.origin}"
+        "GET_VAR" +
+                "${expression.renderOffsets(options)} " +
+                "'${expression.symbol.renderReference()}' type=${expression.type.render()} origin=${expression.origin}"
 
     override fun visitSetValue(expression: IrSetValue, data: Nothing?): String =
-        "SET_VAR '${expression.symbol.renderReference()}' type=${expression.type.render()} origin=${expression.origin}"
+        "SET_VAR" +
+                "${expression.renderOffsets(options)} " +
+                "'${expression.symbol.renderReference()}' type=${expression.type.render()} origin=${expression.origin}"
 
     override fun visitGetField(expression: IrGetField, data: Nothing?): String = buildTrimEnd {
-        append("GET_FIELD '${expression.symbol.renderReference()}' type=${expression.type.render()}")
+        append("GET_FIELD${expression.renderOffsets(options)} '${expression.symbol.renderReference()}' type=${expression.type.render()}")
         appendSuperQualifierSymbol(expression)
         append(" origin=${expression.origin}")
     }
 
     override fun visitSetField(expression: IrSetField, data: Nothing?): String = buildTrimEnd {
-        append("SET_FIELD '${expression.symbol.renderReference()}' type=${expression.type.render()}")
+        append("SET_FIELD${expression.renderOffsets(options)} '${expression.symbol.renderReference()}' type=${expression.type.render()}")
         appendSuperQualifierSymbol(expression)
         append(" origin=${expression.origin}")
     }
@@ -467,45 +516,51 @@ open class RenderIrElementVisitor(private val options: DumpIrTreeOptions = DumpI
     }
 
     override fun visitGetObjectValue(expression: IrGetObjectValue, data: Nothing?): String =
-        "GET_OBJECT '${expression.symbol.renderReference()}' type=${expression.type.render()}"
+        "GET_OBJECT${expression.renderOffsets(options)} '${expression.symbol.renderReference()}' type=${expression.type.render()}"
 
     override fun visitGetEnumValue(expression: IrGetEnumValue, data: Nothing?): String =
-        "GET_ENUM '${expression.symbol.renderReference()}' type=${expression.type.render()}"
+        "GET_ENUM${expression.renderOffsets(options)} '${expression.symbol.renderReference()}' type=${expression.type.render()}"
 
     override fun visitStringConcatenation(expression: IrStringConcatenation, data: Nothing?): String =
-        "STRING_CONCATENATION type=${expression.type.render()}"
+        "STRING_CONCATENATION${expression.renderOffsets(options)} type=${expression.type.render()}"
 
     override fun visitTypeOperator(expression: IrTypeOperatorCall, data: Nothing?): String =
-        "TYPE_OP type=${expression.type.render()} origin=${expression.operator} typeOperand=${expression.typeOperand.render()}"
+        "TYPE_OP" +
+                "${expression.renderOffsets(options)} " +
+                "type=${expression.type.render()} origin=${expression.operator} typeOperand=${expression.typeOperand.render()}"
 
     override fun visitWhen(expression: IrWhen, data: Nothing?): String =
-        "WHEN type=${expression.type.render()} origin=${expression.origin}"
+        "WHEN${expression.renderOffsets(options)} type=${expression.type.render()} origin=${expression.origin}"
 
     override fun visitBranch(branch: IrBranch, data: Nothing?): String =
-        "BRANCH"
+        "BRANCH${branch.renderOffsets(options)}"
 
     override fun visitWhileLoop(loop: IrWhileLoop, data: Nothing?): String =
-        "WHILE label=${loop.label} origin=${loop.origin}"
+        "WHILE${loop.renderOffsets(options)} label=${loop.label} origin=${loop.origin}"
 
     override fun visitDoWhileLoop(loop: IrDoWhileLoop, data: Nothing?): String =
-        "DO_WHILE label=${loop.label} origin=${loop.origin}"
+        "DO_WHILE${loop.renderOffsets(options)} label=${loop.label} origin=${loop.origin}"
 
     override fun visitBreak(jump: IrBreak, data: Nothing?): String =
-        "BREAK label=${jump.label} loop.label=${jump.loop.label}"
+        "BREAK${jump.renderOffsets(options)} label=${jump.label} loop.label=${jump.loop.label}"
 
     override fun visitContinue(jump: IrContinue, data: Nothing?): String =
-        "CONTINUE label=${jump.label} loop.label=${jump.loop.label}"
+        "CONTINUE${jump.renderOffsets(options)} label=${jump.label} loop.label=${jump.loop.label}"
 
     override fun visitThrow(expression: IrThrow, data: Nothing?): String =
-        "THROW type=${expression.type.render()}"
+        "THROW${expression.renderOffsets(options)} type=${expression.type.render()}"
 
     override fun visitFunctionReference(expression: IrFunctionReference, data: Nothing?): String =
-        "FUNCTION_REFERENCE '${expression.symbol.renderReference()}' " +
+        "FUNCTION_REFERENCE" +
+                "${expression.renderOffsets(options)} " +
+                "'${expression.symbol.renderReference()}' " +
                 "type=${expression.type.render()} origin=${expression.origin} " +
                 "reflectionTarget=${renderReflectionTarget(expression)}"
 
     override fun visitRichFunctionReference(expression: IrRichFunctionReference, data: Nothing?): String =
-        "RICH_FUNCTION_REFERENCE type=${expression.type.render()} origin=${expression.origin} " +
+        "RICH_FUNCTION_REFERENCE" +
+                "${expression.renderOffsets(options)} " +
+                "type=${expression.type.render()} origin=${expression.origin} " +
                 renderFlagsListWithoutFiltering(
                     "unit_conversion".takeIf { expression.hasUnitConversion },
                     "suspend_conversion".takeIf { expression.hasSuspendConversion },
@@ -514,11 +569,15 @@ open class RenderIrElementVisitor(private val options: DumpIrTreeOptions = DumpI
                 ) + "reflectionTarget='${expression.reflectionTargetSymbol?.renderReference()}'"
 
     override fun visitRichPropertyReference(expression: IrRichPropertyReference, data: Nothing?): String =
-        "RICH_PROPERTY_REFERENCE type=${expression.type.render()} origin=${expression.origin} " +
+        "RICH_PROPERTY_REFERENCE" +
+                "${expression.renderOffsets(options)} " +
+                "type=${expression.type.render()} origin=${expression.origin} " +
                 "reflectionTarget='${expression.reflectionTargetSymbol?.renderReference()}'"
 
     override fun visitRawFunctionReference(expression: IrRawFunctionReference, data: Nothing?): String =
-        "RAW_FUNCTION_REFERENCE '${expression.symbol.renderReference()}' type=${expression.type.render()}"
+        "RAW_FUNCTION_REFERENCE" +
+                "${expression.renderOffsets(options)} " +
+                "'${expression.symbol.renderReference()}' type=${expression.type.render()}"
 
     private fun renderReflectionTarget(expression: IrFunctionReference) =
         if (expression.symbol == expression.reflectionTarget)
@@ -528,7 +587,8 @@ open class RenderIrElementVisitor(private val options: DumpIrTreeOptions = DumpI
 
     override fun visitPropertyReference(expression: IrPropertyReference, data: Nothing?): String =
         buildTrimEnd {
-            append("PROPERTY_REFERENCE ")
+            append("PROPERTY_REFERENCE")
+            append("${expression.renderOffsets(options)} ")
             append("'${expression.symbol.renderReference()}' ")
             appendNullableAttribute("field=", expression.field) { "'${it.renderReference()}'" }
             appendNullableAttribute("getter=", expression.getter) { "'${it.renderReference()}'" }
@@ -549,7 +609,8 @@ open class RenderIrElementVisitor(private val options: DumpIrTreeOptions = DumpI
 
     override fun visitLocalDelegatedPropertyReference(expression: IrLocalDelegatedPropertyReference, data: Nothing?): String =
         buildTrimEnd {
-            append("LOCAL_DELEGATED_PROPERTY_REFERENCE ")
+            append("LOCAL_DELEGATED_PROPERTY_REFERENCE")
+            append("${expression.renderOffsets(options)} ")
             append("'${expression.symbol.renderReference()}' ")
             append("delegate='${expression.delegate.renderReference()}' ")
             append("getter='${expression.getter.renderReference()}' ")
@@ -559,50 +620,40 @@ open class RenderIrElementVisitor(private val options: DumpIrTreeOptions = DumpI
         }
 
     override fun visitFunctionExpression(expression: IrFunctionExpression, data: Nothing?): String =
-        buildTrimEnd {
-            append("FUN_EXPR type=${expression.type.render()} origin=${expression.origin}")
-        }
+        "FUN_EXPR${expression.renderOffsets(options)} type=${expression.type.render()} origin=${expression.origin}"
 
     override fun visitClassReference(expression: IrClassReference, data: Nothing?): String =
-        "CLASS_REFERENCE '${expression.symbol.renderReference()}' type=${expression.type.render()}"
+        "CLASS_REFERENCE${expression.renderOffsets(options)} '${expression.symbol.renderReference()}' type=${expression.type.render()}"
 
     override fun visitGetClass(expression: IrGetClass, data: Nothing?): String =
-        "GET_CLASS type=${expression.type.render()}"
+        "GET_CLASS${expression.renderOffsets(options)} type=${expression.type.render()}"
 
     override fun visitTry(aTry: IrTry, data: Nothing?): String =
-        "TRY type=${aTry.type.render()}"
+        "TRY${aTry.renderOffsets(options)} type=${aTry.type.render()}"
 
     override fun visitCatch(aCatch: IrCatch, data: Nothing?): String =
-        "CATCH parameter=${aCatch.catchParameter.symbol.renderReference()}"
+        "CATCH${aCatch.renderOffsets(options)} parameter=${aCatch.catchParameter.symbol.renderReference()}"
 
     override fun visitDynamicOperatorExpression(expression: IrDynamicOperatorExpression, data: Nothing?): String =
-        "DYN_OP operator=${expression.operator} type=${expression.type.render()}"
+        "DYN_OP${expression.renderOffsets(options)} operator=${expression.operator} type=${expression.type.render()}"
 
     override fun visitDynamicMemberExpression(expression: IrDynamicMemberExpression, data: Nothing?): String =
-        "DYN_MEMBER memberName='${expression.memberName}' type=${expression.type.render()}"
-
-    @OptIn(ObsoleteDescriptorBasedAPI::class)
-    override fun visitErrorDeclaration(declaration: IrErrorDeclaration, data: Nothing?): String =
-        "ERROR_DECL ${declaration.descriptor::class.java.simpleName} " +
-                descriptorRendererForErrorDeclarations.renderDescriptor(declaration.descriptor.original)
+        "DYN_MEMBER${expression.renderOffsets(options)} memberName='${expression.memberName}' type=${expression.type.render()}"
 
     override fun visitErrorExpression(expression: IrErrorExpression, data: Nothing?): String =
-        "ERROR_EXPR '${expression.description}' type=${expression.type.render()}"
+        "ERROR_EXPR${expression.renderOffsets(options)} '${expression.description}' type=${expression.type.render()}"
 
     override fun visitErrorCallExpression(expression: IrErrorCallExpression, data: Nothing?): String =
-        "ERROR_CALL '${expression.description}' type=${expression.type.render()}"
+        "ERROR_CALL${expression.renderOffsets(options)} '${expression.description}' type=${expression.type.render()}"
 
     override fun visitConstantArray(expression: IrConstantArray, data: Nothing?): String =
-        "CONSTANT_ARRAY type=${expression.type.render()}"
+        "CONSTANT_ARRAY${expression.renderOffsets(options)} type=${expression.type.render()}"
 
     override fun visitConstantObject(expression: IrConstantObject, data: Nothing?): String =
-        "CONSTANT_OBJECT type=${expression.type.render()} constructor=${expression.constructor.renderReference()}"
+        "CONSTANT_OBJECT${expression.renderOffsets(options)} type=${expression.type.render()} constructor=${expression.constructor.renderReference()}"
 
     override fun visitConstantPrimitive(expression: IrConstantPrimitive, data: Nothing?): String =
-        "CONSTANT_PRIMITIVE type=${expression.type.render()}"
-
-
-    private val descriptorRendererForErrorDeclarations = DescriptorRenderer.ONLY_NAMES_WITH_SHORT_TYPES
+        "CONSTANT_PRIMITIVE${expression.renderOffsets(options)} type=${expression.type.render()}"
 }
 
 private fun IrValueParameter.renderValueParameterType(options: DumpIrTreeOptions): String {
@@ -616,9 +667,18 @@ private fun IrValueParameter.renderValueParameterType(options: DumpIrTreeOptions
     }
 }
 
-internal fun IrValueParameter.renderValueParameterName(options: DumpIrTreeOptions): String {
-    val name = runIf(name == IMPLICIT_SET_PARAMETER) { options.replaceImplicitSetterParameterNameWith } ?: name
-    return name.asString()
+internal fun IrValueParameter.renderValueParameterName(options: DumpIrTreeOptions, disambiguate: Boolean = false): String {
+    val name = runIf(name == IMPLICIT_SET_PARAMETER) { options.replaceImplicitSetterParameterNameWith?.asString() } ?: name.asString()
+    if (disambiguate) {
+        val parent = _parent
+        if (parent is IrFunction) {
+            if (parent.parameters.any { it !== this && it.renderValueParameterName(options) == name }) {
+                return "$name(index:${indexInParameters})"
+            }
+        }
+    }
+
+    return name
 }
 
 internal fun DescriptorRenderer.renderDescriptor(descriptor: DeclarationDescriptor): String =
@@ -626,6 +686,14 @@ internal fun DescriptorRenderer.renderDescriptor(descriptor: DeclarationDescript
         "this@${descriptor.containingDeclaration.name}: ${descriptor.type}"
     else
         render(descriptor)
+
+private fun IrFile.renderLineStartOffsets(options: DumpIrTreeOptions): String =
+    if (options.printSourceOffsets)
+        "lineStartOffsets: ${(fileEntry as? AbstractIrFileEntry)?.getLineStartOffsetsForSerialization().orEmpty()}"
+    else ""
+
+private fun IrElement.renderOffsets(options: DumpIrTreeOptions): String =
+    if (options.printSourceOffsets) "[$startOffset, $endOffset]" else ""
 
 private fun IrDeclarationWithName.renderSignatureIfEnabled(printSignatures: Boolean): String =
     if (printSignatures) symbol.signature?.let { "signature:${it.render()} " }.orEmpty() else ""
@@ -638,16 +706,18 @@ internal fun IrDeclaration.renderOriginIfNonTrivial(options: DumpIrTreeOptions):
     return if (origin in originsToSkipFromRendering) "" else "$origin "
 }
 
-internal fun IrClassifierSymbol.renderClassifierFqn(options: DumpIrTreeOptions): String =
-    if (isBound)
-        when (val owner = owner) {
-            is IrClass -> owner.renderClassFqn(options)
-            is IrScript -> owner.renderScriptFqn(options)
-            is IrTypeParameter -> owner.renderTypeParameterFqn(options)
-            else -> "`unexpected classifier: ${owner.render(options)}`"
-        }
-    else
-        "<unbound ${this.javaClass.simpleName}>"
+internal fun IrClassifierSymbol.renderClassifierFqn(options: DumpIrTreeOptions): String {
+    fun CommonSignature.guessClassFqnBySignature(): String =
+        "${if (packageFqName.isEmpty()) FqName.ROOT.toString() else packageFqName}.${declarationFqName}"
+
+    return when (this) {
+        is IrClassSymbol if isBound -> owner.renderClassFqn(options)
+        is IrClassSymbol -> (signature as? CommonSignature)?.guessClassFqnBySignature()
+        is IrTypeParameterSymbol if isBound -> owner.renderTypeParameterFqn(options)
+        is IrScriptSymbol if isBound -> owner.renderScriptFqn(options)
+        else -> null
+    } ?: "<unbound ${this.javaClass.simpleName}>"
+}
 
 internal fun IrTypeAliasSymbol.renderTypeAliasFqn(options: DumpIrTreeOptions): String =
     if (isBound)
@@ -889,29 +959,7 @@ private fun IrType.renderTypeInner(renderer: RenderIrElementVisitor?, options: D
             } else if (isMarkedNullable()) {
                 append('?')
             }
-            if (options.printTypeAbbreviations)
-                abbreviation?.let {
-                    append(it.renderTypeAbbreviation(renderer, options))
-                }
         }
-    }
-
-private fun IrTypeAbbreviation.renderTypeAbbreviation(renderer: RenderIrElementVisitor?, options: DumpIrTreeOptions): String =
-    buildString {
-        append("{ ")
-        append(renderTypeAnnotations(annotations, renderer, options))
-        append(typeAlias.renderTypeAliasFqn(options))
-        if (arguments.isNotEmpty()) {
-            append(
-                arguments.joinToString(prefix = "<", postfix = ">", separator = ", ") {
-                    it.renderTypeArgument(renderer, options)
-                }
-            )
-        }
-        if (hasQuestionMark) {
-            append('?')
-        }
-        append(" }")
     }
 
 private fun IrTypeArgument.renderTypeArgument(renderer: RenderIrElementVisitor?, options: DumpIrTreeOptions): String =
@@ -926,12 +974,13 @@ private fun IrTypeArgument.renderTypeArgument(renderer: RenderIrElementVisitor?,
     }
 
 internal fun List<IrConstructorCall>.filterOutSourceRetentions(options: DumpIrTreeOptions): List<IrConstructorCall> =
-    applyIf(!options.printSourceRetentionAnnotations) {
+    applyIf(!options.printAnnotationsWithSourceRetention) {
         filterNot { it: IrConstructorCall ->
-            (it.symbol.owner.returnType.classifierOrNull?.owner as? IrClass)?.annotations?.any { it: IrConstructorCall ->
-                it.symbol.owner.returnType.classFqName?.asString() == Retention::class.java.name &&
-                        (it.arguments.first() as? IrGetEnumValue)?.symbol?.owner?.name?.asString() == AnnotationRetention.SOURCE.name
-            } == true
+            it.symbol.isBound &&
+                    (it.symbol.owner.returnType.classifierOrNull?.owner as? IrClass)?.annotations?.any { it: IrConstructorCall ->
+                        it.symbol.owner.returnType.classFqName?.asString() == Retention::class.java.name &&
+                                (it.arguments.first() as? IrGetEnumValue)?.symbol?.owner?.name?.asString() == AnnotationRetention.SOURCE.name
+                    } == true
         }
     }
 
@@ -954,7 +1003,15 @@ private fun StringBuilder.renderAsAnnotation(
     renderer: RenderIrElementVisitor?,
     options: DumpIrTreeOptions,
 ) {
-    val annotationClassName = irAnnotation.symbol.takeIf { it.isBound }?.owner?.parentAsClass?.name?.asString() ?: "<unbound>"
+    val annotationClassName = irAnnotation.symbol.getOwnerIfBound()?.parentAsClass?.name?.asString()
+        ?: run {
+            val nameSegments = (irAnnotation.symbol.signature as? CommonSignature)?.nameSegments.orEmpty()
+            runIf(nameSegments.size >= 2 && nameSegments[nameSegments.lastIndex] == SpecialNames.INIT.asString()) {
+                nameSegments[nameSegments.lastIndex - 1]
+            }
+        }
+        ?: "<unbound>"
+
     append(annotationClassName)
 
     if (irAnnotation.typeArguments.isNotEmpty()) {
@@ -963,14 +1020,13 @@ private fun StringBuilder.renderAsAnnotation(
         }
     }
 
-    if (irAnnotation.valueArgumentsCount == 0) return
+    if (irAnnotation.arguments.isEmpty()) return
 
     val valueParameterNames = irAnnotation.getValueParameterNamesForDebug(options)
-
-    appendIterableWith(0 until irAnnotation.valueArgumentsCount, separator = ", ", prefix = "(", postfix = ")") {
+    appendIterableWith(irAnnotation.arguments.indices, separator = ", ", prefix = "(", postfix = ")") {
         append(valueParameterNames[it])
         append(" = ")
-        renderAsAnnotationArgument(irAnnotation.getValueArgument(it), renderer, options)
+        renderAsAnnotationArgument(irAnnotation.arguments[it], renderer, options)
     }
 }
 
@@ -1013,7 +1069,9 @@ private fun renderClassWithRenderer(
     flagsRenderer: FlagsRenderer,
     options: DumpIrTreeOptions,
 ) = declaration.runTrimEnd {
-    "CLASS ${renderOriginIfNonTrivial(options)}" +
+    "CLASS" +
+            "${renderOffsets(options)} " +
+            renderOriginIfNonTrivial(options) +
             "$kind name:$name " +
             renderSignatureIfEnabled(options.printSignatures) +
             "modality:$modality visibility:$visibility " +
@@ -1022,7 +1080,8 @@ private fun renderClassWithRenderer(
 }
 
 private fun renderEnumEntry(declaration: IrEnumEntry, options: DumpIrTreeOptions) = declaration.runTrimEnd {
-    "ENUM_ENTRY " +
+    "ENUM_ENTRY" +
+            "${renderOffsets(options)} " +
             renderOriginIfNonTrivial(options) +
             "name:$name " +
             renderSignatureIfEnabled(options.printSignatures)
@@ -1032,19 +1091,22 @@ private fun renderField(
     declaration: IrField,
     renderer: RenderIrElementVisitor?,
     flagsRenderer: FlagsRenderer,
-    options: DumpIrTreeOptions
+    options: DumpIrTreeOptions,
 ) = declaration.runTrimEnd {
-    "FIELD ${renderOriginIfNonTrivial(options)}name:$name ${renderSignatureIfEnabled(options.printSignatures)}type:${
-        type.renderTypeWithRenderer(
-            renderer,
-            options
-        )
-    } visibility:$visibility ${renderFieldFlags(flagsRenderer)}"
+    "FIELD" +
+            "${renderOffsets(options)} " +
+            renderOriginIfNonTrivial(options) +
+            "name:$name " +
+            renderSignatureIfEnabled(options.printSignatures) +
+            "type:${type.renderTypeWithRenderer(renderer, options)} " +
+            "visibility:$visibility ${renderFieldFlags(flagsRenderer)}"
 }
 
 private fun renderTypeParameter(declaration: IrTypeParameter, renderer: RenderIrElementVisitor?, options: DumpIrTreeOptions) =
     declaration.runTrimEnd {
-        "TYPE_PARAMETER ${renderOriginIfNonTrivial(options)}" +
+        "TYPE_PARAMETER" +
+                "${renderOffsets(options)} " +
+                renderOriginIfNonTrivial(options) +
                 "name:$name index:$index variance:$variance " +
                 renderSignatureIfEnabled(options.printSignatures) +
                 "superTypes:[${

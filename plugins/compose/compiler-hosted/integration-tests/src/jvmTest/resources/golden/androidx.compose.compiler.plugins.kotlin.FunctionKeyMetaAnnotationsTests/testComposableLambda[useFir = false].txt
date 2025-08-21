@@ -22,39 +22,39 @@ fun Bar() {
 // ------------------------------------------
 
 ComposableSingletons$TestKt {
-    <init> null
-    getLambda$-420233864$test_module null
-    getLambda$511230191$test_module null
-    <clinit> null
+    <init> ()V null
+    getLambda$-420233864$test_module ()Lkotlin/jvm/functions/Function2; null
+    getLambda$511230191$test_module ()Lkotlin/jvm/functions/Function2; null
+    <clinit> ()V null
 }
 
 ComposableSingletons$TestKt$lambda$-420233864$1 {
-    <init> null
-    invoke [key=-420233864, startOffset=143, endOffset=170]
-    invoke null
-    <clinit> null
+    <init> ()V null
+    invoke (Landroidx/compose/runtime/Composer;I)V [key=-420233864, startOffset=143, endOffset=170]
+    invoke (Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object; null
+    <clinit> ()V null
 }
 
 ComposableSingletons$TestKt$lambda$511230191$1 {
-    <init> null
-    invoke [key=511230191, startOffset=180, endOffset=206]
-    invoke null
-    <clinit> null
+    <init> ()V null
+    invoke (Landroidx/compose/runtime/Composer;I)V [key=511230191, startOffset=180, endOffset=206]
+    invoke (Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object; null
+    <clinit> ()V null
 }
 
 TestKt {
-    Foo [key=-345321224, startOffset=58, endOffset=108]
-    Bar [key=-1333506531, startOffset=123, endOffset=208]
+    Foo (Lkotlin/jvm/functions/Function2;Landroidx/compose/runtime/Composer;I)V [key=-345321224, startOffset=58, endOffset=108]
+    Bar (Landroidx/compose/runtime/Composer;I)V [key=-1333506531, startOffset=123, endOffset=208]
 }
 
 TestKt$Foo$1 {
-    <init> null
-    invoke null
-    invoke null
+    <init> (Lkotlin/jvm/functions/Function2;I)V null
+    invoke (Landroidx/compose/runtime/Composer;I)V null
+    invoke (Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object; null
 }
 
 TestKt$Bar$1 {
-    <init> null
-    invoke null
-    invoke null
+    <init> (I)V null
+    invoke (Landroidx/compose/runtime/Composer;I)V null
+    invoke (Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object; null
 }

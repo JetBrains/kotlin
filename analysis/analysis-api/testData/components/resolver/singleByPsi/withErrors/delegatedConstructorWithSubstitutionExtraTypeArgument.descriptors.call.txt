@@ -5,6 +5,7 @@ KtConstructorDelegationCall(103,111): 'super(1)'
         argumentMapping = {}
         kind = SUPER_CALL
         partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+          contextArguments = []
           dispatchReceiver = null
           extensionReceiver = null
           signature = KaFunctionSignature:
@@ -12,6 +13,7 @@ KtConstructorDelegationCall(103,111): 'super(1)'
             returnType = kotlin.Any
             symbol = <constructor>(): kotlin.Any
             valueParameters = []
+            contextParameters = []
             callableId = null
         typeArgumentsMapping = {}
     ]

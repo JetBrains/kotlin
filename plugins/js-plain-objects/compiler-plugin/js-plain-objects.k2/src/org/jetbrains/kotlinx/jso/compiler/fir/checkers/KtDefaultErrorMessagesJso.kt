@@ -10,27 +10,27 @@ import org.jetbrains.kotlin.diagnostics.rendering.BaseDiagnosticRendererFactory
 import org.jetbrains.kotlin.diagnostics.rendering.CommonRenderers
 
 object KtDefaultErrorMessagesJsPlainObjects : BaseDiagnosticRendererFactory() {
-    override val MAP = KtDiagnosticFactoryToRendererMap("JsPlainObjects").apply {
-        put(
+    override val MAP by KtDiagnosticFactoryToRendererMap("JsPlainObjects") { map ->
+        map.put(
             FirJsPlainObjectsErrors.NON_EXTERNAL_DECLARATIONS_NOT_SUPPORTED,
             "Non-external {0} can not be annotated with JsPlainObjects. Only external interfaces are supported.",
             CommonRenderers.STRING
         )
-        put(
+        map.put(
             FirJsPlainObjectsErrors.ONLY_INTERFACES_ARE_SUPPORTED,
             "External {0} can not be annotated with JsPlainObjects. Only external interfaces are supported.",
             CommonRenderers.STRING
         )
-        put(
+        map.put(
             FirJsPlainObjectsErrors.IMPLEMENTING_OF_JS_PLAIN_OBJECT_IS_NOT_SUPPORTED,
             "[{0}] is marked as JsPlainObjects, so, it can not be used as a super-type for non-JsPlainObjects declarations",
             CommonRenderers.STRING
         )
-        put(
+        map.put(
             FirJsPlainObjectsErrors.METHODS_ARE_NOT_ALLOWED_INSIDE_JS_PLAIN_OBJECT,
             "Methods are not allowed inside an interface marked with JsPlainObjects",
         )
-        put(
+        map.put(
             FirJsPlainObjectsErrors.JS_PLAIN_OBJECT_CAN_EXTEND_ONLY_OTHER_JS_PLAIN_OBJECTS,
             "[{0}] is marked as JsPlainObjects, so, it can contain as supertypes only other interfaces marked with JsPlainObjects (or marker interfaces)",
             CommonRenderers.STRING

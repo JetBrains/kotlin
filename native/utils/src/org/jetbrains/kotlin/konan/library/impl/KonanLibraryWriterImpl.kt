@@ -5,10 +5,10 @@
 
 package org.jetbrains.kotlin.konan.library.impl
 
-import org.jetbrains.kotlin.konan.library.BitcodeWriter
-import org.jetbrains.kotlin.konan.library.KonanLibraryWriter
 import org.jetbrains.kotlin.konan.file.File
+import org.jetbrains.kotlin.konan.library.BitcodeWriter
 import org.jetbrains.kotlin.konan.library.KonanLibraryLayout
+import org.jetbrains.kotlin.konan.library.KonanLibraryWriter
 import org.jetbrains.kotlin.konan.properties.Properties
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.library.*
@@ -34,7 +34,7 @@ class KonanLibraryWriterImpl(
     base: BaseWriter = BaseWriterImpl(layout, moduleName, versions, builtInsPlatform, nativeTargets, nopack, shortName),
     bitcode: BitcodeWriter = BitcodeWriterImpl(layout),
     metadata: MetadataWriter = MetadataWriterImpl(layout),
-    ir: IrWriter = IrMonoliticWriterImpl(layout),
+    ir: IrWriter = IrWriterImpl(layout),
 
     ) : BaseWriter by base, BitcodeWriter by bitcode, MetadataWriter by metadata, IrWriter by ir, KonanLibraryWriter
 
@@ -69,6 +69,10 @@ fun buildLibrary(
         shortName,
         layout
     )
+
+    if (versions.abiVersion?.major == 1 && versions.abiVersion?.minor == 201) {
+        File(layout.targetDir, "kotlin").mkdirs()
+    }
 
     library.addMetadata(metadata)
     if (ir != null) {

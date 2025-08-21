@@ -3,11 +3,11 @@
 // LANGUAGE:+DirectJavaActualization
 // MODULE: m1-common
 // FILE: common.kt
-<!EXPECT_ACTUAL_INCOMPATIBILITY{JVM}!>expect<!> class KotlinModifiers {
+<!EXPECT_ACTUAL_IR_INCOMPATIBILITY{JVM}!>expect<!> class KotlinModifiers {
     operator fun plus(i: Int)
-    inline fun <!EXPECT_ACTUAL_INCOMPATIBILITY{JVM}!>foo<!>()
-    suspend fun <!EXPECT_ACTUAL_INCOMPATIBILITY{JVM}!>bar<!>()
-    infix fun <!EXPECT_ACTUAL_INCOMPATIBILITY{JVM}!>qux<!>(i: Int)
+    inline fun <!EXPECT_ACTUAL_IR_INCOMPATIBILITY{JVM}!>foo<!>()
+    suspend fun <!EXPECT_ACTUAL_IR_INCOMPATIBILITY{JVM}!>bar<!>()
+    infix fun <!EXPECT_ACTUAL_IR_INCOMPATIBILITY{JVM}!>qux<!>(i: Int)
 }
 
 expect class JavaModifiers {
@@ -40,3 +40,5 @@ public class JavaModifiers {
     @kotlin.annotations.jvm.KotlinActual
     public default void qux(){};
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, expect, functionDeclaration, infix, inline, operator, suspend */

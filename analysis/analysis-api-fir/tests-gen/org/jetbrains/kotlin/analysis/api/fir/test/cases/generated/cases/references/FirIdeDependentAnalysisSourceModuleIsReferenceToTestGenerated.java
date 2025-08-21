@@ -82,6 +82,18 @@ public class FirIdeDependentAnalysisSourceModuleIsReferenceToTestGenerated exten
   }
 
   @Test
+  @TestMetadata("javaRecordComponentReference.kt")
+  public void testJavaRecordComponentReference() {
+    runTest("analysis/analysis-api/testData/references/isReferenceTo/javaRecordComponentReference.kt");
+  }
+
+  @Test
+  @TestMetadata("javaSetterAsBuilderCall.kt")
+  public void testJavaSetterAsBuilderCall() {
+    runTest("analysis/analysis-api/testData/references/isReferenceTo/javaSetterAsBuilderCall.kt");
+  }
+
+  @Test
   @TestMetadata("javaSetterCall.kt")
   public void testJavaSetterCall() {
     runTest("analysis/analysis-api/testData/references/isReferenceTo/javaSetterCall.kt");

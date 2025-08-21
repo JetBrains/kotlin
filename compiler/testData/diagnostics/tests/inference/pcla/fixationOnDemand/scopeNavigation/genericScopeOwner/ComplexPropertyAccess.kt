@@ -119,3 +119,8 @@ object GenericDelegate {
 val <SOTB> ScopeOwner<SOTB>.delegatedExtensionProperty: SOTB by GenericDelegate
 
 object Interloper: BaseType
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, companionObject, functionDeclaration, functionalType, getter,
+interfaceDeclaration, lambdaLiteral, localProperty, nullableType, objectDeclaration, operator, primaryConstructor,
+propertyDeclaration, propertyDelegate, propertyWithExtensionReceiver, safeCall, starProjection, thisExpression,
+typeParameter */

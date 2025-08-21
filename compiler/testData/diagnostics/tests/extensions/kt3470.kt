@@ -7,3 +7,5 @@ class A {
 }
 
 val a = A.toString()
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, functionDeclaration, objectDeclaration, propertyDeclaration */

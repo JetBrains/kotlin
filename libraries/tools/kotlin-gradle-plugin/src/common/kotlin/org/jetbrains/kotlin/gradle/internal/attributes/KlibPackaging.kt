@@ -10,11 +10,10 @@ import org.gradle.api.attributes.*
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.attributes.KlibPackaging
 import org.jetbrains.kotlin.gradle.utils.named
-import org.jetbrains.kotlin.gradle.utils.setAttribute
 
 internal fun KlibPackaging.Companion.setAttributeTo(project: Project, attributes: AttributeContainer, packed: Boolean) {
     if (project.kotlinPropertiesProvider.useNonPackedKlibs) {
-        attributes.setAttribute(
+        attributes.attribute(
             ATTRIBUTE,
             project.objects.named(if (packed) PACKED else NON_PACKED)
         )

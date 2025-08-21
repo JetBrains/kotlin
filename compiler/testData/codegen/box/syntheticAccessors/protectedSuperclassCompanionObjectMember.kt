@@ -1,6 +1,5 @@
 // TARGET_BACKEND: JVM
 // WITH_STDLIB
-// IGNORE_BACKEND: JVM
 
 // FILE: test.kt
 import c2.*

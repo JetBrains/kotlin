@@ -1,3 +1,5 @@
+// COMPILATION_ERRORS
+
 fun main() {
     0..<n
 }

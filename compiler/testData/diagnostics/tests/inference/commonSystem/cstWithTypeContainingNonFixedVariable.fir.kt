@@ -1,3 +1,4 @@
+// LATEST_LV_DIFFERENCE
 // RUN_PIPELINE_TILL: FRONTEND
 // DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_EXPRESSION
 
@@ -59,11 +60,11 @@ fun testVariableWithBound() {
 
     c1
 
-    val c2 = <!NEW_INFERENCE_ERROR!>select(SubInv<String>(), createWithNumberBound())<!>
+    val c2 = <!TYPE_MISMATCH("Number; String")!>select(SubInv<String>(), <!UPPER_BOUND_VIOLATED!>createWithNumberBound<!>())<!>
 
     c2
 
-    val c3 = <!NEW_INFERENCE_ERROR!>select(SubInv<Double>(), createWithIntBound())<!>
+    val c3 = <!TYPE_MISMATCH("Int; Double")!>select(SubInv<Double>(), <!UPPER_BOUND_VIOLATED!>createWithIntBound<!>())<!>
 
     c3
 }
@@ -82,7 +83,10 @@ fun testCapturedVariable() {
 
     c2
 
-    val c3 = <!NEW_INFERENCE_ERROR!>select(SubInv<Number>(), createInvIn())<!>
+    val c3 = <!TYPE_MISMATCH("Inv<out Number>; Inv<CapturedType(in Number)>")!>select(SubInv<Number>(), createInvIn())<!>
 
     c3
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, inProjection, localFunction, localProperty, nullableType,
+outProjection, propertyDeclaration, typeConstraint, typeParameter */

@@ -11,3 +11,5 @@ fun test(vararg values: A) {
     A.foo(*values)
     A.foo(<!TYPE_MISMATCH!>values<!>)
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, javaFunction, javaType, outProjection, vararg */

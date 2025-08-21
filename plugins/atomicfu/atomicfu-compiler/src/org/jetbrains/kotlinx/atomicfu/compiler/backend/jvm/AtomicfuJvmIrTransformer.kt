@@ -39,67 +39,6 @@ class AtomicfuJvmIrTransformer(
     }
 
     private inner class JvmAtomicPropertiesTransformer : AtomicPropertiesTransformer() {
-        override fun createAtomicHandler(
-            atomicfuProperty: IrProperty,
-            parentContainer: IrDeclarationContainer
-        ): AtomicHandler<IrProperty>? {
-            val isTopLevel = parentContainer is IrFile || (parentContainer is IrClass && parentContainer.kind == ClassKind.OBJECT)
-            return when {
-                atomicfuProperty.isNotDelegatedAtomic() -> {
-                    if (isTopLevel) {
-                        buildBoxedAtomic(atomicfuProperty, parentContainer)
-                    } else {
-                        createAtomicFieldUpdater(atomicfuProperty, parentContainer as IrClass)
-                    }
-                }
-                atomicfuProperty.isAtomicArray() -> {
-                    createAtomicArray(atomicfuProperty, parentContainer)
-                }
-                else -> null
-            }
-        }
-
-        /**
-         * Creates a [BoxedAtomic] updater to replace a top-level atomicfu property on JVM:
-         * builds a property of Java boxed atomic type: java.util.concurrent.atomic.Atomic(Integer|Long|Boolean|Reference).
-         */
-        private fun buildBoxedAtomic(atomicfuProperty: IrProperty, parentContainer: IrDeclarationContainer): BoxedAtomic {
-            with(atomicfuSymbols.createBuilder(atomicfuProperty.symbol)) {
-                val atomicArrayField = irBoxedAtomicField(atomicfuProperty, parentContainer)
-                val atomicArrayProperty = buildPropertyWithAccessors(
-                    atomicArrayField,
-                    atomicfuProperty.visibility,
-                    isVar = false,
-                    isStatic = parentContainer is IrFile,
-                    parentContainer
-                )
-                return BoxedAtomic(atomicArrayProperty)
-            }
-        }
-
-        /**
-         * Creates an [AtomicFieldUpdater] to replace an in-class atomicfu property on JVM:
-         * builds a volatile property of the type corresponding to the type of the atomic property, plus a Java atomic field updater:
-         * java.util.concurrent.atomic.Atomic(Integer|Long|Reference)FieldUpdater.
-         *
-         * Note that as there is no AtomicBooleanFieldUpdater in Java, AtomicBoolean is relpaced with a Volatile Int property
-         * and updated with j.u.c.a.AtomicIntegerFieldUpdater.
-         */
-        private fun createAtomicFieldUpdater(atomicfuProperty: IrProperty, parentClass: IrClass): AtomicFieldUpdater {
-            with(atomicfuSymbols.createBuilder(atomicfuProperty.symbol)) {
-                val volatilePropertyHandler = createVolatileProperty(atomicfuProperty, parentClass)
-                val atomicUpdaterField = irJavaAtomicFieldUpdater(volatilePropertyHandler.declaration.backingField!!, parentClass)
-                val atomicUpdaterProperty = buildPropertyWithAccessors(
-                    atomicUpdaterField,
-                    atomicfuProperty.visibility,
-                    isVar = false,
-                    isStatic = true,
-                    parentClass
-                )
-                return AtomicFieldUpdater(volatilePropertyHandler, atomicUpdaterProperty)
-            }
-        }
-
         override fun IrProperty.delegateToTransformedProperty(originalDelegate: IrProperty) {
             val volatileProperty = atomicfuPropertyToVolatile[originalDelegate]
             // On JVM there are 2 options:
@@ -130,7 +69,7 @@ class AtomicfuJvmIrTransformer(
                         if (accessor.isGetter) {
                             invokeFunctionOnAtomicHandler(AtomicHandlerType.BOXED_ATOMIC, getBoxedAtomicProperty, "get", emptyList(), accessor.returnType)
                         } else {
-                            val arg = accessor.valueParameters.first().capture()
+                            val arg = accessor.parameters.last().capture()
                             invokeFunctionOnAtomicHandler(AtomicHandlerType.BOXED_ATOMIC, getBoxedAtomicProperty, "set", listOf(arg), accessor.returnType)
                         }
                     )
@@ -150,8 +89,7 @@ class AtomicfuJvmIrTransformer(
             is AtomicFieldUpdater -> dispatchReceiver
             is AtomicFieldUpdaterValueParameter -> {
                 require(parentFunction != null && parentFunction.isTransformedAtomicExtension())
-                require(parentFunction.valueParameters[1].name.asString() == OBJ)
-                val obj = parentFunction.valueParameters[1].capture()
+                val obj = parentFunction.parameters.find { it.name.asString() == OBJ }!!.capture()
                 obj
             }
             is AtomicArray -> getAtomicArrayElementIndex(propertyGetterCall)
@@ -164,8 +102,8 @@ class AtomicfuJvmIrTransformer(
             dispatchReceiver: IrExpression?
         ): IrExpression = when(atomicHandler) {
             is AtomicFieldUpdater -> irGetProperty(atomicHandler.declaration, null)
-            is BoxedAtomic, is AtomicArray -> irGetProperty((atomicHandler.declaration as IrProperty), dispatchReceiver)
-            is AtomicFieldUpdaterValueParameter, is BoxedAtomicValueParameter, is AtomicArrayValueParameter -> (atomicHandler.declaration as IrValueParameter).capture()
+            is BoxedAtomic, is AtomicArray -> irGetProperty(atomicHandler.declaration, dispatchReceiver)
+            is AtomicFieldUpdaterValueParameter, is BoxedAtomicValueParameter, is AtomicArrayValueParameter -> atomicHandler.declaration.capture()
             else -> error("Unexpected atomic handler type for JVM backend: ${atomicHandler.javaClass.simpleName}")
         }
 
@@ -174,7 +112,7 @@ class AtomicfuJvmIrTransformer(
             dispatchReceiver: IrExpression?
         ): IrExpression = getAtomicHandlerReceiver(atomicHandler, dispatchReceiver)
 
-        override fun AbstractAtomicfuIrBuilder.getAtomicHandlerValueParameterReceiver(
+        override fun AbstractAtomicfuIrBuilder.getAtomicHandlerReceiver(
             atomicHandler: AtomicHandler<*>,
             dispatchReceiver: IrExpression?,
             parentFunction: IrFunction
@@ -192,13 +130,13 @@ class AtomicfuJvmIrTransformer(
     override fun IrFunction.checkAtomicHandlerValueParameters(atomicHandlerType: AtomicHandlerType, valueType: IrType): Boolean =
         when (atomicHandlerType) {
             AtomicHandlerType.ATOMIC_FIELD_UPDATER -> {
-                valueParameters.size > 2 &&
-                        valueParameters.holdsAt(0, ATOMIC_HANDLER, atomicfuSymbols.javaFUClassSymbol(valueType).defaultType) &&
-                        valueParameters.holdsAt(1, OBJ, irBuiltIns.anyNType)
+                parameters.size > 3 &&
+                        holdsAt(1, ATOMIC_HANDLER, atomicfuSymbols.javaFUClassSymbol(valueType).defaultType) &&
+                        holdsAt(2, OBJ, irBuiltIns.anyNType)
             }
             AtomicHandlerType.BOXED_ATOMIC -> {
-                valueParameters.size > 1 &&
-                        valueParameters.holdsAt(0, ATOMIC_HANDLER, atomicfuSymbols.javaAtomicBoxClassSymbol(valueType).defaultType)
+                parameters.size > 2 &&
+                        holdsAt(1, ATOMIC_HANDLER, atomicfuSymbols.javaAtomicBoxClassSymbol(valueType).defaultType)
             }
             AtomicHandlerType.ATOMIC_ARRAY -> {
                 val arrayClassSymbol = atomicfuSymbols.getAtomicArrayClassByValueType(valueType)
@@ -207,9 +145,9 @@ class AtomicfuJvmIrTransformer(
                 } else {
                     arrayClassSymbol.defaultType
                 }
-                valueParameters.size > 2 &&
-                        valueParameters.holdsAt(0, ATOMIC_HANDLER, type) &&
-                        valueParameters.holdsAt(1, INDEX, irBuiltIns.intType)
+                parameters.size > 3 &&
+                        holdsAt(1, ATOMIC_HANDLER, type) &&
+                        holdsAt(2, INDEX, irBuiltIns.intType)
             }
             else -> error("Unexpected atomic handler type for JVM backend: $atomicHandlerType")
         }
@@ -234,6 +172,28 @@ class AtomicfuJvmIrTransformer(
                 addValueParameter(INDEX, irBuiltIns.intType)
             }
             else -> error("Unexpected atomic handler type for JVM backend: $atomicHandlerType")
+        }
+    }
+
+    override fun createAtomicHandler(
+        atomicfuProperty: IrProperty,
+        parentContainer: IrDeclarationContainer
+    ): AtomicHandler<IrProperty>? {
+        val isTopLevel = parentContainer is IrFile || (parentContainer is IrClass && parentContainer.kind == ClassKind.OBJECT)
+        with(atomicfuSymbols.createBuilder(atomicfuProperty.symbol)) {
+            return when {
+                atomicfuProperty.isNotDelegatedAtomic() -> {
+                    if (isTopLevel) {
+                        buildBoxedAtomic(atomicfuProperty, parentContainer)
+                    } else {
+                        buildAtomicFieldUpdater(atomicfuProperty, parentContainer as IrClass)
+                    }
+                }
+                atomicfuProperty.isAtomicArray() -> {
+                    createAtomicArray(atomicfuProperty, parentContainer)
+                }
+                else -> null
+            }
         }
     }
 }

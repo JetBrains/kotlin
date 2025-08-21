@@ -21,3 +21,6 @@ fun ThemedContext.absolute() {
 
     class LocalClass : AbsoluteContext(noriaState)
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, anonymousObjectExpression, classDeclaration, funWithExtensionReceiver,
+functionDeclaration, localClass, nullableType, primaryConstructor, propertyDeclaration */

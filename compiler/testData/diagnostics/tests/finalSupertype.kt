@@ -7,3 +7,5 @@ class OOO
 typealias Alias = OOO
 
 class Child : <!FINAL_SUPERTYPE!>Alias<!>() //K1: [FINAL_SUPERTYPE] This type is final, so it cannot be inherited from, no error in K2
+
+/* GENERATED_FIR_TAGS: classDeclaration, typeAliasDeclaration */

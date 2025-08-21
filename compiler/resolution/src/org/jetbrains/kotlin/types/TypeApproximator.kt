@@ -40,11 +40,11 @@ class TypeApproximator(
     // null means that this input type is the result, i.e. input type not contains not-allowed kind of types
     // type <: resultType
     fun approximateToSuperType(type: UnwrappedType, conf: TypeApproximatorConfiguration): UnwrappedType? =
-        super.approximateToSuperType(type, conf) as UnwrappedType?
+        super.approximateToSuperType(type, conf, caches = null) as UnwrappedType?
 
     // resultType <: type
     fun approximateToSubType(type: UnwrappedType, conf: TypeApproximatorConfiguration): UnwrappedType? =
-        super.approximateToSubType(type, conf) as UnwrappedType?
+        super.approximateToSubType(type, conf, caches = null) as UnwrappedType?
 
     fun approximateTo(type: UnwrappedType, conf: TypeApproximatorConfiguration, toSuperType: Boolean): UnwrappedType? =
         if (toSuperType) approximateToSuperType(type, conf) else approximateToSubType(type, conf)

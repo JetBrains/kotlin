@@ -7,7 +7,9 @@ class A() {
     <!CONFLICTING_JVM_DECLARATIONS!>fun b() {
     }<!>
 
-    <!CONFLICTING_JVM_DECLARATIONS!>@Deprecated("test", level = DeprecationLevel.HIDDEN)
-    fun b() {
+    @Deprecated("test", level = DeprecationLevel.HIDDEN)
+    <!CONFLICTING_JVM_DECLARATIONS!>fun b() {
     }<!>
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, primaryConstructor, stringLiteral */

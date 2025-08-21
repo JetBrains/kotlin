@@ -28,15 +28,15 @@ class IncrementalTestsGeneratorUtil {
             folderToExcludePatternMap: Map<IcTestTypes, String>? = null
         ): TestGroup.TestClass.() -> Unit = {
             val excludeForAllTestData = folderToExcludePatternMap?.get(ALL)
-            model(
-                "incremental/${PURE_KOTLIN.folderName}",
+            modelForDirectoryBasedTest(
+                "incremental", PURE_KOTLIN.folderName,
                 extension = null,
                 recursive = false,
                 targetBackend = targetBackend,
                 excludedPattern = buildExcludePattern(listOfNotNull(folderToExcludePatternMap?.get(PURE_KOTLIN), excludeForAllTestData))
             )
-            model(
-                "incremental/${CLASS_HIERARCHY_AFFECTED.folderName}",
+            modelForDirectoryBasedTest(
+                "incremental", CLASS_HIERARCHY_AFFECTED.folderName,
                 extension = null,
                 recursive = false,
                 targetBackend = targetBackend,
@@ -47,8 +47,8 @@ class IncrementalTestsGeneratorUtil {
                     )
                 )
             )
-            model(
-                "incremental/${INLINE_FUN_CALL_SITE.folderName}",
+            modelForDirectoryBasedTest(
+                "incremental", INLINE_FUN_CALL_SITE.folderName,
                 extension = null,
                 excludeParentDirs = true,
                 targetBackend = targetBackend,
@@ -59,15 +59,15 @@ class IncrementalTestsGeneratorUtil {
                     )
                 )
             )
-            model(
-                "incremental/${WITH_JAVA.folderName}",
+            modelForDirectoryBasedTest(
+                "incremental", WITH_JAVA.folderName,
                 extension = null,
                 excludeParentDirs = true,
                 targetBackend = targetBackend,
                 excludedPattern = buildExcludePattern(listOfNotNull(folderToExcludePatternMap?.get(WITH_JAVA), excludeForAllTestData))
             )
-            model(
-                "incremental/${INCREMENTAL_JVM_COMPILER_ONLY.folderName}",
+            modelForDirectoryBasedTest(
+                "incremental", INCREMENTAL_JVM_COMPILER_ONLY.folderName,
                 extension = null,
                 excludeParentDirs = true,
                 targetBackend = targetBackend,

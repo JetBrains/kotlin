@@ -5,24 +5,14 @@
 
 package org.jetbrains.kotlin.backend.wasm.lower
 
-import org.jetbrains.kotlin.backend.common.ModuleLoweringPass
 import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
-import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.inline.FunctionInlining
 import org.jetbrains.kotlin.ir.inline.InlineMode
-import org.jetbrains.kotlin.ir.util.patchDeclarationParents
 
-internal class WasmFunctionInlining(
-    private val context: WasmBackendContext,
-    private val inlineMode: InlineMode,
-) : ModuleLoweringPass {
-    override fun lower(irModule: IrModuleFragment) {
-        FunctionInlining(
-            context = context,
-            inlineFunctionResolver = WasmInlineFunctionResolver(context, inlineMode),
-            produceOuterThisFields = false,
-        ).inline(irModule)
-
-        irModule.patchDeclarationParents()
-    }
-}
+internal fun WasmFunctionInlining(
+    context: WasmBackendContext,
+    inlineMode: InlineMode,
+) = FunctionInlining(
+    context = context,
+    inlineFunctionResolver = WasmInlineFunctionResolver(context, inlineMode),
+)

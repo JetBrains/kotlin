@@ -78,3 +78,6 @@ fun <E> id(e: E): E = e
 
 fun bar(x: () -> Int) {}
 fun bam(x: A.() -> Int) {}
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, companionObject, functionDeclaration, functionalType,
+integerLiteral, localProperty, nullableType, objectDeclaration, propertyDeclaration, typeParameter, typeWithExtension */

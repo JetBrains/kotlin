@@ -14,3 +14,6 @@ fun <T1, T2, S> bar(list: T2, fn: (S) -> B<T1, T2>) {}
 fun <K> foo(list: Inv<K>) {
     bar(list, ::Foo)
 }
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, functionDeclaration, functionalType, interfaceDeclaration,
+nullableType, primaryConstructor, typeParameter */

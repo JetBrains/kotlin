@@ -1,14 +1,19 @@
-// WITH_REFLECT
 // TARGET_BACKEND: JVM
+// WITH_REFLECT
 
-import java.util.Arrays
-import kotlin.reflect.KClass
+// JVM_ABI_K1_K2_DIFF: K2 serializes annotation parameter default values (KT-59526).
+// NO_CHECK_LAMBDA_INLINING
+
+// FILE: lib.kt
 import kotlin.reflect.KFunction0
 
 inline fun <reified T> test(kFunction: KFunction0<Unit>, test: T.() -> Unit) {
     val annotation = kFunction.annotations.single() as T
     annotation.test()
 }
+
+// FILE: main.kt
+import kotlin.reflect.KClass
 
 fun check(b: Boolean, message: String) {
     if (!b) throw RuntimeException(message)

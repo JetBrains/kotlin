@@ -15,16 +15,13 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.expectActualMatchingContextFactory
-import org.jetbrains.kotlin.fir.languageVersionSettings
+import org.jetbrains.kotlin.fir.isEnabled
 import org.jetbrains.kotlin.resolve.calls.mpp.isIllegalRequiresOptInAnnotation
 
 object FirRequiresOptInOnExpectChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
-    override fun check(
-        declaration: FirDeclaration,
-        context: CheckerContext,
-        reporter: DiagnosticReporter,
-    ) {
-        if (context.session.languageVersionSettings.supportsFeature(LanguageFeature.MultiPlatformProjects) &&
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirDeclaration) {
+        if (LanguageFeature.MultiPlatformProjects.isEnabled() &&
             declaration is FirRegularClass &&
             declaration.isExpect &&
             with(context.session.expectActualMatchingContextFactory.create(context.session, context.scopeSession)) {
@@ -32,7 +29,7 @@ object FirRequiresOptInOnExpectChecker : FirBasicDeclarationChecker(MppCheckerKi
                 isIllegalRequiresOptInAnnotation(on = expectSymbol, expectSymbol, context.languageVersionSettings)
             }
         ) {
-            reporter.reportOn(declaration.source, FirErrors.EXPECT_ACTUAL_OPT_IN_ANNOTATION, context)
+            reporter.reportOn(declaration.source, FirErrors.EXPECT_ACTUAL_OPT_IN_ANNOTATION)
         }
     }
 }

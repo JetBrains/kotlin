@@ -6,3 +6,6 @@ fun test() {
     run { b = 1 }<!UNNECESSARY_SAFE_CALL!>?.<!>let {}
     <!UNINITIALIZED_VARIABLE!>b<!>.inc()
 }
+
+/* GENERATED_FIR_TAGS: assignment, functionDeclaration, integerLiteral, lambdaLiteral, localProperty, nullableType,
+propertyDeclaration, safeCall */

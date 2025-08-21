@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.fir.types
 
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
-import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnosticWithNullability
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.types.model.*
@@ -58,20 +57,29 @@ sealed class ConeRigidType : ConeKotlinType(), RigidTypeMarker
  */
 sealed class ConeSimpleKotlinType : ConeRigidType(), SimpleTypeMarker
 
-class ConeClassLikeErrorLookupTag(override val classId: ClassId) : ConeClassLikeLookupTag()
+class ConeClassLikeErrorLookupTag(
+    override val classId: ClassId,
+    val diagnostic: ConeDiagnostic,
+    /**
+     * A type the error type is somehow related to, e.g., a type parameter type that is uninferred.
+     */
+    val delegatedType: ConeKotlinType? = null,
+) : ConeClassLikeLookupTag()
 
 class ConeErrorType(
-    val diagnostic: ConeDiagnostic,
+    diagnostic: ConeDiagnostic,
     val isUninferredParameter: Boolean = false,
-    val delegatedType: ConeKotlinType? = null,
+    delegatedType: ConeKotlinType? = null,
     override val typeArguments: Array<out ConeTypeProjection> = EMPTY_ARRAY,
-    override val attributes: ConeAttributes = ConeAttributes.Empty
+    override val attributes: ConeAttributes = ConeAttributes.Empty,
+    val nullable: Boolean? = null,
+    override val lookupTag: ConeClassLikeErrorLookupTag =
+        ConeClassLikeErrorLookupTag(delegatedType?.classId ?: ClassId.fromString("<error>"), diagnostic, delegatedType)
 ) : ConeClassLikeType() {
-    override val lookupTag: ConeClassLikeLookupTag
-        get() = ConeClassLikeErrorLookupTag(ClassId.fromString("<error>"))
-
     override val isMarkedNullable: Boolean
-        get() = (diagnostic as? ConeDiagnosticWithNullability)?.isNullable == true
+        get() = nullable == true
+    val diagnostic: ConeDiagnostic get() = lookupTag.diagnostic
+    val delegatedType: ConeKotlinType? get() = lookupTag.delegatedType
 
     override fun equals(other: Any?): Boolean = this === other
     override fun hashCode(): Int = System.identityHashCode(this)
@@ -80,6 +88,25 @@ class ConeErrorType(
 abstract class ConeLookupTagBasedType : ConeSimpleKotlinType() {
     abstract val lookupTag: ConeClassifierLookupTag
     abstract val isMarkedNullable: Boolean
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is ConeLookupTagBasedType) return false
+
+        if (lookupTag != other.lookupTag) return false
+        if (!typeArguments.contentEquals(other.typeArguments)) return false
+        if (isMarkedNullable != other.isMarkedNullable) return false
+        if (attributes definitelyDifferFrom other.attributes) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = lookupTag.hashCode()
+        result = 31 * result + typeArguments.contentHashCode()
+        result = 31 * result + isMarkedNullable.hashCode()
+        return result
+    }
 }
 
 abstract class ConeClassLikeType : ConeLookupTagBasedType() {
@@ -91,7 +118,17 @@ abstract class ConeClassLikeType : ConeLookupTagBasedType() {
  */
 open class ConeFlexibleType(
     val lowerBound: ConeRigidType,
-    val upperBound: ConeRigidType
+    val upperBound: ConeRigidType,
+    /**
+     * If `true`, the upper bound is a trivial, nullable copy of the lower bound.
+     *
+     * This flag is purely for optimization purposes.
+     * Callers should check this flag when they need to iterate all nested types because when it's `true`,
+     * the type arguments of [lowerBound] and [upperBound] are guaranteed to be the same,
+     * and therefore, iterating them once is enough.
+     * This prevents an exponential performance on such operations on deeply nested flexible types.
+     */
+    val isTrivial: Boolean,
 ) : ConeKotlinType(), FlexibleTypeMarker {
     final override val typeArguments: Array<out ConeTypeProjection>
         get() = lowerBound.typeArguments
@@ -106,6 +143,9 @@ open class ConeFlexibleType(
         if (other !is ConeFlexibleType) return false
 
         if (lowerBound != other.lowerBound) return false
+
+        if (isTrivial && other.isTrivial) return true
+
         if (upperBound != other.upperBound) return false
 
         return true
@@ -113,7 +153,12 @@ open class ConeFlexibleType(
 
     final override fun hashCode(): Int {
         var result = lowerBound.hashCode()
-        result = 31 * result + upperBound.hashCode()
+        // We don't use `upperBound.hashCode()` because it might lead to performance loss for trivial types.
+        // While doing something like `31 * lowerBoundResult + Boolean.hashCode(true/* markedNullable */)`
+        // to replicate `upperBound.hashCode()` behavior seems too fragile.
+        // But we want the result was different from just lowerBound's one,
+        // so we add a beautiful though random prime number.
+        result = 31 * result + 2999
         return result
     }
 }
@@ -124,7 +169,7 @@ annotation class DynamicTypeConstructor
 class ConeDynamicType @DynamicTypeConstructor constructor(
     lowerBound: ConeRigidType,
     upperBound: ConeRigidType
-) : ConeFlexibleType(lowerBound, upperBound), DynamicTypeMarker {
+) : ConeFlexibleType(lowerBound, upperBound, isTrivial = false), DynamicTypeMarker {
     companion object
 }
 
@@ -143,30 +188,17 @@ sealed interface ConeTypeConstructorMarker : TypeConstructorMarker
 
 class ConeCapturedTypeConstructor(
     val projection: ConeTypeProjection,
+    val lowerType: ConeKotlinType?,
+    val captureStatus: CaptureStatus,
     var supertypes: List<ConeKotlinType>? = null,
     val typeParameterMarker: TypeParameterMarker? = null
 ) : CapturedTypeConstructorMarker, ConeTypeConstructorMarker
 
 data class ConeCapturedType(
-    val captureStatus: CaptureStatus,
-    val lowerType: ConeKotlinType?,
     val isMarkedNullable: Boolean = false,
     val constructor: ConeCapturedTypeConstructor,
     override val attributes: ConeAttributes = ConeAttributes.Empty,
-    val isProjectionNotNull: Boolean = false
 ) : ConeSimpleKotlinType(), CapturedTypeMarker {
-
-    constructor(
-        captureStatus: CaptureStatus, lowerType: ConeKotlinType?, projection: ConeTypeProjection,
-        typeParameterMarker: TypeParameterMarker
-    ) : this(
-        captureStatus,
-        lowerType,
-        constructor = ConeCapturedTypeConstructor(
-            projection,
-            typeParameterMarker = typeParameterMarker
-        )
-    )
 
     override val typeArguments: Array<out ConeTypeProjection>
         get() = EMPTY_ARRAY
@@ -177,9 +209,7 @@ data class ConeCapturedType(
 
         other as ConeCapturedType
 
-        if (lowerType != other.lowerType) return false
         if (constructor != other.constructor) return false
-        if (captureStatus != other.captureStatus) return false
         if (isMarkedNullable != other.isMarkedNullable) return false
 
         return true
@@ -187,9 +217,7 @@ data class ConeCapturedType(
 
     override fun hashCode(): Int {
         var result = 7
-        result = 31 * result + (lowerType?.hashCode() ?: 0)
         result = 31 * result + constructor.hashCode()
-        result = 31 * result + captureStatus.hashCode()
         result = 31 * result + isMarkedNullable.hashCode()
         return result
     }
@@ -215,7 +243,7 @@ data class ConeDefinitelyNotNullType(
 class ConeRawType private constructor(
     lowerBound: ConeRigidType,
     upperBound: ConeRigidType
-) : ConeFlexibleType(lowerBound, upperBound) {
+) : ConeFlexibleType(lowerBound, upperBound, isTrivial = false) {
     companion object {
         fun create(
             lowerBound: ConeRigidType,

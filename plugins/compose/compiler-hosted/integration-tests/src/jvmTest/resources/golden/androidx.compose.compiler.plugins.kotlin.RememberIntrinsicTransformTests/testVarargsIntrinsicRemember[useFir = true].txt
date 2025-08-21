@@ -19,7 +19,7 @@ fun Test(vararg strings: String) {
 @Composable
 fun Test(strings: Array<out String>, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
-  sourceInformation(%composer, "C(Test)<rememb...>:Test.kt")
+  sourceInformation(%composer, "C(Test)N(strings)<rememb...>:Test.kt")
   val %dirty = %changed
   %composer.startMovableGroup(<>, strings.size)
   %dirty = %dirty or if (%composer.changed(strings.size)) 0b0100 else 0
@@ -32,7 +32,7 @@ fun Test(strings: Array<out String>, %composer: Composer?, %changed: Int) {
   if (%dirty and 0b1110 == 0) {
     %dirty = %dirty or 0b0010
   }
-  if (%dirty and 0b0001 != 0 || !%composer.skipping) {
+  if (%composer.shouldExecute(%dirty and 0b0001 != 0, %dirty and 0b0001)) {
     if (isTraceInProgress()) {
       traceEventStart(<>, %dirty, -1, <>)
     }
@@ -62,6 +62,6 @@ fun Test(strings: Array<out String>, %composer: Composer?, %changed: Int) {
     %composer.skipToGroupEnd()
   }
   %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-    Test(*strings, %composer, updateChangedFlags(%changed or 0b0001))
+    Test(strings, %composer, updateChangedFlags(%changed or 0b0001))
   }
 }

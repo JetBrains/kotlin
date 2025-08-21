@@ -151,7 +151,7 @@ private fun <T> FirAnnotation.findFromRawArguments(expectedEnumClass: ClassId, t
         if (arg !is FirQualifiedAccessExpression) return
         val callableSymbol = arg.calleeReference.toResolvedCallableSymbol() ?: return
         if (callableSymbol.containingClassLookupTag()?.classId != expectedEnumClass) return
-        val identifier = callableSymbol.callableId.callableName.identifier
+        val identifier = callableSymbol.name.identifier
         transformer(identifier)?.let(::add)
     }
 

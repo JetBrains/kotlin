@@ -9,3 +9,5 @@ class Derived<E> : Parent<E>() {
         x.foo()
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, nullableType, typeParameter */

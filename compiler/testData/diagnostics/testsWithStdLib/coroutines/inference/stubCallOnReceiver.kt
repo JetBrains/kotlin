@@ -24,3 +24,6 @@ fun bar() {
         serialize { this.toString() }
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionalType, lambdaLiteral, nullableType,
+thisExpression, typeConstraint, typeParameter, typeWithExtension */

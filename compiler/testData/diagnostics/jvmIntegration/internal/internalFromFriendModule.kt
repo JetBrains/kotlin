@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // MODULE: library
 // FILE: a.kt
@@ -29,3 +30,6 @@ private fun test(i: InternalInterface): InternalTypealias {
 
     return i
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, functionDeclaration, interfaceDeclaration, objectDeclaration,
+propertyDeclaration, stringLiteral, typeAliasDeclaration */

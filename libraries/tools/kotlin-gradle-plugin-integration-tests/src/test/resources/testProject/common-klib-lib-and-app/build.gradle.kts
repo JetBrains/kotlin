@@ -53,6 +53,19 @@ kotlin {
 			dependsOn(jvmAndJsMain)
 		}
 
+		val iosMain by creating {
+			dependsOn(commonMain)
+		}
+		val iosX64Main by getting {
+			dependsOn(iosMain)
+		}
+		val iosArm64Main by getting {
+			dependsOn(iosMain)
+		}
+		val iosSimulatorArm64Main by getting {
+			dependsOn(iosMain)
+		}
+
 		all {
 			languageSettings.optIn("kotlinx.cinterop.ExperimentalForeignApi")
 		}

@@ -21,3 +21,7 @@ fun Any.foo() = myApply {
 
     <!UNRESOLVED_REFERENCE!>baz<!>() // Smart cast should work
 }
+
+/* GENERATED_FIR_TAGS: callableReference, funWithExtensionReceiver, functionDeclaration, functionalType, integerLiteral,
+interfaceDeclaration, isExpression, lambdaLiteral, nullableType, smartcast, thisExpression, typeParameter,
+typeWithExtension, whenExpression, whenWithSubject */

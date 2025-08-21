@@ -1,0 +1,97 @@
+KaNamedFunctionSymbol:
+  annotations: []
+  callableId: one/foo
+  compilerVisibility: Public
+  contextParameters: [
+    KaContextParameterSymbol:
+      annotations: []
+      callableId: null
+      compilerVisibility: Public
+      contextReceivers: []
+      isActual: false
+      isExpect: false
+      isExtension: false
+      isVal: true
+      location: LOCAL
+      modality: FINAL
+      name: <unused var>
+      origin: LIBRARY
+      receiverParameter: null
+      returnType: KaUsualClassType:
+        annotations: []
+        typeArguments: []
+        type: kotlin/Int
+      visibility: PUBLIC
+      getContainingFileSymbol: null
+      getContainingJvmClassName: one.LibraryKt
+      getContainingModule: KaLibraryModule "Library library"
+      deprecationStatus: null
+    KaContextParameterSymbol:
+      annotations: []
+      callableId: null
+      compilerVisibility: Public
+      contextReceivers: []
+      isActual: false
+      isExpect: false
+      isExtension: false
+      isVal: true
+      location: LOCAL
+      modality: FINAL
+      name: <unused var>
+      origin: LIBRARY
+      receiverParameter: null
+      returnType: KaUsualClassType:
+        annotations: []
+        typeArguments: []
+        type: kotlin/String
+      visibility: PUBLIC
+      getContainingFileSymbol: null
+      getContainingJvmClassName: one.LibraryKt
+      getContainingModule: KaLibraryModule "Library library"
+      deprecationStatus: null
+  ]
+  contextReceivers: [
+    KaContextReceiver:
+      label: <unused var>
+      type: KaUsualClassType:
+        annotations: []
+        typeArguments: []
+        type: kotlin/Int
+    KaContextReceiver:
+      label: <unused var>
+      type: KaUsualClassType:
+        annotations: []
+        typeArguments: []
+        type: kotlin/String
+  ]
+  contractEffects: []
+  hasStableParameterNames: true
+  isActual: false
+  isBuiltinFunctionInvoke: false
+  isExpect: false
+  isExtension: false
+  isExternal: false
+  isInfix: false
+  isInline: false
+  isOperator: false
+  isOverride: false
+  isStatic: false
+  isSuspend: false
+  isTailRec: false
+  location: TOP_LEVEL
+  modality: FINAL
+  name: foo
+  origin: LIBRARY
+  receiverParameter: null
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
+    type: kotlin/Unit
+  typeParameters: []
+  valueParameters: []
+  visibility: PUBLIC
+  getContainingFileSymbol: null
+  getContainingJvmClassName: one.LibraryKt
+  canBeOperator: false
+  getContainingModule: KaLibraryModule "Library library"
+  deprecationStatus: null

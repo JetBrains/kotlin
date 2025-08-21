@@ -15,3 +15,6 @@ fun test() {
         <!UNRESOLVED_REFERENCE!>dsgfsdg<!>
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, classReference, functionDeclaration, functionalType, integerLiteral,
+lambdaLiteral, nullableType, typeParameter, typeWithExtension */

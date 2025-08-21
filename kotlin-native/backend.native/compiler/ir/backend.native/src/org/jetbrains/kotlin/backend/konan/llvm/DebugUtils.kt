@@ -10,6 +10,7 @@ import kotlinx.cinterop.memScoped
 import kotlinx.cinterop.reinterpret
 import llvm.*
 import org.jetbrains.kotlin.backend.konan.*
+import org.jetbrains.kotlin.config.nativeBinaryOptions.BinaryOptions
 import org.jetbrains.kotlin.ir.IrFileEntry
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.IrFunction
@@ -66,16 +67,16 @@ internal class DebugInfo(override val generationState: NativeGenerationState) : 
     init {
         val path = generationState.outputFile.toFileAndFolder(config)
         compilationUnit = DICreateCompilationUnit(
-                builder = builder,
-                lang = DWARF.language(config),
+            builder = builder,
+            lang = DWARF.language(config),
                 // we don't split path to filename and directory to provide enough level uniquely for dsymutil to avoid symbol
                 // clashing, which happens on linking with libraries produced from intercepting sources.
-                File = path.path(),
-                dir = config.configuration.get(BinaryOptions.debugCompilationDir) ?: "",
-                producer = DWARF.producer,
-                isOptimized = 0,
-                flags = "",
-                rv = DWARF.runtimeVersion(config)
+            File = path.path(),
+            dir = config.configuration.get(BinaryOptions.debugCompilationDir) ?: "",
+            producer = DWARF.producer,
+            isOptimized = 0,
+            flags = "",
+            rv = DWARF.runtimeVersion(config)
         )!!.reinterpret()
         module = DICreateModule(
                 builder = builder,
@@ -261,7 +262,7 @@ internal class DebugInfo(override val generationState: NativeGenerationState) : 
 
     private val IrFunction.types: List<IrType>
         get() {
-            val parameters = valueParameters.map { it.type }
+            val parameters = parameters.map { it.type }
             return listOf(returnType, *parameters.toTypedArray())
         }
 }
@@ -275,9 +276,7 @@ private fun IrFileEntry.location(offset: Int, offsetToNumber: (Int) -> Int): Int
     if (offset == UNDEFINED_OFFSET) return 0
     if (offset == SYNTHETIC_OFFSET || name.isEmpty() || name == NO_SOURCE_FILE) return 1
     // lldb uses 1-based unsigned integers, so 0 is "no-info".
-    val result = offsetToNumber(offset) + 1
-    assert(result != 0)
-    return result
+    return offsetToNumber(offset) + 1
 }
 
 internal fun IrFileEntry.lineAndColumn(offset: Int): Pair<Int, Int> {

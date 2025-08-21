@@ -1,5 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // SKIP_TXT
+// LANGUAGE: -ForbidInferOfInvisibleTypeAsReifiedVarargOrReturnType
 
 // FILE: a/A.java
 package a;
@@ -38,7 +39,7 @@ import a.AImpl
 fun test1(a: A) {
     if (a is AImpl) {
         (a as A).b().bar() // OK
-        a.b().<!INVISIBLE_REFERENCE!>bar<!>()
+        <!INFERRED_INVISIBLE_RETURN_TYPE_WARNING!>a.b()<!>.<!INVISIBLE_REFERENCE!>bar<!>()
     }
 }
 
@@ -47,3 +48,6 @@ fun test2(aImpl: AImpl) {
     (a <!USELESS_CAST!>as A<!>).b().bar() // OK
     a.b().bar() // Works at FE1.0, fails at FIR
 }
+
+/* GENERATED_FIR_TAGS: asExpression, flexibleType, functionDeclaration, ifExpression, isExpression, javaFunction,
+javaType, localProperty, propertyDeclaration, smartcast */

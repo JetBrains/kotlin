@@ -12,8 +12,9 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.expressions.FirBooleanOperatorExpression
 
 object FirLogicExpressionTypeChecker : FirBooleanOperatorExpressionChecker(MppCheckerKind.Common) {
-    override fun check(expression: FirBooleanOperatorExpression, context: CheckerContext, reporter: DiagnosticReporter) {
-        checkCondition(expression.leftOperand, context, reporter)
-        checkCondition(expression.rightOperand, context, reporter)
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(expression: FirBooleanOperatorExpression) {
+        checkCondition(expression.leftOperand)
+        checkCondition(expression.rightOperand)
     }
 }

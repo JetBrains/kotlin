@@ -11,6 +11,6 @@ package org.jetbrains.kotlin.sir
 /**
  * Generated from: [org.jetbrains.kotlin.sir.tree.generator.SwiftIrTree.mutableDeclarationContainer]
  */
-sealed class SirMutableDeclarationContainer : SirDeclarationContainer(), SirDeclarationParent {
-    abstract override val declarations: MutableList<SirDeclaration>
+sealed interface SirMutableDeclarationContainer : SirDeclarationParent, SirDeclarationContainer {
+    override val declarations: MutableList<SirDeclaration>
 }

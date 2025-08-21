@@ -19,14 +19,14 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrPropertyReferenceImpl
 import org.jetbrains.kotlin.ir.irAttribute
 import org.jetbrains.kotlin.ir.util.copyTo
 import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
-import org.jetbrains.kotlin.ir.util.isLocal
+import org.jetbrains.kotlin.ir.util.isOriginallyLocal
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
 
 private val STATIC_THIS_PARAMETER by IrDeclarationOriginImpl
 
-private var IrFunction.correspondingStatic: IrSimpleFunction? by irAttribute(followAttributeOwner = false)
+private var IrFunction.correspondingStatic: IrSimpleFunction? by irAttribute(copyByDefault = false)
 
 /**
  * Extracts private members from classes.
@@ -53,7 +53,7 @@ class PrivateMembersLowering(val context: JsIrBackendContext) : DeclarationTrans
     private fun transformMemberToStaticFunction(function: IrSimpleFunction): IrSimpleFunction? {
 
         if (function.visibility != DescriptorVisibilities.PRIVATE || function.dispatchReceiverParameter == null) return null
-        val newVisibility = if (function.isLocal) DescriptorVisibilities.LOCAL else function.visibility
+        val newVisibility = if (function.isOriginallyLocal) DescriptorVisibilities.LOCAL else function.visibility
 
         val staticFunction = context.irFactory.buildFun {
             updateFrom(function)
@@ -140,43 +140,6 @@ class PrivateMemberBodiesLowering(val context: JsIrBackendContext) : BodyLowerin
                 } ?: expression
             }
 
-            override fun visitFunctionReference(expression: IrFunctionReference): IrExpression {
-                super.visitFunctionReference(expression)
-
-                return expression.symbol.owner.correspondingStatic?.let {
-                    transformPrivateToStaticReference(expression) {
-                        IrFunctionReferenceImpl(
-                            expression.startOffset, expression.endOffset,
-                            expression.type,
-                            it.symbol, expression.typeArguments.size,
-                            expression.reflectionTarget, expression.origin
-                        )
-                    }
-                } ?: expression
-            }
-
-            override fun visitPropertyReference(expression: IrPropertyReference): IrExpression {
-                super.visitPropertyReference(expression)
-
-                val staticGetter = expression.getter?.owner?.correspondingStatic
-                val staticSetter = expression.setter?.owner?.correspondingStatic
-
-                return if (staticGetter != null || staticSetter != null) {
-                    transformPrivateToStaticReference(expression) {
-                        IrPropertyReferenceImpl(
-                            expression.startOffset, expression.endOffset,
-                            expression.type,
-                            expression.symbol, // TODO remap property symbol based on remapped getter/setter?
-                            expression.typeArguments.size,
-                            expression.field,
-                            staticGetter?.symbol ?: expression.getter,
-                            staticSetter?.symbol ?: expression.setter,
-                            expression.origin
-                        )
-                    }
-                } else expression
-            }
-
             private fun transformPrivateToStaticCall(expression: IrCall, staticTarget: IrSimpleFunction): IrCall {
                 val newExpression = IrCallImpl(
                     expression.startOffset, expression.endOffset,
@@ -186,19 +149,6 @@ class PrivateMemberBodiesLowering(val context: JsIrBackendContext) : BodyLowerin
                     origin = expression.origin,
                     superQualifierSymbol = expression.superQualifierSymbol
                 )
-
-                newExpression.arguments.assignFrom(expression.arguments)
-                newExpression.copyTypeArgumentsFrom(expression)
-
-                return newExpression
-            }
-
-            private fun transformPrivateToStaticReference(
-                expression: IrCallableReference<*>,
-                builder: () -> IrCallableReference<*>
-            ): IrCallableReference<*> {
-
-                val newExpression = builder()
 
                 newExpression.arguments.assignFrom(expression.arguments)
                 newExpression.copyTypeArgumentsFrom(expression)

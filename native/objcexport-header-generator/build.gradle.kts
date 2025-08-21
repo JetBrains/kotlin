@@ -15,10 +15,11 @@ dependencies {
     api(project(":kotlin-tooling-core"))
     api(project(":native:base"))
 
+    testImplementation(project(":native:external-projects-test-utils"))
     testApi(libs.junit.jupiter.api)
     testApi(libs.junit.jupiter.engine)
     testApi(libs.junit.jupiter.params)
-    testApi(project(":compiler:tests-common", "tests-jar"))
+    testApi(testFixtures(project(":compiler:tests-common")))
 }
 
 kotlin {

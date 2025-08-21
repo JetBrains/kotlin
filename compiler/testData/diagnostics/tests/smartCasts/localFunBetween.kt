@@ -14,3 +14,6 @@ fun foo() {
         bar(<!DEBUG_INFO_SMARTCAST!>base<!>)
     }
 }
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, comparisonExpression, functionDeclaration, functionalType,
+ifExpression, integerLiteral, isExpression, localFunction, localProperty, nullableType, propertyDeclaration, smartcast */

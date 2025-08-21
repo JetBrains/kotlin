@@ -11,7 +11,7 @@ interface Foo<T> {
 }
 
 // MODULE: main(lib)
-// JVM_DEFAULT_MODE: all-compatibility
+// JVM_DEFAULT_MODE: enable
 // JVM_TARGET: 1.8
 // FILE: main.kt
 interface Foo2: Foo<String> {

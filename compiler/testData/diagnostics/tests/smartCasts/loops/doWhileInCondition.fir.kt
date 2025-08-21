@@ -4,3 +4,6 @@ fun foo(s: String?): Int {
     } while (s!!.length > 0)
     return s.length
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, comparisonExpression, doWhileLoop, functionDeclaration, integerLiteral,
+nullableType, smartcast */

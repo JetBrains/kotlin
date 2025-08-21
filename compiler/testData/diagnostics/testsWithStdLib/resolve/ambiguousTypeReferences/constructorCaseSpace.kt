@@ -29,3 +29,5 @@ fun test() =
     // K1/K2: resolve to kotlinx.coroutines.sync.Semaphore
     // K2 ignores java.util.concurrent because of interface/class classifier ambiguity
     <!DEBUG_INFO_CALL("fqName: kotlinx.coroutines.sync.Semaphore; typeCall: function")!>Semaphore(1)<!>
+
+/* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral, interfaceDeclaration */

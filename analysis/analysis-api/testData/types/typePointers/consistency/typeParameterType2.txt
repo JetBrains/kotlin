@@ -4,7 +4,6 @@ KaTypeParameterType:
   abbreviation: null
   annotations: []
   name: T
-  nullability: NON_NULLABLE
   symbol: KaTypeParameterSymbol:
     annotations: []
     compilerVisibility: Local
@@ -18,3 +17,6 @@ KaTypeParameterType:
     upperBounds: []
     variance: IN_VARIANCE
     visibility: LOCAL
+  isMarkedNullable: false
+  isNullable: true
+  hasFlexibleNullability: false

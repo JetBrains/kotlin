@@ -44,3 +44,6 @@ fun main() {
 
     takes(<!PROGRESSIONS_CHANGING_RESOLVE_WARNING!>1..10<!>)    // warning
 }
+
+/* GENERATED_FIR_TAGS: asExpression, classDeclaration, functionDeclaration, in, integerLiteral, nullableType,
+primaryConstructor, rangeExpression, starProjection, stringLiteral, typeConstraint, typeParameter */

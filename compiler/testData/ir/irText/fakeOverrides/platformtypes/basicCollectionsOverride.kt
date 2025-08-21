@@ -59,9 +59,6 @@ public class Java1 {
     public String[] bar5() { return e; };
 }
 
-// FILE: Java3.java
-public interface Java3 extends KotlinInterface { }
-
 // FILE: 1.kt
 import java.util.*
 

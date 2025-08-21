@@ -28,3 +28,5 @@ val s1: Byte = <!TYPE_MISMATCH!>-1.toShort()<!>
 val s2: Int = -1.toShort()
 val s3: Long = <!TYPE_MISMATCH!>-1.toShort()<!>
 val s4: Short = <!TYPE_MISMATCH!>-1.toShort()<!>
+
+/* GENERATED_FIR_TAGS: integerLiteral, propertyDeclaration, unaryExpression */

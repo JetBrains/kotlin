@@ -8,3 +8,5 @@ interface A {
     val a: <!UNRESOLVED_REFERENCE!>A<!>
     val b: ER
 }
+
+/* GENERATED_FIR_TAGS: interfaceDeclaration, propertyDeclaration */

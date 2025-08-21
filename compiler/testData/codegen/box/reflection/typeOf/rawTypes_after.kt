@@ -6,23 +6,21 @@ package test
 
 import kotlin.reflect.KType
 import kotlin.reflect.typeOf
+import kotlin.test.assertEquals
 
 class C<T, U : Number>
 
 fun box(): String {
-    val v1 = returnTypeOf { J.raw() }.toString()
-    if (v1 != "(test.C<kotlin.Any?, kotlin.Number>..test.C<*, *>?)") return "Fail 1: $v1"
-
-    val v2 = returnTypeOf { J.rawNotNull() }.toString()
-    if (v2 != "(test.C<kotlin.Any?, kotlin.Number>..test.C<*, *>)") return "Fail 2: $v2"
-
-    val v3 = returnTypeOf { J.rawList() }.toString()
-    if (v3 != "(kotlin.collections.MutableList<kotlin.Any?>..kotlin.collections.List<*>?)") return "Fail 3: $v3"
-
-    val v4 = returnTypeOf { J.rawNotNullMap() }.toString()
-    if (v4 != "(kotlin.collections.MutableMap<kotlin.Any?, kotlin.Any?>..kotlin.collections.Map<*, *>)") return "Fail 4: $v4"
+    check("(test.C<kotlin.Any?, kotlin.Number>..test.C<*, *>?)", returnTypeOf { J.raw() })
+    check("(test.C<kotlin.Any?, kotlin.Number>..test.C<*, *>)", returnTypeOf { J.rawNotNull() })
+    check("(kotlin.collections.MutableList<kotlin.Any?>..kotlin.collections.List<*>?)", returnTypeOf { J.rawList() })
+    check("(kotlin.collections.MutableMap<kotlin.Any?, kotlin.Any?>..kotlin.collections.Map<*, *>)", returnTypeOf { J.rawNotNullMap() })
 
     return "OK"
+}
+
+fun check(expected: String, actual: KType) {
+    assertEquals(expected, actual.toString())
 }
 
 inline fun <reified T : Any> returnTypeOf(block: () -> T) =

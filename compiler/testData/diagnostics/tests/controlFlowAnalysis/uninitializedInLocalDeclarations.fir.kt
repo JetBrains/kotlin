@@ -49,3 +49,6 @@ fun test5() {
 }
 
 fun doSmth(a: Any?) = a
+
+/* GENERATED_FIR_TAGS: assignment, functionDeclaration, lambdaLiteral, localFunction, localProperty, nullableType,
+propertyDeclaration, stringLiteral, tryExpression */

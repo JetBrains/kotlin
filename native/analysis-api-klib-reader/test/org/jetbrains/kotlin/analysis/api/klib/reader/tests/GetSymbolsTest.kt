@@ -14,7 +14,9 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaClassKind
 import org.jetbrains.kotlin.analysis.api.symbols.KaPropertySymbol
 import org.jetbrains.kotlin.analysis.api.symbols.nameOrAnonymous
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
 import org.jetbrains.kotlin.analysis.project.structure.builder.buildKtLibraryModule
+import org.jetbrains.kotlin.analysis.project.structure.builder.buildKtSourceModule
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
@@ -29,8 +31,8 @@ import kotlin.test.fail
 class GetSymbolsTest {
     @Test
     fun `test - getClassOrObjectSymbol - RootPkgClass`() {
-        withTestProjectLibraryAnalysisSession {
-            val addresses = (useSiteModule as KaLibraryModule).readKlibDeclarationAddresses()
+        withTestProjectLibraryAnalysisSession { libraryModule ->
+            val addresses = libraryModule.readKlibDeclarationAddresses()
                 ?: error("Failed reading declaration addresses")
 
             val rootPkgClassAddress = addresses.filterIsInstance<KlibClassAddress>()
@@ -45,8 +47,8 @@ class GetSymbolsTest {
 
     @Test
     fun `test - getClassOrObjectSymbol - AObject`() {
-        withTestProjectLibraryAnalysisSession {
-            val addresses = (useSiteModule as KaLibraryModule).readKlibDeclarationAddresses()
+        withTestProjectLibraryAnalysisSession { libraryModule ->
+            val addresses = libraryModule.readKlibDeclarationAddresses()
                 ?: error("Failed reading declaration addresses")
 
             val aObjectAddress = addresses.filterIsInstance<KlibClassAddress>()
@@ -62,8 +64,8 @@ class GetSymbolsTest {
 
     @Test
     fun `test - getSymbols - rootPkgProperty`() {
-        withTestProjectLibraryAnalysisSession {
-            val addresses = (useSiteModule as KaLibraryModule).readKlibDeclarationAddresses()
+        withTestProjectLibraryAnalysisSession { libraryModule ->
+            val addresses = libraryModule.readKlibDeclarationAddresses()
                 ?: error("Failed reading declaration addresses")
 
             val rootPkgPropertyAddress = addresses.filterIsInstance<KlibPropertyAddress>()
@@ -86,8 +88,8 @@ class GetSymbolsTest {
 
     @Test
     fun `test - getSymbols - aFunction`() {
-        withTestProjectLibraryAnalysisSession {
-            val addresses = (useSiteModule as KaLibraryModule).readKlibDeclarationAddresses()
+        withTestProjectLibraryAnalysisSession { libraryModule ->
+            val addresses = libraryModule.readKlibDeclarationAddresses()
                 ?: error("Failed reading declaration addresses")
 
             val aFunctionAddress = addresses.filterIsInstance<KlibFunctionAddress>()
@@ -116,8 +118,8 @@ class GetSymbolsTest {
 
     @Test
     fun `test - getTypeAlias - TypeAliasA`() {
-        withTestProjectLibraryAnalysisSession {
-            val addresses = (useSiteModule as KaLibraryModule).readKlibDeclarationAddresses() ?: fail("Failed reading addresses")
+        withTestProjectLibraryAnalysisSession { libraryModule ->
+            val addresses = libraryModule.readKlibDeclarationAddresses() ?: fail("Failed reading addresses")
             val typeAliasAAddress = addresses.filterIsInstance<KlibTypeAliasAddress>()
                 .find { it.classId == ClassId.fromString("org/jetbrains/sample/TypeAliasA") }
                 ?: fail("Could not find TypeAliasA")
@@ -131,8 +133,8 @@ class GetSymbolsTest {
     @Test
     @OptIn(KaExperimentalApi::class)
     fun `test - filePrivateSymbolsClash - function`() {
-        withTestProjectLibraryAnalysisSession {
-            val addresses = (useSiteModule as KaLibraryModule).readKlibDeclarationAddresses() ?: fail("Failed reading addresses")
+        withTestProjectLibraryAnalysisSession { libraryModule ->
+            val addresses = libraryModule.readKlibDeclarationAddresses() ?: fail("Failed reading addresses")
             val clashingAddresses = addresses.filterIsInstance<KlibFunctionAddress>()
                 .filter { it.callableName == Name.identifier("foo") }
 
@@ -162,8 +164,8 @@ class GetSymbolsTest {
     @Test
     @OptIn(KaExperimentalApi::class)
     fun `test - filePrivateSymbolsClash - property`() {
-        withTestProjectLibraryAnalysisSession {
-            val addresses = (useSiteModule as KaLibraryModule).readKlibDeclarationAddresses() ?: fail("Failed reading addresses")
+        withTestProjectLibraryAnalysisSession { libraryModule ->
+            val addresses = libraryModule.readKlibDeclarationAddresses() ?: fail("Failed reading addresses")
             val clashingAddresses = addresses.filterIsInstance<KlibPropertyAddress>()
                 .filter { it.callableName == Name.identifier("fooProperty") }
 
@@ -191,26 +193,44 @@ class GetSymbolsTest {
     }
 
     /**
-     * Runs the given [block] in an analysis session that will have the built library as [KaSession.useSiteModule]
+     * Runs the given [block] in an analysis session that will have the built library in its dependencies.
      */
     @Suppress("CONTEXT_RECEIVERS_DEPRECATED")
-    private fun <T> withTestProjectLibraryAnalysisSession(block: KaSession.() -> T): T {
-        val session = buildStandaloneAnalysisAPISession {
+    private fun <T> withTestProjectLibraryAnalysisSession(block: KaSession.(KaLibraryModule) -> T): T {
+        var mainModule: KaSourceModule? = null
+        var libraryModule: KaLibraryModule? = null
+
+        buildStandaloneAnalysisAPISession {
             val currentArchitectureTarget = HostManager.host
             val nativePlatform = NativePlatforms.nativePlatformByTargets(listOf(currentArchitectureTarget))
 
             buildKtModuleProvider {
                 platform = nativePlatform
-                addModule(buildKtLibraryModule {
-                    addBinaryRoot(providedTestProjectKlib)
-                    platform = nativePlatform
-                    libraryName = providedTestProjectKlib.nameWithoutExtension
-                })
+                libraryModule = addModule(
+                    buildKtLibraryModule {
+                        addBinaryRoot(providedTestProjectKlib)
+                        platform = nativePlatform
+                        libraryName = providedTestProjectKlib.nameWithoutExtension
+                    }
+                )
+
+                mainModule = addModule(
+                    buildKtSourceModule {
+                        moduleName = "main"
+                        platform = nativePlatform
+                        addRegularDependency(libraryModule)
+                    }
+                )
             }
         }
 
-        return analyze(session.getAllLibraryModules().single()) {
-            block(this)
+        require(mainModule != null && libraryModule != null) {
+            "Failed to build a Standalone session with a main source module and a library module."
+        }
+
+        // We have to analyze the KLIB from a source use-site module because `KaLibraryModule`s aren't supported as use sites (KT-76042).
+        return analyze(mainModule) {
+            block(this, libraryModule)
         }
     }
 }

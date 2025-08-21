@@ -17,3 +17,6 @@ fun test1(s1: String?) {
     }
     <!DEBUG_INFO_SMARTCAST!>s<!>.length
 }
+
+/* GENERATED_FIR_TAGS: assignment, functionDeclaration, localProperty, nullableType, propertyDeclaration, smartcast,
+stringLiteral, tryExpression */

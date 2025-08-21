@@ -35,9 +35,6 @@ fun check(expectedName: String, p: KProperty0<*>): String? {
     assertEquals(emptyList<KParameter>(), p.getter.parameters)
     assertEquals("kotlin.collections.List<kotlin.String?>", p.getter.returnType.toString())
 
-    // TODO: support annotations
-    assertEquals(emptyList<Annotation>(), p.annotations)
-
     try {
         p.call()
         return "Fail: reflective call of a local delegated property should fail because it's not supported"

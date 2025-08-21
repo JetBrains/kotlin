@@ -13,9 +13,6 @@ import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
 import org.gradle.work.DisableCachingByDefault
 import org.jetbrains.kotlin.gradle.utils.*
-import org.jetbrains.kotlin.gradle.utils.onlyIfCompat
-import org.jetbrains.kotlin.gradle.utils.runCommand
-import org.jetbrains.kotlin.gradle.utils.runCommandWithFallback
 import java.io.File
 
 /**
@@ -26,7 +23,7 @@ import java.io.File
 @DisableCachingByDefault(because = "Abstract super-class, not to be instantiated directly")
 abstract class AbstractPodInstallTask : CocoapodsTask() {
     init {
-        onlyIfCompat("Podfile location is set") { podfile.isPresent }
+        onlyIf("Podfile location is set") { podfile.isPresent }
     }
 
     @get:Optional
@@ -86,21 +83,22 @@ abstract class AbstractPodInstallTask : CocoapodsTask() {
     private fun runPodInstall(updateRepo: Boolean): String {
         val podInstallCommand = listOfNotNull(podExecutable(), "install", if (updateRepo) "--repo-update" else null)
 
-        return runCommandWithFallback(podInstallCommand,
-                                      logger,
-                                      fallback = { result ->
-                                          val output = result.stdErr.ifBlank { result.stdOut }
-                                          if (output.contains("out-of-date source repos which you can update with `pod repo update` or with `pod install --repo-update`") && updateRepo.not()) {
-                                              CommandFallback.Action(runPodInstall(true))
-                                          } else {
-                                              CommandFallback.Error(sharedHandleError(podInstallCommand, result))
-                                          }
-                                      },
-                                      processConfiguration = {
-                                          directory(workingDir.get())
-                                          // CocoaPods requires to be run with Unicode external encoding
-                                          environment().putIfAbsent("LC_ALL", "en_US.UTF-8")
-                                      })
+        return runCommandWithFallback(
+            podInstallCommand,
+            logger,
+            fallback = { result ->
+                val output = result.stdErr.ifBlank { result.stdOut }
+                if (output.contains("out-of-date source repos which you can update with `pod repo update` or with `pod install --repo-update`") && updateRepo.not()) {
+                    CommandFallback.Action(runPodInstall(true))
+                } else {
+                    CommandFallback.Error(sharedHandleError(podInstallCommand, result))
+                }
+            },
+            processConfiguration = {
+                directory(workingDir.get())
+                // CocoaPods requires to be run with Unicode external encoding
+                environment().putIfAbsent("LC_ALL", "en_US.UTF-8")
+            })
     }
 
     private fun sharedHandleError(podInstallCommand: List<String>, result: RunProcessResult): String? {

@@ -25,8 +25,12 @@ import org.jetbrains.kotlin.fir.java.hasJvmFieldAnnotation
 import org.jetbrains.kotlin.fir.lazy.Fir2IrLazyClass
 import org.jetbrains.kotlin.fir.originalForSubstitutionOverride
 import org.jetbrains.kotlin.fir.references.toResolvedBaseSymbol
+import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.calls.FirSimpleSyntheticPropertySymbol
+import org.jetbrains.kotlin.fir.resolve.isFunctionInvoke
 import org.jetbrains.kotlin.fir.resolve.isKFunctionInvoke
+import org.jetbrains.kotlin.fir.resolve.isKSuspendFunctionInvoke
+import org.jetbrains.kotlin.fir.resolve.isSuspendFunctionInvoke
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.resolve.providers.getContainingFile
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
@@ -72,9 +76,11 @@ class Fir2IrCallableDeclarationsGenerator(private val c: Fir2IrComponents) : Fir
     ): IrSimpleFunction = convertCatching(function) {
         val simpleFunction = function as? FirSimpleFunction
         val isLambda = function is FirAnonymousFunction && function.isLambda
+        val isBaseInvokeFunction = function.symbol.callableId
+            .run { isFunctionInvoke() || isSuspendFunctionInvoke() || isKFunctionInvoke() || isKSuspendFunctionInvoke() }
         val updatedOrigin = when {
             isLambda -> IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA
-            function.symbol.callableId.isKFunctionInvoke() -> IrDeclarationOrigin.FAKE_OVERRIDE
+            isBaseInvokeFunction -> IrDeclarationOrigin.FUNCTION_INTERFACE_MEMBER
             !predefinedOrigin.isExternal && // we should preserve origin for external enums
                     simpleFunction?.isStatic == true &&
                     simpleFunction.name in Fir2IrDeclarationStorage.ENUM_SYNTHETIC_NAMES
@@ -91,14 +97,17 @@ class Fir2IrCallableDeclarationsGenerator(private val c: Fir2IrComponents) : Fir
                 fakeOverrideOwnerLookupTag
             )
         }
+        val isSynthetic = updatedOrigin == IrDeclarationOrigin.DELEGATED_MEMBER ||
+                updatedOrigin == IrDeclarationOrigin.ENUM_CLASS_SPECIAL_MEMBER ||
+                updatedOrigin == IrDeclarationOrigin.FUNCTION_INTERFACE_MEMBER
         if (irParent.isExternalParent()) {
             require(function is FirSimpleFunction)
             if (!allowLazyDeclarationsCreation) {
-                error("Lazy functions should be processed in Fir2IrDeclarationStorage")
+                error("Lazy functions should be processed in Fir2IrDeclarationStorage: ${function.render()}")
             }
             @OptIn(UnsafeDuringIrConstructionAPI::class)
             if (symbol.isBound) return symbol.owner
-            return lazyDeclarationsGenerator.createIrLazyFunction(function, symbol, irParent, updatedOrigin)
+            return lazyDeclarationsGenerator.createIrLazyFunction(function, symbol, irParent, updatedOrigin, isSynthetic)
         }
         val name = simpleFunction?.name
             ?: if (isLambda) SpecialNames.ANONYMOUS else SpecialNames.NO_NAME_PROVIDED
@@ -106,8 +115,6 @@ class Fir2IrCallableDeclarationsGenerator(private val c: Fir2IrComponents) : Fir
         val isSuspend =
             if (isLambda) (function.typeRef as? FirResolvedTypeRef)?.coneType?.isSuspendOrKSuspendFunctionType(session) == true
             else function.isSuspend
-        val isSynthetic =
-            updatedOrigin == IrDeclarationOrigin.DELEGATED_MEMBER || updatedOrigin == IrDeclarationOrigin.ENUM_CLASS_SPECIAL_MEMBER
         val created = function.convertWithOffsets { startOffset, endOffset ->
             classifierStorage.preCacheTypeParameters(function)
             IrFactoryImpl.createSimpleFunction(
@@ -118,7 +125,7 @@ class Fir2IrCallableDeclarationsGenerator(private val c: Fir2IrComponents) : Fir
                 visibility = c.visibilityConverter.convertToDescriptorVisibility(visibility),
                 isInline = simpleFunction?.isInline == true,
                 isExpect = simpleFunction?.isExpect == true,
-                returnType = function.returnTypeRef.toIrType(c),
+                returnType = function.returnTypeRef.toIrType(),
                 modality = simpleFunction?.modality ?: Modality.FINAL,
                 symbol = symbol,
                 isTailrec = simpleFunction?.isTailRec == true,
@@ -140,7 +147,7 @@ class Fir2IrCallableDeclarationsGenerator(private val c: Fir2IrComponents) : Fir
                     }
                     declareParameters(
                         function, irParent,
-                        dispatchReceiverType = computeDispatchReceiverType(this, simpleFunction, irParent, c),
+                        dispatchReceiverType = computeDispatchReceiverType(this, simpleFunction, irParent),
                         isStatic = simpleFunction?.isStatic == true,
                         forSetter = false,
                     )
@@ -176,7 +183,7 @@ class Fir2IrCallableDeclarationsGenerator(private val c: Fir2IrComponents) : Fir
         val isPrimary = constructor.isPrimary
         if (irParent is Fir2IrLazyClass) {
             if (!allowLazyDeclarationsCreation) {
-                error("Lazy constructors should be processed in Fir2IrDeclarationStorage")
+                error("Lazy constructors should be processed in Fir2IrDeclarationStorage: ${constructor.render()}")
             }
             return lazyDeclarationsGenerator.createIrLazyConstructor(constructor, symbol, origin, irParent)
         }
@@ -191,7 +198,7 @@ class Fir2IrCallableDeclarationsGenerator(private val c: Fir2IrComponents) : Fir
                 visibility = c.visibilityConverter.convertToDescriptorVisibility(visibility),
                 isInline = false,
                 isExpect = constructor.isExpect,
-                returnType = constructor.returnTypeRef.toIrType(c),
+                returnType = constructor.returnTypeRef.toIrType(),
                 symbol = symbol,
                 isPrimary = isPrimary,
                 isExternal = isEffectivelyExternal(constructor, irParent),
@@ -233,12 +240,12 @@ class Fir2IrCallableDeclarationsGenerator(private val c: Fir2IrComponents) : Fir
         val parentIsExternal = irParent.isExternalParent()
         if (parentIsExternal) {
             if (!allowLazyDeclarationsCreation) {
-                error("Lazy properties should be processed in Fir2IrDeclarationStorage")
+                error("Lazy properties should be processed in Fir2IrDeclarationStorage: ${property.render()}")
             }
             @OptIn(UnsafeDuringIrConstructionAPI::class)
             if (symbols.propertySymbol.isBound) return symbols.propertySymbol.owner
             // For private functions signature is null, fallback to non-lazy property
-            return lazyDeclarationsGenerator.createIrLazyProperty(property, irParent!!, symbols, origin)
+            return lazyDeclarationsGenerator.createIrLazyProperty(property, irParent, symbols, origin)
         }
         return property.convertWithOffsets { startOffset, endOffset ->
             classifierStorage.preCacheTypeParameters(property)
@@ -264,7 +271,7 @@ class Fir2IrCallableDeclarationsGenerator(private val c: Fir2IrComponents) : Fir
                     // IrProperty is never created for local variables
                     setParent(irParent)
                     addDeclarationToParent(this, irParent)
-                    val type = property.returnTypeRef.toIrType(c)
+                    val type = property.returnTypeRef.toIrType()
                     val delegate = property.delegate
                     val getter = property.getter
                     val setter = property.setter
@@ -290,7 +297,7 @@ class Fir2IrCallableDeclarationsGenerator(private val c: Fir2IrComponents) : Fir
                             // funExpression.kt test there's an attempt
                             // to access the `javaClass` property of the `foo0`'s
                             // `block` argument
-                            val typeToUse = property.backingField?.returnTypeRef?.toIrType(c) ?: type
+                            val typeToUse = property.backingField?.returnTypeRef?.toIrType() ?: type
                             createBackingField(
                                 this,
                                 property,
@@ -303,7 +310,7 @@ class Fir2IrCallableDeclarationsGenerator(private val c: Fir2IrComponents) : Fir
                                 typeToUse
                             ).also { field ->
                                 if (initializer is FirLiteralExpression) {
-                                    val constType = initializer.resolvedType.toIrType(c)
+                                    val constType = initializer.resolvedType.toIrType()
                                     field.initializer = factory.createExpressionBody(initializer.toIrConst(constType))
                                 }
                             }
@@ -445,23 +452,17 @@ class Fir2IrCallableDeclarationsGenerator(private val c: Fir2IrComponents) : Fir
             classifiersGenerator.setTypeParameters(
                 this, property, if (isSetter) ConversionTypeOrigin.SETTER else ConversionTypeOrigin.DEFAULT
             )
-            val dispatchReceiverType = computeDispatchReceiverType(this, property, irParent, c)
+            val dispatchReceiverType = computeDispatchReceiverType(this, property, irParent)
             // NB: we should enter accessor' scope before declaring its parameters
             // (both setter default and receiver ones, if any)
             declarationStorage.withScope(symbol) {
-                if (propertyAccessor == null && isSetter) {
-                    declareDefaultSetterParameter(
-                        property.returnTypeRef.toIrType(c, ConversionTypeOrigin.SETTER),
-                        firValueParameter = null
-                    )
-                }
                 // property accessors does not belong to declarations of class/file, but are referenced via property,
                 //   so there is no need to add accessor to list of parents declarations
                 setParent(irParent)
                 declareParameters(
                     propertyAccessor, irParent, dispatchReceiverType,
                     isStatic = irParent !is IrClass || propertyAccessor?.isStatic == true, forSetter = isSetter,
-                    parentPropertyReceiver = property.receiverParameter,
+                    parentProperty = property,
                 )
             }
         }
@@ -480,7 +481,7 @@ class Fir2IrCallableDeclarationsGenerator(private val c: Fir2IrComponents) : Fir
         firInitializerExpression: FirExpression?,
         type: IrType? = null
     ): IrField = convertCatching(firProperty) {
-        val inferredType = type ?: firInitializerExpression!!.resolvedType.toIrType(c)
+        val inferredType = type ?: firInitializerExpression!!.resolvedType.toIrType()
         return (firProperty.delegate ?: firProperty.backingField ?: firProperty).convertWithOffsets { startOffset: Int, endOffset: Int ->
             IrFactoryImpl.createField(
                 startOffset = startOffset,
@@ -506,9 +507,13 @@ class Fir2IrCallableDeclarationsGenerator(private val c: Fir2IrComponents) : Fir
         get() = when {
             hasExplicitBackingField -> backingField?.visibility ?: status.visibility
             isConst -> status.visibility
-            hasJvmFieldAnnotation(session) -> status.visibility
-            origin == FirDeclarationOrigin.ScriptCustomization.ResultProperty -> status.visibility
-            else -> Visibilities.Private
+            else -> {
+                extensions.specialBackingFieldVisibility(this, session)?.let { return it }
+                when {
+                    origin == FirDeclarationOrigin.ScriptCustomization.ResultProperty -> status.visibility
+                    else -> Visibilities.Private
+                }
+            }
         }
 
     internal fun createIrField(
@@ -518,13 +523,13 @@ class Fir2IrCallableDeclarationsGenerator(private val c: Fir2IrComponents) : Fir
         type: ConeKotlinType = field.returnTypeRef.coneType,
         origin: IrDeclarationOrigin = IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB
     ): IrField = convertCatching(field) {
-        val irType = type.toIrType(c)
+        val irType = type.toIrType()
 
         val parentIsExternal = irParent.isExternalParent()
         if (field is FirJavaField && field.isStatic && field.isVal && parentIsExternal) {
             // We are going to create IR for Java static final fields lazily because they can refer to some Kotlin const.
             // This way we delay const evaluation of Java fields until IR tree is fully built, and we can run IR interpreter.
-            return lazyDeclarationsGenerator.createIrLazyField(field, symbol, irParent!!, origin, irPropertySymbol = null).apply {
+            return lazyDeclarationsGenerator.createIrLazyField(field, symbol, irParent, origin, irPropertySymbol = null).apply {
                 setParent(irParent)
                 addDeclarationToParent(this, irParent)
             }
@@ -562,13 +567,6 @@ class Fir2IrCallableDeclarationsGenerator(private val c: Fir2IrComponents) : Fir
 
     // ------------------------------------ parameters ------------------------------------
 
-    private fun <T : IrFunction> T.declareDefaultSetterParameter(type: IrType, firValueParameter: FirValueParameter?): T {
-        valueParameters = listOf(
-            createDefaultSetterParameter(startOffset, endOffset, type, parent = this, firValueParameter)
-        )
-        return this
-    }
-
     internal fun createDefaultSetterParameter(
         startOffset: Int,
         endOffset: Int,
@@ -591,6 +589,7 @@ class Fir2IrCallableDeclarationsGenerator(private val c: Fir2IrComponents) : Fir
             isCrossinline = isCrossinline,
             isNoinline = isNoinline,
             isHidden = false,
+            kind = IrParameterKind.Regular,
         ).apply {
             this.parent = parent
             if (firValueParameter != null) {
@@ -619,7 +618,7 @@ class Fir2IrCallableDeclarationsGenerator(private val c: Fir2IrComponents) : Fir
         contextReceiver: FirValueParameter,
         index: Int,
     ): IrValueParameter = convertCatching(contextReceiver) {
-        val type = contextReceiver.returnTypeRef.toIrType(c)
+        val type = contextReceiver.returnTypeRef.toIrType()
         return contextReceiver.convertWithOffsets { startOffset, endOffset ->
             IrFactoryImpl.createValueParameter(
                 startOffset = startOffset,
@@ -633,6 +632,7 @@ class Fir2IrCallableDeclarationsGenerator(private val c: Fir2IrComponents) : Fir
                 isCrossinline = false,
                 isNoinline = false,
                 isHidden = false,
+                kind = IrParameterKind.Context
             )
         }
     }
@@ -648,26 +648,75 @@ class Fir2IrCallableDeclarationsGenerator(private val c: Fir2IrComponents) : Fir
         isStatic: Boolean,
         forSetter: Boolean,
         // Can be not-null only for property accessors
-        parentPropertyReceiver: FirReceiverParameter? = null
+        parentProperty: FirProperty? = null
     ) {
         val containingClass = computeContainingClass(irParent)
         val parent = this
         if (function is FirSimpleFunction || function is FirConstructor) {
             classifiersGenerator.setTypeParameters(this, function)
         }
-        val typeOrigin = if (forSetter) ConversionTypeOrigin.SETTER else ConversionTypeOrigin.DEFAULT
-        if (function is FirDefaultPropertySetter) {
-            val valueParameter = function.valueParameters.first()
-            val type = valueParameter.returnTypeRef.toIrType(c, ConversionTypeOrigin.SETTER)
-            declareDefaultSetterParameter(type, valueParameter)
-        } else if (function != null) {
-            val contextParameters = function.contextParametersForFunctionOrContainingProperty()
+        parameters = buildList {
+            // dispatch receiver
+            if (function !is FirConstructor) {
+                // See [LocalDeclarationsLowering]: "local function must not have dispatch receiver."
+                val isLocal = function is FirSimpleFunction && function.isLocal
+                if (function !is FirAnonymousFunction && dispatchReceiverType != null && !isStatic && !isLocal) {
+                    this += declareThisReceiverParameter(
+                        thisType = dispatchReceiverType,
+                        thisOrigin = IrDeclarationOrigin.DEFINED,
+                        kind = IrParameterKind.DispatchReceiver,
+                    )
+                }
+            } else {
+                // Set dispatch receiver parameter for inner class's constructor.
+                val outerClass = containingClass?.parentClassOrNull
+                if (containingClass?.isInner == true && outerClass != null) {
+                    this += declareThisReceiverParameter(
+                        thisType = outerClass.thisReceiver!!.type,
+                        thisOrigin = IrDeclarationOrigin.DEFINED,
+                        kind = IrParameterKind.DispatchReceiver,
+                    )
+                }
+            }
 
-            contextReceiverParametersCount = contextParameters.size
-            valueParameters = buildList {
-                addContextParametersTo(contextParameters, parent, this)
+            // context parameters
+            function
+                ?.contextParametersForFunctionOrContainingProperty()
+                ?.let { addContextParametersTo(it, parent, this) }
 
-                function.valueParameters.mapIndexedTo(this) { index, valueParameter ->
+            val typeOrigin = if (forSetter) ConversionTypeOrigin.SETTER else ConversionTypeOrigin.DEFAULT
+
+            // extension receiver
+            val receiver: FirReceiverParameter? =
+                if (function !is FirPropertyAccessor && function != null) function.receiverParameter
+                else parentProperty?.receiverParameter
+
+            if (receiver != null) {
+                this += receiver.convertWithOffsets { startOffset, endOffset ->
+                    val name = (function as? FirAnonymousFunction)?.label?.name?.let {
+                        val suffix = it.takeIf(Name::isValidIdentifier) ?: $$"$receiver"
+                        Name.identifier($$"$this$$$suffix")
+                    } ?: SpecialNames.THIS
+                    declareThisReceiverParameter(
+                        thisType = receiver.typeRef.toIrType(typeOrigin),
+                        thisOrigin = IrDeclarationOrigin.DEFINED,
+                        startOffset = startOffset,
+                        endOffset = endOffset,
+                        name = name,
+                        explicitReceiver = receiver,
+                        isAssignable = function.shouldParametersBeAssignable(c),
+                        kind = IrParameterKind.ExtensionReceiver,
+                    )
+                }
+            }
+
+            // value parameters
+            if (function is FirDefaultPropertySetter || (forSetter && function == null)) {
+                val valueParameter = function?.valueParameters?.first()
+                val type = (valueParameter?.returnTypeRef ?: parentProperty!!.returnTypeRef).toIrType(ConversionTypeOrigin.SETTER)
+                this += createDefaultSetterParameter(startOffset, endOffset, type, parent = this@declareParameters, valueParameter)
+            } else {
+                function?.valueParameters?.mapIndexedTo(this) { index, valueParameter ->
                     declarationStorage.createAndCacheParameter(
                         valueParameter,
                         useStubForDefaultValueStub = function !is FirConstructor || containingClass?.classId != StandardClassIds.Enum,
@@ -678,50 +727,6 @@ class Fir2IrCallableDeclarationsGenerator(private val c: Fir2IrComponents) : Fir
                         this.parent = parent
                     }
                 }
-            }
-        }
-
-        val thisOrigin = IrDeclarationOrigin.DEFINED
-        if (function !is FirConstructor) {
-            val receiver: FirReceiverParameter? =
-                if (function !is FirPropertyAccessor && function != null) function.receiverParameter
-                else parentPropertyReceiver
-            if (receiver != null) {
-                extensionReceiverParameter = receiver.convertWithOffsets { startOffset, endOffset ->
-                    val name = (function as? FirAnonymousFunction)?.label?.name?.let {
-                        val suffix = it.takeIf(Name::isValidIdentifier) ?: "\$receiver"
-                        Name.identifier("\$this\$$suffix")
-                    } ?: SpecialNames.THIS
-                    declareThisReceiverParameter(
-                        c,
-                        thisType = receiver.typeRef.toIrType(c, typeOrigin),
-                        thisOrigin = thisOrigin,
-                        startOffset = startOffset,
-                        endOffset = endOffset,
-                        name = name,
-                        explicitReceiver = receiver,
-                        isAssignable = function.shouldParametersBeAssignable(c)
-                    )
-                }
-            }
-            // See [LocalDeclarationsLowering]: "local function must not have dispatch receiver."
-            val isLocal = function is FirSimpleFunction && function.isLocal
-            if (function !is FirAnonymousFunction && dispatchReceiverType != null && !isStatic && !isLocal) {
-                dispatchReceiverParameter = declareThisReceiverParameter(
-                    c,
-                    thisType = dispatchReceiverType,
-                    thisOrigin = thisOrigin
-                )
-            }
-        } else {
-            // Set dispatch receiver parameter for inner class's constructor.
-            val outerClass = containingClass?.parentClassOrNull
-            if (containingClass?.isInner == true && outerClass != null) {
-                dispatchReceiverParameter = declareThisReceiverParameter(
-                    c,
-                    thisType = outerClass.thisReceiver!!.type,
-                    thisOrigin = thisOrigin
-                )
             }
         }
     }
@@ -740,7 +745,7 @@ class Fir2IrCallableDeclarationsGenerator(private val c: Fir2IrComponents) : Fir
     ): IrValueParameter = convertCatching(valueParameter) {
         valueParameter.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
         val origin = valueParameter.computeIrOrigin(predefinedOrigin)
-        val type = valueParameter.returnTypeRef.toIrType(c, typeOrigin)
+        val type = valueParameter.returnTypeRef.toIrType(typeOrigin)
         val irParameter = valueParameter.convertWithOffsets { startOffset, endOffset ->
             IrFactoryImpl.createValueParameter(
                 startOffset = startOffset,
@@ -750,10 +755,11 @@ class Fir2IrCallableDeclarationsGenerator(private val c: Fir2IrComponents) : Fir
                 type = type,
                 isAssignable = valueParameter.containingDeclarationSymbol.fir.let { it is FirCallableDeclaration && it.shouldParametersBeAssignable(c) },
                 symbol = IrValueParameterSymbolImpl(),
-                varargElementType = valueParameter.varargElementType?.toIrType(c, typeOrigin),
+                varargElementType = valueParameter.varargElementType?.toIrType(typeOrigin),
                 isCrossinline = valueParameter.isCrossinline,
                 isNoinline = valueParameter.isNoinline,
                 isHidden = false,
+                kind = if (valueParameter.valueParameterKind == FirValueParameterKind.Regular) IrParameterKind.Regular else IrParameterKind.Context,
             ).apply {
                 val defaultValue = valueParameter.defaultValue ?: run tryFindInExpect@{
                     /*
@@ -765,13 +771,17 @@ class Fir2IrCallableDeclarationsGenerator(private val c: Fir2IrComponents) : Fir
                      */
                     if (!c.configuration.allowNonCachedDeclarations) return@tryFindInExpect null
 
-                    val actualFunction = valueParameter.containingDeclarationSymbol as FirFunctionSymbol
+                    // Context parameters can't have default values
+                    if (valueParameter.valueParameterKind != FirValueParameterKind.Regular) return@tryFindInExpect null
+
+                    val actualFunction = valueParameter.containingDeclarationSymbol as? FirFunctionSymbol ?: return@tryFindInExpect null
                     if (!actualFunction.isActual) return@tryFindInExpect null
 
                     val expectFunction = actualFunction.getSingleMatchedExpectForActualOrNull()
                         ?: return@tryFindInExpect null
 
-                    val expectValueParam = expectFunction.valueParameterSymbols.find { it.name == name }
+                    val index = actualFunction.valueParameterSymbols.indexOf(valueParameter.symbol)
+                    val expectValueParam = expectFunction.valueParameterSymbols.elementAtOrNull(index)
                         ?: return@tryFindInExpect null
 
                     expectValueParam.fir.defaultValue
@@ -780,7 +790,7 @@ class Fir2IrCallableDeclarationsGenerator(private val c: Fir2IrComponents) : Fir
                 if (!skipDefaultParameter && defaultValue != null) {
                     this.defaultValue = when {
                         forcedDefaultValueConversion && defaultValue !is FirExpressionStub ->
-                            defaultValue.asCompileTimeIrInitializerForAnnotationParameter(c)
+                            defaultValue.asCompileTimeIrInitializerForAnnotationParameter()
                         useStubForDefaultValueStub || defaultValue !is FirExpressionStub ->
                             factory.createExpressionBody(
                                 IrErrorExpressionImpl(
@@ -804,7 +814,7 @@ class Fir2IrCallableDeclarationsGenerator(private val c: Fir2IrComponents) : Fir
         irParent: IrDeclarationParent,
         symbols: LocalDelegatedPropertySymbols
     ): IrLocalDelegatedProperty = convertCatching(property) {
-        val type = property.returnTypeRef.toIrType(c)
+        val type = property.returnTypeRef.toIrType()
         val origin = IrDeclarationOrigin.DEFINED
         val irProperty = property.convertWithOffsets { startOffset, endOffset ->
             IrFactoryImpl.createLocalDelegatedProperty(
@@ -822,7 +832,7 @@ class Fir2IrCallableDeclarationsGenerator(private val c: Fir2IrComponents) : Fir
             declarationStorage.withScope(symbol) {
                 delegate = declareIrVariable(
                     startOffset, endOffset, IrDeclarationOrigin.PROPERTY_DELEGATE,
-                    NameUtils.propertyDelegateName(property.name), property.delegate!!.resolvedType.toIrType(c),
+                    NameUtils.propertyDelegateName(property.name), property.delegate!!.resolvedType.toIrType(),
                     isVar = false, isConst = false, isLateinit = false
                 )
                 delegate.parent = irParent
@@ -849,7 +859,7 @@ class Fir2IrCallableDeclarationsGenerator(private val c: Fir2IrComponents) : Fir
         irParent: IrDeclarationParent,
         givenOrigin: IrDeclarationOrigin?
     ): IrVariable = convertCatching(variable) {
-        val type = variable.irTypeForPotentiallyComponentCall(c)
+        val type = variable.irTypeForPotentiallyComponentCall()
         // Some temporary variables are produced in RawFirBuilder, but we consistently use special names for them.
         val origin = when {
             givenOrigin != null -> givenOrigin
@@ -927,11 +937,11 @@ class Fir2IrCallableDeclarationsGenerator(private val c: Fir2IrComponents) : Fir
          *
          * It is needed to determine proper dispatch receiver type if this declaration is fake-override
          */
+        context(c: Fir2IrComponents)
         internal fun computeDispatchReceiverType(
             irFunction: IrSimpleFunction,
             firCallable: FirCallableDeclaration?,
-            parent: IrDeclarationParent?,
-            c: Fir2IrComponents
+            parent: IrDeclarationParent?
         ): IrType? {
             /*
              * If some function is not fake-override, then its type should be just
@@ -956,7 +966,7 @@ class Fir2IrCallableDeclarationsGenerator(private val c: Fir2IrComponents) : Fir
                 containerOfFakeOverride,
                 containerOfOriginalCallable
             ).firstOrNull() as ConeKotlinType? ?: return defaultType
-            return correspondingSupertype.toIrType(c)
+            return correspondingSupertype.toIrType()
         }
 
         private fun computeContainingClass(parent: IrDeclarationParent?): IrClass? {

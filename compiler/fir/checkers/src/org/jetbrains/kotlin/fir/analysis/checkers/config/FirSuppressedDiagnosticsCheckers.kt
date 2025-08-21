@@ -8,29 +8,26 @@ package org.jetbrains.kotlin.fir.analysis.checkers.config
 import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.diagnostics.Severity
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
-import org.jetbrains.kotlin.diagnostics.rendering.BaseDiagnosticRendererFactory
-import org.jetbrains.kotlin.diagnostics.rendering.RootDiagnosticRendererFactory
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
+import org.jetbrains.kotlin.fir.analysis.diagnostics.diagnosticRendererFactory
 import org.jetbrains.kotlin.fir.languageVersionSettings
 
 object FirSuppressedDiagnosticsCheckers : FirLanguageVersionSettingsChecker() {
-    override fun check(context: CheckerContext, reporter: BaseDiagnosticsCollector.RawReporter) {
-        val globallySuppressedDiagnostics = context.session.languageVersionSettings.getFlag(AnalysisFlags.globallySuppressedDiagnostics)
-        if (globallySuppressedDiagnostics.isEmpty()) return
+    context(context: CheckerContext)
+    override fun check(reporter: BaseDiagnosticsCollector.RawReporter) {
+        val warningLevelMap = context.session.languageVersionSettings.getFlag(AnalysisFlags.warningLevels)
+        if (warningLevelMap.isEmpty()) return
 
-        val allDiagnosticFactories = RootDiagnosticRendererFactory.factories
-            .filterIsInstance<BaseDiagnosticRendererFactory>()
-            .flatMap { it.MAP.factories }
-            .associateBy { it.name }
+        val allDiagnosticFactories = context.session.diagnosticRendererFactory.allDiagnosticFactories.associateBy { it.name }
 
-        for (diagnosticName in globallySuppressedDiagnostics) {
+        for (diagnosticName in warningLevelMap.keys) {
             val diagnosticFactory = allDiagnosticFactories[diagnosticName]
             if (diagnosticFactory == null) {
                 reporter.reportError("Warning with name \"$diagnosticName\" does not exist")
                 continue
             }
             if (diagnosticFactory.severity == Severity.ERROR) {
-                reporter.reportError("Diagnostic \"$diagnosticName\" is an error. Global suppression of errors is prohibited")
+                reporter.reportError("Diagnostic \"$diagnosticName\" is an error. Changing the severity of errors is prohibited")
             }
         }
     }

@@ -8,9 +8,7 @@ package org.jetbrains.kotlin.wasm.ir.convertors
 import org.jetbrains.kotlin.wasm.ir.WasmInstr
 
 internal fun processInstructionsFlow(input: Sequence<WasmInstr>): Sequence<WasmInstr> {
-    val macroTableHandled = handleMacroTable(input)
-    val macroIfHandled = handleMacroIf(macroTableHandled)
-    val removedUnreachableCode = removeUnreachableInstructions(macroIfHandled)
+    val removedUnreachableCode = removeUnreachableInstructions(input)
     val mergedWithDrop = removeInstructionPriorDrop(removedUnreachableCode)
     val mergedWithUnreachable = removeInstructionPriorUnreachable(mergedWithDrop)
     val mergedWithTee = mergeSetAndGetIntoTee(mergedWithUnreachable)

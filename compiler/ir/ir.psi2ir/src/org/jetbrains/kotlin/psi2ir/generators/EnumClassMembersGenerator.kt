@@ -31,10 +31,10 @@ import org.jetbrains.kotlin.resolve.scopes.findFirstFunction
 import org.jetbrains.kotlin.resolve.scopes.findFirstVariable
 
 class EnumClassMembersGenerator(declarationGenerator: DeclarationGenerator) : DeclarationGeneratorExtension(declarationGenerator) {
-    fun generateSpecialMembers(irClass: IrClass) {
+    fun generateSpecialMembers(irClass: IrClass, withEnumEntries: Boolean) {
         generateValues(irClass)
         generateValueOf(irClass)
-        if (context.languageVersionSettings.supportsFeature(LanguageFeature.EnumEntries)) {
+        if (withEnumEntries) {
             generateEntries(irClass)
         }
     }

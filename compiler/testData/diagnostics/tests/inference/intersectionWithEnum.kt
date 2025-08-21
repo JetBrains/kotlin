@@ -25,3 +25,7 @@ object B : Bar<BFoo>()
 val invs = invOf(A, B)
 val outs = outOf(A, B)
 val ins = inOf(A, B)
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, enumDeclaration, functionDeclaration, in,
+interfaceDeclaration, intersectionType, nullableType, objectDeclaration, out, outProjection, propertyDeclaration,
+starProjection, typeConstraint, typeParameter, vararg */

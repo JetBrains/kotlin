@@ -58,7 +58,7 @@ class FirSyntheticPropertyAccessor @FirImplementationDetail internal constructor
         get() = delegate.annotations
 
     override val typeParameters: List<FirTypeParameter>
-        get() = emptyList()
+        get() = delegate.typeParameters
 
     override val isSetter: Boolean
         get() = !isGetter

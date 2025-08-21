@@ -1,15 +1,22 @@
+import org.jetbrains.kotlin.buildtools.api.ExperimentalBuildToolsApi
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
+
 plugins {
     `kotlin-dsl`
     id("org.jetbrains.kotlin.jvm")
 }
 
 repositories {
-    maven(url = "https://maven.pkg.jetbrains.space/kotlin/p/kotlin/kotlin-dependencies")
-    mavenCentral()
+    maven(url = "https://redirector.kotlinlang.org/maven/kotlin-dependencies")
+    mavenCentral { setUrl("https://cache-redirector.jetbrains.com/maven-central") }
     gradlePluginPortal()
 }
 
-kotlin.jvmToolchain(8)
+kotlin {
+    @OptIn(ExperimentalKotlinGradlePluginApi::class, ExperimentalBuildToolsApi::class)
+    compilerVersion = libs.versions.kotlin.`for`.gradle.plugins.compilation
+    jvmToolchain(11)
+}
 
 val buildGradlePluginVersion = extra.get("kotlin.build.gradlePlugin.version")
 dependencies {

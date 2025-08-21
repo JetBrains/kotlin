@@ -189,7 +189,7 @@ class AutoboxingTransformer(context: JsCommonBackendContext, replaceTypesInsideI
                 expectedType,
                 typeArguments = listOf(actualType, expectedType)
             ).also {
-                it.putValueArgument(0, arg)
+                it.arguments[0] = arg
             }
         }
     }
@@ -211,8 +211,8 @@ class AutoboxingTransformer(context: JsCommonBackendContext, replaceTypesInsideI
             val nullCheck = buildIfElse(
                 type = resultType,
                 cond = buildCall(irBuiltIns.eqeqSymbol).apply {
-                    putValueArgument(0, buildGetValue(tmp.symbol))
-                    putValueArgument(1, buildNull(irBuiltIns.nothingNType))
+                    arguments[0] = buildGetValue(tmp.symbol)
+                    arguments[1] = buildNull(irBuiltIns.nothingNType)
                 },
                 thenBranch = buildNull(irBuiltIns.nothingNType),
                 elseBranch = call(buildGetValue(tmp.symbol))

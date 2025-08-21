@@ -18,3 +18,6 @@ class PlatfromDerived : <!SEALED_INHERITOR_IN_DIFFERENT_MODULE!>Base<!>() // mus
 fun test_2(b: Base) = when (b) {
     is Derived -> 1
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, isExpression, sealed, whenExpression,
+whenWithSubject */

@@ -225,6 +225,10 @@ public class DefaultErrorMessages {
         MAP.put(NON_PARENTHESIZED_ANNOTATIONS_ON_FUNCTIONAL_TYPES, "Non-parenthesized annotations on function types without receiver aren't yet supported (see KT-31734 for details)");
 
         MAP.put(ANNOTATION_IN_WHERE_CLAUSE_WARNING, "Type parameter annotations will not be allowed inside where clauses in future releases. You should probably move annotations to the type parameter declaration");
+        MAP.put(
+                IGNORABILITY_ANNOTATIONS_WITH_CHECKER_DISABLED,
+                "Ignorability-related annotations are experimental and cannot be used with -Xreturn-value-checker in disabled state."
+        );
 
         MAP.put(REDUNDANT_MODIFIER, "Modifier ''{0}'' is redundant because ''{1}'' is present", TO_STRING, TO_STRING);
         MAP.put(REDUNDANT_OPEN_IN_INTERFACE, "Modifier 'open' is redundant for abstract interface members");
@@ -768,6 +772,7 @@ public class DefaultErrorMessages {
         MAP.put(DEPRECATED_SYNTAX_WITH_DEFINITELY_NOT_NULL, "Applying '!!' to the whole as/is expression without parentheses is deprecated. Please, put parentheses explicitly");
 
         MAP.put(MODIFIER_LIST_NOT_ALLOWED, "Modifiers and annotations are not allowed here, because there are other modifiers or annotations outside of parenthesis");
+        MAP.put(MULTIPLE_CONTEXT_LISTS, "Multiple context receiver lists.");
         MAP.put(PROGRESSIONS_CHANGING_RESOLVE, "Progressions and ranges types will start implementing Collection interface soon. " +
                                                "This call will resolve to another declaration: {0}. " +
                                                "See https://youtrack.jetbrains.com/issue/KT-49276 for more details. " +

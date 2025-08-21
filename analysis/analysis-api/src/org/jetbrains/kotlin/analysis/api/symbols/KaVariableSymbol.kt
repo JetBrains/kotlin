@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaInitializerValue
 import org.jetbrains.kotlin.analysis.api.base.KaContextReceiver
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
+import org.jetbrains.kotlin.analysis.api.symbols.markers.KaContextParameterOwnerSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaDeclarationContainerSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaNamedSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaTypeParameterOwnerSymbol
@@ -25,6 +26,7 @@ import org.jetbrains.kotlin.name.SpecialNames
 /**
  * [KaVariableSymbol] represents a variable-like declaration, including properties, local variables, and value parameters.
  */
+@OptIn(KaImplementationDetail::class)
 public sealed class KaVariableSymbol : KaCallableSymbol(), KaNamedSymbol {
     /**
      * Whether the declaration is read-only.
@@ -48,6 +50,7 @@ public sealed class KaVariableSymbol : KaCallableSymbol(), KaNamedSymbol {
  *
  * @see KaPropertySymbol.backingFieldSymbol
  */
+@SubclassOptInRequired(KaImplementationDetail::class)
 public abstract class KaBackingFieldSymbol : KaVariableSymbol() {
     /**
      * The property which is backed by the backing field.
@@ -107,6 +110,7 @@ public abstract class KaBackingFieldSymbol : KaVariableSymbol() {
  *
  * `A` is an enum entry of enum class `E`. `x` is a property of `A`'s initializer and thus not accessible outside the initializer.
  */
+@SubclassOptInRequired(KaImplementationDetail::class)
 public abstract class KaEnumEntrySymbol : KaVariableSymbol() {
     /**
      * The enum entry's initializer, or `null` if the enum entry doesn't have a body.
@@ -151,6 +155,7 @@ public abstract class KaEnumEntrySymbol : KaVariableSymbol() {
  * The initializer of `A` declares a member `x: Int`, which is inaccessible outside the initializer. Still, the corresponding
  * [KaEnumEntryInitializerSymbol] can be used to get a declared member scope that contains `x`.
  */
+@SubclassOptInRequired(KaImplementationDetail::class)
 public interface KaEnumEntryInitializerSymbol : KaDeclarationContainerSymbol {
     override fun createPointer(): KaSymbolPointer<KaEnumEntryInitializerSymbol>
 }
@@ -158,6 +163,7 @@ public interface KaEnumEntryInitializerSymbol : KaDeclarationContainerSymbol {
 /**
  * [KaJavaFieldSymbol] represents a [Java field declaration](https://docs.oracle.com/javase/specs/jls/se23/html/jls-8.html#jls-8.3).
  */
+@SubclassOptInRequired(KaImplementationDetail::class)
 public abstract class KaJavaFieldSymbol : KaVariableSymbol() {
     /**
      * Whether the Java field is [static](https://docs.oracle.com/javase/specs/jls/se23/html/jls-8.html#jls-8.3.1.1).
@@ -185,39 +191,89 @@ public sealed class KaPropertySymbol : KaVariableSymbol(), KaTypeParameterOwnerS
     /**
      * Whether the property has a non-null [getter].
      *
-     * To check if the property's getter is a **default** implicit getter, see [KaPropertyGetterSymbol.isDefault].
+     * To check if the property's getter is a **custom** getter, see [KaPropertyGetterSymbol.isNotDefault].
      */
     public abstract val hasGetter: Boolean
 
     /**
      * Whether the property has a non-null [setter].
      *
-     * To check if the property's setter is a **default** implicit setter, see [KaPropertySetterSymbol.isDefault].
+     * To check if the property's setter is a **custom** setter, see [KaPropertySetterSymbol.isNotDefault].
      */
     public abstract val hasSetter: Boolean
 
     /**
-     * The property's explicit or default [getter](https://kotlinlang.org/docs/properties.html#getters-and-setters).
+     * The property's custom or default [getter](https://kotlinlang.org/docs/properties.html#getters-and-setters).
      */
     public abstract val getter: KaPropertyGetterSymbol?
 
     /**
-     * The property's explicit or default [setter](https://kotlinlang.org/docs/properties.html#getters-and-setters).
+     * The property's custom or default [setter](https://kotlinlang.org/docs/properties.html#getters-and-setters).
      */
     public abstract val setter: KaPropertySetterSymbol?
 
     /**
-     * Whether the property has a non-null [backingFieldSymbol].
+     * Whether a [backing field](https://kotlinlang.org/docs/properties.html#backing-fields) is generated or
+     * [declared](https://github.com/Kotlin/KEEP/issues/278) for the property.
+     *
+     * **Important**: this flag is properly supported for source declarations on all platforms,
+     * but for libraries it properly works only on supported platforms.
+     * Only Kotlin/JVM has this information in the metadata yet. Support for other platforms will
+     * be available as soon as a library is compiled with a compiler version that
+     * supports [KT-77281](https://youtrack.jetbrains.com/issue/KT-77281).
+     *
+     * ### Good to know
+     * On Kotlin/JVM compiled properties from annotations classes are compiled without a backing field,
+     * but for sources it still returns **true**.
+     *
+     * @see backingFieldSymbol
+     * @see isDelegatedProperty
      */
     public abstract val hasBackingField: Boolean
 
     /**
-     * The property's [backing field](https://kotlinlang.org/docs/properties.html#backing-fields), if the property has one.
+     * The property's [backing field](https://kotlinlang.org/docs/properties.html#backing-fields).
+     *
+     * It may represent a default, generated, or declared backing field.
+     *
+     * [hasBackingField] can be used to check whether the backing field is not default one.
+     *
+     * #### Example
+     *
+     * ```kotlin
+     * var variable = 0 // generated
+     *
+     * var variableWithCustomSetterVisibility = 1 // generated
+     *   private set
+     *
+     * val customAccessor get() = 2 // default
+     *
+     * val delegated by 3 // default
+     * // for simple `operator fun <T> T.getValue(thisRef: Any?, property: KProperty<*>): String = "str"`
+     *
+     * val delegatedWithBackingField by lazy { 3 } // generated
+     *
+     * abstract class Foo {
+     *     val memberProperty: Int = 4 // generated
+     *       get() = field
+     *
+     *     init {
+     *       memberProperty = 5
+     *     }
+     *
+     *     val abstractProperty: Int // default
+     * }
+     * ```
+     *
+     * @see hasBackingField
+     * @see isDelegatedProperty
      */
     public abstract val backingFieldSymbol: KaBackingFieldSymbol?
 
     /**
      * Whether the property is a [delegated property](https://kotlinlang.org/docs/delegated-properties.html).
+     *
+     * @see backingFieldSymbol
      */
     public abstract val isDelegatedProperty: Boolean
 
@@ -283,7 +339,9 @@ public sealed class KaPropertySymbol : KaVariableSymbol(), KaTypeParameterOwnerS
 /**
  * [KaKotlinPropertySymbol] represents a *Kotlin* property symbol, in contrast to [KaSyntheticJavaPropertySymbol].
  */
-public abstract class KaKotlinPropertySymbol : KaPropertySymbol() {
+@OptIn(KaExperimentalApi::class, KaImplementationDetail::class)
+@SubclassOptInRequired(KaImplementationDetail::class)
+public abstract class KaKotlinPropertySymbol : KaPropertySymbol(), KaContextParameterOwnerSymbol {
     /**
      * Whether the property is a [late-initialized property](https://kotlinlang.org/docs/properties.html#late-initialized-properties-and-variables).
      */
@@ -321,6 +379,7 @@ public abstract class KaKotlinPropertySymbol : KaPropertySymbol() {
  *
  * @see KaSymbolOrigin.JAVA_SYNTHETIC_PROPERTY
  */
+@SubclassOptInRequired(KaImplementationDetail::class)
 public abstract class KaSyntheticJavaPropertySymbol : KaPropertySymbol() {
     /**
      * The function symbol for the original Java getter method.
@@ -383,6 +442,7 @@ public abstract class KaSyntheticJavaPropertySymbol : KaPropertySymbol() {
 /**
  * [KaLocalVariableSymbol] represents a local variable.
  */
+@SubclassOptInRequired(KaImplementationDetail::class)
 public abstract class KaLocalVariableSymbol : KaVariableSymbol() {
     final override val callableId: CallableId? get() = withValidityAssertion { null }
     final override val isExtension: Boolean get() = withValidityAssertion { false }
@@ -395,6 +455,11 @@ public abstract class KaLocalVariableSymbol : KaVariableSymbol() {
     final override val isActual: Boolean get() = withValidityAssertion { false }
     final override val isExpect: Boolean get() = withValidityAssertion { false }
 
+    /**
+     * Whether the variable is a [late-initialized variable](https://kotlinlang.org/docs/properties.html#late-initialized-properties-and-variables).
+     */
+    public abstract val isLateInit: Boolean
+
     @KaExperimentalApi
     final override val compilerVisibility: Visibility get() = withValidityAssertion { Visibilities.Local }
 
@@ -402,10 +467,11 @@ public abstract class KaLocalVariableSymbol : KaVariableSymbol() {
 }
 
 /**
- * [KaParameterSymbol] represents a value parameter or receiver parameter.
+ * [KaParameterSymbol] represents a value parameter, context parameter, or receiver parameter.
  *
  * @see KaValueParameterSymbol
  * @see KaReceiverParameterSymbol
+ * @see KaContextParameterSymbol
  */
 public sealed class KaParameterSymbol : KaVariableSymbol() {
     final override val location: KaSymbolLocation get() = withValidityAssertion { KaSymbolLocation.LOCAL }
@@ -425,6 +491,28 @@ public sealed class KaParameterSymbol : KaVariableSymbol() {
 }
 
 /**
+ * [KaContextParameterSymbol] represents a context parameter of a [KaNamedFunctionSymbol], [KaAnonymousFunctionSymbol], or [KaKotlinPropertySymbol].
+ *
+ * See [KEEP-367](https://github.com/Kotlin/KEEP/issues/367) for more details.
+ *
+ * #### Example
+ *
+ * ```kotlin
+ * context(stringContext: String)
+ * fun foo() { ... }
+ * ```
+ *
+ * The `stringContext` context parameter of `foo` would be represented by [KaContextParameterSymbol].
+ *
+ * @see KaCallableSymbol.contextParameters
+ */
+@KaExperimentalApi
+@SubclassOptInRequired(KaImplementationDetail::class)
+public abstract class KaContextParameterSymbol : KaParameterSymbol() {
+    abstract override fun createPointer(): KaSymbolPointer<KaContextParameterSymbol>
+}
+
+/**
  * [KaValueParameterSymbol] represents a value parameter of a function, constructor, or property setter.
  *
  * In Kotlin, we generally use the phrase "value parameter," as functions have different kinds of parameters, such as value, receiver,
@@ -432,6 +520,7 @@ public sealed class KaParameterSymbol : KaVariableSymbol() {
  *
  * @see KaFunctionSymbol.valueParameters
  */
+@SubclassOptInRequired(KaImplementationDetail::class)
 public abstract class KaValueParameterSymbol : KaParameterSymbol() {
     /**
      * The name of the value parameter.
@@ -495,6 +584,7 @@ public abstract class KaValueParameterSymbol : KaParameterSymbol() {
  *
  * The `String` receiver parameter of `foo` would be represented by [KaReceiverParameterSymbol].
  */
+@SubclassOptInRequired(KaImplementationDetail::class)
 public abstract class KaReceiverParameterSymbol : KaParameterSymbol() {
     /**
      * The corresponding function or property in which the receiver parameter is declared.

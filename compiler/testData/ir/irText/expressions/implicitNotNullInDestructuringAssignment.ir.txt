@@ -1,23 +1,23 @@
 FILE fqName:<root> fileName:/implicitNotNullInDestructuringAssignment.kt
-  FUN name:component1 visibility:public modality:FINAL <> ($receiver:<root>.J?) returnType:kotlin.Int [operator]
-    $receiver: VALUE_PARAMETER name:<this> type:<root>.J?
+  FUN name:component1 visibility:public modality:FINAL returnType:kotlin.Int [operator]
+    VALUE_PARAMETER kind:ExtensionReceiver name:<this> index:0 type:<root>.J?
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='public final fun component1 (): kotlin.Int declared in <root>'
+      RETURN type=kotlin.Nothing from='public final fun component1 (<this>: <root>.J?): kotlin.Int declared in <root>'
         CONST Int type=kotlin.Int value=1
-  FUN name:component2 visibility:private modality:FINAL <> ($receiver:<root>.J) returnType:kotlin.Int [operator]
-    $receiver: VALUE_PARAMETER name:<this> type:<root>.J
+  FUN name:component2 visibility:private modality:FINAL returnType:kotlin.Int [operator]
+    VALUE_PARAMETER kind:ExtensionReceiver name:<this> index:0 type:<root>.J
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='private final fun component2 (): kotlin.Int declared in <root>'
+      RETURN type=kotlin.Nothing from='private final fun component2 (<this>: <root>.J): kotlin.Int declared in <root>'
         CONST Int type=kotlin.Int value=2
-  FUN name:test visibility:public modality:FINAL <> () returnType:kotlin.Unit
+  FUN name:test visibility:public modality:FINAL returnType:kotlin.Unit
     BLOCK_BODY
       COMPOSITE type=kotlin.Unit origin=DESTRUCTURING_DECLARATION
         VAR IR_TEMPORARY_VARIABLE name:tmp_0 type:@[FlexibleNullability] <root>.J? [val]
           CALL 'public open fun j (): @[FlexibleNullability] <root>.J? declared in <root>.J' type=@[FlexibleNullability] <root>.J? origin=null
         VAR name:a type:kotlin.Int [val]
-          CALL 'public final fun component1 (): kotlin.Int declared in <root>' type=kotlin.Int origin=COMPONENT_N(index=1)
-            $receiver: GET_VAR 'val tmp_0: @[FlexibleNullability] <root>.J? declared in <root>.test' type=@[FlexibleNullability] <root>.J? origin=null
+          CALL 'public final fun component1 (<this>: <root>.J?): kotlin.Int declared in <root>' type=kotlin.Int origin=COMPONENT_N(index=1)
+            ARG <this>: GET_VAR 'val tmp_0: @[FlexibleNullability] <root>.J? declared in <root>.test' type=@[FlexibleNullability] <root>.J? origin=null
         VAR name:b type:kotlin.Int [val]
-          CALL 'private final fun component2 (): kotlin.Int declared in <root>' type=kotlin.Int origin=COMPONENT_N(index=2)
-            $receiver: TYPE_OP type=<root>.J origin=IMPLICIT_NOTNULL typeOperand=<root>.J
+          CALL 'private final fun component2 (<this>: <root>.J): kotlin.Int declared in <root>' type=kotlin.Int origin=COMPONENT_N(index=2)
+            ARG <this>: TYPE_OP type=<root>.J origin=IMPLICIT_NOTNULL typeOperand=<root>.J
               GET_VAR 'val tmp_0: @[FlexibleNullability] <root>.J? declared in <root>.test' type=@[FlexibleNullability] <root>.J? origin=null

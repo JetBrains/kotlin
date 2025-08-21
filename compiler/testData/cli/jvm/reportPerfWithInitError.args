@@ -1,0 +1,5 @@
+$TESTDATA_DIR$/../reportPerf.kt
+-Xuse-k2
+-d
+$TEMP_DIR$
+-Xreport-perf=true

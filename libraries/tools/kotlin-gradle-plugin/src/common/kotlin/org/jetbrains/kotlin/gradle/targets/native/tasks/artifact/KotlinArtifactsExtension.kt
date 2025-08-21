@@ -2,6 +2,7 @@
  * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
+@file:Suppress("DEPRECATION")
 
 package org.jetbrains.kotlin.gradle.targets.native.tasks.artifact
 
@@ -9,10 +10,10 @@ import org.gradle.api.Action
 import org.gradle.api.Project
 import org.gradle.api.plugins.ExtensionAware
 import org.jetbrains.kotlin.gradle.dsl.*
-import org.jetbrains.kotlin.gradle.dsl.KotlinNativeArtifactDSL.ExperimentalArtifactDsl
 import org.jetbrains.kotlin.gradle.plugin.KotlinProjectSetupAction
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnosticImmediately
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnosticOncePerProject
 import org.jetbrains.kotlin.gradle.utils.castIsolatedKotlinPluginClassLoaderAware
 import javax.inject.Inject
@@ -28,41 +29,72 @@ internal val KotlinArtifactsExtensionSetupAction = KotlinProjectSetupAction {
 val Project.kotlinArtifactsExtension: KotlinArtifactsExtension
     get() = extensions.getByName(KOTLIN_ARTIFACTS_EXTENSION_NAME).castIsolatedKotlinPluginClassLoaderAware()
 
-@OptIn(ExperimentalArtifactDsl::class)
 abstract class KotlinNativeArtifactDSLImpl @Inject constructor(private val project: Project) : KotlinNativeArtifactDSL {
     companion object {
         private val UNSAFE_NAME_SYMBOLS = """\W""".toRegex()
     }
 
+    @Deprecated(KotlinArtifactsExtension.KOTLIN_NATIVE_ARTIFACTS_DEPRECATION)
     override fun Library(name: String, configure: Action<KotlinNativeLibraryConfig>) {
+        project.reportDiagnosticOncePerProject(
+            KotlinToolingDiagnostics.KotlinNativeArtifactsDeprecation(),
+        )
         addKotlinArtifact<KotlinNativeLibraryConfigImpl>(name, configure)
     }
 
+    @Deprecated(KotlinArtifactsExtension.KOTLIN_NATIVE_ARTIFACTS_DEPRECATION)
     override fun Library(configure: Action<KotlinNativeLibraryConfig>) {
+        project.reportDiagnosticOncePerProject(
+            KotlinToolingDiagnostics.KotlinNativeArtifactsDeprecation(),
+        )
         addKotlinArtifact<KotlinNativeLibraryConfigImpl>(configure)
     }
 
+    @Deprecated(KotlinArtifactsExtension.KOTLIN_NATIVE_ARTIFACTS_DEPRECATION)
     override fun Framework(name: String, configure: Action<KotlinNativeFrameworkConfig>) {
+        project.reportDiagnosticOncePerProject(
+            KotlinToolingDiagnostics.KotlinNativeArtifactsDeprecation(),
+        )
         addKotlinArtifact<KotlinNativeFrameworkConfigImpl>(name, configure)
     }
 
+    @Deprecated(KotlinArtifactsExtension.KOTLIN_NATIVE_ARTIFACTS_DEPRECATION)
     override fun Framework(configure: Action<KotlinNativeFrameworkConfig>) {
+        project.reportDiagnosticOncePerProject(
+            KotlinToolingDiagnostics.KotlinNativeArtifactsDeprecation(),
+        )
         addKotlinArtifact<KotlinNativeFrameworkConfigImpl>(configure)
     }
 
+    @Deprecated(KotlinArtifactsExtension.KOTLIN_NATIVE_ARTIFACTS_DEPRECATION)
     override fun FatFramework(name: String, configure: Action<KotlinNativeFatFrameworkConfig>) {
+        project.reportDiagnosticOncePerProject(
+            KotlinToolingDiagnostics.KotlinNativeArtifactsDeprecation(),
+        )
         addKotlinArtifact<KotlinNativeFatFrameworkConfigImpl>(name, configure)
     }
 
+    @Deprecated(KotlinArtifactsExtension.KOTLIN_NATIVE_ARTIFACTS_DEPRECATION)
     override fun FatFramework(configure: Action<KotlinNativeFatFrameworkConfig>) {
+        project.reportDiagnosticOncePerProject(
+            KotlinToolingDiagnostics.KotlinNativeArtifactsDeprecation(),
+        )
         addKotlinArtifact<KotlinNativeFatFrameworkConfigImpl>(configure)
     }
 
+    @Deprecated(KotlinArtifactsExtension.KOTLIN_NATIVE_ARTIFACTS_DEPRECATION)
     override fun XCFramework(name: String, configure: Action<KotlinNativeXCFrameworkConfig>) {
+        project.reportDiagnosticOncePerProject(
+            KotlinToolingDiagnostics.KotlinNativeArtifactsDeprecation(),
+        )
         addKotlinArtifact<KotlinNativeXCFrameworkConfigImpl>(name, configure)
     }
 
+    @Deprecated(KotlinArtifactsExtension.KOTLIN_NATIVE_ARTIFACTS_DEPRECATION)
     override fun XCFramework(configure: Action<KotlinNativeXCFrameworkConfig>) {
+        project.reportDiagnosticOncePerProject(
+            KotlinToolingDiagnostics.KotlinNativeArtifactsDeprecation(),
+        )
         addKotlinArtifact<KotlinNativeXCFrameworkConfigImpl>(configure)
     }
 

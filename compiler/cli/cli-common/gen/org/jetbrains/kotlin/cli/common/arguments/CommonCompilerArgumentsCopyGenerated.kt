@@ -11,7 +11,11 @@ fun copyCommonCompilerArguments(from: CommonCompilerArguments, to: CommonCompile
     copyCommonToolArguments(from, to)
 
     to.allowAnyScriptsInSourceRoots = from.allowAnyScriptsInSourceRoots
+    to.allowConditionImpliesReturnsContracts = from.allowConditionImpliesReturnsContracts
+    to.allowContractsOnMoreFunctions = from.allowContractsOnMoreFunctions
+    to.allowHoldsinContract = from.allowHoldsinContract
     to.allowKotlinPackage = from.allowKotlinPackage
+    to.allowReifiedTypeInCatch = from.allowReifiedTypeInCatch
     to.annotationDefaultTarget = from.annotationDefaultTarget
     to.annotationTargetAll = from.annotationTargetAll
     to.apiVersion = from.apiVersion
@@ -22,7 +26,10 @@ fun copyCommonCompilerArguments(from: CommonCompilerArguments, to: CommonCompile
     to.consistentDataClassCopyVisibility = from.consistentDataClassCopyVisibility
     to.contextParameters = from.contextParameters
     to.contextReceivers = from.contextReceivers
+    to.contextSensitiveResolution = from.contextSensitiveResolution
+    to.dataFlowBasedExhaustiveness = from.dataFlowBasedExhaustiveness
     to.debugLevelCompilerChecks = from.debugLevelCompilerChecks
+    to.detailedPerf = from.detailedPerf
     to.directJavaActualization = from.directJavaActualization
     to.disableDefaultScriptingPlugin = from.disableDefaultScriptingPlugin
     to.disablePhases = from.disablePhases?.copyOf()
@@ -30,28 +37,27 @@ fun copyCommonCompilerArguments(from: CommonCompilerArguments, to: CommonCompile
     to.dumpDirectory = from.dumpDirectory
     to.dumpOnlyFqName = from.dumpOnlyFqName
     to.dumpPerf = from.dumpPerf
-    to.enableBuilderInference = from.enableBuilderInference
     to.expectActualClasses = from.expectActualClasses
-    to.experimental = from.experimental?.copyOf()
     to.explicitApi = from.explicitApi
+    to.explicitBackingFields = from.explicitBackingFields
     to.explicitReturnTypes = from.explicitReturnTypes
-    to.extendedCompilerChecks = from.extendedCompilerChecks
+    to.fragmentDependencies = from.fragmentDependencies?.copyOf()
     to.fragmentRefines = from.fragmentRefines?.copyOf()
     to.fragmentSources = from.fragmentSources?.copyOf()
     to.fragments = from.fragments?.copyOf()
     to.ignoreConstOptimizationErrors = from.ignoreConstOptimizationErrors
     to.incrementalCompilation = from.incrementalCompilation
-    to.inferenceCompatibility = from.inferenceCompatibility
     to.inlineClasses = from.inlineClasses
     to.intellijPluginRoot = from.intellijPluginRoot
     to.kotlinHome = from.kotlinHome
     to.languageVersion = from.languageVersion
-    to.legacySmartCastAfterTry = from.legacySmartCastAfterTry
+    to.lenientMode = from.lenientMode
     to.listPhases = from.listPhases
     to.metadataKlib = from.metadataKlib
     to.metadataVersion = from.metadataVersion
     to.multiDollarInterpolation = from.multiDollarInterpolation
     to.multiPlatform = from.multiPlatform
+    to.nameBasedDestructuring = from.nameBasedDestructuring
     to.nestedTypeAliases = from.nestedTypeAliases
     to.newInference = from.newInference
     to.noCheckActual = from.noCheckActual
@@ -67,14 +73,17 @@ fun copyCommonCompilerArguments(from: CommonCompilerArguments, to: CommonCompile
     to.pluginClasspaths = from.pluginClasspaths?.copyOf()
     to.pluginConfigurations = from.pluginConfigurations?.copyOf()
     to.pluginOptions = from.pluginOptions?.copyOf()
+    to.pluginOrderConstraints = from.pluginOrderConstraints?.copyOf()
     to.profilePhases = from.profilePhases
     to.progressiveMode = from.progressiveMode
     to.renderInternalDiagnosticNames = from.renderInternalDiagnosticNames
+    to.repl = from.repl
     to.reportAllWarnings = from.reportAllWarnings
     to.reportOutputFiles = from.reportOutputFiles
     to.reportPerf = from.reportPerf
+    to.returnValueChecker = from.returnValueChecker
     to.script = from.script
-    to.selfUpperBoundInference = from.selfUpperBoundInference
+    to.separateKmpCompilationScheme = from.separateKmpCompilationScheme
     to.skipMetadataVersionCheck = from.skipMetadataVersionCheck
     to.skipPrereleaseCheck = from.skipPrereleaseCheck
     to.stdlibCompilation = from.stdlibCompilation
@@ -82,7 +91,7 @@ fun copyCommonCompilerArguments(from: CommonCompilerArguments, to: CommonCompile
     to.suppressVersionWarnings = from.suppressVersionWarnings
     to.suppressedDiagnostics = from.suppressedDiagnostics?.copyOf()
     to.unrestrictedBuilderInference = from.unrestrictedBuilderInference
-    to.useExperimental = from.useExperimental?.copyOf()
+    @Suppress("DEPRECATION")
     to.useFirExperimentalCheckers = from.useFirExperimentalCheckers
     to.useFirIC = from.useFirIC
     to.useFirLT = from.useFirLT
@@ -90,6 +99,7 @@ fun copyCommonCompilerArguments(from: CommonCompilerArguments, to: CommonCompile
     to.verbosePhases = from.verbosePhases?.copyOf()
     to.verifyIr = from.verifyIr
     to.verifyIrVisibility = from.verifyIrVisibility
+    to.warningLevels = from.warningLevels?.copyOf()
     to.whenGuards = from.whenGuards
 
     return to

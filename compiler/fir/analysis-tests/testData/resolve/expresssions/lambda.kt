@@ -18,3 +18,5 @@ fun main() {
     val empty: () -> Unit = { }
 }
 
+/* GENERATED_FIR_TAGS: functionDeclaration, functionalType, lambdaLiteral, localProperty, propertyDeclaration,
+stringLiteral */

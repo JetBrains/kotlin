@@ -15,3 +15,6 @@ class FooB : Foo<FooB> {
 fun testStar(foo1: Foo<*>, foo2: Foo<*>) {
     val x = foo1.bar(foo2)
 }
+
+/* GENERATED_FIR_TAGS: capturedType, classDeclaration, functionDeclaration, interfaceDeclaration, localProperty,
+override, propertyDeclaration, starProjection, typeConstraint, typeParameter */

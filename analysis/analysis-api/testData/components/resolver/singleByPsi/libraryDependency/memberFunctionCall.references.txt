@@ -1,0 +1,3 @@
+KtNameReferenceExpression(90,93): 'foo'
+  KtSimpleNameReference:
+    (in Bar) fun foo(a: kotlin.Int, b: kotlin.String)

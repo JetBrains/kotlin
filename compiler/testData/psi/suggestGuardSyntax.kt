@@ -1,3 +1,5 @@
+// COMPILATION_ERRORS
+
 fun wrongAnd(x: Any, boolExpr: Boolean) {
     when (x) {
         is String && boolExpr -> "hello"

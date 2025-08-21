@@ -130,3 +130,8 @@ fun test17(a: String?) {
     val y = a?.isEmpty()
     if (y == true) a.length
 }
+
+/* GENERATED_FIR_TAGS: andExpression, classDeclaration, classReference, contractConditionalEffect, contracts,
+equalityExpression, funWithExtensionReceiver, functionDeclaration, ifExpression, integerLiteral, isExpression,
+lambdaLiteral, localProperty, nullableType, propertyDeclaration, safeCall, smartcast, stringLiteral, thisExpression,
+whenExpression, whenWithSubject */

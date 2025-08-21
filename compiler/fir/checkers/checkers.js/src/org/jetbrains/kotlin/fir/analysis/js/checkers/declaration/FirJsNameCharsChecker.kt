@@ -20,10 +20,12 @@ import org.jetbrains.kotlin.fir.declarations.FirConstructor
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.impl.FirPrimaryConstructor
+import org.jetbrains.kotlin.fir.isEnabled
 
 object FirJsNameCharsChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
-    override fun check(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
-        if (context.languageVersionSettings.supportsFeature(LanguageFeature.JsAllowInvalidCharsIdentifiersEscaping)) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirDeclaration) {
+        if (LanguageFeature.JsAllowInvalidCharsIdentifiersEscaping.isEnabled()) {
             return
         }
 
@@ -42,7 +44,7 @@ object FirJsNameCharsChecker : FirBasicDeclarationChecker(MppCheckerKind.Common)
 
         val stableName = FirJsStableName.createStableNameOrNull(declaration.symbol, context.session) ?: return
         if ((sanitizeName(stableName.name) != stableName.name)) {
-            reporter.reportOn(declaration.source, FirJsErrors.NAME_CONTAINS_ILLEGAL_CHARS, context)
+            reporter.reportOn(declaration.source, FirJsErrors.NAME_CONTAINS_ILLEGAL_CHARS)
         }
     }
 }

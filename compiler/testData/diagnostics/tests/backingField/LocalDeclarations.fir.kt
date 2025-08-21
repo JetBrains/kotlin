@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LANGUAGE: +RestrictionOfValReassignmentViaBackingField
 
 class Outer {
     val i: Int = 1
@@ -33,3 +32,6 @@ class Outer {
             return field
         }
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, functionDeclaration, getter, incrementDecrementExpression,
+integerLiteral, localClass, localFunction, propertyDeclaration */

@@ -87,3 +87,6 @@ fun conditionalThrowInTry_rethrow_noSmartcastInFinally(a: A) {
         takeB(<!ARGUMENT_TYPE_MISMATCH!>a<!>)
     }
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, ifExpression, interfaceDeclaration, isExpression, localProperty,
+propertyDeclaration, smartcast, stringLiteral, tryExpression */

@@ -10,3 +10,5 @@ fun main(x1: Double?, range: ClosedRange<Double>) {
         x1 in range -> {}
     }
 }
+
+/* GENERATED_FIR_TAGS: equalityExpression, functionDeclaration, nullableType, smartcast, whenExpression, whenWithSubject */

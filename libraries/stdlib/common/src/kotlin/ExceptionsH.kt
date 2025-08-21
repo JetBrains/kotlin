@@ -95,7 +95,10 @@ public expect open class ArithmeticException : RuntimeException {
 }
 
 @Deprecated("This exception type is not supposed to be thrown or caught in common code and will be removed from kotlin-stdlib-common soon.", level = DeprecationLevel.ERROR)
-@Suppress("EXPECT_ACTUAL_INCOMPATIBILITY") // internal in Native and Wasm
+@Suppress(
+    "EXPECT_ACTUAL_INCOMPATIBILITY", // todo drop after bootstrap
+    "EXPECT_ACTUAL_IR_INCOMPATIBILITY"
+) // internal in Native and Wasm
 public expect open class NoWhenBranchMatchedException : RuntimeException {
     public constructor()
     public constructor(message: String?)
@@ -104,7 +107,10 @@ public expect open class NoWhenBranchMatchedException : RuntimeException {
 }
 
 @Deprecated("This exception type is not supposed to be thrown or caught in common code and will be removed from kotlin-stdlib-common soon.", level = DeprecationLevel.ERROR)
-@Suppress("EXPECT_ACTUAL_INCOMPATIBILITY") // internal in Native and Wasm
+@Suppress(
+    "EXPECT_ACTUAL_INCOMPATIBILITY", // todo drop after bootstrap
+    "EXPECT_ACTUAL_IR_INCOMPATIBILITY"
+) // internal in Native and Wasm
 public expect class UninitializedPropertyAccessException : RuntimeException {
     public constructor()
     public constructor(message: String?)

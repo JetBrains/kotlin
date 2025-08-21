@@ -40,7 +40,11 @@ class CocoaPodsSyntheticIT : KGPBaseTest() {
     @DisplayName("Synthetic project podfile generation")
     @GradleTest
     fun testSyntheticProjectPodfileGeneration(gradleVersion: GradleVersion) {
-        nativeProject(cocoapodsSingleKtPod, gradleVersion, environmentVariables = environmentVariables) {
+        nativeProject(
+            cocoapodsSingleKtPod,
+            gradleVersion,
+            environmentVariables = environmentVariables
+        ) {
             buildGradleKts.addCocoapodsBlock(
                 """
                 ios.deploymentTarget = "14.1"

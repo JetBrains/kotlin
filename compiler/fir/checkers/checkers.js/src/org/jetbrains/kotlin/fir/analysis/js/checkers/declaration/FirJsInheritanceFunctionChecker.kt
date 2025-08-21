@@ -13,34 +13,38 @@ import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirFunctionChecker
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors
 import org.jetbrains.kotlin.fir.analysis.js.checkers.isEffectivelyExternal
 import org.jetbrains.kotlin.fir.analysis.js.checkers.isOverridingExternalWithOptionalParams
-import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 
 sealed class FirJsInheritanceFunctionChecker(mppKind: MppCheckerKind) : FirFunctionChecker(mppKind) {
     object Regular : FirJsInheritanceFunctionChecker(MppCheckerKind.Platform) {
-        override fun check(declaration: FirFunction, context: CheckerContext, reporter: DiagnosticReporter) {
-            if ((context.containingDeclarations.last() as? FirClass)?.isExpect == true) return
-            super.check(declaration, context, reporter)
+        context(context: CheckerContext, reporter: DiagnosticReporter)
+        override fun check(declaration: FirFunction) {
+            if ((context.containingDeclarations.last() as? FirClassSymbol<*>)?.isExpect == true) return
+            super.check(declaration)
         }
     }
 
     object ForExpectClass : FirJsInheritanceFunctionChecker(MppCheckerKind.Common) {
-        override fun check(declaration: FirFunction, context: CheckerContext, reporter: DiagnosticReporter) {
-            if ((context.containingDeclarations.last() as? FirClass)?.isExpect != true) return
-            super.check(declaration, context, reporter)
+        context(context: CheckerContext, reporter: DiagnosticReporter)
+        override fun check(declaration: FirFunction) {
+            if ((context.containingDeclarations.last() as? FirClassSymbol<*>)?.isExpect != true) return
+            super.check(declaration)
         }
     }
 
-    override fun check(declaration: FirFunction, context: CheckerContext, reporter: DiagnosticReporter) {
-        if (declaration.isNotEffectivelyExternalFunctionButOverridesExternal(context)) {
-            reporter.reportOn(declaration.source, FirJsErrors.OVERRIDING_EXTERNAL_FUN_WITH_OPTIONAL_PARAMS, context)
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirFunction) {
+        if (declaration.isNotEffectivelyExternalFunctionButOverridesExternal()) {
+            reporter.reportOn(declaration.source, FirJsErrors.OVERRIDING_EXTERNAL_FUN_WITH_OPTIONAL_PARAMS)
         }
     }
 
-    private fun FirDeclaration.isNotEffectivelyExternalFunctionButOverridesExternal(context: CheckerContext): Boolean {
-        if (this !is FirFunction || symbol.isEffectivelyExternal(context)) return false
-        return symbol.isOverridingExternalWithOptionalParams(context)
+    context(context: CheckerContext)
+    private fun FirDeclaration.isNotEffectivelyExternalFunctionButOverridesExternal(): Boolean {
+        if (this !is FirFunction || symbol.isEffectivelyExternal()) return false
+        return symbol.isOverridingExternalWithOptionalParams()
     }
 }

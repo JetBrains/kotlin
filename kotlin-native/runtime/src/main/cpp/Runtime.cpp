@@ -16,6 +16,7 @@
 #include "RuntimePrivate.hpp"
 #include "Worker.h"
 #include "KString.h"
+#include "CrashHandler.hpp"
 #include <atomic>
 #include <cstdint>
 #include <cstdlib>
@@ -163,6 +164,7 @@ bool kotlin::initializeGlobalRuntimeIfNeeded() noexcept {
 
     konan::consoleInit();
     logging::OnRuntimeInit();
+    crashHandlerInit();
     initGlobalMemory();
 #if KONAN_OBJC_INTEROP
     Kotlin_ObjCExport_initialize();
@@ -219,9 +221,6 @@ void Kotlin_shutdownRuntime() {
         // Make sure to collect any lingering cleaners.
         PerformFullGC(runtime->memoryState);
     }
-
-    // Stop cleaner worker. Only execute the cleaners if checker is enabled.
-    ShutdownCleaners(Kotlin_cleanersLeakCheckerEnabled());
 
     // Cleaners are now done, disallow new runtimes.
     auto lastStatus = std_support::atomic_compare_swap_strong(globalRuntimeStatus, kGlobalRuntimeRunning, kGlobalRuntimeShutdown);
@@ -392,8 +391,8 @@ KBoolean Kotlin_Debugging_isPermanent(KRef obj) {
     return obj->permanent();
 }
 
-RUNTIME_NOTHROW KBoolean Kotlin_Debugging_isLocal(KRef obj) {
-    return obj->local();
+RUNTIME_NOTHROW KBoolean Kotlin_Debugging_isStack(KRef obj) {
+    return obj->stack();
 }
 
 static void CallInitGlobalAwaitInitialized(uintptr_t* state) {

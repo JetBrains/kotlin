@@ -10,7 +10,7 @@ FILE: nonExhaustiveWhenWithCoercionToUnit.kt
                 }
             }
 
-            when (R|<local>/a|) {
+            when (lval <when-subject>: R|kotlin/Any| = R|<local>/a|) {
                 ($subj$ is R|kotlin/String|) ->  {
                     Int(1)
                 }

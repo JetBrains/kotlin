@@ -5,27 +5,37 @@
 
 package org.jetbrains.kotlin.gradle.testbase
 
+import com.android.build.api.dsl.CommonExtension
 import com.android.build.api.dsl.LibraryExtension
+import com.android.build.gradle.AppExtension
 import org.gradle.api.Project
 import org.gradle.api.flow.*
-import org.gradle.api.plugins.JavaPluginExtension
-import org.gradle.api.publish.PublishingExtension
-import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.gradle.api.initialization.Settings
 import org.gradle.api.initialization.dsl.ScriptHandler
+import org.gradle.api.plugins.JavaPluginExtension
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
+import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.tasks.Input
 import org.gradle.internal.exceptions.MultiCauseException
 import org.gradle.internal.extensions.core.serviceOf
+import org.gradle.kotlin.dsl.create
+import org.gradle.plugin.use.PluginDependenciesSpec
+import org.gradle.plugin.use.PluginDependencySpec
+import org.gradle.plugin.use.PluginId
+import org.gradle.plugins.signing.SigningExtension
+import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension
+import org.jetbrains.kotlin.gradle.plugin.cocoapods.CocoapodsExtension
+import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.extraProperties
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.SwiftExportExtension
 import java.io.File
 import java.io.ObjectInputStream
 import java.io.ObjectOutputStream
-import java.io.PrintWriter
 import java.io.Serializable
+import java.lang.reflect.Field
 import java.nio.file.Path
 import kotlin.io.path.*
 import kotlin.jvm.optionals.getOrNull
@@ -39,7 +49,7 @@ interface GradleBuildScriptInjection<T> : Serializable {
  */
 class UndispatchedInjection<Context, Target>(
     val instantiateInjectionContext: (Target) -> Context,
-    val executeInjection: Context.() -> Unit
+    val executeInjection: Context.() -> Unit,
 ) : GradleBuildScriptInjection<Target> {
     override fun inject(target: Target) = instantiateInjectionContext(target).executeInjection()
 }
@@ -69,7 +79,7 @@ class OnBuildCompletionSerializingInjection<Return>(
     override fun inject(target: Project) {
         val returnEvaluationProvider = GradleProjectBuildScriptInjectionContext(target).returnValueInjection()
         val serializeOutput = {
-            val returnValue = returnEvaluationProvider.get()
+            val returnValue = returnEvaluationProvider.orNull
             serializedReturnPath.outputStream().use {
                 ObjectOutputStream(it).writeObject(returnValue)
             }
@@ -100,6 +110,7 @@ class FindMatchingBuildFailureInjection<ExpectedException : Exception>(
         interface Parameters : FlowParameters {
             @get:Input
             val onBuildFinish: Property<(Throwable?) -> Unit>
+
             @get:Input
             val buildWorkResult: Property<BuildWorkResult>
         }
@@ -123,14 +134,7 @@ class FindMatchingBuildFailureInjection<ExpectedException : Exception>(
                 if (matchingExceptions.isNotEmpty()) {
                     CaughtBuildFailure.Expected(matchingExceptions)
                 } else {
-                    CaughtBuildFailure.Unexpected(
-                        java.io.StringWriter().use {
-                            PrintWriter(it).use {
-                                topLevelException.printStackTrace(it)
-                            }
-                            it
-                        }.toString()
-                    )
+                    CaughtBuildFailure.Unexpected(topLevelException.fullMessage)
                 }
             }
 
@@ -181,54 +185,57 @@ class FindMatchingBuildFailureInjection<ExpectedException : Exception>(
 }
 
 private const val buildScriptInjectionsMarker = "// MARKER: GradleBuildScriptInjections Enabled"
+private const val buildScriptInjectionsClasspathProperty = "buildScriptInjectionsClasspath"
 
 private fun GradleProject.enableBuildScriptInjectionsIfNecessary(
     buildScript: Path,
     buildScriptKts: Path,
 ) {
-    val injectionClasses = System.getProperty("buildScriptInjectionsClasspath")
-        ?: error("Missing required system property '${"buildScriptInjectionsClasspath"}'")
-    val escapedInjectionClasses = injectionClasses
-        .replace("\\", "\\\\")
-        .replace("$", "\\$")
-
     if (buildScript.exists()) {
         if (buildScript.readText().contains(buildScriptInjectionsMarker)) return
         buildScript.modify {
-            it.insertBlockToBuildScriptAfterImports("""
-            $buildScriptInjectionsMarker
-            buildscript {
-                println("⚠️ GradleBuildScriptInjections Enabled. Classes from kotlin-gradle-plugin-integration-tests injected to buildscript")               
-                dependencies {
-                    classpath(files('$escapedInjectionClasses'))
+            it.insertBlockToBuildScriptAfterPluginManagementAndImports(
+                """
+                $buildScriptInjectionsMarker
+                buildscript {
+                    println("⚠️ GradleBuildScriptInjections Enabled. Classes from kotlin-gradle-plugin-integration-tests injected to buildscript")               
+                    dependencies {
+                        classpath(
+                            files(
+                                ${escapedBuildScriptClasspathUrlsGroovy()}
+                            )
+                        )
+                    }
                 }
-            }
-            
-        """.trimIndent())
+                
+                """.trimIndent()
+            )
         }
         return
     }
 
     if (buildScriptKts.exists()) {
         if (buildScriptKts.readText().contains(buildScriptInjectionsMarker)) return
-
         buildScriptKts.modify {
-            it.insertBlockToBuildScriptAfterImports("""
-            $buildScriptInjectionsMarker
-            buildscript {
-                println("⚠️ GradleBuildScriptInjections Enabled. Classes from kotlin-gradle-plugin-integration-tests injected to buildscript")               
-                val classes = files("$escapedInjectionClasses")
-                dependencies {
-                    classpath(classes)
+            it.insertBlockToBuildScriptAfterPluginManagementAndImports("""
+                $buildScriptInjectionsMarker
+                buildscript {
+                    println("⚠️ GradleBuildScriptInjections Enabled. Classes from kotlin-gradle-plugin-integration-tests injected to buildscript")               
+                    val classes = files(
+                        ${escapedBuildScriptClasspathUrls()}
+                    )
+                    dependencies {
+                        classpath(classes)
+                    }
                 }
-            }
-
-            """.trimIndent())
+            
+                """.trimIndent()
+            )
         }
         return
     }
 
-    error("build.gradle.kts nor build.gradle files not found in Test Project '$projectName'. Please check if it is a valid gradle project")
+    error("Neither $buildScriptKts nor $buildScript files found in the Test Project '$projectName'. Please check if it is a valid gradle project")
 }
 
 class InjectionLoader {
@@ -241,10 +248,12 @@ class InjectionLoader {
     }
 
     @Suppress("unused")
-    fun invokeBuildScriptPluginsInjection(buildscript: ScriptHandler, serializedInjectionPath: File) {
+    fun invokeBuildScriptPluginsInjection(project: Project, serializedInjectionPath: File) {
         serializedInjectionPath.inputStream().use {
             @Suppress("UNCHECKED_CAST")
-            (ObjectInputStream(it).readObject() as GradleBuildScriptInjection<ScriptHandler>).inject(buildscript)
+            (ObjectInputStream(it).readObject() as GradleBuildScriptInjection<Pair<ScriptHandler, Project>>).inject(
+                Pair(project.buildscript, project)
+            )
         }
     }
 
@@ -267,8 +276,13 @@ class GradleProjectBuildScriptInjectionContext(
     val java get() = project.extensions.getByName("java") as JavaPluginExtension
     val kotlinMultiplatform get() = project.extensions.getByName("kotlin") as KotlinMultiplatformExtension
     val kotlinJvm get() = project.extensions.getByName("kotlin") as KotlinJvmProjectExtension
+    val cocoapods get() = kotlinMultiplatform.extensions.getByName("cocoapods") as CocoapodsExtension
+    val swiftExport get() = kotlinMultiplatform.extensions.getByName("swiftExport") as SwiftExportExtension
     val androidLibrary get() = project.extensions.getByName("android") as LibraryExtension
+    val androidApp get() = project.extensions.getByName("android") as AppExtension
+    val androidBase get() = project.extensions.getByName("android") as CommonExtension<*, *, *, *>
     val publishing get() = project.extensions.getByName("publishing") as PublishingExtension
+    val signing get() = project.extensions.getByName("signing") as SigningExtension
     val dependencies get() = project.dependencies
 }
 
@@ -280,15 +294,15 @@ class GradleSettingsBuildScriptInjectionContext(
 @BuildGradleKtsInjectionScope
 class GradleBuildScriptBuildscriptInjectionContext(
     val buildscript: ScriptHandler,
+    val project: Project,
 )
 
-typealias BuildAction = TestProject.(buildArguments: Array<String>, buildOptions: BuildOptions) -> Unit
 class ReturnFromBuildScriptAfterExecution<T>(
     val returnContainingGradleProject: TestProject,
     val serializedReturnPath: File,
     val injectionLoadProperty: String,
     val defaultEvaluationTask: String = "tasks",
-    val defaultBuildAction: BuildAction = build,
+    val defaultBuildAction: BuildAction = BuildActions.build,
 ) {
     /**
      * Return values to the test by serializing the return after the execution. The benefit of serializing after execution is that we can
@@ -304,7 +318,7 @@ class ReturnFromBuildScriptAfterExecution<T>(
          * always forces CC deserialization before task execution and will therefore produce a catchable build failure, but only if the
          * violating task actually executes
          */
-        configurationCache: BuildOptions.ConfigurationCacheValue = BuildOptions.ConfigurationCacheValue.DISABLED,
+        configurationCache: BuildOptions.ConfigurationCacheValue = BuildOptions.ConfigurationCacheValue.AUTO,
         configurationCacheProblems: BuildOptions.ConfigurationCacheProblems = BuildOptions.ConfigurationCacheProblems.FAIL,
         deriveBuildOptions: TestProject.() -> BuildOptions = { buildOptions },
         buildAction: BuildAction = defaultBuildAction,
@@ -324,15 +338,6 @@ class ReturnFromBuildScriptAfterExecution<T>(
             return it.readObject() as T
         }
     }
-
-    companion object {
-        val build: BuildAction = { args, options ->
-            build(*args, buildOptions = options)
-        }
-        val buildAndFail: BuildAction = { args, options ->
-            buildAndFail(*args, buildOptions = options)
-        }
-    }
 }
 
 /**
@@ -345,7 +350,7 @@ class ReturnFromBuildScriptAfterExecution<T>(
  */
 internal fun <T> TestProject.buildScriptReturn(
     returnFromProject: GradleProjectBuildScriptInjectionContext.() -> T,
-) = providerBuildScriptReturn {
+): ReturnFromBuildScriptAfterExecution<T> = providerBuildScriptReturn {
     project.provider {
         returnFromProject()
     }
@@ -382,7 +387,9 @@ internal fun <T> TestProject.providerBuildScriptReturn(
 }
 
 sealed class CaughtBuildFailure<ExpectedException : Throwable> : Serializable {
-    data class Expected<ExpectedException : Throwable>(val matchedExceptions: Set<ExpectedException>) : CaughtBuildFailure<ExpectedException>()
+    data class Expected<ExpectedException : Throwable>(val matchedExceptions: Set<ExpectedException>) :
+        CaughtBuildFailure<ExpectedException>()
+
     data class Unexpected<ExpectedException : Throwable>(val stackTraceDump: String) : CaughtBuildFailure<ExpectedException>()
     class UnexpectedMissingBuildFailure<ExpectedException : Throwable> : CaughtBuildFailure<ExpectedException>()
 
@@ -423,7 +430,7 @@ internal inline fun <reified T : Exception> TestProject.catchBuildFailures(): Re
                 this,
                 serializedReturnPath,
                 injectionIdentifier,
-                defaultBuildAction = ReturnFromBuildScriptAfterExecution.buildAndFail,
+                defaultBuildAction = BuildActions.buildAndFail,
             )
         }
     )
@@ -453,8 +460,8 @@ private fun <T> GradleProject.buildScriptReturnInjection(
         execute: String,
     ): String = """
     
-        if (project.hasProperty("${property}")) {
-            ${execute}
+        if (providers.gradleProperty("$property").getOrNull() != null) {
+            $execute
         }
         
     """.trimIndent()
@@ -525,6 +532,99 @@ fun TestProject.addKgpToBuildScriptCompilationClasspath() {
     }
 }
 
+fun TestProject.addAgpToBuildScriptCompilationClasspath(androidVersion: String) {
+    transferPluginRepositoriesIntoBuildScript()
+    buildScriptBuildscriptBlockInjection {
+        buildscript.configurations.getByName("classpath").dependencies.add(
+            buildscript.dependencies.create("com.android.tools.build:gradle:${androidVersion}")
+        )
+    }
+}
+
+fun TestProject.addEcosystemPluginToBuildScriptCompilationClasspath() {
+    val kotlinVersion = buildOptions.kotlinVersion
+    settingsBuildScriptBuildscriptBlockInjection {
+        settings.buildscript.configurations.getByName("classpath").dependencies.add(
+            settings.buildscript.dependencies.create("org.jetbrains.kotlin:kotlin-gradle-ecosystem-plugin:$kotlinVersion")
+        )
+    }
+}
+
+/**
+ * This helper method works similar to "plugins {}" block in the build script; it resolves the POM pointer to the plugin jar and applies the plugin
+ */
+fun TestProject.plugins(build: PluginDependenciesSpec.() -> Unit) {
+    val spec = TestPluginDependenciesSpec()
+    spec.build()
+    transferPluginRepositoriesIntoBuildScript()
+    transferPluginDependencyConstraintsIntoBuildscriptClasspathDependencyConstraints()
+    buildScriptBuildscriptBlockInjection {
+        spec.plugins
+            .filter {
+                // filter out Gradle's embedded plugins
+                !it.id.startsWith("org.gradle")
+            }
+            .supportGradleBuiltInPlugins()
+            .forEach {
+                val pluginPointer = buildscript.dependencies.create(
+                    group = it.id,
+                    name = "${it.id}.gradle.plugin",
+                    version = it.version,
+                )
+                buildscript.configurations.getByName("classpath").dependencies.add(pluginPointer)
+            }
+    }
+    buildScriptInjection {
+        spec.plugins
+            .filter { it.shouldBeApplied }
+            .supportGradleBuiltInPlugins()
+            .forEach {
+                project.plugins.apply(it.id)
+            }
+    }
+}
+
+private fun List<TestPluginDependencySpec>.supportGradleBuiltInPlugins() = map { spec ->
+    if (spec.id == "kotlin-dsl") {
+        TestPluginDependencySpec("org.gradle.kotlin.kotlin-dsl")
+    } else spec
+}
+
+private class TestPluginDependencySpec(
+    val id: String,
+): PluginDependencySpec, Serializable {
+    var version: String? = null
+    var shouldBeApplied = true
+
+    override fun version(version: String?): PluginDependencySpec {
+        this.version = version
+        return this
+    }
+
+    override fun apply(apply: Boolean): PluginDependencySpec {
+        shouldBeApplied = apply
+        return this
+    }
+}
+
+private class TestPluginDependenciesSpec : PluginDependenciesSpec, Serializable {
+    val plugins = mutableListOf<TestPluginDependencySpec>()
+    override fun id(id: String): PluginDependencySpec = TestPluginDependencySpec(id).also { plugins.add(it) }
+}
+
+private fun Class<*>.getPrivateField(fieldName: String): Field {
+    var clazz: Class<*>? = this
+    while (clazz != null) {
+        try {
+            val field = clazz.getDeclaredField(fieldName)
+            return field
+        } catch (e: NoSuchFieldException) {
+            clazz = clazz.superclass
+        }
+    }
+    throw NoSuchFieldException("Field '$fieldName' not found in class hierarchy")
+}
+
 /**
  * Inject the [buildscript] block of the project build script. The primary use case for this injection is the configuration of the build
  * script classpath before plugin application
@@ -537,24 +637,57 @@ fun GradleProject.buildScriptBuildscriptBlockInjection(
         buildGradle,
         buildGradleKts,
     )
-    val buildscriptBlockInjection = serializeInjection<GradleBuildScriptBuildscriptInjectionContext, ScriptHandler>(
-        instantiateInjectionContext = { GradleBuildScriptBuildscriptInjectionContext(it) },
+    val buildscriptBlockInjection = serializeInjection<GradleBuildScriptBuildscriptInjectionContext, Pair<ScriptHandler, Project>>(
+        instantiateInjectionContext = { GradleBuildScriptBuildscriptInjectionContext(it.first, it.second) },
         code = code,
     )
     when {
         buildGradle.exists() -> buildGradle.prependToOrCreateBuildscriptBlock(
             scriptIsolatedInjectionLoadGroovy(
                 "invokeBuildScriptPluginsInjection",
-                "buildscript",
-                ScriptHandler::class.java.name,
+                "project",
+                Project::class.java.name,
                 buildscriptBlockInjection,
             )
         )
         buildGradleKts.exists() -> buildGradleKts.prependToOrCreateBuildscriptBlock(
             scriptIsolatedInjectionLoad(
                 "invokeBuildScriptPluginsInjection",
-                "buildscript",
-                ScriptHandler::class.java.name,
+                "project",
+                Project::class.java.name,
+                buildscriptBlockInjection,
+            )
+        )
+        else -> error("Can't find the build script to append the injection")
+    }
+}
+
+fun GradleProject.settingsBuildScriptBuildscriptBlockInjection(
+    code: GradleSettingsBuildScriptInjectionContext.() -> Unit,
+) {
+    markAsUsingInjections()
+    enableBuildScriptInjectionsIfNecessary(
+        settingsGradle,
+        settingsGradleKts,
+    )
+    val buildscriptBlockInjection = serializeInjection<GradleSettingsBuildScriptInjectionContext, Settings>(
+        instantiateInjectionContext = { GradleSettingsBuildScriptInjectionContext(it) },
+        code = code,
+    )
+    when {
+        settingsGradle.exists() -> settingsGradle.prependToOrCreateBuildscriptBlock(
+            scriptIsolatedInjectionLoadGroovy(
+                "invokeSettingsBuildScriptInjection",
+                "settings",
+                Settings::class.java.name,
+                buildscriptBlockInjection,
+            )
+        )
+        settingsGradleKts.exists() -> settingsGradleKts.prependToOrCreateBuildscriptBlock(
+            scriptIsolatedInjectionLoad(
+                "invokeSettingsBuildScriptInjection",
+                "settings",
+                Settings::class.java.name,
                 buildscriptBlockInjection,
             )
         )
@@ -567,7 +700,7 @@ fun GradleProject.buildScriptBuildscriptBlockInjection(
  * build.gradle.kts
  */
 private const val transferPluginRepositoriesIntoProjectRepositories = "transferPluginRepositoriesIntoProjectRepositories"
-private fun GradleProject.transferPluginRepositoriesIntoBuildScript() {
+fun GradleProject.transferPluginRepositoriesIntoBuildScript() {
     markAsUsingInjections()
     settingsBuildScriptInjection {
         if (!settings.extraProperties.has(transferPluginRepositoriesIntoProjectRepositories)) {
@@ -581,10 +714,60 @@ private fun GradleProject.transferPluginRepositoriesIntoBuildScript() {
     }
 }
 
+/**
+ * Allow [buildscript] classpath configuration to resolve the versions of plugins declared in the settings.pluginManagement.plugins
+ * dependency constraints
+ */
+private const val transferPluginDependencyConstraintsIntoProjectRepositories = "transferPluginDependencyConstraintsIntoProjectBuildscriptClasspathConfiguration"
+fun GradleProject.transferPluginDependencyConstraintsIntoBuildscriptClasspathDependencyConstraints() {
+    markAsUsingInjections()
+    settingsBuildScriptInjection {
+        val pluginVersionsField = settings.pluginManagement.resolutionStrategy.javaClass.getPrivateField("pluginVersions")
+        pluginVersionsField.isAccessible = true
+        @Suppress("UNCHECKED_CAST")
+        val pluginVersions = pluginVersionsField.get(settings.pluginManagement.resolutionStrategy) as Map<PluginId, String>
+        if (!settings.extraProperties.has(transferPluginDependencyConstraintsIntoProjectRepositories)) {
+            settings.extraProperties.set(transferPluginDependencyConstraintsIntoProjectRepositories, true)
+            settings.gradle.beforeProject { project ->
+                pluginVersions.forEach {
+                    val pluginId = it.key.id
+                    val pluginVersion = it.value
+                    project.buildscript.configurations.getByName("classpath").dependencyConstraints.add(
+                        project.buildscript.dependencies.constraints.create(
+                            "${pluginId}:${pluginId}.gradle.plugin:${pluginVersion}",
+                        )
+                    )
+                }
+            }
+        }
+    }
+}
+
+/**
+ * Transfer dependencyResolutionManagement into project for compatibility with Gradle <8.1 because we emit repositories in the
+ * build script there
+ */
+private const val transferDependencyResolutionRepositoriesIntoProjectRepositories =
+    "transferDependencyResolutionRepositoriesIntoProjectRepositories"
+
+fun GradleProject.transferDependencyResolutionRepositoriesIntoProjectRepositories() {
+    settingsBuildScriptInjection {
+        if (!settings.extraProperties.has(transferDependencyResolutionRepositoriesIntoProjectRepositories)) {
+            settings.extraProperties.set(transferDependencyResolutionRepositoriesIntoProjectRepositories, true)
+            settings.gradle.beforeProject { project ->
+                settings.dependencyResolutionManagement.repositories.all { rep ->
+                    project.repositories.add(rep)
+                }
+            }
+        }
+    }
+}
+
 private val buildscriptBlockStartPattern = Regex("""buildscript\s*\{.*""")
 private fun Path.prependToOrCreateBuildscriptBlock(code: String) = modify {
     it.prependToOrCreateBuildscriptBlock(code)
 }
+
 internal fun String.prependToOrCreateBuildscriptBlock(code: String): String {
     val content = this
     val match = buildscriptBlockStartPattern.find(content)
@@ -595,7 +778,7 @@ internal fun String.prependToOrCreateBuildscriptBlock(code: String): String {
             append(content.substring(match.range.last + 1, content.length))
         }
     } else {
-        content.insertBlockToBuildScriptAfterImports(
+        content.insertBlockToBuildScriptAfterPluginManagementAndImports(
             buildString {
                 appendLine("buildscript {")
                 appendLine(code)
@@ -670,17 +853,14 @@ private fun scriptIsolatedInjectionLoad(
     targetPropertyClassName: String,
     serializedInjectionPath: File,
 ): String {
-    val injectionClasses = System.getProperty("buildScriptInjectionsClasspath")
-        ?: error("Missing test classes output directory in property '${"buildScriptInjectionsClasspath"}'")
-    val escapedInjectionClasses = injectionClasses
-        .replace("\\", "\\\\")
-        .replace("$", "\\$")
     val lambdaName = "invokeInjection${serializedInjectionPath.name.replace("-", "_")}"
 
     return """
         
         val $lambdaName = {
-            val testClasses = arrayOf(File("$escapedInjectionClasses").toURI().toURL())
+            val testClasses = arrayOf(
+                ${escapedBuildScriptClasspathUrls()}
+            )
             val injectionLoaderClass = java.net.URLClassLoader(
                 testClasses, 
                 this.javaClass.classLoader
@@ -705,17 +885,14 @@ private fun scriptIsolatedInjectionLoadGroovy(
     targetPropertyClassName: String,
     serializedInjectionPath: File,
 ): String {
-    val injectionClasses = System.getProperty("buildScriptInjectionsClasspath")
-        ?: error("Missing test classes output directory in property '${"buildScriptInjectionsClasspath"}'")
-    val escapedInjectionClasses = injectionClasses
-        .replace("\\", "\\\\")
-        .replace("$", "\\$")
     val lambdaName = "invokeInjection${serializedInjectionPath.name.replace("-", "_")}"
 
     return """
         
         def ${lambdaName} = {
-            URL[] testClasses = [new File('${escapedInjectionClasses}').toURI().toURL()]
+            URL[] testClasses = [
+                ${escapedBuildScriptClasspathUrlsGroovy()}
+            ]
             def injectionLoaderClass = new URLClassLoader(
                 testClasses, 
                 this.getClass().classLoader
@@ -765,3 +942,14 @@ private fun injectionLoadProjectGroovy(
     
     new org.jetbrains.kotlin.gradle.testbase.InjectionLoader().invokeBuildScriptInjection(project, new java.io.File('${serializedInjectionPath.path.normalizePath()}'))
 """.trimIndent()
+
+private fun escapedBuildScriptClasspath(): List<String> {
+    val injectionClasses = System.getProperty(buildScriptInjectionsClasspathProperty)
+        ?: error("Missing required system property '${buildScriptInjectionsClasspathProperty}'")
+    return injectionClasses.split(":").map { path ->
+        path.replace("\\", "\\\\").replace("$", "\\$")
+    }
+}
+
+private fun escapedBuildScriptClasspathUrlsGroovy() = escapedBuildScriptClasspath().joinToString("\n") { "new File('${it}').toURI().toURL()," }
+private fun escapedBuildScriptClasspathUrls() = escapedBuildScriptClasspath().joinToString("\n") { "File(\"$it\").toURI().toURL()," }

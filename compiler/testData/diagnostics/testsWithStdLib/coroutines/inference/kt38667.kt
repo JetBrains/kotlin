@@ -35,3 +35,7 @@ fun main() {
 
     <!DEBUG_INFO_EXPRESSION_TYPE("TransitionDefinition<kotlin.Int>")!>defn<!>
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, classReference, funWithExtensionReceiver, functionDeclaration, functionalType,
+infix, integerLiteral, interfaceDeclaration, lambdaLiteral, localProperty, nullableType, propertyDeclaration,
+typeConstraint, typeParameter, typeWithExtension */

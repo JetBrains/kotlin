@@ -15,25 +15,27 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirInlineDeclarationChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.extra.FirAnonymousUnusedParamChecker
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
-import org.jetbrains.kotlin.fir.declarations.FirDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.expressions.FirGetClassCall
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
-import org.jetbrains.kotlin.fir.resolve.SessionHolder
+import org.jetbrains.kotlin.fir.SessionAndScopeSessionHolder
+import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirInlineBodyResolvableExpressionChecker
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculator
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirFileSymbol
+import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 
 /**
  * This class is assumed to be read-only (all the modifications are assumed to happen on CheckerContextForProvider side)
  */
-abstract class CheckerContext : DiagnosticContext {
+abstract class CheckerContext : DiagnosticContext, SessionAndScopeSessionHolder {
     // Services
-    abstract val sessionHolder: SessionHolder
+    abstract val sessionHolder: SessionAndScopeSessionHolder
     abstract val returnTypeCalculator: ReturnTypeCalculator
 
     // Context
-    abstract val containingDeclarations: List<FirDeclaration>
+    abstract val containingDeclarations: List<FirBasedSymbol<*>>
 
     /** Contains qualified access, annotation call, delegated constructor call, and variable assignment. */
     abstract val callsOrAssignments: List<FirStatement>
@@ -42,6 +44,7 @@ abstract class CheckerContext : DiagnosticContext {
     abstract val containingElements: List<FirElement>
     abstract val isContractBody: Boolean
     abstract val inlineFunctionBodyContext: FirInlineDeclarationChecker.InlineFunctionBodyContext?
+    abstract val inlinableParameterContext: FirInlineBodyResolvableExpressionChecker.InlinableParameterContext?
     abstract val lambdaBodyContext: FirAnonymousUnusedParamChecker.LambdaBodyContext?
 
     // Suppress
@@ -50,10 +53,10 @@ abstract class CheckerContext : DiagnosticContext {
     abstract val allWarningsSuppressed: Boolean
     abstract val allErrorsSuppressed: Boolean
 
-    val session: FirSession
+    override val session: FirSession
         get() = sessionHolder.session
 
-    val scopeSession: ScopeSession
+    override val scopeSession: ScopeSession
         get() = sessionHolder.scopeSession
 
     override fun isDiagnosticSuppressed(diagnostic: KtDiagnostic): Boolean {
@@ -69,6 +72,8 @@ abstract class CheckerContext : DiagnosticContext {
             Severity.INFO -> allInfosSuppressed
             Severity.WARNING -> allWarningsSuppressed
             Severity.ERROR -> allErrorsSuppressed
+            // diagnostic factory cannot have FIXED_WARNING severity
+            Severity.FIXED_WARNING -> shouldNotBeCalled()
         }
 
         return suppressedByAll || name in suppressedDiagnostics
@@ -77,10 +82,10 @@ abstract class CheckerContext : DiagnosticContext {
     override val languageVersionSettings: LanguageVersionSettings
         get() = session.languageVersionSettings
 
-    abstract val containingFile: FirFile?
+    abstract val containingFileSymbol: FirFileSymbol?
 
     override val containingFilePath: String?
-        get() = containingFile?.sourceFile?.path
+        get() = containingFileSymbol?.sourceFile?.path
 }
 
 /**
@@ -89,8 +94,7 @@ abstract class CheckerContext : DiagnosticContext {
  * E.g., property accessor is either getter or setter, but a type-based search could return, say,
  *   the closest setter, while we want to keep searching for a getter.
  */
-
-inline fun <reified T : FirElement> CheckerContext.findClosest(check: (T) -> Boolean = { true }): T? {
+inline fun <reified T : FirBasedSymbol<*>> CheckerContext.findClosest(check: (T) -> Boolean = { true }): T? {
     for (it in containingDeclarations.asReversed()) {
         return (it as? T)?.takeIf(check) ?: continue
     }

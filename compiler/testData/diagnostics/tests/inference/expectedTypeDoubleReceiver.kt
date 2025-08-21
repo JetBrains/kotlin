@@ -17,3 +17,6 @@ val no2A = A().<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>fooA<!>().<!DEBUG_I
 val correct1 = A().fooA() as A
 val correct2 = foo<A>().fooA() as A
 val correct3 = A().fooA<A>().fooA() as A
+
+/* GENERATED_FIR_TAGS: asExpression, classDeclaration, functionDeclaration, nullableType, propertyDeclaration,
+typeParameter */

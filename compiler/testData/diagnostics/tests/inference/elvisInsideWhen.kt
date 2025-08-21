@@ -18,3 +18,7 @@ fun foo(x: Int, o: Out<String>, oNullable: Out<String>?) {
         else -> myOut<Any?>()
     }
 }
+
+/* GENERATED_FIR_TAGS: capturedType, comparisonExpression, elvisExpression, equalityExpression, functionDeclaration,
+integerLiteral, interfaceDeclaration, localProperty, nullableType, out, outProjection, propertyDeclaration,
+starProjection, typeParameter, vararg, whenExpression */

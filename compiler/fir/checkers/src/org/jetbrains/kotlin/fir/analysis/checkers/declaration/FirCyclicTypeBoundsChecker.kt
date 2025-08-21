@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
+import com.intellij.util.containers.addIfNotNull
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
@@ -14,53 +15,47 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeCyclicTypeBound
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.name.Name
 
 object FirCyclicTypeBoundsChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
 
-    override fun check(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirDeclaration) {
         if (declaration !is FirMemberDeclaration) return
         if (declaration is FirConstructor || declaration is FirTypeAlias) return
+        val actualTypeParameters = declaration.typeParameters.filterNot { it is FirOuterClassTypeParameterRef }.takeIf { it.isNotEmpty() }
+            ?: return
 
-        val processed = mutableSetOf<Name>()
-        val cycles = mutableSetOf<Name>()
-        val graph = declaration.typeParameters.associate { param ->
-            param.symbol.name to param.symbol.resolvedBounds.flatMap { extractTypeParamNames(it) }.toSet()
-        }
-        val graphFunc = { name: Name -> graph.getOrDefault(name, emptySet()) }
-        val path = mutableListOf<Name>()
+        val processed = mutableSetOf<FirTypeParameterSymbol>()
+        val typeParameterCycles = mutableListOf<List<FirTypeParameterSymbol>>()
+        val path = mutableListOf<FirTypeParameterSymbol>()
 
-        fun findCycles(
-            node: Name
-        ) {
-            if (processed.add(node)) {
-                path.add(node)
-                graphFunc(node).forEach { nextNode ->
-                    findCycles(nextNode)
+        fun findCycles(typeParameterSymbol: FirTypeParameterSymbol) {
+            if (processed.add(typeParameterSymbol)) {
+                path.add(typeParameterSymbol)
+                val resolvedBounds = typeParameterSymbol.resolvedBounds.flatMap { extractTypeParamSymbols(it) }.toSet()
+                resolvedBounds.forEach {
+                    findCycles(it)
                 }
                 path.removeAt(path.size - 1)
-            } else {
-                cycles.addAll(path.dropWhile { it != node })
+            } else if (path.isNotEmpty()) {
+                typeParameterCycles.add(path.dropWhile { it != typeParameterSymbol })
             }
         }
 
-        declaration.typeParameters.forEach { param -> findCycles(param.symbol.name) }
+        actualTypeParameters.forEach { param -> findCycles(param.symbol) }
 
-        if (cycles.isNotEmpty()) {
-            declaration.typeParameters
-                .filter { cycles.contains(it.symbol.name) }
-                .forEach { param ->
-                    //for some reason FE 1.0 report differently for class declarations
-                    val targets = if (declaration is FirRegularClass) {
-                        param.symbol.originalBounds().filter { cycles.contains(extractTypeParamName(it.coneType)) }
-                            .mapNotNull { it.source }
-                    } else {
-                        listOf(param.source)
-                    }
-                    targets.forEach {
-                        reporter.reportOn(it, FirErrors.CYCLIC_GENERIC_UPPER_BOUND, context)
-                    }
+        for (typeParameterCycle in typeParameterCycles) {
+            for (typeParameter in typeParameterCycle) {
+                //for some reason FE 1.0 report differently for class declarations
+                val targets = if (declaration is FirRegularClass) {
+                    typeParameter.originalBounds().filter { typeParameterCycle.contains(extractTypeParamSymbol(it.coneType)) }.mapNotNull { it.source }
+                } else {
+                    listOf(typeParameter.source)
                 }
+                targets.forEach {
+                    reporter.reportOn(it, FirErrors.CYCLIC_GENERIC_UPPER_BOUND, typeParameterCycle)
+                }
+            }
         }
     }
 
@@ -74,9 +69,9 @@ object FirCyclicTypeBoundsChecker : FirBasicDeclarationChecker(MppCheckerKind.Co
         }
 
 
-    private fun extractTypeParamNames(ref: FirTypeRef): Set<Name> =
-        ref.unwrapBound().mapNotNull { extractTypeParamName(it.coneType) }.toSet()
+    private fun extractTypeParamSymbols(ref: FirTypeRef): List<FirTypeParameterSymbol> =
+        ref.unwrapBound().mapNotNull { extractTypeParamSymbol(it.coneType) }
 
-    private fun extractTypeParamName(type: ConeKotlinType): Name? =
-        (type.unwrapToSimpleTypeUsingLowerBound() as? ConeTypeParameterType)?.lookupTag?.name
+    private fun extractTypeParamSymbol(type: ConeKotlinType): FirTypeParameterSymbol? =
+        (type.unwrapToSimpleTypeUsingLowerBound() as? ConeTypeParameterType)?.lookupTag?.typeParameterSymbol
 }

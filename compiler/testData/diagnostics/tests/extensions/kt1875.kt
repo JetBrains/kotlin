@@ -15,8 +15,11 @@ fun test(t: T) {
 }
 
 fun test1(t: T?) {
-    t<!UNSAFE_CALL!>.<!><!FUNCTION_EXPECTED!>f<!>(1) // todo resolve f as value and report UNSAFE_CALL
+    t<!UNSAFE_CALL!>.<!><!FUNCTION_EXPECTED!>f<!>(1)
     t?.<!UNSAFE_IMPLICIT_INVOKE_CALL!>f<!>(1)
     t<!UNSAFE_CALL!>.<!>f?.invoke(1)
     t?.f?.invoke(1)
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionalType, integerLiteral, interfaceDeclaration, nullableType,
+propertyDeclaration, safeCall, typeWithExtension */

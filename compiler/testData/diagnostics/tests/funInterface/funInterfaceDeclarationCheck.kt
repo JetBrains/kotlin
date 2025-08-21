@@ -104,3 +104,5 @@ interface BaseWithDefaultValue {
 
 <!FUN_INTERFACE_ABSTRACT_METHOD_WITH_DEFAULT_VALUE!>fun<!> interface DeriveDefault : BaseWithDefaultValue
 
+/* GENERATED_FIR_TAGS: classDeclaration, funInterface, functionDeclaration, getter, integerLiteral, interfaceDeclaration,
+localClass, nestedClass, nullableType, propertyDeclaration, stringLiteral, suspend, typeParameter */

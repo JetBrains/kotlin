@@ -45,3 +45,6 @@ interface MyTrait {
 
     var n: Int                       <!WRONG_MODIFIER_TARGET!>abstract<!> get <!WRONG_MODIFIER_TARGET!>abstract<!> set(v: Int) {}
 }
+
+/* GENERATED_FIR_TAGS: assignment, functionDeclaration, getter, integerLiteral, interfaceDeclaration,
+propertyDeclaration, setter */

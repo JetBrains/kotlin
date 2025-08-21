@@ -19,3 +19,6 @@ package kotlin.jvm
 
 @JvmInline
 actual value class VC(val a: Any)
+
+/* GENERATED_FIR_TAGS: actual, annotationDeclaration, classDeclaration, expect, primaryConstructor, propertyDeclaration,
+value */

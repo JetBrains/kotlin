@@ -22,3 +22,5 @@ fun foo() {
         return@bag
     }
 }
+
+/* GENERATED_FIR_TAGS: anonymousFunction, functionDeclaration, localFunction, localProperty, propertyDeclaration */

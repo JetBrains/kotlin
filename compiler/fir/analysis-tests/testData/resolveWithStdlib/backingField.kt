@@ -6,3 +6,5 @@ var myProperty = listOf(1, 2, 3)
     set(param) {
         field = param
     }
+
+/* GENERATED_FIR_TAGS: additiveExpression, assignment, getter, integerLiteral, propertyDeclaration, setter */

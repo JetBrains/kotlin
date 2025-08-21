@@ -9,3 +9,6 @@ fun foo() {
         s<!UNSAFE_CALL!>.<!>length
     }
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, forLoop, functionDeclaration, javaFunction, localProperty, nullableType,
+propertyDeclaration */

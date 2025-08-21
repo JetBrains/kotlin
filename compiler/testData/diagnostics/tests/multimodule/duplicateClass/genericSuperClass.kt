@@ -41,3 +41,6 @@ fun test() {
     c(<!TYPE_MISMATCH!>M1().b<!>) // Type arguments do not match
     d(M1().b) // Type arguments do match
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, interfaceDeclaration, nullableType, propertyDeclaration,
+typeParameter */

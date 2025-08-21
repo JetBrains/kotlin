@@ -10,10 +10,12 @@ import org.jetbrains.kotlin.builtins.StandardNames
 object StandardClassIds {
     val BASE_KOTLIN_PACKAGE = FqName("kotlin")
     val BASE_REFLECT_PACKAGE = BASE_KOTLIN_PACKAGE.child(Name.identifier("reflect"))
+    val BASE_EXPERIMENTAL_PACKAGE = BASE_KOTLIN_PACKAGE.child(Name.identifier("experimental"))
     val BASE_COLLECTIONS_PACKAGE = BASE_KOTLIN_PACKAGE.child(Name.identifier("collections"))
     val BASE_SEQUENCES_PACKAGE = BASE_KOTLIN_PACKAGE.child(Name.identifier("sequences"))
     val BASE_RANGES_PACKAGE = BASE_KOTLIN_PACKAGE.child(Name.identifier("ranges"))
     val BASE_JVM_PACKAGE = BASE_KOTLIN_PACKAGE.child(Name.identifier("jvm"))
+    val BASE_JS_PACKAGE = BASE_KOTLIN_PACKAGE.child(Name.identifier("js"))
     val BASE_ANNOTATIONS_JVM_PACKAGE = BASE_KOTLIN_PACKAGE.child(Name.identifier("annotations")).child(Name.identifier("jvm"))
     val BASE_JVM_INTERNAL_PACKAGE = BASE_JVM_PACKAGE.child(Name.identifier("internal"))
     val BASE_JVM_FUNCTIONS_PACKAGE = BASE_JVM_PACKAGE.child(Name.identifier("functions"))
@@ -162,7 +164,25 @@ object StandardClassIds {
 
     val EnumEntries = "EnumEntries".enumsId()
 
+    val AtomicBoolean = "AtomicBoolean".atomicsId()
+    val AtomicInt = "AtomicInt".atomicsId()
+    val AtomicLong = "AtomicLong".atomicsId()
     val AtomicReference = "AtomicReference".atomicsId()
+
+    val atomicByPrimitive = mapOf(
+        Boolean to AtomicBoolean,
+        Int to AtomicInt,
+        Long to AtomicLong,
+    )
+
+    val AtomicArray = "AtomicArray".atomicsId()
+    val AtomicIntArray = "AtomicIntArray".atomicsId()
+    val AtomicLongArray = "AtomicLongArray".atomicsId()
+
+    val atomicArrayByPrimitive = mapOf(
+        Int to AtomicIntArray,
+        Long to AtomicLongArray,
+    )
 
     object Annotations {
         val Suppress = "Suppress".baseId()
@@ -173,6 +193,7 @@ object StandardClassIds {
         val Deprecated = "Deprecated".baseId()
         val DeprecatedSinceKotlin = "DeprecatedSinceKotlin".baseId()
         val RequireKotlin = "RequireKotlin".internalId()
+        val DslMarker = "DslMarker".baseId()
 
         val ConsistentCopyVisibility = "ConsistentCopyVisibility".baseId()
         val ExposedCopyVisibility = "ExposedCopyVisibility".baseId()
@@ -185,6 +206,7 @@ object StandardClassIds {
         val Target = "Target".annotationId()
         val Repeatable = "Repeatable".annotationId()
         val MustBeDocumented = "MustBeDocumented".annotationId()
+        val ExpectRefinement = "ExpectRefinement".experimentalId()
 
         val Volatile = "Volatile".concurrentId()
 
@@ -207,6 +229,9 @@ object StandardClassIds {
 
         val WasExperimental = "WasExperimental".baseId()
 
+        val MustUseReturnValue = "MustUseReturnValue".baseId()
+        val IgnorableReturnValue = "IgnorableReturnValue".baseId()
+
         val AccessibleLateinitPropertyLiteral = "AccessibleLateinitPropertyLiteral".internalId()
 
         val OptionalExpectation = "OptionalExpectation".baseId()
@@ -216,6 +241,10 @@ object StandardClassIds {
         val jvmStatic = "JvmStatic".jvmId()
         val jvmName = "JvmName".jvmId()
         val Transient = "Transient".jvmId()
+
+        val jsExport = "JsExport".jsId()
+        val jsExportIgnore = jsExport.createNestedClassId(Name.identifier("Ignore"))
+        val jsNoDispatchReceiver = "JsNoDispatchReceiver".jsId()
 
         val AssociatedObjectKey = "AssociatedObjectKey".reflectId()
         val ExperimentalAssociatedObjects = "ExperimentalAssociatedObjects".reflectId()
@@ -257,6 +286,11 @@ object StandardClassIds {
         val not = "not".callableId(Boolean)
 
         val contract = "contract".callableId(BASE_CONTRACTS_PACKAGE)
+
+        val atomicReferenceCompareAndSet = "compareAndSet".callableId(AtomicReference)
+        val atomicReferenceCompareAndExchange = "compareAndExchange".callableId(AtomicReference)
+        val atomicArrayCompareAndSetAt = "compareAndSetAt".callableId(AtomicArray)
+        val atomicArrayCompareAndExchangeAt = "compareAndExchangeAt".callableId(AtomicArray)
     }
 
     object Collections {
@@ -279,6 +313,7 @@ object StandardClassIds {
 }
 
 private fun String.baseId() = ClassId(StandardClassIds.BASE_KOTLIN_PACKAGE, Name.identifier(this))
+private fun String.experimentalId() = ClassId(StandardClassIds.BASE_EXPERIMENTAL_PACKAGE, Name.identifier(this))
 private fun ClassId.unsignedId() = ClassId(StandardClassIds.BASE_KOTLIN_PACKAGE, Name.identifier("U" + shortClassName.identifier))
 private fun String.reflectId() = ClassId(StandardClassIds.BASE_REFLECT_PACKAGE, Name.identifier(this))
 private fun Name.primitiveArrayId() = ClassId(StandardClassIds.Array.packageFqName, Name.identifier(identifier + StandardClassIds.Array.shortClassName.identifier))
@@ -300,5 +335,7 @@ private fun String.testId() = ClassId(StandardClassIds.BASE_TEST_PACKAGE, Name.i
 
 private fun String.callableId(packageName: FqName) = CallableId(packageName, Name.identifier(this))
 private fun String.callableId(classId: ClassId) = CallableId(classId, Name.identifier(this))
+
+private fun String.jsId() = ClassId(StandardClassIds.BASE_JS_PACKAGE, Name.identifier(this))
 
 private fun <K, V> Map<K, V>.inverseMap(): Map<V, K> = entries.associate { (k, v) -> v to k }

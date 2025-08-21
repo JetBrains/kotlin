@@ -17,6 +17,9 @@ enum class JsModuleKind(val kind: String) {
         @JvmStatic
         fun fromKind(kind: String): JsModuleKind =
             JsModuleKind.values().firstOrNull { it.kind == kind }
-                ?: throw IllegalArgumentException("Unknown JS module kind: $kind")
+                ?: throw IllegalArgumentException(
+                    "Unknown JS module kind: $kind,\navailable kinds: ${JsModuleKind.values().joinToString { it.kind }}\n" +
+                            "Prefer configuring 'moduleKind' value via 'compilerOptions' DSL: https://kotl.in/compiler-options-dsl"
+                )
     }
 }

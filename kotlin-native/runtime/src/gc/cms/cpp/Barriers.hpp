@@ -32,7 +32,7 @@ private:
 };
 
 // Must be called during STW.
-void enableBarriers(int64_t epoch) noexcept;
+void enableBarriers(uint64_t epoch) noexcept;
 void switchToWeakProcessingBarriers() noexcept;
 void disableBarriers() noexcept;
 
@@ -40,7 +40,7 @@ void beforeHeapRefUpdate(mm::DirectRefAccessor ref, ObjHeader* value, bool loadA
 
 ObjHeader* weakRefReadBarrier(std_support::atomic_ref<ObjHeader*> weakReferee) noexcept;
 
-class SpecialRefReleaseGuard::Impl : MoveOnly {
+class ExternalRCRefReleaseGuard::Impl : MoveOnly {
 public:
     explicit Impl(mm::DirectRefAccessor ref) noexcept;
     Impl(Impl&& other) = default;

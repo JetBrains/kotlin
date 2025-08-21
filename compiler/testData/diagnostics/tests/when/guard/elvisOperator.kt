@@ -16,3 +16,7 @@ fun elvisInGuard(x: Any, y: Boolean?) {
         else -> 1
     }
 }
+
+/* GENERATED_FIR_TAGS: andExpression, classDeclaration, elvisExpression, equalityExpression, functionDeclaration,
+guardCondition, ifExpression, integerLiteral, isExpression, nullableType, primaryConstructor, propertyDeclaration,
+sealed, smartcast, whenExpression, whenWithSubject */

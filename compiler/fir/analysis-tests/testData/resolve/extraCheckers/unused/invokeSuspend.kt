@@ -4,3 +4,5 @@ suspend fun foo(action: suspend () -> Unit) {
 
     x()
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionalType, localProperty, propertyDeclaration, suspend */

@@ -32,23 +32,22 @@ internal object FirSerializationPluginCallChecker : FirFunctionCallChecker(MppCh
     private val parameterNameFrom: Name = Name.identifier("from")
     private val parameterNameBuilderAction: Name = Name.identifier("builderAction")
 
-    override fun check(expression: FirFunctionCall, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(expression: FirFunctionCall) {
         val function = expression.calleeReference.symbol as? FirNamedFunctionSymbol ?: return
         if (!isJsonFormatCreation(function)) return
 
         if (isDefaultFormat(expression)) {
             reporter.reportOn(
                 expression.source,
-                FirSerializationErrors.JSON_FORMAT_REDUNDANT_DEFAULT,
-                context
+                FirSerializationErrors.JSON_FORMAT_REDUNDANT_DEFAULT
             )
         } else {
             val parentCall = context.callsOrAssignments.getOrNull(context.callsOrAssignments.size - 2) as? FirFunctionCall ?: return
             if (parentCall.explicitReceiver !== expression) return
             reporter.reportOn(
                 expression.source,
-                FirSerializationErrors.JSON_FORMAT_REDUNDANT,
-                context
+                FirSerializationErrors.JSON_FORMAT_REDUNDANT
             )
         }
     }

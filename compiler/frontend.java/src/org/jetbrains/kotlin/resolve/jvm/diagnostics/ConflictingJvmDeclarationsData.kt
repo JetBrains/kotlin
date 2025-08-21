@@ -17,9 +17,10 @@
 package org.jetbrains.kotlin.resolve.jvm.diagnostics
 
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMemberSignature
 
 class ConflictingJvmDeclarationsData(
     val classInternalName: String,
-    val signature: RawSignature,
+    val signature: JvmMemberSignature,
     val signatureDescriptors: Collection<DeclarationDescriptor>,
 )

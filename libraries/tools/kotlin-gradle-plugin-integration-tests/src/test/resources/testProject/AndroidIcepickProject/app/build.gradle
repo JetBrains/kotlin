@@ -13,16 +13,16 @@ dependencies {
 }
 
 android {
-    namespace "com.github.frankiesardo.icepick"
+    namespace = "com.github.frankiesardo.icepick"
 
-    compileSdkVersion 23
+    compileSdkVersion = 23
 
     defaultConfig {
-        applicationId "com.example.icepick.kotlin"
-        minSdkVersion 14
-        targetSdkVersion 23
-        versionCode 1
-        versionName "1.0"
+        applicationId = "com.example.icepick.kotlin"
+        minSdkVersion = 14
+        targetSdkVersion = 23
+        versionCode = 1
+        versionName = "1.0"
     }
 
     kotlin {
@@ -30,7 +30,7 @@ android {
     }
 
     lintOptions {
-        abortOnError false
+        abortOnError = false
     }
     sourceSets {
         main.java.srcDirs += 'src/main/kotlin'

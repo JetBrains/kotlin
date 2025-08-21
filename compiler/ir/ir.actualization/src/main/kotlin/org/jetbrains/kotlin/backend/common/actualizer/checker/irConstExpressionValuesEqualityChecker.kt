@@ -49,6 +49,8 @@ internal fun IrExpectActualMatchingContext.areIrExpressionConstValuesEqual(
                     }
         }
 
+        a is IrErrorExpression && b is IrErrorExpression -> true
+
         else -> error("Not handled expression types $a $b")
     }
 }

@@ -168,20 +168,23 @@ private fun makeKotlinType(
     return classifier.descriptor.defaultType.replace(newArguments = kotlinTypeArguments).makeNullableAsSpecified(hasQuestionMark)
 }
 
-val IrClassifierSymbol.defaultType: IrType
+val IrClassifierSymbol.defaultType: IrSimpleType
     get() = when (this) {
         is IrClassSymbol -> owner.defaultType
-        is IrTypeParameterSymbol -> owner.defaultType
+        is IrTypeParameterSymbol -> defaultType
         is IrScriptSymbol -> unexpectedSymbolKind<IrClassifierSymbol>()
     }
 
-val IrTypeParameter.defaultType: IrSimpleType
+val IrTypeParameterSymbol.defaultType: IrSimpleType
     get() = IrSimpleTypeImpl(
-        symbol,
-        SimpleTypeNullability.NOT_SPECIFIED,
+        classifier = this,
+        nullability = SimpleTypeNullability.NOT_SPECIFIED,
         arguments = emptyList(),
         annotations = emptyList()
     )
+
+val IrTypeParameter.defaultType: IrSimpleType
+    get() = symbol.defaultType
 
 val IrClassSymbol.starProjectedType: IrSimpleType
     get() = IrSimpleTypeImpl(

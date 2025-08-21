@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.analysis.api.descriptors.types.base.KaFe10Type
 import org.jetbrains.kotlin.analysis.api.descriptors.types.base.renderForDebugging
 import org.jetbrains.kotlin.analysis.api.descriptors.utils.KaFe10JvmTypeMapperContext
 import org.jetbrains.kotlin.analysis.api.impl.base.KaBaseContextReceiver
+import org.jetbrains.kotlin.analysis.api.impl.base.resolution.KaBaseFunctionValueParameter
 import org.jetbrains.kotlin.analysis.api.impl.base.types.KaBaseResolvedClassTypeQualifier
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassLikeSymbol
@@ -33,6 +34,11 @@ internal class KaFe10FunctionType(
     private val descriptor: FunctionClassDescriptor,
     override val analysisContext: Fe10AnalysisContext
 ) : KaFunctionType(), KaFe10Type {
+    @Deprecated(
+        "Use `isMarkedNullable`, `isNullable` or `hasFlexibleNullability` instead. See KDocs for the migration guide",
+        replaceWith = ReplaceWith("this.isMarkedNullable")
+    )
+    @Suppress("Deprecation")
     override val nullability: KaTypeNullability
         get() = withValidityAssertion { fe10Type.ktNullability }
 
@@ -92,6 +98,14 @@ internal class KaFe10FunctionType(
                 descriptor.functionTypeKind.isReflectType -> fe10Type.arguments.dropLast(1)
                 else -> fe10Type.getValueParameterTypesFromFunctionType()
             }.map { it.type.toKtType(analysisContext) }
+        }
+
+    override val parameters: List<KaFunctionValueParameter>
+        get() = withValidityAssertion {
+            parameterTypes.map { type ->
+                val name = (type as KaFe10Type).fe10Type.extractParameterNameFromFunctionTypeArgument()
+                KaBaseFunctionValueParameter(name, type)
+            }
         }
 
     override val returnType: KaType

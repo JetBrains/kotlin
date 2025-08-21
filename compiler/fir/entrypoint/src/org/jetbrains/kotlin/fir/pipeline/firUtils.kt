@@ -22,8 +22,8 @@ import kotlin.reflect.KFunction2
 
 fun FirSession.buildFirViaLightTree(
     files: Collection<KtSourceFile>,
-    diagnosticsReporter: DiagnosticReporter? = null,
-    reportFilesAndLines: ((Int, Int) -> Unit)? = null
+    diagnosticsReporter: DiagnosticReporter?,
+    reportFilesAndLines: ((Int, Int) -> Unit)?,
 ): List<FirFile> {
     val firProvider = (firProvider as FirProviderImpl)
     val sourcesToPathsMapper = sourcesToPathsMapper

@@ -27,3 +27,5 @@ fun main() {
     foo(1, p3 = 2.0, <!MIXING_NAMED_AND_POSITIONAL_ARGUMENTS!>""<!>)
     foo(1, p3 = 2.0, <!MIXING_NAMED_AND_POSITIONAL_ARGUMENTS!>3.0<!>)
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral, stringLiteral */

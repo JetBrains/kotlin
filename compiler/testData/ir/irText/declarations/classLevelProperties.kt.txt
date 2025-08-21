@@ -30,16 +30,16 @@ class C {
     }
 )
     get(): Int {
-      return <this>.#test7$delegate.getValue<Int>(thisRef = <this>, property = C::test7)
+      return getValue<Int>(/* <this> = <this>.#test7$delegate, */ thisRef = <this>, property = C::test7)
     }
 
   var test8: Int /* by */
     field = hashMapOf<String, Int>()
     get(): Int {
-      return <this>.#test8$delegate.getValue<Int, Int>(thisRef = <this>, property = C::test8)
+      return getValue<Int, Int>(/* <this> = <this>.#test8$delegate, */ thisRef = <this>, property = C::test8)
     }
     set(<set-?>: Int) {
-      return <this>.#test8$delegate.setValue<Int>(thisRef = <this>, property = C::test8, value = <set-?>)
+      return setValue<Int>(/* <this> = <this>.#test8$delegate, */ thisRef = <this>, property = C::test8, value = <set-?>)
     }
 
   constructor() /* primary */ {

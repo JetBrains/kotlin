@@ -54,3 +54,7 @@ fun case3() {
         <!INCOMPATIBLE_TYPES!>A.A2<!> -> B() //should be INCOMPATIBLE_TYPES
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, enumDeclaration, enumEntry, equalityExpression, functionDeclaration,
+ifExpression, localProperty, primaryConstructor, propertyDeclaration, smartcast, stringLiteral, whenExpression,
+whenWithSubject */

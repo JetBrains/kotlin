@@ -1,10 +1,13 @@
 element: df.column
-implicit receivers:
-  type: KaUsualClassType:
-    annotations: []
-    typeArguments: []
-    type: <local>/Scope1
-  owner symbol: KaFirLocalVariableSymbol
+implicit values:
+  KaImplicitReceiver:
+    scopeIndexInTower = 0
+    type = KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: <local>/Scope1
+    ownerSymbol = KaLocalVariableSymbol:
+      val df: DataFrame<<local>.DataFrameType>
 
 scopes:
   TypeScope, index = 0
@@ -35,19 +38,19 @@ scopes:
           visibility: PRIVATE
         callableId: null
         compilerVisibility: Local
+        contextParameters: []
         contextReceivers: []
         getter: KaPropertyGetterSymbol:
           annotations: []
           callableId: null
           compilerVisibility: Local
           contextReceivers: []
-          hasBody: false
           hasStableParameterNames: true
           isActual: false
-          isDefault: true
           isExpect: false
           isExtension: false
           isInline: false
+          isNotDefault: false
           isOverride: false
           location: PROPERTY
           modality: FINAL
@@ -138,6 +141,7 @@ scopes:
         annotations: []
         callableId: kotlin/Any.equals
         compilerVisibility: Public
+        contextParameters: []
         contextReceivers: []
         contractEffects: []
         hasStableParameterNames: true
@@ -195,6 +199,7 @@ scopes:
         annotations: []
         callableId: kotlin/Any.hashCode
         compilerVisibility: Public
+        contextParameters: []
         contextReceivers: []
         contractEffects: []
         hasStableParameterNames: true
@@ -226,6 +231,7 @@ scopes:
         annotations: []
         callableId: kotlin/Any.toString
         compilerVisibility: Public
+        contextParameters: []
         contextReceivers: []
         contractEffects: []
         hasStableParameterNames: true
@@ -289,6 +295,7 @@ scopes:
         isActual: false
         isExpect: false
         isExtension: false
+        isLateInit: false
         isVal: true
         location: LOCAL
         modality: FINAL
@@ -447,6 +454,7 @@ scopes:
         ]
         callableId: /add
         compilerVisibility: Public
+        contextParameters: []
         contextReceivers: []
         contractEffects: []
         hasStableParameterNames: true
@@ -588,6 +596,7 @@ scopes:
         annotations: []
         callableId: /test_1
         compilerVisibility: Public
+        contextParameters: []
         contextReceivers: []
         contractEffects: []
         hasStableParameterNames: true

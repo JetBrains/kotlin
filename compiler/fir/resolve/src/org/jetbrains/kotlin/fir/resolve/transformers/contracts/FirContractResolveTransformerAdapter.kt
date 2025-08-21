@@ -45,16 +45,14 @@ class FirContractResolveTransformerAdapter(session: FirSession, scopeSession: Sc
 fun <F : FirClassLikeDeclaration> F.runContractResolveForLocalClass(
     session: FirSession,
     scopeSession: ScopeSession,
-    outerBodyResolveContext: BodyResolveContext,
-    targetedClasses: Set<FirClassLikeDeclaration>
+    context: BodyResolveContext
 ): F {
-    val newContext = outerBodyResolveContext.createSnapshotForLocalClasses(
+    return context.withReturnTypeCalculator(
         ReturnTypeCalculatorForFullBodyResolve.Contract,
-        targetedClasses
-    )
-    val transformer = FirContractResolveTransformer(session, scopeSession, newContext)
-
-    return this.transformSingle(transformer, ResolutionMode.ContextIndependent)
+    ) {
+        val transformer = FirContractResolveTransformer(session, scopeSession, context)
+        this.transformSingle(transformer, ResolutionMode.ContextIndependent)
+    }
 }
 
 fun <F : FirFunction> F.runContractResolveForFunction(

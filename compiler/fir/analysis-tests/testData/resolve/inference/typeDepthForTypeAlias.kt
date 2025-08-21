@@ -13,3 +13,6 @@ fun foo(
 }
 
 fun <T> T.myApply(x: T.() -> Unit) {}
+
+/* GENERATED_FIR_TAGS: funWithExtensionReceiver, functionDeclaration, functionalType, lambdaLiteral, nullableType,
+typeAliasDeclaration, typeParameter, typeWithExtension */

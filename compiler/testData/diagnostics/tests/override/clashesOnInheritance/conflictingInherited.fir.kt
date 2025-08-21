@@ -30,3 +30,6 @@ open class X5 : C() {
     <!CONFLICTING_OVERLOADS!>fun some(text: String)<!> = ""
 }
 open <!CONFLICTING_INHERITED_MEMBERS!>class X6<!> : X5()
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, functionDeclaration, interfaceDeclaration, nullableType,
+stringLiteral, typeParameter */

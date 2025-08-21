@@ -36,3 +36,5 @@ internal class Z2 {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, inline, inner, integerLiteral, propertyDeclaration */

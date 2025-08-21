@@ -48,7 +48,7 @@ internal class CAdapterApiExporter(
             builtIns.charType, builtIns.booleanType,
             builtIns.unitType
     ) + UnsignedType.values().map {
-        // Unfortunately, `context.ir` and `context.irBuiltins` are not initialized, so `context.ir.symbols.ubyte`, etc, are unreachable.
+        // Unfortunately, `context.symbols` and `context.irBuiltins` are not initialized, so `context.symbols.ubyte`, etc, are unreachable.
         builtIns.builtInsModule.findClassAcrossModuleDependencies(it.classId)!!.defaultType
     }
 

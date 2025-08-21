@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.protobuf.GeneratedMessageLite
 import org.jetbrains.kotlin.protobuf.GeneratedMessageLite.GeneratedExtension
-import org.jetbrains.kotlin.resolve.CompilerDeserializationConfiguration
+import org.jetbrains.kotlin.resolve.KlibCompilerDeserializationConfiguration
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 import org.jetbrains.kotlin.serialization.deserialization.getClassId
 
@@ -50,8 +50,8 @@ abstract class MetadataLibraryBasedSymbolProvider<L : MetadataLibrary>(
 
     private val annotationDeserializer = KlibBasedAnnotationDeserializer(session)
     private val constDeserializer = FirConstDeserializer(KlibMetadataSerializerProtocol)
-    protected val deserializationConfiguration: CompilerDeserializationConfiguration =
-        CompilerDeserializationConfiguration(session.languageVersionSettings)
+    protected val deserializationConfiguration: KlibCompilerDeserializationConfiguration =
+        KlibCompilerDeserializationConfiguration(session.languageVersionSettings)
     private val cachedFragments: MutableMap<L, MutableMap<Pair<String, String>, ProtoBuf.PackageFragment>> = mutableMapOf()
 
     private fun getPackageFragment(
@@ -70,10 +70,12 @@ abstract class MetadataLibraryBasedSymbolProvider<L : MetadataLibrary>(
         val librariesWithFragment = fragmentNamesInLibraries[packageStringName] ?: return emptyList()
 
         return librariesWithFragment.flatMap { resolvedLibrary ->
-            resolvedLibrary.packageMetadataParts(packageStringName).mapNotNull {
+
+            val moduleData = moduleData(resolvedLibrary) ?: return@flatMap emptyList()
+
+            resolvedLibrary.packageMetadataParts(packageStringName).map {
                 val fragment = getPackageFragment(resolvedLibrary, packageStringName, it)
 
-                val moduleData = moduleData(resolvedLibrary) ?: return@mapNotNull null
                 val packageProto = fragment.`package`
 
                 val nameResolver = NameResolverImpl(
@@ -136,6 +138,7 @@ abstract class MetadataLibraryBasedSymbolProvider<L : MetadataLibrary>(
                     source,
                     origin = defaultDeserializationOrigin,
                     deserializeNestedClass = this::getClass,
+                    deserializeNestedTypeAlias = this::getTypeAlias,
                 )
 
                 if (resolvedLibrary is KotlinLibrary) {

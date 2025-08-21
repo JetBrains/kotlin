@@ -7,3 +7,5 @@ class C {
         <!VAL_REASSIGNMENT!>p<!> = ""
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, functionDeclaration, nullableType, stringLiteral */

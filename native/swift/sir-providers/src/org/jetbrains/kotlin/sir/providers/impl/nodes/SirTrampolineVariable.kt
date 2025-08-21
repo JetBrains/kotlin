@@ -30,7 +30,7 @@ public class SirTrampolineVariable(
                 listOf(
                     source.swiftFqName
                 )
-            )
+            ).takeUnless { attributes.any { it is SirAttribute.Available && it.isUnusable } }
         }
     }
 
@@ -42,8 +42,10 @@ public class SirTrampolineVariable(
                     listOf(
                         "${source.swiftFqName} = newValue"
                     )
-                )
+                ).takeUnless { attributes.any { it is SirAttribute.Available && it.isUnusable } }
             }
         }
     }
+
+    override val bridges: List<SirBridge> get() = source.bridges
 }

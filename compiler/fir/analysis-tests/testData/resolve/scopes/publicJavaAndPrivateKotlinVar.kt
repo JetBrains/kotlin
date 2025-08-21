@@ -25,3 +25,5 @@ fun test(d: D) {
     val name = d.name
 }
 
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, javaProperty, javaType, localProperty, nullableType,
+override, primaryConstructor, propertyDeclaration */

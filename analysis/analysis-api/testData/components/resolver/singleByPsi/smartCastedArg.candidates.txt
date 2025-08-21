@@ -7,10 +7,12 @@ KtCallExpression(108,119): 'processB(a)'
           receiverType = null
           returnType = B
           symbol = b: B
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -23,8 +25,10 @@ KtCallExpression(108,119): 'processB(a)'
               receiverType = null
               returnType = B
               symbol = b: B
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = /processB
       typeArgumentsMapping = {}
     isInBestCandidates = true

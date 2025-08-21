@@ -24,6 +24,7 @@ abstract class FirStringConcatenationCall : FirExpression(), FirCall {
     @UnresolvedExpressionTypeAccess
     abstract override val coneTypeOrNull: ConeKotlinType?
     abstract val interpolationPrefix: String
+    abstract val isFoldedStrings: Boolean
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
         visitor.visitStringConcatenationCall(this, data)

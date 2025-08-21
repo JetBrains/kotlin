@@ -35,7 +35,8 @@ object FirJavaAnnotationsChecker : FirAnnotationChecker(MppCheckerKind.Common) {
             JvmStandardClassIds.Annotations.Java.Documented to Annotations.MustBeDocumented,
         )
 
-    override fun check(expression: FirAnnotation, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(expression: FirAnnotation) {
         if (context.containingDeclarations.lastOrNull()?.source?.kind != KtRealSourceElementKind) return
         val annotationType = expression.annotationTypeRef.coneType.abbreviatedTypeOrSelf
         val classSymbol = annotationType.classLikeLookupTagIfAny?.toClassSymbol(context.session) ?: return
@@ -43,7 +44,7 @@ object FirJavaAnnotationsChecker : FirAnnotationChecker(MppCheckerKind.Common) {
 
         val lookupTag = classSymbol.toLookupTag()
         javaToKotlinNameMap[lookupTag.classId]?.let { betterName ->
-            reporter.reportOn(expression.source, FirJvmErrors.DEPRECATED_JAVA_ANNOTATION, betterName.asSingleFqName(), context)
+            reporter.reportOn(expression.source, FirJvmErrors.DEPRECATED_JAVA_ANNOTATION, betterName.asSingleFqName())
         }
 
         if (expression is FirAnnotationCall) {
@@ -52,7 +53,7 @@ object FirJavaAnnotationsChecker : FirAnnotationChecker(MppCheckerKind.Common) {
                 val arguments = argumentList.originalArgumentList?.arguments ?: return
                 for (key in arguments) {
                     if (key !is FirWrappedArgumentExpression && argumentList.mapping[key]?.name.let { it != null && it != Annotations.ParameterNames.value}) {
-                        reporter.reportOn(key.source, FirJvmErrors.POSITIONED_VALUE_ARGUMENT_FOR_JAVA_ANNOTATION, context)
+                        reporter.reportOn(key.source, FirJvmErrors.POSITIONED_VALUE_ARGUMENT_FOR_JAVA_ANNOTATION)
                     }
                 }
             }

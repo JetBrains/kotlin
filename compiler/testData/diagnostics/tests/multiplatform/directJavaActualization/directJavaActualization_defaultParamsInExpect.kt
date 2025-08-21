@@ -23,3 +23,5 @@ expect class <!IMPLICIT_JVM_ACTUALIZATION{JVM}!>Foo<!> {
         @kotlin.annotations.jvm.KotlinActual public Nested(int b) {}
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, expect, functionDeclaration, integerLiteral, nestedClass, secondaryConstructor */

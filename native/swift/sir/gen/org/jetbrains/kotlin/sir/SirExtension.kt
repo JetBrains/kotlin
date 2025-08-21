@@ -8,15 +8,22 @@
 
 package org.jetbrains.kotlin.sir
 
+import org.jetbrains.kotlin.sir.util.*
+
 /**
  * Generated from: [org.jetbrains.kotlin.sir.tree.generator.SwiftIrTree.extension]
  */
-abstract class SirExtension : SirMutableDeclarationContainer(), SirDeclaration {
+abstract class SirExtension : SirElementBase(), SirDeclaration, SirMutableDeclarationContainer, SirConstrainedDeclaration, SirProtocolConformingDeclaration {
     abstract override val origin: SirOrigin
     abstract override val visibility: SirVisibility
     abstract override val documentation: String?
     abstract override var parent: SirDeclarationParent
     abstract override val attributes: List<SirAttribute>
     abstract override val declarations: MutableList<SirDeclaration>
+    abstract override val constraints: List<SirTypeConstraint>
+    abstract override val protocols: List<SirProtocol>
     abstract val extendedType: SirType
+    override fun toString(): String {
+        return this.debugString
+    }
 }

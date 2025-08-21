@@ -1,3 +1,4 @@
 Declaration: private fun bar()
 At usage site: println
 Is visible: false
+Receiver expression: null

@@ -106,3 +106,6 @@ fun test_14(x: Any, b: Boolean) {
         x.foo()
     }
 }
+
+/* GENERATED_FIR_TAGS: andExpression, disjunctionExpression, equalityExpression, functionDeclaration, ifExpression,
+integerLiteral, interfaceDeclaration, intersectionType, isExpression, smartcast */

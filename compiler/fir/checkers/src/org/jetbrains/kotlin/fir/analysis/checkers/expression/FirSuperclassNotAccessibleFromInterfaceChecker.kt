@@ -12,26 +12,27 @@ import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.context.findClosest
 import org.jetbrains.kotlin.fir.analysis.checkers.explicitReceiverIsNotSuperReference
-import org.jetbrains.kotlin.fir.analysis.checkers.getContainingClassSymbol
+import org.jetbrains.kotlin.fir.resolve.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
-import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.expressions.toResolvedCallableSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.name.StandardClassIds
 
 object FirSuperclassNotAccessibleFromInterfaceChecker : FirQualifiedAccessExpressionChecker(MppCheckerKind.Common) {
-    override fun check(expression: FirQualifiedAccessExpression, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(expression: FirQualifiedAccessExpression) {
         if (expression.explicitReceiverIsNotSuperReference()) return
 
-        val closestClass = context.findClosest<FirClass>() ?: return
+        val closestClass = context.findClosest<FirClassSymbol<*>>() ?: return
 
         if (closestClass.classKind == ClassKind.INTERFACE) {
             val containingClassSymbol =
                 expression.toResolvedCallableSymbol()?.getContainingClassSymbol() as? FirRegularClassSymbol ?: return
 
             if (containingClassSymbol.source != null && containingClassSymbol.classKind == ClassKind.CLASS && containingClassSymbol.classId != StandardClassIds.Any) {
-                reporter.reportOn(expression.explicitReceiver?.source, FirErrors.SUPERCLASS_NOT_ACCESSIBLE_FROM_INTERFACE, context)
+                reporter.reportOn(expression.explicitReceiver?.source, FirErrors.SUPERCLASS_NOT_ACCESSIBLE_FROM_INTERFACE)
             }
         }
     }

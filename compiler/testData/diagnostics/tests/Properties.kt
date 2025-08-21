@@ -13,6 +13,9 @@ var x : Int = 1 + <!UNINITIALIZED_VARIABLE!>x<!>
   val p : Int = <!PROPERTY_INITIALIZER_NO_BACKING_FIELD!>1<!>
     get() = 1
 
+val illegalDefaultSetter = ""
+    <!VAL_WITH_SETTER!>set<!>
+
 class Test() {
     var a : Int = 111
     var b : Int = 222
@@ -21,3 +24,6 @@ class Test() {
 
    public val i = 1
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, assignment, classDeclaration, getter, integerLiteral, primaryConstructor,
+propertyDeclaration, setter, stringLiteral */

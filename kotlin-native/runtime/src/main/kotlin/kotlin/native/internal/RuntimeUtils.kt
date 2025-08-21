@@ -83,6 +83,11 @@ internal fun ThrowUninitializedPropertyAccessException(propertyName: String): No
     throw UninitializedPropertyAccessException("lateinit property $propertyName has not been initialized")
 }
 
+@PublishedApi
+internal fun ThrowUnsupportedOperationException(message: String): Nothing {
+    throw UnsupportedOperationException(message)
+}
+
 @ExportForCppRuntime
 internal fun ThrowIllegalArgumentException() : Nothing {
     throw IllegalArgumentException()
@@ -128,13 +133,6 @@ internal fun ThrowFileFailedToInitializeException(reason: Throwable?) {
         // and ExceptionInInitializerError if it's non-null
         throw FileFailedToInitializeException("There was an error during file or class initialization", reason)
     }
-}
-
-internal class IrLinkageError(message: String?) : Error(message)
-
-@PublishedApi
-internal fun ThrowIrLinkageError(message: String?): Nothing {
-    throw IrLinkageError(message)
 }
 
 @ExportForCppRuntime

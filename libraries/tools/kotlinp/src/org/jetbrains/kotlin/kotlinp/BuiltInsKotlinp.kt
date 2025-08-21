@@ -6,7 +6,9 @@
 package org.jetbrains.kotlin.kotlinp
 
 import kotlin.metadata.*
-import kotlin.metadata.internal.common.*
+import kotlin.metadata.internal.common.BuiltInExtensionsAccessor
+import kotlin.metadata.internal.common.KmModuleFragment
+import kotlin.metadata.internal.common.KotlinCommonMetadata
 
 class BuiltInsKotlinp(settings: Settings) : Kotlinp(settings) {
     fun printBuiltInsFile(metadata: KotlinCommonMetadata?): String = printString {
@@ -26,15 +28,8 @@ class BuiltInsKotlinp(settings: Settings) : Kotlinp(settings) {
         }
     }
 
-    override fun getAnnotations(clazz: KmClass) = extension { clazz.annotations }
-    override fun getAnnotations(constructor: KmConstructor) = extension { constructor.annotations }
-    override fun getAnnotations(function: KmFunction) = extension { function.annotations }
-    override fun getAnnotations(property: KmProperty) = extension { property.annotations }
-    override fun getGetterAnnotations(property: KmProperty) = extension { property.getterAnnotations }
-    override fun getSetterAnnotations(property: KmProperty) = extension { property.setterAnnotations }
     override fun getAnnotations(typeParameter: KmTypeParameter) = extension { typeParameter.annotations }
     override fun getAnnotations(type: KmType) = extension { type.annotations }
-    override fun getAnnotations(valueParameter: KmValueParameter) = extension { valueParameter.annotations }
 
     override fun sortConstructors(constructors: List<KmConstructor>): List<KmConstructor> =
         constructors.sortedBy { render(it, ::renderConstructor) }
@@ -44,13 +39,6 @@ class BuiltInsKotlinp(settings: Settings) : Kotlinp(settings) {
 
     override fun sortProperties(properties: List<KmProperty>): List<KmProperty> =
         properties.sortedBy { render(it, ::renderProperty) }
-
-    override fun Printer.appendEnumEntries(clazz: KmClass) {
-        clazz.enumEntries.forEach { enumEntry ->
-            appendLine()
-            appendLine(enumEntry, ",")
-        }
-    }
 
     private inline fun <T> render(declaration: T, block: (T, Printer) -> Unit): String {
         val printer = StringBuilderPrinter()

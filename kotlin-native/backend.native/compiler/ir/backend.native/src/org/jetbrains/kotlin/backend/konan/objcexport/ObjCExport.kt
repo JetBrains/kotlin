@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.backend.konan.llvm.objcexport.ObjCExportBlockCodeGen
 import org.jetbrains.kotlin.backend.konan.llvm.objcexport.ObjCExportCodeGenerator
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageUtil
+import org.jetbrains.kotlin.config.nativeBinaryOptions.BinaryOptions
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.konan.exec.Command
 import org.jetbrains.kotlin.konan.file.File
@@ -58,6 +59,8 @@ internal fun produceObjCExportInterface(
     val ignoreInterfaceMethodCollisions = config.configuration.getBoolean(BinaryOptions.objcExportIgnoreInterfaceMethodCollisions)
     val reportNameCollisions = config.configuration.getBoolean(BinaryOptions.objcExportReportNameCollisions)
     val errorOnNameCollisions = config.configuration.getBoolean(BinaryOptions.objcExportErrorOnNameCollisions)
+    val explicitMethodFamily = config.configuration.getBoolean(BinaryOptions.objcExportExplicitMethodFamily)
+    val objcExportBlockExplicitParameterNames = config.configuration.getBoolean(BinaryOptions.objcExportBlockExplicitParameterNames)
 
     val problemCollector = ObjCExportCompilerProblemCollector(context)
 
@@ -75,12 +78,13 @@ internal fun produceObjCExportInterface(
                 errorOnNameCollisions -> ObjCExportNameCollisionMode.ERROR
                 reportNameCollisions -> ObjCExportNameCollisionMode.WARNING
                 else -> ObjCExportNameCollisionMode.NONE
-            }
+            },
+            explicitMethodFamily = explicitMethodFamily,
     )
     val shouldExportKDoc = context.shouldExportKDoc()
     val additionalImports = context.config.configuration.getNotNull(KonanConfigKeys.FRAMEWORK_IMPORT_HEADERS)
     val headerGenerator = ObjCExportHeaderGenerator.createInstance(
-            moduleDescriptors, mapper, namer, problemCollector, objcGenerics, shouldExportKDoc = shouldExportKDoc,
+            moduleDescriptors, mapper, namer, problemCollector, objcGenerics, objcExportBlockExplicitParameterNames, shouldExportKDoc = shouldExportKDoc,
             additionalImports = additionalImports)
     headerGenerator.translateModule()
     return headerGenerator.buildInterface()

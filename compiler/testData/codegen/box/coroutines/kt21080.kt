@@ -1,6 +1,5 @@
 // WITH_STDLIB
 // WITH_COROUTINES
-// IGNORE_BACKEND: JVM
 
 import kotlin.coroutines.*
 import helpers.*

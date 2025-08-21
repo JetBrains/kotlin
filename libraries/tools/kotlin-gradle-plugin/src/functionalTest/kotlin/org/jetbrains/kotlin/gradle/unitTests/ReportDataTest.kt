@@ -12,6 +12,7 @@ import org.gradle.tooling.events.task.TaskOperationDescriptor
 import org.gradle.tooling.events.task.TaskOperationResult
 import org.jetbrains.kotlin.build.report.metrics.*
 import org.jetbrains.kotlin.build.report.statistics.StatTag
+import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.gradle.report.TaskRecord
 import org.jetbrains.kotlin.gradle.report.prepareData
 import org.junit.Ignore
@@ -21,7 +22,7 @@ import kotlin.math.sign
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
-import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
+import org.jetbrains.kotlin.gradle.util.asKotlinVersion
 
 class ReportDataTest {
     private val kotlinTaskPath = "testKotlin"
@@ -45,7 +46,7 @@ class ReportDataTest {
         assertNotNull(statisticData)
         assertTrue(statisticData.getTags().contains(StatTag.KOTLIN_DEBUG))
         assertTrue(statisticData.getTags().contains(StatTag.NON_INCREMENTAL))
-        assertTrue(statisticData.getTags().contains(StatTag.KOTLIN_1))
+        assertTrue(statisticData.getTags().contains(StatTag.KOTLIN_2))
     }
 
     private fun taskRecord(buildMetrics: BuildMetrics<GradleBuildTime, GradleBuildPerformanceMetric>) = TaskRecord(
@@ -57,7 +58,7 @@ class ReportDataTest {
         didWork = true,
         skipMessage = null,
         icLogLines = emptyList(),
-        kotlinLanguageVersion = KotlinVersion.KOTLIN_1_8,
+        kotlinLanguageVersion = LanguageVersion.LATEST_STABLE.asKotlinVersion(),
         changedFiles = null,
         compilerArguments = emptyArray(),
         statTags = emptySet()
@@ -68,10 +69,10 @@ class ReportDataTest {
         val buildOperationRecord = taskRecord(
             BuildMetrics(
                 buildPerformanceMetrics = BuildPerformanceMetrics<GradleBuildPerformanceMetric>().also {
-                    it.add(GradleBuildPerformanceMetric.COMPILE_ITERATION)
-                    it.add(GradleBuildPerformanceMetric.CLASSPATH_ENTRY_COUNT)
-                    it.add(GradleBuildPerformanceMetric.BUNDLE_SIZE)
-                    it.add(GradleBuildPerformanceMetric.CACHE_DIRECTORY_SIZE)
+                    it.addLong(GradleBuildPerformanceMetric.COMPILE_ITERATION)
+                    it.addLong(GradleBuildPerformanceMetric.CLASSPATH_ENTRY_COUNT)
+                    it.addLong(GradleBuildPerformanceMetric.BUNDLE_SIZE)
+                    it.addLong(GradleBuildPerformanceMetric.CACHE_DIRECTORY_SIZE)
                 },
                 buildTimes = BuildTimes<GradleBuildTime>().also {
                     it.addTimeMs(GradleBuildTime.STORE_BUILD_INFO, 20)
@@ -122,10 +123,10 @@ class ReportDataTest {
         val buildOperationRecord = taskRecord(
             BuildMetrics<GradleBuildTime, GradleBuildPerformanceMetric>(
                 buildPerformanceMetrics = BuildPerformanceMetrics<GradleBuildPerformanceMetric>().also {
-                    it.add(GradleBuildPerformanceMetric.FINISH_KOTLIN_DAEMON_EXECUTION, System.currentTimeMillis())
-                    it.add(GradleBuildPerformanceMetric.START_WORKER_EXECUTION, TimeUnit.MILLISECONDS.toNanos(startWorker))
-                    it.add(GradleBuildPerformanceMetric.START_TASK_ACTION_EXECUTION, startTaskAction)
-                    it.add(GradleBuildPerformanceMetric.CALL_WORKER, TimeUnit.MILLISECONDS.toNanos(callWorker))
+                    it.addLong(GradleBuildPerformanceMetric.FINISH_KOTLIN_DAEMON_EXECUTION, System.currentTimeMillis())
+                    it.addLong(GradleBuildPerformanceMetric.START_WORKER_EXECUTION, TimeUnit.MILLISECONDS.toNanos(startWorker))
+                    it.addLong(GradleBuildPerformanceMetric.START_TASK_ACTION_EXECUTION, startTaskAction)
+                    it.addLong(GradleBuildPerformanceMetric.CALL_WORKER, TimeUnit.MILLISECONDS.toNanos(callWorker))
                 }
             )
         )

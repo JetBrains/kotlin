@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.extensions
 
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationDataKey
@@ -12,7 +13,9 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclarationDataRegistry
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.CallInfo
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
+import org.jetbrains.kotlin.name.Name
 import kotlin.reflect.KClass
 
 /**
@@ -75,6 +78,25 @@ abstract class FirFunctionCallRefinementExtension(session: FirSession) : FirExte
      * and put all generated declarations used in [FirResolvedTypeRef] in statements.
      */
     abstract fun transform(call: FirFunctionCall, originalSymbol: FirNamedFunctionSymbol): FirFunctionCall
+
+    /**
+     * Needs to return true for local classes generated in [transform]
+     */
+    abstract fun ownsSymbol(symbol: FirRegularClassSymbol): Boolean
+
+    /**
+     * [transform] creates new local classes following this pattern:
+     * `call()` => `run { *declarations*; call() as Container<NewType> }`.
+     * This function needs to return a source element of `call()` before transformation - *original call*, as typed by users
+     */
+    abstract fun anchorElement(symbol: FirRegularClassSymbol): KtSourceElement
+
+    /**
+     * [call] - FIR of *original call* returned by [anchorElement]
+     * Needs to find a symbol associated with transformed call with given name
+     * This function assumes that generated local classes have unique names
+     */
+    abstract fun restoreSymbol(call: FirFunctionCall, name: Name): FirRegularClassSymbol?
 
     fun interface Factory : FirExtension.Factory<FirFunctionCallRefinementExtension>
 }

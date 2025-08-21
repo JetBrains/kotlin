@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// FIR_IDENTICAL
 sealed class Stmt
 
 class ForStmt : Stmt()
@@ -23,3 +22,6 @@ fun test3(x: Expr): String =
         when (x) {
             <!USELESS_IS_CHECK!>is Stmt<!> -> "stmt"
         }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, isExpression, nestedClass, objectDeclaration, sealed,
+smartcast, stringLiteral, whenExpression, whenWithSubject */

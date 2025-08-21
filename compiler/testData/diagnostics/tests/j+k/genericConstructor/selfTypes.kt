@@ -19,3 +19,5 @@ fun test() {
     val x: R<RImpl> = R(RImpl())
     R<RImpl, RImpl>(RImpl())
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaFunction, javaType, localProperty, propertyDeclaration */

@@ -1,5 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LANGUAGE: -JavaTypeParameterDefaultRepresentationWithDNN
+// LANGUAGE: -DontMakeExplicitJavaTypeArgumentsFlexible -PreciseSimplificationToFlexibleLowerConstraint
 
 // FILE: JavaWithGenericFun.java
 public class JavaWithGenericFun {
@@ -68,3 +68,6 @@ fun geneticFunTest() {
 
 fun takeString(a: String){}
 fun takeAny(a: Any){}
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, inProjection, integerLiteral, javaFunction, javaType,
+nullableType, outProjection, starProjection, stringLiteral */

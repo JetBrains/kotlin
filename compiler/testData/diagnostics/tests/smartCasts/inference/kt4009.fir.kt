@@ -21,3 +21,6 @@ fun foo1(e: PsiElement) {
 
 //from library
 fun println(any: Any?): Nothing = throw Exception("$any")
+
+/* GENERATED_FIR_TAGS: andExpression, assignment, equalityExpression, functionDeclaration, ifExpression,
+interfaceDeclaration, isExpression, localProperty, nullableType, propertyDeclaration, smartcast, whileLoop */

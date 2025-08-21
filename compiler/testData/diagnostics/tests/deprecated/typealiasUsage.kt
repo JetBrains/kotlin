@@ -24,3 +24,6 @@ class Test4: <!DEPRECATION!>Obsolete<!>()
 class Test4a: <!DEPRECATION!>IObsolete<!>
 class Test4b: IG<<!DEPRECATION!>Obsolete<!>>
 class Test4c: CG<<!DEPRECATION!>Obsolete<!>>()
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, functionDeclaration, interfaceDeclaration, nullableType,
+objectDeclaration, propertyDeclaration, stringLiteral, typeAliasDeclaration, typeParameter */

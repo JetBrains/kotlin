@@ -32,3 +32,6 @@ class DeserializedClassDescriptor2 : ClassDescriptor {
 
     override fun getModality() = <!TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM!>modality<!>
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, enumDeclaration, enumEntry, functionDeclaration, javaType, objectDeclaration,
+override, propertyDeclaration */

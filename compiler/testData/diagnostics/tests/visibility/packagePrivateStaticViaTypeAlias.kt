@@ -30,3 +30,5 @@ class Child : TypeAliasedParent() {
         publicStaticMethod()
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, javaFunction, javaType, typeAliasDeclaration */

@@ -10,8 +10,7 @@
     </testcase>
     <system-out><![CDATA[Foo call
 Bar call
-42
-Invalid connection: com.apple.coresymbolicationd]]></system-out>
+42]]></system-out>
     <system-err><![CDATA[]]></system-err>
   </testsuite>
 </results>

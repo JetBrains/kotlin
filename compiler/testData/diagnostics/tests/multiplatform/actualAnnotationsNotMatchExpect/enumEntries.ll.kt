@@ -12,6 +12,8 @@ expect enum class E {
 
 // MODULE: m1-jvm()()(m1-common)
 // FILE: jvm.kt
-actual enum class <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT, ACTUAL_WITHOUT_EXPECT!>E<!> {
+actual enum class <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT, EXPECT_ACTUAL_INCOMPATIBLE_ENUM_ENTRIES!>E<!> {
     FOO
 }
+
+/* GENERATED_FIR_TAGS: actual, annotationDeclaration, enumDeclaration, enumEntry, expect */

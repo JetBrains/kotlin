@@ -1,4 +1,4 @@
-/* RootScriptStructureElement */var a = -1/* DeclarationStructureElement */
+/* RootStructureElement *//* RootScriptStructureElement */var a = -1/* DeclarationStructureElement */
 var b = 0/* DeclarationStructureElement */
 
 data class MyPair(val i: Int, val b: Int)/* DeclarationStructureElement *//* ClassDeclarationStructureElement */

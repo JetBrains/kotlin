@@ -59,28 +59,3 @@ dependencies {
     androidTestImplementation("com.android.support.test:runner:1.0.2")
     androidTestImplementation("com.android.support.test.espresso:espresso-core:3.0.2")
 }
-
-// test diagnostic task, not needed by the build
-tasks.register("printCompilerPluginOptions") {
-    doFirst {
-        kotlin.targets.flatMap { it.compilations }.forEach { compilation ->
-            val sourceSetName = compilation.defaultSourceSet.name
-            val compileTask = compilation.compileTaskProvider.get()
-            val args: List<String>
-            val cp: Set<File>
-            when (compileTask) {
-                is AbstractKotlinCompile<*> -> {
-                    args = compileTask
-                        .pluginOptions
-                        .get()
-                        .fold(CompilerPluginOptions()) { options, option -> options.plus(option) }
-                        .arguments
-                    cp = compileTask.pluginClasspath.files
-                }
-                else -> return@forEach
-            }
-            println(sourceSetName + "=args=>" + args)
-            println(sourceSetName + "=cp=>" + cp)
-        }
-    }
-}

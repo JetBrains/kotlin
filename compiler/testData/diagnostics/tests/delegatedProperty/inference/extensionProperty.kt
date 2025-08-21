@@ -20,3 +20,6 @@ class MyProperty<R : A, T> {
         throw Exception("$thisRef $desc")
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, nullableType, operator, propertyDeclaration,
+propertyDelegate, propertyWithExtensionReceiver, starProjection, stringLiteral, typeConstraint, typeParameter */

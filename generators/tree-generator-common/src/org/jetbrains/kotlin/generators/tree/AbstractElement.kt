@@ -192,6 +192,9 @@ abstract class AbstractElement<Element, Field, Implementation>(
 
     override var kind: ImplementationKind? = null
 
+    override var hasAcceptChildrenMethod: Boolean = false
+    override var hasTransformChildrenMethod: Boolean = false
+
     @Suppress("UNCHECKED_CAST")
     final override val element: Element
         get() = this as Element

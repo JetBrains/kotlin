@@ -25,7 +25,7 @@ data class MyRec : Record {
     when {
       other !is MyRec -> return false
     }
-    val tmp_0: MyRec = other as MyRec
+    val tmp_0: MyRec = other /*as MyRec */
     when {
       EQEQ(arg0 = <this>.#name, arg1 = tmp_0.#name).not() -> return false
     }
@@ -45,4 +45,3 @@ data class MyRec : Record {
 fun test(rec: MyRec) {
   rec.<get-name>() /*~> Unit */
 }
-

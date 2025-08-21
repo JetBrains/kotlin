@@ -99,10 +99,14 @@ actual fun qualifierPartsMatching(arg: WithNested<String>.Nested<@Ann String>) {
 
 actual fun <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>qualifierPartsNonMatching<!>(arg: WithNested<@Ann String>.Nested<String>) {}
 
-actual fun <!ACTUAL_WITHOUT_EXPECT!>funTypeVsUserType<!>(arg: kotlin.jvm.functions.Function0<String>) {}
+actual fun <!ACTUAL_WITHOUT_EXPECT!>funTypeVsUserType<!>(arg: <!PLATFORM_CLASS_MAPPED_TO_KOTLIN!>kotlin.jvm.functions.Function0<String><!>) {}
 
 actual fun <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>funcTypeReturnType<!>(arg: () -> Any) {}
 
 actual fun <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>funcTypeReceiverType<!>(arg: Any.() -> Unit) {}
 
 actual fun <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>funcTypeArgType<!>(arg: (arg: Any) -> Unit) {}
+
+/* GENERATED_FIR_TAGS: actual, annotationDeclaration, classDeclaration, expect, funWithExtensionReceiver,
+functionDeclaration, functionalType, inner, interfaceDeclaration, nullableType, outProjection, starProjection,
+stringLiteral, typeConstraint, typeParameter, typeWithExtension */

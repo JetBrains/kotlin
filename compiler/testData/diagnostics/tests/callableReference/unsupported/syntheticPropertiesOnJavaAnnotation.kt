@@ -9,3 +9,5 @@ public @interface AnnInterface {
 
 // FILE: Main.kt
 val prop = AnnInterface::javaMethod
+
+/* GENERATED_FIR_TAGS: javaCallableReference, javaType, propertyDeclaration */

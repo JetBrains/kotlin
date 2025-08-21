@@ -23,23 +23,23 @@ fun VarargComposable(state: MutableState<Int>, values: Array<out String>?, %comp
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(VarargComposable):Test.kt")
   val %dirty = %changed
-  if (%default and 0b0001 != 0) {
-    %dirty = %dirty or 0b0110
-  } else if (%changed and 0b0110 == 0) {
+  if (%changed and 0b0110 == 0) {
     %dirty = %dirty or if (%composer.changed(state)) 0b0100 else 0b0010
   }
-  %composer.startMovableGroup(<>, values.size)
-  %dirty = %dirty or if (%composer.changed(values.size)) 0b00100000 else 0
-  val <iterator> = values.iterator()
-  while (<iterator>.hasNext()) {
-    val value = <iterator>.next()
-    %dirty = %dirty or if (%composer.changed(value)) 0b00100000 else 0
+  if (%default and 0b0010 == 0) {
+    %composer.startMovableGroup(<>, values.size)
+    %dirty = %dirty or if (%composer.changed(values.size)) 0b00100000 else 0
+    val <iterator> = values.iterator()
+    while (<iterator>.hasNext()) {
+      val value = <iterator>.next()
+      %dirty = %dirty or if (%composer.changed(value)) 0b00100000 else 0
+    }
+    %composer.endMovableGroup()
+    if (%dirty and 0b01110000 == 0) {
+      %dirty = %dirty or 0b00010000
+    }
   }
-  %composer.endMovableGroup()
-  if (%dirty and 0b01110000 == 0) {
-    %dirty = %dirty or 0b00010000
-  }
-  if (%dirty and 0b0011 != 0b0010 || !%composer.skipping) {
+  if (%composer.shouldExecute(%dirty and 0b0011 != 0b0010, %dirty and 0b0001)) {
     %composer.startDefaults()
     if (%changed and 0b0001 == 0 || %composer.defaultsInvalid) {
       if (%default and 0b0010 != 0) {
@@ -67,6 +67,6 @@ fun VarargComposable(state: MutableState<Int>, values: Array<out String>?, %comp
     %composer.skipToGroupEnd()
   }
   %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-    VarargComposable(state, *values, %composer, updateChangedFlags(%changed or 0b0001), %default)
+    VarargComposable(state, values, %composer, updateChangedFlags(%changed or 0b0001), %default)
   }
 }

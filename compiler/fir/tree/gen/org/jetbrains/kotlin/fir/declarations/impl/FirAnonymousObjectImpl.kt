@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.fir.visitors.transformInplace
 
-@OptIn(FirImplementationDetail::class, ResolveStateAccess::class)
+@OptIn(FirImplementationDetail::class, ResolveStateAccess::class, DirectDeclarationsAccess::class)
 internal class FirAnonymousObjectImpl(
     override val source: KtSourceElement?,
     resolvePhase: FirResolvePhase,
@@ -39,6 +39,7 @@ internal class FirAnonymousObjectImpl(
     override val scopeProvider: FirScopeProvider,
     override val classKind: ClassKind,
     override val superTypeRefs: MutableList<FirTypeRef>,
+    @property:DirectDeclarationsAccess
     override val declarations: MutableList<FirDeclaration>,
     override var annotations: MutableOrEmptyList<FirAnnotation>,
     override val symbol: FirAnonymousObjectSymbol,
@@ -48,6 +49,8 @@ internal class FirAnonymousObjectImpl(
     init {
         symbol.bind(this)
         resolveState = resolvePhase.asResolveState()
+        @Suppress("SENSELESS_COMPARISON")
+        require(source != null || origin != FirDeclarationOrigin.Source) { "${this::class.simpleName} with Source origin was instantiated without a source element." }
     }
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {

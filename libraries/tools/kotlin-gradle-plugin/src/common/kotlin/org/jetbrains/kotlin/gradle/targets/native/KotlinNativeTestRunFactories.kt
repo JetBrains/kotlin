@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.testing.internal.configureConventions
 import org.jetbrains.kotlin.gradle.testing.internal.kotlinTestRegistry
 import org.jetbrains.kotlin.gradle.testing.testTaskName
-import org.jetbrains.kotlin.gradle.utils.valueSourceWithExecProviderCompat
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 
@@ -66,7 +65,7 @@ private inline fun <reified T : KotlinNativeTest> KotlinNativeTarget.registerNat
 
 private fun KotlinNativeSimulatorTest.configureDeviceId(konanTarget: KonanTarget) {
     if (!isEnabled) return
-    val deviceIdProvider = project.valueSourceWithExecProviderCompat(XcodeDefaultTestDevicesValueSource::class.java)
+    val deviceIdProvider = project.providers.of(XcodeDefaultTestDevicesValueSource::class.java) {}
 
     // Extract primitive values to avoid [target] capture in lambda
     val konanTargetFamily = konanTarget.family

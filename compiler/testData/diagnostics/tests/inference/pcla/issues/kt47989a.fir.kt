@@ -3,14 +3,14 @@
 // CHECK_TYPE_WITH_EXACT
 
 fun test() {
-    val buildee = <!CANNOT_INFER_PARAMETER_TYPE, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>build<!> {
+    val buildee = <!CANNOT_INFER_PARAMETER_TYPE!>build<!> {
         object: TypeSourceInterface {
             override fun produceTargetType() = getTypeVariable()
         }
     }
     // exact type equality check — turns unexpected compile-time behavior into red code
     // considered to be non-user-reproducible code for the purposes of these tests
-    <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>checkExactType<!><<!CANNOT_INFER_PARAMETER_TYPE!>Buildee<TargetType><!>>(buildee)
+    checkExactType<<!CANNOT_INFER_PARAMETER_TYPE!>Buildee<TargetType><!>>(buildee)
 }
 
 
@@ -30,3 +30,7 @@ class Buildee<TV> {
 fun <PTV> build(instructions: Buildee<PTV>.() -> Unit): Buildee<PTV> {
     return Buildee<PTV>().apply(instructions)
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, checkNotNullCall, classDeclaration, functionDeclaration,
+functionalType, interfaceDeclaration, lambdaLiteral, localProperty, nullableType, override, propertyDeclaration,
+stringLiteral, typeParameter, typeWithExtension */

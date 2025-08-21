@@ -40,3 +40,6 @@ fun test4() {
             }
     }
 }
+
+/* GENERATED_FIR_TAGS: equalityExpression, functionDeclaration, integerLiteral, localProperty, nullableType,
+propertyDeclaration, typeParameter, whenExpression, whenWithSubject */

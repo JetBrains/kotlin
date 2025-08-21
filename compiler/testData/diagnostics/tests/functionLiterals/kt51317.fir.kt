@@ -10,3 +10,7 @@ fun box(): String {
     }
     return g("O")
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, equalityExpression, functionDeclaration, functionalType, lambdaLiteral,
+localProperty, nullableType, propertyDeclaration, smartcast, stringLiteral, thisExpression, typeWithExtension,
+whenExpression */

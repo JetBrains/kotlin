@@ -5,17 +5,20 @@
 
 package org.jetbrains.kotlin.fir.resolve.transformers.body.resolve
 
-import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.FirTargetElement
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
+import org.jetbrains.kotlin.fir.resolve.TypeResolutionConfiguration
 import org.jetbrains.kotlin.fir.resolve.calls.ResolutionContext
 import org.jetbrains.kotlin.fir.resolve.createCurrentScopeList
 import org.jetbrains.kotlin.fir.resolve.dfa.DataFlowAnalyzerContext
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculator
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculatorForFullBodyResolve
-import org.jetbrains.kotlin.fir.resolve.transformers.ScopeClassDeclaration
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
@@ -91,18 +94,22 @@ abstract class FirAbstractBodyResolveTransformerDispatcher(
 
     override fun transformTypeRef(typeRef: FirTypeRef, data: ResolutionMode): FirResolvedTypeRef {
         val resolvedTypeRef = if (typeRef is FirResolvedTypeRef) {
+            if (typeRef is FirErrorTypeRef) {
+                // partially resolved type also has to be transformed to be properly resolved
+                typeRef.transformPartiallyResolvedTypeRef(this, data)
+            }
+
             typeRef
         } else {
-            typeResolverTransformer.withFile(context.file) {
-                transformTypeRef(
-                    typeRef,
-                    ScopeClassDeclaration(
-                        components.createCurrentScopeList(),
-                        context.containingClassDeclarations,
-                        context.containers.lastOrNull { it is FirTypeParameterRefsOwner && it !is FirAnonymousFunction }
-                    )
+            typeResolverTransformer.transformTypeRef(
+                typeRef,
+                TypeResolutionConfiguration(
+                    components.createCurrentScopeList(),
+                    context.containingClassDeclarations,
+                    context.file,
+                    context.topContainerForTypeResolution,
                 )
-            }
+            )
         }
 
         resolvedTypeRef.coneType.forEachType {
@@ -115,15 +122,14 @@ abstract class FirAbstractBodyResolveTransformerDispatcher(
     }
 
     override fun transformImplicitTypeRef(implicitTypeRef: FirImplicitTypeRef, data: ResolutionMode): FirTypeRef {
-        if (data !is ResolutionMode.WithExpectedType)
+        if (data !is ResolutionMode.UpdateImplicitTypeRef)
             return implicitTypeRef
 
         /**
          * We should transform a provided type to process such references in [transformAnnotationCall] by [transformForeignAnnotationCall]
          * because usually we do not run such transformations on replaced types explicitly
          */
-        @OptIn(ResolutionMode.WithExpectedType.ExpectedTypeRefAccess::class)
-        return data.expectedTypeRef.transformSingle(this, data)
+        return data.newTypeRef.transformSingle(this, data)
     }
 
     // ------------------------------------- Expressions -------------------------------------
@@ -156,6 +162,17 @@ abstract class FirAbstractBodyResolveTransformerDispatcher(
         FirExpressionsResolveTransformer::transformQualifiedAccessExpression,
     )
 
+    override fun transformQualifiedErrorAccessExpression(
+        qualifiedErrorAccessExpression: FirQualifiedErrorAccessExpression,
+        data: ResolutionMode
+    ): FirStatement {
+        return expressionTransformation(
+            qualifiedErrorAccessExpression,
+            data,
+            FirExpressionsResolveTransformer::transformQualifiedErrorAccessExpression,
+        )
+    }
+
     override fun transformPropertyAccessExpression(
         propertyAccessExpression: FirPropertyAccessExpression,
         data: ResolutionMode,
@@ -163,6 +180,15 @@ abstract class FirAbstractBodyResolveTransformerDispatcher(
         propertyAccessExpression,
         data,
         FirExpressionsResolveTransformer::transformQualifiedAccessExpression,
+    )
+
+    override fun transformSuperReceiverExpression(
+        superReceiverExpression: FirSuperReceiverExpression,
+        data: ResolutionMode,
+    ): FirStatement = expressionTransformation(
+        superReceiverExpression,
+        data,
+        FirExpressionsResolveTransformer::transformSuperReceiverExpression,
     )
 
     override fun transformFunctionCall(
@@ -477,6 +503,10 @@ abstract class FirAbstractBodyResolveTransformerDispatcher(
         FirDeclarationsResolveTransformer::transformProperty,
     )
 
+    override fun transformErrorProperty(errorProperty: FirErrorProperty, data: ResolutionMode): FirStatement {
+        return transformProperty(errorProperty, data)
+    }
+
     override fun transformPropertyAccessor(
         propertyAccessor: FirPropertyAccessor,
         data: ResolutionMode,
@@ -670,11 +700,11 @@ abstract class FirAbstractBodyResolveTransformerDispatcher(
     override fun transformWhenSubjectExpression(
         whenSubjectExpression: FirWhenSubjectExpression,
         data: ResolutionMode,
-    ): FirStatement = controlFlowStatementsTransformation(
-        whenSubjectExpression,
-        data,
-        FirControlFlowStatementsResolveTransformer::transformWhenSubjectExpression,
-    )
+    ): FirStatement {
+        return transformPropertyAccessExpression(whenSubjectExpression, data).also {
+            dataFlowAnalyzer.exitWhenSubjectExpression(whenSubjectExpression)
+        }
+    }
 
     override fun transformTryExpression(
         tryExpression: FirTryExpression,

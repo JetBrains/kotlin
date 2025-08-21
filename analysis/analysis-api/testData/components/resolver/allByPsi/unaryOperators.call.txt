@@ -31,6 +31,7 @@ KtPrefixExpression(49,53): '-one'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = one
           isSafeNavigation = false
@@ -41,6 +42,7 @@ KtPrefixExpression(49,53): '-one'
           returnType = kotlin.Int
           symbol = kotlin/Int.unaryMinus(<dispatch receiver>: kotlin.Int): kotlin.Int
           valueParameters = []
+          contextParameters = []
           callableId = kotlin/Int.unaryMinus
       typeArgumentsMapping = {}
 
@@ -50,6 +52,7 @@ KtOperationReferenceExpression(49,50): '-'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = one
           isSafeNavigation = false
@@ -60,6 +63,7 @@ KtOperationReferenceExpression(49,50): '-'
           returnType = kotlin.Int
           symbol = kotlin/Int.unaryMinus(<dispatch receiver>: kotlin.Int): kotlin.Int
           valueParameters = []
+          contextParameters = []
           callableId = kotlin/Int.unaryMinus
       typeArgumentsMapping = {}
 
@@ -67,6 +71,7 @@ KtNameReferenceExpression(50,53): 'one'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaVariableSignature:
@@ -74,6 +79,7 @@ KtNameReferenceExpression(50,53): 'one'
           receiverType = null
           returnType = kotlin.Int
           symbol = val one: kotlin.Int
+          contextParameters = []
           callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -87,6 +93,7 @@ KtPrefixExpression(73,77): '+one'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = one
           isSafeNavigation = false
@@ -97,6 +104,7 @@ KtPrefixExpression(73,77): '+one'
           returnType = kotlin.Int
           symbol = kotlin/Int.unaryPlus(<dispatch receiver>: kotlin.Int): kotlin.Int
           valueParameters = []
+          contextParameters = []
           callableId = kotlin/Int.unaryPlus
       typeArgumentsMapping = {}
 
@@ -106,6 +114,7 @@ KtOperationReferenceExpression(73,74): '+'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = one
           isSafeNavigation = false
@@ -116,6 +125,7 @@ KtOperationReferenceExpression(73,74): '+'
           returnType = kotlin.Int
           symbol = kotlin/Int.unaryPlus(<dispatch receiver>: kotlin.Int): kotlin.Int
           valueParameters = []
+          contextParameters = []
           callableId = kotlin/Int.unaryPlus
       typeArgumentsMapping = {}
 
@@ -123,6 +133,7 @@ KtNameReferenceExpression(74,77): 'one'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaVariableSignature:
@@ -130,6 +141,7 @@ KtNameReferenceExpression(74,77): 'one'
           receiverType = null
           returnType = kotlin.Int
           symbol = val one: kotlin.Int
+          contextParameters = []
           callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -140,6 +152,7 @@ KtPrefixExpression(83,118): '!(+(-MyClass().unaryMinus().not()))'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = +(-MyClass().unaryMinus().not())
           isSafeNavigation = false
@@ -150,6 +163,7 @@ KtPrefixExpression(83,118): '!(+(-MyClass().unaryMinus().not()))'
           returnType = MyClass
           symbol = /MyClass.not(<dispatch receiver>: MyClass): MyClass
           valueParameters = []
+          contextParameters = []
           callableId = /MyClass.not
       typeArgumentsMapping = {}
 
@@ -159,6 +173,7 @@ KtOperationReferenceExpression(83,84): '!'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = +(-MyClass().unaryMinus().not())
           isSafeNavigation = false
@@ -169,6 +184,7 @@ KtOperationReferenceExpression(83,84): '!'
           returnType = MyClass
           symbol = /MyClass.not(<dispatch receiver>: MyClass): MyClass
           valueParameters = []
+          contextParameters = []
           callableId = /MyClass.not
       typeArgumentsMapping = {}
 
@@ -181,6 +197,7 @@ KtPrefixExpression(85,117): '+(-MyClass().unaryMinus().not())'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = -MyClass().unaryMinus().not()
           isSafeNavigation = false
@@ -191,6 +208,7 @@ KtPrefixExpression(85,117): '+(-MyClass().unaryMinus().not())'
           returnType = MyClass
           symbol = /MyClass.unaryPlus(<dispatch receiver>: MyClass): MyClass
           valueParameters = []
+          contextParameters = []
           callableId = /MyClass.unaryPlus
       typeArgumentsMapping = {}
 
@@ -200,6 +218,7 @@ KtOperationReferenceExpression(85,86): '+'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = -MyClass().unaryMinus().not()
           isSafeNavigation = false
@@ -210,6 +229,7 @@ KtOperationReferenceExpression(85,86): '+'
           returnType = MyClass
           symbol = /MyClass.unaryPlus(<dispatch receiver>: MyClass): MyClass
           valueParameters = []
+          contextParameters = []
           callableId = /MyClass.unaryPlus
       typeArgumentsMapping = {}
 
@@ -222,6 +242,7 @@ KtPrefixExpression(87,116): '-MyClass().unaryMinus().not()'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = MyClass().unaryMinus().not()
           isSafeNavigation = false
@@ -232,6 +253,7 @@ KtPrefixExpression(87,116): '-MyClass().unaryMinus().not()'
           returnType = MyClass
           symbol = /MyClass.unaryMinus(<dispatch receiver>: MyClass): MyClass
           valueParameters = []
+          contextParameters = []
           callableId = /MyClass.unaryMinus
       typeArgumentsMapping = {}
 
@@ -241,6 +263,7 @@ KtOperationReferenceExpression(87,88): '-'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = MyClass().unaryMinus().not()
           isSafeNavigation = false
@@ -251,6 +274,7 @@ KtOperationReferenceExpression(87,88): '-'
           returnType = MyClass
           symbol = /MyClass.unaryMinus(<dispatch receiver>: MyClass): MyClass
           valueParameters = []
+          contextParameters = []
           callableId = /MyClass.unaryMinus
       typeArgumentsMapping = {}
 
@@ -260,6 +284,7 @@ KtDotQualifiedExpression(88,116): 'MyClass().unaryMinus().not()'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = MyClass().unaryMinus()
           isSafeNavigation = false
@@ -270,6 +295,7 @@ KtDotQualifiedExpression(88,116): 'MyClass().unaryMinus().not()'
           returnType = MyClass
           symbol = /MyClass.not(<dispatch receiver>: MyClass): MyClass
           valueParameters = []
+          contextParameters = []
           callableId = /MyClass.not
       typeArgumentsMapping = {}
 
@@ -279,6 +305,7 @@ KtDotQualifiedExpression(88,110): 'MyClass().unaryMinus()'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = MyClass()
           isSafeNavigation = false
@@ -289,6 +316,7 @@ KtDotQualifiedExpression(88,110): 'MyClass().unaryMinus()'
           returnType = MyClass
           symbol = /MyClass.unaryMinus(<dispatch receiver>: MyClass): MyClass
           valueParameters = []
+          contextParameters = []
           callableId = /MyClass.unaryMinus
       typeArgumentsMapping = {}
 
@@ -298,6 +326,7 @@ KtCallExpression(88,97): 'MyClass()'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -305,6 +334,7 @@ KtCallExpression(88,97): 'MyClass()'
           returnType = MyClass
           symbol = <constructor>(): MyClass
           valueParameters = []
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
 
@@ -314,6 +344,7 @@ KtNameReferenceExpression(88,95): 'MyClass'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -321,6 +352,7 @@ KtNameReferenceExpression(88,95): 'MyClass'
           returnType = MyClass
           symbol = <constructor>(): MyClass
           valueParameters = []
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
 
@@ -333,6 +365,7 @@ KtCallExpression(98,110): 'unaryMinus()'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = MyClass()
           isSafeNavigation = false
@@ -343,6 +376,7 @@ KtCallExpression(98,110): 'unaryMinus()'
           returnType = MyClass
           symbol = /MyClass.unaryMinus(<dispatch receiver>: MyClass): MyClass
           valueParameters = []
+          contextParameters = []
           callableId = /MyClass.unaryMinus
       typeArgumentsMapping = {}
 
@@ -352,6 +386,7 @@ KtNameReferenceExpression(98,108): 'unaryMinus'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = MyClass()
           isSafeNavigation = false
@@ -362,6 +397,7 @@ KtNameReferenceExpression(98,108): 'unaryMinus'
           returnType = MyClass
           symbol = /MyClass.unaryMinus(<dispatch receiver>: MyClass): MyClass
           valueParameters = []
+          contextParameters = []
           callableId = /MyClass.unaryMinus
       typeArgumentsMapping = {}
 
@@ -374,6 +410,7 @@ KtCallExpression(111,116): 'not()'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = MyClass().unaryMinus()
           isSafeNavigation = false
@@ -384,6 +421,7 @@ KtCallExpression(111,116): 'not()'
           returnType = MyClass
           symbol = /MyClass.not(<dispatch receiver>: MyClass): MyClass
           valueParameters = []
+          contextParameters = []
           callableId = /MyClass.not
       typeArgumentsMapping = {}
 
@@ -393,6 +431,7 @@ KtNameReferenceExpression(111,114): 'not'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = MyClass().unaryMinus()
           isSafeNavigation = false
@@ -403,6 +442,7 @@ KtNameReferenceExpression(111,114): 'not'
           returnType = MyClass
           symbol = /MyClass.not(<dispatch receiver>: MyClass): MyClass
           valueParameters = []
+          contextParameters = []
           callableId = /MyClass.not
       typeArgumentsMapping = {}
 

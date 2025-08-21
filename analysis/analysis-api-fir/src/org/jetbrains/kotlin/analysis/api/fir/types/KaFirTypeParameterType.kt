@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.analysis.api.fir.utils.createTypePointer
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaTypeParameterSymbol
-import org.jetbrains.kotlin.analysis.api.types.KaTypeNullability
 import org.jetbrains.kotlin.analysis.api.types.KaTypeParameterType
 import org.jetbrains.kotlin.analysis.api.types.KaTypePointer
 import org.jetbrains.kotlin.analysis.api.types.KaUsualClassType
@@ -37,7 +36,17 @@ internal class KaFirTypeParameterType(
             KaFirAnnotationListForType.create(coneType, builder)
         }
 
-    override val nullability: KaTypeNullability get() = withValidityAssertion { KaTypeNullability.create(coneType.isMarkedNullable) }
+    @Deprecated(
+        "Use `isMarkedNullable`, `isNullable` or `hasFlexibleNullability` instead. See KDocs for the migration guide",
+        replaceWith = ReplaceWith("this.isMarkedNullable")
+    )
+    @Suppress("Deprecation")
+    override val nullability: org.jetbrains.kotlin.analysis.api.types.KaTypeNullability
+        get() = withValidityAssertion {
+            org.jetbrains.kotlin.analysis.api.types.KaTypeNullability.create(
+                coneType.isMarkedNullable
+            )
+        }
 
     override val abbreviation: KaUsualClassType?
         get() = withValidityAssertion { null }

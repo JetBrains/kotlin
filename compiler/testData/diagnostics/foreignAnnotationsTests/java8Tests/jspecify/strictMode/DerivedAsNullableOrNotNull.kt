@@ -16,7 +16,6 @@ public class SomeJavaClass {
 // FILE: test.kt
 
 class DerivedNullable : SomeJavaClass() {
-    // jspecify_nullness_mismatch
     override fun foo(): <!RETURN_TYPE_MISMATCH_ON_OVERRIDE!>String?<!> { return null }
 
     override fun bar(): String? { return null }

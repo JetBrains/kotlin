@@ -38,3 +38,6 @@ class SqliteIntrospector : BaseSingleDatabaseIntrospector<SqliteRoot, SqliteSche
         object : AbstractDatabaseRetriever<SqliteRoot>(database) {
         }
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, classDeclaration, functionDeclaration, inner, interfaceDeclaration,
+outProjection, override, primaryConstructor, propertyDeclaration, typeConstraint, typeParameter */

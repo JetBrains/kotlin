@@ -15,3 +15,6 @@ fun test() {
 }
 
 fun <T> list(value: T): MyList<T> = TODO()
+
+/* GENERATED_FIR_TAGS: classDeclaration, flexibleType, functionDeclaration, interfaceDeclaration, javaType, nullableType,
+typeParameter */

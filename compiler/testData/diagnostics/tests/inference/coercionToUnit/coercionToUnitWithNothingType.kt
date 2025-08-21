@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FIR2IR
-// DISABLE_NEXT_PHASE_SUGGESTION: java.lang.NullPointerException
 // DIAGNOSTICS: -UNUSED_PARAMETER
 
 // FILE: A.java
@@ -53,3 +52,6 @@ fun test(i: Inv<Nothing>, iUnit: Inv<Unit>) {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, flexibleType, functionDeclaration, functionalType, ifExpression, integerLiteral,
+intersectionType, isExpression, javaFunction, lambdaLiteral, nullableType, smartcast, stringLiteral, typeParameter */

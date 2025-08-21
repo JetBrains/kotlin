@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.fir.analysis.jvm.checkers.declaration
 
 import org.jetbrains.kotlin.KtSourceElement
-import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
@@ -15,7 +14,6 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
-import org.jetbrains.kotlin.fir.analysis.checkers.classKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirBasicDeclarationChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.fullyExpandedClassId
@@ -23,10 +21,10 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
-import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.name.ClassId
@@ -34,7 +32,8 @@ import org.jetbrains.kotlin.name.JvmStandardClassIds
 import org.jetbrains.kotlin.name.SpecialNames
 
 object FirJvmStaticChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
-    override fun check(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirDeclaration) {
         if (declaration is FirConstructor) {
             // WRONG_DECLARATION_TARGET
             return
@@ -47,7 +46,7 @@ object FirJvmStaticChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
         fun checkIfAnnotated(it: FirDeclaration) {
             val annotation = it.findAnnotation(JvmStandardClassIds.Annotations.JvmStatic, context.session) ?: return
             val targetSource = annotation.source ?: it.source ?: declaration.source
-            checkAnnotated(it, context, reporter, targetSource, declaration as? FirProperty)
+            checkAnnotated(it, targetSource, declaration as? FirProperty)
         }
 
         checkIfAnnotated(declaration)
@@ -57,10 +56,9 @@ object FirJvmStaticChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
         }
     }
 
+    context(context: CheckerContext, reporter: DiagnosticReporter)
     private fun checkAnnotated(
         declaration: FirDeclaration,
-        context: CheckerContext,
-        reporter: DiagnosticReporter,
         targetSource: KtSourceElement?,
         outerProperty: FirProperty? = null,
     ) {
@@ -69,7 +67,6 @@ object FirJvmStaticChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
         }
 
         val container = context.getContainerAt(0) ?: return
-        val supportsJvmStaticInInterface = context.supports(LanguageFeature.JvmStaticInInterface)
         val containerIsAnonymous = container is FirClassSymbol && container.classId.shortClassName == SpecialNames.ANONYMOUS
 
         if (
@@ -77,41 +74,21 @@ object FirJvmStaticChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
             container.classKind != ClassKind.OBJECT ||
             !container.isCompanion() && containerIsAnonymous
         ) {
-            reportStaticNotInProperObject(context, reporter, supportsJvmStaticInInterface, targetSource)
+            reporter.reportOn(targetSource, FirJvmErrors.JVM_STATIC_NOT_IN_OBJECT_OR_COMPANION)
         } else if (
             container.isCompanion() &&
             context.containerIsInterface(1)
         ) {
-            if (supportsJvmStaticInInterface) {
-                checkForInterface(declaration, context, reporter, targetSource)
-            } else {
-                reportStaticNotInProperObject(context, reporter, supportsJvmStaticInInterface, targetSource)
-            }
+            checkForInterface(declaration, targetSource)
         }
 
-        checkOverrideCannotBeStatic(declaration, context, reporter, targetSource, outerProperty)
-        checkStaticOnConstOrJvmField(declaration, context, reporter, targetSource)
+        checkOverrideCannotBeStatic(declaration, targetSource, outerProperty)
+        checkStaticOnConstOrJvmField(declaration, targetSource)
     }
 
-    private fun reportStaticNotInProperObject(
-        context: CheckerContext,
-        reporter: DiagnosticReporter,
-        supportsJvmStaticInInterface: Boolean,
-        targetSource: KtSourceElement?,
-    ) {
-        val properDiagnostic = if (supportsJvmStaticInInterface) {
-            FirJvmErrors.JVM_STATIC_NOT_IN_OBJECT_OR_COMPANION
-        } else {
-            FirJvmErrors.JVM_STATIC_NOT_IN_OBJECT_OR_CLASS_COMPANION
-        }
-
-        reporter.reportOn(targetSource, properDiagnostic, context)
-    }
-
+    context(context: CheckerContext, reporter: DiagnosticReporter)
     private fun checkForInterface(
         declaration: FirDeclaration,
-        context: CheckerContext,
-        reporter: DiagnosticReporter,
         targetSource: KtSourceElement?,
     ) {
         if (declaration !is FirCallableDeclaration) {
@@ -131,9 +108,9 @@ object FirJvmStaticChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
         }
 
         if (visibility != Visibilities.Public) {
-            reporter.reportOn(targetSource, FirJvmErrors.JVM_STATIC_ON_NON_PUBLIC_MEMBER, context)
+            reporter.reportOn(targetSource, FirJvmErrors.JVM_STATIC_ON_NON_PUBLIC_MEMBER)
         } else if (isExternal) {
-            reporter.reportOn(targetSource, FirJvmErrors.JVM_STATIC_ON_EXTERNAL_IN_INTERFACE, context)
+            reporter.reportOn(targetSource, FirJvmErrors.JVM_STATIC_ON_EXTERNAL_IN_INTERFACE)
         }
     }
 
@@ -174,10 +151,9 @@ object FirJvmStaticChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
         }
     }
 
+    context(context: CheckerContext, reporter: DiagnosticReporter)
     private fun checkOverrideCannotBeStatic(
         declaration: FirMemberDeclaration,
-        context: CheckerContext,
-        reporter: DiagnosticReporter,
         targetSource: KtSourceElement?,
         outerProperty: FirProperty? = null,
     ) {
@@ -187,18 +163,21 @@ object FirJvmStaticChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
             return
         }
 
-        reporter.reportOn(targetSource, FirJvmErrors.OVERRIDE_CANNOT_BE_STATIC, context)
+        reporter.reportOn(targetSource, FirJvmErrors.OVERRIDE_CANNOT_BE_STATIC)
     }
 
+    context(context: CheckerContext, reporter: DiagnosticReporter)
     private fun checkStaticOnConstOrJvmField(
         declaration: FirDeclaration,
-        context: CheckerContext,
-        reporter: DiagnosticReporter,
         targetSource: KtSourceElement?,
     ) {
         if (declaration !is FirProperty) return
-        if (declaration.isConst || declaration.backingField?.hasAnnotationNamedAs(JvmStandardClassIds.Annotations.JvmField, context.session) == true) {
-            reporter.reportOn(targetSource, FirJvmErrors.JVM_STATIC_ON_CONST_OR_JVM_FIELD, context)
+        if (declaration.isConst || declaration.backingField?.hasAnnotationNamedAs(
+                JvmStandardClassIds.Annotations.JvmField,
+                context.session
+            ) == true
+        ) {
+            reporter.reportOn(targetSource, FirJvmErrors.JVM_STATIC_ON_CONST_OR_JVM_FIELD)
         }
     }
 
@@ -214,16 +193,13 @@ object FirJvmStaticChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
     }
 
     private fun CheckerContext.getContainerAt(outerLevel: Int): FirBasedSymbol<*>? {
-        val correction = if (this.containingDeclarations.lastOrNull() is FirProperty) {
+        val correction = if (this.containingDeclarations.lastOrNull() is FirPropertySymbol) {
             1
         } else {
             0
         }
-        val last = this.containingDeclarations.asReversed().getOrNull(outerLevel + correction)
-        return last?.symbol
+        return this.containingDeclarations.asReversed().getOrNull(outerLevel + correction)
     }
-
-    private fun CheckerContext.supports(feature: LanguageFeature) = session.languageVersionSettings.supportsFeature(feature)
 
     private fun FirClassLikeSymbol<*>.isCompanion() = (this as? FirRegularClassSymbol)?.isCompanion == true
 

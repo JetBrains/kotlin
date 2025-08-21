@@ -41,7 +41,7 @@ fun testInnerClassConstructor(outer: Outer): Any {
       return receiver.Inner(xs = [p0])
     }
 
-    outer::<init>
+    ::<init>/*(receiver = outer) */
   })
 }
 
@@ -51,7 +51,7 @@ fun testInnerClassConstructorCapturingOuter(): Any {
       return receiver.Inner(xs = [p0])
     }
 
-    Outer()::<init>
+    ::<init>/*(receiver = Outer()) */
   })
 }
 

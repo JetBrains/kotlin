@@ -18,3 +18,6 @@ public interface JavaInterface {
 public interface Provider<T> {
     public T compute();
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaFunction, javaType, lambdaLiteral, localProperty,
+nullableType, propertyDeclaration, samConversion, stringLiteral */

@@ -1,5 +1,5 @@
 // RUN_PIPELINE_TILL: BACKEND
-// LANGUAGE: +EnumEntries -PrioritizedEnumEntries
+// LANGUAGE: +EnumEntries -PrioritizedEnumEntries -ForbidEnumEntryNamedEntries
 // WITH_STDLIB
 // FIR_DUMP
 
@@ -11,3 +11,5 @@ enum class E {
         E.entries.ordinal
     }
 }
+
+/* GENERATED_FIR_TAGS: enumDeclaration, enumEntry, functionDeclaration */

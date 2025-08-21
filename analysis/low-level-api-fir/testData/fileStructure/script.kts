@@ -1,4 +1,4 @@
-/* RootScriptStructureElement */class Builder {/* ClassDeclarationStructureElement */
+/* RootStructureElement *//* RootScriptStructureElement */class Builder {/* ClassDeclarationStructureElement */
     var version: String = ""/* DeclarationStructureElement */
 
     fun execute() {/* DeclarationStructureElement */
@@ -18,10 +18,10 @@ build {
     }
 
     execute()
-}
+}/* DeclarationStructureElement */
 
 val builder = build {
     version = "321"
 }/* DeclarationStructureElement */
 
-builder.execute()
+builder.execute()/* DeclarationStructureElement */

@@ -34,3 +34,7 @@ fun test() {
         first = temp
     }
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, assignment, break, comparisonExpression, doWhileLoop, equalityExpression,
+functionDeclaration, ifExpression, integerLiteral, localProperty, multiplicativeExpression, propertyDeclaration,
+whileLoop */

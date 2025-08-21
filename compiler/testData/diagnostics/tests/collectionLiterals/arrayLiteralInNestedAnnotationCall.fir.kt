@@ -24,3 +24,6 @@ annotation class Anno1Vararg(vararg val x: Anno2Inv)
 @Anno1Vararg(x = *[Anno2Inv(x = <!ARGUMENT_TYPE_MISMATCH!>[1]<!>)])
 @Anno1Vararg(x = *arrayOf(Anno2Inv(x = <!ARGUMENT_TYPE_MISMATCH!>[1]<!>)))
 fun foo() {}
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, collectionLiteral, functionDeclaration, inProjection, integerLiteral,
+intersectionType, outProjection, primaryConstructor, propertyDeclaration, vararg */

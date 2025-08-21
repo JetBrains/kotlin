@@ -54,3 +54,6 @@ const val equal3 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>1u == uint<!>
 const val notEqual1 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>1u != 1u<!>
 const val notEqual2 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>uint != 1u<!>
 const val notEqual3 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>1u != uint<!>
+
+/* GENERATED_FIR_TAGS: additiveExpression, comparisonExpression, const, equalityExpression, integerLiteral,
+propertyDeclaration, stringLiteral, unsignedLiteral */

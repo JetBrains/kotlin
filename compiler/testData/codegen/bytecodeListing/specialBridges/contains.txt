@@ -112,31 +112,36 @@ public abstract class A8 {
 @kotlin.Metadata
 public final class I1$DefaultImpls {
     // source: 'contains.kt'
-    public static method contains(@org.jetbrains.annotations.NotNull p0: I1, p1: java.lang.Object): boolean
-    public static method containsAll(@org.jetbrains.annotations.NotNull p0: I1, @org.jetbrains.annotations.NotNull p1: java.util.Collection): boolean
+    public deprecated static @java.lang.Deprecated method contains(@org.jetbrains.annotations.NotNull p0: I1, p1: java.lang.Object): boolean
+    public deprecated static @java.lang.Deprecated method containsAll(@org.jetbrains.annotations.NotNull p0: I1, @org.jetbrains.annotations.NotNull p1: java.util.Collection): boolean
     public final inner class I1$DefaultImpls
 }
 
 @kotlin.Metadata
 public interface I1 {
     // source: 'contains.kt'
-    public abstract method contains(p0: java.lang.Object): boolean
-    public abstract method containsAll(@org.jetbrains.annotations.NotNull p0: java.util.Collection): boolean
+    public synthetic static method access$contains$jd(p0: I1, p1: java.lang.Object): boolean
+    public synthetic static method access$containsAll$jd(p0: I1, p1: java.util.Collection): boolean
+    public method contains(p0: java.lang.Object): boolean
+    public method containsAll(@org.jetbrains.annotations.NotNull p0: java.util.Collection): boolean
     public final inner class I1$DefaultImpls
 }
 
 @kotlin.Metadata
 public final class I2$DefaultImpls {
     // source: 'contains.kt'
-    public static method contains(@org.jetbrains.annotations.NotNull p0: I2, @org.jetbrains.annotations.NotNull p1: java.lang.String): boolean
-    public static method containsAll(@org.jetbrains.annotations.NotNull p0: I2, @org.jetbrains.annotations.NotNull p1: java.util.Collection): boolean
+    public deprecated static @java.lang.Deprecated method contains(@org.jetbrains.annotations.NotNull p0: I2, @org.jetbrains.annotations.NotNull p1: java.lang.String): boolean
+    public deprecated static @java.lang.Deprecated method containsAll(@org.jetbrains.annotations.NotNull p0: I2, @org.jetbrains.annotations.NotNull p1: java.util.Collection): boolean
     public final inner class I2$DefaultImpls
 }
 
 @kotlin.Metadata
 public interface I2 {
     // source: 'contains.kt'
-    public abstract method contains(@org.jetbrains.annotations.NotNull p0: java.lang.String): boolean
-    public abstract method containsAll(@org.jetbrains.annotations.NotNull p0: java.util.Collection): boolean
+    public synthetic static method access$contains$jd(p0: I2, p1: java.lang.String): boolean
+    public synthetic static method access$containsAll$jd(p0: I2, p1: java.util.Collection): boolean
+    public method contains(@org.jetbrains.annotations.NotNull p0: java.lang.String): boolean
+    public bridge method contains(p0: java.lang.Object): boolean
+    public method containsAll(@org.jetbrains.annotations.NotNull p0: java.util.Collection): boolean
     public final inner class I2$DefaultImpls
 }

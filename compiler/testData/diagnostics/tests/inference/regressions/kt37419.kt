@@ -44,3 +44,7 @@ val staticWithExplicitType: LambdaWithReceiver
             method(param)
         }
     }
+
+/* GENERATED_FIR_TAGS: classDeclaration, enumDeclaration, enumEntry, equalityExpression, funWithExtensionReceiver,
+functionDeclaration, functionalType, getter, interfaceDeclaration, lambdaLiteral, nullableType, propertyDeclaration,
+typeAliasDeclaration, typeParameter, typeWithExtension, whenExpression, whenWithSubject */

@@ -58,3 +58,7 @@ fun test4() {
         e.let {}
     }
 }
+
+/* GENERATED_FIR_TAGS: andExpression, assignment, comparisonExpression, continue, doWhileLoop, forLoop,
+functionDeclaration, ifExpression, incrementDecrementExpression, integerLiteral, lambdaLiteral, localProperty,
+nullableType, propertyDeclaration, rangeExpression, safeCall, tryExpression */

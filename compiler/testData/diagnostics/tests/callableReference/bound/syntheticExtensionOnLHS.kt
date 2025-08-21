@@ -13,3 +13,6 @@ fun test() {
         foo::toString
     }
 }
+
+/* GENERATED_FIR_TAGS: callableReference, flexibleType, functionDeclaration, javaFunction, javaProperty, javaType,
+lambdaLiteral */

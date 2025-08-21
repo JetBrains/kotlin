@@ -17,3 +17,6 @@ fun more(t: TestDummyClass<in CustomRunnable>) {
 fun interface CustomRunnable {
     fun run()
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, classDeclaration, funInterface, functionDeclaration, inProjection,
+interfaceDeclaration, lambdaLiteral, nullableType, override, samConversion, typeParameter */

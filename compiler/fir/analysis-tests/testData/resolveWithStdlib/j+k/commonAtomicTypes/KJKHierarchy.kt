@@ -39,3 +39,6 @@ fun usage(a:KotlinChildWithFakeOverride) {
     val t1: AtomicInt = a.a
     val t2: AtomicInteger = <!INITIALIZER_TYPE_MISMATCH!>a.a<!>
 }
+
+/* GENERATED_FIR_TAGS: annotationUseSiteTargetFile, classDeclaration, classReference, functionDeclaration, getter,
+integerLiteral, javaFunction, javaType, localProperty, override, propertyDeclaration */

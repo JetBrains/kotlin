@@ -3,3 +3,5 @@
 import <!UNRESOLVED_IMPORT!>aaa<!> // must be an error
 
 fun main() {}
+
+/* GENERATED_FIR_TAGS: functionDeclaration */

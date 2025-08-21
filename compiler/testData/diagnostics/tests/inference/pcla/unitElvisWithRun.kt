@@ -16,3 +16,6 @@ fun String.foo(result: String?) {
         add("a")
     }
 }
+
+/* GENERATED_FIR_TAGS: elvisExpression, funWithExtensionReceiver, functionDeclaration, functionalType,
+interfaceDeclaration, lambdaLiteral, nullableType, stringLiteral, typeParameter, typeWithExtension */

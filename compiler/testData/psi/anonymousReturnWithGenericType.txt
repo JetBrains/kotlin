@@ -1,0 +1,169 @@
+KtFile: anonymousReturnWithGenericType.kt
+  PACKAGE_DIRECTIVE
+    <empty list>
+  IMPORT_LIST
+    <empty list>
+  CLASS
+    PsiElement(interface)('interface')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('Foo')
+    TYPE_PARAMETER_LIST
+      PsiElement(LT)('<')
+      TYPE_PARAMETER
+        PsiElement(IDENTIFIER)('T')
+      PsiElement(GT)('>')
+  PsiWhiteSpace('\n\n')
+  CLASS
+    PsiElement(class)('class')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('AnonymousReturnWithGenericType')
+    TYPE_PARAMETER_LIST
+      PsiElement(LT)('<')
+      TYPE_PARAMETER
+        PsiElement(IDENTIFIER)('T')
+      PsiElement(GT)('>')
+    PsiWhiteSpace(' ')
+    CLASS_BODY
+      PsiElement(LBRACE)('{')
+      PsiWhiteSpace('\n    ')
+      PROPERTY
+        PsiElement(val)('val')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('v1')
+        PsiWhiteSpace(' ')
+        PsiElement(EQ)('=')
+        PsiWhiteSpace(' ')
+        OBJECT_LITERAL
+          OBJECT_DECLARATION
+            PsiElement(object)('object')
+            PsiWhiteSpace(' ')
+            PsiElement(COLON)(':')
+            PsiWhiteSpace(' ')
+            SUPER_TYPE_LIST
+              SUPER_TYPE_ENTRY
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('Foo')
+                    TYPE_ARGUMENT_LIST
+                      PsiElement(LT)('<')
+                      TYPE_PROJECTION
+                        TYPE_REFERENCE
+                          USER_TYPE
+                            REFERENCE_EXPRESSION
+                              PsiElement(IDENTIFIER)('T')
+                      PsiElement(GT)('>')
+            PsiWhiteSpace(' ')
+            CLASS_BODY
+              PsiElement(LBRACE)('{')
+              PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n    ')
+      FUN
+        PsiElement(fun)('fun')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('f1')
+        VALUE_PARAMETER_LIST
+          PsiElement(LPAR)('(')
+          PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        PsiElement(EQ)('=')
+        PsiWhiteSpace(' ')
+        OBJECT_LITERAL
+          OBJECT_DECLARATION
+            PsiElement(object)('object')
+            PsiWhiteSpace(' ')
+            PsiElement(COLON)(':')
+            PsiWhiteSpace(' ')
+            SUPER_TYPE_LIST
+              SUPER_TYPE_ENTRY
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('Foo')
+                    TYPE_ARGUMENT_LIST
+                      PsiElement(LT)('<')
+                      TYPE_PROJECTION
+                        TYPE_REFERENCE
+                          USER_TYPE
+                            REFERENCE_EXPRESSION
+                              PsiElement(IDENTIFIER)('T')
+                      PsiElement(GT)('>')
+            PsiWhiteSpace(' ')
+            CLASS_BODY
+              PsiElement(LBRACE)('{')
+              PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n\n    ')
+      PROPERTY
+        MODIFIER_LIST
+          PsiElement(private)('private')
+        PsiWhiteSpace(' ')
+        PsiElement(val)('val')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('v2')
+        PsiWhiteSpace(' ')
+        PsiElement(EQ)('=')
+        PsiWhiteSpace(' ')
+        OBJECT_LITERAL
+          OBJECT_DECLARATION
+            PsiElement(object)('object')
+            PsiWhiteSpace(' ')
+            PsiElement(COLON)(':')
+            PsiWhiteSpace(' ')
+            SUPER_TYPE_LIST
+              SUPER_TYPE_ENTRY
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('Foo')
+                    TYPE_ARGUMENT_LIST
+                      PsiElement(LT)('<')
+                      TYPE_PROJECTION
+                        TYPE_REFERENCE
+                          USER_TYPE
+                            REFERENCE_EXPRESSION
+                              PsiElement(IDENTIFIER)('T')
+                      PsiElement(GT)('>')
+            PsiWhiteSpace(' ')
+            CLASS_BODY
+              PsiElement(LBRACE)('{')
+              PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n    ')
+      FUN
+        MODIFIER_LIST
+          PsiElement(private)('private')
+        PsiWhiteSpace(' ')
+        PsiElement(fun)('fun')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('f2')
+        VALUE_PARAMETER_LIST
+          PsiElement(LPAR)('(')
+          PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        PsiElement(EQ)('=')
+        PsiWhiteSpace(' ')
+        OBJECT_LITERAL
+          OBJECT_DECLARATION
+            PsiElement(object)('object')
+            PsiWhiteSpace(' ')
+            PsiElement(COLON)(':')
+            PsiWhiteSpace(' ')
+            SUPER_TYPE_LIST
+              SUPER_TYPE_ENTRY
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('Foo')
+                    TYPE_ARGUMENT_LIST
+                      PsiElement(LT)('<')
+                      TYPE_PROJECTION
+                        TYPE_REFERENCE
+                          USER_TYPE
+                            REFERENCE_EXPRESSION
+                              PsiElement(IDENTIFIER)('T')
+                      PsiElement(GT)('>')
+            PsiWhiteSpace(' ')
+            CLASS_BODY
+              PsiElement(LBRACE)('{')
+              PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n')
+      PsiElement(RBRACE)('}')

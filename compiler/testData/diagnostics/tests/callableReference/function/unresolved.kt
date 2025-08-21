@@ -22,3 +22,5 @@ fun test2() {
     foo(<!UNRESOLVED_REFERENCE!>Unresolved<!>::<!UNRESOLVED_REFERENCE!>unresolved<!>)
     ::<!UNRESOLVED_REFERENCE!>unresolved<!>
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, localFunction, localProperty, propertyDeclaration */

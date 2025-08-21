@@ -9,8 +9,7 @@ import org.jetbrains.kotlin.wasm.ir.source.location.SourceLocation
 
 
 class WasmModule(
-    val functionTypes: List<WasmFunctionType> = emptyList(),
-    val recGroupTypes: List<WasmTypeDeclaration> = emptyList(),
+    val recGroups: List<List<WasmTypeDeclaration>> = emptyList(),
     val importsInOrder: List<WasmNamedModuleField> = emptyList(),
     val importedFunctions: List<WasmFunction.Imported> = emptyList(),
     val importedMemories: List<WasmMemory> = emptyList(),
@@ -205,4 +204,10 @@ data class WasmLimits(
 data class WasmImportDescriptor(
     val moduleName: String,
     val declarationName: WasmSymbolReadOnly<String>
+)
+
+data class JsBuiltinDescriptor(
+    val moduleName: String,
+    val declarationName: String,
+    val polyfillImpl: String
 )

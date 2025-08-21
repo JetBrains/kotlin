@@ -17,3 +17,7 @@ fun test2(a: Array<out Int>) {
     val t = <!UNSUPPORTED!>foo<!>(a)
     <!UNSUPPORTED!>t<!> checkType { <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>_<!><Array<out Array<out Int?>>>() }
 }
+
+/* GENERATED_FIR_TAGS: capturedType, checkNotNullCall, classDeclaration, funWithExtensionReceiver, functionDeclaration,
+functionalType, infix, lambdaLiteral, localProperty, nullableType, outProjection, propertyDeclaration, typeConstraint,
+typeParameter, typeWithExtension */

@@ -1,3 +1,5 @@
+// COMPILATION_ERRORS
+
 fun foo(x: Any) {
     x.
     val foo = 1

@@ -25,12 +25,7 @@ class ConeTypePreparator(val session: FirSession) : AbstractTypePreparator() {
             throw AssertionError("Unexpected type in ConeTypePreparator: ${this::class.java}")
         }
         return when (type) {
-            is ConeFlexibleType -> {
-                val lowerBound = prepareType(type.lowerBound)
-                if (lowerBound === type.lowerBound) return type
-
-                ConeFlexibleType(lowerBound, prepareType(type.upperBound))
-            }
+            is ConeFlexibleType -> type.mapTypesOrSelf(session.typeContext, dropIdentity = true) { prepareType(it) }
             is ConeRigidType -> prepareType(type)
         }
     }

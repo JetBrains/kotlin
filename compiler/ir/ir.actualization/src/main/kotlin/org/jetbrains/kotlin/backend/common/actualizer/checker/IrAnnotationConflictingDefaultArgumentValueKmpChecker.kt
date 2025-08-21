@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.common.actualizer.checker
 
+import org.jetbrains.kotlin.backend.common.actualizer.IrExpectActualMap
 import org.jetbrains.kotlin.backend.common.actualizer.reportActualAnnotationConflictingDefaultArgumentValue
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.ir.declarations.IrClass
@@ -16,6 +17,7 @@ import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.resolve.calls.mpp.ExpectActualCollectionArgumentsCompatibilityCheckStrategy
 
 internal object IrAnnotationConflictingDefaultArgumentValueKmpChecker : IrExpectActualChecker {
+    @OptIn(IrExpectActualMap.MappingForCheckers::class)
     override fun check(context: IrExpectActualChecker.Context) = with(context) {
         for ((expectSymbol, actualSymbol) in expectActualMap.expectToActual) {
             if (expectSymbol !is IrConstructorSymbol || actualSymbol !is IrConstructorSymbol) continue

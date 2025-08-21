@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.caches
 
 import org.jetbrains.kotlin.fir.caches.FirCache
+import org.jetbrains.kotlin.utils.exceptions.ExceptionAttachmentBuilder
 
 internal interface FirCacheWithInvalidation<K : Any, V, CONTEXT> {
     /**
@@ -14,8 +15,9 @@ internal interface FirCacheWithInvalidation<K : Any, V, CONTEXT> {
     fun fixInconsistentValue(
         key: K,
         context: CONTEXT & Any,
-        inconsistencyMessage: String,
         mapping: (oldValue: V, newValue: V & Any) -> V & Any,
+        inconsistencyMessage: String,
+        buildAdditionalAttachments: (ExceptionAttachmentBuilder.(K, CONTEXT) -> Unit)? = null,
     ): V & Any
 }
 
@@ -29,6 +31,7 @@ internal interface FirCacheWithInvalidation<K : Any, V, CONTEXT> {
 internal fun <KEY : Any, VALUE, CONTEXT> FirCache<KEY, VALUE, CONTEXT>.getNotNullValueForNotNullContext(
     key: KEY,
     context: CONTEXT,
+    buildAdditionalAttachments: (ExceptionAttachmentBuilder.(KEY, CONTEXT) -> Unit)? = null,
 ): VALUE {
     val value = getValue(key, context)
     @Suppress("CANNOT_CHECK_FOR_ERASED")
@@ -41,8 +44,9 @@ internal fun <KEY : Any, VALUE, CONTEXT> FirCache<KEY, VALUE, CONTEXT>.getNotNul
         fixInconsistentValue(
             key = key,
             context = context,
-            inconsistencyMessage = "Inconsistency in the cache. Someone without context put a null value in the cache",
             mapping = { old, new -> old ?: new },
+            inconsistencyMessage = "Inconsistency in the cache. Someone without context put a null value in the cache",
+            buildAdditionalAttachments = buildAdditionalAttachments,
         )
     }
 }

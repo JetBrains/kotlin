@@ -26,7 +26,7 @@ internal val DECLARATION_ORIGIN_ENTRY_POINT = IrDeclarationOriginImpl("ENTRY_POI
 
 internal fun makeEntryPoint(generationState: NativeGenerationState): IrFunction {
     val context = generationState.context
-    val actualMain = context.ir.symbols.entryPoint!!.owner
+    val actualMain = context.symbols.entryPoint!!.owner
     // TODO: Do we need to do something with the offsets if <main> is in a cached library?
     val startOffset = if (generationState.llvmModuleSpecification.containsDeclaration(actualMain))
         actualMain.startOffset
@@ -54,15 +54,18 @@ internal fun makeEntryPoint(generationState: NativeGenerationState): IrFunction 
     }
     entryPoint.annotations += buildSimpleAnnotation(context.irBuiltIns,
             startOffset, endOffset,
-            context.ir.symbols.exportForCppRuntime.owner, "Konan_start")
+            context.symbols.exportForCppRuntime.owner, "Konan_start")
 
     val builder = context.createIrBuilder(entryPoint.symbol, startOffset, endOffset)
     entryPoint.body = builder.irBlockBody(entryPoint) {
         +IrTryImpl(startOffset, endOffset, context.irBuiltIns.nothingType).apply {
             tryResult = irBlock {
                 +irCall(actualMain).apply {
-                    if (actualMain.valueParameters.size != 0)
-                        putValueArgument(0, irGet(entryPoint.valueParameters[0]))
+                    when (actualMain.parameters.size) {
+                        0 -> Unit
+                        1 -> arguments[0] = irGet(entryPoint.parameters[0])
+                        else -> error("Too many parameters")
+                    }
                 }
                 +irReturn(irInt(0))
             }
@@ -75,14 +78,15 @@ internal fun makeEntryPoint(generationState: NativeGenerationState): IrFunction 
             catches += irCatch(
                     catchParameter,
                     result = irBlock {
-                        +irCall(context.ir.symbols.processUnhandledException).apply {
-                            putValueArgument(0, irGet(catchParameter))
+                        +irCall(context.symbols.processUnhandledException).apply {
+                            arguments[0] = irGet(catchParameter)
                         }
-                        +irCall(context.ir.symbols.terminateWithUnhandledException).apply {
-                            putValueArgument(0, irGet(catchParameter))
+                        +irCall(context.symbols.terminateWithUnhandledException).apply {
+                            arguments[0] = irGet(catchParameter)
                         }
                     }
             )
+            Unit
         }
     }
 

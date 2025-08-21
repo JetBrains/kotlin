@@ -6,19 +6,24 @@
 package org.jetbrains.kotlin.fir.backend.utils
 
 import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.analysis.checkers.getContainingClassSymbol
+import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.resolve.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.backend.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirComponentCall
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
+import org.jetbrains.kotlin.fir.references.symbol
 import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.hasContextParameters
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
@@ -32,21 +37,17 @@ import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.util.isBoxedArray
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.utils.exceptions.rethrowExceptionWithDetails
 import kotlin.collections.set
 
-fun FirRegularClass.getIrSymbolsForSealedSubclasses(c: Fir2IrComponents): List<IrClassSymbol> {
+context(c: Fir2IrComponents)
+fun FirRegularClass.getIrSymbolsForSealedSubclasses(): List<IrClassSymbol> {
     val symbolProvider = c.session.symbolProvider
     return getSealedClassInheritors(c.session).mapNotNull {
-        symbolProvider.getClassLikeSymbolByClassId(it)?.toIrSymbol(c)
+        symbolProvider.getClassLikeSymbolByClassId(it)?.toIrSymbol()
     }.filterIsInstance<IrClassSymbol>()
 }
-
-fun FirCallableDeclaration.contextParametersForFunctionOrContainingProperty(): List<FirValueParameter> =
-    if (this is FirPropertyAccessor)
-        this.propertySymbol.fir.contextParameters
-    else
-        this.contextParameters
 
 fun List<IrDeclaration>.extractFirDeclarations(): Set<FirDeclaration> {
     return this.mapTo(mutableSetOf()) { ((it as IrMetadataSourceOwner).metadata as FirMetadataSource).fir }
@@ -75,7 +76,8 @@ fun List<IrDeclaration>.extractFirDeclarations(): Set<FirDeclaration> {
  *  The alternative could be to determine outside that we are in scope of setter and pass type origin, but it's
  *    much more complicated and messy
  */
-internal fun FirVariable.irTypeForPotentiallyComponentCall(c: Fir2IrComponents, predefinedType: IrType? = null): IrType {
+context(c: Fir2IrComponents)
+internal fun FirVariable.irTypeForPotentiallyComponentCall(predefinedType: IrType? = null): IrType {
     val initializer = initializer
     val typeRef = when {
         isVal && initializer is FirComponentCall -> initializer.resolvedType
@@ -84,7 +86,7 @@ internal fun FirVariable.irTypeForPotentiallyComponentCall(c: Fir2IrComponents, 
             this.returnTypeRef.coneType
         }
     }
-    return typeRef.toIrType(c)
+    return typeRef.toIrType()
 }
 
 internal val FirValueParameter.varargElementType: ConeKotlinType?
@@ -111,7 +113,8 @@ internal fun implicitCast(original: IrExpression, castType: IrType, typeOperator
     )
 }
 
-internal fun FirQualifiedAccessExpression.buildSubstitutorByCalledCallable(c: Fir2IrComponents): ConeSubstitutor {
+context(c: Fir2IrComponents)
+internal fun FirQualifiedAccessExpression.buildSubstitutorByCalledCallable(): ConeSubstitutor {
     val typeParameters = when (val declaration = calleeReference.toResolvedCallableSymbol()?.fir) {
         is FirFunction -> declaration.typeParameters
         is FirProperty -> declaration.typeParameters
@@ -167,8 +170,21 @@ val IrClassSymbol.defaultTypeWithoutArguments: IrSimpleType
 
 val FirCallableSymbol<*>.isInlineClassProperty: Boolean
     get() {
-        if (this !is FirPropertySymbol || dispatchReceiverType == null || receiverParameter != null || resolvedContextParameters.isNotEmpty()) return false
+        if (this !is FirPropertySymbol || dispatchReceiverType == null || receiverParameterSymbol != null || hasContextParameters) return false
         val containingClass = getContainingClassSymbol() as? FirRegularClassSymbol ?: return false
         val inlineClassRepresentation = containingClass.fir.inlineClassRepresentation ?: return false
         return inlineClassRepresentation.underlyingPropertyName == this.name
     }
+
+fun FirBasedSymbol<*>.shouldHaveReceiver(session: FirSession): Boolean =
+    !fir.hasAnnotation(StandardClassIds.Annotations.jsNoDispatchReceiver, session)
+
+fun FirQualifiedAccessExpression.isConstructorCallOnTypealiasWithInnerRhs(): Boolean {
+    return (calleeReference.symbol as? FirConstructorSymbol)?.let {
+        it.origin == FirDeclarationOrigin.Synthetic.TypeAliasConstructor && it.receiverParameterSymbol != null
+    } == true
+}
+
+internal fun <T : FirDeclaration, R> filterOutSymbolsFromCache(cache: Map<T, R>, filterOutSymbols: Set<FirBasedSymbol<*>>): Map<T, R> {
+    return cache.filterKeys { !filterOutSymbols.contains(it.symbol) }
+}

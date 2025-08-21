@@ -15,17 +15,13 @@ import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeTypeArgumentsForOuterClass
 
 object FirQualifierWithTypeArgumentsChecker : FirResolvedQualifierChecker(MppCheckerKind.Common) {
-    override fun check(
-        expression: FirResolvedQualifier,
-        context: CheckerContext,
-        reporter: DiagnosticReporter,
-    ) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(expression: FirResolvedQualifier) {
         expression.nonFatalDiagnostics.filterIsInstance<ConeTypeArgumentsForOuterClass>().forEach { diagnostic ->
             if (expression.symbol?.isInner == true) return@forEach
             reporter.reportOn(
                 expression.source,
-                FirErrors.TYPE_ARGUMENTS_FOR_OUTER_CLASS_WHEN_NESTED_REFERENCED,
-                context
+                FirErrors.TYPE_ARGUMENTS_FOR_OUTER_CLASS_WHEN_NESTED_REFERENCED
             )
         }
     }

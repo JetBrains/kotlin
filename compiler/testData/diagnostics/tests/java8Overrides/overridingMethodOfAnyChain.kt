@@ -12,3 +12,5 @@ interface IC : IB {
 interface ID : IC {
     <!METHOD_OF_ANY_IMPLEMENTED_IN_INTERFACE!>override fun toString(): String = "ID"<!>
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, interfaceDeclaration, override, stringLiteral */

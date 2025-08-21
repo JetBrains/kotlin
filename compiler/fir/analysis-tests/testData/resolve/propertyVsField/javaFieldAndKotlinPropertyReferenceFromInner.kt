@@ -24,3 +24,6 @@ fun box(): String {
 
     return x.bar()
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, classDeclaration, functionDeclaration, inner, javaType, localClass,
+localProperty, propertyDeclaration, stringLiteral */

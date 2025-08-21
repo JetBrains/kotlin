@@ -501,6 +501,54 @@ interface KotlinMultiplatformSourceSetConventions {
      */
     val NamedDomainObjectContainer<KotlinSourceSet>.androidNativeTest: NamedDomainObjectProvider<KotlinSourceSet>
 
+    /**
+     * Static accessor for shared kotlin Source Set between all declared JS and WasmJS targets.
+     * Declare at least one of the targets mentioned above to access this source set.
+     * If no targets were declared, accessing this source set will cause a runtime error during configuration time.
+     *
+     * Sample:
+     *
+     * ```kotlin
+     * kotlin {
+     *    js()
+     *    wasmJs()
+     *
+     *    sourceSets {
+     *      webMain.dependencies {
+     *          // Add webMain dependencies here
+     *      }
+     *    }
+     * }
+     * ```
+     *
+     * @since 1.9.20
+     */
+    val NamedDomainObjectContainer<KotlinSourceSet>.webMain: NamedDomainObjectProvider<KotlinSourceSet>
+
+    /**
+     * Static accessor for shared kotlin Source Set between all declared JS and WasmJS targets.
+     * Declare at least one of the targets mentioned above to access this source set.
+     * If no targets were declared, accessing this source set will cause a runtime error during configuration time.
+     *
+     * Sample:
+     *
+     * ```kotlin
+     * kotlin {
+     *    js()
+     *    wasmJs()
+     *
+     *    sourceSets {
+     *      webTest.dependencies {
+     *          // Add webTest dependencies here
+     *      }
+     *    }
+     * }
+     * ```
+     *
+     * @since 1.9.20
+     */
+    val NamedDomainObjectContainer<KotlinSourceSet>.webTest: NamedDomainObjectProvider<KotlinSourceSet>
+
     // endregion
 
     // region Non-Native Source Set Accessors
@@ -1814,3 +1862,4 @@ interface KotlinMultiplatformSourceSetConventions {
         configure: LanguageSettingsBuilder.() -> Unit,
     ): Unit = this { languageSettings(configure) }
 }
+

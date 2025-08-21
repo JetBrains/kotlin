@@ -27,3 +27,7 @@ data class MyDataClass(val prop: @Anno(0 + constant) MyClass<@Anno(1 + constant)
         const val constant = 0
     }
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, annotationDeclaration, classDeclaration, companionObject, const, data,
+destructuringDeclaration, functionDeclaration, integerLiteral, localProperty, nestedClass, nullableType,
+objectDeclaration, primaryConstructor, propertyDeclaration, stringLiteral, typeParameter */

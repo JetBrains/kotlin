@@ -1,3 +1,5 @@
+// COMPILATION_ERRORS
+
 val foo = object : AntBuilder() {
 
   @lazy val groovy = library {

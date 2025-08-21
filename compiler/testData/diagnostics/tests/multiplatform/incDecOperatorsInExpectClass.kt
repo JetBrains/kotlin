@@ -10,3 +10,5 @@ expect class Counter {
 
 // MODULE: main()()(common)
 actual typealias Counter = Int
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, functionDeclaration, operator, typeAliasDeclaration */

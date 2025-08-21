@@ -1,5 +1,3 @@
-@file:Suppress("NOTHING_TO_INLINE")
-
 fun createRemovedClass() {
     check(RemovedClass().toString() != "Yellow Submarine")
 }
@@ -240,39 +238,3 @@ fun topLevelFunctionWithAnonymousObjectChildOfRemovedInterface() {
 }
 
 open class OpenClassImpl : RemovedOpenClass()
-
-inline fun inlinedFunctionWithRemovedOpenClassVariableType() {
-    val foo: RemovedOpenClass? = null
-    check(foo == null)
-}
-
-inline fun inlinedFunctionWithOpenClassImplVariableType() {
-    val foo: OpenClassImpl? = null
-    check(foo == null)
-}
-
-inline fun inlinedFunctionWithCreationOfRemovedOpenClass() {
-    check(RemovedOpenClass().toString() != "Yellow Submarine")
-}
-
-inline fun inlinedFunctionWithCreationOfOpenClassImpl() {
-    check(OpenClassImpl().toString() != "Yellow Submarine")
-}
-
-inline fun inlinedFunctionWithCreationOfRemovedOpenClassThroughReference() {
-    check(run(::RemovedOpenClass).toString() != "Yellow Submarine")
-}
-
-inline fun inlinedFunctionWithCreationOfOpenClassImplThroughReference() {
-    check(run(::OpenClassImpl).toString() != "Yellow Submarine")
-}
-
-inline fun inlinedFunctionWithRemovedOpenClassAnonymousObject() {
-    val foo = object : RemovedOpenClass() {}
-    check(foo.toString().isNotEmpty())
-}
-
-inline fun inlinedFunctionWithOpenClassImplAnonymousObject() {
-    val foo = object : OpenClassImpl() {}
-    check(foo.toString().isNotEmpty())
-}

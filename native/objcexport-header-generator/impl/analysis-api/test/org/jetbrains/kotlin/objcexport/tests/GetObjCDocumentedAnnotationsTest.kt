@@ -7,8 +7,8 @@ package org.jetbrains.kotlin.objcexport.tests
 
 import org.jetbrains.kotlin.analysis.api.analyze
 import org.jetbrains.kotlin.objcexport.analysisApiUtils.getObjCDocumentedAnnotations
-import org.jetbrains.kotlin.objcexport.testUtils.InlineSourceCodeAnalysis
-import org.jetbrains.kotlin.objcexport.testUtils.getClassOrFail
+import org.jetbrains.kotlin.export.test.InlineSourceCodeAnalysis
+import org.jetbrains.kotlin.export.test.getClassOrFail
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 import kotlin.test.fail
@@ -34,7 +34,7 @@ class GetObjCDocumentedAnnotationsTest(
             @MustBeDocumented
             annotation class ImportantAnnotation           
             annotation class OtherAnnotation
-    
+
             @ImportantAnnotation @OtherAnnotation
             class Foo
         """.trimIndent()

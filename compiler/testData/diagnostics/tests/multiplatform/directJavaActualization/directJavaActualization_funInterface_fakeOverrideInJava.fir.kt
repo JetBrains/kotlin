@@ -5,7 +5,7 @@
 
 // MODULE: m1-common
 // FILE: common.kt
-<!EXPECT_ACTUAL_INCOMPATIBILITY{JVM}, JAVA_DIRECT_ACTUAL_WITHOUT_EXPECT{JVM}!>expect<!> fun interface Foo {
+<!EXPECT_ACTUAL_IR_INCOMPATIBILITY{JVM}!>expect<!> fun interface Foo {
     fun foo()
 }
 
@@ -19,3 +19,5 @@
 public interface Base {
     void bar();
 }
+
+/* GENERATED_FIR_TAGS: expect, funInterface, functionDeclaration, interfaceDeclaration */

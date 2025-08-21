@@ -16,3 +16,5 @@ val foo = 42
 import a.JClass.foo
 import b.foo
 fun test() { <!OVERLOAD_RESOLUTION_AMBIGUITY!>foo<!> }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral, propertyDeclaration */

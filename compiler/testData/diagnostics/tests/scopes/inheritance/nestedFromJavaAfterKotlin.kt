@@ -81,3 +81,5 @@ class Y: F() {
         Y.<!UNRESOLVED_REFERENCE!>E_S<!>()
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, init, interfaceDeclaration, javaFunction, javaType, nestedClass */

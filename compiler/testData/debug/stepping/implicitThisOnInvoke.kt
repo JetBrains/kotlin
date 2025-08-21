@@ -57,5 +57,4 @@ fun test(b: B) {
 // test.kt:16 $test (8)
 // test.kt:17 $test (5)
 // test.kt:18 $test (1)
-// test.kt:5 $box (4)
 // test.kt:6 $box (1)

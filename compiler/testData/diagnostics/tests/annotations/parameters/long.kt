@@ -10,3 +10,5 @@ annotation class Ann(
 @Ann(1, 1.toLong()) class MyClass
 
 // EXPECTED: @Ann(b1 = 1.toLong(), b2 = 1.toLong())
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, integerLiteral, primaryConstructor, propertyDeclaration */

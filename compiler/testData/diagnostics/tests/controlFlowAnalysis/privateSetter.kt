@@ -17,3 +17,6 @@ class Z : X("subclass") {
 fun box() : String {
     return Z().print() //error
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, functionDeclaration, primaryConstructor, propertyDeclaration,
+stringLiteral */

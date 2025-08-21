@@ -36,3 +36,6 @@ class MixedDerivedClass<T> : GenericBaseClass<Int>(), GenericBaseInterface<T> {
     override fun ambiguous(x: T): T =
             <!AMBIGUOUS_SUPER!>super<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>ambiguous<!>(x)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, interfaceDeclaration, nullableType, override,
+superExpression, typeParameter */

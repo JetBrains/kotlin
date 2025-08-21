@@ -17,3 +17,5 @@ package other
 import test.PropType
 
 val prop: PropType? = null
+
+/* GENERATED_FIR_TAGS: classDeclaration, nullableType, propertyDeclaration */

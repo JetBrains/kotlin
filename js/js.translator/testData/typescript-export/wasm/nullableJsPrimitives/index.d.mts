@@ -1,4 +1,5 @@
 type Nullable<T> = T | null | undefined
+declare function KtSingleton<T>(): T & (abstract new() => any);
 export declare function produceBoolean(): Nullable<boolean>;
 export declare function produceNumber(): Nullable<number>;
 export declare function produceBigInt(): Nullable<bigint>;

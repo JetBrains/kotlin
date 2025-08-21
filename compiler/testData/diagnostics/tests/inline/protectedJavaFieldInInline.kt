@@ -22,3 +22,5 @@ class B : JavaClass() {
 }
 
 fun box() = B().bar()
+
+/* GENERATED_FIR_TAGS: classDeclaration, flexibleType, functionDeclaration, inline, javaProperty, javaType */

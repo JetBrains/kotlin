@@ -1,9 +1,12 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.fir.declarations
+
+import org.jetbrains.kotlin.fir.declarations.FirResolvePhase.*
+
 
 /**
  * Compilation in the FIR compiler is performed in separate compiler phases.
@@ -264,6 +267,10 @@ fun FirResolvePhase.isItAllowedToCallLazyResolveTo(requestedPhase: FirResolvePha
  */
 val FirResolvePhase.isItAllowedToCallLazyResolveToTheSamePhase: Boolean
     get() = when (this) {
+        // The resolver can end up in a deadlock in the case of an annotation loop,
+        // so the locking mechanism should support this case
+        FirResolvePhase.COMPILER_REQUIRED_ANNOTATIONS -> true
+
         // The resolver can jump into Java initializer during this phase,
         // which can jump into the Kotlin world again, and we cannot provide the initial context
         FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE -> true

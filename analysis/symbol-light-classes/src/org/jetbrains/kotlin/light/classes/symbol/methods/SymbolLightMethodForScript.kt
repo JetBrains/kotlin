@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -9,6 +9,7 @@ import com.intellij.psi.*
 import org.jetbrains.kotlin.asJava.builder.LightMemberOriginForDeclaration
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.elements.KtLightIdentifier
+import org.jetbrains.kotlin.light.classes.symbol.cachedValue
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassBase
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.InitializedModifiersBox
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightMemberModifierList
@@ -22,9 +23,10 @@ internal sealed class SymbolLightMethodForScript(
     containingClass: SymbolLightClassBase,
     methodIndex: Int,
 ) : SymbolLightMethodBase(
-    LightMemberOriginForDeclaration(ktScript, JvmDeclarationOriginKind.OTHER),
-    containingClass,
-    methodIndex
+    lightMemberOrigin = LightMemberOriginForDeclaration(ktScript, JvmDeclarationOriginKind.OTHER),
+    containingClass = containingClass,
+    methodIndex = methodIndex,
+    isJvmExposedBoxed = false,
 ) {
     abstract override fun getName(): String
 
@@ -35,6 +37,7 @@ internal sealed class SymbolLightMethodForScript(
     override fun getTypeParameters(): Array<PsiTypeParameter> = PsiTypeParameter.EMPTY_ARRAY
 
     override fun getParameterList(): PsiParameterList = _parameterList
+    override fun isVarArgs(): Boolean = false
 
     private val _parameterList by lazyPub {
         SymbolLightParameterList(
@@ -65,9 +68,7 @@ internal class SymbolLightMethodForScriptDefaultConstructor(
 ) {
     override fun getName(): String = containingClass.name ?: ""
 
-    override fun getModifierList(): PsiModifierList = _modifierList
-
-    private val _modifierList: PsiModifierList by lazyPub {
+    override fun getModifierList(): PsiModifierList = cachedValue {
         SymbolLightMemberModifierList(
             containingDeclaration = this@SymbolLightMethodForScriptDefaultConstructor,
             modifiersBox = InitializedModifiersBox(PsiModifier.PUBLIC)
@@ -92,9 +93,7 @@ internal class SymbolLightMethodForScriptMain(
 ) {
     override fun getName(): String = "main"
 
-    override fun getModifierList(): PsiModifierList = _modifierList
-
-    private val _modifierList: PsiModifierList by lazyPub {
+    override fun getModifierList(): PsiModifierList = cachedValue {
         SymbolLightMemberModifierList(
             containingDeclaration = this@SymbolLightMethodForScriptMain,
             modifiersBox = InitializedModifiersBox(PsiModifier.PUBLIC, PsiModifier.STATIC, PsiModifier.FINAL)

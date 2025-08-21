@@ -1,5 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER -TOPLEVEL_TYPEALIASES_ONLY
+// DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER -TOPLEVEL_TYPEALIASES_ONLY -UNSUPPORTED_FEATURE
 
 abstract class AbstractClass
 typealias Test1 = AbstractClass
@@ -33,3 +33,6 @@ val test5b = Outer.<!INNER_CLASS_CONSTRUCTOR_NO_RECEIVER!>TestInner<!>()
 val test5c = Outer().<!UNRESOLVED_REFERENCE!>TestInner<!>()
 val test5d = Outer().Inner()
 val test5e = Outer().Test5()
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, enumDeclaration, enumEntry, inner, propertyDeclaration,
+sealed, typeAliasDeclaration */

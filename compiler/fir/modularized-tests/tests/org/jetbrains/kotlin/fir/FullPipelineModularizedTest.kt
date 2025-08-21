@@ -28,7 +28,6 @@ class FullPipelineModularizedTest : AbstractFullPipelineModularizedTest() {
         // TODO: Remove when support for old modularized tests is removed
         if (moduleData.arguments == null) {
             args.apiVersion = API_VERSION
-            args.jvmDefault = "compatibility"
             args.optIn = moduleData.optInAnnotations.toTypedArray() + arrayOf(
                 "kotlin.RequiresOptIn",
                 "kotlin.contracts.ExperimentalContracts",
@@ -37,6 +36,11 @@ class FullPipelineModularizedTest : AbstractFullPipelineModularizedTest() {
             )
             args.noStdlib = true
             args.noReflect = true
+        }
+
+        val apiVersion = LanguageVersion.fromVersionString(args.apiVersion)
+        if (apiVersion != null && apiVersion.isUnsupported) {
+            args.apiVersion = LanguageVersion.FIRST_SUPPORTED.versionString
         }
 
         require(LanguageVersion.fromVersionString(args.languageVersion)!! >= LanguageVersion.KOTLIN_2_0) {

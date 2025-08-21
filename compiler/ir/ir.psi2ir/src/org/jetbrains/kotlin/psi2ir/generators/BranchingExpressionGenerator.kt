@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffsetSkippingComments
 import org.jetbrains.kotlin.psi2ir.deparenthesize
+import org.jetbrains.kotlin.psi2ir.descriptors.fromSymbolDescriptor
 import org.jetbrains.kotlin.psi2ir.intermediate.loadAt
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsExpression
@@ -233,7 +234,7 @@ internal class BranchingExpressionGenerator(statementGenerator: StatementGenerat
                 hasDispatchReceiver = true,
                 hasExtensionReceiver = false,
             ).apply {
-                dispatchReceiver = irInstanceOf
+                arguments[0] = irInstanceOf
             }
         else
             irInstanceOf
@@ -264,7 +265,7 @@ internal class BranchingExpressionGenerator(statementGenerator: StatementGenerat
                     hasDispatchReceiver = true,
                     hasExtensionReceiver = false,
                 ).apply {
-                    dispatchReceiver = irInCall
+                    arguments[0] = irInCall
                 }
             else -> throw AssertionError("Expected 'in' or '!in', got $inOperator")
         }

@@ -4,6 +4,7 @@ KtDotQualifiedExpression(162,171): 'b.clear()'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaSmartCastedReceiverValue:
           original = KaExplicitReceiverValue:
             expression = b
@@ -16,5 +17,6 @@ KtDotQualifiedExpression(162,171): 'b.clear()'
           returnType = kotlin.Unit
           symbol = kotlin/collections/MutableList.clear(<dispatch receiver>: kotlin.collections.MutableList<E>): kotlin.Unit
           valueParameters = []
+          contextParameters = []
           callableId = kotlin/collections/MutableList.clear
       typeArgumentsMapping = {}

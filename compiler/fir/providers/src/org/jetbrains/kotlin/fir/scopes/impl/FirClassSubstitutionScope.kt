@@ -239,11 +239,11 @@ class FirClassSubstitutionScope(
 
         val symbolForOverride = FirFakeOverrideGenerator.createSymbolForSubstitutionOverride(original, newOwnerClassId)
 
-        val (newTypeParameters, newDispatchReceiverType, newReceiverType, newReturnType, _, callableCopySubstitutionForTypeUpdater) =
+        val (newTypeParameters, newDispatchReceiverType, newReceiverType, newReturnType, newSubstitutor, callableCopySubstitutionForTypeUpdater) =
             createSubstitutedData(member, symbolForOverride)
 
         val newContextParameterTypes = member.contextParameters.map {
-            it.returnTypeRef.coneType.substitute(substitutor)
+            it.returnTypeRef.coneType.substitute(newSubstitutor)
         }
 
         if (newReceiverType == null &&

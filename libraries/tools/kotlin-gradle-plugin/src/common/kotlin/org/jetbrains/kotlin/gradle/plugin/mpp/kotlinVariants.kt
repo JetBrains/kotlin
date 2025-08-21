@@ -53,7 +53,7 @@ internal fun getCoordinatesFromPublicationDelegateAndProject(
     project: Project,
     target: KotlinTarget?,
 ): ModuleVersionIdentifier {
-    val moduleName = publication?.artifactId ?: dashSeparatedName(project.name, target?.name?.toLowerCase())
+    val moduleName = publication?.artifactId ?: dashSeparatedName(project.name, target?.name?.lowercase())
     val moduleGroup = publication?.groupId ?: project.group.toString()
     val moduleVersion = publication?.version ?: project.version.toString()
     return getCoordinatesFromGroupNameAndVersion(moduleGroup, moduleName, moduleVersion)
@@ -86,8 +86,9 @@ open class KotlinVariant(
 
     @Deprecated(
         message = "Sources artifacts are now published as separate variant " +
-                "use target.sourcesElementsConfigurationName to obtain necessary information",
-        replaceWith = ReplaceWith("target.sourcesElementsConfigurationName")
+                "use target.sourcesElementsConfigurationName to obtain necessary information. Scheduled for removal in Kotlin 2.3.",
+        replaceWith = ReplaceWith("target.sourcesElementsConfigurationName"),
+        level = DeprecationLevel.ERROR,
     )
     override val sourcesArtifacts: Set<PublishArtifact>
         get() = target

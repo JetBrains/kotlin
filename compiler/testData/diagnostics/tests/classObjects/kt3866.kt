@@ -20,3 +20,6 @@ fun bar() {
     (X as C).foo()
     ((if (1<2) X else Y) <!USELESS_CAST!>as C<!>).foo()
 }
+
+/* GENERATED_FIR_TAGS: asExpression, classDeclaration, companionObject, comparisonExpression, funWithExtensionReceiver,
+functionDeclaration, ifExpression, integerLiteral, localProperty, objectDeclaration, propertyDeclaration */

@@ -9,5 +9,7 @@ expect fun nonInlineFun()
 // MODULE: m2-jvm()()(m1-common)
 // FILE: jvm.kt
 
-actual fun <!ACTUAL_WITHOUT_EXPECT!>inlineFun<!>() { }
+actual fun <!EXPECT_ACTUAL_INCOMPATIBLE_FUNCTION_MODIFIERS_NOT_SUBSET!>inlineFun<!>() { }
 actual fun nonInlineFun() { }
+
+/* GENERATED_FIR_TAGS: actual, expect, functionDeclaration, inline */

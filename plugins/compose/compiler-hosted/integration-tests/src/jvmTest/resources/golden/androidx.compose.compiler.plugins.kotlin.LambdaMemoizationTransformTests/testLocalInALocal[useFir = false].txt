@@ -20,7 +20,7 @@ import androidx.compose.runtime.Composable
 fun Example(%composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(Example):Test.kt")
-  if (%changed != 0 || !%composer.skipping) {
+  if (%composer.shouldExecute(%changed != 0, %changed and 0b0001)) {
     if (isTraceInProgress()) {
       traceEventStart(<>, %changed, -1, <>)
     }
@@ -56,7 +56,7 @@ fun Example(%composer: Composer?, %changed: Int) {
       }
       B(rememberComposableLambda(<>, false, { %composer: Composer?, %changed: Int ->
         sourceInformation(%composer, "C<A()>:Test.kt")
-        if (%changed and 0b0011 != 0b0010 || !%composer.skipping) {
+        if (%composer.shouldExecute(%changed and 0b0011 != 0b0010, %changed and 0b0001)) {
           if (isTraceInProgress()) {
             traceEventStart(<>, %changed, -1, <>)
           }

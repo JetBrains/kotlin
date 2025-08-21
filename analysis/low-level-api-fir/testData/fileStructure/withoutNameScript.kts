@@ -1,4 +1,4 @@
-/* RootScriptStructureElement */fun (a: Int = 1): String = "str"/* DeclarationStructureElement */
+/* RootStructureElement *//* RootScriptStructureElement */fun (a: Int = 1): String = "str"/* DeclarationStructureElement */
 
 fun () {/* DeclarationStructureElement */
 

@@ -14,3 +14,6 @@ fun testPostfixSpecial() {
 }
 
 fun todo(): Nothing = throw Exception()
+
+/* GENERATED_FIR_TAGS: assignment, checkNotNullCall, funWithExtensionReceiver, functionDeclaration,
+incrementDecrementExpression, localFunction, operator, thisExpression */

@@ -22,8 +22,11 @@ open class C : A<Int>()
 
 interface D : B<Int>
 
-<!CANNOT_INFER_VISIBILITY, MANY_IMPL_MEMBER_NOT_IMPLEMENTED!>class E<!> : C(), D
+<!MANY_IMPL_MEMBER_NOT_IMPLEMENTED!>class E<!> : C(), D
 
 fun main() {
     E().foo(42)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, interfaceDeclaration, javaType,
+nullableType, stringLiteral, typeParameter */

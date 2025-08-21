@@ -1,5 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // ISSUES: KT-57911, KT-56744
+// LANGUAGE: -AllowCheckForErasedTypesInContracts
 
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
@@ -82,3 +83,7 @@ fun test_4(d: Derived, s: Any?) {
         s.length
     }
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, classReference, contractConditionalEffect, contracts,
+equalityExpression, functionDeclaration, ifExpression, inline, isExpression, lambdaLiteral, nullableType, override,
+reified, smartcast, typeParameter */

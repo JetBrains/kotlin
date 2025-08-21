@@ -43,6 +43,8 @@ public actual fun Throwable.addSuppressed(exception: Throwable) {
 
 /**
  * Returns a list of all exceptions that were suppressed in order to deliver this exception.
+ *
+ * The list can be empty if no exceptions were suppressed.
  */
 @SinceKotlin("1.4")
 public actual val Throwable.suppressedExceptions: List<Throwable> get() {

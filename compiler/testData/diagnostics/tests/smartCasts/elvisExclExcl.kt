@@ -9,3 +9,6 @@ fun test(x: Any?, y: Any?): Any {
     y!!.hashCode()
     return z
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, elvisExpression, functionDeclaration, localProperty, nullableType,
+propertyDeclaration, safeCall */

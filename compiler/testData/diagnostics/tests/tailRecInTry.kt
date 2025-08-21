@@ -63,3 +63,5 @@
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, ifExpression, localProperty, propertyDeclaration, tailrec, tryExpression */

@@ -11,3 +11,5 @@ fun foo(foo: Foo?, arg: Int?) {
     foo?.a = null
     foo?.a = arg
 }
+
+/* GENERATED_FIR_TAGS: assignment, functionDeclaration, javaProperty, javaType, nullableType, safeCall */

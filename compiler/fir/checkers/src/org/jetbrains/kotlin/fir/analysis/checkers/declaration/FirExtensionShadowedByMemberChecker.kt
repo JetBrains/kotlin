@@ -25,26 +25,30 @@ import org.jetbrains.kotlin.util.OperatorNameConventions
 
 sealed class FirExtensionShadowedByMemberChecker(kind: MppCheckerKind) : FirCallableDeclarationChecker(kind) {
     data object Regular : FirExtensionShadowedByMemberChecker(MppCheckerKind.Platform) {
-        override fun check(declaration: FirCallableDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
+        context(context: CheckerContext, reporter: DiagnosticReporter)
+        override fun check(declaration: FirCallableDeclaration) {
             if (declaration.isExpect) return
-            super.check(declaration, context, reporter)
+            super.check(declaration)
         }
     }
 
     data object ForExpectDeclaration : FirExtensionShadowedByMemberChecker(MppCheckerKind.Common) {
-        override fun check(declaration: FirCallableDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
+        context(context: CheckerContext, reporter: DiagnosticReporter)
+        override fun check(declaration: FirCallableDeclaration) {
             if (!declaration.isExpect) return
-            super.check(declaration, context, reporter)
+            super.check(declaration)
         }
     }
 
-    override fun check(declaration: FirCallableDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirCallableDeclaration) {
         if (
             declaration.hasAnnotation(StandardClassIds.Annotations.HidesMembers, context.session) ||
             declaration.receiverParameter.let { it == null || it.typeRef.coneType.canBeNull(context.session) } ||
             declaration.nameOrSpecialName == NO_NAME_PROVIDED ||
             // A common pattern, KT-70012
-            declaration.isActual
+            declaration.isActual ||
+            declaration.isOverride
         ) {
             return
         }
@@ -53,22 +57,22 @@ sealed class FirExtensionShadowedByMemberChecker(kind: MppCheckerKind) : FirCall
             ?.toClassLikeSymbol(context.session)
             ?.fullyExpandedClass(context.session)
             ?: return
-        val scope = receiverSymbol.unsubstitutedScope(context)
+        val scope = receiverSymbol.unsubstitutedScope()
 
         val shadowingMember = when (declaration) {
             is FirVariable -> findFirstSymbolByCondition<FirVariableSymbol<*>>(
-                condition = { it.isVisible(context) && !it.isExtension },
+                condition = { it.isVisible() && !it.isExtension },
                 processMembers = { scope.processPropertiesByName(declaration.name, it) },
             )
             is FirSimpleFunction -> findFirstSymbolByCondition<FirNamedFunctionSymbol>(
-                condition = { it.isVisible(context) && it.shadows(declaration.symbol, context) },
+                condition = { it.isVisible() && it.shadows(declaration.symbol) },
                 processMembers = { scope.processFunctionsByName(declaration.name, it) },
             )
             else -> return
         }
 
         if (shadowingMember != null) {
-            reporter.reportOn(declaration.source, FirErrors.EXTENSION_SHADOWED_BY_MEMBER, shadowingMember, context)
+            reporter.reportOn(declaration.source, FirErrors.EXTENSION_SHADOWED_BY_MEMBER, shadowingMember)
             return
         }
 
@@ -78,17 +82,17 @@ sealed class FirExtensionShadowedByMemberChecker(kind: MppCheckerKind) : FirCall
 
         val shadowingSymbols = findFirstNotNullSymbol(
             transform = { property ->
-                if (!property.isVisible(context)) {
+                if (!property.isVisible()) {
                     return@findFirstNotNullSymbol null
                 }
 
                 val returnTypeScope = property.resolvedReturnType.toClassLikeSymbol(context.session)
                     ?.fullyExpandedClass(context.session)
-                    ?.unsubstitutedScope(context)
+                    ?.unsubstitutedScope()
                     ?: return@findFirstNotNullSymbol null
 
                 val invoke = findFirstSymbolByCondition(
-                    condition = { it.isVisible(context) && it.isOperator && it.shadows(declaration.symbol, context) },
+                    condition = { it.isVisible() && it.isOperator && it.shadows(declaration.symbol) },
                     processMembers = { returnTypeScope.processFunctionsByName(OperatorNameConventions.INVOKE, it) },
                 )
 
@@ -102,13 +106,13 @@ sealed class FirExtensionShadowedByMemberChecker(kind: MppCheckerKind) : FirCall
         reporter.reportOn(
             declaration.source,
             FirErrors.EXTENSION_FUNCTION_SHADOWED_BY_MEMBER_PROPERTY_WITH_INVOKE,
-            shadowingProperty, shadowingInvoke,
-            context,
+            shadowingProperty, shadowingInvoke
         )
     }
 
-    private fun FirCallableSymbol<*>.isVisible(context: CheckerContext): Boolean {
-        val useSiteFile = context.containingFile ?: error("No containing file present when running a checker for top-level functions")
+    context(context: CheckerContext)
+    private fun FirCallableSymbol<*>.isVisible(): Boolean {
+        val useSiteFile = context.containingFileSymbol ?: error("No containing file present when running a checker for top-level functions")
 
         return context.session.visibilityChecker.isVisible(
             this, context.session, useSiteFile, context.containingDeclarations,
@@ -141,16 +145,30 @@ sealed class FirExtensionShadowedByMemberChecker(kind: MppCheckerKind) : FirCall
         return found
     }
 
+    context(context: CheckerContext)
     /**
      * See [isExtensionFunctionShadowedByMemberFunction][org.jetbrains.kotlin.resolve.ShadowedExtensionChecker.isExtensionFunctionShadowedByMemberFunction]
      */
-    private fun FirFunctionSymbol<*>.shadows(extension: FirFunctionSymbol<*>, context: CheckerContext): Boolean {
+    private fun FirFunctionSymbol<*>.shadows(extension: FirFunctionSymbol<*>): Boolean {
         if (isExtension) return false
 
-        if (valueParameterSymbols.size != extension.valueParameterSymbols.size) return false
-        if (varargParameterPosition != extension.varargParameterPosition) return false
+        if (extension.contextParameterSymbols.size != contextParameterSymbols.size) return false
+        if (extension.valueParameterSymbols.size != valueParameterSymbols.size) return false
+        if (extension.varargParameterPosition != varargParameterPosition) return false
         if (extension.isOperator && !isOperator) return false
         if (extension.isInfix && !isInfix) return false
+        if (extension.typeParameterSymbols.size != typeParameterSymbols.size) return false
+
+        val extensionHasStableNames = extension.resolvedStatus.hasStableParameterNames
+        val memberHasStableNames = resolvedStatus.hasStableParameterNames
+
+        for (i in extension.valueParameterSymbols.indices) {
+            val extensionParam = extension.valueParameterSymbols[i]
+            val memberParam = valueParameterSymbols[i]
+
+            if (extensionParam.hasDefaultValue && !memberParam.hasDefaultValue) return false
+            if (extensionHasStableNames && (!memberHasStableNames || extensionParam.name != memberParam.name)) return false
+        }
 
         val helper = context.session.declarationOverloadabilityHelper
         val memberSignature = helper.createSignature(this)

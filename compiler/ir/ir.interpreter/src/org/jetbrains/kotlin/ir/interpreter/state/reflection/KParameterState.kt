@@ -42,8 +42,12 @@ internal class KParameterState(
     override fun toString(): String {
         return buildString {
             when (kind) {
-                KParameter.Kind.EXTENSION_RECEIVER -> append("extension receiver parameter")
                 KParameter.Kind.INSTANCE -> append("instance parameter")
+                // Can't use `@OptIn(ExperimentalContextParameters::class)` as long as the project is compiled with API version 2.1.
+                @Suppress("OPT_IN_USAGE_ERROR")
+                KParameter.Kind.CONTEXT,
+                    -> append("context parameter ${irParameter.name}")
+                KParameter.Kind.EXTENSION_RECEIVER -> append("extension receiver parameter")
                 KParameter.Kind.VALUE -> append("parameter #$index ${irParameter.name}")
             }
 

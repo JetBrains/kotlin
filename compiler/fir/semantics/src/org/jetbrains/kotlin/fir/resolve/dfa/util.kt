@@ -10,8 +10,8 @@ import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.ConeTypeContext
 
 fun TypeStatement.smartCastedType(context: ConeTypeContext): ConeKotlinType =
-    if (exactType.isNotEmpty()) {
-        context.intersectTypes(exactType.toMutableList().also { it += variable.originalType })
+    if (upperTypes.isNotEmpty()) {
+        context.intersectTypes(upperTypes.toMutableList().also { it += variable.originalType })
     } else {
         variable.originalType
     }

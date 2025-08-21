@@ -43,3 +43,5 @@ interface I2 : B, A
 <!ABSTRACT_MEMBER_NOT_IMPLEMENTED!>class C4x<!> : I2 {
     override fun foo(x: String?) {}
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, interfaceDeclaration, javaType, nullableType, override */

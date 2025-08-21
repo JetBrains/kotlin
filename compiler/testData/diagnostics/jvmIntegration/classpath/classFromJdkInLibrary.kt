@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 // MODULE: library
 // FILE: java/util/Date.java
@@ -14,3 +15,5 @@ import java.util.Date
 fun foo() {
     Date.<!UNRESOLVED_REFERENCE!>methodWhichDoesNotExistInJdk<!>()
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration */

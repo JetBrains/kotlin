@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.ir.expressions.IrExpression
 
 @PhaseDescription(name = "JvmLateinitLowering")
 class JvmLateinitLowering(context: CommonBackendContext) :
-    LateinitLowering(context, JvmUninitializedPropertyAccessExceptionThrower(context.ir.symbols)) {
+    LateinitLowering(context, JvmUninitializedPropertyAccessExceptionThrower(context.symbols)) {
     override fun transformLateinitBackingField(backingField: IrField, property: IrProperty) {
         super.transformLateinitBackingField(backingField, property)
         backingField.visibility = property.setter?.visibility ?: property.visibility

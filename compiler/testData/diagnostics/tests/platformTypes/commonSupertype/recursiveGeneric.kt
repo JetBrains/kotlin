@@ -35,3 +35,6 @@ fun test(a: A, b: B, c: Boolean) {
     ab = a
     ab = b
 }
+
+/* GENERATED_FIR_TAGS: assignment, functionDeclaration, ifExpression, javaType, localProperty, propertyDeclaration,
+starProjection */

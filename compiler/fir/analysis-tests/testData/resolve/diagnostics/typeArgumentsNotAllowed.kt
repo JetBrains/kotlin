@@ -33,3 +33,6 @@ fun <T> fest() {
     val c: List<List<List<T<!TYPE_ARGUMENTS_NOT_ALLOWED!><String><!>>>>
     gest<List<List<T<!TYPE_ARGUMENTS_NOT_ALLOWED!><Boolean><!>>>>()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, localProperty, nullableType, objectDeclaration,
+propertyDeclaration, typeParameter */

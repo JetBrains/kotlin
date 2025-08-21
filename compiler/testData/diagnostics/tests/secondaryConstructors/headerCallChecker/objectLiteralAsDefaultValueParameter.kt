@@ -11,3 +11,6 @@ class A {
                     <!INSTANCE_ACCESS_BEFORE_SUPER_CALL!>foobar<!>()
     })
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, anonymousObjectExpression, classDeclaration, funWithExtensionReceiver,
+functionDeclaration, integerLiteral, secondaryConstructor, thisExpression */

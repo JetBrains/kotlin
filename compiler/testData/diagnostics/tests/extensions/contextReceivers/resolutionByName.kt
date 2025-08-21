@@ -15,3 +15,6 @@ val bar: String
         <!UNRESOLVED_REFERENCE!>label<!>
         return ""
     }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionDeclarationWithContext, getter,
+propertyDeclaration, propertyDeclarationWithContext, stringLiteral */

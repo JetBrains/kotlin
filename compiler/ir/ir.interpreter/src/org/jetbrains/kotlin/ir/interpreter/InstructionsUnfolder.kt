@@ -73,6 +73,7 @@ internal fun unfoldInstruction(element: IrElement?, environment: IrInterpreterEn
         is IrClassReference -> unfoldClassReference(element, callStack)
         is IrGetClass -> unfoldGetClass(element, callStack)
         is IrComposite -> unfoldComposite(element, callStack)
+        is IrRichCallableReference<*> -> unfoldRichCallableReferenceReference(element, callStack)
 
         else -> TODO("${element.javaClass} not supported")
     }
@@ -447,4 +448,9 @@ private fun unfoldClassReference(classReference: IrClassReference, callStack: Ca
 private fun unfoldGetClass(element: IrGetClass, callStack: CallStack) {
     callStack.pushSimpleInstruction(element)
     callStack.pushCompoundInstruction(element.argument)
+}
+
+private fun unfoldRichCallableReferenceReference(reference: IrRichCallableReference<*>, callStack: CallStack) {
+    callStack.pushSimpleInstruction(reference)
+    reference.boundValues.reversed().forEach { callStack.pushCompoundInstruction(it) }
 }

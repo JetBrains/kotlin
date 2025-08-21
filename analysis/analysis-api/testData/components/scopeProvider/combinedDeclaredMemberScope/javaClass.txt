@@ -1,5 +1,30 @@
 KaJavaFieldSymbol:
   annotations: []
+  callableId: /JavaClass.foo
+  compilerVisibility: Public
+  contextReceivers: []
+  isActual: false
+  isExpect: false
+  isExtension: false
+  isStatic: true
+  isVal: false
+  location: CLASS
+  modality: FINAL
+  name: foo
+  origin: JAVA_SOURCE
+  receiverParameter: null
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
+    type: kotlin/Int
+  visibility: PUBLIC
+  getContainingFileSymbol: null
+  getContainingJvmClassName: JavaClass
+  getContainingModule: KaSourceModule "Sources of main"
+  deprecationStatus: null
+
+KaJavaFieldSymbol:
+  annotations: []
   callableId: /JavaClass.field
   compilerVisibility: Public
   contextReceivers: []
@@ -31,6 +56,7 @@ KaNamedFunctionSymbol:
   annotations: []
   callableId: /JavaClass.bar
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: false
@@ -63,35 +89,11 @@ KaNamedFunctionSymbol:
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
 
-KaJavaFieldSymbol:
-  annotations: []
-  callableId: /JavaClass.foo
-  compilerVisibility: Public
-  contextReceivers: []
-  isActual: false
-  isExpect: false
-  isExtension: false
-  isStatic: true
-  isVal: false
-  location: CLASS
-  modality: FINAL
-  name: foo
-  origin: JAVA_SOURCE
-  receiverParameter: null
-  returnType: KaUsualClassType:
-    annotations: []
-    typeArguments: []
-    type: kotlin/Int
-  visibility: PUBLIC
-  getContainingFileSymbol: null
-  getContainingJvmClassName: JavaClass
-  getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
-
 KaNamedFunctionSymbol:
   annotations: []
   callableId: /JavaClass.hello
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: false
@@ -131,7 +133,7 @@ KaNamedFunctionSymbol:
 
 KaNamedClassSymbol:
   annotations: []
-  classId: JavaClass.InnerClass
+  classId: JavaClass.NestedClass
   classKind: CLASS
   companionObject: null
   compilerVisibility: Public
@@ -142,10 +144,10 @@ KaNamedClassSymbol:
   isExternal: false
   isFun: false
   isInline: false
-  isInner: true
+  isInner: false
   location: CLASS
   modality: OPEN
-  name: InnerClass
+  name: NestedClass
   origin: JAVA_SOURCE
   superTypes: [
     KaUsualClassType:
@@ -162,7 +164,7 @@ KaNamedClassSymbol:
 
 KaNamedClassSymbol:
   annotations: []
-  classId: JavaClass.NestedClass
+  classId: JavaClass.InnerClass
   classKind: CLASS
   companionObject: null
   compilerVisibility: Public
@@ -173,10 +175,10 @@ KaNamedClassSymbol:
   isExternal: false
   isFun: false
   isInline: false
-  isInner: false
+  isInner: true
   location: CLASS
   modality: OPEN
-  name: NestedClass
+  name: InnerClass
   origin: JAVA_SOURCE
   superTypes: [
     KaUsualClassType:

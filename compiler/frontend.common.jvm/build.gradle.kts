@@ -7,13 +7,13 @@ dependencies {
     api(project(":core:metadata.jvm"))
     api(project(":core:deserialization.common"))
     api(project(":core:deserialization.common.jvm"))
-    implementation(project(":core:compiler.common.jvm"))
+    api(project(":compiler:psi:psi-api"))
+    api(project(":core:compiler.common.jvm"))
     compileOnly(intellijCore())
+    compileOnly(libs.kotlinx.coroutines.core.jvm)
     compileOnly(libs.intellij.asm)
-
-    implementation(project(":core:descriptors.jvm"))
-    api(project(":compiler:psi"))
-
+    compileOnly(libs.intellij.fastutil)
+    implementation(libs.vavr)
 }
 
 sourceSets {

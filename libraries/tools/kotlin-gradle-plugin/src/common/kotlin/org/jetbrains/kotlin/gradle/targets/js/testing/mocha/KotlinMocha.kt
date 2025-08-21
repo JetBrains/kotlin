@@ -7,7 +7,9 @@ package org.jetbrains.kotlin.gradle.targets.js.testing.mocha
 
 import org.gradle.api.Project
 import org.gradle.api.file.Directory
+import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Provider
+import org.gradle.api.provider.ProviderFactory
 import org.gradle.process.ProcessForkOptions
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesClientSettings
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesTestExecutionSpec
@@ -17,19 +19,53 @@ import org.jetbrains.kotlin.gradle.targets.js.internal.parseNodeJsStackTraceAsJv
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsPlugin.Companion.kotlinNodeJsEnvSpec
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin.Companion.kotlinNodeJsRootExtension
+import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProjectModules
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTestFramework
+import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTestFramework.Companion.CREATE_TEST_EXEC_SPEC_DEPRECATION_MSG
+import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTestFramework.Companion.createTestExecutionSpecDeprecated
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinTestRunnerCliArgs
+import org.jetbrains.kotlin.gradle.targets.js.webTargetVariant
 import org.jetbrains.kotlin.gradle.utils.getFile
 import org.jetbrains.kotlin.gradle.utils.getValue
+import org.jetbrains.kotlin.gradle.utils.processes.ProcessLaunchOptions
+import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsRootPlugin.Companion.kotlinNodeJsRootExtension as wasmKotlinNodeJsRootExtension
 
-class KotlinMocha(@Transient override val compilation: KotlinJsIrCompilation, private val basePath: String) :
+class KotlinMocha internal constructor(
+    @Transient
+    override val compilation: KotlinJsIrCompilation,
+    private val basePath: String,
+    private val objects: ObjectFactory,
+    private val providers: ProviderFactory,
+) :
     KotlinJsTestFramework {
+
+    @Deprecated("Manually creating instances of this class is deprecated. Scheduled for removal in Kotlin 2.4.")
+    constructor(
+        compilation: KotlinJsIrCompilation,
+        basePath: String,
+    ) : this(
+        compilation = compilation,
+        basePath = basePath,
+        objects = compilation.target.project.objects,
+        providers = compilation.target.project.providers,
+    )
+
     @Transient
     private val project: Project = compilation.target.project
     private val npmProject = compilation.npmProject
-    private val versions = project.rootProject.kotlinNodeJsRootExtension.versions
+
+    @Transient
+    private val nodeJsRoot = compilation.webTargetVariant(
+        { project.rootProject.kotlinNodeJsRootExtension },
+        { project.rootProject.wasmKotlinNodeJsRootExtension },
+    )
+
+    private val versions by lazy {
+        nodeJsRoot.versions
+    }
+
     private val npmProjectDir by project.provider { npmProject.dir }
 
     @Transient
@@ -59,9 +95,9 @@ class KotlinMocha(@Transient override val compilation: KotlinJsIrCompilation, pr
 
     override fun createTestExecutionSpec(
         task: KotlinJsTest,
-        forkOptions: ProcessForkOptions,
+        launchOpts: ProcessLaunchOptions,
         nodeJsArgs: MutableList<String>,
-        debug: Boolean
+        debug: Boolean,
     ): TCServiceMessagesTestExecutionSpec {
         val clientSettings = TCServiceMessagesClientSettings(
             task.name,
@@ -76,13 +112,15 @@ class KotlinMocha(@Transient override val compilation: KotlinJsIrCompilation, pr
             exclude = task.excludePatterns
         )
 
-        val mocha = npmProject.require("mocha/bin/mocha")
+        val modules = NpmProjectModules(npmProjectDir.getFile())
+
+        val mocha = modules.require("mocha/bin/mocha")
 
         val file = task.inputFileProperty.getFile().toString()
 
         val args = nodeJsArgs + mutableListOf(
             "--require",
-            npmProject.require("source-map-support/register.js")
+            modules.require("source-map-support/register.js")
         ).apply {
             if (debug) {
                 add("--inspect-brk")
@@ -90,8 +128,8 @@ class KotlinMocha(@Transient override val compilation: KotlinJsIrCompilation, pr
             add(mocha)
             add(file)
             addAll(cliArgs.toList())
-            addAll(cliArg("--reporter", "kotlin-web-helpers/dist/mocha-kotlin-reporter.js"))
-            addAll(cliArg("--require", npmProject.require("kotlin-web-helpers/dist/kotlin-test-nodejs-runner.js")))
+            addAll(cliArg("--reporter", modules.require("kotlin-web-helpers/dist/mocha-kotlin-reporter.js")))
+            addAll(cliArg("--require", modules.require("kotlin-web-helpers/dist/kotlin-test-nodejs-runner.js")))
             if (debug) {
                 add(NO_TIMEOUT_ARG)
             } else {
@@ -104,27 +142,43 @@ class KotlinMocha(@Transient override val compilation: KotlinJsIrCompilation, pr
         else {
             nodeJsArgs + mutableListOf(
                 "--require",
-                npmProject.require("source-map-support/register.js")
+                modules.require("source-map-support/register.js")
             ).apply {
                 add(mocha)
                 add(file)
                 addAll(cliArgs.toList())
-                addAll(cliArg("--require", npmProject.require("kotlin-web-helpers/dist/kotlin-test-nodejs-empty-runner.js")))
+                addAll(cliArg("--require", modules.require("kotlin-web-helpers/dist/kotlin-test-nodejs-empty-runner.js")))
             }
         }
 
         return TCServiceMessagesTestExecutionSpec(
-            forkOptions,
-            args,
-            false,
-            clientSettings,
-            dryRunArgs
+            processLaunchOptions = launchOpts,
+            processArgs = args,
+            checkExitCode = false,
+            clientSettings = clientSettings,
+            dryRunArgs = dryRunArgs,
         )
     }
 
     private fun cliArg(cli: String, value: String?): List<String> {
         return value?.let { listOf(cli, it) } ?: emptyList()
     }
+
+    @Deprecated(message = CREATE_TEST_EXEC_SPEC_DEPRECATION_MSG)
+    override fun createTestExecutionSpec(
+        task: KotlinJsTest,
+        forkOptions: ProcessForkOptions,
+        nodeJsArgs: MutableList<String>,
+        debug: Boolean,
+    ): TCServiceMessagesTestExecutionSpec =
+        createTestExecutionSpecDeprecated(
+            task = task,
+            forkOptions = forkOptions,
+            nodeJsArgs = nodeJsArgs,
+            debug = debug,
+            objects = objects,
+            providers = providers,
+        )
 
     companion object {
         private const val DEFAULT_TIMEOUT = "2s"

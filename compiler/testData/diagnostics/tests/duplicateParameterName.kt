@@ -41,3 +41,7 @@ internal suspend fun init(
         .collect { (likeState, playable, stationId) ->
         }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, crossinline, funInterface, funWithExtensionReceiver, functionDeclaration,
+functionalType, in, inline, interfaceDeclaration, lambdaLiteral, localProperty, nullableType, out, primaryConstructor,
+propertyDeclaration, samConversion, suspend, typeParameter */

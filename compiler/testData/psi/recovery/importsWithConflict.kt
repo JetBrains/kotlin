@@ -1,3 +1,5 @@
+// COMPILATION_ERRORS
+
 package a
 
 import a1
