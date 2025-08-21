@@ -9717,6 +9717,9 @@ open annotation class kotlin.js/JsName : kotlin/Annotation { // kotlin.js/JsName
         final fun <get-name>(): kotlin/String // kotlin.js/JsName.name.<get-name>|<get-name>(){}[1]
 }
 
+// Targets: [native, wasmWasi]
+open annotation class kotlin.js/nativeInvoke : kotlin/Annotation // kotlin.js/nativeInvoke|null[1]
+
 // Targets: [native]
 open annotation class kotlin.concurrent/Volatile : kotlin/Annotation { // kotlin.concurrent/Volatile|null[0]
     constructor <init>() // kotlin.concurrent/Volatile.<init>|<init>(){}[0]
@@ -13919,6 +13922,11 @@ open annotation class kotlin.js/JsQualifier : kotlin/Annotation { // kotlin.js/J
 }
 
 // Targets: [js, wasmJs]
+open annotation class kotlin.js/nativeInvoke : kotlin/Annotation { // kotlin.js/nativeInvoke|null[0]
+    constructor <init>() // kotlin.js/nativeInvoke.<init>|<init>(){}[0]
+}
+
+// Targets: [js, wasmJs]
 open annotation class kotlin/JsFun : kotlin/Annotation { // kotlin/JsFun|null[0]
     constructor <init>(kotlin/String) // kotlin/JsFun.<init>|<init>(kotlin.String){}[0]
 
@@ -14172,11 +14180,6 @@ open annotation class kotlin.js/JsStatic : kotlin/Annotation { // kotlin.js/JsSt
 // Targets: [js]
 open annotation class kotlin.js/nativeGetter : kotlin/Annotation { // kotlin.js/nativeGetter|null[0]
     constructor <init>() // kotlin.js/nativeGetter.<init>|<init>(){}[0]
-}
-
-// Targets: [js]
-open annotation class kotlin.js/nativeInvoke : kotlin/Annotation { // kotlin.js/nativeInvoke|null[0]
-    constructor <init>() // kotlin.js/nativeInvoke.<init>|<init>(){}[0]
 }
 
 // Targets: [js]
