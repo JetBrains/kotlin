@@ -863,6 +863,12 @@ public class FirLightTreeBlackBoxModernJdkCodegenTestGenerated extends AbstractF
       }
 
       @Test
+      @TestMetadata("sealedJavaConstructorCall.kt")
+      public void testSealedJavaConstructorCall() {
+        runTest("compiler/testData/codegen/boxModernJdk/testsWithJava17/sealed/sealedJavaConstructorCall.kt");
+      }
+
+      @Test
       @TestMetadata("sealedJavaInterfaceViaKotlinReflection.kt")
       public void testSealedJavaInterfaceViaKotlinReflection() {
         runTest("compiler/testData/codegen/boxModernJdk/testsWithJava17/sealed/sealedJavaInterfaceViaKotlinReflection.kt");
