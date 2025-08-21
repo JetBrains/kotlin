@@ -44,7 +44,8 @@ import org.jetbrains.kotlin.util.OperatorNameConventions.TO_STRING
 import org.jetbrains.kotlin.utils.addToStdlib.applyIf
 
 internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassLike {
-    val isValueClass: Boolean
+    private val isValueClass: Boolean
+    override fun isValueClass() = isValueClass
 
     constructor(
         ktModule: KaModule,

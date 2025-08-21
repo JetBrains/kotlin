@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 internal class StubBasedAnnotationDeserializer(private val session: FirSession) {
     companion object {
         fun getAnnotationClassId(ktAnnotation: KtAnnotationEntry): ClassId {
+            @Suppress("DEPRECATION")
             val userType = ktAnnotation.calleeExpression?.typeReference?.typeElement
             requireWithAttachment(
                 userType is KtUserType,
@@ -39,7 +40,6 @@ internal class StubBasedAnnotationDeserializer(private val session: FirSession) 
             ) {
                 withPsiEntry("annotationEntry", ktAnnotation)
             }
-
             return userType.classId()
         }
 
