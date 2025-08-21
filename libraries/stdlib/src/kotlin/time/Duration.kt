@@ -1257,7 +1257,7 @@ private fun parseDefaultStringFormat(
 
 /**
  * Checks if multiplying two Long values exceeds [MAX_MILLIS] bounds.
- * 
+ *
  * Uses a bit-counting technique to determine if the product of [a] and [b]
  * would exceed the bounds of a 64-bit signed integer without actually
  * performing the multiplication.
@@ -1314,9 +1314,12 @@ internal class ParseRule(val overflowLimit: Long, val withSign: Boolean) {
 
 /**
  * Parses the Long from this string starting at the given index.
+ *
+ * Handles optional sign parsing and detects overflow conditions
+ * based on the provided parse rule.
+ *
  * @param startIndex position to start parsing
- * @param withSign if true, accepts optional leading +/- sign
- * @param overflowLimit maximum absolute value before overflow (default [MAX_MILLIS])
+ * @param parseRule the parsing configuration containing overflow limits and sign handling
  * @return [NumericParseData] containing parsed value, end index, sign, and overflow flag
  */
 @kotlin.internal.InlineOnly
