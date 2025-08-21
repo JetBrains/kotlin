@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.gradle.internal.KOTLIN_COMPILER_EMBEDDABLE
 import org.jetbrains.kotlin.gradle.internal.KOTLIN_MODULE_GROUP
 import org.jetbrains.kotlin.gradle.internal.attributes.setupAttributesMatchingStrategy
 import org.jetbrains.kotlin.gradle.internal.diagnostics.AgpCompatibilityCheck.runAgpCompatibilityCheckIfAgpIsApplied
+import org.jetbrains.kotlin.gradle.internal.diagnostics.AgpWithBuiltInKotlinAppliedCheck.runAgpWithBuiltInKotlinIfAppliedCheck
 import org.jetbrains.kotlin.gradle.internal.diagnostics.GradleCompatibilityCheck.runGradleCompatibilityCheck
 import org.jetbrains.kotlin.gradle.internal.diagnostics.KotlinCompilerEmbeddableCheck.checkCompilerEmbeddableInClasspath
 import org.jetbrains.kotlin.gradle.internal.properties.PropertiesBuildService
@@ -225,6 +226,7 @@ abstract class KotlinBasePluginWrapper : DefaultKotlinBasePlugin() {
         project.addPgpSignatureHelpers()
         project.addPomValidationHelpers()
         project.addSigningValidationHelpers()
+        if (projectExtensionClass == KotlinAndroidProjectExtension::class) project.runAgpWithBuiltInKotlinIfAppliedCheck()
 
         project.createKotlinExtension(projectExtensionClass).apply {
             coreLibrariesVersion = pluginVersion
