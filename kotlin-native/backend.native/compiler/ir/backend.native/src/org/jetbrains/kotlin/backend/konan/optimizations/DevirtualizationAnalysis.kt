@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.backend.konan.lower.loweredConstructorFunction
 import org.jetbrains.kotlin.backend.konan.util.IntArrayList
 import org.jetbrains.kotlin.backend.konan.lower.getObjectClassInstanceFunction
 import org.jetbrains.kotlin.backend.konan.util.CustomBitSet
+import org.jetbrains.kotlin.backend.konan.util.LongArrayList
 import org.jetbrains.kotlin.backend.konan.util.LongHashMap
 import org.jetbrains.kotlin.backend.konan.util.LongHashSet
 import org.jetbrains.kotlin.descriptors.ClassKind
@@ -63,7 +64,7 @@ object DevirtualizationUnfoldFactors {
 // Devirtualization analysis is performed using Variable Type Analysis algorithm.
 // See http://web.cs.ucla.edu/~palsberg/tba/papers/sundaresan-et-al-oopsla00.pdf for details.
 internal object DevirtualizationAnalysis {
-    private val TAKE_NAMES = false // Take fqNames for all functions and types (for debug purposes).
+    private val TAKE_NAMES = true // Take fqNames for all functions and types (for debug purposes).
 
     private inline fun takeName(block: () -> String) = if (TAKE_NAMES) block() else null
 
@@ -871,7 +872,8 @@ internal object DevirtualizationAnalysis {
             private val virtualTypeFilter = CustomBitSet().apply { set(VIRTUAL_TYPE_ID) }
             val instantiatingClasses = CustomBitSet()
 
-            val bagOfEdges = LongHashSet(10, 0.4f)
+            val bagOfEdges = LongArrayList()//LongHashSet(10, 0.4f)
+            var localBagOfEdges = LongHashSet(10, 0.4f)
             val directEdgesCount = IntArrayList()
             val reversedEdgesCount = IntArrayList()
 
@@ -880,7 +882,9 @@ internal object DevirtualizationAnalysis {
                 val toId = to.id
                 val value = fromId.toLong() or (toId.toLong() shl 32)
 
-                if (!bagOfEdges.add(value)) return
+                if (!localBagOfEdges.add(value)) return
+
+                bagOfEdges.add(value)
 
                 directEdgesCount.reserve(fromId + 1)
                 directEdgesCount[fromId]++
@@ -960,6 +964,7 @@ internal object DevirtualizationAnalysis {
                     val function = functions[symbol] ?: continue
                     val body = function.body
                     val functionConstraintGraph = constraintGraph.functions[symbol]!!
+                    localBagOfEdges = LongHashSet()
 
                     body.forEachNonScopeNode {
                         val node = dfgNodeToConstraintNode(functionConstraintGraph, it)
