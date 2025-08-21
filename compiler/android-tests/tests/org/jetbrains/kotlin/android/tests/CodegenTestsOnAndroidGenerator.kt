@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.test.InTextDirectivesUtils.IGNORE_BACKEND_DIRECTIVE_
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
 import org.jetbrains.kotlin.test.directives.isApplicableTo
+import org.jetbrains.kotlin.test.frontend.classic.handlers.ClassicUnstableAndK2LanguageFeaturesSkipConfigurator
 import org.jetbrains.kotlin.test.model.DependencyKind
 import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.model.ResultingArtifact
@@ -372,6 +373,10 @@ class CodegenTestsOnAndroidGenerator private constructor(private val pathManager
                         }
                     }
 
+                    if (testConfiguration.metaTestConfigurators.any { it.shouldSkipTest() }) {
+                        continue
+                    }
+
                     patchFilesAndAddTest(file, module, services, filesHolder)
                 }
             }
@@ -423,6 +428,7 @@ class CodegenTestsOnAndroidGenerator private constructor(private val pathManager
             }
         }
         useSourcePreprocessor({ AndroidTransformingPreprocessor(it) })
+        useMetaTestConfigurators(::ClassicUnstableAndK2LanguageFeaturesSkipConfigurator)
     }
 
     companion object {
