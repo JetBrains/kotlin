@@ -838,6 +838,11 @@ class DurationTest {
             "4602453423018496273ms ${Long.MAX_VALUE}us ${Long.MAX_VALUE}ns"
         )
         test(Long.MAX_VALUE.microseconds, "106751991d 4h 0m 54.775s", "${Long.MAX_VALUE}.99999999999us")
+        test(
+            1.days + 2.hours + 3.minutes + 4.seconds + 5.milliseconds + 6.microseconds + 7.nanoseconds,
+            "1d 2h 3m 4.005006007s",
+            "1d2h3m 4s 5ms 6us 7ns"
+        )
 
         // nanoseconds rounding
         for (i in 0..4) {
