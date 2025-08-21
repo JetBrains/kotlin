@@ -116,6 +116,7 @@ class KotlinCompileContext(val jpsContext: CompileContext) {
             }
         }
 
+        @Suppress("DEPRECATION")
         val lookupsCacheRootPath = dataPaths.getTargetDataRoot(KotlinDataContainerTarget)
         return CompositeLookupsCacheAttributesManager(lookupsCacheRootPath.toPath(), expectedLookupsCacheComponents)
     }

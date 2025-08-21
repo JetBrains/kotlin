@@ -73,6 +73,7 @@ class KotlinDirtySourceFilesHolder(
         val byTarget = mutableMapOf<ModuleBuildTarget, TargetFiles>()
 
         chunk.targets.forEach { target ->
+            @Suppress("DEPRECATION")
             val removedFiles = delegate.getRemovedFiles(target)
                 .map { File(it) }
                 .filter { it.isKotlinSourceFile }

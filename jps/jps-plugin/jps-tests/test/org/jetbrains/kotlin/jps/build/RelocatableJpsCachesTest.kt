@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.jps.build
 
 import com.intellij.testFramework.RunAll
 import com.intellij.util.ThrowableRunnable
-import org.jetbrains.jps.builders.*
+import org.jetbrains.jps.builders.BuildTarget
 import org.jetbrains.jps.builders.java.JavaSourceRootDescriptor
 import org.jetbrains.jps.cmdline.ProjectDescriptor
 import org.jetbrains.jps.incremental.ModuleBuildTarget
@@ -149,20 +149,26 @@ abstract class RelocatableCacheTestCase(
     private fun copyKotlinCaches(descriptor: ProjectDescriptor) {
         val kotlinDataPaths = HashSet<File>()
         val dataPaths = descriptor.dataManager.dataPaths
-        kotlinDataPaths.add(dataPaths.getTargetDataRoot(KotlinDataContainerTarget))
+        kotlinDataPaths.add(
+            @Suppress("DEPRECATION")
+            dataPaths.getTargetDataRoot(KotlinDataContainerTarget)
+        )
 
         for (target in descriptor.buildTargetIndex.allTargets) {
             if (!target.isKotlinTarget(descriptor)) continue
 
+            @Suppress("DEPRECATION")
             val targetDataRoot = descriptor.dataManager.dataPaths.getTargetDataRoot(target)
             val kotlinDataRoot = targetDataRoot.resolve(KOTLIN_CACHE_DIRECTORY_NAME)
             assert(kotlinDataRoot.isDirectory) { "Kotlin data root '$kotlinDataRoot' is not a directory" }
             kotlinDataPaths.add(kotlinDataRoot)
         }
 
+        @Suppress("DEPRECATION")
         findFileInDirectory(descriptor.dataManager.dataPaths.dataStorageRoot, "jvm-build-meta-info.txt")!!.also { kotlinDataPaths.add(it) }
 
         dirToCopyKotlinCaches.deleteRecursively()
+        @Suppress("DEPRECATION")
         val originalStorageRoot = descriptor.dataManager.dataPaths.dataStorageRoot
         for (kotlinCacheRoot in kotlinDataPaths) {
             val relativePath = kotlinCacheRoot.relativeTo(originalStorageRoot).path

@@ -48,6 +48,7 @@ object KotlinDataContainerTarget : BuildTarget<BuildRootDescriptor>(KotlinDataCo
 
     override fun getOutputRoots(context: CompileContext): Collection<File> {
         val dataManager = context.projectDescriptor.dataManager
+        @Suppress("DEPRECATION")
         val storageRoot = dataManager.dataPaths.dataStorageRoot
         return listOf(File(storageRoot, SettingConstants.KOTLIN_DATA_CONTAINER_ID))
     }
