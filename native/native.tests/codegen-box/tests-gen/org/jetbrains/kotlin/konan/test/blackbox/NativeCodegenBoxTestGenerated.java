@@ -9627,6 +9627,12 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         }
 
         @Test
+        @TestMetadata("forInListWithIndexNameBasedDestructuringShortForm.kt")
+        public void testForInListWithIndexNameBasedDestructuringShortForm() {
+          runTest("compiler/testData/codegen/box/controlStructures/forInIterableWithIndex/forInListWithIndexNameBasedDestructuringShortForm.kt");
+        }
+
+        @Test
         @TestMetadata("forInListWithIndexNoElementVar.kt")
         public void testForInListWithIndexNoElementVar() {
           runTest("compiler/testData/codegen/box/controlStructures/forInIterableWithIndex/forInListWithIndexNoElementVar.kt");
