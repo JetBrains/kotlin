@@ -66,8 +66,8 @@ class TreesCompareTest : AbstractRawFirBuilderTestCase() {
             diagnosticsReporter = null
         )
         compareBase(System.getProperty("user.dir"), withTestData = false) { file ->
-            val (text, linesMapping) = with(file.inputStream().reader(Charsets.UTF_8)) {
-                this.readSourceFileWithMapping()
+            val (text, linesMapping) = file.inputStream().reader(Charsets.UTF_8).use {
+                it.readSourceFileWithMapping()
             }
             splitText(file.path, text.toString().trim()).forEach { pair ->
                 val (filePath, fileText) = pair

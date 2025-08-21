@@ -74,23 +74,24 @@ fun BinaryArtifactHandler<*>.checkFullDiagnosticRender() {
         needToVerifyDiagnostics = true
         val reportedDiagnostics = mutableListOf<String>()
         for (testFile in module.files) {
-            val finder =
-                SequentialPositionFinder(testServices.sourceFileProvider.getContentOfSourceFile(testFile).byteInputStream().reader())
-            for (metaInfo in testServices.globalMetadataInfoHandler.getReportedMetaInfosForFile(testFile).sortedBy { it.start }) {
-                val rendered = when (metaInfo) {
-                    is DiagnosticCodeMetaInfo -> metaInfo.diagnostic.let {
-                        val message = DefaultErrorMessages.render(it)
-                        val position = DiagnosticUtils.getLineAndColumnRange(it.psiFile, it.textRanges).start
-                        renderDiagnosticMessage(it.psiFile.name, it.severity, message, position.line, position.column)
+            testServices.sourceFileProvider.getContentOfSourceFile(testFile).byteInputStream().reader().use {
+                val finder = SequentialPositionFinder(it)
+                for (metaInfo in testServices.globalMetadataInfoHandler.getReportedMetaInfosForFile(testFile).sortedBy { it.start }) {
+                    val rendered = when (metaInfo) {
+                        is DiagnosticCodeMetaInfo -> metaInfo.diagnostic.let {
+                            val message = DefaultErrorMessages.render(it)
+                            val position = DiagnosticUtils.getLineAndColumnRange(it.psiFile, it.textRanges).start
+                            renderDiagnosticMessage(it.psiFile.name, it.severity, message, position.line, position.column)
+                        }
+                        is FirDiagnosticCodeMetaInfo -> metaInfo.diagnostic.let {
+                            val message = it.renderMessage()
+                            val position = finder.findNextPosition(it.firstRange.startOffset, false)
+                            renderDiagnosticMessage(testFile.relativePath, it.severity, message, position.line, position.column)
+                        }
+                        else -> continue
                     }
-                    is FirDiagnosticCodeMetaInfo -> metaInfo.diagnostic.let {
-                        val message = it.renderMessage()
-                        val position = finder.findNextPosition(it.firstRange.startOffset, false)
-                        renderDiagnosticMessage(testFile.relativePath, it.severity, message, position.line, position.column)
-                    }
-                    else -> continue
+                    reportedDiagnostics += rendered.replace(module.independentSourceDirectoryPath(testServices), "")
                 }
-                reportedDiagnostics += rendered.replace(module.independentSourceDirectoryPath(testServices), "")
             }
         }
         if (reportedDiagnostics.isNotEmpty()) {

@@ -64,8 +64,8 @@ class TotalKotlinTest : AbstractRawFirBuilderTestCase() {
         println("BASE PATH: $path")
         path.walkTopDown {
             val sourceFile = KtIoFileSourceFile(it)
-            val (code, linesMapping) = with(it.inputStream().reader(Charsets.UTF_8)) {
-                this.readSourceFileWithMapping()
+            val (code, linesMapping) = it.inputStream().reader(Charsets.UTF_8).use {
+                it.readSourceFileWithMapping()
             }
             time += measureNanoTime {
                 generateFirFromLightTree(onlyLightTree, lightTreeConverter, code, sourceFile, linesMapping)

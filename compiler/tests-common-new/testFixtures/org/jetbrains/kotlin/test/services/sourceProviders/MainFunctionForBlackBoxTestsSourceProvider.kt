@@ -43,8 +43,8 @@ open class MainFunctionForBlackBoxTestsSourceProvider(testServices: TestServices
         fun fileContainsBoxMethod(sourceFile: KtSourceFile): Boolean =
             when (sourceFile) {
                 is KtPsiSourceFile -> containsBoxMethod(sourceFile.psiFile.text)
-                else -> with(sourceFile.getContentsAsStream().reader(Charsets.UTF_8)) {
-                    containsBoxMethod(this.readText())
+                else -> sourceFile.getContentsAsStream().reader(Charsets.UTF_8).use {
+                    containsBoxMethod(it.readText())
                 }
             }
 

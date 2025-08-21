@@ -141,8 +141,8 @@ class FirResolveBench(val withProgress: Boolean, val listener: BenchListener? = 
             val before = vmStateSnapshot()
             val firFile: FirFile
             val time = measureNanoTime {
-                val (code, linesMapping) = with(file.getContentsAsStream().reader(Charsets.UTF_8)) {
-                    this.readSourceFileWithMapping()
+                val (code, linesMapping) = file.getContentsAsStream().reader(Charsets.UTF_8).use {
+                    it.readSourceFileWithMapping()
                 }
                 totalLines += linesMapping.linesCount
                 firFile = builder.buildFirFile(code, file, linesMapping)
