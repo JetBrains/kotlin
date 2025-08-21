@@ -38,7 +38,7 @@ index 7d1488ab8..7e88705ea 100644
  android.nonFinalResIds=false
 +kotlin.compiler.runViaBuildToolsApi=true
 
- kotlinVersion=2.2.255-SNAPSHOT
+ kotlinVersion=<kotlin_version>
 diff --git a/versions.properties b/versions.properties
 index aa37e7e0f..1933f2a52 100644
 --- a/versions.properties
