@@ -15,9 +15,7 @@ import org.jetbrains.kotlin.fir.dataframe.AbstractCompilerFacilityTestForDataFra
 import org.jetbrains.kotlin.fir.dataframe.AbstractDataFrameBlackBoxCodegenTest
 import org.jetbrains.kotlin.fir.dataframe.AbstractDataFrameDiagnosticTest
 import org.jetbrains.kotlin.generators.generateTestGroupSuiteWithJUnit5
-import org.jetbrains.kotlin.generators.impl.generateTestGroupSuite
 import org.jetbrains.kotlin.generators.util.TestGeneratorUtil
-import org.jetbrains.kotlin.incremental.AbstractIncrementalK2JvmWithPluginCompilerRunnerTest
 import org.jetbrains.kotlin.kapt.cli.test.AbstractArgumentParsingTest
 import org.jetbrains.kotlin.kapt.cli.test.AbstractFirKaptToolIntegrationTest
 import org.jetbrains.kotlin.kapt.cli.test.AbstractKaptToolIntegrationTest
@@ -33,19 +31,10 @@ import org.jetbrains.kotlin.parcelize.test.runners.*
 import org.jetbrains.kotlin.powerassert.AbstractFirLightTreeBlackBoxCodegenTestForPowerAssert
 import org.jetbrains.kotlin.powerassert.AbstractIrBlackBoxCodegenTestForPowerAssert
 import org.jetbrains.kotlin.scripting.test.*
-import org.jetbrains.kotlin.test.TargetBackend
 
 
 fun main(args: Array<String>) {
     System.setProperty("java.awt.headless", "true")
-    generateTestGroupSuite(args) {
-
-        testGroup("plugins/plugin-sandbox/plugin-sandbox-ic-test/tests-gen", "plugins/plugin-sandbox/plugin-sandbox-ic-test/testData") {
-            testClass<AbstractIncrementalK2JvmWithPluginCompilerRunnerTest> {
-                model("pureKotlin", extension = null, recursive = false, targetBackend = TargetBackend.JVM_IR)
-            }
-        }
-    }
 
     generateTestGroupSuiteWithJUnit5 {
         testGroup("plugins/parcelize/parcelize-compiler/tests-gen", "plugins/parcelize/parcelize-compiler/testData") {
