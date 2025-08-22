@@ -9,8 +9,6 @@ import org.jetbrains.kotlin.asJava.AbstractCompilerLightClassTest
 import org.jetbrains.kotlin.cfg.AbstractControlFlowTest
 import org.jetbrains.kotlin.cfg.AbstractDataFlowTest
 import org.jetbrains.kotlin.cfg.AbstractPseudoValueTest
-import org.jetbrains.kotlin.cli.AbstractCliTest
-import org.jetbrains.kotlin.codegen.AbstractIrCustomScriptCodegenTest
 import org.jetbrains.kotlin.codegen.fir.*
 import org.jetbrains.kotlin.codegen.ir.AbstractIrCheckLocalVariablesTableTest
 import org.jetbrains.kotlin.codegen.ir.AbstractIrScriptCodegenTest
@@ -28,7 +26,6 @@ import org.jetbrains.kotlin.fir.lightTree.AbstractLightTree2FirConverterTestCase
 import org.jetbrains.kotlin.generators.impl.generateTestGroupSuite
 import org.jetbrains.kotlin.generators.util.TestGeneratorUtil
 import org.jetbrains.kotlin.generators.util.TestGeneratorUtil.KT_OR_KTS_WITHOUT_DOTS_IN_NAME
-import org.jetbrains.kotlin.integration.AbstractAntTaskTest
 import org.jetbrains.kotlin.jvm.compiler.*
 import org.jetbrains.kotlin.jvm.compiler.fir.AbstractFirLightTreeCompileJavaAgainstKotlinTest
 import org.jetbrains.kotlin.jvm.compiler.fir.AbstractFirPsiCompileJavaAgainstKotlinTest
@@ -38,9 +35,7 @@ import org.jetbrains.kotlin.jvm.compiler.javac.AbstractLoadJavaUsingJavacTest
 import org.jetbrains.kotlin.lexer.kdoc.AbstractKDocLexerTest
 import org.jetbrains.kotlin.lexer.kotlin.AbstractKotlinLexerTest
 import org.jetbrains.kotlin.modules.xml.AbstractModuleXmlParserTest
-import org.jetbrains.kotlin.multiplatform.AbstractMultiPlatformIntegrationTest
 import org.jetbrains.kotlin.parsing.AbstractParsingTest
-import org.jetbrains.kotlin.repl.AbstractReplInterpreterTest
 import org.jetbrains.kotlin.resolve.AbstractResolveTest
 import org.jetbrains.kotlin.resolve.calls.AbstractResolvedCallsTest
 import org.jetbrains.kotlin.resolve.calls.AbstractResolvedConstructorDelegationCallsTests
@@ -52,51 +47,6 @@ fun generateJUnit3CompilerTests(args: Array<String>, mainClassName: String?) {
     val excludedCustomTestdataPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN
 
     generateTestGroupSuite(args, mainClassName) {
-        testGroup("compiler/tests-integration/tests-gen", "compiler/testData") {
-            testClass<AbstractMultiPlatformIntegrationTest> {
-                model("multiplatform", extension = null, recursive = true, excludeParentDirs = true)
-            }
-
-            testClass<AbstractIrCustomScriptCodegenTest> {
-                model("codegen/customScript", pattern = "^(.*)$", targetBackend = TargetBackend.JVM_IR)
-            }
-
-            testClass<AbstractReplInterpreterTest> {
-                model("repl", extension = "repl")
-            }
-
-            testClass<AbstractCliTest> {
-                model("cli/jvm/readingConfigFromEnvironment", extension = "args", testMethod = "doJvmTest", recursive = false)
-                model("cli/jvm/plugins", extension = "args", testMethod = "doJvmTest", recursive = false)
-                model("cli/jvm/hmpp", extension = "args", testMethod = "doJvmTest", recursive = false)
-                model("cli/jvm/apiVersion", extension = "args", testMethod = "doJvmTest", recursive = false)
-                model("cli/jvm/argFileCommonChecks", extension = "args", testMethod = "doJvmTest", recursive = false)
-                model("cli/jvm/diagnosticTests", extension = "args", testMethod = "doJvmTest", recursive = false)
-                model("cli/jvm/diagnosticTests/crv", extension = "args", testMethod = "doJvmTest", recursive = false)
-                model("cli/jvm/extraArgCommonChecks", extension = "args", testMethod = "doJvmTest", recursive = false)
-                model("cli/jvm/internalArgCommonChecks", extension = "args", testMethod = "doJvmTest", recursive = false)
-                model("cli/jvm/jdkHome", extension = "args", testMethod = "doJvmTest", recursive = false)
-                model("cli/jvm/languageVersion", extension = "args", testMethod = "doJvmTest", recursive = false)
-                model("cli/jvm/optIn", extension = "args", testMethod = "doJvmTest", recursive = false)
-                model("cli/jvm/sourcesCommonChecks", extension = "args", testMethod = "doJvmTest", recursive = false)
-                model("cli/jvm/XexplicitApi", extension = "args", testMethod = "doJvmTest", recursive = false)
-                model("cli/jvm/XjdkRelease", extension = "args", testMethod = "doJvmTest", recursive = false)
-                model("cli/jvm/XjspecifyAnnotation", extension = "args", testMethod = "doJvmTest", recursive = false)
-                model("cli/jvm/Xjsr305", extension = "args", testMethod = "doJvmTest", recursive = false)
-                model("cli/jvm/XnewInference", extension = "args", testMethod = "doJvmTest", recursive = false)
-                model("cli/jvm/XsupressWarnings", extension = "args", testMethod = "doJvmTest", recursive = false)
-                model("cli/jvm/XXmultiPlatformProject", extension = "args", testMethod = "doJvmTest", recursive = false)
-                model("cli/jvm", extension = "args", testMethod = "doJvmTest", recursive = false)
-                model("cli/js", extension = "args", testMethod = "doJsTest", recursive = false)
-                model("cli/wasm", extension = "args", testMethod = "doJsTest", recursive = false)
-                model("cli/metadata", extension = "args", testMethod = "doMetadataTest", recursive = false)
-            }
-
-            testClass<AbstractAntTaskTest> {
-                model("integration/ant/jvm", extension = null, recursive = false)
-            }
-        }
-
         testGroup("compiler/tests-gen", "compiler/testData") {
             testClass<AbstractResolveTest> {
                 model("resolve", extension = "resolve")
