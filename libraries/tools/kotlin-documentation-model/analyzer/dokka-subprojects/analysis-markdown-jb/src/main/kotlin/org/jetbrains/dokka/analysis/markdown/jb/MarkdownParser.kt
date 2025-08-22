@@ -133,12 +133,21 @@ public open class MarkdownParser(
     private fun List<ASTNode>.evaluateChildrenWithDroppedEnclosingTokens(count: Int) =
         drop(count).dropLast(count).evaluateChildren()
 
-    private fun blockquotesHandler(node: ASTNode) =
-        DocTagsFromIElementFactory.getInstance(
+    /**
+     * Tracks if we are currently processing elements inside of [MarkdownElementTypes.BLOCK_QUOTE] element.
+     * More info on the specifics and why we need it, in the documentation of [preprocessTextElement]
+     */
+    private var isInsideBlockquote = false
+    private fun blockquotesHandler(node: ASTNode): List<DocTag> {
+        isInsideBlockquote = true
+        val result = DocTagsFromIElementFactory.getInstance(
             node.type, children = node.children
                 .filterIsInstance<CompositeASTNode>()
                 .evaluateChildren()
         )
+        isInsideBlockquote = false
+        return result
+    }
 
     private fun listsHandler(node: ASTNode): List<DocTag> {
 
@@ -281,7 +290,10 @@ public open class MarkdownParser(
 
     private fun textHandler(node: ASTNode, keepAllFormatting: Boolean) = DocTagsFromIElementFactory.getInstance(
         MarkdownTokenTypes.TEXT,
-        body = text.substring(node.startOffset, node.endOffset).transform(),
+        body = preprocessTextElement(
+            text = text.substring(node.startOffset, node.endOffset),
+            isInsideBlockquotesHandler = isInsideBlockquote
+        ),
         keepFormatting = keepAllFormatting
     )
 
@@ -524,11 +536,6 @@ public open class MarkdownParser(
         return LeafASTNode(type, startOffset, endOffset)
     }
 
-    private fun String.transform() = this
-        .replace(Regex("\n\n+"), "")        // Squashing new lines between paragraphs
-        .replace(Regex("\n"), " ")
-        .replace(Regex(" >+ +"), " ")      // Replacement used in blockquotes, get rid of garbage
-
     private fun detailedException(baseMessage: String, node: ASTNode) =
         IllegalStateException(
             baseMessage + " in ${kdocLocation ?: "unspecified location"}, element starts from offset ${node.startOffset} and ends ${node.endOffset}: ${
@@ -549,6 +556,41 @@ public open class MarkdownParser(
                 .joinToString(separator = ".")
                 .takeIf { it.isNotBlank() }
         }
+
+        // Note: Regex creation is a complex operation, and so it should be created once
+        private val blockquoteNewLineRegex = Regex("\n>+ ")
+
+        /**
+         * Performs preprocessing of the Markdown text element.
+         *
+         * First replacement: blockquotes' handling, executed if [isInsideBlockquotesHandler] is `true`
+         * Markdown parser,
+         * when handling blockquotes will handle (remove) `>` symbols only for the first line
+         * and will do nothing for further lines.
+         * So we need to do it manually, for example, when parsing the following Markdown:
+         * ```text
+         * > First line
+         * > Second line
+         * ```
+         * Text element will contain: `First line\n> Second line`.
+         *
+         * Second replacement: combining multiple lines into a single paragraph
+         * When parsing the following Markdown:
+         * ```text
+         * First line
+         * Second line
+         * ```
+         * Text element will contain: `First line\n Second line`.
+         * But it's still a single paragraph that should be concatenated into a single one.
+         *
+         * @param isInsideBlockquotesHandler `true` if the text is inside of blockquotes, and so additional blockquotes preprocessing is required.
+         */
+        private fun preprocessTextElement(text: String, isInsideBlockquotesHandler: Boolean): String {
+            // Note: we need to first do blockquote replacement so that the next lines will be concatenated into a single paragraph.
+            return when {
+                isInsideBlockquotesHandler -> text.replace(blockquoteNewLineRegex, "\n")
+                else -> text
+            }.replace('\n', ' ')
+        }
     }
 }
-
