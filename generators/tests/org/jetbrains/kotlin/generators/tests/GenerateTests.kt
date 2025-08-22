@@ -21,10 +21,6 @@ import org.jetbrains.kotlin.kapt.cli.test.AbstractKaptToolIntegrationTest
 import org.jetbrains.kotlin.kapt.test.AbstractFirKaptStubConverterTest
 import org.jetbrains.kotlin.kapt.test.runners.AbstractIrKotlinKaptContextTest
 import org.jetbrains.kotlin.kapt.test.runners.AbstractKaptStubConverterTest
-import org.jetbrains.kotlin.lombok.AbstractDiagnosticTestForLombok
-import org.jetbrains.kotlin.lombok.AbstractFirLightTreeBlackBoxCodegenTestForLombok
-import org.jetbrains.kotlin.lombok.AbstractFirPsiDiagnosticTestForLombok
-import org.jetbrains.kotlin.lombok.AbstractIrBlackBoxCodegenTestForLombok
 import org.jetbrains.kotlin.powerassert.AbstractFirLightTreeBlackBoxCodegenTestForPowerAssert
 import org.jetbrains.kotlin.powerassert.AbstractIrBlackBoxCodegenTestForPowerAssert
 import org.jetbrains.kotlin.scripting.test.*
@@ -34,22 +30,6 @@ fun main(args: Array<String>) {
     System.setProperty("java.awt.headless", "true")
 
     generateTestGroupSuiteWithJUnit5 {
-
-        testGroup("plugins/lombok/tests-gen", "plugins/lombok/testData") {
-            testClass<AbstractIrBlackBoxCodegenTestForLombok> {
-                model("box")
-            }
-            testClass<AbstractFirLightTreeBlackBoxCodegenTestForLombok> {
-                model("box")
-            }
-            testClass<AbstractDiagnosticTestForLombok> {
-                model("diagnostics/k1+k2", excludedPattern = TestGeneratorUtil.KT_OR_KTS_WITH_FIR_PREFIX)
-            }
-            testClass<AbstractFirPsiDiagnosticTestForLombok> {
-                model("diagnostics")
-            }
-        }
-
         testGroup("plugins/power-assert/tests-gen", "plugins/power-assert/testData") {
             testClass<AbstractIrBlackBoxCodegenTestForPowerAssert> {
                 model("codegen", excludedPattern = TestGeneratorUtil.KT_OR_KTS_WITH_FIR_PREFIX)
