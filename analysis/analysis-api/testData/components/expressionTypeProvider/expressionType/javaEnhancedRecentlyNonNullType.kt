@@ -4,7 +4,8 @@ package androidx.annotation;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Target;
 
-@Target({ElementType.PARAMETER, ElementType.TYPE})
+@Retention(CLASS)
+@Target({METHOD, PARAMETER, FIELD})
 public @interface RecentlyNonNull {
 }
 
@@ -21,4 +22,4 @@ public class A {
 // FILE: main.kt
 import androidx.annotation.A
 
-fun test(a: A) = a.b<caret><caret_onAirContext>ar()
+fun test(a: A) = <expr>a.bar()</expr>

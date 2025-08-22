@@ -46,9 +46,15 @@ public class FirIdeDependentAnalysisSourceModuleSymbolRenderingByReferenceTestGe
   }
 
   @Test
-  @TestMetadata("javaEnhancedType.kt")
-  public void testJavaEnhancedType() {
-    runTest("analysis/analysis-api/testData/components/symbolDeclarationRenderer/symbolRenderingByReference/javaEnhancedType.kt");
+  @TestMetadata("javaEnhancedRecentlyNonNullType.kt")
+  public void testJavaEnhancedRecentlyNonNullType() {
+    runTest("analysis/analysis-api/testData/components/symbolDeclarationRenderer/symbolRenderingByReference/javaEnhancedRecentlyNonNullType.kt");
+  }
+
+  @Test
+  @TestMetadata("javaEnhancedRecentlyNullableType.kt")
+  public void testJavaEnhancedRecentlyNullableType() {
+    runTest("analysis/analysis-api/testData/components/symbolDeclarationRenderer/symbolRenderingByReference/javaEnhancedRecentlyNullableType.kt");
   }
 
   @Test
