@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.generators.tests
 
-import org.jetbrains.kotlin.allopen.*
 import org.jetbrains.kotlin.assignment.plugin.AbstractAssignmentPluginDiagnosticTest
 import org.jetbrains.kotlin.assignment.plugin.AbstractFirLightTreeBlackBoxCodegenTestForAssignmentPlugin
 import org.jetbrains.kotlin.assignment.plugin.AbstractFirPsiAssignmentPluginDiagnosticTest
@@ -36,24 +35,6 @@ fun main(args: Array<String>) {
     System.setProperty("java.awt.headless", "true")
 
     generateTestGroupSuiteWithJUnit5 {
-        testGroup("plugins/allopen/tests-gen", "plugins/allopen/testData") {
-            testClass<AbstractIrBytecodeListingTestForAllOpen> {
-                model("bytecodeListing", excludedPattern = TestGeneratorUtil.KT_OR_KTS_WITH_FIR_PREFIX)
-            }
-            testClass<AbstractFirPsiBytecodeListingTestForAllOpen> {
-                model("bytecodeListing", excludedPattern = TestGeneratorUtil.KT_OR_KTS_WITH_FIR_PREFIX)
-            }
-            testClass<AbstractDiagnosticTestForAllOpenBase> {
-                model("diagnostics", excludedPattern = TestGeneratorUtil.KT_OR_KTS_WITH_FIR_PREFIX)
-            }
-            testClass<AbstractFirLightTreeDiagnosticTestForAllOpen> {
-                model("diagnostics", excludedPattern = TestGeneratorUtil.KT_OR_KTS_WITH_FIR_PREFIX)
-            }
-            testClass<AbstractFirPsiDiagnosticTestForAllOpen> {
-                model("diagnostics", excludedPattern = TestGeneratorUtil.KT_OR_KTS_WITH_FIR_PREFIX)
-            }
-        }
-
         testGroup("plugins/noarg/tests-gen", "plugins/noarg/testData") {
             testClass<AbstractDiagnosticsTestForNoArg> {
                 model("diagnostics", excludedPattern = TestGeneratorUtil.KT_OR_KTS_WITH_FIR_PREFIX)
