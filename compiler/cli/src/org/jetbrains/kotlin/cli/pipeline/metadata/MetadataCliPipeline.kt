@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.cli.common.arguments.K2MetadataCompilerArguments
 import org.jetbrains.kotlin.cli.pipeline.AbstractCliPipeline
 import org.jetbrains.kotlin.cli.pipeline.ArgumentsPipelineArtifact
 import org.jetbrains.kotlin.cli.pipeline.PipelineContext
-import org.jetbrains.kotlin.cli.pipeline.PipelinePhase
 import org.jetbrains.kotlin.config.phaser.CompilerPhase
 import org.jetbrains.kotlin.util.PerformanceManager
 
@@ -23,8 +22,8 @@ class MetadataCliPipeline(override val defaultPerformanceManager: PerformanceMan
 
     private fun serializerPhase(
         arguments: K2MetadataCompilerArguments
-    ): PipelinePhase<MetadataFrontendPipelineArtifact, MetadataSerializationArtifact> = when {
+    ): CompilerPhase<PipelineContext, MetadataFrontendPipelineArtifact, MetadataSerializationArtifact> = when {
         arguments.legacyMetadataJar -> MetadataLegacySerializerPhase
-        else -> MetadataKlibSerializerPhase
+        else -> MetadataKlibInMemorySerializerPhase then MetadataKlibFileWriterPhase
     }
 }

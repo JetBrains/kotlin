@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.metadataVersion
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.fir.pipeline.FirResult
+import org.jetbrains.kotlin.library.SerializedMetadata
 import org.jetbrains.kotlin.metadata.builtins.BuiltInsBinaryVersion
 
 data class MetadataFrontendPipelineArtifact(
@@ -25,6 +26,11 @@ data class MetadataFrontendPipelineArtifact(
     override fun withNewDiagnosticCollectorImpl(newDiagnosticsCollector: BaseDiagnosticsCollector) =
         copy(diagnosticCollector = newDiagnosticsCollector)
 }
+
+data class MetadataInMemorySerializationArtifact(
+    val metadata: SerializedMetadata,
+    val configuration: CompilerConfiguration,
+) : PipelineArtifact()
 
 data class MetadataSerializationArtifact(
     val outputInfo: OutputInfo?,

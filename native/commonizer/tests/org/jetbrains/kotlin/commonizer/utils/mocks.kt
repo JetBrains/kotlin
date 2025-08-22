@@ -7,7 +7,7 @@
 
 package org.jetbrains.kotlin.commonizer.utils
 
-import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibMetadataMonolithicSerializer
+import com.intellij.openapi.Disposable
 import org.jetbrains.kotlin.commonizer.*
 import org.jetbrains.kotlin.commonizer.ModulesProvider.ModuleInfo
 import org.jetbrains.kotlin.commonizer.ResultsConsumer.ModuleResult
@@ -15,13 +15,10 @@ import org.jetbrains.kotlin.commonizer.cir.*
 import org.jetbrains.kotlin.commonizer.konan.NativeManifestDataProvider
 import org.jetbrains.kotlin.commonizer.konan.NativeSensitiveManifestData
 import org.jetbrains.kotlin.commonizer.mergedtree.*
-import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.library.KotlinLibraryVersioning
 import org.jetbrains.kotlin.library.SerializedMetadata
-import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
-import org.jetbrains.kotlin.test.KotlinTestUtils
 
 internal fun mockTAType(
     typeAliasId: String,
@@ -88,51 +85,50 @@ internal val MOCK_CLASSIFIERS = CirKnownClassifiers(
 )
 
 internal class MockModulesProvider private constructor(
-    private val modules: Map<String, ModuleDescriptor>,
+    private val modules: Map<String, SerializedMetadata>,
 ) : ModulesProvider {
     override val moduleInfos = modules.keys.map { name -> fakeModuleInfo(name) }
 
     override fun loadModuleMetadata(name: String): SerializedMetadata {
         val module = modules[name] ?: error("No such module: $name")
-        return SERIALIZER.serializeModule(module)
+        return module
     }
 
     private fun fakeModuleInfo(name: String) = ModuleInfo(name, null)
 
     companion object {
         @JvmName("createByModuleNames")
-        fun create(moduleNames: List<String>) = MockModulesProvider(
+        fun create(moduleNames: List<String>, disposable: Disposable) = MockModulesProvider(
             moduleNames.associateWith { name ->
-                // expected special name for module
-                val module = KotlinTestUtils.createEmptyModule("<$name>")
-                module.initialize(PackageFragmentProvider.Empty)
-                module.setDependencies(module)
-                module
+                createEmptyModule(name, disposable)
             }
         )
 
         @JvmName("createByModules")
-        fun create(modules: List<ModuleDescriptor>) = MockModulesProvider(
-            modules.associateBy { module -> module.name.strip() }
+        fun create(modules: List<CompiledDependency>) = MockModulesProvider(
+            modules.associateBy(
+                keySelector = { (namedMetadata) -> namedMetadata.name.strip() },
+                valueTransform = { (namedMetadata) -> namedMetadata.metadata }
+            )
+        )
+
+        @JvmName("createByModulesWithNames")
+        fun create(modules: List<NamedMetadata>) = MockModulesProvider(
+            modules.associateBy(
+                keySelector = { (name, _) -> name.strip() },
+                valueTransform = { (_, module) -> module }
+            )
         )
 
         @JvmName("createBySingleModule")
-        fun create(module: ModuleDescriptor) = MockModulesProvider(
-            mapOf(module.name.strip() to module)
-        )
+        fun create(module: CompiledDependency) = create(module.namedMetadata)
 
-        val SERIALIZER = KlibMetadataMonolithicSerializer(
-            languageVersionSettings = LanguageVersionSettingsImpl.DEFAULT,
-            metadataVersion = MetadataVersion.INSTANCE,
-            exportKDoc = false,
-            skipExpects = false,
-            project = null,
-            includeOnlyModuleContent = true,
+        @JvmName("createBySingleModule")
+        fun create(nameToModule: NamedMetadata) = MockModulesProvider(
+            mapOf(nameToModule.name.strip() to nameToModule.metadata)
         )
     }
 }
-
-fun ModuleDescriptor.toMetadata(): SerializedMetadata = MockModulesProvider.SERIALIZER.serializeModule(this)
 
 private typealias ModuleName = String
 private typealias ModuleResults = HashMap<ModuleName, ModuleResult>

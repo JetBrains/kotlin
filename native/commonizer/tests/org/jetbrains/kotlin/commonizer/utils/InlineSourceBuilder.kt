@@ -12,9 +12,7 @@ import org.jetbrains.kotlin.commonizer.mergedtree.CirProvidedClassifiers
 import org.jetbrains.kotlin.commonizer.mergedtree.CirProvidedClassifiersByModules
 import org.jetbrains.kotlin.commonizer.tree.CirTreeModule
 import org.jetbrains.kotlin.commonizer.tree.CirTreeRoot
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.library.SerializedMetadata
-import java.io.File
 
 interface InlineSourceBuilder {
     annotation class ModuleBuilderDsl
@@ -67,25 +65,13 @@ interface InlineSourceBuilder {
 
     fun createCirTree(module: Module): CirTreeModule
 
-    fun createModuleDescriptor(module: Module): ModuleDescriptor
-
-    fun createMetadata(module: Module): SerializedMetadata = createModuleDescriptor(module).toMetadata()
+    fun createMetadata(module: Module): NamedMetadata
 }
 
 
 @InlineSourceBuilder.ModuleBuilderDsl
 fun InlineSourceBuilder.createCirTree(builder: InlineSourceBuilder.ModuleBuilder.() -> Unit): CirTreeModule {
     return createCirTree(createModule(builder))
-}
-
-@InlineSourceBuilder.ModuleBuilderDsl
-fun InlineSourceBuilder.createModuleDescriptor(builder: InlineSourceBuilder.ModuleBuilder.() -> Unit): ModuleDescriptor {
-    return createModuleDescriptor(createModule(builder))
-}
-
-@InlineSourceBuilder.ModuleBuilderDsl
-fun InlineSourceBuilder.createMetadata(builder: InlineSourceBuilder.ModuleBuilder.() -> Unit): SerializedMetadata {
-    return createMetadata(createModule(builder))
 }
 
 @InlineSourceBuilder.ModuleBuilderDsl
@@ -107,7 +93,7 @@ fun InlineSourceBuilder.createCirProvidedClassifiers(module: InlineSourceBuilder
         )
 
         override fun loadModuleMetadata(name: String): SerializedMetadata {
-            if (name == moduleInfos.single().name) return createMetadata(module)
+            if (name == moduleInfos.single().name) return createMetadata(module).metadata
             else error("Unknown Module $name")
         }
     }
@@ -117,9 +103,4 @@ fun InlineSourceBuilder.createCirProvidedClassifiers(module: InlineSourceBuilder
 @InlineSourceBuilder.ModuleBuilderDsl
 fun InlineSourceBuilder.createCirProvidedClassifiers(builder: InlineSourceBuilder.ModuleBuilder.() -> Unit): CirProvidedClassifiers {
     return createCirProvidedClassifiers(createModule { builder() })
-}
-
-@InlineSourceBuilder.ModuleBuilderDsl
-fun InlineSourceBuilder.createCirProvidedClassifiersFromSourceCode(@Language("kotlin") sourceCode: String): CirProvidedClassifiers {
-    return createCirProvidedClassifiers(createModule { source(sourceCode) })
 }

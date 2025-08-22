@@ -31,9 +31,12 @@ import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.packageFqName
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.isSubpackageOf
+import org.jetbrains.kotlin.platform.TargetPlatform
+import org.jetbrains.kotlin.platform.isCommon
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.text
 import org.jetbrains.kotlin.util.Logger
+import org.jetbrains.kotlin.util.PerformanceManagerImpl
 import java.io.File
 import org.jetbrains.kotlin.cli.common.messages.toLogger as toLoggerNew
 
@@ -128,6 +131,9 @@ fun <PathProvider : Any> getLibraryFromHome(
     )
     return null
 }
+
+fun createPerformanceManagerFor(platform: TargetPlatform) =
+    PerformanceManagerImpl(platform, "Kotlin to ${if (platform.isCommon()) "Metadata" else platform.first().platformName} compiler")
 
 @Deprecated(
     "Use org.jetbrains.kotlin.cli.common.messages.toLogger() instead",
