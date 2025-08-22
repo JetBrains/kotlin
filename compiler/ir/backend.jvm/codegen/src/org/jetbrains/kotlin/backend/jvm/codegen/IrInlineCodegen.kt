@@ -9,7 +9,7 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.ir.isInlineOnly
 import org.jetbrains.kotlin.backend.jvm.ir.isInlineParameter
-import org.jetbrains.kotlin.backend.jvm.ir.unwrapInlineLambda
+import org.jetbrains.kotlin.backend.jvm.ir.unwrapRichInlineLambda
 import org.jetbrains.kotlin.backend.jvm.localClassType
 import org.jetbrains.kotlin.backend.jvm.mapping.IrCallableMethod
 import org.jetbrains.kotlin.builtins.StandardNames
@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.dump
-import org.jetbrains.kotlin.ir.util.getArgumentsWithIr
 import org.jetbrains.kotlin.ir.util.getPackageFragment
 import org.jetbrains.kotlin.ir.util.isSuspendFunction
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
@@ -110,7 +109,7 @@ class IrInlineCodegen(
         codegen: ExpressionCodegen,
         blockInfo: BlockInfo,
     ) {
-        val inlineLambda = argumentExpression.unwrapInlineLambda()
+        val inlineLambda = argumentExpression.unwrapRichInlineLambda()
         if (inlineLambda != null) {
             val lambdaInfo = IrExpressionLambdaImpl(codegen, inlineLambda)
             invocationParamBuilder.addNextValueParameter(
@@ -120,7 +119,7 @@ class IrInlineCodegen(
                 irValueParameter.indexInParameters
             ).functionalArgument = lambdaInfo
             lambdaInfo.generateLambdaBody(sourceCompiler)
-            lambdaInfo.reference.getArgumentsWithIr().forEachIndexed { index, (_, ir) ->
+            lambdaInfo.reference.boundValues.forEachIndexed { index, ir ->
                 val param = lambdaInfo.capturedVars[index]
                 val onStack = codegen.genOrGetLocal(ir, param.type, ir.type, BlockInfo(), eraseType = false)
                 putCapturedToLocalVal(onStack, param, ir.type)
@@ -449,13 +448,13 @@ class IrInlineCodegen(
 
 class IrExpressionLambdaImpl(
     codegen: ExpressionCodegen,
-    val reference: IrFunctionReference,
+    val reference: IrRichFunctionReference,
 ) : ExpressionLambda(), IrExpressionLambda {
-    override val nonRegularParametersCount: Int = (function.parameters zip reference.arguments)
-        .count { (parameter, argument) -> parameter.kind != IrParameterKind.Regular && argument == null }
+    override val nonRegularParametersCount: Int = (function.parameters.drop(reference.boundValues.size))
+        .count { parameter -> parameter.kind != IrParameterKind.Regular }
 
     val function: IrFunction
-        get() = reference.symbol.owner
+        get() = reference.invokeFunction
 
     override val hasDispatchReceiver: Boolean
         get() = false
@@ -474,10 +473,10 @@ class IrExpressionLambdaImpl(
 
     init {
         val asmMethod = codegen.methodSignatureMapper.mapAsmMethod(function)
-        val capturedParameters = reference.getArgumentsWithIr()
+        val capturedParameters = function.parameters.take(reference.boundValues.size)
         val captureStart = nonRegularParametersCount
         val captureEnd = captureStart + capturedParameters.size
-        capturedVars = capturedParameters.mapIndexed { index, (parameter, _) ->
+        capturedVars = capturedParameters.mapIndexed { index, parameter ->
             val isSuspend = parameter.isInlineParameter() && parameter.type.isSuspendFunction()
             capturedParamDesc(parameter.name.asString(), asmMethod.argumentTypes[captureStart + index], isSuspend)
         }

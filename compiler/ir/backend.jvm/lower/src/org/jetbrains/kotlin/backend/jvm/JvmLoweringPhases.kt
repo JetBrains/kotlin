@@ -112,6 +112,7 @@ private val jvmFilePhases = createFilePhases<JvmBackendContext>(
     ::ReplaceNumberToCharCallSitesLowering,
 
     ::RenameFieldsLowering,
+    ::JvmUpgradeCallableReferences,
     ::FakeLocalVariablesForBytecodeInlinerLowering,
 
     ::SpecialAccessLowering,

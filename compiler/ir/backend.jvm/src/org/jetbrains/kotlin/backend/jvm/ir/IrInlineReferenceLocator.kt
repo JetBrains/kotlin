@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
+import org.jetbrains.kotlin.ir.expressions.IrRichFunctionReference
 import org.jetbrains.kotlin.ir.util.isBuiltInSuspendCoroutine
 import org.jetbrains.kotlin.ir.util.isBuiltInSuspendCoroutineUninterceptedOrReturn
 import org.jetbrains.kotlin.ir.visitors.IrVisitor
@@ -27,8 +28,9 @@ abstract class IrInlineReferenceLocator(private val context: JvmBackendContext) 
         val function = expression.symbol.owner
         if (function.isInlineFunctionCall(context)) {
             for (parameter in function.parameters) {
-                val lambda = expression.arguments[parameter.indexInParameters]?.unwrapInlineLambda() ?: continue
-                visitInlineLambda(lambda, function, parameter, data!!)
+                val argument = expression.arguments[parameter.indexInParameters]
+                argument?.unwrapInlineLambda()?.let { visitInlineLambda(it, function, parameter, data!!) }
+                argument?.unwrapRichInlineLambda()?.let { visitInlineLambda(it, function, parameter, data!!) }
             }
         }
         return super.visitFunctionAccess(expression, data)
@@ -43,6 +45,18 @@ abstract class IrInlineReferenceLocator(private val context: JvmBackendContext) 
      * @param scope The declaration in scope of which [callee] is being called.
      */
     abstract fun visitInlineLambda(argument: IrFunctionReference, callee: IrFunction, parameter: IrValueParameter, scope: IrDeclaration)
+
+    /**
+     * Called by this visitor whenever a lambda is passed to an inline function.
+     *
+     * @param argument The lambda expression passed as an argument to [callee].
+     * @param callee The inline function.
+     * @param parameter The parameter of [callee] to which the lambda is passed.
+     * @param scope The declaration in scope of which [callee] is being called.
+     */
+    open fun visitInlineLambda(argument: IrRichFunctionReference, callee: IrFunction, parameter: IrValueParameter, scope: IrDeclaration) {
+        TODO()
+    }
 }
 
 /**
