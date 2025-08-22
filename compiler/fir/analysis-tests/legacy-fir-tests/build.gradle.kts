@@ -43,6 +43,8 @@ projectTests {
         workingDir = rootDir
     }
 
+    testGenerator("org.jetbrains.kotlin.fir.TestGeneratorForLegacyFirTestsKt")
+
     withJvmStdlibAndReflect()
 }
 

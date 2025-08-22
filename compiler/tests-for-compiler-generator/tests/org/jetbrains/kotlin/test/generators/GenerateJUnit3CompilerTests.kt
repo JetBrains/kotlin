@@ -6,32 +6,10 @@
 package org.jetbrains.kotlin.test.generators
 
 import org.jetbrains.kotlin.compiler.plugins.AbstractPluginCliTests
-import org.jetbrains.kotlin.fir.java.AbstractFirOldFrontendLightClassesTest
-import org.jetbrains.kotlin.fir.java.AbstractFirTypeEnhancementTest
-import org.jetbrains.kotlin.fir.java.AbstractOwnFirTypeEnhancementTest
 import org.jetbrains.kotlin.generators.impl.generateTestGroupSuite
 
 fun generateJUnit3CompilerTests(args: Array<String>, mainClassName: String?) {
     generateTestGroupSuite(args, mainClassName) {
-
-        testGroup("compiler/fir/analysis-tests/legacy-fir-tests/tests-gen", "compiler/testData") {
-            testClass<AbstractFirTypeEnhancementTest> {
-                model("loadJava/compiledJava", extension = "java")
-            }
-        }
-
-        testGroup("compiler/fir/analysis-tests/legacy-fir-tests/tests-gen", "compiler/fir/analysis-tests/testData") {
-            testClass<AbstractOwnFirTypeEnhancementTest> {
-                model("enhancement", extension = "java")
-            }
-        }
-
-        testGroup("compiler/fir/analysis-tests/legacy-fir-tests/tests-gen", "compiler/fir/analysis-tests/testData") {
-            testClass<AbstractFirOldFrontendLightClassesTest> {
-                model("lightClasses")
-            }
-        }
-
         testGroup("plugins/plugins-interactions-testing/tests-gen", "plugins/plugins-interactions-testing/testData") {
             testClass<AbstractPluginCliTests> {
                 model("cli", extension = "args", testMethod = "doJvmTest", recursive = false)
