@@ -15,9 +15,6 @@ import org.jetbrains.kotlin.fir.dataframe.AbstractDataFrameBlackBoxCodegenTest
 import org.jetbrains.kotlin.fir.dataframe.AbstractDataFrameDiagnosticTest
 import org.jetbrains.kotlin.generators.generateTestGroupSuiteWithJUnit5
 import org.jetbrains.kotlin.generators.util.TestGeneratorUtil
-import org.jetbrains.kotlin.kapt.cli.test.AbstractArgumentParsingTest
-import org.jetbrains.kotlin.kapt.cli.test.AbstractFirKaptToolIntegrationTest
-import org.jetbrains.kotlin.kapt.cli.test.AbstractKaptToolIntegrationTest
 import org.jetbrains.kotlin.kapt.test.AbstractFirKaptStubConverterTest
 import org.jetbrains.kotlin.kapt.test.runners.AbstractIrKotlinKaptContextTest
 import org.jetbrains.kotlin.kapt.test.runners.AbstractKaptStubConverterTest
@@ -28,18 +25,6 @@ fun main(args: Array<String>) {
     System.setProperty("java.awt.headless", "true")
 
     generateTestGroupSuiteWithJUnit5 {
-        testGroup("plugins/kapt/kapt-cli/tests-gen", "plugins/kapt/kapt-cli/testData") {
-            testClass<AbstractArgumentParsingTest> {
-                model("argumentParsing", extension = "txt")
-            }
-            testClass<AbstractKaptToolIntegrationTest> {
-                model("integration-k1", recursive = false, extension = null)
-            }
-            testClass<AbstractFirKaptToolIntegrationTest> {
-                model("integration", recursive = false, extension = null)
-            }
-        }
-
         testGroup("plugins/kapt/kapt-compiler/tests-gen", "plugins/kapt/kapt-compiler/testData") {
             testClass<AbstractIrKotlinKaptContextTest> {
                 model("kotlinRunner")

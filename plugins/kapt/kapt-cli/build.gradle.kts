@@ -13,6 +13,7 @@ dependencies {
     testFixturesImplementation(intellijCore())
     testFixturesApi(testFixtures(project(":compiler:test-infrastructure-utils")))
     testFixturesApi(testFixtures(project(":compiler:tests-common-new")))
+    testFixturesImplementation(testFixtures(project(":generators:test-generator")))
     testFixturesApi(platform(libs.junit.bom))
     testFixturesApi(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)
@@ -35,6 +36,8 @@ projectTests {
             environment("JAVA_HOME", jdkHome.get())
         }
     }
+
+    testGenerator("org.jetbrains.kotlin.kapt.cli.test.TestGeneratorKt")
 
     withJvmStdlibAndReflect()
 }
