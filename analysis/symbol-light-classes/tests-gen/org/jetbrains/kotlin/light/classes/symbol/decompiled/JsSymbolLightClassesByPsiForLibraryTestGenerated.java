@@ -367,6 +367,12 @@ public class JsSymbolLightClassesByPsiForLibraryTestGenerated extends AbstractJs
   }
 
   @Test
+  @TestMetadata("typeParameters.kt")
+  public void testTypeParameters() {
+    runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/typeParameters.kt");
+  }
+
+  @Test
   @TestMetadata("typealiasInAnnotation.kt")
   public void testTypealiasInAnnotation() {
     runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/typealiasInAnnotation.kt");
