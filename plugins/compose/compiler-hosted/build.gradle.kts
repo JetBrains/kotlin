@@ -135,7 +135,7 @@ projectTests {
         useJsIrBoxTests(version = version, buildDir = layout.buildDirectory)
     }
 
-    testGenerator("androidx.compose.compiler.plugins.kotlin.TestGeneratorKt")
+    testGenerator("androidx.compose.compiler.plugins.kotlin.TestGeneratorKt", doNotSetFixturesSourceSetDependency = true)
 
     withJvmStdlibAndReflect()
     withStdlibJsRuntime()

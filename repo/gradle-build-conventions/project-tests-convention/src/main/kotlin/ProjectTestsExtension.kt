@@ -220,12 +220,21 @@ abstract class ProjectTestsExtension(val project: Project) {
         }
     }
 
+    /**
+     * [doNotSetFixturesSourceSetDependency] exits only for a migration period and used in projects which are not migrated to `testFixtures` yet.
+     * Please don't use set it to `true` for new generator tasks.
+     */
     fun testGenerator(
         fqName: String,
         taskName: String = "generateTests",
-        sourceSet: SourceSet? = null,
+        doNotSetFixturesSourceSetDependency: Boolean = false,
         configure: JavaExec.() -> Unit = {}
     ) {
-        project.generator(taskName, fqName, sourceSet, configure)
+        val fixturesSourceSet = if (doNotSetFixturesSourceSetDependency) {
+            null
+        } else {
+            project.sourceSets.named("testFixtures").get()
+        }
+        project.generator(taskName, fqName, fixturesSourceSet, configure)
     }
 }

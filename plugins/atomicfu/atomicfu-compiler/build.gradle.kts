@@ -237,7 +237,7 @@ projectTests {
         jvmArgs("--add-opens=java.base/java.io=ALL-UNNAMED")
     }
 
-    testGenerator("org.jetbrains.kotlin.generators.tests.GenerateAtomicfuTestsKt") {
+    testGenerator("org.jetbrains.kotlin.generators.tests.GenerateAtomicfuTestsKt", doNotSetFixturesSourceSetDependency = true) {
         javaLauncher.set(project.getToolchainLauncherFor(JdkMajorVersion.JDK_11_0))
         dependsOn(":compiler:generateTestData")
     }
