@@ -39,7 +39,7 @@ class JsIrPreSerializationLoweringFacade(
     testServices: TestServices,
 ) : IrPreSerializationLoweringFacade<IrBackendInput>(testServices, BackendKinds.IrBackend, BackendKinds.IrBackend) {
     override fun shouldTransform(module: TestModule): Boolean {
-        return module.languageVersionSettings.supportsFeature(LanguageFeature.IrIntraModuleInlinerBeforeKlibSerialization)
+        return module.languageVersionSettings.languageVersion.usesK2
     }
 
     override fun transform(module: TestModule, inputArtifact: IrBackendInput): IrBackendInput {
@@ -54,15 +54,11 @@ class JsIrPreSerializationLoweringFacade(
                 require(cliArtifact is JsFir2IrPipelineArtifact) {
                     "Fir2IrCliBasedOutputArtifact should have JsFir2IrPipelineArtifact as cliArtifact, but has ${cliArtifact::class}"
                 }
-                runKlibCheckers(diagnosticReporter, configuration, inputArtifact.irModuleFragment)
+                // Attach a new empty diagnosticReporter to prevent double-reporting of diagnostics from Fir2IR phase.
                 val input = cliArtifact.copy(diagnosticCollector = diagnosticReporter)
-
-                if (diagnosticReporter.hasErrors) {
-                    // Should errors be found by checkers, there's a chance that JsCodeOutlineLowering will throw an exception on unparseable code.
-                    // In test pipeline, it's unwanted, so let's avoid crashes. Already found errors would already be enough for diagnostic tests.
+                if (!module.languageVersionSettings.supportsFeature(LanguageFeature.IrIntraModuleInlinerBeforeKlibSerialization)) {
                     return Fir2IrCliBasedOutputArtifact(input)
                 }
-
                 val output = WebKlibInliningPipelinePhase.executePhase(input)
 
                 // The returned artifact will be stored in dependencyProvider instead of `inputArtifact`, with same kind=BackendKinds.IrBackend
@@ -70,12 +66,17 @@ class JsIrPreSerializationLoweringFacade(
                 return Fir2IrCliBasedOutputArtifact(output)
             }
             is IrBackendInput.JsIrAfterFrontendBackendInput -> {
-                runKlibCheckers(diagnosticReporter, configuration, inputArtifact.irModuleFragment)
+                // Attach a new empty diagnosticReporter to prevent double-reporting of diagnostics from Fir2IR phase.
+                val input = inputArtifact.copy(diagnosticReporter = diagnosticReporter)
+                if (!module.languageVersionSettings.supportsFeature(LanguageFeature.IrIntraModuleInlinerBeforeKlibSerialization)) {
+                    return input
+                }
+                runKlibCheckers(diagnosticReporter, configuration, input.irModuleFragment)
                 val phaseConfig = createJsTestPhaseConfig(testServices, module)
                 if (diagnosticReporter.hasErrors) {
                     // Should errors be found by checkers, there's a chance that JsCodeOutlineLowering will throw an exception on unparseable code.
                     // In test pipeline, it's unwanted, so let's avoid crashes. Already found errors would already be enough for diagnostic tests.
-                    return inputArtifact.copy(diagnosticReporter = diagnosticReporter)
+                    return input
                 }
 
                 val transformedModule = configuration.perfManager.tryMeasurePhaseTime(PhaseType.IrPreLowering) {
@@ -83,19 +84,19 @@ class JsIrPreSerializationLoweringFacade(
                         phaseConfig,
                         PhaserState(),
                         JsPreSerializationLoweringContext(
-                            inputArtifact.irPluginContext.irBuiltIns,
+                            input.irPluginContext.irBuiltIns,
                             configuration,
                             diagnosticReporter,
                         ),
                     ).runPreSerializationLoweringPhases(
                         jsLoweringsOfTheFirstPhase(module.languageVersionSettings),
-                        inputArtifact.irModuleFragment,
+                        input.irModuleFragment,
                     )
                 }
 
                 // The returned artifact will be stored in dependencyProvider instead of `inputArtifact`, with same kind=BackendKinds.IrBackend
                 // Later, third artifact of class `JsIrDeserializedFromKlibBackendInput` might replace it again during some test pipelines.
-                return inputArtifact.copy(irModuleFragment = transformedModule, diagnosticReporter = diagnosticReporter)
+                return input.copy(irModuleFragment = transformedModule)
             }
             else -> {
                 throw IllegalArgumentException("Unexpected inputArtifact type: ${inputArtifact.javaClass.simpleName}")
