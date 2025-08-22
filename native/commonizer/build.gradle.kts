@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.nativeDistribution.nativeDistribution
+
 plugins {
     kotlin("jvm")
     id("project-tests-convention")
@@ -68,3 +70,8 @@ projectTests {
 runtimeJar()
 sourcesJar { includeEmptyDirs = false; eachFile { exclude() } } // empty Jar, no public sources
 javadocJar { includeEmptyDirs = false; eachFile { exclude() } } // empty Jar, no public javadocs
+
+tasks.test.configure {
+    dependsOn(":kotlin-native:distStdlib")
+    systemProperty("kotlin.internal.native.test.nativeHome", nativeDistribution.get().root.asFile.absolutePath)
+}
