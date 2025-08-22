@@ -36854,6 +36854,12 @@ public class PhasedJvmDiagnosticLightTreeTestGenerated extends AbstractPhasedJvm
         }
 
         @Test
+        @TestMetadata("invokeOnRedeclaredProperty.kt")
+        public void testInvokeOnRedeclaredProperty() {
+          runTest("compiler/testData/diagnostics/tests/resolve/invoke/invokeOnRedeclaredProperty.kt");
+        }
+
+        @Test
         @TestMetadata("invokeOnVariableWithExtensionFunctionType.kt")
         public void testInvokeOnVariableWithExtensionFunctionType() {
           runTest("compiler/testData/diagnostics/tests/resolve/invoke/invokeOnVariableWithExtensionFunctionType.kt");
