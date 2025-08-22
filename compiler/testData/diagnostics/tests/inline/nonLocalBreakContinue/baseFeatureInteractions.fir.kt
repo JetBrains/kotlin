@@ -117,9 +117,9 @@ fun test11(x: Any) {
     for (i in 0..10) {
         inline {
             x is String || continue
-            <!IMPOSSIBLE_IS_CHECK_ERROR!>x is Int<!> || break
-            <!IMPOSSIBLE_IS_CHECK_ERROR!>x is Double<!> && continue
-            <!IMPOSSIBLE_IS_CHECK_ERROR!>x is Float<!> && break
+            x is Int || break
+            x is Double && continue
+            x is Float && break
         }
     }
 }
@@ -128,9 +128,9 @@ fun test12(x: Any) {
     for (i in 0..10) {
         noInline {
             x is String || <!BREAK_OR_CONTINUE_JUMPS_ACROSS_FUNCTION_BOUNDARY!>continue<!>
-            <!IMPOSSIBLE_IS_CHECK_ERROR!>x is Int<!> || <!BREAK_OR_CONTINUE_JUMPS_ACROSS_FUNCTION_BOUNDARY!>break<!>
-            <!IMPOSSIBLE_IS_CHECK_ERROR!>x is Double<!> && <!BREAK_OR_CONTINUE_JUMPS_ACROSS_FUNCTION_BOUNDARY!>continue<!>
-            <!IMPOSSIBLE_IS_CHECK_ERROR!>x is Float<!> && <!BREAK_OR_CONTINUE_JUMPS_ACROSS_FUNCTION_BOUNDARY!>break<!>
+            x is Int || <!BREAK_OR_CONTINUE_JUMPS_ACROSS_FUNCTION_BOUNDARY!>break<!>
+            x is Double && <!BREAK_OR_CONTINUE_JUMPS_ACROSS_FUNCTION_BOUNDARY!>continue<!>
+            x is Float && <!BREAK_OR_CONTINUE_JUMPS_ACROSS_FUNCTION_BOUNDARY!>break<!>
         }
     }
 }

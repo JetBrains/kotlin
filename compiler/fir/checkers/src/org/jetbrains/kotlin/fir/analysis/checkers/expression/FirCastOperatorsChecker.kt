@@ -33,17 +33,28 @@ object FirCastOperatorsChecker : FirTypeOperatorCallChecker(MppCheckerKind.Commo
             reporter.reportOn(expression.conversionTypeRef.source, FirErrors.DYNAMIC_NOT_ALLOWED)
         }
 
-        val applicability = when (expression.operation) {
-            FirOperation.IS, FirOperation.NOT_IS -> checkIsApplicability(l.smartCastTypeInfo, r, expression)
-            FirOperation.AS, FirOperation.SAFE_AS -> checkAsApplicability(l.smartCastTypeInfo, r, expression)
+        val checkApplicability: (TypeInfo) -> Applicability = when (expression.operation) {
+            FirOperation.IS, FirOperation.NOT_IS -> { typeInfo -> checkIsApplicability(typeInfo, r, expression) }
+            FirOperation.AS, FirOperation.SAFE_AS -> { typeInfo -> checkAsApplicability(typeInfo, r, expression) }
             else -> error("Invalid operator of FirTypeOperatorCall")
         }
 
         val rUserType = expression.conversionTypeRef.coneType.finalApproximationOrSelf()
 
-        // No need to check original types separately from smartcast types, because we only report warnings
-        if (applicability != Applicability.APPLICABLE) {
-            reporter.reportInapplicabilityDiagnostic(expression, applicability, l, r.type, rUserType)
+        when (val it = checkApplicability(l.originalTypeInfo)) {
+            Applicability.APPLICABLE -> {}
+            // CAST_ERASED may not be the case if we factor in the smartcast data.
+            Applicability.CAST_ERASED if l.argument is FirSmartCastExpression -> {}
+            else -> return reporter.reportInapplicabilityDiagnostic(expression, it, l, r.type, rUserType)
+        }
+
+        if (l.argument !is FirSmartCastExpression) {
+            return
+        }
+
+        when (val it = checkApplicability(l.smartCastTypeInfo)) {
+            Applicability.APPLICABLE -> {}
+            else -> return reporter.reportInapplicabilityDiagnostic(expression, it, l, r.type, rUserType, forceWarning = true)
         }
     }
 
@@ -145,6 +156,7 @@ object FirCastOperatorsChecker : FirTypeOperatorCallChecker(MppCheckerKind.Commo
         l: ArgumentInfo,
         r: ConeKotlinType,
         rUserType: ConeKotlinType,
+        forceWarning: Boolean = false,
     ) {
         when (applicability) {
             Applicability.IMPOSSIBLE_CAST -> getImpossibilityDiagnostic(l.originalTypeInfo, r)?.let {
@@ -153,11 +165,10 @@ object FirCastOperatorsChecker : FirTypeOperatorCallChecker(MppCheckerKind.Commo
             Applicability.USELESS_CAST -> getUselessCastDiagnostic()?.let {
                 reportOn(expression.source, it)
             }
-            Applicability.IMPOSSIBLE_IS_CHECK -> reportOn(
-                expression.source,
-                FirErrors.IMPOSSIBLE_IS_CHECK,
-                expression.operation != FirOperation.IS
-            )
+            Applicability.IMPOSSIBLE_IS_CHECK -> when {
+                forceWarning -> reportOn(expression.source, FirErrors.USELESS_IS_CHECK, expression.operation != FirOperation.IS)
+                else -> reportOn(expression.source, FirErrors.IMPOSSIBLE_IS_CHECK, expression.operation != FirOperation.IS)
+            }
             Applicability.USELESS_IS_CHECK -> when {
                 !isLastBranchOfExhaustiveWhen(l, r) -> reportOn(
                     expression.source,

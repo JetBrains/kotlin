@@ -35,8 +35,8 @@ fun test_3(a: Any) {
         <!USELESS_IS_CHECK!>a is A<!> // always true
         a is B
 
-        <!IMPOSSIBLE_IS_CHECK_ERROR!>a is AS<!> // always false
-        <!IMPOSSIBLE_IS_CHECK_ERROR!>a is BS<!> // always false
+        <!USELESS_IS_CHECK!>a is AS<!> // always false
+        <!USELESS_IS_CHECK!>a is BS<!> // always false
 
         a is AI
         a is BI
@@ -62,7 +62,7 @@ fun test_5(a: A) {
         !is B -> {}
 
         <!IMPOSSIBLE_IS_CHECK_ERROR!>!is AS<!> -> {} // always true
-        !is BS -> {} // here a may has type AS (by data flow)
+        <!IMPOSSIBLE_IS_CHECK_ERROR!>!is BS<!> -> {} // here a may has type AS (by data flow)
 
         !is AI -> {}
         !is BI -> {}

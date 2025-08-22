@@ -14,8 +14,8 @@
 // TESTCASE NUMBER: 1
 fun case_1(value_1: SealedClass) = when (value_1) {
     !is SealedChild1 -> {}
-    <!IMPOSSIBLE_IS_CHECK_ERROR!>!is SealedChild2<!> -> {}
-    <!IMPOSSIBLE_IS_CHECK_ERROR!>!is SealedChild3<!> -> {}
+    <!USELESS_IS_CHECK!>!is SealedChild2<!> -> {}
+    <!USELESS_IS_CHECK!>!is SealedChild3<!> -> {}
 }
 
 /*

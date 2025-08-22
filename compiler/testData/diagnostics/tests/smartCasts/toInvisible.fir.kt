@@ -38,7 +38,7 @@ import a.AImpl
 
 fun test1(a: A) {
     if (a is AImpl) {
-        (a as A).b().bar() // OK
+        (a <!USELESS_CAST!>as A<!>).b().bar() // OK
         <!INFERRED_INVISIBLE_RETURN_TYPE_WARNING!>a.b()<!>.<!INVISIBLE_REFERENCE!>bar<!>()
     }
 }

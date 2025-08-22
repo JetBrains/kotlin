@@ -9,7 +9,7 @@ fun foo(i: I2) {}
 
 fun bar(i: I1) {
     if (i is I2) {
-        foo(i as I1)
+        foo(i <!USELESS_CAST!>as I1<!>)
         foo(i as I2)
     }
 }
