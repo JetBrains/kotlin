@@ -1345,7 +1345,7 @@ private inline fun String.parseLong(startIndex: Int, parseRule: ParseRule): Nume
             while (index < length && this[index] in '0'..'9') index++
             return NumericParseData(parseRule.overflowLimit * sign, index, sign, hasOverflow = true)
         }
-        result = (result shl 3) + (result shl 1) + digit
+        result = result.multiplyBy10() + digit
         index++
     }
     return NumericParseData(result * sign, index, sign, hasOverflow = false)
@@ -1370,7 +1370,7 @@ private fun String.parseFraction(startIndex: Int): NumericParseData {
             index++
         }
         repeat(maxDigits - count) {
-            result = (result shl 3) + (result shl 1)
+            result = result.multiplyBy10()
         }
         return result
     }
@@ -1519,6 +1519,22 @@ private val DurationUnit.length: Int
         DurationUnit.MILLISECONDS, DurationUnit.MICROSECONDS, DurationUnit.NANOSECONDS -> 2
         else -> 1
     }
+
+/**
+ * Multiplies this Long value by 10 using bit-shift operations for improved performance.
+ *
+ * The multiplication is performed as:
+ * `this * 10 = this * (8 + 2) = (this * 8) + (this * 2) = (this * 2^3) + (this * 2^1) = (this shl 3) + (this shl 1)`
+ *
+ * This optimization replaces a multiplication operation with two bit-shifts and an addition, which is more efficient.
+ *
+ * @return this value multiplied by 10
+ */
+@kotlin.internal.InlineOnly
+private inline fun Long.multiplyBy10(): Long = (this shl 3) + (this shl 1)
+
+@kotlin.internal.InlineOnly
+private inline fun Int.multiplyBy10(): Int = (this shl 3) + (this shl 1)
 
 
 
