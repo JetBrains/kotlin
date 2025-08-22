@@ -7,7 +7,6 @@ plugins {
 val dependency = arrayOf(
     ":generators",
     ":compiler",
-    ":compiler:tests-for-compiler-generator",
     ":core:descriptors.runtime",
 )
 

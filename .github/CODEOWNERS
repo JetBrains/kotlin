@@ -196,7 +196,6 @@
 /compiler/tests-integration/ @JetBrains/kotlin-compiler
 /compiler/tests-integration/tests/org/jetbrains/kotlin/klib/ @JetBrains/kotlin-common-backend
 /compiler/tests-different-jdk/ @JetBrains/kotlin-jvm
-/compiler/tests-for-compiler-generator/ @JetBrains/kotlin-compiler
 /compiler/tests-gen/ @JetBrains/kotlin-compiler
 /compiler/tests-java8/ @JetBrains/kotlin-jvm
 /compiler/tests-mutes/ @JetBrains/kotlin-build-infrastructure
