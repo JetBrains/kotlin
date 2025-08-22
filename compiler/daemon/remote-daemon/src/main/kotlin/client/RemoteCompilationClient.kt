@@ -29,11 +29,8 @@ import model.FileTransferReply
 import model.FileTransferRequest
 import model.ArtifactType
 import org.jetbrains.kotlin.daemon.common.CompilationOptions
-import org.jetbrains.kotlin.daemon.common.CompileService
-import org.jetbrains.kotlin.daemon.common.CompilerMode
 import java.io.File
 import java.nio.file.Files
-import java.nio.file.Paths
 
 class RemoteCompilationClient(
     val serverImplType: RemoteCompilationServiceImplType
@@ -66,7 +63,6 @@ class RemoteCompilationClient(
 //        for (pff in compilerPluginFiles) {
 //            println("plugin file: ${pff.path}")
 //        }
-//
 
         val requestChannel = Channel<CompileRequest>(capacity = Channel.UNLIMITED)
         val responseChannel = Channel<CompileResponse>(capacity = Channel.UNLIMITED)
@@ -90,7 +86,7 @@ class RemoteCompilationClient(
                             if (!it.isPresent) {
                                 launch {
                                     val file = File(it.filePath)
-                                    if (file.isDirectory) {
+                                    if (Files.isDirectory(file.toPath())) {
                                         Files.createDirectories(CLIENT_TMP_DIR.resolve(file.parent))
                                         val tarFile =
                                             CLIENT_TMP_DIR.resolve(file.parent).resolve("${file.nameWithoutExtension}.tar").toFile()
@@ -111,11 +107,9 @@ class RemoteCompilationClient(
                         }
                         is FileChunk -> {
                             launch {
-                                println("FILE CHUNK RECEIVED")
                                 val moduleName = CompilerUtils.getModuleName(compilerArgumentsMap)
                                 fileChunks.getOrPut(it.filePath) { mutableListOf() }.add(it)
                                 if (it.isLast) {
-                                    println("FILEPATH IS ${it.filePath} and module name is $moduleName")
                                     fileChunkStrategy.reconstruct(
                                         fileChunks.getOrDefault(it.filePath, listOf()),
                                         CLIENT_COMPILED_DIR.resolve(moduleName),
@@ -183,30 +177,4 @@ class RemoteCompilationClient(
         }
         return compilationResult ?: throw IllegalStateException("Compilation result is null")
     }
-}
-
-suspend fun main(args: Array<String>) {
-    val client = RemoteCompilationClient(RemoteCompilationServiceImplType.GRPC)
-
-    val compilationOptions = CompilationOptions(
-        compilerMode = CompilerMode.NON_INCREMENTAL_COMPILER,
-        targetPlatform = CompileService.TargetPlatform.JVM,
-        reportSeverity = 0,
-        reportCategories = arrayOf(),
-        requestedCompilationResults = arrayOf(),
-    )
-
-    val compilerArguments = mapOf<String, String>()
-
-    val sourceFiles = listOf(
-        File("src/main/kotlin/client/input/Input.kt"),
-        File("src/main/kotlin/client/input/Input2.kt"),
-        File("src/main/kotlin/client/input/Input3.kt")
-    )
-
-//    client.compile(
-//        compilerArguments = compilerArguments,
-//        compilationOptions = compilationOptions,
-//        sourceFiles = sourceFiles
-//    )
 }

@@ -17,9 +17,10 @@ fun calculateCompilationInputHash(
     // TODO: remove the output folder from compiler args because that is not important
     // TODO: consider refactor and create method that just creates arguments for this hashing use case, it will be probably less error prone
     val importantCompilerArgs = compilerArguments.toMutableMap()
-    importantCompilerArgs.remove("-d")
-    importantCompilerArgs.remove("-classpath")
-    importantCompilerArgs.remove("-Xplugin=")
+    importantCompilerArgs.remove(CompilerUtils.DIRECTORY_ARG)
+    importantCompilerArgs.remove(CompilerUtils.CLASS_PATH_ARG)
+    importantCompilerArgs.remove(CompilerUtils.X_PLUGIN_ARG)
+    importantCompilerArgs.remove(CompilerUtils.SOURCE_FILE_ARG)
 
     val digest = MessageDigest.getInstance("SHA-256")
     val files = CompilerUtils.getSourceFiles(importantCompilerArgs) + CompilerUtils.getDependencyFiles(importantCompilerArgs)
@@ -35,5 +36,6 @@ fun calculateCompilationInputHash(
     importantCompilerArgs.values.sorted().forEach { arg ->
         digest.update(arg.toByteArray())
     }
+
     return digest.digest().joinToString("") { "%02x".format(it) }
 }

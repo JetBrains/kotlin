@@ -32,15 +32,19 @@ abstract class BaseCompilationCompilationTest {
         ?.toURI()
         ?.let { File(it) }
         ?: throw IllegalStateException("Resource /TestInput.kt not found")
-
+    // TODO: change to yours
     protected val sourceFileFingerprint = computeSha256(sourceFile)
+
+    protected val stdLibFilePath = "/Users/michal.svec/Desktop/jars/kotlin-stdlib-2.2.0.jar"
+    protected val stdLibFileFingerprint = computeSha256(File(stdLibFilePath))
+
     protected val fileChunkingStrategy = FixedSizeChunkingStrategy()
 
     companion object {
         protected const val SERVER_NAME = "test-kotlin-daemon-server"
         protected lateinit var server: Server
         protected lateinit var channel: ManagedChannel
-        protected val cacheHandler = CacheHandler(FixedSizeChunkingStrategy())
+        protected val cacheHandler = CacheHandler()
     }
 
     fun getGrpcClient(): RemoteCompilationService {
@@ -57,8 +61,9 @@ abstract class BaseCompilationCompilationTest {
                         GrpcRemoteCompilationService(
                             RemoteCompilationServiceImpl(
                                 cacheHandler,
+                                WorkspaceManager(),
+                                FixedSizeChunkingStrategy(),
                                 InProcessCompilerService(),
-                                WorkspaceManager()
                             )
                         ),
                         LoggingInterceptor(),
@@ -74,7 +79,7 @@ abstract class BaseCompilationCompilationTest {
     @AfterEach
     fun cleanup() {
         cacheHandler.cleanup()
-        File(SERVER_COMPILATION_WORKSPACE_DIR).deleteRecursively()
+        SERVER_COMPILATION_WORKSPACE_DIR.toFile().deleteRecursively()
         server.shutdownNow()
         channel.shutdownNow()
     }

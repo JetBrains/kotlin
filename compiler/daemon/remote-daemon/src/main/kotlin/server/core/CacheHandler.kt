@@ -14,7 +14,6 @@ import common.copyDirectoryRecursively
 import model.ArtifactType
 import java.io.File
 import java.nio.file.Files
-import java.nio.file.Paths
 import java.nio.file.StandardCopyOption
 
 class CacheHandler {
@@ -23,7 +22,7 @@ class CacheHandler {
 
     init {
         Files.createDirectories(SERVER_ARTIFACTS_CACHE_DIR)
-        Files.createDirectories(SERVER_ARTIFACTS_CACHE_DIR)
+        Files.createDirectories(SERVER_TMP_CACHE_DIR)
         loadCache()
     }
 
@@ -85,7 +84,7 @@ class CacheHandler {
             // 2. as a hash of compiler arguments and input files, that is because the compilation result may be used
             // as a dependency for compilation of the same source files with different compiler arguments
             val compilationInputHash = calculateCompilationInputHash(remoteCompilerArguments)
-            val symlink = Files.createSymbolicLink(SERVER_ARTIFACTS_CACHE_DIR.resolve(compilationInputHash), targetPath)
+            val symlink = Files.createSymbolicLink(SERVER_ARTIFACTS_CACHE_DIR.resolve(compilationInputHash), targetPath.fileName)
             artifacts[compilationInputHash] = symlink.toAbsolutePath().toString()
         }
 

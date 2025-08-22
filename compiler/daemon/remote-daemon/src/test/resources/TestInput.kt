@@ -4,5 +4,5 @@
  */
 
 fun main(){
-    kotlin.io.println("This is TestInput.kt file")
+    println("This is TestInput.kt file")
 }

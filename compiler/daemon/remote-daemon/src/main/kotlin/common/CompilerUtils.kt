@@ -14,7 +14,7 @@ import kotlin.collections.component2
 
 object CompilerUtils {
 
-    const val SOURCE_FILE_KEY = ""
+    const val SOURCE_FILE_ARG = ""
     const val DIRECTORY_ARG = "-d"
     const val CLASS_PATH_ARG = "-classpath"
     const val JDK_HOME_ARG = "-jdk-home"
@@ -76,13 +76,13 @@ object CompilerUtils {
                 break
             }
         }
-        map[SOURCE_FILE_KEY] = sourceFiles.reversed().joinToString(" ")
+        map[SOURCE_FILE_ARG] = sourceFiles.reversed().joinToString(" ")
         map.remove(X_PLUGIN_ARG) //TODO temporary removal to make compilations work
         return map
     }
 
     fun getSourceFiles(args: Map<String, String>): List<File> {
-        return args[SOURCE_FILE_KEY]?.split(" ")?.map { File(it.trim()) } ?: emptyList()
+        return args[SOURCE_FILE_ARG]?.split(" ")?.map { File(it.trim()) } ?: emptyList()
     }
 
     fun getDependencyFiles(args: Map<String, String>): List<File> {
@@ -159,8 +159,8 @@ object CompilerUtils {
             args[X_FRIEND_PATHS_ARG] = remotePaths
         }
 
-        if (SOURCE_FILE_KEY in args) {
-            args[SOURCE_FILE_KEY] = sourceFiles.values.joinToString(" ") { it.absolutePath }
+        if (SOURCE_FILE_ARG in args) {
+            args[SOURCE_FILE_ARG] = sourceFiles.values.joinToString(" ") { it.absolutePath }
         }
         return args
     }
@@ -173,7 +173,7 @@ object CompilerUtils {
             when {
                 key.endsWith('=') -> listOf("$key$value")
                 value.isEmpty() -> listOf(key)
-                key == SOURCE_FILE_KEY -> value.split(' ')
+                key == SOURCE_FILE_ARG -> value.split(' ')
                 else -> listOf(key, value)
 
             }

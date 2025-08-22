@@ -2,13 +2,13 @@
  * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
-import common.SERVER_COMPILATION_RESULT_CACHE_DIR
-import common.SERVER_SOURCE_FILES_CACHE_DIR
-import common.calculateCompilationInputHash
+import common.CompilerUtils
+import common.SERVER_ARTIFACTS_CACHE_DIR
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.takeWhile
 import kotlinx.coroutines.test.runTest
+import model.ArtifactType
 import model.CompilationMetadata
 import model.CompilationResult
 import model.CompilationResultSource
@@ -20,108 +20,94 @@ import org.jetbrains.kotlin.daemon.common.CompilationOptions
 import org.jetbrains.kotlin.daemon.common.CompileService
 import org.jetbrains.kotlin.daemon.common.CompilerMode
 import org.junit.jupiter.api.Test
-import server.core.InProcessCompilerService
 import java.io.File
-import java.nio.file.Paths
-import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 class CacheTest : BaseCompilationCompilationTest() {
 
+    val compilerArguments = mapOf(
+        CompilerUtils.DIRECTORY_ARG to "willbeoverwrittenanyway",
+        CompilerUtils.CLASS_PATH_ARG to stdLibFilePath,
+        CompilerUtils.SOURCE_FILE_ARG to sourceFile.path,
+    )
+
+    private suspend fun sendFile(file: File, artifactType: ArtifactType, channel: Channel<CompileRequest>) {
+        fileChunkingStrategy.chunk(file, isDirectory = false, artifactType = artifactType)
+            .collect { chunk ->
+                channel.send(
+                    FileChunk(
+                        chunk.filePath,
+                        artifactType,
+                        chunk.content,
+                        isDirectory = false,
+                        chunk.isLast
+                    )
+                )
+            }
+    }
+
+    private val compilationMetadata = CompilationMetadata(
+        projectName,
+        1,
+        1,
+        0,
+        compilerArguments,
+        CompilationOptions(
+            compilerMode = CompilerMode.NON_INCREMENTAL_COMPILER,
+            targetPlatform = CompileService.TargetPlatform.JVM,
+            reportSeverity = 0,
+            reportCategories = arrayOf(),
+            requestedCompilationResults = arrayOf(),
+        )
+    )
+
+    private val sourceFileRequest = FileTransferRequest(
+        sourceFile.path,
+        sourceFileFingerprint,
+        ArtifactType.SOURCE
+    )
+
+    private val dependencyFileRequest = FileTransferRequest(
+        stdLibFilePath,
+        stdLibFileFingerprint,
+        ArtifactType.DEPENDENCY
+    )
+
+
     @Test
-    fun testIfAbsentSourceFileIsSavedInCache() = runTest {
+    fun testIfSourceAndDependencyFilesWereCached() = runTest {
         val client = getGrpcClient()
         val requestChannel = Channel<CompileRequest>(capacity = Channel.UNLIMITED)
 
-        requestChannel.send(
-            CompilationMetadata(
-                projectName,
-                1,
-                listOf(),
-                CompilationOptions(
-                    compilerMode = CompilerMode.NON_INCREMENTAL_COMPILER,
-                    targetPlatform = CompileService.TargetPlatform.JVM,
-                    reportSeverity = 0,
-                    reportCategories = arrayOf(),
-                    requestedCompilationResults = arrayOf(),
-                )
-            )
-        )
+        requestChannel.send(compilationMetadata)
+        requestChannel.send(sourceFileRequest)
+        requestChannel.send(dependencyFileRequest)
 
-        requestChannel.send(
-            FileTransferRequest(
-                sourceFile.path,
-                sourceFileFingerprint
-            )
-        )
+        var uploadedSource = false
+        var uploadedStdlib = false
 
         client.compile(requestChannel.receiveAsFlow())
             .takeWhile { it !is FileChunk }
             .collect {
-                if (it is FileTransferReply && it.filePath.contains(sourceFile.name)) {
-                    assertFalse { it.isPresent }
-                    fileChunkingStrategy.chunk(sourceFile).collect { chunk ->
-                        requestChannel.send(FileChunk(
-                                chunk.filePath,
-                                chunk.content,
-                                chunk.isLast
-                            )
-                        )
+                if (it is FileTransferReply && !it.isPresent) {
+                    when {
+                        it.filePath.contains(sourceFile.name) -> {
+                            sendFile(sourceFile, ArtifactType.SOURCE, requestChannel)
+                            uploadedSource = true
+                        }
+                        it.filePath == stdLibFilePath || it.filePath.endsWith(File(stdLibFilePath).name) -> {
+                            sendFile(File(stdLibFilePath), ArtifactType.DEPENDENCY, requestChannel)
+                            uploadedStdlib = true
+                        }
                     }
-                    requestChannel.close()
+                    if (uploadedSource && uploadedStdlib) {
+                        requestChannel.close()
+                    }
                 }
             }
 
-        assertTrue { File("$SERVER_SOURCE_FILES_CACHE_DIR/$sourceFileFingerprint").exists() }
-    }
-
-    @Test
-    fun testIfAbsentCompilationResultIsSavedInCache() = runTest {
-        val client = getGrpcClient()
-        val requestChannel = Channel<CompileRequest>(capacity = Channel.UNLIMITED)
-
-        requestChannel.send(
-            CompilationMetadata(
-                projectName,
-                1,
-                listOf(),
-                CompilationOptions(
-                    compilerMode = CompilerMode.NON_INCREMENTAL_COMPILER,
-                    targetPlatform = CompileService.TargetPlatform.JVM,
-                    reportSeverity = 0,
-                    reportCategories = arrayOf(),
-                    requestedCompilationResults = arrayOf(),
-                )
-            )
-        )
-
-        requestChannel.send(
-            FileTransferRequest(
-                sourceFile.path,
-                sourceFileFingerprint
-            )
-        )
-
-        client.compile(requestChannel.receiveAsFlow()).collect {
-            if (it is FileTransferReply && !it.isPresent) {
-                fileChunkingStrategy.chunk(sourceFile).collect { chunk ->
-                    requestChannel.send(FileChunk(
-                            chunk.filePath,
-                            chunk.content,
-                            chunk.isLast
-                        )
-                    )
-                }
-            }
-        }
-
-        val compilerInputFingerprint = calculateCompilationInputHash(
-            listOf(sourceFile), InProcessCompilerService.buildCompilerArgsWithoutSourceFiles(
-                Paths.get("does/not/matter/it/gets/removed/anyway"),
-                listOf("")
-            ), "2.0"
-        )
-        assertTrue { File("$SERVER_COMPILATION_RESULT_CACHE_DIR/$compilerInputFingerprint").exists() }
+        assertTrue { SERVER_ARTIFACTS_CACHE_DIR.resolve(sourceFileFingerprint).toFile().exists() }
+        assertTrue { SERVER_ARTIFACTS_CACHE_DIR.resolve(stdLibFilePath).toFile().exists() }
     }
 
     @Test
@@ -129,38 +115,20 @@ class CacheTest : BaseCompilationCompilationTest() {
         val client = getGrpcClient()
         val requestChannel = Channel<CompileRequest>(capacity = Channel.UNLIMITED)
 
-        val compilationMetadata = CompilationMetadata(
-            projectName,
-            1,
-            listOf(),
-            CompilationOptions(
-                compilerMode = CompilerMode.NON_INCREMENTAL_COMPILER,
-                targetPlatform = CompileService.TargetPlatform.JVM,
-                reportSeverity = 0,
-                reportCategories = arrayOf(),
-                requestedCompilationResults = arrayOf(),
-            )
-        )
-
-        val fileTransferRequest = FileTransferRequest(
-            sourceFile.path,
-            sourceFileFingerprint
-        )
-
         requestChannel.send(compilationMetadata)
-        requestChannel.send(fileTransferRequest)
+        requestChannel.send(sourceFileRequest)
+        requestChannel.send(dependencyFileRequest)
 
         var client1ReceivedCompiledChunks = false
         client.compile(requestChannel.receiveAsFlow()).collect {
             if (it is FileTransferReply && !it.isPresent) {
-                fileChunkingStrategy.chunk(sourceFile).collect { chunk ->
-                    requestChannel.send(
-                        FileChunk(
-                            chunk.filePath,
-                            chunk.content,
-                            chunk.isLast
-                        )
-                    )
+                when {
+                    it.filePath.contains(sourceFile.name) -> {
+                        sendFile(sourceFile, ArtifactType.SOURCE, requestChannel)
+                    }
+                    it.filePath == stdLibFilePath || it.filePath.endsWith(File(stdLibFilePath).name) -> {
+                        sendFile(File(stdLibFilePath), ArtifactType.DEPENDENCY, requestChannel)
+                    }
                 }
             }
             if (it is CompilationResult) {
@@ -177,20 +145,13 @@ class CacheTest : BaseCompilationCompilationTest() {
         val requestChannel2 = Channel<CompileRequest>(capacity = Channel.UNLIMITED)
 
         requestChannel2.send(compilationMetadata)
-        requestChannel2.send(fileTransferRequest)
+        requestChannel2.send(sourceFileRequest)
+        requestChannel2.send(dependencyFileRequest)
 
         var client2ReceivedCompiledChunks = false
         client2.compile(requestChannel2.receiveAsFlow()).collect {
-            if (it is FileTransferReply && !it.isPresent) {
-                fileChunkingStrategy.chunk(sourceFile).collect { chunk ->
-                    requestChannel.send(
-                        FileChunk(
-                            chunk.filePath,
-                            chunk.content,
-                            chunk.isLast
-                        )
-                    )
-                }
+            if (it is FileTransferReply) {
+                assert(it.isPresent)
             }
             if (it is CompilationResult) {
                 assert(it.compilationResultSource == CompilationResultSource.CACHE)

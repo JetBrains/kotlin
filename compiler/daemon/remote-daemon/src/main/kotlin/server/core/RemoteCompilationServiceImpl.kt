@@ -32,6 +32,8 @@ import org.jetbrains.kotlin.daemon.report.DaemonMessageReporter
 import org.jetbrains.kotlin.daemon.report.getBuildReporter
 import server.interceptors.AuthInterceptor
 import java.io.File
+import java.nio.file.Files
+import java.nio.file.LinkOption
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.concurrent.atomic.AtomicInteger
@@ -171,11 +173,6 @@ class RemoteCompilationServiceImpl(
                     compilerPluginFiles
                 )
 
-                val outputFolder = CompilerUtils.getOutputDir(remoteCompilerArguments).absolutePath
-                println("sepcified output folder is ${outputFolder}")
-                println("outpu folder exists ${File(outputFolder).exists() }}")
-
-
                 val (outputDir, compilationResult) = when (compilationMode) {
                     CompilationMode.REAL -> {
                         val (isCompilationResultCached, inputFingerprint) = cacheHandler.isCompilationResultCached(remoteCompilerArguments)
@@ -203,14 +200,12 @@ class RemoteCompilationServiceImpl(
                     }
                 }
                 send(compilationResult)
-                println("Sending output directory: ${outputDir.absolutePath}")
-                // TODO directory does not exist
+
                 outputDir.walkTopDown()
-                    .filter { it.isFile }
+                    .filter { !Files.isDirectory(it.toPath()) }
                     .forEach { file ->
                         val clientCleanedPath = cleanCompilationResultPath(file.path)
                         fileChunkStrategy.chunk(file, isDirectory = false, ArtifactType.RESULT).collect { chunk ->
-                            println("Sending file chunk with path: ${chunk.filePath}")
                             send(
                                 FileChunk(
                                     clientCleanedPath,
