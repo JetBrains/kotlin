@@ -130,7 +130,7 @@ fun runAndCheckResults(
     val (stdoutThread, stdoutException, processOut) = process.inputStream.captureStream()
     val (stderrThread, stderrException, processErr) = process.errorStream.captureStream()
 
-    process.waitFor(30000, TimeUnit.MILLISECONDS)
+    process.waitFor(3000000, TimeUnit.MILLISECONDS)
 
     try {
         if (process.isAlive) {

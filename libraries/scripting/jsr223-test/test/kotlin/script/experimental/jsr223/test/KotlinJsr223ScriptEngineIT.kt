@@ -5,6 +5,7 @@
 
 package kotlin.script.experimental.jsr223.test
 
+import com.intellij.openapi.util.io.toCanonicalPath
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.cliArgument
 import org.jetbrains.kotlin.cli.common.environment.setIdeaIoUseFallback
@@ -25,6 +26,7 @@ import java.lang.management.ManagementFactory
 import java.nio.file.Files.createTempDirectory
 import java.nio.file.Files.createTempFile
 import javax.script.*
+import kotlin.io.path.writeLines
 import kotlin.script.experimental.jvmhost.jsr223.KotlinJsr223ScriptEngineImpl
 import kotlin.script.templates.standard.ScriptTemplateWithBindings
 
@@ -451,6 +453,13 @@ obj
         val runtime = File(jdk17, "bin" + File.separator + javaExe)
 
         val tempDir = createTempDirectory(KotlinJsr223ScriptEngineIT::class.simpleName!!)
+
+        fun prepareArgFile(vararg args: String): String {
+            val file = tempDir.resolve("arguments.args")
+            file.writeLines(args.map { it.replace("\\", "\\\\") })
+            return "@${file.toCanonicalPath()}"
+        }
+
         try {
             val outJar = createTempFile(tempDir, "inlining17", ".jar").toFile()
             val compileCp = File(System.getProperty("testCompilationClasspath")!!).readText().split(File.pathSeparator).map(::File)
@@ -462,12 +471,14 @@ obj
             runAndCheckResults(
                 listOf(
                     runtime.absolutePath,
-                    "-cp", paths.compilerClasspath.joinToString(File.pathSeparator),
-                    K2JVMCompiler::class.java.name,
-                    K2JVMCompilerArguments::noStdlib.cliArgument,
-                    K2JVMCompilerArguments::classpath.cliArgument, compileCp.joinToString(File.pathSeparator) { it.path },
-                    K2JVMCompilerArguments::destination.cliArgument, outJar.absolutePath,
-                    K2JVMCompilerArguments::jvmTarget.cliArgument, "17",
+                    prepareArgFile(
+                        "-cp", paths.compilerClasspath.joinToString(File.pathSeparator),
+                        K2JVMCompiler::class.java.name,
+                        K2JVMCompilerArguments::noStdlib.cliArgument,
+                        K2JVMCompilerArguments::classpath.cliArgument, compileCp.joinToString(File.pathSeparator) { it.path },
+                        K2JVMCompilerArguments::destination.cliArgument, outJar.absolutePath,
+                        K2JVMCompilerArguments::jvmTarget.cliArgument, "17",
+                    ),
                     "libraries/scripting/jsr223-test/testData/testJsr223Inlining.kt"
                 ),
                 additionalEnvVars = listOf("JAVA_HOME" to jdk17.absolutePath)
@@ -480,7 +491,12 @@ obj
             )
 
             runAndCheckResults(
-                listOf(runtime.absolutePath, "-cp", runtimeCp.joinToString(File.pathSeparator) { it.path }, "TestJsr223InliningKt"),
+                listOf(
+                    runtime.absolutePath,
+                    "-cp",
+                    prepareArgFile(runtimeCp.joinToString(File.pathSeparator) { it.path }),
+                    "TestJsr223InliningKt"
+                ),
                 listOf("OK")
             )
         } finally {
