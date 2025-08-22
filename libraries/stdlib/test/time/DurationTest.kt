@@ -884,6 +884,28 @@ class DurationTest {
         }
         test(1.nanoseconds, "1ns", "0.000000000000139h")
 
+        // close to infinite
+        test(
+            53375995583.days,
+            "${MAX_MILLIS / MILLIS_IN_DAY}d"
+        )
+        test(
+            53375995583.days + 15.hours,
+            "53375995583d 15h", "${MAX_MILLIS / MILLIS_IN_HOUR}h"
+        )
+        test(
+            53375995583.days + 15.hours + 36.minutes,
+            "53375995583d 15h 36m", "${MAX_MILLIS / MILLIS_IN_MINUTE}m"
+        )
+        test(
+            53375995583.days + 15.hours + 36.minutes + 27.seconds,
+            "53375995583d 15h 36m 27s", "${MAX_MILLIS / MILLIS_IN_SECOND}s"
+        )
+        test(
+            53375995583.days + 15.hours + 36.minutes + 27.seconds + 902.milliseconds,
+            "53375995583d 15h 36m 27.902s", "${MAX_MILLIS - 1}ms"
+        )
+
         // all infinite
 //        val universeAge = Duration.days(365.25) * 13.799e9
 //        val planckTime = Duration.seconds(5.4e-44)
@@ -894,6 +916,10 @@ class DurationTest {
         test(
             Duration.INFINITE, "Infinity", "53375995583d 20h", "+Infinity", "123456789012345d 123456789012345h",
             "4602453423018496274ms ${Long.MAX_VALUE}us ${Long.MAX_VALUE}ns"
+        )
+        test(
+            Duration.INFINITE, "Infinity", "${MAX_MILLIS / MILLIS_IN_DAY + 1}d", "${MAX_MILLIS / MILLIS_IN_HOUR + 1}h",
+            "${MAX_MILLIS / MILLIS_IN_MINUTE + 1}m", "${MAX_MILLIS / MILLIS_IN_SECOND + 1}s", "${MAX_MILLIS}ms"
         )
         test(-Duration.INFINITE, "-Infinity", "-(53375995583d 20h)")
     }
