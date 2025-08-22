@@ -89,6 +89,8 @@ projectTests {
         }
     }
 
+    testGenerator("org.jetbrains.kotlin.TestGeneratorForTestsIntegrationTestsKt")
+
     withJvmStdlibAndReflect()
 }
 
