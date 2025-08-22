@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.testbase
 
 import org.gradle.api.JavaVersion
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.testbase.TestVersions.AgpCompatibilityMatrix
 import org.junit.jupiter.api.extension.*
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
@@ -335,7 +336,17 @@ class GradleAndAgpArgumentsProvider : GradleArgumentsProvider() {
         val agpVersions = setOfNotNull(
             agpVersionsAnnotation.minVersion,
             *agpVersionsAnnotation.additionalVersions,
-            if (agpVersionsAnnotation.minVersion < agpVersionsAnnotation.maxVersion) agpVersionsAnnotation.maxVersion else null
+            if (
+                AgpCompatibilityMatrix.fromVersion(
+                    agpVersionsAnnotation.minVersion
+                ) < AgpCompatibilityMatrix.fromVersion(
+                    agpVersionsAnnotation.maxVersion
+                )
+            ) {
+                agpVersionsAnnotation.maxVersion
+            } else {
+                null
+            }
         )
 
         val gradleVersions = gradleVersions(context)
@@ -344,7 +355,7 @@ class GradleAndAgpArgumentsProvider : GradleArgumentsProvider() {
 
         return agpVersions
             .flatMap { version ->
-                val agpVersion = TestVersions.AgpCompatibilityMatrix.entries.find { it.version == version }
+                val agpVersion = AgpCompatibilityMatrix.entries.find { it.version == version }
                     ?: throw IllegalArgumentException("AGP version $version is not defined in TestVersions.AGP!")
 
                 val providedJdk = JdkVersions.ProvidedJdk(
