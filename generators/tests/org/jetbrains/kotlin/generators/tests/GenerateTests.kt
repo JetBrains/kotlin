@@ -18,9 +18,6 @@ import org.jetbrains.kotlin.generators.generateTestGroupSuiteWithJUnit5
 import org.jetbrains.kotlin.generators.impl.generateTestGroupSuite
 import org.jetbrains.kotlin.generators.util.TestGeneratorUtil
 import org.jetbrains.kotlin.incremental.AbstractIncrementalK2JvmWithPluginCompilerRunnerTest
-import org.jetbrains.kotlin.jvm.abi.AbstractCompareJvmAbiTest
-import org.jetbrains.kotlin.jvm.abi.AbstractCompileAgainstJvmAbiTest
-import org.jetbrains.kotlin.jvm.abi.AbstractJvmAbiContentTest
 import org.jetbrains.kotlin.kapt.cli.test.AbstractArgumentParsingTest
 import org.jetbrains.kotlin.kapt.cli.test.AbstractFirKaptToolIntegrationTest
 import org.jetbrains.kotlin.kapt.cli.test.AbstractKaptToolIntegrationTest
@@ -43,21 +40,6 @@ import org.jetbrains.kotlin.test.TargetBackend
 fun main(args: Array<String>) {
     System.setProperty("java.awt.headless", "true")
     generateTestGroupSuite(args) {
-
-        testGroup("plugins/jvm-abi-gen/tests-gen", "plugins/jvm-abi-gen/testData") {
-            testClass<AbstractCompareJvmAbiTest> {
-                model("compare", recursive = false, extension = null, targetBackend = TargetBackend.JVM_IR)
-            }
-
-            testClass<AbstractJvmAbiContentTest> {
-                model("content", recursive = false, extension = null, targetBackend = TargetBackend.JVM_IR)
-            }
-
-            testClass<AbstractCompileAgainstJvmAbiTest> {
-                model("compile", recursive = false, extension = null, targetBackend = TargetBackend.JVM_IR)
-            }
-        }
-
         testGroup("plugins/sam-with-receiver/tests-gen", "plugins/sam-with-receiver/testData") {
             testClass<AbstractSamWithReceiverScriptTest> {
                 model("script", extension = "kts")

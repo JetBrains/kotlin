@@ -72,6 +72,8 @@ projectTests {
         dependsOn(":dist")
     }
 
+    testGenerator("org.jetbrains.kotlin.jvm.abi.TestGeneratorKt")
+
     withJvmStdlibAndReflect()
 }
 
