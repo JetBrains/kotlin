@@ -54,15 +54,7 @@ class JsIrPreSerializationLoweringFacade(
                 require(cliArtifact is JsFir2IrPipelineArtifact) {
                     "Fir2IrCliBasedOutputArtifact should have JsFir2IrPipelineArtifact as cliArtifact, but has ${cliArtifact::class}"
                 }
-                runKlibCheckers(diagnosticReporter, configuration, inputArtifact.irModuleFragment)
                 val input = cliArtifact.copy(diagnosticCollector = diagnosticReporter)
-
-                if (diagnosticReporter.hasErrors) {
-                    // Should errors be found by checkers, there's a chance that JsCodeOutlineLowering will throw an exception on unparseable code.
-                    // In test pipeline, it's unwanted, so let's avoid crashes. Already found errors would already be enough for diagnostic tests.
-                    return Fir2IrCliBasedOutputArtifact(input)
-                }
-
                 val output = WebKlibInliningPipelinePhase.executePhase(input)
 
                 // The returned artifact will be stored in dependencyProvider instead of `inputArtifact`, with same kind=BackendKinds.IrBackend
