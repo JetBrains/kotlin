@@ -1,2 +1,2 @@
 expression: a.bar() to "myPair"
-type: kotlin.Pair<kotlin.String!, kotlin.String>
+type: kotlin.Pair<kotlin.String?, kotlin.String>

@@ -111,7 +111,7 @@ internal class KaFe10TypeProvider(
     override val KaType.augmentedByWarningLevelAnnotations: KaType
         get() = withValidityAssertion {
             require(this is KaFe10Type)
-            val enhancement = (fe10Type as? TypeWithEnhancement)?.enhancement
+            val enhancement = fe10Type.getEnhancementDeeply()
             return enhancement?.toKtType(analysisContext) ?: this
         }
 

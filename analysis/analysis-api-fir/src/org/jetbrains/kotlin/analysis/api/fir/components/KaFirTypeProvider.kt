@@ -151,11 +151,11 @@ internal class KaFirTypeProvider(
             require(this is KaFirType)
             val coneType = coneType
             val substitutor = EnhancedForWarningConeSubstitutor(typeContext)
-            val enhancedConeType = substitutor.substituteType(coneType)
+            val enhancedConeType = substitutor.substituteOrNull(coneType)
 
             return enhancedConeType?.asKaType() ?: this
         }
-    
+
     override val KaClassifierSymbol.defaultType: KaType
         get() = withValidityAssertion {
             with(analysisSession) {
