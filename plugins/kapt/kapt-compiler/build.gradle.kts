@@ -40,6 +40,7 @@ dependencies {
     testFixturesApi(project(":kotlin-annotation-processing-base"))
     testFixturesApi(testFixtures(project(":kotlin-annotation-processing-base")))
     testFixturesApi(project(":kotlin-annotation-processing-runtime"))
+    testFixturesImplementation(testFixtures(project(":generators:test-generator")))
 
     testCompileOnly(toolsJarApi())
     testRuntimeOnly(toolsJar())
@@ -83,6 +84,8 @@ projectTests {
     kaptTestTask("testJdk11", JavaLanguageVersion.of(11))
     kaptTestTask("testJdk17", JavaLanguageVersion.of(17))
     kaptTestTask("testJdk21", JavaLanguageVersion.of(21))
+
+    testGenerator("org.jetbrains.kotlin.kapt.test.TestGeneratorKt")
 
     withJvmStdlibAndReflect()
 }
