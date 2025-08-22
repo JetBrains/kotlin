@@ -2059,6 +2059,16 @@ public class CliTestGenerated extends AbstractCliTest {
       runTest("compiler/testData/cli/js/firMultiplatformCompilationWithError.args");
     }
 
+    @TestMetadata("illegalJsCode.args")
+    public void testIllegalJsCode() {
+      runTest("compiler/testData/cli/js/illegalJsCode.args");
+    }
+
+    @TestMetadata("illegalJsCodeWithInlinedFunInKlib.args")
+    public void testIllegalJsCodeWithInlinedFunInKlib() {
+      runTest("compiler/testData/cli/js/illegalJsCodeWithInlinedFunInKlib.args");
+    }
+
     @TestMetadata("invalidKlibAbiVersionFormat.args")
     public void testInvalidKlibAbiVersionFormat() {
       runTest("compiler/testData/cli/js/invalidKlibAbiVersionFormat.args");
