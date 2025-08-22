@@ -28,8 +28,8 @@ dependencies {
     testApi(project(":kotlin-scripting-dependencies-maven"))
     testApi(project(":compiler:cli"))
 
-    testImplementation(libs.kotlinx.coroutines.core)
-    testImplementation(libs.kotlinx.coroutines.core.jvm)
+    testImplementation(libs.intellij.kotlinx.coroutines.core)
+    testImplementation(libs.intellij.kotlinx.coroutines.core.jvm)
     testImplementation(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
     testImplementation(project(":analysis:decompiled:decompiler-to-psi"))
     testImplementation(project(":analysis:decompiled:decompiler-to-file-stubs"))
@@ -45,8 +45,8 @@ dependencies {
     embeddableTestRuntime(project(":kotlin-scripting-dependencies-maven-all"))
     embeddableTestRuntime(kotlinStdlib("jdk8"))
     embeddableTestRuntime(testSourceSet.output)
-    embeddableTestRuntime(libs.kotlinx.coroutines.core)
-    embeddableTestRuntime(libs.kotlinx.coroutines.core.jvm)
+    embeddableTestRuntime(libs.intellij.kotlinx.coroutines.core)
+    embeddableTestRuntime(libs.intellij.kotlinx.coroutines.core.jvm)
 }
 
 sourceSets {

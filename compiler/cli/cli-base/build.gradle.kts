@@ -18,7 +18,7 @@ dependencies {
     compileOnly(intellijCore())
     compileOnly(libs.intellij.fastutil)
     compileOnly(libs.intellij.asm)
-    runtimeOnly(libs.kotlinx.coroutines.core)
+    runtimeOnly(libs.intellij.kotlinx.coroutines.core)
 }
 
 sourceSets {

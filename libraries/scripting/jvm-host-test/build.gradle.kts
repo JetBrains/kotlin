@@ -17,7 +17,7 @@ dependencies {
     testApi(project(":kotlin-scripting-compiler"))
     testApi(project(":daemon-common")) // TODO: fix import (workaround for jps build)
 
-    testImplementation(libs.kotlinx.coroutines.core)
+    testImplementation(libs.intellij.kotlinx.coroutines.core)
 
     testRuntimeOnly(project(":kotlin-compiler"))
     testImplementation(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }

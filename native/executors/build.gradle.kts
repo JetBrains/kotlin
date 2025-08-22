@@ -26,7 +26,7 @@ repositories {
 dependencies {
     implementation(kotlinStdlib())
     implementation(libs.gson)
-    implementation(libs.kotlinx.coroutines.core)
+    implementation(libs.intellij.kotlinx.coroutines.core)
 
     // KT-61897: Workaround for https://github.com/gradle/gradle/issues/26358
     // (wrong conflict resolution, causing selection of not the latest version of `:kotlin-util-klib` module)
