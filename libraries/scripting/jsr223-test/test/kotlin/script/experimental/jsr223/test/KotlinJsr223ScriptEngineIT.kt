@@ -453,7 +453,7 @@ obj
         val tempDir = createTempDirectory(KotlinJsr223ScriptEngineIT::class.simpleName!!)
         try {
             val outJar = createTempFile(tempDir, "inlining17", ".jar").toFile()
-            val compileCp = System.getProperty("testCompilationClasspath")!!.split(File.pathSeparator).map(::File)
+            val compileCp = File(System.getProperty("testCompilationClasspath")!!).readText().split(File.pathSeparator).map(::File)
             assertTrue(
                 compileCp.any { it.name.startsWith("kotlin-stdlib") },
                 "Expecting \"testCompilationClasspath\" property to contain stdlib jar:\n$compileCp"
@@ -473,7 +473,7 @@ obj
                 additionalEnvVars = listOf("JAVA_HOME" to jdk17.absolutePath)
             )
 
-            val runtimeCp = System.getProperty("testJsr223RuntimeClasspath")!!.split(File.pathSeparator).map(::File) + outJar
+            val runtimeCp = File(System.getProperty("testJsr223RuntimeClasspath")!!).readText().split(File.pathSeparator).map(::File) + outJar
             assertTrue(
                 runtimeCp.any { it.name.startsWith("kotlin-scripting-jsr223") },
                 "Expecting \"testJsr223RuntimeClasspath\" property to contain JSR223 jar:\n$runtimeCp"
