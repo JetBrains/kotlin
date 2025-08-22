@@ -12,9 +12,9 @@ failureaccess = "1.0.2"
 javaDiffUtils = "4.12"
 jdom2 = "2.0.6.1"
 kotlinx-serialization = "1.7.3"
-# Version of the coroutines should be aligned with the oldest supported IntelliJ IDEA. Intellij IDEA uses 1.6 since 2022.3
-# Check the version in this file: https://github.com/JetBrains/intellij-community/blob/cc37866d3827c51712f9856f5e580d405784d1ef/.idea/libraries/kotlinx_coroutines_core.xml
-kotlinx-coroutines = "1.8.0"
+# Version of the coroutines should be aligned with the oldest supported IntelliJ IDEA
+# See https://plugins.jetbrains.com/docs/intellij/using-kotlin.html#coroutinesLibraries
+intellij-kotlinx-coroutines = "1.8.0-intellij-13"
 shadow = "8.3.0" # Should be in sync with version in kotlin-native/
 spdx = "0.10.0-dev-15"
 proguard = "7.4.2"
@@ -77,8 +77,9 @@ gradle-customUserData-gradlePlugin = { module = "com.gradle:common-custom-user-d
 develocity-gradlePlugin = { module = "com.gradle:develocity-gradle-plugin", version.ref = "develocity" }
 gradle-pluginPublish-gradlePlugin = { module = "com.gradle.publish:plugin-publish-plugin", version.ref = "gradle-plugin-publish" }
 gradle-toolchainsFoojayResolver-gradlePlugin = { module = "org.gradle.toolchains:foojay-resolver", version.ref = "gradle-toolchains-foojay-resolver" }
-kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinx-coroutines" }
-kotlinx-coroutines-core-jvm = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm", version.ref = "kotlinx-coroutines" }
+# See https://plugins.jetbrains.com/docs/intellij/using-kotlin.html#coroutinesLibraries
+intellij-kotlinx-coroutines-core = { module = "com.intellij.platform:kotlinx-coroutines-core", version.ref = "intellij-kotlinx-coroutines" }
+intellij-kotlinx-coroutines-core-jvm = { module = "com.intellij.platform:kotlinx-coroutines-core-jvm", version.ref = "intellij-kotlinx-coroutines" }
 kotlinx-serialization-core = { module = "org.jetbrains.kotlinx:kotlinx-serialization-core", version.ref = "kotlinx-serialization" }
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinx-serialization" }
 kotlinx-metadataJvm = { module = "org.jetbrains.kotlinx:kotlinx-metadata-jvm", version.ref = "kotlinx-metadataJvm" }
