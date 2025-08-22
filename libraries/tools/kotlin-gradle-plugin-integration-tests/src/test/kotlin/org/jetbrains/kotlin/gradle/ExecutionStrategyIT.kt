@@ -225,7 +225,10 @@ abstract class ExecutionStrategyIT : KGPDaemonsBaseTest() {
     fun testOutOfProcess(gradleVersion: GradleVersion) {
         doTestExecutionStrategy(
             gradleVersion,
-            KotlinCompilerExecutionStrategy.OUT_OF_PROCESS
+            KotlinCompilerExecutionStrategy.OUT_OF_PROCESS,
+            expectFailureWithMessage = if (this is ExecutionStrategyJvmIT) {
+                "The \"OUT_OF_PROCESS\" execution strategy is not supported by the Build Tools API"
+            } else null
         )
     }
 
@@ -235,6 +238,7 @@ abstract class ExecutionStrategyIT : KGPDaemonsBaseTest() {
         addHeapDumpOptions: Boolean = true,
         testFallbackStrategy: Boolean = false,
         shouldConfigureStrategyViaGradleProperty: Boolean = true,
+        expectFailureWithMessage: String? = null,
         additionalProjectConfiguration: TestProject.() -> Unit = {},
     ) {
         project(
@@ -275,6 +279,12 @@ abstract class ExecutionStrategyIT : KGPDaemonsBaseTest() {
             val expectedFinishStrategy = if (testFallbackStrategy) KotlinCompilerExecutionStrategy.OUT_OF_PROCESS else executionStrategy
             val finishMessage = expectedFinishStrategy.asFinishLogMessage
 
+            if (expectFailureWithMessage != null) {
+                buildAndFail("build", *args) {
+                    assertOutputContains(expectFailureWithMessage)
+                }
+                return@project
+            }
             build("build", *args) {
                 assertOutputContains(expectedFinishStrategy.asFinishLogMessage)
                 checkOutput(this@project)
