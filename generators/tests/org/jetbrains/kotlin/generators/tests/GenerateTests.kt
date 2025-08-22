@@ -15,9 +15,6 @@ import org.jetbrains.kotlin.fir.dataframe.AbstractDataFrameBlackBoxCodegenTest
 import org.jetbrains.kotlin.fir.dataframe.AbstractDataFrameDiagnosticTest
 import org.jetbrains.kotlin.generators.generateTestGroupSuiteWithJUnit5
 import org.jetbrains.kotlin.generators.util.TestGeneratorUtil
-import org.jetbrains.kotlin.kapt.test.AbstractFirKaptStubConverterTest
-import org.jetbrains.kotlin.kapt.test.runners.AbstractIrKotlinKaptContextTest
-import org.jetbrains.kotlin.kapt.test.runners.AbstractKaptStubConverterTest
 import org.jetbrains.kotlin.scripting.test.*
 
 
@@ -25,18 +22,6 @@ fun main(args: Array<String>) {
     System.setProperty("java.awt.headless", "true")
 
     generateTestGroupSuiteWithJUnit5 {
-        testGroup("plugins/kapt/kapt-compiler/tests-gen", "plugins/kapt/kapt-compiler/testData") {
-            testClass<AbstractIrKotlinKaptContextTest> {
-                model("kotlinRunner")
-            }
-            testClass<AbstractKaptStubConverterTest> {
-                model("converter")
-            }
-            testClass<AbstractFirKaptStubConverterTest> {
-                model("converter")
-            }
-        }
-
         testGroup("plugins/scripting/scripting-tests/tests-gen", "plugins/scripting/scripting-tests") {
             testClass<AbstractScriptWithCustomDefDiagnosticsTestBase> {
                 model("testData/diagnostics/testScripts", extension = "kts")
