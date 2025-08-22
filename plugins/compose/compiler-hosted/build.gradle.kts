@@ -72,7 +72,7 @@ dependencies {
         // Avoid kotlin stdlib dependency since we are compiling against the newest one
         exclude(group = "org.jetbrains.kotlin")
     }
-    testJsRuntime(libs.kotlinx.coroutines.core) { isTransitive = false }
+    testJsRuntime(libs.intellij.kotlinx.coroutines.core) { isTransitive = false }
     testJsRuntime("org.jetbrains.kotlinx:atomicfu-js:0.25.0") { isTransitive = false }
 
     // other compose
