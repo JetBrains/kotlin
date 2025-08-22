@@ -8,27 +8,13 @@ import kotlin.test.Test
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.days
 import kotlin.time.Duration.Companion.hours
-import kotlin.time.Duration.Companion.microseconds
-import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.nanoseconds
-import kotlin.time.Duration.Companion.seconds
 
-class DurationTest {
+class DurationWasmTest {
 
     @Test
     fun nanosecondsRounding() {
-        for (i in 0..4) {
-            testDefault(Duration.ZERO, "0s", "0.000000000${i}s", "0.000000${i}ms", "0.000${i}us", "0.${i}ns")
-            testDefault(1.nanoseconds, "1ns", "0.000000000${i + 5}s", "0.000000${i + 5}ms", "0.000${i + 5}us", "0.${i + 5}ns")
-            testDefault(1.seconds - 1.nanoseconds, "999.999999ms", "0.999999999${i}s")
-            testDefault(1.seconds, "1s", "0.999999999${i + 5}s")
-            testDefault(1.milliseconds - 1.nanoseconds, "999.999us", "0.999999${i}ms")
-            testDefault(1.milliseconds, "1ms", "0.999999${i + 5}ms")
-            testDefault(1.microseconds - 1.nanoseconds, "999ns", "0.999${i}us")
-            testDefault(1.microseconds, "1us", "0.999${i + 5}us")
-        }
-
         testDefault(1.minutes - 1.nanoseconds, "59.999999999s", "0.999999999991666610m")
         for (i in 1..9) {
             testDefault(1.minutes, "1m", "0.99999999999166661${i}m")
@@ -58,8 +44,8 @@ class DurationTest {
         }
 
         for (i in 0..8) {
-            testDefault(Duration.ZERO, "0s", "0.00000000000013${i}h", "0.000000000000138888888888888${i}h")
+            testDefault(Duration.ZERO, "0s", "0.000000000000138888888888888${i}h")
         }
-        testDefault(1.nanoseconds, "1ns", "0.000000000000139h", "0.0000000000001388888888888889h")
+        testDefault(1.nanoseconds, "1ns", "0.0000000000001388888888888889h")
     }
 }
