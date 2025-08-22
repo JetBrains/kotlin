@@ -24,6 +24,7 @@ dependencies {
     testFixturesApi(testFixtures(project(":compiler:tests-common-new")))
     testFixturesApi(testFixtures(project(":compiler:test-infrastructure")))
     testFixturesApi(testFixtures(project(":compiler:test-infrastructure-utils")))
+    testFixturesImplementation(testFixtures(project(":generators:test-generator")))
 
     testRuntimeOnly(project(":core:descriptors.runtime"))
     testRuntimeOnly(project(":compiler:fir:fir-serialization"))
@@ -56,6 +57,8 @@ projectTests {
         dependsOn(":dist")
         workingDir = rootDir
     }
+
+    testGenerator("org.jetbrains.kotlin.noarg.TestGeneratorKt")
 
     withJvmStdlibAndReflect()
 }
