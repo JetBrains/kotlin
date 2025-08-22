@@ -2,6 +2,7 @@ plugins {
     kotlin("jvm")
     id("jps-compatible")
     id("d8-configuration")
+    id("java-test-fixtures")
     id("project-tests-convention")
 }
 
@@ -18,14 +19,14 @@ dependencies {
     testApi(kotlinTest())
     testCompileOnly(kotlinTest("junit"))
     testImplementation(libs.junit4)
-    testApi(testFixtures(project(":compiler:tests-common")))
-    testApi(testFixtures(project(":compiler:tests-common-new")))
-    testApi(testFixtures(project(":compiler:fir:raw-fir:psi2fir")))
-    testApi(testFixtures(project(":compiler:fir:raw-fir:light-tree2fir")))
-    testApi(testFixtures(project(":compiler:fir:analysis-tests:legacy-fir-tests")))
-    testApi(testFixtures(project(":generators:test-generator")))
-    testApi(project(":compiler:ir.tree")) // used for deepCopyWithSymbols call that is removed by proguard from the compiler TODO: make it more straightforward
-    testApi(project(":kotlin-scripting-compiler"))
+    testFixturesApi(testFixtures(project(":compiler:tests-common")))
+    testFixturesApi(testFixtures(project(":compiler:tests-common-new")))
+    testFixturesApi(testFixtures(project(":compiler:fir:raw-fir:psi2fir")))
+    testFixturesApi(testFixtures(project(":compiler:fir:raw-fir:light-tree2fir")))
+    testFixturesApi(testFixtures(project(":compiler:fir:analysis-tests:legacy-fir-tests")))
+    testFixturesApi(testFixtures(project(":generators:test-generator")))
+    testFixturesApi(project(":compiler:ir.tree")) // used for deepCopyWithSymbols call that is removed by proguard from the compiler TODO: make it more straightforward
+    testFixturesApi(project(":kotlin-scripting-compiler"))
 
     otherCompilerModules.forEach {
         testCompileOnly(project(it))
@@ -41,6 +42,7 @@ optInToExperimentalCompilerApi()
 
 sourceSets {
     "main" {}
+    "testFixtures" { projectDefault() }
     "test" {
         projectDefault()
         generatedTestDir()
@@ -67,6 +69,8 @@ projectTests {
     testTask("fastJarFSLongTests", jUnitMode = JUnitMode.JUnit4, skipInLocalBuild = true) {
         include("**/FastJarFSLongTest*")
     }
+
+    testGenerator("org.jetbrains.kotlin.generators.tests.TestGeneratorForCompilerTestsKt")
 
     withJvmStdlibAndReflect()
 }
