@@ -44,6 +44,8 @@ projectTests {
     testTask(jUnitMode = JUnitMode.JUnit4) {
         workingDir = rootDir
     }
+
+    testGenerator("org.jetbrains.kotlin.fir.builder.TestGeneratorForPsi2FirKt")
 }
 
 testsJar()
