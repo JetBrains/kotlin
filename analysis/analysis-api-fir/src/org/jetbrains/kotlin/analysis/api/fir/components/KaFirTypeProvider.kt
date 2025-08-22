@@ -42,7 +42,10 @@ import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnsupported
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.*
+import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirSymbolEntry
 import org.jetbrains.kotlin.name.Name
@@ -148,7 +151,7 @@ internal class KaFirTypeProvider(
             require(this is KaFirType)
             val coneType = coneType
             val substitutor = EnhancedForWarningConeSubstitutor(typeContext)
-            val enhancedConeType = substitutor.substituteType(coneType)
+            val enhancedConeType = substitutor.substituteOrNull(coneType)
 
             return enhancedConeType?.asKaType()
         }
