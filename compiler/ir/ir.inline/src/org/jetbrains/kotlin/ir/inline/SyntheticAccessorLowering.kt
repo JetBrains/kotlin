@@ -10,10 +10,14 @@ import org.jetbrains.kotlin.backend.common.LoweringContext
 import org.jetbrains.kotlin.backend.common.lower.inline.KlibSyntheticAccessorGenerator
 import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.backend.common.reportWarning
+import org.jetbrains.kotlin.config.AnalysisFlags
+import org.jetbrains.kotlin.config.ExplicitApiMode
+import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities.isPrivate
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.ir.IrDiagnosticRenderers
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.*
@@ -53,6 +57,7 @@ class SyntheticAccessorLowering(private val context: LoweringContext, isExecuted
         val accessors = transformer.generatedAccessors.freezeAndGetAccessors()
         runIf(accessors.isNotEmpty()) {
             runIf(narrowAccessorVisibilities) { narrowAccessorVisibilities(accessors) }
+            emitWarningForPublicAccessorsInExplicitAPIMode(accessors, irFile)
             addAccessorsToParents(accessors)
         }
     }
@@ -244,6 +249,31 @@ class SyntheticAccessorLowering(private val context: LoweringContext, isExecuted
                 )
             }
             return isIncorrect
+        }
+    }
+
+    private fun emitWarningForPublicAccessorsInExplicitAPIMode(accessors: Collection<GeneratedAccessor>, irFile: IrFile) {
+        val explicitApiMode = context.configuration.languageVersionSettings.getFlag(AnalysisFlags.explicitApiMode)
+        if (explicitApiMode == ExplicitApiMode.DISABLED) return
+
+        for (accessor in accessors) {
+            if (accessor.accessorFunction.visibility == DescriptorVisibilities.PUBLIC) {
+                val message = buildString {
+                    append("Public synthetic accessor '${accessor.accessorFunction.name}' was generated in explicit API mode. ")
+                    append("This accessor is a part of the library ABI now.")
+                    (accessor.targetSymbol.owner as? IrDeclarationWithName)?.let { target ->
+                        val kind = IrDiagnosticRenderers.DECLARATION_KIND.render(target)
+                        append(" It became possible because $kind '${target.name}', which is not a part of the library ABI, ")
+                        append("is exposed through an inline function so it can be used in other libraries. ")
+                        append("Please, modify the source code to avoid exposure of $kind '${target.name}' and generation of the accessor.")
+                    }
+                }
+                context.reportWarning(
+                    message,
+                    irFile,
+                    accessor.accessorFunction,
+                )
+            }
         }
     }
 

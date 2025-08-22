@@ -2004,6 +2004,11 @@ public class CliTestGenerated extends AbstractCliTest {
       runTest("compiler/testData/cli/js/compilationWarningExposureOfReferencesToInvisibleEntities.args");
     }
 
+    @TestMetadata("compilationWarningPublicAccessorExplicitAPIMode.args")
+    public void testCompilationWarningPublicAccessorExplicitAPIMode() {
+      runTest("compiler/testData/cli/js/compilationWarningPublicAccessorExplicitAPIMode.args");
+    }
+
     @TestMetadata("createMetadata.args")
     public void testCreateMetadata() {
       runTest("compiler/testData/cli/js/createMetadata.args");
