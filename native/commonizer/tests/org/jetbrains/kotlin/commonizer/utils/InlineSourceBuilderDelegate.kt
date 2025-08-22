@@ -5,17 +5,10 @@
 
 package org.jetbrains.kotlin.commonizer.utils
 
-import org.jetbrains.kotlin.commonizer.tree.CirTreeModule
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-
 internal interface InlineSourceBuilderDelegate : InlineSourceBuilder {
     val inlineSourceBuilder: InlineSourceBuilder
 
-    override fun createCirTree(module: InlineSourceBuilder.Module): CirTreeModule {
-        return inlineSourceBuilder.createCirTree(module)
-    }
+    override fun createCirTree(module: InlineSourceBuilder.Module) = inlineSourceBuilder.createCirTree(module)
 
-    override fun createModuleDescriptor(module: InlineSourceBuilder.Module): ModuleDescriptor {
-        return inlineSourceBuilder.createModuleDescriptor(module)
-    }
+    override fun createMetadata(module: InlineSourceBuilder.Module) = inlineSourceBuilder.createMetadata(module)
 }

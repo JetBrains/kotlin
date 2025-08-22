@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.utils.NativeCompilerDownloader
+
 plugins {
     kotlin("jvm")
     id("project-tests-convention")
@@ -68,3 +70,10 @@ projectTests {
 runtimeJar()
 sourcesJar { includeEmptyDirs = false; eachFile { exclude() } } // empty Jar, no public sources
 javadocJar { includeEmptyDirs = false; eachFile { exclude() } } // empty Jar, no public javadocs
+
+// Use the bootstrap K/N stdlib for compiling test code samples.
+val nativeDistribution = NativeCompilerDownloader(project).also { it.downloadIfNeeded() }.compilerDirectory
+
+tasks.test.configure {
+    systemProperty("kotlin.internal.native.test.nativeHome", nativeDistribution.absolutePath)
+}
