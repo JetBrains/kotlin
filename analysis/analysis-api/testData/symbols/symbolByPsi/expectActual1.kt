@@ -1,6 +1,7 @@
 // LANGUAGE: +MultiPlatformProjects
-// MODULE: commonMain
-// FILE: Common.kt
+// DO_NOT_CHECK_NON_PSI_SYMBOL_RESTORE_K1
+// MODULE: common
+// FILE: common.kt
 
 package sample
 expect object A
@@ -23,8 +24,8 @@ expect fun baz()
 
 expect var m: Int
 
-// MODULE: androidMain(commonMain)
-// FILE: JvmAndroid.kt
+// MODULE: jvm-main()()(common)
+// FILE: main.kt
 
 package sample
 actual object A

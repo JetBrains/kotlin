@@ -1,5 +1,3 @@
-// FILE: main.kt
-
 KaKotlinPropertySymbol:
   annotations: []
   backingFieldSymbol: KaBackingFieldSymbol:
@@ -22,6 +20,10 @@ KaKotlinPropertySymbol:
       typeArguments: []
       type: kotlin/Int
     visibility: PRIVATE
+    getContainingFileSymbol: KaFileSymbol(main.kt)
+    getContainingJvmClassName: MainKt
+    getContainingModule: KaSourceModule "Sources of main"
+    deprecationStatus: null
   callableId: /variable
   compilerVisibility: Public
   contextParameters: []
@@ -48,6 +50,10 @@ KaKotlinPropertySymbol:
       type: kotlin/Int
     valueParameters: []
     visibility: PUBLIC
+    getContainingFileSymbol: KaFileSymbol(main.kt)
+    getContainingJvmClassName: MainKt
+    getContainingModule: KaSourceModule "Sources of main"
+    deprecationStatus: null
   hasBackingField: false
   hasGetter: true
   hasSetter: true
@@ -112,6 +118,10 @@ KaKotlinPropertySymbol:
         typeArguments: []
         type: kotlin/Int
       visibility: LOCAL
+      getContainingFileSymbol: KaFileSymbol(main.kt)
+      getContainingJvmClassName: null
+      getContainingModule: KaSourceModule "Sources of main"
+      deprecationStatus: null
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
@@ -143,8 +153,24 @@ KaKotlinPropertySymbol:
           typeArguments: []
           type: kotlin/Int
         visibility: LOCAL
+        getContainingFileSymbol: KaFileSymbol(main.kt)
+        getContainingJvmClassName: null
+        getContainingModule: KaSourceModule "Sources of main"
+        deprecationStatus: null
     ]
     visibility: PUBLIC
+    getContainingFileSymbol: KaFileSymbol(main.kt)
+    getContainingJvmClassName: MainKt
+    getContainingModule: KaSourceModule "Sources of main"
+    deprecationStatus: null
   typeParameters: []
   visibility: PUBLIC
-
+  getContainingFileSymbol: KaFileSymbol(main.kt)
+  getContainingJvmClassName: MainKt
+  getContainingModule: KaSourceModule "Sources of main"
+  deprecationStatus: null
+  getterDeprecationStatus: null
+  javaGetterName: getVariable
+  javaSetterName: setVariable
+  setterDeprecationStatus: null
+  isInline: false

@@ -23,7 +23,7 @@ public class Common {
     }
 }
 
-// MODULE: module1(library1)
+// MODULE: main(library1)
 // FILE: module1.kt
 import library.Common
 

@@ -31,7 +31,7 @@ val common: Common = Common()
 
 val value = common.foo()
 
-// MODULE: module2(library2)
+// MODULE: main(library2)
 // FILE: module2.kt
 import library.Common
 

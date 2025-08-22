@@ -1,0 +1,3 @@
+val common: library.Common
+
+val value: kotlin.Int

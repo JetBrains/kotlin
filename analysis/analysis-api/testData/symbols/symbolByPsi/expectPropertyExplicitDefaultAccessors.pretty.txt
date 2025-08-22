@@ -1,3 +1,1 @@
-// FILE: main.kt
-
 expect var variable: kotlin.Int
