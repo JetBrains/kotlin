@@ -491,6 +491,7 @@ extra["compilerArtifactsForIde"] = listOfNotNull(
     ":kotlin-scripting-compiler",
     ":kotlin-scripting-compiler-impl",
     ":plugins:parcelize:parcelize-runtime",
+    ":plugins:jvm-abi-gen",
     ":kotlin-stdlib-common",
     ":kotlin-stdlib",
     ":kotlin-test",
