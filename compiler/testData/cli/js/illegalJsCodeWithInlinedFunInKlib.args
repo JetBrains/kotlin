@@ -1,0 +1,8 @@
+$TESTDATA_DIR$/illegalJsCodeWithInlinedFunInKlib.kt
+-ir-output-dir
+$TEMP_DIR$
+-ir-output-name
+illegalJsCodeWithInlinedFunInKlib.kt
+-libraries
+libraries/stdlib/build/classes/kotlin/js/main
+-XXLanguage\:+IrInlinerBeforeKlibSerialization
