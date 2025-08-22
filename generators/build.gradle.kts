@@ -101,10 +101,6 @@ projectTests {
 
 val generateCompilerArgumentsCopy by generator("org.jetbrains.kotlin.generators.arguments.GenerateCompilerArgumentsCopyKt")
 
-val generateTests by generator("org.jetbrains.kotlin.generators.tests.GenerateTestsKt") {
-    dependsOn(":generators:analysis-api-generator:generateFrontendApiTests")
-}
-
 val generateProtoBuf by generator("org.jetbrains.kotlin.generators.protobuf.GenerateProtoBufKt", protobufSourceSet)
 val generateProtoBufCompare by generator("org.jetbrains.kotlin.generators.protobuf.GenerateProtoBufCompare", protobufCompareSourceSet)
 
