@@ -32,6 +32,8 @@ open class UpgradeCallableReferences(
     val upgradePropertyReferences: Boolean = true,
     val upgradeLocalDelegatedPropertyReferences: Boolean = true,
     val upgradeSamConversions: Boolean = true,
+    val upgradeExtractedAdaptedBlocks: Boolean = false,
+    val addCompletionParameterInWrapperFunction: Boolean = false,
 ) : FileLoweringPass {
 
     override fun lower(irFile: IrFile) {
@@ -66,6 +68,7 @@ open class UpgradeCallableReferences(
         private fun IrFunction.flattenParameters() {
             for (parameter in parameters) {
                 require(parameter.kind != IrParameterKind.DispatchReceiver) { "No dispatch receiver allowed in wrappers" }
+                if (parameter.kind == IrParameterKind.ExtensionReceiver) parameter.origin = BOUND_RECEIVER_PARAMETER
                 parameter.kind = IrParameterKind.Regular
             }
         }
@@ -123,17 +126,35 @@ open class UpgradeCallableReferences(
 
         private val blockReferenceOrigins = setOf(
             IrStatementOrigin.ADAPTED_FUNCTION_REFERENCE, IrStatementOrigin.SUSPEND_CONVERSION,
-            IrStatementOrigin.LAMBDA, IrStatementOrigin.FUN_INTERFACE_CONSTRUCTOR_REFERENCE, IrStatementOrigin.ANONYMOUS_FUNCTION,
+            IrStatementOrigin.LAMBDA, IrStatementOrigin.INLINE_LAMBDA, IrStatementOrigin.FUN_INTERFACE_CONSTRUCTOR_REFERENCE, IrStatementOrigin.ANONYMOUS_FUNCTION,
         )
+
+        // TODO delete once the lowering is moved
+        private val usedLambdas = mutableSetOf<IrFunction>()
+
+        // TODO delete once the lowering is moved
+        override fun visitClass(declaration: IrClass, data: IrDeclarationParent): IrStatement {
+            return super.visitClass(declaration, data).also { declaration.declarations.removeIf { it in usedLambdas } }
+        }
 
         private fun IrBlock.parseAdaptedBlock() : AdaptedBlock? {
             if (origin !in blockReferenceOrigins) return null
             if (statements.size != 2) return null
             val (function, reference) = statements
-            if (function !is IrSimpleFunction) return null
             return when (reference) {
-                is IrFunctionReference -> AdaptedBlock(function, reference, null, reference.type)
+                is IrFunctionReference -> {
+                    when (function) {
+                        is IrSimpleFunction -> AdaptedBlock(function, reference, null, reference.type)
+                        is IrContainerExpression if upgradeExtractedAdaptedBlocks && function.statements.isEmpty() -> {
+                            val lambda = reference.symbol.owner as IrSimpleFunction
+                            val lambdaToAdd = if (usedLambdas.add(lambda)) lambda else lambda.deepCopyWithSymbols()
+                            AdaptedBlock(lambdaToAdd, reference, null, reference.type)
+                        }
+                        else -> null
+                    }
+                }
                 is IrTypeOperatorCall -> {
+                    if (function !is IrSimpleFunction) return null
                     if (reference.operator != IrTypeOperator.SAM_CONVERSION) return null
                     val argument = reference.argument as? IrFunctionReference ?: return null
                     if (upgradeSamConversions) {
@@ -150,6 +171,8 @@ open class UpgradeCallableReferences(
             if (!upgradeFunctionReferencesAndLambdas) return super.visitBlock(expression, data)
             val (function, reference, samType, referenceType) = expression.parseAdaptedBlock() ?: return super.visitBlock(expression, data)
             function.transformChildren(this, function)
+            function.setDeclarationsParent(data)
+            function.visibility = DescriptorVisibilities.LOCAL
             reference.transformChildren(this, data)
             val isRestrictedSuspension = function.isRestrictedSuspensionFunction()
             function.flattenParameters()
@@ -163,13 +186,14 @@ open class UpgradeCallableReferences(
                 reflectionTargetSymbol = reflectionTarget,
                 overriddenFunctionSymbol = referenceType.classOrFail.owner.selectSAMOverriddenFunction().symbol,
                 invokeFunction = function,
-                origin = expression.origin,
+                origin = reference.origin,
                 hasSuspendConversion = reflectionTarget != null && reflectionTarget.isSuspend == false && function.isSuspend,
                 hasUnitConversion = reflectionTarget != null && !reflectionTarget.owner.returnType.isUnit() && function.returnType.isUnit(),
                 hasVarargConversion = reflectionTarget is IrSimpleFunctionSymbol && hasVarargConversion(function, reflectionTarget.owner),
                 isRestrictedSuspension = isRestrictedSuspension,
             ).apply {
                 boundValues.addAll(reference.arguments.filterNotNull())
+                copyNecessaryAttributes(reference, this)
             }.let {
                 if (samType != null) {
                     IrTypeOperatorCallImpl(
@@ -309,6 +333,14 @@ open class UpgradeCallableReferences(
             )
         }
 
+        // TODO delete once the lowering is moved
+        private fun IrFunction.addCompletionValueParameter(): IrValueParameter =
+            addValueParameter("\$completion", continuationType())
+
+        // TODO delete once the lowering is moved
+        private fun IrFunction.continuationType(): IrType =
+            context.symbols.continuationClass.typeWith(returnType).makeNullable()
+
         private fun IrCallableReference<*>.buildUnsupportedForLocalFunction(
             captured: List<Pair<IrValueParameter, IrExpression>>,
             parent: IrDeclarationParent,
@@ -357,6 +389,9 @@ open class UpgradeCallableReferences(
                         this.name = Name.identifier("p${index++}")
                         this.type = type
                     }
+                }
+                if (addCompletionParameterInWrapperFunction && isSuspend) {
+                    addCompletionValueParameter()
                 }
                 this.body = context.createIrBuilder(symbol).run {
                     irBlockBody {
@@ -457,4 +492,6 @@ open class UpgradeCallableReferences(
             }
         }
     }
+
+    protected open fun copyNecessaryAttributes(oldReference: IrFunctionReference, newReference: IrRichFunctionReference) {}
 }

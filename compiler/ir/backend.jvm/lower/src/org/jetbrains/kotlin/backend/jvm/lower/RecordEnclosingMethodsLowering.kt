@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.enclosingMethodOverride
 import org.jetbrains.kotlin.backend.jvm.ir.isInlineFunctionCall
 import org.jetbrains.kotlin.backend.jvm.ir.unwrapInlineLambda
+import org.jetbrains.kotlin.backend.jvm.ir.unwrapRichInlineLambda
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrFile
@@ -44,8 +45,10 @@ internal class RecordEnclosingMethodsLowering(val context: JvmBackendContext) : 
                     }
                     expression.symbol.owner.isInlineFunctionCall(context) -> {
                         for (parameter in expression.symbol.owner.parameters) {
-                            val lambda = expression.arguments[parameter]?.unwrapInlineLambda() ?: continue
-                            recordEnclosingMethodOverride(lambda.symbol.owner, data)
+                            expression.arguments[parameter]?.unwrapInlineLambda()
+                                ?.let { recordEnclosingMethodOverride(it.symbol.owner, data) }
+                            expression.arguments[parameter]?.unwrapRichInlineLambda()
+                                ?.let { recordEnclosingMethodOverride(it.invokeFunction, data) }
                         }
                     }
                 }
