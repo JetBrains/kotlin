@@ -5,15 +5,9 @@
 
 package org.jetbrains.kotlin.test.generators
 
-import org.jetbrains.kotlin.compiler.plugins.AbstractPluginCliTests
 import org.jetbrains.kotlin.generators.impl.generateTestGroupSuite
 
 fun generateJUnit3CompilerTests(args: Array<String>, mainClassName: String?) {
     generateTestGroupSuite(args, mainClassName) {
-        testGroup("plugins/plugins-interactions-testing/tests-gen", "plugins/plugins-interactions-testing/testData") {
-            testClass<AbstractPluginCliTests> {
-                model("cli", extension = "args", testMethod = "doJvmTest", recursive = false)
-            }
-        }
     }
 }

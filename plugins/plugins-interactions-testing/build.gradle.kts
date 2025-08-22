@@ -62,6 +62,8 @@ projectTests {
         addClasspathProperty(afterPluginClasspath, "plugin.classpath.after")
     }
 
+    testGenerator("org.jetbrains.kotlin.compiler.plugins.TestGeneratorKt")
+
     withJvmStdlibAndReflect()
 }
 
