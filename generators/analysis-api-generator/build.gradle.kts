@@ -29,7 +29,7 @@ dependencies {
     testFixturesImplementation(intellijCore())
 }
 
-val generateFrontendApiTests by generator("org.jetbrains.kotlin.generators.tests.analysis.api.GenerateAnalysisApiTestsKt") {
+val generateTests by generator("org.jetbrains.kotlin.generators.tests.analysis.api.GenerateAnalysisApiTestsKt") {
     dependsOn(":generators:analysis-api-generator:generator-kotlin-native:generateAnalysisApiNativeTests")
 }
 
