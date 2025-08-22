@@ -1,19 +1,21 @@
+// WITH_STDLIB
 // FILE: androidx/annotation/RecentlyNonNull.java
 package androidx.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Target;
 
-@Target({ElementType.PARAMETER, ElementType.TYPE})
-public @interface RecentlyNonNull {
+@Retention(CLASS)
+@Target({METHOD, PARAMETER, FIELD})
+public @interface RecentlyNullable {
 }
 
 // FILE: androidx/annotation/A.java
 package androidx.annotation;
 
 public class A {
-    @RecentlyNonNull
-    public String bar(@RecentlyNonNull String string) {
+    @RecentlyNullable
+    public String bar(@RecentlyNullable String string) {
         return "";
     }
 }
@@ -21,4 +23,4 @@ public class A {
 // FILE: main.kt
 import androidx.annotation.A
 
-fun test(a: A) = <expr>a.bar()</expr>
+fun test(a: A) = <expr>a.bar() to "myPair"</expr>

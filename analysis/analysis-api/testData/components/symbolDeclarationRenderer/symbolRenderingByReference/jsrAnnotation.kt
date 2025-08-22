@@ -50,5 +50,5 @@ package main
 import lib.Lib
 
 fun test(lib: Lib) {
-    lib.t<caret><caret_onAirContext>est(null)
+    lib.t<caret>est(null)
 }
