@@ -1,0 +1,1 @@
+open fun bar(string: kotlin.String): kotlin.String
