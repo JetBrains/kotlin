@@ -6,10 +6,6 @@
 package org.jetbrains.kotlin.test.generators
 
 import org.jetbrains.kotlin.compiler.plugins.AbstractPluginCliTests
-import org.jetbrains.kotlin.fir.builder.AbstractRawFirBuilderLazyBodiesByAstTest
-import org.jetbrains.kotlin.fir.builder.AbstractRawFirBuilderLazyBodiesByStubTest
-import org.jetbrains.kotlin.fir.builder.AbstractRawFirBuilderSourceElementMappingTestCase
-import org.jetbrains.kotlin.fir.builder.AbstractRawFirBuilderTestCase
 import org.jetbrains.kotlin.fir.java.AbstractFirOldFrontendLightClassesTest
 import org.jetbrains.kotlin.fir.java.AbstractFirTypeEnhancementTest
 import org.jetbrains.kotlin.fir.java.AbstractOwnFirTypeEnhancementTest
@@ -19,24 +15,6 @@ import org.jetbrains.kotlin.generators.util.TestGeneratorUtil
 
 fun generateJUnit3CompilerTests(args: Array<String>, mainClassName: String?) {
     generateTestGroupSuite(args, mainClassName) {
-        testGroup("compiler/fir/raw-fir/psi2fir/tests-gen", "compiler/fir/raw-fir/psi2fir/testData") {
-            testClass<AbstractRawFirBuilderTestCase> {
-                model("rawBuilder", testMethod = "doRawFirTest", pattern = TestGeneratorUtil.KT_OR_KTS)
-            }
-
-            testClass<AbstractRawFirBuilderLazyBodiesByAstTest> {
-                model("rawBuilder", testMethod = "doRawFirTest", pattern = TestGeneratorUtil.KT_OR_KTS)
-            }
-
-            testClass<AbstractRawFirBuilderLazyBodiesByStubTest> {
-                model("rawBuilder", testMethod = "doRawFirTest", pattern = TestGeneratorUtil.KT_OR_KTS)
-            }
-
-            testClass<AbstractRawFirBuilderSourceElementMappingTestCase> {
-                model("sourceElementMapping", testMethod = "doRawFirTest")
-            }
-        }
-
         testGroup("compiler/fir/raw-fir/light-tree2fir/tests-gen", "compiler/fir/raw-fir/psi2fir/testData") {
             testClass<AbstractLightTree2FirConverterTestCase> {
                 model("rawBuilder", pattern = TestGeneratorUtil.KT_OR_KTS)
