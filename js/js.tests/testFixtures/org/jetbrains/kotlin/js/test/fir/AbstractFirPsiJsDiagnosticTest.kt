@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.test.backend.handlers.NoFirCompilationErrorsHandler
 import org.jetbrains.kotlin.test.backend.ir.IrDiagnosticsHandler
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.configureFirHandlersStep
+import org.jetbrains.kotlin.test.builders.configureIrHandlersStep
 import org.jetbrains.kotlin.test.builders.configureLoweredIrHandlersStep
 import org.jetbrains.kotlin.test.builders.klibArtifactsHandlersStep
 import org.jetbrains.kotlin.test.configuration.configurationForClassicAndFirTestsAlongside
@@ -53,6 +54,9 @@ abstract class AbstractFirJsDiagnosticTestBase(val parser: FirParser) : Abstract
         configureFirHandlersStep {
             setupHandlersForDiagnosticTest()
             useHandlers(::NoFirCompilationErrorsHandler)
+        }
+        configureIrHandlersStep {
+            useHandlers(::IrDiagnosticsHandler)
         }
 
         useAfterAnalysisCheckers(
