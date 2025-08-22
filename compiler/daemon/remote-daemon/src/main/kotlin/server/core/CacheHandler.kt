@@ -12,7 +12,6 @@ import common.calculateCompilationInputHash
 import common.computeSha256
 import common.copyDirectoryRecursively
 import model.ArtifactType
-import model.CacheItem
 import java.io.File
 import java.nio.file.Files
 import java.nio.file.Paths
@@ -23,22 +22,22 @@ class CacheHandler {
     private val artifacts = mutableMapOf<String, String>()
 
     init {
-        Files.createDirectories(Paths.get(SERVER_ARTIFACTS_CACHE_DIR))
-        Files.createDirectories(Paths.get(SERVER_ARTIFACTS_CACHE_DIR))
+        Files.createDirectories(SERVER_ARTIFACTS_CACHE_DIR)
+        Files.createDirectories(SERVER_ARTIFACTS_CACHE_DIR)
         loadCache()
     }
 
     fun cleanup() {
         artifacts.clear()
-        File(SERVER_CACHE_DIR).deleteRecursively()
-        Files.createDirectories(Paths.get(SERVER_ARTIFACTS_CACHE_DIR))
-        Files.createDirectories(Paths.get(SERVER_TMP_CACHE_DIR))
+        SERVER_CACHE_DIR.toFile().deleteRecursively()
+        Files.createDirectories(SERVER_ARTIFACTS_CACHE_DIR)
+        Files.createDirectories(SERVER_TMP_CACHE_DIR)
     }
 
     fun loadCache() {
         artifacts.clear()
 
-        Files.list(Paths.get(SERVER_ARTIFACTS_CACHE_DIR)).forEach {
+        Files.list(SERVER_ARTIFACTS_CACHE_DIR).forEach {
             val fingerprint = it.fileName.toString()
             val actualFilePath = it.toAbsolutePath().toString()
             artifacts[fingerprint] = actualFilePath
@@ -53,11 +52,14 @@ class CacheHandler {
         return File(artifacts[fingerprint])
     }
 
-    fun cacheFile(tmpFile: File, artifactType: ArtifactType, remoteCompilerArguments: Map<String, String>? = null): File {
+    fun cacheFile(
+        tmpFile: File,
+        artifactType: ArtifactType,
+        deleteOriginalFile: Boolean,
+        remoteCompilerArguments: Map<String, String>? = null
+    ): File {
         val fingerprint = computeSha256(tmpFile)
-        println("SERVER file path CACEH is ${tmpFile} and hash is $fingerprint")
-
-        val targetPath = Paths.get(SERVER_ARTIFACTS_CACHE_DIR, fingerprint)
+        val targetPath = SERVER_ARTIFACTS_CACHE_DIR.resolve(fingerprint)
         when {
             tmpFile.isDirectory -> {
                 copyDirectoryRecursively(
@@ -83,27 +85,14 @@ class CacheHandler {
             // 2. as a hash of compiler arguments and input files, that is because the compilation result may be used
             // as a dependency for compilation of the same source files with different compiler arguments
             val compilationInputHash = calculateCompilationInputHash(remoteCompilerArguments)
-            val symlink = Files.createSymbolicLink(Paths.get(SERVER_ARTIFACTS_CACHE_DIR, compilationInputHash), targetPath)
+            val symlink = Files.createSymbolicLink(SERVER_ARTIFACTS_CACHE_DIR.resolve(compilationInputHash), targetPath)
             artifacts[compilationInputHash] = symlink.toAbsolutePath().toString()
         }
 
-        tmpFile.deleteRecursively()
+        if (deleteOriginalFile) {
+            tmpFile.deleteRecursively()
+        }
         return targetPath.toFile()
-    }
-
-    private fun cacheCompilationResult(
-        compilerArguments: Map<String, String>
-    ): CacheItem {
-        val inputFingerprint = calculateCompilationInputHash(compilerArguments)
-        val resultOutputDir = compilerArguments["-d"]
-        val cachedCompilationResultPath = Paths.get(SERVER_ARTIFACTS_CACHE_DIR, inputFingerprint)
-        copyDirectoryRecursively(
-            Paths.get(resultOutputDir!!),
-            cachedCompilationResultPath,
-            overwrite = true
-        ) // TODO double exclamation mark
-        artifacts[inputFingerprint] = cachedCompilationResultPath.toAbsolutePath().toString()
-        return CacheItem(inputFingerprint, cachedCompilationResultPath.toFile())
     }
 
     fun isCompilationResultCached(

@@ -7,10 +7,10 @@ package server.core
 
 import common.CompilerUtils
 import common.FileChunkingStrategy
-import common.OneFileOneChunkStrategy
+import common.FixedSizeChunkingStrategy
 import common.RemoteCompilationService
 import common.SERVER_TMP_CACHE_DIR
-import common.computeSha256
+import common.cleanCompilationResultPath
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
@@ -86,7 +86,7 @@ class RemoteCompilationServiceImpl(
                 }
             }
 
-            val fileChunkStrategy = OneFileOneChunkStrategy()
+            val fileChunkStrategy = FixedSizeChunkingStrategy()
             var compilationMetadata: CompilationMetadata? = null
 
             val userId = AuthInterceptor.USER_ID_CONTEXT_KEY.get()
@@ -139,7 +139,8 @@ class RemoteCompilationServiceImpl(
                                     launch {
                                         val allFileChunks = fileChunks.getOrDefault(it.filePath, listOf())
                                         val reconstructedFile = fileChunkingStrategy.reconstruct(allFileChunks, SERVER_TMP_CACHE_DIR)
-                                        val cachedFile = cacheHandler.cacheFile(reconstructedFile, it.artifactType)
+                                        val cachedFile =
+                                            cacheHandler.cacheFile(reconstructedFile, it.artifactType, deleteOriginalFile = true)
                                         val projectFile = workspaceManager.copyFileToProject(
                                             cachedFile.absolutePath,
                                             it.filePath,
@@ -169,66 +170,50 @@ class RemoteCompilationServiceImpl(
                     sourceFiles,
                     compilerPluginFiles
                 )
-                when (compilationMode) {
+
+                val outputFolder = CompilerUtils.getOutputDir(remoteCompilerArguments).absolutePath
+                println("sepcified output folder is ${outputFolder}")
+                println("outpu folder exists ${File(outputFolder).exists() }}")
+
+
+                val (outputDir, compilationResult) = when (compilationMode) {
                     CompilationMode.REAL -> {
-                        doCompilation(userId, remoteCompilerArguments, compilationMetadata, fileChunkStrategy).collect { send(it) }
+                        val (isCompilationResultCached, inputFingerprint) = cacheHandler.isCompilationResultCached(remoteCompilerArguments)
+                        if (isCompilationResultCached) {
+                            debug("[SERVER COMPILATION] Compilation result is cached, fingerprint: $inputFingerprint")
+                            cacheHandler.getCompilationResultDirectory(inputFingerprint) to CompilationResult(
+                                0,
+                                CompilationResultSource.CACHE
+                            )
+                        } else {
+                            debug("[SERVER COMPILATION] Compilation result is NOT cached, fingerprint: $inputFingerprint")
+                            val (outputDir, compilationResult) = doCompilation(
+                                remoteCompilerArguments,
+                                compilationMetadata,
+                                this@channelFlow::trySend// TODO: double check trySend
+
+                            )
+                            cacheHandler.cacheFile(outputDir, ArtifactType.RESULT, deleteOriginalFile = false, remoteCompilerArguments)
+                            outputDir to compilationResult
+                        }
                     }
                     CompilationMode.FAKE -> {
-                        doFakeCompilation(remoteCompilerArguments, fileChunkStrategy).collect { send(it) }
+                        val outputDir = CompilerUtils.getOutputDir(remoteCompilerArguments)
+                        outputDir to CompilationResult(0, CompilationResultSource.CACHE)
                     }
                 }
-                println("server closed ")
-                this@channelFlow.close()
-            }
-        }
-    }
-
-    private fun doFakeCompilation(
-        remoteCompilerArguments: Map<String, String>,
-        fileChunkStrategy: FileChunkingStrategy
-    ): Flow<CompileResponse> {
-        return channelFlow {
-            send(CompilationResult(0, CompilationResultSource.COMPILER))
-
-            val outputDir = CompilerUtils.getOutputDir(remoteCompilerArguments).absolutePath
-            File(outputDir).walkTopDown()
-                .filter { it.isFile }
-                .forEach { file ->
-                    fileChunkStrategy.chunk(file, isDirectory = false, ArtifactType.RESULT).collect { chunk ->
-                        send(
-                            FileChunk(
-                                chunk.filePath,
-                                ArtifactType.RESULT,
-                                chunk.content,
-                                chunk.isDirectory,
-                                chunk.isLast,
-                            )
-                        )
-                    }
-                }
-        }
-    }
-
-    private fun doCompilation(
-        userId: String,
-        remoteCompilerArguments: Map<String, String>,
-        compilationMetadata: CompilationMetadata,
-        fileChunkStrategy: FileChunkingStrategy,
-    ): Flow<CompileResponse> {
-        return channelFlow {
-            val (isCompilationResultCached, inputFingerprint) = cacheHandler.isCompilationResultCached(remoteCompilerArguments)
-
-            if (isCompilationResultCached) {
-                debug("[SERVER COMPILATION] Compilation result is cached, fingerprint: $inputFingerprint")
-                val compilationResultDirectory = cacheHandler.getCompilationResultDirectory(inputFingerprint)
-                send(CompilationResult(exitCode = 0, CompilationResultSource.CACHE))
-                compilationResultDirectory.walkTopDown()
+                send(compilationResult)
+                println("Sending output directory: ${outputDir.absolutePath}")
+                // TODO directory does not exist
+                outputDir.walkTopDown()
                     .filter { it.isFile }
                     .forEach { file ->
+                        val clientCleanedPath = cleanCompilationResultPath(file.path)
                         fileChunkStrategy.chunk(file, isDirectory = false, ArtifactType.RESULT).collect { chunk ->
+                            println("Sending file chunk with path: ${chunk.filePath}")
                             send(
                                 FileChunk(
-                                    chunk.filePath,
+                                    clientCleanedPath,
                                     ArtifactType.RESULT,
                                     chunk.content,
                                     chunk.isDirectory,
@@ -237,70 +222,49 @@ class RemoteCompilationServiceImpl(
                             )
                         }
                     }
-            } else {
-                val remoteMessageCollector = RemoteMessageCollector(object : OnReport {
-                    override fun onReport(msg: CompilerMessage) {
-                        trySend(msg)// TODO double check trySend
-                    }
-                })
-
-                val outputsCollector = { x: File, y: List<File> -> println("$x $y") }
-                val servicesFacade =
-                    BasicCompilerServicesWithResultsFacadeServer(remoteMessageCollector, outputsCollector)
-
-                debug("[SERVER COMPILATION] compilation started")
-                debug("[SERVER COMPILATION] remote compiler arguments are:")
-//                for ((key, value) in remoteCompilerArguments) {
-//                    debug("[SERVER COMPILATION] $key $value")
-//                }
-                println(CompilerUtils.getCompilerArgumentsList(remoteCompilerArguments))
-                val exitCode = compilerService.compileImpl(
-                    compilerArguments = CompilerUtils.getCompilerArgumentsList(remoteCompilerArguments)
-                        .toTypedArray(),
-                    compilationOptions = compilationMetadata.compilationOptions,
-                    servicesFacade = servicesFacade,
-                    compilationResults = null,
-                    hasIncrementalCaches = JpsCompilerServicesFacade::hasIncrementalCaches,
-                    createMessageCollector = { facade, options ->
-                        remoteMessageCollector
-                    },
-                    createReporter = ::DaemonMessageReporter,
-                    createServices = { facade, eventManager ->
-                        Services.EMPTY
-                    },
-                    getICReporter = { a, b, c ->
-                        getBuildReporter(a, b!!, c)
-                    }
-                )
-                debug("[SERVER COMPILATION] compilation finished and exit code is $exitCode")
-
-                send(CompilationResult(exitCode, CompilationResultSource.COMPILER))
-
-                if (exitCode == 0) {
-                    val cachedCompilationResult = cacheHandler.cacheFile(
-                        File(remoteCompilerArguments["-d"]),
-                        ArtifactType.RESULT,
-                        remoteCompilerArguments
-                    )
-
-                    cachedCompilationResult.walkTopDown()
-                        .filter { it.isFile }
-                        .forEach { file ->
-                            fileChunkStrategy.chunk(file, isDirectory = false, ArtifactType.RESULT).collect { chunk ->
-                                send(
-                                    FileChunk(
-                                        chunk.filePath,
-                                        ArtifactType.RESULT,
-                                        chunk.content,
-                                        chunk.isDirectory,
-                                        chunk.isLast,
-                                    )
-                                )
-                            }
-                        }
-                }
+                this@channelFlow.close()
             }
-            close()
         }
+    }
+
+    private fun doCompilation(
+        remoteCompilerArguments: Map<String, String>,
+        compilationMetadata: CompilationMetadata,
+        send: (CompileResponse) -> Unit
+    ): Pair<File, CompilationResult> {
+        val remoteMessageCollector = RemoteMessageCollector(object : OnReport {
+            override fun onReport(msg: CompilerMessage) {
+                send(msg)
+            }
+        })
+
+        val outputsCollector = { x: File, y: List<File> -> println("$x $y") }
+        val servicesFacade =
+            BasicCompilerServicesWithResultsFacadeServer(remoteMessageCollector, outputsCollector)
+
+        debug("[SERVER COMPILATION] compilation started")
+        debug("[SERVER COMPILATION] remote compiler arguments are:")
+        println(CompilerUtils.getCompilerArgumentsList(remoteCompilerArguments))
+        val exitCode = compilerService.compileImpl(
+            compilerArguments = CompilerUtils.getCompilerArgumentsList(remoteCompilerArguments)
+                .toTypedArray(),
+            compilationOptions = compilationMetadata.compilationOptions,
+            servicesFacade = servicesFacade,
+            compilationResults = null,
+            hasIncrementalCaches = JpsCompilerServicesFacade::hasIncrementalCaches,
+            createMessageCollector = { facade, options ->
+                remoteMessageCollector
+            },
+            createReporter = ::DaemonMessageReporter,
+            createServices = { facade, eventManager ->
+                Services.EMPTY
+            },
+            getICReporter = { a, b, c ->
+                getBuildReporter(a, b!!, c)
+            }
+        )
+        debug("[SERVER COMPILATION] compilation finished and exit code is $exitCode")
+        val outputDir = CompilerUtils.getOutputDir(remoteCompilerArguments)
+        return outputDir to CompilationResult(exitCode, CompilationResultSource.COMPILER)
     }
 }

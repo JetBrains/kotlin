@@ -1,5 +1,5 @@
 import client.GrpcClientRemoteCompilationService
-import common.OneFileOneChunkStrategy
+import common.FixedSizeChunkingStrategy
 import common.RemoteCompilationService
 import common.SERVER_COMPILATION_WORKSPACE_DIR
 import common.computeSha256
@@ -34,13 +34,13 @@ abstract class BaseCompilationCompilationTest {
         ?: throw IllegalStateException("Resource /TestInput.kt not found")
 
     protected val sourceFileFingerprint = computeSha256(sourceFile)
-    protected val fileChunkingStrategy = OneFileOneChunkStrategy()
+    protected val fileChunkingStrategy = FixedSizeChunkingStrategy()
 
     companion object {
         protected const val SERVER_NAME = "test-kotlin-daemon-server"
         protected lateinit var server: Server
         protected lateinit var channel: ManagedChannel
-        protected val cacheHandler = CacheHandler(OneFileOneChunkStrategy())
+        protected val cacheHandler = CacheHandler(FixedSizeChunkingStrategy())
     }
 
     fun getGrpcClient(): RemoteCompilationService {

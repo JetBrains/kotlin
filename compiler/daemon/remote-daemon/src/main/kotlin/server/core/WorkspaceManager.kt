@@ -17,11 +17,18 @@ class WorkspaceManager {
 
 
     init {
-        Files.createDirectories(Paths.get(SERVER_COMPILATION_WORKSPACE_DIR))
+        Files.createDirectories(SERVER_COMPILATION_WORKSPACE_DIR)
     }
 
-    fun getOutputDir(userId: String, projectName: String): Path {
-        return Paths.get(SERVER_COMPILATION_WORKSPACE_DIR, userId, projectName, "output")
+    fun getOutputDir(userId: String, projectName: String, moduleName: String): Path {
+        val outputPath = SERVER_COMPILATION_WORKSPACE_DIR
+            .resolve(userId)
+            .resolve(projectName)
+            .resolve("output")
+            .resolve(moduleName)
+
+        Files.createDirectories(outputPath)
+        return outputPath
     }
 
     fun copyFileToProject(cachedFilePath: String, clientFilePath: String, userId: String, projectName: String): File {
@@ -45,6 +52,6 @@ class WorkspaceManager {
         "$SERVER_COMPILATION_WORKSPACE_DIR/$userId/$projectName/output"
 
     fun cleanup() {
-        File(SERVER_COMPILATION_WORKSPACE_DIR).deleteRecursively()
+        SERVER_COMPILATION_WORKSPACE_DIR.toFile().deleteRecursively()
     }
 }

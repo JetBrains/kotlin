@@ -9,17 +9,20 @@ import kotlinx.coroutines.flow.Flow
 import model.FileChunk
 import model.ArtifactType
 import java.io.File
+import java.nio.file.Files
+import java.nio.file.Path
 import java.util.UUID
 
 abstract class FileChunkingStrategy {
 
     abstract fun chunk(file: File, isDirectory: Boolean, artifactType: ArtifactType, filePath: String? = null): Flow<FileChunk>
 
-    fun reconstruct(fileChunks: Collection<FileChunk>, folder: String): File{
+    fun reconstruct(fileChunks: Collection<FileChunk>, folderPath: Path, fileName: String? = null): File {
         try {
             // TODO here we are basically return empty file, would it be better to return null?
-            val filePath = "${folder}/${UUID.randomUUID()}"
-            val file = File(filePath)
+            val filePath = folderPath.resolve(fileName ?: UUID.randomUUID().toString()).normalize()
+            Files.createDirectories(filePath.parent)
+            val file = filePath.toFile()
             if (fileChunks.isEmpty()) return file
             // TODO consider sending filesize in metadata
             val totalSize = fileChunks.sumOf { it.content.size }

@@ -9,12 +9,10 @@ import client.GrpcClientRemoteCompilationService
 import common.CLIENT_COMPILED_DIR
 import common.CLIENT_TMP_DIR
 import common.CompilerUtils
-import common.OneFileOneChunkStrategy
+import common.FixedSizeChunkingStrategy
 import common.RemoteCompilationServiceImplType
-import common.buildAbsPath
 import common.computeSha256
 import common.createTarArchive
-import common.getRelativePath
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.coroutineScope
@@ -42,7 +40,8 @@ class RemoteCompilationClient(
 ) {
 
     init {
-        File(CLIENT_COMPILED_DIR).mkdir()
+        CLIENT_COMPILED_DIR.toFile().mkdirs()
+        CLIENT_TMP_DIR.toFile().mkdirs()
     }
 
     private val client = GrpcClientRemoteCompilationService()
@@ -73,7 +72,7 @@ class RemoteCompilationClient(
         val responseChannel = Channel<CompileResponse>(capacity = Channel.UNLIMITED)
         var compilationResult: CompilationResult? = null
 
-        val fileChunkStrategy = OneFileOneChunkStrategy()
+        val fileChunkStrategy = FixedSizeChunkingStrategy()
 
         coroutineScope {
             // start consuming response
@@ -92,8 +91,9 @@ class RemoteCompilationClient(
                                 launch {
                                     val file = File(it.filePath)
                                     if (file.isDirectory) {
-                                        Files.createDirectories(Paths.get(CLIENT_TMP_DIR, file.parent))
-                                        val tarFile = File(CLIENT_TMP_DIR, "${file.parent}/${file.nameWithoutExtension}.tar")
+                                        Files.createDirectories(CLIENT_TMP_DIR.resolve(file.parent))
+                                        val tarFile =
+                                            CLIENT_TMP_DIR.resolve(file.parent).resolve("${file.nameWithoutExtension}.tar").toFile()
                                         createTarArchive(file, tarFile)
                                         fileChunkStrategy.chunk(tarFile, true, it.artifactType, it.filePath)
                                             .collect { chunk ->
@@ -110,17 +110,19 @@ class RemoteCompilationClient(
                             }
                         }
                         is FileChunk -> {
-// TODO: client reconstruction turned off for this movement
-//                            launch {
-//                                val fileName = it.filePath.split("/").last()
-//                                fileChunks.getOrPut(it.filePath) { mutableListOf() }.add(it)
-//                                if (it.isLast) {
-//                                    fileChunkStrategy.reconstruct(
-//                                        fileChunks.getOrDefault(it.filePath, listOf()),
-//                                        buildAbsPath("$CLIENT_COMPILED_DIR/$fileName")
-//                                    )
-//                                }
-//                            }
+                            launch {
+                                println("FILE CHUNK RECEIVED")
+                                val moduleName = CompilerUtils.getModuleName(compilerArgumentsMap)
+                                fileChunks.getOrPut(it.filePath) { mutableListOf() }.add(it)
+                                if (it.isLast) {
+                                    println("FILEPATH IS ${it.filePath} and module name is $moduleName")
+                                    fileChunkStrategy.reconstruct(
+                                        fileChunks.getOrDefault(it.filePath, listOf()),
+                                        CLIENT_COMPILED_DIR.resolve(moduleName),
+                                        it.filePath,
+                                    )
+                                }
+                            }
                         }
                         is CompilationResult -> {
                             compilationResult = it

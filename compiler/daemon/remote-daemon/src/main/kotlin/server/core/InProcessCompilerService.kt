@@ -55,7 +55,7 @@ class InProcessCompilerService(
 ) {
 
     init {
-        Files.createDirectories(File(SERVER_COMPILATION_WORKSPACE_DIR).toPath())
+        Files.createDirectories(SERVER_COMPILATION_WORKSPACE_DIR)
     }
 
     private val log by lazy { Logger.getLogger("compiler") }

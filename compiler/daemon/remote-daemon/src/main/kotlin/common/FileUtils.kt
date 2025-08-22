@@ -23,16 +23,26 @@ import java.security.MessageDigest
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-fun buildAbsPath(pathSuffix: String): String {
-    val projectRoot = System.getProperty("user.dir")
-    return "$projectRoot/$pathSuffix"
+
+fun cleanCompilationResultPath(path: String): String {
+    // - cache/artifacts/<any>/
+    // - workspace/<userId>/<projectName>/output/<moduleName>/
+    val patterns = listOf(
+        Regex("""^.*?/cache/artifacts/[^/]+/"""),
+        Regex("""^.*?/workspace/[^/]+/[^/]+/output/[^/]+/""")
+    )
+    var cleaned = path
+    for (rx in patterns) {
+        val match = rx.find(cleaned)
+        if (match != null && match.range.first == 0) {
+            cleaned = cleaned.removeRange(match.range)
+            break
+        }
+    }
+    return cleaned
 }
 
-fun getRelativePath(filePath: String): String {
-    val file = File(filePath)
-    val cwd = File(System.getProperty("user.dir"))
-    return file.relativeTo(cwd).path
-}
+
 
 fun computeSha256(file: File): String {
     // TODO: in a real world scenario we should use something more robust

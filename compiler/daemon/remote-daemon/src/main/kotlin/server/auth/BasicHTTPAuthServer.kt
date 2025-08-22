@@ -21,12 +21,12 @@ class BasicHTTPAuthServer : ServerAuth {
 
 
     private fun loadAllowed(): Set<String> {
-        val jsonFile = File(AUTH_FILE)
+        val jsonFile = AUTH_FILE.toFile()
         return json.decodeFromString<Credentials>(jsonFile.readText()).allowed
     }
 
     private fun loadUserUUIDs(): Map<String, String> {
-        val jsonFile = File(UUID_FILE)
+        val jsonFile = UUID_FILE.toFile()
         return json.decodeFromString<List<UUIDMapping>>(jsonFile.readText())
             .associate { it.credential to it.userId }
     }
