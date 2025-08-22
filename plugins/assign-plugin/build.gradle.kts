@@ -22,6 +22,7 @@ dependencies {
 
     testFixturesImplementation(testFixtures(project(":compiler:tests-common")))
     testFixturesImplementation(libs.junit.jupiter.api)
+    testFixturesImplementation(testFixtures(project(":generators:test-generator")))
 
     testFixturesImplementation(project(":kotlin-reflect"))
     testRuntimeOnly(project(":core:descriptors.runtime"))
@@ -56,6 +57,8 @@ projectTests {
         dependsOn(":dist")
         workingDir = rootDir
     }
+
+    testGenerator("org.jetbrains.kotlin.assignment.plugin.TestGeneratorKt")
 
     withJvmStdlibAndReflect()
 }

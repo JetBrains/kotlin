@@ -5,10 +5,6 @@
 
 package org.jetbrains.kotlin.generators.tests
 
-import org.jetbrains.kotlin.assignment.plugin.AbstractAssignmentPluginDiagnosticTest
-import org.jetbrains.kotlin.assignment.plugin.AbstractFirLightTreeBlackBoxCodegenTestForAssignmentPlugin
-import org.jetbrains.kotlin.assignment.plugin.AbstractFirPsiAssignmentPluginDiagnosticTest
-import org.jetbrains.kotlin.assignment.plugin.AbstractIrBlackBoxCodegenTestAssignmentPlugin
 import org.jetbrains.kotlin.compiler.plugins.AbstractPluginInteractionFirBlackBoxCodegenTest
 import org.jetbrains.kotlin.fir.dataframe.AbstractCompilerFacilityTestForDataFrame
 import org.jetbrains.kotlin.fir.dataframe.AbstractDataFrameBlackBoxCodegenTest
@@ -21,21 +17,6 @@ fun main(args: Array<String>) {
     System.setProperty("java.awt.headless", "true")
 
     generateTestGroupSuiteWithJUnit5 {
-        testGroup("plugins/assign-plugin/tests-gen", "plugins/assign-plugin/testData") {
-            testClass<AbstractAssignmentPluginDiagnosticTest> {
-                model("diagnostics", excludedPattern = TestGeneratorUtil.KT_OR_KTS_WITH_FIR_PREFIX)
-            }
-            testClass<AbstractFirPsiAssignmentPluginDiagnosticTest> {
-                model("diagnostics", excludedPattern = TestGeneratorUtil.KT_OR_KTS_WITH_FIR_PREFIX)
-            }
-            testClass<AbstractIrBlackBoxCodegenTestAssignmentPlugin> {
-                model("codegen", excludedPattern = TestGeneratorUtil.KT_OR_KTS_WITH_FIR_PREFIX)
-            }
-            testClass<AbstractFirLightTreeBlackBoxCodegenTestForAssignmentPlugin> {
-                model("codegen", excludedPattern = TestGeneratorUtil.KT_OR_KTS_WITH_FIR_PREFIX)
-            }
-        }
-
         testGroup("plugins/plugins-interactions-testing/tests-gen", "plugins/plugins-interactions-testing/testData") {
             testClass<AbstractPluginInteractionFirBlackBoxCodegenTest> {
                 model("box", excludedPattern = TestGeneratorUtil.KT_OR_KTS_WITH_FIR_PREFIX)
