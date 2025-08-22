@@ -20,6 +20,7 @@ dependencies {
     testFixturesImplementation(project(":kotlin-allopen-compiler-plugin.cli"))
     testFixturesImplementation(project(":compiler:backend"))
     testFixturesImplementation(project(":compiler:cli"))
+    testFixturesImplementation(testFixtures(project(":generators:test-generator")))
 
     testFixturesImplementation(intellijCore())
     testRuntimeOnly(commonDependency("org.codehaus.woodstox:stax2-api"))
@@ -62,6 +63,8 @@ projectTests {
         dependsOn(":dist")
         workingDir = rootDir
     }
+
+    testGenerator("org.jetbrains.kotlin.allopen.TestGeneratorKt")
 
     withJvmStdlibAndReflect()
 }
