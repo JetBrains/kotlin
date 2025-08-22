@@ -136,6 +136,8 @@ projectTests {
             JdkMajorVersion.JDK_21_0, // e.g. org.jetbrains.kotlin.test.runners.codegen.FirLightTreeBlackBoxModernJdkCodegenTestGenerated.TestsWithJava21
         )
     )
+
+    testGenerator("org.jetbrains.kotlin.test.TestGeneratorForTestCommonNewKt")
 }
 
 testsJarToBeUsedAlongWithFixtures()
