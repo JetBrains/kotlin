@@ -1254,12 +1254,8 @@ class LightTreeRawFirDeclarationBuilder(
                 typeParameters += constructorTypeParametersFromConstructedClass(classWrapper.classBuilder.typeParameters)
                 valueParameters += firValueParameters.map { it.firValueParameter }
                 // TODO-HEADER-COMPILATION: Potentially remove this and produce an empty constructor body.
-                val (body, contractDescription) = if (headerCompilationMode) {
-                    buildEmptyExpressionBlock() to null
-                } else {
-                    withForcedLocalContext {
-                        convertFunctionBody(block, null, allowLegacyContractDescription = true)
-                    }
+                val (body, contractDescription) = withForcedLocalContext {
+                    convertFunctionBody(block, null, allowLegacyContractDescription = true)
                 }
                 this.body = body
                 contractDescription?.let { this.contractDescription = it }
@@ -1780,12 +1776,11 @@ class LightTreeRawFirDeclarationBuilder(
             }
             val allowLegacyContractDescription = outerContractDescription == null
             // TODO-HEADER-COMPILATION: Potentially remove getter/setter code.
-            val bodyWithContractDescription = if (headerCompilationMode) {
-                buildEmptyExpressionBlock() to null
-            } else {
-                withForcedLocalContext {
-                    convertFunctionBody(block, expression, allowLegacyContractDescription)
-                }
+            // (headerCompilationMode) {
+            //    buildEmptyExpressionBlock() to null
+            // }
+            val bodyWithContractDescription = withForcedLocalContext {
+                convertFunctionBody(block, expression, allowLegacyContractDescription)
             }
             this.body = bodyWithContractDescription.first
             val contractDescription = outerContractDescription ?: bodyWithContractDescription.second
@@ -2001,11 +1996,18 @@ class LightTreeRawFirDeclarationBuilder(
                     else implicitType
             }
 
+            // TODO-HEADER-COMPILE: While it's a good idea to try to avoid
+            // producing private functions, this breaks when the function is
+            // decorated with @JvmStatic since it makes it visible to Java
+            // programs and causes symbol not found errors.
+            // Fix would be to check if the annotation is there and then skip.
+            /*
             if (headerCompilationMode) {
                 if (calculatedModifiers.getVisibility() == Visibilities.Private) {
                     return null
                 }
             }
+             */
 
             val receiverTypeCalculator = receiverTypeNode?.let { { convertType(it) } }
             val functionBuilder = if (isAnonymousFunction) {
@@ -2124,7 +2126,9 @@ class LightTreeRawFirDeclarationBuilder(
                                 }
                             ) to null)
 
-                    val bodyWithContractDescription = if (headerCompilationMode) {
+                    // Block is null when you have an interface or abstract function declaration.
+                    // In such cases, for header compile mode you shall not generate any code either.
+                    val bodyWithContractDescription = if (headerCompilationMode && block != null) {
                         buildReturnNullExclExclBlock()
                     } else {
                         withForcedLocalContext {
