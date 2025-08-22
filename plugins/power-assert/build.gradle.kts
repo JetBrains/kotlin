@@ -19,6 +19,7 @@ dependencies {
     testFixturesApi(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)
     testFixturesApi(testFixtures(project(":compiler:tests-common-new")))
+    testFixturesImplementation(testFixtures(project(":generators:test-generator")))
 
     testRuntimeOnly(commonDependency("org.codehaus.woodstox:stax2-api"))
     testRuntimeOnly(commonDependency("com.fasterxml:aalto-xml"))
@@ -52,6 +53,8 @@ projectTests {
             systemProperty("junit5.classpath", localJunit5Classpath.asPath)
         }
     }
+
+    testGenerator("org.jetbrains.kotlin.powerassert.TestGeneratorKt")
 
     withJvmStdlibAndReflect()
 }
