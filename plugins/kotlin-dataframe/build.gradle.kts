@@ -27,6 +27,7 @@ dependencies {
     testFixturesApi(testFixtures(project(":analysis:analysis-api-fir")))
     testFixturesApi(testFixtures(project(":analysis:analysis-api-impl-base")))
     testFixturesApi(testFixtures(project(":analysis:low-level-api-fir")))
+    testFixturesImplementation(testFixtures(project(":generators:test-generator")))
 
     dataframeRuntimeClasspath(libs.dataframe.core.dev)
     dataframeRuntimeClasspath(libs.dataframe.csv.dev)
@@ -46,6 +47,8 @@ projectTests {
         classpathProvider.classpath.from(dataframeRuntimeClasspath)
         jvmArgumentProviders.add(classpathProvider)
     }
+
+    testGenerator("org.jetbrains.kotlin.fir.dataframe.TestGeneratorKt")
 
     withJvmStdlibAndReflect()
 }

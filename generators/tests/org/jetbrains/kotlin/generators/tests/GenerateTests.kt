@@ -5,9 +5,6 @@
 
 package org.jetbrains.kotlin.generators.tests
 
-import org.jetbrains.kotlin.fir.dataframe.AbstractCompilerFacilityTestForDataFrame
-import org.jetbrains.kotlin.fir.dataframe.AbstractDataFrameBlackBoxCodegenTest
-import org.jetbrains.kotlin.fir.dataframe.AbstractDataFrameDiagnosticTest
 import org.jetbrains.kotlin.generators.generateTestGroupSuiteWithJUnit5
 
 
@@ -16,18 +13,5 @@ fun main(args: Array<String>) {
 
     generateTestGroupSuiteWithJUnit5 {
 
-        testGroup("plugins/kotlin-dataframe/tests-gen", "plugins/kotlin-dataframe/testData") {
-            testClass<AbstractDataFrameDiagnosticTest> {
-                model("diagnostics")
-            }
-
-            testClass<AbstractDataFrameBlackBoxCodegenTest> {
-                model("box")
-            }
-
-            testClass<AbstractCompilerFacilityTestForDataFrame> {
-                model("compilerFacility")
-            }
-        }
     }
 }
