@@ -257,6 +257,7 @@ abstract class BenchmarkTemplate(
             arrayOf(
                 "--async-profiler-home", asyncProfilerDir.path,
                 "--async-profiler-event", asyncProfilerConfig.cpuProfiler,
+                "--async-profiler-interval", "5000000",
                 "--profile", "async-profiler",
             )
         } ?: emptyArray()
@@ -426,7 +427,16 @@ abstract class BenchmarkTemplate(
          * 4.1 no longer has the script, so. symlink manually
          */
         val asyncProfilerExecutable = asyncProfilerDir.resolve("profiler.sh")
-        Files.createSymbolicLink(asyncProfilerExecutable.toPath(), Paths.get(asyncProfilerBin))
+        asyncProfilerExecutable.writeText(
+            """
+                #!/bin/bash
+                
+                script_root=$(dirname "$0")
+                "${'$'}{script_root}"/bin/asprof -I '*ExecuteBuild.doBuild*' "$@"
+            """.trimIndent()
+        )
+        asyncProfilerExecutable.setExecutable(true)
+        //Files.createSymbolicLink(asyncProfilerExecutable.toPath(), Paths.get(asyncProfilerBin))
 
         println("Finished downloading async-profiler")
     }
@@ -631,13 +641,13 @@ abstract class BenchmarkTemplate(
             javaOsName == "Mac OS X" -> BenchmarkTemplate.AsyncProfilerConfiguration(
                 "https://github.com/async-profiler/async-profiler/releases/download/v${ASYNC_PROFILER_VERSION}/async-profiler-${ASYNC_PROFILER_VERSION}-macos.zip",
                 Decompression.ZIP,
-                cpuProfiler = "cpu",
+                cpuProfiler = "wall",
             )
             javaOsName == "Linux" -> BenchmarkTemplate.AsyncProfilerConfiguration(
                 "https://github.com/async-profiler/async-profiler/releases/download/v${ASYNC_PROFILER_VERSION}/async-profiler-${ASYNC_PROFILER_VERSION}-linux-x64.tar.gz",
                 Decompression.TAR_GZ,
                 // On CI this will implicitly run in "ctimer" mode because we run containerized builds which don't have access to perf_events
-                cpuProfiler = "cpu",
+                cpuProfiler = "wall",
             )
             javaOsName.startsWith("Windows") -> null
             else -> error("Unknown OS ${javaOsName}")
