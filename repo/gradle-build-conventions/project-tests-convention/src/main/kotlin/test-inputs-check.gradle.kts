@@ -118,6 +118,11 @@ tasks.withType<Test>().names.forEach { taskName ->
                             """permission java.io.FilePermission "${file.absolutePath}", "read";""",
                             """permission java.io.FilePermission "${file.parentFile.absolutePath}", "read";""",
                         )
+                    } else if (file.parentFile.name == "ideaHomeForTests") {
+                        listOf(
+                            """permission java.io.FilePermission "${file.parentFile.absolutePath}/-", "read,write";""",
+                            """permission java.io.FilePermission "${file.parentFile.absolutePath}", "read";""",
+                        )
                     } else if (file != null) {
                         val parents = parentsReadPermission(file)
                         listOf(

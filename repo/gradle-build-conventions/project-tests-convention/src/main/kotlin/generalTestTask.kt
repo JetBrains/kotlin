@@ -105,7 +105,10 @@ internal fun Project.createGeneralTestTask(
         evaluationDependsOn(":test-instrumenter")
     }
     return getOrCreateTask<Test>(taskName) {
-        inputs.files(rootProject.tasks.named("createIdeaHomeForTests").map { it.outputs.files }).withPathSensitivity(PathSensitivity.RELATIVE)
+        inputs.file(
+            rootProject.tasks.named("createIdeaHomeForTests")
+                .map { task -> task.outputs.files.singleFile.listFiles { file -> file.name == "build.txt" }.single() })
+            .withPathSensitivity(PathSensitivity.RELATIVE).withPathSensitivity(PathSensitivity.RELATIVE)
 
         muteWithDatabase()
         if (jUnitMode == JUnitMode.JUnit4) {
