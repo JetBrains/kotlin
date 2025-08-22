@@ -711,202 +711,127 @@ class DurationTest {
 
     @Test
     fun parseAndFormatDefault() {
-        fun testParsing(string: String, expectedDuration: Duration) {
-            assertEquals(expectedDuration, Duration.parse(string), string)
-            assertEquals(expectedDuration, Duration.parseOrNull(string), string)
-        }
+        testDefault(101.days, "101d", "2424h")
+        testDefault(45.3.days, "45d 7h 12m", "45.3d", "45d 7.2h") // 0.3d == 7.2h
+        testDefault(45.days, "45d")
 
-        fun test(duration: Duration, vararg expected: String) {
-            val actual = duration.toString()
-            assertEquals(expected.first(), actual)
+        testDefault(40.5.days, "40d 12h", "40.5d", "40d 720m")
+        testDefault(40.days + 20.minutes, "40d 0h 20m", "40d 20m", "40d 1200s")
+        testDefault(40.days + 20.seconds, "40d 0h 0m 20s", "40d 20s")
+        testDefault(40.days + 100.nanoseconds, "40d 0h 0m 0.000000100s", "40d 100ns")
 
-            if (duration.isPositive()) {
-                if (' ' in actual) {
-                    assertEquals("-($actual)", (-duration).toString())
-                } else {
-                    assertEquals("-$actual", (-duration).toString())
-                }
-            }
+        testDefault(40.hours + 15.minutes, "1d 16h 15m", "40h 15m")
+        testDefault(40.hours, "1d 16h", "40h")
 
-            for (string in expected) {
-                testParsing(string, duration)
-                if (duration.isPositive() && duration.isFinite()) {
-                    testParsing("+($string)", duration)
-                    testParsing("-($string)", -duration)
-                    if (' ' !in string) {
-                        testParsing("+$string", duration)
-                        testParsing("-$string", -duration)
-                    }
-                }
-            }
-        }
+        testDefault(12.5.hours, "12h 30m")
+        testDefault(12.hours + 15.seconds, "12h 0m 15s")
+        testDefault(12.hours + 1.nanoseconds, "12h 0m 0.000000001s")
+        testDefault(30.minutes, "30m")
+        testDefault(17.5.minutes, "17m 30s")
 
-        test(101.days, "101d", "2424h")
-        test(45.3.days, "45d 7h 12m", "45.3d", "45d 7.2h") // 0.3d == 7.2h
-        test(45.days, "45d")
+        testDefault(16.5.minutes, "16m 30s")
+        testDefault(1097.1.seconds, "18m 17.1s")
+        testDefault(90.36.seconds, "1m 30.36s")
+        testDefault(50.seconds, "50s")
+        testDefault(1.3.seconds, "1.3s")
+        testDefault(1.seconds, "1s")
 
-        test(40.5.days, "40d 12h", "40.5d", "40d 720m")
-        test(40.days + 20.minutes, "40d 0h 20m", "40d 20m", "40d 1200s")
-        test(40.days + 20.seconds, "40d 0h 0m 20s", "40d 20s")
-        test(40.days + 100.nanoseconds, "40d 0h 0m 0.000000100s", "40d 100ns")
+        testDefault(0.5.seconds, "500ms")
+        testDefault(40.2.milliseconds, "40.2ms")
+        testDefault(4.225.milliseconds, "4.225ms")
+        testDefault(4.24501.milliseconds, "4.245010ms", "4ms 245us 10ns")
+        testDefault(1.milliseconds, "1ms")
 
-        test(40.hours + 15.minutes, "1d 16h 15m", "40h 15m")
-        test(40.hours, "1d 16h", "40h")
+        testDefault(0.75.milliseconds, "750us")
+        testDefault(75.35.microseconds, "75.35us")
+        testDefault(7.25.microseconds, "7.25us")
+        testDefault(1.035.microseconds, "1.035us")
+        testDefault(1.005.microseconds, "1.005us")
+        testDefault(1800.nanoseconds, "1.8us", "1800ns", "0.0000000005h")
 
-        test(12.5.hours, "12h 30m")
-        test(12.hours + 15.seconds, "12h 0m 15s")
-        test(12.hours + 1.nanoseconds, "12h 0m 0.000000001s")
-        test(30.minutes, "30m")
-        test(17.5.minutes, "17m 30s")
-
-        test(16.5.minutes, "16m 30s")
-        test(1097.1.seconds, "18m 17.1s")
-        test(90.36.seconds, "1m 30.36s")
-        test(50.seconds, "50s")
-        test(1.3.seconds, "1.3s")
-        test(1.seconds, "1s")
-
-        test(0.5.seconds, "500ms")
-        test(40.2.milliseconds, "40.2ms")
-        test(4.225.milliseconds, "4.225ms")
-        test(4.24501.milliseconds, "4.245010ms", "4ms 245us 10ns")
-        test(1.milliseconds, "1ms")
-
-        test(0.75.milliseconds, "750us")
-        test(75.35.microseconds, "75.35us")
-        test(7.25.microseconds, "7.25us")
-        test(1.035.microseconds, "1.035us")
-        test(1.005.microseconds, "1.005us")
-        test(1800.nanoseconds, "1.8us", "1800ns", "0.0000000005h")
-
-        test(950.5.nanoseconds, "951ns")
-        test(85.23.nanoseconds, "85ns")
-        test(8.235.nanoseconds, "8ns")
-        test(1.nanoseconds, "1ns", "0.9ns", "0.001us", "0.0009us")
-        test(1.3.nanoseconds, "1ns")
-        test(0.75.nanoseconds, "1ns")
-        test(0.7512.nanoseconds, "1ns")
+        testDefault(950.5.nanoseconds, "951ns")
+        testDefault(85.23.nanoseconds, "85ns")
+        testDefault(8.235.nanoseconds, "8ns")
+        testDefault(1.nanoseconds, "1ns", "0.9ns", "0.001us", "0.0009us")
+        testDefault(1.3.nanoseconds, "1ns")
+        testDefault(0.75.nanoseconds, "1ns")
+        testDefault(0.7512.nanoseconds, "1ns")
 
         // equal to zero
-        test(Duration.ZERO, "0s", "0.4ns", "0000.0000ns")
-        test(0.023.nanoseconds, "0s", "0.023ns")
-        test(0.0034.nanoseconds, "0s", "0.0034ns")
-        test(0.0000035.nanoseconds, "0s", "0.0000035ns")
+        testDefault(Duration.ZERO, "0s", "0.4ns", "0000.0000ns")
+        testDefault(0.023.nanoseconds, "0s", "0.023ns")
+        testDefault(0.0034.nanoseconds, "0s", "0.0034ns")
+        testDefault(0.0000035.nanoseconds, "0s", "0.0000035ns")
 
-        test(365.days * 10000, "3650000d")
-        test(300.days * 100000, "30000000d")
-        test(365.days * 100000, "36500000d")
-        test((MAX_MILLIS - 1).milliseconds, "53375995583d 15h 36m 27.902s") // max finite value
+        testDefault(365.days * 10000, "3650000d")
+        testDefault(300.days * 100000, "30000000d")
+        testDefault(365.days * 100000, "36500000d")
+        testDefault((MAX_MILLIS - 1).milliseconds, "53375995583d 15h 36m 27.902s") // max finite value
 
-        test(10.days, "10d")
-        test(1.days + 12.hours, "1d 12h", "1d12h")
-        test((-5).days - 23.hours - 2.minutes, "-(5d 23h 2m)", "-5d23h2m")
-        test(9.days + 7.hours + 28.minutes + 6.seconds, "9d 7h 28m 6s", "8d 31h 28m 6s")
-        test(
+        testDefault(10.days, "10d")
+        testDefault(1.days + 12.hours, "1d 12h", "1d12h")
+        testDefault((-5).days - 23.hours - 2.minutes, "-(5d 23h 2m)", "-5d23h2m")
+        testDefault(9.days + 7.hours + 28.minutes + 6.seconds, "9d 7h 28m 6s", "8d 31h 28m 6s")
+        testDefault(
             15.days + 1.hours + 45.minutes + 31.seconds + 30123.microseconds,
             "15d 1h 45m 31.030123s",
             "15d 98m 451s 30.123ms"
         )
-        test(
+        testDefault(
             102.days + 9.hours + 12.minutes + 45.seconds + 31.milliseconds + 210.123.microseconds,
             "102d 9h 12m 45.031210123s",
             "100d 57h 12m 45s 28ms 3210.12345us"
         )
-        test(
+        testDefault(
             8771.days + 14.hours + 52.minutes + 42.seconds + 997.milliseconds + 438.microseconds + 653.nanoseconds,
             "8771d 14h 52m 42.997438653s",
             "8765d 151h 452m 1233s 9873ms 123451us 987653.12345678ns"
         )
-        test(
+        testDefault(
             -(1835.days + 14.hours + 27.minutes + 46.619332752.seconds),
             "-(1835d 14h 27m 46.619332752s)",
             "-(01257d  012395h 0087542m  000115874s 0871542ms  00951487us    000125845751.985487515ns)"
         )
-        test(
+        testDefault(
             219124.days + 8.hours + 54.minutes + 38.909.seconds,
             "219124d 8h 54m 38.909s",
             "12345678910ms 18901234567890123us 18765432109876543ns"
         )
-        test(
+        testDefault(
             10_000_000_000_000_100L.microseconds + 10_000_000_000_900_000L.nanoseconds,
             "115856d 11h 33m 20s",
             "10000000000000100us 10000000000900000ns"
         )
-        test(
+        testDefault(
             4602453423018496273.milliseconds + Long.MAX_VALUE.microseconds + Long.MAX_VALUE.nanoseconds,
             "53375995583d 15h 36m 27.902s",
             "4602453423018496273ms ${Long.MAX_VALUE}us ${Long.MAX_VALUE}ns"
         )
-        test(Long.MAX_VALUE.microseconds, "106751991d 4h 0m 54.775s", "${Long.MAX_VALUE}.99999999999us")
-        test(
+        testDefault(Long.MAX_VALUE.microseconds, "106751991d 4h 0m 54.775s", "${Long.MAX_VALUE}.99999999999us")
+        testDefault(
             1.days + 2.hours + 3.minutes + 4.seconds + 5.milliseconds + 6.microseconds + 7.nanoseconds,
             "1d 2h 3m 4.005006007s",
             "1d2h3m 4s 5ms 6us 7ns"
         )
 
-        // nanoseconds rounding
-        for (i in 0..4) {
-            test(Duration.ZERO, "0s", "0.000000000${i}s", "0.000000${i}ms", "0.000${i}us", "0.${i}ns")
-            test(1.nanoseconds, "1ns", "0.000000000${i + 5}s", "0.000000${i + 5}ms", "0.000${i + 5}us", "0.${i + 5}ns")
-            test(1.seconds - 1.nanoseconds, "999.999999ms", "0.999999999${i}s")
-            test(1.seconds, "1s", "0.999999999${i + 5}s")
-            test(1.milliseconds - 1.nanoseconds, "999.999us", "0.999999${i}ms")
-            test(1.milliseconds, "1ms", "0.999999${i + 5}ms")
-            test(1.microseconds - 1.nanoseconds, "999ns", "0.999${i}us")
-            test(1.microseconds, "1us", "0.999${i + 5}us")
-        }
-
-        test(1.minutes - 1.nanoseconds, "59.999999999s", "0.999999999991666610m")
-        for (i in 1..9) {
-            test(1.minutes, "1m", "0.99999999999166661${i}m")
-        }
-
-        for (i in 0..1) {
-            test(1.days - 1.nanoseconds, "23h 59m 59.999999999s", "0.99999999999999417${i}d")
-        }
-        for (i in 2..9) {
-            test(1.days, "1d", "0.99999999999999417${i}d")
-        }
-
-        for (i in 0..3) {
-            test(Duration.ZERO, "0s", "0.0000000000000057870370370370${i}d", "0.0000000000083333333333333${i}m")
-        }
-        for (i in 4..9) {
-            test(1.nanoseconds, "1ns", "0.0000000000000057870370370370${i}d", "0.0000000000083333333333333${i}m")
-        }
-
-        for (i in 0..5) {
-            test(Duration.ZERO, "0s", "0.00000000000000${i}d")
-            test(1.hours - 1.nanoseconds, "59m 59.999999999s", "0.99999999999986105${i}h")
-        }
-        for (i in 6..9) {
-            test(1.nanoseconds, "1ns", "0.00000000000000${i}d")
-            test(1.hours, "1h", "0.99999999999986105${i}h")
-        }
-
-        for (i in 0..8) {
-            test(Duration.ZERO, "0s", "0.00000000000013${i}h", "0.000000000000138888888888888${i}h")
-        }
-        test(1.nanoseconds, "1ns", "0.000000000000139h", "0.0000000000001388888888888889h")
-
         // close to infinite
-        test(
+        testDefault(
             53375995583.days,
             "${MAX_MILLIS / MILLIS_IN_DAY}d"
         )
-        test(
+        testDefault(
             53375995583.days + 15.hours,
             "53375995583d 15h", "${MAX_MILLIS / MILLIS_IN_HOUR}h"
         )
-        test(
+        testDefault(
             53375995583.days + 15.hours + 36.minutes,
             "53375995583d 15h 36m", "${MAX_MILLIS / MILLIS_IN_MINUTE}m"
         )
-        test(
+        testDefault(
             53375995583.days + 15.hours + 36.minutes + 27.seconds,
             "53375995583d 15h 36m 27s", "${MAX_MILLIS / MILLIS_IN_SECOND}s"
         )
-        test(
+        testDefault(
             53375995583.days + 15.hours + 36.minutes + 27.seconds + 902.milliseconds,
             "53375995583d 15h 36m 27.902s", "${MAX_MILLIS - 1}ms"
         )
@@ -918,15 +843,62 @@ class DurationTest {
 //        test(universeAge, "5.04e+12d")
 //        test(planckTime, "5.40e-44s")
 //        test(Duration.nanoseconds(Double.MAX_VALUE), "2.08e+294d")
-        test(
+        testDefault(
             Duration.INFINITE, "Infinity", "53375995583d 20h", "+Infinity", "123456789012345d 123456789012345h",
             "4602453423018496274ms ${Long.MAX_VALUE}us ${Long.MAX_VALUE}ns"
         )
-        test(
+        testDefault(
             Duration.INFINITE, "Infinity", "${MAX_MILLIS / MILLIS_IN_DAY + 1}d", "${MAX_MILLIS / MILLIS_IN_HOUR + 1}h",
             "${MAX_MILLIS / MILLIS_IN_MINUTE + 1}m", "${MAX_MILLIS / MILLIS_IN_SECOND + 1}s", "${MAX_MILLIS}ms"
         )
-        test(-Duration.INFINITE, "-Infinity", "-(53375995583d 20h)")
+        testDefault(-Duration.INFINITE, "-Infinity", "-(53375995583d 20h)")
+    }
+
+    @Test
+    fun nanosecondsRounding() {
+        for (i in 0..4) {
+            testDefault(Duration.ZERO, "0s", "0.000000000${i}s", "0.000000${i}ms", "0.000${i}us", "0.${i}ns")
+            testDefault(1.nanoseconds, "1ns", "0.000000000${i + 5}s", "0.000000${i + 5}ms", "0.000${i + 5}us", "0.${i + 5}ns")
+            testDefault(1.seconds - 1.nanoseconds, "999.999999ms", "0.999999999${i}s")
+            testDefault(1.seconds, "1s", "0.999999999${i + 5}s")
+            testDefault(1.milliseconds - 1.nanoseconds, "999.999us", "0.999999${i}ms")
+            testDefault(1.milliseconds, "1ms", "0.999999${i + 5}ms")
+            testDefault(1.microseconds - 1.nanoseconds, "999ns", "0.999${i}us")
+            testDefault(1.microseconds, "1us", "0.999${i + 5}us")
+        }
+
+        testDefault(1.minutes - 1.nanoseconds, "59.999999999s", "0.999999999991666610m")
+        for (i in 1..9) {
+            testDefault(1.minutes, "1m", "0.99999999999166661${i}m")
+        }
+
+        for (i in 0..1) {
+            testDefault(1.days - 1.nanoseconds, "23h 59m 59.999999999s", "0.99999999999999417${i}d")
+        }
+        for (i in 2..9) {
+            testDefault(1.days, "1d", "0.99999999999999417${i}d")
+        }
+
+        for (i in 0..3) {
+            testDefault(Duration.ZERO, "0s", "0.0000000000000057870370370370${i}d", "0.0000000000083333333333333${i}m")
+        }
+        for (i in 4..9) {
+            testDefault(1.nanoseconds, "1ns", "0.0000000000000057870370370370${i}d", "0.0000000000083333333333333${i}m")
+        }
+
+        for (i in 0..5) {
+            testDefault(Duration.ZERO, "0s", "0.00000000000000${i}d")
+            testDefault(1.hours - 1.nanoseconds, "59m 59.999999999s", "0.99999999999986105${i}h")
+        }
+        for (i in 6..9) {
+            testDefault(1.nanoseconds, "1ns", "0.00000000000000${i}d")
+            testDefault(1.hours, "1h", "0.99999999999986105${i}h")
+        }
+
+        for (i in 0..8) {
+            testDefault(Duration.ZERO, "0s", "0.00000000000013${i}h", "0.000000000000138888888888888${i}h")
+        }
+        testDefault(1.nanoseconds, "1ns", "0.000000000000139h", "0.0000000000001388888888888889h")
     }
 
     @Test
