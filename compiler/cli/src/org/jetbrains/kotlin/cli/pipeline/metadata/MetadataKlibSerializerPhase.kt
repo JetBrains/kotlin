@@ -20,16 +20,14 @@ import org.jetbrains.kotlin.library.SerializedMetadata
 import org.jetbrains.kotlin.library.metadata.KlibMetadataHeaderFlags
 import org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf
 
-object MetadataKlibSerializerPhase : PipelinePhase<MetadataFrontendPipelineArtifact, MetadataSerializationArtifact>(
-    name = "MetadataKlibSerializerPhase",
+object MetadataKlibInMemorySerializerPhase : PipelinePhase<MetadataFrontendPipelineArtifact, MetadataInMemorySerializationArtifact>(
+    name = "MetadataKlibInMemorySerializerPhase",
     preActions = setOf(PerformanceNotifications.KlibWritingStarted),
     postActions = setOf(PerformanceNotifications.KlibWritingFinished, CheckCompilationErrors.CheckDiagnosticCollector)
 ) {
-    override fun executePhase(input: MetadataFrontendPipelineArtifact): MetadataSerializationArtifact {
+    override fun executePhase(input: MetadataFrontendPipelineArtifact): MetadataInMemorySerializationArtifact {
         val (firResult, configuration, _, _) = input
         val metadataVersion = input.metadataVersion
-        val destDir = configuration.metadataDestinationDirectory!!
-
         val fragments = mutableMapOf<String, MutableList<ByteArray>>()
 
         val analysisResult = firResult.outputs
@@ -71,15 +69,24 @@ object MetadataKlibSerializerPhase : PipelinePhase<MetadataFrontendPipelineArtif
         }
 
         val module = header.build().toByteArray()
-
         val serializedMetadata = SerializedMetadata(module, fragmentParts, fragmentNames)
+        return MetadataInMemorySerializationArtifact(serializedMetadata, configuration)
+    }
+}
 
-        buildKotlinMetadataLibrary(configuration, serializedMetadata, destDir)
+object MetadataKlibFileWriterPhase : PipelinePhase<MetadataInMemorySerializationArtifact, MetadataSerializationArtifact>(
+    name = "MetadataKlibFileWriterPhase",
+    preActions = setOf(PerformanceNotifications.KlibWritingStarted),
+    postActions = setOf(PerformanceNotifications.KlibWritingFinished, CheckCompilationErrors.CheckDiagnosticCollector)
+) {
+    override fun executePhase(input: MetadataInMemorySerializationArtifact): MetadataSerializationArtifact {
+        val destDir = input.configuration.metadataDestinationDirectory!!
+        buildKotlinMetadataLibrary(input.configuration, input.metadata, destDir)
 
         return MetadataSerializationArtifact(
             outputInfo = null,
-            configuration,
-            destDir.canonicalPath
+            input.configuration,
+            destDir.canonicalPath,
         )
     }
 }

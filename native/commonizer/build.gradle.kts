@@ -1,6 +1,9 @@
+import org.jetbrains.kotlin.kotlinNativeDist
+
 plugins {
     kotlin("jvm")
     id("project-tests-convention")
+    id("kotlin.native.build-tools-conventions")
 }
 
 description = "Kotlin KLIB Library Commonizer"
@@ -68,3 +71,8 @@ projectTests {
 runtimeJar()
 sourcesJar { includeEmptyDirs = false; eachFile { exclude() } } // empty Jar, no public sources
 javadocJar { includeEmptyDirs = false; eachFile { exclude() } } // empty Jar, no public javadocs
+
+tasks.test.configure {
+    dependsOn(":kotlin-native:distStdlib")
+    systemProperty("kotlin.internal.native.test.nativeHome", kotlinNativeDist.absolutePath)
+}

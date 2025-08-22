@@ -7,7 +7,8 @@ package org.jetbrains.kotlin.test.frontend.fir
 
 import org.jetbrains.kotlin.cli.pipeline.metadata.MetadataFrontendPipelineArtifact
 import org.jetbrains.kotlin.cli.pipeline.metadata.MetadataFrontendPipelinePhase
-import org.jetbrains.kotlin.cli.pipeline.metadata.MetadataKlibSerializerPhase
+import org.jetbrains.kotlin.cli.pipeline.metadata.MetadataKlibFileWriterPhase
+import org.jetbrains.kotlin.cli.pipeline.metadata.MetadataKlibInMemorySerializerPhase
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.diagnostics.impl.SimpleDiagnosticsCollector
@@ -61,7 +62,7 @@ class FirCliMetadataSerializerFacade(val testServices: TestServices) : AbstractT
             "Incompatible type of input artifact: expected ${MetadataFrontendPipelineArtifact::class}, actual ${inputArtifact.cliArtifact::class}"
         }
         val input = inputArtifact.cliArtifact
-        val output = MetadataKlibSerializerPhase.executePhase(input)
+        val output = MetadataKlibInMemorySerializerPhase.executePhase(input).let(MetadataKlibFileWriterPhase::executePhase)
         return BinaryArtifacts.KLib(
             File(output.destination),
             SimpleDiagnosticsCollector(BaseDiagnosticsCollector.RawReporter.DO_NOTHING)
