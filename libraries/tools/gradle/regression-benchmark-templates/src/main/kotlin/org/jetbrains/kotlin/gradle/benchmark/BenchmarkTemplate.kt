@@ -641,13 +641,13 @@ abstract class BenchmarkTemplate(
             javaOsName == "Mac OS X" -> BenchmarkTemplate.AsyncProfilerConfiguration(
                 "https://github.com/async-profiler/async-profiler/releases/download/v${ASYNC_PROFILER_VERSION}/async-profiler-${ASYNC_PROFILER_VERSION}-macos.zip",
                 Decompression.ZIP,
-                cpuProfiler = "wall",
+                cpuProfiler = "cpu",
             )
             javaOsName == "Linux" -> BenchmarkTemplate.AsyncProfilerConfiguration(
                 "https://github.com/async-profiler/async-profiler/releases/download/v${ASYNC_PROFILER_VERSION}/async-profiler-${ASYNC_PROFILER_VERSION}-linux-x64.tar.gz",
                 Decompression.TAR_GZ,
                 // On CI this will implicitly run in "ctimer" mode because we run containerized builds which don't have access to perf_events
-                cpuProfiler = "wall",
+                cpuProfiler = "cpu",
             )
             javaOsName.startsWith("Windows") -> null
             else -> error("Unknown OS ${javaOsName}")
