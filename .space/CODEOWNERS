@@ -231,7 +231,6 @@
 /compiler/tests-integration/ "Kotlin Compiler"
 /compiler/tests-integration/tests/org/jetbrains/kotlin/klib/ "Kotlin Common Backend"
 /compiler/tests-different-jdk/ "Kotlin JVM"
-/compiler/tests-for-compiler-generator/ "Kotlin Compiler"
 /compiler/tests-gen/ "Kotlin Compiler"
 /compiler/tests-java8/ "Kotlin JVM"
 /compiler/tests-mutes/ "Kotlin Build Infrastructure"
