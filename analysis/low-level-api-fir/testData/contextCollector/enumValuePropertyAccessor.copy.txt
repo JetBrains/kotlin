@@ -40,6 +40,8 @@ Tower Data Context:
         Scope: FirLocalScope
             Properties:
                 FirBackingFieldSymbol private final backing field field: R|kotlin/Int|
+    Element 11
+        Scope: FirLocalScope
 
 FILE: [ResolvedTo(IMPORTS)] enumValuePropertyAccessor.kt
     public final? [ResolvedTo(RAW_FIR)] enum class Direction : R|kotlin/Enum<Direction>| {
