@@ -10,10 +10,9 @@ fun test1(x: String?): Int? {
 }
 
 @OptIn(ExperimentalContracts::class)
-@Suppress("IMPOSSIBLE_IS_CHECK_ERROR")
 fun test2(x: String?): Int? {
     contract {
-        returnsNotNull() implies (x is Boolean)
+        returnsNotNull() implies (x is String)
     }
 
     return x?.length
