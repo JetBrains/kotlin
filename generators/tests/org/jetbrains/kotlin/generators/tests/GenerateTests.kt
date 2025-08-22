@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.lombok.AbstractFirLightTreeBlackBoxCodegenTestForLom
 import org.jetbrains.kotlin.lombok.AbstractFirPsiDiagnosticTestForLombok
 import org.jetbrains.kotlin.lombok.AbstractIrBlackBoxCodegenTestForLombok
 import org.jetbrains.kotlin.noarg.*
-import org.jetbrains.kotlin.parcelize.test.runners.*
 import org.jetbrains.kotlin.powerassert.AbstractFirLightTreeBlackBoxCodegenTestForPowerAssert
 import org.jetbrains.kotlin.powerassert.AbstractIrBlackBoxCodegenTestForPowerAssert
 import org.jetbrains.kotlin.scripting.test.*
@@ -37,32 +36,6 @@ fun main(args: Array<String>) {
     System.setProperty("java.awt.headless", "true")
 
     generateTestGroupSuiteWithJUnit5 {
-        testGroup("plugins/parcelize/parcelize-compiler/tests-gen", "plugins/parcelize/parcelize-compiler/testData") {
-            testClass<AbstractParcelizeIrBoxTest> {
-                model("box")
-            }
-
-            testClass<AbstractParcelizeFirLightTreeBoxTest> {
-                model("box")
-            }
-
-            testClass<AbstractParcelizeIrBytecodeListingTest> {
-                model("codegen")
-            }
-
-            testClass<AbstractFirParcelizeBytecodeListingTest> {
-                model("codegen")
-            }
-
-            testClass<AbstractParcelizeDiagnosticTest> {
-                model("diagnostics", excludedPattern = TestGeneratorUtil.KT_OR_KTS_WITH_FIR_PREFIX)
-            }
-
-            testClass<AbstractFirPsiParcelizeDiagnosticTest> {
-                model("diagnostics", excludedPattern = TestGeneratorUtil.KT_OR_KTS_WITH_FIR_PREFIX)
-            }
-        }
-
         testGroup("plugins/allopen/tests-gen", "plugins/allopen/testData") {
             testClass<AbstractIrBytecodeListingTestForAllOpen> {
                 model("bytecodeListing", excludedPattern = TestGeneratorUtil.KT_OR_KTS_WITH_FIR_PREFIX)
