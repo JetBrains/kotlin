@@ -1,3 +1,4 @@
+// WITH_STDLIB
 // FILE: ClassWithExternalAnnotatedMembers.java
 public class ClassWithExternalAnnotatedMembers {
     public String externalNotNullMethod() {
@@ -17,4 +18,4 @@ public class ClassWithExternalAnnotatedMembers {
 // FILE: main.kt
 import ClassWithExternalAnnotatedMembers
 
-fun test(a: ClassWithExternalAnnotatedMembers) = a.e<caret>xternalNotNullMethod()
+fun test(a: ClassWithExternalAnnotatedMembers) = <expr>a.externalNotNullMethod() to "myPair"</expr>

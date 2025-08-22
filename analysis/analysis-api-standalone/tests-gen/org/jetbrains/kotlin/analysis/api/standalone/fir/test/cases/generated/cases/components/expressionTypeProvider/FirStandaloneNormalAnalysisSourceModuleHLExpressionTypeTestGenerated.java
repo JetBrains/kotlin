@@ -209,15 +209,39 @@ public class FirStandaloneNormalAnalysisSourceModuleHLExpressionTypeTestGenerate
   }
 
   @Test
-  @TestMetadata("javaEnhancedType.kt")
-  public void testJavaEnhancedType() {
-    runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/javaEnhancedType.kt");
+  @TestMetadata("javaEnhancedRecentlyNonNullType.kt")
+  public void testJavaEnhancedRecentlyNonNullType() {
+    runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/javaEnhancedRecentlyNonNullType.kt");
+  }
+
+  @Test
+  @TestMetadata("javaEnhancedRecentlyNonNullTypeAsTypeParameter.kt")
+  public void testJavaEnhancedRecentlyNonNullTypeAsTypeParameter() {
+    runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/javaEnhancedRecentlyNonNullTypeAsTypeParameter.kt");
+  }
+
+  @Test
+  @TestMetadata("javaEnhancedRecentlyNullableType.kt")
+  public void testJavaEnhancedRecentlyNullableType() {
+    runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/javaEnhancedRecentlyNullableType.kt");
+  }
+
+  @Test
+  @TestMetadata("javaEnhancedRecentlyNullableTypeAsTypeParameter.kt")
+  public void testJavaEnhancedRecentlyNullableTypeAsTypeParameter() {
+    runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/javaEnhancedRecentlyNullableTypeAsTypeParameter.kt");
   }
 
   @Test
   @TestMetadata("javaEnhancedTypeExternalAnnotation.kt")
   public void testJavaEnhancedTypeExternalAnnotation() {
     runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/javaEnhancedTypeExternalAnnotation.kt");
+  }
+
+  @Test
+  @TestMetadata("javaEnhancedTypeExternalAnnotationAsTypeParameter.kt")
+  public void testJavaEnhancedTypeExternalAnnotationAsTypeParameter() {
+    runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/javaEnhancedTypeExternalAnnotationAsTypeParameter.kt");
   }
 
   @Test
