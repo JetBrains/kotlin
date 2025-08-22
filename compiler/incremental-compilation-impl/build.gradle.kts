@@ -67,6 +67,8 @@ projectTests {
         }
         javaLauncher.set(project.getToolchainLauncherFor(JdkMajorVersion.JDK_11_0))
     }
+
+    testGenerator("org.jetbrains.kotlin.incremental.TestGeneratorForICTestsKt")
 }
 
 testsJar()

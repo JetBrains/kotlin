@@ -16,11 +16,8 @@ import org.jetbrains.kotlin.fir.dataframe.AbstractDataFrameBlackBoxCodegenTest
 import org.jetbrains.kotlin.fir.dataframe.AbstractDataFrameDiagnosticTest
 import org.jetbrains.kotlin.generators.generateTestGroupSuiteWithJUnit5
 import org.jetbrains.kotlin.generators.impl.generateTestGroupSuite
-import org.jetbrains.kotlin.generators.tests.IncrementalTestsGeneratorUtil.Companion.IcTestTypes.PURE_KOTLIN
-import org.jetbrains.kotlin.generators.tests.IncrementalTestsGeneratorUtil.Companion.IcTestTypes.WITH_JAVA
-import org.jetbrains.kotlin.generators.tests.IncrementalTestsGeneratorUtil.Companion.incrementalJvmTestData
 import org.jetbrains.kotlin.generators.util.TestGeneratorUtil
-import org.jetbrains.kotlin.incremental.*
+import org.jetbrains.kotlin.incremental.AbstractIncrementalK2JvmWithPluginCompilerRunnerTest
 import org.jetbrains.kotlin.jvm.abi.AbstractCompareJvmAbiTest
 import org.jetbrains.kotlin.jvm.abi.AbstractCompileAgainstJvmAbiTest
 import org.jetbrains.kotlin.jvm.abi.AbstractJvmAbiContentTest
@@ -36,120 +33,16 @@ import org.jetbrains.kotlin.lombok.AbstractFirPsiDiagnosticTestForLombok
 import org.jetbrains.kotlin.lombok.AbstractIrBlackBoxCodegenTestForLombok
 import org.jetbrains.kotlin.noarg.*
 import org.jetbrains.kotlin.parcelize.test.runners.*
-import org.jetbrains.kotlin.plugin.sandbox.*
 import org.jetbrains.kotlin.powerassert.AbstractFirLightTreeBlackBoxCodegenTestForPowerAssert
 import org.jetbrains.kotlin.powerassert.AbstractIrBlackBoxCodegenTestForPowerAssert
 import org.jetbrains.kotlin.samWithReceiver.*
 import org.jetbrains.kotlin.scripting.test.*
 import org.jetbrains.kotlin.test.TargetBackend
-import org.jetbrains.kotlin.test.utils.CUSTOM_TEST_DATA_EXTENSION_PATTERN
 
-private class ExcludePattern {
-    companion object {
-        private const val MEMBER_ALIAS = "(^removeMemberTypeAlias)|(^addMemberTypeAlias)"
-
-        private const val ALL_EXPECT = "(^.*Expect.*)"
-
-        internal val forK2 = listOf(
-            ALL_EXPECT, // KT-63125 - Partially related to single-module expect-actual tests, but regexp is really wide
-            MEMBER_ALIAS, // KT-55195 - Invalid for K2
-        ).joinToString("|")
-    }
-}
 
 fun main(args: Array<String>) {
     System.setProperty("java.awt.headless", "true")
     generateTestGroupSuite(args) {
-        testGroup("compiler/incremental-compilation-impl/tests-gen", "jps/jps-plugin/testData") {
-            testClass<AbstractIncrementalK1JvmCompilerRunnerTest>(
-                init = incrementalJvmTestData(
-                    targetBackend = TargetBackend.JVM_IR,
-                    folderToExcludePatternMap = mapOf(
-                        PURE_KOTLIN to ".*SinceK2",
-                        WITH_JAVA to "(^javaToKotlin)|(^javaToKotlinAndBack)|(^kotlinToJava)|(^packageFileAdded)|(^changeNotUsedSignature)" // KT-56681
-                    )
-                )
-            )
-
-            // K2
-            testClass<AbstractIncrementalK2JvmCompilerRunnerTest>(
-                init = incrementalJvmTestData(
-                    TargetBackend.JVM_IR,
-                    folderToExcludePatternMap = mapOf(
-                        PURE_KOTLIN to ExcludePattern.forK2
-                    )
-                )
-            )
-
-            testClass<AbstractIncrementalK2FirICJvmCompilerRunnerTest>(
-                init = incrementalJvmTestData(
-                    TargetBackend.JVM_IR,
-                    folderToExcludePatternMap = mapOf(
-                        PURE_KOTLIN to ExcludePattern.forK2,
-                        WITH_JAVA to "^classToPackageFacade" // KT-56698
-                    )
-                )
-            )
-            testClass<AbstractIncrementalK2PsiJvmCompilerRunnerTest>(
-                init = incrementalJvmTestData(
-                    TargetBackend.JVM_IR,
-                    folderToExcludePatternMap = mapOf(
-                        PURE_KOTLIN to ExcludePattern.forK2
-                    )
-                )
-            )
-
-            testClass<AbstractIncrementalK1JsKlibCompilerRunnerTest> {
-                // IC of sealed interfaces are not supported in JS
-                modelForDirectoryBasedTest("incremental", "pureKotlin", extension = null, recursive = false, excludedPattern = "(^sealed.*)|(.*SinceK2)")
-                modelForDirectoryBasedTest("incremental", "classHierarchyAffected", extension = null, recursive = false)
-                model("incremental/js", extension = null, excludeParentDirs = true)
-            }
-
-            testClass<AbstractIncrementalK1JsKlibMultiModuleCompilerRunnerTest> {
-                modelForDirectoryBasedTest("incremental/multiModule", "common", extension = null, excludeParentDirs = true)
-            }
-
-            testClass<AbstractIncrementalK2JsKlibMultiModuleCompilerRunnerTest> {
-                modelForDirectoryBasedTest("incremental/multiModule", "common", extension = null, excludeParentDirs = true)
-            }
-
-            testClass<AbstractIncrementalK1JsKlibCompilerWithScopeExpansionRunnerTest> {
-                // IC of sealed interfaces are not supported in JS
-                modelForDirectoryBasedTest("incremental", "pureKotlin", extension = null, recursive = false, excludedPattern = "(^sealed.*)|(.*SinceK2)")
-                modelForDirectoryBasedTest("incremental", "classHierarchyAffected", extension = null, recursive = false)
-                modelForDirectoryBasedTest("incremental", "js", extension = null, excludeParentDirs = true)
-                modelForDirectoryBasedTest("incremental", "scopeExpansion", extension = null, excludeParentDirs = true)
-            }
-
-            // TODO: https://youtrack.jetbrains.com/issue/KT-61602/JS-K2-ICL-Fix-muted-tests
-            testClass<AbstractIncrementalK2JsKlibCompilerWithScopeExpansionRunnerTest> {
-                // IC of sealed interfaces are not supported in JS
-                modelForDirectoryBasedTest(
-                    "incremental", "pureKotlin", extension = null, recursive = false,
-                    // TODO: 'fileWithConstantRemoved' should be fixed in https://youtrack.jetbrains.com/issue/KT-58824
-                    excludedPattern = "^(sealed.*|fileWithConstantRemoved|propertyRedeclaration|funRedeclaration|funVsConstructorOverloadConflict)"
-                )
-                modelForDirectoryBasedTest(
-                    "incremental", "classHierarchyAffected", extension = null, recursive = false,
-                    excludedPattern = "secondaryConstructorAdded"
-                )
-                modelForDirectoryBasedTest("incremental", "js", extension = null, excludeParentDirs = true)
-            }
-
-            testClass<AbstractIncrementalK1JsKlibCompilerRunnerWithFriendModulesDisabledTest> {
-                modelForDirectoryBasedTest("incremental/js", "friendsModuleDisabled", extension = null, recursive = false)
-            }
-
-            testClass<AbstractIncrementalMultiplatformJvmCompilerRunnerTest> {
-                modelForDirectoryBasedTest("incremental/mpp", "allPlatforms", extension = null, excludeParentDirs = true)
-                modelForDirectoryBasedTest("incremental/mpp", "jvmOnlyK1", extension = null, excludeParentDirs = true)
-            }
-            testClass<AbstractIncrementalK1JsKlibMultiplatformJsCompilerRunnerTest> {
-                modelForDirectoryBasedTest("incremental/mpp", "allPlatforms", extension = null, excludeParentDirs = true)
-            }
-            //TODO: write a proper k2 multiplatform test runner KT-63183
-        }
 
         testGroup("plugins/jvm-abi-gen/tests-gen", "plugins/jvm-abi-gen/testData") {
             testClass<AbstractCompareJvmAbiTest> {
