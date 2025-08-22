@@ -31,6 +31,7 @@ dependencies {
     testFixturesApi(testFixtures(project(":compiler:test-infrastructure")))
     testFixturesApi(testFixtures(project(":compiler:test-infrastructure-utils")))
     testFixturesApi(libs.junit.jupiter.api)
+    testFixturesImplementation(testFixtures(project(":generators:test-generator")))
 
     // FIR dependencies
     testFixturesApi(project(":compiler:fir:checkers"))
@@ -70,6 +71,8 @@ projectTests {
 
         }
     }
+
+    testGenerator("org.jetbrains.kotlin.lombok.TestGeneratorKt")
 
     withJvmStdlibAndReflect()
 }
