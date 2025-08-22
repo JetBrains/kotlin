@@ -317,7 +317,6 @@ private class Fir2IrPipeline(
         return IrFakeOverrideBuilder(
             irTypeSystemContext,
             Fir2IrFakeOverrideStrategy(
-                Fir2IrConverter.friendModulesMap(session),
                 isGenericClashFromSameSupertypeAllowed = session.moduleData.platform.isJvm(),
                 isOverrideOfPublishedApiFromOtherModuleDisallowed = session.moduleData.platform.isJvm(),
                 delegatedMembersGenerationStrategy,

@@ -1177,10 +1177,15 @@ val IrFunction.allParameters: List<IrValueParameter>
         }
     }
 
-private object LoweringsFakeOverrideBuilderStrategy : FakeOverrideBuilderStrategy.BindToPrivateSymbols(
-    friendModules = emptyMap(), // TODO: this is probably not correct. Should be fixed by KT-61384. But it's not important for current usages
-) {
+private object LoweringsFakeOverrideBuilderStrategy : FakeOverrideBuilderStrategy.BindToPrivateSymbols() {
     override fun postProcessGeneratedFakeOverride(fakeOverride: IrOverridableDeclaration<*>, clazz: IrClass) {
+    }
+
+    // TODO(KT-62534) use ModuleDescriptor.shouldSeeInternalsOf when it's fixed
+    override fun shouldSeeInternals(thisModule: ModuleDescriptor, memberModule: ModuleDescriptor): Boolean {
+        val fromModuleName = thisModule.name.asStringStripSpecialMarkers()
+        val toModuleName = memberModule.name.asStringStripSpecialMarkers()
+        return fromModuleName == toModuleName
     }
 }
 

@@ -47,7 +47,7 @@ class JvmIrLinker(
         symbolTable = symbolTable,
         mangler = JvmIrMangler,
         typeSystem = typeSystem,
-        friendModules = emptyMap(), // TODO: provide friend modules
+        friendModules = emptyMap(), // TODO(KT-62534) can be removed when ModuleDescriptorImpl.shouldSeeInternalsOf is fixed
         partialLinkageSupport = PartialLinkageSupportForLinker.DISABLED
     )
 

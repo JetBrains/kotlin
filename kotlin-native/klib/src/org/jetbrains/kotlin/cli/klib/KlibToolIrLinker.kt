@@ -30,7 +30,7 @@ internal class KlibToolIrLinker(
         symbolTable = symbolTable,
         mangler = KonanManglerIr,
         typeSystem = IrTypeSystemContextImpl(builtIns),
-        friendModules = emptyMap(),
+        friendModules = emptyMap(), // TODO(KT-62534) can be removed when ModuleDescriptorImpl.shouldSeeInternalsOf is fixed
         partialLinkageSupport = PartialLinkageSupportForLinker.DISABLED,
     )
 

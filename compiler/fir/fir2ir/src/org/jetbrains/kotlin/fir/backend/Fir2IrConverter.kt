@@ -662,24 +662,6 @@ class Fir2IrConverter(
             return (evaluated as? IrProperty)?.tryToGetConst()?.asString()
         }
 
-        // TODO: drop this function in favor of using [IrModuleDescriptor::shouldSeeInternalsOf] in FakeOverrideBuilder KT-61384
-        fun friendModulesMap(session: FirSession): Map<String, List<String>> {
-            fun FirModuleData.friendsMapName() = name.asStringStripSpecialMarkers()
-            fun FirModuleData.collectDependsOnRecursive(set: MutableSet<FirModuleData>) {
-                if (!set.add(this)) return
-                for (dep in dependsOnDependencies) {
-                    dep.collectDependsOnRecursive(set)
-                }
-            }
-
-            val moduleData = session.moduleData
-            val dependsOnTransitive = buildSet {
-                moduleData.collectDependsOnRecursive(this)
-            }
-            val friendNames = (moduleData.friendDependencies + dependsOnTransitive).map { it.friendsMapName() }
-            return dependsOnTransitive.associate { it.friendsMapName() to friendNames }
-        }
-
         fun generateIrModuleFragment(components: Fir2IrComponentsStorage, firFiles: List<FirFile>): IrModuleFragmentImpl {
             val session = components.session
 

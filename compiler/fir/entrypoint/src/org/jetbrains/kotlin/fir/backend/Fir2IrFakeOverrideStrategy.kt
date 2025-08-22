@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.backend
 import org.jetbrains.kotlin.backend.common.actualizer.ClassActualizationInfo
 import org.jetbrains.kotlin.backend.common.actualizer.SpecialFakeOverrideSymbolsResolver
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.dispatchReceiverClassLookupTagOrNull
@@ -42,11 +43,10 @@ import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
 class Fir2IrFakeOverrideStrategy(
-    friendModules: Map<String, List<String>>,
     override val isGenericClashFromSameSupertypeAllowed: Boolean,
     override val isOverrideOfPublishedApiFromOtherModuleDisallowed: Boolean,
     private val delegatedMemberGenerationStrategy: Fir2IrDelegatedMembersGenerationStrategy,
-) : FakeOverrideBuilderStrategy.BindToPrivateSymbols(friendModules) {
+) : FakeOverrideBuilderStrategy.BindToPrivateSymbols() {
     private val fieldOnlyProperties: MutableList<IrPropertyWithLateBinding> = mutableListOf()
 
     override fun postProcessGeneratedFakeOverride(fakeOverride: IrOverridableDeclaration<*>, clazz: IrClass) {
@@ -64,6 +64,13 @@ class Fir2IrFakeOverrideStrategy(
         if (property.getter == null) {
             fieldOnlyProperties.add(property)
         }
+    }
+
+    override fun shouldSeeInternals(
+        thisModule: ModuleDescriptor,
+        memberModule: ModuleDescriptor,
+    ): Boolean {
+        return thisModule.shouldSeeInternalsOf(memberModule)
     }
 
     fun clearFakeOverrideFields() {

@@ -35,9 +35,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.runIf
  *   * Creating and registering in appropriate storages of fake override member symbols
  *
  */
-abstract class FakeOverrideBuilderStrategy(
-    private val friendModules: Map<String, Collection<String>>,
-) {
+abstract class FakeOverrideBuilderStrategy {
 
     /**
      * This flag enables workaround for KT-65504 and KT-42020.
@@ -88,15 +86,7 @@ abstract class FakeOverrideBuilderStrategy(
         }
     }
 
-    private fun isInFriendModules(
-        fromModule: ModuleDescriptor,
-        toModule: ModuleDescriptor,
-    ): Boolean {
-        val fromModuleName = fromModule.name.asStringStripSpecialMarkers()
-        val toModuleName = toModule.name.asStringStripSpecialMarkers()
-
-        return fromModuleName == toModuleName || friendModules[fromModuleName]?.contains(toModuleName) == true
-    }
+    protected abstract fun shouldSeeInternals(thisModule: ModuleDescriptor, memberModule: ModuleDescriptor): Boolean
 
     private fun isVisibleForOverrideInClass(original: IrOverridableMember, clazz: IrClass) : Boolean {
         return when {
@@ -108,7 +98,7 @@ abstract class FakeOverrideBuilderStrategy(
 
                 when {
                     thisModule == memberModule -> true
-                    isInFriendModules(thisModule, memberModule) -> true
+                    shouldSeeInternals(thisModule, memberModule) -> true
                     !isOverrideOfPublishedApiFromOtherModuleDisallowed &&
                             original.hasAnnotation(StandardClassIds.Annotations.PublishedApi) -> true
                     else -> false
@@ -153,9 +143,7 @@ abstract class FakeOverrideBuilderStrategy(
      */
     protected abstract fun linkPropertyFakeOverride(property: IrPropertyWithLateBinding, manglerCompatibleMode: Boolean)
 
-    abstract class BindToPrivateSymbols(
-        friendModules: Map<String, Collection<String>>,
-    ) : FakeOverrideBuilderStrategy(friendModules) {
+    abstract class BindToPrivateSymbols : FakeOverrideBuilderStrategy() {
         override fun linkFunctionFakeOverride(function: IrFunctionWithLateBinding, manglerCompatibleMode: Boolean) {
             function.acquireSymbol(IrSimpleFunctionSymbolImpl())
         }

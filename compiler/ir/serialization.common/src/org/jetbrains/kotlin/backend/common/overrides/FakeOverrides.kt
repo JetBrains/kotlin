@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.backend.common.serialization.CompatibilityMode
 import org.jetbrains.kotlin.backend.common.serialization.DeclarationTable
 import org.jetbrains.kotlin.backend.common.serialization.GlobalDeclarationTable
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.builders.declarations.buildProperty
@@ -81,8 +82,8 @@ private class IrLinkerFakeOverrideBuilderStrategy(
     private val irBuiltIns: IrBuiltIns,
     private val partialLinkageSupport: PartialLinkageSupportForLinker,
     private val fakeOverrideDeclarationTable: FakeOverrideDeclarationTable,
-    friendModules: Map<String, Collection<String>>,
-) : FakeOverrideBuilderStrategy(friendModules = friendModules) {
+    private val friendModules: Map<String, Collection<String>>,
+) : FakeOverrideBuilderStrategy() {
 
     override fun <R> inFile(file: IrFile?, block: () -> R): R =
         fakeOverrideDeclarationTable.inFile(file, block)
@@ -286,6 +287,13 @@ private class IrLinkerFakeOverrideBuilderStrategy(
             getter = property.getter?.let { buildFunctionWithDisambiguatedSignature(it) }
             setter = property.setter?.let { buildFunctionWithDisambiguatedSignature(it) }
         }
+
+    // TODO(KT-62534) use ModuleDescriptor.shouldSeeInternalsOf when it's fixed and get rid of friendModules
+    override fun shouldSeeInternals(thisModule: ModuleDescriptor, memberModule: ModuleDescriptor): Boolean {
+        val fromModuleName = thisModule.name.asStringStripSpecialMarkers()
+        val toModuleName = memberModule.name.asStringStripSpecialMarkers()
+        return fromModuleName == toModuleName || friendModules[fromModuleName]?.contains(toModuleName) == true
+    }
 }
 
 class IrLinkerFakeOverrideProvider(
