@@ -7,7 +7,7 @@ dependencies {
     api(project(":kotlin-scripting-jvm"))
     api(project(":kotlin-scripting-dependencies"))
     api(project(":kotlin-scripting-dependencies-maven"))
-    api(libs.kotlinx.coroutines.core)
+    api(libs.intellij.kotlinx.coroutines.core)
 }
 
 sourceSets {

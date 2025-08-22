@@ -31,7 +31,7 @@ dependencies {
     testFixturesImplementation(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)
     testFixturesApi(commonDependency("org.jetbrains.kotlinx", "kotlinx-metadata-klib"))
-    testFixturesImplementation(libs.kotlinx.coroutines.core) { isTransitive = false }
+    testFixturesImplementation(libs.intellij.kotlinx.coroutines.core) { isTransitive = false }
 
     testRuntimeOnly(libs.intellij.fastutil)
 }
