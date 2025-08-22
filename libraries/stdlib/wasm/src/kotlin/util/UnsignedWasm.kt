@@ -123,12 +123,12 @@ internal actual fun ulongToString(value: Long, base: Int): String {
 }
 
 internal fun WasmCharArray.createStringStartingFrom(index: Int): String {
-    if (index == 0) return createString()
-    val newLength = this.len() - index
-    if (newLength == 0) return ""
-    val newChars = WasmCharArray(newLength)
-    copyWasmArray(this, newChars, index, 0, newLength)
-    return newChars.createString()
+//    if (index == 0) return createString(0, this.len())
+//    val newLength = this.len() - index
+//    if (newLength == 0) return ""
+//    val newChars = WasmCharArray(newLength)
+//    copyWasmArray(this, newChars, index, 0, newLength)
+    return this.createString(index, this.len())
 }
 
 private fun Int.getChar() = if (this < 10) '0' + this else 'a' + (this - 10)

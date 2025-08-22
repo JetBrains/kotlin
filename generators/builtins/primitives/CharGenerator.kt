@@ -580,7 +580,7 @@ class WasmCharGenerator(writer: PrintWriter) : CharGenerator(writer) {
         """
             val array = WasmCharArray(1)
             array.set(0, this)
-            return array.createString()
+            return array.createString(0, 1)
         """.trimIndent().setAsBlockBody()
     }
 

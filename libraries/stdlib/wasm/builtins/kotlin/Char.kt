@@ -121,7 +121,7 @@ public actual class Char private constructor(private val value: Char) : Comparab
     public actual override fun toString(): String {
         val array = WasmCharArray(1)
         array.set(0, this)
-        return array.createString()
+        return array.createString(0, 1)
     }
 
     @kotlin.internal.IntrinsicConstEvaluation

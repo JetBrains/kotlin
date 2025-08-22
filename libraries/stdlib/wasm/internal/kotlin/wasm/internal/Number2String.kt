@@ -62,7 +62,7 @@ internal fun utoa32(inputValue: UInt): String {
 
     utoaDecSimple(buf, inputValue, decimals)
 
-    return buf.createString()
+    return buf.createString(0, decimals)
 }
 
 private fun utoaDecSimple(buffer: WasmCharArray, numInput: UInt, offsetInput: Int) {
@@ -134,7 +134,7 @@ internal fun utoa64(inputValue: ULong): String {
 
     utoaDecSimple64(buf, inputValue, decimals)
 
-    return buf.createString()
+    return buf.createString(0, decimals)
 }
 
 // Count number of decimals for u64 values
@@ -169,9 +169,9 @@ internal fun dtoa(value: Double, isSinglePrecision: Boolean): String {
 
     val buf = WasmCharArray(MAX_DOUBLE_LENGTH)
     val size = dtoaCore(buf, value, isSinglePrecision)
-    val ret = WasmCharArray(size)
-    buf.copyInto(ret, 0, 0, size)
-    return ret.createString()
+//    val ret = WasmCharArray(size)
+//    buf.copyInto(ret, 0, 0, size)
+    return buf.createString(0, size)
 }
 
 private fun dtoaCore(buffer: WasmCharArray, valueInp: Double, isSinglePrecision: Boolean): Int {

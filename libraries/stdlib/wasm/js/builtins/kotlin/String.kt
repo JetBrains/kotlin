@@ -110,7 +110,7 @@ public actual class String internal @WasmPrimitiveConstructor constructor(
 }
 
 @Suppress("NOTHING_TO_INLINE")
-internal actual fun WasmCharArray.createString(): String =
-    String(jsFromCharCodeArray(this, 0, this.len()).unsafeCast(), this, this.len())
+internal actual fun WasmCharArray.createString(start: Int, end: Int): String =
+    String(jsFromCharCodeArray(this, start, end).unsafeCast(), null, end - start)
 
 internal actual fun String.getChars() = this.chars

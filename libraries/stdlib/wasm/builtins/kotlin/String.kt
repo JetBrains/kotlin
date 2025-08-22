@@ -7,7 +7,7 @@ package kotlin
 
 import kotlin.wasm.internal.*
 
-internal expect fun WasmCharArray.createString(): String
+internal expect fun WasmCharArray.createString(start: Int, end: Int): String
 
 internal expect fun String.getChars(): WasmCharArray
 
@@ -19,7 +19,7 @@ internal fun stringLiteral(poolId: Int, start: Int, length: Int): String {
     }
 
     val chars = array_new_data0<WasmCharArray>(start, length)
-    val newString = chars.createString()
+    val newString = chars.createString(0, length)
     stringPool[poolId] = newString
     return newString
 }

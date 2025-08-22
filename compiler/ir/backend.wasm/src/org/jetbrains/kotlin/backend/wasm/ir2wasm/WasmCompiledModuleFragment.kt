@@ -779,6 +779,9 @@ class WasmCompiledModuleFragment(
                     buildGetLocal(wasmCharArray, serviceCodeLocation)
                 }
 
+                buildConstI32(0, serviceCodeLocation)
+                buildGetLocal(length, serviceCodeLocation)
+
                 buildCall(WasmSymbol(createStringFunction), serviceCodeLocation)
                 buildSetLocal(temporary, serviceCodeLocation)
 
