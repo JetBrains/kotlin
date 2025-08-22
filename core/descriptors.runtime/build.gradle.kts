@@ -1,5 +1,6 @@
 plugins {
     kotlin("jvm")
+    id("java-test-fixtures")
     id("jps-compatible")
     id("project-tests-convention")
 }
@@ -11,16 +12,17 @@ dependencies {
     compileOnly(project(":core:descriptors"))
     compileOnly(project(":core:descriptors.jvm"))
 
-    testApi(testFixtures(project(":compiler:tests-common")))
-    testApi(testFixtures(project(":generators:test-generator")))
+    testFixturesApi(testFixtures(project(":compiler:tests-common")))
+    testFixturesApi(testFixtures(project(":generators:test-generator")))
+    testFixturesApi(intellijCore())
 
-    testApi(intellijCore())
-    testApi(platform(libs.junit.bom))
+    testFixturesApi(platform(libs.junit.bom))
     testImplementation(libs.junit4)
 }
 
 sourceSets {
     "main" { projectDefault() }
+    "testFixtures" { projectDefault() }
     "test" {
         projectDefault()
         generatedTestDir()
