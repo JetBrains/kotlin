@@ -22,12 +22,13 @@ class KlibMetadataClassDataFinder(
 ) : ClassDataFinder {
     val nameList = fragment.getExtension(KlibMetadataProtoBuf.className).orEmpty()
 
+    val classIdToIndex: Map<ClassId, Int> = buildMap {
+        nameList.forEachIndexed { index, value -> this[nameResolver.getClassId(value)] = index }
+    }
+
     override fun findClassData(classId: ClassId): ClassData? {
 
-        val index = nameList.indexOfFirst { nameResolver.getClassId(it) == classId }
-        if (index == -1) {
-            return null
-        }
+        val index = classIdToIndex[classId] ?: return null
 
         val foundClass = fragment.getClass_(index) ?: error("Could not find data for serialized class $classId")
 
