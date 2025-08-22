@@ -806,7 +806,7 @@ class FirCallResolver(
 
                                     // Doesn't cover the case of custom 'invoke',
                                     // but it's difficult to implement without running the whole resolution again at this point.
-                                    if (!singleExpectedCandidate!!.isSuccessful && declarationType?.isSomeFunctionType(session) == true) {
+                                    if (singleExpectedCandidate?.isSuccessful == false && declarationType?.isSomeFunctionType(session) == true) {
                                         createConeDiagnosticForCandidateWithError(
                                             singleExpectedCandidate.lowestApplicability,
                                             singleExpectedCandidate

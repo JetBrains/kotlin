@@ -1,4 +1,0 @@
-Caused by: java.lang.NullPointerException
-	at org.jetbrains.kotlin.fir.resolve.calls.FirCallResolver.createResolvedNamedReference(FirCallResolver.kt:809)
-	at org.jetbrains.kotlin.fir.resolve.calls.FirCallResolver.createResolvedNamedReference$default(FirCallResolver.kt:767)
-	at org.jetbrains.kotlin.fir.resolve.calls.FirCallResolver.resolveCallAndSelectCandidate(FirCallResolver.kt:97)
