@@ -22,25 +22,6 @@ import org.jetbrains.kotlin.test.utils.CUSTOM_TEST_DATA_EXTENSION_PATTERN
 import java.io.File
 import java.nio.file.Files
 
-// `baseDir` is used in Kotlin plugin from IJ infra
-fun detectDirsWithTestsMapFileOnly(dirName: String, baseDir: String = "."): List<String> {
-    val excludedDirs = mutableListOf<String>()
-
-    File("${baseDir}/$SPEC_TESTDATA_PATH/$dirName").walkTopDown().forEach { file ->
-        val listFiles = Files.walk(file.toPath()).filter(Files::isRegularFile)
-
-        if (file.isDirectory && listFiles?.allMatch { it.endsWith(TESTS_MAP_FILENAME) } == true) {
-            val relativePath = file.relativeTo(File("${baseDir}/$SPEC_TESTDATA_PATH/$dirName")).path
-
-            if (!excludedDirs.any { relativePath.startsWith(it) }) {
-                excludedDirs.add(relativePath)
-            }
-        }
-    }
-
-    return excludedDirs.sorted().map { it.replace("\\", "/") }
-}
-
 fun generateTests() {
     generateTestGroupSuite {
         testGroup(SPEC_TEST_PATH, SPEC_TESTDATA_PATH) {
