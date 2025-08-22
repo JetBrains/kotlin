@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.lombok.AbstractDiagnosticTestForLombok
 import org.jetbrains.kotlin.lombok.AbstractFirLightTreeBlackBoxCodegenTestForLombok
 import org.jetbrains.kotlin.lombok.AbstractFirPsiDiagnosticTestForLombok
 import org.jetbrains.kotlin.lombok.AbstractIrBlackBoxCodegenTestForLombok
-import org.jetbrains.kotlin.noarg.*
 import org.jetbrains.kotlin.powerassert.AbstractFirLightTreeBlackBoxCodegenTestForPowerAssert
 import org.jetbrains.kotlin.powerassert.AbstractIrBlackBoxCodegenTestForPowerAssert
 import org.jetbrains.kotlin.scripting.test.*
@@ -35,26 +34,6 @@ fun main(args: Array<String>) {
     System.setProperty("java.awt.headless", "true")
 
     generateTestGroupSuiteWithJUnit5 {
-        testGroup("plugins/noarg/tests-gen", "plugins/noarg/testData") {
-            testClass<AbstractDiagnosticsTestForNoArg> {
-                model("diagnostics", excludedPattern = TestGeneratorUtil.KT_OR_KTS_WITH_FIR_PREFIX)
-            }
-            testClass<AbstractFirPsiDiagnosticsTestForNoArg> {
-                model("diagnostics", excludedPattern = TestGeneratorUtil.KT_OR_KTS_WITH_FIR_PREFIX)
-            }
-            testClass<AbstractIrBytecodeListingTestForNoArg> {
-                model("bytecodeListing", excludedPattern = TestGeneratorUtil.KT_OR_KTS_WITH_FIR_PREFIX)
-            }
-            testClass<AbstractFirLightTreeBytecodeListingTestForNoArg> {
-                model("bytecodeListing", excludedPattern = TestGeneratorUtil.KT_OR_KTS_WITH_FIR_PREFIX)
-            }
-            testClass<AbstractIrBlackBoxCodegenTestForNoArg> {
-                model("box")
-            }
-            testClass<AbstractFirLightTreeBlackBoxCodegenTestForNoArg> {
-                model("box")
-            }
-        }
 
         testGroup("plugins/lombok/tests-gen", "plugins/lombok/testData") {
             testClass<AbstractIrBlackBoxCodegenTestForLombok> {
