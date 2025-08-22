@@ -9,17 +9,10 @@ import org.jetbrains.kotlin.compiler.plugins.AbstractPluginCliTests
 import org.jetbrains.kotlin.fir.java.AbstractFirOldFrontendLightClassesTest
 import org.jetbrains.kotlin.fir.java.AbstractFirTypeEnhancementTest
 import org.jetbrains.kotlin.fir.java.AbstractOwnFirTypeEnhancementTest
-import org.jetbrains.kotlin.fir.lightTree.AbstractLightTree2FirConverterTestCase
 import org.jetbrains.kotlin.generators.impl.generateTestGroupSuite
-import org.jetbrains.kotlin.generators.util.TestGeneratorUtil
 
 fun generateJUnit3CompilerTests(args: Array<String>, mainClassName: String?) {
     generateTestGroupSuite(args, mainClassName) {
-        testGroup("compiler/fir/raw-fir/light-tree2fir/tests-gen", "compiler/fir/raw-fir/psi2fir/testData") {
-            testClass<AbstractLightTree2FirConverterTestCase> {
-                model("rawBuilder", pattern = TestGeneratorUtil.KT_OR_KTS)
-            }
-        }
 
         testGroup("compiler/fir/analysis-tests/legacy-fir-tests/tests-gen", "compiler/testData") {
             testClass<AbstractFirTypeEnhancementTest> {

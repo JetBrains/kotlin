@@ -49,6 +49,8 @@ projectTests {
     testTask(jUnitMode = JUnitMode.JUnit4) {
         workingDir = rootDir
     }
+
+    testGenerator("org.jetbrains.kotlin.fir.lightTree.TestGeneratorForLightTree2FirKt")
 }
 
 testsJar()
