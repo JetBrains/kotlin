@@ -1,0 +1,4 @@
+compiler/testData/cli/js/illegalJsCode.kt:2:8: error: JavaScript error: Invalid assignment left-hand side.
+    js("this = x;")
+       ^^^^^^^^^^^
+COMPILATION_ERROR

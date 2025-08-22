@@ -1,0 +1,7 @@
+$TESTDATA_DIR$/illegalJsCode.kt
+-ir-output-dir
+$TEMP_DIR$
+-ir-output-name
+illegalJsCode.kt
+-libraries
+libraries/stdlib/build/classes/kotlin/js/main
