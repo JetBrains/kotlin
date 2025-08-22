@@ -11,7 +11,7 @@ dependencies {
     api(kotlinStdlib())
     api(project(":kotlin-scripting-common"))
     testImplementation(libs.junit4)
-    testImplementation(libs.kotlinx.coroutines.core)
+    testImplementation(libs.intellij.kotlinx.coroutines.core)
 }
 
 sourceSets {

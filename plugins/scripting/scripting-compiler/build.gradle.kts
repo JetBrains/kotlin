@@ -56,12 +56,12 @@ dependencies {
     testApi(project(":kotlin-scripting-dependencies-maven"))
 
     testImplementation(intellijCore())
-    testImplementation(libs.kotlinx.coroutines.core)
+    testImplementation(libs.intellij.kotlinx.coroutines.core)
     testImplementation(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
 
     kotlinxSerializationGradlePluginClasspath(project(":kotlinx-serialization-compiler-plugin.embeddable")) { isTransitive = true }
     kotlinDataFrameGradlePluginClasspath(project(":kotlin-dataframe-compiler-plugin.embeddable")) { isTransitive = true }
-    kotlinxCoroutinesCoreGradlePluginClasspath(libs.kotlinx.coroutines.core) { isTransitive = false }
+    kotlinxCoroutinesCoreGradlePluginClasspath(libs.intellij.kotlinx.coroutines.core) { isTransitive = false }
 }
 
 optInToExperimentalCompilerApi()

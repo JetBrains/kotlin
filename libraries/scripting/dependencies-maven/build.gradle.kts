@@ -23,7 +23,7 @@ dependencies {
     testImplementation(libs.junit4)
     testRuntimeOnly("org.slf4j:slf4j-nop:1.7.36")
     testImplementation(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
-    testImplementation(libs.kotlinx.coroutines.core)
+    testImplementation(libs.intellij.kotlinx.coroutines.core)
 }
 
 sourceSets {

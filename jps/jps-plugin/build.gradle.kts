@@ -64,7 +64,7 @@ dependencies {
     testRuntimeOnly("com.jetbrains.intellij.platform:util-ex:$intellijVersion") { isTransitive = false }
     testRuntimeOnly(libs.gson)
     testRuntimeOnly(intellijJDom())
-    testRuntimeOnly(libs.kotlinx.coroutines.core.jvm)
+    testRuntimeOnly(libs.intellij.kotlinx.coroutines.core.jvm)
 
     testImplementation(testFixtures(project(":compiler:incremental-compilation-impl")))
     testImplementation(jpsBuild())
