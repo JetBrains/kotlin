@@ -1,11 +1,12 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.test.generators
+package org.jetbrains.kotlin.test
 
 import org.jetbrains.kotlin.generators.generateTestGroupSuiteWithJUnit5
+import org.jetbrains.kotlin.generators.util.TestGeneratorUtil
 import org.jetbrains.kotlin.test.runners.AbstractFirLightTreeDiagnosticsTestWithJvmIrBackend
 import org.jetbrains.kotlin.test.runners.AbstractFirPsiDiagnosticsTestWithConverter
 import org.jetbrains.kotlin.test.runners.AbstractFirPsiDiagnosticsTestWithJvmIrBackend
@@ -13,16 +14,14 @@ import org.jetbrains.kotlin.test.runners.codegen.*
 import org.jetbrains.kotlin.test.runners.ir.*
 import org.jetbrains.kotlin.test.utils.CUSTOM_TEST_DATA_EXTENSION_PATTERN
 
-fun generateJUnit5CompilerTests(args: Array<String>, mainClassName: String?) {
+fun main(args: Array<String>) {
+    val mainClassName = TestGeneratorUtil.getMainClassName()
     val excludedCustomTestdataPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN
     val k1BoxTestDir = listOf("multiplatform/k1")
     val k2BoxTestDir = listOf("multiplatform/k2")
     val excludedScriptDirs = listOf("script")
 
     generateTestGroupSuiteWithJUnit5(args, mainClassName) {
-
-        // ---------------------------------------------- FIR tests ----------------------------------------------
-
         testGroup(testsRoot = "compiler/fir/fir2ir/tests-gen", testDataRoot = "compiler/testData") {
             testClass<AbstractFirLightTreeBlackBoxCodegenTest> {
                 model("codegen/box", excludeDirs = k1BoxTestDir + excludedScriptDirs)
@@ -139,7 +138,6 @@ fun generateJUnit5CompilerTests(args: Array<String>, mainClassName: String?) {
             }
         }
 
-
         testGroup(testsRoot = "compiler/fir/fir2ir/tests-gen", testDataRoot = "compiler/testData") {
             testClass<AbstractFirLightTreeJvmIrTextTest> {
                 model(
@@ -171,8 +169,6 @@ fun generateJUnit5CompilerTests(args: Array<String>, mainClassName: String?) {
                 model("codegen/bytecodeText")
             }
         }
-
-        // ---------------------------------------------- Tiered tests ----------------------------------------------
-
     }
 }
+

@@ -13,7 +13,7 @@ fun main(args: Array<String>) {
     // Determine main class name while still on main thread.
     val mainClassName = TestGeneratorUtil.getMainClassName()
 
-    Stream.of(::generateJUnit3CompilerTests, ::generateJUnit5CompilerTests)
+    Stream.of(::generateJUnit3CompilerTests)
         .parallel()
         .forEach { it.invoke(args, mainClassName) }
 }
