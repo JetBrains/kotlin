@@ -364,7 +364,9 @@ fun generateAsyncJsWrapper(
 
     return """
 export async function instantiate(imports={}, runInitializer=true) {
-    const cachedJsObjects = new WeakMap();
+    imports['_cachedJsObjects_'] = imports['_cachedJsObjects_'] ?? new WeakMap();
+    const cachedJsObjects = imports['_cachedJsObjects_'];
+
     // ref must be non-null
     function getCachedJsObject(ref, ifNotCached) {
         if (typeof ref !== 'object' && typeof ref !== 'function') return ifNotCached;
