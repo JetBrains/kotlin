@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.asJava.classes;
 import com.intellij.lang.Language;
 import com.intellij.lang.java.JavaLanguage;
 import com.intellij.psi.*;
+import com.intellij.psi.impl.light.LightClassTypeReference;
 import com.intellij.psi.impl.light.LightReferenceListBuilder;
 import org.jetbrains.annotations.NotNull;
 
@@ -47,7 +48,7 @@ public class KotlinLightReferenceListBuilder extends LightReferenceListBuilder i
 
     @Override
     public void addReference(PsiClassType type) {
-        final PsiJavaCodeReferenceElement ref = myFactory.createReferenceElementByType(type);
+        final PsiJavaCodeReferenceElement ref = new LightClassTypeReference(getManager(), type);
         myRefs.add(ref);
     }
 
@@ -69,7 +70,12 @@ public class KotlinLightReferenceListBuilder extends LightReferenceListBuilder i
             int size = myRefs.size();
             types = size == 0 ? PsiClassType.EMPTY_ARRAY : new PsiClassType[size];
             for (int i = 0; i < size; i++) {
-                types[i] = myFactory.createType(myRefs.get(i));
+                PsiJavaCodeReferenceElement reference = myRefs.get(i);
+                if (reference instanceof LightClassTypeReference) {
+                    types[i] = ((LightClassTypeReference) reference).getType();
+                } else {
+                    types[i] = myFactory.createType(reference);
+                }
             }
             myCachedTypes = types;
         }
