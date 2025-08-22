@@ -32,7 +32,6 @@ import org.jetbrains.kotlin.noarg.*
 import org.jetbrains.kotlin.parcelize.test.runners.*
 import org.jetbrains.kotlin.powerassert.AbstractFirLightTreeBlackBoxCodegenTestForPowerAssert
 import org.jetbrains.kotlin.powerassert.AbstractIrBlackBoxCodegenTestForPowerAssert
-import org.jetbrains.kotlin.samWithReceiver.*
 import org.jetbrains.kotlin.scripting.test.*
 import org.jetbrains.kotlin.test.TargetBackend
 
@@ -40,15 +39,6 @@ import org.jetbrains.kotlin.test.TargetBackend
 fun main(args: Array<String>) {
     System.setProperty("java.awt.headless", "true")
     generateTestGroupSuite(args) {
-        testGroup("plugins/sam-with-receiver/tests-gen", "plugins/sam-with-receiver/testData") {
-            testClass<AbstractSamWithReceiverScriptTest> {
-                model("script", extension = "kts")
-            }
-
-            testClass<AbstractSamWithReceiverScriptNewDefTest> {
-                model("script", extension = "kts")
-            }
-        }
 
         testGroup("plugins/plugin-sandbox/plugin-sandbox-ic-test/tests-gen", "plugins/plugin-sandbox/plugin-sandbox-ic-test/testData") {
             testClass<AbstractIncrementalK2JvmWithPluginCompilerRunnerTest> {
@@ -58,8 +48,6 @@ fun main(args: Array<String>) {
     }
 
     generateTestGroupSuiteWithJUnit5 {
-        val excludedFirTestdataPattern = TestGeneratorUtil.KT_OR_KTS_WITH_FIR_PREFIX
-
         testGroup("plugins/parcelize/parcelize-compiler/tests-gen", "plugins/parcelize/parcelize-compiler/testData") {
             testClass<AbstractParcelizeIrBoxTest> {
                 model("box")
@@ -78,44 +66,44 @@ fun main(args: Array<String>) {
             }
 
             testClass<AbstractParcelizeDiagnosticTest> {
-                model("diagnostics", excludedPattern = excludedFirTestdataPattern)
+                model("diagnostics", excludedPattern = TestGeneratorUtil.KT_OR_KTS_WITH_FIR_PREFIX)
             }
 
             testClass<AbstractFirPsiParcelizeDiagnosticTest> {
-                model("diagnostics", excludedPattern = excludedFirTestdataPattern)
+                model("diagnostics", excludedPattern = TestGeneratorUtil.KT_OR_KTS_WITH_FIR_PREFIX)
             }
         }
 
         testGroup("plugins/allopen/tests-gen", "plugins/allopen/testData") {
             testClass<AbstractIrBytecodeListingTestForAllOpen> {
-                model("bytecodeListing", excludedPattern = excludedFirTestdataPattern)
+                model("bytecodeListing", excludedPattern = TestGeneratorUtil.KT_OR_KTS_WITH_FIR_PREFIX)
             }
             testClass<AbstractFirPsiBytecodeListingTestForAllOpen> {
-                model("bytecodeListing", excludedPattern = excludedFirTestdataPattern)
+                model("bytecodeListing", excludedPattern = TestGeneratorUtil.KT_OR_KTS_WITH_FIR_PREFIX)
             }
             testClass<AbstractDiagnosticTestForAllOpenBase> {
-                model("diagnostics", excludedPattern = excludedFirTestdataPattern)
+                model("diagnostics", excludedPattern = TestGeneratorUtil.KT_OR_KTS_WITH_FIR_PREFIX)
             }
             testClass<AbstractFirLightTreeDiagnosticTestForAllOpen> {
-                model("diagnostics", excludedPattern = excludedFirTestdataPattern)
+                model("diagnostics", excludedPattern = TestGeneratorUtil.KT_OR_KTS_WITH_FIR_PREFIX)
             }
             testClass<AbstractFirPsiDiagnosticTestForAllOpen> {
-                model("diagnostics", excludedPattern = excludedFirTestdataPattern)
+                model("diagnostics", excludedPattern = TestGeneratorUtil.KT_OR_KTS_WITH_FIR_PREFIX)
             }
         }
 
         testGroup("plugins/noarg/tests-gen", "plugins/noarg/testData") {
             testClass<AbstractDiagnosticsTestForNoArg> {
-                model("diagnostics", excludedPattern = excludedFirTestdataPattern)
+                model("diagnostics", excludedPattern = TestGeneratorUtil.KT_OR_KTS_WITH_FIR_PREFIX)
             }
             testClass<AbstractFirPsiDiagnosticsTestForNoArg> {
-                model("diagnostics", excludedPattern = excludedFirTestdataPattern)
+                model("diagnostics", excludedPattern = TestGeneratorUtil.KT_OR_KTS_WITH_FIR_PREFIX)
             }
             testClass<AbstractIrBytecodeListingTestForNoArg> {
-                model("bytecodeListing", excludedPattern = excludedFirTestdataPattern)
+                model("bytecodeListing", excludedPattern = TestGeneratorUtil.KT_OR_KTS_WITH_FIR_PREFIX)
             }
             testClass<AbstractFirLightTreeBytecodeListingTestForNoArg> {
-                model("bytecodeListing", excludedPattern = excludedFirTestdataPattern)
+                model("bytecodeListing", excludedPattern = TestGeneratorUtil.KT_OR_KTS_WITH_FIR_PREFIX)
             }
             testClass<AbstractIrBlackBoxCodegenTestForNoArg> {
                 model("box")
@@ -133,7 +121,7 @@ fun main(args: Array<String>) {
                 model("box")
             }
             testClass<AbstractDiagnosticTestForLombok> {
-                model("diagnostics/k1+k2", excludedPattern = excludedFirTestdataPattern)
+                model("diagnostics/k1+k2", excludedPattern = TestGeneratorUtil.KT_OR_KTS_WITH_FIR_PREFIX)
             }
             testClass<AbstractFirPsiDiagnosticTestForLombok> {
                 model("diagnostics")
@@ -142,25 +130,10 @@ fun main(args: Array<String>) {
 
         testGroup("plugins/power-assert/tests-gen", "plugins/power-assert/testData") {
             testClass<AbstractIrBlackBoxCodegenTestForPowerAssert> {
-                model("codegen", excludedPattern = excludedFirTestdataPattern)
+                model("codegen", excludedPattern = TestGeneratorUtil.KT_OR_KTS_WITH_FIR_PREFIX)
             }
             testClass<AbstractFirLightTreeBlackBoxCodegenTestForPowerAssert> {
-                model("codegen", excludedPattern = excludedFirTestdataPattern)
-            }
-        }
-
-        testGroup("plugins/sam-with-receiver/tests-gen", "plugins/sam-with-receiver/testData") {
-            testClass<AbstractSamWithReceiverTest> {
-                model("diagnostics", excludedPattern = excludedFirTestdataPattern)
-            }
-            testClass<AbstractFirPsiSamWithReceiverDiagnosticTest> {
-                model("diagnostics", excludedPattern = excludedFirTestdataPattern)
-            }
-            testClass<AbstractIrBlackBoxCodegenTestForSamWithReceiver> {
-                model("codegen", excludedPattern = excludedFirTestdataPattern)
-            }
-            testClass<AbstractFirLightTreeBlackBoxCodegenTestForSamWithReceiver> {
-                model("codegen", excludedPattern = excludedFirTestdataPattern)
+                model("codegen", excludedPattern = TestGeneratorUtil.KT_OR_KTS_WITH_FIR_PREFIX)
             }
         }
 
@@ -226,22 +199,22 @@ fun main(args: Array<String>) {
 
         testGroup("plugins/assign-plugin/tests-gen", "plugins/assign-plugin/testData") {
             testClass<AbstractAssignmentPluginDiagnosticTest> {
-                model("diagnostics", excludedPattern = excludedFirTestdataPattern)
+                model("diagnostics", excludedPattern = TestGeneratorUtil.KT_OR_KTS_WITH_FIR_PREFIX)
             }
             testClass<AbstractFirPsiAssignmentPluginDiagnosticTest> {
-                model("diagnostics", excludedPattern = excludedFirTestdataPattern)
+                model("diagnostics", excludedPattern = TestGeneratorUtil.KT_OR_KTS_WITH_FIR_PREFIX)
             }
             testClass<AbstractIrBlackBoxCodegenTestAssignmentPlugin> {
-                model("codegen", excludedPattern = excludedFirTestdataPattern)
+                model("codegen", excludedPattern = TestGeneratorUtil.KT_OR_KTS_WITH_FIR_PREFIX)
             }
             testClass<AbstractFirLightTreeBlackBoxCodegenTestForAssignmentPlugin> {
-                model("codegen", excludedPattern = excludedFirTestdataPattern)
+                model("codegen", excludedPattern = TestGeneratorUtil.KT_OR_KTS_WITH_FIR_PREFIX)
             }
         }
 
         testGroup("plugins/plugins-interactions-testing/tests-gen", "plugins/plugins-interactions-testing/testData") {
             testClass<AbstractPluginInteractionFirBlackBoxCodegenTest> {
-                model("box", excludedPattern = excludedFirTestdataPattern)
+                model("box", excludedPattern = TestGeneratorUtil.KT_OR_KTS_WITH_FIR_PREFIX)
             }
         }
 
