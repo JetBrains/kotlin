@@ -11,6 +11,35 @@ Tower Data Context:
         Scope: FirPackageMemberScope
     Element 5
         Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Implicit receiver:
+            FirRegularClassSymbol public final companion object Companion : R|kotlin/Any|
+                Type: kotlin.Enum.Companion
+    Element 7
+        Scope: FirNestedClassifierScopeWithSubstitution
+            Classifiers:
+                FirRegularClassSymbol public final companion object Companion : R|kotlin/Any|
+        Static scope owner symbol: FirRegularClassSymbol public abstract class Enum<E : R|kotlin/Enum<E>|> : R|kotlin/Comparable<E>|, R|java/io/Serializable|
+    Element 8
+        Scope: FirNestedClassifierScopeImpl
+            Classifiers:
+                FirRegularClassSymbol public final? inner class InnerClass : R|kotlin/Any|
+                FirRegularClassSymbol public final? class NestedClass : R|kotlin/Any|
+                FirRegularClassSymbol public final? object NestedObject : R|kotlin/Any|
+        Scope: FirNameAwareOnlyCallablesScope
+            Functions
+                FirNamedFunctionSymbol public final static fun valueOf(value: R|kotlin/String|): R|foo/MyEnumClass|
+                FirNamedFunctionSymbol public final static fun values(): R|kotlin/Array<foo/MyEnumClass>|
+            Properties:
+                FirEnumEntrySymbol public final static enum entry ENTRY1: R|foo/MyEnumClass|
+                FirEnumEntrySymbol public final static enum entry ENTRY2: R|foo/MyEnumClass|
+                FirEnumEntrySymbol public final static enum entry ENTRY3: R|foo/MyEnumClass|
+                FirRegularPropertySymbol public final static val entries: R|kotlin/enums/EnumEntries<foo/MyEnumClass>|
+                    public get(): R|kotlin/enums/EnumEntries<foo/MyEnumClass>|
+    Element 9
+        Implicit receiver:
+            FirRegularClassSymbol public final enum class MyEnumClass : R|kotlin/Enum<foo/MyEnumClass>|
+                Type: foo.MyEnumClass
 
 FILE: [ResolvedTo(IMPORTS)] enumClass.kt
     public final [ResolvedTo(STATUS)] enum class MyEnumClass : R|kotlin/Enum<foo/MyEnumClass>| {

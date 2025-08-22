@@ -34,6 +34,8 @@ Tower Data Context:
         Scope: FirLocalScope
     Element 11
         Scope: FirLocalScope
+    Element 12
+        Scope: FirLocalScope
 
 FILE: [ResolvedTo(IMPORTS)] statement.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-statement.kts>
