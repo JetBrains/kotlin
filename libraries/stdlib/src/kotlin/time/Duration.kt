@@ -1345,7 +1345,7 @@ private inline fun String.parseLong(startIndex: Int, parseRule: ParseRule): Nume
             while (index < length && this[index] in '0'..'9') index++
             return NumericParseData(parseRule.overflowLimit * sign, index, sign, hasOverflow = true)
         }
-        result = result * 10 + digit
+        result = (result shl 3) + (result shl 1) + digit
         index++
     }
     return NumericParseData(result * sign, index, sign, hasOverflow = false)
@@ -1370,7 +1370,7 @@ private fun String.parseFraction(startIndex: Int): NumericParseData {
             index++
         }
         repeat(maxDigits - count) {
-            result *= 10
+            result = (result shl 3) + (result shl 1)
         }
         return result
     }
