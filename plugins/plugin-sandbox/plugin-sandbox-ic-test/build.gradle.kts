@@ -39,6 +39,8 @@ projectTests {
         dependsOn(":plugins:plugin-sandbox:plugin-annotations:distAnnotations")
     }
 
+    testGenerator("org.jetbrains.kotlin.incremental.TestGeneratorForPluginSandboxICTestsKt")
+
     withJvmStdlibAndReflect()
 }
 
