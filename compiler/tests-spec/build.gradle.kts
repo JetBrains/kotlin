@@ -61,5 +61,9 @@ projectTests {
         }
     }
 
-    testGenerator("org.jetbrains.kotlin.spec.utils.tasks.GenerateSpecTestsKt", taskName = "generateSpecTests")
+    testGenerator(
+        "org.jetbrains.kotlin.spec.utils.tasks.GenerateSpecTestsKt",
+        taskName = "generateSpecTests",
+        doNotSetFixturesSourceSetDependency = true,
+    )
 }

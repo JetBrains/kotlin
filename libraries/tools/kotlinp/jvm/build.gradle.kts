@@ -49,7 +49,7 @@ projectTests {
         workingDir = rootDir
     }
 
-    testGenerator("org.jetbrains.kotlin.kotlinp.jvm.test.GenerateKotlinpTestsKt")
+    testGenerator("org.jetbrains.kotlin.kotlinp.jvm.test.GenerateKotlinpTestsKt", doNotSetFixturesSourceSetDependency = true)
 
     withJvmStdlibAndReflect()
 }
