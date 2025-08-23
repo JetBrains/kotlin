@@ -39,7 +39,7 @@ import org.jetbrains.kotlin.tooling.core.UnsafeApi
  */
 @InternalKotlinGradlePluginApi
 @DisableCachingByDefault
-open class KotlinJvmRun : JavaExec()
+abstract class KotlinJvmRun : JavaExec()
 
 @ExperimentalKotlinGradlePluginApi
 interface KotlinJvmRunDsl {
