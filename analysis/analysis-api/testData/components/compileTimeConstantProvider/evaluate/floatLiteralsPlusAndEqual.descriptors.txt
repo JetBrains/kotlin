@@ -1,0 +1,5 @@
+expression: 9.5f + 1.5f == 11.0f
+constant: NOT_EVALUATED
+constantValueKind: NOT_EVALUATED
+constantValueSource: NOT_EVALUATED
+constantValueSourceText: NOT_EVALUATED

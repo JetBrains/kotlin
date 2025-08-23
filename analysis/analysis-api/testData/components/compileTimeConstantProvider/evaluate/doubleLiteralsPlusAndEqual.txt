@@ -1,0 +1,5 @@
+expression: 9.5 + 1.5 == 11.0
+constant: true
+constantValueKind: BooleanValue
+constantValueSource: BINARY_EXPRESSION
+constantValueSourceText: 9.5 + 1.5 == 11.0
