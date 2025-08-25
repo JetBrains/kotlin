@@ -685,16 +685,6 @@ public interface NativeArguments : CommonKlibBasedArguments {
     public val X_DUMP_TESTS_TO: NativeArgument<String?> = NativeArgument("X_DUMP_TESTS_TO")
 
     /**
-     * Use lazy IR for cached libraries.
-     *
-     * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
-     */
-    @JvmField
-    @ExperimentalCompilerArgument
-    public val X_LAZY_IR_FOR_CACHES: NativeArgument<String?> =
-        NativeArgument("X_LAZY_IR_FOR_CACHES")
-
-    /**
      * Omit binary when compiling the framework.
      *
      * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.

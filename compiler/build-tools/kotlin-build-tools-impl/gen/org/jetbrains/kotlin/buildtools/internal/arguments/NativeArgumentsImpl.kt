@@ -71,7 +71,6 @@ import org.jetbrains.kotlin.buildtools.api.arguments.NativeArguments.Companion.X
 import org.jetbrains.kotlin.buildtools.api.arguments.NativeArguments.Companion.X_INCLUDE
 import org.jetbrains.kotlin.buildtools.api.arguments.NativeArguments.Companion.X_IR_PROPERTY_LAZY_INITIALIZATION
 import org.jetbrains.kotlin.buildtools.api.arguments.NativeArguments.Companion.X_KONAN_DATA_DIR
-import org.jetbrains.kotlin.buildtools.api.arguments.NativeArguments.Companion.X_LAZY_IR_FOR_CACHES
 import org.jetbrains.kotlin.buildtools.api.arguments.NativeArguments.Companion.X_LLVM_LTO_PASSES
 import org.jetbrains.kotlin.buildtools.api.arguments.NativeArguments.Companion.X_LLVM_MODULE_PASSES
 import org.jetbrains.kotlin.buildtools.api.arguments.NativeArguments.Companion.X_LLVM_VARIANT
@@ -192,7 +191,6 @@ public class NativeArgumentsImpl : CommonKlibBasedArgumentsImpl(), NativeArgumen
     if ("X_BINARY" in optionsMap) { arguments.binaryOptions = get(X_BINARY) }
     if ("X_RUNTIME_LOGS" in optionsMap) { arguments.runtimeLogs = get(X_RUNTIME_LOGS) }
     if ("X_DUMP_TESTS_TO" in optionsMap) { arguments.testDumpOutputPath = get(X_DUMP_TESTS_TO) }
-    if ("X_LAZY_IR_FOR_CACHES" in optionsMap) { arguments.lazyIrForCaches = get(X_LAZY_IR_FOR_CACHES) }
     if ("X_OMIT_FRAMEWORK_BINARY" in optionsMap) { arguments.omitFrameworkBinary = get(X_OMIT_FRAMEWORK_BINARY) }
     if ("X_COMPILE_FROM_BITCODE" in optionsMap) { arguments.compileFromBitcode = get(X_COMPILE_FROM_BITCODE) }
     if ("X_READ_DEPENDENCIES_FROM" in optionsMap) { arguments.serializedDependencies = get(X_READ_DEPENDENCIES_FROM) }
