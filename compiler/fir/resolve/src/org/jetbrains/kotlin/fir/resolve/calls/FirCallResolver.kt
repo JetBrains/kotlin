@@ -76,9 +76,9 @@ class FirCallResolver(
     val conflictResolver: ConeCallConflictResolver =
         session.callConflictResolverFactory.create(TypeSpecificityComparator.NONE, session.inferenceComponents, components)
 
-    fun resolveCallAndSelectCandidate(functionCall: FirFunctionCall, resolutionMode: ResolutionMode): FirFunctionCall {
+    fun resolveCallAndSelectCandidate(functionCall: FirFunctionCall, resolutionMode: ResolutionMode, candidateFactory: CandidateFactory? = null): FirFunctionCall {
         val name = functionCall.calleeReference.name
-        val result = collectCandidates(functionCall, name, origin = functionCall.origin, resolutionMode = resolutionMode)
+        val result = collectCandidates(functionCall, name, origin = functionCall.origin, resolutionMode = resolutionMode, candidateFactory = candidateFactory)
 
         var forceCandidates: Collection<Candidate>? = null
         if (result.candidates.isEmpty()) {
@@ -161,7 +161,6 @@ class FirCallResolver(
             resolutionContext = resolutionContext,
             collector = collector,
             resolutionMode = resolutionMode,
-            forceCallKind = forceCallKind,
         )
 
         var result = collectCandidates(forceCallKind = null)
@@ -188,6 +187,7 @@ class FirCallResolver(
         collector: CandidateCollector? = null,
         callSite: FirElement = qualifiedAccess,
         resolutionMode: ResolutionMode,
+        candidateFactory: CandidateFactory? = null,
     ): ResolutionResult {
         val explicitReceiver = qualifiedAccess.explicitReceiver
         val argumentList = (qualifiedAccess as? FirFunctionCall)?.argumentList ?: FirEmptyArgumentList
@@ -212,7 +212,8 @@ class FirCallResolver(
         )
         towerResolver.reset()
 
-        val result = towerResolver.runResolver(info, resolutionContext, collector)
+        val result = if (candidateFactory != null) towerResolver.runResolver(info, resolutionContext, collector, candidateFactory)
+                    else towerResolver.runResolver(info, resolutionContext, collector)
         var (reducedCandidates, applicability) = reduceCandidates(result, explicitReceiver, resolutionContext)
         reducedCandidates = overloadByLambdaReturnTypeResolver.reduceCandidates(qualifiedAccess, reducedCandidates, reducedCandidates)
 
@@ -291,7 +292,7 @@ class FirCallResolver(
                 callee.name,
                 isUsedAsGetClassReceiver = isUsedAsGetClassReceiver,
                 callSite = callSite,
-                resolutionMode = resolutionMode
+                resolutionMode = resolutionMode,
             )
         }
 
@@ -345,7 +346,7 @@ class FirCallResolver(
 
         var functionCallExpected = false
         if (result.candidates.isEmpty() && qualifiedAccess !is FirFunctionCall) {
-            val newResult = collectCandidates(qualifiedAccess, callee.name, CallKind.Function, resolutionMode = resolutionMode)
+            val newResult = collectCandidates(qualifiedAccess, callee.name, CallKind.Function, resolutionMode = resolutionMode,)
             if (newResult.candidates.isNotEmpty()) {
                 result = newResult
                 functionCallExpected = newResult.applicability > CandidateApplicability.INAPPLICABLE_WRONG_RECEIVER

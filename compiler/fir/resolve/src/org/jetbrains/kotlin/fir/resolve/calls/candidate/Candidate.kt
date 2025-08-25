@@ -226,7 +226,7 @@ class Candidate(
     private var _updatedArgumentsFromContextSensitiveResolution: MutableMap<FirElement, FirExpression>? =
         null
 
-    fun setUpdatedArgumentFromContextSensitiveResolution(old: FirPropertyAccessExpression, new: FirExpression) {
+    fun setUpdatedArgumentFromContextSensitiveResolution(old: FirExpression, new: FirExpression) {
         if (_updatedArgumentsFromContextSensitiveResolution == null) {
             _updatedArgumentsFromContextSensitiveResolution = mutableMapOf()
         }

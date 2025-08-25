@@ -10,24 +10,33 @@ import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.SessionHolder
+import org.jetbrains.kotlin.fir.declarations.utils.isOperator
 import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.expressions.builder.buildFunctionCall
 import org.jetbrains.kotlin.fir.isEnabled
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.lookupTracker
 import org.jetbrains.kotlin.fir.recordTypeResolveAsLookup
 import org.jetbrains.kotlin.fir.references.builder.buildErrorNamedReference
+import org.jetbrains.kotlin.fir.resolve.MainOperatorOfOverload
 import org.jetbrains.kotlin.fir.resolve.calls.*
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.*
 import org.jetbrains.kotlin.fir.resolve.calls.stages.ArgumentCheckingProcessor
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.lastStatement
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedReferenceError
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeLambdaArgumentConstraintPositionWithCoercionToUnit
+import org.jetbrains.kotlin.fir.resolve.getClassRepresentativeForCollectionLiteralResolution
 import org.jetbrains.kotlin.fir.resolve.isImplicitUnitForEmptyLambda
 import org.jetbrains.kotlin.fir.resolve.lambdaWithExplicitEmptyReturns
 import org.jetbrains.kotlin.fir.resolve.runContextSensitiveResolutionForPropertyAccess
+import org.jetbrains.kotlin.fir.resolve.runCollectionLiteralResolution
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolvedTypeFromPrototype
+import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.resolve.calls.components.PostponedArgumentsAnalyzerContext
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilder
 import org.jetbrains.kotlin.resolve.calls.inference.addSubtypeConstraintIfCompatible
@@ -35,6 +44,7 @@ import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
 import org.jetbrains.kotlin.resolve.calls.inference.model.UnstableSystemMergeMode
 import org.jetbrains.kotlin.types.model.freshTypeConstructor
 import org.jetbrains.kotlin.types.model.safeSubstitute
+import org.jetbrains.kotlin.util.OperatorNameConventions
 
 data class ReturnArgumentsAnalysisResult(
     val returnArguments: Collection<ConeResolutionAtom>,
@@ -84,6 +94,8 @@ class PostponedArgumentsAnalyzer(
             is ConeResolvedCallableReferenceAtom -> processCallableReference(argument, candidate)
             is ConeSimpleNameForContextSensitiveResolution ->
                 processSimpleNameForContextSensitiveResolution(argument, candidate)
+            is ConeCollectionLiteralAtom ->
+                processCollectionLiteral(argument, candidate)
         }
     }
 
@@ -171,6 +183,33 @@ class PostponedArgumentsAnalyzer(
         }
     }
 
+    private fun processCollectionLiteral(
+        atom: ConeCollectionLiteralAtom,
+        topLevelCandidate: Candidate,
+    ) {
+        atom.analyzed = true
+
+        val substitutor = topLevelCandidate.csBuilder.buildCurrentSubstitutor(emptyMap()) as ConeSubstitutor
+        val substitutedExpectedType = atom.expectedType?.let {
+            substitutor.safeSubstitute(topLevelCandidate.csBuilder, it) as ConeKotlinType
+        }
+
+        if (substitutedExpectedType == null || !runCollectionLiteralResolution(atom, topLevelCandidate, substitutedExpectedType)) {
+            runFallbackCollectionLiteralResolution(atom, topLevelCandidate, substitutedExpectedType)
+        }
+    }
+
+    /**
+     * @return if this function is suitable main operator `of` overload, its vararg parameter
+     */
+    private fun FirNamedFunctionSymbol.varargParameterOfOperatorOf(outerClass: FirRegularClassSymbol): FirValueParameterSymbol? {
+        if (!isOperator || name != OperatorNameConventions.OF) return null
+        val varargParameter = valueParameterSymbols.firstOrNull { it.isVararg } ?: return null
+        val returnType = resolutionContext.returnTypeCalculator.tryCalculateReturnType(this).coneType
+        return if (returnType is ConeClassLikeType && returnType.lookupTag == outerClass.toLookupTag()) varargParameter
+        else null
+    }
+
     /**
      * @return true if results were successfully applied
      */
@@ -186,6 +225,91 @@ class PostponedArgumentsAnalyzer(
                 originalExpression,
                 substitutedExpectedType
             ) ?: return false
+
+        atom.containingCallCandidate.setUpdatedArgumentFromContextSensitiveResolution(originalExpression, newExpression)
+
+        ArgumentCheckingProcessor.resolveArgumentExpression(
+            topLevelCandidate,
+            ConeResolutionAtom.createRawAtom(newExpression),
+            substitutedExpectedType,
+            CheckerSinkImpl(topLevelCandidate),
+            context = resolutionContext,
+            isReceiver = false,
+            isDispatch = false,
+        )
+
+        return true
+    }
+
+    private fun ConeKotlinType.computeCollectionAndCollectionElementTypes(): MainOperatorOfOverload? {
+        val classSymbol = getClassRepresentativeForCollectionLiteralResolution(session) ?: return null
+        val companionObjectSymbol = classSymbol.resolvedCompanionObjectSymbol ?: return null
+        val (varargOverload, varargParameter) = companionObjectSymbol.declarationSymbols.asSequence()
+            .filterIsInstance<FirNamedFunctionSymbol>()
+            .firstNotNullOfOrNull { declaration ->
+                declaration.varargParameterOfOperatorOf(classSymbol)?.let { declaration to it }
+            } ?: return null
+        return MainOperatorOfOverload(varargOverload, varargParameter, companionObjectSymbol)
+    }
+
+    private fun fallbackCollectionAndCollectionElementTypes(): MainOperatorOfOverload? {
+        val listType = StandardClassIds.List.constructClassLikeType(
+            arrayOf(ConeStarProjection),
+            isMarkedNullable = false
+        )
+        return listType.computeCollectionAndCollectionElementTypes()
+    }
+
+    private fun runFallbackCollectionLiteralResolution(
+        atom: ConeCollectionLiteralAtom,
+        topLevelCandidate: Candidate,
+        substitutedExpectedType: ConeKotlinType?
+    ) {
+        val originalExpression = atom.expression
+
+        val newExpression = fallbackCollectionAndCollectionElementTypes()?.let {
+            resolutionContext.runCollectionLiteralResolution(atom, it, topLevelCandidate)
+        } ?: run {
+            buildFunctionCall {
+                val error = ConeUnresolvedReferenceError(OperatorNameConventions.OF)
+                source = originalExpression.source
+                calleeReference = buildErrorNamedReference {
+                    source = originalExpression.calleeReference.source
+                    name = OperatorNameConventions.OF
+                    diagnostic = error
+                }
+                argumentList = originalExpression.argumentList
+                coneTypeOrNull = ConeErrorType(error)
+            }
+        }
+        atom.containingCallCandidate.setUpdatedArgumentFromContextSensitiveResolution(originalExpression, newExpression)
+
+        ArgumentCheckingProcessor.resolveArgumentExpression(
+            topLevelCandidate,
+            ConeResolutionAtom.createRawAtom(newExpression),
+            substitutedExpectedType,
+            CheckerSinkImpl(topLevelCandidate),
+            context = resolutionContext,
+            isReceiver = false,
+            isDispatch = false,
+        )
+    }
+
+
+    private fun runCollectionLiteralResolution(
+        atom: ConeCollectionLiteralAtom,
+        topLevelCandidate: Candidate,
+        substitutedExpectedType: ConeKotlinType,
+    ): Boolean {
+        val originalExpression = atom.expression
+
+        val operatorOf = substitutedExpectedType.computeCollectionAndCollectionElementTypes() ?: return false
+        val newExpression =
+            resolutionContext.runCollectionLiteralResolution(
+                atom,
+                operatorOf,
+                topLevelCandidate,
+            )
 
         atom.containingCallCandidate.setUpdatedArgumentFromContextSensitiveResolution(originalExpression, newExpression)
 

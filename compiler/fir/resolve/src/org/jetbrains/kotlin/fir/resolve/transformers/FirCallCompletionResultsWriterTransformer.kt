@@ -16,11 +16,14 @@ import org.jetbrains.kotlin.fir.declarations.utils.isInline
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.expressions.builder.buildCollectionLiteralCall
 import org.jetbrains.kotlin.fir.expressions.builder.buildSamConversionExpression
 import org.jetbrains.kotlin.fir.expressions.builder.buildSpreadArgumentExpression
 import org.jetbrains.kotlin.fir.expressions.impl.FirResolvedArgumentList
 import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.references.FirResolvedErrorReference
+import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
+import org.jetbrains.kotlin.fir.references.builder.buildErrorNamedReference
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedCallableReference
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.*
@@ -354,6 +357,33 @@ class FirCallCompletionResultsWriterTransformer(
             return replacement.transformSingle(this, data)
         }
         return transformQualifiedAccessExpression(propertyAccessExpression, data)
+    }
+
+    override fun transformCollectionLiteralCall(
+        collectionLiteralCall: FirCollectionLiteralCall,
+        data: ExpectedArgumentType?
+    ): FirStatement {
+        data?.contextSensitiveResolutionReplacements?.get(collectionLiteralCall)?.let { replacement ->
+            return replacement.transformSingle(this, data)
+        }
+        val diagnostic = ConeSimpleDiagnostic("Not resolved collection literal")
+        val errorCalleeReference: FirNamedReference = when (val calleeRef = collectionLiteralCall.calleeReference) {
+            is FirNamedReferenceWithCandidate -> calleeRef.toErrorReference(diagnostic)
+            is FirResolvedErrorReference -> calleeRef
+            is FirErrorNamedReference -> calleeRef
+            else -> buildErrorNamedReference {
+                source = calleeRef.source
+                name = calleeRef.name
+                this.diagnostic = diagnostic
+            }
+        }
+        val call = buildCollectionLiteralCall {
+            source = collectionLiteralCall.source
+            argumentList = collectionLiteralCall.argumentList
+            calleeReference = errorCalleeReference
+            coneTypeOrNull = ConeErrorType(diagnostic)
+        }
+        return call
     }
 
     override fun transformFunctionCall(functionCall: FirFunctionCall, data: ExpectedArgumentType?): FirStatement {

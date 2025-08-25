@@ -13,13 +13,19 @@ import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirPropertyAccessExpression
 import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
+import org.jetbrains.kotlin.fir.expressions.builder.buildFunctionCall
 import org.jetbrains.kotlin.fir.expressions.builder.buildPropertyAccessExpression
-import org.jetbrains.kotlin.fir.expressions.builder.buildResolvedQualifier
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.references.FirResolvedErrorReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.builder.buildSimpleNamedReference
+import org.jetbrains.kotlin.fir.resolve.calls.ConeAtomWithCandidate
+import org.jetbrains.kotlin.fir.resolve.calls.ConeCollectionLiteralAtom
+import org.jetbrains.kotlin.fir.resolve.calls.ResolutionContext
+import org.jetbrains.kotlin.fir.resolve.calls.candidate.Candidate
+import org.jetbrains.kotlin.fir.resolve.calls.candidate.CandidateFactory
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.FirErrorReferenceWithCandidate
+import org.jetbrains.kotlin.fir.resolve.calls.candidate.FirNamedReferenceWithCandidate
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeAmbiguityError
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeHiddenCandidateError
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedError
@@ -27,6 +33,19 @@ import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeVisibilityError
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
+import org.jetbrains.kotlin.util.OperatorNameConventions
+
+fun ConeKotlinType.getClassRepresentativeForCollectionLiteralResolution(session: FirSession): FirRegularClassSymbol? {
+    return when (this) {
+        is ConeLookupTagBasedType ->
+            when (val symbol = lookupTag.toSymbol(session)) {
+                is FirTypeParameterSymbol, is FirAnonymousObjectSymbol, null -> null
+                is FirRegularClassSymbol -> symbol
+                is FirTypeAliasSymbol -> fullyExpandedType(session).getClassRepresentativeForCollectionLiteralResolution(session)
+            }
+        else -> null
+    }
+}
 
 fun ConeKotlinType.getClassRepresentativeForContextSensitiveResolution(session: FirSession): FirRegularClassSymbol? {
     return when (this) {
@@ -82,6 +101,46 @@ fun FirRegularClassSymbol.getParentChainForContextSensitiveResolution(session: F
             ?.takeIf { it.isSealed }
             ?.takeIf { isSubclassOf(it.toLookupTag(), session, isStrict = true, lookupInterfaces = true) }
     }
+}
+
+
+fun ResolutionContext.runCollectionLiteralResolution(
+    collectionLiteralAtom: ConeCollectionLiteralAtom,
+    operatorOf: MainOperatorOfOverload,
+    topLevelCandidate: Candidate,
+): FirExpression {
+    val collectionLiteral = collectionLiteralAtom.expression
+    val components = bodyResolveComponents
+    val functionCall = buildFunctionCall {
+        explicitReceiver =
+            operatorOf.companionObjectSymbol.toImplicitResolvedQualifierReceiver(
+                components,
+                collectionLiteral.source,
+                resolvedToCompanion = true,
+            )
+        source = collectionLiteral.source
+        calleeReference = buildSimpleNamedReference {
+            source = collectionLiteral.calleeReference.source
+            name = OperatorNameConventions.OF
+        }
+        argumentList = collectionLiteral.argumentList
+    }
+
+    val candidateFactory = CandidateFactory.createForCallableReferenceCandidate(this, topLevelCandidate)
+
+    val selectedCall = bodyResolveComponents.callResolver.resolveCallAndSelectCandidate(functionCall, ResolutionMode.ContextDependent, candidateFactory)
+    val completedCall = bodyResolveComponents.callCompleter.completeCall(selectedCall, ResolutionMode.ContextDependent)
+
+    when (val calleeRef = completedCall.calleeReference) {
+        is FirResolvedNamedReference -> {
+        }
+        is FirNamedReferenceWithCandidate -> {
+            topLevelCandidate.system.replaceContentWith(calleeRef.candidate.system.currentStorage())
+            collectionLiteralAtom.subAtom = ConeAtomWithCandidate(collectionLiteral, calleeRef.candidate)
+        }
+        else -> return collectionLiteral
+    }
+    return completedCall
 }
 
 /**
