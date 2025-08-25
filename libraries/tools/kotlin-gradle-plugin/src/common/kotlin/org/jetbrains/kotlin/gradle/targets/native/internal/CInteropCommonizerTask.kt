@@ -26,12 +26,14 @@ import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
 import org.jetbrains.kotlin.gradle.internal.UsesClassLoadersCachingBuildService
 import org.jetbrains.kotlin.gradle.internal.properties.nativeProperties
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.sources.withDependsOnClosure
 import org.jetbrains.kotlin.gradle.report.GradleBuildMetricsReporter
 import org.jetbrains.kotlin.gradle.targets.native.internal.CInteropCommonizerTask.CInteropCommonizerDependencies
 import org.jetbrains.kotlin.gradle.targets.native.internal.CInteropCommonizerTask.CInteropGist
 import org.jetbrains.kotlin.gradle.targets.native.toolchain.KotlinNativeFromToolchainProvider
+import org.jetbrains.kotlin.gradle.targets.native.toolchain.KotlinNativeProvider
 import org.jetbrains.kotlin.gradle.targets.native.toolchain.NoopKotlinNativeProvider
 import org.jetbrains.kotlin.gradle.targets.native.toolchain.UsesKotlinNativeBundleBuildService
 import org.jetbrains.kotlin.gradle.tasks.CInteropProcess
@@ -39,6 +41,8 @@ import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.io.File
 import javax.inject.Inject
+import kotlin.collections.map
+import kotlin.collections.toSet
 
 private typealias GroupedCommonizerDependencies = Map<CInteropCommonizerGroup, List<CInteropCommonizerDependencies>>
 
@@ -98,6 +102,23 @@ internal abstract class CInteropCommonizerTask
     }
 
     override val outputDirectory: File get() = projectLayout.buildDirectory.get().asFile.resolve("classes/kotlin/commonizer")
+
+    @get:Nested
+    internal val kotlinNativeProvider: Property<KotlinNativeProvider> =
+
+        //set in [CommonizerTasks.kt]
+        project.objects.propertyWithConvention<KotlinNativeProvider>(
+            project.multiplatformExtensionOrNull?.targets?.toSet()?.let { targets ->
+                KotlinNativeFromToolchainProvider(
+                    project,
+                    targets.filterIsInstance<KotlinNativeTarget>().map
+                    { it.konanTarget }.toSet(),
+                    kotlinNativeBundleBuildService,
+                    true
+                )
+            } ?: NoopKotlinNativeProvider(project)
+
+        )
 
     @get:Internal
     internal val metrics: Provider<BuildMetricsReporter<GradleBuildTime, GradleBuildPerformanceMetric>> = objectFactory
@@ -174,13 +195,8 @@ internal abstract class CInteropCommonizerTask
                     target,
                     project.files(
                         externalDependencyFiles,
-                        project.getNativeDistributionDependencies(
-                            KotlinNativeFromToolchainProvider(
-                                project,
-                                target.konanTargets,
-                                kotlinNativeBundleBuildService
-                            ).bundleDirectory.map { KonanDistribution(it) },
-                            target
+                        project.getNativeDistributionDependenciesWithNativeDownloadTask(
+                            target,
                         )
                     )
                 )
@@ -210,6 +226,7 @@ internal abstract class CInteropCommonizerTask
     @TaskAction
     protected fun commonizeCInteropLibraries() {
         val metricReporter = metrics.get()
+
         addBuildMetricsForTaskAction(metricsReporter = metricReporter, languageVersion = null) {
             allInteropGroups.getOrThrow().forEach(::commonize)
         }

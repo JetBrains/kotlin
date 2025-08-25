@@ -631,6 +631,9 @@ internal class PropertiesProvider private constructor(private val project: Proje
      */
     val ignoreTcsmOverflow: Provider<Boolean> = booleanProvider(IGNORE_TCSM_OVERFLOW).orElse(false)
 
+    val isFunctionalTestMode: Boolean
+        get() = booleanProperty(PropertyNames.FUNCTIONAL_TEST_MODE_PROPERTY) ?: false
+
     /**
      * Affects classpath snapshot transformation.
      *
@@ -774,6 +777,8 @@ internal class PropertiesProvider private constructor(private val project: Proje
         val ABI_VALIDATION_BANNED_TARGETS = property(ABI_VALIDATION_BANNED_TARGETS_NAME)
         val ABI_VALIDATION_DISABLED = property(ABI_VALIDATION_DISABLED_NAME)
         val KOTLIN_PARSE_INLINED_LOCAL_CLASSES = property("$KOTLIN_INTERNAL_NAMESPACE.classpathSnapshot.parseInlinedLocalClasses")
+
+        val FUNCTIONAL_TEST_MODE_PROPERTY = "$KOTLIN_INTERNAL_NAMESPACE.functionalTestMode"
     }
 
     companion object {
