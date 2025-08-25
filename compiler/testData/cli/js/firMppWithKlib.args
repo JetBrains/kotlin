@@ -5,7 +5,7 @@ $TESTDATA_DIR$/firMppWithKlib/platform.kt
 $TEMP_DIR$
 -ir-output-name
 firMppWithKlib
--XXLanguage\:+MultiPlatformProjects
+-XXLanguage=+MultiPlatformProjects
 -Xir-produce-klib-file=true
 -libraries
 libraries/stdlib/build/classes/kotlin/js/main

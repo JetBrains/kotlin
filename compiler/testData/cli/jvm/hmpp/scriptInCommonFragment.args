@@ -8,7 +8,7 @@ $TESTDATA_DIR$/src/s1.kts
 $TESTDATA_DIR$/src/s2.kts
 -d
 $TEMP_DIR$
--XXLanguage\:+MultiPlatformProjects
+-XXLanguage=+MultiPlatformProjects
 -Xfragments=a
 -Xfragments=b
 -Xfragments=c

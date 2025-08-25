@@ -6,4 +6,4 @@ $TESTDATA_DIR$/firMultiplatformCompilationWithError/common.kt
 .
 -d
 $TEMP_DIR$
--XXLanguage\:+MultiPlatformProjects
+-XXLanguage=+MultiPlatformProjects

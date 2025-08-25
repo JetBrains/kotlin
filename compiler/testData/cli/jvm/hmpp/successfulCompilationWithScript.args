@@ -6,7 +6,7 @@ $TESTDATA_DIR$/src/c.kt
 $TESTDATA_DIR$/src/s.kts
 -d
 $TEMP_DIR$
--XXLanguage\:+MultiPlatformProjects
+-XXLanguage=+MultiPlatformProjects
 -Xexpect-actual-classes
 -Xfragments=a
 -Xfragments=b

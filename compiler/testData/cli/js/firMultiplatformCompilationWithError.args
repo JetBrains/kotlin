@@ -6,6 +6,6 @@ $TESTDATA_DIR$/../jvm/XXmultiPlatformProject/firMultiplatformCompilationWithErro
 $TEMP_DIR$
 -ir-output-name
 firMultiplatformCompilationWithError
--XXLanguage\:+MultiPlatformProjects
+-XXLanguage=+MultiPlatformProjects
 -libraries
 libraries/stdlib/build/classes/kotlin/js/main

@@ -2,7 +2,7 @@ warning: advanced option value is passed in an obsolete form. Please use the '='
 warning: ATTENTION!
 This build uses unsafe internal compiler arguments:
 
--XXLanguage:+MultiPlatformProjects
+-XXLanguage=+MultiPlatformProjects
 
 This mode is not recommended for production use,
 as no stability/compatibility guarantees are given on

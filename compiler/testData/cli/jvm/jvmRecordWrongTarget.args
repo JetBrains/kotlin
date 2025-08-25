@@ -7,6 +7,6 @@ $TEMP_DIR$
 1.9
 -jdk-home
 $JDK_17$
--XXLanguage\:+JvmRecordSupport
+-XXLanguage=+JvmRecordSupport
 -jvm-target
 9

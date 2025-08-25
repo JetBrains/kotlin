@@ -9,4 +9,4 @@ $TESTDATA_DIR$/scripts/s1.kts
 .
 -d
 $TEMP_DIR$
--XXLanguage\:+MultiPlatformProjects
+-XXLanguage=+MultiPlatformProjects

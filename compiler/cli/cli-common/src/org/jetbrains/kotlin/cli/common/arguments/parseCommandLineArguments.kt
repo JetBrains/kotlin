@@ -265,6 +265,11 @@ private fun <A : CommonToolArguments> parsePreprocessedCommandLineArguments(
     }
 
     result.freeArgs += freeArgs
+    if (result is CommonCompilerArguments) {
+        internalArguments += result.manuallyConfiguredFeatures.orEmpty().mapNotNull { arg ->
+            LanguageSettingsParser.parseLanguageFeature(arg, "-XXLanguage=$arg", errors.value)
+        }
+    }
     result.updateInternalArguments(internalArguments, overrideArguments)
 }
 

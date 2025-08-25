@@ -1,13 +1,15 @@
 warning: ATTENTION!
 This build uses unsafe internal compiler arguments:
 
--XXLanguage=-TypeAliases
--XXLanguage=-BoundCallableReferences
+-XXLanguage:-TypeAliases
+-XXLanguage:-BoundCallableReferences
 
 This mode is not recommended for production use,
 as no stability/compatibility guarantees are given on
 compiler or generated code. Use it at your own risk!
 
+warning: this syntax for `-XXLanguage` is deprecated, please use `-XXLanguage=-TypeAliases`
+warning: this syntax for `-XXLanguage` is deprecated, please use `-XXLanguage=-BoundCallableReferences`
 error: the following features cannot be disabled manually, because the version they first appeared in is no longer supported:
 TypeAliases, BoundCallableReferences
 COMPILATION_ERROR

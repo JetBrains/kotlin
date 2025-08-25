@@ -5,7 +5,7 @@ $TESTDATA_DIR$/../jvm/hmpp/src/c.kt
 $TEMP_DIR$/out.js
 -ir-output-name
 fir-hmpp
--XXLanguage\:+MultiPlatformProjects
+-XXLanguage=+MultiPlatformProjects
 -Xfragments=a,b,c
 -Xfragment-sources=a\:$TESTDATA_DIR$/../jvm/hmpp/src/a.kt
 -Xfragment-sources=b\:$TESTDATA_DIR$/../jvm/hmpp/src/b.kt

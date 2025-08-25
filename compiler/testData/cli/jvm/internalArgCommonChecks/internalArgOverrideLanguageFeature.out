@@ -1,10 +1,13 @@
 warning: ATTENTION!
 This build uses unsafe internal compiler arguments:
 
--XXLanguage:+GenericInlineClassParameter
+-XXLanguage=-GenericInlineClassParameter
+-XXLanguage=+GenericInlineClassParameter
 
 This mode is not recommended for production use,
 as no stability/compatibility guarantees are given on
 compiler or generated code. Use it at your own risk!
 
-OK
+error: the following features cannot be disabled manually, because the version they first appeared in is no longer supported:
+GenericInlineClassParameter
+COMPILATION_ERROR

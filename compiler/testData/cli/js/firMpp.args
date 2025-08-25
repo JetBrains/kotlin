@@ -5,6 +5,6 @@ $TESTDATA_DIR$/firMpp/platform.kt
 $TEMP_DIR$
 -ir-output-name
 firMpp
--XXLanguage\:+MultiPlatformProjects
+-XXLanguage=+MultiPlatformProjects
 -libraries
 libraries/stdlib/build/classes/kotlin/js/main
