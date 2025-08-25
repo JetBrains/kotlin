@@ -7,10 +7,8 @@
 
 package org.jetbrains.kotlin.objcexport
 
-import org.jetbrains.kotlin.analysis.api.export.utilities.isClone
 import org.jetbrains.kotlin.analysis.api.export.utilities.isFakeOverride
 import org.jetbrains.kotlin.analysis.api.symbols.*
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KaNamedSymbol
 import org.jetbrains.kotlin.backend.konan.KonanFqNames
 import org.jetbrains.kotlin.backend.konan.objcexport.*
 import org.jetbrains.kotlin.name.ClassId
@@ -29,7 +27,6 @@ internal val KaSymbol.isConstructor: Boolean
 fun ObjCExportContext.translateToObjCMethod(symbol: KaFunctionSymbol): ObjCMethod? {
     if (!analysisSession.isVisibleInObjC(symbol)) return null
     if (symbol.isFakeOverride) return null
-    if (symbol is KaNamedFunctionSymbol && analysisSession.isClone(symbol)) return null
     return buildObjCMethod(symbol)
 }
 
