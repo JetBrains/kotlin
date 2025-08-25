@@ -54008,9 +54008,21 @@ public class PhasedJvmDiagnosticLightTreeTestGenerated extends AbstractPhasedJvm
         }
 
         @Test
+        @TestMetadata("genericCollectionAssignments.kt")
+        public void testGenericCollectionAssignments() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/userTypes/genericCollectionAssignments.kt");
+        }
+
+        @Test
         @TestMetadata("genericCollectionWithNonGenericElementType.kt")
         public void testGenericCollectionWithNonGenericElementType() {
           runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/userTypes/genericCollectionWithNonGenericElementType.kt");
+        }
+
+        @Test
+        @TestMetadata("genericCollectionWithNonGenericElementTypeAssignments.kt")
+        public void testGenericCollectionWithNonGenericElementTypeAssignments() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/userTypes/genericCollectionWithNonGenericElementTypeAssignments.kt");
         }
 
         @Test
@@ -54020,9 +54032,21 @@ public class PhasedJvmDiagnosticLightTreeTestGenerated extends AbstractPhasedJvm
         }
 
         @Test
+        @TestMetadata("nonGenericCollectionAssignments.kt")
+        public void testNonGenericCollectionAssignments() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/userTypes/nonGenericCollectionAssignments.kt");
+        }
+
+        @Test
         @TestMetadata("nonGenericCollectionWithGenericElementType.kt")
         public void testNonGenericCollectionWithGenericElementType() {
           runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/userTypes/nonGenericCollectionWithGenericElementType.kt");
+        }
+
+        @Test
+        @TestMetadata("nonGenericCollectionWithGenericElementTypeAssignments.kt")
+        public void testNonGenericCollectionWithGenericElementTypeAssignments() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/userTypes/nonGenericCollectionWithGenericElementTypeAssignments.kt");
         }
       }
     }
