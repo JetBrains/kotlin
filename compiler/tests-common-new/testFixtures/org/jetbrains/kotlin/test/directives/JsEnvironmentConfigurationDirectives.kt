@@ -34,11 +34,6 @@ object JsEnvironmentConfigurationDirectives : SimpleDirectivesContainer() {
         applicability = DirectiveApplicability.Global
     )
 
-    val NO_INLINE by directive(
-        description = "Disable inline in js module",
-        applicability = DirectiveApplicability.Module
-    )
-
     val SKIP_NODE_JS by directive(
         description = "",
         applicability = DirectiveApplicability.Global
