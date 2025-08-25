@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.gradle.report.GradleBuildMetricsReporter
 import org.jetbrains.kotlin.gradle.targets.native.internal.CInteropCommonizerTask.CInteropCommonizerDependencies
 import org.jetbrains.kotlin.gradle.targets.native.internal.CInteropCommonizerTask.CInteropGist
 import org.jetbrains.kotlin.gradle.targets.native.toolchain.KotlinNativeFromToolchainProvider
+import org.jetbrains.kotlin.gradle.targets.native.toolchain.KotlinNativeProvider
 import org.jetbrains.kotlin.gradle.targets.native.toolchain.NoopKotlinNativeProvider
 import org.jetbrains.kotlin.gradle.targets.native.toolchain.UsesKotlinNativeBundleBuildService
 import org.jetbrains.kotlin.gradle.tasks.CInteropProcess
@@ -98,6 +99,14 @@ internal abstract class CInteropCommonizerTask
     }
 
     override val outputDirectory: File get() = projectLayout.buildDirectory.get().asFile.resolve("classes/kotlin/commonizer")
+
+    @get:Nested
+    internal val kotlinNativeProvider: Property<KotlinNativeProvider> =
+
+        //set in [CommonizerTasks.kt]
+        project.objects.propertyWithConvention<KotlinNativeProvider>(
+            NoopKotlinNativeProvider(project)
+        )
 
     @get:Internal
     internal val metrics: Provider<BuildMetricsReporter<GradleBuildTime, GradleBuildPerformanceMetric>> = objectFactory
@@ -175,11 +184,7 @@ internal abstract class CInteropCommonizerTask
                     project.files(
                         externalDependencyFiles,
                         project.getNativeDistributionDependencies(
-                            KotlinNativeFromToolchainProvider(
-                                project,
-                                target.konanTargets,
-                                kotlinNativeBundleBuildService
-                            ).bundleDirectory.map { KonanDistribution(it) },
+                            kotlinNativeProvider.get().bundleDirectory.map { KonanDistribution(it) },
                             target
                         )
                     )
