@@ -1,13 +1,14 @@
 warning: ATTENTION!
 This build uses unsafe internal compiler arguments:
 
--XXLanguage:+IrInlinerBeforeKlibSerialization
+-XXLanguage:+IrIntraModuleInlinerBeforeKlibSerialization
+-XXLanguage:+IrCrossModuleInlinerBeforeKlibSerialization
 
 This mode is not recommended for production use,
 as no stability/compatibility guarantees are given on
 compiler or generated code. Use it at your own risk!
 
-warning: following manually enabled features will force generation of pre-release binaries: IrInlinerBeforeKlibSerialization
+warning: following manually enabled features will force generation of pre-release binaries: IrCrossModuleInlinerBeforeKlibSerialization
 compiler/testData/cli/js/compilationWarningExposureOfReferencesToInvisibleEntities.kt:5:37: warning: public-API inline function references a non Public-API function 'foo'. This could happen as a result of cascaded inlining of the following functions:
 private inline fun privateFun1(): KFunction0<Unit>
 private inline fun privateFun2(): KFunction0<Unit>

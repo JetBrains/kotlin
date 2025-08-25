@@ -4,9 +4,9 @@
 // IGNORE_BACKEND: WASM
 // ^^^ Wrong box result: C C make make
 
-// LANGUAGE: +IrInlinerBeforeKlibSerialization
+// LANGUAGE: +IrIntraModuleInlinerBeforeKlibSerialization +IrCrossModuleInlinerBeforeKlibSerialization
 // after fixing everything here and in overrideResolution.kt,
-//   please delete this test and delete `LANGUAGE: -IrInlinerBeforeKlibSerialization` from `overrideResolutionWithInlinedFunInKlib.kt`
+//   please delete this test and delete `LANGUAGE: -IrIntraModuleInlinerBeforeKlibSerialization -IrCrossModuleInlinerBeforeKlibSerialization` from `overrideResolutionWithInlinedFunInKlib.kt`
 
 // IGNORE_BACKEND_K2: NATIVE
 // ^^^ Test failed with: C C make make

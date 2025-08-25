@@ -1,5 +1,5 @@
 // ISSUE: KT-68975
-// LANGUAGE: +IrInlinerBeforeKlibSerialization
+// LANGUAGE: +IrIntraModuleInlinerBeforeKlibSerialization +IrCrossModuleInlinerBeforeKlibSerialization
 inline fun foo(makeInt: () -> Int): Int {
     return js(<!JS_CODE_CAPTURES_INLINABLE_FUNCTION_WARNING!>"makeInt()"<!>)
 }

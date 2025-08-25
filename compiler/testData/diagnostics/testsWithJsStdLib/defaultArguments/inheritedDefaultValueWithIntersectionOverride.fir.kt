@@ -1,6 +1,6 @@
 // RUN_PIPELINE_TILL: FIR2IR
 // ISSUE: KT-49722
-// LANGUAGE: +IrInlinerBeforeKlibSerialization
+// LANGUAGE: +IrIntraModuleInlinerBeforeKlibSerialization +IrCrossModuleInlinerBeforeKlibSerialization
 
 interface I {
     fun h(x: Int = 3, block: () -> String): Any

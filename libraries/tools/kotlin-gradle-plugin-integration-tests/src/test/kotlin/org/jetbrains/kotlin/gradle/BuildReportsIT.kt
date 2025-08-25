@@ -144,7 +144,10 @@ class BuildReportsIT : KGPBaseTest() {
             languageVersion = KotlinVersion.DEFAULT.version,
             // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
             disableIsolatedProjects = true,
-            freeCompilerArgs = listOf("-XXLanguage:+IrInlinerBeforeKlibSerialization"),
+            freeCompilerArgs = listOf(
+                "-XXLanguage:+IrIntraModuleInlinerBeforeKlibSerialization",
+                "-XXLanguage:+IrCrossModuleInlinerBeforeKlibSerialization"
+            ),
             expectedReportLines = listOf(
                 "Compiler IR pre-lowering",
                 "JsCodeOutliningLoweringOnFirstStage",
@@ -192,7 +195,7 @@ class BuildReportsIT : KGPBaseTest() {
                 """
                 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask<*>>().configureEach {
                     compilerOptions {
-                        freeCompilerArgs.add(${args.joinToString { "\"$it\"" }})
+                        freeCompilerArgs.addAll(${args.joinToString { "\"$it\"" }})
                     }
                 }
                 """.trimIndent()
@@ -214,7 +217,10 @@ class BuildReportsIT : KGPBaseTest() {
             gradleVersion,
             // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
             disableIsolatedProjects = true,
-            freeCompilerArgs = listOf("-XXLanguage:+IrInlinerBeforeKlibSerialization"),
+            freeCompilerArgs = listOf(
+                "-XXLanguage:+IrIntraModuleInlinerBeforeKlibSerialization",
+                "-XXLanguage:+IrCrossModuleInlinerBeforeKlibSerialization"
+            ),
             additionalReportLines = listOf(
                 "InlineFunctionSerializationPreProcessing",
             ),
@@ -251,7 +257,7 @@ class BuildReportsIT : KGPBaseTest() {
                 kotlin {
                     tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinNativeCompile>().configureEach {
                         compilerOptions {
-                            freeCompilerArgs.add(${args.joinToString { "\"$it\"" }})
+                            freeCompilerArgs.addAll(${args.joinToString { "\"$it\"" }})
                         }
                     }
                 }
@@ -987,7 +993,10 @@ class BuildReportsIT : KGPBaseTest() {
         ) {
             buildScriptInjection {
                 project.applyMultiplatform {
-                    compilerOptions.freeCompilerArgs.add("-XXLanguage:+IrInlinerBeforeKlibSerialization")
+                    compilerOptions.freeCompilerArgs.addAll(
+                        "-XXLanguage:+IrIntraModuleInlinerBeforeKlibSerialization",
+                        "-XXLanguage:+IrCrossModuleInlinerBeforeKlibSerialization"
+                    )
                 }
             }
             build("linkDebugExecutableHost", "-Pkotlin.build.report.json.directory=${projectPath.resolve("report").pathString}") {
@@ -1012,7 +1021,7 @@ class BuildReportsIT : KGPBaseTest() {
                         "UpgradeCallableReferences",
                         "AssertionWrapperLowering",
                         "AvoidLocalFOsInInlineFunctionsLowering",
-                        "LateinitLowering", // first lowering in K/N 1st phase lowerings, specific for `+IrInlinerBeforeKlibSerialization` feature
+                        "LateinitLowering", // first lowering in K/N 1st phase lowerings, specific for `+IrIntraModuleInlinerBeforeKlibSerialization` and `+IrCrossModuleInlinerBeforeKlibSerialization` features
                     ),
                     jsonReport.aggregatedMetrics.buildTimes.dynamicBuildTimesMapMs().keys
                         .filter { it.parent == GradleBuildTime.IR_PRE_LOWERING }

@@ -4,9 +4,9 @@
 // IGNORE_BACKEND: WASM
 // ^^^ Wrong box result: C C make make
 
-// LANGUAGE: -IrInlinerBeforeKlibSerialization
+// LANGUAGE: -IrIntraModuleInlinerBeforeKlibSerialization -IrCrossModuleInlinerBeforeKlibSerialization
 // after fixing everything here and in overrideResolutionWithInlinedFunInKlib.kt,
-//   please delete overrideResolutionWithInlinedFunInKlib.kt and delete `LANGUAGE: -IrInlinerBeforeKlibSerialization` above
+//   please delete overrideResolutionWithInlinedFunInKlib.kt and delete `LANGUAGE: -IrIntraModuleInlinerBeforeKlibSerialization -IrCrossModuleInlinerBeforeKlibSerialization` above
 
 fun box(): String {
     var result = ""

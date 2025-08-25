@@ -28,6 +28,7 @@ fun IrFunctionSymbol.isConsideredAsPrivateAndNotLocalForInlining(): Boolean = th
 
 enum class InlineMode {
     PRIVATE_INLINE_FUNCTIONS,
+    INTRA_MODULE_INLINE_FUNCTIONS,
     ALL_INLINE_FUNCTIONS,
 }
 
@@ -44,7 +45,7 @@ abstract class InlineFunctionResolver() {
 
 abstract class InlineFunctionResolverReplacingCoroutineIntrinsics<Ctx : LoweringContext>(
     protected val context: Ctx,
-    private val inlineMode: InlineMode,
+    protected val inlineMode: InlineMode,
 ) : InlineFunctionResolver() {
     override fun getFunctionDeclaration(symbol: IrFunctionSymbol): IrFunction? {
         if (!symbol.isBound) return null
@@ -76,7 +77,11 @@ internal class PreSerializationPrivateInlineFunctionResolver(
 internal class PreSerializationNonPrivateInlineFunctionResolver(
     context: LoweringContext,
     irMangler: KotlinMangler.IrMangler,
-) : InlineFunctionResolverReplacingCoroutineIntrinsics<LoweringContext>(context, InlineMode.ALL_INLINE_FUNCTIONS) {
+    inlineCrossModuleFunctions: Boolean,
+) : InlineFunctionResolverReplacingCoroutineIntrinsics<LoweringContext>(
+    context,
+    if (inlineCrossModuleFunctions) InlineMode.ALL_INLINE_FUNCTIONS else InlineMode.INTRA_MODULE_INLINE_FUNCTIONS
+) {
 
     private val deserializer = NonLinkingIrInlineFunctionDeserializer(
         irBuiltIns = context.irBuiltIns,
@@ -88,6 +93,7 @@ internal class PreSerializationNonPrivateInlineFunctionResolver(
         if (declarationMaybeFromOtherModule.body != null) {
             return declarationMaybeFromOtherModule
         }
+        if (inlineMode != InlineMode.ALL_INLINE_FUNCTIONS) return null
         return deserializer.deserializeInlineFunction(declarationMaybeFromOtherModule)
     }
 }

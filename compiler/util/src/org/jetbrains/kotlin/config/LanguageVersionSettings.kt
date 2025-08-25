@@ -542,7 +542,8 @@ enum class LanguageFeature(
 
     DontCreateSyntheticPropertiesWithoutBaseJavaGetter(sinceVersion = null, "KT-64358"),
     ProperFieldAccessGenerationForFieldAccessShadowedByKotlinProperty(sinceVersion = null, "KT-56386"),
-    IrInlinerBeforeKlibSerialization(sinceVersion = null, forcesPreReleaseBinaries = true, issue = "KT-69765"),
+    IrIntraModuleInlinerBeforeKlibSerialization(sinceVersion = null, forcesPreReleaseBinaries = false, issue = "KT-79717"),
+    IrCrossModuleInlinerBeforeKlibSerialization(sinceVersion = null, forcesPreReleaseBinaries = true, issue = "KT-79717"),
     NestedTypeAliases(sinceVersion = null, forcesPreReleaseBinaries = true, issue = "KT-45285"),
     ForbidUsingSupertypesWithInaccessibleContentInTypeArguments(sinceVersion = null, enabledInProgressiveMode = true, "KT-66691"), // KT-66691, KT-66742
     AllowEagerSupertypeAccessibilityChecks(sinceVersion = null, enabledInProgressiveMode = true, "KT-73611"),

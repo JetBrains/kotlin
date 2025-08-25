@@ -1,7 +1,7 @@
 // NO_CHECK_LAMBDA_INLINING
 
 // IGNORE_BACKEND: JS_IR, JS_IR_ES6, WASM
-// LANGUAGE: -IrInlinerBeforeKlibSerialization
+// LANGUAGE: -IrIntraModuleInlinerBeforeKlibSerialization -IrCrossModuleInlinerBeforeKlibSerialization
 // ^^^ KT-78537 Expected: foo, Actual: <anonymous>$foo
 
 // FILE: 1.kt

@@ -1,6 +1,6 @@
 // ISSUE: KT-77103
 // WITH_STDLIB
-// LANGUAGE: +IrInlinerBeforeKlibSerialization
+// LANGUAGE: +IrIntraModuleInlinerBeforeKlibSerialization +IrCrossModuleInlinerBeforeKlibSerialization
 // NO_CHECK_LAMBDA_INLINING
 
 // IGNORE_IR_DESERIALIZATION_TEST: JS_IR, NATIVE

@@ -99,11 +99,11 @@ private val checkInlineDeclarationsAfterInliningOnlyPrivateFunctions = makeIrMod
     prerequisite = setOf(inlineOnlyPrivateFunctionsPhase),
 )
 
-private fun inlineAllFunctionsPhase(irMangler: IrMangler) = makeIrModulePhase(
+private fun inlineAllFunctionsPhase(irMangler: IrMangler, inlineCrossModuleFunctions: Boolean) = makeIrModulePhase(
     { context: LoweringContext ->
         FunctionInlining(
             context,
-            PreSerializationNonPrivateInlineFunctionResolver(context, irMangler),
+            PreSerializationNonPrivateInlineFunctionResolver(context, irMangler, inlineCrossModuleFunctions),
         )
     },
     name = "InlineAllFunctions",
@@ -116,9 +116,9 @@ private val inlineFunctionSerializationPreProcessing = makeIrModulePhase(
     prerequisite = setOf(inlineOnlyPrivateFunctionsPhase, /*inlineAllFunctionsPhase*/),
 )
 
-private fun validateIrAfterInliningAllFunctionsPhase(irMangler: IrMangler) = makeIrModulePhase(
+private fun validateIrAfterInliningAllFunctionsPhase(irMangler: IrMangler, inlineCrossModuleFunctions: Boolean) = makeIrModulePhase(
     { context: LoweringContext ->
-        val resolver = PreSerializationNonPrivateInlineFunctionResolver(context, irMangler)
+        val resolver = PreSerializationNonPrivateInlineFunctionResolver(context, irMangler, inlineCrossModuleFunctions)
         IrValidationAfterInliningAllFunctionsOnTheFirstStagePhase(
             context,
             checkInlineFunctionCallSites = check@{ inlineFunctionUseSite ->
@@ -141,7 +141,10 @@ fun loweringsOfTheFirstPhase(
     languageVersionSettings: LanguageVersionSettings
 ): List<NamedCompilerPhase<PreSerializationLoweringContext, IrModuleFragment, IrModuleFragment>> = buildList {
     this += avoidLocalFOsInInlineFunctionsLowering
-    if (languageVersionSettings.supportsFeature(LanguageFeature.IrInlinerBeforeKlibSerialization)) {
+    if (languageVersionSettings.supportsFeature(LanguageFeature.IrIntraModuleInlinerBeforeKlibSerialization)) {
+        val inlineCrossModuleFunctions =
+            languageVersionSettings.supportsFeature(LanguageFeature.IrCrossModuleInlinerBeforeKlibSerialization)
+
         this += lateinitPhase
         this += sharedVariablesLoweringPhase
         this += localClassesInInlineLambdasPhase
@@ -152,8 +155,8 @@ fun loweringsOfTheFirstPhase(
         this += outerThisSpecialAccessorInInlineFunctionsPhase
         this += syntheticAccessorGenerationPhase
         this += validateIrAfterInliningOnlyPrivateFunctions
-        this += inlineAllFunctionsPhase(irMangler)
+        this += inlineAllFunctionsPhase(irMangler, inlineCrossModuleFunctions)
         this += inlineFunctionSerializationPreProcessing
-        this += validateIrAfterInliningAllFunctionsPhase(irMangler)
+        this += validateIrAfterInliningAllFunctionsPhase(irMangler, inlineCrossModuleFunctions)
     }
 }
