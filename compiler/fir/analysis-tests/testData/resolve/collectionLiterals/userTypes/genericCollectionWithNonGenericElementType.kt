@@ -9,7 +9,7 @@ class MyList<T> {
 }
 
 fun <T> acceptList(l: MyList<T>) = Unit
-fun acceptStringList(l: List<String>) = Unit
+fun acceptStringList(l: MyList<String>) = Unit
 
 class A
 
