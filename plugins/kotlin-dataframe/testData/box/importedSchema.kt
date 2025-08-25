@@ -1,5 +1,3 @@
-// FIR_DUMP
-// DUMP_IR
 // WITH_SCHEMA_READER
 
 package org.jetbrains.kotlinx.dataframe.annotations
