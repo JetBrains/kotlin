@@ -132,7 +132,8 @@ fun getAdditionalMainFiles(
 
 fun testWithModuleSystem(testServices: TestServices): Boolean {
     val globalDirectives = testServices.moduleStructure.allDirectives
-    val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(getMainModule(testServices))
+    val configuration =
+        testServices.compilerConfigurationProvider.getCompilerConfiguration(getMainModule(testServices), CompilationStage.SECOND)
     val mainModuleKind = configuration[JSConfigurationKeys.MODULE_KIND]
     return mainModuleKind != ModuleKind.PLAIN && mainModuleKind != ModuleKind.ES && NO_JS_MODULE_SYSTEM !in globalDirectives
 }

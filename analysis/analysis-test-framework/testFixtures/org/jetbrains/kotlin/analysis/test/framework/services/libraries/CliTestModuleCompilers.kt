@@ -172,7 +172,7 @@ object JvmJarTestModuleCompiler : CliTestModuleCompiler() {
     }
 
     override fun buildPlatformExtraClasspath(module: TestModule, testServices: TestServices): List<String> = buildList {
-        val compilerConfiguration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module)
+        val compilerConfiguration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module, CompilationStage.FIRST)
         for (file in compilerConfiguration.jvmClasspathRoots) {
             add(file.absolutePath)
         }

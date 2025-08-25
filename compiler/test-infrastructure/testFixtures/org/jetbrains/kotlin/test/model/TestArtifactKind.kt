@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.test.model
 
+import org.jetbrains.kotlin.test.services.CompilationStage
+
 abstract class TestArtifactKind<R : ResultingArtifact<R>>(private val representation: String) {
     open val shouldRunAnalysis: Boolean
         get() = true
@@ -30,8 +32,11 @@ abstract class BackendKind<I : ResultingArtifact.BackendInput<I>>(representation
     }
 }
 
-abstract class ArtifactKind<A : ResultingArtifact.Binary<A>>(representation: String) : TestArtifactKind<A>(representation) {
-    object NoArtifact : ArtifactKind<ResultingArtifact.Binary.Empty>("NoArtifact") {
+abstract class ArtifactKind<A : ResultingArtifact.Binary<A>>(
+    representation: String,
+    val producedBy: CompilationStage,
+) : TestArtifactKind<A>(representation) {
+    object NoArtifact : ArtifactKind<ResultingArtifact.Binary.Empty>("NoArtifact", CompilationStage.FIRST) {
         override val shouldRunAnalysis: Boolean
             get() = false
     }

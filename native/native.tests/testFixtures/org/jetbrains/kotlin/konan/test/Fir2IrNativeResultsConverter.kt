@@ -43,6 +43,7 @@ import org.jetbrains.kotlin.name.NativeForwardDeclarationKind
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.frontend.fir.*
 import org.jetbrains.kotlin.test.model.TestModule
+import org.jetbrains.kotlin.test.services.CompilationStage
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.compilerConfigurationProvider
 import org.jetbrains.kotlin.test.services.configuration.nativeEnvironmentConfigurator
@@ -123,7 +124,8 @@ class Fir2IrNativeResultsConverter(testServices: TestServices) : AbstractFir2IrR
 
             val nativeTarget = nativeEnvironmentConfigurator.getNativeTarget(module)
             val nativeDistributionKlibPath = nativeEnvironmentConfigurator.distributionKlibPath().absolutePath
-            val logger = testServices.compilerConfigurationProvider.getCompilerConfiguration(module).getLogger(treatWarningsAsErrors = true)
+            val logger = testServices.compilerConfigurationProvider.getCompilerConfiguration(module, CompilationStage.FIRST)
+                .getLogger(treatWarningsAsErrors = true)
 
             val libraryResolver = KonanLibraryProperResolver(
                 directLibs = directDependencies, // Load all direct dependencies as non-default libraries.

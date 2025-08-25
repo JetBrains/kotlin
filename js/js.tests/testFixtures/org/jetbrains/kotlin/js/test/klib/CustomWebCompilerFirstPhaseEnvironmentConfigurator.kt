@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.IrVerificationMode
 import org.jetbrains.kotlin.config.verifyIr
 import org.jetbrains.kotlin.test.model.TestModule
+import org.jetbrains.kotlin.test.services.CompilationStage
 import org.jetbrains.kotlin.test.services.EnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.TestServices
 
@@ -18,6 +19,9 @@ import org.jetbrains.kotlin.test.services.TestServices
  * Note: This configuration is supposed to be used in tests with the custom compiler on the first compilation phase.
  */
 class CustomWebCompilerFirstPhaseEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfigurator(testServices) {
+    override val compilationStage: CompilationStage
+        get() = CompilationStage.FIRST
+
     override fun configureCompilerConfiguration(configuration: CompilerConfiguration, module: TestModule) {
         configuration.verifyIr = IrVerificationMode.NONE
     }

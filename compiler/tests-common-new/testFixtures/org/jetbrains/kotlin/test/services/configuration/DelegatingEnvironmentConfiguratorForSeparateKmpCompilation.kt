@@ -31,6 +31,9 @@ abstract class DelegatingEnvironmentConfiguratorForSeparateKmpCompilation(
     override val directiveContainers: List<DirectivesContainer>
         get() = delegate.directiveContainers
 
+    override val compilationStage: CompilationStage
+        get() = delegate.compilationStage
+
     final override fun configureCompileConfigurationWithAdditionalConfigurationKeys(configuration: CompilerConfiguration, module: TestModule) {
         require(ConfigurationDirectives.SEPARATE_KMP_COMPILATION in module.directives) {
             "SEPARATE_KMP_COMPILATION should be enabled"

@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.test.model
 
 import org.jetbrains.kotlin.test.Assertions
 import org.jetbrains.kotlin.test.Constructor
+import org.jetbrains.kotlin.test.TestInfrastructureInternals
+import org.jetbrains.kotlin.test.services.CompilationStage
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 
@@ -22,6 +24,20 @@ abstract class AnalysisHandler<A : ResultingArtifact<A>>(
         get() = testServices.assertions
 
     abstract val artifactKind: TestArtifactKind<A>
+
+    /**
+     * The compilation stage this handler is being executed in.
+     */
+    lateinit var compilationStage: CompilationStage
+        private set
+
+    @TestInfrastructureInternals
+    internal fun setCompilationStage(stage: CompilationStage) {
+        if (this::compilationStage.isInitialized) {
+            error("Compilation stage already initialized for $this")
+        }
+        compilationStage = stage
+    }
 
     abstract fun processModule(module: TestModule, info: A)
 

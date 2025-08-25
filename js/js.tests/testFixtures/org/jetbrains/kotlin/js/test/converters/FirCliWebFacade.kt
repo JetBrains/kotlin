@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.js.test.converters
 import org.jetbrains.kotlin.cli.pipeline.web.WebFrontendPipelineArtifact
 import org.jetbrains.kotlin.cli.pipeline.web.WebFrontendPipelinePhase
 import org.jetbrains.kotlin.test.frontend.fir.FirCliFacade
+import org.jetbrains.kotlin.test.services.CompilationStage
 import org.jetbrains.kotlin.test.services.TestServices
 
 class FirCliWebFacade(

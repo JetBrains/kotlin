@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.test
 
 import org.jetbrains.kotlin.test.model.*
+import org.jetbrains.kotlin.test.services.CompilationStage
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.utils.bind
 
@@ -28,8 +29,10 @@ class FacadeStepBuilder<InputArtifact, OutputArtifact>(
     }
 }
 
-class HandlersStepBuilder<InputArtifact, InputArtifactKind>(val artifactKind: InputArtifactKind) :
-    TestStepBuilder<InputArtifact, Nothing>()
+class HandlersStepBuilder<InputArtifact, InputArtifactKind>(
+    val artifactKind: InputArtifactKind,
+    val compilationStage: CompilationStage,
+) : TestStepBuilder<InputArtifact, Nothing>()
         where InputArtifact : ResultingArtifact<InputArtifact>,
               InputArtifactKind : TestArtifactKind<InputArtifact> {
     private val handlers: MutableList<Constructor<AnalysisHandler<InputArtifact>>> = mutableListOf()
@@ -52,6 +55,13 @@ class HandlersStepBuilder<InputArtifact, InputArtifactKind>(val artifactKind: In
 
     @TestInfrastructureInternals
     override fun createTestStep(testServices: TestServices): TestStep.HandlersStep<InputArtifact> {
-        return TestStep.HandlersStep(artifactKind, handlers.map { it.invoke(testServices) })
+        return TestStep.HandlersStep(
+            artifactKind,
+            handlers.map { constructor ->
+                constructor
+                    .invoke(testServices)
+                    .also { it.setCompilationStage(compilationStage) }
+            }
+        )
     }
 }

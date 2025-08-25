@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.model.DependencyKind
 import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerWithTargetBackendTest
+import org.jetbrains.kotlin.test.services.CompilationStage
 import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.JvmEnvironmentConfigurator
 import org.jetbrains.kotlin.utils.bind
@@ -54,7 +55,7 @@ class AbstractKaptIntegrationTestRunner(
         )
 
         facadeStep { services -> JvmCompilerWithKaptFacade(services, additionalPluginExtension) }
-        handlersStep(KaptContextBinaryArtifact.Kind) {
+        handlersStep(KaptContextBinaryArtifact.Kind, CompilationStage.FIRST) {
             useHandlers(::KaptIntegrationStubsDumpHandler, ::ProcessorWasCalledHandler)
         }
 

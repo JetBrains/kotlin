@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.platform.isWasm
 import org.jetbrains.kotlin.platform.wasm.WasmTarget
 import org.jetbrains.kotlin.test.frontend.fir.getTransitivesAndFriends
 import org.jetbrains.kotlin.test.model.TestModule
+import org.jetbrains.kotlin.test.services.CompilationStage
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.compilerConfigurationProvider
 import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
@@ -29,9 +30,9 @@ internal fun TestModule.isWasmModule(testServices: TestServices): Boolean =
  *
  * Note: To be used only internally in [CustomWebCompilerFirstPhaseFacade].
  */
-internal fun TestModule.wasmTargetOrNull(testServices: TestServices): WasmTarget? =
+internal fun TestModule.wasmTargetOrNull(testServices: TestServices, compilationStage: CompilationStage): WasmTarget? =
     runIf(isWasmModule(testServices)) {
-        testServices.compilerConfigurationProvider.getCompilerConfiguration(module = this).wasmTarget
+        testServices.compilerConfigurationProvider.getCompilerConfiguration(module = this, compilationStage).wasmTarget
     }
 
 /**
@@ -43,8 +44,11 @@ internal fun TestModule.customWebCompilerSettings(testServices: TestServices): C
 /**
  * Note: To be used only internally in [CustomWebCompilerFirstPhaseFacade] and [CustomJsCompilerSecondPhaseFacade].
  */
-internal fun TestModule.collectDependencies(testServices: TestServices): Pair<Set<String>, Set<String>> {
-    val runtimeLibraries: List<File> = when (wasmTargetOrNull(testServices)) {
+internal fun TestModule.collectDependencies(
+    testServices: TestServices,
+    compilationStage: CompilationStage,
+): Pair<Set<String>, Set<String>> {
+    val runtimeLibraries: List<File> = when (wasmTargetOrNull(testServices, compilationStage)) {
         null -> { // JS
             listOfNotNull(
                 customJsCompilerSettings.stdlib,

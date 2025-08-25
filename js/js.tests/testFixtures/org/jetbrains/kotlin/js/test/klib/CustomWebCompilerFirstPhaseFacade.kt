@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.test.klib.CustomKlibCompilerException
 import org.jetbrains.kotlin.test.klib.CustomKlibCompilerFirstPhaseFacade
 import org.jetbrains.kotlin.test.model.BinaryArtifacts
 import org.jetbrains.kotlin.test.model.TestModule
+import org.jetbrains.kotlin.test.services.CompilationStage
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import java.io.ByteArrayOutputStream
@@ -29,7 +30,7 @@ class CustomWebCompilerFirstPhaseFacade(testServices: TestServices) : CustomKlib
     override val TestModule.customKlibCompilerDefaultLanguageVersion: LanguageVersion
         get() = customWebCompilerSettings(testServices).defaultLanguageVersion
 
-    override fun collectDependencies(module: TestModule) = module.collectDependencies(testServices)
+    override fun collectDependencies(module: TestModule) = module.collectDependencies(testServices, CompilationStage.FIRST)
 
     override fun compileKlib(
         module: TestModule,

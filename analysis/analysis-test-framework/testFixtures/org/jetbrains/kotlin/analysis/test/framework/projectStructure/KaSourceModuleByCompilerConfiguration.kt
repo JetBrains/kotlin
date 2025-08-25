@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.platform.konan.isNative
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.frontend.fir.getAllNativeDependenciesPaths
 import org.jetbrains.kotlin.test.model.TestModule
+import org.jetbrains.kotlin.test.services.CompilationStage
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.compilerConfigurationProvider
 import org.jetbrains.kotlin.test.services.targetPlatform
@@ -40,7 +41,7 @@ abstract class KtModuleByCompilerConfiguration(
     val testServices: TestServices,
 ) : KaModuleBase() {
     private val compilerConfigurationProvider = testServices.compilerConfigurationProvider
-    private val configuration = compilerConfigurationProvider.getCompilerConfiguration(testModule)
+    private val configuration = compilerConfigurationProvider.getCompilerConfiguration(testModule, CompilationStage.FIRST)
 
     val name: String
         get() = testModule.name

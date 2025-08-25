@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.test.model.ArtifactKinds
 import org.jetbrains.kotlin.test.model.BackendKinds
 import org.jetbrains.kotlin.test.model.BinaryArtifacts
 import org.jetbrains.kotlin.test.model.FrontendKinds
+import org.jetbrains.kotlin.test.services.CompilationStage
 
 object CompilerStepsNames {
     const val FRONTEND_STEP_NAME = "frontend"
@@ -67,61 +68,61 @@ fun TestConfigurationBuilder.psi2IrStep() {
 inline fun TestConfigurationBuilder.classicFrontendHandlersStep(
     init: HandlersStepBuilder<ClassicFrontendOutputArtifact, FrontendKinds.ClassicFrontend>.() -> Unit = {}
 ) {
-    namedHandlersStep(CLASSIC_FRONTEND_HANDLERS_STEP_NAME, FrontendKinds.ClassicFrontend, init)
+    namedHandlersStep(CLASSIC_FRONTEND_HANDLERS_STEP_NAME, FrontendKinds.ClassicFrontend, CompilationStage.FIRST, init)
 }
 
 inline fun TestConfigurationBuilder.firHandlersStep(
     init: HandlersStepBuilder<FirOutputArtifact, FrontendKinds.FIR>.() -> Unit = {}
 ) {
-    namedHandlersStep(FIR_HANDLERS_STEP_NAME, FrontendKinds.FIR, init)
+    namedHandlersStep(FIR_HANDLERS_STEP_NAME, FrontendKinds.FIR, CompilationStage.FIRST, init)
 }
 
 inline fun TestConfigurationBuilder.irHandlersStep(
     init: HandlersStepBuilder<IrBackendInput, BackendKinds.IrBackend>.() -> Unit = {}
 ) {
-    namedHandlersStep(RAW_IR_HANDLERS_STEP_NAME, BackendKinds.IrBackend, init)
+    namedHandlersStep(RAW_IR_HANDLERS_STEP_NAME, BackendKinds.IrBackend, CompilationStage.FIRST, init)
 }
 
 inline fun TestConfigurationBuilder.loweredIrHandlersStep(
     init: HandlersStepBuilder<IrBackendInput, BackendKinds.IrBackend>.() -> Unit = {}
 ) {
-    namedHandlersStep(LOWERED_IR_HANDLERS_STEP_NAME, BackendKinds.IrBackend, init)
+    namedHandlersStep(LOWERED_IR_HANDLERS_STEP_NAME, BackendKinds.IrBackend, CompilationStage.FIRST, init)
 }
 
 inline fun TestConfigurationBuilder.deserializedIrHandlersStep(
     init: HandlersStepBuilder<IrBackendInput, BackendKinds.IrBackend>.() -> Unit = {}
 ) {
-    namedHandlersStep(DESERIALIZED_IR_HANDLERS_STEP_NAME, BackendKinds.IrBackend, init)
+    namedHandlersStep(DESERIALIZED_IR_HANDLERS_STEP_NAME, BackendKinds.IrBackend, CompilationStage.SECOND, init)
 }
 
 inline fun TestConfigurationBuilder.jvmArtifactsHandlersStep(
     init: HandlersStepBuilder<BinaryArtifacts.Jvm, ArtifactKinds.Jvm>.() -> Unit = {}
 ) {
-    namedHandlersStep(JVM_ARTIFACTS_HANDLERS_STEP_NAME, ArtifactKinds.Jvm, init)
+    namedHandlersStep(JVM_ARTIFACTS_HANDLERS_STEP_NAME, ArtifactKinds.Jvm, CompilationStage.FIRST, init)
 }
 
 inline fun TestConfigurationBuilder.jvmFromK1AndK2ArtifactsHandlersStep(
     init: HandlersStepBuilder<BinaryArtifacts.JvmFromK1AndK2, ArtifactKinds.JvmFromK1AndK2>.() -> Unit = {},
 ) {
-    namedHandlersStep(JVM_FROM_K1_AND_K2_ARTIFACTS_HANDLERS_STEP_NAME, ArtifactKinds.JvmFromK1AndK2, init)
+    namedHandlersStep(JVM_FROM_K1_AND_K2_ARTIFACTS_HANDLERS_STEP_NAME, ArtifactKinds.JvmFromK1AndK2, CompilationStage.FIRST, init)
 }
 
 inline fun TestConfigurationBuilder.jsArtifactsHandlersStep(
     init: HandlersStepBuilder<BinaryArtifacts.Js, ArtifactKinds.Js>.() -> Unit = {}
 ) {
-    namedHandlersStep(JS_ARTIFACTS_HANDLERS_STEP_NAME, ArtifactKinds.Js, init)
+    namedHandlersStep(JS_ARTIFACTS_HANDLERS_STEP_NAME, ArtifactKinds.Js, CompilationStage.SECOND, init)
 }
 
 inline fun TestConfigurationBuilder.wasmArtifactsHandlersStep(
     init: HandlersStepBuilder<BinaryArtifacts.Wasm, ArtifactKinds.Wasm>.() -> Unit = {}
 ) {
-    namedHandlersStep(WASM_ARTIFACTS_HANDLERS_STEP_NAME, ArtifactKinds.Wasm, init)
+    namedHandlersStep(WASM_ARTIFACTS_HANDLERS_STEP_NAME, ArtifactKinds.Wasm, CompilationStage.SECOND, init)
 }
 
 inline fun TestConfigurationBuilder.klibArtifactsHandlersStep(
     init: HandlersStepBuilder<BinaryArtifacts.KLib, ArtifactKinds.KLib>.() -> Unit = {}
 ) {
-    namedHandlersStep(KLIB_ARTIFACTS_HANDLERS_STEP_NAME, ArtifactKinds.KLib, init)
+    namedHandlersStep(KLIB_ARTIFACTS_HANDLERS_STEP_NAME, ArtifactKinds.KLib, CompilationStage.FIRST, init)
 }
 
 // and those ones to configure already defined step

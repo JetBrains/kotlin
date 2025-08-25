@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.js.test.handlers.JsBoxRunner
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.loader.KlibPlatformChecker
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.test.backend.ir.IrBackendFacade
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.frontend.fir.getAllJsDependenciesPaths
 import org.jetbrains.kotlin.test.model.TestFile
@@ -88,6 +89,7 @@ class JsIrIncrementalDataProvider(private val testServices: TestServices) : Test
             return FileUtilRt.toSystemIndependentName(realFile.canonicalPath)
         }
 
+    context(_: IrBackendFacade<*>)
     private fun recordIncrementalDataForRuntimeKlib(module: TestModule) {
         val runtimeKlibPath = JsEnvironmentConfigurator.getRuntimePathsForModule(module, testServices)
         val libs = runtimeKlibPath.map {
@@ -103,6 +105,7 @@ class JsIrIncrementalDataProvider(private val testServices: TestServices) : Test
         }
     }
 
+    context(_: IrBackendFacade<*>)
     fun recordIncrementalData(module: TestModule, library: KotlinLibrary) {
         recordIncrementalDataForRuntimeKlib(module)
 

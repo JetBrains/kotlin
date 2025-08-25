@@ -66,6 +66,7 @@ interface EvaluatorHandlerTrait {
 }
 
 interface IrInterpreterDumpHandlerTrait : EvaluatorHandlerTrait {
+    context(_: AnalysisHandler<*>)
     fun processModule(module: TestModule) {
         val irMetaInfo = processIrModule(module)
         val firMetaInfo = testServices.firInterpreterResultsStorage[module] ?: irMetaInfo
@@ -108,6 +109,8 @@ interface IrInterpreterDumpHandlerTrait : EvaluatorHandlerTrait {
             globalMetadataInfoHandler.addMetadataInfosForFile(testFile, metaInfo.map { it.copy().apply { attributes.add("FIR") } })
         }
     }
+
+    context(_: AnalysisHandler<*>)
     fun processIrModule(module: TestModule): Map<TestFile, List<ParsedCodeMetaInfo>> {
         if (!module.isSuppressedForK2() && testServices.defaultsProvider.frontendKind == FrontendKinds.ClassicFrontend) {
             return module.files.associateWith { testFile -> testFile.getExpectedResult() }

@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirective
 import org.jetbrains.kotlin.test.frontend.classic.handlers.FirTestDataConsistencyHandler
 import org.jetbrains.kotlin.test.model.DependencyKind
 import org.jetbrains.kotlin.test.model.FrontendKinds
+import org.jetbrains.kotlin.test.services.CompilationStage
 
 /**
  * ======================================== WARNING ========================================
@@ -40,7 +41,7 @@ open class AbstractClassicJvmIntegrationDiagnosticTest : AbstractKotlinCompilerT
 
         facadeStep(::ClassicJvmCliFacade)
 
-        handlersStep(CliArtifact.Kind) {
+        handlersStep(CliArtifact.Kind, CompilationStage.FIRST) {
             useHandlers(
                 ::CliMetaInfoHandler,
                 ::CliOutputHandler,

@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerTest
+import org.jetbrains.kotlin.test.services.CompilationStage
 import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.JvmEnvironmentConfigurator
 
@@ -47,7 +48,7 @@ open class AbstractKaptStubConverterTest : AbstractKotlinCompilerTest() {
         )
 
         facadeStep(kaptFacade)
-        handlersStep(KaptContextBinaryArtifact.Kind) {
+        handlersStep(KaptContextBinaryArtifact.Kind, CompilationStage.FIRST) {
             useHandlers(::KaptStubConverterHandler)
         }
 

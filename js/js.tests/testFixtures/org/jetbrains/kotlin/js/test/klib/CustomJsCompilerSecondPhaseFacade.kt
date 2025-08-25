@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.test.klib.CustomKlibCompilerSecondPhaseFacade
 import org.jetbrains.kotlin.test.model.ArtifactKinds
 import org.jetbrains.kotlin.test.model.BinaryArtifacts
 import org.jetbrains.kotlin.test.model.TestModule
+import org.jetbrains.kotlin.test.services.CompilationStage
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
@@ -35,7 +36,7 @@ class CustomJsCompilerSecondPhaseFacade(
     override val outputKind get() = ArtifactKinds.Js
 
     override fun isMainModule(module: TestModule) = module == JsEnvironmentConfigurator.getMainModule(testServices)
-    override fun collectDependencies(module: TestModule) = module.collectDependencies(testServices)
+    override fun collectDependencies(module: TestModule) = module.collectDependencies(testServices, CompilationStage.SECOND)
 
     override fun compileBinary(
         module: TestModule,

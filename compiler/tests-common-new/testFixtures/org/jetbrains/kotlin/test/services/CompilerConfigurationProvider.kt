@@ -27,8 +27,7 @@ import org.jetbrains.kotlin.test.TestInfrastructureInternals
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.isApplicableTo
-import org.jetbrains.kotlin.test.model.FrontendKinds
-import org.jetbrains.kotlin.test.model.TestModule
+import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.utils.MessageCollectorForCompilerTests
 import java.io.File
 
@@ -37,7 +36,31 @@ abstract class CompilerConfigurationProvider(val testServices: TestServices) : T
     abstract val configurators: List<AbstractEnvironmentConfigurator>
 
     protected abstract fun getKotlinCoreEnvironment(module: TestModule): KotlinCoreEnvironment
-    abstract fun getCompilerConfiguration(module: TestModule): CompilerConfiguration
+
+    abstract fun getCompilerConfiguration(module: TestModule, compilationStage: CompilationStage): CompilerConfiguration
+
+    context(handler: AnalysisHandler<*>)
+    fun getCompilerConfiguration(module: TestModule): CompilerConfiguration =
+        getCompilerConfiguration(module, handler.compilationStage)
+
+    context(_: FrontendFacade<*>)
+    fun getCompilerConfiguration(module: TestModule): CompilerConfiguration =
+        getCompilerConfiguration(module, CompilationStage.FIRST)
+
+    context(_: Frontend2BackendConverter<*, *>)
+    fun getCompilerConfiguration(module: TestModule): CompilerConfiguration =
+        getCompilerConfiguration(module, CompilationStage.FIRST)
+
+    context(_: IrPreSerializationLoweringFacade<*>)
+    fun getCompilerConfiguration(module: TestModule): CompilerConfiguration =
+        getCompilerConfiguration(module, CompilationStage.FIRST)
+
+    context(backendFacade: BackendFacade<*, *>)
+    fun getCompilerConfiguration(module: TestModule): CompilerConfiguration =
+        getCompilerConfiguration(module, backendFacade.outputKind.producedBy)
+
+    context(_: DeserializerFacade<BinaryArtifacts.KLib, *>)
+    fun getCompilerConfiguration(module: TestModule): CompilerConfiguration = getCompilerConfiguration(module, CompilationStage.SECOND)
 
     open fun getProject(module: TestModule): Project {
         return getKotlinCoreEnvironment(module).project
@@ -73,7 +96,7 @@ open class CompilerConfigurationProviderImpl(
     override val configurators: List<AbstractEnvironmentConfigurator>
 ) : CompilerConfigurationProvider(testServices) {
     private val environmentCache: MutableMap<TestModule, KotlinCoreEnvironment> = mutableMapOf()
-    private val configurationCache: MutableMap<TestModule, CompilerConfiguration> = mutableMapOf()
+    private val configurationCache: MutableMap<Pair<TestModule, CompilationStage>, CompilerConfiguration> = mutableMapOf()
 
     override fun getKotlinCoreEnvironment(module: TestModule): KotlinCoreEnvironment {
         return environmentCache.getOrPut(module) {
@@ -88,7 +111,7 @@ open class CompilerConfigurationProviderImpl(
             testRootDisposable,
             CompilerConfiguration()
         )
-        val configuration = getCompilerConfiguration(module)
+        val configuration = getCompilerConfiguration(module, CompilationStage.FIRST)
         val projectEnv = KotlinCoreEnvironment.ProjectEnvironment(testRootDisposable, applicationEnvironment, configuration)
         return KotlinCoreEnvironment.createForTests(
             projectEnv,
@@ -98,13 +121,13 @@ open class CompilerConfigurationProviderImpl(
     }
 
     @OptIn(TestInfrastructureInternals::class)
-    override fun getCompilerConfiguration(module: TestModule): CompilerConfiguration {
-        return configurationCache.getOrPut(module) { createCompilerConfiguration(module) }
+    override fun getCompilerConfiguration(module: TestModule, compilationStage: CompilationStage): CompilerConfiguration {
+        return configurationCache.getOrPut(module to compilationStage) { createCompilerConfiguration(module, compilationStage) }
     }
 
     @TestInfrastructureInternals
-    fun createCompilerConfiguration(module: TestModule): CompilerConfiguration {
-        return createCompilerConfiguration(testServices, module, configurators).also { configuration ->
+    fun createCompilerConfiguration(module: TestModule, compilationStage: CompilationStage): CompilerConfiguration {
+        return createCompilerConfiguration(testServices, module, configurators, compilationStage).also { configuration ->
             if (testServices.cliBasedFacadesEnabled) {
                 configuration.put(TEST_ONLY_PLUGIN_REGISTRATION_CALLBACK) { project ->
                     registerCompilerExtensions(project, module, configuration)
@@ -129,6 +152,7 @@ fun createCompilerConfiguration(
     testServices: TestServices,
     module: TestModule,
     configurators: List<AbstractEnvironmentConfigurator>,
+    compilationStage: CompilationStage,
 ): CompilerConfiguration {
     val configuration = CompilerConfiguration()
     configuration[CommonConfigurationKeys.MODULE_NAME] = module.name
@@ -160,7 +184,11 @@ fun createCompilerConfiguration(
     configuration.messageCollector = messageCollector
     configuration.languageVersionSettings = module.languageVersionSettings
 
-    configurators.forEach { it.configureCompileConfigurationWithAdditionalConfigurationKeys(configuration, module) }
+    for (configurator in configurators) {
+        if (compilationStage == configurator.compilationStage) {
+            configurator.configureCompileConfigurationWithAdditionalConfigurationKeys(configuration, module)
+        }
+    }
 
     return configuration
 }
