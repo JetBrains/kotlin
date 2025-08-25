@@ -138,5 +138,62 @@ abstract class AbstractTypeCreatorDslTest : AbstractAnalysisApiBasedTest() {
         protected fun getTypeParameterSymbolByCaret(label: String): KaTypeParameterSymbol {
             return (caretToType[label] as? KaTypeParameterType)?.symbol ?: error("Type under `$label` is not a type parameter type")
         }
+
+        inner class FlexibleType {
+            fun testAnyAndNullableAny(): KaType {
+                val lowerBound = getTypeByCaret("lower")
+                val upperBound = getTypeByCaret("upper")
+                return session.typeCreator.flexibleType(lowerBound, upperBound)
+            }
+
+            fun testIntAndNullableInt(): KaType {
+                val lowerBound = getTypeByCaret("lower")
+                val upperBound = getTypeByCaret("upper")
+                return session.typeCreator.flexibleType(lowerBound, upperBound)
+            }
+
+            fun testNothingAndNullableAny(): KaType {
+                val lowerBound = getTypeByCaret("lower")
+                val upperBound = getTypeByCaret("upper")
+                return session.typeCreator.flexibleType(lowerBound, upperBound)
+            }
+
+            fun testTwoUserTypes(): KaType {
+                val lowerBound = getTypeByCaret("lower")
+                val upperBound = getTypeByCaret("upper")
+                return session.typeCreator.flexibleType(lowerBound, upperBound)
+            }
+
+            fun testTwoFlexibleTypes(): KaType {
+                val lowerBound1 = getTypeByCaret("lower1")
+                val upperBound1 = getTypeByCaret("upper1")
+                val lowerBound2 = getTypeByCaret("lower2")
+                val upperBound2 = getTypeByCaret("upper2")
+                return session.typeCreator.flexibleType(
+                    session.typeCreator.flexibleType(lowerBound1, upperBound1),
+                    session.typeCreator.flexibleType(lowerBound2, upperBound2)
+                )
+            }
+
+            fun testFlexibleTypeWithReplaceUpperBound(): KaType {
+                val flexibleType = getTypeByCaret("type") as KaFlexibleType
+                val upperbound = getTypeByCaret("upper")
+                return session.typeCreator.flexibleType(flexibleType) {
+                    upperBound = upperbound
+                }
+            }
+
+            fun testWithAnnotations(): KaType {
+                val annotationClassId1 = ClassId.fromString("MyAnno1")
+                val annotationClassId2 = ClassId.fromString("MyAnno2")
+                val annotationClassId3 = ClassId.fromString("MyAnno3")
+
+                val lowerBound = getTypeByCaret("lower")
+                val upperBound = getTypeByCaret("upper")
+                return session.typeCreator.flexibleType(lowerBound, upperBound) {
+                    annotations(listOf(annotationClassId1, annotationClassId2, annotationClassId3))
+                }
+            }
+        }
     }
 }

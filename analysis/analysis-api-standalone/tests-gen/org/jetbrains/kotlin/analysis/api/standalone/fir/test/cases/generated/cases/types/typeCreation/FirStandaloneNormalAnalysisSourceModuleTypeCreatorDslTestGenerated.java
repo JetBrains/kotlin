@@ -309,6 +309,58 @@ public class FirStandaloneNormalAnalysisSourceModuleTypeCreatorDslTestGenerated 
   }
 
   @Nested
+  @TestMetadata("analysis/analysis-api/testData/types/typeCreation/byDsl/flexibleType")
+  @TestDataPath("$PROJECT_ROOT")
+  public class FlexibleType {
+    @Test
+    public void testAllFilesPresentInFlexibleType() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/types/typeCreation/byDsl/flexibleType"), Pattern.compile("^(.+)\\.kt$"), null, true);
+    }
+
+    @Test
+    @TestMetadata("anyAndNullableAny.kt")
+    public void testAnyAndNullableAny() {
+      runTest("analysis/analysis-api/testData/types/typeCreation/byDsl/flexibleType/anyAndNullableAny.kt");
+    }
+
+    @Test
+    @TestMetadata("flexibleTypeWithReplaceUpperBound.kt")
+    public void testFlexibleTypeWithReplaceUpperBound() {
+      runTest("analysis/analysis-api/testData/types/typeCreation/byDsl/flexibleType/flexibleTypeWithReplaceUpperBound.kt");
+    }
+
+    @Test
+    @TestMetadata("intAndNullableInt.kt")
+    public void testIntAndNullableInt() {
+      runTest("analysis/analysis-api/testData/types/typeCreation/byDsl/flexibleType/intAndNullableInt.kt");
+    }
+
+    @Test
+    @TestMetadata("nothingAndNullableAny.kt")
+    public void testNothingAndNullableAny() {
+      runTest("analysis/analysis-api/testData/types/typeCreation/byDsl/flexibleType/nothingAndNullableAny.kt");
+    }
+
+    @Test
+    @TestMetadata("twoFlexibleTypes.kt")
+    public void testTwoFlexibleTypes() {
+      runTest("analysis/analysis-api/testData/types/typeCreation/byDsl/flexibleType/twoFlexibleTypes.kt");
+    }
+
+    @Test
+    @TestMetadata("twoUserTypes.kt")
+    public void testTwoUserTypes() {
+      runTest("analysis/analysis-api/testData/types/typeCreation/byDsl/flexibleType/twoUserTypes.kt");
+    }
+
+    @Test
+    @TestMetadata("withAnnotations.kt")
+    public void testWithAnnotations() {
+      runTest("analysis/analysis-api/testData/types/typeCreation/byDsl/flexibleType/withAnnotations.kt");
+    }
+  }
+
+  @Nested
   @TestMetadata("analysis/analysis-api/testData/types/typeCreation/byDsl/starTypeProjection")
   @TestDataPath("$PROJECT_ROOT")
   public class StarTypeProjection {
