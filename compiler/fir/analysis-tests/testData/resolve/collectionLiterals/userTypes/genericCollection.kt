@@ -4,11 +4,11 @@
 
 class MyList<T> {
     companion object {
-        <!INAPPLICABLE_OPERATOR_MODIFIER!>operator<!> fun <T> of(vararg vals: T): MyList<T> = MyList<T>()
+        <!INAPPLICABLE_OPERATOR_MODIFIER!>operator<!> fun <T1> of(vararg vals: T1): MyList<T1> = MyList<T1>()
     }
 }
 
-fun <T> acceptList(l: MyList<T>) = Unit
+fun <T2> acceptList(l: MyList<T2>) = Unit
 fun acceptStringList(l: MyList<String>) = Unit
 
 class A
