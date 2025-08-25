@@ -35,6 +35,7 @@ internal abstract class ThrowAwayMetadataJarsTransform : TransformAction<Transfo
             outputs.file(jar)
             return
         }
+        if (!jar.exists()) return
 
         val isMetadataJar: Boolean = ZipFile(jar).use { zip ->
             zip.entries().asSequence().any {
