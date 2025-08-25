@@ -273,6 +273,7 @@ object CheckContextArguments : ResolutionStage() {
             }
 
         val resultingContextArguments = mutableListOf<ConeResolutionAtom>()
+        var errorReported = false
 
         for (symbol in contextSymbols) {
             val expectedType = substitutor.substituteOrSelf(symbol.resolvedReturnType)
@@ -280,7 +281,7 @@ object CheckContextArguments : ResolutionStage() {
             when (potentialContextArguments.size) {
                 0 -> {
                     sink.reportDiagnostic(NoContextArgument(symbol))
-                    return null
+                    errorReported = true
                 }
                 1 -> {
                     val matchingReceiver = potentialContextArguments.single()
@@ -289,12 +290,12 @@ object CheckContextArguments : ResolutionStage() {
                 }
                 else -> {
                     sink.reportDiagnostic(AmbiguousContextArgument(symbol))
-                    return null
+                    errorReported = true
                 }
             }
         }
 
-        return resultingContextArguments
+        return resultingContextArguments.takeUnless { errorReported }
     }
 
     private fun Candidate.findClosestMatchingContextArguments(

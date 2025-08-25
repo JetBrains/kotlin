@@ -2,7 +2,7 @@
 // LANGUAGE: +ContextParameters
 
 fun foo() {
-    <!NO_CONTEXT_ARGUMENT("_: String")!>bar<!>()
+    <!NO_CONTEXT_ARGUMENT("_: String"), NO_CONTEXT_ARGUMENT("_: Int")!>bar<!>()
 }
 
 context(_: String, _: Int)
