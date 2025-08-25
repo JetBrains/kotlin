@@ -59,6 +59,10 @@ internal class CrossCompilationData(
     @get:Internal
     val crossCompilationSupported
         get() = if (targetSupported) crossCompilationEnabled else !hasCInterops && crossCompilationEnabled
+
+    override fun toString(): String {
+        return "CrossCompilationData(cInterops=$cInterops, targetSupported=$targetSupported, crossCompilationEnabled=$crossCompilationEnabled, crossCompilationSupported=$crossCompilationSupported)"
+    }
 }
 
 internal fun KotlinSecondaryVariantsDataSharing.consumeCrossCompilationMetadata(

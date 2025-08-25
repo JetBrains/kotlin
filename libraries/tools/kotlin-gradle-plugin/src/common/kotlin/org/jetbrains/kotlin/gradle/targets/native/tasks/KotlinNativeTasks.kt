@@ -335,6 +335,13 @@ internal constructor(
         (compilation.tcs.compilation as AbstractKotlinNativeCompilation).configurations.compileDependencyConfiguration
     ).files
 
+    @get:Internal
+    internal val crossCompilationData = project.provider {
+        project.kotlinSecondaryVariantsDataSharing.consumeCrossCompilationMetadata(
+            (compilation.tcs.compilation as AbstractKotlinNativeCompilation).configurations.compileDependencyConfiguration
+        ).getDataForAllDependencies()
+    }
+
     @get:Nested
     internal val kotlinNativeProvider: Property<KotlinNativeProvider> =
         project.objects.propertyWithConvention<KotlinNativeProvider>(
@@ -587,6 +594,13 @@ internal constructor(
 
     @TaskAction
     fun compile() {
+
+        val ccFiles = crossCompilationMetadata.files
+        val ccData = crossCompilationData.get()
+
+        println("ccFiles = $ccFiles")
+        println("ccData = $ccData")
+
         val buildMetrics = metrics.get()
         addBuildMetricsForTaskAction(
             metricsReporter = buildMetrics,

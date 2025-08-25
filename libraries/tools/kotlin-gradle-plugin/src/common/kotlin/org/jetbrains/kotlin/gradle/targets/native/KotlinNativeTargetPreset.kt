@@ -146,6 +146,8 @@ internal val AbstractKotlinNativeCompilation.dependenciesContainsCinterops: Bool
             compilation.configurations.compileDependencyConfiguration
         ).getDataForAllDependencies()
 
+        println("dependenciesContainsCinterops: crossCompilationData=$crossCompilationData")
+
         return crossCompilationData.any { it.hasCInterops }
     }
 
