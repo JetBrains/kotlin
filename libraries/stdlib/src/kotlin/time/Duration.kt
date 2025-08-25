@@ -1330,14 +1330,14 @@ private fun String.parseLong(startIndex: Int, parseRule: ParseRule): NumericPars
             index++
         }
     }
-    while (index < length && this[index] == '0') index++
+    index = skipWhile(index) { it == '0' }
     var result = 0L
     while (index < length) {
         val ch = this[index]
         if (ch !in '0'..'9') break
         val digit = ch - '0'
         if (result > parseRule.overflowThreshold || (result == parseRule.overflowThreshold && digit > parseRule.lastDigitMax)) {
-            while (index < length && this[index] in '0'..'9') index++
+            index = skipWhile(index) { it in '0'..'9' }
             return NumericParseData(parseRule.overflowLimit * sign, index, sign, hasOverflow = true)
         }
         result = result.multiplyBy10() + digit
@@ -1373,7 +1373,7 @@ private fun String.parseFraction(startIndex: Int): NumericParseData {
     val r1 = parseDigits(9)
     val r2 = parseDigits(FRACTION_LIMIT - 9)
 
-    while (index < length && this[index] in '0'..'9') index++
+    index = skipWhile(index) { it in '0'..'9' }
 
     return NumericParseData(r1.toLong() * 1_000_000 + r2, index)
 }
