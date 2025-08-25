@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.backend.ir.IrPreSerializationJsSymbolValidationHandler
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.klib.AbstractPreSerializationSymbolsTest
-import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
+import org.jetbrains.kotlin.test.services.configuration.JsFirstStageEnvironmentConfigurator
 
 @Suppress("JUnitTestCaseWithNoTests")
 class JsPreSerializationSymbolsTest : AbstractPreSerializationSymbolsTest(
@@ -23,6 +23,6 @@ class JsPreSerializationSymbolsTest : AbstractPreSerializationSymbolsTest(
     ::IrPreSerializationJsSymbolValidationHandler
 ) {
     override fun TestConfigurationBuilder.applyConfigurators() {
-        useConfigurators(::JsEnvironmentConfigurator)
+        useConfigurators(::JsFirstStageEnvironmentConfigurator)
     }
 }
