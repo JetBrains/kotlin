@@ -69,6 +69,7 @@ import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.restrictedAnalysis
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.session.*
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.symbols.*
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.types.*
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.types.typeCreation.AbstractTypeCreatorDslTest
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.*
 import org.jetbrains.kotlin.generators.dsl.TestGroup
 import org.jetbrains.kotlin.generators.tests.analysis.api.dsl.*
@@ -298,6 +299,12 @@ private fun AnalysisApiTestGroup.generateAnalysisApiNonComponentsTests() {
             group("typePointers", filter = frontendIs(FrontendKind.Fir)) {
                 test<AbstractTypePointerConsistencyTest> {
                     model(it, "consistency")
+                }
+            }
+
+            group("typeCreation") {
+                test<AbstractTypeCreatorDslTest> {
+                    model(it, "byDsl")
                 }
             }
         }
