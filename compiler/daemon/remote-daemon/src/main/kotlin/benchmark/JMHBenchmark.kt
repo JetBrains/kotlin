@@ -1,0 +1,4 @@
+package benchmark
+
+class JMHBenchmark {
+}
