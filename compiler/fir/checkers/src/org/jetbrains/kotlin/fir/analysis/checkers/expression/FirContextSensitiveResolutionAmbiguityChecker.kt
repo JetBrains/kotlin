@@ -76,7 +76,7 @@ object FirContextSensitiveResolutionAmbiguityCheckerForEqualities : FirEqualityO
         } ?: return
 
         FirContextSensitiveResolutionAmbiguityChecker.check(
-            contextualType = expression.argument.resolvedType,
+            contextualType = expression.arguments[0].resolvedType,
             resolvedSymbol = resolvedSymbol,
             name = name,
             source = rhs.source
