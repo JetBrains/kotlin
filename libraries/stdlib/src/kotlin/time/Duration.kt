@@ -1360,7 +1360,7 @@ private fun String.parseFraction(startIndex: Int): NumericParseData {
         while (index < length && count < maxDigits) {
             val ch = this[index]
             if (ch !in '0'..'9') break
-            result = result * 10 + (ch - '0')
+            result = result.multiplyBy10() + (ch - '0')
             count++
             index++
         }
