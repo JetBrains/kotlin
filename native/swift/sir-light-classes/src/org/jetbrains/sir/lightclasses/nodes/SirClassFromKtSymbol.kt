@@ -124,8 +124,22 @@ internal class SirEnumFromKtSymbol(
             argumentName = "__externalRCRefUnsafe",
             type = unsafeMutableRawPointerFlexibleType()
         )
+        val caseSelector = if (cases.isEmpty()) {
+            "default: fatalError()"
+        } else {
+            cases.joinToString(separator = "\n                    ") {
+                val condition = if (it === cases.last()) "default" else "case $name.${it.name}.__externalRCRef()"
+                "$condition: self = .${it.name}"
+            }
+        }
         body = SirFunctionBody(
-            listOf("super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)")
+            listOf(
+                """
+                    switch __externalRCRefUnsafe {
+                    $caseSelector
+                    }
+                """.trimIndent()
+            )
         )
     }.also { it.parent = this }
 
