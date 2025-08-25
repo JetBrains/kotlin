@@ -163,7 +163,6 @@ internal class ICHasher(checkForClassStructuralChanges: Boolean = false) {
 
         val booleanKeys = listOf(
             JSConfigurationKeys.SOURCE_MAP,
-            JSConfigurationKeys.META_INFO,
             JSConfigurationKeys.DEVELOPER_MODE,
             JSConfigurationKeys.USE_ES6_CLASSES,
             JSConfigurationKeys.GENERATE_POLYFILLS,
