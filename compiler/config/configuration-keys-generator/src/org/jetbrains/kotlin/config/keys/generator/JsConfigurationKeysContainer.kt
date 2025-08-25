@@ -42,8 +42,6 @@ object JsConfigurationKeysContainer : KeysContainer("org.jetbrains.kotlin.js.con
 
     val META_INFO by key<Boolean>("generate .meta.js and .kjsm files")
 
-    val TARGET by key<EcmaVersion>("ECMA version target")
-
     val MODULE_KIND by key<ModuleKind>("module kind")
 
     val JS_INCREMENTAL_COMPILATION_ENABLED by key<Boolean>("incremental compilation enabled")

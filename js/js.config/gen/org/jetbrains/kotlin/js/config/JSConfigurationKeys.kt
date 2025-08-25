@@ -63,9 +63,6 @@ object JSConfigurationKeys {
     val META_INFO = CompilerConfigurationKey.create<Boolean>("generate .meta.js and .kjsm files")
 
     @JvmField
-    val TARGET = CompilerConfigurationKey.create<EcmaVersion>("ECMA version target")
-
-    @JvmField
     val MODULE_KIND = CompilerConfigurationKey.create<ModuleKind>("module kind")
 
     @JvmField
@@ -239,10 +236,6 @@ var CompilerConfiguration.sourceMapIncludeMappingsFromUnavailableFiles: Boolean
 var CompilerConfiguration.metaInfo: Boolean
     get() = getBoolean(JSConfigurationKeys.META_INFO)
     set(value) { put(JSConfigurationKeys.META_INFO, value) }
-
-var CompilerConfiguration.target: EcmaVersion?
-    get() = get(JSConfigurationKeys.TARGET)
-    set(value) { put(JSConfigurationKeys.TARGET, requireNotNull(value) { "nullable values are not allowed" }) }
 
 var CompilerConfiguration.moduleKind: ModuleKind?
     get() = get(JSConfigurationKeys.MODULE_KIND)

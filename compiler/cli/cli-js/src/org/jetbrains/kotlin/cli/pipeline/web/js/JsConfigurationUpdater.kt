@@ -49,7 +49,7 @@ object JsConfigurationUpdater : ConfigurationUpdater<K2JSCompilerArguments>() {
      */
     internal fun fillConfiguration(configuration: CompilerConfiguration, arguments: K2JSCompilerArguments) {
         val messageCollector = configuration.messageCollector
-        val targetVersion = initializeAndCheckTargetVersion(arguments, configuration, messageCollector)
+        val targetVersion = initializeAndCheckTargetVersion(arguments, messageCollector)
         configuration.optimizeGeneratedJs = arguments.optimizeGeneratedJs
         val isES2015 = targetVersion == EcmaVersion.es2015
         configuration.moduleKind = configuration.moduleKind
@@ -95,12 +95,9 @@ object JsConfigurationUpdater : ConfigurationUpdater<K2JSCompilerArguments>() {
 
     private fun initializeAndCheckTargetVersion(
         arguments: K2JSCompilerArguments,
-        configuration: CompilerConfiguration,
         messageCollector: MessageCollector,
     ): EcmaVersion? {
-        val targetVersion = arguments.targetVersion?.also {
-            configuration.target = it
-        }
+        val targetVersion = arguments.targetVersion
 
         if (targetVersion == null) {
             messageCollector.report(ERROR, "Unsupported ECMA version: ${arguments.target}")
