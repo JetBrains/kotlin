@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.testing
 
+import org.gradle.api.file.FileCollection
 import kotlin.reflect.full.memberProperties
 
 /** Pretty print diffable by text and copypastable collection-like hierarchies */
@@ -17,6 +18,18 @@ class PrettyPrint<T : Any>(
         val indentationSpace = " ".repeat(indentation)
         val nextIndentationDepth = indentation + 2
         val elements: Array<String> = when (value) {
+            is FileCollection -> {
+                val files = value.files.map { it.absolutePath }
+                arrayOf(
+                    PrettyPrintedFileCollection(files).prettyPrinted(indentation).toString()
+                )
+            }
+            is PrettyPrintedFileCollection -> arrayOf(
+                "prettyPrintedFileCollectionOf(",
+                *value.map { twoSpaces + it.prettyPrinted(nextIndentationDepth) + "," }.toTypedArray(),
+                ")"
+            )
+
             is Map<*, *> -> arrayOf(
                 "mutableMapOf(",
                 *value.map { it }.sortedBy { it.key.toString() }.map {
@@ -79,3 +92,6 @@ class PrettyPrint<T : Any>(
 }
 
 val <T : Any> T.prettyPrinted: PrettyPrint<T> get() = PrettyPrint(this, 0)
+
+private class PrettyPrintedFileCollection(files: List<String>) : List<String> by files
+fun prettyPrintedFileCollectionOf(vararg files: String): List<String> = PrettyPrintedFileCollection(files.toList())
