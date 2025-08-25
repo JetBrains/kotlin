@@ -985,7 +985,7 @@ object FirStub : FirExpression() {
 class FakeExpressionEnterNode(owner: ControlFlowGraph, level: Int) : CFGNode<FirStub>(owner, level), GraphEnterNodeMarker, GraphExitNodeMarker {
     init { isDead = true }
 
-    override val fir: FirStub = FirStub
+    override val fir: FirStub get() = FirStub
 
     override fun <R, D> accept(visitor: ControlFlowGraphVisitor<R, D>, data: D): R {
         return visitor.visitFakeExpressionEnterNode(this, data)
