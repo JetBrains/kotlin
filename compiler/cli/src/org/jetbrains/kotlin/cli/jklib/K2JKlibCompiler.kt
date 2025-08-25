@@ -540,6 +540,7 @@ class K2JKlibCompiler : CLICompiler<K2JKlibCompilerArguments>() {
             ).forEach {
                 symbolFinder.findClass(it, FqName("kotlin.jvm.internal"))
             }
+
             listOf(
                 Name.identifier("toBooleanArrayInitializer"),
                 Name.identifier("toIntArrayInitializer"),
@@ -552,6 +553,17 @@ class K2JKlibCompiler : CLICompiler<K2JKlibCompilerArguments>() {
                 Name.identifier("toArrayInitializer"),
             ).forEach {
                 symbolFinder.findFunctions(it, FqName("kotlin.jvm.internal"))
+            }
+
+            val jsUtils = symbolFinder.findClass(Name.identifier("JsUtils"), FqName("javaemul.internal"))
+            if (jsUtils != null) {
+                listOf(
+                    Name.identifier("undefined"),
+                    Name.identifier("isUndefined"),
+                    Name.identifier("coerceToNull"),
+                ).forEach {
+                    symbolFinder.findMemberFunction(jsUtils, it)
+                }
             }
         }
         val stubGenerator =
