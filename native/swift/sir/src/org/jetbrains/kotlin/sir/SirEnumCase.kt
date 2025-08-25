@@ -9,9 +9,8 @@ class SirEnumCase(
     override val name: String,
     val parameters: List<SirParameter>,
     val enum: SirEnum,
+    override val origin: SirOrigin,
 ) : SirNamedDeclaration {
-    override val origin: SirOrigin
-        get() = enum.origin
     override val visibility: SirVisibility
         get() = SirVisibility.PUBLIC
     override val documentation: String?

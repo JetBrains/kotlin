@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.sir.providers.support
 
 import org.jetbrains.kotlin.sir.SirClass
 import org.jetbrains.kotlin.sir.SirDeclaration
+import org.jetbrains.kotlin.sir.SirEnum
 import org.jetbrains.kotlin.sir.SirFunction
 import org.jetbrains.kotlin.sir.SirProtocol
 import org.jetbrains.kotlin.sir.SirVariable
@@ -18,6 +19,12 @@ fun List<SirDeclaration>.classNamed(className: String): SirClass {
     return filterIsInstance<SirClass>()
         .firstOrNull { it.name == className }
         ?: error("Class $className not found")
+}
+
+fun List<SirDeclaration>.enumNamed(enumName: String): SirEnum {
+    return filterIsInstance<SirEnum>()
+        .firstOrNull { it.name == enumName }
+        ?: error("Class $enumName not found")
 }
 
 fun List<SirDeclaration>.protocolNamed(protocolName: String): SirProtocol {
