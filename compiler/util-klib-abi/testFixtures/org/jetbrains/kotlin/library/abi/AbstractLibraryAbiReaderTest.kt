@@ -7,8 +7,6 @@ package org.jetbrains.kotlin.library.abi
 
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.js.test.converters.*
-import org.jetbrains.kotlin.js.test.converters.JsIrPreSerializationLoweringFacade
-import org.jetbrains.kotlin.js.test.converters.ClassicJsKlibSerializerFacade
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.js.JsPlatforms
 import org.jetbrains.kotlin.test.Constructor
@@ -33,7 +31,7 @@ import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerWithTargetBackendTest
 import org.jetbrains.kotlin.test.services.LibraryProvider
 import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigurator
-import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
+import org.jetbrains.kotlin.test.services.configuration.JsFirstStageEnvironmentConfigurator
 
 /**
  * This test class can potentially be re-used in the future for other backends.
@@ -98,7 +96,7 @@ abstract class AbstractJsLibraryAbiReaderTest<FrontendOutput : ResultingArtifact
     override fun configure(builder: TestConfigurationBuilder) = with(builder) {
         useConfigurators(
             ::CommonEnvironmentConfigurator,
-            ::JsEnvironmentConfigurator,
+            ::JsFirstStageEnvironmentConfigurator,
         )
         super.configure(builder)
     }

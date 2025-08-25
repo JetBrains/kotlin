@@ -9,13 +9,13 @@ import org.jetbrains.kotlin.analysis.test.framework.services.configuration.Analy
 import org.jetbrains.kotlin.analysis.test.framework.utils.SkipTestException
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigurator
-import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
+import org.jetbrains.kotlin.test.services.configuration.JsFirstStageEnvironmentConfigurator
 
 fun TestConfigurationBuilder.configurePlatformEnvironmentConfigurators() {
     useConfigurators(
         ::CommonEnvironmentConfigurator,
         ::AnalysisApiJvmEnvironmentConfigurator,
-        ::JsEnvironmentConfigurator
+        ::JsFirstStageEnvironmentConfigurator,
     )
 }
 

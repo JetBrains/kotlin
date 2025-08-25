@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -8,26 +8,20 @@ package org.jetbrains.kotlin.test.services.configuration
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.config.AnalysisFlags.allowFullyQualifiedNameInKClass
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.TranslationMode
-import org.jetbrains.kotlin.js.config.*
-import org.jetbrains.kotlin.platform.isJs
-import org.jetbrains.kotlin.test.TargetBackend
+import org.jetbrains.kotlin.js.config.ModuleKind
+import org.jetbrains.kotlin.js.config.moduleKind
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives
-import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives.GENERATE_INLINE_ANONYMOUS_FUNCTIONS
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives.JS_MODULE_KIND
-import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives.PROPERTY_LAZY_INITIALIZATION
-import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives.SOURCE_MAP_EMBED_SOURCES
 import org.jetbrains.kotlin.test.directives.KlibBasedCompilerTestDirectives
-import org.jetbrains.kotlin.test.directives.KlibBasedCompilerTestDirectives.KLIB_RELATIVE_PATH_BASES
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.test.util.joinToArrayString
-import org.jetbrains.kotlin.utils.addToStdlib.applyIf
 import java.io.File
 
-class JsEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfigurator(testServices) {
+abstract class JsEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfigurator(testServices) {
     override val directiveContainers: List<DirectivesContainer>
         get() = listOf(JsEnvironmentConfigurationDirectives, KlibBasedCompilerTestDirectives)
 
@@ -129,16 +123,8 @@ class JsEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfigu
         }
     }
 
-    override fun DirectiveToConfigurationKeyExtractor.provideConfigurationKeys() {
-        register(PROPERTY_LAZY_INITIALIZATION, JSConfigurationKeys.PROPERTY_LAZY_INITIALIZATION)
-        register(GENERATE_INLINE_ANONYMOUS_FUNCTIONS, JSConfigurationKeys.GENERATE_INLINE_ANONYMOUS_FUNCTIONS)
-    }
-
     override fun configureCompilerConfiguration(configuration: CompilerConfiguration, module: TestModule) {
-        if (!module.targetPlatform(testServices).isJs()) return
-
         configuration.phaseConfig = createJsTestPhaseConfig(testServices, module)
-        configuration.outputDir = getKlibArtifactFile(testServices, module.name)
 
         val registeredDirectives = module.directives
         val moduleKinds = registeredDirectives[JS_MODULE_KIND]
@@ -148,47 +134,8 @@ class JsEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfigu
             1 -> moduleKinds.single()
             else -> error("Too many module kinds passed ${moduleKinds.joinToArrayString()}")
         }
-        configuration.put(JSConfigurationKeys.MODULE_KIND, moduleKind)
-
-        val dependencies = module.regularDependencies.map { getKlibArtifactFile(testServices, it.dependencyModule.name).absolutePath }
-        val friends = module.friendDependencies.map { getKlibArtifactFile(testServices, it.dependencyModule.name).absolutePath }
-
-        val libraries = when (val targetBackend = testServices.defaultsProvider.targetBackend) {
-            null -> listOf(
-                testServices.standardLibrariesPathProvider.fullJsStdlib().absolutePath,
-                testServices.standardLibrariesPathProvider.kotlinTestJsKLib().absolutePath
-            )
-            TargetBackend.JS_IR, TargetBackend.JS_IR_ES6 -> getRuntimePathsForModule(module, testServices) + dependencies + friends
-            else -> error("Unsupported target backend: $targetBackend")
-        }
-        configuration.put(JSConfigurationKeys.LIBRARIES, libraries)
-        configuration.friendLibraries = friends
-
-        configuration.put(CommonConfigurationKeys.MODULE_NAME, module.name.removeSuffix(OLD_MODULE_SUFFIX))
-
-        val sourceDirs = module.files.mapNotNull { it.originalFile.parent }.distinct()
-        configuration.put(JSConfigurationKeys.SOURCE_MAP_SOURCE_ROOTS, sourceDirs)
-        configuration.put(JSConfigurationKeys.SOURCE_MAP, true)
-
-        val sourceMapSourceEmbedding = registeredDirectives[SOURCE_MAP_EMBED_SOURCES].singleOrNull() ?: SourceMapSourceEmbedding.NEVER
-        configuration.put(JSConfigurationKeys.SOURCE_MAP_EMBED_SOURCES, sourceMapSourceEmbedding)
-
-        configuration.put(JSConfigurationKeys.GENERATE_POLYFILLS, true)
-        configuration.put(JSConfigurationKeys.GENERATE_REGION_COMMENTS, true)
-
-        configuration.put(
-            JSConfigurationKeys.FILE_PATHS_PREFIX_MAP,
-            mapOf(File(".").absolutePath.removeSuffix(".") to "")
-        )
-
-        configuration.klibRelativePathBases = registeredDirectives[KLIB_RELATIVE_PATH_BASES].applyIf(testServices.cliBasedFacadesEnabled) {
-            val modulePath = testServices.sourceFileProvider.getKotlinSourceDirectoryForModule(module).canonicalPath
-            map { "$modulePath/$it" }
-        }
-
-        if (testServices.cliBasedFacadesEnabled) {
-            configuration.addSourcesForDependsOnClosure(module, testServices)
-        }
+        configuration.moduleKind = moduleKind
+        configuration.moduleName = module.name.removeSuffix(OLD_MODULE_SUFFIX)
     }
 }
 

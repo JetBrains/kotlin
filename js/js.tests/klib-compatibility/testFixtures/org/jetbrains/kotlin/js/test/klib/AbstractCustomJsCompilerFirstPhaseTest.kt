@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.test.model.DependencyKind
 import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerWithTargetBackendTest
 import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigurator
-import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
+import org.jetbrains.kotlin.test.services.configuration.JsSecondStageEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.sourceProviders.AdditionalDiagnosticsSourceFilesProvider
 import org.jetbrains.kotlin.test.services.sourceProviders.CoroutineHelpersSourceFilesProvider
 import org.jetbrains.kotlin.utils.bind
@@ -38,7 +38,7 @@ open class AbstractCustomJsCompilerFirstPhaseTest : AbstractKotlinCompilerWithTa
         useConfigurators(
             // These configurators are only necessary for the second compilation phase:
             ::CommonEnvironmentConfigurator,
-            ::JsEnvironmentConfigurator,
+            ::JsSecondStageEnvironmentConfigurator,
 
             // And this configurator is necessary for the first (custom) compilation phase:
             ::CustomWebCompilerFirstPhaseEnvironmentConfigurator,

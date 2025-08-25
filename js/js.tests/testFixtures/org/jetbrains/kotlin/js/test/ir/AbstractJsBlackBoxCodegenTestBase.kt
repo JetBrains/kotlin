@@ -35,7 +35,8 @@ import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerWithTargetBackendTest
 import org.jetbrains.kotlin.test.services.AbstractEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigurator
-import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
+import org.jetbrains.kotlin.test.services.configuration.JsFirstStageEnvironmentConfigurator
+import org.jetbrains.kotlin.test.services.configuration.JsSecondStageEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.sourceProviders.AdditionalDiagnosticsSourceFilesProvider
 import org.jetbrains.kotlin.test.services.sourceProviders.CoroutineHelpersSourceFilesProvider
 import org.jetbrains.kotlin.utils.bind
@@ -247,7 +248,8 @@ fun TestConfigurationBuilder.commonServicesConfigurationForJsCodegenTest(
     if (customConfigurators == null) {
         useConfigurators(
             ::CommonEnvironmentConfigurator,
-            ::JsEnvironmentConfigurator,
+            ::JsFirstStageEnvironmentConfigurator,
+            ::JsSecondStageEnvironmentConfigurator,
         )
     } else {
         useConfigurators(*customConfigurators.toTypedArray())

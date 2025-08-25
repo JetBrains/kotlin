@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.analysis.test.framework.test.configurators.FrontendK
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.services.TestModuleStructure
 import org.jetbrains.kotlin.test.services.TestServices
-import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
+import org.jetbrains.kotlin.test.services.configuration.JsFirstStageEnvironmentConfigurator
 
 object AnalysisApiFirLibrarySourceTestConfigurator : AnalysisApiTestConfigurator() {
     override val analyseInDependentSession: Boolean get() = false
@@ -45,7 +45,7 @@ object AnalysisApiFirLibrarySourceTestConfigurator : AnalysisApiTestConfigurator
             useAdditionalService { AnalysisApiIndexingConfiguration(AnalysisApiBinaryLibraryIndexingMode.INDEX_STUBS) }
             useConfigurators(
                 ::AnalysisApiJvmEnvironmentConfigurator,
-                ::JsEnvironmentConfigurator,
+                ::JsFirstStageEnvironmentConfigurator,
             )
         }
     }

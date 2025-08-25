@@ -22,9 +22,9 @@ import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerTest
 import org.jetbrains.kotlin.test.services.LibraryProvider
 import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigurator
+import org.jetbrains.kotlin.test.services.configuration.JsFirstStageEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.sourceProviders.AdditionalDiagnosticsSourceFilesProvider
 import org.jetbrains.kotlin.test.services.sourceProviders.CoroutineHelpersSourceFilesProvider
-import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
 
 abstract class AbstractDiagnosticsTestWithJsStdLib : AbstractKotlinCompilerTest() {
     override fun configure(builder: TestConfigurationBuilder) = with(builder) {
@@ -48,7 +48,7 @@ abstract class AbstractDiagnosticsTestWithJsStdLib : AbstractKotlinCompilerTest(
 
         useConfigurators(
             ::CommonEnvironmentConfigurator,
-            ::JsEnvironmentConfigurator,
+            ::JsFirstStageEnvironmentConfigurator,
         )
 
         useMetaInfoProcessors(::OldNewInferenceMetaInfoProcessor)

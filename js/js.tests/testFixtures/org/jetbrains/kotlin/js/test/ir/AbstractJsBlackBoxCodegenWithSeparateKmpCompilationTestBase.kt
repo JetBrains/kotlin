@@ -27,7 +27,8 @@ import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerWithTargetBackend
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.DelegatingEnvironmentConfiguratorForSeparateKmpCompilation
-import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
+import org.jetbrains.kotlin.test.services.configuration.JsFirstStageEnvironmentConfigurator
+import org.jetbrains.kotlin.test.services.configuration.JsSecondStageEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.MetadataEnvironmentConfiguratorForSeparateKmpCompilation
 import org.jetbrains.kotlin.test.services.isLeafModuleInMppGraph
 
@@ -51,7 +52,8 @@ abstract class AbstractJsBlackBoxCodegenWithSeparateKmpCompilationTestBase(
             customConfigurators = listOf(
                 ::CommonEnvironmentConfigurator,
                 ::MetadataEnvironmentConfiguratorForSeparateKmpCompilation,
-                ::JsEnvironmentConfiguratorForSeparateKmpCompilation,
+                ::JsFirstStageEnvironmentConfiguratorForSeparateKmpCompilation,
+                ::JsSecondStageEnvironmentConfiguratorForSeparateKmpCompilation,
             )
         )
 
@@ -80,9 +82,17 @@ abstract class AbstractJsBlackBoxCodegenWithSeparateKmpCompilationTestBase(
     }
 }
 
-class JsEnvironmentConfiguratorForSeparateKmpCompilation(
+class JsFirstStageEnvironmentConfiguratorForSeparateKmpCompilation(
     testServices: TestServices
-) : DelegatingEnvironmentConfiguratorForSeparateKmpCompilation(testServices, ::JsEnvironmentConfigurator) {
+) : DelegatingEnvironmentConfiguratorForSeparateKmpCompilation(testServices, ::JsFirstStageEnvironmentConfigurator) {
+    override fun shouldApply(module: TestModule): Boolean {
+        return module.isLeafModuleInMppGraph(testServices)
+    }
+}
+
+class JsSecondStageEnvironmentConfiguratorForSeparateKmpCompilation(
+    testServices: TestServices
+) : DelegatingEnvironmentConfiguratorForSeparateKmpCompilation(testServices, ::JsSecondStageEnvironmentConfigurator) {
     override fun shouldApply(module: TestModule): Boolean {
         return module.isLeafModuleInMppGraph(testServices)
     }

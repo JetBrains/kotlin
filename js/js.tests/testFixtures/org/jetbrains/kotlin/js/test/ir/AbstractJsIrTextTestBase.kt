@@ -21,7 +21,8 @@ import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.runners.ir.AbstractNonJvmIrTextTest
 import org.jetbrains.kotlin.test.services.LibraryProvider
 import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigurator
-import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
+import org.jetbrains.kotlin.test.services.configuration.JsFirstStageEnvironmentConfigurator
+import org.jetbrains.kotlin.test.services.configuration.JsSecondStageEnvironmentConfigurator
 
 abstract class AbstractJsIrTextTestBase<FrontendOutput : ResultingArtifact.FrontendOutput<FrontendOutput>> :
     AbstractNonJvmIrTextTest<FrontendOutput>(JsPlatforms.defaultJsPlatform, TargetBackend.JS_IR) {
@@ -31,7 +32,8 @@ abstract class AbstractJsIrTextTestBase<FrontendOutput : ResultingArtifact.Front
     final override fun TestConfigurationBuilder.applyConfigurators() {
         useConfigurators(
             ::CommonEnvironmentConfigurator,
-            ::JsEnvironmentConfigurator,
+            ::JsFirstStageEnvironmentConfigurator,
+            ::JsSecondStageEnvironmentConfigurator,
         )
 
         useAdditionalService(::LibraryProvider)
