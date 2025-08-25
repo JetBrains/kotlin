@@ -38,18 +38,6 @@ projectTests {
     withStdlibJsRuntime()
     withTestJsRuntime()
 
-    withStdlibCommon()
-    withMockJdkRuntime()
-    withMockJdkAnnotationsJar()
-    withThirdPartyAnnotations()
-    withThirdPartyJsr305()
-    withTestJar()
-    withMockJDKModifiedRuntime()
-    withJvmStdlibAndReflect()
-    withScriptingPlugin()
-    withAnnotations()
-    withScriptRuntime()
-
     testTask(jUnitMode = JUnitMode.JUnit5) {
         outputs.dir(layout.buildDirectory.dir("t"))
         useJUnitPlatform()
