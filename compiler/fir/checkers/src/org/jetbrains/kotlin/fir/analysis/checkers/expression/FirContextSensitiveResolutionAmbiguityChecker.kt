@@ -40,7 +40,7 @@ object FirContextSensitiveResolutionAmbiguityChecker {
         for (classToLookAt in chainToLookAt) {
             val problems = classToLookAt.declaredMemberScope().getClassifiers(name)
             if (problems.isEmpty()) continue
-            if (problems.none { it == resolvedSymbol }) {
+            if (resolvedSymbol !in problems) {
                 reporter.reportOn(
                     source,
                     FirErrors.CONTEXT_SENSITIVE_RESOLUTION_AMBIGUITY,
