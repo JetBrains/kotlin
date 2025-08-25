@@ -53,6 +53,7 @@ import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens.*
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
+import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.util.getChildren
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
@@ -61,10 +62,10 @@ class LightTreeRawFirDeclarationBuilder(
     session: FirSession,
     internal val baseScopeProvider: FirScopeProvider,
     tree: FlyweightCapableTreeStructure<LighterASTNode>,
+    private val headerCompilationMode: Boolean = false,
     context: Context<LighterASTNode> = Context(),
 ) : AbstractLightTreeRawFirBuilder(session, tree, context) {
-
-    private val expressionConverter = LightTreeRawFirExpressionBuilder(session, tree, this, context)
+    private val expressionConverter = LightTreeRawFirExpressionBuilder(session, tree, this, headerCompilationMode, context)
 
     /**
      * [org.jetbrains.kotlin.parsing.KotlinParsing.parseFile]
@@ -96,7 +97,12 @@ class LightTreeRawFirDeclarationBuilder(
                 }
                 IMPORT_LIST -> importList += convertImportDirectives(child)
                 CLASS -> firDeclarationList += convertClass(child)
-                FUN -> firDeclarationList += convertFunctionDeclaration(child) as FirDeclaration
+                FUN -> {
+                    val functionDeclaration = convertFunctionDeclaration(child)
+                    if (functionDeclaration != null) {
+                        firDeclarationList += functionDeclaration as FirDeclaration
+                    }
+                }
                 KtNodeTypes.PROPERTY -> firDeclarationList += convertPropertyDeclaration(child)
                 TYPEALIAS -> firDeclarationList += convertTypeAlias(child)
                 OBJECT_DECLARATION -> firDeclarationList += convertClass(child)
@@ -142,7 +148,12 @@ class LightTreeRawFirDeclarationBuilder(
         val firStatements = block.forEachChildrenReturnList { node, container ->
             when (node.tokenType) {
                 CLASS, OBJECT_DECLARATION -> container += convertClass(node) as FirStatement
-                FUN -> container += convertFunctionDeclaration(node)
+                FUN -> {
+                    val functionDeclaration = convertFunctionDeclaration(node)
+                    if (functionDeclaration != null) {
+                        container += functionDeclaration
+                    }
+                }
                 KtNodeTypes.PROPERTY -> container += convertPropertyDeclaration(node) as FirStatement
                 DESTRUCTURING_DECLARATION -> container +=
                     convertDestructingDeclaration(node).toFirDestructingDeclaration(this, baseModuleData)
@@ -938,7 +949,11 @@ class LightTreeRawFirDeclarationBuilder(
         when (node.tokenType) {
             ENUM_ENTRY -> container += convertEnumEntry(node, classWrapper!!)
             CLASS -> container += convertClass(node)
-            FUN -> container += convertFunctionDeclaration(node) as FirDeclaration
+            FUN -> {
+                val functionDeclaration = convertFunctionDeclaration(node)
+                if (functionDeclaration != null)
+                    container += functionDeclaration as FirDeclaration
+            }
             KtNodeTypes.PROPERTY -> container += convertPropertyDeclaration(node, classWrapper)
             TYPEALIAS -> container += convertTypeAlias(node)
             OBJECT_DECLARATION -> container += convertClass(node)
@@ -1238,6 +1253,7 @@ class LightTreeRawFirDeclarationBuilder(
                 modifiers?.convertAnnotationsTo(annotations)
                 typeParameters += constructorTypeParametersFromConstructedClass(classWrapper.classBuilder.typeParameters)
                 valueParameters += firValueParameters.map { it.firValueParameter }
+                // TODO-HEADER-COMPILATION: Potentially remove this and produce an empty constructor body.
                 val (body, contractDescription) = withForcedLocalContext {
                     convertFunctionBody(block, null, allowLegacyContractDescription = true)
                 }
@@ -1759,6 +1775,10 @@ class LightTreeRawFirDeclarationBuilder(
                 valueParameters += firValueParameters
             }
             val allowLegacyContractDescription = outerContractDescription == null
+            // TODO-HEADER-COMPILATION: Potentially remove getter/setter code.
+            // (headerCompilationMode) {
+            //    buildEmptyExpressionBlock() to null
+            // }
             val bodyWithContractDescription = withForcedLocalContext {
                 convertFunctionBody(block, expression, allowLegacyContractDescription)
             }
@@ -1922,7 +1942,7 @@ class LightTreeRawFirDeclarationBuilder(
     /**
      * @see org.jetbrains.kotlin.parsing.KotlinParsing.parseFunction
      */
-    fun convertFunctionDeclaration(functionDeclaration: LighterASTNode): FirStatement {
+    fun convertFunctionDeclaration(functionDeclaration: LighterASTNode): FirStatement? {
         var modifiers: ModifierList? = null
         var identifier: String? = null
         var valueParametersList: LighterASTNode? = null
@@ -1976,8 +1996,23 @@ class LightTreeRawFirDeclarationBuilder(
                     else implicitType
             }
 
+            // TODO-HEADER-COMPILE: While it's a good idea to try to avoid
+            // producing private functions, this breaks when the function is
+            // decorated with @JvmStatic since it makes it visible to Java
+            // programs and causes symbol not found errors.
+            // Fix would be to check if the annotation is there and then skip.
+            /*
+            if (headerCompilationMode) {
+                if (calculatedModifiers.getVisibility() == Visibilities.Private) {
+                    return null
+                }
+            }
+             */
+
             val receiverTypeCalculator = receiverTypeNode?.let { { convertType(it) } }
             val functionBuilder = if (isAnonymousFunction) {
+                if (headerCompilationMode)
+                    return null
                 FirAnonymousFunctionBuilder().apply {
                     source = functionSource
                     receiverParameter = receiverTypeCalculator?.let { createReceiverParameter(it, baseModuleData, functionSymbol) }
@@ -2064,8 +2099,41 @@ class LightTreeRawFirDeclarationBuilder(
                     }
 
                     val allowLegacyContractDescription = outerContractDescription == null
-                    val bodyWithContractDescription = withForcedLocalContext {
-                        convertFunctionBody(block, expression, allowLegacyContractDescription)
+
+                    // TODO: HEADER-COMPILATION
+                    // replacing method bodies with `return null!!` doesn't seem to be ideal since it's producing a rather
+                    // long bytecode sequence:
+                    //     Code:
+                    //         0: aconst_null
+                    //         1: dup
+                    //         2: invokestatic  #18                 // Method kotlin/jvm/internal/Intrinsics.checkNotNull:(Ljava/lang/Object;)V
+                    //         5: pop
+                    //         6: new           #26                 // class kotlin/KotlinNothingValueException
+                    //         9: dup
+                    //        10: invokespecial #27                 // Method kotlin/KotlinNothingValueException."<init>":()V
+                    //        13: athrow
+                    //
+                    // Consider unconditionally throwing an exception instead.
+                    fun buildReturnNullExclExclBlock() = (
+                            FirSingleExpressionBlock(
+                                buildReturnExpression {
+                                    this.target = target
+                                    result = buildCheckNotNullCall {
+                                        argumentList = buildUnaryArgumentList(
+                                            buildLiteralExpression(null, ConstantValueKind.Null, null, setType = true)
+                                        )
+                                    }
+                                }
+                            ) to null)
+
+                    // Block is null when you have an interface or abstract function declaration.
+                    // In such cases, for header compile mode you shall not generate any code either.
+                    val bodyWithContractDescription = if (headerCompilationMode && block != null) {
+                        buildReturnNullExclExclBlock()
+                    } else {
+                        withForcedLocalContext {
+                            convertFunctionBody(block, expression, allowLegacyContractDescription)
+                        }
                     }
                     this.body = bodyWithContractDescription.first
                     val contractDescription = outerContractDescription ?: bodyWithContractDescription.second

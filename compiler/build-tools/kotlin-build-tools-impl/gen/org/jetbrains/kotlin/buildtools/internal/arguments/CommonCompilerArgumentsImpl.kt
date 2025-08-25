@@ -17,6 +17,7 @@ import kotlin.collections.mutableListOf
 import kotlin.collections.mutableMapOf
 import org.jetbrains.kotlin.buildtools.`internal`.UseFromImplModuleRestricted
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonCompilerArguments.Companion.API_VERSION
+import org.jetbrains.kotlin.buildtools.api.arguments.CommonCompilerArguments.Companion.HEADER
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonCompilerArguments.Companion.KOTLIN_HOME
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonCompilerArguments.Companion.LANGUAGE_VERSION
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonCompilerArguments.Companion.OPT_IN
@@ -120,6 +121,7 @@ internal open class CommonCompilerArgumentsImpl : CommonToolArgumentsImpl(),
     if ("LANGUAGE_VERSION" in optionsMap) { arguments.languageVersion = get(LANGUAGE_VERSION)?.stringValue }
     if ("API_VERSION" in optionsMap) { arguments.apiVersion = get(API_VERSION)?.stringValue }
     if ("KOTLIN_HOME" in optionsMap) { arguments.kotlinHome = get(KOTLIN_HOME) }
+    if ("HEADER" in optionsMap) { arguments.headerMode = get(HEADER) }
     if ("PROGRESSIVE" in optionsMap) { arguments.progressiveMode = get(PROGRESSIVE) }
     if ("OPT_IN" in optionsMap) { arguments.optIn = get(OPT_IN) }
     if ("X_NO_INLINE" in optionsMap) { arguments.noInline = get(X_NO_INLINE) }
@@ -348,6 +350,8 @@ internal open class CommonCompilerArgumentsImpl : CommonToolArgumentsImpl(),
         CommonCompilerArgument("API_VERSION")
 
     public val KOTLIN_HOME: CommonCompilerArgument<String?> = CommonCompilerArgument("KOTLIN_HOME")
+
+    public val HEADER: CommonCompilerArgument<Boolean> = CommonCompilerArgument("HEADER")
 
     public val PROGRESSIVE: CommonCompilerArgument<Boolean> = CommonCompilerArgument("PROGRESSIVE")
 

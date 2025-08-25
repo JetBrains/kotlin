@@ -62,6 +62,7 @@ class LightTreeRawFirExpressionBuilder(
     session: FirSession,
     tree: FlyweightCapableTreeStructure<LighterASTNode>,
     private val declarationBuilder: LightTreeRawFirDeclarationBuilder,
+    val headerCompilationMode: Boolean = false, // TODO: may be unnecessary
     context: Context<LighterASTNode> = Context(),
 ) : AbstractLightTreeRawFirBuilder(session, tree, context) {
 
@@ -165,7 +166,7 @@ class LightTreeRawFirExpressionBuilder(
             SUPER_EXPRESSION -> convertSuperExpression(expression)
 
             OBJECT_LITERAL -> declarationBuilder.convertObjectLiteral(expression)
-            FUN -> declarationBuilder.convertFunctionDeclaration(expression)
+            FUN -> declarationBuilder.convertFunctionDeclaration(expression) ?: buildEmptyExpressionBlock()
             DESTRUCTURING_DECLARATION -> declarationBuilder.convertDestructingDeclaration(expression)
                 .toFirDestructingDeclaration(this, baseModuleData)
             else -> buildErrorExpression(
