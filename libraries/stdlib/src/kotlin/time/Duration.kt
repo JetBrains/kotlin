@@ -1246,7 +1246,7 @@ private fun parseDefaultStringFormat(
 
             // Since totalNanos is at most 1_998_999, and the added value is at most 10^15, their sum will never overflow.
             totalNanos += if (unit >= DurationUnit.MINUTES && index - fractionStartIndex > FRACTION_LIMIT)
-                value.parseFractionFallback(fractionStartIndex, index - unit.length).fractionAsDoubleToNanos(unit)
+                value.parseFractionFallback(fractionStartIndex, index - unit.length, unit)
             else
                 fractionValue.fractionDigitsToNanos(unit)
         }
@@ -1382,10 +1382,11 @@ private fun String.parseFraction(startIndex: Int): NumericParseData {
  * Fallback for parsing fractions with more than 15 digits using Double parsing.
  * @param startIndex start of the fraction substring (including decimal point)
  * @param endIndex end of the fraction substring
- * @return the fraction as a Double value
+ * @param unit the duration unit of the whole part before the fraction
+ * @return nanoseconds representing the fractional part
  */
-private fun String.parseFractionFallback(startIndex: Int, endIndex: Int): Double {
-    return substring(startIndex, endIndex).toDouble()
+private fun String.parseFractionFallback(startIndex: Int, endIndex: Int, unit: DurationUnit): Long {
+    return (substring(startIndex, endIndex).toDouble() * unit.fallbackFractionMultiplier).roundToLong()
 }
 
 /**
@@ -1394,14 +1395,6 @@ private fun String.parseFractionFallback(startIndex: Int, endIndex: Int): Double
  * @return nanoseconds representing the fractional part
  */
 private fun Long.fractionDigitsToNanos(unit: DurationUnit): Long = (this * unit.fractionMultiplier).roundToLong()
-
-/**
- * Converts a fraction parsed as Double to nanoseconds for the given unit.
- * Used as fallback for fractions with more than 15 digits.
- * @param unit the duration unit of the whole part before the fraction
- * @return nanoseconds representing the fractional part
- */
-private fun Double.fractionAsDoubleToNanos(unit: DurationUnit): Long = (this * unit.fallbackFractionMultiplier).roundToLong()
 
 /**
  * Handles parsing errors based on the throwException flag.
