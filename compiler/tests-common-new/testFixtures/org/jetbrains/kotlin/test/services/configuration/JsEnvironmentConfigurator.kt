@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.test.directives.ConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives.GENERATE_INLINE_ANONYMOUS_FUNCTIONS
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives.JS_MODULE_KIND
-import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives.NO_INLINE
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives.PROPERTY_LAZY_INITIALIZATION
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives.SOURCE_MAP_EMBED_SOURCES
 import org.jetbrains.kotlin.test.directives.KlibBasedCompilerTestDirectives
@@ -150,9 +149,6 @@ class JsEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfigu
             else -> error("Too many module kinds passed ${moduleKinds.joinToArrayString()}")
         }
         configuration.put(JSConfigurationKeys.MODULE_KIND, moduleKind)
-
-        val noInline = registeredDirectives.contains(NO_INLINE)
-        configuration.put(CommonConfigurationKeys.DISABLE_INLINE, noInline)
 
         val dependencies = module.regularDependencies.map { getKlibArtifactFile(testServices, it.dependencyModule.name).absolutePath }
         val friends = module.friendDependencies.map { getKlibArtifactFile(testServices, it.dependencyModule.name).absolutePath }

@@ -1,7 +1,5 @@
 package foo
 
-// NO_INLINE
-
 class A
 class B
 
