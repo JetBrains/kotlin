@@ -8,7 +8,6 @@ import org.gradle.api.tasks.*
 import org.gradle.util.GradleVersion
 import org.gradle.work.NormalizeLineEndings
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
-import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.internal.kotlinSecondaryVariantsDataSharing
 import org.jetbrains.kotlin.gradle.plugin.mpp.internal.projectStructureMetadataResolvedConfiguration
 import org.jetbrains.kotlin.gradle.plugin.sources.internal
@@ -19,8 +18,8 @@ import org.jetbrains.kotlin.utils.addToStdlib.applyIf
 internal class MetadataDependencyTransformationTaskInputs(
     project: Project,
     kotlinSourceSet: KotlinSourceSet,
-    private val keepProjectDependencies: Boolean = true,
 ) {
+    private val keepProjectDependencies: Boolean = true
     private val currentBuild = project.currentBuild
 
     // GMT algorithm uses the project-structure-metadata.json files from the other subprojects.
