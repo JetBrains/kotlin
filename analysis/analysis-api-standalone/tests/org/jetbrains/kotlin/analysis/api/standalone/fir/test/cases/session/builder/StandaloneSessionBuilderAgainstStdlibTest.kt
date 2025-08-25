@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.platform.CommonPlatforms
 import org.jetbrains.kotlin.platform.js.JsPlatforms
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.utils.PathUtil
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import java.nio.file.Paths
 
 class StandaloneSessionBuilderAgainstStdlibTest : AbstractStandaloneSessionBuilderAgainstStdlibTest() {
