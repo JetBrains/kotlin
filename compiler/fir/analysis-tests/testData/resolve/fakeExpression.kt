@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// IGNORE_PARTIAL_BODY_ANALYSIS: KT-78991
 import java.util.<!UNRESOLVED_IMPORT!>function<!>.Supplier;
 
 public abstract class SuspendContextImpl <!SYNTAX!>extends<!> <!SYNTAX!>Disposable<!> <!SYNTAX!><!>{
