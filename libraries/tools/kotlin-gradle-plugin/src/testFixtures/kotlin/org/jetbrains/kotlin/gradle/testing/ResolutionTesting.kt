@@ -44,11 +44,14 @@ fun Configuration.resolveProjectDependencyComponentsWithArtifacts(
 }
 
 fun KotlinTarget.compilationResolution(compilationName: String = "main"): Map<ComponentPath, ResolvedComponentWithArtifacts> {
+    return compilationConfiguration(compilationName).resolveProjectDependencyComponentsWithArtifacts()
+}
+
+fun KotlinTarget.compilationConfiguration(compilationName: String = "main"): Configuration {
     // workaround for KT-76284
     val compilation = compilations
         .getByName(compilationName)
     return compilation.internal.configurations.compileDependencyConfiguration
-        .resolveProjectDependencyComponentsWithArtifacts()
 }
 
 private data class ResolvedVariant(

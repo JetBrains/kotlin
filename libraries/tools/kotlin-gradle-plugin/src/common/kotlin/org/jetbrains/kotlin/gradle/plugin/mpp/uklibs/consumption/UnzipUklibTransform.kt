@@ -32,6 +32,12 @@ internal abstract class UnzipUklibTransform @Inject constructor(
 
     override fun transform(outputs: TransformOutputs) {
         val input = inputArtifact.get().asFile
+        /**
+         * If artifact-level resolution happened before interproject dependencies produced UKlibs, ignore the artifact
+         *
+         * FIXME: See if this addresses KT-77367
+         */
+        if (!input.exists()) return
         val outputDir = outputs.dir("unzipped_uklib_${input.name}")
         fileOperations.copy {
             it.from(archiveOperations.zipTree(inputArtifact.get().asFile))
