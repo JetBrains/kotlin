@@ -339,7 +339,7 @@ public value class Duration internal constructor(private val rawValue: Long) : C
          *   @sample samples.time.Durations.parse
          */
         public fun parseOrNull(value: String): Duration? =
-            parseDuration(value, strictIso = false, throwException = false).onInvalid { return null }
+            parseDuration(value, strictIso = false, throwException = false).onInvalid { null }
 
         /**
          * Parses a string that represents a duration in restricted ISO-8601 composite representation
@@ -349,7 +349,7 @@ public value class Duration internal constructor(private val rawValue: Long) : C
          * @sample samples.time.Durations.parseIsoString
          */
         public fun parseIsoStringOrNull(value: String): Duration? =
-            parseDuration(value, strictIso = true, throwException = false).onInvalid { return null }
+            parseDuration(value, strictIso = true, throwException = false).onInvalid { null }
     }
 
     // arithmetic operators
@@ -1421,7 +1421,7 @@ private inline fun handleError(throwException: Boolean, message: String = ""): D
  * @param block lambda to execute if Duration is INVALID
  * @return this Duration if valid, or the result of the block if INVALID
  */
-private inline fun Duration.onInvalid(block: () -> Nothing): Duration {
+private inline fun Duration.onInvalid(block: () -> Duration?): Duration? {
     return if (this == Duration.INVALID) block() else this
 }
 
