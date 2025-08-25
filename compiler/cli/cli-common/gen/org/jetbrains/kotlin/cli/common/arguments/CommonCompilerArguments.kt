@@ -1020,6 +1020,20 @@ default: 'first-only-warn' in language version 2.2+, 'first-only' in version 2.1
             field = if (value.isNullOrEmpty()) null else value
         }
 
+    @Argument(
+        value = "-XXLanguage",
+        valueDescription = "[+-]LanguageFeatureName",
+        description = """Enables/disables specified language feature.
+Warning: this flag is not intended for production use. If you want to configure the language behaviour use the
+-language-version or corresponding experimental feature flags.""",
+        delimiter = Argument.Delimiters.none,
+    )
+    var manuallyConfiguredFeatures: Array<String>? = null
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
     @get:Transient
     abstract val configurator: CommonCompilerArgumentsConfigurator
 
