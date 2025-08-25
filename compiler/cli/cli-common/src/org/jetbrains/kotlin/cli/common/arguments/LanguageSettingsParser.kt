@@ -5,54 +5,24 @@
 
 package org.jetbrains.kotlin.cli.common.arguments
 
-import com.intellij.openapi.application.ApplicationManager
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.config.LanguageFeature
 
-/**
- * Arguments that can drastically change compiler behavior,
- * breaking stability/compatibility.
- *
- * Internal arguments are split into 'families', each family
- * with its own set of arguments, settings and parsing rules
- *
- * Internal arguments start with '-XX' prefix, followed by
- * family name. Everything after that is handled by the corresponding
- * parser of that particular family.
- */
-interface InternalArgumentParser<A : InternalArgument> {
-    // Should be fast
-    fun canParse(arg: String): Boolean
+// Arguments of form '-XXLanguage:+LanguageFeature' or '-XXLanguage:-LanguageFeature', which enable or disable corresponding LanguageFeature.
+object LanguageSettingsParser {
 
-    fun parseInternalArgument(arg: String, errors: ArgumentParseErrors): A?
+    private val wholePrefix: String = "${INTERNAL_ARGUMENT_PREFIX}Language"
 
-    companion object {
-        internal val PARSERS: List<InternalArgumentParser<*>> = listOf(
-            LanguageSettingsParser()
-        )
-    }
-}
+    fun canParse(arg: String): Boolean = arg.startsWith(wholePrefix)
 
-abstract class AbstractInternalArgumentParser<A : InternalArgument>(familyName: String) : InternalArgumentParser<A> {
-    private val wholePrefix: String = INTERNAL_ARGUMENT_PREFIX + familyName
-
-    override fun canParse(arg: String): Boolean = arg.startsWith(wholePrefix)
-
-    override fun parseInternalArgument(arg: String, errors: ArgumentParseErrors): A? {
+    fun parseInternalArgument(arg: String, errors: ArgumentParseErrors): ManualLanguageFeatureSetting? {
         if (!arg.startsWith(wholePrefix)) return null
 
         return parseTail(arg.removePrefix(wholePrefix), arg, errors)
     }
 
-    abstract fun parseTail(tail: String, wholeArgument: String, errors: ArgumentParseErrors): A?
-}
-
-
-// Arguments of form '-XXLanguage:+LanguageFeature' or '-XXLanguage:-LanguageFeature', which enable or disable corresponding LanguageFeature.
-class LanguageSettingsParser : AbstractInternalArgumentParser<ManualLanguageFeatureSetting>("Language") {
-
     // Expected tail form: ':(+|-)<language feature name>'
-    override fun parseTail(tail: String, wholeArgument: String, errors: ArgumentParseErrors): ManualLanguageFeatureSetting? {
+    fun parseTail(tail: String, wholeArgument: String, errors: ArgumentParseErrors): ManualLanguageFeatureSetting? {
         fun reportAndReturnNull(message: String, severity: CompilerMessageSeverity = CompilerMessageSeverity.STRONG_WARNING): Nothing? {
             errors.internalArgumentsParsingProblems += severity to message
             return null
@@ -95,12 +65,8 @@ private val areTestOnlyLanguageFeaturesAllowed: Boolean by lazy {
     System.getProperty("kotlinc.test.allow.testonly.language.features")?.toBoolean() == true
 }
 
-interface InternalArgument {
-    val stringRepresentation: String
-}
-
 data class ManualLanguageFeatureSetting(
     val languageFeature: LanguageFeature,
     val state: LanguageFeature.State,
-    override val stringRepresentation: String
-) : InternalArgument
+    val stringRepresentation: String
+)

@@ -97,7 +97,7 @@ open class CommonCompilerArgumentsConfigurator {
 
         var standaloneSamConversionFeaturePassedExplicitly = false
         var functionReferenceWithDefaultValueFeaturePassedExplicitly = false
-        for ((feature, state) in arguments.internalArguments.filterIsInstance<ManualLanguageFeatureSetting>()) {
+        for ((feature, state) in arguments.internalArguments) {
             put(feature, state)
             if (state == LanguageFeature.State.ENABLED && feature.forcesPreReleaseBinariesIfEnabled()) {
                 featuresThatForcePreReleaseBinaries += feature
