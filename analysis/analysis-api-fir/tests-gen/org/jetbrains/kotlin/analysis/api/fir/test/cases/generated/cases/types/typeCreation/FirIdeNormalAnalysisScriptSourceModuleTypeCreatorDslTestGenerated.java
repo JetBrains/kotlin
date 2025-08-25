@@ -77,6 +77,16 @@ public class FirIdeNormalAnalysisScriptSourceModuleTypeCreatorDslTestGenerated e
   }
 
   @Nested
+  @TestMetadata("analysis/analysis-api/testData/types/typeCreation/byDsl/definitelyNotNullType")
+  @TestDataPath("$PROJECT_ROOT")
+  public class DefinitelyNotNullType {
+    @Test
+    public void testAllFilesPresentInDefinitelyNotNullType() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/types/typeCreation/byDsl/definitelyNotNullType"), Pattern.compile("^(.+)\\.kts$"), null, true);
+    }
+  }
+
+  @Nested
   @TestMetadata("analysis/analysis-api/testData/types/typeCreation/byDsl/dynamicType")
   @TestDataPath("$PROJECT_ROOT")
   public class DynamicType {
