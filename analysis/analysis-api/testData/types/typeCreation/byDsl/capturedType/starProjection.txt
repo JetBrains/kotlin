@@ -1,0 +1,11 @@
+KaType
+KaCapturedType:
+  abbreviation: null
+  annotations: []
+  projection: *
+  isMarkedNullable: false
+  isNullable: true
+  hasFlexibleNullability: false
+
+Rendered type:
+CapturedType(*)
