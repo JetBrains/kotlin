@@ -325,7 +325,7 @@ class BodyGenerator(
      */
     private val rawExceptionType =
         if (backendContext.isWasmJsTarget)
-            WasmExternRef
+            WasmUnshareableExternRef
         else
             wasmModuleTypeTransformer.transformBlockResultType(irBuiltIns.throwableType)
                 ?: error("Can't transform Throwable type to wasm block result type")

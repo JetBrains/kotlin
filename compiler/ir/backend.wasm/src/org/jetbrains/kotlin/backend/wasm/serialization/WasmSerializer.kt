@@ -247,6 +247,7 @@ class WasmSerializer(outputStream: OutputStream) {
             WasmEqRef -> setTag(TypeTags.EQREF)
             WasmExnRefType -> setTag(TypeTags.EXTERN_REF_TYPE)
             WasmExternRef -> setTag(TypeTags.EXTERN_REF)
+            WasmUnshareableExternRef -> setTag(TypeTags.UNSHAREABLE_EXTERN_REF)
             WasmF32 -> setTag(TypeTags.F32)
             WasmF64 -> setTag(TypeTags.F64)
             WasmFuncRef -> setTag(TypeTags.FUNC_REF)

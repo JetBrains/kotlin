@@ -23,6 +23,8 @@ object WasmI8 : WasmType("i8", -0x8)
 object WasmI16 : WasmType("i16", -0x9)
 object WasmFuncRef : WasmType("funcref", -0x10)
 object WasmExternRef : WasmType("externref", -0x11)
+// same as WasmExternRef, but cannot be shared even in `useSharedObjects` mode
+object WasmUnshareableExternRef : WasmType("externref", -0x11)
 object WasmAnyRef : WasmType("anyref", -0x12)
 object WasmEqRef : WasmType("eqref", -0x13)
 object WasmRefNullrefType : WasmType("nullref", -0x0F) // Shorthand for (ref null none)
@@ -77,7 +79,7 @@ fun WasmType.getHeapType(): WasmHeapType =
         is WasmEqRef -> WasmHeapType.Simple.Eq
         is WasmAnyRef -> WasmHeapType.Simple.Any
         is WasmFuncRef -> WasmHeapType.Simple.Func
-        is WasmExternRef -> WasmHeapType.Simple.Extern
+        is WasmExternRef, is WasmUnshareableExternRef -> WasmHeapType.Simple.Extern
         else -> error("Unknown heap type for type $this")
     }
 
@@ -101,6 +103,8 @@ fun WasmType.isShareableRefType() = when (this) {
     is WasmRefNullExternrefType -> true
     else -> false
 }
+
+// TODO fix WebAssembly.instantiate(): Import #107 "intrinsics" "tag": imported tag does not match the expected type
 
 fun WasmFunctionType.referencesTypeDeclarations(): Boolean =
     parameterTypes.any { it.referencesTypeDeclaration() } or resultTypes.any { it.referencesTypeDeclaration() }
