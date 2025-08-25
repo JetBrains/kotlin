@@ -1,0 +1,40 @@
+KaType
+KaFlexibleType:
+  abbreviation: null
+  annotations: []
+  lowerBound: KaUsualClassType:
+    abbreviation: null
+    annotations: []
+    classId: B
+    qualifiers: [
+      KaResolvedClassTypeQualifier:
+        name: B
+        symbol: KaNamedClassSymbol(B)
+        typeArguments: []
+    ]
+    symbol: KaNamedClassSymbol(B)
+    typeArguments: []
+    isMarkedNullable: false
+    isNullable: false
+    hasFlexibleNullability: false
+  upperBound: KaUsualClassType:
+    abbreviation: null
+    annotations: []
+    classId: A
+    qualifiers: [
+      KaResolvedClassTypeQualifier:
+        name: A
+        symbol: KaNamedClassSymbol(A)
+        typeArguments: []
+    ]
+    symbol: KaNamedClassSymbol(A)
+    typeArguments: []
+    isMarkedNullable: false
+    isNullable: false
+    hasFlexibleNullability: false
+  isMarkedNullable: false
+  isNullable: false
+  hasFlexibleNullability: false
+
+Rendered type:
+(B..A)
