@@ -243,6 +243,12 @@ public class LLPartialDiagnosticsFirTestGenerated extends AbstractLLPartialDiagn
     }
 
     @Test
+    @TestMetadata("fakeExpression.kt")
+    public void testFakeExpression() {
+      runTest("compiler/fir/analysis-tests/testData/resolve/fakeExpression.kt");
+    }
+
+    @Test
     @TestMetadata("fakeRecursiveSupertype.kt")
     public void testFakeRecursiveSupertype() {
       runTest("compiler/fir/analysis-tests/testData/resolve/fakeRecursiveSupertype.kt");
