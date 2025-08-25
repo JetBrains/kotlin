@@ -1,0 +1,1 @@
+val x = 453<caret_type>45

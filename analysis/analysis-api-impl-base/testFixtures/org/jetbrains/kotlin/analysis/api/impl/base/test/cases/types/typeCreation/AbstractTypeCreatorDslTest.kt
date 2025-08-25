@@ -138,5 +138,115 @@ abstract class AbstractTypeCreatorDslTest : AbstractAnalysisApiBasedTest() {
         protected fun getTypeParameterSymbolByCaret(label: String): KaTypeParameterSymbol {
             return (caretToType[label] as? KaTypeParameterType)?.symbol ?: error("Type under `$label` is not a type parameter type")
         }
+
+        inner class ArrayType {
+            fun testBoolPreferPrimitive(): KaType {
+                val type = getTypeByCaret("type")
+                return session.typeCreator.arrayType(type) {
+                    shouldPreferPrimitiveTypes = true
+                }
+            }
+
+            fun testBoxedArrayOutVariance(): KaType {
+                val type = getTypeByCaret("type")
+                return session.typeCreator.arrayType(type) {
+                    variance = Variance.OUT_VARIANCE
+                }
+            }
+
+            fun testErrorType(): KaType {
+                val type = getTypeByCaret("type")
+                return session.typeCreator.arrayType(type)
+            }
+
+            fun testFlexibleInt(): KaType {
+                val type = getTypeByCaret("type")
+                return session.typeCreator.arrayType(type)
+            }
+
+            fun testIntOutVariance(): KaType {
+                val type = getTypeByCaret("type")
+                return session.typeCreator.arrayType(type) {
+                    variance = Variance.OUT_VARIANCE
+                    shouldPreferPrimitiveTypes = false
+                }
+            }
+
+            fun testNullableIntPreferPrimitive(): KaType {
+                val type = getTypeByCaret("type")
+                return session.typeCreator.arrayType(type) {
+                    shouldPreferPrimitiveTypes = true
+                }
+            }
+
+            fun testNullableUserType(): KaType {
+                val type = getTypeByCaret("type")
+                return session.typeCreator.arrayType(type)
+            }
+
+            fun testPrimitiveArrayPreferPrimitive(): KaType {
+                val type = getTypeByCaret("type")
+                return session.typeCreator.arrayType(type) {
+                    shouldPreferPrimitiveTypes = true
+                }
+            }
+
+            fun testSimpleUserTypeMakeNullablePreferPrimitive(): KaType {
+                val type = getTypeByCaret("type")
+                return session.typeCreator.arrayType(type) {
+                    shouldPreferPrimitiveTypes = true
+                    isMarkedNullable = true
+                }
+            }
+
+            fun testTypeParameterPreferPrimitiveOutVariance(): KaType {
+                val type = getTypeByCaret("type")
+                return session.typeCreator.arrayType(type) {
+                    shouldPreferPrimitiveTypes = true
+                    variance = Variance.OUT_VARIANCE
+                }
+            }
+
+            fun testTypeParameterWithIntUpperBound(): KaType {
+                val type = getTypeByCaret("type")
+                return session.typeCreator.arrayType(type)
+            }
+
+            fun testCharShouldNotPreferPrimitive(): KaType {
+                val type = getTypeByCaret("type")
+                return session.typeCreator.arrayType(type) {
+                    shouldPreferPrimitiveTypes = false
+                }
+            }
+
+            fun testIntInVarianceShouldPreferPrimitive(): KaType {
+                val type = getTypeByCaret("type")
+                return session.typeCreator.arrayType(type) {
+                    shouldPreferPrimitiveTypes = true
+                    variance = Variance.IN_VARIANCE
+                }
+            }
+
+            fun testInt(): KaType {
+                val type = getTypeByCaret("type")
+                return session.typeCreator.arrayType(type)
+            }
+
+            fun testDynamicType(): KaType {
+                val type = session.typeCreator.dynamicType()
+                return session.typeCreator.arrayType(type)
+            }
+
+            fun testWithAnnotations(): KaType {
+                val annotationClassId1 = ClassId.fromString("MyAnno1")
+                val annotationClassId2 = ClassId.fromString("MyAnno2")
+                val annotationClassId3 = ClassId.fromString("MyAnno3")
+
+                val type = getTypeByCaret("type")
+                return session.typeCreator.arrayType(type) {
+                    annotations(listOf(annotationClassId1, annotationClassId2, annotationClassId3))
+                }
+            }
+        }
     }
 }
