@@ -3,7 +3,7 @@ package org.jetbrains.kotlin.arguments
 
 import org.jetbrains.kotlin.cli.common.arguments.Argument
 import org.jetbrains.kotlin.cli.common.arguments.CommonToolArguments
-import org.jetbrains.kotlin.cli.common.arguments.InternalArgument
+import org.jetbrains.kotlin.cli.common.arguments.ManualLanguageFeatureSetting
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import kotlin.reflect.KClass
 import kotlin.reflect.KProperty1
@@ -42,6 +42,6 @@ object CompilerArgumentsContentProspector {
 
     val freeArgsProperty: KProperty1<in CommonToolArguments, List<String>>
         get() = CommonToolArguments::freeArgs
-    val internalArgumentsProperty: KProperty1<in CommonToolArguments, List<InternalArgument>>
+    val internalArgumentsProperty: KProperty1<in CommonToolArguments, List<ManualLanguageFeatureSetting>>
         get() = CommonToolArguments::internalArguments
 }

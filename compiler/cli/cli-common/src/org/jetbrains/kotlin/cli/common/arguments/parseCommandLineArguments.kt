@@ -164,7 +164,7 @@ private fun <A : CommonToolArguments> parsePreprocessedCommandLineArguments(
     var freeArgsStarted = false
 
     val freeArgs = ArrayList<String>()
-    val internalArguments = ArrayList<InternalArgument>()
+    val internalArguments = ArrayList<ManualLanguageFeatureSetting>()
 
     var i = 0
     loop@ while (i < args.size) {
@@ -185,10 +185,7 @@ private fun <A : CommonToolArguments> parsePreprocessedCommandLineArguments(
             when {
                 // Unknown -XX argument
                 arg.startsWith(INTERNAL_ARGUMENT_PREFIX) -> {
-                    val matchingParsers = InternalArgumentParser.PARSERS.filter { it.canParse(arg) }
-                    assert(matchingParsers.size <= 1) { "Internal error: internal argument $arg can be ambiguously parsed by parsers ${matchingParsers.joinToString()}" }
-
-                    val parser = matchingParsers.firstOrNull()
+                    val parser = LanguageSettingsParser.takeIf { it.canParse(arg) }
 
                     if (parser == null) {
                         errors.value.unknownExtraFlags += arg
@@ -196,8 +193,7 @@ private fun <A : CommonToolArguments> parsePreprocessedCommandLineArguments(
                         val newInternalArgument = parser.parseInternalArgument(arg, errors.value) ?: continue
                         // Manual language feature setting overrides the previous value of the same feature setting, if it exists.
                         internalArguments.removeIf {
-                            (it as? ManualLanguageFeatureSetting)?.languageFeature ==
-                                    (newInternalArgument as? ManualLanguageFeatureSetting)?.languageFeature
+                            it.languageFeature == newInternalArgument.languageFeature
                         }
                         internalArguments.add(newInternalArgument)
                     }
@@ -273,15 +269,12 @@ private fun <A : CommonToolArguments> parsePreprocessedCommandLineArguments(
 }
 
 private fun <A : CommonToolArguments> A.updateInternalArguments(
-    newInternalArguments: ArrayList<InternalArgument>,
+    newInternalArguments: ArrayList<ManualLanguageFeatureSetting>,
     overrideArguments: Boolean
 ) {
     val filteredExistingArguments = if (overrideArguments) {
         internalArguments.filter { existingArgument ->
-            existingArgument !is ManualLanguageFeatureSetting ||
-                    newInternalArguments.none {
-                        it is ManualLanguageFeatureSetting && it.languageFeature == existingArgument.languageFeature
-                    }
+            newInternalArguments.none { it.languageFeature == existingArgument.languageFeature }
         }
     } else internalArguments
 
