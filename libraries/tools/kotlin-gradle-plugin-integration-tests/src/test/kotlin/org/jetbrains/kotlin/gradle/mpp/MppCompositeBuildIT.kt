@@ -541,7 +541,7 @@ class MppCompositeBuildIT : KGPBaseTest() {
     @GradleTest
     fun `test included build of older version works correctly`(gradleVersion: GradleVersion) {
         val defaultKotlinNativeVersion = defaultBuildOptions.nativeOptions.version
-        val oldKotlinVersion = "2.2.10"
+        val oldKotlinVersion = TestVersions.Kotlin.STABLE_RELEASE
 
         val buildOptions = defaultBuildOptions.copy(
             nativeOptions = defaultBuildOptions.nativeOptions.copy(version = null)
