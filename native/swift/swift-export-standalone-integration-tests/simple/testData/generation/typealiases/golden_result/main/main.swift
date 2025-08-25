@@ -38,7 +38,7 @@ public enum ENUM: KotlinRuntimeSupport._KotlinBridgeable, Swift.CaseIterable {
     public static func valueOf(
         value: Swift.String
     ) -> main.ENUM {
-        return main.ENUM.__createClassWrapper(externalRCRef: ENUM_valueOf__TypesOfArguments__Swift_String__(value))
+        return main.ENUM(__externalRCRefUnsafe: ENUM_valueOf__TypesOfArguments__Swift_String__(value), options: .asBestFittingWrapper)
     }
 }
 public typealias DefaultInteger = main.RegularInteger

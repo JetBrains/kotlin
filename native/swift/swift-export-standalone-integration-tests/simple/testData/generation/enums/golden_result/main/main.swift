@@ -34,7 +34,7 @@ public enum Enum: KotlinRuntimeSupport._KotlinBridgeable, Swift.CaseIterable {
     public static func valueOf(
         value: Swift.String
     ) -> main.Enum {
-        return main.Enum.__createClassWrapper(externalRCRef: Enum_valueOf__TypesOfArguments__Swift_String__(value))
+        return main.Enum(__externalRCRefUnsafe: Enum_valueOf__TypesOfArguments__Swift_String__(value), options: .asBestFittingWrapper)
     }
 }
 public enum EnumSimple: KotlinRuntimeSupport._KotlinBridgeable, Swift.CaseIterable {
@@ -58,7 +58,7 @@ public enum EnumSimple: KotlinRuntimeSupport._KotlinBridgeable, Swift.CaseIterab
     public static func valueOf(
         value: Swift.String
     ) -> main.EnumSimple {
-        return main.EnumSimple.__createClassWrapper(externalRCRef: EnumSimple_valueOf__TypesOfArguments__Swift_String__(value))
+        return main.EnumSimple(__externalRCRefUnsafe: EnumSimple_valueOf__TypesOfArguments__Swift_String__(value), options: .asBestFittingWrapper)
     }
 }
 public enum EnumWithAbstractMembers: KotlinRuntimeSupport._KotlinBridgeable, Swift.CaseIterable {
@@ -96,7 +96,7 @@ public enum EnumWithAbstractMembers: KotlinRuntimeSupport._KotlinBridgeable, Swi
     public static func valueOf(
         value: Swift.String
     ) -> main.EnumWithAbstractMembers {
-        return main.EnumWithAbstractMembers.__createClassWrapper(externalRCRef: EnumWithAbstractMembers_valueOf__TypesOfArguments__Swift_String__(value))
+        return main.EnumWithAbstractMembers(__externalRCRefUnsafe: EnumWithAbstractMembers_valueOf__TypesOfArguments__Swift_String__(value), options: .asBestFittingWrapper)
     }
 }
 public enum EnumWithMembers: KotlinRuntimeSupport._KotlinBridgeable, Swift.CaseIterable {
@@ -127,7 +127,7 @@ public enum EnumWithMembers: KotlinRuntimeSupport._KotlinBridgeable, Swift.CaseI
     public static func valueOf(
         value: Swift.String
     ) -> main.EnumWithMembers {
-        return main.EnumWithMembers.__createClassWrapper(externalRCRef: EnumWithMembers_valueOf__TypesOfArguments__Swift_String__(value))
+        return main.EnumWithMembers(__externalRCRefUnsafe: EnumWithMembers_valueOf__TypesOfArguments__Swift_String__(value), options: .asBestFittingWrapper)
     }
 }
 public func enumId(
@@ -139,5 +139,5 @@ public func ewamValues() -> ExportedKotlinPackages.kotlin.Array {
     return ExportedKotlinPackages.kotlin.Array.__createClassWrapper(externalRCRef: __root___ewamValues())
 }
 public func yellow() -> main.EnumWithAbstractMembers {
-    return main.EnumWithAbstractMembers.__createClassWrapper(externalRCRef: __root___yellow())
+    return main.EnumWithAbstractMembers(__externalRCRefUnsafe: __root___yellow(), options: .asBestFittingWrapper)
 }
