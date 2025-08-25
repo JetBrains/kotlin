@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.fir.backend.Fir2IrComponents
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirConstructor
 import org.jetbrains.kotlin.fir.declarations.FirProperty
+import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.resolve.isRealOwnerOf
 import org.jetbrains.kotlin.fir.scopes.FirContainingNamesAwareScope
@@ -133,7 +134,7 @@ internal fun FirProperty.processOverriddenPropertySymbols(
 
 context(c: Fir2IrComponents)
 internal fun FirClassSymbol<*>.unsubstitutedScope(): FirTypeScope {
-    return this.unsubstitutedScope(c.session, c.scopeSession, withForcedTypeCalculator = true, memberRequiredPhase = null)
+    return this.unsubstitutedScope(c.session, c.scopeSession, withForcedTypeCalculator = true, memberRequiredPhase = FirResolvePhase.STATUS)
 }
 
 context(c: Fir2IrComponents)
@@ -143,5 +144,5 @@ internal fun FirClass.unsubstitutedScope(): FirTypeScope {
 
 context(c: Fir2IrComponents)
 internal fun FirClassSymbol<*>.declaredScope(): FirContainingNamesAwareScope {
-    return this.declaredMemberScope(c.session, memberRequiredPhase = null)
+    return this.declaredMemberScope(c.session, memberRequiredPhase = FirResolvePhase.STATUS)
 }
