@@ -68,8 +68,8 @@ internal class KaBaseResolutionScope(
          * analyzable in its context module's session.
          */
         val psiFile = element.containingFile
-        val virtualFile = psiFile.virtualFile
-        return virtualFile != null && cachedSearchScopeContains(virtualFile) || isAccessibleDanglingFile(psiFile)
+        val virtualFile = psiFile.viewProvider.virtualFile
+        return cachedSearchScopeContains(virtualFile) || isAccessibleDanglingFile(psiFile)
     }
 
     private fun cachedSearchScopeContains(virtualFile: VirtualFile): Boolean {
