@@ -194,7 +194,7 @@ internal sealed class Bridge(
     }
 
 
-    class AsObject(swiftType: SirType, kotlinType: KotlinType, cType: CType) : Bridge(swiftType, kotlinType, cType) {
+    class AsObject(swiftType: SirNominalType, kotlinType: KotlinType, cType: CType) : Bridge(swiftType, kotlinType, cType) {
         override val inKotlinSources = object : ValueConversion {
             // nulls are handled by AsOptionalWrapper, so safe to cast from nullable to non-nullable
             override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String) =
@@ -214,8 +214,14 @@ internal sealed class Bridge(
 
             override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String) = "${valueExpression}.__externalRCRef()"
 
-            override fun kotlinToSwift(typeNamer: SirTypeNamer, valueExpression: String) =
-                "${typeNamer.swiftFqName(swiftType)}.__createClassWrapper(externalRCRef: $valueExpression)"
+            override fun kotlinToSwift(typeNamer: SirTypeNamer, valueExpression: String): String {
+                val swiftFqName = typeNamer.swiftFqName(swiftType)
+                if (swiftType.typeDeclaration is SirEnum) {
+                    return "$swiftFqName(__externalRCRefUnsafe: $valueExpression, options: .asBestFittingWrapper)"
+                } else {
+                    return "$swiftFqName.__createClassWrapper(externalRCRef: $valueExpression)"
+                }
+            }
         }
     }
 

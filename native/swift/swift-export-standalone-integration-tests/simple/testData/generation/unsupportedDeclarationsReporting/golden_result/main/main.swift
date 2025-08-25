@@ -80,7 +80,7 @@ extension ExportedKotlinPackages.a.b.c {
         public static func valueOf(
             value: Swift.String
         ) -> ExportedKotlinPackages.a.b.c.E {
-            return ExportedKotlinPackages.a.b.c.E.__createClassWrapper(externalRCRef: a_b_c_E_valueOf__TypesOfArguments__Swift_String__(value))
+            return ExportedKotlinPackages.a.b.c.E(__externalRCRefUnsafe: a_b_c_E_valueOf__TypesOfArguments__Swift_String__(value), options: .asBestFittingWrapper)
         }
     }
 }
