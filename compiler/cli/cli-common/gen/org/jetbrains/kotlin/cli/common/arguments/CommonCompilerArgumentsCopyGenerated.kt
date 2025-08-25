@@ -53,6 +53,7 @@ fun copyCommonCompilerArguments(from: CommonCompilerArguments, to: CommonCompile
     to.languageVersion = from.languageVersion
     to.lenientMode = from.lenientMode
     to.listPhases = from.listPhases
+    to.manuallyConfiguredFeatures = from.manuallyConfiguredFeatures?.copyOf()
     to.metadataKlib = from.metadataKlib
     to.metadataVersion = from.metadataVersion
     to.multiDollarInterpolation = from.multiDollarInterpolation
