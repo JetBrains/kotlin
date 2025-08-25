@@ -7,11 +7,10 @@ package org.jetbrains.kotlin.sir.providers
 
 import org.jetbrains.kotlin.analysis.api.symbols.KaEnumEntrySymbol
 import org.jetbrains.kotlin.export.test.InlineSourceCodeAnalysis
-import org.jetbrains.kotlin.sir.SirNominalType
-import org.jetbrains.kotlin.sir.SirVariable
+import org.jetbrains.kotlin.sir.SirEnumCase
 import org.jetbrains.kotlin.sir.providers.source.kaSymbolOrNull
 import org.jetbrains.kotlin.sir.providers.support.SirTranslationTest
-import org.jetbrains.kotlin.sir.providers.support.classNamed
+import org.jetbrains.kotlin.sir.providers.support.enumNamed
 import org.jetbrains.kotlin.sir.providers.support.translate
 import org.jetbrains.kotlin.sir.util.SirSwiftModule
 import org.junit.jupiter.api.Test
@@ -28,10 +27,10 @@ class EnumClassTranslationTests : SirTranslationTest() {
             """.trimIndent()
         )
         translate(file) {
-            val enumClass = it.classNamed("Foo")
-            assertContains(enumClass.protocols, SirSwiftModule.caseIterable)
-            val cases = enumClass.declarations
-                .filterIsInstance<SirVariable>()
+            val enumeration = it.enumNamed("Foo")
+            assertContains(enumeration.protocols, SirSwiftModule.caseIterable)
+            val cases = enumeration.declarations
+                .filterIsInstance<SirEnumCase>()
                 .filter { it.kaSymbolOrNull<KaEnumEntrySymbol>() != null }
             val caseA = cases.find { it.name == "A" }
             val caseB = cases.find { it.name == "B" }
@@ -39,10 +38,9 @@ class EnumClassTranslationTests : SirTranslationTest() {
             assertNotNull(caseA)
             assertNotNull(caseB)
             assertNotNull(caseC)
-            val sirEnumType = SirNominalType(enumClass)
-            assertEquals(sirEnumType, caseA.type)
-            assertEquals(sirEnumType, caseB.type)
-            assertEquals(sirEnumType, caseB.type)
+            assertEquals(enumeration, caseA.parent)
+            assertEquals(enumeration, caseB.parent)
+            assertEquals(enumeration, caseB.parent)
         }
     }
 }

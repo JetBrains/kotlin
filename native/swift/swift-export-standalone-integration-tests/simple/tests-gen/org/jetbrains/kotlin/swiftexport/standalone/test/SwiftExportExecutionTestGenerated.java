@@ -44,6 +44,12 @@ public class SwiftExportExecutionTestGenerated extends AbstractSwiftExportExecut
   }
 
   @Test
+  @TestMetadata("enums")
+  public void testEnums() {
+    runTest("native/swift/swift-export-standalone-integration-tests/simple/testData/execution/enums/");
+  }
+
+  @Test
   @TestMetadata("exceptions")
   public void testExceptions() {
     runTest("native/swift/swift-export-standalone-integration-tests/simple/testData/execution/exceptions/");
