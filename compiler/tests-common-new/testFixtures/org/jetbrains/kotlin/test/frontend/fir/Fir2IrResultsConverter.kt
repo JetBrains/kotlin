@@ -47,7 +47,8 @@ class Fir2IrResultsConverter(
                 jvmResultsConverter.transform(module, inputArtifact)
             }
             targetPlatform.isJs() -> {
-                jsResultsConverter.transform(module, inputArtifact)
+                error("Unsupported platform: $targetPlatform")
+//                jsResultsConverter.transform(module, inputArtifact)
             }
             targetPlatform.isWasm() -> {
                 wasmResultsConverter.transform(module, inputArtifact)
