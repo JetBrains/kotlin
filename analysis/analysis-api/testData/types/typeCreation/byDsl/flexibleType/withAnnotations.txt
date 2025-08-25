@@ -1,0 +1,61 @@
+KaType
+KaFlexibleType:
+  abbreviation: null
+  annotations: [
+    MyAnno1()
+      psi: null
+    MyAnno2()
+      psi: null
+    MyAnno3()
+      psi: null
+  ]
+  lowerBound: KaUsualClassType:
+    abbreviation: null
+    annotations: [
+      MyAnno1()
+        psi: null
+      MyAnno2()
+        psi: null
+      MyAnno3()
+        psi: null
+    ]
+    classId: kotlin/Any
+    qualifiers: [
+      KaResolvedClassTypeQualifier:
+        name: Any
+        symbol: KaNamedClassSymbol(kotlin/Any)
+        typeArguments: []
+    ]
+    symbol: KaNamedClassSymbol(kotlin/Any)
+    typeArguments: []
+    isMarkedNullable: false
+    isNullable: false
+    hasFlexibleNullability: false
+  upperBound: KaUsualClassType:
+    abbreviation: null
+    annotations: [
+      MyAnno1()
+        psi: null
+      MyAnno2()
+        psi: null
+      MyAnno3()
+        psi: null
+    ]
+    classId: kotlin/Any
+    qualifiers: [
+      KaResolvedClassTypeQualifier:
+        name: Any
+        symbol: KaNamedClassSymbol(kotlin/Any)
+        typeArguments: []
+    ]
+    symbol: KaNamedClassSymbol(kotlin/Any)
+    typeArguments: []
+    isMarkedNullable: true
+    isNullable: true
+    hasFlexibleNullability: false
+  isMarkedNullable: false
+  isNullable: true
+  hasFlexibleNullability: true
+
+Rendered type:
+@MyAnno1 @MyAnno2 @MyAnno3 kotlin.Any!
