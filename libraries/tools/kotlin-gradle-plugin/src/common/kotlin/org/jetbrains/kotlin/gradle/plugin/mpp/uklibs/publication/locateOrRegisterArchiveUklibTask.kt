@@ -14,7 +14,6 @@ import org.gradle.jvm.tasks.Jar
 import org.jetbrains.kotlin.gradle.dsl.awaitMetadataTarget
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.*
-import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle
 import org.jetbrains.kotlin.gradle.plugin.categoryByName
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.internal
@@ -23,6 +22,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.consumption.isUklib
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.consumption.isUklibTrue
 import org.jetbrains.kotlin.gradle.plugin.usageByName
 import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
+import org.jetbrains.kotlin.gradle.targets.metadata.awaitMetadataCompilationsCreated
 import org.jetbrains.kotlin.gradle.tasks.locateTask
 import org.jetbrains.kotlin.gradle.utils.createConsumable
 
@@ -32,7 +32,7 @@ internal const val UKLIB_RUNTIME_ELEMENTS_NAME = "uklibRuntimeElements"
 internal const val UKLIB_JAVA_API_ELEMENTS_STUB_NAME = "javaApiElements"
 internal const val UKLIB_JAVA_RUNTIME_ELEMENTS_STUB_NAME = "javaRuntimeElements"
 
-internal suspend fun Project.createUklibPublication(): List<DefaultKotlinUsageContext> {
+internal suspend fun Project.createUklibOutgoingVariantsAndPublication(): List<DefaultKotlinUsageContext> {
     val taskName = "archiveUklib"
     val archiveUklib = tasks.register(taskName, ArchiveUklibTask::class.java)
 
@@ -54,7 +54,7 @@ internal suspend fun Project.createUklibPublication(): List<DefaultKotlinUsageCo
     return uklibUsages
 }
 
-internal suspend fun Project.createOutgoingUklibConfigurationsAndUsages(
+private suspend fun Project.createOutgoingUklibConfigurationsAndUsages(
     archiveTask: TaskProvider<ArchiveUklibTask>,
     publishedCompilations: List<KGPUklibFragment>,
 ): List<DefaultKotlinUsageContext> {
@@ -82,9 +82,8 @@ internal suspend fun Project.createOutgoingUklibConfigurationsAndUsages(
         it.extension = Uklib.UKLIB_EXTENSION
     }
 
-    KotlinPluginLifecycle.Stage.AfterFinaliseCompilations.await()
     val metadataTarget = multiplatformExtension.awaitMetadataTarget()
-    val anyMetadataCompilation = metadataTarget.compilations.first()
+    val anyMetadataCompilation = metadataTarget.awaitMetadataCompilationsCreated().first()
     val variants = mutableListOf(
         DefaultKotlinUsageContext(
             compilation = anyMetadataCompilation,
