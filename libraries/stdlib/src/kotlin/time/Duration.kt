@@ -1264,8 +1264,7 @@ private fun parseDefaultStringFormat(
  *
  * @return true if [a] * [b] would overflow [MAX_MILLIS] or -[MAX_MILLIS]
  */
-@kotlin.internal.InlineOnly
-private inline fun willMultiplyOverflow(a: Long, b: Long): Boolean {
+private fun willMultiplyOverflow(a: Long, b: Long): Boolean {
     val leadingZerosA = abs(a).countLeadingZeroBits()
     val leadingZerosB = abs(b).countLeadingZeroBits()
     return (64 - leadingZerosA) + (64 - leadingZerosB) > 63
@@ -1275,8 +1274,7 @@ private inline fun willMultiplyOverflow(a: Long, b: Long): Boolean {
  * Multiplies this Long by another, clamping the result to ±[MAX_MILLIS] on overflow.
  * @return the product or ±[MAX_MILLIS] if overflow occurs
  */
-@kotlin.internal.InlineOnly
-private inline fun Long.multiplyWithoutOverflow(other: Long): Long = when {
+private fun Long.multiplyWithoutOverflow(other: Long): Long = when {
     willMultiplyOverflow(this, other) -> if (this > 0) MAX_MILLIS else -MAX_MILLIS
     else -> this * other
 }
@@ -1285,8 +1283,7 @@ private inline fun Long.multiplyWithoutOverflow(other: Long): Long = when {
  * Checks if adding two Long values exceeds [MAX_MILLIS] bounds.
  * @return true if [a] + [b] would overflow [MAX_MILLIS] or -[MAX_MILLIS]
  */
-@kotlin.internal.InlineOnly
-private inline fun willAddOverflow(a: Long, b: Long): Boolean = when {
+private fun willAddOverflow(a: Long, b: Long): Boolean = when {
     a > 0 && b > 0 -> a > MAX_MILLIS - b
     a < 0 && b < 0 -> a < -MAX_MILLIS - b
     else -> false
@@ -1296,8 +1293,7 @@ private inline fun willAddOverflow(a: Long, b: Long): Boolean = when {
  * Adds another Long to this one, handling overflow and special cases.
  * @return the sum, ±[MAX_MILLIS] on overflow, or [Duration.INVALID_RAW_VALUE] for infinity arithmetic errors
  */
-@kotlin.internal.InlineOnly
-private inline fun Long.addWithoutOverflow(other: Long): Long = when {
+private fun Long.addWithoutOverflow(other: Long): Long = when {
     this == -MAX_MILLIS && other == MAX_MILLIS || this == MAX_MILLIS && other == -MAX_MILLIS -> Duration.INVALID_RAW_VALUE
     this == MAX_MILLIS || other == MAX_MILLIS -> MAX_MILLIS
     this == -MAX_MILLIS || other == -MAX_MILLIS -> -MAX_MILLIS
@@ -1322,8 +1318,7 @@ internal class ParseRule(val overflowLimit: Long, val withSign: Boolean) {
  * @param parseRule the parsing configuration containing overflow limits and sign handling
  * @return [NumericParseData] containing parsed value, end index, sign, and overflow flag
  */
-@kotlin.internal.InlineOnly
-private inline fun String.parseLong(startIndex: Int, parseRule: ParseRule): NumericParseData {
+private fun String.parseLong(startIndex: Int, parseRule: ParseRule): NumericParseData {
     var sign = 1
     var index = startIndex
     if (parseRule.withSign) {
@@ -1389,8 +1384,7 @@ private fun String.parseFraction(startIndex: Int): NumericParseData {
  * @param endIndex end of the fraction substring
  * @return the fraction as a Double value
  */
-@kotlin.internal.InlineOnly
-private inline fun String.parseFractionFallback(startIndex: Int, endIndex: Int): Double {
+private fun String.parseFractionFallback(startIndex: Int, endIndex: Int): Double {
     return substring(startIndex, endIndex).toDouble()
 }
 
@@ -1399,8 +1393,7 @@ private inline fun String.parseFractionFallback(startIndex: Int, endIndex: Int):
  * @param unit the duration unit of the whole part before the fraction
  * @return nanoseconds representing the fractional part
  */
-@kotlin.internal.InlineOnly
-private inline fun Long.fractionDigitsToNanos(unit: DurationUnit): Long = (this * unit.fractionMultiplier).roundToLong()
+private fun Long.fractionDigitsToNanos(unit: DurationUnit): Long = (this * unit.fractionMultiplier).roundToLong()
 
 /**
  * Converts a fraction parsed as Double to nanoseconds for the given unit.
@@ -1408,8 +1401,7 @@ private inline fun Long.fractionDigitsToNanos(unit: DurationUnit): Long = (this 
  * @param unit the duration unit of the whole part before the fraction
  * @return nanoseconds representing the fractional part
  */
-@kotlin.internal.InlineOnly
-private inline fun Double.fractionAsDoubleToNanos(unit: DurationUnit): Long = (this * unit.fallbackFractionMultiplier).roundToLong()
+private fun Double.fractionAsDoubleToNanos(unit: DurationUnit): Long = (this * unit.fallbackFractionMultiplier).roundToLong()
 
 /**
  * Handles parsing errors based on the throwException flag.
@@ -1451,8 +1443,7 @@ private inline fun String.skipWhile(startIndex: Int, predicate: (Char) -> Boolea
  * @param start the index in the string where the unit name starts
  * @return the corresponding [DurationUnit] or null if no valid unit is found
  */
-@kotlin.internal.InlineOnly
-private inline fun String.durationUnitByShortNameOrNull(start: Int): DurationUnit? {
+private fun String.durationUnitByShortNameOrNull(start: Int): DurationUnit? {
     val first = this[start]
     val second = if (start < lastIndex) this[start + 1] else '\u0000'
 
