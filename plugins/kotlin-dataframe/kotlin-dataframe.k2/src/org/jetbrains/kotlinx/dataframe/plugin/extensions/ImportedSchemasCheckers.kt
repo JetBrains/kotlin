@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlinx.dataframe.plugin.extensions
 
-import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.diagnostics.*
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticRenderers.TO_STRING
 import org.jetbrains.kotlin.diagnostics.rendering.BaseDiagnosticRendererFactory
@@ -26,6 +25,7 @@ import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlinx.dataframe.plugin.ImportedSchemaMetadata
 import org.jetbrains.kotlinx.dataframe.plugin.extensions.ImportedSchemasDiagnostics.GENERATED_FROM_SOURCE_SCHEMA
 import org.jetbrains.kotlinx.dataframe.plugin.extensions.ImportedSchemasDiagnostics.INVALID_SUPERTYPE
@@ -97,8 +97,8 @@ private class ImportedSchemaInfoChecker() : FirRegularClassChecker(mppKind = Mpp
 
 object ImportedSchemasDiagnostics : KtDiagnosticsContainer() {
     val GENERATED_FROM_SOURCE_SCHEMA by info1(SourceElementPositioningStrategies.DECLARATION_NAME)
-    val CONFLICTING_COMPANION_OBJECT_DECLARATION by error1<PsiElement, String>(SourceElementPositioningStrategies.DEFAULT)
-    val INVALID_SUPERTYPE by error1<PsiElement, String>(SourceElementPositioningStrategies.SUPERTYPES_LIST)
+    val CONFLICTING_COMPANION_OBJECT_DECLARATION by error1<KtElement, String>(SourceElementPositioningStrategies.DEFAULT)
+    val INVALID_SUPERTYPE by error1<KtElement, String>(SourceElementPositioningStrategies.SUPERTYPES_LIST)
 
     override fun getRendererFactory(): BaseDiagnosticRendererFactory = SchemaRenderers
 
