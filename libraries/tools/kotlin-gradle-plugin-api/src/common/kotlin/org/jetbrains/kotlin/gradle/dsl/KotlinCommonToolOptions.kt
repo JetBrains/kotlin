@@ -33,7 +33,7 @@ interface KotlinCommonToolOptions {
     @OptIn(org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi::class)
     @Deprecated(
         message = org.jetbrains.kotlin.gradle.dsl.KOTLIN_OPTIONS_DEPRECATION_MESSAGE,
-        level = DeprecationLevel.WARNING,
+        level = DeprecationLevel.ERROR,
     )
     var allWarningsAsErrors: kotlin.Boolean
         get() = options.allWarningsAsErrors.get()
@@ -47,7 +47,7 @@ interface KotlinCommonToolOptions {
     @OptIn(org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi::class)
     @Deprecated(
         message = org.jetbrains.kotlin.gradle.dsl.KOTLIN_OPTIONS_DEPRECATION_MESSAGE,
-        level = DeprecationLevel.WARNING,
+        level = DeprecationLevel.ERROR,
     )
     var suppressWarnings: kotlin.Boolean
         get() = options.suppressWarnings.get()
@@ -61,7 +61,7 @@ interface KotlinCommonToolOptions {
     @OptIn(org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi::class)
     @Deprecated(
         message = org.jetbrains.kotlin.gradle.dsl.KOTLIN_OPTIONS_DEPRECATION_MESSAGE,
-        level = DeprecationLevel.WARNING,
+        level = DeprecationLevel.ERROR,
     )
     var verbose: kotlin.Boolean
         get() = options.verbose.get()
@@ -75,7 +75,7 @@ interface KotlinCommonToolOptions {
     @OptIn(org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi::class)
     @Deprecated(
         message = org.jetbrains.kotlin.gradle.dsl.KOTLIN_OPTIONS_DEPRECATION_MESSAGE,
-        level = DeprecationLevel.WARNING,
+        level = DeprecationLevel.ERROR,
     )
     var freeCompilerArgs: kotlin.collections.List<kotlin.String>
         get() = options.freeCompilerArgs.get()

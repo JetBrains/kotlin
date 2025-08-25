@@ -834,7 +834,7 @@ private fun Printer.generatePropertyGetterAndSetter(
             kotlinOptionDeprecation(
                 indent = 4,
                 indentFirstLine = false,
-                deprecationLevel = DeprecationLevel.WARNING,
+                deprecationLevel = DeprecationLevel.ERROR,
             )
         )
     }

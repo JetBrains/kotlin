@@ -39,7 +39,7 @@ interface KotlinCommonOptions : org.jetbrains.kotlin.gradle.dsl.KotlinCommonTool
     @OptIn(org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi::class)
     @Deprecated(
         message = org.jetbrains.kotlin.gradle.dsl.KOTLIN_OPTIONS_DEPRECATION_MESSAGE,
-        level = DeprecationLevel.WARNING,
+        level = DeprecationLevel.ERROR,
     )
     var apiVersion: kotlin.String?
         get() = options.apiVersion.orNull.apiVersionKotlinOption
@@ -59,7 +59,7 @@ interface KotlinCommonOptions : org.jetbrains.kotlin.gradle.dsl.KotlinCommonTool
     @OptIn(org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi::class)
     @Deprecated(
         message = org.jetbrains.kotlin.gradle.dsl.KOTLIN_OPTIONS_DEPRECATION_MESSAGE,
-        level = DeprecationLevel.WARNING,
+        level = DeprecationLevel.ERROR,
     )
     var languageVersion: kotlin.String?
         get() = options.languageVersion.orNull.languageVersionKotlinOption
