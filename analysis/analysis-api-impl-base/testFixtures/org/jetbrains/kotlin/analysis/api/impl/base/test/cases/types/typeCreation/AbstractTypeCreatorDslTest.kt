@@ -138,5 +138,57 @@ abstract class AbstractTypeCreatorDslTest : AbstractAnalysisApiBasedTest() {
         protected fun getTypeParameterSymbolByCaret(label: String): KaTypeParameterSymbol {
             return (caretToType[label] as? KaTypeParameterType)?.symbol ?: error("Type under `$label` is not a type parameter type")
         }
+
+        inner class DefinitelyNotNullType {
+            fun testCapturedTypeIntOut(): KaType {
+                val type = getTypeByCaret("type")
+                with(session.typeCreator) {
+                    val projection = typeArgumentWithVariance(Variance.OUT_VARIANCE, type)
+                    val capturedType = capturedType(projection)
+                    return definitelyNotNullType(capturedType)
+                }
+            }
+
+            fun testCapturedTypeWithStarProjection(): KaType {
+                with(session.typeCreator) {
+                    val projection = starTypeProjection()
+                    val capturedType = capturedType(projection)
+                    return definitelyNotNullType(capturedType)
+                }
+            }
+
+            fun testNullableTypeParameter(): KaType {
+                val type = getTypeByCaret("type")
+                return session.typeCreator.definitelyNotNullType(type)
+            }
+
+            fun testTypeParameter(): KaType {
+                val type = getTypeByCaret("type")
+                return session.typeCreator.definitelyNotNullType(type)
+            }
+
+            fun testTypeParameterWithAnyUpperBound(): KaType {
+                val type = getTypeByCaret("type")
+                return session.typeCreator.definitelyNotNullType(type)
+            }
+
+            fun testTypeParameterWithNullableIntUpperBound(): KaType {
+                val type = getTypeByCaret("type")
+                return session.typeCreator.definitelyNotNullType(type)
+            }
+
+            fun testWithAnnotations(): KaType {
+                val annotationClassId1 = ClassId.fromString("MyAnno1")
+                val annotationClassId2 = ClassId.fromString("MyAnno2")
+                val annotationClassId3 = ClassId.fromString("MyAnno3")
+
+                val type = getTypeByCaret("type")
+                return session.typeCreator.definitelyNotNullType(type) {
+                    annotation { annotationClassId1 }
+                    annotation(annotationClassId2)
+                    annotations(listOf(annotationClassId3))
+                }
+            }
+        }
     }
 }
