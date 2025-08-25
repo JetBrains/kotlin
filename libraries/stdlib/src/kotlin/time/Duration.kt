@@ -81,8 +81,9 @@ public value class Duration internal constructor(private val rawValue: Long) : C
          * @property withSign Whether to parse the optional '+' or '-' sign at the beginning
          */
         internal class LongParser(val overflowLimit: Long, val withSign: Boolean) {
-            val overflowThreshold = overflowLimit / 10
-            val lastDigitMax = overflowLimit % 10
+
+            private val overflowThreshold = overflowLimit / 10
+            private val lastDigitMax = overflowLimit % 10
 
             /**
              * Parses a long integer from the string starting at the specified index.
@@ -138,23 +139,6 @@ public value class Duration internal constructor(private val rawValue: Long) : C
          * - Low precision: remaining 6 digits
          */
         internal class FractionalParser {
-            private inline fun String.parseDigits(startIndex: Int, maxDigits: Int, callback: (Int) -> Unit): Int {
-                var index = startIndex
-                var result = 0
-                var count = 0
-                while (index < length && count < maxDigits) {
-                    val ch = this[index]
-                    if (ch !in '0'..'9') break
-                    result = result.multiplyBy10() + (ch - '0')
-                    count++
-                    index++
-                }
-                repeat(maxDigits - count) {
-                    result = result.multiplyBy10()
-                }
-                callback(index)
-                return result
-            }
 
             /**
              * Parses up to 15 decimal digits as a fraction and returns them scaled to 15 decimal places.
@@ -171,6 +155,24 @@ public value class Duration internal constructor(private val rawValue: Long) : C
                 index = value.skipWhile(index) { it in '0'..'9' }
                 callback(index)
                 return highPrecisionDigits.toLong() * 1_000_000 + lowPrecisionDigits
+            }
+
+            private inline fun String.parseDigits(startIndex: Int, maxDigits: Int, callback: (Int) -> Unit): Int {
+                var index = startIndex
+                var result = 0
+                var count = 0
+                while (index < length && count < maxDigits) {
+                    val ch = this[index]
+                    if (ch !in '0'..'9') break
+                    result = result.multiplyBy10() + (ch - '0')
+                    count++
+                    index++
+                }
+                repeat(maxDigits - count) {
+                    result = result.multiplyBy10()
+                }
+                callback(index)
+                return result
             }
         }
 
