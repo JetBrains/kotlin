@@ -28,7 +28,6 @@ object CompilerUtils {
     const val X_JAVA_SOURCE_ROOTS_ARG = "-Xjava-source-roots="
     const val X_KLIB_ARG = "-Xklib="
 
-
     fun getMap(args: List<String>): MutableMap<String, String> {
         //  TODO this must be verified
         val argumentsExpectingFilePath = setOf(
@@ -77,7 +76,6 @@ object CompilerUtils {
             }
         }
         map[SOURCE_FILE_ARG] = sourceFiles.reversed().joinToString(" ")
-        map.remove(X_PLUGIN_ARG) //TODO temporary removal to make compilations work
         return map
     }
 
@@ -138,7 +136,18 @@ object CompilerUtils {
         if (X_PLUGIN_ARG in args) {
             val clientPlugins = args[X_PLUGIN_ARG]?.split(",") ?: emptyList()
             val remotePlugins = clientPlugins.joinToString(",") { clientPath ->
-                compilerPluginFiles[clientPath]?.absolutePath.toString()
+                // TODO: proper solution
+                // THIS IS JUST A WORKAROUND, because we use a compiler from Kotlin project and the older libraries are not compatible
+                // with the current Kotlin compiler
+                if (clientPath.contains("kotlin-scripting-compiler-impl-embeddable")) {
+                    "/Users/michal.svec/Desktop/kotlin/plugins/scripting/scripting-compiler-impl-embeddable/build/libs/kotlin-scripting-compiler-impl-embeddable-2.3.255-SNAPSHOT.jar"
+                } else if (clientPath.contains("kotlin-scripting-compiler-embeddable")) {
+                    "/Users/michal.svec/Desktop/kotlin/plugins/scripting/scripting-compiler-embeddable/build/libs/kotlin-scripting-compiler-embeddable-2.3.255-SNAPSHOT.jar"
+                } else if (clientPath.contains("kotlin-serialization-compiler-plugin-embeddable")) {
+                    "/Users/michal.svec/Desktop/kotlin/plugins/kotlinx-serialization/kotlinx-serialization.embeddable/build/libs/kotlinx-serialization-compiler-plugin.embeddable-2.3.255-SNAPSHOT.jar"
+                } else {
+                    compilerPluginFiles[clientPath]?.absolutePath.toString()
+                }
             }
             args[X_PLUGIN_ARG] = remotePlugins
         }
