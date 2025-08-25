@@ -24,7 +24,7 @@ public enum EnumWithFactory: KotlinRuntimeSupport._KotlinBridgeable, Swift.CaseI
     public static func valueOf(
         value: Swift.String
     ) -> main.EnumWithFactory {
-        return main.EnumWithFactory.__createClassWrapper(externalRCRef: EnumWithFactory_valueOf__TypesOfArguments__Swift_String__(value))
+        return main.EnumWithFactory(__externalRCRefUnsafe: EnumWithFactory_valueOf__TypesOfArguments__Swift_String__(value), options: .asBestFittingWrapper)
     }
 }
 public protocol InterfaceWithFactory: KotlinRuntime.KotlinBase {
@@ -99,7 +99,7 @@ public func classWithFactoryWithoutParameters() -> main.ClassWithFactoryWithoutP
 public func enumWithFactory(
     x: Swift.Int32
 ) -> main.EnumWithFactory {
-    return main.EnumWithFactory.__createClassWrapper(externalRCRef: __root___EnumWithFactory__TypesOfArguments__Swift_Int32__(x))
+    return main.EnumWithFactory(__externalRCRefUnsafe: __root___EnumWithFactory__TypesOfArguments__Swift_Int32__(x), options: .asBestFittingWrapper)
 }
 public func interfaceWithFactory() -> any main.InterfaceWithFactory {
     return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: __root___InterfaceWithFactory()) as! any main.InterfaceWithFactory

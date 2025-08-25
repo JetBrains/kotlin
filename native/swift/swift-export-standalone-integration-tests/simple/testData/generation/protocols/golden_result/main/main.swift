@@ -451,7 +451,7 @@ extension ExportedKotlinPackages.packagewithprotocols {
         public static func valueOf(
             value: Swift.String
         ) -> ExportedKotlinPackages.packagewithprotocols.ENUM_WITH_INTERFACE_INHERITANCE {
-            return ExportedKotlinPackages.packagewithprotocols.ENUM_WITH_INTERFACE_INHERITANCE.__createClassWrapper(externalRCRef: packagewithprotocols_ENUM_WITH_INTERFACE_INHERITANCE_valueOf__TypesOfArguments__Swift_String__(value))
+            return ExportedKotlinPackages.packagewithprotocols.ENUM_WITH_INTERFACE_INHERITANCE(__externalRCRefUnsafe: packagewithprotocols_ENUM_WITH_INTERFACE_INHERITANCE_valueOf__TypesOfArguments__Swift_String__(value), options: .asBestFittingWrapper)
         }
     }
     public protocol ContainerProtocol: KotlinRuntime.KotlinBase {

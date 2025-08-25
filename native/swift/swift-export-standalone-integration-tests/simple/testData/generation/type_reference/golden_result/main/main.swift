@@ -641,11 +641,11 @@ extension ExportedKotlinPackages.ignored {
         public static func valueOf(
             value: Swift.String
         ) -> ExportedKotlinPackages.ignored.ENUM {
-            return ExportedKotlinPackages.ignored.ENUM.__createClassWrapper(externalRCRef: ignored_ENUM_valueOf__TypesOfArguments__Swift_String__(value))
+            return ExportedKotlinPackages.ignored.ENUM(__externalRCRefUnsafe: ignored_ENUM_valueOf__TypesOfArguments__Swift_String__(value), options: .asBestFittingWrapper)
         }
     }
     public static func produce_ENUM() -> ExportedKotlinPackages.ignored.ENUM {
-        return ExportedKotlinPackages.ignored.ENUM.__createClassWrapper(externalRCRef: ignored_produce_ENUM())
+        return ExportedKotlinPackages.ignored.ENUM(__externalRCRefUnsafe: ignored_produce_ENUM(), options: .asBestFittingWrapper)
     }
     public static func produce_VALUE_CLASS() -> Swift.Never {
         fatalError()
