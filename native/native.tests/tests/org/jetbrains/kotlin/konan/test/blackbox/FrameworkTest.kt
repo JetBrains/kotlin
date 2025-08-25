@@ -484,7 +484,7 @@ abstract class FrameworkTestBase : AbstractNativeSimpleTest() {
             testSuiteDir.resolve("objcexport/noEnumEntries"),
             buildDir,
             TestCompilerArgs(
-                "-Xshort-module-name=NoEnumEntriesLibrary", "-XXLanguage:-EnumEntries",
+                "-Xshort-module-name=NoEnumEntriesLibrary", "-XXLanguage=-EnumEntries",
                 "-module-name", "org.jetbrains.kotlin.native.test-no-enum-entries-library",
             ),
             emptyList(),

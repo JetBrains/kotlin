@@ -197,7 +197,7 @@ private class ExtTestDataFile(
         val defaultDirectives = settings.get<RegisteredDirectives>()
         args += defaultDirectives[FREE_COMPILER_ARGS]
         args += structure.directives[FREE_COMPILER_ARGS]
-        testDataFileSettings.languageSettings.sorted().mapTo(args) { "-XXLanguage:$it" }
+        testDataFileSettings.languageSettings.sorted().mapTo(args) { "-XXLanguage=$it" }
         testDataFileSettings.optInsForCompiler.sorted().mapTo(args) { "-opt-in=$it" }
         if (!structure.directives[CodegenTestDirectives.DISABLE_IR_VISIBILITY_CHECKS].containsNativeOrAny &&
             !defaultDirectives[CodegenTestDirectives.DISABLE_IR_VISIBILITY_CHECKS].containsNativeOrAny

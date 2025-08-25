@@ -136,6 +136,6 @@ internal class NativeTestGroupingMessageCollector(
         private val PARTIAL_LINKAGE_WARNING_REGEX = Regex("^<[^<>]+>( @ (?:(?!: ).)+)?: .*")
 
         private fun parseLanguageFeatureArg(arg: String): String? =
-            substringAfter(arg, "-XXLanguage:-") ?: substringAfter(arg, "-XXLanguage:+")
+            substringAfter(arg, "-XXLanguage=-") ?: substringAfter(arg, "-XXLanguage=+")
     }
 }

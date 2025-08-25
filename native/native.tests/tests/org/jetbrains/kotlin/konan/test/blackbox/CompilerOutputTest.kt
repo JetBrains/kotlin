@@ -295,7 +295,7 @@ class FirCompilerOutputTest : CompilerOutputTestBase() {
         val poisonedLibrary = compileLibrary(
             settings = object : Settings(testRunSettings, listOf(PipelineType.DEFAULT)) {},
             source = rootDir.resolve("poisonedLibrary"),
-            freeCompilerArgs = listOf("-XXLanguage:+$arbitraryPoisoningFeature",),
+            freeCompilerArgs = listOf("-XXLanguage=+$arbitraryPoisoningFeature",),
         ).assertSuccess().resultingArtifact
 
         val library = compileLibrary(
@@ -324,7 +324,7 @@ class FirCompilerOutputTest : CompilerOutputTestBase() {
         val poisonedLibrary = compileLibrary(
             settings = object : Settings(testRunSettings, listOf(PipelineType.DEFAULT)) {},
             source = rootDir.resolve("poisonedLibrary"),
-            freeCompilerArgs = listOf("-XXLanguage:+$arbitraryPoisoningFeature",),
+            freeCompilerArgs = listOf("-XXLanguage=+$arbitraryPoisoningFeature",),
         ).assertSuccess().resultingArtifact
 
         val library = compileLibrary(
