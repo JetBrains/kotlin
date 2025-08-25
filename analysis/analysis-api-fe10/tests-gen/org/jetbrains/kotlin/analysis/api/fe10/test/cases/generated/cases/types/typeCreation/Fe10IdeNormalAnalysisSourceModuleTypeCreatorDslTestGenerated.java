@@ -287,6 +287,64 @@ public class Fe10IdeNormalAnalysisSourceModuleTypeCreatorDslTestGenerated extend
   }
 
   @Nested
+  @TestMetadata("analysis/analysis-api/testData/types/typeCreation/byDsl/definitelyNotNullType")
+  @TestDataPath("$PROJECT_ROOT")
+  public class DefinitelyNotNullType {
+    @Test
+    public void testAllFilesPresentInDefinitelyNotNullType() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/types/typeCreation/byDsl/definitelyNotNullType"), Pattern.compile("^(.+)\\.kt$"), null, true);
+    }
+
+    @Test
+    @TestMetadata("capturedNullableTypeOutProjection.kt")
+    public void testCapturedNullableTypeOutProjection() {
+      runTest("analysis/analysis-api/testData/types/typeCreation/byDsl/definitelyNotNullType/capturedNullableTypeOutProjection.kt");
+    }
+
+    @Test
+    @TestMetadata("capturedTypeIntOut.kt")
+    public void testCapturedTypeIntOut() {
+      runTest("analysis/analysis-api/testData/types/typeCreation/byDsl/definitelyNotNullType/capturedTypeIntOut.kt");
+    }
+
+    @Test
+    @TestMetadata("capturedTypeWithStarProjection.kt")
+    public void testCapturedTypeWithStarProjection() {
+      runTest("analysis/analysis-api/testData/types/typeCreation/byDsl/definitelyNotNullType/capturedTypeWithStarProjection.kt");
+    }
+
+    @Test
+    @TestMetadata("nullableTypeParameter.kt")
+    public void testNullableTypeParameter() {
+      runTest("analysis/analysis-api/testData/types/typeCreation/byDsl/definitelyNotNullType/nullableTypeParameter.kt");
+    }
+
+    @Test
+    @TestMetadata("typeParameter.kt")
+    public void testTypeParameter() {
+      runTest("analysis/analysis-api/testData/types/typeCreation/byDsl/definitelyNotNullType/typeParameter.kt");
+    }
+
+    @Test
+    @TestMetadata("typeParameterWithAnyUpperBound.kt")
+    public void testTypeParameterWithAnyUpperBound() {
+      runTest("analysis/analysis-api/testData/types/typeCreation/byDsl/definitelyNotNullType/typeParameterWithAnyUpperBound.kt");
+    }
+
+    @Test
+    @TestMetadata("typeParameterWithNullableIntUpperBound.kt")
+    public void testTypeParameterWithNullableIntUpperBound() {
+      runTest("analysis/analysis-api/testData/types/typeCreation/byDsl/definitelyNotNullType/typeParameterWithNullableIntUpperBound.kt");
+    }
+
+    @Test
+    @TestMetadata("withAnnotations.kt")
+    public void testWithAnnotations() {
+      runTest("analysis/analysis-api/testData/types/typeCreation/byDsl/definitelyNotNullType/withAnnotations.kt");
+    }
+  }
+
+  @Nested
   @TestMetadata("analysis/analysis-api/testData/types/typeCreation/byDsl/dynamicType")
   @TestDataPath("$PROJECT_ROOT")
   public class DynamicType {
