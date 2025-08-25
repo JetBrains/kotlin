@@ -13,6 +13,7 @@ import org.gradle.api.provider.Provider
 import org.jetbrains.kotlin.gradle.internal.properties.nativeProperties
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
+import org.jetbrains.kotlin.gradle.plugin.internal.kotlinSecondaryVariantsDataSharing
 import org.jetbrains.kotlin.gradle.targets.android.internal.InternalKotlinTargetPreset
 import org.jetbrains.kotlin.gradle.targets.native.internal.setupCInteropCommonizerDependencies
 import org.jetbrains.kotlin.gradle.targets.native.internal.setupCInteropPropagatedDependencies
@@ -138,6 +139,31 @@ internal val AbstractKotlinNativeCompilation.crossCompilationOnCurrentHostSuppor
         is KotlinNativeCompilation -> target.crossCompilationOnCurrentHostSupported
         else -> project.future { true }
     }
+
+internal val AbstractKotlinNativeCompilation.dependenciesContainsCinterops: Boolean
+    get() {
+        val crossCompilationData = project.kotlinSecondaryVariantsDataSharing.consumeCrossCompilationMetadata(
+            compilation.configurations.compileDependencyConfiguration
+        ).getDataForAllDependencies()
+
+        return crossCompilationData.any { it.hasCInterops }
+    }
+
+internal val KotlinNativeCompilation.hasCInterops: Boolean
+    get() = cinterops.isNotEmpty()
+
+//internal val AbstractKotlinNativeCompilation.canCrossCompileDependencies: Boolean
+//    get() {
+//        val crossCompilationData = project.kotlinSecondaryVariantsDataSharing.consumeCrossCompilationMetadata(
+//            compilation.configurations.compileDependencyConfiguration
+//        ).getDataForAllDependencies()
+//
+//        return if (crossCompilationData.isEmpty()) {
+//            true
+//        } else {
+//            crossCompilationData.all { it.crossCompilationSupported }
+//        }
+//    }
 
 // The same as `KotlinNativeTarget.publishable`, but with a fallback to `enabledOnCurrentHostForKlibCompilation`
 @Suppress("DEPRECATION")

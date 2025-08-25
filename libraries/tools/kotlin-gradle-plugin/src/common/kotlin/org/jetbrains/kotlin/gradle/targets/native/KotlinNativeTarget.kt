@@ -51,7 +51,7 @@ abstract class KotlinNativeTarget @Inject constructor(
 
         // Unsupported hosts require cross-compilation enabled and no cinterops
         KotlinPluginLifecycle.Stage.AfterFinaliseCompilations.await()
-        crossCompilationEnabled && compilations.none { it.cinterops.isNotEmpty() }
+        crossCompilationEnabled && compilations.none { it.hasCInterops || it.dependenciesContainsCinterops }
     }
 
     override val kotlinComponents: Set<KotlinTargetComponent> by lazy {
