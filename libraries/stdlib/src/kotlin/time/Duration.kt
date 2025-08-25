@@ -1370,12 +1370,12 @@ private fun String.parseFraction(startIndex: Int): NumericParseData {
         return result
     }
 
-    val r1 = parseDigits(9)
-    val r2 = parseDigits(FRACTION_LIMIT - 9)
+    val highPrecisionDigits = parseDigits(9)
+    val lowPrecisionDigits = parseDigits(FRACTION_LIMIT - 9)
 
     index = skipWhile(index) { it in '0'..'9' }
 
-    return NumericParseData(r1.toLong() * 1_000_000 + r2, index)
+    return NumericParseData(highPrecisionDigits.toLong() * 1_000_000 + lowPrecisionDigits, index)
 }
 
 /**
