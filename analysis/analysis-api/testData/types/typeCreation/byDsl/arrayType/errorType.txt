@@ -1,0 +1,37 @@
+KaType
+KaUsualClassType:
+  abbreviation: null
+  annotations: []
+  classId: kotlin/Array
+  qualifiers: [
+    KaResolvedClassTypeQualifier:
+      name: Array
+      symbol: KaNamedClassSymbol(kotlin/Array)
+      typeArguments: [
+        KaErrorType:
+          abbreviation: null
+          annotations: []
+          errorMessage: No type for parameter
+          presentableText: null
+          isMarkedNullable: false
+          isNullable: true
+          hasFlexibleNullability: true
+      ]
+  ]
+  symbol: KaNamedClassSymbol(kotlin/Array)
+  typeArguments: [
+    KaErrorType:
+      abbreviation: null
+      annotations: []
+      errorMessage: No type for parameter
+      presentableText: null
+      isMarkedNullable: false
+      isNullable: true
+      hasFlexibleNullability: true
+  ]
+  isMarkedNullable: false
+  isNullable: false
+  hasFlexibleNullability: false
+
+Rendered type:
+kotlin.Array<ERROR>

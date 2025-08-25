@@ -1,0 +1,115 @@
+KaType
+KaUsualClassType:
+  abbreviation: null
+  annotations: []
+  classId: kotlin/Array
+  qualifiers: [
+    KaResolvedClassTypeQualifier:
+      name: Array
+      symbol: KaNamedClassSymbol(kotlin/Array)
+      typeArguments: [
+        out KaUsualClassType:
+          abbreviation: null
+          annotations: []
+          classId: kotlin/Array
+          qualifiers: [
+            KaResolvedClassTypeQualifier:
+              name: Array
+              symbol: KaNamedClassSymbol(kotlin/Array)
+              typeArguments: [
+                KaUsualClassType:
+                  abbreviation: null
+                  annotations: []
+                  classId: kotlin/Int
+                  qualifiers: [
+                    KaResolvedClassTypeQualifier:
+                      name: Int
+                      symbol: KaNamedClassSymbol(kotlin/Int)
+                      typeArguments: []
+                  ]
+                  symbol: KaNamedClassSymbol(kotlin/Int)
+                  typeArguments: []
+                  isMarkedNullable: false
+                  isNullable: false
+                  hasFlexibleNullability: false
+              ]
+          ]
+          symbol: KaNamedClassSymbol(kotlin/Array)
+          typeArguments: [
+            KaUsualClassType:
+              abbreviation: null
+              annotations: []
+              classId: kotlin/Int
+              qualifiers: [
+                KaResolvedClassTypeQualifier:
+                  name: Int
+                  symbol: KaNamedClassSymbol(kotlin/Int)
+                  typeArguments: []
+              ]
+              symbol: KaNamedClassSymbol(kotlin/Int)
+              typeArguments: []
+              isMarkedNullable: false
+              isNullable: false
+              hasFlexibleNullability: false
+          ]
+          isMarkedNullable: false
+          isNullable: false
+          hasFlexibleNullability: false
+      ]
+  ]
+  symbol: KaNamedClassSymbol(kotlin/Array)
+  typeArguments: [
+    out KaUsualClassType:
+      abbreviation: null
+      annotations: []
+      classId: kotlin/Array
+      qualifiers: [
+        KaResolvedClassTypeQualifier:
+          name: Array
+          symbol: KaNamedClassSymbol(kotlin/Array)
+          typeArguments: [
+            KaUsualClassType:
+              abbreviation: null
+              annotations: []
+              classId: kotlin/Int
+              qualifiers: [
+                KaResolvedClassTypeQualifier:
+                  name: Int
+                  symbol: KaNamedClassSymbol(kotlin/Int)
+                  typeArguments: []
+              ]
+              symbol: KaNamedClassSymbol(kotlin/Int)
+              typeArguments: []
+              isMarkedNullable: false
+              isNullable: false
+              hasFlexibleNullability: false
+          ]
+      ]
+      symbol: KaNamedClassSymbol(kotlin/Array)
+      typeArguments: [
+        KaUsualClassType:
+          abbreviation: null
+          annotations: []
+          classId: kotlin/Int
+          qualifiers: [
+            KaResolvedClassTypeQualifier:
+              name: Int
+              symbol: KaNamedClassSymbol(kotlin/Int)
+              typeArguments: []
+          ]
+          symbol: KaNamedClassSymbol(kotlin/Int)
+          typeArguments: []
+          isMarkedNullable: false
+          isNullable: false
+          hasFlexibleNullability: false
+      ]
+      isMarkedNullable: false
+      isNullable: false
+      hasFlexibleNullability: false
+  ]
+  isMarkedNullable: false
+  isNullable: false
+  hasFlexibleNullability: false
+
+Rendered type:
+kotlin.Array<out kotlin.Array<kotlin.Int>>

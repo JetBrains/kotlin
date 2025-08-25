@@ -135,6 +135,7 @@ abstract class AbstractTypeCreatorDslTest : AbstractAnalysisApiBasedTest() {
                 "TypeParameterType" to TypeParameterTypeCreatorDslTestCases::class,
                 "TypeProjection" to TypeProjectionCreatorDslTestCases::class,
                 "CapturedType" to CapturedTypeCreatorDslTestCases::class,
+                "ArrayType" to ArrayTypeCreatorDslTestCases::class,
             )
         }
 
