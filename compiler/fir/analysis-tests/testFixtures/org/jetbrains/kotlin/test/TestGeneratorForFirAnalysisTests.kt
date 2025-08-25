@@ -9,12 +9,15 @@ import org.jetbrains.kotlin.generators.TestGroup.TestClass
 import org.jetbrains.kotlin.generators.generateTestGroupSuiteWithJUnit5
 import org.jetbrains.kotlin.generators.util.TestGeneratorUtil
 import org.jetbrains.kotlin.generators.util.TestGeneratorUtil.canFreezeIDE
+import org.jetbrains.kotlin.spec.utils.tasks.detectDirsWithTestsMapFileOnly
+import org.jetbrains.kotlin.test.runners.AbstractFirLightTreeDiagnosticTestSpec
 import org.jetbrains.kotlin.test.runners.AbstractFirLightTreeDiagnosticsWithLatestLanguageVersionTest
 import org.jetbrains.kotlin.test.runners.AbstractFirLightTreeDiagnosticsWithoutAliasExpansionTest
 import org.jetbrains.kotlin.test.runners.AbstractFirLightTreeWithActualizerDiagnosticsWithLatestLanguageVersionTest
 import org.jetbrains.kotlin.test.runners.AbstractFirLoadCompiledJvmWithAnnotationsInMetadataKotlinTest
 import org.jetbrains.kotlin.test.runners.AbstractFirLoadK1CompiledJvmKotlinTest
 import org.jetbrains.kotlin.test.runners.AbstractFirLoadK2CompiledJvmKotlinTest
+import org.jetbrains.kotlin.test.runners.AbstractFirPsiDiagnosticTestSpec
 import org.jetbrains.kotlin.test.runners.AbstractFirPsiForeignAnnotationsCompiledJavaTest
 import org.jetbrains.kotlin.test.runners.AbstractFirPsiForeignAnnotationsCompiledJavaWithPsiClassReadingTest
 import org.jetbrains.kotlin.test.runners.AbstractFirPsiForeignAnnotationsSourceJavaTest
@@ -165,6 +168,23 @@ fun main(args: Array<String>) {
             }
             testClass<AbstractPhasedJvmDiagnosticPsiTest> {
                 phasedModel(allowKts = true)
+            }
+        }
+
+        testGroup(testsRoot = "compiler/fir/analysis-tests/tests-gen", testDataRoot = "compiler/tests-spec/testData") {
+            testClass<AbstractFirPsiDiagnosticTestSpec> {
+                model(
+                    "diagnostics",
+                    excludeDirs = listOf("helpers") + detectDirsWithTestsMapFileOnly("diagnostics"),
+                    excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN
+                )
+            }
+            testClass<AbstractFirLightTreeDiagnosticTestSpec> {
+                model(
+                    "diagnostics",
+                    excludeDirs = listOf("helpers") + detectDirsWithTestsMapFileOnly("diagnostics"),
+                    excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN
+                )
             }
         }
     }

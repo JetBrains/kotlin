@@ -11,7 +11,6 @@ dependencies {
     testImplementation(testFixtures(project(":compiler:tests-common")))
 
     testFixturesApi(testFixtures(project(":compiler:test-infrastructure")))
-    testFixturesApi(testFixtures(project(":compiler:tests-common-new")))
 
     testFixturesImplementation(commonDependency("com.google.code.gson:gson"))
     testImplementation(commonDependency("com.google.code.gson:gson"))

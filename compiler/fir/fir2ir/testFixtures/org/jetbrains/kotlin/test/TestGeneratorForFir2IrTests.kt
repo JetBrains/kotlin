@@ -7,6 +7,9 @@ package org.jetbrains.kotlin.test
 
 import org.jetbrains.kotlin.generators.generateTestGroupSuiteWithJUnit5
 import org.jetbrains.kotlin.generators.util.TestGeneratorUtil
+import org.jetbrains.kotlin.spec.utils.GeneralConfiguration.SPEC_TEST_PATH
+import org.jetbrains.kotlin.spec.utils.tasks.detectDirsWithTestsMapFileOnly
+import org.jetbrains.kotlin.test.runners.AbstractFirBlackBoxCodegenTestSpec
 import org.jetbrains.kotlin.test.runners.AbstractFirLightTreeDiagnosticsTestWithJvmIrBackend
 import org.jetbrains.kotlin.test.runners.AbstractFirPsiDiagnosticsTestWithConverter
 import org.jetbrains.kotlin.test.runners.AbstractFirPsiDiagnosticsTestWithJvmIrBackend
@@ -167,6 +170,15 @@ fun main(args: Array<String>) {
 
             testClass<AbstractFirPsiBytecodeTextTest> {
                 model("codegen/bytecodeText")
+            }
+        }
+
+        testGroup("compiler/fir/fir2ir/tests-gen", "compiler/tests-spec/testData") {
+            testClass<AbstractFirBlackBoxCodegenTestSpec> {
+                model(
+                    relativeRootPath = "codegen/box",
+                    excludeDirs = listOf("helpers", "templates") + detectDirsWithTestsMapFileOnly("codegen/box"),
+                )
             }
         }
     }
