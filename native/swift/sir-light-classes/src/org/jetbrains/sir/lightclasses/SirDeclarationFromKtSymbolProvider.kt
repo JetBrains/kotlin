@@ -66,8 +66,10 @@ public class SirDeclarationFromKtSymbolProvider(
             is KaEnumEntrySymbol -> {
                 SirTranslationResult.EnumCase(
                     SirEnumCase(
-                        ktSymbol.name.asString(), emptyList(),
-                        sirSession.withSessions { ktSymbol.getSirParent() as SirEnum }
+                        ktSymbol.name.asString(),
+                        emptyList(),
+                        sirSession.withSessions { ktSymbol.getSirParent() as SirEnum },
+                        KotlinSource(ktSymbol),
                     )
                 )
             }
