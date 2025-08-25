@@ -63,7 +63,6 @@ abstract class InventNamesForLocalFunctions : BodyLoweringPass {
     private val declarationScopesWithCounter: MutableMap<IrClass, MutableMap<Name, ScopeWithCounter>> = mutableMapOf()
 
     private class LocalFunctionContext(
-        val originalName: Name,
         val index: Int,
         val newOwnerForLiftedUpFunction: IrDeclarationContainer,
         val isNestedInLambda: Boolean,
@@ -129,7 +128,6 @@ abstract class InventNamesForLocalFunctions : BodyLoweringPass {
                         ?: enclosingScope.irElement as IrDeclarationContainer
 
                 val functionContext = LocalFunctionContext(
-                    originalName = declaration.name, // TODO: remove it?
                     index = index,
                     newOwnerForLiftedUpFunction = newOwnerForLiftedUpFunction,
                     isNestedInLambda = data.isInLambdaFunction,
@@ -172,14 +170,14 @@ abstract class InventNamesForLocalFunctions : BodyLoweringPass {
 
         private fun suggestLocalName(declaration: IrDeclarationWithName): String {
             val functionContext = localFunctions[declaration]
-                ?: return sanitizeNameIfNeeded(declaration.inventedNameForLocalFunctionOrDefaultName.asString())
+                ?: return sanitizeNameIfNeeded(declaration.name.asString())
 
             if (functionContext.index < 0)
-                return sanitizeNameIfNeeded(functionContext.originalName.asString())
+                return sanitizeNameIfNeeded(declaration.name.asString())
 
             val baseName = when {
-                functionContext.originalName.isSpecial -> if (functionContext.isNestedInLambda) "" else "lambda"
-                else -> sanitizeNameIfNeeded(functionContext.originalName.asString())
+                declaration.name.isSpecial -> if (functionContext.isNestedInLambda) "" else "lambda"
+                else -> sanitizeNameIfNeeded(declaration.name.asString())
             }
 
             if (!suggestUniqueNames) return baseName
