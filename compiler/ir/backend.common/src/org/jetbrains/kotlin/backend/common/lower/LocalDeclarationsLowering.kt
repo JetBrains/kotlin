@@ -823,7 +823,7 @@ open class LocalDeclarationsLowering(
 
             val newDeclaration = context.irFactory.buildFun {
                 updateFrom(oldDeclaration)
-                name = oldDeclaration.name
+                name = oldDeclaration.inventedNameForLocalFunctionOrDefaultName
                 visibility = if (owner.isLocal) DescriptorVisibilities.LOCAL else DescriptorVisibilities.PRIVATE
                 modality = Modality.FINAL
             }

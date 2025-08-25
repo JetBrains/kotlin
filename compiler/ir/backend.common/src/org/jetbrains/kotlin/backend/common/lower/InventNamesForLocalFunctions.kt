@@ -35,6 +35,11 @@ import org.jetbrains.kotlin.ir.visitors.IrVisitor
 import org.jetbrains.kotlin.name.Name
 import kotlin.collections.set
 
+private var IrSimpleFunction.inventedNameForLocalFunction: Name? by irAttribute(copyByDefault = false)
+
+internal val IrDeclarationWithName.inventedNameForLocalFunctionOrDefaultName: Name
+    get() = (this as? IrSimpleFunction)?.inventedNameForLocalFunction ?: name
+
 /**
  * Invent names for local functions before lifting them up.
  *
@@ -124,7 +129,7 @@ abstract class InventNamesForLocalFunctions : BodyLoweringPass {
                         ?: enclosingScope.irElement as IrDeclarationContainer
 
                 val functionContext = LocalFunctionContext(
-                    originalName = declaration.name,
+                    originalName = declaration.name, // TODO: remove it?
                     index = index,
                     newOwnerForLiftedUpFunction = newOwnerForLiftedUpFunction,
                     isNestedInLambda = data.isInLambdaFunction,
@@ -132,7 +137,7 @@ abstract class InventNamesForLocalFunctions : BodyLoweringPass {
                 localFunctions[declaration] = functionContext
                 enclosingScope.usedLocalFunctionNames.add(declaration.name)
 
-                declaration.name = generateNameForLiftedFunction(
+                declaration.inventedNameForLocalFunction = generateNameForLiftedFunction(
                     function = declaration,
                     newOwnerForLiftedUpFunction = functionContext.newOwnerForLiftedUpFunction
                 )
@@ -167,7 +172,7 @@ abstract class InventNamesForLocalFunctions : BodyLoweringPass {
 
         private fun suggestLocalName(declaration: IrDeclarationWithName): String {
             val functionContext = localFunctions[declaration]
-                ?: return sanitizeNameIfNeeded(declaration.name.asString())
+                ?: return sanitizeNameIfNeeded(declaration.inventedNameForLocalFunctionOrDefaultName.asString())
 
             if (functionContext.index < 0)
                 return sanitizeNameIfNeeded(functionContext.originalName.asString())
