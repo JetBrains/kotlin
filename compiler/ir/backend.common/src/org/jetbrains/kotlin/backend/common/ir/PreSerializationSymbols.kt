@@ -201,7 +201,10 @@ interface PreSerializationWebSymbols : PreSerializationKlibSymbols {
         val COROUTINE_SUSPEND_OR_RETURN_JS_NAME = "suspendCoroutineUninterceptedOrReturnJS"
     }
 
-    abstract class Impl(irBuiltIns: IrBuiltIns) : PreSerializationWebSymbols, PreSerializationKlibSymbols.Impl(irBuiltIns)
+    abstract class Impl(irBuiltIns: IrBuiltIns) : PreSerializationWebSymbols, PreSerializationKlibSymbols.Impl(irBuiltIns) {
+        override val coroutineContextGetter =
+            symbolFinder.findTopLevelPropertyGetter(COROUTINE_PACKAGE_FQNAME, COROUTINE_CONTEXT_NAME.asString())
+    }
 }
 
 interface PreSerializationJsSymbols : PreSerializationWebSymbols {
@@ -221,8 +224,6 @@ interface PreSerializationJsSymbols : PreSerializationWebSymbols {
         override val defaultConstructorMarker =
             symbolFinder.topLevelClass(BASE_JS_PACKAGE, "DefaultConstructorMarker")
 
-        override val coroutineContextGetter =
-            symbolFinder.findTopLevelPropertyGetter(PreSerializationWebSymbols.COROUTINE_PACKAGE_FQNAME, PreSerializationWebSymbols.COROUTINE_CONTEXT_NAME.asString())
         override val suspendCoroutineUninterceptedOrReturn = symbolFinder.topLevelFunction(BASE_JS_PACKAGE, PreSerializationWebSymbols.COROUTINE_SUSPEND_OR_RETURN_JS_NAME)
         override val coroutineGetContext = symbolFinder.topLevelFunction(BASE_JS_PACKAGE, PreSerializationWebSymbols.GET_COROUTINE_CONTEXT_NAME)
 
@@ -246,8 +247,6 @@ interface PreSerializationWasmSymbols : PreSerializationWebSymbols {
         override val defaultConstructorMarker =
             getIrClass(FqName("kotlin.wasm.internal.DefaultConstructorMarker"))
 
-        override val coroutineContextGetter =
-            symbolFinder.findTopLevelPropertyGetter(PreSerializationWebSymbols.COROUTINE_PACKAGE_FQNAME, PreSerializationWebSymbols.COROUTINE_CONTEXT_NAME.asString())
         override val suspendCoroutineUninterceptedOrReturn =
             getInternalWasmFunction("suspendCoroutineUninterceptedOrReturn")
         override val coroutineGetContext =
