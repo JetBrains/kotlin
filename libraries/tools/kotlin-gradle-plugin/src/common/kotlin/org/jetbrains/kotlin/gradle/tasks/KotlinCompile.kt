@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.compilerRunner.GradleCompilerEnvironment
 import org.jetbrains.kotlin.compilerRunner.IncrementalCompilationEnvironment
 import org.jetbrains.kotlin.compilerRunner.OutputItemsCollectorImpl
 import org.jetbrains.kotlin.config.JvmTarget
-import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.dsl.jvm.JvmTargetValidationMode
 import org.jetbrains.kotlin.gradle.internal.tasks.allOutputFiles
@@ -38,7 +37,6 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer.CreateCompilerArgumentsContext.Companion.create
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnostic
-import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
 import org.jetbrains.kotlin.gradle.report.BuildReportMode
 import org.jetbrains.kotlin.gradle.tasks.internal.KotlinJvmOptionsCompat
 import org.jetbrains.kotlin.gradle.utils.*
@@ -117,22 +115,8 @@ abstract class KotlinCompile @Inject constructor(
     @get:Nested
     abstract val classpathSnapshotProperties: ClasspathSnapshotProperties
 
-    /** Properties related to the `kotlin.incremental.useClasspathSnapshot` feature. */
+    /** Properties related to the classpath snapshots based incremental compilation feature. */
     abstract class ClasspathSnapshotProperties {
-        @get:Internal
-        @Deprecated(
-            message = "This input property is not supported - classpath snapshots based incremental compilation is the only used approach.",
-            level = DeprecationLevel.ERROR
-        )
-        abstract val useClasspathSnapshot: Property<Boolean>
-
-        @get:Internal
-        @Deprecated(
-            message = "This input property is not supported - classpath snapshots based incremental compilation is the only used approach.",
-            level = DeprecationLevel.ERROR
-        )
-        abstract val classpath: ConfigurableFileCollection
-
         @get:Classpath
         @get:Incremental
         @get:Optional // Set if useClasspathSnapshot == true
