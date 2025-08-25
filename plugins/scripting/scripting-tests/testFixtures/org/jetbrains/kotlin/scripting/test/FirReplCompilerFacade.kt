@@ -31,7 +31,7 @@ data class ReplCompilationArtifact(
     val snippetSource: KtFileScriptSource,
     val compilationResult: ResultWithDiagnostics<LinkedSnippet<CompiledSnippet>>,
 ) : ResultingArtifact.Binary<ReplCompilationArtifact>() {
-    object Kind : ArtifactKind<ReplCompilationArtifact>("ReplCompilationArtifact")
+    object Kind : ArtifactKind<ReplCompilationArtifact>("ReplCompilationArtifact", CompilationStage.FIRST)
 
     override val kind: ArtifactKind<ReplCompilationArtifact> get() = Kind
 }

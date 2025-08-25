@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
 import org.jetbrains.kotlin.test.directives.model.singleOrZeroValue
 import org.jetbrains.kotlin.test.model.TestFile
 import org.jetbrains.kotlin.test.model.TestModule
+import org.jetbrains.kotlin.test.services.CompilationStage
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.compilerConfigurationProvider
 import org.jetbrains.kotlin.test.services.sourceFileProvider
@@ -189,7 +190,7 @@ object JvmJarTestModuleCompiler : CliTestModuleCompiler() {
     }
 
     override fun buildPlatformExtraClasspath(module: TestModule, testServices: TestServices): List<String> = buildList {
-        val compilerConfiguration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module)
+        val compilerConfiguration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module, CompilationStage.FIRST)
         for (file in compilerConfiguration.jvmClasspathRoots) {
             add(file.absolutePath)
         }

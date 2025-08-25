@@ -158,7 +158,7 @@ object TestModuleStructureFactory {
     ) {
         val project = ktModule.project
 
-        val compilerConfiguration = testServices.compilerConfigurationProvider.getCompilerConfiguration(testModule)
+        val compilerConfiguration = testServices.compilerConfigurationProvider.getCompilerConfiguration(testModule, CompilationStage.FIRST)
 
         val classpathRoots = compilerConfiguration[CLIConfigurationKeys.CONTENT_ROOTS, emptyList()]
             .mapNotNull { (it as? JvmClasspathRoot)?.file?.toPath() }

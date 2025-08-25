@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.test.backend.ir.IrBackendInputsFromK1AndK2
 import org.jetbrains.kotlin.test.frontend.K1AndK2OutputArtifact
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontendOutputArtifact
 import org.jetbrains.kotlin.test.frontend.fir.FirOutputArtifact
+import org.jetbrains.kotlin.test.services.CompilationStage
 
 object FrontendKinds {
     object ClassicFrontend : FrontendKind<ClassicFrontendOutputArtifact>("ClassicFrontend")
@@ -46,12 +47,12 @@ object BackendKinds {
 }
 
 object ArtifactKinds {
-    object Jvm : ArtifactKind<BinaryArtifacts.Jvm>("JVM")
-    object JvmFromK1AndK2 : ArtifactKind<BinaryArtifacts.JvmFromK1AndK2>("JvmFromK1AndK2")
-    object Js : ArtifactKind<BinaryArtifacts.Js>("JS")
-    object Native : ArtifactKind<BinaryArtifacts.Native>("Native")
-    object Wasm : ArtifactKind<BinaryArtifacts.Wasm>("Wasm")
-    object KLib : ArtifactKind<BinaryArtifacts.KLib>("KLib")
+    object Jvm : ArtifactKind<BinaryArtifacts.Jvm>("JVM", CompilationStage.FIRST)
+    object JvmFromK1AndK2 : ArtifactKind<BinaryArtifacts.JvmFromK1AndK2>("JvmFromK1AndK2", CompilationStage.FIRST)
+    object Js : ArtifactKind<BinaryArtifacts.Js>("JS", CompilationStage.SECOND)
+    object Native : ArtifactKind<BinaryArtifacts.Native>("Native", CompilationStage.SECOND)
+    object Wasm : ArtifactKind<BinaryArtifacts.Wasm>("Wasm", CompilationStage.SECOND)
+    object KLib : ArtifactKind<BinaryArtifacts.KLib>("KLib", CompilationStage.FIRST)
 
     fun fromString(string: String): ArtifactKind<*>? {
         return when (string) {

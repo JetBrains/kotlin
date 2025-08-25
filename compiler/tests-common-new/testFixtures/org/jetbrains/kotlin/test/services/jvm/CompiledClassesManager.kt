@@ -35,7 +35,7 @@ class CompiledClassesManager(val testServices: TestServices) : TestService {
         } else {
             testServices.artifactsProvider.getArtifact(module, ArtifactKinds.Jvm).classFileFactory
         }
-        val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module)
+        val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module, CompilationStage.FIRST)
         classFileFactory.writeAll(outputDir, configuration.messageCollector, reportOutputFiles = false, configuration.fileMappingTracker)
         return outputDir
     }
