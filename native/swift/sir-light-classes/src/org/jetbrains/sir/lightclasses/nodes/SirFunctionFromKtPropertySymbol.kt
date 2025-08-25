@@ -17,27 +17,22 @@ import org.jetbrains.kotlin.sir.SirFixity
 import org.jetbrains.kotlin.sir.SirFunction
 import org.jetbrains.kotlin.sir.SirFunctionBody
 import org.jetbrains.kotlin.sir.SirModality
-import org.jetbrains.kotlin.sir.SirModule
 import org.jetbrains.kotlin.sir.SirOrigin
 import org.jetbrains.kotlin.sir.SirParameter
 import org.jetbrains.kotlin.sir.SirType
 import org.jetbrains.kotlin.sir.SirVisibility
 import org.jetbrains.kotlin.sir.providers.SirSession
-import org.jetbrains.kotlin.sir.providers.generateFunctionBridge
 import org.jetbrains.kotlin.sir.providers.getSirParent
 import org.jetbrains.kotlin.sir.providers.impl.BridgeProvider.BridgeFunctionProxy
 import org.jetbrains.kotlin.sir.providers.sirDeclarationName
 import org.jetbrains.kotlin.sir.providers.source.KotlinPropertyAccessorOrigin
 import org.jetbrains.kotlin.sir.providers.utils.throwsAnnotation
-import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
-import org.jetbrains.sir.lightclasses.SirFromKtSymbol
 import org.jetbrains.sir.lightclasses.extensions.documentation
 import org.jetbrains.sir.lightclasses.extensions.lazyWithSessions
 import org.jetbrains.sir.lightclasses.extensions.sirModality
 import org.jetbrains.sir.lightclasses.extensions.withSessions
 import org.jetbrains.sir.lightclasses.utils.OverrideStatus
 import org.jetbrains.sir.lightclasses.utils.computeIsOverride
-import org.jetbrains.sir.lightclasses.utils.forBridge
 import org.jetbrains.sir.lightclasses.utils.selfType
 import org.jetbrains.sir.lightclasses.utils.translateExtensionParameter
 import org.jetbrains.sir.lightclasses.utils.translateParameters
@@ -53,7 +48,7 @@ internal class SirFunctionFromKtPropertySymbol(
     val ktPropertySymbol: KaPropertySymbol,
     override val ktSymbol: KaPropertyAccessorSymbol,
     override val sirSession: SirSession,
-) : SirFunction(), SirFromKtSymbol<KaPropertyAccessorSymbol> {
+) : SirFunction(), SirWithBridgeFromKtSymbol<KaPropertyAccessorSymbol> {
 
     override val visibility: SirVisibility = SirVisibility.PUBLIC
     override val origin: SirOrigin by lazy {
@@ -115,25 +110,7 @@ internal class SirFunctionFromKtPropertySymbol(
             is KaPropertySetterSymbol -> "_set"
         }
 
-        val baseName = fqName.forBridge.joinToString("_") + suffix
-
-        val extensionReceiverParameter = extensionReceiverParameter?.let {
-            SirParameter("", "receiver", it.type)
-        }
-
-        generateFunctionBridge(
-            baseBridgeName = baseName,
-            explicitParameters = listOfNotNull(extensionReceiverParameter) + parameters,
-            returnType = returnType,
-            kotlinFqName = fqName,
-            selfParameter = (parent !is SirModule && isInstance).ifTrue {
-                SirParameter("", "self", selfType ?: error("Only a member can have a self parameter"))
-            },
-            extensionReceiverParameter = extensionReceiverParameter,
-            errorParameter = errorType.takeIf { it != SirType.never }?.let {
-                SirParameter("", "_out_error", it)
-            },
-        )
+        generateFunctionBridge(sirSession, fqName, suffix, selfType)
     }
 
     override val bridges: List<SirBridge> by lazyWithSessions {
@@ -155,6 +132,6 @@ internal class SirFunctionFromKtPropertySymbol(
     }
 
     override var body: SirFunctionBody?
-        set(value) {}
+        set(_) {}
         get() = bridgeProxy?.createSwiftInvocation { "return $it" }?.let(::SirFunctionBody)
 }
