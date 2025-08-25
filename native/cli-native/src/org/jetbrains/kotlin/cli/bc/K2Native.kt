@@ -106,7 +106,7 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
         configuration.phaseConfig = createPhaseConfig(arguments)
 
         // Values for keys for non-nullable arguments below must be also copied during 1st stage preparation within `KonanDriver.splitOntoTwoStages()`
-        configuration.setupCommonKlibArguments(arguments, canBeMetadataKlibCompilation = true)
+        configuration.setupCommonKlibArguments(arguments, canBeMetadataKlibCompilation = true, rootDisposable)
 
         return environment
     }

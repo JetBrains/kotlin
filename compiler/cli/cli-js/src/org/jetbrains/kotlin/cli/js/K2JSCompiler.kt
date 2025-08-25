@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.cli.js
 
 import com.intellij.openapi.Disposable
-import com.intellij.openapi.util.Disposer
 import org.jetbrains.kotlin.analyzer.CompilationErrorException
 import org.jetbrains.kotlin.backend.common.LoadedKlibs
 import org.jetbrains.kotlin.cli.common.CLICompiler
@@ -118,13 +117,9 @@ class K2JSCompiler : CLICompiler<K2JSCompilerArguments>() {
         val pluginLoadResult = loadPlugins(paths, arguments, configuration, rootDisposable)
         if (pluginLoadResult != OK) return pluginLoadResult
 
-        CommonWebConfigurationUpdater.initializeCommonConfiguration(compilerImpl.configuration, arguments)
+        CommonWebConfigurationUpdater.initializeCommonConfiguration(compilerImpl.configuration, arguments, rootDisposable)
 
         val targetEnvironment = compilerImpl.tryInitializeCompiler(rootDisposable) ?: return COMPILATION_ERROR
-
-        val zipAccessor = DisposableZipFileSystemAccessor(64)
-        Disposer.register(rootDisposable, zipAccessor)
-        targetEnvironment.configuration.put(JSConfigurationKeys.ZIP_FILE_SYSTEM_ACCESSOR, zipAccessor)
 
         val sourcesFiles = targetEnvironment.getSourceFiles()
 

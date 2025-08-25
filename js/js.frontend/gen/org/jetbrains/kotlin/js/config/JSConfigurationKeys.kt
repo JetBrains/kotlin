@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.config.CompilerConfigurationKey
 import org.jetbrains.kotlin.incremental.js.IncrementalDataProvider
 import org.jetbrains.kotlin.incremental.js.IncrementalNextRoundChecker
 import org.jetbrains.kotlin.incremental.js.IncrementalResultsConsumer
-import org.jetbrains.kotlin.konan.file.ZipFileSystemAccessor
 import org.jetbrains.kotlin.serialization.js.ModuleKind
 
 object JSConfigurationKeys {
@@ -134,9 +133,6 @@ object JSConfigurationKeys {
 
     @JvmField
     val GENERATE_STRICT_IMPLICIT_EXPORT = CompilerConfigurationKey.create<Boolean>("enable strict implicitly exported entities types inside d.ts files")
-
-    @JvmField
-    val ZIP_FILE_SYSTEM_ACCESSOR = CompilerConfigurationKey.create<ZipFileSystemAccessor>("zip file system accessor, used for klib reading")
 
     @JvmField
     val OPTIMIZE_GENERATED_JS = CompilerConfigurationKey.create<Boolean>("perform additional optimizations on the generated JS code")
@@ -341,10 +337,6 @@ var CompilerConfiguration.generateInlineAnonymousFunctions: Boolean
 var CompilerConfiguration.generateStrictImplicitExport: Boolean
     get() = getBoolean(JSConfigurationKeys.GENERATE_STRICT_IMPLICIT_EXPORT)
     set(value) { put(JSConfigurationKeys.GENERATE_STRICT_IMPLICIT_EXPORT, value) }
-
-var CompilerConfiguration.zipFileSystemAccessor: ZipFileSystemAccessor?
-    get() = get(JSConfigurationKeys.ZIP_FILE_SYSTEM_ACCESSOR)
-    set(value) { put(JSConfigurationKeys.ZIP_FILE_SYSTEM_ACCESSOR, requireNotNull(value) { "nullable values are not allowed" }) }
 
 var CompilerConfiguration.optimizeGeneratedJs: Boolean
     get() = getBoolean(JSConfigurationKeys.OPTIMIZE_GENERATED_JS)

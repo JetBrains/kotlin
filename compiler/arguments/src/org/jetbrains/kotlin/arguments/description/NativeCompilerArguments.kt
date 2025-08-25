@@ -1062,7 +1062,8 @@ The default value is 1.""".asReleaseDependent()
 
     compilerArgument {
         name = "Xmanifest-native-targets"
-        description = "Comma-separated list that will be written as the value of 'native_targets' property in the .klib manifest. Unknown values are discarded.".asReleaseDependent()
+        description =
+            "Comma-separated list that will be written as the value of 'native_targets' property in the .klib manifest. Unknown values are discarded.".asReleaseDependent()
         valueType = StringArrayType.defaultNull
 
         lifecycle(

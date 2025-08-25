@@ -12,6 +12,7 @@ package org.jetbrains.kotlin.config
  * DO NOT MODIFY IT MANUALLY
  */
 
+import org.jetbrains.kotlin.konan.file.ZipFileSystemAccessor
 import org.jetbrains.kotlin.library.KotlinAbiVersion
 
 object KlibConfigurationKeys {
@@ -32,6 +33,9 @@ object KlibConfigurationKeys {
 
     @JvmField
     val KLIB_ABI_COMPATIBILITY_LEVEL = CompilerConfigurationKey.create<KlibAbiCompatibilityLevel>("KLIB ABI compatibility level")
+
+    @JvmField
+    val ZIP_FILE_SYSTEM_ACCESSOR = CompilerConfigurationKey.create<ZipFileSystemAccessor>("zip file system accessor, used for klib reading")
 
 }
 
@@ -58,4 +62,8 @@ var CompilerConfiguration.customKlibAbiVersion: KotlinAbiVersion?
 var CompilerConfiguration.klibAbiCompatibilityLevel: KlibAbiCompatibilityLevel
     get() = get(KlibConfigurationKeys.KLIB_ABI_COMPATIBILITY_LEVEL, KlibAbiCompatibilityLevel.LATEST_STABLE)
     set(value) { put(KlibConfigurationKeys.KLIB_ABI_COMPATIBILITY_LEVEL, value) }
+
+var CompilerConfiguration.zipFileSystemAccessor: ZipFileSystemAccessor?
+    get() = get(KlibConfigurationKeys.ZIP_FILE_SYSTEM_ACCESSOR)
+    set(value) { put(KlibConfigurationKeys.ZIP_FILE_SYSTEM_ACCESSOR, requireNotNull(value) { "nullable values are not allowed" }) }
 
