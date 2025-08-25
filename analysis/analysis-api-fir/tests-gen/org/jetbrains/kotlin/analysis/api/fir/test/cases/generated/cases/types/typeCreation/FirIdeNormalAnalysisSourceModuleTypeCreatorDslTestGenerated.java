@@ -47,6 +47,58 @@ public class FirIdeNormalAnalysisSourceModuleTypeCreatorDslTestGenerated extends
   }
 
   @Nested
+  @TestMetadata("analysis/analysis-api/testData/types/typeCreation/byDsl/capturedType")
+  @TestDataPath("$PROJECT_ROOT")
+  public class CapturedType {
+    @Test
+    public void testAllFilesPresentInCapturedType() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/types/typeCreation/byDsl/capturedType"), Pattern.compile("^(.+)\\.kt$"), null, true);
+    }
+
+    @Test
+    @TestMetadata("fromAnotherCapturedTypeMarkedNullable.kt")
+    public void testFromAnotherCapturedTypeMarkedNullable() {
+      runTest("analysis/analysis-api/testData/types/typeCreation/byDsl/capturedType/fromAnotherCapturedTypeMarkedNullable.kt");
+    }
+
+    @Test
+    @TestMetadata("outIntProjection.kt")
+    public void testOutIntProjection() {
+      runTest("analysis/analysis-api/testData/types/typeCreation/byDsl/capturedType/outIntProjection.kt");
+    }
+
+    @Test
+    @TestMetadata("starProjection.kt")
+    public void testStarProjection() {
+      runTest("analysis/analysis-api/testData/types/typeCreation/byDsl/capturedType/starProjection.kt");
+    }
+
+    @Test
+    @TestMetadata("starProjectionMarkedNullable.kt")
+    public void testStarProjectionMarkedNullable() {
+      runTest("analysis/analysis-api/testData/types/typeCreation/byDsl/capturedType/starProjectionMarkedNullable.kt");
+    }
+
+    @Test
+    @TestMetadata("starProjectionWithAnnotations.kt")
+    public void testStarProjectionWithAnnotations() {
+      runTest("analysis/analysis-api/testData/types/typeCreation/byDsl/capturedType/starProjectionWithAnnotations.kt");
+    }
+
+    @Test
+    @TestMetadata("typeParameterOutProjection.kt")
+    public void testTypeParameterOutProjection() {
+      runTest("analysis/analysis-api/testData/types/typeCreation/byDsl/capturedType/typeParameterOutProjection.kt");
+    }
+
+    @Test
+    @TestMetadata("userTypeInProjection.kt")
+    public void testUserTypeInProjection() {
+      runTest("analysis/analysis-api/testData/types/typeCreation/byDsl/capturedType/userTypeInProjection.kt");
+    }
+  }
+
+  @Nested
   @TestMetadata("analysis/analysis-api/testData/types/typeCreation/byDsl/classType")
   @TestDataPath("$PROJECT_ROOT")
   public class ClassType {

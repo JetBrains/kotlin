@@ -1,0 +1,25 @@
+KaType
+KaCapturedType:
+  abbreviation: null
+  annotations: []
+  projection: out KaUsualClassType:
+    abbreviation: null
+    annotations: []
+    classId: kotlin/Int
+    qualifiers: [
+      KaResolvedClassTypeQualifier:
+        name: Int
+        symbol: KaNamedClassSymbol(kotlin/Int)
+        typeArguments: []
+    ]
+    symbol: KaNamedClassSymbol(kotlin/Int)
+    typeArguments: []
+    isMarkedNullable: false
+    isNullable: false
+    hasFlexibleNullability: false
+  isMarkedNullable: false
+  isNullable: false
+  hasFlexibleNullability: false
+
+Rendered type:
+CapturedType(out kotlin.Int)
