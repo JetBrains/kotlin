@@ -70,7 +70,10 @@ fun BodyResolveComponents.runContextSensitiveResolutionForPropertyAccess(
             }
 
             // resolved qualifiers are always successful when returned
-            is FirResolvedQualifier -> true
+            is FirResolvedQualifier -> {
+                newExpression.replaceIsContextSensitiveResolved(true)
+                true
+            }
 
             // Non-trivial FIR element
             else -> false

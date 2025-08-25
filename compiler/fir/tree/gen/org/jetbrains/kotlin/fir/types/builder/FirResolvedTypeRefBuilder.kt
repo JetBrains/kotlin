@@ -28,6 +28,7 @@ class FirResolvedTypeRefBuilder : FirAnnotationContainerBuilder {
     override val annotations: MutableList<FirAnnotation> = mutableListOf()
     lateinit var coneType: ConeKotlinType
     var delegatedTypeRef: FirTypeRef? = null
+    var isContextSensitiveResolved: Boolean = false
 
     @OptIn(FirImplementationDetail::class)
     override fun build(): FirResolvedTypeRef {
@@ -36,6 +37,7 @@ class FirResolvedTypeRefBuilder : FirAnnotationContainerBuilder {
             annotations.toMutableOrEmpty(),
             coneType,
             delegatedTypeRef,
+            isContextSensitiveResolved,
         )
     }
 
@@ -59,5 +61,6 @@ inline fun buildResolvedTypeRefCopy(original: FirResolvedTypeRef, init: FirResol
     copyBuilder.annotations.addAll(original.annotations)
     copyBuilder.coneType = original.coneType
     copyBuilder.delegatedTypeRef = original.delegatedTypeRef
+    copyBuilder.isContextSensitiveResolved = original.isContextSensitiveResolved
     return copyBuilder.apply(init).build()
 }

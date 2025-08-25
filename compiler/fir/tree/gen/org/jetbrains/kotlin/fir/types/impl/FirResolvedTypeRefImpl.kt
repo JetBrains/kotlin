@@ -27,6 +27,7 @@ class FirResolvedTypeRefImpl @FirImplementationDetail constructor(
     override var annotations: MutableOrEmptyList<FirAnnotation>,
     override val coneType: ConeKotlinType,
     override var delegatedTypeRef: FirTypeRef?,
+    override var isContextSensitiveResolved: Boolean,
 ) : FirResolvedTypeRef() {
     override val customRenderer: Boolean
         get() = false
@@ -47,5 +48,9 @@ class FirResolvedTypeRefImpl @FirImplementationDetail constructor(
 
     override fun replaceAnnotations(newAnnotations: List<FirAnnotation>) {
         annotations = newAnnotations.toMutableOrEmpty()
+    }
+
+    override fun replaceIsContextSensitiveResolved(newIsContextSensitiveResolved: Boolean) {
+        isContextSensitiveResolved = newIsContextSensitiveResolved
     }
 }

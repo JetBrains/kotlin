@@ -1004,6 +1004,7 @@ object FirTree : AbstractFirTreeBuilder() {
         +field("canBeValue", boolean, withReplace = true)
         +field("isFullyQualified", boolean)
         +listField("nonFatalDiagnostics", coneDiagnosticType, useMutableOrEmpty = true)
+        +field("isContextSensitiveResolved", boolean, withReplace = true)
         +typeArguments {
             withTransform = true
         }
@@ -1151,6 +1152,7 @@ object FirTree : AbstractFirTreeBuilder() {
 
         +field("coneType", coneKotlinTypeType)
         +field("delegatedTypeRef", typeRef, nullable = true, isChild = false)
+        +field("isContextSensitiveResolved", boolean, withReplace = true)
     }
 
     val unresolvedTypeRef: Element by sealedElement(TypeRefElement) {

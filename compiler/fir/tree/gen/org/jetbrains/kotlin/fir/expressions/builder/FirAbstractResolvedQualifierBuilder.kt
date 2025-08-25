@@ -36,6 +36,7 @@ interface FirAbstractResolvedQualifierBuilder {
     abstract var canBeValue: Boolean
     abstract var isFullyQualified: Boolean
     abstract val nonFatalDiagnostics: MutableList<ConeDiagnostic>
+    abstract var isContextSensitiveResolved: Boolean
     abstract val typeArguments: MutableList<FirTypeProjection>
 
     fun build(): FirResolvedQualifier

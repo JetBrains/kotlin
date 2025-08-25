@@ -5,8 +5,6 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
-import org.jetbrains.kotlin.KtLightSourceElement
-import org.jetbrains.kotlin.KtRealPsiSourceElement
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
@@ -25,10 +23,10 @@ import org.jetbrains.kotlin.fir.resolve.getClassRepresentativeForContextSensitiv
 import org.jetbrains.kotlin.fir.resolve.getParentChainForContextSensitiveResolution
 import org.jetbrains.kotlin.fir.scopes.getClassifiers
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.psi.KtNameReferenceExpression
-import org.jetbrains.kotlin.psi.stubs.elements.KtNameReferenceExpressionElementType
 
 object FirContextSensitiveResolutionAmbiguityChecker {
     context(context: CheckerContext, reporter: DiagnosticReporter)
@@ -62,7 +60,7 @@ object FirContextSensitiveResolutionAmbiguityCheckerForEqualities : FirEqualityO
 
         val resolvedSymbol = when (rhs) {
             is FirErrorResolvedQualifier -> null
-            is FirResolvedQualifier -> rhs.symbol
+            is FirResolvedQualifier if !rhs.isContextSensitiveResolved && rhs.explicitParent == null -> rhs.symbol
             is FirPropertyAccessExpression if rhs.explicitReceiver == null -> when (val callee = rhs.calleeReference) {
                 is FirErrorNamedReference -> null
                 is FirResolvedNamedReference if !callee.isContextSensitiveResolved -> callee.resolvedSymbol
@@ -71,10 +69,9 @@ object FirContextSensitiveResolutionAmbiguityCheckerForEqualities : FirEqualityO
             else -> null
         } ?: return
 
-        val name = when (val source = rhs.source) {
-            is KtRealPsiSourceElement -> (source.psi as? KtNameReferenceExpression)?.getReferencedNameAsName()
-            is KtLightSourceElement if source.elementType is KtNameReferenceExpressionElementType ->
-                Name.identifier(source.lighterASTNode.toString())
+        val name = when (resolvedSymbol) {
+            is FirClassLikeSymbol<*> -> resolvedSymbol.name
+            is FirCallableSymbol<*> -> resolvedSymbol.name
             else -> null
         } ?: return
 
@@ -92,7 +89,7 @@ object FirContextSensitiveResolutionAmbiguityCheckerForTypeOperators : FirTypeOp
     override fun check(expression: FirTypeOperatorCall) {
         if (!LanguageFeature.ContextSensitiveResolutionUsingExpectedType.isEnabled()) return
         val typeRef = expression.conversionTypeRef as? FirResolvedTypeRef ?: return
-        if (typeRef is FirErrorTypeRef) return
+        if (typeRef.isContextSensitiveResolved || typeRef is FirErrorTypeRef) return
 
         val resolvedClass = typeRef.toClassLikeSymbol(context.session) ?: return
         val name = (typeRef.delegatedTypeRef as? FirUserTypeRef)?.qualifier?.singleOrNull()?.name ?: return

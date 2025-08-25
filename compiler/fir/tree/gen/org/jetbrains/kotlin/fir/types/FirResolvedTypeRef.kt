@@ -24,6 +24,7 @@ abstract class FirResolvedTypeRef : FirTypeRef(), TypeRefMarker {
     abstract override val customRenderer: Boolean
     abstract val coneType: ConeKotlinType
     abstract val delegatedTypeRef: FirTypeRef?
+    abstract val isContextSensitiveResolved: Boolean
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
         visitor.visitResolvedTypeRef(this, data)
@@ -33,6 +34,8 @@ abstract class FirResolvedTypeRef : FirTypeRef(), TypeRefMarker {
         transformer.transformResolvedTypeRef(this, data) as E
 
     abstract override fun replaceAnnotations(newAnnotations: List<FirAnnotation>)
+
+    abstract fun replaceIsContextSensitiveResolved(newIsContextSensitiveResolved: Boolean)
 
     abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirResolvedTypeRef
 }

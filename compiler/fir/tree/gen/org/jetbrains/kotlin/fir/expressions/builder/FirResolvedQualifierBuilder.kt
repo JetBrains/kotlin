@@ -39,6 +39,7 @@ class FirResolvedQualifierBuilder : FirAbstractResolvedQualifierBuilder, FirAnno
     override var canBeValue: Boolean = false
     override var isFullyQualified: Boolean = false
     override val nonFatalDiagnostics: MutableList<ConeDiagnostic> = mutableListOf()
+    override var isContextSensitiveResolved: Boolean = false
     override val typeArguments: MutableList<FirTypeProjection> = mutableListOf()
 
     override fun build(): FirResolvedQualifier {
@@ -55,6 +56,7 @@ class FirResolvedQualifierBuilder : FirAbstractResolvedQualifierBuilder, FirAnno
             canBeValue,
             isFullyQualified,
             nonFatalDiagnostics.toMutableOrEmpty(),
+            isContextSensitiveResolved,
             typeArguments.toMutableOrEmpty(),
         )
     }

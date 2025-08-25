@@ -31,7 +31,7 @@ class FirTypeCandidateCollector(
     var applicability: CandidateApplicability? = null
         private set
 
-    fun processCandidate(symbol: FirBasedSymbol<*>, substitutor: ConeSubstitutor? = null) {
+    fun processCandidate(symbol: FirBasedSymbol<*>, substitutor: ConeSubstitutor? = null, isContextSensitiveResolved: Boolean = false) {
         var symbolApplicability = CandidateApplicability.RESOLVED
         var diagnostic: ConeVisibilityError? = null
 
@@ -57,7 +57,7 @@ class FirTypeCandidateCollector(
             candidates.clear()
         }
         if (symbolApplicability == applicability) {
-            candidates.add(TypeCandidate(symbol, substitutor, diagnostic, symbolApplicability))
+            candidates.add(TypeCandidate(symbol, substitutor, diagnostic, symbolApplicability, isContextSensitiveResolved))
         }
     }
 
@@ -132,6 +132,7 @@ class FirTypeCandidateCollector(
         // Currently, it's only ConeVisibilityError
         val diagnostic: ConeDiagnostic?,
         override val applicability: CandidateApplicability,
+        val isContextSensitiveResolved: Boolean,
     ) : AbstractCandidate() {
         override fun equals(other: Any?): Boolean {
             if (this === other) return true
