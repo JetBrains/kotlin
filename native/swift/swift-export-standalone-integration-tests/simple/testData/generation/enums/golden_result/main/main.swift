@@ -23,7 +23,10 @@ public enum Enum: KotlinRuntimeSupport._KotlinBridgeable, Swift.CaseIterable {
         __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer!,
         options: KotlinRuntime.KotlinBaseConstructionOptions
     ) {
-        super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+        switch __externalRCRefUnsafe {
+        case Enum.a.__externalRCRef(): self = .a
+        default: self = .b
+        }
     }
     public func __externalRCRef() -> Swift.UnsafeMutableRawPointer! {
         return nil
@@ -50,7 +53,11 @@ public enum EnumSimple: KotlinRuntimeSupport._KotlinBridgeable, Swift.CaseIterab
         __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer!,
         options: KotlinRuntime.KotlinBaseConstructionOptions
     ) {
-        super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+        switch __externalRCRefUnsafe {
+        case EnumSimple.FIRST.__externalRCRef(): self = .FIRST
+        case EnumSimple.SECOND.__externalRCRef(): self = .SECOND
+        default: self = .LAST
+        }
     }
     public func __externalRCRef() -> Swift.UnsafeMutableRawPointer! {
         return nil
@@ -79,7 +86,11 @@ public enum EnumWithAbstractMembers: KotlinRuntimeSupport._KotlinBridgeable, Swi
         __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer!,
         options: KotlinRuntime.KotlinBaseConstructionOptions
     ) {
-        super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+        switch __externalRCRefUnsafe {
+        case EnumWithAbstractMembers.YELLOW.__externalRCRef(): self = .YELLOW
+        case EnumWithAbstractMembers.SKY.__externalRCRef(): self = .SKY
+        default: self = .MAGENTA
+        }
     }
     public func __externalRCRef() -> Swift.UnsafeMutableRawPointer! {
         return nil
@@ -116,7 +127,10 @@ public enum EnumWithMembers: KotlinRuntimeSupport._KotlinBridgeable, Swift.CaseI
         __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer!,
         options: KotlinRuntime.KotlinBaseConstructionOptions
     ) {
-        super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+        switch __externalRCRefUnsafe {
+        case EnumWithMembers.NORTH.__externalRCRef(): self = .NORTH
+        default: self = .SOUTH
+        }
     }
     public func __externalRCRef() -> Swift.UnsafeMutableRawPointer! {
         return nil
