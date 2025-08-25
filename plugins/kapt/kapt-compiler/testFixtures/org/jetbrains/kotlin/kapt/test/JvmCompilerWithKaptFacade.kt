@@ -39,7 +39,7 @@ class JvmCompilerWithKaptFacade(
         val classBuilderFactory = OriginCollectingClassBuilderFactory(ClassBuilderMode.KAPT3)
         val (generationState, bindingContext) = GenerationUtils.compileFiles(
             ktFiles,
-            configurationProvider.getCompilerConfiguration(module),
+            configurationProvider.getCompilerConfiguration(module, CompilationStage.FIRST),
             classBuilderFactory,
             configurationProvider.getPackagePartProviderFactory(module)
         )
@@ -69,7 +69,7 @@ class JvmCompilerWithKaptFacade(
 }
 
 class KaptContextBinaryArtifact(val kaptContext: KaptContextForStubGeneration) : ResultingArtifact.Binary<KaptContextBinaryArtifact>() {
-    object Kind : ArtifactKind<KaptContextBinaryArtifact>("KaptArtifact")
+    object Kind : ArtifactKind<KaptContextBinaryArtifact>("KaptArtifact", CompilationStage.FIRST)
 
     override val kind: ArtifactKind<KaptContextBinaryArtifact>
         get() = Kind

@@ -107,11 +107,12 @@ class TestConfigurationBuilder {
 
     inline fun <InputArtifact, InputArtifactKind> handlersStep(
         artifactKind: InputArtifactKind,
+        compilationStage: CompilationStage,
         init: HandlersStepBuilder<InputArtifact, InputArtifactKind>.() -> Unit,
     ): HandlersStepBuilder<InputArtifact, InputArtifactKind>
             where InputArtifact : ResultingArtifact<InputArtifact>,
                   InputArtifactKind : TestArtifactKind<InputArtifact> {
-        return HandlersStepBuilder(artifactKind).also {
+        return HandlersStepBuilder(artifactKind, compilationStage).also {
             it.init()
             steps += it
         }
@@ -120,13 +121,14 @@ class TestConfigurationBuilder {
     inline fun <InputArtifact, InputArtifactKind> namedHandlersStep(
         name: String,
         artifactKind: InputArtifactKind,
+        compilationStage: CompilationStage,
         init: HandlersStepBuilder<InputArtifact, InputArtifactKind>.() -> Unit,
     ): HandlersStepBuilder<InputArtifact, InputArtifactKind>
             where InputArtifact : ResultingArtifact<InputArtifact>,
                   InputArtifactKind : TestArtifactKind<InputArtifact> {
         val previouslyContainedStep = namedStepOfType<InputArtifact, InputArtifactKind>(name)
         return if (previouslyContainedStep == null) {
-            val step = handlersStep(artifactKind, init)
+            val step = handlersStep(artifactKind, compilationStage, init)
             namedSteps[name] = step
             step
         } else {

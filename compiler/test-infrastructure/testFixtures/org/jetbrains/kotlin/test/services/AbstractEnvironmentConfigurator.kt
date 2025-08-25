@@ -15,11 +15,17 @@ import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
 import org.jetbrains.kotlin.test.directives.model.SimpleDirective
 import org.jetbrains.kotlin.test.directives.model.ValueDirective
 import org.jetbrains.kotlin.test.directives.model.singleOrZeroValue
-import org.jetbrains.kotlin.test.model.DependencyDescription
 import org.jetbrains.kotlin.test.model.ServicesAndDirectivesContainer
 import org.jetbrains.kotlin.test.model.TestModule
 
 abstract class AbstractEnvironmentConfigurator : ServicesAndDirectivesContainer {
+
+    /**
+     * For KLIB-based backends, the compilation stage this configurator creates the [CompilerConfiguration] for.
+     */
+    open val compilationStage: CompilationStage
+        get() = CompilationStage.FIRST
+
     abstract fun configureCompileConfigurationWithAdditionalConfigurationKeys(configuration: CompilerConfiguration, module: TestModule)
 
     abstract fun provideAdditionalAnalysisFlags(directives: RegisteredDirectives, languageVersion: LanguageVersion): Map<AnalysisFlag<*>, Any?>

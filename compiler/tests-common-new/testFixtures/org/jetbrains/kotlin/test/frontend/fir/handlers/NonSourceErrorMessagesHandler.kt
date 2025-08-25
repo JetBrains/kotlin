@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.model.AfterAnalysisChecker
 import org.jetbrains.kotlin.test.model.FrontendKinds
+import org.jetbrains.kotlin.test.services.CompilationStage
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 import org.jetbrains.kotlin.test.services.compilerConfigurationProvider
@@ -35,7 +36,7 @@ class NonSourceErrorMessagesHandler(testServices: TestServices) : AfterAnalysisC
         if (CHECK_COMPILER_OUTPUT !in testServices.moduleStructure.allDirectives) return
 
         val dump = testServices.moduleStructure.modules.map { module ->
-            val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module)
+            val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module, CompilationStage.FIRST)
             val messageCollector = configuration.messageCollector as MessageCollectorForCompilerTests
             messageCollector.nonSourceMessages.joinToString("\n")
         }.filter { it.isNotEmpty() }.joinToString("\n")

@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerTest
 import org.jetbrains.kotlin.test.configuration.baseFirDiagnosticTestConfiguration
 import org.jetbrains.kotlin.test.runners.codegen.AbstractFirScriptAndReplCodegenTest
 import org.jetbrains.kotlin.test.configuration.enableLazyResolvePhaseChecking
+import org.jetbrains.kotlin.test.services.CompilationStage
 import org.jetbrains.kotlin.test.services.EnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.compilerConfigurationProvider
@@ -46,7 +47,6 @@ import org.jetbrains.kotlin.test.services.configuration.ScriptingEnvironmentConf
 import org.jetbrains.kotlin.test.services.sourceProviders.AdditionalDiagnosticsSourceFilesProvider
 import org.jetbrains.kotlin.test.services.sourceProviders.CoroutineHelpersSourceFilesProvider
 import org.jetbrains.kotlin.test.services.standardLibrariesPathProvider
-import org.jetbrains.kotlin.utils.bind
 import java.io.ByteArrayOutputStream
 import java.io.PrintStream
 import kotlin.script.experimental.api.*
@@ -106,7 +106,7 @@ open class AbstractReplViaApiDiagnosticsTest : AbstractKotlinCompilerTest() {
                 ::ReplConfigurator
             )
             facadeStep(::FirReplCompilerFacade)
-            namedHandlersStep("ReplDiagnosticHandlerStep", ReplCompilationArtifact.Kind) {
+            namedHandlersStep("ReplDiagnosticHandlerStep", ReplCompilationArtifact.Kind, CompilationStage.FIRST) {
                 useHandlers(::ReplCompilerDiagnosticsHandler)
             }
         }
@@ -139,7 +139,7 @@ open class AbstractReplViaApiEvaluationTest : AbstractReplViaApiDiagnosticsTest(
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
         with(builder) {
-            namedHandlersStep("ReplEvaluationStep", ReplCompilationArtifact.Kind) {
+            namedHandlersStep("ReplEvaluationStep", ReplCompilationArtifact.Kind, CompilationStage.FIRST) {
                 useHandlers(::ReplRunViaApiChecker)
             }
         }
