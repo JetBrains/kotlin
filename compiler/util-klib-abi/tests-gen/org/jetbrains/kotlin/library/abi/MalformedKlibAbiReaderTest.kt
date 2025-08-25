@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.library.abi
 
+import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.fail
 import org.junit.jupiter.api.BeforeEach
@@ -17,7 +18,7 @@ class MalformedKlibAbiReaderTest {
 
     @BeforeEach
     fun setUp() {
-        testDataDir = File("compiler/testData/klib/dump-abi/malformed").absoluteFile
+        testDataDir = ForTestCompileRuntime.transformTestDataPath("compiler/testData/klib/dump-abi/malformed").absoluteFile
         check(testDataDir.isDirectory) { "Test data dir does not exist: $testDataDir" }
     }
 

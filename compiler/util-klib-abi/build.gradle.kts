@@ -3,6 +3,7 @@ plugins {
     id("jps-compatible")
     id("java-test-fixtures")
     id("project-tests-convention")
+    id("test-inputs-check")
 }
 
 dependencies {
@@ -31,15 +32,26 @@ sourceSets {
     "testFixtures" { projectDefault() }
 }
 
-val testDataDir = project(":compiler").projectDir.resolve("testData/klib/dump-abi/content")
-
 projectTests {
-    testTask(jUnitMode = JUnitMode.JUnit5) {
-        inputs.dir(testDataDir)
-        outputs.dir(layout.buildDirectory.dir("t"))
+    testData(project(":compiler").isolated, "testData/klib/dump-abi/content")
+    testData(project(":compiler").isolated, "testData/klib/dump-abi/malformed")
+    withStdlibJsRuntime()
+    withTestJsRuntime()
 
-        dependsOn(":dist")
-        workingDir = rootDir
+    withStdlibCommon()
+    withMockJdkRuntime()
+    withMockJdkAnnotationsJar()
+    withThirdPartyAnnotations()
+    withThirdPartyJsr305()
+    withTestJar()
+    withMockJDKModifiedRuntime()
+    withJvmStdlibAndReflect()
+    withScriptingPlugin()
+    withAnnotations()
+    withScriptRuntime()
+
+    testTask(jUnitMode = JUnitMode.JUnit5) {
+        outputs.dir(layout.buildDirectory.dir("t"))
         useJUnitPlatform()
     }
 
