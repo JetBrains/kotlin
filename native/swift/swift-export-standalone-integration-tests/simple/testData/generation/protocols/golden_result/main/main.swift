@@ -443,7 +443,9 @@ extension ExportedKotlinPackages.packagewithprotocols {
             __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer!,
             options: KotlinRuntime.KotlinBaseConstructionOptions
         ) {
-            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+            switch __externalRCRefUnsafe {
+            default: fatalError()
+            }
         }
         public func __externalRCRef() -> Swift.UnsafeMutableRawPointer! {
             return nil
