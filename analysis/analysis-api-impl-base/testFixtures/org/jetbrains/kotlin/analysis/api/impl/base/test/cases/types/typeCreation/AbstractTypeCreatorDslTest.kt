@@ -134,6 +134,7 @@ abstract class AbstractTypeCreatorDslTest : AbstractAnalysisApiBasedTest() {
                 "VarargArrayType" to VarargArrayTypeCreatorDslTestCases::class,
                 "TypeParameterType" to TypeParameterTypeCreatorDslTestCases::class,
                 "TypeProjection" to TypeProjectionCreatorDslTestCases::class,
+                "CapturedType" to CapturedTypeCreatorDslTestCases::class,
             )
         }
 
