@@ -84,9 +84,10 @@ internal val Project.runCommonizerTask: TaskProvider<Task>
     )
 
 private const val commonizeCInteropTaskName = "commonizeCInterop"
-
 internal suspend fun Project.commonizeCInteropTask(): TaskProvider<CInteropCommonizerTask>? {
     if (cInteropCommonizationEnabled()) {
+        val nativeDownloadTask = getOrRegisterDownloadKotlinNativeDistributionTask()
+
         return locateOrRegisterTask(
             commonizeCInteropTaskName,
             invokeWhenRegistered = {
@@ -105,6 +106,7 @@ internal suspend fun Project.commonizeCInteropTask(): TaskProvider<CInteropCommo
                 kotlinCompilerArgumentsLogLevel
                     .value(project.kotlinPropertiesProvider.kotlinCompilerArgumentsLogLevel)
                     .finalizeValueOnRead()
+                dependsOn(nativeDownloadTask)
             }
         )
     }
@@ -146,9 +148,6 @@ private fun getCommonizedPlatformLibrariesFor(commonizerFile: File, target: Shar
     val targetOutputDirectory = CommonizerOutputFileLayout.resolveCommonizedDirectory(rootOutputDirectory, target)
     return targetOutputDirectory.listLibraryFiles()
 }
-
-private fun File.listLibraryFiles(): List<File> = listFiles().orEmpty()
-    .filter { it.isDirectory || it.extension == "klib" }
 
 private val Project.addCommonizerTaskToProject
     get() = if (kotlinPropertiesProvider.kotlinKmpProjectIsolationEnabled) {

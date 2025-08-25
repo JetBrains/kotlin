@@ -541,7 +541,7 @@ internal constructor(
         } else {
             objectFactory.fileCollection()
                 .from(kotlinNativeProvider.flatMap { it.bundleDirectory }
-                          .map { KonanDistribution(it).platformLibsDir.resolve(konanTarget.name).listLibraryFiles() })
+                          .map { KonanDistribution(it).platformLibsDir.absoluteFile.resolve(konanTarget.name).listLibraryFiles() })
         }
 
     private fun File.listLibraryFiles(): List<File> = listFiles().orEmpty()

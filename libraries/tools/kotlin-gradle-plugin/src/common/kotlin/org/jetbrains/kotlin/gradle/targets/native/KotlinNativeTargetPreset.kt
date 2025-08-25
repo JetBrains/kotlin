@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.gradle.internal.properties.nativeProperties
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.targets.android.internal.InternalKotlinTargetPreset
+import org.jetbrains.kotlin.gradle.targets.native.internal.getOrRegisterDownloadKotlinNativeDistributionTask
 import org.jetbrains.kotlin.gradle.targets.native.internal.setupCInteropCommonizerDependencies
 import org.jetbrains.kotlin.gradle.targets.native.internal.setupCInteropPropagatedDependencies
 import org.jetbrains.kotlin.gradle.utils.SingleActionPerProject
@@ -65,6 +66,7 @@ internal abstract class AbstractKotlinNativeTargetPreset<T : KotlinNativeTarget>
         createTargetConfigurator().configureTarget(result)
 
         SingleActionPerProject.run(project, "setupCInteropDependencies") {
+            project.getOrRegisterDownloadKotlinNativeDistributionTask()
             project.setupCInteropCommonizerDependencies()
             project.setupCInteropPropagatedDependencies()
         }
