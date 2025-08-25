@@ -118,6 +118,12 @@ tasks.withType<Test>().names.forEach { taskName ->
                             """permission java.io.FilePermission "${file.absolutePath}", "read";""",
                             """permission java.io.FilePermission "${file.parentFile.absolutePath}", "read";""",
                         )
+                    } else if (file.extension == "klib") {
+                        // KlibLoader.kt creates a ZipFileSystem, and that always require write permission
+                        // (even if you don't modify the file, potentially, you could)
+                        listOf(
+                            """permission java.io.FilePermission "${file.absolutePath}", "read,write";""",
+                        )
                     } else if (file != null) {
                         val parents = parentsReadPermission(file)
                         listOf(
