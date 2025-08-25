@@ -5,8 +5,8 @@ import org.jdom.Element
 import org.jdom.Text
 import org.jetbrains.kotlin.cli.common.arguments.ArgumentParseErrors
 import org.jetbrains.kotlin.cli.common.arguments.CommonToolArguments
-import org.jetbrains.kotlin.cli.common.arguments.InternalArgument
 import org.jetbrains.kotlin.cli.common.arguments.LanguageSettingsParser
+import org.jetbrains.kotlin.cli.common.arguments.ManualLanguageFeatureSetting
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import java.io.File
 import kotlin.reflect.KMutableProperty1
@@ -48,7 +48,7 @@ class CompilerArgumentsDeserializerV5<T : CommonToolArguments>(override val comp
 
         val internalArguments = readElementsList(element, INTERNAL_ARGS_ROOT_ELEMENTS_NAME, INTERNAL_ARGS_ELEMENT_NAME)
             .mapNotNull { parseInternalArgument(it) }
-        CompilerArgumentsContentProspector.internalArgumentsProperty.safeAs<KMutableProperty1<T, List<InternalArgument>>>()
+        CompilerArgumentsContentProspector.internalArgumentsProperty.safeAs<KMutableProperty1<T, List<ManualLanguageFeatureSetting>>>()
             ?.set(compilerArguments, internalArguments)
     }
 
@@ -101,8 +101,8 @@ class CompilerArgumentsDeserializerV5<T : CommonToolArguments>(override val comp
             }
         }
 
-        private fun parseInternalArgument(argument: String): InternalArgument? {
-            val parser = LanguageSettingsParser()
+        private fun parseInternalArgument(argument: String): ManualLanguageFeatureSetting? {
+            val parser = LanguageSettingsParser
             return parser.parseInternalArgument(argument, ArgumentParseErrors())
         }
     }
