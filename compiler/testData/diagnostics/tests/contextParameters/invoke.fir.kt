@@ -43,14 +43,14 @@ fun qux(
     f4("", 1, "")
     f5("", 1, "", true)
 
-    <!NO_CONTEXT_ARGUMENT!>f1<!>()
-    <!NO_CONTEXT_ARGUMENT!>f2<!>(true)
-    <!NO_CONTEXT_ARGUMENT!>f3<!>(true)
-    true.<!NO_CONTEXT_ARGUMENT!>f3<!>()
-    <!NO_CONTEXT_ARGUMENT!>f4<!>("")
-    "".<!NO_CONTEXT_ARGUMENT!>f4<!>()
-    <!NO_CONTEXT_ARGUMENT!>f5<!>("", true)
-    "".<!NO_CONTEXT_ARGUMENT!>f5<!>(true)
+    <!NO_CONTEXT_ARGUMENT, NO_CONTEXT_ARGUMENT!>f1<!>()
+    <!NO_CONTEXT_ARGUMENT, NO_CONTEXT_ARGUMENT!>f2<!>(true)
+    <!NO_CONTEXT_ARGUMENT, NO_CONTEXT_ARGUMENT!>f3<!>(true)
+    true.<!NO_CONTEXT_ARGUMENT, NO_CONTEXT_ARGUMENT!>f3<!>()
+    <!NO_CONTEXT_ARGUMENT, NO_CONTEXT_ARGUMENT!>f4<!>("")
+    "".<!NO_CONTEXT_ARGUMENT, NO_CONTEXT_ARGUMENT!>f4<!>()
+    <!NO_CONTEXT_ARGUMENT, NO_CONTEXT_ARGUMENT!>f5<!>("", true)
+    "".<!NO_CONTEXT_ARGUMENT, NO_CONTEXT_ARGUMENT!>f5<!>(true)
 
     with("") {
         with(1) {
