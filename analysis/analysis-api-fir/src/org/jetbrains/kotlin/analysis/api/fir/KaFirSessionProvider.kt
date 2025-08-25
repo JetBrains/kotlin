@@ -56,6 +56,8 @@ internal class KaFirSessionProvider(project: Project) : KaBaseSessionProvider(pr
      */
     private val cache: Cache<KaModule, KaSession> = Caffeine.newBuilder().weakValues().build()
 
+    private val lowMemoryWatcher: LowMemoryWatcher
+
     private val scheduledCacheMaintenance: Future<*>
 
     private val cacheCleaner: KaFirCacheCleaner by lazy(LazyThreadSafetyMode.PUBLICATION) {
@@ -71,7 +73,7 @@ internal class KaFirSessionProvider(project: Project) : KaBaseSessionProvider(pr
     }
 
     init {
-        LowMemoryWatcher.register(::handleLowMemoryEvent, project)
+        lowMemoryWatcher = LowMemoryWatcher.register(::handleLowMemoryEvent)
         scheduledCacheMaintenance = AppExecutorUtil.getAppScheduledExecutorService().scheduleWithFixedDelay(
             { performCacheMaintenance() },
             10,
@@ -176,6 +178,7 @@ internal class KaFirSessionProvider(project: Project) : KaBaseSessionProvider(pr
     }
 
     override fun dispose() {
+        lowMemoryWatcher.stop()
         scheduledCacheMaintenance.cancel(false)
     }
 
