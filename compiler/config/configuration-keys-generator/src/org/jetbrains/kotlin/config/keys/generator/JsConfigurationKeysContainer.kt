@@ -40,8 +40,6 @@ object JsConfigurationKeysContainer : KeysContainer("org.jetbrains.kotlin.js.con
 
     val SOURCE_MAP_INCLUDE_MAPPINGS_FROM_UNAVAILABLE_FILES by key<Boolean>("insert source mappings from libraries even if their sources are unavailable on the end-user machine")
 
-    val META_INFO by key<Boolean>("generate .meta.js and .kjsm files")
-
     val MODULE_KIND by key<ModuleKind>("module kind")
 
     val JS_INCREMENTAL_COMPILATION_ENABLED by key<Boolean>("incremental compilation enabled")
