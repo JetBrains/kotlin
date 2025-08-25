@@ -45,16 +45,14 @@ class JsIrPreSerializationLoweringFacade(
     override fun transform(module: TestModule, inputArtifact: IrBackendInput): IrBackendInput {
         require(module.languageVersionSettings.languageVersion.usesK2)
 
-        val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module)
-        val diagnosticReporter = DiagnosticReporterFactory.createReporter(configuration.messageCollector)
-
         when (inputArtifact) {
             is Fir2IrCliBasedOutputArtifact<*> -> {
                 val cliArtifact = inputArtifact.cliArtifact
                 require(cliArtifact is JsFir2IrPipelineArtifact) {
                     "Fir2IrCliBasedOutputArtifact should have JsFir2IrPipelineArtifact as cliArtifact, but has ${cliArtifact::class}"
                 }
-                runKlibCheckers(diagnosticReporter, configuration, inputArtifact.irModuleFragment)
+                val diagnosticReporter = DiagnosticReporterFactory.createReporter(cliArtifact.configuration.messageCollector)
+                runKlibCheckers(diagnosticReporter, cliArtifact.configuration, inputArtifact.irModuleFragment)
                 val input = cliArtifact.copy(diagnosticCollector = diagnosticReporter)
 
                 if (diagnosticReporter.hasErrors) {
@@ -70,6 +68,8 @@ class JsIrPreSerializationLoweringFacade(
                 return Fir2IrCliBasedOutputArtifact(output)
             }
             is IrBackendInput.JsIrAfterFrontendBackendInput -> {
+                val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module)
+                val diagnosticReporter = DiagnosticReporterFactory.createReporter(configuration.messageCollector)
                 runKlibCheckers(diagnosticReporter, configuration, inputArtifact.irModuleFragment)
                 val phaseConfig = createJsTestPhaseConfig(testServices, module)
                 if (diagnosticReporter.hasErrors) {

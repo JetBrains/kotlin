@@ -36,7 +36,7 @@ abstract class FirCliFacade<Phase, OutputPipelineArtifact>(
     }
 
     override fun analyze(module: TestModule): FirOutputArtifact? {
-        val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module)
+        val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module, CompilationStage.SOURCE_TO_KLIB)
         val input = ConfigurationPipelineArtifact(
             configuration = configuration,
             diagnosticCollector = DiagnosticReporterFactory.createPendingReporter(configuration.messageCollector),
