@@ -1156,4 +1156,19 @@ default: 'first-only-warn' in language version 2.2+, 'first-only' in version 2.1
             introducedVersion = KotlinReleaseVersion.v2_3_0
         )
     }
+
+    compilerArgument {
+        name = "XXLanguage"
+        description = """Enables/disables specified language feature.
+Warning: this flag is not intended for production use. If you want to configure the language behaviour use the
+-language-version or corresponding experimental feature flags.
+        """.trimIndent().asReleaseDependent()
+        valueDescription = "[+-]LanguageFeatureName".asReleaseDependent()
+        compilerName = "manuallyConfiguredFeatures"
+        valueType = StringArrayType.defaultNull
+        delimiter = KotlinCompilerArgument.Delimiter.None
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_0_0
+        )
+    }
 }

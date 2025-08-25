@@ -3780,6 +3780,37 @@
                             "deprecatedVersion": null,
                             "removedVersion": null
                         }
+                    },
+                    {
+                        "name": "XXLanguage",
+                        "shortName": null,
+                        "deprecatedName": null,
+                        "description": {
+                            "current": "Enables/disables specified language feature.\nWarning: this flag is not intended for production use. If you want to configure the language behaviour use the\n-language-version or corresponding experimental feature flags.",
+                            "valueInVersions": []
+                        },
+                        "delimiter": "None",
+                        "valueType": {
+                            "type": "org.jetbrains.kotlin.arguments.dsl.types.StringArrayType",
+                            "defaultValue": {
+                                "current": null,
+                                "valueInVersions": []
+                            },
+                            "isNullable": {
+                                "current": true,
+                                "valueInVersions": []
+                            }
+                        },
+                        "valueDescription": {
+                            "current": "[+-]LanguageFeatureName",
+                            "valueInVersions": []
+                        },
+                        "releaseVersionsMetadata": {
+                            "introducedVersion": "1.0.0",
+                            "stabilizedVersion": null,
+                            "deprecatedVersion": null,
+                            "removedVersion": null
+                        }
                     }
                 ],
                 "nestedLevels": [
