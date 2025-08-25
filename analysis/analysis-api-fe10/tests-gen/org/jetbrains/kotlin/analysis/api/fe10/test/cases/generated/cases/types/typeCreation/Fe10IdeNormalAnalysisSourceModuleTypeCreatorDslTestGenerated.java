@@ -47,6 +47,112 @@ public class Fe10IdeNormalAnalysisSourceModuleTypeCreatorDslTestGenerated extend
   }
 
   @Nested
+  @TestMetadata("analysis/analysis-api/testData/types/typeCreation/byDsl/arrayType")
+  @TestDataPath("$PROJECT_ROOT")
+  public class ArrayType {
+    @Test
+    public void testAllFilesPresentInArrayType() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/types/typeCreation/byDsl/arrayType"), Pattern.compile("^(.+)\\.kt$"), null, true);
+    }
+
+    @Test
+    @TestMetadata("boolPreferPrimitive.kt")
+    public void testBoolPreferPrimitive() {
+      runTest("analysis/analysis-api/testData/types/typeCreation/byDsl/arrayType/boolPreferPrimitive.kt");
+    }
+
+    @Test
+    @TestMetadata("boxedArrayOutVariance.kt")
+    public void testBoxedArrayOutVariance() {
+      runTest("analysis/analysis-api/testData/types/typeCreation/byDsl/arrayType/boxedArrayOutVariance.kt");
+    }
+
+    @Test
+    @TestMetadata("charShouldNotPreferPrimitive.kt")
+    public void testCharShouldNotPreferPrimitive() {
+      runTest("analysis/analysis-api/testData/types/typeCreation/byDsl/arrayType/charShouldNotPreferPrimitive.kt");
+    }
+
+    @Test
+    @TestMetadata("dynamicType.kt")
+    public void testDynamicType() {
+      runTest("analysis/analysis-api/testData/types/typeCreation/byDsl/arrayType/dynamicType.kt");
+    }
+
+    @Test
+    @TestMetadata("errorType.kt")
+    public void testErrorType() {
+      runTest("analysis/analysis-api/testData/types/typeCreation/byDsl/arrayType/errorType.kt");
+    }
+
+    @Test
+    @TestMetadata("flexibleInt.kt")
+    public void testFlexibleInt() {
+      runTest("analysis/analysis-api/testData/types/typeCreation/byDsl/arrayType/flexibleInt.kt");
+    }
+
+    @Test
+    @TestMetadata("int.kt")
+    public void testInt() {
+      runTest("analysis/analysis-api/testData/types/typeCreation/byDsl/arrayType/int.kt");
+    }
+
+    @Test
+    @TestMetadata("intInVarianceShouldPreferPrimitive.kt")
+    public void testIntInVarianceShouldPreferPrimitive() {
+      runTest("analysis/analysis-api/testData/types/typeCreation/byDsl/arrayType/intInVarianceShouldPreferPrimitive.kt");
+    }
+
+    @Test
+    @TestMetadata("intOutVariance.kt")
+    public void testIntOutVariance() {
+      runTest("analysis/analysis-api/testData/types/typeCreation/byDsl/arrayType/intOutVariance.kt");
+    }
+
+    @Test
+    @TestMetadata("nullableIntPreferPrimitive.kt")
+    public void testNullableIntPreferPrimitive() {
+      runTest("analysis/analysis-api/testData/types/typeCreation/byDsl/arrayType/nullableIntPreferPrimitive.kt");
+    }
+
+    @Test
+    @TestMetadata("nullableUserType.kt")
+    public void testNullableUserType() {
+      runTest("analysis/analysis-api/testData/types/typeCreation/byDsl/arrayType/nullableUserType.kt");
+    }
+
+    @Test
+    @TestMetadata("primitiveArrayPreferPrimitive.kt")
+    public void testPrimitiveArrayPreferPrimitive() {
+      runTest("analysis/analysis-api/testData/types/typeCreation/byDsl/arrayType/primitiveArrayPreferPrimitive.kt");
+    }
+
+    @Test
+    @TestMetadata("simpleUserTypeMakeNullablePreferPrimitive.kt")
+    public void testSimpleUserTypeMakeNullablePreferPrimitive() {
+      runTest("analysis/analysis-api/testData/types/typeCreation/byDsl/arrayType/simpleUserTypeMakeNullablePreferPrimitive.kt");
+    }
+
+    @Test
+    @TestMetadata("typeParameterPreferPrimitiveOutVariance.kt")
+    public void testTypeParameterPreferPrimitiveOutVariance() {
+      runTest("analysis/analysis-api/testData/types/typeCreation/byDsl/arrayType/typeParameterPreferPrimitiveOutVariance.kt");
+    }
+
+    @Test
+    @TestMetadata("typeParameterWithIntUpperBound.kt")
+    public void testTypeParameterWithIntUpperBound() {
+      runTest("analysis/analysis-api/testData/types/typeCreation/byDsl/arrayType/typeParameterWithIntUpperBound.kt");
+    }
+
+    @Test
+    @TestMetadata("withAnnotations.kt")
+    public void testWithAnnotations() {
+      runTest("analysis/analysis-api/testData/types/typeCreation/byDsl/arrayType/withAnnotations.kt");
+    }
+  }
+
+  @Nested
   @TestMetadata("analysis/analysis-api/testData/types/typeCreation/byDsl/capturedType")
   @TestDataPath("$PROJECT_ROOT")
   public class CapturedType {
