@@ -79,8 +79,10 @@ public value class Duration internal constructor(private val rawValue: Long) : C
          *
          * @property overflowLimit The maximum value that can be parsed without overflow
          * @property withSign Whether to parse the optional '+' or '-' sign at the beginning
+         * @property overflowThreshold Pre-calculated threshold (overflowLimit / 10) for early overflow detection
+         * @property lastDigitMax Maximum allowed last digit (overflowLimit % 10) when at the overflow threshold
          */
-        internal class LongParser(val overflowLimit: Long, val withSign: Boolean) {
+        internal class LongParser(private val overflowLimit: Long, private val withSign: Boolean) {
 
             private val overflowThreshold = overflowLimit / 10
             private val lastDigitMax = overflowLimit % 10
