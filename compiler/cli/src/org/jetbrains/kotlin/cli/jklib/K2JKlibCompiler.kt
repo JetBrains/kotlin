@@ -238,8 +238,17 @@ class K2JKlibCompiler : CLICompiler<K2JKlibCompilerArguments>() {
 
             private fun resolveDescriptor(idSig: IdSignature): DeclarationDescriptor? = descriptorFinder.findDescriptorBySignature(idSig)
 
+            private val throwableSymbols = mutableMapOf<String, IrSymbol>()
+
             override fun tryDeserializeIrSymbol(idSig: IdSignature, symbolKind: BinarySymbolData.SymbolKind): IrSymbol? {
-                val descriptor = resolveDescriptor(idSig) ?: return null
+                val descriptor = resolveDescriptor(idSig)
+
+                if (descriptor == null) {
+                    if (idSig is IdSignature.CommonSignature) {
+                        return throwableSymbols[idSig.nameSegments.last()]
+                    }
+                    return null
+                }
 
                 val declaration = stubGenerator.run {
                     when (symbolKind) {
@@ -254,6 +263,9 @@ class K2JKlibCompiler : CLICompiler<K2JKlibCompilerArguments>() {
                     }
                 }
 
+                if (idSig is IdSignature.CommonSignature && idSig.nameSegments.first() == "Throwable") {
+                    throwableSymbols[idSig.nameSegments.last()] = declaration.symbol
+                }
                 return declaration.symbol
             }
 
@@ -576,12 +588,6 @@ class K2JKlibCompiler : CLICompiler<K2JKlibCompilerArguments>() {
         // Deserialize modules
         // We explicitly use the DeserializationStrategy.ALL to deserialize the whole world,
         // so that we don't rely on linker side effects for proper deserialization.
-        linker.deserializeIrModuleHeader(
-            jarDepsModuleDescriptor,
-            null,
-            { DeserializationStrategy.ALL },
-            jarDepsModuleDescriptor.name.asString()
-        )
         lateinit var mainModuleFragment: IrModuleFragment
         for (dep in sortedDependencies) {
             val descriptor = getModuleDescriptor(dep)
@@ -592,6 +598,12 @@ class K2JKlibCompiler : CLICompiler<K2JKlibCompilerArguments>() {
                 else -> linker.deserializeIrModuleHeader(descriptor, dep, { DeserializationStrategy.ALL })
             }
         }
+        linker.deserializeIrModuleHeader(
+            jarDepsModuleDescriptor,
+            null,
+            { DeserializationStrategy.ALL },
+            jarDepsModuleDescriptor.name.asString()
+        )
 
         irBuiltIns.functionFactory = IrDescriptorBasedFunctionFactory(
             irBuiltIns,
@@ -604,6 +616,8 @@ class K2JKlibCompiler : CLICompiler<K2JKlibCompilerArguments>() {
         linker.init(null)
         ExternalDependenciesGenerator(symbolTable, listOf(linker)).generateUnboundSymbolsAsDependencies()
         linker.postProcess(inOrAfterLinkageStep = true)
+
+        linker.checkNoUnboundSymbols(symbolTable, "Found unbound symbol")
 
 //        DEBUG
 //        error("DON'T REACH")

@@ -37,7 +37,7 @@ object JvmIrMangler : IrBasedKotlinManglerImpl() {
         override fun copy(newMode: MangleMode): IrMangleComputer =
             JvmIrManglerComputer(builder, newMode, compatibleMode)
 
-        override fun addReturnTypeSpecialCase(function: IrFunction): Boolean = true
+        override fun addReturnTypeSpecialCase(function: IrFunction): Boolean = false
 
         override fun mangleTypePlatformSpecific(type: IrType, tBuilder: StringBuilder) {
             if (type.hasAnnotation(JvmAnnotationNames.ENHANCED_NULLABILITY_ANNOTATION)) {
@@ -62,7 +62,7 @@ class JvmDescriptorMangler(private val mainDetector: MainFunctionDetector?) : De
         private val mainDetector: MainFunctionDetector?,
         mode: MangleMode
     ) : DescriptorMangleComputer(builder, mode) {
-        override fun addReturnTypeSpecialCase(function: FunctionDescriptor): Boolean = true
+        override fun addReturnTypeSpecialCase(function: FunctionDescriptor): Boolean = false
 
         override fun copy(newMode: MangleMode): DescriptorMangleComputer = JvmDescriptorManglerComputer(builder, mainDetector, newMode)
 
