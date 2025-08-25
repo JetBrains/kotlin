@@ -67,13 +67,22 @@ fun ConeKotlinType.getClassRepresentativeForContextSensitiveResolution(session: 
     }
 }
 
-fun FirRegularClassSymbol.getParentChainForContextSensitiveResolution(session: FirSession): Sequence<FirRegularClassSymbol> = sequence {
+fun FirRegularClassSymbol.getParentChainForContextSensitiveResolution(
+    session: FirSession, onlySealed: Boolean = false
+): Sequence<FirRegularClassSymbol> = sequence {
     var current: FirRegularClassSymbol? = this@getParentChainForContextSensitiveResolution
+    var onlySealed = onlySealed
 
     while (current != null) {
-        yield(current)
+        if (!onlySealed || current.isSealed) { yield(current) }
+        // after the first one, return only sealed enclosing parents
         current = (current.getContainingDeclaration(session) as? FirRegularClassSymbol)
-            ?.takeIf { it.isSealed }
             ?.takeIf { isSubclassOf(it.toLookupTag(), session, isStrict = true, lookupInterfaces = true) }
+        onlySealed = true
     }
 }
+
+fun ConeKotlinType.getParentChainForContextSensitiveResolutionOfTypes(session: FirSession): Sequence<FirRegularClassSymbol> =
+    getClassRepresentativeForContextSensitiveResolution(session)
+        ?.getParentChainForContextSensitiveResolution(session, onlySealed = true)
+        .orEmpty()

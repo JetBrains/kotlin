@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isExternal
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
-import org.jetbrains.kotlin.fir.declarations.utils.isSealed
 import org.jetbrains.kotlin.fir.diagnostics.*
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.FirOperation.*
@@ -39,7 +38,6 @@ import org.jetbrains.kotlin.fir.resolve.calls.candidate.FirErrorReferenceWithCan
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.FirNamedReferenceWithCandidate
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.candidate
 import org.jetbrains.kotlin.fir.resolve.calls.findTypesForSuperCandidates
-import org.jetbrains.kotlin.fir.resolve.calls.fullyExpandedClass
 import org.jetbrains.kotlin.fir.resolve.calls.stages.mapArguments
 import org.jetbrains.kotlin.fir.resolve.diagnostics.*
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
@@ -1192,13 +1190,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
 
         val argument = argumentList.arguments.singleOrNull() ?: error("Not a single argument: ${this.render()}")
 
-        val chainToLookAt =
-            argument.resolvedType.getClassRepresentativeForContextSensitiveResolution(session)
-                ?.getParentChainForContextSensitiveResolution(session)
-                ?.filter { it.isSealed }
-                ?: return
-
-        for (classToLookAt in chainToLookAt) {
+        for (classToLookAt in argument.resolvedType.getParentChainForContextSensitiveResolutionOfTypes(session)) {
             val resultingTypeRef = typeResolverTransformer.withBareTypes {
                 typeResolverTransformer.transformTypeRef(
                     userTypeRef,
