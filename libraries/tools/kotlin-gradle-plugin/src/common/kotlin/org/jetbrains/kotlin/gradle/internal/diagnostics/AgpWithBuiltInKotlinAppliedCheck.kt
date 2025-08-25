@@ -6,11 +6,10 @@
 package org.jetbrains.kotlin.gradle.internal.diagnostics
 
 import org.gradle.api.Project
-import org.jetbrains.kotlin.gradle.dsl.KotlinAndroidExtension
+import org.jetbrains.kotlin.gradle.dsl.kotlinAndroidExtensionOrNull
 import org.jetbrains.kotlin.gradle.plugin.AndroidGradlePluginVersion
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnostic
-import org.jetbrains.kotlin.gradle.utils.findByType
 
 internal object AgpWithBuiltInKotlinAppliedCheck {
     val minimalBuiltInKotlinSupportedAgpVersion = AndroidGradlePluginVersion(9, 0, 0, "alpha01")
@@ -18,7 +17,7 @@ internal object AgpWithBuiltInKotlinAppliedCheck {
     fun Project.runAgpWithBuiltInKotlinIfAppliedCheck(
         agpVersionProvider: AndroidGradlePluginVersionProvider = AndroidGradlePluginVersionProvider.Default
     ) {
-        val isKotlinAndroidExtensionExists = extensions.findByType<KotlinAndroidExtension>() != null
+        val isKotlinAndroidExtensionExists = kotlinAndroidExtensionOrNull != null
         val agpVersion = agpVersionProvider.get()
         if (isKotlinAndroidExtensionExists &&
             agpVersion != null &&
