@@ -68,7 +68,7 @@ private fun generateRec(
             val classifier: KClassifier = type.classifier!!
             return when {
                 classifier is KClass<*> && classifier == List::class -> isSupportedImmutable(type.arguments.single().type!!)
-                classifier == InternalArgument::class -> true
+                classifier == ManualLanguageFeatureSetting::class -> true
                 classifier == Boolean::class -> true
                 classifier == Int::class -> true
                 classifier == String::class -> true

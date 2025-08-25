@@ -88,7 +88,7 @@ abstract class CommonToolArguments : Freezable(), Serializable {
             field = value
         }
 
-    var internalArguments: List<InternalArgument> = emptyList()
+    var internalArguments: List<ManualLanguageFeatureSetting> = emptyList()
         set(value) {
             checkFrozen()
             field = value
