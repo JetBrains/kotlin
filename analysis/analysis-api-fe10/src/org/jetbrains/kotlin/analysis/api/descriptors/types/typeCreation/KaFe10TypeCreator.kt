@@ -12,29 +12,22 @@ import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.bas
 import org.jetbrains.kotlin.analysis.api.descriptors.types.KaFe10ClassErrorType
 import org.jetbrains.kotlin.analysis.api.descriptors.types.KaFe10UsualClassType
 import org.jetbrains.kotlin.analysis.api.descriptors.types.base.KaFe10Type
-import org.jetbrains.kotlin.analysis.api.impl.base.types.typeCreation.KaBaseClassTypeBuilder
-import org.jetbrains.kotlin.analysis.api.impl.base.types.typeCreation.KaBaseTypeCreator
-import org.jetbrains.kotlin.analysis.api.impl.base.types.typeCreation.KaBaseTypeParameterTypeBuilder
+import org.jetbrains.kotlin.analysis.api.impl.base.types.typeCreation.*
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassLikeSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaTypeParameterSymbol
-import org.jetbrains.kotlin.analysis.api.types.KaStarTypeProjection
-import org.jetbrains.kotlin.analysis.api.types.KaType
-import org.jetbrains.kotlin.analysis.api.types.KaTypeArgumentWithVariance
-import org.jetbrains.kotlin.analysis.api.types.KaTypeParameterType
-import org.jetbrains.kotlin.analysis.api.types.typeCreation.KaClassTypeBuilder
-import org.jetbrains.kotlin.analysis.api.types.typeCreation.KaTypeParameterTypeBuilder
+import org.jetbrains.kotlin.analysis.api.types.*
+import org.jetbrains.kotlin.analysis.api.types.typeCreation.*
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.findClassAcrossModuleDependencies
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.SpecialNames
-import org.jetbrains.kotlin.types.SimpleType
-import org.jetbrains.kotlin.types.StarProjectionImpl
-import org.jetbrains.kotlin.types.TypeProjectionImpl
-import org.jetbrains.kotlin.types.TypeUtils
+import org.jetbrains.kotlin.resolve.calls.inference.CapturedType
+import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.error.ErrorTypeKind
 import org.jetbrains.kotlin.types.error.ErrorUtils
+import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
 internal class KaFe10TypeCreator(
     analysisSession: KaFe10Session
@@ -95,6 +88,166 @@ internal class KaFe10TypeCreator(
             return typeWithNullability.toKtType(analysisContext) as KaTypeParameterType
         }
 
+    override fun capturedType(
+        type: KaCapturedType,
+        init: KaCapturedTypeBuilder.() -> Unit
+    ): KaCapturedType {
+        withValidityAssertion {
+            val builder = KaBaseCapturedTypeBuilder.Base(this).apply(init)
+            val projection = type.projection
+            return buildCapturedType(projection, builder)
+        }
+    }
+
+    override fun capturedType(
+        projection: KaTypeProjection,
+        init: KaCapturedTypeBuilder.() -> Unit,
+    ): KaCapturedType {
+        withValidityAssertion {
+            val builder = KaBaseCapturedTypeBuilder.Base(this).apply(init)
+            return buildCapturedType(projection, builder)
+        }
+    }
+
+    private fun buildCapturedType(originalProjection: KaTypeProjection, builder: KaCapturedTypeBuilder): KaCapturedType {
+        with(analysisSession) {
+            val projection = when (originalProjection) {
+                is KaStarTypeProjection -> StarProjectionForAbsentTypeParameter(analysisContext.builtIns)
+                is KaTypeArgumentWithVariance -> {
+                    if (originalProjection.variance == Variance.INVARIANT) {
+                        errorWithAttachment("Only non-invariant projections can be captured") {
+                            withEntry("projection", Variance.INVARIANT.toString())
+                            withEntry("type", originalProjection.type.render(position = Variance.INVARIANT))
+                        }
+                    }
+
+                    TypeProjectionImpl(
+                        originalProjection.variance,
+                        (originalProjection.type as KaFe10Type).fe10Type
+                    )
+                }
+            }
+
+            val kotlinType = CapturedType(typeProjection = projection, isMarkedNullable = builder.isMarkedNullable)
+            return kotlinType.toKtType(analysisContext) as KaCapturedType
+        }
+    }
+
+    override fun definitelyNotNullType(type: KaType, init: KaDefinitelyNotNullTypeBuilder.() -> Unit): KaDefinitelyNotNullType {
+        withValidityAssertion {
+            with(analysisSession) {
+                val builder = KaBaseDefinitelyNotNullTypeBuilder.Base(this@KaFe10TypeCreator).apply(init)
+                require(type is KaFe10Type)
+
+                if (type !is KaCapturedType && type !is KaTypeParameterType) {
+                    errorWithAttachment("`KaDefinitelyNotNullType` can only wrap `KaCapturedType` or `KaTypeParameterType`") {
+                        withEntry("type", type.render(position = Variance.INVARIANT))
+                    }
+                }
+
+                return DefinitelyNotNullType.makeDefinitelyNotNull(type.fe10Type, avoidCheckingActualTypeNullability = true)
+                    ?.toKtType(analysisContext) as KaDefinitelyNotNullType
+            }
+        }
+    }
+
+    override fun flexibleType(
+        type: KaFlexibleType,
+        init: KaFlexibleTypeBuilder.() -> Unit,
+    ): KaFlexibleType {
+        withValidityAssertion {
+            val builder = KaBaseFlexibleTypeBuilder.ByFlexibleType(type, this).apply(init)
+            return buildFlexibleType(builder)
+        }
+    }
+
+    override fun flexibleType(
+        lowerBound: KaType,
+        upperBound: KaType,
+        init: KaFlexibleTypeBuilder.() -> Unit,
+    ): KaFlexibleType {
+        withValidityAssertion {
+            val builder = KaBaseFlexibleTypeBuilder.ByBounds(lowerBound, upperBound, this).apply(init)
+            return buildFlexibleType(builder)
+        }
+    }
+
+    private fun buildFlexibleType(builder: KaFlexibleTypeBuilder): KaFlexibleType {
+        withValidityAssertion {
+            with(analysisSession) {
+                val lowerBound = builder.lowerBound.lowerBoundIfFlexible()
+                require(lowerBound is KaFe10Type)
+                val upperBound = builder.upperBound.upperBoundIfFlexible()
+                require(upperBound is KaFe10Type)
+
+
+                if (lowerBound == upperBound) {
+                    errorWithAttachment("Lower and upper bounds are equal") {
+                        withEntry("lowerBound", lowerBound.render(position = Variance.INVARIANT))
+                        withEntry("upperBound", upperBound.render(position = Variance.INVARIANT))
+                    }
+                }
+
+                if (!lowerBound.isSubtypeOf(upperBound)) {
+                    errorWithAttachment("Lower bound must be a subtype of upper bound") {
+                        withEntry("lowerBound", lowerBound.render(position = Variance.INVARIANT))
+                        withEntry("upperBound", upperBound.render(position = Variance.INVARIANT))
+                    }
+                }
+
+                val kotlinType = FlexibleTypeImpl(lowerBound.fe10Type.asSimpleType(), upperBound.fe10Type.asSimpleType())
+                return kotlinType.toKtType(analysisContext) as KaFlexibleType
+            }
+        }
+    }
+
+    override fun intersectionType(
+        type: KaIntersectionType,
+        init: KaIntersectionTypeBuilder.() -> Unit,
+    ): KaIntersectionType {
+        withValidityAssertion {
+            val builder = KaBaseIntersectionTypeBuilder.ByIntersectionType(type, this).apply(init)
+            return buildIntersectionType(builder)
+        }
+    }
+
+    override fun intersectionType(
+        conjuncts: List<KaType>,
+        init: KaIntersectionTypeBuilder.() -> Unit,
+    ): KaIntersectionType {
+        withValidityAssertion {
+            val builder = KaBaseIntersectionTypeBuilder.ByConjuncts(conjuncts, this).apply(init)
+            return buildIntersectionType(builder)
+        }
+    }
+
+    private fun buildIntersectionType(builder: KaIntersectionTypeBuilder): KaIntersectionType {
+        withValidityAssertion {
+            val conjuncts = builder.conjuncts
+            assert(conjuncts.isNotEmpty()) { "Intersection type must have at least one conjunct" }
+
+            val intersectionConstructor = IntersectionTypeConstructor(
+                typesToIntersect = conjuncts.map { conjunctType -> (conjunctType as KaFe10Type).fe10Type }
+            )
+            val simpleType = KotlinTypeFactory.simpleType(
+                attributes = TypeAttributes.Empty,
+                constructor = intersectionConstructor,
+                arguments = emptyList(),
+                nullable = false
+            )
+
+            return simpleType.toKtType(analysisContext) as KaIntersectionType
+        }
+    }
+
+    override fun dynamicType(): KaDynamicType {
+        withValidityAssertion {
+            val kotlinType = createDynamicType(analysisContext.builtIns)
+            return kotlinType.toKtType(analysisContext) as KaDynamicType
+        }
+    }
+
     private val analysisContext: Fe10AnalysisContext
         get() = analysisSession.analysisContext
+
 }
