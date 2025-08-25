@@ -1,4 +1,3 @@
-// NO_INLINE
 package foo
 
 object Obj
