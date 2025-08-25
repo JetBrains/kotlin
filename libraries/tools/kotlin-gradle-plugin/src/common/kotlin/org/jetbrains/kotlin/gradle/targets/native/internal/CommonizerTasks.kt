@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.commonizer.CommonizerOutputFileLayout
 import org.jetbrains.kotlin.commonizer.SharedCommonizerTarget
 import org.jetbrains.kotlin.commonizer.konanTargets
 import org.jetbrains.kotlin.compilerRunner.maybeCreateCommonizerClasspathConfiguration
+import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
 import org.jetbrains.kotlin.gradle.internal.isInIdeaSync
 import org.jetbrains.kotlin.gradle.internal.properties.nativeProperties
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle
@@ -27,6 +28,7 @@ import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPro
 import org.jetbrains.kotlin.gradle.plugin.await
 import org.jetbrains.kotlin.gradle.plugin.ide.Idea222Api
 import org.jetbrains.kotlin.gradle.plugin.ide.ideaImportDependsOn
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.targets.native.toolchain.KotlinNativeBundleArtifactFormat
 import org.jetbrains.kotlin.gradle.targets.native.toolchain.KotlinNativeBundleArtifactFormat.addKotlinNativeBundleConfiguration
 import org.jetbrains.kotlin.gradle.targets.native.toolchain.KotlinNativeBundleBuildService
@@ -86,6 +88,8 @@ internal val Project.runCommonizerTask: TaskProvider<Task>
 private const val commonizeCInteropTaskName = "commonizeCInterop"
 
 internal suspend fun Project.commonizeCInteropTask(): TaskProvider<CInteropCommonizerTask>? {
+    val targets = multiplatformExtensionOrNull?.awaitTargets()?.toSet() ?: return null
+
     if (cInteropCommonizationEnabled()) {
         return locateOrRegisterTask(
             commonizeCInteropTaskName,
@@ -105,6 +109,14 @@ internal suspend fun Project.commonizeCInteropTask(): TaskProvider<CInteropCommo
                 kotlinCompilerArgumentsLogLevel
                     .value(project.kotlinPropertiesProvider.kotlinCompilerArgumentsLogLevel)
                     .finalizeValueOnRead()
+                kotlinNativeProvider.set(
+                    KotlinNativeFromToolchainProvider(
+                        project,
+                        targets.filterIsInstance<KotlinNativeTarget>().map { it.konanTarget }.toSet(),
+                        kotlinNativeBundleBuildService,
+                        true
+                    )
+                )
             }
         )
     }
