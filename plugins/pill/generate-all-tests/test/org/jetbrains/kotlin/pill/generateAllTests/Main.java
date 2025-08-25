@@ -5,20 +5,17 @@
 
 package org.jetbrains.kotlin.pill.generateAllTests;
 
-import org.jetbrains.kotlin.generators.tests.*;
 import org.jetbrains.kotlin.generators.InconsistencyChecker;
-import org.jetbrains.kotlin.test.generators.GenerateCompilerTestsKt;
+import org.jetbrains.kotlin.generators.tests.GenerateJava8TestsKt;
+import org.jetbrains.kotlin.generators.tests.GenerateJsTestsKt;
 import org.jetbrains.kotlin.generators.tests.analysis.api.GenerateAnalysisApiTestsKt;
 
 import java.util.List;
 
 public class Main {
     public static void main(String[] args) {
-        GenerateCompilerTestsKt.main(args);
-        GenerateTestsKt.main(args);
         GenerateJsTestsKt.main(args);
         GenerateJava8TestsKt.main(args);
-        GenerateRuntimeDescriptorTestsKt.main(args);
         GenerateAnalysisApiTestsKt.main(args);
 
         boolean dryRun = InconsistencyChecker.Companion.hasDryRunArg(args);
