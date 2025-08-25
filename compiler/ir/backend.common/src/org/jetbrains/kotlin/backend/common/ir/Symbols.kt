@@ -25,8 +25,6 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import kotlin.getValue
 
-// Some symbols below are used in kotlin-native, so they can't be private
-@Suppress("MemberVisibilityCanBePrivate")
 @OptIn(InternalSymbolFinderAPI::class)
 abstract class Symbols(irBuiltIns: IrBuiltIns) : PreSerializationSymbols.Impl(irBuiltIns) {
     private fun getClass(name: Name, vararg packageNameSegments: String = arrayOf("kotlin")): IrClassSymbol =
