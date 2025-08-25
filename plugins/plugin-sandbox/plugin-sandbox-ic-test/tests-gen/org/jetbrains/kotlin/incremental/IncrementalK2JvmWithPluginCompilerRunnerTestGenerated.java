@@ -54,4 +54,9 @@ public class IncrementalK2JvmWithPluginCompilerRunnerTestGenerated extends Abstr
   public void testReferenceFunctionFromIrPlugin() {
     runTest("plugins/plugin-sandbox/plugin-sandbox-ic-test/testData/pureKotlin/referenceFunctionFromIrPlugin/");
   }
+
+  @TestMetadata("removeLookupToDeclaration")
+  public void testRemoveLookupToDeclaration() {
+    runTest("plugins/plugin-sandbox/plugin-sandbox-ic-test/testData/pureKotlin/removeLookupToDeclaration/");
+  }
 }
