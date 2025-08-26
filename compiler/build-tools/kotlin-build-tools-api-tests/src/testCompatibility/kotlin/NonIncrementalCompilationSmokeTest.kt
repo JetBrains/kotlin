@@ -55,7 +55,7 @@ class NonIncrementalCompilationSmokeTest : BaseCompilationTest() {
         }
     }
 
-    @OptIn(ExperimentalCompilerArgument::class, RemovedCompilerArgument::class)
+    @OptIn(ExperimentalCompilerArgument::class)
     @DisplayName("Using recently added argument throws on unsupported compiler versions")
     @DefaultStrategyAgnosticCompilationTest
     @TestMetadata("jvm-module-1")
