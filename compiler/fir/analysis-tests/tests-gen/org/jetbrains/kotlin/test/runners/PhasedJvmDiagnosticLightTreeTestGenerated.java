@@ -53984,6 +53984,41 @@ public class PhasedJvmDiagnosticLightTreeTestGenerated extends AbstractPhasedJvm
     @TestDataPath("$PROJECT_ROOT")
     public class CollectionLiterals {
       @Nested
+      @TestMetadata("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/noOperatorOf")
+      @TestDataPath("$PROJECT_ROOT")
+      public class NoOperatorOf {
+        @Test
+        @TestMetadata("incorrectReturnTypeInVarargOverload.kt")
+        public void testIncorrectReturnTypeInVarargOverload() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/noOperatorOf/incorrectReturnTypeInVarargOverload.kt");
+        }
+
+        @Test
+        @TestMetadata("noCompanionObject.kt")
+        public void testNoCompanionObject() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/noOperatorOf/noCompanionObject.kt");
+        }
+
+        @Test
+        @TestMetadata("noOf.kt")
+        public void testNoOf() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/noOperatorOf/noOf.kt");
+        }
+
+        @Test
+        @TestMetadata("noOperator.kt")
+        public void testNoOperator() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/noOperatorOf/noOperator.kt");
+        }
+
+        @Test
+        @TestMetadata("noVarargOverload.kt")
+        public void testNoVarargOverload() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/noOperatorOf/noVarargOverload.kt");
+        }
+      }
+
+      @Nested
       @TestMetadata("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/userTypes")
       @TestDataPath("$PROJECT_ROOT")
       public class UserTypes {
