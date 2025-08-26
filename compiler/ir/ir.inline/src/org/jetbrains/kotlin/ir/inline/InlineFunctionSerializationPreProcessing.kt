@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.ir.util.file
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 
-class InlineFunctionSerializationPreProcessing(private val context: LoweringContext) : IrVisitorVoid(), FileLoweringPass {
+class InlineFunctionSerializationPreProcessing(private val inliner: FunctionInlining) : IrVisitorVoid(), FileLoweringPass {
     override fun lower(irFile: IrFile) {
         irFile.accept(this, null)
     }
@@ -29,7 +29,11 @@ class InlineFunctionSerializationPreProcessing(private val context: LoweringCont
 
     override fun visitSimpleFunction(declaration: IrSimpleFunction) {
         if (!declaration.isInline || declaration.body == null || declaration.symbol.isConsideredAsPrivateForInlining()) return
-        declaration.erasedTopLevelCopy = declaration.copyAndEraseTypeParameters().convertToPrivateTopLevel().erasePrivateSymbols()
+        declaration.erasedTopLevelCopy = declaration
+            .copyAndEraseTypeParameters()
+            .convertToPrivateTopLevel()
+            .erasePrivateSymbols()
+            .inlineFunctions()
     }
 
     private fun IrSimpleFunction.copyAndEraseTypeParameters(): IrSimpleFunction {
@@ -66,5 +70,10 @@ class InlineFunctionSerializationPreProcessing(private val context: LoweringCont
 
     private fun IrInlinedFunctionBlock.isEffectivelyPrivate(): Boolean {
         return inlinedFunctionSymbol?.isConsideredAsPrivateAndNotLocalForInlining() == true
+    }
+
+    private fun IrSimpleFunction.inlineFunctions(): IrSimpleFunction {
+        inliner.lower(body!!, this)
+        return this
     }
 }

@@ -110,8 +110,15 @@ private fun inlineAllFunctionsPhase(irMangler: IrMangler, inlineCrossModuleFunct
     prerequisite = setOf(outerThisSpecialAccessorInInlineFunctionsPhase)
 )
 
-private val inlineFunctionSerializationPreProcessing = makeIrModulePhase(
-    lowering = ::InlineFunctionSerializationPreProcessing,
+private fun inlineFunctionSerializationPreProcessing(irMangler: IrMangler, inlineCrossModuleFunctions: Boolean) = makeIrModulePhase(
+    lowering = { context ->
+        InlineFunctionSerializationPreProcessing(
+            FunctionInlining(
+                context,
+                PreSerializationNonPrivateInlineFunctionResolver(context, irMangler, inlineCrossModuleFunctions),
+            )
+        )
+    },
     name = "InlineFunctionSerializationPreProcessing",
     prerequisite = setOf(inlineOnlyPrivateFunctionsPhase, /*inlineAllFunctionsPhase*/),
 )
@@ -156,7 +163,7 @@ fun loweringsOfTheFirstPhase(
         this += syntheticAccessorGenerationPhase
         this += validateIrAfterInliningOnlyPrivateFunctions
         this += inlineAllFunctionsPhase(irMangler, inlineCrossModuleFunctions)
-        this += inlineFunctionSerializationPreProcessing
+        this += inlineFunctionSerializationPreProcessing(irMangler, inlineCrossModuleFunctions)
         this += validateIrAfterInliningAllFunctionsPhase(irMangler, inlineCrossModuleFunctions)
     }
 }
