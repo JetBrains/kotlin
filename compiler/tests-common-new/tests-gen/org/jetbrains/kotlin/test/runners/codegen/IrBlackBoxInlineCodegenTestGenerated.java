@@ -6746,6 +6746,12 @@ public class IrBlackBoxInlineCodegenTestGenerated extends AbstractIrBlackBoxInli
         }
 
         @Test
+        @TestMetadata("leakingPrivateMethodWithAnnotationAsDefaultValue.kt")
+        public void testLeakingPrivateMethodWithAnnotationAsDefaultValue() {
+          runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossFilePrivateLeak/leakingPrivateMethodWithAnnotationAsDefaultValue.kt");
+        }
+
+        @Test
         @TestMetadata("leakingPrivateMethodWithDifferentVisibility.kt")
         public void testLeakingPrivateMethodWithDifferentVisibility() {
           runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossFilePrivateLeak/leakingPrivateMethodWithDifferentVisibility.kt");
@@ -7740,6 +7746,12 @@ public class IrBlackBoxInlineCodegenTestGenerated extends AbstractIrBlackBoxInli
         }
 
         @Test
+        @TestMetadata("syntheticAccessorDefaultValuesWithAnnotation.kt")
+        public void testSyntheticAccessorDefaultValuesWithAnnotation() {
+          runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossFilePrivateLeak/syntheticAccessorDefaultValuesWithAnnotation.kt");
+        }
+
+        @Test
         @TestMetadata("syntheticAccessorTypeParameters.kt")
         public void testSyntheticAccessorTypeParameters() {
           runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossFilePrivateLeak/syntheticAccessorTypeParameters.kt");
@@ -8038,6 +8050,12 @@ public class IrBlackBoxInlineCodegenTestGenerated extends AbstractIrBlackBoxInli
         }
 
         @Test
+        @TestMetadata("syntheticAccessorDefaultValuesWithAnnotation.kt")
+        public void testSyntheticAccessorDefaultValuesWithAnnotation() {
+          runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossModulePrivateLeak/syntheticAccessorDefaultValuesWithAnnotation.kt");
+        }
+
+        @Test
         @TestMetadata("syntheticAccessorTypeParameters.kt")
         public void testSyntheticAccessorTypeParameters() {
           runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossModulePrivateLeak/syntheticAccessorTypeParameters.kt");
@@ -8195,6 +8213,12 @@ public class IrBlackBoxInlineCodegenTestGenerated extends AbstractIrBlackBoxInli
         @TestMetadata("syntheticAccessorDefaultValues.kt")
         public void testSyntheticAccessorDefaultValues() {
           runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/singleFile/syntheticAccessorDefaultValues.kt");
+        }
+
+        @Test
+        @TestMetadata("syntheticAccessorDefaultValuesWithAnnotation.kt")
+        public void testSyntheticAccessorDefaultValuesWithAnnotation() {
+          runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/singleFile/syntheticAccessorDefaultValuesWithAnnotation.kt");
         }
 
         @Test

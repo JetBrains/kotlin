@@ -1576,6 +1576,12 @@ public class NativeKlibSyntheticAccessorsBoxTestGenerated extends AbstractNative
       }
 
       @Test
+      @TestMetadata("syntheticAccessorDefaultValuesWithAnnotation.kt")
+      public void testSyntheticAccessorDefaultValuesWithAnnotation() {
+        runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossFilePrivateLeak/syntheticAccessorDefaultValuesWithAnnotation.kt");
+      }
+
+      @Test
       @TestMetadata("syntheticAccessorTypeParameters.kt")
       public void testSyntheticAccessorTypeParameters() {
         runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossFilePrivateLeak/syntheticAccessorTypeParameters.kt");
@@ -1888,6 +1894,12 @@ public class NativeKlibSyntheticAccessorsBoxTestGenerated extends AbstractNative
       }
 
       @Test
+      @TestMetadata("syntheticAccessorDefaultValuesWithAnnotation.kt")
+      public void testSyntheticAccessorDefaultValuesWithAnnotation() {
+        runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossModulePrivateLeak/syntheticAccessorDefaultValuesWithAnnotation.kt");
+      }
+
+      @Test
       @TestMetadata("syntheticAccessorTypeParameters.kt")
       public void testSyntheticAccessorTypeParameters() {
         runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossModulePrivateLeak/syntheticAccessorTypeParameters.kt");
@@ -2047,6 +2059,12 @@ public class NativeKlibSyntheticAccessorsBoxTestGenerated extends AbstractNative
       @TestMetadata("syntheticAccessorDefaultValues.kt")
       public void testSyntheticAccessorDefaultValues() {
         runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/singleFile/syntheticAccessorDefaultValues.kt");
+      }
+
+      @Test
+      @TestMetadata("syntheticAccessorDefaultValuesWithAnnotation.kt")
+      public void testSyntheticAccessorDefaultValuesWithAnnotation() {
+        runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/singleFile/syntheticAccessorDefaultValuesWithAnnotation.kt");
       }
 
       @Test
