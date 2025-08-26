@@ -2,6 +2,7 @@ plugins {
     kotlin("jvm")
     id("jps-compatible")
     id("project-tests-convention")
+    id("test-inputs-check")
 }
 
 dependencies {
@@ -25,9 +26,6 @@ configureJvmToolchain(JdkMajorVersion.JDK_11_0)
 
 projectTests {
     testTask(jUnitMode = JUnitMode.JUnit5) {
-        dependsOn(":dist")
-        workingDir = rootDir
-
         // This is required by lincheck model checking to be able to use `jdk.internal.misc.Unsafe` and similar classes under the hood.
         jvmArgs(
             "--add-opens",
