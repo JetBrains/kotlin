@@ -38,17 +38,19 @@ sourceSets {
 }
 
 projectTests {
+    testData(isolated, "testData")
+    withJvmStdlibAndReflect()
+    withScriptRuntime()
+    withTestJar()
+    withMockJdkAnnotationsJar()
+
     testTask(jUnitMode = JUnitMode.JUnit5) {
-        dependsOn(":dist")
-        workingDir = rootDir
         val classpathProvider = objects.newInstance<DataFramePluginClasspathProvider>()
         classpathProvider.classpath.from(dataframeRuntimeClasspath)
         jvmArgumentProviders.add(classpathProvider)
     }
 
     testGenerator("org.jetbrains.kotlin.fir.dataframe.TestGeneratorKt")
-
-    withJvmStdlibAndReflect()
 }
 
 abstract class DataFramePluginClasspathProvider : CommandLineArgumentProvider {

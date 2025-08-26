@@ -43,7 +43,7 @@ open class AbstractDataFrameBlackBoxCodegenTest : AbstractFirLightTreeBlackBoxCo
 
     class SelectionDslUtilsSourceProvider(testServices: TestServices) : AdditionalSourceProvider(testServices) {
         companion object {
-            const val SELECTION_DSL_UTILS = "plugins/kotlin-dataframe/testData/selectionDslTestUtils.kt"
+            const val SELECTION_DSL_UTILS = "selectionDslTestUtils.kt"
         }
 
         override fun produceAdditionalFiles(
@@ -51,7 +51,8 @@ open class AbstractDataFrameBlackBoxCodegenTest : AbstractFirLightTreeBlackBoxCo
             module: TestModule,
             testModuleStructure: TestModuleStructure,
         ): List<TestFile> {
-            return listOf(File(SELECTION_DSL_UTILS).toTestFile())
+            val classLoader = this::class.java.classLoader
+            return listOf(classLoader.getResource(SELECTION_DSL_UTILS)!!.toTestFile())
         }
     }
 }

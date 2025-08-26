@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.analysis.test.framework.test.configurators.FrontendK
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.registerAllServices
 import org.jetbrains.kotlin.analysis.test.framework.utils.SkipTestException
 import org.jetbrains.kotlin.analysis.test.framework.utils.singleOrZeroValue
+import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.TestConfiguration
@@ -55,7 +56,6 @@ import org.junit.jupiter.api.TestInfo
 import org.junit.jupiter.api.extension.ExtendWith
 import java.io.IOException
 import java.nio.file.Path
-import java.nio.file.Paths
 import kotlin.io.path.exists
 import kotlin.io.path.nameWithoutExtension
 
@@ -404,7 +404,7 @@ abstract class AbstractAnalysisApiBasedTest : TestWithDisposable() {
     }
 
     protected fun runTest(@TestDataFile path: String, block: (TestServices) -> Unit) {
-        testDataPath = configurator.computeTestDataPath(Paths.get(path))
+        testDataPath = configurator.computeTestDataPath(ForTestCompileRuntime.transformTestDataPath(path).toPath())
         val testConfiguration = createTestConfiguration()
         testServices = testConfiguration.testServices
         createAndRegisterTestModuleStructure(testConfiguration)

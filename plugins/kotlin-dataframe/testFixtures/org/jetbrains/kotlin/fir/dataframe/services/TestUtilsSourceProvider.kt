@@ -11,11 +11,10 @@ import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.AdditionalSourceProvider
 import org.jetbrains.kotlin.test.services.TestModuleStructure
 import org.jetbrains.kotlin.test.services.TestServices
-import java.io.File
 
 class TestUtilsSourceProvider(testServices: TestServices) : AdditionalSourceProvider(testServices) {
     companion object {
-        const val COMMON_SOURCE_PATH = "plugins/kotlin-dataframe/testData/testUtils.kt"
+        const val COMMON_SOURCE_PATH = "testUtils.kt"
     }
 
     override fun produceAdditionalFiles(
@@ -24,10 +23,11 @@ class TestUtilsSourceProvider(testServices: TestServices) : AdditionalSourceProv
         testModuleStructure: TestModuleStructure,
     ): List<TestFile> {
         return buildList {
-            add(File(COMMON_SOURCE_PATH).toTestFile())
+            add(this::class.java.classLoader.getResource(COMMON_SOURCE_PATH)!!.toTestFile())
+
             if (DataFrameDirectives.WITH_SCHEMA_READER in module.directives) {
-                add(File("plugins/kotlin-dataframe/testData/schemaReaderDeclaration.kt").toTestFile())
-                add(File("plugins/kotlin-dataframe/testData/dataSchemaSourceDeclaration.kt").toTestFile())
+                add(this::class.java.classLoader.getResource("schemaReaderDeclaration.kt")!!.toTestFile())
+                add(this::class.java.classLoader.getResource("dataSchemaSourceDeclaration.kt")!!.toTestFile())
             }
         }
     }
