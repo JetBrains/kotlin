@@ -1,5 +1,6 @@
 // TARGET_BACKEND: WASM
 // USE_SHARED_OBJECTS
+// DISABLE_WASM_EXCEPTION_HANDLING
 
 // FILE: shared.kt
 
@@ -10,5 +11,5 @@ class MyClass(val a: Int, val b: Int) : Function2<Int, Int, Int> {
 var a = MyClass(1, 2)
 
 fun box(): String {
-    return if (a.a == 1) "OK" else "Fail"
+    return if (a.a == 1 && MyClass(1, 2).invoke(3, 4) == 10) "OK" else "Fail"
 }
