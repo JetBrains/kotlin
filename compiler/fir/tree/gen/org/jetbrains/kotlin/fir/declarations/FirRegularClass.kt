@@ -33,6 +33,7 @@ abstract class FirRegularClass : FirClass() {
     abstract override val status: FirDeclarationStatus
     abstract override val deprecationsProvider: DeprecationsProvider
     abstract override val scopeProvider: FirScopeProvider
+    abstract override val isLocal: Boolean
     abstract override val controlFlowGraphReference: FirControlFlowGraphReference?
     abstract override val classKind: ClassKind
     @DirectDeclarationsAccess

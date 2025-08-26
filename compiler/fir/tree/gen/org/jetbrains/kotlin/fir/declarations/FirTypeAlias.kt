@@ -31,6 +31,7 @@ abstract class FirTypeAlias : FirClassLikeDeclaration() {
     abstract override val status: FirDeclarationStatus
     abstract override val deprecationsProvider: DeprecationsProvider
     abstract override val scopeProvider: FirScopeProvider
+    abstract override val isLocal: Boolean
     abstract val name: Name
     abstract override val symbol: FirTypeAliasSymbol
     abstract val expandedTypeRef: FirTypeRef

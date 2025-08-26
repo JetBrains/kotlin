@@ -44,6 +44,8 @@ internal class FirAnonymousObjectImpl(
     override var annotations: MutableOrEmptyList<FirAnnotation>,
     override val symbol: FirAnonymousObjectSymbol,
 ) : FirAnonymousObject() {
+    override val isLocal: Boolean
+        get() = true
     override var controlFlowGraphReference: FirControlFlowGraphReference? = null
 
     init {

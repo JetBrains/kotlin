@@ -21,3 +21,5 @@ val fakeElementImport = ArbitraryImportable("org.jetbrains.kotlin", "fakeElement
 
 val transformInPlaceImport = ArbitraryImportable(VISITOR_PACKAGE, "transformInplace")
 val toMutableOrEmptyImport = ArbitraryImportable("org.jetbrains.kotlin.fir.builder", "toMutableOrEmpty")
+
+val visibilitiesImport = ArbitraryImportable("org.jetbrains.kotlin.descriptors", "Visibilities")

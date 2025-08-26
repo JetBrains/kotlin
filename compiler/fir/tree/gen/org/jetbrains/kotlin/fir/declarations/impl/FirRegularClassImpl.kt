@@ -12,6 +12,7 @@ package org.jetbrains.kotlin.fir.declarations.impl
 
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.MutableOrEmptyList
@@ -48,6 +49,8 @@ internal class FirRegularClassImpl(
     override val superTypeRefs: MutableList<FirTypeRef>,
     override var contextParameters: MutableOrEmptyList<FirValueParameter>,
 ) : FirRegularClass() {
+    override val isLocal: Boolean
+        get() = status.visibility == Visibilities.Local
     override var controlFlowGraphReference: FirControlFlowGraphReference? = null
     override val hasLazyNestedClassifiers: Boolean
         get() = false

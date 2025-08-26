@@ -194,6 +194,9 @@ class FirJavaClass @FirImplementationDetail internal constructor(
     override val companionObjectSymbol: FirRegularClassSymbol?
         get() = null
 
+    override val isLocal: Boolean
+        get() = false
+
     override fun replaceCompanionObjectSymbol(newCompanionObjectSymbol: FirRegularClassSymbol?) {}
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
