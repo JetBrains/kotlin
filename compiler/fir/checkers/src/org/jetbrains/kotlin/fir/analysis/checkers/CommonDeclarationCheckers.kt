@@ -90,6 +90,7 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
         FirInlinePropertyChecker,
         FirUnnamedPropertyChecker,
         FirContextualPropertyWithBackingFieldChecker,
+        FirStabilityAnalysisChecker,
     )
 
     override val backingFieldCheckers: Set<FirBackingFieldChecker> = setOf(

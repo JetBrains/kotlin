@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.diagnostics.WhenMissingCase
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.model.*
+import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeprecationInfo
 import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
@@ -65,6 +66,10 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
 
         val OTHER_ERROR_WITH_REASON by error<PsiElement> {
             parameter<String>("reason")
+        }
+
+        val LATEINIT_VAR_USAGE by warning<PsiElement> {
+            parameter<String>("info")
         }
     }
 

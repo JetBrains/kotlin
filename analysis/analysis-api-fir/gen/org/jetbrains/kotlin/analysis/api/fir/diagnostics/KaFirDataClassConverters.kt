@@ -113,6 +113,13 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.LATEINIT_VAR_USAGE) { firDiagnostic ->
+        LateinitVarUsageImpl(
+            firDiagnostic.a,
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.ILLEGAL_CONST_EXPRESSION) { firDiagnostic ->
         IllegalConstExpressionImpl(
             firDiagnostic as KtPsiDiagnostic,

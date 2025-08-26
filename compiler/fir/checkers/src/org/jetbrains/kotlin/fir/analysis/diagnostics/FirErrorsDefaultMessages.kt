@@ -607,6 +607,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.OPT_IN_USAGE_ERRO
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.OPT_IN_WITHOUT_ARGUMENTS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.OTHER_ERROR
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.OTHER_ERROR_WITH_REASON
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.LATEINIT_VAR_USAGE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.OUTER_CLASS_ARGUMENTS_REQUIRED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.OVERLOAD_RESOLUTION_AMBIGUITY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.OVERRIDE_BY_INLINE
@@ -895,6 +896,11 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         // Miscellaneous
         map.put(OTHER_ERROR, "Unknown error.")
         map.put(OTHER_ERROR_WITH_REASON, "Unknown error: {0}.", STRING)
+        map.put(
+            LATEINIT_VAR_USAGE,
+            "LATEINIT_VAR_USAGE: {0}",
+            STRING
+        )
 
         // General syntax
         map.put(ILLEGAL_CONST_EXPRESSION, "Incorrect const expression.")
