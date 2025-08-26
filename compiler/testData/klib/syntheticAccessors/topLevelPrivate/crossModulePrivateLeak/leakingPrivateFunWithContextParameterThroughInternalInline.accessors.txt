@@ -1,0 +1,21 @@
+/* MODULE name=<lib> */
+
+/* FILE package=<root> fileName=A.kt */
+
+/* TARGET declaration */ context(scope: Scope) private fun privateFun(): String
+internal inline fun internalInlineFun(): String
+    /* LOCAL declaration @0 */ local fun <anonymous>($this$with: Scope): String
+        /* ACCESSOR use-site */ access$privateFun$tAKt(scope = $this$with)
+    /* INVOKE @0 */ local fun <anonymous>($this$with: Scope): String
+/* ACCESSOR declaration */ internal fun access$privateFun$tAKt(scope: Scope): String
+    /* TARGET use-site */ privateFun(/* scope = scope */)
+
+
+/* MODULE name=<main> */
+
+/* FILE package=<root> fileName=B.kt */
+
+public fun box(): String
+    /* LOCAL declaration @0 */ local fun <anonymous>($this$with: Scope): String
+        /* ACCESSOR use-site */ access$privateFun$tAKt(scope = $this$with)
+    /* INVOKE @0 */ local fun <anonymous>($this$with: Scope): String
