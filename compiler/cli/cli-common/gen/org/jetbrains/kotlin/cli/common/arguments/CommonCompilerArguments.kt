@@ -812,6 +812,21 @@ The argument should be used only if the new compilation scheme is enabled with -
         }
 
     @Argument(
+        value = "-Xfragment-friend-dependency",
+        valueDescription = "<fragment name>:<path>",
+        description = """Declare common klib friend dependencies for the specific fragment.
+This argument can be specified for any HMPP module except the platform leaf module: it takes dependencies from the platform specific friend module arguments.
+The argument should be used only if the new compilation scheme is enabled with -Xseparate-kmp-compilation
+""",
+        delimiter = Argument.Delimiters.none,
+    )
+    var fragmentFriendDependencies: Array<String>? = null
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
+    @Argument(
         value = "-Xseparate-kmp-compilation",
         description = "Enables the separated compilation scheme, in which common source sets are analyzed against their own dependencies",
     )

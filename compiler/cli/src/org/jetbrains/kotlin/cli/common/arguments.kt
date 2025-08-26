@@ -179,6 +179,7 @@ private val FRAGMENTS_ARG_NAME = CommonCompilerArguments::fragments.cliArgument
 private val FRAGMENT_REFINES_ARG_NAME = CommonCompilerArguments::fragmentRefines.cliArgument
 private val FRAGMENT_SOURCES_ARG_NAME = CommonCompilerArguments::fragmentSources.cliArgument
 private val FRAGMENT_DEPENDENCIES_ARG_NAME = CommonCompilerArguments::fragmentDependencies.cliArgument
+private val FRAGMENT_FRIEND_DEPENDENCIES_ARG_NAME = CommonCompilerArguments::fragmentFriendDependencies.cliArgument
 
 private fun CompilerConfiguration.buildHmppModuleStructure(arguments: CommonCompilerArguments): HmppCliModuleStructure? {
     val rawFragments = arguments.fragments
@@ -275,7 +276,7 @@ private fun CompilerConfiguration.buildHmppModuleStructure(arguments: CommonComp
         if (rawFragmentRefines?.isNotEmpty() == true) {
             reportError("$FRAGMENT_REFINES_ARG_NAME flag is specified but there is only one module declared")
         }
-        return HmppCliModuleStructure(modules, sourceDependencies = emptyMap(), moduleDependencies = emptyMap())
+        return HmppCliModuleStructure(modules, sourceDependencies = emptyMap(), moduleDependencies = emptyMap(), friendDependencies = emptyMap())
     }
 
     val duplicatedModules = modules.filter { module -> modules.count { it.name == module.name } > 1 }
@@ -329,26 +330,34 @@ private fun CompilerConfiguration.buildHmppModuleStructure(arguments: CommonComp
     if (arguments.fragmentDependencies != null && !arguments.separateKmpCompilationScheme) {
         reportError("$FRAGMENT_DEPENDENCIES_ARG_NAME flag could be used only with ${CommonCompilerArguments::separateKmpCompilationScheme.cliArgument}")
     }
+    if (arguments.fragmentFriendDependencies != null && !arguments.separateKmpCompilationScheme) {
+        reportError("$FRAGMENT_FRIEND_DEPENDENCIES_ARG_NAME flag could be used only with ${CommonCompilerArguments::separateKmpCompilationScheme.cliArgument}")
+    }
 
-    val moduleDependencies = buildMap<HmppCliModule, MutableList<String>> {
-        for (argument in arguments.fragmentDependencies.orEmpty()) {
-            val splitArg = argument.split(":", limit = 2)
-            if (splitArg.size != 2) {
-                reportError(
-                    "Incorrect syntax for $FRAGMENT_DEPENDENCIES_ARG_NAME argument. " +
-                            "Expected <moduleName>:<path> but got `$argument`"
-                )
-                continue
+    fun buildFragmentDependencyMap(arguments: Array<String>?, argumentName: String): Map<HmppCliModule, MutableList<String>> {
+        return buildMap {
+            for (argument in arguments.orEmpty()) {
+                val splitArg = argument.split(":", limit = 2)
+                if (splitArg.size != 2) {
+                    reportError(
+                        "Incorrect syntax for $argumentName argument. " +
+                                "Expected <moduleName>:<path> but got `$argument`"
+                    )
+                    continue
+                }
+                val (moduleName, dependency) = splitArg
+                val module = moduleByName[moduleName] ?: run {
+                    reportError("Module `$moduleName` not found in $FRAGMENTS_ARG_NAME arguments")
+                    continue
+                }
+                val dependencies = getOrPut(module) { mutableListOf() }
+                dependencies += dependency
             }
-            val (moduleName, dependency) = splitArg
-            val module = moduleByName[moduleName] ?: run {
-                reportError("Module `$moduleName` not found in $FRAGMENTS_ARG_NAME arguments")
-                continue
-            }
-            val dependencies = getOrPut(module) { mutableListOf() }
-            dependencies += dependency
         }
     }
 
-    return HmppCliModuleStructure(modules, sourceDependencies, moduleDependencies)
+    val moduleDependencies = buildFragmentDependencyMap(arguments.fragmentDependencies, FRAGMENT_DEPENDENCIES_ARG_NAME)
+    val friendDependencies = buildFragmentDependencyMap(arguments.fragmentFriendDependencies, FRAGMENT_FRIEND_DEPENDENCIES_ARG_NAME)
+
+    return HmppCliModuleStructure(modules, sourceDependencies, moduleDependencies, friendDependencies)
 }

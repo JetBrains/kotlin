@@ -898,7 +898,6 @@ Kotlin reports a warning every time you use one of them. You can use this flag t
         )
     }
 
-
     compilerArgument {
         name = "Xfragment-dependency"
         compilerName = "fragmentDependencies"
@@ -915,6 +914,21 @@ The argument should be used only if the new compilation scheme is enabled with -
         )
     }
 
+    compilerArgument {
+        name = "Xfragment-friend-dependency"
+        compilerName = "fragmentFriendDependencies"
+        valueDescription = "<fragment name>:<path>".asReleaseDependent()
+        description = """Declare common klib friend dependencies for the specific fragment.
+This argument can be specified for any HMPP module except the platform leaf module: it takes dependencies from the platform specific friend module arguments.
+The argument should be used only if the new compilation scheme is enabled with -Xseparate-kmp-compilation
+""".asReleaseDependent()
+        valueType = StringArrayType.defaultNull
+        delimiter = KotlinCompilerArgument.Delimiter.None
+
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v2_3_0,
+        )
+    }
 
     compilerArgument {
         name = "Xseparate-kmp-compilation"

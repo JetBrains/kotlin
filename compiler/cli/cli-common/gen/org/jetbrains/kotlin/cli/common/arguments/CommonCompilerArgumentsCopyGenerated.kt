@@ -42,6 +42,7 @@ fun copyCommonCompilerArguments(from: CommonCompilerArguments, to: CommonCompile
     to.explicitBackingFields = from.explicitBackingFields
     to.explicitReturnTypes = from.explicitReturnTypes
     to.fragmentDependencies = from.fragmentDependencies?.copyOf()
+    to.fragmentFriendDependencies = from.fragmentFriendDependencies?.copyOf()
     to.fragmentRefines = from.fragmentRefines?.copyOf()
     to.fragmentSources = from.fragmentSources?.copyOf()
     to.fragments = from.fragments?.copyOf()

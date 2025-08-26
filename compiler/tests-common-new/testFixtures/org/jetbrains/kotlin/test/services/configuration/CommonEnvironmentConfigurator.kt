@@ -92,33 +92,38 @@ class CommonEnvironmentConfigurator(testServices: TestServices) : EnvironmentCon
                 }
             }
 
-            val moduleDependencies = when {
-                SEPARATE_KMP_COMPILATION in module.directives -> {
-                    buildMap {
-                        for ((testModule, cliModule) in hmppModules) {
-                            val dependencies = buildList {
-                                testModule.allDependencies.mapNotNullTo(this) { dependencyDescription ->
-                                    val dependencyOutputDir = testServices.compiledClassesManager.getOutputDirForModule(dependencyDescription.dependencyModule)
-                                    configuration.addJvmClasspathRoot(dependencyOutputDir)
-                                    when (dependencyDescription.relation) {
-                                        RegularDependency, FriendDependency -> dependencyOutputDir.canonicalPath
-                                        DependsOnDependency -> null
-                                    }
-                                }
-                                val standardLibrariesPathProvider = testServices.standardLibrariesPathProvider
-                                add(standardLibrariesPathProvider.commonStdlibForTests().canonicalPath)
-                            }
-                            put(cliModule, dependencies)
+            val moduleDependencies = mutableMapOf<HmppCliModule, List<String>>()
+            val friendDependencies = mutableMapOf<HmppCliModule, List<String>>()
+
+            if (SEPARATE_KMP_COMPILATION in module.directives) {
+                for ((testModule, cliModule) in hmppModules) {
+                    val dependencies = mutableListOf<String>()
+                    val friends = mutableListOf<String>()
+
+                    testModule.allDependencies.forEach { dependencyDescription ->
+                        val dependencyOutputDir =
+                            testServices.compiledClassesManager.getOutputDirForModule(dependencyDescription.dependencyModule)
+                        configuration.addJvmClasspathRoot(dependencyOutputDir)
+                        when (dependencyDescription.relation) {
+                            RegularDependency -> dependencies += dependencyOutputDir.canonicalPath
+                            FriendDependency -> friends += dependencyOutputDir.canonicalPath
+                            DependsOnDependency -> {}
                         }
                     }
+
+                    val standardLibrariesPathProvider = testServices.standardLibrariesPathProvider
+                    dependencies.add(standardLibrariesPathProvider.commonStdlibForTests().canonicalPath)
+
+                    moduleDependencies[cliModule] = dependencies
+                    friendDependencies[cliModule] = friends
                 }
-                else -> emptyMap()
             }
 
             configuration.hmppModuleStructure = HmppCliModuleStructure(
                 hmppModules.values.toList(),
                 sourceDependencies,
-                moduleDependencies
+                moduleDependencies,
+                friendDependencies,
             )
         }
 

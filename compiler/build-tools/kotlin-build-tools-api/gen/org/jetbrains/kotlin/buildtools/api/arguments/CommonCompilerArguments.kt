@@ -574,6 +574,19 @@ public interface CommonCompilerArguments : CommonToolArguments {
         CommonCompilerArgument("X_REPORT_ALL_WARNINGS")
 
     /**
+     * Declare common klib friend dependencies for the specific fragment.
+     * This argument can be specified for any HMPP module except the platform leaf module: it takes dependencies from the platform specific friend module arguments.
+     * The argument should be used only if the new compilation scheme is enabled with -Xseparate-kmp-compilation
+     *
+     *
+     * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
+     */
+    @JvmField
+    @ExperimentalCompilerArgument
+    public val X_FRAGMENT_FRIEND_DEPENDENCY: CommonCompilerArgument<Array<String>?> =
+        CommonCompilerArgument("X_FRAGMENT_FRIEND_DEPENDENCY")
+
+    /**
      * Ignore all compilation exceptions while optimizing some constant expressions.
      *
      * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
