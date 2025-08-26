@@ -533,6 +533,11 @@ internal class SelfCallInNestedObjectConstructorErrorImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.SelfCallInNestedObjectConstructorError
 
+internal class UnknownCollectionLiteralTypeImpl(
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.UnknownCollectionLiteralType
+
 internal class SuperIsNotAnExpressionImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
