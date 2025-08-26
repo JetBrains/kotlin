@@ -12,12 +12,9 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.LowMemoryWatcher
-import com.intellij.openapi.util.registry.Registry
 import com.intellij.util.concurrency.AppExecutorUtil
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.fir.utils.KaFirCacheCleaner
-import org.jetbrains.kotlin.analysis.api.fir.utils.KaFirNoOpCacheCleaner
-import org.jetbrains.kotlin.analysis.api.fir.utils.KaFirStopWorldCacheCleaner
 import org.jetbrains.kotlin.analysis.api.impl.base.sessions.KaBaseSessionProvider
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.permissions.KaAnalysisPermissionRegistry
@@ -60,11 +57,9 @@ internal class KaFirSessionProvider(project: Project) : KaBaseSessionProvider(pr
 
     private val scheduledCacheMaintenance: Future<*>
 
+    @KaCachedService
     private val cacheCleaner: KaFirCacheCleaner by lazy(LazyThreadSafetyMode.PUBLICATION) {
-        when {
-            !Registry.`is`("kotlin.analysis.lowMemoryCacheCleanup", true) -> KaFirNoOpCacheCleaner
-            else -> KaFirStopWorldCacheCleaner(project)
-        }
+        KaFirCacheCleaner.getInstance(project)
     }
 
     @KaCachedService

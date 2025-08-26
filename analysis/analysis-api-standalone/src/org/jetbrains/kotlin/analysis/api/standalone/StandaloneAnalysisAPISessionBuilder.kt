@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -15,6 +15,8 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.util.concurrency.AppExecutorUtil
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
+import org.jetbrains.kotlin.analysis.api.fir.utils.KaFirCacheCleaner
 import org.jetbrains.kotlin.analysis.api.platform.KotlinPlatformSettings
 import org.jetbrains.kotlin.analysis.api.platform.declarations.KotlinAnnotationsResolverFactory
 import org.jetbrains.kotlin.analysis.api.platform.declarations.KotlinDeclarationProviderFactory
@@ -158,6 +160,11 @@ public class StandaloneAnalysisAPISessionBuilder(
                 KotlinPackagePartProviderFactory::class.java,
                 KotlinStaticPackagePartProviderFactory(packagePartProvider)
             )
+
+            if (!isCacheCleanerEnabled) {
+                @OptIn(KaImplementationDetail::class)
+                project.picoContainer.unregisterComponent(KaFirCacheCleaner::class.java)
+            }
         }
     }
 
@@ -171,6 +178,19 @@ public class StandaloneAnalysisAPISessionBuilder(
         kotlinCoreProjectEnvironment.project.apply {
             registerService(serviceImplementation)
         }
+    }
+
+    private var isCacheCleanerEnabled = false
+
+    /**
+     * Enables a cache cleaner for the current session. It might attempt to drop internal caches to avoid memory issues.
+     *
+     * The cleaner is mostly designed for long-running workloads where analyze affects so many modules that cache size blows out of proportion.
+     *
+     * See [KT-70489](https://youtrack.jetbrains.com/issue/KT-70489) for more details.
+     */
+    public fun enableCacheCleaner() {
+        isCacheCleanerEnabled = true
     }
 
     /**
