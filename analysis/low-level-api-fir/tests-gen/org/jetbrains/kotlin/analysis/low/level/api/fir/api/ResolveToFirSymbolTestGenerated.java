@@ -188,6 +188,12 @@ public class ResolveToFirSymbolTestGenerated extends AbstractResolveToFirSymbolT
     }
 
     @Test
+    @TestMetadata("emptyArray.kt")
+    public void testEmptyArray() {
+      runTest("analysis/low-level-api-fir/testData/resolveToFirSymbol/builtins/emptyArray.kt");
+    }
+
+    @Test
     @TestMetadata("intArrayOfFullStdlib.kt")
     public void testIntArrayOfFullStdlib() {
       runTest("analysis/low-level-api-fir/testData/resolveToFirSymbol/builtins/intArrayOfFullStdlib.kt");
@@ -209,6 +215,22 @@ public class ResolveToFirSymbolTestGenerated extends AbstractResolveToFirSymbolT
     @TestMetadata("stringMinimalStdlib.kt")
     public void testStringMinimalStdlib() {
       runTest("analysis/low-level-api-fir/testData/resolveToFirSymbol/builtins/stringMinimalStdlib.kt");
+    }
+  }
+
+  @Nested
+  @TestMetadata("analysis/low-level-api-fir/testData/resolveToFirSymbol/stdlib")
+  @TestDataPath("$PROJECT_ROOT")
+  public class Stdlib {
+    @Test
+    public void testAllFilesPresentInStdlib() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/resolveToFirSymbol/stdlib"), Pattern.compile("^(.+)\\.kt$"), null, true);
+    }
+
+    @Test
+    @TestMetadata("getProgressionLastElement.kt")
+    public void testGetProgressionLastElement() {
+      runTest("analysis/low-level-api-fir/testData/resolveToFirSymbol/stdlib/getProgressionLastElement.kt");
     }
   }
 }

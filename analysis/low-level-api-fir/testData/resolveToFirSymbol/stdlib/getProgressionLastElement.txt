@@ -1,0 +1,12 @@
+KtNamedFunction 'getProgressionLastElement' in 'kotlin-stdlib.jar!/kotlin/internal/ProgressionUtilKt.class':
+  <NO SYMBOL>
+
+KtNamedFunction 'getProgressionLastElement' in 'kotlin-stdlib.jar!/kotlin/internal/ProgressionUtilKt.class':
+  <NO SYMBOL>
+
+KtNamedFunction 'getProgressionLastElement' in 'kotlin-stdlib.jar!/kotlin/internal/UProgressionUtilKt.class':
+  @R|kotlin/PublishedApi|() @R|kotlin/SinceKotlin|(version = String(1.3)) internal final fun getProgressionLastElement(start: R|kotlin/UInt|, end: R|kotlin/UInt|, step: R|kotlin/Int|): R|kotlin/UInt|
+
+
+KtNamedFunction 'getProgressionLastElement' in 'kotlin-stdlib.jar!/kotlin/internal/UProgressionUtilKt.class':
+  @R|kotlin/PublishedApi|() @R|kotlin/SinceKotlin|(version = String(1.3)) internal final fun getProgressionLastElement(start: R|kotlin/ULong|, end: R|kotlin/ULong|, step: R|kotlin/Long|): R|kotlin/ULong|
