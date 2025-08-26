@@ -312,12 +312,6 @@ public fun packagewithprotocols_ContainerProtocol_NestedProtocol_NestedClass_ini
     kotlin.native.internal.initInstance(____kt, packagewithprotocols.ContainerProtocol.NestedProtocol.NestedClass())
 }
 
-@ExportedBridge("packagewithprotocols_ENUM_WITH_INTERFACE_INHERITANCE_entries_get")
-public fun packagewithprotocols_ENUM_WITH_INTERFACE_INHERITANCE_entries_get(): kotlin.native.internal.NativePtr {
-    val _result = packagewithprotocols.ENUM_WITH_INTERFACE_INHERITANCE.entries
-    return _result.objcPtr()
-}
-
 @ExportedBridge("packagewithprotocols_INHERITANCE_COUPLE_init_allocate")
 public fun packagewithprotocols_INHERITANCE_COUPLE_init_allocate(): kotlin.native.internal.NativePtr {
     val _result = kotlin.native.internal.createUninitializedInstance<packagewithprotocols.INHERITANCE_COUPLE>()

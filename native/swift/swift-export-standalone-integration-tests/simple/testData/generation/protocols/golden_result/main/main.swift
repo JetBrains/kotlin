@@ -434,11 +434,6 @@ extension main._SealedFoeble_SealedBarable where Self : KotlinRuntimeSupport._Ko
 }
 extension ExportedKotlinPackages.packagewithprotocols {
     public enum ENUM_WITH_INTERFACE_INHERITANCE: KotlinRuntimeSupport._KotlinBridgeable, Swift.CaseIterable, Swift.LosslessStringConvertible {
-        public static var allCases: [ExportedKotlinPackages.packagewithprotocols.ENUM_WITH_INTERFACE_INHERITANCE] {
-            get {
-                return packagewithprotocols_ENUM_WITH_INTERFACE_INHERITANCE_entries_get() as! Swift.Array<ExportedKotlinPackages.packagewithprotocols.ENUM_WITH_INTERFACE_INHERITANCE>
-            }
-        }
         public var description: Swift.String {
             get {
                 switch self {

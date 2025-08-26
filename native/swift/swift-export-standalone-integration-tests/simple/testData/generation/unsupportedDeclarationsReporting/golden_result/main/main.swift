@@ -63,11 +63,6 @@ extension ExportedKotlinPackages.a.b.c {
         case A
         case B
         case C
-        public static var allCases: [ExportedKotlinPackages.a.b.c.E] {
-            get {
-                return a_b_c_E_entries_get() as! Swift.Array<ExportedKotlinPackages.a.b.c.E>
-            }
-        }
         public var description: Swift.String {
             get {
                 switch self {

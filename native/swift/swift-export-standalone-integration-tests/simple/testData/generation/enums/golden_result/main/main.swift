@@ -6,11 +6,6 @@ import KotlinStdlib
 public enum Enum: KotlinRuntimeSupport._KotlinBridgeable, Swift.CaseIterable, Swift.LosslessStringConvertible {
     case a
     case b
-    public static var allCases: [main.Enum] {
-        get {
-            return Enum_entries_get() as! Swift.Array<main.Enum>
-        }
-    }
     public var description: Swift.String {
         get {
             switch self {
@@ -56,11 +51,6 @@ public enum EnumSimple: KotlinRuntimeSupport._KotlinBridgeable, Swift.CaseIterab
     case FIRST
     case SECOND
     case LAST
-    public static var allCases: [main.EnumSimple] {
-        get {
-            return EnumSimple_entries_get() as! Swift.Array<main.EnumSimple>
-        }
-    }
     public var description: Swift.String {
         get {
             switch self {
@@ -98,11 +88,6 @@ public enum EnumWithAbstractMembers: KotlinRuntimeSupport._KotlinBridgeable, Swi
     case YELLOW
     case SKY
     case MAGENTA
-    public static var allCases: [main.EnumWithAbstractMembers] {
-        get {
-            return EnumWithAbstractMembers_entries_get() as! Swift.Array<main.EnumWithAbstractMembers>
-        }
-    }
     public var description: Swift.String {
         get {
             switch self {
@@ -153,11 +138,6 @@ public enum EnumWithAbstractMembers: KotlinRuntimeSupport._KotlinBridgeable, Swi
 public enum EnumWithMembers: KotlinRuntimeSupport._KotlinBridgeable, Swift.CaseIterable, Swift.LosslessStringConvertible {
     case NORTH
     case SOUTH
-    public static var allCases: [main.EnumWithMembers] {
-        get {
-            return EnumWithMembers_entries_get() as! Swift.Array<main.EnumWithMembers>
-        }
-    }
     public var description: Swift.String {
         get {
             switch self {

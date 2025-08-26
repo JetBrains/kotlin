@@ -83,7 +83,8 @@ public class SirDeclarationFromKtSymbolProvider(
                         SirTranslationResult.ExtensionProperty(it, ktSymbol.setter?.toSirFunction(ktSymbol))
                     } ?: SirTranslationResult.Untranslatable(KotlinSource(ktSymbol))
                 } else {
-                    ktSymbol.toSirVariable().let(SirTranslationResult::RegularProperty)
+                    ktSymbol.toSirVariable()?.let(SirTranslationResult::RegularProperty)
+                        ?: SirTranslationResult.Untranslatable(KotlinSource(ktSymbol))
                 }
             }
             is KaTypeAliasSymbol -> {
@@ -101,7 +102,7 @@ public class SirDeclarationFromKtSymbolProvider(
         sirSession = sirSession,
     )
 
-    private fun KaVariableSymbol.toSirVariable(): SirAbstractVariableFromKtSymbol = when (this) {
+    private fun KaVariableSymbol.toSirVariable(): SirAbstractVariableFromKtSymbol? = when (this) {
         is KaEnumEntrySymbol -> SirEnumCaseFromKtSymbol(
             ktSymbol = this,
             sirSession = sirSession,
@@ -111,7 +112,7 @@ public class SirDeclarationFromKtSymbolProvider(
                 && isStatic
                 && name == StandardNames.ENUM_ENTRIES
             ) {
-                SirEnumEntriesStaticPropertyFromKtSymbol(this, sirSession)
+                null
             } else {
                 SirVariableFromKtSymbol(
                     ktSymbol = this@toSirVariable,
