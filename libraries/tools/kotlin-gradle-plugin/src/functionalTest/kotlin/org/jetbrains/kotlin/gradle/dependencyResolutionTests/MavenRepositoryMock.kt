@@ -6,13 +6,9 @@
 package org.jetbrains.kotlin.gradle.dependencyResolutionTests
 
 import org.gradle.api.Project
-import org.gradle.api.attributes.AttributeContainer
 import org.gradle.kotlin.dsl.maven
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
-import org.jetbrains.kotlin.gradle.plugin.mpp.DefaultKotlinUsageContext
-import org.jetbrains.kotlin.gradle.plugin.mpp.internal
-import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
 import org.jetbrains.kotlin.gradle.utils.targets
 import java.io.File
 
@@ -24,11 +20,6 @@ class MavenRepositoryMock {
     ) {
         val asMavenNotation get() = moduleKey(group, name, version)
         val dependencies: MutableSet<Module> = mutableSetOf()
-
-        fun artifactName(target: KotlinTarget, usageContext: DefaultKotlinUsageContext): String {
-            val extension = if (target is KotlinJvmTarget) "jar" else "klib"
-            return "$name-${usageContext.dependencyConfigurationName}-$version.$extension"
-        }
 
         /**
          * Limitation! All modules should be defined outside of the [variantDependencies] lambda
@@ -49,9 +40,6 @@ class MavenRepositoryMock {
 
     fun applyToProject(project: Project, repositoryDir: File) {
         project.allprojects { it.repositories.maven(repositoryDir) }
-    }
-
-    fun publishMocks(project: Project, repositoryDir: File) {
         val targets = project.kotlinExtension.targets.toList()
         declaredModules.values.forEach { module -> module.publishAsMockedLibrary(repositoryDir, targets) }
     }
@@ -85,7 +73,7 @@ fun Project.mockMavenRepository(
     init: MavenRepositoryMockDsl.() -> Unit,
 ): MavenRepositoryMock {
     val mock = mockMavenRepository(init)
-    mock.publishMocks(this, repositoryDir)
+    mock.applyToProject(this, repositoryDir)
     return mock
 }
 
@@ -124,18 +112,10 @@ private fun MavenRepositoryMock.Module.publishAsMockedLibrary(
             </project>
         """.trimIndent()
     )
-
-    kotlinTargets.forEach { target ->
-        target.publishableUsageContexts().forEach { usageContext ->
-            val artifactName = artifactName(target, usageContext)
-            val artifactFile = moduleRootDir.resolve(artifactName)
-            artifactFile.writeText("Mocked artifact content for $target / ${usageContext.name}")
-        }
-    }
 }
 
 private fun MavenRepositoryMock.Module.publishedMockedGradleMetadata(kotlinTargets: List<KotlinTarget>): String {
-    val variants = kotlinTargets.flatMap { variantJsons(it) }.joinToString(",") { "$it\n" }
+    val variants = kotlinTargets.joinToString(",") { variantJson(it) + "\n" }
     return """
             {
               "formatVersion": "1.1",
@@ -154,31 +134,15 @@ private fun MavenRepositoryMock.Module.publishedMockedGradleMetadata(kotlinTarge
         """.trimIndent()
 }
 
-private fun KotlinTarget.publishableUsageContexts() = internal
-    .kotlinComponents.flatMap { component ->
-        if (!component.publishable) return@flatMap emptyList()
-        component.internal.usages.filterIsInstance<DefaultKotlinUsageContext>()
-    }
-
-private fun MavenRepositoryMock.Module.variantJsons(target: KotlinTarget): List<String> =
-    target.publishableUsageContexts().map { usageContext ->
-        val artifactName = artifactName(target, usageContext)
-        val variantDependencies = variantDependencies(target)
-        val variantName = usageContext.name
-        variantJsons(artifactName, variantDependencies, variantName, usageContext.attributes)
-    }
-
-private fun MavenRepositoryMock.Module.variantJsons(
-    artifactName: String,
-    variantDependencies: Iterable<MavenRepositoryMock.Module>,
-    variantName: String,
-    attributes: AttributeContainer
-): String {
-    val attributesString = attributes
+private fun MavenRepositoryMock.Module.variantJson(target: KotlinTarget): String {
+    val apiElements = target.project.configurations.getByName(target.apiElementsConfigurationName)
+    val attributesString = apiElements
+        .attributes
         .keySet()
-        .map { it to attributes.getAttribute(it) }
+        .map { it to apiElements.attributes.getAttribute(it) }
         .joinToString(",\n") { "\"${it.first.name}\": \"${it.second}\"" }
 
+    val variantDependencies = target.variantDependencies()
     val allDependencies = dependencies + variantDependencies
 
     val dependenciesJson = allDependencies.joinToString(", \n") { moduleDependency ->
@@ -195,17 +159,11 @@ private fun MavenRepositoryMock.Module.variantJsons(
 
     return """
                 {
-                  "name": "$variantName",
+                  "name": "${target.name.ifEmpty { "apiElements" }}",
                   "attributes": {
                     $attributesString
                   },
-                  "dependencies": [ $dependenciesJson ],
-                  "files": [
-                    {
-                      "name": "$artifactName",
-                      "url": "$artifactName"
-                    }
-                  ]
+                  "dependencies": [ $dependenciesJson ]                  
                 }
             """.trimIndent()
 }

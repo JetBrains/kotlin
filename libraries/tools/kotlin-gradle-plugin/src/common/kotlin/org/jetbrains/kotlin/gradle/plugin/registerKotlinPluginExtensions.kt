@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.gradle.plugin
 
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.artifacts.*
-import org.jetbrains.kotlin.gradle.dependencies.*
+import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.diagnostics.UklibPublicationDiagnosticsSetupAction
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.internal.CustomizeKotlinDependenciesSetupAction
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
@@ -32,7 +32,6 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.resources.RegisterMultiplatformRes
 import org.jetbrains.kotlin.gradle.plugin.mpp.resources.publication.SetUpMultiplatformAndroidAssetsAndResourcesPublicationAction
 import org.jetbrains.kotlin.gradle.plugin.mpp.resources.publication.SetUpMultiplatformJvmResourcesPublicationAction
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.consumption.UklibConsumptionSetupAction
-import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.diagnostics.UklibPublicationDiagnosticsSetupAction
 import org.jetbrains.kotlin.gradle.plugin.sources.KotlinMultiplatformSourceSetSetupAction
 import org.jetbrains.kotlin.gradle.plugin.sources.LanguageSettingsSetupAction
 import org.jetbrains.kotlin.gradle.plugin.statistics.FinalizeConfigurationFusMetricAction
@@ -40,8 +39,8 @@ import org.jetbrains.kotlin.gradle.plugin.statistics.MultiplatformBuildStatsRepo
 import org.jetbrains.kotlin.gradle.scripting.internal.ScriptingGradleSubpluginSetupAction
 import org.jetbrains.kotlin.gradle.targets.*
 import org.jetbrains.kotlin.gradle.targets.js.npm.AddNpmDependencyExtensionProjectSetupAction
-import org.jetbrains.kotlin.gradle.targets.jvm.ConfigureJavaTestFixturesSideEffect
 import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmCompilationWireJavaSourcesSideEffect
+import org.jetbrains.kotlin.gradle.targets.jvm.ConfigureJavaTestFixturesSideEffect
 import org.jetbrains.kotlin.gradle.targets.metadata.KotlinMetadataTargetSetupAction
 import org.jetbrains.kotlin.gradle.targets.native.ConfigureFrameworkExportSideEffect
 import org.jetbrains.kotlin.gradle.targets.native.CreateFatFrameworksSetupAction
@@ -50,7 +49,6 @@ import org.jetbrains.kotlin.gradle.targets.native.SetupEmbedAndSignAppleFramewor
 import org.jetbrains.kotlin.gradle.targets.native.internal.*
 import org.jetbrains.kotlin.gradle.targets.native.tasks.artifact.KotlinArtifactsExtensionSetupAction
 import org.jetbrains.kotlin.gradle.targets.native.toolchain.NativeToolchainProjectSetupAction
-import org.jetbrains.kotlin.gradle.tasks.ConfigureK2MultiplatformStructureDumpTasks
 import org.jetbrains.kotlin.gradle.tooling.RegisterBuildKotlinToolingMetadataTask
 
 /**
@@ -103,7 +101,6 @@ internal fun Project.registerKotlinPluginExtensions() {
             register(project, SetUpMultiplatformAndroidAssetsAndResourcesPublicationAction)
             register(project, SetUpSwiftExportAction)
             register(project, ConfigureKotlinTopLevelDependenciesDSL)
-            register(project, CreateTransformedMetadataDependencies)
 
             if (isKmpProjectIsolationEnabled) {
                 register(project, ProjectStructureMetadataForKMPSetupAction)
@@ -149,7 +146,6 @@ internal fun Project.registerKotlinPluginExtensions() {
         register(project, KotlinCreateNativeCInteropTasksSideEffect)
         register(project, KotlinCreateCompilationArchivesTask)
         register(project, KotlinJvmCompilationWireJavaSourcesSideEffect)
-        register(project, ConfigureK2MultiplatformStructureDumpTasks)
     }
 
     KotlinTargetArtifact.extensionPoint.apply {
@@ -197,16 +193,6 @@ internal fun Project.registerKotlinPluginExtensions() {
             register(project, MultipleSourceSetRootsInCompilationChecker)
             register(project, SwiftExportModuleNameChecker)
             register(project, CinteropCrossCompilationChecker)
-        }
-    }
-
-    if (project.kotlinPropertiesProvider.separateKmpCompilation.get()) {
-        KotlinSourceSetDependenciesContributor.extensionPoint.apply {
-            register(project, KotlinDependencyFromConfigurationContributor)
-            register(project, KotlinNativeStdlibDependencyContributor)
-            register(project, KotlinNativePlatformDependenciesContributor)
-            register(project, CommonizedNativeDistributionDependenciesContributor)
-            register(project, TransformedMetadataDependenciesContributor)
         }
     }
 }
