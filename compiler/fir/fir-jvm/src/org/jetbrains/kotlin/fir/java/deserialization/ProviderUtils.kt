@@ -10,4 +10,4 @@ package org.jetbrains.kotlin.fir.java.deserialization
  * (see `prepareCommonSources` task in `:core:builtins` project)
  * so we filter them out to avoid providing the "same" symbols twice.
  */
-val KotlinBuiltins: Set<String> = setOf("kotlin/ArrayIntrinsicsKt", "kotlin/internal/ProgressionUtilKt")
+val KotlinBuiltins: Set<String> = setOf("kotlin/ArrayIntrinsicsKt")
