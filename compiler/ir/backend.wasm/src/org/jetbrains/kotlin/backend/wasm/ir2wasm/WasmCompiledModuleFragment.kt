@@ -93,7 +93,8 @@ class WasmCompiledFileFragment(
 class WasmCompiledModuleFragment(
     private val wasmCompiledFileFragments: List<WasmCompiledFileFragment>,
     private val generateTrapsInsteadOfExceptions: Boolean,
-    private val isWasmJsTarget: Boolean
+    private val isWasmJsTarget: Boolean,
+    private val useIndirectVirtualCalls: Boolean
 ) {
     // Used during linking
     private val serviceCodeLocation = SourceLocation.NoLocation("Generated service code")
@@ -310,8 +311,8 @@ class WasmCompiledModuleFragment(
                 WasmStructFieldDeclaration("simpleNamePoolId", WasmI32, false),
                 WasmStructFieldDeclaration("klassId", WasmI64, false),
                 WasmStructFieldDeclaration("typeInfoFlag", WasmI32, false),
-                WasmStructFieldDeclaration("qualifierStringLoader", WasmFuncRef, false),
-                WasmStructFieldDeclaration("simpleNameStringLoader", WasmFuncRef, false),
+                WasmStructFieldDeclaration("qualifierStringLoader", if (useIndirectVirtualCalls) WasmI32 else WasmFuncRef, false),
+                WasmStructFieldDeclaration("simpleNameStringLoader", if (useIndirectVirtualCalls) WasmI32 else WasmFuncRef, false),
             ),
             superType = null,
             isFinal = true
@@ -447,7 +448,9 @@ class WasmCompiledModuleFragment(
     private fun materializeDeferredGlobals(functionsTableValues: List<WasmTable.Value.Function>) {
         val tableFunctionIndicesMap = functionsTableValues.mapIndexed { index, value -> value.function to index }.toMap()
         wasmCompiledFileFragments.forEach { fragment ->
-            (fragment.globalVTables.elements + fragment.globalClassITables.elements)
+            (fragment.globalVTables.elements
+                    + fragment.globalClassITables.elements
+                    + (fragment.rttiElements?.globals?.map { it.global } ?: emptyList()))
                 .filter { it.isDeferred }
                 .map { it as? DeferredWasmGlobal ?: error("Unknown deferred global type: ${it::class}") }
                 .forEach { it.materialize(tableFunctionIndicesMap) }
