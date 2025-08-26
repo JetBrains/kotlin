@@ -3,6 +3,7 @@ plugins {
     id("java-test-fixtures")
     id("jps-compatible")
     id("project-tests-convention")
+    id("test-inputs-check")
 }
 
 project.configureJvmToolchain(JdkMajorVersion.JDK_1_8)
@@ -30,14 +31,17 @@ sourceSets {
 }
 
 projectTests {
-    testTask(jUnitMode = JUnitMode.JUnit4) {
-        dependsOn(":dist")
-        workingDir = rootDir
-    }
-
-    testGenerator("org.jetbrains.kotlin.generators.tests.GenerateRuntimeDescriptorTestsKt")
-
+    testData(project(":compiler").isolated, "testData/loadJava")
+    testData(project(":compiler").isolated, "testData/loadJava8")
     withJvmStdlibAndReflect()
+    withMockJdkAnnotationsJar()
+    withMockJdkRuntime()
+    withScriptRuntime()
+    withTestJar()
+    withAnnotations()
+
+    testTask(jUnitMode = JUnitMode.JUnit4)
+    testGenerator("org.jetbrains.kotlin.generators.tests.GenerateRuntimeDescriptorTestsKt")
 }
 
 testsJar()
