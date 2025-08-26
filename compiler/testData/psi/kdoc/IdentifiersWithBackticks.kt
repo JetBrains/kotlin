@@ -1,14 +1,6 @@
-/*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
- * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
- */
+// ISSUE: KT-69975, KT-78229
 
-package org.jetbrains.kotlin.kmp
-
-object TestData {
-    // ISSUE: KT-69975, KT-78229
-    const val IDENTIFIER_WITH_BACKTICKS_IN_KDOC =
-"""/**
+/**
  *
  * [`top level`]
  * [top level]
@@ -33,5 +25,4 @@ fun `top level`() = Unit
 object O {
     fun `with space`() = Unit
     fun without_space() = Unit
-}"""
 }

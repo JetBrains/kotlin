@@ -2868,6 +2868,12 @@ public class DecompiledStubsTestGenerated extends AbstractDecompiledStubsTest {
     }
 
     @Test
+    @TestMetadata("IdentifiersWithBackticks.kt")
+    public void testIdentifiersWithBackticks() {
+      runTest("compiler/testData/psi/kdoc/IdentifiersWithBackticks.kt");
+    }
+
+    @Test
     @TestMetadata("Incomplete.kt")
     public void testIncomplete() {
       runTest("compiler/testData/psi/kdoc/Incomplete.kt");

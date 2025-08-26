@@ -1,0 +1,201 @@
+KtFile: IdentifiersWithBackticks.kt
+  PACKAGE_DIRECTIVE
+    <empty list>
+  IMPORT_LIST
+    <empty list>
+  PsiComment(EOL_COMMENT)('// ISSUE: KT-69975, KT-78229')
+  PsiWhiteSpace('\n\n')
+  FUN
+    KDoc
+      PsiElement(KDOC_START)('/**')
+      PsiWhiteSpace('\n ')
+      KDOC_SECTION
+        PsiElement(KDOC_LEADING_ASTERISK)('*')
+        PsiWhiteSpace('\n ')
+        PsiElement(KDOC_LEADING_ASTERISK)('*')
+        PsiElement(KDOC_TEXT)(' ')
+        KDOC_MARKDOWN_LINK
+          PsiElement(LBRACKET)('[')
+          KDOC_NAME
+            PsiElement(IDENTIFIER)('`top level`')
+          PsiElement(RBRACKET)(']')
+        PsiWhiteSpace('\n ')
+        PsiElement(KDOC_LEADING_ASTERISK)('*')
+        PsiElement(KDOC_TEXT)(' [top level]')
+        PsiWhiteSpace('\n ')
+        PsiElement(KDOC_LEADING_ASTERISK)('*')
+        PsiElement(KDOC_TEXT)(' [O.with space]')
+        PsiWhiteSpace('\n ')
+        PsiElement(KDOC_LEADING_ASTERISK)('*')
+        PsiElement(KDOC_TEXT)(' ')
+        KDOC_MARKDOWN_LINK
+          PsiElement(LBRACKET)('[')
+          KDOC_NAME
+            KDOC_NAME
+              PsiElement(IDENTIFIER)('O')
+            PsiElement(DOT)('.')
+            PsiElement(IDENTIFIER)('`with space`')
+          PsiElement(RBRACKET)(']')
+        PsiWhiteSpace('\n ')
+        PsiElement(KDOC_LEADING_ASTERISK)('*')
+        PsiElement(KDOC_TEXT)(' ')
+        KDOC_TAG
+          PsiElement(KDOC_TAG_NAME)('@see')
+          PsiWhiteSpace(' ')
+          KDOC_MARKDOWN_LINK
+            KDOC_NAME
+              KDOC_NAME
+                PsiElement(IDENTIFIER)('O')
+              PsiElement(DOT)('.')
+              PsiElement(IDENTIFIER)('with')
+          PsiWhiteSpace(' ')
+          PsiElement(KDOC_TEXT)('space')
+        PsiWhiteSpace('\n ')
+        PsiElement(KDOC_LEADING_ASTERISK)('*')
+        PsiElement(KDOC_TEXT)(' ')
+        KDOC_TAG
+          PsiElement(KDOC_TAG_NAME)('@see')
+          PsiWhiteSpace(' ')
+          KDOC_MARKDOWN_LINK
+            KDOC_NAME
+              KDOC_NAME
+                PsiElement(IDENTIFIER)('O')
+              PsiElement(DOT)('.')
+              PsiElement(IDENTIFIER)('`with space`')
+          PsiWhiteSpace('\n ')
+          PsiElement(KDOC_LEADING_ASTERISK)('*')
+          PsiElement(KDOC_TEXT)(' ')
+          KDOC_MARKDOWN_LINK
+            PsiElement(LBRACKET)('[')
+            KDOC_NAME
+              KDOC_NAME
+                PsiElement(IDENTIFIER)('O')
+              PsiElement(DOT)('.')
+              PsiElement(IDENTIFIER)('without_space')
+            PsiElement(RBRACKET)(']')
+          PsiWhiteSpace('\n ')
+          PsiElement(KDOC_LEADING_ASTERISK)('*')
+          PsiElement(KDOC_TEXT)(' ')
+          KDOC_MARKDOWN_LINK
+            PsiElement(LBRACKET)('[')
+            KDOC_NAME
+              KDOC_NAME
+                PsiElement(IDENTIFIER)('O')
+              PsiElement(DOT)('.')
+              PsiElement(IDENTIFIER)('`without_space`')
+            PsiElement(RBRACKET)(']')
+        PsiWhiteSpace('\n ')
+        PsiElement(KDOC_LEADING_ASTERISK)('*')
+        PsiElement(KDOC_TEXT)(' ')
+        KDOC_TAG
+          PsiElement(KDOC_TAG_NAME)('@see')
+          PsiWhiteSpace(' ')
+          KDOC_MARKDOWN_LINK
+            KDOC_NAME
+              KDOC_NAME
+                PsiElement(IDENTIFIER)('O')
+              PsiElement(DOT)('.')
+              PsiElement(IDENTIFIER)('without_space')
+        PsiWhiteSpace('\n ')
+        PsiElement(KDOC_LEADING_ASTERISK)('*')
+        PsiElement(KDOC_TEXT)(' ')
+        KDOC_TAG
+          PsiElement(KDOC_TAG_NAME)('@see')
+          PsiWhiteSpace(' ')
+          KDOC_MARKDOWN_LINK
+            KDOC_NAME
+              KDOC_NAME
+                PsiElement(IDENTIFIER)('O')
+              PsiElement(DOT)('.')
+              PsiElement(IDENTIFIER)('`without_space`')
+          PsiWhiteSpace('\n ')
+          PsiElement(KDOC_LEADING_ASTERISK)('*')
+          PsiWhiteSpace('\n ')
+          PsiElement(KDOC_LEADING_ASTERISK)('*')
+          PsiElement(KDOC_TEXT)(' // Resolve incorrect code for completion')
+          PsiWhiteSpace('\n ')
+          PsiElement(KDOC_LEADING_ASTERISK)('*')
+          PsiElement(KDOC_TEXT)(' ')
+          KDOC_MARKDOWN_LINK
+            PsiElement(LBRACKET)('[')
+            KDOC_NAME
+              PsiElement(IDENTIFIER)('O')
+            PsiElement(DOT)('.')
+            PsiErrorElement:Identifier expected
+              <empty list>
+            PsiElement(RBRACKET)(']')
+        PsiWhiteSpace('\n ')
+        PsiElement(KDOC_LEADING_ASTERISK)('*')
+        PsiElement(KDOC_TEXT)(' ')
+        KDOC_TAG
+          PsiElement(KDOC_TAG_NAME)('@see')
+          PsiWhiteSpace(' ')
+          KDOC_MARKDOWN_LINK
+            KDOC_NAME
+              PsiElement(IDENTIFIER)('O')
+            PsiElement(DOT)('.')
+            PsiErrorElement:Identifier expected
+              <empty list>
+      PsiWhiteSpace('\n ')
+      PsiElement(KDOC_END)('*/')
+    PsiWhiteSpace('\n')
+    PsiElement(fun)('fun')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('main')
+    VALUE_PARAMETER_LIST
+      PsiElement(LPAR)('(')
+      PsiElement(RPAR)(')')
+    PsiWhiteSpace(' ')
+    BLOCK
+      PsiElement(LBRACE)('{')
+      PsiWhiteSpace('\n')
+      PsiElement(RBRACE)('}')
+  PsiWhiteSpace('\n\n')
+  FUN
+    PsiElement(fun)('fun')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('`top level`')
+    VALUE_PARAMETER_LIST
+      PsiElement(LPAR)('(')
+      PsiElement(RPAR)(')')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    REFERENCE_EXPRESSION
+      PsiElement(IDENTIFIER)('Unit')
+  PsiWhiteSpace('\n\n')
+  OBJECT_DECLARATION
+    PsiElement(object)('object')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('O')
+    PsiWhiteSpace(' ')
+    CLASS_BODY
+      PsiElement(LBRACE)('{')
+      PsiWhiteSpace('\n    ')
+      FUN
+        PsiElement(fun)('fun')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('`with space`')
+        VALUE_PARAMETER_LIST
+          PsiElement(LPAR)('(')
+          PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        PsiElement(EQ)('=')
+        PsiWhiteSpace(' ')
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('Unit')
+      PsiWhiteSpace('\n    ')
+      FUN
+        PsiElement(fun)('fun')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('without_space')
+        VALUE_PARAMETER_LIST
+          PsiElement(LPAR)('(')
+          PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        PsiElement(EQ)('=')
+        PsiWhiteSpace(' ')
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('Unit')
+      PsiWhiteSpace('\n')
+      PsiElement(RBRACE)('}')

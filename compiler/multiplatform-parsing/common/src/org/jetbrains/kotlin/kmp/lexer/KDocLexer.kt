@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.kmp.lexer
 
+import com.intellij.platform.syntax.element.SyntaxTokenTypes
 import com.intellij.platform.syntax.syntaxElementTypeSetOf
 import com.intellij.platform.syntax.util.lexer.FlexAdapter
 import com.intellij.platform.syntax.util.lexer.MergingLexerAdapter
@@ -16,6 +17,6 @@ class KDocLexer : MergingLexerAdapter(
     KDOC_TOKENS
 ) {
     companion object {
-        val KDOC_TOKENS = syntaxElementTypeSetOf(KDocTokens.TEXT, KDocTokens.CODE_BLOCK_TEXT)
+        val KDOC_TOKENS = syntaxElementTypeSetOf(KDocTokens.TEXT, KDocTokens.CODE_BLOCK_TEXT, SyntaxTokenTypes.WHITE_SPACE)
     }
 }
