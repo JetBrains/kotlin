@@ -719,7 +719,7 @@ fun getActualTargetList(container: FirAnnotationContainer): AnnotationTargetList
         }
         is FirSimpleFunction -> {
             when {
-                annotated.isLocalInFunction -> TargetLists.T_LOCAL_FUNCTION
+                annotated.isLocal -> TargetLists.T_LOCAL_FUNCTION
                 annotated.isMember -> TargetLists.T_MEMBER_FUNCTION
                 else -> TargetLists.T_TOP_LEVEL_FUNCTION
             }

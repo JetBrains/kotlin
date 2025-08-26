@@ -87,6 +87,3 @@ inline val FirFunction.hasBody: Boolean get() = body != null
 inline val FirPropertyAccessor.hasBody: Boolean get() = body != null
 
 inline val FirSimpleFunction.isLocal: Boolean get() = status.visibility == Visibilities.Local
-
-inline val FirSimpleFunction.isLocalInFunction: Boolean
-    get() = status.visibility == Visibilities.Local && isReplSnippetDeclaration != true
