@@ -5145,6 +5145,12 @@ public class LLReversedDiagnosticsFirTestGenerated extends AbstractLLReversedDia
         }
 
         @Test
+        @TestMetadata("invokeSmartcast.kt")
+        public void testInvokeSmartcast() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/extraCheckers/unused/invokeSmartcast.kt");
+        }
+
+        @Test
         @TestMetadata("invokeSuspend.kt")
         public void testInvokeSuspend() {
           runTest("compiler/fir/analysis-tests/testData/resolve/extraCheckers/unused/invokeSuspend.kt");
