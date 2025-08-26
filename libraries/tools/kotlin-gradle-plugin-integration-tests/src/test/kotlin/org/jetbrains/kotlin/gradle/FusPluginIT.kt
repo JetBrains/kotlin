@@ -50,7 +50,7 @@ class FusPluginIT : KGPBaseTest() {
 
     @DisplayName("with configuration cache and project isolation")
     @GradleTestVersions(
-        additionalVersions = [TestVersions.Gradle.G_8_0, TestVersions.Gradle.G_8_1],
+        minVersion = TestVersions.Gradle.G_8_14
     )
     @GradleTest
     fun withConfigurationCacheAndProjectIsolation(gradleVersion: GradleVersion) {

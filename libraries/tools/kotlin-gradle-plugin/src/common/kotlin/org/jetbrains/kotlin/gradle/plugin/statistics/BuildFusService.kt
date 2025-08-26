@@ -52,7 +52,7 @@ abstract class BuildFusService<T : BuildFusService.Parameters> :
     protected val buildId = parameters.buildId.get()
 
     init {
-        log.kotlinDebug("Initialize ${this.javaClass.simpleName}")
+        log.kotlinDebug("Initialize build service $serviceName: class \"${this.javaClass.simpleName}\", build \"$buildId\"")
         KotlinBuildStatsBeanService.recordBuildStart(buildId)
     }
 
@@ -95,9 +95,9 @@ abstract class BuildFusService<T : BuildFusService.Parameters> :
             }
 
 
-        fun registerIfAbsent(project: Project, pluginVersion: String, buildUidService: Provider<BuildUidService>) =
+        fun registerIfAbsent(project: Project, pluginVersion: String, buildUidService: Provider<BuildUidService>, buildFinishBuildService: Provider<BuildFinishBuildService>?) =
             if (project.buildServiceShouldBeCreated) {
-                registerIfAbsentImpl(project, pluginVersion, buildUidService).also { serviceProvider ->
+                registerIfAbsentImpl(project, pluginVersion, buildUidService, buildFinishBuildService).also { serviceProvider ->
                     SingleActionPerProject.run(project, UsesBuildFusService::class.java.name) {
                         project.tasks.withType<UsesBuildFusService>().configureEach { task ->
                             task.buildFusService.value(serviceProvider).disallowChanges()
@@ -120,6 +120,7 @@ abstract class BuildFusService<T : BuildFusService.Parameters> :
             project: Project,
             pluginVersion: String,
             buildUidService: Provider<BuildUidService>,
+            buildFinishBuildService: Provider<BuildFinishBuildService>?
         ): Provider<out BuildFusService<out Parameters>> {
 
             val isProjectIsolationEnabled = project.isProjectIsolationEnabled
@@ -155,7 +156,7 @@ abstract class BuildFusService<T : BuildFusService.Parameters> :
             // when this OperationCompletionListener is called services can be already closed for Gradle 8,
             // so there is a change that no VariantImplementationFactory will be found
             val fusService = if (GradleVersion.current().baseVersion >= GradleVersion.version("8.9")) {
-                FlowActionBuildFusService.registerIfAbsentImpl(project, buildUidService, generalConfigurationMetricsProvider)
+                FlowActionBuildFusService.registerIfAbsentImpl(project, buildUidService, generalConfigurationMetricsProvider, buildFinishBuildService)
             } else if (GradleVersion.current().baseVersion >= GradleVersion.version("8.1")) {
                 ConfigurationMetricParameterFlowActionBuildFusService.registerIfAbsentImpl(
                     project,
@@ -196,7 +197,11 @@ abstract class BuildFusService<T : BuildFusService.Parameters> :
 
     override fun close() {
         KotlinBuildStatsBeanService.closeServices()
-        log.kotlinDebug("Close ${this.javaClass.simpleName}")
+        log.kotlinDebug("Close build service $serviceName: class \"${this.javaClass.simpleName}\", build \"$buildId\"")
+    }
+
+    internal fun recordBuildFinished(buildFailed: Boolean, configurationMetrics: List<MetricContainer>) {
+        recordBuildFinished(buildFailed, buildId, configurationMetrics)
     }
 
     internal fun recordBuildFinished(buildFailed: Boolean, buildId: String, configurationMetrics: List<MetricContainer>) {

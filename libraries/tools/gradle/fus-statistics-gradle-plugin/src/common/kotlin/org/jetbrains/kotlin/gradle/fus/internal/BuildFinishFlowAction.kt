@@ -33,6 +33,7 @@ internal abstract class FusBuildFinishFlowManager @Inject constructor(
         ) {
             it.parameters.configurationTimeMetrics.addAll(fusService.get().getConfigurationReportedMetrics())
             it.parameters.buildId.set(buildUid)
+            it.parameters.buildId.finalizeValue()
         }
     }
 }
