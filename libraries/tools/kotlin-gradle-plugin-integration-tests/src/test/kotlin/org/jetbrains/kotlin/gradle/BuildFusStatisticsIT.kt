@@ -101,9 +101,9 @@ class BuildFusStatisticsIT : KGPDaemonsBaseTest() {
                             1
                         )
 
-                        //from main project
+                        //from the main project
                         assertOutputContainsExactlyTimes(
-                            "[KOTLIN] Initialize FlowActionBuildFusService${'$'}Inject",
+                            "[KOTLIN] Initialize build service FlowActionBuildFusService${'$'}Inject",
                             1
                         )
                     }
@@ -124,10 +124,16 @@ class BuildFusStatisticsIT : KGPDaemonsBaseTest() {
                             0
                         )
 
-                        //from buildSrc and main project
+                        //from buildSrc project
                         assertOutputContainsExactlyTimes(
                             "[KOTLIN] Initialize FlowActionBuildFusService${'$'}Inject",
-                            2
+                            1
+                        )
+
+                        //from  main project
+                        assertOutputContainsExactlyTimes(
+                            "[KOTLIN] Initialize build service FlowActionBuildFusService${'$'}Inject",
+                            1
                         )
                     }
                 }
