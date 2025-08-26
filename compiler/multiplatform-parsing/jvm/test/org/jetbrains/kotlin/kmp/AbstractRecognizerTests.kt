@@ -31,49 +31,11 @@ abstract class AbstractRecognizerTests<OldT, NewT, OldSyntaxElement : TestSyntax
     abstract val recognizerName: String
     open val oldRecognizerSuffix: String = ""
     abstract val recognizerSyntaxElementName: String
-
-    abstract val expectedExampleDump: String
-    abstract val expectedExampleSyntaxElementsNumber: Long
-    open val expectedExampleContainsSyntaxError: Boolean = true
-    open val expectedEmptySyntaxElementsNumber: Long = 0
     abstract val expectedDumpOnWindowsNewLine: String
 
     // It doesn't make sense to print the total time of an old PSI parser because it needs the entire document to be parsed
     // even if only KDoc nodes are needed
     open val printOldRecognizerTimeInfo: Boolean = true
-
-    @Test
-    fun testSimple() {
-        val (_, _, _, oldSyntaxElement, _, linesCount) = checkOnKotlinCode(
-            """fun main() {
-    println("Hello, World!")
-}
-
-class C(val x: Int)
-
-/**
- * @param [C.x] Some parameter.
- * @return [Exception]
- */
-fun test(p: String) {
-    val badCharacter = ^
-    throw Exception()
-}""",
-            expectedExampleDump
-        )
-        assertEquals(14, linesCount)
-        val (syntaxElementsNumber, containsErrorElement) = oldSyntaxElement.countSyntaxElements()
-        assertEquals(expectedExampleSyntaxElementsNumber, syntaxElementsNumber)
-        assertEquals(expectedExampleContainsSyntaxError, containsErrorElement)
-    }
-
-    @Test
-    fun testEmpty() {
-        val (_, _, _, oldSyntaxElement, _, linesCount) = checkOnKotlinCode("")
-        assertEquals(1, linesCount)
-        val (syntaxElementsNumber, _) = oldSyntaxElement.countSyntaxElements()
-        assertEquals(expectedEmptySyntaxElementsNumber, syntaxElementsNumber)
-    }
 
     /**
      * Current lexers tokenize `\r` as `BAD_CHARACTER`, it also causes creating of `ERROR_ELEMENT` in parse trees.

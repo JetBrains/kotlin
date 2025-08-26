@@ -2554,6 +2554,11 @@ public class ParsingTestGenerated extends AbstractParsingTest {
         runTest("compiler/testData/psi/kdoc/HttpLink.kt");
       }
 
+      @TestMetadata("IdentifiersWithBackticks.kt")
+      public void testIdentifiersWithBackticks() {
+        runTest("compiler/testData/psi/kdoc/IdentifiersWithBackticks.kt");
+      }
+
       @TestMetadata("Incomplete.kt")
       public void testIncomplete() {
         runTest("compiler/testData/psi/kdoc/Incomplete.kt");
