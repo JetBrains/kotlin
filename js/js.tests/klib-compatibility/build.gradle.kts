@@ -81,22 +81,23 @@ fun Project.customCompilerTest(
     taskName: String,
     tag: String,
 ): TaskProvider<out Task> {
-    val configurationName = "customCompilerArtifacts_$version"
+    val customCompiler: Configuration = getOrCreateConfiguration("customCompiler_$version") {
+        project.dependencies.add(name, "org.jetbrains.kotlin:kotlin-compiler-embeddable:${version.rawVersion}")
+    }
 
-    val configuration = configurations.findByName(configurationName)
-        ?: configurations.create(configurationName).also {
-            project.dependencies.add(configurationName, "org.jetbrains.kotlin:kotlin-compiler-embeddable:${version.rawVersion}")
-            project.dependencies.add(configurationName, "org.jetbrains.kotlin:kotlin-stdlib-js:${version.rawVersion}") {
-                attributes { attribute(KotlinJsCompilerAttribute.jsCompilerAttribute, KotlinJsCompilerAttribute.ir) }
-            }
-            project.dependencies.add(configurationName, "org.jetbrains.kotlin:kotlin-test-js:${version.rawVersion}") {
-                attributes { attribute(KotlinJsCompilerAttribute.jsCompilerAttribute, KotlinJsCompilerAttribute.ir) }
-            }
+    val runtimeDependencies: Configuration = getOrCreateConfiguration("customCompilerRuntimeDependencies_$version") {
+        project.dependencies.add(name,"org.jetbrains.kotlin:kotlin-stdlib-js:${version.rawVersion}") {
+            attributes { attribute(KotlinJsCompilerAttribute.jsCompilerAttribute, KotlinJsCompilerAttribute.ir) }
         }
+        project.dependencies.add(name, "org.jetbrains.kotlin:kotlin-test-js:${version.rawVersion}") {
+            attributes { attribute(KotlinJsCompilerAttribute.jsCompilerAttribute, KotlinJsCompilerAttribute.ir) }
+        }
+    }
 
     return projectTests.testTask(taskName, jUnitMode = JUnitMode.JUnit5, skipInLocalBuild = false) {
         setUpJsBoxTests(tag)
-        addClasspathProperty(configuration, "kotlin.internal.js.test.compat.customCompilerArtifactsDir")
+        addClasspathProperty(customCompiler, "kotlin.internal.js.test.compat.customCompilerClasspath")
+        addClasspathProperty(runtimeDependencies, "kotlin.internal.js.test.compat.runtimeDependencies")
         systemProperty("kotlin.internal.js.test.compat.customCompilerVersion", version.rawVersion)
     }
 }
