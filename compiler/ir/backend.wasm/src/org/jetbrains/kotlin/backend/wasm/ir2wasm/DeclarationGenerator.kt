@@ -467,12 +467,13 @@ class DeclarationGenerator(
             buildStructNew(wasmFileCodegenContext.rttiType, location)
         }
 
-        val rttiGlobal = WasmGlobal(
-            name = "${klass.fqNameWhenAvailable}_rtti",
-            type = WasmRefType(WasmHeapType.Type(wasmFileCodegenContext.rttiType)),
-            isMutable = false,
-            init = initRttiGlobal
-        )
+        val rttiGcType = WasmRefType(WasmHeapType.Type(wasmFileCodegenContext.rttiType))
+        val rttiGlobal = if (useSharedObjects) {
+            addTableFunctionsForFuncRefsOf(initRttiGlobal)
+            DeferredWasmGlobal("${klass.fqNameWhenAvailable}_rtti", rttiGcType, false, initTemplate = initRttiGlobal)
+        } else {
+            WasmGlobal("${klass.fqNameWhenAvailable}_rtti", rttiGcType, false, init = initRttiGlobal)
+        }
 
         wasmFileCodegenContext.defineRttiGlobal(rttiGlobal, symbol, superType)
     }

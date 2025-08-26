@@ -744,6 +744,25 @@ class BodyGenerator(
         buildInstr(WasmOp.CALL_REF, location, WasmImmediate.TypeIdx(functionTypeReference))
     }
 
+    private fun WasmExpressionBuilder.buildInstrCallRefWithCastOrIndirect(
+        functionTypeReference: WasmSymbol<WasmFunctionType>,
+        location: SourceLocation
+    ) = if (useSharedObjects) {
+        buildInstr(
+            WasmOp.CALL_INDIRECT,
+            location,
+            WasmImmediate.TypeIdx(functionTypeReference),
+            WasmImmediate.TableIdx(FUNCTIONS_TABLE)
+        )
+    } else {
+        buildInstr(
+            op = WasmOp.REF_CAST,
+            location = location,
+            WasmImmediate.HeapType(WasmHeapType.Type(functionTypeReference))
+        )
+        buildInstr(WasmOp.CALL_REF, location, WasmImmediate.TypeIdx(functionTypeReference))
+    }
+
     private fun generateCall(call: IrFunctionAccessExpression) {
         val location = if (call.origin === IrStatementOrigin.DEFAULT_DISPATCH_CALL)
             SourceLocation.NoLocation("Default dispatch")
@@ -1004,16 +1023,8 @@ class BodyGenerator(
 
                 body.buildStructGet(wasmFileCodegenContext.rttiType, fieldId, location)
 
-                body.buildInstr(
-                    op = WasmOp.REF_CAST,
-                    location = location,
-                    WasmImmediate.HeapType(WasmHeapType.Type(wasmFileCodegenContext.wasmStringsElements.createStringLiteralType))
-                )
-                body.buildInstr(
-                    op = WasmOp.CALL_REF,
-                    location = location,
-                    WasmImmediate.TypeIdx(wasmFileCodegenContext.wasmStringsElements.createStringLiteralType),
-                )
+                val funcType = wasmFileCodegenContext.wasmStringsElements.createStringLiteralType
+                body.buildInstrCallRefWithCastOrIndirect(funcType, location)
             }
 
             wasmSymbols.reflectionSymbols.wasmGetInterfaceVTableBodyImpl -> {
@@ -1210,17 +1221,7 @@ class BodyGenerator(
             wasmSymbols.callAssociatedObjectGetter -> {
                 val tryGetAssociatedObjectType =
                     wasmFileCodegenContext.referenceFunctionType(backendContext.wasmSymbols.tryGetAssociatedObject)
-
-                body.buildInstr(
-                    op = WasmOp.REF_CAST,
-                    location = location,
-                    WasmImmediate.HeapType(WasmHeapType.Type(tryGetAssociatedObjectType))
-                )
-                body.buildInstr(
-                    op = WasmOp.CALL_REF,
-                    location = location,
-                    WasmImmediate.TypeIdx(tryGetAssociatedObjectType),
-                )
+                body.buildInstrCallRefWithCastOrIndirect(tryGetAssociatedObjectType, location)
             }
 
             else -> {

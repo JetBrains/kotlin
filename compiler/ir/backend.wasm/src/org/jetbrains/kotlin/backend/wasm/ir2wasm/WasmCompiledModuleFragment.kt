@@ -92,7 +92,8 @@ class WasmCompiledFileFragment(
 class WasmCompiledModuleFragment(
     private val wasmCompiledFileFragments: List<WasmCompiledFileFragment>,
     private val generateTrapsInsteadOfExceptions: Boolean,
-    private val isWasmJsTarget: Boolean
+    private val isWasmJsTarget: Boolean,
+    private val useSharedObjects: Boolean
 ) {
     // Used during linking
     private val serviceCodeLocation = SourceLocation.NoLocation("Generated service code")
@@ -100,6 +101,10 @@ class WasmCompiledModuleFragment(
 
     private val stringDataSectionIndex = WasmImmediate.DataIdx(0)
     private val stringAddressesAndLengthsIndex = WasmImmediate.DataIdx(1)
+
+    var declarativeFuncElements: List<WasmElement> = mutableListOf()
+    var functionsTableValues: List<WasmTable.Value.Function> = mutableListOf()
+    val tableFunctionIndicesMap: MutableMap<WasmSymbol<WasmFunction>, Int> = mutableMapOf()
 
     private inline fun tryFindBuiltInFunction(select: (BuiltinIdSignatures) -> IdSignature?): WasmFunction? {
         for (fragment in wasmCompiledFileFragments) {
@@ -171,7 +176,6 @@ class WasmCompiledModuleFragment(
         additionalTypes: MutableList<WasmTypeDeclaration>,
         stringPoolSize: Int,
         initializeUnit: Boolean,
-        wasmElements: MutableList<WasmElement>,
         exports: MutableList<WasmExport<*>>,
         globals: MutableList<WasmGlobal>,
     ) {
@@ -182,7 +186,7 @@ class WasmCompiledModuleFragment(
             createFieldInitializerFunction(stringPoolSize, stringAddressesAndLengthsGlobal, wasmLongArrayDeclaration)
         definedFunctions.add(fieldInitializerFunction)
 
-        val associatedObjectGetter = createAssociatedObjectGetterFunction(wasmElements, additionalTypes)
+        val associatedObjectGetter = createAssociatedObjectGetterFunction(additionalTypes)
         if (associatedObjectGetter != null) {
             definedFunctions.add(associatedObjectGetter)
         }
@@ -202,7 +206,6 @@ class WasmCompiledModuleFragment(
                 createStringFunction = createStringFunction,
                 stringPoolGlobalField = stringPoolField,
                 additionalTypes = additionalTypes,
-                wasmElements = wasmElements,
                 stringArrayType = stringArrayType,
                 stringAddressesAndLengthsGlobal = stringAddressesAndLengthsGlobal,
                 wasmLongArrayDeclaration = wasmLongArrayDeclaration,
@@ -215,7 +218,6 @@ class WasmCompiledModuleFragment(
                 createStringFunction = createStringFunction,
                 stringPoolGlobalField = stringPoolField,
                 additionalTypes = additionalTypes,
-                wasmElements = wasmElements,
                 stringArrayType = stringArrayType,
                 stringAddressesAndLengthsGlobal = stringAddressesAndLengthsGlobal,
                 wasmLongArrayDeclaration = wasmLongArrayDeclaration,
@@ -247,25 +249,30 @@ class WasmCompiledModuleFragment(
         val memories = createAndExportMemory(exports, stdlibModuleNameForImport)
         val (importedMemories, definedMemories) = memories.partition { it.importPair != null }
 
+        bindTableFunctionsFromFragments()
+
+        val syntheticTypes = mutableListOf<WasmTypeDeclaration>()
+        createAndBindSpecialITableTypes(syntheticTypes)
+        val globals = getGlobals(syntheticTypes)
+
+        val additionalTypes = mutableListOf<WasmTypeDeclaration>()
+        additionalTypes.add(parameterlessNoReturnFunctionType)
+
+        createAndExportServiceFunctions(definedFunctions, additionalTypes, stringPoolSize, initializeUnit, exports, globals)
+
         // Tables and elements for indirect calls (useSharedObjects mode)
         val tables = mutableListOf<WasmTable>()
         val elements = mutableListOf<WasmElement>()
-        val functionsTableValues = getTableFunctionValues().toList()
+
         if (functionsTableValues.isNotEmpty()) {
             val tableSize = functionsTableValues.size.toUInt()
             val funcTable = WasmTable(elementType = WasmFuncRef, limits = WasmLimits(tableSize, tableSize))
             tables.add(FUNCTIONS_TABLE, funcTable)
             elements.add(WasmElement(WasmFuncRef, functionsTableValues, WasmElement.Mode.Active(funcTable, 0)))
         }
-
-        val syntheticTypes = mutableListOf<WasmTypeDeclaration>()
-        createAndBindSpecialITableTypes(syntheticTypes)
-        val globals = getGlobals(syntheticTypes, functionsTableValues)
-
-        val additionalTypes = mutableListOf<WasmTypeDeclaration>()
-        additionalTypes.add(parameterlessNoReturnFunctionType)
-
-        createAndExportServiceFunctions(definedFunctions, additionalTypes, stringPoolSize, initializeUnit, elements, exports, globals)
+        elements.addAll(declarativeFuncElements)
+        functionsTableValues = emptyList() // prevents adding new table functions
+        declarativeFuncElements = emptyList()
 
         val tags = getTags()
         require(tags.size <= 1) { "Having more than 1 tag is not supported" }
@@ -317,8 +324,8 @@ class WasmCompiledModuleFragment(
                 WasmStructFieldDeclaration("simpleNamePoolId", WasmI32, false),
                 WasmStructFieldDeclaration("klassId", WasmI64, false),
                 WasmStructFieldDeclaration("typeInfoFlag", WasmI32, false),
-                WasmStructFieldDeclaration("qualifierStringLoader", WasmFuncRef, false),
-                WasmStructFieldDeclaration("simpleNameStringLoader", WasmFuncRef, false),
+                WasmStructFieldDeclaration("qualifierStringLoader", if (useSharedObjects) WasmI32 else WasmFuncRef, false),
+                WasmStructFieldDeclaration("simpleNameStringLoader", if (useSharedObjects) WasmI32 else WasmFuncRef, false),
             ),
             superType = null,
             isFinal = true
@@ -460,30 +467,59 @@ class WasmCompiledModuleFragment(
         return recursiveGroups
     }
 
-    private fun getGlobals(additionalTypes: MutableList<WasmTypeDeclaration>, functionsTableValues: List<WasmTable.Value.Function>) = mutableListOf<WasmGlobal>().apply {
-        materializeDeferredGlobals(functionsTableValues)
-        wasmCompiledFileFragments.forEach { fragment ->
-            addAll(fragment.globalFields.elements)
-            addAll(fragment.globalVTables.elements)
-            addAll(fragment.globalClassITables.elements.distinct())
+    private fun getGlobals(additionalTypes: MutableList<WasmTypeDeclaration>) =
+        mutableListOf<WasmGlobal>().apply {
+            materializeDeferredGlobals()
+            wasmCompiledFileFragments.forEach { fragment ->
+                addAll(fragment.globalFields.elements)
+                addAll(fragment.globalVTables.elements)
+                addAll(fragment.globalClassITables.elements.distinct())
+            }
+            createRttiTypeAndProcessRttiGlobals(this, additionalTypes)
         }
-        createRttiTypeAndProcessRttiGlobals(this, additionalTypes)
-    }
 
-    private fun materializeDeferredGlobals(functionsTableValues: List<WasmTable.Value.Function>) {
-        val tableFunctionIndicesMap = functionsTableValues.mapIndexed { index, value -> value.function to index }.toMap()
+    private fun materializeDeferredGlobals() {
         wasmCompiledFileFragments.forEach { fragment ->
-            (fragment.globalVTables.elements + fragment.globalClassITables.elements)
+            (fragment.globalVTables.elements
+                    + fragment.globalClassITables.elements
+                    + (fragment.rttiElements?.globals?.map { it.global } ?: emptyList()))
                 .filter { it.isDeferred }
                 .map { it as? DeferredWasmGlobal ?: error("Unknown deferred global type: ${it::class}") }
                 .forEach { it.materialize(tableFunctionIndicesMap) }
         }
     }
 
-    private fun getTableFunctionValues() = linkedSetOf<WasmTable.Value.Function>().apply {
+    private fun addTableFunction(func: WasmSymbol<WasmFunction>) {
+        val functionsTableValuesAsMutable =
+            functionsTableValues as? MutableList ?: error("Attempt to add a table function after the bound completion")
+        if (functionsTableValuesAsMutable.add(WasmTable.Value.Function(func)))
+            tableFunctionIndicesMap[func] = functionsTableValues.size - 1
+    }
+
+    // Makes a function added during linking possible to func.ref
+    private fun addDeclarativeFuncElement(func: WasmSymbol<WasmFunction>) {
+        val declarativeFuncElementsAsMutable =
+            declarativeFuncElements as? MutableList ?: error("Attempt to add a declarative function element after the bound completion")
+        declarativeFuncElementsAsMutable.add(
+            WasmElement(
+                type = WasmFuncRef,
+                values = listOf(WasmTable.Value.Function(func)),
+                mode = WasmElement.Mode.Declarative
+            )
+        )
+    }
+
+    private fun addTableFunctionOrDeclarativeElement(func: WasmSymbol<WasmFunction>) =
+        if (useSharedObjects) {
+            addTableFunction(func)
+        } else {
+            addDeclarativeFuncElement(func)
+        }
+
+    private fun bindTableFunctionsFromFragments() {
         for (fragment in wasmCompiledFileFragments) {
             for (tableFunction in fragment.tableFunctions) {
-                add(WasmTable.Value.Function(tableFunction))
+                addTableFunction(tableFunction)
             }
         }
     }
@@ -519,7 +555,13 @@ class WasmCompiledModuleFragment(
                 // we do not register descriptor while no need in it
                 val registerModuleDescriptor = tryFindBuiltInFunction { it.registerModuleDescriptor }
                     ?: compilationException("kotlin.registerModuleDescriptor is not file in fragments", null)
-                buildInstr(WasmOp.REF_FUNC, serviceCodeLocation, WasmImmediate.FuncIdx(WasmSymbol(tryGetAssociatedObject)))
+                if (useSharedObjects) {
+                    val funcTableIdx : Int = tableFunctionIndicesMap[WasmSymbol(tryGetAssociatedObject)]
+                        ?: error("Missing table index for 'getAssociatedObject'")
+                    buildConstI32(funcTableIdx, location = serviceCodeLocation)
+                } else {
+                    buildInstr(WasmOp.REF_FUNC, serviceCodeLocation, WasmImmediate.FuncIdx(WasmSymbol(tryGetAssociatedObject)))
+                }
                 buildInstr(WasmOp.CALL, serviceCodeLocation, WasmImmediate.FuncIdx(WasmSymbol(registerModuleDescriptor)))
             }
 
@@ -536,7 +578,6 @@ class WasmCompiledModuleFragment(
     }
 
     private fun createAssociatedObjectGetterFunction(
-        wasmElements: MutableList<WasmElement>,
         additionalTypes: MutableList<WasmTypeDeclaration>
     ): WasmFunction.Defined? {
         // If AO accessor removed by DCE - we do not need it then
@@ -550,14 +591,8 @@ class WasmCompiledModuleFragment(
         additionalTypes.add(associatedObjectGetterType)
 
         val associatedObjectGetter = WasmFunction.Defined("_associatedObjectGetter", WasmSymbol(associatedObjectGetterType))
-        // Make this function possible to func.ref
-        wasmElements.add(
-            WasmElement(
-                type = WasmFuncRef,
-                values = listOf(WasmTable.Value.Function(WasmSymbol(associatedObjectGetter))),
-                mode = WasmElement.Mode.Declarative
-            )
-        )
+        val associatedObjectGetterSym = WasmSymbol(associatedObjectGetter)
+        addTableFunctionOrDeclarativeElement(associatedObjectGetterSym)
 
         val jsToKotlinAnyAdapter by lazy {
             tryFindBuiltInFunction { it.jsToKotlinAnyAdapter }
@@ -698,7 +733,6 @@ class WasmCompiledModuleFragment(
         createStringFunction: WasmFunction,
         stringPoolGlobalField: WasmGlobal,
         additionalTypes: MutableList<WasmTypeDeclaration>,
-        wasmElements: MutableList<WasmElement>,
         stringArrayType: WasmArrayDeclaration,
         stringAddressesAndLengthsGlobal: WasmGlobal,
         wasmLongArrayDeclaration: WasmArrayDeclaration,
@@ -847,13 +881,7 @@ class WasmCompiledModuleFragment(
         }
 
         // Make this function possible to func.ref
-        wasmElements.add(
-            WasmElement(
-                type = WasmFuncRef,
-                values = listOf(WasmTable.Value.Function(WasmSymbol(stringLiteralFunction))),
-                mode = WasmElement.Mode.Declarative
-            )
-        )
+        addDeclarativeFuncElement(WasmSymbol(stringLiteralFunction))
 
         wasmCompiledFileFragments.forEach { fragment ->
             if (isLatin1) {

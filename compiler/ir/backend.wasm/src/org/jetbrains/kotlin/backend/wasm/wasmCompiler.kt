@@ -181,6 +181,7 @@ fun compileWasm(
         wasmCompiledFileFragments,
         configuration.getBoolean(WasmConfigurationKeys.WASM_USE_TRAPS_INSTEAD_OF_EXCEPTIONS),
         isWasmJsTarget,
+        useSharedObjects = configuration.getBoolean(WasmConfigurationKeys.WASM_USE_SHARED_OBJECTS),
     )
 
     val linkedModule = wasmCompiledModuleFragment.linkWasmCompiledFragments(stdlibModuleNameForImport, initializeUnit)
