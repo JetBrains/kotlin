@@ -2940,6 +2940,12 @@ public class SourceStubsTestGenerated extends AbstractSourceStubsTest {
     }
 
     @Test
+    @TestMetadata("StartCodeBlockAfterTwoOrMoreLineBreaks.kt")
+    public void testStartCodeBlockAfterTwoOrMoreLineBreaks() {
+      runTest("compiler/testData/psi/kdoc/StartCodeBlockAfterTwoOrMoreLineBreaks.kt");
+    }
+
+    @Test
     @TestMetadata("TextLinkWithNewLine.kt")
     public void testTextLinkWithNewLine() {
       runTest("compiler/testData/psi/kdoc/TextLinkWithNewLine.kt");

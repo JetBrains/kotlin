@@ -2614,6 +2614,11 @@ public class ParsingTestGenerated extends AbstractParsingTest {
         runTest("compiler/testData/psi/kdoc/Simple.kt");
       }
 
+      @TestMetadata("StartCodeBlockAfterTwoOrMoreLineBreaks.kt")
+      public void testStartCodeBlockAfterTwoOrMoreLineBreaks() {
+        runTest("compiler/testData/psi/kdoc/StartCodeBlockAfterTwoOrMoreLineBreaks.kt");
+      }
+
       @TestMetadata("TextLinkWithNewLine.kt")
       public void testTextLinkWithNewLine() {
         runTest("compiler/testData/psi/kdoc/TextLinkWithNewLine.kt");
