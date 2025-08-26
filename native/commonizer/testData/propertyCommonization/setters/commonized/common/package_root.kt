@@ -11,7 +11,7 @@ expect var setterWithDelegation2: Int
 expect var defaultSetteCustomVisibility1: Int
 expect var defaultSetteCustomVisibility2: Int
     private set
-expect var defaultSetteCustomVisibility3 = 42
+expect var defaultSetteCustomVisibility3: Int
     internal set
 expect var defaultSetteCustomVisibility4: Int
     private set

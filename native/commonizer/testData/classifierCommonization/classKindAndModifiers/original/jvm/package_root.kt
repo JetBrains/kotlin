@@ -137,7 +137,7 @@ interface JJ {
 }
 
 class KK1(override val property: String) : JJ {
-    val property2 = property
+    override val property2 = property
     override fun function() = property
 }
 

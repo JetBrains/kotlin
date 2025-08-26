@@ -4,7 +4,7 @@ val propertyWithInferredType1 = 1
 val propertyWithInferredType2 = "hello"
 val propertyWithInferredType3 = 42.toString()
 val propertyWithInferredType4 = null
-val propertyWithInferredType5 = Planet("Earth", 12742)
+val propertyWithInferredType5 = Planet("Earth", 12742.0)
 
 typealias A = Planet
 typealias C = Planet
@@ -12,20 +12,20 @@ typealias C = Planet
 // with inferred type:
 val property1 = 1
 val property2 = "hello"
-val property3 = Planet("Earth", 12742)
-val property4 = A("Earth", 12742)
-val property5 = A("Earth", 12742)
-val property6 = Planet("Earth", 12742)
-val property7 = C("Earth", 12742)
+val property3 = Planet("Earth", 12742.0)
+val property4 = A("Earth", 12742.0)
+val property5 = A("Earth", 12742.0)
+val property6 = Planet("Earth", 12742.0)
+val property7 = C("Earth", 12742.0)
 
 // with inferred type:
 fun function1() = 1
 fun function2() = "hello"
-fun function3() = Planet("Earth", 12742)
-fun function4() = A("Earth", 12742)
-fun function5() = A("Earth", 12742)
-fun function6() = Planet("Earth", 12742)
-fun function7() = C("Earth", 12742)
+fun function3() = Planet("Earth", 12742.0)
+fun function4() = A("Earth", 12742.0)
+fun function5() = A("Earth", 12742.0)
+fun function6() = Planet("Earth", 12742.0)
+fun function7() = C("Earth", 12742.0)
 
 val propertyWithMismatchedType1: Int = 1
 val propertyWithMismatchedType2: Int = 1
@@ -51,8 +51,8 @@ fun functionWithTypeParametersInReturnType6(): List<String> = listOf("hello")
 fun functionWithTypeParametersInReturnType7() = Box(1)
 fun functionWithTypeParametersInReturnType8() = Box(1)
 fun functionWithTypeParametersInReturnType9() = Box("hello")
-fun functionWithTypeParametersInReturnType10() = Box(Planet("Earth", 12742))
-fun functionWithTypeParametersInReturnType11() = Box(Planet("Earth", 12742))
+fun functionWithTypeParametersInReturnType10() = Box(Planet("Earth", 12742.0))
+fun functionWithTypeParametersInReturnType11() = Box(Planet("Earth", 12742.0))
 fun functionWithTypeParametersInReturnType12() = Box(Fox())
 
 fun <T> functionWithUnsubstitutedTypeParametersInReturnType1(): T = TODO()
