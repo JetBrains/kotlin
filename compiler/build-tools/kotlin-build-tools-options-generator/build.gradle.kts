@@ -2,6 +2,7 @@ plugins {
     kotlin("jvm")
     id("jps-compatible")
     application
+    id("project-tests-convention")
 }
 
 dependencies {
@@ -11,7 +12,8 @@ dependencies {
     implementation(project(":compiler:build-tools:util-kotlinpoet"))
     implementation(project(":generators"))
     implementation(commonDependency("org.jetbrains.kotlin:kotlin-reflect"))
-    testImplementation(kotlinTest("junit"))
+    testImplementation(kotlinTest("junit5"))
+    testImplementation(platform(libs.junit.bom))
 }
 
 application {
@@ -24,5 +26,11 @@ sourceSets {
     }
     "test" {
         projectDefault()
+    }
+}
+
+projectTests {
+    testTask(jUnitMode = JUnitMode.JUnit5) {
+        useJUnitPlatform()
     }
 }
