@@ -18,11 +18,11 @@ import org.jetbrains.kotlin.psi.stubs.impl.KotlinFileStubImpl
  *
  * **Note**: shared stubs might store psi, but **MUST NOT** reuse it for different files
  */
-internal class KotlinFakeClsStubsCache {
-    private val fileStubs = CollectionFactory.createConcurrentWeakKeySoftValueMap<VirtualFile, KotlinFileStubImpl>()
+internal class KotlinStandaloneStubsCache {
+    private val stubs = CollectionFactory.createConcurrentWeakKeySoftValueMap<VirtualFile, KotlinFileStubImpl>()
 
     fun getOrBuildStub(
         compiledFile: VirtualFile,
         stubBuilder: (VirtualFile) -> KotlinFileStubImpl,
-    ): KotlinFileStubImpl = fileStubs.computeIfAbsent(compiledFile, stubBuilder)
+    ): KotlinFileStubImpl = stubs.computeIfAbsent(compiledFile, stubBuilder)
 }

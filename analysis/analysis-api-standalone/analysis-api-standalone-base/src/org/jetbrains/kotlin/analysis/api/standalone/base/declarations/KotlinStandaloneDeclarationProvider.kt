@@ -309,7 +309,7 @@ private fun computeIndex(
     val rawIndex = KotlinStandaloneDeclarationIndexImpl()
 
     val psiManager = PsiManager.getInstance(project)
-    val cacheService = ApplicationManager.getApplication().serviceOrNull<KotlinFakeClsStubsCache>()
+    val cacheService = ApplicationManager.getApplication().serviceOrNull<KotlinStandaloneStubsCache>()
 
     // Synchronization is not needed since either this code is executed in a single thread right away or guarded by the next synchronized `lazyIndex` property
     val setStubTreeMethod by lazy(LazyThreadSafetyMode.NONE) {

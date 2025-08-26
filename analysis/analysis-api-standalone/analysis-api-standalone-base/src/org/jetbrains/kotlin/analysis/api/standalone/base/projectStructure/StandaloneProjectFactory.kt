@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -42,7 +42,7 @@ import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibrarySourceModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.allDirectDependencies
 import org.jetbrains.kotlin.analysis.api.resolve.extensions.KaResolveExtensionProvider
-import org.jetbrains.kotlin.analysis.api.standalone.base.declarations.KotlinFakeClsStubsCache
+import org.jetbrains.kotlin.analysis.api.standalone.base.declarations.KotlinStandaloneStubsCache
 import org.jetbrains.kotlin.analysis.api.standalone.base.java.KotlinStandaloneJavaModuleAccessibilityChecker
 import org.jetbrains.kotlin.analysis.api.standalone.base.java.KotlinStandaloneJavaModuleAnnotationsProvider
 import org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.StandaloneProjectFactory.findJvmRootsForJavaFiles
@@ -110,17 +110,17 @@ object StandaloneProjectFactory {
 
     private fun registerApplicationServices(applicationEnvironment: KotlinCoreApplicationEnvironment) {
         val application = applicationEnvironment.application
-        if (application.getServiceIfCreated(KotlinFakeClsStubsCache::class.java) != null) {
+        if (application.getServiceIfCreated(KotlinStandaloneStubsCache::class.java) != null) {
             // application services already registered by som other threads, tests
             return
         }
         KotlinCoreEnvironment.underApplicationLock {
-            if (application.getServiceIfCreated(KotlinFakeClsStubsCache::class.java) != null) {
+            if (application.getServiceIfCreated(KotlinStandaloneStubsCache::class.java) != null) {
                 // application services already registered by som other threads, tests
                 return
             }
             application.apply {
-                registerService(KotlinFakeClsStubsCache::class.java, KotlinFakeClsStubsCache::class.java)
+                registerService(KotlinStandaloneStubsCache::class.java, KotlinStandaloneStubsCache::class.java)
                 registerService(ClsKotlinBinaryClassCache::class.java)
                 registerService(
                     BuiltinsVirtualFileProvider::class.java,
