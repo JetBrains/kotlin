@@ -102,12 +102,12 @@ class UklibInterprojectConsumptionIT : KGPBaseTest() {
                         ),
                         configuration = "uklibApiElements",
                     ),
-                    "org.jetbrains.kotlin:kotlin-dom-api-compat:2.3.255-SNAPSHOT" to ResolvedComponentWithArtifacts(
+                    "org.jetbrains.kotlin:kotlin-dom-api-compat:${defaultBuildOptions.kotlinVersion}" to ResolvedComponentWithArtifacts(
                         artifacts = mutableListOf(
                         ),
                         configuration = "commonFakeApiElements-published",
                     ),
-                    "org.jetbrains.kotlin:kotlin-stdlib:2.3.255-SNAPSHOT" to ResolvedComponentWithArtifacts(
+                    "org.jetbrains.kotlin:kotlin-stdlib:${defaultBuildOptions.kotlinVersion}" to ResolvedComponentWithArtifacts(
                         artifacts = mutableListOf(
                         ),
                         configuration = "nativeApiElements",
@@ -133,7 +133,7 @@ class UklibInterprojectConsumptionIT : KGPBaseTest() {
                         ),
                         configuration = "uklibApiElements",
                     ),
-                    "org.jetbrains.kotlin:kotlin-dom-api-compat:2.3.255-SNAPSHOT" to ResolvedComponentWithArtifacts(
+                    "org.jetbrains.kotlin:kotlin-dom-api-compat:${defaultBuildOptions.kotlinVersion}" to ResolvedComponentWithArtifacts(
                         artifacts = mutableListOf(
                             mutableMapOf(
                                 "artifactType" to "klib",
@@ -147,7 +147,7 @@ class UklibInterprojectConsumptionIT : KGPBaseTest() {
                         ),
                         configuration = "jsApiElements-published",
                     ),
-                    "org.jetbrains.kotlin:kotlin-stdlib-js:2.3.255-SNAPSHOT" to ResolvedComponentWithArtifacts(
+                    "org.jetbrains.kotlin:kotlin-stdlib-js:${defaultBuildOptions.kotlinVersion}" to ResolvedComponentWithArtifacts(
                         artifacts = mutableListOf(
                             mutableMapOf(
                                 "artifactType" to "klib",
@@ -162,7 +162,7 @@ class UklibInterprojectConsumptionIT : KGPBaseTest() {
                         ),
                         configuration = "jsApiElements",
                     ),
-                    "org.jetbrains.kotlin:kotlin-stdlib:2.3.255-SNAPSHOT" to ResolvedComponentWithArtifacts(
+                    "org.jetbrains.kotlin:kotlin-stdlib:${defaultBuildOptions.kotlinVersion}" to ResolvedComponentWithArtifacts(
                         artifacts = mutableListOf(
                         ),
                         configuration = "jsApiElements",
@@ -188,12 +188,12 @@ class UklibInterprojectConsumptionIT : KGPBaseTest() {
                         ),
                         configuration = "uklibApiElements",
                     ),
-                    "org.jetbrains.kotlin:kotlin-dom-api-compat:2.3.255-SNAPSHOT" to ResolvedComponentWithArtifacts(
+                    "org.jetbrains.kotlin:kotlin-dom-api-compat:${defaultBuildOptions.kotlinVersion}" to ResolvedComponentWithArtifacts(
                         artifacts = mutableListOf(
                         ),
                         configuration = "commonFakeApiElements-published",
                     ),
-                    "org.jetbrains.kotlin:kotlin-stdlib:2.3.255-SNAPSHOT" to ResolvedComponentWithArtifacts(
+                    "org.jetbrains.kotlin:kotlin-stdlib:${defaultBuildOptions.kotlinVersion}" to ResolvedComponentWithArtifacts(
                         artifacts = mutableListOf(
                             mutableMapOf(
                                 "artifactType" to "jar",
