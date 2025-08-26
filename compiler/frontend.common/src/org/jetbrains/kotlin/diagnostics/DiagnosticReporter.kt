@@ -48,10 +48,6 @@ open class KtDiagnosticReporterWithContext(
         override val languageVersionSettings: LanguageVersionSettings
             get() = this@KtDiagnosticReporterWithContext.languageVersionSettings
 
-        fun report(factory: KtSourcelessDiagnosticFactory, message: String) {
-            report(factory, message, this)
-        }
-
         fun report(factory: KtDiagnosticFactory0) {
             sourceElement?.let {
                 reportOn(it, factory)

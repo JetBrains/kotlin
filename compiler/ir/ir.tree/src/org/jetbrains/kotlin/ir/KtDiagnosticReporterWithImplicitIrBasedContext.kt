@@ -9,9 +9,11 @@ import org.jetbrains.kotlin.AbstractKtSourceElement
 import org.jetbrains.kotlin.KtRealPsiSourceElement
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.diagnostics.AbstractKotlinSuppressCache
+import org.jetbrains.kotlin.diagnostics.DiagnosticContext
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.KtDiagnostic
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticReporterWithContext
+import org.jetbrains.kotlin.diagnostics.KtSourcelessDiagnosticFactory
 import org.jetbrains.kotlin.ir.declarations.IrAnnotationContainer
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrFile
@@ -57,6 +59,19 @@ class KtDiagnosticReporterWithImplicitIrBasedContext(
 
     override fun at(sourceElement: AbstractKtSourceElement?, containingFilePath: String): DiagnosticContextImpl {
         error("Should not be called directly")
+    }
+
+    override fun report(factory: KtSourcelessDiagnosticFactory, message: String) {
+        val context = object : DiagnosticContext {
+            override val containingFilePath: String?
+                get() = null
+
+            override fun isDiagnosticSuppressed(diagnostic: KtDiagnostic): Boolean = false
+            override val languageVersionSettings: LanguageVersionSettings
+                get() = this@KtDiagnosticReporterWithImplicitIrBasedContext.languageVersionSettings
+        }
+        val diagnostic = factory.create(message, languageVersionSettings) ?: return
+        report(diagnostic, context)
     }
 
     internal inner class DiagnosticContextWithSuppressionImpl(
