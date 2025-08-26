@@ -17,7 +17,6 @@ import com.intellij.psi.PsiManager
 import com.intellij.psi.impl.source.PsiFileImpl
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.stubs.*
-import com.intellij.util.containers.CollectionFactory
 import org.jetbrains.kotlin.analysis.api.platform.KotlinDeserializedDeclarationsOrigin
 import org.jetbrains.kotlin.analysis.api.platform.KotlinPlatformSettings
 import org.jetbrains.kotlin.analysis.api.platform.declarations.*
@@ -427,24 +426,6 @@ private val KtFile.forcedStub: KotlinFileStubImpl
         val stubTree = greenStubTree ?: calcStubTree()
         return stubTree.root as KotlinFileStubImpl
     }
-
-/**
- * Test application service to store stubs of libraries shared between tests.
- *
- * Otherwise, each test would start indexing of stdlib from scratch and under the lock, which makes tests extremely slow.
- *
- * The cache shouldn't be stored on hard references to avoid problems with memory leaks.
- *
- * **Note**: shared stubs might store psi, but **MUST NOT** reuse it for different files
- */
-internal class KotlinFakeClsStubsCache {
-    private val fileStubs = CollectionFactory.createConcurrentWeakKeySoftValueMap<VirtualFile, KotlinFileStubImpl>()
-
-    fun getOrBuildStub(
-        compiledFile: VirtualFile,
-        stubBuilder: (VirtualFile) -> KotlinFileStubImpl,
-    ): KotlinFileStubImpl = fileStubs.computeIfAbsent(compiledFile, stubBuilder)
-}
 
 class KotlinStandaloneDeclarationProviderMerger(private val project: Project) : KotlinDeclarationProviderMerger {
     override fun merge(providers: List<KotlinDeclarationProvider>): KotlinDeclarationProvider =
