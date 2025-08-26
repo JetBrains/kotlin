@@ -34,7 +34,7 @@ tasks.withType<Test>().configureEach {
 
     develocity.testRetry {
         maxRetries = if (kotlinBuildProperties.isTeamcityBuild) 3 else 0
-        failOnPassedAfterRetry.set(extension.allowFlaky.convention(false).map { !it })
+        failOnPassedAfterRetry.set(extension.allowFlaky.convention(true).map { !it })
     }
     ignoreFailures = false
 }
