@@ -13,6 +13,7 @@ import org.antlr.v4.runtime.tree.TerminalNode
 import org.jetbrains.kotlin.js.backend.ast.JsBinaryOperation
 import org.jetbrains.kotlin.js.backend.ast.JsBinaryOperator
 import org.jetbrains.kotlin.js.backend.ast.JsBlock
+import org.jetbrains.kotlin.js.backend.ast.JsDebugger
 import org.jetbrains.kotlin.js.backend.ast.JsExpression
 import org.jetbrains.kotlin.js.backend.ast.JsFunction
 import org.jetbrains.kotlin.js.backend.ast.JsNode
@@ -20,43 +21,21 @@ import org.jetbrains.kotlin.js.backend.ast.JsParameter
 import org.jetbrains.kotlin.js.backend.ast.JsStatement
 import org.jetbrains.kotlin.js.backend.ast.JsVars
 import org.jetbrains.kotlin.js.parser.antlr.generated.JavaScriptParser
+import org.jetbrains.kotlin.js.parser.antlr.generated.JavaScriptParserBaseVisitor
 import org.jetbrains.kotlin.js.parser.antlr.generated.JavaScriptParserVisitor
+import kotlin.math.exp
 
 class JsAstMapperVisitor(
     private val fileName: String,
     private val scopeContext: ScopeContext
-) : JavaScriptParserVisitor<JsNode?> {
-    override fun visitProgram(ctx: JavaScriptParser.ProgramContext): JsNode? {
-        TODO("Not yet implemented")
-    }
-
-    override fun visitSourceElement(ctx: JavaScriptParser.SourceElementContext): JsNode? {
-        TODO("Not yet implemented")
-    }
-
+) : JavaScriptParserBaseVisitor<JsNode?>() {
     // ENTRY POINT
     override fun visitStatement(ctx: JavaScriptParser.StatementContext): JsStatement? {
-        ctx.block()?.run {
-            return visitBlock(this)
-        }
-
-        ctx.variableStatement()?.run {
-            return visitVariableStatement(this)
-        }
-
-        ctx.emptyStatement_()?.run {
-            return null
-        }
-
         ctx.functionDeclaration()?.run {
             return visitFunctionDeclaration(this).makeStmt()
         }
 
-        ctx.expressionStatement()?.run {
-            return visitExpressionStatement(this)
-        }
-
-        TODO("Node is not supported yet: ${ctx.javaClass.name}")
+        return super.visitStatement(ctx).expect<JsStatement>()
     }
 
     override fun visitBlock(ctx: JavaScriptParser.BlockContext): JsBlock {
@@ -72,59 +51,59 @@ class JsAstMapperVisitor(
     }
 
     override fun visitImportFromBlock(ctx: JavaScriptParser.ImportFromBlockContext): JsNode? {
-        TODO("Not yet implemented")
+        TODO("Import statemements not supported yet")
     }
 
     override fun visitImportModuleItems(ctx: JavaScriptParser.ImportModuleItemsContext): JsNode? {
-        TODO("Not yet implemented")
+        TODO("Import statemements not supported yet")
     }
 
     override fun visitImportAliasName(ctx: JavaScriptParser.ImportAliasNameContext): JsNode? {
-        TODO("Not yet implemented")
+        TODO("Import statemements not supported yet")
     }
 
     override fun visitModuleExportName(ctx: JavaScriptParser.ModuleExportNameContext): JsNode? {
-        TODO("Not yet implemented")
+        TODO("Import statemements not supported yet")
     }
 
     override fun visitImportedBinding(ctx: JavaScriptParser.ImportedBindingContext): JsNode? {
-        TODO("Not yet implemented")
+        TODO("Import statemements not supported yet")
     }
 
     override fun visitImportDefault(ctx: JavaScriptParser.ImportDefaultContext): JsNode? {
-        TODO("Not yet implemented")
+        TODO("Import statemements not supported yet")
     }
 
     override fun visitImportNamespace(ctx: JavaScriptParser.ImportNamespaceContext): JsNode? {
-        TODO("Not yet implemented")
+        TODO("Import statemements not supported yet")
     }
 
     override fun visitImportFrom(ctx: JavaScriptParser.ImportFromContext): JsNode? {
-        TODO("Not yet implemented")
+        TODO("Import statemements not supported yet")
     }
 
     override fun visitAliasName(ctx: JavaScriptParser.AliasNameContext): JsNode? {
-        TODO("Not yet implemented")
+        TODO("Import statemements not supported yet")
     }
 
     override fun visitExportDeclaration(ctx: JavaScriptParser.ExportDeclarationContext): JsNode? {
-        TODO("Not yet implemented")
+        TODO("Export statemements not supported yet")
     }
 
     override fun visitExportDefaultDeclaration(ctx: JavaScriptParser.ExportDefaultDeclarationContext): JsNode? {
-        TODO("Not yet implemented")
+        TODO("Export statemements not supported yet")
     }
 
     override fun visitExportFromBlock(ctx: JavaScriptParser.ExportFromBlockContext): JsNode? {
-        TODO("Not yet implemented")
+        TODO("Export statemements not supported yet")
     }
 
     override fun visitExportModuleItems(ctx: JavaScriptParser.ExportModuleItemsContext): JsNode? {
-        TODO("Not yet implemented")
+        TODO("Export statemements not supported yet")
     }
 
     override fun visitExportAliasName(ctx: JavaScriptParser.ExportAliasNameContext): JsNode? {
-        TODO("Not yet implemented")
+        TODO("Export statemements not supported yet")
     }
 
     override fun visitDeclaration(ctx: JavaScriptParser.DeclarationContext): JsNode? {
@@ -143,12 +122,18 @@ class JsAstMapperVisitor(
         TODO("Not yet implemented")
     }
 
-    override fun visitEmptyStatement_(ctx: JavaScriptParser.EmptyStatement_Context): JsStatement {
-        TODO("Not yet implemented")
+    override fun visitEmptyStatement_(ctx: JavaScriptParser.EmptyStatement_Context): JsStatement? {
+        return null
     }
 
     override fun visitExpressionStatement(ctx: JavaScriptParser.ExpressionStatementContext): JsStatement? {
-        TODO("Not yet implemented")
+        val exprSequence = ctx.expressionSequence()
+        val expressions = exprSequence.singleExpression()
+        return when (expressions.size) {
+            0 -> null
+            1 -> visit(expressions[0]).expect<JsExpression>().makeStmt()
+            else -> mapComma(ctx.expressionSequence()).expect<JsBinaryOperation>().makeStmt()
+        }
     }
 
     override fun visitIfStatement(ctx: JavaScriptParser.IfStatementContext): JsNode? {
@@ -239,8 +224,8 @@ class JsAstMapperVisitor(
         TODO("Not yet implemented")
     }
 
-    override fun visitDebuggerStatement(ctx: JavaScriptParser.DebuggerStatementContext): JsNode? {
-        TODO("Not yet implemented")
+    override fun visitDebuggerStatement(ctx: JavaScriptParser.DebuggerStatementContext): JsDebugger {
+        return JsDebugger()
     }
 
     override fun visitFunctionDeclaration(ctx: JavaScriptParser.FunctionDeclarationContext): JsFunction {
@@ -705,10 +690,6 @@ class JsAstMapperVisitor(
         TODO("Not yet implemented")
     }
 
-    override fun visit(tree: ParseTree?): JsNode? {
-        TODO("Not yet implemented")
-    }
-
     override fun visitChildren(node: RuleNode?): JsNode? {
         TODO("Not yet implemented")
     }
@@ -724,8 +705,8 @@ class JsAstMapperVisitor(
     private fun mapComma(sequence: JavaScriptParser.ExpressionSequenceContext): JsBinaryOperation? {
         fun reduce(i: Int, expressions: List<JavaScriptParser.SingleExpressionContext>): JsBinaryOperation {
             if (i == expressions.size - 2) {
-                val left = visitSingleExpression(expressions[i])
-                val right = visitSingleExpression(expressions[i + 1])
+                val left = visit(expressions[i]).expect<JsExpression>()
+                val right = visit(expressions[i + 1]).expect<JsExpression>()
                 return JsBinaryOperation(JsBinaryOperator.COMMA, left, right)
             }
 
@@ -735,14 +716,19 @@ class JsAstMapperVisitor(
                 reduce(i + 1, expressions)
             )
         }
+
+        val expressions = sequence.singleExpression()
+        if (expressions.size < 2) return null
+
+        return reduce(0, sequence.singleExpression())
     }
 
     private fun mapBlock(statements: List<JavaScriptParser.StatementContext>): JsBlock {
         val block = JsBlock()
         statements
             // visitStatement can return null in some cases, like an empty statement (';') maps to nothing.
-            // mayeb we need to consider it including into resulting AST as it may be useful for debugging and stepping.
-            .mapNotNull { visitStatement(it) }
+            // maybe we need to consider it including into resulting AST as it may be useful for debugging and stepping.
+            .mapNotNull { visit(it).expect<JsStatement?>() }
             .forEach { block.statements.add(it) }
 
         return block
@@ -773,11 +759,16 @@ class JsAstMapperVisitor(
             function.parameters.add(JsParameter(paramName).applyLocation(fileName,paramNode))
         }
 
-        val block = visitFunctionBody(body)
+        val block = visit(body).expect<JsBlock>()
         function.body = block
 
         return function.also {
             scopeContext.exitFunction()
         }
+    }
+
+    private inline fun <reified T> JsNode?.expect(): T {
+        if (this !is T) throw AssertionError("Expected ${T::class}, got ${this?.javaClass}")
+        return this
     }
 }
