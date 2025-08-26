@@ -3214,6 +3214,37 @@
                         }
                     },
                     {
+                        "name": "Xfragment-friend-dependency",
+                        "shortName": null,
+                        "deprecatedName": null,
+                        "description": {
+                            "current": "Declare common klib friend dependencies for the specific fragment.\nThis argument can be specified for any HMPP module except the platform leaf module: it takes dependencies from the platform specific friend module arguments.\nThe argument should be used only if the new compilation scheme is enabled with -Xseparate-kmp-compilation\n",
+                            "valueInVersions": []
+                        },
+                        "delimiter": "None",
+                        "valueType": {
+                            "type": "org.jetbrains.kotlin.arguments.dsl.types.StringArrayType",
+                            "defaultValue": {
+                                "current": null,
+                                "valueInVersions": []
+                            },
+                            "isNullable": {
+                                "current": true,
+                                "valueInVersions": []
+                            }
+                        },
+                        "valueDescription": {
+                            "current": "<fragment name>:<path>",
+                            "valueInVersions": []
+                        },
+                        "releaseVersionsMetadata": {
+                            "introducedVersion": "2.3.0",
+                            "stabilizedVersion": null,
+                            "deprecatedVersion": null,
+                            "removedVersion": null
+                        }
+                    },
+                    {
                         "name": "Xseparate-kmp-compilation",
                         "shortName": null,
                         "deprecatedName": null,

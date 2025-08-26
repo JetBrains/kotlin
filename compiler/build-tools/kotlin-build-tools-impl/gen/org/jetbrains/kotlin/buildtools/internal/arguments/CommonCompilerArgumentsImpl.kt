@@ -45,6 +45,7 @@ import org.jetbrains.kotlin.buildtools.api.arguments.CommonCompilerArguments.Com
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonCompilerArguments.Companion.X_EXPECT_ACTUAL_CLASSES
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonCompilerArguments.Companion.X_EXPLICIT_API
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonCompilerArguments.Companion.X_EXPLICIT_BACKING_FIELDS
+import org.jetbrains.kotlin.buildtools.api.arguments.CommonCompilerArguments.Companion.X_FRAGMENT_FRIEND_DEPENDENCY
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonCompilerArguments.Companion.X_IGNORE_CONST_OPTIMIZATION_ERRORS
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonCompilerArguments.Companion.X_INLINE_CLASSES
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonCompilerArguments.Companion.X_LIST_PHASES
@@ -170,6 +171,7 @@ internal open class CommonCompilerArgumentsImpl : CommonToolArgumentsImpl(),
     if ("X_RENDER_INTERNAL_DIAGNOSTIC_NAMES" in optionsMap) { arguments.renderInternalDiagnosticNames = get(X_RENDER_INTERNAL_DIAGNOSTIC_NAMES) }
     if ("X_ALLOW_ANY_SCRIPTS_IN_SOURCE_ROOTS" in optionsMap) { arguments.allowAnyScriptsInSourceRoots = get(X_ALLOW_ANY_SCRIPTS_IN_SOURCE_ROOTS) }
     if ("X_REPORT_ALL_WARNINGS" in optionsMap) { arguments.reportAllWarnings = get(X_REPORT_ALL_WARNINGS) }
+    if ("X_FRAGMENT_FRIEND_DEPENDENCY" in optionsMap) { arguments.fragmentFriendDependencies = get(X_FRAGMENT_FRIEND_DEPENDENCY) }
     if ("X_IGNORE_CONST_OPTIMIZATION_ERRORS" in optionsMap) { arguments.ignoreConstOptimizationErrors = get(X_IGNORE_CONST_OPTIMIZATION_ERRORS) }
     if ("X_DONT_WARN_ON_ERROR_SUPPRESSION" in optionsMap) { arguments.dontWarnOnErrorSuppression = get(X_DONT_WARN_ON_ERROR_SUPPRESSION) }
     if ("X_WHEN_GUARDS" in optionsMap) { arguments.whenGuards = get(X_WHEN_GUARDS) }
@@ -249,6 +251,7 @@ internal open class CommonCompilerArgumentsImpl : CommonToolArgumentsImpl(),
     if ("X_RENDER_INTERNAL_DIAGNOSTIC_NAMES" in optionsMap) { arguments.add("-Xrender-internal-diagnostic-names=" + get(X_RENDER_INTERNAL_DIAGNOSTIC_NAMES)) }
     if ("X_ALLOW_ANY_SCRIPTS_IN_SOURCE_ROOTS" in optionsMap) { arguments.add("-Xallow-any-scripts-in-source-roots=" + get(X_ALLOW_ANY_SCRIPTS_IN_SOURCE_ROOTS)) }
     if ("X_REPORT_ALL_WARNINGS" in optionsMap) { arguments.add("-Xreport-all-warnings=" + get(X_REPORT_ALL_WARNINGS)) }
+    if ("X_FRAGMENT_FRIEND_DEPENDENCY" in optionsMap) { arguments.add("-Xfragment-friend-dependency=" + get(X_FRAGMENT_FRIEND_DEPENDENCY)) }
     if ("X_IGNORE_CONST_OPTIMIZATION_ERRORS" in optionsMap) { arguments.add("-Xignore-const-optimization-errors=" + get(X_IGNORE_CONST_OPTIMIZATION_ERRORS)) }
     if ("X_DONT_WARN_ON_ERROR_SUPPRESSION" in optionsMap) { arguments.add("-Xdont-warn-on-error-suppression=" + get(X_DONT_WARN_ON_ERROR_SUPPRESSION)) }
     if ("X_WHEN_GUARDS" in optionsMap) { arguments.add("-Xwhen-guards=" + get(X_WHEN_GUARDS)) }
@@ -321,6 +324,7 @@ internal open class CommonCompilerArgumentsImpl : CommonToolArgumentsImpl(),
     this[X_RENDER_INTERNAL_DIAGNOSTIC_NAMES] = arguments.renderInternalDiagnosticNames
     this[X_ALLOW_ANY_SCRIPTS_IN_SOURCE_ROOTS] = arguments.allowAnyScriptsInSourceRoots
     this[X_REPORT_ALL_WARNINGS] = arguments.reportAllWarnings
+    this[X_FRAGMENT_FRIEND_DEPENDENCY] = arguments.fragmentFriendDependencies
     this[X_IGNORE_CONST_OPTIMIZATION_ERRORS] = arguments.ignoreConstOptimizationErrors
     this[X_DONT_WARN_ON_ERROR_SUPPRESSION] = arguments.dontWarnOnErrorSuppression
     this[X_WHEN_GUARDS] = arguments.whenGuards
@@ -494,6 +498,9 @@ internal open class CommonCompilerArgumentsImpl : CommonToolArgumentsImpl(),
 
     public val X_REPORT_ALL_WARNINGS: CommonCompilerArgument<Boolean> =
         CommonCompilerArgument("X_REPORT_ALL_WARNINGS")
+
+    public val X_FRAGMENT_FRIEND_DEPENDENCY: CommonCompilerArgument<Array<String>?> =
+        CommonCompilerArgument("X_FRAGMENT_FRIEND_DEPENDENCY")
 
     public val X_IGNORE_CONST_OPTIMIZATION_ERRORS: CommonCompilerArgument<Boolean> =
         CommonCompilerArgument("X_IGNORE_CONST_OPTIMIZATION_ERRORS")

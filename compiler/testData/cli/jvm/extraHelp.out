@@ -240,6 +240,11 @@ where advanced options include:
                              This argument is required for any HMPP module except the platform leaf module: it takes dependencies from -cp/-libraries.
                              The argument should be used only if the new compilation scheme is enabled with -Xseparate-kmp-compilation
 
+  -Xfragment-friend-dependency=<fragment name>:<path>
+                             Declare common klib friend dependencies for the specific fragment.
+                             This argument can be specified for any HMPP module except the platform leaf module: it takes dependencies from the platform specific friend module arguments.
+                             The argument should be used only if the new compilation scheme is enabled with -Xseparate-kmp-compilation
+
   -Xseparate-kmp-compilation Enables the separated compilation scheme, in which common source sets are analyzed against their own dependencies
   -Xignore-const-optimization-errors
                              Ignore all compilation exceptions while optimizing some constant expressions.
