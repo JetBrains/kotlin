@@ -135,11 +135,7 @@ class WasmIrToText(
 
         newLine()
 
-        val parenthesisNeeded = wasmInstr.operator == WasmOp.REF_CAST_NULL
-        if (wasmInstr.operator == WasmOp.REF_CAST_NULL) // TODO fix mnemonics instead
-            stringBuilder.append("ref.cast (ref null")
-        else
-            stringBuilder.append(wasmInstr.operator.mnemonic)
+        stringBuilder.append(wasmInstr.operator.mnemonic)
 
         if (
             op == WasmOp.BLOCK ||
@@ -157,13 +153,13 @@ class WasmIrToText(
             wasmInstr.immediates.reversed().forEach {
                 appendImmediate(it)
             }
+            stringBuilder.append(wasmInstr.operator.tailMnemonic)
             return
         }
         wasmInstr.immediates.forEach {
             appendImmediate(it)
         }
-        if (parenthesisNeeded)
-            stringBuilder.append(")")
+        stringBuilder.append(wasmInstr.operator.tailMnemonic)
     }
 
     private fun appendImmediate(x: WasmImmediate) {
