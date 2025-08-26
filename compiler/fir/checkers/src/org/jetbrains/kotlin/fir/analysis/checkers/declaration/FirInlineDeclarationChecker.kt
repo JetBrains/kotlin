@@ -260,7 +260,7 @@ object FirInlineDeclarationChecker : FirFunctionChecker(MppCheckerKind.Common) {
         private fun FirClassifierSymbol<*>.isDefinedInInlineFunction(): Boolean {
             return when (val symbol = this) {
                 is FirAnonymousObjectSymbol -> true
-                is FirRegularClassSymbol -> symbol.classId.isLocal
+                is FirRegularClassSymbol -> symbol.isLocal
                 is FirTypeAliasSymbol, is FirTypeParameterSymbol -> error("Unexpected classifier declaration type: $symbol")
             }
         }

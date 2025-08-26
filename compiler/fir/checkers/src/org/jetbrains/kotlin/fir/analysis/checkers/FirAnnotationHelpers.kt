@@ -16,9 +16,9 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.context.findClosest
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
-import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
@@ -116,9 +116,8 @@ fun checkRepeatedAnnotation(
 }
 
 fun FirAnnotation.isRepeatable(session: FirSession): Boolean {
-    val annotationClassId = this.toAnnotationClassId(session) ?: return false
-    if (annotationClassId.isLocal) return false
-    val annotationClass = session.symbolProvider.getClassLikeSymbolByClassId(annotationClassId) ?: return false
+    val annotationClass = this.toAnnotationClassLikeSymbol(session) ?: return false
+    if (annotationClass.isLocal) return false
 
     return session.annotationPlatformSupport.symbolContainsRepeatableAnnotation(annotationClass, session)
 }

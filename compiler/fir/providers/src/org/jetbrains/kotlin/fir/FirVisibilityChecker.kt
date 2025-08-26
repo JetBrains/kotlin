@@ -336,11 +336,11 @@ abstract class FirVisibilityChecker : FirSessionComponent {
     }
 
     private fun ConeClassLikeLookupTag.ownerIfCompanion(session: FirSession): ConeClassLikeLookupTag? {
-        if (classId.isLocal) return null
         val outerClassId = classId.outerClassId ?: return null
-        val ownerSymbol = toRegularClassSymbol(session)
+        val ownerSymbol = toSymbol(session)
+        if (ownerSymbol?.isLocal == true) return null
 
-        if (ownerSymbol?.fir?.isCompanion == true) {
+        if ((ownerSymbol as? FirRegularClassSymbol)?.fir?.isCompanion == true) {
             return outerClassId.toLookupTag()
         }
         return null
