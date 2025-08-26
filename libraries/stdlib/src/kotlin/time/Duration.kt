@@ -1089,11 +1089,10 @@ public fun Int.toDuration(unit: DurationUnit): Duration {
 @SinceKotlin("1.6")
 public fun Long.toDuration(unit: DurationUnit): Duration {
     val maxNsInUnit = convertDurationUnitOverflow(MAX_NANOS, DurationUnit.NANOSECONDS, unit)
-    if (this in -maxNsInUnit..maxNsInUnit) {
-        return durationOfNanos(convertDurationUnitOverflow(this, unit, DurationUnit.NANOSECONDS))
-    } else {
-        val millis = convertDurationUnit(this, unit, DurationUnit.MILLISECONDS)
-        return durationOfMillis(millis.coerceIn(-MAX_MILLIS, MAX_MILLIS))
+    return when {
+        this in -maxNsInUnit..maxNsInUnit -> durationOfNanos(convertDurationUnitOverflow(this, unit, DurationUnit.NANOSECONDS))
+        unit >= DurationUnit.MILLISECONDS -> durationOfMillis(convertDurationUnitToMilliseconds(this, unit))
+        else -> durationOfMillis(convertDurationUnit(this, unit, DurationUnit.MILLISECONDS).coerceIn(-MAX_MILLIS, MAX_MILLIS))
     }
 }
 
@@ -1185,7 +1184,7 @@ private fun parseIsoStringFormat(
     var totalMillis = 0L
     var totalNanos = 0L
     var isTimeComponent = false
-    var prevUnit = '\u0000'
+    var prevUnit: DurationUnit? = null
 
     while (index < value.length) {
         val ch = value[index]
@@ -1203,43 +1202,34 @@ private fun parseIsoStringFormat(
             sign = localSign
         }
 
-        var unit = value[index]
+        if (value[index] == '.') {
+            index++
+            val fractionValue = Duration.fractionalParser.parse(value, index) { fractionEndIndex ->
+                if (fractionEndIndex == index || fractionEndIndex == value.length || value[fractionEndIndex] != 'S') {
+                    return handleError(throwException)
+                }
+                index = fractionEndIndex
+            }
+            totalNanos = sign * fractionValue.fractionDigitsToNanos(DurationUnit.SECONDS)
+        }
 
-        if (unit == 'D') {
+        val unit = value.isoDurationUnitByShortNameOrNull(index)
+            ?: return handleError(throwException, "Unknown duration unit short name: ${value[index]}")
+        if (prevUnit != null && prevUnit <= unit) return handleError(throwException, "Unexpected order of duration components")
+        prevUnit = unit
+
+        if (unit == DurationUnit.DAYS) {
             if (isTimeComponent) return handleError(throwException)
-            totalMillis = longValue.multiplyWithoutOverflow(MILLIS_IN_DAY)
+            totalMillis = convertDurationUnitToMilliseconds(longValue, unit)
         } else {
             if (!isTimeComponent) return handleError(throwException)
-            totalMillis = totalMillis.addWithoutOverflow(
-                longValue.multiplyWithoutOverflow(
-                    when (unit) {
-                        'H' -> MILLIS_IN_HOUR
-                        'M' -> MILLIS_IN_MINUTE
-                        'S', '.' -> MILLIS_IN_SECOND
-                        else -> return handleError(
-                            throwException,
-                            "Invalid or unsupported duration ISO non-time unit $unit for value $longValue"
-                        )
-                    }
-                )
-            ).also { if (it == Duration.INVALID_RAW_VALUE) return handleError(throwException) }
-
-            if (unit == '.') {
-                index++
-                val fractionStartIndex = index
-                val fractionValue = Duration.fractionalParser.parse(value, index) { index = it }
-                if (index == fractionStartIndex || index == value.length || value[index] != 'S') return handleError(throwException)
-                totalNanos = sign * fractionValue.fractionDigitsToNanos(DurationUnit.SECONDS)
-                unit = 'S'
-            }
-
-            // Because the order of the units matches their lexical order (D, H, M, S), we can compare units as symbols
-            if (unit <= prevUnit) return handleError(throwException, "Unexpected order of duration components")
-            prevUnit = unit
+            totalMillis = totalMillis.addWithoutOverflow(convertDurationUnitToMilliseconds(longValue, unit))
+                .also { if (it == Duration.INVALID_RAW_VALUE) return handleError(throwException) }
         }
 
         index++
     }
+
     return totalMillis.toDuration(DurationUnit.MILLISECONDS) + totalNanos.toDuration(DurationUnit.NANOSECONDS)
 }
 
@@ -1298,11 +1288,9 @@ private fun parseDefaultStringFormat(
             }
         } else 0L
 
-        val unit = value.durationUnitByShortNameOrNull(index)
+        val unit = value.defaultDurationUnitByShortNameOrNull(index)
             ?: return handleError(throwException, "Unknown duration unit short name: ${value[index]}")
-        if (prevUnit != null && prevUnit <= unit) {
-            return handleError(throwException, "Unexpected order of duration components")
-        }
+        if (prevUnit != null && prevUnit <= unit) return handleError(throwException, "Unexpected order of duration components")
         prevUnit = unit
 
         when (unit) {
@@ -1328,8 +1316,7 @@ private fun parseDefaultStringFormat(
             else -> {
                 // When other time units are greater than or equal to milliseconds,
                 // we convert them to milliseconds, add them to totalMillis, and preserve any overflow.
-                val multiplier = unit.millisMultiplier
-                totalMillis = totalMillis.addWithoutOverflow(longValue.multiplyWithoutOverflow(multiplier))
+                totalMillis = totalMillis.addWithoutOverflow(convertDurationUnitToMilliseconds(longValue, unit))
             }
         }
 
@@ -1349,30 +1336,6 @@ private fun parseDefaultStringFormat(
     }
 
     return totalMillis.toDuration(DurationUnit.MILLISECONDS) + totalNanos.toDuration(DurationUnit.NANOSECONDS)
-}
-
-/**
- * Checks if multiplying two Long values exceeds [MAX_MILLIS] bounds.
- *
- * Uses a bit-counting technique to determine if the product of [a] and [b]
- * would exceed the bounds of a 64-bit signed integer without actually
- * performing the multiplication.
- *
- * @return true if [a] * [b] would overflow [MAX_MILLIS] or -[MAX_MILLIS]
- */
-private fun willMultiplyOverflow(a: Long, b: Long): Boolean {
-    val leadingZerosA = abs(a).countLeadingZeroBits()
-    val leadingZerosB = abs(b).countLeadingZeroBits()
-    return (64 - leadingZerosA) + (64 - leadingZerosB) > 63
-}
-
-/**
- * Multiplies this Long by another, clamping the result to ±[MAX_MILLIS] on overflow.
- * @return the product or ±[MAX_MILLIS] if overflow occurs
- */
-private fun Long.multiplyWithoutOverflow(other: Long): Long = when {
-    willMultiplyOverflow(this, other) -> if (this > 0) MAX_MILLIS else -MAX_MILLIS
-    else -> this * other
 }
 
 /**
@@ -1450,12 +1413,16 @@ private inline fun String.skipWhile(startIndex: Int, predicate: (Char) -> Boolea
 }
 
 /**
- * Parses a duration unit from its short name at the given position.
- * Recognizes: d (days), h (hours), m/ms (minutes/milliseconds), s (seconds), us (microseconds), ns (nanoseconds).
+ * Parses a duration unit from its default format short name at the given position.
+ *
+ * Recognizes lowercase unit abbreviations:
+ * - Single character: d (days), h (hours), m (minutes), s (seconds)
+ * - Two characters: ms (milliseconds), us (microseconds), ns (nanoseconds)
+ *
  * @param start the index in the string where the unit name starts
  * @return the corresponding [DurationUnit] or null if no valid unit is found
  */
-private fun String.durationUnitByShortNameOrNull(start: Int): DurationUnit? {
+private fun String.defaultDurationUnitByShortNameOrNull(start: Int): DurationUnit? {
     val first = this[start]
     val second = if (start < lastIndex) this[start + 1] else '\u0000'
 
@@ -1469,6 +1436,21 @@ private fun String.durationUnitByShortNameOrNull(start: Int): DurationUnit? {
         else -> null
     }
 }
+
+/**
+ * Parses a duration unit from its ISO 8601 short name at the given position.
+ * Recognizes: D (days), H (hours), M (minutes), S (seconds).
+ * @param start the index in the string where the unit name starts
+ * @return the corresponding [DurationUnit] or null if no valid unit is found
+ */
+private fun String.isoDurationUnitByShortNameOrNull(start: Int): DurationUnit? =
+    when (this[start]) {
+        'D' -> DurationUnit.DAYS
+        'H' -> DurationUnit.HOURS
+        'M' -> DurationUnit.MINUTES
+        'S' -> DurationUnit.SECONDS
+        else -> null
+    }
 
 /**
  * Multiplier to convert a 15-digit fraction to nanoseconds for this unit.
@@ -1509,20 +1491,6 @@ private val DurationUnit.fallbackFractionMultiplier: Long
         DurationUnit.HOURS -> 3_600_000_000_000L
         DurationUnit.DAYS -> 86_400_000_000_000L
         else -> error("Invalid unit: $this for fallback fraction multiplier")
-    }
-
-/**
- * Number of milliseconds in one unit of this DurationUnit.
- * Used for converting whole unit values to milliseconds during parsing.
- */
-private val DurationUnit.millisMultiplier: Long
-    get() = when (this) {
-        DurationUnit.DAYS -> MILLIS_IN_DAY
-        DurationUnit.HOURS -> MILLIS_IN_HOUR
-        DurationUnit.MINUTES -> MILLIS_IN_MINUTE
-        DurationUnit.SECONDS -> MILLIS_IN_SECOND
-        DurationUnit.MILLISECONDS -> 1L
-        else -> error("Wrong unit for millisMultiplier: $this")
     }
 
 /**
