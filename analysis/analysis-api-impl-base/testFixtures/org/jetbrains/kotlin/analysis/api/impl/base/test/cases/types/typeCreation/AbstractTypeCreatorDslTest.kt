@@ -138,5 +138,90 @@ abstract class AbstractTypeCreatorDslTest : AbstractAnalysisApiBasedTest() {
         protected fun getTypeParameterSymbolByCaret(label: String): KaTypeParameterSymbol {
             return (caretToType[label] as? KaTypeParameterType)?.symbol ?: error("Type under `$label` is not a type parameter type")
         }
+
+        inner class IntersectionType {
+            fun testSingleConjunct(): KaType {
+                val type = getTypeByCaret("type")
+                return session.typeCreator.intersectionType {
+                    conjunct { type }
+                }
+            }
+
+            fun testThreeRandomTypes(): KaType {
+                val type1 = getTypeByCaret("1")
+                val type2 = getTypeByCaret("2")
+                val type3 = getTypeByCaret("3")
+                return session.typeCreator.intersectionType {
+                    conjunct { type1 }
+                    conjunct(type2)
+                    conjunct { type3 }
+                }
+            }
+
+            fun testThreeSubtypes(): KaType {
+                val type1 = getTypeByCaret("1")
+                val type2 = getTypeByCaret("2")
+                val type3 = getTypeByCaret("3")
+                return session.typeCreator.intersectionType {
+                    conjunct { type1 }
+                    conjuncts {
+                        listOf(type2, type3)
+                    }
+                }
+            }
+
+            fun testThreeUserSubtypes(): KaType {
+                val type1 = getTypeByCaret("1")
+                val type2 = getTypeByCaret("2")
+                val type3 = getTypeByCaret("3")
+                return session.typeCreator.intersectionType {
+                    conjunct { type1 }
+                    conjuncts(listOf(type2, type3))
+                }
+            }
+
+            fun testWithError(): KaType {
+                val type1 = getTypeByCaret("1")
+                val type2 = getTypeByCaret("2")
+                val type3 = getTypeByCaret("3")
+                return session.typeCreator.intersectionType(listOf(type1, type2, type3))
+            }
+
+            fun testDuplicates(): KaType {
+                val type = getTypeByCaret("type")
+                return session.typeCreator.intersectionType(listOf(type, type, type))
+            }
+
+            fun testAnotherIntersectionTypeAsConjunct(): KaType {
+                val type1 = getTypeByCaret("1")
+                val type2 = getTypeByCaret("2")
+                val type3 = getTypeByCaret("3")
+                val type4 = getTypeByCaret("4")
+                val intersection = session.typeCreator.intersectionType {
+                    conjunct { type1 }
+                    conjunct { type2 }
+                    conjunct { type3 }
+                }
+
+                return session.typeCreator.intersectionType {
+                    conjunct(intersection)
+                    conjunct { type4 }
+                }
+            }
+
+            fun testWithAnnotations(): KaType {
+                val annotationClassId1 = ClassId.fromString("MyAnno1")
+                val annotationClassId2 = ClassId.fromString("MyAnno2")
+                val annotationClassId3 = ClassId.fromString("MyAnno3")
+
+                val type = getTypeByCaret("type")
+                return session.typeCreator.intersectionType {
+                    conjunct { type }
+                    annotation { annotationClassId1 }
+                    annotation(annotationClassId2)
+                    annotations(listOf(annotationClassId3))
+                }
+            }
+        }
     }
 }
