@@ -1,10 +1,6 @@
-expect annotation class CommonAnnotationForAnnotationClassesOnly(text: String) {
-    val text: String
-}
+expect annotation class CommonAnnotationForAnnotationClassesOnly(val text: String)
 
-expect annotation class CommonAnnotation(text: String) {
-    val text: String
-}
+expect annotation class CommonAnnotation(val text: String)
 
 expect var propertyWithoutBackingField: Double
 expect val propertyWithBackingField: Double
@@ -19,4 +15,6 @@ expect class AnnotatedClass(value: String) {
 }
 typealias AnnotatedLiftedUpTypeAlias = AnnotatedClass
 
-expect class AnnotatedNonLiftedUpTypeAlias expect constructor(expect val value: String)
+expect class AnnotatedNonLiftedUpTypeAlias constructor(value: String) {
+    val value: String
+}

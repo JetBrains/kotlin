@@ -102,7 +102,9 @@ class HierarchicalPlatformIntegerCommonizationTest : AbstractInlineSourcesCommon
                 
                 typealias AX = Int
                 typealias AY = Long
+                @OptIn(kotlinx.cinterop.ExperimentalForeignApi::class)
                 typealias X = IntVarOf<AX>
+                @OptIn(kotlinx.cinterop.ExperimentalForeignApi::class)
                 typealias Y = LongVarOf<AY>
             """.trimIndent()
 
@@ -111,7 +113,9 @@ class HierarchicalPlatformIntegerCommonizationTest : AbstractInlineSourcesCommon
 
                 typealias AX = Long
                 typealias AY = Int
+                @OptIn(kotlinx.cinterop.ExperimentalForeignApi::class)
                 typealias X = LongVarOf<AX>
+                @OptIn(kotlinx.cinterop.ExperimentalForeignApi::class)
                 typealias Y = IntVarOf<AY>
             """.trimIndent()
         }
@@ -123,6 +127,7 @@ class HierarchicalPlatformIntegerCommonizationTest : AbstractInlineSourcesCommon
             @UnsafeNumber(["${LINUX_ARM32_HFP.name}: kotlin.Long", "${LINUX_ARM64.name}: kotlin.Int"])
             typealias AX = Int
             typealias AY = PlatformInt
+            @OptIn(kotlinx.cinterop.ExperimentalForeignApi::class)
             @UnsafeNumber(["${LINUX_ARM32_HFP.name}: kotlinx.cinterop.LongVarOf<kotlin.Long>", "${LINUX_ARM64.name}: kotlinx.cinterop.IntVarOf<kotlin.Int>"])
             typealias X = IntVarOf<AX>
             typealias Y = PlatformIntVarOf<AY>
@@ -141,7 +146,9 @@ class HierarchicalPlatformIntegerCommonizationTest : AbstractInlineSourcesCommon
                 
                 typealias AX = UInt
                 typealias AY = ULong
+                @OptIn(kotlinx.cinterop.ExperimentalForeignApi::class)
                 typealias X = UIntVarOf<AX>
+                @OptIn(kotlinx.cinterop.ExperimentalForeignApi::class)
                 typealias Y = ULongVarOf<AY>
             """.trimIndent()
 
@@ -150,7 +157,9 @@ class HierarchicalPlatformIntegerCommonizationTest : AbstractInlineSourcesCommon
 
                 typealias AX = ULong
                 typealias AY = UInt
+                @OptIn(kotlinx.cinterop.ExperimentalForeignApi::class)
                 typealias X = ULongVarOf<AX>
+                @OptIn(kotlinx.cinterop.ExperimentalForeignApi::class)
                 typealias Y = UIntVarOf<AY>
             """.trimIndent()
         }
@@ -162,6 +171,7 @@ class HierarchicalPlatformIntegerCommonizationTest : AbstractInlineSourcesCommon
             @UnsafeNumber(["${LINUX_ARM32_HFP.name}: kotlin.ULong", "${LINUX_ARM64.name}: kotlin.UInt"])
             typealias AX = UInt
             typealias AY = PlatformUInt
+            @OptIn(kotlinx.cinterop.ExperimentalForeignApi::class)
             @UnsafeNumber(["${LINUX_ARM32_HFP.name}: kotlinx.cinterop.ULongVarOf<kotlin.ULong>", "${LINUX_ARM64.name}: kotlinx.cinterop.UIntVarOf<kotlin.UInt>"])
             typealias X = UIntVarOf<AX>
             typealias Y = PlatformUIntVarOf<AY>
@@ -351,6 +361,7 @@ class HierarchicalPlatformIntegerCommonizationTest : AbstractInlineSourcesCommon
                 
                 class C {
                     val i: Int = null!!
+                    @OptIn(kotlinx.cinterop.ExperimentalForeignApi::class)
                     fun v(): IntVarOf<Int> = null!!
                     fun r(): IntRange = null!!
                 }
@@ -365,6 +376,7 @@ class HierarchicalPlatformIntegerCommonizationTest : AbstractInlineSourcesCommon
                 
                 class C {
                     val i: Long = null!!
+                    @OptIn(kotlinx.cinterop.ExperimentalForeignApi::class)
                     fun v(): LongVarOf<Long> = null!!
                     fun r(): LongRange = null!!
                 }
@@ -403,6 +415,7 @@ class HierarchicalPlatformIntegerCommonizationTest : AbstractInlineSourcesCommon
                 
                 class C {
                     fun i(arg: Int) {}
+                    @OptIn(kotlinx.cinterop.ExperimentalForeignApi::class)
                     fun v(arg: IntVarOf<Int>) {}
                     fun r(arg: IntRange) {}
                 }
@@ -417,6 +430,7 @@ class HierarchicalPlatformIntegerCommonizationTest : AbstractInlineSourcesCommon
                 
                 class C {
                     fun i(arg: Long) {}
+                    @OptIn(kotlinx.cinterop.ExperimentalForeignApi::class)
                     fun v(arg: LongVarOf<Long>) {}
                     fun r(arg: LongRange) {}
                 }
@@ -458,6 +472,7 @@ class HierarchicalPlatformIntegerCommonizationTest : AbstractInlineSourcesCommon
                 import kotlinx.cinterop.*
                 
                 typealias X = Int
+                @OptIn(kotlinx.cinterop.ExperimentalForeignApi::class)
                 typealias XV = IntVarOf<X>
             """.trimIndent()
 
@@ -465,6 +480,7 @@ class HierarchicalPlatformIntegerCommonizationTest : AbstractInlineSourcesCommon
                 import kotlinx.cinterop.*
                 
                 typealias X = Int
+                @OptIn(kotlinx.cinterop.ExperimentalForeignApi::class)
                 typealias XV = IntVarOf<X>
             """.trimIndent()
 
@@ -472,6 +488,7 @@ class HierarchicalPlatformIntegerCommonizationTest : AbstractInlineSourcesCommon
                 import kotlinx.cinterop.*
                 
                 typealias X = Long
+                @OptIn(kotlinx.cinterop.ExperimentalForeignApi::class)
                 typealias XV = LongVarOf<X>
             """.trimIndent()
 
@@ -479,6 +496,7 @@ class HierarchicalPlatformIntegerCommonizationTest : AbstractInlineSourcesCommon
                 import kotlinx.cinterop.*
                 
                 typealias X = Long
+                @OptIn(kotlinx.cinterop.ExperimentalForeignApi::class)
                 typealias XV = LongVarOf<X>
             """.trimIndent()
 
@@ -489,6 +507,7 @@ class HierarchicalPlatformIntegerCommonizationTest : AbstractInlineSourcesCommon
             import kotlinx.cinterop.*
             
             typealias X = Int
+            @OptIn(kotlinx.cinterop.ExperimentalForeignApi::class)
             typealias XV = IntVarOf<X>
         """.trimIndent()
         )
@@ -498,6 +517,7 @@ class HierarchicalPlatformIntegerCommonizationTest : AbstractInlineSourcesCommon
             import kotlinx.cinterop.*
             
             typealias X = Long
+            @OptIn(kotlinx.cinterop.ExperimentalForeignApi::class)
             typealias XV = LongVarOf<X>
         """.trimIndent()
         )
@@ -607,6 +627,7 @@ class HierarchicalPlatformIntegerCommonizationTest : AbstractInlineSourcesCommon
                 
                 class Box<T>
                 
+                @OptIn(kotlinx.cinterop.ExperimentalForeignApi::class)
                 fun fn(
                     arg1: Box<kotlinx.cinterop.UIntVarOf<Arm32Alias>>, 
                     arg2: Box<kotlinx.cinterop.UIntVarOf<Arm32Alias>>
@@ -619,6 +640,7 @@ class HierarchicalPlatformIntegerCommonizationTest : AbstractInlineSourcesCommon
                 
                 class Box<T>
                 
+                @OptIn(kotlinx.cinterop.ExperimentalForeignApi::class)
                 fun fn(
                     arg1: Box<kotlinx.cinterop.ULongVarOf<Arm64Alias>>, 
                     arg2: Box<kotlinx.cinterop.ULongVarOf<Arm64Alias>>

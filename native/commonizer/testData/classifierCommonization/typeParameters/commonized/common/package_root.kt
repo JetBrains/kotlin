@@ -1,13 +1,13 @@
-expect class A2<T : Any?>() {
+expect class A2<T>() {
     val property: T
     fun function(value: T): T
 
-    expect class Nested<T : Any?>() {
+    class Nested<T>() {
         val property: T
         fun function(value: T): T
     }
 
-    expect inner class Inner() {
+    inner class Inner() {
         val property: T
         fun function(value: T): T
     }
@@ -17,12 +17,12 @@ expect class B4<T : Any>() {
     val property: T
     fun function(value: T): T
 
-    expect class Nested<T : Any>() {
+    class Nested<T : Any>() {
         val property: T
         fun function(value: T): T
     }
 
-    expect inner class Inner() {
+    inner class Inner() {
         val property: T
         fun function(value: T): T
     }
@@ -32,12 +32,12 @@ expect class C5<T : CharSequence>() {
     val property: T
     fun function(value: T): T
 
-    expect class Nested<T : CharSequence>() {
+    class Nested<T : CharSequence>() {
         val property: T
         fun function(value: T): T
     }
 
-    expect inner class Inner() {
+    inner class Inner() {
         val property: T
         fun function(value: T): T
     }
@@ -47,12 +47,12 @@ expect class D6<T : String>() {
     val property: T
     fun function(value: T): T
 
-    expect class Nested<T : String>() {
+    class Nested<T : String>() {
         val property: T
         fun function(value: T): T
     }
 
-    expect inner class Inner() {
+    inner class Inner() {
         val property: T
         fun function(value: T): T
     }
@@ -62,12 +62,12 @@ expect class E7<String>() {
     val property: String
     fun function(value: String): String
 
-    expect class Nested<String>() {
+    class Nested<String>() {
         val property: String
         fun function(value: String): String
     }
 
-    expect inner class Inner() {
+    inner class Inner() {
         val property: String
         fun function(value: String): String
     }
@@ -77,12 +77,12 @@ expect class F1<T>() {
     val property: T
     fun function(value: T): T
 
-    expect class Nested<T>() {
+    class Nested<T>() {
         val property: T
         fun function(value: T): T
     }
 
-    expect inner class Inner() {
+    inner class Inner() {
         val property: T
         fun function(value: T): T
     }
@@ -93,13 +93,13 @@ expect class G1<T, R>() {
     val property2: R
     fun function(value: T): R
 
-    expect class Nested<T, R>() {
+    class Nested<T, R>() {
         val property1: T
         val property2: R
         fun function(value: T): R
     }
 
-    expect inner class Inner() {
+    inner class Inner() {
         val property1: T
         val property2: R
         fun function(value: T): R

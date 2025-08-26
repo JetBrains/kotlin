@@ -660,7 +660,7 @@ class ParameterizedTypesCommonizationTest : AbstractInlineSourcesCommonizationTe
                 typealias TA2<T> = X<T>?
                                 
                 val p1: A<TA1<Unit>> get() = null!!
-                val p2: A<TA1<Unit?> get() = null!!
+                val p2: A<TA1<Unit?>> get() = null!!
                 val p3: A<TA1<Unit>?> get() = null!!
                 val p4: A<TA2<Unit>> get() = null!!
                 val p5: A<TA2<Unit?>> get() = null!!
@@ -679,7 +679,7 @@ class ParameterizedTypesCommonizationTest : AbstractInlineSourcesCommonizationTe
                 typealias TA2<T> = X<T>?
                                 
                 val p1: A<TA1<Unit>> get() = null!!
-                val p2: A<TA1<Unit?> get() = null!!
+                val p2: A<TA1<Unit?>> get() = null!!
                 val p3: A<TA1<Unit>?> get() = null!!
                 val p4: A<TA2<Unit>> get() = null!!
                 val p5: A<TA2<Unit?>> get() = null!!
@@ -700,7 +700,7 @@ class ParameterizedTypesCommonizationTest : AbstractInlineSourcesCommonizationTe
                 typealias TA2<T> = X<T>?
                 
                 expect val p1: A<TA1<Unit>> 
-                expect val p2: A<TA1<Unit?> 
+                expect val p2: A<TA1<Unit?>> 
                 expect val p3: A<TA1<Unit>?>
                 expect val p4: A<TA2<Unit>?>
                 expect val p5: A<TA2<Unit?>?>

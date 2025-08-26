@@ -672,18 +672,18 @@ class I<T : I<T>> {
 }
 
 interface J1<A> {
-    actual fun a(): A
+    fun a(): A
 }
 
 interface J2<A, B> {
-    actual fun a(b: B): A
-    actual fun b(a: A): B
+    fun a(b: B): A
+    fun b(a: A): B
 }
 
 interface J3<A, B, C> {
-    actual fun a(b: B, c: C): A
-    actual fun b(a: A, c: C): B
-    actual fun c(a: A, b: B): C
+    fun a(b: B, c: C): A
+    fun b(a: A, c: C): B
+    fun c(a: A, b: B): C
 }
 
 class K<A, B : A, C : J1<B>, D : J2<C, A>> : J3<D, C, B> {

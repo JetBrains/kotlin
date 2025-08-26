@@ -1,3 +1,8 @@
+// For `ObjCMethod`
+@file:OptIn(@Suppress("INVISIBLE_REFERENCE") kotlin.native.internal.InternalForKotlinNative::class)
+// For `overloadedFunctionByParameterNames`, doesn't work when placed on the functions themselves!
+@file:Suppress("CONFLICTING_OVERLOADS")
+
 expect fun functionNoParameters()
 expect fun functionSingleParameter(i: Int)
 expect fun functionTwoParameters(i: Int, s: String)

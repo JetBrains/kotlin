@@ -18,7 +18,7 @@ expect fun String.intFunction(): Int
 expect fun Planet.intFunction(): Int
 
 expect val <T> T.propertyWithTypeParameter1: Int
-expect val <T : Any?> T.propertyWithTypeParameter2: Int
+expect val <T> T.propertyWithTypeParameter2: Int
 expect val <T : CharSequence> T.propertyWithTypeParameter4: Int
 
 expect fun <T> T.functionWithTypeParameter1()
