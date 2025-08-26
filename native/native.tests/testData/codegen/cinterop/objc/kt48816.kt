@@ -1,8 +1,6 @@
 // TARGET_BACKEND: NATIVE
 // DISABLE_NATIVE: isAppleTarget=false
 // Without a fix, fails in two-stage mode.
-// The bug was accidentally fixed with lazy IR for caches, so testing it with this feature disabled:
-// FREE_COMPILER_ARGS: -Xlazy-ir-for-caches=disable
 
 // MODULE: cinterop
 // FILE: objclib.def

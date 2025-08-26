@@ -496,15 +496,9 @@ public class FirNativeCodegenLocalTestWithInlinedFunInKlibGenerated extends Abst
       }
 
       @Test
-      @TestMetadata("kt48816_lazy_ir_disable.kt")
-      public void testKt48816_lazy_ir_disable() {
-        runTest("native/native.tests/testData/codegen/cinterop/objc/kt48816_lazy_ir_disable.kt");
-      }
-
-      @Test
-      @TestMetadata("kt48816_lazy_ir_enable.kt")
-      public void testKt48816_lazy_ir_enable() {
-        runTest("native/native.tests/testData/codegen/cinterop/objc/kt48816_lazy_ir_enable.kt");
+      @TestMetadata("kt48816.kt")
+      public void testKt48816() {
+        runTest("native/native.tests/testData/codegen/cinterop/objc/kt48816.kt");
       }
 
       @Test
