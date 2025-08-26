@@ -42,6 +42,11 @@ sourceSets {
     }
 }
 
+tasks.withType<JavaCompile> {
+    targetCompatibility = "1.8"
+    sourceCompatibility = "1.8"
+}
+
 tasks.withType<GenerateModuleMetadata> {
     enabled = false
 }
