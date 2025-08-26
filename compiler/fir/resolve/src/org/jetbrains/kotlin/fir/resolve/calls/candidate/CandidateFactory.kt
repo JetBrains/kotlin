@@ -50,11 +50,12 @@ class CandidateFactory private constructor(
         }
 
         // For callable reference candidates, we use containing call as a source for the base system.
+        // The same is true for collection literal calls.
         // Thus, their Constraint Systems are effectively clones of the containing call ones with additional constraints.
-        fun createForCallableReferenceCandidate(context: ResolutionContext, containingCall: Candidate): CandidateFactory =
-            CandidateFactory(context, buildBaseSystemForCallableReference(context, containingCall))
+        fun createForContainingCallAwareCases(context: ResolutionContext, containingCall: Candidate): CandidateFactory =
+            CandidateFactory(context, buildBaseSystemForContainingCallAwareCases(context, containingCall))
 
-        private fun buildBaseSystemForCallableReference(context: ResolutionContext, containingCall: Candidate): ConstraintStorage {
+        private fun buildBaseSystemForContainingCallAwareCases(context: ResolutionContext, containingCall: Candidate): ConstraintStorage {
             val system = context.inferenceComponents.createConstraintSystem()
             system.setBaseSystem(containingCall.system.currentStorage())
             return system.asReadOnlyStorage()

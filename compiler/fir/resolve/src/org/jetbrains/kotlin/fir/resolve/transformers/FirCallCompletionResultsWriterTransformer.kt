@@ -16,12 +16,16 @@ import org.jetbrains.kotlin.fir.declarations.utils.hasExplicitBackingField
 import org.jetbrains.kotlin.fir.declarations.utils.isInline
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
+import org.jetbrains.kotlin.fir.diagnostics.ConeUnknownCollectionLiteralType
 import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.expressions.builder.buildCollectionLiteralCall
 import org.jetbrains.kotlin.fir.expressions.builder.buildSamConversionExpression
 import org.jetbrains.kotlin.fir.expressions.builder.buildSpreadArgumentExpression
 import org.jetbrains.kotlin.fir.expressions.impl.FirResolvedArgumentList
 import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.references.FirResolvedErrorReference
+import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
+import org.jetbrains.kotlin.fir.references.builder.buildErrorNamedReference
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedCallableReference
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.*
@@ -356,6 +360,32 @@ class FirCallCompletionResultsWriterTransformer(
             return replacement.transformSingle(this, data)
         }
         return transformQualifiedAccessExpression(propertyAccessExpression, data)
+    }
+
+    override fun transformCollectionLiteralCall(
+        collectionLiteralCall: FirCollectionLiteralCall,
+        data: ExpectedArgumentType?
+    ): FirStatement {
+        data?.contextSensitiveResolutionReplacements?.get(collectionLiteralCall)?.let { replacement ->
+            return replacement.transformSingle(this, data)
+        }
+        val diagnostic = ConeUnknownCollectionLiteralType
+
+        val errorCalleeReference: FirNamedReference = when (val calleeReference = collectionLiteralCall.calleeReference) {
+            is FirErrorNamedReference -> calleeReference
+            else -> buildErrorNamedReference {
+                source = calleeReference.source
+                name = calleeReference.name
+                this.diagnostic = diagnostic
+            }
+        }
+        val call = buildCollectionLiteralCall {
+            source = collectionLiteralCall.source
+            argumentList = collectionLiteralCall.argumentList
+            calleeReference = errorCalleeReference
+            coneTypeOrNull = ConeErrorType(diagnostic)
+        }
+        return call
     }
 
     override fun transformFunctionCall(functionCall: FirFunctionCall, data: ExpectedArgumentType?): FirStatement {
@@ -807,7 +837,7 @@ class FirCallCompletionResultsWriterTransformer(
             }
         }.toMap()
 
-        val contextSensitiveResolutionReplacements = this@createArgumentsMapping.contextSensitiveResolutionReplacements
+        val contextSensitiveResolutionReplacements = this@createArgumentsMapping.contextSensitiveResolutionAndCollectionLiteralReplacements
 
         if (lambdasReturnType.isEmpty() && arguments.isEmpty() && contextSensitiveResolutionReplacements.isNullOrEmpty()) return null
         return ExpectedArgumentType.ArgumentsMap(
@@ -1204,7 +1234,7 @@ class FirCallCompletionResultsWriterTransformer(
         data: ExpectedArgumentType?,
     ) where D : FirResolvable, D : FirExpression {
         val newExpectedType = data?.getExpectedType(syntheticCall) ?: syntheticCall.resolvedType
-        val newData = newExpectedType.toExpectedType(syntheticCall.candidate()?.contextSensitiveResolutionReplacements)
+        val newData = newExpectedType.toExpectedType(syntheticCall.candidate()?.contextSensitiveResolutionAndCollectionLiteralReplacements)
 
         if (syntheticCall is FirTryExpression) {
             syntheticCall.transformCalleeReference(this, newData)
