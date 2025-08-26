@@ -26,9 +26,12 @@ fun Configuration.resolveProjectDependencyComponentsWithArtifacts(
         // The status is inferred from the presence of "-SNAPSHOT" in this version. It should have no effect on resolution, but makes testing against snapshot versions painful
         "org.gradle.status",
     ),
-): Map<ComponentPath, ResolvedComponentWithArtifacts> = resolveProjectDependencyComponentsWithArtifactsProvider(
+): Map<ComponentPath, ResolvedComponentWithArtifacts> = resolveProjectDependencyComponentsWithArtifacts(
+    resolvedArtifacts = incoming.artifacts.artifacts,
+    allComponentsProvider = incoming.resolutionResult.allComponents,
+    rootComponentProvider = incoming.resolutionResult.root,
     removeAttributesNamed = removeAttributesNamed,
-).get()
+)
 
 fun Configuration.resolveProjectDependencyComponentsWithArtifactsProvider(
     removeAttributesNamed: Set<String> = setOf(
