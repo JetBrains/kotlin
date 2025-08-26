@@ -84,7 +84,7 @@ val actualCommonKlibBasedArguments by compilerArgumentsLevel(CompilerArgumentsLe
     compilerArgument {
         name = "Xklib-ir-inliner"
         compilerName = "irInlinerBeforeKlibSerialization"
-        description = "Enable experimental support to invoke IR Inliner before Klib serialization.".asReleaseDependent()
+        description = "Enable experimental IR inliner during KLIB generation.".asReleaseDependent()
         valueType = KlibIrInlinerModeType()
         valueDescription = ReleaseDependent(
             current = KlibIrInlinerMode.entries.joinToString(prefix = "{", separator = "|", postfix = "}") { it.modeState }

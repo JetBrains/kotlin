@@ -6398,7 +6398,7 @@
                                 "shortName": null,
                                 "deprecatedName": null,
                                 "description": {
-                                    "current": "Enable experimental support to invoke IR Inliner before Klib serialization.",
+                                    "current": "Enable experimental IR inliner during KLIB generation.",
                                     "valueInVersions": []
                                 },
                                 "delimiter": null,
