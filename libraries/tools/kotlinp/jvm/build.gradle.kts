@@ -1,5 +1,4 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
-import org.jetbrains.kotlin.ideaExt.idea
 
 description = "kotlinp-jvm"
 
@@ -7,6 +6,7 @@ plugins {
     kotlin("jvm")
     id("jps-compatible")
     id("project-tests-convention")
+    id("test-inputs-check")
 }
 
 val shadows by configurations.creating
@@ -45,13 +45,21 @@ sourceSets {
 }
 
 projectTests {
-    testTask(jUnitMode = JUnitMode.JUnit5) {
-        workingDir = rootDir
-    }
+    testData(isolated, "testData")
+    testData(project(":compiler").isolated, "testData/loadJava")
+    testData(project(":compiler").isolated, "testData/serialization")
+
+    testTask(jUnitMode = JUnitMode.JUnit5)
 
     testGenerator("org.jetbrains.kotlin.kotlinp.jvm.test.GenerateKotlinpTestsKt", doNotSetFixturesSourceSetDependency = true)
 
     withJvmStdlibAndReflect()
+    withScriptRuntime()
+    withMockJdkAnnotationsJar()
+    withTestJar()
+    withMockJdkRuntime()
+    withAnnotations()
+    withScriptingPlugin()
 }
 
 val shadowJar by task<ShadowJar> {
@@ -68,10 +76,6 @@ val shadowJar by task<ShadowJar> {
 tasks {
     "assemble" {
         dependsOn(shadowJar)
-    }
-    "test" {
-        // These dependencies are needed because ForTestCompileRuntime loads jars from dist
-        dependsOn(rootProject.tasks.named("dist"))
     }
 }
 
