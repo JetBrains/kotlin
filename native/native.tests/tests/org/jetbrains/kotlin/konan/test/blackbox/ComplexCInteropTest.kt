@@ -417,6 +417,7 @@ abstract class ComplexCInteropTestBase : AbstractNativeSimpleTest() {
     private fun compileDefAndKtToExecutable(
         testName: String,
         defFile: File,
+        cinteropSourceFiles: List<File> = emptyList(),
         ktFiles: Collection<File>,
         freeCompilerArgs: TestCompilerArgs,
         extras: TestCase.Extras,
@@ -424,6 +425,7 @@ abstract class ComplexCInteropTestBase : AbstractNativeSimpleTest() {
     ): Pair<TestCase, TestCompilationResult.Success<out TestCompilationArtifact.Executable>> {
         val cinteropModule = TestModule.Exclusive("cinterop", emptySet(), emptySet(), emptySet())
         cinteropModule.files += TestFile.createCommitted(defFile, cinteropModule)
+        cinteropSourceFiles.forEach { cinteropModule.files += TestFile.createCommitted(it, cinteropModule) }
 
         val ktModule = TestModule.Exclusive("main", setOf("cinterop"), emptySet(), emptySet())
         ktFiles.forEach { ktModule.files += TestFile.createCommitted(it, ktModule) }
@@ -532,13 +534,13 @@ abstract class ComplexCInteropTestBase : AbstractNativeSimpleTest() {
         val (testCase, compilationResult) = compileDefAndKtToExecutable(
             testName = "initWithExtgernalRCRef_leak",
             defFile = srcDir.resolve("cinterop.def"),
+            cinteropSourceFiles = listOf(srcDir.resolve("cinterop.m")), // FIXME: disable or enable ARC?
             ktFiles = listOf(srcDir.resolve("main.kt")),
             freeCompilerArgs = TestCompilerArgs(
                 compilerArgs = listOf(
                     "-opt-in=kotlin.native.internal.InternalForKotlinNative",
                     "-Xbinary=swiftExport=true",
                 ),
-                cinteropArgs = listOf("-Xcompile-source", srcDir.resolve("cinterop.m").path),
                 objcArc = false
             ),
             extras = TestCase.NoTestRunnerExtras(),
