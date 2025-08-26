@@ -80,7 +80,8 @@ abstract class DefaultKotlinBasePlugin : KotlinBasePlugin {
         BuildSessionService.registerIfAbsent(project)
 
         val buildUidService = BuildUidService.registerIfAbsent(project.gradle)
-        BuildFusService.registerIfAbsent(project, pluginVersion, buildUidService)
+        val buildFinishBuildService = BuildFinishBuildService.registerIfAbsent(project, buildUidService, pluginVersion)
+        BuildFusService.registerIfAbsent(project, pluginVersion, buildUidService, buildFinishBuildService)
         PropertiesBuildService.registerIfAbsent(project)
 
         project.gradle.projectsEvaluated {
@@ -101,7 +102,7 @@ abstract class DefaultKotlinBasePlugin : KotlinBasePlugin {
 
         BuildMetricsService.registerIfAbsent(project)
         KotlinNativeBundleBuildService.registerIfAbsent(project)
-        BuildFinishBuildService.registerIfAbsent(project, buildUidService, pluginVersion)
+
     }
 
     private fun addKotlinCompilerConfiguration(project: Project) {
