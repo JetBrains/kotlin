@@ -21,11 +21,6 @@ public enum ENUM: KotlinRuntimeSupport._KotlinBridgeable, Swift.CaseIterable, Sw
             super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
         }
     }
-    public static var allCases: [main.ENUM] {
-        get {
-            return ENUM_entries_get() as! Swift.Array<main.ENUM>
-        }
-    }
     public var description: Swift.String {
         get {
             switch self {

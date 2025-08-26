@@ -7,11 +7,6 @@ import flattened
 
 public enum EnumWithFactory: KotlinRuntimeSupport._KotlinBridgeable, Swift.CaseIterable, Swift.LosslessStringConvertible {
     case ONE
-    public static var allCases: [main.EnumWithFactory] {
-        get {
-            return EnumWithFactory_entries_get() as! Swift.Array<main.EnumWithFactory>
-        }
-    }
     public var description: Swift.String {
         get {
             switch self {

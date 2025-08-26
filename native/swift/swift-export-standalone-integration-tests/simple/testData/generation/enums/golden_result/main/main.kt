@@ -4,23 +4,11 @@ import kotlin.native.internal.ExportedBridge
 import kotlinx.cinterop.*
 import kotlinx.cinterop.internal.convertBlockPtrToKotlinFunction
 
-@ExportedBridge("EnumSimple_entries_get")
-public fun EnumSimple_entries_get(): kotlin.native.internal.NativePtr {
-    val _result = EnumSimple.entries
-    return _result.objcPtr()
-}
-
 @ExportedBridge("EnumWithAbstractMembers_blue")
 public fun EnumWithAbstractMembers_blue(self: kotlin.native.internal.NativePtr): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as EnumWithAbstractMembers
     val _result = __self.blue()
     return _result
-}
-
-@ExportedBridge("EnumWithAbstractMembers_entries_get")
-public fun EnumWithAbstractMembers_entries_get(): kotlin.native.internal.NativePtr {
-    val _result = EnumWithAbstractMembers.entries
-    return _result.objcPtr()
 }
 
 @ExportedBridge("EnumWithAbstractMembers_green")
@@ -44,12 +32,6 @@ public fun EnumWithAbstractMembers_red_get(self: kotlin.native.internal.NativePt
     return _result
 }
 
-@ExportedBridge("EnumWithMembers_entries_get")
-public fun EnumWithMembers_entries_get(): kotlin.native.internal.NativePtr {
-    val _result = EnumWithMembers.entries
-    return _result.objcPtr()
-}
-
 @ExportedBridge("EnumWithMembers_foo")
 public fun EnumWithMembers_foo(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as EnumWithMembers
@@ -62,12 +44,6 @@ public fun EnumWithMembers_isNorth_get(self: kotlin.native.internal.NativePtr): 
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as EnumWithMembers
     val _result = __self.isNorth
     return _result
-}
-
-@ExportedBridge("Enum_entries_get")
-public fun Enum_entries_get(): kotlin.native.internal.NativePtr {
-    val _result = Enum.entries
-    return _result.objcPtr()
 }
 
 @ExportedBridge("Enum_i_get")
