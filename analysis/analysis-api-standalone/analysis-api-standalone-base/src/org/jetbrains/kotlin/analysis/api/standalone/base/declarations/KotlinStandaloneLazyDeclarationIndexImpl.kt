@@ -20,9 +20,9 @@ import org.jetbrains.kotlin.psi.KtTypeAlias
  * @see KotlinStandaloneDeclarationIndexImpl
  */
 internal class KotlinStandaloneLazyDeclarationIndexImpl(
-    private val lazyIndex: Lazy<KotlinStandaloneDeclarationIndexImpl>
+    private val lazyIndex: Lazy<KotlinStandaloneDeclarationIndex>
 ) : KotlinStandaloneDeclarationIndex {
-    private val computedIndex: KotlinStandaloneDeclarationIndexImpl get() = lazyIndex.value
+    private val computedIndex: KotlinStandaloneDeclarationIndex get() = lazyIndex.value
 
     override val facadeFileMap: Map<FqName, Set<KtFile>> get() = computedIndex.facadeFileMap
     override val multiFileClassPartMap: Map<FqName, Set<KtFile>> get() = computedIndex.multiFileClassPartMap

@@ -7,14 +7,10 @@ package org.jetbrains.kotlin.analysis.api.standalone.base.declarations
 
 import com.intellij.core.CoreApplicationEnvironment
 import com.intellij.ide.highlighter.JavaClassFileType
-import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.components.serviceOrNull
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileVisitor
-import com.intellij.psi.PsiManager
-import com.intellij.psi.impl.source.PsiFileImpl
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.stubs.*
 import org.jetbrains.kotlin.analysis.api.platform.KotlinDeserializedDeclarationsOrigin
@@ -23,10 +19,6 @@ import org.jetbrains.kotlin.analysis.api.platform.declarations.*
 import org.jetbrains.kotlin.analysis.api.platform.mergeSpecificProviders
 import org.jetbrains.kotlin.analysis.api.projectStructure.*
 import org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.StandaloneProjectFactory
-import org.jetbrains.kotlin.analysis.decompiler.psi.BuiltinsVirtualFileProvider
-import org.jetbrains.kotlin.analysis.decompiler.psi.KotlinBuiltInFileType
-import org.jetbrains.kotlin.analysis.decompiler.psi.file.deepCopy
-import org.jetbrains.kotlin.analysis.decompiler.stub.file.ClsClassFinder
 import org.jetbrains.kotlin.fileClasses.javaFileFacadeFqName
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.psi.*
@@ -223,15 +215,28 @@ class KotlinStandaloneDeclarationProviderFactory(
     private val shouldComputeBinaryLibraryPackageSets: Boolean = false,
     postponeIndexing: Boolean = false,
 ) : KotlinDeclarationProviderFactory {
-    private val indexData: IndexData = computeIndex(
+    private val indexData: KotlinStandaloneIndexBuilder.IndexData = KotlinStandaloneIndexBuilder(
         project = project,
-        sourceKtFiles = sourceKtFiles,
-        binaryRoots = binaryRoots,
-        sharedBinaryRoots = sharedBinaryRoots,
-        skipBuiltins = skipBuiltins,
-        shouldBuildStubsForBinaryLibraries = shouldBuildStubsForBinaryLibraries,
-        postponeIndexing = postponeIndexing,
-    )
+        shouldBuildStubsForDecompiledFiles = shouldBuildStubsForBinaryLibraries,
+    ).apply {
+        collectSourceFiles(sourceKtFiles)
+
+        if (!skipBuiltins) {
+            collectDecompiledFilesFromBuiltins()
+        }
+
+        // We only need to index binary roots if we deserialize compiled symbols from stubs. When deserializing from class files, we don't
+        // need these symbols in the declaration provider.
+        if (shouldBuildStubsForBinaryLibraries) {
+            for (root in sharedBinaryRoots) {
+                collectDecompiledFilesFromBinaryRoot(root, isSharedRoot = true)
+            }
+
+            for (root in binaryRoots) {
+                collectDecompiledFilesFromBinaryRoot(root, isSharedRoot = false)
+            }
+        }
+    }.build(postponeIndexing)
 
     private val index: KotlinStandaloneDeclarationIndex
         get() = indexData.index
@@ -252,180 +257,6 @@ class KotlinStandaloneDeclarationProviderFactory(
     fun getInheritableTypeAliases(aliasedName: Name): Set<KtTypeAlias> =
         index.inheritableTypeAliasesByAliasedName[aliasedName].orEmpty()
 }
-
-private class IndexData(val fakeKtFiles: List<KtFile>, val index: KotlinStandaloneDeclarationIndex)
-
-private class IndexableFile(
-    /**
-     * The virtual file of the file that is being indexed.
-     */
-    val virtualFile: VirtualFile,
-
-    /**
-     * The [KtFile] associated with the [virtualFile].
-     */
-    val ktFile: KtFile,
-
-    /**
-     * Whether the file is shared between multiple projects.
-     */
-    val isShared: Boolean,
-) {
-    override fun equals(other: Any?): Boolean = this === other || other is IndexableFile && virtualFile == other.virtualFile
-    override fun hashCode(): Int = virtualFile.hashCode()
-    override fun toString(): String = virtualFile.toString()
-}
-
-private fun MutableSet<IndexableFile>.collectDecompiledFilesFromBinaryRoot(
-    psiManager: PsiManager,
-    binaryRoot: VirtualFile,
-    isSharedRoot: Boolean,
-) {
-    VfsUtilCore.visitChildrenRecursively(binaryRoot, object : VirtualFileVisitor<Void>() {
-        override fun visitFile(file: VirtualFile): Boolean {
-            if (!file.isDirectory) {
-                val ktFile = psiManager.findFile(file) as? KtFile
-                // Synthetic class parts are not supposed to be indexed to avoid duplicates
-                // The information about virtual files are already cached after the previous line
-                if (ktFile != null && !ClsClassFinder.isMultifileClassPartFile(file)) {
-                    add(IndexableFile(file, ktFile, isShared = isSharedRoot))
-                }
-            }
-
-            return true
-        }
-    })
-}
-
-private fun computeIndex(
-    project: Project,
-    sourceKtFiles: Collection<KtFile>,
-    binaryRoots: List<VirtualFile>,
-    sharedBinaryRoots: List<VirtualFile>,
-    skipBuiltins: Boolean,
-    shouldBuildStubsForBinaryLibraries: Boolean,
-    postponeIndexing: Boolean,
-): IndexData {
-    val rawIndex = KotlinStandaloneDeclarationIndexImpl()
-
-    val psiManager = PsiManager.getInstance(project)
-    val cacheService = ApplicationManager.getApplication().serviceOrNull<KotlinStandaloneStubsCache>()
-
-    // Synchronization is not needed since either this code is executed in a single thread right away or guarded by the next synchronized `lazyIndex` property
-    val setStubTreeMethod by lazy(LazyThreadSafetyMode.NONE) {
-        val setStubTreeMethodName = "setStubTree"
-
-        PsiFileImpl::class
-            .java
-            .declaredMethods
-            .find { it.name == setStubTreeMethodName && it.parameterCount == 1 }
-            ?.also { it.isAccessible = true }
-            ?: error("'${PsiFileImpl::class.simpleName}.$setStubTreeMethodName' method is not found")
-    }
-
-    fun indexStubRecursively(indexableFile: IndexableFile) {
-        val virtualFile = indexableFile.virtualFile
-        val ktFile = indexableFile.ktFile
-
-        // Stub calculation
-        if (indexableFile.isShared && cacheService != null) {
-            val stub = cacheService.getOrBuildStub(virtualFile) {
-                ktFile.forcedStub
-            }
-
-            if (stub.psi != ktFile) {
-                @OptIn(KtImplementationDetail::class)
-                val clonedStub = stub.deepCopy()
-
-                // A hack to avoid costly stub builder execution
-                setStubTreeMethod.invoke(ktFile, clonedStub)
-            }
-        }
-
-        val stub = ktFile.forcedStub
-        rawIndex.indexStubRecursively(stub)
-    }
-
-    // We only need to index binary roots if we deserialize compiled symbols from stubs. When deserializing from class files, we don't
-    // need these symbols in the declaration provider.
-    val decompiledFilesFromBinaryRoots: Set<IndexableFile> = if (shouldBuildStubsForBinaryLibraries) {
-        buildSet {
-            for (root in sharedBinaryRoots) {
-                collectDecompiledFilesFromBinaryRoot(psiManager, root, isSharedRoot = true)
-            }
-
-            for (root in binaryRoots) {
-                collectDecompiledFilesFromBinaryRoot(psiManager, root, isSharedRoot = false)
-            }
-        }
-    } else {
-        emptySet()
-    }
-
-    val decompiledFilesFromBuiltins = if (!skipBuiltins) {
-        BuiltinsVirtualFileProvider.getInstance()
-            .getBuiltinVirtualFiles()
-            .mapNotNull { virtualFile ->
-                (psiManager.findFile(virtualFile) as? KtFile)?.let {
-                    IndexableFile(virtualFile, it, isShared = true)
-                }
-            }
-    } else {
-        emptyList()
-    }
-
-    // indexing
-    fun buildIndex(): KotlinStandaloneDeclarationIndexImpl {
-        decompiledFilesFromBuiltins.forEach(::indexStubRecursively)
-
-        val (decompiledBuiltinsFilesFromBinaryRoots, decompiledFilesFromOtherFiles) = decompiledFilesFromBinaryRoots.partition { entry ->
-            entry.virtualFile.fileType == KotlinBuiltInFileType
-        }
-
-        decompiledFilesFromOtherFiles.forEach(::indexStubRecursively)
-
-        // Due to KT-78748, we have to index builtin declarations last so that class declarations are preferred. Note that this currently
-        // only affects Analysis API tests, since production Standalone doesn't index binary declarations as stubs.
-        decompiledBuiltinsFilesFromBinaryRoots.forEach(::indexStubRecursively)
-
-        val astBasedIndexer = rawIndex.AstBasedIndexer()
-
-        for (file in sourceKtFiles) when {
-            !file.isCompiled -> {
-                val stub = file.stub
-                if (stub != null) {
-                    rawIndex.indexStubRecursively(stub)
-                } else {
-                    file.accept(astBasedIndexer)
-                }
-            }
-
-            shouldBuildStubsForBinaryLibraries -> rawIndex.indexStubRecursively(file.forcedStub)
-        }
-
-        return rawIndex
-    }
-
-    val initializedIndex = if (postponeIndexing) {
-        KotlinStandaloneLazyDeclarationIndexImpl(lazy(::buildIndex))
-    } else {
-        buildIndex()
-    }
-
-    return IndexData(
-        fakeKtFiles = decompiledFilesFromBuiltins.map(IndexableFile::ktFile) + decompiledFilesFromBinaryRoots.map(IndexableFile::ktFile),
-        index = initializedIndex,
-    )
-}
-
-/**
- * [PsiFileImpl.getGreenStubTree] is cheaper if it is available since it doesn't require computing the AST tree
- */
-private val KtFile.forcedStub: KotlinFileStubImpl
-    get() {
-        val stubTree = greenStubTree ?: calcStubTree()
-        return stubTree.root as KotlinFileStubImpl
-    }
 
 class KotlinStandaloneDeclarationProviderMerger(private val project: Project) : KotlinDeclarationProviderMerger {
     override fun merge(providers: List<KotlinDeclarationProvider>): KotlinDeclarationProvider =
