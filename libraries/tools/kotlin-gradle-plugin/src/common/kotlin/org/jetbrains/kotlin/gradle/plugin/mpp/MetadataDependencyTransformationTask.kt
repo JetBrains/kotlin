@@ -22,11 +22,13 @@ import org.gradle.work.DisableCachingByDefault
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.UsesKotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.consumption.KmpResolutionStrategy
-import org.jetbrains.kotlin.gradle.targets.metadata.dependsOnClosureWithInterCompilationDependencies
+import org.jetbrains.kotlin.gradle.plugin.sources.internal
 import org.jetbrains.kotlin.gradle.tasks.dependsOn
 import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
 import org.jetbrains.kotlin.gradle.tasks.locateTask
-import org.jetbrains.kotlin.gradle.utils.*
+import org.jetbrains.kotlin.gradle.utils.buildPathCompat
+import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
+import org.jetbrains.kotlin.gradle.utils.setProperty
 import java.io.File
 import javax.inject.Inject
 
@@ -80,7 +82,7 @@ abstract class MetadataDependencyTransformationTask
 
     @Transient // Only needed for configuring task inputs
     private val parentTransformationTasksLazy: Lazy<List<TaskProvider<MetadataDependencyTransformationTask>>>? = lazy {
-        dependsOnClosureWithInterCompilationDependencies(kotlinSourceSet).mapNotNull {
+        kotlinSourceSet.internal.dependsOnClosure.mapNotNull {
             project
                 .tasks
                 .locateTask(transformGranularMetadataTaskName(it.name))
