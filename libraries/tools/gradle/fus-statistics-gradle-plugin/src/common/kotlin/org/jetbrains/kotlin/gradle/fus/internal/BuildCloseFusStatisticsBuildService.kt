@@ -17,15 +17,13 @@ import javax.inject.Inject
  * Build close action is used for Gradle versions up to 8.1, For older version [BuildFinishFlowAction] is used.
  */
 internal abstract class BuildCloseFusStatisticsBuildService @Inject constructor(private val providersFactor: ProviderFactory) :
-    InternalGradleBuildFusStatisticsService<BuildCloseFusStatisticsBuildService.Parameter>() {
+    InternalGradleBuildFusStatisticsService<BuildCloseFusStatisticsBuildService.Parameter>(), AutoCloseable {
 
     internal interface Parameter : InternalGradleBuildFusStatisticsService.Parameter {
         val configurationMetrics: ListProperty<Metric>
-        val buildId: Property<String>
     }
 
     private val log = Logging.getLogger(this.javaClass)
-    private val buildId: String = parameters.buildId.get()
 
     override fun getExecutionTimeMetrics(): Provider<List<Metric>> {
         return providersFactor.provider {
@@ -41,7 +39,7 @@ internal abstract class BuildCloseFusStatisticsBuildService @Inject constructor(
     }
 
     override fun close() {
-        log.debug("InternalGradleBuildFusStatisticsService is closed for $buildId build")
-        writeDownFusMetrics(buildId, log, parameters.configurationMetrics.orNull)
+        writeDownFusMetrics(parameters.configurationMetrics.orNull)
+        super.close()
     }
 }

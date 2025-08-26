@@ -30,9 +30,7 @@ abstract class BuildUidService : BuildService<BuildServiceParameters.None>, Auto
             }.also {
                 // There is a specific behavior in Gradle 8.0 where: the BuildUidService gets closed during the build execution process.
                 // This results in having different buildIds for BuildCloseFusStatisticsBuildService and BuildFusService.
-                if (GradleVersion.current().baseVersion >= GradleVersion.version("8.0")
-                    && GradleVersion.current().baseVersion < GradleVersion.version("8.1")
-                ) {
+                if (GradleVersion.current().baseVersion >= GradleVersion.version("8.0")) {
                     (it as RegisteredBuildServiceProvider<*, *>).keepAlive()
                 }
             }
