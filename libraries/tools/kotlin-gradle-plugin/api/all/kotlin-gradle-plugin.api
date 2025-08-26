@@ -1700,6 +1700,26 @@ public final class org/jetbrains/kotlin/gradle/plugin/sources/android/configurat
 	public fun configureWithVariant (Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinAndroidTarget;Lorg/jetbrains/kotlin/gradle/plugin/KotlinSourceSet;Lcom/android/build/gradle/api/BaseVariant;)V
 }
 
+public abstract class org/jetbrains/kotlin/gradle/plugin/statistics/BuildFinishBuildService : java/lang/AutoCloseable, org/gradle/api/services/BuildService, org/gradle/tooling/events/OperationCompletionListener {
+	public static final field Companion Lorg/jetbrains/kotlin/gradle/plugin/statistics/BuildFinishBuildService$Companion;
+	public fun <init> ()V
+	public fun close ()V
+	protected final fun getBuildId ()Ljava/lang/String;
+	public fun onFinish (Lorg/gradle/tooling/events/FinishEvent;)V
+}
+
+public final class org/jetbrains/kotlin/gradle/plugin/statistics/BuildFinishBuildService$Companion {
+	public final fun registerIfAbsent (Lorg/gradle/api/Project;Lorg/gradle/api/provider/Provider;Ljava/lang/String;)Lorg/gradle/api/provider/Provider;
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/plugin/statistics/BuildFinishBuildService$Parameters : org/gradle/api/services/BuildServiceParameters {
+	public abstract fun getBuildId ()Lorg/gradle/api/provider/Property;
+	public abstract fun getCollectAllFusReportsIntoOne ()Lorg/gradle/api/provider/Property;
+	public abstract fun getErrorDirs ()Lorg/gradle/api/provider/ListProperty;
+	public abstract fun getFusReportDirectory ()Lorg/gradle/api/provider/Property;
+	public abstract fun getKotlinVersion ()Lorg/gradle/api/provider/Property;
+}
+
 public abstract class org/jetbrains/kotlin/gradle/plugin/statistics/BuildFinishFlowProviderManager {
 	public static final field Companion Lorg/jetbrains/kotlin/gradle/plugin/statistics/BuildFinishFlowProviderManager$Companion;
 	public fun <init> (Lorg/gradle/api/flow/FlowScope;Lorg/gradle/api/flow/FlowProviders;)V
@@ -1719,7 +1739,7 @@ public abstract class org/jetbrains/kotlin/gradle/plugin/statistics/BuildFusServ
 }
 
 public final class org/jetbrains/kotlin/gradle/plugin/statistics/BuildFusService$Companion {
-	public final fun registerIfAbsent (Lorg/gradle/api/Project;Ljava/lang/String;Lorg/gradle/api/provider/Provider;)Lorg/gradle/api/provider/Provider;
+	public final fun registerIfAbsent (Lorg/gradle/api/Project;Ljava/lang/String;Lorg/gradle/api/provider/Provider;Lorg/gradle/api/provider/Provider;)Lorg/gradle/api/provider/Provider;
 }
 
 public abstract interface class org/jetbrains/kotlin/gradle/plugin/statistics/BuildFusService$Parameters : org/gradle/api/services/BuildServiceParameters {

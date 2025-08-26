@@ -33,8 +33,8 @@ abstract class CloseActionBuildFusService :
 
     override fun close() {
         recordBuildFinished(buildFailed, buildId, parameters.configurationMetrics.orElse(emptyList()).get())
-        //There is no order in which BuildService are closed.
-        // To ensure ".profile" file is created only after ".kotlin-profile", call it manually from here
+//        //There is no order in which BuildService are closed.
+//        // To ensure ".profile" file is created only after ".kotlin-profile", call it manually from here
         BuildFinishBuildService.collectAllFusReportsIntoOne(
             buildId,
             parameters.buildStatisticsConfiguration.get().sessionLoggerPath,

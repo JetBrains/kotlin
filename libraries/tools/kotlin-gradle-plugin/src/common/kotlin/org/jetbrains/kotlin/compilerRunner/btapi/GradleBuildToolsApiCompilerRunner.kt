@@ -33,7 +33,7 @@ internal class GradleBuildToolsApiCompilerRunner(
     private val buildFinishedListenerService: Provider<BuildFinishedListenerService>,
     private val buildIdService: Provider<BuildIdService>,
     private val buildSessionService: Provider<BuildSessionService>,
-    fusMetricsConsumer: StatisticsValuesConsumer?,
+    fusMetricsConsumer: Provider<StatisticsValuesConsumer>,
 ) : GradleCompilerRunner(taskProvider, jdkToolsJar, compilerExecutionSettings, buildMetrics, fusMetricsConsumer) {
 
 
