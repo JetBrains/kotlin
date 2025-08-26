@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.standalone.base.declarations
 
+import com.intellij.psi.PsiElement
 import com.intellij.psi.stubs.StubElement
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -17,6 +18,7 @@ import org.jetbrains.kotlin.psi.KtScript
 import org.jetbrains.kotlin.psi.KtTypeAlias
 import org.jetbrains.kotlin.psi.KtTypeElement
 import org.jetbrains.kotlin.psi.KtUserType
+import org.jetbrains.kotlin.psi.KtVisitorVoid
 import org.jetbrains.kotlin.psi.psiUtil.getImportedSimpleNameByImportAlias
 import org.jetbrains.kotlin.psi.psiUtil.getSuperNames
 import org.jetbrains.kotlin.psi.stubs.KotlinClassOrObjectStub
@@ -42,20 +44,20 @@ internal class KotlinStandaloneDeclarationIndexImpl : KotlinStandaloneDeclaratio
     override val classesBySupertypeName: MutableMap<Name, MutableSet<KtClassOrObject>> = mutableMapOf()
     override val inheritableTypeAliasesByAliasedName: MutableMap<Name, MutableSet<KtTypeAlias>> = mutableMapOf()
 
-    fun indexFile(file: KtFile) {
+    private fun indexFile(file: KtFile) {
         if (!file.hasTopLevelCallables()) return
         facadeFileMap.computeIfAbsent(file.packageFqName) {
             mutableSetOf()
         }.add(file)
     }
 
-    fun indexScript(script: KtScript) {
+    private fun indexScript(script: KtScript) {
         scriptMap.computeIfAbsent(script.fqName) {
             mutableSetOf()
         }.add(script)
     }
 
-    fun indexClassOrObject(classOrObject: KtClassOrObject) {
+    private fun indexClassOrObject(classOrObject: KtClassOrObject) {
         classOrObject.getClassId()?.let { classId ->
             classMap.computeIfAbsent(classId.packageFqName) {
                 mutableSetOf()
@@ -69,7 +71,7 @@ internal class KotlinStandaloneDeclarationIndexImpl : KotlinStandaloneDeclaratio
         }
     }
 
-    fun indexTypeAlias(typeAlias: KtTypeAlias) {
+    private fun indexTypeAlias(typeAlias: KtTypeAlias) {
         typeAlias.getClassId()?.let { classId ->
             typeAliasMap.computeIfAbsent(classId.packageFqName) {
                 mutableSetOf()
@@ -94,7 +96,7 @@ internal class KotlinStandaloneDeclarationIndexImpl : KotlinStandaloneDeclaratio
         }
     }
 
-    fun indexNamedFunction(function: KtNamedFunction) {
+    private fun indexNamedFunction(function: KtNamedFunction) {
         if (!function.isTopLevel) return
         val packageFqName = function.containingKtFile.packageFqName
         topLevelFunctionMap.computeIfAbsent(packageFqName) {
@@ -102,7 +104,7 @@ internal class KotlinStandaloneDeclarationIndexImpl : KotlinStandaloneDeclaratio
         }.add(function)
     }
 
-    fun indexProperty(property: KtProperty) {
+    private fun indexProperty(property: KtProperty) {
         if (!property.isTopLevel) return
         val packageFqName = property.containingKtFile.packageFqName
         topLevelPropertyMap.computeIfAbsent(packageFqName) {
@@ -151,6 +153,42 @@ internal class KotlinStandaloneDeclarationIndexImpl : KotlinStandaloneDeclaratio
         }
 
         else -> Unit
+    }
+
+    inner class AstBasedIndexer : KtVisitorVoid() {
+        override fun visitElement(element: PsiElement) {
+            element.acceptChildren(this)
+        }
+
+        override fun visitKtFile(file: KtFile) {
+            indexFile(file)
+            super.visitKtFile(file)
+        }
+
+        override fun visitScript(script: KtScript) {
+            indexScript(script)
+            super.visitScript(script)
+        }
+
+        override fun visitClassOrObject(classOrObject: KtClassOrObject) {
+            indexClassOrObject(classOrObject)
+            super.visitClassOrObject(classOrObject)
+        }
+
+        override fun visitTypeAlias(typeAlias: KtTypeAlias) {
+            indexTypeAlias(typeAlias)
+            super.visitTypeAlias(typeAlias)
+        }
+
+        override fun visitNamedFunction(function: KtNamedFunction) {
+            indexNamedFunction(function)
+            super.visitNamedFunction(function)
+        }
+
+        override fun visitProperty(property: KtProperty) {
+            indexProperty(property)
+            super.visitProperty(property)
+        }
     }
 }
 

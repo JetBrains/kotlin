@@ -13,7 +13,6 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileVisitor
-import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiManager
 import com.intellij.psi.impl.source.PsiFileImpl
 import com.intellij.psi.search.GlobalSearchScope
@@ -321,44 +320,6 @@ private fun computeIndex(
         })
     }
 
-    class KtDeclarationRecorder : KtVisitorVoid() {
-        override fun visitElement(element: PsiElement) {
-            element.acceptChildren(this)
-        }
-
-        override fun visitKtFile(file: KtFile) {
-            index.indexFile(file)
-            super.visitKtFile(file)
-        }
-
-        override fun visitScript(script: KtScript) {
-            index.indexScript(script)
-            super.visitScript(script)
-        }
-
-        override fun visitClassOrObject(classOrObject: KtClassOrObject) {
-            index.indexClassOrObject(classOrObject)
-            super.visitClassOrObject(classOrObject)
-        }
-
-        override fun visitTypeAlias(typeAlias: KtTypeAlias) {
-            index.indexTypeAlias(typeAlias)
-            super.visitTypeAlias(typeAlias)
-        }
-
-        override fun visitNamedFunction(function: KtNamedFunction) {
-            index.indexNamedFunction(function)
-            super.visitNamedFunction(function)
-        }
-
-        override fun visitProperty(property: KtProperty) {
-            index.indexProperty(property)
-            super.visitProperty(property)
-        }
-    }
-
-    val recorder = KtDeclarationRecorder()
-
     fun indexStubRecursively(indexableFile: IndexableFile) {
         val virtualFile = indexableFile.virtualFile
         val ktFile = indexableFile.ktFile
@@ -430,13 +391,15 @@ private fun computeIndex(
             indexStubRecursively(IndexableFile(file.virtualFile, file, isShared = false))
         }
 
+        val astBasedIndexer = index.AstBasedIndexer()
+
         sourceKtFiles.forEach { file ->
             if (!shouldBuildStubsForBinaryLibraries || !file.isCompiled) {
                 val stub = file.stub
                 if (stub != null) {
                     index.indexStubRecursively(stub)
                 } else {
-                    file.accept(recorder)
+                    file.accept(astBasedIndexer)
                 }
             }
         }
