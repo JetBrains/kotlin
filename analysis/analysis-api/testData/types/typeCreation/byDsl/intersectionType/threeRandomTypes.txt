@@ -1,0 +1,57 @@
+KaType
+KaIntersectionType:
+  abbreviation: null
+  annotations: []
+  conjuncts: [
+    KaUsualClassType:
+      abbreviation: null
+      annotations: []
+      classId: kotlin/Int
+      qualifiers: [
+        KaResolvedClassTypeQualifier:
+          name: Int
+          symbol: KaNamedClassSymbol(kotlin/Int)
+          typeArguments: []
+      ]
+      symbol: KaNamedClassSymbol(kotlin/Int)
+      typeArguments: []
+      isMarkedNullable: false
+      isNullable: false
+      hasFlexibleNullability: false
+    KaUsualClassType:
+      abbreviation: null
+      annotations: []
+      classId: kotlin/String
+      qualifiers: [
+        KaResolvedClassTypeQualifier:
+          name: String
+          symbol: KaNamedClassSymbol(kotlin/String)
+          typeArguments: []
+      ]
+      symbol: KaNamedClassSymbol(kotlin/String)
+      typeArguments: []
+      isMarkedNullable: false
+      isNullable: false
+      hasFlexibleNullability: false
+    KaUsualClassType:
+      abbreviation: null
+      annotations: []
+      classId: kotlin/Boolean
+      qualifiers: [
+        KaResolvedClassTypeQualifier:
+          name: Boolean
+          symbol: KaNamedClassSymbol(kotlin/Boolean)
+          typeArguments: []
+      ]
+      symbol: KaNamedClassSymbol(kotlin/Boolean)
+      typeArguments: []
+      isMarkedNullable: false
+      isNullable: false
+      hasFlexibleNullability: false
+  ]
+  isMarkedNullable: false
+  isNullable: false
+  hasFlexibleNullability: false
+
+Rendered type:
+kotlin.Int & kotlin.String & kotlin.Boolean

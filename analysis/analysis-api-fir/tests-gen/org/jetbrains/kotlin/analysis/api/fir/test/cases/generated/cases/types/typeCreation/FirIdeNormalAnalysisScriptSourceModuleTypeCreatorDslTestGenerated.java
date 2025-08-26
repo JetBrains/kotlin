@@ -107,6 +107,16 @@ public class FirIdeNormalAnalysisScriptSourceModuleTypeCreatorDslTestGenerated e
   }
 
   @Nested
+  @TestMetadata("analysis/analysis-api/testData/types/typeCreation/byDsl/intersectionType")
+  @TestDataPath("$PROJECT_ROOT")
+  public class IntersectionType {
+    @Test
+    public void testAllFilesPresentInIntersectionType() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/types/typeCreation/byDsl/intersectionType"), Pattern.compile("^(.+)\\.kts$"), null, true);
+    }
+  }
+
+  @Nested
   @TestMetadata("analysis/analysis-api/testData/types/typeCreation/byDsl/starTypeProjection")
   @TestDataPath("$PROJECT_ROOT")
   public class StarTypeProjection {

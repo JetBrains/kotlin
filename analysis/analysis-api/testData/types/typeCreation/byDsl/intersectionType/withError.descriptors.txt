@@ -1,0 +1,12 @@
+KaType
+KaErrorType:
+  abbreviation: null
+  annotations: []
+  errorMessage: Intersection of error types [Any, Number, [Error type: No type specified for unknown element]]
+  presentableText: null
+  isMarkedNullable: false
+  isNullable: false
+  hasFlexibleNullability: false
+
+Rendered type:
+ERROR

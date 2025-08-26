@@ -449,6 +449,70 @@ public class FirStandaloneNormalAnalysisSourceModuleTypeCreatorDslTestGenerated 
   }
 
   @Nested
+  @TestMetadata("analysis/analysis-api/testData/types/typeCreation/byDsl/intersectionType")
+  @TestDataPath("$PROJECT_ROOT")
+  public class IntersectionType {
+    @Test
+    public void testAllFilesPresentInIntersectionType() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/types/typeCreation/byDsl/intersectionType"), Pattern.compile("^(.+)\\.kt$"), null, true);
+    }
+
+    @Test
+    @TestMetadata("anotherIntersectionTypeAsConjunct.kt")
+    public void testAnotherIntersectionTypeAsConjunct() {
+      runTest("analysis/analysis-api/testData/types/typeCreation/byDsl/intersectionType/anotherIntersectionTypeAsConjunct.kt");
+    }
+
+    @Test
+    @TestMetadata("duplicates.kt")
+    public void testDuplicates() {
+      runTest("analysis/analysis-api/testData/types/typeCreation/byDsl/intersectionType/duplicates.kt");
+    }
+
+    @Test
+    @TestMetadata("flexibleTypeAsConjunct.kt")
+    public void testFlexibleTypeAsConjunct() {
+      runTest("analysis/analysis-api/testData/types/typeCreation/byDsl/intersectionType/flexibleTypeAsConjunct.kt");
+    }
+
+    @Test
+    @TestMetadata("singleConjunct.kt")
+    public void testSingleConjunct() {
+      runTest("analysis/analysis-api/testData/types/typeCreation/byDsl/intersectionType/singleConjunct.kt");
+    }
+
+    @Test
+    @TestMetadata("threeRandomTypes.kt")
+    public void testThreeRandomTypes() {
+      runTest("analysis/analysis-api/testData/types/typeCreation/byDsl/intersectionType/threeRandomTypes.kt");
+    }
+
+    @Test
+    @TestMetadata("threeSubtypes.kt")
+    public void testThreeSubtypes() {
+      runTest("analysis/analysis-api/testData/types/typeCreation/byDsl/intersectionType/threeSubtypes.kt");
+    }
+
+    @Test
+    @TestMetadata("threeUserSubtypes.kt")
+    public void testThreeUserSubtypes() {
+      runTest("analysis/analysis-api/testData/types/typeCreation/byDsl/intersectionType/threeUserSubtypes.kt");
+    }
+
+    @Test
+    @TestMetadata("withAnnotationsOnConjuncts.kt")
+    public void testWithAnnotationsOnConjuncts() {
+      runTest("analysis/analysis-api/testData/types/typeCreation/byDsl/intersectionType/withAnnotationsOnConjuncts.kt");
+    }
+
+    @Test
+    @TestMetadata("withError.kt")
+    public void testWithError() {
+      runTest("analysis/analysis-api/testData/types/typeCreation/byDsl/intersectionType/withError.kt");
+    }
+  }
+
+  @Nested
   @TestMetadata("analysis/analysis-api/testData/types/typeCreation/byDsl/starTypeProjection")
   @TestDataPath("$PROJECT_ROOT")
   public class StarTypeProjection {

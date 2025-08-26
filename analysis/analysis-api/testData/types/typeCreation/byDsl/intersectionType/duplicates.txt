@@ -1,0 +1,24 @@
+KaType
+KaTypeParameterType:
+  abbreviation: null
+  annotations: []
+  name: T
+  symbol: KaTypeParameterSymbol:
+    annotations: []
+    compilerVisibility: Local
+    isActual: false
+    isExpect: false
+    isReified: false
+    location: LOCAL
+    modality: FINAL
+    name: T
+    origin: SOURCE
+    upperBounds: []
+    variance: INVARIANT
+    visibility: LOCAL
+  isMarkedNullable: false
+  isNullable: true
+  hasFlexibleNullability: false
+
+Rendered type:
+T
