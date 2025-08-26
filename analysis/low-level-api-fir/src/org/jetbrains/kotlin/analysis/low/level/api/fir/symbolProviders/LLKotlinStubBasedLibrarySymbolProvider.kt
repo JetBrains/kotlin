@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.fir.caches.FirCache
 import org.jetbrains.kotlin.fir.caches.firCachesFactory
 import org.jetbrains.kotlin.fir.caches.getValue
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
-import org.jetbrains.kotlin.fir.java.deserialization.KotlinBuiltins
 import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.realPsi
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolNamesProvider
@@ -234,7 +233,7 @@ internal open class LLKotlinStubBasedLibrarySymbolProvider(
                     functionOrigin = getDeclarationOriginFor(function.containingKtFile),
                     deserializedContainerSourceProvider = deserializedContainerSourceProvider,
                     session = session,
-                ) ?: continue
+                )
                 add(symbol)
             }
         }
@@ -503,20 +502,13 @@ internal open class LLKotlinStubBasedLibrarySymbolProvider(
             functionOrigin: FirDeclarationOrigin,
             deserializedContainerSourceProvider: DeserializedContainerSourceProvider,
             session: FirSession,
-        ): FirNamedFunctionSymbol? {
+        ): FirNamedFunctionSymbol {
             val functionStub: KotlinFunctionStubImpl = function.compiledStub
             val containerSource = deserializedContainerSourceProvider.getFacadeContainerSource(
                 file = function.containingKtFile,
                 stubOrigin = functionStub.origin,
                 declarationOrigin = functionOrigin,
             )
-
-            if (!functionOrigin.isBuiltIns &&
-                containerSource is FacadeClassSource &&
-                containerSource.className.internalName in KotlinBuiltins
-            ) {
-                return null
-            }
 
             val symbol = FirNamedFunctionSymbol(callableId)
             val rootContext = StubBasedFirDeserializationContext.createRootContext(

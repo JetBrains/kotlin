@@ -3,7 +3,8 @@ KtNamedFunction 'emptyArray' in 'fallback builtins':
 
 
 KtNamedFunction 'emptyArray' in 'kotlin-stdlib.jar!/kotlin/ArrayIntrinsicsKt.class':
-  <NO SYMBOL>
+  public final inline fun <reified T> emptyArray(): R|kotlin/Array<T>|
+
 
 KtNamedFunction 'emptyArray' in 'kotlin-stdlib.jar!/kotlin/kotlin.kotlin_builtins':
   public final inline fun <reified T> emptyArray(): R|kotlin/Array<T>|
