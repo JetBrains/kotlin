@@ -14,12 +14,12 @@ class A
 
 fun test() {
     acceptList(MyList.of("1", "2", "3"))
-    acceptList(<!ARGUMENT_TYPE_MISMATCH, UNSUPPORTED!>["1", "2", "3"]<!>)
-    acceptList(<!ARGUMENT_TYPE_MISMATCH, UNSUPPORTED!>[]<!>)
-    acceptList(<!ARGUMENT_TYPE_MISMATCH, UNSUPPORTED!>[null]<!>) // should not pass
-    acceptList(<!ARGUMENT_TYPE_MISMATCH, UNSUPPORTED!>[A()]<!>) // should not pass
-    acceptList(<!ARGUMENT_TYPE_MISMATCH, UNSUPPORTED!>["0", A()]<!>) // should not pass
-    acceptList(<!ARGUMENT_TYPE_MISMATCH, UNSUPPORTED!>["0", null]<!>) // should not pass
+    acceptList(["1", "2", "3"])
+    acceptList([])
+    acceptList([<!NULL_FOR_NONNULL_TYPE!>null<!>]) // should not pass
+    acceptList([<!ARGUMENT_TYPE_MISMATCH!>A()<!>]) // should not pass
+    acceptList(["0", <!ARGUMENT_TYPE_MISMATCH!>A()<!>]) // should not pass
+    acceptList(["0", <!NULL_FOR_NONNULL_TYPE!>null<!>]) // should not pass
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, collectionLiteral, companionObject, functionDeclaration, localProperty,

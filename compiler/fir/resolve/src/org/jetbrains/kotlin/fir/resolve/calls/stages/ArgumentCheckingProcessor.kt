@@ -122,6 +122,7 @@ internal object ArgumentCheckingProcessor {
                 is FirAnonymousFunctionExpression -> preprocessLambdaArgument(atom)
                 is FirCallableReferenceAccess -> preprocessCallableReference(atom)
                 is FirPropertyAccessExpression -> preprocessSimpleNameReferenceForContextSensitiveResolution(atom)
+                is FirCollectionLiteralCall -> preprocessCollectionLiteral(atom)
                 else -> error("Unknown kind of atom with postponed child: ${atom.expression::class}")
             }
 
@@ -355,6 +356,18 @@ internal object ArgumentCheckingProcessor {
         candidate.addPostponedAtom(postponedAtom)
     }
 
+    private fun ArgumentContext.preprocessCollectionLiteral(atom: ConeResolutionAtomWithPostponedChild) {
+        val expression = atom.collectionLiteralExpression
+
+        check(LanguageFeature.CollectionLiterals.isEnabled()) {
+            "FirCollectionLiteralCall must only be created when CollectionLiterals feature is enabled."
+        }
+
+        val postponedAtom = ConeCollectionLiteralAtom(expression, expectedType, candidate)
+        atom.setPostponedSubAtom(postponedAtom)
+        candidate.addPostponedAtom(postponedAtom)
+    }
+
     private fun ArgumentContext.preprocessLambdaArgument(atom: ConeResolutionAtomWithPostponedChild) {
         if (createLambdaWithTypeVariableAsExpectedTypeAtomIfNeeded(atom)) {
             return
@@ -530,4 +543,7 @@ internal object ArgumentCheckingProcessor {
 
     private val ConeResolutionAtomWithPostponedChild.callableReferenceExpression: FirCallableReferenceAccess
         get() = expression as? FirCallableReferenceAccess ?: error("Expected callable reference")
+
+    private val ConeResolutionAtomWithPostponedChild.collectionLiteralExpression: FirCollectionLiteralCall
+        get() = expression as? FirCollectionLiteralCall ?: error("Expected collection literal expression")
 }

@@ -95,6 +95,7 @@ sealed class ConeResolutionAtom : AbstractConeResolutionAtom() {
                         fallbackSubAtom = createRawAtomForResolvable(expression, allowUnresolvedExpression),
                     )
                 }
+                is FirCollectionLiteralCall -> ConeResolutionAtomWithPostponedChild(expression)
                 is FirResolvable -> createRawAtomForResolvable(expression, allowUnresolvedExpression)
                 is FirSafeCallExpression -> expression.createConeResolutionAtomWithSingleChild(
                     (expression.selector as? FirExpression)?.unwrapSmartcastExpression()
@@ -358,6 +359,22 @@ class ConeSimpleNameForContextSensitiveResolution(
     override val inputTypes: Collection<ConeKotlinType> = listOf(expectedType)
     override val outputType: ConeKotlinType?
         get() = null
+}
+
+class ConeCollectionLiteralAtom(
+    override val expression: FirCollectionLiteralCall,
+    override val expectedType: ConeKotlinType?,
+    val containingCallCandidate: Candidate,
+) : ConePostponedResolvedAtom() {
+    override val inputTypes: Collection<ConeKotlinType> = listOfNotNull(expectedType)
+    override val outputType: ConeKotlinType?
+        get() = null
+
+    var subAtom: ConeAtomWithCandidate? = null
+        set(value) {
+            require(field == null) { "subAtom already initialized" }
+            field = value
+        }
 }
 
 //  -------------------------- Utils --------------------------

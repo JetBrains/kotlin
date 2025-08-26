@@ -16,23 +16,23 @@ class A
 fun test() {
     <!CANNOT_INFER_PARAMETER_TYPE!>acceptList<!>(MyList.<!CANNOT_INFER_PARAMETER_TYPE!>of<!>("1", "2", "3")) // should not pass
     <!CANNOT_INFER_PARAMETER_TYPE!>acceptList<!>(MyList.<!CANNOT_INFER_PARAMETER_TYPE!>of<!>("0", <!ARGUMENT_TYPE_MISMATCH!>A()<!>)) // should not pass
-    <!CANNOT_INFER_PARAMETER_TYPE!>acceptList<!>(<!ARGUMENT_TYPE_MISMATCH, UNSUPPORTED!>["1", "2", "3"]<!>) // should not pass
-    <!CANNOT_INFER_PARAMETER_TYPE!>acceptList<!>(<!ARGUMENT_TYPE_MISMATCH, UNSUPPORTED!>["0", A()]<!>) // should not pass
+    <!CANNOT_INFER_PARAMETER_TYPE!>acceptList<!>(<!CANNOT_INFER_PARAMETER_TYPE, INAPPLICABLE_CANDIDATE!>["1", "2", "3"]<!>) // should not pass
+    <!CANNOT_INFER_PARAMETER_TYPE!>acceptList<!>(<!CANNOT_INFER_PARAMETER_TYPE, INAPPLICABLE_CANDIDATE!>["0", A()]<!>) // should not pass
     acceptList(MyList.of<String>())
-    <!CANNOT_INFER_PARAMETER_TYPE!>acceptList<!>(<!ARGUMENT_TYPE_MISMATCH, UNSUPPORTED!>[]<!>) // should not pass
+    <!CANNOT_INFER_PARAMETER_TYPE!>acceptList<!>(<!CANNOT_INFER_PARAMETER_TYPE, INAPPLICABLE_CANDIDATE!>[]<!>) // should not pass
 
-    acceptStringList(<!ARGUMENT_TYPE_MISMATCH, UNSUPPORTED!>[]<!>)
-    acceptStringList(<!ARGUMENT_TYPE_MISMATCH, UNSUPPORTED!>["1", "2", "3"]<!>)
-    acceptStringList(<!ARGUMENT_TYPE_MISMATCH, UNSUPPORTED!>["0", null]<!>) // should not pass
-    acceptStringList(<!ARGUMENT_TYPE_MISMATCH, UNSUPPORTED!>["0", A()]<!>) // should not pass
-    acceptStringList(<!ARGUMENT_TYPE_MISMATCH, UNSUPPORTED!>["0"]<!>)
+    acceptStringList([])
+    acceptStringList(["1", "2", "3"])
+    acceptStringList(["0", <!NULL_FOR_NONNULL_TYPE!>null<!>]) // should not pass
+    acceptStringList(["0", <!ARGUMENT_TYPE_MISMATCH!>A()<!>]) // should not pass
+    acceptStringList(["0"])
 
-    acceptList<A>(<!ARGUMENT_TYPE_MISMATCH, UNSUPPORTED!>[]<!>)
-    acceptList<A>(<!ARGUMENT_TYPE_MISMATCH, UNSUPPORTED!>["1", "2", "3"]<!>)
-    acceptList<Nothing>(<!ARGUMENT_TYPE_MISMATCH, UNSUPPORTED!>["1", "2", "3"]<!>)
-    acceptList<Nothing?>(<!ARGUMENT_TYPE_MISMATCH, UNSUPPORTED!>[]<!>)
-    acceptList<Any?>(<!ARGUMENT_TYPE_MISMATCH, UNSUPPORTED!>["0", A()]<!>) // should not pass
-    acceptList<String?>(<!ARGUMENT_TYPE_MISMATCH, UNSUPPORTED!>["0", null]<!>) // should not pass
+    acceptList<A>([])
+    acceptList<A>(["1", "2", "3"])
+    acceptList<Nothing>(["1", "2", "3"])
+    acceptList<Nothing?>([])
+    acceptList<Any?>(["0", <!ARGUMENT_TYPE_MISMATCH!>A()<!>]) // should not pass
+    acceptList<String?>(["0", <!NULL_FOR_NONNULL_TYPE!>null<!>]) // should not pass
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, collectionLiteral, companionObject, functionDeclaration, nullableType,
