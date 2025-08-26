@@ -6,6 +6,7 @@ pluginManagement {
         maven {
             url "file:///dump"
         }
+        mavenLocal()
         maven {
             url "https://packages.jetbrains.team/maven/p/ij/intellij-dependencies"
             content {
