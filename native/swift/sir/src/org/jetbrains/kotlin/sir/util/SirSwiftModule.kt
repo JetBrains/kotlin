@@ -55,6 +55,7 @@ object SirSwiftModule : SirModule() {
     val optional: SirEnum = enumStub("Optional")
 
     val caseIterable = protocol("CaseIterable")
+    val losslessStringConvertible = protocol("LosslessStringConvertible")
 }
 
 private fun SirMutableDeclarationContainer.struct(typeName: String) = addChild {

@@ -43,8 +43,6 @@ void ENUM_INSIDE_ENUM_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawP
 
 NSArray<id> * ENUM_entries_get();
 
-void * ENUM_valueOf__TypesOfArguments__Swift_String__(NSString * value);
-
 _Bool OBJECT_WITH_GENERIC_INHERITANCE_hasNext(void * self);
 
 _Bool OBJECT_WITH_GENERIC_INHERITANCE_hasPrevious(void * self);

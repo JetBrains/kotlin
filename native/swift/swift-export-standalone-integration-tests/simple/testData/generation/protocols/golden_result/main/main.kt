@@ -318,13 +318,6 @@ public fun packagewithprotocols_ENUM_WITH_INTERFACE_INHERITANCE_entries_get(): k
     return _result.objcPtr()
 }
 
-@ExportedBridge("packagewithprotocols_ENUM_WITH_INTERFACE_INHERITANCE_valueOf__TypesOfArguments__Swift_String__")
-public fun packagewithprotocols_ENUM_WITH_INTERFACE_INHERITANCE_valueOf__TypesOfArguments__Swift_String__(value: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
-    val __value = interpretObjCPointer<kotlin.String>(value)
-    val _result = packagewithprotocols.ENUM_WITH_INTERFACE_INHERITANCE.valueOf(__value)
-    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
-}
-
 @ExportedBridge("packagewithprotocols_INHERITANCE_COUPLE_init_allocate")
 public fun packagewithprotocols_INHERITANCE_COUPLE_init_allocate(): kotlin.native.internal.NativePtr {
     val _result = kotlin.native.internal.createUninitializedInstance<packagewithprotocols.INHERITANCE_COUPLE>()
