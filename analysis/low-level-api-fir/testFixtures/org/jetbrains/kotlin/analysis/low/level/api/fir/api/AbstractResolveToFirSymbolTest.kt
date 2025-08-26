@@ -52,13 +52,24 @@ abstract class AbstractResolveToFirSymbolTest : AbstractAnalysisApiBasedTest() {
         val actualText = withResolutionFacade(mainModule.ktModule) { resolutionFacade ->
             prettyPrint {
                 targetElements.forEach { (ktDeclaration, locationDescription) ->
-                    // Resolve to `BODY_RESOLVE` so that enum entry initializers are visible. This allows us to disambiguate enum entries with
-                    // the same name in the test results according to their initializer members.
-                    val firSymbol = ktDeclaration.resolveToFirSymbol(resolutionFacade, phase = FirResolvePhase.BODY_RESOLVE)
+                    val resultText = try {
+                        // Resolve to `BODY_RESOLVE` so that enum entry initializers are visible. This allows us to disambiguate enum
+                        // entries with the same name in the test results according to their initializer members.
+                        ktDeclaration
+                            .resolveToFirSymbol(resolutionFacade, phase = FirResolvePhase.BODY_RESOLVE)
+                            .fir
+                            .render()
+                    } catch (t: Throwable) {
+                        if (t.message?.contains("We should be able to find a symbol") == true) {
+                            "<NO SYMBOL>"
+                        } else {
+                            throw t
+                        }
+                    }
 
                     appendLine("${ktDeclaration::class.simpleName} '${ktDeclaration.name}' in $locationDescription:")
                     withIndent {
-                        appendLine(firSymbol.fir.render())
+                        appendLine(resultText)
                     }
                     appendLine()
                 }
