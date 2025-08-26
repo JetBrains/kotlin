@@ -6,16 +6,19 @@
 package org.jetbrains.kotlin.gradle.plugin
 
 import org.gradle.api.Project
-import org.gradle.api.flow.*
+import org.gradle.api.flow.FlowAction
+import org.gradle.api.flow.FlowParameters
+import org.gradle.api.flow.FlowProviders
+import org.gradle.api.flow.FlowScope
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.services.ServiceReference
 import org.gradle.api.tasks.Input
-import org.jetbrains.kotlin.gradle.fus.BuildUidService
 import org.jetbrains.kotlin.gradle.internal.report.BuildScanApi
-import org.jetbrains.kotlin.gradle.plugin.statistics.FlowActionBuildFusService
+import org.jetbrains.kotlin.gradle.plugin.statistics.BuildFinishBuildService
 import org.jetbrains.kotlin.gradle.plugin.statistics.ConfigurationMetricParameterFlowActionBuildFusService
+import org.jetbrains.kotlin.gradle.plugin.statistics.FlowActionBuildFusService
 import org.jetbrains.kotlin.gradle.plugin.statistics.MetricContainer
 import org.jetbrains.kotlin.gradle.report.BuildMetricsService
 import javax.inject.Inject
@@ -29,12 +32,17 @@ internal abstract class StatisticsBuildFlowManager @Inject constructor(
             project.objects.newInstance(StatisticsBuildFlowManager::class.java)
     }
 
-    fun subscribeForBuildResultAndConfigurationTimeMetrics(buildFusServiceProvider: Provider<FlowActionBuildFusService>) {
+    fun subscribeForBuildResultAndConfigurationTimeMetrics(
+        buildFusServiceProvider: Provider<FlowActionBuildFusService>,
+        buildFinishBuildService: Provider<BuildFinishBuildService>?,
+    ) {
         flowScope.always(
             BuildFinishAndConfigurationTimeMetricsFlowAction::class.java
         ) { spec ->
             spec.parameters.buildFailed.set(flowProviders.buildWorkResult.map { it.failure.isPresent })
             spec.parameters.configurationTimeMetrics.addAll(buildFusServiceProvider.get().getConfigurationTimeMetrics())
+            //Gradle 9+: ensure BuildFinishBuildService is initialized at the same time as BuildFusService to ensure the same buildId is used
+            buildFinishBuildService?.get()
         }
     }
 
@@ -74,9 +82,6 @@ internal class BuildFinishFlowAction : FlowAction<BuildFinishFlowAction.Paramete
         @get:ServiceReference
         val buildFusServiceProperty: Property<ConfigurationMetricParameterFlowActionBuildFusService>
 
-        @get:ServiceReference
-        val buildUidServiceProperty: Property<BuildUidService?>
-
         @get:Input
         val buildFailed: Property<Boolean>
     }
@@ -84,7 +89,6 @@ internal class BuildFinishFlowAction : FlowAction<BuildFinishFlowAction.Paramete
     override fun execute(parameters: Parameters) {
         parameters.buildFusServiceProperty.orNull?.recordBuildFinished(
             parameters.buildFailed.get(),
-            parameters.buildUidServiceProperty.orNull?.buildId ?: "unknown_id",
             parameters.buildFusServiceProperty.orNull?.parameters?.configurationMetrics?.orNull ?: emptyList()
         )
     }
@@ -94,9 +98,6 @@ internal class BuildFinishAndConfigurationTimeMetricsFlowAction : FlowAction<Bui
     interface Parameters : FlowParameters {
         @get:ServiceReference
         val buildFusServiceProperty: Property<FlowActionBuildFusService>
-
-        @get:ServiceReference
-        val buildUidServiceProperty: Property<BuildUidService?>
 
         @get:Input
         val buildFailed: Property<Boolean>
@@ -108,7 +109,6 @@ internal class BuildFinishAndConfigurationTimeMetricsFlowAction : FlowAction<Bui
     override fun execute(parameters: Parameters) {
         parameters.buildFusServiceProperty.orNull?.recordBuildFinished(
             parameters.buildFailed.get(),
-            parameters.buildUidServiceProperty.orNull?.buildId ?: "unknown_id",
             parameters.configurationTimeMetrics.get()
         )
     }
