@@ -1482,6 +1482,12 @@ private fun String.durationUnitByShortNameOrNull(start: Int): DurationUnit? {
 /**
  * Multiplier to convert a 15-digit fraction to nanoseconds for this unit.
  * Used for efficient fraction parsing when the fraction has 15 or fewer digits.
+ *
+ * These values are calculated as: nanoseconds_in_unit / 10^15
+ * Examples:
+ * - SECONDS: 1_000_000_000 ns / 10^15 = 0.000001
+ * - DAYS: 86_400_000_000_000 ns / 10^15 = 0.0864
+ * This allows direct multiplication: fraction_value * multiplier = nanoseconds
  */
 @Suppress("REDUNDANT_ELSE_IN_WHEN")
 private val DurationUnit.fractionMultiplier: Double
@@ -1499,6 +1505,12 @@ private val DurationUnit.fractionMultiplier: Double
 /**
  * Multiplier to convert a Double fraction (0.0 to 1.0) to nanoseconds for this unit.
  * Used as fallback for fractions with more than 15 digits that require Double parsing.
+ *
+ * These values represent the total number of nanoseconds in one unit:
+ * - MINUTES: 60 seconds * 1_000_000_000 ns/s = 60_000_000_000 ns
+ * - HOURS: 3600 seconds * 1_000_000_000 ns/s = 3_600_000_000_000 ns
+ * - DAYS: 86400 seconds * 1_000_000_000 ns/s = 86_400_000_000_000 ns
+ * Smaller units don't need fallback as they fit within 15-digit precision.
  */
 private val DurationUnit.fallbackFractionMultiplier: Long
     get() = when (this) {
