@@ -1,0 +1,43 @@
+<caret_1>:
+  KDocName(8,16): 'T.foxAny'
+    null
+
+<caret_2>:
+  KDocName(22,38): 'T.foxAnyNullable'
+    null
+
+<caret_3>:
+  KDocName(44,52): 'T.foxInt'
+    null
+
+<caret_4>:
+  KDocName(58,66): 'T.foxSeq'
+    null
+
+<caret_5>:
+  KDocName(72,88): 'T.foxSeqNullable'
+    null
+
+<caret_6>:
+  KDocName(337,345): 'T.foxAny'
+    null
+
+<caret_7>:
+  KDocName(351,367): 'T.foxAnyNullable'
+    null
+
+<caret_8>:
+  KDocName(373,381): 'T.foxInt'
+    null
+
+<caret_9>:
+  KDocName(387,395): 'T.foxSeq'
+    null
+
+<caret_10>:
+  KDocName(401,417): 'T.foxSeqNullable'
+    null
+
+<caret_11>:
+  KDocName(723,737): 'T.foxRecursive'
+    null

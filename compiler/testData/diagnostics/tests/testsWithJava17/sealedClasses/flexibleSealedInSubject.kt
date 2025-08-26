@@ -2,7 +2,7 @@
 // FIR_IDENTICAL
 // ISSUE: KT-56942
 // FILE: Base.java
-public sealed class Base permits A, B {
+public sealed abstract class Base permits A, B {
     public static Base provide() { return new A(); }
 }
 

@@ -1,14 +1,15 @@
+// FIR_IDENTICAL
 // RUN_PIPELINE_TILL: FRONTEND
 // DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_ANONYMOUS_PARAMETER -UNUSED_EXPRESSION -UNREACHABLE_CODE -UNUSED_VARIABLE -WRONG_ANNOTATION_TARGET -UNUSED_LAMBDA_EXPRESSION
-// LANGUAGE: +YieldIsNoMoreReserved
+// LANGUAGE: +YieldIsNoMoreReserved +NameBasedDestructuring +DeprecateNameMismatchInShortDestructuringWithParentheses +EnableNameBasedDestructuringShortForm
 
 // FILE: 1.kt
 
 annotation class yield
 
 fun bar(p: Int) {
-    <!REDUNDANT_LABEL_WARNING!>yield@<!> p
-    <!REDUNDANT_LABEL_WARNING!>`yield`@<!> p
+    yield@ p
+    `yield`@ p
 
     @yield() p
     @`yield`() p
@@ -18,7 +19,7 @@ fun bar(p: Int) {
     }
     { yield: Int -> }
 
-    val (yield) = listOf(4)
+    val [yield] = listOf(4)
 
 }
 

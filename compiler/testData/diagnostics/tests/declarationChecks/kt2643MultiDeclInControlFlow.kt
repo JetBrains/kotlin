@@ -1,3 +1,5 @@
+// LANGUAGE: +NameBasedDestructuring +DeprecateNameMismatchInShortDestructuringWithParentheses +EnableNameBasedDestructuringShortForm
+// FIR_IDENTICAL
 // RUN_PIPELINE_TILL: BACKEND
 //KT-2643 Support multi-declarations in Data-Flow analysis
 package n
@@ -8,21 +10,21 @@ class C {
 }
 
 fun test1(c: C) {
-    val (a, b) = c
+    val [a, b] = c
 }
 
 fun test2(c: C) {
-    val (a, b) = c
+    val [a, b] = c
     a + 3
 }
 
 fun test3(c: C) {
-    var (<!ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE!>a<!>, b) = c
+    var [a, b] = c
     a = 3
 }
 
 fun test4(c: C) {
-    var (<!VARIABLE_WITH_REDUNDANT_INITIALIZER!>a<!>, b) = c
+    var [a, b] = c
     a = 3
     a + 1
 }

@@ -16,7 +16,7 @@ object LanguageSettingsDirectives : SimpleDirectivesContainer() {
     val LANGUAGE by stringDirective(
         description = """
             List of enabled and disabled language features.
-            Usage: // LANGUAGE: +SomeFeature -OtherFeature warn:FeatureWithEarning
+            Usage: // LANGUAGE: +SomeFeature -OtherFeature
         """.trimIndent()
     )
 

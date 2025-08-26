@@ -1,3 +1,4 @@
+// LANGUAGE: +NameBasedDestructuring +DeprecateNameMismatchInShortDestructuringWithParentheses +EnableNameBasedDestructuringShortForm
 // WITH_STDLIB
 
 class C : Iterable<String> {
@@ -9,7 +10,7 @@ class C : Iterable<String> {
 
 fun box(): String {
     val c = C()
-    for ((i, x) in c.withIndex()) {
+    for ([i, x] in c.withIndex()) {
         if (i == 0) {
             return x
         }

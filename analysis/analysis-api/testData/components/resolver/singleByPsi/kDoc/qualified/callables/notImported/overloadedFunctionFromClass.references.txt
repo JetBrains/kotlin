@@ -1,4 +1,4 @@
 KDocName(48,59): 'foo.Foo.foo'
   KDocReference:
-    0: (in foo.Foo) fun foo(number: kotlin.Int)
-    1: (in foo.Foo) fun foo(string: kotlin.String)
+    0: (in foo.Foo) fun foo(string: kotlin.String)
+    1: (in foo.Foo) fun foo(number: kotlin.Int)

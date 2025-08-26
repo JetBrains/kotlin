@@ -1,8 +1,10 @@
 // KT-79359
-// TARGET_BACKEND: JS_IR
-// TARGET_BACKEND: JS_IR_ES6
+// TARGET_BACKEND: JS_IR, JS_IR_ES6
 // WITH_STDLIB
 // WITH_COROUTINES
+
+// IGNORE_BACKEND_K1: JS_IR, JS_IR_ES6
+// ^^^ This test was always ignored in K1 before the change in ClassicUnstableAndK2LanguageFeaturesSkipConfigurator.shouldSkipTest()
 
 import helpers.*
 import kotlin.coroutines.*

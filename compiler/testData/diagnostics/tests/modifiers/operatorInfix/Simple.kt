@@ -1,3 +1,4 @@
+// LANGUAGE: +NameBasedDestructuring +DeprecateNameMismatchInShortDestructuringWithParentheses +EnableNameBasedDestructuringShortForm
 // RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // DIAGNOSTICS: -UNUSED_PARAMETER, -EXTENSION_SHADOWED_BY_MEMBER
@@ -33,7 +34,7 @@ fun test() {
     consumeString(a())
     consumeString(a[1])
 
-    val (x, y) = Example()
+    val [x, y] = Example()
     consumeString(x)
     consumeString(y)
 

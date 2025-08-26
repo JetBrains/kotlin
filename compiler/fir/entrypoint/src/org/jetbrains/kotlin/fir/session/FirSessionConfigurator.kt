@@ -12,10 +12,11 @@ import org.jetbrains.kotlin.fir.analysis.checkers.LanguageVersionSettingsChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.DeclarationCheckers
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.ExpressionCheckers
 import org.jetbrains.kotlin.fir.analysis.checkers.type.TypeCheckers
-import org.jetbrains.kotlin.fir.analysis.checkersComponent
+import org.jetbrains.kotlin.fir.analysis.nullableCheckersComponent
 import org.jetbrains.kotlin.fir.analysis.diagnostics.diagnosticRendererFactory
 import org.jetbrains.kotlin.fir.analysis.extensions.additionalCheckers
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticsContainer
+import org.jetbrains.kotlin.fir.analysis.checkersComponent
 import org.jetbrains.kotlin.fir.extensions.*
 import kotlin.reflect.KClass
 
@@ -26,21 +27,33 @@ class FirSessionConfigurator(private val session: FirSession) {
         registeredExtensions += extensions
     }
 
+    /**
+     * Must only be used in CLI compiler mode.
+     */
     @OptIn(SessionConfiguration::class)
     fun useCheckers(checkers: ExpressionCheckers) {
         session.checkersComponent.register(checkers)
     }
 
+    /**
+     * Must only be used in CLI compiler mode.
+     */
     @OptIn(SessionConfiguration::class)
     fun useCheckers(checkers: DeclarationCheckers) {
         session.checkersComponent.register(checkers)
     }
 
+    /**
+     * Must only be used in CLI compiler mode.
+     */
     @OptIn(SessionConfiguration::class)
     fun useCheckers(checkers: TypeCheckers) {
         session.checkersComponent.register(checkers)
     }
 
+    /**
+     * Must only be used in CLI compiler mode.
+     */
     @OptIn(SessionConfiguration::class)
     fun useCheckers(checkers: LanguageVersionSettingsCheckers) {
         session.checkersComponent.register(checkers)
@@ -65,8 +78,11 @@ class FirSessionConfigurator(private val session: FirSession) {
             extensions = BunchOfRegisteredExtensions(filteredExtensions, diagnosticsContainers = emptyList())
         }
         session.extensionService.registerExtensions(extensions)
+
         if (session.kind == FirSession.Kind.Source) {
-            session.extensionService.additionalCheckers.forEach(session.checkersComponent::register)
+            session.nullableCheckersComponent?.let { checkersComponent ->
+                session.extensionService.additionalCheckers.forEach(checkersComponent::register)
+            }
         }
     }
 }

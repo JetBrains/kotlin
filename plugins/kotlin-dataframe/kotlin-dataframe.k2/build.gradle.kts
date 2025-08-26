@@ -2,6 +2,7 @@ description = "Kotlin DataFrame Compiler Plugin (K2)"
 
 plugins {
     kotlin("jvm")
+    kotlin("plugin.serialization")
     id("jps-compatible")
 }
 
@@ -15,6 +16,8 @@ dependencies {
     compileOnly(project(":compiler:fir:plugin-utils"))
     compileOnly(project(":compiler:fir:entrypoint"))
     compileOnly(project(":compiler:cli-common"))
+    compileOnly(libs.kotlinx.serialization.core)
+    compileOnly(libs.kotlinx.serialization.json)
 
     compileOnly(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
     compileOnly(intellijCore())

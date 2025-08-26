@@ -15,14 +15,7 @@ FILE: [ResolvedTo(ANNOTATION_ARGUMENTS)] danglingModifierInsideEnumEntry.kt
             super<R|kotlin/Enum<foo/MyEnumClass>|>()
         }
 
-        public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyEnumClass] enum entry Entry: R|foo/MyEnumClass| = object : R|foo/MyEnumClass| {
-            private [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=<anonymous>] constructor(): R|foo/<anonymous>| {
-                super<R|foo/MyEnumClass|>()
-            }
-
-            [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=<anonymous>] @R|foo/Anno|[Types](i = R|foo/CONSTANT|) <DANGLING MODIFIER: Top level declaration expected>
-        }
-
+        public final static [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=MyEnumClass] enum entry Entry: R|foo/MyEnumClass| = LAZY_EXPRESSION
         public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyEnumClass] fun values(): R|kotlin/Array<foo/MyEnumClass>| {
         }
 

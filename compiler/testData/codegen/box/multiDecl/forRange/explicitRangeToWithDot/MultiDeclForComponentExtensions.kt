@@ -1,3 +1,4 @@
+// LANGUAGE: +NameBasedDestructuring +DeprecateNameMismatchInShortDestructuringWithParentheses +EnableNameBasedDestructuringShortForm
 class Range(val from : C, val to: C) {
     operator fun iterator() = It(from, to)
 }
@@ -22,7 +23,7 @@ operator fun C.component2() = i + 2
 
 fun doTest(): String {
     var s = ""
-    for ((a, b) in C(0).rangeTo(C(2))) {
+    for ([a, b] in C(0).rangeTo(C(2))) {
         s += "$a:$b;"
     }
     return s

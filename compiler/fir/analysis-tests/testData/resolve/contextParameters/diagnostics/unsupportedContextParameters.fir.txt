@@ -161,6 +161,19 @@ FILE: unsupportedContextParameters.kt
             lval <iterator>: R|kotlin/collections/Iterator<kotlin/Pair<kotlin/Int, kotlin/Int>>| = R|<local>/collection|.R|SubstitutionOverride<kotlin/Array.iterator: R|kotlin/collections/Iterator<kotlin/Pair<kotlin/Int, kotlin/Int>>|>|()
             while(R|<local>/<iterator>|.R|SubstitutionOverride<kotlin/collections/Iterator.hasNext: R|kotlin/Boolean|>|()) {
                 lval <destruct>: R|kotlin/Pair<kotlin/Int, kotlin/Int>| = R|<local>/<iterator>|.R|SubstitutionOverride<kotlin/collections/Iterator.next: R|kotlin/Pair<kotlin/Int, kotlin/Int>|>|()
+                lval b: <ERROR TYPE REF: Unresolved name: b> = R|<local>/<destruct>|.<Unresolved name: b>#
+                lval c: <ERROR TYPE REF: Unresolved name: c> = R|<local>/<destruct>|.<Unresolved name: c>#
+                 {
+                }
+
+            }
+
+        }
+
+         {
+            lval <iterator>: R|kotlin/collections/Iterator<kotlin/Pair<kotlin/Int, kotlin/Int>>| = R|<local>/collection|.R|SubstitutionOverride<kotlin/Array.iterator: R|kotlin/collections/Iterator<kotlin/Pair<kotlin/Int, kotlin/Int>>|>|()
+            while(R|<local>/<iterator>|.R|SubstitutionOverride<kotlin/collections/Iterator.hasNext: R|kotlin/Boolean|>|()) {
+                lval <destruct>: R|kotlin/Pair<kotlin/Int, kotlin/Int>| = R|<local>/<iterator>|.R|SubstitutionOverride<kotlin/collections/Iterator.next: R|kotlin/Pair<kotlin/Int, kotlin/Int>|>|()
                 lval b: R|kotlin/Int| = R|<local>/<destruct>|.R|SubstitutionOverride<kotlin/Pair.component1: R|kotlin/Int|>|()
                 lval c: R|kotlin/Int| = R|<local>/<destruct>|.R|SubstitutionOverride<kotlin/Pair.component2: R|kotlin/Int|>|()
                  {
@@ -171,8 +184,11 @@ FILE: unsupportedContextParameters.kt
         }
 
         lval <destruct>: R|kotlin/Pair<kotlin/Int, kotlin/Int>| = R|kotlin/Pair.Pair|<R|kotlin/Int|, R|kotlin/Int|>(Int(1), Int(2))
+        lval <unused var>: <ERROR TYPE REF: Underscore without renaming in destructuring> = ERROR_EXPR(Underscore without renaming in destructuring)
+        lval b: <ERROR TYPE REF: Unresolved name: b> = R|<local>/<destruct>|.<Unresolved name: b>#
+        lval <destruct>: R|kotlin/Pair<kotlin/Int, kotlin/Int>| = R|kotlin/Pair.Pair|<R|kotlin/Int|, R|kotlin/Int|>(Int(1), Int(2))
         lval <unused var>: R|kotlin/Int| = R|<local>/<destruct>|.R|SubstitutionOverride<kotlin/Pair.component1: R|kotlin/Int|>|()
-        lval b: R|kotlin/Int| = R|<local>/<destruct>|.R|SubstitutionOverride<kotlin/Pair.component2: R|kotlin/Int|>|()
+        lval b2: R|kotlin/Int| = R|<local>/<destruct>|.R|SubstitutionOverride<kotlin/Pair.component2: R|kotlin/Int|>|()
         local final fun local(f: R|kotlin/Int| = Int(1)): R|kotlin/Unit| {
         }
 

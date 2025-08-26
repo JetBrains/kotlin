@@ -1,3 +1,4 @@
+// LANGUAGE: +NameBasedDestructuring +DeprecateNameMismatchInShortDestructuringWithParentheses +EnableNameBasedDestructuringShortForm
 // WITH_STDLIB
 
 fun box(): String {
@@ -16,7 +17,7 @@ fun box(): String {
 fun <T> Nat<T>.fibonacci(
     n: T,
     seed: Pair<T, T> = nil to one,
-    fib: (Pair<T, T>) -> Pair<T, T> = { (a, b) -> b to a + b },
+    fib: (Pair<T, T>) -> Pair<T, T> = { [a, b] -> b to a + b },
     i: T = nil,
 ): T =
     if (i == n) fib(seed).first

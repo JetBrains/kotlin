@@ -13,7 +13,10 @@ open class AbstractNativeIrDeserializationWithInlinedFunInKlibTest : AbstractNat
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
         builder.defaultDirectives {
-            LANGUAGE with "+${LanguageFeature.IrInlinerBeforeKlibSerialization.name}"
+            LANGUAGE with listOf(
+                "+${LanguageFeature.IrIntraModuleInlinerBeforeKlibSerialization.name}",
+                "+${LanguageFeature.IrCrossModuleInlinerBeforeKlibSerialization.name}"
+            )
         }
     }
 }

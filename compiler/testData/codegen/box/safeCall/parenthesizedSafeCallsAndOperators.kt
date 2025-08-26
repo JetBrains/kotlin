@@ -2,6 +2,9 @@
 // ISSUE: KT-68834
 // IGNORE_BACKEND_K1: ANY
 
+// IGNORE_KLIB_BACKEND_ERRORS_WITH_CUSTOM_FIRST_PHASE: 2.0.0
+// ^^^ KT-68834 fixed in 2.1.0-Beta1
+
 var result = "none"
 
 fun member(name: String) {

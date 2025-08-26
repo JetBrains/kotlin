@@ -1,3 +1,4 @@
+// LANGUAGE: +NameBasedDestructuring +DeprecateNameMismatchInShortDestructuringWithParentheses +EnableNameBasedDestructuringShortForm
 // OPT_IN: kotlin.contracts.ExperimentalContracts
 // WITH_STDLIB
 
@@ -32,7 +33,7 @@ fun test2(): String {
 
 fun test3(): String {
     var res = ""
-    for ((s, _) in listOf("OK" to "FAIL")) {
+    for ([s, _] in listOf("OK" to "FAIL")) {
         runOnce {
             res += s
         }
@@ -42,7 +43,7 @@ fun test3(): String {
 
 fun test4(): String {
     var res = ""
-    for ((s: String, _) in listOf("OK" to "FAIL")) {
+    for ([s: String, _] in listOf("OK" to "FAIL")) {
         runOnce {
             res += s
         }

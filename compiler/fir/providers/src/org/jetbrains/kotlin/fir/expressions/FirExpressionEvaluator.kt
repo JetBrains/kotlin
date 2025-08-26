@@ -339,10 +339,15 @@ object FirExpressionEvaluator {
                 evaluate(it).unwrapOr<FirLiteralExpression> { return it } ?: return NotEvaluated
             }
             if (evaluatedArgs.size != 2) return NotEvaluated
+            val opr1 = evaluatedArgs[0]
+            val opr2 = evaluatedArgs[1]
+
+            val opr1Value = opr1.kind.convertToGivenKind(opr1.value)
+            val opr2Value = opr2.kind.convertToGivenKind(opr2.value)
 
             val result = when (equalityOperatorCall.operation) {
-                FirOperation.EQ -> evaluatedArgs[0].value == evaluatedArgs[1].value
-                FirOperation.NOT_EQ -> evaluatedArgs[0].value != evaluatedArgs[1].value
+                FirOperation.EQ -> opr1Value == opr2Value
+                FirOperation.NOT_EQ -> opr1Value != opr2Value
                 else -> error("Operation \"${equalityOperatorCall.operation}\" is not supported in compile time evaluation")
             }
 

@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.diagnostics.WhenMissingCase
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.FirEnumEntry
-import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.collectEnumEntries
 import org.jetbrains.kotlin.fir.declarations.getSealedClassInheritors
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
@@ -87,16 +86,16 @@ class FirWhenExhaustivenessTransformer(private val bodyResolveComponents: BodyRe
         }
 
         private fun ConeKotlinType.unwrapTypeParameterAndIntersectionTypes(session: FirSession): Collection<ConeKotlinType> {
-            return when {
-                this is ConeIntersectionType -> intersectedTypes
-                this is ConeTypeParameterType && session.languageVersionSettings.supportsFeature(LanguageFeature.ImprovedExhaustivenessChecksIn21)
+            return when (this) {
+                is ConeIntersectionType -> intersectedTypes
+                is ConeTypeParameterType if session.languageVersionSettings.supportsFeature(LanguageFeature.ImprovedExhaustivenessChecksIn21)
                     -> buildList {
                     lookupTag.typeParameterSymbol.resolvedBounds.flatMapTo(this) {
                         it.coneType.unwrapTypeParameterAndIntersectionTypes(session)
                     }
                     add(this@unwrapTypeParameterAndIntersectionTypes)
                 }
-                this is ConeDefinitelyNotNullType && session.languageVersionSettings.supportsFeature(LanguageFeature.ImprovedExhaustivenessChecksIn21)
+                is ConeDefinitelyNotNullType if session.languageVersionSettings.supportsFeature(LanguageFeature.ImprovedExhaustivenessChecksIn21)
                     -> original.unwrapTypeParameterAndIntersectionTypes(session)
                     .map { it.makeConeTypeDefinitelyNotNullOrNotNull(session.typeContext) }
                 else -> listOf(this)
@@ -107,7 +106,7 @@ class FirWhenExhaustivenessTransformer(private val bodyResolveComponents: BodyRe
             subjectType: ConeKotlinType,
             session: FirSession
         ): List<WhenExhaustivenessChecker> {
-            return buildList<WhenExhaustivenessChecker> {
+            return buildList {
                 exhaustivenessCheckers.filterTo(this) {
                     it.isApplicable(subjectType, session)
                 }
@@ -170,7 +169,7 @@ class FirWhenExhaustivenessTransformer(private val bodyResolveComponents: BodyRe
 
         // May not need to calculate the status of the minimum bound if there is an else branch for a platform type subject.
         // In that case, only the upper bound of the platform type needs to be calculated.
-        val minimumStatus by lazy { computeExhaustivenessStatus(whenExpression, minimumBound) }
+        val minimumStatus by lazy(LazyThreadSafetyMode.NONE) { computeExhaustivenessStatus(whenExpression, minimumBound) }
 
         fun computeUpperBoundStatus(): ExhaustivenessStatus {
             val upperBound = subjectType.upperBoundIfFlexible()
@@ -537,9 +536,15 @@ private object WhenOnSealedClassExhaustivenessChecker : WhenExhaustivenessChecke
             return
         }
         when {
-            fir.modality == Modality.SEALED -> fir.getSealedClassInheritors(session).forEach {
-                val symbol = session.symbolProvider.getClassLikeSymbolByClassId(it) as? FirRegularClassSymbol
-                symbol?.collectAllSubclassesTo(destination, session)
+            fir.modality == Modality.SEALED -> {
+                if (fir.isJavaNonAbstractSealed == true) {
+                    destination.add(this)
+                }
+
+                fir.getSealedClassInheritors(session).forEach {
+                    val symbol = session.symbolProvider.getClassLikeSymbolByClassId(it) as? FirRegularClassSymbol
+                    symbol?.collectAllSubclassesTo(destination, session)
+                }
             }
             fir.classKind == ClassKind.ENUM_CLASS -> fir.collectEnumEntries(session).mapTo(destination) { it.symbol }
             else -> destination.add(this)

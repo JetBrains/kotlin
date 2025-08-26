@@ -1,3 +1,4 @@
+// LANGUAGE: +NameBasedDestructuring +DeprecateNameMismatchInShortDestructuringWithParentheses +EnableNameBasedDestructuringShortForm
 class A {
     operator fun component1() = 1
     operator fun component2() = 2
@@ -5,7 +6,7 @@ class A {
 
 
 fun box() : String {
-    val (a, b) = A()
+    val [a, b] = A()
 
     val local = object {
         public fun run() : Int {

@@ -1,3 +1,4 @@
+// LANGUAGE: +NameBasedDestructuring +DeprecateNameMismatchInShortDestructuringWithParentheses +EnableNameBasedDestructuringShortForm
 // WITH_STDLIB
 
 fun box(): String {
@@ -5,7 +6,7 @@ fun box(): String {
 
     val xs = StringBuilder("abcd")
 
-    for ((index, x) in xs.withIndex()) {
+    for ([index, x] in xs.withIndex()) {
         s.append("$index:$x;")
         xs.setLength(0)
     }

@@ -1,3 +1,5 @@
+// LANGUAGE: +NameBasedDestructuring +DeprecateNameMismatchInShortDestructuringWithParentheses +EnableNameBasedDestructuringShortForm
+// FIR_IDENTICAL
 // RUN_PIPELINE_TILL: FRONTEND
 // CHECK_TYPE
 // DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_ANONYMOUS_PARAMETER +UNUSED_DESTRUCTURED_PARAMETER_ENTRY
@@ -8,36 +10,36 @@ fun foo(block: (A) -> Unit) { }
 fun foobar(block: (A, B) -> Unit) { }
 
 fun bar() {
-    foo { (a, <!UNUSED_DESTRUCTURED_PARAMETER_ENTRY!>b<!>) ->
+    foo { [a, b] ->
         a checkType { _<Int>() }
     }
 
-    foo { (<!UNUSED_DESTRUCTURED_PARAMETER_ENTRY!>a<!>, b) ->
+    foo { [a, b] ->
         b checkType { _<String>() }
     }
 
-    foo { (a: Int, <!UNUSED_DESTRUCTURED_PARAMETER_ENTRY!>b<!>: String) ->
+    foo { [a: Int, b: String] ->
         a checkType { _<Int>() }
     }
 
-    foo { (<!UNUSED_DESTRUCTURED_PARAMETER_ENTRY!>a<!>: Int, b: String) ->
+    foo { [a: Int, b: String] ->
         b checkType { _<String>() }
     }
 
-    foobar { (a, <!UNUSED_DESTRUCTURED_PARAMETER_ENTRY!>b<!>), c ->
+    foobar { [a, b], c ->
         a checkType { _<Int>() }
     }
 
-    foobar { a, (<!UNUSED_DESTRUCTURED_PARAMETER_ENTRY!>b<!>, c) ->
+    foobar { a, [b, c] ->
         c checkType { _<Short>() }
     }
 
-    foobar { (a, <!UNUSED_DESTRUCTURED_PARAMETER_ENTRY!>b<!>), (<!UNUSED_DESTRUCTURED_PARAMETER_ENTRY!>c<!>, d) ->
+    foobar { [a, b], [c, d] ->
         a checkType { _<Int>() }
         d checkType { _<Short>() }
     }
 
-    foobar { (<!UNUSED_DESTRUCTURED_PARAMETER_ENTRY!>a<!>, b), (c, <!UNUSED_DESTRUCTURED_PARAMETER_ENTRY!>d<!>) ->
+    foobar { [a, b], [c, d] ->
         b checkType { _<String>() }
         c checkType { _<Double>() }
     }

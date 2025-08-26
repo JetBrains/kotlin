@@ -16,6 +16,7 @@ dependencies {
     testFixturesApi(testFixtures(project(":compiler:tests-compiler-utils")))
     testFixturesApi(testFixtures(project(":compiler:tests-common-new")))
     testFixturesApi(project(":compiler:fir:tree"))
+    testFixturesImplementation(testFixtures(project(":generators:test-generator")))
 
     testFixturesApi(platform(libs.junit.bom))
     testCompileOnly(project(":compiler:plugin-api"))
@@ -58,6 +59,8 @@ projectTests {
             systemProperty("kotlin.script.test.script.definition.classpath", scriptingTestDefinitionClasspath)
         }
     }
+
+    testGenerator("org.jetbrains.kotlin.scripting.test.TestGeneratorKt")
 
     withJvmStdlibAndReflect()
 }

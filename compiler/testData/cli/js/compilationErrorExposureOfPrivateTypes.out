@@ -1,14 +1,15 @@
 warning: ATTENTION!
 This build uses unsafe internal compiler arguments:
 
--XXLanguage:+IrInlinerBeforeKlibSerialization
+-XXLanguage:+IrIntraModuleInlinerBeforeKlibSerialization
+-XXLanguage:+IrCrossModuleInlinerBeforeKlibSerialization
 
 This mode is not recommended for production use,
 as no stability/compatibility guarantees are given on
 compiler or generated code. Use it at your own risk!
 
 warning: argument "-Xsuppress-warning" is deprecated. Use "-Xwarning-level=NOTHING_TO_INLINE:disabled" instead
-warning: following manually enabled features will force generation of pre-release binaries: IrInlinerBeforeKlibSerialization
+warning: following manually enabled features will force generation of pre-release binaries: IrCrossModuleInlinerBeforeKlibSerialization
 compiler/testData/cli/js/compilationErrorExposureOfPrivateTypes.kt:14:43: error: public-API inline function accesses a non Public-API class 'A'. This could happen as a result of cascaded inlining of the following functions:
 private inline fun privateInlineFun1()
 private inline fun privateInlineFun2()

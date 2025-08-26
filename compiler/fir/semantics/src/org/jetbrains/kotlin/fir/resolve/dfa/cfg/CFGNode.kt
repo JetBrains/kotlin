@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -985,10 +985,10 @@ object FirStub : FirExpression() {
 class FakeExpressionEnterNode(owner: ControlFlowGraph, level: Int) : CFGNode<FirStub>(owner, level), GraphEnterNodeMarker, GraphExitNodeMarker {
     init { isDead = true }
 
-    override val fir: FirStub = FirStub
+    override val fir: FirStub get() = FirStub
 
     override fun <R, D> accept(visitor: ControlFlowGraphVisitor<R, D>, data: D): R {
-        throw IllegalStateException("fake expressions should not appear in graphs")
+        return visitor.visitFakeExpressionEnterNode(this, data)
     }
 }
 

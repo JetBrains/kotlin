@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.ir.backend.js
 
 import org.jetbrains.kotlin.backend.common.LoweringContext
-import org.jetbrains.kotlin.backend.common.ir.Symbols
+import org.jetbrains.kotlin.backend.common.ir.PreSerializationSymbols
 import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.backend.common.lower.coroutines.AddContinuationToLocalSuspendFunctionsLowering
 import org.jetbrains.kotlin.backend.common.lower.coroutines.AddContinuationToNonLocalSuspendFunctionsLowering
@@ -61,7 +61,7 @@ private val validateIrAfterInliningAllFunctions = makeIrModulePhase(
                 // No inline function call sites should remain at this stage.
                 val inlineFunction = inlineFunctionUseSite.symbol.owner
                 // it's fine to have typeOf<T>, it would be ignored by inliner and handled on the second stage of compilation
-                if (Symbols.isTypeOfIntrinsic(inlineFunction.symbol)) return@check true
+                if (PreSerializationSymbols.isTypeOfIntrinsic(inlineFunction.symbol)) return@check true
                 return@check inlineFunction.body == null
             }
         )
@@ -145,7 +145,7 @@ private val stripTypeAliasDeclarationsPhase = makeIrModulePhase<JsIrBackendConte
 )
 
 private val jsCodeOutliningPhaseOnSecondStage = makeIrModulePhase(
-    { context: JsIrBackendContext -> JsCodeOutliningLowering(context, context.intrinsics, context.dynamicType) },
+    { context: JsIrBackendContext -> JsCodeOutliningLowering(context) },
     name = "JsCodeOutliningLoweringOnSecondStage",
 )
 
@@ -156,7 +156,7 @@ private val jsCodeOutliningPhaseOnFirstStage = makeIrModulePhase(
             context.configuration.languageVersionSettings
         )
 
-        JsCodeOutliningLowering(context, context.intrinsics, context.dynamicType) { jsCall, valueDeclaration, container ->
+        JsCodeOutliningLowering(context) { jsCall, valueDeclaration, container ->
             irDiagnosticReporter.at(jsCall, container)
                 .report(JsKlibErrors.JS_CODE_CAPTURES_INLINABLE_FUNCTION, valueDeclaration)
         }
@@ -723,7 +723,7 @@ fun jsLoweringsOfTheFirstPhase(
     if (languageVersionSettings.supportsFeature(LanguageFeature.IrRichCallableReferencesInKlibs)) {
         this += upgradeCallableReferences
     }
-    if (languageVersionSettings.supportsFeature(LanguageFeature.IrInlinerBeforeKlibSerialization)) {
+    if (languageVersionSettings.supportsFeature(LanguageFeature.IrIntraModuleInlinerBeforeKlibSerialization)) {
         this += jsCodeOutliningPhaseOnFirstStage
     }
     this += loweringsOfTheFirstPhase(JsManglerIr, languageVersionSettings)

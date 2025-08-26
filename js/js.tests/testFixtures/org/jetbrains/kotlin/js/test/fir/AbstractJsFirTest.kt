@@ -132,7 +132,10 @@ open class AbstractFirJsCodegenBoxWithInlinedFunInKlibTest : AbstractFirJsCodege
         with(builder) {
             defaultDirectives {
                 +CHECK_SAME_ABI_AFTER_INLINING
-                LANGUAGE with "+${LanguageFeature.IrInlinerBeforeKlibSerialization.name}"
+                LANGUAGE with listOf(
+                    "+${LanguageFeature.IrIntraModuleInlinerBeforeKlibSerialization.name}",
+                    "+${LanguageFeature.IrCrossModuleInlinerBeforeKlibSerialization.name}"
+                )
             }
             configureLoweredIrHandlersStep {
                 useHandlers({ ts, ak -> IrTextDumpHandler(ts, ak, "inlined.ir", DUMP_IR_AFTER_INLINE) })
@@ -157,7 +160,10 @@ open class AbstractFirJsCodegenInlineWithInlinedFunInKlibTest(
         super.configure(builder)
         with(builder) {
             defaultDirectives {
-                LANGUAGE with "+${LanguageFeature.IrInlinerBeforeKlibSerialization.name}"
+                LANGUAGE with listOf(
+                    "+${LanguageFeature.IrIntraModuleInlinerBeforeKlibSerialization.name}",
+                    "+${LanguageFeature.IrCrossModuleInlinerBeforeKlibSerialization.name}"
+                )
             }
         }
     }
@@ -198,7 +204,10 @@ open class AbstractFirJsTypeScriptExportWithInlinedFunInKlibTest : AbstractFirJs
         super.configure(builder)
         with(builder) {
             defaultDirectives {
-                LANGUAGE with "+${LanguageFeature.IrInlinerBeforeKlibSerialization.name}"
+                LANGUAGE with listOf(
+                    "+${LanguageFeature.IrIntraModuleInlinerBeforeKlibSerialization.name}",
+                    "+${LanguageFeature.IrCrossModuleInlinerBeforeKlibSerialization.name}"
+                )
             }
         }
     }
@@ -236,7 +245,10 @@ open class AbstractFirJsLineNumberWithInlinedFunInKlibTest : AbstractFirJsLineNu
         with(builder) {
             configureLineNumberTests(::createFirJsLineNumberHandler)
             defaultDirectives {
-                LANGUAGE with "+${LanguageFeature.IrInlinerBeforeKlibSerialization.name}"
+                LANGUAGE with listOf(
+                    "+${LanguageFeature.IrIntraModuleInlinerBeforeKlibSerialization.name}",
+                    "+${LanguageFeature.IrCrossModuleInlinerBeforeKlibSerialization.name}"
+                )
             }
         }
     }
@@ -295,7 +307,10 @@ open class AbstractFirJsSteppingWithInlinedFunInKlibTest : AbstractFirJsStepping
         super.configure(builder)
         with(builder) {
             defaultDirectives {
-                LANGUAGE with "+${LanguageFeature.IrInlinerBeforeKlibSerialization.name}"
+                LANGUAGE with listOf(
+                    "+${LanguageFeature.IrIntraModuleInlinerBeforeKlibSerialization.name}",
+                    "+${LanguageFeature.IrCrossModuleInlinerBeforeKlibSerialization.name}"
+                )
             }
         }
     }
@@ -315,7 +330,10 @@ open class AbstractFirJsCodegenWasmJsInteropWithInlinedFunInKlibTest : AbstractF
         super.configure(builder)
         with(builder) {
             defaultDirectives {
-                LANGUAGE with "+${LanguageFeature.IrInlinerBeforeKlibSerialization.name}"
+                LANGUAGE with listOf(
+                    "+${LanguageFeature.IrIntraModuleInlinerBeforeKlibSerialization.name}",
+                    "+${LanguageFeature.IrCrossModuleInlinerBeforeKlibSerialization.name}"
+                )
             }
         }
     }

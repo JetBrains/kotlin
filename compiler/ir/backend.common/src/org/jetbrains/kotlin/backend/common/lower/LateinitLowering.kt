@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.backend.common.lower
 
 import org.jetbrains.kotlin.backend.common.LoweringContext
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
+import org.jetbrains.kotlin.backend.common.ir.PreSerializationSymbols
 import org.jetbrains.kotlin.backend.common.ir.Symbols
 import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.ir.IrStatement
@@ -128,7 +129,7 @@ open class LateinitLowering(
     override fun visitCall(expression: IrCall): IrExpression {
         expression.transformChildrenVoid()
 
-        if (!Symbols.isLateinitIsInitializedPropertyGetter(expression.symbol)) return expression
+        if (!PreSerializationSymbols.isLateinitIsInitializedPropertyGetter(expression.symbol)) return expression
 
         return expression.arguments[0]!!.replaceTailExpression {
             val (property, dispatchReceiver) = when (it) {
@@ -204,7 +205,7 @@ private inline fun IrExpression.replaceTailExpression(crossinline transform: (Ir
     return this
 }
 
-open class UninitializedPropertyAccessExceptionThrower(private val symbols: Symbols) {
+open class UninitializedPropertyAccessExceptionThrower(private val symbols: PreSerializationSymbols) {
     open fun build(builder: IrBuilderWithScope, name: String): IrExpression {
         val throwExceptionFunction = symbols.throwUninitializedPropertyAccessException.owner
         return builder.irCall(throwExceptionFunction).apply {

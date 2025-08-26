@@ -1,3 +1,4 @@
+// LANGUAGE: +NameBasedDestructuring +DeprecateNameMismatchInShortDestructuringWithParentheses +EnableNameBasedDestructuringShortForm
 // WITH_STDLIB
 // WITH_COROUTINES
 // FULL_RUNTIME
@@ -13,7 +14,7 @@ private fun scriptTemplatesDiscoverySequence(): Sequence<String> {
                 val jar = JarFile()
                 try {
                     jar.entries().map { it }
-                    val (loadedDefinitions, notFoundClasses) = listOf<String>() to listOf<String>()
+                    val [loadedDefinitions, notFoundClasses] = listOf<String>() to listOf<String>()
                     listOf<String>().forEach {
                         yield(it)
                     }

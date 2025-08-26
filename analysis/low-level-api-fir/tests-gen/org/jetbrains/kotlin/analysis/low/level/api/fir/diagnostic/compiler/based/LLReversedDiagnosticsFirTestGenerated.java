@@ -243,6 +243,12 @@ public class LLReversedDiagnosticsFirTestGenerated extends AbstractLLReversedDia
     }
 
     @Test
+    @TestMetadata("fakeExpression.kt")
+    public void testFakeExpression() {
+      runTest("compiler/fir/analysis-tests/testData/resolve/fakeExpression.kt");
+    }
+
+    @Test
     @TestMetadata("fakeRecursiveSupertype.kt")
     public void testFakeRecursiveSupertype() {
       runTest("compiler/fir/analysis-tests/testData/resolve/fakeRecursiveSupertype.kt");
@@ -1057,6 +1063,12 @@ public class LLReversedDiagnosticsFirTestGenerated extends AbstractLLReversedDia
       @TestMetadata("destructuring.kt")
       public void testDestructuring() {
         runTest("compiler/fir/analysis-tests/testData/resolve/arguments/destructuring.kt");
+      }
+
+      @Test
+      @TestMetadata("destructuringOld.kt")
+      public void testDestructuringOld() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/arguments/destructuringOld.kt");
       }
 
       @Test
@@ -4840,6 +4852,12 @@ public class LLReversedDiagnosticsFirTestGenerated extends AbstractLLReversedDia
       }
 
       @Test
+      @TestMetadata("CanBeValCheckerOld.kt")
+      public void testCanBeValCheckerOld() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/extraCheckers/CanBeValCheckerOld.kt");
+      }
+
+      @Test
       @TestMetadata("kt69190.kt")
       public void testKt69190() {
         runTest("compiler/fir/analysis-tests/testData/resolve/extraCheckers/kt69190.kt");
@@ -6179,6 +6197,12 @@ public class LLReversedDiagnosticsFirTestGenerated extends AbstractLLReversedDia
       @TestMetadata("incorrectGenericLambdaProperty.kt")
       public void testIncorrectGenericLambdaProperty() {
         runTest("compiler/fir/analysis-tests/testData/resolve/problems/incorrectGenericLambdaProperty.kt");
+      }
+
+      @Test
+      @TestMetadata("incorrectGenericLambdaPropertyOld.kt")
+      public void testIncorrectGenericLambdaPropertyOld() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/problems/incorrectGenericLambdaPropertyOld.kt");
       }
 
       @Test
@@ -8901,6 +8925,12 @@ public class LLReversedDiagnosticsFirTestGenerated extends AbstractLLReversedDia
       @TestMetadata("dnnTypeWithNullable.kt")
       public void testDnnTypeWithNullable() {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/inference/dnnTypeWithNullable.kt");
+      }
+
+      @Test
+      @TestMetadata("dnnTypeWithNullableOld.kt")
+      public void testDnnTypeWithNullableOld() {
+        runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/inference/dnnTypeWithNullableOld.kt");
       }
 
       @Test

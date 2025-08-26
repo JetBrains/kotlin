@@ -10,7 +10,7 @@ fun <K> takeTwoInvOut(x: Inv<out K>, y: Inv<out K>) : K = x.y
 fun test1(y: Any) {
     y as Map<String, Any?>
     y as Map<*, *>
-    y.forEach { (k: String, u: Any?) -> }
+    y.forEach { (key: String, value: Any?) -> }
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.collections.Map<kotlin.String, kotlin.Any?>")!>y<!>
 }
 

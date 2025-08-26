@@ -1,3 +1,4 @@
+// LANGUAGE: +NameBasedDestructuring +DeprecateNameMismatchInShortDestructuringWithParentheses +EnableNameBasedDestructuringShortForm
 // WITH_STDLIB
 
 class CountingSequence<out T>(private val s: Sequence<T>) : Sequence<T> {
@@ -17,7 +18,7 @@ val xs = CountingSequence(listOf("a", "b", "c", "d").asSequence())
 fun box(): String {
     val s = StringBuilder()
 
-    for ((index, x) in xs.withIndex()) {
+    for ([index, x] in xs.withIndex()) {
         s.append("$index:$x;")
     }
 

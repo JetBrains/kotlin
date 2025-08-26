@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.config.CommonConfigurationKeys.LANGUAGE_VERSION_SETTINGS
+import org.jetbrains.kotlin.config.zipFileSystemAccessor
 import org.jetbrains.kotlin.konan.file.ZipFileSystemAccessor
 import org.jetbrains.kotlin.konan.file.ZipFileSystemCacheableAccessor
 import org.jetbrains.kotlin.konan.file.ZipFileSystemInPlaceAccessor
@@ -26,7 +27,7 @@ import kotlin.collections.plus
 fun CompilerConfiguration.setupCommonKlibArguments(
     arguments: CommonKlibBasedCompilerArguments,
     canBeMetadataKlibCompilation: Boolean,
-    rootDisposable: Disposable
+    rootDisposable: Disposable,
 ) {
     val isKlibMetadataCompilation = canBeMetadataKlibCompilation && arguments.metadataKlib
 
@@ -51,8 +52,7 @@ fun CompilerConfiguration.setupCommonKlibArguments(
         setupKlibAbiCompatibilityLevel()
     }
 
-    zipFileSystemAccessor = getZipFileSystemAccessor(arguments, messageCollector)
-    (zipFileSystemAccessor as? Disposable)?.let { Disposer.register(rootDisposable, it) }
+    zipFileSystemAccessor = getZipFileSystemAccessor(arguments, messageCollector, rootDisposable)
 }
 
 /**
@@ -99,7 +99,11 @@ private fun parseCustomKotlinAbiVersion(customKlibAbiVersion: String?, collector
     return KotlinAbiVersion(version[0], version[1], version[2])
 }
 
-private fun getZipFileSystemAccessor(arguments: CommonKlibBasedCompilerArguments, collector: MessageCollector): ZipFileSystemAccessor? {
+private fun getZipFileSystemAccessor(
+    arguments: CommonKlibBasedCompilerArguments,
+    collector: MessageCollector,
+    rootDisposable: Disposable,
+): ZipFileSystemAccessor? {
     val cacheLimit = arguments.klibZipFileAccessorCacheLimit.toIntOrNull()
     if (cacheLimit == null || cacheLimit < 0) {
         collector.report(
@@ -111,10 +115,10 @@ private fun getZipFileSystemAccessor(arguments: CommonKlibBasedCompilerArguments
         )
         return null
     }
-    if (cacheLimit > 0) {
-        return DisposableZipFileSystemAccessor(cacheLimit)
+    return if (cacheLimit > 0) {
+        DisposableZipFileSystemAccessor(cacheLimit).also { Disposer.register(rootDisposable, it) }
     } else {
-        return ZipFileSystemInPlaceAccessor
+        ZipFileSystemInPlaceAccessor
     }
 }
 

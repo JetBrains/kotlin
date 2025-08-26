@@ -1,3 +1,4 @@
+// LANGUAGE: +NameBasedDestructuring +DeprecateNameMismatchInShortDestructuringWithParentheses +EnableNameBasedDestructuringShortForm
 // RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // FIR_DUMP
@@ -14,7 +15,7 @@ fun main() {
     val copy = data.copy(value)
     val prop: Alias<Alias<Int>> = data.prop
     val component1: Alias<Alias<Int>> = data.component1()
-    val (destructuring: Alias<Alias<Int>>) = (data)
+    val [destructuring: Alias<Alias<Int>>] = (data)
 }
 
 const val constant = ""

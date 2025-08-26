@@ -269,7 +269,7 @@ internal class ColsOf2 : AbstractInterpreter<ColumnsResolver>() {
 
     override fun Arguments.interpret(): ColumnsResolver {
         return columnsResolver {
-            receiver.cols().filter { it.asSimpleColumn().isColOf(typeArg0.type, session) }
+            receiver.all().filter { it.asSimpleColumn().isColOf(typeArg0.type, session) }
         }
     }
 }

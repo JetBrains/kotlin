@@ -189,6 +189,12 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<ConeKotlinType>("missingType")
             parameter<ConeKotlinType>("declarationType")
         }
+        val MISSING_DEPENDENCY_IN_INFERRED_TYPE_ANNOTATION by deprecationError<PsiElement>(
+            LanguageFeature.ForbidImplicitTypeAnnotationWithMissingDependency,
+            PositioningStrategy.REFERENCED_NAME_BY_QUALIFIED
+        ) {
+            parameter<ConeKotlinType>("type")
+        }
     }
 
     val CALL_RESOLUTION by object : DiagnosticGroup("Call resolution") {
@@ -1808,6 +1814,9 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val NO_ELSE_IN_WHEN by error<KtWhenExpression>(PositioningStrategy.WHEN_EXPRESSION) {
             parameter<List<WhenMissingCase>>("missingWhenCases")
             parameter<String>("description")
+        }
+        val MISSING_BRANCH_FOR_NON_ABSTRACT_SEALED_CLASS by warning<KtWhenExpression>(PositioningStrategy.WHEN_EXPRESSION) {
+            parameter<List<WhenMissingCase>>("missingWhenCases")
         }
         val INVALID_IF_AS_EXPRESSION by error<KtIfExpression>(PositioningStrategy.IF_EXPRESSION)
         val ELSE_MISPLACED_IN_WHEN by error<KtWhenEntry>(PositioningStrategy.ELSE_ENTRY)

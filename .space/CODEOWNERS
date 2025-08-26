@@ -218,6 +218,7 @@
 /compiler/testData/type-checker-test.kt "Kotlin Frontend"
 /compiler/testData/type-substitutor.kt "Kotlin Frontend"
 /compiler/tests/ "Kotlin Compiler"
+/compiler/testFixtures/ "Kotlin Compiler"
 /compiler/tests-against-klib/ "Kotlin JVM"
 /compiler/tests-common/ "Kotlin Compiler"
 /compiler/tests-common/testFixtures/org/jetbrains/kotlin/asJava/ "Kotlin Analysis API"
@@ -231,7 +232,6 @@
 /compiler/tests-integration/ "Kotlin Compiler"
 /compiler/tests-integration/tests/org/jetbrains/kotlin/klib/ "Kotlin Common Backend"
 /compiler/tests-different-jdk/ "Kotlin JVM"
-/compiler/tests-for-compiler-generator/ "Kotlin Compiler"
 /compiler/tests-gen/ "Kotlin Compiler"
 /compiler/tests-java8/ "Kotlin JVM"
 /compiler/tests-mutes/ "Kotlin Build Infrastructure"
@@ -265,7 +265,6 @@
 /dependencies/ "Kotlin Build Infrastructure"
 
 # UNKNOWN: /docs/
-/docs/analysis/ "Kotlin Analysis API"
 /docs/code_authoring_and_core_review.md vsevolod.tolstopyatov@jetbrains.com simon.ogorodnik@jetbrains.com
 /docs/changelogs/ "Kotlin Release"
 

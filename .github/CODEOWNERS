@@ -183,6 +183,7 @@
 /compiler/testData/type-checker-test.kt @JetBrains/kotlin-frontend
 /compiler/testData/type-substitutor.kt @JetBrains/kotlin-frontend
 /compiler/tests/ @JetBrains/kotlin-compiler
+/compiler/testFixtures/ @JetBrains/kotlin-compiler
 /compiler/tests-against-klib/ @JetBrains/kotlin-jvm
 /compiler/tests-common/ @JetBrains/kotlin-compiler
 /compiler/tests-common/testFixtures/org/jetbrains/kotlin/asJava/ @JetBrains/kotlin-analysis-api
@@ -196,7 +197,6 @@
 /compiler/tests-integration/ @JetBrains/kotlin-compiler
 /compiler/tests-integration/tests/org/jetbrains/kotlin/klib/ @JetBrains/kotlin-common-backend
 /compiler/tests-different-jdk/ @JetBrains/kotlin-jvm
-/compiler/tests-for-compiler-generator/ @JetBrains/kotlin-compiler
 /compiler/tests-gen/ @JetBrains/kotlin-compiler
 /compiler/tests-java8/ @JetBrains/kotlin-jvm
 /compiler/tests-mutes/ @JetBrains/kotlin-build-infrastructure
@@ -229,7 +229,6 @@
 
 /dependencies/ @JetBrains/kotlin-build-infrastructure
 
-/docs/analysis/ @JetBrains/kotlin-analysis-api
 /docs/code_authoring_and_core_review.md vsevolod.tolstopyatov@jetbrains.com simon.ogorodnik@jetbrains.com
 /docs/changelogs/ @JetBrains/kotlin-release
 

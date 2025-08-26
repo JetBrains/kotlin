@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.utils.addToStdlib.countOccurrencesOf
 import org.junit.jupiter.params.ParameterizedTest
 import kotlin.io.path.createDirectories
 import kotlin.io.path.writeText
-import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
@@ -151,7 +150,9 @@ class MppMetadataResolutionIT : KGPBaseTest() {
 
         if (kmpIsolatedProjectsSupport == KmpIsolatedProjectsSupport.DISABLE) {
             // See: KT-72394 (Dependency.getProjectDependency is deprecated)
-            if (gradleVersion >= GradleVersion.version(TestVersions.Gradle.G_8_11)) {
+            if (gradleVersion >= GradleVersion.version(TestVersions.Gradle.G_8_11) &&
+                gradleVersion < GradleVersion.version(TestVersions.Gradle.G_9_0)
+            ) {
                 buildOptions = buildOptions.copy(warningMode = WarningMode.Summary)
             }
             buildOptions = buildOptions.copy(isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED)

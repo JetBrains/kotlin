@@ -48,13 +48,13 @@ import org.jetbrains.kotlin.test.*
 import org.jetbrains.kotlin.test.InTextDirectivesUtils.isCompatibleTarget
 import org.jetbrains.kotlin.test.InTextDirectivesUtils.isDirectiveDefined
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
-import org.jetbrains.kotlin.test.directives.KlibBasedCompilerTestDirectives
-import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.RETURN_VALUE_CHECKER_MODE
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
+import org.jetbrains.kotlin.test.frontend.classic.handlers.ClassicUnstableAndK2LanguageFeaturesSkipConfigurator
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertFalse
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.fail
+import org.jetbrains.kotlin.test.util.parseLanguageFeature
 import org.jetbrains.kotlin.utils.addIfNotNull
 import java.io.File
 
@@ -143,8 +143,10 @@ private class ExtTestDataFile(
         val optInsForSourceCode = optIns subtract OPT_INS_PURELY_FOR_COMPILER
         val optInsForCompiler = optIns intersect OPT_INS_PURELY_FOR_COMPILER
         val extraLanguageSettings = buildSet {
-            if (klibIrInlinerMode == KlibIrInlinerMode.ON)
-                add("+${LanguageFeature.IrInlinerBeforeKlibSerialization.name}")
+            if (klibIrInlinerMode == KlibIrInlinerMode.ON) {
+                add("+${LanguageFeature.IrIntraModuleInlinerBeforeKlibSerialization.name}")
+                add("+${LanguageFeature.IrCrossModuleInlinerBeforeKlibSerialization.name}")
+            }
         }
 
         ExtTestDataFileSettings(
@@ -182,6 +184,15 @@ private class ExtTestDataFile(
                      && pipelineType == PipelineType.K2
                      && testMode == TestMode.ONE_STAGE_MULTI_MODULE)
                 && structure.defFilesContents.all { it.defFileContentsIsSupportedOn(settings.get<KotlinNativeTargets>().testTarget) }
+                && (pipelineType == PipelineType.K2 || !hasK2OnlyLanguageFeature())
+
+    private fun hasK2OnlyLanguageFeature(): Boolean {
+        return testDataFileSettings.languageSettings
+            .any {
+                val (feature, mode) = it.parseLanguageFeature()
+                mode == LanguageFeature.State.ENABLED && (feature.sinceVersion?.usesK2 == true || feature in ClassicUnstableAndK2LanguageFeaturesSkipConfigurator.unscheduledK2OnlyFeatures)
+            }
+    }
 
     private fun assembleFreeCompilerArgs(settings: Settings): TestCompilerArgs {
         val args = mutableListOf<String>()

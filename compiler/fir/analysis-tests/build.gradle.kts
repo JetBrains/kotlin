@@ -28,6 +28,8 @@ dependencies {
     testFixturesApi(project(":compiler:fir:fir-serialization"))
     testFixturesApi(project(":compiler:fir:entrypoint"))
     testFixturesApi(project(":compiler:frontend"))
+    testFixturesImplementation(testFixtures(project(":generators:test-generator")))
+    testFixturesImplementation(testFixtures(project(":compiler:tests-spec")))
 
     testFixturesApi(platform(libs.junit.bom))
     testFixturesApi(libs.junit.jupiter.api)
@@ -73,6 +75,8 @@ projectTests {
         useJUnitPlatform()
         useJsIrBoxTests(version = version, buildDir = layout.buildDirectory)
     }
+
+    testGenerator("org.jetbrains.kotlin.test.TestGeneratorForFirAnalysisTestsKt")
 
     withJvmStdlibAndReflect()
 }

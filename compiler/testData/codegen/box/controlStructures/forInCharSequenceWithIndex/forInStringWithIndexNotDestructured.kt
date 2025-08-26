@@ -1,10 +1,11 @@
+// LANGUAGE: +NameBasedDestructuring +DeprecateNameMismatchInShortDestructuringWithParentheses +EnableNameBasedDestructuringShortForm
 // WITH_STDLIB
 
 fun box(): String {
     val s = StringBuilder()
 
     for (iv in "abcd".withIndex()) {
-        val (index, x) = iv
+        val [index, x] = iv
         s.append("$index:$x;")
     }
 

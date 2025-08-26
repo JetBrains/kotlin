@@ -42,6 +42,36 @@ public class FirStandaloneNormalAnalysisSourceModuleSymbolByPsiTestGenerated ext
   }
 
   @Test
+  @TestMetadata("actualAccessors.kt")
+  public void testActualAccessors() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByPsi/actualAccessors.kt");
+  }
+
+  @Test
+  @TestMetadata("actualDefaultAccessors.kt")
+  public void testActualDefaultAccessors() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByPsi/actualDefaultAccessors.kt");
+  }
+
+  @Test
+  @TestMetadata("actualPropertyAccessors.kt")
+  public void testActualPropertyAccessors() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByPsi/actualPropertyAccessors.kt");
+  }
+
+  @Test
+  @TestMetadata("actualPropertyDefaultAccessors.kt")
+  public void testActualPropertyDefaultAccessors() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByPsi/actualPropertyDefaultAccessors.kt");
+  }
+
+  @Test
+  @TestMetadata("actualPropertyExplicitDefaultAccessors.kt")
+  public void testActualPropertyExplicitDefaultAccessors() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByPsi/actualPropertyExplicitDefaultAccessors.kt");
+  }
+
+  @Test
   public void testAllFilesPresentInSymbolByPsi() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/symbols/symbolByPsi"), Pattern.compile("^(.+)\\.kt$"), null, true, "withTestCompilerPluginEnabled");
   }
@@ -191,6 +221,48 @@ public class FirStandaloneNormalAnalysisSourceModuleSymbolByPsiTestGenerated ext
   }
 
   @Test
+  @TestMetadata("expectAccessors.kt")
+  public void testExpectAccessors() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByPsi/expectAccessors.kt");
+  }
+
+  @Test
+  @TestMetadata("expectActual1.kt")
+  public void testExpectActual1() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByPsi/expectActual1.kt");
+  }
+
+  @Test
+  @TestMetadata("expectActual2.kt")
+  public void testExpectActual2() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByPsi/expectActual2.kt");
+  }
+
+  @Test
+  @TestMetadata("expectDefaultAccessors.kt")
+  public void testExpectDefaultAccessors() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByPsi/expectDefaultAccessors.kt");
+  }
+
+  @Test
+  @TestMetadata("expectPropertyAccessors.kt")
+  public void testExpectPropertyAccessors() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByPsi/expectPropertyAccessors.kt");
+  }
+
+  @Test
+  @TestMetadata("expectPropertyDefaultAccessors.kt")
+  public void testExpectPropertyDefaultAccessors() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByPsi/expectPropertyDefaultAccessors.kt");
+  }
+
+  @Test
+  @TestMetadata("expectPropertyExplicitDefaultAccessors.kt")
+  public void testExpectPropertyExplicitDefaultAccessors() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByPsi/expectPropertyExplicitDefaultAccessors.kt");
+  }
+
+  @Test
   @TestMetadata("explicitBackingField.kt")
   public void testExplicitBackingField() {
     runTest("analysis/analysis-api/testData/symbols/symbolByPsi/explicitBackingField.kt");
@@ -278,6 +350,30 @@ public class FirStandaloneNormalAnalysisSourceModuleSymbolByPsiTestGenerated ext
   @TestMetadata("implicitReturnInLambda.kt")
   public void testImplicitReturnInLambda() {
     runTest("analysis/analysis-api/testData/symbols/symbolByPsi/implicitReturnInLambda.kt");
+  }
+
+  @Test
+  @TestMetadata("independentModulesWithGloballyDuplicateJavaLibrary1.kt")
+  public void testIndependentModulesWithGloballyDuplicateJavaLibrary1() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByPsi/independentModulesWithGloballyDuplicateJavaLibrary1.kt");
+  }
+
+  @Test
+  @TestMetadata("independentModulesWithGloballyDuplicateJavaLibrary2.kt")
+  public void testIndependentModulesWithGloballyDuplicateJavaLibrary2() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByPsi/independentModulesWithGloballyDuplicateJavaLibrary2.kt");
+  }
+
+  @Test
+  @TestMetadata("independentModulesWithGloballyDuplicateLibrary1.kt")
+  public void testIndependentModulesWithGloballyDuplicateLibrary1() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByPsi/independentModulesWithGloballyDuplicateLibrary1.kt");
+  }
+
+  @Test
+  @TestMetadata("independentModulesWithGloballyDuplicateLibrary2.kt")
+  public void testIndependentModulesWithGloballyDuplicateLibrary2() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByPsi/independentModulesWithGloballyDuplicateLibrary2.kt");
   }
 
   @Test

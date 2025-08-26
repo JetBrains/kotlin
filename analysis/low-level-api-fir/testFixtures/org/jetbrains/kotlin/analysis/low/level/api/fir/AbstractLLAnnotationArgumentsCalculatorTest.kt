@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir
 
+import org.jetbrains.kotlin.analysis.low.level.api.fir.AbstractLLAnnotationArgumentsCalculatorTest.AnnotationResult
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLResolutionFacade
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.FirLazyBodiesCalculator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirSourceTestConfigurator
@@ -27,7 +29,7 @@ import java.util.*
  *
  * Initial issue: [KT-71787](https://youtrack.jetbrains.com/issue/KT-71787)
  */
-abstract class AbstractLLAnnotationArgumentsCalculatorTest : AbstractLLStubBasedTest() {
+abstract class AbstractLLAnnotationArgumentsCalculatorTest : AbstractLLStubBasedTest<List<AnnotationResult>>() {
     override val additionalDirectives: List<DirectivesContainer>
         get() = super.additionalDirectives + listOf(Directives)
 
@@ -35,12 +37,22 @@ abstract class AbstractLLAnnotationArgumentsCalculatorTest : AbstractLLStubBased
         val STUB_DIFFERENCE by directive("Indicates that stub-based and AST-based annotations differ")
     }
 
-    override fun doTest(astBasedFile: KtFile, stubBasedFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
-        val stubBasedAnnotations = collectStubBasedAndAssertAstBasedAnnotations(stubBasedFile, testServices)
+    context(facade: LLResolutionFacade)
+    override fun doStubBasedTest(stubBasedFile: KtFile, mainModule: KtTestModule, testServices: TestServices): List<AnnotationResult> {
+        return collectStubBasedAndAssertAstBasedAnnotations(stubBasedFile, testServices)
+    }
+
+    context(facade: LLResolutionFacade)
+    override fun doAstBasedValidation(
+        stubBasedOutput: List<@JvmWildcard AnnotationResult>,
+        astBasedFile: KtFile,
+        mainModule: KtTestModule,
+        testServices: TestServices
+    ) {
         val astBasedAnnotations = collectAnnotations(astBasedFile)
         testServices.assertConsistency(
             astBasedAnnotations = astBasedAnnotations,
-            stubBasedAnnotations = stubBasedAnnotations,
+            stubBasedAnnotations = stubBasedOutput,
         )
     }
 
@@ -95,7 +107,7 @@ abstract class AbstractLLAnnotationArgumentsCalculatorTest : AbstractLLStubBased
         assertions.assertEqualsToFile(expectedFile, actualText)
     }
 
-    private class AnnotationResult(
+    class AnnotationResult(
         val globalIndex: Int,
         val annotation: String,
         val isCalculatedSuccessfully: Boolean,
@@ -116,13 +128,14 @@ abstract class AbstractLLAnnotationArgumentsCalculatorTest : AbstractLLStubBased
         override fun hashCode(): Int = Objects.hash(globalIndex, context, annotation)
     }
 
-    private fun collectAnnotations(file: KtFile): List<AnnotationResult> = withResolutionFacade(file) { resolutionFacade ->
-        val firFile = file.getOrBuildFirFile(resolutionFacade)
+    context(facade: LLResolutionFacade)
+    private fun collectAnnotations(file: KtFile): List<AnnotationResult> {
+        val firFile = file.getOrBuildFirFile(facade)
         val annotations = firFile.collectAnnotations()
-        annotations.mapIndexed { index, annotationWithContext ->
+        return annotations.mapIndexed { index, annotationWithContext ->
             val annotationCall = annotationWithContext.annotation
             val isCalculatedSuccessfully = computeAstLoadingAware {
-                FirLazyBodiesCalculator.calculateAnnotation(annotationCall, resolutionFacade.useSiteFirSession)
+                FirLazyBodiesCalculator.calculateAnnotation(annotationCall, facade.useSiteFirSession)
             } != null
 
             AnnotationResult(
@@ -134,6 +147,7 @@ abstract class AbstractLLAnnotationArgumentsCalculatorTest : AbstractLLStubBased
         }
     }
 
+    context(facade: LLResolutionFacade)
     private fun collectStubBasedAndAssertAstBasedAnnotations(stubBasedFile: KtFile, testServices: TestServices): List<AnnotationResult> {
         // We analyze the stub-based file, so all failed annotations represent annotations which
         // weren't able to calculate arguments via stubs

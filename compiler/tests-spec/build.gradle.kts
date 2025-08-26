@@ -3,31 +3,36 @@ plugins {
     id("jps-compatible")
     id("project-tests-convention")
     id("test-inputs-check")
+    id("java-test-fixtures")
 }
 
 dependencies {
-    testApi(testFixtures(project(":compiler:tests-common")))
+    testFixturesImplementation(testFixtures(project(":compiler:tests-common")))
+    testImplementation(testFixtures(project(":compiler:tests-common")))
 
-    testImplementation(testFixtures(project(":compiler:test-infrastructure")))
-    testImplementation(testFixtures(project(":compiler:tests-common-new")))
+    testFixturesApi(testFixtures(project(":compiler:test-infrastructure")))
 
-    testApi(commonDependency("com.google.code.gson:gson"))
-    testApi(intellijJDom())
+    testFixturesImplementation(commonDependency("com.google.code.gson:gson"))
+    testImplementation(commonDependency("com.google.code.gson:gson"))
+    testFixturesImplementation(intellijJDom())
+    testImplementation(intellijJDom())
 
     api(libs.jsoup)
 
     testRuntimeOnly(project(":core:descriptors.runtime"))
     testRuntimeOnly(toolsJar())
-    testApi(platform(libs.junit.bom))
-    testImplementation(libs.junit.jupiter.api)
+    testFixturesApi(platform(libs.junit.bom))
+    testFixturesApi(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)
     testImplementation(libs.junit.jupiter.params)
     runtimeOnly(libs.junit.vintage.engine)
+    testFixturesImplementation(libs.junit4)
     testImplementation(libs.junit4)
 }
 
 sourceSets {
     "main" { }
+    "testFixtures" { projectDefault() }
     "test" { projectDefault() }
 }
 
@@ -61,5 +66,8 @@ projectTests {
         }
     }
 
-    testGenerator("org.jetbrains.kotlin.spec.utils.tasks.GenerateSpecTestsKt", taskName = "generateSpecTests")
+    testGenerator(
+        "org.jetbrains.kotlin.spec.utils.tasks.GenerateSpecTestsKt",
+        taskName = "generateSpecTests",
+    )
 }

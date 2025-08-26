@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.konan.ir
 
 import org.jetbrains.kotlin.backend.common.ErrorReportingContext
+import org.jetbrains.kotlin.backend.common.ir.PreSerializationNativeSymbols
 import org.jetbrains.kotlin.backend.common.ir.KlibSymbols
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.lower.TestProcessorFunctionKind
@@ -48,7 +49,6 @@ private object ClassIds {
 
     // Internal classes
     private val String.internalClassId get() = ClassId(RuntimeNames.kotlinNativeInternalPackageName, Name.identifier(this))
-    val refClass = "Ref".internalClassId
     val kFunctionImpl = "KFunctionImpl".internalClassId
     val kFunctionDescription = "KFunctionDescription".internalClassId
     val kFunctionDescriptionCorrect = kFunctionDescription.createNestedClassId(Name.identifier("Correct"))
@@ -68,7 +68,6 @@ private object ClassIds {
     val kTypeImpl = "KTypeImpl".internalClassId
     val kTypeImplForTypeParametersWithRecursiveBounds = "KTypeImplForTypeParametersWithRecursiveBounds".internalClassId
     val kTypeProjectionList = "KTypeProjectionList".internalClassId
-    val defaultConstructorMarker = "DefaultConstructorMarker".internalClassId
     val nativePtr = "NativePtr".internalClassId
     val functionAdapter = "FunctionAdapter".internalClassId
 
@@ -134,9 +133,6 @@ private object ClassIds {
     val testFunctionKind = "TestFunctionKind".internalTestClassId
 }
 
-private val IrFunction.extensionReceiverType get() = parameters.singleOrNull { it.kind == IrParameterKind.ExtensionReceiver }?.type
-private val IrFunction.extensionReceiverClass get() = extensionReceiverType?.classOrNull
-
 // TODO: KT-77494 - move this callable ids into more appropriate places.
 private object CallableIds {
 
@@ -170,8 +166,6 @@ private object CallableIds {
     val throwIllegalStateExceptionWithMessage = "ThrowIllegalStateExceptionWithMessage".internalCallableId
     val throwIllegalArgumentException = "ThrowIllegalArgumentException".internalCallableId
     val throwIllegalArgumentExceptionWithMessage = "ThrowIllegalArgumentExceptionWithMessage".internalCallableId
-    val throwUninitializedPropertyAccessException = "ThrowUninitializedPropertyAccessException".internalCallableId
-    val throwUnsupportedOperationException = "ThrowUnsupportedOperationException".internalCallableId
     val valuesForEnum = "valuesForEnum".internalCallableId
     val valueOfForEnum = "valueOfForEnum".internalCallableId
     val createUninitializedInstance = "createUninitializedInstance".internalCallableId
@@ -181,8 +175,6 @@ private object CallableIds {
     val isSubtype = "isSubtype".internalCallableId
     val getContinuation = "getContinuation".internalCallableId
     val returnIfSuspended = "returnIfSuspended".internalCallableId
-    val suspendCoroutineUninterceptedOrReturn = "suspendCoroutineUninterceptedOrReturn".internalCallableId
-    val getCoroutineContext = "getCoroutineContext".internalCallableId
     val saveCoroutineState = "saveCoroutineState".internalCallableId
     val restoreCoroutineState = "restoreCoroutineState".internalCallableId
     val getObjectTypeInfo = "getObjectTypeInfo".internalCallableId
@@ -234,7 +226,6 @@ private object CallableIds {
     // Built-ins functions
     private val String.builtInsCallableId get() = CallableId(StandardNames.BUILT_INS_PACKAGE_FQ_NAME, Name.identifier(this))
     val isAssertionThrowingErrorEnabled = "isAssertionThrowingErrorEnabled".builtInsCallableId
-    val isAssertionArgumentEvaluationEnabled = "isAssertionArgumentEvaluationEnabled".builtInsCallableId
     val getOrThrow = "getOrThrow".builtInsCallableId
 
     // Special stdlib public functions
@@ -242,7 +233,6 @@ private object CallableIds {
     val println = CallableId(FqName("kotlin.io"), Name.identifier("println"))
     val executeImpl = CallableId(KonanFqNames.packageName.child(Name.identifier("concurrent")), Name.identifier("executeImpl"))
     val createCleaner = CallableId(KonanFqNames.packageName.child(Name.identifier("ref")), Name.identifier("createCleaner"))
-    val coroutineContext = CallableId(StandardNames.COROUTINES_PACKAGE_FQ_NAME, Name.identifier("coroutineContext"))
     val coroutineSuspended = CallableId(StandardNames.COROUTINES_INTRINSICS_PACKAGE_FQ_NAME, StandardNames.COROUTINE_SUSPENDED_NAME)
     val invokeSuspend = CallableId(ClassIds.baseContinuationImpl, Name.identifier("invokeSuspend"))
     val anyEquals = CallableId(StandardClassIds.Any, StandardNames.EQUALS_NAME)
@@ -270,13 +260,13 @@ private fun CompilerConfiguration.getMainCallableId() : CallableId? {
     }
 }
 
-
+// TODO KT-77388 rename to `BackendNativeSymbolsImpl`
 @OptIn(InternalSymbolFinderAPI::class, InternalKotlinNativeApi::class)
 class KonanSymbols(
         context: ErrorReportingContext,
         irBuiltIns: IrBuiltIns,
         config: CompilerConfiguration,
-) : KlibSymbols(irBuiltIns) {
+) : PreSerializationNativeSymbols by PreSerializationNativeSymbols.Impl(irBuiltIns), KlibSymbols(irBuiltIns) {
     val entryPoint by run {
         val mainCallableId = config.getMainCallableId()
         val unfilteredCandidates = mainCallableId?.functionSymbols()
@@ -535,13 +525,7 @@ class KonanSymbols(
     val throwIllegalArgumentException = CallableIds.throwIllegalArgumentException.functionSymbol()
     val throwIllegalArgumentExceptionWithMessage = CallableIds.throwIllegalArgumentExceptionWithMessage.functionSymbol()
 
-
-    override val throwUninitializedPropertyAccessException = CallableIds.throwUninitializedPropertyAccessException.functionSymbol()
-    override val throwUnsupportedOperationException = CallableIds.throwUnsupportedOperationException.functionSymbol()
-
     override val stringBuilder = ClassIds.stringBuilder.classSymbol()
-
-    override val defaultConstructorMarker = ClassIds.defaultConstructorMarker.classSymbol()
 
     private fun arrayToExtensionSymbolMap(callableId: CallableId, condition: (IrFunction) -> Boolean = { true }): Lazy<Map<IrClassSymbol, IrSimpleFunctionSymbol>> {
         val allSymbols = callableId.functionSymbols()
@@ -611,12 +595,6 @@ class KonanSymbols(
 
     override val returnIfSuspended = CallableIds.returnIfSuspended.functionSymbol()
 
-    override val suspendCoroutineUninterceptedOrReturn = CallableIds.suspendCoroutineUninterceptedOrReturn.functionSymbol()
-
-    override val coroutineContextGetter by CallableIds.coroutineContext.getterSymbol()
-
-    override val coroutineGetContext = CallableIds.getCoroutineContext.functionSymbol()
-
     override val coroutineImpl get() = TODO()
 
     val baseContinuationImpl = ClassIds.baseContinuationImpl.classSymbol()
@@ -685,57 +663,6 @@ class KonanSymbols(
     val primitiveVarTypePrimaryConstructor by ClassIds.interopCPrimitiveVarType.primaryConstructorSymbol()
 
     val isAssertionThrowingErrorEnabled = CallableIds.isAssertionThrowingErrorEnabled.functionSymbol()
-    val isAssertionArgumentEvaluationEnabled = CallableIds.isAssertionArgumentEvaluationEnabled.functionSymbol()
-
-    private fun CallableId.getterSymbol() : Lazy<IrSimpleFunctionSymbol> {
-        val elements = propertySymbols()
-        require(elements.isNotEmpty()) { "No properties $this found" }
-        require(elements.size == 1) { "Several properties $this found:\n${elements.joinToString("\n")}" }
-        return lazy {
-            elements.single().owner.getter!!.symbol
-        }
-    }
-
-    private fun CallableId.getterSymbol(extensionReceiverClass: IrClassSymbol?) : Lazy<IrSimpleFunctionSymbol> {
-        val unfilteredElements = propertySymbols()
-        require(unfilteredElements.isNotEmpty()) { "No properties $this found" }
-        return lazy {
-            val elements = unfilteredElements.filter { it.owner.getter?.extensionReceiverClass == extensionReceiverClass }
-            require(elements.isNotEmpty()) { "No properties $this found with ${extensionReceiverClass} receiver" }
-            require(elements.size == 1) { "Several properties $this found with ${extensionReceiverClass} receiver:\n${elements.joinToString("\n")}" }
-            elements.single().owner.getter!!.symbol
-        }
-    }
-
-    private fun ClassId.classSymbol() = symbolFinder.findClass(this) ?: error("Class $this is not found")
-    private fun CallableId.propertySymbols() = symbolFinder.findProperties(this).toList()
-    private fun CallableId.functionSymbols() = symbolFinder.findFunctions(this).toList()
-    private fun ClassId.primaryConstructorSymbol() : Lazy<IrConstructorSymbol> {
-        val clazz = classSymbol()
-        return lazy { (clazz.owner.primaryConstructor ?: error("Class ${this} has no primary constructor")).symbol }
-    }
-    private fun ClassId.noParametersConstructorSymbol() : Lazy<IrConstructorSymbol> {
-        val clazz = classSymbol()
-        return lazy { (clazz.owner.constructors.singleOrNull { it.parameters.isEmpty() } ?: error("Class ${this} has no constructor without parameters")).symbol }
-    }
-
-    private fun CallableId.functionSymbol(): IrSimpleFunctionSymbol {
-        val elements = functionSymbols()
-        require(elements.isNotEmpty()) { "No function $this found" }
-        require(elements.size == 1) { "Several functions $this found:\n${elements.joinToString("\n")}" }
-        return elements.single()
-    }
-
-    private inline fun CallableId.functionSymbol(crossinline condition: (IrFunction) -> Boolean): Lazy<IrSimpleFunctionSymbol> {
-        val unfilteredElements = functionSymbols()
-        require(unfilteredElements.isNotEmpty()) { "No function $this found" }
-        return lazy {
-            val elements = unfilteredElements.filter { condition(it.owner) }
-            require(elements.isNotEmpty()) { "No function $this found corresponding given condition" }
-            require(elements.size == 1) { "Several functions $this found corresponding given condition:\n${elements.joinToString("\n")}" }
-            elements.single()
-        }
-    }
 
     val baseClassSuite = ClassIds.baseClassSuite.classSymbol()
     val topLevelSuite = ClassIds.topLevelSuite.classSymbol()

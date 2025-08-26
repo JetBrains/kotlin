@@ -13,8 +13,6 @@ dependencies {
     embedded(project(":kotlin-dataframe-compiler-plugin.cli")) { isTransitive = false }
 
     testFixturesApi(project(":kotlin-dataframe-compiler-plugin.cli"))
-    testRuntimeOnly(libs.dataframe.core.dev)
-    testRuntimeOnly(libs.dataframe.csv.dev)
     testFixturesApi(platform(libs.junit.bom))
     testFixturesApi(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)
@@ -27,6 +25,7 @@ dependencies {
     testFixturesApi(testFixtures(project(":analysis:analysis-api-fir")))
     testFixturesApi(testFixtures(project(":analysis:analysis-api-impl-base")))
     testFixturesApi(testFixtures(project(":analysis:low-level-api-fir")))
+    testFixturesImplementation(testFixtures(project(":generators:test-generator")))
 
     dataframeRuntimeClasspath(libs.dataframe.core.dev)
     dataframeRuntimeClasspath(libs.dataframe.csv.dev)
@@ -46,6 +45,8 @@ projectTests {
         classpathProvider.classpath.from(dataframeRuntimeClasspath)
         jvmArgumentProviders.add(classpathProvider)
     }
+
+    testGenerator("org.jetbrains.kotlin.fir.dataframe.TestGeneratorKt")
 
     withJvmStdlibAndReflect()
 }

@@ -111,10 +111,8 @@ dependencies {
     testRuntimeOnly(project(":compiler:fir:fir-serialization"))
 
     // Dependencies for Kotlin/Native test infra:
-    if (!kotlinBuildProperties.isInIdeaSync) {
-        testImplementation(testFixtures(project(":native:native.tests")))
-    }
-    testImplementation(testFixtures(project(":native:native.tests:klib-ir-inliner")))
+    testFixturesApi(testFixtures(project(":native:native.tests")))
+    testFixturesApi(testFixtures(project(":native:native.tests:klib-ir-inliner")))
 
     // Implicit dependencies on CORE and JSON native artifacts to run native tests on CI
     listOf(
@@ -198,7 +196,7 @@ projectTests {
         compilerPluginDependencies = listOf(serializationPluginForTests)
     )
 
-    testGenerator("org.jetbrains.kotlin.generators.tests.GenerateSerializationTestsKt")
+    testGenerator("org.jetbrains.kotlinx.serialization.GenerateSerializationTestsKt")
 
     withJvmStdlibAndReflect()
 }

@@ -195,9 +195,10 @@ class ComposeIT : KGPBaseTest() {
     ) {
         var buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion)
             .suppressDeprecationWarningsOn(
-                "JB Compose produces deprecation warning: https://github.com/JetBrains/compose-multiplatform/issues/3945"
+                "JB Compose produces deprecation warning: CMP-3945"
             ) {
-                gradleVersion >= GradleVersion.version(TestVersions.Gradle.G_8_4)
+                gradleVersion >= GradleVersion.version(TestVersions.Gradle.G_8_4) &&
+                        gradleVersion < GradleVersion.version(TestVersions.Gradle.G_9_0)
             }
         if (OS.WINDOWS.isCurrentOs) {
             // CMP-8375 Compose Gradle Plugin is not compatible with Gradle isolated projects on Windows
@@ -398,6 +399,7 @@ class ComposeIT : KGPBaseTest() {
     @DisplayName("Run test against older versions of open @Composable function")
     @GradleAndroidTest
     @AndroidTestVersions(minVersion = TestVersions.AGP.MAX_SUPPORTED)
+    @GradleTestVersions(maxVersion = TestVersions.Gradle.G_8_14) // Kotlin 1.9.2x is not compatible with Gradle 9+
     @OtherGradlePluginTests
     @TestMetadata("composeMultiModule")
     fun testComposeDefaultParamsInOpenFunctionK1ToK2(

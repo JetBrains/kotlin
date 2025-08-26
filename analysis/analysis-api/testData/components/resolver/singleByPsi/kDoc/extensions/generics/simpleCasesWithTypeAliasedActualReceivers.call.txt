@@ -1,0 +1,63 @@
+<caret_1>:
+  KDocName(396,417): 'ChildGenericAlias.ext'
+    null
+
+<caret_2>:
+  KDocName(423,453): 'ChildGenericAlias.extRecursive'
+    null
+
+<caret_3>:
+  KDocName(459,487): 'ChildGenericAlias.extNothing'
+    null
+
+<caret_4>:
+  KDocName(493,518): 'ChildGenericAlias.extStar'
+    null
+
+<caret_5>:
+  KDocName(527,566): 'ChildGenericAliasWithStarProjection.ext'
+    null
+
+<caret_6>:
+  KDocName(572,620): 'ChildGenericAliasWithStarProjection.extRecursive'
+    null
+
+<caret_7>:
+  KDocName(626,672): 'ChildGenericAliasWithStarProjection.extNothing'
+    null
+
+<caret_8>:
+  KDocName(678,721): 'ChildGenericAliasWithStarProjection.extStar'
+    null
+
+<caret_9>:
+  KDocName(730,762): 'ChildGenericAliasWithNothing.ext'
+    null
+
+<caret_10>:
+  KDocName(768,809): 'ChildGenericAliasWithNothing.extRecursive'
+    null
+
+<caret_11>:
+  KDocName(815,854): 'ChildGenericAliasWithNothing.extNothing'
+    null
+
+<caret_12>:
+  KDocName(860,896): 'ChildGenericAliasWithNothing.extStar'
+    null
+
+<caret_13>:
+  KDocName(905,949): 'ChildGenericAliasWithAnotherNothingAlias.ext'
+    null
+
+<caret_14>:
+  KDocName(955,1008): 'ChildGenericAliasWithAnotherNothingAlias.extRecursive'
+    null
+
+<caret_15>:
+  KDocName(1014,1065): 'ChildGenericAliasWithAnotherNothingAlias.extNothing'
+    null
+
+<caret_16>:
+  KDocName(1071,1119): 'ChildGenericAliasWithAnotherNothingAlias.extStar'
+    null

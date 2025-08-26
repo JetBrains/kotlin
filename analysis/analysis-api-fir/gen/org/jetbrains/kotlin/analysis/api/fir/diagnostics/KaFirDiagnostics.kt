@@ -383,6 +383,16 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         val declarationType: KaType
     }
 
+    interface MissingDependencyInInferredTypeAnnotationError : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = MissingDependencyInInferredTypeAnnotationError::class
+        val type: KaType
+    }
+
+    interface MissingDependencyInInferredTypeAnnotationWarning : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = MissingDependencyInInferredTypeAnnotationWarning::class
+        val type: KaType
+    }
+
     interface CreatingAnInstanceOfAbstractClass : KaFirDiagnostic<KtExpression> {
         override val diagnosticClass get() = CreatingAnInstanceOfAbstractClass::class
     }
@@ -3676,6 +3686,11 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = NoElseInWhen::class
         val missingWhenCases: List<WhenMissingCase>
         val description: String
+    }
+
+    interface MissingBranchForNonAbstractSealedClass : KaFirDiagnostic<KtWhenExpression> {
+        override val diagnosticClass get() = MissingBranchForNonAbstractSealedClass::class
+        val missingWhenCases: List<WhenMissingCase>
     }
 
     interface InvalidIfAsExpression : KaFirDiagnostic<KtIfExpression> {

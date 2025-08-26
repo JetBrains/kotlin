@@ -43,11 +43,13 @@ object TestReferenceResolveResultRenderer {
     fun renderResolvedTo(
         symbols: Collection<KaSymbol>,
         renderer: KaDeclarationRenderer = KaDeclarationRendererForDebug.WITH_QUALIFIED_NAMES,
-        additionalInfo: KaSession.(KaSymbol) -> String? = { null }
+        sortRenderedDeclarations: Boolean = true,
+        additionalInfo: KaSession.(KaSymbol) -> String? = { null },
     ): String {
         if (symbols.isEmpty()) return UNRESOLVED_REFERENCE_RESULT
 
-        val sortedSymbols = symbols.map { renderResolveResult(it, renderer, additionalInfo) }.sorted()
+        val sortedSymbols =
+            symbols.map { renderResolveResult(it, renderer, additionalInfo) }.let { if (sortRenderedDeclarations) it.sorted() else it }
         if (sortedSymbols.size == 1) {
             return sortedSymbols.single()
         }

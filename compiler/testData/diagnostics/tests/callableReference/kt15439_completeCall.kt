@@ -4,7 +4,7 @@
 
 fun test() {
     data class Pair<F, S>(val first: F, val second: S)
-    val (x, y) =
+    val (first, second) =
             Pair(1,
                  if (1 == 1)
                      Pair<String, String>::first

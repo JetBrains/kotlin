@@ -17,7 +17,7 @@ public class JClass {
 }
 
 // FILE: SealedJClass.java
-public sealed class SealedJClass permits SealedJClass.SCOption1, SealedJClass.SCOption2 {
+public sealed abstract class SealedJClass permits SealedJClass.SCOption1, SealedJClass.SCOption2 {
     public static final class SCOption1 extends SealedJClass {
         public int prop1 = 1;
     }

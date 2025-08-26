@@ -1,3 +1,4 @@
+// LANGUAGE: +NameBasedDestructuring +DeprecateNameMismatchInShortDestructuringWithParentheses +EnableNameBasedDestructuringShortForm
 // RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 // DIAGNOSTICS: -UNUSED_VARIABLE
@@ -28,9 +29,9 @@ fun test() {
     // platform type with no annotation
     val platformJ = J.staticJ
 
-    val (a1, b1) = platformNN
-    val (a2, b2) = <!COMPONENT_FUNCTION_ON_NULLABLE, COMPONENT_FUNCTION_ON_NULLABLE!>platformN<!>
-    val (a3, b3) = platformJ
+    val [a1, b1] = platformNN
+    val [a2, b2] = <!COMPONENT_FUNCTION_ON_NULLABLE, COMPONENT_FUNCTION_ON_NULLABLE!>platformN<!>
+    val [a3, b3] = platformJ
 }
 
 /* GENERATED_FIR_TAGS: destructuringDeclaration, flexibleType, functionDeclaration, javaProperty, javaType,

@@ -5,10 +5,13 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.utils
 
+import com.intellij.openapi.components.serviceOrNull
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.diagnostic.trace
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.registry.Registry
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.analyze
 import org.jetbrains.kotlin.analysis.api.platform.KaCachedService
@@ -24,7 +27,8 @@ import kotlin.system.measureTimeMillis
 /**
  * A facility that cleans up all low-level resolution caches per request.
  */
-internal interface KaFirCacheCleaner {
+@KaImplementationDetail
+interface KaFirCacheCleaner {
     /**
      * This method must be called before the [KaSession] is obtained (to be used later in an [analyze] block).
      * If the method is called, [exitAnalysis] must also be called from the same thread right after the block finishes executing, or
@@ -45,13 +49,24 @@ internal interface KaFirCacheCleaner {
      * Consequent calls to [scheduleCleanup] are permitted (and ignored if a cleanup is already scheduled).
      */
     fun scheduleCleanup()
+
+    @KaImplementationDetail
+    companion object {
+        fun getInstance(project: Project): KaFirCacheCleaner {
+            if (!Registry.`is`("kotlin.analysis.lowMemoryCacheCleanup", true)) {
+                return KaFirNoOpCacheCleaner
+            }
+
+            return project.serviceOrNull<KaFirCacheCleaner>() ?: KaFirNoOpCacheCleaner
+        }
+    }
 }
 
 /**
  * An empty implementation of a cache cleaner – no additional cleanup is performed.
  * Can be used as a drop-in substitution for [KaFirStopWorldCacheCleaner] if forceful cache cleanup is disabled.
  */
-internal object KaFirNoOpCacheCleaner : KaFirCacheCleaner {
+private object KaFirNoOpCacheCleaner : KaFirCacheCleaner {
     override fun enterAnalysis() {}
     override fun exitAnalysis() {}
     override fun scheduleCleanup() {}
@@ -65,7 +80,7 @@ internal object KaFirNoOpCacheCleaner : KaFirCacheCleaner {
  * Once a cleanup is requested, the class also prevents all new analysis blocks from running until it's complete (see the [cleanupLatch]).
  * If there is no ongoing analysis, though, caches can be cleaned up immediately.
  */
-internal class KaFirStopWorldCacheCleaner(private val project: Project) : KaFirCacheCleaner {
+private class KaFirStopWorldCacheCleaner(private val project: Project) : KaFirCacheCleaner {
     private companion object {
         private val LOG = logger<KaFirStopWorldCacheCleaner>()
 

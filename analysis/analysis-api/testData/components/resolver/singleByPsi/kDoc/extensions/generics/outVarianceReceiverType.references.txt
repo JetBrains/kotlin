@@ -1,0 +1,29 @@
+<caret_1>:
+  KDocName(226,258): 'OutContainer.someNumberExtension'
+    KDocReference:
+      (in ROOT) fun OutContainer<kotlin.Number>.someNumberExtension()
+
+<caret_2>:
+  KDocName(275,310): 'IntOutContainer.someNumberExtension'
+    KDocReference:
+      (in ROOT) fun OutContainer<kotlin.Number>.someNumberExtension()
+
+<caret_3>:
+  KDocName(327,365): 'NumberOutContainer.someNumberExtension'
+    KDocReference:
+      (in ROOT) fun OutContainer<kotlin.Number>.someNumberExtension()
+
+<caret_4>:
+  KDocName(382,411): 'OutContainer.someIntExtension'
+    KDocReference:
+      (in ROOT) fun OutContainer<kotlin.Int>.someIntExtension()
+
+<caret_5>:
+  KDocName(428,460): 'IntOutContainer.someIntExtension'
+    KDocReference:
+      (in ROOT) fun OutContainer<kotlin.Int>.someIntExtension()
+
+<caret_6>:
+  KDocName(477,512): 'NumberOutContainer.someIntExtension'
+    KDocReference:
+      Nothing (Unresolved reference)

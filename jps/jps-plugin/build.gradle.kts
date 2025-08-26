@@ -138,7 +138,7 @@ projectTests {
         )
     }
 
-    testGenerator("org.jetbrains.kotlin.jps.GenerateJpsPluginTestsKt") {
+    testGenerator("org.jetbrains.kotlin.jps.GenerateJpsPluginTestsKt", doNotSetFixturesSourceSetDependency = true) {
         javaLauncher.set(
             javaToolchains.launcherFor {
                 languageVersion.set(JavaLanguageVersion.of(17))

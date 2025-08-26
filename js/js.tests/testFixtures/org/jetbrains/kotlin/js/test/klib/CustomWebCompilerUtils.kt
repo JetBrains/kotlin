@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.config.LanguageVersion
 import java.io.File
 import java.io.PrintStream
 import java.lang.ref.SoftReference
+import java.net.URL
 import java.net.URLClassLoader
 import kotlin.test.fail
 
@@ -19,7 +20,8 @@ import kotlin.test.fail
  */
 val customJsCompilerSettings: CustomWebCompilerSettings by lazy {
     createCustomWebCompilerSettings(
-        artifactsDirPropertyName = "kotlin.internal.js.test.compat.customCompilerArtifactsDir",
+        compilerClasspathPropertyName = "kotlin.internal.js.test.compat.customCompilerClasspath",
+        runtimeDependenciesPropertyName = "kotlin.internal.js.test.compat.runtimeDependencies",
         versionPropertyName = "kotlin.internal.js.test.compat.customCompilerVersion",
         stdlibArtifactName = "kotlin-stdlib-js",
         kotlinTestArtifactName = "kotlin-test-js",
@@ -32,7 +34,8 @@ val customJsCompilerSettings: CustomWebCompilerSettings by lazy {
  */
 val customWasmJsCompilerSettings: CustomWebCompilerSettings by lazy {
     createCustomWebCompilerSettings(
-        artifactsDirPropertyName = "kotlin.internal.wasm.test.compat.customCompilerArtifactsDir",
+        compilerClasspathPropertyName = "kotlin.internal.wasm.test.compat.customCompilerClasspath",
+        runtimeDependenciesPropertyName = "kotlin.internal.wasm.test.compat.runtimeDependencies",
         versionPropertyName = "kotlin.internal.wasm.test.compat.customCompilerVersion",
         stdlibArtifactName = "kotlin-stdlib-wasm-js",
         kotlinTestArtifactName = "kotlin-test-wasm-js",
@@ -55,31 +58,26 @@ val CustomWebCompilerSettings.defaultLanguageVersion: LanguageVersion
         ?: fail("Cannot deduce the default LV from the compiler version: $version")
 
 private fun createCustomWebCompilerSettings(
-    artifactsDirPropertyName: String,
+    compilerClasspathPropertyName: String,
+    runtimeDependenciesPropertyName: String,
     versionPropertyName: String,
     stdlibArtifactName: String,
     kotlinTestArtifactName: String,
 ): CustomWebCompilerSettings = object : CustomWebCompilerSettings {
     private val artifacts: CustomWebCompilerArtifacts by lazy {
-        CustomWebCompilerArtifacts.create(artifactsDirPropertyName, versionPropertyName)
+        CustomWebCompilerArtifacts.create(compilerClasspathPropertyName, runtimeDependenciesPropertyName, versionPropertyName)
     }
 
     override val version: String get() = artifacts.version
-    override val stdlib: File by lazy { artifacts.resolve(stdlibArtifactName, "klib") }
+    override val stdlib: File by lazy { artifacts.runtimeDependency(stdlibArtifactName, "klib") }
 
     override val kotlinTest: File by lazy {
         // Older versions of Kotlin/JS 'kotlin-test' had KLIBs with *.jar file extension.
-        artifacts.resolve(kotlinTestArtifactName, "klib", "jar")
+        artifacts.runtimeDependency(kotlinTestArtifactName, "klib", "jar")
     }
 
     override val customCompiler: CustomWebCompiler by lazy {
-        CustomWebCompiler(
-            listOfNotNull(
-                artifacts.resolve("kotlin-compiler-embeddable", "jar"),
-                artifacts.resolveOptionalTrove4j(),
-                artifacts.resolve("kotlin-stdlib", "jar"),
-            )
-        )
+        CustomWebCompiler(artifacts.compilerClassPath)
     }
 }
 
@@ -89,19 +87,24 @@ private fun createCustomWebCompilerSettings(
  * Note: The class loader is cached to be easily reused in all later calls without reloading the class path.
  * Yet it is cached as a [SoftReference] to allow GC in the case of a need.
  */
-class CustomWebCompiler(private val compilerClassPath: List<File>) {
+class CustomWebCompiler(private val compilerClassPath: List<URL>) {
     private var isolatedClassLoaderSoftRef: SoftReference<URLClassLoader>? = null
 
     private fun getIsolatedClassLoader(): URLClassLoader = isolatedClassLoaderSoftRef?.get() ?: synchronized(this) {
         isolatedClassLoaderSoftRef?.get() ?: run {
-            val isolatedClassLoader = URLClassLoader(compilerClassPath.map { it.toURI().toURL() }.toTypedArray(), null)
+            val isolatedClassLoader = URLClassLoader(compilerClassPath.toTypedArray(), null)
             isolatedClassLoader.setDefaultAssertionStatus(true)
             isolatedClassLoaderSoftRef = SoftReference(isolatedClassLoader)
             isolatedClassLoader
         }
     }
 
-    fun callCompiler(output: PrintStream, args: Array<String>): ExitCode {
+    fun callCompiler(output: PrintStream, vararg args: List<String>?): ExitCode {
+        val allArgs = args.flatMap { it.orEmpty() }.toTypedArray()
+        return callCompiler(output, *allArgs)
+    }
+
+    fun callCompiler(output: PrintStream, vararg args: String): ExitCode {
         val isolatedClassLoader = getIsolatedClassLoader()
 
         val compilerClass = Class.forName("org.jetbrains.kotlin.cli.js.K2JSCompiler", true, isolatedClassLoader)
@@ -122,44 +125,59 @@ private sealed interface CustomWebCompilerArtifacts {
     val version: String
 
     /**
-     * Resolves the mandatory artifact '$baseName-$version.$extension', where $extension is one of the passed [extensions].
+     * The classpath of the custom compiler.
      */
-    fun resolve(baseName: String, vararg extensions: String): File
+    val compilerClassPath: List<URL>
 
     /**
-     * This artifact was removed in Kotlin 2.2.0-Beta1.
-     * But it is still available in older compiler versions, where we need to load it.
+     * Resolves the '$baseName-$version.$extension' runtime dependency artifact, where $extension is one of the passed [extensions].
      */
-    fun resolveOptionalTrove4j(): File?
+    fun runtimeDependency(baseName: String, vararg extensions: String): File
 
-    private class Resolvable(override val version: String, private val artifactsDir: File) : CustomWebCompilerArtifacts {
-        override fun resolve(baseName: String, vararg extensions: String): File {
-            val candidates: List<File> = extensions.map { extension -> artifactsDir.resolve("$baseName-$version.$extension") }
-            return candidates.firstOrNull { it.exists() } ?: fail("Artifact $baseName is not found. Candidates tested: $candidates")
-        }
+    private class Resolvable(
+        override val version: String,
+        override val compilerClassPath: List<URL>,
+        private val runtimeDependencies: List<File>,
+    ) : CustomWebCompilerArtifacts {
+        override fun runtimeDependency(baseName: String, vararg extensions: String): File {
+            val candidates = runtimeDependencies.filter { file ->
+                file.isFile && file.extension in extensions && file.nameWithoutExtension == "$baseName-$version"
+            }
 
-        override fun resolveOptionalTrove4j(): File? {
-            return artifactsDir.listFiles()?.firstOrNull { file ->
-                file.isFile && file.name.run { startsWith("trove4j") && endsWith("jar") }
+            return when (candidates.size) {
+                0 -> fail("Artifact $baseName is not found.")
+                1 -> candidates.first()
+                else -> fail("More than one $baseName artifact is found: $candidates")
             }
         }
     }
 
     private class Unresolvable(val reason: String) : CustomWebCompilerArtifacts {
         override val version get() = fail(reason)
-        override fun resolve(baseName: String, vararg extensions: String) = fail(reason)
-        override fun resolveOptionalTrove4j() = fail(reason)
+        override val compilerClassPath get() = fail(reason)
+        override fun runtimeDependency(baseName: String, vararg extensions: String) = fail(reason)
     }
 
     companion object {
-        fun create(artifactsDirPropertyName: String, versionPropertyName: String): CustomWebCompilerArtifacts {
+        fun create(
+            compilerClassPathPropertyName: String,
+            runtimeDependenciesPropertyName: String,
+            versionPropertyName: String
+        ): CustomWebCompilerArtifacts {
             val version: String = readProperty(versionPropertyName)
                 ?: return propertyNotFound(versionPropertyName)
 
-            val artifactsDir: File = readProperty(artifactsDirPropertyName)?.let(::File)
-                ?: return propertyNotFound(artifactsDirPropertyName)
+            val compilerClassPath: List<URL> = readProperty(compilerClassPathPropertyName)
+                ?.split(File.pathSeparatorChar)
+                ?.map { File(it).toURI().toURL() }
+                ?: return propertyNotFound(compilerClassPathPropertyName)
 
-            return Resolvable(version, artifactsDir)
+            val runtimeDependencies = readProperty(runtimeDependenciesPropertyName)
+                ?.split(File.pathSeparatorChar)
+                ?.map(::File)
+                ?: return propertyNotFound(runtimeDependenciesPropertyName)
+
+            return Resolvable(version, compilerClassPath, runtimeDependencies)
         }
 
         private fun readProperty(propertyName: String): String? =

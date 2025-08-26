@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.config.LanguageFeature.ForbidAnnotationsWithUseSiteT
 import org.jetbrains.kotlin.config.LanguageFeature.ForbidCompanionInLocalInnerClass
 import org.jetbrains.kotlin.config.LanguageFeature.ForbidEnumEntryNamedEntries
 import org.jetbrains.kotlin.config.LanguageFeature.ForbidExposingLessVisibleTypesInInline
+import org.jetbrains.kotlin.config.LanguageFeature.ForbidImplicitTypeAnnotationWithMissingDependency
 import org.jetbrains.kotlin.config.LanguageFeature.ForbidInferOfInvisibleTypeAsReifiedVarargOrReturnType
 import org.jetbrains.kotlin.config.LanguageFeature.ForbidInferringTypeVariablesIntoEmptyIntersection
 import org.jetbrains.kotlin.config.LanguageFeature.ForbidObjectDelegationToItself
@@ -212,6 +213,7 @@ object FirErrors : KtDiagnosticsContainer() {
     val MISSING_DEPENDENCY_CLASS_IN_LAMBDA_PARAMETER: KtDiagnosticFactory2<ConeKotlinType, Name> = KtDiagnosticFactory2("MISSING_DEPENDENCY_CLASS_IN_LAMBDA_PARAMETER", WARNING, SourceElementPositioningStrategies.REFERENCED_NAME_BY_QUALIFIED, PsiElement::class, getRendererFactory())
     val MISSING_DEPENDENCY_CLASS_IN_LAMBDA_RECEIVER: KtDiagnosticFactory1<ConeKotlinType> = KtDiagnosticFactory1("MISSING_DEPENDENCY_CLASS_IN_LAMBDA_RECEIVER", WARNING, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())
     val MISSING_DEPENDENCY_CLASS_IN_TYPEALIAS: KtDiagnosticFactory2<ConeKotlinType, ConeKotlinType> = KtDiagnosticFactory2("MISSING_DEPENDENCY_CLASS_IN_TYPEALIAS", WARNING, SourceElementPositioningStrategies.REFERENCED_NAME_BY_QUALIFIED, PsiElement::class, getRendererFactory())
+    val MISSING_DEPENDENCY_IN_INFERRED_TYPE_ANNOTATION: KtDiagnosticFactoryForDeprecation1<ConeKotlinType> = KtDiagnosticFactoryForDeprecation1("MISSING_DEPENDENCY_IN_INFERRED_TYPE_ANNOTATION", ForbidImplicitTypeAnnotationWithMissingDependency, SourceElementPositioningStrategies.REFERENCED_NAME_BY_QUALIFIED, PsiElement::class, getRendererFactory())
 
     // Call resolution
     val CREATING_AN_INSTANCE_OF_ABSTRACT_CLASS: KtDiagnosticFactory0 = KtDiagnosticFactory0("CREATING_AN_INSTANCE_OF_ABSTRACT_CLASS", ERROR, SourceElementPositioningStrategies.DEFAULT, KtExpression::class, getRendererFactory())
@@ -886,6 +888,7 @@ object FirErrors : KtDiagnosticsContainer() {
     // When expressions
     val EXPECTED_CONDITION: KtDiagnosticFactory0 = KtDiagnosticFactory0("EXPECTED_CONDITION", ERROR, SourceElementPositioningStrategies.DEFAULT, KtWhenCondition::class, getRendererFactory())
     val NO_ELSE_IN_WHEN: KtDiagnosticFactory2<List<WhenMissingCase>, String> = KtDiagnosticFactory2("NO_ELSE_IN_WHEN", ERROR, SourceElementPositioningStrategies.WHEN_EXPRESSION, KtWhenExpression::class, getRendererFactory())
+    val MISSING_BRANCH_FOR_NON_ABSTRACT_SEALED_CLASS: KtDiagnosticFactory1<List<WhenMissingCase>> = KtDiagnosticFactory1("MISSING_BRANCH_FOR_NON_ABSTRACT_SEALED_CLASS", WARNING, SourceElementPositioningStrategies.WHEN_EXPRESSION, KtWhenExpression::class, getRendererFactory())
     val INVALID_IF_AS_EXPRESSION: KtDiagnosticFactory0 = KtDiagnosticFactory0("INVALID_IF_AS_EXPRESSION", ERROR, SourceElementPositioningStrategies.IF_EXPRESSION, KtIfExpression::class, getRendererFactory())
     val ELSE_MISPLACED_IN_WHEN: KtDiagnosticFactory0 = KtDiagnosticFactory0("ELSE_MISPLACED_IN_WHEN", ERROR, SourceElementPositioningStrategies.ELSE_ENTRY, KtWhenEntry::class, getRendererFactory())
     val REDUNDANT_ELSE_IN_WHEN: KtDiagnosticFactory0 = KtDiagnosticFactory0("REDUNDANT_ELSE_IN_WHEN", WARNING, SourceElementPositioningStrategies.ELSE_ENTRY, KtWhenEntry::class, getRendererFactory())

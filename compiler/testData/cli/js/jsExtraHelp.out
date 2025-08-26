@@ -78,6 +78,8 @@ where advanced options include:
   -Xklib-abi-version=<version> Specify the custom ABI version to be written in KLIB. This option is intended only for tests.
                              Warning: This option does not affect KLIB ABI. Neither allows it making a KLIB backward-compatible with older ABI versions.
                              The only observable effect is that a custom ABI version is written to KLIB manifest file.
+  -Xklib-zip-file-accessor-cache-limit
+                             Maximum number of klibs that can be cached during compilation. Default is 64.
   -Xrepl                     Run Kotlin REPL (deprecated)
   -Xno-inline                Disable method inlining.
   -Xskip-metadata-version-check Allow loading classes with bad metadata versions and pre-release classes.

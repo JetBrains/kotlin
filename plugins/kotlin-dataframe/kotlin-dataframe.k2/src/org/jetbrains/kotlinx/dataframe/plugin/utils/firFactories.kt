@@ -16,7 +16,8 @@ import org.jetbrains.kotlin.fir.extensions.FirDeclarationGenerationExtension
 import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.toFirResolvedTypeRef
-import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
+import org.jetbrains.kotlin.fir.types.ConeClassLikeType
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlinx.dataframe.plugin.DataFramePlugin
@@ -24,9 +25,9 @@ import org.jetbrains.kotlinx.dataframe.plugin.extensions.impl.PropertyName
 
 internal fun FirDeclarationGenerationExtension.generateExtensionProperty(
     callableIdOrSymbol: CallableIdOrSymbol,
-    receiverType: ConeClassLikeTypeImpl,
+    receiverType: ConeClassLikeType,
     propertyName: PropertyName,
-    returnTypeRef: FirResolvedTypeRef,
+    returnType: ConeKotlinType,
     symbol: FirClassSymbol<*>? = null,
     effectiveVisibility: EffectiveVisibility = EffectiveVisibility.Public,
     source: KtSourceElement?,
@@ -51,7 +52,7 @@ internal fun FirDeclarationGenerationExtension.generateExtensionProperty(
             effectiveVisibility
         )
         this.typeParameters += typeParameters
-        this.returnTypeRef = returnTypeRef
+        this.returnTypeRef = returnType.toFirResolvedTypeRef()
         receiverParameter = buildReceiverParameter {
             this.symbol = FirReceiverParameterSymbol()
             containingDeclarationSymbol = firPropertySymbol
@@ -80,7 +81,7 @@ internal fun FirDeclarationGenerationExtension.generateExtensionProperty(
             moduleData = session.moduleData
             resolvePhase = FirResolvePhase.BODY_RESOLVE
             origin = FirDeclarationOrigin.Plugin(DataFramePlugin)
-            this.returnTypeRef = returnTypeRef
+            this.returnTypeRef = returnType.toFirResolvedTypeRef()
             dispatchReceiverType = receiverType
             this.symbol = firPropertyAccessorSymbol
             this.propertySymbol = firPropertySymbol

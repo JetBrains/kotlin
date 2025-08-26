@@ -46,6 +46,15 @@ import org.jetbrains.kotlin.wasm.test.handlers.WasmBoxRunner
 import org.jetbrains.kotlin.wasm.test.handlers.WasmDebugRunner
 import org.jetbrains.kotlin.wasm.test.providers.WasmJsSteppingTestAdditionalSourceProvider
 
+fun TestConfigurationBuilder.configureCodegenFirHandlerSteps() {
+    configureFirHandlersStep {
+        commonFirHandlersForCodegenTest()
+    }
+    useAfterAnalysisCheckers(
+        ::FirMetaInfoDiffSuppressor
+    )
+}
+
 abstract class AbstractFirWasmTest(
     targetPlatform: TargetPlatform,
     pathToTestDir: String,
@@ -106,13 +115,7 @@ open class AbstractFirWasmJsCodegenBoxTest(
 ) {
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
-        builder.configureFirHandlersStep {
-            commonFirHandlersForCodegenTest()
-        }
-
-        builder.useAfterAnalysisCheckers(
-            ::FirMetaInfoDiffSuppressor
-        )
+        builder.configureCodegenFirHandlerSteps()
     }
 }
 
@@ -125,7 +128,10 @@ open class AbstractFirWasmJsCodegenBoxWithInlinedFunInKlibTest(
         super.configure(builder)
         with(builder) {
             defaultDirectives {
-                LANGUAGE with "+${LanguageFeature.IrInlinerBeforeKlibSerialization.name}"
+                LANGUAGE with listOf(
+                    "+${LanguageFeature.IrIntraModuleInlinerBeforeKlibSerialization.name}",
+                    "+${LanguageFeature.IrCrossModuleInlinerBeforeKlibSerialization.name}"
+                )
             }
         }
     }
@@ -150,12 +156,22 @@ open class AbstractFirWasmJsCodegenSplittingWithInlinedFunInKlibTest() : Abstrac
 open class AbstractFirWasmJsCodegenBoxInlineTest : AbstractFirWasmJsTest(
     "compiler/testData/codegen/boxInline/",
     "codegen/firBoxInline/"
-)
+) {
+    override fun configure(builder: TestConfigurationBuilder) {
+        super.configure(builder)
+        builder.configureCodegenFirHandlerSteps()
+    }
+}
 
 open class AbstractFirWasmJsCodegenInteropTest : AbstractFirWasmJsTest(
     "compiler/testData/codegen/wasmJsInterop",
     "codegen/firWasmJsInterop"
-)
+) {
+    override fun configure(builder: TestConfigurationBuilder) {
+        super.configure(builder)
+        builder.configureCodegenFirHandlerSteps()
+    }
+}
 
 open class AbstractFirWasmJsTranslatorTest : AbstractFirWasmJsTest(
     "js/js.translator/testData/box/",
@@ -211,13 +227,7 @@ open class AbstractFirWasmWasiCodegenBoxTest(
 ) {
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
-        builder.configureFirHandlersStep {
-            commonFirHandlersForCodegenTest()
-        }
-
-        builder.useAfterAnalysisCheckers(
-            ::FirMetaInfoDiffSuppressor
-        )
+        builder.configureCodegenFirHandlerSteps()
     }
 }
 
@@ -228,7 +238,10 @@ open class AbstractFirWasmWasiCodegenBoxWithInlinedFunInKlibTest : AbstractFirWa
         super.configure(builder)
         with(builder) {
             defaultDirectives {
-                LANGUAGE with "+${LanguageFeature.IrInlinerBeforeKlibSerialization.name}"
+                LANGUAGE with listOf(
+                    "+${LanguageFeature.IrIntraModuleInlinerBeforeKlibSerialization.name}",
+                    "+${LanguageFeature.IrCrossModuleInlinerBeforeKlibSerialization.name}"
+                )
             }
         }
     }

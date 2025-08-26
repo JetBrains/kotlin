@@ -15,7 +15,7 @@ dependencies {
 
     testFixturesImplementation(testFixtures(project(":generators:test-generator")))
     testFixturesImplementation(testFixtures(project(":compiler:tests-common")))
-    testFixturesImplementation(projectTests(":compiler:tests-spec"))
+    testFixturesImplementation(testFixtures(project(":compiler:tests-spec")))
     testFixturesImplementation(testFixtures(project(":analysis:low-level-api-fir")))
     testFixturesImplementation(testFixtures(project(":analysis:analysis-api-fir")))
     testFixturesImplementation(testFixtures(project(":analysis:analysis-api-fe10")))
@@ -29,7 +29,7 @@ dependencies {
     testFixturesImplementation(intellijCore())
 }
 
-val generateFrontendApiTests by generator("org.jetbrains.kotlin.generators.tests.analysis.api.GenerateAnalysisApiTestsKt") {
+val generateTests by generator("org.jetbrains.kotlin.generators.tests.analysis.api.GenerateAnalysisApiTestsKt") {
     dependsOn(":generators:analysis-api-generator:generator-kotlin-native:generateAnalysisApiNativeTests")
 }
 

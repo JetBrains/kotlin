@@ -184,6 +184,12 @@ public class LLDiagnosticsFe10TestGenerated extends AbstractLLDiagnosticsTest {
     }
 
     @Test
+    @TestMetadata("BacktickNamesOld.kt")
+    public void testBacktickNamesOld() {
+      runTest("compiler/testData/diagnostics/tests/BacktickNamesOld.kt");
+    }
+
+    @Test
     @TestMetadata("Basic.kt")
     public void testBasic() {
       runTest("compiler/testData/diagnostics/tests/Basic.kt");
@@ -1168,6 +1174,12 @@ public class LLDiagnosticsFe10TestGenerated extends AbstractLLDiagnosticsTest {
     }
 
     @Test
+    @TestMetadata("kt54587_1Old.kt")
+    public void testKt54587_1Old() {
+      runTest("compiler/testData/diagnostics/tests/kt54587_1Old.kt");
+    }
+
+    @Test
     @TestMetadata("kt54587_2.kt")
     public void testKt54587_2() {
       runTest("compiler/testData/diagnostics/tests/kt54587_2.kt");
@@ -1531,6 +1543,12 @@ public class LLDiagnosticsFe10TestGenerated extends AbstractLLDiagnosticsTest {
     @TestMetadata("OperatorConventions.kt")
     public void testOperatorConventions() {
       runTest("compiler/testData/diagnostics/tests/OperatorConventions.kt");
+    }
+
+    @Test
+    @TestMetadata("OperatorConventionsOld.kt")
+    public void testOperatorConventionsOld() {
+      runTest("compiler/testData/diagnostics/tests/OperatorConventionsOld.kt");
     }
 
     @Test
@@ -2245,6 +2263,12 @@ public class LLDiagnosticsFe10TestGenerated extends AbstractLLDiagnosticsTest {
     @TestMetadata("Underscore.kt")
     public void testUnderscore() {
       runTest("compiler/testData/diagnostics/tests/Underscore.kt");
+    }
+
+    @Test
+    @TestMetadata("UnderscoreOld.kt")
+    public void testUnderscoreOld() {
+      runTest("compiler/testData/diagnostics/tests/UnderscoreOld.kt");
     }
 
     @Test
@@ -3070,6 +3094,12 @@ public class LLDiagnosticsFe10TestGenerated extends AbstractLLDiagnosticsTest {
       @TestMetadata("MultiDeclaration.kt")
       public void testMultiDeclaration() {
         runTest("compiler/testData/diagnostics/tests/annotations/MultiDeclaration.kt");
+      }
+
+      @Test
+      @TestMetadata("MultiDeclarationOld.kt")
+      public void testMultiDeclarationOld() {
+        runTest("compiler/testData/diagnostics/tests/annotations/MultiDeclarationOld.kt");
       }
 
       @Test
@@ -5639,6 +5669,12 @@ public class LLDiagnosticsFe10TestGenerated extends AbstractLLDiagnosticsTest {
         @TestMetadata("genericFunctionsWithNullableTypes.kt")
         public void testGenericFunctionsWithNullableTypes() {
           runTest("compiler/testData/diagnostics/tests/callableReference/generic/genericFunctionsWithNullableTypes.kt");
+        }
+
+        @Test
+        @TestMetadata("genericFunctionsWithNullableTypesOld.kt")
+        public void testGenericFunctionsWithNullableTypesOld() {
+          runTest("compiler/testData/diagnostics/tests/callableReference/generic/genericFunctionsWithNullableTypesOld.kt");
         }
 
         @Test
@@ -9427,6 +9463,12 @@ public class LLDiagnosticsFe10TestGenerated extends AbstractLLDiagnosticsTest {
       }
 
       @Test
+      @TestMetadata("valVarLoopParameterOld.kt")
+      public void testValVarLoopParameterOld() {
+        runTest("compiler/testData/diagnostics/tests/controlStructures/valVarLoopParameterOld.kt");
+      }
+
+      @Test
       @TestMetadata("whenInResultOfLambda.kt")
       public void testWhenInResultOfLambda() {
         runTest("compiler/testData/diagnostics/tests/controlStructures/whenInResultOfLambda.kt");
@@ -10423,6 +10465,12 @@ public class LLDiagnosticsFe10TestGenerated extends AbstractLLDiagnosticsTest {
       }
 
       @Test
+      @TestMetadata("extensionComponentsOnNullableOld.kt")
+      public void testExtensionComponentsOnNullableOld() {
+        runTest("compiler/testData/diagnostics/tests/dataClasses/extensionComponentsOnNullableOld.kt");
+      }
+
+      @Test
       @TestMetadata("finalMembersInBaseClass.kt")
       public void testFinalMembersInBaseClass() {
         runTest("compiler/testData/diagnostics/tests/dataClasses/finalMembersInBaseClass.kt");
@@ -10477,6 +10525,18 @@ public class LLDiagnosticsFe10TestGenerated extends AbstractLLDiagnosticsTest {
       }
 
       @Test
+      @TestMetadata("multiDeclarationForOld.kt")
+      public void testMultiDeclarationForOld() {
+        runTest("compiler/testData/diagnostics/tests/dataClasses/multiDeclarationForOld.kt");
+      }
+
+      @Test
+      @TestMetadata("multiDeclarationOld.kt")
+      public void testMultiDeclarationOld() {
+        runTest("compiler/testData/diagnostics/tests/dataClasses/multiDeclarationOld.kt");
+      }
+
+      @Test
       @TestMetadata("noConstructor.kt")
       public void testNoConstructor() {
         runTest("compiler/testData/diagnostics/tests/dataClasses/noConstructor.kt");
@@ -10504,6 +10564,18 @@ public class LLDiagnosticsFe10TestGenerated extends AbstractLLDiagnosticsTest {
       @TestMetadata("propertyTypeCollisionAndAnnotations.kt")
       public void testPropertyTypeCollisionAndAnnotations() {
         runTest("compiler/testData/diagnostics/tests/dataClasses/propertyTypeCollisionAndAnnotations.kt");
+      }
+
+      @Test
+      @TestMetadata("propertyTypeCollisionAndAnnotationsOld.kt")
+      public void testPropertyTypeCollisionAndAnnotationsOld() {
+        runTest("compiler/testData/diagnostics/tests/dataClasses/propertyTypeCollisionAndAnnotationsOld.kt");
+      }
+
+      @Test
+      @TestMetadata("propertyTypeCollisionOld.kt")
+      public void testPropertyTypeCollisionOld() {
+        runTest("compiler/testData/diagnostics/tests/dataClasses/propertyTypeCollisionOld.kt");
       }
 
       @Test
@@ -10937,6 +11009,12 @@ public class LLDiagnosticsFe10TestGenerated extends AbstractLLDiagnosticsTest {
       }
 
       @Test
+      @TestMetadata("MultiDeclarationOld.kt")
+      public void testMultiDeclarationOld() {
+        runTest("compiler/testData/diagnostics/tests/dataFlowInfoTraversal/MultiDeclarationOld.kt");
+      }
+
+      @Test
       @TestMetadata("ObjectExpression.kt")
       public void testObjectExpression() {
         runTest("compiler/testData/diagnostics/tests/dataFlowInfoTraversal/ObjectExpression.kt");
@@ -11105,6 +11183,12 @@ public class LLDiagnosticsFe10TestGenerated extends AbstractLLDiagnosticsTest {
       }
 
       @Test
+      @TestMetadata("ComponentFunctionReturnTypeMismatchOld.kt")
+      public void testComponentFunctionReturnTypeMismatchOld() {
+        runTest("compiler/testData/diagnostics/tests/declarationChecks/ComponentFunctionReturnTypeMismatchOld.kt");
+      }
+
+      @Test
       @TestMetadata("ConflictingAndRedundantProjections.kt")
       public void testConflictingAndRedundantProjections() {
         runTest("compiler/testData/diagnostics/tests/declarationChecks/ConflictingAndRedundantProjections.kt");
@@ -11117,9 +11201,21 @@ public class LLDiagnosticsFe10TestGenerated extends AbstractLLDiagnosticsTest {
       }
 
       @Test
+      @TestMetadata("DataFlowInMultiDeclInForOld.kt")
+      public void testDataFlowInMultiDeclInForOld() {
+        runTest("compiler/testData/diagnostics/tests/declarationChecks/DataFlowInMultiDeclInForOld.kt");
+      }
+
+      @Test
       @TestMetadata("DataFlowInfoInMultiDecl.kt")
       public void testDataFlowInfoInMultiDecl() {
         runTest("compiler/testData/diagnostics/tests/declarationChecks/DataFlowInfoInMultiDecl.kt");
+      }
+
+      @Test
+      @TestMetadata("DataFlowInfoInMultiDeclOld.kt")
+      public void testDataFlowInfoInMultiDeclOld() {
+        runTest("compiler/testData/diagnostics/tests/declarationChecks/DataFlowInfoInMultiDeclOld.kt");
       }
 
       @Test
@@ -11177,9 +11273,21 @@ public class LLDiagnosticsFe10TestGenerated extends AbstractLLDiagnosticsTest {
       }
 
       @Test
+      @TestMetadata("kt2631_MultipleDeclarationOld.kt")
+      public void testKt2631_MultipleDeclarationOld() {
+        runTest("compiler/testData/diagnostics/tests/declarationChecks/kt2631_MultipleDeclarationOld.kt");
+      }
+
+      @Test
       @TestMetadata("kt2643MultiDeclInControlFlow.kt")
       public void testKt2643MultiDeclInControlFlow() {
         runTest("compiler/testData/diagnostics/tests/declarationChecks/kt2643MultiDeclInControlFlow.kt");
+      }
+
+      @Test
+      @TestMetadata("kt2643MultiDeclInControlFlowOld.kt")
+      public void testKt2643MultiDeclInControlFlowOld() {
+        runTest("compiler/testData/diagnostics/tests/declarationChecks/kt2643MultiDeclInControlFlowOld.kt");
       }
 
       @Test
@@ -11249,6 +11357,12 @@ public class LLDiagnosticsFe10TestGenerated extends AbstractLLDiagnosticsTest {
       }
 
       @Test
+      @TestMetadata("MultiDeclarationErrorsOld.kt")
+      public void testMultiDeclarationErrorsOld() {
+        runTest("compiler/testData/diagnostics/tests/declarationChecks/MultiDeclarationErrorsOld.kt");
+      }
+
+      @Test
       @TestMetadata("nameWithDangerousCharacters.kt")
       public void testNameWithDangerousCharacters() {
         runTest("compiler/testData/diagnostics/tests/declarationChecks/nameWithDangerousCharacters.kt");
@@ -11276,6 +11390,12 @@ public class LLDiagnosticsFe10TestGenerated extends AbstractLLDiagnosticsTest {
       @TestMetadata("RedeclarationsInMultiDecl.kt")
       public void testRedeclarationsInMultiDecl() {
         runTest("compiler/testData/diagnostics/tests/declarationChecks/RedeclarationsInMultiDecl.kt");
+      }
+
+      @Test
+      @TestMetadata("RedeclarationsInMultiDeclOld.kt")
+      public void testRedeclarationsInMultiDeclOld() {
+        runTest("compiler/testData/diagnostics/tests/declarationChecks/RedeclarationsInMultiDeclOld.kt");
       }
 
       @Test
@@ -11324,6 +11444,12 @@ public class LLDiagnosticsFe10TestGenerated extends AbstractLLDiagnosticsTest {
         }
 
         @Test
+        @TestMetadata("destructuringDeclarationAssignedUnresolvedOld.kt")
+        public void testDestructuringDeclarationAssignedUnresolvedOld() {
+          runTest("compiler/testData/diagnostics/tests/declarationChecks/destructuringDeclarations/destructuringDeclarationAssignedUnresolvedOld.kt");
+        }
+
+        @Test
         @TestMetadata("destructuringDeclarationMissingInitializer.kt")
         public void testDestructuringDeclarationMissingInitializer() {
           runTest("compiler/testData/diagnostics/tests/declarationChecks/destructuringDeclarations/destructuringDeclarationMissingInitializer.kt");
@@ -11336,9 +11462,21 @@ public class LLDiagnosticsFe10TestGenerated extends AbstractLLDiagnosticsTest {
         }
 
         @Test
+        @TestMetadata("DoubleDeclForLoopOld.kt")
+        public void testDoubleDeclForLoopOld() {
+          runTest("compiler/testData/diagnostics/tests/declarationChecks/destructuringDeclarations/DoubleDeclForLoopOld.kt");
+        }
+
+        @Test
         @TestMetadata("FolLoopTypeComponentTypeMismatch.kt")
         public void testFolLoopTypeComponentTypeMismatch() {
           runTest("compiler/testData/diagnostics/tests/declarationChecks/destructuringDeclarations/FolLoopTypeComponentTypeMismatch.kt");
+        }
+
+        @Test
+        @TestMetadata("FolLoopTypeComponentTypeMismatchOld.kt")
+        public void testFolLoopTypeComponentTypeMismatchOld() {
+          runTest("compiler/testData/diagnostics/tests/declarationChecks/destructuringDeclarations/FolLoopTypeComponentTypeMismatchOld.kt");
         }
 
         @Test
@@ -11348,9 +11486,21 @@ public class LLDiagnosticsFe10TestGenerated extends AbstractLLDiagnosticsTest {
         }
 
         @Test
+        @TestMetadata("ForLoopComponentFunctionAmbiguityOld.kt")
+        public void testForLoopComponentFunctionAmbiguityOld() {
+          runTest("compiler/testData/diagnostics/tests/declarationChecks/destructuringDeclarations/ForLoopComponentFunctionAmbiguityOld.kt");
+        }
+
+        @Test
         @TestMetadata("ForLoopComponentFunctionMissing.kt")
         public void testForLoopComponentFunctionMissing() {
           runTest("compiler/testData/diagnostics/tests/declarationChecks/destructuringDeclarations/ForLoopComponentFunctionMissing.kt");
+        }
+
+        @Test
+        @TestMetadata("ForLoopComponentFunctionMissingOld.kt")
+        public void testForLoopComponentFunctionMissingOld() {
+          runTest("compiler/testData/diagnostics/tests/declarationChecks/destructuringDeclarations/ForLoopComponentFunctionMissingOld.kt");
         }
 
         @Test
@@ -11366,9 +11516,21 @@ public class LLDiagnosticsFe10TestGenerated extends AbstractLLDiagnosticsTest {
         }
 
         @Test
+        @TestMetadata("ForLoopWithExtensionsOld.kt")
+        public void testForLoopWithExtensionsOld() {
+          runTest("compiler/testData/diagnostics/tests/declarationChecks/destructuringDeclarations/ForLoopWithExtensionsOld.kt");
+        }
+
+        @Test
         @TestMetadata("ForWithExplicitTypes.kt")
         public void testForWithExplicitTypes() {
           runTest("compiler/testData/diagnostics/tests/declarationChecks/destructuringDeclarations/ForWithExplicitTypes.kt");
+        }
+
+        @Test
+        @TestMetadata("ForWithExplicitTypesOld.kt")
+        public void testForWithExplicitTypesOld() {
+          runTest("compiler/testData/diagnostics/tests/declarationChecks/destructuringDeclarations/ForWithExplicitTypesOld.kt");
         }
 
         @Test
@@ -11378,9 +11540,21 @@ public class LLDiagnosticsFe10TestGenerated extends AbstractLLDiagnosticsTest {
         }
 
         @Test
+        @TestMetadata("kt2829Old.kt")
+        public void testKt2829Old() {
+          runTest("compiler/testData/diagnostics/tests/declarationChecks/destructuringDeclarations/kt2829Old.kt");
+        }
+
+        @Test
         @TestMetadata("lastDestructuringDeclarationInBlock.kt")
         public void testLastDestructuringDeclarationInBlock() {
           runTest("compiler/testData/diagnostics/tests/declarationChecks/destructuringDeclarations/lastDestructuringDeclarationInBlock.kt");
+        }
+
+        @Test
+        @TestMetadata("lastDestructuringDeclarationInBlockOld.kt")
+        public void testLastDestructuringDeclarationInBlockOld() {
+          runTest("compiler/testData/diagnostics/tests/declarationChecks/destructuringDeclarations/lastDestructuringDeclarationInBlockOld.kt");
         }
 
         @Test
@@ -11390,9 +11564,21 @@ public class LLDiagnosticsFe10TestGenerated extends AbstractLLDiagnosticsTest {
         }
 
         @Test
+        @TestMetadata("missingComponentNOld.kt")
+        public void testMissingComponentNOld() {
+          runTest("compiler/testData/diagnostics/tests/declarationChecks/destructuringDeclarations/missingComponentNOld.kt");
+        }
+
+        @Test
         @TestMetadata("missingComponentOnFlexible.kt")
         public void testMissingComponentOnFlexible() {
           runTest("compiler/testData/diagnostics/tests/declarationChecks/destructuringDeclarations/missingComponentOnFlexible.kt");
+        }
+
+        @Test
+        @TestMetadata("missingComponentOnFlexibleOld.kt")
+        public void testMissingComponentOnFlexibleOld() {
+          runTest("compiler/testData/diagnostics/tests/declarationChecks/destructuringDeclarations/missingComponentOnFlexibleOld.kt");
         }
 
         @Test
@@ -11402,15 +11588,33 @@ public class LLDiagnosticsFe10TestGenerated extends AbstractLLDiagnosticsTest {
         }
 
         @Test
+        @TestMetadata("RedeclarationInForLoopOld.kt")
+        public void testRedeclarationInForLoopOld() {
+          runTest("compiler/testData/diagnostics/tests/declarationChecks/destructuringDeclarations/RedeclarationInForLoopOld.kt");
+        }
+
+        @Test
         @TestMetadata("SingleDeclForLoop.kt")
         public void testSingleDeclForLoop() {
           runTest("compiler/testData/diagnostics/tests/declarationChecks/destructuringDeclarations/SingleDeclForLoop.kt");
         }
 
         @Test
+        @TestMetadata("SingleDeclForLoopOld.kt")
+        public void testSingleDeclForLoopOld() {
+          runTest("compiler/testData/diagnostics/tests/declarationChecks/destructuringDeclarations/SingleDeclForLoopOld.kt");
+        }
+
+        @Test
         @TestMetadata("underscore.kt")
         public void testUnderscore() {
           runTest("compiler/testData/diagnostics/tests/declarationChecks/destructuringDeclarations/underscore.kt");
+        }
+
+        @Test
+        @TestMetadata("underscoreOld.kt")
+        public void testUnderscoreOld() {
+          runTest("compiler/testData/diagnostics/tests/declarationChecks/destructuringDeclarations/underscoreOld.kt");
         }
       }
 
@@ -12639,6 +12843,12 @@ public class LLDiagnosticsFe10TestGenerated extends AbstractLLDiagnosticsTest {
       }
 
       @Test
+      @TestMetadata("componentUsageOld.kt")
+      public void testComponentUsageOld() {
+        runTest("compiler/testData/diagnostics/tests/deprecated/componentUsageOld.kt");
+      }
+
+      @Test
       @TestMetadata("deprecatedCompanionAndClassReference.kt")
       public void testDeprecatedCompanionAndClassReference() {
         runTest("compiler/testData/diagnostics/tests/deprecated/deprecatedCompanionAndClassReference.kt");
@@ -12750,6 +12960,12 @@ public class LLDiagnosticsFe10TestGenerated extends AbstractLLDiagnosticsTest {
       @TestMetadata("hiddenComponentInDestructuringDeclaration.kt")
       public void testHiddenComponentInDestructuringDeclaration() {
         runTest("compiler/testData/diagnostics/tests/deprecated/hiddenComponentInDestructuringDeclaration.kt");
+      }
+
+      @Test
+      @TestMetadata("hiddenComponentInDestructuringDeclarationOld.kt")
+      public void testHiddenComponentInDestructuringDeclarationOld() {
+        runTest("compiler/testData/diagnostics/tests/deprecated/hiddenComponentInDestructuringDeclarationOld.kt");
       }
 
       @Test
@@ -12980,6 +13196,12 @@ public class LLDiagnosticsFe10TestGenerated extends AbstractLLDiagnosticsTest {
       @TestMetadata("destructuringInInitializer.kt")
       public void testDestructuringInInitializer() {
         runTest("compiler/testData/diagnostics/tests/destructuring/destructuringInInitializer.kt");
+      }
+
+      @Test
+      @TestMetadata("destructuringInInitializerOld.kt")
+      public void testDestructuringInInitializerOld() {
+        runTest("compiler/testData/diagnostics/tests/destructuring/destructuringInInitializerOld.kt");
       }
 
       @Test
@@ -15245,6 +15467,12 @@ public class LLDiagnosticsFe10TestGenerated extends AbstractLLDiagnosticsTest {
       }
 
       @Test
+      @TestMetadata("DeprecatedSyntaxOld.kt")
+      public void testDeprecatedSyntaxOld() {
+        runTest("compiler/testData/diagnostics/tests/functionLiterals/DeprecatedSyntaxOld.kt");
+      }
+
+      @Test
       @TestMetadata("emptyLambdaTypeMismatchDiagnostic.kt")
       public void testEmptyLambdaTypeMismatchDiagnostic() {
         runTest("compiler/testData/diagnostics/tests/functionLiterals/emptyLambdaTypeMismatchDiagnostic.kt");
@@ -15452,9 +15680,21 @@ public class LLDiagnosticsFe10TestGenerated extends AbstractLLDiagnosticsTest {
         }
 
         @Test
+        @TestMetadata("complexInferenceOld.kt")
+        public void testComplexInferenceOld() {
+          runTest("compiler/testData/diagnostics/tests/functionLiterals/destructuringInLambdas/complexInferenceOld.kt");
+        }
+
+        @Test
         @TestMetadata("extensionComponents.kt")
         public void testExtensionComponents() {
           runTest("compiler/testData/diagnostics/tests/functionLiterals/destructuringInLambdas/extensionComponents.kt");
+        }
+
+        @Test
+        @TestMetadata("extensionComponentsOld.kt")
+        public void testExtensionComponentsOld() {
+          runTest("compiler/testData/diagnostics/tests/functionLiterals/destructuringInLambdas/extensionComponentsOld.kt");
         }
 
         @Test
@@ -15464,9 +15704,21 @@ public class LLDiagnosticsFe10TestGenerated extends AbstractLLDiagnosticsTest {
         }
 
         @Test
+        @TestMetadata("inferredFunctionalTypeOld.kt")
+        public void testInferredFunctionalTypeOld() {
+          runTest("compiler/testData/diagnostics/tests/functionLiterals/destructuringInLambdas/inferredFunctionalTypeOld.kt");
+        }
+
+        @Test
         @TestMetadata("modifiers.kt")
         public void testModifiers() {
           runTest("compiler/testData/diagnostics/tests/functionLiterals/destructuringInLambdas/modifiers.kt");
+        }
+
+        @Test
+        @TestMetadata("modifiersOld.kt")
+        public void testModifiersOld() {
+          runTest("compiler/testData/diagnostics/tests/functionLiterals/destructuringInLambdas/modifiersOld.kt");
         }
 
         @Test
@@ -15476,9 +15728,21 @@ public class LLDiagnosticsFe10TestGenerated extends AbstractLLDiagnosticsTest {
         }
 
         @Test
+        @TestMetadata("noExpectedTypeOld.kt")
+        public void testNoExpectedTypeOld() {
+          runTest("compiler/testData/diagnostics/tests/functionLiterals/destructuringInLambdas/noExpectedTypeOld.kt");
+        }
+
+        @Test
         @TestMetadata("redeclaration.kt")
         public void testRedeclaration() {
           runTest("compiler/testData/diagnostics/tests/functionLiterals/destructuringInLambdas/redeclaration.kt");
+        }
+
+        @Test
+        @TestMetadata("redeclarationOld.kt")
+        public void testRedeclarationOld() {
+          runTest("compiler/testData/diagnostics/tests/functionLiterals/destructuringInLambdas/redeclarationOld.kt");
         }
 
         @Test
@@ -15488,9 +15752,21 @@ public class LLDiagnosticsFe10TestGenerated extends AbstractLLDiagnosticsTest {
         }
 
         @Test
+        @TestMetadata("shadowingOld.kt")
+        public void testShadowingOld() {
+          runTest("compiler/testData/diagnostics/tests/functionLiterals/destructuringInLambdas/shadowingOld.kt");
+        }
+
+        @Test
         @TestMetadata("simple.kt")
         public void testSimple() {
           runTest("compiler/testData/diagnostics/tests/functionLiterals/destructuringInLambdas/simple.kt");
+        }
+
+        @Test
+        @TestMetadata("simpleOld.kt")
+        public void testSimpleOld() {
+          runTest("compiler/testData/diagnostics/tests/functionLiterals/destructuringInLambdas/simpleOld.kt");
         }
 
         @Test
@@ -15500,9 +15776,21 @@ public class LLDiagnosticsFe10TestGenerated extends AbstractLLDiagnosticsTest {
         }
 
         @Test
+        @TestMetadata("underscoreOld.kt")
+        public void testUnderscoreOld() {
+          runTest("compiler/testData/diagnostics/tests/functionLiterals/destructuringInLambdas/underscoreOld.kt");
+        }
+
+        @Test
         @TestMetadata("unusedParameters.kt")
         public void testUnusedParameters() {
           runTest("compiler/testData/diagnostics/tests/functionLiterals/destructuringInLambdas/unusedParameters.kt");
+        }
+
+        @Test
+        @TestMetadata("unusedParametersOld.kt")
+        public void testUnusedParametersOld() {
+          runTest("compiler/testData/diagnostics/tests/functionLiterals/destructuringInLambdas/unusedParametersOld.kt");
         }
       }
 
@@ -17639,6 +17927,12 @@ public class LLDiagnosticsFe10TestGenerated extends AbstractLLDiagnosticsTest {
         @TestMetadata("valWithNoNameInBlock.kt")
         public void testValWithNoNameInBlock() {
           runTest("compiler/testData/diagnostics/tests/incompleteCode/diagnosticWithSyntaxError/valWithNoNameInBlock.kt");
+        }
+
+        @Test
+        @TestMetadata("valWithNoNameInBlockOld.kt")
+        public void testValWithNoNameInBlockOld() {
+          runTest("compiler/testData/diagnostics/tests/incompleteCode/diagnosticWithSyntaxError/valWithNoNameInBlockOld.kt");
         }
       }
     }
@@ -20961,6 +21255,12 @@ public class LLDiagnosticsFe10TestGenerated extends AbstractLLDiagnosticsTest {
           public void testBuildeeSupertypeAsTypeVariableSourceInProperties() {
             runTest("compiler/testData/diagnostics/tests/inference/pcla/additional/BuildeeSupertypeAsTypeVariableSourceInProperties.kt");
           }
+
+          @Test
+          @TestMetadata("BuildeeSupertypeAsTypeVariableSourceInPropertiesOld.kt")
+          public void testBuildeeSupertypeAsTypeVariableSourceInPropertiesOld() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/additional/BuildeeSupertypeAsTypeVariableSourceInPropertiesOld.kt");
+          }
         }
 
         @Nested
@@ -21425,6 +21725,12 @@ public class LLDiagnosticsFe10TestGenerated extends AbstractLLDiagnosticsTest {
             @TestMetadata("DestructuringDeclaration.kt")
             public void testDestructuringDeclaration() {
               runTest("compiler/testData/diagnostics/tests/inference/pcla/fixationOnDemand/syntaxForms/DestructuringDeclaration.kt");
+            }
+
+            @Test
+            @TestMetadata("DestructuringDeclarationOld.kt")
+            public void testDestructuringDeclarationOld() {
+              runTest("compiler/testData/diagnostics/tests/inference/pcla/fixationOnDemand/syntaxForms/DestructuringDeclarationOld.kt");
             }
 
             @Test
@@ -22154,6 +22460,12 @@ public class LLDiagnosticsFe10TestGenerated extends AbstractLLDiagnosticsTest {
           @TestMetadata("kt68889.kt")
           public void testKt68889() {
             runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt68889.kt");
+          }
+
+          @Test
+          @TestMetadata("kt68889Old.kt")
+          public void testKt68889Old() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt68889Old.kt");
           }
 
           @Test
@@ -23496,6 +23808,12 @@ public class LLDiagnosticsFe10TestGenerated extends AbstractLLDiagnosticsTest {
         }
 
         @Test
+        @TestMetadata("typeInferenceFailedOnComponentNOld.kt")
+        public void testTypeInferenceFailedOnComponentNOld() {
+          runTest("compiler/testData/diagnostics/tests/inference/reportingImprovements/typeInferenceFailedOnComponentNOld.kt");
+        }
+
+        @Test
         @TestMetadata("typeInferenceFailedOnIteratorCall.kt")
         public void testTypeInferenceFailedOnIteratorCall() {
           runTest("compiler/testData/diagnostics/tests/inference/reportingImprovements/typeInferenceFailedOnIteratorCall.kt");
@@ -24059,9 +24377,21 @@ public class LLDiagnosticsFe10TestGenerated extends AbstractLLDiagnosticsTest {
       }
 
       @Test
+      @TestMetadata("privateOperatorsInInlineAfterOld.kt")
+      public void testPrivateOperatorsInInlineAfterOld() {
+        runTest("compiler/testData/diagnostics/tests/inline/privateOperatorsInInlineAfterOld.kt");
+      }
+
+      @Test
       @TestMetadata("privateOperatorsInInlineBefore.kt")
       public void testPrivateOperatorsInInlineBefore() {
         runTest("compiler/testData/diagnostics/tests/inline/privateOperatorsInInlineBefore.kt");
+      }
+
+      @Test
+      @TestMetadata("privateOperatorsInInlineBeforeOld.kt")
+      public void testPrivateOperatorsInInlineBeforeOld() {
+        runTest("compiler/testData/diagnostics/tests/inline/privateOperatorsInInlineBeforeOld.kt");
       }
 
       @Test
@@ -24263,6 +24593,12 @@ public class LLDiagnosticsFe10TestGenerated extends AbstractLLDiagnosticsTest {
         @TestMetadata("componentAccess.kt")
         public void testComponentAccess() {
           runTest("compiler/testData/diagnostics/tests/inline/binaryExpressions/componentAccess.kt");
+        }
+
+        @Test
+        @TestMetadata("componentAccessOld.kt")
+        public void testComponentAccessOld() {
+          runTest("compiler/testData/diagnostics/tests/inline/binaryExpressions/componentAccessOld.kt");
         }
 
         @Test
@@ -28446,6 +28782,12 @@ public class LLDiagnosticsFe10TestGenerated extends AbstractLLDiagnosticsTest {
         public void testSimple() {
           runTest("compiler/testData/diagnostics/tests/modifiers/operatorInfix/Simple.kt");
         }
+
+        @Test
+        @TestMetadata("SimpleOld.kt")
+        public void testSimpleOld() {
+          runTest("compiler/testData/diagnostics/tests/modifiers/operatorInfix/SimpleOld.kt");
+        }
       }
     }
 
@@ -28528,6 +28870,12 @@ public class LLDiagnosticsFe10TestGenerated extends AbstractLLDiagnosticsTest {
       @TestMetadata("friendModulePrivate.kt")
       public void testFriendModulePrivate() {
         runTest("compiler/testData/diagnostics/tests/multimodule/friendModulePrivate.kt");
+      }
+
+      @Test
+      @TestMetadata("inaccessibleAnnotationInInferredReturnType.kt")
+      public void testInaccessibleAnnotationInInferredReturnType() {
+        runTest("compiler/testData/diagnostics/tests/multimodule/inaccessibleAnnotationInInferredReturnType.kt");
       }
 
       @Test
@@ -32957,6 +33305,12 @@ public class LLDiagnosticsFe10TestGenerated extends AbstractLLDiagnosticsTest {
       }
 
       @Test
+      @TestMetadata("incorrectComponentExtensionOld.kt")
+      public void testIncorrectComponentExtensionOld() {
+        runTest("compiler/testData/diagnostics/tests/operatorsOverloading/incorrectComponentExtensionOld.kt");
+      }
+
+      @Test
       @TestMetadata("IteratorAmbiguity.kt")
       public void testIteratorAmbiguity() {
         runTest("compiler/testData/diagnostics/tests/operatorsOverloading/IteratorAmbiguity.kt");
@@ -33298,6 +33652,12 @@ public class LLDiagnosticsFe10TestGenerated extends AbstractLLDiagnosticsTest {
       @TestMetadata("RedeclarationThroughDestructuring.kt")
       public void testRedeclarationThroughDestructuring() {
         runTest("compiler/testData/diagnostics/tests/overload/RedeclarationThroughDestructuring.kt");
+      }
+
+      @Test
+      @TestMetadata("RedeclarationThroughDestructuringOld.kt")
+      public void testRedeclarationThroughDestructuringOld() {
+        runTest("compiler/testData/diagnostics/tests/overload/RedeclarationThroughDestructuringOld.kt");
       }
 
       @Test
@@ -34954,6 +35314,12 @@ public class LLDiagnosticsFe10TestGenerated extends AbstractLLDiagnosticsTest {
         }
 
         @Test
+        @TestMetadata("multiDeclarationOld.kt")
+        public void testMultiDeclarationOld() {
+          runTest("compiler/testData/diagnostics/tests/platformTypes/nullabilityWarnings/multiDeclarationOld.kt");
+        }
+
+        @Test
         @TestMetadata("noWarningOnDoubleElvis.kt")
         public void testNoWarningOnDoubleElvis() {
           runTest("compiler/testData/diagnostics/tests/platformTypes/nullabilityWarnings/noWarningOnDoubleElvis.kt");
@@ -36074,6 +36440,12 @@ public class LLDiagnosticsFe10TestGenerated extends AbstractLLDiagnosticsTest {
       @TestMetadata("RedeclaredValsAndVars.kt")
       public void testRedeclaredValsAndVars() {
         runTest("compiler/testData/diagnostics/tests/redeclarations/RedeclaredValsAndVars.kt");
+      }
+
+      @Test
+      @TestMetadata("RedeclaredValsAndVarsOld.kt")
+      public void testRedeclaredValsAndVarsOld() {
+        runTest("compiler/testData/diagnostics/tests/redeclarations/RedeclaredValsAndVarsOld.kt");
       }
 
       @Test
@@ -37900,6 +38272,12 @@ public class LLDiagnosticsFe10TestGenerated extends AbstractLLDiagnosticsTest {
         }
 
         @Test
+        @TestMetadata("invokeOnRedeclaredProperty.kt")
+        public void testInvokeOnRedeclaredProperty() {
+          runTest("compiler/testData/diagnostics/tests/resolve/invoke/invokeOnRedeclaredProperty.kt");
+        }
+
+        @Test
         @TestMetadata("invokeOnVariableWithExtensionFunctionType.kt")
         public void testInvokeOnVariableWithExtensionFunctionType() {
           runTest("compiler/testData/diagnostics/tests/resolve/invoke/invokeOnVariableWithExtensionFunctionType.kt");
@@ -38385,6 +38763,12 @@ public class LLDiagnosticsFe10TestGenerated extends AbstractLLDiagnosticsTest {
         @TestMetadata("synthesizedMembersVsExtension.kt")
         public void testSynthesizedMembersVsExtension() {
           runTest("compiler/testData/diagnostics/tests/resolve/priority/synthesizedMembersVsExtension.kt");
+        }
+
+        @Test
+        @TestMetadata("synthesizedMembersVsExtensionOld.kt")
+        public void testSynthesizedMembersVsExtensionOld() {
+          runTest("compiler/testData/diagnostics/tests/resolve/priority/synthesizedMembersVsExtensionOld.kt");
         }
 
         @Test
@@ -39913,6 +40297,18 @@ public class LLDiagnosticsFe10TestGenerated extends AbstractLLDiagnosticsTest {
       }
 
       @Test
+      @TestMetadata("sealedJavaClass.kt")
+      public void testSealedJavaClass() {
+        runTest("compiler/testData/diagnostics/tests/sealed/sealedJavaClass.kt");
+      }
+
+      @Test
+      @TestMetadata("sealedJavaClassEnabled.kt")
+      public void testSealedJavaClassEnabled() {
+        runTest("compiler/testData/diagnostics/tests/sealed/sealedJavaClassEnabled.kt");
+      }
+
+      @Test
       @TestMetadata("TreeWhen.kt")
       public void testTreeWhen() {
         runTest("compiler/testData/diagnostics/tests/sealed/TreeWhen.kt");
@@ -40425,9 +40821,21 @@ public class LLDiagnosticsFe10TestGenerated extends AbstractLLDiagnosticsTest {
       }
 
       @Test
+      @TestMetadata("ShadowLambdaParameterOld.kt")
+      public void testShadowLambdaParameterOld() {
+        runTest("compiler/testData/diagnostics/tests/shadowing/ShadowLambdaParameterOld.kt");
+      }
+
+      @Test
       @TestMetadata("ShadowMultiDeclarationWithFunParameter.kt")
       public void testShadowMultiDeclarationWithFunParameter() {
         runTest("compiler/testData/diagnostics/tests/shadowing/ShadowMultiDeclarationWithFunParameter.kt");
+      }
+
+      @Test
+      @TestMetadata("ShadowMultiDeclarationWithFunParameterOld.kt")
+      public void testShadowMultiDeclarationWithFunParameterOld() {
+        runTest("compiler/testData/diagnostics/tests/shadowing/ShadowMultiDeclarationWithFunParameterOld.kt");
       }
 
       @Test
@@ -40464,6 +40872,12 @@ public class LLDiagnosticsFe10TestGenerated extends AbstractLLDiagnosticsTest {
       @TestMetadata("ShadowVariableInFor.kt")
       public void testShadowVariableInFor() {
         runTest("compiler/testData/diagnostics/tests/shadowing/ShadowVariableInFor.kt");
+      }
+
+      @Test
+      @TestMetadata("ShadowVariableInForOld.kt")
+      public void testShadowVariableInForOld() {
+        runTest("compiler/testData/diagnostics/tests/shadowing/ShadowVariableInForOld.kt");
       }
 
       @Test
@@ -41098,6 +41512,12 @@ public class LLDiagnosticsFe10TestGenerated extends AbstractLLDiagnosticsTest {
       @TestMetadata("multipleResolvedCalls.kt")
       public void testMultipleResolvedCalls() {
         runTest("compiler/testData/diagnostics/tests/smartCasts/multipleResolvedCalls.kt");
+      }
+
+      @Test
+      @TestMetadata("multipleResolvedCallsOld.kt")
+      public void testMultipleResolvedCallsOld() {
+        runTest("compiler/testData/diagnostics/tests/smartCasts/multipleResolvedCallsOld.kt");
       }
 
       @Test
@@ -46169,9 +46589,21 @@ public class LLDiagnosticsFe10TestGenerated extends AbstractLLDiagnosticsTest {
       }
 
       @Test
+      @TestMetadata("unnamedLocalVariablesOld.kt")
+      public void testUnnamedLocalVariablesOld() {
+        runTest("compiler/testData/diagnostics/tests/unnamedLocalVariables/unnamedLocalVariablesOld.kt");
+      }
+
+      @Test
       @TestMetadata("unnamedLocalVariables_Disabled.kt")
       public void testUnnamedLocalVariables_Disabled() {
         runTest("compiler/testData/diagnostics/tests/unnamedLocalVariables/unnamedLocalVariables_Disabled.kt");
+      }
+
+      @Test
+      @TestMetadata("unnamedLocalVariables_DisabledOld.kt")
+      public void testUnnamedLocalVariables_DisabledOld() {
+        runTest("compiler/testData/diagnostics/tests/unnamedLocalVariables/unnamedLocalVariables_DisabledOld.kt");
       }
 
       @Test
@@ -48421,6 +48853,12 @@ public class LLDiagnosticsFe10TestGenerated extends AbstractLLDiagnosticsTest {
       runTest("compiler/testData/diagnostics/testsWithStdLib/shadowingInDestructuring.kt");
     }
 
+    @Test
+    @TestMetadata("shadowingInDestructuringOld.kt")
+    public void testShadowingInDestructuringOld() {
+      runTest("compiler/testData/diagnostics/testsWithStdLib/shadowingInDestructuringOld.kt");
+    }
+
     @Nested
     @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/annotations")
     @TestDataPath("$PROJECT_ROOT")
@@ -49682,6 +50120,12 @@ public class LLDiagnosticsFe10TestGenerated extends AbstractLLDiagnosticsTest {
         }
 
         @Test
+        @TestMetadata("contractInDestructuringDeclarationOld.kt")
+        public void testContractInDestructuringDeclarationOld() {
+          runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/dsl/contractInDestructuringDeclarationOld.kt");
+        }
+
+        @Test
         @TestMetadata("fqnContractFunction.kt")
         public void testFqnContractFunction() {
           runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/dsl/fqnContractFunction.kt");
@@ -50632,6 +51076,12 @@ public class LLDiagnosticsFe10TestGenerated extends AbstractLLDiagnosticsTest {
       @TestMetadata("suspendDestructuring.kt")
       public void testSuspendDestructuring() {
         runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/suspendDestructuring.kt");
+      }
+
+      @Test
+      @TestMetadata("suspendDestructuringOld.kt")
+      public void testSuspendDestructuringOld() {
+        runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/suspendDestructuringOld.kt");
       }
 
       @Test
@@ -52375,6 +52825,12 @@ public class LLDiagnosticsFe10TestGenerated extends AbstractLLDiagnosticsTest {
           }
 
           @Test
+          @TestMetadata("fixInputTypeToMoreSpecificTypeOld.kt")
+          public void testFixInputTypeToMoreSpecificTypeOld() {
+            runTest("compiler/testData/diagnostics/testsWithStdLib/inference/completion/postponedArgumentsAnalysis/fixInputTypeToMoreSpecificTypeOld.kt");
+          }
+
+          @Test
           @TestMetadata("fixReceiverToMoreSpecificType.kt")
           public void testFixReceiverToMoreSpecificType() {
             runTest("compiler/testData/diagnostics/testsWithStdLib/inference/completion/postponedArgumentsAnalysis/fixReceiverToMoreSpecificType.kt");
@@ -53480,6 +53936,12 @@ public class LLDiagnosticsFe10TestGenerated extends AbstractLLDiagnosticsTest {
       @TestMetadata("multiVariableDeclarationWithEnabledFeature.kt")
       public void testMultiVariableDeclarationWithEnabledFeature() {
         runTest("compiler/testData/diagnostics/testsWithStdLib/trailingComma/multiVariableDeclarationWithEnabledFeature.kt");
+      }
+
+      @Test
+      @TestMetadata("multiVariableDeclarationWithEnabledFeatureOld.kt")
+      public void testMultiVariableDeclarationWithEnabledFeatureOld() {
+        runTest("compiler/testData/diagnostics/testsWithStdLib/trailingComma/multiVariableDeclarationWithEnabledFeatureOld.kt");
       }
 
       @Test

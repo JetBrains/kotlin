@@ -28,8 +28,8 @@ annotation class Ann(val x: String)
 
 fun testMethodNoAnnotations(method: Method, name: String) {
     assertEquals(0, method.getDeclaredAnnotations().size, "No method annotations expected `$name`")
-    for ((index, annotations) in method.getParameterAnnotations().withIndex()) {
-        assertEquals(0, annotations.size, "No parameter $index annotations expected `$name`")
+    for ((index, value) in method.getParameterAnnotations().withIndex()) {
+        assertEquals(0, value.size, "No parameter $index annotations expected `$name`")
     }
 }
 

@@ -1,0 +1,19 @@
+expect fun baz()
+
+expect var m: kotlin.Int
+
+expect object A
+
+expect class Bexpect constructor(s: kotlin.String) {
+  expect fun bar()
+
+  expect val n: kotlin.Int
+
+  expect class Nested
+
+  expect constructor(n: kotlin.Int)
+}
+
+expect class C {
+  expect class Nested
+}

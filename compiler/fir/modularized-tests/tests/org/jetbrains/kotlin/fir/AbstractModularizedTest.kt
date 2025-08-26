@@ -12,8 +12,11 @@ import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
+import org.jetbrains.kotlin.test.kotlinPathsForDistDirectoryForTests
 import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
 import org.jetbrains.kotlin.types.AbstractTypeChecker
+import org.jetbrains.kotlin.utils.KotlinPaths
+import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
@@ -216,4 +219,24 @@ internal fun K2JVMCompilerArguments.jvmTargetIfSupported(): JvmTarget? {
     val specified = jvmTarget?.let { JvmTarget.fromString(it) } ?: return null
     if (specified != JvmTarget.JVM_1_6) return specified
     return null
+}
+
+fun substituteCompilerPluginPathForKnownPlugins(path: String): File? {
+    val file = File(path)
+    val paths = PathUtil.kotlinPathsForDistDirectoryForTests
+    return when {
+        file.name.startsWith("kotlinx-serialization") || file.name.startsWith("kotlin-serialization") ->
+            paths.jar(KotlinPaths.Jar.SerializationPlugin)
+        file.name.startsWith("kotlin-sam-with-receiver") -> paths.jar(KotlinPaths.Jar.SamWithReceiver)
+        file.name.startsWith("kotlin-allopen") -> paths.jar(KotlinPaths.Jar.AllOpenPlugin)
+        file.name.startsWith("kotlin-noarg") -> paths.jar(KotlinPaths.Jar.NoArgPlugin)
+        file.name.startsWith("kotlin-lombok") -> paths.jar(KotlinPaths.Jar.LombokPlugin)
+        file.name.startsWith("kotlin-compose-compiler-plugin") -> {
+            // compose plugin is not a part of the dist yet, so we have to go an extra mile to get it
+            System.getProperty("fir.bench.compose.plugin.classpath")?.split(File.pathSeparator)?.firstOrNull()?.let(::File)
+        }
+        // Assuming that the rest is the custom compiler plugins, that cannot be kept stable with the new compiler, so we're skipping them
+        // If the module is compillable without it - fine, otherwise at least it will hopefully be a stable failure.
+        else -> null
+    }
 }

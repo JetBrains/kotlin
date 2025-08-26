@@ -1,0 +1,1 @@
+actual var variable: kotlin.Int

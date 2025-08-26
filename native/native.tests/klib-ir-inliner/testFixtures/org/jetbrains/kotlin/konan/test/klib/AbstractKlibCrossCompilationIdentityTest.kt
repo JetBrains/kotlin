@@ -68,7 +68,10 @@ open class AbstractKlibCrossCompilationIdentityWithPreSerializationLoweringTest 
         super.configure(builder)
         with(builder) {
             defaultDirectives {
-                LANGUAGE with "+${LanguageFeature.IrInlinerBeforeKlibSerialization.name}"
+                LANGUAGE with listOf(
+                    "+${LanguageFeature.IrIntraModuleInlinerBeforeKlibSerialization.name}",
+                    "+${LanguageFeature.IrCrossModuleInlinerBeforeKlibSerialization.name}"
+                )
             }
         }
     }
@@ -100,7 +103,10 @@ open class AbstractFirKlibCrossCompilationIdentityTestBase(val irFileSuffix: Str
 
             DiagnosticsDirectives.DIAGNOSTICS with "-warnings"
 
-            LANGUAGE with "-${LanguageFeature.IrInlinerBeforeKlibSerialization.name}"
+            LANGUAGE with listOf(
+                "-${LanguageFeature.IrIntraModuleInlinerBeforeKlibSerialization.name}",
+                "-${LanguageFeature.IrCrossModuleInlinerBeforeKlibSerialization.name}"
+            )
         }
 
         useAfterAnalysisCheckers(::BlackBoxCodegenSuppressor)

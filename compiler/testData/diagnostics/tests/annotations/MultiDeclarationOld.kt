@@ -1,0 +1,15 @@
+// LANGUAGE: -NameBasedDestructuring -DeprecateNameMismatchInShortDestructuringWithParentheses -EnableNameBasedDestructuringShortForm
+// RUN_PIPELINE_TILL: FRONTEND
+// FIR_IDENTICAL
+annotation class Ann
+
+data class Pair(val x: Int, val y: Int)
+
+fun foo(): Int {
+    <!WRONG_ANNOTATION_TARGET!>@Ann<!> val (a, b) = Pair(12, 34)
+    @<!UNRESOLVED_REFERENCE!>Err<!> val (c, d) = Pair(56, 78)
+    return a + b + c + d
+}
+
+/* GENERATED_FIR_TAGS: additiveExpression, annotationDeclaration, classDeclaration, data, destructuringDeclaration,
+functionDeclaration, integerLiteral, localProperty, primaryConstructor, propertyDeclaration */

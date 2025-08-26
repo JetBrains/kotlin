@@ -44,6 +44,8 @@ dependencies {
     testFixturesApi(testFixtures(project(":compiler:test-infrastructure")))
     testFixturesApi(testFixtures(project(":compiler:test-infrastructure-utils")))
 
+    testFixturesImplementation(testFixtures(project(":generators:test-generator")))
+
     // FIR dependencies
     testFixturesApi(project(":compiler:fir:plugin-utils"))
     testFixturesApi(project(":compiler:fir:entrypoint"))
@@ -125,6 +127,8 @@ projectTests {
             systemProperty("layoutLibApi.path", layoutLibApiConf.singleFile.canonicalPath)
         }
     }
+
+    testGenerator("org.jetbrains.kotlin.parcelize.test.TestGeneratorKt")
 
     withJvmStdlibAndReflect()
 }

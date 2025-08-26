@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestExecutable
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunners.createProperTestRunner
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.KotlinNativeTargets
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.systemFrameworksPath
+import org.jetbrains.kotlin.konan.test.blackbox.support.settings.systemToolchainPath
 import org.jetbrains.kotlin.swiftexport.standalone.SwiftExportModule
 import org.jetbrains.kotlin.utils.KotlinNativePaths
 import org.junit.jupiter.api.Assumptions
@@ -81,14 +82,15 @@ abstract class AbstractSwiftExportExecutionTest : AbstractSwiftExportWithBinaryC
                 "-L", it.rootDir.absolutePath,
                 "-l${it.moduleName}",
             )
-        } + listOf(
+        } + listOfNotNull(
             "-Xcc", "-fmodule-map-file=${Distribution(KotlinNativePaths.homePath.absolutePath).kotlinRuntimeForSwiftModuleMap}",
             "-L", kotlinBinaryLibrary.libraryFile.parentFile.absolutePath,
             "-l${kotlinBinaryLibrary.libraryFile.nameWithoutExtension.removePrefix("lib")}",
 
             "-F", testRunSettings.systemFrameworksPath,
             "-Xlinker", "-rpath", "-Xlinker", testRunSettings.systemFrameworksPath,
-            "-framework", "Testing"
+            "-framework", "Testing",
+            testRunSettings.systemToolchainPath?.let { "-plugin-path ${it}/usr/lib/swift/host/plugins/testing/" }
         )
 
         val success = SwiftCompilation(

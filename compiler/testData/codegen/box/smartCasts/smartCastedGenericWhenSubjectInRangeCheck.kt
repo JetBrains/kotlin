@@ -1,5 +1,8 @@
 // ISSUE: KT-68446
 
+// IGNORE_KLIB_BACKEND_ERRORS_WITH_CUSTOM_FIRST_PHASE: 2.0.0
+// ^^^ KT-68446 fixed in 2.0.20-Beta1
+
 fun <T> test_1(arg: T): String {
     if (arg is Char) {
         return when (arg) {

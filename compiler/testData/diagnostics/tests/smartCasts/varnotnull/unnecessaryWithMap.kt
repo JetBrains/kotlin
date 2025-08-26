@@ -13,8 +13,8 @@ class MyClass {
         var res = 0
         m = create()
         // See KT-7428
-        for ((k, v) in <!SMARTCAST_IMPOSSIBLE!>m<!>)
-            res += (<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>k<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>length<!> <!DEBUG_INFO_MISSING_UNRESOLVED!>+<!> <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>v<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>length<!>)
+        for ((key, value) in <!SMARTCAST_IMPOSSIBLE!>m<!>)
+            res += (<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>key<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>length<!> <!DEBUG_INFO_MISSING_UNRESOLVED!>+<!> <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>value<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>length<!>)
         return res
     }
 }

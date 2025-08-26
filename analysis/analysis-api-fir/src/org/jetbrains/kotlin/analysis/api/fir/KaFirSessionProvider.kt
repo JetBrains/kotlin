@@ -12,12 +12,9 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.LowMemoryWatcher
-import com.intellij.openapi.util.registry.Registry
 import com.intellij.util.concurrency.AppExecutorUtil
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.fir.utils.KaFirCacheCleaner
-import org.jetbrains.kotlin.analysis.api.fir.utils.KaFirNoOpCacheCleaner
-import org.jetbrains.kotlin.analysis.api.fir.utils.KaFirStopWorldCacheCleaner
 import org.jetbrains.kotlin.analysis.api.impl.base.sessions.KaBaseSessionProvider
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.permissions.KaAnalysisPermissionRegistry
@@ -56,13 +53,13 @@ internal class KaFirSessionProvider(project: Project) : KaBaseSessionProvider(pr
      */
     private val cache: Cache<KaModule, KaSession> = Caffeine.newBuilder().weakValues().build()
 
+    private val lowMemoryWatcher: LowMemoryWatcher
+
     private val scheduledCacheMaintenance: Future<*>
 
+    @KaCachedService
     private val cacheCleaner: KaFirCacheCleaner by lazy(LazyThreadSafetyMode.PUBLICATION) {
-        when {
-            !Registry.`is`("kotlin.analysis.lowMemoryCacheCleanup", true) -> KaFirNoOpCacheCleaner
-            else -> KaFirStopWorldCacheCleaner(project)
-        }
+        KaFirCacheCleaner.getInstance(project)
     }
 
     @KaCachedService
@@ -71,7 +68,7 @@ internal class KaFirSessionProvider(project: Project) : KaBaseSessionProvider(pr
     }
 
     init {
-        LowMemoryWatcher.register(::handleLowMemoryEvent, project)
+        lowMemoryWatcher = LowMemoryWatcher.register(::handleLowMemoryEvent)
         scheduledCacheMaintenance = AppExecutorUtil.getAppScheduledExecutorService().scheduleWithFixedDelay(
             { performCacheMaintenance() },
             10,
@@ -176,6 +173,7 @@ internal class KaFirSessionProvider(project: Project) : KaBaseSessionProvider(pr
     }
 
     override fun dispose() {
+        lowMemoryWatcher.stop()
         scheduledCacheMaintenance.cancel(false)
     }
 

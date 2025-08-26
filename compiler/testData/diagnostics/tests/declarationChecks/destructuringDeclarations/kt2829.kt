@@ -1,9 +1,10 @@
+// LANGUAGE: +NameBasedDestructuring +DeprecateNameMismatchInShortDestructuringWithParentheses +EnableNameBasedDestructuringShortForm
 // RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 package test
 
 fun a(s: String) { // <- ERROR
-    val (x, y) = Pair("", s)
+    val [x, y] = Pair("", s)
     println(x + y)
 }
 

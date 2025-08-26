@@ -1,7 +1,8 @@
+// FIR_IDENTICAL
 // RUN_PIPELINE_TILL: FRONTEND
 // WITH_STDLIB
 // DIAGNOSTICS: -NOTHING_TO_INLINE
-// LANGUAGE: -ProhibitPrivateOperatorCallInInline
+// LANGUAGE: -ProhibitPrivateOperatorCallInInline +NameBasedDestructuring +DeprecateNameMismatchInShortDestructuringWithParentheses +EnableNameBasedDestructuringShortForm
 
 import kotlin.reflect.KProperty
 import kotlin.properties.ReadOnlyProperty
@@ -35,22 +36,22 @@ private operator fun P.next() = P
 private operator fun P.hasNext() = false
 
 inline fun foo() {
-    var x by ""
+    var x by <!NON_PUBLIC_CALL_FROM_PUBLIC_INLINE_DEPRECATION, NON_PUBLIC_CALL_FROM_PUBLIC_INLINE_DEPRECATION!>""<!>
     x
     x = ""
 
-    val y by 1
+    val y by <!NON_PUBLIC_CALL_FROM_PUBLIC_INLINE_DEPRECATION!>1<!>
     y
 
     var o = O
     o <!NON_PUBLIC_CALL_FROM_PUBLIC_INLINE!><<!> o
     o <!NON_PUBLIC_CALL_FROM_PUBLIC_INLINE!>in<!> o
-    <!DEPRECATED_IMPLICIT_NON_PUBLIC_API_ACCESS!>o<!>()
-    for (o1 in <!ITERATOR_MISSING!>o<!>) {
+    <!NON_PUBLIC_CALL_FROM_PUBLIC_INLINE!>o<!>()
+    for (o1 in <!NON_PUBLIC_CALL_FROM_PUBLIC_INLINE, NON_PUBLIC_CALL_FROM_PUBLIC_INLINE_DEPRECATION, NON_PUBLIC_CALL_FROM_PUBLIC_INLINE_DEPRECATION!>o<!>) {
     }
     <!NON_PUBLIC_CALL_FROM_PUBLIC_INLINE!>o[1]<!>
     <!NON_PUBLIC_CALL_FROM_PUBLIC_INLINE!>o[1]<!> = o
-    val (o2) = <!COMPONENT_FUNCTION_MISSING!>o<!>
+    val [<!NON_PUBLIC_CALL_FROM_PUBLIC_INLINE!>o2<!>] = o
     o<!NON_PUBLIC_CALL_FROM_PUBLIC_INLINE!>++<!>
     <!NON_PUBLIC_CALL_FROM_PUBLIC_INLINE!>!<!>o
     o <!NON_PUBLIC_CALL_FROM_PUBLIC_INLINE!>+<!> o
@@ -59,7 +60,7 @@ inline fun foo() {
     o<!NON_PUBLIC_CALL_FROM_PUBLIC_INLINE!>..<<!>o
     O <!NON_PUBLIC_CALL_FROM_PUBLIC_INLINE!>+=<!> o
 
-    for (p in P) {
+    for (p in <!NON_PUBLIC_CALL_FROM_PUBLIC_INLINE_DEPRECATION, NON_PUBLIC_CALL_FROM_PUBLIC_INLINE_DEPRECATION!>P<!>) {
     }
 }
 

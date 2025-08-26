@@ -32,14 +32,14 @@ fun box(): String {
     }
 
     assertFailsWith<IndexOutOfBoundsException> {
-        for ((i, v) in (0..array.size + 30 step 2).withIndex()) {
-            array[i] = 6
+        for ((index, value) in (0..array.size + 30 step 2).withIndex()) {
+            array[index] = 6
         }
     }
 
     assertFailsWith<IndexOutOfBoundsException> {
-        for ((i, v) in (0..array.size).withIndex()) {
-            array[v] = 8
+        for ((index, value) in (0..array.size).withIndex()) {
+            array[value] = 8
         }
     }
     return "OK"

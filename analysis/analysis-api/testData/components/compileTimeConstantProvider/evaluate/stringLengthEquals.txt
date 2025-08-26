@@ -1,0 +1,5 @@
+expression: "hello".length == 5
+constant: true
+constantValueKind: BooleanValue
+constantValueSource: BINARY_EXPRESSION
+constantValueSourceText: "hello".length == 5

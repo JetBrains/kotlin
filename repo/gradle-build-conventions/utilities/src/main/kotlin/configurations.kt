@@ -6,6 +6,7 @@
 import org.gradle.api.Action
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.NamedDomainObjectProvider
+import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.Dependency
 import org.gradle.api.artifacts.ExternalModuleDependency
@@ -28,3 +29,7 @@ fun DependencyHandler.implicitDependencies(dependencyNotation: Any, configure: A
             configure?.execute(it)
         }
     }
+
+fun Project.getOrCreateConfiguration(taskName: String, body: Configuration.() -> Unit): Configuration {
+    return configurations.findByName(taskName)?.apply { body() } ?: configurations.create(taskName) { body() }
+}

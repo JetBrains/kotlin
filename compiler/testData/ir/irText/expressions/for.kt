@@ -1,3 +1,4 @@
+// LANGUAGE: +NameBasedDestructuring +DeprecateNameMismatchInShortDestructuringWithParentheses +EnableNameBasedDestructuringShortForm
 // FIR_IDENTICAL
 // WITH_STDLIB
 // IGNORE_BACKEND: JS_IR
@@ -16,7 +17,7 @@ fun testIterable(ss: List<String>) {
 }
 
 fun testDestructuring(pp: List<Pair<Int, String>>) {
-    for ((i, s) in pp) {
+    for ([i, s] in pp) {
         println(i)
         println(s)
     }

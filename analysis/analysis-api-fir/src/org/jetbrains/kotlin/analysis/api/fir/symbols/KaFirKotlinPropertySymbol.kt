@@ -331,8 +331,6 @@ private class KaFirKotlinPropertyKtPropertyBasedSymbol : KaFirKotlinPropertySymb
     override val hasBackingField: Boolean
         get() = withValidityAssertion {
             if (backingPsi != null) {
-                backingPsi.greenStub?.hasBackingField?.let { return it }
-
                 val fastAnswer = when {
                     backingPsi.isExpectDeclaration() -> false
                     backingPsi.hasModifier(KtTokens.ABSTRACT_KEYWORD) -> false

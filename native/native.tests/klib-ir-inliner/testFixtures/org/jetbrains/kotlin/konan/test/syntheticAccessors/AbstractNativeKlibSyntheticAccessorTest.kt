@@ -92,7 +92,10 @@ private fun TestConfigurationBuilder.commonConfigurationForDumpSyntheticAccessor
     }
     defaultDirectives {
         DIAGNOSTICS with listOf("-NOTHING_TO_INLINE", "-ERROR_SUPPRESSION", "-UNCHECKED_CAST")
-        LANGUAGE with "+${LanguageFeature.IrInlinerBeforeKlibSerialization.name}"
+        LANGUAGE with listOf(
+            "+${LanguageFeature.IrIntraModuleInlinerBeforeKlibSerialization.name}",
+            "+${LanguageFeature.IrCrossModuleInlinerBeforeKlibSerialization.name}"
+        )
         +DiagnosticsDirectives.REPORT_ONLY_EXPLICITLY_DEFINED_DEBUG_INFO
         +ConfigurationDirectives.WITH_STDLIB
     }

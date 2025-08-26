@@ -1,3 +1,4 @@
+// LANGUAGE: +NameBasedDestructuring +DeprecateNameMismatchInShortDestructuringWithParentheses +EnableNameBasedDestructuringShortForm
 // TARGET_BACKEND: JVM
 // WITH_JDK
 // DISABLE_JAVA_FACADE
@@ -12,7 +13,7 @@ fun testForInListUnused() {
 
 fun testForInListDestructured() {
     // See KT-36343 and KT-36344
-    for ((x, y) in J.listOfNotNull()) {}
+    for ([x, y] in J.listOfNotNull()) {}
 }
 
 fun testDesugaredForInList() {

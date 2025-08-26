@@ -1,3 +1,4 @@
+// LANGUAGE: +NameBasedDestructuring +DeprecateNameMismatchInShortDestructuringWithParentheses +EnableNameBasedDestructuringShortForm
 // WITH_STDLIB
 
 val arr = byteArrayOf(10, 20, 30, 40)
@@ -6,7 +7,7 @@ fun foo(xs: Any): String {
     if (xs !is ByteArray) return "not a ByteArray"
 
     val s = StringBuilder()
-    for ((index, x) in xs.withIndex()) {
+    for ([index, x] in xs.withIndex()) {
         s.append("$index:$x;")
     }
     return s.toString()

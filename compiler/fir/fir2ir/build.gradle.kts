@@ -29,6 +29,8 @@ dependencies {
     testFixturesApi(testFixtures(project(":compiler:tests-compiler-utils")))
     testFixturesApi(testFixtures(project(":compiler:tests-common-new")))
     testFixturesApi(testFixtures(project(":compiler:fir:analysis-tests")))
+    testFixturesImplementation(testFixtures(project(":generators:test-generator")))
+    testFixturesImplementation(testFixtures(project(":compiler:tests-spec")))
 
     testApi(platform(libs.junit.bom))
     testImplementation(libs.junit.jupiter.api)
@@ -68,6 +70,7 @@ fun Test.configure(configureJUnit: JUnitPlatformOptions.() -> Unit = {}) {
         configureJUnit()
     }
 }
+
 projectTests {
     testTask(
         jUnitMode = JUnitMode.JUnit5,
@@ -82,11 +85,14 @@ projectTests {
         }
 
     }
+
     testTask("nightlyTests", jUnitMode = JUnitMode.JUnit5, skipInLocalBuild = true) {
         configure {
             includeTags("FirPsiCodegenTest")
         }
     }
+
+    testGenerator("org.jetbrains.kotlin.test.TestGeneratorForFir2IrTestsKt")
 
     withJvmStdlibAndReflect()
 }

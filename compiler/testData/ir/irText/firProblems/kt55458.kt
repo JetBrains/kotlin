@@ -1,3 +1,4 @@
+// LANGUAGE: +NameBasedDestructuring +DeprecateNameMismatchInShortDestructuringWithParentheses +EnableNameBasedDestructuringShortForm
 // WITH_STDLIB
 // IGNORE_BACKEND_K1: JS_IR
 
@@ -5,6 +6,6 @@
 // IGNORE_BACKEND_K1: NATIVE
 
 fun runMe() {
-    val (a: Any, _) = 1 to 2
+    val [a: Any, _] = 1 to 2
     println(a)
 }

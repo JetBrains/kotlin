@@ -58,5 +58,7 @@ projectTests {
         workingDir = rootDir
     }
 
+    testGenerator("org.jetbrains.kotlin.samWithReceiver.TestGeneratorKt")
+
     withJvmStdlibAndReflect()
 }

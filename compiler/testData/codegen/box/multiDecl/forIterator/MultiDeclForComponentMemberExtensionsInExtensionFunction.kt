@@ -1,3 +1,4 @@
+// LANGUAGE: +NameBasedDestructuring +DeprecateNameMismatchInShortDestructuringWithParentheses +EnableNameBasedDestructuringShortForm
 // KJS_WITH_FULL_RUNTIME
 class C(val i: Int) {
 }
@@ -9,7 +10,7 @@ class M {
 
 fun M.doTest(l : ArrayList<C>): String {
     var s = ""
-    for ((a, b) in l) {
+    for ([a, b] in l) {
       s += "$a:$b;"
     }
     return s

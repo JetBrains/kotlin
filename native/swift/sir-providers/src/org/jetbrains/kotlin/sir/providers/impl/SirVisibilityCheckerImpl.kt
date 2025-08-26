@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.analysis.api.components.isFunctionType
 import org.jetbrains.kotlin.analysis.api.components.isNothingType
 import org.jetbrains.kotlin.analysis.api.components.isPrimitive
 import org.jetbrains.kotlin.analysis.api.export.utilities.isAllSuperTypesExported
-import org.jetbrains.kotlin.analysis.api.export.utilities.isClone
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaAnnotatedSymbol
 import org.jetbrains.kotlin.analysis.api.types.KaClassType
@@ -158,10 +157,6 @@ public class SirVisibilityCheckerImpl(
         }
         if (isInline) {
             unsupportedDeclarationReporter.report(this@isExported, "inline functions are not supported yet.")
-            return@withSessions false
-        }
-        if (isClone(this@isExported)) {
-            // Cloneable (and its method `clone`) are synthetic on Native, and we don't care about them atm.
             return@withSessions false
         }
         return@withSessions true

@@ -1,3 +1,5 @@
+// FIR_IDENTICAL
+// LANGUAGE: +NameBasedDestructuring +DeprecateNameMismatchInShortDestructuringWithParentheses +EnableNameBasedDestructuringShortForm
 // RUN_PIPELINE_TILL: BACKEND
 // WITH_REFLECT
 // DIAGNOSTICS: -ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE
@@ -18,8 +20,8 @@ fun test() {
     }
 
     // a destructuring declaration
-    <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>build<!> {
-        val (_: BaseBuildee<TargetType>, _: BaseBuildee<TargetType>) = this to this
+    build {
+        val [_: BaseBuildee<TargetType>, _: BaseBuildee<TargetType>] = this to this
     }
 
     // body of a getter of an immutable property
@@ -56,7 +58,7 @@ fun test() {
     }
 
     // declaration of a property delegated via getValue/setValue
-    <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>build<!> {
+    build {
         val baseG: BaseBuildee<TargetType> by Delegate(this)
     }
 
@@ -66,7 +68,7 @@ fun test() {
     }
 
     // declaration of a property delegated via provideDelegate
-    <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>build<!> {
+    build {
         val baseI: BaseBuildee<TargetType> by DelegateProvider(this)
     }
 

@@ -23,8 +23,8 @@ annotation class Ann(val x: String)
 fun testMethod(method: Method, name: String) {
     assertEquals("OK", method.getAnnotation(Ann::class.java).x, "On method of test named `$name`")
 
-    for ((index, annotations) in method.getParameterAnnotations().withIndex()) {
-        val ann = annotations.filterIsInstance<Ann>().single()
+    for ((index, value) in method.getParameterAnnotations().withIndex()) {
+        val ann = value.filterIsInstance<Ann>().single()
         assertEquals("OK$index", ann.x, "On parameter $index of test named `$name`")
     }
 }

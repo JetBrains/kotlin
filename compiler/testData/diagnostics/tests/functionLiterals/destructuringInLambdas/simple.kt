@@ -1,3 +1,5 @@
+// FIR_IDENTICAL
+// LANGUAGE: +NameBasedDestructuring +DeprecateNameMismatchInShortDestructuringWithParentheses +EnableNameBasedDestructuringShortForm
 // RUN_PIPELINE_TILL: FRONTEND
 // CHECK_TYPE
 // DIAGNOSTICS: -UNUSED_PARAMETER
@@ -8,46 +10,46 @@ fun foo(block: (A) -> Unit) { }
 fun foobar(block: (A, B) -> Unit) { }
 
 fun bar() {
-    foo { (a, b) ->
+    foo { [a, b] ->
         a checkType { _<Int>() }
         b checkType { _<String>() }
     }
 
-    foo { (a: Int, b: String) ->
+    foo { [a: Int, b: String] ->
         a checkType { _<Int>() }
         b checkType { _<String>() }
     }
 
-    foo { (a, b): A ->
+    foo { [a, b]: A ->
         a checkType { _<Int>() }
         b checkType { _<String>() }
     }
 
-    foobar { (a, b), c ->
+    foobar { [a, b], c ->
         a checkType { _<Int>() }
         b checkType { _<String>() }
         c checkType { _<B>() }
     }
 
-    foobar { a, (b, c) ->
+    foobar { a, [b, c] ->
         a checkType { _<A>() }
         b checkType { _<Double>() }
         c checkType { _<Short>() }
     }
 
-    foobar { (a, b), (c, d) ->
+    foobar { [a, b], [c, d] ->
         a checkType { _<Int>() }
         b checkType { _<String>() }
         c checkType { _<Double>() }
         d checkType { _<Short>() }
     }
 
-    foo { (<!COMPONENT_FUNCTION_RETURN_TYPE_MISMATCH!>a: String<!>, b) ->
-        a checkType { _<Int>() }
+    foo { [<!COMPONENT_FUNCTION_RETURN_TYPE_MISMATCH!>a: String<!>, b] ->
+        a checkType { <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>_<!><Int>() }
         b checkType { _<String>() }
     }
 
-    foo <!TYPE_MISMATCH!>{ <!EXPECTED_PARAMETER_TYPE_MISMATCH!>(a, b): B<!> ->
+    foo <!ARGUMENT_TYPE_MISMATCH!>{ [a, b]: B ->
         a checkType { _<Double>() }
         b checkType { _<Short>() }
     }<!>

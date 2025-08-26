@@ -17,7 +17,6 @@ public fun KaSession.getDeclaredSuperInterfaceSymbols(symbol: KaClassSymbol): Li
     return symbol.superTypes
         .asSequence()
         .mapNotNull { type -> type.symbol as? KaClassSymbol }
-        .filter { !it.isCloneable } // TODO: Write unit test for this
         .filter { superInterface -> superInterface.classKind == KaClassKind.INTERFACE }
         .toList()
 }

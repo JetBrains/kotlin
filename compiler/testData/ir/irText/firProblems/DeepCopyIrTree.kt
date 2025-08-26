@@ -1,3 +1,4 @@
+// LANGUAGE: +NameBasedDestructuring +DeprecateNameMismatchInShortDestructuringWithParentheses +EnableNameBasedDestructuringShortForm
 // FIR_IDENTICAL
 // WITH_STDLIB
 // FULL_JDK
@@ -29,7 +30,7 @@ class DeepCopyIrTreeWithSymbols(private val typeRemapper: TypeRemapper) {
         }
 
         typeRemapper.withinScope(this) {
-            for ((thisTypeParameter, otherTypeParameter) in this.typeParameters.zip(other.typeParameters)) {
+            for ([thisTypeParameter, otherTypeParameter] in this.typeParameters.zip(other.typeParameters)) {
                 otherTypeParameter.superTypes.mapTo(thisTypeParameter.superTypes) {
                     typeRemapper.remapType(it)
                 }

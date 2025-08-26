@@ -92,5 +92,5 @@ projectTests {
         }
     }
 
-    testGenerator("org.jetbrains.kotlinx.jspo.TestGeneratorKt")
+    testGenerator("org.jetbrains.kotlinx.jspo.TestGeneratorKt", doNotSetFixturesSourceSetDependency = true)
 }

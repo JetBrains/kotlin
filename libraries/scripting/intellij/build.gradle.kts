@@ -21,7 +21,7 @@ tasks.withType<KotlinJvmCompile>().configureEach {
     compilerOptions.freeCompilerArgs.addAll(
         listOf(
             "-Xallow-kotlin-package",
-            "-Xjvm-default=all",
+            "-jvm-default=no-compatibility",
         )
     )
 }

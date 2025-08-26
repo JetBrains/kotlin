@@ -484,6 +484,20 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.MISSING_DEPENDENCY_IN_INFERRED_TYPE_ANNOTATION.errorFactory) { firDiagnostic ->
+        MissingDependencyInInferredTypeAnnotationErrorImpl(
+            firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.MISSING_DEPENDENCY_IN_INFERRED_TYPE_ANNOTATION.warningFactory) { firDiagnostic ->
+        MissingDependencyInInferredTypeAnnotationWarningImpl(
+            firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.CREATING_AN_INSTANCE_OF_ABSTRACT_CLASS) { firDiagnostic ->
         CreatingAnInstanceOfAbstractClassImpl(
             firDiagnostic as KtPsiDiagnostic,
@@ -5245,6 +5259,15 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
                 whenMissingCase
             },
             firDiagnostic.b,
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.MISSING_BRANCH_FOR_NON_ABSTRACT_SEALED_CLASS) { firDiagnostic ->
+        MissingBranchForNonAbstractSealedClassImpl(
+            firDiagnostic.a.map { whenMissingCase ->
+                whenMissingCase
+            },
             firDiagnostic as KtPsiDiagnostic,
             token,
         )
