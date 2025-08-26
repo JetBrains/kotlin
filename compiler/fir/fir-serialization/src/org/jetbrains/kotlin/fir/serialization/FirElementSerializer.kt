@@ -1323,7 +1323,7 @@ class FirElementSerializer private constructor(
     }
 
     private fun isDefaultAccessor(accessor: FirPropertyAccessor, property: FirProperty): Boolean {
-        if (property.isLocalInFunction) return true
+        if (property.isLocal) return true
 
         // [FirDefaultPropertyAccessor]---a property accessor without body---can still hold other information, such as annotations,
         // user-contributed visibility, and modifiers, such as `external` or `inline`.

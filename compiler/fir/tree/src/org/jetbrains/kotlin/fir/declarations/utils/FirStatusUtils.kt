@@ -65,8 +65,6 @@ inline val FirClassLikeDeclaration.isLocal: Boolean get() = symbol.classId.isLoc
 fun FirDeclaration?.isLocalClassOrAnonymousObject(): Boolean = ((this as? FirRegularClass)?.isLocal == true) || this is FirAnonymousObject
 fun FirBasedSymbol<*>?.isLocalClassOrAnonymousObject(): Boolean = this?.fir.isLocalClassOrAnonymousObject()
 
-inline val FirProperty.isLocalInFunction: Boolean get() = isLocal && isReplSnippetDeclaration != true
-
 inline val FirClass.isInterface: Boolean
     get() = classKind.isInterface
 
