@@ -277,6 +277,27 @@ private class IndexableFile(
     override fun toString(): String = virtualFile.toString()
 }
 
+private fun MutableSet<IndexableFile>.collectDecompiledFilesFromBinaryRoot(
+    psiManager: PsiManager,
+    binaryRoot: VirtualFile,
+    isSharedRoot: Boolean,
+) {
+    VfsUtilCore.visitChildrenRecursively(binaryRoot, object : VirtualFileVisitor<Void>() {
+        override fun visitFile(file: VirtualFile): Boolean {
+            if (!file.isDirectory) {
+                val ktFile = psiManager.findFile(file) as? KtFile
+                // Synthetic class parts are not supposed to be indexed to avoid duplicates
+                // The information about virtual files are already cached after the previous line
+                if (ktFile != null && !ClsClassFinder.isMultifileClassPartFile(file)) {
+                    add(IndexableFile(file, ktFile, isShared = isSharedRoot))
+                }
+            }
+
+            return true
+        }
+    })
+}
+
 private fun computeIndex(
     project: Project,
     sourceKtFiles: Collection<KtFile>,
@@ -301,23 +322,6 @@ private fun computeIndex(
             .find { it.name == setStubTreeMethodName && it.parameterCount == 1 }
             ?.also { it.isAccessible = true }
             ?: error("'${PsiFileImpl::class.simpleName}.$setStubTreeMethodName' method is not found")
-    }
-
-    fun MutableSet<IndexableFile>.collectDecompiledFilesFromBinaryRoot(binaryRoot: VirtualFile, isSharedRoot: Boolean) {
-        VfsUtilCore.visitChildrenRecursively(binaryRoot, object : VirtualFileVisitor<Void>() {
-            override fun visitFile(file: VirtualFile): Boolean {
-                if (!file.isDirectory) {
-                    val ktFile = psiManager.findFile(file) as? KtFile
-                    // Synthetic class parts are not supposed to be indexed to avoid duplicates
-                    // The information about virtual files are already cached after the previous line
-                    if (ktFile != null && !ClsClassFinder.isMultifileClassPartFile(file)) {
-                        add(IndexableFile(file, ktFile, isShared = isSharedRoot))
-                    }
-                }
-
-                return true
-            }
-        })
     }
 
     fun indexStubRecursively(indexableFile: IndexableFile) {
@@ -348,11 +352,11 @@ private fun computeIndex(
     val decompiledFilesFromBinaryRoots: Set<IndexableFile> = if (shouldBuildStubsForBinaryLibraries) {
         buildSet {
             for (root in sharedBinaryRoots) {
-                collectDecompiledFilesFromBinaryRoot(root, isSharedRoot = true)
+                collectDecompiledFilesFromBinaryRoot(psiManager, root, isSharedRoot = true)
             }
 
             for (root in binaryRoots) {
-                collectDecompiledFilesFromBinaryRoot(root, isSharedRoot = false)
+                collectDecompiledFilesFromBinaryRoot(psiManager, root, isSharedRoot = false)
             }
         }
     } else {
