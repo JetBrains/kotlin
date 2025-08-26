@@ -73,6 +73,7 @@ internal sealed class WasmVM(
             jsFiles: List<String>,
             workingDirectory: File?,
             useNewExceptionHandling: Boolean,
+            useSharedThreads: Boolean,
             toolArgs: List<String>
         ) =
             tool.run(
