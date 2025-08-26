@@ -17,17 +17,19 @@ import model.CompileResponse
 import model.toDomain
 import model.toGrpc
 import org.jetbrains.kotlin.server.CompileServiceGrpcKt
+import sun.util.logging.resources.logging
 import java.io.Closeable
 import java.util.concurrent.TimeUnit
 
 class GrpcClientRemoteCompilationService(
+    private val logging: Boolean = false,
     private val channel: ManagedChannel
     = ManagedChannelBuilder
         .forAddress("localhost", 50051)
         .usePlaintext()
-        .intercept(RemoteClientInterceptor())
-        .build()
-) : RemoteCompilationService, Closeable {
+        .intercept(if (logging) RemoteClientInterceptor() else null)
+        .build(),
+    ) : RemoteCompilationService, Closeable {
 
     private val stub: CompileServiceGrpcKt.CompileServiceCoroutineStub = CompileServiceGrpcKt
         .CompileServiceCoroutineStub(channel)

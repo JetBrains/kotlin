@@ -43,9 +43,9 @@ class RemoteCompilationClient(
 
     private val client = GrpcClientRemoteCompilationService()
 
-    suspend fun compile(compilerArguments: List<String>, compilationOptions: CompilationOptions): CompilationResult {
+    suspend fun compile(projectName: String, compilerArguments: List<String>, compilationOptions: CompilationOptions): CompilationResult {
         val compilerArgumentsMap = CompilerUtils.getMap(compilerArguments)
-
+        println("COMPILER ARGUMENTS MAP: $compilerArgumentsMap")
         val sourceFiles = CompilerUtils.getSourceFiles(compilerArgumentsMap)
         val dependencyFiles = CompilerUtils.getDependencyFiles(compilerArgumentsMap)
         val compilerPluginFiles = CompilerUtils.getCompilerPluginFiles(compilerArgumentsMap)
@@ -133,7 +133,7 @@ class RemoteCompilationClient(
                 // as a first step we want to send compilation metadata
                 requestChannel.send(
                     CompilationMetadata(
-                        "mycustomproject",
+                        projectName,
                         sourceFiles.size,
                         dependencyFiles.size,
                         compilerPluginFiles.size,
