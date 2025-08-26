@@ -4,8 +4,8 @@
 fun func() {}
 
 fun bar() {
-    val <!VARIABLE_NEVER_READ!>f<!>: () -> Unit
-    <!ASSIGNED_VALUE_IS_NEVER_READ!>f<!> = ::func
+    val f: () -> Unit
+    f = ::func
     f()
 }
 
