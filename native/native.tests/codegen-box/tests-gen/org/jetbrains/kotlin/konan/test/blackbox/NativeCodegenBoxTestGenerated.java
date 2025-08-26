@@ -201,6 +201,12 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         }
 
         @Test
+        @TestMetadata("differentAnnotationTypes.kt")
+        public void testDifferentAnnotationTypes() {
+          runTest("compiler/testData/codegen/box/annotations/instances/differentAnnotationTypes.kt");
+        }
+
+        @Test
         @TestMetadata("inInlineFunction.kt")
         public void testInInlineFunction() {
           runTest("compiler/testData/codegen/box/annotations/instances/inInlineFunction.kt");

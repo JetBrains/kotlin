@@ -159,6 +159,12 @@ public class FirJsCodegenSplittingInlineWithInlinedFunInKlibTestGenerated extend
         }
 
         @Test
+        @TestMetadata("AnnotationInstantiationWithArray.kt")
+        public void testAnnotationInstantiationWithArray() {
+          runTest("compiler/testData/codegen/box/annotations/instances/AnnotationInstantiationWithArray.kt");
+        }
+
+        @Test
         @TestMetadata("annotationToString.kt")
         public void testAnnotationToString() {
           runTest("compiler/testData/codegen/box/annotations/instances/annotationToString.kt");
@@ -174,6 +180,12 @@ public class FirJsCodegenSplittingInlineWithInlinedFunInKlibTestGenerated extend
         @TestMetadata("annotationsUnsignedTypes.kt")
         public void testAnnotationsUnsignedTypes() {
           runTest("compiler/testData/codegen/box/annotations/instances/annotationsUnsignedTypes.kt");
+        }
+
+        @Test
+        @TestMetadata("differentAnnotationTypes.kt")
+        public void testDifferentAnnotationTypes() {
+          runTest("compiler/testData/codegen/box/annotations/instances/differentAnnotationTypes.kt");
         }
 
         @Test
