@@ -28,6 +28,8 @@ import org.jetbrains.kotlin.analysis.api.utils.getApiKClassOf
 import org.jetbrains.kotlin.analysis.utils.printer.prettyPrint
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.collectDescendantsOfType
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 import org.jetbrains.kotlin.types.Variance
@@ -132,6 +134,27 @@ internal fun stringRepresentation(any: Any?): String = with(any) {
         }
     }
 }
+
+/**
+ * Sequence of all declarations from the [KtFile] including nested declarations from classes.
+ *
+ * This API helps to iterate both compiled and source files without AST tree loading.
+ */
+val KtFile.allDeclarationsRecursively: Sequence<KtDeclaration>
+    get() = if (isCompiled) {
+        generateSequence<List<KtElement>>(listOf(this)) { elements ->
+            elements.flatMap { element ->
+                when (element) {
+                    is KtFile -> element.declarations
+                    is KtScript -> element.declarations
+                    is KtClassOrObject -> element.declarations
+                    else -> emptyList()
+                }
+            }.takeUnless(List<KtDeclaration>::isEmpty)
+        }.flatten().filterIsInstance<KtDeclaration>()
+    } else {
+        collectDescendantsOfType<KtDeclaration>().asSequence()
+    }
 
 context(_: KaSession)
 private fun stringRepresentation(signature: KaCallableSignature<*>): String = buildString {

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.visibilityChecker
 
 import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.allDeclarationsRecursively
 import org.jetbrains.kotlin.analysis.api.renderer.declarations.impl.KaDeclarationRendererForDebug
 import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaFileSymbol
@@ -15,15 +16,10 @@ import org.jetbrains.kotlin.analysis.test.framework.services.ExpressionMarkerPro
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
 import org.jetbrains.kotlin.analysis.test.framework.targets.getSingleTestTargetSymbolOfType
 import org.jetbrains.kotlin.analysis.utils.printer.parentOfType
-import org.jetbrains.kotlin.psi.KtClassOrObject
-import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtDotQualifiedExpression
-import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
-import org.jetbrains.kotlin.psi.KtScript
-import org.jetbrains.kotlin.psi.psiUtil.collectDescendantsOfType
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 
@@ -90,22 +86,10 @@ abstract class AbstractVisibilityCheckerTest : AbstractAnalysisApiBasedTest() {
         val byCaret = provider.getBottommostElementOfTypeAtCaretOrNull<KtExpression>(contextFile)
         if (byCaret != null) return byCaret
 
-        val namedDeclarations = if (contextFile.isCompiled) {
-            generateSequence<List<KtElement>>(listOf(contextFile)) { elements ->
-                elements.flatMap { element ->
-                    when (element) {
-                        is KtFile -> element.declarations
-                        is KtScript -> element.declarations
-                        is KtClassOrObject -> element.declarations
-                        else -> emptyList()
-                    }
-                }.takeUnless(List<KtDeclaration>::isEmpty)
-            }.flatten()
-        } else {
-            contextFile.collectDescendantsOfType<KtNamedDeclaration>().asSequence()
+        val byName = contextFile.allDeclarationsRecursively.find {
+            it is KtNamedDeclaration && it.name?.lowercase() == USE_SITE_ELEMENT_NAME
         }
 
-        val byName = namedDeclarations.find { it is KtNamedDeclaration && it.name?.lowercase() == USE_SITE_ELEMENT_NAME }
         if (byName != null) {
             return byName as KtExpression
         }
