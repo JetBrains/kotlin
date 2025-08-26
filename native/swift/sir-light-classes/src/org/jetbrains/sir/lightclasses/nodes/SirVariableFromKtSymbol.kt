@@ -6,22 +6,16 @@
 package org.jetbrains.sir.lightclasses.nodes
 
 import org.jetbrains.kotlin.analysis.api.KaSession
-import org.jetbrains.kotlin.analysis.api.components.containingModule
-import org.jetbrains.kotlin.analysis.api.components.render
 import org.jetbrains.kotlin.analysis.api.symbols.*
-import org.jetbrains.kotlin.analysis.api.types.KaClassType
 import org.jetbrains.kotlin.sir.*
 import org.jetbrains.kotlin.sir.providers.SirSession
 import org.jetbrains.kotlin.sir.providers.generateFunctionBridge
 import org.jetbrains.kotlin.sir.providers.getSirParent
 import org.jetbrains.kotlin.sir.providers.impl.BridgeProvider.BridgeFunctionProxy
 import org.jetbrains.kotlin.sir.providers.sirDeclarationName
-import org.jetbrains.kotlin.sir.providers.sirModule
 import org.jetbrains.kotlin.sir.providers.source.KotlinSource
 import org.jetbrains.kotlin.sir.providers.source.kaSymbolOrNull
-import org.jetbrains.kotlin.sir.providers.translateType
 import org.jetbrains.kotlin.sir.providers.utils.throwsAnnotation
-import org.jetbrains.kotlin.sir.providers.utils.updateImports
 import org.jetbrains.kotlin.sir.providers.withSessions
 import org.jetbrains.kotlin.sir.util.SirSwiftModule
 import org.jetbrains.kotlin.utils.addToStdlib.ifFalse
@@ -116,30 +110,6 @@ internal class SirVariableFromKtSymbol(
 ) : SirAbstractVariableFromKtSymbol(ktSymbol, sirSession) {
     override val isInstance: Boolean
         get() = !ktSymbol.isTopLevel && !(ktSymbol is KaPropertySymbol && ktSymbol.isStatic)
-}
-
-internal class SirEnumEntriesStaticPropertyFromKtSymbol(
-    ktSymbol: KaPropertySymbol,
-    sirSession: SirSession,
-) : SirAbstractVariableFromKtSymbol(ktSymbol, sirSession) {
-    override val isInstance: Boolean
-        get() = false
-
-    override val name: String
-        get() = "allCases"
-
-    override val type: SirType by lazyWithSessions {
-        SirArrayType(
-            (ktSymbol.returnType as KaClassType)
-                .typeArguments.first().type!!
-                .translateType(
-                    SirTypeVariance.INVARIANT,
-                    reportErrorType = { error("Can't translate return type in ${ktSymbol.render()}: ${it}") },
-                    reportUnsupportedType = { error("Can't translate return type in ${ktSymbol.render()}: type is not supported") },
-                    processTypeImports = ktSymbol.containingModule.sirModule()::updateImports
-                ),
-        )
-    }
 }
 
 internal abstract class SirAbstractGetter(

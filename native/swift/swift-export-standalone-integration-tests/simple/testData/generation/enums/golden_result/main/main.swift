@@ -3,12 +3,15 @@ import KotlinRuntime
 import KotlinRuntimeSupport
 import KotlinStdlib
 
-public enum Enum: KotlinRuntimeSupport._KotlinBridgeable, Swift.CaseIterable {
+public enum Enum: KotlinRuntimeSupport._KotlinBridgeable, Swift.CaseIterable, Swift.LosslessStringConvertible, Swift.RawRepresentable {
     case a
     case b
-    public static var allCases: [main.Enum] {
+    public var description: Swift.String {
         get {
-            return Enum_entries_get() as! Swift.Array<main.Enum>
+            switch self {
+            case .a: "a"
+            default: "b"
+            }
         }
     }
     public var i: Swift.Int32 {
@@ -19,6 +22,29 @@ public enum Enum: KotlinRuntimeSupport._KotlinBridgeable, Swift.CaseIterable {
             return Enum_i_set__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), newValue)
         }
     }
+    public var rawValue: Swift.Int32 {
+        get {
+            switch self {
+            case .a: 0
+            default: 1
+            }
+        }
+    }
+    public init?(
+        _ description: Swift.String
+    ) {
+        switch description {
+        case "a": self = .a
+        case "b": self = .b
+        default: return nil
+        }
+    }
+    public init?(
+        rawValue: Swift.Int32
+    ) {
+        guard 0..<2 ~= rawValue else { return nil }
+        self = Enum.allCases[Int(rawValue)]
+    }
     public init(
         __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer!,
         options: KotlinRuntime.KotlinBaseConstructionOptions
@@ -28,20 +54,44 @@ public enum Enum: KotlinRuntimeSupport._KotlinBridgeable, Swift.CaseIterable {
     public func print() -> Swift.String {
         return Enum_print(self.__externalRCRef())
     }
-    public static func valueOf(
-        value: Swift.String
-    ) -> main.Enum {
-        return main.Enum(__externalRCRefUnsafe: Enum_valueOf__TypesOfArguments__Swift_String__(value), options: .asBestFittingWrapper)
-    }
 }
-public enum EnumSimple: KotlinRuntimeSupport._KotlinBridgeable, Swift.CaseIterable {
+public enum EnumSimple: KotlinRuntimeSupport._KotlinBridgeable, Swift.CaseIterable, Swift.LosslessStringConvertible, Swift.RawRepresentable {
     case FIRST
     case SECOND
     case LAST
-    public static var allCases: [main.EnumSimple] {
+    public var description: Swift.String {
         get {
-            return EnumSimple_entries_get() as! Swift.Array<main.EnumSimple>
+            switch self {
+            case .FIRST: "FIRST"
+            case .SECOND: "SECOND"
+            default: "LAST"
+            }
         }
+    }
+    public var rawValue: Swift.Int32 {
+        get {
+            switch self {
+            case .FIRST: 0
+            case .SECOND: 1
+            default: 2
+            }
+        }
+    }
+    public init?(
+        _ description: Swift.String
+    ) {
+        switch description {
+        case "FIRST": self = .FIRST
+        case "SECOND": self = .SECOND
+        case "LAST": self = .LAST
+        default: return nil
+        }
+    }
+    public init?(
+        rawValue: Swift.Int32
+    ) {
+        guard 0..<3 ~= rawValue else { return nil }
+        self = EnumSimple.allCases[Int(rawValue)]
     }
     public init(
         __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer!,
@@ -49,25 +99,49 @@ public enum EnumSimple: KotlinRuntimeSupport._KotlinBridgeable, Swift.CaseIterab
     ) {
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
     }
-    public static func valueOf(
-        value: Swift.String
-    ) -> main.EnumSimple {
-        return main.EnumSimple(__externalRCRefUnsafe: EnumSimple_valueOf__TypesOfArguments__Swift_String__(value), options: .asBestFittingWrapper)
-    }
 }
-public enum EnumWithAbstractMembers: KotlinRuntimeSupport._KotlinBridgeable, Swift.CaseIterable {
+public enum EnumWithAbstractMembers: KotlinRuntimeSupport._KotlinBridgeable, Swift.CaseIterable, Swift.LosslessStringConvertible, Swift.RawRepresentable {
     case YELLOW
     case SKY
     case MAGENTA
-    public static var allCases: [main.EnumWithAbstractMembers] {
+    public var description: Swift.String {
         get {
-            return EnumWithAbstractMembers_entries_get() as! Swift.Array<main.EnumWithAbstractMembers>
+            switch self {
+            case .YELLOW: "YELLOW"
+            case .SKY: "SKY"
+            default: "MAGENTA"
+            }
+        }
+    }
+    public var rawValue: Swift.Int32 {
+        get {
+            switch self {
+            case .YELLOW: 0
+            case .SKY: 1
+            default: 2
+            }
         }
     }
     public var red: Swift.Int32 {
         get {
             return EnumWithAbstractMembers_red_get(self.__externalRCRef())
         }
+    }
+    public init?(
+        _ description: Swift.String
+    ) {
+        switch description {
+        case "YELLOW": self = .YELLOW
+        case "SKY": self = .SKY
+        case "MAGENTA": self = .MAGENTA
+        default: return nil
+        }
+    }
+    public init?(
+        rawValue: Swift.Int32
+    ) {
+        guard 0..<3 ~= rawValue else { return nil }
+        self = EnumWithAbstractMembers.allCases[Int(rawValue)]
     }
     public init(
         __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer!,
@@ -84,24 +158,45 @@ public enum EnumWithAbstractMembers: KotlinRuntimeSupport._KotlinBridgeable, Swi
     public func ordinalSquare() -> Swift.Int32 {
         return EnumWithAbstractMembers_ordinalSquare(self.__externalRCRef())
     }
-    public static func valueOf(
-        value: Swift.String
-    ) -> main.EnumWithAbstractMembers {
-        return main.EnumWithAbstractMembers(__externalRCRefUnsafe: EnumWithAbstractMembers_valueOf__TypesOfArguments__Swift_String__(value), options: .asBestFittingWrapper)
-    }
 }
-public enum EnumWithMembers: KotlinRuntimeSupport._KotlinBridgeable, Swift.CaseIterable {
+public enum EnumWithMembers: KotlinRuntimeSupport._KotlinBridgeable, Swift.CaseIterable, Swift.LosslessStringConvertible, Swift.RawRepresentable {
     case NORTH
     case SOUTH
-    public static var allCases: [main.EnumWithMembers] {
+    public var description: Swift.String {
         get {
-            return EnumWithMembers_entries_get() as! Swift.Array<main.EnumWithMembers>
+            switch self {
+            case .NORTH: "NORTH"
+            default: "SOUTH"
+            }
         }
     }
     public var isNorth: Swift.Bool {
         get {
             return EnumWithMembers_isNorth_get(self.__externalRCRef())
         }
+    }
+    public var rawValue: Swift.Int32 {
+        get {
+            switch self {
+            case .NORTH: 0
+            default: 1
+            }
+        }
+    }
+    public init?(
+        _ description: Swift.String
+    ) {
+        switch description {
+        case "NORTH": self = .NORTH
+        case "SOUTH": self = .SOUTH
+        default: return nil
+        }
+    }
+    public init?(
+        rawValue: Swift.Int32
+    ) {
+        guard 0..<2 ~= rawValue else { return nil }
+        self = EnumWithMembers.allCases[Int(rawValue)]
     }
     public init(
         __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer!,
@@ -111,11 +206,6 @@ public enum EnumWithMembers: KotlinRuntimeSupport._KotlinBridgeable, Swift.CaseI
     }
     public func foo() -> Swift.String {
         return EnumWithMembers_foo(self.__externalRCRef())
-    }
-    public static func valueOf(
-        value: Swift.String
-    ) -> main.EnumWithMembers {
-        return main.EnumWithMembers(__externalRCRefUnsafe: EnumWithMembers_valueOf__TypesOfArguments__Swift_String__(value), options: .asBestFittingWrapper)
     }
 }
 public func enumId(

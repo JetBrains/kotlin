@@ -464,22 +464,40 @@ extension main._SealedFoeble_SealedBarable where Self : KotlinRuntimeSupport._Ko
 extension main._SealedFoeble_SealedBarable {
 }
 extension ExportedKotlinPackages.packagewithprotocols {
-    public enum ENUM_WITH_INTERFACE_INHERITANCE: KotlinRuntimeSupport._KotlinBridgeable, Swift.CaseIterable {
-        public static var allCases: [ExportedKotlinPackages.packagewithprotocols.ENUM_WITH_INTERFACE_INHERITANCE] {
+    public enum ENUM_WITH_INTERFACE_INHERITANCE: KotlinRuntimeSupport._KotlinBridgeable, Swift.CaseIterable, Swift.LosslessStringConvertible, Swift.RawRepresentable {
+        public var description: Swift.String {
             get {
-                return packagewithprotocols_ENUM_WITH_INTERFACE_INHERITANCE_entries_get() as! Swift.Array<ExportedKotlinPackages.packagewithprotocols.ENUM_WITH_INTERFACE_INHERITANCE>
+                switch self {
+                default: fatalError()
+                }
             }
+        }
+        public var rawValue: Swift.Int32 {
+            get {
+                switch self {
+                default: fatalError()
+                }
+            }
+        }
+        public init?(
+            _ description: Swift.String
+        ) {
+            switch description {
+
+            default: return nil
+            }
+        }
+        public init?(
+            rawValue: Swift.Int32
+        ) {
+            guard 0..<0 ~= rawValue else { return nil }
+            self = ENUM_WITH_INTERFACE_INHERITANCE.allCases[Int(rawValue)]
         }
         public init(
             __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer!,
             options: KotlinRuntime.KotlinBaseConstructionOptions
         ) {
             super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
-        }
-        public static func valueOf(
-            value: Swift.String
-        ) -> ExportedKotlinPackages.packagewithprotocols.ENUM_WITH_INTERFACE_INHERITANCE {
-            return ExportedKotlinPackages.packagewithprotocols.ENUM_WITH_INTERFACE_INHERITANCE(__externalRCRefUnsafe: packagewithprotocols_ENUM_WITH_INTERFACE_INHERITANCE_valueOf__TypesOfArguments__Swift_String__(value), options: .asBestFittingWrapper)
         }
     }
     public protocol ContainerProtocol: KotlinRuntime.KotlinBase {

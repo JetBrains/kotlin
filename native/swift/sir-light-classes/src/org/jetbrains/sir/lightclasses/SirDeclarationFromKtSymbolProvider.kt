@@ -16,7 +16,9 @@ import org.jetbrains.kotlin.sir.providers.SirTranslationResult
 import org.jetbrains.kotlin.sir.providers.getSirParent
 import org.jetbrains.kotlin.sir.providers.source.KotlinSource
 import org.jetbrains.kotlin.sir.providers.withSessions
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.sir.lightclasses.nodes.*
+import org.jetbrains.sir.lightclasses.utils.SirEnumSyntheticsTranslationStrategy
 import org.jetbrains.sir.lightclasses.utils.SirOperatorTranslationStrategy
 
 public class SirDeclarationFromKtSymbolProvider(
@@ -51,14 +53,16 @@ public class SirDeclarationFromKtSymbolProvider(
                 }
             }
             is KaConstructorSymbol -> {
-                SirInitFromKtSymbol(
+                SirRegularInitFromKtSymbol(
                     ktSymbol = ktSymbol,
                     sirSession = sirSession,
                 ).let(SirTranslationResult::Constructor)
             }
             is KaNamedFunctionSymbol -> {
                 SirOperatorTranslationStrategy(ktSymbol)?.translate(sirSession)
-                    ?: SirFunctionFromKtSymbol(
+                    ?: runIf(sirSession.withSessions { ktSymbol.getSirParent() is SirEnum }) {
+                        SirEnumSyntheticsTranslationStrategy(ktSymbol)?.translate(sirSession)
+                    } ?: SirFunctionFromKtSymbol(
                         ktSymbol = ktSymbol,
                         sirSession = sirSession,
                     ).let(SirTranslationResult::RegularFunction)
@@ -77,7 +81,8 @@ public class SirDeclarationFromKtSymbolProvider(
                         SirTranslationResult.ExtensionProperty(it, ktSymbol.setter?.toSirFunction(ktSymbol))
                     } ?: SirTranslationResult.Untranslatable(KotlinSource(ktSymbol))
                 } else {
-                    ktSymbol.toSirVariable().let(SirTranslationResult::RegularProperty)
+                    ktSymbol.toSirVariable()?.let(SirTranslationResult::RegularProperty)
+                        ?: SirTranslationResult.Untranslatable(KotlinSource(ktSymbol))
                 }
             }
             is KaTypeAliasSymbol -> {
@@ -95,12 +100,12 @@ public class SirDeclarationFromKtSymbolProvider(
         sirSession = sirSession,
     )
 
-    private fun KaVariableSymbol.toSirVariable(): SirAbstractVariableFromKtSymbol =
+    private fun KaVariableSymbol.toSirVariable(): SirAbstractVariableFromKtSymbol? =
         if (this is KaPropertySymbol
             && isStatic
             && name == StandardNames.ENUM_ENTRIES
         ) {
-            SirEnumEntriesStaticPropertyFromKtSymbol(this, sirSession)
+            null
         } else {
             SirVariableFromKtSymbol(
                 ktSymbol = this@toSirVariable,

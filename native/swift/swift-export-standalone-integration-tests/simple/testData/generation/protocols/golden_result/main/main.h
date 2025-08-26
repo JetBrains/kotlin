@@ -85,10 +85,6 @@ void * packagewithprotocols_ContainerProtocol_NestedProtocol_NestedClass_init_al
 
 void packagewithprotocols_ContainerProtocol_NestedProtocol_NestedClass_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
 
-NSArray<id> * packagewithprotocols_ENUM_WITH_INTERFACE_INHERITANCE_entries_get();
-
-void * packagewithprotocols_ENUM_WITH_INTERFACE_INHERITANCE_valueOf__TypesOfArguments__Swift_String__(NSString * value);
-
 void * packagewithprotocols_INHERITANCE_COUPLE_init_allocate();
 
 void packagewithprotocols_INHERITANCE_COUPLE_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);

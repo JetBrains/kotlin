@@ -49,10 +49,6 @@ void * ENUM_INSIDE_ENUM_init_allocate();
 
 void ENUM_INSIDE_ENUM_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
 
-NSArray<id> * ENUM_entries_get();
-
-void * ENUM_valueOf__TypesOfArguments__Swift_String__(NSString * value);
-
 void * Foo_Companion_get();
 
 _Bool Foo_Companion_my_func(void * self);

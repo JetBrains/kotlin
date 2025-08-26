@@ -3,7 +3,7 @@
 import KotlinRuntime
 import KotlinRuntimeSupport
 
-public enum ENUM: KotlinRuntimeSupport._KotlinBridgeable, Swift.CaseIterable {
+public enum ENUM: KotlinRuntimeSupport._KotlinBridgeable, Swift.CaseIterable, Swift.LosslessStringConvertible, Swift.RawRepresentable {
     case A
     case B
     case C
@@ -21,21 +21,45 @@ public enum ENUM: KotlinRuntimeSupport._KotlinBridgeable, Swift.CaseIterable {
             super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
         }
     }
-    public static var allCases: [main.ENUM] {
+    public var description: Swift.String {
         get {
-            return ENUM_entries_get() as! Swift.Array<main.ENUM>
+            switch self {
+            case .A: "A"
+            case .B: "B"
+            default: "C"
+            }
         }
+    }
+    public var rawValue: Swift.Int32 {
+        get {
+            switch self {
+            case .A: 0
+            case .B: 1
+            default: 2
+            }
+        }
+    }
+    public init?(
+        _ description: Swift.String
+    ) {
+        switch description {
+        case "A": self = .A
+        case "B": self = .B
+        case "C": self = .C
+        default: return nil
+        }
+    }
+    public init?(
+        rawValue: Swift.Int32
+    ) {
+        guard 0..<3 ~= rawValue else { return nil }
+        self = ENUM.allCases[Int(rawValue)]
     }
     public init(
         __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer!,
         options: KotlinRuntime.KotlinBaseConstructionOptions
     ) {
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
-    }
-    public static func valueOf(
-        value: Swift.String
-    ) -> main.ENUM {
-        return main.ENUM(__externalRCRefUnsafe: ENUM_valueOf__TypesOfArguments__Swift_String__(value), options: .asBestFittingWrapper)
     }
 }
 open class ABSTRACT_CLASS: KotlinRuntime.KotlinBase {
