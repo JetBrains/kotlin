@@ -1040,10 +1040,6 @@ val ConeKotlinType.isUnitOrFlexibleUnit: Boolean
         return classId == StandardClassIds.Unit
     }
 
-fun ConeClassLikeLookupTag.isLocalClass(): Boolean {
-    return classId.isLocal
-}
-
 fun ConeClassLikeLookupTag.isAnonymousClass(): Boolean {
     return name == SpecialNames.ANONYMOUS
 }

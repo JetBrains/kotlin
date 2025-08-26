@@ -215,7 +215,7 @@ object FirDiagnosticRenderers {
                     firClassLike.isInterface -> "interface"
                     firClassLike.isEnumClass -> "enum class"
                     firClassLike.isFromEnumClass -> "enum entry"
-                    firClassLike.isLocalClassOrAnonymousObject -> "object"
+                    firClassLike.isLocal -> "object"
                     else -> "class"
                 }
             }

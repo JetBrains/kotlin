@@ -41,7 +41,7 @@ fun FirDanglingModifierList.containingClass(): ConeClassLikeLookupTag? =
     containingClassAttr
 
 fun FirClassLikeSymbol<*>.getContainingClassLookupTag(): ConeClassLikeLookupTag? {
-    return if (classId.isLocal) {
+    return if (isLocal) {
         fir.containingClassForLocal()
     } else {
         val ownerId = classId.outerClassId

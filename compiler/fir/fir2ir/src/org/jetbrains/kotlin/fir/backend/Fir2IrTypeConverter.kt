@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.fir.backend
 import org.jetbrains.kotlin.fir.backend.utils.ConversionTypeOrigin
 import org.jetbrains.kotlin.fir.backend.utils.toIrSymbol
 import org.jetbrains.kotlin.fir.declarations.getAnnotationsByClassId
-import org.jetbrains.kotlin.fir.declarations.utils.isLocalClassOrAnonymousObject
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.unexpandedConeClassLikeType
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedError
@@ -351,7 +350,7 @@ class Fir2IrTypeConverter(
 
         if (symbol !is FirClassSymbol) return null
         val firClass = symbol.fir
-        if (!firClass.isLocalClassOrAnonymousObject()) return null
+        if (!firClass.isLocal) return null
         return firClass.superTypeRefs.firstOrNull {
             // Skip Enum supertype because otherwise, translating local enums will lead to stack overflow error
             // (since a local enum `L` has `kotlin/Enum<L>` as a supertype).

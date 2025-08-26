@@ -293,7 +293,7 @@ open class FirSupertypeResolverVisitor(
         val classModuleSession = classLikeDeclaration.moduleData.session
 
         val result = when {
-            classId.isLocal -> {
+            classLikeDeclaration.isLocal -> {
                 // Typically, local class-like declarations (class, typealias) should be treated specially and supplied with localClassesNavigationInfo.
                 // But it seems to be too strict to add an assertion here
                 if (localClassesNavigationInfo == null) return persistentListOf()
@@ -350,7 +350,7 @@ open class FirSupertypeResolverVisitor(
         )
 
         val newUseSiteFile =
-            if (classLikeDeclaration.isLocalClassOrAnonymousObject()) @OptIn(PrivateForInline::class) useSiteFile
+            if (classLikeDeclaration.isLocal) @OptIn(PrivateForInline::class) useSiteFile
             else session.firProvider.getFirClassifierContainerFileIfAny(classLikeDeclaration.symbol)
 
         @OptIn(PrivateForInline::class)
@@ -720,7 +720,7 @@ open class SupertypeComputationSession {
             val classId = classLikeDeclaration.classId
             if (classId.isNestedClass) {
                 val parentFir = when {
-                    !classId.isLocal -> session.firProvider.getContainingClass(classLikeDeclaration.symbol)?.fir
+                    !classLikeDeclaration.isLocal -> session.firProvider.getContainingClass(classLikeDeclaration.symbol)?.fir
                     localClassesNavigationInfo != null -> localClassesNavigationInfo.parentForClass[classLikeDeclaration]
                     else -> error("Couldn't retrieve the parent of a local class because there's no `LocalClassesNavigationInfo`")
                 }

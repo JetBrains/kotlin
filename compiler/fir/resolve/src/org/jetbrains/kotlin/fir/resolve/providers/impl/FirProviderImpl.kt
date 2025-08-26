@@ -130,7 +130,7 @@ class FirProviderImpl(val session: FirSession, val kotlinScopeProvider: FirKotli
             visitClassifier(regularClass, data)
             val classId = regularClass.symbol.classId
 
-            if (!classId.isNestedClass && !classId.isLocal) {
+            if (!classId.isNestedClass && !regularClass.isLocal) {
                 data.state.classesInPackage.getOrPut(classId.packageFqName, ::mutableSetOf).add(classId.shortClassName)
                 data.state.classifierInPackage.getOrPut(classId.packageFqName, ::mutableSetOf).add(classId.shortClassName)
             }

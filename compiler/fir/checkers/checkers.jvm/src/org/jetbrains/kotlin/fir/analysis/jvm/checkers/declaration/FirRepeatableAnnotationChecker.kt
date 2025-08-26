@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.unsubstitutedScope
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.classId
+import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
@@ -45,9 +46,8 @@ object FirRepeatableAnnotationChecker : FirBasicDeclarationChecker(MppCheckerKin
         val session = context.session
         for (annotation in annotations) {
             val unexpandedClassId = annotation.unexpandedClassId ?: continue
-            val annotationClassId = annotation.toAnnotationClassId(session) ?: continue
-            if (annotationClassId.isLocal) continue
-            val annotationClass = session.symbolProvider.getClassLikeSymbolByClassId(annotationClassId) ?: continue
+            val annotationClass = annotation.toAnnotationClassLikeSymbol(session) ?: continue
+            if (annotationClass.isLocal) continue
 
             val useSiteTarget = annotation.useSiteTarget
             val expandedType = annotation.annotationTypeRef.coneType.fullyExpandedType()

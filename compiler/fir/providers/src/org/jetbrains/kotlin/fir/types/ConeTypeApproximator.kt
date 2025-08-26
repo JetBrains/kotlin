@@ -30,7 +30,7 @@ class ConeTypeApproximator(inferenceContext: ConeInferenceContext, languageVersi
 
     private fun ConeKotlinType.fastPathSkipApproximation(conf: TypeApproximatorConfiguration): Boolean {
         if (this is ConeClassLikeType && this.typeArguments.isEmpty() &&
-            this.lookupTag.let { !it.isLocalClass() && !it.isAnonymousClass() }
+            this.lookupTag.let { !it.isLocalType() && !it.isAnonymous() }
         ) {
             return true
         }

@@ -61,7 +61,7 @@ val FirBasedSymbol<*>.isNonLocal: Boolean
     get() = when (this) {
         is FirFileSymbol -> true
         is FirCallableSymbol -> !callableId.isLocal
-        is FirClassLikeSymbol -> !classId.isLocal
+        is FirClassLikeSymbol -> !isLocal
         else -> false
     }
 

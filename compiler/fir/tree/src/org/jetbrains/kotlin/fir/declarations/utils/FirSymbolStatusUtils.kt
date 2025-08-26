@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.declarations.utils
 
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 
 // ---------------------- callables with status ----------------------
@@ -68,11 +69,9 @@ inline val FirClassLikeSymbol<*>.isSealed: Boolean get() = resolvedStatus.modali
 
 // ---------------------- common classes ----------------------
 
-inline val FirClassLikeSymbol<*>.isLocal: Boolean get() = classId.isLocal
+inline val FirClassLikeSymbol<*>.isLocal: Boolean get() = fir.isLocal
 
-inline val FirClassSymbol<*>.isLocalClassOrAnonymousObject: Boolean
-    get() = classId.isLocal || this is FirAnonymousObjectSymbol
-
+val FirBasedSymbol<*>?.isLocalClassLike: Boolean get() = (this as? FirClassLikeSymbol<*>)?.isLocal == true
 
 inline val FirClassSymbol<*>.isClass: Boolean
     get() = classKind.isClass

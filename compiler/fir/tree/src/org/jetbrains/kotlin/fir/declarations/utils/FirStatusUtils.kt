@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.fir.declarations.utils
 
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 
 inline val FirMemberDeclaration.modality: Modality? get() = status.modality
@@ -59,9 +58,6 @@ inline val FirMemberDeclaration.isFromSealedClass: Boolean get() = status.isFrom
 inline val FirMemberDeclaration.isFromEnumClass: Boolean get() = status.isFromEnumClass
 inline val FirMemberDeclaration.isFun: Boolean get() = status.isFun
 inline val FirMemberDeclaration.hasStableParameterNames: Boolean get() = status.hasStableParameterNames
-
-fun FirDeclaration?.isLocalClassOrAnonymousObject(): Boolean = ((this as? FirRegularClass)?.isLocal == true) || this is FirAnonymousObject
-fun FirBasedSymbol<*>?.isLocalClassOrAnonymousObject(): Boolean = this?.fir.isLocalClassOrAnonymousObject()
 
 inline val FirClass.isInterface: Boolean
     get() = classKind.isInterface

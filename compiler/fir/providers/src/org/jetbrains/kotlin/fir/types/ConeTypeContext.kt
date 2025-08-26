@@ -49,7 +49,7 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
 
     override fun TypeConstructorMarker.isLocalType(): Boolean {
         if (this !is ConeClassLikeLookupTag) return false
-        return isLocalClass()
+        return toSymbol(session)?.isLocal == true
     }
 
     override fun TypeConstructorMarker.isAnonymous(): Boolean {

@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.utils.classId
 import org.jetbrains.kotlin.fir.declarations.utils.isInner
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.declarations.utils.superConeTypes
@@ -51,7 +50,7 @@ object FirThrowableSubclassChecker : FirClassChecker(MppCheckerKind.Common) {
 
     context(context: CheckerContext)
     private fun FirClass.hasGenericOuterDeclaration(): Boolean {
-        if (!classId.isLocal) return false
+        if (!isLocal) return false
         for (containingDeclaration in context.containingDeclarations.asReversed()) {
             val hasTypeParameters = when (containingDeclaration) {
                 is FirCallableSymbol -> containingDeclaration.typeParameterSymbols.isNotEmpty()

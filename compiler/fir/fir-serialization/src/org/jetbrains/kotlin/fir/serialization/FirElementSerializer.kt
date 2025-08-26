@@ -1265,7 +1265,7 @@ class FirElementSerializer private constructor(
 
         if (!symbol.isInner) return
         val outerClassId = symbol.classId.outerClassId
-        if (outerClassId == null || outerClassId.isLocal) return
+        if (outerClassId == null || symbol.isLocal) return
         val outerSymbol = outerClassId.toLookupTag().toSymbol(session)
         if (outerSymbol != null) {
             val outerBuilder = ProtoBuf.Type.newBuilder()
@@ -1491,7 +1491,7 @@ class FirElementSerializer private constructor(
             produceHeaderKlib: Boolean = false,
         ): FirElementSerializer {
             val parentClassId = klass.symbol.classId.outerClassId
-            val parent = if (parentClassId != null && !parentClassId.isLocal) {
+            val parent = if (parentClassId != null && !klass.isLocal) {
                 val parentClass = session.symbolProvider.getClassLikeSymbolByClassId(parentClassId)!!.fir as FirRegularClass
                 parentSerializer ?: create(
                     session, scopeSession, parentClass, extension, null, typeApproximator,
