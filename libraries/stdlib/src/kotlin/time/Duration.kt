@@ -31,7 +31,7 @@ import kotlin.math.*
  */
 @SinceKotlin("1.6")
 @JvmInline
-public value class Duration internal constructor(private val rawValue: Long) : Comparable<Duration> {
+public value class Duration private constructor(private val rawValue: Long) : Comparable<Duration> {
 
     private val value: Long get() = rawValue shr 1
     private inline val unitDiscriminator: Int get() = rawValue.toInt() and 1
@@ -39,18 +39,18 @@ public value class Duration internal constructor(private val rawValue: Long) : C
     private fun isInMillis() = unitDiscriminator == 1
     private val storageUnit get() = if (isInNanos()) DurationUnit.NANOSECONDS else DurationUnit.MILLISECONDS
 
-    init {
-        if (durationAssertionsEnabled && !allowInvalidDurationConstruction) {
-            if (isInNanos()) {
-                if (value !in -MAX_NANOS..MAX_NANOS) throw AssertionError("$value ns is out of nanoseconds range")
-            } else {
-                if (value !in -MAX_MILLIS..MAX_MILLIS) throw AssertionError("$value ms is out of milliseconds range")
-                if (value in -MAX_NANOS_IN_MILLIS..MAX_NANOS_IN_MILLIS) throw AssertionError("$value ms is denormalized")
+    public companion object {
+        internal fun makeFromRawValue(rawValue: Long): Duration = Duration(rawValue).apply {
+            if (durationAssertionsEnabled) {
+                if (isInNanos()) {
+                    if (value !in -MAX_NANOS..MAX_NANOS) throw AssertionError("$value ns is out of nanoseconds range")
+                } else {
+                    if (value !in -MAX_MILLIS..MAX_MILLIS) throw AssertionError("$value ms is out of milliseconds range")
+                    if (value in -MAX_NANOS_IN_MILLIS..MAX_NANOS_IN_MILLIS) throw AssertionError("$value ms is denormalized")
+                }
             }
         }
-    }
 
-    public companion object {
         /** The duration equal to exactly 0 seconds. */
         public val ZERO: Duration = Duration(0L)
 
@@ -58,17 +58,8 @@ public value class Duration internal constructor(private val rawValue: Long) : C
         public val INFINITE: Duration = durationOfMillis(MAX_MILLIS)
         internal val NEG_INFINITE: Duration = durationOfMillis(-MAX_MILLIS)
 
-        private var allowInvalidDurationConstruction: Boolean = false
-
-        private inline fun <T> constructingInvalid(block: () -> T): T {
-            allowInvalidDurationConstruction = true
-            val duration = block()
-            allowInvalidDurationConstruction = false
-            return duration
-        }
-
         internal const val INVALID_RAW_VALUE = 0x7FFFFFFFFFFFC0DE
-        internal val INVALID: Duration = constructingInvalid { Duration(INVALID_RAW_VALUE) }
+        internal val INVALID = Duration(INVALID_RAW_VALUE)
 
         /**
          * Parser for long integer values with overflow detection and optional sign handling.
@@ -1589,9 +1580,9 @@ private const val FRACTION_LIMIT = 15
 private fun nanosToMillis(nanos: Long): Long = nanos / NANOS_IN_MILLIS
 private fun millisToNanos(millis: Long): Long = millis * NANOS_IN_MILLIS
 
-private fun durationOfNanos(normalNanos: Long) = Duration(normalNanos shl 1)
-private fun durationOfMillis(normalMillis: Long) = Duration((normalMillis shl 1) + 1)
-private fun durationOf(normalValue: Long, unitDiscriminator: Int) = Duration((normalValue shl 1) + unitDiscriminator)
+private fun durationOfNanos(normalNanos: Long) = Duration.makeFromRawValue(normalNanos shl 1)
+private fun durationOfMillis(normalMillis: Long) = Duration.makeFromRawValue((normalMillis shl 1) + 1)
+private fun durationOf(normalValue: Long, unitDiscriminator: Int) = Duration.makeFromRawValue((normalValue shl 1) + unitDiscriminator)
 private fun durationOfNanosNormalized(nanos: Long) =
     if (nanos in -MAX_NANOS..MAX_NANOS) {
         durationOfNanos(nanos)
