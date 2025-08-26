@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.analysis.api.descriptors.components
 
 import org.jetbrains.kotlin.analysis.api.components.KaBuiltinTypes
 import org.jetbrains.kotlin.analysis.api.components.KaScopeKind
-import org.jetbrains.kotlin.analysis.api.components.KaTypeProvider
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisContext
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisFacade.AnalysisMode
 import org.jetbrains.kotlin.analysis.api.descriptors.KaFe10Session
@@ -109,11 +108,11 @@ internal class KaFe10TypeProvider(
         }
     }
 
-    override val KaType.enhancedType: KaType?
+    override val KaType.augmentedByWarningLevelAnnotations: KaType
         get() = withValidityAssertion {
             require(this is KaFe10Type)
             val enhancement = (fe10Type as? TypeWithEnhancement)?.enhancement
-            return enhancement?.toKtType(analysisContext)
+            return enhancement?.toKtType(analysisContext) ?: this
         }
 
     override val KaClassifierSymbol.defaultType: KaType
