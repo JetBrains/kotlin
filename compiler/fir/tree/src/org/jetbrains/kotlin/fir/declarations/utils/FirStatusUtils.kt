@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.fir.declarations.utils
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 
 inline val FirMemberDeclaration.modality: Modality? get() = status.modality
@@ -62,8 +61,6 @@ inline val FirMemberDeclaration.isFun: Boolean get() = status.isFun
 inline val FirMemberDeclaration.hasStableParameterNames: Boolean get() = status.hasStableParameterNames
 
 inline val FirClassLikeDeclaration.isLocal: Boolean get() = symbol.classId.isLocal
-inline val FirClassLikeDeclaration.isLocalInFunction: Boolean get() = symbol.classId.isLocal && isReplSnippetDeclaration != true
-inline val FirClassLikeSymbol<*>.isLocalInFunction: Boolean get() = fir.isLocalInFunction
 
 fun FirDeclaration?.isLocalClassOrAnonymousObject(): Boolean = ((this as? FirRegularClass)?.isLocal == true) || this is FirAnonymousObject
 fun FirBasedSymbol<*>?.isLocalClassOrAnonymousObject(): Boolean = this?.fir.isLocalClassOrAnonymousObject()

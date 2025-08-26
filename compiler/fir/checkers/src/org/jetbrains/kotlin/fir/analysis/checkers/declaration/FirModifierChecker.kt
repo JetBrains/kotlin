@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget.Companion.classActualTargets
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
@@ -80,7 +81,7 @@ object FirModifierChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
                 parent.classKind,
                 isInnerClass = parent.isInner,
                 isCompanionObject = parent.isCompanion,
-                isLocalClass = parent.isLocalInFunction
+                isLocalClass = parent.visibility == Visibilities.Local && parent.isReplSnippetDeclaration != true,
             )
             is FirPropertyAccessorSymbol -> if (parent.isSetter) KotlinTarget.PROPERTY_SETTER_LIST else KotlinTarget.PROPERTY_GETTER_LIST
             is FirFunctionSymbol -> KotlinTarget.FUNCTION_LIST
