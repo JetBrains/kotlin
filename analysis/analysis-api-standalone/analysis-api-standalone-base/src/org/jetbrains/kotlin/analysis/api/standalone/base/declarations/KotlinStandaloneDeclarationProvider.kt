@@ -389,16 +389,10 @@ private fun computeIndex(
         // only affects Analysis API tests, since production Standalone doesn't index binary declarations as stubs.
         decompiledBuiltinsFilesFromBinaryRoots.forEach(::indexStubRecursively)
 
-        for (file in sourceKtFiles) {
-            if (!file.isCompiled) continue
-
-            indexStubRecursively(IndexableFile(file.virtualFile, file, isShared = false))
-        }
-
         val astBasedIndexer = rawIndex.AstBasedIndexer()
 
-        sourceKtFiles.forEach { file ->
-            if (!shouldBuildStubsForBinaryLibraries || !file.isCompiled) {
+        for (file in sourceKtFiles) when {
+            !file.isCompiled -> {
                 val stub = file.stub
                 if (stub != null) {
                     rawIndex.indexStubRecursively(stub)
@@ -406,6 +400,8 @@ private fun computeIndex(
                     file.accept(astBasedIndexer)
                 }
             }
+
+            shouldBuildStubsForBinaryLibraries -> rawIndex.indexStubRecursively(file.forcedStub)
         }
 
         return rawIndex
