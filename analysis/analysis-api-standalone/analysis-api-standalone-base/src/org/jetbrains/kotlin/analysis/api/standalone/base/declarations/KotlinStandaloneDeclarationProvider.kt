@@ -307,7 +307,7 @@ private fun computeIndex(
     shouldBuildStubsForBinaryLibraries: Boolean,
     postponeIndexing: Boolean,
 ): IndexData {
-    val index = KotlinStandaloneDeclarationIndexImpl()
+    val rawIndex = KotlinStandaloneDeclarationIndexImpl()
 
     val psiManager = PsiManager.getInstance(project)
     val cacheService = ApplicationManager.getApplication().serviceOrNull<KotlinFakeClsStubsCache>()
@@ -344,7 +344,7 @@ private fun computeIndex(
         }
 
         val stub = ktFile.forcedStub
-        index.indexStubRecursively(stub)
+        rawIndex.indexStubRecursively(stub)
     }
 
     // We only need to index binary roots if we deserialize compiled symbols from stubs. When deserializing from class files, we don't
@@ -395,43 +395,31 @@ private fun computeIndex(
             indexStubRecursively(IndexableFile(file.virtualFile, file, isShared = false))
         }
 
-        val astBasedIndexer = index.AstBasedIndexer()
+        val astBasedIndexer = rawIndex.AstBasedIndexer()
 
         sourceKtFiles.forEach { file ->
             if (!shouldBuildStubsForBinaryLibraries || !file.isCompiled) {
                 val stub = file.stub
                 if (stub != null) {
-                    index.indexStubRecursively(stub)
+                    rawIndex.indexStubRecursively(stub)
                 } else {
                     file.accept(astBasedIndexer)
                 }
             }
         }
 
-        return index
+        return rawIndex
     }
 
-    val lazyIndex = if (postponeIndexing) {
-        lazy(::buildIndex)
+    val initializedIndex = if (postponeIndexing) {
+        KotlinStandaloneLazyDeclarationIndexImpl(lazy(::buildIndex))
     } else {
-        lazyOf(buildIndex())
+        buildIndex()
     }
 
     return IndexData(
         fakeKtFiles = decompiledFilesFromBuiltins.map(IndexableFile::ktFile) + decompiledFilesFromBinaryRoots.map(IndexableFile::ktFile),
-        index = object : KotlinStandaloneDeclarationIndex {
-            private val computedIndex: KotlinStandaloneDeclarationIndexImpl get() = lazyIndex.value
-
-            override val facadeFileMap: Map<FqName, Set<KtFile>> get() = computedIndex.facadeFileMap
-            override val multiFileClassPartMap: Map<FqName, Set<KtFile>> get() = computedIndex.multiFileClassPartMap
-            override val scriptMap: Map<FqName, Set<KtScript>> get() = computedIndex.scriptMap
-            override val classMap: Map<FqName, Set<KtClassOrObject>> get() = computedIndex.classMap
-            override val typeAliasMap: Map<FqName, Set<KtTypeAlias>> get() = computedIndex.typeAliasMap
-            override val topLevelFunctionMap: Map<FqName, Set<KtNamedFunction>> get() = computedIndex.topLevelFunctionMap
-            override val topLevelPropertyMap: Map<FqName, Set<KtProperty>> get() = computedIndex.topLevelPropertyMap
-            override val classesBySupertypeName: Map<Name, Set<KtClassOrObject>> get() = computedIndex.classesBySupertypeName
-            override val inheritableTypeAliasesByAliasedName: Map<Name, Set<KtTypeAlias>> get() = computedIndex.inheritableTypeAliasesByAliasedName
-        },
+        index = initializedIndex,
     )
 }
 
