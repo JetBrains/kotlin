@@ -554,6 +554,18 @@ public class CustomJsCompilerSecondPhaseTestGenerated extends AbstractCustomJsCo
         }
 
         @Test
+        @TestMetadata("annotationAnnotationParam.kt")
+        public void testAnnotationAnnotationParam() {
+          runTest("compiler/testData/codegen/box/annotations/instances/annotationAnnotationParam.kt");
+        }
+
+        @Test
+        @TestMetadata("annotationAnyDispatch.kt")
+        public void testAnnotationAnyDispatch() {
+          runTest("compiler/testData/codegen/box/annotations/instances/annotationAnyDispatch.kt");
+        }
+
+        @Test
         @TestMetadata("annotationEnclosingName.kt")
         public void testAnnotationEnclosingName() {
           runTest("compiler/testData/codegen/box/annotations/instances/annotationEnclosingName.kt");
@@ -569,6 +581,12 @@ public class CustomJsCompilerSecondPhaseTestGenerated extends AbstractCustomJsCo
         @TestMetadata("annotationFromStdlib.kt")
         public void testAnnotationFromStdlib() {
           runTest("compiler/testData/codegen/box/annotations/instances/annotationFromStdlib.kt");
+        }
+
+        @Test
+        @TestMetadata("annotationInlineMultiModule.kt")
+        public void testAnnotationInlineMultiModule() {
+          runTest("compiler/testData/codegen/box/annotations/instances/annotationInlineMultiModule.kt");
         }
 
         @Test
@@ -608,6 +626,12 @@ public class CustomJsCompilerSecondPhaseTestGenerated extends AbstractCustomJsCo
         }
 
         @Test
+        @TestMetadata("annotationToStringDefaultsAndEmptyArrays.kt")
+        public void testAnnotationToStringDefaultsAndEmptyArrays() {
+          runTest("compiler/testData/codegen/box/annotations/instances/annotationToStringDefaultsAndEmptyArrays.kt");
+        }
+
+        @Test
         @TestMetadata("annotationType.kt")
         public void testAnnotationType() {
           runTest("compiler/testData/codegen/box/annotations/instances/annotationType.kt");
@@ -632,6 +656,42 @@ public class CustomJsCompilerSecondPhaseTestGenerated extends AbstractCustomJsCo
         }
 
         @Test
+        @TestMetadata("arrayContentEqAny.kt")
+        public void testArrayContentEqAny() {
+          runTest("compiler/testData/codegen/box/annotations/instances/arrayContentEqAny.kt");
+        }
+
+        @Test
+        @TestMetadata("arraysAndKClass.kt")
+        public void testArraysAndKClass() {
+          runTest("compiler/testData/codegen/box/annotations/instances/arraysAndKClass.kt");
+        }
+
+        @Test
+        @TestMetadata("differentAnnotationTypes.kt")
+        public void testDifferentAnnotationTypes() {
+          runTest("compiler/testData/codegen/box/annotations/instances/differentAnnotationTypes.kt");
+        }
+
+        @Test
+        @TestMetadata("differentOrder.kt")
+        public void testDifferentOrder() {
+          runTest("compiler/testData/codegen/box/annotations/instances/differentOrder.kt");
+        }
+
+        @Test
+        @TestMetadata("enumAndKClass.kt")
+        public void testEnumAndKClass() {
+          runTest("compiler/testData/codegen/box/annotations/instances/enumAndKClass.kt");
+        }
+
+        @Test
+        @TestMetadata("enumArray.kt")
+        public void testEnumArray() {
+          runTest("compiler/testData/codegen/box/annotations/instances/enumArray.kt");
+        }
+
+        @Test
         @TestMetadata("inInlineFunction.kt")
         public void testInInlineFunction() {
           runTest("compiler/testData/codegen/box/annotations/instances/inInlineFunction.kt");
@@ -641,6 +701,12 @@ public class CustomJsCompilerSecondPhaseTestGenerated extends AbstractCustomJsCo
         @TestMetadata("innerAnnotationInstantiation.kt")
         public void testInnerAnnotationInstantiation() {
           runTest("compiler/testData/codegen/box/annotations/instances/innerAnnotationInstantiation.kt");
+        }
+
+        @Test
+        @TestMetadata("instanceEquality.kt")
+        public void testInstanceEquality() {
+          runTest("compiler/testData/codegen/box/annotations/instances/instanceEquality.kt");
         }
 
         @Test
@@ -665,6 +731,12 @@ public class CustomJsCompilerSecondPhaseTestGenerated extends AbstractCustomJsCo
         @TestMetadata("kotlinExistingAnnotation.kt")
         public void testKotlinExistingAnnotation() {
           runTest("compiler/testData/codegen/box/annotations/instances/kotlinExistingAnnotation.kt");
+        }
+
+        @Test
+        @TestMetadata("mixedArray.kt")
+        public void testMixedArray() {
+          runTest("compiler/testData/codegen/box/annotations/instances/mixedArray.kt");
         }
 
         @Test
@@ -698,9 +770,27 @@ public class CustomJsCompilerSecondPhaseTestGenerated extends AbstractCustomJsCo
         }
 
         @Test
+        @TestMetadata("naNAndZero.kt")
+        public void testNaNAndZero() {
+          runTest("compiler/testData/codegen/box/annotations/instances/naNAndZero.kt");
+        }
+
+        @Test
+        @TestMetadata("nested.kt")
+        public void testNested() {
+          runTest("compiler/testData/codegen/box/annotations/instances/nested.kt");
+        }
+
+        @Test
         @TestMetadata("nestedAnnotationInstances.kt")
         public void testNestedAnnotationInstances() {
           runTest("compiler/testData/codegen/box/annotations/instances/nestedAnnotationInstances.kt");
+        }
+
+        @Test
+        @TestMetadata("nestedDefaults.kt")
+        public void testNestedDefaults() {
+          runTest("compiler/testData/codegen/box/annotations/instances/nestedDefaults.kt");
         }
 
         @Test
@@ -710,9 +800,33 @@ public class CustomJsCompilerSecondPhaseTestGenerated extends AbstractCustomJsCo
         }
 
         @Test
+        @TestMetadata("repeatableInstantiation.kt")
+        public void testRepeatableInstantiation() {
+          runTest("compiler/testData/codegen/box/annotations/instances/repeatableInstantiation.kt");
+        }
+
+        @Test
+        @TestMetadata("typeAliasesAndGenericsInterop.kt")
+        public void testTypeAliasesAndGenericsInterop() {
+          runTest("compiler/testData/codegen/box/annotations/instances/typeAliasesAndGenericsInterop.kt");
+        }
+
+        @Test
+        @TestMetadata("unsignedAndBooleanArrays.kt")
+        public void testUnsignedAndBooleanArrays() {
+          runTest("compiler/testData/codegen/box/annotations/instances/unsignedAndBooleanArrays.kt");
+        }
+
+        @Test
         @TestMetadata("varargInAnnotationParameterInstantiation.kt")
         public void testVarargInAnnotationParameterInstantiation() {
           runTest("compiler/testData/codegen/box/annotations/instances/varargInAnnotationParameterInstantiation.kt");
+        }
+
+        @Test
+        @TestMetadata("withDefaults.kt")
+        public void testWithDefaults() {
+          runTest("compiler/testData/codegen/box/annotations/instances/withDefaults.kt");
         }
       }
 
