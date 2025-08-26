@@ -214,13 +214,6 @@ public fun ENUM_entries_get(): kotlin.native.internal.NativePtr {
     return _result.objcPtr()
 }
 
-@ExportedBridge("ENUM_valueOf__TypesOfArguments__Swift_String__")
-public fun ENUM_valueOf__TypesOfArguments__Swift_String__(value: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
-    val __value = interpretObjCPointer<kotlin.String>(value)
-    val _result = ENUM.valueOf(__value)
-    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
-}
-
 @ExportedBridge("Foo_Companion_get")
 public fun Foo_Companion_get(): kotlin.native.internal.NativePtr {
     val _result = Foo.Companion

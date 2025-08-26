@@ -5,11 +5,26 @@ import KotlinRuntimeSupport
 import dep
 import flattened
 
-public enum EnumWithFactory: KotlinRuntimeSupport._KotlinBridgeable, Swift.CaseIterable {
+public enum EnumWithFactory: KotlinRuntimeSupport._KotlinBridgeable, Swift.CaseIterable, Swift.LosslessStringConvertible {
     case ONE
     public static var allCases: [main.EnumWithFactory] {
         get {
             return EnumWithFactory_entries_get() as! Swift.Array<main.EnumWithFactory>
+        }
+    }
+    public var description: Swift.String {
+        get {
+            switch self {
+            default: "ONE"
+            }
+        }
+    }
+    public init?(
+        _ description: Swift.String
+    ) {
+        switch description {
+        case "ONE": self = .ONE
+        default: return nil
         }
     }
     public init(
@@ -22,11 +37,6 @@ public enum EnumWithFactory: KotlinRuntimeSupport._KotlinBridgeable, Swift.CaseI
     }
     public func __externalRCRef() -> Swift.UnsafeMutableRawPointer! {
         return nil
-    }
-    public static func valueOf(
-        value: Swift.String
-    ) -> main.EnumWithFactory {
-        return main.EnumWithFactory(__externalRCRefUnsafe: EnumWithFactory_valueOf__TypesOfArguments__Swift_String__(value), options: .asBestFittingWrapper)
     }
 }
 public protocol InterfaceWithFactory: KotlinRuntime.KotlinBase {

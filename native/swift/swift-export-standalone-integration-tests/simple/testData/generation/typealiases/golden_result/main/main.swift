@@ -3,7 +3,7 @@
 import KotlinRuntime
 import KotlinRuntimeSupport
 
-public enum ENUM: KotlinRuntimeSupport._KotlinBridgeable, Swift.CaseIterable {
+public enum ENUM: KotlinRuntimeSupport._KotlinBridgeable, Swift.CaseIterable, Swift.LosslessStringConvertible {
     case A
     case B
     case C
@@ -26,6 +26,25 @@ public enum ENUM: KotlinRuntimeSupport._KotlinBridgeable, Swift.CaseIterable {
             return ENUM_entries_get() as! Swift.Array<main.ENUM>
         }
     }
+    public var description: Swift.String {
+        get {
+            switch self {
+            case .A: "A"
+            case .B: "B"
+            default: "C"
+            }
+        }
+    }
+    public init?(
+        _ description: Swift.String
+    ) {
+        switch description {
+        case "A": self = .A
+        case "B": self = .B
+        case "C": self = .C
+        default: return nil
+        }
+    }
     public init(
         __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer!,
         options: KotlinRuntime.KotlinBaseConstructionOptions
@@ -38,11 +57,6 @@ public enum ENUM: KotlinRuntimeSupport._KotlinBridgeable, Swift.CaseIterable {
     }
     public func __externalRCRef() -> Swift.UnsafeMutableRawPointer! {
         return nil
-    }
-    public static func valueOf(
-        value: Swift.String
-    ) -> main.ENUM {
-        return main.ENUM(__externalRCRefUnsafe: ENUM_valueOf__TypesOfArguments__Swift_String__(value), options: .asBestFittingWrapper)
     }
 }
 public typealias DefaultInteger = main.RegularInteger

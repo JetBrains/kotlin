@@ -622,11 +622,26 @@ extension ExportedKotlinPackages.namespace.deeper {
     }
 }
 extension ExportedKotlinPackages.ignored {
-    public enum ENUM: KotlinRuntimeSupport._KotlinBridgeable, Swift.CaseIterable {
+    public enum ENUM: KotlinRuntimeSupport._KotlinBridgeable, Swift.CaseIterable, Swift.LosslessStringConvertible {
         case A
         public static var allCases: [ExportedKotlinPackages.ignored.ENUM] {
             get {
                 return ignored_ENUM_entries_get() as! Swift.Array<ExportedKotlinPackages.ignored.ENUM>
+            }
+        }
+        public var description: Swift.String {
+            get {
+                switch self {
+                default: "A"
+                }
+            }
+        }
+        public init?(
+            _ description: Swift.String
+        ) {
+            switch description {
+            case "A": self = .A
+            default: return nil
             }
         }
         public init(
@@ -639,11 +654,6 @@ extension ExportedKotlinPackages.ignored {
         }
         public func __externalRCRef() -> Swift.UnsafeMutableRawPointer! {
             return nil
-        }
-        public static func valueOf(
-            value: Swift.String
-        ) -> ExportedKotlinPackages.ignored.ENUM {
-            return ExportedKotlinPackages.ignored.ENUM(__externalRCRefUnsafe: ignored_ENUM_valueOf__TypesOfArguments__Swift_String__(value), options: .asBestFittingWrapper)
         }
     }
     public static func produce_ENUM() -> ExportedKotlinPackages.ignored.ENUM {

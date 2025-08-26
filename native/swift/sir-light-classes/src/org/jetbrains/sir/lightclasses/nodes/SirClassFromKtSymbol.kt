@@ -13,7 +13,9 @@ import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.types.KaClassType
 import org.jetbrains.kotlin.sir.*
 import org.jetbrains.kotlin.sir.builder.buildFunctionCopy
+import org.jetbrains.kotlin.sir.builder.buildGetter
 import org.jetbrains.kotlin.sir.builder.buildInitCopy
+import org.jetbrains.kotlin.sir.builder.buildVariable
 import org.jetbrains.kotlin.sir.providers.SirSession
 import org.jetbrains.kotlin.sir.providers.extractDeclarations
 import org.jetbrains.kotlin.sir.providers.getSirParent
@@ -92,7 +94,7 @@ internal class SirEnumFromKtSymbol(
         (this@SirEnumFromKtSymbol.relocatedDeclarationNamePrefix() ?: "") + ktSymbol.sirDeclarationName()
     }
     override val protocols: List<SirProtocol> by lazyWithSessions {
-        listOf(KotlinRuntimeSupportModule.kotlinBridgeable, SirSwiftModule.caseIterable)
+        listOf(KotlinRuntimeSupportModule.kotlinBridgeable, SirSwiftModule.caseIterable, SirSwiftModule.losslessStringConvertible)
     }
     override var parent: SirDeclarationParent
         get() = withSessions {
@@ -116,6 +118,7 @@ internal class SirEnumFromKtSymbol(
     private fun syntheticDeclarations(): List<SirDeclaration> = listOf(
         kotlinBaseInitDeclaration(),
         kotlinBridgeableExternalRcRef(),
+        description(),
     )
 
     private fun kotlinBaseInitDeclaration(): SirDeclaration = buildInitCopy(KotlinRuntimeModule.kotlinBaseDesignatedInit) {
@@ -149,6 +152,28 @@ internal class SirEnumFromKtSymbol(
         body = SirFunctionBody(
             listOf("return nil")
         )
+    }.also { it.parent = this }
+
+    private fun description(): SirVariable = buildVariable {
+        name = "description"
+        type = SirNominalType(SirSwiftModule.string)
+        getter = buildGetter {
+            val caseSelector = if (cases.isEmpty()) {
+                "default: fatalError()"
+            } else cases.joinToString(separator = "\n                        ") {
+                val condition = if (it === cases.last()) "default" else "case .${it.name}"
+                "$condition: \"${it.name}\""
+            }
+            body = SirFunctionBody(
+                listOf(
+                    """
+                        switch self {
+                        $caseSelector
+                        }
+                    """.trimIndent()
+                )
+            )
+        }
     }.also { it.parent = this }
 
     private fun unsafeMutableRawPointerFlexibleType(): SirNominalType =

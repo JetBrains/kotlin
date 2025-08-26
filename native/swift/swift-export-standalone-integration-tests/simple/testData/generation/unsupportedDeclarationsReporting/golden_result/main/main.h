@@ -19,6 +19,4 @@ void __root___Foo_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPoint
 
 NSArray<id> * a_b_c_E_entries_get();
 
-void * a_b_c_E_valueOf__TypesOfArguments__Swift_String__(NSString * value);
-
 NS_ASSUME_NONNULL_END

@@ -7,8 +7,6 @@ int32_t ClassWithFactoryWithoutParameters_value_get(void * self);
 
 NSArray<id> * EnumWithFactory_entries_get();
 
-void * EnumWithFactory_valueOf__TypesOfArguments__Swift_String__(NSString * value);
-
 void * __root___ClassWithFactoryWithoutParameters();
 
 void * __root___ClassWithFactoryWithoutParameters_init_allocate();
