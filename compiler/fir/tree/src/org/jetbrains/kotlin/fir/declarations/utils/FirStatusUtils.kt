@@ -60,7 +60,7 @@ inline val FirMemberDeclaration.isFromEnumClass: Boolean get() = status.isFromEn
 inline val FirMemberDeclaration.isFun: Boolean get() = status.isFun
 inline val FirMemberDeclaration.hasStableParameterNames: Boolean get() = status.hasStableParameterNames
 
-inline val FirClassLikeDeclaration.isLocal: Boolean get() = symbol.classId.isLocal
+inline val FirClassLikeDeclaration.isLocal: Boolean get() = visibility == Visibilities.Local
 
 fun FirDeclaration?.isLocalClassOrAnonymousObject(): Boolean = ((this as? FirRegularClass)?.isLocal == true) || this is FirAnonymousObject
 fun FirBasedSymbol<*>?.isLocalClassOrAnonymousObject(): Boolean = this?.fir.isLocalClassOrAnonymousObject()
