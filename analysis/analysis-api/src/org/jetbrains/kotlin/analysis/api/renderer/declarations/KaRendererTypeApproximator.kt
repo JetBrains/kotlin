@@ -21,7 +21,7 @@ public interface KaRendererTypeApproximator {
         @OptIn(KaExperimentalApi::class)
         override fun approximateType(analysisSession: KaSession, type: KaType, position: Variance): KaType {
             with(analysisSession) {
-                val effectiveType = type.enhancedType ?: type
+                val effectiveType = type.augmentedByWarningLevelAnnotations
 
                 return when (position) {
                     Variance.INVARIANT -> effectiveType
