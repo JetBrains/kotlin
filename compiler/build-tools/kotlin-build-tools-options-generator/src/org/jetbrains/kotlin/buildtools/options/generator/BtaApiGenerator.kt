@@ -140,6 +140,9 @@ internal class BtaApiGenerator(
     ) {
         if (removedVersion != null && removedVersion <= kotlinVersion) {
             annotation(ClassName(API_PACKAGE, "RemovedCompilerArgument")) {}
+            if (wasDeprecatedInVersion != null) {
+                addKdoc("\n\nDeprecated in Kotlin version ${wasDeprecatedInVersion.releaseName}.")
+            }
             addKdoc("\n\nRemoved in Kotlin version ${removedVersion.releaseName}.")
         } else if (wasDeprecatedInVersion != null) {
             addKdoc("\n\nDeprecated in Kotlin version ${wasDeprecatedInVersion.releaseName}.")
