@@ -10,6 +10,7 @@ import org.gradle.api.file.FileSystemOperations
 import org.gradle.api.logging.Logging
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
+import org.gradle.api.provider.Provider
 import org.gradle.workers.WorkAction
 import org.gradle.workers.WorkParameters
 import org.gradle.workers.WorkQueue
@@ -30,7 +31,7 @@ internal class GradleCompilerRunnerWithWorkers(
     compilerExecutionSettings: CompilerExecutionSettings,
     buildMetrics: BuildMetricsReporter<BuildTimeMetric, BuildPerformanceMetric>,
     private val workerExecutor: WorkerExecutor,
-    fusMetricsConsumer: StatisticsValuesConsumer?,
+    fusMetricsConsumer: Provider<StatisticsValuesConsumer>,
 ) : GradleCompilerRunner(taskProvider, jdkToolsJar, compilerExecutionSettings, buildMetrics, fusMetricsConsumer) {
     override fun runCompilerAsync(
         workArgs: GradleKotlinCompilerWorkArguments,

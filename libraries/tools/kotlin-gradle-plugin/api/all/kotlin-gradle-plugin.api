@@ -1719,7 +1719,6 @@ public abstract class org/jetbrains/kotlin/gradle/plugin/statistics/BuildFusServ
 }
 
 public final class org/jetbrains/kotlin/gradle/plugin/statistics/BuildFusService$Companion {
-	public final fun registerIfAbsent (Lorg/gradle/api/Project;Ljava/lang/String;Lorg/gradle/api/provider/Provider;)Lorg/gradle/api/provider/Provider;
 }
 
 public abstract interface class org/jetbrains/kotlin/gradle/plugin/statistics/BuildFusService$Parameters : org/gradle/api/services/BuildServiceParameters {

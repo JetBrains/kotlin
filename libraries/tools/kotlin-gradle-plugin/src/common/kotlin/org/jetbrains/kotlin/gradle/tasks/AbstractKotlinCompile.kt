@@ -206,7 +206,7 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> @Inject constr
                                     buildFinishedListenerService,
                                     buildIdService,
                                     buildSessionService,
-                                    buildFusService.orNull?.getFusMetricsConsumer(),
+                                    buildFusService.map { it?.getFusMetricsConsumer() },
                                     this
                                 )
                             }
