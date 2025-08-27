@@ -60,12 +60,12 @@ FILE: [ResolvedTo(IMPORTS)] contextParameters.kt
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] contextParameters.kt
-    context([ResolvedTo(BODY_RESOLVE)] <unused var>: R|kotlin/String|)
+    context([ResolvedTo(BODY_RESOLVE)] [UnnamedContextParameterNameKey=$context-String] <unused var>: R|kotlin/String|)
     public final [ResolvedTo(BODY_RESOLVE)] fun foo(): R|kotlin/Unit| {
     }
 
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] contextParameters.kt
-    context([ResolvedTo(BODY_RESOLVE)] <unused var>: R|kotlin/String|)
+    context([ResolvedTo(BODY_RESOLVE)] [UnnamedContextParameterNameKey=$context-String] <unused var>: R|kotlin/String|)
     public final [ResolvedTo(BODY_RESOLVE)] fun foo(): R|kotlin/Unit| {
     }

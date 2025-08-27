@@ -11,13 +11,20 @@ class Ctx2 {
     fun boo(x: Int) = 10 + x
 }
 
+class Ctx3 {
+    fun coo() = 100
+}
 
-context(ctx2: Ctx2, ctx1: Ctx1)
-fun bar(x: Int) = ctx2.boo(x) + ctx1.foo()
+interface Ctx4
+
+context(ctx2: Ctx2, ctx1: Ctx1, ctx3: Ctx3, ctx4: Ctx4)
+fun bar(x: Int) = ctx2.boo(x) + ctx1.foo() + ctx3.coo()
 
 context(_: Ctx1, _: Ctx2)
 fun check(x: Int) {
-    <caret_context>bar(x)
+    context(Ctx3(), object: Ctx4 {}) {
+        <caret_context>bar(x)
+    }
 }
 
 fun main() {

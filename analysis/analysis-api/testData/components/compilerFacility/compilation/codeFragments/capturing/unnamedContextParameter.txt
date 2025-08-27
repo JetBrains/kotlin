@@ -1,5 +1,6 @@
 public final class CodeFragment {
     // source: 'fragment.kt'
+    inner (anonymous) class ContextParameterKt$check$1
     public method <init>(): void
-    public final static method run(p0: Ctx2, p1: Ctx1, p2: int): int
+    public final static method run(p0: Ctx2, p1: Ctx1, p2: Ctx3, p3: ContextParameterKt$check$1, p4: int): int
 }

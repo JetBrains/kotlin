@@ -195,6 +195,8 @@ open class FirDeclarationsResolveTransformer(
                     property.transformReceiverParameter(transformer, ResolutionMode.ContextIndependent)
                     property.transformContextParameters(transformer, ResolutionMode.ContextIndependent)
                     doTransformTypeParameters(property)
+
+                    property.setUnnamedContextParameterNames()
                 }
 
                 // TODO: the [skipCleanup] hack should be reverted on fixing KT-79107
@@ -1063,6 +1065,8 @@ open class FirDeclarationsResolveTransformer(
                 .transformContextParameters(this, ResolutionMode.ContextIndependent)
                 .transformValueParameters(this, ResolutionMode.ContextIndependent)
                 .transformAnnotations(this, ResolutionMode.ContextIndependent)
+
+            function.setUnnamedContextParameterNames()
         }
 
         if (!bodyResolved) {
@@ -1311,6 +1315,7 @@ open class FirDeclarationsResolveTransformer(
 
         lambda = lambda.transformValueParameters(ImplicitToErrorTypeTransformer, null)
         lambda = lambda.transformContextParameters(ImplicitToErrorTypeTransformer, null)
+        lambda.setUnnamedContextParameterNames()
 
         val initialReturnTypeRef = lambda.returnTypeRef as? FirResolvedTypeRef
         val expectedReturnTypeRef = initialReturnTypeRef
