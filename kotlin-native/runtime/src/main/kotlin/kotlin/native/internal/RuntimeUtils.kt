@@ -14,6 +14,7 @@ import kotlin.concurrent.atomics.AtomicReference
 import kotlin.concurrent.atomics.ExperimentalAtomicApi
 import kotlinx.cinterop.*
 import kotlinx.cinterop.NativePtr
+import kotlin.internal.UsedFromCompilerGeneratedCode
 import kotlin.native.internal.escapeAnalysis.Escapes
 
 @ExportForCppRuntime
@@ -79,12 +80,14 @@ internal fun ThrowNoWhenBranchMatchedException(): Nothing {
 }
 
 // TODO KT-79334: Drop this fun after bootstrap update, and use `kotlin.internal.throwUninitializedPropertyAccessException` instead
+@UsedFromCompilerGeneratedCode
 @PublishedApi
 internal fun ThrowUninitializedPropertyAccessException(propertyName: String): Nothing {
     kotlin.internal.throwUninitializedPropertyAccessException(propertyName)
 }
 
 // TODO KT-79334: Drop this fun after bootstrap update, and use `kotlin.internal.throwUnsupportedOperationException` instead
+@UsedFromCompilerGeneratedCode
 @PublishedApi
 internal fun ThrowUnsupportedOperationException(message: String): Nothing {
     kotlin.internal.throwUnsupportedOperationException(message)
