@@ -161,23 +161,35 @@ private class CirTreeSerializationVisitor(
             nestedClass
         }
 
+        // `protected` members are prohibited inside final expect classes, as they can't be accessed.
+        fun <T> T.takeIfNeeded(visibility: Visibility): T? = when {
+            cirClass.modality == org.jetbrains.kotlin.descriptors.Modality.FINAL && visibility == Visibility.PROTECTED -> null
+            else -> this
+        }
+
         val nestedConstructors: Collection<KmConstructor> = node.constructors.mapNotNull { (constructorKey, constructorNode) ->
             val constructorContext = classContext.callableMemberContext(DEFAULT_CONSTRUCTOR_NAME, classTypeParametersCount)
-            val constructor: KmConstructor = constructorNode.accept(this, constructorContext)?.cast() ?: return@mapNotNull null
+            val constructor: KmConstructor = (constructorNode.accept(this, constructorContext) as? KmConstructor)
+                ?.let { it.takeIfNeeded(it.visibility) }
+                ?: return@mapNotNull null
             statsCollector?.logClassConstructor(constructor, constructorContext, constructorKey)
             constructor
         }
 
         val nestedFunctions: Collection<KmFunction> = node.functions.mapNotNull { (functionKey, functionNode) ->
             val functionContext = classContext.callableMemberContext(functionKey.name, classTypeParametersCount)
-            val function: KmFunction = functionNode.accept(this, functionContext)?.cast() ?: return@mapNotNull null
+            val function: KmFunction = (functionNode.accept(this, functionContext) as? KmFunction)
+                ?.let { it.takeIfNeeded(it.visibility) }
+                ?: return@mapNotNull null
             statsCollector?.logFunction(function, functionContext, functionKey)
             function
         }
 
         val nestedProperties: Collection<KmProperty> = node.properties.mapNotNull { (propertyKey, propertyNode) ->
             val propertyContext = classContext.callableMemberContext(propertyKey.name, classTypeParametersCount)
-            val property: KmProperty = propertyNode.accept(this, propertyContext)?.cast() ?: return@mapNotNull null
+            val property: KmProperty = (propertyNode.accept(this, propertyContext) as? KmProperty)
+                ?.let { it.takeIfNeeded(it.visibility) }
+                ?: return@mapNotNull null
             statsCollector?.logProperty(propertyContext, propertyKey, propertyNode)
             property
         }
