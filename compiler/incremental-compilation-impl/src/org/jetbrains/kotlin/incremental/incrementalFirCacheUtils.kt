@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -9,37 +9,41 @@ import org.jetbrains.kotlin.backend.common.pop
 import org.jetbrains.kotlin.backend.common.push
 import org.jetbrains.kotlin.backend.jvm.metadata.MetadataSerializer
 import org.jetbrains.kotlin.build.report.ICReporter
+import org.jetbrains.kotlin.cli.pipeline.jvm.JvmFrontendPipelineArtifact
 import org.jetbrains.kotlin.codegen.serialization.JvmSerializationBindings
-import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.moduleName
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.backend.FirMetadataSource
 import org.jetbrains.kotlin.fir.backend.jvm.makeLocalFirMetadataSerializerForMetadataSource
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.classId
-import org.jetbrains.kotlin.fir.pipeline.FirResult
 import org.jetbrains.kotlin.fir.pipeline.ModuleCompilerAnalyzedOutput
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.renderWithType
 import org.jetbrains.kotlin.fir.scopes.jvm.computeJvmDescriptor
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.metadata.ProtoBuf
+import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.modules.TargetId
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.org.objectweb.asm.commons.Method
 import java.io.File
 
-internal fun collectNewDirtySources(
-    analysisResults: FirResult,
-    targetId: TargetId,
-    configuration: CompilerConfiguration,
+internal fun collectNewDirtySourcesFromFirResult(
+    phaseArtifact: JvmFrontendPipelineArtifact,
     caches: IncrementalJvmCachesManager,
-    alreadyCompiledSources: Set<File>,
-    reporter: ICReporter
+    reporter: ICReporter,
+    alreadyCompiledSources: Set<File>
 ): LinkedHashSet<File> {
     val changesCollector = ChangesCollector()
     val globalSerializationBindings = JvmSerializationBindings()
 
     fun visitFirFiles(analyzedOutput: ModuleCompilerAnalyzedOutput) {
+        val targetId: TargetId = run { //TODO(emazhukin) this feels like an abstraction level breakage
+            val moduleName = phaseArtifact.configuration.moduleName ?: JvmProtoBufUtil.DEFAULT_MODULE_NAME
+            TargetId(moduleName, "java-production") // TODO: get rid of magic constant // is it even worth getting rid of?
+        }
+
         for (file in analyzedOutput.fir) {
             println("fir runner diff - iteration: ${file.name}")
             file.accept(object : FirVisitor<Unit, MutableList<MetadataSerializer>>() {
@@ -56,7 +60,7 @@ internal fun collectNewDirtySources(
                         globalSerializationBindings,
                         data.lastOrNull(),
                         targetId,
-                        configuration,
+                        phaseArtifact.configuration,
                         actualizedExpectDeclarations = null //TODO(emazhukin) disable fir runner in kmp to skip a nasty new pile of test cases?
                     )
                     data.push(serializer)
@@ -149,7 +153,7 @@ internal fun collectNewDirtySources(
 //            }
 //        }"
 //    )
-    for (output in analysisResults.outputs) {
+    for (output in phaseArtifact.result.outputs) {
         println("fir runner diff - output batch - ${output.session.kind}")
         visitFirFiles(output)
     }
@@ -162,6 +166,7 @@ internal fun collectNewDirtySources(
     //println("fir runner diff - dirtyClassFqNames: ${dirtyClassFqNames.joinToString(",")}")
     //println("fir runner diff - forceRecompile: ${forceRecompile.joinToString(",")}")
 
+    // TODO(emazhukin) hey Dmitry, this is yet another version of "force to recompile" in IC :melting_face:
     val forceToRecompileFiles = mapClassesFqNamesToFiles(listOf(caches.platformCache), forceRecompile, reporter)
     //println("fir runner diff - forceToRecompileFiles: ${forceToRecompileFiles.joinToString(",")}")
 

@@ -27,6 +27,46 @@ private class CompositePhase<Context : LoggingContext, Input, Output>(
         phases.flatMap { it.getNamedSubphases(startDepth) }
 }
 
+// used for building dynamic pipelines, where phases can repeat in a non trivial way
+interface JvmPhaseCoordinator <Context : LoggingContext> {
+    //TODO(emazhukin) mixing generics with inheritance.. there should be a nice way to implement the thing
+    fun nextPhaseOrEnd(
+        lastPhase: CompilerPhase<Context, Any?, Any?>?,
+        mutableInput: Any?,
+        phaseOutput: Any?
+    ): CompilerPhase<Context, Any?, Any?>?
+}
+
+//TODO(emazhukin) move all dynamic pipeline stuff into FirRunner sourcefile?
+class DynamicCompositePhase<Context : LoggingContext, Input, Output>(
+    private val coordinator: JvmPhaseCoordinator<Context>
+) : CompilerPhase<Context, Input, Output> {
+
+    override fun invoke(phaseConfig: PhaseConfig, phaserState: PhaserState, context: Context, input: Input): Output {
+        var nextPhase = coordinator.nextPhaseOrEnd(null, null, null)
+        var previousOut: Any? = input
+        var previousPhase: CompilerPhase<Context, Any?, Any?>? = null
+        var recentOut: Any? = null
+        while (nextPhase != null) {
+            recentOut = nextPhase.invoke(phaseConfig, phaserState, context, previousOut)
+            nextPhase = coordinator.nextPhaseOrEnd(nextPhase, previousOut, recentOut)
+            if (nextPhase != previousPhase) {
+                previousPhase = nextPhase
+                previousOut = recentOut
+            }
+            // else we repeat the same phase with the previous phase's output as current phase input
+            // it only makes sense if execution of the phase modifies a mutable part of the input
+            // (so we could obtain a new result after doing the same thing)
+        }
+        @Suppress("UNCHECKED_CAST")
+        return recentOut as Output
+    }
+
+    override fun getNamedSubphases(startDepth: Int): List<Pair<Int, NamedCompilerPhase<Context, *, *>>> {
+        throw UnsupportedOperationException("in the dynamic pipeline list of phases may vary")
+    }
+}
+
 @Suppress("UNCHECKED_CAST")
 infix fun <Context : LoggingContext, Input, Mid, Output> CompilerPhase<Context, Input, Mid>.then(
     other: CompilerPhase<Context, Mid, Output>

@@ -19,13 +19,6 @@ import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.modules.TargetId
 
 @LegacyK2CliPipeline
-data class ModuleCompilerInput(
-    val targetId: TargetId,
-    val groupedSources: GroupedKtSources,
-    val configuration: CompilerConfiguration,
-)
-
-@LegacyK2CliPipeline
 data class ModuleCompilerEnvironment(
     val projectEnvironment: VfsBasedProjectEnvironment,
     val diagnosticsReporter: BaseDiagnosticsCollector

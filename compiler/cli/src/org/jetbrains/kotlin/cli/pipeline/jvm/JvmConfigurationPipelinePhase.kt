@@ -112,4 +112,11 @@ object JvmConfigurationUpdater : ConfigurationUpdater<K2JVMCompilerArguments>() 
         }
         configureSourceRoots(moduleChunk.modules, buildFile)
     }
+
+    //TODO(emazhukin): is this how we want to do this? with an opt-in annotation, perhaps?
+    //TODO(emazhukin) a separate question is firrunner with KMP, how is that supposed to work? "modules" here are referring to source sets, right?
+    //incremental configuration updates are sketchy..
+    public fun CompilerConfiguration.firRunnerHack_setupModuleChunk(arguments: K2JVMCompilerArguments) {
+        setupModuleChunk(arguments)
+    }
 }
