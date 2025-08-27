@@ -12653,6 +12653,12 @@ public class PhasedJvmDiagnosticLightTreeTestGenerated extends AbstractPhasedJvm
       }
 
       @Test
+      @TestMetadata("overrideOfDeprecatedInJavaInAnonymousObject.kt")
+      public void testOverrideOfDeprecatedInJavaInAnonymousObject() {
+        runTest("compiler/testData/diagnostics/tests/deprecated/overrideOfDeprecatedInJavaInAnonymousObject.kt");
+      }
+
+      @Test
       @TestMetadata("propertyUsage.kt")
       public void testPropertyUsage() {
         runTest("compiler/testData/diagnostics/tests/deprecated/propertyUsage.kt");
