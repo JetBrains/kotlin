@@ -38,7 +38,7 @@ import org.jetbrains.kotlin.serialization.deserialization.getClassId
 import org.jetbrains.kotlin.serialization.deserialization.getName
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 
-open class KotlinClsStubBuilder : ClsStubBuilder() {
+class KotlinClsStubBuilder : ClsStubBuilder() {
     override fun getStubVersion(): Int = KotlinStubVersions.CLASSFILE_STUB_VERSION
 
     override fun buildFileStub(content: FileContent): PsiFileStub<*>? {
