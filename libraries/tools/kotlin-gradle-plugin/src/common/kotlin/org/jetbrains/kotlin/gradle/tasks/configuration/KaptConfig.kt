@@ -9,7 +9,6 @@ package org.jetbrains.kotlin.gradle.tasks.configuration
 
 import org.gradle.api.Project
 import org.gradle.api.artifacts.type.ArtifactTypeDefinition
-import org.gradle.api.attributes.Attribute
 import org.gradle.api.file.FileCollection
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.TaskProvider
@@ -99,7 +98,7 @@ internal open class KaptConfig<TASK : KaptTask>(
             // the attributes that are potentially needed to resolve dependencies on MPP modules, and the classpath configuration does.
             classStructureConfiguration.dependencies.add(project.dependencies.create(project.files(project.provider { taskProvider.get().classpath })))
             classStructureConfiguration.incoming.artifactView { viewConfig ->
-                viewConfig.attributes.attribute(artifactType, CLASS_STRUCTURE_ARTIFACT_TYPE)
+                viewConfig.attributes.attribute(ArtifactTypeDefinition.ARTIFACT_TYPE_ATTRIBUTE, CLASS_STRUCTURE_ARTIFACT_TYPE)
             }.files
         } else null
     }
@@ -229,5 +228,3 @@ internal class KaptWithoutKotlincConfig : KaptConfig<KaptWithoutKotlincTask> {
         }
     }
 }
-
-private val artifactType = Attribute.of("artifactType", String::class.java)
