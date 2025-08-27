@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.common.ir.*
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationWithName
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationWithVisibility
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.IrDynamicType
@@ -27,6 +28,9 @@ import kotlin.reflect.KVisibility
 abstract class IrPreSerializationSymbolValidationHandler(testServices: TestServices) : AbstractIrHandler(testServices) {
     companion object {
         private val preSerializationAnnotation = FqName.fromSegments(listOf("kotlin", "internal", "UsedFromCompilerGeneratedCode"))
+        // TODO drop after KT-80226 is fixed. We should use a new marker here.
+        //  Also `DefaultConstructorMarker` should be moved to the backend symbols.
+        private val excludeList = listOf("DefaultConstructorMarker")
     }
 
     abstract fun getSymbols(irBuiltIns: IrBuiltIns): PreSerializationSymbols
@@ -67,6 +71,7 @@ abstract class IrPreSerializationSymbolValidationHandler(testServices: TestServi
     }
 
     private fun validateVisibility(declaration: IrDeclarationWithVisibility, symbolsClass: KClass<out PreSerializationSymbols>) {
+        if (declaration is IrDeclarationWithName && declaration.name.asString() in excludeList) return
         if (declaration.visibility == DescriptorVisibilities.INTERNAL) {
             require(declaration.isPublishedApi()) {
                 "Internal API loaded from ${symbolsClass.qualifiedName} must have '@PublishedApi' annotation: ${declaration.render()}"
