@@ -5,56 +5,46 @@
 
 package org.jetbrains.kotlin.incremental
 
-import com.intellij.ide.highlighter.JavaFileType
-import com.intellij.openapi.util.Disposer
-import com.intellij.psi.PsiJavaModule
-import org.jetbrains.kotlin.KtIoFileSourceFile
-import org.jetbrains.kotlin.KtSourceFile
-import org.jetbrains.kotlin.KtVirtualFileSourceFile
-import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
-import org.jetbrains.kotlin.backend.jvm.JvmIrDeserializerImpl
+import org.jetbrains.kotlin.backend.common.phaser.JvmPhaseCoordinator
+import org.jetbrains.kotlin.backend.common.serialization.toIoFileOrNull
 import org.jetbrains.kotlin.build.DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS
 import org.jetbrains.kotlin.build.report.BuildReporter
 import org.jetbrains.kotlin.build.report.metrics.GradleBuildPerformanceMetric
 import org.jetbrains.kotlin.build.report.metrics.GradleBuildTime
+import org.jetbrains.kotlin.build.report.reportPerformanceData
 import org.jetbrains.kotlin.cli.common.*
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
-import org.jetbrains.kotlin.cli.common.config.addKotlinSourceRoot
-import org.jetbrains.kotlin.cli.common.config.kotlinSourceRoots
-import org.jetbrains.kotlin.cli.common.environment.setIdeaIoUseFallback
-import org.jetbrains.kotlin.cli.common.fir.reportToMessageCollector
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
-import org.jetbrains.kotlin.cli.common.messages.GroupingMessageCollector
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
-import org.jetbrains.kotlin.cli.common.modules.ModuleBuilder
 import org.jetbrains.kotlin.cli.jvm.*
-import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
-import org.jetbrains.kotlin.cli.jvm.compiler.findMainClass
-import org.jetbrains.kotlin.cli.jvm.compiler.forAllFiles
-import org.jetbrains.kotlin.cli.jvm.compiler.legacy.pipeline.*
-import org.jetbrains.kotlin.cli.jvm.compiler.writeOutputsIfNeeded
-import org.jetbrains.kotlin.cli.jvm.config.*
-import org.jetbrains.kotlin.cli.jvm.plugins.PluginCliParser
+import org.jetbrains.kotlin.cli.pipeline.ConfigurationPipelineArtifact
+import org.jetbrains.kotlin.cli.pipeline.PipelineContext
+import org.jetbrains.kotlin.cli.pipeline.jvm.JvmBackendPipelinePhase
+import org.jetbrains.kotlin.cli.pipeline.jvm.JvmCliPipeline
+import org.jetbrains.kotlin.cli.pipeline.jvm.JvmConfigurationPipelinePhase
+import org.jetbrains.kotlin.cli.pipeline.jvm.JvmConfigurationUpdater.firRunnerHack_setupModuleChunk
+import org.jetbrains.kotlin.cli.pipeline.jvm.JvmFir2IrPipelinePhase
+import org.jetbrains.kotlin.cli.pipeline.jvm.JvmFrontendPipelineArtifact
+import org.jetbrains.kotlin.cli.pipeline.jvm.JvmFrontendPipelinePhase
+import org.jetbrains.kotlin.cli.pipeline.jvm.JvmWriteOutputsPhase
 import org.jetbrains.kotlin.config.*
-import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
-import org.jetbrains.kotlin.fir.backend.jvm.JvmFir2IrExtensions
-import org.jetbrains.kotlin.fir.pipeline.FirResult
-import org.jetbrains.kotlin.fir.session.environment.AbstractProjectFileSearchScope
-import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
-import org.jetbrains.kotlin.incremental.components.ICFileMappingTracker
-import org.jetbrains.kotlin.incremental.components.InlineConstTracker
-import org.jetbrains.kotlin.incremental.components.LookupTracker
-import org.jetbrains.kotlin.load.java.JavaClassesTracker
-import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
-import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
-import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
-import org.jetbrains.kotlin.modules.TargetId
-import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.progress.CompilationCanceledException
-import org.jetbrains.kotlin.util.PhaseType
+import org.jetbrains.kotlin.config.phaser.CompilerPhase
 import java.io.File
 
-@OptIn(LegacyK2CliPipeline::class)
+/**
+ * The original FirRunner reused low-ish level details of Kotlin compiler to optimize scenarios
+ * where compilation scope can be safely expanded via Compiler Frontend rounds
+ *
+ * This version removes most optimizations, but heavily reuses the existing pipeline phases
+ * and allows for dirty set expansion between repeated frontend phases
+ *
+ * This is subject to discussion/design, one hypothesis is that FirRunner is useful for first round failures
+ * so they should be supported first and then optimization options should be considered
+ *
+ * Also, current implementation is very close to the "mainline" IncrementalJvmCompilerRunner,
+ * so there might be hope to fully switch to the FirJvm version (?) //TODO(emazhukin) speculation, citation needed, leading
+ *
+ * //TODO(emazhukin) what about the loss of `incrementalExcludesScope`, are they super important or not quite?
+ */
 open class IncrementalFirJvmCompilerRunner(
     workingDir: File,
     reporter: BuildReporter<GradleBuildTime, GradleBuildPerformanceMetric>,
@@ -70,7 +60,6 @@ open class IncrementalFirJvmCompilerRunner(
     kotlinSourceFilesExtensions,
     icFeatures,
 ) {
-
     override fun runCompiler(
         sourcesToCompile: List<File>,
         args: K2JVMCompilerArguments,
@@ -80,279 +69,106 @@ open class IncrementalFirJvmCompilerRunner(
         allSources: List<File>,
         isIncremental: Boolean
     ): Pair<ExitCode, Collection<File>> {
-//        val isIncremental = true // TODO
-        val collector = GroupingMessageCollector(messageCollector, args.allWarningsAsErrors, args.reportAllWarnings)
-        val allSourcesWithJava = allSources + args.javaSources()
-        // from K2JVMCompiler (~)
-        val moduleName = args.moduleName ?: JvmProtoBufUtil.DEFAULT_MODULE_NAME
-        val targetId = TargetId(moduleName, "java-production") // TODO: get rid of magic constant
-
-        val dirtySources = linkedSetOf<KtSourceFile>().apply { sourcesToCompile.forEach { add(KtIoFileSourceFile(it)) } }
-
-        // TODO: probably shoudl be passed along with sourcesToCompile
-        // TODO: file path normalization
-        val commonSources = args.commonSources?.mapTo(mutableSetOf(), ::File).orEmpty()
-
-        val exitCode = ExitCode.OK
-        val allCompiledSources = LinkedHashSet<File>()
-        val rootDisposable = Disposer.newDisposable("Disposable for ${IncrementalFirJvmCompilerRunner::class.simpleName}.runCompiler")
-
-        try {
-            // - configuration
-            val configuration = CompilerConfiguration().apply {
-
-                put(CLIConfigurationKeys.ORIGINAL_MESSAGE_COLLECTOR_KEY, messageCollector)
-                this.messageCollector = collector
-
-                setupCommonArguments(args) { MetadataVersion(*it) }
-
-                if (incrementalCompilationIsEnabled(args)) {
-                    putIfNotNull(CommonConfigurationKeys.LOOKUP_TRACKER, services[LookupTracker::class.java])
-
-                    putIfNotNull(CommonConfigurationKeys.EXPECT_ACTUAL_TRACKER, services[ExpectActualTracker::class.java])
-
-                    putIfNotNull(CommonConfigurationKeys.INLINE_CONST_TRACKER, services[InlineConstTracker::class.java])
-
-                    putIfNotNull(CommonConfigurationKeys.FILE_MAPPING_TRACKER, services[ICFileMappingTracker::class.java])
-
-                    putIfNotNull(
-                        JVMConfigurationKeys.INCREMENTAL_COMPILATION_COMPONENTS,
-                        services[IncrementalCompilationComponents::class.java]
-                    )
-
-                    putIfNotNull(ClassicFrontendSpecificJvmConfigurationKeys.JAVA_CLASSES_TRACKER, services[JavaClassesTracker::class.java])
-                }
-
-                setupJvmSpecificArguments(args)
-            }
-
-            val paths = computeKotlinPaths(collector, args)
-            if (collector.hasErrors()) return ExitCode.COMPILATION_ERROR to emptyList()
-
-            // -- plugins
-            val pluginClasspaths = args.pluginClasspaths?.toList() ?: emptyList()
-            val pluginOptions = args.pluginOptions?.toMutableList() ?: ArrayList()
-            val pluginConfigurations = args.pluginConfigurations?.toList() ?: emptyList()
-            val pluginOrderConstraints = args.pluginOrderConstraints?.toList() ?: emptyList()
-            // TODO: add scripting support when ready in FIR
-            val pluginLoadResult = PluginCliParser.loadPluginsSafe(
-                pluginClasspaths,
-                pluginOptions,
-                pluginConfigurations,
-                pluginOrderConstraints,
-                configuration,
-                rootDisposable
-            )
-            if (pluginLoadResult != ExitCode.OK) return pluginLoadResult to emptyList()
-            // -- /plugins
-
-            with(configuration) {
-                configureJavaModulesContentRoots(args)
-                configureStandardLibs(paths, args)
-                configureAdvancedJvmOptions(args)
-                configureKlibPaths(args)
-                configureJdkClasspathRoots()
-                configureJdkHome(args)
-
-                val destination = File(args.destination ?: ".")
-                if (destination.path.endsWith(".jar")) {
-                    put(JVMConfigurationKeys.OUTPUT_JAR, destination)
-                } else {
-                    put(JVMConfigurationKeys.OUTPUT_DIRECTORY, destination)
-                }
-                addAll(JVMConfigurationKeys.MODULES, listOf(ModuleBuilder(targetId.name, destination.path, targetId.type)))
-
-                configureBaseRoots(args)
-                configureSourceRootsFromSources(allSourcesWithJava, commonSources, args.javaPackagePrefix)
-            }
-            // - /configuration
-
-            setIdeaIoUseFallback()
-
-            // -AbstractProjectEnvironment-
-            val projectEnvironment =
-                createProjectEnvironment(configuration, rootDisposable, EnvironmentConfigFiles.JVM_CONFIG_FILES, messageCollector)
-
-            // -sources
-            val allPlatformSourceFiles = linkedSetOf<KtSourceFile>() // TODO: get from caller
-            val allCommonSourceFiles = linkedSetOf<KtSourceFile>()
-            val sourcesByModuleName = mutableMapOf<String, MutableSet<KtSourceFile>>()
-
-            configuration.kotlinSourceRoots.forAllFiles(configuration, projectEnvironment.project) { virtualFile, isCommon, hmppModule ->
-                val file = KtVirtualFileSourceFile(virtualFile)
-                if (isCommon) allCommonSourceFiles.add(file)
-                else allPlatformSourceFiles.add(file)
-                if (hmppModule != null) {
-                    sourcesByModuleName.getOrPut(hmppModule) { mutableSetOf() }.add(file)
+        val compiler = when {
+            !isIncremental -> K2JVMCompiler()
+            // in a non-incremental build, fir runner can't add any value
+            // an edge case is when a frontend compiler plugin generates symbols that should be used in compilation of this module
+            // but that sounds extremely ill-defined (and it would be caught by the outer ic loop) (right?)
+            else -> object : K2JVMCompiler() {
+                override fun doExecutePhased(
+                    arguments: K2JVMCompilerArguments,
+                    services: Services,
+                    basicMessageCollector: MessageCollector
+                ): ExitCode {
+                    return JvmCliPipeline(
+                        defaultPerformanceManager,
+                        FirRunnerPhaseCoordinator(caches, args)
+                    ).execute(arguments, services, basicMessageCollector)
                 }
             }
+        }
+        val freeArgsBackup = args.freeArgs.toList()
+        args.freeArgs += sourcesToCompile.map { it.absolutePath }
+        args.allowNoSourceFiles = true
+        val exitCode = compiler.exec(messageCollector, services, args)
+        // note that inside `exec` phase coordinator can further add sour
+        //TODO(emazhukin) consider catching PipelineStepException to deal with frontend errors by expanding the dirty set
+        val actualSourcesToCompile = if (args.freeArgs.size - sourcesToCompile.size == freeArgsBackup.size) {
+            sourcesToCompile // i.e. the compiler did not expand the dirty set during execution
+        } else {
+            args.freeArgs.subList(freeArgsBackup.size, args.freeArgs.size).map { File(it) }
+        }
+        args.freeArgs = freeArgsBackup
+        reporter.reportPerformanceData(compiler.defaultPerformanceManager.unitStats) //TODO(emazhukin) some metrics also can be inaccurate in firrunner, need to check
+        return exitCode to actualSourcesToCompile
+    }
 
-            val diagnosticsReporter = DiagnosticReporterFactory.createPendingReporter(messageCollector)
-            val performanceManager = configuration[CLIConfigurationKeys.PERF_MANAGER]
-            val compilerEnvironment = ModuleCompilerEnvironment(projectEnvironment, diagnosticsReporter)
+    private inner class FirRunnerPhaseCoordinator(
+        val caches: IncrementalJvmCachesManager,
+        val mutableArgs: K2JVMCompilerArguments
+    ) : JvmPhaseCoordinator<PipelineContext> {
+        private val alreadyCompiledByFrontendSources = mutableSetOf<File>()
 
-            performanceManager?.apply {
-                targetDescription = "${targetId.name}-${targetId.type}"
-                notifyPhaseFinished(PhaseType.Initialization)
-            }
+        override fun nextPhaseOrEnd(
+            lastPhase: CompilerPhase<PipelineContext, Any?, Any?>?,
+            mutableInput: Any?,
+            phaseOutput: Any?
+        ): CompilerPhase<PipelineContext, Any?, Any?>? {
+            @Suppress("UNCHECKED_CAST")
+            return when (lastPhase) {
+                null -> JvmConfigurationPipelinePhase
+                is JvmConfigurationPipelinePhase -> {
+                    // TODO if we need to back something up before the first frontend launch,
+                    // do it here
+                    JvmFrontendPipelinePhase
+                }
+                is JvmFrontendPipelinePhase -> {
+                    // this branch means that we've run the frontend once, and now we need to either move on to the next phase,
+                    // or run frontend again with a different dirtySet
 
-            // !! main class - maybe from cache?
-            var mainClassFqName: FqName? = null
+                    // the logic corresponds to the `firIncrementalCycle()` in the original FirRunner
 
-            val renderDiagnosticName = configuration.getBoolean(CLIConfigurationKeys.RENDER_DIAGNOSTIC_INTERNAL_NAME)
+                    //TODO!!!!!!!!!!!(emazhukin) must log the fir specific logic to understand what's going on there
+                    val firPipelineArtifact = phaseOutput as? JvmFrontendPipelineArtifact ?: return null // TODO check - error exit should look ok
+                    alreadyCompiledByFrontendSources.addAll(firPipelineArtifact.sourceFiles.mapNotNull { it.toIoFileOrNull() })
+                    val expandedDirtySources = collectNewDirtySourcesFromFirResult(firPipelineArtifact, caches, reporter, alreadyCompiledByFrontendSources)
+                    // note: it's always correct to pass alreadyCompiledByFrontendSources as excludes
+                    // with monotonous dirtySet, if no new files are added to dirtySet, it's the final round
+                    // and with non-monotonous dirtySet, this risky optimization is "in the name"
 
-            var incrementalExcludesScope: AbstractProjectFileSearchScope? = null
+                    //TODO(emazhukin) is frontend dirtyset allowed to not be monotonous? i.e. can we run frontend once per file max?
+                    // i bet we can not
+                    val dirtySetDiff = expandedDirtySources - alreadyCompiledByFrontendSources
+                    when (dirtySetDiff.size) {
+                        0 -> JvmFir2IrPipelinePhase
+                        else -> {
+                            val effectiveDirtySet = when (icFeatures.enableMonotonousIncrementalCompileSetExpansion) {
+                                true -> alreadyCompiledByFrontendSources + dirtySetDiff
+                                false -> dirtySetDiff
+                            }
+                            caches.platformCache.markDirty(effectiveDirtySet)
+                            caches.inputsCache.removeOutputForSourceFiles(effectiveDirtySet)
+                            firPipelineArtifact.environment.localFileSystem.refresh(false) //TODO(emazhukin) why is this required?
 
-            fun firIncrementalCycle(): FirResult? {
-                while (true) {
-                    val dirtySourcesByModuleName = sourcesByModuleName.mapValues { (_, sources) ->
-                        sources.filterTo(mutableSetOf()) { dirtySources.any { df -> df.path == it.path } }
-                    }
-                    val groupedSources = GroupedKtSources(
-                        commonSources = allCommonSourceFiles.filter { dirtySources.any { df -> df.path == it.path } },
-                        platformSources = allPlatformSourceFiles.filter { dirtySources.any { df -> df.path == it.path } },
-                        sourcesByModuleName = dirtySourcesByModuleName
-                    )
+                            // TODO(emazhukin) two options here:
+                            // A: add new dirty sources as freeArg, go back to phase 0 - safe & inefficient
+                            // B: add new dirty sources as freeArg, then force configuration updater to `setupModuleChunk`
+                            //    looks like it's the only usage of sources-to-compile in compiler, but idk
 
-                    @OptIn(IncrementalCompilationApi::class)
-                    val analysisResults = compileModuleToAnalyzedFirViaLightTreeIncrementally(
-                        projectEnvironment,
-                        messageCollector,
-                        configuration,
-                        ModuleCompilerInput(targetId, groupedSources, configuration),
-                        diagnosticsReporter,
-                        incrementalExcludesScope,
-                    )
+                            mutableArgs.freeArgs += dirtySetDiff.map { it.absolutePath }
+                            val frontendInput = mutableInput as? ConfigurationPipelineArtifact
+                                ?: error("unexpected branch: frontend was ran with wrong input ${mutableInput!!::class.java.name}")
+                            frontendInput.configuration.firRunnerHack_setupModuleChunk(mutableArgs)
 
-                    // TODO: consider what to do if many compilations find a main class
-                    if (mainClassFqName == null && configuration.get(JVMConfigurationKeys.OUTPUT_JAR) != null) {
-                        mainClassFqName = findMainClass(analysisResults.outputs.last().fir)
-                    }
-
-                    // TODO: switch the whole IC to KtSourceFile instead of FIle
-                    dirtySources.forEach {
-                        allCompiledSources.add(File(it.path!!))
-                    }
-
-                    if (diagnosticsReporter.hasErrors) {
-                        diagnosticsReporter.reportToMessageCollector(messageCollector, renderDiagnosticName)
-                        return null
-                    }
-
-                    val newDirtySources =
-                        collectNewDirtySources(analysisResults, targetId, configuration, caches, allCompiledSources, reporter)
-
-                    if (!isIncremental || newDirtySources.isEmpty()) return analysisResults
-
-                    caches.platformCache.markDirty(newDirtySources)
-                    val newDirtyFilesOutputsScope =
-                        projectEnvironment.getSearchScopeByIoFiles(caches.inputsCache.getOutputForSourceFiles(newDirtySources))
-                    incrementalExcludesScope = incrementalExcludesScope.let {
-                        when {
-                            newDirtyFilesOutputsScope.isEmpty -> it
-                            it == null || it.isEmpty -> newDirtyFilesOutputsScope
-                            else -> it + newDirtyFilesOutputsScope
+                            JvmFrontendPipelinePhase
                         }
                     }
-                    caches.inputsCache.removeOutputForSourceFiles(newDirtySources)
-                    newDirtySources.forEach {
-                        dirtySources.add(KtIoFileSourceFile(it))
-                    }
-                    projectEnvironment.localFileSystem.refresh(false)
                 }
-            }
-
-            val cycleResult = firIncrementalCycle() ?: return ExitCode.COMPILATION_ERROR to allCompiledSources
-
-            val extensions = JvmFir2IrExtensions(configuration, JvmIrDeserializerImpl())
-            val irGenerationExtensions = projectEnvironment.project.let { IrGenerationExtension.getInstances(it) }
-            val (irModuleFragment, components, pluginContext, irActualizedResult, _, symbolTable) = cycleResult.convertToIrAndActualizeForJvm(
-                extensions, configuration, compilerEnvironment.diagnosticsReporter, irGenerationExtensions,
-            )
-
-            val irInput = ModuleCompilerIrBackendInput(
-                targetId,
-                configuration,
-                extensions,
-                irModuleFragment,
-                components,
-                pluginContext,
-                irActualizedResult,
-                symbolTable,
-            )
-
-            val generationState = generateCodeFromIr(irInput, compilerEnvironment)
-
-            diagnosticsReporter.reportToMessageCollector(messageCollector, renderDiagnosticName)
-
-            writeOutputsIfNeeded(
-                projectEnvironment.project,
-                configuration,
-                messageCollector,
-                hasPendingErrors = false,
-                listOf(generationState),
-                mainClassFqName
-            )
-        } catch (e: CompilationCanceledException) {
-            collector.report(CompilerMessageSeverity.INFO, "Compilation was canceled", null)
-            return ExitCode.OK to allCompiledSources
-        } catch (e: RuntimeException) {
-            val cause = e.cause
-            if (cause is CompilationCanceledException) {
-                collector.report(CompilerMessageSeverity.INFO, "Compilation was canceled", null)
-                return ExitCode.OK to allCompiledSources
-            } else {
-                throw e
-            }
-        } finally {
-            collector.flush()
-            Disposer.dispose(rootDisposable)
-        }
-        return exitCode to allCompiledSources
-    }
-}
-
-
-private fun CompilerConfiguration.configureBaseRoots(args: K2JVMCompilerArguments) {
-
-    var isJava9Module = false
-    args.javaSourceRoots?.forEach {
-        val file = File(it)
-        val packagePrefix = args.javaPackagePrefix
-        addJavaSourceRoot(file, packagePrefix)
-        if (!isJava9Module && packagePrefix == null && (file.name == PsiJavaModule.MODULE_INFO_FILE ||
-                    (file.isDirectory && file.listFiles()?.any { it.name == PsiJavaModule.MODULE_INFO_FILE } == true))
-        ) {
-            isJava9Module = true
-        }
-    }
-
-    args.classpath?.split(File.pathSeparator)?.forEach { classpathRoot ->
-        add(
-            CLIConfigurationKeys.CONTENT_ROOTS,
-            if (isJava9Module) JvmModulePathRoot(File(classpathRoot)) else JvmClasspathRoot(File(classpathRoot))
-        )
-    }
-
-    // TODO: modularJdkRoot (now seems only processed from the build file
-}
-
-private fun CompilerConfiguration.configureSourceRootsFromSources(
-    allSources: Collection<File>, commonSources: Set<File>, javaPackagePrefix: String?
-) {
-    val hmppCliModuleStructure = get(CommonConfigurationKeys.HMPP_MODULE_STRUCTURE)
-    for (sourceFile in allSources) {
-        if (sourceFile.name.endsWith(JavaFileType.DOT_DEFAULT_EXTENSION)) {
-            addJavaSourceRoot(sourceFile, javaPackagePrefix)
-        } else {
-            val path = sourceFile.path
-            addKotlinSourceRoot(path, isCommon = sourceFile in commonSources, hmppCliModuleStructure?.getModuleNameForSource(path))
-
-            if (sourceFile.isDirectory) {
-                addJavaSourceRoot(sourceFile, javaPackagePrefix)
-            }
+                is JvmFir2IrPipelinePhase -> JvmBackendPipelinePhase
+                is JvmBackendPipelinePhase -> JvmWriteOutputsPhase
+                is JvmWriteOutputsPhase -> null
+                else -> error("unexpected branch: unknown jvm pipeline phase")
+            } as CompilerPhase<PipelineContext, Any?, Any?>?
         }
     }
 }
-
-private fun K2JVMCompilerArguments.javaSources(): List<File> = freeArgs.filter { it.endsWith(".java") }.map { File(it) }

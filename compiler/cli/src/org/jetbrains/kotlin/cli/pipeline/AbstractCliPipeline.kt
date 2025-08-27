@@ -65,7 +65,7 @@ abstract class AbstractCliPipeline<A : CommonCompilerArguments> {
         }
 
         return try {
-            val code = runPhasedPipeline(argumentsInput)
+            val code = runPhasedPipeline(argumentsInput) // TODO(local) this is the entry point of sorts
             performanceManager.notifyCompilationFinished()
             if (arguments.reportPerf) {
                 messageCollector.report(CompilerMessageSeverity.LOGGING, "PERF: " + performanceManager.getTargetInfo())
