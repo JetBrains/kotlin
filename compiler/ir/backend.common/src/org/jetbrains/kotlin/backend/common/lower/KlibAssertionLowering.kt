@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.backend.common.lower
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.LoweringContext
+import org.jetbrains.kotlin.backend.common.ir.PreSerializationNativeSymbols
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.irCall
@@ -36,7 +37,7 @@ import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
  * ```
  */
 abstract class KlibAssertionWrapperLowering(val context: LoweringContext) : FileLoweringPass {
-    private val asserts = context.symbols.asserts.toSet()
+    private val asserts = (context.symbols as PreSerializationNativeSymbols).asserts.toSet()
 
     protected abstract val isAssertionArgumentEvaluationEnabled: IrSimpleFunctionSymbol
 

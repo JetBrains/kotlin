@@ -104,7 +104,6 @@ abstract class BaseSymbolsImpl(protected val irBuiltIns: IrBuiltIns) {
 }
 
 interface PreSerializationSymbols {
-    val asserts: Iterable<IrSimpleFunctionSymbol>
     val arrays: List<IrClassSymbol>
 
     val throwUninitializedPropertyAccessException: IrSimpleFunctionSymbol
@@ -132,18 +131,8 @@ interface PreSerializationSymbols {
     }
 
     abstract class Impl(irBuiltIns: IrBuiltIns) : PreSerializationSymbols, BaseSymbolsImpl(irBuiltIns) {
-        override val asserts: Iterable<IrSimpleFunctionSymbol> = CallableIds.asserts.functionSymbols()
-
         override val arrays: List<IrClassSymbol>
             get() = irBuiltIns.primitiveTypesToPrimitiveArrays.values + irBuiltIns.unsignedTypesToUnsignedArrays.values + irBuiltIns.arrayClass
-
-        companion object {
-            private object CallableIds {
-                private val String.baseId: CallableId
-                    get() = CallableId(BASE_KOTLIN_PACKAGE, Name.identifier(this))
-                val asserts: CallableId = "assert".baseId
-            }
-        }
     }
 }
 
@@ -271,9 +260,12 @@ interface PreSerializationWasmSymbols : PreSerializationWebSymbols {
 }
 
 interface PreSerializationNativeSymbols : PreSerializationKlibSymbols {
+    val asserts: Iterable<IrSimpleFunctionSymbol>
     val isAssertionArgumentEvaluationEnabled: IrSimpleFunctionSymbol
 
     open class Impl(irBuiltIns: IrBuiltIns) : PreSerializationNativeSymbols, PreSerializationKlibSymbols.Impl(irBuiltIns) {
+        override val asserts: Iterable<IrSimpleFunctionSymbol> = CallableIds.asserts.functionSymbols()
+
         override val throwUninitializedPropertyAccessException: IrSimpleFunctionSymbol =
             CallableIds.throwUninitializedPropertyAccessException.functionSymbol()
         override val throwUnsupportedOperationException: IrSimpleFunctionSymbol =
@@ -309,6 +301,7 @@ interface PreSerializationNativeSymbols : PreSerializationKlibSymbols {
                 // Built-ins functions
                 private val String.builtInsCallableId: CallableId
                     get() = CallableId(StandardNames.BUILT_INS_PACKAGE_FQ_NAME, Name.identifier(this))
+                val asserts: CallableId = "assert".builtInsCallableId
                 val isAssertionArgumentEvaluationEnabled: CallableId = "isAssertionArgumentEvaluationEnabled".builtInsCallableId
             }
 
