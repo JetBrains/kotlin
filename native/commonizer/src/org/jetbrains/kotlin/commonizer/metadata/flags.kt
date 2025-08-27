@@ -94,10 +94,8 @@ internal fun KmTypeAlias.modifiersFrom(ct: CirTypeAlias) {
 private inline val CirHasAnnotations.hasAnnotations: Boolean
     get() = annotations.isNotEmpty()
 
-// Since 1.4.30 a special @JvmInline annotation is generated to distinguish JVM-inline from value classes.
-// This has an effect on class serialization: Every class with isValue == true automatically gets HAS_ANNOTATIONS flag.
 private inline val CirClass.hasAnnotations: Boolean
-    get() = annotations.isNotEmpty() || isValue
+    get() = annotations.isNotEmpty()
 
 private inline val CirProperty.hasAnnotations: Boolean
     get() = annotations.isNotEmpty() || backingFieldAnnotations.isNotEmpty() || delegateFieldAnnotations.isNotEmpty()
