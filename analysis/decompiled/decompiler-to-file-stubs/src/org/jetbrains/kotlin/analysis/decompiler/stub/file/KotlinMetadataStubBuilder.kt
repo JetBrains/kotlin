@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.analysis.decompiler.stub.file
 import com.intellij.openapi.fileTypes.FileType
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.compiled.ClsStubBuilder
-import com.intellij.psi.impl.compiled.ClassFileStubBuilder
 import com.intellij.psi.stubs.PsiFileStub
 import com.intellij.util.indexing.FileContent
 import org.jetbrains.kotlin.analysis.decompiler.psi.text.createIncompatibleMetadataVersionDecompiledText
@@ -26,13 +25,13 @@ import org.jetbrains.kotlin.serialization.deserialization.ProtoContainer
 import org.jetbrains.kotlin.serialization.deserialization.getClassId
 
 open class KotlinMetadataStubBuilder(
-    private val version: Int,
+    private val stubVersion: Int,
     private val fileType: FileType,
     private val serializerProtocol: () -> SerializerExtensionProtocol,
     private val readFile: (VirtualFile, ByteArray) -> FileWithMetadata?,
     val expectedBinaryVersion: () -> BinaryVersion,
 ) : ClsStubBuilder() {
-    override fun getStubVersion() = ClassFileStubBuilder.STUB_VERSION + version
+    override fun getStubVersion(): Int = stubVersion
 
     override fun buildFileStub(content: FileContent): PsiFileStub<*>? {
         val virtualFile = content.file

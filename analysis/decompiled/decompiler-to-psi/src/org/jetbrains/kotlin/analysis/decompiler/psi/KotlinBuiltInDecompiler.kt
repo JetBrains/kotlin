@@ -39,7 +39,7 @@ class KotlinBuiltInDecompiler : KotlinMetadataDecompiler<BuiltInsBinaryVersion>(
 private class KotlinBuiltInMetadataStubBuilder(
     readFile: (VirtualFile, ByteArray) -> FileWithMetadata?,
 ) : KotlinMetadataStubBuilder(
-    version = stubVersionForStubBuilderAndDecompiler,
+    stubVersion = stubVersionForStubBuilderAndDecompiler,
     fileType = KotlinBuiltInFileType,
     serializerProtocol = { BuiltInSerializerProtocol },
     readFile = readFile,
