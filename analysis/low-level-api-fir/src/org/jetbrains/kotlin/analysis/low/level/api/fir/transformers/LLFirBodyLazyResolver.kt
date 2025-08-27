@@ -13,24 +13,15 @@ import org.jetbrains.kotlin.KtPsiSourceElement
 import org.jetbrains.kotlin.KtRealSourceElementKind
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDesignation
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getResolutionFacade
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLFirPartialBodyResolveTarget
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLFirResolveTarget
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLPartialBodyResolveRequest
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLPartialBodyAnalysisResult
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLPartialBodyAnalysisSnapshot
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLPartialBodyAnalysisState
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.partialBodyAnalysisState
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.*
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.throwUnexpectedFirElementError
 import org.jetbrains.kotlin.analysis.low.level.api.fir.compile.codeFragmentScopeProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.LLFirDeclarationModificationService
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.LLFirPhaseUpdater
 import org.jetbrains.kotlin.analysis.low.level.api.fir.projectStructure.llFirModuleData
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.*
-import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.FirElementWithResolveState
-import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.isLocalMember
-import org.jetbrains.kotlin.fir.canHaveDeferredReturnTypeCalculation
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.getExplicitBackingField
 import org.jetbrains.kotlin.fir.declarations.utils.isNonLocal
@@ -39,7 +30,6 @@ import org.jetbrains.kotlin.fir.expressions.builder.buildLazyDelegatedConstructo
 import org.jetbrains.kotlin.fir.expressions.builder.buildMultiDelegatedConstructorCall
 import org.jetbrains.kotlin.fir.expressions.impl.FirContractCallBlock
 import org.jetbrains.kotlin.fir.expressions.impl.FirLazyDelegatedConstructorCall
-import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.FirSuperReference
 import org.jetbrains.kotlin.fir.references.FirThisReference
@@ -53,18 +43,9 @@ import org.jetbrains.kotlin.fir.resolve.codeFragmentContext
 import org.jetbrains.kotlin.fir.resolve.dfa.FirControlFlowGraphReferenceImpl
 import org.jetbrains.kotlin.fir.resolve.dfa.RealVariable
 import org.jetbrains.kotlin.fir.resolve.dfa.SnapshotFirMapper
-import org.jetbrains.kotlin.fir.resolve.dfa.cfg.CfgInternals
-import org.jetbrains.kotlin.fir.resolve.dfa.cfg.ControlFlowGraph
-import org.jetbrains.kotlin.fir.resolve.dfa.cfg.isUsedInControlFlowGraphBuilderForClass
-import org.jetbrains.kotlin.fir.resolve.dfa.cfg.isUsedInControlFlowGraphBuilderForFile
-import org.jetbrains.kotlin.fir.resolve.dfa.cfg.isUsedInControlFlowGraphBuilderForScript
+import org.jetbrains.kotlin.fir.resolve.dfa.cfg.*
 import org.jetbrains.kotlin.fir.resolve.dfa.controlFlowGraph
-import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.BodyResolveContext
-import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirAbstractBodyResolveTransformerDispatcher
-import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirBodyResolveTransformer
-import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirDeclarationsResolveTransformer
-import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirExpressionsResolveTransformer
-import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.writeResultType
+import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.*
 import org.jetbrains.kotlin.fir.scopes.DelicateScopeAPI
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
@@ -83,6 +64,7 @@ import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
+import kotlin.reflect.KProperty1
 
 internal object LLFirBodyLazyResolver : LLFirLazyResolver(FirResolvePhase.BODY_RESOLVE) {
     override fun createTargetResolver(target: LLFirResolveTarget): LLFirTargetResolver = LLFirBodyTargetResolver(target)
@@ -572,18 +554,18 @@ private class FirPartialBodyExpressionResolveTransformer(
  *
  * This resolver:
  * - Transforms bodies of declarations.
- * - Builds [control flow graph][org.jetbrains.kotlin.fir.resolve.dfa.cfg.ControlFlowGraph].
+ * - Builds [control flow graph][ControlFlowGraph].
  *
  * Before the transformation, the resolver [recreates][BodyStateKeepers] all bodies
  * to prevent corrupted states due to [PCE][com.intellij.openapi.progress.ProcessCanceledException].
  *
  * Special rules:
  * - [FirFile] – All members which [isUsedInControlFlowGraphBuilderForFile] have
- *   to be resolved before the file to build correct [CFG][org.jetbrains.kotlin.fir.resolve.dfa.cfg.ControlFlowGraph].
+ *   to be resolved before the file to build correct [CFG][ControlFlowGraph].
  * - [FirScript] – All members which [isUsedInControlFlowGraphBuilderForScript] have
- *   to be resolved before the script to build correct [CFG][org.jetbrains.kotlin.fir.resolve.dfa.cfg.ControlFlowGraph].
+ *   to be resolved before the script to build correct [CFG][ControlFlowGraph].
  * - [FirRegularClass] – All members which [isUsedInControlFlowGraphBuilderForClass] have
- *   to be resolved before the class to build correct [CFG][org.jetbrains.kotlin.fir.resolve.dfa.cfg.ControlFlowGraph].
+ *   to be resolved before the class to build correct [CFG][ControlFlowGraph].
  *
  * @see BodyStateKeepers
  * @see FirBodyResolveTransformer
@@ -916,8 +898,13 @@ internal object BodyStateKeepers {
         builder.add(FirVariable::returnTypeRef, FirVariable::replaceReturnTypeRef)
 
         if (!isCallableWithSpecialBody(variable)) {
-            builder.add(FirVariable::initializerIfUnresolved, FirVariable::replaceInitializer, ::expressionGuard)
-            builder.add(FirVariable::delegateIfUnresolved, FirVariable::replaceDelegate, ::expressionGuard)
+            variable.initializerGetterIfUnresolved?.let {
+                builder.add(it, FirVariable::replaceInitializer, ::expressionGuard)
+            }
+
+            variable.delegateGetterIfUnresolved?.let {
+                builder.add(it, FirVariable::replaceDelegate, ::expressionGuard)
+            }
         }
     }
 
@@ -1046,17 +1033,11 @@ private val FirFunction.isCertainlyResolved: Boolean
         return body !is FirLazyBlock && body.isResolved
     }
 
-private val FirVariable.initializerIfUnresolved: FirExpression?
-    get() = when (this) {
-        is FirProperty -> if (bodyResolveState < FirPropertyBodyResolveState.INITIALIZER_RESOLVED) initializer else null
-        else -> initializer
-    }
+private val FirVariable.initializerGetterIfUnresolved: KProperty1<FirVariable, FirExpression?>?
+    get() = FirVariable::initializer.takeUnless { this is FirProperty && bodyResolveState >= FirPropertyBodyResolveState.INITIALIZER_RESOLVED }
 
-private val FirVariable.delegateIfUnresolved: FirExpression?
-    get() = when (this) {
-        is FirProperty -> if (bodyResolveState < FirPropertyBodyResolveState.ALL_BODIES_RESOLVED) delegate else null
-        else -> delegate
-    }
+private val FirVariable.delegateGetterIfUnresolved: KProperty1<FirVariable, FirExpression?>?
+    get() = FirVariable::delegate.takeUnless { this is FirProperty && bodyResolveState >= FirPropertyBodyResolveState.ALL_BODIES_RESOLVED }
 
 private val FirProperty.backingFieldIfUnresolved: FirBackingField?
     get() = if (bodyResolveState < FirPropertyBodyResolveState.INITIALIZER_RESOLVED) getExplicitBackingField() else null

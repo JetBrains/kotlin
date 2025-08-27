@@ -7,7 +7,7 @@ null
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] propertyWithBrokenGetter.kt
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] val foo: R|kotlin/Int|
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] val foo: R|kotlin/Int| = Int(1)
         public [ResolvedTo(ANNOTATION_ARGUMENTS)] get(): R|kotlin/Int| {
             [ResolvedTo(RAW_FIR)] lval t: broken.lib.Foo? = Null(null)
             t#?.{ $subj$.result# }
