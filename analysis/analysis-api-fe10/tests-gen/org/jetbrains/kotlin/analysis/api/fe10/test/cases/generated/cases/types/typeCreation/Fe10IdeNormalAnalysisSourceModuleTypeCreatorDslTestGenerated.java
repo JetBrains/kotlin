@@ -449,6 +449,106 @@ public class Fe10IdeNormalAnalysisSourceModuleTypeCreatorDslTestGenerated extend
   }
 
   @Nested
+  @TestMetadata("analysis/analysis-api/testData/types/typeCreation/byDsl/functionType")
+  @TestDataPath("$PROJECT_ROOT")
+  public class FunctionType {
+    @Test
+    public void testAllFilesPresentInFunctionType() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/types/typeCreation/byDsl/functionType"), Pattern.compile("^(.+)\\.kt$"), null, true);
+    }
+
+    @Test
+    @TestMetadata("basicFunWithIntReturnType.kt")
+    public void testBasicFunWithIntReturnType() {
+      runTest("analysis/analysis-api/testData/types/typeCreation/byDsl/functionType/basicFunWithIntReturnType.kt");
+    }
+
+    @Test
+    @TestMetadata("basicFunWithIntReturnTypeAndReceiver.kt")
+    public void testBasicFunWithIntReturnTypeAndReceiver() {
+      runTest("analysis/analysis-api/testData/types/typeCreation/byDsl/functionType/basicFunWithIntReturnTypeAndReceiver.kt");
+    }
+
+    @Test
+    @TestMetadata("basicNullableFunWithUserReturnType.kt")
+    public void testBasicNullableFunWithUserReturnType() {
+      runTest("analysis/analysis-api/testData/types/typeCreation/byDsl/functionType/basicNullableFunWithUserReturnType.kt");
+    }
+
+    @Test
+    @TestMetadata("fourIntValueParameters.kt")
+    public void testFourIntValueParameters() {
+      runTest("analysis/analysis-api/testData/types/typeCreation/byDsl/functionType/fourIntValueParameters.kt");
+    }
+
+    @Test
+    @TestMetadata("reflectAndSuspendWithDefaultValues.kt")
+    public void testReflectAndSuspendWithDefaultValues() {
+      runTest("analysis/analysis-api/testData/types/typeCreation/byDsl/functionType/reflectAndSuspendWithDefaultValues.kt");
+    }
+
+    @Test
+    @TestMetadata("reflectWithDefaultValues.kt")
+    public void testReflectWithDefaultValues() {
+      runTest("analysis/analysis-api/testData/types/typeCreation/byDsl/functionType/reflectWithDefaultValues.kt");
+    }
+
+    @Test
+    @TestMetadata("reflectWithSingleContextParameter.kt")
+    public void testReflectWithSingleContextParameter() {
+      runTest("analysis/analysis-api/testData/types/typeCreation/byDsl/functionType/reflectWithSingleContextParameter.kt");
+    }
+
+    @Test
+    @TestMetadata("reflectWithStringReceiver.kt")
+    public void testReflectWithStringReceiver() {
+      runTest("analysis/analysis-api/testData/types/typeCreation/byDsl/functionType/reflectWithStringReceiver.kt");
+    }
+
+    @Test
+    @TestMetadata("suspendWithDefaultValues.kt")
+    public void testSuspendWithDefaultValues() {
+      runTest("analysis/analysis-api/testData/types/typeCreation/byDsl/functionType/suspendWithDefaultValues.kt");
+    }
+
+    @Test
+    @TestMetadata("withAnnotation.kt")
+    public void testWithAnnotation() {
+      runTest("analysis/analysis-api/testData/types/typeCreation/byDsl/functionType/withAnnotation.kt");
+    }
+
+    @Test
+    @TestMetadata("withAnnotationReceiverAndContextParameter.kt")
+    public void testWithAnnotationReceiverAndContextParameter() {
+      runTest("analysis/analysis-api/testData/types/typeCreation/byDsl/functionType/withAnnotationReceiverAndContextParameter.kt");
+    }
+
+    @Test
+    @TestMetadata("withContextParameterReceiverAndValueParameter.kt")
+    public void testWithContextParameterReceiverAndValueParameter() {
+      runTest("analysis/analysis-api/testData/types/typeCreation/byDsl/functionType/withContextParameterReceiverAndValueParameter.kt");
+    }
+
+    @Test
+    @TestMetadata("withDefaultValues.kt")
+    public void testWithDefaultValues() {
+      runTest("analysis/analysis-api/testData/types/typeCreation/byDsl/functionType/withDefaultValues.kt");
+    }
+
+    @Test
+    @TestMetadata("withPluginAnnotation.kt")
+    public void testWithPluginAnnotation() {
+      runTest("analysis/analysis-api/testData/types/typeCreation/byDsl/functionType/withPluginAnnotation.kt");
+    }
+
+    @Test
+    @TestMetadata("withSingleContextParameter.kt")
+    public void testWithSingleContextParameter() {
+      runTest("analysis/analysis-api/testData/types/typeCreation/byDsl/functionType/withSingleContextParameter.kt");
+    }
+  }
+
+  @Nested
   @TestMetadata("analysis/analysis-api/testData/types/typeCreation/byDsl/intersectionType")
   @TestDataPath("$PROJECT_ROOT")
   public class IntersectionType {

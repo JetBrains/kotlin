@@ -1,0 +1,297 @@
+KaType
+KaFunctionType:
+  abbreviation: null
+  annotations: []
+  arity: 4
+  classId: kotlin/Function4
+  contextReceivers: []
+  hasContextReceivers: false
+  hasReceiver: false
+  isReflectType: false
+  isSuspend: false
+  parameterTypes: [
+    KaUsualClassType:
+      abbreviation: null
+      annotations: [
+        kotlin/ParameterName(name = "first")
+          psi: null
+      ]
+      classId: kotlin/Int
+      qualifiers: [
+        KaResolvedClassTypeQualifier:
+          name: Int
+          symbol: KaNamedClassSymbol(kotlin/Int)
+          typeArguments: []
+      ]
+      symbol: KaNamedClassSymbol(kotlin/Int)
+      typeArguments: []
+      isMarkedNullable: false
+      isNullable: false
+      hasFlexibleNullability: false
+    KaUsualClassType:
+      abbreviation: null
+      annotations: [
+        kotlin/ParameterName(name = "second")
+          psi: null
+      ]
+      classId: kotlin/Int
+      qualifiers: [
+        KaResolvedClassTypeQualifier:
+          name: Int
+          symbol: KaNamedClassSymbol(kotlin/Int)
+          typeArguments: []
+      ]
+      symbol: KaNamedClassSymbol(kotlin/Int)
+      typeArguments: []
+      isMarkedNullable: false
+      isNullable: false
+      hasFlexibleNullability: false
+    KaUsualClassType:
+      abbreviation: null
+      annotations: [
+        kotlin/ParameterName(name = "third")
+          psi: null
+      ]
+      classId: kotlin/Int
+      qualifiers: [
+        KaResolvedClassTypeQualifier:
+          name: Int
+          symbol: KaNamedClassSymbol(kotlin/Int)
+          typeArguments: []
+      ]
+      symbol: KaNamedClassSymbol(kotlin/Int)
+      typeArguments: []
+      isMarkedNullable: false
+      isNullable: false
+      hasFlexibleNullability: false
+    KaUsualClassType:
+      abbreviation: null
+      annotations: [
+        kotlin/ParameterName(name = "fourth")
+          psi: null
+      ]
+      classId: kotlin/Int
+      qualifiers: [
+        KaResolvedClassTypeQualifier:
+          name: Int
+          symbol: KaNamedClassSymbol(kotlin/Int)
+          typeArguments: []
+      ]
+      symbol: KaNamedClassSymbol(kotlin/Int)
+      typeArguments: []
+      isMarkedNullable: false
+      isNullable: false
+      hasFlexibleNullability: false
+  ]
+  parameters: [
+    KaBaseFunctionValueParameter [name: first, type: kotlin/Int]
+    KaBaseFunctionValueParameter [name: second, type: kotlin/Int]
+    KaBaseFunctionValueParameter [name: third, type: kotlin/Int]
+    KaBaseFunctionValueParameter [name: fourth, type: kotlin/Int]
+  ]
+  qualifiers: [
+    KaResolvedClassTypeQualifier:
+      name: Function4
+      symbol: KaNamedClassSymbol(kotlin/Function4)
+      typeArguments: [
+        KaUsualClassType:
+          abbreviation: null
+          annotations: [
+            kotlin/ParameterName(name = "first")
+              psi: null
+          ]
+          classId: kotlin/Int
+          qualifiers: [
+            KaResolvedClassTypeQualifier:
+              name: Int
+              symbol: KaNamedClassSymbol(kotlin/Int)
+              typeArguments: []
+          ]
+          symbol: KaNamedClassSymbol(kotlin/Int)
+          typeArguments: []
+          isMarkedNullable: false
+          isNullable: false
+          hasFlexibleNullability: false
+        KaUsualClassType:
+          abbreviation: null
+          annotations: [
+            kotlin/ParameterName(name = "second")
+              psi: null
+          ]
+          classId: kotlin/Int
+          qualifiers: [
+            KaResolvedClassTypeQualifier:
+              name: Int
+              symbol: KaNamedClassSymbol(kotlin/Int)
+              typeArguments: []
+          ]
+          symbol: KaNamedClassSymbol(kotlin/Int)
+          typeArguments: []
+          isMarkedNullable: false
+          isNullable: false
+          hasFlexibleNullability: false
+        KaUsualClassType:
+          abbreviation: null
+          annotations: [
+            kotlin/ParameterName(name = "third")
+              psi: null
+          ]
+          classId: kotlin/Int
+          qualifiers: [
+            KaResolvedClassTypeQualifier:
+              name: Int
+              symbol: KaNamedClassSymbol(kotlin/Int)
+              typeArguments: []
+          ]
+          symbol: KaNamedClassSymbol(kotlin/Int)
+          typeArguments: []
+          isMarkedNullable: false
+          isNullable: false
+          hasFlexibleNullability: false
+        KaUsualClassType:
+          abbreviation: null
+          annotations: [
+            kotlin/ParameterName(name = "fourth")
+              psi: null
+          ]
+          classId: kotlin/Int
+          qualifiers: [
+            KaResolvedClassTypeQualifier:
+              name: Int
+              symbol: KaNamedClassSymbol(kotlin/Int)
+              typeArguments: []
+          ]
+          symbol: KaNamedClassSymbol(kotlin/Int)
+          typeArguments: []
+          isMarkedNullable: false
+          isNullable: false
+          hasFlexibleNullability: false
+        KaUsualClassType:
+          abbreviation: null
+          annotations: []
+          classId: kotlin/Unit
+          qualifiers: [
+            KaResolvedClassTypeQualifier:
+              name: Unit
+              symbol: KaNamedClassSymbol(kotlin/Unit)
+              typeArguments: []
+          ]
+          symbol: KaNamedClassSymbol(kotlin/Unit)
+          typeArguments: []
+          isMarkedNullable: false
+          isNullable: false
+          hasFlexibleNullability: false
+      ]
+  ]
+  receiverType: null
+  returnType: KaUsualClassType:
+    abbreviation: null
+    annotations: []
+    classId: kotlin/Unit
+    qualifiers: [
+      KaResolvedClassTypeQualifier:
+        name: Unit
+        symbol: KaNamedClassSymbol(kotlin/Unit)
+        typeArguments: []
+    ]
+    symbol: KaNamedClassSymbol(kotlin/Unit)
+    typeArguments: []
+    isMarkedNullable: false
+    isNullable: false
+    hasFlexibleNullability: false
+  symbol: KaNamedClassSymbol(kotlin/Function4)
+  typeArguments: [
+    KaUsualClassType:
+      abbreviation: null
+      annotations: [
+        kotlin/ParameterName(name = "first")
+          psi: null
+      ]
+      classId: kotlin/Int
+      qualifiers: [
+        KaResolvedClassTypeQualifier:
+          name: Int
+          symbol: KaNamedClassSymbol(kotlin/Int)
+          typeArguments: []
+      ]
+      symbol: KaNamedClassSymbol(kotlin/Int)
+      typeArguments: []
+      isMarkedNullable: false
+      isNullable: false
+      hasFlexibleNullability: false
+    KaUsualClassType:
+      abbreviation: null
+      annotations: [
+        kotlin/ParameterName(name = "second")
+          psi: null
+      ]
+      classId: kotlin/Int
+      qualifiers: [
+        KaResolvedClassTypeQualifier:
+          name: Int
+          symbol: KaNamedClassSymbol(kotlin/Int)
+          typeArguments: []
+      ]
+      symbol: KaNamedClassSymbol(kotlin/Int)
+      typeArguments: []
+      isMarkedNullable: false
+      isNullable: false
+      hasFlexibleNullability: false
+    KaUsualClassType:
+      abbreviation: null
+      annotations: [
+        kotlin/ParameterName(name = "third")
+          psi: null
+      ]
+      classId: kotlin/Int
+      qualifiers: [
+        KaResolvedClassTypeQualifier:
+          name: Int
+          symbol: KaNamedClassSymbol(kotlin/Int)
+          typeArguments: []
+      ]
+      symbol: KaNamedClassSymbol(kotlin/Int)
+      typeArguments: []
+      isMarkedNullable: false
+      isNullable: false
+      hasFlexibleNullability: false
+    KaUsualClassType:
+      abbreviation: null
+      annotations: [
+        kotlin/ParameterName(name = "fourth")
+          psi: null
+      ]
+      classId: kotlin/Int
+      qualifiers: [
+        KaResolvedClassTypeQualifier:
+          name: Int
+          symbol: KaNamedClassSymbol(kotlin/Int)
+          typeArguments: []
+      ]
+      symbol: KaNamedClassSymbol(kotlin/Int)
+      typeArguments: []
+      isMarkedNullable: false
+      isNullable: false
+      hasFlexibleNullability: false
+    KaUsualClassType:
+      abbreviation: null
+      annotations: []
+      classId: kotlin/Unit
+      qualifiers: [
+        KaResolvedClassTypeQualifier:
+          name: Unit
+          symbol: KaNamedClassSymbol(kotlin/Unit)
+          typeArguments: []
+      ]
+      symbol: KaNamedClassSymbol(kotlin/Unit)
+      typeArguments: []
+      isMarkedNullable: false
+      isNullable: false
+      hasFlexibleNullability: false
+  ]
+  isMarkedNullable: false
+  isNullable: false
+  hasFlexibleNullability: false
+
+Rendered type:
+(first: kotlin.Int, second: kotlin.Int, third: kotlin.Int, fourth: kotlin.Int) -> kotlin.Unit

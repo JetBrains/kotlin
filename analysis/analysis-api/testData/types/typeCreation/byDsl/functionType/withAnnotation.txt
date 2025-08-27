@@ -1,0 +1,78 @@
+KaType
+KaFunctionType:
+  abbreviation: null
+  annotations: [
+    MyAnno()
+      psi: null
+  ]
+  arity: 0
+  classId: kotlin/Function0
+  contextReceivers: []
+  hasContextReceivers: false
+  hasReceiver: false
+  isReflectType: false
+  isSuspend: false
+  parameterTypes: []
+  parameters: []
+  qualifiers: [
+    KaResolvedClassTypeQualifier:
+      name: Function0
+      symbol: KaNamedClassSymbol(kotlin/Function0)
+      typeArguments: [
+        KaUsualClassType:
+          abbreviation: null
+          annotations: []
+          classId: kotlin/Unit
+          qualifiers: [
+            KaResolvedClassTypeQualifier:
+              name: Unit
+              symbol: KaNamedClassSymbol(kotlin/Unit)
+              typeArguments: []
+          ]
+          symbol: KaNamedClassSymbol(kotlin/Unit)
+          typeArguments: []
+          isMarkedNullable: false
+          isNullable: false
+          hasFlexibleNullability: false
+      ]
+  ]
+  receiverType: null
+  returnType: KaUsualClassType:
+    abbreviation: null
+    annotations: []
+    classId: kotlin/Unit
+    qualifiers: [
+      KaResolvedClassTypeQualifier:
+        name: Unit
+        symbol: KaNamedClassSymbol(kotlin/Unit)
+        typeArguments: []
+    ]
+    symbol: KaNamedClassSymbol(kotlin/Unit)
+    typeArguments: []
+    isMarkedNullable: false
+    isNullable: false
+    hasFlexibleNullability: false
+  symbol: KaNamedClassSymbol(kotlin/Function0)
+  typeArguments: [
+    KaUsualClassType:
+      abbreviation: null
+      annotations: []
+      classId: kotlin/Unit
+      qualifiers: [
+        KaResolvedClassTypeQualifier:
+          name: Unit
+          symbol: KaNamedClassSymbol(kotlin/Unit)
+          typeArguments: []
+      ]
+      symbol: KaNamedClassSymbol(kotlin/Unit)
+      typeArguments: []
+      isMarkedNullable: false
+      isNullable: false
+      hasFlexibleNullability: false
+  ]
+  isMarkedNullable: false
+  isNullable: false
+  hasFlexibleNullability: false
+
+Rendered type:
+@MyAnno (() -> kotlin.Unit)

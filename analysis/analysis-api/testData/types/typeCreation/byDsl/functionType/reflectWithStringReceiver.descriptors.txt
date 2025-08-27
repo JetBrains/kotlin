@@ -1,0 +1,124 @@
+KaType
+KaFunctionType:
+  abbreviation: null
+  annotations: []
+  arity: 1
+  classId: kotlin/reflect/KFunction1
+  contextReceivers: Could not render due to java.lang.AssertionError: Not a function type: [@kotlin.ExtensionFunctionType] KFunction1<String, Unit>
+
+  hasContextReceivers: false
+  hasReceiver: false
+  isReflectType: true
+  isSuspend: false
+  parameterTypes: [
+    KaUsualClassType:
+      abbreviation: null
+      annotations: []
+      classId: kotlin/String
+      qualifiers: [
+        KaResolvedClassTypeQualifier:
+          name: String
+          symbol: KaNamedClassSymbol(kotlin/String)
+          typeArguments: []
+      ]
+      symbol: KaNamedClassSymbol(kotlin/String)
+      typeArguments: []
+      isMarkedNullable: false
+      isNullable: false
+      hasFlexibleNullability: false
+  ]
+  parameters: [
+    KaBaseFunctionValueParameter [name: null, type: kotlin/String]
+  ]
+  qualifiers: [
+    KaResolvedClassTypeQualifier:
+      name: KFunction1
+      symbol: KaNamedClassSymbol(kotlin/reflect/KFunction1)
+      typeArguments: [
+        KaUsualClassType:
+          abbreviation: null
+          annotations: []
+          classId: kotlin/String
+          qualifiers: [
+            KaResolvedClassTypeQualifier:
+              name: String
+              symbol: KaNamedClassSymbol(kotlin/String)
+              typeArguments: []
+          ]
+          symbol: KaNamedClassSymbol(kotlin/String)
+          typeArguments: []
+          isMarkedNullable: false
+          isNullable: false
+          hasFlexibleNullability: false
+        KaUsualClassType:
+          abbreviation: null
+          annotations: []
+          classId: kotlin/Unit
+          qualifiers: [
+            KaResolvedClassTypeQualifier:
+              name: Unit
+              symbol: KaNamedClassSymbol(kotlin/Unit)
+              typeArguments: []
+          ]
+          symbol: KaNamedClassSymbol(kotlin/Unit)
+          typeArguments: []
+          isMarkedNullable: false
+          isNullable: false
+          hasFlexibleNullability: false
+      ]
+  ]
+  receiverType: null
+  returnType: KaUsualClassType:
+    abbreviation: null
+    annotations: []
+    classId: kotlin/Unit
+    qualifiers: [
+      KaResolvedClassTypeQualifier:
+        name: Unit
+        symbol: KaNamedClassSymbol(kotlin/Unit)
+        typeArguments: []
+    ]
+    symbol: KaNamedClassSymbol(kotlin/Unit)
+    typeArguments: []
+    isMarkedNullable: false
+    isNullable: false
+    hasFlexibleNullability: false
+  symbol: KaNamedClassSymbol(kotlin/reflect/KFunction1)
+  typeArguments: [
+    KaUsualClassType:
+      abbreviation: null
+      annotations: []
+      classId: kotlin/String
+      qualifiers: [
+        KaResolvedClassTypeQualifier:
+          name: String
+          symbol: KaNamedClassSymbol(kotlin/String)
+          typeArguments: []
+      ]
+      symbol: KaNamedClassSymbol(kotlin/String)
+      typeArguments: []
+      isMarkedNullable: false
+      isNullable: false
+      hasFlexibleNullability: false
+    KaUsualClassType:
+      abbreviation: null
+      annotations: []
+      classId: kotlin/Unit
+      qualifiers: [
+        KaResolvedClassTypeQualifier:
+          name: Unit
+          symbol: KaNamedClassSymbol(kotlin/Unit)
+          typeArguments: []
+      ]
+      symbol: KaNamedClassSymbol(kotlin/Unit)
+      typeArguments: []
+      isMarkedNullable: false
+      isNullable: false
+      hasFlexibleNullability: false
+  ]
+  isMarkedNullable: false
+  isNullable: false
+  hasFlexibleNullability: false
+
+Rendered type:
+kotlin.reflect.KFunction1<kotlin.String, kotlin.Unit>

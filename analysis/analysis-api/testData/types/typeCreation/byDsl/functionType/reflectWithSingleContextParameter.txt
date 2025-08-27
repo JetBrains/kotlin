@@ -1,0 +1,75 @@
+KaType
+KaFunctionType:
+  abbreviation: null
+  annotations: []
+  arity: 0
+  classId: kotlin/reflect/KFunction0
+  contextReceivers: []
+  hasContextReceivers: false
+  hasReceiver: false
+  isReflectType: true
+  isSuspend: false
+  parameterTypes: []
+  parameters: []
+  qualifiers: [
+    KaResolvedClassTypeQualifier:
+      name: KFunction0
+      symbol: KaNamedClassSymbol(kotlin/reflect/KFunction0)
+      typeArguments: [
+        KaUsualClassType:
+          abbreviation: null
+          annotations: []
+          classId: kotlin/Unit
+          qualifiers: [
+            KaResolvedClassTypeQualifier:
+              name: Unit
+              symbol: KaNamedClassSymbol(kotlin/Unit)
+              typeArguments: []
+          ]
+          symbol: KaNamedClassSymbol(kotlin/Unit)
+          typeArguments: []
+          isMarkedNullable: false
+          isNullable: false
+          hasFlexibleNullability: false
+      ]
+  ]
+  receiverType: null
+  returnType: KaUsualClassType:
+    abbreviation: null
+    annotations: []
+    classId: kotlin/Unit
+    qualifiers: [
+      KaResolvedClassTypeQualifier:
+        name: Unit
+        symbol: KaNamedClassSymbol(kotlin/Unit)
+        typeArguments: []
+    ]
+    symbol: KaNamedClassSymbol(kotlin/Unit)
+    typeArguments: []
+    isMarkedNullable: false
+    isNullable: false
+    hasFlexibleNullability: false
+  symbol: KaNamedClassSymbol(kotlin/reflect/KFunction0)
+  typeArguments: [
+    KaUsualClassType:
+      abbreviation: null
+      annotations: []
+      classId: kotlin/Unit
+      qualifiers: [
+        KaResolvedClassTypeQualifier:
+          name: Unit
+          symbol: KaNamedClassSymbol(kotlin/Unit)
+          typeArguments: []
+      ]
+      symbol: KaNamedClassSymbol(kotlin/Unit)
+      typeArguments: []
+      isMarkedNullable: false
+      isNullable: false
+      hasFlexibleNullability: false
+  ]
+  isMarkedNullable: false
+  isNullable: false
+  hasFlexibleNullability: false
+
+Rendered type:
+kotlin.reflect.KFunction0<kotlin.Unit>
