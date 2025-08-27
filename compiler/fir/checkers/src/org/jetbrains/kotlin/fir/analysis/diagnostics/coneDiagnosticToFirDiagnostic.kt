@@ -123,7 +123,7 @@ private fun ConeDiagnostic.toKtDiagnostic(
     }
     is ConeNoCompanionObject -> FirErrors.NO_COMPANION_OBJECT.createOn(source, this.candidateSymbol as FirClassLikeSymbol<*>, session)
     is ConeAmbiguityError -> @OptIn(ApplicabilityDetail::class) when {
-        // Don't report ambiguity when some non-lambda, non-callable-reference argument has an error type
+        // Don't report ambiguity when some non-lambda, non-callable-reference, non-collection-literal argument has an error type
         candidates.all {
             if (it !is AbstractCallCandidate<*>) return@all false
             // Ambiguous candidates may be not fully processed, so argument mapping may be not initialized
@@ -265,8 +265,10 @@ private fun ConeAmbiguityError.candidatesWithDiagnosticMessages(
 }
 
 private fun AbstractConeResolutionAtom.containsErrorTypeForSuppressingAmbiguityError(): Boolean {
-    val arg = expression
-    return arg.resolvedType.hasError() && arg !is FirAnonymousFunctionExpression && arg !is FirCallableReferenceAccess
+    return when (expression) {
+        is FirCollectionLiteralCall, is FirCallableReferenceAccess, is FirAnonymousFunctionExpression -> false
+        else -> expression.resolvedType.hasError()
+    }
 }
 
 /**

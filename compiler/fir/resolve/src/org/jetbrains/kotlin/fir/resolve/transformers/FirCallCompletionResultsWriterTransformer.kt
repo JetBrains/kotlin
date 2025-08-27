@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.ConeUnsupportedCollectionLiteralType
 import org.jetbrains.kotlin.fir.expressions.*
-import org.jetbrains.kotlin.fir.expressions.builder.buildCollectionLiteralCall
 import org.jetbrains.kotlin.fir.expressions.builder.buildSamConversionExpression
 import org.jetbrains.kotlin.fir.expressions.builder.buildSpreadArgumentExpression
 import org.jetbrains.kotlin.fir.expressions.impl.FirResolvedArgumentList
@@ -368,7 +367,7 @@ class FirCallCompletionResultsWriterTransformer(
         data: ExpectedArgumentType?
     ): FirStatement {
         data?.argumentReplacements?.get(collectionLiteralCall)?.let { replacement ->
-            return replacement.transformSingle(this, data)
+            return replacement.transform(this, data)
         }
         val diagnostic = ConeUnsupportedCollectionLiteralType
 
@@ -380,13 +379,10 @@ class FirCallCompletionResultsWriterTransformer(
                 this.diagnostic = diagnostic
             }
         }
-        val call = buildCollectionLiteralCall {
-            source = collectionLiteralCall.source
-            argumentList = collectionLiteralCall.argumentList
-            calleeReference = errorCalleeReference
-            coneTypeOrNull = ConeErrorType(diagnostic)
-        }
-        return call
+        collectionLiteralCall.replaceCalleeReference(errorCalleeReference)
+        collectionLiteralCall.replaceConeTypeOrNull(ConeErrorType(diagnostic))
+        collectionLiteralCall.transformArgumentList(null)
+        return collectionLiteralCall
     }
 
     override fun transformFunctionCall(functionCall: FirFunctionCall, data: ExpectedArgumentType?): FirStatement {
