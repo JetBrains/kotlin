@@ -6,19 +6,15 @@
 package org.jetbrains.kotlin.analysis.decompiler.psi.file
 
 import com.intellij.lang.ASTNode
-import com.intellij.openapi.util.registry.Registry
-import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.StubBuilder
 import com.intellij.psi.stubs.StubElement
 import com.intellij.psi.stubs.StubTreeLoader
 import org.jetbrains.kotlin.analysis.decompiler.psi.KotlinDecompiledFileViewProvider
-import org.jetbrains.kotlin.analysis.decompiler.psi.text.DecompiledText
 import org.jetbrains.kotlin.analysis.decompiler.psi.text.buildDecompiledText
 import org.jetbrains.kotlin.analysis.decompiler.stub.file.ClsClassFinder
 import org.jetbrains.kotlin.analysis.utils.errors.requireIsInstance
-import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.psi.stubs.KotlinStubElement
@@ -26,25 +22,14 @@ import org.jetbrains.kotlin.psi.stubs.impl.KotlinFileStubImpl
 import org.jetbrains.kotlin.utils.concurrent.block.LockedClearableLazyValue
 import org.jetbrains.kotlin.utils.exceptions.checkWithAttachment
 
-open class KtDecompiledFile(
-    private val provider: KotlinDecompiledFileViewProvider,
-    buildDecompiledText: (VirtualFile) -> DecompiledText,
-) : KtFile(provider, true) {
+open class KtDecompiledFile(private val provider: KotlinDecompiledFileViewProvider) : KtFile(provider, true) {
     @OptIn(KtImplementationDetail::class)
     override val customStubBuilder: StubBuilder?
-        get() = if (stubBasedDecompilerEnabled) {
-            CompiledStubBuilder
-        } else {
-            null
-        }
+        get() = CompiledStubBuilder
 
     private val decompiledText = LockedClearableLazyValue(Any()) {
-        if (stubBasedDecompilerEnabled) {
-            val stub = CompiledStubBuilder.readOrBuildCompiledStub(this)
-            buildDecompiledText(stub)
-        } else {
-            buildDecompiledText(provider.virtualFile).text
-        }
+        val stub = CompiledStubBuilder.readOrBuildCompiledStub(this)
+        buildDecompiledText(stub)
     }
 
     override fun getText(): String? {
@@ -107,10 +92,6 @@ private object CompiledStubBuilder : StubBuilder {
     }
 
     override fun skipChildProcessingWhenBuildingStubs(parent: ASTNode, node: ASTNode): Boolean = false
-}
-
-private val stubBasedDecompilerEnabled: Boolean by lazyPub {
-    Registry.`is`("kotlin.analysis.stub.based.decompiler", true)
 }
 
 /** Creates a deep copy of the given [this] */

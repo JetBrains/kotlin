@@ -12,27 +12,16 @@ import com.intellij.psi.PsiManager
 import com.intellij.psi.compiled.ClassFileDecompilers
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.analysis.decompiler.psi.file.KtDecompiledFile
-import org.jetbrains.kotlin.analysis.decompiler.psi.text.DecompiledText
-import org.jetbrains.kotlin.analysis.decompiler.psi.text.buildDecompiledText
-import org.jetbrains.kotlin.analysis.decompiler.psi.text.createIncompatibleMetadataVersionDecompiledText
-import org.jetbrains.kotlin.analysis.decompiler.psi.text.defaultDecompilerRendererOptions
 import org.jetbrains.kotlin.analysis.decompiler.stub.file.KotlinMetadataStubBuilder
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
-import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.serialization.SerializerExtensionProtocol
-import org.jetbrains.kotlin.serialization.deserialization.FlexibleTypeDeserializer
-import org.jetbrains.kotlin.serialization.deserialization.getClassId
-import org.jetbrains.kotlin.utils.addIfNotNull
 import java.io.IOException
 
 abstract class KotlinMetadataDecompiler<out V : BinaryVersion>(
     private val fileType: FileType,
     private val serializerProtocol: () -> SerializerExtensionProtocol,
-    private val flexibleTypeDeserializer: FlexibleTypeDeserializer,
     private val expectedBinaryVersion: () -> V,
-    private val invalidBinaryVersion: () -> V,
-    stubVersion: Int
+    stubVersion: Int,
 ) : ClassFileDecompilers.Full() {
     protected open val metadataStubBuilder: KotlinMetadataStubBuilder = KotlinMetadataStubBuilder(
         version = stubVersion,
@@ -41,10 +30,6 @@ abstract class KotlinMetadataDecompiler<out V : BinaryVersion>(
         readFile = ::readFileSafely,
         expectedBinaryVersion = expectedBinaryVersion,
     )
-
-    private val renderer: DescriptorRenderer by lazy {
-        DescriptorRenderer.withOptions { defaultDecompilerRendererOptions() }
-    }
 
     abstract fun readFile(bytes: ByteArray, file: VirtualFile): KotlinMetadataStubBuilder.FileWithMetadata?
 
@@ -55,13 +40,10 @@ abstract class KotlinMetadataDecompiler<out V : BinaryVersion>(
     override fun createFileViewProvider(file: VirtualFile, manager: PsiManager, physical: Boolean): FileViewProvider {
         return KotlinDecompiledFileViewProvider(manager, file, physical) { provider ->
             val virtualFile = provider.virtualFile
-            readFileSafely(virtualFile)?.let { fileWithMetadata ->
-                KtDecompiledFile(provider) {
-                    check(it == virtualFile) {
-                        "Unexpected file $it, expected ${virtualFile.fileType}"
-                    }
-                    buildDecompiledText(fileWithMetadata)
-                }
+            if (readFileSafely(virtualFile) != null) {
+                KtDecompiledFile(provider)
+            } else {
+                null
             }
         }
     }
@@ -82,27 +64,4 @@ abstract class KotlinMetadataDecompiler<out V : BinaryVersion>(
             null
         }
     }
-
-    fun buildDecompiledText(file: KotlinMetadataStubBuilder.FileWithMetadata): DecompiledText {
-        return when (file) {
-            is KotlinMetadataStubBuilder.FileWithMetadata.Incompatible -> {
-                DecompiledText(createIncompatibleMetadataVersionDecompiledText(expectedBinaryVersion(), file.version))
-            }
-            is KotlinMetadataStubBuilder.FileWithMetadata.Compatible -> {
-                val packageFqName = file.packageFqName
-                val resolver = KotlinMetadataDeserializerForDecompiler(
-                    packageFqName, file.proto, file.nameResolver, file.version,
-                    serializerProtocol(), flexibleTypeDeserializer
-                )
-                val declarations = arrayListOf<DeclarationDescriptor>()
-                declarations.addAll(resolver.resolveDeclarationsInFacade(packageFqName))
-                for (classProto in file.classesToDecompile) {
-                    val classId = file.nameResolver.getClassId(classProto.fqName)
-                    declarations.addIfNotNull(resolver.resolveTopLevelClass(classId))
-                }
-                buildDecompiledText(packageFqName, declarations, renderer)
-            }
-        }
-    }
 }
-

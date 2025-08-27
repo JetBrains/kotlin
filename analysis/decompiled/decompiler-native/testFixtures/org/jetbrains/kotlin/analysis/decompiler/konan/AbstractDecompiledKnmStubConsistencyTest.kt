@@ -58,9 +58,7 @@ abstract class AbstractDecompiledKnmStubConsistencyTest : AbstractDecompiledKnmF
             knmFile, PsiManager.getInstance(project), physical = false,
         )
 
-        val stubTreeForDecompiledFile = KlibDecompiledFile(fileViewProviderForDecompiledFile) { virtualFile ->
-            decompiler.buildDecompiledTextForTests(virtualFile)
-        }.calcStubTree().root
+        val stubTreeForDecompiledFile = KlibDecompiledFile(fileViewProviderForDecompiledFile).calcStubTree().root
 
         Assert.assertEquals(
             "PSI and deserialized stubs don't match",

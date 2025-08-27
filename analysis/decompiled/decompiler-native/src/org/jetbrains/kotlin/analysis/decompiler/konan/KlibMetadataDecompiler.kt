@@ -9,50 +9,38 @@ import com.intellij.openapi.fileTypes.FileTypeRegistry
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiManager
 import com.intellij.psi.compiled.ClassFileDecompilers
-import org.jetbrains.annotations.TestOnly
+import com.intellij.psi.compiled.ClsStubBuilder
 import org.jetbrains.kotlin.analysis.decompiler.psi.KotlinDecompiledFileViewProvider
-import org.jetbrains.kotlin.analysis.decompiler.psi.text.DecompiledText
-import org.jetbrains.kotlin.analysis.decompiler.psi.text.createIncompatibleMetadataVersionDecompiledText
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
-import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
-import org.jetbrains.kotlin.serialization.SerializerExtensionProtocol
-import org.jetbrains.kotlin.serialization.deserialization.FlexibleTypeDeserializer
 import java.io.IOException
 
 abstract class KlibMetadataDecompiler<out V : BinaryVersion>(
     private val fileType: FileType,
-    private val serializerProtocol: () -> SerializerExtensionProtocol,
-    private val flexibleTypeDeserializer: FlexibleTypeDeserializer,
 ) : ClassFileDecompilers.Full() {
     protected abstract val metadataStubBuilder: KlibMetadataStubBuilder
 
-    protected abstract fun doReadFile(file: VirtualFile): FileWithMetadata?
+    protected fun doReadFile(file: VirtualFile): FileWithMetadata? {
+        return FileWithMetadata.forPackageFragment(file)
+    }
 
-    protected abstract fun getDecompiledText(
-        fileWithMetadata: FileWithMetadata.Compatible,
-        virtualFile: VirtualFile,
-        serializerProtocol: SerializerExtensionProtocol,
-        flexibleTypeDeserializer: FlexibleTypeDeserializer,
-    ): DecompiledText
+    override fun accepts(file: VirtualFile): Boolean = FileTypeRegistry.getInstance().isFileOfType(file, fileType)
 
-    override fun accepts(file: VirtualFile) = FileTypeRegistry.getInstance().isFileOfType(file, fileType)
+    override fun getStubBuilder(): ClsStubBuilder = metadataStubBuilder
 
-    override fun getStubBuilder() = metadataStubBuilder
-
-    override fun createFileViewProvider(file: VirtualFile, manager: PsiManager, physical: Boolean) =
-        KotlinDecompiledFileViewProvider(manager, file, physical) { provider ->
-            KlibDecompiledFile(
-                provider,
-                ::buildDecompiledText
-            )
-        }
+    override fun createFileViewProvider(
+        file: VirtualFile,
+        manager: PsiManager,
+        physical: Boolean,
+    ) = KotlinDecompiledFileViewProvider(manager, file, physical) { provider ->
+        KlibDecompiledFile(provider)
+    }
 
     protected fun readFileSafely(file: VirtualFile): FileWithMetadata? {
         if (!file.isValid) return null
 
         return try {
             doReadFile(file)
-        } catch (e: IOException) {
+        } catch (_: IOException) {
             // This is needed because sometimes we're given VirtualFile instances that point to non-existent .jar entries.
             // Such files are valid (isValid() returns true), but an attempt to read their contents results in a FileNotFoundException.
             // Note that although calling "refresh()" instead of catching an exception would seem more correct here,
@@ -60,20 +48,4 @@ abstract class KlibMetadataDecompiler<out V : BinaryVersion>(
             null
         }
     }
-
-    private fun buildDecompiledText(virtualFile: VirtualFile): DecompiledText {
-        assert(FileTypeRegistry.getInstance().isFileOfType(virtualFile, fileType)) { "Unexpected file type ${virtualFile.fileType}" }
-
-        return when (val fileWithMetadata = readFileSafely(virtualFile)) {
-            is FileWithMetadata.Incompatible -> DecompiledText(createIncompatibleMetadataVersionDecompiledText(fileWithMetadata.version))
-            is FileWithMetadata.Compatible -> {
-                getDecompiledText(fileWithMetadata, virtualFile, serializerProtocol(), flexibleTypeDeserializer)
-            }
-
-            null -> DecompiledText(createIncompatibleMetadataVersionDecompiledText(MetadataVersion.INVALID_VERSION))
-        }
-    }
-
-    @TestOnly
-    internal fun buildDecompiledTextForTests(virtualFile: VirtualFile): DecompiledText = buildDecompiledText(virtualFile)
 }

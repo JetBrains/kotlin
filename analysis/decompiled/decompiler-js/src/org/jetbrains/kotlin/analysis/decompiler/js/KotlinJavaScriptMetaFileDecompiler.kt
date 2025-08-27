@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.analysis.decompiler.stub.file.KotlinMetadataStubBuil
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.js.JsProtoBuf
 import org.jetbrains.kotlin.psi.stubs.KotlinStubVersions
-import org.jetbrains.kotlin.serialization.js.DynamicTypeDeserializer
 import org.jetbrains.kotlin.serialization.js.JsSerializerProtocol
 import org.jetbrains.kotlin.utils.JsMetadataVersion
 import java.io.ByteArrayInputStream
@@ -19,10 +18,8 @@ import java.io.ByteArrayInputStream
 class KotlinJavaScriptMetaFileDecompiler : KotlinMetadataDecompiler<JsMetadataVersion>(
     fileType = KotlinJavaScriptMetaFileType,
     serializerProtocol = { JsSerializerProtocol },
-    flexibleTypeDeserializer = DynamicTypeDeserializer,
     expectedBinaryVersion = { JsMetadataVersion.INSTANCE },
-    invalidBinaryVersion = { JsMetadataVersion.INVALID_VERSION },
-    stubVersion = KotlinStubVersions.JS_STUB_VERSION
+    stubVersion = KotlinStubVersions.JS_STUB_VERSION,
 ) {
     override fun readFile(bytes: ByteArray, file: VirtualFile): KotlinMetadataStubBuilder.FileWithMetadata {
         val stream = ByteArrayInputStream(bytes)

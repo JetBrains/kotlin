@@ -4,7 +4,6 @@
  */
 package org.jetbrains.kotlin.psi.stubs.elements
 
-import com.intellij.ide.highlighter.JavaClassFileType
 import com.intellij.psi.PsiComment
 import com.intellij.psi.PsiFile
 import com.intellij.psi.stubs.DefaultStubBuilder
@@ -37,8 +36,7 @@ class KtFileStubBuilder : DefaultStubBuilder() {
         val kind = when {
             errorMessage != null -> KotlinFileStubKindImpl.Invalid(errorMessage)
             file.isScript() -> KotlinFileStubKindImpl.Script(packageFqName = packageFqName)
-            // TODO: KT-80350 drop isCompiled check, only `hasTopLevelCallables` is needed for K2 decompiler
-            (!file.isCompiled || file.name.endsWith(JavaClassFileType.DOT_DEFAULT_EXTENSION)) && file.hasTopLevelCallables() -> {
+            file.hasTopLevelCallables() -> {
                 val fileClassInfo = JvmFileClassUtil.getFileClassInfoNoResolve(file)
                 KotlinFileStubKindImpl.Facade(
                     packageFqName = packageFqName,
