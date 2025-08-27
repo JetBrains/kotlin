@@ -22,6 +22,13 @@ import org.jetbrains.kotlin.kdoc.parser.KDocKnownTag;
    */
   private int consecutiveLineBreakCount;
 
+  private BlockType lastBlockType;
+
+  private enum BlockType {
+      Paragraph,
+      Code,
+  }
+
   public _KDocLexer() {
     this((java.io.Reader)null);
   }
@@ -84,6 +91,7 @@ CODE_FENCE_END=("```" | "~~~")
 
 <CONTENTS_BEGINNING> "@"{PLAIN_IDENTIFIER} {
     consecutiveLineBreakCount = 0;
+    lastBlockType = BlockType.Paragraph;
     KDocKnownTag tag = KDocKnownTag.Companion.findByTagName(zzBuffer.subSequence(zzStartRead, zzMarkedPos));
     yybegin(tag != null && tag.isReferenceRequired() ? TAG_BEGINNING : TAG_TEXT_BEGINNING);
     return KDocTokens.TAG_NAME;
@@ -172,24 +180,28 @@ CODE_FENCE_END=("```" | "~~~")
 
     "\\"[\[\]] {
         consecutiveLineBreakCount = 0;
+        lastBlockType = BlockType.Paragraph;
         yybegin(CONTENTS);
         return KDocTokens.MARKDOWN_ESCAPED_CHAR;
     }
 
     "(" {
         consecutiveLineBreakCount = 0;
+        lastBlockType = BlockType.Paragraph;
         yybegin(CONTENTS);
         return KDocTokens.KDOC_LPAR;
     }
 
     ")" {
         consecutiveLineBreakCount = 0;
+        lastBlockType = BlockType.Paragraph;
         yybegin(CONTENTS);
         return KDocTokens.KDOC_RPAR;
     }
 
     {CODE_FENCE_START} {
         consecutiveLineBreakCount = 0;
+        lastBlockType = BlockType.Code;
         yybegin(CODE_BLOCK_LINE_BEGINNING);
         return KDocTokens.TEXT;
     }
@@ -201,12 +213,14 @@ CODE_FENCE_END=("```" | "~~~")
        link and not a Kotlin identifier, so we don't need to do our parsing and resolution. */
     {CODE_LINK} / [^\(\[] {
         consecutiveLineBreakCount = 0;
+        lastBlockType = BlockType.Paragraph;
         yybegin(CONTENTS);
         return KDocTokens.MARKDOWN_LINK;
     }
 
     {NOT_WHITE_SPACE_OR_LINE_BREAK_CHAR} {
         consecutiveLineBreakCount = 0;
+        lastBlockType = BlockType.Paragraph;
         yybegin(CONTENTS);
         return KDocTokens.TEXT;
     }
@@ -254,5 +268,6 @@ CODE_FENCE_END=("```" | "~~~")
 
 [\s\S] {
 consecutiveLineBreakCount = 0;
+lastBlockType = BlockType.Paragraph;
 return TokenType.BAD_CHARACTER;
 }
