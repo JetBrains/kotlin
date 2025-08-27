@@ -551,7 +551,7 @@ private class Fir2IrPipeline(
                     }
                 } else regularSeverity
             },
-            phaseName = "",
+            phaseName = if (extension == null) "FIR2IR" else "Applying IR compiler plugins",
             customMessagePrefix = if (extension == null) {
                 "The frontend generated invalid IR. This is a compiler bug, please report it to https://kotl.in/issue."
             } else {
