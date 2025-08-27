@@ -275,7 +275,7 @@ private class Fir2IrPipeline(
 
         removeGeneratedBuiltinsDeclarationsIfNeeded()
 
-        pluginContext.runMandatoryIrValidation(extension = null, mainIrFragment)
+        hasIrValidationErrorFromFrontend = pluginContext.runMandatoryIrValidation(extension = null, mainIrFragment)
         pluginContext.applyIrGenerationExtensions(mainIrFragment, irGeneratorExtensions)
 
         return Fir2IrActualizedResult(mainIrFragment, componentsStorage, pluginContext, actualizationResult, irBuiltIns, symbolTable)
@@ -485,9 +485,9 @@ private class Fir2IrPipeline(
             return false
         }
         val regularSeverity = when {
-            // Do not report regular violations in compiler plugins, if frontend produced incorrect an IR itself.
-            // It would be too confusing to blame plugins, even if some really contributed to an invalid IR as well,
-            // if it is primarily our fault.
+            // Do not report regular violations in compiler plugins if frontend itself produced an incorrect IR.
+            // It would be too confusing to blame plugins, even if one really contributed to an invalid IR as well,
+            // when it is primarily our fault.
             hasIrValidationErrorFromFrontend -> null
             verificationMode == IrVerificationMode.WARNING -> CompilerMessageSeverity.WARNING
             verificationMode == IrVerificationMode.ERROR -> CompilerMessageSeverity.ERROR
