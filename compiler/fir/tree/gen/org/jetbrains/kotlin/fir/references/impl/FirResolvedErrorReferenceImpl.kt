@@ -13,6 +13,7 @@ package org.jetbrains.kotlin.fir.references.impl
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.references.FirResolvedErrorReference
+import org.jetbrains.kotlin.fir.resolve.FirSpecialOrigin
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
@@ -22,7 +23,7 @@ internal class FirResolvedErrorReferenceImpl(
     override val source: KtSourceElement?,
     override val name: Name,
     override val resolvedSymbol: FirBasedSymbol<*>,
-    override var isContextSensitiveResolved: Boolean,
+    override var specialOrigin: FirSpecialOrigin?,
     override val diagnostic: ConeDiagnostic,
 ) : FirResolvedErrorReference() {
 
@@ -32,7 +33,7 @@ internal class FirResolvedErrorReferenceImpl(
         return this
     }
 
-    override fun replaceIsContextSensitiveResolved(newIsContextSensitiveResolved: Boolean) {
-        isContextSensitiveResolved = newIsContextSensitiveResolved
+    override fun replaceSpecialOrigin(newSpecialOrigin: FirSpecialOrigin?) {
+        specialOrigin = newSpecialOrigin
     }
 }

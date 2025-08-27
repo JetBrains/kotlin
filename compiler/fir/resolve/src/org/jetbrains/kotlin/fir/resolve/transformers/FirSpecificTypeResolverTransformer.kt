@@ -129,7 +129,7 @@ class FirSpecificTypeResolverTransformer(
         resolvedType: ConeKotlinType,
         diagnostic: ConeDiagnostic?,
         configuration: TypeResolutionConfiguration,
-        isContextSensitiveResolved: Boolean,
+        specialOrigin: FirSpecialOrigin?,
     ): FirResolvedTypeRef {
         return when {
             resolvedType is ConeErrorType -> {
@@ -144,7 +144,7 @@ class FirSpecificTypeResolverTransformer(
                     coneType = resolvedType
                     annotations += typeRef.annotations
                     delegatedTypeRef = typeRef
-                    this.isContextSensitiveResolved = isContextSensitiveResolved
+                    this.specialOrigin = specialOrigin
                 }
             }
         }

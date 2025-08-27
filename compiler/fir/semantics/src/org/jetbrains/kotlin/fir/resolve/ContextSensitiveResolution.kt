@@ -22,7 +22,17 @@ import org.jetbrains.kotlin.fir.types.ConeLookupTagBasedType
 import org.jetbrains.kotlin.fir.types.ConeStubTypeForTypeVariableInSubtyping
 import org.jetbrains.kotlin.fir.types.ConeTypeVariableType
 
-fun ConeKotlinType.getClassRepresentativeForContextSensitiveResolution(session: FirSession): FirRegularClassSymbol? {
+fun ConeKotlinType.getParentChainForContextSensitiveResolutionOfExpressions(session: FirSession): Sequence<FirRegularClassSymbol> =
+    getClassRepresentativeForContextSensitiveResolution(session)
+        ?.getParentChainForContextSensitiveResolution(session, onlySealed = false)
+        .orEmpty()
+
+fun ConeKotlinType.getParentChainForContextSensitiveResolutionOfTypes(session: FirSession): Sequence<FirRegularClassSymbol> =
+    getClassRepresentativeForContextSensitiveResolution(session)
+        ?.getParentChainForContextSensitiveResolution(session, onlySealed = true)
+        .orEmpty()
+
+private fun ConeKotlinType.getClassRepresentativeForContextSensitiveResolution(session: FirSession): FirRegularClassSymbol? {
     return when (this) {
         is ConeFlexibleType ->
             lowerBound.getClassRepresentativeForContextSensitiveResolution(session)?.takeIf {
@@ -67,7 +77,7 @@ fun ConeKotlinType.getClassRepresentativeForContextSensitiveResolution(session: 
     }
 }
 
-fun FirRegularClassSymbol.getParentChainForContextSensitiveResolution(
+private fun FirRegularClassSymbol.getParentChainForContextSensitiveResolution(
     session: FirSession, onlySealed: Boolean = false
 ): Sequence<FirRegularClassSymbol> = sequence {
     var current: FirRegularClassSymbol? = this@getParentChainForContextSensitiveResolution
@@ -81,8 +91,3 @@ fun FirRegularClassSymbol.getParentChainForContextSensitiveResolution(
         onlySealed = true
     }
 }
-
-fun ConeKotlinType.getParentChainForContextSensitiveResolutionOfTypes(session: FirSession): Sequence<FirRegularClassSymbol> =
-    getClassRepresentativeForContextSensitiveResolution(session)
-        ?.getParentChainForContextSensitiveResolution(session, onlySealed = true)
-        .orEmpty()

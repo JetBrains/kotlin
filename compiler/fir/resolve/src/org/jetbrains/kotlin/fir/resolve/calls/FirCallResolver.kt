@@ -41,6 +41,8 @@ import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirAbstractBod
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirExpressionsResolveTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.resultType
 import org.jetbrains.kotlin.fir.resolve.transformers.doesResolutionResultOverrideOtherToPreserveCompatibility
+import org.jetbrains.kotlin.fir.scopes.impl.FirAbstractStarImportingScope
+import org.jetbrains.kotlin.fir.scopes.impl.FirDefaultStarImportingScope
 import org.jetbrains.kotlin.fir.scopes.impl.typeAliasConstructorInfo
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
@@ -365,10 +367,10 @@ class FirCallResolver(
             expectedCallKind = if (functionCallExpected) CallKind.Function else null
         )
 
-        val referencedSymbol = when (nameReference) {
-            is FirResolvedNamedReference -> nameReference.resolvedSymbol
-            is FirNamedReferenceWithCandidate -> nameReference.candidateSymbol
-            else -> null
+        val (referencedSymbol, specialOrigin) = when (nameReference) {
+            is FirResolvedNamedReference -> nameReference.resolvedSymbol to nameReference.specialOrigin
+            is FirNamedReferenceWithCandidate -> nameReference.candidateSymbol to nameReference.candidate.originScope?.asSpecialOrigin()
+            else -> null to null
         }
 
         val diagnostic = when (nameReference) {
@@ -406,7 +408,8 @@ class FirCallResolver(
                         nonFatalDiagnosticFromExpressionWithExtra,
                         session
                     ),
-                    annotations = qualifiedAccess.annotations
+                    annotations = qualifiedAccess.annotations,
+                    specialOrigin = specialOrigin,
                 )
             }
             is FirTypeParameterSymbol if referencedSymbol.fir.isReified && diagnostic == null -> {
@@ -866,11 +869,15 @@ class FirCallResolver(
 
         val candidate = candidates.single()
         val coneSymbol = candidate.symbol
+        val specialOrigin = FirSpecialOrigin.StarOrDefaultImport.takeIf {
+            candidate.originScope is FirDefaultStarImportingScope || candidate.originScope is FirAbstractStarImportingScope
+        }
         if (coneSymbol is FirBackingFieldSymbol) {
             coneSymbol.fir.propertySymbol.fir.isReferredViaField = true
             return buildBackingFieldReference {
                 this.source = source
                 resolvedSymbol = coneSymbol
+                this.specialOrigin = specialOrigin
             }
         }
         if ((coneSymbol as? FirPropertySymbol)?.hasExplicitBackingField == true) {
@@ -879,6 +886,7 @@ class FirCallResolver(
                 this.name = name
                 this.resolvedSymbol = candidate.symbol
                 hasVisibleBackingField = candidate.hasVisibleBackingField
+                this.specialOrigin = specialOrigin
             }.build()
         }
         /*
@@ -906,6 +914,7 @@ class FirCallResolver(
                 this.source = source
                 this.name = name
                 resolvedSymbol = coneSymbol
+                this.specialOrigin = specialOrigin
             }
         }
         return FirNamedReferenceWithCandidate(source, name, candidate)

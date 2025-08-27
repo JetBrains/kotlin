@@ -317,36 +317,35 @@ class BuilderConfigurator(model: Model) : AbstractFirBuilderConfigurator<Abstrac
         }
 
         builder(resolvedNamedReference, "FirResolvedNamedReferenceImpl") {
-            defaultFalse("isContextSensitiveResolved")
+            defaultNull("specialOrigin")
         }
 
         builder(resolvedNamedReference, "FirPropertyFromParameterResolvedNamedReference") {
-            defaultFalse("isContextSensitiveResolved")
+            defaultNull("specialOrigin")
         }
 
         builder(resolvedErrorReference) {
-            defaultFalse("isContextSensitiveResolved")
+            defaultNull("specialOrigin")
         }
 
         builder(resolvedCallableReference) {
-            defaultFalse("isContextSensitiveResolved")
+            defaultNull("specialOrigin")
         }
 
         builder(delegateFieldReference) {
-            defaultFalse("isContextSensitiveResolved")
+            defaultNull("specialOrigin")
         }
 
         builder(backingFieldReference) {
-            defaultFalse("isContextSensitiveResolved")
+            defaultNull("specialOrigin")
         }
 
         builder(propertyWithExplicitBackingFieldResolvedNamedReference) {
-            defaultFalse("isContextSensitiveResolved")
+            defaultNull("specialOrigin")
         }
 
         builder(resolvedTypeRef) {
-            defaultNull("delegatedTypeRef")
-            defaultFalse("isContextSensitiveResolved")
+            defaultNull("delegatedTypeRef", "specialOrigin")
             withCopy()
         }
 
@@ -440,12 +439,14 @@ class BuilderConfigurator(model: Model) : AbstractFirBuilderConfigurator<Abstrac
 
         builder(resolvedQualifier) {
             parents += abstractResolvedQualifierBuilder
-            defaultFalse("isNullableLHSForCallableReference", "isFullyQualified", "canBeValue", "isContextSensitiveResolved")
+            defaultFalse("isNullableLHSForCallableReference", "isFullyQualified", "canBeValue")
+            defaultNull("specialOrigin")
         }
 
         builder(errorResolvedQualifier) {
             parents += abstractResolvedQualifierBuilder
-            defaultFalse("isNullableLHSForCallableReference", "isFullyQualified", "canBeValue", "isContextSensitiveResolved")
+            defaultFalse("isNullableLHSForCallableReference", "isFullyQualified", "canBeValue")
+            defaultNull("specialOrigin")
         }
 
 //        builder(safeCallExpression) {

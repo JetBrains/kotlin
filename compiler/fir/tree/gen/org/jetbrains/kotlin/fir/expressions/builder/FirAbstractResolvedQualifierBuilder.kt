@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
+import org.jetbrains.kotlin.fir.resolve.FirSpecialOrigin
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeProjection
@@ -36,7 +37,7 @@ interface FirAbstractResolvedQualifierBuilder {
     abstract var canBeValue: Boolean
     abstract var isFullyQualified: Boolean
     abstract val nonFatalDiagnostics: MutableList<ConeDiagnostic>
-    abstract var isContextSensitiveResolved: Boolean
+    abstract var specialOrigin: FirSpecialOrigin?
     abstract val typeArguments: MutableList<FirTypeProjection>
 
     fun build(): FirResolvedQualifier

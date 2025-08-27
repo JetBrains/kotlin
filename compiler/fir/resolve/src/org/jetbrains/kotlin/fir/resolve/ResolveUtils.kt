@@ -28,8 +28,12 @@ import org.jetbrains.kotlin.fir.resolve.calls.isVisible
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.FirAnonymousFunctionReturnExpressionInfo
 import org.jetbrains.kotlin.fir.resolve.diagnostics.*
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.resultType
+import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
+import org.jetbrains.kotlin.fir.scopes.impl.FirAbstractStarImportingScope
+import org.jetbrains.kotlin.fir.scopes.impl.FirDefaultSimpleImportingScope
+import org.jetbrains.kotlin.fir.scopes.impl.FirDefaultStarImportingScope
 import org.jetbrains.kotlin.fir.scopes.impl.importedFromObjectOrStaticData
 import org.jetbrains.kotlin.fir.scopes.impl.typeAliasConstructorInfo
 import org.jetbrains.kotlin.fir.scopes.processOverriddenFunctions
@@ -336,6 +340,7 @@ fun BodyResolveComponents.buildResolvedQualifierForClass(
     diagnostic: ConeDiagnostic? = null,
     nonFatalDiagnostics: List<ConeDiagnostic> = emptyList(),
     annotations: List<FirAnnotation> = emptyList(),
+    specialOrigin: FirSpecialOrigin? = null,
 ): FirResolvedQualifier {
     return buildResolvedQualifierForClass(
         symbol,
@@ -347,6 +352,7 @@ fun BodyResolveComponents.buildResolvedQualifierForClass(
         nonFatalDiagnostics,
         annotations,
         explicitParent,
+        specialOrigin,
     )
 }
 
@@ -359,7 +365,8 @@ fun BodyResolveComponents.buildResolvedQualifierForClass(
     diagnostic: ConeDiagnostic?,
     nonFatalDiagnostics: List<ConeDiagnostic>?,
     annotations: List<FirAnnotation>,
-    explicitParent: FirResolvedQualifier?
+    explicitParent: FirResolvedQualifier?,
+    specialOrigin: FirSpecialOrigin?,
 ): FirResolvedQualifier {
     val builder: FirAbstractResolvedQualifierBuilder = if (diagnostic == null) {
         FirResolvedQualifierBuilder()
@@ -386,6 +393,7 @@ fun BodyResolveComponents.buildResolvedQualifierForClass(
         this.annotations.addAll(annotations)
         this.explicitParent = explicitParent
         this.resolvedToCompanionObject = symbol?.fullyExpandedClass(session)?.resolvedCompanionObjectSymbol != null
+        this.specialOrigin = specialOrigin
     }.build().apply {
         if (symbol?.classId?.isLocal == true) {
             resultType = typeForQualifierByDeclaration(symbol.fir, session, element = this@apply, file)
@@ -840,4 +848,9 @@ fun FirQualifiedAccessExpression.replaceExplicitReceiverIfNecessary(dispatchRece
     ) {
         replaceExplicitReceiver(dispatchReceiver)
     }
+}
+
+fun FirScope.asSpecialOrigin(): FirSpecialOrigin? = when (this) {
+    is FirDefaultStarImportingScope, is FirAbstractStarImportingScope, is FirDefaultSimpleImportingScope -> FirSpecialOrigin.StarOrDefaultImport
+    else -> null
 }

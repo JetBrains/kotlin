@@ -13,6 +13,7 @@ package org.jetbrains.kotlin.fir.references.impl
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.references.FirResolvedCallableReference
+import org.jetbrains.kotlin.fir.resolve.FirSpecialOrigin
 import org.jetbrains.kotlin.fir.resolve.calls.CallableReferenceMappedArguments
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
@@ -24,7 +25,7 @@ internal class FirResolvedCallableReferenceImpl(
     override val source: KtSourceElement?,
     override val name: Name,
     override val resolvedSymbol: FirBasedSymbol<*>,
-    override var isContextSensitiveResolved: Boolean,
+    override var specialOrigin: FirSpecialOrigin?,
     override val inferredTypeArguments: MutableList<ConeKotlinType>,
     override val mappedArguments: CallableReferenceMappedArguments<FirExpression>,
 ) : FirResolvedCallableReference() {
@@ -35,7 +36,7 @@ internal class FirResolvedCallableReferenceImpl(
         return this
     }
 
-    override fun replaceIsContextSensitiveResolved(newIsContextSensitiveResolved: Boolean) {
-        isContextSensitiveResolved = newIsContextSensitiveResolved
+    override fun replaceSpecialOrigin(newSpecialOrigin: FirSpecialOrigin?) {
+        specialOrigin = newSpecialOrigin
     }
 }

@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirErrorResolvedQualifier
 import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
 import org.jetbrains.kotlin.fir.expressions.impl.FirErrorResolvedQualifierImpl
+import org.jetbrains.kotlin.fir.resolve.FirSpecialOrigin
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeProjection
@@ -40,7 +41,7 @@ class FirErrorResolvedQualifierBuilder : FirAbstractResolvedQualifierBuilder, Fi
     override var canBeValue: Boolean = false
     override var isFullyQualified: Boolean = false
     override val nonFatalDiagnostics: MutableList<ConeDiagnostic> = mutableListOf()
-    override var isContextSensitiveResolved: Boolean = false
+    override var specialOrigin: FirSpecialOrigin? = null
     override val typeArguments: MutableList<FirTypeProjection> = mutableListOf()
     lateinit var diagnostic: ConeDiagnostic
 
@@ -58,7 +59,7 @@ class FirErrorResolvedQualifierBuilder : FirAbstractResolvedQualifierBuilder, Fi
             canBeValue,
             isFullyQualified,
             nonFatalDiagnostics.toMutableOrEmpty(),
-            isContextSensitiveResolved,
+            specialOrigin,
             typeArguments.toMutableOrEmpty(),
             diagnostic,
         )

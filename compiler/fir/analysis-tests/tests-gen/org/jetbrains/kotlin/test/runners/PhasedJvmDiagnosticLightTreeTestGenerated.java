@@ -54871,16 +54871,27 @@ public class PhasedJvmDiagnosticLightTreeTestGenerated extends AbstractPhasedJvm
     @TestMetadata("compiler/fir/analysis-tests/testData/resolve/contextSensitiveResolutionUsingExpectedType")
     @TestDataPath("$PROJECT_ROOT")
     public class ContextSensitiveResolutionUsingExpectedType {
-      @Test
-      @TestMetadata("ambiguity.kt")
-      public void testAmbiguity() {
-        runTest("compiler/fir/analysis-tests/testData/resolve/contextSensitiveResolutionUsingExpectedType/ambiguity.kt");
-      }
+      @Nested
+      @TestMetadata("compiler/fir/analysis-tests/testData/resolve/contextSensitiveResolutionUsingExpectedType/ambiguity")
+      @TestDataPath("$PROJECT_ROOT")
+      public class Ambiguity {
+        @Test
+        @TestMetadata("local.kt")
+        public void testLocal() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextSensitiveResolutionUsingExpectedType/ambiguity/local.kt");
+        }
 
-      @Test
-      @TestMetadata("ambiguityStarImport.kt")
-      public void testAmbiguityStarImport() {
-        runTest("compiler/fir/analysis-tests/testData/resolve/contextSensitiveResolutionUsingExpectedType/ambiguityStarImport.kt");
+        @Test
+        @TestMetadata("samePackage.kt")
+        public void testSamePackage() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextSensitiveResolutionUsingExpectedType/ambiguity/samePackage.kt");
+        }
+
+        @Test
+        @TestMetadata("starImport.kt")
+        public void testStarImport() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextSensitiveResolutionUsingExpectedType/ambiguity/starImport.kt");
+        }
       }
 
       @Nested

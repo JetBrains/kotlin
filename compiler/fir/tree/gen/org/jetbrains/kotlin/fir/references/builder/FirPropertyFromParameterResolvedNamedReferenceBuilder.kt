@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.impl.FirPropertyFromParameterResolvedNamedReference
+import org.jetbrains.kotlin.fir.resolve.FirSpecialOrigin
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.name.Name
 
@@ -24,7 +25,7 @@ class FirPropertyFromParameterResolvedNamedReferenceBuilder {
     var source: KtSourceElement? = null
     lateinit var name: Name
     lateinit var resolvedSymbol: FirBasedSymbol<*>
-    var isContextSensitiveResolved: Boolean = false
+    var specialOrigin: FirSpecialOrigin? = null
 
     @OptIn(FirImplementationDetail::class)
     fun build(): FirResolvedNamedReference {
@@ -32,7 +33,7 @@ class FirPropertyFromParameterResolvedNamedReferenceBuilder {
             source,
             name,
             resolvedSymbol,
-            isContextSensitiveResolved,
+            specialOrigin,
         )
     }
 

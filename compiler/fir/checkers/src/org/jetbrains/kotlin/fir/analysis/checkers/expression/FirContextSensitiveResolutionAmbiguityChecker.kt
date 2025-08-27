@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
-import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
@@ -14,16 +13,26 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaredMemberScope
 import org.jetbrains.kotlin.fir.analysis.checkers.toClassLikeSymbol
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
+import org.jetbrains.kotlin.fir.declarations.staticScope
+import org.jetbrains.kotlin.fir.declarations.utils.isExtension
+import org.jetbrains.kotlin.fir.declarations.utils.isSealed
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.isEnabled
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
+import org.jetbrains.kotlin.fir.resolve.FirSpecialOrigin
+import org.jetbrains.kotlin.fir.resolve.getParentChainForContextSensitiveResolutionOfExpressions
 import org.jetbrains.kotlin.fir.resolve.getParentChainForContextSensitiveResolutionOfTypes
+import org.jetbrains.kotlin.fir.scopes.FirContainingNamesAwareScope
 import org.jetbrains.kotlin.fir.scopes.getClassifiers
-import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
-import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.hasContextParameters
+import org.jetbrains.kotlin.fir.types.FirErrorTypeRef
+import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
+import org.jetbrains.kotlin.fir.types.FirUserTypeRef
+import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.name.Name
 
 object FirContextSensitiveResolutionAmbiguityCheckerForEqualities : FirEqualityOperatorCallChecker(MppCheckerKind.Common) {
@@ -34,10 +43,10 @@ object FirContextSensitiveResolutionAmbiguityCheckerForEqualities : FirEqualityO
 
         val resolvedSymbol = when (rhs) {
             is FirErrorResolvedQualifier -> null
-            is FirResolvedQualifier if !rhs.isContextSensitiveResolved && rhs.explicitParent == null -> rhs.symbol
+            is FirResolvedQualifier if rhs.specialOrigin == FirSpecialOrigin.StarOrDefaultImport && rhs.explicitParent == null -> rhs.symbol
             is FirPropertyAccessExpression if rhs.explicitReceiver == null -> when (val callee = rhs.calleeReference) {
                 is FirErrorNamedReference -> null
-                is FirResolvedNamedReference if !callee.isContextSensitiveResolved -> callee.resolvedSymbol
+                is FirResolvedNamedReference if callee.specialOrigin == FirSpecialOrigin.StarOrDefaultImport -> callee.resolvedSymbol
                 else -> null
             }
             else -> null
@@ -49,12 +58,27 @@ object FirContextSensitiveResolutionAmbiguityCheckerForEqualities : FirEqualityO
             else -> null
         } ?: return
 
-        checkContextSensitiveResolutionAmbiguities(
-            contextualType = expression.arguments[0].resolvedType,
-            resolvedSymbol = resolvedSymbol,
-            name = name,
-            source = rhs.source
-        )
+        for (classToLookAt in expression.arguments[0].resolvedType.getParentChainForContextSensitiveResolutionOfExpressions(context.session)) {
+            val nestedClassifierSymbols = when {
+                classToLookAt.isSealed -> classToLookAt.declaredMemberScope().getClassifiers(name)
+                else -> emptyList()
+            }
+            val staticNoArgumentProperties =
+                classToLookAt.staticScope(context.sessionHolder)?.collectNoArgumentProperties(name).orEmpty()
+            val companionNoArgumentProperties =
+                classToLookAt.resolvedCompanionObjectSymbol?.declaredMemberScope()?.collectNoArgumentProperties(name).orEmpty()
+
+            val contextSensitiveCandidates = nestedClassifierSymbols + staticNoArgumentProperties + companionNoArgumentProperties
+            if (contextSensitiveCandidates.isEmpty()) continue
+            if (resolvedSymbol !in contextSensitiveCandidates) {
+                reporter.reportOn(
+                    rhs.source,
+                    FirErrors.CONTEXT_SENSITIVE_RESOLUTION_AMBIGUITY,
+                    listOf(resolvedSymbol) + contextSensitiveCandidates
+                )
+            }
+            return
+        }
     }
 }
 
@@ -63,37 +87,28 @@ object FirContextSensitiveResolutionAmbiguityCheckerForTypeOperators : FirTypeOp
     override fun check(expression: FirTypeOperatorCall) {
         if (!LanguageFeature.ContextSensitiveResolutionUsingExpectedType.isEnabled()) return
         val typeRef = expression.conversionTypeRef as? FirResolvedTypeRef ?: return
-        if (typeRef.isContextSensitiveResolved || typeRef is FirErrorTypeRef) return
+        if (typeRef.specialOrigin != FirSpecialOrigin.StarOrDefaultImport || typeRef is FirErrorTypeRef) return
 
         val resolvedClass = typeRef.toClassLikeSymbol(context.session) ?: return
         val name = (typeRef.delegatedTypeRef as? FirUserTypeRef)?.qualifier?.singleOrNull()?.name ?: return
 
-        checkContextSensitiveResolutionAmbiguities(
-            contextualType = expression.argument.resolvedType,
-            resolvedSymbol = resolvedClass,
-            name = name,
-            source = typeRef.source
-        )
+        for (classToLookAt in expression.argument.resolvedType.getParentChainForContextSensitiveResolutionOfTypes(context.session)) {
+            val nestedClassifierSymbols = classToLookAt.declaredMemberScope().getClassifiers(name)
+            if (nestedClassifierSymbols.isEmpty()) continue
+            if (resolvedClass !in nestedClassifierSymbols) {
+                reporter.reportOn(
+                    typeRef.source,
+                    FirErrors.CONTEXT_SENSITIVE_RESOLUTION_AMBIGUITY,
+                    listOf(resolvedClass) + nestedClassifierSymbols
+                )
+            }
+            return
+        }
     }
 }
 
-context(context: CheckerContext, reporter: DiagnosticReporter)
-private fun checkContextSensitiveResolutionAmbiguities(
-    contextualType: ConeKotlinType,
-    resolvedSymbol: FirBasedSymbol<*>,
-    name: Name,
-    source: KtSourceElement?
-) {
-    for (classToLookAt in contextualType.getParentChainForContextSensitiveResolutionOfTypes(context.session)) {
-        val nestedClassifierSymbols = classToLookAt.declaredMemberScope().getClassifiers(name)
-        if (nestedClassifierSymbols.isEmpty()) continue
-        if (resolvedSymbol !in nestedClassifierSymbols) {
-            reporter.reportOn(
-                source,
-                FirErrors.CONTEXT_SENSITIVE_RESOLUTION_AMBIGUITY,
-                listOf(resolvedSymbol) + nestedClassifierSymbols
-            )
-        }
-        return
+private fun FirContainingNamesAwareScope.collectNoArgumentProperties(name: Name): List<FirVariableSymbol<*>> = buildList {
+    processPropertiesByName(name) {
+        if (!it.isExtension && !it.hasContextParameters) add(it)
     }
 }

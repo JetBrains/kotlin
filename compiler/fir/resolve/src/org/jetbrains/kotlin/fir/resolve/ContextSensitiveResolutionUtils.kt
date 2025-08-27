@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeAmbiguityError
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeHiddenCandidateError
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedError
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeVisibilityError
-import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
 
@@ -32,11 +31,7 @@ fun BodyResolveComponents.runContextSensitiveResolutionForPropertyAccess(
     originalExpression: FirPropertyAccessExpression,
     expectedType: ConeKotlinType,
 ): FirExpression? {
-    val representativeClass: FirRegularClassSymbol =
-        expectedType.getClassRepresentativeForContextSensitiveResolution(session)
-            ?: return null
-
-    for (representativeClass in representativeClass.getParentChainForContextSensitiveResolution(session)) {
+    for (representativeClass in expectedType.getParentChainForContextSensitiveResolutionOfExpressions(session)) {
         val additionalQualifier = representativeClass.toImplicitResolvedQualifierReceiver(
             this,
             originalExpression.source?.fakeElement(KtFakeSourceElementKind.QualifierForContextSensitiveResolution)
@@ -64,14 +59,14 @@ fun BodyResolveComponents.runContextSensitiveResolutionForPropertyAccess(
                 val newCalleeReference = newExpression.calleeReference
                 val shouldTake = newCalleeReference is FirResolvedNamedReference && newCalleeReference !is FirResolvedErrorReference
                 if (shouldTake) {
-                    newCalleeReference.replaceIsContextSensitiveResolved(true)
+                    newCalleeReference.replaceSpecialOrigin(FirSpecialOrigin.ContextSensitive)
                 }
                 shouldTake
             }
 
             // resolved qualifiers are always successful when returned
             is FirResolvedQualifier -> {
-                newExpression.replaceIsContextSensitiveResolved(true)
+                newExpression.replaceSpecialOrigin(FirSpecialOrigin.ContextSensitive)
                 true
             }
 

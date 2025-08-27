@@ -11,6 +11,7 @@ package org.jetbrains.kotlin.fir.types
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
+import org.jetbrains.kotlin.fir.resolve.FirSpecialOrigin
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.mpp.TypeRefMarker
@@ -24,7 +25,7 @@ abstract class FirResolvedTypeRef : FirTypeRef(), TypeRefMarker {
     abstract override val customRenderer: Boolean
     abstract val coneType: ConeKotlinType
     abstract val delegatedTypeRef: FirTypeRef?
-    abstract val isContextSensitiveResolved: Boolean
+    abstract val specialOrigin: FirSpecialOrigin?
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
         visitor.visitResolvedTypeRef(this, data)
@@ -35,7 +36,7 @@ abstract class FirResolvedTypeRef : FirTypeRef(), TypeRefMarker {
 
     abstract override fun replaceAnnotations(newAnnotations: List<FirAnnotation>)
 
-    abstract fun replaceIsContextSensitiveResolved(newIsContextSensitiveResolved: Boolean)
+    abstract fun replaceSpecialOrigin(newSpecialOrigin: FirSpecialOrigin?)
 
     abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirResolvedTypeRef
 }

@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: BACKEND
 // ISSUE: KT-75061
 // LANGUAGE: +ContextSensitiveResolutionUsingExpectedType
 
@@ -12,7 +12,7 @@ interface Left {
 }
 
 fun MySealed.getOrElse() = when (this) {
-    is <!CONTEXT_SENSITIVE_RESOLUTION_AMBIGUITY!>Left<!> -> z
+    is Left -> z
     is Right -> y
     else -> ""
 }

@@ -85,7 +85,7 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
                     resolvedSymbol,
                     // We don't allow inner classes capturing outer type parameters
                     ConeSubstitutor.Empty,
-                    isContextSensitiveResolved = true,
+                    FirSpecialOrigin.ContextSensitive,
                 )
             }
 
@@ -103,7 +103,7 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
                 val resolvedSymbol = resolveSymbol(symbol, qualifier.subList(1, qualifier.size), qualifierResolver)
 
                 if (resolvedSymbol != null) {
-                    collector.processCandidate(resolvedSymbol, substitutorFromScope)
+                    collector.processCandidate(resolvedSymbol, substitutorFromScope, scope.asSpecialOrigin())
                 }
             }
 
@@ -120,7 +120,7 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
         if (collector.applicability != CandidateApplicability.RESOLVED) {
             val symbol = qualifierResolver.resolveFullyQualifiedSymbol(qualifier)
             if (symbol != null) {
-                collector.processCandidate(symbol, null)
+                collector.processCandidate(symbol, null, specialOrigin = null)
             }
         }
 
@@ -421,7 +421,7 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
                 FirTypeResolutionResult(
                     resolvedExpandedType,
                     potentiallyResolvedCandidate?.diagnostic,
-                    potentiallyResolvedCandidate?.isContextSensitiveResolved ?: false
+                    potentiallyResolvedCandidate?.specialOrigin
                 )
             }
             is FirFunctionTypeRef -> createFunctionType(typeRef)
