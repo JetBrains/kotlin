@@ -6,3 +6,6 @@
 package kotlin.wasm.internal
 
 internal object DefaultConstructorMarker
+
+@PublishedApi
+internal object SyntheticConstructorMarker

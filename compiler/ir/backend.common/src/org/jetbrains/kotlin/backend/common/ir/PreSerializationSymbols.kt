@@ -146,6 +146,7 @@ interface PreSerializationSymbols {
     val throwUnsupportedOperationException: IrSimpleFunctionSymbol
 
     val defaultConstructorMarker: IrClassSymbol
+    val syntheticConstructorMarker: IrClassSymbol
     val coroutineContextGetter: IrSimpleFunctionSymbol
     val suspendCoroutineUninterceptedOrReturn: IrSimpleFunctionSymbol
     val coroutineGetContext: IrSimpleFunctionSymbol
@@ -225,6 +226,9 @@ interface PreSerializationJsSymbols : PreSerializationWebSymbols {
         override val defaultConstructorMarker: IrClassSymbol =
             symbolFinder.topLevelClass(BASE_JS_PACKAGE, "DefaultConstructorMarker")
 
+        override val syntheticConstructorMarker =
+            symbolFinder.topLevelClass(BASE_JS_PACKAGE, "SyntheticConstructorMarker")
+
         override val suspendCoroutineUninterceptedOrReturn: IrSimpleFunctionSymbol =
             symbolFinder.topLevelFunction(BASE_JS_PACKAGE, PreSerializationWebSymbols.COROUTINE_SUSPEND_OR_RETURN_JS_NAME)
         override val coroutineGetContext: IrSimpleFunctionSymbol =
@@ -250,6 +254,9 @@ interface PreSerializationWasmSymbols : PreSerializationWebSymbols {
 
         override val defaultConstructorMarker: IrClassSymbol =
             getIrClass(FqName("kotlin.wasm.internal.DefaultConstructorMarker"))
+
+        override val syntheticConstructorMarker =
+            getIrClass(FqName("kotlin.wasm.internal.SyntheticConstructorMarker"))
 
         override val suspendCoroutineUninterceptedOrReturn: IrSimpleFunctionSymbol =
             getInternalWasmFunction("suspendCoroutineUninterceptedOrReturn")
@@ -291,6 +298,7 @@ interface PreSerializationNativeSymbols : PreSerializationKlibSymbols {
             private val String.internalClassId: ClassId
                 get() = ClassId(RuntimeNames.kotlinNativeInternalPackageName, Name.identifier(this))
             val defaultConstructorMarker: ClassId = "DefaultConstructorMarker".internalClassId
+            val syntheticConstructorMarker: ClassId = "SyntheticConstructorMarker".internalClassId
         }
 
         override val throwUninitializedPropertyAccessException: IrSimpleFunctionSymbol =
@@ -299,6 +307,8 @@ interface PreSerializationNativeSymbols : PreSerializationKlibSymbols {
             CallableIds.throwUnsupportedOperationException.functionSymbol()
         override val defaultConstructorMarker: IrClassSymbol =
             ClassIds.defaultConstructorMarker.classSymbol()
+        override val syntheticConstructorMarker: IrClassSymbol =
+            ClassIds.syntheticConstructorMarker.classSymbol()
         override val isAssertionArgumentEvaluationEnabled: IrSimpleFunctionSymbol =
             CallableIds.isAssertionArgumentEvaluationEnabled.functionSymbol()
 
