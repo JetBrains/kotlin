@@ -14,36 +14,43 @@ import org.jetbrains.kotlin.js.backend.ast.JsBinaryOperation
 import org.jetbrains.kotlin.js.backend.ast.JsBinaryOperator
 import org.jetbrains.kotlin.js.backend.ast.JsBlock
 import org.jetbrains.kotlin.js.backend.ast.JsDebugger
+import org.jetbrains.kotlin.js.backend.ast.JsDoWhile
+import org.jetbrains.kotlin.js.backend.ast.JsEmpty
 import org.jetbrains.kotlin.js.backend.ast.JsExpression
+import org.jetbrains.kotlin.js.backend.ast.JsFor
 import org.jetbrains.kotlin.js.backend.ast.JsFunction
+import org.jetbrains.kotlin.js.backend.ast.JsIf
 import org.jetbrains.kotlin.js.backend.ast.JsNode
 import org.jetbrains.kotlin.js.backend.ast.JsParameter
 import org.jetbrains.kotlin.js.backend.ast.JsStatement
 import org.jetbrains.kotlin.js.backend.ast.JsVars
+import org.jetbrains.kotlin.js.backend.ast.JsWhile
 import org.jetbrains.kotlin.js.parser.antlr.generated.JavaScriptParser
 import org.jetbrains.kotlin.js.parser.antlr.generated.JavaScriptParserBaseVisitor
-import org.jetbrains.kotlin.js.parser.antlr.generated.JavaScriptParserVisitor
-import kotlin.math.exp
 
 class JsAstMapperVisitor(
     private val fileName: String,
     private val scopeContext: ScopeContext
 ) : JavaScriptParserBaseVisitor<JsNode?>() {
+    override fun visitSourceElement(ctx: JavaScriptParser.SourceElementContext): JsNode? {
+        return visit<JsStatement?>(ctx.statement())
+    }
+
     // ENTRY POINT
     override fun visitStatement(ctx: JavaScriptParser.StatementContext): JsStatement? {
         ctx.functionDeclaration()?.run {
             return visitFunctionDeclaration(this).makeStmt()
         }
 
-        return super.visitStatement(ctx).expect<JsStatement>()
+        return super.visitStatement(ctx).expect<JsStatement?>()
     }
 
     override fun visitBlock(ctx: JavaScriptParser.BlockContext): JsBlock {
-        return mapBlock(ctx.statementList().statement())
+        return visit<JsBlock>(ctx.statementList())
     }
 
     override fun visitStatementList(ctx: JavaScriptParser.StatementListContext): JsBlock {
-        return mapBlock(ctx.statement())
+        return mapBlock(ctx.statement().map { visit<JsStatement?>(it) })
     }
 
     override fun visitImportStatement(ctx: JavaScriptParser.ImportStatementContext): JsNode? {
@@ -107,19 +114,27 @@ class JsAstMapperVisitor(
     }
 
     override fun visitDeclaration(ctx: JavaScriptParser.DeclarationContext): JsNode? {
-        TODO("Not yet implemented")
+        TODO("Export statemements not supported yet")
     }
 
     override fun visitVariableStatement(ctx: JavaScriptParser.VariableStatementContext): JsVars {
-        TODO("Not yet implemented")
+        return visit<JsVars>(ctx.variableDeclarationList())
     }
 
-    override fun visitVariableDeclarationList(ctx: JavaScriptParser.VariableDeclarationListContext): JsNode? {
-        TODO("Not yet implemented")
+    override fun visitVariableDeclarationList(ctx: JavaScriptParser.VariableDeclarationListContext): JsVars {
+        return JsVars().apply {
+            ctx.variableDeclaration().forEach {
+                add(visit<JsVars.JsVar>(it))
+            }
+        }
     }
 
-    override fun visitVariableDeclaration(ctx: JavaScriptParser.VariableDeclarationContext): JsNode? {
-        TODO("Not yet implemented")
+    override fun visitVariableDeclaration(ctx: JavaScriptParser.VariableDeclarationContext): JsVars.JsVar {
+        val originalId = ctx.assignable().identifier()?.text
+            ?: TODO("Only identifier parameters are supported yet")
+        val id = scopeContext.localNameFor(originalId)
+
+        return JsVars.JsVar(id).applyLocation(fileName, ctx)
     }
 
     override fun visitEmptyStatement_(ctx: JavaScriptParser.EmptyStatement_Context): JsStatement? {
@@ -127,29 +142,48 @@ class JsAstMapperVisitor(
     }
 
     override fun visitExpressionStatement(ctx: JavaScriptParser.ExpressionStatementContext): JsStatement? {
-        val exprSequence = ctx.expressionSequence()
-        val expressions = exprSequence.singleExpression()
-        return when (expressions.size) {
-            0 -> null
-            1 -> visit(expressions[0]).expect<JsExpression>().makeStmt()
-            else -> mapComma(ctx.expressionSequence()).expect<JsBinaryOperation>().makeStmt()
+        return visit<JsExpression>(ctx.expressionSequence()).makeStmt()
+    }
+
+    override fun visitIfStatement(ctx: JavaScriptParser.IfStatementContext): JsIf {
+        val ifCondition = visit<JsExpression>(ctx.expressionSequence())
+        // Empty statements are not supported in both 'if' branches, so always expect non-nullable statements.
+        val allStatements = ctx.statement().map { visit<JsStatement>(it) }
+
+        return JsIf(
+            ifCondition,
+            allStatements[0],
+            allStatements.getOrNull(1)
+        )
+    }
+
+    override fun visitDoStatement(ctx: JavaScriptParser.DoStatementContext): JsDoWhile {
+        val body = visit<JsStatement>(ctx.statement())
+        val condition = visit<JsExpression>(ctx.expressionSequence())
+
+        return JsDoWhile(condition, body)
+    }
+
+    override fun visitWhileStatement(ctx: JavaScriptParser.WhileStatementContext): JsWhile {
+        val condition = visit<JsExpression>(ctx.expressionSequence())
+        val body = visit<JsStatement>(ctx.statement())
+
+        return JsWhile(condition, body)
+    }
+
+    override fun visitForStatement(ctx: JavaScriptParser.ForStatementContext): JsFor {
+        val initSequence = ctx.expressionSequence(0)?.let { visit<JsExpression>(it) }
+        val initDeclaration = ctx.variableDeclarationList()?.let { visit<JsVars>(it) }
+
+        val condition = ctx.expressionSequence(1)?.let { visit<JsExpression>(it) }
+        val increment = ctx.expressionSequence(2)?.let { visit<JsExpression>(it) }
+        val body = visit<JsStatement?>(ctx.statement()) ?: JsEmpty
+
+        return when {
+            initSequence != null -> JsFor(initSequence, condition, increment, body)
+            initDeclaration != null -> JsFor(initDeclaration, condition, increment, body)
+            else -> TODO("Invalid for statement: ${ctx.text}")
         }
-    }
-
-    override fun visitIfStatement(ctx: JavaScriptParser.IfStatementContext): JsNode? {
-        TODO("Not yet implemented")
-    }
-
-    override fun visitDoStatement(ctx: JavaScriptParser.DoStatementContext): JsNode? {
-        TODO("Not yet implemented")
-    }
-
-    override fun visitWhileStatement(ctx: JavaScriptParser.WhileStatementContext): JsNode? {
-        TODO("Not yet implemented")
-    }
-
-    override fun visitForStatement(ctx: JavaScriptParser.ForStatementContext): JsNode? {
-        TODO("Not yet implemented")
     }
 
     override fun visitForInStatement(ctx: JavaScriptParser.ForInStatementContext): JsNode? {
@@ -157,7 +191,7 @@ class JsAstMapperVisitor(
     }
 
     override fun visitForOfStatement(ctx: JavaScriptParser.ForOfStatementContext): JsNode? {
-        TODO("Not yet implemented")
+        TODO("for .. of is not supported yet")
     }
 
     override fun visitVarModifier(ctx: JavaScriptParser.VarModifierContext): JsNode? {
@@ -274,17 +308,16 @@ class JsAstMapperVisitor(
     }
 
     override fun visitRestParameterArg(ctx: JavaScriptParser.RestParameterArgContext?): JsNode? {
-        TODO("Not yet implemented")
+        TODO("Rest parameters are not supported yet")
     }
 
     override fun visitFunctionBody(ctx: JavaScriptParser.FunctionBodyContext): JsBlock {
-        val statements = ctx.sourceElements().sourceElement().map { it.statement() }
-
-        return mapBlock(statements)
+        return visit<JsBlock>(ctx.sourceElements())
     }
 
-    override fun visitSourceElements(ctx: JavaScriptParser.SourceElementsContext): JsNode? {
-        TODO("Not yet implemented")
+    override fun visitSourceElements(ctx: JavaScriptParser.SourceElementsContext): JsBlock {
+        val statements = ctx.sourceElement().map { visit<JsStatement?>(it) }
+        return mapBlock(statements)
     }
 
     override fun visitArrayLiteral(ctx: JavaScriptParser.ArrayLiteralContext): JsNode? {
@@ -335,12 +368,17 @@ class JsAstMapperVisitor(
         TODO("Not yet implemented")
     }
 
-    override fun visitExpressionSequence(ctx: JavaScriptParser.ExpressionSequenceContext): JsNode? {
-        TODO("Not yet implemented")
+    override fun visitExpressionSequence(ctx: JavaScriptParser.ExpressionSequenceContext): JsExpression {
+        if (ctx.singleExpression().size == 1) {
+            return visit<JsExpression>(ctx.singleExpression()[0])
+        }
+
+        val exprs = ctx.singleExpression().map { visit<JsExpression>(it) }
+        return mapComma(exprs)
     }
 
     override fun visitSingleExpression(ctx: JavaScriptParser.SingleExpressionContext?): JsExpression {
-        TODO("Not yet implemented")
+        return super.visit(ctx).expect<JsExpression>()
     }
 
     override fun visitTemplateStringExpression(ctx: JavaScriptParser.TemplateStringExpressionContext): JsNode? {
@@ -552,10 +590,11 @@ class JsAstMapperVisitor(
 
     override fun visitNamedFunction(ctx: JavaScriptParser.NamedFunctionContext): JsFunction {
         val declaration = ctx.functionDeclaration()
+        val name = declaration.identifier()
         assert(declaration.Async() == null) { "Async functions are not supported yet"}
         val isGenerator = declaration.Multiply() != null
 
-        return mapFunction(null, declaration.functionBody(), declaration.formalParameterList().formalParameterArg(), isGenerator)
+        return mapFunction(name?.text, declaration.functionBody(), declaration.formalParameterList().formalParameterArg(), isGenerator)
     }
 
     override fun visitAnonymousFunctionDecl(ctx: JavaScriptParser.AnonymousFunctionDeclContext): JsFunction {
@@ -702,33 +741,33 @@ class JsAstMapperVisitor(
         TODO("Not yet implemented")
     }
 
-    private fun mapComma(sequence: JavaScriptParser.ExpressionSequenceContext): JsBinaryOperation? {
-        fun reduce(i: Int, expressions: List<JavaScriptParser.SingleExpressionContext>): JsBinaryOperation {
+    private fun mapComma(sequence: List<JsExpression>): JsBinaryOperation {
+        fun reduce(i: Int, expressions: List<JsExpression>): JsBinaryOperation {
             if (i == expressions.size - 2) {
-                val left = visit(expressions[i]).expect<JsExpression>()
-                val right = visit(expressions[i + 1]).expect<JsExpression>()
+                val left = expressions[i]
+                val right = expressions[i + 1]
                 return JsBinaryOperation(JsBinaryOperator.COMMA, left, right)
             }
 
             return JsBinaryOperation(
                 JsBinaryOperator.COMMA,
-                visitSingleExpression(expressions[i]),
+                expressions[i],
                 reduce(i + 1, expressions)
             )
         }
 
-        val expressions = sequence.singleExpression()
-        if (expressions.size < 2) return null
+        if (sequence.size < 2)
+            TODO("Sequence should contain at least 2 expressions to be used in comma mapping")
 
-        return reduce(0, sequence.singleExpression())
+        return reduce(0, sequence)
     }
 
-    private fun mapBlock(statements: List<JavaScriptParser.StatementContext>): JsBlock {
+    private fun mapBlock(statements: List<JsStatement?>): JsBlock {
         val block = JsBlock()
         statements
             // visitStatement can return null in some cases, like an empty statement (';') maps to nothing.
             // maybe we need to consider it including into resulting AST as it may be useful for debugging and stepping.
-            .mapNotNull { visit(it).expect<JsStatement?>() }
+            .filterNotNull()
             .forEach { block.statements.add(it) }
 
         return block
@@ -759,13 +798,16 @@ class JsAstMapperVisitor(
             function.parameters.add(JsParameter(paramName).applyLocation(fileName,paramNode))
         }
 
-        val block = visit(body).expect<JsBlock>()
+        val block = visit<JsBlock>(body)
         function.body = block
 
         return function.also {
             scopeContext.exitFunction()
         }
     }
+
+    private inline fun <reified T> visit(node: ParseTree): T =
+        visit(node).expect<T>()
 
     private inline fun <reified T> JsNode?.expect(): T {
         if (this !is T) throw AssertionError("Expected ${T::class}, got ${this?.javaClass}")
