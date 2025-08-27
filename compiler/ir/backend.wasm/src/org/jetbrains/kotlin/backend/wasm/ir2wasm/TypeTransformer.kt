@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.ir.util.erasedUpperBound
 import org.jetbrains.kotlin.ir.util.isInterface
 import org.jetbrains.kotlin.ir.util.packageFqName
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.wasm.config.WasmConfigurationKeys
 import org.jetbrains.kotlin.wasm.ir.*
 
 class WasmTypeTransformer(
@@ -22,6 +23,7 @@ class WasmTypeTransformer(
 ) {
     private val builtIns: IrBuiltIns = backendContext.irBuiltIns
     private val symbols = backendContext.wasmSymbols
+    private val useSharedObjects = backendContext.configuration.getBoolean(WasmConfigurationKeys.WASM_USE_SHARED_OBJECTS)
 
     fun IrType.toWasmResultType(): WasmType? =
         when (this) {
@@ -103,7 +105,8 @@ class WasmTypeTransformer(
                 "eqref" -> WasmEqRef
                 "structref" -> WasmRefNullType(WasmHeapType.Simple.Struct)
                 "i31ref" -> WasmI31Ref
-                "funcref" -> WasmRefNullType(WasmHeapType.Simple.Func)
+                "SmartShareableFuncRef" if useSharedObjects -> WasmI32
+                "funcref", "SmartShareableFuncRef" -> WasmRefNullType(WasmHeapType.Simple.Func)
                 else -> error("Unknown reference type $name")
             }
         } else {
