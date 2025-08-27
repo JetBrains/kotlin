@@ -38,8 +38,8 @@ import org.jetbrains.kotlin.analysis.api.standalone.base.packages.KotlinStandalo
 import org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.StandaloneProjectFactory
 import org.jetbrains.kotlin.analysis.decompiled.light.classes.ClsJavaStubByVirtualFileCache
 import org.jetbrains.kotlin.analysis.decompiled.light.classes.DecompiledLightClassesFactory
-import org.jetbrains.kotlin.analysis.decompiler.konan.K2KotlinNativeMetadataDecompiler
 import org.jetbrains.kotlin.analysis.decompiler.konan.KlibMetaFileType
+import org.jetbrains.kotlin.analysis.decompiler.konan.KotlinNativeMetadataDecompiler
 import org.jetbrains.kotlin.analysis.decompiler.psi.KotlinBuiltInDecompiler
 import org.jetbrains.kotlin.analysis.decompiler.psi.KotlinBuiltInFileType
 import org.jetbrains.kotlin.analysis.decompiler.psi.KotlinClassFileDecompiler
@@ -198,7 +198,7 @@ object AnalysisApiBaseTestServiceRegistrar : AnalysisApiTestServiceRegistrar() {
             registerExtension(KotlinClassFileDecompiler(), LoadingOrder.FIRST, applicationDisposable)
             registerExtension(KotlinBuiltInDecompiler(), LoadingOrder.FIRST, applicationDisposable)
             registerExtension(
-                K2KotlinNativeMetadataDecompiler(),
+                KotlinNativeMetadataDecompiler(),
                 LoadingOrder.FIRST,
                 applicationDisposable,
             )

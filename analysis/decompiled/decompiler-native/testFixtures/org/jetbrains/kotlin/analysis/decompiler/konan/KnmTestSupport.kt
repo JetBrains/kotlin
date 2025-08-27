@@ -19,7 +19,7 @@ import kotlin.io.path.absolutePathString
 
 interface KnmTestSupport {
     val ignoreDirective: SimpleDirective
-    fun createDecompiler(): KlibMetadataDecompiler<*>
+    fun createDecompiler(): KlibMetadataDecompiler
     fun compileCommonMetadata(inputKtFiles: List<Path>, compilationOutputPath: Path, additionalArguments: List<String>): OutputType
 }
 
@@ -34,8 +34,8 @@ object Fe10KnmTestSupport : KnmTestSupport {
     override val ignoreDirective: SimpleDirective
         get() = Directives.KNM_FE10_IGNORE
 
-    override fun createDecompiler(): KlibMetadataDecompiler<*> {
-        return K1KotlinNativeMetadataDecompiler()
+    override fun createDecompiler(): KlibMetadataDecompiler {
+        return KotlinNativeMetadataDecompiler()
     }
 
     override fun compileCommonMetadata(
@@ -65,8 +65,8 @@ object K2KnmTestSupport : KnmTestSupport {
     override val ignoreDirective: SimpleDirective
         get() = Directives.KNM_K2_IGNORE
 
-    override fun createDecompiler(): KlibMetadataDecompiler<*> {
-        return K2KotlinNativeMetadataDecompiler()
+    override fun createDecompiler(): KlibMetadataDecompiler {
+        return KotlinNativeMetadataDecompiler()
     }
 
     override fun compileCommonMetadata(
