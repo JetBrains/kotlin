@@ -73,7 +73,7 @@ internal inline fun convertDurationUnitToMilliseconds(value: Long, unit: Duratio
     value.multiplyNonNegativeWithoutOverflow(unit.millisMultiplier)
 
 /**
- * Multiplies this non-negative Long value by another non-negative Long value,
+ * Multiplies this non-negative Long value by another positive Long value,
  * clamping the result to [MAX_MILLIS] on overflow.
  *
  * This function optimizes multiplication for non-negative values by:
@@ -81,11 +81,11 @@ internal inline fun convertDurationUnitToMilliseconds(value: Long, unit: Duratio
  * - Using bit counting to detect potential overflow without performing the multiplication
  * - Clamping to [MAX_MILLIS] when overflow is detected
  *
- * @param other the non-negative Long value to multiply by
+ * @param other the Long value to multiply by (always positive)
  * @return the product clamped to the range [0, MAX_MILLIS]
  */
 private fun Long.multiplyNonNegativeWithoutOverflow(other: Long): Long = when {
-    this == 0L || other == 0L -> 0L
+    this == 0L -> 0L
     this == 1L -> other
     other == 1L -> this
     else -> {
