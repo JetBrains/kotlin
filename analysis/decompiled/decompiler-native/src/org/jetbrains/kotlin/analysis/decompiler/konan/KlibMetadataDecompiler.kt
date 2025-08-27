@@ -20,7 +20,7 @@ abstract class KlibMetadataDecompiler(
     private val stubVersion: Int,
 ) : ClassFileDecompilers.Full() {
     protected open val metadataStubBuilder: KlibMetadataStubBuilder by lazy {
-        K2KlibMetadataStubBuilder(stubVersion, fileType, serializerProtocol, ::readFileSafely)
+        KlibMetadataStubBuilder(stubVersion, fileType, serializerProtocol, ::readFileSafely)
     }
 
     protected fun doReadFile(file: VirtualFile): FileWithMetadata? {
