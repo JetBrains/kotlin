@@ -44,7 +44,7 @@ internal val IrElement.fqName: String
 
 internal fun IrFunctionAccessExpression.getThisReceiver(): IrValueSymbol = this.symbol.owner.parentAsClass.thisReceiver!!.symbol
 
-internal fun IrConst.toPrimitive(): Primitive = when {
+internal fun convertToPrimitive(value: Any?, type: IrType): Primitive = when {
     type.isByte() -> Primitive(convertTo<Byte>(value!!), type)
     type.isShort() -> Primitive(convertTo<Short>(value!!), type)
     type.isUByte() -> Primitive(convertTo<UByte>(value!!), type)
@@ -53,6 +53,8 @@ internal fun IrConst.toPrimitive(): Primitive = when {
     type.isULong() -> Primitive(convertTo<ULong>(value!!), type)
     else -> Primitive(value, type)
 }
+
+internal fun IrConst.toPrimitive(): Primitive = convertToPrimitive(value, type)
 
 fun IrAnnotationContainer?.hasAnnotation(annotation: FqName): Boolean {
     this ?: return false

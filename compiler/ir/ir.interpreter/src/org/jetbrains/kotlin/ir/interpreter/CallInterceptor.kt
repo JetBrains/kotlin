@@ -92,7 +92,8 @@ internal class DefaultCallInterceptor(override val interpreter: IrInterpreter) :
                 verify(handleIntrinsicMethods(irConstructor)) { "Unsupported intrinsic constructor: ${irConstructor.render()}" }
             }
             irClass.defaultType.isUnsignedType() -> {
-                callStack.rewriteState(constructorCall.getThisReceiver(), args.single())
+                val newState = convertToPrimitive((args.single() as Primitive).value, irClass.defaultType)
+                callStack.rewriteState(constructorCall.getThisReceiver(), newState)
             }
             else -> defaultAction()
         }
