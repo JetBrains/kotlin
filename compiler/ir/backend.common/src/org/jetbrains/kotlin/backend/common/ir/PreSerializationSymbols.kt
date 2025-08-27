@@ -110,6 +110,7 @@ interface PreSerializationSymbols {
     val throwUnsupportedOperationException: IrSimpleFunctionSymbol
 
     val defaultConstructorMarker: IrClassSymbol
+    val syntheticConstructorMarker: IrClassSymbol
     val coroutineContextGetter: IrSimpleFunctionSymbol
     val suspendCoroutineUninterceptedOrReturn: IrSimpleFunctionSymbol
     val coroutineGetContext: IrSimpleFunctionSymbol
@@ -147,6 +148,8 @@ interface PreSerializationKlibSymbols : PreSerializationSymbols {
 
     abstract class Impl(irBuiltIns: IrBuiltIns) : PreSerializationKlibSymbols, PreSerializationSymbols.Impl(irBuiltIns) {
         override val genericSharedVariableBox: SharedVariableBoxClassInfo = findSharedVariableBoxClass(null)
+        override val syntheticConstructorMarker: IrClassSymbol =
+            ClassId(StandardNames.KOTLIN_INTERNAL_FQ_NAME, Name.identifier("SyntheticConstructorMarker")).classSymbol()
     }
 
     companion object {

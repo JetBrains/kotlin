@@ -249,6 +249,9 @@ class JvmSymbols(
     override val defaultConstructorMarker: IrClassSymbol =
         createClass(FqName("kotlin.jvm.internal.DefaultConstructorMarker"))
 
+    override val syntheticConstructorMarker: IrClassSymbol
+        get() = error("not implemented")
+
     override val coroutineImpl: IrClassSymbol
         get() = error("not implemented")
 
