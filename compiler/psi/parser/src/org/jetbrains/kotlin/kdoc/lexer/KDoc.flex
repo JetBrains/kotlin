@@ -3,7 +3,6 @@ package org.jetbrains.kotlin.kdoc.lexer;
 import com.intellij.lexer.FlexLexer;
 import com.intellij.psi.TokenType;
 import com.intellij.psi.tree.IElementType;
-import com.intellij.util.text.CharArrayUtil;
 import java.lang.Character;
 import org.jetbrains.kotlin.kdoc.parser.KDocKnownTag;
 
@@ -71,8 +70,10 @@ CODE_FENCE_END=("```" | "~~~")
 %%
 
 
-<YYINITIAL> "/**"                         { yybegin(CONTENTS_BEGINNING);
-                                            return KDocTokens.START;            }
+<YYINITIAL> "/**" {
+              yybegin(CONTENTS_BEGINNING);
+              return KDocTokens.START;
+}
 "*"+ "/" {
               consecutiveLineBreakCount = 0;
               if (isLastToken()) return KDocTokens.END;
@@ -90,130 +91,134 @@ CODE_FENCE_END=("```" | "~~~")
 }
 
 <CONTENTS_BEGINNING> "@"{PLAIN_IDENTIFIER} {
-    consecutiveLineBreakCount = 0;
-    lastBlockType = BlockType.Paragraph;
-    KDocKnownTag tag = KDocKnownTag.Companion.findByTagName(zzBuffer.subSequence(zzStartRead, zzMarkedPos));
-    yybegin(tag != null && tag.isReferenceRequired() ? TAG_BEGINNING : TAG_TEXT_BEGINNING);
-    return KDocTokens.TAG_NAME;
+              consecutiveLineBreakCount = 0;
+              lastBlockType = BlockType.Paragraph;
+              KDocKnownTag tag = KDocKnownTag.Companion.findByTagName(zzBuffer.subSequence(zzStartRead, zzMarkedPos));
+              yybegin(tag != null && tag.isReferenceRequired() ? TAG_BEGINNING : TAG_TEXT_BEGINNING);
+              return KDocTokens.TAG_NAME;
 }
 
 <TAG_BEGINNING> {
     {LINE_BREAK_CHAR} {
-        consecutiveLineBreakCount++;
-        yybegin(LINE_BEGINNING);
-        return TokenType.WHITE_SPACE;
+              consecutiveLineBreakCount++;
+              yybegin(LINE_BEGINNING);
+              return TokenType.WHITE_SPACE;
     }
 
     {WHITE_SPACE_CHAR}+ {
-        return TokenType.WHITE_SPACE;
+              return TokenType.WHITE_SPACE;
     }
 
     /* Example: @return[x] The return value of function x
                        ^^^
     */
-    {CODE_LINK} { consecutiveLineBreakCount = 0;
-                  yybegin(TAG_TEXT_BEGINNING);
-                  return KDocTokens.MARKDOWN_LINK; }
+    {CODE_LINK} {
+              consecutiveLineBreakCount = 0;
+              yybegin(TAG_TEXT_BEGINNING);
+              return KDocTokens.MARKDOWN_LINK;
+    }
 
     /* Example: @param aaa The value of aaa
                        ^^^
     */
     {QUALIFIED_NAME} {
-        consecutiveLineBreakCount = 0;
-        yybegin(TAG_TEXT_BEGINNING);
-        return KDocTokens.MARKDOWN_LINK;
+              consecutiveLineBreakCount = 0;
+              yybegin(TAG_TEXT_BEGINNING);
+              return KDocTokens.MARKDOWN_LINK;
     }
 
     {NOT_WHITE_SPACE_OR_LINE_BREAK_CHAR} {
-        consecutiveLineBreakCount = 0;
-        yybegin(CONTENTS);
-        return KDocTokens.TEXT;
+              consecutiveLineBreakCount = 0;
+              yybegin(CONTENTS);
+              return KDocTokens.TEXT;
     }
 }
 
 <TAG_TEXT_BEGINNING> {
     {LINE_BREAK_CHAR} {
-        consecutiveLineBreakCount++;
-        yybegin(LINE_BEGINNING);
-        return TokenType.WHITE_SPACE;
+              consecutiveLineBreakCount++;
+              yybegin(LINE_BEGINNING);
+              return TokenType.WHITE_SPACE;
     }
 
     {WHITE_SPACE_CHAR}+ {
-        return TokenType.WHITE_SPACE;
+              return TokenType.WHITE_SPACE;
     }
 
     /* Example: @return[x] The return value of function x
                        ^^^
     */
-    {CODE_LINK} { consecutiveLineBreakCount = 0;
-                  yybegin(CONTENTS);
-                  return KDocTokens.MARKDOWN_LINK; }
+    {CODE_LINK} {
+              consecutiveLineBreakCount = 0;
+              yybegin(CONTENTS);
+              return KDocTokens.MARKDOWN_LINK;
+    }
 
     {NOT_WHITE_SPACE_OR_LINE_BREAK_CHAR} {
-        consecutiveLineBreakCount = 0;
-        yybegin(CONTENTS);
-        return KDocTokens.TEXT;
+              consecutiveLineBreakCount = 0;
+              yybegin(CONTENTS);
+              return KDocTokens.TEXT;
     }
 }
 
 <LINE_BEGINNING, CONTENTS_BEGINNING, CONTENTS> {
     {LINE_BREAK_CHAR} {
-        consecutiveLineBreakCount++;
-        yybegin(LINE_BEGINNING);
-        return TokenType.WHITE_SPACE;
+              consecutiveLineBreakCount++;
+              yybegin(LINE_BEGINNING);
+              return TokenType.WHITE_SPACE;
     }
 
     {WHITE_SPACE_CHAR}+ {
-        int state = yystate();
+              int state = yystate();
 
-        if (
-            // Recognize indented code blocks if only the line starts with an asterisk(s)
-            state == CONTENTS_BEGINNING &&
+              if (
+                  // Recognize indented code blocks if only the line starts with an asterisk(s)
+                  state == CONTENTS_BEGINNING &&
 
-            // If there are more than 4 spaces at the beginning of the line or a tab char, we are trying to recognize indented code block
-            (zzMarkedPos - zzStartRead >= 4 || zzBuffer.charAt(zzStartRead) == '\t' || zzBuffer.charAt(zzMarkedPos - 1) == '\t') &&
+                  // If there are more than 4 spaces at the beginning of the line or a tab char, we are trying to recognize indented code block
+                  (zzMarkedPos - zzStartRead >= 4 || zzBuffer.charAt(zzStartRead) == '\t' || zzBuffer.charAt(zzMarkedPos - 1) == '\t') &&
 
-            // If the last block type is paragraph, more than 1 consecutive line break is required
-            (lastBlockType != BlockType.Paragraph || consecutiveLineBreakCount >= 2)
-        ) {
-            yybegin(INDENTED_CODE_BLOCK);
-            lastBlockType = BlockType.Code;
-            return KDocTokens.CODE_BLOCK_TEXT;
-        }
+                  // If the last block type is paragraph, more than 1 consecutive line break is required
+                  (lastBlockType != BlockType.Paragraph || consecutiveLineBreakCount >= 2)
+              ) {
+                  yybegin(INDENTED_CODE_BLOCK);
+                  lastBlockType = BlockType.Code;
+                  return KDocTokens.CODE_BLOCK_TEXT;
+              }
 
-        if (state != CONTENTS_BEGINNING) {
-            yybegin(CONTENTS);
-        }
+              if (state != CONTENTS_BEGINNING) {
+                  yybegin(CONTENTS);
+              }
 
-        return KDocTokens.TEXT;  // internal white space
+              return KDocTokens.TEXT;  // internal white space
     }
 
     "\\"[\[\]] {
-        consecutiveLineBreakCount = 0;
-        lastBlockType = BlockType.Paragraph;
-        yybegin(CONTENTS);
-        return KDocTokens.MARKDOWN_ESCAPED_CHAR;
+              consecutiveLineBreakCount = 0;
+              lastBlockType = BlockType.Paragraph;
+              yybegin(CONTENTS);
+              return KDocTokens.MARKDOWN_ESCAPED_CHAR;
     }
 
     "(" {
-        consecutiveLineBreakCount = 0;
-        lastBlockType = BlockType.Paragraph;
-        yybegin(CONTENTS);
-        return KDocTokens.KDOC_LPAR;
+              consecutiveLineBreakCount = 0;
+              lastBlockType = BlockType.Paragraph;
+              yybegin(CONTENTS);
+              return KDocTokens.KDOC_LPAR;
     }
 
     ")" {
-        consecutiveLineBreakCount = 0;
-        lastBlockType = BlockType.Paragraph;
-        yybegin(CONTENTS);
-        return KDocTokens.KDOC_RPAR;
+              consecutiveLineBreakCount = 0;
+              lastBlockType = BlockType.Paragraph;
+              yybegin(CONTENTS);
+              return KDocTokens.KDOC_RPAR;
     }
 
     {CODE_FENCE_START} {
-        consecutiveLineBreakCount = 0;
-        lastBlockType = BlockType.Code;
-        yybegin(CODE_BLOCK_LINE_BEGINNING);
-        return KDocTokens.TEXT;
+              consecutiveLineBreakCount = 0;
+              lastBlockType = BlockType.Code;
+              yybegin(CODE_BLOCK_LINE_BEGINNING);
+              return KDocTokens.TEXT;
     }
 
     /* We're only interested in parsing links that can become code references,
@@ -222,62 +227,62 @@ CODE_FENCE_END=("```" | "~~~")
        Also if a link is followed by [ or (, then its destination is a regular HTTP
        link and not a Kotlin identifier, so we don't need to do our parsing and resolution. */
     {CODE_LINK} / [^\(\[] {
-        consecutiveLineBreakCount = 0;
-        lastBlockType = BlockType.Paragraph;
-        yybegin(CONTENTS);
-        return KDocTokens.MARKDOWN_LINK;
+              consecutiveLineBreakCount = 0;
+              lastBlockType = BlockType.Paragraph;
+              yybegin(CONTENTS);
+              return KDocTokens.MARKDOWN_LINK;
     }
 
     {NOT_WHITE_SPACE_OR_LINE_BREAK_CHAR} {
-        consecutiveLineBreakCount = 0;
-        lastBlockType = BlockType.Paragraph;
-        yybegin(CONTENTS);
-        return KDocTokens.TEXT;
+              consecutiveLineBreakCount = 0;
+              lastBlockType = BlockType.Paragraph;
+              yybegin(CONTENTS);
+              return KDocTokens.TEXT;
     }
 }
 
 <CODE_BLOCK_LINE_BEGINNING> {
     {WHITE_SPACE_CHAR}+ {
-        return TokenType.WHITE_SPACE;
+              return TokenType.WHITE_SPACE;
     }
 
     "*"+ {
-        yybegin(CODE_BLOCK_CONTENTS_BEGINNING);
-        return KDocTokens.LEADING_ASTERISK;
+              yybegin(CODE_BLOCK_CONTENTS_BEGINNING);
+              return KDocTokens.LEADING_ASTERISK;
     }
 }
 
 <CODE_BLOCK_LINE_BEGINNING, CODE_BLOCK_CONTENTS_BEGINNING> {
     {CODE_FENCE_END} / [ \t\f]* [\n] {
-        consecutiveLineBreakCount = 0;
-        // Code fence end
-        yybegin(CONTENTS);
-        return KDocTokens.TEXT;
+              consecutiveLineBreakCount = 0;
+              // Code fence end
+              yybegin(CONTENTS);
+              return KDocTokens.TEXT;
     }
 }
 
 <INDENTED_CODE_BLOCK, CODE_BLOCK_LINE_BEGINNING, CODE_BLOCK_CONTENTS_BEGINNING, CODE_BLOCK> {
     {LINE_BREAK_CHAR} {
-        consecutiveLineBreakCount++;
-        yybegin(yystate() == INDENTED_CODE_BLOCK ? LINE_BEGINNING : CODE_BLOCK_LINE_BEGINNING);
-        return TokenType.WHITE_SPACE;
+              consecutiveLineBreakCount++;
+              yybegin(yystate() == INDENTED_CODE_BLOCK ? LINE_BEGINNING : CODE_BLOCK_LINE_BEGINNING);
+              return TokenType.WHITE_SPACE;
     }
 
     {WHITE_SPACE_CHAR}+ {
-        return KDocTokens.CODE_BLOCK_TEXT;
+              return KDocTokens.CODE_BLOCK_TEXT;
     }
 
     {NOT_WHITE_SPACE_OR_LINE_BREAK_CHAR} {
-        consecutiveLineBreakCount = 0;
-        if (yystate() != INDENTED_CODE_BLOCK) {
-            yybegin(CODE_BLOCK);
-        }
-        return KDocTokens.CODE_BLOCK_TEXT;
+              consecutiveLineBreakCount = 0;
+              if (yystate() != INDENTED_CODE_BLOCK) {
+                  yybegin(CODE_BLOCK);
+              }
+              return KDocTokens.CODE_BLOCK_TEXT;
     }
 }
 
 [\s\S] {
-consecutiveLineBreakCount = 0;
-lastBlockType = BlockType.Paragraph;
-return TokenType.BAD_CHARACTER;
+              consecutiveLineBreakCount = 0;
+              lastBlockType = BlockType.Paragraph;
+              return TokenType.BAD_CHARACTER;
 }
