@@ -17,7 +17,6 @@ internal fun <P : TransformParameters, T : TransformAction<P>> DependencyHandler
     toArtifactType: String,
     configure: (TransformSpec<P>) -> Unit = {},
 ) {
-    @Suppress("registerTransform_without_artifactType") // this is an actual replacement implementation
     registerTransform(transformClass) { spec ->
         configure(spec)
         spec.from.attribute(ArtifactTypeDefinition.ARTIFACT_TYPE_ATTRIBUTE, fromArtifactType)
