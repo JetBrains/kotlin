@@ -5,7 +5,14 @@ Local[name: $context-Ctx2; isMutated: false; displayText: $context-Ctx2]
 Local[name: $context-Ctx1; isMutated: false; displayText: $context-Ctx1]
     <unused var>: R|Ctx1|
     R|Ctx1|
+Local[name: $context-Ctx3; isMutated: false; displayText: $context-Ctx3]
+    <unused var>: R|Ctx3|
+    R|Ctx3|
+Local[name: $context-_anonymous_; isMutated: false; displayText: $context-_anonymous_]
+    <unused var>: R|<anonymous>|
+    R|<anonymous>|
 Local[name: x; isMutated: false; displayText: x]
     x: R|kotlin/Int|
     R|kotlin/Int|
-No captured files
+Captured files:
+contextParameter.kt

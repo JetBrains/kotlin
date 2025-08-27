@@ -168,9 +168,6 @@ class MemoizedInlineClassReplacements(
                             // The function's name will be mangled, so preserve the old receiver name.
                             function.extensionReceiverName(context.config).let(Name::identifier)
                         }
-                        IrParameterKind.Context -> {
-                            function.anonymousContextParameterName(parameter)?.let(Name::identifier) ?: parameter.name
-                        }
                         else -> parameter.name
                     },
                     origin = when (parameter.kind) {
@@ -207,7 +204,7 @@ class MemoizedInlineClassReplacements(
                     IrParameterKind.Context -> {
                         parameter.copyTo(
                             this,
-                            name = function.anonymousContextParameterName(parameter)?.let(Name::identifier) ?: parameter.name,
+                            name = parameter.name,
                             origin = IrDeclarationOrigin.MOVED_CONTEXT_RECEIVER,
                             kind = IrParameterKind.Regular,
                         )

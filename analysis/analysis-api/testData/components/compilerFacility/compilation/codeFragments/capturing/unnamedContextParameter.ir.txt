@@ -8,10 +8,14 @@ MODULE_FRAGMENT
       FUN name:run visibility:public modality:FINAL returnType:kotlin.Int
         VALUE_PARAMETER kind:Regular name:p0 index:0 type:<root>.Ctx2
         VALUE_PARAMETER kind:Regular name:p1 index:1 type:<root>.Ctx1
-        VALUE_PARAMETER kind:Regular name:p2 index:2 type:kotlin.Int
+        VALUE_PARAMETER kind:Regular name:p2 index:2 type:<root>.Ctx3
+        VALUE_PARAMETER kind:Regular name:p3 index:3 type:<root>.ContextParameterKt.check.<no name provided>
+        VALUE_PARAMETER kind:Regular name:p4 index:4 type:kotlin.Int
         EXPRESSION_BODY
           BLOCK type=kotlin.Int origin=null
-            CALL 'public final fun bar (ctx2: <root>.Ctx2, ctx1: <root>.Ctx1, x: kotlin.Int): kotlin.Int declared in <root>.ContextParameterKt' type=kotlin.Int origin=null
+            CALL 'public final fun bar (ctx2: <root>.Ctx2, ctx1: <root>.Ctx1, ctx3: <root>.Ctx3, ctx4: <root>.Ctx4, x: kotlin.Int): kotlin.Int declared in <root>.ContextParameterKt' type=kotlin.Int origin=null
               ARG ctx2: GET_VAR 'p0: <root>.Ctx2 declared in <root>.CodeFragment.run' type=<root>.Ctx2 origin=null
               ARG ctx1: GET_VAR 'p1: <root>.Ctx1 declared in <root>.CodeFragment.run' type=<root>.Ctx1 origin=null
-              ARG x: GET_VAR 'p2: kotlin.Int declared in <root>.CodeFragment.run' type=kotlin.Int origin=null
+              ARG ctx3: GET_VAR 'p2: <root>.Ctx3 declared in <root>.CodeFragment.run' type=<root>.Ctx3 origin=null
+              ARG ctx4: GET_VAR 'p3: <root>.ContextParameterKt.check.<no name provided> declared in <root>.CodeFragment.run' type=<root>.ContextParameterKt.check.<no name provided> origin=null
+              ARG x: GET_VAR 'p4: kotlin.Int declared in <root>.CodeFragment.run' type=kotlin.Int origin=null

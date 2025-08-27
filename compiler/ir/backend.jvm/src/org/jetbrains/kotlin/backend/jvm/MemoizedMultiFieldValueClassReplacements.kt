@@ -147,8 +147,7 @@ class MemoizedMultiFieldValueClassReplacements(
             val name = when (param.kind) {
                 IrParameterKind.DispatchReceiver -> AsmUtil.THIS
                 IrParameterKind.ExtensionReceiver -> sourceFunction.extensionReceiverName(context.config)
-                IrParameterKind.Context -> sourceFunction.anonymousContextParameterName(param)
-                IrParameterKind.Regular -> null
+                IrParameterKind.Regular, IrParameterKind.Context -> null
             }
             val originWhenNotFlattened = when (param.kind) {
                 IrParameterKind.DispatchReceiver -> IrDeclarationOrigin.MOVED_DISPATCH_RECEIVER

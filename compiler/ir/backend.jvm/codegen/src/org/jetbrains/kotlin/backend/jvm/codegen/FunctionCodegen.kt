@@ -376,8 +376,7 @@ private fun generateParameterNames(irFunction: IrFunction, mv: MethodVisitor, co
             parameter.name.asString()
         } else when (parameter.kind) {
             IrParameterKind.DispatchReceiver -> continue
-            IrParameterKind.Regular -> parameter.name.asString()
-            IrParameterKind.Context -> irFunction.anonymousContextParameterName(parameter) ?: parameter.name.asString()
+            IrParameterKind.Regular, IrParameterKind.Context -> parameter.name.asString()
             IrParameterKind.ExtensionReceiver -> irFunction.extensionReceiverName(config)
         }
         val origin = parameter.origin
