@@ -46,7 +46,6 @@ import org.jetbrains.kotlin.psi
 import org.jetbrains.kotlin.psi.KtCodeFragment
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtFunction
-import org.jetbrains.kotlin.resolve.jvm.JvmConstants
 import java.util.*
 
 @KaImplementationDetail
@@ -256,7 +255,7 @@ private class CodeFragmentCapturedValueVisitor(
         when (symbol) {
             is FirValueParameterSymbol -> {
                 val isCrossingInlineBounds = isCrossingInlineBounds(element, symbol)
-                val name = symbol.anonymousContextParameterName(session, JvmConstants.INVALID_CHARS)
+                val name = symbol.anonymousContextParameterName(session)
                     ?.let { Name.identifier(it) }
                     ?: symbol.name
                 val capturedValue = CodeFragmentCapturedValue.Local(name, isMutated, isCrossingInlineBounds, depth)

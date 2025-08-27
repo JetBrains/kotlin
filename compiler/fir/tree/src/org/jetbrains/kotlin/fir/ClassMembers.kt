@@ -255,3 +255,9 @@ var <D : FirCallableDeclaration>
 
 val <D : FirCallableDeclaration> FirCallableSymbol<D>.delegatedWrapperData: DelegatedWrapperData<D>?
     get() = fir.delegatedWrapperData
+
+class FirDeclarationNameInvalidCharsProvider(val invalidChars: Set<Char>) : FirSessionComponent
+
+private val FirSession.declarationNameInvalidCharsProvider: FirDeclarationNameInvalidCharsProvider? by FirSession.nullableSessionComponentAccessor()
+
+val FirSession.declarationNameInvalidChars: Set<Char> get() = declarationNameInvalidCharsProvider?.invalidChars ?: emptySet()
