@@ -7467,6 +7467,39 @@ public class NativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenBoxT
       public void testAllFilesPresentInCollectionLiterals() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/collectionLiterals"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
       }
+
+      @Test
+      @TestMetadata("genericCollection.kt")
+      public void testGenericCollection() {
+        runTest("compiler/testData/codegen/box/collectionLiterals/genericCollection.kt");
+      }
+
+      @Test
+      @TestMetadata("multipleOfOverloads.kt")
+      public void testMultipleOfOverloads() {
+        runTest("compiler/testData/codegen/box/collectionLiterals/multipleOfOverloads.kt");
+      }
+
+      @Test
+      @TestMetadata("nonGenericCollection.kt")
+      public void testNonGenericCollection() {
+        runTest("compiler/testData/codegen/box/collectionLiterals/nonGenericCollection.kt");
+      }
+    }
+
+    @Nested
+    @TestMetadata("compiler/testData/codegen/box/collectionLiteralsInAnnotations")
+    @TestDataPath("$PROJECT_ROOT")
+    @ClassicPipeline()
+    @UseExtTestCaseGroupProvider()
+    @UsePartialLinkage(mode = Mode.DISABLED)
+    @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
+    public class CollectionLiteralsInAnnotations {
+      @Test
+      public void testAllFilesPresentInCollectionLiteralsInAnnotations() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/collectionLiteralsInAnnotations"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+      }
     }
 
     @Nested

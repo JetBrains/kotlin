@@ -7221,6 +7221,36 @@ public class IrJsES6CodegenBoxTestGenerated extends AbstractIrJsES6CodegenBoxTes
     public void testAllFilesPresentInCollectionLiterals() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/collectionLiterals"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
     }
+
+    @Test
+    @TestMetadata("genericCollection.kt")
+    public void testGenericCollection() {
+      runTest("compiler/testData/codegen/box/collectionLiterals/genericCollection.kt");
+    }
+
+    @Test
+    @TestMetadata("multipleOfOverloads.kt")
+    public void testMultipleOfOverloads() {
+      runTest("compiler/testData/codegen/box/collectionLiterals/multipleOfOverloads.kt");
+    }
+
+    @Test
+    @TestMetadata("nonGenericCollection.kt")
+    public void testNonGenericCollection() {
+      runTest("compiler/testData/codegen/box/collectionLiterals/nonGenericCollection.kt");
+    }
+  }
+
+  @Nested
+  @TestMetadata("compiler/testData/codegen/box/collectionLiteralsInAnnotations")
+  @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
+  @Tag("es6")
+  public class CollectionLiteralsInAnnotations {
+    @Test
+    public void testAllFilesPresentInCollectionLiteralsInAnnotations() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/collectionLiteralsInAnnotations"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+    }
   }
 
   @Nested

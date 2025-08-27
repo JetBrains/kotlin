@@ -7084,6 +7084,34 @@ public class JsIrDeserializationCodegenBoxTestGenerated extends AbstractJsIrDese
       public void testAllFilesPresentInCollectionLiterals() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/collectionLiterals"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
       }
+
+      @Test
+      @TestMetadata("genericCollection.kt")
+      public void testGenericCollection() {
+        runTest("compiler/testData/codegen/box/collectionLiterals/genericCollection.kt");
+      }
+
+      @Test
+      @TestMetadata("multipleOfOverloads.kt")
+      public void testMultipleOfOverloads() {
+        runTest("compiler/testData/codegen/box/collectionLiterals/multipleOfOverloads.kt");
+      }
+
+      @Test
+      @TestMetadata("nonGenericCollection.kt")
+      public void testNonGenericCollection() {
+        runTest("compiler/testData/codegen/box/collectionLiterals/nonGenericCollection.kt");
+      }
+    }
+
+    @Nested
+    @TestMetadata("compiler/testData/codegen/box/collectionLiteralsInAnnotations")
+    @TestDataPath("$PROJECT_ROOT")
+    public class CollectionLiteralsInAnnotations {
+      @Test
+      public void testAllFilesPresentInCollectionLiteralsInAnnotations() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/collectionLiteralsInAnnotations"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+      }
     }
 
     @Nested
