@@ -68,8 +68,7 @@ internal expect fun convertDurationUnit(value: Long, sourceUnit: DurationUnit, t
  * @param unit the source duration unit
  * @return the duration value converted to milliseconds
  */
-@kotlin.internal.InlineOnly
-internal inline fun convertDurationUnitToMilliseconds(value: Long, unit: DurationUnit): Long =
+internal fun convertDurationUnitToMilliseconds(value: Long, unit: DurationUnit): Long =
     value.multiplyNonNegativeWithoutOverflow(unit.millisMultiplier)
 
 /**
