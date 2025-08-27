@@ -151,8 +151,13 @@ private class CirTreeSerializationVisitor(
         val directNestedClasses: Collection<KmClass> = node.classes.mapNotNull { (nestedClassName, nestedClassNode) ->
             val nestedClassContext = classContext.classifierContext(nestedClassName, classTypeParametersCount)
             val nestedClass: KmClass = nestedClassNode.accept(this, nestedClassContext)?.cast() ?: return@mapNotNull null
-            classConsumer.consume(nestedClass)
-            statsCollector?.logClass(nestedClass, nestedClassContext)
+            // Nested classes are collected separately inside `cirClass.serializeClass()`.
+            // If we add them here, we'll end up with both enum entries and enum entries' classes
+            // in the resulting metadata, which is not how `FirElementSerializer` works.
+            if (nestedClass.kind != ClassKind.ENUM_ENTRY) {
+                classConsumer.consume(nestedClass)
+                statsCollector?.logClass(nestedClass, nestedClassContext)
+            }
             nestedClass
         }
 
