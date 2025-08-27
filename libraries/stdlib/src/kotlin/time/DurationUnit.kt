@@ -85,14 +85,14 @@ internal fun convertDurationUnitToMilliseconds(value: Long, unit: DurationUnit):
  */
 private fun Long.multiplyNonNegativeWithoutOverflow(other: Long): Long = when {
     this == 0L -> 0L
-    this == 1L -> other
-    other == 1L -> this
+    this == 1L -> other.coerceAtMost(MAX_MILLIS)
+    other == 1L -> this.coerceAtMost(MAX_MILLIS)
     else -> {
         val bitSum = (64 - countLeadingZeroBits()) + (64 - other.countLeadingZeroBits())
         when {
             bitSum < 63 -> this * other
-            bitSum > 64 -> MAX_MILLIS
-            else -> (this * other).let { if (it in 1..MAX_MILLIS) it else MAX_MILLIS }
+            bitSum > 63 -> MAX_MILLIS
+            else -> (this * other).coerceAtMost(MAX_MILLIS)
         }
     }
 }
