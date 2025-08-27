@@ -23,7 +23,7 @@ abstract class KotlinMetadataDecompiler<out V : BinaryVersion>(
     stubVersion: Int,
 ) : ClassFileDecompilers.Full() {
     protected open val metadataStubBuilder: KotlinMetadataStubBuilder = KotlinMetadataStubBuilder(
-        version = stubVersion,
+        stubVersion = stubVersion,
         fileType = fileType,
         serializerProtocol = serializerProtocol,
         readFile = ::readFileSafely,
