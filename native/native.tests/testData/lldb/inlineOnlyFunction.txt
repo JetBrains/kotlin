@@ -3,8 +3,8 @@
 > r
 > bt
 * thread #1, [..] stop reason = breakpoint 1.1
-  * frame #0: [..]`kfun:#main(kotlin.Array<kotlin.String>){} [inlined] [..] at main.kt:9:9
-    frame #1: [..]`kfun:#main(kotlin.Array<kotlin.String>){} [inlined] [..] at Standard.kt:83:5
+  * frame #0: [..]<inlined-lambda>[..] at main.kt:9:9[..]
+    frame #1: [..]apply[..] at Standard.kt:83:5[..]
     frame #2: [..]`kfun:#main(args=[]){} at main.kt:7:7
     frame #3: [..]`Konan_start(args=[]) at [..]
     frame #4: [..]
@@ -12,10 +12,10 @@
 > n
 > bt
 * thread #1, [..] stop reason = breakpoint 2.1
-  * frame #0: [..]`kfun:#main(kotlin.Array<kotlin.String>){} [inlined] [..] at main.kt:10:13
-    frame #1: [..]`kfun:#main(kotlin.Array<kotlin.String>){} [inlined] [..] at Standard.kt:83:5
-    frame #2: [..]`kfun:#main(kotlin.Array<kotlin.String>){} [inlined] [..] at main.kt:9:14
-    frame #3: [..]`kfun:#main(kotlin.Array<kotlin.String>){} [inlined] [..] at Standard.kt:83:5
+  * frame #0: [..]<inlined-lambda>[..] at main.kt:10:13[..]
+    frame #1: [..]apply[..] at Standard.kt:83:5[..]
+    frame #2: [..]<inlined-lambda>[..] at main.kt:9:14[..]
+    frame #3: [..]apply[..] at Standard.kt:83:5[..]
     frame #4: [..]`kfun:#main(args=[]){} at main.kt:7:7
     frame #5: [..]`Konan_start(args=[]) at [..]
     frame #6: [..]
