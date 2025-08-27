@@ -10,6 +10,7 @@ import org.gradle.api.provider.Property
 import org.gradle.api.tasks.*
 import org.gradle.work.DisableCachingByDefault
 import org.jetbrains.kotlin.abi.tools.api.AbiToolsInterface
+import org.jetbrains.kotlin.buildtools.api.KotlinToolchain.BuildSession
 import org.jetbrains.kotlin.gradle.plugin.abi.AbiValidationPaths.LEGACY_JVM_DUMP_EXTENSION
 import org.jetbrains.kotlin.gradle.plugin.abi.AbiValidationPaths.LEGACY_KLIB_DUMP_EXTENSION
 
@@ -34,7 +35,7 @@ internal abstract class KotlinLegacyAbiCheckTaskImpl : AbiToolsTask(), KotlinLeg
     private val rootDir = project.rootDir
 
 
-    override fun runTools(tools: AbiToolsInterface) {
+    override fun runTools(tools: AbiToolsInterface, session: BuildSession?) {
         val referenceDir = referenceDir.get().asFile
         val actualDir = actualDir.get().asFile
         val pathPrefix = if (projectPath == ":") ":" else "$projectPath:"
@@ -58,10 +59,17 @@ internal abstract class KotlinLegacyAbiCheckTaskImpl : AbiToolsTask(), KotlinLeg
             if (referenceDumps.remove(referenceDump)) {
 
                 val diffSet = mutableSetOf<String>()
-                val diff = tools.filesDiff(
-                    referenceDump,
-                    actualDump
-                )
+
+                val diff: String? = if (session != null) {
+                    val operation = session.kotlinToolchain.abiValidation.findDiffFormatV2(referenceDump, actualDump)
+                    session.executeOperation(operation)
+                } else {
+                    tools.filesDiff(
+                        referenceDump,
+                        actualDump
+                    )
+                }
+
                 if (diff != null) diffSet.add(diff)
                 if (diffSet.isNotEmpty()) {
                     val diffText = diffSet.joinToString("\n\n")

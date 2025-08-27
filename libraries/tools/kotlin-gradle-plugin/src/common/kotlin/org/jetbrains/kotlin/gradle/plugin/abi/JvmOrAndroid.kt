@@ -8,8 +8,10 @@ package org.jetbrains.kotlin.gradle.plugin.abi
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
 import org.jetbrains.kotlin.gradle.dsl.abi.AbiValidationVariantSpec
+import org.jetbrains.kotlin.gradle.plugin.BUILD_TOOLS_API_CLASSPATH_CONFIGURATION_NAME
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 
 /**
  * Finalizes the configuration of the report variant for the JVM version of the Kotlin Gradle plugin.
@@ -42,6 +44,10 @@ private fun AbiValidationVariantSpec.finalizeVariant(
 ) {
     val taskSet = AbiValidationTaskSet(project, name)
     taskSet.setClasspath(abiClasspath)
+
+    val isBuildToolsApiEnabled = project.kotlinPropertiesProvider.runKotlinCompilerViaBuildToolsApi
+    val buildToolsApiClasspath = project.configurations.named(BUILD_TOOLS_API_CLASSPATH_CONFIGURATION_NAME)
+    taskSet.setBuildTools(isBuildToolsApiEnabled, buildToolsApiClasspath)
 
     val classfiles = project.files()
     taskSet.addSingleJvmTarget(classfiles)

@@ -9,6 +9,7 @@ package org.jetbrains.kotlin.buildtools.internal.compat
 
 import org.jetbrains.kotlin.buildtools.api.*
 import org.jetbrains.kotlin.buildtools.api.ProjectId.Companion.RandomProjectUUID
+import org.jetbrains.kotlin.buildtools.api.abi.AbiValidationToolchain
 import org.jetbrains.kotlin.buildtools.api.js.JsPlatformToolchain
 import org.jetbrains.kotlin.buildtools.api.js.WasmPlatformToolchain
 import org.jetbrains.kotlin.buildtools.api.jvm.*
@@ -51,6 +52,8 @@ internal class KotlinToolchainV1Adapter(
     override val js: JsPlatformToolchain get() = error("JS compilation is not available in BTA API v1 fallback (compiler version ${getCompilerVersion()}")
     override val native: NativePlatformToolchain get() = error("Native compilation is not available in BTA API v1 fallback (compiler version ${getCompilerVersion()}")
     override val wasm: WasmPlatformToolchain get() = error("WASM compilation is not available in BTA API v1 fallback (compiler version ${getCompilerVersion()}")
+
+    override val abiValidation: AbiValidationToolchain get() = error("ABI validation is not available in BTA API v1 fallback (compiler version ${getCompilerVersion()}")
 
     override fun createInProcessExecutionPolicy(): ExecutionPolicy.InProcess {
         return ExecutionPolicyV1Adapter.InProcess(compilationService.makeCompilerExecutionStrategyConfiguration().useInProcessStrategy())

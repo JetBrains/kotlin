@@ -12,21 +12,28 @@ import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.SetProperty
 import org.gradle.api.tasks.*
-import org.jetbrains.kotlin.abi.tools.api.AbiFilters
 import org.jetbrains.kotlin.abi.tools.api.AbiToolsInterface
 import org.jetbrains.kotlin.abi.tools.api.v2.KlibTarget
+import org.jetbrains.kotlin.buildtools.api.KotlinToolchain.BuildSession
+import org.jetbrains.kotlin.buildtools.api.abi.KlibTargetId
+import org.jetbrains.kotlin.buildtools.api.abi.operations.AbiValidationWriteJvmDumpFormatV2
+import org.jetbrains.kotlin.buildtools.api.abi.operations.AbiValidationWriteKlibDumpFormatV2
 import org.jetbrains.kotlin.gradle.plugin.abi.AbiValidationPaths.LEGACY_JVM_DUMP_EXTENSION
 import org.jetbrains.kotlin.gradle.plugin.abi.AbiValidationPaths.LEGACY_KLIB_DUMP_EXTENSION
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.UsesKotlinToolingDiagnostics
 import org.jetbrains.kotlin.incremental.deleteDirectoryContents
+import java.io.File
+
+typealias AbiFiltersBTApi = org.jetbrains.kotlin.buildtools.api.abi.AbiFilters
+typealias AbiFiltersAbiToolsApi = org.jetbrains.kotlin.abi.tools.api.AbiFilters
 
 @CacheableTask
 internal abstract class KotlinLegacyAbiDumpTaskImpl : AbiToolsTask(), KotlinLegacyAbiDumpTask, UsesKotlinToolingDiagnostics {
     @get:OutputDirectory
     abstract override val dumpDir: DirectoryProperty
 
-    @get:InputFiles // don't fail the task if file does not exist https://github.com/gradle/gradle/issues/2016
+    @get:InputFiles // don't fail the task if the file does not exist https://github.com/gradle/gradle/issues/2016
     @get:Optional
     @get:PathSensitive(PathSensitivity.RELATIVE)
     abstract val referenceKlibDump: RegularFileProperty
@@ -78,7 +85,7 @@ internal abstract class KotlinLegacyAbiDumpTaskImpl : AbiToolsTask(), KotlinLega
     val projectName: String = project.name
 
 
-    override fun runTools(tools: AbiToolsInterface) {
+    override fun runTools(tools: AbiToolsInterface, session: BuildSession?) {
         val abiDir = dumpDir.get().asFile
 
         val jvmTargets = jvm.get()
@@ -96,7 +103,7 @@ internal abstract class KotlinLegacyAbiDumpTaskImpl : AbiToolsTask(), KotlinLega
             )
         }
 
-        val filters = AbiFilters(
+        val filters = AbiFiltersAbiToolsApi(
             includedClasses.getOrElse(emptySet()),
             excludedClasses.getOrElse(emptySet()),
             includedAnnotatedWith.getOrElse(emptySet()),
@@ -123,39 +130,70 @@ internal abstract class KotlinLegacyAbiDumpTaskImpl : AbiToolsTask(), KotlinLega
             val dumpFile = dirForDump.resolve(jvmDumpName)
 
             dumpFile.bufferedWriter().use { writer ->
-                tools.v2.printJvmDump(writer, classfiles, filters)
+                if (session != null) {
+                    val operation = session.kotlinToolchain.abiValidation.writeJvmDumpFormatV2(writer, classfiles)
+                    if (!filters.isEmpty) {
+                        operation[AbiValidationWriteJvmDumpFormatV2.PATTERN_FILTERS] = filters.convert()
+                    }
+                    session.executeOperation(operation)
+                } else {
+                    tools.v2.printJvmDump(writer, classfiles, filters)
+                }
             }
         }
 
         if (klibIsEnabled.get() && (klibTargets.isNotEmpty() || unsupported.isNotEmpty())) {
-            val mergedDump = tools.v2.createKlibDump()
+            val klibs: MutableMap<KlibTargetId, File> = mutableMapOf()
             klibTargets.forEach { suite ->
                 val klibDir = suite.klibFiles.files.first()
                 if (klibDir.exists()) {
-                    val dump = tools.v2.extractKlibAbi(klibDir, KlibTarget(suite.canonicalTargetName, suite.targetName), filters)
-                    mergedDump.merge(dump)
+                    klibs[KlibTargetId(suite.canonicalTargetName, suite.targetName)] = klibDir
                 }
             }
-
-            val referenceFile = referenceKlibDump.get().asFile
             if (unsupported.isNotEmpty()) {
-                val referenceDump = if (referenceFile.exists() && referenceFile.isFile) {
-                    tools.v2.loadKlibDump(referenceFile)
-                } else {
-                    tools.v2.createKlibDump()
-                }
-
                 unsupported.map { unsupportedTarget ->
                     reportDiagnostic(
                         KotlinToolingDiagnostics.AbiValidationUnsupportedTarget.invoke(unsupportedTarget.targetName)
                     )
-                    mergedDump.inferAbiForUnsupportedTarget(referenceDump, unsupportedTarget)
-                }.forEach { inferredDump ->
-                    mergedDump.merge(inferredDump)
                 }
             }
+            val referenceFile = referenceKlibDump.get().asFile
 
-            mergedDump.print(abiDir.resolve(klibDumpName))
+            if (session != null) {
+                abiDir.resolve(klibDumpName).bufferedWriter().use { writer ->
+                    val operation = session.kotlinToolchain.abiValidation.writeKlibDumpFormatV2(
+                        writer,
+                        referenceFile,
+                        klibs,
+                        unsupported.map { it.convert() }.toSet(),
+                    )
+                    if (!filters.isEmpty) {
+                        operation[AbiValidationWriteKlibDumpFormatV2.PATTERN_FILTERS] = filters.convert()
+                    }
+                    // TODO is operation synchronous?
+                    session.executeOperation(operation)
+                }
+
+            } else {
+                // direct call of ABI Tools
+                val mergedDump = tools.v2.createKlibDump()
+                klibs.forEach { (target, klibDir) ->
+                    val dump = tools.v2.extractKlibAbi(klibDir, KlibTarget(target.targetName, target.configurableName), filters)
+                    mergedDump.merge(dump)
+                }
+                if (unsupported.isNotEmpty()) {
+                    val referenceDump = if (referenceFile.exists() && referenceFile.isFile) {
+                        tools.v2.loadKlibDump(referenceFile)
+                    } else {
+                        tools.v2.createKlibDump()
+                    }
+                    unsupported.forEach { unsupportedTarget ->
+                        val inferredDump = mergedDump.inferAbiForUnsupportedTarget(referenceDump, unsupportedTarget)
+                        mergedDump.merge(inferredDump)
+                    }
+                }
+                mergedDump.print(abiDir.resolve(klibDumpName))
+            }
         }
     }
 
@@ -186,4 +224,12 @@ internal abstract class KotlinLegacyAbiDumpTaskImpl : AbiToolsTask(), KotlinLega
             return composeTaskName("dumpLegacyAbi", variantName)
         }
     }
+}
+
+private fun AbiFiltersAbiToolsApi.convert(): AbiFiltersBTApi {
+    return AbiFiltersBTApi(includedClasses, excludedClasses, includedAnnotatedWith, excludedAnnotatedWith)
+}
+
+private fun KlibTarget.convert(): KlibTargetId {
+    return KlibTargetId(targetName, configurableName)
 }

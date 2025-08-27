@@ -97,4 +97,18 @@ internal class AbiValidationTaskSet(project: Project, variantName: String) {
             it.toolsClasspath.from(toolClasspath)
         }
     }
+
+    /**
+     * Sets the settings of using the build tools API.
+     */
+    fun setBuildTools(isBuildToolsApiEnabled: Provider<Boolean>, buildToolsClasspath: Provider<Configuration>) {
+        legacyDumpTaskProvider.configure {
+            it.buildToolsApiEnabled.set(isBuildToolsApiEnabled)
+            it.buildToolsClasspath.from(buildToolsClasspath)
+        }
+        legacyCheckDumpTaskProvider.configure {
+            it.buildToolsApiEnabled.set(isBuildToolsApiEnabled)
+            it.buildToolsClasspath.from(buildToolsClasspath)
+        }
+    }
 }

@@ -17,11 +17,13 @@ dependencies {
     compileOnly(intellijCore())
     compileOnly(project(":kotlin-scripting-compiler"))
     compileOnly(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
+    compileOnly(project(":libraries:tools:abi-validation:abi-tools"))
 
     runtimeOnly(project(":kotlin-compiler-embeddable"))
     runtimeOnly(project(":kotlin-compiler-runner"))
     runtimeOnly(project(":kotlin-scripting-compiler-embeddable"))
     runtimeOnly(project(":kotlin-scripting-compiler-impl-embeddable"))
+    runtimeOnly(project(":libraries:tools:abi-validation:abi-tools"))
 }
 
 publish()

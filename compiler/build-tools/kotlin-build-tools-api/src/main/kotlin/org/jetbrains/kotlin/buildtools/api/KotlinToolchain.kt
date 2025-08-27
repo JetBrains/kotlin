@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.buildtools.api
 
 import org.jetbrains.kotlin.buildtools.api.KotlinToolchain.Companion.loadImplementation
+import org.jetbrains.kotlin.buildtools.api.abi.AbiValidationToolchain
 import org.jetbrains.kotlin.buildtools.api.js.JsPlatformToolchain
 import org.jetbrains.kotlin.buildtools.api.js.WasmPlatformToolchain
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmPlatformToolchain
@@ -36,6 +37,8 @@ public interface KotlinToolchain {
     public val js: JsPlatformToolchain
     public val native: NativePlatformToolchain
     public val wasm: WasmPlatformToolchain
+
+    public val abiValidation: AbiValidationToolchain
 
     public fun createInProcessExecutionPolicy(): ExecutionPolicy.InProcess
     public fun createDaemonExecutionPolicy(): ExecutionPolicy.WithDaemon

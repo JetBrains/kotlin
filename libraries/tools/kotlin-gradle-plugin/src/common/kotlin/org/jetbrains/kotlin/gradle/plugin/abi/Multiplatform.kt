@@ -9,6 +9,7 @@ import org.gradle.api.NamedDomainObjectCollection
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
 import org.jetbrains.kotlin.gradle.dsl.abi.AbiValidationMultiplatformVariantSpec
+import org.jetbrains.kotlin.gradle.plugin.BUILD_TOOLS_API_CLASSPATH_CONFIGURATION_NAME
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
@@ -29,6 +30,10 @@ internal fun AbiValidationMultiplatformVariantSpec.finalizeMultiplatformVariant(
     taskSet.setClasspath(abiClasspath)
     taskSet.keepUnsupportedTargets(klib.keepUnsupportedTargets)
     taskSet.klibEnabled(klib.enabled)
+
+    val isBuildToolsApiEnabled = project.kotlinPropertiesProvider.runKotlinCompilerViaBuildToolsApi
+    val buildToolsApiClasspath = project.configurations.named(BUILD_TOOLS_API_CLASSPATH_CONFIGURATION_NAME)
+    taskSet.setBuildTools(isBuildToolsApiEnabled, buildToolsApiClasspath)
 
     project.processJvmKindTargets(targets, taskSet)
     project.processNonJvmTargets(targets, taskSet)
