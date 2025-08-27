@@ -10,7 +10,7 @@ import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.component.ModuleComponentIdentifier
 import org.gradle.api.artifacts.result.ResolvedDependencyResult
 import org.gradle.api.artifacts.transform.TransformSpec
-import org.gradle.api.attributes.Attribute
+import org.gradle.api.artifacts.type.ArtifactTypeDefinition
 import org.gradle.api.provider.Provider
 import org.jetbrains.kotlin.gradle.dsl.ExplicitApiMode
 import org.jetbrains.kotlin.gradle.internal.ClassLoadersCachingBuildService
@@ -58,7 +58,7 @@ internal open class BaseKotlinCompileConfig<TASK : KotlinCompile> : AbstractKotl
 
                 task.incrementalModuleInfoProvider.disallowChanges()
                 val classpathEntrySnapshotFiles = classpathConfiguration.incoming.artifactView {
-                    it.attributes.attribute(ARTIFACT_TYPE_ATTRIBUTE, CLASSPATH_ENTRY_SNAPSHOT_ARTIFACT_TYPE)
+                    it.attributes.attribute(ArtifactTypeDefinition.ARTIFACT_TYPE_ATTRIBUTE, CLASSPATH_ENTRY_SNAPSHOT_ARTIFACT_TYPE)
                 }.files
                 task.classpathSnapshotProperties.classpathSnapshot.from(classpathEntrySnapshotFiles).disallowChanges()
                 task.classpathSnapshotProperties.classpathSnapshotDir.value(getClasspathSnapshotDir(task)).disallowChanges()
@@ -121,9 +121,6 @@ internal open class BaseKotlinCompileConfig<TASK : KotlinCompile> : AbstractKotl
     companion object {
         private const val TRANSFORMS_REGISTERED = "_kgp_internal_kotlin_compile_transforms_registered"
 
-        val ARTIFACT_TYPE_ATTRIBUTE: Attribute<String> = Attribute.of("artifactType", String::class.java)
-        private const val DIRECTORY_ARTIFACT_TYPE = "directory"
-        private const val JAR_ARTIFACT_TYPE = "jar"
         const val CLASSPATH_ENTRY_SNAPSHOT_ARTIFACT_TYPE = "classpath-entry-snapshot"
         const val READONLY_CACHE_ENV_VAR = "GRADLE_RO_DEP_CACHE"
         internal const val CLASSES_SECONDARY_VARIANT_NAME = "classes"
@@ -192,7 +189,7 @@ internal open class BaseKotlinCompileConfig<TASK : KotlinCompile> : AbstractKotl
         val kgpVersion = project.getKotlinPluginVersion()
         project.dependencies.registerTransformForArtifactType(
             BuildToolsApiClasspathEntrySnapshotTransform::class.java,
-            fromArtifactType = JAR_ARTIFACT_TYPE,
+            fromArtifactType = ArtifactTypeDefinition.JAR_TYPE,
             toArtifactType = CLASSPATH_ENTRY_SNAPSHOT_ARTIFACT_TYPE
         ) {
             it.configureCommonParameters(
@@ -206,7 +203,7 @@ internal open class BaseKotlinCompileConfig<TASK : KotlinCompile> : AbstractKotl
         }
         project.dependencies.registerTransformForArtifactType(
             BuildToolsApiClasspathEntrySnapshotTransform::class.java,
-            fromArtifactType = DIRECTORY_ARTIFACT_TYPE,
+            fromArtifactType = ArtifactTypeDefinition.DIRECTORY_TYPE,
             toArtifactType = CLASSPATH_ENTRY_SNAPSHOT_ARTIFACT_TYPE
         ) {
             it.configureCommonParameters(
