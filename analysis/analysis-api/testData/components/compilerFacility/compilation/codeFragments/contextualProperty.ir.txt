@@ -9,5 +9,5 @@ MODULE_FRAGMENT
         VALUE_PARAMETER kind:Regular name:p0 index:0 type:kotlin.String
         EXPRESSION_BODY
           BLOCK type=kotlin.String origin=null
-            CALL 'public final fun <get-hello> (<unused var>: kotlin.String): kotlin.String declared in <root>.ContextKt' type=kotlin.String origin=GET_PROPERTY
-              ARG <unused var>: GET_VAR 'p0: kotlin.String declared in <root>.CodeFragment.run' type=kotlin.String origin=null
+            CALL 'public final fun <get-hello> ($context-String: kotlin.String): kotlin.String declared in <root>.ContextKt' type=kotlin.String origin=GET_PROPERTY
+              ARG $context-String: GET_VAR 'p0: kotlin.String declared in <root>.CodeFragment.run' type=kotlin.String origin=null

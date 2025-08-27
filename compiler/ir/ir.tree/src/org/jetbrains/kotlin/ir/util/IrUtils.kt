@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.ir.builders.IrBuilderWithScope
 import org.jetbrains.kotlin.ir.builders.declarations.*
 import org.jetbrains.kotlin.ir.builders.irImplicitCast
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin.Companion.UNDERSCORE_PARAMETER
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.overrides.FakeOverrideBuilderStrategy
@@ -34,7 +33,6 @@ import org.jetbrains.kotlin.ir.visitors.IrVisitor
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.util.OperatorNameConventions
-import org.jetbrains.kotlin.util.anonymousContextParameterName
 import org.jetbrains.kotlin.utils.*
 import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
 import java.io.StringWriter
@@ -1634,13 +1632,4 @@ val IrSimpleFunction.isTrivialGetter: Boolean
         return (receiver as? IrGetValue)?.symbol?.owner === this.dispatchReceiverParameter
     }
 
-
-fun IrFunction.anonymousContextParameterName(parameter: IrValueParameter, invalidChars: Set<Char>): String? {
-    if (parameter.kind != IrParameterKind.Context || parameter.origin != UNDERSCORE_PARAMETER) return null
-    val allUnnamedContextParameters = parameters.filter { it.kind == IrParameterKind.Context && it.origin == UNDERSCORE_PARAMETER }
-    return parameter.anonymousContextParameterName(
-        allUnnamedContextParameters,
-        invalidChars
-    ) { t -> t.type.erasedUpperBound.name.asString() }
-}
 

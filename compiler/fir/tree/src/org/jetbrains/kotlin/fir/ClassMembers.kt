@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.declarations.utils.isSynthetic
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.name.Name
 
 fun FirCallableSymbol<*>.dispatchReceiverClassTypeOrNull(): ConeClassLikeType? =
     fir.dispatchReceiverClassTypeOrNull()
@@ -255,6 +256,12 @@ var <D : FirCallableDeclaration>
 
 val <D : FirCallableDeclaration> FirCallableSymbol<D>.delegatedWrapperData: DelegatedWrapperData<D>?
     get() = fir.delegatedWrapperData
+
+private object UnnamedContextParameterNameKey : FirDeclarationDataKey()
+
+var FirValueParameter.generatedContextParameterName: Name? by FirDeclarationDataRegistry.data(UnnamedContextParameterNameKey)
+
+val FirValueParameterSymbol.generatedContextParameterName: Name? get() = fir.generatedContextParameterName
 
 class FirDeclarationNameInvalidCharsProvider(val invalidChars: Set<Char>) : FirSessionComponent
 

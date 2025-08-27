@@ -72,7 +72,7 @@ FILE: [ResolvedTo(IMPORTS)] contextParametersProperty.kt
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] contextParametersProperty.kt
-    context([ResolvedTo(BODY_RESOLVE)] <unused var>: R|kotlin/String|)
+    context([ResolvedTo(BODY_RESOLVE)] [UnnamedContextParameterNameKey=$context-String] <unused var>: R|kotlin/String|)
     public final [ResolvedTo(BODY_RESOLVE)] val bar: R|kotlin/String|
         public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/String| {
             ^ String()
@@ -80,7 +80,7 @@ FILE: [ResolvedTo(IMPORTS)] contextParametersProperty.kt
 
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] contextParametersProperty.kt
-    context([ResolvedTo(BODY_RESOLVE)] <unused var>: R|kotlin/String|)
+    context([ResolvedTo(BODY_RESOLVE)] [UnnamedContextParameterNameKey=$context-String] <unused var>: R|kotlin/String|)
     public final [ResolvedTo(BODY_RESOLVE)] val bar: R|kotlin/String|
         public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/String| {
             ^ String()
