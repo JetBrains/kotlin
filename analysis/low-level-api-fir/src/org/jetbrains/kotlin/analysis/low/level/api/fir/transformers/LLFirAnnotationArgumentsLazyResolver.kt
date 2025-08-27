@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.transformers.plugin.FirAnnotationArgumentsTransformer
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
-import org.jetbrains.kotlin.fir.types.FirTypeProjection
 import org.jetbrains.kotlin.fir.visitors.transformSingle
 
 internal object LLFirAnnotationArgumentsLazyResolver : LLFirLazyResolver(FirResolvePhase.ANNOTATION_ARGUMENTS) {
@@ -198,7 +197,10 @@ internal object AnnotationArgumentsStateKeepers {
     private val ANNOTATION: StateKeeper<FirAnnotation, FirSession> = stateKeeper { builder, _, session ->
         builder.add(ANNOTATION_BASE, session)
         builder.add(FirAnnotation::argumentMapping, FirAnnotation::replaceArgumentMapping)
-        builder.add(FirAnnotation::typeArgumentsCopied, FirAnnotation::replaceTypeArguments)
+        builder.add(FirAnnotation::typeArguments, FirAnnotation::replaceTypeArguments) { typeArguments ->
+            // To avoid modification of the original list
+            if (typeArguments.isEmpty()) typeArguments else ArrayList(typeArguments)
+        }
     }
 
     private val ANNOTATION_BASE: StateKeeper<FirAnnotation, FirSession> = stateKeeper { builder, annotation, session ->
@@ -251,6 +253,3 @@ internal object AnnotationArgumentsStateKeepers {
         }
     }
 }
-
-private val FirAnnotation.typeArgumentsCopied: List<FirTypeProjection>
-    get() = if (typeArguments.isEmpty()) emptyList() else ArrayList(typeArguments)
