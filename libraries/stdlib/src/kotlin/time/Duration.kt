@@ -107,13 +107,13 @@ public value class Duration private constructor(private val rawValue: Long) : Co
                     if (result > overflowThreshold || (result == overflowThreshold && digit > lastDigitMax)) {
                         index = value.skipWhile(index) { it in '0'..'9' }
                         callback(index, sign, true)
-                        return overflowLimit * sign
+                        return overflowLimit
                     }
                     result = result.multiplyBy10() + digit
                     index++
                 }
                 callback(index, sign, false)
-                return result * sign
+                return result
             }
         }
 
@@ -1091,7 +1091,7 @@ public fun Long.toDuration(unit: DurationUnit): Duration {
     val maxNsInUnit = convertDurationUnitOverflow(MAX_NANOS, DurationUnit.NANOSECONDS, unit)
     return when {
         this in -maxNsInUnit..maxNsInUnit -> durationOfNanos(convertDurationUnitOverflow(this, unit, DurationUnit.NANOSECONDS))
-        unit >= DurationUnit.MILLISECONDS -> durationOfMillis(convertDurationUnitToMilliseconds(this, unit))
+        unit >= DurationUnit.MILLISECONDS -> durationOfMillis(this.sign * convertDurationUnitToMilliseconds(abs(this), unit))
         else -> durationOfMillis(convertDurationUnit(this, unit, DurationUnit.MILLISECONDS).coerceIn(-MAX_MILLIS, MAX_MILLIS))
     }
 }
@@ -1220,10 +1220,10 @@ private fun parseIsoStringFormat(
 
         if (unit == DurationUnit.DAYS) {
             if (isTimeComponent) return handleError(throwException)
-            totalMillis = convertDurationUnitToMilliseconds(longValue, unit)
+            totalMillis = sign * convertDurationUnitToMilliseconds(longValue, unit)
         } else {
             if (!isTimeComponent) return handleError(throwException)
-            totalMillis = totalMillis.addWithoutOverflow(convertDurationUnitToMilliseconds(longValue, unit))
+            totalMillis = totalMillis.addWithoutOverflow(sign * convertDurationUnitToMilliseconds(longValue, unit))
                 .also { if (it == Duration.INVALID_RAW_VALUE) return handleError(throwException) }
         }
 

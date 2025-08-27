@@ -847,6 +847,8 @@ class DurationTest {
             Duration.INFINITE, "Infinity", "53375995583d 20h", "+Infinity", "123456789012345d 123456789012345h",
             "4602453423018496274ms ${Long.MAX_VALUE}us ${Long.MAX_VALUE}ns"
         )
+        testDefault(90_000_000_000_000.minutes, "Infinity", "90000000000000m")
+        testDefault((-90_000_000_000_000).minutes, "-Infinity", "-90000000000000m")
         testDefault(
             Duration.INFINITE, "Infinity", "${MAX_MILLIS / MILLIS_IN_DAY + 1}d", "${MAX_MILLIS / MILLIS_IN_HOUR + 1}h",
             "${MAX_MILLIS / MILLIS_IN_MINUTE + 1}m", "${MAX_MILLIS / MILLIS_IN_SECOND + 1}s", "${MAX_MILLIS}ms"

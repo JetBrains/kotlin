@@ -8,8 +8,6 @@
 
 package kotlin.time
 
-import kotlin.math.abs
-
 
 /**
  * The list of possible time measurement units, in which a duration can be expressed.
@@ -66,36 +64,38 @@ internal expect fun convertDurationUnit(value: Long, sourceUnit: DurationUnit, t
  * This function performs the conversion by multiplying the value with the unit's
  * millisecond multiplier, using overflow-safe multiplication.
  *
- * @param value the duration value to convert
+ * @param value the duration value to convert. Should always be non-negative.
  * @param unit the source duration unit
  * @return the duration value converted to milliseconds
  */
 @kotlin.internal.InlineOnly
 internal inline fun convertDurationUnitToMilliseconds(value: Long, unit: DurationUnit): Long =
-    value.multiplyWithoutOverflow(unit.millisMultiplier)
+    value.multiplyNonNegativeWithoutOverflow(unit.millisMultiplier)
 
 /**
- * Checks if multiplying two Long values exceeds [MAX_MILLIS] bounds.
+ * Multiplies this non-negative Long value by another non-negative Long value,
+ * clamping the result to [MAX_MILLIS] on overflow.
  *
- * Uses a bit-counting technique to determine if the product of [a] and [b]
- * would exceed the bounds of a 64-bit signed integer without actually
- * performing the multiplication.
+ * This function optimizes multiplication for non-negative values by:
+ * - Handling special cases (0 and 1) efficiently
+ * - Using bit counting to detect potential overflow without performing the multiplication
+ * - Clamping to [MAX_MILLIS] when overflow is detected
  *
- * @return true if [a] * [b] would overflow [MAX_MILLIS] or -[MAX_MILLIS]
+ * @param other the non-negative Long value to multiply by
+ * @return the product clamped to the range [0, MAX_MILLIS]
  */
-private fun willMultiplyOverflow(a: Long, b: Long): Boolean {
-    val leadingZerosA = abs(a).countLeadingZeroBits()
-    val leadingZerosB = abs(b).countLeadingZeroBits()
-    return (64 - leadingZerosA) + (64 - leadingZerosB) > 63
-}
-
-/**
- * Multiplies this Long by another, clamping the result to ±[MAX_MILLIS] on overflow.
- * @return the product or ±[MAX_MILLIS] if overflow occurs
- */
-private fun Long.multiplyWithoutOverflow(other: Long): Long = when {
-    willMultiplyOverflow(this, other) -> if (this > 0) MAX_MILLIS else -MAX_MILLIS
-    else -> this * other
+private fun Long.multiplyNonNegativeWithoutOverflow(other: Long): Long = when {
+    this == 0L || other == 0L -> 0L
+    this == 1L -> other
+    other == 1L -> this
+    else -> {
+        val bitSum = (64 - countLeadingZeroBits()) + (64 - other.countLeadingZeroBits())
+        when {
+            bitSum < 63 -> this * other
+            bitSum > 64 -> MAX_MILLIS
+            else -> (this * other).let { if (it in 1..MAX_MILLIS) it else MAX_MILLIS }
+        }
+    }
 }
 
 /**
