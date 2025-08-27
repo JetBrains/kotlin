@@ -107,6 +107,16 @@ public class FirIdeNormalAnalysisScriptSourceModuleTypeCreatorDslTestGenerated e
   }
 
   @Nested
+  @TestMetadata("analysis/analysis-api/testData/types/typeCreation/byDsl/functionType")
+  @TestDataPath("$PROJECT_ROOT")
+  public class FunctionType {
+    @Test
+    public void testAllFilesPresentInFunctionType() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/types/typeCreation/byDsl/functionType"), Pattern.compile("^(.+)\\.kts$"), null, true);
+    }
+  }
+
+  @Nested
   @TestMetadata("analysis/analysis-api/testData/types/typeCreation/byDsl/intersectionType")
   @TestDataPath("$PROJECT_ROOT")
   public class IntersectionType {
