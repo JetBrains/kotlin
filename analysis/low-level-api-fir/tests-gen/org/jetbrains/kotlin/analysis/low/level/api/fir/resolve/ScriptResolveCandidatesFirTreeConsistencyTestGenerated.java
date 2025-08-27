@@ -63,6 +63,16 @@ public class ScriptResolveCandidatesFirTreeConsistencyTestGenerated extends Abst
   }
 
   @Nested
+  @TestMetadata("analysis/analysis-api/testData/components/resolver/singleByPsi/builtins")
+  @TestDataPath("$PROJECT_ROOT")
+  public class Builtins {
+    @Test
+    public void testAllFilesPresentInBuiltins() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/singleByPsi/builtins"), Pattern.compile("^(.+)\\.(kts)$"), null, true);
+    }
+  }
+
+  @Nested
   @TestMetadata("analysis/analysis-api/testData/components/resolver/singleByPsi/callableReferences")
   @TestDataPath("$PROJECT_ROOT")
   public class CallableReferences {

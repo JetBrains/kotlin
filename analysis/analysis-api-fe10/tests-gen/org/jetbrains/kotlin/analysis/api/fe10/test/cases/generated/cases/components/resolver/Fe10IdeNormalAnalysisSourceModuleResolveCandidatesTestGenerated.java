@@ -1687,6 +1687,28 @@ public class Fe10IdeNormalAnalysisSourceModuleResolveCandidatesTestGenerated ext
   }
 
   @Nested
+  @TestMetadata("analysis/analysis-api/testData/components/resolver/singleByPsi/builtins")
+  @TestDataPath("$PROJECT_ROOT")
+  public class Builtins {
+    @Test
+    public void testAllFilesPresentInBuiltins() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/singleByPsi/builtins"), Pattern.compile("^(.+)\\.kt$"), null, true, "withTestCompilerPluginEnabled");
+    }
+
+    @Test
+    @TestMetadata("emptyArray.kt")
+    public void testEmptyArray() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/builtins/emptyArray.kt");
+    }
+
+    @Test
+    @TestMetadata("emptyArrayWithStdlib.kt")
+    public void testEmptyArrayWithStdlib() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/builtins/emptyArrayWithStdlib.kt");
+    }
+  }
+
+  @Nested
   @TestMetadata("analysis/analysis-api/testData/components/resolver/singleByPsi/callableReferences")
   @TestDataPath("$PROJECT_ROOT")
   public class CallableReferences {
