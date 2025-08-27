@@ -1,7 +1,7 @@
 // This file was generated automatically. See  generateTestDataForTypeScriptWithFileExport.kt
 // DO NOT MODIFY IT MANUALLY.
 
-// DISABLE_IR_VISIBILITY_CHECKS: JS_IR
+// DISABLE_IR_VISIBILITY_CHECKS: ANY
 // CHECK_TYPESCRIPT_DECLARATIONS
 // RUN_PLAIN_BOX_FUNCTION
 // SKIP_NODE_JS

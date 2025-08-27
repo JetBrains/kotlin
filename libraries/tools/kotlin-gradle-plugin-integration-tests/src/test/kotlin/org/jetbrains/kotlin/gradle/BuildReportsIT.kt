@@ -1021,7 +1021,7 @@ class BuildReportsIT : KGPBaseTest() {
                         "UpgradeCallableReferences",
                         "AssertionWrapperLowering",
                         "AvoidLocalFOsInInlineFunctionsLowering",
-                        "LateinitLowering", // first lowering in K/N 1st phase lowerings, specific for `+IrIntraModuleInlinerBeforeKlibSerialization` and `+IrCrossModuleInlinerBeforeKlibSerialization` features
+                        "VersionOverloadsLowering", // first lowering in K/N 1st phase lowerings, specific for `+IrIntraModuleInlinerBeforeKlibSerialization` and `+IrCrossModuleInlinerBeforeKlibSerialization` features
                     ),
                     jsonReport.aggregatedMetrics.buildTimes.dynamicBuildTimesMapMs().keys
                         .filter { it.parent == GradleBuildTime.IR_PRE_LOWERING }
