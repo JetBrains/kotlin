@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
+import org.jetbrains.kotlin.fir.types.ConeErrorType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.ConeLookupTagBasedType
 import org.jetbrains.kotlin.util.OperatorNameConventions
@@ -43,6 +44,7 @@ private fun FirNamedFunctionSymbol.canBeMainOperatorOfOverload(outerClass: FirRe
         !isOperator || name != OperatorNameConventions.OF || valueParameterSymbols.none { it.isVararg } -> false
         else -> when (val returnType = resolutionContext.returnTypeCalculator.tryCalculateReturnType(this).coneType) {
             is ConeClassLikeType if returnType.lookupTag == outerClass.toLookupTag() -> true
+            is ConeErrorType -> true
             else -> false
         }
     }
