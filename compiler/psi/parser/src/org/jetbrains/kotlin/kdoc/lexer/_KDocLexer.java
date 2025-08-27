@@ -297,14 +297,14 @@ class _KDocLexer implements FlexLexer {
 
   private static final String ZZ_ACTION_PACKED_0 =
     "\11\0\3\1\1\2\1\3\1\4\1\5\1\6\1\7"+
-    "\4\2\1\10\2\11\2\2\1\12\3\2\1\13\1\14"+
-    "\1\15\1\13\1\16\2\13\1\0\1\17\3\0\1\20"+
-    "\2\0\1\11\1\21\1\12\7\0\1\22\3\0\1\23"+
-    "\1\11\2\0\1\24\1\0\1\12\1\0\1\25\2\0"+
-    "\1\26\1\0\1\10\2\0\1\27";
+    "\4\2\1\10\2\11\2\2\1\12\1\13\4\12\1\14"+
+    "\1\15\1\16\1\14\1\17\2\14\1\0\1\20\3\0"+
+    "\1\21\2\0\1\11\1\22\1\13\7\0\1\23\3\0"+
+    "\1\24\1\11\2\0\1\25\1\0\1\13\1\0\1\26"+
+    "\2\0\1\27\1\0\1\10\2\0\1\30";
 
   private static int [] zzUnpackAction() {
-    int [] result = new int[77];
+    int [] result = new int[79];
     int offset = 0;
     offset = zzUnpackAction(ZZ_ACTION_PACKED_0, offset, result);
     return result;
@@ -332,16 +332,16 @@ class _KDocLexer implements FlexLexer {
     "\0\0\0\24\0\50\0\74\0\120\0\144\0\170\0\214"+
     "\0\240\0\264\0\310\0\334\0\264\0\360\0\264\0\264"+
     "\0\264\0\u0104\0\u0118\0\u012c\0\u0140\0\u0154\0\u0168\0\u017c"+
-    "\0\u0190\0\310\0\u01a4\0\u01b8\0\u01cc\0\u01e0\0\u01f4\0\264"+
-    "\0\u0208\0\264\0\310\0\u021c\0\u0230\0\u0244\0\310\0\264"+
-    "\0\u0258\0\u026c\0\u0280\0\264\0\u0294\0\u02a8\0\u02bc\0\u02d0"+
-    "\0\u02e4\0\u02f8\0\u030c\0\u0320\0\u0334\0\u0348\0\u035c\0\u0370"+
-    "\0\264\0\u0384\0\u0398\0\u03ac\0\u03c0\0\u03d4\0\u01e0\0\u03e8"+
-    "\0\264\0\u03fc\0\u0410\0\u0424\0\264\0\u0438\0\u044c\0\264"+
-    "\0\u0460\0\u03d4\0\u0474\0\u0488\0\264";
+    "\0\u0190\0\310\0\u01a4\0\264\0\u01b8\0\310\0\u01cc\0\u01e0"+
+    "\0\u01f4\0\264\0\u0208\0\264\0\310\0\u021c\0\u0230\0\u0244"+
+    "\0\310\0\264\0\u0258\0\u026c\0\u0280\0\264\0\u0294\0\u02a8"+
+    "\0\u02bc\0\u02d0\0\u02e4\0\u02f8\0\u030c\0\u0320\0\u0334\0\u0348"+
+    "\0\u035c\0\u0370\0\264\0\u0384\0\u0398\0\u03ac\0\u03c0\0\u03d4"+
+    "\0\u01e0\0\u03e8\0\264\0\u03fc\0\u0410\0\u0424\0\264\0\u0438"+
+    "\0\u044c\0\264\0\u0460\0\u03d4\0\u0474\0\u0488\0\264";
 
   private static int [] zzUnpackRowMap() {
-    int [] result = new int[77];
+    int [] result = new int[79];
     int offset = 0;
     offset = zzUnpackRowMap(ZZ_ROWMAP_PACKED_0, offset, result);
     return result;
@@ -369,45 +369,45 @@ class _KDocLexer implements FlexLexer {
     "\4\15\1\23\1\24\1\15\1\25\1\26\1\15\1\27"+
     "\1\17\1\15\1\30\1\17\1\31\1\15\1\20\1\21"+
     "\1\32\3\15\1\33\1\23\1\24\1\15\1\25\1\26"+
-    "\1\15\1\16\1\17\1\15\1\16\1\17\1\16\1\34"+
-    "\2\15\1\32\4\15\1\35\2\15\1\36\2\15\1\16"+
-    "\1\17\1\15\1\16\1\17\1\16\3\15\1\32\4\15"+
-    "\1\37\5\15\1\27\1\17\1\15\1\30\1\17\1\31"+
-    "\1\15\1\20\1\21\1\32\4\15\1\23\1\24\1\15"+
-    "\1\25\1\26\1\40\1\41\1\42\1\40\1\41\1\42"+
-    "\1\41\3\40\1\43\12\40\1\16\1\42\1\40\1\16"+
-    "\1\42\1\16\3\40\1\44\7\40\1\45\1\46\1\40"+
-    "\1\41\1\42\1\40\1\41\1\42\1\41\3\40\1\43"+
-    "\7\40\1\45\1\46\36\0\1\47\1\0\1\50\21\0"+
-    "\1\51\12\0\1\16\2\0\1\16\1\0\1\16\27\0"+
-    "\1\22\1\0\1\50\16\0\1\52\12\0\1\53\20\0"+
-    "\1\54\1\0\1\54\24\0\1\55\24\0\1\56\1\0"+
-    "\1\27\2\0\1\30\1\0\1\30\16\0\1\30\2\0"+
-    "\1\30\1\0\1\30\16\0\1\30\2\0\1\30\1\0"+
-    "\1\57\24\0\1\60\23\0\1\34\3\0\1\61\1\0"+
-    "\1\34\15\0\1\62\12\0\1\63\1\0\2\64\1\0"+
-    "\17\64\1\0\1\64\7\0\1\65\12\0\1\66\2\0"+
-    "\1\41\2\0\1\41\1\0\1\41\27\0\1\44\1\0"+
-    "\1\50\31\0\1\67\24\0\1\70\12\0\1\71\20\0"+
-    "\1\52\3\0\1\72\1\0\1\52\3\0\1\73\2\0"+
-    "\2\74\1\0\17\74\1\0\1\74\22\0\1\75\24\0"+
-    "\1\75\1\0\1\30\2\0\1\30\1\0\1\76\24\0"+
-    "\1\60\5\0\1\60\15\0\1\34\3\0\1\61\6\0"+
-    "\1\77\10\0\1\62\3\0\1\100\1\0\1\62\3\0"+
-    "\1\101\2\0\2\102\1\0\17\102\1\0\1\102\2\64"+
-    "\1\0\17\64\1\103\1\64\7\0\1\65\3\0\1\104"+
-    "\1\0\1\65\3\0\1\105\2\0\2\106\1\0\17\106"+
-    "\1\0\1\106\22\0\1\107\24\0\1\107\7\0\1\52"+
-    "\3\0\1\72\5\0\1\73\1\53\1\0\10\110\1\0"+
-    "\6\110\1\0\4\110\2\74\1\0\17\74\1\111\1\74"+
-    "\2\75\4\0\16\75\1\0\1\30\2\0\1\30\1\0"+
-    "\1\112\24\0\1\62\3\0\1\100\5\0\1\101\1\63"+
-    "\1\0\2\102\1\0\17\102\1\113\1\102\13\0\1\61"+
-    "\17\0\1\65\3\0\1\104\5\0\1\105\1\66\1\0"+
-    "\2\106\1\0\17\106\1\114\1\106\1\0\1\107\1\115"+
-    "\1\0\1\107\1\0\1\107\30\0\1\72\5\0\1\73"+
-    "\15\0\1\100\5\0\1\101\15\0\1\104\5\0\1\105"+
-    "\2\0";
+    "\1\34\1\16\1\17\1\34\1\16\1\17\1\16\1\35"+
+    "\2\34\1\36\4\34\1\37\2\34\1\40\2\34\1\16"+
+    "\1\17\1\34\1\16\1\17\1\16\3\34\1\36\4\34"+
+    "\1\41\4\34\1\15\1\27\1\17\1\15\1\30\1\17"+
+    "\1\31\1\15\1\20\1\21\1\32\4\15\1\23\1\24"+
+    "\1\15\1\25\1\26\1\42\1\43\1\44\1\42\1\43"+
+    "\1\44\1\43\3\42\1\45\12\42\1\16\1\44\1\42"+
+    "\1\16\1\44\1\16\3\42\1\46\7\42\1\47\1\50"+
+    "\1\42\1\43\1\44\1\42\1\43\1\44\1\43\3\42"+
+    "\1\45\7\42\1\47\1\50\36\0\1\51\1\0\1\52"+
+    "\21\0\1\53\12\0\1\16\2\0\1\16\1\0\1\16"+
+    "\27\0\1\22\1\0\1\52\16\0\1\54\12\0\1\55"+
+    "\20\0\1\56\1\0\1\56\24\0\1\57\24\0\1\60"+
+    "\1\0\1\27\2\0\1\30\1\0\1\30\16\0\1\30"+
+    "\2\0\1\30\1\0\1\30\16\0\1\30\2\0\1\30"+
+    "\1\0\1\61\24\0\1\62\23\0\1\35\3\0\1\63"+
+    "\1\0\1\35\15\0\1\64\12\0\1\65\1\0\2\66"+
+    "\1\0\17\66\1\0\1\66\7\0\1\67\12\0\1\70"+
+    "\2\0\1\43\2\0\1\43\1\0\1\43\27\0\1\46"+
+    "\1\0\1\52\31\0\1\71\24\0\1\72\12\0\1\73"+
+    "\20\0\1\54\3\0\1\74\1\0\1\54\3\0\1\75"+
+    "\2\0\2\76\1\0\17\76\1\0\1\76\22\0\1\77"+
+    "\24\0\1\77\1\0\1\30\2\0\1\30\1\0\1\100"+
+    "\24\0\1\62\5\0\1\62\15\0\1\35\3\0\1\63"+
+    "\6\0\1\101\10\0\1\64\3\0\1\102\1\0\1\64"+
+    "\3\0\1\103\2\0\2\104\1\0\17\104\1\0\1\104"+
+    "\2\66\1\0\17\66\1\105\1\66\7\0\1\67\3\0"+
+    "\1\106\1\0\1\67\3\0\1\107\2\0\2\110\1\0"+
+    "\17\110\1\0\1\110\22\0\1\111\24\0\1\111\7\0"+
+    "\1\54\3\0\1\74\5\0\1\75\1\55\1\0\10\112"+
+    "\1\0\6\112\1\0\4\112\2\76\1\0\17\76\1\113"+
+    "\1\76\2\77\4\0\16\77\1\0\1\30\2\0\1\30"+
+    "\1\0\1\114\24\0\1\64\3\0\1\102\5\0\1\103"+
+    "\1\65\1\0\2\104\1\0\17\104\1\115\1\104\13\0"+
+    "\1\63\17\0\1\67\3\0\1\106\5\0\1\107\1\70"+
+    "\1\0\2\110\1\0\17\110\1\116\1\110\1\0\1\111"+
+    "\1\117\1\0\1\111\1\0\1\111\30\0\1\74\5\0"+
+    "\1\75\15\0\1\102\5\0\1\103\15\0\1\106\5\0"+
+    "\1\107\2\0";
 
   private static int [] zzUnpacktrans() {
     int [] result = new int[1180];
@@ -448,14 +448,14 @@ class _KDocLexer implements FlexLexer {
   private static final int [] ZZ_ATTRIBUTE = zzUnpackAttribute();
 
   private static final String ZZ_ATTRIBUTE_PACKED_0 =
-    "\11\0\1\11\2\1\1\11\1\1\3\11\16\1\1\11"+
-    "\1\1\1\11\4\1\1\0\1\11\3\0\1\11\2\0"+
-    "\3\1\7\0\1\11\3\0\2\1\2\0\1\11\1\0"+
-    "\1\1\1\0\1\11\2\0\1\11\1\0\1\1\2\0"+
-    "\1\11";
+    "\11\0\1\11\2\1\1\11\1\1\3\11\12\1\1\11"+
+    "\5\1\1\11\1\1\1\11\4\1\1\0\1\11\3\0"+
+    "\1\11\2\0\3\1\7\0\1\11\3\0\2\1\2\0"+
+    "\1\11\1\0\1\1\1\0\1\11\2\0\1\11\1\0"+
+    "\1\1\2\0\1\11";
 
   private static int [] zzUnpackAttribute() {
-    int [] result = new int[77];
+    int [] result = new int[79];
     int offset = 0;
     offset = zzUnpackAttribute(ZZ_ATTRIBUTE_PACKED_0, offset, result);
     return result;
@@ -529,6 +529,13 @@ class _KDocLexer implements FlexLexer {
    * For instance, indented code blocks require two consecutive line breaks after paragraphs.
    */
   private int consecutiveLineBreakCount;
+
+  private BlockType lastBlockType;
+
+  private enum BlockType {
+      Paragraph,
+      Code,
+  }
 
   public _KDocLexer() {
     this((java.io.Reader)null);
@@ -796,49 +803,53 @@ class _KDocLexer implements FlexLexer {
         switch (zzAction < 0 ? zzAction : ZZ_ACTION[zzAction]) {
           case 1:
             { consecutiveLineBreakCount = 0;
+lastBlockType = BlockType.Paragraph;
 return TokenType.BAD_CHARACTER;
             }
           // fall through
-          case 24: break;
+          case 25: break;
           case 2:
             { consecutiveLineBreakCount = 0;
+        lastBlockType = BlockType.Paragraph;
         yybegin(CONTENTS);
         return KDocTokens.TEXT;
             }
           // fall through
-          case 25: break;
+          case 26: break;
           case 3:
             { return TokenType.WHITE_SPACE;
             }
           // fall through
-          case 26: break;
+          case 27: break;
           case 4:
             { consecutiveLineBreakCount++;
         yybegin(LINE_BEGINNING);
         return TokenType.WHITE_SPACE;
             }
           // fall through
-          case 27: break;
+          case 28: break;
           case 5:
             { consecutiveLineBreakCount = 0;
+        lastBlockType = BlockType.Paragraph;
         yybegin(CONTENTS);
         return KDocTokens.KDOC_LPAR;
             }
           // fall through
-          case 28: break;
+          case 29: break;
           case 6:
             { consecutiveLineBreakCount = 0;
+        lastBlockType = BlockType.Paragraph;
         yybegin(CONTENTS);
         return KDocTokens.KDOC_RPAR;
             }
           // fall through
-          case 29: break;
+          case 30: break;
           case 7:
             { yybegin(CONTENTS_BEGINNING);
               return KDocTokens.LEADING_ASTERISK;
             }
           // fall through
-          case 30: break;
+          case 31: break;
           case 8:
             { if(yystate() == CONTENTS_BEGINNING) {
             yybegin(INDENTED_CODE_BLOCK);
@@ -846,7 +857,7 @@ return TokenType.BAD_CHARACTER;
         }
             }
           // fall through
-          case 31: break;
+          case 32: break;
           case 9:
             { if (yystate() != CONTENTS_BEGINNING) {
             yybegin(CONTENTS);
@@ -854,15 +865,22 @@ return TokenType.BAD_CHARACTER;
         return KDocTokens.TEXT;  // internal white space
             }
           // fall through
-          case 32: break;
+          case 33: break;
           case 10:
+            { consecutiveLineBreakCount = 0;
+        yybegin(CONTENTS);
+        return KDocTokens.TEXT;
+            }
+          // fall through
+          case 34: break;
+          case 11:
             { consecutiveLineBreakCount = 0;
         yybegin(TAG_TEXT_BEGINNING);
         return KDocTokens.MARKDOWN_LINK;
             }
           // fall through
-          case 33: break;
-          case 11:
+          case 35: break;
+          case 12:
             { consecutiveLineBreakCount = 0;
         if (yystate() != INDENTED_CODE_BLOCK) {
             yybegin(CODE_BLOCK);
@@ -870,85 +888,89 @@ return TokenType.BAD_CHARACTER;
         return KDocTokens.CODE_BLOCK_TEXT;
             }
           // fall through
-          case 34: break;
-          case 12:
+          case 36: break;
+          case 13:
             { return KDocTokens.CODE_BLOCK_TEXT;
             }
           // fall through
-          case 35: break;
-          case 13:
+          case 37: break;
+          case 14:
             { consecutiveLineBreakCount++;
         yybegin(yystate() == INDENTED_CODE_BLOCK ? LINE_BEGINNING : CODE_BLOCK_LINE_BEGINNING);
         return TokenType.WHITE_SPACE;
             }
           // fall through
-          case 36: break;
-          case 14:
+          case 38: break;
+          case 15:
             { yybegin(CODE_BLOCK_CONTENTS_BEGINNING);
         return KDocTokens.LEADING_ASTERISK;
             }
           // fall through
-          case 37: break;
-          case 15:
+          case 39: break;
+          case 16:
             { consecutiveLineBreakCount = 0;
               if (isLastToken()) return KDocTokens.END;
               else return KDocTokens.TEXT;
             }
           // fall through
-          case 38: break;
-          case 16:
+          case 40: break;
+          case 17:
             { consecutiveLineBreakCount = 0;
+        lastBlockType = BlockType.Paragraph;
         yybegin(CONTENTS);
         return KDocTokens.MARKDOWN_ESCAPED_CHAR;
             }
           // fall through
-          case 39: break;
-          case 17:
+          case 41: break;
+          case 18:
             { consecutiveLineBreakCount = 0;
+    lastBlockType = BlockType.Paragraph;
     KDocKnownTag tag = KDocKnownTag.Companion.findByTagName(zzBuffer.subSequence(zzStartRead, zzMarkedPos));
     yybegin(tag != null && tag.isReferenceRequired() ? TAG_BEGINNING : TAG_TEXT_BEGINNING);
     return KDocTokens.TAG_NAME;
             }
           // fall through
-          case 40: break;
-          case 18:
+          case 42: break;
+          case 19:
             { yybegin(CONTENTS_BEGINNING);
                                             return KDocTokens.START;
             }
           // fall through
-          case 41: break;
-          case 19:
+          case 43: break;
+          case 20:
             { consecutiveLineBreakCount = 0;
+        lastBlockType = BlockType.Code;
         yybegin(CODE_BLOCK_LINE_BEGINNING);
         return KDocTokens.TEXT;
             }
           // fall through
-          case 42: break;
-          case 20:
+          case 44: break;
+          case 21:
             { consecutiveLineBreakCount = 0;
                   yybegin(TAG_TEXT_BEGINNING);
                   return KDocTokens.MARKDOWN_LINK;
             }
           // fall through
-          case 43: break;
-          case 21:
+          case 45: break;
+          case 22:
             { consecutiveLineBreakCount = 0;
                   yybegin(CONTENTS);
                   return KDocTokens.MARKDOWN_LINK;
             }
           // fall through
-          case 44: break;
-          case 22:
+          case 46: break;
+          case 23:
             // lookahead expression with fixed lookahead length
             zzMarkedPos = Character.offsetByCodePoints
                 (zzBufferL, zzMarkedPos, -1);
             { consecutiveLineBreakCount = 0;
+        lastBlockType = BlockType.Paragraph;
         yybegin(CONTENTS);
         return KDocTokens.MARKDOWN_LINK;
             }
           // fall through
-          case 45: break;
-          case 23:
+          case 47: break;
+          case 24:
             // lookahead expression with fixed base length
             zzMarkedPos = Character.offsetByCodePoints
                 (zzBufferL, zzStartRead, 3);
@@ -958,7 +980,7 @@ return TokenType.BAD_CHARACTER;
         return KDocTokens.TEXT;
             }
           // fall through
-          case 46: break;
+          case 48: break;
           default:
             zzScanError(ZZ_NO_MATCH);
           }
