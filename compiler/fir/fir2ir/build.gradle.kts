@@ -3,6 +3,7 @@ plugins {
     id("jps-compatible")
     id("java-test-fixtures")
     id("project-tests-convention")
+    id("test-inputs-check")
 }
 
 dependencies {
@@ -64,14 +65,18 @@ sourceSets {
 }
 
 fun Test.configure(configureJUnit: JUnitPlatformOptions.() -> Unit = {}) {
-    dependsOn(":dist")
-    workingDir = rootDir
     useJUnitPlatform {
         configureJUnit()
     }
 }
 
 projectTests {
+    testData(project(":compiler").isolated, "testData/codegen")
+    testData(project(":compiler").isolated, "testData/diagnostics")
+    testData(project(":compiler").isolated, "testData/ir")
+    testData(project(":compiler").isolated, "testData/klib")
+    testData(project(":compiler").isolated, "testData/debug")
+    testData(project(":compiler:tests-spec").isolated, "testData/codegen")
     testTask(
         jUnitMode = JUnitMode.JUnit5,
         defineJDKEnvVariables = listOf(JdkMajorVersion.JDK_1_8, JdkMajorVersion.JDK_11_0, JdkMajorVersion.JDK_17_0, JdkMajorVersion.JDK_21_0),
@@ -95,6 +100,15 @@ projectTests {
     testGenerator("org.jetbrains.kotlin.test.TestGeneratorForFir2IrTestsKt")
 
     withJvmStdlibAndReflect()
+    withScriptRuntime()
+    withMockJdkAnnotationsJar()
+    withTestJar()
+    withScriptingPlugin()
+    withMockJdkRuntime()
+    withStdlibCommon()
+    withAnnotations()
+    withThirdPartyAnnotations()
+    withThirdPartyJsr305()
 }
 
 testsJarToBeUsedAlongWithFixtures()

@@ -41,8 +41,7 @@ import org.jetbrains.kotlin.test.services.EnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.JvmEnvironmentConfigurator
-import org.jetbrains.kotlin.utils.PathUtil
-import java.io.File
+import org.jetbrains.kotlin.test.services.standardLibrariesPathProvider
 import java.net.URLClassLoader
 
 open class AbstractFirScriptAndReplCodegenTest(val frontendFacade: Constructor<FrontendFacade<FirOutputArtifact>> = ::FirFrontendFacade) :
@@ -177,8 +176,7 @@ class FirJvmScriptRunChecker(testServices: TestServices) : JvmBinaryArtifactHand
 
 class ScriptingPluginEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfigurator(testServices) {
     override fun configureCompilerConfiguration(configuration: CompilerConfiguration, module: TestModule) {
-        val libPath = PathUtil.kotlinPathsForCompiler.libPath
-        val pluginClasspath = PathUtil.KOTLIN_SCRIPTING_PLUGIN_CLASSPATH_JARS.map { File(libPath, it) }
+        val pluginClasspath = testServices.standardLibrariesPathProvider.scriptingPluginFilesForTests()
         val pluginClassLoader = URLClassLoader(pluginClasspath.map { it.toURI().toURL() }.toTypedArray(), this::class.java.classLoader)
 
         val pluginRegistrarClass = pluginClassLoader.loadClass(CLICompiler.SCRIPT_PLUGIN_REGISTRAR_NAME)
