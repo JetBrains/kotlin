@@ -16,7 +16,7 @@ data class Task(
 
 object DataExtractor {
 
-    // run on a file generated using ./gradlew clean && ./gradlew assembleAllKotlin -Pkotlin.internal.compiler.arguments.log.level=warning > output
+    // run on a file generated using ./gradlew --stop && ./gradlew clean && ./gradlew assembleAllKotlin --no-configuration-cache --rerun --no-build-cache --refresh-dependencies -Pkotlin.internal.compiler.arguments.log.level=warning -Pkotlin.incremental=false > output9
     fun getTask(filePath: String): List<Task> {
         val compileTaskSearchString = " Kotlin compiler args: "
         val messageSearchString = "w: "

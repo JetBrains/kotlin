@@ -88,9 +88,11 @@ class CacheHandler {
             artifacts[compilationInputHash] = symlink.toAbsolutePath().toString()
         }
 
-        if (deleteOriginalFile) {
-            tmpFile.deleteRecursively()
-        }
+
+        // TODO we want to delete temp files, but this tmpFile does not have to be necessarily in tmp directory
+//        if (deleteOriginalFile) {
+//            tmpFile.deleteRecursively()
+//        }
         return targetPath.toFile()
     }
 

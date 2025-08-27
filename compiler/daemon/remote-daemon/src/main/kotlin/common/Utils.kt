@@ -23,7 +23,7 @@ fun calculateCompilationInputHash(
     importantCompilerArgs.remove(CompilerUtils.SOURCE_FILE_ARG)
 
     val digest = MessageDigest.getInstance("SHA-256")
-    val files = CompilerUtils.getSourceFiles(importantCompilerArgs) + CompilerUtils.getDependencyFiles(importantCompilerArgs)
+    val files = CompilerUtils.getSourceFilePaths(importantCompilerArgs).map { it.toFile() } + CompilerUtils.getDependencyFilePaths(importantCompilerArgs).map { it.toFile() }
     files.sortedBy { it.path }.forEach { file ->
         file.inputStream().use { input ->
             val buffer = ByteArray(8192)
@@ -36,6 +36,5 @@ fun calculateCompilationInputHash(
     importantCompilerArgs.values.sorted().forEach { arg ->
         digest.update(arg.toByteArray())
     }
-
     return digest.digest().joinToString("") { "%02x".format(it) }
 }
