@@ -1066,6 +1066,7 @@ class LinkTest : BaseAbstractTest() {
     }
 
     @Test
+    @OnlySymbols("#3586 - K1 does not resolve KDoc links to synthetic java properties")
     fun `KDoc link should lead to java synthetic properties`() {
         testInline(
             """
@@ -1075,13 +1076,12 @@ class LinkTest : BaseAbstractTest() {
             |/**
             | * value: [Storage.value] is unresolved
             | * setValue: [Storage.setValue]
-            | * prop: [Storage.prop]
+            | * prop: [Storage.prop] is resolve in K2, but unresolved in K1 
             | */
             |val usage = 0            
             |/src/example/Storage.java
             |package example;
             |class Storage {
-            |    void prop() {}
             |    void setValue(String value) {}
             |    String getProp() { return null; }
             |}
@@ -1092,7 +1092,7 @@ class LinkTest : BaseAbstractTest() {
                 assertEquals(
                     listOf(
                         "Storage.setValue" to DRI("example", "Storage", Callable("setValue", null, listOf(TypeConstructor("kotlin.String", emptyList())))),
-                        "Storage.prop" to DRI("example", "Storage", Callable("prop", null, emptyList()))
+                        "Storage.prop" to DRI("example", "Storage", Callable("getProp", null, emptyList()))
                     ),
                     module.getAllLinkDRIFrom("usage"))
             }
