@@ -8,7 +8,6 @@ import com.intellij.openapi.fileTypes.FileType
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.analysis.decompiler.psi.text.DecompiledText
 import org.jetbrains.kotlin.analysis.decompiler.psi.text.buildDecompiledText
-import org.jetbrains.kotlin.analysis.decompiler.psi.text.defaultDecompilerRendererOptions
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.library.metadata.KlibMetadataClassDataFinder
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
@@ -22,28 +21,10 @@ import org.jetbrains.kotlin.utils.addIfNotNull
 abstract class Fe10KlibMetadataDecompiler<out V : BinaryVersion>(
     fileType: FileType,
     serializerProtocol: () -> SerializerExtensionProtocol,
-    flexibleTypeDeserializer: FlexibleTypeDeserializer,
-    stubVersion: Int
-) : KlibMetadataDecompiler<V>(
-    fileType,
-    serializerProtocol,
-    flexibleTypeDeserializer,
-) {
-    private val renderer: DescriptorRenderer by lazy {
-        DescriptorRenderer.withOptions { defaultDecompilerRendererOptions() }
-    }
-
+    stubVersion: Int,
+) : KlibMetadataDecompiler<V>(fileType) {
     override val metadataStubBuilder: KlibMetadataStubBuilder by lazy {
         Fe10KlibMetadataStubBuilder(stubVersion, fileType, serializerProtocol, ::readFileSafely)
-    }
-
-    override fun getDecompiledText(
-        fileWithMetadata: FileWithMetadata.Compatible,
-        virtualFile: VirtualFile,
-        serializerProtocol: SerializerExtensionProtocol,
-        flexibleTypeDeserializer: FlexibleTypeDeserializer
-    ): DecompiledText {
-        return decompiledText(fileWithMetadata, virtualFile, serializerProtocol, ::readFileSafely, flexibleTypeDeserializer, renderer)
     }
 }
 

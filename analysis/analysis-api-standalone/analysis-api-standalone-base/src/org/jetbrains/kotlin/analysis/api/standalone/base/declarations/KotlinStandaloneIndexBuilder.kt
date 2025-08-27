@@ -203,10 +203,8 @@ internal class KotlinStandaloneIndexBuilder private constructor(
         // A hack to avoid costly checks inside createFile
         val ktFile = when (kotlinDecompiler) {
             is KotlinClassFileDecompiler -> KtClsFile(viewProvider)
-
-            // Exceptions are acceptable since the files don't use those lambdas with stub-based decompilers
-            is KlibMetadataDecompiler<*> -> KlibDecompiledFile(viewProvider) { throw UnsupportedOperationException() }
-            is KotlinMetadataDecompiler<*> -> KtDecompiledFile(viewProvider) { throw UnsupportedOperationException() }
+            is KlibMetadataDecompiler<*> -> KlibDecompiledFile(viewProvider)
+            is KotlinBuiltInDecompiler -> KtDecompiledFile(viewProvider)
             else -> error("Unexpected decompiler: ${kotlinDecompiler::class.simpleName}")
         }
 
