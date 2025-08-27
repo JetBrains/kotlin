@@ -453,14 +453,14 @@ func dataClassesShouldWork() throws {
 
 @Test
 func testEnums() throws {
-    let en = Enum.a
+    var en = Enum.a
     try #require(en.print() == "1 - str")
     en.i = 3
     try #require(en.print() == "3 - str")
     try #require(Enum.a.print() == "3 - str")
 
     try #require(Enum.b.print() == "rts - 5")
-    try #require(Enum.valueOf(value: "b").print() == "rts - 5")
+    try #require(Enum("b")!.print() == "rts - 5")
 
     switch en {
     case .a: break;
