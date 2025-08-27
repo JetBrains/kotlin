@@ -96,6 +96,8 @@ class List2: JavaList() {
     }
 }
 
+// Due to enhancements, UnnanotatedList.get/size/add get @MURV from kotlin.collections.List :
+
 class List3: UnannotatedList() {
     override fun get(index: Int) = ""
     override fun notAListMember(): Int = 42
@@ -130,7 +132,6 @@ fun test2(l: List2) {
 }
 
 fun test3(l: List3) {
-    // Due to enhancements, UnnanotatedList.get/size get @MURV from kotlin.collections.List.get/size
     l.get(0)
     l.notAListMember()
     l.size

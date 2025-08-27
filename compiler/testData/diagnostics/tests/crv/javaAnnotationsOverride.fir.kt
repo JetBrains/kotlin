@@ -96,6 +96,8 @@ class List2: JavaList() {
     }
 }
 
+// Due to enhancements, UnnanotatedList.get/size/add get @MURV from kotlin.collections.List :
+
 class List3: UnannotatedList() {
     override fun get(index: Int) = ""
     override fun notAListMember(): Int = 42
@@ -105,7 +107,7 @@ class List3: UnannotatedList() {
 class List4: UnannotatedList() {
     override fun get(index: Int): String = ""
     // Not sure why K1 reports parameter name change, probably some quirk in handling java list as supertype
-    override fun add(s: String?): Boolean = true
+    override fun <!OVERRIDING_IGNORABLE_WITH_MUST_USE!>add<!>(s: String?): Boolean = true
 
     @IgnorableReturnValue
     override fun set(index: Int, element: String?): String {
@@ -130,7 +132,6 @@ fun test2(l: List2) {
 }
 
 fun test3(l: List3) {
-    // Due to enhancements, UnnanotatedList.get/size get @MURV from kotlin.collections.List.get/size
     <!RETURN_VALUE_NOT_USED!>l.get(0)<!>
     l.notAListMember()
     <!RETURN_VALUE_NOT_USED!>l.size<!>
