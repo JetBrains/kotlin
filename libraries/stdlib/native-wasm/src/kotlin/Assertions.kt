@@ -5,6 +5,8 @@
 
 package kotlin
 
+import kotlin.internal.UsedFromCompilerGeneratedCode
+
 /**
  * Throws an [AssertionError] if the [value] is false.
  */
@@ -15,8 +17,10 @@ internal expect fun assert(value: Boolean)
  */
 internal expect fun assert(value: Boolean, lazyMessage: () -> Any)
 
+@UsedFromCompilerGeneratedCode
 @PublishedApi
 internal fun isAssertionThrowingErrorEnabled(): Boolean = throw NotImplementedError("Implemented as intrinsic")
 
+@UsedFromCompilerGeneratedCode
 @PublishedApi
 internal fun isAssertionArgumentEvaluationEnabled(): Boolean = throw NotImplementedError("Implemented as intrinsic")

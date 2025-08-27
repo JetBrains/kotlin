@@ -41,8 +41,8 @@ internal fun safePropertySet(self: dynamic, setterName: String, propName: String
  * For that reason, [kotlin.js.JsOutlinedFunction] will forever remain internal.
  */
 @Target(AnnotationTarget.FUNCTION)
+@UsedFromCompilerGeneratedCode
 @PublishedApi
-@Suppress("unused") // used by JsCodeOutliningLowering
 internal annotation class JsOutlinedFunction(val jsFunctionExpression: String, val sourceMap: String)
 
 /**

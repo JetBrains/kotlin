@@ -8,4 +8,5 @@ package kotlin.js
 import kotlin.internal.UsedFromCompilerGeneratedCode
 
 @UsedFromCompilerGeneratedCode
+@PublishedApi
 internal object DefaultConstructorMarker

@@ -8,11 +8,13 @@ package kotlin
 import kotlin.internal.UsedFromCompilerGeneratedCode
 
 // TODO KT-79334: Drop this fun after bootstrap update, and use `kotlin.internal.throwUninitializedPropertyAccessException` instead
+@UsedFromCompilerGeneratedCode
 @PublishedApi
 internal fun throwUninitializedPropertyAccessException(name: String): Nothing =
     kotlin.internal.throwUninitializedPropertyAccessException(name)
 
 // TODO KT-79334: Drop this fun after bootstrap update, and use `kotlin.internal.throwUnsupportedOperationException` instead
+@UsedFromCompilerGeneratedCode
 @PublishedApi
 internal fun throwUnsupportedOperationException(message: String): Nothing =
     kotlin.internal.throwUnsupportedOperationException(message)

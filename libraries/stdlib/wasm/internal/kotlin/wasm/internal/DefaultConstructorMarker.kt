@@ -5,4 +5,8 @@
 
 package kotlin.wasm.internal
 
+import kotlin.internal.UsedFromCompilerGeneratedCode
+
+@UsedFromCompilerGeneratedCode
+@PublishedApi
 internal object DefaultConstructorMarker
