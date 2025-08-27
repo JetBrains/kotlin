@@ -40,15 +40,15 @@ internal constructor(
 ) : KotlinTest(execOps),
     RequiresNpmDependencies {
 
-    @Deprecated("Extending this class is deprecated. Scheduled for removal in Kotlin 2.4.")
-    @Suppress("DEPRECATION")
+    @Deprecated("Extending this class is deprecated. Scheduled for removal in Kotlin 2.4.", level = DeprecationLevel.ERROR)
+    @Suppress("DEPRECATION", "UNREACHABLE_CODE")
     constructor(
         compilation: KotlinJsIrCompilation,
     ) : this(
         compilation = compilation,
-        objects = compilation.target.project.objects,
-        providers = compilation.target.project.providers,
-        execOps = compilation.target.project.getExecOperations(),
+        objects = error("constructor is deprecated"),
+        providers = error("constructor is deprecated"),
+        execOps = error("constructor is deprecated"),
     )
 
     @Input

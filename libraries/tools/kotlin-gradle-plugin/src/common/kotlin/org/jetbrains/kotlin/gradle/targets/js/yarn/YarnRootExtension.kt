@@ -31,7 +31,8 @@ internal constructor(
     execOps = execOps,
 ) {
 
-    @Deprecated("Extending or manually creating instances of this class is deprecated. Scheduled for removal in Kotlin 2.4.")
+    @Deprecated("Extending or manually creating instances of this class is deprecated. Scheduled for removal in Kotlin 2.4.", level = DeprecationLevel.ERROR)
+    @Suppress("UNREACHABLE_CODE")
     constructor(
         project: Project,
         nodeJsRoot: NodeJsRootExtension,
@@ -40,8 +41,8 @@ internal constructor(
         project = project,
         nodeJsRoot = nodeJsRoot,
         yarnSpec = yarnSpec,
-        objects = project.objects,
-        execOps = @Suppress("DEPRECATION") project.getExecOperations(),
+        objects = error("constructor is deprecated"),
+        execOps = error("constructor is deprecated"),
     )
 
     companion object : HasPlatformDisambiguator by JsPlatformDisambiguator {

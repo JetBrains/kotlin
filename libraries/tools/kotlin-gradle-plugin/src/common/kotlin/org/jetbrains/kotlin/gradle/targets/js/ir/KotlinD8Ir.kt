@@ -28,13 +28,14 @@ internal constructor(
     KotlinJsIrSubTarget(target, "d8"),
     KotlinWasmD8Dsl {
 
-    @Deprecated("Extending this class is deprecated. Scheduled for removal in Kotlin 2.4.")
+    @Deprecated("Extending this class is deprecated. Scheduled for removal in Kotlin 2.4.", level = DeprecationLevel.ERROR)
+    @Suppress("UNREACHABLE_CODE")
     constructor(
         target: KotlinJsIrTarget,
     ) : this(
         target = target,
-        objects = target.project.objects,
-        providers = target.project.providers,
+        objects = error("constructor is deprecated"),
+        providers = error("constructor is deprecated"),
     )
 
     private val d8 = D8Plugin.applyWithEnvSpec(project)
