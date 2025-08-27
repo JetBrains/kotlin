@@ -88,7 +88,7 @@ private fun Long.multiplyNonNegativeWithoutOverflow(other: Long): Long = when {
     this == 1L -> other.coerceAtMost(MAX_MILLIS)
     other == 1L -> this.coerceAtMost(MAX_MILLIS)
     else -> {
-        val bitSum = (64 - countLeadingZeroBits()) + (64 - other.countLeadingZeroBits())
+        val bitSum = 128 - countLeadingZeroBits() - other.countLeadingZeroBits()
         when {
             bitSum < 63 -> this * other
             bitSum > 63 -> MAX_MILLIS
