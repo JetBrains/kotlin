@@ -19,7 +19,7 @@
     <!-- legacy JS decompiler for .kjsm files, not supported in K2 -->
     <psi.classFileDecompiler implementation="org.jetbrains.kotlin.analysis.decompiler.js.KotlinJavaScriptMetaFileDecompiler"/>
 
-    <psi.classFileDecompiler implementation="org.jetbrains.kotlin.analysis.decompiler.konan.KotlinNativeMetadataDecompiler"/>
+    <psi.classFileDecompiler implementation="org.jetbrains.kotlin.analysis.decompiler.konan.K1KotlinNativeMetadataDecompiler"/>
 
     <projectService
         serviceInterface="org.jetbrains.kotlin.analysis.api.session.KaSessionProvider"
