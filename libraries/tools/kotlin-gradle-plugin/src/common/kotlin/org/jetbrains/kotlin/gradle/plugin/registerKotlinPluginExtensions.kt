@@ -63,7 +63,6 @@ internal fun Project.registerKotlinPluginExtensions() {
         register(project, UserDefinedAttributesSetupAction)
         register(project, CustomizeKotlinDependenciesSetupAction)
         register(project, AddKotlinPlatformIntegersSupportLibrary)
-        register(project, SetupKotlinNativeStdlibAndPlatformDependenciesImport)
         register(project, FinalizeConfigurationFusMetricAction)
 
         if (isAbiValidationEnabled) {
@@ -95,7 +94,6 @@ internal fun Project.registerKotlinPluginExtensions() {
             register(project, IdeMultiplatformImportActionSetupAction)
             register(project, KotlinLLDBScriptSetupAction)
             register(project, SetupKotlinNativePlatformDependenciesAndStdlib)
-            register(project, SetupConsistentMetadataDependenciesResolution)
             register(project, RegisterMultiplatformResourcesPublicationExtensionAction)
             register(project, SetUpMultiplatformJvmResourcesPublicationAction)
             register(project, SetUpMultiplatformAndroidAssetsAndResourcesPublicationAction)

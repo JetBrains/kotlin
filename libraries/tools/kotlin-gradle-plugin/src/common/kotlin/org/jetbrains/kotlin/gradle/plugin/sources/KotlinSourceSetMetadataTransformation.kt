@@ -47,14 +47,6 @@ internal val InternalKotlinSourceSet.metadataTransformation: GranularMetadataTra
     the intransitiveMetadataConfigurationName will not extend this mechanism, since it only
     relies on dependencies being added explicitly by the Kotlin Gradle Plugin
     */
-    listOf(
-        apiMetadataConfigurationName,
-        implementationMetadataConfigurationName,
-        compileOnlyMetadataConfigurationName
-    ).forEach { configurationName ->
-        val configuration = project.configurations.getByName(configurationName)
-        project.applyTransformationToLegacyDependenciesMetadataConfiguration(configuration, granularMetadataTransformation)
-    }
 
     granularMetadataTransformation
 }

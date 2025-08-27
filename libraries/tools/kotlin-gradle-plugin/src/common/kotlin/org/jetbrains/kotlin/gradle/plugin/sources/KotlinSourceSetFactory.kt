@@ -81,28 +81,6 @@ internal class DefaultKotlinSourceSetFactory(
         super.setUpSourceSetDefaults(sourceSet)
         sourceSet.resources.srcDir(defaultSourceFolder(project, sourceSet.name, SOURCE_SET_TYPE_RESOURCES))
 
-        val dependencyConfigurationWithMetadata = with(sourceSet) {
-            @Suppress("DEPRECATION")
-            listOf(
-                apiConfigurationName to apiMetadataConfigurationName,
-                implementationConfigurationName to implementationMetadataConfigurationName,
-                compileOnlyConfigurationName to compileOnlyMetadataConfigurationName,
-                null to intransitiveMetadataConfigurationName
-            )
-        }
-
-        dependencyConfigurationWithMetadata.forEach { (configurationName, metadataName) ->
-            project.configurations.maybeCreateResolvable(metadataName).apply {
-                attributes.attribute(KotlinPlatformType.attribute, KotlinPlatformType.common)
-                attributes.attribute(Usage.USAGE_ATTRIBUTE, project.usageByName(KotlinUsages.KOTLIN_METADATA))
-                attributes.attribute(Category.CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))
-                isVisible = false
-
-                if (configurationName != null) {
-                    extendsFrom(project.configurations.maybeCreateDependencyScope(configurationName))
-                }
-            }
-        }
     }
 
     override fun doCreateSourceSet(name: String): DefaultKotlinSourceSet =
