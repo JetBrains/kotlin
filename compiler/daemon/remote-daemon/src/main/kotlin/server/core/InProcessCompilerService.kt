@@ -162,7 +162,8 @@ class InProcessCompilerService(
                 doCompile(daemonReporter) { _ ->
                     val exitCode = compiler.exec(messageCollector, Services.Companion.EMPTY, k2PlatformArgs)
 
-                    val perfString = compiler.defaultPerformanceManager.createPerformanceReport(dumpFormat = PerformanceManager.DumpFormat.PlainText)
+                    val perfString =
+                        compiler.defaultPerformanceManager.createPerformanceReport(dumpFormat = PerformanceManager.DumpFormat.PlainText)
                     compilationResults?.also {
                         (it as CompilationResults).add(
                             CompilationResultCategory.BUILD_REPORT_LINES.code,

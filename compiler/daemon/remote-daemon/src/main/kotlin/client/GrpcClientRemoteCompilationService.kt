@@ -27,9 +27,11 @@ class GrpcClientRemoteCompilationService(
     = ManagedChannelBuilder
         .forAddress("localhost", 50051)
         .usePlaintext()
-        .intercept(if (logging) RemoteClientInterceptor() else null)
+        .let { builder ->
+            if (logging) builder.intercept(RemoteClientInterceptor()) else builder
+        }
         .build(),
-    ) : RemoteCompilationService, Closeable {
+) : RemoteCompilationService, Closeable {
 
     private val stub: CompileServiceGrpcKt.CompileServiceCoroutineStub = CompileServiceGrpcKt
         .CompileServiceCoroutineStub(channel)

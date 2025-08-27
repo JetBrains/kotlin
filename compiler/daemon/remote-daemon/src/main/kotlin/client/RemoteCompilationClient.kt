@@ -31,24 +31,38 @@ import model.ArtifactType
 import org.jetbrains.kotlin.daemon.common.CompilationOptions
 import java.io.File
 import java.nio.file.Files
+import kotlin.io.path.ExperimentalPathApi
+import kotlin.io.path.deleteRecursively
 
+@OptIn(ExperimentalPathApi::class)
 class RemoteCompilationClient(
-    val serverImplType: RemoteCompilationServiceImplType
+    val serverImplType: RemoteCompilationServiceImplType,
+    val logging: Boolean = false
 ) {
 
     init {
         CLIENT_COMPILED_DIR.toFile().mkdirs()
         CLIENT_TMP_DIR.toFile().mkdirs()
+
+        Runtime.getRuntime().addShutdownHook(
+            Thread {
+                CLIENT_COMPILED_DIR.deleteRecursively()
+                CLIENT_TMP_DIR.deleteRecursively()
+            },
+        )
     }
 
     private val client = GrpcClientRemoteCompilationService()
 
     suspend fun compile(projectName: String, compilerArguments: List<String>, compilationOptions: CompilationOptions): CompilationResult {
         val compilerArgumentsMap = CompilerUtils.getMap(compilerArguments)
-        println("COMPILER ARGUMENTS MAP: $compilerArgumentsMap")
-        val sourceFiles = CompilerUtils.getSourceFiles(compilerArgumentsMap)
-        val dependencyFiles = CompilerUtils.getDependencyFiles(compilerArgumentsMap)
-        val compilerPluginFiles = CompilerUtils.getCompilerPluginFiles(compilerArgumentsMap)
+        val sourceFiles = CompilerUtils.getSourceFilePaths(compilerArgumentsMap).map { it.toFile() }
+        val dependencyFiles = CompilerUtils.getDependencyFilePaths(compilerArgumentsMap).map { it.toFile() }
+        val compilerPluginFiles = CompilerUtils.getCompilerPluginFilesPath(compilerArgumentsMap).map { it.toFile() }
+        println("client source files count = ${sourceFiles.size}")
+        println("client dependency files count = ${dependencyFiles.size}")
+        println("client compiler plugin files count = ${compilerPluginFiles.size}")
+
 
         val fileChunks = mutableMapOf<String, MutableList<FileChunk>>()
 
@@ -154,9 +168,10 @@ class RemoteCompilationClient(
                 }
 
                 dependencyFiles.forEach {
+                    println("sending file transfer request for a dependency file: ${it.path}")
                     requestChannel.send(
                         FileTransferRequest(
-                            it.path, // we need to preserve original path for dependency
+                            it.path,
                             computeSha256(it),
                             ArtifactType.DEPENDENCY
                         )

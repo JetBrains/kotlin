@@ -3,7 +3,10 @@ plugins {
     id("com.google.protobuf") version "0.9.5"
     id("org.jetbrains.kotlin.plugin.serialization")
     application  // This plugin is required
-    id("org.jetbrains.kotlinx.rpc.plugin") version "0.9.1"
+    id("me.champeau.jmh") version "0.7.2"
+    kotlin("kapt") // Add this line
+
+//    id("org.jetbrains.kotlinx.rpc.plugin") version "0.9.1"
 }
 
 application {
@@ -60,19 +63,26 @@ dependencies {
     testImplementation("io.grpc:grpc-inprocess:1.74.0")
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.10.2")
 
-    // koltinx rpc
-    implementation("org.jetbrains.kotlinx:kotlinx-rpc-krpc-client:0.9.1")
-    implementation("org.jetbrains.kotlinx:kotlinx-rpc-krpc-server:0.9.1")
-    implementation("io.ktor:ktor-server-core:3.2.3")
-    implementation("org.jetbrains.kotlinx:kotlinx-rpc-krpc-client:0.9.1")
-    implementation("org.jetbrains.kotlinx:kotlinx-rpc-krpc-ktor-client:0.9.1")
-    implementation("io.ktor:ktor-server-netty-jvm:3.2.3")
-    implementation("ch.qos.logback:logback-classic:1.5.18")
-    implementation("org.jetbrains.kotlinx:kotlinx-rpc-krpc-server:0.9.1")
-    implementation("org.jetbrains.kotlinx:kotlinx-rpc-krpc-ktor-server:0.9.1")
-    implementation("org.jetbrains.kotlinx:kotlinx-rpc-krpc-serialization-json:0.9.1")
+    // TAR
+    implementation("org.apache.commons:commons-compress:1.24.0")
 
-    kotlinCompilerPluginClasspathMain("org.jetbrains.kotlinx:kotlinx-rpc-compiler-plugin-k2:2.2.0-0.9.1!")
+    // JMH
+    implementation("org.openjdk.jmh:jmh-core:1.37")
+    kapt("org.openjdk.jmh:jmh-generator-annprocess:1.37")
+
+    // koltinx rpc
+//    implementation("org.jetbrains.kotlinx:kotlinx-rpc-krpc-client:0.9.1")
+//    implementation("org.jetbrains.kotlinx:kotlinx-rpc-krpc-server:0.9.1")
+//    implementation("io.ktor:ktor-server-core:3.2.3")
+//    implementation("org.jetbrains.kotlinx:kotlinx-rpc-krpc-client:0.9.1")
+//    implementation("org.jetbrains.kotlinx:kotlinx-rpc-krpc-ktor-client:0.9.1")
+//    implementation("io.ktor:ktor-server-netty-jvm:3.2.3")
+//    implementation("ch.qos.logback:logback-classic:1.5.18")
+//    implementation("org.jetbrains.kotlinx:kotlinx-rpc-krpc-server:0.9.1")
+//    implementation("org.jetbrains.kotlinx:kotlinx-rpc-krpc-ktor-server:0.9.1")
+//    implementation("org.jetbrains.kotlinx:kotlinx-rpc-krpc-serialization-json:0.9.1")
+
+//    kotlinCompilerPluginClasspathMain("org.jetbrains.kotlinx:kotlinx-rpc-compiler-plugin-k2:2.2.0-0.9.1!")
 }
 
 // workaround that IDEA run configuration does not properly resolve runtime classpath

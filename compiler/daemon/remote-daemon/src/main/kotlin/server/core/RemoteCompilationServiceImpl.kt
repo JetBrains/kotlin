@@ -30,30 +30,31 @@ import org.jetbrains.kotlin.daemon.client.BasicCompilerServicesWithResultsFacade
 import org.jetbrains.kotlin.daemon.common.JpsCompilerServicesFacade
 import org.jetbrains.kotlin.daemon.report.DaemonMessageReporter
 import org.jetbrains.kotlin.daemon.report.getBuildReporter
+import org.jetbrains.kotlin.utils.createConcurrentMultiMap
 import server.interceptors.AuthInterceptor
 import java.io.File
 import java.nio.file.Files
 import java.nio.file.LinkOption
+import java.nio.file.Path
+import java.nio.file.Paths
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.atomic.AtomicInteger
-
-enum class CompilationMode {
-    REAL,
-    FAKE
-}
 
 class RemoteCompilationServiceImpl(
     val cacheHandler: CacheHandler,
     val workspaceManager: WorkspaceManager,
     val fileChunkingStrategy: FileChunkingStrategy,
     val compilerService: InProcessCompilerService,
-    val compilationMode: CompilationMode = CompilationMode.REAL,
+    val logging: Boolean = false,
 ) : RemoteCompilationService {
 
     fun debug(text: String) {
-        val formatter = DateTimeFormatter.ofPattern("HH:mm:ss")
-        println("[${LocalDateTime.now().format(formatter)}] [thread=${Thread.currentThread().name}] DEBUG SERVER: $text")
+        if (logging) {
+            val formatter = DateTimeFormatter.ofPattern("HH:mm:ss")
+            println("[${LocalDateTime.now().format(formatter)}] [thread=${Thread.currentThread().name}] DEBUG SERVER: $text")
+        }
     }
 
     override fun cleanup() {
@@ -69,14 +70,13 @@ class RemoteCompilationServiceImpl(
             var totalFilesExpected = -1
 
             // <ClientPath, FileFromUserWorkspace>
-            val sourceFiles = mutableMapOf<String, File>()
-            val dependencyFiles = mutableMapOf<String, File>()
-            val compilerPluginFiles = mutableMapOf<String, File>()
+            val sourceFiles = ConcurrentHashMap<Path, File>()
+            val dependencyFiles = ConcurrentHashMap<Path, File>()
+            val compilerPluginFiles = ConcurrentHashMap<Path, File>()
 
             val fileChunks = mutableMapOf<String, MutableList<FileChunk>>()
 
-            fun fileAvailable(clientPath: String, file: File, artifactType: ArtifactType) {
-                println("file available: $clientPath, ${file.absolutePath}, $artifactType")
+            fun fileAvailable(clientPath: Path, file: File, artifactType: ArtifactType) {
                 when (artifactType) {
                     ArtifactType.SOURCE -> sourceFiles[clientPath] = file
                     ArtifactType.DEPENDENCY -> dependencyFiles[clientPath] = file
@@ -114,7 +114,7 @@ class RemoteCompilationServiceImpl(
                                                 userId,
                                                 compilationMetadata.projectName
                                             )
-                                            fileAvailable(it.filePath, projectFile, it.artifactType)
+                                            fileAvailable(Paths.get(it.filePath).toAbsolutePath().normalize(), projectFile, it.artifactType)
                                             FileTransferReply(
                                                 it.filePath,
                                                 isPresent = true,
@@ -150,7 +150,7 @@ class RemoteCompilationServiceImpl(
                                             compilationMetadata.projectName
                                         )
                                         debug("Reconstructed ${if (reconstructedFile.isFile) "file" else "directory"}, artifactType=${it.artifactType}, clientPath=${it.filePath}")
-                                        fileAvailable(it.filePath, projectFile, it.artifactType)
+                                        fileAvailable(Paths.get(it.filePath).toAbsolutePath().normalize(), projectFile, it.artifactType)
                                     }
                                 }
                             }
@@ -164,6 +164,11 @@ class RemoteCompilationServiceImpl(
             launch {
                 allFilesReady.join()
 
+                println("list of ${dependencyFiles.size} dependency files received on a server:")
+                for((key, value) in dependencyFiles) {
+                    println("SERVER RECEIVED KEY=$key->VAL=$value")
+                }
+
                 val remoteCompilerArguments = CompilerUtils.replaceClientPathsWithRemotePaths(
                     userId,
                     compilationMetadata!!, // TODO exclamation marks
@@ -173,31 +178,22 @@ class RemoteCompilationServiceImpl(
                     compilerPluginFiles
                 )
 
-                val (outputDir, compilationResult) = when (compilationMode) {
-                    CompilationMode.REAL -> {
-                        val (isCompilationResultCached, inputFingerprint) = cacheHandler.isCompilationResultCached(remoteCompilerArguments)
-                        if (isCompilationResultCached) {
-                            debug("[SERVER COMPILATION] Compilation result is cached, fingerprint: $inputFingerprint")
-                            cacheHandler.getCompilationResultDirectory(inputFingerprint) to CompilationResult(
-                                0,
-                                CompilationResultSource.CACHE
-                            )
-                        } else {
-                            debug("[SERVER COMPILATION] Compilation result is NOT cached, fingerprint: $inputFingerprint")
-                            val (outputDir, compilationResult) = doCompilation(
-                                remoteCompilerArguments,
-                                compilationMetadata,
-                                this@channelFlow::trySend// TODO: double check trySend
-
-                            )
-                            cacheHandler.cacheFile(outputDir, ArtifactType.RESULT, deleteOriginalFile = false, remoteCompilerArguments)
-                            outputDir to compilationResult
-                        }
-                    }
-                    CompilationMode.FAKE -> {
-                        val outputDir = CompilerUtils.getOutputDir(remoteCompilerArguments)
-                        outputDir to CompilationResult(0, CompilationResultSource.CACHE)
-                    }
+                val (isCompilationResultCached, inputFingerprint) = cacheHandler.isCompilationResultCached(remoteCompilerArguments)
+                val (outputDir, compilationResult) = if (isCompilationResultCached) {
+                    debug("[SERVER COMPILATION] Compilation result is cached, fingerprint: $inputFingerprint")
+                    cacheHandler.getCompilationResultDirectory(inputFingerprint) to CompilationResult(
+                        0,
+                        CompilationResultSource.CACHE
+                    )
+                } else {
+                    debug("[SERVER COMPILATION] Compilation result is NOT cached, fingerprint: $inputFingerprint")
+                    val (outputDir, compilationResult) = doCompilation(
+                        remoteCompilerArguments,
+                        compilationMetadata,
+                        this@channelFlow::trySend// TODO: double check trySend
+                    )
+                    cacheHandler.cacheFile(outputDir, ArtifactType.RESULT, deleteOriginalFile = false, remoteCompilerArguments)
+                    outputDir to compilationResult
                 }
                 send(compilationResult)
 

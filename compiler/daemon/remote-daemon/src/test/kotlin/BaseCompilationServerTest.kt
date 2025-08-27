@@ -48,7 +48,7 @@ abstract class BaseCompilationCompilationTest {
     }
 
     fun getGrpcClient(): RemoteCompilationService {
-        return GrpcClientRemoteCompilationService(channel)
+        return GrpcClientRemoteCompilationService(logging = true, channel)
     }
 
     @BeforeEach

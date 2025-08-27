@@ -21,7 +21,8 @@ import server.interceptors.AuthInterceptor
 
 class RemoteCompilationServer(
     private val port: Int,
-    private val serverImplType: RemoteCompilationServiceImplType
+    private val serverImplType: RemoteCompilationServiceImplType,
+    private val logging: Boolean = false
 ) {
 
     private val fileChunkingStrategy = FixedSizeChunkingStrategy()
@@ -40,6 +41,7 @@ class RemoteCompilationServer(
                                 workspaceManager,
                                 fileChunkingStrategy,
                                 InProcessCompilerService(),
+                                logging = logging,
                             )
                         ),
                         LoggingInterceptor(),
