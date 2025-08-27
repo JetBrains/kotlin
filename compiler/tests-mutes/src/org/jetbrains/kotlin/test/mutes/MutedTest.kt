@@ -70,7 +70,7 @@ private fun parseMutedTest(str: String): MutedTest {
     val matchResult = MUTE_LINE_PARSE_REGEXP.matchEntire(str) ?: throw ParseError("Can't parse the line: $str")
     val resultValues = matchResult.groups.filterNotNull()
 
-    val testKey = resultValues[1].value
+    val testKey = resultValues[1].value.replace("$", ".")
     val issue = resultValues[2].value
     val isFlaky = when (val statusStr = resultValues[3].value) {
         "FLAKY" -> true
