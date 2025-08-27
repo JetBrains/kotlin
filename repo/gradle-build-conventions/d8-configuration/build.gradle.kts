@@ -4,6 +4,8 @@ plugins {
 }
 
 repositories {
+    maven(url = "file:///dump")
+    mavenLocal()
     maven("https://redirector.kotlinlang.org/maven/kotlin-dependencies")
     mavenCentral { setUrl("https://cache-redirector.jetbrains.com/maven-central") }
     gradlePluginPortal()
