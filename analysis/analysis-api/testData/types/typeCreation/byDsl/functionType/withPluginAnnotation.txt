@@ -1,0 +1,78 @@
+KaType
+KaFunctionType:
+  abbreviation: null
+  annotations: [
+    org/jetbrains/kotlin/plugin/sandbox/MyInlineable()
+      psi: null
+  ]
+  arity: 0
+  classId: some/MyInlineableFunction0
+  contextReceivers: []
+  hasContextReceivers: false
+  hasReceiver: false
+  isReflectType: false
+  isSuspend: false
+  parameterTypes: []
+  parameters: []
+  qualifiers: [
+    KaResolvedClassTypeQualifier:
+      name: MyInlineableFunction0
+      symbol: KaNamedClassSymbol(some/MyInlineableFunction0)
+      typeArguments: [
+        KaUsualClassType:
+          abbreviation: null
+          annotations: []
+          classId: kotlin/Unit
+          qualifiers: [
+            KaResolvedClassTypeQualifier:
+              name: Unit
+              symbol: KaNamedClassSymbol(kotlin/Unit)
+              typeArguments: []
+          ]
+          symbol: KaNamedClassSymbol(kotlin/Unit)
+          typeArguments: []
+          isMarkedNullable: false
+          isNullable: false
+          hasFlexibleNullability: false
+      ]
+  ]
+  receiverType: null
+  returnType: KaUsualClassType:
+    abbreviation: null
+    annotations: []
+    classId: kotlin/Unit
+    qualifiers: [
+      KaResolvedClassTypeQualifier:
+        name: Unit
+        symbol: KaNamedClassSymbol(kotlin/Unit)
+        typeArguments: []
+    ]
+    symbol: KaNamedClassSymbol(kotlin/Unit)
+    typeArguments: []
+    isMarkedNullable: false
+    isNullable: false
+    hasFlexibleNullability: false
+  symbol: KaNamedClassSymbol(some/MyInlineableFunction0)
+  typeArguments: [
+    KaUsualClassType:
+      abbreviation: null
+      annotations: []
+      classId: kotlin/Unit
+      qualifiers: [
+        KaResolvedClassTypeQualifier:
+          name: Unit
+          symbol: KaNamedClassSymbol(kotlin/Unit)
+          typeArguments: []
+      ]
+      symbol: KaNamedClassSymbol(kotlin/Unit)
+      typeArguments: []
+      isMarkedNullable: false
+      isNullable: false
+      hasFlexibleNullability: false
+  ]
+  isMarkedNullable: false
+  isNullable: false
+  hasFlexibleNullability: false
+
+Rendered type:
+@org.jetbrains.kotlin.plugin.sandbox.MyInlineable (() -> kotlin.Unit)
