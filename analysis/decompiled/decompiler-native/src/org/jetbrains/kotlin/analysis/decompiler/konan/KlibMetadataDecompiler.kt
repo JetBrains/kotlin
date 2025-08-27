@@ -11,13 +11,17 @@ import com.intellij.psi.PsiManager
 import com.intellij.psi.compiled.ClassFileDecompilers
 import com.intellij.psi.compiled.ClsStubBuilder
 import org.jetbrains.kotlin.analysis.decompiler.psi.KotlinDecompiledFileViewProvider
-import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
+import org.jetbrains.kotlin.serialization.SerializerExtensionProtocol
 import java.io.IOException
 
-abstract class KlibMetadataDecompiler<out V : BinaryVersion>(
+abstract class KlibMetadataDecompiler(
     private val fileType: FileType,
+    private val serializerProtocol: () -> SerializerExtensionProtocol,
+    private val stubVersion: Int,
 ) : ClassFileDecompilers.Full() {
-    protected abstract val metadataStubBuilder: KlibMetadataStubBuilder
+    protected open val metadataStubBuilder: KlibMetadataStubBuilder by lazy {
+        K2KlibMetadataStubBuilder(stubVersion, fileType, serializerProtocol, ::readFileSafely)
+    }
 
     protected fun doReadFile(file: VirtualFile): FileWithMetadata? {
         return FileWithMetadata.forPackageFragment(file)
