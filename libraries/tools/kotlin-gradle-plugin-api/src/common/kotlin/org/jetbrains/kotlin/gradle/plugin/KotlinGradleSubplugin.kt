@@ -244,7 +244,7 @@ interface KotlinCompilerPluginSupportPlugin : Plugin<Project> {
     @Deprecated(
         message = "This function is no longer used as only the embeddable compiler is supported. " +
                 "The 'kotlin.native.useEmbeddableCompilerJar' property has been removed and " +
-                "getPluginArtifact() is always used instead.",
+                "getPluginArtifact() is always used instead. Scheduled for removal in Kotlin 2.4.",
         level = DeprecationLevel.ERROR,
         replaceWith = ReplaceWith("getPluginArtifact()")
     ) // Since 2.2.20
