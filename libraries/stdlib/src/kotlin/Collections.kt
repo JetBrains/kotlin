@@ -716,6 +716,7 @@ public expect interface MutableMap<K, V> : Map<K, V> {
          *
          * @return the previous value corresponding to the key.
          */
+        @IgnorableReturnValue
         public fun setValue(newValue: V): V
     }
 }
