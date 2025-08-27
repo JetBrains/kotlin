@@ -71,6 +71,7 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
         FirDataObjectContentChecker,
         ContractSyntaxV2FunctionChecker,
         FirAnyDeprecationChecker,
+        FirNoSmartCastChecker,
     )
 
     override val propertyCheckers: Set<FirPropertyChecker> = setOf(

@@ -66,6 +66,10 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val OTHER_ERROR_WITH_REASON by error<PsiElement> {
             parameter<String>("reason")
         }
+
+        val IE_WARNING by warning<PsiElement>() {
+            parameter<String>("payload")
+        }
     }
 
     val GENERAL_SYNTAX by object : DiagnosticGroup("General syntax") {

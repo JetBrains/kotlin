@@ -156,6 +156,7 @@ object FirErrors : KtDiagnosticsContainer() {
     // Miscellaneous
     val OTHER_ERROR: KtDiagnosticFactory0 = KtDiagnosticFactory0("OTHER_ERROR", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())
     val OTHER_ERROR_WITH_REASON: KtDiagnosticFactory1<String> = KtDiagnosticFactory1("OTHER_ERROR_WITH_REASON", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())
+    val IE_WARNING: KtDiagnosticFactory1<String> = KtDiagnosticFactory1("IE_WARNING", WARNING, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())
 
     // General syntax
     val ILLEGAL_CONST_EXPRESSION: KtDiagnosticFactory0 = KtDiagnosticFactory0("ILLEGAL_CONST_EXPRESSION", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())

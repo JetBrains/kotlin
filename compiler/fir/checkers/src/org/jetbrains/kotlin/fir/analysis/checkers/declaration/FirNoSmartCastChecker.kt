@@ -1,0 +1,62 @@
+/*
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
+package org.jetbrains.kotlin.fir.analysis.checkers.declaration
+
+import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
+import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.IE_WARNING
+import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
+import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.expressions.FirOperation
+import org.jetbrains.kotlin.fir.expressions.FirTypeOperatorCall
+import org.jetbrains.kotlin.fir.expressions.argument
+import org.jetbrains.kotlin.fir.render
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.fir.types.coneType
+import org.jetbrains.kotlin.fir.types.renderReadable
+import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
+
+object FirNoSmartCastChecker : FirSimpleFunctionChecker(MppCheckerKind.Common) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirSimpleFunction) {
+        val visitor = NoSmartCastVisitor()
+        declaration.accept(visitor)
+        visitor.isArguments.forEach { isArg ->
+            val asArg = visitor.asArguments.find { it == isArg } ?: return@forEach
+            reporter.reportOn(
+                declaration.source, IE_WARNING, "is: ${isArg.ex.render()}, as: ${asArg.ex.render()}, ty: ${isArg.ty.renderReadable()}"
+            )
+        }
+    }
+
+    class NoSmartCastVisitor : FirVisitorVoid() {
+        data class Cast(val ex: FirExpression, val ty: ConeKotlinType) {
+            override fun equals(other: Any?): Boolean {
+                if (other !is Cast) return false
+                return ex::class.java == other.ex::class.java && ty == other.ty
+            }
+        }
+
+        val isArguments = mutableListOf<Cast>()
+        val asArguments = mutableListOf<Cast>()
+
+        override fun visitElement(element: FirElement) {
+            element.acceptChildren(this)
+        }
+
+        override fun visitTypeOperatorCall(typeOperatorCall: FirTypeOperatorCall) {
+            when (typeOperatorCall.operation) {
+                FirOperation.IS, FirOperation.NOT_IS, FirOperation.SAFE_AS,
+                    -> isArguments.add(Cast(typeOperatorCall.argument, typeOperatorCall.conversionTypeRef.coneType))
+                FirOperation.AS -> asArguments.add(Cast(typeOperatorCall.argument, typeOperatorCall.conversionTypeRef.coneType))
+                else -> {}
+            }
+        }
+    }
+}
