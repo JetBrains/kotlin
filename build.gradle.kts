@@ -66,13 +66,6 @@ plugins {
     id("nodejs-cache-redirector-configuration")
 }
 
-develocity {
-    buildScan {
-        termsOfUseUrl.set("https://gradle.com/help/legal-terms-of-use")
-        termsOfUseAgree.set("yes")
-    }
-}
-
 val isTeamcityBuild = project.kotlinBuildProperties.isTeamcityBuild
 
 val defaultSnapshotVersion: String by extra

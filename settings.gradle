@@ -33,6 +33,13 @@ plugins {
     id "cache-redirector"
 }
 
+develocity {
+    buildScan {
+        termsOfUseUrl = "https://gradle.com/help/legal-terms-of-use"
+        termsOfUseAgree = "yes"
+    }
+}
+
 File versionPropertiesFile = new File(rootProject.projectDir, "gradle/versions.properties")
 def versionProperties = new Properties()
 versionPropertiesFile.withInputStream {
