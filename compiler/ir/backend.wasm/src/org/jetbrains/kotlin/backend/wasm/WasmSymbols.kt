@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
+import org.jetbrains.kotlin.name.StandardClassIds.BASE_KOTLIN_PACKAGE
 import org.jetbrains.kotlin.platform.wasm.WasmTarget
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.wasm.config.wasmTarget
@@ -81,6 +82,8 @@ class WasmSymbols(
 
     internal val wasmLongImmutableArray = getInternalWasmClass("WasmLongImmutableArray")
 
+    val asserts: Iterable<IrSimpleFunctionSymbol> =
+        CallableId(BASE_KOTLIN_PACKAGE, Name.identifier("assert")).functionSymbols()
     override val throwNullPointerException = getInternalWasmFunction("THROW_NPE")
     override val throwISE = getInternalWasmFunction("THROW_ISE")
     override val throwTypeCastException = getInternalWasmFunction("THROW_CCE")
