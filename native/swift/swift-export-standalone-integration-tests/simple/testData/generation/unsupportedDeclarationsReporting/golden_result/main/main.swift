@@ -59,7 +59,7 @@ public final class Foo: KotlinRuntime.KotlinBase {
     }
 }
 extension ExportedKotlinPackages.a.b.c {
-    public enum E: KotlinRuntimeSupport._KotlinBridgeable, Swift.CaseIterable, Swift.LosslessStringConvertible {
+    public enum E: KotlinRuntimeSupport._KotlinBridgeable, Swift.CaseIterable, Swift.LosslessStringConvertible, Swift.RawRepresentable {
         case A
         case B
         case C
@@ -72,6 +72,15 @@ extension ExportedKotlinPackages.a.b.c {
                 }
             }
         }
+        public var rawValue: Swift.Int32 {
+            get {
+                switch self {
+                case .A: 0
+                case .B: 1
+                default: 2
+                }
+            }
+        }
         public init?(
             _ description: Swift.String
         ) {
@@ -81,6 +90,14 @@ extension ExportedKotlinPackages.a.b.c {
             case "C": self = .C
             default: return nil
             }
+        }
+        public init?(
+            rawValue: Swift.Int32
+        ) {
+            if (rawValue < 0 && rawValue >= 3) {
+                return nil
+            }
+            self = E.allCases[Int(rawValue)]
         }
         public init(
             __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer!,

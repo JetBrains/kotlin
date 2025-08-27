@@ -622,12 +622,19 @@ extension ExportedKotlinPackages.namespace.deeper {
     }
 }
 extension ExportedKotlinPackages.ignored {
-    public enum ENUM: KotlinRuntimeSupport._KotlinBridgeable, Swift.CaseIterable, Swift.LosslessStringConvertible {
+    public enum ENUM: KotlinRuntimeSupport._KotlinBridgeable, Swift.CaseIterable, Swift.LosslessStringConvertible, Swift.RawRepresentable {
         case A
         public var description: Swift.String {
             get {
                 switch self {
                 default: "A"
+                }
+            }
+        }
+        public var rawValue: Swift.Int32 {
+            get {
+                switch self {
+                default: 0
                 }
             }
         }
@@ -638,6 +645,14 @@ extension ExportedKotlinPackages.ignored {
             case "A": self = .A
             default: return nil
             }
+        }
+        public init?(
+            rawValue: Swift.Int32
+        ) {
+            if (rawValue < 0 && rawValue >= 1) {
+                return nil
+            }
+            self = ENUM.allCases[Int(rawValue)]
         }
         public init(
             __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer!,
