@@ -25,6 +25,18 @@ public class InterruptingSourceGetOrBuildFirTestGenerated extends AbstractInterr
   }
 
   @Test
+  @TestMetadata("propertyWithBrokenGetter.kt")
+  public void testPropertyWithBrokenGetter() {
+    runTest("analysis/low-level-api-fir/testData/getOrBuildFirWithInterruption/propertyWithBrokenGetter.kt");
+  }
+
+  @Test
+  @TestMetadata("propertyWithBrokenSetter.kt")
+  public void testPropertyWithBrokenSetter() {
+    runTest("analysis/low-level-api-fir/testData/getOrBuildFirWithInterruption/propertyWithBrokenSetter.kt");
+  }
+
+  @Test
   @TestMetadata("reverseOrder.kt")
   public void testReverseOrder() {
     runTest("analysis/low-level-api-fir/testData/getOrBuildFirWithInterruption/reverseOrder.kt");
