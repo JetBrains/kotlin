@@ -61,116 +61,6 @@ public value class Duration private constructor(private val rawValue: Long) : Co
         internal const val INVALID_RAW_VALUE = 0x7FFFFFFFFFFFC0DE
         internal val INVALID = Duration(INVALID_RAW_VALUE)
 
-        /**
-         * Parser for long integer values with overflow detection and optional sign handling.
-         *
-         * This class provides efficient parsing of long values from strings with built-in
-         * overflow detection based on a configurable limit. It supports optional sign
-         * parsing for formats that require it (e.g., ISO 8601).
-         *
-         * @property overflowLimit The maximum value that can be parsed without overflow
-         * @property withSign Whether to parse the optional '+' or '-' sign at the beginning
-         * @property overflowThreshold Pre-calculated threshold (overflowLimit / 10) for early overflow detection
-         * @property lastDigitMax Maximum allowed last digit (overflowLimit % 10) when at the overflow threshold
-         */
-        internal class LongParser(private val overflowLimit: Long, private val withSign: Boolean) {
-
-            private val overflowThreshold = overflowLimit / 10
-            private val lastDigitMax = overflowLimit % 10
-
-            /**
-             * Parses a long integer from the string starting at the specified index.
-             *
-             * @param value The string to parse
-             * @param startIndex The index to start parsing from
-             * @param callback Invoked with (endIndex, sign, hasOverflow) when parsing completes
-             * @return The parsed value, clamped to overflowLimit if overflow occurred
-             */
-            internal inline fun parse(value: String, startIndex: Int, callback: (Int, Int, Boolean) -> Unit): Long {
-                var sign = 1
-                var index = startIndex
-                if (withSign) {
-                    val firstChar = value[index]
-                    if (firstChar == '-') {
-                        sign = -1
-                        index++
-                    } else if (firstChar == '+') {
-                        index++
-                    }
-                }
-                index = value.skipWhile(index) { it == '0' }
-                var result = 0L
-                while (index < value.length) {
-                    val ch = value[index]
-                    if (ch !in '0'..'9') break
-                    val digit = ch - '0'
-                    if (result > overflowThreshold || (result == overflowThreshold && digit > lastDigitMax)) {
-                        index = value.skipWhile(index) { it in '0'..'9' }
-                        callback(index, sign, true)
-                        return overflowLimit
-                    }
-                    result = result.multiplyBy10() + digit
-                    index++
-                }
-                callback(index, sign, false)
-                return result
-            }
-        }
-
-        internal val isoLongParser = LongParser(MAX_MILLIS, true)
-        internal val defaultLongParser = LongParser(Long.MAX_VALUE, false)
-
-        /**
-         * Parser for fractional parts of duration values.
-         *
-         * This class efficiently parses up to 15 decimal digits from a string,
-         * converting them to nanoseconds. It handles the fractional component
-         * that appears after a decimal point in duration strings (e.g., the ".5" in "1.5s").
-         *
-         * The parser splits the 15-digit precision into two parts for efficiency:
-         * - High precision: first 9 digits
-         * - Low precision: remaining 6 digits
-         */
-        internal class FractionalParser {
-
-            /**
-             * Parses up to 15 decimal digits as a fraction and returns them scaled to 15 decimal places.
-             *
-             * @param value The string to parse
-             * @param startIndex The index to start parsing from
-             * @param callback Invoked with the end index after parsing
-             * @return The fraction scaled to 15 decimal places (suitable for nanosecond conversion)
-             */
-            internal inline fun parse(value: String, startIndex: Int, callback: (Int) -> Unit): Long {
-                var index = startIndex
-                val highPrecisionDigits = value.parseDigits(index, 9) { index = it }
-                val lowPrecisionDigits = value.parseDigits(index, FRACTION_LIMIT - 9) { index = it }
-                index = value.skipWhile(index) { it in '0'..'9' }
-                callback(index)
-                return highPrecisionDigits.toLong() * 1_000_000 + lowPrecisionDigits
-            }
-
-            private inline fun String.parseDigits(startIndex: Int, maxDigits: Int, callback: (Int) -> Unit): Int {
-                var index = startIndex
-                var result = 0
-                var count = 0
-                while (index < length && count < maxDigits) {
-                    val ch = this[index]
-                    if (ch !in '0'..'9') break
-                    result = result.multiplyBy10() + (ch - '0')
-                    count++
-                    index++
-                }
-                repeat(maxDigits - count) {
-                    result = result.multiplyBy10()
-                }
-                callback(index)
-                return result
-            }
-        }
-
-        internal val fractionalParser = FractionalParser()
-
         /** Converts the given time duration [value] expressed in the specified [sourceUnit] into the specified [targetUnit]. */
         @ExperimentalTime
         public fun convert(value: Double, sourceUnit: DurationUnit, targetUnit: DurationUnit): Double =
@@ -1196,7 +1086,7 @@ private fun parseIsoStringFormat(
 
         val longStartIndex = index
         var sign = -1
-        val longValue = Duration.isoLongParser.parse(value, index) { longEndIndex, localSign, _ ->
+        val longValue = LongParser.iso.parse(value, index) { longEndIndex, localSign, _ ->
             index = longEndIndex
             if (index == value.length || index == longStartIndex + if (ch == '-' || ch == '+') 1 else 0) return handleError(throwException)
             sign = localSign
@@ -1204,7 +1094,7 @@ private fun parseIsoStringFormat(
 
         if (value[index] == '.') {
             index++
-            val fractionValue = Duration.fractionalParser.parse(value, index) { fractionEndIndex ->
+            val fractionValue = FractionalParser.parse(value, index) { fractionEndIndex ->
                 if (fractionEndIndex == index || fractionEndIndex == value.length || value[fractionEndIndex] != 'S') {
                     return handleError(throwException)
                 }
@@ -1272,7 +1162,7 @@ private fun parseDefaultStringFormat(
         isFirstComponent = false
 
         val longStartIndex = index
-        val longValue = Duration.defaultLongParser.parse(value, index) { longEndIndex, _, hasOverflow ->
+        val longValue = LongParser.default.parse(value, index) { longEndIndex, _, hasOverflow ->
             if (longEndIndex == longStartIndex || longEndIndex == length || hasOverflow) return handleError(throwException)
             index = longEndIndex
         }
@@ -1282,7 +1172,7 @@ private fun parseDefaultStringFormat(
         val fractionValue = if (hasFractionalPart) {
             fractionStartIndex = index
             index++
-            Duration.fractionalParser.parse(value, index) { fractionEndIndex ->
+            FractionalParser.parse(value, index) { fractionEndIndex ->
                 if (fractionEndIndex == index || fractionEndIndex == length) return handleError(throwException)
                 index = fractionEndIndex
             }
@@ -1336,6 +1226,116 @@ private fun parseDefaultStringFormat(
     }
 
     return totalMillis.toDuration(DurationUnit.MILLISECONDS) + totalNanos.toDuration(DurationUnit.NANOSECONDS)
+}
+
+/**
+ * Parser for long integer values with overflow detection and optional sign handling.
+ *
+ * This class provides efficient parsing of long values from strings with built-in
+ * overflow detection based on a configurable limit. It supports optional sign
+ * parsing for formats that require it (e.g., ISO 8601).
+ *
+ * @property overflowLimit The maximum value that can be parsed without overflow
+ * @property withSign Whether to parse the optional '+' or '-' sign at the beginning
+ * @property overflowThreshold Pre-calculated threshold (overflowLimit / 10) for early overflow detection
+ * @property lastDigitMax Maximum allowed last digit (overflowLimit % 10) when at the overflow threshold
+ */
+private class LongParser(private val overflowLimit: Long, private val withSign: Boolean) {
+
+    private val overflowThreshold = overflowLimit / 10
+    private val lastDigitMax = overflowLimit % 10
+
+    /**
+     * Parses a long integer from the string starting at the specified index.
+     *
+     * @param value The string to parse
+     * @param startIndex The index to start parsing from
+     * @param callback Invoked with (endIndex, sign, hasOverflow) when parsing completes
+     * @return The parsed value, clamped to overflowLimit if overflow occurred
+     */
+    inline fun parse(value: String, startIndex: Int, callback: (endIndex: Int, sign: Int, hasOverflow: Boolean) -> Unit): Long {
+        var sign = 1
+        var index = startIndex
+        if (withSign) {
+            val firstChar = value[index]
+            if (firstChar == '-') {
+                sign = -1
+                index++
+            } else if (firstChar == '+') {
+                index++
+            }
+        }
+        index = value.skipWhile(index) { it == '0' }
+        var result = 0L
+        while (index < value.length) {
+            val ch = value[index]
+            if (ch !in '0'..'9') break
+            val digit = ch - '0'
+            if (result > overflowThreshold || (result == overflowThreshold && digit > lastDigitMax)) {
+                index = value.skipWhile(index) { it in '0'..'9' }
+                callback(index, sign, true)
+                return overflowLimit
+            }
+            result = result.multiplyBy10() + digit
+            index++
+        }
+        callback(index, sign, false)
+        return result
+    }
+
+    companion object {
+        val iso = LongParser(MAX_MILLIS, true)
+        val default = LongParser(Long.MAX_VALUE, false)
+    }
+}
+
+/**
+ * Parser for fractional parts of duration values.
+ *
+ * This object efficiently parses up to 15 decimal digits from a string,
+ * converting them to nanoseconds. It handles the fractional component
+ * that appears after a decimal point in duration strings (e.g., the ".5" in "1.5s").
+ *
+ * The parser splits the 15-digit precision into two parts for efficiency:
+ * - High precision: first 9 digits
+ * - Low precision: remaining 6 digits
+ */
+private object FractionalParser {
+
+    /**
+     * Parses up to 15 decimal digits as a fraction and returns them scaled to 15 decimal places.
+     *
+     * @param value The string to parse
+     * @param startIndex The index to start parsing from
+     * @param callback Invoked with the end index after parsing
+     * @return The fraction scaled to 15 decimal places (suitable for nanosecond conversion)
+     */
+    inline fun parse(value: String, startIndex: Int, callback: (Int) -> Unit): Long {
+        var index = startIndex
+        val highPrecisionDigits = value.parseDigits(index, 9) { index = it }
+        val lowPrecisionDigits = value.parseDigits(index, FRACTION_LIMIT - 9) { index = it }
+        index = value.skipWhile(index) { it in '0'..'9' }
+        callback(index)
+        return highPrecisionDigits.toLong() * 1_000_000 + lowPrecisionDigits
+    }
+
+    private inline fun String.parseDigits(startIndex: Int, maxDigits: Int, callback: (Int) -> Unit): Int {
+        var index = startIndex
+        var result = 0
+        var count = 0
+        while (index < length && count < maxDigits) {
+            val ch = this[index]
+            if (ch !in '0'..'9') break
+            result = result.multiplyBy10() + (ch - '0')
+            count++
+            index++
+        }
+        repeat(maxDigits - count) {
+            result = result.multiplyBy10()
+        }
+        callback(index)
+        return result
+    }
 }
 
 /**
