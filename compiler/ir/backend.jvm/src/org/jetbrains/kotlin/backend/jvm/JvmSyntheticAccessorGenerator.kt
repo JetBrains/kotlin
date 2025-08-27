@@ -17,10 +17,7 @@ import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
 import org.jetbrains.kotlin.ir.builders.declarations.buildConstructor
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.expressions.impl.IrDelegatingConstructorCallImpl
-import org.jetbrains.kotlin.ir.expressions.impl.fromSymbolOwner
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
-import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.types.makeNullable
 import org.jetbrains.kotlin.ir.util.*
@@ -36,7 +33,6 @@ class JvmSyntheticAccessorGenerator(context: JvmBackendContext) :
         const val SUPER_QUALIFIER_SUFFIX_MARKER = "s"
         const val JVM_DEFAULT_MARKER = "jd"
         const val COMPANION_PROPERTY_MARKER = "cp"
-        const val CONSTRUCTOR_MARKER_PARAMETER_NAME = "constructor_marker"
     }
 
     override fun IrConstructor.makeConstructorAccessor(originForConstructorAccessor: IrDeclarationOrigin): IrConstructor {
@@ -71,16 +67,6 @@ class JvmSyntheticAccessorGenerator(context: JvmBackendContext) :
             )
         }
     }
-
-    protected fun createDelegatingConstructorCall(accessor: IrFunction, targetSymbol: IrConstructorSymbol) =
-        IrDelegatingConstructorCallImpl.fromSymbolOwner(
-            UNDEFINED_OFFSET, UNDEFINED_OFFSET,
-            context.irBuiltIns.unitType,
-            targetSymbol, targetSymbol.owner.parentAsClass.typeParameters.size + targetSymbol.owner.typeParameters.size
-        ).also {
-            copyAllParamsToArgs(it, accessor)
-        }
-
 
     override fun accessorModality(parent: IrDeclarationParent): Modality =
         if (parent is IrClass && parent.isJvmInterface) Modality.OPEN else Modality.FINAL

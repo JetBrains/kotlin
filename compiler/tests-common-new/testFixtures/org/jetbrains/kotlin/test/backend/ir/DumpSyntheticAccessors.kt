@@ -93,6 +93,7 @@ object DumpSyntheticAccessors {
         val expression = when (body) {
             is IrExpressionBody -> body.expression
             is IrBlockBody -> (body.statements.singleOrNull() as? IrReturn)?.value
+                ?: body.statements.singleOrNull() as? IrDelegatingConstructorCall
                 ?: compilationException("${id()} is expected to have exactly the single expression in block body", this)
             is IrSyntheticBody -> syntheticBodyIsNotSupported(this)
         }
