@@ -54043,6 +54043,41 @@ public class PhasedJvmDiagnosticLightTreeTestGenerated extends AbstractPhasedJvm
       }
 
       @Nested
+      @TestMetadata("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/multipleOverloads")
+      @TestDataPath("$PROJECT_ROOT")
+      public class MultipleOverloads {
+        @Test
+        @TestMetadata("overloadsByDifferentCollections.kt")
+        public void testOverloadsByDifferentCollections() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/multipleOverloads/overloadsByDifferentCollections.kt");
+        }
+
+        @Test
+        @TestMetadata("overloadsByDifferentCollectionsAndTypeParameter.kt")
+        public void testOverloadsByDifferentCollectionsAndTypeParameter() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/multipleOverloads/overloadsByDifferentCollectionsAndTypeParameter.kt");
+        }
+
+        @Test
+        @TestMetadata("overloadsByTypeParameter.kt")
+        public void testOverloadsByTypeParameter() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/multipleOverloads/overloadsByTypeParameter.kt");
+        }
+
+        @Test
+        @TestMetadata("overloadsByTypeParameterWithElementTypeArgument.kt")
+        public void testOverloadsByTypeParameterWithElementTypeArgument() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/multipleOverloads/overloadsByTypeParameterWithElementTypeArgument.kt");
+        }
+
+        @Test
+        @TestMetadata("overloadsWithDifferentParameterNames.kt")
+        public void testOverloadsWithDifferentParameterNames() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/multipleOverloads/overloadsWithDifferentParameterNames.kt");
+        }
+      }
+
+      @Nested
       @TestMetadata("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/noOperatorOf")
       @TestDataPath("$PROJECT_ROOT")
       public class NoOperatorOf {
