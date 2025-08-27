@@ -7,8 +7,8 @@ public class A
     public constructor()
         /* TARGET use-site */ A(s = "")
     internal inline fun copy(s: String): A
-        /* ACCESSOR use-site */ access$<init>(s = s)
-    /* ACCESSOR declaration */ internal /* static */ fun access$<init>(s: String): A
+        /* ACCESSOR use-site */ A(s = s, $constructor_marker = null)
+    /* ACCESSOR declaration */ internal constructor(s: String, $constructor_marker: SyntheticConstructorMarker?)
         /* TARGET use-site */ A(s = s)
 
 
@@ -17,4 +17,4 @@ public class A
 /* FILE package=<root> fileName=main.kt */
 
 public fun box(): String
-    /* ACCESSOR use-site */ access$<init>(s = s)
+    /* ACCESSOR use-site */ A(s = s, $constructor_marker = null)
