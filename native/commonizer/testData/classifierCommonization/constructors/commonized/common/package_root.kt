@@ -10,9 +10,7 @@ expect class A3
 expect class A4
 expect class A5
 
-expect class B1 protected constructor(text: String) {
-    protected constructor(number: Int)
-}
+expect class B1
 
 expect class B2
 expect class B3
