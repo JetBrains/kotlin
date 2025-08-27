@@ -55,6 +55,8 @@ fun IrValidatorConfig.withAllChecks() = withBasicChecks()
     .withVarargChecks()
     .withTypeChecks()
     .withCheckers(
+        IrCallValueArgumentCountChecker,
+        IrCallTypeArgumentCountChecker,
         IrVisibilityChecker,
         IrValueAccessScopeChecker,
         IrTypeParameterScopeChecker,
