@@ -12,23 +12,11 @@ import com.intellij.psi.PsiManager
 import com.intellij.psi.compiled.ClassFileDecompilers
 import org.jetbrains.kotlin.analysis.decompiler.psi.file.KtDecompiledFile
 import org.jetbrains.kotlin.analysis.decompiler.stub.file.KotlinMetadataStubBuilder
-import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
-import org.jetbrains.kotlin.serialization.SerializerExtensionProtocol
 import java.io.IOException
 
-abstract class KotlinMetadataDecompiler<out V : BinaryVersion>(
-    private val fileType: FileType,
-    private val serializerProtocol: () -> SerializerExtensionProtocol,
-    private val expectedBinaryVersion: () -> V,
-    stubVersion: Int,
-) : ClassFileDecompilers.Full() {
-    protected open val metadataStubBuilder: KotlinMetadataStubBuilder = KotlinMetadataStubBuilder(
-        stubVersion = stubVersion,
-        fileType = fileType,
-        serializerProtocol = serializerProtocol,
-        readFile = ::readFileSafely,
-        expectedBinaryVersion = expectedBinaryVersion,
-    )
+abstract class KotlinMetadataDecompiler : ClassFileDecompilers.Full() {
+    protected abstract val fileType: FileType
+    protected abstract val metadataStubBuilder: KotlinMetadataStubBuilder
 
     abstract fun readFile(bytes: ByteArray, file: VirtualFile): KotlinMetadataStubBuilder.FileWithMetadata?
 
