@@ -14,6 +14,14 @@ import org.jetbrains.kotlin.kdoc.parser.KDocKnownTag;
 %implements FlexLexer
 
 %{
+  /**
+   * Counts the number of line breaks after the previous text, typically paragraph.
+   * White spaces as well as leading asterisks aren't considered as text, so, they don't reset the counter.
+   * It allows implementing markdown spec in a more convenient way.
+   * For instance, indented code blocks require two consecutive line breaks after paragraphs.
+   */
+  private int consecutiveLineBreakCount;
+
   public _KDocLexer() {
     this((java.io.Reader)null);
   }
@@ -59,6 +67,7 @@ CODE_FENCE_END=("```" | "~~~")
 <YYINITIAL> "/**"                         { yybegin(CONTENTS_BEGINNING);
                                             return KDocTokens.START;            }
 "*"+ "/" {
+              consecutiveLineBreakCount = 0;
               if (isLastToken()) return KDocTokens.END;
               else return KDocTokens.TEXT;
 }
@@ -74,6 +83,7 @@ CODE_FENCE_END=("```" | "~~~")
 }
 
 <CONTENTS_BEGINNING> "@"{PLAIN_IDENTIFIER} {
+    consecutiveLineBreakCount = 0;
     KDocKnownTag tag = KDocKnownTag.Companion.findByTagName(zzBuffer.subSequence(zzStartRead, zzMarkedPos));
     yybegin(tag != null && tag.isReferenceRequired() ? TAG_BEGINNING : TAG_TEXT_BEGINNING);
     return KDocTokens.TAG_NAME;
@@ -81,6 +91,7 @@ CODE_FENCE_END=("```" | "~~~")
 
 <TAG_BEGINNING> {
     {LINE_BREAK_CHAR} {
+        consecutiveLineBreakCount++;
         yybegin(LINE_BEGINNING);
         return TokenType.WHITE_SPACE;
     }
@@ -92,18 +103,21 @@ CODE_FENCE_END=("```" | "~~~")
     /* Example: @return[x] The return value of function x
                        ^^^
     */
-    {CODE_LINK} { yybegin(TAG_TEXT_BEGINNING);
+    {CODE_LINK} { consecutiveLineBreakCount = 0;
+                  yybegin(TAG_TEXT_BEGINNING);
                   return KDocTokens.MARKDOWN_LINK; }
 
     /* Example: @param aaa The value of aaa
                        ^^^
     */
     {QUALIFIED_NAME} {
+        consecutiveLineBreakCount = 0;
         yybegin(TAG_TEXT_BEGINNING);
         return KDocTokens.MARKDOWN_LINK;
     }
 
     {NOT_WHITE_SPACE_OR_LINE_BREAK_CHAR} {
+        consecutiveLineBreakCount = 0;
         yybegin(CONTENTS);
         return KDocTokens.TEXT;
     }
@@ -111,6 +125,7 @@ CODE_FENCE_END=("```" | "~~~")
 
 <TAG_TEXT_BEGINNING> {
     {LINE_BREAK_CHAR} {
+        consecutiveLineBreakCount++;
         yybegin(LINE_BEGINNING);
         return TokenType.WHITE_SPACE;
     }
@@ -122,10 +137,12 @@ CODE_FENCE_END=("```" | "~~~")
     /* Example: @return[x] The return value of function x
                        ^^^
     */
-    {CODE_LINK} { yybegin(CONTENTS);
+    {CODE_LINK} { consecutiveLineBreakCount = 0;
+                  yybegin(CONTENTS);
                   return KDocTokens.MARKDOWN_LINK; }
 
     {NOT_WHITE_SPACE_OR_LINE_BREAK_CHAR} {
+        consecutiveLineBreakCount = 0;
         yybegin(CONTENTS);
         return KDocTokens.TEXT;
     }
@@ -141,31 +158,38 @@ CODE_FENCE_END=("```" | "~~~")
     }
 
     {LINE_BREAK_CHAR} {
+        consecutiveLineBreakCount++;
         yybegin(LINE_BEGINNING);
         return TokenType.WHITE_SPACE;
     }
 
     {WHITE_SPACE_CHAR}+ {
-        yybegin(yystate() == CONTENTS_BEGINNING ? CONTENTS_BEGINNING : CONTENTS);
+        if (yystate() != CONTENTS_BEGINNING) {
+            yybegin(CONTENTS);
+        }
         return KDocTokens.TEXT;  // internal white space
     }
 
     "\\"[\[\]] {
+        consecutiveLineBreakCount = 0;
         yybegin(CONTENTS);
         return KDocTokens.MARKDOWN_ESCAPED_CHAR;
     }
 
     "(" {
+        consecutiveLineBreakCount = 0;
         yybegin(CONTENTS);
         return KDocTokens.KDOC_LPAR;
     }
 
     ")" {
+        consecutiveLineBreakCount = 0;
         yybegin(CONTENTS);
         return KDocTokens.KDOC_RPAR;
     }
 
     {CODE_FENCE_START} {
+        consecutiveLineBreakCount = 0;
         yybegin(CODE_BLOCK_LINE_BEGINNING);
         return KDocTokens.TEXT;
     }
@@ -176,11 +200,13 @@ CODE_FENCE_END=("```" | "~~~")
        Also if a link is followed by [ or (, then its destination is a regular HTTP
        link and not a Kotlin identifier, so we don't need to do our parsing and resolution. */
     {CODE_LINK} / [^\(\[] {
+        consecutiveLineBreakCount = 0;
         yybegin(CONTENTS);
         return KDocTokens.MARKDOWN_LINK;
     }
 
     {NOT_WHITE_SPACE_OR_LINE_BREAK_CHAR} {
+        consecutiveLineBreakCount = 0;
         yybegin(CONTENTS);
         return KDocTokens.TEXT;
     }
@@ -199,6 +225,7 @@ CODE_FENCE_END=("```" | "~~~")
 
 <CODE_BLOCK_LINE_BEGINNING, CODE_BLOCK_CONTENTS_BEGINNING> {
     {CODE_FENCE_END} / [ \t\f]* [\n] {
+        consecutiveLineBreakCount = 0;
         // Code fence end
         yybegin(CONTENTS);
         return KDocTokens.TEXT;
@@ -207,6 +234,7 @@ CODE_FENCE_END=("```" | "~~~")
 
 <INDENTED_CODE_BLOCK, CODE_BLOCK_LINE_BEGINNING, CODE_BLOCK_CONTENTS_BEGINNING, CODE_BLOCK> {
     {LINE_BREAK_CHAR} {
+        consecutiveLineBreakCount++;
         yybegin(yystate() == INDENTED_CODE_BLOCK ? LINE_BEGINNING : CODE_BLOCK_LINE_BEGINNING);
         return TokenType.WHITE_SPACE;
     }
@@ -216,9 +244,15 @@ CODE_FENCE_END=("```" | "~~~")
     }
 
     {NOT_WHITE_SPACE_OR_LINE_BREAK_CHAR} {
-        yybegin(yystate() == INDENTED_CODE_BLOCK ? INDENTED_CODE_BLOCK : CODE_BLOCK);
+        consecutiveLineBreakCount = 0;
+        if (yystate() != INDENTED_CODE_BLOCK) {
+            yybegin(CODE_BLOCK);
+        }
         return KDocTokens.CODE_BLOCK_TEXT;
     }
 }
 
-[\s\S] { return TokenType.BAD_CHARACTER; }
+[\s\S] {
+consecutiveLineBreakCount = 0;
+return TokenType.BAD_CHARACTER;
+}

@@ -522,6 +522,14 @@ class _KDocLexer implements FlexLexer {
   private boolean zzEOFDone;
 
   /* user code: */
+  /**
+   * Counts the number of line breaks after the previous text, typically paragraph.
+   * White spaces as well as leading asterisks aren't considered as text, so, they don't reset the counter.
+   * It allows implementing markdown spec in a more convenient way.
+   * For instance, indented code blocks require two consecutive line breaks after paragraphs.
+   */
+  private int consecutiveLineBreakCount;
+
   public _KDocLexer() {
     this((java.io.Reader)null);
   }
@@ -787,12 +795,14 @@ class _KDocLexer implements FlexLexer {
       else {
         switch (zzAction < 0 ? zzAction : ZZ_ACTION[zzAction]) {
           case 1:
-            { return TokenType.BAD_CHARACTER;
+            { consecutiveLineBreakCount = 0;
+return TokenType.BAD_CHARACTER;
             }
           // fall through
           case 24: break;
           case 2:
-            { yybegin(CONTENTS);
+            { consecutiveLineBreakCount = 0;
+        yybegin(CONTENTS);
         return KDocTokens.TEXT;
             }
           // fall through
@@ -803,19 +813,22 @@ class _KDocLexer implements FlexLexer {
           // fall through
           case 26: break;
           case 4:
-            { yybegin(LINE_BEGINNING);
+            { consecutiveLineBreakCount++;
+        yybegin(LINE_BEGINNING);
         return TokenType.WHITE_SPACE;
             }
           // fall through
           case 27: break;
           case 5:
-            { yybegin(CONTENTS);
+            { consecutiveLineBreakCount = 0;
+        yybegin(CONTENTS);
         return KDocTokens.KDOC_LPAR;
             }
           // fall through
           case 28: break;
           case 6:
-            { yybegin(CONTENTS);
+            { consecutiveLineBreakCount = 0;
+        yybegin(CONTENTS);
         return KDocTokens.KDOC_RPAR;
             }
           // fall through
@@ -835,19 +848,25 @@ class _KDocLexer implements FlexLexer {
           // fall through
           case 31: break;
           case 9:
-            { yybegin(yystate() == CONTENTS_BEGINNING ? CONTENTS_BEGINNING : CONTENTS);
+            { if (yystate() != CONTENTS_BEGINNING) {
+            yybegin(CONTENTS);
+        }
         return KDocTokens.TEXT;  // internal white space
             }
           // fall through
           case 32: break;
           case 10:
-            { yybegin(TAG_TEXT_BEGINNING);
+            { consecutiveLineBreakCount = 0;
+        yybegin(TAG_TEXT_BEGINNING);
         return KDocTokens.MARKDOWN_LINK;
             }
           // fall through
           case 33: break;
           case 11:
-            { yybegin(yystate() == INDENTED_CODE_BLOCK ? INDENTED_CODE_BLOCK : CODE_BLOCK);
+            { consecutiveLineBreakCount = 0;
+        if (yystate() != INDENTED_CODE_BLOCK) {
+            yybegin(CODE_BLOCK);
+        }
         return KDocTokens.CODE_BLOCK_TEXT;
             }
           // fall through
@@ -858,7 +877,8 @@ class _KDocLexer implements FlexLexer {
           // fall through
           case 35: break;
           case 13:
-            { yybegin(yystate() == INDENTED_CODE_BLOCK ? LINE_BEGINNING : CODE_BLOCK_LINE_BEGINNING);
+            { consecutiveLineBreakCount++;
+        yybegin(yystate() == INDENTED_CODE_BLOCK ? LINE_BEGINNING : CODE_BLOCK_LINE_BEGINNING);
         return TokenType.WHITE_SPACE;
             }
           // fall through
@@ -870,19 +890,22 @@ class _KDocLexer implements FlexLexer {
           // fall through
           case 37: break;
           case 15:
-            { if (isLastToken()) return KDocTokens.END;
+            { consecutiveLineBreakCount = 0;
+              if (isLastToken()) return KDocTokens.END;
               else return KDocTokens.TEXT;
             }
           // fall through
           case 38: break;
           case 16:
-            { yybegin(CONTENTS);
+            { consecutiveLineBreakCount = 0;
+        yybegin(CONTENTS);
         return KDocTokens.MARKDOWN_ESCAPED_CHAR;
             }
           // fall through
           case 39: break;
           case 17:
-            { KDocKnownTag tag = KDocKnownTag.Companion.findByTagName(zzBuffer.subSequence(zzStartRead, zzMarkedPos));
+            { consecutiveLineBreakCount = 0;
+    KDocKnownTag tag = KDocKnownTag.Companion.findByTagName(zzBuffer.subSequence(zzStartRead, zzMarkedPos));
     yybegin(tag != null && tag.isReferenceRequired() ? TAG_BEGINNING : TAG_TEXT_BEGINNING);
     return KDocTokens.TAG_NAME;
             }
@@ -895,19 +918,22 @@ class _KDocLexer implements FlexLexer {
           // fall through
           case 41: break;
           case 19:
-            { yybegin(CODE_BLOCK_LINE_BEGINNING);
+            { consecutiveLineBreakCount = 0;
+        yybegin(CODE_BLOCK_LINE_BEGINNING);
         return KDocTokens.TEXT;
             }
           // fall through
           case 42: break;
           case 20:
-            { yybegin(TAG_TEXT_BEGINNING);
+            { consecutiveLineBreakCount = 0;
+                  yybegin(TAG_TEXT_BEGINNING);
                   return KDocTokens.MARKDOWN_LINK;
             }
           // fall through
           case 43: break;
           case 21:
-            { yybegin(CONTENTS);
+            { consecutiveLineBreakCount = 0;
+                  yybegin(CONTENTS);
                   return KDocTokens.MARKDOWN_LINK;
             }
           // fall through
@@ -916,7 +942,8 @@ class _KDocLexer implements FlexLexer {
             // lookahead expression with fixed lookahead length
             zzMarkedPos = Character.offsetByCodePoints
                 (zzBufferL, zzMarkedPos, -1);
-            { yybegin(CONTENTS);
+            { consecutiveLineBreakCount = 0;
+        yybegin(CONTENTS);
         return KDocTokens.MARKDOWN_LINK;
             }
           // fall through
@@ -925,7 +952,8 @@ class _KDocLexer implements FlexLexer {
             // lookahead expression with fixed base length
             zzMarkedPos = Character.offsetByCodePoints
                 (zzBufferL, zzStartRead, 3);
-            { // Code fence end
+            { consecutiveLineBreakCount = 0;
+        // Code fence end
         yybegin(CONTENTS);
         return KDocTokens.TEXT;
             }
