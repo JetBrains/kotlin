@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.fir.references.impl.FirSimpleNamedReference
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.*
 import org.jetbrains.kotlin.fir.resolve.calls.overloads.ConeCallConflictResolver
+import org.jetbrains.kotlin.fir.resolve.calls.overloads.ConeEquivalentCallConflictResolver
 import org.jetbrains.kotlin.fir.resolve.calls.overloads.FirOverloadByLambdaReturnTypeResolver
 import org.jetbrains.kotlin.fir.resolve.calls.overloads.callConflictResolverFactory
 import org.jetbrains.kotlin.fir.resolve.calls.stages.ResolutionStageRunner
@@ -172,7 +173,14 @@ class FirCallResolver(
             }
         }
 
-        return collector.allCandidates.map { candidate ->
+        // This function collects *all* candidates, so it doesn't benefit from the deduplication performed by
+        // `ConeEquivalentCallConflictResolver` during resolution. However, such duplicates aren't useful to an Analysis API user calling
+        // `resolveToCallCandidates` at all. They are confusing and can lead to bugs, as users expect candidates to originate from different
+        // underlying pieces of code. Hence, we filter out such duplicates with `ConeEquivalentCallConflictResolver`.
+        val equivalentCallConflictResolver = ConeEquivalentCallConflictResolver(session)
+        val deduplicatedCandidates = equivalentCallConflictResolver.chooseMaximallySpecificCandidates(collector.allCandidates)
+
+        return deduplicatedCandidates.map { candidate ->
             OverloadCandidate(candidate, isInBestCandidates = candidate in result.candidates)
         }
     }
