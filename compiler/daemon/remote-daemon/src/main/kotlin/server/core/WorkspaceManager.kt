@@ -36,7 +36,6 @@ class WorkspaceManager {
         val targetPath = Paths.get(projectDir, clientFilePath)
         Files.createDirectories(targetPath.parent)
 
-        println("Copying $cachedFilePath to $targetPath")
         return if (File(cachedFilePath).isDirectory) {
             copyDirectoryRecursively(Paths.get(cachedFilePath), targetPath)
         } else {

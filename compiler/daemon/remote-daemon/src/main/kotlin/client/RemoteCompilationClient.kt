@@ -31,6 +31,8 @@ import model.ArtifactType
 import org.jetbrains.kotlin.daemon.common.CompilationOptions
 import java.io.File
 import java.nio.file.Files
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import kotlin.io.path.ExperimentalPathApi
 import kotlin.io.path.deleteRecursively
 
@@ -39,6 +41,13 @@ class RemoteCompilationClient(
     val serverImplType: RemoteCompilationServiceImplType,
     val logging: Boolean = false
 ) {
+
+    fun debug(text: String) {
+        if (logging) {
+            val formatter = DateTimeFormatter.ofPattern("HH:mm:ss")
+            println("[${LocalDateTime.now().format(formatter)}] [thread=${Thread.currentThread().name}] DEBUG SERVER: $text")
+        }
+    }
 
     init {
         CLIENT_COMPILED_DIR.toFile().mkdirs()
@@ -56,27 +65,12 @@ class RemoteCompilationClient(
 
     suspend fun compile(projectName: String, compilerArguments: List<String>, compilationOptions: CompilationOptions): CompilationResult {
         val compilerArgumentsMap = CompilerUtils.getMap(compilerArguments)
+
         val sourceFiles = CompilerUtils.getSourceFilePaths(compilerArgumentsMap).map { it.toFile() }
         val dependencyFiles = CompilerUtils.getDependencyFilePaths(compilerArgumentsMap).map { it.toFile() }
         val compilerPluginFiles = CompilerUtils.getCompilerPluginFilesPath(compilerArgumentsMap).map { it.toFile() }
-        println("client source files count = ${sourceFiles.size}")
-        println("client dependency files count = ${dependencyFiles.size}")
-        println("client compiler plugin files count = ${compilerPluginFiles.size}")
-
 
         val fileChunks = mutableMapOf<String, MutableList<FileChunk>>()
-
-//        for (sf in sourceFiles) {
-//            println("source file: ${sf.path}")
-//        }
-//
-//        for (df in dependencyFiles) {
-//            println("dependency file: ${df.path}")
-//        }
-//
-//        for (pff in compilerPluginFiles) {
-//            println("plugin file: ${pff.path}")
-//        }
 
         val requestChannel = Channel<CompileRequest>(capacity = Channel.UNLIMITED)
         val responseChannel = Channel<CompileResponse>(capacity = Channel.UNLIMITED)
@@ -134,10 +128,10 @@ class RemoteCompilationClient(
                         }
                         is CompilationResult -> {
                             compilationResult = it
-                            println("COMPILATION RESULT: $it")
+                            debug("COMPILATION RESULT: $it")
                         }
                         is CompilerMessage -> {
-                            println("COMPILER MESSAGE: $it")
+                            debug("COMPILER MESSAGE: $it")
                         }
                     }
                 }
@@ -168,7 +162,6 @@ class RemoteCompilationClient(
                 }
 
                 dependencyFiles.forEach {
-                    println("sending file transfer request for a dependency file: ${it.path}")
                     requestChannel.send(
                         FileTransferRequest(
                             it.path,

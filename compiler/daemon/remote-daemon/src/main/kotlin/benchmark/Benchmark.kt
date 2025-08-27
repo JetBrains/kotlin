@@ -6,7 +6,6 @@
 package benchmark
 
 import common.RemoteCompilationServiceImplType
-import kotlinx.coroutines.delay
 import main.kotlin.server.RemoteCompilationServer
 import org.jetbrains.kotlin.client.RemoteCompilationClient
 import org.jetbrains.kotlin.daemon.common.CompilationOptions
@@ -18,7 +17,7 @@ class Benchmark(
     serverImplType: RemoteCompilationServiceImplType
 ) {
 
-    val client = RemoteCompilationClient(serverImplType, logging = true)
+    val client = RemoteCompilationClient(serverImplType, logging = false)
 
     init {
         RemoteCompilationServer(50051, serverImplType, logging = false).start()

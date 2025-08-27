@@ -97,8 +97,6 @@ object CompilerUtils {
             }
             map[X_PLUGIN_ARG] = remotePlugins
         }
-
-        println("initial compiler arguments: $map")
         return map
     }
 

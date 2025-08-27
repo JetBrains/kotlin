@@ -39,12 +39,11 @@ abstract class FileChunkingStrategy {
                 temporaryTar.writeBytes(completeContent)
                 extractTarArchive(temporaryTar, file)
                 // TODO delete temporary tar
-                println("[RECONSTRUCTION] folder ${fileChunks.last().filePath} has been successfully reconstructed to ${file.absolutePath}")
+//                println("[RECONSTRUCTION] folder ${fileChunks.last().filePath} has been successfully reconstructed to ${file.absolutePath}")
             } else {
                 file.writeBytes(completeContent)
-                println("[RECONSTRUCTION] file ${fileChunks.last().filePath} has been successfully reconstructed to ${file.absolutePath} ")
+//                println("[RECONSTRUCTION] file ${fileChunks.last().filePath} has been successfully reconstructed to ${file.absolutePath} ")
             }
-            println("[RECONSTRUCTION] file exists: ${file.exists()}")
             return file
         } catch (e: Exception) {
             println("Error while reconstructing file $fileChunks")
