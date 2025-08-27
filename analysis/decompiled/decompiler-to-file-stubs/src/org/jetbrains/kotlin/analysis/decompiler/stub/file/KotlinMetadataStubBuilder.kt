@@ -24,14 +24,11 @@ import org.jetbrains.kotlin.serialization.deserialization.ProtoBasedClassDataFin
 import org.jetbrains.kotlin.serialization.deserialization.ProtoContainer
 import org.jetbrains.kotlin.serialization.deserialization.getClassId
 
-open class KotlinMetadataStubBuilder(
-    private val stubVersion: Int,
-    private val fileType: FileType,
-    private val serializerProtocol: () -> SerializerExtensionProtocol,
-    private val readFile: (VirtualFile, ByteArray) -> FileWithMetadata?,
-    val expectedBinaryVersion: () -> BinaryVersion,
-) : ClsStubBuilder() {
-    override fun getStubVersion(): Int = stubVersion
+abstract class KotlinMetadataStubBuilder : ClsStubBuilder() {
+    protected abstract val fileType: FileType
+    protected abstract val serializerProtocol: SerializerExtensionProtocol
+    protected abstract val expectedBinaryVersion: BinaryVersion
+    protected abstract fun readFile(virtualFile: VirtualFile, content: ByteArray): FileWithMetadata?
 
     override fun buildFileStub(content: FileContent): PsiFileStub<*>? {
         val virtualFile = content.file
@@ -41,7 +38,7 @@ open class KotlinMetadataStubBuilder(
         return when (file) {
             is FileWithMetadata.Incompatible -> createIncompatibleAbiVersionFileStub(
                 createIncompatibleMetadataVersionDecompiledText(
-                    expectedVersion = expectedBinaryVersion(),
+                    expectedVersion = expectedBinaryVersion,
                     actualVersion = file.version,
                 )
             )
@@ -50,7 +47,7 @@ open class KotlinMetadataStubBuilder(
                 val packageProto = file.proto.`package`
                 val packageFqName = file.packageFqName
                 val nameResolver = file.nameResolver
-                val protocol = serializerProtocol()
+                val protocol = serializerProtocol
                 val components = ClsStubBuilderComponents(
                     ProtoBasedClassDataFinder(file.proto, nameResolver, file.version),
                     AnnotationLoaderForStubBuilderImpl(protocol),

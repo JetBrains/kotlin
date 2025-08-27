@@ -5,22 +5,23 @@
 
 package org.jetbrains.kotlin.analysis.decompiler.js
 
+import com.intellij.openapi.fileTypes.FileType
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.analysis.decompiler.psi.KotlinMetadataDecompiler
 import org.jetbrains.kotlin.analysis.decompiler.stub.file.KotlinMetadataStubBuilder
 import org.jetbrains.kotlin.metadata.ProtoBuf
+import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.metadata.js.JsProtoBuf
 import org.jetbrains.kotlin.psi.stubs.KotlinStubVersions
+import org.jetbrains.kotlin.serialization.SerializerExtensionProtocol
 import org.jetbrains.kotlin.serialization.js.JsSerializerProtocol
 import org.jetbrains.kotlin.utils.JsMetadataVersion
 import java.io.ByteArrayInputStream
 
-class KotlinJavaScriptMetaFileDecompiler : KotlinMetadataDecompiler<JsMetadataVersion>(
-    fileType = KotlinJavaScriptMetaFileType,
-    serializerProtocol = { JsSerializerProtocol },
-    expectedBinaryVersion = { JsMetadataVersion.INSTANCE },
-    stubVersion = KotlinStubVersions.JS_STUB_VERSION,
-) {
+class KotlinJavaScriptMetaFileDecompiler : KotlinMetadataDecompiler() {
+    override val fileType: FileType get() = KotlinJavaScriptMetaFileType
+    override val metadataStubBuilder: KotlinMetadataStubBuilder = KotlinJavaScriptMetadataStubBuilder(::readFileSafely)
+
     override fun readFile(bytes: ByteArray, file: VirtualFile): KotlinMetadataStubBuilder.FileWithMetadata {
         val stream = ByteArrayInputStream(bytes)
 
@@ -34,4 +35,14 @@ class KotlinJavaScriptMetaFileDecompiler : KotlinMetadataDecompiler<JsMetadataVe
         val proto = ProtoBuf.PackageFragment.parseFrom(stream, JsSerializerProtocol.extensionRegistry)
         return KotlinMetadataStubBuilder.FileWithMetadata.Compatible(proto, version, JsSerializerProtocol)
     }
+}
+
+private class KotlinJavaScriptMetadataStubBuilder(
+    private val readFileMethod: (VirtualFile, ByteArray) -> FileWithMetadata?,
+) : KotlinMetadataStubBuilder() {
+    override fun getStubVersion(): Int = KotlinStubVersions.JS_STUB_VERSION
+    override val fileType: FileType get() = KotlinJavaScriptMetaFileType
+    override val serializerProtocol: SerializerExtensionProtocol get() = JsSerializerProtocol
+    override val expectedBinaryVersion: BinaryVersion get() = JsMetadataVersion.INSTANCE
+    override fun readFile(virtualFile: VirtualFile, content: ByteArray): FileWithMetadata? = readFileMethod(virtualFile, content)
 }
