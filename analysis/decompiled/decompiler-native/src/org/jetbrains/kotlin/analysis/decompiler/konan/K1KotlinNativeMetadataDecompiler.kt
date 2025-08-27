@@ -8,7 +8,7 @@ import org.jetbrains.kotlin.library.metadata.KlibMetadataSerializerProtocol
 import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import org.jetbrains.kotlin.psi.stubs.KotlinStubVersions
 
-class KotlinNativeMetadataDecompiler : Fe10KlibMetadataDecompiler<MetadataVersion>(
+class K1KotlinNativeMetadataDecompiler : Fe10KlibMetadataDecompiler<MetadataVersion>(
     KlibMetaFileType,
     { KlibMetadataSerializerProtocol },
     KotlinStubVersions.KOTLIN_NATIVE_STUB_VERSION,
