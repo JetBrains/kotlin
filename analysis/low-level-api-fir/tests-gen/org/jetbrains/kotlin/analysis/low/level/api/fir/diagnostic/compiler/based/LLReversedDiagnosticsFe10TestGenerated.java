@@ -38004,6 +38004,18 @@ public class LLReversedDiagnosticsFe10TestGenerated extends AbstractLLReversedDi
         }
 
         @Test
+        @TestMetadata("dslLambdaAssignment.kt")
+        public void testDslLambdaAssignment() {
+          runTest("compiler/testData/diagnostics/tests/resolve/dslMarker/dslLambdaAssignment.kt");
+        }
+
+        @Test
+        @TestMetadata("dslLambdaAssignmentBefore.kt")
+        public void testDslLambdaAssignmentBefore() {
+          runTest("compiler/testData/diagnostics/tests/resolve/dslMarker/dslLambdaAssignmentBefore.kt");
+        }
+
+        @Test
         @TestMetadata("dslMarkerNamedArgumentLambda.kt")
         public void testDslMarkerNamedArgumentLambda() {
           runTest("compiler/testData/diagnostics/tests/resolve/dslMarker/dslMarkerNamedArgumentLambda.kt");
