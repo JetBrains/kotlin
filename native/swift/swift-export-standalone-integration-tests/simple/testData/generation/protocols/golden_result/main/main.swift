@@ -433,8 +433,15 @@ extension KotlinRuntimeSupport._KotlinExistential: main._ExportedKotlinPackages_
 extension main._SealedFoeble_SealedBarable where Self : KotlinRuntimeSupport._KotlinBridgeable {
 }
 extension ExportedKotlinPackages.packagewithprotocols {
-    public enum ENUM_WITH_INTERFACE_INHERITANCE: KotlinRuntimeSupport._KotlinBridgeable, Swift.CaseIterable, Swift.LosslessStringConvertible {
+    public enum ENUM_WITH_INTERFACE_INHERITANCE: KotlinRuntimeSupport._KotlinBridgeable, Swift.CaseIterable, Swift.LosslessStringConvertible, Swift.RawRepresentable {
         public var description: Swift.String {
+            get {
+                switch self {
+                default: fatalError()
+                }
+            }
+        }
+        public var rawValue: Swift.Int32 {
             get {
                 switch self {
                 default: fatalError()
@@ -448,6 +455,14 @@ extension ExportedKotlinPackages.packagewithprotocols {
 
             default: return nil
             }
+        }
+        public init?(
+            rawValue: Swift.Int32
+        ) {
+            if (rawValue < 0 && rawValue >= 0) {
+                return nil
+            }
+            self = ENUM_WITH_INTERFACE_INHERITANCE.allCases[Int(rawValue)]
         }
         public init(
             __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer!,

@@ -3,7 +3,7 @@ import KotlinRuntime
 import KotlinRuntimeSupport
 import KotlinStdlib
 
-public enum Enum: KotlinRuntimeSupport._KotlinBridgeable, Swift.CaseIterable, Swift.LosslessStringConvertible {
+public enum Enum: KotlinRuntimeSupport._KotlinBridgeable, Swift.CaseIterable, Swift.LosslessStringConvertible, Swift.RawRepresentable {
     case a
     case b
     public var description: Swift.String {
@@ -22,6 +22,14 @@ public enum Enum: KotlinRuntimeSupport._KotlinBridgeable, Swift.CaseIterable, Sw
             return Enum_i_set__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), newValue)
         }
     }
+    public var rawValue: Swift.Int32 {
+        get {
+            switch self {
+            case .a: 0
+            default: 1
+            }
+        }
+    }
     public init?(
         _ description: Swift.String
     ) {
@@ -30,6 +38,14 @@ public enum Enum: KotlinRuntimeSupport._KotlinBridgeable, Swift.CaseIterable, Sw
         case "b": self = .b
         default: return nil
         }
+    }
+    public init?(
+        rawValue: Swift.Int32
+    ) {
+        if (rawValue < 0 && rawValue >= 2) {
+            return nil
+        }
+        self = Enum.allCases[Int(rawValue)]
     }
     public init(
         __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer!,
@@ -47,7 +63,7 @@ public enum Enum: KotlinRuntimeSupport._KotlinBridgeable, Swift.CaseIterable, Sw
         return Enum_print(self.__externalRCRef())
     }
 }
-public enum EnumSimple: KotlinRuntimeSupport._KotlinBridgeable, Swift.CaseIterable, Swift.LosslessStringConvertible {
+public enum EnumSimple: KotlinRuntimeSupport._KotlinBridgeable, Swift.CaseIterable, Swift.LosslessStringConvertible, Swift.RawRepresentable {
     case FIRST
     case SECOND
     case LAST
@@ -60,6 +76,15 @@ public enum EnumSimple: KotlinRuntimeSupport._KotlinBridgeable, Swift.CaseIterab
             }
         }
     }
+    public var rawValue: Swift.Int32 {
+        get {
+            switch self {
+            case .FIRST: 0
+            case .SECOND: 1
+            default: 2
+            }
+        }
+    }
     public init?(
         _ description: Swift.String
     ) {
@@ -69,6 +94,14 @@ public enum EnumSimple: KotlinRuntimeSupport._KotlinBridgeable, Swift.CaseIterab
         case "LAST": self = .LAST
         default: return nil
         }
+    }
+    public init?(
+        rawValue: Swift.Int32
+    ) {
+        if (rawValue < 0 && rawValue >= 3) {
+            return nil
+        }
+        self = EnumSimple.allCases[Int(rawValue)]
     }
     public init(
         __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer!,
@@ -84,7 +117,7 @@ public enum EnumSimple: KotlinRuntimeSupport._KotlinBridgeable, Swift.CaseIterab
         return nil
     }
 }
-public enum EnumWithAbstractMembers: KotlinRuntimeSupport._KotlinBridgeable, Swift.CaseIterable, Swift.LosslessStringConvertible {
+public enum EnumWithAbstractMembers: KotlinRuntimeSupport._KotlinBridgeable, Swift.CaseIterable, Swift.LosslessStringConvertible, Swift.RawRepresentable {
     case YELLOW
     case SKY
     case MAGENTA
@@ -94,6 +127,15 @@ public enum EnumWithAbstractMembers: KotlinRuntimeSupport._KotlinBridgeable, Swi
             case .YELLOW: "YELLOW"
             case .SKY: "SKY"
             default: "MAGENTA"
+            }
+        }
+    }
+    public var rawValue: Swift.Int32 {
+        get {
+            switch self {
+            case .YELLOW: 0
+            case .SKY: 1
+            default: 2
             }
         }
     }
@@ -111,6 +153,14 @@ public enum EnumWithAbstractMembers: KotlinRuntimeSupport._KotlinBridgeable, Swi
         case "MAGENTA": self = .MAGENTA
         default: return nil
         }
+    }
+    public init?(
+        rawValue: Swift.Int32
+    ) {
+        if (rawValue < 0 && rawValue >= 3) {
+            return nil
+        }
+        self = EnumWithAbstractMembers.allCases[Int(rawValue)]
     }
     public init(
         __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer!,
@@ -135,7 +185,7 @@ public enum EnumWithAbstractMembers: KotlinRuntimeSupport._KotlinBridgeable, Swi
         return EnumWithAbstractMembers_ordinalSquare(self.__externalRCRef())
     }
 }
-public enum EnumWithMembers: KotlinRuntimeSupport._KotlinBridgeable, Swift.CaseIterable, Swift.LosslessStringConvertible {
+public enum EnumWithMembers: KotlinRuntimeSupport._KotlinBridgeable, Swift.CaseIterable, Swift.LosslessStringConvertible, Swift.RawRepresentable {
     case NORTH
     case SOUTH
     public var description: Swift.String {
@@ -151,6 +201,14 @@ public enum EnumWithMembers: KotlinRuntimeSupport._KotlinBridgeable, Swift.CaseI
             return EnumWithMembers_isNorth_get(self.__externalRCRef())
         }
     }
+    public var rawValue: Swift.Int32 {
+        get {
+            switch self {
+            case .NORTH: 0
+            default: 1
+            }
+        }
+    }
     public init?(
         _ description: Swift.String
     ) {
@@ -159,6 +217,14 @@ public enum EnumWithMembers: KotlinRuntimeSupport._KotlinBridgeable, Swift.CaseI
         case "SOUTH": self = .SOUTH
         default: return nil
         }
+    }
+    public init?(
+        rawValue: Swift.Int32
+    ) {
+        if (rawValue < 0 && rawValue >= 2) {
+            return nil
+        }
+        self = EnumWithMembers.allCases[Int(rawValue)]
     }
     public init(
         __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer!,

@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.analysis.api.types.KaClassType
 import org.jetbrains.kotlin.sir.*
 import org.jetbrains.kotlin.sir.builder.buildFunctionCopy
 import org.jetbrains.kotlin.sir.builder.buildGetter
+import org.jetbrains.kotlin.sir.builder.buildInit
 import org.jetbrains.kotlin.sir.builder.buildInitCopy
 import org.jetbrains.kotlin.sir.builder.buildVariable
 import org.jetbrains.kotlin.sir.providers.SirSession
@@ -25,10 +26,15 @@ import org.jetbrains.kotlin.sir.providers.sirModule
 import org.jetbrains.kotlin.sir.providers.source.KotlinSource
 import org.jetbrains.kotlin.sir.providers.toSir
 import org.jetbrains.kotlin.sir.providers.utils.KotlinRuntimeModule
+import org.jetbrains.kotlin.sir.providers.utils.KotlinRuntimeSupportModule
+import org.jetbrains.kotlin.sir.providers.utils.KotlinRuntimeSupportModule.kotlinBridgeable
 import org.jetbrains.kotlin.sir.providers.utils.containingModule
 import org.jetbrains.kotlin.sir.providers.utils.updateImport
 import org.jetbrains.kotlin.sir.providers.utils.throwsAnnotation
 import org.jetbrains.kotlin.sir.util.SirSwiftModule
+import org.jetbrains.kotlin.sir.util.SirSwiftModule.caseIterable
+import org.jetbrains.kotlin.sir.util.SirSwiftModule.losslessStringConvertible
+import org.jetbrains.kotlin.sir.util.SirSwiftModule.rawRepresentable
 import org.jetbrains.kotlin.sir.util.swiftFqName
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.filterIsInstanceAnd
@@ -94,7 +100,7 @@ internal class SirEnumFromKtSymbol(
         (this@SirEnumFromKtSymbol.relocatedDeclarationNamePrefix() ?: "") + ktSymbol.sirDeclarationName()
     }
     override val protocols: List<SirProtocol> by lazyWithSessions {
-        listOf(KotlinRuntimeSupportModule.kotlinBridgeable, SirSwiftModule.caseIterable, SirSwiftModule.losslessStringConvertible)
+        listOf(kotlinBridgeable, caseIterable, losslessStringConvertible, rawRepresentable)
     }
     override var parent: SirDeclarationParent
         get() = withSessions {
@@ -119,6 +125,8 @@ internal class SirEnumFromKtSymbol(
         kotlinBaseInitDeclaration(),
         kotlinBridgeableExternalRcRef(),
         description(),
+        rawValue(),
+        failableInitFromInteger(),
     )
 
     private fun kotlinBaseInitDeclaration(): SirDeclaration = buildInitCopy(KotlinRuntimeModule.kotlinBaseDesignatedInit) {
@@ -176,24 +184,53 @@ internal class SirEnumFromKtSymbol(
         }
     }.also { it.parent = this }
 
+    private fun rawValue(): SirVariable = buildVariable {
+        name = "rawValue"
+        type = SirNominalType(SirSwiftModule.int32)
+        getter = buildGetter {
+            val caseSelector = if (cases.isEmpty()) {
+                "default: fatalError()"
+            } else {
+                var index = 0
+                cases.joinToString(separator = "\n                        ") {
+                    val condition = if (it === cases.last()) "default" else "case .${it.name}"
+                    "$condition: ${index++}"
+                }
+            }
+            body = SirFunctionBody(
+                listOf(
+                    """
+                        switch self {
+                        $caseSelector
+                        }
+                    """.trimIndent()
+                )
+            )
+        }
+    }.also { it.parent = this }
+
+    private fun failableInitFromInteger(): SirInit = buildInit {
+        isFailable = true
+        parameters.add(
+            SirParameter(
+                argumentName = "rawValue",
+                type = SirNominalType(SirSwiftModule.int32),
+            )
+        )
+        body = SirFunctionBody(
+            listOf(
+                """
+                    if (rawValue < 0 && rawValue >= ${cases.size}) {
+                        return nil
+                    }
+                    self = $name.allCases[Int(rawValue)]
+                """.trimIndent()
+            )
+        )
+    }.also { it.parent = this }
+
     private fun unsafeMutableRawPointerFlexibleType(): SirNominalType =
         SirNominalType(SirSwiftModule.unsafeMutableRawPointer).implicitlyUnwrappedOptional()
-}
-
-internal class SirEnumClassFromKtSymbol(
-    ktSymbol: KaNamedClassSymbol,
-    sirSession: SirSession,
-) : SirAbstractClassFromKtSymbol(
-    ktSymbol,
-    sirSession
-) {
-    override val superClass: SirNominalType? by lazyWithSessions {
-        // TODO: this super class as default will become obsolete with the KT-66855
-        SirNominalType(KotlinRuntimeModule.kotlinBase).also {
-            ktSymbol.containingModule.sirModule()
-        }
-    }
-    override val protocols: List<SirProtocol> = super.protocols + listOf(SirSwiftModule.caseIterable)
 }
 
 internal abstract class SirAbstractClassFromKtSymbol(

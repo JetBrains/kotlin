@@ -3,7 +3,7 @@
 import KotlinRuntime
 import KotlinRuntimeSupport
 
-public enum ENUM: KotlinRuntimeSupport._KotlinBridgeable, Swift.CaseIterable, Swift.LosslessStringConvertible {
+public enum ENUM: KotlinRuntimeSupport._KotlinBridgeable, Swift.CaseIterable, Swift.LosslessStringConvertible, Swift.RawRepresentable {
     case A
     case B
     case C
@@ -30,6 +30,15 @@ public enum ENUM: KotlinRuntimeSupport._KotlinBridgeable, Swift.CaseIterable, Sw
             }
         }
     }
+    public var rawValue: Swift.Int32 {
+        get {
+            switch self {
+            case .A: 0
+            case .B: 1
+            default: 2
+            }
+        }
+    }
     public init?(
         _ description: Swift.String
     ) {
@@ -39,6 +48,14 @@ public enum ENUM: KotlinRuntimeSupport._KotlinBridgeable, Swift.CaseIterable, Sw
         case "C": self = .C
         default: return nil
         }
+    }
+    public init?(
+        rawValue: Swift.Int32
+    ) {
+        if (rawValue < 0 && rawValue >= 3) {
+            return nil
+        }
+        self = ENUM.allCases[Int(rawValue)]
     }
     public init(
         __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer!,

@@ -56,6 +56,7 @@ object SirSwiftModule : SirModule() {
 
     val caseIterable = protocol("CaseIterable")
     val losslessStringConvertible = protocol("LosslessStringConvertible")
+    val rawRepresentable = protocol("RawRepresentable")
 }
 
 private fun SirMutableDeclarationContainer.struct(typeName: String) = addChild {
