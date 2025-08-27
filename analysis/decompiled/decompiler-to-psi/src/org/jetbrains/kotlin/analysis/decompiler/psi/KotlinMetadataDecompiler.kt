@@ -10,42 +10,27 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.FileViewProvider
 import com.intellij.psi.PsiManager
 import com.intellij.psi.compiled.ClassFileDecompilers
+import com.intellij.psi.compiled.ClsStubBuilder
 import org.jetbrains.kotlin.analysis.decompiler.psi.file.KtDecompiledFile
 import org.jetbrains.kotlin.analysis.decompiler.stub.file.KotlinMetadataStubBuilder
-import java.io.IOException
 
 abstract class KotlinMetadataDecompiler : ClassFileDecompilers.Full() {
-    protected abstract val fileType: FileType
     protected abstract val metadataStubBuilder: KotlinMetadataStubBuilder
 
-    abstract fun readFile(bytes: ByteArray, file: VirtualFile): KotlinMetadataStubBuilder.FileWithMetadata?
+    private val fileType: FileType get() = metadataStubBuilder.fileType
 
     override fun accepts(file: VirtualFile) = file.extension == fileType.defaultExtension || file.fileType == fileType
 
-    override fun getStubBuilder() = metadataStubBuilder
+    override fun getStubBuilder(): ClsStubBuilder = metadataStubBuilder
 
     override fun createFileViewProvider(file: VirtualFile, manager: PsiManager, physical: Boolean): FileViewProvider {
         return KotlinDecompiledFileViewProvider(manager, file, physical) { provider ->
             val virtualFile = provider.virtualFile
-            if (readFileSafely(virtualFile) != null) {
+            if (metadataStubBuilder.readFileSafely(virtualFile) != null) {
                 KtDecompiledFile(provider)
             } else {
                 null
             }
-        }
-    }
-
-    protected fun readFileSafely(file: VirtualFile, content: ByteArray? = null): KotlinMetadataStubBuilder.FileWithMetadata? {
-        if (!file.isValid) return null
-
-        return try {
-            readFile(content ?: file.contentsToByteArray(false), file)
-        } catch (e: IOException) {
-            // This is needed because sometimes we're given VirtualFile instances that point to non-existent .jar entries.
-            // Such files are valid (isValid() returns true), but an attempt to read their contents results in a FileNotFoundException.
-            // Note that although calling "refresh()" instead of catching an exception would seem more correct here,
-            // it's not always allowed and also is likely to degrade performance
-            null
         }
     }
 }
