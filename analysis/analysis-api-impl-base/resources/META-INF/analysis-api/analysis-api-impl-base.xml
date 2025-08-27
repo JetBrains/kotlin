@@ -94,6 +94,7 @@
     />
 
     <applicationService serviceImplementation="org.jetbrains.kotlin.analysis.decompiled.light.classes.origin.KotlinDeclarationInCompiledFileSearcher" />
+    <applicationService serviceImplementation="org.jetbrains.kotlin.analysis.decompiler.konan.KlibLoadingMetadataCache" />
 
     <java.elementFinder implementation="org.jetbrains.kotlin.asJava.finder.JavaElementFinder"/>
 

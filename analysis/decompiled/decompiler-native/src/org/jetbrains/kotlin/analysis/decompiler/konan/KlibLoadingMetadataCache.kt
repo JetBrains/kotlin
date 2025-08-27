@@ -1,12 +1,11 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.analysis.decompiler.konan
 
 import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.components.Service
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.containers.ContainerUtil
 import org.jetbrains.kotlin.library.KLIB_MANIFEST_FILE_NAME
@@ -17,12 +16,10 @@ import org.jetbrains.kotlin.library.metadata.parseModuleHeader
 import org.jetbrains.kotlin.library.metadata.parsePackageFragment
 import org.jetbrains.kotlin.library.readKonanLibraryVersioning
 import org.jetbrains.kotlin.metadata.ProtoBuf
-import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import java.io.IOException
 import java.util.*
 
-@Service
 class KlibLoadingMetadataCache {
     // Use special CacheKey class instead of VirtualFile for cache keys. Certain types of VirtualFiles (for example, obtained from JarFileSystem)
     // do not compare path (url) and modification stamp in equals() method.
@@ -130,5 +127,4 @@ class KlibLoadingMetadataCache {
         fun getInstance(): KlibLoadingMetadataCache =
             ApplicationManager.getApplication().getService(KlibLoadingMetadataCache::class.java)
     }
-
 }

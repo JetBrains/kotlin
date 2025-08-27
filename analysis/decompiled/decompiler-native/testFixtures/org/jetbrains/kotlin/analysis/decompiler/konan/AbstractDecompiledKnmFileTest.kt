@@ -32,6 +32,11 @@ abstract class AbstractDecompiledKnmFileTest : KotlinTestWithEnvironment() {
     override fun setUp() {
         super.setUp()
 
+        environment.projectEnvironment.environment.registerApplicationService(
+            KlibLoadingMetadataCache::class.java,
+            KlibLoadingMetadataCache()
+        )
+
         environment.projectEnvironment.environment.registerFileType(
             KlibMetaFileType, KlibMetaFileType.defaultExtension
         )
