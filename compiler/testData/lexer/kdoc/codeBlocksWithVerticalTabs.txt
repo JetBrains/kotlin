@@ -7,10 +7,14 @@ WHITE_SPACE (' ')
 KDOC_TEXT ('Thisis text.')
 WHITE_SPACE ('\n ')
 KDOC_LEADING_ASTERISK ('*')
+WHITE_SPACE ('\n ')
+KDOC_LEADING_ASTERISK ('*')
 KDOC_CODE_BLOCK_TEXT ('    This isindented code block')
 WHITE_SPACE ('\n ')
 KDOC_LEADING_ASTERISK ('*')
 KDOC_CODE_BLOCK_TEXT ('    Second lineof code block')
+WHITE_SPACE ('\n ')
+KDOC_LEADING_ASTERISK ('*')
 WHITE_SPACE ('\n ')
 KDOC_LEADING_ASTERISK ('*')
 KDOC_TEXT (' ')
@@ -19,10 +23,14 @@ WHITE_SPACE (' ')
 KDOC_TEXT ('Thisistext.')
 WHITE_SPACE ('\n ')
 KDOC_LEADING_ASTERISK ('*')
+WHITE_SPACE ('\n ')
+KDOC_LEADING_ASTERISK ('*')
 KDOC_CODE_BLOCK_TEXT ('	Tabulated code block')
 WHITE_SPACE ('\n ')
 KDOC_LEADING_ASTERISK ('*')
 KDOC_CODE_BLOCK_TEXT ('	Tabulated secondline')
+WHITE_SPACE ('\n ')
+KDOC_LEADING_ASTERISK ('*')
 WHITE_SPACE ('\n ')
 KDOC_LEADING_ASTERISK ('*')
 KDOC_TEXT (' ')

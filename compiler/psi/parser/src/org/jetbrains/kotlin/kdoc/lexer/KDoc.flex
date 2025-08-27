@@ -157,14 +157,6 @@ CODE_FENCE_END=("```" | "~~~")
 }
 
 <LINE_BEGINNING, CONTENTS_BEGINNING, CONTENTS> {
-
-    ([\ ]{4}[\ ]*)|([\t]+) {
-        if(yystate() == CONTENTS_BEGINNING) {
-            yybegin(INDENTED_CODE_BLOCK);
-            return KDocTokens.CODE_BLOCK_TEXT;
-        }
-    }
-
     {LINE_BREAK_CHAR} {
         consecutiveLineBreakCount++;
         yybegin(LINE_BEGINNING);
@@ -172,9 +164,27 @@ CODE_FENCE_END=("```" | "~~~")
     }
 
     {WHITE_SPACE_CHAR}+ {
-        if (yystate() != CONTENTS_BEGINNING) {
+        int state = yystate();
+
+        if (
+            // Recognize indented code blocks if only the line starts with an asterisk(s)
+            state == CONTENTS_BEGINNING &&
+
+            // If there are more than 4 spaces at the beginning of the line or a tab char, we are trying to recognize indented code block
+            (zzMarkedPos - zzStartRead >= 4 || zzBuffer.charAt(zzStartRead) == '\t' || zzBuffer.charAt(zzMarkedPos - 1) == '\t') &&
+
+            // If the last block type is paragraph, more than 1 consecutive line break is required
+            (lastBlockType != BlockType.Paragraph || consecutiveLineBreakCount >= 2)
+        ) {
+            yybegin(INDENTED_CODE_BLOCK);
+            lastBlockType = BlockType.Code;
+            return KDocTokens.CODE_BLOCK_TEXT;
+        }
+
+        if (state != CONTENTS_BEGINNING) {
             yybegin(CONTENTS);
         }
+
         return KDocTokens.TEXT;  // internal white space
     }
 

@@ -51,10 +51,25 @@ KtFile: StartCodeBlockAfterTwoOrMoreLineBreaks.kt
       PsiElement(KDOC_TEXT)(' Some text')
       PsiWhiteSpace('\n ')
       PsiElement(KDOC_LEADING_ASTERISK)('*')
-      PsiElement(KDOC_CODE_BLOCK_TEXT)('     [X] (Recognize the link because there is only a single line break and it's not a code block, KT-79783)')
+      PsiElement(KDOC_TEXT)('     ')
+      KDOC_MARKDOWN_LINK
+        PsiElement(LBRACKET)('[')
+        KDOC_NAME
+          PsiElement(IDENTIFIER)('X')
+        PsiElement(RBRACKET)(']')
+      PsiElement(KDOC_TEXT)(' ')
+      PsiElement(KDOC_LPAR)('(')
+      PsiElement(KDOC_TEXT)('Recognize the link because there is only a single line break and it's not a code block, KT-79783')
+      PsiElement(KDOC_RPAR)(')')
       PsiWhiteSpace('\n ')
       PsiElement(KDOC_LEADING_ASTERISK)('*')
-      PsiElement(KDOC_CODE_BLOCK_TEXT)('       [Y] Next Link')
+      PsiElement(KDOC_TEXT)('       ')
+      KDOC_MARKDOWN_LINK
+        PsiElement(LBRACKET)('[')
+        KDOC_NAME
+          PsiElement(IDENTIFIER)('Y')
+        PsiElement(RBRACKET)(']')
+      PsiElement(KDOC_TEXT)(' Next Link')
       PsiWhiteSpace('\n ')
       PsiElement(KDOC_LEADING_ASTERISK)('*')
       PsiWhiteSpace('\n ')
