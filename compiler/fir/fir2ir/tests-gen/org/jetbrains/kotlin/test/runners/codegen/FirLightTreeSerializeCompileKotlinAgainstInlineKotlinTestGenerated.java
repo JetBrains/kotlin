@@ -43046,6 +43046,12 @@ public class FirLightTreeSerializeCompileKotlinAgainstInlineKotlinTestGenerated 
           }
 
           @Test
+          @TestMetadata("friendDependency.kt")
+          public void testFriendDependency() {
+            runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/friendDependency.kt");
+          }
+
+          @Test
           @TestMetadata("iheritanceFromExpected2-2.kt")
           public void testIheritanceFromExpected2_2() {
             runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/iheritanceFromExpected2-2.kt");
