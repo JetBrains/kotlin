@@ -68,6 +68,7 @@ import org.jetbrains.kotlin.incremental.components.ICFileMappingTracker
 import org.jetbrains.kotlin.incremental.components.ImportTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.load.java.JavaTypeEnhancementState
+import org.jetbrains.kotlin.resolve.jvm.JvmConstants
 import org.jetbrains.kotlin.resolve.jvm.JvmTypeSpecificityComparator
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleResolver
 
@@ -184,6 +185,7 @@ fun FirSession.registerJavaComponents(
     register(FirDelegatedMembersFilter::class, FirJvmDelegatedMembersFilter(this))
     register(FirPlatformUpperBoundsProvider::class, FirJavaNullabilityWarningUpperBoundsProvider(this))
     register(FirDefaultImportProviderHolder::class, FirDefaultImportProviderHolder(FirJvmDefaultImportProvider))
+    register(FirDeclarationNameInvalidCharsProvider::class, FirDeclarationNameInvalidCharsProvider(JvmConstants.INVALID_CHARS))
 }
 
 /**

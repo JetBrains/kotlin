@@ -19,11 +19,11 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.util.anonymousContextParameterName
 
-fun FirValueParameterSymbol.anonymousContextParameterName(session: FirSession, invalidChars: Set<Char>): String? {
+fun FirValueParameterSymbol.anonymousContextParameterName(session: FirSession): String? {
     if (fir.valueParameterKind != FirValueParameterKind.ContextParameter || name != SpecialNames.UNDERSCORE_FOR_UNUSED_VAR) return null
     return anonymousContextParameterName(
         (containingDeclarationSymbol as FirCallableSymbol).contextParameterSymbols,
-        invalidChars,
+        session.declarationNameInvalidChars,
         erasedUpperBoundName = {
             it.resolvedReturnType.erasedUpperBoundName(session)?.identifierOrNullIfSpecial ?: "???"
         }
