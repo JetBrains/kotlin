@@ -26,22 +26,17 @@ import org.jetbrains.kotlin.serialization.deserialization.getClassId
 import java.io.ByteArrayInputStream
 
 class KotlinBuiltInDecompiler : KotlinMetadataDecompiler() {
-    override val fileType: FileType get() = KotlinBuiltInFileType
-    override val metadataStubBuilder: KotlinMetadataStubBuilder = KotlinBuiltInMetadataStubBuilder(::readFileSafely)
-
-    override fun readFile(bytes: ByteArray, file: VirtualFile): KotlinMetadataStubBuilder.FileWithMetadata? {
-        return KotlinBuiltInDecompilationInterceptor.readFile(bytes, file) ?: BuiltInDefinitionFile.read(bytes, file)
-    }
+    override val metadataStubBuilder: KotlinMetadataStubBuilder get() = KotlinBuiltInMetadataStubBuilder
 }
 
-private class KotlinBuiltInMetadataStubBuilder(
-    private val readFileMethod: (VirtualFile, ByteArray) -> FileWithMetadata?,
-) : KotlinMetadataStubBuilder() {
+private object KotlinBuiltInMetadataStubBuilder : KotlinMetadataStubBuilder() {
     override fun getStubVersion(): Int = stubVersionForStubBuilderAndDecompiler
     override val fileType: FileType get() = KotlinBuiltInFileType
     override val serializerProtocol: SerializerExtensionProtocol get() = BuiltInSerializerProtocol
     override val expectedBinaryVersion: BinaryVersion get() = BuiltInsBinaryVersion.INSTANCE
-    override fun readFile(virtualFile: VirtualFile, content: ByteArray): FileWithMetadata? = readFileMethod(virtualFile, content)
+    override fun readFile(virtualFile: VirtualFile, content: ByteArray): FileWithMetadata? {
+        return KotlinBuiltInDecompilationInterceptor.readFile(content, virtualFile) ?: BuiltInDefinitionFile.read(content, virtualFile)
+    }
 
     override fun createCallableSource(file: FileWithMetadata.Compatible, filename: String): SourceElement? {
         val fileNameForFacade = when (val withoutExtension = filename.removeSuffix(BuiltInSerializerProtocol.DOT_DEFAULT_EXTENSION)) {

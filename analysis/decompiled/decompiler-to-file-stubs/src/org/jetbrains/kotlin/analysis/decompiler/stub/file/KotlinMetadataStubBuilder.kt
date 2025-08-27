@@ -23,17 +23,32 @@ import org.jetbrains.kotlin.serialization.deserialization.ClassDeserializer
 import org.jetbrains.kotlin.serialization.deserialization.ProtoBasedClassDataFinder
 import org.jetbrains.kotlin.serialization.deserialization.ProtoContainer
 import org.jetbrains.kotlin.serialization.deserialization.getClassId
+import java.io.IOException
 
 abstract class KotlinMetadataStubBuilder : ClsStubBuilder() {
-    protected abstract val fileType: FileType
+    abstract val fileType: FileType
     protected abstract val serializerProtocol: SerializerExtensionProtocol
     protected abstract val expectedBinaryVersion: BinaryVersion
     protected abstract fun readFile(virtualFile: VirtualFile, content: ByteArray): FileWithMetadata?
 
+    fun readFileSafely(file: VirtualFile, content: ByteArray? = null): FileWithMetadata? {
+        if (!file.isValid) return null
+
+        return try {
+            readFile(file, content ?: file.contentsToByteArray(false))
+        } catch (e: IOException) {
+            // This is needed because sometimes we're given VirtualFile instances that point to non-existent .jar entries.
+            // Such files are valid (isValid() returns true), but an attempt to read their contents results in a FileNotFoundException.
+            // Note that although calling "refresh()" instead of catching an exception would seem more correct here,
+            // it's not always allowed and also is likely to degrade performance
+            null
+        }
+    }
+
     override fun buildFileStub(content: FileContent): PsiFileStub<*>? {
         val virtualFile = content.file
         assert(virtualFile.extension == fileType.defaultExtension || virtualFile.fileType == fileType) { "Unexpected file type ${virtualFile.fileType.name}" }
-        val file = readFile(virtualFile, content.content) ?: return null
+        val file = readFileSafely(virtualFile, content.content) ?: return null
 
         return when (file) {
             is FileWithMetadata.Incompatible -> createIncompatibleAbiVersionFileStub(
