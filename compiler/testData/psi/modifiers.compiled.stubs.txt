@@ -182,7 +182,7 @@ FILE[kind=File[packageFqName=test]]
               REFERENCE_EXPRESSION[referencedName=test]
             REFERENCE_EXPRESSION[referencedName=Modifiers]
       FUN[fqName=test.Modifiers.hashCode, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=hashCode]
-        MODIFIER_LIST[public open]
+        MODIFIER_LIST[public open MustUseReturnValue]
         VALUE_PARAMETER_LIST
         TYPE_REFERENCE
           USER_TYPE
@@ -190,7 +190,7 @@ FILE[kind=File[packageFqName=test]]
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Int]
       FUN[fqName=test.Modifiers.toString, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=toString]
-        MODIFIER_LIST[public open]
+        MODIFIER_LIST[public open MustUseReturnValue]
         VALUE_PARAMETER_LIST
         TYPE_REFERENCE
           USER_TYPE

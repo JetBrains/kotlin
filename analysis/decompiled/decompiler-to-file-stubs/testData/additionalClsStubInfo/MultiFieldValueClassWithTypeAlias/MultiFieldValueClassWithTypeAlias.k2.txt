@@ -1,0 +1,93 @@
+KotlinStub$FILE[kind=File[packageFqName=pack]]
+KotlinStub$PACKAGE_DIRECTIVE
+  KotlinStub$REFERENCE_EXPRESSION[referencedName=pack]
+KotlinStub$IMPORT_LIST
+KotlinStub$CLASS[classId=pack/MultiFieldValueClassWithTypeAlias, fqName=pack.MultiFieldValueClassWithTypeAlias, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=MultiFieldValueClassWithTypeAlias, superNames=[]]
+  KotlinStub$MODIFIER_LIST[public final value]
+    KotlinStub$ANNOTATION_ENTRY[hasValueArguments=false, shortName=JvmInline]
+      valueArguments: ()
+      KotlinStub$CONSTRUCTOR_CALLEE
+        KotlinStub$TYPE_REFERENCE
+          KotlinStub$USER_TYPE
+            KotlinStub$USER_TYPE
+              KotlinStub$USER_TYPE
+                KotlinStub$REFERENCE_EXPRESSION[referencedName=kotlin]
+              KotlinStub$REFERENCE_EXPRESSION[referencedName=jvm]
+            KotlinStub$REFERENCE_EXPRESSION[referencedName=JvmInline]
+  KotlinStub$TYPE_PARAMETER_LIST
+    KotlinStub$TYPE_PARAMETER[fqName=null, name=T]
+  KotlinStub$PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=MultiFieldValueClassWithTypeAlias]
+    KotlinStub$MODIFIER_LIST[public]
+    KotlinStub$VALUE_PARAMETER_LIST
+      KotlinStub$VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=alias]
+        KotlinStub$TYPE_REFERENCE
+          KotlinStub$USER_TYPE    abbreviatedType: pack.MyAlias<T>
+            KotlinStub$USER_TYPE
+              KotlinStub$USER_TYPE
+                KotlinStub$REFERENCE_EXPRESSION[referencedName=kotlin]
+              KotlinStub$REFERENCE_EXPRESSION[referencedName=collections]
+            KotlinStub$REFERENCE_EXPRESSION[referencedName=List]
+            KotlinStub$TYPE_ARGUMENT_LIST
+              KotlinStub$TYPE_PROJECTION[projectionKind=NONE]
+                KotlinStub$TYPE_REFERENCE
+                  KotlinStub$USER_TYPE
+                    KotlinStub$REFERENCE_EXPRESSION[referencedName=T]
+      KotlinStub$VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=b]
+        KotlinStub$TYPE_REFERENCE
+          KotlinStub$USER_TYPE
+            KotlinStub$USER_TYPE
+              KotlinStub$REFERENCE_EXPRESSION[referencedName=kotlin]
+            KotlinStub$REFERENCE_EXPRESSION[referencedName=String]
+  KotlinStub$CLASS_BODY
+    KotlinStub$PROPERTY[fqName=pack.MultiFieldValueClassWithTypeAlias.alias, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=alias]
+      KotlinStub$MODIFIER_LIST[public final]
+      KotlinStub$TYPE_REFERENCE
+        KotlinStub$USER_TYPE    abbreviatedType: pack.MyAlias<T>
+          KotlinStub$USER_TYPE
+            KotlinStub$USER_TYPE
+              KotlinStub$REFERENCE_EXPRESSION[referencedName=kotlin]
+            KotlinStub$REFERENCE_EXPRESSION[referencedName=collections]
+          KotlinStub$REFERENCE_EXPRESSION[referencedName=List]
+          KotlinStub$TYPE_ARGUMENT_LIST
+            KotlinStub$TYPE_PROJECTION[projectionKind=NONE]
+              KotlinStub$TYPE_REFERENCE
+                KotlinStub$USER_TYPE
+                  KotlinStub$REFERENCE_EXPRESSION[referencedName=T]
+    KotlinStub$PROPERTY[fqName=pack.MultiFieldValueClassWithTypeAlias.b, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=b]
+      KotlinStub$MODIFIER_LIST[public final]
+      KotlinStub$TYPE_REFERENCE
+        KotlinStub$USER_TYPE
+          KotlinStub$USER_TYPE
+            KotlinStub$REFERENCE_EXPRESSION[referencedName=kotlin]
+          KotlinStub$REFERENCE_EXPRESSION[referencedName=String]
+    KotlinStub$FUN[fqName=pack.MultiFieldValueClassWithTypeAlias.equals, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=equals]
+      KotlinStub$MODIFIER_LIST[public open operator MustUseReturnValue]
+      KotlinStub$VALUE_PARAMETER_LIST
+        KotlinStub$VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=other]
+          KotlinStub$TYPE_REFERENCE
+            KotlinStub$NULLABLE_TYPE
+              KotlinStub$USER_TYPE
+                KotlinStub$USER_TYPE
+                  KotlinStub$REFERENCE_EXPRESSION[referencedName=kotlin]
+                KotlinStub$REFERENCE_EXPRESSION[referencedName=Any]
+      KotlinStub$TYPE_REFERENCE
+        KotlinStub$USER_TYPE
+          KotlinStub$USER_TYPE
+            KotlinStub$REFERENCE_EXPRESSION[referencedName=kotlin]
+          KotlinStub$REFERENCE_EXPRESSION[referencedName=Boolean]
+    KotlinStub$FUN[fqName=pack.MultiFieldValueClassWithTypeAlias.hashCode, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=hashCode]
+      KotlinStub$MODIFIER_LIST[public open MustUseReturnValue]
+      KotlinStub$VALUE_PARAMETER_LIST
+      KotlinStub$TYPE_REFERENCE
+        KotlinStub$USER_TYPE
+          KotlinStub$USER_TYPE
+            KotlinStub$REFERENCE_EXPRESSION[referencedName=kotlin]
+          KotlinStub$REFERENCE_EXPRESSION[referencedName=Int]
+    KotlinStub$FUN[fqName=pack.MultiFieldValueClassWithTypeAlias.toString, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=toString]
+      KotlinStub$MODIFIER_LIST[public open MustUseReturnValue]
+      KotlinStub$VALUE_PARAMETER_LIST
+      KotlinStub$TYPE_REFERENCE
+        KotlinStub$USER_TYPE
+          KotlinStub$USER_TYPE
+            KotlinStub$REFERENCE_EXPRESSION[referencedName=kotlin]
+          KotlinStub$REFERENCE_EXPRESSION[referencedName=String]

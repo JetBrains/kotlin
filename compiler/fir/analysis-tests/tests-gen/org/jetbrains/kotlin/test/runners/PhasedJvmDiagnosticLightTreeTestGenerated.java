@@ -9585,6 +9585,12 @@ public class PhasedJvmDiagnosticLightTreeTestGenerated extends AbstractPhasedJvm
       }
 
       @Test
+      @TestMetadata("syntheticMembers.kt")
+      public void testSyntheticMembers() {
+        runTest("compiler/testData/diagnostics/tests/crv/syntheticMembers.kt");
+      }
+
+      @Test
       @TestMetadata("unresolveds.kt")
       public void testUnresolveds() {
         runTest("compiler/testData/diagnostics/tests/crv/unresolveds.kt");
@@ -9740,6 +9746,12 @@ public class PhasedJvmDiagnosticLightTreeTestGenerated extends AbstractPhasedJvm
       @TestMetadata("overrides.kt")
       public void testOverrides() {
         runTest("compiler/testData/diagnostics/tests/crvFull/overrides.kt");
+      }
+
+      @Test
+      @TestMetadata("syntheticMembers.kt")
+      public void testSyntheticMembers() {
+        runTest("compiler/testData/diagnostics/tests/crvFull/syntheticMembers.kt");
       }
 
       @Test
