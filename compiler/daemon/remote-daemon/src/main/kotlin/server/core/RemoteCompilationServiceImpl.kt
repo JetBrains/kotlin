@@ -164,11 +164,6 @@ class RemoteCompilationServiceImpl(
             launch {
                 allFilesReady.join()
 
-                println("list of ${dependencyFiles.size} dependency files received on a server:")
-                for((key, value) in dependencyFiles) {
-                    println("SERVER RECEIVED KEY=$key->VAL=$value")
-                }
-
                 val remoteCompilerArguments = CompilerUtils.replaceClientPathsWithRemotePaths(
                     userId,
                     compilationMetadata!!, // TODO exclamation marks
@@ -233,9 +228,8 @@ class RemoteCompilationServiceImpl(
         val servicesFacade =
             BasicCompilerServicesWithResultsFacadeServer(remoteMessageCollector, outputsCollector)
 
-        debug("[SERVER COMPILATION] compilation started")
         debug("[SERVER COMPILATION] remote compiler arguments are:")
-        println(CompilerUtils.getCompilerArgumentsList(remoteCompilerArguments))
+        debug(CompilerUtils.getCompilerArgumentsList(remoteCompilerArguments).toString())
         val exitCode = compilerService.compileImpl(
             compilerArguments = CompilerUtils.getCompilerArgumentsList(remoteCompilerArguments)
                 .toTypedArray(),

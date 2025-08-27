@@ -44,11 +44,12 @@ class RemoteCompilationServer(
                                 logging = logging,
                             )
                         ),
-                        LoggingInterceptor(),
-                        AuthInterceptor(BasicHTTPAuthServer())
+                        listOfNotNull(
+                            if (logging) LoggingInterceptor() else null,
+                            AuthInterceptor(BasicHTTPAuthServer())
+                        ),
                     )
-            )
-            .build()
+            ).build()
 
     fun start() {
         server.start()
