@@ -16,10 +16,10 @@ class B
 
 fun sealed(s: Sealed): Int = when (s) {
     A -> 1
-    <!USELESS_IS_CHECK!>is B<!> -> 2
+    <!IMPOSSIBLE_IS_CHECK_ERROR!>is B<!> -> 2
     C -> 3
     is D -> 4
-    <!USELESS_IS_CHECK!>is <!CONTEXT_SENSITIVE_RESOLUTION_AMBIGUITY!>String<!><!> -> 5
+    <!IMPOSSIBLE_IS_CHECK_ERROR!>is <!CONTEXT_SENSITIVE_RESOLUTION_AMBIGUITY!>String<!><!> -> 5
     else -> 6
 }
 
@@ -31,7 +31,7 @@ fun sealedExplicit(s: Sealed): Int = when (s) {
 
 fun topLevelExplicit(s: Sealed): Int = when (s) {
     foo.A -> 1
-    <!USELESS_IS_CHECK!>is foo.B<!> -> 2
+    <!IMPOSSIBLE_IS_CHECK_ERROR!>is foo.B<!> -> 2
     else -> 6
 }
 

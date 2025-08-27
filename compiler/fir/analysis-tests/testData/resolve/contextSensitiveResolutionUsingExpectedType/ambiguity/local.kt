@@ -22,10 +22,10 @@ fun test(s: Sealed): Int {
     val CompanionB: Int = 0
 
     return when (s) {
-        <!USELESS_IS_CHECK!>is B<!> -> 2
+        <!IMPOSSIBLE_IS_CHECK_ERROR!>is B<!> -> 2
         C -> 3
         is D -> 4
-        <!USELESS_IS_CHECK!>is <!CONTEXT_SENSITIVE_RESOLUTION_AMBIGUITY!>String<!><!> -> 5
+        <!IMPOSSIBLE_IS_CHECK_ERROR!>is <!CONTEXT_SENSITIVE_RESOLUTION_AMBIGUITY!>String<!><!> -> 5
         <!INCOMPATIBLE_TYPES!>CompanionB<!> -> 7
         else -> 100
     }
@@ -41,10 +41,10 @@ class Test {
     fun test(s: Sealed): Int {
         return when (s) {
             A -> 1
-            <!USELESS_IS_CHECK!>is B<!> -> 2
+            <!IMPOSSIBLE_IS_CHECK_ERROR!>is B<!> -> 2
             C -> 3
             is D -> 4
-            <!USELESS_IS_CHECK!>is <!CONTEXT_SENSITIVE_RESOLUTION_AMBIGUITY!>String<!><!> -> 5
+            <!IMPOSSIBLE_IS_CHECK_ERROR!>is <!CONTEXT_SENSITIVE_RESOLUTION_AMBIGUITY!>String<!><!> -> 5
             CompanionA -> 6
             <!INCOMPATIBLE_TYPES!>CompanionB<!> -> 7
             else -> 100

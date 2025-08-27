@@ -41,14 +41,14 @@ import bar.*
 
 fun sealed(s: Sealed): Int = when (s) {
     <!CONTEXT_SENSITIVE_RESOLUTION_AMBIGUITY!>A<!> -> 1
-    <!USELESS_IS_CHECK!>is <!CONTEXT_SENSITIVE_RESOLUTION_AMBIGUITY!>B<!><!> -> 2
+    <!IMPOSSIBLE_IS_CHECK_ERROR!>is <!CONTEXT_SENSITIVE_RESOLUTION_AMBIGUITY!>B<!><!> -> 2
     C -> 3
     is D -> 4
-    <!USELESS_IS_CHECK!>is <!CONTEXT_SENSITIVE_RESOLUTION_AMBIGUITY!>String<!><!> -> 5
+    <!IMPOSSIBLE_IS_CHECK_ERROR!>is <!CONTEXT_SENSITIVE_RESOLUTION_AMBIGUITY!>String<!><!> -> 5
     <!CONTEXT_SENSITIVE_RESOLUTION_AMBIGUITY!>CompanionA<!> -> 6
     <!CONTEXT_SENSITIVE_RESOLUTION_AMBIGUITY, INCOMPATIBLE_TYPES!>CompanionB<!> -> 7
-    <!USELESS_IS_CHECK!>is E<!> -> 8
-    <!USELESS_IS_CHECK!>is F<!> -> 9
+    <!IMPOSSIBLE_IS_CHECK_ERROR!>is E<!> -> 8
+    <!IMPOSSIBLE_IS_CHECK_ERROR!>is F<!> -> 9
     else -> 100
 }
 
@@ -65,12 +65,12 @@ fun sealedExplicit(s: Sealed): Int = when (s) {
 
 fun topLevelExplicit(s: Sealed): Int = when (s) {
     foo.A -> 1
-    <!USELESS_IS_CHECK!>is foo.B<!> -> 2
-    <!USELESS_IS_CHECK!>is kotlin.String<!> -> 5
+    <!IMPOSSIBLE_IS_CHECK_ERROR!>is foo.B<!> -> 2
+    <!IMPOSSIBLE_IS_CHECK_ERROR!>is kotlin.String<!> -> 5
     foo.CompanionA -> 6
     <!INCOMPATIBLE_TYPES!>foo.CompanionB<!> -> 7
-    <!USELESS_IS_CHECK!>is foo.E<!> -> 8
-    <!USELESS_IS_CHECK!>is foo.F<!> -> 9
+    <!IMPOSSIBLE_IS_CHECK_ERROR!>is foo.E<!> -> 8
+    <!IMPOSSIBLE_IS_CHECK_ERROR!>is foo.F<!> -> 9
     else -> 6
 }
 
