@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.utils.JsMetadataVersion
 import java.io.ByteArrayInputStream
 
 class KotlinJavaScriptMetaFileDecompiler : KotlinMetadataDecompiler() {
-    override val metadataStubBuilder: KotlinMetadataStubBuilder get() = KotlinJavaScriptMetadataStubBuilder
+    override fun getStubBuilder(): KotlinMetadataStubBuilder = KotlinJavaScriptMetadataStubBuilder
     override fun createFile(viewProvider: KotlinDecompiledFileViewProvider): KtDecompiledFile = KjsmDecompiledFile(viewProvider)
 }
 
