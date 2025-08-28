@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaClassLikeSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaTypeParameterSymbol
 import org.jetbrains.kotlin.analysis.api.types.*
 import org.jetbrains.kotlin.analysis.api.types.typeCreation.*
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.isAnnotationClass
 import org.jetbrains.kotlin.fir.analysis.checkers.classKind
 import org.jetbrains.kotlin.fir.FirSession
@@ -26,6 +27,7 @@ import org.jetbrains.kotlin.fir.getPrimaryConstructorSymbol
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedSymbolError
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
+import org.jetbrains.kotlin.fir.resolve.withParameterNameAnnotation
 import org.jetbrains.kotlin.fir.scopes.impl.toConeType
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
@@ -33,6 +35,8 @@ import org.jetbrains.kotlin.fir.utils.exceptions.withConeTypeEntry
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.model.CaptureStatus
+import org.jetbrains.kotlin.utils.addIfNotNull
+import org.jetbrains.kotlin.utils.addToStdlib.butIf
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
 internal class KaFirTypeCreator(
@@ -239,18 +243,98 @@ internal class KaFirTypeCreator(
         }
     }
 
+    override fun functionType(
+        init: KaFunctionTypeBuilder.() -> Unit,
+    ): KaFunctionType = withValidityAssertion {
+        return buildFunctionType(KaBaseFunctionTypeBuilder(this, analysisSession).apply(init)) as KaFunctionType
+    }
+
+
+    private fun buildFunctionType(builder: KaBaseFunctionTypeBuilder): KaType {
+        val isSuspend = builder.isSuspend
+        val isReflect = builder.isReflectType
+        val numberOfParameters =
+            builder.valueParameters.size +
+                    (builder.contextParameters.size.takeIf { !isReflect } ?: 0) +
+                    (builder.receiverType?.let { 1 } ?: 0)
+
+        val baseClassId = when {
+            isSuspend && isReflect -> StandardNames.getKSuspendFunctionClassId(numberOfParameters)
+            isSuspend -> StandardNames.getSuspendFunctionClassId(numberOfParameters)
+            isReflect -> StandardNames.getKFunctionClassId(numberOfParameters)
+            else -> StandardNames.getFunctionClassId(numberOfParameters)
+        }
+
+        val firAnnotation = builder.annotations.mapNotNull { constructAnnotation(it) }
+
+        val refinedClassId =
+            analysisSession.firSession.functionTypeService.extractSingleExtensionKindForDeserializedConeType(baseClassId, firAnnotation)
+                ?.let { functionClassKind ->
+                    ClassId(functionClassKind.packageFqName, functionClassKind.numberedClassName(numberOfParameters))
+                } ?: baseClassId
+
+        val classSymbol = rootModuleSession.symbolProvider.getClassLikeSymbolByClassId(refinedClassId)
+            ?: return ConeErrorType(ConeUnresolvedSymbolError(refinedClassId)).asKaType()
+        val lookupTag = classSymbol.toLookupTag()
+
+        val contextParameters = builder.contextParameters.map { it.coneType }.butIf(isReflect) { emptyList() }
+        val receiverType = builder.receiverType?.coneType
+        val valueParameters = builder.valueParameters.map { valueParameter ->
+            val parameterConeType = valueParameter.type.coneType
+            valueParameter.name?.let { name ->
+                parameterConeType.withParameterNameAnnotation(
+                    name = name,
+                    element = null
+                )
+            } ?: parameterConeType
+        }
+
+        val returnType = builder.returnType.coneType
+
+        val typeArguments = buildList {
+            addAll(contextParameters)
+            addIfNotNull(receiverType)
+            addAll(valueParameters)
+            add(returnType)
+        }
+
+        val constructedAttributes = constructAnnotationAttributesList(builder.annotations)
+            .let { attributes ->
+                if (contextParameters.isNotEmpty()) {
+                    attributes + CompilerConeAttributes.ContextFunctionTypeParams(contextParameters.size)
+                } else {
+                    attributes
+                }
+            }
+
+        val typeContext = rootModuleSession.typeContext
+        val coneType = typeContext.createSimpleType(
+            constructor = lookupTag,
+            arguments = typeArguments,
+            nullable = builder.isMarkedNullable,
+            isExtensionFunction = builder.receiverType != null,
+            attributes = constructedAttributes
+        ) as ConeClassLikeType
+
+        return coneType.asKaType()
+    }
+
     private fun ConeKotlinType.withAnnotationAttributes(annotationClassIds: List<ClassId>): ConeKotlinType {
         return this.withAttributes(constructAnnotationAttributes(annotationClassIds))
     }
 
     private fun constructAnnotationAttributes(annotationClassIds: List<ClassId>): ConeAttributes {
+        return ConeAttributes.create(constructAnnotationAttributesList(annotationClassIds))
+    }
+
+    private fun constructAnnotationAttributesList(annotationClassIds: List<ClassId>): List<ConeAttribute<*>> {
         if (annotationClassIds.isEmpty()) {
-            return ConeAttributes.Empty
+            return emptyList()
         }
 
         val customAttribute = CustomAnnotationTypeAttribute(annotationClassIds.mapNotNull(::constructAnnotation))
 
-        return ConeAttributes.create(listOf(customAttribute))
+        return listOf(customAttribute)
     }
 
     private fun constructAnnotation(classId: ClassId): FirAnnotation? {

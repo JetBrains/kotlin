@@ -19,18 +19,25 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaTypeParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.nameOrAnonymous
 import org.jetbrains.kotlin.analysis.api.types.*
 import org.jetbrains.kotlin.analysis.api.types.typeCreation.*
+import org.jetbrains.kotlin.builtins.StandardNames
+import org.jetbrains.kotlin.builtins.withContextReceiversFunctionAnnotation
+import org.jetbrains.kotlin.builtins.withExtensionFunctionAnnotation
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptorImpl
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
+import org.jetbrains.kotlin.descriptors.annotations.BuiltInAnnotationDescriptor
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.resolve.calls.inference.CapturedType
+import org.jetbrains.kotlin.resolve.constants.StringValue
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.intersectTypes
 import org.jetbrains.kotlin.types.error.ErrorType
 import org.jetbrains.kotlin.types.error.ErrorTypeKind
 import org.jetbrains.kotlin.types.error.ErrorUtils
 import org.jetbrains.kotlin.types.typeUtil.replaceAnnotations
+import org.jetbrains.kotlin.utils.addIfNotNull
+import org.jetbrains.kotlin.utils.addToStdlib.butIf
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
 internal class KaFe10TypeCreator(
@@ -253,6 +260,86 @@ internal class KaFe10TypeCreator(
             val kotlinType = createDynamicType(analysisContext.builtIns)
             return kotlinType.withAnnotations(builder.annotations).toKtType(analysisContext) as KaDynamicType
         }
+    }
+
+    override fun functionType(
+        init: KaFunctionTypeBuilder.() -> Unit,
+    ): KaFunctionType = withValidityAssertion {
+        buildFunctionType(KaBaseFunctionTypeBuilder(this, analysisSession).apply(init))
+    }
+
+    private fun buildFunctionType(builder: KaBaseFunctionTypeBuilder): KaFunctionType {
+        val isSuspend = builder.isSuspend
+        val isReflect = builder.isReflectType
+        val numberOfParameters =
+            builder.valueParameters.size +
+                    (builder.contextParameters.size.takeIf { !isReflect } ?: 0) +
+                    (builder.receiverType?.let { 1 } ?: 0)
+
+        val functionClassId = when {
+            isSuspend && isReflect -> StandardNames.getKSuspendFunctionClassId(numberOfParameters)
+            isSuspend -> StandardNames.getSuspendFunctionClassId(numberOfParameters)
+            isReflect -> StandardNames.getKFunctionClassId(numberOfParameters)
+            else -> StandardNames.getFunctionClassId(numberOfParameters)
+        }
+
+        val descriptor: ClassDescriptor =
+            analysisContext.resolveSession.moduleDescriptor.findClassAcrossModuleDependencies(functionClassId)
+                ?: error("Unable to retrieve descriptor for $functionClassId. This should never happen. Please report this as a bug.")
+
+        val typeParameters = descriptor.typeConstructor.parameters
+
+        val contextParameters = builder.contextParameters.map { (it as KaFe10Type).fe10Type }.butIf(isReflect) { emptyList() }
+        val receiverType = (builder.receiverType as? KaFe10Type)?.fe10Type
+        val returnType = (builder.returnType as KaFe10Type).fe10Type
+        val valueParameters = builder.valueParameters.map { valueParameter ->
+            val type = (valueParameter.type as KaFe10Type).fe10Type
+            val name = valueParameter.name
+            if (name != null) {
+                val parameterNameAnnotation = BuiltInAnnotationDescriptor(
+                    analysisSession.analysisContext.builtIns,
+                    StandardNames.FqNames.parameterName,
+                    mapOf(StandardNames.NAME to StringValue(name.asString()))
+                )
+                type.replaceAnnotations(Annotations.create(type.annotations + parameterNameAnnotation))
+            } else {
+                type
+            }
+        }
+
+        val typeArguments = buildList {
+            addAll(contextParameters)
+            addIfNotNull(receiverType)
+            addAll(valueParameters)
+            add(returnType)
+        }.map { TypeProjectionImpl(it) }
+
+        val constructedAnnotations = constructAnnotations(builder.annotations)
+            .let { annotations ->
+                if (receiverType != null) {
+                    annotations.withExtensionFunctionAnnotation(analysisSession.analysisContext.builtIns)
+                } else {
+                    annotations
+                }
+            }.let { annotations ->
+                if (contextParameters.isNotEmpty()) {
+                    annotations.withContextReceiversFunctionAnnotation(
+                        analysisSession.analysisContext.builtIns,
+                        contextParameters.size
+                    )
+                } else {
+                    annotations
+                }
+            }
+
+        val type = if (typeParameters.size == typeArguments.size) {
+            TypeUtils.substituteProjectionsForParameters(descriptor, typeArguments)
+        } else {
+            descriptor.defaultType
+        }.replaceAnnotations(constructedAnnotations)
+
+        val typeWithNullability = TypeUtils.makeNullableAsSpecified(type, builder.isMarkedNullable)
+        return typeWithNullability.toKtType(analysisContext) as KaFunctionType
     }
 
     private fun KotlinType.withAnnotations(annotationClassIds: List<ClassId>): KotlinType {
