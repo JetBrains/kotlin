@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.serialization.SerializerExtensionProtocol
 
 open class AbstractAnnotationDeserializerWithTypeAnnotations(
     session: FirSession, protocol: SerializerExtensionProtocol
-) : AbstractAnnotationDeserializer(session, protocol) {
+) : AbstractAnnotationDeserializerWithProtocol(session, protocol) {
     override fun loadTypeAnnotations(typeProto: ProtoBuf.Type, nameResolver: NameResolver): List<FirAnnotation> {
         val annotations = typeProto.getExtension(protocol.typeAnnotation).orEmpty()
         return annotations.map { deserializeAnnotation(it, nameResolver) }

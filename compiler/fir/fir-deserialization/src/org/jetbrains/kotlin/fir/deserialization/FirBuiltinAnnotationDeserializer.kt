@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.serialization.deserialization.builtins.BuiltInSerial
 
 class FirBuiltinAnnotationDeserializer(
     session: FirSession
-) : AbstractAnnotationDeserializer(session, BuiltInSerializerProtocol) {
+) : AbstractAnnotationDeserializerWithProtocol(session, BuiltInSerializerProtocol) {
 
     override fun loadTypeAnnotations(typeProto: ProtoBuf.Type, nameResolver: NameResolver): List<FirAnnotation> {
         if (!Flags.HAS_ANNOTATIONS.get(typeProto.flags)) return emptyList()

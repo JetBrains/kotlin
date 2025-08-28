@@ -206,7 +206,7 @@ fun deserializeClassToSymbol(
                 }.apply {
                     containingClassForStaticMemberAttr = context.dispatchReceiver!!.lookupTag
                     replaceAnnotations(
-                        context.annotationDeserializer.loadEnumEntryAnnotations(classId, enumEntryProto, context.nameResolver)
+                        context.annotationDeserializer.loadEnumEntryAnnotations(classId, enumEntryProto, context.nameResolver)!!
                     )
                 }
 
@@ -253,7 +253,7 @@ fun deserializeClassToSymbol(
             } ?: computeValueClassRepresentation(this, session)
 
         replaceAnnotations(
-            context.annotationDeserializer.loadClassAnnotations(classProto, context.nameResolver)
+            context.annotationDeserializer.loadClassAnnotations(classProto, context.nameResolver)!!
         )
 
         this.versionRequirements = versionRequirements
