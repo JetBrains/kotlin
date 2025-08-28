@@ -4229,6 +4229,12 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
         }
 
         @Test
+        @TestMetadata("complexHierarchyOfInterfaces.kt")
+        public void testComplexHierarchyOfInterfaces() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/exhaustiveness/positive/complexHierarchyOfInterfaces.kt");
+        }
+
+        @Test
         @TestMetadata("exhaustiveWhenAndFlexibleType.kt")
         public void testExhaustiveWhenAndFlexibleType() {
           runTest("compiler/fir/analysis-tests/testData/resolve/exhaustiveness/positive/exhaustiveWhenAndFlexibleType.kt");
