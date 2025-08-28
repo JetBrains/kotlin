@@ -121,7 +121,6 @@ abstract class AbstractNativeKlibDumpSignaturesTest : AbstractNativeSimpleTest()
         muteCInteropTestIfNecessary(defFile, targets.testTarget)
 
         return cinteropToLibrary(
-            targets = targets,
             defFile = defFile,
             outputDir = buildDir,
             freeCompilerArgs = TestCompilerArgs.EMPTY

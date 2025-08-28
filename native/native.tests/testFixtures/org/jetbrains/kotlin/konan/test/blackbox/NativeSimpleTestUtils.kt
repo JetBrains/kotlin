@@ -138,7 +138,6 @@ fun AbstractNativeSimpleTest.compileToLibrary(
 }
 
 fun AbstractNativeSimpleTest.cinteropToLibrary(
-    targets: KotlinNativeTargets,
     defFile: File,
     outputDir: File,
     freeCompilerArgs: TestCompilerArgs
@@ -146,8 +145,7 @@ fun AbstractNativeSimpleTest.cinteropToLibrary(
     val args = freeCompilerArgs + cinteropModulesCachePathArguments(freeCompilerArgs.cinteropArgs, outputDir)
     val testCase: TestCase = generateCInteropTestCaseFromSingleDefFile(defFile, args)
     return CInteropCompilation(
-        classLoader = testRunSettings.get(),
-        targets = targets,
+        settings = testRunSettings,
         freeCompilerArgs = args,
         defFile = testCase.modules.single().files.single().location,
         dependencies = emptyList(),

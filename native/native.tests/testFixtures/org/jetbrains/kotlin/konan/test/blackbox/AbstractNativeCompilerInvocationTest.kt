@@ -113,8 +113,7 @@ class NativeCompilerInvocationTestArtifactBuilder(
             compilation.result.assertSuccess() // <-- trigger compilation
         } else {
             val compilation = CInteropCompilation(
-                settings.get(),
-                settings.get(),
+                settings,
                 TestCompilerArgs(compilerArguments),
                 srcFiles[0],
                 sources = srcFiles.filterNot { it == srcFiles[0] },

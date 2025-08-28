@@ -316,7 +316,6 @@ abstract class FrameworkTestBase : AbstractNativeSimpleTest() {
 
     private fun compileCInterop(testName: String, freeCInteropArgs: TestCompilerArgs = TestCompilerArgs.EMPTY) =
         cinteropToLibrary(
-            targets = targets,
             defFile = testSuiteDir.resolve(testName).resolve("$testName.def"),
             outputDir = buildDir,
             freeCompilerArgs = freeCInteropArgs

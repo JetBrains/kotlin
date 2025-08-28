@@ -5,6 +5,9 @@
 language = Objective-C
 headers = kt63048.h
 
+# Workaround for https://youtrack.jetbrains.com/issue/KT-80470.
+linkerOpts = -all_load
+
 // FILE: kt63048.h
 #import "Foundation/NSString.h"
 #import "Foundation/NSObject.h"

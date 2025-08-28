@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.konan.test.blackbox
 
-import com.intellij.openapi.util.text.StringUtilRt
 import com.intellij.testFramework.TestDataFile
 import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.target.KonanTarget
@@ -18,7 +17,6 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.util.getAbsoluteFile
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.dumpMetadata
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.has32BitPointers
 import org.jetbrains.kotlin.konan.util.CInteropHints
-import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertEquals
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertEqualsToFile
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
 import org.junit.jupiter.api.Assumptions
@@ -98,7 +96,7 @@ abstract class AbstractNativeCInteropTest : AbstractNativeCInteropBaseTest() {
         else
             TestCInteropArgs("-compiler-option", "-I${includeFolder.canonicalPath}")
 
-        val testCompilationResult = cinteropToLibrary(targets, defFile, buildDir, includeArgs + fmodulesArgs)
+        val testCompilationResult = cinteropToLibrary(defFile, buildDir, includeArgs + fmodulesArgs)
         // If we are running fmodules-specific test without -fmodules then we want to be sure that cinterop fails the way we want it to.
         if (!fmodules && testPath.endsWith("FModules/")) {
             val loggedData = (testCompilationResult as TestCompilationResult.CompilationToolFailure).loggedData

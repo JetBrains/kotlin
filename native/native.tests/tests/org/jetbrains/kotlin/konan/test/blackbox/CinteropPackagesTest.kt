@@ -71,7 +71,6 @@ class CInteropPackagesTest : AbstractNativeSimpleTest() {
             ktFile.appendText("fun main() { box() }")
 
             val library = cinteropToLibrary(
-                targets = targets,
                 defFile = defFile,
                 outputDir = buildDir,
                 freeCompilerArgs = TestCompilerArgs.EMPTY

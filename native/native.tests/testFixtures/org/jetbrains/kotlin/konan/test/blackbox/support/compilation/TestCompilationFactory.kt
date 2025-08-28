@@ -312,8 +312,7 @@ class TestCompilationFactory {
                             }
                         }
                         CInteropCompilation(
-                            classLoader = settings.get(),
-                            targets = settings.get(),
+                            settings = settings,
                             freeCompilerArgs = freeCompilerArgs,
                             defFile = defFile,
                             sources = cSourceFiles,

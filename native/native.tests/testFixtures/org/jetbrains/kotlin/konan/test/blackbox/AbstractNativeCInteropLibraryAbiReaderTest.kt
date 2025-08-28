@@ -69,8 +69,6 @@ abstract class AbstractNativeCInteropLibraryAbiReaderTest : AbstractNativeSimple
     }
 
     private fun produceCustomDependencies(sourceFile: File): List<TestCompilationArtifact.KLIB> {
-        val targets: KotlinNativeTargets = testRunSettings.get()
-
         assumeTrue(targets.hostTarget.family.isAppleFamily) // ObjC tests can run only on Apple targets.
 
         val defFile = sourceFile.withExtension(".def")
@@ -78,7 +76,6 @@ abstract class AbstractNativeCInteropLibraryAbiReaderTest : AbstractNativeSimple
 
         return listOf(
             cinteropToLibrary(
-                targets = targets,
                 defFile = defFile,
                 outputDir = buildDir,
                 freeCompilerArgs = TestCompilerArgs.EMPTY

@@ -50,7 +50,6 @@ class KT59030WorkaroundTest : AbstractNativeSimpleTest() {
     @Test
     fun kt59030() {
         val library = cinteropToLibrary(
-            targets = targets,
             defFile = File(DEF_FILE_PATH),
             outputDir = buildDir,
             freeCompilerArgs = TestCompilerArgs.EMPTY

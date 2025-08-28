@@ -5,8 +5,10 @@
 
 package org.jetbrains.kotlin.konan.test.blackbox.support.compilation
 
-import org.jetbrains.kotlin.config.nativeBinaryOptions.BinaryOptionWithValue
 import org.jetbrains.kotlin.cli.common.ExitCode
+import org.jetbrains.kotlin.config.nativeBinaryOptions.BinaryOptionWithValue
+import org.jetbrains.kotlin.config.nativeBinaryOptions.BinaryOptions
+import org.jetbrains.kotlin.config.nativeBinaryOptions.RuntimeAssertsMode
 import org.jetbrains.kotlin.konan.properties.resolvablePropertyList
 import org.jetbrains.kotlin.konan.target.AppleConfigurables
 import org.jetbrains.kotlin.konan.target.Family
@@ -22,18 +24,13 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.ExecutableCo
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.ExecutableCompilation.Companion.assertTestDumpFileNotEmptyIfExists
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationArtifact.*
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationDependencyType.*
+import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationResult.Companion.assertSuccess
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.*
-import org.jetbrains.kotlin.konan.test.blackbox.support.settings.ExplicitBinaryOptions
-import org.jetbrains.kotlin.konan.test.blackbox.support.util.ArgsBuilder
-import org.jetbrains.kotlin.konan.test.blackbox.support.util.buildArgs
-import org.jetbrains.kotlin.konan.test.blackbox.support.util.flatMapToSet
-import org.jetbrains.kotlin.konan.test.blackbox.support.util.mapToSet
+import org.jetbrains.kotlin.konan.test.blackbox.support.util.*
 import org.jetbrains.kotlin.library.impl.createKotlinLibraryComponents
 import org.jetbrains.kotlin.library.metadata.isCInteropLibrary
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.fail
-import org.jetbrains.kotlin.config.nativeBinaryOptions.BinaryOptions
-import org.jetbrains.kotlin.config.nativeBinaryOptions.RuntimeAssertsMode
 import java.io.File
 
 private fun AssertionsMode.assertionsEnabledWith(optimizationMode: OptimizationMode) = when (this) {
@@ -489,16 +486,38 @@ internal class GivenLibraryCompilation(givenArtifact: KLIB) : TestCompilation<KL
 }
 
 internal class CInteropCompilation(
-    targets: KotlinNativeTargets,
-    classLoader: KotlinNativeClassLoader,
+    settings: Settings,
     freeCompilerArgs: TestCompilerArgs,
     defFile: File,
     sources: List<File> = emptyList(),
     dependencies: Iterable<CompiledDependency<KLIB>>,
     expectedArtifact: KLIB
 ) : TestCompilation<KLIB>() {
+    private val targets: KotlinNativeTargets = settings.get()
+    private val classLoader: KotlinNativeClassLoader = settings.get()
 
     override val result: TestCompilationResult<out KLIB> by lazy {
+        val staticLibraries = sources.map {
+            compileWithClangToStaticLibrary(
+                settings,
+                clangMode = when (it.extension) {
+                    "c", "m" -> ClangMode.C
+                    "cpp", "mm" -> ClangMode.CXX
+                    else -> error("unexpected file extension: $it")
+                },
+                sourceFiles = listOf(it),
+                outputFile = expectedArtifact.klibFile.resolveSibling("${it.nameWithoutExtension}.a"),
+                includeDirectories = listOf(defFile.parentFile),
+                additionalClangFlags = listOf(
+                    if (freeCompilerArgs.objcArc) {
+                        "-fobjc-arc"
+                    } else {
+                        "-fno-objc-arc"
+                    }
+                )
+            ).assertSuccess().resultingArtifact.libraryFile
+        }
+
         val args = buildList {
             add("-def")
             add(defFile.canonicalPath)
@@ -512,18 +531,12 @@ internal class CInteropCompilation(
                 add(it.artifact.path)
             }
             addAll(freeCompilerArgs.cinteropArgs)
-            sources.forEach {
-                add("-Xcompile-source")
-                add(it.absolutePath)
+            staticLibraries.forEach {
+                add("-libraryPath")
+                add(it.parentFile.absolutePath)
+                add("-staticLibrary")
+                add(it.name)
             }
-            add("-Xsource-compiler-option")
-            if (freeCompilerArgs.objcArc) {
-                add("-fobjc-arc")
-            } else {
-                add("-fno-objc-arc")
-            }
-            add("-Xsource-compiler-option")
-            add("-DNS_FORMAT_ARGUMENT(A)=")
             add("-compiler-option")
             add("-I${defFile.parentFile}")
         }

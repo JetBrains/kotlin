@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.CompilationT
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationArtifact
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationResult
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.KotlinNativeTargets
+import org.jetbrains.kotlin.konan.test.blackbox.support.settings.Settings
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.configurables
 import org.jetbrains.kotlin.native.executors.RunProcessException
 import org.jetbrains.kotlin.native.executors.runProcess
@@ -45,8 +46,8 @@ enum class ClangMode {
     C, CXX
 }
 
-private fun AbstractNativeSimpleTest.defaultClangDistribution(): ClangDistribution =
-    if (testRunSettings.configurables.target.family.isAppleFamily) {
+private fun Settings.defaultClangDistribution(): ClangDistribution =
+    if (configurables.target.family.isAppleFamily) {
         ClangDistribution.Toolchain
     } else {
         ClangDistribution.Llvm
@@ -55,7 +56,7 @@ private fun AbstractNativeSimpleTest.defaultClangDistribution(): ClangDistributi
 // FIXME: absoluteTargetToolchain might not work correctly with KONAN_USE_INTERNAL_SERVER because
 // :kotlin-native:dependencies:update is not a dependency of :native:native.tests:test where this test runs
 fun AbstractNativeSimpleTest.compileWithClang(
-    clangDistribution: ClangDistribution = defaultClangDistribution(),
+    clangDistribution: ClangDistribution = testRunSettings.defaultClangDistribution(),
     clangMode: ClangMode = ClangMode.C,
     sourceFiles: List<File>,
     outputFile: File,
@@ -65,6 +66,32 @@ fun AbstractNativeSimpleTest.compileWithClang(
     libraries: List<String> = emptyList(),
     additionalClangFlags: List<String> = emptyList(),
     fmodules: Boolean = true
+): TestCompilationResult<out TestCompilationArtifact.Executable> = compileWithClang(
+    testRunSettings = testRunSettings,
+    clangDistribution = clangDistribution,
+    clangMode = clangMode,
+    sourceFiles = sourceFiles,
+    outputFile = outputFile,
+    includeDirectories = includeDirectories,
+    frameworkDirectories = frameworkDirectories,
+    libraryDirectories = libraryDirectories,
+    libraries = libraries,
+    additionalClangFlags = additionalClangFlags,
+    fmodules = fmodules,
+)
+
+fun compileWithClang(
+    testRunSettings: Settings,
+    clangDistribution: ClangDistribution = testRunSettings.defaultClangDistribution(),
+    clangMode: ClangMode = ClangMode.C,
+    sourceFiles: List<File>,
+    outputFile: File,
+    includeDirectories: List<File> = emptyList(),
+    frameworkDirectories: List<File> = emptyList(),
+    libraryDirectories: List<File> = emptyList(),
+    libraries: List<String> = emptyList(),
+    additionalClangFlags: List<String> = emptyList(),
+    fmodules: Boolean = true,
 ): TestCompilationResult<out TestCompilationArtifact.Executable> {
     val configurables = testRunSettings.configurables
     val host = testRunSettings.get<KotlinNativeTargets>().hostTarget
@@ -149,7 +176,7 @@ fun AbstractNativeSimpleTest.compileWithClang(
 }
 
 internal fun AbstractNativeSimpleTest.compileWithClangToStaticLibrary(
-    clangDistribution: ClangDistribution = defaultClangDistribution(),
+    clangDistribution: ClangDistribution = testRunSettings.defaultClangDistribution(),
     clangMode: ClangMode = ClangMode.C,
     sourceFiles: List<File>,
     outputFile: File,
@@ -158,10 +185,35 @@ internal fun AbstractNativeSimpleTest.compileWithClangToStaticLibrary(
     libraryDirectories: List<File> = emptyList(),
     libraries: List<String> = emptyList(),
     additionalClangFlags: List<String> = emptyList(),
-) : TestCompilationResult<out TestCompilationArtifact.BinaryLibrary> {
+): TestCompilationResult<out TestCompilationArtifact.BinaryLibrary> = compileWithClangToStaticLibrary(
+    testRunSettings = testRunSettings,
+    clangDistribution = clangDistribution,
+    clangMode = clangMode,
+    sourceFiles = sourceFiles,
+    outputFile = outputFile,
+    includeDirectories = includeDirectories,
+    frameworkDirectories = frameworkDirectories,
+    libraryDirectories = libraryDirectories,
+    libraries = libraries,
+    additionalClangFlags = additionalClangFlags
+)
+
+fun compileWithClangToStaticLibrary(
+    testRunSettings: Settings,
+    clangDistribution: ClangDistribution = testRunSettings.defaultClangDistribution(),
+    clangMode: ClangMode = ClangMode.C,
+    sourceFiles: List<File>,
+    outputFile: File,
+    includeDirectories: List<File> = emptyList(),
+    frameworkDirectories: List<File> = emptyList(),
+    libraryDirectories: List<File> = emptyList(),
+    libraries: List<String> = emptyList(),
+    additionalClangFlags: List<String> = emptyList(),
+): TestCompilationResult<out TestCompilationArtifact.BinaryLibrary> {
     val llvmAr = ClangArgs.Native(testRunSettings.configurables).llvmAr().first()
     val objFile = File("${outputFile.absolutePath}.o")
     val compilationResult = compileWithClang(
+        testRunSettings,
         clangDistribution,
         clangMode,
         sourceFiles,
