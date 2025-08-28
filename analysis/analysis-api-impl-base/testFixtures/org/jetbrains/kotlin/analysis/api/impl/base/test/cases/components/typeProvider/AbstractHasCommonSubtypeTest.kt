@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.test.services.AdditionalSourceProvider
 import org.jetbrains.kotlin.test.services.TestModuleStructure
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
-import java.io.File
 
 abstract class AbstractHasCommonSubtypeTest : AbstractAnalysisApiBasedTest() {
     override fun doTestByMainModuleAndOptionalMainFile(mainFile: KtFile?, mainModule: KtTestModule, testServices: TestServices) {
@@ -103,7 +102,10 @@ abstract class AbstractHasCommonSubtypeTest : AbstractAnalysisApiBasedTest() {
             module: TestModule,
             testModuleStructure: TestModuleStructure
         ): List<TestFile> {
-            return listOf(File("analysis/analysis-api/testData/helpers/hasCommonSubtype/helpers.kt").toTestFile())
+            return listOf(
+                this::class.java.classLoader.getResource("helpers/hasCommonSubtype/helpers.kt")!!
+                    .toTestFile()
+            )
         }
     }
 

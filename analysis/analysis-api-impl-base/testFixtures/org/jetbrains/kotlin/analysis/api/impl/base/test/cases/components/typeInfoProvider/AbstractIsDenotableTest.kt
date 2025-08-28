@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.test.services.TestModuleStructure
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 import org.jetbrains.kotlin.types.Variance
-import java.io.File
 
 abstract class AbstractIsDenotableTest : AbstractAnalysisApiBasedTest() {
     val denotableName = Name.identifier("Denotable")
@@ -98,7 +97,7 @@ abstract class AbstractIsDenotableTest : AbstractAnalysisApiBasedTest() {
             module: TestModule,
             testModuleStructure: TestModuleStructure
         ): List<TestFile> {
-            return listOf(File("analysis/analysis-api/testData/helpers/isDenotable/helpers.kt").toTestFile())
+            return listOf(this::class.java.classLoader.getResource("helpers/isDenotable/helpers.kt")!!.toTestFile())
         }
     }
 }
