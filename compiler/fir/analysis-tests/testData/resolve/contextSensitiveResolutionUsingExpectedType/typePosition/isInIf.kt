@@ -1,6 +1,7 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-75061
 // LANGUAGE: +ContextSensitiveResolutionUsingExpectedType
+// DIAGNOSTICS: -POTENTIALLY_NOTHING_VALUE
 
 sealed class SealedClass {
     open class SealedInheritor1(val prop1: String = "1"): SealedClass()

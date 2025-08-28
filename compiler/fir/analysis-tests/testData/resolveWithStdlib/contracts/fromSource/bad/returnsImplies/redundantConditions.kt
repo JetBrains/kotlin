@@ -14,7 +14,7 @@ fun testAlwaysNotNull(x: String?): Any? {
 @OptIn(ExperimentalContracts::class)
 fun testAlwaysAny(x: String?): Any? {
     contract {
-        returnsNotNull() implies (<!USELESS_IS_CHECK!>x is String?<!> || <!USELESS_IS_CHECK!>x is Any?<!>)
+        returnsNotNull() implies (<!USELESS_IS_CHECK!>x is String?<!> || <!USELESS_IS_CHECK!><!POTENTIALLY_NOTHING_VALUE!>x<!> is Any?<!>)
     }
 
     return x

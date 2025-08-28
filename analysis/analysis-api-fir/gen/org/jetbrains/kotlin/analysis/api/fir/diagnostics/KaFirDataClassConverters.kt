@@ -5749,6 +5749,12 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.POTENTIALLY_NOTHING_VALUE) { firDiagnostic ->
+        PotentiallyNothingValueImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.RETURN_NOT_ALLOWED) { firDiagnostic ->
         ReturnNotAllowedImpl(
             firDiagnostic as KtPsiDiagnostic,

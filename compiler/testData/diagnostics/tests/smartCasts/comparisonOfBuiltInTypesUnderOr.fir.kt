@@ -20,7 +20,7 @@ fun test2(x: Any?) {
 }
 
 fun test3(x: Any?) {
-    if (<!USELESS_IS_CHECK!>x is Any?<!> || <!SENSELESS_COMPARISON!>x != null<!>) {
+    if (<!USELESS_IS_CHECK!>x is Any?<!> || <!SENSELESS_COMPARISON!><!POTENTIALLY_NOTHING_VALUE!>x<!> != null<!>) {
         var k: Any? = x
     } else {
         var k: Nothing = x

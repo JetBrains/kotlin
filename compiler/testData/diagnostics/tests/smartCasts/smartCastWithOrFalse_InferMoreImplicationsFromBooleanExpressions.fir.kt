@@ -6,7 +6,7 @@ fun main(x: Any?) {
         x.length
     }
     else if (false || x is String) {
-        x.length
+        <!POTENTIALLY_NOTHING_VALUE!>x<!>.length
     }
     else {
         x.<!UNRESOLVED_REFERENCE!>length<!>

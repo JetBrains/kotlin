@@ -11,7 +11,7 @@ fun earlyJumpInGuard(x: Any) {
         is String if true && throw Exception() -> 3
         is String if false || throw Exception() -> 3
         is String if {throw Exception()}() -> 3
-        is String if true && x == "10" <!USELESS_ELVIS!>?: return Unit<!> -> 3
+        is String if true && <!POTENTIALLY_NOTHING_VALUE!>x<!> == "10" <!USELESS_ELVIS!>?: return Unit<!> -> 3
         is String if return Unit -> 3
     }
 

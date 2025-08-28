@@ -56,6 +56,14 @@ class FirWhenExhaustivenessTransformer(private val bodyResolveComponents: BodyRe
             }
         }
 
+        fun coversAllCases(session: FirSession, subjectType: ConeKotlinType, lowerTypes: Collection<DfaType>): Boolean {
+            if (lowerTypes.isEmpty()) return false
+            return subjectType.minimumBoundIfFlexible(session).unwrapTypeParameterAndIntersectionTypes(session).any { type ->
+                val checkers = getCheckers(type, session)
+                coversAllCases(checkers, lowerTypes, type, session)
+            }
+        }
+
         private fun getSubjectType(session: FirSession, whenExpression: FirWhenExpression): ConeKotlinType? {
             val subjectType = whenExpression.subjectVariable?.takeIf { !it.isImplicitWhenSubjectVariable }?.returnTypeRef?.coneType
                 ?: whenExpression.subjectVariable?.initializer?.resolvedType
@@ -134,6 +142,13 @@ class FirWhenExhaustivenessTransformer(private val bodyResolveComponents: BodyRe
                 add(WhenMissingCase.Unknown)
             }
         }
+
+        private fun coversAllCases(
+            checkers: List<WhenExhaustivenessChecker>,
+            lowerTypes: Collection<DfaType>,
+            subjectType: ConeKotlinType,
+            session: FirSession
+        ): Boolean = checkers.all { it.coversAllCases(lowerTypes, subjectType, session) }
     }
 
     override fun <E : FirElement> transformElement(element: E, data: Any?): E {
@@ -260,6 +275,12 @@ private sealed class WhenExhaustivenessChecker {
         destination: MutableCollection<WhenMissingCase>
     )
 
+    abstract fun coversAllCases(
+        lowerTypes: Collection<DfaType>,
+        subjectType: ConeKotlinType,
+        session: FirSession,
+    ): Boolean
+
     protected abstract class AbstractConditionChecker<in D : Any> : FirVisitor<Unit, D>() {
         override fun visitElement(element: FirElement, data: D) {}
 
@@ -298,6 +319,9 @@ private object WhenOnNullableExhaustivenessChecker : WhenExhaustivenessChecker()
             destination.add(WhenMissingCase.NullIsMissing)
         }
     }
+
+    override fun coversAllCases(lowerTypes: Collection<DfaType>, subjectType: ConeKotlinType, session: FirSession): Boolean =
+        false // if we've arrived here, that means that there's a null case missing
 
     fun isNullBranchMissing(whenExpression: FirWhenExpression): Boolean {
         val flags = Flags()
@@ -369,6 +393,12 @@ private object WhenOnBooleanExhaustivenessChecker : WhenExhaustivenessChecker() 
         }
     }
 
+    override fun coversAllCases(lowerTypes: Collection<DfaType>, subjectType: ConeKotlinType, session: FirSession): Boolean {
+        val flags = Flags()
+        lowerTypes.mapNotNull { (it as? DfaType.BooleanLiteral)?.value }.forEach { recordValue(it, flags) }
+        return flags.containsTrue && flags.containsFalse
+    }
+
     private object ConditionChecker : AbstractConditionChecker<Flags>() {
         override fun visitEqualityOperatorCall(equalityOperatorCall: FirEqualityOperatorCall, data: Flags) {
             if (equalityOperatorCall.operation.let { it == FirOperation.EQ || it == FirOperation.IDENTITY }) {
@@ -410,6 +440,15 @@ private object WhenOnEnumExhaustivenessChecker : WhenExhaustivenessChecker() {
 
         whenExpression.accept(ConditionChecker, notCheckedEntries)
         notCheckedEntries.mapTo(destination) { WhenMissingCase.EnumCheckIsMissing(it.symbol.callableId) }
+    }
+
+    override fun coversAllCases(lowerTypes: Collection<DfaType>, subjectType: ConeKotlinType, session: FirSession): Boolean {
+        val enumClass = (subjectType.toSymbol(session) as FirRegularClassSymbol).fir
+        val notCheckedEntries = enumClass.declarations.mapNotNullTo(mutableSetOf()) { it as? FirEnumEntry }
+        for (lowerType in lowerTypes) {
+            (lowerType as? DfaType.Symbol)?.symbol?.fir?.let { notCheckedEntries.remove(it) }
+        }
+        return notCheckedEntries.isEmpty()
     }
 
     private object ConditionChecker : AbstractConditionChecker<MutableSet<FirEnumEntry>>() {
@@ -459,6 +498,14 @@ private object WhenOnSealedClassExhaustivenessChecker : WhenExhaustivenessChecke
         }
     }
 
+    override fun coversAllCases(lowerTypes: Collection<DfaType>, subjectType: ConeKotlinType, session: FirSession): Boolean {
+        val allSubclasses = subjectType.toSymbol(session)?.collectAllSubclasses(session) ?: return false
+        val checkedSubclasses = mutableSetOf<FirBasedSymbol<*>>()
+        val flags = Flags(allSubclasses, checkedSubclasses, session)
+        inferVariantsFromSubjectSmartCast(lowerTypes, flags)
+        return (allSubclasses - checkedSubclasses).isEmpty()
+    }
+
     private class Flags(
         val allSubclasses: Set<FirBasedSymbol<*>>,
         val checkedSubclasses: MutableSet<FirBasedSymbol<*>>,
@@ -467,8 +514,11 @@ private object WhenOnSealedClassExhaustivenessChecker : WhenExhaustivenessChecke
 
     private fun inferVariantsFromSubjectSmartCast(subject: FirExpression, data: Flags) {
         if (subject !is FirSmartCastExpression) return
+        inferVariantsFromSubjectSmartCast(subject.lowerTypesFromSmartCast, data)
+    }
 
-        for (knownNonType in subject.lowerTypesFromSmartCast) {
+    private fun inferVariantsFromSubjectSmartCast(lowerTypes: Collection<DfaType>, data: Flags) {
+        for (knownNonType in lowerTypes) {
             val symbol = when (knownNonType) {
                 is DfaType.Cone -> knownNonType.type.toSymbol(data.session)
                 is DfaType.Symbol -> knownNonType.symbol
@@ -574,6 +624,8 @@ private object WhenOnNothingExhaustivenessChecker : WhenExhaustivenessChecker() 
     ) {
         // Nothing has no branches. The null case for `Nothing?` is handled by WhenOnNullableExhaustivenessChecker
     }
+
+    override fun coversAllCases(lowerTypes: Collection<DfaType>, subjectType: ConeKotlinType, session: FirSession): Boolean = true
 }
 
 /**
@@ -597,6 +649,9 @@ private data object WhenSelfTypeExhaustivenessChecker : WhenExhaustivenessChecke
             destination.add(WhenMissingCase.Unknown)
         }
     }
+
+    override fun coversAllCases(lowerTypes: Collection<DfaType>, subjectType: ConeKotlinType, session: FirSession): Boolean =
+        lowerTypes.filterIsInstance<DfaType.Cone>().any { subjectType.isSubtypeOf(it.type, session) }
 
     fun isExhaustiveThroughSelfTypeCheck(
         whenExpression: FirWhenExpression,

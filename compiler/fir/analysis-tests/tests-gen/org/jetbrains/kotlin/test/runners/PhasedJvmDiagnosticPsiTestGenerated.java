@@ -56297,6 +56297,12 @@ public class PhasedJvmDiagnosticPsiTestGenerated extends AbstractPhasedJvmDiagno
         public void testNonExhaustiveWhenWithoutCoercionToUnit() {
           runTest("compiler/fir/analysis-tests/testData/resolve/exhaustiveness/negative/nonExhaustiveWhenWithoutCoercionToUnit.kt");
         }
+
+        @Test
+        @TestMetadata("smartcastNothing.kt")
+        public void testSmartcastNothing() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/exhaustiveness/negative/smartcastNothing.kt");
+        }
       }
 
       @Nested

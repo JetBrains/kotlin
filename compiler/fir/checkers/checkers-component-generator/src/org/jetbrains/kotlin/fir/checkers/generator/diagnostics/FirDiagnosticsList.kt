@@ -1980,6 +1980,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         }
         val UNUSED_EXPRESSION by warning<PsiElement>()
         val UNUSED_LAMBDA_EXPRESSION by warning<PsiElement>()
+        val POTENTIALLY_NOTHING_VALUE by warning<KtElement>()
     }
 
     val RETURNS by object : DiagnosticGroup("Returns") {

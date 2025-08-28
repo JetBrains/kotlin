@@ -12,9 +12,9 @@ fun test1(x:Any?) {
         var k3: Any? = x
     }
     else {
-        var k: Any = x
-        var k2: A = x
-        var k3: B = x
+        var k: Any = <!POTENTIALLY_NOTHING_VALUE!>x<!>
+        var k2: A = <!POTENTIALLY_NOTHING_VALUE!>x<!>
+        var k3: B = <!POTENTIALLY_NOTHING_VALUE!>x<!>
     }
 }
 
@@ -91,10 +91,10 @@ fun test7(x:Any?) {
         var k4: Any? = x
     }
     else {
-        var k: Any = x
-        var k2: A2 = x
-        var k3: B2 = x
-        var k4 : C2 = <!INITIALIZER_TYPE_MISMATCH!>x<!>
+        var k: Any = <!POTENTIALLY_NOTHING_VALUE!>x<!>
+        var k2: A2 = <!POTENTIALLY_NOTHING_VALUE!>x<!>
+        var k3: B2 = <!POTENTIALLY_NOTHING_VALUE!>x<!>
+        var k4 : C2 = <!INITIALIZER_TYPE_MISMATCH, POTENTIALLY_NOTHING_VALUE!>x<!>
     }
 }
 
@@ -148,8 +148,8 @@ fun test11(x:A2?) {
         var k: A2? = x
     }
     else {
-        var k : B2 = x
-        var k2 : A2? = x
+        var k : B2 = <!POTENTIALLY_NOTHING_VALUE!>x<!>
+        var k2 : A2? = <!POTENTIALLY_NOTHING_VALUE!>x<!>
     }
 }
 

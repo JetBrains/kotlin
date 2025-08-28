@@ -6,10 +6,10 @@ fun test(e: Exception) {
         throw e
     }
     if (<!IMPOSSIBLE_IS_CHECK_ERROR!>e is AssertionError<!>) {
-        throw e
+        throw <!POTENTIALLY_NOTHING_VALUE!>e<!>
     }
     if (<!IMPOSSIBLE_IS_CHECK_ERROR!>e is NotImplementedError<!>) {
-        throw e
+        throw <!POTENTIALLY_NOTHING_VALUE!>e<!>
     }
 }
 

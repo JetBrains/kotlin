@@ -57,11 +57,11 @@ fun Any?.foo() : Int {
     if (this is Int)
       return this
     if (this@foo is Int)
-      return this
+      return <!POTENTIALLY_NOTHING_VALUE!>this<!>
     if (this@foo is Int)
-      return this@foo
+      return <!POTENTIALLY_NOTHING_VALUE!>this@foo<!>
     if (this is Int)
-      return this@foo
+      return <!POTENTIALLY_NOTHING_VALUE!>this@foo<!>
     return 1
 }
 

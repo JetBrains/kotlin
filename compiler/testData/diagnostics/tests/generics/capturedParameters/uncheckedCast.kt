@@ -1,4 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -POTENTIALLY_NOTHING_VALUE
 fun <E> foo(x: Any, y: Any) : Any {
     class C
     // without E?

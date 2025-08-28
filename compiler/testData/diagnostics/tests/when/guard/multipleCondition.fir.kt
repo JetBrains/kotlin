@@ -18,7 +18,7 @@ fun MultipleConditionsWithNoGuards(x: Any) {
     return when (x) {
         is String -> Unit
         is True, is False -> Unit
-        is True if x.value -> Unit
+        is True if <!POTENTIALLY_NOTHING_VALUE!>x<!>.value -> Unit
         else -> Unit
     }
 }

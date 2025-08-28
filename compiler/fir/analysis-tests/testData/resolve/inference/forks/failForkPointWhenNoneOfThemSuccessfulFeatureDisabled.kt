@@ -22,7 +22,7 @@ fun <A : Type.TypeA<out K>, K : Data> Base<A, Token.TokenA, K>.foo() {}
 
 fun test_3_2(algorithm: Base.A<*, Token.TokenB, Data>) {
     algorithm <!UNCHECKED_CAST!>as Base.B<Type<out Data>, Data><!>
-    algorithm.foo() // should be wrong receiver
+    <!POTENTIALLY_NOTHING_VALUE!>algorithm<!>.foo() // should be wrong receiver
 }
 
 /* GENERATED_FIR_TAGS: asExpression, classDeclaration, funWithExtensionReceiver, functionDeclaration,
