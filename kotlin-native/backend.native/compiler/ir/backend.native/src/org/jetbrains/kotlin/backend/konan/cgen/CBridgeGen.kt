@@ -126,7 +126,8 @@ private fun KotlinToCCallBuilder.buildKotlinBridgeCall(transformCall: (IrMemberA
 
 internal fun KotlinStubs.generateCCall(
         expression: IrCall, builder: IrBuilderWithScope, isInvoke: Boolean,
-        foreignExceptionMode: ForeignExceptionMode.Mode = ForeignExceptionMode.default
+        foreignExceptionMode: ForeignExceptionMode.Mode = ForeignExceptionMode.default,
+        direct: Boolean
 ): IrExpression {
     val callBuilder = KotlinToCCallBuilder(builder, this, isObjCMethod = false, foreignExceptionMode)
 
@@ -180,13 +181,52 @@ internal fun KotlinStubs.generateCCall(
 
     val result = callBuilder.buildCall(targetFunctionName, returnValuePassing)
 
-    val targetFunctionVariable = CVariable(CTypes.pointer(callBuilder.cFunctionBuilder.getType()), targetFunctionName)
-
     if (isInvoke) {
+        val targetFunctionVariable = CVariable(CTypes.pointer(callBuilder.cFunctionBuilder.getType()), targetFunctionName)
         callBuilder.cBridgeBodyLines.add(0, "$targetFunctionVariable = ${targetPtrParameter!!};")
-    } else {
+    } else if (!direct) {
+        val targetFunctionVariable = CVariable(CTypes.pointer(callBuilder.cFunctionBuilder.getType()), targetFunctionName)
         val cCallSymbolName = callee.getAnnotationArgumentValue<String>(RuntimeNames.cCall, "id")!!
         callBuilder.state.addC(listOf("extern const $targetFunctionVariable __asm(\"$cCallSymbolName\");")) // Exported from cinterop stubs.
+    } else {
+        /*
+        Basically, we need to make the target C function accessible here.
+
+        We could declare the function with its original name without the `__asm` attribute.
+        But then we could have ended up with the "same" function declared multiple times incompatibly across different
+        generated stubs.
+        See e.g. the `sameFunctionWithDifferentSignatures.kt` test.
+        Declaring them in the C bridge bodies wouldn't help either -- Clang still prohibits incompatible redeclarations
+        even when they are "local".
+
+        So, instead we stick to the unique name for the declaration (`targetFunctionName`)
+        and specify the actual symbol name with the `__asm` attribute.
+        Having multiple function declarations with the same `__asm` is perfectly fine.
+
+        This approach has a downside: it is incompatible with `-Xcompile-source` in cinterop.
+        Explanation: imagine there is a function definition `foo` on an Apple platform, compiled to bitcode
+        with `-Xcompile-source`.
+        As any other C function on Apple platforms, it gets a global symbol name prefix, so
+        `symbolName` is "_foo".
+
+        Using `__asm("_foo")` makes Clang refer to this function as "\01_foo" in the resulting LLVM IR,
+        where `\01` instructs LLVM that it doesn't need to add the global symbol name prefix
+        when generating machine code.
+        But the function is defined as "foo" in LLVM IR of the source code compiled with `-Xcompile-source`.
+
+        All LLVM modules (including those definition and reference) are linked and then optimized
+        using LLVM optimization passes.
+        One of them, globaldce, won't understand that "foo" and "\01_foo" denote the same function
+        and will just delete "foo", leading to an unresolved symbol error at the linkage stage.
+
+        There seems to be no alternative way to specify the symbol name without making Clang add `\01`.
+
+        To work around this problem, cinterop marks `-Xcompile-source` incompatible with direct CCall.
+        */
+        val symbolName = callee.getAnnotationArgumentValue<String>(RuntimeNames.cCallDirect, "name")!!
+        val signature = callBuilder.cFunctionBuilder.buildSignature(targetFunctionName, language)
+
+        callBuilder.state.addC(listOf("""$signature __asm("$symbolName");"""))
     }
 
     val libraryName = if (isInvoke) "" else callee.getPackageFragment().konanLibrary.let {

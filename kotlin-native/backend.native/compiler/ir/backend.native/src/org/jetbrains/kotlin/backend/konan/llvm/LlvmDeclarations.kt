@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.backend.konan.llvm
 import kotlinx.cinterop.toCValues
 import llvm.*
 import org.jetbrains.kotlin.backend.konan.*
+import org.jetbrains.kotlin.backend.konan.cgen.isCFunctionOrGlobalAccessor
 import org.jetbrains.kotlin.backend.konan.ir.*
 import org.jetbrains.kotlin.backend.konan.llvm.objcexport.WritableTypeInfoPointer
 import org.jetbrains.kotlin.backend.konan.llvm.objcexport.generateWritableTypeInfoForClass
@@ -436,7 +437,7 @@ private class DeclarationsGeneratorVisitor(override val generationState: NativeG
                     // All call-sites to external accessors to interop properties
                     // are lowered by InteropLowering.
                     || (declaration.isAccessor && declaration.isFromCInteropLibrary())
-                    || declaration.annotations.hasAnnotation(RuntimeNames.cCall)) return
+                    || declaration.isCFunctionOrGlobalAccessor()) return
 
             val proto = LlvmFunctionProto(declaration, declaration.computeSymbolName(), this, LLVMLinkage.LLVMExternalLinkage)
             llvm.externalFunction(proto)

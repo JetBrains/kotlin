@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import org.jetbrains.kotlin.config.nativeBinaryOptions.AndroidProgramType
 import org.jetbrains.kotlin.config.nativeBinaryOptions.AppStateTracking
 import org.jetbrains.kotlin.config.nativeBinaryOptions.BinaryOptions
+import org.jetbrains.kotlin.config.nativeBinaryOptions.CCallMode
 import org.jetbrains.kotlin.config.nativeBinaryOptions.CInterfaceGenerationMode
 import org.jetbrains.kotlin.config.nativeBinaryOptions.CoreSymbolicationImageListType
 import org.jetbrains.kotlin.config.nativeBinaryOptions.GC
@@ -642,6 +643,8 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
             else -> CInterfaceGenerationMode.NONE
         }
     }
+
+    val cCallMode get() = configuration.get(BinaryOptions.cCallMode) ?: CCallMode.IndirectOrDirect
 }
 
 private fun String.isRelease(): Boolean {

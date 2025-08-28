@@ -431,6 +431,41 @@ public class FirNativeCodegenLocalTestGenerated extends AbstractNativeCodegenBox
     }
 
     @Nested
+    @TestMetadata("native/native.tests/testData/codegen/cinterop/cCallDirect")
+    @TestDataPath("$PROJECT_ROOT")
+    @UseExtTestCaseGroupProvider()
+    public class CCallDirect {
+      @Test
+      public void testAllFilesPresentInCCallDirect() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/native.tests/testData/codegen/cinterop/cCallDirect"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+      }
+
+      @Test
+      @TestMetadata("differentFunctions.kt")
+      public void testDifferentFunctions() {
+        runTest("native/native.tests/testData/codegen/cinterop/cCallDirect/differentFunctions.kt");
+      }
+
+      @Test
+      @TestMetadata("functionWithAsmAttribute.kt")
+      public void testFunctionWithAsmAttribute() {
+        runTest("native/native.tests/testData/codegen/cinterop/cCallDirect/functionWithAsmAttribute.kt");
+      }
+
+      @Test
+      @TestMetadata("sameFunctionWithDifferentSignatures.kt")
+      public void testSameFunctionWithDifferentSignatures() {
+        runTest("native/native.tests/testData/codegen/cinterop/cCallDirect/sameFunctionWithDifferentSignatures.kt");
+      }
+
+      @Test
+      @TestMetadata("smoke.kt")
+      public void testSmoke() {
+        runTest("native/native.tests/testData/codegen/cinterop/cCallDirect/smoke.kt");
+      }
+    }
+
+    @Nested
     @TestMetadata("native/native.tests/testData/codegen/cinterop/exceptions")
     @TestDataPath("$PROJECT_ROOT")
     @UseExtTestCaseGroupProvider()

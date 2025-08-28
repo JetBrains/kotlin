@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.konan.ir
 
 import org.jetbrains.kotlin.backend.konan.*
+import org.jetbrains.kotlin.backend.konan.cgen.isCFunctionOrGlobalAccessor
 import org.jetbrains.kotlin.backend.konan.descriptors.arrayTypes
 import org.jetbrains.kotlin.backend.konan.descriptors.arraysWithFixedSizeItems
 import org.jetbrains.kotlin.backend.konan.llvm.isVoidAsReturnType
@@ -298,7 +299,7 @@ fun IrFunction.externalSymbolOrThrow(): String? {
 
     if (annotations.hasAnnotation(KonanFqNames.typedIntrinsic)) return null
 
-    if (annotations.hasAnnotation(RuntimeNames.cCall)) return null
+    if (this.isCFunctionOrGlobalAccessor()) return null
 
     throw Error("external function ${this.longName} must have @TypedIntrinsic, @SymbolName, @GCUnsafeCall or @ObjCMethod annotation")
 }
