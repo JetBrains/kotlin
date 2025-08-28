@@ -9743,6 +9743,12 @@ public class LLReversedDiagnosticsFe10TestGenerated extends AbstractLLReversedDi
       }
 
       @Test
+      @TestMetadata("callableReferences.kt")
+      public void testCallableReferences() {
+        runTest("compiler/testData/diagnostics/tests/crv/callableReferences.kt");
+      }
+
+      @Test
       @TestMetadata("casts.kt")
       public void testCasts() {
         runTest("compiler/testData/diagnostics/tests/crv/casts.kt");
