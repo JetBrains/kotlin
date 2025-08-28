@@ -51,7 +51,7 @@ fun ConeKotlinType.withParameterNameAnnotation(parameter: FirValueParameter): Co
     return withParameterNameAnnotation(name, parameter.source)
 }
 
-private fun ConeKotlinType.withParameterNameAnnotation(name: Name, element: KtSourceElement?): ConeKotlinType {
+fun ConeKotlinType.withParameterNameAnnotation(name: Name, element: KtSourceElement?): ConeKotlinType {
     if (name == SpecialNames.NO_NAME_PROVIDED || name == SpecialNames.UNDERSCORE_FOR_UNUSED_VAR) return this
     // Existing @ParameterName annotation takes precedence
     if (attributes.parameterNameAttribute != null) return this
