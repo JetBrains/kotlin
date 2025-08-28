@@ -6,7 +6,6 @@ import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.artifacts.ConfigurablePublishArtifact
 import org.gradle.api.artifacts.Configuration
-import org.gradle.api.artifacts.ConfigurationContainer
 import org.gradle.api.artifacts.ModuleDependency
 import org.gradle.api.artifacts.PublishArtifact
 import org.gradle.api.artifacts.component.ProjectComponentIdentifier
@@ -19,19 +18,17 @@ import org.gradle.api.plugins.JavaPlugin
 import org.gradle.api.plugins.JavaPlugin.JAVADOC_ELEMENTS_CONFIGURATION_NAME
 import org.gradle.api.plugins.JavaPlugin.SOURCES_ELEMENTS_CONFIGURATION_NAME
 import org.gradle.api.plugins.JavaPluginExtension
-import org.gradle.api.provider.Provider
 import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.publish.tasks.GenerateModuleMetadata
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.javadoc.Javadoc
+import org.gradle.internal.component.external.model.TestFixturesSupport
 import org.gradle.jvm.tasks.Jar
 import org.gradle.kotlin.dsl.*
 import org.gradle.kotlin.dsl.support.serviceOf
-import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSetContainer
 import plugins.KotlinBuildPublishingPlugin
 import plugins.mainPublicationName
-import java.io.File
 
 
 private const val MAGIC_DO_NOT_CHANGE_TEST_JAR_TASK_NAME = "testJar"
@@ -456,8 +453,17 @@ private fun Project.publishTestJar(
     }
 
     sourcesJar {
+        fun registerTestSources(projectNames: List<String>) {
+            from {
+                projectNames.map { project(it).testSourceSet.allSource }
+            }
+        }
+
+        registerTestSources(projects)
+        registerTestSources(projectWithRenamedTestJarNames)
+
         from {
-            projects.map { project(it).testSourceSet.allSource }
+            projectWithFixturesNames.map { project(it).sourceSets.getByName(TestFixturesSupport.TEST_FIXTURE_SOURCESET_NAME).allSource }
         }
     }
 
