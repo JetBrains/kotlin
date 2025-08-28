@@ -30,11 +30,9 @@ import org.jetbrains.kotlin.daemon.client.BasicCompilerServicesWithResultsFacade
 import org.jetbrains.kotlin.daemon.common.JpsCompilerServicesFacade
 import org.jetbrains.kotlin.daemon.report.DaemonMessageReporter
 import org.jetbrains.kotlin.daemon.report.getBuildReporter
-import org.jetbrains.kotlin.utils.createConcurrentMultiMap
-import server.interceptors.AuthInterceptor
+import server.interceptors.AuthServerInterceptor
 import java.io.File
 import java.nio.file.Files
-import java.nio.file.LinkOption
 import java.nio.file.Path
 import java.nio.file.Paths
 import java.time.LocalDateTime
@@ -91,7 +89,7 @@ class RemoteCompilationServiceImpl(
             val fileChunkStrategy = FixedSizeChunkingStrategy()
             var compilationMetadata: CompilationMetadata? = null
 
-            val userId = AuthInterceptor.USER_ID_CONTEXT_KEY.get()
+            val userId = AuthServerInterceptor.USER_ID_CONTEXT_KEY.get()
 
             // here we consume request stream
             launch {

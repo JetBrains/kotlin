@@ -52,5 +52,6 @@ class WorkspaceManager {
 
     fun cleanup() {
         SERVER_COMPILATION_WORKSPACE_DIR.toFile().deleteRecursively()
+        Files.createDirectories(SERVER_COMPILATION_WORKSPACE_DIR)
     }
 }

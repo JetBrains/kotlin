@@ -12,18 +12,19 @@ import org.jetbrains.kotlin.daemon.common.CompilationOptions
 import org.jetbrains.kotlin.daemon.common.CompileService
 import org.jetbrains.kotlin.daemon.common.CompilerMode
 
-
 class Benchmark(
     serverImplType: RemoteCompilationServiceImplType
 ) {
 
     val client = RemoteCompilationClient(serverImplType, logging = false)
+    val server = RemoteCompilationServer(50051, serverImplType, logging = false)
 
     init {
-        RemoteCompilationServer(50051, serverImplType, logging = false).start()
+        server.start()
     }
 
     suspend fun compileProject(tasks: List<Task>) {
+        server.cleanup()
         val compilationOptions = CompilationOptions(
             compilerMode = CompilerMode.NON_INCREMENTAL_COMPILER,
             targetPlatform = CompileService.TargetPlatform.JVM,
@@ -47,12 +48,33 @@ class Benchmark(
         }
     }
 }
+// HOW TO RUN
+// 1. add this task to build.gradle of Ktor project
+//tasks.register("assembleAllKotlin") {
+//    allprojects {
+//        dependsOn(tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>())
+//    }
+//}
+//
+// 2. run this command that redirects all output to a file
+// ./gradlew --stop && ./gradlew clean && ./gradlew assembleAllKotlin --no-configuration-cache --rerun --no-build-cache --refresh-dependencies -Pkotlin.internal.compiler.arguments.log.level=warning -Pkotlin.incremental=false > output
+//
+// 3. create a file in this Kotlin project and paste there the generated output from previous step
+//
+// 4. pass the path of the file to getTask function
+//
+// 5. run this command to build required modules for our app
+// ./gradlew :libraries:build && ./gradlew :kotlin-scripting-compiler-impl-embeddable:build && ./gradlew :kotlin-scripting-compiler-impl:build && ./gradlew :kotlin-scripting-compiler-embeddable:build && ./gradlew :kotlinx-serialization-compiler-plugin.embeddable:build
+//
+// 6. swap paths of hardcoded dependencies for yours in CompilerUtils.getMap() function, starting on line 89
+//
+// 7. change CWD of this configuration to /kotlin/compiler/daemon/remote-daemon
+//
+// 8. ready to run main function
 
 suspend fun main() {
-    val ktorTasks =
-        DataExtractor.getTask("/Users/michal.svec/Desktop/kotlin/compiler/daemon/remote-daemon/src/main/kotlin/benchmark/compileOutput")
+    val ktorTasks = TasksExtractor.getTasks("/Users/michal.svec/Desktop/kotlin/compiler/daemon/remote-daemon/src/main/kotlin/benchmark/compileOutput")
     println("We have ${ktorTasks.size} tasks to compile")
-    println("************* BENCHMARK INITIALIZED *************")
     val benchmark = Benchmark(
         RemoteCompilationServiceImplType.GRPC
     )

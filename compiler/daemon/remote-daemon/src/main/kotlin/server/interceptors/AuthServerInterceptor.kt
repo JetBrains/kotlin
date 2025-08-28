@@ -13,7 +13,7 @@ import io.grpc.ServerCallHandler
 import io.grpc.ServerInterceptor
 import server.auth.ServerAuth
 
-class AuthInterceptor(private val authenticator: ServerAuth) : ServerInterceptor {
+class AuthServerInterceptor(private val authenticator: ServerAuth) : ServerInterceptor {
 
     companion object {
         val USER_ID_CONTEXT_KEY: Context.Key<String> = Context.key("user-id")
