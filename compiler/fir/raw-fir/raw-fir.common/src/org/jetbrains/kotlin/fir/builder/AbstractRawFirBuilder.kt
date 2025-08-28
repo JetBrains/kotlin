@@ -1300,7 +1300,7 @@ abstract class AbstractRawFirBuilder<T : Any>(val baseSession: FirSession, val c
         return status.isActual && (status.isInline || status.isValue || classKind == ClassKind.ANNOTATION_CLASS)
     }
 
-    protected fun resolveCollectionLiteral(arguments: FirArgumentList, callSource: KtSourceElement): FirExpression {
+    protected fun chooseCollectionLiteralNode(arguments: FirArgumentList, callSource: KtSourceElement): FirExpression {
         val supportsCollectionLiteral = baseSession.languageVersionSettings.supportsFeature(LanguageFeature.CollectionLiterals)
 
         return when {

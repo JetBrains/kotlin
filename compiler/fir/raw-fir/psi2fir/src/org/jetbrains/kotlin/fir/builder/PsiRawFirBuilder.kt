@@ -3612,7 +3612,7 @@ open class PsiRawFirBuilder(
                     arguments += innerExpression.toFirExpression("Incorrect collection literal argument")
                 }
             }
-            return resolveCollectionLiteral(arguments, expression.toFirSourceElement())
+            return chooseCollectionLiteralNode(arguments, expression.toFirSourceElement())
         }
 
         override fun visitExpression(expression: KtExpression, data: FirElement?): FirElement {
