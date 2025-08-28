@@ -41,7 +41,12 @@ internal class BtaApiGenerator(
                     }
                     parentClass?.let { addSuperinterface(it) }
                     val argument =
-                        generateArgumentType(className, CodeBlock.of(KDOC_BASE_OPTIONS_CLASS, ClassName(targetPackage, className)))
+                        generateArgumentType(
+                            className,
+                            includeSinceVersion = true,
+                            registerAsKnownArgument = false,
+                            CodeBlock.of(KDOC_BASE_OPTIONS_CLASS, ClassName(targetPackage, className))
+                        )
                     val argumentTypeName = ClassName(targetPackage, className, argument)
                     if (parentClass == null) {
                         addToArgumentStringsFun()
@@ -115,7 +120,16 @@ internal class BtaApiGenerator(
                 maybeAddExperimentalAnnotation(experimental)
                 maybeAddDeprecatedAnnotation(argument.releaseVersionsMetadata.removedVersion, wasDeprecatedInVersion)
 
-                initializer("%T(%S)", argumentTypeName, name)
+                val introducedVersion = argument.releaseVersionsMetadata.introducedVersion
+                initializer(
+                    "%T(%S, %T(%L, %L, %L))",
+                    argumentTypeName,
+                    name,
+                    KotlinVersion::class,
+                    introducedVersion.major,
+                    introducedVersion.minor,
+                    introducedVersion.patch,
+                )
             }
         }
 
@@ -207,7 +221,12 @@ internal class BtaApiGenerator(
     }
 }
 
-internal fun TypeSpec.Builder.generateArgumentType(argumentsClassName: String, kDoc: CodeBlock? = null): String {
+internal fun TypeSpec.Builder.generateArgumentType(
+    argumentsClassName: String,
+    includeSinceVersion: Boolean,
+    registerAsKnownArgument: Boolean,
+    kDoc: CodeBlock? = null,
+): String {
     require(argumentsClassName.endsWith("Arguments"))
     val argumentTypeName = argumentsClassName.removeSuffix("s")
     val typeSpec = TypeSpec.classBuilder(argumentTypeName).apply {
@@ -216,10 +235,30 @@ internal fun TypeSpec.Builder.generateArgumentType(argumentsClassName: String, k
         property<String>("id") {
             initializer("id")
         }
-        primaryConstructor(FunSpec.constructorBuilder().addParameter("id", String::class).build())
+        if (includeSinceVersion) {
+            property<KotlinVersion>("availableSinceVersion") {
+                initializer("availableSinceVersion")
+            }
+        }
+        primaryConstructor(
+            FunSpec.constructorBuilder()
+                .addParameter("id", String::class)
+                .addParameterIf("availableSinceVersion", KotlinVersion::class, includeSinceVersion)
+                .build()
+        )
+        if (registerAsKnownArgument) {
+            addInitializerBlock(CodeBlock.of("knownArguments.add(id)"))
+        }
     }.build()
     addType(typeSpec)
     return argumentTypeName
+}
+
+private fun FunSpec.Builder.addParameterIf(name: String, type: KClass<*>, condition: Boolean): FunSpec.Builder {
+    if (condition) {
+        addParameter(name, type)
+    }
+    return this
 }
 
 private fun TypeSpec.Builder.maybeAddApplyArgumentStringsFun() {

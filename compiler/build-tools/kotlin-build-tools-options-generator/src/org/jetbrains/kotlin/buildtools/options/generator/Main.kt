@@ -30,6 +30,7 @@ import kotlin.io.path.walk
  *     generate classes for all levels (`*`) or only generate classes for the specified list of argument level names and their parents
  *     (see CompilerArgumentsLevelNames.kt)
  *     1. `<package>` - (optional) the target package for generated arguments
+ *     1. `"compat"` – use special mode for compatibility layer generator
  *
  * You must specify at least one of "api" or "impl", and if both are specified "api" must come before "impl".
  */
@@ -58,12 +59,18 @@ fun main(args: Array<String>) {
         val targetPackage = if (localArgs.size > 2) {
             localArgs[2]
         } else null
+        val generateCompatLayer = localArgs.size > 3 && localArgs[3] == "compat"
         when (localArgs[0]) {
             "api" -> {
                 BtaApiGenerator(targetPackage ?: API_ARGUMENTS_PACKAGE, skipXX = true, kotlinVersion) to allowedLevels
             }
             "impl" -> {
-                BtaImplGenerator(targetPackage ?: IMPL_ARGUMENTS_PACKAGE, skipXX = false, kotlinVersion) to allowedLevels
+                BtaImplGenerator(
+                    targetPackage ?: IMPL_ARGUMENTS_PACKAGE,
+                    skipXX = false,
+                    kotlinVersion,
+                    generateCompatLayer,
+                ) to allowedLevels
             }
             else -> {
                 error("Only `api` and `impl` are supported as arguments for the main function of the options generator")

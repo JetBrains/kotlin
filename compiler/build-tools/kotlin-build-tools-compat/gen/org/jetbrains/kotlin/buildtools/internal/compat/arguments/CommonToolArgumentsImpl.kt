@@ -5,8 +5,10 @@
 
 package org.jetbrains.kotlin.buildtools.`internal`.compat.arguments
 
+import java.lang.IllegalStateException
 import kotlin.Any
 import kotlin.Boolean
+import kotlin.KotlinVersion
 import kotlin.OptIn
 import kotlin.String
 import kotlin.Suppress
@@ -36,6 +38,9 @@ internal abstract class CommonToolArgumentsImpl : ArgumentsCommonToolArguments {
   override operator fun <V> `get`(key: ArgumentsCommonToolArguments.CommonToolArgument<V>): V = optionsMap[key.id] as V
 
   override operator fun <V> `set`(key: ArgumentsCommonToolArguments.CommonToolArgument<V>, `value`: V) {
+    if (key.availableSinceVersion > KotlinVersion(2, 2, 20)) {
+      throw IllegalStateException("${key.id} is available only since ${key.availableSinceVersion}")
+    }
     optionsMap[key.id] = `value`
   }
 
@@ -52,13 +57,17 @@ internal abstract class CommonToolArgumentsImpl : ArgumentsCommonToolArguments {
 
   @Suppress("DEPRECATION")
   public fun toCompilerArguments(arguments: CommonToolArguments): CommonToolArguments {
+    val unknownArgs = optionsMap.keys.filter { it !in knownArguments }
+    if (unknownArgs.isNotEmpty()) {
+      throw IllegalStateException("Unknown arguments: ${unknownArgs.joinToString()}")
+    }
     if (HELP in this) { arguments.help = get(HELP)}
     if (X in this) { arguments.extraHelp = get(X)}
     if (VERSION in this) { arguments.version = get(VERSION)}
     if (VERBOSE in this) { arguments.verbose = get(VERBOSE)}
     if (NOWARN in this) { arguments.suppressWarnings = get(NOWARN)}
     if (WERROR in this) { arguments.allWarningsAsErrors = get(WERROR)}
-    try { if (WEXTRA in this) { arguments.extraWarnings = get(WEXTRA)} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: WEXTRA. Current compiler version is: $KC_VERSION}, but argument was introduced in 2.1.0""").initCause(e) }
+    try { if (WEXTRA in this) { arguments.extraWarnings = get(WEXTRA)} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: WEXTRA. Current compiler version is: $KC_VERSION}, but the argument was introduced in 2.1.0""").initCause(e) }
     return arguments
   }
 
@@ -76,9 +85,14 @@ internal abstract class CommonToolArgumentsImpl : ArgumentsCommonToolArguments {
 
   public class CommonToolArgument<V>(
     public val id: String,
-  )
+  ) {
+    init {
+      knownArguments.add(id)}
+  }
 
   public companion object {
+    private val knownArguments: MutableSet<String> = mutableSetOf()
+
     public val HELP: CommonToolArgument<Boolean> = CommonToolArgument("HELP")
 
     public val X: CommonToolArgument<Boolean> = CommonToolArgument("X")
