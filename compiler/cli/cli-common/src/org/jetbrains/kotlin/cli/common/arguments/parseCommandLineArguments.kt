@@ -164,7 +164,6 @@ private fun <A : CommonToolArguments> parsePreprocessedCommandLineArguments(
     var freeArgsStarted = false
 
     val freeArgs = ArrayList<String>()
-    val internalArguments = ArrayList<ManualLanguageFeatureSetting>()
 
     var i = 0
     loop@ while (i < args.size) {
@@ -179,25 +178,15 @@ private fun <A : CommonToolArguments> parsePreprocessedCommandLineArguments(
             continue
         }
 
-        val key = arg.substringBefore('=')
+        // TODO(KT-80348): should be replaced with just '=' when `-XXLanguage` would be removed
+        val delimiter = when {
+            arg.startsWith("-XXLanguage") -> ':'
+            else -> '='
+        }
+        val key = arg.substringBefore(delimiter)
         val argumentField = properties[key]
         if (argumentField == null) {
             when {
-                // Unknown -XX argument
-                arg.startsWith(INTERNAL_ARGUMENT_PREFIX) -> {
-                    val parser = LanguageSettingsParser.takeIf { it.canParse(arg) }
-
-                    if (parser == null) {
-                        errors.value.unknownExtraFlags += arg
-                    } else {
-                        val newInternalArgument = parser.parseInternalArgument(arg, errors.value) ?: continue
-                        // Manual language feature setting overrides the previous value of the same feature setting, if it exists.
-                        internalArguments.removeIf {
-                            it.languageFeature == newInternalArgument.languageFeature
-                        }
-                        internalArguments.add(newInternalArgument)
-                    }
-                }
                 // Unknown -X argument
                 arg.startsWith(ADVANCED_ARGUMENT_PREFIX) -> errors.value.unknownExtraFlags.add(arg)
                 arg.startsWith("-") -> errors.value.unknownArgs.add(arg)
@@ -232,7 +221,7 @@ private fun <A : CommonToolArguments> parsePreprocessedCommandLineArguments(
 
         val value: Any = when {
             getter.returnType.kotlin == Boolean::class -> {
-                if (arg.startsWith(argument.value + "=")) {
+                if (arg.startsWith(argument.value + delimiter)) {
                     // Can't use toBooleanStrict yet because this part of the compiler is used in Gradle and needs API version 1.4.
                     when (arg.substring(argument.value.length + 1)) {
                         "true" -> true
@@ -241,10 +230,10 @@ private fun <A : CommonToolArguments> parsePreprocessedCommandLineArguments(
                     }
                 } else true
             }
-            arg.startsWith(argument.value + "=") -> {
+            arg.startsWith(argument.value + delimiter) -> {
                 arg.substring(argument.value.length + 1)
             }
-            arg.startsWith(argument.deprecatedName + "=") -> {
+            arg.startsWith(argument.deprecatedName + delimiter) -> {
                 arg.substring(argument.deprecatedName.length + 1)
             }
             i == args.size -> {
@@ -265,7 +254,17 @@ private fun <A : CommonToolArguments> parsePreprocessedCommandLineArguments(
     }
 
     result.freeArgs += freeArgs
-    result.updateInternalArguments(internalArguments, overrideArguments)
+    if (result is CommonCompilerArguments) {
+        val internalArguments = ArrayList<ManualLanguageFeatureSetting>()
+        for (arg in result.manuallyConfiguredFeatures.orEmpty()) {
+            val featureSetting = LanguageSettingsParser.parseLanguageFeature(arg, "-XXLanguage:$arg", errors.value) ?: continue
+            internalArguments.removeIf {
+                it.languageFeature == featureSetting.languageFeature
+            }
+            internalArguments.add(featureSetting)
+        }
+        result.updateInternalArguments(internalArguments, overrideArguments)
+    }
 }
 
 private fun <A : CommonToolArguments> A.updateInternalArguments(
