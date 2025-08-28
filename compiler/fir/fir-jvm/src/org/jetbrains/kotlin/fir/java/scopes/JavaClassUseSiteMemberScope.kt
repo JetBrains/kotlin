@@ -221,7 +221,9 @@ class JavaClassUseSiteMemberScope(
     private fun FirPropertySymbol.findGetterOverride(
         scope: FirScope,
     ): FirNamedFunctionSymbol? {
-        val specialGetterName = if (canUseSpecialGetters) getBuiltinSpecialPropertyGetterName() else null
+        val specialGetterName = runIf(canUseSpecialGetters || name in BuiltinSpecialProperties.SPECIAL_SHORT_NAMES) {
+            getBuiltinSpecialPropertyGetterName()
+        }
         val name = specialGetterName?.asString() ?: JvmAbi.getterName(fir.name.asString())
         return findGetterOverride(name, scope)
     }
