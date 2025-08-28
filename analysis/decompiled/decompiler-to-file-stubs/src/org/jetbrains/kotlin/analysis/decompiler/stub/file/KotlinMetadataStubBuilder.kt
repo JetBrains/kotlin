@@ -105,7 +105,7 @@ abstract class KotlinMetadataStubBuilder : ClsStubBuilder() {
         ) : FileWithMetadata() {
             val nameResolver: NameResolverImpl = NameResolverImpl(proto.strings, proto.qualifiedNames)
 
-            val packageFqName: FqName
+            open val packageFqName: FqName
                 get() = FqName(nameResolver.getPackageFqName(proto.`package`.getExtension(serializerProtocol.packageFqName)))
 
             open val classesToDecompile: List<ProtoBuf.Class>

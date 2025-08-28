@@ -10,9 +10,13 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiManager
 import com.intellij.psi.compiled.ClassFileDecompilers
 import com.intellij.psi.compiled.ClsStubBuilder
-import org.jetbrains.kotlin.analysis.decompiler.konan.FileWithMetadata.Compatible
-import org.jetbrains.kotlin.analysis.decompiler.konan.FileWithMetadata.Incompatible
 import org.jetbrains.kotlin.analysis.decompiler.psi.KotlinDecompiledFileViewProvider
+import org.jetbrains.kotlin.analysis.decompiler.stub.file.KotlinMetadataStubBuilder.FileWithMetadata
+import org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf
+import org.jetbrains.kotlin.library.metadata.KlibMetadataSerializerProtocol
+import org.jetbrains.kotlin.metadata.ProtoBuf
+import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.serialization.SerializerExtensionProtocol
 import java.io.IOException
 
@@ -61,9 +65,22 @@ abstract class KlibMetadataDecompiler(
             val (fragment, version) = klibMetadataLoadingCache.getCachedPackageFragmentWithVersion(packageFragment)
             if (fragment == null || version == null) return null
             if (!version.isCompatibleWithCurrentCompilerVersion()) {
-                return Incompatible(version)
+                return FileWithMetadata.Incompatible(version)
             }
-            return Compatible(fragment, version)
+
+            return KlibFileWithMetadata(fragment, version)
         }
+    }
+
+    class KlibFileWithMetadata(
+        proto: ProtoBuf.PackageFragment,
+        version: BinaryVersion,
+    ) : FileWithMetadata.Compatible(
+        proto = proto,
+        version = version,
+        serializerProtocol = KlibMetadataSerializerProtocol,
+    ) {
+        override val packageFqName: FqName
+            get() = FqName(proto.getExtension(KlibMetadataProtoBuf.fqName))
     }
 }

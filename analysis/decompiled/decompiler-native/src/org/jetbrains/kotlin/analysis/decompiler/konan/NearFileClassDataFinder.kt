@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.decompiler.konan
 
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.containers.FactoryMap
+import org.jetbrains.kotlin.analysis.decompiler.stub.file.KotlinMetadataStubBuilder.FileWithMetadata
 import org.jetbrains.kotlin.library.metadata.KlibMetadataClassDataFinder
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.serialization.deserialization.ClassData
