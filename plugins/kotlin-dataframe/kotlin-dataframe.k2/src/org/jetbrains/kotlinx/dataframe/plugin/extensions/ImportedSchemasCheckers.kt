@@ -61,7 +61,7 @@ private object ImportedSchemaCompanionObjectChecker : FirRegularClassChecker(mpp
             } else {
                 declaration.symbol.resolvedSuperTypes.forEach {
                     val argument = it.typeArguments.firstOrNull() as? ConeKotlinType
-                    if (it.classId == Names.DATAFRAME_PROVIDER && argument != null && argument.toRegularClassSymbol(context.session) != containingClassSymbol) {
+                    if (it.classId == Names.DATAFRAME_PROVIDER && argument != null && argument.toRegularClassSymbol() != containingClassSymbol) {
                         reporter.reportOn(
                             declaration.source,
                             INVALID_SUPERTYPE,
