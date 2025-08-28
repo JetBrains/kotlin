@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.buildtools.`internal`.compat.arguments
 
+import java.lang.IllegalStateException
 import kotlin.Any
 import kotlin.Array
 import kotlin.Boolean
@@ -12,7 +13,9 @@ import kotlin.OptIn
 import kotlin.String
 import kotlin.Suppress
 import kotlin.collections.MutableMap
+import kotlin.collections.MutableSet
 import kotlin.collections.mutableMapOf
+import kotlin.collections.mutableSetOf
 import org.jetbrains.kotlin.buildtools.`internal`.compat.arguments.CommonCompilerArgumentsImpl.Companion.API_VERSION
 import org.jetbrains.kotlin.buildtools.`internal`.compat.arguments.CommonCompilerArgumentsImpl.Companion.KOTLIN_HOME
 import org.jetbrains.kotlin.buildtools.`internal`.compat.arguments.CommonCompilerArgumentsImpl.Companion.LANGUAGE_VERSION
@@ -99,9 +102,10 @@ import org.jetbrains.kotlin.buildtools.`internal`.compat.arguments.CommonCompile
 import org.jetbrains.kotlin.buildtools.`internal`.compat.arguments.CommonCompilerArgumentsImpl.Companion.X_WHEN_GUARDS
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.ExplicitApiMode
-import org.jetbrains.kotlin.buildtools.api.arguments.enums.KotlinVersion
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.ReturnValueCheckerMode
+import kotlin.KotlinVersion as KotlinKotlinVersion
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonCompilerArguments as ArgumentsCommonCompilerArguments
+import org.jetbrains.kotlin.buildtools.api.arguments.enums.KotlinVersion as EnumsKotlinVersion
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments as CommonCompilerArguments
 import org.jetbrains.kotlin.compilerRunner.toArgumentStrings as compilerToArgumentStrings
 import org.jetbrains.kotlin.config.KotlinCompilerVersion.VERSION as KC_VERSION
@@ -114,6 +118,9 @@ internal abstract class CommonCompilerArgumentsImpl : CommonToolArgumentsImpl(),
   override operator fun <V> `get`(key: ArgumentsCommonCompilerArguments.CommonCompilerArgument<V>): V = optionsMap[key.id] as V
 
   override operator fun <V> `set`(key: ArgumentsCommonCompilerArguments.CommonCompilerArgument<V>, `value`: V) {
+    if (key.availableSinceVersion > KotlinKotlinVersion(2, 2, 20)) {
+      throw IllegalStateException("${key.id} is available only since ${key.availableSinceVersion}")
+    }
     optionsMap[key.id] = `value`
   }
 
@@ -131,6 +138,10 @@ internal abstract class CommonCompilerArgumentsImpl : CommonToolArgumentsImpl(),
   @Suppress("DEPRECATION")
   public fun toCompilerArguments(arguments: CommonCompilerArguments): CommonCompilerArguments {
     super.toCompilerArguments(arguments)
+    val unknownArgs = optionsMap.keys.filter { it !in knownArguments }
+    if (unknownArgs.isNotEmpty()) {
+      throw IllegalStateException("Unknown arguments: ${unknownArgs.joinToString()}")
+    }
     if (LANGUAGE_VERSION in this) { arguments.languageVersion = get(LANGUAGE_VERSION)?.stringValue}
     if (API_VERSION in this) { arguments.apiVersion = get(API_VERSION)?.stringValue}
     if (KOTLIN_HOME in this) { arguments.kotlinHome = get(KOTLIN_HOME)}
@@ -221,8 +232,8 @@ internal abstract class CommonCompilerArgumentsImpl : CommonToolArgumentsImpl(),
   @Suppress("DEPRECATION")
   public fun applyCompilerArguments(arguments: CommonCompilerArguments) {
     super.applyCompilerArguments(arguments)
-    try { this[LANGUAGE_VERSION] = arguments.languageVersion?.let { KotlinVersion.entries.first { entry -> entry.stringValue == it } } } catch (_: NoSuchMethodError) {  }
-    try { this[API_VERSION] = arguments.apiVersion?.let { KotlinVersion.entries.first { entry -> entry.stringValue == it } } } catch (_: NoSuchMethodError) {  }
+    try { this[LANGUAGE_VERSION] = arguments.languageVersion?.let { EnumsKotlinVersion.entries.first { entry -> entry.stringValue == it } } } catch (_: NoSuchMethodError) {  }
+    try { this[API_VERSION] = arguments.apiVersion?.let { EnumsKotlinVersion.entries.first { entry -> entry.stringValue == it } } } catch (_: NoSuchMethodError) {  }
     try { this[KOTLIN_HOME] = arguments.kotlinHome } catch (_: NoSuchMethodError) {  }
     try { this[PROGRESSIVE] = arguments.progressiveMode } catch (_: NoSuchMethodError) {  }
     try { this[SCRIPT] = arguments.script } catch (_: NoSuchMethodError) {  }
@@ -310,13 +321,18 @@ internal abstract class CommonCompilerArgumentsImpl : CommonToolArgumentsImpl(),
 
   public class CommonCompilerArgument<V>(
     public val id: String,
-  )
+  ) {
+    init {
+      knownArguments.add(id)}
+  }
 
   public companion object {
-    public val LANGUAGE_VERSION: CommonCompilerArgument<KotlinVersion?> =
+    private val knownArguments: MutableSet<String> = mutableSetOf()
+
+    public val LANGUAGE_VERSION: CommonCompilerArgument<EnumsKotlinVersion?> =
         CommonCompilerArgument("LANGUAGE_VERSION")
 
-    public val API_VERSION: CommonCompilerArgument<KotlinVersion?> =
+    public val API_VERSION: CommonCompilerArgument<EnumsKotlinVersion?> =
         CommonCompilerArgument("API_VERSION")
 
     public val KOTLIN_HOME: CommonCompilerArgument<String?> = CommonCompilerArgument("KOTLIN_HOME")

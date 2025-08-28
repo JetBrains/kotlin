@@ -5,16 +5,20 @@
 
 package org.jetbrains.kotlin.buildtools.`internal`.compat.arguments
 
+import java.lang.IllegalStateException
 import kotlin.Any
 import kotlin.Array
 import kotlin.Boolean
 import kotlin.Int
+import kotlin.KotlinVersion
 import kotlin.OptIn
 import kotlin.String
 import kotlin.Suppress
 import kotlin.collections.List
 import kotlin.collections.MutableMap
+import kotlin.collections.MutableSet
 import kotlin.collections.mutableMapOf
+import kotlin.collections.mutableSetOf
 import org.jetbrains.kotlin.buildtools.`internal`.compat.arguments.JvmCompilerArgumentsImpl.Companion.CLASSPATH
 import org.jetbrains.kotlin.buildtools.`internal`.compat.arguments.JvmCompilerArgumentsImpl.Companion.D
 import org.jetbrains.kotlin.buildtools.`internal`.compat.arguments.JvmCompilerArgumentsImpl.Companion.EXPRESSION
@@ -108,6 +112,9 @@ internal class JvmCompilerArgumentsImpl : CommonCompilerArgumentsImpl(), JvmComp
   override operator fun <V> `get`(key: JvmCompilerArguments.JvmCompilerArgument<V>): V = optionsMap[key.id] as V
 
   override operator fun <V> `set`(key: JvmCompilerArguments.JvmCompilerArgument<V>, `value`: V) {
+    if (key.availableSinceVersion > KotlinVersion(2, 2, 20)) {
+      throw IllegalStateException("${key.id} is available only since ${key.availableSinceVersion}")
+    }
     optionsMap[key.id] = `value`
   }
 
@@ -125,6 +132,10 @@ internal class JvmCompilerArgumentsImpl : CommonCompilerArgumentsImpl(), JvmComp
   @Suppress("DEPRECATION")
   public fun toCompilerArguments(arguments: K2JVMCompilerArguments = K2JVMCompilerArguments()): K2JVMCompilerArguments {
     super.toCompilerArguments(arguments)
+    val unknownArgs = optionsMap.keys.filter { it !in knownArguments }
+    if (unknownArgs.isNotEmpty()) {
+      throw IllegalStateException("Unknown arguments: ${unknownArgs.joinToString()}")
+    }
     if (D in this) { arguments.destination = get(D)}
     if (CLASSPATH in this) { arguments.classpath = get(CLASSPATH)}
     if (INCLUDE_RUNTIME in this) { arguments.includeRuntime = get(INCLUDE_RUNTIME)}
@@ -303,9 +314,14 @@ internal class JvmCompilerArgumentsImpl : CommonCompilerArgumentsImpl(), JvmComp
 
   public class JvmCompilerArgument<V>(
     public val id: String,
-  )
+  ) {
+    init {
+      knownArguments.add(id)}
+  }
 
   public companion object {
+    private val knownArguments: MutableSet<String> = mutableSetOf()
+
     public val D: JvmCompilerArgument<String?> = JvmCompilerArgument("D")
 
     public val CLASSPATH: JvmCompilerArgument<String?> = JvmCompilerArgument("CLASSPATH")

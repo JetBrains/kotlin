@@ -28,6 +28,7 @@ internal class BtaImplGenerator(
     private val targetPackage: String,
     private val skipXX: Boolean,
     private val kotlinVersion: KotlinReleaseVersion,
+    private val generateCompatLayer: Boolean,
 ) : BtaGenerator {
 
     private val outputs = mutableListOf<Pair<Path, String>>()
@@ -68,12 +69,20 @@ internal class BtaImplGenerator(
                     val toCompilerConverterFun = toCompilerConverterFunBuilder(level, parentClass)
                     val applyCompilerArgumentsFun = applyCompilerArgumentsFunBuilder(level, parentClass)
 
-                    val argumentTypeNameString = generateArgumentType(apiClassName)
+                    val argumentTypeNameString =
+                        generateArgumentType(apiClassName, includeSinceVersion = false, registerAsKnownArgument = true)
                     val argumentTypeName = ClassName(API_ARGUMENTS_PACKAGE, apiClassName, argumentTypeNameString)
                     val argumentImplTypeName = ClassName(targetPackage, implClassName, argumentTypeNameString)
 
                     generateGetPutFunctions(argumentTypeName, argumentImplTypeName)
                     addType(TypeSpec.companionObjectBuilder().apply {
+                        property(
+                            "knownArguments",
+                            ClassName("kotlin.collections", "MutableSet").parameterizedBy(ClassName("kotlin", "String")),
+                            KModifier.PRIVATE
+                        ) {
+                            initializer("%M()", MemberName("kotlin.collections", "mutableSetOf"))
+                        }
                         generateOptions(
                             arguments = level.arguments,
                             implClassName = implClassName,
@@ -175,7 +184,14 @@ internal class BtaImplGenerator(
                 }
                 add("}")
             }.build().also { setStatement ->
-                toCompilerConverterFun.addSafeSetStatement(wasIntroducedRecently, wasRemoved, name, argument, setStatement)
+                toCompilerConverterFun.addSafeSetStatement(
+                    wasIntroducedRecently,
+                    wasRemoved,
+                    name,
+                    argument,
+                    setStatement,
+                    generateCompatLayer,
+                )
             }
 
             applyCompilerArgumentsFun.addSafeMethodAccessStatement(CodeBlock.builder().apply {
@@ -232,6 +248,22 @@ internal class BtaImplGenerator(
             addTypeVariable(typeParameter)
             addParameter("key", parameter.parameterizedBy(typeParameter))
             addParameter("value", typeParameter)
+            addCode(
+                CodeBlock.builder()
+                    .beginControlFlow(
+                        "if (key.availableSinceVersion > %T(%L, %L, %L))",
+                        ClassName("kotlin", "KotlinVersion"),
+                        kotlinVersion.major,
+                        kotlinVersion.minor,
+                        kotlinVersion.patch
+                    )
+                    .addStatement(
+                        $$"throw %T(\"${key.id} is available only since ${key.availableSinceVersion}\")",
+                        IllegalStateException::class
+                    )
+                    .endControlFlow()
+                    .build()
+            )
             addStatement("%N[key.id] = %N", mapProperty, "value")
         }
 
@@ -277,8 +309,9 @@ private fun FunSpec.Builder.addSafeSetStatement(
     name: String,
     argument: KotlinCompilerArgument,
     setStatement: CodeBlock,
+    generateCompatLayer: Boolean,
 ) {
-    if (wasIntroducedRecently || wasRemoved) {
+    if (generateCompatLayer && (wasIntroducedRecently || wasRemoved)) {
         val errorMessage = CodeBlock.of(
             "%P",
             buildString {
@@ -335,6 +368,17 @@ private fun toCompilerConverterFunBuilder(
     if (parentClass != null) {
         addStatement("super.toCompilerArguments(arguments)")
     }
+    addStatement("val unknownArgs = optionsMap.keys.filter { it !in knownArguments }")
+    addCode(
+        CodeBlock.builder()
+            .beginControlFlow("if (unknownArgs.isNotEmpty())")
+            .addStatement(
+                "throw %T(\"Unknown arguments: \${unknownArgs.joinToString()}\")",
+                IllegalStateException::class
+            )
+            .endControlFlow()
+            .build()
+    )
     returns(compilerArgumentsClass)
 }
 
