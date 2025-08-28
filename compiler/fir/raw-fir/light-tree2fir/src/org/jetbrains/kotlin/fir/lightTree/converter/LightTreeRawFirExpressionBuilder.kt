@@ -129,7 +129,7 @@ class LightTreeRawFirExpressionBuilder(
     }
 
     /*****    EXPRESSIONS    *****/
-    fun convertExpression(expression: LighterASTNode, errorReason: String): FirElement {
+    fun convertExpression(expression: LighterASTNode, errorReason: String): FirElement? {
         return when (expression.tokenType) {
             LAMBDA_EXPRESSION -> convertLambdaExpression(expression)
             BINARY_EXPRESSION -> convertBinaryExpression(expression)
