@@ -10,7 +10,7 @@ package org.jetbrains.kotlin.fir.references
 
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.resolve.FirSpecialOrigin
+import org.jetbrains.kotlin.fir.resolve.FirResolvedSymbolOrigin
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
@@ -23,7 +23,7 @@ abstract class FirResolvedNamedReference : FirNamedReference() {
     abstract override val source: KtSourceElement?
     abstract override val name: Name
     abstract val resolvedSymbol: FirBasedSymbol<*>
-    abstract val specialOrigin: FirSpecialOrigin?
+    abstract val resolvedSymbolOrigin: FirResolvedSymbolOrigin?
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
         visitor.visitResolvedNamedReference(this, data)
@@ -32,5 +32,5 @@ abstract class FirResolvedNamedReference : FirNamedReference() {
     override fun <E : FirElement, D> transform(transformer: FirTransformer<D>, data: D): E =
         transformer.transformResolvedNamedReference(this, data) as E
 
-    abstract fun replaceSpecialOrigin(newSpecialOrigin: FirSpecialOrigin?)
+    abstract fun replaceResolvedSymbolOrigin(newResolvedSymbolOrigin: FirResolvedSymbolOrigin?)
 }

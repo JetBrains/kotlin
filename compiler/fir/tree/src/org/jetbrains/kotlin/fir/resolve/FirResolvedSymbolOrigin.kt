@@ -5,7 +5,12 @@
 
 package org.jetbrains.kotlin.fir.resolve
 
-enum class FirSpecialOrigin {
-    StarOrDefaultImport,
+enum class FirResolvedSymbolOrigin {
+    DefaultImport,
+    StarImport,
+    ExplicitImport,
+    Package,
+    Qualified,
+    RootForIdeResolution,
     ContextSensitive
 }

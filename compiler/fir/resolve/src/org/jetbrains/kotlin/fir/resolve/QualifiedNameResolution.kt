@@ -48,6 +48,7 @@ fun BodyResolveComponents.resolveRootPartOfQualifier(
             qualifiedAccess = qualifiedAccess,
             packageFqName = FqName.ROOT,
             nonFatalDiagnostics = nonFatalDiagnosticsFromExpression,
+            resolvedSymbolOrigin = FirResolvedSymbolOrigin.RootForIdeResolution
         )
     }
 
@@ -70,14 +71,14 @@ fun BodyResolveComponents.resolveRootPartOfQualifier(
             continue
         }
 
-        return buildResolvedQualifierResultForTopLevelClass(symbol, qualifiedAccess, nonFatalDiagnosticsFromExpression, candidate, candidate.specialOrigin)
+        return buildResolvedQualifierResultForTopLevelClass(symbol, qualifiedAccess, nonFatalDiagnosticsFromExpression, candidate)
     }
 
     // If we have only found one unsuccessful candidate, return it.
     if (firstUnsuccessful != null) {
         // We checked the type of the symbol in the loop
         val symbol = firstUnsuccessful.symbol as FirClassLikeSymbol
-        return buildResolvedQualifierResultForTopLevelClass(symbol, qualifiedAccess, nonFatalDiagnosticsFromExpression, firstUnsuccessful, firstUnsuccessful.specialOrigin)
+        return buildResolvedQualifierResultForTopLevelClass(symbol, qualifiedAccess, nonFatalDiagnosticsFromExpression, firstUnsuccessful)
     }
 
     // KT-72173 To mimic K1 behavior,
@@ -146,7 +147,7 @@ fun FirResolvedQualifier.continueQualifier(
 private fun FirScope.getUnambiguousCandidate(name: Name, components: BodyResolveComponents): FirTypeCandidateCollector.TypeCandidate? {
     val collector = FirTypeCandidateCollector(components.session, components.file, components.containingDeclarations)
     processClassifiersByName(name) {
-        collector.processCandidate(it, null, this@getUnambiguousCandidate.asSpecialOrigin())
+        collector.processCandidate(it, null, this@getUnambiguousCandidate.toResolvedSymbolOrigin())
     }
     return collector.getResult().resolvedCandidateOrNull()
 }
@@ -163,13 +164,14 @@ private fun FqName.continueQualifierInPackage(
             qualifiedAccess = qualifiedAccess,
             packageFqName = childFqName,
             nonFatalDiagnostics = nonFatalDiagnosticsFromExpression,
+            resolvedSymbolOrigin = FirResolvedSymbolOrigin.Qualified,
         )
     }
 
     val classId = ClassId.topLevel(childFqName)
     val symbol = components.symbolProvider.getClassLikeSymbolByClassId(classId) ?: return null
     val collector = FirTypeCandidateCollector(components.session, components.file, components.containingDeclarations)
-    collector.processCandidate(symbol, specialOrigin = null)
+    collector.processCandidate(symbol, resolvedSymbolOrigin = FirResolvedSymbolOrigin.Qualified)
     val candidate = collector.getResult().resolvedCandidateOrNull()
 
     val nonFatalDiagnostics = extractNonFatalDiagnostics(
@@ -194,7 +196,6 @@ private fun BodyResolveComponents.buildResolvedQualifierResultForTopLevelClass(
     qualifiedAccess: FirQualifiedAccessExpression,
     nonFatalDiagnosticsFromExpression: List<ConeDiagnostic>?,
     candidate: FirTypeCandidateCollector.TypeCandidate,
-    specialOrigin: FirSpecialOrigin?,
 ): QualifierResolutionResult {
     val classId = symbol.classId
     val nonFatalDiagnostics = extractNonFatalDiagnostics(
@@ -211,7 +212,6 @@ private fun BodyResolveComponents.buildResolvedQualifierResultForTopLevelClass(
         symbol = symbol,
         nonFatalDiagnostics = nonFatalDiagnostics,
         candidate = candidate,
-        specialOrigin = specialOrigin,
     )
 }
 
@@ -224,7 +224,7 @@ private fun BodyResolveComponents.buildResolvedQualifierResult(
     extraTypeArguments: List<FirTypeProjection>? = null,
     candidate: FirTypeCandidateCollector.TypeCandidate? = null,
     explicitParent: FirResolvedQualifier? = null,
-    specialOrigin: FirSpecialOrigin? = null,
+    resolvedSymbolOrigin: FirResolvedSymbolOrigin? = null
 ): QualifierResolutionResult {
     return QualifierResolutionResult(
         buildResolvedQualifierForClass(
@@ -237,7 +237,7 @@ private fun BodyResolveComponents.buildResolvedQualifierResult(
             nonFatalDiagnostics = nonFatalDiagnostics.orEmpty(),
             annotations = qualifiedAccess.annotations,
             explicitParent = explicitParent,
-            specialOrigin = specialOrigin,
+            resolvedSymbolOrigin = candidate?.resolvedSymbolOrigin ?: resolvedSymbolOrigin,
         ),
         candidate?.applicability ?: CandidateApplicability.RESOLVED,
     )

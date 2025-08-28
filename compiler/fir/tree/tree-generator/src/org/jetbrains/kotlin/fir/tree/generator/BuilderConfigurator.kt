@@ -317,35 +317,35 @@ class BuilderConfigurator(model: Model) : AbstractFirBuilderConfigurator<Abstrac
         }
 
         builder(resolvedNamedReference, "FirResolvedNamedReferenceImpl") {
-            defaultNull("specialOrigin")
+            defaultNull("resolvedSymbolOrigin")
         }
 
         builder(resolvedNamedReference, "FirPropertyFromParameterResolvedNamedReference") {
-            defaultNull("specialOrigin")
+            defaultNull("resolvedSymbolOrigin")
         }
 
         builder(resolvedErrorReference) {
-            defaultNull("specialOrigin")
+            defaultNull("resolvedSymbolOrigin")
         }
 
         builder(resolvedCallableReference) {
-            defaultNull("specialOrigin")
+            defaultNull("resolvedSymbolOrigin")
         }
 
         builder(delegateFieldReference) {
-            defaultNull("specialOrigin")
+            defaultNull("resolvedSymbolOrigin")
         }
 
         builder(backingFieldReference) {
-            defaultNull("specialOrigin")
+            defaultNull("resolvedSymbolOrigin")
         }
 
         builder(propertyWithExplicitBackingFieldResolvedNamedReference) {
-            defaultNull("specialOrigin")
+            defaultNull("resolvedSymbolOrigin")
         }
 
         builder(resolvedTypeRef) {
-            defaultNull("delegatedTypeRef", "specialOrigin")
+            defaultNull("delegatedTypeRef", "resolvedSymbolOrigin")
             withCopy()
         }
 
@@ -440,13 +440,13 @@ class BuilderConfigurator(model: Model) : AbstractFirBuilderConfigurator<Abstrac
         builder(resolvedQualifier) {
             parents += abstractResolvedQualifierBuilder
             defaultFalse("isNullableLHSForCallableReference", "isFullyQualified", "canBeValue")
-            defaultNull("specialOrigin")
+            defaultNull("resolvedSymbolOrigin")
         }
 
         builder(errorResolvedQualifier) {
             parents += abstractResolvedQualifierBuilder
             defaultFalse("isNullableLHSForCallableReference", "isFullyQualified", "canBeValue")
-            defaultNull("specialOrigin")
+            defaultNull("resolvedSymbolOrigin")
         }
 
 //        builder(safeCallExpression) {

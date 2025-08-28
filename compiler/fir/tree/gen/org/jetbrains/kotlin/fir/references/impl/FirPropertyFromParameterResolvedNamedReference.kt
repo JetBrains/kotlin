@@ -13,7 +13,7 @@ package org.jetbrains.kotlin.fir.references.impl
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
-import org.jetbrains.kotlin.fir.resolve.FirSpecialOrigin
+import org.jetbrains.kotlin.fir.resolve.FirResolvedSymbolOrigin
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
@@ -23,7 +23,7 @@ class FirPropertyFromParameterResolvedNamedReference @FirImplementationDetail co
     override val source: KtSourceElement?,
     override val name: Name,
     override val resolvedSymbol: FirBasedSymbol<*>,
-    override var specialOrigin: FirSpecialOrigin?,
+    override var resolvedSymbolOrigin: FirResolvedSymbolOrigin?,
 ) : FirResolvedNamedReference() {
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {}
@@ -32,7 +32,7 @@ class FirPropertyFromParameterResolvedNamedReference @FirImplementationDetail co
         return this
     }
 
-    override fun replaceSpecialOrigin(newSpecialOrigin: FirSpecialOrigin?) {
-        specialOrigin = newSpecialOrigin
+    override fun replaceResolvedSymbolOrigin(newResolvedSymbolOrigin: FirResolvedSymbolOrigin?) {
+        resolvedSymbolOrigin = newResolvedSymbolOrigin
     }
 }

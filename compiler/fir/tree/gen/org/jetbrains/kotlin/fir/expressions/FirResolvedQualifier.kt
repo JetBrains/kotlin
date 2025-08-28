@@ -11,7 +11,7 @@ package org.jetbrains.kotlin.fir.expressions
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
-import org.jetbrains.kotlin.fir.resolve.FirSpecialOrigin
+import org.jetbrains.kotlin.fir.resolve.FirResolvedSymbolOrigin
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeProjection
@@ -38,7 +38,7 @@ abstract class FirResolvedQualifier : FirExpression() {
     abstract val canBeValue: Boolean
     abstract val isFullyQualified: Boolean
     abstract val nonFatalDiagnostics: List<ConeDiagnostic>
-    abstract val specialOrigin: FirSpecialOrigin?
+    abstract val resolvedSymbolOrigin: FirResolvedSymbolOrigin?
     abstract val typeArguments: List<FirTypeProjection>
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
@@ -58,7 +58,7 @@ abstract class FirResolvedQualifier : FirExpression() {
 
     abstract fun replaceCanBeValue(newCanBeValue: Boolean)
 
-    abstract fun replaceSpecialOrigin(newSpecialOrigin: FirSpecialOrigin?)
+    abstract fun replaceResolvedSymbolOrigin(newResolvedSymbolOrigin: FirResolvedSymbolOrigin?)
 
     abstract fun replaceTypeArguments(newTypeArguments: List<FirTypeProjection>)
 

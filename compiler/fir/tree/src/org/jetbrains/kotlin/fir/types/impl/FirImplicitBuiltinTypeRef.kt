@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.fir.types.impl
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
-import org.jetbrains.kotlin.fir.resolve.FirSpecialOrigin
+import org.jetbrains.kotlin.fir.resolve.FirResolvedSymbolOrigin
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
@@ -46,11 +46,11 @@ sealed class FirImplicitBuiltinTypeRef(
         return this
     }
 
-    override val specialOrigin: FirSpecialOrigin?
+    override val resolvedSymbolOrigin: FirResolvedSymbolOrigin?
         get() = null
 
-    override fun replaceSpecialOrigin(newSpecialOrigin: FirSpecialOrigin?) {
-        throw AssertionError("Replacing context-sensitive resolved in FirImplicitBuiltinTypeRef is not supported")
+    override fun replaceResolvedSymbolOrigin(newResolvedSymbolOrigin: FirResolvedSymbolOrigin?) {
+        throw AssertionError("Replacing resolvedSymbolOrigin in FirImplicitBuiltinTypeRef is not supported")
     }
 }
 

@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.FirDiagnosticHolder
-import org.jetbrains.kotlin.fir.resolve.FirSpecialOrigin
+import org.jetbrains.kotlin.fir.resolve.FirResolvedSymbolOrigin
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeProjection
@@ -39,7 +39,7 @@ abstract class FirErrorResolvedQualifier : FirResolvedQualifier(), FirDiagnostic
     abstract override val canBeValue: Boolean
     abstract override val isFullyQualified: Boolean
     abstract override val nonFatalDiagnostics: List<ConeDiagnostic>
-    abstract override val specialOrigin: FirSpecialOrigin?
+    abstract override val resolvedSymbolOrigin: FirResolvedSymbolOrigin?
     abstract override val typeArguments: List<FirTypeProjection>
     abstract override val diagnostic: ConeDiagnostic
 
@@ -60,7 +60,7 @@ abstract class FirErrorResolvedQualifier : FirResolvedQualifier(), FirDiagnostic
 
     abstract override fun replaceCanBeValue(newCanBeValue: Boolean)
 
-    abstract override fun replaceSpecialOrigin(newSpecialOrigin: FirSpecialOrigin?)
+    abstract override fun replaceResolvedSymbolOrigin(newResolvedSymbolOrigin: FirResolvedSymbolOrigin?)
 
     abstract override fun replaceTypeArguments(newTypeArguments: List<FirTypeProjection>)
 

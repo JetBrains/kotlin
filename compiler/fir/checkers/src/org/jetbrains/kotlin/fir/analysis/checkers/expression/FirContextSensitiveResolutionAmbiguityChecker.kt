@@ -20,13 +20,15 @@ import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.isEnabled
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
-import org.jetbrains.kotlin.fir.resolve.FirSpecialOrigin
+import org.jetbrains.kotlin.fir.resolve.FirResolvedSymbolOrigin
 import org.jetbrains.kotlin.fir.resolve.getParentChainForContextSensitiveResolutionOfExpressions
 import org.jetbrains.kotlin.fir.resolve.getParentChainForContextSensitiveResolutionOfTypes
-import org.jetbrains.kotlin.fir.scopes.FirContainingNamesAwareScope
 import org.jetbrains.kotlin.fir.scopes.getClassifiers
+import org.jetbrains.kotlin.fir.scopes.processClassifiersByName
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.hasContextParameters
 import org.jetbrains.kotlin.fir.types.FirErrorTypeRef
@@ -43,10 +45,10 @@ object FirContextSensitiveResolutionAmbiguityCheckerForEqualities : FirEqualityO
 
         val resolvedSymbol = when (rhs) {
             is FirErrorResolvedQualifier -> null
-            is FirResolvedQualifier if rhs.specialOrigin == FirSpecialOrigin.StarOrDefaultImport && rhs.explicitParent == null -> rhs.symbol
+            is FirResolvedQualifier if rhs.resolvedSymbolOrigin.shouldWarn && rhs.explicitParent == null -> rhs.symbol
             is FirPropertyAccessExpression if rhs.explicitReceiver == null -> when (val callee = rhs.calleeReference) {
                 is FirErrorNamedReference -> null
-                is FirResolvedNamedReference if callee.specialOrigin == FirSpecialOrigin.StarOrDefaultImport -> callee.resolvedSymbol
+                is FirResolvedNamedReference if callee.resolvedSymbolOrigin.shouldWarn -> callee.resolvedSymbol
                 else -> null
             }
             else -> null
@@ -59,16 +61,7 @@ object FirContextSensitiveResolutionAmbiguityCheckerForEqualities : FirEqualityO
         } ?: return
 
         for (classToLookAt in expression.arguments[0].resolvedType.getParentChainForContextSensitiveResolutionOfExpressions(context.session)) {
-            val nestedClassifierSymbols = when {
-                classToLookAt.isSealed -> classToLookAt.declaredMemberScope().getClassifiers(name)
-                else -> emptyList()
-            }
-            val staticNoArgumentProperties =
-                classToLookAt.staticScope(context.sessionHolder)?.collectNoArgumentProperties(name).orEmpty()
-            val companionNoArgumentProperties =
-                classToLookAt.resolvedCompanionObjectSymbol?.declaredMemberScope()?.collectNoArgumentProperties(name).orEmpty()
-
-            val contextSensitiveCandidates = nestedClassifierSymbols + staticNoArgumentProperties + companionNoArgumentProperties
+            val contextSensitiveCandidates = classToLookAt.contextSensitiveCandidates(name)
             if (contextSensitiveCandidates.isEmpty()) continue
             if (resolvedSymbol !in contextSensitiveCandidates) {
                 reporter.reportOn(
@@ -80,6 +73,19 @@ object FirContextSensitiveResolutionAmbiguityCheckerForEqualities : FirEqualityO
             return
         }
     }
+
+    context(context: CheckerContext)
+    fun FirRegularClassSymbol.contextSensitiveCandidates(name: Name): List<FirBasedSymbol<*>> = buildList {
+        if (isSealed) {
+            declaredMemberScope().processClassifiersByName(name, this::add)
+        }
+        staticScope(context.sessionHolder)?.processPropertiesByName(name) {
+            if (it.isNoArgumentProperty) add(it)
+        }
+        resolvedCompanionObjectSymbol?.declaredMemberScope()?.processPropertiesByName(name) {
+            if (it.isNoArgumentProperty) add(it)
+        }
+    }
 }
 
 object FirContextSensitiveResolutionAmbiguityCheckerForTypeOperators : FirTypeOperatorCallChecker(MppCheckerKind.Common) {
@@ -87,7 +93,7 @@ object FirContextSensitiveResolutionAmbiguityCheckerForTypeOperators : FirTypeOp
     override fun check(expression: FirTypeOperatorCall) {
         if (!LanguageFeature.ContextSensitiveResolutionUsingExpectedType.isEnabled()) return
         val typeRef = expression.conversionTypeRef as? FirResolvedTypeRef ?: return
-        if (typeRef.specialOrigin != FirSpecialOrigin.StarOrDefaultImport || typeRef is FirErrorTypeRef) return
+        if (!typeRef.resolvedSymbolOrigin.shouldWarn || typeRef is FirErrorTypeRef) return
 
         val resolvedClass = typeRef.toClassLikeSymbol(context.session) ?: return
         val name = (typeRef.delegatedTypeRef as? FirUserTypeRef)?.qualifier?.singleOrNull()?.name ?: return
@@ -107,8 +113,7 @@ object FirContextSensitiveResolutionAmbiguityCheckerForTypeOperators : FirTypeOp
     }
 }
 
-private fun FirContainingNamesAwareScope.collectNoArgumentProperties(name: Name): List<FirVariableSymbol<*>> = buildList {
-    processPropertiesByName(name) {
-        if (!it.isExtension && !it.hasContextParameters) add(it)
-    }
-}
+private val FirResolvedSymbolOrigin?.shouldWarn: Boolean
+    get() = this != null && (this == FirResolvedSymbolOrigin.StarImport || this == FirResolvedSymbolOrigin.DefaultImport)
+
+private val FirVariableSymbol<*>.isNoArgumentProperty: Boolean get() = !isExtension && !hasContextParameters

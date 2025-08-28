@@ -59,14 +59,14 @@ fun BodyResolveComponents.runContextSensitiveResolutionForPropertyAccess(
                 val newCalleeReference = newExpression.calleeReference
                 val shouldTake = newCalleeReference is FirResolvedNamedReference && newCalleeReference !is FirResolvedErrorReference
                 if (shouldTake) {
-                    newCalleeReference.replaceSpecialOrigin(FirSpecialOrigin.ContextSensitive)
+                    newCalleeReference.replaceResolvedSymbolOrigin(FirResolvedSymbolOrigin.ContextSensitive)
                 }
                 shouldTake
             }
 
             // resolved qualifiers are always successful when returned
             is FirResolvedQualifier -> {
-                newExpression.replaceSpecialOrigin(FirSpecialOrigin.ContextSensitive)
+                newExpression.replaceResolvedSymbolOrigin(FirResolvedSymbolOrigin.ContextSensitive)
                 true
             }
 
