@@ -590,8 +590,8 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
-    add(FirErrors.UNKNOWN_COLLECTION_LITERAL_TYPE) { firDiagnostic ->
-        UnknownCollectionLiteralTypeImpl(
+    add(FirErrors.UNSUPPORTED_COLLECTION_LITERAL_TYPE) { firDiagnostic ->
+        UnsupportedCollectionLiteralTypeImpl(
             firDiagnostic as KtPsiDiagnostic,
             token,
         )
