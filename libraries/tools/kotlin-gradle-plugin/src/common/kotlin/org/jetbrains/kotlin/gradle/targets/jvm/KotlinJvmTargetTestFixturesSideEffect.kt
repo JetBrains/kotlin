@@ -10,8 +10,7 @@ import org.gradle.internal.component.external.model.TestFixturesSupport.TEST_FIX
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnostic
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmCompilation
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinWithJavaTarget
+import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.targets.KotlinTargetSideEffect
 import org.jetbrains.kotlin.gradle.utils.addExtendsFromRelation
 import org.jetbrains.kotlin.gradle.utils.javaSourceSets
@@ -44,14 +43,14 @@ internal val ConfigureJavaTestFixturesSideEffect = KotlinTargetSideEffect { targ
 
             // Publishing
             listOfNotNull(
-                testFixturesCompilation.apiConfigurationName
+                testFixturesCompilation.legacyApiConfigurationName
             ).forEach { configurationName ->
                 target.project.addExtendsFromRelation(testFixturesSourceSet.apiElementsConfigurationName, configurationName)
             }
 
             listOfNotNull(
-                testFixturesCompilation.implementationConfigurationName,
-                testFixturesCompilation.runtimeOnlyConfigurationName
+                testFixturesCompilation.legacyImplementationConfigurationName,
+                testFixturesCompilation.legacyRuntimeOnlyConfigurationName,
             ).forEach { configurationName ->
                 target.project.addExtendsFromRelation(testFixturesSourceSet.runtimeElementsConfigurationName, configurationName)
             }
