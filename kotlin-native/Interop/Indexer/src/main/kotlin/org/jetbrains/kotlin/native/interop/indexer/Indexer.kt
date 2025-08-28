@@ -1068,7 +1068,7 @@ public open class NativeIndexImpl(val library: NativeLibrary, val verbose: Boole
 
         val isVararg = clang_Cursor_isVariadic(cursor) != 0
 
-        return FunctionDecl(name, parameters, returnType, isVararg)
+        return FunctionDecl(name, parameters, returnType, isVararg, binaryName)
     }
 
     private fun getObjCMethod(cursor: CValue<CXCursor>): ObjCMethod? {

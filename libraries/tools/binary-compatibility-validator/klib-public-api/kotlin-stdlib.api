@@ -9969,6 +9969,13 @@ open annotation class kotlinx.cinterop.internal/CCall : kotlin/Annotation { // k
         constructor <init>() // kotlinx.cinterop.internal/CCall.ConsumesReceiver.<init>|<init>(){}[0]
     }
 
+    open annotation class Direct : kotlin/Annotation { // kotlinx.cinterop.internal/CCall.Direct|null[0]
+        constructor <init>(kotlin/String) // kotlinx.cinterop.internal/CCall.Direct.<init>|<init>(kotlin.String){}[0]
+
+        final val name // kotlinx.cinterop.internal/CCall.Direct.name|{}name[0]
+            final fun <get-name>(): kotlin/String // kotlinx.cinterop.internal/CCall.Direct.name.<get-name>|<get-name>(){}[0]
+    }
+
     open annotation class ReturnsRetained : kotlin/Annotation { // kotlinx.cinterop.internal/CCall.ReturnsRetained|null[0]
         constructor <init>() // kotlinx.cinterop.internal/CCall.ReturnsRetained.<init>|<init>(){}[0]
     }

@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.native.interop.tool
 
 import kotlinx.cli.*
+import org.jetbrains.kotlin.native.interop.gen.jvm.CCallMode
 
 const val HEADER_FILTER_ADDITIONAL_SEARCH_PREFIX = "headerFilterAdditionalSearchPrefix"
 const val NODEFAULTLIBS_DEPRECATED = "nodefaultlibs"
@@ -33,6 +34,7 @@ const val DUMP_BRIDGES = "Xdump-bridges"
 const val DISABLE_EXCEPTION_PRETTIFIER = "Xdisable-exception-prettifier"
 const val USER_SETUP_HINT = "Xuser-setup-hint"
 const val KONAN_DATA_DIR = "Xkonan-data-dir"
+const val CCALL_MODE = "Xccall-mode"
 
 // TODO: unify camel and snake cases.
 // Possible solution is to accept both cases
@@ -142,6 +144,15 @@ open class CInteropArguments(argParser: ArgParser =
 
     val disableExperimentalAnnotation by argParser.option(ArgType.Boolean, "Xdisable-experimental-annotation",
             description = "Don't add @ExperimentalForeignApi to generated Kotlin declarations")
+
+    val cCallMode by argParser.option(
+            ArgType.Choice<CCallMode>(),
+            CCALL_MODE,
+            description = "CCall mode: " +
+                    "${CCallMode.DIRECT.name.lowercase()} - generate only @CCall.Direct, " +
+                    "${CCallMode.INDIRECT.name.lowercase()} - generate only @CCall (default), " +
+                    "${CCallMode.BOTH.name.lowercase()} - generate both"
+    ).default(CCallMode.INDIRECT)
 }
 
 internal fun warn(msg: String) {

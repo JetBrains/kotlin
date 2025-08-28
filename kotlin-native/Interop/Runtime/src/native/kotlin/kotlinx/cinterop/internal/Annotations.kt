@@ -37,6 +37,10 @@ public annotation class CStruct(val spelling: String) {
 @InternalForKotlinNative
 @Retention(AnnotationRetention.BINARY)
 public annotation class CCall(val id: String) {
+    @Target(AnnotationTarget.FUNCTION)
+    @Retention(AnnotationRetention.BINARY)
+    public annotation class Direct(val name: String)
+
     @Target(AnnotationTarget.VALUE_PARAMETER)
     @Retention(AnnotationRetention.BINARY)
     public annotation class CString
