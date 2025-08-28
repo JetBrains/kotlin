@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.metadata.js.JsProtoBuf
 import org.jetbrains.kotlin.psi.stubs.KotlinStubVersions
-import org.jetbrains.kotlin.serialization.SerializerExtensionProtocol
 import org.jetbrains.kotlin.serialization.js.JsSerializerProtocol
 import org.jetbrains.kotlin.utils.JsMetadataVersion
 import java.io.ByteArrayInputStream
@@ -27,8 +26,7 @@ class KotlinJavaScriptMetaFileDecompiler : KotlinMetadataDecompiler() {
 
 private object KotlinJavaScriptMetadataStubBuilder : KotlinMetadataStubBuilder() {
     override fun getStubVersion(): Int = KotlinStubVersions.JS_STUB_VERSION
-    override val fileType: FileType get() = KotlinJavaScriptMetaFileType
-    override val serializerProtocol: SerializerExtensionProtocol get() = JsSerializerProtocol
+    override val supportedFileType: FileType get() = KotlinJavaScriptMetaFileType
     override val expectedBinaryVersion: BinaryVersion get() = JsMetadataVersion.INSTANCE
 
     override fun readFile(virtualFile: VirtualFile, content: ByteArray): FileWithMetadata {

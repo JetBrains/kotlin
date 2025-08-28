@@ -23,31 +23,48 @@ import org.jetbrains.kotlin.serialization.deserialization.ClassDeserializer
 import org.jetbrains.kotlin.serialization.deserialization.ProtoBasedClassDataFinder
 import org.jetbrains.kotlin.serialization.deserialization.ProtoContainer
 import org.jetbrains.kotlin.serialization.deserialization.getClassId
+import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
+import org.jetbrains.kotlin.utils.exceptions.withVirtualFileEntry
 import java.io.IOException
 
 abstract class KotlinMetadataStubBuilder : ClsStubBuilder() {
-    abstract val fileType: FileType
-    protected abstract val serializerProtocol: SerializerExtensionProtocol
+    protected abstract val supportedFileType: FileType
     protected abstract val expectedBinaryVersion: BinaryVersion
     protected abstract fun readFile(virtualFile: VirtualFile, content: ByteArray): FileWithMetadata?
 
-    fun readFileSafely(file: VirtualFile, content: ByteArray? = null): FileWithMetadata? {
-        if (!file.isValid) return null
+    /**
+     * Whether the [file] is supported, so it might have a stub
+     */
+    fun isSupported(file: VirtualFile): Boolean {
+        val supportedType = supportedFileType
+        return file.extension == supportedType.defaultExtension || file.fileType == supportedType
+    }
 
-        return try {
+    /**
+     * Whether the [file] would have a stub as the result of [buildFileStub]
+     */
+    fun hasStub(file: VirtualFile): Boolean = isSupported(file) && readFileSafely(file) != null
+
+    fun readFileSafely(file: VirtualFile, content: ByteArray? = null): FileWithMetadata? = try {
+        if (file.isValid) {
             readFile(file, content ?: file.contentsToByteArray(false))
-        } catch (e: IOException) {
-            // This is needed because sometimes we're given VirtualFile instances that point to non-existent .jar entries.
-            // Such files are valid (isValid() returns true), but an attempt to read their contents results in a FileNotFoundException.
-            // Note that although calling "refresh()" instead of catching an exception would seem more correct here,
-            // it's not always allowed and also is likely to degrade performance
+        } else {
             null
         }
+    } catch (_: IOException) {
+        // This is needed because sometimes we're given VirtualFile instances that point to non-existent .jar entries.
+        // Such files are valid (isValid() returns true), but an attempt to read their contents results in a FileNotFoundException.
+        // Note that although calling "refresh()" instead of catching an exception would seem more correct here,
+        // it's not always allowed and also is likely to degrade performance
+        null
     }
 
     override fun buildFileStub(content: FileContent): PsiFileStub<*>? {
         val virtualFile = content.file
-        assert(virtualFile.extension == fileType.defaultExtension || virtualFile.fileType == fileType) { "Unexpected file type ${virtualFile.fileType.name}" }
+        requireWithAttachment(isSupported(virtualFile), { "Unexpected file type" }) {
+            withVirtualFileEntry("file", virtualFile)
+        }
+
         val file = readFileSafely(virtualFile, content.content) ?: return null
 
         return when (file) {
@@ -62,7 +79,7 @@ abstract class KotlinMetadataStubBuilder : ClsStubBuilder() {
                 val packageProto = file.proto.`package`
                 val packageFqName = file.packageFqName
                 val nameResolver = file.nameResolver
-                val protocol = serializerProtocol
+                val protocol = file.serializerProtocol
                 val components = ClsStubBuilderComponents(
                     ProtoBasedClassDataFinder(file.proto, nameResolver, file.version),
                     AnnotationLoaderForStubBuilderImpl(protocol),

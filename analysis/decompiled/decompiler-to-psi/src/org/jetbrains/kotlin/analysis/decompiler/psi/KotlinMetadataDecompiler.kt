@@ -12,10 +12,7 @@ import org.jetbrains.kotlin.analysis.decompiler.psi.file.KtDecompiledFile
 import org.jetbrains.kotlin.analysis.decompiler.stub.file.KotlinMetadataStubBuilder
 
 abstract class KotlinMetadataDecompiler : ClassFileDecompilers.Full() {
-    final override fun accepts(file: VirtualFile): Boolean {
-        val supportedType = stubBuilder.fileType
-        return file.extension == supportedType.defaultExtension || file.fileType == supportedType
-    }
+    final override fun accepts(file: VirtualFile): Boolean = stubBuilder.isSupported(file)
 
     abstract override fun getStubBuilder(): KotlinMetadataStubBuilder
 
@@ -26,8 +23,7 @@ abstract class KotlinMetadataDecompiler : ClassFileDecompilers.Full() {
         manager: PsiManager,
         physical: Boolean,
     ): KotlinDecompiledFileViewProvider = KotlinDecompiledFileViewProvider(manager, file, physical) { provider ->
-        val virtualFile = provider.virtualFile
-        if (stubBuilder.readFileSafely(virtualFile) != null) {
+        if (stubBuilder.hasStub(provider.virtualFile)) {
             createFile(provider)
         } else {
             null
