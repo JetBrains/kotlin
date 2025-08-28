@@ -1339,26 +1339,39 @@ private object FractionalParser {
 }
 
 /**
- * Checks if adding two Long values exceeds [MAX_MILLIS] bounds.
- * @return true if [a] + [b] would overflow [MAX_MILLIS] or -[MAX_MILLIS]
+ * Adds two Long values representing duration components without overflow.
+ * Handles infinite values and ensures the result stays within the valid range.
+ * @param other the value to add
+ * @return the sum clamped to [-MAX_MILLIS, MAX_MILLIS] range, or INVALID_RAW_VALUE for invalid operations
  */
-private fun willAddOverflow(a: Long, b: Long): Boolean = when {
-    a > 0 && b > 0 -> a > MAX_MILLIS - b
-    a < 0 && b < 0 -> a < -MAX_MILLIS - b
-    else -> false
+private fun Long.addWithoutOverflow(other: Long): Long = when {
+    isInfinite() -> if (other.isFinite() || sameSign(this, other)) this else Duration.INVALID_RAW_VALUE
+    other.isInfinite() -> other
+    else -> (this + other).coerceIn(-MAX_MILLIS, MAX_MILLIS)
 }
 
 /**
- * Adds another Long to this one, handling overflow and special cases.
- * @return the sum, ±[MAX_MILLIS] on overflow, or [Duration.INVALID_RAW_VALUE] for infinity arithmetic errors
+ * Checks if this Long value represents an infinite duration.
+ * @return true if this value equals MAX_MILLIS or -MAX_MILLIS, false otherwise
  */
-private fun Long.addWithoutOverflow(other: Long): Long = when {
-    this == -MAX_MILLIS && other == MAX_MILLIS || this == MAX_MILLIS && other == -MAX_MILLIS -> Duration.INVALID_RAW_VALUE
-    this == MAX_MILLIS || other == MAX_MILLIS -> MAX_MILLIS
-    this == -MAX_MILLIS || other == -MAX_MILLIS -> -MAX_MILLIS
-    willAddOverflow(this, other) -> if (this > 0) MAX_MILLIS else -MAX_MILLIS
-    else -> this + other
-}
+@kotlin.internal.InlineOnly
+private inline fun Long.isInfinite(): Boolean = this == MAX_MILLIS || this == -MAX_MILLIS
+
+/**
+ * Checks if this Long value represents a finite duration.
+ * @return true if this value is not infinite (not equal to MAX_MILLIS or -MAX_MILLIS), false otherwise
+ */
+@kotlin.internal.InlineOnly
+private inline fun Long.isFinite(): Boolean = !isInfinite()
+
+/**
+ * Checks if two Long values have the same sign.
+ * @param a the first value
+ * @param b the second value
+ * @return true if both values have the same sign (both positive or both negative), false otherwise
+ */
+@kotlin.internal.InlineOnly
+private inline fun sameSign(a: Long, b: Long): Boolean = a xor b >= 0L
 
 /**
  * Fallback for parsing fractions with more than 15 digits using Double parsing.
