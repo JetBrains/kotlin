@@ -110,7 +110,7 @@ private class IrFileValidator(
     }
 
     override fun visitClass(declaration: IrClass) {
-        if (declaration.origin == IrDeclarationOrigin.REPL_SNIPPET_CLASS) {
+        if (declaration.origin == IrDeclarationOrigin.REPL_SNIPPET_CLASS || declaration.origin == IrDeclarationOrigin.SCRIPT_CLASS) {
             context.withinScripOrScriptClass {
                 super.visitClass(declaration)
             }
