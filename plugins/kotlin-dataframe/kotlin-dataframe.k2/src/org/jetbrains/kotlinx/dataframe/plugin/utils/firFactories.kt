@@ -20,13 +20,13 @@ import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.constructClassType
 import org.jetbrains.kotlin.name.CallableId
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlinx.dataframe.plugin.DataFramePlugin
-import org.jetbrains.kotlinx.dataframe.plugin.extensions.impl.PropertyName
 
 internal fun FirDeclarationGenerationExtension.generateExtensionProperty(
     callableIdOrSymbol: CallableIdOrSymbol,
     receiverType: ConeClassLikeType,
-    propertyName: PropertyName,
+    propertyName: Name,
     returnType: ConeKotlinType,
     symbol: FirClassSymbol<*>? = null,
     effectiveVisibility: EffectiveVisibility = EffectiveVisibility.Public,
@@ -40,9 +40,6 @@ internal fun FirDeclarationGenerationExtension.generateExtensionProperty(
 
     return buildProperty {
         this.source = source
-        propertyName.columnNameAnnotation?.let {
-            annotations += it
-        }
         moduleData = session.moduleData
         resolvePhase = FirResolvePhase.BODY_RESOLVE
         origin = FirDeclarationOrigin.Plugin(DataFramePlugin)
@@ -84,7 +81,7 @@ internal fun FirDeclarationGenerationExtension.generateExtensionProperty(
                 effectiveVisibility
             )
         }
-        name = propertyName.identifier
+        name = propertyName
         this.symbol = firPropertySymbol
         isVar = false
     }

@@ -5,10 +5,8 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.builder.buildTypeParameter
 import org.jetbrains.kotlin.fir.declarations.declaredProperties
-import org.jetbrains.kotlin.fir.declarations.getAnnotationByClassId
 import org.jetbrains.kotlin.fir.declarations.hasAnnotation
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
-import org.jetbrains.kotlin.fir.expressions.FirLiteralExpression
 import org.jetbrains.kotlin.fir.extensions.*
 import org.jetbrains.kotlin.fir.extensions.predicate.LookupPredicate
 import org.jetbrains.kotlin.fir.moduleData
@@ -27,7 +25,6 @@ import org.jetbrains.kotlin.name.packageName
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlinx.dataframe.annotations.DataSchema
 import org.jetbrains.kotlinx.dataframe.plugin.DataFramePlugin
-import org.jetbrains.kotlinx.dataframe.plugin.extensions.impl.PropertyName
 import org.jetbrains.kotlinx.dataframe.plugin.utils.CallableIdOrSymbol
 import org.jetbrains.kotlinx.dataframe.plugin.utils.Names
 import org.jetbrains.kotlinx.dataframe.plugin.utils.generateExtensionProperty
@@ -89,9 +86,6 @@ class TopLevelExtensionsGenerator(session: FirSession) : FirDeclarationGeneratio
                 owner,
                 mode,
                 property.resolvedReturnType,
-                property.getAnnotationByClassId(Names.COLUMN_NAME_ANNOTATION, this@TopLevelExtensionsGenerator.session)?.let { annotation ->
-                    (annotation.argumentMapping.mapping[Names.COLUMN_NAME_ARGUMENT] as? FirLiteralExpression)?.value as? String?
-                },
                 property.name
             )
         }
@@ -111,12 +105,9 @@ fun FirDeclarationGenerationExtension.buildExtensionPropertiesApi(
     owner: FirRegularClassSymbol,
     mode: TopLevelExtensionsGenerator.Receiver,
     resolvedReturnType: ConeKotlinType,
-    columnName: String?,
     name: Name
 ): FirPropertySymbol {
     var resolvedReturnType = resolvedReturnType
-    val columnName = columnName
-
     val firPropertySymbol = FirRegularPropertySymbol(callableId)
 
     val typeParameters = owner.typeParameterSymbols.map {
@@ -182,7 +173,7 @@ fun FirDeclarationGenerationExtension.buildExtensionPropertiesApi(
                 typeArguments = arrayOf(marker),
                 isMarkedNullable = false
             ),
-            propertyName = PropertyName.of(name, columnName?.let { PropertyName.buildAnnotation(it) }),
+            propertyName = name,
             returnType = resolvedReturnType,
             source = owner.source,
             typeParameters = typeParameters,
@@ -193,7 +184,7 @@ fun FirDeclarationGenerationExtension.buildExtensionPropertiesApi(
                 typeArguments = arrayOf(marker),
                 isMarkedNullable = false
             ),
-            propertyName = PropertyName.of(name, columnName?.let { PropertyName.buildAnnotation(it) }),
+            propertyName = name,
             returnType = columnReturnType,
             source = owner.source,
             typeParameters = typeParameters,

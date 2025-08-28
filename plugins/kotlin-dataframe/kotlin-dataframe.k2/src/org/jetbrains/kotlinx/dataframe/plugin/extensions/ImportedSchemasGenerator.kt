@@ -121,7 +121,6 @@ class ImportedSchemasGenerator(
                     it.owner,
                     mode,
                     it.returnType,
-                    null,
                     callableId.callableName
                 )
             }.orEmpty()

@@ -698,6 +698,12 @@ public class DataFrameBlackBoxCodegenTestGenerated extends AbstractDataFrameBlac
   }
 
   @Test
+  @TestMetadata("resolveGeneratedPropertyOnStatusPhase.kt")
+  public void testResolveGeneratedPropertyOnStatusPhase() {
+    runTest("plugins/kotlin-dataframe/testData/box/resolveGeneratedPropertyOnStatusPhase.kt");
+  }
+
+  @Test
   @TestMetadata("Schema.kt")
   public void testSchema() {
     runTest("plugins/kotlin-dataframe/testData/box/Schema.kt");
