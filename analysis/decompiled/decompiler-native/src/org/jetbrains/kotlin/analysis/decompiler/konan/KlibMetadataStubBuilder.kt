@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.stubs.KotlinStubVersions
 import org.jetbrains.kotlin.serialization.deserialization.ClassDataFinder
 
-internal object KlibMetadataStubBuilder : KotlinMetadataStubBuilder() {
+object KlibMetadataStubBuilder : KotlinMetadataStubBuilder() {
     override fun getStubVersion(): Int = KotlinStubVersions.KLIB_STUB_VERSION
     override val supportedFileType: FileType get() = KlibMetaFileType
     override val expectedBinaryVersion: BinaryVersion get() = MetadataVersion.INSTANCE
