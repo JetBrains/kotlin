@@ -453,12 +453,12 @@ fun serializeModuleIntoKlib(
                     JsKlibCheckers.makeChecker(
                         irDiagnosticReporter,
                         configuration,
-                        doCheckCalls = false, // calls must already be checked at the end of Fir2IR phase.
+                        doCheckCalls = true,
                         doModuleLevelChecks = true,
                         cleanFilesIrData,
                         moduleExportedNames,
                     )
-                }.takeIf { builtInsPlatform == BuiltInsPlatform.JS },
+                }.takeIf { builtInsPlatform == BuiltInsPlatform.JS && !configuration.useFir },
                 { irDiagnosticReporter: IrDiagnosticReporter ->
                     val cleanFilesIrData = cleanFiles.map { it.irData ?: error("Metadata-only KLIBs are not supported in Kotlin/Wasm") }
                     WasmKlibCheckers.makeChecker(

@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.fir.backend.Fir2IrExtensions
 import org.jetbrains.kotlin.fir.backend.Fir2IrVisibilityConverter
 import org.jetbrains.kotlin.fir.descriptors.FirModuleDescriptor
 import org.jetbrains.kotlin.fir.pipeline.Fir2IrActualizedResult
+import org.jetbrains.kotlin.fir.pipeline.Fir2KlibMetadataSerializer
 import org.jetbrains.kotlin.fir.pipeline.FirResult
 import org.jetbrains.kotlin.fir.pipeline.ModuleCompilerAnalyzedOutput
 import org.jetbrains.kotlin.fir.pipeline.convertToIrAndActualize
@@ -30,10 +31,13 @@ import org.jetbrains.kotlin.ir.KtDiagnosticReporterWithImplicitIrBasedContext
 import org.jetbrains.kotlin.ir.backend.js.JsFactories
 import org.jetbrains.kotlin.ir.backend.js.ModulesStructure
 import org.jetbrains.kotlin.ir.backend.js.checkers.JsKlibCheckers
+import org.jetbrains.kotlin.ir.backend.js.getSerializedData
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsManglerIr
+import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.collectExportedNames
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContextImpl
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
+import org.jetbrains.kotlin.js.config.incrementalDataProvider
 import org.jetbrains.kotlin.js.config.wasmCompilation
 import org.jetbrains.kotlin.library.unresolvedDependencies
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
@@ -47,7 +51,7 @@ object WebFir2IrPipelinePhase : PipelinePhase<WebFrontendPipelineArtifact, JsFir
         val (analyzedOutput, configuration, diagnosticsReporter, moduleStructure, hasErrors) = input
         val fir2IrActualizedResult = transformFirToIr(moduleStructure, analyzedOutput.output, diagnosticsReporter)
         if (!configuration.wasmCompilation)
-            runJsKlibCallCheckers(diagnosticsReporter, configuration, fir2IrActualizedResult.irModuleFragment)
+            runJsKlibCallCheckers(diagnosticsReporter, configuration, analyzedOutput.output, fir2IrActualizedResult)
 
         return JsFir2IrPipelineArtifact(
             fir2IrActualizedResult,
@@ -110,16 +114,31 @@ object WebFir2IrPipelinePhase : PipelinePhase<WebFrontendPipelineArtifact, JsFir
 private fun runJsKlibCallCheckers(
     diagnosticReporter: BaseDiagnosticsCollector,
     configuration: CompilerConfiguration,
-    irModuleFragment: IrModuleFragment,
+    firOutputs: List<ModuleCompilerAnalyzedOutput>,
+    fir2IrActualizedResult: Fir2IrActualizedResult,
 ) {
     val irDiagnosticReporter =
         KtDiagnosticReporterWithImplicitIrBasedContext(diagnosticReporter.deduplicating(), configuration.languageVersionSettings)
+
+    val fir2KlibMetadataSerializer = Fir2KlibMetadataSerializer(
+        configuration,
+        firOutputs,
+        fir2IrActualizedResult,
+        exportKDoc = false,
+        produceHeaderKlib = false,
+    )
+    val cleanFiles = configuration.incrementalDataProvider?.getSerializedData(fir2KlibMetadataSerializer.sourceFiles).orEmpty()
+    val cleanFilesIrData = cleanFiles.map { it.irData ?: error("Metadata-only KLIBs are not supported in Kotlin/JS") }
+
+    val irModuleFragment = fir2IrActualizedResult.irModuleFragment
     irModuleFragment.acceptVoid(
         JsKlibCheckers.makeChecker(
             irDiagnosticReporter,
             configuration,
             doCheckCalls = true,
-            doModuleLevelChecks = false,
+            doModuleLevelChecks = true,
+            cleanFiles = cleanFilesIrData,
+            exportedNames = irModuleFragment.collectExportedNames(),
         )
     )
 }
