@@ -82,7 +82,7 @@ object FirImportsChecker : FirFileChecker(MppCheckerKind.Common) {
             // Already an error import, already reported
             is PackageResolutionResult.Error -> return
         }
-        val classSymbol = classLike.fullyExpandedClass(context.session)
+        val classSymbol = classLike.fullyExpandedClass()
         if (classSymbol != null && classSymbol.classKind.isObject) {
             reporter.reportOn(import.source, FirErrors.CANNOT_ALL_UNDER_IMPORT_FROM_SINGLETON, classSymbol.classId.shortClassName)
         }
@@ -103,7 +103,7 @@ object FirImportsChecker : FirFileChecker(MppCheckerKind.Common) {
         val parentClassId = (import as? FirResolvedImport)?.resolvedParentClassId
         if (parentClassId != null) {
             val parentClassLikeSymbol = parentClassId.resolveToClassLike() ?: return
-            val parentClassSymbol = parentClassLikeSymbol.fullyExpandedClass(context.session) ?: return
+            val parentClassSymbol = parentClassLikeSymbol.fullyExpandedClass() ?: return
 
             fun reportInvisibleParentClasses(classSymbol: FirClassLikeSymbol<*>, depth: Int) {
                 if (!classSymbol.isVisible()) {
@@ -280,7 +280,7 @@ object FirImportsChecker : FirFileChecker(MppCheckerKind.Common) {
         val classSymbol = resolveToClassLike() ?: return null
         return when (classSymbol) {
             is FirRegularClassSymbol -> classSymbol
-            is FirTypeAliasSymbol -> classSymbol.fullyExpandedClass(context.session)
+            is FirTypeAliasSymbol -> classSymbol.fullyExpandedClass()
             is FirAnonymousObjectSymbol -> null
         }
     }

@@ -394,7 +394,7 @@ fun BodyResolveComponents.buildResolvedQualifierForClass(
         nonFatalDiagnostics?.let(this.nonFatalDiagnostics::addAll)
         this.annotations.addAll(annotations)
         this.explicitParent = explicitParent
-        this.resolvedToCompanionObject = symbol?.fullyExpandedClass(session)?.resolvedCompanionObjectSymbol != null
+        this.resolvedToCompanionObject = symbol?.fullyExpandedClass()?.resolvedCompanionObjectSymbol != null
         this.resolvedSymbolOrigin = resolvedSymbolOrigin
     }.build().apply {
         if (symbol?.classId?.isLocal == true) {

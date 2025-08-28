@@ -48,7 +48,7 @@ object FirStandaloneQualifierChecker : FirResolvedQualifierChecker(MppCheckerKin
                 reporter.reportOn(source, FirErrors.NO_COMPANION_OBJECT, this)
             }
             is FirTypeAliasSymbol -> {
-                fullyExpandedClass(context.session)?.reportErrorOn(source)
+                fullyExpandedClass()?.reportErrorOn(source)
             }
             null -> {
                 reporter.reportOn(source, FirErrors.EXPRESSION_EXPECTED_PACKAGE_FOUND)

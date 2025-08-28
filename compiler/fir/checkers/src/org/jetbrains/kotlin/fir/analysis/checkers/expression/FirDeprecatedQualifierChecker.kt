@@ -28,7 +28,7 @@ object FirDeprecatedQualifierChecker : FirResolvedQualifierChecker(MppCheckerKin
             // is handled automatically when getting deprecationInfo
             // for the typealias symbol (in FirDeprecationChecker).
             // Below we check "the last transition".
-            val companionSymbol = expression.symbol?.fullyExpandedClass(context.session)?.resolvedCompanionObjectSymbol ?: return
+            val companionSymbol = expression.symbol?.fullyExpandedClass()?.resolvedCompanionObjectSymbol ?: return
             FirDeprecationChecker.reportApiStatusIfNeeded(expression.source, companionSymbol)
         }
     }

@@ -57,7 +57,7 @@ sealed class FirExtensionShadowedByMemberChecker(kind: MppCheckerKind) : FirCall
 
         val receiverSymbol = declaration.receiverParameter?.typeRef?.coneType
             ?.toClassLikeSymbol()
-            ?.fullyExpandedClass(context.session)
+            ?.fullyExpandedClass()
             ?: return
         val scope = receiverSymbol.unsubstitutedScope()
 
@@ -93,7 +93,7 @@ sealed class FirExtensionShadowedByMemberChecker(kind: MppCheckerKind) : FirCall
                 }
 
                 val returnTypeScope = property.resolvedReturnType.toClassLikeSymbol()
-                    ?.fullyExpandedClass(context.session)
+                    ?.fullyExpandedClass()
                     ?.unsubstitutedScope()
                     ?: return@findFirstNotNullSymbol null
 

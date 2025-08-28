@@ -118,7 +118,7 @@ object FirExhaustiveWhenChecker : FirWhenExpressionChecker(MppCheckerKind.Common
     context(context: CheckerContext)
     private fun ClassId.isJavaNonAbstractSealed(): Boolean {
         val symbol = toSymbol() as? FirClassLikeSymbol ?: return false
-        val fullyExpandedClassSymbol = symbol.fullyExpandedClass(context.session) ?: return false
+        val fullyExpandedClassSymbol = symbol.fullyExpandedClass() ?: return false
 
         @OptIn(SymbolInternals::class)
         return fullyExpandedClassSymbol.fir.isJavaNonAbstractSealed == true
