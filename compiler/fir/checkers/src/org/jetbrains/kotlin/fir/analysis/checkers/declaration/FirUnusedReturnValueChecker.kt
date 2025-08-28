@@ -50,9 +50,6 @@ object FirReturnValueOverrideChecker : FirCallableDeclarationChecker(MppCheckerK
         val overriddenSymbols = symbol.directOverriddenSymbolsSafe()
         val ignorableBaseSymbol = overriddenSymbols.find {
             it.resolvedStatus.returnValueStatus == ReturnValueStatus.ExplicitlyIgnorable
-                        // FIXME (KT-79923): Checking annotation is required only for tests to pass with bootstrap (old metadata) stdlib
-                        // Should be deleted after re-bootstrapping stdlib again
-                    || context.session.mustUseReturnValueStatusComponent.hasIgnorableLikeAnnotation(it.resolvedAnnotationClassIds)
         } ?: return
 
         // Report error if an overridden symbol has @IgnorableReturnValue but the current declaration doesn't
