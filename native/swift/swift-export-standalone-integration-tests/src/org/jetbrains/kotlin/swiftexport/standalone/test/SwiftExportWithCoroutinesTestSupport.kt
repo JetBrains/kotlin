@@ -7,15 +7,27 @@ package org.jetbrains.kotlin.swiftexport.standalone.test
 
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestModule
 import org.jetbrains.kotlin.konan.test.testLibraryAtomicFu
+import org.jetbrains.kotlin.konan.test.testLibraryAtomicFuCinteropInterop
 import org.jetbrains.kotlin.konan.test.testLibraryKotlinxCoroutines
 import org.junit.jupiter.api.extension.BeforeTestExecutionCallback
 import org.junit.jupiter.api.extension.ExtensionContext
 
 class SwiftExportWithCoroutinesTestSupport : BeforeTestExecutionCallback {
     override fun beforeTestExecution(context: ExtensionContext?) {
+        val atomicFuCinteropInterop = TestModule.Given(testLibraryAtomicFuCinteropInterop.toFile())
+        val atomicFuModule = TestModule.Given(
+            testLibraryAtomicFu.toFile(),
+            dependencies = setOf(atomicFuCinteropInterop)
+        )
+        val kotlinxCoroutinesModule = TestModule.Given(
+            testLibraryKotlinxCoroutines.toFile(),
+            // It is not quite correct to pass atomicfu-cinterop-interop as a coroutines dependency,
+            // but this fixes compilation of the corresponding static caches.
+            dependencies = setOf(atomicFuModule, atomicFuCinteropInterop)
+        )
         (context?.requiredTestInstance as AbstractSwiftExportTest).givenModules += setOf(
-            TestModule.Given(testLibraryKotlinxCoroutines.toFile()),
-            TestModule.Given(testLibraryAtomicFu.toFile()),
+            kotlinxCoroutinesModule,
+            atomicFuModule,
         )
     }
 }
