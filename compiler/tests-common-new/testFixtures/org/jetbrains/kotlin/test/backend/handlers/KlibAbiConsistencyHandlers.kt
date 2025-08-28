@@ -38,8 +38,19 @@ private fun shouldCheckAbiConsistency(module: TestModule): Boolean =
             module.languageVersionSettings.supportsFeature(LanguageFeature.IrIntraModuleInlinerBeforeKlibSerialization)
 
 private class SyntheticAccessors : AbiReadingFilter {
-    override fun isDeclarationExcluded(declaration: AbiDeclaration): Boolean =
-        declaration is AbiFunction && declaration.qualifiedName.relativeName.simpleName.value.startsWith("access$")
+    override fun isDeclarationExcluded(declaration: AbiDeclaration): Boolean {
+        if (declaration !is AbiFunction) return false
+
+        return declaration.qualifiedName.relativeName.simpleName.value.startsWith("access$") || declaration.isSyntheticConstructor
+    }
+
+    private val AbiFunction.isSyntheticConstructor: Boolean
+        get() {
+            val markerParameterType = valueParameters.lastOrNull()?.type as? AbiType.Simple ?: return false
+            val markerParameterClassReference =
+                markerParameterType.classifierReference as? AbiClassifierReference.ClassReference ?: return false
+            return markerParameterClassReference.className.relativeName.value == "SyntheticConstructorMarker"
+        }
 }
 
 abstract class AbstractKlibAbiDumpBeforeInliningSavingHandler(
