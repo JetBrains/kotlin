@@ -56260,6 +56260,12 @@ public class PhasedJvmDiagnosticPsiTestGenerated extends AbstractPhasedJvmDiagno
         }
 
         @Test
+        @TestMetadata("inheritorNameClashesWithBase.kt")
+        public void testInheritorNameClashesWithBase() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/exhaustiveness/negative/inheritorNameClashesWithBase.kt");
+        }
+
+        @Test
         @TestMetadata("missingBooleanBranch.kt")
         public void testMissingBooleanBranch() {
           runTest("compiler/fir/analysis-tests/testData/resolve/exhaustiveness/negative/missingBooleanBranch.kt");
