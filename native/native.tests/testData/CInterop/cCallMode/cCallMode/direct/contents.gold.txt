@@ -1,0 +1,68 @@
+library {
+  // module name: <pod1.def>
+
+  library fragment {
+    // package name: pod1
+
+    // class name: pod1/S
+    // class name: pod1/S.Companion
+
+    @kotlinx/cinterop/internal/CStruct(spelling = "struct  { int x; }")
+    public final class pod1/S : kotlinx/cinterop/CStructVar {
+
+      public constructor(rawPtr: kotlin/native/internal/NativePtr /* = kotlinx/cinterop/NativePtr^ */)
+
+      public final var x: kotlin/Int
+        @kotlinx/cinterop/internal/CStruct.MemberAt(offset = 0L)
+        public final /* non-default */ external get
+        @kotlinx/cinterop/internal/CStruct.MemberAt(offset = 0L)
+        public final /* non-default */ external set(value: kotlin/Int)
+
+      // companion object: Companion
+
+      // nested class: Companion
+    }
+
+    @kotlinx/cinterop/internal/CStruct.VarType(size = 4L, align = 4)
+    @kotlin/Deprecated(message = "Use sizeOf<T>() or alignOf<T>() instead.", replaceWith = kotlin/ReplaceWith(imports = [], expression = ""), level = kotlin/DeprecationLevel.WARNING)
+    public final companion object pod1/S.Companion : kotlinx/cinterop/CStructVar.Type {
+
+      private constructor()
+    }
+
+    package {
+
+      @kotlinx/cinterop/internal/CCall.Direct(name = "function")
+      public final external /* non-stable parameter names */ fun function(arg0: kotlin/Int): kotlin/Int
+
+      @kotlinx/cinterop/internal/CCall.Direct(name = "funWithAsm")
+      public final external /* non-stable parameter names */ fun functionWithAsm(arg0: kotlin/Int): kotlin/Int
+
+      public final var global: kotlin/Int
+        @kotlin/Deprecated(message = "Global variables are not yet supported with -Xccall-mode direct", replaceWith = kotlin/ReplaceWith(imports = [], expression = ""), level = kotlin/DeprecationLevel.ERROR)
+        public final /* non-default */ external get
+        @kotlin/Deprecated(message = "Global variables are not yet supported with -Xccall-mode direct", replaceWith = kotlin/ReplaceWith(imports = [], expression = ""), level = kotlin/DeprecationLevel.ERROR)
+        public final /* non-default */ external set(value: kotlin/Int)
+
+      public final val globalArray: kotlinx/cinterop/CPointer<kotlinx/cinterop/ByteVarOf<kotlin/Byte> /* = kotlinx/cinterop/ByteVar^ */> /* = kotlinx/cinterop/CArrayPointer^<kotlinx/cinterop/ByteVarOf<kotlin/Byte> /* = kotlinx/cinterop/ByteVar^ */> */
+        @kotlin/Deprecated(message = "Global variables are not yet supported with -Xccall-mode direct", replaceWith = kotlin/ReplaceWith(imports = [], expression = ""), level = kotlin/DeprecationLevel.ERROR)
+        public final /* non-default */ external get
+
+      public final val globalArrayWithAsm: kotlinx/cinterop/CPointer<kotlinx/cinterop/ByteVarOf<kotlin/Byte> /* = kotlinx/cinterop/ByteVar^ */> /* = kotlinx/cinterop/CArrayPointer^<kotlinx/cinterop/ByteVarOf<kotlin/Byte> /* = kotlinx/cinterop/ByteVar^ */> */
+        @kotlin/Deprecated(message = "Global variables are not yet supported with -Xccall-mode direct", replaceWith = kotlin/ReplaceWith(imports = [], expression = ""), level = kotlin/DeprecationLevel.ERROR)
+        public final /* non-default */ external get
+
+      public final val globalStruct: pod1/S
+        @kotlin/Deprecated(message = "Global variables are not yet supported with -Xccall-mode direct", replaceWith = kotlin/ReplaceWith(imports = [], expression = ""), level = kotlin/DeprecationLevel.ERROR)
+        public final /* non-default */ external get
+
+      public final val globalStructWithAsm: pod1/S
+        @kotlin/Deprecated(message = "Global variables are not yet supported with -Xccall-mode direct", replaceWith = kotlin/ReplaceWith(imports = [], expression = ""), level = kotlin/DeprecationLevel.ERROR)
+        public final /* non-default */ external get
+
+      public final val globalWithAsm: kotlin/Int
+        @kotlin/Deprecated(message = "Global variables are not yet supported with -Xccall-mode direct", replaceWith = kotlin/ReplaceWith(imports = [], expression = ""), level = kotlin/DeprecationLevel.ERROR)
+        public final /* non-default */ external get
+    }
+  }
+}

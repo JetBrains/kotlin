@@ -278,4 +278,39 @@ public class CInteropNoFModulesTestGenerated extends AbstractNativeCInteropNoFMo
       runTest("native/native.tests/testData/CInterop/builtins/builtinsDefs/modulesA/");
     }
   }
+
+  @Nested
+  @TestMetadata("native/native.tests/testData/CInterop/cCallMode/cCallMode")
+  @TestDataPath("$PROJECT_ROOT")
+  @ClassicPipeline()
+  public class CCallMode {
+    @Test
+    public void testAllFilesPresentInCCallMode() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/native.tests/testData/CInterop/cCallMode/cCallMode"), Pattern.compile("^([^_](.+))$"), null, false);
+    }
+
+    @Test
+    @TestMetadata("both")
+    public void testBoth() {
+      runTest("native/native.tests/testData/CInterop/cCallMode/cCallMode/both/");
+    }
+
+    @Test
+    @TestMetadata("bothWithModules")
+    public void testBothWithModules() {
+      runTest("native/native.tests/testData/CInterop/cCallMode/cCallMode/bothWithModules/");
+    }
+
+    @Test
+    @TestMetadata("direct")
+    public void testDirect() {
+      runTest("native/native.tests/testData/CInterop/cCallMode/cCallMode/direct/");
+    }
+
+    @Test
+    @TestMetadata("indirect")
+    public void testIndirect() {
+      runTest("native/native.tests/testData/CInterop/cCallMode/cCallMode/indirect/");
+    }
+  }
 }
