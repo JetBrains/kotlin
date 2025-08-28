@@ -1,12 +1,16 @@
+import org.jetbrains.kotlin.buildtools.api.ExperimentalBuildToolsApi
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 plugins {
-    id("org.jetbrains.kotlin.jvm")
+    kotlin("jvm")
+    kotlin("plugin.serialization")
     id("com.google.protobuf") version "0.9.5"
-    id("org.jetbrains.kotlin.plugin.serialization")
     application
     id("me.champeau.jmh") version "0.7.2" //JMH
-    kotlin("kapt") // for JMH
+//    kotlin("kapt") // for JMH
 
-//    id("org.jetbrains.kotlinx.rpc.plugin") version "0.9.1"
+    id("org.jetbrains.kotlinx.rpc.plugin") version "0.9.1"
 }
 
 application {
@@ -69,21 +73,45 @@ dependencies {
 
     // JMH
     implementation("org.openjdk.jmh:jmh-core:1.37")
-    kapt("org.openjdk.jmh:jmh-generator-annprocess:1.37")
+    //kapt("org.openjdk.jmh:jmh-generator-annprocess:1.37")
 
     // koltinx rpc
-//    implementation("org.jetbrains.kotlinx:kotlinx-rpc-krpc-client:0.9.1")
-//    implementation("org.jetbrains.kotlinx:kotlinx-rpc-krpc-server:0.9.1")
-//    implementation("io.ktor:ktor-server-core:3.2.3")
-//    implementation("org.jetbrains.kotlinx:kotlinx-rpc-krpc-client:0.9.1")
-//    implementation("org.jetbrains.kotlinx:kotlinx-rpc-krpc-ktor-client:0.9.1")
-//    implementation("io.ktor:ktor-server-netty-jvm:3.2.3")
-//    implementation("ch.qos.logback:logback-classic:1.5.18")
-//    implementation("org.jetbrains.kotlinx:kotlinx-rpc-krpc-server:0.9.1")
-//    implementation("org.jetbrains.kotlinx:kotlinx-rpc-krpc-ktor-server:0.9.1")
-//    implementation("org.jetbrains.kotlinx:kotlinx-rpc-krpc-serialization-json:0.9.1")
+    implementation("org.jetbrains.kotlinx:kotlinx-rpc-krpc-client:0.9.1")
+    implementation("org.jetbrains.kotlinx:kotlinx-rpc-krpc-server:0.9.1")
+    implementation("io.ktor:ktor-server-core:3.2.3")
+    implementation("org.jetbrains.kotlinx:kotlinx-rpc-krpc-client:0.9.1")
+    implementation("org.jetbrains.kotlinx:kotlinx-rpc-krpc-ktor-client:0.9.1")
+    implementation("io.ktor:ktor-server-netty-jvm:3.2.3")
+    implementation("ch.qos.logback:logback-classic:1.5.18")
+    implementation("org.jetbrains.kotlinx:kotlinx-rpc-krpc-server:0.9.1")
+    implementation("org.jetbrains.kotlinx:kotlinx-rpc-krpc-ktor-server:0.9.1")
+    implementation("org.jetbrains.kotlinx:kotlinx-rpc-krpc-serialization-json:0.9.1")
 //
 //    kotlinCompilerPluginClasspathMain("org.jetbrains.kotlinx:kotlinx-rpc-compiler-plugin-k2:2.2.0-0.9.1!")
+}
+
+configurations {
+    kotlinCompilerPluginClasspathMain.configure {
+        resolutionStrategy.eachDependency {
+            if ((requested.group == "org.jetbrains.kotlin" || requested.group == "org.jetbrains.kotlinx") && requested.name.startsWith("kotlinx-rpc")) {
+                useTarget("${requested.group}:${requested.name}:2.2.0-0.9.1")
+            } else if (requested.group == "org.jetbrains.kotlin" && requested.name.startsWith("kotlin-")) {
+                useTarget("${requested.group}:${requested.name}:2.2.0")
+            }
+        }
+    }
+}
+
+kotlin {
+    @OptIn(ExperimentalBuildToolsApi::class, ExperimentalKotlinGradlePluginApi::class)
+    compilerVersion.set("2.2.0")
+}
+
+tasks.withType<KotlinCompile> {
+    compilerOptions {
+        languageVersion.set(org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_2_2)
+        apiVersion.set(org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_2_2)
+    }
 }
 
 // workaround that IDEA run configuration does not properly resolve runtime classpath
