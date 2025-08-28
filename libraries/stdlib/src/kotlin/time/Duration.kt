@@ -1310,7 +1310,7 @@ private object FractionalParser {
      * @param callback Invoked with the end index after parsing
      * @return The fraction scaled to 15 decimal places (suitable for nanosecond conversion)
      */
-    inline fun parse(value: String, startIndex: Int, callback: (Int) -> Unit): Long {
+    inline fun parse(value: String, startIndex: Int, callback: (endIndex: Int) -> Unit): Long {
         var index = startIndex
         val highPrecisionDigits = value.parseDigits(index, 9) { index = it }
         val lowPrecisionDigits = value.parseDigits(index, FRACTION_LIMIT - 9) { index = it }
@@ -1319,7 +1319,7 @@ private object FractionalParser {
         return highPrecisionDigits.toLong() * 1_000_000 + lowPrecisionDigits
     }
 
-    private inline fun String.parseDigits(startIndex: Int, maxDigits: Int, callback: (Int) -> Unit): Int {
+    private inline fun String.parseDigits(startIndex: Int, maxDigits: Int, callback: (endIndex: Int) -> Unit): Int {
         var index = startIndex
         var result = 0
         var count = 0
