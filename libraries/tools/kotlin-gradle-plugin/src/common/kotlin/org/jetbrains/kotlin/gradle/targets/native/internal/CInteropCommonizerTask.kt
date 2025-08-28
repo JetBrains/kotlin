@@ -199,10 +199,7 @@ internal abstract class CInteropCommonizerTask
 
     @Suppress("unused") // Used for UP-TO-DATE check
     @get:Classpath
-    protected val commonizerDependenciesClasspath: FileCollection = project.filesProvider(kotlinNativeProvider.map {
-        //force to download native dependencies
-        it.konanDistributionProvider
-    }) {
+    protected val commonizerDependenciesClasspath: FileCollection = project.filesProvider {
         groupedCommonizerDependencies.getOrThrow().values.flatten().map { it.dependencies }
     }
 
