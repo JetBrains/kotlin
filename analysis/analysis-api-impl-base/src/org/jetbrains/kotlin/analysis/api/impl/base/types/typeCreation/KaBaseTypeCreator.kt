@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.api.impl.base.types.typeCreation
 
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.impl.base.resolution.KaBaseFunctionValueParameter
 import org.jetbrains.kotlin.analysis.api.impl.base.types.KaBaseStarTypeProjection
 import org.jetbrains.kotlin.analysis.api.impl.base.types.KaBaseTypeArgumentWithVariance
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
@@ -14,6 +15,7 @@ import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.types.*
 import org.jetbrains.kotlin.analysis.api.types.typeCreation.*
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.types.Variance
 
@@ -235,3 +237,67 @@ class KaBaseIntersectionTypeBuilder(
 @KaImplementationDetail
 class KaBaseDynamicTypeBuilder(typeCreatorDelegate: KaTypeCreator) : KaDynamicTypeBuilder,
     KaBaseTypeBuilderWithAnnotations(), KaTypeCreator by typeCreatorDelegate
+
+@KaImplementationDetail
+class KaBaseFunctionTypeBuilder(typeCreatorDelegate: KaTypeCreator, session: KaSession) : KaFunctionTypeBuilder,
+    KaBaseTypeBuilderWithAnnotations(),
+    KaTypeCreator by typeCreatorDelegate {
+    override var isMarkedNullable: Boolean = false
+        get() = withValidityAssertion { field }
+        set(value) {
+            withValidityAssertion {
+                field = value
+            }
+        }
+
+    override var isSuspend: Boolean = false
+        get() = withValidityAssertion { field }
+        set(value) {
+            withValidityAssertion {
+                field = value
+            }
+        }
+
+    override var isReflectType: Boolean = false
+        get() = withValidityAssertion { field }
+        set(value) {
+            withValidityAssertion {
+                field = value
+            }
+        }
+
+    private val backingContextParameters: MutableList<KaType> = mutableListOf()
+
+    override val contextParameters: List<KaType>
+        get() = withValidityAssertion { backingContextParameters }
+
+    override fun contextParameter(contextParameter: KaType) = withValidityAssertion {
+        backingContextParameters += contextParameter
+    }
+
+    override fun contextParameter(contextParameter: () -> KaType) = contextParameter(contextParameter())
+
+    private val backingValueParameters: MutableList<KaFunctionValueParameter> = mutableListOf()
+
+    override val valueParameters: List<KaFunctionValueParameter>
+        get() = withValidityAssertion { backingValueParameters }
+
+    override fun valueParameter(name: Name?, type: KaType) = withValidityAssertion {
+        val valueParameter = KaBaseFunctionValueParameter(name, type)
+        backingValueParameters += valueParameter
+    }
+
+    override fun valueParameter(name: Name?, type: () -> KaType) = valueParameter(name, type())
+
+    override var receiverType: KaType? = null
+        get() = withValidityAssertion { field }
+        set(value) {
+            withValidityAssertion { field = value }
+        }
+
+    override var returnType: KaType = session.builtinTypes.unit
+        get() = withValidityAssertion { field }
+        set(value) {
+            withValidityAssertion { field = value }
+        }
+}

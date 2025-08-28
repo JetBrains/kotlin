@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaClassLikeSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaTypeParameterSymbol
 import org.jetbrains.kotlin.analysis.api.types.*
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.Variance
 
 /**
@@ -206,6 +207,12 @@ public interface KaTypeCreator : KaLifetimeOwner {
      */
     @KaExperimentalApi
     public fun dynamicType(init: KaDynamicTypeBuilder.() -> Unit = {}): KaDynamicType
+
+    /**
+     * Builds a [KaFunctionType] based on the given [init] block.
+     */
+    @KaExperimentalApi
+    public fun functionType(init: KaFunctionTypeBuilder.() -> Unit = {}): KaFunctionType
 
     /**
      * Builds a [KaTypeArgumentWithVariance].
@@ -511,3 +518,105 @@ public interface KaIntersectionTypeBuilder : KaTypeBuilder {
 @KaExperimentalApi
 @SubclassOptInRequired(KaImplementationDetail::class)
 public interface KaDynamicTypeBuilder : KaTypeBuilderWithAnnotations
+
+/**
+ * A builder for [KaFunctionType].
+ *
+ * @see KaTypeCreator.functionType
+ */
+@KaExperimentalApi
+@SubclassOptInRequired(KaImplementationDetail::class)
+public interface KaFunctionTypeBuilder : KaTypeBuilderWithAnnotations {
+    /**
+     * Whether the type is marked as nullable, i.e., the type is represented as `(R.(T) -> S)?`.
+     *
+     * Default value: `false`.
+     *
+     * @see KaTypeInformationProvider.isMarkedNullable
+     */
+    public var isMarkedNullable: Boolean
+
+    /**
+     * Whether the function type is a [suspend type]
+     * (https://kotlinlang.org/spec/asynchronous-programming-with-coroutines.html#suspending-functions).
+     *
+     * Default value: `false`.
+     *
+     * @see KaFunctionType.isSuspend
+     */
+    public var isSuspend: Boolean
+
+    /**
+     * Whether the function type is a [reflection type]
+     * (https://kotlinlang.org/docs/reflection.html#function-references)
+     *
+     * Default value: `false`.
+     *
+     * Note that Kotlin prohibits context parameters in reflection types.
+     * So all context parameters passed to the builder are discarded when [isReflectType] is `true`.
+     *
+     * @see KaFunctionType.isReflectType
+     */
+    public var isReflectType: Boolean
+
+    /**
+     * List of context parameters for the function type.
+     *
+     * Note that Kotlin prohibits context parameters in reflection types.
+     * So all context parameters passed to the builder are discarded when [isReflectType] is `true`.
+     *
+     * @see KaFunctionType.contextReceivers
+     */
+    public val contextParameters: List<KaType>
+
+    /**
+     * Adds the given [contextParameter] to the [contextParameters] list.
+     *
+     * Note that Kotlin prohibits context parameters in reflection types.
+     * So all context parameters passed to the builder are discarded when [isReflectType] is `true`.
+     */
+    public fun contextParameter(contextParameter: KaType)
+
+    /**
+     * Adds the type produced by [contextParameter] to the [contextParameters] list.
+     *
+     * Note that Kotlin prohibits context parameters in reflection types.
+     * So all context parameters passed to the builder are discarded when [isReflectType] is `true`.
+     */
+    public fun contextParameter(contextParameter: () -> KaType)
+
+    /**
+     * Function receiver type.
+     *
+     * Default value: `null`.
+     *
+     * @see KaFunctionType.receiverType
+     */
+    public var receiverType: KaType?
+
+    /**
+     * Function value parameters.
+     *
+     * @see KaFunctionType.parameters
+     */
+    public val valueParameters: List<KaFunctionValueParameter>
+
+    /**
+     * Adds a value parameter with the given [name] and [type] to the [valueParameters] list.
+     */
+    public fun valueParameter(name: Name?, type: KaType)
+
+    /**
+     * Adds a value parameter with the given [name] and type produced by [type] to the [valueParameters] list.
+     */
+    public fun valueParameter(name: Name?, type: () -> KaType)
+
+    /**
+     * Function return type.
+     *
+     * Default value: [Unit][org.jetbrains.kotlin.analysis.api.components.KaBuiltinTypes.unit].
+     *
+     * @see KaFunctionType.returnType
+     */
+    public var returnType: KaType
+}
