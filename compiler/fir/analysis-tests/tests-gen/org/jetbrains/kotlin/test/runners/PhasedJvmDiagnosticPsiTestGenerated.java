@@ -54259,6 +54259,29 @@ public class PhasedJvmDiagnosticPsiTestGenerated extends AbstractPhasedJvmDiagno
       }
 
       @Nested
+      @TestMetadata("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/nestedCollectionLiterals")
+      @TestDataPath("$PROJECT_ROOT")
+      public class NestedCollectionLiterals {
+        @Test
+        @TestMetadata("genericMatrix.kt")
+        public void testGenericMatrix() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/nestedCollectionLiterals/genericMatrix.kt");
+        }
+
+        @Test
+        @TestMetadata("listsOfLists.kt")
+        public void testListsOfLists() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/nestedCollectionLiterals/listsOfLists.kt");
+        }
+
+        @Test
+        @TestMetadata("matrix.kt")
+        public void testMatrix() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/nestedCollectionLiterals/matrix.kt");
+        }
+      }
+
+      @Nested
       @TestMetadata("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/noOperatorOf")
       @TestDataPath("$PROJECT_ROOT")
       public class NoOperatorOf {
@@ -54297,6 +54320,12 @@ public class PhasedJvmDiagnosticPsiTestGenerated extends AbstractPhasedJvmDiagno
       @TestMetadata("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/userTypes")
       @TestDataPath("$PROJECT_ROOT")
       public class UserTypes {
+        @Test
+        @TestMetadata("collectionLiteralsWithNestedExpressionsInside.kt")
+        public void testCollectionLiteralsWithNestedExpressionsInside() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/userTypes/collectionLiteralsWithNestedExpressionsInside.kt");
+        }
+
         @Test
         @TestMetadata("genericCollection.kt")
         public void testGenericCollection() {
