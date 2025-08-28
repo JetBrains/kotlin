@@ -44,9 +44,5 @@ data class PropertyName(val identifier: Name, val columnNameAnnotation: FirAnnot
                 }
             }
         }
-
-        fun of(identifier: Name, columnNameAnnotation: FirAnnotation?): PropertyName {
-            return PropertyName(identifier, columnNameAnnotation)
-        }
     }
 }

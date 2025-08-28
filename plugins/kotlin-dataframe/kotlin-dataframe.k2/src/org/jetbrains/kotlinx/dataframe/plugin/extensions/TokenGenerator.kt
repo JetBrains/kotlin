@@ -65,7 +65,7 @@ class TokenGenerator(session: FirSession) : FirDeclarationGenerationExtension(se
                         receiverType = Names.DATA_ROW_CLASS_ID.constructClassLikeType(
                             typeArguments = arrayOf(schemaProperty.marker)
                         ),
-                        propertyName = propertyName,
+                        propertyName = propertyName.identifier,
                         returnType = schemaProperty.dataRowReturnType,
                         symbol = k,
                         effectiveVisibility = EffectiveVisibility.Local,
@@ -77,7 +77,7 @@ class TokenGenerator(session: FirSession) : FirDeclarationGenerationExtension(se
                         receiverType = Names.COLUMNS_SCOPE_CLASS_ID.constructClassLikeType(
                             typeArguments = arrayOf(schemaProperty.marker)
                         ),
-                        propertyName = propertyName,
+                        propertyName = propertyName.identifier,
                         returnType = schemaProperty.columnContainerReturnType,
                         symbol = k,
                         effectiveVisibility = EffectiveVisibility.Local,

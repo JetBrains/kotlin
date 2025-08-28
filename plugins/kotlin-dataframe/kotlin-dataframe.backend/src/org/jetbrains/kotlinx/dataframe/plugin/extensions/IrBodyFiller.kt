@@ -109,10 +109,10 @@ private class DataFrameFileLowering(val context: IrPluginContext) : FileLowering
         val call = IrCallImpl(-1, -1, context.irBuiltIns.anyNType, get, 0).also {
             val thisSymbol: IrValueSymbol = getterExtensionReceiver.symbol
             it.arguments[0] = IrGetValueImpl(-1, -1, thisSymbol)
-            val annotation = declaration.annotations.findAnnotation(Names.COLUMN_NAME_ANNOTATION.asSingleFqName())
-            val columnName = (annotation?.arguments?.get(0) as? IrConst)?.value as? String
-            val columName = columnName ?: declaration.name.identifier
-            it.arguments[1] = IrConstImpl.string(-1, -1, context.irBuiltIns.stringType, columName)
+            val columnName = marker.properties.firstOrNull { it.name == declaration.name }
+                ?.getAnnotationArgumentValue<String>(Names.COLUMN_NAME_ANNOTATION.asSingleFqName(), Names.COLUMN_NAME_ARGUMENT.identifier)
+            val arg = columnName ?: declaration.name.identifier
+            it.arguments[1] = IrConstImpl.string(-1, -1, context.irBuiltIns.stringType, arg)
         }
 
         val typeOp = IrTypeOperatorCallImpl(-1, -1, returnType, IrTypeOperator.CAST, returnType, call)
