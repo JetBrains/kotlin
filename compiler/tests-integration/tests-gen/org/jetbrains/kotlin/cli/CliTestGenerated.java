@@ -1776,6 +1776,11 @@ public class CliTestGenerated extends AbstractCliTest {
       runTest("compiler/testData/cli/jvm/nullabilityAnnotations.args");
     }
 
+    @TestMetadata("oldXXLanguageSyntax.args")
+    public void testOldXXLanguageSyntax() {
+      runTest("compiler/testData/cli/jvm/oldXXLanguageSyntax.args");
+    }
+
     @TestMetadata("progressiveModeOff.args")
     public void testProgressiveModeOff() {
       runTest("compiler/testData/cli/jvm/progressiveModeOff.args");
