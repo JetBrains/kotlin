@@ -3,7 +3,7 @@ A.class:
   // Implementation of methods is not available
 
   public final class A public constructor() {
-      public final val valueA: kotlin.Int /* compiled code */ /* hasBackingField: true */
+      public final val valueA: kotlin.Int /* compiled code */
   }
 
 B.class:
@@ -11,7 +11,7 @@ B.class:
   // Implementation of methods is not available
 
   public final class B public constructor() {
-      public final val valueB: kotlin.Int /* compiled code */ /* hasBackingField: true */
+      public final val valueB: kotlin.Int /* compiled code */
   }
 
 ContextReceiversOnClass.class:

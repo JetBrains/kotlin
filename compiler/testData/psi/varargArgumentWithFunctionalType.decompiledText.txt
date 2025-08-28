@@ -5,7 +5,7 @@ MyBuilder.class:
   package test
 
   public interface MyBuilder {
-      public abstract val name: kotlin.String /* hasBackingField: false */
+      public abstract val name: kotlin.String
   }
 
 VarargArgumentWithFunctionalType.class:

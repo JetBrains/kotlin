@@ -2,21 +2,21 @@ KT element: KtClass
 KT element text:
 public final class OuterClass public constructor() {
     public final class MyClass public constructor() {
-        public final var myInt: kotlin.Int /* compiled code */ /* hasBackingField: true */
+        public final var myInt: kotlin.Int /* compiled code */
             public final get() { /* compiled code */ }
             public final set(value: kotlin.Int) { /* compiled code */ }
     }
 
     public final class AnotherClass public constructor(multiplier: kotlin.Int) {
-        public final val multiplier: kotlin.Int /* compiled code */ /* hasBackingField: true */
+        public final val multiplier: kotlin.Int /* compiled code */
 
-        public final var anotherInt: kotlin.Int /* compiled code */ /* hasBackingField: true */
+        public final var anotherInt: kotlin.Int /* compiled code */
             public final get() { /* compiled code */ }
             public final set(value: kotlin.Int) { /* compiled code */ }
     }
 
     public final class SomeClass public constructor(multiplier: kotlin.Int?) {
-        public final var someInt: kotlin.Int /* compiled code */ /* hasBackingField: true */
+        public final var someInt: kotlin.Int /* compiled code */
             public final get() { /* compiled code */ }
             public final set(value: kotlin.Int) { /* compiled code */ }
     }

@@ -17,11 +17,11 @@ EnumLiteral.class:
   package test
 
   public final annotation class EnumLiteral public constructor(e1: test.E, e2: test.E, e3: test.E) : kotlin.Annotation {
-      public final val e1: test.E /* compiled code */ /* hasBackingField: false */
+      public final val e1: test.E /* compiled code */
 
-      public final val e2: test.E /* compiled code */ /* hasBackingField: false */
+      public final val e2: test.E /* compiled code */
 
-      public final val e3: test.E /* compiled code */ /* hasBackingField: false */
+      public final val e3: test.E /* compiled code */
   }
 
 WithEnumLiteral.class:

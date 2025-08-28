@@ -34,7 +34,7 @@ Top Level Class.class:
   @`one two`.`three four`.`Annotation Class` public final class `Top Level Class`<`Type Parameter` : `one two`.`three four`.`Top Level Object`.`Member Level Interface`> {
       public constructor(`parameter name`: `one two`.`three four`.`Top Level Object`) { /* compiled code */ }
 
-      public final var `one two`.`three four`.`Top Level Class`<`Type Parameter`> /* from: `one two`.`three four`.`Top Level Class`.`Member Level TypeAlias`<`Type Parameter`> */.`member property`: `one two`.`three four`.`Top Level Class`<`Type Parameter`>? /* compiled code */ /* hasBackingField: false */
+      public final var `one two`.`three four`.`Top Level Class`<`Type Parameter`> /* from: `one two`.`three four`.`Top Level Class`.`Member Level TypeAlias`<`Type Parameter`> */.`member property`: `one two`.`three four`.`Top Level Class`<`Type Parameter`>? /* compiled code */
           public final get() { /* compiled code */ }
           public final set(value: `one two`.`three four`.`Top Level Class`<`Type Parameter`>?) { /* compiled code */ }
 

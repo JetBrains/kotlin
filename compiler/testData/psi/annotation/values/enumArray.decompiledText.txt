@@ -3,7 +3,7 @@ Arrays.class:
   // Implementation of methods is not available
 
   public final annotation class Arrays public constructor(value: kotlin.Array<MyEnum>) : kotlin.Annotation {
-      public final val value: kotlin.Array<MyEnum> /* compiled code */ /* hasBackingField: false */
+      public final val value: kotlin.Array<MyEnum> /* compiled code */
   }
 
 MyEnum.class:

@@ -8,9 +8,9 @@ public final enum class Color private constructor(r: kotlin.Int, g: kotlin.Int, 
 
     BLUE;
 
-    public final val r: kotlin.Int /* compiled code */ /* hasBackingField: true */
+    public final val r: kotlin.Int /* compiled code */
 
-    public final val g: kotlin.Int /* compiled code */ /* hasBackingField: true */
+    public final val g: kotlin.Int /* compiled code */
 
-    public final val sb: kotlin.Int /* compiled code */ /* hasBackingField: true */
+    public final val sb: kotlin.Int /* compiled code */
 }

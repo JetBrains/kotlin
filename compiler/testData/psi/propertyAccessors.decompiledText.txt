@@ -1,12 +1,12 @@
 // IntelliJ API Decompiler stub source generated from a class file
 // Implementation of methods is not available
 
-public var privateSetter: kotlin.Int /* compiled code */ /* hasBackingField: true */
+public var privateSetter: kotlin.Int /* compiled code */
     private final set(value: kotlin.Int) { /* compiled code */ }
 
-private var privateVarPrivateSetter: kotlin.Int /* compiled code */ /* hasBackingField: true */
+private var privateVarPrivateSetter: kotlin.Int /* compiled code */
 
-public val explicitPublicGetter: kotlin.Int /* compiled code */ /* hasBackingField: true */
+public val explicitPublicGetter: kotlin.Int /* compiled code */
 
-public val inlineProperty: kotlin.Int /* compiled code */ /* hasBackingField: false */
+public val inlineProperty: kotlin.Int /* compiled code */
     public final inline get() { /* compiled code */ }

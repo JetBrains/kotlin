@@ -1,6 +1,6 @@
 KT element: KtProperty
 KT element text:
-context(A) public val <A> myContextOf: A /* compiled code */ /* hasBackingField: false */
+context(A) public val <A> myContextOf: A /* compiled code */
     public final inline get() { /* compiled code */ }
 FIR element: FirPropertyImpl
 FIR source kind: KtRealSourceElementKind

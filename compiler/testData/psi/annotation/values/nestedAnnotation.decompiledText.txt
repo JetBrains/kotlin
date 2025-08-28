@@ -5,9 +5,9 @@ Nested.class:
   package foo
 
   public final annotation class Nested public constructor(i: kotlin.Int, s: kotlin.String) : kotlin.Annotation {
-      public final val i: kotlin.Int /* compiled code */ /* hasBackingField: false */
+      public final val i: kotlin.Int /* compiled code */
 
-      public final val s: kotlin.String /* compiled code */ /* hasBackingField: false */
+      public final val s: kotlin.String /* compiled code */
   }
 
 Outer.class:
@@ -15,9 +15,9 @@ Outer.class:
   // Implementation of methods is not available
 
   public final annotation class Outer public constructor(some: kotlin.String, nested: foo.Nested) : kotlin.Annotation {
-      public final val some: kotlin.String /* compiled code */ /* hasBackingField: false */
+      public final val some: kotlin.String /* compiled code */
 
-      public final val nested: foo.Nested /* compiled code */ /* hasBackingField: false */
+      public final val nested: foo.Nested /* compiled code */
   }
 
 WithNested.class:

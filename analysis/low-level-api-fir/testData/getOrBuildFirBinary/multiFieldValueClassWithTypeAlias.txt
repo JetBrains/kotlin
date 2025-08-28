@@ -1,9 +1,9 @@
 KT element: KtClass
 KT element text:
 @kotlin.jvm.JvmInline public final value class Foo<T> public constructor(alias: kotlin.collections.List<T> /* from: pack.MyAlias<T> */, b: kotlin.String) {
-    public final val alias: kotlin.collections.List<T> /* from: pack.MyAlias<T> */ /* compiled code */ /* hasBackingField: true */
+    public final val alias: kotlin.collections.List<T> /* from: pack.MyAlias<T> */ /* compiled code */
 
-    public final val b: kotlin.String /* compiled code */ /* hasBackingField: true */
+    public final val b: kotlin.String /* compiled code */
 
     public open operator fun equals(other: kotlin.Any?): kotlin.Boolean { /* compiled code */ }
 

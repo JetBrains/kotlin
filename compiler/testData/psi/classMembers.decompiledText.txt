@@ -4,17 +4,17 @@
 package test
 
 public abstract class ClassMembers public constructor(p: kotlin.Int, p2: kotlin.String, p3: kotlin.Int, p4: kotlin.Int = COMPILED_CODE, p5: kotlin.String = COMPILED_CODE) {
-    private final val p: kotlin.Int /* compiled code */ /* hasBackingField: true */
+    private final val p: kotlin.Int /* compiled code */
 
-    public open var p2: kotlin.String /* compiled code */ /* hasBackingField: true */
+    public open var p2: kotlin.String /* compiled code */
 
-    public final val p5: kotlin.String /* compiled code */ /* hasBackingField: true */
+    public final val p5: kotlin.String /* compiled code */
 
-    public final val foo: kotlin.Int /* compiled code */ /* hasBackingField: true */
+    public final val foo: kotlin.Int /* compiled code */
 
-    public open val openVal: kotlin.Int /* compiled code */ /* hasBackingField: true */
+    public open val openVal: kotlin.Int /* compiled code */
 
-    public abstract var abstractVar: kotlin.Int /* hasBackingField: false */
+    public abstract var abstractVar: kotlin.Int
 
     public final fun bar(): kotlin.Int { /* compiled code */ }
 

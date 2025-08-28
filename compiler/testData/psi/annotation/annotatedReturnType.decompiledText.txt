@@ -3,7 +3,7 @@ MyInterface.class:
   // Implementation of methods is not available
 
   public interface MyInterface {
-      @RegularAnno public abstract val property: @TypeAnno kotlin.String /* hasBackingField: false */
+      @RegularAnno public abstract val property: @TypeAnno kotlin.String
 
       @RegularAnno public abstract fun function(@RegularAnno argument: @TypeAnno kotlin.Int): @TypeAnno kotlin.Int
   }

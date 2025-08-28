@@ -13,7 +13,7 @@ TopLevelMembersAnnotatedKt.class:
 
   package a.b.c.topLevelMembersAnnotated
 
-  @d.e.f.a @d.e.f.b public val i: kotlin.Int /* compiled code */ /* hasBackingField: true */
+  @d.e.f.a @d.e.f.b public val i: kotlin.Int /* compiled code */
 
   @d.e.f.a @d.e.f.b public fun f(@d.e.f.a @d.e.f.b p1: a.b.c.topLevelMembersAnnotated.C): kotlin.Int { /* compiled code */ }
 

@@ -1,2 +1,2 @@
-val customGetterOnly: Int /* hasBackingField: true */
+val customGetterOnly: Int
     get() = 1

@@ -4,36 +4,36 @@ Annotations.class:
 
   @a public final class Annotations @a private constructor(@a c1: kotlin.Int, @a c2: kotlin.Int) {
       private companion object {
-          @field:f public final val field: kotlin.Int /* compiled code */ /* hasBackingField: true */
+          @field:f public final val field: kotlin.Int /* compiled code */
       }
 
-      @a private final val c1: kotlin.Int /* compiled code */ /* hasBackingField: true */
+      @a private final val c1: kotlin.Int /* compiled code */
 
-      @a public final val c2: kotlin.Int /* compiled code */ /* hasBackingField: true */
+      @a public final val c2: kotlin.Int /* compiled code */
 
-      @a public final val hasValueArguments: kotlin.Int /* compiled code */ /* hasBackingField: true */
+      @a public final val hasValueArguments: kotlin.Int /* compiled code */
 
-      private final val c: kotlin.Int /* compiled code */ /* hasBackingField: true */
+      private final val c: kotlin.Int /* compiled code */
 
-      public final var withCustomAccessors: kotlin.Int /* compiled code */ /* hasBackingField: true */
+      public final var withCustomAccessors: kotlin.Int /* compiled code */
           @a public final get
           private final set(value: kotlin.Int) { /* compiled code */ }
 
-      public final val @receiver:a kotlin.Int.receiverField: kotlin.String? /* compiled code */ /* hasBackingField: false */
+      public final val @receiver:a kotlin.Int.receiverField: kotlin.String? /* compiled code */
           public final get() { /* compiled code */ }
 
-      public final val getterField: kotlin.String? /* compiled code */ /* hasBackingField: true */
+      public final val getterField: kotlin.String? /* compiled code */
           @a public final get
 
-      public final var setterField: kotlin.String? /* compiled code */ /* hasBackingField: true */
+      public final var setterField: kotlin.String? /* compiled code */
           @a public final set
 
-      @field:a public final val ownField: kotlin.String? /* compiled code */ /* hasBackingField: true */
+      @field:a public final val ownField: kotlin.String? /* compiled code */
 
-      public final var setParam: kotlin.String? /* compiled code */ /* hasBackingField: true */
+      public final var setParam: kotlin.String? /* compiled code */
           public final set(@a value: kotlin.String?) { /* compiled code */ }
 
-      @delegate:a public final val deleage: kotlin.Int by COMPILED_CODE /* compiled code */ /* hasBackingField: true */
+      @delegate:a public final val deleage: kotlin.Int by COMPILED_CODE /* compiled code */
           public final get() { /* compiled code */ }
 
       @a protected final fun f(): kotlin.Unit { /* compiled code */ }
@@ -60,7 +60,7 @@ Annotations.class:
       }
 
       public final class ClassWithConstructor public constructor(@a b: kotlin.Int) {
-          public final val b: kotlin.Int /* compiled code */ /* hasBackingField: true */
+          public final val b: kotlin.Int /* compiled code */
       }
   }
 
@@ -86,7 +86,7 @@ b.class:
   // Implementation of methods is not available
 
   @kotlin.annotation.Target @kotlin.annotation.Retention @kotlin.annotation.Repeatable public final annotation class b public constructor(e: E) : kotlin.Annotation {
-      public final val e: E /* compiled code */ /* hasBackingField: false */
+      public final val e: E /* compiled code */
   }
 
 c.class:

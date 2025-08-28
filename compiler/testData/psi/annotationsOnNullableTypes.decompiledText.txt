@@ -10,15 +10,15 @@ AnnotationsOnNullableTypes.class:
   // Implementation of methods is not available
 
   public final class AnnotationsOnNullableTypes public constructor() {
-      public final val lambdaType: @A (() -> C)? /* compiled code */ /* hasBackingField: true */
+      public final val lambdaType: @A (() -> C)? /* compiled code */
 
-      public final val lambdaParameter: (@A C?) -> C /* compiled code */ /* hasBackingField: true */
+      public final val lambdaParameter: (@A C?) -> C /* compiled code */
 
-      public final val lambdaReturnValue: () -> @A C? /* compiled code */ /* hasBackingField: true */
+      public final val lambdaReturnValue: () -> @A C? /* compiled code */
 
-      public final val lambdaReceiver: (@A C?).() -> C /* compiled code */ /* hasBackingField: true */
+      public final val lambdaReceiver: (@A C?).() -> C /* compiled code */
 
-      public final val lambdaTypeWithNullableReceiver: @A C?.() -> C /* compiled code */ /* hasBackingField: true */
+      public final val lambdaTypeWithNullableReceiver: @A C?.() -> C /* compiled code */
 
       public final fun B<@A C?>.receiverArgument(): kotlin.Unit { /* compiled code */ }
 

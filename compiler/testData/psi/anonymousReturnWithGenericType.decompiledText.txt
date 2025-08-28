@@ -3,9 +3,9 @@ AnonymousReturnWithGenericType.class:
   // Implementation of methods is not available
 
   public final class AnonymousReturnWithGenericType<T> public constructor() {
-      public final val v1: Foo<T> /* compiled code */ /* hasBackingField: true */
+      public final val v1: Foo<T> /* compiled code */
 
-      private final val v2: kotlin.Any /* compiled code */ /* hasBackingField: true */
+      private final val v2: kotlin.Any /* compiled code */
 
       public final fun f1(): Foo<T> { /* compiled code */ }
 

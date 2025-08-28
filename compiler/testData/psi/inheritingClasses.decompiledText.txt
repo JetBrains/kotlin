@@ -5,11 +5,11 @@ package a
 
 public final class InheritingClasses public constructor() {
     public abstract class A public constructor(c: kotlin.Int = COMPILED_CODE) : a.InheritingClasses.C {
-        public open val c: kotlin.Int /* compiled code */ /* hasBackingField: true */
+        public open val c: kotlin.Int /* compiled code */
 
-        public open val op: kotlin.Int /* compiled code */ /* hasBackingField: true */
+        public open val op: kotlin.Int /* compiled code */
 
-        public abstract val ap: kotlin.Int /* hasBackingField: false */
+        public abstract val ap: kotlin.Int
 
         public open fun of(): kotlin.Int { /* compiled code */ }
 
@@ -17,9 +17,9 @@ public final class InheritingClasses public constructor() {
     }
 
     public open class B public constructor() : a.InheritingClasses.A {
-        public open val op: kotlin.Int /* compiled code */ /* hasBackingField: true */
+        public open val op: kotlin.Int /* compiled code */
 
-        public open val ap: kotlin.Int /* compiled code */ /* hasBackingField: true */
+        public open val ap: kotlin.Int /* compiled code */
 
         public open fun of(): kotlin.Int { /* compiled code */ }
 
@@ -27,11 +27,11 @@ public final class InheritingClasses public constructor() {
     }
 
     public interface C {
-        public abstract val c: kotlin.Int /* hasBackingField: false */
+        public abstract val c: kotlin.Int
     }
 
     public interface D<T> : a.InheritingClasses.C {
-        public abstract val c: kotlin.Int /* hasBackingField: false */
+        public abstract val c: kotlin.Int
     }
 
     public interface E {

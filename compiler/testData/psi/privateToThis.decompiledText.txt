@@ -4,14 +4,14 @@
 package p
 
 public final class PrivateToThis<in I> public constructor() {
-    private final val foo: I /* compiled code */ /* hasBackingField: true */
+    private final val foo: I /* compiled code */
 
-    private final var bar: I /* compiled code */ /* hasBackingField: true */
+    private final var bar: I /* compiled code */
 
-    private final val val_with_accessors: I /* compiled code */ /* hasBackingField: false */
+    private final val val_with_accessors: I /* compiled code */
         private final get() { /* compiled code */ }
 
-    private final var var_with_accessors: I /* compiled code */ /* hasBackingField: false */
+    private final var var_with_accessors: I /* compiled code */
         private final get() { /* compiled code */ }
         private final set(value: I) { /* compiled code */ }
 

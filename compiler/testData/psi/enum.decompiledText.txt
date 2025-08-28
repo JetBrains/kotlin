@@ -27,7 +27,7 @@ Enum.class:
       F;
 
       public companion object {
-          @a.b.c.test.enum.Ann public final val c: kotlin.Int /* compiled code */ /* hasBackingField: true */
+          @a.b.c.test.enum.Ann public final val c: kotlin.Int /* compiled code */
       }
 
       public open fun f(): kotlin.Int { /* compiled code */ }

@@ -3,21 +3,21 @@ Simple.class:
   // Implementation of methods is not available
 
   public final annotation class Simple public constructor(i: kotlin.Int, l: kotlin.Long, b: kotlin.Byte, d: kotlin.Double, f: kotlin.Float, c: kotlin.Char, b1: kotlin.Boolean, b2: kotlin.Boolean) : kotlin.Annotation {
-      public final val i: kotlin.Int /* compiled code */ /* hasBackingField: false */
+      public final val i: kotlin.Int /* compiled code */
 
-      public final val l: kotlin.Long /* compiled code */ /* hasBackingField: false */
+      public final val l: kotlin.Long /* compiled code */
 
-      public final val b: kotlin.Byte /* compiled code */ /* hasBackingField: false */
+      public final val b: kotlin.Byte /* compiled code */
 
-      public final val d: kotlin.Double /* compiled code */ /* hasBackingField: false */
+      public final val d: kotlin.Double /* compiled code */
 
-      public final val f: kotlin.Float /* compiled code */ /* hasBackingField: false */
+      public final val f: kotlin.Float /* compiled code */
 
-      public final val c: kotlin.Char /* compiled code */ /* hasBackingField: false */
+      public final val c: kotlin.Char /* compiled code */
 
-      public final val b1: kotlin.Boolean /* compiled code */ /* hasBackingField: false */
+      public final val b1: kotlin.Boolean /* compiled code */
 
-      public final val b2: kotlin.Boolean /* compiled code */ /* hasBackingField: false */
+      public final val b2: kotlin.Boolean /* compiled code */
   }
 
 WithNamedSimple.class:

@@ -3,7 +3,7 @@ AnnoWithCustomName.class:
   // Implementation of methods is not available
 
   public final annotation class AnnoWithCustomName public constructor(string: kotlin.String) : kotlin.Annotation {
-      public final val string: kotlin.String /* compiled code */ /* hasBackingField: false */
+      public final val string: kotlin.String /* compiled code */
   }
 
 AnnoWithCustomNameAndDefaultValue.class:
@@ -11,7 +11,7 @@ AnnoWithCustomNameAndDefaultValue.class:
   // Implementation of methods is not available
 
   public final annotation class AnnoWithCustomNameAndDefaultValue public constructor(string: kotlin.String = COMPILED_CODE) : kotlin.Annotation {
-      public final val string: kotlin.String = COMPILED_CODE /* compiled code */ /* hasBackingField: false */
+      public final val string: kotlin.String = COMPILED_CODE /* compiled code */
   }
 
 AnnoWithDefaultName.class:
@@ -19,7 +19,7 @@ AnnoWithDefaultName.class:
   // Implementation of methods is not available
 
   public final annotation class AnnoWithDefaultName public constructor(value: kotlin.Int) : kotlin.Annotation {
-      public final val value: kotlin.Int /* compiled code */ /* hasBackingField: false */
+      public final val value: kotlin.Int /* compiled code */
   }
 
 AnnoWithDefaultNameAndDefaultValue.class:
@@ -27,7 +27,7 @@ AnnoWithDefaultNameAndDefaultValue.class:
   // Implementation of methods is not available
 
   public final annotation class AnnoWithDefaultNameAndDefaultValue public constructor(value: kotlin.Int = COMPILED_CODE) : kotlin.Annotation {
-      public final val value: kotlin.Int = COMPILED_CODE /* compiled code */ /* hasBackingField: false */
+      public final val value: kotlin.Int = COMPILED_CODE /* compiled code */
   }
 
 AnnoWithVararg.class:
@@ -35,7 +35,7 @@ AnnoWithVararg.class:
   // Implementation of methods is not available
 
   public final annotation class AnnoWithVararg public constructor(vararg value: kotlin.Int) : kotlin.Annotation {
-      public final val value: kotlin.IntArray /* compiled code */ /* hasBackingField: false */
+      public final val value: kotlin.IntArray /* compiled code */
   }
 
 AnnoWithVarargAndDefaultVakue.class:
@@ -43,5 +43,5 @@ AnnoWithVarargAndDefaultVakue.class:
   // Implementation of methods is not available
 
   public final annotation class AnnoWithVarargAndDefaultVakue public constructor(vararg value: kotlin.Int = COMPILED_CODE) : kotlin.Annotation {
-      public final val value: kotlin.IntArray = COMPILED_CODE /* compiled code */ /* hasBackingField: false */
+      public final val value: kotlin.IntArray = COMPILED_CODE /* compiled code */
   }

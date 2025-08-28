@@ -36,7 +36,6 @@ public class KtPropertyElementType extends KtStubElementType<KotlinPropertyStubI
                 String.format("Should not store local property: %s, parent %s",
                               psi.getText(), psi.getParent() != null ? psi.getParent().getText() : "<no parent>");
 
-        Boolean hasBackingField = StubUtils.searchForHasBackingFieldComment$psi_impl(psi);
         return new KotlinPropertyStubImpl(
                 (StubElement<?>) parentStub,
                 StringRef.fromString(psi.getName()),
@@ -50,7 +49,7 @@ public class KtPropertyElementType extends KtStubElementType<KotlinPropertyStubI
                 KtPsiUtilKt.safeFqNameForLazyResolve(psi),
                 /* constantInitializer = */ null,
                 /* origin = */ null,
-                /* hasBackingField = */hasBackingField
+                /* hasBackingField = */ null
         );
     }
 

@@ -10,20 +10,20 @@ Objects.class:
   // Implementation of methods is not available
 
   public object Objects {
-      public final val c: kotlin.Int /* compiled code */ /* hasBackingField: true */
+      public final val c: kotlin.Int /* compiled code */
 
       public final fun f(): kotlin.Unit { /* compiled code */ }
 
       public final fun g(): kotlin.Int { /* compiled code */ }
 
       private object InnerObject : A {
-          public final val c: kotlin.Int /* compiled code */ /* hasBackingField: true */
+          public final val c: kotlin.Int /* compiled code */
 
           public final fun f(): kotlin.Unit { /* compiled code */ }
       }
 
       public object OtherObject : Objects.NestedClass {
-          public final val c: kotlin.Int /* compiled code */ /* hasBackingField: true */
+          public final val c: kotlin.Int /* compiled code */
 
           public final fun f(): kotlin.Unit { /* compiled code */ }
       }
