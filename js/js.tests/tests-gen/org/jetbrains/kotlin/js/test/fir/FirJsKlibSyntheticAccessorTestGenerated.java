@@ -1510,6 +1510,12 @@ public class FirJsKlibSyntheticAccessorTestGenerated extends AbstractFirJsKlibSy
       }
 
       @Test
+      @TestMetadata("leakingPrivateValThroughLocalObjectInInternalInlineFunWithAnnotation.kt")
+      public void testLeakingPrivateValThroughLocalObjectInInternalInlineFunWithAnnotation() {
+        runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossFilePrivateLeak/leakingPrivateValThroughLocalObjectInInternalInlineFunWithAnnotation.kt");
+      }
+
+      @Test
       @TestMetadata("leakingPrivateValThroughReferenceInPublicInlineFun.kt")
       public void testLeakingPrivateValThroughReferenceInPublicInlineFun() {
         runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossFilePrivateLeak/leakingPrivateValThroughReferenceInPublicInlineFun.kt");
@@ -1820,6 +1826,12 @@ public class FirJsKlibSyntheticAccessorTestGenerated extends AbstractFirJsKlibSy
       }
 
       @Test
+      @TestMetadata("leakingPrivateValThroughLocalObjectInInternalInlineFunWithAnnotation.kt")
+      public void testLeakingPrivateValThroughLocalObjectInInternalInlineFunWithAnnotation() {
+        runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossModulePrivateLeak/leakingPrivateValThroughLocalObjectInInternalInlineFunWithAnnotation.kt");
+      }
+
+      @Test
       @TestMetadata("leakingPrivateValThroughReferenceInPublicInlineFun.kt")
       public void testLeakingPrivateValThroughReferenceInPublicInlineFun() {
         runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossModulePrivateLeak/leakingPrivateValThroughReferenceInPublicInlineFun.kt");
@@ -2031,6 +2043,12 @@ public class FirJsKlibSyntheticAccessorTestGenerated extends AbstractFirJsKlibSy
       @TestMetadata("leakingPrivateTopLevelLateinitVar.kt")
       public void testLeakingPrivateTopLevelLateinitVar() {
         runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/singleFile/leakingPrivateTopLevelLateinitVar.kt");
+      }
+
+      @Test
+      @TestMetadata("leakingPrivateValThroughLocalObjectInInternalInlineFunWithAnnotation.kt")
+      public void testLeakingPrivateValThroughLocalObjectInInternalInlineFunWithAnnotation() {
+        runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/singleFile/leakingPrivateValThroughLocalObjectInInternalInlineFunWithAnnotation.kt");
       }
 
       @Test
