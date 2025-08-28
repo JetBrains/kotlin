@@ -8,8 +8,8 @@ package org.jetbrains.kotlin.analysis.decompiler.konan
 import org.jetbrains.kotlin.library.metadata.KlibMetadataSerializerProtocol
 import org.jetbrains.kotlin.psi.stubs.KotlinStubVersions
 
-class KotlinNativeMetadataDecompiler : KlibMetadataDecompiler(
+class KotlinKlibDecompiler : KlibMetadataDecompiler(
     KlibMetaFileType,
     { KlibMetadataSerializerProtocol },
-    KotlinStubVersions.KOTLIN_NATIVE_STUB_VERSION,
+    KotlinStubVersions.KLIB_STUB_VERSION,
 )

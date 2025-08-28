@@ -31,7 +31,7 @@
 
     <psi.classFileDecompiler implementation="org.jetbrains.kotlin.analysis.decompiler.psi.KotlinClassFileDecompiler"/>
     <psi.classFileDecompiler implementation="org.jetbrains.kotlin.analysis.decompiler.psi.KotlinBuiltInDecompiler"/>
-    <psi.classFileDecompiler implementation="org.jetbrains.kotlin.analysis.decompiler.konan.KotlinNativeMetadataDecompiler"/>
+    <psi.classFileDecompiler implementation="org.jetbrains.kotlin.analysis.decompiler.konan.KotlinKlibDecompiler"/>
 
     <projectService
         serviceInterface="org.jetbrains.kotlin.resolve.jvm.KotlinJavaPsiFacade"
