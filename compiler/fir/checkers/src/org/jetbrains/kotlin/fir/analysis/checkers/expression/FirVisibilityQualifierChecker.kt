@@ -78,12 +78,12 @@ object FirVisibilityQualifierChecker : FirResolvedQualifierChecker(MppCheckerKin
         }
 
         if (symbol is FirTypeAliasSymbol) {
-            symbol.resolvedExpandedTypeRef.coneType.toClassLikeSymbol(context.session)?.let {
+            symbol.resolvedExpandedTypeRef.coneType.toClassLikeSymbol()?.let {
                 checkClassLikeSymbol(it, expression, isStandalone)
             }
         }
 
-        symbol.getOwnerLookupTag()?.toSymbol(context.session)?.let {
+        symbol.getOwnerLookupTag()?.toSymbol()?.let {
             checkClassLikeSymbol(it, expression, isStandalone = false)
         }
     }

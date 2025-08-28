@@ -38,7 +38,7 @@ object FirSealedSupertypeChecker : FirClassChecker(MppCheckerKind.Common) {
     private fun checkGlobalDeclaration(declaration: FirClass) {
         val subclassPackage = declaration.classId.packageFqName
         for (superTypeRef in declaration.superTypeRefs) {
-            val superClass = superTypeRef.coneType.fullyExpandedType().toRegularClassSymbol(context.session) ?: continue
+            val superClass = superTypeRef.coneType.fullyExpandedType().toRegularClassSymbol() ?: continue
 
             if (superClass.isLocal) {
                 continue
@@ -62,7 +62,7 @@ object FirSealedSupertypeChecker : FirClassChecker(MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
     private fun checkLocalDeclaration(declaration: FirClass) {
         for (it in declaration.superTypeRefs) {
-            val superClassSymbol = it.coneType.fullyExpandedType().toRegularClassSymbol(context.session) ?: continue
+            val superClassSymbol = it.coneType.fullyExpandedType().toRegularClassSymbol() ?: continue
 
             if (superClassSymbol.isLocal) {
                 continue

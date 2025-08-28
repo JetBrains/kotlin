@@ -41,7 +41,7 @@ object FirJvmFieldApplicabilityChecker : FirPropertyChecker(MppCheckerKind.Commo
         val session = context.session
         val annotation = declaration.backingField?.getAnnotationByClassId(JVM_FIELD_ANNOTATION_CLASS_ID, session)
             ?: return
-        val containingClassSymbol = declaration.containingClassLookupTag()?.toRegularClassSymbol(session)
+        val containingClassSymbol = declaration.containingClassLookupTag()?.toRegularClassSymbol()
 
         val problem = when {
             declaration.delegate != null -> DELEGATE

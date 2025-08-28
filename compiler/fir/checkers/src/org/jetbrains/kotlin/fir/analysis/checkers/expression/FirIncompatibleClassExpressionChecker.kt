@@ -42,7 +42,7 @@ object FirIncompatibleClassExpressionChecker : FirQualifiedAccessExpressionCheck
 
     context(context: CheckerContext, reporter: DiagnosticReporter)
     internal fun checkType(type: ConeKotlinType?, element: FirElement) {
-        val classSymbol = type?.toRegularClassSymbol(context.session)
+        val classSymbol = type?.toRegularClassSymbol()
         checkSourceElement(classSymbol?.sourceElement, element)
     }
 

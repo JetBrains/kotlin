@@ -104,7 +104,7 @@ sealed class FirNativeThrowsChecker(mppKind: MppCheckerKind) : FirBasicDeclarati
             reporter.reportOn(
                 declaration.source,
                 FirNativeErrors.INCOMPATIBLE_THROWS_INHERITED,
-                inherited.mapNotNull { it.key.containingClassLookupTag()?.toRegularClassSymbol(context.session) })
+                inherited.mapNotNull { it.key.containingClassLookupTag()?.toRegularClassSymbol() })
             return false
         }
 
@@ -112,7 +112,7 @@ sealed class FirNativeThrowsChecker(mppKind: MppCheckerKind) : FirBasicDeclarati
             ?: return true // Should not happen though.
 
         if (throwsAnnotation?.source != null && decodeThrowsFilter(throwsAnnotation, context.session) != overriddenThrows) {
-            val containingClassSymbol = overriddenMember.containingClassLookupTag()?.toRegularClassSymbol(context.session)
+            val containingClassSymbol = overriddenMember.containingClassLookupTag()?.toRegularClassSymbol()
             if (containingClassSymbol != null) {
                 reporter.reportOn(throwsAnnotation.source, FirNativeErrors.INCOMPATIBLE_THROWS_OVERRIDE, containingClassSymbol)
             }
@@ -151,7 +151,7 @@ sealed class FirNativeThrowsChecker(mppKind: MppCheckerKind) : FirBasicDeclarati
             }
         }
 
-        val currentScope = function.symbol.containingClassLookupTag()?.toRegularClassSymbol(context.session)?.unsubstitutedScope()
+        val currentScope = function.symbol.containingClassLookupTag()?.toRegularClassSymbol()?.unsubstitutedScope()
         if (currentScope != null) {
             currentScope.processFunctionsByName(function.name) {}
             getInheritedThrows(throwsAnnotation, MemberWithBaseScope(function.symbol, currentScope))

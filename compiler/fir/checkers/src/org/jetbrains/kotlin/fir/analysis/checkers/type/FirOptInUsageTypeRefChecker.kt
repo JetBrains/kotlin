@@ -35,9 +35,9 @@ object FirOptInUsageTypeRefChecker : FirResolvedTypeRefChecker(MppCheckerKind.Co
         // ConeClassLikeType filters out all delegatedTypeRefs from here
         val expandedTypealiasType = typeRef.coneType.fullyExpandedType().lowerBoundIfFlexible() as? ConeClassLikeType ?: return
         val coneType = expandedTypealiasType.abbreviatedTypeOrSelf as? ConeClassLikeType ?: return
-        val symbol = coneType.toSymbol(context.session) ?: return
+        val symbol = coneType.toSymbol() ?: return
 
-        val typeAliasExpandedSymbol = expandedTypealiasType.takeIf { it.isTypealiasExpansion }?.toSymbol(context.session)
+        val typeAliasExpandedSymbol = expandedTypealiasType.takeIf { it.isTypealiasExpansion }?.toSymbol()
         val processedSymbol = typeAliasExpandedSymbol ?: symbol
 
         val classId = processedSymbol.classId
@@ -81,7 +81,7 @@ object FirOptInUsageTypeRefChecker : FirResolvedTypeRefChecker(MppCheckerKind.Co
         source: KtSourceElement,
         qualifier: List<FirQualifierPart>,
     ) {
-        val containingClassSymbol = this.getContainingClassLookupTag()?.toSymbol(context.session) ?: return
+        val containingClassSymbol = this.getContainingClassLookupTag()?.toSymbol() ?: return
         if (qualifier.any { it.name == containingClassSymbol.name } && containingClassSymbol.isExperimentalMarker(context.session)) {
             reporter.reportOn(source, OPT_IN_MARKER_CAN_ONLY_BE_USED_AS_ANNOTATION_OR_ARGUMENT_IN_OPT_IN)
         }

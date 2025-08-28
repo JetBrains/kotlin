@@ -39,7 +39,7 @@ object FirJvmModuleAccessibilityQualifiedAccessChecker : FirQualifiedAccessExpre
 
         val containingClass = callableSymbol.containingClassLookupTag()
         if (containingClass != null) {
-            val containingClassSymbol = containingClass.toRegularClassSymbol(context.session) ?: return
+            val containingClassSymbol = containingClass.toRegularClassSymbol() ?: return
             checkClassAccess(containingClassSymbol, expression)
         } else {
             val containerSource = callableSymbol.containerSource as? JvmPackagePartSource ?: return

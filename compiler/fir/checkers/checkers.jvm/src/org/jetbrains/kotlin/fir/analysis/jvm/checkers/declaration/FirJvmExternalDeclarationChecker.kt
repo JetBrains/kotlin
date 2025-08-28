@@ -64,7 +64,7 @@ object FirJvmExternalDeclarationChecker : FirBasicDeclarationChecker(MppCheckerK
             return
         }
 
-        val containingClassSymbol = declaration.symbol.containingClassLookupTag()?.toRegularClassSymbol(context.session)
+        val containingClassSymbol = declaration.symbol.containingClassLookupTag()?.toRegularClassSymbol()
         if (containingClassSymbol != null) {
             if (containingClassSymbol.isInterface) {
                 reporter.reportOn(declaration.source, FirJvmErrors.EXTERNAL_DECLARATION_IN_INTERFACE)

@@ -68,7 +68,7 @@ object FirExhaustiveWhenChecker : FirWhenExpressionChecker(MppCheckerKind.Common
         val source = whenExpression.source ?: return
 
         val subjectType = exhaustivenessStatus.subjectType
-        val subjectClassSymbol = subjectType?.toRegularClassSymbol(context.session)
+        val subjectClassSymbol = subjectType?.toRegularClassSymbol()
 
         if (whenExpression.usedAsExpression) {
             if (source.isIfExpression) {
@@ -117,7 +117,7 @@ object FirExhaustiveWhenChecker : FirWhenExpressionChecker(MppCheckerKind.Common
 
     context(context: CheckerContext)
     private fun ClassId.isJavaNonAbstractSealed(): Boolean {
-        val symbol = toSymbol(context.session) as? FirClassLikeSymbol ?: return false
+        val symbol = toSymbol() as? FirClassLikeSymbol ?: return false
         val fullyExpandedClassSymbol = symbol.fullyExpandedClass(context.session) ?: return false
 
         @OptIn(SymbolInternals::class)

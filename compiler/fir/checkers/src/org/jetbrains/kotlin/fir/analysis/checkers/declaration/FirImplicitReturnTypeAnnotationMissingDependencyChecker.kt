@@ -45,7 +45,7 @@ object FirImplicitReturnTypeAnnotationMissingDependencyChecker : FirCallableDecl
     context(context: CheckerContext, reporter: DiagnosticReporter)
     private fun check(it: FirAnnotation, source: AbstractKtSourceElement?) {
         val coneType = it.annotationTypeRef.coneType
-        if (coneType.toSymbol(context.session) == null) {
+        if (coneType.toSymbol() == null) {
             reporter.reportOn(source, FirErrors.MISSING_DEPENDENCY_IN_INFERRED_TYPE_ANNOTATION, coneType)
         }
     }

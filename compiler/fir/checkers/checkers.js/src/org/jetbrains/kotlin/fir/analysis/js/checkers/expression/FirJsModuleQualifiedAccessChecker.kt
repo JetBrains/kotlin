@@ -55,7 +55,7 @@ object FirJsModuleQualifiedAccessChecker : FirQualifiedAccessExpressionChecker(M
         expr: FirQualifiedAccessExpression,
     ) {
         (expr as? FirFunctionCall)?.forAllReifiedTypeParameters { type, typeArgument ->
-            val typeArgumentClass = type.toRegularClassSymbol(context.session) ?: return@forAllReifiedTypeParameters
+            val typeArgumentClass = type.toRegularClassSymbol() ?: return@forAllReifiedTypeParameters
             val source = typeArgument.source ?: expr.calleeReference.source ?: expr.source
             checkJsModuleUsage(typeArgumentClass, source)
         }

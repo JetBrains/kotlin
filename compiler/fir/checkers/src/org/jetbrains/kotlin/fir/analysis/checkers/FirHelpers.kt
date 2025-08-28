@@ -241,7 +241,7 @@ fun FirClass.findNonInterfaceSupertype(): FirTypeRef? {
     for (superTypeRef in superTypeRefs) {
         val lookupTag = (superTypeRef.coneType as? ConeClassLikeType)?.lookupTag ?: continue
 
-        val symbol = lookupTag.toClassSymbol(context.session) ?: continue
+        val symbol = lookupTag.toClassSymbol() ?: continue
 
         if (symbol.classKind != ClassKind.INTERFACE) {
             return superTypeRef

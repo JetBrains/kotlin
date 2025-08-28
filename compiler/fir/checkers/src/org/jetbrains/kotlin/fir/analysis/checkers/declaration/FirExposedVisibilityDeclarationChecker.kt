@@ -68,7 +68,7 @@ object FirExposedVisibilityDeclarationChecker : FirBasicDeclarationChecker(MppCh
         for (supertypeRef in supertypes) {
             if (supertypeRef.source?.kind == KtFakeSourceElementKind.EnumSuperTypeRef) continue
             val supertype = supertypeRef.coneType
-            val classSymbol = supertype.toRegularClassSymbol(context.session) ?: continue
+            val classSymbol = supertype.toRegularClassSymbol() ?: continue
             val superIsInterface = classSymbol.classKind == ClassKind.INTERFACE
             if (superIsInterface != isInterface) {
                 continue
@@ -244,7 +244,7 @@ object FirExposedVisibilityDeclarationChecker : FirBasicDeclarationChecker(MppCh
             else -> return null
         }
 
-        val classSymbol = type.fullyExpandedType().lookupTag.toSymbol(context.session) ?: return null
+        val classSymbol = type.fullyExpandedType().lookupTag.toSymbol() ?: return null
 
         val effectiveVisibility = when (classSymbol) {
             is FirRegularClassSymbol -> classSymbol.effectiveVisibility
@@ -281,7 +281,7 @@ object FirExposedVisibilityDeclarationChecker : FirBasicDeclarationChecker(MppCh
                     ?.let { return it }
                 is ConeKotlinTypeProjection -> it.type.findVisibilityExposure(base, ignoreInternalExposure, visitedTypes)
                     ?.let { return it }
-                is ConeStarProjection -> type.toRegularClassSymbol(context.session)
+                is ConeStarProjection -> type.toRegularClassSymbol()
                     ?.typeParameterSymbols?.getOrNull(index)
                     ?.resolvedBounds?.firstNotNullOfOrNull {
                         it.coneType.findVisibilityExposure(base, ignoreInternalExposure, visitedTypes)

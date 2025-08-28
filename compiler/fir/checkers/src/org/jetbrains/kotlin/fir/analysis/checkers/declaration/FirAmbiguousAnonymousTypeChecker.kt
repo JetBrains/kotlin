@@ -63,7 +63,7 @@ object FirAmbiguousAnonymousTypeChecker : FirBasicDeclarationChecker(MppCheckerK
         type: ConeKotlinType,
         reportOn: KtSourceElement?
     ) {
-        val classSymbol = type.toSymbol(context.session)
+        val classSymbol = type.toSymbol()
         if (classSymbol is FirAnonymousObjectSymbol && classSymbol.resolvedSuperTypeRefs.size > 1) {
             // Any anonymous object that has only one super type is already approximated to the super type by
             // org.jetbrains.kotlin.fir.types.TypeUtilsKt#hideLocalTypeIfNeeded. Hence, any remaining anonymous object must have more than

@@ -74,7 +74,7 @@ object FirSupertypesChecker : FirClassChecker(MppCheckerKind.Platform) {
 
             checkAnnotationOnSuperclass(superTypeRef)
 
-            val symbol = expandedSupertype.toSymbol(context.session)
+            val symbol = expandedSupertype.toSymbol()
             val allowUsingClassTypeAsInterface =
                 context.session.languageVersionSettings.supportsFeature(LanguageFeature.AllowAnyAsAnActualTypeForExpectInterface) &&
                         expandedSupertype.isAny &&
@@ -199,7 +199,7 @@ object FirSupertypesChecker : FirClassChecker(MppCheckerKind.Platform) {
         fullyExpandedType: ConeKotlinType,
         superTypeRef: FirTypeRef,
     ) {
-        if (coneType.toSymbol(context.session) is FirTypeAliasSymbol &&
+        if (coneType.toSymbol() is FirTypeAliasSymbol &&
             fullyExpandedType.typeArguments.any { it.isConflictingOrNotInvariant }
         ) {
             reporter.reportOn(superTypeRef.source, FirErrors.CONSTRUCTOR_OR_SUPERTYPE_ON_TYPEALIAS_WITH_TYPE_PROJECTION)

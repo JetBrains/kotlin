@@ -54,7 +54,7 @@ object FirOptInUsageQualifierChecker : FirResolvedQualifierChecker(MppCheckerKin
             reporter.reportOn(source, FirErrors.OPT_IN_MARKER_CAN_ONLY_BE_USED_AS_ANNOTATION_OR_ARGUMENT_IN_OPT_IN)
         }
 
-        val containingClassSymbol = this.getContainingClassLookupTag()?.toSymbol(context.session) ?: return
+        val containingClassSymbol = this.getContainingClassLookupTag()?.toSymbol() ?: return
         containingClassSymbol.checkContainingClasses(source)
     }
 }

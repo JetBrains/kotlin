@@ -34,7 +34,7 @@ object FirJavaSamConstructorNullabilityChecker : FirFunctionCallChecker(MppCheck
         if (calleeReference.isError()) return
         val symbol = calleeReference.toResolvedFunctionSymbol() ?: return
         if (symbol.origin != FirDeclarationOrigin.SamConstructor) return
-        if (symbol.resolvedReturnType.toRegularClassSymbol(context.session)?.isJavaOrEnhancement != true) return
+        if (symbol.resolvedReturnType.toRegularClassSymbol()?.isJavaOrEnhancement != true) return
 
         val (lambda, parameter) = expression.resolvedArgumentMapping?.entries?.singleOrNull() ?: return
         if (lambda !is FirAnonymousFunctionExpression) return

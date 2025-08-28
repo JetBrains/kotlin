@@ -27,7 +27,7 @@ object RedundantNullableChecker : FirResolvedTypeRefChecker(MppCheckerKind.Commo
             typeRef.source?.kind !is KtRealSourceElementKind
         ) return
 
-        var symbol = typeRef.coneType.abbreviatedTypeOrSelf.toSymbol(context.session)
+        var symbol = typeRef.coneType.abbreviatedTypeOrSelf.toSymbol()
         if (symbol is FirTypeAliasSymbol) {
             while (symbol is FirTypeAliasSymbol) {
                 val resolvedExpandedTypeRef = symbol.resolvedExpandedTypeRef

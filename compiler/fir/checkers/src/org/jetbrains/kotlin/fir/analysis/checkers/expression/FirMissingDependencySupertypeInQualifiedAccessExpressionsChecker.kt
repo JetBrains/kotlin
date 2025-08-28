@@ -42,19 +42,19 @@ object FirMissingDependencySupertypeInQualifiedAccessExpressionsChecker : FirQua
 
         val checkedSymbols = SmartSet.create<FirBasedSymbol<*>>()
 
-        val dispatchReceiverSymbol = expression.dispatchReceiver?.resolvedType?.toSymbol(context.session)
+        val dispatchReceiverSymbol = expression.dispatchReceiver?.resolvedType?.toSymbol()
         val missingSuperTypes = checkMissingDependencySuperTypes(dispatchReceiverSymbol, source, isEagerCheck = false)
         dispatchReceiverSymbol?.let(checkedSymbols::add)
 
         val lazySupertypesUnresolvedByDefault = symbol is FirConstructorSymbol || symbol is FirAnonymousFunctionSymbol
         val isEagerCheck = lazySupertypesUnresolvedByDefault || missingSuperTypes
 
-        val ownerSymbol = symbol.getOwnerLookupTag()?.toSymbol(context.session)
+        val ownerSymbol = symbol.getOwnerLookupTag()?.toSymbol()
         if (ownerSymbol != null && checkedSymbols.add(ownerSymbol)) {
             checkMissingDependencySuperTypes(ownerSymbol, source, isEagerCheck)
         }
 
-        val receiverSymbol = symbol.resolvedReceiverType?.toSymbol(context.session)
+        val receiverSymbol = symbol.resolvedReceiverType?.toSymbol()
         if (receiverSymbol != null && checkedSymbols.add(receiverSymbol)) {
             checkMissingDependencySuperTypes(receiverSymbol, source, isEagerCheck)
         }

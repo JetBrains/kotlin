@@ -51,7 +51,7 @@ object FirFiniteBoundRestrictionChecker : FirRegularClassChecker(MppCheckerKind.
             }
         }
 
-        val problemSymbols = problemNodes.mapNotNullTo(mutableSetOf()) { it.toTypeParameterSymbol(context.session) }
+        val problemSymbols = problemNodes.mapNotNullTo(mutableSetOf()) { it.toTypeParameterSymbol() }
 
         val containers = problemSymbols.map { it.containingDeclarationSymbol }
         if (containers.any { it.origin !is FirDeclarationOrigin.Java }) return

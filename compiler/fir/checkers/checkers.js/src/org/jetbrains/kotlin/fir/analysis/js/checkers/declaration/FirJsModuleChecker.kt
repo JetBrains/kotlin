@@ -49,10 +49,10 @@ object FirJsModuleChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
     private fun checkSuperClass(declaration: FirDeclaration) {
         val classDeclaration = declaration as? FirClass ?: return
-        val superClassSymbol = classDeclaration.superClassNotAny(context.session)?.toSymbol(context.session) ?: return
+        val superClassSymbol = classDeclaration.superClassNotAny(context.session)?.toSymbol() ?: return
 
         val superClassRef = classDeclaration.superTypeRefs.firstOrNull {
-            it.coneTypeOrNull?.toSymbol(context.session) == superClassSymbol
+            it.coneTypeOrNull?.toSymbol() == superClassSymbol
         }
         checkJsModuleUsage(superClassSymbol, superClassRef?.source ?: declaration.source)
     }

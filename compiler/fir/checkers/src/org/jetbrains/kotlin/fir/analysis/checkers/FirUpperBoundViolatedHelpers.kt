@@ -58,7 +58,7 @@ private fun checkUpperBoundViolated(
 
     if (type.typeArguments.isEmpty()) return
 
-    val prototypeClassSymbol = type.lookupTag.toRegularClassSymbol(context.session) ?: return
+    val prototypeClassSymbol = type.lookupTag.toRegularClassSymbol() ?: return
 
     val typeParameterSymbols = prototypeClassSymbol.typeParameterSymbols
 

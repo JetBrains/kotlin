@@ -44,7 +44,7 @@ object FirInlineExposedLessVisibleTypeQualifiedAccessChecker : FirQualifiedAcces
         fun ConeKotlinType.reportIfLessVisible() {
             fullyExpandedType().forEachType { type ->
                 val symbolEffectiveVisibility =
-                    type.toClassLikeSymbol(inlineFunctionBodyContext.session)
+                    type.toClassLikeSymbol()
                         ?.let { it.publishedApiEffectiveVisibility ?: it.effectiveVisibility } ?: return@forEachType
 
                 if (inlineFunctionBodyContext.isLessVisibleThanInlineFunction(symbolEffectiveVisibility)) {
@@ -84,11 +84,11 @@ object FirInlineExposedLessVisibleTypeQualifiedAccessChecker : FirQualifiedAcces
                 // Stop recursion to prevent multiple errors
                 return
             }
-            containingClassLookupTag?.toRegularClassSymbol(c.session)?.reportIfLessVisible()
+            containingClassLookupTag?.toRegularClassSymbol()?.reportIfLessVisible()
         }
 
         // We don't check the visibility of the declaration itself because we generate synthetic bridges if necessary
         // and it won't lead to runtime crashes.
-        symbol.containingClassLookupTag()?.toRegularClassSymbol(c.session)?.reportIfLessVisible()
+        symbol.containingClassLookupTag()?.toRegularClassSymbol()?.reportIfLessVisible()
     }
 }

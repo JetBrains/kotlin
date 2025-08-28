@@ -39,9 +39,9 @@ object FirAnyTypeAliasChecker : FirTypeAliasChecker(MppCheckerKind.Common) {
         declaration.checkTypeAliasExpansionCapturesOuterTypeParameters(fullyExpandedType, expandedTypeRef)
 
         if (!fullyExpandedType.hasError()) {
-            if (fullyExpandedType.toRegularClassSymbol(context.session) == null || fullyExpandedType is ConeDynamicType) {
+            if (fullyExpandedType.toRegularClassSymbol() == null || fullyExpandedType is ConeDynamicType) {
                 // Skip reporting if RHS is a type alias to keep the amount of error minimal
-                if (expandedTypeRef.coneType.toTypeAliasSymbol(context.session) == null) {
+                if (expandedTypeRef.coneType.toTypeAliasSymbol() == null) {
                     reporter.reportOn(expandedTypeRef.source, FirErrors.TYPEALIAS_SHOULD_EXPAND_TO_CLASS, fullyExpandedType)
                 }
             }
@@ -74,7 +74,7 @@ object FirAnyTypeAliasChecker : FirTypeAliasChecker(MppCheckerKind.Common) {
                 typeArgument.type?.fullyExpandedType()?.let { checkRecursively(it) }
             }
 
-            val typeParameterSymbol = coneType.toTypeParameterSymbol(context.session) ?: return
+            val typeParameterSymbol = coneType.toTypeParameterSymbol() ?: return
 
             if (symbol != typeParameterSymbol.containingDeclarationSymbol) {
                 unsubstitutedOuterTypeParameters.add(typeParameterSymbol)

@@ -34,7 +34,7 @@ object FirAbstractSuperCallChecker : FirQualifiedAccessExpressionChecker(MppChec
             reporter.reportOn(expression.calleeReference.source, FirErrors.ABSTRACT_SUPER_CALL)
         } else if (declarationSymbol is FirIntersectionCallableSymbol) {
             val symbolFromBaseClass = declarationSymbol.intersections.firstOrNull {
-                it.containingClassLookupTag()?.toSymbol(context.session)?.classKind != ClassKind.INTERFACE
+                it.containingClassLookupTag()?.toSymbol()?.classKind != ClassKind.INTERFACE
             }
             if (symbolFromBaseClass?.isAbstract == true) {
                 if (LanguageFeature.ForbidSuperDelegationToAbstractFakeOverride.isEnabled()) {

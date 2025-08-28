@@ -21,7 +21,7 @@ object FirOptionalExpectationExpressionChecker : FirFunctionCallChecker(MppCheck
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(expression: FirFunctionCall) {
         val constructorSymbol = expression.calleeReference.toResolvedConstructorSymbol() ?: return
-        val declarationClass = constructorSymbol.resolvedReturnTypeRef.coneType.toRegularClassSymbol(context.session) ?: return
+        val declarationClass = constructorSymbol.resolvedReturnTypeRef.coneType.toRegularClassSymbol() ?: return
         if (!declarationClass.isOptionalAnnotationClass(context.session)) return
 
         if (!context.session.moduleData.isCommon) {

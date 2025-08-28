@@ -364,7 +364,7 @@ object FirImportsChecker : FirFileChecker(MppCheckerKind.Common) {
         val importedFqName = import.importedFqName ?: return
         if (importedFqName.isRoot || importedFqName.shortName().asString().isEmpty()) return
         val classId = (import as? FirResolvedImport)?.resolvedParentClassId ?: ClassId.topLevel(importedFqName)
-        val symbol = classId.toSymbol(context.session) ?: return
+        val symbol = classId.toSymbol() ?: return
         FirDeprecationChecker.reportApiStatusIfNeeded(import.source, symbol)
     }
 }

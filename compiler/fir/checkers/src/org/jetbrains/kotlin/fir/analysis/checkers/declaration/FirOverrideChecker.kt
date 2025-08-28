@@ -399,7 +399,7 @@ sealed class FirOverrideChecker(mppKind: MppCheckerKind) : FirAbstractOverrideCh
                     skipCheckForContainingClassVisibility = true
                 )
             }?.originalOrSelf() ?: return
-            val originalContainingClassSymbol = overridden.containingClassLookupTag()?.toRegularClassSymbol(context.session) ?: return
+            val originalContainingClassSymbol = overridden.containingClassLookupTag()?.toRegularClassSymbol() ?: return
             reporter.reportOn(
                 member.source,
                 FirErrors.VIRTUAL_MEMBER_HIDDEN,

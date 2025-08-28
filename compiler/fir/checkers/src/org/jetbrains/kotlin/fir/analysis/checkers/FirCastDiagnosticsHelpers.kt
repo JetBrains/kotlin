@@ -54,7 +54,7 @@ fun isCastErased(supertype: ConeKotlinType, subtype: ConeKotlinType): Boolean {
     // downcasting to a reified type parameter is never erased
     else if (subtype is ConeTypeParameterType) return false
 
-    val regularClassSymbol = subtype.toRegularClassSymbol(context.session) ?: return true
+    val regularClassSymbol = subtype.toRegularClassSymbol() ?: return true
 
     val outerClasses = regularClassSymbol.getClassAndItsOuterClassesWhenLocal(context.session)
 
@@ -103,10 +103,7 @@ fun findStaticallyKnownSubtype(
 ): ConeKotlinType {
     assert(!supertype.isMarkedNullable) { "This method only makes sense for non-nullable types" }
 
-    val session = context.session
-    val typeContext = session.typeContext
-
-    if (supertype is ConeClassLikeType && supertype.toSymbol(session) == subTypeClassSymbol) {
+    if (supertype is ConeClassLikeType && supertype.toSymbol() == subTypeClassSymbol) {
         return supertype
     }
 
@@ -134,7 +131,7 @@ fun findStaticallyKnownSubtype(
             findCorrespondingSupertypes(
                 typeCheckerState,
                 subtypeWithVariablesType,
-                normalizedType.typeConstructor(typeContext)
+                normalizedType.typeConstructor(context.session.typeContext)
             ).firstOrNull()
 
         val variables: List<FirTypeParameterSymbol> = subTypeClassSymbol.typeParameterSymbols
@@ -175,7 +172,7 @@ fun findStaticallyKnownSubtype(
 
     // At this point we have values for all type parameters of List
     // Let's make a type by substituting them: List<T> -> List<Foo>
-    val substitutor = substitutorByMap(resultSubstitution, session)
+    val substitutor = substitutorByMap(resultSubstitution, context.session)
     return substitutor.substituteOrSelf(subtypeWithVariablesType)
 }
 

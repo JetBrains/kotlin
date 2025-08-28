@@ -28,7 +28,7 @@ object FirConstructorCallChecker : FirFunctionCallChecker(MppCheckerKind.Common)
             reporter.reportOn(expression.source, FirErrors.CONSTRUCTOR_OR_SUPERTYPE_ON_TYPEALIAS_WITH_TYPE_PROJECTION)
         }
 
-        val declarationClass = coneType.toRegularClassSymbol(context.session)
+        val declarationClass = coneType.toRegularClassSymbol()
             ?: return
 
         if (declarationClass.classKind == ClassKind.ENUM_CLASS) {

@@ -59,7 +59,7 @@ object FirJvmInlineTargetQualifiedAccessChecker : FirQualifiedAccessExpressionCh
 
         val containingClass = callableSymbol.containingClassLookupTag()
         val binaryClass = if (containingClass != null) {
-            val containingClassSymbol = containingClass.toRegularClassSymbol(context.session) ?: return
+            val containingClassSymbol = containingClass.toRegularClassSymbol() ?: return
 
             @OptIn(SymbolInternals::class)
             val sourceElement = containingClassSymbol.fir.sourceElement as? KotlinJvmBinarySourceElement ?: return

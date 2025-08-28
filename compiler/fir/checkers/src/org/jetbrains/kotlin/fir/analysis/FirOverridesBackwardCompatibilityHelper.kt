@@ -57,7 +57,7 @@ abstract class FirOverridesBackwardCompatibilityHelper : FirSessionComponent {
         additionalCheck(originalMemberSymbol)?.let { return it }
 
         if (!originalMemberSymbol.isAbstract) {
-            val containingClass = originalMemberSymbol.containingClassLookupTag()?.toRegularClassSymbol(context.session)
+            val containingClass = originalMemberSymbol.containingClassLookupTag()?.toRegularClassSymbol()
             if (containingClass?.isInterface == false) {
                 return false
             }

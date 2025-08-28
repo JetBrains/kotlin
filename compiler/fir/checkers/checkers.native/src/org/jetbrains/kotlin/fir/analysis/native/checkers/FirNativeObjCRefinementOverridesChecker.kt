@@ -129,7 +129,7 @@ sealed class FirNativeObjCRefinementOverridesChecker(mppKind: MppCheckerKind) : 
             notRefinedSupers: List<FirCallableSymbol<*>>
         ) {
             val containingDeclarations =
-                notRefinedSupers.mapNotNull { it.containingClassLookupTag()?.toRegularClassSymbol(context.session) }
+                notRefinedSupers.mapNotNull { it.containingClassLookupTag()?.toRegularClassSymbol() }
             if (annotations.isEmpty()) {
                 reportOn(declaration.source, INCOMPATIBLE_OBJC_REFINEMENT_OVERRIDE, declaration.symbol, containingDeclarations)
             } else {

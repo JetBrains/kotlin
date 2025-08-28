@@ -36,7 +36,7 @@ object FirInterfaceDefaultMethodCallChecker : FirQualifiedAccessExpressionChecke
         if (LanguageFeature.AllowSuperCallToJavaInterface.isEnabled()) return
 
         val symbol = expression.calleeReference.toResolvedCallableSymbol()
-        val typeSymbol = symbol?.containingClassLookupTag()?.toRegularClassSymbol(context.session) ?: return
+        val typeSymbol = symbol?.containingClassLookupTag()?.toRegularClassSymbol() ?: return
         if (typeSymbol.isLocal) return
 
         if (expression.explicitReceiverIsNotSuperReference()) return

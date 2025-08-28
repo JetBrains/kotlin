@@ -39,7 +39,7 @@ object FirJsExportedActualMatchExpectChecker : FirBasicDeclarationChecker(MppChe
 
         val correspondingActualDeclaration = when (declaration) {
             is FirTypeAlias -> {
-                declaration.expandedTypeRef.coneType.abbreviatedTypeOrSelf.toClassSymbol(context.session) ?: return
+                declaration.expandedTypeRef.coneType.abbreviatedTypeOrSelf.toClassSymbol() ?: return
             }
             else -> declaration.symbol
         }

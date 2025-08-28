@@ -157,7 +157,7 @@ sealed class FirTypeParameterBoundsChecker(mppKind: MppCheckerKind) : FirTypePar
                 !allowUsingClassTypeAsInterface || coneType.fullyExpandedType().let { it.abbreviatedType == null || !it.isAnyOrNullableAny }
             }
 
-            boundConeType?.toRegularClassSymbol(context.session)?.let { symbol ->
+            boundConeType?.toRegularClassSymbol()?.let { symbol ->
                 if (classKinds.contains(symbol.classKind) && seenClasses.add(symbol) && seenClasses.size > 1) {
                     reporter.reportOn(bound.source, FirErrors.ONLY_ONE_CLASS_BOUND_ALLOWED)
                 }

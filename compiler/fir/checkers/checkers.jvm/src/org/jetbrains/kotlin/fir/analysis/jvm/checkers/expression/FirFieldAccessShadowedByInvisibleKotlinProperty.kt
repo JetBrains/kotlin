@@ -93,7 +93,7 @@ private fun checkClashWithCompanionProperty(
     fieldSymbol: FirFieldSymbol,
     expression: FirQualifiedAccessExpression,
 ) {
-    val dispatchReceiverClass = expression.dispatchReceiver?.resolvedType?.toRegularClassSymbol(context.session) ?: return
+    val dispatchReceiverClass = expression.dispatchReceiver?.resolvedType?.toRegularClassSymbol() ?: return
     val companionClass = dispatchReceiverClass.resolvedCompanionObjectSymbol ?: return
     val companionScope = companionClass.unsubstitutedScope()
     val properties = companionScope.getProperties(fieldSymbol.name)

@@ -43,7 +43,7 @@ object FirJvmProtectedInSuperClassCompanionCallChecker : FirBasicExpressionCheck
             else -> null
         } ?: return
 
-        val dispatchClassSymbol = dispatchReceiver.resolvedType.toRegularClassSymbol(context.session) ?: return
+        val dispatchClassSymbol = dispatchReceiver.resolvedType.toRegularClassSymbol() ?: return
         val calleeReference = expression.toReference(context.session)
         val resolvedSymbol = calleeReference?.toResolvedCallableSymbol() ?: return
 

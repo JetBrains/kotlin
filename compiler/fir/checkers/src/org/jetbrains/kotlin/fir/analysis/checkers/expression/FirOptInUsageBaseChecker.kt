@@ -222,7 +222,7 @@ object FirOptInUsageBaseChecker {
         dispatchReceiverType: ConeKotlinType?,
         result: SmartSet<Experimentality>,
     ) {
-        val parentClassSymbol = containingClassLookupTag()?.toRegularClassSymbol(context.session)
+        val parentClassSymbol = containingClassLookupTag()?.toRegularClassSymbol()
         if (this is FirConstructorSymbol) {
             val ownerClassLikeSymbol = this.typeAliasConstructorInfo?.typeAliasSymbol ?: parentClassSymbol
             // For other callable we check dispatch receiver type instead
@@ -284,7 +284,7 @@ object FirOptInUsageBaseChecker {
         visited: MutableSet<FirBasedSymbol<*>> = mutableSetOf(),
     ) {
         if (this !is ConeClassLikeType) return
-        lookupTag.toSymbol(context.session)?.loadExperimentalities(
+        lookupTag.toSymbol()?.loadExperimentalities(
             result, visited, fromSetter = false, dispatchReceiverType = null, fromSupertype = false
         )
         fullyExpandedType().typeArguments.forEach {
