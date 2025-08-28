@@ -21,11 +21,11 @@ import org.jetbrains.kotlin.analysis.decompiler.konan.KotlinKlibDecompiler
 import org.jetbrains.kotlin.analysis.decompiler.psi.*
 import org.jetbrains.kotlin.analysis.decompiler.psi.file.KtClsFile
 import org.jetbrains.kotlin.analysis.decompiler.psi.file.KtDecompiledFile
-import org.jetbrains.kotlin.analysis.decompiler.psi.file.deepCopy
 import org.jetbrains.kotlin.analysis.decompiler.stub.file.ClsClassFinder
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinFileStubImpl
+import org.jetbrains.kotlin.psi.stubs.impl.deepCopy
 
 internal class KotlinStandaloneIndexBuilder private constructor(
     project: Project,
