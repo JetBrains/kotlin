@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.metadata.deserialization.NameResolverImpl
 import org.jetbrains.kotlin.metadata.deserialization.TypeTable
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.serialization.SerializerExtensionProtocol
+import org.jetbrains.kotlin.serialization.deserialization.ClassDataFinder
 import org.jetbrains.kotlin.serialization.deserialization.ClassDeserializer
 import org.jetbrains.kotlin.serialization.deserialization.ProtoBasedClassDataFinder
 import org.jetbrains.kotlin.serialization.deserialization.ProtoContainer
@@ -59,7 +60,7 @@ abstract class KotlinMetadataStubBuilder : ClsStubBuilder() {
         null
     }
 
-    override fun buildFileStub(content: FileContent): PsiFileStub<*>? {
+    final override fun buildFileStub(content: FileContent): PsiFileStub<*>? {
         val virtualFile = content.file
         requireWithAttachment(isSupported(virtualFile), { "Unexpected file type" }) {
             withVirtualFileEntry("file", virtualFile)
@@ -81,11 +82,15 @@ abstract class KotlinMetadataStubBuilder : ClsStubBuilder() {
                 val nameResolver = file.nameResolver
                 val protocol = file.serializerProtocol
                 val components = ClsStubBuilderComponents(
-                    ProtoBasedClassDataFinder(file.proto, nameResolver, file.version),
-                    AnnotationLoaderForStubBuilderImpl(protocol),
-                    virtualFile,
-                    protocol
+                    classDataFinder = classDataFinder(
+                        original = ProtoBasedClassDataFinder(file.proto, nameResolver, file.version),
+                        file = virtualFile,
+                    ),
+                    annotationLoader = AnnotationLoaderForStubBuilderImpl(protocol),
+                    virtualFileForDebug = virtualFile,
+                    serializationProtocol = protocol,
                 )
+
                 val context = components.createContext(nameResolver, packageFqName, TypeTable(packageProto.typeTable))
 
                 val fileStub = createFileStub(packageFqName, isScript = false)
@@ -99,9 +104,15 @@ abstract class KotlinMetadataStubBuilder : ClsStubBuilder() {
                     ),
                     packageProto
                 )
+
                 for (classProto in file.classesToDecompile) {
                     createClassStub(
-                        fileStub, classProto, nameResolver, nameResolver.getClassId(classProto.fqName), source = null, context = context
+                        parent = fileStub,
+                        classProto = classProto,
+                        nameResolver = nameResolver,
+                        classId = nameResolver.getClassId(classProto.fqName),
+                        source = null,
+                        context = context,
                     )
                 }
 
@@ -111,6 +122,7 @@ abstract class KotlinMetadataStubBuilder : ClsStubBuilder() {
     }
 
     protected open fun createCallableSource(file: FileWithMetadata.Compatible, filename: String): SourceElement? = null
+    protected open fun classDataFinder(original: ClassDataFinder, file: VirtualFile): ClassDataFinder = original
 
     sealed class FileWithMetadata {
         class Incompatible(val version: BinaryVersion) : FileWithMetadata()
