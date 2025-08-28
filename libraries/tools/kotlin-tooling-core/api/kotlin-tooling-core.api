@@ -24,13 +24,8 @@ public abstract class org/jetbrains/kotlin/tooling/core/AbstractExtras : org/jet
 }
 
 public final class org/jetbrains/kotlin/tooling/core/ClosureKt {
-	public static final fun closureTo (Ljava/util/Set;Ljava/util/Set;Ljava/util/List;Ljava/lang/Object;Lkotlin/jvm/functions/Function2;)Ljava/util/Set;
 	public static final fun createResultSet (I)Ljava/util/Set;
-	public static final fun createResultSet (Ljava/lang/Iterable;I)Ljava/util/Set;
-	public static final fun createResultSet (Ljava/lang/Object;I)Ljava/util/Set;
 	public static synthetic fun createResultSet$default (IILjava/lang/Object;)Ljava/util/Set;
-	public static synthetic fun createResultSet$default (Ljava/lang/Iterable;IILjava/lang/Object;)Ljava/util/Set;
-	public static synthetic fun createResultSet$default (Ljava/lang/Object;IILjava/lang/Object;)Ljava/util/Set;
 }
 
 public abstract interface class org/jetbrains/kotlin/tooling/core/Extras : java/util/Collection, kotlin/jvm/internal/markers/KMappedMarker {
@@ -167,7 +162,6 @@ public final class org/jetbrains/kotlin/tooling/core/KotlinToolingVersionKt {
 	public static final fun KotlinToolingVersion (Ljava/lang/String;)Lorg/jetbrains/kotlin/tooling/core/KotlinToolingVersion;
 	public static final fun KotlinToolingVersion (Lkotlin/KotlinVersion;Ljava/lang/String;)Lorg/jetbrains/kotlin/tooling/core/KotlinToolingVersion;
 	public static synthetic fun KotlinToolingVersion$default (Lkotlin/KotlinVersion;Ljava/lang/String;ILjava/lang/Object;)Lorg/jetbrains/kotlin/tooling/core/KotlinToolingVersion;
-	public static final fun KotlinToolingVersionOrNull (Ljava/lang/String;)Lorg/jetbrains/kotlin/tooling/core/KotlinToolingVersion;
 	public static final fun compareTo (Ljava/lang/String;Lorg/jetbrains/kotlin/tooling/core/KotlinToolingVersion;)I
 	public static final fun compareTo (Lorg/jetbrains/kotlin/tooling/core/KotlinToolingVersion;Ljava/lang/String;)I
 	public static final fun getBuildNumber (Lorg/jetbrains/kotlin/tooling/core/KotlinToolingVersion;)Ljava/lang/Integer;

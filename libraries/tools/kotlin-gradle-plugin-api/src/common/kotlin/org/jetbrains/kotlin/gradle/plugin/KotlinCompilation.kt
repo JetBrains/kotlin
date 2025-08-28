@@ -307,16 +307,6 @@ interface KotlinCompilation<UNUSED : KotlinAnyOptionsDeprecated> : Named,
     fun associateWith(other: KotlinCompilation<*>)
 
     /**
-     * @suppress
-     */
-    @Deprecated(
-        "Use 'associatedCompilations' instead",
-        ReplaceWith("associatedCompilations.toList(). Scheduled for removal in Kotlin 2.3."),
-        level = DeprecationLevel.ERROR
-    )
-    val associateWith: List<KotlinCompilation<*>> get() = associatedCompilations.toList()
-
-    /**
      * A list of all compilations that were previously associated with this compilation using [associateWith].
      *
      * For exmaple, 'test' compilations return 'setOf(main)' by default.
@@ -365,15 +355,6 @@ interface KotlinCompilationToRunnableFiles<T : KotlinAnyOptionsDeprecated> : Kot
  */
 @Suppress("Deprecation_ERROR")
 typealias DeprecatedKotlinCompilationToRunnableFiles<T> = KotlinCompilationToRunnableFiles<T>
-
-/**
- * @suppress
- */
-@Deprecated("Scheduled for removal with Kotlin 2.3.", level = DeprecationLevel.ERROR)
-@Suppress("EXTENSION_SHADOWED_BY_MEMBER", "DEPRECATION_ERROR", "TYPEALIAS_EXPANSION_DEPRECATION_ERROR") // kept for compatibility
-val <T : KotlinCommonOptionsDeprecated> KotlinCompilation<T>.runtimeDependencyConfigurationName: String?
-    get() = (this as? KotlinCompilationToRunnableFiles<T>)?.runtimeDependencyConfigurationName
-
 /**
  * @suppress
  */
