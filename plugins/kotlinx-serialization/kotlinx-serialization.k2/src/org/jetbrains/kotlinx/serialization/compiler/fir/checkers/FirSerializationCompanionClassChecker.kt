@@ -45,7 +45,7 @@ internal fun CheckerContext.checkCompanionSerializerDependency(
 ) {
     if (classSymbol !is FirRegularClassSymbol) return
     val companionObjectSymbol = classSymbol.resolvedCompanionObjectSymbol ?: return
-    val serializerForInCompanion = companionObjectSymbol.getSerializerForClass(session)?.toRegularClassSymbol(session) ?: return
+    val serializerForInCompanion = companionObjectSymbol.getSerializerForClass(session)?.toRegularClassSymbol() ?: return
     val serializableWith: ConeKotlinType? = classSymbol.getSerializableWith(session)
     val context = this@checkCompanionSerializerDependency
 
