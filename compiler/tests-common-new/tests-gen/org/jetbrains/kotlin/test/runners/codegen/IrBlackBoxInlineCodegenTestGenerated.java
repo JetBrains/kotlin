@@ -6746,12 +6746,6 @@ public class IrBlackBoxInlineCodegenTestGenerated extends AbstractIrBlackBoxInli
         }
 
         @Test
-        @TestMetadata("leakingPrivateMethodWithAnnotationAsDefaultValue.kt")
-        public void testLeakingPrivateMethodWithAnnotationAsDefaultValue() {
-          runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossFilePrivateLeak/leakingPrivateMethodWithAnnotationAsDefaultValue.kt");
-        }
-
-        @Test
         @TestMetadata("leakingPrivateMethodWithDifferentVisibility.kt")
         public void testLeakingPrivateMethodWithDifferentVisibility() {
           runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossFilePrivateLeak/leakingPrivateMethodWithDifferentVisibility.kt");
