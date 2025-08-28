@@ -246,7 +246,7 @@ class Candidate(
         setUpdatedArgument(old, new)
     }
 
-    val contextSensitiveResolutionAndCollectionLiteralReplacements: Map<FirElement, FirExpression>?
+    val argumentReplacements: Map<FirElement, FirExpression>?
         get() = _updatedArguments
 
     // ---------------------------------------- PCLA-related parts ----------------------------------------
