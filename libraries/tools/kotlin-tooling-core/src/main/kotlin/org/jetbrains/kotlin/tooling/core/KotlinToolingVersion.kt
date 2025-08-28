@@ -8,7 +8,6 @@
 package org.jetbrains.kotlin.tooling.core
 
 import java.io.Serializable
-import java.util.*
 
 fun KotlinToolingVersion(kotlinVersionString: String): KotlinToolingVersion {
     val baseVersion = kotlinVersionString.split("-", limit = 2)[0]
@@ -33,18 +32,6 @@ fun KotlinToolingVersion(kotlinVersionString: String): KotlinToolingVersion {
 
 fun KotlinToolingVersion(kotlinVersion: KotlinVersion, classifier: String? = null): KotlinToolingVersion {
     return KotlinToolingVersion(kotlinVersion.major, kotlinVersion.minor, kotlinVersion.patch, classifier)
-}
-
-@Deprecated(
-    "Use KotlinToolingVersion instead. Scheduled for removal with Kotlin 2.0",
-    replaceWith = ReplaceWith("KotlinToolingVersion(kotlinVersionString)")
-)
-fun KotlinToolingVersionOrNull(kotlinVersionString: String): KotlinToolingVersion? {
-    return try {
-        KotlinToolingVersion(kotlinVersionString)
-    } catch (t: IllegalArgumentException) {
-        null
-    }
 }
 
 class KotlinToolingVersion(

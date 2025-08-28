@@ -1200,7 +1200,6 @@ public final class org/jetbrains/kotlin/gradle/plugin/mpp/KotlinMetadataCompilat
 	public static fun attributes (Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinMetadataCompilation;Lkotlin/jvm/functions/Function1;)V
 	public static fun attributes (Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinMetadataCompilation;Lorg/gradle/api/Action;)V
 	public static fun defaultSourceSet (Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinMetadataCompilation;Lorg/gradle/api/Action;)V
-	public static fun getAssociateWith (Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinMetadataCompilation;)Ljava/util/List;
 	public static fun getDefaultSourceSetName (Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinMetadataCompilation;)Ljava/lang/String;
 	public static fun getDisambiguatedName (Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinMetadataCompilation;)Ljava/lang/String;
 	public static fun getName (Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinMetadataCompilation;)Ljava/lang/String;
