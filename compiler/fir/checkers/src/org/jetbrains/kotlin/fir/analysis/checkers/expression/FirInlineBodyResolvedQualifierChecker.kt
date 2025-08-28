@@ -27,7 +27,7 @@ object FirInlineBodyResolvedQualifierChecker : FirResolvedQualifierChecker(MppCh
         if (expression.isExplicitParentOfResolvedQualifier()) return
         val accessedClass = expression.symbol
             ?.applyIf(expression.resolvedToCompanionObject) {
-                fullyExpandedClass(context.session)?.resolvedCompanionObjectSymbol
+                fullyExpandedClass()?.resolvedCompanionObjectSymbol
             }
             ?: return
         val source = expression.source ?: return

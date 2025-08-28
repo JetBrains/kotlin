@@ -215,7 +215,7 @@ class Fir2IrReplSnippetConfiguratorExtensionImpl(
             val hashMapClassSymbol =
                 session.dependenciesSymbolProvider.getClassLikeSymbolByClassId(
                     fqn2cid("kotlin.collections.HashMap")
-                )?.fullyExpandedClass(session) ?: error("HashMap class not found")
+                )?.fullyExpandedClass() ?: error("HashMap class not found")
             val firReplStateSymbol = FirRegularClassSymbol(classId)
             val constructor = buildPrimaryConstructor {
                 moduleData = session.moduleData

@@ -239,6 +239,22 @@ tailrec fun FirClassLikeSymbol<*>.fullyExpandedClass(useSiteSession: FirSession)
     }
 }
 
+/**
+ * Returns the FirClassLikeDeclaration that the
+ * sequence of FirTypeAlias'es points to starting
+ * with `this`. Or null if something goes wrong or we have anonymous object symbol.
+ */
+context(sessionHolder: SessionHolder)
+fun FirClassLikeSymbol<*>.fullyExpandedClass(): FirRegularClassSymbol? {
+    return fullyExpandedClass(useSiteSession = sessionHolder.session)
+}
+
+@Deprecated("Use parameterless overload", replaceWith = ReplaceWith("fullyExpandedClass()"))
+context(sessionHolder: SessionHolder)
+fun FirClassLikeSymbol<*>.fullyExpandedClass(@Suppress("unused") s: FirSession): FirRegularClassSymbol? {
+    return fullyExpandedClass()
+}
+
 fun FirBasedSymbol<*>.isAnnotationConstructor(session: FirSession): Boolean {
     if (this !is FirConstructorSymbol) return false
     return getConstructedClass(session)?.classKind == ClassKind.ANNOTATION_CLASS

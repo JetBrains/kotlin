@@ -35,7 +35,7 @@ object FirOptInImportsChecker : FirFileChecker(MppCheckerKind.Common) {
             when (parentClassSymbol) {
                 is FirRegularClassSymbol -> parentClassSymbol.checkContainingClasses(source)
                 is FirTypeAliasSymbol -> {
-                    val expandedClassSymbol = parentClassSymbol.fullyExpandedClass(context.session) ?: return@forEach
+                    val expandedClassSymbol = parentClassSymbol.fullyExpandedClass() ?: return@forEach
                     expandedClassSymbol.checkContainingClasses(source)
                 }
                 else -> return@forEach

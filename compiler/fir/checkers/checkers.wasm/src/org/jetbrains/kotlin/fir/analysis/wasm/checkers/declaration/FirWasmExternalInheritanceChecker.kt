@@ -42,7 +42,7 @@ sealed class FirWasmExternalInheritanceChecker(mppKind: MppCheckerKind) : FirCla
         val session = context.session
         val isCurrentClassExternal = declaration.symbol.isEffectivelyExternal(session)
         for (superTypeRef in declaration.superTypeRefs) {
-            val superClass = (superTypeRef.toClassLikeSymbol(session)?.fullyExpandedClass(session) ?: continue)
+            val superClass = (superTypeRef.toClassLikeSymbol(session)?.fullyExpandedClass() ?: continue)
             if (superClass.classId == StandardClassIds.Any) continue  // External classes can extend Any
 
             val isSuperClassExternal = superClass.isEffectivelyExternal(session)
