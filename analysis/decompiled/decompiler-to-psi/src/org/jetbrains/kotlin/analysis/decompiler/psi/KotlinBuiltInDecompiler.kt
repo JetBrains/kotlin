@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.psi.stubs.KotlinStubVersions
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
-import org.jetbrains.kotlin.serialization.SerializerExtensionProtocol
 import org.jetbrains.kotlin.serialization.deserialization.METADATA_FILE_EXTENSION
 import org.jetbrains.kotlin.serialization.deserialization.builtins.BuiltInSerializerProtocol
 import org.jetbrains.kotlin.serialization.deserialization.getClassId
@@ -33,9 +32,9 @@ class KotlinBuiltInDecompiler : KotlinMetadataDecompiler() {
 
 private object KotlinBuiltInMetadataStubBuilder : KotlinMetadataStubBuilder() {
     override fun getStubVersion(): Int = stubVersionForStubBuilderAndDecompiler
-    override val fileType: FileType get() = KotlinBuiltInFileType
-    override val serializerProtocol: SerializerExtensionProtocol get() = BuiltInSerializerProtocol
+    override val supportedFileType: FileType get() = KotlinBuiltInFileType
     override val expectedBinaryVersion: BinaryVersion get() = BuiltInsBinaryVersion.INSTANCE
+
     override fun readFile(virtualFile: VirtualFile, content: ByteArray): FileWithMetadata? {
         return KotlinBuiltInDecompilationInterceptor.readFile(content, virtualFile) ?: BuiltInDefinitionFile.read(content, virtualFile)
     }

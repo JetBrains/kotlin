@@ -18,15 +18,13 @@ import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import org.jetbrains.kotlin.metadata.deserialization.TypeTable
 import org.jetbrains.kotlin.psi.stubs.KotlinStubVersions
-import org.jetbrains.kotlin.serialization.SerializerExtensionProtocol
 import org.jetbrains.kotlin.serialization.deserialization.ProtoBasedClassDataFinder
 import org.jetbrains.kotlin.serialization.deserialization.ProtoContainer.Package
 import org.jetbrains.kotlin.serialization.deserialization.getClassId
 
 internal object KlibMetadataStubBuilder : KotlinMetadataStubBuilder() {
     override fun getStubVersion(): Int = KotlinStubVersions.KLIB_STUB_VERSION
-    override val fileType: FileType get() = KlibMetaFileType
-    override val serializerProtocol: SerializerExtensionProtocol get() = KlibMetadataSerializerProtocol
+    override val supportedFileType: FileType get() = KlibMetaFileType
     override val expectedBinaryVersion: BinaryVersion get() = MetadataVersion.INSTANCE
 
     override fun readFile(
@@ -40,7 +38,7 @@ internal object KlibMetadataStubBuilder : KotlinMetadataStubBuilder() {
             return FileWithMetadata.Incompatible(version)
         }
 
-        return FileWithMetadata.Compatible(fragment, version, serializerProtocol)
+        return FileWithMetadata.Compatible(fragment, version, KlibMetadataSerializerProtocol)
     }
 
     override fun buildFileStub(content: FileContent): PsiFileStub<*>? {
@@ -59,7 +57,7 @@ internal object KlibMetadataStubBuilder : KotlinMetadataStubBuilder() {
                 val packageFqName = fileWithMetadata.packageFqName
                 val nameResolver = fileWithMetadata.nameResolver
                 val mainClassDataFinder = ProtoBasedClassDataFinder(fileWithMetadata.proto, nameResolver, fileWithMetadata.version)
-                val protocol = serializerProtocol
+                val protocol = fileWithMetadata.serializerProtocol
                 val components = ClsStubBuilderComponents(
                     classDataFinder = NearFileClassDataFinder.wrapIfNeeded(mainClassDataFinder, content.file) { readFileSafely(it) },
                     annotationLoader = AnnotationLoaderForStubBuilderImpl(protocol),
