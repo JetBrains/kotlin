@@ -4,6 +4,7 @@ plugins {
     id("d8-configuration")
     id("java-test-fixtures")
     id("project-tests-convention")
+    id("test-inputs-check")
 }
 
 val compilerModules: Array<String> by rootProject.extra
@@ -50,20 +51,19 @@ sourceSets {
 }
 
 projectTests {
+    testData(isolated, "testData")
     testTask(
         jUnitMode = JUnitMode.JUnit4,
         parallel = true,
         defineJDKEnvVariables = listOf(JdkMajorVersion.JDK_1_8, JdkMajorVersion.JDK_11_0, JdkMajorVersion.JDK_17_0)
     ) {
-        dependsOn(":dist")
         useJsIrBoxTests(version = version, buildDir = layout.buildDirectory)
 
         filter {
             excludeTestsMatching("org.jetbrains.kotlin.jvm.compiler.io.FastJarFSLongTest*")
         }
 
-        workingDir = rootDir
-        systemProperty("kotlin.test.script.classpath", testSourceSet.output.classesDirs.joinToString(File.pathSeparator))
+        addClasspathProperty(testSourceSet.output.classesDirs,"kotlin.test.script.classpath")
     }
 
     testTask("fastJarFSLongTests", jUnitMode = JUnitMode.JUnit4, skipInLocalBuild = true) {
@@ -73,6 +73,10 @@ projectTests {
     testGenerator("org.jetbrains.kotlin.generators.tests.TestGeneratorForCompilerTestsKt")
 
     withJvmStdlibAndReflect()
+    withScriptRuntime()
+    withTestJar()
+    withMockJdkRuntime()
+    withMockJdkAnnotationsJar()
 }
 
 val generateTestData by generator("org.jetbrains.kotlin.generators.tests.GenerateCompilerTestDataKt")

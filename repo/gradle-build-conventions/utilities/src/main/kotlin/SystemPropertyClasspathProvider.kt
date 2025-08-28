@@ -3,8 +3,8 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-import org.gradle.api.artifacts.Configuration
 import org.gradle.api.file.ConfigurableFileCollection
+import org.gradle.api.file.FileCollection
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Classpath
 import org.gradle.api.tasks.Input
@@ -27,7 +27,7 @@ abstract class SystemPropertyClasspathProvider : CommandLineArgumentProvider {
     }
 }
 
-fun Test.addClasspathProperty(configuration: Configuration, property: String) {
+fun Test.addClasspathProperty(configuration: FileCollection, property: String) {
     val classpathProvider = project.objects.newInstance(SystemPropertyClasspathProvider::class.java)
     classpathProvider.classpath.from(configuration)
     classpathProvider.property.set(property)
