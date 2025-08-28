@@ -7561,6 +7561,54 @@ public class LLDiagnosticsFe10TestGenerated extends AbstractLLDiagnosticsTest {
         }
 
         @Test
+        @TestMetadata("uByteOperations_after.kt")
+        public void testUByteOperations_after() {
+          runTest("compiler/testData/diagnostics/tests/constantEvaluator/constant/uByteOperations_after.kt");
+        }
+
+        @Test
+        @TestMetadata("uByteOperations_before.kt")
+        public void testUByteOperations_before() {
+          runTest("compiler/testData/diagnostics/tests/constantEvaluator/constant/uByteOperations_before.kt");
+        }
+
+        @Test
+        @TestMetadata("uIntOperations_after.kt")
+        public void testUIntOperations_after() {
+          runTest("compiler/testData/diagnostics/tests/constantEvaluator/constant/uIntOperations_after.kt");
+        }
+
+        @Test
+        @TestMetadata("uIntOperations_before.kt")
+        public void testUIntOperations_before() {
+          runTest("compiler/testData/diagnostics/tests/constantEvaluator/constant/uIntOperations_before.kt");
+        }
+
+        @Test
+        @TestMetadata("uLongOperations_after.kt")
+        public void testULongOperations_after() {
+          runTest("compiler/testData/diagnostics/tests/constantEvaluator/constant/uLongOperations_after.kt");
+        }
+
+        @Test
+        @TestMetadata("uLongOperations_before.kt")
+        public void testULongOperations_before() {
+          runTest("compiler/testData/diagnostics/tests/constantEvaluator/constant/uLongOperations_before.kt");
+        }
+
+        @Test
+        @TestMetadata("uShortOperations_after.kt")
+        public void testUShortOperations_after() {
+          runTest("compiler/testData/diagnostics/tests/constantEvaluator/constant/uShortOperations_after.kt");
+        }
+
+        @Test
+        @TestMetadata("uShortOperations_before.kt")
+        public void testUShortOperations_before() {
+          runTest("compiler/testData/diagnostics/tests/constantEvaluator/constant/uShortOperations_before.kt");
+        }
+
+        @Test
         @TestMetadata("unaryMinusIndepWoExpType.kt")
         public void testUnaryMinusIndepWoExpType() {
           runTest("compiler/testData/diagnostics/tests/constantEvaluator/constant/unaryMinusIndepWoExpType.kt");
