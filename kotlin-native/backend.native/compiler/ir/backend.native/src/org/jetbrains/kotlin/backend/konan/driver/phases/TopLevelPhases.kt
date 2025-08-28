@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.konan.driver.phases
 
 import org.jetbrains.kotlin.backend.common.phaser.PhaseEngine
 import org.jetbrains.kotlin.backend.konan.*
+import org.jetbrains.kotlin.backend.konan.driver.PerformanceManagerContext
 import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
 import org.jetbrains.kotlin.backend.konan.driver.utilities.CExportFiles
 import org.jetbrains.kotlin.backend.konan.driver.utilities.createTempFiles
@@ -227,7 +228,6 @@ internal fun <C : PhaseContext> PhaseEngine<C>.runBackend(backendContext: Contex
                             outputFiles.mainFileName,
                             outputFiles,
                             tempFiles,
-                            fragment.performanceManager,
                     )
                 }
             } finally {
@@ -285,7 +285,7 @@ internal fun <C : PhaseContext> PhaseEngine<C>.runBackend(backendContext: Contex
 }
 
 internal fun <C : PhaseContext> PhaseEngine<C>.runBitcodeBackend(
-        context: BitcodePostProcessingContext, dependencies: DependenciesTrackingResult, performanceManager: PerformanceManager?,
+        context: BitcodePostProcessingContext, dependencies: DependenciesTrackingResult,
 ) {
     useContext(context) { bitcodeEngine ->
         val tempFiles = createTempFiles(context.config, null)
@@ -295,7 +295,7 @@ internal fun <C : PhaseContext> PhaseEngine<C>.runBitcodeBackend(
         bitcodeEngine.runBitcodePostProcessing()
         runPhase(WriteBitcodeFilePhase, WriteBitcodeFileInput(context.llvm.module, bitcodeFile))
         val moduleCompilationOutput = ModuleCompilationOutput(bitcodeFile, dependencies)
-        compileAndLink(moduleCompilationOutput, outputFiles.mainFileName, outputFiles, tempFiles, performanceManager)
+        compileAndLink(moduleCompilationOutput, outputFiles.mainFileName, outputFiles, tempFiles)
     }
 }
 
@@ -389,20 +389,20 @@ internal fun PhaseEngine<NativeGenerationState>.compileModule(
         irBuiltIns: IrBuiltIns,
         bitcodeFile: java.io.File,
         cExportFiles: CExportFiles?,
-) = with(PhaseRunner(this, context.performanceManager)) {
+) {
     runBackendCodegen(module, irBuiltIns, cExportFiles)
     val checkExternalCalls = context.config.checkStateAtExternalCalls
     if (checkExternalCalls) {
-        CheckExternalCallsPhase.run(Unit)
+        runAndMeasurePhase(CheckExternalCallsPhase)
     }
     newEngine(context as BitcodePostProcessingContext) { it.runBitcodePostProcessing() }
     if (checkExternalCalls) {
-        RewriteExternalCallsCheckerGlobals.run(Unit)
+        runAndMeasurePhase(RewriteExternalCallsCheckerGlobals)
     }
     if (context.config.produce.isFullCache) {
-        SaveAdditionalCacheInfoPhase.run(Unit)
+        runAndMeasurePhase(SaveAdditionalCacheInfoPhase)
     }
-    WriteBitcodeFilePhase.run(WriteBitcodeFileInput(context.llvm.module, bitcodeFile))
+    runAndMeasurePhase(WriteBitcodeFilePhase, WriteBitcodeFileInput(context.llvm.module, bitcodeFile))
 }
 
 
@@ -411,10 +411,9 @@ internal fun <C : PhaseContext> PhaseEngine<C>.compileAndLink(
         linkerOutputFile: String,
         outputFiles: OutputFiles,
         temporaryFiles: TempFiles,
-        performanceManager: PerformanceManager?,
-) = with(PhaseRunner(this, performanceManager)) {
+) {
     val compilationResult = temporaryFiles.create(File(outputFiles.nativeBinaryFile).name, ".o").javaFile()
-    ObjectFilesPhase.run(ObjectFilesPhaseInput(moduleCompilationOutput.bitcodeFile, compilationResult))
+    runAndMeasurePhase(ObjectFilesPhase, ObjectFilesPhaseInput(moduleCompilationOutput.bitcodeFile, compilationResult))
     val linkerOutputKind = determineLinkerOutput(context)
     val (linkerInput, cacheBinaries) = run {
         val resolvedCacheBinaries by lazy { resolveCacheBinaries(context.config.cachedLibraries, moduleCompilationOutput.dependenciesTrackingResult) }
@@ -424,7 +423,7 @@ internal fun <C : PhaseContext> PhaseEngine<C>.compileAndLink(
             }
             shouldPerformPreLink(context.config, resolvedCacheBinaries, linkerOutputKind) -> {
                 val prelinkResult = temporaryFiles.create("withStaticCaches", ".o").javaFile()
-                PreLinkCachesPhase.run(PreLinkCachesInput(listOf(compilationResult), resolvedCacheBinaries, prelinkResult))
+                runAndMeasurePhase(PreLinkCachesPhase, PreLinkCachesInput(listOf(compilationResult), resolvedCacheBinaries, prelinkResult))
                 // Static caches are linked into binary, so we don't need to pass them.
                 prelinkResult to ResolvedCacheBinaries(emptyList(), resolvedCacheBinaries.dynamic)
             }
@@ -442,9 +441,9 @@ internal fun <C : PhaseContext> PhaseEngine<C>.compileAndLink(
             temporaryFiles,
             cacheBinaries,
     )
-    LinkerPhase.run(linkerPhaseInput)
+    runAndMeasurePhase(LinkerPhase, linkerPhaseInput)
     if (context.config.produce.isCache) {
-        FinalizeCachePhase.run(outputFiles)
+        runAndMeasurePhase(FinalizeCachePhase, outputFiles)
     }
 }
 
@@ -474,9 +473,7 @@ internal fun PhaseEngine<NativeGenerationState>.partiallyLowerModuleWithDependen
     runModuleWisePhase(lowering, allModulesToLower, performanceManager)
 }
 
-internal fun PhaseEngine<NativeGenerationState>.runBackendCodegen(
-        module: IrModuleFragment, irBuiltIns: IrBuiltIns, cExportFiles: CExportFiles?
-) = with(PhaseRunner(this, context.performanceManager)) {
+internal fun PhaseEngine<NativeGenerationState>.runBackendCodegen(module: IrModuleFragment, irBuiltIns: IrBuiltIns, cExportFiles: CExportFiles?) {
     runCodegen(module, irBuiltIns)
     val generatedBitcodeFiles = if (context.config.produceCInterface) {
         require(cExportFiles != null)
@@ -486,75 +483,75 @@ internal fun PhaseEngine<NativeGenerationState>.runBackendCodegen(
                 defFile = cExportFiles.def,
                 cppAdapterFile = cExportFiles.cppAdapter
         )
-        CExportGenerateApiPhase.run(input)
-        CExportCompileAdapterPhase.run(CExportCompileAdapterInput(cExportFiles.cppAdapter, cExportFiles.bitcodeAdapter))
+        runAndMeasurePhase(CExportGenerateApiPhase, input)
+        runAndMeasurePhase(CExportCompileAdapterPhase, CExportCompileAdapterInput(cExportFiles.cppAdapter, cExportFiles.bitcodeAdapter))
         listOf(cExportFiles.bitcodeAdapter)
     } else {
         emptyList()
     }
-    CStubsPhase.run(Unit)
+    runAndMeasurePhase(CStubsPhase)
     // TODO: Consider extracting llvmModule and friends from nativeGenerationState and pass them explicitly.
     //  Motivation: possibility to run LTO on bitcode level after separate IR compilation.
     val llvmModule = context.llvm.module
     // TODO: Consider dropping these in favor of proper phases dumping and validation.
     if (context.config.needCompilerVerification || context.config.configuration.getBoolean(KonanConfigKeys.VERIFY_BITCODE)) {
-        VerifyBitcodePhase.run(llvmModule)
+        runAndMeasurePhase(VerifyBitcodePhase, llvmModule)
     }
     if (context.shouldPrintBitCode()) {
-        PrintBitcodePhase.run(llvmModule)
+        runAndMeasurePhase(PrintBitcodePhase, llvmModule)
     }
-    LinkBitcodeDependenciesPhase.run(generatedBitcodeFiles)
+    runAndMeasurePhase(LinkBitcodeDependenciesPhase, generatedBitcodeFiles)
 }
 
-private class PhaseRunner<Context : LoggingContext>(val engine: PhaseEngine<Context>, val performanceManager: PerformanceManager?) {
-    fun <Input, Output, Phase : NamedCompilerPhase<Context, Input, Output>> Phase.run(input: Input, disable: Boolean = false): Output {
-        if (disable) {
-            return this.outputIfNotEnabled(engine.phaseConfig, engine.phaserState, engine.context, input)
-        }
-        return performanceManager.tryMeasureDynamicPhaseTime(this.name, PhaseType.Backend) {
-            this.invoke(engine.phaseConfig, engine.phaserState, engine.context, input)
-        }
+internal fun <Context, Input, Output, P> PhaseEngine<Context>.runAndMeasurePhase(phase: P, input: Input, disable: Boolean = false): Output
+        where Context : LoggingContext, Context : PerformanceManagerContext, P : NamedCompilerPhase<Context, Input, Output> {
+    val perfManager = context.performanceManager.takeUnless { disable }
+    return perfManager.tryMeasureDynamicPhaseTime(phase.name, PhaseType.Backend) {
+        runPhase(phase, input, disable)
     }
+}
+
+internal fun <Context, Output, P> PhaseEngine<Context>.runAndMeasurePhase(phase: P, disable: Boolean = false): Output
+        where Context : LoggingContext, Context : PerformanceManagerContext, P : NamedCompilerPhase<Context, Unit, Output> {
+    return runAndMeasurePhase(phase, Unit, disable)
 }
 
 /**
  * Compile lowered [module] to object file.
  * @return absolute path to object file.
  */
-private fun PhaseEngine<NativeGenerationState>.runCodegen(
-        module: IrModuleFragment, irBuiltIns: IrBuiltIns
-) = with(PhaseRunner(this, context.performanceManager)) {
+private fun PhaseEngine<NativeGenerationState>.runCodegen(module: IrModuleFragment, irBuiltIns: IrBuiltIns) {
     val optimize = context.shouldOptimize()
     val enablePreCodegenInliner = context.config.preCodegenInlineThreshold != 0U && optimize
     module.files.forEach {
-        ReturnsInsertionPhase.run(it)
+        runAndMeasurePhase(ReturnsInsertionPhase, it)
         // Have to run after link dependencies phase, because fields from dependencies can be changed during lowerings.
         // Inline accessors only in optimized builds due to separate compilation and possibility to get broken debug information.
-        PropertyAccessorInlinePhase.run(it, disable = !optimize)
-        InlineClassPropertyAccessorsPhase.run(it, disable = !optimize)
+        runAndMeasurePhase(PropertyAccessorInlinePhase, it, disable = !optimize)
+        runAndMeasurePhase(InlineClassPropertyAccessorsPhase, it, disable = !optimize)
     }
-    val moduleDFG = BuildDFGPhase.run(module, disable = !optimize)
-    RemoveRedundantCallsToStaticInitializersPhase.run(RedundantCallsInput(moduleDFG, module), disable = !enablePreCodegenInliner)
-    PreCodegenInlinerPhase.run(PreCodegenInlinerInput(module, moduleDFG), disable = !enablePreCodegenInliner)
-    DevirtualizationAnalysisPhase.run(DevirtualizationAnalysisInput(module, moduleDFG), disable = !optimize)
+    val moduleDFG = runAndMeasurePhase(BuildDFGPhase, module, disable = !optimize)
+    runAndMeasurePhase(RemoveRedundantCallsToStaticInitializersPhase, RedundantCallsInput(moduleDFG, module), disable = !enablePreCodegenInliner)
+    runAndMeasurePhase(PreCodegenInlinerPhase, PreCodegenInlinerInput(module, moduleDFG), disable = !enablePreCodegenInliner)
+    runAndMeasurePhase(DevirtualizationAnalysisPhase, DevirtualizationAnalysisInput(module, moduleDFG), disable = !optimize)
     // KT-72336: This is more optimal but contradicts with the pre-codegen inliner.
-    RemoveRedundantCallsToStaticInitializersPhase.run(RedundantCallsInput(moduleDFG, module), disable = enablePreCodegenInliner || !optimize)
-    DevirtualizationPhase.run(DevirtualizationInput(module, moduleDFG), disable = !optimize)
+    runAndMeasurePhase(RemoveRedundantCallsToStaticInitializersPhase, RedundantCallsInput(moduleDFG, module), disable = enablePreCodegenInliner || !optimize)
+    runAndMeasurePhase(DevirtualizationPhase, DevirtualizationInput(module, moduleDFG), disable = !optimize)
     module.files.forEach {
-        RedundantCoercionsCleaningPhase.run(it)
+        runAndMeasurePhase(RedundantCoercionsCleaningPhase, it)
         // depends on redundantCoercionsCleaningPhase
-        UnboxInlinePhase.run(it, disable = !optimize)
+        runAndMeasurePhase(UnboxInlinePhase, it, disable = !optimize)
     }
-    PreCodegenInlinerPhase.run(PreCodegenInlinerInput(module, moduleDFG), disable = !enablePreCodegenInliner)
-    val dceResult = DCEPhase.run(DCEInput(module, moduleDFG), disable = !optimize)
+    runAndMeasurePhase(PreCodegenInlinerPhase, PreCodegenInlinerInput(module, moduleDFG), disable = !enablePreCodegenInliner)
+    val dceResult = runAndMeasurePhase(DCEPhase, DCEInput(module, moduleDFG), disable = !optimize)
     module.files.forEach {
-        CoroutinesVarSpillingPhase.run(it)
+        runAndMeasurePhase(CoroutinesVarSpillingPhase, it)
     }
-    CreateLLVMDeclarationsPhase.run(module)
-    GHAPhase.run(module, disable = !optimize)
-    RTTIPhase.run(RTTIInput(module, dceResult))
-    val lifetimes = EscapeAnalysisPhase.run(EscapeAnalysisInput(module, moduleDFG), disable = !optimize)
-    CodegenPhase.run(CodegenInput(module, irBuiltIns, lifetimes))
+    runAndMeasurePhase(CreateLLVMDeclarationsPhase, module)
+    runAndMeasurePhase(GHAPhase, module, disable = !optimize)
+    runAndMeasurePhase(RTTIPhase, RTTIInput(module, dceResult))
+    val lifetimes = runAndMeasurePhase(EscapeAnalysisPhase, EscapeAnalysisInput(module, moduleDFG), disable = !optimize)
+    runAndMeasurePhase(CodegenPhase, CodegenInput(module, irBuiltIns, lifetimes))
 }
 
 private fun PhaseEngine<NativeGenerationState>.findDependenciesToCompile(): List<IrModuleFragment> {
