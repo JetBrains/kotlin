@@ -401,6 +401,11 @@ private fun TypeSpec.Builder.maybeAddApplyArgumentStringsFun(
             compilerArgumentsClass,
             MemberName("org.jetbrains.kotlin.cli.common.arguments", "parseCommandLineArguments")
         )
+        addStatement(
+            "%M(compilerArgs.errors)?.let { throw %M(it) }",
+            MemberName("org.jetbrains.kotlin.cli.common.arguments", "validateArguments"),
+            MemberName("org.jetbrains.kotlin.buildtools.api", "CompilerArgumentsParseException"),
+        )
         addStatement("applyCompilerArguments(compilerArgs)")
     }
 }
