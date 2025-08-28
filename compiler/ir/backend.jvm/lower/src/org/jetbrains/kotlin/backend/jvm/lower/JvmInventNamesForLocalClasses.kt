@@ -43,8 +43,6 @@ internal class JvmInventNamesForLocalClasses(private val context: JvmBackendCont
     }
 
     override fun putLocalClassName(declaration: IrElement, localClassName: String) {
-        // We can visit the same class twice: before IR inlining and after. The name that was before is more preferable.
-        if (declaration.localClassType != null) return
         declaration.localClassType = Type.getObjectType(localClassName)
     }
 }
