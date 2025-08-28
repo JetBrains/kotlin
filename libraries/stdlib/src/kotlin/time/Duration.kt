@@ -354,7 +354,7 @@ public value class Duration private constructor(private val rawValue: Long) : Co
     public operator fun plus(other: Duration): Duration = when {
         unitDiscriminator == other.unitDiscriminator -> when {
             isInNanos() -> durationOfNanosNormalized(value + other.value)
-            else -> value.addWithoutOverflow(other.value).let {
+            else -> value.addMillisWithoutOverflow(other.value).let {
                 when {
                     it == INVALID_RAW_VALUE -> throw IllegalArgumentException("Summing infinite durations of different signs yields an undefined result.")
                     it.isInfinite() -> durationOfMillis(it)
@@ -1100,7 +1100,7 @@ private fun parseIsoStringFormat(
             totalMillis = sign * convertDurationUnitToMilliseconds(longValue, unit)
         } else {
             if (!isTimeComponent) return handleError(throwException)
-            totalMillis = totalMillis.addWithoutOverflow(sign * convertDurationUnitToMilliseconds(longValue, unit))
+            totalMillis = totalMillis.addMillisWithoutOverflow(sign * convertDurationUnitToMilliseconds(longValue, unit))
                 .also { if (it == Duration.INVALID_RAW_VALUE) return handleError(throwException) }
         }
 
@@ -1193,7 +1193,7 @@ private fun parseDefaultStringFormat(
             else -> {
                 // When other time units are greater than or equal to milliseconds,
                 // we convert them to milliseconds, add them to totalMillis, and preserve any overflow.
-                totalMillis = totalMillis.addWithoutOverflow(convertDurationUnitToMilliseconds(longValue, unit))
+                totalMillis = totalMillis.addMillisWithoutOverflow(convertDurationUnitToMilliseconds(longValue, unit))
             }
         }
 
@@ -1326,12 +1326,12 @@ private object FractionalParser {
 }
 
 /**
- * Adds two Long values representing duration components without overflow.
+ * Adds two Long values representing milliseconds without overflow.
  * Handles infinite values and ensures the result stays within the valid range.
- * @param other the value to add
- * @return the sum clamped to [-MAX_MILLIS, MAX_MILLIS] range, or INVALID_RAW_VALUE for invalid operations
+ * @param other the value in milliseconds to add
+ * @return the sum in milliseconds clamped to [-MAX_MILLIS, MAX_MILLIS] range, or INVALID_RAW_VALUE for invalid operations
  */
-private fun Long.addWithoutOverflow(other: Long): Long = when {
+private fun Long.addMillisWithoutOverflow(other: Long): Long = when {
     isInfinite() -> if (other.isFinite() || sameSign(this, other)) this else Duration.INVALID_RAW_VALUE
     other.isInfinite() -> other
     else -> (this + other).coerceIn(-MAX_MILLIS, MAX_MILLIS)
