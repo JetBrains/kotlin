@@ -9,6 +9,7 @@ import com.intellij.ide.highlighter.JavaClassFileType
 import com.intellij.openapi.fileTypes.FileType
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.annotations.TestOnly
+import org.jetbrains.kotlin.analysis.decompiler.psi.file.KtDecompiledFile
 import org.jetbrains.kotlin.analysis.decompiler.stub.file.KotlinMetadataStubBuilder
 import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.load.kotlin.JvmPackagePartSource
@@ -27,6 +28,7 @@ import java.io.ByteArrayInputStream
 
 class KotlinBuiltInDecompiler : KotlinMetadataDecompiler() {
     override val metadataStubBuilder: KotlinMetadataStubBuilder get() = KotlinBuiltInMetadataStubBuilder
+    override fun createFile(viewProvider: KotlinDecompiledFileViewProvider): KtDecompiledFile = KotlinBuiltinsDecompiledFile(viewProvider)
 }
 
 private object KotlinBuiltInMetadataStubBuilder : KotlinMetadataStubBuilder() {

@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.psi.stubs.impl.KotlinFileStubImpl
 import org.jetbrains.kotlin.utils.concurrent.block.LockedClearableLazyValue
 import org.jetbrains.kotlin.utils.exceptions.checkWithAttachment
 
-open class KtDecompiledFile(private val provider: KotlinDecompiledFileViewProvider) : KtFile(provider, true) {
+abstract class KtDecompiledFile(private val provider: KotlinDecompiledFileViewProvider) : KtFile(provider, true) {
     @OptIn(KtImplementationDetail::class)
     override val customStubBuilder: StubBuilder?
         get() = CompiledStubBuilder

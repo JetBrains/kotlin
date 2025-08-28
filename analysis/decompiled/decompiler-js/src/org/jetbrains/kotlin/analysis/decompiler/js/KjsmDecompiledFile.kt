@@ -3,14 +3,14 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.analysis.decompiler.konan
+package org.jetbrains.kotlin.analysis.decompiler.js
 
 import org.jetbrains.kotlin.analysis.decompiler.psi.KotlinDecompiledFileViewProvider
 import org.jetbrains.kotlin.analysis.decompiler.psi.file.KtDecompiledFile
 
 /**
- * The file represents a decompiled .knm file
+ * The file represents a decompiled obsolete .kjsm file
  *
- * @see KlibMetaFileType
+ * @see KotlinJavaScriptMetaFileType
  */
-class KlibDecompiledFile(provider: KotlinDecompiledFileViewProvider) : KtDecompiledFile(provider)
+class KjsmDecompiledFile(provider: KotlinDecompiledFileViewProvider) : KtDecompiledFile(provider)
