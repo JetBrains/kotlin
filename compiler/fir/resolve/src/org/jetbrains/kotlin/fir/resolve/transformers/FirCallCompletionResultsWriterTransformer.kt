@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
 import org.jetbrains.kotlin.fir.declarations.utils.isInline
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
-import org.jetbrains.kotlin.fir.diagnostics.ConeUnknownCollectionLiteralType
+import org.jetbrains.kotlin.fir.diagnostics.ConeUnsupportedCollectionLiteralType
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.buildCollectionLiteralCall
 import org.jetbrains.kotlin.fir.expressions.builder.buildSamConversionExpression
@@ -367,7 +367,7 @@ class FirCallCompletionResultsWriterTransformer(
         data?.argumentReplacements?.get(collectionLiteralCall)?.let { replacement ->
             return replacement.transformSingle(this, data)
         }
-        val diagnostic = ConeUnknownCollectionLiteralType
+        val diagnostic = ConeUnsupportedCollectionLiteralType
 
         val errorCalleeReference: FirNamedReference = when (val calleeReference = collectionLiteralCall.calleeReference) {
             is FirErrorNamedReference -> calleeReference
