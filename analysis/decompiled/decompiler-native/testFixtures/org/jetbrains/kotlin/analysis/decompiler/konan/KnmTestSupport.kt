@@ -35,7 +35,7 @@ object Fe10KnmTestSupport : KnmTestSupport {
         get() = Directives.KNM_FE10_IGNORE
 
     override fun createDecompiler(): KlibMetadataDecompiler {
-        return KotlinNativeMetadataDecompiler()
+        return KotlinKlibDecompiler()
     }
 
     override fun compileCommonMetadata(
@@ -66,7 +66,7 @@ object K2KnmTestSupport : KnmTestSupport {
         get() = Directives.KNM_K2_IGNORE
 
     override fun createDecompiler(): KlibMetadataDecompiler {
-        return KotlinNativeMetadataDecompiler()
+        return KotlinKlibDecompiler()
     }
 
     override fun compileCommonMetadata(

@@ -4156,7 +4156,7 @@ public final class org/jetbrains/kotlin/psi/stubs/KotlinStubVersions {
 	public static final field CLASSFILE_STUB_VERSION I
 	public static final field INSTANCE Lorg/jetbrains/kotlin/psi/stubs/KotlinStubVersions;
 	public static final field JS_STUB_VERSION I
-	public static final field KOTLIN_NATIVE_STUB_VERSION I
+	public static final field KLIB_STUB_VERSION I
 	public static final field SOURCE_STUB_VERSION I
 }
 

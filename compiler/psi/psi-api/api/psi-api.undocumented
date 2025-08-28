@@ -2039,7 +2039,7 @@ org.jetbrains.kotlin.psi.stubs.KotlinStubVersions
 org.jetbrains.kotlin.psi.stubs.KotlinStubVersions.BUILTIN_STUB_VERSION
 org.jetbrains.kotlin.psi.stubs.KotlinStubVersions.CLASSFILE_STUB_VERSION
 org.jetbrains.kotlin.psi.stubs.KotlinStubVersions.JS_STUB_VERSION
-org.jetbrains.kotlin.psi.stubs.KotlinStubVersions.KOTLIN_NATIVE_STUB_VERSION
+org.jetbrains.kotlin.psi.stubs.KotlinStubVersions.KLIB_STUB_VERSION
 org.jetbrains.kotlin.psi.stubs.KotlinStubVersions.SOURCE_STUB_VERSION
 org.jetbrains.kotlin.psi.stubs.KotlinStubWithFqName
 org.jetbrains.kotlin.psi.stubs.KotlinStubWithFqName.fqName
