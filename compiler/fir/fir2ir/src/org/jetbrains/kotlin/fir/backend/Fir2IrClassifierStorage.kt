@@ -261,7 +261,7 @@ class Fir2IrClassifierStorage(
     }
 
     private fun getIrClass(lookupTag: ConeClassLikeLookupTag): IrClass? {
-        val firClassSymbol = lookupTag.toClassSymbol(session) ?: return null
+        val firClassSymbol = lookupTag.toClassSymbol() ?: return null
         return getIrClass(firClassSymbol.fir)
     }
 

@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.references.toResolvedNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.references.toResolvedPropertySymbol
 import org.jetbrains.kotlin.fir.resolve.*
+import org.jetbrains.kotlin.fir.resolve.toClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.resolvedType
@@ -1811,7 +1812,7 @@ class Fir2IrVisitor(
     }
 
     private fun ConeClassLikeType?.toIrClassSymbol(): IrClassSymbol? {
-        return this?.lookupTag?.toClassSymbol(session)?.let {
+        return this?.lookupTag?.toClassSymbol()?.let {
             classifierStorage.getIrClassSymbol(it)
         }
     }

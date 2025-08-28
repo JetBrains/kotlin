@@ -210,7 +210,7 @@ class Fir2IrDeclarationStorage(
                 return FakeOverrideIdentifier(
                     originalSymbol,
                     dispatchReceiverLookupTag,
-                    dispatchReceiverLookupTag.toRegularClassSymbol(c.session)?.isExpect == true
+                    dispatchReceiverLookupTag.toRegularClassSymbol()?.isExpect == true
                 )
             }
         }
@@ -629,7 +629,7 @@ class Fir2IrDeclarationStorage(
 
         val setterSymbol = runIf(property.isVar) {
             val setterIsVisible = property.setter?.let { setter ->
-                fakeOverrideOwnerLookupTag?.toClassSymbol(session)?.fir?.let { containingClass ->
+                fakeOverrideOwnerLookupTag?.toClassSymbol()?.fir?.let { containingClass ->
                     setter.isVisibleInClass(containingClass)
                 }
             } ?: true
@@ -1110,7 +1110,7 @@ class Fir2IrDeclarationStorage(
     }
 
     private fun FirCallableDeclaration.computeExternalOrigin(): IrDeclarationOrigin {
-        val containingClass = containingClassLookupTag()?.toRegularClassSymbol(session)
+        val containingClass = containingClassLookupTag()?.toRegularClassSymbol()
         return when (containingClass?.isJavaOrEnhancement) {
             true -> IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB
             else -> IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB

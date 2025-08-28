@@ -21,6 +21,8 @@ import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedSymbolError
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedTypeQualifierError
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
+import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
+import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.types.ConeClassifierLookupTag
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
@@ -130,11 +132,11 @@ class FirJvmTypeMapper(override val session: FirSession) : FirSessionComponent, 
 
             if (this !is ConeClassLikeType) return createForError()
 
-            return when (val symbol = lookupTag.toSymbol(session)) {
+            return when (val symbol = lookupTag.toSymbol()) {
                 is FirRegularClassSymbol -> buildPossiblyInnerType(symbol, 0)
                 is FirTypeAliasSymbol -> {
                     val expandedType = fullyExpandedType()
-                    val classSymbol = expandedType.lookupTag.toRegularClassSymbol(session)
+                    val classSymbol = expandedType.lookupTag.toRegularClassSymbol()
                     classSymbol?.let { expandedType.buildPossiblyInnerType(it, 0) }
                 }
                 else -> null

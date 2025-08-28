@@ -54,7 +54,7 @@ fun FirClassifierSymbol<*>.toIrSymbol(
         is FirTypeAliasSymbol -> {
             handleAnnotations?.invoke(symbol.fir.expandedTypeRef.annotations)
             val coneClassLikeType = symbol.fir.expandedTypeRef.coneType as ConeClassLikeType
-            coneClassLikeType.lookupTag.toSymbol(session)
+            coneClassLikeType.lookupTag.toSymbol()
                 ?.toIrSymbol(typeOrigin, handleAnnotations)
                 ?: classifierStorage.getIrClassForNotFoundClass(coneClassLikeType.lookupTag).symbol
         }
