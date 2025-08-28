@@ -19,11 +19,12 @@ package org.jetbrains.annotations;
 import java.lang.annotation.*;
 
 /**
- * Annotate anything of type descendant from Iterable or Iterator with @ReadOnly if the underlying reference is not intended for mutation.
- * Note that such a reference is not guaranteed to be immutable. It may refer to an object mutated elsewhere.
+ * Annotate anything of type descendant from {@code Iterable} or {@code Iterator} with {@code @ReadOnly} if the underlying
+ * reference is not intended for mutation. Note that such a reference is not guaranteed to be immutable and may refer to
+ * an object mutated elsewhere.
  */
 @Documented
 @Retention(RetentionPolicy.CLASS)
-@Target({ElementType.METHOD, ElementType.FIELD, ElementType.PARAMETER, ElementType.LOCAL_VARIABLE})
+@Target({ElementType.TYPE_USE})
 public @interface ReadOnly {
 }
