@@ -199,7 +199,7 @@ class Fir2IrClassifiersGenerator(private val c: Fir2IrComponents) : Fir2IrCompon
         // finding the parent class that actually contains the [klass] in the tree - it is the root one that should be created on the fly
         val classOrLocalParent = generateSequence(klass) { c ->
             c.containingClassForLocalAttr?.let { lookupTag ->
-                (lookupTag.toClassSymbol(session)?.fir)?.takeIf {
+                (lookupTag.toClassSymbol()?.fir)?.takeIf {
                     it.declarations.contains(c)
                 }
             }

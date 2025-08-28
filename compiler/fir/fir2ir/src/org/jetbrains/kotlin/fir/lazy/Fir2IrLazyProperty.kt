@@ -113,7 +113,7 @@ class Fir2IrLazyProperty(
                 declarationStorage.withScope(symbol) {
                     with(declarationStorage) {
                         val firPrimaryConstructor = fir.containingClassLookupTag()
-                            ?.toRegularClassSymbol(session)
+                            ?.toRegularClassSymbol()
                             ?.fir
                             ?.primaryConstructorIfAny(session)
                             ?: return@with

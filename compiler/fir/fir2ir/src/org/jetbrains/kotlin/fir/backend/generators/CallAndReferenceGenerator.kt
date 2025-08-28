@@ -240,7 +240,7 @@ class CallAndReferenceGenerator(
         val dispatchReceiverReference = calleeReference
         val superTypeRef = dispatchReceiverReference.superTypeRef
         val coneSuperType = superTypeRef.coneType
-        val firClassSymbol = coneSuperType.fullyExpandedType().toClassSymbol(session)
+        val firClassSymbol = coneSuperType.fullyExpandedType().toClassSymbol()
         if (firClassSymbol != null) {
             return classifierStorage.getIrClassSymbol(firClassSymbol)
         }
@@ -279,7 +279,7 @@ class CallAndReferenceGenerator(
                         )
                     }
                 }
-                findIntersectionComponent(type)?.toClassSymbol(session)
+                findIntersectionComponent(type)?.toClassSymbol()
             }
         } ?: return null
 
@@ -897,12 +897,12 @@ class CallAndReferenceGenerator(
                 )
             }
         }
-        val annotationIsAccessible = coneType.toRegularClassSymbol(session) != null
+        val annotationIsAccessible = coneType.toRegularClassSymbol() != null
         val symbol = type.classifierOrNull
         val firConstructorSymbol = (annotation.toResolvedCallableSymbol(session) as? FirConstructorSymbol)
             ?: run {
                 // Fallback for FirReferencePlaceholderForResolvedAnnotations from jar
-                val fir = coneType.toClassSymbol(session)?.fir
+                val fir = coneType.toClassSymbol()?.fir
                 var constructorSymbol: FirConstructorSymbol? = null
                 fir?.unsubstitutedScope()?.processDeclaredConstructors {
                     if (it.fir.isPrimary && constructorSymbol == null) {
@@ -967,7 +967,7 @@ class CallAndReferenceGenerator(
         return buildAnnotationCall {
             useSiteTarget = this@toAnnotationCall.useSiteTarget
             annotationTypeRef = this@toAnnotationCall.annotationTypeRef
-            val symbol = annotationTypeRef.coneType.fullyExpandedType().toRegularClassSymbol(session) ?: return null
+            val symbol = annotationTypeRef.coneType.fullyExpandedType().toRegularClassSymbol() ?: return null
 
             val constructorSymbol = symbol.unsubstitutedScope().getDeclaredConstructors().firstOrNull() ?: return null
 
@@ -997,7 +997,7 @@ class CallAndReferenceGenerator(
         qualifier: FirResolvedQualifier,
         callableReferenceAccess: FirCallableReferenceAccess?,
     ): IrExpression? {
-        val classSymbol = qualifier.resolvedType.toClassLikeSymbol(session)
+        val classSymbol = qualifier.resolvedType.toClassLikeSymbol()
 
         if (callableReferenceAccess?.isBound == false) {
             return null
@@ -1376,7 +1376,7 @@ class CallAndReferenceGenerator(
                         firDispatchReceiver = firDispatchReceiver.dispatchReceiver
                     }
                     val notFromAny = !declarationSiteSymbol.isFunctionFromAny()
-                    val notAnInterface = firDispatchReceiver?.resolvedType?.toRegularClassSymbol(session)?.isInterface != true
+                    val notAnInterface = firDispatchReceiver?.resolvedType?.toRegularClassSymbol()?.isInterface != true
                     arguments[0] =
                         if (notFromAny || notAnInterface) {
                             baseDispatchReceiver

@@ -311,7 +311,7 @@ class Fir2IrDataClassGeneratedMemberBodyGenerator(private val irBuiltins: IrBuil
             private fun getHashCodeFunction(klass: FirRegularClass): FirNamedFunctionSymbol {
                 if (klass.classId == StandardClassIds.Nothing) {
                     // scope of kotlin.Nothing is empty, so we need to search for `hashCode` in the scope of kotlin.Any
-                    return getHashCodeFunction(session.builtinTypes.anyType.coneType.toRegularClassSymbol(session)!!.fir)
+                    return getHashCodeFunction(session.builtinTypes.anyType.coneType.toRegularClassSymbol()!!.fir)
                 }
                 val scope = klass.symbol.unsubstitutedScope()
                 return scope.getFunctions(HASHCODE_NAME).first { symbol ->
@@ -325,7 +325,7 @@ class Fir2IrDataClassGeneratedMemberBodyGenerator(private val irBuiltins: IrBuil
                 get() {
                     // Pick the (necessarily unique) non-interface upper bound if it exists
                     for (type in bounds) {
-                        val klass = type.coneType.coerceToAny().toRegularClassSymbol(session)?.fir ?: continue
+                        val klass = type.coneType.coerceToAny().toRegularClassSymbol()?.fir ?: continue
                         val kind = klass.classKind
                         if (kind != ClassKind.INTERFACE && kind != ClassKind.ANNOTATION_CLASS) return klass
                     }
@@ -334,7 +334,7 @@ class Fir2IrDataClassGeneratedMemberBodyGenerator(private val irBuiltins: IrBuil
                     // In the first case, all supertypes are interface types and the choice was arbitrary.
                     // In the second case, there is only a single supertype.
                     val firstBoundType = bounds.first().coneType.fullyExpandedType().coerceToAny()
-                    return when (val firstSuper = firstBoundType.toSymbol(session)?.fir) {
+                    return when (val firstSuper = firstBoundType.toSymbol()?.fir) {
                         is FirRegularClass -> firstSuper
                         is FirTypeParameter -> firstSuper.erasedUpperBound
                         else -> error("unknown supertype kind ${firstSuper?.render()}")
@@ -355,7 +355,7 @@ class Fir2IrDataClassGeneratedMemberBodyGenerator(private val irBuiltins: IrBuil
                     type.isArrayOrPrimitiveArray(checkUnsignedArrays = false) -> context.irBuiltIns.dataClassArrayMemberHashCodeSymbol to false
                     else -> {
                         val preparedType = type.unwrapToSimpleTypeUsingLowerBound().coerceToAny()
-                        val classForType = when (val classifier = preparedType.toSymbol(session)?.fir) {
+                        val classForType = when (val classifier = preparedType.toSymbol()?.fir) {
                             is FirRegularClass -> classifier
                             is FirTypeParameter -> classifier.erasedUpperBound
                             else -> error("Unknown classifier kind ${classifier?.render()}")

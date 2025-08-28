@@ -116,7 +116,7 @@ class Fir2IrTypeConverter(
 
                 val irSymbol =
                     getBuiltInClassSymbol(type.classId)
-                        ?: type.lookupTag.toSymbol(session)?.let { firSymbol ->
+                        ?: type.lookupTag.toSymbol()?.let { firSymbol ->
                             approximateTypeForLocalClassIfNeeded(firSymbol)?.let { return it }
                             firSymbol.toIrSymbol(typeOrigin) {
                                 typeAnnotations += with(annotationGenerator) { it.toIrAnnotations() }
