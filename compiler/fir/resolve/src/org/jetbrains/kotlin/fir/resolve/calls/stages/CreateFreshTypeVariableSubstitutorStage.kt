@@ -258,7 +258,7 @@ internal object CreateFreshTypeVariableSubstitutorStage : ResolutionStage() {
             val typeParameterConeType = toConeType()
             val expandedConeType = containingDeclaration.expandedTypeRef.coneType
             val typeArgumentIndex = expandedConeType.typeArguments.indexOfFirst { it.type == typeParameterConeType }
-            val expandedTypeFir = expandedConeType.toSymbol(context.session)?.fir
+            val expandedTypeFir = expandedConeType.toSymbol()?.fir
             if (expandedTypeFir is FirTypeParameterRefsOwner) {
                 val typeParameterFir = expandedTypeFir.typeParameters.elementAtOrNull(typeArgumentIndex)?.symbol?.fir ?: return this
                 if (expandedTypeFir is FirTypeAlias) {

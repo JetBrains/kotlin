@@ -609,7 +609,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
     private fun transformCallArgumentsInsideAnnotationContext(call: FirFunctionCall, data: ResolutionMode.WithExpectedType) {
         // Special handling of nested calls inside annotation calls/default values.
         val expectedType = data.expectedType
-        if (expectedType.fullyExpandedType().toClassSymbol(session)?.classKind == ClassKind.ANNOTATION_CLASS) {
+        if (expectedType.fullyExpandedType().toClassSymbol()?.classKind == ClassKind.ANNOTATION_CLASS) {
             // Annotation calls inside annotation calls are treated similar to regular annotation calls,
             // mainly so that array literals are resolved with the correct expected type.
             val constructorSymbol = callResolver.getAnnotationConstructorSymbol(expectedType, null)
@@ -1070,7 +1070,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         if (type.typeArguments.isNotEmpty()) return this // TODO: Incorrect for local classes, KT-59686
         // TODO: Check equality of size of arguments and parameters?
 
-        val firClass = type.lookupTag.toSymbol(session)?.fir ?: return this
+        val firClass = type.lookupTag.toSymbol()?.fir ?: return this
         if (firClass.typeParameters.isEmpty()) return this
 
         val originalType = argument.unwrapExpression().resolvedType.let {
@@ -1153,7 +1153,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
                     // is not bare type
                     it !is ConeClassLikeType ||
                             it.typeArguments.isNotEmpty() ||
-                            it.lookupTag.toSymbol(session)?.fir?.typeParameters?.isEmpty() == true
+                            it.lookupTag.toSymbol()?.fir?.typeParameters?.isEmpty() == true
                 }?.let {
                     if (operation == SAFE_AS)
                         it.withNullability(nullable = true, session.typeContext)
@@ -1447,7 +1447,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
             ConstantValueKind.IntegerLiteral, ConstantValueKind.UnsignedIntegerLiteral -> {
                 val expressionType = ConeIntegerLiteralConstantTypeImpl.create(
                     literalExpression.value as Long,
-                    isTypePresent = { it.lookupTag.toSymbol(session) != null },
+                    isTypePresent = { it.lookupTag.toSymbol() != null },
                     isUnsigned = kind == ConstantValueKind.UnsignedIntegerLiteral
                 )
                 val expectedType = data.expectedType
@@ -1580,7 +1580,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         }
 
         if (reference is FirThisReference && reference.boundSymbol == null) {
-            resolvedCall.dispatchReceiver?.resolvedType?.classLikeLookupTagIfAny?.toSymbol(session)?.let {
+            resolvedCall.dispatchReceiver?.resolvedType?.classLikeLookupTagIfAny?.toSymbol()?.let {
                 reference.replaceBoundSymbol(it)
             }
         }

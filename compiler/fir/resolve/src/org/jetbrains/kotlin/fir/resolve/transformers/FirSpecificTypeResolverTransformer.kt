@@ -199,7 +199,7 @@ class FirSpecificTypeResolverTransformer(
             ?: fakeElement(KtFakeSourceElementKind.ErroneousTypealiasExpansion)
 
     private val ConeKotlinType.isTypealiasWithErrorInExpansion: Boolean
-        get() = toTypeAliasSymbol(session)?.resolvedExpandedTypeRef is FirErrorTypeRef
+        get() = toTypeAliasSymbol()?.resolvedExpandedTypeRef is FirErrorTypeRef
 
     /**
      * Returns the smallest non-resolvable prefix of the given [qualifiers].

@@ -119,7 +119,7 @@ private inline fun BodyResolveComponents.resolveSupertypesByMembers(
             typesWithNonConcreteMembers.filter {
                 // We aren't interested in objects or enum classes here
                 // (objects can't be inherited, enum classes cannot have specific equals/hashCode)
-                it is ConeClassLikeType && it.lookupTag.toRegularClassSymbol(session)?.classKind?.isClass == true
+                it is ConeClassLikeType && it.lookupTag.toRegularClassSymbol()?.classKind?.isClass == true
             }
     }
 }
@@ -152,7 +152,7 @@ private fun BodyResolveComponents.isConcreteMember(supertype: ConeKotlinType, me
     if (member.modality == Modality.ABSTRACT)
         return false
 
-    val classSymbol = supertype.toRegularClassSymbol(session) ?: return true
+    val classSymbol = supertype.toRegularClassSymbol() ?: return true
     if (classSymbol.fir.classKind != ClassKind.INTERFACE) return true
     return member.symbol.unwrapFakeOverrides().dispatchReceiverClassLookupTagOrNull()?.classId != StandardClassIds.Any
 }

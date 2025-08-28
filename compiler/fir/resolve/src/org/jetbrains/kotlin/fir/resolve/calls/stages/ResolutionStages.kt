@@ -560,7 +560,7 @@ private object CheckDslScopeViolation {
             is ConeDefinitelyNotNullType -> collectDslMarkerAnnotations(originalType.original)
             is ConeIntersectionType -> originalType.intersectedTypes.forEach { collectDslMarkerAnnotations(it) }
             is ConeClassLikeType -> {
-                val classDeclaration = originalType.toSymbol(context.session) ?: return
+                val classDeclaration = originalType.toSymbol() ?: return
                 collectDslMarkerAnnotations(classDeclaration.resolvedAnnotationsWithClassIds)
                 when (classDeclaration) {
                     is FirClassSymbol -> {
@@ -583,7 +583,7 @@ private object CheckDslScopeViolation {
     private fun MutableSet<ClassId>.collectDslMarkerAnnotations(annotations: Collection<FirAnnotation>) {
         for (annotation in annotations) {
             val annotationClass =
-                annotation.annotationTypeRef.coneType.fullyExpandedType().toClassSymbol(context.session)
+                annotation.annotationTypeRef.coneType.fullyExpandedType().toClassSymbol()
                     ?: continue
             if (annotationClass.hasAnnotation(StandardClassIds.Annotations.DslMarker, context.session)) {
                 add(annotationClass.classId)
@@ -630,7 +630,7 @@ private object CheckReceiverShadowedByContextParameter {
         } else {
             originalCallableSymbol.resolvedReceiverType
         }
-        return receiverType?.upperBoundIfFlexible()?.fullyExpandedType()?.toClassSymbol(context.session)?.constructStarProjectedType()
+        return receiverType?.upperBoundIfFlexible()?.fullyExpandedType()?.toClassSymbol()?.constructStarProjectedType()
             ?: receiverType
     }
 }
@@ -847,7 +847,7 @@ internal object CheckVisibility : ResolutionStage() {
         val declaration = candidate.symbol.fir as? FirMemberDeclaration ?: return
 
         if (declaration is FirConstructor) {
-            val classSymbol = declaration.returnTypeRef.coneType.classLikeLookupTagIfAny?.toSymbol(context.session)
+            val classSymbol = declaration.returnTypeRef.coneType.classLikeLookupTagIfAny?.toSymbol()
             if (classSymbol is FirRegularClassSymbol && classSymbol.fir.classKind.isSingleton) {
                 sink.yieldDiagnostic(HiddenCandidate)
             }

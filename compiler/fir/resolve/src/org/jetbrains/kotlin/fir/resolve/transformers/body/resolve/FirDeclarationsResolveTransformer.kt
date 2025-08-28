@@ -1160,7 +1160,7 @@ open class FirDeclarationsResolveTransformer(
     ): FirValueParameter = whileAnalysing(session, valueParameter) {
         dataFlowAnalyzer.enterValueParameter(valueParameter)
         val insideAnnotationConstructorDeclaration =
-            (valueParameter.containingDeclarationSymbol as? FirConstructorSymbol)?.resolvedReturnType?.toClassSymbol(session)?.classKind == ClassKind.ANNOTATION_CLASS
+            (valueParameter.containingDeclarationSymbol as? FirConstructorSymbol)?.resolvedReturnType?.toClassSymbol()?.classKind == ClassKind.ANNOTATION_CLASS
         val result = context.withValueParameter(valueParameter, session) {
             transformDeclarationContent(
                 valueParameter,

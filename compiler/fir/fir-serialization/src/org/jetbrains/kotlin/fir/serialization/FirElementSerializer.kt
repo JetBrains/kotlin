@@ -1208,7 +1208,7 @@ class FirElementSerializer private constructor(
 
     private fun createAnnotationForCompilerDefinedTypeAttribute(attribute: ConeAttribute<*>): FirAnnotation? {
         val lookupTag = CompilerConeAttributes.classIdByCompilerAttributeKey.getValue(attribute.key).toLookupTag()
-        val annotationClassSymbol = lookupTag.toRegularClassSymbol(session)
+        val annotationClassSymbol = lookupTag.toRegularClassSymbol()
         if (annotationClassSymbol?.getRetention(session) == AnnotationRetention.SOURCE) return null
         return buildAnnotation {
             annotationTypeRef = buildResolvedTypeRef {
@@ -1266,7 +1266,7 @@ class FirElementSerializer private constructor(
         if (!symbol.isInner) return
         val outerClassId = symbol.classId.outerClassId
         if (outerClassId == null || symbol.isLocal) return
-        val outerSymbol = outerClassId.toLookupTag().toSymbol(session)
+        val outerSymbol = outerClassId.toLookupTag().toSymbol()
         if (outerSymbol != null) {
             val outerBuilder = ProtoBuf.Type.newBuilder()
             fillFromPossiblyInnerType(outerBuilder, outerSymbol, typeArguments, argumentIndex)
@@ -1279,7 +1279,7 @@ class FirElementSerializer private constructor(
     }
 
     private fun fillFromPossiblyInnerType(builder: ProtoBuf.Type.Builder, type: ConeClassLikeType, abbreviationOnly: Boolean = false) {
-        val classifierSymbol = type.lookupTag.toSymbol(session)
+        val classifierSymbol = type.lookupTag.toSymbol()
         if (classifierSymbol != null) {
             fillFromPossiblyInnerType(builder, classifierSymbol, type.typeArguments, 0, abbreviationOnly)
         } else {

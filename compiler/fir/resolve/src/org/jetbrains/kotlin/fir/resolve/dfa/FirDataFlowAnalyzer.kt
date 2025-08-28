@@ -190,7 +190,7 @@ abstract class FirDataFlowAnalyzer(
                             return when (this) {
                                 is ConeClassLikeType -> {
                                     val symbol =
-                                        fullyExpandedType().lookupTag.toSymbol(components.session) ?: return false
+                                        fullyExpandedType().lookupTag.toSymbol() ?: return false
                                     val declaration = symbol.fir as? FirRegularClass ?: return true
                                     visibilityChecker.isClassLikeVisible(
                                         declaration,
@@ -551,7 +551,7 @@ abstract class FirDataFlowAnalyzer(
         val type = typeOperatorCall.conversionTypeRef.coneType
         val operandVariable = flow.getVariableIfUsedOrReal(typeOperatorCall.argument) ?: return
         val complementarySymbols = typeOperatorCall.conversionTypeRef.coneType
-            .toRegularClassSymbol(session)?.getComplementarySymbols()?.takeIf { it.isNotEmpty() }
+                .toRegularClassSymbol()?.getComplementarySymbols()?.takeIf { it.isNotEmpty() }
         when (val operation = typeOperatorCall.operation) {
             FirOperation.IS, FirOperation.NOT_IS -> {
                 val isType = operation == FirOperation.IS

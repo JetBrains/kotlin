@@ -53,7 +53,7 @@ internal object CheckArguments : ResolutionStage() {
                         val coneType = it.returnTypeRef.coneType
                         context.bodyResolveComponents.samResolver.isSamType(coneType) &&
                                 // Candidate is not from Java, so no flexible types are possible here
-                                coneType.toRegularClassSymbol(context.session)?.isJavaOrEnhancement == true
+                                coneType.toRegularClassSymbol()?.isJavaOrEnhancement == true
                     }
                 ) {
                     sink.markCandidateForCompatibilityResolve()
