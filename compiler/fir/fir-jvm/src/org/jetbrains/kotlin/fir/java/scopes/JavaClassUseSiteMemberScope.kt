@@ -991,7 +991,10 @@ class JavaClassUseSiteMemberScope(
             this is FirJavaClass -> superConeTypes.any { type ->
                 type.toFir(session)?.hasKotlinSuper(session, visited) == true
             }
-            isInterface || origin.isBuiltIns -> false
+            isInterface
+                    || symbol.classId == StandardClassIds.Any
+                    || symbol.classId.asSingleFqName() in BuiltinSpecialProperties.TYPE_FQ_NAMES
+                -> false
             else -> {
                 if (!session.languageVersionSettings.getFlag(JvmAnalysisFlags.expectBuiltinsAsPartOfStdlib)) {
                     true
