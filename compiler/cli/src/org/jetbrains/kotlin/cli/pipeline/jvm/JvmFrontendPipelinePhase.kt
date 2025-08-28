@@ -263,7 +263,8 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
         val countFilesAndLines = if (perfManager == null) null else perfManager::addSourcesStats
         val outputs = sessionsWithSources.map { (session, sources) ->
             val rawFirFiles = when (configuration.useLightTree) {
-                true -> session.buildFirViaLightTree(sources, diagnosticsCollector, countFilesAndLines)
+                true -> session.buildFirViaLightTree(sources, diagnosticsCollector, countFilesAndLines,
+                    configuration.headerCompilation)
                 else -> session.buildFirFromKtFiles(sources.asKtFilesList())
             }
             resolveAndCheckFir(session, rawFirFiles, diagnosticsCollector)

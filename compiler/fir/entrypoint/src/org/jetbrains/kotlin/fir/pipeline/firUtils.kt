@@ -24,10 +24,11 @@ fun FirSession.buildFirViaLightTree(
     files: Collection<KtSourceFile>,
     diagnosticsReporter: DiagnosticReporter?,
     reportFilesAndLines: ((Int, Int) -> Unit)?,
+    useHeaderCompilation: Boolean,
 ): List<FirFile> {
     val firProvider = (firProvider as FirProviderImpl)
     val sourcesToPathsMapper = sourcesToPathsMapper
-    val builder = LightTree2Fir(this, firProvider.kotlinScopeProvider, diagnosticsReporter)
+    val builder = LightTree2Fir(this, useHeaderCompilation,firProvider.kotlinScopeProvider, diagnosticsReporter)
     val shouldCountLines = (reportFilesAndLines != null)
     var linesCount = 0
     val firFiles = files.map { file ->
@@ -82,8 +83,9 @@ fun buildResolveAndCheckFirViaLightTree(
     session: FirSession,
     ktFiles: Collection<KtSourceFile>,
     diagnosticsReporter: BaseDiagnosticsCollector,
-    countFilesAndLines: KFunction2<Int, Int, Unit>?
+    countFilesAndLines: KFunction2<Int, Int, Unit>?,
+    useHeaderCompilation: Boolean,
 ): ModuleCompilerAnalyzedOutput {
-    val firFiles = session.buildFirViaLightTree(ktFiles, diagnosticsReporter, countFilesAndLines)
+    val firFiles = session.buildFirViaLightTree(ktFiles, diagnosticsReporter, countFilesAndLines, useHeaderCompilation)
     return resolveAndCheckFir(session, firFiles, diagnosticsReporter)
 }
