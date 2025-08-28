@@ -1,7 +1,7 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-80455
 
-sealed interface SE
+sealed interface <!CLASSIFIER_REDECLARATION!>SE<!>
 sealed interface SN : SE
 sealed interface SD : SE
 sealed interface SND : SD, SN
@@ -17,8 +17,8 @@ abstract class SM : SEB(), SMDC, SN
 abstract class SC : SB(), SND, SDC
 
 // Mistake: name clash
-abstract class SE : SEB(), SND, SDC
-class SES : SE(), SMDC
+abstract class <!CLASSIFIER_REDECLARATION!>SE<!> : SEB(), SND, SDC
+class SES : SE<!NO_CONSTRUCTOR!>()<!>, SMDC
 
 public val SDP.x: String?
     get() = when (this) {

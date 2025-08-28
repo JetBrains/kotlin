@@ -530,11 +530,16 @@ private object WhenOnSealedClassExhaustivenessChecker : WhenExhaustivenessChecke
         return mutableSetOf<FirBasedSymbol<*>>().apply { collectAllSubclassesTo(this, session) }
     }
 
-    private fun FirBasedSymbol<*>.collectAllSubclassesTo(destination: MutableSet<FirBasedSymbol<*>>, session: FirSession) {
+    private fun FirBasedSymbol<*>.collectAllSubclassesTo(
+        destination: MutableSet<FirBasedSymbol<*>>,
+        session: FirSession,
+        visited: MutableSet<FirRegularClassSymbol> = mutableSetOf(),
+    ) {
         if (this !is FirRegularClassSymbol) {
             destination.add(this)
             return
         }
+        if (!visited.add(this)) return
         when {
             fir.modality == Modality.SEALED -> {
                 if (fir.isJavaNonAbstractSealed == true) {
@@ -543,7 +548,7 @@ private object WhenOnSealedClassExhaustivenessChecker : WhenExhaustivenessChecke
 
                 fir.getSealedClassInheritors(session).forEach {
                     val symbol = session.symbolProvider.getClassLikeSymbolByClassId(it) as? FirRegularClassSymbol
-                    symbol?.collectAllSubclassesTo(destination, session)
+                    symbol?.collectAllSubclassesTo(destination, session, visited)
                 }
             }
             fir.classKind == ClassKind.ENUM_CLASS -> fir.collectEnumEntries(session).mapTo(destination) { it.symbol }

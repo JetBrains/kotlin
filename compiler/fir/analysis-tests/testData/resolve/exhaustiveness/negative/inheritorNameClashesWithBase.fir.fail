@@ -1,9 +1,0 @@
-java.lang.StackOverflowError
-	at kotlin.text.StringsKt___StringsKt.lastOrNull(_Strings.kt:212)
-	at org.jetbrains.kotlin.fir.resolve.providers.impl.FirSyntheticFunctionInterfaceProviderBase$Companion.mayBeSyntheticFunctionClassName(FirExtensionSyntheticFunctionInterfaceProvider.kt:320)
-	at org.jetbrains.kotlin.fir.resolve.providers.impl.FirSyntheticFunctionInterfaceProviderBase$Companion.getFunctionTypeKind(FirExtensionSyntheticFunctionInterfaceProvider.kt:310)
-	at org.jetbrains.kotlin.fir.resolve.providers.impl.FirSyntheticFunctionInterfaceProviderBase$Companion.isNameForFunctionClass(FirExtensionSyntheticFunctionInterfaceProvider.kt:306)
-	at org.jetbrains.kotlin.fir.resolve.providers.impl.FirCachingCompositeSymbolProvider$symbolNamesProvider$1.mayHaveSyntheticFunctionType(FirCachingCompositeSymbolProvider.kt:66)
-	at org.jetbrains.kotlin.fir.resolve.providers.FirSymbolNamesProvider.mayHaveTopLevelClassifier(FirSymbolNamesProvider.kt:104)
-	at org.jetbrains.kotlin.fir.resolve.providers.impl.FirCachingCompositeSymbolProvider.getClassLikeSymbolByClassId(FirCachingCompositeSymbolProvider.kt:124)
-	at org.jetbrains.kotlin.fir.resolve.transformers.WhenOnSealedClassExhaustivenessChecker.collectAllSubclassesTo(FirWhenExhaustivenessTransformer.kt:545)
