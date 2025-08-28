@@ -2,9 +2,9 @@ plugins {
     id("org.jetbrains.kotlin.jvm")
     id("com.google.protobuf") version "0.9.5"
     id("org.jetbrains.kotlin.plugin.serialization")
-    application  // This plugin is required
-    id("me.champeau.jmh") version "0.7.2"
-    kotlin("kapt") // Add this line
+    application
+    id("me.champeau.jmh") version "0.7.2" //JMH
+    kotlin("kapt") // for JMH
 
 //    id("org.jetbrains.kotlinx.rpc.plugin") version "0.9.1"
 }
@@ -20,7 +20,6 @@ repositories {
     google()
     mavenCentral()
 }
-
 
 //rpc {
 //    annotationTypeSafetyEnabled = true
@@ -59,6 +58,8 @@ dependencies {
     runtimeOnly(project(":kotlin-compiler-embeddable"))
 
     testImplementation(kotlin("test"))
+
+    // gRPC testing utilities
     testImplementation("io.grpc:grpc-testing:1.74.0")
     testImplementation("io.grpc:grpc-inprocess:1.74.0")
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.10.2")
@@ -81,7 +82,7 @@ dependencies {
 //    implementation("org.jetbrains.kotlinx:kotlinx-rpc-krpc-server:0.9.1")
 //    implementation("org.jetbrains.kotlinx:kotlinx-rpc-krpc-ktor-server:0.9.1")
 //    implementation("org.jetbrains.kotlinx:kotlinx-rpc-krpc-serialization-json:0.9.1")
-
+//
 //    kotlinCompilerPluginClasspathMain("org.jetbrains.kotlinx:kotlinx-rpc-compiler-plugin-k2:2.2.0-0.9.1!")
 }
 
@@ -100,7 +101,7 @@ protobuf {
             artifact = "io.grpc:protoc-gen-grpc-java:1.73.0"
         }
 
-        create("grpckt") {  // Add the Kotlin gRPC plugin
+        create("grpckt") {
             artifact = "io.grpc:protoc-gen-grpc-kotlin:1.4.0:jdk8@jar"
         }
     }

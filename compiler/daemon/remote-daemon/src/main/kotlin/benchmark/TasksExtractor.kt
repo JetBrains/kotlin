@@ -14,10 +14,9 @@ data class Task(
     val messages: List<String>
 )
 
-object DataExtractor {
+object TasksExtractor {
 
-    // run on a file generated using ./gradlew --stop && ./gradlew clean && ./gradlew assembleAllKotlin --no-configuration-cache --rerun --no-build-cache --refresh-dependencies -Pkotlin.internal.compiler.arguments.log.level=warning -Pkotlin.incremental=false > output9
-    fun getTask(filePath: String): List<Task> {
+    fun getTasks(filePath: String): List<Task> {
         val compileTaskSearchString = " Kotlin compiler args: "
         val messageSearchString = "w: "
         val tasks = mutableListOf<Task>()

@@ -19,7 +19,7 @@ import com.google.protobuf.util.JsonFormat
 import org.jetbrains.kotlin.server.CompileRequestGrpc
 import org.jetbrains.kotlin.server.CompileResponseGrpc
 
-class LoggingInterceptor : ServerInterceptor {
+class LoggingServerInterceptor : ServerInterceptor {
 
     private val formatter = DateTimeFormatter.ofPattern("HH:mm:ss")
 

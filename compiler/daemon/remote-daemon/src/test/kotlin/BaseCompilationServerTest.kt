@@ -16,8 +16,8 @@ import server.core.InProcessCompilerService
 import server.auth.BasicHTTPAuthServer
 import server.core.RemoteCompilationServiceImpl
 import server.core.WorkspaceManager
-import server.interceptors.AuthInterceptor
-import server.interceptors.LoggingInterceptor
+import server.interceptors.AuthServerInterceptor
+import server.interceptors.LoggingServerInterceptor
 import java.io.File
 
 /*
@@ -66,8 +66,8 @@ abstract class BaseCompilationCompilationTest {
                                 InProcessCompilerService(),
                             )
                         ),
-                        LoggingInterceptor(),
-                        AuthInterceptor(BasicHTTPAuthServer())
+                        LoggingServerInterceptor(),
+                        AuthServerInterceptor(BasicHTTPAuthServer())
                     )
             )
             .build()

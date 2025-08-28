@@ -1,11 +1,6 @@
 package benchmark
 
-import common.CLIENT_COMPILED_DIR
-import common.CLIENT_TMP_DIR
 import common.RemoteCompilationServiceImplType
-import common.SERVER_ARTIFACTS_CACHE_DIR
-import common.SERVER_COMPILATION_WORKSPACE_DIR
-import common.SERVER_TMP_CACHE_DIR
 import kotlinx.coroutines.runBlocking
 import main.kotlin.server.RemoteCompilationServer
 import org.jetbrains.kotlin.client.RemoteCompilationClient
@@ -14,10 +9,8 @@ import org.jetbrains.kotlin.daemon.common.CompileService
 import org.jetbrains.kotlin.daemon.common.CompilerMode
 import org.openjdk.jmh.annotations.Benchmark as JmhBenchmark
 import org.openjdk.jmh.annotations.*
-import java.nio.file.Files
 import java.util.concurrent.TimeUnit
 import kotlin.io.path.ExperimentalPathApi
-import kotlin.io.path.deleteRecursively
 
 @State(Scope.Benchmark)
 open class JMHBenchmark(
@@ -27,14 +20,18 @@ open class JMHBenchmark(
     private lateinit var ktorTasks: List<Task>
     private lateinit var client: RemoteCompilationClient
     private lateinit var compilationOptions: CompilationOptions
+    private lateinit var server: RemoteCompilationServer
 
     @Setup
     fun setup() {
-        RemoteCompilationServer(50051, serverImplType).start()
+        server = RemoteCompilationServer(50051, serverImplType)
+        server.start()
+
         client = RemoteCompilationClient(serverImplType)
         // TODO: adjust path/data source as needed
-        ktorTasks = DataExtractor
-            .getTask("/Users/michal.svec/Desktop/kotlin/compiler/daemon/remote-daemon/src/main/kotlin/benchmark/compileOutput3")
+        ktorTasks = TasksExtractor
+            .getTasks("/Users/michal.svec/Desktop/kotlin/compiler/daemon/remote-daemon/src/main/kotlin/benchmark/compileOutput")
+            .subList(0, 10) // TODO adjust size
 
         compilationOptions = CompilationOptions(
             compilerMode = CompilerMode.NON_INCREMENTAL_COMPILER,
@@ -46,26 +43,24 @@ open class JMHBenchmark(
     }
 
     @OptIn(ExperimentalPathApi::class)
-    @TearDown
-    fun tearDown() {
+    @TearDown(Level.Iteration)
+    fun iterationTearDown() {
         println("TEAR DOWN CALLED")
-        CLIENT_COMPILED_DIR.deleteRecursively()
-        CLIENT_TMP_DIR.deleteRecursively()
-        SERVER_TMP_CACHE_DIR.deleteRecursively()
-        SERVER_ARTIFACTS_CACHE_DIR.deleteRecursively()
-        SERVER_COMPILATION_WORKSPACE_DIR.deleteRecursively()
-
-        Files.createDirectories(CLIENT_COMPILED_DIR)
-        Files.createDirectories(CLIENT_TMP_DIR)
-        Files.createDirectories(SERVER_TMP_CACHE_DIR)
-        Files.createDirectories(SERVER_ARTIFACTS_CACHE_DIR)
-        Files.createDirectories(SERVER_COMPILATION_WORKSPACE_DIR)
-
+        server.cleanup()
     }
 
+    @TearDown(Level.Trial)
+    fun serverTearDown() {
+        println("SERVER TEAR DOWN CALLED")
+        server.stop()
+    }
+
+    // to do the setup steps described in Benchmark.kt file,
+    // you can run this JMH benchmark using the following command
+    // ./gradlew jmh -DjmhIncludes="benchmark.JMHBenchmark"
     @JmhBenchmark
-    @BenchmarkMode(Mode.Throughput)
-    @OutputTimeUnit(TimeUnit.MILLISECONDS)
+    @BenchmarkMode(Mode.SampleTime)
+    @OutputTimeUnit(TimeUnit.SECONDS)
     @Warmup(iterations = 1, time = 1)
     @Measurement(iterations = 5, time = 1)
     @Fork(1)

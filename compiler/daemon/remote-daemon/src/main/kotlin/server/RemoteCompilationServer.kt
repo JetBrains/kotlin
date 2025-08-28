@@ -7,17 +7,22 @@ package main.kotlin.server
 
 import common.FixedSizeChunkingStrategy
 import common.RemoteCompilationServiceImplType
+import common.SERVER_ARTIFACTS_CACHE_DIR
+import common.SERVER_CACHE_DIR
+import common.SERVER_COMPILATION_WORKSPACE_DIR
+import common.SERVER_TMP_CACHE_DIR
 import io.grpc.Server
 import io.grpc.ServerBuilder
 import io.grpc.ServerInterceptors
 import server.GrpcRemoteCompilationService
 import server.core.CacheHandler
 import server.core.InProcessCompilerService
-import server.interceptors.LoggingInterceptor
+import server.interceptors.LoggingServerInterceptor
 import server.auth.BasicHTTPAuthServer
 import server.core.RemoteCompilationServiceImpl
 import server.core.WorkspaceManager
-import server.interceptors.AuthInterceptor
+import server.interceptors.AuthServerInterceptor
+import java.nio.file.Files
 
 class RemoteCompilationServer(
     private val port: Int,
@@ -45,8 +50,8 @@ class RemoteCompilationServer(
                             )
                         ),
                         listOfNotNull(
-                            if (logging) LoggingInterceptor() else null,
-                            AuthInterceptor(BasicHTTPAuthServer())
+                            if (logging) LoggingServerInterceptor() else null,
+                            AuthServerInterceptor(BasicHTTPAuthServer())
                         ),
                     )
             ).build()
@@ -63,7 +68,7 @@ class RemoteCompilationServer(
         )
     }
 
-    private fun stop() {
+    fun stop() {
         cleanup()
         server.shutdown()
     }
