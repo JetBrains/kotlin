@@ -86,9 +86,13 @@ private fun createTargetPublications(project: Project, publishing: PublishingExt
                 }
                 is KotlinNativeTarget -> {
                     project.launch {
-                        val crossCompilationSupported = kotlinTarget.crossCompilationOnCurrentHostSupported.await()
-                        if (!crossCompilationSupported) return@launch
-                        kotlinTarget.createTargetSpecificMavenPublications(publishing.publications)
+                        val crossCompilationService = project.crossCompilationServiceProvider.get()
+                        val publishingSupported = crossCompilationService.isCrossCompilationSupported(kotlinTarget.konanTarget)
+                        if (publishingSupported) {
+                            // Re-acquire the publishing extension inside the deferred block
+                            val currentPublishing = project.extensions.getByType(PublishingExtension::class.java)
+                            kotlinTarget.createTargetSpecificMavenPublications(currentPublishing.publications)
+                        }
                     }
                 }
                 else -> kotlinTarget.createTargetSpecificMavenPublications(publishing.publications)
