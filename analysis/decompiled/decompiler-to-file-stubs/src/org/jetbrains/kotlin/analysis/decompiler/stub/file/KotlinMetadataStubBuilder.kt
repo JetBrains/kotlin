@@ -101,13 +101,15 @@ abstract class KotlinMetadataStubBuilder : ClsStubBuilder() {
         open class Compatible(
             val proto: ProtoBuf.PackageFragment,
             val version: BinaryVersion,
-            serializerProtocol: SerializerExtensionProtocol
+            val serializerProtocol: SerializerExtensionProtocol
         ) : FileWithMetadata() {
-            val nameResolver = NameResolverImpl(proto.strings, proto.qualifiedNames)
-            val packageFqName = FqName(nameResolver.getPackageFqName(proto.`package`.getExtension(serializerProtocol.packageFqName)))
+            val nameResolver: NameResolverImpl = NameResolverImpl(proto.strings, proto.qualifiedNames)
 
-            open val classesToDecompile: List<ProtoBuf.Class> =
-                proto.class_List.filter { proto ->
+            val packageFqName: FqName
+                get() = FqName(nameResolver.getPackageFqName(proto.`package`.getExtension(serializerProtocol.packageFqName)))
+
+            open val classesToDecompile: List<ProtoBuf.Class>
+                get() = proto.class_List.filter { proto ->
                     val classId = nameResolver.getClassId(proto.fqName)
                     !classId.isNestedClass && classId !in ClassDeserializer.BLACK_LIST
                 }
