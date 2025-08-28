@@ -292,7 +292,12 @@ private class SyntheticAccessorsDumper(
                 )
             ).substringBefore('{').trimEnd()
 
-            return appendLine(dump)
+            val oneLineDump =
+                if ('\n' in dump && (element as? IrFunction)?.parameters?.any { it.kind == IrParameterKind.Context } == true) {
+                    dump.replaceFirst('\n', ' ')
+                } else dump
+
+            return appendLine(oneLineDump)
         }
 
         private fun StringBuilder.appendIndent(indent: Int): StringBuilder {
