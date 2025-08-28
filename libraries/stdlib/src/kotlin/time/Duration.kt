@@ -351,32 +351,19 @@ public value class Duration private constructor(private val rawValue: Long) : Co
      * @throws IllegalArgumentException if the operation results in an undefined value for the given arguments,
      * e.g. when adding infinite durations of different sign.
      */
-    public operator fun plus(other: Duration): Duration {
-        when {
-            this.isInfinite() -> {
-                if (other.isFinite() || (this.rawValue xor other.rawValue >= 0))
-                    return this
-                else
-                    throw IllegalArgumentException("Summing infinite durations of different signs yields an undefined result.")
-            }
-            other.isInfinite() -> return other
-        }
-
-        return when {
-            this.unitDiscriminator == other.unitDiscriminator -> {
-                val result = this.value + other.value // never overflows long, but can overflow long63
+    public operator fun plus(other: Duration): Duration = when {
+        unitDiscriminator == other.unitDiscriminator -> when {
+            isInNanos() -> durationOfNanosNormalized(value + other.value)
+            else -> value.addWithoutOverflow(other.value).let {
                 when {
-                    isInNanos() ->
-                        durationOfNanosNormalized(result)
-                    else ->
-                        durationOfMillisNormalized(result)
+                    it == INVALID_RAW_VALUE -> throw IllegalArgumentException("Summing infinite durations of different signs yields an undefined result.")
+                    it.isInfinite() -> durationOfMillis(it)
+                    else -> durationOfMillisNormalized(it)
                 }
             }
-            this.isInMillis() ->
-                addValuesMixedRanges(this.value, other.value)
-            else ->
-                addValuesMixedRanges(other.value, this.value)
         }
+        this.isInMillis() -> addValuesMixedRanges(value, other.value)
+        else -> addValuesMixedRanges(other.value, value)
     }
 
     private fun addValuesMixedRanges(thisMillis: Long, otherNanos: Long): Duration {
