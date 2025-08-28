@@ -4,11 +4,9 @@
  */
 package org.jetbrains.kotlin.analysis.decompiler.konan
 
-import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
-import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import org.jetbrains.kotlin.metadata.deserialization.NameResolverImpl
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.serialization.deserialization.ClassDeserializer
@@ -26,17 +24,5 @@ sealed class FileWithMetadata {
                 val classId = nameResolver.getClassId(proto.fqName)
                 !classId.isNestedClass && classId !in ClassDeserializer.BLACK_LIST
             }
-    }
-
-    companion object {
-        fun forPackageFragment(packageFragment: VirtualFile): FileWithMetadata? {
-            val klibMetadataLoadingCache = KlibLoadingMetadataCache.getInstance()
-            val (fragment, version) = klibMetadataLoadingCache.getCachedPackageFragmentWithVersion(packageFragment)
-            if (fragment == null || version == null) return null
-            if (!version.isCompatibleWithCurrentCompilerVersion()) {
-                return Incompatible(version)
-            }
-            return Compatible(fragment, version)
-        }
     }
 }
