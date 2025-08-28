@@ -6,10 +6,13 @@ val testModules = listOf(
     ":analysis:analysis-api-fir",
     ":analysis:low-level-api-fir",
     ":analysis:low-level-api-fir:tests-jdk11",
-    ":analysis:analysis-test-framework",
     ":analysis:analysis-api-impl-base",
     ":analysis:analysis-api-standalone",
     ":analysis:decompiled:decompiler-to-file-stubs",
+)
+
+val testFixturesModules = listOf(
+    ":analysis:analysis-test-framework",
 )
 
 val mainModules = listOf(
@@ -19,6 +22,10 @@ val mainModules = listOf(
 dependencies {
     testModules.forEach {
         embedded(projectTests(it)) { isTransitive = false }
+    }
+
+    testFixturesModules.forEach {
+        embedded(testFixtures(project(it))) { (this as ModuleDependency).isTransitive = false }
     }
 
     mainModules.forEach {
