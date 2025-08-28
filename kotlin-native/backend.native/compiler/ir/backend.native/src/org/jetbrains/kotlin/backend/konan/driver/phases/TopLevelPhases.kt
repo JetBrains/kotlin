@@ -214,13 +214,7 @@ internal fun <C : PhaseContext> PhaseEngine<C>.runBackend(backendContext: Contex
                         )
                     } else null
                     // TODO: Make this work if we first compile all the fragments and only after that run the link phases.
-                    generationStateEngine.compileModule(
-                            fragment.irModule,
-                            backendContext.irBuiltIns,
-                            bitcodeFile,
-                            cExportFiles,
-                            fragment.performanceManager,
-                    )
+                    generationStateEngine.compileModule(fragment.irModule, backendContext.irBuiltIns, bitcodeFile, cExportFiles)
                     // Split here
                     val dependenciesTrackingResult = generationState.dependenciesTracker.collectResult()
                     val depsFilePath = config.writeSerializedDependencies
@@ -395,9 +389,8 @@ internal fun PhaseEngine<NativeGenerationState>.compileModule(
         irBuiltIns: IrBuiltIns,
         bitcodeFile: java.io.File,
         cExportFiles: CExportFiles?,
-        performanceManager: PerformanceManager?,
-) = with(PhaseRunner(this, performanceManager)) {
-    runBackendCodegen(module, irBuiltIns, cExportFiles, performanceManager)
+) = with(PhaseRunner(this, context.performanceManager)) {
+    runBackendCodegen(module, irBuiltIns, cExportFiles)
     val checkExternalCalls = context.config.checkStateAtExternalCalls
     if (checkExternalCalls) {
         CheckExternalCallsPhase.run(Unit)
@@ -482,12 +475,9 @@ internal fun PhaseEngine<NativeGenerationState>.partiallyLowerModuleWithDependen
 }
 
 internal fun PhaseEngine<NativeGenerationState>.runBackendCodegen(
-        module: IrModuleFragment,
-        irBuiltIns: IrBuiltIns,
-        cExportFiles: CExportFiles?,
-        performanceManager: PerformanceManager?,
-) = with(PhaseRunner(this, performanceManager)) {
-    runCodegen(module, irBuiltIns, performanceManager)
+        module: IrModuleFragment, irBuiltIns: IrBuiltIns, cExportFiles: CExportFiles?
+) = with(PhaseRunner(this, context.performanceManager)) {
+    runCodegen(module, irBuiltIns)
     val generatedBitcodeFiles = if (context.config.produceCInterface) {
         require(cExportFiles != null)
         val input = CExportGenerateApiInput(
@@ -532,10 +522,8 @@ private class PhaseRunner<Context : LoggingContext>(val engine: PhaseEngine<Cont
  * @return absolute path to object file.
  */
 private fun PhaseEngine<NativeGenerationState>.runCodegen(
-        module: IrModuleFragment,
-        irBuiltIns: IrBuiltIns,
-        performanceManager: PerformanceManager?,
-) = with(PhaseRunner(this, performanceManager)) {
+        module: IrModuleFragment, irBuiltIns: IrBuiltIns
+) = with(PhaseRunner(this, context.performanceManager)) {
     val optimize = context.shouldOptimize()
     val enablePreCodegenInliner = context.config.preCodegenInlineThreshold != 0U && optimize
     module.files.forEach {
