@@ -22,7 +22,11 @@ interface KotlinJsTestFramework : RequiresNpmDependencies {
 
     val executable: Provider<String>
 
-    @Deprecated(message = CREATE_TEST_EXEC_SPEC_DEPRECATION_MSG)
+    @Deprecated(
+        CREATE_TEST_EXEC_SPEC_DEPRECATION_MSG,
+        ReplaceWith("createTestExecutionSpec(task, launchOpts, nodeJsArgs, debug)"),
+        DeprecationLevel.ERROR
+    )
     fun createTestExecutionSpec(
         task: KotlinJsTest,
         forkOptions: ProcessForkOptions,
