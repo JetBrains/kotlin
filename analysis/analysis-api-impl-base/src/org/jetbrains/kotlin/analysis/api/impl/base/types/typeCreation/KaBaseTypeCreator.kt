@@ -250,3 +250,84 @@ class KaBaseIntersectionTypeBuilder(
 @KaImplementationDetail
 class KaBaseDynamicTypeBuilder(typeCreatorDelegate: KaTypeCreator) : KaDynamicTypeBuilder,
     KaBaseTypeBuilderWithAnnotations(), KaTypeCreator by typeCreatorDelegate
+
+@KaImplementationDetail
+sealed class KaBaseFunctionTypeBuilder(typeCreatorDelegate: KaTypeCreator, session: KaSession) : KaFunctionTypeBuilder,
+    KaBaseTypeBuilderWithAnnotations(),
+    KaTypeCreator by typeCreatorDelegate {
+    override var isMarkedNullable: Boolean = false
+        get() = withValidityAssertion { field }
+        set(value) {
+            withValidityAssertion {
+                field = value
+            }
+        }
+
+    override var isSuspend: Boolean = false
+        get() = withValidityAssertion { field }
+        set(value) {
+            withValidityAssertion {
+                field = value
+            }
+        }
+
+    override var isReflectType: Boolean = false
+        get() = withValidityAssertion { field }
+        set(value) {
+            withValidityAssertion {
+                field = value
+            }
+        }
+
+    private val backingContextParameters: MutableList<KaType> = mutableListOf()
+
+    override val contextParameters: List<KaType>
+        get() = withValidityAssertion { backingContextParameters }
+
+    override fun contextParameter(contextParameter: KaType) = withValidityAssertion {
+        backingContextParameters += contextParameter
+    }
+
+    override fun contextParameter(contextParameter: () -> KaType) = withValidityAssertion {
+        backingContextParameters += contextParameter()
+    }
+
+    private val backingValueParameters: MutableList<KaFunctionValueParameter> = mutableListOf()
+
+    override val valueParameters: List<KaFunctionValueParameter>
+        get() = withValidityAssertion { backingValueParameters }
+
+    override fun valueParameter(parameter: KaFunctionValueParameter) = withValidityAssertion {
+        backingValueParameters += parameter
+    }
+
+    override fun valueParameter(name: Name?, type: KaType) = withValidityAssertion {
+        val valueParameter = KaBaseFunctionValueParameter(name, type)
+        backingValueParameters += valueParameter
+    }
+
+    override fun valueParameter(name: Name?, type: () -> KaType) = withValidityAssertion {
+        val valueParameter = KaBaseFunctionValueParameter(name, type())
+        backingValueParameters += valueParameter
+    }
+
+    override fun valueParameter(parameter: () -> KaFunctionValueParameter) = withValidityAssertion {
+        backingValueParameters += parameter()
+    }
+
+    override var receiverType: KaType? = null
+        get() = withValidityAssertion { field }
+        set(value) {
+            withValidityAssertion { field = value }
+        }
+
+    override var returnType: KaType = session.builtinTypes.unit
+        get() = withValidityAssertion { field }
+        set(value) {
+            withValidityAssertion { field = value }
+        }
+
+    class Base(typeCreatorDelegate: KaTypeCreator, session: KaSession) :
+        KaBaseFunctionTypeBuilder(typeCreatorDelegate, session) {
+    }
+}
