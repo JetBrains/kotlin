@@ -1367,9 +1367,8 @@ private inline fun sameSign(a: Long, b: Long): Boolean = a xor b >= 0L
  * @param unit the duration unit of the whole part before the fraction
  * @return nanoseconds representing the fractional part
  */
-private fun String.parseFractionFallback(startIndex: Int, endIndex: Int, unit: DurationUnit): Long {
-    return (substring(startIndex, endIndex).toDouble() * unit.fallbackFractionMultiplier).roundToLong()
-}
+private fun String.parseFractionFallback(startIndex: Int, endIndex: Int, unit: DurationUnit): Long =
+    (substring(startIndex, endIndex).toDouble() * unit.fallbackFractionMultiplier).roundToLong()
 
 /**
  * Converts fraction digits (scaled to 15 decimal places) to nanoseconds for the given unit.
@@ -1396,9 +1395,7 @@ private inline fun handleError(throwException: Boolean, message: String = ""): D
  * @param block lambda to execute if Duration is INVALID
  * @return this Duration if valid, or the result of the block if INVALID
  */
-private inline fun Duration.onInvalid(block: () -> Duration?): Duration? {
-    return if (this == Duration.INVALID) block() else this
-}
+private inline fun Duration.onInvalid(block: () -> Duration?): Duration? = if (this == Duration.INVALID) block() else this
 
 /**
  * Skips characters in this string starting from the given index while they match the predicate.
