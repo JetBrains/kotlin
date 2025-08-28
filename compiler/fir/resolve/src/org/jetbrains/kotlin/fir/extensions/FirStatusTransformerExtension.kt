@@ -50,6 +50,12 @@ abstract class FirStatusTransformerExtension(session: FirSession) : FirExtension
         return transformStatus(status, function)
     }
 
+    /**
+     * This function may change the status (in general, visibility, modality, and modifiers) of a regular class.
+     *
+     * Limitation: it's forbidden for this extension to change the visibility of a regular class in any way,
+     * as this may influence type resolve thus violating our phase contracts.
+     */
     open fun transformStatus(
         status: FirDeclarationStatus,
         regularClass: FirRegularClass,
@@ -59,6 +65,12 @@ abstract class FirStatusTransformerExtension(session: FirSession) : FirExtension
         return transformStatus(status, regularClass)
     }
 
+    /**
+     * This function may change the status (in general, visibility, modality, and modifiers) of a type alias.
+     *
+     * Limitation: it's forbidden for this extension to change the visibility of a type alias in any way,
+     * as this may influence type resolve thus violating our phase contracts.
+     */
     open fun transformStatus(
         status: FirDeclarationStatus,
         typeAlias: FirTypeAlias,
