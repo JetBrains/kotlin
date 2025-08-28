@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.fir.references.builder.buildErrorNamedReference
 import org.jetbrains.kotlin.fir.resolve.calls.*
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.*
 import org.jetbrains.kotlin.fir.resolve.calls.stages.ArgumentCheckingProcessor
-import org.jetbrains.kotlin.fir.resolve.findMainOperatorOfOverload
+import org.jetbrains.kotlin.fir.resolve.companionObjectIfDefinedOperatorOf
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.lastStatement
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedReferenceError
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeLambdaArgumentConstraintPositionWithCoercionToUnit
@@ -229,11 +229,11 @@ class PostponedArgumentsAnalyzer(
     ) {
         val originalExpression = atom.expression
 
-        val operatorOf = with(resolutionContext) { substitutedExpectedType.findMainOperatorOfOverload() } ?: return
+        val companion = with(resolutionContext) { substitutedExpectedType.companionObjectIfDefinedOperatorOf } ?: return
         val newExpression =
             resolutionContext.runCollectionLiteralResolution(
                 atom,
-                operatorOf,
+                companion,
                 topLevelCandidate,
             )
 
