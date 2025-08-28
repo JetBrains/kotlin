@@ -87,6 +87,7 @@ import org.jetbrains.kotlin.psi.KtWhenCondition
 import org.jetbrains.kotlin.psi.KtWhenEntry
 import org.jetbrains.kotlin.psi.KtWhenExpression
 import org.jetbrains.kotlin.resolve.ForbiddenNamedArgumentsTarget
+import org.jetbrains.kotlin.resolve.ReturnValueStatus
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualAnnotationsIncompatibilityType
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualMatchingCompatibility
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualMatchingCompatibility.Mismatch
@@ -4146,8 +4147,9 @@ internal class ActualAnnotationsNotMatchExpectImpl(
 
 internal class ActualIgnorabilityNotMatchExpectImpl(
     override val expectDeclaration: KaSymbol,
+    override val expectIgnorability: ReturnValueStatus,
     override val actualDeclaration: KaSymbol,
-    override val reason: String,
+    override val actualIgnorability: ReturnValueStatus,
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtNamedDeclaration>(firDiagnostic, token), KaFirDiagnostic.ActualIgnorabilityNotMatchExpect

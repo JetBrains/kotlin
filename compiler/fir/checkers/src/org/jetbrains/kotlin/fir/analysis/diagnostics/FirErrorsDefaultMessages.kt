@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.DECL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.DECLARATION_NAME
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.FOR_OPTIONAL_OPERATOR
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.FUNCTIONAL_TYPE_KINDS
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.IGNORABILITY_STATUS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.KOTLIN_TARGETS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.MODULE_DATA
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.NAME_OF_CONTAINING_DECLARATION_OR_FILE
@@ -2978,8 +2979,9 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             ACTUAL_IGNORABILITY_NOT_MATCH_EXPECT,
-            "Ignorability statuses for expect declaration ''{0}'' and actual declaration ''{1}'' do not match. @IgnorableReturnValue declaration cannot be actualized with Must-Use declaration, and vice versa.",
-            SYMBOL_WITH_CONTAINING_DECLARATION, SYMBOL_WITH_CONTAINING_DECLARATION, EMPTY
+            "Ignorability statuses for expect and actual declarations are different. Expect declaration {0} is {1} and actual declaration {2} is {3}. " +
+                    "Different statuses may result in inconsistent and incorrect warnings.",
+            SYMBOL_WITH_CONTAINING_DECLARATION, IGNORABILITY_STATUS, SYMBOL_WITH_CONTAINING_DECLARATION, IGNORABILITY_STATUS,
         )
         map.put(
             OPTIONAL_DECLARATION_OUTSIDE_OF_ANNOTATION_ENTRY,

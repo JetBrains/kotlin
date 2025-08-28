@@ -1685,8 +1685,9 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         // Same as expectActualIncompatibilityError, but warning
         val ACTUAL_IGNORABILITY_NOT_MATCH_EXPECT by warning<KtNamedDeclaration>(PositioningStrategy.DECLARATION_NAME_ONLY) {
             parameter<Symbol>("expectDeclaration")
+            parameter<ReturnValueStatus>("expectIgnorability")
             parameter<Symbol>("actualDeclaration")
-            parameter<String>("reason")
+            parameter<ReturnValueStatus>("actualIgnorability")
         }
 
         val OPTIONAL_DECLARATION_OUTSIDE_OF_ANNOTATION_ENTRY by error<PsiElement>()

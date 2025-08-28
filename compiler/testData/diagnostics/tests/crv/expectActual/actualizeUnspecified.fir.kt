@@ -30,10 +30,10 @@ fun commonMain() {
 // <init>, x, p: Unspecifed -> MustUse is not allowed
 // ign: Unspecified -> ExplicitlyIgnorable is allowed
 @MustUseReturnValue
-actual class Foo <!ACTUAL_IGNORABILITY_NOT_MATCH_EXPECT!>actual constructor()<!> {
-    actual fun <!ACTUAL_IGNORABILITY_NOT_MATCH_EXPECT!>x<!>(): String = ""
+actual class Foo <!ACTUAL_IGNORABILITY_NOT_MATCH_EXPECT("'expect constructor(): Foo' defined in 'Foo'; unspecified (implicitly ignorable); 'actual constructor(): Foo' defined in 'Foo'; must-use")!>actual constructor()<!> {
+    actual fun <!ACTUAL_IGNORABILITY_NOT_MATCH_EXPECT("'expect fun x(): String' defined in 'Foo'; unspecified (implicitly ignorable); 'actual fun x(): String' defined in 'Foo'; must-use")!>x<!>(): String = ""
     @IgnorableReturnValue actual fun ign(): String = ""
-    actual val <!ACTUAL_IGNORABILITY_NOT_MATCH_EXPECT!>p<!>: Int = 42
+    actual val <!ACTUAL_IGNORABILITY_NOT_MATCH_EXPECT("'expect val p: Int' defined in 'Foo'; unspecified (implicitly ignorable); 'actual val p: Int' defined in 'Foo'; must-use")!>p<!>: Int = 42
     fun notActual(): String = ""
 }
 

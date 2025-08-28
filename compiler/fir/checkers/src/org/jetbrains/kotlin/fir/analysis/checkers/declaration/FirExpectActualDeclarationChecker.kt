@@ -186,6 +186,8 @@ object FirExpectActualDeclarationChecker : FirBasicDeclarationChecker(MppChecker
             // A nicer diagnostic for functions with default params
             if (declaration is FirFunction && incompatibility == ExpectActualIncompatibility.ActualFunctionWithOptionalParameters) {
                 reporter.reportOn(declaration.source, FirErrors.ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS)
+            } else if (incompatibility == ExpectActualIncompatibility.IgnorabilityIsDifferent) {
+                reportIgnorabilityIncompatibleMembers(expectedSingleCandidate, symbol, source)
             } else {
                 reporter.reportOn(
                     source,
@@ -287,22 +289,31 @@ object FirExpectActualDeclarationChecker : FirBasicDeclarationChecker(MppChecker
 
     context(reporter: DiagnosticReporter, context: CheckerContext)
     private fun reportIgnorabilityIncompatibleMembers(
+        expect: FirBasedSymbol<*>,
+        actual: FirBasedSymbol<*>,
+        source: KtSourceElement?,
+    ) {
+        val expectMember =
+            expect as? FirCallableSymbol<*> ?: error("Ignorability incompatibility can be reported only for callables")
+        val actualMember =
+            actual as? FirCallableSymbol<*> ?: error("Ignorability incompatibility can be reported only for callables")
+        reporter.reportOn(
+            source,
+            FirErrors.ACTUAL_IGNORABILITY_NOT_MATCH_EXPECT,
+            expectMember,
+            expectMember.resolvedStatus.returnValueStatus,
+            actualMember,
+            actualMember.resolvedStatus.returnValueStatus
+        )
+    }
+
+    context(reporter: DiagnosticReporter, context: CheckerContext)
+    private fun reportIgnorabilityIncompatibleMembers(
         ignorabilityIncompatibleMembers: List<MemberIncompatibility<FirBasedSymbol<*>>>,
         source: KtSourceElement?,
     ) {
-        // Separate handling because it is a warning
         for (member in ignorabilityIncompatibleMembers) {
-            val expectMember =
-                member.expect as? FirCallableSymbol<*> ?: error("Ignorability incompatibility can be reported only for callables")
-            val actualMember =
-                member.actual as? FirCallableSymbol<*> ?: error("Ignorability incompatibility can be reported only for callables")
-            reporter.reportOn(
-                source,
-                FirErrors.ACTUAL_IGNORABILITY_NOT_MATCH_EXPECT,
-                expectMember,
-                actualMember,
-                member.incompatibility.reason
-            )
+            reportIgnorabilityIncompatibleMembers(member.expect, member.actual, source)
         }
     }
 
@@ -408,6 +419,7 @@ object FirExpectActualDeclarationChecker : FirBasicDeclarationChecker(MppChecker
 private fun ExpectActualIncompatibility<*>.toDiagnostic() = when (this) {
     ExpectActualIncompatibility.ActualFunctionWithOptionalParameters -> error("unreachable")
     is ExpectActualIncompatibility.ClassScopes<*> -> error("unreachable")
+    ExpectActualIncompatibility.IgnorabilityIsDifferent -> error("Should be handled before")
 
     ExpectActualIncompatibility.ClassKind -> FirErrors.EXPECT_ACTUAL_INCOMPATIBLE_CLASS_KIND
     ExpectActualIncompatibility.ClassModifiers -> FirErrors.EXPECT_ACTUAL_INCOMPATIBLE_CLASS_MODIFIERS
@@ -436,5 +448,4 @@ private fun ExpectActualIncompatibility<*>.toDiagnostic() = when (this) {
     is ExpectActualIncompatibility.Modality -> FirErrors.EXPECT_ACTUAL_INCOMPATIBLE_MODALITY
     is ExpectActualIncompatibility.PropertySetterVisibility -> FirErrors.EXPECT_ACTUAL_INCOMPATIBLE_PROPERTY_SETTER_VISIBILITY
     is ExpectActualIncompatibility.Visibility -> FirErrors.EXPECT_ACTUAL_INCOMPATIBLE_VISIBILITY
-    ExpectActualIncompatibility.IgnorabilityIsDifferent -> FirErrors.ACTUAL_IGNORABILITY_NOT_MATCH_EXPECT
 }

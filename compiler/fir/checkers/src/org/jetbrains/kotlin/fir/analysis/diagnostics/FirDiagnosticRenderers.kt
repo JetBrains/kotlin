@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.metadata.deserialization.VersionRequirement
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.ReturnValueStatus
 import org.jetbrains.kotlin.types.model.TypeConstructorMarker
 import java.text.MessageFormat
 
@@ -384,6 +385,14 @@ object FirDiagnosticRenderers {
 
     val OF_OPTIONAL_NAME = Renderer { name: Name? ->
         name?.asString()?.takeIf { it.isNotBlank() }?.let { " of '$it'" } ?: ""
+    }
+
+    val IGNORABILITY_STATUS = Renderer { status: ReturnValueStatus ->
+        when (status) {
+            ReturnValueStatus.MustUse -> "must-use"
+            ReturnValueStatus.ExplicitlyIgnorable -> "ignorable"
+            ReturnValueStatus.Unspecified -> "unspecified (implicitly ignorable)"
+        }
     }
 
     val SYMBOL_WITH_CONTAINING_DECLARATION = Renderer { symbol: FirBasedSymbol<*> ->
