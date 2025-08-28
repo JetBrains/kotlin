@@ -184,8 +184,12 @@ internal abstract class CInteropCommonizerTask
                     project.files(
                         externalDependencyFiles,
                         project.getNativeDistributionDependencies(
-                            kotlinNativeProvider.flatMap { it.bundleDirectory }.map { KonanDistribution(it) },
-                            target
+                            kotlinNativeProvider.flatMap {
+                                //Force to download native dependencies
+                                (it as? KotlinNativeFromToolchainProvider)?.kotlinNativeBundleVersion?.get()
+                                it.bundleDirectory.map { bd -> KonanDistribution(bd) }
+                            },
+                            target,
                         )
                     )
                 )
