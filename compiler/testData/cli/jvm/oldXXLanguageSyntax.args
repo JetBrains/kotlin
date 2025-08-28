@@ -1,0 +1,5 @@
+$TESTDATA_DIR$/disabledFeatureInUnsupportedVersion.kt
+-XXLanguage\:-TypeAliases
+-XXLanguage\:-BoundCallableReferences
+-d
+$TEMP_DIR$

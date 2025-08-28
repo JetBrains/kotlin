@@ -18,41 +18,58 @@ object LanguageSettingsParser {
     fun parseInternalArgument(arg: String, errors: ArgumentParseErrors): ManualLanguageFeatureSetting? {
         if (!arg.startsWith(wholePrefix)) return null
 
-        return parseTail(arg.removePrefix(wholePrefix), arg, errors)
+        val tail = arg.removePrefix(wholePrefix)
+        if (tail.getOrNull(0) != ':') {
+            return errors.reportAndReturnNull("Incorrect internal argument syntax, missing colon: $arg")
+        }
+        val parsedFeature = parseLanguageFeature(tail.substring(1), arg, errors)
+        if (parsedFeature != null) {
+            val sign = when (parsedFeature.state) {
+                LanguageFeature.State.ENABLED -> "+"
+                LanguageFeature.State.DISABLED -> "-"
+            }
+            errors.reportAndReturnNull(
+                "This syntax for `-XXLanguage` is deprecated, please use `-XXLanguage=$sign${parsedFeature.languageFeature.name}`",
+                CompilerMessageSeverity.STRONG_WARNING,
+            )
+        }
+
+        return parsedFeature
     }
 
     // Expected tail form: ':(+|-)<language feature name>'
-    fun parseTail(tail: String, wholeArgument: String, errors: ArgumentParseErrors): ManualLanguageFeatureSetting? {
-        fun reportAndReturnNull(message: String, severity: CompilerMessageSeverity = CompilerMessageSeverity.STRONG_WARNING): Nothing? {
-            errors.internalArgumentsParsingProblems += severity to message
-            return null
-        }
-
-        if (tail.getOrNull(0) != ':') return reportAndReturnNull("Incorrect internal argument syntax, missing colon: $wholeArgument")
-
-        val modificator = tail.getOrNull(1)
+    fun parseLanguageFeature(tail: String, wholeArgument: String, errors: ArgumentParseErrors): ManualLanguageFeatureSetting? {
+        val modificator = tail.getOrNull(0)
         val languageFeatureState = when (modificator) {
             '+' -> LanguageFeature.State.ENABLED
 
             '-' -> LanguageFeature.State.DISABLED
 
-            else -> return reportAndReturnNull("Incorrect internal argument syntax, missing modificator: $wholeArgument")
+            else -> return errors.reportAndReturnNull("Incorrect internal argument syntax, missing modificator: $wholeArgument")
         }
 
-        val languageFeatureName = tail.substring(2)
-        if (languageFeatureName.isEmpty()) return reportAndReturnNull("Empty language feature name for internal argument '$wholeArgument'")
+        val languageFeatureName = tail.substring(1)
+        if (languageFeatureName.isEmpty()) return errors.reportAndReturnNull("Empty language feature name for internal argument '$wholeArgument'")
 
         val languageFeature = LanguageFeature.fromString(languageFeatureName)
-            ?: return reportAndReturnNull("Unknown language feature '$languageFeatureName' in passed internal argument '$wholeArgument'")
+            ?: return errors.reportAndReturnNull("Unknown language feature '$languageFeatureName' in passed internal argument '$wholeArgument'")
 
         if (languageFeature.testOnly && !areTestOnlyLanguageFeaturesAllowed) {
-            reportAndReturnNull(
+            errors.reportAndReturnNull(
                 "Language feature '$languageFeatureName' is test-only and cannot be enabled from command line",
                 severity = CompilerMessageSeverity.ERROR
             )
         }
 
         return ManualLanguageFeatureSetting(languageFeature, languageFeatureState, wholeArgument)
+    }
+
+    private fun ArgumentParseErrors.reportAndReturnNull(
+        message: String,
+        severity: CompilerMessageSeverity = CompilerMessageSeverity.STRONG_WARNING
+    ): Nothing? {
+        internalArgumentsParsingProblems += severity to message
+        return null
     }
 }
 
