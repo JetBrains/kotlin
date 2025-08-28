@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.decompiler.stub.file
 
-import com.intellij.openapi.diagnostic.Logger
+import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.compiled.ClsStubBuilder
 import com.intellij.psi.stubs.PsiFileStub
@@ -38,7 +38,7 @@ import org.jetbrains.kotlin.serialization.deserialization.getClassId
 import org.jetbrains.kotlin.serialization.deserialization.getName
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 
-class KotlinClsStubBuilder : ClsStubBuilder() {
+object KotlinClsStubBuilder : ClsStubBuilder() {
     override fun getStubVersion(): Int = KotlinStubVersions.CLASSFILE_STUB_VERSION
 
     override fun buildFileStub(content: FileContent): PsiFileStub<*>? {
@@ -131,16 +131,12 @@ class KotlinClsStubBuilder : ClsStubBuilder() {
         return ClsStubBuilderComponents(classDataFinder, annotationLoader, file, BuiltInSerializerProtocol, classFinder, metadataVersion)
     }
 
-    companion object {
-        val LOG = Logger.getInstance(KotlinClsStubBuilder::class.java)
+    private val LOG = logger<KotlinClsStubBuilder>()
 
-        // Archive separator + META-INF + versions
-        private val VERSIONED_PATH_MARKER = "!/META-INF/versions/"
+    // Archive separator + META-INF + versions
+    private const val VERSIONED_PATH_MARKER = "!/META-INF/versions/"
 
-        fun isVersioned(virtualFile: VirtualFile): Boolean {
-            return virtualFile.path.contains(VERSIONED_PATH_MARKER)
-        }
-    }
+    fun isVersioned(virtualFile: VirtualFile): Boolean = VERSIONED_PATH_MARKER in virtualFile.path
 }
 
 private class AnnotationLoaderForClassFileStubBuilder(

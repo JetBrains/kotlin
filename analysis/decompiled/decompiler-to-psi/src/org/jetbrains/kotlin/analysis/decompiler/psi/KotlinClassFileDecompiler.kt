@@ -15,11 +15,9 @@ import org.jetbrains.kotlin.analysis.decompiler.stub.file.ClsKotlinBinaryClassCa
 import org.jetbrains.kotlin.analysis.decompiler.stub.file.KotlinClsStubBuilder
 
 class KotlinClassFileDecompiler : ClassFileDecompilers.Full() {
-    private val stubBuilder = KotlinClsStubBuilder()
-
     override fun accepts(file: VirtualFile): Boolean = ClsKotlinBinaryClassCache.getInstance().isKotlinJvmCompiledFile(file)
 
-    override fun getStubBuilder() = stubBuilder
+    override fun getStubBuilder(): KotlinClsStubBuilder = KotlinClsStubBuilder
 
     override fun createFileViewProvider(file: VirtualFile, manager: PsiManager, physical: Boolean): KotlinDecompiledFileViewProvider {
         return KotlinDecompiledFileViewProvider(manager, file, physical) factory@{ provider ->

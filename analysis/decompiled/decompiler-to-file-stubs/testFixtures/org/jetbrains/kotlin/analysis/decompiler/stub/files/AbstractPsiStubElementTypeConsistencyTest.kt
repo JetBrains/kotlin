@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -28,7 +28,7 @@ abstract class AbstractPsiStubElementTypeConsistencyTest : AbstractDecompiledCla
     private fun doTest(testData: TestData, useStringTable: Boolean) {
         val classFile = getClassFileToDecompile(testData, useStringTable)
         val fileStub = ClsClassFinder.allowMultifileClassPart {
-            KotlinClsStubBuilder().buildFileStub(FileContentImpl.createByFile(classFile))
+            KotlinClsStubBuilder.buildFileStub(FileContentImpl.createByFile(classFile))
         } ?: error("Couldn't build a file stub for the file: $classFile")
 
         checkPsiElementTypeConsistency(fileStub)
