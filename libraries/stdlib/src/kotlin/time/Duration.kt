@@ -1240,7 +1240,7 @@ private fun parseDefaultStringFormat(
  * @property overflowThreshold Pre-calculated threshold (overflowLimit / 10) for early overflow detection
  * @property lastDigitMax Maximum allowed last digit (overflowLimit % 10) when at the overflow threshold
  */
-private class LongParser(private val overflowLimit: Long, private val withSign: Boolean) {
+private class LongParser private constructor(private val overflowLimit: Long, private val withSign: Boolean) {
 
     private val overflowThreshold = overflowLimit / 10
     private val lastDigitMax = overflowLimit % 10
