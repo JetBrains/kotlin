@@ -122,6 +122,11 @@ kotlin {
 
             val main by getting {
                 compileTaskProvider.configure {
+                    // use os.arch as an input property of the compilation task
+                    // to avoid resuing compilation results from the build cache
+                    // produced on the other CPU architecture due to KT-53258
+                    inputs.property("os.arch", providers.systemProperty("os.arch"))
+
                     this as UsesKotlinJavaToolchain
                     kotlinJavaToolchain.toolchain.use(getToolchainLauncherFor(JdkMajorVersion.JDK_11_0))
                     compilerOptions {
