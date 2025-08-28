@@ -5916,7 +5916,6 @@ public abstract class org/jetbrains/kotlin/gradle/tasks/CInteropProcess : org/gr
 	public final fun getCompilerOpts ()Ljava/util/List;
 	public final fun getDefFile ()Ljava/io/File;
 	public abstract fun getDefinitionFile ()Lorg/gradle/api/file/RegularFileProperty;
-	public final fun getDestinationDir ()Lorg/gradle/api/provider/Provider;
 	public abstract fun getDestinationDirectory ()Lorg/gradle/api/file/DirectoryProperty;
 	public final fun getExtraOpts ()Ljava/util/List;
 	public final fun getHeaderFilterDirs ()Ljava/util/Set;
@@ -5942,7 +5941,6 @@ public abstract class org/jetbrains/kotlin/gradle/tasks/CInteropProcess : org/gr
 	public abstract fun getProviderFactory ()Lorg/gradle/api/provider/ProviderFactory;
 	public final fun getSettings ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/DefaultCInteropSettings;
 	public final fun processInterop ()V
-	public final fun setDestinationDir (Lorg/gradle/api/provider/Provider;)V
 }
 
 public class org/jetbrains/kotlin/gradle/tasks/CleanDataTask : org/gradle/api/DefaultTask {

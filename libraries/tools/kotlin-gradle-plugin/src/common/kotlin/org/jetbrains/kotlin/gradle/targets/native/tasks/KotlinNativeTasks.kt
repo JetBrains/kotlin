@@ -1089,9 +1089,9 @@ abstract class CInteropProcess @Inject internal constructor(params: Params) :
     abstract val destinationDirectory: DirectoryProperty
 
     @Deprecated(
-        message = "This property is scheduled for removal in Kotlin 2.3. Please, use `destinationDirectory` instead",
+        message = "This property has been hidden since Kotlin 2.3. Please, use `destinationDirectory` instead",
         replaceWith = ReplaceWith("destinationDirectory"),
-        DeprecationLevel.ERROR,
+        level = DeprecationLevel.HIDDEN,
     )
     @Internal // Taken into account in the outputFileProvider property
     var destinationDir: Provider<File> = destinationDirectory.map { it.asFile }
