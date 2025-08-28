@@ -35,7 +35,8 @@ private object KotlinBuiltInMetadataStubBuilder : KotlinMetadataStubBuilder() {
     override val supportedFileType: FileType get() = KotlinBuiltInFileType
     override val expectedBinaryVersion: BinaryVersion get() = BuiltInsBinaryVersion.INSTANCE
 
-    override fun readFile(virtualFile: VirtualFile, content: ByteArray): FileWithMetadata? {
+    override fun readFile(virtualFile: VirtualFile, content: ByteArray?): FileWithMetadata? {
+        val content = content ?: virtualFile.contentsToByteArray(false)
         return KotlinBuiltInDecompilationInterceptor.readFile(content, virtualFile) ?: BuiltInDefinitionFile.read(content, virtualFile)
     }
 
