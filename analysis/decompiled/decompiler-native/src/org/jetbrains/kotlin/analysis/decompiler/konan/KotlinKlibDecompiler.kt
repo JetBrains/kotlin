@@ -5,25 +5,12 @@
 
 package org.jetbrains.kotlin.analysis.decompiler.konan
 
-import com.intellij.openapi.fileTypes.FileTypeRegistry
-import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.psi.PsiManager
-import com.intellij.psi.compiled.ClassFileDecompilers
-import com.intellij.psi.compiled.ClsStubBuilder
 import org.jetbrains.kotlin.analysis.decompiler.psi.KotlinDecompiledFileViewProvider
+import org.jetbrains.kotlin.analysis.decompiler.psi.KotlinMetadataDecompiler
+import org.jetbrains.kotlin.analysis.decompiler.psi.file.KtDecompiledFile
+import org.jetbrains.kotlin.analysis.decompiler.stub.file.KotlinMetadataStubBuilder
 
-class KotlinKlibDecompiler : ClassFileDecompilers.Full() {
-    private val metadataStubBuilder: KlibMetadataStubBuilder get() = KlibMetadataStubBuilder
-
-    override fun accepts(file: VirtualFile): Boolean = FileTypeRegistry.getInstance().isFileOfType(file, metadataStubBuilder.fileType)
-
-    override fun getStubBuilder(): ClsStubBuilder = metadataStubBuilder
-
-    override fun createFileViewProvider(
-        file: VirtualFile,
-        manager: PsiManager,
-        physical: Boolean,
-    ) = KotlinDecompiledFileViewProvider(manager, file, physical) { provider ->
-        KlibDecompiledFile(provider)
-    }
+class KotlinKlibDecompiler : KotlinMetadataDecompiler() {
+    override val metadataStubBuilder: KotlinMetadataStubBuilder get() = KlibMetadataStubBuilder
+    override fun createFile(viewProvider: KotlinDecompiledFileViewProvider): KtDecompiledFile = KlibDecompiledFile(viewProvider)
 }
