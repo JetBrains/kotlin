@@ -233,7 +233,7 @@ class FirCallResolver(
 
         val candidateFactory = when (containingCallCandidateForBaseCS) {
             null -> CandidateFactory(resolutionContext, info)
-            else -> CandidateFactory.createForContainingCallAwareCases(resolutionContext, containingCallCandidateForBaseCS)
+            else -> CandidateFactory.createForCollectionLiterals(resolutionContext, containingCallCandidateForBaseCS, info)
         }
 
         val result = towerResolver.runResolver(info, resolutionContext, collector, candidateFactory)
@@ -499,7 +499,7 @@ class FirCallResolver(
                 transformer.resolutionContext,
                 collector = localCollector,
                 manager = TowerResolveManager(localCollector),
-                candidateFactory = CandidateFactory.createForContainingCallAwareCases(
+                candidateFactory = CandidateFactory.createForCallableReferences(
                     transformer.resolutionContext, containingCallCandidate
                 )
             )
