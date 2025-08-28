@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.plugin
 import org.jetbrains.kotlin.GeneratedDeclarationKey
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.containingClassForLocalAttr
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
@@ -140,10 +141,17 @@ public fun FirExtension.createNestedClass(
     config: ClassBuildingContext.() -> Unit = {}
 ): FirRegularClass {
     return ClassBuildingContext(session, key, owner, owner.classId.createNestedClassId(name), classKind).apply(config).apply {
+        if (owner.isLocal) {
+            visibility = Visibilities.Local
+        }
         status {
             isExpect = owner.isExpect
         }
-    }.build()
+    }.build().apply {
+        if (owner.isLocal) {
+            containingClassForLocalAttr = owner.toLookupTag()
+        }
+    }
 }
 
 /**
@@ -165,9 +173,16 @@ public fun FirExtension.createCompanionObject(
     val classId = owner.classId.createNestedClassId(SpecialNames.DEFAULT_NAME_FOR_COMPANION_OBJECT)
     return ClassBuildingContext(session, key, owner, classId, ClassKind.OBJECT).apply(config).apply {
         modality = Modality.FINAL
+        if (owner.isLocal) {
+            visibility = Visibilities.Local
+        }
         status {
             isCompanion = true
             isExpect = owner.isExpect
         }
-    }.build()
+    }.build().apply {
+        if (owner.isLocal) {
+            containingClassForLocalAttr = owner.toLookupTag()
+        }
+    }
 }
