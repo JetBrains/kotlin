@@ -370,6 +370,7 @@ internal class CastsOptimization(val context: Context) : BodyLoweringPass {
             context.irBuiltIns.ieee754equalsFunByOperandType.values.toSet()
     private val throwClassCastException = context.symbols.throwClassCastException
     private val unitType = context.irBuiltIns.unitType
+    private val nothingType = context.irBuiltIns.nothingType
 
     private fun IrExpression.isNullConst() = this is IrConst && this.value == null
 
@@ -905,7 +906,10 @@ internal class CastsOptimization(val context: Context) : BodyLoweringPass {
                 super.visitBlock(expression, data)
                 returnableBlockCFMPInfos.remove(returnableBlock)
 
-                return finishControlFlowMerging(expression, cfmpInfo)
+                val result = finishControlFlowMerging(expression, cfmpInfo)
+                return if (expression.type == nothingType)
+                    VisitorResult.Nothing
+                else result
             }
 
             override fun visitReturn(expression: IrReturn, data: Predicate): VisitorResult {
@@ -1254,7 +1258,9 @@ internal class CastsOptimization(val context: Context) : BodyLoweringPass {
 
                     VisitorResult(receiverResult?.predicate ?: Predicate.Empty, phantomVariable)
                 } else {
-                    super.visitCall(expression, data)
+                    if (expression.type == nothingType)
+                        VisitorResult.Nothing
+                    else super.visitCall(expression, data)
                 }
             }
         }
