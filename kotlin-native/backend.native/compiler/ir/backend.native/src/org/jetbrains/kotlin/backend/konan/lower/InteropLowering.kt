@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.backend.konan.ir.*
 import org.jetbrains.kotlin.backend.konan.llvm.IntrinsicType
 import org.jetbrains.kotlin.backend.konan.llvm.tryGetIntrinsicType
 import org.jetbrains.kotlin.backend.konan.serialization.isFromCInteropLibrary
+import org.jetbrains.kotlin.config.nativeBinaryOptions.CCallMode
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
@@ -809,14 +810,43 @@ private class InteropTransformerPart2(
         return initializer.shallowCopy()
     }
 
-    private fun generateCCall(expression: IrCall): IrExpression {
+    private fun generateCCall(expression: IrCall, direct: Boolean): IrExpression {
         val function = expression.symbol.owner
 
         val exceptionMode = ForeignExceptionMode.byValue(
                 function.konanLibrary?.manifestProperties?.getProperty(ForeignExceptionMode.manifestKey)
         )
-        return builder.generateExpressionWithStubs(expression) { generateCCall(expression, builder, isInvoke = false, exceptionMode) }
+        return builder.generateExpressionWithStubs(expression) {
+            generateCCall(
+                    expression,
+                    builder,
+                    isInvoke = false,
+                    exceptionMode,
+                    direct = direct
+            )
+        }
     }
+
+    private fun tryGenerateIndirectCCall(expression: IrCall): IrExpression? =
+            if (expression.symbol.owner.hasAnnotation(RuntimeNames.cCall)) {
+                generateCCall(expression, direct = false)
+            } else {
+                null
+            }
+
+    private fun tryGenerateDirectCCall(expression: IrCall): IrExpression? =
+            if (expression.symbol.owner.hasAnnotation(RuntimeNames.cCallDirect)) {
+                generateCCall(expression, direct = true)
+            } else {
+                null
+            }
+
+    private fun generateCFunctionCallOrGlobalAccess(expression: IrCall): IrExpression = when (context.config.cCallMode) {
+        CCallMode.Indirect -> tryGenerateIndirectCCall(expression)
+        CCallMode.IndirectOrDirect -> tryGenerateIndirectCCall(expression) ?: tryGenerateDirectCCall(expression)
+        CCallMode.DirectOrIndirect -> tryGenerateDirectCCall(expression) ?: tryGenerateIndirectCCall(expression)
+        CCallMode.Direct -> tryGenerateDirectCCall(expression)
+    } ?: error(renderCompilerError(expression, "the call is incompatible with cCallMode=${context.config.cCallMode}"))
 
     private fun lowerObjCInitBy(expression: IrCall): IrExpression {
         val argument = expression.arguments[1]!!
@@ -917,8 +947,8 @@ private class InteropTransformerPart2(
             }
         }
 
-        if (function.annotations.hasAnnotation(RuntimeNames.cCall)) {
-            return generateCCall(expression)
+        if (function.isCFunctionOrGlobalAccessor()) {
+            return generateCFunctionCallOrGlobalAccess(expression)
         }
 
         val failCompilation = { msg: String -> error(irFile, expression, msg) }
@@ -947,7 +977,7 @@ private class InteropTransformerPart2(
                     }
                 }
                 IntrinsicType.INTEROP_FUNPTR_INVOKE -> {
-                    builder.generateExpressionWithStubs { generateCCall(expression, builder, isInvoke = true) }
+                    builder.generateExpressionWithStubs { generateCCall(expression, builder, isInvoke = true, direct = false) }
                 }
                 IntrinsicType.INTEROP_SIGN_EXTEND, IntrinsicType.INTEROP_NARROW -> {
 
