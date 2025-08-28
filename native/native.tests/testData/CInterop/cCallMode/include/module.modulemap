@@ -1,0 +1,4 @@
+module CInteropLib {
+    header "lib.h"
+    export *
+}

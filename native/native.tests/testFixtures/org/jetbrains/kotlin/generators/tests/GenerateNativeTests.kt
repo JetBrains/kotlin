@@ -155,6 +155,7 @@ fun main() {
                 model("framework/frameworkDefs", pattern = "^([^_](.+))$", recursive = false)
                 model("framework.macros/macrosDefs", pattern = "^([^_](.+))$", recursive = false)
                 model("builtins/builtinsDefs", pattern = "^([^_](.+))$", recursive = false)
+                model("cCallMode/cCallMode", pattern = "^([^_](.+))$", recursive = false)
             }
             testClass<AbstractNativeCInteropNoFModulesTest>(
                 suiteTestClassName = "CInteropNoFModulesTestGenerated",
@@ -166,6 +167,7 @@ fun main() {
                 model("framework/frameworkDefs", pattern = "^([^_](.+))$", recursive = false)
                 model("framework.macros/macrosDefs", pattern = "^([^_](.+))$", recursive = false)
                 model("builtins/builtinsDefs", pattern = "^([^_](.+))$", recursive = false)
+                model("cCallMode/cCallMode", pattern = "^([^_](.+))$", recursive = false)
             }
             testClass<AbstractNativeCInteropKT39120Test>(
                 suiteTestClassName = "CInteropKT39120TestGenerated",
