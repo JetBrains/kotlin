@@ -29,7 +29,7 @@ open class BaseFoo {
 
 // FILE: jvm.kt
 
-actual typealias <!ACTUAL_IGNORABILITY_NOT_MATCH_EXPECT("'expect fun x(): String' defined in 'Foo'; 'fun x(): String' defined in 'BaseFoo'"), ACTUAL_IGNORABILITY_NOT_MATCH_EXPECT("'expect fun ign(): String' defined in 'Foo'; 'fun ign(): String' defined in 'BaseFoo'")!>Foo<!> = BaseFoo
+actual typealias <!ACTUAL_IGNORABILITY_NOT_MATCH_EXPECT("'expect fun x(): String' defined in 'Foo'; must-use; 'fun x(): String' defined in 'BaseFoo'; ignorable"), ACTUAL_IGNORABILITY_NOT_MATCH_EXPECT("'expect fun ign(): String' defined in 'Foo'; ignorable; 'fun ign(): String' defined in 'BaseFoo'; must-use")!>Foo<!> = BaseFoo
 
 fun main() {
     <!RETURN_VALUE_NOT_USED!>Foo()<!>
