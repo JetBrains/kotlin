@@ -133,9 +133,7 @@ class FunctionCallTransformer(
         }
         val noRefineAnnotation =
             symbol.resolvedAnnotationClassIds.none { it.shortClassName == Name.identifier("Refine") }
-        val optIn = symbol.resolvedAnnotationClassIds.any { it.shortClassName == Name.identifier("OptInRefine") } &&
-                callSiteAnnotations.any { it.fqName(session)?.shortName()?.equals(Name.identifier("Import")) == true }
-        if (noRefineAnnotation && !optIn) {
+        if (noRefineAnnotation) {
             return null
         }
 
