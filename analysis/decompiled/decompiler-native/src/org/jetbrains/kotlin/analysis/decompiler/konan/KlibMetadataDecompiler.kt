@@ -10,9 +10,8 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiManager
 import com.intellij.psi.compiled.ClassFileDecompilers
 import com.intellij.psi.compiled.ClsStubBuilder
-import org.jetbrains.kotlin.analysis.decompiler.konan.FileWithMetadata.Compatible
-import org.jetbrains.kotlin.analysis.decompiler.konan.FileWithMetadata.Incompatible
 import org.jetbrains.kotlin.analysis.decompiler.psi.KotlinDecompiledFileViewProvider
+import org.jetbrains.kotlin.analysis.decompiler.stub.file.KotlinMetadataStubBuilder.FileWithMetadata
 import org.jetbrains.kotlin.serialization.SerializerExtensionProtocol
 import java.io.IOException
 
@@ -26,7 +25,7 @@ abstract class KlibMetadataDecompiler(
     }
 
     protected fun doReadFile(file: VirtualFile): FileWithMetadata? {
-        return forPackageFragment(file)
+        return forPackageFragment(file, serializerProtocol())
     }
 
     override fun accepts(file: VirtualFile): Boolean = FileTypeRegistry.getInstance().isFileOfType(file, fileType)
@@ -56,14 +55,14 @@ abstract class KlibMetadataDecompiler(
     }
 
     companion object {
-        fun forPackageFragment(packageFragment: VirtualFile): FileWithMetadata? {
+        fun forPackageFragment(packageFragment: VirtualFile, protocol: SerializerExtensionProtocol): FileWithMetadata? {
             val klibMetadataLoadingCache = KlibLoadingMetadataCache.getInstance()
             val (fragment, version) = klibMetadataLoadingCache.getCachedPackageFragmentWithVersion(packageFragment)
             if (fragment == null || version == null) return null
             if (!version.isCompatibleWithCurrentCompilerVersion()) {
-                return Incompatible(version)
+                return FileWithMetadata.Incompatible(version)
             }
-            return Compatible(fragment, version)
+            return FileWithMetadata.Compatible(fragment, version, protocol)
         }
     }
 }
