@@ -165,6 +165,11 @@ class FirStatusResolver(
             is FirRegularClass -> firClass.applyExtensionTransformers { transformStatus(it, firClass, containingClass?.symbol, isLocal) }
             else -> firClass.status
         }
+        require(status.visibility == firClass.status.visibility) {
+            "Attempt to change visibility of a class-like: ${firClass.symbol.classId}, " +
+                    "original visibility: ${firClass.status.visibility}, new visibility: ${status.visibility}"
+        }
+
         return resolveStatus(firClass, status, containingClass, null, isLocal, emptyList())
     }
 
