@@ -275,6 +275,7 @@ private class IndexableFile(
  */
 private val KtFile.forcedStub: KotlinFileStubImpl
     get() {
+        @Suppress("DEPRECATION")
         val stubTree = greenStubTree ?: calcStubTree()
         return stubTree.root as KotlinFileStubImpl
     }
