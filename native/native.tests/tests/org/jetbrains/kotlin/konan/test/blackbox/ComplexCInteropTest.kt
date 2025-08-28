@@ -162,7 +162,7 @@ abstract class ComplexCInteropTestBase : AbstractNativeSimpleTest() {
                 compilerArgs = listOf(
                     "-opt-in=kotlinx.cinterop.ExperimentalForeignApi",
                     "-opt-in=kotlin.native.internal.InternalForKotlinNative",
-                    "-XXLanguage:+ImplicitSignedToUnsignedIntegerConversion",
+                    "-XXLanguage=+ImplicitSignedToUnsignedIntegerConversion",
                     "-tr", "-e", "main", "-linker-option", "-L${buildDir.absolutePath}"
                 ),
                 cinteropArgs = hFiles.flatMap { listOf("-header", "tests/${it.name}") }
@@ -248,7 +248,7 @@ abstract class ComplexCInteropTestBase : AbstractNativeSimpleTest() {
         val execResult = testDylibCinteropExe(
             "friendly_dealloc",
             extraClangOpts = listOf("-fno-objc-arc"),
-            extraCompilerOpts = listOf("-tr", "-XXLanguage:+ImplicitSignedToUnsignedIntegerConversion"),
+            extraCompilerOpts = listOf("-tr", "-XXLanguage=+ImplicitSignedToUnsignedIntegerConversion"),
             extras = TestCase.WithTestRunnerExtras(TestRunnerType.DEFAULT),
         )
         Assumptions.assumingThat(!testRunSettings.get<ForcedNoopTestRunner>().value) {

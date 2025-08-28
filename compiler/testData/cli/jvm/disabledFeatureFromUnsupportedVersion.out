@@ -1,8 +1,8 @@
 warning: ATTENTION!
 This build uses unsafe internal compiler arguments:
 
--XXLanguage:-TypeAliases
--XXLanguage:-BoundCallableReferences
+-XXLanguage=-TypeAliases
+-XXLanguage=-BoundCallableReferences
 
 This mode is not recommended for production use,
 as no stability/compatibility guarantees are given on

@@ -2,7 +2,7 @@ Module: lib
 warning: ATTENTION!
 This build uses unsafe internal compiler arguments:
 
--XXLanguage:+DataClassCopyRespectsConstructorVisibility
+-XXLanguage=+DataClassCopyRespectsConstructorVisibility
 
 This mode is not recommended for production use,
 as no stability/compatibility guarantees are given on
@@ -12,7 +12,7 @@ Module: main
 warning: ATTENTION!
 This build uses unsafe internal compiler arguments:
 
--XXLanguage:+DataClassCopyRespectsConstructorVisibility
+-XXLanguage=+DataClassCopyRespectsConstructorVisibility
 
 This mode is not recommended for production use,
 as no stability/compatibility guarantees are given on

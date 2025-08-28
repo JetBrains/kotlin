@@ -13,7 +13,7 @@ build:
   [kotlinc] warning: ATTENTION!
   [kotlinc] This build uses unsafe internal compiler arguments:
   [kotlinc] 
-  [kotlinc] -XXLanguage:+EnableDfaWarningsInK2
+  [kotlinc] -XXLanguage=+EnableDfaWarningsInK2
   [kotlinc] 
   [kotlinc] This mode is not recommended for production use,
   [kotlinc] as no stability/compatibility guarantees are given on

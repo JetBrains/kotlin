@@ -7,7 +7,7 @@
 // 1.9 language flag (-TakeIntoAccountEffectivelyFinalInMustBeInitializedCheck) => It's only possible if users manually set `-XXLanguage` =>
 // Technically, it's UB (undefined behaviour)
 //
-// On one hand, suppose that you have 1.9.0 compiler with -XXLanguage:-TakeIntoAccountEffectivelyFinalInMustBeInitializedCheck and then you
+// On one hand, suppose that you have 1.9.0 compiler with -XXLanguage=-TakeIntoAccountEffectivelyFinalInMustBeInitializedCheck and then you
 // bump your compiler version to 1.9.20. It's not nice that you will get this compilation error considering that you didn't have a warning
 // => so probably we shouldn't report a error here
 //

@@ -1,8 +1,8 @@
 warning: ATTENTION!
 This build uses unsafe internal compiler arguments:
 
--XXLanguage:+IrIntraModuleInlinerBeforeKlibSerialization
--XXLanguage:+IrCrossModuleInlinerBeforeKlibSerialization
+-XXLanguage=+IrIntraModuleInlinerBeforeKlibSerialization
+-XXLanguage=+IrCrossModuleInlinerBeforeKlibSerialization
 
 This mode is not recommended for production use,
 as no stability/compatibility guarantees are given on

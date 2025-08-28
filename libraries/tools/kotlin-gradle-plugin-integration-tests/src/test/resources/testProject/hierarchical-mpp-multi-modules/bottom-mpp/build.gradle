@@ -40,7 +40,7 @@ kotlin {
     targets.all {
         compilations.all {
             kotlinOptions {
-                freeCompilerArgs += ["-progressive", "-XXLanguage:+SamConversionForKotlinFunctions", "-opt-in=kotlin.ExperimentalMultiplatform", "-Xskip-prerelease-check"]
+                freeCompilerArgs += ["-progressive", "-XXLanguage=+SamConversionForKotlinFunctions", "-opt-in=kotlin.ExperimentalMultiplatform", "-Xskip-prerelease-check"]
             }
         }
     }

@@ -9,5 +9,5 @@ $TESTDATA_DIR$/firMultiplatformCompilationWithoutErrors/common.kt
 .
 -d
 $TEMP_DIR$
--XXLanguage\:+MultiPlatformProjects
+-XXLanguage=+MultiPlatformProjects
 -Xexpect-actual-classes

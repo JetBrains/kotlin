@@ -3,7 +3,7 @@ $TESTDATA_DIR$/src/b.kt
 $TESTDATA_DIR$/src/c.kt
 -d
 $TEMP_DIR$
--XXLanguage\:+MultiPlatformProjects
+-XXLanguage=+MultiPlatformProjects
 -Xfragments=a,b,c
 -Xfragment-sources=a\:$TESTDATA_DIR$/src/a.kt
 -Xfragment-sources=b\:$TESTDATA_DIR$/src/b.kt

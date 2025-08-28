@@ -1,4 +1,4 @@
 $TESTDATA_DIR$/internalArgEnableLanguageFeature.kt
 -d
 $TEMP_DIR$
--XXLanguage\:+ProhibitImplementingVarByInheritedVal=true
+-XXLanguage=+ProhibitImplementingVarByInheritedVal=true

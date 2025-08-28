@@ -67,7 +67,7 @@ abstract class CustomKlibCompilerFirstPhaseFacade(
                 return@mapNotNull null
             }
 
-            "-XXLanguage:${if (state == LanguageFeature.State.ENABLED) "+" else "-"}${feature.name}"
+            "-XXLanguage=${if (state == LanguageFeature.State.ENABLED) "+" else "-"}${feature.name}"
         }
 
         val isKmpSupported = module.languageVersionSettings.supportsFeature(MultiPlatformProjects)

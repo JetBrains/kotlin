@@ -78,7 +78,7 @@ abstract class ManifestWritingTest : AbstractNativeSimpleTest() {
             testRunSettings,
             stubSourceFile,
             packed = false,
-            freeCompilerArgs = listOf("-XXLanguage:+$poisoningFeature", "-XXLanguage:-$enabledLanguageFeature")
+            freeCompilerArgs = listOf("-XXLanguage=+$poisoningFeature", "-XXLanguage=-$enabledLanguageFeature")
         )
 
         val klib = compilationResult.assertSuccess().resultingArtifact.klibFile

@@ -6,5 +6,5 @@ reportPerfK2
 -libraries
 libraries/stdlib/build/classes/kotlin/js/main
 -Xreport-perf=true
--XXLanguage\:+IrIntraModuleInlinerBeforeKlibSerialization
--XXLanguage\:+IrCrossModuleInlinerBeforeKlibSerialization
+-XXLanguage=+IrIntraModuleInlinerBeforeKlibSerialization
+-XXLanguage=+IrCrossModuleInlinerBeforeKlibSerialization

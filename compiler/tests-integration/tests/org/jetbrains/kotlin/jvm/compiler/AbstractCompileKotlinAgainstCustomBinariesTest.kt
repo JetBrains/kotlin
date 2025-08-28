@@ -170,7 +170,7 @@ abstract class AbstractCompileKotlinAgainstCustomBinariesTest : AbstractKotlinCo
         doTestBrokenLibrary(
             "library",
             "test/Super.class",
-            additionalOptions = listOf("-XXLanguage:-${LanguageFeature.AllowEagerSupertypeAccessibilityChecks.name}"),
+            additionalOptions = listOf("-XXLanguage=-${LanguageFeature.AllowEagerSupertypeAccessibilityChecks.name}"),
         )
     }
 
@@ -178,7 +178,7 @@ abstract class AbstractCompileKotlinAgainstCustomBinariesTest : AbstractKotlinCo
         doTestBrokenLibrary(
             "library",
             "test/Super.class",
-            additionalOptions = listOf("-XXLanguage:+${LanguageFeature.AllowEagerSupertypeAccessibilityChecks.name}"),
+            additionalOptions = listOf("-XXLanguage=+${LanguageFeature.AllowEagerSupertypeAccessibilityChecks.name}"),
         )
     }
 
@@ -475,10 +475,10 @@ abstract class AbstractCompileKotlinAgainstCustomBinariesTest : AbstractKotlinCo
     fun testInlineFunctionsWithMatchingJvmSignatures() {
         val library = compileLibrary(
             "library",
-            additionalOptions = listOf("-XXLanguage:+InlineClasses"),
+            additionalOptions = listOf("-XXLanguage=+InlineClasses"),
             checkKotlinOutput = { _ -> }
         )
-        compileKotlin("source.kt", tmpdir, listOf(library), additionalOptions = listOf("-XXLanguage:+InlineClasses"))
+        compileKotlin("source.kt", tmpdir, listOf(library), additionalOptions = listOf("-XXLanguage=+InlineClasses"))
 
         URLClassLoader(arrayOf(library.toURI().toURL(), tmpdir.toURI().toURL()), ForTestCompileRuntime.runtimeJarClassLoader())
             .loadClass("SourceKt").getDeclaredMethod("run").invoke(null)

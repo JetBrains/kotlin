@@ -163,7 +163,7 @@ class CompilerOptionsProjectIT : KGPBaseTest() {
                     "-api-version 1.9",
                     "-Xdebug",
                     "-opt-in my.custom.OptInAnnotation,another.CustomOptInAnnotation",
-                    "-XXLanguage:+UnitConversionsOnArbitraryExpressions",
+                    "-XXLanguage=+UnitConversionsOnArbitraryExpressions",
                     logLevel = LogLevel.INFO
                 )
 

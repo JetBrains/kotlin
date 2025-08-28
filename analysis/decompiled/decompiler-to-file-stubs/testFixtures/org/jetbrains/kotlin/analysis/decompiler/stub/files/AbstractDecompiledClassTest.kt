@@ -151,7 +151,7 @@ internal data class TestData(
             val fileText = mainKotlinFile.readText()
             val jvmFileName = InTextDirectivesUtils.findStringWithPrefixes(fileText, "JVM_FILE_NAME:") ?: directory.name
             val additionalCompilerOptions = InTextDirectivesUtils.findListWithPrefixes(fileText, "// LANGUAGE: ")
-                .map { "-XXLanguage:$it" } + InTextDirectivesUtils.findListWithPrefixes(fileText, "// JVM_DEFAULT: ")
+                .map { "-XXLanguage=$it" } + InTextDirectivesUtils.findListWithPrefixes(fileText, "// JVM_DEFAULT: ")
                 .map { "-jvm-default=$it" }
             return TestData(
                 directory = directory,

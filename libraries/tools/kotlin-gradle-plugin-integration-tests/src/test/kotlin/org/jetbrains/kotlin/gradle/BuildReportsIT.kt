@@ -145,8 +145,8 @@ class BuildReportsIT : KGPBaseTest() {
             // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
             disableIsolatedProjects = true,
             freeCompilerArgs = listOf(
-                "-XXLanguage:+IrIntraModuleInlinerBeforeKlibSerialization",
-                "-XXLanguage:+IrCrossModuleInlinerBeforeKlibSerialization"
+                "-XXLanguage=+IrIntraModuleInlinerBeforeKlibSerialization",
+                "-XXLanguage=+IrCrossModuleInlinerBeforeKlibSerialization"
             ),
             expectedReportLines = listOf(
                 "Compiler IR pre-lowering",
@@ -218,8 +218,8 @@ class BuildReportsIT : KGPBaseTest() {
             // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
             disableIsolatedProjects = true,
             freeCompilerArgs = listOf(
-                "-XXLanguage:+IrIntraModuleInlinerBeforeKlibSerialization",
-                "-XXLanguage:+IrCrossModuleInlinerBeforeKlibSerialization"
+                "-XXLanguage=+IrIntraModuleInlinerBeforeKlibSerialization",
+                "-XXLanguage=+IrCrossModuleInlinerBeforeKlibSerialization"
             ),
             additionalReportLines = listOf(
                 "InlineFunctionSerializationPreProcessing",
@@ -994,8 +994,8 @@ class BuildReportsIT : KGPBaseTest() {
             buildScriptInjection {
                 project.applyMultiplatform {
                     compilerOptions.freeCompilerArgs.addAll(
-                        "-XXLanguage:+IrIntraModuleInlinerBeforeKlibSerialization",
-                        "-XXLanguage:+IrCrossModuleInlinerBeforeKlibSerialization"
+                        "-XXLanguage=+IrIntraModuleInlinerBeforeKlibSerialization",
+                        "-XXLanguage=+IrCrossModuleInlinerBeforeKlibSerialization"
                     )
                 }
             }

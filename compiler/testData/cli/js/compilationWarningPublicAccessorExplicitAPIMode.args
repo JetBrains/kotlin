@@ -5,5 +5,5 @@ $TEMP_DIR$
 out
 -libraries
 libraries/stdlib/build/classes/kotlin/js/main
--XXLanguage\:+IrIntraModuleInlinerBeforeKlibSerialization
+-XXLanguage=+IrIntraModuleInlinerBeforeKlibSerialization
 -Xexplicit-api=warning

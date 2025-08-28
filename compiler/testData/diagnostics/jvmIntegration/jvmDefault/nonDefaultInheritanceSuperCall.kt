@@ -11,7 +11,7 @@ interface UExpression {
 }
 
 // MODULE: main(library)
-// KOTLINC_ARGS: -jvm-default=disable -XXLanguage:-AllowSuperCallToJavaInterface
+// KOTLINC_ARGS: -jvm-default=disable -XXLanguage=-AllowSuperCallToJavaInterface
 // JVM_DEFAULT_MODE: disable
 // LANGUAGE: -AllowSuperCallToJavaInterface
 // FILE: source.kt

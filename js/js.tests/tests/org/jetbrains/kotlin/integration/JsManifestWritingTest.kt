@@ -42,7 +42,7 @@ class JsManifestWritingTest : TestCaseWithTmpdir() {
                 foo,
                 lib,
                 outKlibDir,
-                listOf("-XXLanguage:+${poisoningFeature}", "-XXLanguage:-${enabledLanguageFeature}"),
+                listOf("-XXLanguage=+${poisoningFeature}", "-XXLanguage=-${enabledLanguageFeature}"),
             )
 
             val manifestFile = File(outKlibDir, "default/manifest")

@@ -86,7 +86,7 @@ class FirCompileKotlinAgainstCustomBinariesTest : AbstractCompileKotlinAgainstCu
 
         val poisonedLibrary = compileJsLibrary(
             libraryName = "poisonedLibrary",
-            additionalOptions = listOf("-XXLanguage:+$arbitraryPoisoningFeature",)
+            additionalOptions = listOf("-XXLanguage=+$arbitraryPoisoningFeature",)
         ) {}
 
         val library = compileJsLibrary(
@@ -108,7 +108,7 @@ class FirCompileKotlinAgainstCustomBinariesTest : AbstractCompileKotlinAgainstCu
 
         val poisonedLibrary = compileJsLibrary(
             libraryName = "poisonedLibrary",
-            additionalOptions = listOf("-XXLanguage:+$arbitraryPoisoningFeature",)
+            additionalOptions = listOf("-XXLanguage=+$arbitraryPoisoningFeature",)
         ) {}
 
         val library = compileJsLibrary(

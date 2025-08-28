@@ -323,7 +323,7 @@ abstract class SourceBasedCompilation<A : TestCompilationArtifact>(
     }
 
     private fun applyK2MPPArgs(argsBuilder: ArgsBuilder): Unit = with(argsBuilder) {
-        if (pipelineType == PipelineType.K2 && freeCompilerArgs.compilerArgs.any { it == "-XXLanguage:+MultiPlatformProjects" }) {
+        if (pipelineType == PipelineType.K2 && freeCompilerArgs.compilerArgs.any { it == "-XXLanguage=+MultiPlatformProjects" }) {
             sourceModules.mapToSet { "-Xfragments=${it.name}" }
                 .sorted().forEach { add(it) }
             sourceModules.flatMapToSet { module -> module.directDependsOnDependencies.map { "-Xfragment-refines=${module.name}:${it.name}" } }

@@ -132,7 +132,7 @@ abstract class CliTestModuleCompiler : TestModuleCompiler() {
         }
 
         module.directives[LanguageSettingsDirectives.LANGUAGE].forEach {
-            add("-XXLanguage:$it")
+            add("-XXLanguage=$it")
         }
 
         if (LanguageSettingsDirectives.ALLOW_KOTLIN_PACKAGE in module.directives) {
@@ -167,7 +167,7 @@ object JvmJarTestModuleCompiler : CliTestModuleCompiler() {
 
             addAll(listOf(K2JVMCompilerArguments::jdkHome.cliArgument, jdkHome.toString()))
         }
-        add("-XXLanguage:-${LanguageFeature.SkipStandaloneScriptsInSourceRoots.name}")
+        add("-XXLanguage=-${LanguageFeature.SkipStandaloneScriptsInSourceRoots.name}")
     }
 
     override fun doCompile(

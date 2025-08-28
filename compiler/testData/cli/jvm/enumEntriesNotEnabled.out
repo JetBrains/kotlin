@@ -1,7 +1,7 @@
 warning: ATTENTION!
 This build uses unsafe internal compiler arguments:
 
--XXLanguage:-EnumEntries
+-XXLanguage=-EnumEntries
 
 This mode is not recommended for production use,
 as no stability/compatibility guarantees are given on

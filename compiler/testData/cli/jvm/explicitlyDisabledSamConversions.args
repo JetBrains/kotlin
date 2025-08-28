@@ -3,4 +3,4 @@ $TESTDATA_DIR$/newInferenceImpliesSamConversions.kt
 1.9
 -d
 $TEMP_DIR$
--XXLanguage\:-SamConversionForKotlinFunctions
+-XXLanguage=-SamConversionForKotlinFunctions
