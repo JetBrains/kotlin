@@ -3,7 +3,7 @@ MyRepeatableAnnotation.class:
   // Implementation of methods is not available
 
   @kotlin.annotation.Repeatable public final annotation class MyRepeatableAnnotation public constructor(index: kotlin.Int) : kotlin.Annotation {
-      public final val index: kotlin.Int /* compiled code */ /* hasBackingField: false */
+      public final val index: kotlin.Int /* compiled code */
   }
 
 RepeatableAnnotation.class:

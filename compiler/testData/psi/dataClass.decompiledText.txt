@@ -4,9 +4,9 @@
 package a.b.c
 
 public final data class DataClass public constructor(i: kotlin.Int, j: kotlin.String) {
-    public final val i: kotlin.Int /* compiled code */ /* hasBackingField: true */
+    public final val i: kotlin.Int /* compiled code */
 
-    public final val j: kotlin.String /* compiled code */ /* hasBackingField: true */
+    public final val j: kotlin.String /* compiled code */
 
     public final fun f(): kotlin.Int { /* compiled code */ }
 

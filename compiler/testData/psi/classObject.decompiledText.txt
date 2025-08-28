@@ -5,20 +5,20 @@ package test.class_object
 
 public final class ClassObject public constructor() {
     public companion object {
-        public final val j: kotlin.Int /* compiled code */ /* hasBackingField: true */
+        public final val j: kotlin.Int /* compiled code */
 
         public final fun z(): kotlin.Int { /* compiled code */ }
 
         public final class A public constructor() {
             public final class B public constructor() {
-                public final val i: kotlin.Int /* compiled code */ /* hasBackingField: true */
+                public final val i: kotlin.Int /* compiled code */
 
                 public final fun f(): kotlin.Int { /* compiled code */ }
             }
         }
     }
 
-    public final val c: kotlin.Int /* compiled code */ /* hasBackingField: true */
+    public final val c: kotlin.Int /* compiled code */
 
     public final fun f(): kotlin.Unit { /* compiled code */ }
 
@@ -28,7 +28,7 @@ public final class ClassObject public constructor() {
                 public companion object {
                     public final class D public constructor() {
                         public companion object {
-                            public final val i: kotlin.Int /* compiled code */ /* hasBackingField: true */
+                            public final val i: kotlin.Int /* compiled code */
 
                             public final fun f(): kotlin.Unit { /* compiled code */ }
 

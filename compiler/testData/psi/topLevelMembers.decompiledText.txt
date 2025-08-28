@@ -31,19 +31,19 @@ TopLevelMembersKt.class:
 
   package foo.TopLevelMembers
 
-  public val immutable: kotlin.Double /* compiled code */ /* hasBackingField: true */
+  public val immutable: kotlin.Double /* compiled code */
 
-  public var mutable: kotlin.Float /* compiled code */ /* hasBackingField: true */
+  public var mutable: kotlin.Float /* compiled code */
 
-  public val kotlin.String.ext: kotlin.String /* compiled code */ /* hasBackingField: false */
+  public val kotlin.String.ext: kotlin.String /* compiled code */
       public final get() { /* compiled code */ }
 
-  private val certainlyNothing: kotlin.Nothing /* compiled code */ /* hasBackingField: true */
+  private val certainlyNothing: kotlin.Nothing /* compiled code */
 
-  public val foo.TopLevelMembers.D.Main: foo.TopLevelMembers.D? /* compiled code */ /* hasBackingField: false */
+  public val foo.TopLevelMembers.D.Main: foo.TopLevelMembers.D? /* compiled code */
       public final get() { /* compiled code */ }
 
-  @field:foo.TopLevelMembers.A internal val Main: foo.TopLevelMembers.D? /* compiled code */ /* hasBackingField: true */
+  @field:foo.TopLevelMembers.A internal val Main: foo.TopLevelMembers.D? /* compiled code */
 
   public fun funWithBlockBody(): kotlin.Unit { /* compiled code */ }
 

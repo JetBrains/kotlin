@@ -4,9 +4,9 @@
 package a
 
 public interface DefaultImplsInInterface {
-    public abstract val isVisible: kotlin.Boolean /* hasBackingField: false */
+    public abstract val isVisible: kotlin.Boolean
 
-    public abstract val isPersistent: kotlin.Boolean /* hasBackingField: false */
+    public abstract val isPersistent: kotlin.Boolean
 
     public abstract suspend fun show(mutatePriority: kotlin.Int): kotlin.Unit
 

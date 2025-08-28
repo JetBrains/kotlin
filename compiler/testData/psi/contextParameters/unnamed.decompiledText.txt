@@ -1,7 +1,7 @@
 // IntelliJ API Decompiler stub source generated from a class file
 // Implementation of methods is not available
 
-context(kotlin.Int, kotlin.String) public val unnamedProperty: kotlin.Int /* compiled code */ /* hasBackingField: false */
+context(kotlin.Int, kotlin.String) public val unnamedProperty: kotlin.Int /* compiled code */
     public final get() { /* compiled code */ }
 
 context(kotlin.String, kotlin.collections.List<kotlin.Int>) public fun unnamedFunction(): kotlin.Unit { /* compiled code */ }

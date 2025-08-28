@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.quoteIfNeeded
 import org.jetbrains.kotlin.psi.stubs.KotlinFileStubKind
-import org.jetbrains.kotlin.psi.stubs.StubUtils
 import org.jetbrains.kotlin.psi.stubs.impl.*
 import org.jetbrains.kotlin.renderer.render
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
@@ -437,13 +436,6 @@ internal fun buildDecompiledText(fileStub: KotlinFileStubImpl): String = PrettyP
 
             if (!property.hasModifier(KtTokens.ABSTRACT_KEYWORD)) {
                 append(" $DECOMPILED_CODE_COMMENT")
-            }
-
-            property.stub?.hasBackingField?.let {
-                append(' ')
-                append(StubUtils.HAS_BACKING_FIELD_COMMENT_PREFIX)
-                append(it.toString())
-                append(" */")
             }
 
             withIndent {

@@ -1,14 +1,14 @@
 KT element: KtClass
 KT element text:
 public final data class MyDependency public constructor(b: one.B, d: one.D) {
-    public final val b: one.B /* compiled code */ /* hasBackingField: true */
+    public final val b: one.B /* compiled code */
 
-    public final var d: one.D /* compiled code */ /* hasBackingField: true */
+    public final var d: one.D /* compiled code */
 
-    public final val a: one.A /* compiled code */ /* hasBackingField: false */
+    public final val a: one.A /* compiled code */
         public final get() { /* compiled code */ }
 
-    public final val c: one.C /* compiled code */ /* hasBackingField: false */
+    public final val c: one.C /* compiled code */
         public final get() { /* compiled code */ }
 
     public final operator fun component1(): one.B { /* compiled code */ }

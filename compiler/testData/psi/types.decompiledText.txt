@@ -4,37 +4,37 @@
 package test
 
 public abstract class Types public constructor() {
-    public final val nullable: kotlin.Int? /* compiled code */ /* hasBackingField: true */
+    public final val nullable: kotlin.Int? /* compiled code */
 
-    public abstract val list: kotlin.collections.List<kotlin.Int> /* hasBackingField: false */
+    public abstract val list: kotlin.collections.List<kotlin.Int>
 
-    public abstract val map: kotlin.collections.Map<kotlin.Int, kotlin.Int> /* hasBackingField: false */
+    public abstract val map: kotlin.collections.Map<kotlin.Int, kotlin.Int>
 
-    public abstract val nullableMap: kotlin.collections.Map<kotlin.Int?, kotlin.Int?>? /* hasBackingField: false */
+    public abstract val nullableMap: kotlin.collections.Map<kotlin.Int?, kotlin.Int?>?
 
-    public abstract val projections: kotlin.collections.Map<in kotlin.Int, out kotlin.String> /* hasBackingField: false */
+    public abstract val projections: kotlin.collections.Map<in kotlin.Int, out kotlin.String>
 
-    public final val function: () -> kotlin.Unit /* compiled code */ /* hasBackingField: true */
+    public final val function: () -> kotlin.Unit /* compiled code */
 
-    public abstract val functionWithParam: (kotlin.String, kotlin.Int) -> kotlin.collections.List<kotlin.String> /* hasBackingField: false */
+    public abstract val functionWithParam: (kotlin.String, kotlin.Int) -> kotlin.collections.List<kotlin.String>
 
-    public abstract val extFunction: kotlin.String.() -> kotlin.collections.List<kotlin.String> /* hasBackingField: false */
+    public abstract val extFunction: kotlin.String.() -> kotlin.collections.List<kotlin.String>
 
-    public abstract val extFunctionWithParam: kotlin.String.(kotlin.Int, kotlin.String) -> kotlin.collections.List<kotlin.String> /* hasBackingField: false */
+    public abstract val extFunctionWithParam: kotlin.String.(kotlin.Int, kotlin.String) -> kotlin.collections.List<kotlin.String>
 
-    public abstract val extFunctionWithNullables: kotlin.String.(kotlin.Int?, kotlin.String?) -> kotlin.collections.List<kotlin.String?>? /* hasBackingField: false */
+    public abstract val extFunctionWithNullables: kotlin.String.(kotlin.Int?, kotlin.String?) -> kotlin.collections.List<kotlin.String?>?
 
-    public abstract val deepExtFunctionType: kotlin.String.((kotlin.Int) -> kotlin.Int, kotlin.String?) -> kotlin.collections.List<kotlin.String?>? /* hasBackingField: false */
+    public abstract val deepExtFunctionType: kotlin.String.((kotlin.Int) -> kotlin.Int, kotlin.String?) -> kotlin.collections.List<kotlin.String?>?
 
-    public abstract val starList: kotlin.collections.List<*> /* hasBackingField: false */
+    public abstract val starList: kotlin.collections.List<*>
 
-    public abstract val starFun: kotlin.Function1<*, *> /* hasBackingField: false */
+    public abstract val starFun: kotlin.Function1<*, *>
 
-    public abstract val extFun: kotlin.Int.(kotlin.Int) -> kotlin.Unit /* hasBackingField: false */
+    public abstract val extFun: kotlin.Int.(kotlin.Int) -> kotlin.Unit
 
-    public abstract val listExtStarFun: kotlin.collections.List<@kotlin.ExtensionFunctionType kotlin.Function1<*, *>> /* hasBackingField: false */
+    public abstract val listExtStarFun: kotlin.collections.List<@kotlin.ExtensionFunctionType kotlin.Function1<*, *>>
 
-    public abstract val funTypeWithStarAndNonStar: kotlin.Function1<*, kotlin.Int> /* hasBackingField: false */
+    public abstract val funTypeWithStarAndNonStar: kotlin.Function1<*, kotlin.Int>
 
     public final fun <P1, P2, P3, R> ((P1, P2, P3) -> R).extOnFunctionType(): kotlin.Unit { /* compiled code */ }
 

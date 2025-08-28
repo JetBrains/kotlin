@@ -2,12 +2,12 @@ FunctionTypesAsArgumentsKt.class:
   // IntelliJ API Decompiler stub source generated from a class file
   // Implementation of methods is not available
 
-  public val commands: java.util.HashMap<kotlin.String, () -> kotlin.Unit> /* compiled code */ /* hasBackingField: true */
+  public val commands: java.util.HashMap<kotlin.String, () -> kotlin.Unit> /* compiled code */
 
 Lifetime.class:
   // IntelliJ API Decompiler stub source generated from a class file
   // Implementation of methods is not available
 
   public final class Lifetime public constructor() {
-      public final val attached: java.util.ArrayList<() -> kotlin.Unit> /* from: kotlin.collections.ArrayList<kotlin.Function0<kotlin.Unit>> */ /* compiled code */ /* hasBackingField: true */
+      public final val attached: java.util.ArrayList<() -> kotlin.Unit> /* from: kotlin.collections.ArrayList<kotlin.Function0<kotlin.Unit>> */ /* compiled code */
   }

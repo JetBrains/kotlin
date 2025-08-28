@@ -2,5 +2,5 @@
 // Implementation of methods is not available
 
 public object SpecialNames {
-    public final val `1M`: kotlin.Int /* compiled code */ /* hasBackingField: true */
+    public final val `1M`: kotlin.Int /* compiled code */
 }

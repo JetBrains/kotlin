@@ -1,15 +1,15 @@
 KT element: KtClass
 KT element text:
 public final class I public constructor(p: A) : A {
-    private final val p: A /* compiled code */ /* hasBackingField: true */
+    private final val p: A /* compiled code */
 
-    public open var bar: kotlin.Long /* compiled code */ /* hasBackingField: false */
+    public open var bar: kotlin.Long /* compiled code */
 
-    public open val kotlin.Int.doo: kotlin.String /* compiled code */ /* hasBackingField: false */
+    public open val kotlin.Int.doo: kotlin.String /* compiled code */
 
-    public open val foo: kotlin.Int /* compiled code */ /* hasBackingField: false */
+    public open val foo: kotlin.Int /* compiled code */
 
-    public open var kotlin.Int.zoo: kotlin.Unit /* compiled code */ /* hasBackingField: false */
+    public open var kotlin.Int.zoo: kotlin.Unit /* compiled code */
 
     public open fun foo(): kotlin.Unit { /* compiled code */ }
 

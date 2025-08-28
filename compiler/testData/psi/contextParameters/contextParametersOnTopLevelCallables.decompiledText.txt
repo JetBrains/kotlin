@@ -3,7 +3,7 @@ A.class:
   // Implementation of methods is not available
 
   public final class A public constructor() {
-      public final val x: kotlin.Int /* compiled code */ /* hasBackingField: true */
+      public final val x: kotlin.Int /* compiled code */
   }
 
 B.class:
@@ -17,10 +17,10 @@ ContextParametersOnTopLevelCallablesKt.class:
   // IntelliJ API Decompiler stub source generated from a class file
   // Implementation of methods is not available
 
-  context(A, B) @MyAnnotation public val kotlin.Int.property: kotlin.Int /* compiled code */ /* hasBackingField: false */
+  context(A, B) @MyAnnotation public val kotlin.Int.property: kotlin.Int /* compiled code */
       public final get() { /* compiled code */ }
 
-  context(A, B) @MyAnnotation public var kotlin.Int.propertyWithSetter: kotlin.Int /* compiled code */ /* hasBackingField: false */
+  context(A, B) @MyAnnotation public var kotlin.Int.propertyWithSetter: kotlin.Int /* compiled code */
       public final get() { /* compiled code */ }
       public final set(v: kotlin.Int) { /* compiled code */ }
 

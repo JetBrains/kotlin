@@ -4,7 +4,7 @@
 package test.a
 
 public final annotation class AnnotationClass public constructor(i: kotlin.Int, j: kotlin.String = COMPILED_CODE) : kotlin.Annotation {
-    public final val i: kotlin.Int /* compiled code */ /* hasBackingField: false */
+    public final val i: kotlin.Int /* compiled code */
 
-    public final val j: kotlin.String = COMPILED_CODE /* compiled code */ /* hasBackingField: false */
+    public final val j: kotlin.String = COMPILED_CODE /* compiled code */
 }

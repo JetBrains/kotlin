@@ -4,17 +4,17 @@
 package test
 
 public final class NestedClasses<TOuter> public constructor() {
-    public final val c: kotlin.Int /* compiled code */ /* hasBackingField: true */
+    public final val c: kotlin.Int /* compiled code */
 
     public final fun f(): kotlin.Unit { /* compiled code */ }
 
     private final class Nested<TN> public constructor() {
-        public final val c: kotlin.Int /* compiled code */ /* hasBackingField: true */
+        public final val c: kotlin.Int /* compiled code */
 
         public final fun f(p1: TN): kotlin.Unit { /* compiled code */ }
 
         public final class NN<TNN> public constructor() {
-            public final val c: kotlin.Int /* compiled code */ /* hasBackingField: true */
+            public final val c: kotlin.Int /* compiled code */
 
             public final fun f(p1: TNN): kotlin.Unit { /* compiled code */ }
         }

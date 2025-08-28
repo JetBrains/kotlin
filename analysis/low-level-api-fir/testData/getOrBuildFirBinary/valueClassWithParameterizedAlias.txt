@@ -1,7 +1,7 @@
 KT element: KtClass
 KT element text:
 @kotlin.jvm.JvmInline public final value class ValueClass<T> public constructor(value: kotlin.collections.List<T> /* from: pack.MyTypeAlias<T> */) {
-    public final val value: kotlin.collections.List<T> /* from: pack.MyTypeAlias<T> */ /* compiled code */ /* hasBackingField: true */
+    public final val value: kotlin.collections.List<T> /* from: pack.MyTypeAlias<T> */ /* compiled code */
 
     public open operator fun equals(other: kotlin.Any?): kotlin.Boolean { /* compiled code */ }
 

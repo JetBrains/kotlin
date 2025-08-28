@@ -3,7 +3,7 @@ A.class:
   // Implementation of methods is not available
 
   public final class A public constructor() {
-      public final val valueA: kotlin.Int /* compiled code */ /* hasBackingField: true */
+      public final val valueA: kotlin.Int /* compiled code */
   }
 
 B.class:
@@ -11,7 +11,7 @@ B.class:
   // Implementation of methods is not available
 
   public final class B public constructor() {
-      public final val valueB: kotlin.Int /* compiled code */ /* hasBackingField: true */
+      public final val valueB: kotlin.Int /* compiled code */
   }
 
 ContextReceiversCallableMembers.class:
@@ -19,10 +19,10 @@ ContextReceiversCallableMembers.class:
   // Implementation of methods is not available
 
   private open class ContextReceiversCallableMembers public constructor() {
-      context(A, B) @MyAnnotation private final val kotlin.Int.property: kotlin.Int /* compiled code */ /* hasBackingField: false */
+      context(A, B) @MyAnnotation private final val kotlin.Int.property: kotlin.Int /* compiled code */
           private final get() { /* compiled code */ }
 
-      context(A, B) @MyAnnotation private final var kotlin.Int.propertyWithSetter: kotlin.Int /* compiled code */ /* hasBackingField: false */
+      context(A, B) @MyAnnotation private final var kotlin.Int.propertyWithSetter: kotlin.Int /* compiled code */
           private final get() { /* compiled code */ }
           private final set(v: kotlin.Int) { /* compiled code */ }
 

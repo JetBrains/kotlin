@@ -1,6 +1,6 @@
 KT element: KtProperty
 KT element text:
-private var privateVariable1: kotlin.Long /* compiled code */ /* hasBackingField: true */
+private var privateVariable1: kotlin.Long /* compiled code */
 FIR element: FirPropertyImpl
 FIR source kind: KtRealSourceElementKind
 

@@ -10,13 +10,13 @@ Foo.class:
   // Implementation of methods is not available
 
   public final class Foo public constructor(withDefaultGetter: kotlin.Int, withDefaultSetter: kotlin.String, both: kotlin.String) {
-      public final val withDefaultGetter: kotlin.Int /* compiled code */ /* hasBackingField: true */
+      public final val withDefaultGetter: kotlin.Int /* compiled code */
           @Anno public final get
 
-      public final var withDefaultSetter: kotlin.String /* compiled code */ /* hasBackingField: true */
+      public final var withDefaultSetter: kotlin.String /* compiled code */
           @Anno public final set
 
-      public final var both: kotlin.String /* compiled code */ /* hasBackingField: true */
+      public final var both: kotlin.String /* compiled code */
           @Anno public final get
           @Anno public final set
   }

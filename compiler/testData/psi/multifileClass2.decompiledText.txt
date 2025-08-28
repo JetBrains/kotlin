@@ -4,14 +4,14 @@ MultifileClass.class:
 
   package test
 
-  public val p1Val: kotlin.Int /* compiled code */ /* hasBackingField: true */
+  public val p1Val: kotlin.Int /* compiled code */
 
-  public val kotlin.String.p1ExtVal: kotlin.Int /* compiled code */ /* hasBackingField: false */
+  public val kotlin.String.p1ExtVal: kotlin.Int /* compiled code */
       public final get() { /* compiled code */ }
 
-  public var p1Var: kotlin.Int /* compiled code */ /* hasBackingField: true */
+  public var p1Var: kotlin.Int /* compiled code */
 
-  @kotlin.Deprecated public const val annotatedConstVal: kotlin.Int = COMPILED_CODE /* compiled code */ /* hasBackingField: true */
+  @kotlin.Deprecated public const val annotatedConstVal: kotlin.Int = COMPILED_CODE /* compiled code */
 
   public fun p1Fun(): kotlin.Unit { /* compiled code */ }
 
@@ -21,18 +21,18 @@ MultifileClass.class:
 
   public fun p1FunWithParams(x: kotlin.Int): kotlin.Int { /* compiled code */ }
 
-  public val p3Val: kotlin.Int /* compiled code */ /* hasBackingField: true */
+  public val p3Val: kotlin.Int /* compiled code */
 
-  public val kotlin.String.p3ExtVal: kotlin.Int /* compiled code */ /* hasBackingField: false */
+  public val kotlin.String.p3ExtVal: kotlin.Int /* compiled code */
       public final get() { /* compiled code */ }
 
   public fun p3Fun(): kotlin.Unit { /* compiled code */ }
 
   public fun kotlin.String.p3ExtFun(): kotlin.Unit { /* compiled code */ }
 
-  public val p2Val: kotlin.Int /* compiled code */ /* hasBackingField: true */
+  public val p2Val: kotlin.Int /* compiled code */
 
-  public val kotlin.String.p2ExtVal: kotlin.Int /* compiled code */ /* hasBackingField: false */
+  public val kotlin.String.p2ExtVal: kotlin.Int /* compiled code */
       public final get() { /* compiled code */ }
 
   public fun p2Fun(): kotlin.Unit { /* compiled code */ }
@@ -45,14 +45,14 @@ MultifileClass__MultifileClassKt.class:
 
   package test
 
-  public val p1Val: kotlin.Int /* compiled code */ /* hasBackingField: true */
+  public val p1Val: kotlin.Int /* compiled code */
 
-  public val kotlin.String.p1ExtVal: kotlin.Int /* compiled code */ /* hasBackingField: false */
+  public val kotlin.String.p1ExtVal: kotlin.Int /* compiled code */
       public final get() { /* compiled code */ }
 
-  public var p1Var: kotlin.Int /* compiled code */ /* hasBackingField: true */
+  public var p1Var: kotlin.Int /* compiled code */
 
-  @kotlin.Deprecated public const val annotatedConstVal: kotlin.Int /* compiled code */ /* hasBackingField: true */
+  @kotlin.Deprecated public const val annotatedConstVal: kotlin.Int /* compiled code */
 
   public fun p1Fun(): kotlin.Unit { /* compiled code */ }
 
@@ -68,9 +68,9 @@ MultifileClass__MultifileClass__PartKt.class:
 
   package test
 
-  public val p3Val: kotlin.Int /* compiled code */ /* hasBackingField: true */
+  public val p3Val: kotlin.Int /* compiled code */
 
-  public val kotlin.String.p3ExtVal: kotlin.Int /* compiled code */ /* hasBackingField: false */
+  public val kotlin.String.p3ExtVal: kotlin.Int /* compiled code */
       public final get() { /* compiled code */ }
 
   public fun p3Fun(): kotlin.Unit { /* compiled code */ }
@@ -83,9 +83,9 @@ MultifileClass__PartKt.class:
 
   package test
 
-  public val p2Val: kotlin.Int /* compiled code */ /* hasBackingField: true */
+  public val p2Val: kotlin.Int /* compiled code */
 
-  public val kotlin.String.p2ExtVal: kotlin.Int /* compiled code */ /* hasBackingField: false */
+  public val kotlin.String.p2ExtVal: kotlin.Int /* compiled code */
       public final get() { /* compiled code */ }
 
   public fun p2Fun(): kotlin.Unit { /* compiled code */ }

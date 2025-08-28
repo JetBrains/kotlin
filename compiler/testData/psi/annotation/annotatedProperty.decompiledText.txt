@@ -9,14 +9,14 @@ PropertiesKt.class:
   // IntelliJ API Decompiler stub source generated from a class file
   // Implementation of methods is not available
 
-  @Anno internal var withCustomSetter: kotlin.String /* compiled code */ /* hasBackingField: true */
+  @Anno internal var withCustomSetter: kotlin.String /* compiled code */
       internal final set(value: kotlin.String) { /* compiled code */ }
 
-  @Anno internal var withCustomGetter: kotlin.String /* compiled code */ /* hasBackingField: true */
+  @Anno internal var withCustomGetter: kotlin.String /* compiled code */
       internal final get() { /* compiled code */ }
 
-  @Anno internal var custom: kotlin.String /* compiled code */ /* hasBackingField: true */
+  @Anno internal var custom: kotlin.String /* compiled code */
       internal final get() { /* compiled code */ }
       internal final set(value: kotlin.String) { /* compiled code */ }
 
-  @Anno internal var variable: kotlin.String /* compiled code */ /* hasBackingField: true */
+  @Anno internal var variable: kotlin.String /* compiled code */

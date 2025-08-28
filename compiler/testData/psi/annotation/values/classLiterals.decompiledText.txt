@@ -3,9 +3,9 @@ ClassLiteral.class:
   // Implementation of methods is not available
 
   public final annotation class ClassLiteral public constructor(c1: kotlin.reflect.KClass<*>, c2: kotlin.reflect.KClass<*>) : kotlin.Annotation {
-      public final val c1: kotlin.reflect.KClass<*> /* compiled code */ /* hasBackingField: false */
+      public final val c1: kotlin.reflect.KClass<*> /* compiled code */
 
-      public final val c2: kotlin.reflect.KClass<*> /* compiled code */ /* hasBackingField: false */
+      public final val c2: kotlin.reflect.KClass<*> /* compiled code */
   }
 
 WithClassLiteral.class:

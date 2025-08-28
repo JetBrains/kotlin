@@ -1,7 +1,7 @@
 KT element: KtClass
 KT element text:
 public final annotation class Anno public constructor(value: kotlin.Int) : kotlin.Annotation {
-    public final val value: kotlin.Int /* compiled code */ /* hasBackingField: false */
+    public final val value: kotlin.Int /* compiled code */
 }
 FIR element: FirRegularClassImpl
 FIR source kind: KtRealSourceElementKind

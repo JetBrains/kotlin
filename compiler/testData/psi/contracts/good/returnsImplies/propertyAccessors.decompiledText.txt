@@ -10,6 +10,6 @@ PropertyAccessorsKt.class:
   // IntelliJ API Decompiler stub source generated from a class file
   // Implementation of methods is not available
 
-  public var kotlin.Any?.isNotNull: kotlin.Boolean /* compiled code */ /* hasBackingField: false */
+  public var kotlin.Any?.isNotNull: kotlin.Boolean /* compiled code */
       public final get() { /* compiled code */ }
       public final set(value: kotlin.Boolean) { /* compiled code */ }

@@ -4,11 +4,11 @@
 package test
 
 public final class LocalClass public constructor() {
-    private final val bar: kotlin.Any /* compiled code */ /* hasBackingField: true */
+    private final val bar: kotlin.Any /* compiled code */
 
-    private final val sam: java.lang.Runnable /* compiled code */ /* hasBackingField: true */
+    private final val sam: java.lang.Runnable /* compiled code */
 
-    private final val sub: kotlin.Any /* compiled code */ /* hasBackingField: true */
+    private final val sub: kotlin.Any /* compiled code */
 
     private final fun foo(): kotlin.Any { /* compiled code */ }
 }

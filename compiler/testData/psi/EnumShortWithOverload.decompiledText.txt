@@ -8,7 +8,7 @@ public final enum class Color private constructor(rgb: kotlin.Int) : kotlin.Enum
 
     BLUE;
 
-    public final val rgb: kotlin.Int /* compiled code */ /* hasBackingField: true */
+    public final val rgb: kotlin.Int /* compiled code */
 
     public abstract fun foo(): kotlin.Int
 }
