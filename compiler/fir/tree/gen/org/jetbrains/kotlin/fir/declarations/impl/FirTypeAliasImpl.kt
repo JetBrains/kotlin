@@ -11,6 +11,7 @@
 package org.jetbrains.kotlin.fir.declarations.impl
 
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.MutableOrEmptyList
@@ -41,6 +42,8 @@ internal class FirTypeAliasImpl(
     override var expandedTypeRef: FirTypeRef,
     override var annotations: MutableOrEmptyList<FirAnnotation>,
 ) : FirTypeAlias() {
+    override val isLocal: Boolean
+        get() = status.visibility == Visibilities.Local
 
     init {
         symbol.bind(this)

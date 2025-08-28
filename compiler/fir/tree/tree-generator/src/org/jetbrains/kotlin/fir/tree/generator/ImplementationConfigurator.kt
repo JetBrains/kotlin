@@ -44,15 +44,31 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
 
         impl(regularClass) {
             defaultFalse("hasLazyNestedClassifiers", withGetter = true)
+            default("isLocal") {
+                value = "status.visibility == Visibilities.Local"
+                withGetter = true
+            }
+            additionalImports(visibilitiesImport)
         }
 
         impl(anonymousInitializer)
 
-        impl(anonymousObject)
+        impl(anonymousObject) {
+            default("isLocal") {
+                value = "true"
+                withGetter = true
+            }
+        }
         impl(danglingModifierList)
         noImpl(anonymousObjectExpression)
 
-        impl(typeAlias)
+        impl(typeAlias) {
+            default("isLocal") {
+                value = "status.visibility == Visibilities.Local"
+                withGetter = true
+            }
+            additionalImports(visibilitiesImport)
+        }
 
         impl(import)
 

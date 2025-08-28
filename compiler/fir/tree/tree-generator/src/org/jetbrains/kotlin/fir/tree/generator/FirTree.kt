@@ -401,6 +401,7 @@ object FirTree : AbstractFirTreeBuilder() {
             isMutable = true
         }
         +field("scopeProvider", firScopeProviderType)
+        +field("isLocal", boolean)
     }
 
     val klass: Element by sealedElement(Declaration, name = "Class") {
