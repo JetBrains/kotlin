@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.name.ClassId
 class FirParcelizeFunctionChecker(private val parcelizeAnnotations: List<ClassId>) : FirSimpleFunctionChecker(MppCheckerKind.Platform) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirSimpleFunction) {
-        val containingClassSymbol = declaration.dispatchReceiverType?.toRegularClassSymbol(context.session)
+        val containingClassSymbol = declaration.dispatchReceiverType?.toRegularClassSymbol()
         if (!containingClassSymbol.isParcelize(context.session, parcelizeAnnotations)) return
         if (declaration.origin != FirDeclarationOrigin.Source) return
         if (declaration.isWriteToParcel() && declaration.isOverride) {
