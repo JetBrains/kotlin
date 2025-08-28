@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.analysis.decompiler.psi
 
 import com.intellij.openapi.fileTypes.FileType
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.psi.FileViewProvider
 import com.intellij.psi.PsiManager
 import com.intellij.psi.compiled.ClassFileDecompilers
 import com.intellij.psi.compiled.ClsStubBuilder
@@ -23,14 +22,18 @@ abstract class KotlinMetadataDecompiler : ClassFileDecompilers.Full() {
 
     override fun getStubBuilder(): ClsStubBuilder = metadataStubBuilder
 
-    override fun createFileViewProvider(file: VirtualFile, manager: PsiManager, physical: Boolean): FileViewProvider {
-        return KotlinDecompiledFileViewProvider(manager, file, physical) { provider ->
-            val virtualFile = provider.virtualFile
-            if (metadataStubBuilder.readFileSafely(virtualFile) != null) {
-                KtDecompiledFile(provider)
-            } else {
-                null
-            }
+    protected abstract fun createFile(viewProvider: KotlinDecompiledFileViewProvider): KtDecompiledFile
+
+    final override fun createFileViewProvider(
+        file: VirtualFile,
+        manager: PsiManager,
+        physical: Boolean,
+    ): KotlinDecompiledFileViewProvider = KotlinDecompiledFileViewProvider(manager, file, physical) { provider ->
+        val virtualFile = provider.virtualFile
+        if (metadataStubBuilder.readFileSafely(virtualFile) != null) {
+            createFile(provider)
+        } else {
+            null
         }
     }
 }

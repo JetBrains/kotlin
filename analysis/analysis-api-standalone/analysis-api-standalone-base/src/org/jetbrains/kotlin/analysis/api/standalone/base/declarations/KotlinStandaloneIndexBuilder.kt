@@ -204,7 +204,7 @@ internal class KotlinStandaloneIndexBuilder private constructor(
         val ktFile = when (kotlinDecompiler) {
             is KotlinClassFileDecompiler -> KtClsFile(viewProvider)
             is KotlinNativeMetadataDecompiler -> KlibDecompiledFile(viewProvider)
-            is KotlinBuiltInDecompiler -> KtDecompiledFile(viewProvider)
+            is KotlinBuiltInDecompiler -> KotlinBuiltinsDecompiledFile(viewProvider)
             else -> error("Unexpected decompiler: ${kotlinDecompiler::class.simpleName}")
         }
 

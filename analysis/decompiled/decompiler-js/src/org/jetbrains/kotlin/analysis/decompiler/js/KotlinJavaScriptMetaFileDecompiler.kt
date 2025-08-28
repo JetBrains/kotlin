@@ -7,7 +7,9 @@ package org.jetbrains.kotlin.analysis.decompiler.js
 
 import com.intellij.openapi.fileTypes.FileType
 import com.intellij.openapi.vfs.VirtualFile
+import org.jetbrains.kotlin.analysis.decompiler.psi.KotlinDecompiledFileViewProvider
 import org.jetbrains.kotlin.analysis.decompiler.psi.KotlinMetadataDecompiler
+import org.jetbrains.kotlin.analysis.decompiler.psi.file.KtDecompiledFile
 import org.jetbrains.kotlin.analysis.decompiler.stub.file.KotlinMetadataStubBuilder
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
@@ -20,6 +22,7 @@ import java.io.ByteArrayInputStream
 
 class KotlinJavaScriptMetaFileDecompiler : KotlinMetadataDecompiler() {
     override val metadataStubBuilder: KotlinMetadataStubBuilder get() = KotlinJavaScriptMetadataStubBuilder
+    override fun createFile(viewProvider: KotlinDecompiledFileViewProvider): KtDecompiledFile = KjsmDecompiledFile(viewProvider)
 }
 
 private object KotlinJavaScriptMetadataStubBuilder : KotlinMetadataStubBuilder() {
