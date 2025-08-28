@@ -7,32 +7,47 @@ package org.jetbrains.kotlin.analysis.decompiler.konan
 import com.intellij.openapi.fileTypes.FileType
 import com.intellij.openapi.fileTypes.FileTypeRegistry
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.psi.compiled.ClsStubBuilder
 import com.intellij.psi.stubs.PsiFileStub
 import com.intellij.util.indexing.FileContent
 import org.jetbrains.kotlin.analysis.decompiler.psi.text.createIncompatibleMetadataVersionDecompiledText
 import org.jetbrains.kotlin.analysis.decompiler.stub.*
 import org.jetbrains.kotlin.analysis.decompiler.stub.file.AnnotationLoaderForStubBuilderImpl
-import org.jetbrains.kotlin.analysis.decompiler.stub.file.KotlinMetadataStubBuilder.FileWithMetadata
+import org.jetbrains.kotlin.analysis.decompiler.stub.file.KotlinMetadataStubBuilder
+import org.jetbrains.kotlin.library.metadata.KlibMetadataSerializerProtocol
+import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
+import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import org.jetbrains.kotlin.metadata.deserialization.TypeTable
+import org.jetbrains.kotlin.psi.stubs.KotlinStubVersions
 import org.jetbrains.kotlin.serialization.SerializerExtensionProtocol
 import org.jetbrains.kotlin.serialization.deserialization.ProtoBasedClassDataFinder
 import org.jetbrains.kotlin.serialization.deserialization.ProtoContainer.Package
 import org.jetbrains.kotlin.serialization.deserialization.getClassId
 
-class KlibMetadataStubBuilder(
-    private val version: Int,
-    private val fileType: FileType,
-    private val serializerProtocol: () -> SerializerExtensionProtocol,
-    private val readFile: (VirtualFile) -> FileWithMetadata?,
-) : ClsStubBuilder() {
-    override fun getStubVersion(): Int = version
+internal object KlibMetadataStubBuilder : KotlinMetadataStubBuilder() {
+    override fun getStubVersion(): Int = KotlinStubVersions.KLIB_STUB_VERSION
+    override val fileType: FileType get() = KlibMetaFileType
+    override val serializerProtocol: SerializerExtensionProtocol get() = KlibMetadataSerializerProtocol
+    override val expectedBinaryVersion: BinaryVersion get() = MetadataVersion.INSTANCE
+
+    override fun readFile(
+        virtualFile: VirtualFile,
+        content: ByteArray,
+    ): FileWithMetadata? {
+        val klibMetadataLoadingCache = KlibLoadingMetadataCache.getInstance()
+        val (fragment, version) = klibMetadataLoadingCache.getCachedPackageFragmentWithVersion(virtualFile)
+        if (fragment == null || version == null) return null
+        if (!version.isCompatibleWithCurrentCompilerVersion()) {
+            return FileWithMetadata.Incompatible(version)
+        }
+
+        return FileWithMetadata.Compatible(fragment, version, serializerProtocol)
+    }
 
     override fun buildFileStub(content: FileContent): PsiFileStub<*>? {
         val virtualFile = content.file
         assert(FileTypeRegistry.getInstance().isFileOfType(virtualFile, fileType)) { "Unexpected file type ${virtualFile.fileType}" }
 
-        val fileWithMetadata = readFile(virtualFile) ?: return null
+        val fileWithMetadata = readFileSafely(virtualFile) ?: return null
 
         return when (fileWithMetadata) {
             is FileWithMetadata.Incompatible -> createIncompatibleAbiVersionFileStub(
@@ -44,9 +59,9 @@ class KlibMetadataStubBuilder(
                 val packageFqName = fileWithMetadata.packageFqName
                 val nameResolver = fileWithMetadata.nameResolver
                 val mainClassDataFinder = ProtoBasedClassDataFinder(fileWithMetadata.proto, nameResolver, fileWithMetadata.version)
-                val protocol = serializerProtocol()
+                val protocol = serializerProtocol
                 val components = ClsStubBuilderComponents(
-                    classDataFinder = NearFileClassDataFinder.wrapIfNeeded(mainClassDataFinder, content.file, readFile),
+                    classDataFinder = NearFileClassDataFinder.wrapIfNeeded(mainClassDataFinder, content.file) { readFileSafely(it) },
                     annotationLoader = AnnotationLoaderForStubBuilderImpl(protocol),
                     virtualFileForDebug = content.file,
                     serializationProtocol = protocol,

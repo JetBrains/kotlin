@@ -4,31 +4,17 @@
  */
 package org.jetbrains.kotlin.analysis.decompiler.konan
 
-import com.intellij.openapi.fileTypes.FileType
 import com.intellij.openapi.fileTypes.FileTypeRegistry
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiManager
 import com.intellij.psi.compiled.ClassFileDecompilers
 import com.intellij.psi.compiled.ClsStubBuilder
 import org.jetbrains.kotlin.analysis.decompiler.psi.KotlinDecompiledFileViewProvider
-import org.jetbrains.kotlin.analysis.decompiler.stub.file.KotlinMetadataStubBuilder.FileWithMetadata
-import org.jetbrains.kotlin.serialization.SerializerExtensionProtocol
-import java.io.IOException
 
-abstract class KlibMetadataDecompiler(
-    private val fileType: FileType,
-    private val serializerProtocol: () -> SerializerExtensionProtocol,
-    private val stubVersion: Int,
-) : ClassFileDecompilers.Full() {
-    protected open val metadataStubBuilder: KlibMetadataStubBuilder by lazy {
-        KlibMetadataStubBuilder(stubVersion, fileType, serializerProtocol, ::readFileSafely)
-    }
+abstract class KlibMetadataDecompiler : ClassFileDecompilers.Full() {
+    private val metadataStubBuilder: KlibMetadataStubBuilder get() = KlibMetadataStubBuilder
 
-    protected fun doReadFile(file: VirtualFile): FileWithMetadata? {
-        return forPackageFragment(file, serializerProtocol())
-    }
-
-    override fun accepts(file: VirtualFile): Boolean = FileTypeRegistry.getInstance().isFileOfType(file, fileType)
+    override fun accepts(file: VirtualFile): Boolean = FileTypeRegistry.getInstance().isFileOfType(file, metadataStubBuilder.fileType)
 
     override fun getStubBuilder(): ClsStubBuilder = metadataStubBuilder
 
@@ -38,31 +24,5 @@ abstract class KlibMetadataDecompiler(
         physical: Boolean,
     ) = KotlinDecompiledFileViewProvider(manager, file, physical) { provider ->
         KlibDecompiledFile(provider)
-    }
-
-    protected fun readFileSafely(file: VirtualFile): FileWithMetadata? {
-        if (!file.isValid) return null
-
-        return try {
-            doReadFile(file)
-        } catch (_: IOException) {
-            // This is needed because sometimes we're given VirtualFile instances that point to non-existent .jar entries.
-            // Such files are valid (isValid() returns true), but an attempt to read their contents results in a FileNotFoundException.
-            // Note that although calling "refresh()" instead of catching an exception would seem more correct here,
-            // it's not always allowed and also is likely to degrade performance
-            null
-        }
-    }
-
-    companion object {
-        fun forPackageFragment(packageFragment: VirtualFile, protocol: SerializerExtensionProtocol): FileWithMetadata? {
-            val klibMetadataLoadingCache = KlibLoadingMetadataCache.getInstance()
-            val (fragment, version) = klibMetadataLoadingCache.getCachedPackageFragmentWithVersion(packageFragment)
-            if (fragment == null || version == null) return null
-            if (!version.isCompatibleWithCurrentCompilerVersion()) {
-                return FileWithMetadata.Incompatible(version)
-            }
-            return FileWithMetadata.Compatible(fragment, version, protocol)
-        }
     }
 }
