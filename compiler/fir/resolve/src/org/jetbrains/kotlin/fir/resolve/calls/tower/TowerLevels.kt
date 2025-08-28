@@ -172,8 +172,6 @@ class MemberScopeTowerLevel(
                     givenExtensionReceiverOptions,
                     scope
                 )
-            } else if (candidate is FirClassLikeSymbol<*>) {
-                output.consumeCandidate(candidate, null, givenExtensionReceiverOptions, scope)
             }
         }
     }
