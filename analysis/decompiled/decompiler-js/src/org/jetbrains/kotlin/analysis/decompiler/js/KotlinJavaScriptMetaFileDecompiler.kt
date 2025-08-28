@@ -29,7 +29,8 @@ private object KotlinJavaScriptMetadataStubBuilder : KotlinMetadataStubBuilder()
     override val supportedFileType: FileType get() = KotlinJavaScriptMetaFileType
     override val expectedBinaryVersion: BinaryVersion get() = JsMetadataVersion.INSTANCE
 
-    override fun readFile(virtualFile: VirtualFile, content: ByteArray): FileWithMetadata {
+    override fun readFile(virtualFile: VirtualFile, content: ByteArray?): FileWithMetadata {
+        val content = content ?: virtualFile.contentsToByteArray(false)
         val stream = ByteArrayInputStream(content)
 
         val version = JsMetadataVersion.readFrom(stream)

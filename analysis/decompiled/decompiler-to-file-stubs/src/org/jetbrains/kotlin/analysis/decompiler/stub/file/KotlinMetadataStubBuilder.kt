@@ -31,7 +31,7 @@ import java.io.IOException
 abstract class KotlinMetadataStubBuilder : ClsStubBuilder() {
     protected abstract val supportedFileType: FileType
     protected abstract val expectedBinaryVersion: BinaryVersion
-    protected abstract fun readFile(virtualFile: VirtualFile, content: ByteArray): FileWithMetadata?
+    protected abstract fun readFile(virtualFile: VirtualFile, content: ByteArray?): FileWithMetadata?
 
     /**
      * Whether the [file] is supported, so it might have a stub
@@ -48,7 +48,7 @@ abstract class KotlinMetadataStubBuilder : ClsStubBuilder() {
 
     fun readFileSafely(file: VirtualFile, content: ByteArray? = null): FileWithMetadata? = try {
         if (file.isValid) {
-            readFile(file, content ?: file.contentsToByteArray(false))
+            readFile(file, content)
         } else {
             null
         }

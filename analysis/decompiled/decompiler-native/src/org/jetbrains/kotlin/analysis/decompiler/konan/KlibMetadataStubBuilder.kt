@@ -23,7 +23,7 @@ internal object KlibMetadataStubBuilder : KotlinMetadataStubBuilder() {
 
     override fun readFile(
         virtualFile: VirtualFile,
-        content: ByteArray,
+        content: ByteArray?,
     ): FileWithMetadata? {
         val klibMetadataLoadingCache = KlibLoadingMetadataCache.getInstance()
         val (fragment, version) = klibMetadataLoadingCache.getCachedPackageFragmentWithVersion(virtualFile)
