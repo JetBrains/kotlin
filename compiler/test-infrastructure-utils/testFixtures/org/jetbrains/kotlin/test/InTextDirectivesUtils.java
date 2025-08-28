@@ -249,7 +249,7 @@ public final class InTextDirectivesUtils {
     }
 
     public static boolean isCompatibleTarget(@NotNull TargetBackend targetBackend, @NotNull File file) {
-        return isCompatibleTarget(targetBackend, file, /*separatedDirectiveValues=*/false);
+        return isCompatibleTarget(targetBackend, file, /*separatedDirectiveValues=*/true);
     }
 
     public static boolean isCompatibleTarget(@NotNull TargetBackend targetBackend, @NotNull File file, boolean separatedDirectiveValues) {
