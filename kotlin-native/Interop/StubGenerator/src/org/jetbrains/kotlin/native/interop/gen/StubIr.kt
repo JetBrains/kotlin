@@ -201,6 +201,7 @@ sealed class AnnotationStub(val classifier: Classifier) {
         object CString : CCall(cCallClassifier.nested("CString"))
         object WCString : CCall(cCallClassifier.nested("WCString"))
         class Symbol(val symbolName: String) : CCall(cCallClassifier)
+        class Direct(val name: String) : CCall(cCallClassifier.nested("Direct"))
     }
 
     class CStruct(val struct: String) : AnnotationStub(cStructClassifier) {

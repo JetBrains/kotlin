@@ -34,10 +34,17 @@ class InteropConfiguration(
         val allowedOverloadsForCFunctions: Set<String>,
         val disableDesignatedInitializerChecks: Boolean,
         val disableExperimentalAnnotation: Boolean,
-        val target: KonanTarget
+        val target: KonanTarget,
+        val cCallMode: CCallMode,
 )
 
 enum class KotlinPlatform {
     JVM,
     NATIVE
+}
+
+enum class CCallMode {
+    INDIRECT,
+    BOTH,
+    DIRECT,
 }
