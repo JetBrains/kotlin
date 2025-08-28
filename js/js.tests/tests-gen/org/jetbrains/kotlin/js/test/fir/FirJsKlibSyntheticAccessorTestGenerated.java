@@ -1414,6 +1414,12 @@ public class FirJsKlibSyntheticAccessorTestGenerated extends AbstractFirJsKlibSy
       }
 
       @Test
+      @TestMetadata("leakingPrivateFunWithContextParameterThroughInternalInline.kt")
+      public void testLeakingPrivateFunWithContextParameterThroughInternalInline() {
+        runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossFilePrivateLeak/leakingPrivateFunWithContextParameterThroughInternalInline.kt");
+      }
+
+      @Test
       @TestMetadata("leakingPrivateTopLevelFun.kt")
       public void testLeakingPrivateTopLevelFun() {
         runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossFilePrivateLeak/leakingPrivateTopLevelFun.kt");
@@ -1718,6 +1724,12 @@ public class FirJsKlibSyntheticAccessorTestGenerated extends AbstractFirJsKlibSy
       }
 
       @Test
+      @TestMetadata("leakingPrivateFunWithContextParameterThroughInternalInline.kt")
+      public void testLeakingPrivateFunWithContextParameterThroughInternalInline() {
+        runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossModulePrivateLeak/leakingPrivateFunWithContextParameterThroughInternalInline.kt");
+      }
+
+      @Test
       @TestMetadata("leakingPrivateTopLevelFun.kt")
       public void testLeakingPrivateTopLevelFun() {
         runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossModulePrivateLeak/leakingPrivateTopLevelFun.kt");
@@ -2007,6 +2019,12 @@ public class FirJsKlibSyntheticAccessorTestGenerated extends AbstractFirJsKlibSy
       @TestMetadata("leakingPrivateFunThroughReferenceInPublicInlineFun.kt")
       public void testLeakingPrivateFunThroughReferenceInPublicInlineFun() {
         runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/singleFile/leakingPrivateFunThroughReferenceInPublicInlineFun.kt");
+      }
+
+      @Test
+      @TestMetadata("leakingPrivateFunWithContextParameterThroughInternalInline.kt")
+      public void testLeakingPrivateFunWithContextParameterThroughInternalInline() {
+        runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/singleFile/leakingPrivateFunWithContextParameterThroughInternalInline.kt");
       }
 
       @Test
