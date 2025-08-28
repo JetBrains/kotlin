@@ -80,6 +80,12 @@ public class DataFrameBlackBoxCodegenTestGenerated extends AbstractDataFrameBlac
   }
 
   @Test
+  @TestMetadata("columnName_modifyColumn.kt")
+  public void testColumnName_modifyColumn() {
+    runTest("plugins/kotlin-dataframe/testData/box/columnName_modifyColumn.kt");
+  }
+
+  @Test
   @TestMetadata("columnOf_nested.kt")
   public void testColumnOf_nested() {
     runTest("plugins/kotlin-dataframe/testData/box/columnOf_nested.kt");
