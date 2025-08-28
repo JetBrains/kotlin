@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.serialization.deserialization.getClassId
 import java.io.ByteArrayInputStream
 
 class KotlinBuiltInDecompiler : KotlinMetadataDecompiler() {
-    override val metadataStubBuilder: KotlinMetadataStubBuilder get() = KotlinBuiltInMetadataStubBuilder
+    override fun getStubBuilder(): KotlinMetadataStubBuilder = KotlinBuiltInMetadataStubBuilder
     override fun createFile(viewProvider: KotlinDecompiledFileViewProvider): KtDecompiledFile = KotlinBuiltinsDecompiledFile(viewProvider)
 }
 

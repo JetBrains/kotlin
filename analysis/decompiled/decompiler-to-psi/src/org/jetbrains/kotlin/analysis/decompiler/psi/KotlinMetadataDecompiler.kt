@@ -5,22 +5,19 @@
 
 package org.jetbrains.kotlin.analysis.decompiler.psi
 
-import com.intellij.openapi.fileTypes.FileType
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiManager
 import com.intellij.psi.compiled.ClassFileDecompilers
-import com.intellij.psi.compiled.ClsStubBuilder
 import org.jetbrains.kotlin.analysis.decompiler.psi.file.KtDecompiledFile
 import org.jetbrains.kotlin.analysis.decompiler.stub.file.KotlinMetadataStubBuilder
 
 abstract class KotlinMetadataDecompiler : ClassFileDecompilers.Full() {
-    protected abstract val metadataStubBuilder: KotlinMetadataStubBuilder
+    final override fun accepts(file: VirtualFile): Boolean {
+        val supportedType = stubBuilder.fileType
+        return file.extension == supportedType.defaultExtension || file.fileType == supportedType
+    }
 
-    private val fileType: FileType get() = metadataStubBuilder.fileType
-
-    override fun accepts(file: VirtualFile) = file.extension == fileType.defaultExtension || file.fileType == fileType
-
-    override fun getStubBuilder(): ClsStubBuilder = metadataStubBuilder
+    abstract override fun getStubBuilder(): KotlinMetadataStubBuilder
 
     protected abstract fun createFile(viewProvider: KotlinDecompiledFileViewProvider): KtDecompiledFile
 
@@ -30,7 +27,7 @@ abstract class KotlinMetadataDecompiler : ClassFileDecompilers.Full() {
         physical: Boolean,
     ): KotlinDecompiledFileViewProvider = KotlinDecompiledFileViewProvider(manager, file, physical) { provider ->
         val virtualFile = provider.virtualFile
-        if (metadataStubBuilder.readFileSafely(virtualFile) != null) {
+        if (stubBuilder.readFileSafely(virtualFile) != null) {
             createFile(provider)
         } else {
             null
