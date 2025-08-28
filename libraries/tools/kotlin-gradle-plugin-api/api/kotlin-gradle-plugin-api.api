@@ -943,7 +943,6 @@ public abstract interface class org/jetbrains/kotlin/gradle/plugin/KotlinCompila
 	public abstract fun kotlinOptions (Lkotlin/jvm/functions/Function1;)V
 	public abstract fun kotlinOptions (Lorg/gradle/api/Action;)V
 	public abstract fun setCompileDependencyFiles (Lorg/gradle/api/file/FileCollection;)V
-	public abstract fun source (Lorg/jetbrains/kotlin/gradle/plugin/KotlinSourceSet;)V
 }
 
 public final class org/jetbrains/kotlin/gradle/plugin/KotlinCompilation$Companion {
