@@ -40,7 +40,7 @@ object FirOuterClassArgumentsRequiredChecker : FirRegularClassChecker(MppChecker
         val delegatedTypeRef = typeRef.delegatedTypeRef
 
         if (delegatedTypeRef is FirUserTypeRef && type is ConeClassLikeType) {
-            val symbol = type.lookupTag.toSymbol(context.session)
+            val symbol = type.lookupTag.toSymbol()
 
             if (symbol is FirRegularClassSymbol) {
                 val typeArguments = delegatedTypeRef.qualifier.toTypeProjections()

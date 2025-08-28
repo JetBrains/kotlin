@@ -30,7 +30,7 @@ object FirSealedClassConstructorCallChecker : FirQualifiedAccessExpressionChecke
         val constructorSymbol = expression.calleeReference.toResolvedConstructorSymbol(discardErrorReference = true) ?: return
 
         val typeSymbol = constructorSymbol.resolvedReturnTypeRef.coneType.fullyExpandedType()
-            .classLikeLookupTagIfAny?.toRegularClassSymbol(context.session)
+            .classLikeLookupTagIfAny?.toRegularClassSymbol()
             ?: return
 
         if (typeSymbol.modality == Modality.SEALED && !typeSymbol.isAllowedJavaNonAbstractSealedClass()) {

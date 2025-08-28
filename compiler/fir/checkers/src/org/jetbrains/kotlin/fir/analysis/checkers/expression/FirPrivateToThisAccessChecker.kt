@@ -45,7 +45,7 @@ object FirPrivateToThisAccessChecker : FirQualifiedAccessExpressionChecker(MppCh
         val symbol = reference.toResolvedCallableSymbol(discardErrorReference = true) ?: return
         if (symbol.visibility != Visibilities.Private) return
         val session = context.session
-        val containingClassSymbol = symbol.containingClassLookupTag()?.toClassSymbol(session)
+        val containingClassSymbol = symbol.containingClassLookupTag()?.toClassSymbol()
 
         if (!isPrivateToThis(symbol.unwrapFakeOverrides(), containingClassSymbol, session)) return
 

@@ -32,7 +32,7 @@ object FirNativeForwardDeclarationReifiedChecker : FirQualifiedAccessExpressionC
             val typeArgument = typeArgumentProjection.toConeTypeProjection().type ?: continue
             val typeParameter = typeParameters[index]
 
-            if (typeParameter.isReified && typeArgument.toRegularClassSymbol(context.session)?.forwardDeclarationKindOrNull() != null) {
+            if (typeParameter.isReified && typeArgument.toRegularClassSymbol()?.forwardDeclarationKindOrNull() != null) {
                 reporter.reportOn(
                     source,
                     FirNativeErrors.FORWARD_DECLARATION_AS_REIFIED_TYPE_ARGUMENT,

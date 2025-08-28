@@ -22,7 +22,7 @@ object FirAbstractClassInstantiationChecker : FirQualifiedAccessExpressionChecke
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(expression: FirQualifiedAccessExpression) {
         val constructorSymbol = expression.calleeReference.toResolvedConstructorSymbol() ?: return
-        val declarationClass = constructorSymbol.resolvedReturnTypeRef.coneType.toRegularClassSymbol(context.session) ?: return
+        val declarationClass = constructorSymbol.resolvedReturnTypeRef.coneType.toRegularClassSymbol() ?: return
 
         if (declarationClass.isAbstract && declarationClass.classKind == ClassKind.CLASS) {
             val source = when (expression) {

@@ -75,7 +75,7 @@ object FirJvmExposeBoxedChecker : FirBasicDeclarationChecker(MppCheckerKind.Comm
                 reporter.reportOn(jvmExposeBoxedAnnotation.source, FirJvmErrors.JVM_EXPOSE_BOXED_CANNOT_EXPOSE_SYNTHETIC)
             }
 
-            if (!declaration.isFinal && declaration.containingClassLookupTag()?.toRegularClassSymbol(context.session)?.isFinal == false) {
+            if (!declaration.isFinal && declaration.containingClassLookupTag()?.toRegularClassSymbol()?.isFinal == false) {
                 reporter.reportOn(jvmExposeBoxedAnnotation.source, FirJvmErrors.JVM_EXPOSE_BOXED_CANNOT_EXPOSE_OPEN_ABSTRACT)
             }
 

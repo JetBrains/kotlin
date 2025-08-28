@@ -20,7 +20,7 @@ internal fun ConeKotlinType.isTypeVisibilityBroken(
 ): Boolean {
 
     val visibilityChecker = context.session.visibilityChecker
-    val classSymbol = toClassSymbol(context.session)
+    val classSymbol = toClassSymbol()
     val containingFile = context.containingFileSymbol
     if (classSymbol == null || containingFile == null) return false
     if (

@@ -126,7 +126,7 @@ internal interface FirMissingDependencyClassProxy {
                 } else {
                     considerType(delegatedType, missingTypes)
                 }
-            } else if (type.lookupTag.toSymbol(context.session) == null) {
+            } else if (type.lookupTag.toSymbol() == null) {
                 (missingClasses ?: mutableSetOf<ConeClassLikeType>().also { missingClasses = it }) +=
                     type.lookupTag.constructClassType()
             }

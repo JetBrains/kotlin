@@ -78,7 +78,7 @@ object FirNotImplementedOverrideChecker : FirClassChecker(MppCheckerKind.Platfor
         fun DelegatedWrapperData<FirCallableDeclaration>.isIncorrectlyDelegated(): Boolean {
             if (classKind != ClassKind.OBJECT) return false
             val delegateFieldType = delegateFieldSymbol.resolvedInitializer?.resolvedType?.fullyExpandedType()
-            return (delegateFieldType as? ConeClassLikeType)?.lookupTag?.toSymbol(session) == classSymbol
+            return (delegateFieldType as? ConeClassLikeType)?.lookupTag?.toSymbol() == classSymbol
         }
 
         @OptIn(ScopeFunctionRequiresPrewarm::class) // The symbol is coming from a call to process*ByName
@@ -223,13 +223,13 @@ object FirNotImplementedOverrideChecker : FirClassChecker(MppCheckerKind.Platfor
                         it.modality == Modality.ABSTRACT
                     }
                 if (implIntersections.any {
-                        it.containingClassLookupTag()?.toRegularClassSymbol(session)?.classKind == ClassKind.CLASS
+                        it.containingClassLookupTag()?.toRegularClassSymbol()?.classKind == ClassKind.CLASS
                     }
                 ) {
                     reporter.reportOn(source, MANY_IMPL_MEMBER_NOT_IMPLEMENTED, classSymbol, notImplementedIntersectionSymbol)
                 } else {
                     if (canHaveAbstractDeclarations && abstractIntersections.any {
-                            it.containingClassLookupTag()?.toRegularClassSymbol(session)?.classKind == ClassKind.CLASS
+                            it.containingClassLookupTag()?.toRegularClassSymbol()?.classKind == ClassKind.CLASS
                         }
                     ) {
                         return

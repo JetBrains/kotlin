@@ -77,7 +77,7 @@ object FirPrimaryConstructorSuperTypeChecker : FirClassChecker(MppCheckerKind.Co
         // No need to check implicit call to the constructor of `kotlin.Any`.
         val constructedTypeRef = delegatedConstructorCall.constructedTypeRef
         if (constructedTypeRef is FirImplicitAnyTypeRef || constructedTypeRef.source?.kind == KtFakeSourceElementKind.PluginGenerated) return
-        val superClassSymbol = constructedTypeRef.coneType.toRegularClassSymbol(context.session) ?: return
+        val superClassSymbol = constructedTypeRef.coneType.toRegularClassSymbol() ?: return
         // Subclassing a singleton should be reported as SINGLETON_IN_SUPERTYPE
         if (superClassSymbol.classKind.isSingleton) return
         if (regularClass.isEffectivelyExpect(containingClass) ||

@@ -93,7 +93,7 @@ private fun buildDeepSubstitutionMultimap(
             val fullyExpandedType = superTypeRef.coneType.fullyExpandedType()
             if (!visitedSupertypes.add(fullyExpandedType)) continue
 
-            val superClassSymbol = fullyExpandedType.toRegularClassSymbol(session)
+            val superClassSymbol = fullyExpandedType.toRegularClassSymbol()
             if (!fullyExpandedType.isEnum && superClassSymbol != null) {
                 fillInDeepSubstitutor(fullyExpandedType.typeArguments, superClassSymbol)
             }

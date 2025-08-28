@@ -34,7 +34,7 @@ object FirUnsupportedArrayLiteralChecker : FirArrayLiteralChecker(MppCheckerKind
     context(context: CheckerContext)
     private fun isInsideAnnotationCall(): Boolean = context.callsOrAssignments.asReversed().any {
         when (it) {
-            is FirFunctionCall -> it.resolvedType.toRegularClassSymbol(context.session)?.classKind == ClassKind.ANNOTATION_CLASS
+            is FirFunctionCall -> it.resolvedType.toRegularClassSymbol()?.classKind == ClassKind.ANNOTATION_CLASS
             is FirAnnotationCall -> true
             else -> false
         }
@@ -42,6 +42,6 @@ object FirUnsupportedArrayLiteralChecker : FirArrayLiteralChecker(MppCheckerKind
 
     context(context: CheckerContext)
     private fun isInsideAnnotationConstructor(): Boolean {
-        return context.findClosest<FirConstructorSymbol>()?.resolvedReturnType?.toRegularClassSymbol(context.session)?.classKind == ClassKind.ANNOTATION_CLASS
+        return context.findClosest<FirConstructorSymbol>()?.resolvedReturnType?.toRegularClassSymbol()?.classKind == ClassKind.ANNOTATION_CLASS
     }
 }

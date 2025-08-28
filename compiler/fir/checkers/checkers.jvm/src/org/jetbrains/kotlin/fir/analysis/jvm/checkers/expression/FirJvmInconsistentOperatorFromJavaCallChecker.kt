@@ -64,7 +64,7 @@ object FirJvmInconsistentOperatorFromJavaCallChecker : FirFunctionCallChecker(Mp
         }
 
         // Check explicitly overridden contains
-        val containingClass = containingClassLookupTag()?.toRegularClassSymbol(context.session) ?: return false
+        val containingClass = containingClassLookupTag()?.toRegularClassSymbol() ?: return false
         val overriddenFunctions = overriddenFunctions(containingClass)
         for (overriddenFunction in overriddenFunctions) {
             if (overriddenFunction is FirNamedFunctionSymbol && overriddenFunction.check(source)) {

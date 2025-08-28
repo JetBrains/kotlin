@@ -183,7 +183,7 @@ object FirInlineDeclarationChecker : FirFunctionChecker(MppCheckerKind.Common) {
 
         private fun FirStatement.localDispatchReceiver(): ConeKotlinType? =
             (this as? FirQualifiedAccessExpression)?.dispatchReceiver?.resolvedType?.takeIf {
-                it.toClassLikeSymbol(session)?.effectiveVisibility == EffectiveVisibility.Local
+                it.toClassLikeSymbol()?.effectiveVisibility == EffectiveVisibility.Local
             }
 
         internal data class AccessedDeclarationVisibilityData(
@@ -246,7 +246,7 @@ object FirInlineDeclarationChecker : FirFunctionChecker(MppCheckerKind.Common) {
 
             if (receiver is FirSuperReceiverExpression) {
                 val dispatchReceiverType = receiver.dispatchReceiver?.resolvedType
-                val classSymbol = dispatchReceiverType?.toSymbol(session) ?: return
+                val classSymbol = dispatchReceiverType?.toSymbol() ?: return
                 if (!classSymbol.isDefinedInInlineFunction()) {
                     reporter.reportOn(
                         receiver.source,
@@ -276,7 +276,7 @@ object FirInlineDeclarationChecker : FirFunctionChecker(MppCheckerKind.Common) {
         }
 
         private fun FirBasedSymbol<*>.isInsidePrivateClass(): Boolean {
-            val containingClassSymbol = this.getOwnerLookupTag()?.toSymbol(session) ?: return false
+            val containingClassSymbol = getOwnerLookupTag()?.toSymbol() ?: return false
 
             val containingClassVisibility = when (containingClassSymbol) {
                 is FirAnonymousObjectSymbol -> return false

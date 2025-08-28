@@ -39,7 +39,7 @@ object FirJavaAnnotationsChecker : FirAnnotationChecker(MppCheckerKind.Common) {
     override fun check(expression: FirAnnotation) {
         if (context.containingDeclarations.lastOrNull()?.source?.kind != KtRealSourceElementKind) return
         val annotationType = expression.annotationTypeRef.coneType.abbreviatedTypeOrSelf
-        val classSymbol = annotationType.classLikeLookupTagIfAny?.toClassSymbol(context.session) ?: return
+        val classSymbol = annotationType.classLikeLookupTagIfAny?.toClassSymbol() ?: return
         if (classSymbol.origin !is FirDeclarationOrigin.Java) return
 
         val lookupTag = classSymbol.toLookupTag()

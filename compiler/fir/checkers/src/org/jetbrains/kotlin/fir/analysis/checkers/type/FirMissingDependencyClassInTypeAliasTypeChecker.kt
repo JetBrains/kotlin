@@ -30,7 +30,7 @@ object FirMissingDependencyClassInTypeAliasTypeChecker : FirResolvedTypeRefCheck
          * And if we used the [org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol], we would get a false-positive
          * [FirErrors.MISSING_DEPENDENCY_CLASS] in addition.
          */
-        val expandedSymbol = fullyExpandedType.toSymbol(context.session)
+        val expandedSymbol = fullyExpandedType.toSymbol()
         if (expandedSymbol == null) {
             /**
              * Use the error [FirErrors.MISSING_DEPENDENCY_CLASS] without deprecation cycle if the type arguments are not empty.

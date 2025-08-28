@@ -31,7 +31,7 @@ object FirVarargWithNonTrivialUpperBoundInferredToNothingChecker : FirFunctionCa
             .filter { it.isVararg }
             .mapNotNull { valueParameter ->
                 val varargType = valueParameter.resolvedReturnTypeRef.coneType.arrayElementTypeArgument()?.type ?: return@mapNotNull null
-                varargType.toTypeParameterSymbol(context.session)
+                varargType.toTypeParameterSymbol()
                     ?.takeUnless { it.isReified } // reified parameters are covered with FirReifiedChecker
             }
             .takeIf { it.isNotEmpty() }

@@ -35,7 +35,7 @@ object FirDataClassCopyUsageWillBecomeInaccessibleChecker : FirQualifiedAccessEx
     override fun check(expression: FirQualifiedAccessExpression) {
         if (expression !is FirFunctionCall && expression !is FirCallableReferenceAccess) return
         val copyFunction = expression.calleeReference.symbol as? FirCallableSymbol ?: return
-        val dataClass = copyFunction.containingClassLookupTag()?.toRegularClassSymbol(context.session) ?: return
+        val dataClass = copyFunction.containingClassLookupTag()?.toRegularClassSymbol() ?: return
         if (copyFunction.isDataClassCopy(dataClass, context.session)) {
             val dataClassConstructor = dataClass.primaryConstructorIfAny(context.session) ?: return
 

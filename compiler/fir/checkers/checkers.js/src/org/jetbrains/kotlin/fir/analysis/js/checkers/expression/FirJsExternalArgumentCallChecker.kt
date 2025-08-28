@@ -29,7 +29,7 @@ object FirJsExternalArgumentCallChecker : FirCallChecker(MppCheckerKind.Common) 
             if (parameter.hasAnnotation(JsExternalArgument, context.session)) {
                 val unwrappedArg = argument.unwrapArgument()
                 val type = unwrappedArg.resolvedType
-                val symbol = type.toRegularClassSymbol(context.session)
+                val symbol = type.toRegularClassSymbol()
                 if (symbol?.isEffectivelyExternal(context.session) == false || type is ConeDynamicType) {
                     reporter.reportOn(
                         unwrappedArg.source,

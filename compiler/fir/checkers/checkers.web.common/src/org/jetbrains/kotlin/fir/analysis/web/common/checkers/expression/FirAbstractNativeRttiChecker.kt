@@ -32,7 +32,7 @@ abstract class FirAbstractNativeRttiChecker(
 
     context(context: CheckerContext, reporter: DiagnosticReporter)
     private fun checkGetClassCall(expression: FirGetClassCall) {
-        val declarationToCheck = expression.argument.resolvedType.toRegularClassSymbol(context.session) ?: return
+        val declarationToCheck = expression.argument.resolvedType.toRegularClassSymbol() ?: return
 
         if (expression.arguments.firstOrNull() !is FirResolvedQualifier) {
             return

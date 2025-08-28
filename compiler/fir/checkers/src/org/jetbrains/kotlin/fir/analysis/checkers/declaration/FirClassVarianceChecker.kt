@@ -155,7 +155,7 @@ object FirClassVarianceChecker : FirClassChecker(MppCheckerKind.Common) {
 
         if (type is ConeClassLikeType) {
             val fullyExpandedType = type.fullyExpandedType()
-            val classSymbol = fullyExpandedType.lookupTag.toSymbol(context.session)
+            val classSymbol = fullyExpandedType.lookupTag.toSymbol()
             if (classSymbol is FirClassSymbol<*>) {
                 val typeRefAndSourcesForArguments = extractArgumentsTypeRefAndSource(typeRef)
                 for ((index, typeArgument) in fullyExpandedType.typeArguments.withIndex()) {

@@ -45,7 +45,7 @@ sealed class FirJsExternalInheritorOnlyChecker(mppKind: MppCheckerKind) : FirCla
         val done = hashSetOf<FirRegularClassSymbol>()
 
         while (todo.isNotEmpty()) {
-            val classSymbol = todo.popLast().toRegularClassSymbol(context.session) ?: continue
+            val classSymbol = todo.popLast().toRegularClassSymbol() ?: continue
             if (done.add(classSymbol)) {
                 f(classSymbol)
                 classSymbol.resolvedSuperTypeRefs.mapNotNullTo(todo) { it.coneType as? ConeClassLikeType }

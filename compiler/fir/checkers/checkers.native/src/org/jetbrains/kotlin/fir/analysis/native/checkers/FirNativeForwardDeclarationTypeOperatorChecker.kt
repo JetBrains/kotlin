@@ -30,7 +30,7 @@ object FirNativeForwardDeclarationTypeOperatorChecker : FirTypeOperatorCallCheck
 
         when (expression.operation) {
             FirOperation.AS, FirOperation.SAFE_AS -> {
-                val sourceClass = expression.argument.resolvedType.toRegularClassSymbol(context.session)
+                val sourceClass = expression.argument.resolvedType.toRegularClassSymbol()
                 // It can make sense to avoid warning if sourceClass is subclass of class with such property,
                 // but for the sake of simplicity, we don't do it now.
                 if (sourceClass != null && sourceClass.classKind == fwdKind.classKind && sourceClass.name == declarationToCheck.name) {

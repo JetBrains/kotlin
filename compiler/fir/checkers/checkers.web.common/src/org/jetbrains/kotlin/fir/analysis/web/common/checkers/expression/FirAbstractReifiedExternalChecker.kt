@@ -22,7 +22,7 @@ abstract class FirAbstractReifiedExternalChecker(
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(expression: FirFunctionCall) {
         expression.forAllReifiedTypeParameters { type, typeArgument ->
-            val typeSymbol = type.toSymbol(context.session)
+            val typeSymbol = type.toSymbol()
             if (typeSymbol != null && webCheckerUtils.isNativeOrExternalInterface(typeSymbol, context.session)) {
                 reporter.reportOn(
                     typeArgument.source ?: expression.source,

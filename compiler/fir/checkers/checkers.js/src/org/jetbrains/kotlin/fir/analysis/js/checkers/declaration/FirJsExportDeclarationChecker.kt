@@ -222,7 +222,7 @@ object FirJsExportDeclarationChecker : FirBasicDeclarationChecker(MppCheckerKind
         if (typeArguments.isEmpty()) {
             return true
         }
-        val symbol = toRegularClassSymbol(session) ?: return false
+        val symbol = toRegularClassSymbol() ?: return false
         for (i in 0 until typeArguments.size) {
             val parameter = symbol.typeParameterSymbols.getOrNull(i) ?: return false
             if (!typeArguments[i].isExportable(session, parameter, currentlyProcessed)) {
@@ -272,7 +272,7 @@ object FirJsExportDeclarationChecker : FirBasicDeclarationChecker(MppCheckerKind
         val isPrimitiveExportableType = nonNullable.isAny || nonNullable.isNullableAny
                 || nonNullable is ConeDynamicType || nonNullable.isPrimitiveExportableConeKotlinType
 
-        val symbol = expandedType.toSymbol(session)
+        val symbol = expandedType.toSymbol()
 
         return when {
             isPrimitiveExportableType -> true

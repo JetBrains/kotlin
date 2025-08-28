@@ -40,7 +40,7 @@ object FirActualTypeAliasChecker : FirTypeAliasChecker(MppCheckerKind.Common) {
         declaration.checkDefaultArgumentsInExpectWithActualTypeAlias()
 
         val expandedType = declaration.expandedTypeRef.coneType.abbreviatedTypeOrSelf as? ConeClassLikeType ?: return
-        val expandedTypeSymbol = expandedType.toSymbol(context.session) ?: return
+        val expandedTypeSymbol = expandedType.toSymbol() ?: return
 
         if (expandedTypeSymbol is FirTypeAliasSymbol) {
             reporter.reportOn(declaration.source, FirErrors.ACTUAL_TYPE_ALIAS_NOT_TO_CLASS)

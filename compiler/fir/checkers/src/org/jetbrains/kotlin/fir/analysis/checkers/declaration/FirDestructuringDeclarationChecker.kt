@@ -233,7 +233,7 @@ object FirDestructuringDeclarationChecker : FirPropertyChecker(MppCheckerKind.Co
 
     context(context: CheckerContext)
     private fun ConeKotlinType.associatedPropertyName(componentIndex: Int): Name? {
-        val classSymbol = fullyExpandedType().toRegularClassSymbol(context.session) ?: return null
+        val classSymbol = fullyExpandedType().toRegularClassSymbol() ?: return null
         return when {
             classSymbol.isData -> {
                 val constructor = classSymbol.declaredMemberScope().getDeclaredConstructors().firstOrNull { it.isPrimary }

@@ -88,7 +88,7 @@ object FirNativeObjCNameUtilities {
         val objCNames = overriddenSymbols.map { it.getFirstBaseSymbol().getObjCNames(context.session) }
         if (!objCNames.allNamesEquals()) {
             val containingDeclarations = overriddenSymbols.mapNotNull {
-                it.containingClassLookupTag()?.toRegularClassSymbol(context.session)
+                it.containingClassLookupTag()?.toRegularClassSymbol()
             }
             reporter.reportOn(
                 declarationToReport.source,
@@ -102,7 +102,7 @@ object FirNativeObjCNameUtilities {
     context(context: CheckerContext)
     private fun FirCallableSymbol<*>.getFirstBaseSymbol(): FirCallableSymbol<*> {
         val session = context.session
-        val ownScope = containingClassLookupTag()?.toSymbol(session)?.fullyExpandedClass(session)?.unsubstitutedScope()
+        val ownScope = containingClassLookupTag()?.toSymbol()?.fullyExpandedClass(session)?.unsubstitutedScope()
             ?: return this
         val overriddenMemberSymbols = ownScope.getDirectOverriddenSafe(this).map { it.unwrapSubstitutionOverrides() }
         return if (overriddenMemberSymbols.isEmpty()) this else overriddenMemberSymbols.first().getFirstBaseSymbol()

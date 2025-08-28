@@ -33,7 +33,7 @@ object FirJavaClassOnCompanionChecker : FirPropertyAccessExpressionChecker(MppCh
 
         val actualType = expression.resolvedType as? ConeClassLikeType ?: return
         val projectionType = (actualType.typeArguments.singleOrNull() as? ConeKotlinTypeProjection)?.type ?: return
-        val projectionClassSymbol = projectionType.toRegularClassSymbol(context.session)
+        val projectionClassSymbol = projectionType.toRegularClassSymbol()
         if (projectionClassSymbol?.isCompanion != true) return
 
         val containingClassSymbol = projectionClassSymbol.getContainingClassSymbol() ?: return

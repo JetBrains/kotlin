@@ -50,7 +50,7 @@ object FirUpperBoundViolatedQualifiedAccessExpressionChecker : FirQualifiedAcces
                 it.withSourceRecursive(expression)
             }
 
-            typeParameters = constructedType.toRegularClassSymbol(context.session)?.typeParameterSymbols ?: return
+            typeParameters = constructedType.toRegularClassSymbol()?.typeParameterSymbols ?: return
         } else {
             typeArguments = expression.typeArguments.toTypeArgumentsWithSourceInfo()
             typeParameters = calleeSymbol?.typeParameterSymbols ?: return
