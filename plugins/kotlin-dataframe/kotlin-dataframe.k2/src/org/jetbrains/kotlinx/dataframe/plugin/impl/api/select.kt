@@ -1,9 +1,8 @@
 package org.jetbrains.kotlinx.dataframe.plugin.impl.api
 
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
+import org.jetbrains.kotlin.fir.types.constructClassLikeType
 import org.jetbrains.kotlin.fir.types.isMarkedNullable
 import org.jetbrains.kotlin.fir.types.isSubtypeOf
 import org.jetbrains.kotlinx.dataframe.api.asColumnGroup
@@ -212,15 +211,11 @@ private fun Arguments.colsOf(cols: List<ColumnWithPathApproximation>, type: Cone
 fun SimpleCol.isColOf(type: ConeKotlinType, session: FirSession): Boolean {
     val columnType = when (this) {
         is SimpleDataColumn -> this.type.type
-        is SimpleColumnGroup -> ConeClassLikeTypeImpl(
-            ConeClassLikeLookupTagImpl(Names.DATA_ROW_CLASS_ID),
-            typeArguments = arrayOf(session.builtinTypes.anyType.coneType),
-            isMarkedNullable = false
+        is SimpleColumnGroup -> Names.DATA_ROW_CLASS_ID.constructClassLikeType(
+            typeArguments = arrayOf(session.builtinTypes.anyType.coneType)
         )
-        is SimpleFrameColumn -> ConeClassLikeTypeImpl(
-            ConeClassLikeLookupTagImpl(Names.DF_CLASS_ID),
-            typeArguments = arrayOf(session.builtinTypes.anyType.coneType),
-            isMarkedNullable = false
+        is SimpleFrameColumn -> Names.DF_CLASS_ID.constructClassLikeType(
+            typeArguments = arrayOf(session.builtinTypes.anyType.coneType)
         )
     }
     return columnType.isSubtypeOf(type, session)

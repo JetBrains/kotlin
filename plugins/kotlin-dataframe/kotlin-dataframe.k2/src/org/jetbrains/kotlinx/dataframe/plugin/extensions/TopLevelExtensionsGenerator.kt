@@ -15,13 +15,11 @@ import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.resolve.toClassLikeSymbol
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.scopes.impl.toConeType
-import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -160,8 +158,7 @@ fun FirDeclarationGenerationExtension.buildExtensionPropertiesApi(
             ?.hasAnnotation(Names.DATA_SCHEMA_CLASS_ID, session) == true
     ) {
         require(columnGroupProjection == null)
-        resolvedReturnType = ConeClassLikeTypeImpl(
-            ConeClassLikeLookupTagImpl(Names.DF_CLASS_ID),
+        resolvedReturnType = Names.DF_CLASS_ID.constructClassLikeType(
             typeArguments = arrayOf(resolvedReturnType.typeArguments[0]),
             isMarkedNullable = false
         )

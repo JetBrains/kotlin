@@ -19,13 +19,12 @@ import org.jetbrains.kotlin.fir.plugin.createConstructor
 import org.jetbrains.kotlin.fir.plugin.createMemberProperty
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
-import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
-import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
+import org.jetbrains.kotlin.fir.types.constructClassLikeType
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
@@ -63,10 +62,8 @@ class TokenGenerator(session: FirSession) : FirDeclarationGenerationExtension(se
                     val callableId = CallableId(k.classId, propertyName.identifier)
                     val dataRowExtension = generateExtensionProperty(
                         callableIdOrSymbol = CallableIdOrSymbol.Id(callableId),
-                        receiverType = ConeClassLikeTypeImpl(
-                            ConeClassLikeLookupTagImpl(Names.DATA_ROW_CLASS_ID),
-                            typeArguments = arrayOf(schemaProperty.marker),
-                            isMarkedNullable = false
+                        receiverType = Names.DATA_ROW_CLASS_ID.constructClassLikeType(
+                            typeArguments = arrayOf(schemaProperty.marker)
                         ),
                         propertyName = propertyName,
                         returnType = schemaProperty.dataRowReturnType,
@@ -77,10 +74,8 @@ class TokenGenerator(session: FirSession) : FirDeclarationGenerationExtension(se
 
                     val columnContainerExtension = generateExtensionProperty(
                         callableIdOrSymbol = CallableIdOrSymbol.Id(callableId),
-                        receiverType = ConeClassLikeTypeImpl(
-                            ConeClassLikeLookupTagImpl(Names.COLUMNS_SCOPE_CLASS_ID),
-                            typeArguments = arrayOf(schemaProperty.marker),
-                            isMarkedNullable = false
+                        receiverType = Names.COLUMNS_SCOPE_CLASS_ID.constructClassLikeType(
+                            typeArguments = arrayOf(schemaProperty.marker)
                         ),
                         propertyName = propertyName,
                         returnType = schemaProperty.columnContainerReturnType,
