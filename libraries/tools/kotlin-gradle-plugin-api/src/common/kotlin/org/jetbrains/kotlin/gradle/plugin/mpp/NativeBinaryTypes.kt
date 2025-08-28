@@ -7,7 +7,6 @@
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import org.gradle.api.Named
-import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.util.*
@@ -44,11 +43,6 @@ enum class NativeBuildType(
      */
     override fun getName(): String = name.lowercase()
 
-    /** @suppress **/
-    @OptIn(InternalKotlinGradlePluginApi::class)
-    @Suppress("DEPRECATION_ERROR", "UNUSED_PARAMETER")
-    @Deprecated(BITCODE_EMBEDDING_DEPRECATION_MESSAGE, level = DeprecationLevel.ERROR, replaceWith = ReplaceWith(""))
-    fun embedBitcode(target: KonanTarget) = BitcodeEmbeddingMode.DISABLE
 
     /** @suppress **/
     companion object {
@@ -136,20 +130,3 @@ enum class NativeOutputKind(
  * @property BITCODE Bitcode is embedded as part of the binary, allowing later optimization.
  * @property MARKER Only a placeholder marker is embedded instead of actual bitcode.
  */
-@OptIn(InternalKotlinGradlePluginApi::class)
-@Deprecated(BITCODE_EMBEDDING_DEPRECATION_MESSAGE, level = DeprecationLevel.ERROR)
-enum class BitcodeEmbeddingMode {
-    /** Don't embed LLVM IR bitcode. */
-    DISABLE,
-
-    /** Embed LLVM IR bitcode as data. */
-    BITCODE,
-
-    /** Embed placeholder LLVM IR data as a marker. */
-    MARKER,
-}
-
-/** @suppress **/
-@InternalKotlinGradlePluginApi
-const val BITCODE_EMBEDDING_DEPRECATION_MESSAGE =
-    "Bitcode embedding is not supported anymore. Configuring it has no effect. The corresponding DSL parameters will be removed in Kotlin 2.3"
