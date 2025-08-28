@@ -164,7 +164,11 @@ class KotlinMocha internal constructor(
         return value?.let { listOf(cli, it) } ?: emptyList()
     }
 
-    @Deprecated(message = CREATE_TEST_EXEC_SPEC_DEPRECATION_MSG)
+    @Deprecated(
+        CREATE_TEST_EXEC_SPEC_DEPRECATION_MSG,
+        ReplaceWith("createTestExecutionSpec(task, launchOpts, nodeJsArgs, debug)"),
+        DeprecationLevel.ERROR
+    )
     override fun createTestExecutionSpec(
         task: KotlinJsTest,
         forkOptions: ProcessForkOptions,
