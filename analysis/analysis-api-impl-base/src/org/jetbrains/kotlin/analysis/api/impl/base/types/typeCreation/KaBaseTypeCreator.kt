@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.analysis.api.impl.base.types.typeCreation
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseSessionComponent
+import org.jetbrains.kotlin.analysis.api.impl.base.resolution.KaBaseFunctionValueParameter
 import org.jetbrains.kotlin.analysis.api.impl.base.types.KaBaseStarTypeProjection
 import org.jetbrains.kotlin.analysis.api.impl.base.types.KaBaseTypeArgumentWithVariance
 import org.jetbrains.kotlin.analysis.api.lifetime.validityAsserted
@@ -17,6 +18,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaTypeParameterSymbol
 import org.jetbrains.kotlin.analysis.api.types.*
 import org.jetbrains.kotlin.analysis.api.types.typeCreation.*
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.types.Variance
 
@@ -34,6 +36,20 @@ abstract class KaBaseTypeCreator<T : KaSession> : KaBaseSessionComponent<T>(), K
         type: KaTypeCreator.() -> KaType,
     ): KaTypeArgumentWithVariance = withValidityAssertion {
         KaBaseTypeArgumentWithVariance(type(), variance, token)
+    }
+
+    override fun functionValueParameter(
+        name: Name?,
+        type: KaType,
+    ): KaFunctionValueParameter = withValidityAssertion {
+        KaBaseFunctionValueParameter(name, type)
+    }
+
+    override fun functionValueParameter(
+        name: Name?,
+        type: KaTypeCreator.() -> KaType,
+    ): KaFunctionValueParameter = withValidityAssertion {
+        KaBaseFunctionValueParameter(name, type())
     }
 
     override fun starTypeProjection(): KaStarTypeProjection = withValidityAssertion {

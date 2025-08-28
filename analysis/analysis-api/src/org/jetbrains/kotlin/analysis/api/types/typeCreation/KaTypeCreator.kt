@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaClassLikeSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaTypeParameterSymbol
 import org.jetbrains.kotlin.analysis.api.types.*
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.Variance
 
 /**
@@ -168,6 +169,18 @@ public interface KaTypeCreator : KaLifetimeOwner {
      */
     @KaExperimentalApi
     public fun typeArgumentWithVariance(variance: Variance, type: KaTypeCreator.() -> KaType): KaTypeArgumentWithVariance
+
+    /**
+     * Builds a [KaFunctionValueParameter] with the given [name] and [type].
+     */
+    @KaExperimentalApi
+    public fun functionValueParameter(name: Name?, type: KaType): KaFunctionValueParameter
+
+    /**
+     * Builds a [KaFunctionValueParameter] with the given [name] and [type].
+     */
+    @KaExperimentalApi
+    public fun functionValueParameter(name: Name?, type: KaTypeCreator.() -> KaType): KaFunctionValueParameter
 
     /**
      * Builds a [KaStarTypeProjection] (`*`).
