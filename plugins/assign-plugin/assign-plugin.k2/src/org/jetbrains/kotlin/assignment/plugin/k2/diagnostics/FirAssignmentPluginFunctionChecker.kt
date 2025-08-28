@@ -31,7 +31,7 @@ object FirAssignmentPluginFunctionChecker : FirSimpleFunctionChecker(MppCheckerK
         val receiverClassSymbol = if (declaration.isExtension) {
             declaration.symbol.resolvedReceiverTypeRef?.toRegularClassSymbol(context.session)
         } else {
-            declaration.dispatchReceiverType?.toRegularClassSymbol(context.session)
+            declaration.dispatchReceiverType?.toRegularClassSymbol()
         }
         if (!context.session.annotationMatchingService.isAnnotated(receiverClassSymbol)) return
         if (!declaration.returnTypeRef.coneType.isUnit) {
