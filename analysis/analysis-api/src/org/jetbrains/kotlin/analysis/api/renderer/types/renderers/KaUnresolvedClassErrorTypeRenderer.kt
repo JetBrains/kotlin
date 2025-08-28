@@ -32,8 +32,10 @@ public interface KaUnresolvedClassErrorTypeRenderer {
             printer: PrettyPrinter,
         ) {
             printer {
-                typeRenderer.annotationsRenderer.renderAnnotations(analysisSession, type, printer)
-                typeRenderer.classIdRenderer.renderClassTypeQualifier(analysisSession, type, type.qualifiers, typeRenderer, printer)
+                " ".separated(
+                    { typeRenderer.annotationsRenderer.renderAnnotations(analysisSession, type, printer) },
+                    { typeRenderer.classIdRenderer.renderClassTypeQualifier(analysisSession, type, type.qualifiers, typeRenderer, printer) }
+                )
             }
         }
     }
