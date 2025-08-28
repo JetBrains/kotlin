@@ -20,6 +20,7 @@ import org.jetbrains.kotlinx.dataframe.plugin.utils.Names
 import org.jetbrains.kotlinx.dataframe.plugin.utils.projectOverDataColumnType
 import org.jetbrains.kotlin.fir.declarations.EmptyDeprecationsProvider
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
+import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.InlineStatus
@@ -28,6 +29,8 @@ import org.jetbrains.kotlin.fir.declarations.builder.buildRegularClass
 import org.jetbrains.kotlin.fir.declarations.builder.buildValueParameter
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.utils.classId
+import org.jetbrains.kotlin.fir.declarations.utils.isInline
+import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirLiteralExpression
 import org.jetbrains.kotlin.fir.expressions.buildResolvedArgumentList
@@ -90,6 +93,16 @@ class FunctionCallTransformer(
 ) : FirFunctionCallRefinementExtension(session), KotlinTypeFacade {
     companion object {
         const val DEFAULT_NAME = "DataFrameType"
+
+        fun shouldRefine(callSiteAnnotations: List<FirAnnotation>, symbol: FirNamedFunctionSymbol, session: FirSession): Boolean {
+            if (callSiteAnnotations.any { it.fqName(session)?.shortName()?.equals(Name.identifier("DisableInterpretation")) == true }) {
+                return false
+            }
+            if (symbol.resolvedAnnotationClassIds.none { it.shortClassName == Name.identifier("Refine") }) {
+                return false
+            }
+            return true
+        }
     }
 
     private interface CallTransformer {
@@ -112,6 +125,9 @@ class FunctionCallTransformer(
 
     override fun intercept(callInfo: CallInfo, symbol: FirNamedFunctionSymbol): CallReturnType? {
         val callSiteAnnotations = (callInfo.callSite as? FirAnnotationContainer)?.annotations ?: emptyList()
+        if (!shouldRefine(callSiteAnnotations, symbol, session)) return null
+        // See org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirInlineBodyRegularClassChecker
+        if (callInfo.containingDeclarations.any { it is FirFunction && it.isInline }) return null
         if (callSiteAnnotations.any { it.fqName(session)?.shortName()?.equals(Name.identifier("DisableInterpretation")) == true }) {
             return null
         }
