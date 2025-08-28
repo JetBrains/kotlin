@@ -453,7 +453,7 @@ fun serializeModuleIntoKlib(
                     JsKlibCheckers.makeChecker(
                         irDiagnosticReporter,
                         configuration,
-                        doCheckCalls = false, // calls must already be checked at the end of Fir2IR phase.
+                        doCheckCalls = true,
                         doModuleLevelChecks = true,
                         cleanFilesIrData,
                         moduleExportedNames,
