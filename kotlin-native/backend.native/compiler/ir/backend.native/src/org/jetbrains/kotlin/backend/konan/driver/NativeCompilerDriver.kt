@@ -217,7 +217,7 @@ internal class NativeCompilerDriver(private val performanceManager: PerformanceM
             val dependencies = if (depsPath.isNullOrEmpty()) DependenciesTrackingResult(emptyList(), emptyList(), emptyList()).also {
                 config.configuration.report(CompilerMessageSeverity.WARNING, "No backend dependencies provided.")
             } else DependenciesTrackingResult.deserialize(depsPath, File(depsPath).readStrings(), config)
-            engine.runBitcodeBackend(context, dependencies, performanceManager)
+            engine.runBitcodeBackend(context, dependencies)
         } finally {
             llvmModule?.let { LLVMDisposeModule(it) }
             LLVMContextDispose(llvmContext)
