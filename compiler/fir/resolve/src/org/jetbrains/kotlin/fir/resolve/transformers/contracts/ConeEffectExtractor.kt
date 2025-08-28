@@ -241,7 +241,7 @@ class ConeEffectExtractor(
         val arg = typeOperatorCall.argument.asContractValueExpression()
         val type = typeOperatorCall.conversionTypeRef.coneType.fullyExpandedType()
         val isNegated = typeOperatorCall.operation == FirOperation.NOT_IS
-        val diagnostic = type.toTypeParameterSymbol(session)?.let { typeParameterSymbol ->
+        val diagnostic = type.toTypeParameterSymbol()?.let { typeParameterSymbol ->
             val typeParametersOfOwner = (owner as? FirTypeParameterRefsOwner)?.typeParameters.orEmpty()
             if (typeParametersOfOwner.none { it is FirTypeParameter && it.symbol == typeParameterSymbol }) {
                 return@let ConeContractDescriptionError.NotSelfTypeParameter(typeParameterSymbol)

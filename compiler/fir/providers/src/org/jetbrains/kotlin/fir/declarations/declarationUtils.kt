@@ -207,20 +207,20 @@ fun FirClassSymbol<*>.collectEnumEntries(session: FirSession): List<FirEnumEntry
 
 context(holder: SessionHolder)
 fun FirEnumEntrySymbol.getComplementarySymbols(): List<FirEnumEntrySymbol>? = resolvedReturnType
-    .toRegularClassSymbol(holder.session)
+    .toRegularClassSymbol()
     ?.collectEnumEntries(holder.session)
     ?.filter { it != this }
 
 context(holder: SessionHolder)
 fun FirRegularClassSymbol.getComplementarySymbols(): List<FirRegularClassSymbol>? {
     val superTypes = getSuperTypes(holder.session)
-        .mapNotNullTo(mutableSetOf()) { it.toRegularClassSymbol(holder.session) }
+        .mapNotNullTo(mutableSetOf()) { it.toRegularClassSymbol() }
 
     return superTypes.flatMap { superType ->
         if (!superType.isSealed) return@flatMap emptyList()
 
         superType.fir.getSealedClassInheritors(holder.session)
-            .mapNotNull { it.toSymbol(holder.session) as? FirRegularClassSymbol }
+            .mapNotNull { it.toSymbol() as? FirRegularClassSymbol }
             .filter { it != this@getComplementarySymbols && it !in superTypes }
     }
 }

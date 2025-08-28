@@ -406,7 +406,7 @@ class JavaOverrideChecker internal constructor(
         if (dispatchClassSymbol?.fir is FirJavaClass) {
             val nonAbstractFromClass = overrides.find {
                 !it.isAbstractAccordingToRawStatus && it.dispatchReceiverClassLookupTagOrNull()
-                    ?.toSymbol(session)?.classKind == ClassKind.CLASS
+                    ?.toSymbol()?.classKind == ClassKind.CLASS
             }
             if (nonAbstractFromClass != null) {
                 return nonAbstractFromClass.rawStatus.visibility

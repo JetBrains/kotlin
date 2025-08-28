@@ -42,7 +42,7 @@ fun SessionAndScopeSessionHolder.collectTowerDataElementsForClass(owner: FirClas
     val superClassesStaticsAndCompanionReceivers = mutableListOf<FirTowerDataElement>()
     for (superType in lookupSuperTypes(owner, lookupInterfaces = false, deep = true, useSiteSession = session, substituteTypes = true)) {
         val expandedType = superType.fullyExpandedType()
-        val superClass = expandedType.lookupTag.toRegularClassSymbol(session)?.fir ?: continue
+        val superClass = expandedType.lookupTag.toRegularClassSymbol()?.fir ?: continue
 
         superClass.staticScope(this)
             ?.wrapNestedClassifierScopeWithSubstitutionForSuperType(expandedType, session)
