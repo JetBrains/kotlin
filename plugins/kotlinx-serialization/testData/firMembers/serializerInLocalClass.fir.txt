@@ -12,7 +12,7 @@ FILE: serializerInLocalClass.kt
 
             public final fun copy(i: R|kotlin/Int| = this@R|<local>/Carrier|.R|<local>/i|): R|<local>/Carrier|
 
-            public final companion object Companion : R|kotlin/Any| {
+            local final companion object Companion : R|kotlin/Any| {
                 public final fun serializer(): R|kotlinx/serialization/KSerializer<<local>/Carrier>|
 
                 private constructor(): R|<local>/Carrier.Companion| {
