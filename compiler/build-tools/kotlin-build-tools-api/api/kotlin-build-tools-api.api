@@ -161,6 +161,7 @@ public final class org/jetbrains/kotlin/buildtools/api/SourcesChanges$Unknown : 
 public abstract interface class org/jetbrains/kotlin/buildtools/api/arguments/CommonCompilerArguments : org/jetbrains/kotlin/buildtools/api/arguments/CommonToolArguments {
 	public static final field API_VERSION Lorg/jetbrains/kotlin/buildtools/api/arguments/CommonCompilerArguments$CommonCompilerArgument;
 	public static final field Companion Lorg/jetbrains/kotlin/buildtools/api/arguments/CommonCompilerArguments$Companion;
+	public static final field HEADER Lorg/jetbrains/kotlin/buildtools/api/arguments/CommonCompilerArguments$CommonCompilerArgument;
 	public static final field KOTLIN_HOME Lorg/jetbrains/kotlin/buildtools/api/arguments/CommonCompilerArguments$CommonCompilerArgument;
 	public static final field LANGUAGE_VERSION Lorg/jetbrains/kotlin/buildtools/api/arguments/CommonCompilerArguments$CommonCompilerArgument;
 	public static final field OPT_IN Lorg/jetbrains/kotlin/buildtools/api/arguments/CommonCompilerArguments$CommonCompilerArgument;

@@ -1116,6 +1116,37 @@
                         }
                     },
                     {
+                        "name": "header",
+                        "shortName": null,
+                        "deprecatedName": null,
+                        "description": {
+                            "current": "Enable header compilation mode.\nIn this mode, the compiler produces class files that only contain the 'skeleton' of the classes to be\ncompiled but the method bodies of all the implementations are empty.  This is used to speed up parallel compilation\nbuild systems where header libraries can be used to replace downstream dependencies for which we only need to\nsee the type names and method signatures required to compile a given translation unit.",
+                            "valueInVersions": []
+                        },
+                        "delimiter": null,
+                        "valueType": {
+                            "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
+                            "isNullable": {
+                                "current": false,
+                                "valueInVersions": []
+                            },
+                            "defaultValue": {
+                                "current": false,
+                                "valueInVersions": []
+                            }
+                        },
+                        "valueDescription": {
+                            "current": null,
+                            "valueInVersions": []
+                        },
+                        "releaseVersionsMetadata": {
+                            "introducedVersion": "2.2.0",
+                            "stabilizedVersion": "2.2.0",
+                            "deprecatedVersion": null,
+                            "removedVersion": null
+                        }
+                    },
+                    {
                         "name": "progressive",
                         "shortName": null,
                         "deprecatedName": "Xprogressive",
