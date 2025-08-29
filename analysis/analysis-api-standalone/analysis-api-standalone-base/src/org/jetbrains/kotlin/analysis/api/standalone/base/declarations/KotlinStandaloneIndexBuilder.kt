@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinFileStubImpl
 
-internal class KotlinStandaloneIndexBuilder(
+internal class KotlinStandaloneIndexBuilder private constructor(
     project: Project,
     private val shouldBuildStubsForDecompiledFiles: Boolean,
 ) {
@@ -146,6 +146,18 @@ internal class KotlinStandaloneIndexBuilder(
 
     fun collectSourceFiles(sourceFiles: Collection<KtFile>) {
         providedSourceFiles += sourceFiles
+    }
+
+    companion object {
+        operator fun invoke(
+            project: Project,
+            shouldBuildStubsForDecompiledFiles: Boolean,
+            postponeIndexing: Boolean,
+            configurator: KotlinStandaloneIndexBuilder.() -> Unit,
+        ): IndexData = KotlinStandaloneIndexBuilder(
+            project = project,
+            shouldBuildStubsForDecompiledFiles = shouldBuildStubsForDecompiledFiles,
+        ).apply(configurator).build(postponeIndexing = postponeIndexing)
     }
 }
 
