@@ -89,10 +89,10 @@ class AppleConfigurablesImpl(
  */
 fun AppleConfigurables.platformName(): String = when (target.family) {
     Family.OSX -> "MacOSX"
-    Family.IOS -> if (targetTriple.isSimulator) {
-        "iPhoneSimulator"
-    } else {
-        "iPhoneOS"
+    Family.IOS -> when {
+        targetTriple.isSimulator -> "iPhoneSimulator"
+        targetTriple.isMacabi -> "MacOSX"
+        else -> "iPhoneOS"
     }
     Family.TVOS -> if (targetTriple.isSimulator) {
         "AppleTVSimulator"

@@ -47,8 +47,30 @@ import java.nio.file.Files
 import java.nio.file.Paths
 
 class KonanConfig(val project: Project, val configuration: CompilerConfiguration) {
+    /**
+     * Determine if we compile for iOS target with Mac ABI (Catalyst).
+     * Avoid using this property if possible. Instead, use [TargetTriple.isMacabi] as it is more direct.
+     */
+    val macabi: Boolean = run {
+        val macabi = configuration.getBoolean(BinaryOptions.macabi)
+        // We can't access `target` property due to circular dependency.
+        if (macabi && configuration.get(KonanConfigKeys.TARGET) != "ios_arm64") {
+            configuration.report(CompilerMessageSeverity.STRONG_WARNING, "macabi is only supported for iosArm64 target")
+            false
+        }
+        else macabi
+    }
+
     internal val distribution = run {
         val overridenProperties = mutableMapOf<String, String>().apply {
+            if (macabi) {
+                // Overriding target-triple via properties is a bit better alternative than
+                // Tracking all usages of `configurables.targeTriple` and making adjustments on call-site.
+                // Still ugly, of course.
+                put("targetTriple.ios_arm64", "arm64-apple-ios-macabi")
+                // macabi implies usage of macOS sysroot.
+                put("targetSysRoot.ios_arm64", "\$targetSysRoot.macos_arm64")
+            }
             configuration.get(KonanConfigKeys.OVERRIDE_KONAN_PROPERTIES)?.let(this::putAll)
             configuration.get(KonanConfigKeys.LLVM_VARIANT)?.getKonanPropertiesEntry()?.let { (key, value) ->
                 put(key, value)
@@ -498,6 +520,7 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
             append("-check_state_at_external_calls")
         if (stackProtectorMode != StackProtectorMode.NO)
             append("-stack_protector${stackProtectorMode.name}")
+        if (macabi) append("-macabi")
     }
 
     private val systemCacheFlavorString = buildString {
