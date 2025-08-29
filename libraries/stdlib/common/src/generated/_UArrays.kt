@@ -2437,14 +2437,7 @@ public fun UIntArray.take(n: Int): List<UInt> {
     if (n == 0) return emptyList()
     if (n >= size) return toList()
     if (n == 1) return listOf(this[0])
-    var count = 0
-    val list = ArrayList<UInt>(n)
-    for (item in this) {
-        list.add(item)
-        if (++count == n)
-            break
-    }
-    return list
+    return copyOfRange(0, n).asList()
 }
 
 /**
@@ -2461,14 +2454,7 @@ public fun ULongArray.take(n: Int): List<ULong> {
     if (n == 0) return emptyList()
     if (n >= size) return toList()
     if (n == 1) return listOf(this[0])
-    var count = 0
-    val list = ArrayList<ULong>(n)
-    for (item in this) {
-        list.add(item)
-        if (++count == n)
-            break
-    }
-    return list
+    return copyOfRange(0, n).asList()
 }
 
 /**
@@ -2485,14 +2471,7 @@ public fun UByteArray.take(n: Int): List<UByte> {
     if (n == 0) return emptyList()
     if (n >= size) return toList()
     if (n == 1) return listOf(this[0])
-    var count = 0
-    val list = ArrayList<UByte>(n)
-    for (item in this) {
-        list.add(item)
-        if (++count == n)
-            break
-    }
-    return list
+    return copyOfRange(0, n).asList()
 }
 
 /**
@@ -2509,14 +2488,7 @@ public fun UShortArray.take(n: Int): List<UShort> {
     if (n == 0) return emptyList()
     if (n >= size) return toList()
     if (n == 1) return listOf(this[0])
-    var count = 0
-    val list = ArrayList<UShort>(n)
-    for (item in this) {
-        list.add(item)
-        if (++count == n)
-            break
-    }
-    return list
+    return copyOfRange(0, n).asList()
 }
 
 /**
