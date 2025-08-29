@@ -206,7 +206,8 @@ data class VariantAttributes(
 data class Dependency(
     val group: String,
     val module: String,
-    val version: Version,
+    val version: Version? = null,
+
     val attributes: DependencyAttributes? = null,
     val endorseStrictVersions: Boolean? = null,
     val excludes: MutableList<Exclude>? = null,
@@ -219,7 +220,7 @@ data class Dependency(
 
     fun replaceKotlinVersion(oldVersion: String, newVersion: String) {
         if (group == ORG_JETBRAINS_KOTLIN) {
-            version.requires = version.requires.replace(oldVersion, newVersion)
+            version?.requires = version.requires.replace(oldVersion, newVersion)
         }
     }
 
