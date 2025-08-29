@@ -42,7 +42,7 @@ import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibrarySourceModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.allDirectDependencies
 import org.jetbrains.kotlin.analysis.api.resolve.extensions.KaResolveExtensionProvider
-import org.jetbrains.kotlin.analysis.api.standalone.base.declarations.KotlinStandaloneStubsCache
+import org.jetbrains.kotlin.analysis.api.standalone.base.declarations.KotlinStandaloneIndexCache
 import org.jetbrains.kotlin.analysis.api.standalone.base.java.KotlinStandaloneJavaModuleAccessibilityChecker
 import org.jetbrains.kotlin.analysis.api.standalone.base.java.KotlinStandaloneJavaModuleAnnotationsProvider
 import org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.StandaloneProjectFactory.findJvmRootsForJavaFiles
@@ -110,17 +110,17 @@ object StandaloneProjectFactory {
 
     private fun registerApplicationServices(applicationEnvironment: KotlinCoreApplicationEnvironment) {
         val application = applicationEnvironment.application
-        if (application.getServiceIfCreated(KotlinStandaloneStubsCache::class.java) != null) {
+        if (application.getServiceIfCreated(KotlinStandaloneIndexCache::class.java) != null) {
             // application services already registered by som other threads, tests
             return
         }
         KotlinCoreEnvironment.underApplicationLock {
-            if (application.getServiceIfCreated(KotlinStandaloneStubsCache::class.java) != null) {
+            if (application.getServiceIfCreated(KotlinStandaloneIndexCache::class.java) != null) {
                 // application services already registered by som other threads, tests
                 return
             }
             application.apply {
-                registerService(KotlinStandaloneStubsCache::class.java, KotlinStandaloneStubsCache::class.java)
+                registerService(KotlinStandaloneIndexCache::class.java, KotlinStandaloneIndexCache::class.java)
                 registerService(ClsKotlinBinaryClassCache::class.java)
                 registerService(
                     BuiltinsVirtualFileProvider::class.java,
