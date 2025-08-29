@@ -4,6 +4,9 @@ plugins {
     kotlin("jvm")
     id("jps-compatible")
     id("gradle-plugin-compiler-dependency-configuration")
+    // kotlinx-rpc implementation in remote-daemon module uses object that needs to be marked as @Serializable
+    // TODO: double check if this is really necessary
+    kotlin("plugin.serialization")
 }
 
 dependencies {
@@ -21,6 +24,9 @@ dependencies {
     testImplementation(intellijCore())
     testApi(platform(libs.junit.bom))
     testImplementation(libs.junit4)
+    // kotlinx-rpc implementation in remote-daemon module uses object that needs to be marked as @Serializable
+    // TODO: double check if this is really necessary
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.9.0")
 }
 
 sourceSets {

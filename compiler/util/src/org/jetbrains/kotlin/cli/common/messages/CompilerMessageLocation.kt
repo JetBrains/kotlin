@@ -7,7 +7,8 @@ package org.jetbrains.kotlin.cli.common.messages
 
 import java.io.Serializable
 
-interface CompilerMessageSourceLocation : Serializable {
+@kotlinx.serialization.Serializable
+sealed interface CompilerMessageSourceLocation : Serializable {
     val path: String
     val line: Int
     val column: Int
@@ -39,6 +40,7 @@ data class CompilerMessageLocation private constructor(
     }
 }
 
+@kotlinx.serialization.Serializable
 data class CompilerMessageLocationWithRange private constructor(
     override val path: String,
     override val line: Int,

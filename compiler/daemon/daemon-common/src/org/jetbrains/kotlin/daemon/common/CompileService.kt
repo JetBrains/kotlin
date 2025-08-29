@@ -32,6 +32,7 @@ interface CompileService : Remote {
         XML
     }
 
+    @kotlinx.serialization.Serializable
     enum class TargetPlatform : Serializable {
         JVM,
         JS,
@@ -118,11 +119,11 @@ interface CompileService : Remote {
 
     @Throws(RemoteException::class)
     fun compile(
-            sessionId: Int,
-            compilerArguments: Array<out String>,
-            compilationOptions: CompilationOptions,
-            servicesFacade: CompilerServicesFacadeBase,
-            compilationResults: CompilationResults?
+        sessionId: Int,
+        compilerArguments: Array<out String>,
+        compilationOptions: CompilationOptions,
+        servicesFacade: CompilerServicesFacadeBase,
+        compilationResults: CompilationResults?
     ): CallResult<Int>
 
     @Throws(RemoteException::class)
@@ -139,12 +140,12 @@ interface CompileService : Remote {
 
     @Throws(RemoteException::class)
     fun leaseReplSession(
-            aliveFlagPath: String?,
-            compilerArguments: Array<out String>,
-            compilationOptions: CompilationOptions,
-            servicesFacade: CompilerServicesFacadeBase,
-            templateClasspath: List<File>,
-            templateClassName: String
+        aliveFlagPath: String?,
+        compilerArguments: Array<out String>,
+        compilationOptions: CompilationOptions,
+        servicesFacade: CompilerServicesFacadeBase,
+        templateClasspath: List<File>,
+        templateClassName: String
     ): CallResult<Int>
 
     @Throws(RemoteException::class)
@@ -152,15 +153,15 @@ interface CompileService : Remote {
 
     @Throws(RemoteException::class)
     fun replCheck(
-            sessionId: Int,
-            replStateId: Int,
-            codeLine: ReplCodeLine
+        sessionId: Int,
+        replStateId: Int,
+        codeLine: ReplCodeLine
     ): CallResult<ReplCheckResult>
 
     @Throws(RemoteException::class)
     fun replCompile(
-            sessionId: Int,
-            replStateId: Int,
-            codeLine: ReplCodeLine
+        sessionId: Int,
+        replStateId: Int,
+        codeLine: ReplCodeLine
     ): CallResult<ReplCompileResult>
 }
