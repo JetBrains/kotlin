@@ -2,7 +2,7 @@
 // IGNORE_BACKEND_K2: JS_IR, JS_IR_ES6, WASM
 // IGNORE_IR_DESERIALIZATION_TEST: NATIVE
 // ^^^ Ignore Backends that apply inliner before interpreter, which messes with the interpreter.
-//     All Backends can be enabled once it's supported in the frontend.
+//     TODO, KT-80561: Reenable all backends, once unsigned operations are supported in the frontend.
 // WITH_STDLIB
 fun <T> T.id() = this
 
