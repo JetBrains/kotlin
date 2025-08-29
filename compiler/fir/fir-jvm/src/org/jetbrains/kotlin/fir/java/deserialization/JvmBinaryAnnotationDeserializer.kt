@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.deserialization.AbstractAnnotationDeserializer
+import org.jetbrains.kotlin.fir.deserialization.deserializeAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirLiteralExpression
@@ -89,12 +90,12 @@ class JvmBinaryAnnotationDeserializer(
 
     override fun loadTypeAnnotations(typeProto: ProtoBuf.Type, nameResolver: NameResolver): List<FirAnnotation> {
         val annotations = typeProto.getExtension(JvmProtoBuf.typeAnnotation).orEmpty()
-        return annotations.map { deserializeAnnotation(it, nameResolver) }
+        return annotations.map { deserializeAnnotation(session, it, nameResolver) }
     }
 
     override fun loadTypeParameterAnnotations(typeParameterProto: ProtoBuf.TypeParameter, nameResolver: NameResolver): List<FirAnnotation> {
         val annotations = typeParameterProto.getExtension(JvmProtoBuf.typeParameterAnnotation).orEmpty()
-        return annotations.map { deserializeAnnotation(it, nameResolver) }
+        return annotations.map { deserializeAnnotation(session, it, nameResolver) }
     }
 
     private fun loadAnnotationsFromMetadata(
@@ -103,7 +104,7 @@ class JvmBinaryAnnotationDeserializer(
         when {
             flags != null && !Flags.HAS_ANNOTATIONS.get(flags) -> emptyList()
             session.languageVersionSettings.supportsFeature(LanguageFeature.AnnotationsInMetadata) && annotations.isNotEmpty() ->
-                annotations.map { deserializeAnnotation(it, nameResolver, useSiteTarget) }
+                annotations.map { deserializeAnnotation(session, it, nameResolver, useSiteTarget) }
             else -> null
         }
 
