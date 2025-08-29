@@ -9,7 +9,3 @@ import kotlin.internal.UsedFromCompilerGeneratedCode
 
 @UsedFromCompilerGeneratedCode
 internal object DefaultConstructorMarker
-
-@PublishedApi
-@UsedFromCompilerGeneratedCode
-internal object SyntheticConstructorMarker

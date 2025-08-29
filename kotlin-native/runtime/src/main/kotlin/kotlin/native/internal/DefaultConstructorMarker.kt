@@ -7,7 +7,3 @@ package kotlin.native.internal
 
 @ExportForCompiler
 internal object DefaultConstructorMarker;
-
-@PublishedApi
-@ExportForCompiler
-internal object SyntheticConstructorMarker;

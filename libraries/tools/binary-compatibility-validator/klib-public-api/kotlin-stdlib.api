@@ -4703,6 +4703,8 @@ final object kotlin.coroutines/EmptyCoroutineContext : kotlin.coroutines/Corouti
     final fun toString(): kotlin/String // kotlin.coroutines/EmptyCoroutineContext.toString|toString(){}[0]
 }
 
+final object kotlin.internal/SyntheticConstructorMarker // kotlin.internal/SyntheticConstructorMarker|null[0]
+
 final object kotlin.properties/Delegates { // kotlin.properties/Delegates|null[0]
     final fun <#A1: kotlin/Any> notNull(): kotlin.properties/ReadWriteProperty<kotlin/Any?, #A1> // kotlin.properties/Delegates.notNull|notNull(){0§<kotlin.Any>}[0]
     final inline fun <#A1: kotlin/Any?> observable(#A1, crossinline kotlin/Function3<kotlin.reflect/KProperty<*>, #A1, #A1, kotlin/Unit>): kotlin.properties/ReadWriteProperty<kotlin/Any?, #A1> // kotlin.properties/Delegates.observable|observable(0:0;kotlin.Function3<kotlin.reflect.KProperty<*>,0:0,0:0,kotlin.Unit>){0§<kotlin.Any?>}[0]
@@ -11653,9 +11655,6 @@ final object kotlin.native.internal/MemoryUsageInfo { // kotlin.native.internal/
 }
 
 // Targets: [native]
-final object kotlin.native.internal/SyntheticConstructorMarker // kotlin.native.internal/SyntheticConstructorMarker|null[0]
-
-// Targets: [native]
 final object kotlin.native.runtime/Debugging { // kotlin.native.runtime/Debugging|null[0]
     final val isThreadStateRunnable // kotlin.native.runtime/Debugging.isThreadStateRunnable|{}isThreadStateRunnable[0]
         final fun <get-isThreadStateRunnable>(): kotlin/Boolean // kotlin.native.runtime/Debugging.isThreadStateRunnable.<get-isThreadStateRunnable>|<get-isThreadStateRunnable>(){}[0]
@@ -14072,9 +14071,6 @@ final value class kotlin.wasm.unsafe/Pointer { // kotlin.wasm.unsafe/Pointer|nul
 }
 
 // Targets: [wasmJs, wasmWasi]
-final object kotlin.wasm.internal/SyntheticConstructorMarker // kotlin.wasm.internal/SyntheticConstructorMarker|null[0]
-
-// Targets: [wasmJs, wasmWasi]
 final val kotlin.wasm.internal/EmptyContinuation // kotlin.wasm.internal/EmptyContinuation|{}EmptyContinuation[0]
     final fun <get-EmptyContinuation>(): kotlin.coroutines/Continuation<kotlin/Any?> // kotlin.wasm.internal/EmptyContinuation.<get-EmptyContinuation>|<get-EmptyContinuation>(){}[0]
 
@@ -14617,9 +14613,6 @@ final object kotlin.js/JsMath { // kotlin.js/JsMath|null[0]
     final fun sqrt(kotlin/Double): kotlin/Double // kotlin.js/JsMath.sqrt|sqrt(kotlin.Double){}[0]
     final fun tan(kotlin/Double): kotlin/Double // kotlin.js/JsMath.tan|tan(kotlin.Double){}[0]
 }
-
-// Targets: [js]
-final object kotlin.js/SyntheticConstructorMarker // kotlin.js/SyntheticConstructorMarker|null[0]
 
 // Targets: [js]
 final val kotlin.coroutines.js.internal/EmptyContinuation // kotlin.coroutines.js.internal/EmptyContinuation|{}EmptyContinuation[0]
