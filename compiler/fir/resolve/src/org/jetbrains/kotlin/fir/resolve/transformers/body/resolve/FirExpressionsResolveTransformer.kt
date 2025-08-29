@@ -1963,6 +1963,20 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         )
     }
 
+    override fun transformCollectionLiteralCall(collectionLiteralCall: FirCollectionLiteralCall, data: ResolutionMode): FirStatement =
+        whileAnalysing(session, collectionLiteralCall) {
+            collectionLiteralCall.transformAnnotations(transformer, data)
+            collectionLiteralCall.transformChildren(transformer, ResolutionMode.ContextDependent)
+
+            return if (data !is ResolutionMode.ContextDependent) {
+                components.syntheticCallGenerator.resolveCollectionLiteralExpressionWithSyntheticOuterCall(
+                    collectionLiteralCall, data as? ResolutionMode.WithExpectedType, resolutionContext
+                )
+            } else {
+                collectionLiteralCall
+            }
+        }
+
     override fun transformArrayLiteral(arrayLiteral: FirArrayLiteral, data: ResolutionMode): FirStatement =
         whileAnalysing(session, arrayLiteral) {
             when (data) {

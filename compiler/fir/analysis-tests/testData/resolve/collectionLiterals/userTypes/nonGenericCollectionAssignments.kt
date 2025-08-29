@@ -10,11 +10,20 @@ class MyList {
 
 class A
 
+val globalLst: MyList = []
+
 fun test() {
-    val lst1: MyList = <!INITIALIZER_TYPE_MISMATCH, UNSUPPORTED!>[]<!>
-    val lst2: MyList = <!INITIALIZER_TYPE_MISMATCH, UNSUPPORTED!>["1", "2", "3"]<!>
-    val lst3: MyList = <!INITIALIZER_TYPE_MISMATCH, UNSUPPORTED!>[null]<!> // should not pass
-    val lst4: MyList = <!INITIALIZER_TYPE_MISMATCH, UNSUPPORTED!>["0", A()]<!> // should not pass
+    val lst1: MyList = []
+    val lst2: MyList = ["1", "2", "3"]
+    val lst3: MyList = [<!NULL_FOR_NONNULL_TYPE!>null<!>] // should not pass
+    val lst4: MyList = ["0", <!ARGUMENT_TYPE_MISMATCH!>A()<!>] // should not pass
+
+    var lst: MyList = []
+    lst = ["1", "2", "3"]
+    lst = [<!NULL_FOR_NONNULL_TYPE!>null<!>] // should not pass
+    lst = ["0", <!ARGUMENT_TYPE_MISMATCH!>A()<!>] // should not pass
+
+    val withoutSpecifiedType = <!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[]<!>
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, collectionLiteral, companionObject, functionDeclaration, localProperty,

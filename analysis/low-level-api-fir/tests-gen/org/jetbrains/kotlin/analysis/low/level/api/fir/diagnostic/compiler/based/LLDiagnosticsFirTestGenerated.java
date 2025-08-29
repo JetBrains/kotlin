@@ -1925,6 +1925,12 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/collectionLiterals"), Pattern.compile("^([^.]+)\\.kt(\\.can-freeze-ide)?$"), null, true);
       }
 
+      @Test
+      @TestMetadata("collectionLiteralAsReceiver.kt")
+      public void testCollectionLiteralAsReceiver() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/collectionLiteralAsReceiver.kt");
+      }
+
       @Nested
       @TestMetadata("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/collectionLiteralsDisabled")
       @TestDataPath("$PROJECT_ROOT")
@@ -2107,6 +2113,12 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
         }
 
         @Test
+        @TestMetadata("collectionLiteralsAndSmartcasts.kt")
+        public void testCollectionLiteralsAndSmartcasts() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/userTypes/collectionLiteralsAndSmartcasts.kt");
+        }
+
+        @Test
         @TestMetadata("collectionLiteralsWithNestedExpressionsInside.kt")
         public void testCollectionLiteralsWithNestedExpressionsInside() {
           runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/userTypes/collectionLiteralsWithNestedExpressionsInside.kt");
@@ -2137,6 +2149,18 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
         }
 
         @Test
+        @TestMetadata("inReturnPositions.kt")
+        public void testInReturnPositions() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/userTypes/inReturnPositions.kt");
+        }
+
+        @Test
+        @TestMetadata("interfaceDelegationByCollectionLiteral.kt")
+        public void testInterfaceDelegationByCollectionLiteral() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/userTypes/interfaceDelegationByCollectionLiteral.kt");
+        }
+
+        @Test
         @TestMetadata("noExplicitReturnTypeRecursion.kt")
         public void testNoExplicitReturnTypeRecursion() {
           runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/userTypes/noExplicitReturnTypeRecursion.kt");
@@ -2164,6 +2188,12 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
         @TestMetadata("nonGenericCollectionWithGenericElementTypeAssignments.kt")
         public void testNonGenericCollectionWithGenericElementTypeAssignments() {
           runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/userTypes/nonGenericCollectionWithGenericElementTypeAssignments.kt");
+        }
+
+        @Test
+        @TestMetadata("plusOperator.kt")
+        public void testPlusOperator() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/userTypes/plusOperator.kt");
         }
       }
     }

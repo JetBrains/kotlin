@@ -248,6 +248,33 @@ class FirSyntheticCallGenerator(
             .firstOrNull() // TODO: it should be single() after KTIJ-26465 is fixed
     }
 
+    fun resolveCollectionLiteralExpressionWithSyntheticOuterCall(
+        firCollectionLiteralCall: FirCollectionLiteralCall,
+        expectedTypeData: ResolutionMode.WithExpectedType?,
+        context: ResolutionContext,
+    ): FirExpression {
+        val argumentList = buildUnaryArgumentList(firCollectionLiteralCall)
+        val reference = generateCalleeReferenceToFunctionWithExpectedTypeForArgument(
+            firCollectionLiteralCall,
+            argumentList,
+            expectedTypeData?.expectedType,
+            context,
+        )
+
+        val fakeCall = buildFunctionCall {
+            calleeReference = reference
+            this.argumentList = argumentList
+        }
+
+        components.dataFlowAnalyzer.enterCallArguments(fakeCall, argumentList.arguments)
+        components.dataFlowAnalyzer.exitCallArguments()
+
+        val resultingCall = components.callCompleter.completeCall(fakeCall, ResolutionMode.ContextIndependent)
+        components.dataFlowAnalyzer.exitFunctionCall(fakeCall, callCompleted = true)
+
+        return resultingCall.arguments.single()
+    }
+
     fun resolveAnonymousFunctionExpressionWithSyntheticOuterCall(
         anonymousFunctionExpression: FirAnonymousFunctionExpression,
         expectedTypeData: ResolutionMode.WithExpectedType?,
