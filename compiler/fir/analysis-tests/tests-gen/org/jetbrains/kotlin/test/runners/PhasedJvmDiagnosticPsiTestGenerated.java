@@ -27620,15 +27620,9 @@ public class PhasedJvmDiagnosticPsiTestGenerated extends AbstractPhasedJvmDiagno
         }
 
         @Test
-        @TestMetadata("ifConstVal_after.kt")
-        public void testIfConstVal_after() {
-          runTest("compiler/testData/diagnostics/tests/modifiers/const/ifConstVal_after.kt");
-        }
-
-        @Test
-        @TestMetadata("ifConstVal_before.kt")
-        public void testIfConstVal_before() {
-          runTest("compiler/testData/diagnostics/tests/modifiers/const/ifConstVal_before.kt");
+        @TestMetadata("ifConstVal.kt")
+        public void testIfConstVal() {
+          runTest("compiler/testData/diagnostics/tests/modifiers/const/ifConstVal.kt");
         }
 
         @Test

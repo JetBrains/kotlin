@@ -165,26 +165,11 @@ private class FirConstCheckVisitor(
     }
 
     override fun visitWhenExpression(whenExpression: FirWhenExpression, data: Nothing?): ConstantArgumentKind {
-        if (!whenExpression.isProperlyExhaustive || !intrinsicConstEvaluation) {
-            return ConstantArgumentKind.NOT_CONST
-        }
-
-        whenExpression.subjectVariable?.initializer?.accept(this, data)?.ifNotValidConst { return it }
-        for (branch in whenExpression.branches) {
-            when (branch.condition) {
-                is FirElseIfTrueCondition -> { /* skip */ }
-                else -> branch.condition.accept(this, data).ifNotValidConst { return it }
-            }
-            branch.result.statements.forEach { stmt ->
-                if (stmt !is FirExpression) return ConstantArgumentKind.NOT_CONST
-                stmt.accept(this, data).ifNotValidConst { return it }
-            }
-        }
-        return ConstantArgumentKind.VALID_CONST
+        return ConstantArgumentKind.NOT_CONST
     }
 
     override fun visitWhenSubjectExpression(whenSubjectExpression: FirWhenSubjectExpression, data: Nothing?): ConstantArgumentKind {
-        return if (intrinsicConstEvaluation) ConstantArgumentKind.VALID_CONST else ConstantArgumentKind.NOT_CONST
+        return ConstantArgumentKind.NOT_CONST
     }
 
     override fun visitLiteralExpression(literalExpression: FirLiteralExpression, data: Nothing?): ConstantArgumentKind {
