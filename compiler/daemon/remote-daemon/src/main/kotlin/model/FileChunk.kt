@@ -6,8 +6,10 @@
 package model
 
 import com.google.protobuf.kotlin.toByteString
+import kotlinx.serialization.Serializable
 import org.jetbrains.kotlin.server.FileChunkGrpc
 
+@Serializable
 class FileChunk(
     val filePath: String,
     val artifactType: ArtifactType,

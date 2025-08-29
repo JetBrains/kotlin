@@ -7,12 +7,14 @@ package model
 
 import common.toDomain
 import common.toGrpc
+import kotlinx.serialization.Serializable
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSourceLocation
 import org.jetbrains.kotlin.server.CompileResponseGrpc
 import org.jetbrains.kotlin.server.CompilerMessageGrpc
 
 // TODO: this class is basically copy of MessageCollectorImpl.Message
+@Serializable
 data class CompilerMessage(
     val severity: CompilerMessageSeverity,
     val message: String,

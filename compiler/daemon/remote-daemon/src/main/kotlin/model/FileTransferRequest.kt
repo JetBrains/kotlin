@@ -5,8 +5,10 @@
 
 package model
 
+import kotlinx.serialization.Serializable
 import org.jetbrains.kotlin.server.FileTransferRequestGrpc
 
+@Serializable
 data class FileTransferRequest(
     val filePath: String,
     val fileFingerprint: String,

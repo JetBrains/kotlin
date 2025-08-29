@@ -4,13 +4,15 @@
  */
 
 package model
+
+import kotlinx.serialization.Serializable
 import org.jetbrains.kotlin.server.CompileRequestGrpc
 
-interface CompileRequest
+@Serializable
+sealed interface CompileRequest
 
 fun CompileRequest.toGrpc(): CompileRequestGrpc = when (this) {
     is CompilationMetadata -> CompileRequestGrpc.newBuilder().setMetadata(toGrpc()).build()
     is FileChunk -> CompileRequestGrpc.newBuilder().setSourceFileChunk(toGrpc()).build()
     is FileTransferRequest -> CompileRequestGrpc.newBuilder().setFileTransferRequest(toGrpc()).build()
-    else -> error("Unknown CompileRequest type: ${javaClass.simpleName}")
 }

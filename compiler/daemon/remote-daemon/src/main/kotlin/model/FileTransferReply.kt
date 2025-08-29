@@ -5,8 +5,10 @@
 
 package model
 
+import kotlinx.serialization.Serializable
 import org.jetbrains.kotlin.server.FileTransferReplyGrpc
 
+@Serializable
 data class FileTransferReply(
     val filePath: String,
     val isPresent: Boolean,
