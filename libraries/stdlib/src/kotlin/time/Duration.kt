@@ -367,14 +367,13 @@ public value class Duration private constructor(private val rawValue: Long) : Co
     }
 
     private fun addValuesMixedRanges(thisMillis: Long, otherNanos: Long): Duration {
-        if (thisMillis.isInfinite()) return durationOfMillis(thisMillis)
         val otherMillis = nanosToMillis(otherNanos)
-        val resultMillis = thisMillis + otherMillis
+        val resultMillis = thisMillis.addMillisWithoutOverflow(otherMillis)
         return if (resultMillis in -MAX_NANOS_IN_MILLIS..MAX_NANOS_IN_MILLIS) {
             val otherNanoRemainder = otherNanos - millisToNanos(otherMillis)
             durationOfNanos(millisToNanos(resultMillis) + otherNanoRemainder)
         } else {
-            durationOfMillis(resultMillis.coerceIn(-MAX_MILLIS, MAX_MILLIS))
+            durationOfMillis(resultMillis)
         }
     }
 
