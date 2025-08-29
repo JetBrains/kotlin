@@ -3,10 +3,9 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package client
+package client.grpc
 
-import client.auth.BasicHTTPAuthClient
-import client.auth.CallAuthenticator
+import client.core.BasicHTTPAuthClient
 import common.RemoteCompilationService
 import io.grpc.ManagedChannel
 import io.grpc.ManagedChannelBuilder
@@ -17,15 +16,15 @@ import model.CompileResponse
 import model.toDomain
 import model.toGrpc
 import org.jetbrains.kotlin.server.CompileServiceGrpcKt
-import sun.util.logging.resources.logging
 import java.io.Closeable
 import java.util.concurrent.TimeUnit
 
-class GrpcClientRemoteCompilationService(
+class GrpcRemoteCompilationServiceClient(
+    private val port: Int,
     private val logging: Boolean = false,
     private val channel: ManagedChannel
     = ManagedChannelBuilder
-        .forAddress("localhost", 50051)
+        .forAddress("localhost", port)
         .usePlaintext()
         .let { builder ->
             if (logging) builder.intercept(RemoteClientInterceptor()) else builder
@@ -48,7 +47,7 @@ class GrpcClientRemoteCompilationService(
         return stub.compile(compileRequests.map { it.toGrpc() }).map { it.toDomain() }
     }
 
-    override fun cleanup() {
+    override suspend fun cleanup() {
         // TODO: atm we do not care
     }
 

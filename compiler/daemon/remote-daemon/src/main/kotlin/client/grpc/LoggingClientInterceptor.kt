@@ -1,8 +1,13 @@
 /*
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
+/*
  * Client-side interceptor for bidirectional streaming
  */
 
-package client
+package client.grpc
 
 import com.google.protobuf.MessageOrBuilder
 import com.google.protobuf.util.JsonFormat
@@ -14,6 +19,7 @@ import io.grpc.ForwardingClientCall
 import io.grpc.ForwardingClientCallListener
 import io.grpc.Metadata
 import io.grpc.MethodDescriptor
+import io.grpc.Status
 import org.jetbrains.kotlin.server.CompileRequestGrpc
 import org.jetbrains.kotlin.server.CompileResponseGrpc
 import java.time.LocalDateTime
@@ -22,6 +28,7 @@ import java.time.format.DateTimeFormatter
 class RemoteClientInterceptor : ClientInterceptor {
 
     private val formatter = DateTimeFormatter.ofPattern("HH:mm:ss")
+
     // grpc does not send default values therefore, they are not printed, we use
     // this printer that prints all fields of a message
     private val printer = JsonFormat.printer().alwaysPrintFieldsWithNoPresence()
@@ -80,7 +87,7 @@ class RemoteClientInterceptor : ClientInterceptor {
                         super.onHeaders(headers)
                     }
 
-                    override fun onClose(status: io.grpc.Status?, trailers: Metadata?) {
+                    override fun onClose(status: Status?, trailers: Metadata?) {
                         debug("closing call with status: $status")
                         super.onClose(status, trailers)
                     }

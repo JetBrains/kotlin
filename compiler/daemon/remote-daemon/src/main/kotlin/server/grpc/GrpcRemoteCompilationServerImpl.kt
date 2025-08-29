@@ -3,38 +3,29 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package main.kotlin.server
+package server.grpc
 
 import common.FixedSizeChunkingStrategy
-import common.RemoteCompilationServiceImplType
-import common.SERVER_ARTIFACTS_CACHE_DIR
-import common.SERVER_CACHE_DIR
-import common.SERVER_COMPILATION_WORKSPACE_DIR
-import common.SERVER_TMP_CACHE_DIR
-import io.grpc.Server
 import io.grpc.ServerBuilder
 import io.grpc.ServerInterceptors
-import server.GrpcRemoteCompilationService
+import server.auth.BasicHTTPAuthServer
 import server.core.CacheHandler
 import server.core.InProcessCompilerService
-import server.interceptors.LoggingServerInterceptor
-import server.auth.BasicHTTPAuthServer
 import server.core.RemoteCompilationServiceImpl
+import server.core.Server
 import server.core.WorkspaceManager
-import server.interceptors.AuthServerInterceptor
-import java.nio.file.Files
 
-class RemoteCompilationServer(
-    private val port: Int,
-    private val serverImplType: RemoteCompilationServiceImplType,
-    private val logging: Boolean = false
-) {
+
+class GrpcRemoteCompilationServerImpl(
+    port: Int,
+    private val logging: Boolean = false,
+) : Server {
 
     private val fileChunkingStrategy = FixedSizeChunkingStrategy()
     private val cacheHandler = CacheHandler()
     private val workspaceManager = WorkspaceManager()
 
-    val server: Server =
+    val server: io.grpc.Server =
         ServerBuilder
             .forPort(port)
             .addService(
@@ -56,41 +47,17 @@ class RemoteCompilationServer(
                     )
             ).build()
 
-    fun start() {
+
+    override fun start(block: Boolean) {
         server.start()
-        println("Server started, listening on $port")
-        Runtime.getRuntime().addShutdownHook(
-            Thread {
-                println("*** shutting down gRPC server since JVM is shutting down")
-                this@RemoteCompilationServer.stop()
-                println("*** server shut down")
-            },
-        )
     }
 
-    fun stop() {
-        cleanup()
-        server.shutdown()
+    override fun stop() {
+        server.shutdownNow()
     }
 
-    fun blockUntilShutdown() {
-        server.awaitTermination()
-    }
-
-    fun cleanup() {
+    override fun cleanup() {
         cacheHandler.cleanup()
         workspaceManager.cleanup()
-    }
-}
-
-fun main() {
-    try {
-        val port = System.getenv("PORT")?.toInt() ?: 50051
-        val server = RemoteCompilationServer(port, RemoteCompilationServiceImplType.GRPC)
-        server.start()
-        server.blockUntilShutdown()
-    } catch (e: Exception) {
-        println("error occurred: ${e.message}")
-        e.printStackTrace()
     }
 }

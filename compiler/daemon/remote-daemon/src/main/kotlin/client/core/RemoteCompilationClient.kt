@@ -3,14 +3,13 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.client
+package client.core
 
-import client.GrpcClientRemoteCompilationService
 import common.CLIENT_COMPILED_DIR
 import common.CLIENT_TMP_DIR
 import common.CompilerUtils
 import common.FixedSizeChunkingStrategy
-import common.RemoteCompilationServiceImplType
+import common.RemoteCompilationService
 import common.computeSha256
 import common.createTarArchive
 import kotlinx.coroutines.Dispatchers
@@ -19,6 +18,7 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.consumeAsFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
+import model.ArtifactType
 import model.CompilationMetadata
 import model.CompilationResult
 import model.CompileRequest
@@ -27,7 +27,6 @@ import model.CompilerMessage
 import model.FileChunk
 import model.FileTransferReply
 import model.FileTransferRequest
-import model.ArtifactType
 import org.jetbrains.kotlin.daemon.common.CompilationOptions
 import java.io.File
 import java.nio.file.Files
@@ -38,7 +37,7 @@ import kotlin.io.path.deleteRecursively
 
 @OptIn(ExperimentalPathApi::class)
 class RemoteCompilationClient(
-    val serverImplType: RemoteCompilationServiceImplType,
+    val clientImpl: RemoteCompilationService,
     val logging: Boolean = false
 ) {
 
@@ -53,6 +52,7 @@ class RemoteCompilationClient(
         CLIENT_COMPILED_DIR.toFile().mkdirs()
         CLIENT_TMP_DIR.toFile().mkdirs()
 
+        // TODO: this is just a convenient for testing and debugging
         Runtime.getRuntime().addShutdownHook(
             Thread {
                 CLIENT_COMPILED_DIR.deleteRecursively()
@@ -60,8 +60,6 @@ class RemoteCompilationClient(
             },
         )
     }
-
-    private val client = GrpcClientRemoteCompilationService()
 
     suspend fun compile(projectName: String, compilerArguments: List<String>, compilationOptions: CompilationOptions): CompilationResult {
         val compilerArgumentsMap = CompilerUtils.getMap(compilerArguments)
@@ -72,8 +70,8 @@ class RemoteCompilationClient(
 
         val fileChunks = mutableMapOf<String, MutableList<FileChunk>>()
 
-        val requestChannel = Channel<CompileRequest>(capacity = Channel.UNLIMITED)
-        val responseChannel = Channel<CompileResponse>(capacity = Channel.UNLIMITED)
+        val requestChannel = Channel<CompileRequest>(capacity = Channel.Factory.UNLIMITED)
+        val responseChannel = Channel<CompileResponse>(capacity = Channel.Factory.UNLIMITED)
         var compilationResult: CompilationResult? = null
 
         val fileChunkStrategy = FixedSizeChunkingStrategy()
@@ -81,7 +79,7 @@ class RemoteCompilationClient(
         coroutineScope {
             // start consuming response
             val responseJob = launch(Dispatchers.IO) {
-                client.compile(requestChannel.receiveAsFlow()).collect { responseChannel.send(it) }
+                clientImpl.compile(requestChannel.receiveAsFlow()).collect { responseChannel.send(it) }
                 // when the server stops closes connection, we can close our channels
                 responseChannel.close()
                 requestChannel.close()
