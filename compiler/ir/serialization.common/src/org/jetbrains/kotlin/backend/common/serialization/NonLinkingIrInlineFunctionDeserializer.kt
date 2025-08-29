@@ -64,11 +64,7 @@ class NonLinkingIrInlineFunctionDeserializer(
 
         val library = deserializedContainerSource.klib
         val moduleDeserializer = moduleDeserializers.getOrPut(library) {
-            when {
-                library.hasIrOfInlineableFuns -> ModuleDeserializer(library)
-                !library.hasIr -> error("Ir-less library: ${library.libraryFile.path}")
-                else -> null
-            }
+            if (library.hasIrOfInlineableFuns) ModuleDeserializer(library) else null
         } ?: return null
 
         val functionSignature: IdSignature = signatureComputer.computeSignature(function)
