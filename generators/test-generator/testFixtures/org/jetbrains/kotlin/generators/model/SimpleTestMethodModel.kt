@@ -23,18 +23,6 @@ open class SimpleTestMethodModel(
 ) : MethodModel {
     object Kind : MethodModel.Kind()
 
-    val directives: Map<String, List<String>> by lazy(LazyThreadSafetyMode.NONE) {
-        InTextDirectivesUtils.findLinesByPrefixRemoved(
-            /* fileText = */ InTextDirectivesUtils.textWithDirectives(file),
-            /* trim = */ true,
-            /* strict = */ true,
-            /* separatedValues = */ true,
-            *InTextDirectivesUtils.IGNORE_BACKEND_DIRECTIVE_PREFIXES,
-            InTextDirectivesUtils.TARGET_BACKEND_DIRECTIVE_PREFIX,
-            InTextDirectivesUtils.DORT_TARGET_EXACT_BACKEND_DIRECTIVE_PREFIX,
-        )
-    }
-
     override val kind: MethodModel.Kind
         get() = Kind
 
@@ -45,7 +33,7 @@ open class SimpleTestMethodModel(
         }
 
     override fun shouldBeGenerated(): Boolean {
-        return InTextDirectivesUtils.isCompatibleTarget(targetBackend, directives)
+        return true
     }
 
     override val name: String

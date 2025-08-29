@@ -49,7 +49,11 @@ abstract class AbstractKotlinCompilerTest {
             useAdditionalService<TargetPlatformProvider>(::TargetPlatformProviderForCompilerTests)
             useSourcePreprocessor(*defaultPreprocessors.toTypedArray())
             useDirectives(*defaultDirectiveContainers.toTypedArray())
-            useMetaTestConfigurators(::SystemPropertyTestDataRootConfigurator, ::ClassicUnstableAndK2LanguageFeaturesSkipConfigurator)
+            useMetaTestConfigurators(
+                ::SystemPropertyTestDataRootConfigurator,
+                ::ClassicUnstableAndK2LanguageFeaturesSkipConfigurator,
+                ::TargetBackendTestSkipper,
+            )
             configureDebugFlags()
             startingArtifactFactory = { ResultingArtifact.Source() }
         }

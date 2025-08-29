@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.test.directives
 
+import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
 
 object ConfigurationDirectives : SimpleDirectivesContainer() {
@@ -19,4 +20,7 @@ object ConfigurationDirectives : SimpleDirectivesContainer() {
     val WORKS_WHEN_VALUE_CLASS by directive(
         "Enables `JvmInlineSourceTransformer`, which transforms the OPTIONAL_JVM_INLINE_ANNOTATION placeholder"
     )
+
+    val TARGET_BACKEND by enumDirective<TargetBackend>("If specified then test will be skipped on any non-specified backends")
+    val DONT_TARGET_EXACT_BACKEND by enumDirective<TargetBackend>("If specified then test will be skipped on specified backends")
 }

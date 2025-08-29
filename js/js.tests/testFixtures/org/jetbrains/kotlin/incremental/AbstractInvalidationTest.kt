@@ -27,12 +27,14 @@ import org.jetbrains.kotlin.konan.file.ZipFileSystemCacheableAccessor
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.multiplatform.isCommonSource
 import org.jetbrains.kotlin.serialization.js.ModuleKind
+import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.builders.LanguageVersionSettingsBuilder
 import org.jetbrains.kotlin.test.util.JUnit4Assertions
 import org.jetbrains.kotlin.test.utils.TestDisposable
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.Assumptions
 import java.io.File
 import java.nio.file.Files
 import java.nio.file.Path
@@ -109,6 +111,13 @@ abstract class AbstractInvalidationTest(
         val testName = testDirectory.name
         val projectInfoFile = getProjectInfoFile(testDirectory)
         val projectInfo = parseProjectInfo(testName, projectInfoFile)
+        Assumptions.assumeTrue(
+            InTextDirectivesUtils.isCompatibleTarget(
+                /* targetBackend = */ targetBackend,
+                /* backends = */ projectInfo.targetBackends.toList(),
+                /* doNotTarget = */ emptyList()
+            )
+        )
 
         if (isIgnoredTest(projectInfo)) {
             return

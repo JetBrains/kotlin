@@ -1,3 +1,4 @@
+// TARGET_BACKEND: JVM
 // FILE: JavaInterface.java
 
 public interface JavaInterface {
@@ -19,7 +20,6 @@ public class JavaClass implements JavaInterface {
 }
 
 // FILE: test.kt
-// TARGET_BACKEND: JVM
 
 class KotlinClass : JavaClass()
 

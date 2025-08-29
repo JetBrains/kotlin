@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.klib
 
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.klib.KlibCompilerInvocationTestUtils.TestStructure.ModuleUnderTest
+import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.TargetBackend
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.fail
@@ -33,9 +34,11 @@ object KlibCompilerInvocationTestUtils {
         // A way to check if a test is ignored or not. Override this function if necessary.
         fun isIgnoredTest(projectInfo: ProjectInfo): Boolean {
             if (projectInfo.muted) return true
-            val compatibleBackends = generateSequence(targetBackend) { if (it == TargetBackend.ANY) null else it.compatibleWith }.toSet()
-            projectInfo.targetBackend?.let { return it !in compatibleBackends }
-            return projectInfo.ignoreBackends.intersect(compatibleBackends).isNotEmpty()
+            return !InTextDirectivesUtils.isCompatibleTarget(
+                /* targetBackend = */ targetBackend,
+                /* backends = */ projectInfo.targetBackends.toList(),
+                /* doNotTarget = */ projectInfo.ignoreBackends.toList(),
+            )
         }
 
         // How to handle the test that is known to be ignored.
