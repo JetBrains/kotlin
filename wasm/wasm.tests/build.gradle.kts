@@ -38,6 +38,30 @@ repositories {
         metadataSources { artifact() }
         content { includeModule("org.wasmedge", "wasmedge") }
     }
+    ivy {
+        url = URI("https://s3-us-west-2.amazonaws.com/minified-archives.webkit.org/mac-sequoia-x86_64%20arm64-release/")
+        patternLayout {
+            artifact("[revision]@main.zip")
+        }
+        metadataSources { artifact() }
+        content { includeModule("org.jsc", "jsc_macos") }
+    }
+    ivy {
+        url = URI("https://webkitgtk.org/jsc-built-products/x86_64/release/")
+        patternLayout {
+            artifact("[revision]@main.zip")
+        }
+        metadataSources { artifact() }
+        content { includeModule("org.jsc", "jsc_linux") }
+    }
+    ivy {
+        url = URI("https://github.com/igoriakovlev/javascriptcore_win_repack/releases/download/")
+        patternLayout {
+            artifact("[revision]/[revision]@main.zip")
+        }
+        metadataSources { artifact() }
+        content { includeModule("org.jsc", "jsc_windows") }
+    }
 }
 
 enum class OsName { WINDOWS, MAC, LINUX, UNKNOWN }
@@ -64,7 +88,6 @@ val currentOsType = run {
 
     OsType(osName, osArch)
 }
-
 
 val jsShellVersion = "134.0.2"
 val jsShellSuffix = when (currentOsType) {
@@ -103,6 +126,25 @@ val wasmEdge by configurations.creating {
     isCanBeConsumed = false
 }
 
+// TO FIND LATEST VERSIONS ONE CAN TRY TO USE FOLLOWING LINKS
+//ventura -> https://build.webkit.org/#/builders/706
+//monterey -> https://build.webkit.org/#/builders/368
+//sonoma -> https://build.webkit.org/#/builders/938
+//sequoia -> https://build.webkit.org/#/builders/1223
+//linux64 -> https://webkitgtk.org/jsc-built-products/x86_64/release/LAST-IS
+//win64 -> https://build.webkit.org/#/builders/1192
+val jscOsDependentVersion = when (currentOsType.name) {
+    OsName.MAC -> libs.versions.jscMacos
+    OsName.LINUX -> libs.versions.jscLinux
+    OsName.WINDOWS -> libs.versions.jscWindows
+    else -> error("unsupported os type $currentOsType")
+}.get()
+
+val jsc by configurations.creating {
+    isCanBeResolved = true
+    isCanBeConsumed = false
+}
+
 dependencies {
     testFixturesApi(testFixtures(project(":compiler:tests-common")))
     testFixturesApi(testFixtures(project(":compiler:tests-common-new")))
@@ -123,6 +165,18 @@ dependencies {
     implicitDependencies("org.wasmedge:wasmedge:${wasmEdgeVersion.get()}:windows@zip")
     implicitDependencies("org.wasmedge:wasmedge:${wasmEdgeVersion.get()}:manylinux_2_28_x86_64@tar.gz")
     implicitDependencies("org.wasmedge:wasmedge:${wasmEdgeVersion.get()}:darwin_arm64@tar.gz")
+
+    val jscOsDependentDependencyName = when (currentOsType.name) {
+        OsName.MAC -> "jsc_macos"
+        OsName.LINUX -> "jsc_linux"
+        OsName.WINDOWS -> "jsc_windows"
+        else -> error("unsupported os type $currentOsType")
+    }
+    jsc("org.jsc:$jscOsDependentDependencyName:$jscOsDependentVersion")
+
+    implicitDependencies("org.jsc:jsc_macos:${libs.versions.jscMacos.get()}")
+    implicitDependencies("org.jsc:jsc_linux:${libs.versions.jscLinux.get()}")
+    implicitDependencies("org.jsc:jsc_windows:${libs.versions.jscWindows.get()}")
 }
 
 optInToExperimentalCompilerApi()
@@ -247,6 +301,14 @@ val unzipWasmEdge by task<Copy> {
     }
 }
 
+val unzipJsc by task<Copy> {
+    dependsOn(jsc)
+    from(zipTree(jsc.singleFile))
+
+    val distDir = layout.buildDirectory.dir("tools/jsc-${currentOsType.name.name.lowercase()}-$jscOsDependentVersion")
+    into(distDir)
+}
+
 fun Test.setupSpiderMonkey() {
     dependsOn(unzipJsShell)
     val jsShellExecutablePath = File(unzipJsShell.get().destinationDir, "js").absolutePath
@@ -262,6 +324,61 @@ fun Test.setupWasmEdge() {
         .withPropertyName("wasmEdgeDirectory")
 
     jvmArgumentProviders.add { listOf("-Dwasm.engine.path.WasmEdge=${wasmEdgeDirectory.get().resolve("bin/wasmedge")}") }
+}
+
+fun getJscRunner(jscBinariesDir: File) = when (currentOsType.name) {
+    OsName.MAC ->
+"""#!/usr/bin/env bash
+DYLD_FRAMEWORK_PATH="$jscBinariesDir" DYLD_LIBRARY_PATH="$jscBinariesDir" "$jscBinariesDir/jsc" "$@"
+"""
+    OsName.LINUX ->
+"""#!/usr/bin/env bash
+LD_LIBRARY_PATH="$jscBinariesDir/lib" exec "$jscBinariesDir/lib/ld-linux-x86-64.so.2" "$jscBinariesDir/bin/jsc" "$@"
+"""
+    OsName.WINDOWS ->
+"""@echo off
+"$jscBinariesDir\\jsc.exe" %*
+"""
+    else -> error("unsupported os type $currentOsType")
+}
+
+val createJscRunner by task<Task> {
+    dependsOn(unzipJsc)
+
+    val jscDirectory = unzipJsc.map { it.destinationDir }
+
+    val runnerFile = jscDirectory.map {
+        if (currentOsType.name == OsName.WINDOWS) it.resolve("runJsc.cmd") else it.resolve("runJsc")
+    }
+
+    outputs.files(runnerFile)
+
+    val jscRunner = jscDirectory.map { dir ->
+        val binDirectory = when (currentOsType.name) {
+            OsName.MAC -> dir.resolve("Release")
+            OsName.LINUX -> dir
+            OsName.WINDOWS -> dir.resolve("bin")
+            else -> error("unsupported os type $currentOsType")
+        }
+        getJscRunner(binDirectory)
+    }
+
+    doLast {
+        with(runnerFile.get()) {
+            writeText(jscRunner.get())
+            setExecutable(true)
+        }
+    }
+}
+
+fun Test.setupJsc() {
+    val jscRunner = createJscRunner.map { it.outputs.files.singleFile }
+
+    inputs.file(jscRunner)
+        .withPathSensitivity(PathSensitivity.RELATIVE)
+        .withPropertyName("jscRunner")
+
+    systemProperty("javascript.engine.path.JavaScriptCore", jscRunner.get())
 }
 
 testsJar {}
@@ -289,6 +406,7 @@ projectTests {
             }
             setupSpiderMonkey()
             setupWasmEdge()
+            setupJsc()
             useJUnitPlatform()
             setupWasmStdlib("js")
             setupWasmStdlib("wasi")
