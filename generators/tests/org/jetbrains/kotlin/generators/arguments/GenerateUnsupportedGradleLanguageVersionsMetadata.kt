@@ -27,14 +27,19 @@ fun generateUnsupportedGradleLanguageVersionsMetadata(withPrinterToFile: (target
         println()
         println("internal object UnsupportedKotlinLanguageVersionsMetadata {")
         withIndent {
-            println("internal val firstDeprecatedInCompilerVersion: Map<KotlinVersion, KotlinToolingVersion> = mapOf(")
+            println("internal class UnsupportedKotlinLanguageVersionMetadata(val deprecationVersion: KotlinToolingVersion, val removalVersion: KotlinToolingVersion?)")
+            println()
+            println("internal val unsupportedPerVersion: Map<KotlinVersion, UnsupportedKotlinLanguageVersionMetadata> = mapOf(")
             withIndent {
                 for (version in ArgsKotlinVersion.entries) {
                     val gradleEnumName = "KOTLIN_" + version.versionName.replace('.', '_')
                     val meta = version.releaseVersionsMetadata
                     val deprecationVersion = meta.deprecatedVersion ?: continue
+                    val removalVersion = meta.removedVersion
+                    val removalVersionString =
+                        removalVersion?.let { "KotlinToolingVersion(${removalVersion.major}, ${removalVersion.minor}, ${removalVersion.patch}, null)" }
                     println(
-                        "KotlinVersion.$gradleEnumName to KotlinToolingVersion(${deprecationVersion.major}, ${deprecationVersion.minor}, ${deprecationVersion.patch}, null),"
+                        "KotlinVersion.$gradleEnumName to UnsupportedKotlinLanguageVersionMetadata(KotlinToolingVersion(${deprecationVersion.major}, ${deprecationVersion.minor}, ${deprecationVersion.patch}, null), $removalVersionString),"
                     )
                 }
             }

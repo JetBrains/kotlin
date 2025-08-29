@@ -8,17 +8,19 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
 
 internal object UnsupportedKotlinLanguageVersionsMetadata {
-    internal val firstDeprecatedInCompilerVersion: Map<KotlinVersion, KotlinToolingVersion> = mapOf(
-        KotlinVersion.KOTLIN_1_0 to KotlinToolingVersion(1, 3, 0, null),
-        KotlinVersion.KOTLIN_1_1 to KotlinToolingVersion(1, 3, 0, null),
-        KotlinVersion.KOTLIN_1_2 to KotlinToolingVersion(1, 4, 0, null),
-        KotlinVersion.KOTLIN_1_3 to KotlinToolingVersion(1, 5, 0, null),
-        KotlinVersion.KOTLIN_1_4 to KotlinToolingVersion(1, 6, 0, null),
-        KotlinVersion.KOTLIN_1_5 to KotlinToolingVersion(1, 9, 0, null),
-        KotlinVersion.KOTLIN_1_6 to KotlinToolingVersion(1, 3, 0, null),
-        KotlinVersion.KOTLIN_1_7 to KotlinToolingVersion(1, 3, 0, null),
-        KotlinVersion.KOTLIN_1_8 to KotlinToolingVersion(2, 2, 0, null),
-        KotlinVersion.KOTLIN_1_9 to KotlinToolingVersion(2, 2, 0, null),
-        KotlinVersion.KOTLIN_2_0 to KotlinToolingVersion(2, 3, 0, null),
+    internal class UnsupportedKotlinLanguageVersionMetadata(val deprecationVersion: KotlinToolingVersion, val removalVersion: KotlinToolingVersion?)
+
+    internal val unsupportedPerVersion: Map<KotlinVersion, UnsupportedKotlinLanguageVersionMetadata> = mapOf(
+        KotlinVersion.KOTLIN_1_0 to UnsupportedKotlinLanguageVersionMetadata(KotlinToolingVersion(1, 3, 0, null), KotlinToolingVersion(1, 4, 0, null)),
+        KotlinVersion.KOTLIN_1_1 to UnsupportedKotlinLanguageVersionMetadata(KotlinToolingVersion(1, 3, 0, null), KotlinToolingVersion(1, 4, 0, null)),
+        KotlinVersion.KOTLIN_1_2 to UnsupportedKotlinLanguageVersionMetadata(KotlinToolingVersion(1, 4, 0, null), KotlinToolingVersion(1, 5, 0, null)),
+        KotlinVersion.KOTLIN_1_3 to UnsupportedKotlinLanguageVersionMetadata(KotlinToolingVersion(1, 5, 0, null), KotlinToolingVersion(1, 9, 0, null)),
+        KotlinVersion.KOTLIN_1_4 to UnsupportedKotlinLanguageVersionMetadata(KotlinToolingVersion(1, 6, 0, null), KotlinToolingVersion(2, 1, 0, null)),
+        KotlinVersion.KOTLIN_1_5 to UnsupportedKotlinLanguageVersionMetadata(KotlinToolingVersion(1, 9, 0, null), KotlinToolingVersion(2, 1, 0, null)),
+        KotlinVersion.KOTLIN_1_6 to UnsupportedKotlinLanguageVersionMetadata(KotlinToolingVersion(1, 3, 0, null), KotlinToolingVersion(2, 1, 0, null)),
+        KotlinVersion.KOTLIN_1_7 to UnsupportedKotlinLanguageVersionMetadata(KotlinToolingVersion(1, 3, 0, null), KotlinToolingVersion(2, 2, 0, null)),
+        KotlinVersion.KOTLIN_1_8 to UnsupportedKotlinLanguageVersionMetadata(KotlinToolingVersion(2, 2, 0, null), KotlinToolingVersion(2, 3, 0, null)),
+        KotlinVersion.KOTLIN_1_9 to UnsupportedKotlinLanguageVersionMetadata(KotlinToolingVersion(2, 2, 0, null), null),
+        KotlinVersion.KOTLIN_2_0 to UnsupportedKotlinLanguageVersionMetadata(KotlinToolingVersion(2, 3, 0, null), null),
     )
 }

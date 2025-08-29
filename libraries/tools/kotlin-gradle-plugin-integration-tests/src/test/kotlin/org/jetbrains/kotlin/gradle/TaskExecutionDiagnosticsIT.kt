@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.gradle
 
-import com.android.build.gradle.internal.crash.afterEvaluate
 import org.gradle.kotlin.dsl.kotlin
 import org.gradle.kotlin.dsl.withType
 import org.gradle.testkit.runner.BuildResult
@@ -13,10 +12,9 @@ import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.buildtools.api.ExperimentalBuildToolsApi
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnostic
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.uklibs.applyJvm
-import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
-import org.jetbrains.kotlin.tooling.core.compareTo
 import org.junit.jupiter.api.DisplayName
 import kotlin.io.path.appendText
 
@@ -83,27 +81,48 @@ class TaskExecutionDiagnosticsIT : KGPBaseTest() {
         }
     }
 
-    @DisplayName("KT-79851: emit unsupported language version kotlin-dsl diagnostic, default compiler")
+    @DisplayName("KT-79851: emit unsupported language version kotlin-dsl diagnostic strong warning, default compiler")
     @JvmGradlePluginTests
     @GradleTest
-    fun emitDiagnosticOnUnsupportedVersionAlongKotlinDsl(gradleVersion: GradleVersion) =
-        emitDiagnosticOnUnsupportedVersionAlongKotlinDsl(gradleVersion, btaVersion = null)
+    fun emitDiagnosticOnUnsupportedVersionAlongKotlinDslStrongWarning(gradleVersion: GradleVersion) =
+        emitDiagnosticOnUnsupportedVersionAlongKotlinDsl(
+            gradleVersion,
+            btaVersion = null,
+            expectedSeverity = ToolingDiagnostic.Severity.STRONG_WARNING,
+        )
+
+    @DisplayName("KT-79851: emit unsupported language version kotlin-dsl diagnostic warning, default compiler")
+    @JvmGradlePluginTests
+    @GradleTest
+    fun emitDiagnosticOnUnsupportedVersionAlongKotlinDslWarning(gradleVersion: GradleVersion) =
+        emitDiagnosticOnUnsupportedVersionAlongKotlinDsl(
+            gradleVersion,
+            btaVersion = null,
+            expectedSeverity = ToolingDiagnostic.Severity.ERROR, // it's rendered as ERROR because of warning-mode=fail
+            customizedKotlinVersion = KotlinVersion.KOTLIN_1_9,
+        )
 
     @DisplayName("KT-79851: emit unsupported language version kotlin-dsl diagnostic, custom compiler via BTA with deprecation")
     @JvmGradlePluginTests
     @GradleTest
     fun emitDiagnosticOnUnsupportedVersionAlongKotlinDslCustomVersionDeprecation(gradleVersion: GradleVersion) =
-        emitDiagnosticOnUnsupportedVersionAlongKotlinDsl(gradleVersion, btaVersion = "2.2.10")
+        emitDiagnosticOnUnsupportedVersionAlongKotlinDsl(
+            gradleVersion,
+            btaVersion = "2.2.10",
+            expectedSeverity = ToolingDiagnostic.Severity.ERROR, // it's rendered as ERROR because of warning-mode=fail
+        )
 
     @DisplayName("KT-79851: emit unsupported language version kotlin-dsl diagnostic, custom compiler via BTA without deprecation")
     @JvmGradlePluginTests
     @GradleTest
     fun emitDiagnosticOnUnsupportedVersionAlongKotlinDslCustomVersion(gradleVersion: GradleVersion) =
-        emitDiagnosticOnUnsupportedVersionAlongKotlinDsl(gradleVersion, btaVersion = "2.1.20")
+        emitDiagnosticOnUnsupportedVersionAlongKotlinDsl(gradleVersion, btaVersion = "2.1.20", expectedSeverity = null)
 
     private fun emitDiagnosticOnUnsupportedVersionAlongKotlinDsl(
         gradleVersion: GradleVersion,
-        btaVersion: String? = null,
+        btaVersion: String?,
+        expectedSeverity: ToolingDiagnostic.Severity?,
+        customizedKotlinVersion: KotlinVersion = KotlinVersion.KOTLIN_1_8,
     ) {
         val project =
             project("emptyKts", gradleVersion, buildOptions = defaultBuildOptions.copy(runViaBuildToolsApi = btaVersion != null)) {
@@ -124,8 +143,8 @@ class TaskExecutionDiagnosticsIT : KGPBaseTest() {
                     // to make the test more reliable, fixate AV/LV. Those particular values are defaults for Gradle 8
                     val configureKotlin = {
                         project.tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
-                            it.compilerOptions.apiVersion.set(KotlinVersion.KOTLIN_1_8)
-                            it.compilerOptions.languageVersion.set(KotlinVersion.KOTLIN_1_8)
+                            it.compilerOptions.apiVersion.set(customizedKotlinVersion)
+                            it.compilerOptions.languageVersion.set(customizedKotlinVersion)
                         }
                     }
                     if (haveToUseAfterEvaluate) {
@@ -143,30 +162,21 @@ class TaskExecutionDiagnosticsIT : KGPBaseTest() {
                 }
             }
 
-        val btaToolingVersion = btaVersion?.let { KotlinToolingVersion(it) }
-        val canCompileWithoutWarningsViaBta = when {
-            btaToolingVersion == null -> false
-            btaToolingVersion < "2.2.0" -> true
-            else -> false
-        }
-        val canCompileWithoutErrorsViaBta = when {
-            btaToolingVersion == null -> false
-            btaToolingVersion < "2.3.0" -> true
-            else -> false
-        }
-        val expectFail = when {
-            canCompileWithoutErrorsViaBta -> false
-            else -> true
+        val expectFail = when (expectedSeverity) {
+            ToolingDiagnostic.Severity.ERROR -> false // ERROR == WARNING because of warning-mode=fail
+            ToolingDiagnostic.Severity.STRONG_WARNING -> true
+            null -> false
+            else -> error("Impossible expected severity: $expectedSeverity")
         }
         val assertions: BuildResult.() -> Unit = {
-            if (canCompileWithoutWarningsViaBta) {
+            if (expectedSeverity == null) {
                 assertNoDiagnostic(KotlinToolingDiagnostics.DeprecatedKotlinVersionKotlinDsl)
             } else {
                 val expectedVersions = """
-                    - API version: 1.8
-                    - language version: 1.8
+                    - API version: ${customizedKotlinVersion.version}
+                    - language version: ${customizedKotlinVersion.version}
                 """.trimIndent()
-                assertHasDiagnostic(KotlinToolingDiagnostics.DeprecatedKotlinVersionKotlinDsl, expectedVersions)
+                assertHasDiagnostic(KotlinToolingDiagnostics.DeprecatedKotlinVersionKotlinDsl, expectedVersions, expectedSeverity)
             }
         }
         if (expectFail) {

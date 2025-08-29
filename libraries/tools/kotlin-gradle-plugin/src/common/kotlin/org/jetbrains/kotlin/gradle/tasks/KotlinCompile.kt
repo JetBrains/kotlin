@@ -330,11 +330,6 @@ abstract class KotlinCompile @Inject constructor(
         }
     }
 
-    private fun KotlinVersion?.isSupported(): Boolean {
-        val deprecatedInVersion = UnsupportedKotlinLanguageVersionsMetadata.firstDeprecatedInCompilerVersion[this]
-        return deprecatedInVersion == null || kotlinCompilerVersion.get() < deprecatedInVersion
-    }
-
     /**
      * KT-79851: Validates the Kotlin versions (API and language) when the Kotlin DSL plugin is present to simplify resolution.
      * The check itself together with the related code generator may look overcomplicated.
@@ -350,23 +345,44 @@ abstract class KotlinCompile @Inject constructor(
     private fun validateKotlinVersionsInPresenceOfKotlinDslPlugin(args: KotlinJvmCompilerOptions) {
         if (!kotlinDslPluginIsPresent.get()) return
 
-        val versions = buildList {
-            val apiVersion = args.apiVersion.orNull
-            // null means the default version which is always supported
-            if (apiVersion != null && !apiVersion.isSupported()) {
-                add(DeprecatedKotlinVersionKotlinDsl.VersionMetadata(apiVersion, "API", "apiVersion"))
+        fun KotlinVersion?.unsupportedLevel(): ToolingDiagnostic.Severity? {
+            if (this == null) return null
+            val metadata = UnsupportedKotlinLanguageVersionsMetadata.unsupportedPerVersion[this]
+            return when {
+                metadata == null -> null
+                metadata.removalVersion != null && metadata.removalVersion < kotlinCompilerVersion.get() -> ToolingDiagnostic.Severity.STRONG_WARNING
+                metadata.deprecationVersion < kotlinCompilerVersion.get() -> ToolingDiagnostic.Severity.WARNING
+                else -> null
             }
+        }
+
+        val versions = buildList {
+            // null means the default version which is always supported
+            val apiVersion = args.apiVersion.orNull
+            val apiVersionUnsupportedLevel = apiVersion.unsupportedLevel()
+            if (apiVersion != null && apiVersionUnsupportedLevel != null) {
+                add(DeprecatedKotlinVersionKotlinDsl.VersionMetadata(apiVersion, "API", "apiVersion", apiVersionUnsupportedLevel))
+            }
+            // null means the default version which is always supported
             val languageVersion = args.languageVersion.orNull
-            if (languageVersion != null && !languageVersion.isSupported()) {
-                add(DeprecatedKotlinVersionKotlinDsl.VersionMetadata(languageVersion, "language", "languageVersion"))
+            val languageVersionUnsupportedLevel = languageVersion.unsupportedLevel()
+            if (languageVersion != null && languageVersionUnsupportedLevel != null) {
+                add(
+                    DeprecatedKotlinVersionKotlinDsl.VersionMetadata(
+                        languageVersion,
+                        "language",
+                        "languageVersion",
+                        languageVersionUnsupportedLevel
+                    )
+                )
             }
         }
 
         if (versions.isNotEmpty()) {
-            val firstNonDeprecatedVersion = KotlinVersion.values().first {
-                UnsupportedKotlinLanguageVersionsMetadata.firstDeprecatedInCompilerVersion[it] == null
+            val unsupportedVersionsMetadata = KotlinVersion.values().first {
+                UnsupportedKotlinLanguageVersionsMetadata.unsupportedPerVersion[it] == null
             }
-            reportDiagnostic(DeprecatedKotlinVersionKotlinDsl(versions, firstNonDeprecatedVersion))
+            reportDiagnostic(DeprecatedKotlinVersionKotlinDsl(versions, unsupportedVersionsMetadata))
         }
     }
 

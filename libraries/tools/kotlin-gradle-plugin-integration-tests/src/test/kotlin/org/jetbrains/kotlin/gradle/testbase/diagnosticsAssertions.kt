@@ -8,22 +8,31 @@ package org.jetbrains.kotlin.gradle.testbase
 import org.gradle.testkit.runner.BuildResult
 import org.jetbrains.kotlin.gradle.internals.*
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnostic
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnosticFactory
 import java.io.File
 import kotlin.test.assertContentEquals
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
-internal fun BuildResult.assertHasDiagnostic(diagnosticFactory: ToolingDiagnosticFactory, withSubstring: String? = null) {
-    output.assertHasDiagnostic(diagnosticFactory, withSubstring)
+internal fun BuildResult.assertHasDiagnostic(
+    diagnosticFactory: ToolingDiagnosticFactory,
+    withSubstring: String? = null,
+    expectedSeverity: ToolingDiagnostic.Severity? = null,
+) {
+    output.assertHasDiagnostic(diagnosticFactory, withSubstring, expectedSeverity)
 }
 
 internal fun BuildResult.assertNoDiagnostic(diagnosticFactory: ToolingDiagnosticFactory, withSubstring: String? = null) {
     output.assertNoDiagnostic(diagnosticFactory, withSubstring)
 }
 
-internal fun String.assertHasDiagnostic(diagnosticFactory: ToolingDiagnosticFactory, withSubstring: String? = null) {
-    val diagnosticsMessages = extractRenderedDiagnostics(diagnosticFactory, this)
+internal fun String.assertHasDiagnostic(
+    diagnosticFactory: ToolingDiagnosticFactory,
+    withSubstring: String? = null,
+    expectedSeverity: ToolingDiagnostic.Severity? = null,
+) {
+    val diagnosticsMessages = extractRenderedDiagnostics(diagnosticFactory, this, expectedSeverity)
     assertTrue(diagnosticsMessages.isNotEmpty(), "Diagnostic with id=${diagnosticFactory.id} not found. Full text output:\n\n" + this)
     if (withSubstring != null) {
         assertTrue(
@@ -200,11 +209,15 @@ private val DIAGNOSTIC_START_REGEX = """\s*([we]:)?\s*\[\w+ \| \w+].*""".toRegex
      Multiline
          Text"
   */
-private fun extractRenderedDiagnostics(diagnostic: ToolingDiagnosticFactory, fromText: String): List<String> {
+private fun extractRenderedDiagnostics(
+    diagnostic: ToolingDiagnosticFactory,
+    fromText: String,
+    expectedSeverity: ToolingDiagnostic.Severity? = null,
+): List<String> {
     var parsedPrefix = 0
 
     return generateSequence {
-        extractNextDiagnosticAndIndex(diagnostic, fromText, startIndex = parsedPrefix)
+        extractNextDiagnosticAndIndex(diagnostic, fromText, startIndex = parsedPrefix, expectedSeverity = expectedSeverity)
             ?.also { (_, newPrefix) -> parsedPrefix = newPrefix }
             ?.first
     }.toList()
@@ -215,8 +228,10 @@ private fun extractNextDiagnosticAndIndex(
     diagnostic: ToolingDiagnosticFactory,
     fromText: String,
     startIndex: Int,
+    expectedSeverity: ToolingDiagnostic.Severity? = null,
 ): Pair<String, Int>? {
-    val diagnosticStartIndex = fromText.indexOf("[${diagnostic.id}", startIndex)
+    val severitySuffix = expectedSeverity?.let { " | $it" } ?: ""
+    val diagnosticStartIndex = fromText.indexOf("[${diagnostic.id}$severitySuffix", startIndex)
     if (diagnosticStartIndex == -1) return null
 
     val diagnosticHeaderEnd = fromText.indexOf("]", startIndex = diagnosticStartIndex)
