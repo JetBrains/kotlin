@@ -354,7 +354,7 @@ public actual class AtomicReference<T> public actual constructor(private var val
 @InlineOnly
 public actual inline fun AtomicInt.update(transform: (Int) -> Int): Unit {
     contract {
-        callsInPlace(transform, InvocationKind.AT_LEAST_ONCE)
+        callsInPlace(transform, InvocationKind.EXACTLY_ONCE)
     }
     store(transform(load()))
 }
@@ -373,7 +373,7 @@ public actual inline fun AtomicInt.update(transform: (Int) -> Int): Unit {
 @InlineOnly
 public actual inline fun AtomicInt.fetchAndUpdate(transform: (Int) -> Int): Int {
     contract {
-        callsInPlace(transform, InvocationKind.AT_LEAST_ONCE)
+        callsInPlace(transform, InvocationKind.EXACTLY_ONCE)
     }
     val old = load()
     store(transform(old))
@@ -394,7 +394,7 @@ public actual inline fun AtomicInt.fetchAndUpdate(transform: (Int) -> Int): Int 
 @InlineOnly
 public actual inline fun AtomicInt.updateAndFetch(transform: (Int) -> Int): Int {
     contract {
-        callsInPlace(transform, InvocationKind.AT_LEAST_ONCE)
+        callsInPlace(transform, InvocationKind.EXACTLY_ONCE)
     }
     val newValue = transform(load())
     store(newValue)
@@ -414,7 +414,7 @@ public actual inline fun AtomicInt.updateAndFetch(transform: (Int) -> Int): Int 
 @InlineOnly
 public actual inline fun AtomicLong.update(transform: (Long) -> Long): Unit {
     contract {
-        callsInPlace(transform, InvocationKind.AT_LEAST_ONCE)
+        callsInPlace(transform, InvocationKind.EXACTLY_ONCE)
     }
     store(transform(load()))
 }
@@ -433,7 +433,7 @@ public actual inline fun AtomicLong.update(transform: (Long) -> Long): Unit {
 @InlineOnly
 public actual inline fun AtomicLong.fetchAndUpdate(transform: (Long) -> Long): Long {
     contract {
-        callsInPlace(transform, InvocationKind.AT_LEAST_ONCE)
+        callsInPlace(transform, InvocationKind.EXACTLY_ONCE)
     }
     val old = load()
     store(transform(old))
@@ -454,7 +454,7 @@ public actual inline fun AtomicLong.fetchAndUpdate(transform: (Long) -> Long): L
 @InlineOnly
 public actual inline fun AtomicLong.updateAndFetch(transform: (Long) -> Long): Long {
     contract {
-        callsInPlace(transform, InvocationKind.AT_LEAST_ONCE)
+        callsInPlace(transform, InvocationKind.EXACTLY_ONCE)
     }
     val newValue = transform(load())
     store(newValue)
@@ -474,7 +474,7 @@ public actual inline fun AtomicLong.updateAndFetch(transform: (Long) -> Long): L
 @InlineOnly
 public actual inline fun <T> AtomicReference<T>.update(transform: (T) -> T): Unit {
     contract {
-        callsInPlace(transform, InvocationKind.AT_LEAST_ONCE)
+        callsInPlace(transform, InvocationKind.EXACTLY_ONCE)
     }
     store(transform(load()))
 }
@@ -493,7 +493,7 @@ public actual inline fun <T> AtomicReference<T>.update(transform: (T) -> T): Uni
 @InlineOnly
 public actual inline fun <T> AtomicReference<T>.fetchAndUpdate(transform: (T) -> T): T {
     contract {
-        callsInPlace(transform, InvocationKind.AT_LEAST_ONCE)
+        callsInPlace(transform, InvocationKind.EXACTLY_ONCE)
     }
     val old = load()
     store(transform(old))
@@ -514,7 +514,7 @@ public actual inline fun <T> AtomicReference<T>.fetchAndUpdate(transform: (T) ->
 @InlineOnly
 public actual inline fun <T> AtomicReference<T>.updateAndFetch(transform: (T) -> T): T {
     contract {
-        callsInPlace(transform, InvocationKind.AT_LEAST_ONCE)
+        callsInPlace(transform, InvocationKind.EXACTLY_ONCE)
     }
     val newValue = transform(load())
     store(newValue)

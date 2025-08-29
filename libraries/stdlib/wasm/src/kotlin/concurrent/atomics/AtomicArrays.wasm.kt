@@ -175,7 +175,7 @@ public actual class AtomicIntArray {
 @InlineOnly
 public actual inline fun AtomicIntArray.updateAt(index: Int, transform: (Int) -> Int): Unit {
     contract {
-        callsInPlace(transform, InvocationKind.AT_LEAST_ONCE)
+        callsInPlace(transform, InvocationKind.EXACTLY_ONCE)
     }
     storeAt(index, transform(loadAt(index)))
 }
@@ -196,7 +196,7 @@ public actual inline fun AtomicIntArray.updateAt(index: Int, transform: (Int) ->
 @InlineOnly
 public actual inline fun AtomicIntArray.updateAndFetchAt(index: Int, transform: (Int) -> Int): Int {
     contract {
-        callsInPlace(transform, InvocationKind.AT_LEAST_ONCE)
+        callsInPlace(transform, InvocationKind.EXACTLY_ONCE)
     }
     val updated = transform(loadAt(index))
     storeAt(index, updated)
@@ -219,7 +219,7 @@ public actual inline fun AtomicIntArray.updateAndFetchAt(index: Int, transform: 
 @InlineOnly
 public actual inline fun AtomicIntArray.fetchAndUpdateAt(index: Int, transform: (Int) -> Int): Int {
     contract {
-        callsInPlace(transform, InvocationKind.AT_LEAST_ONCE)
+        callsInPlace(transform, InvocationKind.EXACTLY_ONCE)
     }
     val old = loadAt(index)
     storeAt(index, transform(old))
@@ -393,7 +393,7 @@ public actual class AtomicLongArray {
 @InlineOnly
 public actual inline fun AtomicLongArray.updateAt(index: Int, transform: (Long) -> Long): Unit {
     contract {
-        callsInPlace(transform, InvocationKind.AT_LEAST_ONCE)
+        callsInPlace(transform, InvocationKind.EXACTLY_ONCE)
     }
     storeAt(index, transform(loadAt(index)))
 }
@@ -414,7 +414,7 @@ public actual inline fun AtomicLongArray.updateAt(index: Int, transform: (Long) 
 @InlineOnly
 public actual inline fun AtomicLongArray.updateAndFetchAt(index: Int, transform: (Long) -> Long): Long {
     contract {
-        callsInPlace(transform, InvocationKind.AT_LEAST_ONCE)
+        callsInPlace(transform, InvocationKind.EXACTLY_ONCE)
     }
     val updated = transform(loadAt(index))
     storeAt(index, updated)
@@ -437,7 +437,7 @@ public actual inline fun AtomicLongArray.updateAndFetchAt(index: Int, transform:
 @InlineOnly
 public actual inline fun AtomicLongArray.fetchAndUpdateAt(index: Int, transform: (Long) -> Long): Long {
     contract {
-        callsInPlace(transform, InvocationKind.AT_LEAST_ONCE)
+        callsInPlace(transform, InvocationKind.EXACTLY_ONCE)
     }
     val old = loadAt(index)
     storeAt(index, transform(old))
@@ -572,7 +572,7 @@ public actual class AtomicArray<T> {
 @InlineOnly
 public actual inline fun <T> AtomicArray<T>.updateAt(index: Int, transform: (T) -> T): Unit {
     contract {
-        callsInPlace(transform, InvocationKind.AT_LEAST_ONCE)
+        callsInPlace(transform, InvocationKind.EXACTLY_ONCE)
     }
     storeAt(index, transform(loadAt(index)))
 }
@@ -593,7 +593,7 @@ public actual inline fun <T> AtomicArray<T>.updateAt(index: Int, transform: (T) 
 @InlineOnly
 public actual inline fun <T> AtomicArray<T>.updateAndFetchAt(index: Int, transform: (T) -> T): T {
     contract {
-        callsInPlace(transform, InvocationKind.AT_LEAST_ONCE)
+        callsInPlace(transform, InvocationKind.EXACTLY_ONCE)
     }
     val updated = transform(loadAt(index))
     storeAt(index, updated)
@@ -616,7 +616,7 @@ public actual inline fun <T> AtomicArray<T>.updateAndFetchAt(index: Int, transfo
 @InlineOnly
 public actual inline fun <T> AtomicArray<T>.fetchAndUpdateAt(index: Int, transform: (T) -> T): T {
     contract {
-        callsInPlace(transform, InvocationKind.AT_LEAST_ONCE)
+        callsInPlace(transform, InvocationKind.EXACTLY_ONCE)
     }
     val old = loadAt(index)
     storeAt(index, transform(old))
