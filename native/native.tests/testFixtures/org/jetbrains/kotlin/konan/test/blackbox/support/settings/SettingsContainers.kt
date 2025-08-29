@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.konan.test.blackbox.support.settings
 
+import org.jetbrains.kotlin.config.nativeBinaryOptions.BinaryOptions
 import org.jetbrains.kotlin.konan.target.Configurables
 import org.jetbrains.kotlin.konan.target.Distribution
 import org.jetbrains.kotlin.konan.target.HostManager
@@ -66,10 +67,18 @@ class SimpleTestRunSettings(parent: SimpleTestClassSettings, settings: Iterable<
 
 val Settings.configurables: Configurables
     get() {
+        val propertyOverrides = buildMap {
+            // Development variant of LLVM is used to have utilities like FileCheck
+            put("llvmHome.${HostManager.hostName}", "\$llvm.${HostManager.hostName}.dev")
+            if (get<ExplicitBinaryOptions>().getOrNull(BinaryOptions.macabi) == true) {
+                // The same as in KonanConfig. See the motivation there.
+                put("targetTriple.ios_arm64", "arm64-apple-ios-macabi")
+                put("targetSysRoot.ios_arm64", "\$targetSysRoot.macos_arm64")
+            }
+        }
         val distribution = Distribution(
             get<KotlinNativeHome>().dir.path,
-            // Development variant of LLVM is used to have utilities like FileCheck
-            propertyOverrides = mapOf("llvmHome.${HostManager.hostName}" to "\$llvm.${HostManager.hostName}.dev")
+            propertyOverrides = propertyOverrides
         )
         return PlatformManager(distribution).platform(get<KotlinNativeTargets>().testTarget).configurables
     }
