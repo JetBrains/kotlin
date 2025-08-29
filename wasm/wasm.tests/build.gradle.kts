@@ -297,8 +297,12 @@ val unzipJsc by task<Copy> {
 
 fun Test.setupSpiderMonkey() {
     dependsOn(unzipJsShell)
-    val jsShellExecutablePath = File(unzipJsShell.get().destinationDir, "js").absolutePath
-    systemProperty("javascript.engine.path.SpiderMonkey", jsShellExecutablePath)
+
+    val destinationDir = unzipJsShell.map { it.destinationDir }
+    doFirst {
+        val jsShellExecutablePath = File(destinationDir.get(), "js").absolutePath
+        systemProperty("javascript.engine.path.SpiderMonkey", jsShellExecutablePath)
+    }
 }
 
 fun Test.setupWasmEdge() {
@@ -383,7 +387,9 @@ fun Test.setupJsc() {
         .withPathSensitivity(PathSensitivity.RELATIVE)
         .withPropertyName("jscRunner")
 
-    systemProperty("javascript.engine.path.JavaScriptCore", jscRunner.get())
+    doFirst {
+        systemProperty("javascript.engine.path.JavaScriptCore", jscRunner.get())
+    }
 }
 
 testsJar {}
@@ -423,7 +429,10 @@ projectTests {
             setupWasmStdlib("js")
             setupWasmStdlib("wasi")
             setupGradlePropertiesForwarding()
-            systemProperty("kotlin.wasm.test.root.out.dir", "${layout.buildDirectory.get().asFile}/")
+            val buildDirectory = layout.buildDirectory.map { it.asFile }
+            doFirst {
+                systemProperty("kotlin.wasm.test.root.out.dir", "${buildDirectory.get()}/")
+            }
             body()
         }
     }
