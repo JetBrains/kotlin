@@ -10068,6 +10068,12 @@ public class FirLightTreeOldFrontendDiagnosticsWithLatestLanguageVersionTestGene
       }
 
       @Test
+      @TestMetadata("nestedScopesInsideFile.kt")
+      public void testNestedScopesInsideFile() {
+        runTest("compiler/testData/diagnostics/tests/crvFull/nestedScopesInsideFile.kt");
+      }
+
+      @Test
       @TestMetadata("noConflictOnMultipleMainDeclarations.kt")
       public void testNoConflictOnMultipleMainDeclarations() {
         runTest("compiler/testData/diagnostics/tests/crvFull/noConflictOnMultipleMainDeclarations.kt");

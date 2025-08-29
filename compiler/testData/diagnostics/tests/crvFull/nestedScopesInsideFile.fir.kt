@@ -1,12 +1,10 @@
 // RUN_PIPELINE_TILL: BACKEND
 // WITH_STDLIB
 
-@file:MustUseReturnValue
-
 fun localFun() {
     fun local(): Int = 123
     @IgnorableReturnValue fun localIgnorable() = ""
-    local()
+    <!RETURN_VALUE_NOT_USED!>local()<!>
     localIgnorable()
 }
 
@@ -15,12 +13,12 @@ class Outer {
         class Inner {
             @IgnorableReturnValue fun bar() {
                 fun local() = ""
-                local()
+                <!RETURN_VALUE_NOT_USED!>local()<!>
             }
             fun inner() = ""
         }
-        Inner()
-        Inner().inner()
+        <!RETURN_VALUE_NOT_USED!>Inner()<!>
+        <!RETURN_VALUE_NOT_USED!>Inner().inner()<!>
         Inner().bar()
         return ""
     }
@@ -29,8 +27,8 @@ class Outer {
 }
 
 fun main() {
-    Outer().foo()
-    Outer().bar()
+    <!RETURN_VALUE_NOT_USED!>Outer().foo()<!>
+    <!RETURN_VALUE_NOT_USED!>Outer().bar()<!>
 }
 
 /* GENERATED_FIR_TAGS: annotationUseSiteTargetFile, classDeclaration, functionDeclaration, integerLiteral, localFunction */

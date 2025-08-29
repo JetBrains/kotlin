@@ -10086,6 +10086,12 @@ public class LLReversedDiagnosticsFe10TestGenerated extends AbstractLLReversedDi
       }
 
       @Test
+      @TestMetadata("nestedScopesInsideFile.kt")
+      public void testNestedScopesInsideFile() {
+        runTest("compiler/testData/diagnostics/tests/crvFull/nestedScopesInsideFile.kt");
+      }
+
+      @Test
       @TestMetadata("noConflictOnMultipleMainDeclarations.kt")
       public void testNoConflictOnMultipleMainDeclarations() {
         runTest("compiler/testData/diagnostics/tests/crvFull/noConflictOnMultipleMainDeclarations.kt");

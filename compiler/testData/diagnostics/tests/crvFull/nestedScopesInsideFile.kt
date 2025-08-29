@@ -1,8 +1,6 @@
 // RUN_PIPELINE_TILL: BACKEND
 // WITH_STDLIB
 
-@file:MustUseReturnValue
-
 fun localFun() {
     fun local(): Int = 123
     @IgnorableReturnValue fun localIgnorable() = ""
