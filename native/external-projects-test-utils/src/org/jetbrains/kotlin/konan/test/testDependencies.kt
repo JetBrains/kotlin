@@ -55,5 +55,10 @@ val testLibraryKotlinxCoroutines
 
 val testLibraryAtomicFu
     get() = testDependencyKlibs.firstOrNull {
-        it.pathString.contains("atomicfu")
+        it.pathString.contains("atomicfu") && !it.pathString.contains("cinterop-interop")
+    } ?: error("Missing 'org.jetbrains.kotlinx.atomicfu' in 'testDependencyKlibs' System Property")
+
+val testLibraryAtomicFuCinteropInterop
+    get() = testDependencyKlibs.firstOrNull {
+        it.pathString.contains("atomicfu-cinterop-interop")
     } ?: error("Missing 'org.jetbrains.kotlinx.atomicfu' in 'testDependencyKlibs' System Property")
