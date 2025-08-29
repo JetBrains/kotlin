@@ -839,7 +839,6 @@ tasks {
     }
 
     register("wasmCompilerTest") {
-        dependsOn(":wasm:wasm.tests:testK1")
         dependsOn(":wasm:wasm.tests:diagnosticTest")
         // Windows WABT release requires Visual C++ Redistributable
         if (!kotlinBuildProperties.isTeamcityBuild || !org.gradle.internal.os.OperatingSystem.current().isWindows) {

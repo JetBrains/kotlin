@@ -126,7 +126,6 @@ dependencies {
 }
 
 optInToExperimentalCompilerApi()
-optInToK1Deprecation()
 
 sourceSets {
     "main" { }
@@ -304,11 +303,6 @@ projectTests {
     wasmProjectTest("testFir", skipInLocalBuild = true) {
         dependsOn(generateTypeScriptTests)
         include("**/Fir*.class")
-    }
-
-    wasmProjectTest("testK1", skipInLocalBuild = true) {
-        dependsOn(generateTypeScriptTests)
-        include("**/K1*.class")
     }
 
     wasmProjectTest("diagnosticTest", skipInLocalBuild = true) {

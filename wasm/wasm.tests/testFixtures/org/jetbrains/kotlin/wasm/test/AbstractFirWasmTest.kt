@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.test.services.AdditionalSourceProvider
 import org.jetbrains.kotlin.test.services.EnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.SplittingModuleTransformerForBoxTests
 import org.jetbrains.kotlin.test.services.SplittingTestConfigurator
+import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.WasmEnvironmentConfiguratorJs
 import org.jetbrains.kotlin.test.services.configuration.WasmEnvironmentConfiguratorWasi
 import org.jetbrains.kotlin.wasm.test.converters.FirWasmKlibSerializerFacade
@@ -243,6 +244,18 @@ open class AbstractFirWasmWasiCodegenBoxWithInlinedFunInKlibTest : AbstractFirWa
                     "+${LanguageFeature.IrCrossModuleInlinerBeforeKlibSerialization.name}"
                 )
             }
+        }
+    }
+}
+
+open class AbstractFirWasmTypeScriptExportTest : AbstractFirWasmJsTest(
+    "${JsEnvironmentConfigurator.TEST_DATA_DIR_PATH}/typescript-export/wasm/",
+    "typescript-export/"
+) {
+    override fun configure(builder: TestConfigurationBuilder) {
+        super.configure(builder)
+        builder.defaultDirectives {
+            +WasmEnvironmentConfigurationDirectives.CHECK_TYPESCRIPT_DECLARATIONS
         }
     }
 }

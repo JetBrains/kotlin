@@ -20,7 +20,6 @@ fun main(args: Array<String>) {
     // Common configuration shared between K1 and K2 tests:
     val jvmOnlyBoxTests = listOf("compileKotlinAgainstKotlin")
     val k1BoxTestDir = "multiplatform/k1"
-    val k2BoxTestDir = "multiplatform/k2"
 
     val jsTranslatorTestPattern = "^([^_](.+))\\.kt$"
     val jsTranslatorReflectionPattern = "^(findAssociatedObject(InSeparatedFile)?(Lazyness)?(AndDCE)?)\\.kt$"
@@ -136,46 +135,8 @@ fun main(args: Array<String>) {
                 model("debug/stepping")
             }
         }
-
-        testGroup("wasm/wasm.tests/tests-gen", "js/js.translator/testData", testRunnerMethodName = "runTest0") {
-            testClass<AbstractK1WasmJsTranslatorTest> {
-                model("box/main", pattern = jsTranslatorTestPattern)
-                model("box/native/", pattern = jsTranslatorTestPattern)
-                model("box/esModules/", pattern = jsTranslatorTestPattern, excludeDirs = jsTranslatorEsModulesExcludedDirs)
-                model("box/jsQualifier/", pattern = jsTranslatorTestPattern)
-                model("box/reflection/", pattern = jsTranslatorReflectionPattern)
-                model("box/kotlin.test/", pattern = jsTranslatorTestPattern)
-            }
-        }
-
-        testGroup("wasm/wasm.tests/tests-gen", "compiler/testData", testRunnerMethodName = "runTest0") {
-            testClass<AbstractK1WasmCodegenBoxTest> {
-                model("codegen/box", pattern = jsTranslatorTestPattern, excludeDirs = jvmOnlyBoxTests + k2BoxTestDir)
-            }
-
-            testClass<AbstractK1WasmCodegenBoxInlineTest> {
-                model("codegen/boxInline")
-            }
-
-            testClass<AbstractK1WasmCodegenWasmJsInteropTest> {
-                model("codegen/boxWasmJsInterop")
-            }
-
-            testClass<AbstractK1WasmWasiCodegenBoxTest> {
-                model("codegen/boxWasmWasi")
-            }
-
-            testClass<AbstractK1WasmSteppingTest> {
-                model("debug/stepping")
-            }
-        }
-
         testGroup("wasm/wasm.tests/tests-gen", "js/js.translator/testData", testRunnerMethodName = "runTest0") {
             testClass<AbstractFirWasmTypeScriptExportTest> {
-                model("typescript-export/wasm/")
-            }
-
-            testClass<AbstractK1WasmTypeScriptExportTest> {
                 model("typescript-export/wasm/")
             }
         }
