@@ -8,11 +8,19 @@ public interface IrLocalDelegatedPropertyReferenceOrBuilder extends
     org.jetbrains.kotlin.protobuf.MessageLiteOrBuilder {
 
   /**
-   * <code>required int64 delegate = 1;</code>
+   * <code>optional int64 delegate = 1;</code>
+   *
+   * <pre>
+   * Was required before 2.3.0.
+   * </pre>
    */
   boolean hasDelegate();
   /**
-   * <code>required int64 delegate = 1;</code>
+   * <code>optional int64 delegate = 1;</code>
+   *
+   * <pre>
+   * Was required before 2.3.0.
+   * </pre>
    */
   long getDelegate();
 

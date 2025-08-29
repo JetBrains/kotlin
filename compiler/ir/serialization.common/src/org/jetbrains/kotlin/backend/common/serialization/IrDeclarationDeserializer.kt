@@ -705,7 +705,9 @@ class IrDeclarationDeserializer(
             )
 
             prop.apply {
-                delegate = deserializeIrVariable(proto.delegate)
+                if (proto.hasDelegate()) {
+                    delegate = deserializeIrVariable(proto.delegate)
+                }
                 getter = deserializeIrFunction(proto.getter)
                 if (proto.hasSetter())
                     setter = deserializeIrFunction(proto.setter)

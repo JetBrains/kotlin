@@ -1244,7 +1244,7 @@ open class IrFileSerializer(
             .setBase(serializeIrDeclarationBase(variable, LocalVariableFlags.encode(variable)))
             .setNameType(serializeNameAndType(variable.name, variable.type))
 
-        proto.delegate = serializeIrVariable(variable.delegate)
+        variable.delegate?.let { proto.delegate = serializeIrVariable(it) }
         proto.getter = serializeIrFunction(variable.getter)
         variable.setter?.let { proto.setSetter(serializeIrFunction(it)) }
 

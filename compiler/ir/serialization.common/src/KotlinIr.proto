@@ -199,7 +199,7 @@ message IrFunctionReference {
 }
 
 message IrLocalDelegatedPropertyReference {
-  required int64 delegate = 1;
+  optional int64 delegate = 1; // Was required before 2.3.0.
   optional int64 getter = 2;
   optional int64 setter = 3;
   required int64 symbol = 4;
