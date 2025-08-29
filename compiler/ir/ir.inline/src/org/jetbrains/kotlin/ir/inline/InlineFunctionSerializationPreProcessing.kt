@@ -34,7 +34,7 @@ class InlineFunctionSerializationPreProcessing(private val context: LoweringCont
 
     override fun visitSimpleFunction(declaration: IrSimpleFunction) {
         if (!declaration.isInline || declaration.body == null || declaration.symbol.isConsideredAsPrivateForInlining()) return
-        val preprocessed = declaration.copyAndEraseTypeParameters().convertToPrivateTopLevel().erasePrivateSymbols()
+        val preprocessed = declaration.copyAndEraseTypeParameters().convertToPublicTopLevel().erasePrivateSymbols()
         declaration.preparedInlineFunctionCopy = preprocessed
         preprocessed.originalOfPreparedInlineFunctionCopy = declaration
         preprocessedFunctions += preprocessed
@@ -46,7 +46,7 @@ class InlineFunctionSerializationPreProcessing(private val context: LoweringCont
             .preprocess(this) as IrSimpleFunction
     }
 
-    private fun IrSimpleFunction.convertToPrivateTopLevel(): IrSimpleFunction {
+    private fun IrSimpleFunction.convertToPublicTopLevel(): IrSimpleFunction {
         visibility = DescriptorVisibilities.PUBLIC
         correspondingPropertySymbol = null
         parent = file
