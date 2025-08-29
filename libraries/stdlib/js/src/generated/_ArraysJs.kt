@@ -886,7 +886,7 @@ public actual inline fun IntArray.copyOf(): IntArray {
  */
 @OptIn(JsIntrinsic::class)
 public actual fun LongArray.copyOf(): LongArray {
-    return longCopyOfRange(this)
+    return longCopyOfRange(this, VOID, VOID)
 }
 
 /**

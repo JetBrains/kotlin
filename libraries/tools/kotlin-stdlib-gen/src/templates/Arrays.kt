@@ -1019,7 +1019,7 @@ object ArrayOps : TemplateGroupBase() {
                         }
                         PrimitiveType.Long -> {
                             annotation("@OptIn(JsIntrinsic::class)")
-                            body { "return longCopyOfRange(this)" }
+                            body { "return longCopyOfRange(this, VOID, VOID)" }
                         }
                         PrimitiveType.Char, PrimitiveType.Boolean ->
                             body { "return withType(\"${primitive}Array\", this.asDynamic().slice())" }

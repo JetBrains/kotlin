@@ -236,10 +236,12 @@ internal fun <T> jsYield(suspendFunction: () -> T): T
  * Depending on the target ES edition, calls transforms either
  * to [kotlin.js.internal.boxedLong.longCopyOfRange], or to `arr.slice(fromIndex, toIndex)`
  *
- * TODO(KT-70480): Replace call sites with `value.unsafeCast<BigInt64Array>().slice(fromIndex, toIndex)` when we drop the ES5 target
+ * TODO(KT-70480): Replace call sites with `arr.unsafeCast<BigInt64Array>().slice(fromIndex, toIndex)` when we drop the ES5 target
+ *
+ * TODO: after bootstrap drop `external` modifier from this function, since the incremental compilation of the current bootstrap can't find the intrinsic anywhere
  */
 @JsIntrinsic
-internal fun longCopyOfRange(arr: dynamic, fromIndex: dynamic = VOID, toIndex: dynamic = VOID): LongArray
+internal external fun longCopyOfRange(arr: dynamic, fromIndex: dynamic, toIndex: dynamic): LongArray
 
 /**
  * Depending on the target ES edition, calls to this function are either replaced with a call
