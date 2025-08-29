@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.analysis.decompiler.stub.file
 
 import com.intellij.ide.highlighter.JavaClassFileType
 import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.diagnostic.ControlFlowException
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileWithId
@@ -86,10 +85,8 @@ class ClsKotlinBinaryClassCache {
             attributeService.writeBooleanAttribute(KOTLIN_IS_COMPILED_FILE_ATTRIBUTE, file, isKotlinBinaryClass)
         }
 
-        if (isKotlinBinaryClass) {
-            val headerInfo = createHeaderInfo(kotlinBinaryClass)
-            file.putUserData(KOTLIN_BINARY_DATA_KEY, SoftReference(KotlinBinaryData(isKotlinBinaryClass, file.timeStamp, headerInfo)))
-        }
+        val headerInfo = if (isKotlinBinaryClass) createHeaderInfo(kotlinBinaryClass) else null
+        file.putUserData(KOTLIN_BINARY_DATA_KEY, SoftReference(KotlinBinaryData(isKotlinBinaryClass, file.timeStamp, headerInfo)))
 
         return kotlinBinaryClass
     }
