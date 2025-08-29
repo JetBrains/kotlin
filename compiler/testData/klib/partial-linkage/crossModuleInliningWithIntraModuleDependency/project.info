@@ -1,0 +1,7 @@
+MODULES: intraModule, main
+
+STEP 0:
+    libs: intraModule, main
+
+STEP 1:
+    libs: intraModule
