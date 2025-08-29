@@ -37165,12 +37165,6 @@ public class FirNativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTe
         }
 
         @Test
-        @TestMetadata("ifConstVal.kt")
-        public void testIfConstVal() {
-          runTest("compiler/testData/codegen/box/involvesIrInterpreter/intrinsicConst/ifConstVal.kt");
-        }
-
-        @Test
         @TestMetadata("kCallableName.kt")
         public void testKCallableName() {
           runTest("compiler/testData/codegen/box/involvesIrInterpreter/intrinsicConst/kCallableName.kt");
