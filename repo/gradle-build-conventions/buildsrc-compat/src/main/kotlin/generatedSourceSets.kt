@@ -14,11 +14,5 @@ val SourceSet.generatedTestDir: Project.() -> Unit
     }
 
 private fun SourceSet.generatedDir(project: Project, dirName: String) {
-    val generationRoot = project.projectDir.resolve(dirName)
-    java.srcDir(generationRoot.name)
-
-    project.apply(plugin = "idea")
-    project.idea {
-        this.module.generatedSourceDirs.add(generationRoot)
-    }
+    generatedDir(project, project.layout.projectDirectory.dir(dirName))
 }
