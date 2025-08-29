@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.config.MavenComparableVersion
 import org.jetbrains.kotlin.ir.InternalSymbolFinderAPI
 import org.jetbrains.kotlin.ir.builders.declarations.buildConstructor
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
-import org.jetbrains.kotlin.ir.builders.setSourceRange
 import org.jetbrains.kotlin.ir.declarations.IrAnnotationContainer
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
@@ -52,7 +51,6 @@ import org.jetbrains.kotlin.ir.util.getAnnotation
 import org.jetbrains.kotlin.ir.util.isAnnotation
 import org.jetbrains.kotlin.ir.util.remapSymbolParent
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.utils.memoryOptimizedMapNotNull
 import org.jetbrains.kotlin.utils.memoryOptimizedPlus
@@ -252,7 +250,7 @@ class VersionOverloadsLowering(val context: LoweringContext) : ClassLoweringPass
             arguments[0] =
                 IrConstImpl.string(
                     SYNTHETIC_OFFSET, SYNTHETIC_OFFSET,
-                    context.irBuiltIns.stringType, "Deprecated"
+                    context.irBuiltIns.stringType, "This version is kept for binary compatibility purposes, please use the main overload."
                 )
             arguments[2] =
                 IrGetEnumValueImpl(

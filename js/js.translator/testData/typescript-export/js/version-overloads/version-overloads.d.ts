@@ -7,9 +7,9 @@ declare namespace JS_TESTS {
             get a(): number;
             get b(): string;
             get c(): number;
-            /** @deprecated Deprecated */
+            /** @deprecated This version is kept for binary compatibility purposes, please use the main overload. */
             constructor(a?: number, b?: string, b1?: string);
-            /** @deprecated Deprecated */
+            /** @deprecated This version is kept for binary compatibility purposes, please use the main overload. */
             constructor(a?: number);
         }
         namespace A {
@@ -23,9 +23,9 @@ declare namespace JS_TESTS {
             get a(): number;
             get a1(): string;
             get c(): number;
-            /** @deprecated Deprecated */
+            /** @deprecated This version is kept for binary compatibility purposes, please use the main overload. */
             constructor(a?: number, b?: string, c?: number);
-            /** @deprecated Deprecated */
+            /** @deprecated This version is kept for binary compatibility purposes, please use the main overload. */
             constructor(a?: number);
         }
         namespace B {
@@ -65,9 +65,9 @@ declare namespace JS_TESTS {
             toString(): string;
             hashCode(): number;
             equals(other: Nullable<any>): boolean;
-            /** @deprecated Deprecated */
+            /** @deprecated This version is kept for binary compatibility purposes, please use the main overload. */
             constructor(a?: number, b?: string);
-            /** @deprecated Deprecated */
+            /** @deprecated This version is kept for binary compatibility purposes, please use the main overload. */
             constructor(a?: number);
             copy(a?: number, b?: string): foo.D;
             copy(a?: number): foo.D;
@@ -83,10 +83,10 @@ declare namespace JS_TESTS {
             foo(a: number, B?: string, b1?: string, c?: number): void;
             mid(a: number, a1?: number, b?: string, c?: number): void;
             foo(a: number, B?: string, b1?: string): void;
-            /** @deprecated Deprecated */
+            /** @deprecated This version is kept for binary compatibility purposes, please use the main overload. */
             foo(a: number): void;
             mid(a: number, b?: string, c?: number): void;
-            /** @deprecated Deprecated */
+            /** @deprecated This version is kept for binary compatibility purposes, please use the main overload. */
             mid(a: number): void;
         }
         namespace X {
