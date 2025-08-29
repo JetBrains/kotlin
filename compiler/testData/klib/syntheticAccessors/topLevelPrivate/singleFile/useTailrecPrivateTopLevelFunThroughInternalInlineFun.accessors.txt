@@ -2,7 +2,7 @@
 
 /* FILE package=<root> fileName=useTailrecPrivateTopLevelFunThroughInternalInlineFun.kt */
 
-/* TARGET declaration */ private lateinit fun sum(x: Int): Int
+/* TARGET declaration */ private tailrec fun sum(x: Int): Int
     /* TARGET use-site */ sum(x = x.minus(other = 1))
 internal inline fun internalFun(x: Int): Int
     /* ACCESSOR use-site */ access$sum$tUseTailrecPrivateTopLevelFunThroughInternalInlineFunKt(x = x)
