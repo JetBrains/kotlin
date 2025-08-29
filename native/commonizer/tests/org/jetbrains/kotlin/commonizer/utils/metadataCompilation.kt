@@ -158,7 +158,7 @@ fun serializeModuleToMetadata(
     )
 
     configuration.contentRoots += JvmClasspathRoot(stdlibPath())
-    configuration.contentRoots += regularDependencies
+    configuration.contentRoots += regularDependencies + refinesDependencies.map { JvmClasspathRoot(File(it)) }
     configuration.putIfNotNull(K2MetadataConfigurationKeys.REFINES_PATHS, refinesDependencies.takeIf { it.isNotEmpty() })
     configuration.contentRoots += moduleRoot.walkTopDown()
         .filter { it.isFile }
