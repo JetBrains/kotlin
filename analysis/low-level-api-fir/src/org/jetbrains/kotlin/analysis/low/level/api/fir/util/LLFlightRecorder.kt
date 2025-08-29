@@ -250,8 +250,8 @@ internal interface ILLPhaseEvent : ILLEvent {
 
 @Name("org.jetbrains.kotlin.LLPhase")
 @Category("Kotlin Code Analysis")
-@Label("Successful analysis of a Kotlin declaration")
-@Description("A Kotlin declaration is successfully analyzed to the specified FIR resolution phase")
+@Label("Analysis of a Kotlin declaration")
+@Description("A Kotlin declaration is analyzed to the specified FIR resolution phase (either successfully or with an error)")
 @StackTrace(false)
 private class LLPhaseEvent : Event(), ILLPhaseEvent {
     @JvmField
