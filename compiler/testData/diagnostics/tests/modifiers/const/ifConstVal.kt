@@ -1,5 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LANGUAGE: +IntrinsicConstEvaluation
+// FIR_IDENTICAL
 
 const val flag = true
 const val value = 10
