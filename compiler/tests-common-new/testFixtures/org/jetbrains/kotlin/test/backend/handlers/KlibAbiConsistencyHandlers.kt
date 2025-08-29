@@ -46,10 +46,16 @@ private class SyntheticAccessors : AbiReadingFilter {
 
     private val AbiFunction.isSyntheticConstructor: Boolean
         get() {
+            if (!isConstructor) return false
             val markerParameterType = valueParameters.lastOrNull()?.type as? AbiType.Simple ?: return false
             val markerParameterClassReference =
                 markerParameterType.classifierReference as? AbiClassifierReference.ClassReference ?: return false
-            return markerParameterClassReference.className.relativeName.value == "SyntheticConstructorMarker"
+
+            val syntheticConstructorMarkerName = AbiQualifiedName(
+                packageName = AbiCompoundName("kotlin.internal"),
+                relativeName = AbiCompoundName("SyntheticConstructorMarker")
+            )
+            return markerParameterClassReference.className == syntheticConstructorMarkerName
         }
 }
 
