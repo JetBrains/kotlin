@@ -4508,6 +4508,144 @@ public class FirPsiJvmIrTextTestGenerated extends AbstractFirPsiJvmIrTextTest {
       public void testAllFilesPresentInDynamic() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/js/dynamic"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
+
+      @Test
+      @TestMetadata("dynamicAndMembersOfAny.kt")
+      public void testDynamicAndMembersOfAny() {
+        runTest("compiler/testData/ir/irText/js/dynamic/dynamicAndMembersOfAny.kt");
+      }
+
+      @Test
+      @TestMetadata("dynamicArrayAccess.kt")
+      public void testDynamicArrayAccess() {
+        runTest("compiler/testData/ir/irText/js/dynamic/dynamicArrayAccess.kt");
+      }
+
+      @Test
+      @TestMetadata("dynamicArrayAssignment.kt")
+      public void testDynamicArrayAssignment() {
+        runTest("compiler/testData/ir/irText/js/dynamic/dynamicArrayAssignment.kt");
+      }
+
+      @Test
+      @TestMetadata("dynamicArrayAugmentedAssignment.kt")
+      public void testDynamicArrayAugmentedAssignment() {
+        runTest("compiler/testData/ir/irText/js/dynamic/dynamicArrayAugmentedAssignment.kt");
+      }
+
+      @Test
+      @TestMetadata("dynamicArrayIncrementDecrement.kt")
+      public void testDynamicArrayIncrementDecrement() {
+        runTest("compiler/testData/ir/irText/js/dynamic/dynamicArrayIncrementDecrement.kt");
+      }
+
+      @Test
+      @TestMetadata("dynamicBinaryEqualityOperator.kt")
+      public void testDynamicBinaryEqualityOperator() {
+        runTest("compiler/testData/ir/irText/js/dynamic/dynamicBinaryEqualityOperator.kt");
+      }
+
+      @Test
+      @TestMetadata("dynamicBinaryLogicalOperator.kt")
+      public void testDynamicBinaryLogicalOperator() {
+        runTest("compiler/testData/ir/irText/js/dynamic/dynamicBinaryLogicalOperator.kt");
+      }
+
+      @Test
+      @TestMetadata("dynamicBinaryOperator.kt")
+      public void testDynamicBinaryOperator() {
+        runTest("compiler/testData/ir/irText/js/dynamic/dynamicBinaryOperator.kt");
+      }
+
+      @Test
+      @TestMetadata("dynamicBinaryRelationalOperator.kt")
+      public void testDynamicBinaryRelationalOperator() {
+        runTest("compiler/testData/ir/irText/js/dynamic/dynamicBinaryRelationalOperator.kt");
+      }
+
+      @Test
+      @TestMetadata("dynamicCall.kt")
+      public void testDynamicCall() {
+        runTest("compiler/testData/ir/irText/js/dynamic/dynamicCall.kt");
+      }
+
+      @Test
+      @TestMetadata("dynamicElvisOperator.kt")
+      public void testDynamicElvisOperator() {
+        runTest("compiler/testData/ir/irText/js/dynamic/dynamicElvisOperator.kt");
+      }
+
+      @Test
+      @TestMetadata("dynamicExclExclOperator.kt")
+      public void testDynamicExclExclOperator() {
+        runTest("compiler/testData/ir/irText/js/dynamic/dynamicExclExclOperator.kt");
+      }
+
+      @Test
+      @TestMetadata("dynamicInDataClass.kt")
+      public void testDynamicInDataClass() {
+        runTest("compiler/testData/ir/irText/js/dynamic/dynamicInDataClass.kt");
+      }
+
+      @Test
+      @TestMetadata("dynamicInfixCall.kt")
+      public void testDynamicInfixCall() {
+        runTest("compiler/testData/ir/irText/js/dynamic/dynamicInfixCall.kt");
+      }
+
+      @Test
+      @TestMetadata("dynamicMemberAccess.kt")
+      public void testDynamicMemberAccess() {
+        runTest("compiler/testData/ir/irText/js/dynamic/dynamicMemberAccess.kt");
+      }
+
+      @Test
+      @TestMetadata("dynamicMemberAssignment.kt")
+      public void testDynamicMemberAssignment() {
+        runTest("compiler/testData/ir/irText/js/dynamic/dynamicMemberAssignment.kt");
+      }
+
+      @Test
+      @TestMetadata("dynamicMemberAugmentedAssignment.kt")
+      public void testDynamicMemberAugmentedAssignment() {
+        runTest("compiler/testData/ir/irText/js/dynamic/dynamicMemberAugmentedAssignment.kt");
+      }
+
+      @Test
+      @TestMetadata("dynamicMemberIncrementDecrement.kt")
+      public void testDynamicMemberIncrementDecrement() {
+        runTest("compiler/testData/ir/irText/js/dynamic/dynamicMemberIncrementDecrement.kt");
+      }
+
+      @Test
+      @TestMetadata("dynamicUnaryOperator.kt")
+      public void testDynamicUnaryOperator() {
+        runTest("compiler/testData/ir/irText/js/dynamic/dynamicUnaryOperator.kt");
+      }
+
+      @Test
+      @TestMetadata("dynamicWithSmartCast.kt")
+      public void testDynamicWithSmartCast() {
+        runTest("compiler/testData/ir/irText/js/dynamic/dynamicWithSmartCast.kt");
+      }
+
+      @Test
+      @TestMetadata("implicitCastFromDynamic.kt")
+      public void testImplicitCastFromDynamic() {
+        runTest("compiler/testData/ir/irText/js/dynamic/implicitCastFromDynamic.kt");
+      }
+
+      @Test
+      @TestMetadata("implicitCastToDynamic.kt")
+      public void testImplicitCastToDynamic() {
+        runTest("compiler/testData/ir/irText/js/dynamic/implicitCastToDynamic.kt");
+      }
+
+      @Test
+      @TestMetadata("invokeOperator.kt")
+      public void testInvokeOperator() {
+        runTest("compiler/testData/ir/irText/js/dynamic/invokeOperator.kt");
+      }
     }
 
     @Nested
@@ -4518,6 +4656,18 @@ public class FirPsiJvmIrTextTestGenerated extends AbstractFirPsiJvmIrTextTest {
       public void testAllFilesPresentInExternal() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/js/external"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
+
+      @Test
+      @TestMetadata("external.kt")
+      public void testExternal() {
+        runTest("compiler/testData/ir/irText/js/external/external.kt");
+      }
+
+      @Test
+      @TestMetadata("kt38765.kt")
+      public void testKt38765() {
+        runTest("compiler/testData/ir/irText/js/external/kt38765.kt");
+      }
     }
 
     @Nested
@@ -4527,6 +4677,12 @@ public class FirPsiJvmIrTextTestGenerated extends AbstractFirPsiJvmIrTextTest {
       @Test
       public void testAllFilesPresentInNative() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/js/native"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+      }
+
+      @Test
+      @TestMetadata("nativeNativeKotlin.kt")
+      public void testNativeNativeKotlin() {
+        runTest("compiler/testData/ir/irText/js/native/nativeNativeKotlin.kt");
       }
     }
   }

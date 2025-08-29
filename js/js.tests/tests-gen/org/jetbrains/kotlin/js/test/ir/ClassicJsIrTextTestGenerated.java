@@ -86,6 +86,12 @@ public class ClassicJsIrTextTestGenerated extends AbstractClassicJsIrTextTest {
     }
 
     @Test
+    @TestMetadata("cloneable.kt")
+    public void testCloneable() {
+      runTest("compiler/testData/ir/irText/classes/cloneable.kt");
+    }
+
+    @Test
     @TestMetadata("companionObject.kt")
     public void testCompanionObject() {
       runTest("compiler/testData/ir/irText/classes/companionObject.kt");
@@ -107,6 +113,12 @@ public class ClassicJsIrTextTestGenerated extends AbstractClassicJsIrTextTest {
     @TestMetadata("delegatedImplementation.kt")
     public void testDelegatedImplementation() {
       runTest("compiler/testData/ir/irText/classes/delegatedImplementation.kt");
+    }
+
+    @Test
+    @TestMetadata("delegatedImplementationOfJavaInterface.kt")
+    public void testDelegatedImplementationOfJavaInterface() {
+      runTest("compiler/testData/ir/irText/classes/delegatedImplementationOfJavaInterface.kt");
     }
 
     @Test
@@ -164,6 +176,24 @@ public class ClassicJsIrTextTestGenerated extends AbstractClassicJsIrTextTest {
     }
 
     @Test
+    @TestMetadata("fakeOverridesForJavaNonStaticMembers.kt")
+    public void testFakeOverridesForJavaNonStaticMembers() {
+      runTest("compiler/testData/ir/irText/classes/fakeOverridesForJavaNonStaticMembers.kt");
+    }
+
+    @Test
+    @TestMetadata("fakeOverridesForJavaStaticMembers.kt")
+    public void testFakeOverridesForJavaStaticMembers() {
+      runTest("compiler/testData/ir/irText/classes/fakeOverridesForJavaStaticMembers.kt");
+    }
+
+    @Test
+    @TestMetadata("implicitNotNullOnDelegatedImplementation.kt")
+    public void testImplicitNotNullOnDelegatedImplementation() {
+      runTest("compiler/testData/ir/irText/classes/implicitNotNullOnDelegatedImplementation.kt");
+    }
+
+    @Test
     @TestMetadata("initBlock.kt")
     public void testInitBlock() {
       runTest("compiler/testData/ir/irText/classes/initBlock.kt");
@@ -215,6 +245,18 @@ public class ClassicJsIrTextTestGenerated extends AbstractClassicJsIrTextTest {
     @TestMetadata("kt19306.kt")
     public void testKt19306() {
       runTest("compiler/testData/ir/irText/classes/kt19306.kt");
+    }
+
+    @Test
+    @TestMetadata("kt43217.kt")
+    public void testKt43217() {
+      runTest("compiler/testData/ir/irText/classes/kt43217.kt");
+    }
+
+    @Test
+    @TestMetadata("kt45853.kt")
+    public void testKt45853() {
+      runTest("compiler/testData/ir/irText/classes/kt45853.kt");
     }
 
     @Test
@@ -432,9 +474,21 @@ public class ClassicJsIrTextTestGenerated extends AbstractClassicJsIrTextTest {
     }
 
     @Test
+    @TestMetadata("fakeOverrideModality.kt")
+    public void testFakeOverrideModality() {
+      runTest("compiler/testData/ir/irText/declarations/fakeOverrideModality.kt");
+    }
+
+    @Test
     @TestMetadata("fakeOverrides.kt")
     public void testFakeOverrides() {
       runTest("compiler/testData/ir/irText/declarations/fakeOverrides.kt");
+    }
+
+    @Test
+    @TestMetadata("fileWithAnnotations.kt")
+    public void testFileWithAnnotations() {
+      runTest("compiler/testData/ir/irText/declarations/fileWithAnnotations.kt");
     }
 
     @Test
@@ -474,6 +528,12 @@ public class ClassicJsIrTextTestGenerated extends AbstractClassicJsIrTextTest {
     }
 
     @Test
+    @TestMetadata("kt29833.kt")
+    public void testKt29833() {
+      runTest("compiler/testData/ir/irText/declarations/kt29833.kt");
+    }
+
+    @Test
     @TestMetadata("kt35550.kt")
     public void testKt35550() {
       runTest("compiler/testData/ir/irText/declarations/kt35550.kt");
@@ -492,9 +552,21 @@ public class ClassicJsIrTextTestGenerated extends AbstractClassicJsIrTextTest {
     }
 
     @Test
+    @TestMetadata("kt65236.kt")
+    public void testKt65236() {
+      runTest("compiler/testData/ir/irText/declarations/kt65236.kt");
+    }
+
+    @Test
     @TestMetadata("kt65273.kt")
     public void testKt65273() {
       runTest("compiler/testData/ir/irText/declarations/kt65273.kt");
+    }
+
+    @Test
+    @TestMetadata("kt65432.kt")
+    public void testKt65432() {
+      runTest("compiler/testData/ir/irText/declarations/kt65432.kt");
     }
 
     @Test
@@ -519,6 +591,12 @@ public class ClassicJsIrTextTestGenerated extends AbstractClassicJsIrTextTest {
     @TestMetadata("mainFunctionMangling.kt")
     public void testMainFunctionMangling() {
       runTest("compiler/testData/ir/irText/declarations/mainFunctionMangling.kt");
+    }
+
+    @Test
+    @TestMetadata("mainFunctionManglingInJvm.kt")
+    public void testMainFunctionManglingInJvm() {
+      runTest("compiler/testData/ir/irText/declarations/mainFunctionManglingInJvm.kt");
     }
 
     @Test
@@ -562,6 +640,12 @@ public class ClassicJsIrTextTestGenerated extends AbstractClassicJsIrTextTest {
       }
 
       @Test
+      @TestMetadata("annotationMixedTargeting.kt")
+      public void testAnnotationMixedTargeting() {
+        runTest("compiler/testData/ir/irText/declarations/annotations/annotationMixedTargeting.kt");
+      }
+
+      @Test
       @TestMetadata("annotationOnClassWithInitializer.kt")
       public void testAnnotationOnClassWithInitializer() {
         runTest("compiler/testData/ir/irText/declarations/annotations/annotationOnClassWithInitializer.kt");
@@ -601,6 +685,12 @@ public class ClassicJsIrTextTestGenerated extends AbstractClassicJsIrTextTest {
       @TestMetadata("annotationsWithVarargParameters.kt")
       public void testAnnotationsWithVarargParameters() {
         runTest("compiler/testData/ir/irText/declarations/annotations/annotationsWithVarargParameters.kt");
+      }
+
+      @Test
+      @TestMetadata("argWithDefaultValueInAnnotationClass.kt")
+      public void testArgWithDefaultValueInAnnotationClass() {
+        runTest("compiler/testData/ir/irText/declarations/annotations/argWithDefaultValueInAnnotationClass.kt");
       }
 
       @Test
@@ -685,6 +775,18 @@ public class ClassicJsIrTextTestGenerated extends AbstractClassicJsIrTextTest {
       @TestMetadata("inheritingDeprecation.kt")
       public void testInheritingDeprecation() {
         runTest("compiler/testData/ir/irText/declarations/annotations/inheritingDeprecation.kt");
+      }
+
+      @Test
+      @TestMetadata("javaAnnotation.kt")
+      public void testJavaAnnotation() {
+        runTest("compiler/testData/ir/irText/declarations/annotations/javaAnnotation.kt");
+      }
+
+      @Test
+      @TestMetadata("javaAnnotationWithSingleArrayArgument.kt")
+      public void testJavaAnnotationWithSingleArrayArgument() {
+        runTest("compiler/testData/ir/irText/declarations/annotations/javaAnnotationWithSingleArrayArgument.kt");
       }
 
       @Test
@@ -792,6 +894,12 @@ public class ClassicJsIrTextTestGenerated extends AbstractClassicJsIrTextTest {
       @TestMetadata("contextWithAnnotation.kt")
       public void testContextWithAnnotation() {
         runTest("compiler/testData/ir/irText/declarations/contextParameters/contextWithAnnotation.kt");
+      }
+
+      @Test
+      @TestMetadata("contextWithJavaAnnotation.kt")
+      public void testContextWithJavaAnnotation() {
+        runTest("compiler/testData/ir/irText/declarations/contextParameters/contextWithJavaAnnotation.kt");
       }
     }
 
@@ -1023,6 +1131,18 @@ public class ClassicJsIrTextTestGenerated extends AbstractClassicJsIrTextTest {
       public void testAllFilesPresentInJvmRecord() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/declarations/jvmRecord"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
       }
+
+      @Test
+      @TestMetadata("dataClassWithJvmRecord.kt")
+      public void testDataClassWithJvmRecord() {
+        runTest("compiler/testData/ir/irText/declarations/jvmRecord/dataClassWithJvmRecord.kt");
+      }
+
+      @Test
+      @TestMetadata("javaRecordComponentAccess.kt")
+      public void testJavaRecordComponentAccess() {
+        runTest("compiler/testData/ir/irText/declarations/jvmRecord/javaRecordComponentAccess.kt");
+      }
     }
 
     @Nested
@@ -1189,6 +1309,12 @@ public class ClassicJsIrTextTestGenerated extends AbstractClassicJsIrTextTest {
       }
 
       @Test
+      @TestMetadata("javaDelegate.kt")
+      public void testJavaDelegate() {
+        runTest("compiler/testData/ir/irText/declarations/provideDelegate/javaDelegate.kt");
+      }
+
+      @Test
       @TestMetadata("local.kt")
       public void testLocal() {
         runTest("compiler/testData/ir/irText/declarations/provideDelegate/local.kt");
@@ -1245,6 +1371,12 @@ public class ClassicJsIrTextTestGenerated extends AbstractClassicJsIrTextTest {
     @Test
     public void testAllFilesPresentInExpressions() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/expressions"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+    }
+
+    @Test
+    @TestMetadata("ambiguousFieldAccess.kt")
+    public void testAmbiguousFieldAccess() {
+      runTest("compiler/testData/ir/irText/expressions/ambiguousFieldAccess.kt");
     }
 
     @Test
@@ -1410,9 +1542,27 @@ public class ClassicJsIrTextTestGenerated extends AbstractClassicJsIrTextTest {
     }
 
     @Test
+    @TestMetadata("classReference.kt")
+    public void testClassReference() {
+      runTest("compiler/testData/ir/irText/expressions/classReference.kt");
+    }
+
+    @Test
+    @TestMetadata("coercionToUnit.kt")
+    public void testCoercionToUnit() {
+      runTest("compiler/testData/ir/irText/expressions/coercionToUnit.kt");
+    }
+
+    @Test
     @TestMetadata("complexAugmentedAssignment.kt")
     public void testComplexAugmentedAssignment() {
       runTest("compiler/testData/ir/irText/expressions/complexAugmentedAssignment.kt");
+    }
+
+    @Test
+    @TestMetadata("constructorWithOwnTypeParametersCall.kt")
+    public void testConstructorWithOwnTypeParametersCall() {
+      runTest("compiler/testData/ir/irText/expressions/constructorWithOwnTypeParametersCall.kt");
     }
 
     @Test
@@ -1482,6 +1632,18 @@ public class ClassicJsIrTextTestGenerated extends AbstractClassicJsIrTextTest {
     }
 
     @Test
+    @TestMetadata("equals.kt")
+    public void testEquals() {
+      runTest("compiler/testData/ir/irText/expressions/equals.kt");
+    }
+
+    @Test
+    @TestMetadata("exclExclOnPlatformType.kt")
+    public void testExclExclOnPlatformType() {
+      runTest("compiler/testData/ir/irText/expressions/exclExclOnPlatformType.kt");
+    }
+
+    @Test
     @TestMetadata("exhaustiveWhenElseBranch.kt")
     public void testExhaustiveWhenElseBranch() {
       runTest("compiler/testData/ir/irText/expressions/exhaustiveWhenElseBranch.kt");
@@ -1509,6 +1671,24 @@ public class ClassicJsIrTextTestGenerated extends AbstractClassicJsIrTextTest {
     @TestMetadata("field.kt")
     public void testField() {
       runTest("compiler/testData/ir/irText/expressions/field.kt");
+    }
+
+    @Test
+    @TestMetadata("fieldAccess_generic.kt")
+    public void testFieldAccess_generic() {
+      runTest("compiler/testData/ir/irText/expressions/fieldAccess_generic.kt");
+    }
+
+    @Test
+    @TestMetadata("fieldAccess_invisible.kt")
+    public void testFieldAccess_invisible() {
+      runTest("compiler/testData/ir/irText/expressions/fieldAccess_invisible.kt");
+    }
+
+    @Test
+    @TestMetadata("fieldAccess_regular.kt")
+    public void testFieldAccess_regular() {
+      runTest("compiler/testData/ir/irText/expressions/fieldAccess_regular.kt");
     }
 
     @Test
@@ -1608,6 +1788,12 @@ public class ClassicJsIrTextTestGenerated extends AbstractClassicJsIrTextTest {
     }
 
     @Test
+    @TestMetadata("implicitCastOnPlatformType.kt")
+    public void testImplicitCastOnPlatformType() {
+      runTest("compiler/testData/ir/irText/expressions/implicitCastOnPlatformType.kt");
+    }
+
+    @Test
     @TestMetadata("implicitCastToNonNull.kt")
     public void testImplicitCastToNonNull() {
       runTest("compiler/testData/ir/irText/expressions/implicitCastToNonNull.kt");
@@ -1617,6 +1803,18 @@ public class ClassicJsIrTextTestGenerated extends AbstractClassicJsIrTextTest {
     @TestMetadata("implicitCastToTypeParameter.kt")
     public void testImplicitCastToTypeParameter() {
       runTest("compiler/testData/ir/irText/expressions/implicitCastToTypeParameter.kt");
+    }
+
+    @Test
+    @TestMetadata("implicitNotNullInDestructuringAssignment.kt")
+    public void testImplicitNotNullInDestructuringAssignment() {
+      runTest("compiler/testData/ir/irText/expressions/implicitNotNullInDestructuringAssignment.kt");
+    }
+
+    @Test
+    @TestMetadata("implicitNotNullInDestructuringAssignmentOld.kt")
+    public void testImplicitNotNullInDestructuringAssignmentOld() {
+      runTest("compiler/testData/ir/irText/expressions/implicitNotNullInDestructuringAssignmentOld.kt");
     }
 
     @Test
@@ -1647,6 +1845,42 @@ public class ClassicJsIrTextTestGenerated extends AbstractClassicJsIrTextTest {
     @TestMetadata("intersectedSmartcastForExtensionReceiverWithSameConstructor.kt")
     public void testIntersectedSmartcastForExtensionReceiverWithSameConstructor() {
       runTest("compiler/testData/ir/irText/expressions/intersectedSmartcastForExtensionReceiverWithSameConstructor.kt");
+    }
+
+    @Test
+    @TestMetadata("javaSyntheticGenericPropretyAccess.kt")
+    public void testJavaSyntheticGenericPropretyAccess() {
+      runTest("compiler/testData/ir/irText/expressions/javaSyntheticGenericPropretyAccess.kt");
+    }
+
+    @Test
+    @TestMetadata("javaSyntheticPropertyAccess.kt")
+    public void testJavaSyntheticPropertyAccess() {
+      runTest("compiler/testData/ir/irText/expressions/javaSyntheticPropertyAccess.kt");
+    }
+
+    @Test
+    @TestMetadata("jvmFieldReferenceWithIntersectionTypes.kt")
+    public void testJvmFieldReferenceWithIntersectionTypes() {
+      runTest("compiler/testData/ir/irText/expressions/jvmFieldReferenceWithIntersectionTypes.kt");
+    }
+
+    @Test
+    @TestMetadata("jvmInstanceFieldReference.kt")
+    public void testJvmInstanceFieldReference() {
+      runTest("compiler/testData/ir/irText/expressions/jvmInstanceFieldReference.kt");
+    }
+
+    @Test
+    @TestMetadata("jvmStaticFieldReference.kt")
+    public void testJvmStaticFieldReference() {
+      runTest("compiler/testData/ir/irText/expressions/jvmStaticFieldReference.kt");
+    }
+
+    @Test
+    @TestMetadata("kt16904.kt")
+    public void testKt16904() {
+      runTest("compiler/testData/ir/irText/expressions/kt16904.kt");
     }
 
     @Test
@@ -1740,9 +1974,27 @@ public class ClassicJsIrTextTestGenerated extends AbstractClassicJsIrTextTest {
     }
 
     @Test
+    @TestMetadata("kt42321.kt")
+    public void testKt42321() {
+      runTest("compiler/testData/ir/irText/expressions/kt42321.kt");
+    }
+
+    @Test
+    @TestMetadata("kt44993.kt")
+    public void testKt44993() {
+      runTest("compiler/testData/ir/irText/expressions/kt44993.kt");
+    }
+
+    @Test
     @TestMetadata("kt45022.kt")
     public void testKt45022() {
       runTest("compiler/testData/ir/irText/expressions/kt45022.kt");
+    }
+
+    @Test
+    @TestMetadata("kt47082.kt")
+    public void testKt47082() {
+      runTest("compiler/testData/ir/irText/expressions/kt47082.kt");
     }
 
     @Test
@@ -1785,6 +2037,12 @@ public class ClassicJsIrTextTestGenerated extends AbstractClassicJsIrTextTest {
     @TestMetadata("kt51036.kt")
     public void testKt51036() {
       runTest("compiler/testData/ir/irText/expressions/kt51036.kt");
+    }
+
+    @Test
+    @TestMetadata("kt70753.kt")
+    public void testKt70753() {
+      runTest("compiler/testData/ir/irText/expressions/kt70753.kt");
     }
 
     @Test
@@ -1836,6 +2094,18 @@ public class ClassicJsIrTextTestGenerated extends AbstractClassicJsIrTextTest {
     }
 
     @Test
+    @TestMetadata("nullCheckOnGenericLambdaReturn.kt")
+    public void testNullCheckOnGenericLambdaReturn() {
+      runTest("compiler/testData/ir/irText/expressions/nullCheckOnGenericLambdaReturn.kt");
+    }
+
+    @Test
+    @TestMetadata("nullCheckOnLambdaReturn.kt")
+    public void testNullCheckOnLambdaReturn() {
+      runTest("compiler/testData/ir/irText/expressions/nullCheckOnLambdaReturn.kt");
+    }
+
+    @Test
     @TestMetadata("objectAsCallable.kt")
     public void testObjectAsCallable() {
       runTest("compiler/testData/ir/irText/expressions/objectAsCallable.kt");
@@ -1845,6 +2115,12 @@ public class ClassicJsIrTextTestGenerated extends AbstractClassicJsIrTextTest {
     @TestMetadata("objectByNameInsideObject.kt")
     public void testObjectByNameInsideObject() {
       runTest("compiler/testData/ir/irText/expressions/objectByNameInsideObject.kt");
+    }
+
+    @Test
+    @TestMetadata("objectClassReference.kt")
+    public void testObjectClassReference() {
+      runTest("compiler/testData/ir/irText/expressions/objectClassReference.kt");
     }
 
     @Test
@@ -1890,6 +2166,18 @@ public class ClassicJsIrTextTestGenerated extends AbstractClassicJsIrTextTest {
     }
 
     @Test
+    @TestMetadata("propertyReferences.kt")
+    public void testPropertyReferences() {
+      runTest("compiler/testData/ir/irText/expressions/propertyReferences.kt");
+    }
+
+    @Test
+    @TestMetadata("protectedJavaFieldRef.kt")
+    public void testProtectedJavaFieldRef() {
+      runTest("compiler/testData/ir/irText/expressions/protectedJavaFieldRef.kt");
+    }
+
+    @Test
     @TestMetadata("references.kt")
     public void testReferences() {
       runTest("compiler/testData/ir/irText/expressions/references.kt");
@@ -1917,6 +2205,12 @@ public class ClassicJsIrTextTestGenerated extends AbstractClassicJsIrTextTest {
     @TestMetadata("safeCalls.kt")
     public void testSafeCalls() {
       runTest("compiler/testData/ir/irText/expressions/safeCalls.kt");
+    }
+
+    @Test
+    @TestMetadata("setFieldWithImplicitCast.kt")
+    public void testSetFieldWithImplicitCast() {
+      runTest("compiler/testData/ir/irText/expressions/setFieldWithImplicitCast.kt");
     }
 
     @Test
@@ -2079,6 +2373,12 @@ public class ClassicJsIrTextTestGenerated extends AbstractClassicJsIrTextTest {
     @TestMetadata("typeAliasConstructorReference.kt")
     public void testTypeAliasConstructorReference() {
       runTest("compiler/testData/ir/irText/expressions/typeAliasConstructorReference.kt");
+    }
+
+    @Test
+    @TestMetadata("typeArguments.kt")
+    public void testTypeArguments() {
+      runTest("compiler/testData/ir/irText/expressions/typeArguments.kt");
     }
 
     @Test
@@ -2432,6 +2732,12 @@ public class ClassicJsIrTextTestGenerated extends AbstractClassicJsIrTextTest {
       }
 
       @Test
+      @TestMetadata("functionSupertype.kt")
+      public void testFunctionSupertype() {
+        runTest("compiler/testData/ir/irText/expressions/funInterface/functionSupertype.kt");
+      }
+
+      @Test
       @TestMetadata("partialSam.kt")
       public void testPartialSam() {
         runTest("compiler/testData/ir/irText/expressions/funInterface/partialSam.kt");
@@ -2471,6 +2777,60 @@ public class ClassicJsIrTextTestGenerated extends AbstractClassicJsIrTextTest {
       public void testAllFilesPresentInSam() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/expressions/sam"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
       }
+
+      @Test
+      @TestMetadata("genericSamProjectedOut.kt")
+      public void testGenericSamProjectedOut() {
+        runTest("compiler/testData/ir/irText/expressions/sam/genericSamProjectedOut.kt");
+      }
+
+      @Test
+      @TestMetadata("genericSamSmartcast.kt")
+      public void testGenericSamSmartcast() {
+        runTest("compiler/testData/ir/irText/expressions/sam/genericSamSmartcast.kt");
+      }
+
+      @Test
+      @TestMetadata("samByProjectedType.kt")
+      public void testSamByProjectedType() {
+        runTest("compiler/testData/ir/irText/expressions/sam/samByProjectedType.kt");
+      }
+
+      @Test
+      @TestMetadata("samConstructors.kt")
+      public void testSamConstructors() {
+        runTest("compiler/testData/ir/irText/expressions/sam/samConstructors.kt");
+      }
+
+      @Test
+      @TestMetadata("samConversionInGenericConstructorCall.kt")
+      public void testSamConversionInGenericConstructorCall() {
+        runTest("compiler/testData/ir/irText/expressions/sam/samConversionInGenericConstructorCall.kt");
+      }
+
+      @Test
+      @TestMetadata("samConversionToGeneric.kt")
+      public void testSamConversionToGeneric() {
+        runTest("compiler/testData/ir/irText/expressions/sam/samConversionToGeneric.kt");
+      }
+
+      @Test
+      @TestMetadata("samConversions.kt")
+      public void testSamConversions() {
+        runTest("compiler/testData/ir/irText/expressions/sam/samConversions.kt");
+      }
+
+      @Test
+      @TestMetadata("samConversionsWithSmartCasts.kt")
+      public void testSamConversionsWithSmartCasts() {
+        runTest("compiler/testData/ir/irText/expressions/sam/samConversionsWithSmartCasts.kt");
+      }
+
+      @Test
+      @TestMetadata("samOperators.kt")
+      public void testSamOperators() {
+        runTest("compiler/testData/ir/irText/expressions/sam/samOperators.kt");
+      }
     }
   }
 
@@ -2485,15 +2845,63 @@ public class ClassicJsIrTextTestGenerated extends AbstractClassicJsIrTextTest {
     }
 
     @Test
+    @TestMetadata("annotatedTypeParameter.kt")
+    public void testAnnotatedTypeParameter() {
+      runTest("compiler/testData/ir/irText/fakeOverrides/annotatedTypeParameter.kt");
+    }
+
+    @Test
     @TestMetadata("capturedTypeInFakeOverride.kt")
     public void testCapturedTypeInFakeOverride() {
       runTest("compiler/testData/ir/irText/fakeOverrides/capturedTypeInFakeOverride.kt");
     }
 
     @Test
+    @TestMetadata("fakeOverrideOfRaw.kt")
+    public void testFakeOverrideOfRaw() {
+      runTest("compiler/testData/ir/irText/fakeOverrides/fakeOverrideOfRaw.kt");
+    }
+
+    @Test
+    @TestMetadata("fakeOverrideOfRawJavaCollection.kt")
+    public void testFakeOverrideOfRawJavaCollection() {
+      runTest("compiler/testData/ir/irText/fakeOverrides/fakeOverrideOfRawJavaCollection.kt");
+    }
+
+    @Test
+    @TestMetadata("intersectionWithJava.kt")
+    public void testIntersectionWithJava() {
+      runTest("compiler/testData/ir/irText/fakeOverrides/intersectionWithJava.kt");
+    }
+
+    @Test
+    @TestMetadata("intersectionWithMappedSignature.kt")
+    public void testIntersectionWithMappedSignature() {
+      runTest("compiler/testData/ir/irText/fakeOverrides/intersectionWithMappedSignature.kt");
+    }
+
+    @Test
+    @TestMetadata("intersectionWithRawType.kt")
+    public void testIntersectionWithRawType() {
+      runTest("compiler/testData/ir/irText/fakeOverrides/intersectionWithRawType.kt");
+    }
+
+    @Test
+    @TestMetadata("kjkWithRawTypes.kt")
+    public void testKjkWithRawTypes() {
+      runTest("compiler/testData/ir/irText/fakeOverrides/kjkWithRawTypes.kt");
+    }
+
+    @Test
     @TestMetadata("setterVisibliity.kt")
     public void testSetterVisibliity() {
       runTest("compiler/testData/ir/irText/fakeOverrides/setterVisibliity.kt");
+    }
+
+    @Test
+    @TestMetadata("setterVisibliityWithJava.kt")
+    public void testSetterVisibliityWithJava() {
+      runTest("compiler/testData/ir/irText/fakeOverrides/setterVisibliityWithJava.kt");
     }
 
     @Nested
@@ -2505,6 +2913,48 @@ public class ClassicJsIrTextTestGenerated extends AbstractClassicJsIrTextTest {
       public void testAllFilesPresentInAnnotations() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/fakeOverrides/annotations"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
       }
+
+      @Test
+      @TestMetadata("basicNullabilityAnnotationOverride.kt")
+      public void testBasicNullabilityAnnotationOverride() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/annotations/basicNullabilityAnnotationOverride.kt");
+      }
+
+      @Test
+      @TestMetadata("intersectionNullabilityAnnotation.kt")
+      public void testIntersectionNullabilityAnnotation() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/annotations/intersectionNullabilityAnnotation.kt");
+      }
+
+      @Test
+      @TestMetadata("kotlinCustomAnnotationOverride.kt")
+      public void testKotlinCustomAnnotationOverride() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/annotations/kotlinCustomAnnotationOverride.kt");
+      }
+
+      @Test
+      @TestMetadata("nullabilityAnnotationOverrideOnComplexHierarchy.kt")
+      public void testNullabilityAnnotationOverrideOnComplexHierarchy() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/annotations/nullabilityAnnotationOverrideOnComplexHierarchy.kt");
+      }
+
+      @Test
+      @TestMetadata("platformAnnotationOverride.kt")
+      public void testPlatformAnnotationOverride() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/annotations/platformAnnotationOverride.kt");
+      }
+
+      @Test
+      @TestMetadata("typeArgumentAnnotationOverride.kt")
+      public void testTypeArgumentAnnotationOverride() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/annotations/typeArgumentAnnotationOverride.kt");
+      }
+
+      @Test
+      @TestMetadata("typeParameterAnnotationOverride.kt")
+      public void testTypeParameterAnnotationOverride() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/annotations/typeParameterAnnotationOverride.kt");
+      }
     }
 
     @Nested
@@ -2515,6 +2965,18 @@ public class ClassicJsIrTextTestGenerated extends AbstractClassicJsIrTextTest {
       @Test
       public void testAllFilesPresentInCharsequence() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/fakeOverrides/charsequence"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+      }
+
+      @Test
+      @TestMetadata("javaCharSequenceOverride.kt")
+      public void testJavaCharSequenceOverride() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/charsequence/javaCharSequenceOverride.kt");
+      }
+
+      @Test
+      @TestMetadata("kotlinCharSequenceOverride.kt")
+      public void testKotlinCharSequenceOverride() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/charsequence/kotlinCharSequenceOverride.kt");
       }
     }
 
@@ -2537,6 +2999,84 @@ public class ClassicJsIrTextTestGenerated extends AbstractClassicJsIrTextTest {
         public void testAllFilesPresentInList() {
           KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/fakeOverrides/collections/list"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
         }
+
+        @Test
+        @TestMetadata("inheritJavaListSubclass.kt")
+        public void testInheritJavaListSubclass() {
+          runTest("compiler/testData/ir/irText/fakeOverrides/collections/list/inheritJavaListSubclass.kt");
+        }
+
+        @Test
+        @TestMetadata("inheritJavaUtilList.kt")
+        public void testInheritJavaUtilList() {
+          runTest("compiler/testData/ir/irText/fakeOverrides/collections/list/inheritJavaUtilList.kt");
+        }
+
+        @Test
+        @TestMetadata("intersectionListOverrideKJJ.kt")
+        public void testIntersectionListOverrideKJJ() {
+          runTest("compiler/testData/ir/irText/fakeOverrides/collections/list/intersectionListOverrideKJJ.kt");
+        }
+
+        @Test
+        @TestMetadata("intersectionListOverrideKJK.kt")
+        public void testIntersectionListOverrideKJK() {
+          runTest("compiler/testData/ir/irText/fakeOverrides/collections/list/intersectionListOverrideKJK.kt");
+        }
+
+        @Test
+        @TestMetadata("listOverrideKJ.kt")
+        public void testListOverrideKJ() {
+          runTest("compiler/testData/ir/irText/fakeOverrides/collections/list/listOverrideKJ.kt");
+        }
+
+        @Test
+        @TestMetadata("listOverrideKJJ.kt")
+        public void testListOverrideKJJ() {
+          runTest("compiler/testData/ir/irText/fakeOverrides/collections/list/listOverrideKJJ.kt");
+        }
+
+        @Test
+        @TestMetadata("listOverrideKJK.kt")
+        public void testListOverrideKJK() {
+          runTest("compiler/testData/ir/irText/fakeOverrides/collections/list/listOverrideKJK.kt");
+        }
+
+        @Test
+        @TestMetadata("listOverrideOnComplexHierarchy.kt")
+        public void testListOverrideOnComplexHierarchy() {
+          runTest("compiler/testData/ir/irText/fakeOverrides/collections/list/listOverrideOnComplexHierarchy.kt");
+        }
+
+        @Test
+        @TestMetadata("listOverrideOnKJKJ.kt")
+        public void testListOverrideOnKJKJ() {
+          runTest("compiler/testData/ir/irText/fakeOverrides/collections/list/listOverrideOnKJKJ.kt");
+        }
+
+        @Test
+        @TestMetadata("substitutionListOverrideKJ.kt")
+        public void testSubstitutionListOverrideKJ() {
+          runTest("compiler/testData/ir/irText/fakeOverrides/collections/list/substitutionListOverrideKJ.kt");
+        }
+
+        @Test
+        @TestMetadata("substitutionListOverrideKJJ.kt")
+        public void testSubstitutionListOverrideKJJ() {
+          runTest("compiler/testData/ir/irText/fakeOverrides/collections/list/substitutionListOverrideKJJ.kt");
+        }
+
+        @Test
+        @TestMetadata("substitutionListOverrideKJK.kt")
+        public void testSubstitutionListOverrideKJK() {
+          runTest("compiler/testData/ir/irText/fakeOverrides/collections/list/substitutionListOverrideKJK.kt");
+        }
+
+        @Test
+        @TestMetadata("substitutionListOverrideKJKJ.kt")
+        public void testSubstitutionListOverrideKJKJ() {
+          runTest("compiler/testData/ir/irText/fakeOverrides/collections/list/substitutionListOverrideKJKJ.kt");
+        }
       }
 
       @Nested
@@ -2548,6 +3088,84 @@ public class ClassicJsIrTextTestGenerated extends AbstractClassicJsIrTextTest {
         public void testAllFilesPresentInMap() {
           KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/fakeOverrides/collections/map"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
         }
+
+        @Test
+        @TestMetadata("intersectionMapOverrideKJJ.kt")
+        public void testIntersectionMapOverrideKJJ() {
+          runTest("compiler/testData/ir/irText/fakeOverrides/collections/map/intersectionMapOverrideKJJ.kt");
+        }
+
+        @Test
+        @TestMetadata("intersectionMapOverrideKJK.kt")
+        public void testIntersectionMapOverrideKJK() {
+          runTest("compiler/testData/ir/irText/fakeOverrides/collections/map/intersectionMapOverrideKJK.kt");
+        }
+
+        @Test
+        @TestMetadata("intersectionWithGenericMapOverrideKJJ.kt")
+        public void testIntersectionWithGenericMapOverrideKJJ() {
+          runTest("compiler/testData/ir/irText/fakeOverrides/collections/map/intersectionWithGenericMapOverrideKJJ.kt");
+        }
+
+        @Test
+        @TestMetadata("intersectionWithGenericMapOverrideKJK.kt")
+        public void testIntersectionWithGenericMapOverrideKJK() {
+          runTest("compiler/testData/ir/irText/fakeOverrides/collections/map/intersectionWithGenericMapOverrideKJK.kt");
+        }
+
+        @Test
+        @TestMetadata("mapOverrideKJKJ.kt")
+        public void testMapOverrideKJKJ() {
+          runTest("compiler/testData/ir/irText/fakeOverrides/collections/map/mapOverrideKJKJ.kt");
+        }
+
+        @Test
+        @TestMetadata("mapOverrideOnComplexHierarchy.kt")
+        public void testMapOverrideOnComplexHierarchy() {
+          runTest("compiler/testData/ir/irText/fakeOverrides/collections/map/mapOverrideOnComplexHierarchy.kt");
+        }
+
+        @Test
+        @TestMetadata("mapOverrideOnKJ.kt")
+        public void testMapOverrideOnKJ() {
+          runTest("compiler/testData/ir/irText/fakeOverrides/collections/map/mapOverrideOnKJ.kt");
+        }
+
+        @Test
+        @TestMetadata("mapOverrideOnKJJ.kt")
+        public void testMapOverrideOnKJJ() {
+          runTest("compiler/testData/ir/irText/fakeOverrides/collections/map/mapOverrideOnKJJ.kt");
+        }
+
+        @Test
+        @TestMetadata("mapOverrrideOnKJK.kt")
+        public void testMapOverrrideOnKJK() {
+          runTest("compiler/testData/ir/irText/fakeOverrides/collections/map/mapOverrrideOnKJK.kt");
+        }
+
+        @Test
+        @TestMetadata("substitutionMapOverrideKJJ.kt")
+        public void testSubstitutionMapOverrideKJJ() {
+          runTest("compiler/testData/ir/irText/fakeOverrides/collections/map/substitutionMapOverrideKJJ.kt");
+        }
+
+        @Test
+        @TestMetadata("substitutionMapOverrideKJK.kt")
+        public void testSubstitutionMapOverrideKJK() {
+          runTest("compiler/testData/ir/irText/fakeOverrides/collections/map/substitutionMapOverrideKJK.kt");
+        }
+
+        @Test
+        @TestMetadata("substitutionMapOverrideOnKJKJ.kt")
+        public void testSubstitutionMapOverrideOnKJKJ() {
+          runTest("compiler/testData/ir/irText/fakeOverrides/collections/map/substitutionMapOverrideOnKJKJ.kt");
+        }
+
+        @Test
+        @TestMetadata("sunstitutionMapOverrideKJ.kt")
+        public void testSunstitutionMapOverrideKJ() {
+          runTest("compiler/testData/ir/irText/fakeOverrides/collections/map/sunstitutionMapOverrideKJ.kt");
+        }
       }
 
       @Nested
@@ -2558,6 +3176,48 @@ public class ClassicJsIrTextTestGenerated extends AbstractClassicJsIrTextTest {
         @Test
         public void testAllFilesPresentInSet() {
           KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/fakeOverrides/collections/set"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+        }
+
+        @Test
+        @TestMetadata("intersectionSetOverrideKJJ.kt")
+        public void testIntersectionSetOverrideKJJ() {
+          runTest("compiler/testData/ir/irText/fakeOverrides/collections/set/intersectionSetOverrideKJJ.kt");
+        }
+
+        @Test
+        @TestMetadata("intersectionSetOverrideKJK.kt")
+        public void testIntersectionSetOverrideKJK() {
+          runTest("compiler/testData/ir/irText/fakeOverrides/collections/set/intersectionSetOverrideKJK.kt");
+        }
+
+        @Test
+        @TestMetadata("setOverrideKJ.kt")
+        public void testSetOverrideKJ() {
+          runTest("compiler/testData/ir/irText/fakeOverrides/collections/set/setOverrideKJ.kt");
+        }
+
+        @Test
+        @TestMetadata("setOverrideKJJ.kt")
+        public void testSetOverrideKJJ() {
+          runTest("compiler/testData/ir/irText/fakeOverrides/collections/set/setOverrideKJJ.kt");
+        }
+
+        @Test
+        @TestMetadata("setOverrideKJK.kt")
+        public void testSetOverrideKJK() {
+          runTest("compiler/testData/ir/irText/fakeOverrides/collections/set/setOverrideKJK.kt");
+        }
+
+        @Test
+        @TestMetadata("setOverrideKJKJ.kt")
+        public void testSetOverrideKJKJ() {
+          runTest("compiler/testData/ir/irText/fakeOverrides/collections/set/setOverrideKJKJ.kt");
+        }
+
+        @Test
+        @TestMetadata("setOverrideOnComplexHierarchy.kt")
+        public void testSetOverrideOnComplexHierarchy() {
+          runTest("compiler/testData/ir/irText/fakeOverrides/collections/set/setOverrideOnComplexHierarchy.kt");
         }
       }
     }
@@ -2571,6 +3231,12 @@ public class ClassicJsIrTextTestGenerated extends AbstractClassicJsIrTextTest {
       public void testAllFilesPresentInDataclass() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/fakeOverrides/dataclass"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
       }
+
+      @Test
+      @TestMetadata("dataClassMethodOverride.kt")
+      public void testDataClassMethodOverride() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/dataclass/dataClassMethodOverride.kt");
+      }
     }
 
     @Nested
@@ -2581,6 +3247,12 @@ public class ClassicJsIrTextTestGenerated extends AbstractClassicJsIrTextTest {
       @Test
       public void testAllFilesPresentInEnum() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/fakeOverrides/enum"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+      }
+
+      @Test
+      @TestMetadata("enumMethodOverride.kt")
+      public void testEnumMethodOverride() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/enum/enumMethodOverride.kt");
       }
     }
 
@@ -2593,6 +3265,18 @@ public class ClassicJsIrTextTestGenerated extends AbstractClassicJsIrTextTest {
       public void testAllFilesPresentInFieldmodifiers() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/fakeOverrides/fieldmodifiers"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
       }
+
+      @Test
+      @TestMetadata("javaModifiersOverride.kt")
+      public void testJavaModifiersOverride() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/fieldmodifiers/javaModifiersOverride.kt");
+      }
+
+      @Test
+      @TestMetadata("kotlinModifiersOverride.kt")
+      public void testKotlinModifiersOverride() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/fieldmodifiers/kotlinModifiersOverride.kt");
+      }
     }
 
     @Nested
@@ -2603,6 +3287,120 @@ public class ClassicJsIrTextTestGenerated extends AbstractClassicJsIrTextTest {
       @Test
       public void testAllFilesPresentInGenerics() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/fakeOverrides/generics"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+      }
+
+      @Test
+      @TestMetadata("basicGenericMethodsOverride.kt")
+      public void testBasicGenericMethodsOverride() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/generics/basicGenericMethodsOverride.kt");
+      }
+
+      @Test
+      @TestMetadata("basicGenericWithBoundsOverride.kt")
+      public void testBasicGenericWithBoundsOverride() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/generics/basicGenericWithBoundsOverride.kt");
+      }
+
+      @Test
+      @TestMetadata("basicRawTypeOverride.kt")
+      public void testBasicRawTypeOverride() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/generics/basicRawTypeOverride.kt");
+      }
+
+      @Test
+      @TestMetadata("basicWilcardsOverride.kt")
+      public void testBasicWilcardsOverride() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/generics/basicWilcardsOverride.kt");
+      }
+
+      @Test
+      @TestMetadata("genericMethodOverrideOnComplexHierarchy.kt")
+      public void testGenericMethodOverrideOnComplexHierarchy() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/generics/genericMethodOverrideOnComplexHierarchy.kt");
+      }
+
+      @Test
+      @TestMetadata("genericMethodOverrideOnKJJ.kt")
+      public void testGenericMethodOverrideOnKJJ() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/generics/genericMethodOverrideOnKJJ.kt");
+      }
+
+      @Test
+      @TestMetadata("genericMethodOverrideOnKJK.kt")
+      public void testGenericMethodOverrideOnKJK() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/generics/genericMethodOverrideOnKJK.kt");
+      }
+
+      @Test
+      @TestMetadata("genericWithBoundsOnComplexHierarchy.kt")
+      public void testGenericWithBoundsOnComplexHierarchy() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/generics/genericWithBoundsOnComplexHierarchy.kt");
+      }
+
+      @Test
+      @TestMetadata("genericWithBoundsOnKJJ.kt")
+      public void testGenericWithBoundsOnKJJ() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/generics/genericWithBoundsOnKJJ.kt");
+      }
+
+      @Test
+      @TestMetadata("genericWithBoundsOnKJK.kt")
+      public void testGenericWithBoundsOnKJK() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/generics/genericWithBoundsOnKJK.kt");
+      }
+
+      @Test
+      @TestMetadata("intersectionGenericMethodOverride.kt")
+      public void testIntersectionGenericMethodOverride() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/generics/intersectionGenericMethodOverride.kt");
+      }
+
+      @Test
+      @TestMetadata("intersectionGenericWithBoundsOverride.kt")
+      public void testIntersectionGenericWithBoundsOverride() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/generics/intersectionGenericWithBoundsOverride.kt");
+      }
+
+      @Test
+      @TestMetadata("intersectionRawTypeOverride.kt")
+      public void testIntersectionRawTypeOverride() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/generics/intersectionRawTypeOverride.kt");
+      }
+
+      @Test
+      @TestMetadata("intersectionWildcardsOverride.kt")
+      public void testIntersectionWildcardsOverride() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/generics/intersectionWildcardsOverride.kt");
+      }
+
+      @Test
+      @TestMetadata("rawTypeOverrideOnComplexHierarchy.kt")
+      public void testRawTypeOverrideOnComplexHierarchy() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/generics/rawTypeOverrideOnComplexHierarchy.kt");
+      }
+
+      @Test
+      @TestMetadata("rawTypeOverrideOnKJJ.kt")
+      public void testRawTypeOverrideOnKJJ() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/generics/rawTypeOverrideOnKJJ.kt");
+      }
+
+      @Test
+      @TestMetadata("wildcardsOverrideOnComplexHierarchy.kt")
+      public void testWildcardsOverrideOnComplexHierarchy() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/generics/wildcardsOverrideOnComplexHierarchy.kt");
+      }
+
+      @Test
+      @TestMetadata("wildcardsOverrideOnKJJ.kt")
+      public void testWildcardsOverrideOnKJJ() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/generics/wildcardsOverrideOnKJJ.kt");
+      }
+
+      @Test
+      @TestMetadata("wildcardsOverrideOnKJK.kt")
+      public void testWildcardsOverrideOnKJK() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/generics/wildcardsOverrideOnKJK.kt");
       }
     }
 
@@ -2615,6 +3413,48 @@ public class ClassicJsIrTextTestGenerated extends AbstractClassicJsIrTextTest {
       public void testAllFilesPresentInGettersetter() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/fakeOverrides/gettersetter"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
       }
+
+      @Test
+      @TestMetadata("getterSetterOverrideOnKJ.kt")
+      public void testGetterSetterOverrideOnKJ() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/gettersetter/getterSetterOverrideOnKJ.kt");
+      }
+
+      @Test
+      @TestMetadata("getterSetterOverrideOnKJK.kt")
+      public void testGetterSetterOverrideOnKJK() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/gettersetter/getterSetterOverrideOnKJK.kt");
+      }
+
+      @Test
+      @TestMetadata("getterSetterOverrideonComplexHierarchy.kt")
+      public void testGetterSetterOverrideonComplexHierarchy() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/gettersetter/getterSetterOverrideonComplexHierarchy.kt");
+      }
+
+      @Test
+      @TestMetadata("getterSetterOvverideOnKJJ.kt")
+      public void testGetterSetterOvverideOnKJJ() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/gettersetter/getterSetterOvverideOnKJJ.kt");
+      }
+
+      @Test
+      @TestMetadata("getterSetterOvverrideOnKJKJ.kt")
+      public void testGetterSetterOvverrideOnKJKJ() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/gettersetter/getterSetterOvverrideOnKJKJ.kt");
+      }
+
+      @Test
+      @TestMetadata("intersectionOverrideForGetterSetter.kt")
+      public void testIntersectionOverrideForGetterSetter() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/gettersetter/intersectionOverrideForGetterSetter.kt");
+      }
+
+      @Test
+      @TestMetadata("substitutionOverrideForGetterSetter.kt")
+      public void testSubstitutionOverrideForGetterSetter() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/gettersetter/substitutionOverrideForGetterSetter.kt");
+      }
     }
 
     @Nested
@@ -2625,6 +3465,60 @@ public class ClassicJsIrTextTestGenerated extends AbstractClassicJsIrTextTest {
       @Test
       public void testAllFilesPresentInJava21() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/fakeOverrides/java21"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+      }
+
+      @Test
+      @TestMetadata("sequenceCollectionIntersectionOverrideKJJ.kt")
+      public void testSequenceCollectionIntersectionOverrideKJJ() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/java21/sequenceCollectionIntersectionOverrideKJJ.kt");
+      }
+
+      @Test
+      @TestMetadata("sequenceCollectionIntersectionOverrideKJK.kt")
+      public void testSequenceCollectionIntersectionOverrideKJK() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/java21/sequenceCollectionIntersectionOverrideKJK.kt");
+      }
+
+      @Test
+      @TestMetadata("sequenceCollectionOverride.kt")
+      public void testSequenceCollectionOverride() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/java21/sequenceCollectionOverride.kt");
+      }
+
+      @Test
+      @TestMetadata("sequenceMapIntersectionOverrideKJJ.kt")
+      public void testSequenceMapIntersectionOverrideKJJ() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/java21/sequenceMapIntersectionOverrideKJJ.kt");
+      }
+
+      @Test
+      @TestMetadata("sequenceMapOverride.kt")
+      public void testSequenceMapOverride() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/java21/sequenceMapOverride.kt");
+      }
+
+      @Test
+      @TestMetadata("sequenceMapOverrideKJ.kt")
+      public void testSequenceMapOverrideKJ() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/java21/sequenceMapOverrideKJ.kt");
+      }
+
+      @Test
+      @TestMetadata("sequenceSetIntersectionOverrideKJJ.kt")
+      public void testSequenceSetIntersectionOverrideKJJ() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/java21/sequenceSetIntersectionOverrideKJJ.kt");
+      }
+
+      @Test
+      @TestMetadata("sequenceSetIntersectionOverrideKJK.kt")
+      public void testSequenceSetIntersectionOverrideKJK() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/java21/sequenceSetIntersectionOverrideKJK.kt");
+      }
+
+      @Test
+      @TestMetadata("sequenceSetOverride.kt")
+      public void testSequenceSetOverride() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/java21/sequenceSetOverride.kt");
       }
     }
 
@@ -2637,6 +3531,66 @@ public class ClassicJsIrTextTestGenerated extends AbstractClassicJsIrTextTest {
       public void testAllFilesPresentInJavastatic() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/fakeOverrides/javastatic"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
       }
+
+      @Test
+      @TestMetadata("intersectionOverrideOnStaticKJJ.kt")
+      public void testIntersectionOverrideOnStaticKJJ() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/javastatic/intersectionOverrideOnStaticKJJ.kt");
+      }
+
+      @Test
+      @TestMetadata("intersectionOverrideOnStaticKJK.kt")
+      public void testIntersectionOverrideOnStaticKJK() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/javastatic/intersectionOverrideOnStaticKJK.kt");
+      }
+
+      @Test
+      @TestMetadata("intersectionWithGenericOnComplexHierarchy.kt")
+      public void testIntersectionWithGenericOnComplexHierarchy() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/javastatic/intersectionWithGenericOnComplexHierarchy.kt");
+      }
+
+      @Test
+      @TestMetadata("intersectionWithGenericOverride.kt")
+      public void testIntersectionWithGenericOverride() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/javastatic/intersectionWithGenericOverride.kt");
+      }
+
+      @Test
+      @TestMetadata("staticOverrideOnComplexHierarchy.kt")
+      public void testStaticOverrideOnComplexHierarchy() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/javastatic/staticOverrideOnComplexHierarchy.kt");
+      }
+
+      @Test
+      @TestMetadata("staticOverrideOnKJ.kt")
+      public void testStaticOverrideOnKJ() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/javastatic/staticOverrideOnKJ.kt");
+      }
+
+      @Test
+      @TestMetadata("staticOverrideOnKJJ.kt")
+      public void testStaticOverrideOnKJJ() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/javastatic/staticOverrideOnKJJ.kt");
+      }
+
+      @Test
+      @TestMetadata("staticOverrideOnKJK.kt")
+      public void testStaticOverrideOnKJK() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/javastatic/staticOverrideOnKJK.kt");
+      }
+
+      @Test
+      @TestMetadata("staticOverrideOnKJKJ.kt")
+      public void testStaticOverrideOnKJKJ() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/javastatic/staticOverrideOnKJKJ.kt");
+      }
+
+      @Test
+      @TestMetadata("substitutionStaticOverride.kt")
+      public void testSubstitutionStaticOverride() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/javastatic/substitutionStaticOverride.kt");
+      }
     }
 
     @Nested
@@ -2647,6 +3601,18 @@ public class ClassicJsIrTextTestGenerated extends AbstractClassicJsIrTextTest {
       @Test
       public void testAllFilesPresentInKotlinextensions() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/fakeOverrides/kotlinextensions"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+      }
+
+      @Test
+      @TestMetadata("kotlinExtensionsOverride.kt")
+      public void testKotlinExtensionsOverride() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/kotlinextensions/kotlinExtensionsOverride.kt");
+      }
+
+      @Test
+      @TestMetadata("memberExtensionOverride.kt")
+      public void testMemberExtensionOverride() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/kotlinextensions/memberExtensionOverride.kt");
       }
     }
 
@@ -2659,6 +3625,36 @@ public class ClassicJsIrTextTestGenerated extends AbstractClassicJsIrTextTest {
       public void testAllFilesPresentInMethodmodifiers() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/fakeOverrides/methodmodifiers"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
       }
+
+      @Test
+      @TestMetadata("basicJavaModifiersOverride.kt")
+      public void testBasicJavaModifiersOverride() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/methodmodifiers/basicJavaModifiersOverride.kt");
+      }
+
+      @Test
+      @TestMetadata("basicKotlinModifiersOverride.kt")
+      public void testBasicKotlinModifiersOverride() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/methodmodifiers/basicKotlinModifiersOverride.kt");
+      }
+
+      @Test
+      @TestMetadata("intersectionJavaModifiersOverride.kt")
+      public void testIntersectionJavaModifiersOverride() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/methodmodifiers/intersectionJavaModifiersOverride.kt");
+      }
+
+      @Test
+      @TestMetadata("intersectionKotlinModifiersOverride.kt")
+      public void testIntersectionKotlinModifiersOverride() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/methodmodifiers/intersectionKotlinModifiersOverride.kt");
+      }
+
+      @Test
+      @TestMetadata("kotlinFunParamModifiersOverride.kt")
+      public void testKotlinFunParamModifiersOverride() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/methodmodifiers/kotlinFunParamModifiersOverride.kt");
+      }
     }
 
     @Nested
@@ -2669,6 +3665,30 @@ public class ClassicJsIrTextTestGenerated extends AbstractClassicJsIrTextTest {
       @Test
       public void testAllFilesPresentInMethodparameters() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/fakeOverrides/methodparameters"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+      }
+
+      @Test
+      @TestMetadata("basicJavaThisOverride.kt")
+      public void testBasicJavaThisOverride() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/methodparameters/basicJavaThisOverride.kt");
+      }
+
+      @Test
+      @TestMetadata("basicKotlinDefaultParametersOverride.kt")
+      public void testBasicKotlinDefaultParametersOverride() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/methodparameters/basicKotlinDefaultParametersOverride.kt");
+      }
+
+      @Test
+      @TestMetadata("intersectionJavaThisOverride.kt")
+      public void testIntersectionJavaThisOverride() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/methodparameters/intersectionJavaThisOverride.kt");
+      }
+
+      @Test
+      @TestMetadata("intersectionKotlinDefaultParametersOverride.kt")
+      public void testIntersectionKotlinDefaultParametersOverride() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/methodparameters/intersectionKotlinDefaultParametersOverride.kt");
       }
     }
 
@@ -2681,6 +3701,18 @@ public class ClassicJsIrTextTestGenerated extends AbstractClassicJsIrTextTest {
       public void testAllFilesPresentInNumber() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/fakeOverrides/number"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
       }
+
+      @Test
+      @TestMetadata("javaNumberOverride.kt")
+      public void testJavaNumberOverride() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/number/javaNumberOverride.kt");
+      }
+
+      @Test
+      @TestMetadata("kotlinNumberOverride.kt")
+      public void testKotlinNumberOverride() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/number/kotlinNumberOverride.kt");
+      }
     }
 
     @Nested
@@ -2691,6 +3723,30 @@ public class ClassicJsIrTextTestGenerated extends AbstractClassicJsIrTextTest {
       @Test
       public void testAllFilesPresentInOperators() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/fakeOverrides/operators"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+      }
+
+      @Test
+      @TestMetadata("basicOperatorsOverride.kt")
+      public void testBasicOperatorsOverride() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/operators/basicOperatorsOverride.kt");
+      }
+
+      @Test
+      @TestMetadata("basicOverrideOnComplexHierarchy.kt")
+      public void testBasicOverrideOnComplexHierarchy() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/operators/basicOverrideOnComplexHierarchy.kt");
+      }
+
+      @Test
+      @TestMetadata("intersectionOperatorsOverride.kt")
+      public void testIntersectionOperatorsOverride() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/operators/intersectionOperatorsOverride.kt");
+      }
+
+      @Test
+      @TestMetadata("substitutionOperatorsOverride.kt")
+      public void testSubstitutionOperatorsOverride() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/operators/substitutionOperatorsOverride.kt");
       }
     }
 
@@ -2703,6 +3759,96 @@ public class ClassicJsIrTextTestGenerated extends AbstractClassicJsIrTextTest {
       public void testAllFilesPresentInPlatformtypes() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/fakeOverrides/platformtypes"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
       }
+
+      @Test
+      @TestMetadata("basicCollectionOverrideOnComplexHierarchy.kt")
+      public void testBasicCollectionOverrideOnComplexHierarchy() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/platformtypes/basicCollectionOverrideOnComplexHierarchy.kt");
+      }
+
+      @Test
+      @TestMetadata("basicCollectionsOverride.kt")
+      public void testBasicCollectionsOverride() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/platformtypes/basicCollectionsOverride.kt");
+      }
+
+      @Test
+      @TestMetadata("basicOverride.kt")
+      public void testBasicOverride() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/platformtypes/basicOverride.kt");
+      }
+
+      @Test
+      @TestMetadata("basicOverrideOnComplexHierarchy.kt")
+      public void testBasicOverrideOnComplexHierarchy() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/platformtypes/basicOverrideOnComplexHierarchy.kt");
+      }
+
+      @Test
+      @TestMetadata("combinationExplicitImlicitOverride.kt")
+      public void testCombinationExplicitImlicitOverride() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/platformtypes/combinationExplicitImlicitOverride.kt");
+      }
+
+      @Test
+      @TestMetadata("intersectionOnComplexHierarchy.kt")
+      public void testIntersectionOnComplexHierarchy() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/platformtypes/intersectionOnComplexHierarchy.kt");
+      }
+
+      @Test
+      @TestMetadata("intersectionOverride.kt")
+      public void testIntersectionOverride() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/platformtypes/intersectionOverride.kt");
+      }
+
+      @Test
+      @TestMetadata("intersectionOverrideOnCollections.kt")
+      public void testIntersectionOverrideOnCollections() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/platformtypes/intersectionOverrideOnCollections.kt");
+      }
+
+      @Test
+      @TestMetadata("intersectionWithExplicitOverride.kt")
+      public void testIntersectionWithExplicitOverride() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/platformtypes/intersectionWithExplicitOverride.kt");
+      }
+
+      @Test
+      @TestMetadata("intersectionWithGenericExplicitOverride.kt")
+      public void testIntersectionWithGenericExplicitOverride() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/platformtypes/intersectionWithGenericExplicitOverride.kt");
+      }
+
+      @Test
+      @TestMetadata("intersectionWithGenericOnComplexHierarchy.kt")
+      public void testIntersectionWithGenericOnComplexHierarchy() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/platformtypes/intersectionWithGenericOnComplexHierarchy.kt");
+      }
+
+      @Test
+      @TestMetadata("intersectionWithGenericOverride.kt")
+      public void testIntersectionWithGenericOverride() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/platformtypes/intersectionWithGenericOverride.kt");
+      }
+
+      @Test
+      @TestMetadata("substitutionOverride.kt")
+      public void testSubstitutionOverride() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/platformtypes/substitutionOverride.kt");
+      }
+
+      @Test
+      @TestMetadata("substitutionOverrideOnCollections.kt")
+      public void testSubstitutionOverrideOnCollections() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/platformtypes/substitutionOverrideOnCollections.kt");
+      }
+
+      @Test
+      @TestMetadata("substitutionOverrideOnComplexHierarchy.kt")
+      public void testSubstitutionOverrideOnComplexHierarchy() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/platformtypes/substitutionOverrideOnComplexHierarchy.kt");
+      }
     }
 
     @Nested
@@ -2713,6 +3859,24 @@ public class ClassicJsIrTextTestGenerated extends AbstractClassicJsIrTextTest {
       @Test
       public void testAllFilesPresentInTypenothing() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/fakeOverrides/typenothing"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+      }
+
+      @Test
+      @TestMetadata("baseOverrideOnNothing.kt")
+      public void testBaseOverrideOnNothing() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/typenothing/baseOverrideOnNothing.kt");
+      }
+
+      @Test
+      @TestMetadata("intersectionOverrrideOnNothing.kt")
+      public void testIntersectionOverrrideOnNothing() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/typenothing/intersectionOverrrideOnNothing.kt");
+      }
+
+      @Test
+      @TestMetadata("substitutionOverrideOnNothing.kt")
+      public void testSubstitutionOverrideOnNothing() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/typenothing/substitutionOverrideOnNothing.kt");
       }
     }
 
@@ -2725,6 +3889,30 @@ public class ClassicJsIrTextTestGenerated extends AbstractClassicJsIrTextTest {
       public void testAllFilesPresentInVararg() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/fakeOverrides/vararg"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
       }
+
+      @Test
+      @TestMetadata("basicVarargOverride.kt")
+      public void testBasicVarargOverride() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/vararg/basicVarargOverride.kt");
+      }
+
+      @Test
+      @TestMetadata("intersectionOnVarargOverride.kt")
+      public void testIntersectionOnVarargOverride() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/vararg/intersectionOnVarargOverride.kt");
+      }
+
+      @Test
+      @TestMetadata("intersectionWithGenericOnVarargOverride.kt")
+      public void testIntersectionWithGenericOnVarargOverride() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/vararg/intersectionWithGenericOnVarargOverride.kt");
+      }
+
+      @Test
+      @TestMetadata("substitutionOnVarargOverride.kt")
+      public void testSubstitutionOnVarargOverride() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/vararg/substitutionOnVarargOverride.kt");
+      }
     }
 
     @Nested
@@ -2735,6 +3923,126 @@ public class ClassicJsIrTextTestGenerated extends AbstractClassicJsIrTextTest {
       @Test
       public void testAllFilesPresentInVisibility() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/fakeOverrides/visibility"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+      }
+
+      @Test
+      @TestMetadata("allPropertiesAndMethodsKJ.kt")
+      public void testAllPropertiesAndMethodsKJ() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/visibility/allPropertiesAndMethodsKJ.kt");
+      }
+
+      @Test
+      @TestMetadata("allPropertiesAndMethodsKJJ.kt")
+      public void testAllPropertiesAndMethodsKJJ() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/visibility/allPropertiesAndMethodsKJJ.kt");
+      }
+
+      @Test
+      @TestMetadata("allPropertiesAndMethodsKJK.kt")
+      public void testAllPropertiesAndMethodsKJK() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/visibility/allPropertiesAndMethodsKJK.kt");
+      }
+
+      @Test
+      @TestMetadata("allPropertiesAndMethodsKJKJ.kt")
+      public void testAllPropertiesAndMethodsKJKJ() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/visibility/allPropertiesAndMethodsKJKJ.kt");
+      }
+
+      @Test
+      @TestMetadata("allPropertiesAndMethodsWithSeparateModuleKJJ.kt")
+      public void testAllPropertiesAndMethodsWithSeparateModuleKJJ() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/visibility/allPropertiesAndMethodsWithSeparateModuleKJJ.kt");
+      }
+
+      @Test
+      @TestMetadata("internalOverrideCrossModule.kt")
+      public void testInternalOverrideCrossModule() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/visibility/internalOverrideCrossModule.kt");
+      }
+
+      @Test
+      @TestMetadata("internalOverrideWithFriendModule.kt")
+      public void testInternalOverrideWithFriendModule() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/visibility/internalOverrideWithFriendModule.kt");
+      }
+
+      @Test
+      @TestMetadata("internalWithPublishedApiOverride.kt")
+      public void testInternalWithPublishedApiOverride() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/visibility/internalWithPublishedApiOverride.kt");
+      }
+
+      @Test
+      @TestMetadata("intersectionVisibilityOverrideKJJ.kt")
+      public void testIntersectionVisibilityOverrideKJJ() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/visibility/intersectionVisibilityOverrideKJJ.kt");
+      }
+
+      @Test
+      @TestMetadata("intersectionVisibilityOverrideKJK.kt")
+      public void testIntersectionVisibilityOverrideKJK() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/visibility/intersectionVisibilityOverrideKJK.kt");
+      }
+
+      @Test
+      @TestMetadata("intersectionWithPublishedApiOverride.kt")
+      public void testIntersectionWithPublishedApiOverride() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/visibility/intersectionWithPublishedApiOverride.kt");
+      }
+
+      @Test
+      @TestMetadata("intersectionWithSeparateModule.kt")
+      public void testIntersectionWithSeparateModule() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/visibility/intersectionWithSeparateModule.kt");
+      }
+
+      @Test
+      @TestMetadata("lateinitPropertiesFakeOverrideJKK.kt")
+      public void testLateinitPropertiesFakeOverrideJKK() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/visibility/lateinitPropertiesFakeOverrideJKK.kt");
+      }
+
+      @Test
+      @TestMetadata("lateinitPropertiesJJK.kt")
+      public void testLateinitPropertiesJJK() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/visibility/lateinitPropertiesJJK.kt");
+      }
+
+      @Test
+      @TestMetadata("lateinitPropertiesJK.kt")
+      public void testLateinitPropertiesJK() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/visibility/lateinitPropertiesJK.kt");
+      }
+
+      @Test
+      @TestMetadata("lateinitPropertiesJKK.kt")
+      public void testLateinitPropertiesJKK() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/visibility/lateinitPropertiesJKK.kt");
+      }
+
+      @Test
+      @TestMetadata("lateinitPropertiesSeparateModule.kt")
+      public void testLateinitPropertiesSeparateModule() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/visibility/lateinitPropertiesSeparateModule.kt");
+      }
+
+      @Test
+      @TestMetadata("overrideKotlinMethodsKJKK.kt")
+      public void testOverrideKotlinMethodsKJKK() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/visibility/overrideKotlinMethodsKJKK.kt");
+      }
+
+      @Test
+      @TestMetadata("overridePropertiesKJKK.kt")
+      public void testOverridePropertiesKJKK() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/visibility/overridePropertiesKJKK.kt");
+      }
+
+      @Test
+      @TestMetadata("overrideSetAndGetKJK.kt")
+      public void testOverrideSetAndGetKJK() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/visibility/overrideSetAndGetKJK.kt");
       }
     }
 
@@ -2747,6 +4055,18 @@ public class ClassicJsIrTextTestGenerated extends AbstractClassicJsIrTextTest {
       public void testAllFilesPresentInVoid() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/fakeOverrides/void"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
       }
+
+      @Test
+      @TestMetadata("basicVoidOverride.kt")
+      public void testBasicVoidOverride() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/void/basicVoidOverride.kt");
+      }
+
+      @Test
+      @TestMetadata("intersectionVoidOverride.kt")
+      public void testIntersectionVoidOverride() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/void/intersectionVoidOverride.kt");
+      }
     }
   }
 
@@ -2756,8 +4076,26 @@ public class ClassicJsIrTextTestGenerated extends AbstractClassicJsIrTextTest {
   @Tag("legacy-frontend")
   public class FirProblems {
     @Test
+    @TestMetadata("AbstractMutableMap.kt")
+    public void testAbstractMutableMap() {
+      runTest("compiler/testData/ir/irText/firProblems/AbstractMutableMap.kt");
+    }
+
+    @Test
+    @TestMetadata("AllCandidates.kt")
+    public void testAllCandidates() {
+      runTest("compiler/testData/ir/irText/firProblems/AllCandidates.kt");
+    }
+
+    @Test
     public void testAllFilesPresentInFirProblems() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/firProblems"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+    }
+
+    @Test
+    @TestMetadata("AnnotationInAnnotation.kt")
+    public void testAnnotationInAnnotation() {
+      runTest("compiler/testData/ir/irText/firProblems/AnnotationInAnnotation.kt");
     }
 
     @Test
@@ -2770,6 +4108,12 @@ public class ClassicJsIrTextTestGenerated extends AbstractClassicJsIrTextTest {
     @TestMetadata("AnonymousAsReturnOfGenericFunction.kt")
     public void testAnonymousAsReturnOfGenericFunction() {
       runTest("compiler/testData/ir/irText/firProblems/AnonymousAsReturnOfGenericFunction.kt");
+    }
+
+    @Test
+    @TestMetadata("ArrayListOverrides.kt")
+    public void testArrayListOverrides() {
+      runTest("compiler/testData/ir/irText/firProblems/ArrayListOverrides.kt");
     }
 
     @Test
@@ -2797,6 +4141,18 @@ public class ClassicJsIrTextTestGenerated extends AbstractClassicJsIrTextTest {
     }
 
     @Test
+    @TestMetadata("ClashResolutionDescriptor.kt")
+    public void testClashResolutionDescriptor() {
+      runTest("compiler/testData/ir/irText/firProblems/ClashResolutionDescriptor.kt");
+    }
+
+    @Test
+    @TestMetadata("coercionToUnitForNestedWhen.kt")
+    public void testCoercionToUnitForNestedWhen() {
+      runTest("compiler/testData/ir/irText/firProblems/coercionToUnitForNestedWhen.kt");
+    }
+
+    @Test
     @TestMetadata("DeepCopyIrTree.kt")
     public void testDeepCopyIrTree() {
       runTest("compiler/testData/ir/irText/firProblems/DeepCopyIrTree.kt");
@@ -2815,9 +4171,21 @@ public class ClassicJsIrTextTestGenerated extends AbstractClassicJsIrTextTest {
     }
 
     @Test
+    @TestMetadata("DelegationAndInheritanceFromJava.kt")
+    public void testDelegationAndInheritanceFromJava() {
+      runTest("compiler/testData/ir/irText/firProblems/DelegationAndInheritanceFromJava.kt");
+    }
+
+    @Test
     @TestMetadata("deprecated.kt")
     public void testDeprecated() {
       runTest("compiler/testData/ir/irText/firProblems/deprecated.kt");
+    }
+
+    @Test
+    @TestMetadata("elvisOnBackingFieldInGetter.kt")
+    public void testElvisOnBackingFieldInGetter() {
+      runTest("compiler/testData/ir/irText/firProblems/elvisOnBackingFieldInGetter.kt");
     }
 
     @Test
@@ -2845,6 +4213,12 @@ public class ClassicJsIrTextTestGenerated extends AbstractClassicJsIrTextTest {
     }
 
     @Test
+    @TestMetadata("FieldsFromJavaClass.kt")
+    public void testFieldsFromJavaClass() {
+      runTest("compiler/testData/ir/irText/firProblems/FieldsFromJavaClass.kt");
+    }
+
+    @Test
     @TestMetadata("Fir2IrClassifierStorage.kt")
     public void testFir2IrClassifierStorage() {
       runTest("compiler/testData/ir/irText/firProblems/Fir2IrClassifierStorage.kt");
@@ -2854,6 +4228,24 @@ public class ClassicJsIrTextTestGenerated extends AbstractClassicJsIrTextTest {
     @TestMetadata("FirBuilder.kt")
     public void testFirBuilder() {
       runTest("compiler/testData/ir/irText/firProblems/FirBuilder.kt");
+    }
+
+    @Test
+    @TestMetadata("FlushFromAnonymous.kt")
+    public void testFlushFromAnonymous() {
+      runTest("compiler/testData/ir/irText/firProblems/FlushFromAnonymous.kt");
+    }
+
+    @Test
+    @TestMetadata("functionLiteralGenericSignature.kt")
+    public void testFunctionLiteralGenericSignature() {
+      runTest("compiler/testData/ir/irText/firProblems/functionLiteralGenericSignature.kt");
+    }
+
+    @Test
+    @TestMetadata("ImplicitReceiverStack.kt")
+    public void testImplicitReceiverStack() {
+      runTest("compiler/testData/ir/irText/firProblems/ImplicitReceiverStack.kt");
     }
 
     @Test
@@ -2878,6 +4270,24 @@ public class ClassicJsIrTextTestGenerated extends AbstractClassicJsIrTextTest {
     @TestMetadata("integerLiteralWithExpectedTypealiasType.kt")
     public void testIntegerLiteralWithExpectedTypealiasType() {
       runTest("compiler/testData/ir/irText/firProblems/integerLiteralWithExpectedTypealiasType.kt");
+    }
+
+    @Test
+    @TestMetadata("internalPotentialFakeOverride.kt")
+    public void testInternalPotentialFakeOverride() {
+      runTest("compiler/testData/ir/irText/firProblems/internalPotentialFakeOverride.kt");
+    }
+
+    @Test
+    @TestMetadata("internalPotentialOverride.kt")
+    public void testInternalPotentialOverride() {
+      runTest("compiler/testData/ir/irText/firProblems/internalPotentialOverride.kt");
+    }
+
+    @Test
+    @TestMetadata("kt19251.kt")
+    public void testKt19251() {
+      runTest("compiler/testData/ir/irText/firProblems/kt19251.kt");
     }
 
     @Test
@@ -2935,9 +4345,33 @@ public class ClassicJsIrTextTestGenerated extends AbstractClassicJsIrTextTest {
     }
 
     @Test
+    @TestMetadata("Modality.kt")
+    public void testModality() {
+      runTest("compiler/testData/ir/irText/firProblems/Modality.kt");
+    }
+
+    @Test
+    @TestMetadata("MultiList.kt")
+    public void testMultiList() {
+      runTest("compiler/testData/ir/irText/firProblems/MultiList.kt");
+    }
+
+    @Test
     @TestMetadata("noErrorTypeAfterCaptureApproximation.kt")
     public void testNoErrorTypeAfterCaptureApproximation() {
       runTest("compiler/testData/ir/irText/firProblems/noErrorTypeAfterCaptureApproximation.kt");
+    }
+
+    @Test
+    @TestMetadata("OutBox.kt")
+    public void testOutBox() {
+      runTest("compiler/testData/ir/irText/firProblems/OutBox.kt");
+    }
+
+    @Test
+    @TestMetadata("putIfAbsent.kt")
+    public void testPutIfAbsent() {
+      runTest("compiler/testData/ir/irText/firProblems/putIfAbsent.kt");
     }
 
     @Test
@@ -2953,6 +4387,12 @@ public class ClassicJsIrTextTestGenerated extends AbstractClassicJsIrTextTest {
     }
 
     @Test
+    @TestMetadata("reflectFindAnnotationOnDefaultMethodParameter.kt")
+    public void testReflectFindAnnotationOnDefaultMethodParameter() {
+      runTest("compiler/testData/ir/irText/firProblems/reflectFindAnnotationOnDefaultMethodParameter.kt");
+    }
+
+    @Test
     @TestMetadata("reflectGetOnNullableTypeAlias.kt")
     public void testReflectGetOnNullableTypeAlias() {
       runTest("compiler/testData/ir/irText/firProblems/reflectGetOnNullableTypeAlias.kt");
@@ -2965,9 +4405,21 @@ public class ClassicJsIrTextTestGenerated extends AbstractClassicJsIrTextTest {
     }
 
     @Test
+    @TestMetadata("SameJavaFieldReferences.kt")
+    public void testSameJavaFieldReferences() {
+      runTest("compiler/testData/ir/irText/firProblems/SameJavaFieldReferences.kt");
+    }
+
+    @Test
     @TestMetadata("SignatureClash.kt")
     public void testSignatureClash() {
       runTest("compiler/testData/ir/irText/firProblems/SignatureClash.kt");
+    }
+
+    @Test
+    @TestMetadata("SignatureComputationComplexJavaGeneric.kt")
+    public void testSignatureComputationComplexJavaGeneric() {
+      runTest("compiler/testData/ir/irText/firProblems/SignatureComputationComplexJavaGeneric.kt");
     }
 
     @Test
@@ -2977,15 +4429,39 @@ public class ClassicJsIrTextTestGenerated extends AbstractClassicJsIrTextTest {
     }
 
     @Test
+    @TestMetadata("substitutionOverrideWithDelegate.kt")
+    public void testSubstitutionOverrideWithDelegate() {
+      runTest("compiler/testData/ir/irText/firProblems/substitutionOverrideWithDelegate.kt");
+    }
+
+    @Test
+    @TestMetadata("SyntheticSetterType.kt")
+    public void testSyntheticSetterType() {
+      runTest("compiler/testData/ir/irText/firProblems/SyntheticSetterType.kt");
+    }
+
+    @Test
     @TestMetadata("thisInEnumConstructor.kt")
     public void testThisInEnumConstructor() {
       runTest("compiler/testData/ir/irText/firProblems/thisInEnumConstructor.kt");
     }
 
     @Test
+    @TestMetadata("throwableStackTrace.kt")
+    public void testThrowableStackTrace() {
+      runTest("compiler/testData/ir/irText/firProblems/throwableStackTrace.kt");
+    }
+
+    @Test
     @TestMetadata("timesInBuilder.kt")
     public void testTimesInBuilder() {
       runTest("compiler/testData/ir/irText/firProblems/timesInBuilder.kt");
+    }
+
+    @Test
+    @TestMetadata("TypeAliasConstructorParameterMapping.kt")
+    public void testTypeAliasConstructorParameterMapping() {
+      runTest("compiler/testData/ir/irText/firProblems/TypeAliasConstructorParameterMapping.kt");
     }
 
     @Test
@@ -3007,6 +4483,18 @@ public class ClassicJsIrTextTestGenerated extends AbstractClassicJsIrTextTest {
     }
 
     @Test
+    @TestMetadata("typeParameterFromJavaClass.kt")
+    public void testTypeParameterFromJavaClass() {
+      runTest("compiler/testData/ir/irText/firProblems/typeParameterFromJavaClass.kt");
+    }
+
+    @Test
+    @TestMetadata("TypeParameterInClashingAccessor.kt")
+    public void testTypeParameterInClashingAccessor() {
+      runTest("compiler/testData/ir/irText/firProblems/TypeParameterInClashingAccessor.kt");
+    }
+
+    @Test
     @TestMetadata("TypeParameterInNestedClass.kt")
     public void testTypeParameterInNestedClass() {
       runTest("compiler/testData/ir/irText/firProblems/TypeParameterInNestedClass.kt");
@@ -3016,6 +4504,18 @@ public class ClassicJsIrTextTestGenerated extends AbstractClassicJsIrTextTest {
     @TestMetadata("typeVariableAfterBuildMap.kt")
     public void testTypeVariableAfterBuildMap() {
       runTest("compiler/testData/ir/irText/firProblems/typeVariableAfterBuildMap.kt");
+    }
+
+    @Test
+    @TestMetadata("V8ArrayToList.kt")
+    public void testV8ArrayToList() {
+      runTest("compiler/testData/ir/irText/firProblems/V8ArrayToList.kt");
+    }
+
+    @Test
+    @TestMetadata("valueClassEquals.kt")
+    public void testValueClassEquals() {
+      runTest("compiler/testData/ir/irText/firProblems/valueClassEquals.kt");
     }
 
     @Test
@@ -3288,6 +4788,18 @@ public class ClassicJsIrTextTestGenerated extends AbstractClassicJsIrTextTest {
     public void testNonLocalReturn() {
       runTest("compiler/testData/ir/irText/lambdas/nonLocalReturn.kt");
     }
+
+    @Test
+    @TestMetadata("samAdapter.kt")
+    public void testSamAdapter() {
+      runTest("compiler/testData/ir/irText/lambdas/samAdapter.kt");
+    }
+
+    @Test
+    @TestMetadata("samConversionClassInProjection.kt")
+    public void testSamConversionClassInProjection() {
+      runTest("compiler/testData/ir/irText/lambdas/samConversionClassInProjection.kt");
+    }
   }
 
   @Nested
@@ -3298,6 +4810,18 @@ public class ClassicJsIrTextTestGenerated extends AbstractClassicJsIrTextTest {
     @Test
     public void testAllFilesPresentInLenientMode() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/lenientMode"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+    }
+
+    @Test
+    @TestMetadata("annotations.kt")
+    public void testAnnotations() {
+      runTest("compiler/testData/ir/irText/lenientMode/annotations.kt");
+    }
+
+    @Test
+    @TestMetadata("lenientModeStubs.kt")
+    public void testLenientModeStubs() {
+      runTest("compiler/testData/ir/irText/lenientMode/lenientModeStubs.kt");
     }
   }
 
@@ -3388,6 +4912,18 @@ public class ClassicJsIrTextTestGenerated extends AbstractClassicJsIrTextTest {
     }
 
     @Test
+    @TestMetadata("kt44855.kt")
+    public void testKt44855() {
+      runTest("compiler/testData/ir/irText/regressions/kt44855.kt");
+    }
+
+    @Test
+    @TestMetadata("kt45236.kt")
+    public void testKt45236() {
+      runTest("compiler/testData/ir/irText/regressions/kt45236.kt");
+    }
+
+    @Test
     @TestMetadata("newInferenceFixationOrder1.kt")
     public void testNewInferenceFixationOrder1() {
       runTest("compiler/testData/ir/irText/regressions/newInferenceFixationOrder1.kt");
@@ -3403,6 +4939,12 @@ public class ClassicJsIrTextTestGenerated extends AbstractClassicJsIrTextTest {
     @TestMetadata("typeAliasCtorForGenericClass.kt")
     public void testTypeAliasCtorForGenericClass() {
       runTest("compiler/testData/ir/irText/regressions/typeAliasCtorForGenericClass.kt");
+    }
+
+    @Test
+    @TestMetadata("typeParametersInImplicitCast.kt")
+    public void testTypeParametersInImplicitCast() {
+      runTest("compiler/testData/ir/irText/regressions/typeParametersInImplicitCast.kt");
     }
   }
 
@@ -3446,9 +4988,87 @@ public class ClassicJsIrTextTestGenerated extends AbstractClassicJsIrTextTest {
     }
 
     @Test
+    @TestMetadata("arraysFromBuiltins.kt")
+    public void testArraysFromBuiltins() {
+      runTest("compiler/testData/ir/irText/stubs/arraysFromBuiltins.kt");
+    }
+
+    @Test
+    @TestMetadata("builtinMap.kt")
+    public void testBuiltinMap() {
+      runTest("compiler/testData/ir/irText/stubs/builtinMap.kt");
+    }
+
+    @Test
+    @TestMetadata("constFromBuiltins.kt")
+    public void testConstFromBuiltins() {
+      runTest("compiler/testData/ir/irText/stubs/constFromBuiltins.kt");
+    }
+
+    @Test
     @TestMetadata("genericClassInDifferentModule.kt")
     public void testGenericClassInDifferentModule() {
       runTest("compiler/testData/ir/irText/stubs/genericClassInDifferentModule.kt");
+    }
+
+    @Test
+    @TestMetadata("javaAnnotationOnJavaEnum.kt")
+    public void testJavaAnnotationOnJavaEnum() {
+      runTest("compiler/testData/ir/irText/stubs/javaAnnotationOnJavaEnum.kt");
+    }
+
+    @Test
+    @TestMetadata("javaConstructorWithTypeParameters.kt")
+    public void testJavaConstructorWithTypeParameters() {
+      runTest("compiler/testData/ir/irText/stubs/javaConstructorWithTypeParameters.kt");
+    }
+
+    @Test
+    @TestMetadata("javaEnum.kt")
+    public void testJavaEnum() {
+      runTest("compiler/testData/ir/irText/stubs/javaEnum.kt");
+    }
+
+    @Test
+    @TestMetadata("javaInnerClass.kt")
+    public void testJavaInnerClass() {
+      runTest("compiler/testData/ir/irText/stubs/javaInnerClass.kt");
+    }
+
+    @Test
+    @TestMetadata("javaMethod.kt")
+    public void testJavaMethod() {
+      runTest("compiler/testData/ir/irText/stubs/javaMethod.kt");
+    }
+
+    @Test
+    @TestMetadata("javaNestedClass.kt")
+    public void testJavaNestedClass() {
+      runTest("compiler/testData/ir/irText/stubs/javaNestedClass.kt");
+    }
+
+    @Test
+    @TestMetadata("javaNestedClassesInHierarchy.kt")
+    public void testJavaNestedClassesInHierarchy() {
+      runTest("compiler/testData/ir/irText/stubs/javaNestedClassesInHierarchy.kt");
+    }
+
+    @Test
+    @TestMetadata("javaStaticMethod.kt")
+    public void testJavaStaticMethod() {
+      runTest("compiler/testData/ir/irText/stubs/javaStaticMethod.kt");
+    }
+
+    @Test
+    @TestMetadata("javaSyntheticProperty.kt")
+    public void testJavaSyntheticProperty() {
+      runTest("compiler/testData/ir/irText/stubs/javaSyntheticProperty.kt");
+    }
+
+    @Test
+    @TestMetadata("jdkClassSyntheticProperty.kt")
+    public void testJdkClassSyntheticProperty() {
+      runTest("compiler/testData/ir/irText/stubs/jdkClassSyntheticProperty.kt");
     }
 
     @Test
@@ -3481,6 +5101,12 @@ public class ClassicJsIrTextTestGenerated extends AbstractClassicJsIrTextTest {
     }
 
     @Test
+    @TestMetadata("asOnPlatformType.kt")
+    public void testAsOnPlatformType() {
+      runTest("compiler/testData/ir/irText/types/asOnPlatformType.kt");
+    }
+
+    @Test
     @TestMetadata("castsInsideCoroutineInference.kt")
     public void testCastsInsideCoroutineInference() {
       runTest("compiler/testData/ir/irText/types/castsInsideCoroutineInference.kt");
@@ -3508,6 +5134,12 @@ public class ClassicJsIrTextTestGenerated extends AbstractClassicJsIrTextTest {
     @TestMetadata("definitelyNonNullSAM.kt")
     public void testDefinitelyNonNullSAM() {
       runTest("compiler/testData/ir/irText/types/definitelyNonNullSAM.kt");
+    }
+
+    @Test
+    @TestMetadata("definitelyNonNullWithJava.kt")
+    public void testDefinitelyNonNullWithJava() {
+      runTest("compiler/testData/ir/irText/types/definitelyNonNullWithJava.kt");
     }
 
     @Test
@@ -3553,6 +5185,12 @@ public class ClassicJsIrTextTestGenerated extends AbstractClassicJsIrTextTest {
     }
 
     @Test
+    @TestMetadata("inferenceOfDefinitelyNotNullableBoolean.kt")
+    public void testInferenceOfDefinitelyNotNullableBoolean() {
+      runTest("compiler/testData/ir/irText/types/inferenceOfDefinitelyNotNullableBoolean.kt");
+    }
+
+    @Test
     @TestMetadata("intersectionType1.kt")
     public void testIntersectionType1() {
       runTest("compiler/testData/ir/irText/types/intersectionType1.kt");
@@ -3568,6 +5206,18 @@ public class ClassicJsIrTextTestGenerated extends AbstractClassicJsIrTextTest {
     @TestMetadata("intersectionType3.kt")
     public void testIntersectionType3() {
       runTest("compiler/testData/ir/irText/types/intersectionType3.kt");
+    }
+
+    @Test
+    @TestMetadata("intersectionTypeInSamType.kt")
+    public void testIntersectionTypeInSamType() {
+      runTest("compiler/testData/ir/irText/types/intersectionTypeInSamType.kt");
+    }
+
+    @Test
+    @TestMetadata("javaWildcardType.kt")
+    public void testJavaWildcardType() {
+      runTest("compiler/testData/ir/irText/types/javaWildcardType.kt");
     }
 
     @Test
@@ -3589,9 +5239,27 @@ public class ClassicJsIrTextTestGenerated extends AbstractClassicJsIrTextTest {
     }
 
     @Test
+    @TestMetadata("rawTypeInSignature.kt")
+    public void testRawTypeInSignature() {
+      runTest("compiler/testData/ir/irText/types/rawTypeInSignature.kt");
+    }
+
+    @Test
+    @TestMetadata("receiverOfIntersectionType.kt")
+    public void testReceiverOfIntersectionType() {
+      runTest("compiler/testData/ir/irText/types/receiverOfIntersectionType.kt");
+    }
+
+    @Test
     @TestMetadata("smartCastOnFakeOverrideReceiver.kt")
     public void testSmartCastOnFakeOverrideReceiver() {
       runTest("compiler/testData/ir/irText/types/smartCastOnFakeOverrideReceiver.kt");
+    }
+
+    @Test
+    @TestMetadata("smartCastOnFieldReceiverOfGenericType.kt")
+    public void testSmartCastOnFieldReceiverOfGenericType() {
+      runTest("compiler/testData/ir/irText/types/smartCastOnFieldReceiverOfGenericType.kt");
     }
 
     @Test
@@ -3628,6 +5296,96 @@ public class ClassicJsIrTextTestGenerated extends AbstractClassicJsIrTextTest {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/types/nullChecks"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
       }
 
+      @Test
+      @TestMetadata("enhancedNullability.kt")
+      public void testEnhancedNullability() {
+        runTest("compiler/testData/ir/irText/types/nullChecks/enhancedNullability.kt");
+      }
+
+      @Test
+      @TestMetadata("enhancedNullabilityInCatch.kt")
+      public void testEnhancedNullabilityInCatch() {
+        runTest("compiler/testData/ir/irText/types/nullChecks/enhancedNullabilityInCatch.kt");
+      }
+
+      @Test
+      @TestMetadata("enhancedNullabilityInDestructuringAssignment.kt")
+      public void testEnhancedNullabilityInDestructuringAssignment() {
+        runTest("compiler/testData/ir/irText/types/nullChecks/enhancedNullabilityInDestructuringAssignment.kt");
+      }
+
+      @Test
+      @TestMetadata("enhancedNullabilityInDestructuringAssignmentOld.kt")
+      public void testEnhancedNullabilityInDestructuringAssignmentOld() {
+        runTest("compiler/testData/ir/irText/types/nullChecks/enhancedNullabilityInDestructuringAssignmentOld.kt");
+      }
+
+      @Test
+      @TestMetadata("enhancedNullabilityInForLoop.kt")
+      public void testEnhancedNullabilityInForLoop() {
+        runTest("compiler/testData/ir/irText/types/nullChecks/enhancedNullabilityInForLoop.kt");
+      }
+
+      @Test
+      @TestMetadata("enhancedNullabilityInForLoopOld.kt")
+      public void testEnhancedNullabilityInForLoopOld() {
+        runTest("compiler/testData/ir/irText/types/nullChecks/enhancedNullabilityInForLoopOld.kt");
+      }
+
+      @Test
+      @TestMetadata("explicitEqualsAndCompareToCallsOnPlatformTypeReceiver.kt")
+      public void testExplicitEqualsAndCompareToCallsOnPlatformTypeReceiver() {
+        runTest("compiler/testData/ir/irText/types/nullChecks/explicitEqualsAndCompareToCallsOnPlatformTypeReceiver.kt");
+      }
+
+      @Test
+      @TestMetadata("implicitNotNullOnPlatformType.kt")
+      public void testImplicitNotNullOnPlatformType() {
+        runTest("compiler/testData/ir/irText/types/nullChecks/implicitNotNullOnPlatformType.kt");
+      }
+
+      @Test
+      @TestMetadata("nullCheckInElvisRhs.kt")
+      public void testNullCheckInElvisRhs() {
+        runTest("compiler/testData/ir/irText/types/nullChecks/nullCheckInElvisRhs.kt");
+      }
+
+      @Test
+      @TestMetadata("nullCheckOnInterfaceDelegation.kt")
+      public void testNullCheckOnInterfaceDelegation() {
+        runTest("compiler/testData/ir/irText/types/nullChecks/nullCheckOnInterfaceDelegation.kt");
+      }
+
+      @Test
+      @TestMetadata("nullabilityAssertionOnExtensionReceiver.kt")
+      public void testNullabilityAssertionOnExtensionReceiver() {
+        runTest("compiler/testData/ir/irText/types/nullChecks/nullabilityAssertionOnExtensionReceiver.kt");
+      }
+
+      @Test
+      @TestMetadata("platformTypeReceiver.kt")
+      public void testPlatformTypeReceiver() {
+        runTest("compiler/testData/ir/irText/types/nullChecks/platformTypeReceiver.kt");
+      }
+
+      @Test
+      @TestMetadata("typeParameterWithMixedNullableAndNotNullableBounds.kt")
+      public void testTypeParameterWithMixedNullableAndNotNullableBounds() {
+        runTest("compiler/testData/ir/irText/types/nullChecks/typeParameterWithMixedNullableAndNotNullableBounds.kt");
+      }
+
+      @Test
+      @TestMetadata("typeParameterWithMultipleNotNullableBounds.kt")
+      public void testTypeParameterWithMultipleNotNullableBounds() {
+        runTest("compiler/testData/ir/irText/types/nullChecks/typeParameterWithMultipleNotNullableBounds.kt");
+      }
+
+      @Test
+      @TestMetadata("typeParameterWithMultipleNullableBounds.kt")
+      public void testTypeParameterWithMultipleNullableBounds() {
+        runTest("compiler/testData/ir/irText/types/nullChecks/typeParameterWithMultipleNullableBounds.kt");
+      }
+
       @Nested
       @TestMetadata("compiler/testData/ir/irText/types/nullChecks/nullCheckOnLambdaResult")
       @TestDataPath("$PROJECT_ROOT")
@@ -3636,6 +5394,72 @@ public class ClassicJsIrTextTestGenerated extends AbstractClassicJsIrTextTest {
         @Test
         public void testAllFilesPresentInNullCheckOnLambdaResult() {
           KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/types/nullChecks/nullCheckOnLambdaResult"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+        }
+
+        @Test
+        @TestMetadata("nnStringVsT.kt")
+        public void testNnStringVsT() {
+          runTest("compiler/testData/ir/irText/types/nullChecks/nullCheckOnLambdaResult/nnStringVsT.kt");
+        }
+
+        @Test
+        @TestMetadata("nnStringVsTAny.kt")
+        public void testNnStringVsTAny() {
+          runTest("compiler/testData/ir/irText/types/nullChecks/nullCheckOnLambdaResult/nnStringVsTAny.kt");
+        }
+
+        @Test
+        @TestMetadata("nnStringVsTConstrained.kt")
+        public void testNnStringVsTConstrained() {
+          runTest("compiler/testData/ir/irText/types/nullChecks/nullCheckOnLambdaResult/nnStringVsTConstrained.kt");
+        }
+
+        @Test
+        @TestMetadata("nnStringVsTXArray.kt")
+        public void testNnStringVsTXArray() {
+          runTest("compiler/testData/ir/irText/types/nullChecks/nullCheckOnLambdaResult/nnStringVsTXArray.kt");
+        }
+
+        @Test
+        @TestMetadata("nnStringVsTXString.kt")
+        public void testNnStringVsTXString() {
+          runTest("compiler/testData/ir/irText/types/nullChecks/nullCheckOnLambdaResult/nnStringVsTXString.kt");
+        }
+
+        @Test
+        @TestMetadata("stringVsAny.kt")
+        public void testStringVsAny() {
+          runTest("compiler/testData/ir/irText/types/nullChecks/nullCheckOnLambdaResult/stringVsAny.kt");
+        }
+
+        @Test
+        @TestMetadata("stringVsT.kt")
+        public void testStringVsT() {
+          runTest("compiler/testData/ir/irText/types/nullChecks/nullCheckOnLambdaResult/stringVsT.kt");
+        }
+
+        @Test
+        @TestMetadata("stringVsTAny.kt")
+        public void testStringVsTAny() {
+          runTest("compiler/testData/ir/irText/types/nullChecks/nullCheckOnLambdaResult/stringVsTAny.kt");
+        }
+
+        @Test
+        @TestMetadata("stringVsTConstrained.kt")
+        public void testStringVsTConstrained() {
+          runTest("compiler/testData/ir/irText/types/nullChecks/nullCheckOnLambdaResult/stringVsTConstrained.kt");
+        }
+
+        @Test
+        @TestMetadata("stringVsTXArray.kt")
+        public void testStringVsTXArray() {
+          runTest("compiler/testData/ir/irText/types/nullChecks/nullCheckOnLambdaResult/stringVsTXArray.kt");
+        }
+
+        @Test
+        @TestMetadata("stringVsTXString.kt")
+        public void testStringVsTXString() {
+          runTest("compiler/testData/ir/irText/types/nullChecks/nullCheckOnLambdaResult/stringVsTXString.kt");
         }
       }
     }

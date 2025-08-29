@@ -127,6 +127,12 @@ public class NativeLibraryAbiReaderTestGenerated extends AbstractNativeLibraryAb
   }
 
   @Test
+  @TestMetadata("specific_types_dynamic.kt")
+  public void testSpecific_types_dynamic() {
+    runTest("compiler/testData/klib/dump-abi/content/specific_types_dynamic.kt");
+  }
+
+  @Test
   @TestMetadata("type_parameters.kt")
   public void testType_parameters() {
     runTest("compiler/testData/klib/dump-abi/content/type_parameters.kt");

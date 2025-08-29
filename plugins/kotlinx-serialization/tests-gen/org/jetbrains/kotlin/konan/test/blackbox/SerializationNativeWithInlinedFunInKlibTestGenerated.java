@@ -29,6 +29,12 @@ import java.util.regex.Pattern;
 @UseExtTestCaseGroupProvider()
 public class SerializationNativeWithInlinedFunInKlibTestGenerated extends AbstractNativeCodegenBoxTest {
   @Test
+  @TestMetadata("allConstructorsAccessible.kt")
+  public void testAllConstructorsAccessible() {
+    runTest("plugins/kotlinx-serialization/testData/boxIr/allConstructorsAccessible.kt");
+  }
+
+  @Test
   public void testAllFilesPresentInBoxIr() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/kotlinx-serialization/testData/boxIr"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
   }
@@ -106,6 +112,48 @@ public class SerializationNativeWithInlinedFunInKlibTestGenerated extends Abstra
   }
 
   @Test
+  @TestMetadata("excludedFromExport.kt")
+  public void testExcludedFromExport() {
+    runTest("plugins/kotlinx-serialization/testData/boxIr/excludedFromExport.kt");
+  }
+
+  @Test
+  @TestMetadata("excludedFromFileExport.kt")
+  public void testExcludedFromFileExport() {
+    runTest("plugins/kotlinx-serialization/testData/boxIr/excludedFromFileExport.kt");
+  }
+
+  @Test
+  @TestMetadata("expectActual.kt")
+  public void testExpectActual() {
+    runTest("plugins/kotlinx-serialization/testData/boxIr/expectActual.kt");
+  }
+
+  @Test
+  @TestMetadata("expectActualSealedClass.kt")
+  public void testExpectActualSealedClass() {
+    runTest("plugins/kotlinx-serialization/testData/boxIr/expectActualSealedClass.kt");
+  }
+
+  @Test
+  @TestMetadata("externalSerialierJava.kt")
+  public void testExternalSerialierJava() {
+    runTest("plugins/kotlinx-serialization/testData/boxIr/externalSerialierJava.kt");
+  }
+
+  @Test
+  @TestMetadata("externalSerializerForClassWithNonSerializableType.kt")
+  public void testExternalSerializerForClassWithNonSerializableType() {
+    runTest("plugins/kotlinx-serialization/testData/boxIr/externalSerializerForClassWithNonSerializableType.kt");
+  }
+
+  @Test
+  @TestMetadata("generatedClassifiersViaLibraryDependency.kt")
+  public void testGeneratedClassifiersViaLibraryDependency() {
+    runTest("plugins/kotlinx-serialization/testData/boxIr/generatedClassifiersViaLibraryDependency.kt");
+  }
+
+  @Test
   @TestMetadata("genericBaseClassMultiple.kt")
   public void testGenericBaseClassMultiple() {
     runTest("plugins/kotlinx-serialization/testData/boxIr/genericBaseClassMultiple.kt");
@@ -124,6 +172,12 @@ public class SerializationNativeWithInlinedFunInKlibTestGenerated extends Abstra
   }
 
   @Test
+  @TestMetadata("inlineClasses.kt")
+  public void testInlineClasses() {
+    runTest("plugins/kotlinx-serialization/testData/boxIr/inlineClasses.kt");
+  }
+
+  @Test
   @TestMetadata("instantSerializer.kt")
   public void testInstantSerializer() {
     runTest("plugins/kotlinx-serialization/testData/boxIr/instantSerializer.kt");
@@ -136,9 +190,57 @@ public class SerializationNativeWithInlinedFunInKlibTestGenerated extends Abstra
   }
 
   @Test
+  @TestMetadata("intrinsicAnnotations.kt")
+  public void testIntrinsicAnnotations() {
+    runTest("plugins/kotlinx-serialization/testData/boxIr/intrinsicAnnotations.kt");
+  }
+
+  @Test
+  @TestMetadata("intrinsicsBox.kt")
+  public void testIntrinsicsBox() {
+    runTest("plugins/kotlinx-serialization/testData/boxIr/intrinsicsBox.kt");
+  }
+
+  @Test
+  @TestMetadata("intrinsicsConsistency.kt")
+  public void testIntrinsicsConsistency() {
+    runTest("plugins/kotlinx-serialization/testData/boxIr/intrinsicsConsistency.kt");
+  }
+
+  @Test
+  @TestMetadata("intrinsicsNonReified.kt")
+  public void testIntrinsicsNonReified() {
+    runTest("plugins/kotlinx-serialization/testData/boxIr/intrinsicsNonReified.kt");
+  }
+
+  @Test
+  @TestMetadata("intrinsicsNullable.kt")
+  public void testIntrinsicsNullable() {
+    runTest("plugins/kotlinx-serialization/testData/boxIr/intrinsicsNullable.kt");
+  }
+
+  @Test
+  @TestMetadata("intrinsicsPolymorphicPriority.kt")
+  public void testIntrinsicsPolymorphicPriority() {
+    runTest("plugins/kotlinx-serialization/testData/boxIr/intrinsicsPolymorphicPriority.kt");
+  }
+
+  @Test
+  @TestMetadata("intrinsicsStarProjections.kt")
+  public void testIntrinsicsStarProjections() {
+    runTest("plugins/kotlinx-serialization/testData/boxIr/intrinsicsStarProjections.kt");
+  }
+
+  @Test
   @TestMetadata("KeepGeneratedSerializer.kt")
   public void testKeepGeneratedSerializer() {
     runTest("plugins/kotlinx-serialization/testData/boxIr/KeepGeneratedSerializer.kt");
+  }
+
+  @Test
+  @TestMetadata("localSerializable.kt")
+  public void testLocalSerializable() {
+    runTest("plugins/kotlinx-serialization/testData/boxIr/localSerializable.kt");
   }
 
   @Test
@@ -148,9 +250,81 @@ public class SerializationNativeWithInlinedFunInKlibTestGenerated extends Abstra
   }
 
   @Test
+  @TestMetadata("mpp.kt")
+  public void testMpp() {
+    runTest("plugins/kotlinx-serialization/testData/boxIr/mpp.kt");
+  }
+
+  @Test
+  @TestMetadata("mppInheritance.kt")
+  public void testMppInheritance() {
+    runTest("plugins/kotlinx-serialization/testData/boxIr/mppInheritance.kt");
+  }
+
+  @Test
+  @TestMetadata("multiFieldValueClasses.kt")
+  public void testMultiFieldValueClasses() {
+    runTest("plugins/kotlinx-serialization/testData/boxIr/multiFieldValueClasses.kt");
+  }
+
+  @Test
+  @TestMetadata("multiFileInheritanceJs.kt")
+  public void testMultiFileInheritanceJs() {
+    runTest("plugins/kotlinx-serialization/testData/boxIr/multiFileInheritanceJs.kt");
+  }
+
+  @Test
+  @TestMetadata("multimoduleInheritance.kt")
+  public void testMultimoduleInheritance() {
+    runTest("plugins/kotlinx-serialization/testData/boxIr/multimoduleInheritance.kt");
+  }
+
+  @Test
+  @TestMetadata("multimoduleInheritanceJs.kt")
+  public void testMultimoduleInheritanceJs() {
+    runTest("plugins/kotlinx-serialization/testData/boxIr/multimoduleInheritanceJs.kt");
+  }
+
+  @Test
+  @TestMetadata("multimoduleInheritanceJsGeneric.kt")
+  public void testMultimoduleInheritanceJsGeneric() {
+    runTest("plugins/kotlinx-serialization/testData/boxIr/multimoduleInheritanceJsGeneric.kt");
+  }
+
+  @Test
   @TestMetadata("multipleGenericsPolymorphic.kt")
   public void testMultipleGenericsPolymorphic() {
     runTest("plugins/kotlinx-serialization/testData/boxIr/multipleGenericsPolymorphic.kt");
+  }
+
+  @Test
+  @TestMetadata("namedCompanions.kt")
+  public void testNamedCompanions() {
+    runTest("plugins/kotlinx-serialization/testData/boxIr/namedCompanions.kt");
+  }
+
+  @Test
+  @TestMetadata("polymorphic.kt")
+  public void testPolymorphic() {
+    runTest("plugins/kotlinx-serialization/testData/boxIr/polymorphic.kt");
+  }
+
+  @Test
+  @TestMetadata("polymorphicTypeParameter.kt")
+  public void testPolymorphicTypeParameter() {
+    runTest("plugins/kotlinx-serialization/testData/boxIr/polymorphicTypeParameter.kt");
+  }
+
+  @Test
+  @TestMetadata("privateCustomSerializer.kt")
+  public void testPrivateCustomSerializer() {
+    runTest("plugins/kotlinx-serialization/testData/boxIr/privateCustomSerializer.kt");
+  }
+
+  @Test
+  @TestMetadata("repeatableSerialInfo.kt")
+  public void testRepeatableSerialInfo() {
+    runTest("plugins/kotlinx-serialization/testData/boxIr/repeatableSerialInfo.kt");
   }
 
   @Test
@@ -163,6 +337,12 @@ public class SerializationNativeWithInlinedFunInKlibTestGenerated extends Abstra
   @TestMetadata("sealedInterfaces.kt")
   public void testSealedInterfaces() {
     runTest("plugins/kotlinx-serialization/testData/boxIr/sealedInterfaces.kt");
+  }
+
+  @Test
+  @TestMetadata("serialInfo.kt")
+  public void testSerialInfo() {
+    runTest("plugins/kotlinx-serialization/testData/boxIr/serialInfo.kt");
   }
 
   @Test
@@ -202,9 +382,27 @@ public class SerializationNativeWithInlinedFunInKlibTestGenerated extends Abstra
   }
 
   @Test
+  @TestMetadata("singleFileInheritanceJs.kt")
+  public void testSingleFileInheritanceJs() {
+    runTest("plugins/kotlinx-serialization/testData/boxIr/singleFileInheritanceJs.kt");
+  }
+
+  @Test
   @TestMetadata("starProjections.kt")
   public void testStarProjections() {
     runTest("plugins/kotlinx-serialization/testData/boxIr/starProjections.kt");
+  }
+
+  @Test
+  @TestMetadata("typealiasesInContextualTest.kt")
+  public void testTypealiasesInContextualTest() {
+    runTest("plugins/kotlinx-serialization/testData/boxIr/typealiasesInContextualTest.kt");
+  }
+
+  @Test
+  @TestMetadata("typealiasesTest.kt")
+  public void testTypealiasesTest() {
+    runTest("plugins/kotlinx-serialization/testData/boxIr/typealiasesTest.kt");
   }
 
   @Test
