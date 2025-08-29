@@ -1,8 +1,11 @@
 import org.gradle.api.Project
+import org.gradle.api.file.Directory
 import org.gradle.api.plugins.JavaPluginExtension
 import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.SourceSetContainer
+import org.gradle.kotlin.dsl.apply
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSetContainer
+import org.jetbrains.kotlin.ideaExt.idea
 
 inline fun Project.sourceSets(crossinline body: SourceSetsBuilder.() -> Unit) = SourceSetsBuilder(this).body()
 
@@ -65,3 +68,12 @@ fun Project.mainJavaPluginSourceSet() = findJavaPluginExtension()?.sourceSets?.f
 fun Project.mainKotlinSourceSet() =
     (extensions.findByName("kotlin") as? KotlinSourceSetContainer)?.sourceSets?.findByName("main")
 fun Project.sources() = mainJavaPluginSourceSet()?.allSource ?: mainKotlinSourceSet()?.kotlin
+
+fun SourceSet.generatedDir(project: Project, generationRoot: Directory) {
+    java.srcDir(generationRoot)
+
+    project.apply(plugin = "idea")
+    project.idea {
+        this.module.generatedSourceDirs.add(generationRoot.asFile)
+    }
+}
