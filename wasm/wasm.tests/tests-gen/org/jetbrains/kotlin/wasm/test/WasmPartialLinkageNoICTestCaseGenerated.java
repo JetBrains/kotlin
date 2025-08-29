@@ -121,6 +121,12 @@ public class WasmPartialLinkageNoICTestCaseGenerated extends AbstractWasmPartial
   }
 
   @Test
+  @TestMetadata("intraModuleInlining")
+  public void testIntraModuleInlining() {
+    runTest("compiler/testData/klib/partial-linkage/intraModuleInlining/");
+  }
+
+  @Test
   @TestMetadata("modifyInlineFunction")
   public void testModifyInlineFunction() {
     runTest("compiler/testData/klib/partial-linkage/modifyInlineFunction/");
