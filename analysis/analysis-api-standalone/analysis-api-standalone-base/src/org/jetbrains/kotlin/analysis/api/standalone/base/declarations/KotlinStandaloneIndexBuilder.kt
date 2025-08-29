@@ -28,7 +28,7 @@ internal class KotlinStandaloneIndexBuilder(
     class IndexData(val fakeKtFiles: List<KtFile>, val index: KotlinStandaloneDeclarationIndex)
 
     private val psiManager = PsiManager.getInstance(project)
-    private val cacheService = ApplicationManager.getApplication().serviceOrNull<KotlinStandaloneStubsCache>()
+    private val cacheService = ApplicationManager.getApplication().serviceOrNull<KotlinStandaloneIndexCache>()
 
     /**
      * Synchronization is not needed since either this code is executed in a single thread right away
