@@ -28,7 +28,6 @@ fun methodModelLocator(
     filenamePattern: Pattern,
     checkFilenameStartsLowerCase: Boolean?,
     targetBackend: TargetBackend,
-    skipIgnored: Boolean,
     tags: List<String>,
     nativeTestInNonNativeTestInfra: Boolean
 ): List<MethodModel> = SimpleTestMethodModel(
@@ -37,7 +36,6 @@ fun methodModelLocator(
     filenamePattern,
     checkFilenameStartsLowerCase,
     targetBackend,
-    skipIgnored,
     tags,
     nativeTestInNonNativeTestInfra
 ).let { methodModel ->

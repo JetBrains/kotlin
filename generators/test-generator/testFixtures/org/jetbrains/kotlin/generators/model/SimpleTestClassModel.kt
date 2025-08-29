@@ -26,7 +26,6 @@ class SimpleTestClassModel(
     val targetBackend: TargetBackend,
     excludeDirs: Collection<String>,
     excludeDirsRecursively: Collection<String>,
-    private val skipIgnored: Boolean,
     private val testRunnerMethodName: String,
     private val additionalRunnerArguments: List<String>,
     private val deep: Int?,
@@ -66,7 +65,6 @@ class SimpleTestClassModel(
                         targetBackend,
                         excludesStripOneDirectory(file.name),
                         excludeDirsRecursively,
-                        skipIgnored,
                         testRunnerMethodName,
                         additionalRunnerArguments,
                         if (deep != null) deep - 1 else null,
@@ -106,7 +104,6 @@ class SimpleTestClassModel(
                 filenamePattern,
                 checkFilenameStartsLowerCase,
                 targetBackend,
-                skipIgnored,
                 extractTagsFromTestFile(rootFile),
                 nativeTestInNonNativeTestInfra
             )
@@ -141,7 +138,7 @@ class SimpleTestClassModel(
                         result.addAll(
                             methodModelLocator(
                                 rootFile, file, filenamePattern,
-                                checkFilenameStartsLowerCase, targetBackend, skipIgnored, extractTagsFromTestFile(file),
+                                checkFilenameStartsLowerCase, targetBackend, extractTagsFromTestFile(file),
                                 nativeTestInNonNativeTestInfra
                             )
                         )
