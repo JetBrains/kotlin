@@ -25,9 +25,21 @@ public class FirJsLightTreePluginBlackBoxCodegenTestGenerated extends AbstractFi
   }
 
   @Test
+  @TestMetadata("annotationsGeneratedInBackend_mpp.kt")
+  public void testAnnotationsGeneratedInBackend_mpp() {
+    runTest("plugins/plugin-sandbox/testData/box/annotationsGeneratedInBackend_mpp.kt");
+  }
+
+  @Test
   @TestMetadata("builtins.kt")
   public void testBuiltins() {
     runTest("plugins/plugin-sandbox/testData/box/builtins.kt");
+  }
+
+  @Test
+  @TestMetadata("classWithAllPropertiesConstructor.kt")
+  public void testClassWithAllPropertiesConstructor() {
+    runTest("plugins/plugin-sandbox/testData/box/classWithAllPropertiesConstructor.kt");
   }
 
   @Test
@@ -52,6 +64,12 @@ public class FirJsLightTreePluginBlackBoxCodegenTestGenerated extends AbstractFi
   @TestMetadata("expectInlineableFunction.kt")
   public void testExpectInlineableFunction() {
     runTest("plugins/plugin-sandbox/testData/box/expectInlineableFunction.kt");
+  }
+
+  @Test
+  @TestMetadata("extendsJava.kt")
+  public void testExtendsJava() {
+    runTest("plugins/plugin-sandbox/testData/box/extendsJava.kt");
   }
 
   @Test
@@ -103,6 +121,12 @@ public class FirJsLightTreePluginBlackBoxCodegenTestGenerated extends AbstractFi
   }
 
   @Test
+  @TestMetadata("mppDependencyWithActualTypealiasAnnotation.kt")
+  public void testMppDependencyWithActualTypealiasAnnotation() {
+    runTest("plugins/plugin-sandbox/testData/box/mppDependencyWithActualTypealiasAnnotation.kt");
+  }
+
+  @Test
   @TestMetadata("nestedClassesWithSupertypesDependantOnAnnotationArgument.kt")
   public void testNestedClassesWithSupertypesDependantOnAnnotationArgument() {
     runTest("plugins/plugin-sandbox/testData/box/nestedClassesWithSupertypesDependantOnAnnotationArgument.kt");
@@ -130,6 +154,18 @@ public class FirJsLightTreePluginBlackBoxCodegenTestGenerated extends AbstractFi
   @TestMetadata("serializer.kt")
   public void testSerializer() {
     runTest("plugins/plugin-sandbox/testData/box/serializer.kt");
+  }
+
+  @Test
+  @TestMetadata("superCompiledClassAnnotation.kt")
+  public void testSuperCompiledClassAnnotation() {
+    runTest("plugins/plugin-sandbox/testData/box/superCompiledClassAnnotation.kt");
+  }
+
+  @Test
+  @TestMetadata("superJavaClassAnnotation.kt")
+  public void testSuperJavaClassAnnotation() {
+    runTest("plugins/plugin-sandbox/testData/box/superJavaClassAnnotation.kt");
   }
 
   @Test

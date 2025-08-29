@@ -655,4 +655,10 @@ public class JsFirES6InvalidationPerModuleTestGenerated extends AbstractJsFirES6
   public void testVariance() {
     runTest("js/js.translator/testData/incremental/invalidation/variance/");
   }
+
+  @Test
+  @TestMetadata("wasmJsInterop")
+  public void testWasmJsInterop() {
+    runTest("js/js.translator/testData/incremental/invalidation/wasmJsInterop/");
+  }
 }

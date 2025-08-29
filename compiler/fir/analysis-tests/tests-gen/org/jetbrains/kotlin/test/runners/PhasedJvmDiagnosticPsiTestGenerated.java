@@ -46705,6 +46705,12 @@ public class PhasedJvmDiagnosticPsiTestGenerated extends AbstractPhasedJvmDiagno
   @TestDataPath("$PROJECT_ROOT")
   public class TestsWithAnyBackend {
     @Test
+    @TestMetadata("crossFileInlineCycle.kt")
+    public void testCrossFileInlineCycle() {
+      runTest("compiler/testData/diagnostics/testsWithAnyBackend/crossFileInlineCycle.kt");
+    }
+
+    @Test
     @TestMetadata("defaultValuesCycle.kt")
     public void testDefaultValuesCycle() {
       runTest("compiler/testData/diagnostics/testsWithAnyBackend/defaultValuesCycle.kt");

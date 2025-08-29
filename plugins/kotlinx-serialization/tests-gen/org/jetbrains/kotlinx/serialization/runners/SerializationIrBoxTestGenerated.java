@@ -103,6 +103,18 @@ public class SerializationIrBoxTestGenerated extends AbstractSerializationIrBoxT
   }
 
   @Test
+  @TestMetadata("excludedFromExport.kt")
+  public void testExcludedFromExport() {
+    runTest("plugins/kotlinx-serialization/testData/boxIr/excludedFromExport.kt");
+  }
+
+  @Test
+  @TestMetadata("excludedFromFileExport.kt")
+  public void testExcludedFromFileExport() {
+    runTest("plugins/kotlinx-serialization/testData/boxIr/excludedFromFileExport.kt");
+  }
+
+  @Test
   @TestMetadata("expectActual.kt")
   public void testExpectActual() {
     runTest("plugins/kotlinx-serialization/testData/boxIr/expectActual.kt");
@@ -256,6 +268,18 @@ public class SerializationIrBoxTestGenerated extends AbstractSerializationIrBoxT
   @TestMetadata("multimoduleInheritance.kt")
   public void testMultimoduleInheritance() {
     runTest("plugins/kotlinx-serialization/testData/boxIr/multimoduleInheritance.kt");
+  }
+
+  @Test
+  @TestMetadata("multimoduleInheritanceJs.kt")
+  public void testMultimoduleInheritanceJs() {
+    runTest("plugins/kotlinx-serialization/testData/boxIr/multimoduleInheritanceJs.kt");
+  }
+
+  @Test
+  @TestMetadata("multimoduleInheritanceJsGeneric.kt")
+  public void testMultimoduleInheritanceJsGeneric() {
+    runTest("plugins/kotlinx-serialization/testData/boxIr/multimoduleInheritanceJsGeneric.kt");
   }
 
   @Test

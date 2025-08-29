@@ -68,6 +68,30 @@ public class JvmLightTreeBlackBoxCodegenWithSeparateKmpCompilationTestGenerated 
   }
 
   @Test
+  @TestMetadata("assertDisabledAsActualFunction.kt")
+  public void testAssertDisabledAsActualFunction() {
+    runTest("compiler/testData/codegen/box/multiplatform/k2/assertDisabledAsActualFunction.kt");
+  }
+
+  @Test
+  @TestMetadata("assertDisabledAsActualFunctionHmpp.kt")
+  public void testAssertDisabledAsActualFunctionHmpp() {
+    runTest("compiler/testData/codegen/box/multiplatform/k2/assertDisabledAsActualFunctionHmpp.kt");
+  }
+
+  @Test
+  @TestMetadata("assertEnabledAsActualFunction.kt")
+  public void testAssertEnabledAsActualFunction() {
+    runTest("compiler/testData/codegen/box/multiplatform/k2/assertEnabledAsActualFunction.kt");
+  }
+
+  @Test
+  @TestMetadata("assertEnabledAsActualFunctionHmpp.kt")
+  public void testAssertEnabledAsActualFunctionHmpp() {
+    runTest("compiler/testData/codegen/box/multiplatform/k2/assertEnabledAsActualFunctionHmpp.kt");
+  }
+
+  @Test
   @TestMetadata("callToJavaSuper.kt")
   public void testCallToJavaSuper() {
     runTest("compiler/testData/codegen/box/multiplatform/k2/callToJavaSuper.kt");
@@ -736,6 +760,12 @@ public class JvmLightTreeBlackBoxCodegenWithSeparateKmpCompilationTestGenerated 
     @TestMetadata("expectCtorlessFinalToActualObject.kt")
     public void testExpectCtorlessFinalToActualObject() {
       runTest("compiler/testData/codegen/box/multiplatform/k2/complexMatchings/expectCtorlessFinalToActualObject.kt");
+    }
+
+    @Test
+    @TestMetadata("expectCtorlessFinalToActualPromiseOfUnit.kt")
+    public void testExpectCtorlessFinalToActualPromiseOfUnit() {
+      runTest("compiler/testData/codegen/box/multiplatform/k2/complexMatchings/expectCtorlessFinalToActualPromiseOfUnit.kt");
     }
 
     @Test

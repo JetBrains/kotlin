@@ -21,9 +21,27 @@ import java.util.regex.Pattern;
 @TestDataPath("$PROJECT_ROOT")
 public class JsLightTreeBlackBoxCodegenWithSeparateKmpCompilationTestGenerated extends AbstractJsLightTreeBlackBoxCodegenWithSeparateKmpCompilationTest {
   @Test
+  @TestMetadata("AbstractMutableList_modCount.kt")
+  public void testAbstractMutableList_modCount() {
+    runTest("compiler/testData/codegen/box/multiplatform/k2/AbstractMutableList_modCount.kt");
+  }
+
+  @Test
+  @TestMetadata("AbstractMutableList_modCount_deprecated.kt")
+  public void testAbstractMutableList_modCount_deprecated() {
+    runTest("compiler/testData/codegen/box/multiplatform/k2/AbstractMutableList_modCount_deprecated.kt");
+  }
+
+  @Test
   @TestMetadata("actualInnerClassesFirMemberMapping.kt")
   public void testActualInnerClassesFirMemberMapping() {
     runTest("compiler/testData/codegen/box/multiplatform/k2/actualInnerClassesFirMemberMapping.kt");
+  }
+
+  @Test
+  @TestMetadata("actualizeExpectProtectedToJavaProtected.kt")
+  public void testActualizeExpectProtectedToJavaProtected() {
+    runTest("compiler/testData/codegen/box/multiplatform/k2/actualizeExpectProtectedToJavaProtected.kt");
   }
 
   @Test
@@ -38,9 +56,45 @@ public class JsLightTreeBlackBoxCodegenWithSeparateKmpCompilationTestGenerated e
   }
 
   @Test
+  @TestMetadata("annotationsViaActualTypeAliasFromBinary2.kt")
+  public void testAnnotationsViaActualTypeAliasFromBinary2() {
+    runTest("compiler/testData/codegen/box/multiplatform/k2/annotationsViaActualTypeAliasFromBinary2.kt");
+  }
+
+  @Test
   @TestMetadata("anonymousObjectAndSpecificImplementationInDeserializedIr.kt")
   public void testAnonymousObjectAndSpecificImplementationInDeserializedIr() {
     runTest("compiler/testData/codegen/box/multiplatform/k2/anonymousObjectAndSpecificImplementationInDeserializedIr.kt");
+  }
+
+  @Test
+  @TestMetadata("assertDisabledAsActualFunction.kt")
+  public void testAssertDisabledAsActualFunction() {
+    runTest("compiler/testData/codegen/box/multiplatform/k2/assertDisabledAsActualFunction.kt");
+  }
+
+  @Test
+  @TestMetadata("assertDisabledAsActualFunctionHmpp.kt")
+  public void testAssertDisabledAsActualFunctionHmpp() {
+    runTest("compiler/testData/codegen/box/multiplatform/k2/assertDisabledAsActualFunctionHmpp.kt");
+  }
+
+  @Test
+  @TestMetadata("assertEnabledAsActualFunction.kt")
+  public void testAssertEnabledAsActualFunction() {
+    runTest("compiler/testData/codegen/box/multiplatform/k2/assertEnabledAsActualFunction.kt");
+  }
+
+  @Test
+  @TestMetadata("assertEnabledAsActualFunctionHmpp.kt")
+  public void testAssertEnabledAsActualFunctionHmpp() {
+    runTest("compiler/testData/codegen/box/multiplatform/k2/assertEnabledAsActualFunctionHmpp.kt");
+  }
+
+  @Test
+  @TestMetadata("callToJavaSuper.kt")
+  public void testCallToJavaSuper() {
+    runTest("compiler/testData/codegen/box/multiplatform/k2/callToJavaSuper.kt");
   }
 
   @Test
@@ -68,9 +122,21 @@ public class JsLightTreeBlackBoxCodegenWithSeparateKmpCompilationTestGenerated e
   }
 
   @Test
+  @TestMetadata("directJavaActualization.kt")
+  public void testDirectJavaActualization() {
+    runTest("compiler/testData/codegen/box/multiplatform/k2/directJavaActualization.kt");
+  }
+
+  @Test
   @TestMetadata("enumStaticMethods.kt")
   public void testEnumStaticMethods() {
     runTest("compiler/testData/codegen/box/multiplatform/k2/enumStaticMethods.kt");
+  }
+
+  @Test
+  @TestMetadata("expectAnnotationAsTypeAlias.kt")
+  public void testExpectAnnotationAsTypeAlias() {
+    runTest("compiler/testData/codegen/box/multiplatform/k2/expectAnnotationAsTypeAlias.kt");
   }
 
   @Test
@@ -92,9 +158,21 @@ public class JsLightTreeBlackBoxCodegenWithSeparateKmpCompilationTestGenerated e
   }
 
   @Test
+  @TestMetadata("expectValInInlineClassJVM.kt")
+  public void testExpectValInInlineClassJVM() {
+    runTest("compiler/testData/codegen/box/multiplatform/k2/expectValInInlineClassJVM.kt");
+  }
+
+  @Test
   @TestMetadata("extensionPropertiesOverloads.kt")
   public void testExtensionPropertiesOverloads() {
     runTest("compiler/testData/codegen/box/multiplatform/k2/extensionPropertiesOverloads.kt");
+  }
+
+  @Test
+  @TestMetadata("hashSetSize.kt")
+  public void testHashSetSize() {
+    runTest("compiler/testData/codegen/box/multiplatform/k2/hashSetSize.kt");
   }
 
   @Test
@@ -116,6 +194,24 @@ public class JsLightTreeBlackBoxCodegenWithSeparateKmpCompilationTestGenerated e
   }
 
   @Test
+  @TestMetadata("javaClassReferencedActualType.kt")
+  public void testJavaClassReferencedActualType() {
+    runTest("compiler/testData/codegen/box/multiplatform/k2/javaClassReferencedActualType.kt");
+  }
+
+  @Test
+  @TestMetadata("javaMethodWithTypeParameter.kt")
+  public void testJavaMethodWithTypeParameter() {
+    runTest("compiler/testData/codegen/box/multiplatform/k2/javaMethodWithTypeParameter.kt");
+  }
+
+  @Test
+  @TestMetadata("jvmDeclarationsUpdatedMembersInCommonModule.kt")
+  public void testJvmDeclarationsUpdatedMembersInCommonModule() {
+    runTest("compiler/testData/codegen/box/multiplatform/k2/jvmDeclarationsUpdatedMembersInCommonModule.kt");
+  }
+
+  @Test
   @TestMetadata("kt57391.kt")
   public void testKt57391() {
     runTest("compiler/testData/codegen/box/multiplatform/k2/kt57391.kt");
@@ -125,6 +221,12 @@ public class JsLightTreeBlackBoxCodegenWithSeparateKmpCompilationTestGenerated e
   @TestMetadata("kt59613.kt")
   public void testKt59613() {
     runTest("compiler/testData/codegen/box/multiplatform/k2/kt59613.kt");
+  }
+
+  @Test
+  @TestMetadata("kt60854.kt")
+  public void testKt60854() {
+    runTest("compiler/testData/codegen/box/multiplatform/k2/kt60854.kt");
   }
 
   @Test
@@ -146,6 +248,12 @@ public class JsLightTreeBlackBoxCodegenWithSeparateKmpCompilationTestGenerated e
   }
 
   @Test
+  @TestMetadata("kt70894.kt")
+  public void testKt70894() {
+    runTest("compiler/testData/codegen/box/multiplatform/k2/kt70894.kt");
+  }
+
+  @Test
   @TestMetadata("kt-65249.kt")
   public void testKt_65249() {
     runTest("compiler/testData/codegen/box/multiplatform/k2/kt-65249.kt");
@@ -155,6 +263,12 @@ public class JsLightTreeBlackBoxCodegenWithSeparateKmpCompilationTestGenerated e
   @TestMetadata("mergedOverrides.kt")
   public void testMergedOverrides() {
     runTest("compiler/testData/codegen/box/multiplatform/k2/mergedOverrides.kt");
+  }
+
+  @Test
+  @TestMetadata("optionalExpectationJvm.kt")
+  public void testOptionalExpectationJvm() {
+    runTest("compiler/testData/codegen/box/multiplatform/k2/optionalExpectationJvm.kt");
   }
 
   @Test
@@ -175,6 +289,24 @@ public class JsLightTreeBlackBoxCodegenWithSeparateKmpCompilationTestGenerated e
     runTest("compiler/testData/codegen/box/multiplatform/k2/starImportOfExpectEnumWithActualTypeAlias.kt");
   }
 
+  @Test
+  @TestMetadata("staticjavaFieldInCommonCode.kt")
+  public void testStaticjavaFieldInCommonCode() {
+    runTest("compiler/testData/codegen/box/multiplatform/k2/staticjavaFieldInCommonCode.kt");
+  }
+
+  @Test
+  @TestMetadata("synteticProperty.kt")
+  public void testSynteticProperty() {
+    runTest("compiler/testData/codegen/box/multiplatform/k2/synteticProperty.kt");
+  }
+
+  @Test
+  @TestMetadata("unsignedArrayForLoop.kt")
+  public void testUnsignedArrayForLoop() {
+    runTest("compiler/testData/codegen/box/multiplatform/k2/unsignedArrayForLoop.kt");
+  }
+
   @Nested
   @TestMetadata("compiler/testData/codegen/box/multiplatform/k2/annotations")
   @TestDataPath("$PROJECT_ROOT")
@@ -182,6 +314,12 @@ public class JsLightTreeBlackBoxCodegenWithSeparateKmpCompilationTestGenerated e
     @Test
     public void testAllFilesPresentInAnnotations() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multiplatform/k2/annotations"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+    }
+
+    @Test
+    @TestMetadata("annotationsViaActualTypeAliasFromBinary.kt")
+    public void testAnnotationsViaActualTypeAliasFromBinary() {
+      runTest("compiler/testData/codegen/box/multiplatform/k2/annotations/annotationsViaActualTypeAliasFromBinary.kt");
     }
 
     @Test
@@ -194,6 +332,12 @@ public class JsLightTreeBlackBoxCodegenWithSeparateKmpCompilationTestGenerated e
     @TestMetadata("expectAnnotationCallInLibrary.kt")
     public void testExpectAnnotationCallInLibrary() {
       runTest("compiler/testData/codegen/box/multiplatform/k2/annotations/expectAnnotationCallInLibrary.kt");
+    }
+
+    @Test
+    @TestMetadata("expectClassInJvmMultifileFacade.kt")
+    public void testExpectClassInJvmMultifileFacade() {
+      runTest("compiler/testData/codegen/box/multiplatform/k2/annotations/expectClassInJvmMultifileFacade.kt");
     }
 
     @Test
@@ -363,6 +507,12 @@ public class JsLightTreeBlackBoxCodegenWithSeparateKmpCompilationTestGenerated e
     }
 
     @Test
+    @TestMetadata("expectActualTypealiasCoercion.kt")
+    public void testExpectActualTypealiasCoercion() {
+      runTest("compiler/testData/codegen/box/multiplatform/k2/basic/expectActualTypealiasCoercion.kt");
+    }
+
+    @Test
     @TestMetadata("expectAndCommonFunctionOverloads.kt")
     public void testExpectAndCommonFunctionOverloads() {
       runTest("compiler/testData/codegen/box/multiplatform/k2/basic/expectAndCommonFunctionOverloads.kt");
@@ -411,9 +561,21 @@ public class JsLightTreeBlackBoxCodegenWithSeparateKmpCompilationTestGenerated e
     }
 
     @Test
+    @TestMetadata("extensionFunctionAsASupertypeWithJavaActualization.kt")
+    public void testExtensionFunctionAsASupertypeWithJavaActualization() {
+      runTest("compiler/testData/codegen/box/multiplatform/k2/basic/extensionFunctionAsASupertypeWithJavaActualization.kt");
+    }
+
+    @Test
     @TestMetadata("extensionFunctionAsAType.kt")
     public void testExtensionFunctionAsAType() {
       runTest("compiler/testData/codegen/box/multiplatform/k2/basic/extensionFunctionAsAType.kt");
+    }
+
+    @Test
+    @TestMetadata("extensionFunctionAsATypeWithJavaActualization.kt")
+    public void testExtensionFunctionAsATypeWithJavaActualization() {
+      runTest("compiler/testData/codegen/box/multiplatform/k2/basic/extensionFunctionAsATypeWithJavaActualization.kt");
     }
 
     @Test
@@ -459,6 +621,12 @@ public class JsLightTreeBlackBoxCodegenWithSeparateKmpCompilationTestGenerated e
     }
 
     @Test
+    @TestMetadata("getRidOfDoubleBindingInFir2IrLazyProperty.kt")
+    public void testGetRidOfDoubleBindingInFir2IrLazyProperty() {
+      runTest("compiler/testData/codegen/box/multiplatform/k2/basic/getRidOfDoubleBindingInFir2IrLazyProperty.kt");
+    }
+
+    @Test
     @TestMetadata("independentCommonSourceModules.kt")
     public void testIndependentCommonSourceModules() {
       runTest("compiler/testData/codegen/box/multiplatform/k2/basic/independentCommonSourceModules.kt");
@@ -483,6 +651,18 @@ public class JsLightTreeBlackBoxCodegenWithSeparateKmpCompilationTestGenerated e
     }
 
     @Test
+    @TestMetadata("kt-51753-1.kt")
+    public void testKt_51753_1() {
+      runTest("compiler/testData/codegen/box/multiplatform/k2/basic/kt-51753-1.kt");
+    }
+
+    @Test
+    @TestMetadata("kt-51753-2.kt")
+    public void testKt_51753_2() {
+      runTest("compiler/testData/codegen/box/multiplatform/k2/basic/kt-51753-2.kt");
+    }
+
+    @Test
     @TestMetadata("kt-56329.kt")
     public void testKt_56329() {
       runTest("compiler/testData/codegen/box/multiplatform/k2/basic/kt-56329.kt");
@@ -504,6 +684,12 @@ public class JsLightTreeBlackBoxCodegenWithSeparateKmpCompilationTestGenerated e
     @TestMetadata("localSubstitutionOverrideInCommonModule.kt")
     public void testLocalSubstitutionOverrideInCommonModule() {
       runTest("compiler/testData/codegen/box/multiplatform/k2/basic/localSubstitutionOverrideInCommonModule.kt");
+    }
+
+    @Test
+    @TestMetadata("noArgActualConstructor.kt")
+    public void testNoArgActualConstructor() {
+      runTest("compiler/testData/codegen/box/multiplatform/k2/basic/noArgActualConstructor.kt");
     }
 
     @Test
@@ -534,6 +720,24 @@ public class JsLightTreeBlackBoxCodegenWithSeparateKmpCompilationTestGenerated e
     @TestMetadata("transitiveSuperclassActualization.kt")
     public void testTransitiveSuperclassActualization() {
       runTest("compiler/testData/codegen/box/multiplatform/k2/basic/transitiveSuperclassActualization.kt");
+    }
+
+    @Test
+    @TestMetadata("transitiveSuperclassActualization_java.kt")
+    public void testTransitiveSuperclassActualization_java() {
+      runTest("compiler/testData/codegen/box/multiplatform/k2/basic/transitiveSuperclassActualization_java.kt");
+    }
+
+    @Test
+    @TestMetadata("valueClassOfExpectClass.kt")
+    public void testValueClassOfExpectClass() {
+      runTest("compiler/testData/codegen/box/multiplatform/k2/basic/valueClassOfExpectClass.kt");
+    }
+
+    @Test
+    @TestMetadata("valueClasses.kt")
+    public void testValueClasses() {
+      runTest("compiler/testData/codegen/box/multiplatform/k2/basic/valueClasses.kt");
     }
 
     @Test
@@ -578,6 +782,12 @@ public class JsLightTreeBlackBoxCodegenWithSeparateKmpCompilationTestGenerated e
     @Test
     public void testAllFilesPresentInDefaultArguments() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multiplatform/k2/defaultArguments"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+    }
+
+    @Test
+    @TestMetadata("annotations.kt")
+    public void testAnnotations() {
+      runTest("compiler/testData/codegen/box/multiplatform/k2/defaultArguments/annotations.kt");
     }
 
     @Test
@@ -683,6 +893,12 @@ public class JsLightTreeBlackBoxCodegenWithSeparateKmpCompilationTestGenerated e
     }
 
     @Test
+    @TestMetadata("jvmOverloads.kt")
+    public void testJvmOverloads() {
+      runTest("compiler/testData/codegen/box/multiplatform/k2/defaultArguments/jvmOverloads.kt");
+    }
+
+    @Test
     @TestMetadata("kt23239.kt")
     public void testKt23239() {
       runTest("compiler/testData/codegen/box/multiplatform/k2/defaultArguments/kt23239.kt");
@@ -759,15 +975,51 @@ public class JsLightTreeBlackBoxCodegenWithSeparateKmpCompilationTestGenerated e
     }
 
     @Test
+    @TestMetadata("delegationToExpectInterfaceWithFakeOverride.kt")
+    public void testDelegationToExpectInterfaceWithFakeOverride() {
+      runTest("compiler/testData/codegen/box/multiplatform/k2/delegation/delegationToExpectInterfaceWithFakeOverride.kt");
+    }
+
+    @Test
+    @TestMetadata("delegationToExpectInterfaceWithOverrideFromExpect.kt")
+    public void testDelegationToExpectInterfaceWithOverrideFromExpect() {
+      runTest("compiler/testData/codegen/box/multiplatform/k2/delegation/delegationToExpectInterfaceWithOverrideFromExpect.kt");
+    }
+
+    @Test
     @TestMetadata("delegationToExpectInterfaceWithOverride_noNewMembers.kt")
     public void testDelegationToExpectInterfaceWithOverride_noNewMembers() {
       runTest("compiler/testData/codegen/box/multiplatform/k2/delegation/delegationToExpectInterfaceWithOverride_noNewMembers.kt");
     }
 
     @Test
+    @TestMetadata("delegationToExpectInterfaceWithOverride_noNewMembers_javaActualization.kt")
+    public void testDelegationToExpectInterfaceWithOverride_noNewMembers_javaActualization() {
+      runTest("compiler/testData/codegen/box/multiplatform/k2/delegation/delegationToExpectInterfaceWithOverride_noNewMembers_javaActualization.kt");
+    }
+
+    @Test
     @TestMetadata("delegationToExpectInterface_noNewMembers.kt")
     public void testDelegationToExpectInterface_noNewMembers() {
       runTest("compiler/testData/codegen/box/multiplatform/k2/delegation/delegationToExpectInterface_noNewMembers.kt");
+    }
+
+    @Test
+    @TestMetadata("delegationToExpectInterface_noNewMembers_javaActualization.kt")
+    public void testDelegationToExpectInterface_noNewMembers_javaActualization() {
+      runTest("compiler/testData/codegen/box/multiplatform/k2/delegation/delegationToExpectInterface_noNewMembers_javaActualization.kt");
+    }
+
+    @Test
+    @TestMetadata("delegationToExpectInterface_withJavaActualizationAndImpl.kt")
+    public void testDelegationToExpectInterface_withJavaActualizationAndImpl() {
+      runTest("compiler/testData/codegen/box/multiplatform/k2/delegation/delegationToExpectInterface_withJavaActualizationAndImpl.kt");
+    }
+
+    @Test
+    @TestMetadata("delegationToExpectInterface_withJavaImpl.kt")
+    public void testDelegationToExpectInterface_withJavaImpl() {
+      runTest("compiler/testData/codegen/box/multiplatform/k2/delegation/delegationToExpectInterface_withJavaImpl.kt");
     }
 
     @Test
@@ -792,6 +1044,12 @@ public class JsLightTreeBlackBoxCodegenWithSeparateKmpCompilationTestGenerated e
     @TestMetadata("delegationWithIntersection.kt")
     public void testDelegationWithIntersection() {
       runTest("compiler/testData/codegen/box/multiplatform/k2/delegation/delegationWithIntersection.kt");
+    }
+
+    @Test
+    @TestMetadata("delegationWithIntersectionAndJavaActualization.kt")
+    public void testDelegationWithIntersectionAndJavaActualization() {
+      runTest("compiler/testData/codegen/box/multiplatform/k2/delegation/delegationWithIntersectionAndJavaActualization.kt");
     }
   }
 
@@ -1005,6 +1263,12 @@ public class JsLightTreeBlackBoxCodegenWithSeparateKmpCompilationTestGenerated e
     public void testTypealiasActualisation2_2() {
       runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/typealiasActualisation2-2.kt");
     }
+
+    @Test
+    @TestMetadata("typealiasActualizationJavaSimple2-2.kt")
+    public void testTypealiasActualizationJavaSimple2_2() {
+      runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/typealiasActualizationJavaSimple2-2.kt");
+    }
   }
 
   @Nested
@@ -1014,6 +1278,36 @@ public class JsLightTreeBlackBoxCodegenWithSeparateKmpCompilationTestGenerated e
     @Test
     public void testAllFilesPresentInLenientMode() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multiplatform/k2/lenientMode"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+    }
+
+    @Test
+    @TestMetadata("classes.kt")
+    public void testClasses() {
+      runTest("compiler/testData/codegen/box/multiplatform/k2/lenientMode/classes.kt");
+    }
+
+    @Test
+    @TestMetadata("lenientModeSmokeTest.kt")
+    public void testLenientModeSmokeTest() {
+      runTest("compiler/testData/codegen/box/multiplatform/k2/lenientMode/lenientModeSmokeTest.kt");
+    }
+
+    @Test
+    @TestMetadata("overloads.kt")
+    public void testOverloads() {
+      runTest("compiler/testData/codegen/box/multiplatform/k2/lenientMode/overloads.kt");
+    }
+
+    @Test
+    @TestMetadata("returnTypes.kt")
+    public void testReturnTypes() {
+      runTest("compiler/testData/codegen/box/multiplatform/k2/lenientMode/returnTypes.kt");
+    }
+
+    @Test
+    @TestMetadata("typealias.kt")
+    public void testTypealias() {
+      runTest("compiler/testData/codegen/box/multiplatform/k2/lenientMode/typealias.kt");
     }
   }
 
@@ -1064,6 +1358,30 @@ public class JsLightTreeBlackBoxCodegenWithSeparateKmpCompilationTestGenerated e
     @Test
     public void testAllFilesPresentInMultiModule() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multiplatform/k2/multiModule"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+    }
+
+    @Test
+    @TestMetadata("expectInterfaceInheritance.kt")
+    public void testExpectInterfaceInheritance() {
+      runTest("compiler/testData/codegen/box/multiplatform/k2/multiModule/expectInterfaceInheritance.kt");
+    }
+
+    @Test
+    @TestMetadata("hmppSimple.kt")
+    public void testHmppSimple() {
+      runTest("compiler/testData/codegen/box/multiplatform/k2/multiModule/hmppSimple.kt");
+    }
+
+    @Test
+    @TestMetadata("mutlimoduleActualizationByJavaClasses.kt")
+    public void testMutlimoduleActualizationByJavaClasses() {
+      runTest("compiler/testData/codegen/box/multiplatform/k2/multiModule/mutlimoduleActualizationByJavaClasses.kt");
+    }
+
+    @Test
+    @TestMetadata("stdlibClassRedefine.kt")
+    public void testStdlibClassRedefine() {
+      runTest("compiler/testData/codegen/box/multiplatform/k2/multiModule/stdlibClassRedefine.kt");
     }
   }
 }

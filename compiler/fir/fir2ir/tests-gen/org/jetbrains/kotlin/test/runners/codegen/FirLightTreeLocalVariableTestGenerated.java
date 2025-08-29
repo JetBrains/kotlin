@@ -80,6 +80,12 @@ public class FirLightTreeLocalVariableTestGenerated extends AbstractFirLightTree
   }
 
   @Test
+  @TestMetadata("jsCode.kt")
+  public void testJsCode() {
+    runTest("compiler/testData/debug/localVariables/jsCode.kt");
+  }
+
+  @Test
   @TestMetadata("jvmOverloads.kt")
   public void testJvmOverloads() {
     runTest("compiler/testData/debug/localVariables/jvmOverloads.kt");

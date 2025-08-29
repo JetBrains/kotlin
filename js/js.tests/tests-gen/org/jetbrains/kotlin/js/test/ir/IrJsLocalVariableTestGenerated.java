@@ -90,6 +90,12 @@ public class IrJsLocalVariableTestGenerated extends AbstractIrJsLocalVariableTes
   }
 
   @Test
+  @TestMetadata("jvmOverloads.kt")
+  public void testJvmOverloads() {
+    runTest("compiler/testData/debug/localVariables/jvmOverloads.kt");
+  }
+
+  @Test
   @TestMetadata("lambdaInObject.kt")
   public void testLambdaInObject() {
     runTest("compiler/testData/debug/localVariables/lambdaInObject.kt");
@@ -493,6 +499,12 @@ public class IrJsLocalVariableTestGenerated extends AbstractIrJsLocalVariableTes
       @TestMetadata("nonStaticSimple.kt")
       public void testNonStaticSimple() {
         runTest("compiler/testData/debug/localVariables/suspend/completion/nonStaticSimple.kt");
+      }
+
+      @Test
+      @TestMetadata("nonStaticStateMachine.kt")
+      public void testNonStaticStateMachine() {
+        runTest("compiler/testData/debug/localVariables/suspend/completion/nonStaticStateMachine.kt");
       }
 
       @Test

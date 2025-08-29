@@ -92,6 +92,12 @@ public class FirWasmJsTranslatorTestGenerated extends AbstractFirWasmJsTranslato
     }
 
     @Test
+    @TestMetadata("callbackOptionalParameter.kt")
+    public void testCallbackOptionalParameter() {
+      runTest("js/js.translator/testData/box/native/callbackOptionalParameter.kt");
+    }
+
+    @Test
     @TestMetadata("castToNativeClassChecked.kt")
     public void testCastToNativeClassChecked() {
       runTest("js/js.translator/testData/box/native/castToNativeClassChecked.kt");
@@ -134,9 +140,33 @@ public class FirWasmJsTranslatorTestGenerated extends AbstractFirWasmJsTranslato
     }
 
     @Test
+    @TestMetadata("equalsMangling.kt")
+    public void testEqualsMangling() {
+      runTest("js/js.translator/testData/box/native/equalsMangling.kt");
+    }
+
+    @Test
+    @TestMetadata("eval.kt")
+    public void testEval() {
+      runTest("js/js.translator/testData/box/native/eval.kt");
+    }
+
+    @Test
+    @TestMetadata("exception.kt")
+    public void testException() {
+      runTest("js/js.translator/testData/box/native/exception.kt");
+    }
+
+    @Test
     @TestMetadata("externalLong.kt")
     public void testExternalLong() {
       runTest("js/js.translator/testData/box/native/externalLong.kt");
+    }
+
+    @Test
+    @TestMetadata("externalNestedEnum.kt")
+    public void testExternalNestedEnum() {
+      runTest("js/js.translator/testData/box/native/externalNestedEnum.kt");
     }
 
     @Test
@@ -146,9 +176,51 @@ public class FirWasmJsTranslatorTestGenerated extends AbstractFirWasmJsTranslato
     }
 
     @Test
+    @TestMetadata("inheritanceFromNativeClass.kt")
+    public void testInheritanceFromNativeClass() {
+      runTest("js/js.translator/testData/box/native/inheritanceFromNativeClass.kt");
+    }
+
+    @Test
+    @TestMetadata("inheritanceFromNativeTrait.kt")
+    public void testInheritanceFromNativeTrait() {
+      runTest("js/js.translator/testData/box/native/inheritanceFromNativeTrait.kt");
+    }
+
+    @Test
+    @TestMetadata("inheritanceInNativeClass.kt")
+    public void testInheritanceInNativeClass() {
+      runTest("js/js.translator/testData/box/native/inheritanceInNativeClass.kt");
+    }
+
+    @Test
     @TestMetadata("kt2209.kt")
     public void testKt2209() {
       runTest("js/js.translator/testData/box/native/kt2209.kt");
+    }
+
+    @Test
+    @TestMetadata("long.kt")
+    public void testLong() {
+      runTest("js/js.translator/testData/box/native/long.kt");
+    }
+
+    @Test
+    @TestMetadata("nativeClassAsReifiedTypeArgument.kt")
+    public void testNativeClassAsReifiedTypeArgument() {
+      runTest("js/js.translator/testData/box/native/nativeClassAsReifiedTypeArgument.kt");
+    }
+
+    @Test
+    @TestMetadata("nativeGetterAndNativeSetter.kt")
+    public void testNativeGetterAndNativeSetter() {
+      runTest("js/js.translator/testData/box/native/nativeGetterAndNativeSetter.kt");
+    }
+
+    @Test
+    @TestMetadata("nativeInvoke.kt")
+    public void testNativeInvoke() {
+      runTest("js/js.translator/testData/box/native/nativeInvoke.kt");
     }
 
     @Test
@@ -161,6 +233,18 @@ public class FirWasmJsTranslatorTestGenerated extends AbstractFirWasmJsTranslato
     @TestMetadata("objectFunWithVararg.kt")
     public void testObjectFunWithVararg() {
       runTest("js/js.translator/testData/box/native/objectFunWithVararg.kt");
+    }
+
+    @Test
+    @TestMetadata("overrideNativeOverloadedFunction.kt")
+    public void testOverrideNativeOverloadedFunction() {
+      runTest("js/js.translator/testData/box/native/overrideNativeOverloadedFunction.kt");
+    }
+
+    @Test
+    @TestMetadata("passExtLambdaFromNative.kt")
+    public void testPassExtLambdaFromNative() {
+      runTest("js/js.translator/testData/box/native/passExtLambdaFromNative.kt");
     }
 
     @Test
@@ -194,6 +278,12 @@ public class FirWasmJsTranslatorTestGenerated extends AbstractFirWasmJsTranslato
     }
 
     @Test
+    @TestMetadata("print.kt")
+    public void testPrint() {
+      runTest("js/js.translator/testData/box/native/print.kt");
+    }
+
+    @Test
     @TestMetadata("privateExternal.kt")
     public void testPrivateExternal() {
       runTest("js/js.translator/testData/box/native/privateExternal.kt");
@@ -224,9 +314,27 @@ public class FirWasmJsTranslatorTestGenerated extends AbstractFirWasmJsTranslato
     }
 
     @Test
+    @TestMetadata("typeof.kt")
+    public void testTypeof() {
+      runTest("js/js.translator/testData/box/native/typeof.kt");
+    }
+
+    @Test
+    @TestMetadata("undefined.kt")
+    public void testUndefined() {
+      runTest("js/js.translator/testData/box/native/undefined.kt");
+    }
+
+    @Test
     @TestMetadata("useClassFromInlineFun.kt")
     public void testUseClassFromInlineFun() {
       runTest("js/js.translator/testData/box/native/useClassFromInlineFun.kt");
+    }
+
+    @Test
+    @TestMetadata("valueClass.kt")
+    public void testValueClass() {
+      runTest("js/js.translator/testData/box/native/valueClass.kt");
     }
 
     @Test
@@ -269,6 +377,12 @@ public class FirWasmJsTranslatorTestGenerated extends AbstractFirWasmJsTranslato
       public void testAllFilesPresentInInline() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/esModules/inline"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
       }
+
+      @Test
+      @TestMetadata("inlinedObjectLiteralIsCheck.kt")
+      public void testInlinedObjectLiteralIsCheck() {
+        runTest("js/js.translator/testData/box/esModules/inline/inlinedObjectLiteralIsCheck.kt");
+      }
     }
 
     @Nested
@@ -290,6 +404,18 @@ public class FirWasmJsTranslatorTestGenerated extends AbstractFirWasmJsTranslato
       @TestMetadata("externalClassNameClash.kt")
       public void testExternalClassNameClash() {
         runTest("js/js.translator/testData/box/esModules/jsModule/externalClassNameClash.kt");
+      }
+
+      @Test
+      @TestMetadata("externalClassWithDefaults.kt")
+      public void testExternalClassWithDefaults() {
+        runTest("js/js.translator/testData/box/esModules/jsModule/externalClassWithDefaults.kt");
+      }
+
+      @Test
+      @TestMetadata("externalConstructor.kt")
+      public void testExternalConstructor() {
+        runTest("js/js.translator/testData/box/esModules/jsModule/externalConstructor.kt");
       }
 
       @Test
@@ -332,6 +458,18 @@ public class FirWasmJsTranslatorTestGenerated extends AbstractFirWasmJsTranslato
       @TestMetadata("interfaces.kt")
       public void testInterfaces() {
         runTest("js/js.translator/testData/box/esModules/jsModule/interfaces.kt");
+      }
+
+      @Test
+      @TestMetadata("interfacesWithCompanion.kt")
+      public void testInterfacesWithCompanion() {
+        runTest("js/js.translator/testData/box/esModules/jsModule/interfacesWithCompanion.kt");
+      }
+
+      @Test
+      @TestMetadata("jsExternalInheritorsOnly.kt")
+      public void testJsExternalInheritorsOnly() {
+        runTest("js/js.translator/testData/box/esModules/jsModule/jsExternalInheritorsOnly.kt");
       }
 
       @Test
@@ -508,9 +646,27 @@ public class FirWasmJsTranslatorTestGenerated extends AbstractFirWasmJsTranslato
     }
 
     @Test
+    @TestMetadata("interfacesWithCompanion.kt")
+    public void testInterfacesWithCompanion() {
+      runTest("js/js.translator/testData/box/jsQualifier/interfacesWithCompanion.kt");
+    }
+
+    @Test
     @TestMetadata("simple.kt")
     public void testSimple() {
       runTest("js/js.translator/testData/box/jsQualifier/simple.kt");
+    }
+
+    @Test
+    @TestMetadata("umdFallback.kt")
+    public void testUmdFallback() {
+      runTest("js/js.translator/testData/box/jsQualifier/umdFallback.kt");
+    }
+
+    @Test
+    @TestMetadata("withModule.kt")
+    public void testWithModule() {
+      runTest("js/js.translator/testData/box/jsQualifier/withModule.kt");
     }
   }
 

@@ -409,6 +409,12 @@ public class FirJsSteppingTestGenerated extends AbstractFirJsSteppingTest {
   }
 
   @Test
+  @TestMetadata("javaSam.kt")
+  public void testJavaSam() {
+    runTest("compiler/testData/debug/stepping/javaSam.kt");
+  }
+
+  @Test
   @TestMetadata("kt15259.kt")
   public void testKt15259() {
     runTest("compiler/testData/debug/stepping/kt15259.kt");
@@ -544,6 +550,12 @@ public class FirJsSteppingTestGenerated extends AbstractFirJsSteppingTest {
   @TestMetadata("nestedInline.kt")
   public void testNestedInline() {
     runTest("compiler/testData/debug/stepping/nestedInline.kt");
+  }
+
+  @Test
+  @TestMetadata("noLinenumberInInvokeOfSuspendLambda.kt")
+  public void testNoLinenumberInInvokeOfSuspendLambda() {
+    runTest("compiler/testData/debug/stepping/noLinenumberInInvokeOfSuspendLambda.kt");
   }
 
   @Test
@@ -715,6 +727,18 @@ public class FirJsSteppingTestGenerated extends AbstractFirJsSteppingTest {
   }
 
   @Test
+  @TestMetadata("tryFinallyAndNonLocalReturn.kt")
+  public void testTryFinallyAndNonLocalReturn() {
+    runTest("compiler/testData/debug/stepping/tryFinallyAndNonLocalReturn.kt");
+  }
+
+  @Test
+  @TestMetadata("tryOneLineFinallyAndNonLocalReturn.kt")
+  public void testTryOneLineFinallyAndNonLocalReturn() {
+    runTest("compiler/testData/debug/stepping/tryOneLineFinallyAndNonLocalReturn.kt");
+  }
+
+  @Test
   @TestMetadata("variablesWithoutInitializer.kt")
   public void testVariablesWithoutInitializer() {
     runTest("compiler/testData/debug/stepping/variablesWithoutInitializer.kt");
@@ -796,6 +820,12 @@ public class FirJsSteppingTestGenerated extends AbstractFirJsSteppingTest {
   @TestMetadata("whenIsChecks.kt")
   public void testWhenIsChecks() {
     runTest("compiler/testData/debug/stepping/whenIsChecks.kt");
+  }
+
+  @Test
+  @TestMetadata("whenIsChecksIndy.kt")
+  public void testWhenIsChecksIndy() {
+    runTest("compiler/testData/debug/stepping/whenIsChecksIndy.kt");
   }
 
   @Test
