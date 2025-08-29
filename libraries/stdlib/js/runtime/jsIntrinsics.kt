@@ -232,6 +232,12 @@ internal fun jsIsEs6(): Boolean
 @JsIntrinsic
 internal fun <T> jsYield(suspendFunction: () -> T): T
 
+/**
+ * Depending on the target ES edition, calls transforms either
+ * to [kotlin.js.internal.boxedLong.longCopyOfRange], or to `arr.slice(fromIndex, toIndex)`
+ *
+ * TODO(KT-70480): Replace call sites with `value.unsafeCast<BigInt64Array>().slice(fromIndex, toIndex)` when we drop the ES5 target
+ */
 @JsIntrinsic
 internal fun longCopyOfRange(arr: dynamic, fromIndex: dynamic = VOID, toIndex: dynamic = VOID): LongArray
 

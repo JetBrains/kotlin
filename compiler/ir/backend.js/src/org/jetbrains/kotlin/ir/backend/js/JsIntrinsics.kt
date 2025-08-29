@@ -177,7 +177,7 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns, private val configuration
     val longArrayClass = getLongHelperPropertyGetter("longArrayClass")!!
     val longCopyOfRange = getInternalFunction("longCopyOfRange")
 
-    val longCopyOfRangeForBoxedLong = getLongHelperFunction("longCopyOfRange", JsStandardClassIds.BOXED_LONG_PACKAGE)!!
+    val longCopyOfRangeForBoxedLong = getLongHelperFunction("longCopyOfRange")
 
     val isPrimitiveArray = mapOf(
         PrimitiveType.BOOLEAN to getInternalFunction("isBooleanArray"),
@@ -450,26 +450,21 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns, private val configuration
     val jsCreateMutableMapFrom = getInternalCollectionFunction("createMutableMapFrom")
 
     // Helpers:
-    private fun getLongHelperFunction(name: String, forcedPackageName: FqName? = null): IrSimpleFunctionSymbol? =
-        getLongHelper(
-            name,
-            { name, packageName -> symbolFinder.findFunctions(name, packageName).singleOrNull() },
-            forcedPackageName
-        )
+    private fun getLongHelperFunction(name: String): IrSimpleFunctionSymbol? =
+        getLongHelper(name) { name, packageName ->
+            symbolFinder.findFunctions(name, packageName).singleOrNull()
+        }
 
-    private fun getLongHelperPropertyGetter(name: String, forcedPackageName: FqName? = null): IrSimpleFunctionSymbol? =
-        getLongHelper(
-            name,
-            { name, packageName -> symbolFinder.findTopLevelPropertyGetter(packageName, name.identifier) },
-            forcedPackageName
-        )
+    private fun getLongHelperPropertyGetter(name: String): IrSimpleFunctionSymbol? =
+        getLongHelper(name) { name, packageName ->
+            symbolFinder.findTopLevelPropertyGetter(packageName, name.identifier)
+        }
 
     private inline fun <T : IrSymbol> getLongHelper(
         name: String,
         finder: (Name, FqName) -> T?,
-        forcedPackageName: FqName?
     ): T? {
-        val packageName = forcedPackageName ?: if (configuration.compileLongAsBigint) {
+        val packageName = if (configuration.compileLongAsBigint) {
             JsStandardClassIds.LONG_AS_BIGINT_PACKAGE
         } else {
             JsStandardClassIds.BOXED_LONG_PACKAGE

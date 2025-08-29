@@ -184,7 +184,7 @@ class JsIntrinsicTransformers(backendContext: JsIrBackendContext) {
                 if (backendContext.configuration.compileLongAsBigint) {
                     JsInvocation(JsNameRef(Namer.SLICE_FUNCTION, args.first()), args.drop(1))
                 } else {
-                    JsInvocation(context.getNameForStaticFunction(intrinsics.longCopyOfRangeForBoxedLong.owner).makeRef(), args)
+                    JsInvocation(context.getNameForStaticFunction(intrinsics.longCopyOfRangeForBoxedLong!!.owner).makeRef(), args)
                 }
             }
 
