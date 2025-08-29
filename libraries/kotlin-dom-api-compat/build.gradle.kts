@@ -40,7 +40,10 @@ val prepareFriendStdlibJs = tasks.register<Zip>("prepareFriendStdlibJs") {
 @Suppress("UNUSED_VARIABLE")
 kotlin {
     explicitApi()
-    js()
+    js {
+        nodejs()
+        browser()
+    }
 
     compilerOptions {
         allWarningsAsErrors.set(true)
