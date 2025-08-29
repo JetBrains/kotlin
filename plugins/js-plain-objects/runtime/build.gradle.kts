@@ -4,7 +4,7 @@ import plugins.configureKotlinPomAttributes
 description = "Runtime library for the JS Plain Objects compiler plugin"
 
 plugins {
-    kotlin("js")
+    kotlin("multiplatform")
     `maven-publish`
     id("nodejs-cache-redirector-configuration")
 }
@@ -15,10 +15,11 @@ kotlin {
     js {
         browser()
         nodejs()
-        compilations["main"].defaultSourceSet {
-            dependencies {
-                compileOnly(kotlin("stdlib-js"))
-            }
+    }
+
+    sourceSets {
+        jsMain.dependencies {
+            api(kotlin("stdlib-js"))
         }
     }
 }
@@ -29,15 +30,41 @@ val emptyJavadocJar by tasks.registering(Jar::class) {
 
 configureDefaultPublishing()
 
+val defaultArtifactId = "kotlin-js-plain-objects"
+val extraDescription = "Annotations library for the JS Plain Objects compiler plugin"
+
 publishing {
     publications {
-        create<MavenPublication>("maven") {
-            artifactId = "kotlin-js-plain-objects"
-            from(components["kotlin"])
-            configureKotlinPomAttributes(project, "Annotations library for the JS Plain Objects compiler plugin", packaging = "klib")
-        }
-        withType<MavenPublication> {
+        val mainPublication = named<MavenPublication>("kotlinMultiplatform") {
             artifact(emptyJavadocJar)
+            artifactId = defaultArtifactId
+            configureKotlinPomAttributes(
+                project,
+                explicitDescription = extraDescription,
+                packaging = "pom",
+            )
         }
+
+        val jsPublication = named<MavenPublication>("js") {
+            artifact(emptyJavadocJar)
+            artifactId = "$defaultArtifactId-js"
+            configureKotlinPomAttributes(
+                project,
+                explicitDescription = extraDescription,
+                packaging = "klib",
+            )
+        }
+
+        configureSbom(
+            target = "Main",
+            gradleConfigurations = setOf(),
+            publication = mainPublication,
+        )
+
+        configureSbom(
+            target = "Js",
+            gradleConfigurations = setOf("jsRuntimeClasspath"),
+            publication = jsPublication,
+        )
     }
 }
