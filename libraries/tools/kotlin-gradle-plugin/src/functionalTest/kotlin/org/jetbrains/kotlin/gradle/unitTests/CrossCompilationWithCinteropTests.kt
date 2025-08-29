@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.junit.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
+import kotlin.test.assertNull
 import kotlin.test.assertTrue
 import kotlin.test.fail
 
@@ -133,7 +134,13 @@ class CrossCompilationWithCinteropTests {
 
         publishing.publications
             .withType(MavenPublication::class.java)
-            .findByName("macosX64") ?: fail("Missing 'macosX64' publication")
+            .findByName("macosX64").let { publication ->
+                if (HostManager.hostIsMac) {
+                    assertNotNull(publication, "Missing 'mingwX64' publication")
+                } else {
+                    assertNull(publication, "'mingwX64' publication should not be registered on non-macOS host")
+                }
+            }
 
         publishing.publications
             .withType(MavenPublication::class.java)
