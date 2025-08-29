@@ -1,0 +1,8 @@
+STEP 0:
+    arguments: -Xklib-ir-inliner=intra-module -Xcontext-parameters
+    dependencies: stdlib
+STEP 1:
+    arguments: -Xklib-ir-inliner=intra-module -Xcontext-parameters
+    dependencies: stdlib
+    modifications:
+        U : intraModule.kt.1 -> intraModule.kt
