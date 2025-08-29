@@ -5,6 +5,8 @@ plugins {
 kotlin {
     jvm()
     js {
+        nodejs()
+        browser()
         binaries.executable()
     }
 
