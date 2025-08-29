@@ -266,7 +266,7 @@ private class LLPhaseEvent : Event(), ILLPhaseEvent {
     var phase: Byte = -1
 
     @JvmField
-    @Label("Failure reason (1 – cancellation, 2 – unknowne exception, 0 – successful analysis)")
+    @Label("Failure reason (1 – cancellation, 2 – unknown exception, 0 – successful analysis)")
     var result: Byte = -1
 
     override fun notifyCompleted() {
