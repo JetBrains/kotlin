@@ -5,11 +5,10 @@
 
 package org.jetbrains.kotlin.fir.deserialization
 
-import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.deserialization.AnnotationDeserializer.CallableKind
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
-import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.Flags
 import org.jetbrains.kotlin.metadata.deserialization.NameResolver
@@ -18,12 +17,12 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.protobuf.MessageLite
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 
-class MetadataAnnotationDeserializer(private val session: FirSession, private val languageFeature: LanguageFeature) :
-    AbstractAnnotationDeserializer(session) {
+class MetadataAnnotationDeserializer(private val session: FirSession) :
+    AnnotationDeserializer {
     override fun loadClassAnnotations(
         classProto: ProtoBuf.Class,
         nameResolver: NameResolver,
-    ): List<FirAnnotation>? =
+    ): List<FirAnnotation> =
         /* Note that HAS_ANNOTATIONS flag has incorrect value for inline classes in the old syntax (`inline class ...`).
         For inline classes in the old syntax, JVM backend adds a `@JvmInline` annotation, but HAS_ANNOTATIONS flag is still false.
         So, we disable the optimization that avoids loading annotations, for inline classes. */
@@ -34,7 +33,7 @@ class MetadataAnnotationDeserializer(private val session: FirSession, private va
         functionProto: ProtoBuf.Function,
         nameResolver: NameResolver,
         typeTable: TypeTable,
-    ): List<FirAnnotation>? =
+    ): List<FirAnnotation> =
         loadAnnotationsFromMetadata(functionProto.flags, functionProto.annotationList, nameResolver)
 
 
@@ -44,7 +43,7 @@ class MetadataAnnotationDeserializer(private val session: FirSession, private va
         containingClassProto: ProtoBuf.Class?,
         nameResolver: NameResolver,
         typeTable: TypeTable,
-    ): List<FirAnnotation>? =
+    ): List<FirAnnotation> =
         loadAnnotationsFromMetadata(propertyProto.flags, propertyProto.annotationList, nameResolver, AnnotationUseSiteTarget.PROPERTY)
 
     override fun loadPropertyBackingFieldAnnotations(
@@ -52,7 +51,7 @@ class MetadataAnnotationDeserializer(private val session: FirSession, private va
         propertyProto: ProtoBuf.Property,
         nameResolver: NameResolver,
         typeTable: TypeTable,
-    ): List<FirAnnotation>? =
+    ): List<FirAnnotation> =
         loadAnnotationsFromMetadata(
             propertyProto.flags,
             propertyProto.backingFieldAnnotationList,
@@ -65,7 +64,7 @@ class MetadataAnnotationDeserializer(private val session: FirSession, private va
         propertyProto: ProtoBuf.Property,
         nameResolver: NameResolver,
         typeTable: TypeTable,
-    ): List<FirAnnotation>? =
+    ): List<FirAnnotation> =
         loadAnnotationsFromMetadata(
             propertyProto.flags,
             propertyProto.delegateFieldAnnotationList,
@@ -79,7 +78,7 @@ class MetadataAnnotationDeserializer(private val session: FirSession, private va
         nameResolver: NameResolver,
         typeTable: TypeTable,
         getterFlags: Int,
-    ): List<FirAnnotation>? =
+    ): List<FirAnnotation> =
         loadAnnotationsFromMetadata(getterFlags, propertyProto.getterAnnotationList, nameResolver)
 
 
@@ -92,7 +91,7 @@ class MetadataAnnotationDeserializer(private val session: FirSession, private va
         typeTable: TypeTable,
         kind: CallableKind,
         parameterIndex: Int,
-    ): List<FirAnnotation>? =
+    ): List<FirAnnotation> =
         loadAnnotationsFromMetadata(valueParameterProto.flags, valueParameterProto.annotationList, nameResolver)
 
 
@@ -100,7 +99,7 @@ class MetadataAnnotationDeserializer(private val session: FirSession, private va
         classId: ClassId,
         enumEntryProto: ProtoBuf.EnumEntry,
         nameResolver: NameResolver,
-    ): List<FirAnnotation>? =
+    ): List<FirAnnotation> =
         loadAnnotationsFromMetadata(flags = null, enumEntryProto.annotationList, nameResolver)
 
     override fun loadExtensionReceiverParameterAnnotations(
@@ -109,13 +108,13 @@ class MetadataAnnotationDeserializer(private val session: FirSession, private va
         nameResolver: NameResolver,
         typeTable: TypeTable,
         kind: CallableKind,
-    ): List<FirAnnotation>? =
+    ): List<FirAnnotation> =
         when (callableProto) {
             is ProtoBuf.Function ->
                 loadAnnotationsFromMetadata(flags = null, callableProto.extensionReceiverAnnotationList, nameResolver)
             is ProtoBuf.Property ->
                 loadAnnotationsFromMetadata(flags = null, callableProto.extensionReceiverAnnotationList, nameResolver)
-            else -> null
+            else -> emptyList()
         }
 
     override fun loadPropertySetterAnnotations(
@@ -124,7 +123,7 @@ class MetadataAnnotationDeserializer(private val session: FirSession, private va
         nameResolver: NameResolver,
         typeTable: TypeTable,
         setterFlags: Int,
-    ): List<FirAnnotation>? =
+    ): List<FirAnnotation> =
         loadAnnotationsFromMetadata(setterFlags, propertyProto.setterAnnotationList, nameResolver)
 
 
@@ -133,17 +132,13 @@ class MetadataAnnotationDeserializer(private val session: FirSession, private va
         constructorProto: ProtoBuf.Constructor,
         nameResolver: NameResolver,
         typeTable: TypeTable,
-    ): List<FirAnnotation>? =
+    ): List<FirAnnotation> =
         loadAnnotationsFromMetadata(constructorProto.flags, constructorProto.annotationList, nameResolver)
 
 
     private fun loadAnnotationsFromMetadata(
         flags: Int?, annotations: List<ProtoBuf.Annotation>, nameResolver: NameResolver, useSiteTarget: AnnotationUseSiteTarget? = null,
-    ): List<FirAnnotation>? =
-        when {
-            flags != null && !Flags.HAS_ANNOTATIONS.get(flags) -> emptyList()
-            session.languageVersionSettings.supportsFeature(languageFeature) && annotations.isNotEmpty() ->
-                annotations.map { deserializeAnnotation(it, nameResolver, useSiteTarget) }
-            else -> null
-        }
+    ): List<FirAnnotation> =
+        if (flags != null && !Flags.HAS_ANNOTATIONS.get(flags)) emptyList()
+        else annotations.map { deserializeAnnotation(it, nameResolver, session, useSiteTarget) }
 }

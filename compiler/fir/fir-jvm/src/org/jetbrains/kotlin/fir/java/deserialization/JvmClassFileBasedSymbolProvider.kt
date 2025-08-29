@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.java.deserialization
 
 import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.ThreadSafeMutableState
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
@@ -108,7 +109,7 @@ open class JvmClassFileBasedSymbolProvider(
             packageProto,
             FirDeserializationContext.createForPackage(
                 packageFqName, packageProto, nameResolver, moduleData,
-                JvmBinaryAnnotationDeserializer(session, kotlinClass, kotlinClassFinder, byteContent),
+                createJvmAnnotationDeserializer(session, kotlinClass, kotlinClassFinder, byteContent),
                 JavaAwareFlexibleTypeFactory,
                 FirJvmConstDeserializer(facadeBinaryClass ?: kotlinClass, BuiltInSerializerProtocol),
                 source
@@ -193,7 +194,7 @@ open class JvmClassFileBasedSymbolProvider(
         return ClassMetadataFindResult.Metadata(
             nameResolver,
             classProto,
-            JvmBinaryAnnotationDeserializer(session, kotlinClass, kotlinClassFinder, result.byteContent),
+            createJvmAnnotationDeserializer(session, kotlinClass, kotlinClassFinder, result.byteContent),
             moduleDataProvider.getModuleData(kotlinClass.containingLibraryPath?.asNioPath()),
             KotlinJvmBinarySourceElement(
                 kotlinClass,
@@ -229,4 +230,25 @@ open class JvmClassFileBasedSymbolProvider(
 
             null
         }
+
+    private fun createJvmAnnotationDeserializer(
+        session: FirSession,
+        kotlinClass: KotlinJvmBinaryClass,
+        kotlinClassFinder: KotlinClassFinder,
+        byteContent: ByteArray?,
+    ): JvmBinaryAnnotationDeserializer {
+        val delegateAnnotationDeserializer =
+            if (session.languageVersionSettings.supportsFeature(LanguageFeature.AnnotationsInMetadata))
+                MetadataAnnotationDeserializer(session)
+            else
+                BytecodeAnnotationDeserializer(session, kotlinClass, kotlinClassFinder, byteContent)
+
+        return JvmBinaryAnnotationDeserializer(
+            session,
+            kotlinClass,
+            kotlinClassFinder,
+            byteContent,
+            delegateAnnotationDeserializer,
+        )
+    }
 }

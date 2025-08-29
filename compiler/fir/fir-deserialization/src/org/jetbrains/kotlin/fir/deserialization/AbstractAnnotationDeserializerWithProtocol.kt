@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.deserialization
 
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.deserialization.AnnotationDeserializer.CallableKind
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.Flags
@@ -19,13 +20,14 @@ import org.jetbrains.kotlin.protobuf.MessageLite
 import org.jetbrains.kotlin.serialization.SerializerExtensionProtocol
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 
-abstract class AbstractAnnotationDeserializerWithProtocol(session: FirSession, protected val protocol: SerializerExtensionProtocol) :
-    AbstractAnnotationDeserializer(session) {
-
+abstract class AbstractAnnotationDeserializerWithProtocol(
+    private val session: FirSession,
+    protected val protocol: SerializerExtensionProtocol,
+) : AnnotationDeserializer {
     override fun loadClassAnnotations(classProto: ProtoBuf.Class, nameResolver: NameResolver): List<FirAnnotation> {
         if (!Flags.HAS_ANNOTATIONS.get(classProto.flags)) return emptyList()
         val annotations = classProto.getExtension(protocol.classAnnotation).orEmpty()
-        return annotations.map { deserializeAnnotation(it, nameResolver) }
+        return annotations.map { deserializeAnnotation(it, nameResolver, session) }
     }
 
     override fun loadFunctionAnnotations(
@@ -36,7 +38,7 @@ abstract class AbstractAnnotationDeserializerWithProtocol(session: FirSession, p
     ): List<FirAnnotation> {
         if (!Flags.HAS_ANNOTATIONS.get(functionProto.flags)) return emptyList()
         val annotations = functionProto.getExtension(protocol.functionAnnotation).orEmpty()
-        return annotations.map { deserializeAnnotation(it, nameResolver) }
+        return annotations.map { deserializeAnnotation(it, nameResolver, session) }
     }
 
     override fun loadPropertyAnnotations(
@@ -149,6 +151,6 @@ abstract class AbstractAnnotationDeserializerWithProtocol(session: FirSession, p
     ): List<FirAnnotation> {
         if (extension == null || flags >= 0 && !Flags.HAS_ANNOTATIONS.get(flags)) return emptyList()
         val annotations = getExtension(extension)
-        return annotations.map { deserializeAnnotation(it, nameResolver, useSiteTarget) }
+        return annotations.map { deserializeAnnotation(it, nameResolver, session, useSiteTarget) }
     }
 }

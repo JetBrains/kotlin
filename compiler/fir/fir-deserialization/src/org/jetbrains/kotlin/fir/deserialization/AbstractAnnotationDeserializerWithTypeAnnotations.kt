@@ -12,15 +12,15 @@ import org.jetbrains.kotlin.metadata.deserialization.NameResolver
 import org.jetbrains.kotlin.serialization.SerializerExtensionProtocol
 
 open class AbstractAnnotationDeserializerWithTypeAnnotations(
-    session: FirSession, protocol: SerializerExtensionProtocol
+    private val session: FirSession, protocol: SerializerExtensionProtocol
 ) : AbstractAnnotationDeserializerWithProtocol(session, protocol) {
     override fun loadTypeAnnotations(typeProto: ProtoBuf.Type, nameResolver: NameResolver): List<FirAnnotation> {
         val annotations = typeProto.getExtension(protocol.typeAnnotation).orEmpty()
-        return annotations.map { deserializeAnnotation(it, nameResolver) }
+        return annotations.map { deserializeAnnotation(it, nameResolver, session) }
     }
 
     override fun loadTypeParameterAnnotations(typeParameterProto: ProtoBuf.TypeParameter, nameResolver: NameResolver): List<FirAnnotation> {
         val annotations = typeParameterProto.getExtension(protocol.typeParameterAnnotation).orEmpty()
-        return annotations.map { deserializeAnnotation(it, nameResolver) }
+        return annotations.map { deserializeAnnotation(it, nameResolver, session) }
     }
 }

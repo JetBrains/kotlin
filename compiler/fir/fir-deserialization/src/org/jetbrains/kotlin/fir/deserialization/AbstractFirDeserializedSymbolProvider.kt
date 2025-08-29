@@ -201,7 +201,7 @@ abstract class AbstractFirDeserializedSymbolProvider(
         data class Metadata(
             val nameResolver: NameResolver,
             val classProto: ProtoBuf.Class,
-            val annotationDeserializer: AbstractAnnotationDeserializer?,
+            val annotationDeserializer: AnnotationDeserializer?,
             val moduleData: FirModuleData?,
             val sourceElement: DeserializedContainerSource?,
             val flexibleTypeFactory: FirTypeDeserializer.FlexibleTypeFactory,
