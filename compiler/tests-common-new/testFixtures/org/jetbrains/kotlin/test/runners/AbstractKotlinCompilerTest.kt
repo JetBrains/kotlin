@@ -8,11 +8,13 @@ package org.jetbrains.kotlin.test.runners
 import com.intellij.testFramework.TestDataFile
 import org.jetbrains.kotlin.test.Constructor
 import org.jetbrains.kotlin.test.ExecutionListenerBasedDisposableProvider
+import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.TestInfrastructureInternals
 import org.jetbrains.kotlin.test.backend.handlers.IrValidationErrorChecker
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.testRunner
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives
+import org.jetbrains.kotlin.test.directives.ConfigurationDirectives.WORKS_WHEN_VALUE_CLASS
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
 import org.jetbrains.kotlin.test.frontend.classic.handlers.ClassicUnstableAndK2LanguageFeaturesSkipConfigurator
 import org.jetbrains.kotlin.test.model.ResultingArtifact
@@ -21,6 +23,7 @@ import org.jetbrains.kotlin.test.preprocessors.MetaInfosCleanupPreprocessor
 import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.test.services.impl.TemporaryDirectoryManagerImpl
 import org.jetbrains.kotlin.test.utils.ReplacingSourceTransformer
+import org.jetbrains.kotlin.test.utils.TransformersFunctions
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.FlexibleTypeImpl
 import org.junit.jupiter.api.BeforeEach
@@ -35,7 +38,8 @@ abstract class AbstractKotlinCompilerTest {
         )
 
         val defaultPreprocessors: List<Constructor<SourceFilePreprocessor>> = listOf(
-            ::MetaInfosCleanupPreprocessor
+            ::MetaInfosCleanupPreprocessor,
+            ::JvmInlineSourceTransformer,
         )
 
         private fun configureDebugFlags() {
@@ -110,20 +114,6 @@ abstract class AbstractKotlinCompilerTest {
     open fun runTest(@TestDataFile filePath: String) {
         testRunner(filePath, configuration).runTest(filePath)
     }
-
-    open fun runTest(
-        @TestDataFile filePath: String,
-        contentModifier: ReplacingSourceTransformer,
-    ) {
-        class SourceTransformer(testServices: TestServices) : ReversibleSourceFilePreprocessor(testServices) {
-            override fun process(file: TestFile, content: String): String = contentModifier.invokeForTestFile(content)
-            override fun revert(file: TestFile, actualContent: String): String = contentModifier.revertForFile(actualContent)
-        }
-        testRunner(filePath) {
-            configuration.invoke(this)
-            useSourcePreprocessor(::SourceTransformer)
-        }.runTest(filePath)
-    }
 }
 
 fun TestInfo.toKotlinTestInfo(): KotlinTestInfo {
@@ -132,4 +122,32 @@ fun TestInfo.toKotlinTestInfo(): KotlinTestInfo {
         methodName = this.testMethod.getOrNull()?.name ?: "_testUndefined_",
         tags = this.tags
     )
+}
+
+class JvmInlineSourceTransformer(testServices: TestServices) : ReversibleSourceFilePreprocessor(testServices) {
+    private var contentModifier: ReplacingSourceTransformer? = null
+
+    companion object {
+        fun computeModifier(targetBackend: TargetBackend): ReplacingSourceTransformer {
+            return when {
+                targetBackend.isRecursivelyCompatibleWith(TargetBackend.JVM_IR) -> TransformersFunctions.replaceOptionalJvmInlineAnnotationWithReal
+                targetBackend == TargetBackend.ANY -> TransformersFunctions.replaceOptionalJvmInlineAnnotationWithUniversal
+                else -> TransformersFunctions.removeOptionalJvmInlineAnnotation
+            }
+        }
+
+        private fun TargetBackend.isRecursivelyCompatibleWith(targetBackend: TargetBackend): Boolean =
+            this == targetBackend || this != TargetBackend.ANY && this.compatibleWith.isRecursivelyCompatibleWith(targetBackend)
+    }
+
+    override fun process(file: TestFile, content: String): String {
+        if (WORKS_WHEN_VALUE_CLASS !in testServices.moduleStructure.allDirectives) return content
+        val targetBackend = testServices.defaultsProvider.targetBackend ?: TargetBackend.ANY
+        val contentModifier = computeModifier(targetBackend).also { this.contentModifier = it }
+        return contentModifier.invokeForTestFile(content)
+    }
+
+    override fun revert(file: TestFile, actualContent: String): String {
+        return contentModifier?.revertForFile(actualContent) ?: actualContent
+    }
 }

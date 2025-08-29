@@ -32,7 +32,6 @@ open class SimpleTestMethodModel(
             *InTextDirectivesUtils.IGNORE_BACKEND_DIRECTIVE_PREFIXES,
             InTextDirectivesUtils.TARGET_BACKEND_DIRECTIVE_PREFIX,
             InTextDirectivesUtils.DORT_TARGET_EXACT_BACKEND_DIRECTIVE_PREFIX,
-            "// WORKS_WHEN_VALUE_CLASS"
         )
     }
 
