@@ -47,7 +47,7 @@ class KlibSyntheticAccessorGenerator(
             startOffset = parent.startOffset
             endOffset = parent.startOffset
             origin = IrDeclarationOrigin.SYNTHETIC_ACCESSOR
-            name = source.accessorNameForStaticConstructor()
+            name = source.name
             visibility = DescriptorVisibilities.PUBLIC
             modality = Modality.FINAL
         }.also { accessor ->
@@ -105,9 +105,6 @@ class KlibSyntheticAccessorGenerator(
 
         contribute(TOP_LEVEL_DECLARATION_SUFFIX_MARKER + parent.packagePartClassName)
     }
-
-    private fun IrConstructor.accessorNameForStaticConstructor(): Name =
-        AccessorNameBuilder().apply { contribute(this@accessorNameForStaticConstructor.name.asString()) }.build()
 
     /**
      * This is a special kind of _private_ non-static accessor specifically for accessing "outer this"
