@@ -70,6 +70,8 @@ object FirContextSensitiveResolutionAmbiguityCheckerForEqualities : FirEqualityO
                     listOf(resolvedSymbol) + contextSensitiveCandidates
                 )
             }
+            // at this point we've either found a clash (and reported an error)
+            // or the resolved symbol coincides with the context-sensitive one
             return
         }
     }
@@ -108,12 +110,14 @@ object FirContextSensitiveResolutionAmbiguityCheckerForTypeOperators : FirTypeOp
                     listOf(resolvedClass) + nestedClassifierSymbols
                 )
             }
+            // at this point we've either found a clash (and reported an error)
+            // or the resolved symbol coincides with the context-sensitive one
             return
         }
     }
 }
 
 private val FirResolvedSymbolOrigin?.shouldWarn: Boolean
-    get() = this != null && (this == FirResolvedSymbolOrigin.StarImport || this == FirResolvedSymbolOrigin.DefaultImport)
+    get() = this != FirResolvedSymbolOrigin.ContextSensitive && this != FirResolvedSymbolOrigin.Qualified
 
 private val FirVariableSymbol<*>.isNoArgumentProperty: Boolean get() = !isExtension && !hasContextParameters

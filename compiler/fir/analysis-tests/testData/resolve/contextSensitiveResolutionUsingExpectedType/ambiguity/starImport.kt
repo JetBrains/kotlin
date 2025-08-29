@@ -47,8 +47,8 @@ fun sealed(s: Sealed): Int = when (s) {
     <!IMPOSSIBLE_IS_CHECK_ERROR!>is <!CONTEXT_SENSITIVE_RESOLUTION_AMBIGUITY!>String<!><!> -> 5
     <!CONTEXT_SENSITIVE_RESOLUTION_AMBIGUITY!>CompanionA<!> -> 6
     <!CONTEXT_SENSITIVE_RESOLUTION_AMBIGUITY, INCOMPATIBLE_TYPES!>CompanionB<!> -> 7
-    <!IMPOSSIBLE_IS_CHECK_ERROR!>is E<!> -> 8
-    <!IMPOSSIBLE_IS_CHECK_ERROR!>is F<!> -> 9
+    <!IMPOSSIBLE_IS_CHECK_ERROR!>is <!CONTEXT_SENSITIVE_RESOLUTION_AMBIGUITY!>E<!><!> -> 8
+    <!IMPOSSIBLE_IS_CHECK_ERROR!>is <!CONTEXT_SENSITIVE_RESOLUTION_AMBIGUITY!>F<!><!> -> 9
     else -> 100
 }
 
@@ -124,7 +124,7 @@ fun equality3wrong(s: Sealed): Boolean = s == <!CONTEXT_SENSITIVE_RESOLUTION_AMB
 fun equality3sealed(s: Sealed): Boolean = s == Sealed.CompanionA
 fun equality3topLevel(s: Sealed): Boolean = s == foo.CompanionA
 
-fun equality4ok(s: Sealed): Boolean = s == F
+fun equality4ok(s: Sealed): Boolean = s == <!CONTEXT_SENSITIVE_RESOLUTION_AMBIGUITY!>F<!>
 fun equality4sealed(s: Sealed): Boolean = s == Sealed.F
 fun equality4topLevel(s: Sealed): Boolean = s == foo.F
 

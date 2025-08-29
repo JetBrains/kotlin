@@ -15,8 +15,8 @@ object A
 class B
 
 fun sealed(s: Sealed): Int = when (s) {
-    A -> 1
-    <!IMPOSSIBLE_IS_CHECK_ERROR!>is B<!> -> 2
+    <!CONTEXT_SENSITIVE_RESOLUTION_AMBIGUITY!>A<!> -> 1
+    <!IMPOSSIBLE_IS_CHECK_ERROR!>is <!CONTEXT_SENSITIVE_RESOLUTION_AMBIGUITY!>B<!><!> -> 2
     C -> 3
     is D -> 4
     <!IMPOSSIBLE_IS_CHECK_ERROR!>is <!CONTEXT_SENSITIVE_RESOLUTION_AMBIGUITY!>String<!><!> -> 5
@@ -36,12 +36,12 @@ fun topLevelExplicit(s: Sealed): Int = when (s) {
 }
 
 fun cast1wrong(s: Sealed): Int {
-    s <!CAST_NEVER_SUCCEEDS!>as<!> A
+    s <!CAST_NEVER_SUCCEEDS!>as<!> <!CONTEXT_SENSITIVE_RESOLUTION_AMBIGUITY!>A<!>
     return 1
 }
 
 fun cast2wrong(s: Sealed): Int {
-    s <!CAST_NEVER_SUCCEEDS!>as<!> B
+    s <!CAST_NEVER_SUCCEEDS!>as<!> <!CONTEXT_SENSITIVE_RESOLUTION_AMBIGUITY!>B<!>
     return 2
 }
 
@@ -75,7 +75,7 @@ fun cast4ok(s: Sealed): Int {
     return 4
 }
 
-fun equality1wrong(s: Sealed): Boolean = s == A
+fun equality1wrong(s: Sealed): Boolean = s == <!CONTEXT_SENSITIVE_RESOLUTION_AMBIGUITY!>A<!>
 fun equality1sealed(s: Sealed): Boolean = s == Sealed.A
 fun equality1topLevel(s: Sealed): Boolean = s == foo.A
 fun equality2ok(s: Sealed): Boolean = s == Sealed.C
