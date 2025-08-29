@@ -15,4 +15,8 @@ object ConfigurationDirectives : SimpleDirectivesContainer() {
     val DISABLE_TYPEALIAS_EXPANSION by directive("Disables automatic expansion of aliased types in type resolution")
 
     val SEPARATE_KMP_COMPILATION by directive("Enables separate compilation for KMP modules")
+
+    val WORKS_WHEN_VALUE_CLASS by directive(
+        "Enables `JvmInlineSourceTransformer`, which transforms the OPTIONAL_JVM_INLINE_ANNOTATION placeholder"
+    )
 }

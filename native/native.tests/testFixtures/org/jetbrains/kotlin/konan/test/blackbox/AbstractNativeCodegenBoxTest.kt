@@ -5,25 +5,26 @@
 
 package org.jetbrains.kotlin.konan.test.blackbox
 
-import com.intellij.testFramework.TestDataFile
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.ExternalSourceTransformersProvider
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.ExternalSourceTransformer
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.ExternalSourceTransformers
-import org.jetbrains.kotlin.konan.test.blackbox.support.util.ThreadSafeCache
-import org.jetbrains.kotlin.konan.test.blackbox.support.util.getAbsoluteFile
+import org.jetbrains.kotlin.test.TargetBackend
+import org.jetbrains.kotlin.test.directives.ConfigurationDirectives.WORKS_WHEN_VALUE_CLASS
+import org.jetbrains.kotlin.test.preprocessors.JvmInlineSourceTransformer
 import org.junit.jupiter.api.Tag
 import java.io.File
 
 @Tag("codegen")
 abstract class AbstractNativeCodegenBoxTest : ExternalSourceTransformersProvider, AbstractNativeBlackBoxTest() {
-    private val registeredSourceTransformers: ThreadSafeCache<File, MutableList<ExternalSourceTransformer>> = ThreadSafeCache()
-
-    override fun getSourceTransformers(testDataFile: File): ExternalSourceTransformers? = registeredSourceTransformers[testDataFile]
-
-    /**
-     * Called directly from test class constructor.
-     */
-    fun register(@TestDataFile testDataFilePath: String, sourceTransformer: ExternalSourceTransformer) {
-        registeredSourceTransformers.computeIfAbsent(getAbsoluteFile(testDataFilePath)) { mutableListOf() } += sourceTransformer
+    override fun getSourceTransformers(testDataFile: File): ExternalSourceTransformers? {
+        val needTransform = "// $WORKS_WHEN_VALUE_CLASS" in testDataFile.readText()
+        val transformer = object : ExternalSourceTransformer {
+            override fun invoke(content: String): String {
+                if (!needTransform) return content
+                val contentModifier = JvmInlineSourceTransformer.computeModifier(TargetBackend.NATIVE)
+                return contentModifier.invoke(content)
+            }
+        }
+        return listOf(transformer)
     }
 }

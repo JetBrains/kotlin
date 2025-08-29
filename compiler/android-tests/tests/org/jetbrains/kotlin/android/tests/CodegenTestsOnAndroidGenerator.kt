@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.test.model.DependencyKind
 import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.model.ResultingArtifact
 import org.jetbrains.kotlin.test.model.TestFile
+import org.jetbrains.kotlin.test.preprocessors.JvmInlineSourceTransformer
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerTest
 import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigurator
@@ -427,7 +428,7 @@ class CodegenTestsOnAndroidGenerator private constructor(private val pathManager
                 return transformers.fold(content) { text, transformer -> transformer(text) }
             }
         }
-        useSourcePreprocessor({ AndroidTransformingPreprocessor(it) })
+        useSourcePreprocessor({ AndroidTransformingPreprocessor(it) }, ::JvmInlineSourceTransformer)
         useMetaTestConfigurators(::ClassicUnstableAndK2LanguageFeaturesSkipConfigurator)
     }
 

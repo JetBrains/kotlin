@@ -16,11 +16,10 @@ import org.jetbrains.kotlin.test.directives.ConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
 import org.jetbrains.kotlin.test.frontend.classic.handlers.ClassicUnstableAndK2LanguageFeaturesSkipConfigurator
 import org.jetbrains.kotlin.test.model.ResultingArtifact
-import org.jetbrains.kotlin.test.model.TestFile
+import org.jetbrains.kotlin.test.preprocessors.JvmInlineSourceTransformer
 import org.jetbrains.kotlin.test.preprocessors.MetaInfosCleanupPreprocessor
 import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.test.services.impl.TemporaryDirectoryManagerImpl
-import org.jetbrains.kotlin.test.utils.ReplacingSourceTransformer
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.FlexibleTypeImpl
 import org.junit.jupiter.api.BeforeEach
@@ -35,7 +34,8 @@ abstract class AbstractKotlinCompilerTest {
         )
 
         val defaultPreprocessors: List<Constructor<SourceFilePreprocessor>> = listOf(
-            ::MetaInfosCleanupPreprocessor
+            ::MetaInfosCleanupPreprocessor,
+            ::JvmInlineSourceTransformer,
         )
 
         private fun configureDebugFlags() {
@@ -109,20 +109,6 @@ abstract class AbstractKotlinCompilerTest {
 
     open fun runTest(@TestDataFile filePath: String) {
         testRunner(filePath, configuration).runTest(filePath)
-    }
-
-    open fun runTest(
-        @TestDataFile filePath: String,
-        contentModifier: ReplacingSourceTransformer,
-    ) {
-        class SourceTransformer(testServices: TestServices) : ReversibleSourceFilePreprocessor(testServices) {
-            override fun process(file: TestFile, content: String): String = contentModifier.invokeForTestFile(content)
-            override fun revert(file: TestFile, actualContent: String): String = contentModifier.revertForFile(actualContent)
-        }
-        testRunner(filePath) {
-            configuration.invoke(this)
-            useSourcePreprocessor(::SourceTransformer)
-        }.runTest(filePath)
     }
 }
 
