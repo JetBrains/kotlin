@@ -5,9 +5,11 @@
 
 package model
 
+import kotlinx.serialization.Serializable
 import org.jetbrains.kotlin.server.CompilationResultGrpc
 import org.jetbrains.kotlin.server.CompileResponseGrpc
 
+@Serializable
 data class CompilationResult(
     val exitCode: Int,
     val compilationResultSource: CompilationResultSource

@@ -5,15 +5,19 @@
 
 package model
 
+import kotlinx.serialization.Contextual
+import kotlinx.serialization.Serializable
 import org.jetbrains.kotlin.daemon.common.CompilationOptions
 import org.jetbrains.kotlin.server.CompilationMetadataGrpc
 
+@Serializable
 data class CompilationMetadata(
     val projectName: String,
     val sourceFilesCount: Int,
     val dependencyFilesCount: Int,
     val compilerPluginFilesCount: Int,
     val compilerArguments: Map<String, String>,
+    @Contextual
     val compilationOptions: CompilationOptions
 ) : CompileRequest
 
@@ -28,7 +32,7 @@ fun CompilationMetadata.toGrpc(): CompilationMetadataGrpc {
         .build()
 }
 
-fun CompilationMetadataGrpc.toDomain(): CompilationMetadata{
+fun CompilationMetadataGrpc.toDomain(): CompilationMetadata {
     return CompilationMetadata(
         projectName,
         sourceFilesCount,

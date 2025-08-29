@@ -5,8 +5,10 @@
 
 package model
 
+import kotlinx.serialization.Serializable
 import org.jetbrains.kotlin.server.CompileResponseGrpc
 
+@Serializable
 sealed interface CompileResponse
 
 fun CompileResponseGrpc.toDomain(): CompileResponse = when {
