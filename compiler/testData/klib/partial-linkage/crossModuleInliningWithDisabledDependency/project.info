@@ -1,0 +1,7 @@
+MODULES: disabled, main
+
+STEP 0:
+    libs: disabled, main
+
+STEP 1:
+    libs: disabled

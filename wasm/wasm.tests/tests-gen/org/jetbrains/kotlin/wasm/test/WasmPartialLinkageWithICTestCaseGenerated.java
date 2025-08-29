@@ -67,6 +67,12 @@ public class WasmPartialLinkageWithICTestCaseGenerated extends AbstractWasmParti
   }
 
   @Test
+  @TestMetadata("crossModuleInliningWithDisabledDependency")
+  public void testCrossModuleInliningWithDisabledDependency() {
+    runTest("compiler/testData/klib/partial-linkage/crossModuleInliningWithDisabledDependency/");
+  }
+
+  @Test
   @TestMetadata("crossModuleInliningWithIntraModuleDependency")
   public void testCrossModuleInliningWithIntraModuleDependency() {
     runTest("compiler/testData/klib/partial-linkage/crossModuleInliningWithIntraModuleDependency/");
