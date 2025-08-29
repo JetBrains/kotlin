@@ -5,13 +5,13 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.util
 
-import com.intellij.openapi.progress.ProcessCanceledException
 import jdk.jfr.*
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDesignation
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLFirResolveTarget
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLPartialBodyAnalysisState
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.LLFirResolveDesignationCollector
+import org.jetbrains.kotlin.analysis.low.level.api.fir.transformers.PartialBodyAnalysisSuspendedException
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousInitializer
@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
 import org.jetbrains.kotlin.fir.declarations.FirVariable
 import org.jetbrains.kotlin.fir.declarations.utils.classId
 import org.jetbrains.kotlin.fir.declarations.utils.nameOrSpecialName
+import org.jetbrains.kotlin.utils.exceptions.shouldIjPlatformExceptionBeRethrown
 
 @KaImplementationDetail
 object LLFlightRecorder {
@@ -270,17 +271,19 @@ private class LLPhaseEvent : Event(), ILLPhaseEvent {
     var result: Byte = -1
 
     override fun notifyCompleted() {
+        result = 0
         end()
         commit()
     }
 
     override fun notifyCompletedWithFailure(throwable: Throwable) {
         result = when {
-            throwable is ProcessCanceledException -> 1
-            else -> 0
+            throwable is PartialBodyAnalysisSuspendedException -> 0
+            shouldIjPlatformExceptionBeRethrown(throwable) -> 1
+            else -> 2
         }
-
-        notifyCompleted()
+        end()
+        commit()
     }
 }
 
