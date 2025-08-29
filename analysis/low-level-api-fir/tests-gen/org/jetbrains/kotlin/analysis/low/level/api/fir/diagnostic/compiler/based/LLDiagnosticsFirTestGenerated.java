@@ -3784,12 +3784,6 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
       }
 
       @Test
-      @TestMetadata("multipleBounds.kt")
-      public void testMultipleBounds() {
-        runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/multipleBounds.kt");
-      }
-
-      @Test
       @TestMetadata("nonConstValInAnnotationArgument.kt")
       public void testNonConstValInAnnotationArgument() {
         runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/nonConstValInAnnotationArgument.kt");
@@ -4189,21 +4183,9 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
         }
 
         @Test
-        @TestMetadata("exhaustiveWhenAndDNNType.kt")
-        public void testExhaustiveWhenAndDNNType() {
-          runTest("compiler/fir/analysis-tests/testData/resolve/exhaustiveness/positive/exhaustiveWhenAndDNNType.kt");
-        }
-
-        @Test
         @TestMetadata("exhaustiveWhenAndFlexibleType.kt")
         public void testExhaustiveWhenAndFlexibleType() {
           runTest("compiler/fir/analysis-tests/testData/resolve/exhaustiveness/positive/exhaustiveWhenAndFlexibleType.kt");
-        }
-
-        @Test
-        @TestMetadata("exhaustiveness_boolean.kt")
-        public void testExhaustiveness_boolean() {
-          runTest("compiler/fir/analysis-tests/testData/resolve/exhaustiveness/positive/exhaustiveness_boolean.kt");
         }
 
         @Test

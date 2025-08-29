@@ -1,4 +1,5 @@
 // RUN_PIPELINE_TILL: BACKEND
+// LANGUAGE: -ForbidInferringTypeVariablesIntoEmptyIntersection
 // FIR_IDENTICAL
 // WITH_STDLIB
 

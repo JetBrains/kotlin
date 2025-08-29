@@ -779,12 +779,6 @@ public class FirLightTreeOldFrontendDiagnosticsWithoutAliasExpansionTestGenerate
       }
 
       @Test
-      @TestMetadata("selectOfLambdaWithExtensionEnabled.kt")
-      public void testSelectOfLambdaWithExtensionEnabled() {
-        runTest("compiler/testData/diagnostics/tests/inference/selectOfLambdaWithExtensionEnabled.kt");
-      }
-
-      @Test
       @TestMetadata("specialCallsWithLambdas.kt")
       public void testSpecialCallsWithLambdas() {
         runTest("compiler/testData/diagnostics/tests/inference/specialCallsWithLambdas.kt");
