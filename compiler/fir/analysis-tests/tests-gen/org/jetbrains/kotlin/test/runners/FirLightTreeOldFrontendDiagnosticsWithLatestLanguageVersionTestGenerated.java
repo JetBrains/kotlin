@@ -34812,6 +34812,12 @@ public class FirLightTreeOldFrontendDiagnosticsWithLatestLanguageVersionTestGene
       }
 
       @Test
+      @TestMetadata("implicitPropertyTypeThatMakesBehaviorOrderDependant.kt")
+      public void testImplicitPropertyTypeThatMakesBehaviorOrderDependant() {
+        runTest("compiler/testData/diagnostics/tests/resolve/implicitPropertyTypeThatMakesBehaviorOrderDependant.kt");
+      }
+
+      @Test
       @TestMetadata("implicitReceiverProperty.kt")
       public void testImplicitReceiverProperty() {
         runTest("compiler/testData/diagnostics/tests/resolve/implicitReceiverProperty.kt");
