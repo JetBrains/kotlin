@@ -64,7 +64,7 @@ class TestRunner(private val testConfiguration: TestConfiguration) {
         }
 
         testConfiguration.metaTestConfigurators.forEach {
-            if (it.shouldSkipTest()) return
+            services.assertions.assumeFalse(it.shouldSkipTest()) { "Test skipped by ${it::class.simpleName}" }
         }
 
         runTestPipeline(moduleStructure, services)

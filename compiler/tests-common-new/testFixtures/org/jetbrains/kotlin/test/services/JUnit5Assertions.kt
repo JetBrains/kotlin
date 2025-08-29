@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.test.services
 import org.jetbrains.kotlin.test.util.convertLineSeparators
 import org.jetbrains.kotlin.test.util.trimTrailingWhitespacesAndAddNewlineAtEOF
 import org.jetbrains.kotlin.utils.rethrow
+import org.junit.jupiter.api.Assumptions
 import org.junit.jupiter.api.function.Executable
 import org.opentest4j.AssertionFailedError
 import org.opentest4j.FileInfo
@@ -116,6 +117,10 @@ object JUnit5Assertions : AssertionsService() {
 
     override fun fail(message: () -> String): Nothing {
         org.junit.jupiter.api.fail(message)
+    }
+
+    override fun assumeFalse(value: Boolean, message: () -> String) {
+        Assumptions.assumeFalse(value, message)
     }
 
     private object AssertionFailedErrorFirst : Comparator<Throwable> {

@@ -70,4 +70,6 @@ abstract class Assertions {
     }
 
     abstract fun fail(message: () -> String): Nothing
+
+    abstract fun assumeFalse(value: Boolean, message: () -> String)
 }
