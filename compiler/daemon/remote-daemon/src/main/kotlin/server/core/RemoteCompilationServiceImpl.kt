@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.daemon.client.BasicCompilerServicesWithResultsFacade
 import org.jetbrains.kotlin.daemon.common.JpsCompilerServicesFacade
 import org.jetbrains.kotlin.daemon.report.DaemonMessageReporter
 import org.jetbrains.kotlin.daemon.report.getBuildReporter
-import server.interceptors.AuthServerInterceptor
+import server.grpc.AuthServerInterceptor
 import java.io.File
 import java.nio.file.Files
 import java.nio.file.Path
@@ -55,7 +55,7 @@ class RemoteCompilationServiceImpl(
         }
     }
 
-    override fun cleanup() {
+    override suspend fun cleanup() {
         workspaceManager.cleanup()
         cacheHandler.cleanup()
     }
@@ -89,7 +89,7 @@ class RemoteCompilationServiceImpl(
             val fileChunkStrategy = FixedSizeChunkingStrategy()
             var compilationMetadata: CompilationMetadata? = null
 
-            val userId = AuthServerInterceptor.USER_ID_CONTEXT_KEY.get()
+            val userId = AuthServerInterceptor.USER_ID_CONTEXT_KEY.get() ?: "3489439j"
 
             // here we consume request stream
             launch {

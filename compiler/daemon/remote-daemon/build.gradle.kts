@@ -57,7 +57,6 @@ dependencies {
     implementation("io.grpc:grpc-netty:1.74.0")
     implementation("com.google.protobuf:protobuf-kotlin:4.31.1")
     implementation("com.google.protobuf:protobuf-java-util:4.31.1") // printing default values of messages
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.9.0")
 
     runtimeOnly(project(":kotlin-compiler-embeddable"))
 
@@ -85,11 +84,25 @@ dependencies {
     implementation("ch.qos.logback:logback-classic:1.5.18")
     implementation("org.jetbrains.kotlinx:kotlinx-rpc-krpc-server:0.9.1")
     implementation("org.jetbrains.kotlinx:kotlinx-rpc-krpc-ktor-server:0.9.1")
+
+    // ktor client
+    implementation("io.ktor:ktor-client-cio-jvm:3.2.3")
+
+    // protobuf serialization and its kotlinx-rpc integration
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-protobuf:1.9.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-rpc-krpc-serialization-protobuf:0.9.1")
+
+    // cbor serialization and its kotlinx-rpc integration
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-cbor:1.9.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-rpc-krpc-serialization-cbor:0.9.1")
+
+    // json serialization and its kotlinx-rpc integration
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.9.0")
     implementation("org.jetbrains.kotlinx:kotlinx-rpc-krpc-serialization-json:0.9.1")
-//
-//    kotlinCompilerPluginClasspathMain("org.jetbrains.kotlinx:kotlinx-rpc-compiler-plugin-k2:2.2.0-0.9.1!")
+
 }
 
+// added to resolve dependency issues with kotlinx-rpc dependencies
 configurations {
     kotlinCompilerPluginClasspathMain.configure {
         resolutionStrategy.eachDependency {

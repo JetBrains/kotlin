@@ -5,22 +5,59 @@
 
 package benchmark
 
-import common.RemoteCompilationServiceImplType
+import client.grpc.GrpcRemoteCompilationServiceClient
 import main.kotlin.server.RemoteCompilationServer
-import org.jetbrains.kotlin.client.RemoteCompilationClient
+import client.core.RemoteCompilationClient
+import com.example.KotlinxRpcRemoteCompilationServiceClient
+import common.CLIENT_COMPILED_DIR
+import common.CLIENT_TMP_DIR
+import common.SERVER_CACHE_DIR
+import common.SERVER_COMPILATION_WORKSPACE_DIR
+import kotlinx.rpc.krpc.serialization.cbor.cbor
+import kotlinx.serialization.ExperimentalSerializationApi
 import org.jetbrains.kotlin.daemon.common.CompilationOptions
 import org.jetbrains.kotlin.daemon.common.CompileService
 import org.jetbrains.kotlin.daemon.common.CompilerMode
+import server.core.Server
+import server.grpc.GrpcRemoteCompilationServerImpl
+import server.kotlinxrpc.KotlinxRpcRemoteCompilationServerImpl
 
+enum class RemoteCompilationServiceImplType {
+    GRPC,
+    KOTLINX_RPC
+}
+
+@OptIn(ExperimentalSerializationApi::class)
 class Benchmark(
-    serverImplType: RemoteCompilationServiceImplType
+    implType: RemoteCompilationServiceImplType
 ) {
 
-    val client = RemoteCompilationClient(serverImplType, logging = false)
-    val server = RemoteCompilationServer(50051, serverImplType, logging = false)
+    private var client: RemoteCompilationClient
+    private var server: Server
+    private val port = 7777
 
     init {
-        server.start()
+        val (serverImpl, clientImpl) = when (implType) {
+            RemoteCompilationServiceImplType.GRPC -> {
+                GrpcRemoteCompilationServerImpl(port) to GrpcRemoteCompilationServiceClient(port)
+            }
+            RemoteCompilationServiceImplType.KOTLINX_RPC -> {
+                val server = KotlinxRpcRemoteCompilationServerImpl(
+                    port,
+                    logging = true,
+                    serialization = { cbor() }
+                )
+                val client = KotlinxRpcRemoteCompilationServiceClient(
+                    port,
+                    serialization = { cbor() }
+                )
+                server to client
+            }
+        }
+
+        server = RemoteCompilationServer(serverImpl)
+        client = RemoteCompilationClient(clientImpl)
+        server.start(block = false)
     }
 
     suspend fun compileProject(tasks: List<Task>) {
@@ -70,13 +107,19 @@ class Benchmark(
 //
 // 7. change CWD of this configuration to /kotlin/compiler/daemon/remote-daemon
 //
-// 8. ready to run main function
+// 8. ready to run the main function
 
 suspend fun main() {
-    val ktorTasks = TasksExtractor.getTasks("/Users/michal.svec/Desktop/kotlin/compiler/daemon/remote-daemon/src/main/kotlin/benchmark/compileOutput")
+    val ktorTasks =
+        TasksExtractor.getTasks("/Users/michal.svec/Desktop/kotlin/compiler/daemon/remote-daemon/src/main/kotlin/benchmark/compileOutput")
     println("We have ${ktorTasks.size} tasks to compile")
     val benchmark = Benchmark(
-        RemoteCompilationServiceImplType.GRPC
+        RemoteCompilationServiceImplType.KOTLINX_RPC
     )
     benchmark.compileProject(ktorTasks)
+
+    SERVER_CACHE_DIR.toFile().deleteRecursively()
+    SERVER_COMPILATION_WORKSPACE_DIR.toFile().deleteRecursively()
+    CLIENT_TMP_DIR.toFile().deleteRecursively()
+    CLIENT_COMPILED_DIR.toFile().deleteRecursively()
 }

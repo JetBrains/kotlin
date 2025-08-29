@@ -6,16 +6,12 @@
 package common
 
 import kotlinx.coroutines.flow.Flow
-//import kotlinx.rpc.annotations.Rpc
+import kotlinx.rpc.annotations.Rpc
 import model.CompileRequest
 import model.CompileResponse
 
-//@Rpc
+@Rpc
 interface RemoteCompilationService {
     fun compile(compileRequests: Flow<CompileRequest>): Flow<CompileResponse>
-    fun cleanup()
-}
-
-enum class RemoteCompilationServiceImplType {
-    GRPC
+    suspend fun cleanup()
 }

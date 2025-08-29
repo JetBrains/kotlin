@@ -3,8 +3,9 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package client.auth
+package client.grpc
 
+import client.core.ClientAuth
 import common.AUTH_KEY
 import io.grpc.CallCredentials
 import io.grpc.Metadata

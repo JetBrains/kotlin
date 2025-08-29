@@ -1,0 +1,51 @@
+package com.example
+
+import common.RemoteCompilationService
+import io.ktor.client.*
+import io.ktor.http.*
+import kotlinx.coroutines.flow.Flow
+import kotlinx.rpc.withService
+import kotlinx.rpc.krpc.ktor.client.KtorRpcClient
+import kotlinx.rpc.krpc.ktor.client.installKrpc
+import kotlinx.rpc.krpc.ktor.client.rpc
+import kotlinx.rpc.krpc.ktor.client.rpcConfig
+import kotlinx.rpc.krpc.serialization.KrpcSerialFormatConfiguration
+
+import model.CompileRequest
+import model.CompileResponse
+
+class KotlinxRpcRemoteCompilationServiceClient(
+    val port: Int,
+    val serialization: KrpcSerialFormatConfiguration.() -> Unit
+) : RemoteCompilationService {
+
+    val ktorClient = HttpClient {
+        installKrpc {
+            waitForServices = true
+        }
+    }
+
+    val client: KtorRpcClient = ktorClient.rpc {
+        url {
+            host = "localhost"
+            port = this@KotlinxRpcRemoteCompilationServiceClient.port
+            encodedPath = "compile"
+        }
+        rpcConfig {
+            serialization {
+                this.serialization()
+            }
+        }
+
+    }
+
+    val compilationService: RemoteCompilationService = client.withService<RemoteCompilationService>()
+
+    override fun compile(compileRequests: Flow<CompileRequest>): Flow<CompileResponse> {
+        return compilationService.compile(compileRequests)
+    }
+
+    override suspend fun cleanup() {
+        compilationService.cleanup()
+    }
+}

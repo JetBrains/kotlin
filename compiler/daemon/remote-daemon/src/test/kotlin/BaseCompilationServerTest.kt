@@ -1,4 +1,4 @@
-import client.GrpcClientRemoteCompilationService
+import client.grpc.GrpcRemoteCompilationServiceClient
 import common.FixedSizeChunkingStrategy
 import common.RemoteCompilationService
 import common.SERVER_COMPILATION_WORKSPACE_DIR
@@ -11,13 +11,13 @@ import io.grpc.inprocess.InProcessServerBuilder
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import server.core.CacheHandler
-import server.GrpcRemoteCompilationService
+import server.grpc.GrpcRemoteCompilationService
 import server.core.InProcessCompilerService
 import server.auth.BasicHTTPAuthServer
 import server.core.RemoteCompilationServiceImpl
 import server.core.WorkspaceManager
-import server.interceptors.AuthServerInterceptor
-import server.interceptors.LoggingServerInterceptor
+import server.grpc.AuthServerInterceptor
+import server.grpc.LoggingServerInterceptor
 import java.io.File
 
 /*
@@ -48,7 +48,7 @@ abstract class BaseCompilationCompilationTest {
     }
 
     fun getGrpcClient(): RemoteCompilationService {
-        return GrpcClientRemoteCompilationService(logging = true, channel)
+        return GrpcRemoteCompilationServiceClient(logging = true, channel)
     }
 
     @BeforeEach
