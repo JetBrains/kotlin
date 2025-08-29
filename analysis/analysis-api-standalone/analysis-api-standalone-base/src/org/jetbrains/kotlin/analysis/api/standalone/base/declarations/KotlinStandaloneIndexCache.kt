@@ -6,7 +6,9 @@
 package org.jetbrains.kotlin.analysis.api.standalone.base.declarations
 
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.psi.compiled.ClassFileDecompilers
 import com.intellij.util.containers.CollectionFactory
+import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinFileStubImpl
 
 /**
@@ -20,9 +22,28 @@ import org.jetbrains.kotlin.psi.stubs.impl.KotlinFileStubImpl
  */
 internal class KotlinStandaloneIndexCache {
     private val stubs = CollectionFactory.createConcurrentWeakKeySoftValueMap<VirtualFile, KotlinFileStubImpl>()
+    private val roots = CollectionFactory.createConcurrentWeakKeySoftValueMap<VirtualFile, Set<SharedIndexableFile>>()
 
     fun getOrBuildStub(
         compiledFile: VirtualFile,
         stubBuilder: (VirtualFile) -> KotlinFileStubImpl,
     ): KotlinFileStubImpl = stubs.computeIfAbsent(compiledFile, stubBuilder)
+
+    /** @see SharedIndexableFile */
+    fun getOrProcessBinaryRoot(
+        binaryRoot: VirtualFile,
+        processRoot: (VirtualFile) -> Set<SharedIndexableFile>,
+    ): Set<SharedIndexableFile> = roots.computeIfAbsent(binaryRoot) { processRoot(it) }
+
+    /**
+     * Represents a binary file that was successfully decompiled by some Kotlin decompiler.
+     */
+    class SharedIndexableFile(
+        val virtualFile: VirtualFile,
+        val kotlinDecompiler: ClassFileDecompilers.Full,
+    ) {
+        override fun equals(other: Any?): Boolean = this === other || other is SharedIndexableFile && virtualFile == other.virtualFile
+        override fun hashCode(): Int = virtualFile.hashCode()
+        override fun toString(): String = "$virtualFile (${kotlinDecompiler::class.simpleName})"
+    }
 }

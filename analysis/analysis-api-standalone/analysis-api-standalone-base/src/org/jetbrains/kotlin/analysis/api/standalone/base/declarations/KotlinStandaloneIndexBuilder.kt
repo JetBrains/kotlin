@@ -12,9 +12,19 @@ import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileVisitor
 import com.intellij.psi.PsiManager
+import com.intellij.psi.compiled.ClassFileDecompilers
 import com.intellij.psi.impl.source.PsiFileImpl
+import com.intellij.testFramework.LightVirtualFile
+import org.jetbrains.kotlin.analysis.api.standalone.base.declarations.KotlinStandaloneIndexCache.SharedIndexableFile
+import org.jetbrains.kotlin.analysis.decompiler.konan.KlibDecompiledFile
+import org.jetbrains.kotlin.analysis.decompiler.konan.KlibMetadataDecompiler
 import org.jetbrains.kotlin.analysis.decompiler.psi.BuiltinsVirtualFileProvider
 import org.jetbrains.kotlin.analysis.decompiler.psi.KotlinBuiltInFileType
+import org.jetbrains.kotlin.analysis.decompiler.psi.KotlinClassFileDecompiler
+import org.jetbrains.kotlin.analysis.decompiler.psi.KotlinDecompiledFileViewProvider
+import org.jetbrains.kotlin.analysis.decompiler.psi.KotlinMetadataDecompiler
+import org.jetbrains.kotlin.analysis.decompiler.psi.file.KtClsFile
+import org.jetbrains.kotlin.analysis.decompiler.psi.file.KtDecompiledFile
 import org.jetbrains.kotlin.analysis.decompiler.psi.file.deepCopy
 import org.jetbrains.kotlin.analysis.decompiler.stub.file.ClsClassFinder
 import org.jetbrains.kotlin.psi.KtFile
@@ -117,21 +127,80 @@ internal class KotlinStandaloneIndexBuilder(
     private val decompiledFilesFromBinaryRoots = mutableSetOf<IndexableFile>()
 
     fun collectDecompiledFilesFromBinaryRoot(binaryRoot: VirtualFile, isSharedRoot: Boolean) {
-        VfsUtilCore.visitChildrenRecursively(binaryRoot, object : VirtualFileVisitor<Void>() {
+        if (isSharedRoot && cacheService != null) {
+            val sharedFiles = cacheService.getOrProcessBinaryRoot(binaryRoot) { root ->
+                buildSet {
+                    processBinaryRoot(root) { sharedFile, _ -> add(sharedFile) }
+                }
+            }
+
+            sharedFiles.mapTo(decompiledFilesFromBinaryRoots) { sharedFile ->
+                val virtualFile = sharedFile.virtualFile
+                val kotlinDecompiler = sharedFile.kotlinDecompiler
+                val viewProvider = kotlinDecompiler.kotlinDecompiledFileViewProvider(virtualFile)!!
+
+                // A hack to avoid costly checks inside createFile
+                val ktFile = when (kotlinDecompiler) {
+                    is KotlinClassFileDecompiler -> KtClsFile(viewProvider)
+
+                    // Exceptions are acceptable since the files don't use those lambdas with stub-based decompilers
+                    is KlibMetadataDecompiler<*> -> KlibDecompiledFile(viewProvider) { throw UnsupportedOperationException() }
+                    is KotlinMetadataDecompiler<*> -> KtDecompiledFile(viewProvider) { throw UnsupportedOperationException() }
+                    else -> error("Unexpected decompiler: ${kotlinDecompiler::class.simpleName}")
+                }
+
+                // This call is required to bind the view provider, its file and the psi manager together
+                viewProvider.forceCachedPsi(ktFile)
+                IndexableFile(virtualFile = virtualFile, ktFile = ktFile, isShared = true)
+            }
+        } else {
+            processBinaryRoot(binaryRoot) { sharedFile, ktFile ->
+                decompiledFilesFromBinaryRoots += IndexableFile(
+                    virtualFile = sharedFile.virtualFile,
+                    ktFile = ktFile,
+                    isShared = isSharedRoot,
+                )
+            }
+        }
+    }
+
+    private fun processBinaryRoot(root: VirtualFile, action: (SharedIndexableFile, KtFile) -> Unit) {
+        VfsUtilCore.visitChildrenRecursively(root, object : VirtualFileVisitor<Void>() {
             override fun visitFile(file: VirtualFile): Boolean {
                 if (!file.isDirectory) {
-                    val ktFile = psiManager.findFile(file) as? KtFile
-                    // Synthetic class parts are not supposed to be indexed to avoid duplicates
-                    // The information about virtual files are already cached after the previous line
-                    if (ktFile != null && !ClsClassFinder.isMultifileClassPartFile(file)) {
-                        decompiledFilesFromBinaryRoots += IndexableFile(file, ktFile, isShared = isSharedRoot)
-                    }
+                    val (sharedFile, ktFile) = findSharedFile(file) ?: return true
+                    action(sharedFile, ktFile)
                 }
 
                 return true
             }
         })
     }
+
+    /**
+     * The function imitates [PsiManager.findFile] behavior for a file inside a binary root
+     */
+    private fun findSharedFile(virtualFile: VirtualFile): Pair<SharedIndexableFile, KtFile>? {
+        val decompiler = ClassFileDecompilers.getInstance().find(virtualFile, ClassFileDecompilers.Full::class.java) ?: return null
+
+        val viewProvider = decompiler.kotlinDecompiledFileViewProvider(virtualFile)
+        val ktFile = viewProvider?.getPsi(viewProvider.baseLanguage) as? KtFile ?: return null
+
+        // Synthetic class parts are not supposed to be indexed to avoid duplicates
+        // The information about virtual files is already cached after the previous line
+        if (ClsClassFinder.isMultifileClassPartFile(virtualFile)) {
+            return null
+        }
+
+        return SharedIndexableFile(virtualFile, decompiler) to ktFile
+    }
+
+    private fun ClassFileDecompilers.Full.kotlinDecompiledFileViewProvider(virtualFile: VirtualFile): KotlinDecompiledFileViewProvider? =
+        createFileViewProvider(
+            /* file = */ virtualFile,
+            /* manager = */ psiManager,
+            /* physical = */ !LightVirtualFile.shouldSkipEventSystem(virtualFile),
+        ) as? KotlinDecompiledFileViewProvider
 
     private val decompiledFilesFromBuiltins = mutableSetOf<IndexableFile>()
 
