@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.incremental
 
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.backend.wasm.compileWasm
 import org.jetbrains.kotlin.backend.wasm.ic.WasmICContextForTesting
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.WasmCompiledFileFragment
@@ -43,6 +44,7 @@ abstract class WasmAbstractInvalidationTest(
     final override val rootDisposable: TestDisposable =
         TestDisposable("${WasmAbstractInvalidationTest::class.simpleName}.rootDisposable")
 
+    @OptIn(K1Deprecation::class)
     override val environment: KotlinCoreEnvironment =
         KotlinCoreEnvironment.createForParallelTests(rootDisposable, CompilerConfiguration(), EnvironmentConfigFiles.JS_CONFIG_FILES)
 
