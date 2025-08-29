@@ -38406,6 +38406,12 @@ public class FirLightTreeSerializeCompileKotlinAgainstInlineKotlinTestGenerated 
           }
 
           @Test
+          @TestMetadata("funInterfaceMixedMode.kt")
+          public void testFunInterfaceMixedMode() {
+            runTest("compiler/testData/codegen/box/jvm8/defaults/enable/funInterfaceMixedMode.kt");
+          }
+
+          @Test
           @TestMetadata("inheritedFunctionWithDefaultParameters.kt")
           public void testInheritedFunctionWithDefaultParameters() {
             runTest("compiler/testData/codegen/box/jvm8/defaults/enable/inheritedFunctionWithDefaultParameters.kt");
@@ -38699,6 +38705,12 @@ public class FirLightTreeSerializeCompileKotlinAgainstInlineKotlinTestGenerated 
           @TestMetadata("funInterface.kt")
           public void testFunInterface() {
             runTest("compiler/testData/codegen/box/jvm8/defaults/noCompatibility/funInterface.kt");
+          }
+
+          @Test
+          @TestMetadata("funInterfaceMixedMode.kt")
+          public void testFunInterfaceMixedMode() {
+            runTest("compiler/testData/codegen/box/jvm8/defaults/noCompatibility/funInterfaceMixedMode.kt");
           }
 
           @Test

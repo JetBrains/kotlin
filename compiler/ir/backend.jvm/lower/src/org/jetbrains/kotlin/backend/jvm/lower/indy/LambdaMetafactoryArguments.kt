@@ -7,7 +7,10 @@ package org.jetbrains.kotlin.backend.jvm.lower.indy
 
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
-import org.jetbrains.kotlin.backend.jvm.ir.*
+import org.jetbrains.kotlin.backend.jvm.ir.findSuperDeclaration
+import org.jetbrains.kotlin.backend.jvm.ir.getJvmAnnotationRetention
+import org.jetbrains.kotlin.backend.jvm.ir.getSingleAbstractMethod
+import org.jetbrains.kotlin.backend.jvm.ir.isCompiledToJvmDefault
 import org.jetbrains.kotlin.backend.jvm.needsMfvcFlattening
 import org.jetbrains.kotlin.builtins.functions.BuiltInFunctionArity
 import org.jetbrains.kotlin.config.LanguageFeature
@@ -234,15 +237,10 @@ internal class LambdaMetafactoryArgumentsBuilder(
         for (irMemberFun in functionsAndAccessors) {
             if (irMemberFun.modality == Modality.ABSTRACT)
                 continue
-            val irImplFun =
-                if (irMemberFun.isFakeOverride)
-                    irMemberFun.findInterfaceImplementation(context.config.jvmDefaultMode)
-                        ?: continue
-                else
-                    irMemberFun
+            val irImplFun = irMemberFun.resolveFakeOverride() ?: irMemberFun
             if (irImplFun.origin == IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB)
                 continue
-            if (!irImplFun.isCompiledToJvmDefault(context.config.jvmDefaultMode))
+            if (irImplFun.hasInterfaceParent() && !irImplFun.isCompiledToJvmDefault(context.config.jvmDefaultMode))
                 return true
         }
         return false
