@@ -235,6 +235,9 @@ abstract class ProjectTestsExtension(val project: Project) {
         } else {
             project.sourceSets.named("testFixtures").get()
         }
-        project.generator(taskName, fqName, fixturesSourceSet, configure)
+        project.generator(taskName, fqName, fixturesSourceSet) {
+            this.args = listOf(project.layout.projectDirectory.dir("tests-gen").asFile.absolutePath)
+            configure()
+        }
     }
 }
