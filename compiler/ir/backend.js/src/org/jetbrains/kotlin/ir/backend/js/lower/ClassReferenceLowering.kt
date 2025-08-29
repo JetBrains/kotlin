@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.types.*
 class JsClassReferenceLowering(context: JsIrBackendContext) : ClassReferenceLowering(context) {
     private val getClassData = context.intrinsics.jsClass
     private val primitiveClassesObject = context.intrinsics.primitiveClassesObject
-    private val longArrayClass = context.intrinsics.longArrayClass.owner.getter!!
+    private val longArrayClassSymbol = context.intrinsics.longArrayClass
 
     private val primitiveClassProperties by lazy(LazyThreadSafetyMode.NONE) {
         primitiveClassesObject.owner.declarations.filterIsInstance<IrProperty>()
@@ -90,7 +90,7 @@ class JsClassReferenceLowering(context: JsIrBackendContext) : ClassReferenceLowe
 
     override fun getFinalPrimitiveKClass(returnType: IrType, typeArgument: IrType): IrCall? {
         if (typeArgument.isLongArray()) {
-            return JsIrBuilder.buildCall(longArrayClass.symbol, returnType)
+            return JsIrBuilder.buildCall(longArrayClassSymbol, returnType)
         }
         for ((typePredicate, v) in finalPrimitiveClasses) {
             if (typePredicate(typeArgument))

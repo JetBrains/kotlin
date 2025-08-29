@@ -19,6 +19,7 @@
 
 package kotlin.js.internal.boxedLong
 
+import withType
 import kotlin.internal.UsedFromCompilerGeneratedCode
 import kotlin.reflect.js.internal.PrimitiveKClassImpl
 
@@ -541,3 +542,8 @@ internal val longArrayClass = PrimitiveKClassImpl(js("Array").unsafeCast<JsClass
 @BoxedLongApi
 @UsedFromCompilerGeneratedCode
 internal fun isLongArray(a: dynamic): Boolean = isJsArray(a) && a.`$type$` === "LongArray"
+
+@BoxedLongApi
+@UsedFromCompilerGeneratedCode
+internal fun longCopyOfRange(arr: dynamic, fromIndex: dynamic = VOID, toIndex: dynamic = VOID): LongArray =
+    withType("LongArray", arr.slice(fromIndex, toIndex)).unsafeCast<LongArray>()

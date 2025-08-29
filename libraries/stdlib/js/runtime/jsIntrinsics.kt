@@ -232,6 +232,9 @@ internal fun jsIsEs6(): Boolean
 @JsIntrinsic
 internal fun <T> jsYield(suspendFunction: () -> T): T
 
+@JsIntrinsic
+internal fun longCopyOfRange(arr: dynamic, fromIndex: dynamic = VOID, toIndex: dynamic = VOID): LongArray
+
 /**
  * Depending on the target ES edition, calls to this function are either replaced with a call
  * to [kotlin.js.internal.boxedLong.toStringImpl], or to [kotlin.js.internal.longAsBigInt.toStringImpl].

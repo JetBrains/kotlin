@@ -898,8 +898,10 @@ object ArrayOps : TemplateGroupBase() {
                     when (primitive) {
                         PrimitiveType.Char, PrimitiveType.Boolean ->
                             body { "return withType(\"${primitive}Array\", this.asDynamic().slice(fromIndex, toIndex))" }
-                        PrimitiveType.Long ->
+                        PrimitiveType.Long -> {
+                            annotation("@OptIn(JsIntrinsic::class)")
                             body { "return longCopyOfRange(this, fromIndex, toIndex)" }
+                        }
                         null -> {
                             inlineOnly()
                             deprecate(Deprecation("Provided for expect-actual matching", level = DeprecationLevel.HIDDEN))
@@ -1015,8 +1017,10 @@ object ArrayOps : TemplateGroupBase() {
                             deprecate(Deprecation("Provided for expect-actual matching", level = DeprecationLevel.HIDDEN))
                             body { "return this.copyOf()" }
                         }
-                        PrimitiveType.Long ->
+                        PrimitiveType.Long -> {
+                            annotation("@OptIn(JsIntrinsic::class)")
                             body { "return longCopyOfRange(this)" }
+                        }
                         PrimitiveType.Char, PrimitiveType.Boolean ->
                             body { "return withType(\"${primitive}Array\", this.asDynamic().slice())" }
                         else -> {

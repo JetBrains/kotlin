@@ -884,6 +884,7 @@ public actual inline fun IntArray.copyOf(): IntArray {
  * 
  * @sample samples.collections.Arrays.CopyOfOperations.copyOf
  */
+@OptIn(JsIntrinsic::class)
 public actual fun LongArray.copyOf(): LongArray {
     return longCopyOfRange(this)
 }
@@ -1145,6 +1146,7 @@ public actual fun IntArray.copyOfRange(fromIndex: Int, toIndex: Int): IntArray {
  * @throws IndexOutOfBoundsException if [fromIndex] is less than zero or [toIndex] is greater than the size of this array.
  * @throws IllegalArgumentException if [fromIndex] is greater than [toIndex].
  */
+@OptIn(JsIntrinsic::class)
 public actual fun LongArray.copyOfRange(fromIndex: Int, toIndex: Int): LongArray {
     AbstractList.checkRangeIndexes(fromIndex, toIndex, size)
     return longCopyOfRange(this, fromIndex, toIndex)

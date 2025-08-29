@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 import java.util.*
-import kotlin.collections.buildMap
 
 @OptIn(ObsoleteDescriptorBasedAPI::class, InternalSymbolFinderAPI::class)
 class JsIntrinsics(private val irBuiltIns: IrBuiltIns, private val configuration: CompilerConfiguration) {
@@ -175,8 +174,10 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns, private val configuration
     val isComparableSymbol = getInternalFunction("isComparable")
     val isCharSequenceSymbol = getInternalFunction("isCharSequence")
 
-    val longArrayClass = getLongHelperProperty("longArrayClass")!!
+    val longArrayClass = getLongHelperPropertyGetter("longArrayClass")!!
     val longCopyOfRange = getInternalFunction("longCopyOfRange")
+
+    val longCopyOfRangeForBoxedLong = getLongHelperFunction("longCopyOfRange", JsStandardClassIds.BOXED_LONG_PACKAGE)!!
 
     val isPrimitiveArray = mapOf(
         PrimitiveType.BOOLEAN to getInternalFunction("isBooleanArray"),
@@ -449,19 +450,31 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns, private val configuration
     val jsCreateMutableMapFrom = getInternalCollectionFunction("createMutableMapFrom")
 
     // Helpers:
-    private fun getLongHelperFunction(name: String): IrSimpleFunctionSymbol? =
-        getLongHelper(name, symbolFinder::findFunctions)
+    private fun getLongHelperFunction(name: String, forcedPackageName: FqName? = null): IrSimpleFunctionSymbol? =
+        getLongHelper(
+            name,
+            { name, packageName -> symbolFinder.findFunctions(name, packageName).singleOrNull() },
+            forcedPackageName
+        )
 
-    private fun getLongHelperProperty(name: String): IrPropertySymbol? =
-        getLongHelper(name, symbolFinder::findProperties)
+    private fun getLongHelperPropertyGetter(name: String, forcedPackageName: FqName? = null): IrSimpleFunctionSymbol? =
+        getLongHelper(
+            name,
+            { name, packageName -> symbolFinder.findTopLevelPropertyGetter(packageName, name.identifier) },
+            forcedPackageName
+        )
 
-    private inline fun <T : IrSymbol> getLongHelper(name: String, finder: (Name, FqName) -> Iterable<T>): T? {
-        val packageName = if (configuration.compileLongAsBigint) {
+    private inline fun <T : IrSymbol> getLongHelper(
+        name: String,
+        finder: (Name, FqName) -> T?,
+        forcedPackageName: FqName?
+    ): T? {
+        val packageName = forcedPackageName ?: if (configuration.compileLongAsBigint) {
             JsStandardClassIds.LONG_AS_BIGINT_PACKAGE
         } else {
             JsStandardClassIds.BOXED_LONG_PACKAGE
         }
-        return finder(Name.identifier(name), packageName).singleOrNull()
+        return finder(Name.identifier(name), packageName)
     }
 
     private fun getInternalFunction(name: String): IrSimpleFunctionSymbol =

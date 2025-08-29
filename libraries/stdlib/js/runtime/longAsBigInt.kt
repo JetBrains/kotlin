@@ -193,10 +193,10 @@ internal fun Long.lowBits(): Int = toInt()
 @UsedFromCompilerGeneratedCode
 internal fun Long.highBits(): Int = (this shr 32).toInt()
 
-// TODO(KT-70480): Remove this function when we drop the ES5 target
 @LongAsBigIntApi
+@UsedFromCompilerGeneratedCode
 internal val longArrayClass = PrimitiveKClassImpl(js("BigInt64Array").unsafeCast<JsClass<LongArray>>(), "LongArray", { it is LongArray })
 
-// TODO(KT-70480): Remove this function when we drop the ES5 target
 @LongAsBigIntApi
+@UsedFromCompilerGeneratedCode
 internal fun isLongArray(a: dynamic): Boolean = jsInstanceOf(a, js("BigInt64Array"))

@@ -178,10 +178,13 @@ class JsIntrinsicTransformers(backendContext: JsIrBackendContext) {
                 JsInvocation(JsNameRef(Namer.SLICE_FUNCTION, translateCallArguments(call, context).single()))
             }
 
-            if (backendContext.configuration.compileLongAsBigint) {
-                add(intrinsics.longCopyOfRange) { call, context ->
-                    val args = translateCallArguments(call, context)
+            add(intrinsics.longCopyOfRange) { call, context ->
+                val args = translateCallArguments(call, context)
+
+                if (backendContext.configuration.compileLongAsBigint) {
                     JsInvocation(JsNameRef(Namer.SLICE_FUNCTION, args.first()), args.drop(1))
+                } else {
+                    JsInvocation(context.getNameForStaticFunction(intrinsics.longCopyOfRangeForBoxedLong.owner).makeRef(), args)
                 }
             }
 
