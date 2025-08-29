@@ -36,9 +36,7 @@ abstract class AbstractAnnotationDeserializer(
     }
 
     open fun loadClassAnnotations(classProto: ProtoBuf.Class, nameResolver: NameResolver): List<FirAnnotation> {
-        if (!Flags.HAS_ANNOTATIONS.get(classProto.flags)) return emptyList()
-        val annotations = classProto.getExtension(protocol.classAnnotation).orEmpty()
-        return annotations.map { deserializeAnnotation(session, it, nameResolver) }
+        return classProto.loadAnnotations(session, protocol.classAnnotation, classProto.flags, nameResolver)
     }
 
     fun loadTypeAliasAnnotations(aliasProto: ProtoBuf.TypeAlias, nameResolver: NameResolver): List<FirAnnotation> {
@@ -194,3 +192,5 @@ abstract class AbstractAnnotationDeserializer(
         return annotations.map { deserializeAnnotation(session, it, nameResolver, useSiteTarget) }
     }
 }
+
+

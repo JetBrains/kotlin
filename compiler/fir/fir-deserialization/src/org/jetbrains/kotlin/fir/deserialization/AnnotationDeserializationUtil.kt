@@ -57,6 +57,8 @@ import org.jetbrains.kotlin.metadata.deserialization.NameResolver
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
+import org.jetbrains.kotlin.protobuf.GeneratedMessageLite
+import org.jetbrains.kotlin.protobuf.GeneratedMessageLite.ExtendableMessage
 import org.jetbrains.kotlin.serialization.deserialization.getClassId
 import org.jetbrains.kotlin.serialization.deserialization.getName
 import org.jetbrains.kotlin.types.ConstantValueKind
@@ -79,6 +81,29 @@ fun deserializeAnnotation(
             this.useSiteTarget = it
         }
     }
+}
+
+fun <T : ExtendableMessage<T>> T.loadAnnotations(
+    session: FirSession,
+    extension: GeneratedMessageLite.GeneratedExtension<T, List<ProtoBuf.Annotation>>?,
+    flags: Int,
+    nameResolver: NameResolver,
+    useSiteTarget: AnnotationUseSiteTarget? = null
+): List<FirAnnotation> {
+    if (extension == null || flags >= 0 && !Flags.HAS_ANNOTATIONS.get(flags)) return emptyList()
+    val annotations = getExtension(extension)
+    return annotations.map { deserializeAnnotation(session, it, nameResolver, useSiteTarget) }
+}
+
+fun <T : ExtendableMessage<T>> T.loadAnnotations(
+    session: FirSession,
+    extension: GeneratedMessageLite.GeneratedExtension<T, List<ProtoBuf.Annotation>>?,
+    nameResolver: NameResolver,
+    useSiteTarget: AnnotationUseSiteTarget? = null
+): List<FirAnnotation> {
+    if (extension == null) return emptyList()
+    val annotations = getExtension(extension)
+    return annotations.map { deserializeAnnotation(session, it, nameResolver, useSiteTarget) }
 }
 
 private fun createArgumentMapping(
