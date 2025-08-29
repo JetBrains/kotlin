@@ -8,12 +8,15 @@ package org.jetbrains.kotlin.test.runners
 import com.intellij.testFramework.TestDataFile
 import org.jetbrains.kotlin.test.Constructor
 import org.jetbrains.kotlin.test.ExecutionListenerBasedDisposableProvider
+import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.TestInfrastructureInternals
 import org.jetbrains.kotlin.test.backend.handlers.IrValidationErrorChecker
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.testRunner
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives
+import org.jetbrains.kotlin.test.directives.ConfigurationDirectives.DONT_TARGET_EXACT_BACKEND
+import org.jetbrains.kotlin.test.directives.ConfigurationDirectives.TARGET_BACKEND
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives.WORKS_WHEN_VALUE_CLASS
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
 import org.jetbrains.kotlin.test.frontend.classic.handlers.ClassicUnstableAndK2LanguageFeaturesSkipConfigurator
@@ -53,7 +56,11 @@ abstract class AbstractKotlinCompilerTest {
             useAdditionalService<TargetPlatformProvider>(::TargetPlatformProviderForCompilerTests)
             useSourcePreprocessor(*defaultPreprocessors.toTypedArray())
             useDirectives(*defaultDirectiveContainers.toTypedArray())
-            useMetaTestConfigurators(::SystemPropertyTestDataRootConfigurator, ::ClassicUnstableAndK2LanguageFeaturesSkipConfigurator)
+            useMetaTestConfigurators(
+                ::SystemPropertyTestDataRootConfigurator,
+                ::ClassicUnstableAndK2LanguageFeaturesSkipConfigurator,
+                ::TargetBackendTestSkipper,
+            )
             configureDebugFlags()
             startingArtifactFactory = { ResultingArtifact.Source() }
         }
@@ -149,5 +156,17 @@ class JvmInlineSourceTransformer(testServices: TestServices) : ReversibleSourceF
 
     override fun revert(file: TestFile, actualContent: String): String {
         return contentModifier?.revertForFile(actualContent) ?: actualContent
+    }
+}
+
+class TargetBackendTestSkipper(testServices: TestServices) : MetaTestConfigurator(testServices) {
+    override fun shouldSkipTest(): Boolean {
+        val targetBackendOfTest = testServices.defaultsProvider.targetBackend ?: return false
+        val directives = testServices.moduleStructure.allDirectives
+        return !InTextDirectivesUtils.isCompatibleTarget(
+            /* targetBackend = */ targetBackendOfTest,
+            /* backends = */ directives[TARGET_BACKEND],
+            /* doNotTarget = */ directives[DONT_TARGET_EXACT_BACKEND],
+        )
     }
 }

@@ -279,6 +279,19 @@ public final class InTextDirectivesUtils {
         return isCompatibleTargetExceptAny(targetBackend, backends);
     }
 
+    public static boolean isCompatibleTarget(
+            @NotNull TargetBackend targetBackend,
+            @NotNull List<TargetBackend> backends,
+            @NotNull List<TargetBackend> doNotTarget
+    ) {
+        if (targetBackend == TargetBackend.ANY) return true;
+
+        if (doNotTarget.contains(targetBackend))
+            return false;
+
+        return isCompatibleTargetExceptAny(targetBackend, backends.stream().map(TargetBackend::name).collect(Collectors.toList()));
+    }
+
     private static boolean isCompatibleTargetExceptAny(@NotNull TargetBackend targetBackend, @NotNull List<String> backends) {
         if (targetBackend == TargetBackend.ANY) return false;
         return backends.isEmpty() || backends.contains(targetBackend.name()) || isCompatibleTargetExceptAny(targetBackend.getCompatibleWith(), backends);
