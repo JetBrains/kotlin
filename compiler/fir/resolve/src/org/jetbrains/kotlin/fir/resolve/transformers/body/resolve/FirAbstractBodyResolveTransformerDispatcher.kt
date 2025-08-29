@@ -433,6 +433,15 @@ abstract class FirAbstractBodyResolveTransformerDispatcher(
         FirExpressionsResolveTransformer::transformArrayLiteral,
     )
 
+    override fun transformCollectionLiteralCall(
+        collectionLiteralCall: FirCollectionLiteralCall,
+        data: ResolutionMode,
+    ): FirStatement = expressionTransformation(
+        collectionLiteralCall,
+        data,
+        FirExpressionsResolveTransformer::transformCollectionLiteralCall,
+    )
+
     override fun transformSmartCastExpression(
         smartCastExpression: FirSmartCastExpression,
         data: ResolutionMode,

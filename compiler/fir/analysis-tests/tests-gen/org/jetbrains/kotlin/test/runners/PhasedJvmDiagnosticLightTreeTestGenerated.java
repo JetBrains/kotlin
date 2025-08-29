@@ -53983,6 +53983,12 @@ public class PhasedJvmDiagnosticLightTreeTestGenerated extends AbstractPhasedJvm
     @TestMetadata("compiler/fir/analysis-tests/testData/resolve/collectionLiterals")
     @TestDataPath("$PROJECT_ROOT")
     public class CollectionLiterals {
+      @Test
+      @TestMetadata("collectionLiteralAsReceiver.kt")
+      public void testCollectionLiteralAsReceiver() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/collectionLiteralAsReceiver.kt");
+      }
+
       @Nested
       @TestMetadata("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/collectionLiteralsDisabled")
       @TestDataPath("$PROJECT_ROOT")
@@ -54140,6 +54146,12 @@ public class PhasedJvmDiagnosticLightTreeTestGenerated extends AbstractPhasedJvm
       @TestDataPath("$PROJECT_ROOT")
       public class UserTypes {
         @Test
+        @TestMetadata("collectionLiteralsAndSmartcasts.kt")
+        public void testCollectionLiteralsAndSmartcasts() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/userTypes/collectionLiteralsAndSmartcasts.kt");
+        }
+
+        @Test
         @TestMetadata("collectionLiteralsWithNestedExpressionsInside.kt")
         public void testCollectionLiteralsWithNestedExpressionsInside() {
           runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/userTypes/collectionLiteralsWithNestedExpressionsInside.kt");
@@ -54170,6 +54182,18 @@ public class PhasedJvmDiagnosticLightTreeTestGenerated extends AbstractPhasedJvm
         }
 
         @Test
+        @TestMetadata("inReturnPositions.kt")
+        public void testInReturnPositions() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/userTypes/inReturnPositions.kt");
+        }
+
+        @Test
+        @TestMetadata("interfaceDelegationByCollectionLiteral.kt")
+        public void testInterfaceDelegationByCollectionLiteral() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/userTypes/interfaceDelegationByCollectionLiteral.kt");
+        }
+
+        @Test
         @TestMetadata("noExplicitReturnTypeRecursion.kt")
         public void testNoExplicitReturnTypeRecursion() {
           runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/userTypes/noExplicitReturnTypeRecursion.kt");
@@ -54197,6 +54221,12 @@ public class PhasedJvmDiagnosticLightTreeTestGenerated extends AbstractPhasedJvm
         @TestMetadata("nonGenericCollectionWithGenericElementTypeAssignments.kt")
         public void testNonGenericCollectionWithGenericElementTypeAssignments() {
           runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/userTypes/nonGenericCollectionWithGenericElementTypeAssignments.kt");
+        }
+
+        @Test
+        @TestMetadata("plusOperator.kt")
+        public void testPlusOperator() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/userTypes/plusOperator.kt");
         }
       }
     }

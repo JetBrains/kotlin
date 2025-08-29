@@ -69,6 +69,16 @@ fun testMatrixInt() {
     ])
     takeMatrix<Int>([<!ARGUMENT_TYPE_MISMATCH!>1<!>, <!ARGUMENT_TYPE_MISMATCH!>2<!>, <!ARGUMENT_TYPE_MISMATCH!>3<!>])
     takeMatrix<Int>([[<!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[1, 2, 3]<!>]])
+
+    var matrix: Matrix<Int> = [[1, 2, 3], [4, 5, 6], [7, 8, 9]]
+    matrix = []
+    matrix = [[]]
+    matrix = [[<!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[]<!>]]
+    matrix = [[<!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[1, 2, 3]<!>]]
+    matrix = [<!ARGUMENT_TYPE_MISMATCH!>1<!>, <!ARGUMENT_TYPE_MISMATCH!>2<!>, <!ARGUMENT_TYPE_MISMATCH!>3<!>]
+    matrix = [[1, null, 3]]
+    matrix = [[1, "2", 3]]
+    matrix = [[null!!]]
 }
 
 fun testMatrix() {
