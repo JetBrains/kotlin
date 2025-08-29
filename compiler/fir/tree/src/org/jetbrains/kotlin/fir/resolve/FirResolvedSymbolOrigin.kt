@@ -6,11 +6,33 @@
 package org.jetbrains.kotlin.fir.resolve
 
 enum class FirResolvedSymbolOrigin {
+    /**
+     * Resolved as one of the default imports on every Kotlin file.
+     */
     DefaultImport,
+
+    /**
+     * Resolved through an import of the form `import some.package.*`.
+     */
     StarImport,
+
+    /**
+     * Resolved through an import of the form `import some.package.Thing`.
+     */
     ExplicitImport,
+
+    /**
+     * Resolved in the same package as the current declaration.
+     */
     Package,
+
+    /**
+     * Resolved through a qualified name `some.package.Thing`.
+     */
     Qualified,
-    RootForIdeResolution,
+
+    /**
+     * Resolved through context-sensitive resolution.
+     */
     ContextSensitive
 }

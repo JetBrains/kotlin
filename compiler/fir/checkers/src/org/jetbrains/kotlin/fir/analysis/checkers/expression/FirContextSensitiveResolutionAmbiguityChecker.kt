@@ -118,6 +118,7 @@ object FirContextSensitiveResolutionAmbiguityCheckerForTypeOperators : FirTypeOp
 }
 
 private val FirResolvedSymbolOrigin?.shouldWarn: Boolean
-    get() = this != FirResolvedSymbolOrigin.ContextSensitive && this != FirResolvedSymbolOrigin.Qualified
+    get() = this != FirResolvedSymbolOrigin.ContextSensitive
 
-private val FirVariableSymbol<*>.isNoArgumentProperty: Boolean get() = !isExtension && !hasContextParameters
+private val FirVariableSymbol<*>.isNoArgumentProperty: Boolean
+    get() = !isExtension && !hasContextParameters

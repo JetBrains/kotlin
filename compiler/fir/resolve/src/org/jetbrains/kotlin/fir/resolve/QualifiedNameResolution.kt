@@ -48,7 +48,7 @@ fun BodyResolveComponents.resolveRootPartOfQualifier(
             qualifiedAccess = qualifiedAccess,
             packageFqName = FqName.ROOT,
             nonFatalDiagnostics = nonFatalDiagnosticsFromExpression,
-            resolvedSymbolOrigin = FirResolvedSymbolOrigin.RootForIdeResolution
+            resolvedSymbolOrigin = FirResolvedSymbolOrigin.Qualified
         )
     }
 
