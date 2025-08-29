@@ -34,23 +34,25 @@ import org.jetbrains.kotlin.fir.declarations.utils.nameOrSpecialName
 
 @KaImplementationDetail
 object LLFlightRecorder {
+    private val phaseEventType = EventType.getEventType(LLPhaseEvent::class.java)
+
     /**
      * Notify that the [target] declaration was successfully analyzed up to the given [phase] (possibly partially).
      *
      * @param target The declaration being analyzed.
      * @param phase The phase the declaration was analyzed to.
      */
-    internal fun phase(target: LLFirResolveTarget, phase: FirResolvePhase): ILLPhaseEvent? {
-        val event = LLPhaseEvent()
-        if (event.isEnabled) {
-            event.path = path(target.designation)
-            event.hash = System.identityHashCode(target.target)
-            event.phase = PHASE_COMPACT_NAMES[phase.ordinal]
-            event.begin()
-            return event
+    internal fun phase(target: LLFirResolveTarget, requestedPhase: FirResolvePhase): ILLPhaseEvent? {
+        if (!phaseEventType.isEnabled) {
+            return null
         }
 
-        return null
+        return LLPhaseEvent().apply {
+            path = path(target.designation)
+            hash = System.identityHashCode(target.target)
+            phase = PHASE_COMPACT_NAMES[requestedPhase.ordinal]
+            begin()
+        }
     }
 
     /**
@@ -59,18 +61,20 @@ object LLFlightRecorder {
      * @param file The file being analyzed.
      * @param phase The phase the file was analyzed to.
      */
-    internal fun phase(file: FirFile, phase: FirResolvePhase): ILLPhaseEvent? {
-        val event = LLPhaseEvent()
-        if (event.isEnabled) {
-            event.path = name(file)
-            event.hash = System.identityHashCode(file)
-            event.phase = PHASE_COMPACT_NAMES[phase.ordinal]
-            event.begin()
-            return event
+    internal fun phase(file: FirFile, requestedPhase: FirResolvePhase): ILLPhaseEvent? {
+        if (!phaseEventType.isEnabled) {
+            return null
         }
 
-        return null
+        return LLPhaseEvent().apply {
+            path = name(file)
+            hash = System.identityHashCode(file)
+            phase = PHASE_COMPACT_NAMES[requestedPhase.ordinal]
+            begin()
+        }
     }
+
+    private val partialBodyAnalysisEventType = EventType.getEventType(LLPartialBodyAnalysisEvent::class.java)
 
     /**
      * Notify that the [declaration]'s body is analyzed partially.
@@ -79,14 +83,19 @@ object LLFlightRecorder {
      * @param state The current partial analysis state of the [declaration].
      */
     internal fun partialBodyAnalyzed(declaration: FirElementWithResolveState, state: LLPartialBodyAnalysisState) {
-        val event = LLPartialBodyAnalysisEvent()
-        if (event.isEnabled) {
-            event.hash = System.identityHashCode(declaration)
-            event.count = state.analyzedPsiStatementCount
-            event.attempt = state.performedAnalysesCount
-            event.commit()
+        if (!partialBodyAnalysisEventType.isEnabled) {
+            return
+        }
+
+        LLPartialBodyAnalysisEvent().apply {
+            hash = System.identityHashCode(declaration)
+            count = state.analyzedPsiStatementCount
+            attempt = state.performedAnalysesCount
+            commit()
         }
     }
+
+    private val readyPhaseEventType = EventType.getEventType(LLReadyPhaseEvent::class.java)
 
     /**
      * Notify that the [declaration] was required to be analyzed up to the given [phase].
@@ -96,17 +105,23 @@ object LLFlightRecorder {
      * @param phase The phase the [declaration] is already analyzed to.
      * @param withCallableMembers Whether the analysis should have also included callable members.
      */
-    internal fun readyPhase(declaration: FirElementWithResolveState, phase: FirResolvePhase, withCallableMembers: Boolean) {
-        val event = LLReadyPhaseEvent()
-        if (event.isEnabled) {
-            val designation = LLFirResolveDesignationCollector.getDesignationToResolve(declaration)?.designation ?: return
-            event.path = path(designation)
-            event.hash = System.identityHashCode(designation.target)
-            event.phase = PHASE_COMPACT_NAMES[phase.ordinal]
-            event.withMembers = withCallableMembers
-            event.commit()
+    internal fun readyPhase(declaration: FirElementWithResolveState, requestedPhase: FirResolvePhase, withCallableMembers: Boolean) {
+        if (!readyPhaseEventType.isEnabled) {
+            return
+        }
+
+        val designation = LLFirResolveDesignationCollector.getDesignationToResolve(declaration)?.designation ?: return
+
+        LLReadyPhaseEvent().apply {
+            path = path(designation)
+            hash = System.identityHashCode(designation.target)
+            phase = PHASE_COMPACT_NAMES[requestedPhase.ordinal]
+            withMembers = withCallableMembers
+            commit()
         }
     }
+
+    private val phaseSuspensionEventType = EventType.getEventType(LLPhaseSuspensionEvent::class.java)
 
     /**
      * Notify that the current thread acknowledged the [declaration] is either finished analyzing up to [phase],
@@ -115,37 +130,42 @@ object LLFlightRecorder {
      * @param declaration The analyzed declaration.
      * @param phase The phase the [declaration] is being analyzed to.
      */
-    internal fun phaseSuspension(declaration: FirElementWithResolveState, phase: FirResolvePhase): ILLPhaseSuspensionEvent? {
-        val event = LLPhaseSuspensionEvent()
-        if (event.isEnabled) {
-            event.hash = System.identityHashCode(declaration)
-            event.phase = PHASE_COMPACT_NAMES[phase.ordinal]
-            event.begin()
-            return event
+    internal fun phaseSuspension(declaration: FirElementWithResolveState, requestedPhase: FirResolvePhase): ILLPhaseSuspensionEvent? {
+        if (!phaseSuspensionEventType.isEnabled) {
+            return null
         }
 
-        return null
+        return LLPhaseSuspensionEvent().apply {
+            hash = System.identityHashCode(declaration)
+            phase = PHASE_COMPACT_NAMES[requestedPhase.ordinal]
+            begin()
+        }
     }
+
+    private val stopWorldInvalidationEventType = EventType.getEventType(LLStopWorldInvalidation::class.java)
 
     /**
      * Notify that a stop-the-world session invalidation has been scheduled.
      */
     fun stopWorldSessionInvalidationScheduled() {
-        stopWorldSessionInvalidation(state = true)
+        stopWorldSessionInvalidation(newState = true)
     }
 
     /**
      * Notify that a stop-the-world session invalidation has been completed (either after being scheduled, or immediately).
      */
     fun stopWorldSessionInvalidationComplete() {
-        stopWorldSessionInvalidation(state = false)
+        stopWorldSessionInvalidation(newState = false)
     }
 
-    private fun stopWorldSessionInvalidation(state: Boolean) {
-        val event = LLStopWorldInvalidation()
-        if (event.isEnabled) {
-            event.state = state
-            event.commit()
+    private fun stopWorldSessionInvalidation(newState: Boolean) {
+        if (!stopWorldInvalidationEventType.isEnabled) {
+            return
+        }
+
+        LLStopWorldInvalidation().apply {
+            state = newState
+            commit()
         }
     }
 
