@@ -100,8 +100,7 @@ object FirExpressionEvaluator {
     }
 
     private fun FirExpression?.canBeEvaluated(session: FirSession): Boolean {
-        val intrinsicConstEvaluation = session.languageVersionSettings.supportsFeature(LanguageFeature.IntrinsicConstEvaluation)
-        if (this == null || intrinsicConstEvaluation || this is FirLazyExpression || !isResolved) return false
+        if (this == null  || this is FirLazyExpression || !isResolved) return false
         return canBeEvaluatedAtCompileTime(this, session, allowErrors = false, calledOnCheckerStage = false)
     }
 
