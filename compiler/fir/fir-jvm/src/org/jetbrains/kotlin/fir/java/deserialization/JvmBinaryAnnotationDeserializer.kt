@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.deserialization.AbstractAnnotationDeserializer
+import org.jetbrains.kotlin.fir.deserialization.AnnotationDeserializer
 import org.jetbrains.kotlin.fir.deserialization.AnnotationDeserializer.CallableKind
 import org.jetbrains.kotlin.fir.deserialization.deserializeAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
@@ -35,18 +35,17 @@ import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.protobuf.MessageLite
-import org.jetbrains.kotlin.serialization.deserialization.builtins.BuiltInSerializerProtocol
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.util.toJvmMetadataVersion
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 class JvmBinaryAnnotationDeserializer(
-    val session: FirSession,
+    private val session: FirSession,
     private val kotlinBinaryClass: KotlinJvmBinaryClass,
     kotlinClassFinder: KotlinClassFinder,
     private val byteContent: ByteArray?
-) : AbstractAnnotationDeserializer(session, BuiltInSerializerProtocol) {
+) : AnnotationDeserializer {
     private val annotationInfo by lazy(LazyThreadSafetyMode.PUBLICATION) {
         session.loadMemberAnnotations(kotlinBinaryClass, byteContent, kotlinClassFinder)
     }
@@ -60,7 +59,7 @@ class JvmBinaryAnnotationDeserializer(
         session.loadMemberAnnotations(defaultImplsClass, defaultImplsByteContent, kotlinClassFinder)
     }
 
-    override fun inheritAnnotationInfo(parent: AbstractAnnotationDeserializer) {
+    override fun inheritAnnotationInfo(parent: AnnotationDeserializer) {
         if (parent is JvmBinaryAnnotationDeserializer) {
             annotationInfo.memberAnnotations.putAll(parent.annotationInfo.memberAnnotations)
         }
@@ -87,6 +86,14 @@ class JvmBinaryAnnotationDeserializer(
             byteContent,
         )
         return annotations
+    }
+
+    override fun loadTypeAliasAnnotations(
+        aliasProto: ProtoBuf.TypeAlias,
+        nameResolver: NameResolver,
+    ): List<FirAnnotation> {
+        if (!Flags.HAS_ANNOTATIONS.get(aliasProto.flags)) return emptyList()
+        return aliasProto.annotationList.map { deserializeAnnotation(session, it, nameResolver) }
     }
 
     override fun loadTypeAnnotations(typeProto: ProtoBuf.Type, nameResolver: NameResolver): List<FirAnnotation> {
