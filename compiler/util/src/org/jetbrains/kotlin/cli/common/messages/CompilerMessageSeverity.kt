@@ -5,7 +5,9 @@
 package org.jetbrains.kotlin.cli.common.messages
 
 import java.util.*
+import kotlinx.serialization.Serializable
 
+@Serializable
 enum class CompilerMessageSeverity {
     EXCEPTION,
     ERROR,

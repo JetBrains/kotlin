@@ -23,7 +23,9 @@ import org.jetbrains.kotlin.incremental.IncrementalModuleInfo
 import java.io.File
 import java.io.Serializable
 import java.util.*
+import kotlinx.serialization.Serializable as KotlinxSerializable
 
+@KotlinxSerializable
 open class CompilationOptions(
     val compilerMode: CompilerMode,
     val targetPlatform: CompileService.TargetPlatform,
@@ -112,6 +114,7 @@ data class MultiModuleICSettings(
     }
 }
 
+@KotlinxSerializable
 enum class CompilerMode : Serializable {
     NON_INCREMENTAL_COMPILER,
     INCREMENTAL_COMPILER,
