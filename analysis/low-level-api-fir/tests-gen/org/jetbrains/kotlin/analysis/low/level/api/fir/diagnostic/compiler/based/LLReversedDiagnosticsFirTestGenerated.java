@@ -2867,6 +2867,12 @@ public class LLReversedDiagnosticsFirTestGenerated extends AbstractLLReversedDia
         }
 
         @Test
+        @TestMetadata("companion.kt")
+        public void testCompanion() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextSensitiveResolutionUsingExpectedType/ambiguity/companion.kt");
+        }
+
+        @Test
         @TestMetadata("local.kt")
         public void testLocal() {
           runTest("compiler/fir/analysis-tests/testData/resolve/contextSensitiveResolutionUsingExpectedType/ambiguity/local.kt");
