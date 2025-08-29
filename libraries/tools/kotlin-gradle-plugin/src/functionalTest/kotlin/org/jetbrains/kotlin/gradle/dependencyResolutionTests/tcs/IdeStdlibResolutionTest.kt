@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.gradle.internal.properties.nativeProperties
 import org.jetbrains.kotlin.gradle.plugin.KotlinJsCompilerType
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.ide.kotlinIdeMultiplatformImport
+import org.jetbrains.kotlin.gradle.targets.native.toolchain.NativeVersionValueSource.Companion.logger
 import org.jetbrains.kotlin.gradle.util.applyMultiplatformPlugin
 import org.jetbrains.kotlin.gradle.util.buildProject
 import org.jetbrains.kotlin.gradle.util.configureDefaults
@@ -29,12 +30,19 @@ import org.jetbrains.kotlin.gradle.util.provisionKotlinNativeDistribution
 import org.jetbrains.kotlin.gradle.utils.androidExtension
 import org.junit.Before
 import org.junit.Test
+import kotlin.io.path.Path
 
 class IdeStdlibResolutionTest {
     // workaround for tests that don't unpack Kotlin Native when using local repo: KT-77580
     @Before
     fun setUp() {
         provisionKotlinNativeDistribution()
+    }
+
+    private fun dumpKonanDirContents() {
+        val konanDir = Path(System.getProperty("user.home")).resolve(".konan").toFile()
+        logger.info("Contents of ${konanDir.absolutePath}:")
+        konanDir.walk().forEach { file -> logger.info("  $file") }
     }
 
     @Test
@@ -76,6 +84,7 @@ class IdeStdlibResolutionTest {
 
         project.evaluate()
 
+        dumpKonanDirContents()
         project.assertStdlibDependencies(kotlin.sourceSets.getByName("commonMain"), nativeStdlibDependency(kotlin))
         project.assertStdlibDependencies(kotlin.sourceSets.getByName("commonTest"), nativeStdlibDependency(kotlin))
         project.assertStdlibDependencies(kotlin.sourceSets.getByName("linuxMain"), nativeStdlibDependency(kotlin))
@@ -123,6 +132,7 @@ class IdeStdlibResolutionTest {
 
         project.evaluate()
 
+        dumpKonanDirContents()
         project.assertStdlibDependencies(kotlin.sourceSets.getByName("commonMain"), stdlibCommonMainDependency(kotlin))
         project.assertStdlibDependencies(kotlin.sourceSets.getByName("commonTest"), stdlibCommonMainDependency(kotlin))
         project.assertStdlibDependencies(kotlin.sourceSets.getByName("jvmMain"), jvmStdlibDependencies(kotlin))
@@ -183,6 +193,7 @@ class IdeStdlibResolutionTest {
 
         project.evaluate()
 
+        dumpKonanDirContents()
         project.assertStdlibDependencies(linuxIntermediateMain, nativeStdlibDependency(kotlin))
         project.assertStdlibDependencies(linuxIntermediateTest, nativeStdlibDependency(kotlin))
     }
@@ -215,6 +226,7 @@ class IdeStdlibResolutionTest {
 
         project.evaluate()
 
+        dumpKonanDirContents()
         project.assertStdlibDependencies(
             linuxSharedMain, listOf(nativeStdlibDependency(kotlin))
         )
