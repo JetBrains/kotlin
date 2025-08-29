@@ -43,8 +43,30 @@ enum class KotlinPlatform {
     NATIVE
 }
 
+/**
+ * The Kotlin function for a C function is emitted with instructions to the Kotlin/Native compiler
+ * on how to generate a call to this function.
+ *
+ * Such an instruction is an annotation that can be `@CCall(id)` or `@CCall.Direct(name)`.
+ * The [CCallMode] controls which to emit.
+ *
+ * If a requested flavor is not available, it is not emitted.
+ *
+ * See [KT-79751](https://youtrack.jetbrains.com/issue/KT-79751) for more details.
+ */
 enum class CCallMode {
+    /**
+     * Emit only `@CCall`.
+     */
     INDIRECT,
+
+    /**
+     * Emit both `@CCall` and `@CCall.Direct`.
+     */
     BOTH,
+
+    /**
+     * Emit only `@CCall.Direct`.
+     */
     DIRECT,
 }
