@@ -52,6 +52,10 @@ internal open class RunnerWithExecutor(
             }
             this.stdout = stdout
             this.stderr = stderr
+            if (testRun.runParameters.has<TestRunParameter.WithLLDB>()) {
+                // konan_lldb.py writes logs to the file specified by GLOG_log_dir environment variable.
+                this.environment["GLOG_log_dir"] = workingDirectory.absolutePath
+            }
             this.timeout = testRun.checks.executionTimeoutCheck.timeout
         }
         val response = executor.execute(request)
