@@ -48,6 +48,7 @@ import kotlin.metadata.*
 import kotlin.metadata.ClassKind
 import kotlin.metadata.Modality
 import kotlin.metadata.internal.toKmClass
+import kotlin.metadata.jvm.KotlinClassMetadata
 import kotlin.reflect.*
 import kotlin.reflect.jvm.internal.KDeclarationContainerImpl.MemberBelonginess.DECLARED
 import kotlin.reflect.jvm.internal.KDeclarationContainerImpl.MemberBelonginess.INHERITED
@@ -60,8 +61,14 @@ internal class KClassImpl<T : Any>(
 ) : KDeclarationContainerImpl(), KClass<T>, KTypeParameterOwnerImpl, TypeConstructorMarker {
     inner class Data : KDeclarationContainerImpl.Data() {
         val kmClass: KmClass? by lazy(PUBLICATION) {
-            (descriptor as? DeserializedClassDescriptor)?.let { descriptor ->
-                descriptor.classProto.toKmClass(descriptor.c.nameResolver)
+            if (loadMetadataDirectly) {
+                jClass.getAnnotation(Metadata::class.java)?.let { metadata ->
+                    (KotlinClassMetadata.readLenient(metadata) as? KotlinClassMetadata.Class)?.kmClass
+                }
+            } else {
+                (descriptor as? DeserializedClassDescriptor)?.let { descriptor ->
+                    descriptor.classProto.toKmClass(descriptor.c.nameResolver)
+                }
             }
         }
 

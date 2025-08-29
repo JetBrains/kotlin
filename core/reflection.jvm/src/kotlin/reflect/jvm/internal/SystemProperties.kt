@@ -19,3 +19,23 @@ package kotlin.reflect.jvm.internal
 internal val useK1Implementation = runCatching {
     System.getProperty("kotlin.reflect.jvm.useK1Implementation")
 }.getOrNull()?.toBoolean() == true
+
+/**
+ * True if the system property `kotlin.reflect.jvm.loadMetadataDirectly` is set to true.
+ *
+ * This system property can be used to instruct the kotlin-reflect implementation to avoid using K1 compiler representation unless
+ * absolutely required, until KT-75463 is resolved.
+ *
+ * Currently, kotlin-reflect still uses K1 compiler representation, "descriptors", to implement some API (e.g., `KClass.members`).
+ * For most of the remaining API, new implementation is used, which is based on kotlin-metadata-jvm and Java reflection elements.
+ * To prevent parsing Kotlin metadata twice in the worst case, the new implementation loads the parsed binary data from descriptors.
+ * This is more efficient in case you use both `KClass.members` and something else, however it's less efficient if you don't use API that
+ * is still implemented via descriptors.
+ *
+ * This system property instructs kotlin-reflect to load Kotlin metadata directly in the new implementation, avoiding descriptors.
+ * This is more efficient if you only use API that is already implemented without descriptors. However, this is less efficient if API
+ * implemented via descriptors (such as `KClass.members`) is used as well, because it will lead to second parsing of Kotlin metadata.
+ */
+internal val loadMetadataDirectly = runCatching {
+    System.getProperty("kotlin.reflect.jvm.loadMetadataDirectly")
+}.getOrNull()?.toBoolean() == true
