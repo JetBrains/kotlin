@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.test.Assertions
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
 import org.junit.Assert
+import org.junit.Assume
 import java.io.File
 
 object JUnit4Assertions : Assertions() {
@@ -54,5 +55,9 @@ object JUnit4Assertions : Assertions() {
 
     override fun fail(message: () -> String): Nothing {
         throw AssertionError(message.invoke())
+    }
+
+    override fun assumeFalse(value: Boolean, message: () -> String) {
+        Assume.assumeFalse(message.invoke(), value)
     }
 }

@@ -70,4 +70,9 @@ abstract class Assertions {
     }
 
     abstract fun fail(message: () -> String): Nothing
+
+    // The default implementation exists only for compatibility with IDEA
+    open fun assumeFalse(value: Boolean, message: () -> String) {
+        assertFalse(value, message)
+    }
 }
