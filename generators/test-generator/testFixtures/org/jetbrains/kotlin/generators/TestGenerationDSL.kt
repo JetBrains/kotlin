@@ -137,7 +137,6 @@ class TestGroup(
             excludeDirs: List<String> = listOf(),
             excludeDirsRecursively: List<String> = listOf(),
             filenameStartsLowerCase: Boolean? = null, // assert that file is properly named
-            skipIgnored: Boolean = false, // pretty meaningless flag, affects only few test names in one test runner
             deep: Int? = null, // specifies how deep recursive search will follow directory with testdata
             skipSpecificFile: (File) -> Boolean = { false },
             skipTestAllFilesCheck: Boolean = false,
@@ -155,14 +154,14 @@ class TestGroup(
 
                     SingleClassTestModel(
                         rootFile, compiledPattern, compiledExcludedPattern, filenameStartsLowerCase, testMethod, className,
-                        realTargetBackend, skipIgnored, testRunnerMethodName, additionalRunnerArguments, annotations,
+                        realTargetBackend, testRunnerMethodName, additionalRunnerArguments, annotations,
                         extractTagsFromDirectory(rootFile), methodModels
                     )
                 } else {
                     SimpleTestClassModel(
                         rootFile, recursive, excludeParentDirs,
                         compiledPattern, compiledExcludedPattern, filenameStartsLowerCase, testMethod, className,
-                        realTargetBackend, excludeDirs, excludeDirsRecursively, skipIgnored, testRunnerMethodName, additionalRunnerArguments, deep, annotations,
+                        realTargetBackend, excludeDirs, excludeDirsRecursively, testRunnerMethodName, additionalRunnerArguments, deep, annotations,
                         extractTagsFromDirectory(rootFile), methodModels, skipSpecificFile, skipTestAllFilesCheck,
                         generateEmptyTestClasses, nativeTestInNonNativeTestInfra = nativeTestInNonNativeTestInfra
                     )

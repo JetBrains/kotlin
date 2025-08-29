@@ -18,7 +18,6 @@ open class SimpleTestMethodModel(
     private val filenamePattern: Pattern,
     checkFilenameStartsLowerCase: Boolean?,
     internal val targetBackend: TargetBackend,
-    private val skipIgnored: Boolean,
     override val tags: List<String>,
     val nativeTestInNonNativeTestInfra: Boolean,
 ) : MethodModel {
@@ -67,8 +66,8 @@ open class SimpleTestMethodModel(
                 val relativePath = FileUtil.getRelativePath(rootDir, file.parentFile)
                 relativePath + "-" + extractedName.replaceFirstChar(Char::uppercaseChar)
             }
-            val ignored = skipIgnored && InTextDirectivesUtils.isIgnoredTarget(targetBackend, directives, false)
-            return (if (ignored) "ignore" else "test") + escapeForJavaIdentifier(unescapedName).replaceFirstChar(Char::uppercaseChar)
+            val nameSuffix = escapeForJavaIdentifier(unescapedName).replaceFirstChar(Char::uppercaseChar)
+            return "test$nameSuffix"
         }
 
     init {

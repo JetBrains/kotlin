@@ -19,7 +19,6 @@ class SingleClassTestModel(
     private val doTestMethodName: String,
     private val testClassName: String,
     val targetBackend: TargetBackend,
-    private val skipIgnored: Boolean,
     private val testRunnerMethodName: String,
     private val additionalRunnerArguments: List<String>,
     override val annotations: List<AnnotationModel>,
@@ -53,7 +52,7 @@ class SingleClassTestModel(
 
     private fun getTestMethodsFromFile(file: File): Collection<MethodModel> {
         return methodModelLocator(
-            rootFile, file, filenamePattern, checkFilenameStartsLowerCase, targetBackend, skipIgnored, tags = emptyList(),
+            rootFile, file, filenamePattern, checkFilenameStartsLowerCase, targetBackend, tags = emptyList(),
             nativeTestInNonNativeTestInfra = false
         )
     }
