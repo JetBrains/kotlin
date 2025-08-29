@@ -90,7 +90,8 @@ abstract class AbstractSwiftExportExecutionTest : AbstractSwiftExportTest() {
             "-F", testRunSettings.systemFrameworksPath,
             "-Xlinker", "-rpath", "-Xlinker", testRunSettings.systemFrameworksPath,
             "-framework", "Testing",
-            testRunSettings.systemToolchainPath?.let { "-plugin-path ${it}/usr/lib/swift/host/plugins/testing/" }
+            testRunSettings.systemToolchainPath?.let { "-plugin-path" },
+            testRunSettings.systemToolchainPath?.let { "${it}/usr/lib/swift/host/plugins/testing/" },
         )
 
         val success = SwiftCompilation(
