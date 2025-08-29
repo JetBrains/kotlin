@@ -16,6 +16,7 @@ import org.gradle.api.project.IsolatedProject
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.JavaExec
+import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.testing.Test
 import org.gradle.kotlin.dsl.dependencies
@@ -147,14 +148,14 @@ abstract class ProjectTestsExtension(val project: Project) {
     // -------------------- testData configuration --------------------
 
     internal abstract val testDataFiles: ListProperty<Directory>
-    internal val testDataMap: MutableMap<String, String> = mutableMapOf<String, String>()
+    internal val testDataMap: MutableMap<String, String> = mutableMapOf()
 
     fun testData(isolatedProject: IsolatedProject, relativePath: String) {
         val testDataDirectory = isolatedProject.projectDirectory.dir(relativePath)
         testDataFiles.add(testDataDirectory)
         testDataMap.put(
-            testDataDirectory.asFile.relativeTo(project.rootDir).path.replace("\\", "/"),
-            testDataDirectory.asFile.canonicalPath.replace("\\", "/")
+            testDataDirectory.asFile.relativeTo(project.rootDir).path.toSystemIndependentPath(),
+            testDataDirectory.asFile.canonicalPath.toSystemIndependentPath()
         )
     }
 
@@ -228,6 +229,7 @@ abstract class ProjectTestsExtension(val project: Project) {
         fqName: String,
         taskName: String = "generateTests",
         doNotSetFixturesSourceSetDependency: Boolean = false,
+        generateTestsInBuildDirectory: Boolean = false,
         configure: JavaExec.() -> Unit = {}
     ) {
         val fixturesSourceSet = if (doNotSetFixturesSourceSetDependency) {
@@ -235,9 +237,53 @@ abstract class ProjectTestsExtension(val project: Project) {
         } else {
             project.sourceSets.named("testFixtures").get()
         }
-        project.generator(taskName, fqName, fixturesSourceSet) {
-            this.args = listOf(project.layout.projectDirectory.dir("tests-gen").asFile.absolutePath)
+        val generationPath = when (generateTestsInBuildDirectory) {
+            false -> project.layout.projectDirectory.dir("tests-gen")
+            true -> project.layout.buildDirectory.dir("tests-gen").get().also {
+                project.sourceSets.named(SourceSet.TEST_SOURCE_SET_NAME) {
+                    generatedDir(project, it)
+                }
+            }
+        }
+        val generatorTask = project.generator(taskName, fqName, fixturesSourceSet) {
+            this.args = listOf(generationPath.asFile.absolutePath)
+            if (generateTestsInBuildDirectory) {
+                this.outputs.dir(generationPath).withPropertyName("generatedTests")
+            }
             configure()
         }
+        if (generateTestsInBuildDirectory) {
+            configureCollectTestDataTask(generatorTask)
+        }
     }
+
+    private fun configureCollectTestDataTask(generatorTask: TaskProvider<out Task>) {
+        val collectTestDataTask = project.tasks.register("collectTestData") {
+            val targetFile = project.layout.buildDirectory.file("testDataInfo/testDataFilesList.txt").get().asFile
+            outputs.file(targetFile)
+            outputs.upToDateWhen { false }
+
+            val testDataDirectories = testDataFiles.get()
+            if (testDataDirectories.isEmpty()) {
+                throw GradleException("No testData directories provided for $project")
+            }
+            val rootDir = project.rootDir
+            doLast {
+                targetFile.parentFile.mkdirs() // Ensure the directory exists
+                val text= testDataDirectories.flatMap { directory ->
+                    directory.asFileTree.matching { include("**/*.kt") }.files
+                }.sorted().joinToString("\n") {
+                    it.relativeTo(rootDir).path.toSystemIndependentPath()
+                }
+
+                targetFile.writeText(text)
+            }
+        }
+        generatorTask.configure { inputs.file(collectTestDataTask.map { it.outputs.files.singleFile }) }
+        project.tasks.named("compileTestKotlin") {
+            inputs.dir(generatorTask.map { it.outputs.files.singleFile })
+        }
+    }
+
+    private fun String.toSystemIndependentPath(): String = replace('\\', '/')
 }
