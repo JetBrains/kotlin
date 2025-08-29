@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.test.runners;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TargetBackend;
-import org.jetbrains.kotlin.test.utils.TransformersFunctions;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -14452,7 +14451,7 @@ public class PhasedJvmDiagnosticLightTreeTestGenerated extends AbstractPhasedJvm
         @Test
         @TestMetadata("noContextReceiversOnValueClasses.kt")
         public void testNoContextReceiversOnValueClasses() {
-          runTest("compiler/testData/diagnostics/tests/extensions/contextReceivers/noContextReceiversOnValueClasses.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+          runTest("compiler/testData/diagnostics/tests/extensions/contextReceivers/noContextReceiversOnValueClasses.kt");
         }
 
         @Test
@@ -44913,7 +44912,7 @@ public class PhasedJvmDiagnosticLightTreeTestGenerated extends AbstractPhasedJvm
       @Test
       @TestMetadata("annotations.kt")
       public void testAnnotations() {
-        runTest("compiler/testData/diagnostics/tests/valueClasses/annotations.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        runTest("compiler/testData/diagnostics/tests/valueClasses/annotations.kt");
       }
 
       @Test
@@ -44931,7 +44930,7 @@ public class PhasedJvmDiagnosticLightTreeTestGenerated extends AbstractPhasedJvm
       @Test
       @TestMetadata("defaultParameters.kt")
       public void testDefaultParameters() {
-        runTest("compiler/testData/diagnostics/tests/valueClasses/defaultParameters.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        runTest("compiler/testData/diagnostics/tests/valueClasses/defaultParameters.kt");
       }
 
       @Test

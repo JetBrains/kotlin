@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.test.runners.codegen;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TargetBackend;
-import org.jetbrains.kotlin.test.utils.TransformersFunctions;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -1562,25 +1561,25 @@ public class FirLightTreeBytecodeListingTestGenerated extends AbstractFirLightTr
     @Test
     @TestMetadata("substitutedTypeParameterArray.kt")
     public void testSubstitutedTypeParameterArray() {
-      runTest("compiler/testData/codegen/bytecodeListing/inlineClasses/substitutedTypeParameterArray.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+      runTest("compiler/testData/codegen/bytecodeListing/inlineClasses/substitutedTypeParameterArray.kt");
     }
 
     @Test
     @TestMetadata("substitutedTypeParameterNullableWrapper.kt")
     public void testSubstitutedTypeParameterNullableWrapper() {
-      runTest("compiler/testData/codegen/bytecodeListing/inlineClasses/substitutedTypeParameterNullableWrapper.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+      runTest("compiler/testData/codegen/bytecodeListing/inlineClasses/substitutedTypeParameterNullableWrapper.kt");
     }
 
     @Test
     @TestMetadata("substitutedTypeParameterUpperBound.kt")
     public void testSubstitutedTypeParameterUpperBound() {
-      runTest("compiler/testData/codegen/bytecodeListing/inlineClasses/substitutedTypeParameterUpperBound.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+      runTest("compiler/testData/codegen/bytecodeListing/inlineClasses/substitutedTypeParameterUpperBound.kt");
     }
 
     @Test
     @TestMetadata("substitutedTypeParameterWrapper.kt")
     public void testSubstitutedTypeParameterWrapper() {
-      runTest("compiler/testData/codegen/bytecodeListing/inlineClasses/substitutedTypeParameterWrapper.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+      runTest("compiler/testData/codegen/bytecodeListing/inlineClasses/substitutedTypeParameterWrapper.kt");
     }
 
     @Nested
