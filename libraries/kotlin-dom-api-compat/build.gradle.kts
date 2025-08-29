@@ -6,14 +6,14 @@ import plugins.configureKotlinPomAttributes
 
 plugins {
     `maven-publish`
-    kotlin("js")
+    kotlin("multiplatform")
 }
 
 val jsStdlibSources = "${projectDir}/../stdlib/js/src"
 
-val kotlinStdlibJs by configurations.creating {
-    isCanBeResolved = true
-    isCanBeConsumed = false
+val kotlinStdlibJs = configurations.dependencyScope("kotlinStdlibJs")
+val kotlinStdlibJsResolvable = configurations.resolvable("kotlinStdlibJsResolvable") {
+    extendsFrom(kotlinStdlibJs.get())
     attributes {
         attribute(Category.CATEGORY_ATTRIBUTE, objects.named(Category.LIBRARY))
         attribute(Usage.USAGE_ATTRIBUTE, objects.named(KotlinUsages.KOTLIN_API))
@@ -31,8 +31,8 @@ dependencies {
 
 // Workaround for #KT-65266
 val prepareFriendStdlibJs = tasks.register<Zip>("prepareFriendStdlibJs") {
-    dependsOn(kotlinStdlibJs)
-    from { zipTree(kotlinStdlibJs.singleFile).matching { exclude("META-INF/MANIFEST.MF") } }
+    dependsOn(kotlinStdlibJsResolvable)
+    from { zipTree(kotlinStdlibJsResolvable.get().singleFile).matching { exclude("META-INF/MANIFEST.MF") } }
     destinationDirectory = layout.buildDirectory.map { it.dir("libs") }
     archiveFileName = "friend-kotlin-stdlib-js.klib"
 }
@@ -42,8 +42,21 @@ kotlin {
     explicitApi()
     js()
 
+    compilerOptions {
+        allWarningsAsErrors.set(true)
+        optIn.addAll(
+            "kotlin.ExperimentalMultiplatform",
+            "kotlin.contracts.ExperimentalContracts",
+        )
+        freeCompilerArgs.add("-Xallow-kotlin-package")
+        val renderDiagnosticNames by extra(project.kotlinBuildProperties.renderDiagnosticNames)
+        if (renderDiagnosticNames) {
+            freeCompilerArgs.add("-Xrender-internal-diagnostic-names")
+        }
+    }
+
     sourceSets {
-        val main by getting {
+        val jsMain by getting {
             if (!kotlinBuildProperties.isInIdeaSync) {
                 kotlin.srcDir("$jsStdlibSources/org.w3c")
                 kotlin.srcDir("$jsStdlibSources/kotlinx")
@@ -51,27 +64,16 @@ kotlin {
                 kotlin.srcDir("$jsStdlibSources/kotlin/dom")
             }
             dependencies {
-                api(project(":kotlin-stdlib"))
+                api(kotlinStdlib())
             }
         }
     }
 }
 
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile>().configureEach {
-    compilerOptions.freeCompilerArgs
-        .addAll(
-            "-Xallow-kotlin-package",
-            "-opt-in=kotlin.ExperimentalMultiplatform",
-            "-opt-in=kotlin.contracts.ExperimentalContracts",
-        )
-    val renderDiagnosticNames by extra(project.kotlinBuildProperties.renderDiagnosticNames)
-    if (renderDiagnosticNames) {
-        compilerOptions.freeCompilerArgs.add("-Xrender-internal-diagnostic-names")
-    }
     dependsOn(prepareFriendStdlibJs)
     libraries.setFrom(prepareFriendStdlibJs)
     friendPaths.setFrom(libraries)
-    compilerOptions.allWarningsAsErrors.set(true)
 }
 
 val emptyJavadocJar by tasks.registering(Jar::class) {
@@ -80,17 +82,26 @@ val emptyJavadocJar by tasks.registering(Jar::class) {
 
 publishing {
     publications {
-        val mavenPublication = register<MavenPublication>("maven") {
-            from(components["kotlin"])
-            configureKotlinPomAttributes(project, "Kotlin DOM API compatibility library", packaging = "klib")
-        }
-        withType<MavenPublication> {
+        withType<MavenPublication>().configureEach {
             artifact(emptyJavadocJar)
+            val packaging = if (name == "kotlinMultiplatform") "pom" else "klib"
+            configureKotlinPomAttributes(
+                project,
+                explicitDescription = "Kotlin DOM API compatibility library",
+                packaging = packaging,
+            )
         }
+
         configureSbom(
-            target = "Maven",
+            target = "Main",
             gradleConfigurations = setOf(),
-            publication = mavenPublication,
+            publication = named<MavenPublication>("kotlinMultiplatform"),
+        )
+
+        configureSbom(
+            target = "Js",
+            gradleConfigurations = setOf("jsRuntimeClasspath"),
+            publication = named<MavenPublication>("js"),
         )
     }
 }

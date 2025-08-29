@@ -11,10 +11,8 @@ import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertEqualsToFile
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.isTeamCityBuild
 import org.junit.jupiter.api.DynamicTest
 import org.junit.jupiter.api.TestFactory
-import java.nio.file.Files
 import java.util.stream.Stream
 import kotlin.io.path.absolute
-import kotlin.io.path.name
 import kotlin.streams.asStream
 import kotlin.test.assertTrue
 import kotlin.test.fail
