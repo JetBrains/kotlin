@@ -14,11 +14,13 @@ import org.jetbrains.kotlin.serialization.deserialization.builtins.BuiltInSerial
 
 class FirBuiltinAnnotationDeserializer(
     private val session: FirSession
-) : AbstractAnnotationDeserializer(session, BuiltInSerializerProtocol) {
-
+) : AnnotationDeserializerWithProtocol(session, BuiltInSerializerProtocol) {
     override fun loadTypeAnnotations(typeProto: ProtoBuf.Type, nameResolver: NameResolver): List<FirAnnotation> {
         if (!Flags.HAS_ANNOTATIONS.get(typeProto.flags)) return emptyList()
         val annotations = typeProto.getExtension(protocol.typeAnnotation).orEmpty()
         return annotations.map { deserializeAnnotation(session, it, nameResolver) }
     }
+
+    override fun loadTypeParameterAnnotations(typeParameterProto: ProtoBuf.TypeParameter, nameResolver: NameResolver): List<FirAnnotation> =
+        emptyList<FirAnnotation>()
 }

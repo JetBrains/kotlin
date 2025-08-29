@@ -20,12 +20,11 @@ import org.jetbrains.kotlin.protobuf.MessageLite
 import org.jetbrains.kotlin.serialization.SerializerExtensionProtocol
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 
-abstract class AbstractAnnotationDeserializer(
+abstract class AnnotationDeserializerWithProtocol(
     private val session: FirSession,
     protected val protocol: SerializerExtensionProtocol
 ) : AnnotationDeserializer {
-    override fun inheritAnnotationInfo(parent: AnnotationDeserializer) {
-    }
+    override fun inheritAnnotationInfo(parent: AnnotationDeserializer): Unit = Unit
 
     override fun loadClassAnnotations(classProto: ProtoBuf.Class, nameResolver: NameResolver): List<FirAnnotation> {
         if (!Flags.HAS_ANNOTATIONS.get(classProto.flags)) return emptyList()
@@ -170,6 +169,13 @@ abstract class AbstractAnnotationDeserializer(
         return null
     }
 
-    override fun loadTypeParameterAnnotations(typeParameterProto: ProtoBuf.TypeParameter, nameResolver: NameResolver): List<FirAnnotation> =
-        emptyList<FirAnnotation>()
+    override fun loadTypeAnnotations(typeProto: ProtoBuf.Type, nameResolver: NameResolver): List<FirAnnotation> {
+        val annotations = typeProto.getExtension(protocol.typeAnnotation).orEmpty()
+        return annotations.map { deserializeAnnotation(session, it, nameResolver) }
+    }
+
+    override fun loadTypeParameterAnnotations(typeParameterProto: ProtoBuf.TypeParameter, nameResolver: NameResolver): List<FirAnnotation> {
+        val annotations = typeParameterProto.getExtension(protocol.typeParameterAnnotation).orEmpty()
+        return annotations.map { deserializeAnnotation(session, it, nameResolver) }
+    }
 }

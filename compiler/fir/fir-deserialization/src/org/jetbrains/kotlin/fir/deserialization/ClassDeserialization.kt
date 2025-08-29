@@ -51,7 +51,7 @@ fun deserializeClassToSymbol(
     nameResolver: NameResolver,
     session: FirSession,
     moduleData: FirModuleData,
-    defaultAnnotationDeserializer: AbstractAnnotationDeserializer?,
+    defaultAnnotationDeserializer: AnnotationDeserializer?,
     flexibleTypeFactory: FirTypeDeserializer.FlexibleTypeFactory,
     scopeProvider: FirScopeProvider,
     serializerExtensionProtocol: SerializerExtensionProtocol,
