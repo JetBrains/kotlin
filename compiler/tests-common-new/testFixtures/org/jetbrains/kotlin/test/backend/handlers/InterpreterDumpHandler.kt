@@ -166,12 +166,7 @@ class FirInterpreterDumpHandler(testServices: TestServices) : FirAnalysisHandler
         val results = buildMap {
             info.partsForDependsOnModules.forEach {
                 it.firFiles.forEach { (testFile, firFile) ->
-                    val intrinsicConstEvaluation = it.session.languageVersionSettings.supportsFeature(LanguageFeature.IntrinsicConstEvaluation)
-                    if (intrinsicConstEvaluation) {
-                        put(testFile, testFile.getExpectedResult())
-                    } else {
-                        putAll(processFile(testFile, firFile, it.session))
-                    }
+                    putAll(processFile(testFile, firFile, it.session))
                 }
             }
         }

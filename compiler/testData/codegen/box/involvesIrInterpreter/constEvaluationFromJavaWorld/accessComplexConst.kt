@@ -12,7 +12,8 @@ public class Bar {
 // FILE: Main.kt
 package one.two
 
-const val FOO = "123".<!EVALUATED("123")!>trimIndent()<!>
+// TODO, KT-22505: Reenable .trimIndent once implemented.
+const val FOO = <!EVALUATED("123")!>"123"<!>
 
 const val BAZ = <!EVALUATED("123 JavaString KotlinString")!>Bar.BAR + " KotlinString"<!>
 

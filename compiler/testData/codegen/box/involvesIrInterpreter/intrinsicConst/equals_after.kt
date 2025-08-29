@@ -49,44 +49,44 @@ const val doubleFourVal = <!EVALUATED("4.0")!>4.0<!>
 const val someStr = <!EVALUATED("123")!>"123"<!>
 const val otherStr = <!EVALUATED("other")!>"other"<!>
 
-const val equalsBoolean1 = trueVal.<!EVALUATED("true")!>equals(trueVal)<!>
+const val equalsBoolean1 = trueVal.<!EVALUATED{IR}("true")!>equals(trueVal)<!>
 const val equalsBoolean2 = <!EVALUATED("false")!>trueVal == falseVal<!>
-const val equalsBoolean3 = falseVal.<!EVALUATED("false")!>equals(1)<!>
+const val equalsBoolean3 = falseVal.<!EVALUATED{IR}("false")!>equals(1)<!>
 
-const val equalsChar1 = charOneVal.<!EVALUATED("false")!>equals(charTwoVal)<!>
-const val equalsChar2 = charTwoVal.<!EVALUATED("true")!>equals(charTwoVal)<!>
+const val equalsChar1 = charOneVal.<!EVALUATED{IR}("false")!>equals(charTwoVal)<!>
+const val equalsChar2 = charTwoVal.<!EVALUATED{IR}("true")!>equals(charTwoVal)<!>
 const val equalsChar3 = <!EVALUATED("false")!>charThreeVal == charTwoVal<!>
-const val equalsChar4 = charFourVal.<!EVALUATED("false")!>equals(1)<!>
+const val equalsChar4 = charFourVal.<!EVALUATED{IR}("false")!>equals(1)<!>
 
-const val equalsByte1 = byteOneVal.<!EVALUATED("false")!>equals(byteTwoVal)<!>
-const val equalsByte2 = byteTwoVal.<!EVALUATED("true")!>equals(byteTwoVal)<!>
+const val equalsByte1 = byteOneVal.<!EVALUATED{IR}("false")!>equals(byteTwoVal)<!>
+const val equalsByte2 = byteTwoVal.<!EVALUATED{IR}("true")!>equals(byteTwoVal)<!>
 const val equalsByte3 = <!EVALUATED("false")!>byteThreeVal == byteTwoVal<!>
-const val equalsByte4 = byteFourVal.<!EVALUATED("false")!>equals(1)<!>
+const val equalsByte4 = byteFourVal.<!EVALUATED{IR}("false")!>equals(1)<!>
 
-const val equalsShort1 = shortOneVal.<!EVALUATED("false")!>equals(shortTwoVal)<!>
-const val equalsShort2 = shortTwoVal.<!EVALUATED("true")!>equals(shortTwoVal)<!>
+const val equalsShort1 = shortOneVal.<!EVALUATED{IR}("false")!>equals(shortTwoVal)<!>
+const val equalsShort2 = shortTwoVal.<!EVALUATED{IR}("true")!>equals(shortTwoVal)<!>
 const val equalsShort3 = <!EVALUATED("false")!>shortThreeVal == shortTwoVal<!>
-const val equalsShort4 = shortFourVal.<!EVALUATED("false")!>equals(1)<!>
+const val equalsShort4 = shortFourVal.<!EVALUATED{IR}("false")!>equals(1)<!>
 
-const val equalsInt1 = intOneVal.<!EVALUATED("false")!>equals(intTwoVal)<!>
-const val equalsInt2 = intTwoVal.<!EVALUATED("true")!>equals(intTwoVal)<!>
+const val equalsInt1 = intOneVal.<!EVALUATED{IR}("false")!>equals(intTwoVal)<!>
+const val equalsInt2 = intTwoVal.<!EVALUATED{IR}("true")!>equals(intTwoVal)<!>
 const val equalsInt3 = <!EVALUATED("false")!>intThreeVal == intTwoVal<!>
-const val equalsInt4 = intFourVal.<!EVALUATED("false")!>equals(1)<!>
+const val equalsInt4 = intFourVal.<!EVALUATED{IR}("false")!>equals(1)<!>
 
-const val equalsLong1 = longOneVal.<!EVALUATED("false")!>equals(longTwoVal)<!>
-const val equalsLong2 = longTwoVal.<!EVALUATED("true")!>equals(longTwoVal)<!>
+const val equalsLong1 = longOneVal.<!EVALUATED{IR}("false")!>equals(longTwoVal)<!>
+const val equalsLong2 = longTwoVal.<!EVALUATED{IR}("true")!>equals(longTwoVal)<!>
 const val equalsLong3 = <!EVALUATED("false")!>longThreeVal == longTwoVal<!>
-const val equalsLong4 = longFourVal.<!EVALUATED("false")!>equals(1)<!>
+const val equalsLong4 = longFourVal.<!EVALUATED{IR}("false")!>equals(1)<!>
 
-const val equalsFloat1 = floatOneVal.<!EVALUATED("false")!>equals(floatTwoVal)<!>
-const val equalsFloat2 = floatTwoVal.<!EVALUATED("true")!>equals(floatTwoVal)<!>
+const val equalsFloat1 = floatOneVal.<!EVALUATED{IR}("false")!>equals(floatTwoVal)<!>
+const val equalsFloat2 = floatTwoVal.<!EVALUATED{IR}("true")!>equals(floatTwoVal)<!>
 const val equalsFloat3 = <!EVALUATED("false")!>floatThreeVal == floatTwoVal<!>
-const val equalsFloat4 = floatFourVal.<!EVALUATED("false")!>equals(1)<!>
+const val equalsFloat4 = floatFourVal.<!EVALUATED{IR}("false")!>equals(1)<!>
 
-const val equalsDouble1 = doubleOneVal.<!EVALUATED("false")!>equals(doubleTwoVal)<!>
-const val equalsDouble2 = doubleTwoVal.<!EVALUATED("true")!>equals(doubleTwoVal)<!>
+const val equalsDouble1 = doubleOneVal.<!EVALUATED{IR}("false")!>equals(doubleTwoVal)<!>
+const val equalsDouble2 = doubleTwoVal.<!EVALUATED{IR}("true")!>equals(doubleTwoVal)<!>
 const val equalsDouble3 = <!EVALUATED("false")!>doubleThreeVal == doubleTwoVal<!>
-const val equalsDouble4 = doubleFourVal.<!EVALUATED("false")!>equals(1)<!>
+const val equalsDouble4 = doubleFourVal.<!EVALUATED{IR}("false")!>equals(1)<!>
 
 const val equalsString1 = someStr.<!EVALUATED("false")!>equals(otherStr)<!>
 const val equalsString2 = someStr.<!EVALUATED("true")!>equals("123")<!>

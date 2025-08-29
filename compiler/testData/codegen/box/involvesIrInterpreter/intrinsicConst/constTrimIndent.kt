@@ -3,13 +3,13 @@
 // WITH_STDLIB
 fun <T> T.id() = this
 
-const val trimIndent = "123".<!EVALUATED("123")!>trimIndent()<!>
+const val trimIndent = "123".<!EVALUATED{IR}("123")!>trimIndent()<!>
 const val complexTrimIndent =
     """
             ABC
             123
             456
-        """.<!EVALUATED("ABC\n123\n456")!>trimIndent()<!>
+        """.<!EVALUATED{IR}("ABC\n123\n456")!>trimIndent()<!>
 
 // STOP_EVALUATION_CHECKS
 fun box(): String {
