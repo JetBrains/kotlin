@@ -42,7 +42,7 @@ class FirTypeDeserializer(
     private val moduleData: FirModuleData,
     private val nameResolver: NameResolver,
     private val typeTable: TypeTable,
-    private val annotationDeserializer: AbstractAnnotationDeserializer,
+    private val annotationDeserializer: AnnotationDeserializer,
     private val flexibleTypeFactory: FlexibleTypeFactory,
     typeParameterProtos: List<ProtoBuf.TypeParameter>,
     private val parent: FirTypeDeserializer?,
@@ -103,7 +103,7 @@ class FirTypeDeserializer(
         containingDeclarationSymbol: FirBasedSymbol<*>,
         nameResolver: NameResolver,
         typeTable: TypeTable,
-        annotationDeserializer: AbstractAnnotationDeserializer,
+        annotationDeserializer: AnnotationDeserializer,
     ): FirTypeDeserializer = FirTypeDeserializer(
         moduleData,
         nameResolver,

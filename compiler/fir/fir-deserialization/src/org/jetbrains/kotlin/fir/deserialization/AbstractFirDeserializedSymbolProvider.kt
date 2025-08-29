@@ -30,7 +30,6 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptors.Deserializ
 import org.jetbrains.kotlin.serialization.deserialization.getName
 import org.jetbrains.kotlin.utils.mapToSetOrEmpty
 import java.nio.file.Path
-import kotlin.io.path.exists
 
 class PackagePartsCacheData(
     val proto: ProtoBuf.Package,
@@ -201,7 +200,7 @@ abstract class AbstractFirDeserializedSymbolProvider(
         data class Metadata(
             val nameResolver: NameResolver,
             val classProto: ProtoBuf.Class,
-            val annotationDeserializer: AbstractAnnotationDeserializer?,
+            val annotationDeserializer: AnnotationDeserializer?,
             val moduleData: FirModuleData?,
             val sourceElement: DeserializedContainerSource?,
             val flexibleTypeFactory: FirTypeDeserializer.FlexibleTypeFactory,
