@@ -10,7 +10,7 @@ import com.intellij.util.containers.CollectionFactory
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinFileStubImpl
 
 /**
- * Test application service to store stubs of libraries shared between tests.
+ * Test application service to store libraries' information shared between tests.
  *
  * Otherwise, each test would start indexing of stdlib from scratch and under the lock, which makes tests extremely slow.
  *
@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.psi.stubs.impl.KotlinFileStubImpl
  *
  * **Note**: shared stubs might store psi, but **MUST NOT** reuse it for different files
  */
-internal class KotlinStandaloneStubsCache {
+internal class KotlinStandaloneIndexCache {
     private val stubs = CollectionFactory.createConcurrentWeakKeySoftValueMap<VirtualFile, KotlinFileStubImpl>()
 
     fun getOrBuildStub(
