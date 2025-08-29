@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
+import org.jetbrains.kotlin.fir.types.toRegularClassSymbol
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -113,9 +114,10 @@ abstract class FirMustUseReturnValueStatusComponent : FirSessionComponent {
             containingProperty: FirPropertySymbol?,
             overriddenStatuses: List<FirResolvedDeclarationStatus>,
         ): ReturnValueStatus {
+            val analysisMode = session.languageVersionSettings.getFlag(AnalysisFlags.returnValueCheckerMode)
             if (isLocal) {
-                // FIXME (KT-78112): pass through outer declaration through BodyResolveTransformer when we compute status for local functions
-                return if (declaration is FirFunctionSymbol) ReturnValueStatus.MustUse else ReturnValueStatus.Unspecified
+                // To compute status using annotations, getFirCallableContainerFile/getContainingDeclaration should work correctly for local declarations (KT-80564)
+                return if (declaration is FirFunctionSymbol && analysisMode == ReturnValueCheckerMode.FULL) ReturnValueStatus.MustUse else ReturnValueStatus.Unspecified
             }
             // Implementation note: just with intersection overrides, in case we have more than one immediate parent, we take first from the list
             // See inheritanceChainIgnorability.kt test.
@@ -127,7 +129,7 @@ abstract class FirMustUseReturnValueStatusComponent : FirSessionComponent {
             // In the case of inheriting from Ignorable or Unspecified, global FULL setting has lesser priority than annotations/parent
             // but we want to check it here first to avoid looking through the containers
             val overridesIgnorableOrUnspecified = overriddenFlag == ReturnValueStatus.ExplicitlyIgnorable || overriddenFlag == ReturnValueStatus.Unspecified
-            if (session.languageVersionSettings.getFlag(AnalysisFlags.returnValueCheckerMode) == ReturnValueCheckerMode.FULL && !overridesIgnorableOrUnspecified)
+            if (analysisMode == ReturnValueCheckerMode.FULL && !overridesIgnorableOrUnspecified)
                 return ReturnValueStatus.MustUse
 
             if (findMustUseAmongContainers(
