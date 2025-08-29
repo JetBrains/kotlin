@@ -18,11 +18,7 @@ import com.intellij.testFramework.LightVirtualFile
 import org.jetbrains.kotlin.analysis.api.standalone.base.declarations.KotlinStandaloneIndexCache.SharedIndexableFile
 import org.jetbrains.kotlin.analysis.decompiler.konan.KlibDecompiledFile
 import org.jetbrains.kotlin.analysis.decompiler.konan.KlibMetadataDecompiler
-import org.jetbrains.kotlin.analysis.decompiler.psi.BuiltinsVirtualFileProvider
-import org.jetbrains.kotlin.analysis.decompiler.psi.KotlinBuiltInFileType
-import org.jetbrains.kotlin.analysis.decompiler.psi.KotlinClassFileDecompiler
-import org.jetbrains.kotlin.analysis.decompiler.psi.KotlinDecompiledFileViewProvider
-import org.jetbrains.kotlin.analysis.decompiler.psi.KotlinMetadataDecompiler
+import org.jetbrains.kotlin.analysis.decompiler.psi.*
 import org.jetbrains.kotlin.analysis.decompiler.psi.file.KtClsFile
 import org.jetbrains.kotlin.analysis.decompiler.psi.file.KtDecompiledFile
 import org.jetbrains.kotlin.analysis.decompiler.psi.file.deepCopy
@@ -31,7 +27,7 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinFileStubImpl
 
-internal class KotlinStandaloneIndexBuilder(
+internal class KotlinStandaloneIndexBuilder private constructor(
     project: Project,
     private val shouldBuildStubsForDecompiledFiles: Boolean,
 ) {
@@ -226,6 +222,18 @@ internal class KotlinStandaloneIndexBuilder(
 
     fun collectSourceFiles(sourceFiles: Collection<KtFile>) {
         providedSourceFiles += sourceFiles
+    }
+
+    companion object {
+        operator fun invoke(
+            project: Project,
+            shouldBuildStubsForDecompiledFiles: Boolean,
+            postponeIndexing: Boolean,
+            configurator: KotlinStandaloneIndexBuilder.() -> Unit,
+        ): IndexData = KotlinStandaloneIndexBuilder(
+            project = project,
+            shouldBuildStubsForDecompiledFiles = shouldBuildStubsForDecompiledFiles,
+        ).apply(configurator).build(postponeIndexing = postponeIndexing)
     }
 }
 

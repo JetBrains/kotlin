@@ -218,7 +218,8 @@ class KotlinStandaloneDeclarationProviderFactory(
     private val indexData: KotlinStandaloneIndexBuilder.IndexData = KotlinStandaloneIndexBuilder(
         project = project,
         shouldBuildStubsForDecompiledFiles = shouldBuildStubsForBinaryLibraries,
-    ).apply {
+        postponeIndexing = postponeIndexing,
+    ) {
         collectSourceFiles(sourceKtFiles)
 
         if (!skipBuiltins) {
@@ -236,7 +237,7 @@ class KotlinStandaloneDeclarationProviderFactory(
                 collectDecompiledFilesFromBinaryRoot(root, isSharedRoot = false)
             }
         }
-    }.build(postponeIndexing)
+    }
 
     private val index: KotlinStandaloneDeclarationIndex
         get() = indexData.index
