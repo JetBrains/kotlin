@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.platform.konan.NativePlatforms
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.backend.ir.IrPreSerializationNativeSymbolValidationHandler
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
+import org.jetbrains.kotlin.test.frontend.fir.FirFrontendFacade
 import org.jetbrains.kotlin.test.klib.AbstractPreSerializationSymbolsTest
 import org.jetbrains.kotlin.test.services.configuration.NativeEnvironmentConfigurator
 
@@ -17,6 +18,7 @@ import org.jetbrains.kotlin.test.services.configuration.NativeEnvironmentConfigu
 class NativePreSerializationSymbolsTest : AbstractPreSerializationSymbolsTest(
     TargetBackend.NATIVE,
     NativePlatforms.unspecifiedNativePlatform,
+    ::FirFrontendFacade,
     ::Fir2IrNativeResultsConverter,
     ::IrPreSerializationNativeSymbolValidationHandler,
 ) {

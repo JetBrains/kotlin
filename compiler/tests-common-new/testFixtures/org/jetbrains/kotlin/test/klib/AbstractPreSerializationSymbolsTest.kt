@@ -17,11 +17,11 @@ import org.jetbrains.kotlin.test.builders.firHandlersStep
 import org.jetbrains.kotlin.test.builders.irHandlersStep
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.configureFirParser
-import org.jetbrains.kotlin.test.frontend.fir.FirFrontendFacade
 import org.jetbrains.kotlin.test.frontend.fir.FirOutputArtifact
 import org.jetbrains.kotlin.test.model.ArtifactKind
 import org.jetbrains.kotlin.test.model.DependencyKind
 import org.jetbrains.kotlin.test.model.Frontend2BackendConverter
+import org.jetbrains.kotlin.test.model.FrontendFacade
 import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerWithTargetBackendTest
 import org.jetbrains.kotlin.test.services.LibraryProvider
@@ -32,6 +32,7 @@ import java.nio.file.Files
 abstract class AbstractSymbolsValidationTextTest(
     targetBackend: TargetBackend,
     private val targetPlatform: TargetPlatform,
+    private val frontendFacade: Constructor<FrontendFacade<FirOutputArtifact>>,
     private val frontendToBackendConverter: Constructor<Frontend2BackendConverter<FirOutputArtifact, IrBackendInput>>,
     private val handler: Constructor<IrPreSerializationSymbolValidationHandler>
 ) : AbstractKotlinCompilerWithTargetBackendTest(targetBackend) {
@@ -50,7 +51,7 @@ abstract class AbstractSymbolsValidationTextTest(
             +ConfigurationDirectives.WITH_STDLIB
         }
 
-        facadeStep(::FirFrontendFacade)
+        facadeStep(frontendFacade)
         firHandlersStep()
         facadeStep(frontendToBackendConverter)
         irHandlersStep(init = {})
@@ -69,10 +70,11 @@ abstract class AbstractSymbolsValidationTextTest(
 
 abstract class AbstractPreSerializationSymbolsTest(
     targetBackend: TargetBackend,
-    val targetPlatform: TargetPlatform,
-    val frontendToBackendConverter: Constructor<Frontend2BackendConverter<FirOutputArtifact, IrBackendInput>>,
-    val handler: Constructor<IrPreSerializationSymbolValidationHandler>,
-) : AbstractSymbolsValidationTextTest(targetBackend, targetPlatform, frontendToBackendConverter, handler) {
+    targetPlatform: TargetPlatform,
+    frontendFacade: Constructor<FrontendFacade<FirOutputArtifact>>,
+    frontendToBackendConverter: Constructor<Frontend2BackendConverter<FirOutputArtifact, IrBackendInput>>,
+    handler: Constructor<IrPreSerializationSymbolValidationHandler>,
+) : AbstractSymbolsValidationTextTest(targetBackend, targetPlatform, frontendFacade, frontendToBackendConverter, handler) {
     @Test
     fun testValidation() {
         val file = Files.createTempFile("validation", ".kt").toFile()
