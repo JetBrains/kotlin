@@ -3,7 +3,7 @@
 
 // FILE: 1.kt
 
-const val name = E.OK.<!EVALUATED("OK")!>name<!>
+const val name = E.OK.<!EVALUATED{IR}("OK")!>name<!>
 // STOP_EVALUATION_CHECKS
 fun box(): String = name
 
