@@ -37839,6 +37839,12 @@ public class LLReversedDiagnosticsFe10TestGenerated extends AbstractLLReversedDi
       }
 
       @Test
+      @TestMetadata("propertyWithImplicitTypeWhenResolvingInvokeCallWithExtensionReceiver.kt")
+      public void testPropertyWithImplicitTypeWhenResolvingInvokeCallWithExtensionReceiver() {
+        runTest("compiler/testData/diagnostics/tests/resolve/propertyWithImplicitTypeWhenResolvingInvokeCallWithExtensionReceiver.kt");
+      }
+
+      @Test
       @TestMetadata("redCodeInOverloadByLambdaReturnTypeLambda.kt")
       public void testRedCodeInOverloadByLambdaReturnTypeLambda() {
         runTest("compiler/testData/diagnostics/tests/resolve/redCodeInOverloadByLambdaReturnTypeLambda.kt");
