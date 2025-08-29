@@ -43,9 +43,9 @@ declare namespace JS_TESTS {
             toString(): string;
             hashCode(): number;
             equals(other: Nullable<any>): boolean;
-            /** @deprecated Deprecated */
+            /** @deprecated This version is kept for binary compatibility purposes, please use the main overload. */
             constructor(a?: number, b?: string);
-            /** @deprecated Deprecated */
+            /** @deprecated This version is kept for binary compatibility purposes, please use the main overload. */
             constructor(a?: number);
             copy(a?: number, b?: string): foo.C;
             copy(a?: number): foo.C;
