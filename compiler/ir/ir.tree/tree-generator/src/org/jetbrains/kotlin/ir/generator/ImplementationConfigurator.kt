@@ -84,8 +84,8 @@ object ImplementationConfigurator : AbstractIrTreeImplementationConfigurator() {
         }
 
         impl(localDelegatedProperty) {
-            isLateinit("delegate", "getter")
-            defaultNull("setter")
+            isLateinit( "getter")
+            defaultNull("setter", "delegate")
         }
 
         impl(typeParameter) {

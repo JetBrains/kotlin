@@ -40,7 +40,7 @@ class IrLocalDelegatedPropertyImpl @IrImplementationDetail constructor(
     override val descriptor: VariableDescriptorWithAccessors
         get() = symbol.descriptor
 
-    override lateinit var delegate: IrVariable
+    override var delegate: IrVariable? = null
 
     override lateinit var getter: IrSimpleFunction
 

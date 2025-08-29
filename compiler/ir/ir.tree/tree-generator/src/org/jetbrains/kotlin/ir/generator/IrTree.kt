@@ -450,7 +450,20 @@ object IrTree : AbstractTreeBuilder() {
         +declaredSymbol(localDelegatedPropertySymbol)
         +field("type", irTypeType)
         +field("isVar", boolean)
-        +field("delegate", variable)
+        +field("delegate", variable, nullable = true) {
+            kDoc = """
+                 Normally, all local delegated properties have non-null value in [delegate].
+                 
+                 The `null` value can happen only in a very special case:
+                 * The local delegated property was used inside an inlinable lambda argument of an inline function.
+                 * A KLIB-based compiler (Kotlin/Native, Kotlin/JS, Kotlin/Wasm) with the enabled IR inliner on
+                   the first stage pre-processed the call site of the inliner function, so that the [delegate]
+                   variable was "detached" from the local delegated property and left inside the lambda while
+                   the property itself was extracted to the same level as the call site.
+                 
+                 This is called a "soft-extraction" of local delegated properties. It was implemented in KT-78856.
+            """.trimIndent()
+        }
         +field("getter", simpleFunction)
         +field("setter", simpleFunction, nullable = true)
     }

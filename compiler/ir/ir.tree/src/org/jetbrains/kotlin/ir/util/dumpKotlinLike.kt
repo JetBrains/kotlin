@@ -1012,7 +1012,7 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
         p.printlnWithNoIndent()
         p.pushIndent()
 
-        declaration.delegate.accept(this, declaration)
+        declaration.delegate?.accept(this, declaration)
         p.printlnWithNoIndent()
 
         declaration.getter.printAccessor("get", declaration)

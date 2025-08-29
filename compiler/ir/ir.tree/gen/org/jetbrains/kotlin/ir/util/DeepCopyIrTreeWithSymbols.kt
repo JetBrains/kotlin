@@ -208,7 +208,7 @@ open class DeepCopyIrTreeWithSymbols(
         ).apply {
             with(factory) { declarationCreated() }
             annotations = declaration.annotations.memoryOptimizedMap { it.transform() }
-            delegate = declaration.delegate.transform()
+            delegate = declaration.delegate?.transform()
             getter = declaration.getter.transform()
             setter = declaration.setter?.transform()
             processAttributes(declaration)
