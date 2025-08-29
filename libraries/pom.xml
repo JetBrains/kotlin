@@ -71,6 +71,14 @@
         <maven>3.0.2</maven>
     </prerequisites>
 
+  <repositories>
+    <repository>
+      <id>ijdeps</id>
+      <name>IntelliJ Dependencies</name>
+      <url>https://packages.jetbrains.team/maven/p/ij/intellij-dependencies</url>
+    </repository>
+  </repositories>
+
     <distributionManagement>
         <repository>
             <id>${deploy-repo}</id>
