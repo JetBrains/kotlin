@@ -51,8 +51,6 @@
 
 # UNKNOWN: /annotations/
 
-/ant/ "Kotlin Build Tools"
-
 /benchmarks/ "Kotlin Frontend"
 
 /build-common/ "Kotlin Build Tools"

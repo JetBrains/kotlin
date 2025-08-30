@@ -1,5 +1,5 @@
 // RUN_PIPELINE_TILL: BACKEND
-// FIR_IDENTICAL
+// LANGUAGE: -UnrestrictedBuilderInference
 // OPT_IN: kotlin.RequiresOptIn
 // DIAGNOSTICS: -UNUSED_EXPRESSION -UNUSED_PARAMETER -UNUSED_VARIABLE
 
@@ -26,12 +26,12 @@ val test2 = generate {
     notYield(3)
 }
 
-val test3 = generate {
+val test3 = <!COULD_BE_INFERRED_ONLY_WITH_UNRESTRICTED_BUILDER_INFERENCE!>generate<!> {
     yield(3)
     yieldBarReturnType(3)
 }
 
-val test4 = generate {
+val test4 = <!COULD_BE_INFERRED_ONLY_WITH_UNRESTRICTED_BUILDER_INFERENCE!>generate<!> {
     yield(3)
     barReturnType()
 }

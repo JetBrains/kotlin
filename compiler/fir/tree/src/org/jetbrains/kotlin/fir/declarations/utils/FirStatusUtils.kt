@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.fir.declarations.utils
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 
 inline val FirMemberDeclaration.modality: Modality? get() = status.modality
@@ -62,13 +61,9 @@ inline val FirMemberDeclaration.isFun: Boolean get() = status.isFun
 inline val FirMemberDeclaration.hasStableParameterNames: Boolean get() = status.hasStableParameterNames
 
 inline val FirClassLikeDeclaration.isLocal: Boolean get() = symbol.classId.isLocal
-inline val FirClassLikeDeclaration.isLocalInFunction: Boolean get() = symbol.classId.isLocal && isReplSnippetDeclaration != true
-inline val FirClassLikeSymbol<*>.isLocalInFunction: Boolean get() = fir.isLocalInFunction
 
 fun FirDeclaration?.isLocalClassOrAnonymousObject(): Boolean = ((this as? FirRegularClass)?.isLocal == true) || this is FirAnonymousObject
 fun FirBasedSymbol<*>?.isLocalClassOrAnonymousObject(): Boolean = this?.fir.isLocalClassOrAnonymousObject()
-
-inline val FirProperty.isLocalInFunction: Boolean get() = isLocal && isReplSnippetDeclaration != true
 
 inline val FirClass.isInterface: Boolean
     get() = classKind.isInterface
@@ -92,6 +87,3 @@ inline val FirFunction.hasBody: Boolean get() = body != null
 inline val FirPropertyAccessor.hasBody: Boolean get() = body != null
 
 inline val FirSimpleFunction.isLocal: Boolean get() = status.visibility == Visibilities.Local
-
-inline val FirSimpleFunction.isLocalInFunction: Boolean
-    get() = status.visibility == Visibilities.Local && isReplSnippetDeclaration != true

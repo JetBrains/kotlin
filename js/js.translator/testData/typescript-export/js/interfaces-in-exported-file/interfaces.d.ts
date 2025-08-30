@@ -52,6 +52,7 @@ declare namespace JS_TESTS {
             };
         }
         namespace WithTheCompanion {
+            function companionStaticFunction(): string;
             abstract class Companion extends KtSingleton<Companion.$metadata$.constructor>() {
                 private constructor();
             }

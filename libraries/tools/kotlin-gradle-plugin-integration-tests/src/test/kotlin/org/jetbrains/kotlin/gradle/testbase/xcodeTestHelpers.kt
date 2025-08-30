@@ -118,6 +118,8 @@ internal fun TestProject.prepareForXcodebuild(appendToProperties: () -> String =
     gradleProperties
         .takeIf(Path::exists)
         ?.let {
+            // Gradle 9.0+ requires minimum JDK 17 to run
+            it.append("org.gradle.java.home=${jdk17Info.javaHome}")
             it.append("kotlin_version=${buildOptions.kotlinVersion}")
             it.append("test_fixes_version=${KOTLIN_VERSION}")
             appendToProperties().let { extraProperties ->

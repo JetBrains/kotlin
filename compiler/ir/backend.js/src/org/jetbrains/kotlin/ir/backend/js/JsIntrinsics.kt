@@ -254,6 +254,8 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns, private val configuration
         startCoroutineUninterceptedOrReturnGeneratorVersion.single { it.owner.hasShape(extensionReceiver = true, regularParameters = 2) }
     }
 
+    val awaitFunctionSymbol = getCoroutineIntrinsic("await").single()
+    val promisifyFunctionSymbol = getCoroutineIntrinsic("promisify").single()
     val suspendOrReturnFunctionSymbol: IrSimpleFunctionSymbol = getCoroutineIntrinsic("suspendOrReturn").single()
 
     val jsNumberRangeToNumber = getInternalFunction("numberRangeToNumber")

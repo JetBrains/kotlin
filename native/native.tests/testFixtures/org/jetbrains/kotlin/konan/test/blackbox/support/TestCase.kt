@@ -149,7 +149,7 @@ sealed class TestModule {
         override val files: FailOnDuplicatesSet<TestFile<Shared>> = FailOnDuplicatesSet()
     }
 
-    data class Given(val klibFile: File) : TestModule() {
+    data class Given(val klibFile: File, val dependencies: Set<Given> = emptySet()) : TestModule() {
         override val name: String get() = klibFile.name
         override val files: Set<TestFile<*>> get() = emptySet()
     }
@@ -166,7 +166,8 @@ sealed class TestModule {
         val TestModule.allRegularDependencies: Set<TestModule>
             get() = when (this) {
                 is Exclusive -> allRegularDependencies
-                is Shared, is Given -> emptySet()
+                is Given -> dependencies
+                is Shared -> emptySet()
             }
 
         val TestModule.allFriendDependencies: Set<TestModule>

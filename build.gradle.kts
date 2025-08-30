@@ -135,7 +135,9 @@ val irCompilerModules = arrayOf(
     ":compiler:ir.interpreter",
     ":compiler:ir.inline",
     ":compiler:ir.validation",
-    ":wasm:wasm.ir"
+    ":wasm:wasm.ir",
+    ":js:typescript-export-model",
+    ":js:typescript-printer",
 ).also { extra["irCompilerModules"] = it }
 
 val irCompilerModulesForIDE = arrayOf(
@@ -871,6 +873,7 @@ tasks {
     // technically or semantically depend on Xcode SDK.
     register("nativeAppleSpecificTests") {
         dependsOn(":native:objcexport-header-generator:check")
+        dependsOn(":native:swift:swift-export-embeddable:testCoroutinesITWithEmbeddable")
         dependsOn(":native:swift:swift-export-embeddable:testExternalITWithEmbeddable")
         dependsOn(":native:swift:swift-export-embeddable:testSimpleITWithEmbeddable")
         dependsOn(":native:swift:swift-export-standalone:check")

@@ -1,8 +1,12 @@
 package
 
-public val extension: kotlin.collections.List<kotlin.String>
+public val extension: [Error type: Not found recorded type for generate {
+    extensionYield("foo")
+}]
 public val normal: kotlin.collections.List<kotlin.Int>
-public val safeExtension: kotlin.collections.List<kotlin.String>
+public val safeExtension: [Error type: Not found recorded type for generate {
+    safeExtensionYield("foo")
+}]
 public fun </*0*/ S> generate(/*0*/ g: suspend GenericController<S>.() -> kotlin.Unit): kotlin.collections.List<S>
 public suspend fun </*0*/ S> GenericController<S>.extensionYield(/*0*/ s: S): kotlin.Unit
 public suspend fun </*0*/ S> GenericController<S>.safeExtensionYield(/*0*/ s: S): kotlin.Unit
@@ -24,3 +28,4 @@ package kotlin {
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 }
+

@@ -1,6 +1,6 @@
 // RUN_PIPELINE_TILL: BACKEND
-// FIR_IDENTICAL
 // DIAGNOSTICS: -UNUSED_PARAMETER
+// LANGUAGE: -UnrestrictedBuilderInference
 // ALLOW_KOTLIN_PACKAGE
 
 // FILE: annotation.kt
@@ -25,11 +25,11 @@ val normal = generate {
     yield(42)
 }
 
-val extension = generate {
+val extension = <!COULD_BE_INFERRED_ONLY_WITH_UNRESTRICTED_BUILDER_INFERENCE!>generate<!> {
     extensionYield("foo")
 }
 
-val safeExtension = generate {
+val safeExtension = <!COULD_BE_INFERRED_ONLY_WITH_UNRESTRICTED_BUILDER_INFERENCE!>generate<!> {
     safeExtensionYield("foo")
 }
 

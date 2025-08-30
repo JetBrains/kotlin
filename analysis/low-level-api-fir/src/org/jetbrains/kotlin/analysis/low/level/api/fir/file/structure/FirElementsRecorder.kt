@@ -1,10 +1,11 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure
 
+import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.DuplicatedFirSourceElementsException
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.isErrorElement
@@ -12,7 +13,6 @@ import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.builder.toFirOperationOrNull
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
 import org.jetbrains.kotlin.fir.expressions.*
-import org.jetbrains.kotlin.fir.expressions.FirThisReceiverExpression
 import org.jetbrains.kotlin.fir.expressions.builder.buildLiteralExpression
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.references.*
@@ -122,97 +122,8 @@ internal open class FirElementsRecorder : FirVisitor<Unit, MutableMap<KtElement,
     }
 
     protected fun cacheElement(element: FirElement, cache: MutableMap<KtElement, FirElement>) {
-        val psi = element.source
-            ?.takeIf {
-                it is KtRealPsiSourceElement ||
-                        it.kind == KtFakeSourceElementKind.ReferenceInAtomicQualifiedAccess ||
-                        it.kind == KtFakeSourceElementKind.FromUseSiteTarget ||
-                        // To allow type retrieval from erroneous typealias even though it is erroneous
-                        it.kind == KtFakeSourceElementKind.ErroneousTypealiasExpansion ||
-                        // For secondary constructors without explicit delegated constructor call, the PSI tree always create an empty
-                        // KtConstructorDelegationCall. In this case, the source in FIR has this fake source kind.
-                        it.kind == KtFakeSourceElementKind.ImplicitConstructor ||
-                        it.isSourceForSmartCasts(element) ||
-                        it.kind == KtFakeSourceElementKind.DanglingModifierList ||
-                        it.isSourceForArrayAugmentedAssign(element) ||
-                        it.isSourceForCompoundAccess(element) ||
-                        it.isSourceForInvertedInOperator(element)
-            }.psi as? KtElement
-            ?: return
+        val psi = element.anchorPsi as? KtElement ?: return
         cache(psi, element, cache)
-    }
-
-    private fun KtSourceElement.isSourceForInvertedInOperator(fir: FirElement) =
-        kind == KtFakeSourceElementKind.DesugaredInvertedContains
-                && fir is FirResolvedNamedReference && fir.name == OperatorNameConventions.CONTAINS
-
-    /**
-     * FIR represents compound assignment and inc/dec operations as multiple smaller instructions. Here we choose the write operation as the
-     * resolved FirElement for binary and unary expressions. For example, the `FirVariableAssignment` or the call to `set` or `plusAssign`
-     * function, etc. This is because the write FirElement can be used to retrieve all other information related to this compound operation.
-
-     * On the other hand, if the PSI is the left operand of an assignment or the base expression of a unary expression, we take the read FIR
-     * element so the user of the Analysis API is able to retrieve such read calls reliably.
-     */
-    private fun KtSourceElement.isSourceForCompoundAccess(fir: FirElement): Boolean {
-        val psi = psi
-        val parentPsi = psi?.parent
-        if (kind !is KtFakeSourceElementKind.DesugaredAugmentedAssign && kind !is KtFakeSourceElementKind.DesugaredIncrementOrDecrement) {
-            return false
-        }
-        return when {
-            psi is KtBinaryExpression || psi is KtUnaryExpression -> fir.isWriteInCompoundCall()
-            parentPsi is KtBinaryExpression && psi == parentPsi.left -> fir.isReadInCompoundCall()
-            parentPsi is KtUnaryExpression && psi == parentPsi.baseExpression -> fir.isReadInCompoundCall()
-            else -> false
-        }
-    }
-
-    // After desugaring, we also have FirBlock with the same source element.
-    // We need to filter it out to map this source element to set/plusAssign call, so we check `is FirFunctionCall`
-    private fun KtSourceElement.isSourceForArrayAugmentedAssign(fir: FirElement): Boolean {
-        return kind is KtFakeSourceElementKind.DesugaredAugmentedAssign && (fir is FirFunctionCall || fir is FirThisReceiverExpression)
-    }
-
-    // `FirSmartCastExpression` forward the source from the original expression,
-    // and implicit receivers have fake sources pointing to a wider part of the expression.
-    // Thus, `FirElementsRecorder` may try assigning an unnecessarily wide source
-    // to smart cast expressions, which will affect the
-    // `org.jetbrains.kotlin.idea.highlighting.highlighters.ExpressionsSmartcastHighlighter#highlightExpression`
-    // function in intellij.git
-    private fun KtSourceElement.isSourceForSmartCasts(fir: FirElement) =
-        (kind is KtFakeSourceElementKind.SmartCastExpression) && fir is FirSmartCastExpression && !fir.originalExpression.isImplicitThisReceiver
-
-    private val FirExpression.isImplicitThisReceiver get() = this is FirThisReceiverExpression && this.isImplicit
-
-    private fun FirElement.isReadInCompoundCall(): Boolean {
-        if (this is FirPropertyAccessExpression) return true
-        if (this !is FirFunctionCall) return false
-        val name = (calleeReference as? FirResolvedNamedReference)?.name ?: getFallbackCompoundCalleeName()
-        return name == OperatorNameConventions.GET
-    }
-
-    private fun FirElement.isWriteInCompoundCall(): Boolean {
-        if (this is FirVariableAssignment) return true
-        if (this !is FirFunctionCall) return false
-        val name = (calleeReference as? FirResolvedNamedReference)?.name ?: getFallbackCompoundCalleeName()
-        return name == OperatorNameConventions.SET || name in OperatorNameConventions.ASSIGNMENT_OPERATIONS
-    }
-
-    /**
-     * If the callee reference is not a [FirResolvedNamedReference], we can get the compound callee name from the source instead. For
-     * example, if the callee reference is a [FirErrorNamedReference] with an unresolved name `plusAssign`, the operation element type from
-     * the source will be `KtTokens.PLUSEQ`, which can be transformed to `plusAssign`.
-     */
-    private fun FirElement.getFallbackCompoundCalleeName(): Name? {
-        val psi = source.psi as? KtOperationExpression ?: return null
-        val operationReference = psi.operationReference
-        return operationReference.getAssignmentOperationName() ?: operationReference.getReferencedNameAsName()
-    }
-
-    private fun KtSimpleNameExpression.getAssignmentOperationName(): Name? {
-        val firOperation = getReferencedNameElementType().toFirOperationOrNull() ?: return null
-        return FirOperationNameConventions.ASSIGNMENTS[firOperation]
     }
 
     private val FirLiteralExpression.isConverted: Boolean
@@ -262,5 +173,116 @@ internal open class FirElementsRecorder : FirVisitor<Unit, MutableMap<KtElement,
     companion object {
         fun recordElementsFrom(firElement: FirElement, recorder: FirElementsRecorder): Map<KtElement, FirElement> =
             buildMap { firElement.accept(recorder, this) }
+
+        /**
+         * The PSI element which can be used as an anchor point for FIR <–> PSI mapping.
+         *
+         * Not all fake FIR elements might have an anhor PSI element to avoid conflict with the original source element.
+         * For instance, the synthetic enum supertype would have the same psi as the class itself, so it shouldn't be used
+         * as an anchor to avoid ambiguity. Clients won't expect to see the supertype type reference value instead of the [FirRegularClass][org.jetbrains.kotlin.fir.declarations.FirRegularClass]
+         * by [KtClass] key.
+         */
+        val FirElement.anchorPsi: PsiElement?
+            get() {
+                val source = source as? KtPsiSourceElement? ?: return null
+                when (source.kind) {
+                    KtRealSourceElementKind,
+                    KtFakeSourceElementKind.ReferenceInAtomicQualifiedAccess,
+                    KtFakeSourceElementKind.FromUseSiteTarget,
+                        // To allow type retrieval from erroneous typealias even though it is erroneous
+                    KtFakeSourceElementKind.ErroneousTypealiasExpansion,
+                        // For secondary constructors without explicit delegated constructor call, the PSI tree always create an empty
+                        // KtConstructorDelegationCall. In this case, the source in FIR has this fake source kind.
+                    KtFakeSourceElementKind.ImplicitConstructor,
+                    KtFakeSourceElementKind.DanglingModifierList,
+                        -> Unit
+
+                    else if (
+                            source.isSourceForSmartCasts(this) ||
+                                    source.isSourceForArrayAugmentedAssign(this) ||
+                                    source.isSourceForCompoundAccess(this) ||
+                                    source.isSourceForInvertedInOperator(this)
+                            )
+                        -> Unit
+
+                    else -> return null
+                }
+
+                return source.psi
+            }
+
+
+        private fun KtSourceElement.isSourceForInvertedInOperator(fir: FirElement) =
+            kind == KtFakeSourceElementKind.DesugaredInvertedContains
+                    && fir is FirResolvedNamedReference && fir.name == OperatorNameConventions.CONTAINS
+
+        /**
+         * FIR represents compound assignment and inc/dec operations as multiple smaller instructions. Here we choose the write operation as the
+         * resolved FirElement for binary and unary expressions. For example, the `FirVariableAssignment` or the call to `set` or `plusAssign`
+         * function, etc. This is because the write FirElement can be used to retrieve all other information related to this compound operation.
+
+         * On the other hand, if the PSI is the left operand of an assignment or the base expression of a unary expression, we take the read FIR
+         * element so the user of the Analysis API is able to retrieve such read calls reliably.
+         */
+        private fun KtSourceElement.isSourceForCompoundAccess(fir: FirElement): Boolean {
+            val psi = psi
+            val parentPsi = psi?.parent
+            if (kind !is KtFakeSourceElementKind.DesugaredAugmentedAssign && kind !is KtFakeSourceElementKind.DesugaredIncrementOrDecrement) {
+                return false
+            }
+            return when {
+                psi is KtBinaryExpression || psi is KtUnaryExpression -> fir.isWriteInCompoundCall()
+                parentPsi is KtBinaryExpression && psi == parentPsi.left -> fir.isReadInCompoundCall()
+                parentPsi is KtUnaryExpression && psi == parentPsi.baseExpression -> fir.isReadInCompoundCall()
+                else -> false
+            }
+        }
+
+        // After desugaring, we also have FirBlock with the same source element.
+        // We need to filter it out to map this source element to set/plusAssign call, so we check `is FirFunctionCall`
+        private fun KtSourceElement.isSourceForArrayAugmentedAssign(fir: FirElement): Boolean {
+            return kind is KtFakeSourceElementKind.DesugaredAugmentedAssign && (fir is FirFunctionCall || fir is FirThisReceiverExpression)
+        }
+
+        // `FirSmartCastExpression` forward the source from the original expression,
+        // and implicit receivers have fake sources pointing to a wider part of the expression.
+        // Thus, `FirElementsRecorder` may try assigning an unnecessarily wide source
+        // to smart cast expressions, which will affect the
+        // `org.jetbrains.kotlin.idea.highlighting.highlighters.ExpressionsSmartcastHighlighter#highlightExpression`
+        // function in intellij.git
+        private fun KtSourceElement.isSourceForSmartCasts(fir: FirElement) =
+            (kind is KtFakeSourceElementKind.SmartCastExpression) && fir is FirSmartCastExpression && !fir.originalExpression.isImplicitThisReceiver
+
+        private val FirExpression.isImplicitThisReceiver get() = this is FirThisReceiverExpression && this.isImplicit
+
+        private fun FirElement.isReadInCompoundCall(): Boolean {
+            if (this is FirPropertyAccessExpression) return true
+            if (this !is FirFunctionCall) return false
+            val name = (calleeReference as? FirResolvedNamedReference)?.name ?: getFallbackCompoundCalleeName()
+            return name == OperatorNameConventions.GET
+        }
+
+        private fun FirElement.isWriteInCompoundCall(): Boolean {
+            if (this is FirVariableAssignment) return true
+            if (this !is FirFunctionCall) return false
+            val name = (calleeReference as? FirResolvedNamedReference)?.name ?: getFallbackCompoundCalleeName()
+            return name == OperatorNameConventions.SET || name in OperatorNameConventions.ASSIGNMENT_OPERATIONS
+        }
+
+        /**
+         * If the callee reference is not a [FirResolvedNamedReference], we can get the compound callee name from the source instead. For
+         * example, if the callee reference is a [FirErrorNamedReference] with an unresolved name `plusAssign`, the operation element type from
+         * the source will be `KtTokens.PLUSEQ`, which can be transformed to `plusAssign`.
+         */
+        private fun FirElement.getFallbackCompoundCalleeName(): Name? {
+            val psi = source.psi as? KtOperationExpression ?: return null
+            val operationReference = psi.operationReference
+            return operationReference.getAssignmentOperationName() ?: operationReference.getReferencedNameAsName()
+        }
+
+        private fun KtSimpleNameExpression.getAssignmentOperationName(): Name? {
+            val firOperation = getReferencedNameElementType().toFirOperationOrNull() ?: return null
+            return FirOperationNameConventions.ASSIGNMENTS[firOperation]
+        }
     }
 }

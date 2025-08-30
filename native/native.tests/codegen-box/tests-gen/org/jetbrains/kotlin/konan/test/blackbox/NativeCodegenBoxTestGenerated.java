@@ -16524,6 +16524,12 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
       }
 
       @Test
+      @TestMetadata("elvisToCommonType.kt")
+      public void testElvisToCommonType() {
+        runTest("compiler/testData/codegen/box/elvis/elvisToCommonType.kt");
+      }
+
+      @Test
       @TestMetadata("genericElvisWithMoreSpecificLHS.kt")
       public void testGenericElvisWithMoreSpecificLHS() {
         runTest("compiler/testData/codegen/box/elvis/genericElvisWithMoreSpecificLHS.kt");

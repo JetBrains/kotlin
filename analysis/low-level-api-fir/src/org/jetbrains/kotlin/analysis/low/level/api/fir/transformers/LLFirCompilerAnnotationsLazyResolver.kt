@@ -149,7 +149,7 @@ private class LLFirCompilerRequiredAnnotationsTargetResolver(
 
     @Deprecated("Should never be called directly, only for override purposes, please use withRegularClass", level = DeprecationLevel.ERROR)
     override fun withContainingRegularClass(firClass: FirRegularClass, action: () -> Unit) {
-        transformer.annotationTransformer.withRegularClass(firClass, action)
+        transformer.annotationTransformer.withClass(firClass, action)
     }
 
     override fun doResolveWithoutLock(target: FirElementWithResolveState): Boolean {
@@ -188,7 +188,7 @@ private class LLFirCompilerRequiredAnnotationsTargetResolver(
         val annotationTransformer = transformer.annotationTransformer
         when (target) {
             is FirFile -> annotationTransformer.resolveFile(target) {}
-            is FirRegularClass -> annotationTransformer.resolveRegularClass(target) {}
+            is FirRegularClass -> annotationTransformer.resolveClass(target) {}
             is FirScript -> annotationTransformer.resolveScript(target) {}
             else -> target.transformSingle(annotationTransformer, null)
         }

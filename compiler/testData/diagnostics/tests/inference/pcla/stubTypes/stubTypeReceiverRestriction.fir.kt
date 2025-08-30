@@ -1,4 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: -NoBuilderInferenceWithoutAnnotationRestriction
 // WITH_STDLIB
 // SKIP_TXT
 

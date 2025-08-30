@@ -723,7 +723,7 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
                     isExternal = isExternal,
                     isOverride = overriddenSymbols.isNotEmpty(),
                     isFakeOverride = isFakeOverride,
-                    isLateinit = isTailrec,
+                    isTailrec = isTailrec,
                     isSuspend = isSuspend,
                     isInline = isInline,
                     isInfix = isInfix,

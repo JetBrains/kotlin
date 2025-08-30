@@ -31,6 +31,12 @@ public class ContextCollectorSourceTestGenerated extends AbstractContextCollecto
   }
 
   @Test
+  @TestMetadata("class.kt")
+  public void testClass() {
+    runTest("analysis/low-level-api-fir/testData/contextCollector/class.kt");
+  }
+
+  @Test
   @TestMetadata("classFunction.kt")
   public void testClassFunction() {
     runTest("analysis/low-level-api-fir/testData/contextCollector/classFunction.kt");
@@ -58,6 +64,12 @@ public class ContextCollectorSourceTestGenerated extends AbstractContextCollecto
   @TestMetadata("doWhile.kt")
   public void testDoWhile() {
     runTest("analysis/low-level-api-fir/testData/contextCollector/doWhile.kt");
+  }
+
+  @Test
+  @TestMetadata("enumClass.kt")
+  public void testEnumClass() {
+    runTest("analysis/low-level-api-fir/testData/contextCollector/enumClass.kt");
   }
 
   @Test

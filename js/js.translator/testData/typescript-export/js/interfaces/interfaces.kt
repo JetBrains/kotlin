@@ -1,6 +1,7 @@
 // CHECK_TYPESCRIPT_DECLARATIONS
 // RUN_PLAIN_BOX_FUNCTION
 // SKIP_NODE_JS
+// LANGUAGE: +JsStaticInInterface
 // INFER_MAIN_MODULE
 // MODULE: JS_TESTS
 // FILE: interfaces.kt
@@ -43,6 +44,9 @@ interface WithTheCompanion {
 
     companion object {
         fun companionFunction(): String = "FUNCTION"
+
+        @JsStatic
+        fun companionStaticFunction(): String = "STATIC FUNCTION"
     }
 }
 

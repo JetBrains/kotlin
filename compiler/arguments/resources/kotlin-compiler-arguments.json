@@ -1,5 +1,5 @@
 {
-    "schemaVersion": 1,
+    "schemaVersion": 2,
     "releases": [
         {
             "name": "1.0.0",
@@ -748,6 +748,38 @@
                     "name": "disable",
                     "releaseVersionsMetadata": {
                         "introducedVersion": "2.2.0",
+                        "stabilizedVersion": null,
+                        "deprecatedVersion": null,
+                        "removedVersion": null
+                    }
+                }
+            ]
+        },
+        "klibIrInlinerMode": {
+            "type": "org.jetbrains.kotlin.arguments.dsl.types.KlibIrInlinerModeType",
+            "values": [
+                {
+                    "name": "intra-module",
+                    "releaseVersionsMetadata": {
+                        "introducedVersion": "2.3.0",
+                        "stabilizedVersion": null,
+                        "deprecatedVersion": null,
+                        "removedVersion": null
+                    }
+                },
+                {
+                    "name": "full",
+                    "releaseVersionsMetadata": {
+                        "introducedVersion": "2.3.0",
+                        "stabilizedVersion": null,
+                        "deprecatedVersion": null,
+                        "removedVersion": null
+                    }
+                },
+                {
+                    "name": "disabled",
+                    "releaseVersionsMetadata": {
+                        "introducedVersion": "2.3.0",
                         "stabilizedVersion": null,
                         "deprecatedVersion": null,
                         "removedVersion": null
@@ -6366,23 +6398,23 @@
                                 "shortName": null,
                                 "deprecatedName": null,
                                 "description": {
-                                    "current": "Enable experimental support to invoke IR Inliner before Klib serialization.",
+                                    "current": "Enable experimental IR inliner during KLIB generation.",
                                     "valueInVersions": []
                                 },
                                 "delimiter": null,
                                 "valueType": {
-                                    "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
+                                    "type": "org.jetbrains.kotlin.arguments.dsl.types.KlibIrInlinerModeType",
                                     "isNullable": {
                                         "current": false,
                                         "valueInVersions": []
                                     },
                                     "defaultValue": {
-                                        "current": false,
+                                        "current": "disabled",
                                         "valueInVersions": []
                                     }
                                 },
                                 "valueDescription": {
-                                    "current": null,
+                                    "current": "{intra-module|full|disabled}",
                                     "valueInVersions": []
                                 },
                                 "releaseVersionsMetadata": {

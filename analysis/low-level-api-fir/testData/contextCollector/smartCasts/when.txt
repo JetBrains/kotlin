@@ -19,6 +19,8 @@ Tower Data Context:
         Scope: FirLocalScope
             Properties:
                 FirLocalPropertySymbol lval <when-subject>: R|kotlin/Any|
+    Element 8
+        Scope: FirLocalScope
 Smart Casts:
     FirLocalPropertySymbol lval <when-subject>: R|kotlin/Any|
     Types:

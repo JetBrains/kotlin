@@ -31,6 +31,12 @@ public class DataFrameDiagnosticTestGenerated extends AbstractDataFrameDiagnosti
   }
 
   @Test
+  @TestMetadata("pluginInInline.kt")
+  public void testPluginInInline() {
+    runTest("plugins/kotlin-dataframe/testData/diagnostics/pluginInInline.kt");
+  }
+
+  @Test
   @TestMetadata("schemaInfo.kt")
   public void testSchemaInfo() {
     runTest("plugins/kotlin-dataframe/testData/diagnostics/schemaInfo.kt");

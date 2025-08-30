@@ -19,7 +19,6 @@ lib/kotlin-annotation-processing-runtime.jar
 lib/kotlin-annotation-processing.jar
 lib/kotlin-annotations-jvm-sources.jar
 lib/kotlin-annotations-jvm.jar
-lib/kotlin-ant.jar
 lib/kotlin-compiler.jar
 lib/kotlin-daemon-client.jar
 lib/kotlin-daemon.jar

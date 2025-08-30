@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.js.backend.JsToStringGenerationVisitor
 import org.jetbrains.kotlin.js.backend.NoOpSourceLocationConsumer
 import org.jetbrains.kotlin.js.backend.SourceLocationConsumer
 import org.jetbrains.kotlin.js.backend.ast.*
+import org.jetbrains.kotlin.js.common.makeValidES5Identifier
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.js.config.SourceMapSourceEmbedding
 import org.jetbrains.kotlin.js.sourceMap.SourceFilePathResolver
@@ -50,7 +51,7 @@ val String.safeModuleName: String
         if (result.startsWith('<')) result = result.substring(1)
         if (result.endsWith('>')) result = result.substring(0, result.length - 1)
 
-        return sanitizeName("kotlin_$result", false)
+        return makeValidES5Identifier("kotlin_$result", false)
     }
 
 val IrModuleFragment.safeName: String

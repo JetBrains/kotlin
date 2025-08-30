@@ -17,9 +17,7 @@ import org.jetbrains.kotlin.ir.types.isUnit
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
-import org.jetbrains.kotlin.js.common.isES5IdentifierPart
-import org.jetbrains.kotlin.js.common.isES5IdentifierStart
-import org.jetbrains.kotlin.js.common.isValidES5Identifier
+import org.jetbrains.kotlin.js.common.makeValidES5Identifier
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 import java.util.*
@@ -51,7 +49,7 @@ class NameTable<T>(
     }
 
     fun declareFreshName(declaration: T, suggestedName: String): String {
-        val freshName = findFreshName(sanitizeName(suggestedName))
+        val freshName = findFreshName(makeValidES5Identifier(suggestedName))
         declareStableName(declaration, freshName)
         return freshName
     }
@@ -168,7 +166,7 @@ fun calculateJsFunctionSignature(declaration: IrFunction, context: JsIrBackendCo
     val signature = abs(nameBuilder.toString().hashCode()).toString(Character.MAX_RADIX)
 
     // TODO: Use better hashCode
-    val sanitizedName = sanitizeName(declarationName, withHash = false)
+    val sanitizedName = makeValidES5Identifier(declarationName, withHash = false)
     return context.globalIrInterner.string("${sanitizedName}_$signature$RESERVED_MEMBER_NAME_SUFFIX")
 }
 
@@ -264,29 +262,6 @@ class LocalNameGenerator(val variableNames: NameTable<IrDeclaration>) : IrVisito
     }
 }
 
-fun sanitizeName(name: String, withHash: Boolean = true): String {
-    if (name.isValidES5Identifier()) return name
-    if (name.isEmpty()) return "_"
-
-    // 7 = _ + MAX_INT.toString(Character.MAX_RADIX)
-    val builder = StringBuilder(name.length + if (withHash) 7 else 0)
-
-    val first = name.first()
-
-    builder.append(first.mangleIfNot(Char::isES5IdentifierStart))
-
-    for (idx in 1..name.lastIndex) {
-        val c = name[idx]
-        builder.append(c.mangleIfNot(Char::isES5IdentifierPart))
-    }
-
-    return if (withHash) {
-        "${builder}_${abs(name.hashCode()).toString(Character.MAX_RADIX)}"
-    } else {
-        builder.toString()
-    }
-}
-
 fun IrDeclarationWithName.nameIfPropertyAccessor(): String? {
     if (this is IrSimpleFunction) {
         return when {
@@ -314,9 +289,6 @@ fun IrDeclarationWithName.nameIfPropertyAccessor(): String? {
     }
     return null
 }
-
-private inline fun Char.mangleIfNot(predicate: Char.() -> Boolean) =
-    if (predicate()) this else '_'
 
 private const val SYNTHETIC_LOOP_LABEL = "\$l\$loop"
 private const val SYNTHETIC_BLOCK_LABEL = "\$l\$block"

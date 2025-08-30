@@ -96,7 +96,6 @@ val distLibraryProjects = listOfNotNull(
     ":kotlin-annotation-processing-runtime",
     ":kotlin-annotation-processing",
     ":kotlin-annotations-jvm",
-    ":kotlin-ant",
     ":kotlin-daemon",
     ":kotlin-daemon-client",
     ":kotlin-main-kts",

@@ -444,6 +444,7 @@ enum class LanguageFeature(
     ParseLambdaWithSuspendModifier(KOTLIN_2_3, "KT-22765"),
     DiscriminateSuspendInOverloadResolution(KOTLIN_2_3, "KT-23610"),
     JsAllowLongInExportedDeclarations(sinceVersion = KOTLIN_2_3, "KT-79222"),
+    JsStaticInInterface(KOTLIN_2_3, "KT-80168"),
 
     IrRichCallableReferencesInKlibs(sinceVersion = KOTLIN_2_3, "KT-72734"), // KT-72734, KT-74384, KT-74392
 
@@ -465,6 +466,7 @@ enum class LanguageFeature(
     ForbidTypeAliasWithMissingDependencyType(KOTLIN_2_4, enabledInProgressiveMode = true, "KT-79781"),
     ForbidImplicitTypeAnnotationWithMissingDependency(KOTLIN_2_4, enabledInProgressiveMode = true, "KT-80247"),
     ProperExhaustivenessCheckForJavaOpenSealedClass(sinceVersion = KOTLIN_2_4, enabledInProgressiveMode = true,"KT-78879"),
+    JsAllowExportingSuspendFunctions(sinceVersion = KOTLIN_2_4, "KT-56281"),
 
     // 2.5
 

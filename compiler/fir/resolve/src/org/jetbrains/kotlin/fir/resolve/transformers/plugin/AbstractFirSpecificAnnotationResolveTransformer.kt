@@ -373,7 +373,7 @@ abstract class AbstractFirSpecificAnnotationResolveTransformer(
 
 
     override fun transformRegularClass(regularClass: FirRegularClass, data: Nothing?): FirStatement {
-        resolveRegularClass(
+        resolveClass(
             regularClass,
             transformChildren = {
                 regularClass.transformDeclarations(this, data)
@@ -383,24 +383,39 @@ abstract class AbstractFirSpecificAnnotationResolveTransformer(
         return regularClass
     }
 
-    inline fun resolveRegularClass(
-        regularClass: FirRegularClass,
+    override fun transformAnonymousObject(
+        anonymousObject: FirAnonymousObject,
+        data: Nothing?,
+    ): FirStatement {
+        resolveClass(
+            anonymousObject,
+            transformChildren = {
+                anonymousObject.transformDeclarations(this, data)
+            }
+        )
+        return anonymousObject
+    }
+
+    inline fun resolveClass(
+        klass: FirClass,
         transformChildren: () -> Unit,
     ) {
-        withRegularClass(regularClass) {
-            if (!shouldTransformDeclaration(regularClass)) return
-            if (!computationSession.annotationResolutionWasAlreadyStarted(regularClass)) {
-                computationSession.recordThatAnnotationResolutionStarted(regularClass)
-                transformDeclaration(regularClass, null)
-                computationSession.recordThatAnnotationsAreResolved(regularClass)
+        withClass(klass) {
+            if (!shouldTransformDeclaration(klass)) return
+            if (!computationSession.annotationResolutionWasAlreadyStarted(klass)) {
+                computationSession.recordThatAnnotationResolutionStarted(klass)
+                transformDeclaration(klass, null)
+                computationSession.recordThatAnnotationsAreResolved(klass)
             }
 
-            transformChildren(regularClass) {
-                regularClass.transformContextParameters(this, null)
+            transformChildren(klass) {
+                if (klass is FirRegularClass) {
+                    klass.transformContextParameters(this, null)
+                }
                 transformChildren()
             }
 
-            calculateDeprecations(regularClass)
+            calculateDeprecations(klass)
         }
     }
 
@@ -429,11 +444,11 @@ abstract class AbstractFirSpecificAnnotationResolveTransformer(
         return script
     }
 
-    inline fun withRegularClass(
-        regularClass: FirRegularClass,
+    inline fun withClass(
+        klass: FirClass,
         action: () -> Unit
     ) {
-        withClassDeclarationCleanup(classDeclarationsStack, regularClass) {
+        withClassDeclarationCleanup(classDeclarationsStack, klass) {
             action()
         }
     }

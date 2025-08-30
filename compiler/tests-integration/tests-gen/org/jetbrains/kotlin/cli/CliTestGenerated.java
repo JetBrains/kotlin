@@ -1989,6 +1989,11 @@ public class CliTestGenerated extends AbstractCliTest {
       runTest("compiler/testData/cli/js/compilationErrorConstDivByZero.args");
     }
 
+    @TestMetadata("compilationErrorCrossInlinerWithoutIntraModuleInliner.args")
+    public void testCompilationErrorCrossInlinerWithoutIntraModuleInliner() {
+      runTest("compiler/testData/cli/js/compilationErrorCrossInlinerWithoutIntraModuleInliner.args");
+    }
+
     @TestMetadata("compilationErrorExposureOfPrivateTypes.args")
     public void testCompilationErrorExposureOfPrivateTypes() {
       runTest("compiler/testData/cli/js/compilationErrorExposureOfPrivateTypes.args");

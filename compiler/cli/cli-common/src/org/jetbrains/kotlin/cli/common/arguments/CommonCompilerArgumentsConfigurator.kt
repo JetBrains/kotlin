@@ -77,11 +77,16 @@ open class CommonCompilerArgumentsConfigurator {
                 configureLanguageFeaturesFromInternalArgs(arguments, collector)
             }
 
-            configureExtraLanguageFeatures(arguments, this)
+            configureExtraLanguageFeatures(arguments, this, collector)
         }
     }
 
-    protected open fun configureExtraLanguageFeatures(arguments: CommonCompilerArguments, map: HashMap<LanguageFeature, LanguageFeature.State>) {}
+    protected open fun configureExtraLanguageFeatures(
+        arguments: CommonCompilerArguments,
+        map: HashMap<LanguageFeature, LanguageFeature.State>,
+        collector: MessageCollector,
+    ) {
+    }
 
     private fun HashMap<LanguageFeature, LanguageFeature.State>.configureLanguageFeaturesFromInternalArgs(
         arguments: CommonCompilerArguments,
@@ -125,6 +130,16 @@ open class CommonCompilerArgumentsConfigurator {
                 put(LanguageFeature.FunctionReferenceWithDefaultValueAsOtherType, LanguageFeature.State.ENABLED)
 
             put(LanguageFeature.DisableCompatibilityModeForNewInference, LanguageFeature.State.ENABLED)
+        }
+
+        val isCrossModuleInlinerEnabled = this[LanguageFeature.IrCrossModuleInlinerBeforeKlibSerialization] == LanguageFeature.State.ENABLED
+        val isIntraModuleInlinerEnabled = this[LanguageFeature.IrIntraModuleInlinerBeforeKlibSerialization] == LanguageFeature.State.ENABLED
+        if (isCrossModuleInlinerEnabled && !isIntraModuleInlinerEnabled) {
+            collector.report(
+                CompilerMessageSeverity.ERROR,
+                "-XXLanguage:+IrCrossModuleInlinerBeforeKlibSerialization requires -XXLanguage:+IrIntraModuleInlinerBeforeKlibSerialization. " +
+                        "Enable the intra-module inliner as well to avoid inconsistent configuration."
+            )
         }
 
         if (featuresThatForcePreReleaseBinaries.isNotEmpty()) {

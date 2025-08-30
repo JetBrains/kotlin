@@ -74,7 +74,8 @@ where advanced options include:
                              Define the compile-time log level for partial linkage.
   -Xklib-duplicated-unique-name-strategy={deny|allow-all-with-warning|allow-first-with-warning}
                              Klib dependencies usage strategy when multiple KLIBs has same `unique_name` property value.
-  -Xklib-ir-inliner          Enable experimental support to invoke IR Inliner before Klib serialization.
+  -Xklib-ir-inliner={intra-module|full|disabled}
+                             Enable experimental IR inliner during KLIB generation.
   -Xklib-abi-version=<version> Specify the custom ABI version to be written in KLIB. This option is intended only for tests.
                              Warning: This option does not affect KLIB ABI. Neither allows it making a KLIB backward-compatible with older ABI versions.
                              The only observable effect is that a custom ABI version is written to KLIB manifest file.

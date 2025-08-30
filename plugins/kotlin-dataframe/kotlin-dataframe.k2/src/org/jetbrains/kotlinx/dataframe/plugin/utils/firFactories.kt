@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.toFirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
+import org.jetbrains.kotlin.fir.types.constructClassType
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlinx.dataframe.plugin.DataFramePlugin
 import org.jetbrains.kotlinx.dataframe.plugin.extensions.impl.PropertyName
@@ -63,17 +63,9 @@ internal fun FirDeclarationGenerationExtension.generateExtensionProperty(
         val classId = firPropertySymbol.callableId.classId
         if (classId != null) {
             dispatchReceiverType = if (symbol != null) {
-                ConeClassLikeTypeImpl(
-                    ConeClassLikeLookupTagWithFixedSymbol(classId, symbol),
-                    emptyArray(),
-                    false
-                )
+                ConeClassLikeLookupTagWithFixedSymbol(classId, symbol).constructClassType()
             } else {
-                ConeClassLikeTypeImpl(
-                    ConeClassLikeLookupTagImpl(classId),
-                    emptyArray(),
-                    false
-                )
+                ConeClassLikeLookupTagImpl(classId).constructClassType()
             }
         }
         val firPropertyAccessorSymbol = FirPropertyAccessorSymbol()

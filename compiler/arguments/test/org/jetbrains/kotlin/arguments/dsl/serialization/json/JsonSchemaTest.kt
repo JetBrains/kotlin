@@ -51,7 +51,7 @@ class JsonSchemaTest {
     }
 
     companion object {
-        private const val CURRENT_JSON_SCHEMA_VERSION = 1
-        private const val CURRENT_JSON_SCHEMA_HASH = 569815075
+        private const val CURRENT_JSON_SCHEMA_VERSION = 2
+        private const val CURRENT_JSON_SCHEMA_HASH = -171115104
     }
 }

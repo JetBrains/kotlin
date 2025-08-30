@@ -100,11 +100,12 @@ object ImportedSchemasDiagnostics : KtDiagnosticsContainer() {
     val CONFLICTING_COMPANION_OBJECT_DECLARATION by error1<KtElement, String>(SourceElementPositioningStrategies.DEFAULT)
     val INVALID_SUPERTYPE by error1<KtElement, String>(SourceElementPositioningStrategies.SUPERTYPES_LIST)
 
-    override fun getRendererFactory(): BaseDiagnosticRendererFactory = SchemaRenderers
+    override fun getRendererFactory(): BaseDiagnosticRendererFactory = ImportedSchemaDiagnosticRenderers
 
-    private object SchemaRenderers : BaseDiagnosticRendererFactory() {
-        override val MAP: KtDiagnosticFactoryToRendererMap by KtDiagnosticFactoryToRendererMap("DataFrame Schemas") {
+    private object ImportedSchemaDiagnosticRenderers : BaseDiagnosticRendererFactory() {
+        override val MAP: KtDiagnosticFactoryToRendererMap by KtDiagnosticFactoryToRendererMap("DataFrame Imported Schemas") {
             it.put(GENERATED_FROM_SOURCE_SCHEMA, "{0}", TO_STRING)
+            it.put(CONFLICTING_COMPANION_OBJECT_DECLARATION, "{0}", TO_STRING)
             it.put(INVALID_SUPERTYPE, "{0}", TO_STRING)
         }
     }

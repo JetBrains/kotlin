@@ -12,6 +12,11 @@ fun test_1(cond: Boolean) {
         true -> 1
         false -> 2
     }
+
+    val k = when (cond) {
+        true -> 1
+        else -> 2
+    }
 }
 
 fun test_2(cond: Boolean?) {

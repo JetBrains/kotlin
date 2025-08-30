@@ -21,6 +21,15 @@ FILE: missingBooleanBranch.kt
             }
         }
 
+        lval k: R|kotlin/Int| = when (lval <when-subject>: R|kotlin/Boolean| = R|<local>/cond|) {
+            ==($subj$, Boolean(true)) ->  {
+                Int(1)
+            }
+            else ->  {
+                Int(2)
+            }
+        }
+
     }
     public final fun test_2(cond: R|kotlin/Boolean?|): R|kotlin/Unit| {
         lval x: R|kotlin/Int| = when (lval <when-subject>: R|kotlin/Boolean?| = R|<local>/cond|) {

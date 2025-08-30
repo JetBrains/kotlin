@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.backend.js.*
 import org.jetbrains.kotlin.ir.backend.js.lower.ES6_BOX_PARAMETER
+import org.jetbrains.kotlin.ir.backend.js.lower.coroutines.isPromisifiedWrapper
 import org.jetbrains.kotlin.ir.backend.js.lower.isBoxParameter
 import org.jetbrains.kotlin.ir.backend.js.lower.isEs6ConstructorReplacement
 import org.jetbrains.kotlin.ir.backend.js.utils.*
@@ -23,6 +24,7 @@ import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.util.isNullable
+import org.jetbrains.kotlin.js.common.makeValidES5Identifier
 import org.jetbrains.kotlin.js.config.compileLongAsBigint
 import org.jetbrains.kotlin.utils.*
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
@@ -77,7 +79,7 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
             is Exportability.Prohibited -> ErrorDeclaration(exportability.reason)
             is Exportability.Allowed -> {
                 val parent = function.parent
-                val realOverrideTarget = function.realOverrideTarget
+                val realOverrideTarget = function.realOverrideTargetOrNull
                 ExportedFunction(
                     function.getExportedIdentifier(),
                     returnType = exportType(function.returnType, function),
@@ -91,7 +93,7 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
                         .memoryOptimizedMap {
                             exportParameter(
                                 it,
-                                it.hasDefaultValue || realOverrideTarget.parameters[it.indexInParameters].hasDefaultValue
+                                it.hasDefaultValue || realOverrideTarget?.parameters?.get(it.indexInParameters)?.hasDefaultValue == true
                             )
                         }
                 )
@@ -111,7 +113,7 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
 
     private fun exportParameter(parameter: IrValueParameter, hasDefaultValue: Boolean): ExportedParameter {
         // Parameter names do not matter in d.ts files. They can be renamed as we like
-        var parameterName = sanitizeName(parameter.name.asString(), withHash = false)
+        var parameterName = makeValidES5Identifier(parameter.name.asString(), withHash = false)
         if (parameterName in allReservedWords)
             parameterName = "_$parameterName"
 
@@ -794,9 +796,9 @@ private fun shouldDeclarationBeExported(
         val overriddenNonEmpty = source.overriddenSymbols.isNotEmpty()
 
         if (overriddenNonEmpty) {
-            return source.isOverriddenExported(context) ||
-                    (source as? IrSimpleFunction)?.isMethodOfAny() == true // Handle names for special functions
+            return (source as? IrSimpleFunction)?.isMethodOfAny() == true // Handle names for special functions
                     || source.isAllowedFakeOverriddenDeclaration(context)
+                    || source.isOverriddenExported(context)
         }
     }
 
@@ -811,7 +813,7 @@ private fun shouldDeclarationBeExported(
 }
 
 fun IrOverridableDeclaration<*>.isAllowedFakeOverriddenDeclaration(context: JsIrBackendContext): Boolean {
-    if (isOverriddenEnumProperty(context)) return true
+    if (isPromisifiedWrapper || isOverriddenEnumProperty(context)) return true
 
     val firstExportedRealOverride = runIf(isFakeOverride) {
         resolveFakeOverrideMaybeAbstract { it === this || it.isFakeOverride || it.parentClassOrNull?.isExported(context) != true }

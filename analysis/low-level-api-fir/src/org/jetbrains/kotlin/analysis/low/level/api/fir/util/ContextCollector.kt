@@ -13,22 +13,22 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLPartialBody
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.partialBodyAnalysisState
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.withFirDesignationEntry
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.getNonLocalContainingOrThisDeclaration
+import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.isAutonomousElement
+import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.FirElementsRecorder.Companion.anchorPsi
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.LLPartialBodyElementMapper
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.llFirSession
-import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.isAutonomousElement
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.ContextCollector.Context
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.ContextCollector.ContextKind
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.ContextCollector.FilterResponse
 import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.SessionAndScopeSessionHolder
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
+import org.jetbrains.kotlin.fir.declarations.utils.isScriptTopLevelDeclaration
 import org.jetbrains.kotlin.fir.declarations.utils.memberDeclarationNameOrNull
 import org.jetbrains.kotlin.fir.expressions.*
-import org.jetbrains.kotlin.fir.psi
-import org.jetbrains.kotlin.fir.realPsi
-import org.jetbrains.kotlin.fir.SessionAndScopeSessionHolder
-import org.jetbrains.kotlin.fir.declarations.utils.isScriptTopLevelDeclaration
 import org.jetbrains.kotlin.fir.extensions.scriptResolutionHacksComponent
+import org.jetbrains.kotlin.fir.realPsi
 import org.jetbrains.kotlin.fir.resolve.SessionHolderImpl
 import org.jetbrains.kotlin.fir.resolve.calls.ImplicitValue
 import org.jetbrains.kotlin.fir.resolve.dfa.DataFlowAnalyzerContext
@@ -143,7 +143,7 @@ object ContextCollector {
     private fun partiallyResolveTargetElementIfPossible(
         resolutionFacade: LLResolutionFacade,
         designation: FirDesignation?,
-        targetElement: PsiElement
+        targetElement: PsiElement,
     ): Boolean {
         val declaration = designation?.target?.realPsi as? KtDeclaration ?: return false
 
@@ -291,7 +291,7 @@ private class ContextCollectorVisitor(
             return
         }
 
-        val psi = fir.psi ?: return
+        val psi = fir.anchorPsi ?: return
 
         val key = ContextKey(psi, kind)
         if (key in result) {
@@ -1087,7 +1087,7 @@ private class ContextCollectorVisitor(
     private inner class FilteringVisitor(
         val delegate: FirVisitorVoid,
         val elementsToSkip: Set<FirElement>,
-        val checkIsActive: Boolean
+        val checkIsActive: Boolean,
     ) : FirVisitorVoid() {
         override fun visitElement(element: FirElement) {
             if (checkIsActive && !isActive) {

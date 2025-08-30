@@ -9,10 +9,7 @@ import org.jetbrains.kotlin.arguments.dsl.base.*
 import org.jetbrains.kotlin.arguments.dsl.defaultFalse
 import org.jetbrains.kotlin.arguments.dsl.defaultNull
 import org.jetbrains.kotlin.arguments.dsl.defaultTrue
-import org.jetbrains.kotlin.arguments.dsl.types.BooleanType
-import org.jetbrains.kotlin.arguments.dsl.types.IntType
-import org.jetbrains.kotlin.arguments.dsl.types.StringArrayType
-import org.jetbrains.kotlin.arguments.dsl.types.StringType
+import org.jetbrains.kotlin.arguments.dsl.types.*
 
 val actualCommonKlibBasedArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.commonKlibBasedArguments) {
     compilerArgument {
@@ -87,8 +84,11 @@ val actualCommonKlibBasedArguments by compilerArgumentsLevel(CompilerArgumentsLe
     compilerArgument {
         name = "Xklib-ir-inliner"
         compilerName = "irInlinerBeforeKlibSerialization"
-        description = "Enable experimental support to invoke IR Inliner before Klib serialization.".asReleaseDependent()
-        valueType = BooleanType.defaultFalse
+        description = "Enable experimental IR inliner during KLIB generation.".asReleaseDependent()
+        valueType = KlibIrInlinerModeType()
+        valueDescription = ReleaseDependent(
+            current = KlibIrInlinerMode.entries.joinToString(prefix = "{", separator = "|", postfix = "}") { it.modeState }
+        )
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v2_1_20,
