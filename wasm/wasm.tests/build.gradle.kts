@@ -346,8 +346,27 @@ LD_LIBRARY_PATH="$jscBinariesDir/lib" exec "$jscBinariesDir/lib/ld-linux-x86-64.
     else -> error("unsupported os type $currentOsType")
 }
 
+val fixSymbolicLinks by task<Task> {
+    dependsOn(unzipJsc)
+    val jscDirectory = unzipJsc.map { it.destinationDir }
+
+    doFirst {
+        val libDirectory = File(jscDirectory.get(), "lib")
+        for (file in libDirectory.listFiles()) {
+            if (file.isFile && file.length() < 100) { // seems unpacked file link
+                val linkTo = file.readText()
+                file.delete()
+                Files.createSymbolicLink(file.toPath(), File(linkTo).toPath())
+            }
+        }
+    }
+}
+
 val createJscRunner by task<Task> {
     dependsOn(unzipJsc)
+    if (currentOsType.name == OsName.LINUX) {
+        dependsOn(fixSymbolicLinks)
+    }
 
     val jscDirectory = unzipJsc.map { it.destinationDir }
 
