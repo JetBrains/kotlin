@@ -15,11 +15,14 @@ import org.jetbrains.kotlin.test.Constructor
 import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.backend.BlackBoxCodegenSuppressor
+import org.jetbrains.kotlin.test.backend.handlers.NoFir2IrCompilationErrorsHandler
 import org.jetbrains.kotlin.test.backend.handlers.SyntheticAccessorsDumpHandler
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.deserializedIrHandlersStep
 import org.jetbrains.kotlin.test.builders.firHandlersStep
+import org.jetbrains.kotlin.test.builders.irHandlersStep
+import org.jetbrains.kotlin.test.builders.loweredIrHandlersStep
 import org.jetbrains.kotlin.test.configuration.commonFirHandlersForCodegenTest
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives
@@ -119,7 +122,13 @@ private fun TestConfigurationBuilder.commonConfigurationForDumpSyntheticAccessor
         )
     }
     facadeStep(frontendToIrConverter)
+    irHandlersStep {
+        useHandlers(::NoFir2IrCompilationErrorsHandler)
+    }
     facadeStep(irInliningFacade)
+    loweredIrHandlersStep {
+        useHandlers(::NoFir2IrCompilationErrorsHandler)
+    }
 
     enableMetaInfoHandler()
     facadeStep(serializerFacade)
