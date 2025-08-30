@@ -56,6 +56,7 @@ private class AutoboxingTransformer(val context: Context) : AbstractValueUsageTr
         context.irBuiltIns
 ) {
     private val insertSafeCasts = context.config.genericSafeCasts
+    private val anyClass = context.irBuiltIns.anyClass.owner
 
     // TODO: should we handle the cases when expression type
     // is not equal to e.g. called function return type?
@@ -187,7 +188,8 @@ private class AutoboxingTransformer(val context: Context) : AbstractValueUsageTr
             }
 
     private fun IrClass.canBeAssignedTo(expectedClass: IrClass) =
-            this.isNothing() || this.symbol.isSubtypeOfClass(expectedClass.symbol)
+            this.isNothing() || expectedClass == anyClass /* A workaround for plugins emitting classes with empty superTypes */
+                    || this.symbol.isSubtypeOfClass(expectedClass.symbol)
 
     private fun IrExpression.adaptIfNecessary(actualType: IrType, expectedType: IrType, skipTypeCheck: Boolean = false): IrExpression {
         val conversion = context.getTypeConversion(actualType, expectedType)
