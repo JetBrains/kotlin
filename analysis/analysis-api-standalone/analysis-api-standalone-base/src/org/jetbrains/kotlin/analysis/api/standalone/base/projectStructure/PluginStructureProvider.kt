@@ -15,9 +15,7 @@ import com.intellij.mock.MockApplication
 import com.intellij.mock.MockComponentManager
 import com.intellij.mock.MockProject
 import com.intellij.openapi.extensions.DefaultPluginDescriptor
-import com.intellij.openapi.extensions.PluginDescriptor
 import com.intellij.util.containers.ContainerUtil
-import com.intellij.util.lang.ZipFilePool
 import com.intellij.util.messages.ListenerDescriptor
 import com.intellij.util.messages.impl.MessageBusEx
 import com.intellij.util.xml.dom.NoOpXmlInterner
@@ -60,15 +58,12 @@ object PluginStructureProvider {
     private fun getOrCalculatePluginDescriptor(
         designation: PluginDesignation,
     ): RawPluginDescriptor = pluginDescriptorsCache.computeIfAbsent(designation) {
-        val descriptor = RawPluginDescriptor()
         PluginXmlPathResolver.DEFAULT_PATH_RESOLVER.resolvePath(
             readContext = ReadContext,
             dataLoader = ResourceDataLoader(designation.classLoader),
             relativePath = designation.relativePath,
-            readInto = descriptor,
-        )
-
-        descriptor
+            readInto = null,
+        ) ?: RawPluginDescriptor()
     }
 
     fun registerProjectExtensionPoints(project: MockProject, pluginRelativePath: String) {
