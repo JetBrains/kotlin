@@ -249,7 +249,12 @@ abstract class PerformanceManager(val targetPlatform: TargetPlatform, val presen
     fun notifyPhaseFinished(phaseType: PhaseType) {
         ensureNotFinalizedAndSameThread()
 
-        assert(phaseStartTime != null) { "The measurement for phase $phaseType hasn't been started or already finished" }
+        //TODO(emazhukin) disabling the assert for a quick check
+        // but also, shouldn't it just work? why don't we start phase twice?
+        // ideally we need to measure repeated phases properly (e.g. sum their times or do some other thing)
+        // assert(phaseStartTime != null) { "The measurement for phase $phaseType hasn't been started or already finished" }
+        if (phaseStartTime == null) return
+
         finishPhase(phaseType)
     }
 

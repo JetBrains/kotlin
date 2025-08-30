@@ -886,7 +886,7 @@ public class IncrementalK2FirICJvmCompilerRunnerTestGenerated extends AbstractIn
     }
 
     @TestMetadata("propertyNullabilityChanged")
-    public void testPropertyNullabilityChanged() {
+    public void testPropertyNullabilityChanged() { //TODO(emazhukin) nvm, THIS one fails
       runTest("jps/jps-plugin/testData/incremental/classHierarchyAffected/propertyNullabilityChanged/");
     }
 
