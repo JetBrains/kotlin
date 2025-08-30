@@ -3,9 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-@file:ExcludedFromCodegen
 @file:Suppress("unused", "NON_ABSTRACT_FUNCTION_WITH_NO_BODY", "INLINE_CLASS_IN_EXTERNAL_DECLARATION", "UNUSED_PARAMETER")
-
 
 package kotlin.wasm.internal
 
@@ -14,10 +12,12 @@ internal fun wasm_unreachable(): Nothing =
     implementedAsIntrinsic
 
 @Suppress("REIFIED_TYPE_PARAMETER_NO_INLINE")
+@ExcludedFromCodegen
 internal fun <reified To> wasm_ref_cast_null(a: Any?): To =
     implementedAsIntrinsic
 
 @Suppress("REIFIED_TYPE_PARAMETER_NO_INLINE")
+@ExcludedFromCodegen
 internal fun <reified To> wasm_ref_test(a: Any?): Boolean =
     implementedAsIntrinsic
 
@@ -26,12 +26,15 @@ internal fun <reified To> wasm_ref_test(a: Any?): Boolean =
 internal fun <reified To> wasm_ref_test_null(a: Any?): Boolean =
     implementedAsIntrinsic
 
+@ExcludedFromCodegen
 internal fun <T> wasm_array_copy(destination: T, destinationIndex: Int, source: T, sourceIndex: Int, length: Int): Unit =
     implementedAsIntrinsic
 
+@ExcludedFromCodegen
 internal fun <T> array_new_data0(address: Int, length: Int): T =
     implementedAsIntrinsic
 
+@ExcludedFromCodegen
 internal fun array_new_data0_char_array(address: Int, length: Int): WasmCharArray =
     implementedAsIntrinsic
 
