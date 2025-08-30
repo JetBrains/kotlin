@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.prepareJvmSessions
 import org.jetbrains.kotlin.cli.jvm.compiler.VfsBasedProjectEnvironment
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.headerCompilation
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.pipeline.FirResult
@@ -94,9 +95,9 @@ private fun FrontendContext.compileModuleToAnalyzedFirViaLightTreeIncrementally(
         )
 
         val countFilesAndLines = if (performanceManager == null) null else performanceManager::addSourcesStats
-
         val outputs = sessionsWithSources.map { (session, sources) ->
-            buildResolveAndCheckFirViaLightTree(session, sources, diagnosticsReporter, countFilesAndLines)
+            buildResolveAndCheckFirViaLightTree(session, sources, diagnosticsReporter, countFilesAndLines,
+                configuration.headerCompilation)
         }
         outputs.runPlatformCheckers(diagnosticsReporter)
         FirResult(outputs)

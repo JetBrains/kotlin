@@ -69,6 +69,16 @@ public interface CommonCompilerArguments : CommonToolArguments {
     public val KOTLIN_HOME: CommonCompilerArgument<String?> = CommonCompilerArgument("KOTLIN_HOME")
 
     /**
+     * Enable header compilation mode.
+     * In this mode, the compiler produces class files that only contain the 'skeleton' of the classes to be
+     * compiled but the method bodies of all the implementations are empty.  This is used to speed up parallel compilation
+     * build systems where header libraries can be used to replace downstream dependencies for which we only need to
+     * see the type names and method signatures required to compile a given translation unit.
+     */
+    @JvmField
+    public val HEADER: CommonCompilerArgument<Boolean> = CommonCompilerArgument("HEADER")
+
+    /**
      * Enable progressive compiler mode.
      * In this mode, deprecations and bug fixes for unstable code take effect immediately
      * instead of going through a graceful migration cycle.

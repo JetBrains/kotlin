@@ -23,6 +23,7 @@ import java.nio.file.Path
 
 class LightTree2Fir(
     val session: FirSession,
+    val headerCompilationMode: Boolean,
     private val scopeProvider: FirScopeProvider,
     private val diagnosticsReporter: DiagnosticReporter? = null,
 ) {
@@ -43,7 +44,7 @@ class LightTree2Fir(
         sourceFile: KtSourceFile,
         linesMapping: KtSourceFileLinesMapping,
     ): FirFile {
-        return LightTreeRawFirDeclarationBuilder(session, scopeProvider, lightTree)
+        return LightTreeRawFirDeclarationBuilder(session, scopeProvider, lightTree, headerCompilationMode)
             .convertFile(lightTree.root, sourceFile, linesMapping)
     }
 
