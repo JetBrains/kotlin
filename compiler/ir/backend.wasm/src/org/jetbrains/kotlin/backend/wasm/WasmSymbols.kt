@@ -224,8 +224,6 @@ class WasmSymbols(
 
     val createString = getFunction("createString", StandardNames.BUILT_INS_PACKAGE_FQ_NAME)
 
-    val stringGetPoolSize = getInternalWasmFunction("stringGetPoolSize")
-
     val getWasmAbiVersion = getInternalWasmFunction("getWasmAbiVersion")
 
     val testFun = maybeGetFunction("test", kotlinTestPackageFqName)

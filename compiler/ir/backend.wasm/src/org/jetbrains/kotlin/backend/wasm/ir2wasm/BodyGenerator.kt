@@ -1157,10 +1157,6 @@ class BodyGenerator(
                 body.buildInstr(WasmOp.ARRAY_COPY, location, immediate, immediate)
             }
 
-            wasmSymbols.stringGetPoolSize -> {
-                body.buildConstI32Symbol(wasmFileCodegenContext.wasmStringsElements.stringPoolSize, location)
-            }
-
             wasmSymbols.getWasmAbiVersion -> {
                 body.buildConstI32Symbol(wasmAbiVersion, location)
             }

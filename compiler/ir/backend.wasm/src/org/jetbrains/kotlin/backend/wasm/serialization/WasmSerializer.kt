@@ -643,8 +643,6 @@ class WasmSerializer(outputStream: OutputStream) {
         serializeWasmSymbolReadOnly(wasmStringsElements.createStringLiteralUtf16, ::serializeWasmFunction)
         serializeWasmSymbolReadOnly(wasmStringsElements.createStringLiteralLatin1, ::serializeWasmFunction)
         serializeWasmSymbolReadOnly(wasmStringsElements.createStringLiteralType, ::serializeWasmFunctionType)
-        serializeWasmSymbolReadOnly(wasmStringsElements.stringPoolSize, ::serializeInt)
-        serializeNullable(wasmStringsElements.stringPoolFieldInitializer, ::serializeIdSignature)
     }
 
     private fun serializeRttiElements(rttiElements: RttiElements) {

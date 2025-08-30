@@ -79,7 +79,6 @@ class WasmBackendContext(
         var testFunctionDeclarator: IrSimpleFunction? = null
 
         var objectInstanceFieldInitializer: IrSimpleFunction? = null
-        var stringPoolFieldInitializer: IrSimpleFunction? = null
         var nonConstantFieldInitializer: IrSimpleFunction? = null
     }
 

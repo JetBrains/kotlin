@@ -37,12 +37,9 @@ import org.jetbrains.kotlin.name.Name
  * field initializers.
  */
 class FieldInitializersLowering(val context: WasmBackendContext) : FileLoweringPass {
-    private val stringPoolFqName = FqName("kotlin.wasm.internal.stringPool")
-
     override fun lower(irFile: IrFile) {
         var nonConstantFieldInitializer: IrSimpleFunction? = null
         var objectInstanceFieldInitializer: IrSimpleFunction? = null
-        var stringPoolFieldInitializer: IrSimpleFunction? = null
 
         irFile.acceptVoid(object : IrVisitorVoid() {
             override fun visitElement(element: IrElement) {
@@ -83,7 +80,6 @@ class FieldInitializersLowering(val context: WasmBackendContext) : FileLoweringP
 
                 val initializeFunction = when {
                     declaration.isObjectInstanceField() -> objectInstanceFieldInitializer
-                    declaration.fqNameWhenAvailable == stringPoolFqName -> stringPoolFieldInitializer
                     else -> nonConstantFieldInitializer
                 }
 
@@ -93,7 +89,6 @@ class FieldInitializersLowering(val context: WasmBackendContext) : FileLoweringP
                     }.also {
                         when {
                             declaration.isObjectInstanceField() -> objectInstanceFieldInitializer = it
-                            declaration.fqNameWhenAvailable == stringPoolFqName -> stringPoolFieldInitializer = it
                             else -> nonConstantFieldInitializer = it
                         }
                     }
@@ -111,10 +106,9 @@ class FieldInitializersLowering(val context: WasmBackendContext) : FileLoweringP
             }
         })
 
-        if (objectInstanceFieldInitializer != null || stringPoolFieldInitializer != null || nonConstantFieldInitializer != null) {
+        if (objectInstanceFieldInitializer != null || nonConstantFieldInitializer != null) {
             with(context.getFileContext(irFile)) {
                 this.objectInstanceFieldInitializer = objectInstanceFieldInitializer?.also { irFile.declarations.add(it) }
-                this.stringPoolFieldInitializer = stringPoolFieldInitializer?.also { irFile.declarations.add(it) }
                 this.nonConstantFieldInitializer = nonConstantFieldInitializer?.also { irFile.declarations.add(it) }
             }
         }

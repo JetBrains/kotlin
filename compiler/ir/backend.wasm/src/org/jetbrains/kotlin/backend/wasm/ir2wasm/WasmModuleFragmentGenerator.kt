@@ -108,9 +108,6 @@ private fun compileIrFile(
     fileContext.objectInstanceFieldInitializer?.apply {
         wasmFileCodegenContext.addObjectInstanceFieldInitializer(symbol)
     }
-    fileContext.stringPoolFieldInitializer?.apply {
-        wasmFileCodegenContext.setStringPoolFieldInitializer(symbol)
-    }
     fileContext.nonConstantFieldInitializer?.apply {
         wasmFileCodegenContext.addNonConstantFieldInitializers(symbol)
     }

@@ -54,8 +54,6 @@ class WasmStringsElements(
     var createStringLiteralUtf16: WasmSymbol<WasmFunction> = WasmSymbol(),
     var createStringLiteralLatin1: WasmSymbol<WasmFunction> = WasmSymbol(),
     var createStringLiteralType: WasmSymbol<WasmFunctionType> = WasmSymbol(),
-    var stringPoolSize: WasmSymbol<Int> = WasmSymbol(),
-    var stringPoolFieldInitializer: IdSignature? = null,
 )
 
 class WasmCompiledFileFragment(
@@ -569,11 +567,6 @@ class WasmCompiledModuleFragment(
             )
             buildSetGlobal(WasmSymbol(stringAddressesAndLengthsGlobal), serviceCodeLocation)
 
-            val stringPoolInitializer = wasmCompiledFileFragments.firstNotNullOfOrNull { fragment ->
-                fragment.wasmStringsElements?.stringPoolFieldInitializer?.let { WasmSymbol(fragment.functions.defined[it]) }
-            } ?: compilationException("stringPool initializer not found!", type = null)
-            buildCall(stringPoolInitializer, serviceCodeLocation)
-
             wasmCompiledFileFragments.forEach { fragment ->
                 fragment.objectInstanceFieldInitializers.forEach { objectInitializer ->
                     val functionSymbol = WasmSymbol(fragment.functions.defined[objectInitializer]!!)
@@ -878,10 +871,6 @@ class WasmCompiledModuleFragment(
                 }
                 literalIdSymbol.bind(stringId)
             }
-        }
-
-        wasmCompiledFileFragments.forEach { fragment ->
-            fragment.wasmStringsElements?.stringPoolSize?.bind(visitedStrings.size)
         }
 
         data.add(WasmData(WasmDataMode.Passive, stringDataSectionBytes.toByteArray()))
