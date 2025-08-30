@@ -42,7 +42,7 @@ class IdeStdlibResolutionTest {
     private fun dumpKonanDirContents() {
         val konanDir = Path(System.getProperty("user.home")).resolve(".konan").toFile()
         System.err.println("Contents of ${konanDir.absolutePath}:")
-        konanDir.walk().forEach { file -> System.err.println("  $file") }
+        konanDir.list().forEach { file -> System.err.println("  $file") }
     }
 
     @Test
