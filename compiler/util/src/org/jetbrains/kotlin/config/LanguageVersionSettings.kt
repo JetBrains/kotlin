@@ -466,6 +466,7 @@ enum class LanguageFeature(
     ForbidTypeAliasWithMissingDependencyType(KOTLIN_2_4, enabledInProgressiveMode = true, "KT-79781"),
     ForbidImplicitTypeAnnotationWithMissingDependency(KOTLIN_2_4, enabledInProgressiveMode = true, "KT-80247"),
     ProperExhaustivenessCheckForJavaOpenSealedClass(sinceVersion = KOTLIN_2_4, enabledInProgressiveMode = true,"KT-78879"),
+    JsAllowExportingSuspendFunctions(sinceVersion = KOTLIN_2_4, "KT-56281"),
 
     // 2.5
 

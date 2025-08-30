@@ -349,7 +349,7 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
     }
 
     private fun generateMemberFunction(declaration: IrSimpleFunction): Pair<JsName, JsFunction?> {
-        val memberName = context.getNameForMemberFunction(declaration.realOverrideTarget)
+        val memberName = context.getNameForMemberFunction(declaration.realOverrideTargetOrNull ?: declaration)
 
         if (declaration.isReal && declaration.body != null) {
             val translatedFunction: JsFunction = declaration.accept(IrFunctionToJsTransformer(), context)

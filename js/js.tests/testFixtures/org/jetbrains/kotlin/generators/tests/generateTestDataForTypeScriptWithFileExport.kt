@@ -29,6 +29,7 @@ fun generateTypeScriptJsExportOnFiles(jsTestsDirPath: String) {
                 !file.path.endsWith("implicit-export") &&
                 !file.path.endsWith("inheritance") &&
                 !file.path.endsWith("strict-implicit-export") &&
+                !file.path.endsWith("suspend-functions") &&
                 !file.path.endsWith("private-primary-constructor") &&
                 !file.path.endsWith(EXPORT_FILE_DIR_SUFIX)
     } ?: emptyArray()

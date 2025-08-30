@@ -133,7 +133,10 @@ class JsDefaultArgumentStubGenerator(context: JsIrBackendContext) :
         val (exportAnnotations, irrelevantAnnotations) = originalFun.annotations
             .map { it.deepCopyWithSymbols(originalFun as? IrDeclarationParent) }
             .partition {
-                it.isAnnotation(JsAnnotations.jsExportFqn) || (it.isAnnotation(JsAnnotations.jsNameFqn))
+                it.isAnnotation(JsAnnotations.jsExportFqn) ||
+                        (it.isAnnotation(JsAnnotations.jsNameFqn)) ||
+                        (it.isAnnotation(JsAnnotations.jsExportIgnoreFqn))
+
             }
 
         originalFun.annotations = irrelevantAnnotations
