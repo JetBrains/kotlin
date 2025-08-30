@@ -843,7 +843,7 @@ fun test39(a: Any): Int {
 // CHECK-OPT-NOT: {{call|call zeroext}} i1 @IsSubclassFast
 // CHECK-LABEL: epilogue:
 object Test40 {
-    val z = test39("zzz") // To deny possibility of placing into static data.
+    val z = test39(A("zzz", 42, 117)) // To deny possibility of placing into static data.
 }
 
 // CHECK-LABEL: define ptr @"kfun:#box(){}kotlin.String"
