@@ -38,6 +38,9 @@ open class LocalDeclarationPopupLowering(
 
         irBody.transform(object : IrElementTransformerVoidWithContext() {
             override fun visitLocalDelegatedProperty(declaration: IrLocalDelegatedProperty): IrStatement {
+                // Note: This code is not accessible in KLIB-based backends now because `LocalDeclarationPopupLowering` runs
+                // after `LocalDelegatedPropertiesLowering`, which reshapes `IrLocalDelegatedProperty`s to simpler declarations.
+                // While it is still used in Kotlin/JVM.
                 declaration.getter.transformStatement(this)
                 declaration.setter?.transformStatement(this)
                 return declaration.delegate.transformStatement(this)

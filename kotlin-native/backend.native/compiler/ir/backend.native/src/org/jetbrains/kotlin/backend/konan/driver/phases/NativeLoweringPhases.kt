@@ -208,7 +208,7 @@ private val inventNamesForInteropBridgesPhase = createFileLoweringPhase(
 
 private val localFunctionsPhase = createFileLoweringPhase(
         op = { context, irFile ->
-            LocalDelegatedPropertiesLowering().lower(irFile)
+            LocalDelegatedPropertiesLowering(context).lower(irFile)
             LocalDeclarationsLowering(context).lower(irFile)
             LocalDeclarationPopupLowering(context).lower(irFile)
         },

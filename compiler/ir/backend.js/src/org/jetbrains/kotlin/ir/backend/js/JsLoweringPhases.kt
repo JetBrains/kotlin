@@ -391,7 +391,7 @@ private val booleanPropertyInExternalLowering = makeIrModulePhase(
 )
 
 private val localDelegatedPropertiesLoweringPhase = makeIrModulePhase<JsIrBackendContext>(
-    { LocalDelegatedPropertiesLowering() },
+    ::LocalDelegatedPropertiesLowering,
     name = "LocalDelegatedPropertiesLowering",
 )
 

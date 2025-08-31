@@ -299,7 +299,7 @@ private val singleAbstractMethodPhase = makeIrModulePhase(
 )
 
 private val localDelegatedPropertiesLoweringPhase = makeIrModulePhase<WasmBackendContext>(
-    { LocalDelegatedPropertiesLowering() },
+    ::LocalDelegatedPropertiesLowering,
     name = "LocalDelegatedPropertiesLowering",
 )
 
