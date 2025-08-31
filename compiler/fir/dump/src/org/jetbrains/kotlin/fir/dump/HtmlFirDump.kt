@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.fir.dump
 
 import kotlinx.html.*
 import kotlinx.html.stream.appendHTML
-import org.apache.commons.lang3.StringEscapeUtils
+import org.apache.commons.text.StringEscapeUtils
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
@@ -417,7 +417,6 @@ class MultiModuleHtmlFirDump(private val outputRoot: File) {
     }
 }
 
-@Suppress("DEPRECATION")
 class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver, private val session: FirSession) {
     var errors: Int = 0
         private set
