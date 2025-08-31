@@ -88,8 +88,6 @@ internal val Project.runCommonizerTask: TaskProvider<Task>
 private const val commonizeCInteropTaskName = "commonizeCInterop"
 
 internal suspend fun Project.commonizeCInteropTask(): TaskProvider<CInteropCommonizerTask>? {
-    val targets = multiplatformExtensionOrNull?.awaitTargets()?.toSet() ?: return null
-
     if (cInteropCommonizationEnabled()) {
         return locateOrRegisterTask(
             commonizeCInteropTaskName,
@@ -109,14 +107,6 @@ internal suspend fun Project.commonizeCInteropTask(): TaskProvider<CInteropCommo
                 kotlinCompilerArgumentsLogLevel
                     .value(project.kotlinPropertiesProvider.kotlinCompilerArgumentsLogLevel)
                     .finalizeValueOnRead()
-                kotlinNativeProvider.set(
-                    KotlinNativeFromToolchainProvider(
-                        project,
-                        targets.filterIsInstance<KotlinNativeTarget>().map { it.konanTarget }.toSet(),
-                        kotlinNativeBundleBuildService,
-                        true
-                    )
-                )
             }
         )
     }

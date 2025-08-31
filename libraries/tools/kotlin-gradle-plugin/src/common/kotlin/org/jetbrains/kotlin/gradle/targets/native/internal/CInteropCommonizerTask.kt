@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
 import org.jetbrains.kotlin.gradle.internal.UsesClassLoadersCachingBuildService
 import org.jetbrains.kotlin.gradle.internal.properties.nativeProperties
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.sources.withDependsOnClosure
 import org.jetbrains.kotlin.gradle.report.GradleBuildMetricsReporter
@@ -40,6 +41,8 @@ import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.io.File
 import javax.inject.Inject
+import kotlin.collections.map
+import kotlin.collections.toSet
 
 private typealias GroupedCommonizerDependencies = Map<CInteropCommonizerGroup, List<CInteropCommonizerDependencies>>
 
@@ -105,7 +108,16 @@ internal abstract class CInteropCommonizerTask
 
         //set in [CommonizerTasks.kt]
         project.objects.propertyWithConvention<KotlinNativeProvider>(
-            NoopKotlinNativeProvider(project)
+            project.multiplatformExtensionOrNull?.targets?.toSet()?.let { targets ->
+                KotlinNativeFromToolchainProvider(
+                    project,
+                    targets.filterIsInstance<KotlinNativeTarget>().map
+                    { it.konanTarget }.toSet(),
+                    kotlinNativeBundleBuildService,
+                    true
+                )
+            } ?: NoopKotlinNativeProvider(project)
+
         )
 
     @get:Internal
