@@ -14,7 +14,7 @@ plugins {
 }
 
 application {
-    mainClass.set("org.jetbrains.kotlin.server.RemoteKotlinDaemonKt")
+    mainClass.set("main.kotlin.server.RemoteCompilationServerKt")
 }
 
 

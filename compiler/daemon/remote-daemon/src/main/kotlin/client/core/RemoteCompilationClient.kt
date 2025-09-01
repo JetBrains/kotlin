@@ -5,6 +5,9 @@
 
 package client.core
 
+import benchmark.RemoteCompilationServiceImplType
+import client.grpc.GrpcRemoteCompilationServiceClient
+import com.example.KotlinxRpcRemoteCompilationServiceClient
 import common.CLIENT_COMPILED_DIR
 import common.CLIENT_TMP_DIR
 import common.CompilerUtils
@@ -18,6 +21,8 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.consumeAsFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
+import kotlinx.rpc.krpc.serialization.cbor.cbor
+import kotlinx.serialization.ExperimentalSerializationApi
 import model.ArtifactType
 import model.CompilationMetadata
 import model.CompilationResult
@@ -28,6 +33,8 @@ import model.FileChunk
 import model.FileTransferReply
 import model.FileTransferRequest
 import org.jetbrains.kotlin.daemon.common.CompilationOptions
+import server.grpc.GrpcRemoteCompilationServerImpl
+import server.kotlinxrpc.KotlinxRpcRemoteCompilationServerImpl
 import java.io.File
 import java.nio.file.Files
 import java.time.LocalDateTime
@@ -40,6 +47,26 @@ class RemoteCompilationClient(
     val clientImpl: RemoteCompilationService,
     val logging: Boolean = false
 ) {
+
+    companion object {
+
+        fun getClient(implType: RemoteCompilationServiceImplType, port: Int, logging: Boolean = false): RemoteCompilationClient{
+            val clientImpl = when (implType) {
+                RemoteCompilationServiceImplType.KOTLINX_RPC -> {
+                    // TODO logging
+                    @OptIn(ExperimentalSerializationApi::class)
+                    KotlinxRpcRemoteCompilationServiceClient(
+                        port,
+                        serialization = { cbor() }
+                    )
+                }
+                RemoteCompilationServiceImplType.GRPC -> {
+                    GrpcRemoteCompilationServiceClient(port, logging)
+                }
+            }
+            return RemoteCompilationClient(clientImpl)
+        }
+    }
 
     fun debug(text: String) {
         if (logging) {
@@ -182,5 +209,9 @@ class RemoteCompilationClient(
             responseJob.join()
         }
         return compilationResult ?: throw IllegalStateException("Compilation result is null")
+    }
+
+    suspend fun cleanup() {
+        clientImpl.cleanup()
     }
 }

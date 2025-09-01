@@ -4,12 +4,35 @@
  */
 package main.kotlin.server
 
+import benchmark.RemoteCompilationServiceImplType
+import kotlinx.rpc.krpc.serialization.cbor.cbor
+import kotlinx.serialization.ExperimentalSerializationApi
 import server.core.Server
 import server.grpc.GrpcRemoteCompilationServerImpl
+import server.kotlinxrpc.KotlinxRpcRemoteCompilationServerImpl
 
 class RemoteCompilationServer(
     private val serverImpl: Server
 ) : Server {
+
+    companion object {
+        fun getServer(implType: RemoteCompilationServiceImplType, port: Int, logging: Boolean = false): RemoteCompilationServer {
+            val serverImpl = when (implType) {
+                RemoteCompilationServiceImplType.GRPC -> {
+                    GrpcRemoteCompilationServerImpl(port, logging)
+                }
+                RemoteCompilationServiceImplType.KOTLINX_RPC -> {
+                    @OptIn(ExperimentalSerializationApi::class)
+                    KotlinxRpcRemoteCompilationServerImpl(
+                        port,
+                        logging = logging,
+                        serialization = { cbor() }
+                    )
+                }
+            }
+            return RemoteCompilationServer(serverImpl)
+        }
+    }
 
     override fun start(block: Boolean) {
         Runtime.getRuntime().addShutdownHook(
@@ -33,8 +56,8 @@ class RemoteCompilationServer(
 
 fun main() {
     try {
-        val port = 7777
-        val server = RemoteCompilationServer(GrpcRemoteCompilationServerImpl(port))
+        val port = 8000
+        val server = RemoteCompilationServer.getServer(RemoteCompilationServiceImplType.GRPC, port, logging = true)
         server.start(block = true)
     } catch (e: Exception) {
         println("error occurred: ${e.message}")
