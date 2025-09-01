@@ -1,0 +1,30 @@
+inline fun inlineFunctionIntraModule() = "inlineFunctionIntraModule.v2"
+
+inline fun inlineFunctionWithParamIntraModule(param: String = "defaultIntraModule.v2") = "inlineFunctionWithParamIntraModule.v2: $param"
+
+context(c: String)
+inline fun String.inlineExtensionFunctionIntraModule() = "$this.inlineExtensionFunctionIntraModule.v2 with context $c"
+
+inline val inlinePropertyIntraModule: String
+    get() = "inlinePropertyIntraModule.v2"
+
+context(c: String)
+inline val String.inlineExtensionPropertyIntraModule: String
+    get() = "$this.inlineExtensionPropertyIntraModule.v2 with context $c"
+
+
+class E {
+    inline fun inlineClassFunctionIntraModule() = "inlineClassFunctionIntraModule.v2"
+
+    inline fun inlineClassFunctionWithParamIntraModule(param: String = "defaultIntraModule.v2") = "inlineClassFunctionWithParamIntraModule.v2: $param"
+
+    context(c: String)
+    inline fun String.inlineClassExtensionFunctionIntraModule() = "$this.inlineClassExtensionFunctionIntraModule.v2 with context $c"
+
+    inline val inlineClassPropertyIntraModule: String
+        get() = "inlineClassPropertyIntraModule.v2"
+
+    context(c: String)
+    inline val String.inlineClassExtensionPropertyIntraModule: String
+        get() = "$this.inlineClassExtensionPropertyIntraModule.v2 with context $c"
+}
