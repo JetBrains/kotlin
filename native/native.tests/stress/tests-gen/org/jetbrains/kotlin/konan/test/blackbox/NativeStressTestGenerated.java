@@ -57,6 +57,12 @@ public class NativeStressTestGenerated extends AbstractNativeBlackBoxTest {
   }
 
   @Test
+  @TestMetadata("kt79384.kt")
+  public void testKt79384() {
+    runTest("native/native.tests/stress/testData/kt79384.kt");
+  }
+
+  @Test
   @TestMetadata("stress_gc_allocations.kt")
   public void testStress_gc_allocations() {
     runTest("native/native.tests/stress/testData/stress_gc_allocations.kt");
