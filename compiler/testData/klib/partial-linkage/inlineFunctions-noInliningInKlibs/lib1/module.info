@@ -1,8 +1,8 @@
 STEP 0:
     dependencies: stdlib
-    arguments: -XXLanguage:-IrIntraModuleInlinerBeforeKlibSerialization -XXLanguage:-IrCrossModuleInlinerBeforeKlibSerialization
+    arguments: -Xklib-ir-inliner=disabled
 STEP 1:
     dependencies: stdlib
     modifications:
         U : l1.kt.1 -> l1.kt
-    arguments: -XXLanguage:-IrIntraModuleInlinerBeforeKlibSerialization -XXLanguage:-IrCrossModuleInlinerBeforeKlibSerialization
+    arguments: -Xklib-ir-inliner=disabled

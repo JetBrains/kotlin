@@ -1,6 +1,6 @@
 // KIND: STANDALONE_LLDB
 // FIR_IDENTICAL
-// FREE_COMPILER_ARGS: -XXLanguage:+IrIntraModuleInlinerBeforeKlibSerialization -XXLanguage:+IrCrossModuleInlinerBeforeKlibSerialization
+// FREE_COMPILER_ARGS: -Xklib-ir-inliner=full
 
 
 // FILE: kt42208-1.kt
