@@ -42,6 +42,8 @@ import org.jetbrains.kotlin.synthetic.SyntheticJavaPropertyDescriptor
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.model.SimpleTypeMarker
 import org.jetbrains.kotlin.types.typeUtil.isUnit
+import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
+import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 import org.jetbrains.org.objectweb.asm.Type
 
 internal class KaFe10JavaInteroperabilityComponent(
@@ -212,43 +214,52 @@ internal class KaFe10JavaInteroperabilityComponent(
 
     override val KaPropertySymbol.javaGetterName: Name
         get() = withValidityAssertion {
-            val descriptor = getSymbolDescriptor(this) as? PropertyDescriptor
-            if (descriptor is SyntheticJavaPropertyDescriptor) {
-                return descriptor.getMethod.name
-            }
-
-            if (descriptor != null) {
-                if (descriptor.hasJvmFieldAnnotation()) return descriptor.name
-
-                val getter = descriptor.getter ?: return SpecialNames.NO_NAME_PROVIDED
-                return Name.identifier(DescriptorUtils.getJvmName(getter) ?: JvmAbi.getterName(descriptor.name.asString()))
-            }
-
-            val ktPropertyName = (psi as? KtProperty)?.name ?: return SpecialNames.NO_NAME_PROVIDED
-            return Name.identifier(JvmAbi.getterName(ktPropertyName))
+            computeAccessorName(this, isSetter = false)
+                ?: errorWithAttachment("Property ${this::class.simpleName} has no getter name") {
+                    withPsiEntry("psi", this@javaGetterName.psi)
+                    withEntry("symbol", DebugSymbolRenderer().render(analysisSession, this@javaGetterName))
+                }
         }
 
     override val KaPropertySymbol.javaSetterName: Name?
         get() = withValidityAssertion {
-            val descriptor = getSymbolDescriptor(this) as? PropertyDescriptor
-            if (descriptor is SyntheticJavaPropertyDescriptor) {
-                return descriptor.setMethod?.name
-            }
-
-            if (descriptor != null) {
-                if (!descriptor.isVar) {
-                    return null
-                }
-
-                if (descriptor.hasJvmFieldAnnotation()) return descriptor.name
-
-                val setter = descriptor.setter ?: return SpecialNames.NO_NAME_PROVIDED
-                return Name.identifier(DescriptorUtils.getJvmName(setter) ?: JvmAbi.setterName(descriptor.name.asString()))
-            }
-
-            val ktPropertyName = (psi as? KtProperty)?.takeIf { it.isVar }?.name ?: return SpecialNames.NO_NAME_PROVIDED
-            return Name.identifier(JvmAbi.setterName(ktPropertyName))
+            computeAccessorName(this, isSetter = true)
         }
+
+    private fun computeAccessorName(symbol: KaPropertySymbol, isSetter: Boolean): Name? {
+        val descriptor = getSymbolDescriptor(symbol) as? PropertyDescriptor
+        if (descriptor is SyntheticJavaPropertyDescriptor) {
+            val method = if (isSetter) descriptor.setMethod else descriptor.getMethod
+            return method?.name
+        }
+
+        if (descriptor != null) {
+            if (isSetter && !descriptor.isVar) {
+                return null
+            }
+
+            if (descriptor.hasJvmFieldAnnotation()) return descriptor.name
+
+            val accessor = if (isSetter) descriptor.setter else descriptor.getter
+            if (accessor == null) {
+                return SpecialNames.NO_NAME_PROVIDED
+            }
+
+            val customName = DescriptorUtils.getJvmName(accessor)
+            if (customName != null) {
+                return Name.identifier(customName)
+            }
+
+            val propertyName = descriptor.name.takeUnless { it.isSpecial }?.asString()
+                ?: return SpecialNames.NO_NAME_PROVIDED
+
+            val accessorName = if (isSetter) JvmAbi.setterName(propertyName) else JvmAbi.getterName(propertyName)
+            return Name.identifier(accessorName)
+        }
+
+        val ktPropertyName = (symbol.psi as? KtProperty)?.takeIf { it.isVar }?.name ?: return SpecialNames.NO_NAME_PROVIDED
+        return Name.identifier(JvmAbi.setterName(ktPropertyName))
+    }
 }
 
 private class SyntheticTypeElement(

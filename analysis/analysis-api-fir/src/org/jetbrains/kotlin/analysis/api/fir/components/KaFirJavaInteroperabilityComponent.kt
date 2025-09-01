@@ -413,10 +413,12 @@ internal class KaFirJavaInteroperabilityComponent(
         if (property.backingField?.symbol?.hasAnnotation(JvmStandardClassIds.Annotations.JvmField, analysisSession.firSession) == true) {
             return property.name
         }
-        return Name.identifier(getJvmNameAsString(property, isSetter))
+
+        val nameString = getJvmNameAsString(property, isSetter) ?: return SpecialNames.NO_NAME_PROVIDED
+        return Name.identifier(nameString)
     }
 
-    private fun getJvmNameAsString(property: FirProperty, isSetter: Boolean): String {
+    private fun getJvmNameAsString(property: FirProperty, isSetter: Boolean): String? {
         val useSiteTarget = if (isSetter) AnnotationUseSiteTarget.PROPERTY_SETTER else AnnotationUseSiteTarget.PROPERTY_GETTER
         val jvmNameFromProperty = property.getJvmNameFromAnnotation(analysisSession.firSession, useSiteTarget)
         if (jvmNameFromProperty != null) {
@@ -429,7 +431,7 @@ internal class KaFirJavaInteroperabilityComponent(
             return jvmNameFromAccessor
         }
 
-        val identifier = property.name.identifier
+        val identifier = property.name.takeUnless { it.isSpecial }?.identifier ?: return null
         return if (isSetter) JvmAbi.setterName(identifier) else JvmAbi.getterName(identifier)
     }
 }
