@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.impl.FirSimpleNamedReference
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.transformers.FirSpecificTypeResolverTransformer
+import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.BodyResolveContext
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirAbstractBodyResolveTransformerDispatcher
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirDeclarationsResolveTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirExpressionsResolveTransformer
@@ -45,7 +46,8 @@ abstract class AbstractFirSpecificAnnotationResolveTransformer(
     @property:PrivateForInline val session: FirSession,
     @property:PrivateForInline val scopeSession: ScopeSession,
     @property:PrivateForInline val computationSession: CompilerRequiredAnnotationsComputationSession,
-    containingDeclarations: List<FirDeclaration> = emptyList()
+    containingDeclarations: List<FirDeclaration> = emptyList(),
+    private val outerBodyResolveContext: BodyResolveContext? = null,
 ) : FirDefaultTransformer<Nothing?>() {
     inner class FirEnumAnnotationArgumentsTransformerDispatcher : FirAbstractBodyResolveTransformerDispatcher(
         session,
@@ -55,6 +57,7 @@ abstract class AbstractFirSpecificAnnotationResolveTransformer(
         // This transformer is only used for COMPILER_REQUIRED_ANNOTATIONS, which is <=SUPER_TYPES,
         // so we can't yet expand typealiases.
         expandTypeAliases = false,
+        outerBodyResolveContext = outerBodyResolveContext
     ) {
         override val expressionsTransformer: FirExpressionsResolveTransformer = FirEnumAnnotationArgumentsTransformer(this)
         override val declarationsTransformer: FirDeclarationsResolveTransformer? = null
