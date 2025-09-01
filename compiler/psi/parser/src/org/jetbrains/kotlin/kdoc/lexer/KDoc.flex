@@ -55,8 +55,6 @@ import org.jetbrains.kotlin.kdoc.parser.KDocKnownTag;
 
 WHITE_SPACE_CHAR    = [\ \t\f]
 LINE_BREAK_CHAR     = [\r\n]
-WHITE_SPACE_OR_LINE_BREAK_CHAR     = {WHITE_SPACE_CHAR} | {LINE_BREAK_CHAR}
-NOT_WHITE_SPACE_OR_LINE_BREAK_CHAR = [^\ \t\f\r\n]
 
 DIGIT=[0-9]
 LETTER = [:jletter:]
@@ -127,7 +125,7 @@ CODE_FENCE_END=("```" | "~~~")
               return KDocTokens.MARKDOWN_LINK;
     }
 
-    {NOT_WHITE_SPACE_OR_LINE_BREAK_CHAR} {
+    [^] {
               consecutiveLineBreakCount = 0;
               yybegin(CONTENTS);
               return KDocTokens.TEXT;
@@ -154,7 +152,7 @@ CODE_FENCE_END=("```" | "~~~")
               return KDocTokens.MARKDOWN_LINK;
     }
 
-    {NOT_WHITE_SPACE_OR_LINE_BREAK_CHAR} {
+    [^] {
               consecutiveLineBreakCount = 0;
               yybegin(CONTENTS);
               return KDocTokens.TEXT;
@@ -233,7 +231,7 @@ CODE_FENCE_END=("```" | "~~~")
               return KDocTokens.MARKDOWN_LINK;
     }
 
-    {NOT_WHITE_SPACE_OR_LINE_BREAK_CHAR} {
+    [^] {
               consecutiveLineBreakCount = 0;
               lastBlockType = BlockType.Paragraph;
               yybegin(CONTENTS);
@@ -272,7 +270,7 @@ CODE_FENCE_END=("```" | "~~~")
               return KDocTokens.CODE_BLOCK_TEXT;
     }
 
-    {NOT_WHITE_SPACE_OR_LINE_BREAK_CHAR} {
+    [^] {
               consecutiveLineBreakCount = 0;
               if (yystate() != INDENTED_CODE_BLOCK) {
                   yybegin(CODE_BLOCK);
