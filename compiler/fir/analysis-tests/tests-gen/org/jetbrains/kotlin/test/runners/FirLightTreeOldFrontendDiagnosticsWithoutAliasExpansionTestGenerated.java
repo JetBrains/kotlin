@@ -1071,6 +1071,12 @@ public class FirLightTreeOldFrontendDiagnosticsWithoutAliasExpansionTestGenerate
       public void testNullableSupertypeWithoutTypealiases() {
         runTest("compiler/testData/diagnostics/tests/nullableTypes/nullableSupertypeWithoutTypealiases.kt");
       }
+
+      @Test
+      @TestMetadata("redundantNullable.kt")
+      public void testRedundantNullable() {
+        runTest("compiler/testData/diagnostics/tests/nullableTypes/redundantNullable.kt");
+      }
     }
 
     @Nested

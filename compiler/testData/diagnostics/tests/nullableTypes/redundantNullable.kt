@@ -10,4 +10,14 @@ fun redundantNullable(
 ) {
 }
 
+private typealias AA = String?
+
+fun m(m: IFoo<AA>) {
+        m.onProcessed {}
+}
+
+interface IFoo<T> {
+        fun onProcessed(f: (T?) -> Unit)
+}
+
 /* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, nullableType, typeParameter */
