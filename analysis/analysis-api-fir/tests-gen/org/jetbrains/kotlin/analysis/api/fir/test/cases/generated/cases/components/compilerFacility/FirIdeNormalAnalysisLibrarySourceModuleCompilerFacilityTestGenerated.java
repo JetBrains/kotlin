@@ -470,6 +470,24 @@ public class FirIdeNormalAnalysisLibrarySourceModuleCompilerFacilityTestGenerate
     }
 
     @Test
+    @TestMetadata("resultNothing.kt")
+    public void testResultNothing() {
+      runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/resultNothing.kt");
+    }
+
+    @Test
+    @TestMetadata("resultNothingBeforeSmartCast.kt")
+    public void testResultNothingBeforeSmartCast() {
+      runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/resultNothingBeforeSmartCast.kt");
+    }
+
+    @Test
+    @TestMetadata("resultNothingSmartCast.kt")
+    public void testResultNothingSmartCast() {
+      runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/resultNothingSmartCast.kt");
+    }
+
+    @Test
     @TestMetadata("simple.kt")
     public void testSimple() {
       runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/simple.kt");
