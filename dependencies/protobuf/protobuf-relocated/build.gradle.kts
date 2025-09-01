@@ -13,6 +13,7 @@ repositories {
 
 val baseProtobuf by configurations.creating
 val baseProtobufSources by configurations.creating
+val protobufPatches by configurations.creating
 
 val protobufVersion: String by rootProject.extra
 val protobufJarPrefix = "protobuf-$protobufVersion"
@@ -22,18 +23,17 @@ val outputJarsPath = "$buildDir/libs"
 
 dependencies {
     baseProtobuf("com.google.protobuf:protobuf-java:$protobufVersion")
+    protobufPatches(project(":protobuf-patches"))
     baseProtobufSources("com.google.protobuf:protobuf-java:$protobufVersion:sources")
 }
 
-val prepare = tasks.register<ShadowJar>("prepare") {
+val prepare = tasks.register<ShadowJar>("shadow") {
+    dependsOn(":protobuf-patches:build")
     destinationDirectory.set(File(outputJarsPath))
     archiveVersion.set(protobufVersion)
-    archiveClassifier.set("")
-    from(
-        provider {
-            baseProtobuf.files.find { it.name.startsWith("protobuf-java") }?.canonicalPath
-        }
-    )
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    from(zipTree(protobufPatches.resolvedConfiguration.resolvedArtifacts.single { it.name == "protobuf-patches" }.file))
+    from(zipTree(baseProtobuf.files.find { it.name.startsWith("protobuf-java") }!!.canonicalPath))
 
     relocate("com.google.protobuf", "org.jetbrains.kotlin.protobuf" ) {
         exclude("META-INF/maven/com.google.protobuf/protobuf-java/pom.properties")
@@ -43,12 +43,17 @@ val prepare = tasks.register<ShadowJar>("prepare") {
 artifacts.add("default", prepare)
 
 val relocateSources = task<Copy>("relocateSources") {
+    dependsOn(":protobuf-patches:build")
     from(
         provider {
             zipTree(baseProtobufSources.files.find { it.name.startsWith("protobuf-java") && it.name.endsWith("-sources.jar") }
                         ?: throw GradleException("sources jar not found among ${baseProtobufSources.files}"))
         }
-    )
+    ) {
+        exclude("com/google/protobuf/CodedInputStream.java")
+    }
+
+    from(project(":protobuf-patches").extensions.getByType(SourceSetContainer::class.java).getByName("main").allSource.srcDirs)
 
     into(renamedSources)
 

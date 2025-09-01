@@ -43,6 +43,10 @@ the Kotlin IntelliJ IDEA plugin:
      - License: BSD ([license/third_party/asm_license.txt][asm])
      - Origin: Derived from ASM: a very small and fast Java bytecode manipulation framework, Copyright (c) 2000-2011 INRIA, France Telecom
 
+ - Path: dependencies/protobuf/protobuf-patches/src/main/java/com/google/protobuf/CodedInputStream.java
+     - License: BSD ([license/third_party/protobuf_license.txt][protobuf])
+     - Origin: Derived from Protocol Buffers, Copyright 2008, Google Inc.
+
  - Path: js/js.ast
      - License: BSD ([license/third_party/dart_LICENSE.txt][dart])
      - Origin: Originally part of the Dart compiler, (c) 2011 the Dart Project Authors,
@@ -298,6 +302,7 @@ any distributions of the compiler, libraries or plugin:
 [jspecify]: third_party/testdata/jspecify_license.txt
 [lombok]: third_party/testdata/lombok_license.txt
 [power-assert]: third_party/power_assert_license.txt
+[protobuf]: third_party/protobuf_license.txt
 [rhino]: third_party/rhino_LICENSE.txt
 [rxjava]: third_party/testdata/rxjava_license.txt
 [spring]: third_party/testdata/spring_license.txt
