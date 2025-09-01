@@ -70,7 +70,6 @@ internal fun reportingSettings(project: Project): ReportingSettings {
     val buildScanSettings = if (buildReportOutputTypes.contains(BuildReportType.BUILD_SCAN)) {
         val metrics = properties.buildReportBuildScanMetrics?.split(",")?.toSet()
         metrics?.forEach {
-            //TODO
             if (!availableMetrics.contains(it.trim().uppercase())) {
                 throw IllegalStateException("Unknown metric: '$it', list of available metrics: $availableMetrics")
             }

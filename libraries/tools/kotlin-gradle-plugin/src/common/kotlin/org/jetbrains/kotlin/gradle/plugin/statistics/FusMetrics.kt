@@ -10,9 +10,7 @@ import org.gradle.api.logging.Logger
 import org.gradle.tooling.events.FailureResult
 import org.gradle.tooling.events.FinishEvent
 import org.gradle.tooling.events.task.TaskFinishEvent
-import org.jetbrains.kotlin.build.report.metrics.ANALYSIS_LPS
-import org.jetbrains.kotlin.build.report.metrics.CODE_GENERATION_LPS
-import org.jetbrains.kotlin.build.report.metrics.SOURCE_LINES_NUMBER
+import org.jetbrains.kotlin.build.report.metrics.*
 import org.jetbrains.kotlin.cli.common.arguments.*
 import org.jetbrains.kotlin.compilerRunner.ArgumentUtils
 import org.jetbrains.kotlin.compilerRunner.isKonanIncrementalCompilationEnabled

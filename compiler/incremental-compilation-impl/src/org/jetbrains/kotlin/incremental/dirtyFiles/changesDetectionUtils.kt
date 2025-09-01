@@ -8,10 +8,7 @@ package org.jetbrains.kotlin.incremental.dirtyFiles
 import org.jetbrains.kotlin.build.report.BuildReporter
 import org.jetbrains.kotlin.build.report.ICReporter
 import org.jetbrains.kotlin.build.report.info
-import org.jetbrains.kotlin.build.report.metrics.BuildAttribute
-import org.jetbrains.kotlin.build.report.metrics.IC_ANALYZE_HISTORY_FILES
-import org.jetbrains.kotlin.build.report.metrics.IC_ANALYZE_JAR_FILES
-import org.jetbrains.kotlin.build.report.metrics.IC_FIND_HISTORY_FILES
+import org.jetbrains.kotlin.build.report.metrics.*
 import org.jetbrains.kotlin.build.report.metrics.measure
 import org.jetbrains.kotlin.incremental.*
 import org.jetbrains.kotlin.incremental.ChangedFiles.DeterminableFiles
@@ -26,7 +23,7 @@ internal fun getClasspathChanges(
     changedFiles: DeterminableFiles.Known,
     lastBuildInfo: BuildInfo,
     modulesApiHistory: ModulesApiHistory,
-    reporter: BuildReporter,
+    reporter: BuildReporter<GradleBuildTimeMetric, GradleBuildPerformanceMetric>,
     abiSnapshots: Map<String, AbiSnapshot>,
     withSnapshot: Boolean,
     caches: IncrementalCacheCommon,

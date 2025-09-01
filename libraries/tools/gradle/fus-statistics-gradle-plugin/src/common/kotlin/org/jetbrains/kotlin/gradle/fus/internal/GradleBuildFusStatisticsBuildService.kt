@@ -64,8 +64,9 @@ private fun registerIfAbsent(
     } else {
         val fusService = project.gradle.sharedServices.registerIfAbsent(serviceName, BuildFlowFusStatisticsBuildService::class.java) {
             it.parameters.fusStatisticsRootDirPath.value(customPath).disallowChanges()
+            it.parameters.buildId.value(uidService.map { it.buildId }).disallowChanges()
         }
-        FusBuildFinishFlowManager.getInstance(project).subscribeForBuildFinish(fusService, uidService.map { it.buildId })
+        FusBuildFinishFlowManager.getInstance(project).subscribeForBuildFinish(fusService)
         fusService
     }
 }

@@ -9,11 +9,11 @@ import java.io.Serializable
 
 data class DynamicBuildTimeKey(val name: String, val parent: BuildTimeMetric) : Serializable
 
-class BuildTimes : Serializable {
-    private val buildTimesNs = HashMap<BuildTimeMetric, Long>()
+class BuildTimes<T : BuildTimeMetric> : Serializable {
+    private val buildTimesNs = HashMap<T, Long>()
     private val dynamicBuildTimesNs = LinkedHashMap<DynamicBuildTimeKey, Long>()
 
-    fun addAll(other: BuildTimes) {
+    fun addAll(other: BuildTimes<T>) {
         for ((buildTime, timeNs) in other.buildTimesNs) {
             addTimeNs(buildTime, timeNs)
         }
@@ -23,17 +23,17 @@ class BuildTimes : Serializable {
         }
     }
 
-    fun addTimeNs(buildTimeMetric: BuildTimeMetric, timeNs: Long) {
-        buildTimesNs[buildTimeMetric] = buildTimesNs.getOrDefault(buildTimeMetric, 0) + timeNs
+    fun addTimeNs(buildTime: T, timeNs: Long) {
+        buildTimesNs[buildTime] = buildTimesNs.getOrDefault(buildTime, 0) + timeNs
     }
 
     fun addDynamicTimeNs(dynamicBuildTimeKey: DynamicBuildTimeKey, timeNs: Long) {
         dynamicBuildTimesNs[dynamicBuildTimeKey] = dynamicBuildTimesNs.getOrDefault(dynamicBuildTimeKey, 0) + timeNs
     }
 
-    fun addTimeMs(buildTimeMetric: BuildTimeMetric, timeMs: Long) = addTimeNs(buildTimeMetric, timeMs * 1_000_000)
+    fun addTimeMs(buildTime: T, timeMs: Long) = addTimeNs(buildTime, timeMs * 1_000_000)
 
-    fun buildTimesMapMs(): Map<BuildTimeMetric, Long> = buildTimesNs.mapValues { it.value / 1_000_000 }
+    fun buildTimesMapMs(): Map<T, Long> = buildTimesNs.mapValues { it.value / 1_000_000 }
 
     fun dynamicBuildTimesMapMs(): Map<DynamicBuildTimeKey, Long> = dynamicBuildTimesNs.mapValues { it.value / 1_000_000 }
 
