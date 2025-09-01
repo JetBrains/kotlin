@@ -1,64 +1,126 @@
-import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+
+import java.io.BufferedOutputStream
 import java.io.File
+import java.io.FileOutputStream
+import java.util.jar.JarEntry
+import java.util.jar.JarFile
+import java.util.zip.ZipOutputStream
 
 plugins {
-    `java-base`
+    base
     `maven-publish`
-    id("com.github.johnrengelman.shadow") version "4.0.3" apply false
-}
-
-repositories {
-    mavenCentral()
 }
 
 val relocatedProtobuf by configurations.creating
 val relocatedProtobufSources by configurations.creating
 
 val protobufVersion: String by rootProject.extra
-
-val renamedSources = "${layout.buildDirectory.get()}/renamedSrc/"
-val outputJarsPath = "${layout.buildDirectory.get()}/libs"
+val outputJarPath = "$buildDir/libs/protobuf-lite-$protobufVersion.jar"
+val sourcesJarName = "protobuf-lite-$protobufVersion-sources.jar"
 
 dependencies {
-    relocatedProtobuf("com.google.protobuf:protobuf-javalite:$protobufVersion") { isTransitive = false }
-    relocatedProtobufSources("com.google.protobuf:protobuf-javalite:$protobufVersion:sources") { isTransitive = false }
+    relocatedProtobuf(project(":protobuf-relocated"))
 }
 
-val prepare = tasks.register<ShadowJar>("prepare") {
-    destinationDirectory.set(File(outputJarsPath))
-    archiveVersion.set(protobufVersion)
-    archiveClassifier.set("")
-    from(relocatedProtobuf)
+val prepare by tasks.registering {
+    inputs.files(relocatedProtobuf) // this also adds a dependency
+    outputs.file(outputJarPath)
+    doFirst {
+        File(outputJarPath).parentFile.mkdirs()
+    }
+    doLast {
+        val INCLUDE_START = "<include>**/"
+        val INCLUDE_END = ".java</include>"
+        val POM_PATH = "META-INF/maven/com.google.protobuf/protobuf-java/pom.xml"
 
-    relocate("com.google.protobuf", "org.jetbrains.kotlin.protobuf" ) {
-        exclude("META-INF/maven/com.google.protobuf/protobuf-javalite/pom.properties")
+        fun loadAllFromJar(file: File): Map<String, Pair<JarEntry, ByteArray>> {
+            val result = hashMapOf<String, Pair<JarEntry, ByteArray>>()
+            JarFile(file).use { jar ->
+                for (jarEntry in jar.entries()) {
+                    result[jarEntry.name] = Pair(jarEntry, jar.getInputStream(jarEntry).readBytes())
+                }
+            }
+            return result
+        }
+
+        val mainJar = relocatedProtobuf.resolvedConfiguration.resolvedArtifacts.single {
+            it.name == "protobuf-relocated" && it.classifier == null
+        }.file
+
+        val allFiles = loadAllFromJar(mainJar)
+
+        val keepClasses = arrayListOf<String>()
+
+        val pomBytes = allFiles[POM_PATH]?.second ?: error("pom.xml is not found in protobuf jar at $POM_PATH")
+        val lines = String(pomBytes).lines()
+
+        var liteProfileReached = false
+        for (lineUntrimmed in lines) {
+            val line = lineUntrimmed.trim()
+
+            if (liteProfileReached && line == "</includes>") {
+                break
+            }
+            else if (line == "<id>lite</id>") {
+                liteProfileReached = true
+                continue
+            }
+
+            if (liteProfileReached && line.startsWith(INCLUDE_START) && line.endsWith(INCLUDE_END)) {
+                keepClasses.add(line.removeSurrounding(INCLUDE_START, INCLUDE_END))
+            }
+        }
+
+        assert(liteProfileReached && keepClasses.isNotEmpty()) { "Wrong pom.xml or the format has changed, check its contents at $POM_PATH" }
+
+        val outputFile = File(outputJarPath).apply { delete() }
+        ZipOutputStream(BufferedOutputStream(FileOutputStream(outputFile))).use { output ->
+            for ((name, value) in allFiles) {
+                val className = name.substringAfter("org/jetbrains/kotlin/protobuf/").substringBeforeLast(".class")
+                if (keepClasses.any { className == it || className.startsWith(it + "$") }) {
+                    val (entry, bytes) = value
+                    output.putNextEntry(entry)
+                    output.write(bytes)
+                    output.closeEntry()
+                }
+            }
+        }
     }
 }
 
-val relocateSources = task<Copy>("relocateSources") {
-    from(
-        provider {
-            zipTree(relocatedProtobufSources.files.single())
-        }
-    )
+val prepareSources = tasks.register<Copy>("prepareSources") {
+    dependsOn(":protobuf-relocated:prepareSources")
+    from(provider {
+        relocatedProtobuf
+                .resolvedConfiguration
+                .resolvedArtifacts
+                .single { it.name == "protobuf-relocated" && it.classifier == "sources" }.file
+    })
 
-    into(renamedSources)
-
-    filter { it.replace("com.google.protobuf", "org.jetbrains.kotlin.protobuf") }
+    into("$buildDir/libs/")
+    rename { sourcesJarName }
 }
 
-val prepareSources = task<Jar>("prepareSources") {
-    destinationDirectory.set(File(outputJarsPath))
-    archiveVersion.set(protobufVersion)
-    archiveClassifier.set("sources")
-    from(relocateSources)
+val mainArtifact = artifacts.add(
+    "default",
+    provider {
+        prepare.get().outputs.files.singleFile
+    }
+) {
+    builtBy(prepare)
+    classifier = ""
+}
+
+val sourcesArtifact = artifacts.add("default", File("$buildDir/libs/$sourcesJarName")) {
+    builtBy(prepareSources)
+    classifier = "sources"
 }
 
 publishing {
     publications {
         create<MavenPublication>("maven") {
-            artifact(prepare)
-            artifact(prepareSources)
+            artifact(mainArtifact)
+            artifact(sourcesArtifact)
         }
     }
 
