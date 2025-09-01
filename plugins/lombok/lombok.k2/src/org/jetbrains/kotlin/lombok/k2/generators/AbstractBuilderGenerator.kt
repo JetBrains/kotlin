@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirVariable
 import org.jetbrains.kotlin.fir.declarations.builder.buildConstructedClassTypeParameterRef
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
+import org.jetbrains.kotlin.fir.declarations.primaryConstructorIfAny
 import org.jetbrains.kotlin.fir.declarations.utils.classId
 import org.jetbrains.kotlin.fir.declarations.utils.effectiveVisibility
 import org.jetbrains.kotlin.fir.extensions.FirDeclarationGenerationExtension
@@ -291,8 +292,14 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
         addSpecialBuilderMethods(builder, entitySymbol, builderSymbol, existingFunctionNames)
 
         val items = when (builderDeclaration) {
-            is FirClassLikeDeclaration -> entityJavaClass.declarations.filterIsInstance<FirJavaField>().map { it }
-            is FirConstructor -> builderDeclaration.valueParameters
+            is FirJavaClass -> {
+                if (entityJavaClass.isRecord) {
+                    entityJavaClass.primaryConstructorIfAny(session)?.valueParameterSymbols?.map { it.fir } ?: emptyList()
+                } else {
+                    entityJavaClass.declarations.filterIsInstance<FirJavaField>().map { it }
+                }
+            }
+            is FirJavaConstructor -> builderDeclaration.valueParameters
             else -> emptyList()
         }
         for (item in items) {

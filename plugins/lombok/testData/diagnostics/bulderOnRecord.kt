@@ -16,5 +16,5 @@ record RecordBuilder(String prop) {
 // FILE: test.kt
 
 fun box(): String {
-    return RecordBuilder.builder().<!UNRESOLVED_REFERENCE!>prop<!>("OK").build().prop
+    return RecordBuilder.builder().prop("OK").build().prop
 }
